@@ -182,7 +182,7 @@ nav {
 }
 
 .hero-note {
-  margin-top: 14px;
+  margin-top: 22px;
   color: var(--muted);
   font-size: 13px;
 }
@@ -501,6 +501,52 @@ section {
   font-size: 14px;
 }
 
+.credential-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(280px, 46%) 1fr;
+  gap: 32px;
+  align-items: center;
+  min-height: auto;
+  padding: 28px;
+}
+
+.credential-image-wrap {
+  margin: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f7f1ec;
+  border: 1px solid rgba(80, 55, 48, .12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.credential-image-wrap img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+  display: block;
+  padding: 14px;
+}
+
+.credential-copy {
+  max-width: 420px;
+}
+
+.credential-copy strong {
+  display: block;
+  margin-top: 10px;
+}
+
+.card-action {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--rose);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .face-section {
   background: var(--sand);
 }
@@ -710,6 +756,20 @@ section {
   color: var(--muted);
   font-size: 13px;
   font-style: normal;
+}
+
+.review-source {
+  display: block;
+  margin-top: 6px;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  opacity: .62;
+}
+
+.proof-copy .text-link {
+  display: inline-block;
+  margin-top: 12px;
 }
 
 .liv-section {
@@ -1029,6 +1089,18 @@ footer {
     right: 14px;
     left: 14px;
     bottom: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .credential-card {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+
+  .credential-image-wrap img {
+    aspect-ratio: 16 / 11;
+    padding: 10px;
   }
 }
 
