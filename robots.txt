@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://draamandaschroeder.com.br/sitemap.xml
