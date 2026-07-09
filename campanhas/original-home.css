@@ -142,6 +142,19 @@ nav {
   padding: 11px 18px;
 }
 
+.nav-clinic {
+  min-height: 42px;
+  padding: 11px 18px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(80, 55, 48, .22);
+  box-shadow: none;
+}
+
+.nav-clinic:hover {
+  background: rgba(80, 55, 48, .06);
+}
+
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -249,7 +262,6 @@ section {
 .signature-copy h2,
 .proof-copy h2,
 .liv-section h2,
-.other-wrap h2,
 .cta h2 {
   margin: 10px 0 13px;
   font-size: 52px;
@@ -430,9 +442,9 @@ section {
 
 .content-layout {
   display: grid;
-  grid-template-columns: minmax(360px, .62fr) minmax(0, 1fr);
-  gap: 24px;
-  align-items: stretch;
+  grid-template-columns: minmax(320px, .58fr) minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
 }
 
 .instagram-feature,
@@ -443,17 +455,31 @@ section {
 
 .instagram-feature {
   overflow: hidden;
+  display: grid;
 }
 
-.instagram-frame {
+.instagram-video-shell {
+  width: min(100%, 340px);
+  aspect-ratio: 9 / 16;
+  max-height: 560px;
+  margin: 22px auto 0;
+  border: 1px solid rgba(80, 55, 48, .12);
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f8f3ee;
+  box-shadow: 0 18px 45px rgba(74, 49, 39, .1);
+}
+
+.instagram-video-shell .instagram-frame {
   width: 100%;
-  min-height: 520px;
+  height: 100%;
+  min-height: 0;
   display: block;
   border: 0;
   background: var(--paper);
 }
 
-.instagram-feature div {
+.instagram-copy {
   padding: 22px;
 }
 
@@ -501,14 +527,25 @@ section {
   font-size: 14px;
 }
 
+.external-cue {
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
 .credential-card {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(280px, 46%) 1fr;
-  gap: 32px;
+  grid-template-columns: minmax(300px, 48%) 1fr;
+  gap: 34px;
   align-items: center;
   min-height: auto;
   padding: 28px;
+  background: linear-gradient(135deg, #fffaf7 0%, #f2e8e2 100%);
 }
 
 .credential-image-wrap {
@@ -527,11 +564,11 @@ section {
   aspect-ratio: 16 / 10;
   object-fit: contain;
   display: block;
-  padding: 14px;
+  padding: 12px;
 }
 
 .credential-copy {
-  max-width: 420px;
+  max-width: 460px;
 }
 
 .credential-copy strong {
@@ -542,7 +579,7 @@ section {
 .card-action {
   display: inline-block;
   margin-top: 18px;
-  color: var(--rose);
+  color: var(--soft);
   font-size: 13px;
   font-weight: 600;
 }
@@ -552,7 +589,7 @@ section {
 }
 
 .face-grid {
-  grid-template-columns: 1fr .92fr .92fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .journey-section {
@@ -776,6 +813,10 @@ section {
   background: var(--paper);
 }
 
+#clinica-liv {
+  scroll-margin-top: 96px;
+}
+
 .liv-split {
   grid-template-columns: 1fr .8fr;
 }
@@ -826,24 +867,83 @@ section {
 }
 
 .other-section {
-  padding: 58px 0;
+  padding: 86px 0;
   background: var(--sand-deep);
 }
 
-.other-wrap {
+.other-head {
+  max-width: 880px;
+}
+
+.other-procedure-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 28px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.other-procedure-card {
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.other-procedure-card span {
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.other-procedure-card h3 {
+  margin: 14px 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.other-procedure-card p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.other-actions {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 28px;
+}
+
+.other-primary {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 1px solid rgba(120, 82, 72, .32);
+  background: rgba(120, 82, 72, .08);
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
 }
 
-.other-wrap h2 {
-  font-size: 38px;
+.other-primary:hover {
+  filter: brightness(.96);
 }
 
-.other-wrap p {
-  max-width: 760px;
+.other-note {
+  max-width: 780px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 13px;
 }
+
 
 .faq-section {
   background: var(--sand);
@@ -959,6 +1059,7 @@ footer {
   .proof-layout,
   .liv-split,
   .other-wrap,
+  .other-procedure-grid,
   .faq-grid,
   .cta-wrap {
     grid-template-columns: 1fr;
@@ -1031,7 +1132,6 @@ footer {
   .signature-copy h2,
   .proof-copy h2,
   .liv-section h2,
-  .other-wrap h2,
   .cta h2 {
     font-size: 36px;
   }
@@ -1042,7 +1142,8 @@ footer {
   .quote-card,
   .faq-item,
   .location-box,
-  .path-card {
+  .path-card,
+  .other-procedure-card {
     padding: 24px;
   }
 
@@ -1060,8 +1161,10 @@ footer {
     gap: 6px;
   }
 
-  .instagram-frame {
-    min-height: 430px;
+  .instagram-video-shell {
+    width: min(100%, 315px);
+    max-height: 520px;
+    margin-top: 18px;
   }
 
   .content-card {
@@ -1133,7 +1236,6 @@ footer {
   .signature-copy h2,
   .proof-copy h2,
   .liv-section h2,
-  .other-wrap h2,
   .cta h2 {
     font-size: 32px;
   }
@@ -1150,11 +1252,436 @@ footer {
     font-size: 22px;
   }
 
-  .instagram-frame {
-    min-height: 390px;
+  .instagram-video-shell {
+    width: min(100%, 290px);
+    max-height: 500px;
   }
 
   .liv-logo {
     width: 128px;
+  }
+}
+
+#alem-da-face { scroll-margin-top: 96px; }
+
+/* Ajustes estratégicos da home: navegação, âncoras e hierarquia editorial */
+#face,
+#alem-da-face,
+#clinica-liv,
+#resultados {
+  scroll-margin-top: 96px;
+}
+
+.nav-clinic {
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  nav a:not(.nav-cta) {
+    display: none;
+  }
+}
+
+
+.local-video {
+  object-fit: cover;
+  background: #000;
+}
+
+.local-video::-webkit-media-controls-panel {
+  background: linear-gradient(180deg, rgba(20,20,20,.1), rgba(20,20,20,.55));
+}
+
+
+/* Etapa 5: menu mais homogêneo e bloco médico de confiança */
+nav {
+  gap: 8px;
+}
+
+.nav-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border: 1px solid rgba(80, 55, 48, .14);
+  border-radius: 999px;
+  background: rgba(255, 250, 247, .34);
+  color: rgba(80, 55, 48, .78);
+  white-space: nowrap;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 250, 247, .7);
+  border-color: rgba(80, 55, 48, .24);
+  color: var(--ink);
+}
+
+.nav-cta {
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.doctor-section {
+  padding: 58px 0;
+  background: var(--paper);
+}
+
+.doctor-card {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 34px;
+  align-items: center;
+  padding: 38px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, #fffaf7 0%, #f3e9e3 100%);
+  box-shadow: 0 18px 46px rgba(74, 49, 39, .08);
+}
+
+.doctor-copy h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(36px, 4vw, 48px);
+  line-height: 1.04;
+}
+
+.doctor-copy p {
+  color: var(--muted);
+  max-width: 560px;
+}
+
+.doctor-points {
+  display: grid;
+  gap: 12px;
+}
+
+.doctor-points div {
+  padding: 18px 0;
+  border-top: 1px solid rgba(154, 123, 114, .28);
+}
+
+.doctor-points div:first-child {
+  border-top: 0;
+}
+
+.doctor-points strong {
+  display: block;
+  margin-bottom: 5px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.doctor-points span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 980px) {
+  .doctor-card {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  nav .nav-link {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .doctor-section {
+    padding: 38px 0;
+  }
+
+  .doctor-card {
+    padding: 24px;
+  }
+
+  .doctor-copy h2 {
+    font-size: 32px;
+  }
+}
+
+
+.contact-flow-section {
+  background: var(--ivory);
+}
+
+.contact-flow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.contact-flow-grid article {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 24px;
+}
+
+.contact-flow-grid span {
+  display: inline-flex;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  margin-bottom: 12px;
+}
+
+.contact-flow-grid h3 {
+  margin: 0 0 8px;
+  font-size: 19px;
+}
+
+.contact-flow-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .contact-flow-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Etapa 8: Clínica LIV com diferenciais mais materiais */
+.liv-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.liv-feature {
+  min-height: 156px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 247, .72);
+}
+
+.liv-feature span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.liv-feature p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+@media (max-width: 980px) {
+  .liv-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .liv-feature {
+    min-height: 0;
+  }
+}
+
+
+/* Stage 9: stronger doctor connection for Instagram/referral traffic */
+.subtle-hero-link {
+  opacity: .72;
+}
+
+.doctor-card-with-photo {
+  grid-template-columns: minmax(190px, .52fr) minmax(0, .98fr) minmax(0, 1.05fr);
+}
+
+.doctor-photo {
+  margin: 0;
+  align-self: stretch;
+  min-height: 260px;
+  overflow: hidden;
+  border: 1px solid rgba(154, 123, 114, .22);
+  border-radius: 26px;
+  background: #f3e9e3;
+}
+
+.doctor-photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.doctor-copy .text-link {
+  display: inline-flex;
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .doctor-card-with-photo {
+    grid-template-columns: 1fr;
+  }
+  .doctor-photo {
+    max-height: 420px;
+  }
+}
+
+
+/* Etapa 10: otimização mobile da jornada */
+.hero-secondary-links {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.mobile-home-quick-nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  body {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-home-quick-nav {
+    display: block;
+    padding: 14px 0;
+    background: rgba(255, 250, 247, .94);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .quick-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+
+  .quick-nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quick-nav-inner span {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .quick-nav-inner a {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 8px 12px;
+    border: 1px solid rgba(154, 123, 114, .28);
+    border-radius: 999px;
+    background: #fffaf7;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-secondary-links {
+    width: 100%;
+    justify-content: center;
+    gap: 14px;
+    padding-top: 2px;
+    font-size: 13px;
+  }
+
+  .hero-secondary-links .text-link {
+    width: auto;
+  }
+
+  .hero-media img {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    max-height: 460px;
+  }
+
+  .whatsapp-float {
+    left: 14px;
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 760px) {
+  .doctor-section {
+    padding: 34px 0;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo {
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .doctor-photo {
+    min-height: 190px;
+    max-height: 220px;
+    border-radius: 20px;
+  }
+
+  .doctor-photo img {
+    min-height: 190px;
+  }
+
+  .doctor-copy h2 {
+    font-size: 30px;
+  }
+
+  .doctor-copy p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .doctor-copy .text-link {
+    margin-top: 10px;
+  }
+
+  .doctor-points {
+    gap: 0;
+  }
+
+  .doctor-points div {
+    padding: 11px 0;
+  }
+
+  .doctor-points strong {
+    font-size: 18px;
+  }
+
+  .doctor-points span {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .quick-nav-inner span {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .doctor-card-with-photo .doctor-copy p {
+    font-size: 15px;
+    line-height: 1.65;
   }
 }
