@@ -715,3 +715,177 @@ footer {
     justify-content: center;
   }
 }
+
+/* Refino mobile-first de densidade visual em páginas internas — 20260709 */
+@media (max-width: 900px) {
+  .container { width: min(100% - 24px, 1120px); }
+  section { padding: 42px 0; }
+  .hero-copy { padding: 32px 12px 20px; }
+  .hero h1 { font-size: clamp(34px, 10vw, 42px); line-height: .98; }
+  .lead, .section-head p, .hero-note, .cta p, .location-card p, .safety-note p { max-width: none; width: 100%; }
+  .lead, .section-head p, .location-card p, .safety-note p, .faq-item p, .step p, .panel p, .procedure-card p, .category-card p { font-size: 14px; line-height: 1.5; }
+  .hero-media { padding: 0 12px 24px; }
+  .hero-media img { aspect-ratio: 4 / 3; max-height: 330px; object-fit: cover; object-position: center top; }
+  .section-head { margin-bottom: 20px; }
+  .section-head h2, .cta h2 { font-size: clamp(28px, 8.4vw, 34px); line-height: 1.04; }
+  .panel, .faq-item, .proof-summary, .quote-card, .outcome, .step, .instagram-card, .category-card, .procedure-card, .comparison-card, .contact-step, .location-card, .safety-note { padding: 16px; }
+  .panel-grid, .steps, .proof-grid, .outcomes, .result-grid, .faq-grid, .category-grid, .procedure-grid, .comparison-grid, .contact-flow-grid { gap: 10px; }
+  .result-card img, .home-result img { max-height: 260px; }
+  .page-quick-nav { padding: 8px 0; }
+  .page-quick-nav-inner a { min-height: 32px; padding: 7px 10px; font-size: 12.5px; }
+  .instagram-frame { min-height: 380px; }
+}
+
+@media (max-width: 520px) {
+  .container { width: min(100% - 22px, 1120px); }
+  section { padding: 34px 0; }
+  .hero h1 { font-size: clamp(31px, 10vw, 38px); }
+  .hero-media img { max-height: 300px; }
+  .panel, .faq-item, .proof-summary, .quote-card, .outcome, .step, .instagram-card, .category-card, .procedure-card, .comparison-card, .contact-step, .location-card, .safety-note { padding: 15px; }
+  .result-card img, .home-result img { max-height: 230px; }
+}
+
+/* Refino mobile específico para páginas internas — 20260709 */
+@media (max-width: 900px) {
+  /* credenciais mais compactas: evita quatro linhas empilhadas antes do conteúdo */
+  .trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trust-item {
+    padding: 12px 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .trust-item:nth-child(odd) {
+    border-right: 1px solid var(--line);
+  }
+
+  .trust-item strong {
+    margin-bottom: 2px;
+    font-size: 10.5px;
+    letter-spacing: .08em;
+  }
+
+  .trust-item span {
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  /* navegação interna ajuda, mas não deve roubar área útil no mobile */
+  .page-quick-nav {
+    position: static;
+    top: auto;
+    padding: 6px 0;
+  }
+
+  .page-quick-nav-inner {
+    gap: 7px;
+  }
+
+  .page-quick-nav-inner span {
+    display: none;
+  }
+
+  .page-quick-nav-inner a {
+    min-height: 30px;
+    padding: 6px 9px;
+    font-size: 12px;
+  }
+
+  /* no hero, só o CTA principal deve parecer botão forte */
+  .hero-actions .btn.ghost {
+    width: auto;
+    min-height: auto;
+    margin: 0 auto;
+    padding: 4px 2px;
+    border: 0;
+    background: transparent;
+    color: var(--soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* imagens de consulta/autoridade menores nas páginas internas */
+  .split {
+    gap: 22px;
+  }
+
+  .split .portrait {
+    width: min(100%, 420px);
+    margin: 0 auto;
+    box-shadow: none;
+  }
+
+  .split .portrait img {
+    aspect-ratio: 4 / 3;
+    max-height: 280px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .results .split .section-head {
+    margin-bottom: 14px;
+  }
+
+  /* etapas e entregáveis ficam mais escaneáveis em 2 colunas */
+  .steps,
+  .outcomes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .step,
+  .outcome {
+    padding: 13px;
+  }
+
+  .step span {
+    width: 25px;
+    height: 25px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .step h3,
+  .outcome strong {
+    margin-bottom: 4px;
+    font-size: 15px;
+    line-height: 1.18;
+  }
+
+  .step p,
+  .outcome span {
+    font-size: 12.8px;
+    line-height: 1.38;
+  }
+
+  .comparison-card h3,
+  .panel h3,
+  .faq-item h3,
+  .location-card h3,
+  .safety-note h3 {
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 520px) {
+  .split .portrait {
+    width: 100%;
+  }
+
+  .split .portrait img {
+    max-height: 240px;
+  }
+
+  .steps,
+  .outcomes {
+    gap: 8px;
+  }
+
+  .step,
+  .outcome {
+    padding: 12px;
+  }
+}
