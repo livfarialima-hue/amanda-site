@@ -36,6 +36,18 @@ a {
   text-decoration: none;
 }
 
+main strong {
+  font-weight: 650;
+  color: inherit;
+}
+
+.hero .lead strong,
+.section-text strong,
+.card p strong,
+.faq-answer strong {
+  font-weight: 650;
+}
+
 p,
 h1,
 h2,
@@ -749,10 +761,37 @@ section {
 }
 
 .result-card img {
+  display: block;
   width: 100%;
   height: 320px;
+  object-fit: cover;
+  object-position: center center;
+  background: var(--paper);
+  transform: scale(1.035);
+  transform-origin: center center;
+}
+
+.result-card img.result-img-blefaro {
+  object-position: center 60%;
+  transform: scale(1.09);
+}
+
+.result-card img.result-img-neck {
+  object-position: center 60%;
+  transform: scale(1.02);
+}
+
+.result-card img.result-img-face {
+  object-position: center 21%;
+  transform: scale(1.01);
+}
+
+.result-card img.result-img-lifting {
+  height: 230px;
   object-fit: contain;
-  background: #fff;
+  object-position: center center;
+  transform: none;
+  background: var(--paper);
 }
 
 .result-card div {
@@ -1248,8 +1287,14 @@ footer {
   }
 
   .result-card img {
-    height: auto;
+    height: 300px;
     max-height: 360px;
+    object-fit: cover;
+  }
+
+  .result-card img.result-img-lifting {
+    height: 210px;
+    max-height: 210px;
   }
 
   .cta .btn {
@@ -2312,7 +2357,14 @@ body.has-area-focus .orientation-chip-reset {
   }
 
   .result-card img {
+    height: 260px;
     max-height: 260px;
+    object-fit: cover;
+  }
+
+  .result-card img.result-img-lifting {
+    height: 180px;
+    max-height: 180px;
   }
 
   .proof-copy {
@@ -2491,5 +2543,106 @@ body.has-area-focus .orientation-chip-reset {
   .hero-media,
   .hero-media img {
     min-height: min(680px, calc(100vh - 76px));
+  }
+}
+
+main p strong,
+main li strong,
+main .lead strong,
+main .section-text strong,
+main .card p strong,
+main .feature-card p strong,
+main .doctor-highlights p strong,
+main .trust-card p strong,
+main .faq-answer strong {
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  margin: 0;
+  color: inherit;
+  font-weight: 650;
+}
+
+@media (max-width: 900px) {
+  .hero-copy,
+  .hero-inner,
+  .hero-note,
+  .section-head,
+  .compact-head,
+  .signature-copy,
+  .proof-copy,
+  .liv-copy,
+  .other-head,
+  .doctor-copy,
+  .cta-wrap,
+  .instagram-copy,
+  .centered {
+    text-align: center;
+  }
+
+  .hero-inner,
+  .doctor-copy,
+  .section-head,
+  .compact-head {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .hero-actions,
+  .hero-secondary-links {
+    justify-content: center;
+  }
+
+  .hero-secondary-links {
+    align-items: center;
+  }
+
+  .hero-actions .text-link,
+  .doctor-copy .text-link,
+  .proof-link-mobile {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .proof-link-mobile {
+    justify-self: center;
+  }
+
+  .doctor-photo {
+    aspect-ratio: 5 / 3;
+    max-height: 260px;
+  }
+
+  .doctor-photo picture,
+  .doctor-photo img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .doctor-photo img {
+    object-fit: cover;
+    object-position: center top;
+  }
+}
+
+@media (max-width: 760px) {
+  .result-card img.result-img-blefaro,
+  .result-card img.result-img-neck,
+  .result-card img.result-img-face {
+    height: min(450px, 122vw);
+    max-height: none;
+    object-fit: contain;
+    object-position: center center;
+    transform: none;
+  }
+
+  .result-card img.result-img-lifting {
+    height: min(240px, 64vw);
+    max-height: none;
+    object-fit: cover;
+    object-position: center center;
+    transform: none;
   }
 }
