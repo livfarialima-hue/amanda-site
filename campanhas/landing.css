@@ -12,6 +12,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 132px; }
 body {
   margin: 0;
   background: var(--ivory);
@@ -539,6 +540,7 @@ footer {
 /* Stage 9: SEO/navigation helpers */
 .breadcrumb {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
   padding-top: 14px;
@@ -550,6 +552,7 @@ footer {
 .breadcrumb a {
   color: inherit;
   text-decoration: none;
+  border-bottom: 1px solid rgba(80, 55, 48, .18);
 }
 
 .breadcrumb a:hover {
@@ -558,6 +561,19 @@ footer {
 
 .breadcrumb .sep {
   opacity: .45;
+}
+
+.internal-trust-card,
+.contact-explainer,
+.liv-reference-card {
+  align-items: center;
+}
+
+.liv-reference-card .eyebrow,
+.internal-trust-card .eyebrow,
+.contact-explainer .eyebrow {
+  display: block;
+  margin-bottom: 8px;
 }
 
 .comparison-section {
@@ -598,7 +614,39 @@ footer {
 
 /* Etapa 10: navegação mobile e safe area nas páginas internas */
 .page-quick-nav {
-  display: none;
+  display: block;
+  position: sticky;
+  top: 76px;
+  z-index: 19;
+  padding: 12px 0;
+  background: rgba(255, 250, 247, .96);
+  border-bottom: 1px solid var(--line);
+}
+
+.page-quick-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.page-quick-nav-inner span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.page-quick-nav-inner a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 8px 12px;
+  border: 1px solid rgba(154, 123, 114, .28);
+  border-radius: 999px;
+  background: #fffaf7;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 @media (max-width: 900px) {
@@ -607,15 +655,11 @@ footer {
   }
 
   .page-quick-nav {
-    display: block;
-    padding: 12px 0;
-    background: rgba(255, 250, 247, .96);
-    border-bottom: 1px solid var(--line);
+    top: 70px;
   }
 
   .page-quick-nav-inner {
-    display: flex;
-    align-items: center;
+    justify-content: flex-start;
     gap: 9px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -629,23 +673,10 @@ footer {
 
   .page-quick-nav-inner span {
     flex: 0 0 auto;
-    color: var(--muted);
-    font-size: 12px;
   }
 
   .page-quick-nav-inner a {
     flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    padding: 8px 12px;
-    border: 1px solid rgba(154, 123, 114, .28);
-    border-radius: 999px;
-    background: #fffaf7;
-    color: var(--ink);
-    font-size: 13px;
-    font-weight: 600;
   }
 
   .hero-actions {
@@ -667,16 +698,20 @@ footer {
 
 
 @media (max-width: 760px) {
-  .page-quick-nav {
-    position: sticky;
-    top: 0;
-    z-index: 20;
+  .breadcrumb {
+    font-size: .82rem;
   }
-}
 
-@media (max-width: 760px) {
-  .page-quick-nav {
-    top: 70px;
-    z-index: 18;
+  .internal-trust-card,
+  .contact-explainer,
+  .liv-reference-card {
+    gap: 18px;
+  }
+
+  .internal-trust-card .btn,
+  .contact-explainer .btn,
+  .liv-reference-card .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
