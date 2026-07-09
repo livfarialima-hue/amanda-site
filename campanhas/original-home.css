@@ -2646,3 +2646,397 @@ main .faq-answer strong {
     transform: none;
   }
 }
+
+/* Ajuste mobile de densidade vertical sem alterar textos, fluxo ou tamanho das fotos — 20260709 */
+@media (max-width: 900px) {
+  .container {
+    width: min(100% - 18px, 1160px);
+  }
+
+  .nav {
+    min-height: 66px;
+    gap: 12px;
+  }
+
+  .brand {
+    gap: 0;
+  }
+
+  .brand strong {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .brand span {
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .nav-cta,
+  .nav-clinic {
+    min-height: 38px;
+    padding: 9px 13px;
+    font-size: 12.5px;
+  }
+
+  section,
+  .other-section,
+  .doctor-section,
+  .proof-section,
+  .content-section,
+  .contact-flow-section,
+  .liv-section,
+  .results-section,
+  .faq-section,
+  .approach-section,
+  .journey-section {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .hero-copy {
+    padding-top: 24px;
+    padding-bottom: 12px;
+  }
+
+  .hero h1 {
+    margin-top: 7px;
+    margin-bottom: 9px;
+  }
+
+  .lead {
+    line-height: 1.48;
+  }
+
+  .hero-actions {
+    margin-top: 16px;
+    gap: 11px;
+  }
+
+  .hero-note {
+    margin-top: 11px;
+    line-height: 1.42;
+  }
+
+  .btn {
+    min-height: 42px;
+    padding: 10px 17px;
+  }
+
+  .section-head,
+  .compact-head {
+    margin-bottom: 17px;
+  }
+
+  .section-head h2,
+  .consult-card h2,
+  .signature-copy h2,
+  .proof-copy h2,
+  .liv-section h2,
+  .cta h2,
+  .doctor-copy h2 {
+    margin-top: 5px;
+    margin-bottom: 9px;
+  }
+
+  .section-head p,
+  .signature-copy p,
+  .proof-copy p,
+  .liv-copy p,
+  .other-wrap p,
+  .path-card p,
+  .faq-item p,
+  .result-card p,
+  .journey-grid span,
+  .liv-feature p,
+  .doctor-copy p,
+  .contact-flow-grid p,
+  .disclaimer {
+    line-height: 1.5;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo,
+  .consult-card,
+  .proof-copy,
+  .quote-card,
+  .path-card,
+  .other-procedure-card,
+  .principle-grid article,
+  .faq-item,
+  .result-card div,
+  .content-card,
+  .journey-grid div,
+  .liv-feature,
+  .location-box,
+  .contact-flow-grid article {
+    padding: 13px;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo,
+  .split,
+  .signature-layout,
+  .liv-split,
+  .proof-layout,
+  .content-layout,
+  .cta-wrap {
+    gap: 16px;
+  }
+
+  .doctor-copy p + p {
+    margin-top: 8px;
+  }
+
+  .doctor-points div {
+    padding: 7px 0;
+  }
+
+  .doctor-points strong,
+  .signature-details strong {
+    margin-bottom: 2px;
+  }
+
+  .mobile-home-quick-nav {
+    padding: 7px 0;
+  }
+
+  .quick-nav-inner {
+    gap: 5px;
+  }
+
+  .quick-nav-inner a,
+  .quick-nav-inner button {
+    min-height: 30px;
+    padding: 6px 7px;
+  }
+
+  .signature-section,
+  .other-section,
+  .cta {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .signature-layout,
+  .other-procedure-grid,
+  .principle-grid,
+  .path-grid,
+  .face-grid,
+  .journey-grid,
+  .result-grid,
+  .faq-grid,
+  .contact-flow-grid,
+  .liv-feature-grid,
+  .proof-reviews,
+  .content-card-grid {
+    gap: 10px;
+  }
+
+  .signature-details div {
+    padding: 8px 0;
+  }
+
+  .path-card h3,
+  .other-procedure-card h3,
+  .result-card h3,
+  .faq-item h3,
+  .principle-grid h3,
+  .journey-grid strong,
+  .content-card strong,
+  .location-box strong {
+    margin-top: 5px;
+    margin-bottom: 6px;
+  }
+
+  .path-card > .mini-link,
+  .other-actions,
+  .procedure-links,
+  .external-cue {
+    margin-top: 11px;
+  }
+
+  .image-frame {
+    padding: 6px;
+  }
+
+  .image-frame figcaption {
+    padding-top: 5px;
+  }
+
+  .liv-feature-grid {
+    margin-top: 10px;
+  }
+
+  .location-box {
+    gap: 4px;
+  }
+
+  .journey-grid div {
+    border-top-width: 1px;
+  }
+
+  .quote-card blockquote {
+    line-height: 1.26;
+  }
+
+  .quote-card cite {
+    margin-top: 8px;
+  }
+
+  .instagram-copy {
+    padding: 13px;
+  }
+
+  .faq-grid {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    width: min(100% - 16px, 1160px);
+  }
+
+  section,
+  .other-section,
+  .doctor-section,
+  .proof-section,
+  .content-section,
+  .contact-flow-section,
+  .liv-section,
+  .results-section,
+  .faq-section,
+  .approach-section,
+  .journey-section {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .hero-copy {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo,
+  .proof-copy,
+  .quote-card,
+  .path-card,
+  .other-procedure-card,
+  .principle-grid article,
+  .faq-item,
+  .result-card div,
+  .content-card,
+  .journey-grid div,
+  .liv-feature,
+  .location-box,
+  .contact-flow-grid article {
+    padding: 12px;
+  }
+
+  .nav {
+    min-height: 62px;
+  }
+}
+
+/* Conteúdos internos expansíveis — evita saída precoce para redes sociais */
+.content-expand {
+  margin-top: 14px;
+  border-top: 1px solid rgba(80, 55, 48, 0.14);
+  padding-top: 12px;
+}
+
+.content-expand summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: inherit;
+  list-style: none;
+}
+
+.content-expand summary::-webkit-details-marker {
+  display: none;
+}
+
+.content-expand summary::after {
+  content: " +";
+  font-weight: 400;
+}
+
+.content-expand[open] summary::after {
+  content: " −";
+}
+
+.content-expand-body {
+  margin-top: 10px;
+}
+
+.content-expand-body p {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.content-expand-body .text-link {
+  margin-top: 4px;
+}
+
+@media (max-width: 760px) {
+  .content-expand {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  .content-expand-body p {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+}
+
+/* Ajuste final desktop: hero completo dentro do primeiro viewport */
+@media (min-width: 981px) {
+  .hero {
+    min-height: calc(100vh - 79px);
+    min-height: calc(100svh - 79px);
+  }
+
+  .hero-copy {
+    align-items: center;
+    padding-top: clamp(16px, 2.5vh, 24px);
+    padding-bottom: clamp(16px, 2.5vh, 24px);
+  }
+
+  .hero-inner {
+    max-width: 590px;
+    padding-right: clamp(32px, 4vw, 48px);
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 4.2vw, 60px) !important;
+    line-height: .98;
+    margin-top: 8px;
+    margin-bottom: 10px;
+  }
+
+  .hero .lead {
+    max-width: 530px;
+    font-size: clamp(15.5px, 1.2vw, 17px);
+    line-height: 1.38;
+  }
+
+  .hero-actions {
+    margin-top: 16px;
+  }
+
+  .hero-note {
+    margin-top: 10px;
+    line-height: 1.32;
+  }
+
+  .hero-media,
+  .hero-media img {
+    min-height: calc(100vh - 79px);
+    min-height: calc(100svh - 79px);
+  }
+}
