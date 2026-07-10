@@ -49,6 +49,13 @@
   }
 
   function loadGoogleTags() {
+    var hasGoogleTag = !!document.querySelector('script[src*="googletagmanager.com/gtag/js"]');
+    var hasConfiguredDestination = function (id) {
+      return window.dataLayer.some(function (entry) {
+        return entry && entry[0] === 'config' && entry[1] === id;
+      });
+    };
+
     if (config.gtmId) {
       (function(w,d,s,l,i){
         w[l]=w[l]||[];
@@ -63,19 +70,29 @@
     }
 
     if (config.ga4Id) {
-      loadScript('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(config.ga4Id), 'ga4-gtag');
-      window.gtag('js', new Date());
-      window.gtag('config', config.ga4Id, {
-        anonymize_ip: true,
-        send_page_view: true
-      });
+      if (!hasGoogleTag) {
+        loadScript('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(config.ga4Id), 'ga4-gtag');
+        hasGoogleTag = true;
+      }
+      if (!hasConfiguredDestination(config.ga4Id)) {
+        window.gtag('js', new Date());
+        window.gtag('config', config.ga4Id, {
+          anonymize_ip: true,
+          send_page_view: true
+        });
+      }
       log('[tracking] GA4 carregado', config.ga4Id);
     }
 
     if (config.googleAdsId) {
-      loadScript('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(config.googleAdsId), 'google-ads-gtag');
-      window.gtag('js', new Date());
-      window.gtag('config', config.googleAdsId);
+      if (!hasGoogleTag) {
+        loadScript('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(config.googleAdsId), 'google-ads-gtag');
+        hasGoogleTag = true;
+      }
+      if (!hasConfiguredDestination(config.googleAdsId)) {
+        window.gtag('js', new Date());
+        window.gtag('config', config.googleAdsId);
+      }
       log('[tracking] Google Ads carregado', config.googleAdsId);
     }
   }
