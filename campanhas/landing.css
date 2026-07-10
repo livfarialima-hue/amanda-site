@@ -1283,6 +1283,18 @@ footer {
   }
 }
 
+/* Páginas auxiliares: preservar a imagem completa dos resultados no desktop. */
+@media (min-width: 901px) {
+  .result-card img,
+  .result-card img.result-img-lifting {
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
+  }
+}
+
 /* Conversão, jornada e acessibilidade das páginas auxiliares — 20260710 */
 .text-link {
   color: var(--deep);
