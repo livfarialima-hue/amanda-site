@@ -123,14 +123,14 @@
     if (!config.requireConsent || !hasAnyTag || getConsent()) return;
 
     var style = document.createElement('style');
-    style.textContent = '\n.cookie-consent{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;max-width:760px;margin:0 auto;padding:18px 18px;background:#fffaf7;border:1px solid rgba(80,55,48,.18);box-shadow:0 20px 60px rgba(55,35,28,.18);border-radius:18px;color:#392720;font-size:14px;line-height:1.45}.cookie-consent strong{display:block;margin:0 0 5px;font-size:15px}.cookie-consent p{margin:0;color:rgba(57,39,32,.78)}.cookie-consent-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.cookie-consent button{border:1px solid rgba(80,55,48,.22);background:transparent;color:inherit;border-radius:999px;padding:9px 14px;font:inherit;cursor:pointer}.cookie-consent .accept{background:#51362f;color:#fff;border-color:#51362f}@media(max-width:760px){.cookie-consent{left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));font-size:13px}}\n';
+    style.textContent = '\n.cookie-consent{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;max-width:760px;margin:0 auto;padding:18px 18px;background:#fffaf7;border:1px solid rgba(80,55,48,.18);box-shadow:0 20px 60px rgba(55,35,28,.18);border-radius:18px;color:#392720;font-size:14px;line-height:1.45}.cookie-consent strong{display:block;margin:0 0 5px;font-size:15px}.cookie-consent p{margin:0;color:rgba(57,39,32,.78)}.cookie-consent-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.cookie-consent button{border:1px solid rgba(80,55,48,.22);background:transparent;color:inherit;border-radius:999px;padding:9px 14px;font:inherit;cursor:pointer}.cookie-consent .accept{background:#51362f;color:#fff;border-color:#51362f}.cookie-consent .privacy-policy{display:inline-flex;align-items:center;color:inherit;text-decoration:underline;padding:9px 2px}@media(max-width:760px){.cookie-consent{left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));font-size:13px}}\n';
     document.head.appendChild(style);
 
     var banner = document.createElement('div');
     banner.className = 'cookie-consent';
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-label', 'Preferências de privacidade');
-    banner.innerHTML = '<strong>Privacidade e mensuração</strong><p>Usamos cookies e tecnologias de mensuração para entender acessos ao site e melhorar a experiência. Não coletamos dados clínicos pelo site.</p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar mensuração</button><button class="reject" type="button">Continuar sem aceitar</button></div>';
+    banner.innerHTML = '<strong>Privacidade e mensuração</strong><p>Usamos cookies e tecnologias de mensuração para entender acessos ao site e melhorar a experiência. Não coletamos dados clínicos pelo site.</p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar mensuração</button><button class="reject" type="button">Continuar sem aceitar</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
     document.body.appendChild(banner);
 
     banner.querySelector('.accept').addEventListener('click', function () {

@@ -1,0 +1,7 @@
+# Redirecionamentos permanentes das antigas páginas de mama.
+# QSA preserva parâmetros de campanha (UTM, gclid, fbclid).
+RewriteEngine On
+RewriteRule ^mastopexia/?$ /mama/?procedimento=mastopexia [R=301,L,NE,QSA]
+RewriteRule ^mastopexia-com-protese/?$ /mama/?procedimento=mastopexia-protese [R=301,L,NE,QSA]
+RewriteRule ^mamoplastia-redutora/?$ /mama/?procedimento=redutora [R=301,L,NE,QSA]
+RewriteRule ^protese-de-mama/?$ /mama/?procedimento=protese [R=301,L,NE,QSA]

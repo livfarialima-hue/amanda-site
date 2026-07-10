@@ -1,125 +1,94 @@
-# Tracking e conversões — Dra. Amanda Schroeder
+# Mensuração das páginas de campanha
 
-Este pacote já está preparado para mensuração real, mas os pixels só carregam depois de preencher os IDs em:
+Atualizado em 10/07/2026.
 
-```text
-campanhas/tracking-config.js
-```
+## Estado atual
 
-## 1. IDs a preencher
+As páginas auxiliares usam uma configuração central em `campanhas/tracking-config.js`:
 
-```js
-window.AMANDA_TRACKING_CONFIG = {
-  ga4Id: "G-49S7FB3PMV",
-  gtmId: "",
-  metaPixelId: "123456789012345",
-  googleAdsId: "AW-123456789",
-  googleAdsConversionLabel: "LABEL_DA_CONVERSAO",
-  requireConsent: true,
-  debug: false
-};
-```
+- GA4: `G-49S7FB3PMV`
+- Meta Pixel: `1407471497197720`
+- Google Ads: `AW-17157418677`
+- Ação de conversão Google Ads: `XxykCLiY7s0cELXdpfU_`
+- Google Tag Manager: não configurado
+- Consentimento prévio: obrigatório (`requireConsent: true`)
 
-Use preferencialmente uma destas arquiteturas:
+As tags são carregadas por `tracking-loader.js` somente após consentimento. O padrão inicial do Google Consent Mode é negado para `analytics_storage`, `ad_storage`, `ad_user_data` e `ad_personalization`.
 
-### Opção simples
-- Preencher `ga4Id`.
-- Preencher `metaPixelId` se houver Meta Ads.
-- Preencher `googleAdsId` e `googleAdsConversionLabel` se houver Google Ads.
-- Deixar `gtmId` vazio.
+## Conversão principal
 
-### Opção avançada com GTM
-- Preencher `gtmId`.
-- Configurar GA4, Meta Pixel e Google Ads dentro do Google Tag Manager.
-- Deixar `ga4Id`, `metaPixelId`, `googleAdsId` e `googleAdsConversionLabel` vazios no arquivo, para evitar duplicidade.
+A conversão de campanha é o primeiro clique em WhatsApp por página/procedimento durante a sessão.
 
-## 2. Eventos enviados
+Esse clique envia:
 
-### Clique em WhatsApp
-Todo clique em `wa.me` dispara:
+- `lead_whatsapp_click` ao `dataLayer`;
+- `whatsapp_click` ao GA4;
+- `generate_lead` ao GA4, apenas uma vez por sessão/página/procedimento;
+- `conversion` ao Google Ads, apenas uma vez por sessão/página/procedimento;
+- `Lead` ao Meta Pixel, apenas uma vez;
+- `WhatsAppClick` como evento personalizado do Meta em cada clique.
 
-- `dataLayer.push({ event: "lead_whatsapp_click", ... })`
-- GA4: `whatsapp_click`
-- GA4: `generate_lead`
-- Meta Pixel: `Lead`
-- Meta Pixel: `WhatsAppClick`
-- Google Ads: `conversion`, se `googleAdsId` e `googleAdsConversionLabel` estiverem preenchidos.
+A trava por sessão evita que vários cliques do mesmo visitante inflem a conversão principal.
 
-## 3. Parâmetros úteis
+## Eventos auxiliares
 
-O evento envia parâmetros como:
+| Evento | Finalidade |
+|---|---|
+| `landing_page_ready` | carregamento e contexto da landing page |
+| `page_context` | grupo de conteúdo, procedimento e caminho |
+| `campaign_procedure_view` | abertura automática de um procedimento em `/mama/` pela URL de campanha |
+| `procedure_interest_click` | clique em uma queixa ou procedimento na página de mama |
+| `procedure_details_open` | abertura das informações detalhadas de um procedimento |
+| `faq_open` | abertura de uma dúvida frequente |
+| `educational_content_click` | saída para um conteúdo educativo no Instagram |
+| `content_search` | busca na biblioteca de conteúdos, sem dados pessoais |
+| `engaged_30_seconds` | permanência mínima de 30 segundos |
+| `scroll_50` / `scroll_90` | profundidade de leitura |
+| `phone_click` / `email_click` | clique em telefone ou e-mail |
+| `tracking_consent_granted` / `tracking_consent_denied` | escolha de privacidade |
 
-- `page_type`
-- `page_campaign`
-- `cta_location`
-- `cta_text`
-- `page_path`
-- `utm_source`
-- `utm_medium`
-- `utm_campaign`
-- `landing_page`
+## Atribuição
 
-Por privacidade, o script não envia:
+São preservados no navegador, quando presentes:
 
-- texto completo da mensagem de WhatsApp;
-- telefone;
-- nome;
-- dados clínicos livres.
+- `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`;
+- `gclid`, `gbraid`, `wbraid`, `fbclid`;
+- página e horário de entrada.
 
-## 4. Consentimento
+A origem é acrescentada à mensagem pré-preenchida do WhatsApp. Não são enviados às plataformas de anúncios nomes, telefones, fotografias, texto livre digitado pela paciente ou dados clínicos.
 
-O arquivo está com:
+## Estrutura recomendada de campanhas
 
-```js
-requireConsent: true
-```
+A página consolidada de mama aceita links profundos:
 
-Com isso, pixels carregam apenas após aceite no banner. Para testes rápidos, você pode temporariamente usar:
+- `/mama/?procedimento=mastopexia`
+- `/mama/?procedimento=protese`
+- `/mama/?procedimento=redutora`
+- `/mama/?procedimento=mastopexia-protese`
 
-```js
-requireConsent: false
-```
+Acrescente UTMs normalmente. Exemplo conceitual:
 
-Depois volte para `true`.
+`/mama/?procedimento=mastopexia&utm_source=meta&utm_medium=paid_social&utm_campaign=mama_mastopexia&utm_content=video_01`
 
-## 5. Google Search Console
+A página abre automaticamente o bloco correto e registra o interesse. As antigas URLs de mama têm fallback HTML/JavaScript e foram incluídas em regras de redirecionamento 301 para servidores Apache (`.htaccess`) e hosts compatíveis com `_redirects`.
 
-Preferência: verificar a propriedade de domínio por DNS. Depois enviar o sitemap:
+## Validação antes de publicar campanhas
 
-```text
-https://draamandaschroeder.com.br/sitemap.xml
-```
+1. Publicar primeiro em ambiente de homologação.
+2. Confirmar se o host aplica `.htaccess` ou `_redirects`; manter apenas o mecanismo compatível.
+3. Testar consentimento aceito e recusado no Google Tag Assistant.
+4. Confirmar no GA4 DebugView: `landing_page_ready`, `whatsapp_click` e `generate_lead`.
+5. Confirmar em Meta Events Manager > Test Events: `PageView`, `Lead` e `WhatsAppClick`.
+6. Confirmar no Google Ads que a ação recebe somente um evento no primeiro clique da sessão.
+7. Testar links com UTM e verificar se a mensagem do WhatsApp inclui a atribuição.
+8. Validar todos os anúncios em celular real, especialmente abertura do WhatsApp.
 
-Se preferir verificar por meta tag, cole a meta tag fornecida pelo Search Console no `<head>` da home (`index.html`).
+## Meta Conversions API
 
-## 6. Teste pós-publicação
+A Conversions API não foi adicionada porque o projeto entregue é estático e não possui backend seguro. Implementá-la no navegador exporia credenciais e não é adequado.
 
-Depois de publicar:
+Quando houver backend, CRM ou integração server-side, enviar o mesmo `event_id` pelo navegador e pelo servidor para deduplicação. Uma conversão mais forte do que clique seria “consulta agendada” ou “consulta realizada”, importada do sistema de agenda/CRM, sem transmitir dado clínico.
 
-1. Abrir o site em aba anônima.
-2. Aceitar mensuração no banner.
-3. Clicar em um botão de WhatsApp.
-4. Confirmar no GA4 Realtime/DebugView:
-   - `page_view`
-   - `whatsapp_click`
-   - `generate_lead`
-5. Confirmar no Meta Events Manager:
-   - `PageView`
-   - `Lead`
-   - `WhatsAppClick`
-6. Se houver Google Ads, testar a ação de conversão.
-7. No Search Console, verificar propriedade e enviar sitemap.
+## Observação sobre a página principal
 
-## 7. Observação importante
-
-Se você usar GTM e também preencher GA4/Meta/Google Ads diretamente neste arquivo, pode haver duplicidade de eventos. Escolha uma arquitetura e mantenha consistência.
-
-
-## Status atual
-
-- GA4 configurado: `G-49S7FB3PMV`
-- GTM: não configurado
-- Meta Pixel: não configurado
-- Google Ads: não configurado
-
-Após publicar, aceitar o banner de mensuração e testar cliques no WhatsApp no relatório em tempo real do GA4.
+A página principal foi preservada, conforme solicitado. Ela deve passar por uma auditoria separada antes de unificar toda a arquitetura de tags, pois o escopo atual se restringiu às páginas auxiliares.

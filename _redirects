@@ -1,0 +1,5 @@
+# Netlify/hosts compatíveis. As páginas HTML antigas também mantêm fallback em JavaScript.
+/mastopexia/                 /mama/?procedimento=mastopexia                 301
+/mastopexia-com-protese/     /mama/?procedimento=mastopexia-protese         301
+/mamoplastia-redutora/       /mama/?procedimento=redutora                   301
+/protese-de-mama/            /mama/?procedimento=protese                    301
