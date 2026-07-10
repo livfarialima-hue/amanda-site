@@ -4,91 +4,92 @@ Atualizado em 10/07/2026.
 
 ## Estado atual
 
-As páginas auxiliares usam uma configuração central em `campanhas/tracking-config.js`:
+Configuração central em `campanhas/tracking-config.js`:
 
 - GA4: `G-49S7FB3PMV`
 - Meta Pixel: `1407471497197720`
 - Google Ads: `AW-17157418677`
-- Ação de conversão Google Ads: `XxykCLiY7s0cELXdpfU_`
 - Google Tag Manager: não configurado
 - Consentimento prévio: obrigatório (`requireConsent: true`)
 
-As tags são carregadas por `tracking-loader.js` somente após consentimento. O padrão inicial do Google Consent Mode é negado para `analytics_storage`, `ad_storage`, `ad_user_data` e `ad_personalization`.
+As tags são carregadas somente após consentimento. O estado inicial do Google Consent Mode permanece negado para armazenamento analítico e publicitário.
 
-## Conversão principal
+## Evento de WhatsApp
 
-A conversão de campanha é o primeiro clique em WhatsApp por página/procedimento durante a sessão.
+O clique no WhatsApp é tratado como **sinal de intenção**, não como lead confirmado.
 
-Esse clique envia:
+Eventos enviados após consentimento:
 
-- `lead_whatsapp_click` ao `dataLayer`;
+- `whatsapp_click_intent` ao `dataLayer`;
 - `whatsapp_click` ao GA4;
-- `generate_lead` ao GA4, apenas uma vez por sessão/página/procedimento;
-- `conversion` ao Google Ads, apenas uma vez por sessão/página/procedimento;
-- `Lead` ao Meta Pixel, apenas uma vez;
-- `WhatsAppClick` como evento personalizado do Meta em cada clique.
+- `WhatsAppClick` como evento personalizado do Meta.
 
-A trava por sessão evita que vários cliques do mesmo visitante inflem a conversão principal.
+O clique não dispara automaticamente `generate_lead`, conversão do Google Ads nem `Lead` do Meta.
+
+## Conversões recomendadas
+
+- `conversation_started`: conversa efetivamente iniciada;
+- `qualified_lead`: paciente com interesse e perfil compatíveis;
+- `appointment_booked`: consulta marcada — conversão principal inicial;
+- `appointment_attended`: consulta realizada;
+- `surgery_closed`: cirurgia contratada, preferencialmente com valor de receita.
+
+O site expõe `window.AmandaTracking.trackLeadStage(stage, metadata)` para integrações futuras com CRM, agenda ou atendimento. Não enviar diagnóstico, fotografias, texto livre, procedimento íntimo, telefone em claro ou qualquer informação clínica às plataformas de anúncios.
 
 ## Eventos auxiliares
 
 | Evento | Finalidade |
 |---|---|
-| `landing_page_ready` | carregamento e contexto da landing page |
-| `page_context` | grupo de conteúdo, procedimento e caminho |
-| `campaign_procedure_view` | abertura automática de um procedimento em `/mama/` pela URL de campanha |
-| `procedure_interest_click` | clique em uma queixa ou procedimento na página de mama |
-| `procedure_details_open` | abertura das informações detalhadas de um procedimento |
-| `faq_open` | abertura de uma dúvida frequente |
-| `educational_content_click` | saída para um conteúdo educativo no Instagram |
-| `content_search` | busca na biblioteca de conteúdos, sem dados pessoais |
+| `landing_page_ready` | carregamento e contexto da página |
+| `campaign_procedure_view` | abertura de procedimento por URL de campanha |
+| `procedure_interest_click` | clique em queixa ou procedimento |
+| `procedure_details_open` | abertura de informações detalhadas |
+| `faq_open` | abertura de dúvida frequente |
+| `content_search` | busca na biblioteca, sem dados pessoais |
 | `engaged_30_seconds` | permanência mínima de 30 segundos |
 | `scroll_50` / `scroll_90` | profundidade de leitura |
-| `phone_click` / `email_click` | clique em telefone ou e-mail |
-| `tracking_consent_granted` / `tracking_consent_denied` | escolha de privacidade |
+| `mobile_details_open` / `mobile_details_close` | uso dos blocos recolhíveis |
+| `mobile_horizontal_scroll` | descoberta de cards por gesto horizontal |
+| `internal_navigation_click` | navegação interna |
 
 ## Atribuição
 
-São preservados no navegador, quando presentes:
+Quando presentes, são preservados no navegador:
 
 - `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`;
 - `gclid`, `gbraid`, `wbraid`, `fbclid`;
 - página e horário de entrada.
 
-A origem é acrescentada à mensagem pré-preenchida do WhatsApp. Não são enviados às plataformas de anúncios nomes, telefones, fotografias, texto livre digitado pela paciente ou dados clínicos.
+A mensagem visível no WhatsApp foi simplificada para não exibir UTMs ou códigos técnicos. A atribuição permanece disponível para a mensuração do site.
 
-## Estrutura recomendada de campanhas
+## Destinos de campanha
 
-A página consolidada de mama aceita links profundos:
+Use páginas específicas para cada intenção:
 
-- `/mama/?procedimento=mastopexia`
-- `/mama/?procedimento=protese`
-- `/mama/?procedimento=redutora`
-- `/mama/?procedimento=mastopexia-protese`
+- `/lifting-facial/`
+- `/blefaroplastia/`
+- `/mama/`
+- `/mastopexia/`
+- `/mastopexia-com-protese/`
+- `/protese-de-mama/`
+- `/mamoplastia-redutora/`
+- `/abdominoplastia/`
+- `/lipoaspiracao/`
+- `/injetaveis/`
+- `/otoplastia/`
+- `/pos-bariatrica/`
 
-Acrescente UTMs normalmente. Exemplo conceitual:
+A página `/mama/` permanece como hub comparativo. As páginas específicas foram restauradas para buscas e campanhas de intenção direta.
 
-`/mama/?procedimento=mastopexia&utm_source=meta&utm_medium=paid_social&utm_campaign=mama_mastopexia&utm_content=video_01`
+## Validação após publicar
 
-A página abre automaticamente o bloco correto e registra o interesse. As antigas URLs de mama têm fallback HTML/JavaScript e foram incluídas em regras de redirecionamento 301 para servidores Apache (`.htaccess`) e hosts compatíveis com `_redirects`.
+1. Testar consentimento aceito e recusado no Google Tag Assistant.
+2. Confirmar no GA4 DebugView: `landing_page_ready`, `whatsapp_click` e eventos de engajamento.
+3. Confirmar no Meta Events Manager: `PageView` e `WhatsAppClick`.
+4. Configurar consulta marcada como conversão principal assim que a integração com atendimento estiver disponível.
+5. Testar UTMs e abertura do WhatsApp em celular real.
+6. Validar que nenhum dado clínico ou texto digitado pela paciente é enviado aos pixels.
 
-## Validação antes de publicar campanhas
+## Meta Conversions API e conversões offline
 
-1. Publicar primeiro em ambiente de homologação.
-2. Confirmar se o host aplica `.htaccess` ou `_redirects`; manter apenas o mecanismo compatível.
-3. Testar consentimento aceito e recusado no Google Tag Assistant.
-4. Confirmar no GA4 DebugView: `landing_page_ready`, `whatsapp_click` e `generate_lead`.
-5. Confirmar em Meta Events Manager > Test Events: `PageView`, `Lead` e `WhatsAppClick`.
-6. Confirmar no Google Ads que a ação recebe somente um evento no primeiro clique da sessão.
-7. Testar links com UTM e verificar se a mensagem do WhatsApp inclui a atribuição.
-8. Validar todos os anúncios em celular real, especialmente abertura do WhatsApp.
-
-## Meta Conversions API
-
-A Conversions API não foi adicionada porque o projeto entregue é estático e não possui backend seguro. Implementá-la no navegador exporia credenciais e não é adequado.
-
-Quando houver backend, CRM ou integração server-side, enviar o mesmo `event_id` pelo navegador e pelo servidor para deduplicação. Uma conversão mais forte do que clique seria “consulta agendada” ou “consulta realizada”, importada do sistema de agenda/CRM, sem transmitir dado clínico.
-
-## Observação sobre a página principal
-
-A página principal foi preservada, conforme solicitado. Ela deve passar por uma auditoria separada antes de unificar toda a arquitetura de tags, pois o escopo atual se restringiu às páginas auxiliares.
+Não foram adicionadas diretamente porque o site é estático e não possui backend seguro. Quando houver CRM, agenda ou integração server-side, importar consulta marcada, consulta realizada e cirurgia fechada, com deduplicação e sem transmissão de dados clínicos.

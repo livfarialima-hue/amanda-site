@@ -915,6 +915,7 @@ section {
 
 .liv-photo {
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border: 1px solid var(--line);
@@ -930,7 +931,9 @@ section {
 
 .liv-logo {
   width: 148px;
+  height: auto;
   max-width: 45%;
+  justify-self: center;
   margin-bottom: 2px;
   background: #4b3b36;
 }
@@ -3238,5 +3241,17 @@ main .faq-answer strong {
   .signature-details div {
     padding-top: 15px;
     padding-bottom: 15px;
+  }
+}
+
+/* Título de especialista: cartão mais compacto em telas pequenas. */
+@media (max-width: 760px) {
+  .credential-card {
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .credential-image-wrap img {
+    padding: 4px;
   }
 }

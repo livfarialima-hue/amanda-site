@@ -101,10 +101,10 @@
     var selectedProcedure = anchor.dataset.procedure || context.procedure;
 
     var payload = Object.assign({
-      event: 'lead_whatsapp_click',
+      event: 'whatsapp_click_intent',
       lead_type: 'whatsapp',
       lead_source: 'site',
-      event_category: 'lead',
+      event_category: 'engagement',
       event_label: campaign || context.procedure,
       page_campaign: campaign,
       selected_procedure: selectedProcedure,
@@ -121,12 +121,10 @@
 
     pushDataLayer(payload);
 
-    var uniqueKey = context.page_path.replace(/\W+/g, '_') + '_' + selectedProcedure;
-    var firstLeadClick = conversionNotYetSent(uniqueKey);
-
+    // Clique no WhatsApp é um sinal de intenção, não uma conversão clínica confirmada.
     if (typeof window.gtag === 'function' && consentAllowsPixels()) {
       window.gtag('event', 'whatsapp_click', {
-        event_category: 'lead',
+        event_category: 'engagement',
         event_label: payload.event_label,
         page_campaign: payload.page_campaign,
         page_type: payload.page_type,
@@ -134,47 +132,34 @@
         cta_location: payload.cta_location,
         cta_text: payload.cta_text,
         page_path: payload.page_path,
-        utm_source: payload.utm_source,
-        utm_medium: payload.utm_medium,
-        utm_campaign: payload.utm_campaign,
-        utm_content: payload.utm_content,
         transport_type: 'beacon'
       });
-
-      if (firstLeadClick) {
-        window.gtag('event', 'generate_lead', {
-          method: 'whatsapp',
-          page_type: payload.page_type,
-          content_group: payload.content_group,
-          cta_location: payload.cta_location,
-          page_campaign: payload.page_campaign,
-          transport_type: 'beacon'
-        });
-
-        if (config.googleAdsId && config.googleAdsConversionLabel) {
-          window.gtag('event', 'conversion', {
-            send_to: config.googleAdsId + '/' + config.googleAdsConversionLabel,
-            transport_type: 'beacon'
-          });
-        }
-      }
     }
 
     if (typeof window.fbq === 'function' && consentAllowsPixels()) {
-      // Nenhum nome, telefone, texto livre, foto ou dado clínico é enviado ao Meta Pixel.
-      if (firstLeadClick) {
-        window.fbq('track', 'Lead', {
-          content_name: 'consultation_request',
-          content_category: 'medical_consultation',
-          cta_location: payload.cta_location
-        });
-      }
       window.fbq('trackCustom', 'WhatsAppClick', {
         cta_location: payload.cta_location,
         page_group: payload.content_group || 'procedure'
       });
     }
   }
+
+  /*
+    Pontos de integração para CRM/WhatsApp. Use somente identificadores internos e
+    eventos genéricos; nunca envie diagnóstico, texto livre ou dado clínico.
+  */
+  window.AmandaTracking = window.AmandaTracking || {};
+  window.AmandaTracking.trackLeadStage = function (stage, metadata) {
+    var allowed = ['conversation_started', 'qualified_lead', 'appointment_booked', 'appointment_attended', 'surgery_closed'];
+    if (allowed.indexOf(stage) === -1) return false;
+    var context = pageContext();
+    var payload = Object.assign({ event: stage }, context, metadata || {});
+    pushDataLayer(payload);
+    if (typeof window.gtag === 'function' && consentAllowsPixels()) {
+      window.gtag('event', stage, Object.assign({}, metadata || {}, { transport_type: 'beacon' }));
+    }
+    return true;
+  };
 
   function trackContactLink(anchor, type) {
     var context = pageContext();

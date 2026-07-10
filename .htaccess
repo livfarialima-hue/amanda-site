@@ -1,7 +1,29 @@
-# Redirecionamentos permanentes das antigas páginas de mama.
-# QSA preserva parâmetros de campanha (UTM, gclid, fbclid).
+# Regras de redirecionamento e preservação de parâmetros de campanha.
 RewriteEngine On
-RewriteRule ^mastopexia/?$ /mama/?procedimento=mastopexia [R=301,L,NE,QSA]
-RewriteRule ^mastopexia-com-protese/?$ /mama/?procedimento=mastopexia-protese [R=301,L,NE,QSA]
-RewriteRule ^mamoplastia-redutora/?$ /mama/?procedimento=redutora [R=301,L,NE,QSA]
-RewriteRule ^protese-de-mama/?$ /mama/?procedimento=protese [R=301,L,NE,QSA]
+RewriteRule ^braquioplastia/?$ /pos-bariatrica/?area=bracos [R=301,L,NE,QSA]
+
+# Compressão e cache para melhorar Core Web Vitals.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/ld+json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  <FilesMatch "\.(css|js|webp|jpg|jpeg|png|svg|woff2)$">
+    Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
+  </FilesMatch>
+</IfModule>

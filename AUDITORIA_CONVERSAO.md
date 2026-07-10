@@ -141,8 +141,8 @@ O FAQ schema foi mantido como marcação semântica, mas não se deve contar com
 - banner aceitar/recusar e política de privacidade;
 - persistência de primeira e última atribuição;
 - UTMs e identificadores de clique preservados;
-- clique no WhatsApp como lead principal;
-- `generate_lead` e conversão de Ads apenas uma vez por sessão/página/procedimento;
+- clique no WhatsApp como sinal secundário de intenção;
+- sem disparo automático de `generate_lead`, conversão de Ads ou `Lead` do Meta no clique;
 - eventos de abertura de procedimento, FAQ, busca, leitura e profundidade de scroll;
 - contexto de página e procedimento em cada evento;
 - exclusão deliberada de texto clínico, fotos, nomes e telefones dos eventos de publicidade.
