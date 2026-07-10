@@ -3147,3 +3147,96 @@ main .faq-answer strong {
     object-position: center;
   }
 }
+
+/* Ajuste de acessibilidade para leitura confortável em telas menores. */
+@media (max-width: 900px) {
+  section,
+  .other-section,
+  .doctor-section,
+  .proof-section,
+  .content-section,
+  .contact-flow-section,
+  .liv-section,
+  .results-section,
+  .faq-section,
+  .approach-section,
+  .journey-section {
+    padding-top: 44px;
+    padding-bottom: 44px;
+  }
+
+  .lead {
+    font-size: 17.5px;
+    line-height: 1.62;
+  }
+
+  .hero-note,
+  .credentials span,
+  .doctor-points span,
+  .image-frame figcaption,
+  .disclaimer {
+    font-size: 14.5px;
+    line-height: 1.58;
+  }
+
+  .section-head p,
+  .signature-copy p,
+  .proof-copy p,
+  .liv-copy p,
+  .doctor-copy p,
+  .cta p,
+  .other-wrap p,
+  .path-card p,
+  .faq-item p,
+  .result-card p,
+  .journey-grid span,
+  .liv-feature p,
+  .contact-flow-grid p,
+  .content-card p,
+  .principle-grid p,
+  .content-expand-body p {
+    font-size: 16.5px;
+    line-height: 1.68;
+  }
+
+  .section-head,
+  .compact-head {
+    margin-bottom: 26px;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo,
+  .split,
+  .signature-layout,
+  .liv-split,
+  .proof-layout,
+  .content-layout,
+  .cta-wrap {
+    gap: 26px;
+  }
+
+  .signature-layout,
+  .other-procedure-grid,
+  .principle-grid,
+  .path-grid,
+  .face-grid,
+  .journey-grid,
+  .result-grid,
+  .faq-grid,
+  .contact-flow-grid,
+  .liv-feature-grid,
+  .proof-reviews,
+  .content-card-grid {
+    gap: 16px;
+  }
+
+  .doctor-copy p + p {
+    margin-top: 16px;
+  }
+
+  .doctor-points div,
+  .signature-details div {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
