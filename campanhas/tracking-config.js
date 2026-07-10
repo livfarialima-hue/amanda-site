@@ -13,7 +13,7 @@
 window.AMANDA_TRACKING_CONFIG = {
   ga4Id: "G-49S7FB3PMV",        // Google Analytics 4 - Dra. Amanda Schroeder
   gtmId: "",                     // Ex.: "GTM-XXXXXXX". Use preferencialmente OU GTM OU GA4 direto para evitar duplicidade.
-  metaPixelId: "",               // Ex.: "123456789012345"
+  metaPixelId: "1407471497197720",               // Ex.: "123456789012345"
   googleAdsId: "",               // Ex.: "AW-123456789"
   googleAdsConversionLabel: "",  // Ex.: "AbCdEfGhIjKlmNoPqRs"
   requireConsent: true,
