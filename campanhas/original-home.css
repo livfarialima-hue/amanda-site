@@ -3255,3 +3255,27 @@ main .faq-answer strong {
     padding: 4px;
   }
 }
+
+/* Resultados da página inicial: manter imagens completas e cartões alinhados no mobile. */
+@media (max-width: 760px) {
+  .results-section .result-card img.result-img-lifting {
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+  }
+
+  .results-section .result-card img[src*="otoplastia-caso-02"] {
+    margin-top: 12px;
+  }
+
+  .results-section .result-card > div {
+    display: flex;
+    min-height: 118px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .results-section .result-card > div p {
+    margin-bottom: 0;
+  }
+}
