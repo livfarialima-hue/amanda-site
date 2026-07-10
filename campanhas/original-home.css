@@ -3279,3 +3279,53 @@ main .faq-answer strong {
     margin-bottom: 0;
   }
 }
+
+/* Refinamento de densidade para a página principal em desktop. */
+@media (min-width: 981px) {
+  section,
+  .other-section {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+
+  .split,
+  .signature-layout {
+    gap: 44px;
+  }
+
+  .section-head h2,
+  .consult-card h2,
+  .signature-copy h2,
+  .proof-copy h2,
+  .liv-section h2,
+  .cta h2 {
+    font-size: 48px;
+  }
+
+  .principle-grid article {
+    min-height: 170px;
+  }
+
+  .content-card {
+    min-height: 190px;
+  }
+
+  .journey-grid div,
+  .quote-card {
+    min-height: 160px;
+  }
+
+  .path-card,
+  .other-procedure-card {
+    min-height: 270px;
+  }
+
+  .liv-feature {
+    min-height: 132px;
+  }
+
+  .consult-card {
+    gap: 42px;
+    padding: 42px;
+  }
+}
