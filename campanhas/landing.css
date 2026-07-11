@@ -622,6 +622,18 @@ footer {
   align-items: center;
 }
 
+.internal-trust-section .panel-grid {
+  margin-bottom: 24px;
+}
+
+.internal-trust-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 250px;
+}
+
 .liv-reference-card .eyebrow,
 .internal-trust-card .eyebrow,
 .contact-explainer .eyebrow {
@@ -766,6 +778,11 @@ footer {
   .liv-reference-card .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .internal-trust-actions {
+    width: 100%;
+    min-width: 0;
   }
 }
 
