@@ -2,8 +2,7 @@
   'use strict';
 
   function pushEvent(name, params) {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(Object.assign({ event: name }, params || {}));
+    // Mensuração comportamental desativada: somente cliques no WhatsApp são medidos.
   }
 
   function pageContext() {
@@ -52,7 +51,7 @@
     var input = document.querySelector('[data-content-search]');
     if (!input) return;
 
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.category-card'));
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.category-card, .content-intent-card'));
     var blocks = Array.prototype.slice.call(document.querySelectorAll('.category-block'));
     var status = document.querySelector('[data-content-search-status]');
     var noResults = document.querySelector('[data-content-no-results]');
@@ -80,7 +79,7 @@
       if (query.length >= 3) {
         debounce = window.setTimeout(function () {
           pushEvent('content_search', Object.assign(pageContext(), {
-            search_term: query.substring(0, 80),
+            query_length: query.length,
             results_count: visible
           }));
         }, 700);
@@ -100,31 +99,19 @@
         }));
       });
     });
-  }
 
-  function enrichWhatsAppLinks() {
-    var stored = {};
-    try { stored = JSON.parse(localStorage.getItem('amanda_attribution') || '{}') || {}; } catch (e) {}
-    if (!stored.utm_campaign && !stored.utm_content && !stored.utm_source) return;
-
-    document.querySelectorAll('a[href*="wa.me/"], a[href*="api.whatsapp.com/"]').forEach(function (anchor) {
-      try {
-        var url = new URL(anchor.href, window.location.href);
-        var current = url.searchParams.get('text') || '';
-        var attribution = [];
-        if (stored.utm_source) attribution.push('source=' + stored.utm_source);
-        if (stored.utm_campaign) attribution.push('campaign=' + stored.utm_campaign);
-        if (stored.utm_content) attribution.push('content=' + stored.utm_content);
-        if (!attribution.length || current.indexOf('Atribuição:') !== -1) return;
-        url.searchParams.set('text', current + '\nAtribuição: ' + attribution.join(' | '));
-        anchor.href = url.toString();
-      } catch (e) {}
+    document.querySelectorAll('a[data-track="educational-content"]').forEach(function (link) {
+      link.addEventListener('click', function () {
+        pushEvent('educational_content_click', Object.assign(pageContext(), {
+          content_topic: link.dataset.contentTopic || '',
+          destination_path: new URL(link.href, window.location.href).pathname
+        }));
+      });
     });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     pushEvent('page_context', pageContext());
-    enrichWhatsAppLinks();
     openCampaignProcedure();
     installContentSearch();
     installContentLinkTracking();
@@ -150,21 +137,14 @@
       });
     });
 
-    document.querySelectorAll('details.faq-item').forEach(function (details) {
+    document.querySelectorAll('details.faq-item').forEach(function (details, index) {
       details.addEventListener('toggle', function () {
         if (!details.open) return;
-        var heading = details.querySelector('h3');
         pushEvent('faq_open', Object.assign(pageContext(), {
-          faq_question: heading ? heading.textContent.trim() : ''
+          faq_position: index + 1
         }));
       });
     });
 
-    document.querySelectorAll('[data-privacy-settings]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        try { localStorage.removeItem('amanda_tracking_consent'); } catch (e) {}
-        window.location.reload();
-      });
-    });
   });
 })();

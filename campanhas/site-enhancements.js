@@ -15,8 +15,7 @@
   }
 
   function pushEvent(name, data) {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(Object.assign({ event: name }, context(), data || {}));
+    // Mensuração comportamental desativada: somente cliques no WhatsApp são medidos.
   }
 
   function uniqueId(prefix) {
@@ -76,9 +75,18 @@
 
       var heading = head.querySelector('h2, h3');
       var sectionName = section.id || (heading ? heading.textContent.trim() : section.dataset.mobileCollapse);
-      var button = createToggle(section.dataset.mobileCollapse, panel, sectionName);
-      head.insertAdjacentElement('afterend', button);
-      button.insertAdjacentElement('afterend', panel);
+      var previewFirst = section.classList.contains('contact-flow');
+      var label = previewFirst ? 'Ver os próximos passos' : section.dataset.mobileCollapse;
+      var button = createToggle(label, panel, sectionName);
+
+      if (previewFirst) {
+        panel.classList.add('mobile-preview-first');
+        head.insertAdjacentElement('afterend', panel);
+        panel.insertAdjacentElement('afterend', button);
+      } else {
+        head.insertAdjacentElement('afterend', button);
+        button.insertAdjacentElement('afterend', panel);
+      }
       section.dataset.mobileEnhanced = 'true';
     });
   }
@@ -90,13 +98,30 @@
       var section = target.closest('section');
       var heading = section && section.querySelector('h2, h3');
       var sectionName = (section && section.id) || (heading ? heading.textContent.trim() : label);
-      var button = createToggle(label, target, sectionName);
-      target.parentNode.insertBefore(button, target);
+      var previewFirst = target.classList.contains('contact-flow-grid');
+      var button = createToggle(previewFirst ? 'Ver os próximos passos' : label, target, sectionName);
+      if (previewFirst) {
+        target.classList.add('mobile-preview-first');
+        target.insertAdjacentElement('afterend', button);
+      } else {
+        target.parentNode.insertBefore(button, target);
+      }
       target.dataset.mobileEnhanced = 'true';
     });
   }
 
   function installScrollRows() {
+    var floatResumeTimer;
+
+    function pauseFloatingCta() {
+      if (!mobileQuery.matches) return;
+      document.body.classList.add('mobile-gallery-active');
+      window.clearTimeout(floatResumeTimer);
+      floatResumeTimer = window.setTimeout(function () {
+        document.body.classList.remove('mobile-gallery-active');
+      }, 1800);
+    }
+
     document.querySelectorAll('[data-mobile-scroll]').forEach(function (row) {
       if (row.dataset.mobileScrollEnhanced === 'true' || row.children.length < 2) return;
       row.setAttribute('tabindex', '0');
@@ -111,12 +136,17 @@
 
       var tracked = false;
       row.addEventListener('scroll', function () {
+        pauseFloatingCta();
         if (!tracked && row.scrollLeft > 24) {
           tracked = true;
           pushEvent('mobile_horizontal_scroll', {
             section_name: row.dataset.mobileScrollLabel || 'Opções relacionadas'
           });
         }
+      }, { passive: true });
+      row.addEventListener('touchstart', pauseFloatingCta, { passive: true });
+      row.addEventListener('pointerdown', function (event) {
+        if (event.pointerType === 'touch' || event.pointerType === 'pen') pauseFloatingCta();
       }, { passive: true });
     });
   }
@@ -226,6 +256,152 @@
     }
     syncCookieState();
     new MutationObserver(syncCookieState).observe(document.body, { childList: true, subtree: false });
+
+    if ('IntersectionObserver' in window && window.matchMedia('(max-width: 760px)').matches) {
+      var visibleMedia = new Set();
+      var mediaObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) visibleMedia.add(entry.target);
+          else visibleMedia.delete(entry.target);
+        });
+        document.body.classList.toggle('mobile-media-viewing', visibleMedia.size > 0);
+      }, { threshold: [0, .35, .7] });
+
+      document.querySelectorAll('.doctor-photo, .image-frame img, .liv-photo, .results-section, .result-grid, .result-card > img, .instagram-video-shell').forEach(function (media) {
+        mediaObserver.observe(media);
+      });
+    }
   }
   document.addEventListener('DOMContentLoaded', installFloatingCtaBehavior);
+})();
+
+
+/* Vídeos curados: modal local, sem saída para Instagram. */
+(function () {
+  'use strict';
+
+  function pushVideoEvent(name, data) {
+    // Eventos de vídeo permanecem desativados por política de mensuração mínima.
+  }
+
+  function installCuratedVideoModal() {
+    var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-curated-video]'));
+    if (!triggers.length) return;
+
+    var modal = document.createElement('div');
+    modal.className = 'curated-video-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('aria-labelledby', 'curated-video-title');
+    modal.setAttribute('aria-describedby', 'curated-video-summary curated-video-disclaimer');
+    modal.innerHTML = '<div class="curated-video-dialog"><button class="curated-video-close" type="button" aria-label="Fechar vídeo">×</button><div class="curated-video-media"><video controls playsinline preload="metadata"></video></div><div class="curated-video-copy"><span class="eyebrow">Conteúdo educativo</span><h2></h2><p class="curated-video-summary"></p><p class="disclaimer">O vídeo traz informação geral e não substitui avaliação médica individualizada.</p></div></div>';
+    document.body.appendChild(modal);
+
+    var video = modal.querySelector('video');
+    var title = modal.querySelector('h2');
+    var summary = modal.querySelector('.curated-video-summary');
+    var close = modal.querySelector('.curated-video-close');
+    var disclaimer = modal.querySelector('.disclaimer');
+    var currentId = '';
+    var sent = {};
+    var lastFocus = null;
+
+    title.id = 'curated-video-title';
+    summary.id = 'curated-video-summary';
+    disclaimer.id = 'curated-video-disclaimer';
+
+    function getFocusableElements() {
+      return Array.prototype.slice.call(modal.querySelectorAll(
+        'a[href], button:not([disabled]), video[controls], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter(function (element) {
+        return element.getClientRects().length > 0 && element.getAttribute('aria-hidden') !== 'true';
+      });
+    }
+
+    function closeModal() {
+      if (!modal.classList.contains('is-open')) return;
+      video.pause();
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('curated-video-open');
+      window.setTimeout(function () {
+        video.removeAttribute('src');
+        video.removeAttribute('poster');
+        video.load();
+      }, 80);
+      if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+    }
+
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        lastFocus = trigger;
+        currentId = trigger.dataset.contentId || '';
+        sent = {};
+        title.textContent = trigger.dataset.videoTitle || 'Conteúdo educativo';
+        summary.textContent = trigger.dataset.videoSummary || '';
+        video.poster = trigger.dataset.videoPoster || '';
+        video.src = trigger.dataset.videoSrc || '';
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('curated-video-open');
+        close.focus();
+        pushVideoEvent('native_video_open', { content_id: currentId });
+      });
+    });
+
+    video.addEventListener('play', function () {
+      if (sent.start) return;
+      sent.start = true;
+      pushVideoEvent('video_start', { content_id: currentId });
+    });
+
+    video.addEventListener('timeupdate', function () {
+      if (!video.duration) return;
+      var percent = Math.round((video.currentTime / video.duration) * 100);
+      [25, 50, 75, 90].forEach(function (mark) {
+        if (percent >= mark && !sent[mark]) {
+          sent[mark] = true;
+          pushVideoEvent('video_progress', { content_id: currentId, video_percent: mark });
+        }
+      });
+    });
+
+    video.addEventListener('ended', function () {
+      pushVideoEvent('video_complete', { content_id: currentId });
+    });
+    close.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (!modal.classList.contains('is-open')) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      var focusable = getFocusableElements();
+      if (!focusable.length) {
+        event.preventDefault();
+        close.focus();
+        return;
+      }
+
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      var focusIsOutside = !modal.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === first || focusIsOutside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || focusIsOutside)) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
 })();

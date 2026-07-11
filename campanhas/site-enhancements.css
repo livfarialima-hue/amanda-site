@@ -363,6 +363,18 @@ html, body {
   max-width: 100%;
 }
 
+/* A foto da Clínica LIV é horizontal; não deve herdar o recorte vertical de retratos. */
+.split .portrait.clinic-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+}
+
 .whatsapp-float {
   opacity: 0;
   pointer-events: none;
@@ -379,6 +391,13 @@ body.show-whatsapp-float .whatsapp-float {
 body.has-cookie-consent .whatsapp-float {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+body.mobile-gallery-active .whatsapp-float,
+body.mobile-media-viewing .whatsapp-float {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(14px) !important;
 }
 
 .footer-grid {
@@ -426,6 +445,18 @@ body.has-cookie-consent .whatsapp-float {
   background: var(--ivory);
 }
 
+/* O seletor histórico `header` fixa a navegação; o cabeçalho editorial não deve
+   herdar esse comportamento, pois encobre o artigo durante a rolagem. */
+.article-page > .article-hero {
+  position: static;
+  top: auto;
+  z-index: auto;
+  width: auto;
+  backdrop-filter: none;
+  border-bottom: 0;
+  box-shadow: none;
+}
+
 .content-hub-hero h1,
 .article-hero h1 {
   max-width: 900px;
@@ -445,25 +476,39 @@ body.has-cookie-consent .whatsapp-float {
 
 .content-intent-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  max-width: 880px;
 }
 
 .content-intent-card {
-  padding: 26px;
+  display: grid;
+  grid-template-columns: minmax(210px, .72fr) minmax(280px, 1fr) auto;
+  align-items: center;
+  gap: 12px 24px;
+  padding: 22px 24px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: #fff;
 }
 
+.content-intent-card .eyebrow {
+  grid-column: 1 / -1;
+}
+
 .content-intent-card h2 {
-  margin: 8px 0 10px;
-  font-size: 27px;
-  line-height: 1.08;
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.18;
 }
 
 .content-intent-card p {
+  margin: 0;
   color: var(--muted);
+}
+
+.content-intent-card .text-link {
+  white-space: nowrap;
 }
 
 .social-library-link {
@@ -491,15 +536,17 @@ body.has-cookie-consent .whatsapp-float {
 
 .article-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 54px;
+  grid-template-columns: minmax(0, 820px);
+  justify-content: center;
+  gap: 38px;
   align-items: start;
   padding-top: 52px;
   padding-bottom: 72px;
 }
 
 .article-body {
-  max-width: 760px;
+  width: 100%;
+  max-width: 820px;
 }
 
 .article-block {
@@ -528,25 +575,42 @@ body.has-cookie-consent .whatsapp-float {
 }
 
 .article-aside {
-  position: sticky;
-  top: 96px;
+  position: static;
+  width: 100%;
 }
 
 .article-aside-card {
-  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 28px;
+  padding: 24px 28px;
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: #fff;
+  background: var(--ivory);
+}
+
+.article-aside-card .eyebrow,
+.article-aside-card h2,
+.article-aside-card p {
+  grid-column: 1;
 }
 
 .article-aside-card h2 {
-  margin: 8px 0 10px;
-  font-size: 27px;
+  margin: 2px 0 4px;
+  font-size: 25px;
 }
 
 .article-aside-card .btn {
-  width: 100%;
-  margin: 10px 0 14px;
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  width: auto;
+  margin: 0;
+}
+
+.article-aside-card .text-link {
+  grid-column: 1 / -1;
+  margin-top: 4px;
 }
 
 @media (max-width: 900px) {
@@ -554,6 +618,33 @@ body.has-cookie-consent .whatsapp-float {
   .content-intent-grid { grid-template-columns: 1fr; }
   .article-layout { grid-template-columns: 1fr; gap: 24px; }
   .article-aside { position: static; }
+  .content-intent-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .content-intent-card .eyebrow,
+  .content-intent-card h2,
+  .content-intent-card p,
+  .content-intent-card .text-link {
+    grid-column: 1;
+  }
+  .content-intent-card .text-link { white-space: normal; }
+  .article-aside-card {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .article-aside-card .eyebrow,
+  .article-aside-card h2,
+  .article-aside-card p,
+  .article-aside-card .btn,
+  .article-aside-card .text-link {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .article-aside-card .btn {
+    width: 100%;
+    margin: 8px 0 2px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -592,10 +683,12 @@ body.has-cookie-consent .whatsapp-float {
   .footer-navigation { grid-template-columns: 1fr 1fr; gap: 20px 14px; }
   .content-hub-hero, .article-hero { padding: 38px 0 28px; }
   .content-hub-hero h1, .article-hero h1 { font-size: 42px; }
-  .content-intent-card { padding: 20px; }
-  .content-intent-card h2 { font-size: 24px; }
+  .content-intent-card { padding: 18px; }
+  .content-intent-card h2 { font-size: 22px; line-height: 1.22; }
   .article-layout { padding-top: 28px; padding-bottom: 42px; }
   .article-block p { font-size: 16px; line-height: 1.65; }
+  .article-aside-card { padding: 20px; }
+  .article-aside-card h2 { font-size: 23px; line-height: 1.2; }
 }
 
 @media (max-width: 520px) {
@@ -670,4 +763,470 @@ body.has-cookie-consent .whatsapp-float {
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+
+/* Vídeos curados no main — integração discreta, sem alterar a estrutura da página. */
+.curated-video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #875845;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.curated-video-link::before {
+  content: "▶";
+  font-size: 10px;
+  text-decoration: none;
+}
+.curated-video-link:hover { color: #633c30; }
+.curated-video-link:focus-visible {
+  outline: 3px solid rgba(135, 88, 69, .28);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.faq-video-link { margin-top: 8px; }
+
+.curated-video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(25, 18, 16, .78);
+  backdrop-filter: blur(8px);
+}
+.curated-video-modal.is-open { display: flex; }
+.curated-video-dialog {
+  position: relative;
+  width: min(920px, 100%);
+  max-height: 94vh;
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) 1fr;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .38);
+}
+.curated-video-media {
+  display: flex;
+  align-items: center;
+  background: #111;
+}
+.curated-video-media video {
+  display: block;
+  width: 100%;
+  max-height: 90vh;
+  background: #000;
+}
+.curated-video-copy {
+  align-self: center;
+  padding: clamp(26px, 4vw, 46px);
+}
+.curated-video-copy h2 {
+  margin: 8px 0 14px;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.08;
+}
+.curated-video-copy p {
+  color: #5f5652;
+  line-height: 1.7;
+}
+.curated-video-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+  font-size: 24px;
+  cursor: pointer;
+}
+.curated-video-close:focus-visible {
+  outline: 3px solid #8b5a49;
+  outline-offset: 3px;
+}
+body.curated-video-open { overflow: hidden; }
+
+@media (max-width: 760px) {
+  .curated-video-dialog {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    max-height: 98vh;
+    border-radius: 16px;
+  }
+  .curated-video-modal { padding: 8px; }
+  .curated-video-media video { max-height: 64vh; }
+  .curated-video-copy { padding: 20px; }
+  .curated-video-copy h2 { font-size: 26px; }
+}
+
+/* Primeiro passo do contato permanece visível no mobile; os detalhes seguintes ficam sob demanda. */
+@media (max-width: 760px) {
+  section.contact-flow .mobile-disclosure-panel.mobile-preview-first.is-collapsed {
+    display: block !important;
+    margin-top: 14px;
+  }
+
+  section.contact-flow .mobile-disclosure-panel.mobile-preview-first.is-collapsed > :not(.contact-flow-grid) {
+    display: none !important;
+  }
+
+  section.contact-flow .mobile-disclosure-panel.mobile-preview-first.is-collapsed .contact-flow-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-top: 0;
+  }
+
+  section.contact-flow .mobile-disclosure-panel.mobile-preview-first.is-collapsed .contact-step:not(:first-child),
+  .contact-flow-section .contact-flow-grid.mobile-preview-first.is-collapsed > article:not(:first-child) {
+    display: none !important;
+  }
+
+  .contact-flow-section .contact-flow-grid.mobile-preview-first.is-collapsed {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  section.contact-flow .mobile-disclosure-panel.mobile-preview-first + .mobile-disclosure-toggle,
+  .contact-flow-section .contact-flow-grid.mobile-preview-first + .mobile-disclosure-toggle {
+    margin-top: 12px;
+  }
+}
+
+
+/* FACIAL JOURNEY OPTIMIZATION 2026-07-10 */
+
+.approach-grid { display: grid; grid-template-columns: minmax(0,.92fr) minmax(360px,1.08fr); grid-template-areas: "copy media" "points media"; gap: 28px 56px; align-items: start; }
+.approach-copy { grid-area: copy; }
+.approach-copy h2 { margin: 10px 0 14px; font-size: clamp(38px,4.5vw,56px); line-height: 1.04; }
+.approach-copy p { color: var(--muted); }
+.approach-copy p + p { margin-top: 12px; }
+.approach-points { grid-area: points; display: grid; gap: 0; }
+.approach-points > div { display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 18px; padding: 15px 0; border-top: 1px solid var(--line); }
+.approach-points strong { color: var(--ink); font-family: Georgia,"Times New Roman",serif; font-size: 19px; font-weight: 400; }
+.approach-points span { color: var(--muted); }
+.approach-media { grid-area: media; margin: 0; overflow: hidden; border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow); }
+.approach-media img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center; }
+.approach-media figcaption { padding: 12px 14px; color: var(--muted); font-size: 13px; }
+
+.result-grid-face-focus { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.facial-results-home .result-card img.result-img-blefaro { height: 300px; object-fit: contain; transform: none; padding: 10px; }
+.proof-layout-three { grid-template-columns: minmax(0, .72fr) minmax(0, 1.6fr); }
+.proof-reviews-three { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+.proof-reviews-three .quote-card { min-height: 245px; }
+.journey-grid-five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.journey-grid-five > div { min-width: 0; }
+.proof-grid-curated { grid-template-columns: .82fr repeat(3, minmax(0, 1fr)); }
+.proof-grid-curated .quote-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 230px; }
+.proof-grid-curated .review-source { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+.result-context-card { border: 1px solid var(--line); background: rgba(255,250,247,.78); padding: clamp(24px,4vw,42px); display: flex; flex-direction: column; justify-content: center; }
+.result-context-card h3 { margin: 8px 0 12px; font-family: Georgia,"Times New Roman",serif; font-size: clamp(26px,3vw,38px); font-weight: 400; line-height: 1.1; }
+.result-context-card p { color: var(--muted); }
+.result-grid-single { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.result-grid-single .result-card img.result-img-blefaro { height: 460px; object-fit: contain; transform: none; padding: 12px; }
+.surgical-journey-section { background: var(--ivory, var(--sand)); border-top: 1px solid var(--line); }
+.surgical-journey-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 14px; }
+.surgical-journey-grid article { border: 1px solid var(--line); background: var(--paper); padding: 22px; }
+.surgical-journey-grid article > span { display: inline-block; margin-bottom: 10px; color: var(--soft); font-size: 12px; font-weight: 700; letter-spacing: .12em; }
+.surgical-journey-grid h3 { margin: 0 0 8px; font-family: Georgia,"Times New Roman",serif; font-size: 21px; font-weight: 400; line-height: 1.15; }
+.surgical-journey-grid p { margin: 0; color: var(--muted); font-size: 14px; }
+.recovery-timeline-section { background: var(--paper); border-top: 1px solid var(--line); }
+.recovery-timeline-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
+.recovery-card { border-top: 3px solid var(--soft); background: var(--ivory, var(--sand)); padding: 24px; }
+.recovery-card strong { display: block; margin-bottom: 10px; font-family: Georgia,"Times New Roman",serif; font-size: 23px; font-weight: 400; line-height: 1.15; }
+.recovery-card p { margin: 0; color: var(--muted); }
+.recovery-note { margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(154,123,114,.28); background: rgba(154,123,114,.07); }
+.recovery-note p { margin: 0 0 8px; color: var(--muted); }
+.integrated-safety-section { background: var(--paper); }
+.hero-note { max-width: 720px; }
+.contact-facts { align-items: stretch; }
+.contact-facts > div { min-width: 0; }
+.article-body .article-block + .article-block { margin-top: 34px; }
+.article-body .article-block h2 { margin-bottom: 10px; }
+.article-body .article-block p { color: var(--muted); }
+
+.article-media {
+  margin: 0 0 34px;
+  padding: 16px;
+  border: 1px solid rgba(49, 63, 59, .14);
+  border-radius: 20px;
+  background: #fff;
+}
+
+.article-media video {
+  display: block;
+  width: min(100%, 420px);
+  max-height: 680px;
+  margin: 0 auto;
+  border-radius: 14px;
+  background: #17201d;
+}
+
+.article-media figcaption {
+  max-width: 620px;
+  margin: 12px auto 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+@media (max-width: 1080px) {
+  .journey-grid-five, .surgical-journey-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .proof-reviews-three, .proof-grid-curated { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .proof-grid-curated .proof-summary { grid-column: 1 / -1; }
+}
+
+@media (max-width: 760px) {
+  body { font-size: 16px; line-height: 1.66; }
+  p, li, blockquote, .hero-note, .section-head p, .contact-step p, .panel p, .faq-item p, .outcome span, .result-card p, .recovery-card p, .surgical-journey-grid p { font-size: 16px !important; line-height: 1.62; }
+  .eyebrow { color: #805f56; font-size: 12px; }
+  .hero h1 { font-size: clamp(38px, 11vw, 48px); line-height: 1.03; }
+  .hero-note { color: #695d57; }
+  .btn { min-height: 50px; font-size: 15px; }
+  .result-grid-face-focus, .proof-reviews-three, .journey-grid-five, .proof-grid-curated, .surgical-journey-grid, .recovery-timeline-grid, .result-grid-single { grid-template-columns: 1fr; }
+  .proof-layout-three { grid-template-columns: 1fr; }
+  .proof-reviews-three .quote-card, .proof-grid-curated .quote-card { min-height: 0; }
+  .facial-results-home .result-card img.result-img-lifting { height: auto !important; min-height: 190px; }
+  .facial-results-home .result-card img.result-img-blefaro, .result-grid-single .result-card img.result-img-blefaro { height: auto; max-height: 440px; }
+  .surgical-journey-grid article, .recovery-card, .result-context-card { padding: 20px; }
+  .surgical-journey-grid h3 { font-size: 23px; }
+  .recovery-card strong { font-size: 24px; }
+
+  .approach-grid { grid-template-columns: 1fr; grid-template-areas: "copy" "points" "media"; gap: 24px; }
+  .approach-copy h2 { font-size: 36px; }
+  .approach-points > div { grid-template-columns: 1fr; gap: 5px; }
+  .approach-media img { aspect-ratio: 4 / 5; height: auto !important; }
+  .contact-facts { grid-template-columns: 1fr 1fr !important; }
+  .contact-facts > div:last-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 420px) {
+  .contact-facts { grid-template-columns: 1fr !important; }
+  .contact-facts > div:last-child { grid-column: auto; }
+}
+
+/* HOME HÍBRIDA — legibilidade e navegação final — 2026-07-11 */
+.journey-grid-expanded {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.results-section .result-card > div.result-img-body-frame {
+  aspect-ratio: 20 / 7;
+  overflow: hidden;
+  min-height: 0;
+  padding: 0;
+  background: var(--paper);
+}
+
+.results-section .result-card > div.result-img-body-frame .result-img-body {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: initial;
+  transform: none;
+}
+
+.proof-reviews {
+  align-items: stretch;
+}
+
+.proof-reviews .quote-card {
+  height: 100%;
+}
+
+.explore-section {
+  padding: clamp(70px, 8vw, 106px) 0;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.explore-section .section-head {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 34px;
+}
+
+.explore-card {
+  display: flex;
+  min-width: 0;
+  min-height: 330px;
+  flex-direction: column;
+  padding: 26px;
+  border: 1px solid var(--line);
+  background: var(--sand);
+}
+
+.explore-card > span {
+  color: #76564e;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.explore-card h3 {
+  margin: 22px 0 20px;
+  font-size: 27px;
+  line-height: 1.12;
+}
+
+.explore-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: auto;
+}
+
+.explore-links a {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  color: #654b44;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.explore-links a:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.explore-links a:hover {
+  color: var(--ink);
+}
+
+@media (max-width: 1080px) {
+  .explore-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  /* Público maduro: texto funcional nunca depende de fonte pequena ou contraste suave. */
+  .hero .lead,
+  .doctor-copy p,
+  .signature-copy p,
+  .section-head p,
+  .path-card p,
+  .other-procedure-card p,
+  .principle-grid p,
+  .liv-copy > p,
+  .liv-feature p,
+  .journey-grid span,
+  .result-card p,
+  .proof-copy p,
+  .quote-card blockquote,
+  .content-card p,
+  .instagram-copy p,
+  .faq-answer p,
+  .contact-flow-grid p,
+  .cta p,
+  .explore-section .section-head p {
+    color: #5d4b45;
+    font-size: 16px !important;
+    line-height: 1.65 !important;
+  }
+
+  .hero-note,
+  .review-source,
+  .result-card .disclaimer,
+  figcaption,
+  .credentials span,
+  .location-box span,
+  .content-type {
+    color: #6d554e;
+    font-size: 14px !important;
+    line-height: 1.5;
+  }
+
+  .eyebrow,
+  .path-card > span,
+  .other-procedure-card > span,
+  .explore-card > span {
+    color: #76564e;
+    font-size: 13px;
+  }
+
+  .faq-item summary h3 {
+    font-size: 17px !important;
+    line-height: 1.35;
+  }
+
+  .text-link,
+  .mini-link,
+  .other-primary,
+  .explore-links a {
+    font-size: 15px;
+  }
+
+  .journey-grid-expanded {
+    grid-template-columns: 1fr;
+  }
+
+  .results-section .result-card > div.result-img-body-frame .result-img-body {
+    min-height: 0;
+  }
+
+  .proof-reviews {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+  }
+
+  .proof-reviews .quote-card {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    scroll-snap-align: none !important;
+  }
+
+  .explore-section {
+    padding: 64px 0;
+  }
+
+  .explore-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .explore-card {
+    min-height: 0;
+    padding: 22px;
+  }
+
+  .explore-card h3 {
+    margin: 16px 0 18px;
+    font-size: 25px;
+  }
 }

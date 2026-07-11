@@ -15,7 +15,15 @@ window.AMANDA_TRACKING_CONFIG = {
   gtmId: "",                     // Ex.: "GTM-XXXXXXX". Use preferencialmente OU GTM OU GA4 direto para evitar duplicidade.
   metaPixelId: "1407471497197720",               // Ex.: "123456789012345"
   googleAdsId: "AW-17157418677",               // Ex.: "AW-123456789"
-  googleAdsConversionLabel: "",  // Legado desativado: clique no WhatsApp não é conversão principal.
+  googleAdsConversionLabel: "Hc43CM7-qvsaELXdpfU_",  // Conversão de clique no WhatsApp.
+  advancedConsentMode: true,
+  measureOnlyWhatsAppClick: true,
+  sanitizePreConsentMeasurement: true,
+  allowAdStorageAfterConsent: true,
+  allowAdUserDataAfterConsent: true,
+  allowAdPersonalization: false,
+  allowGoogleSignals: false,
+  loadMetaOnlyAfterConsent: true,
   requireConsent: true,
   debug: false
 };

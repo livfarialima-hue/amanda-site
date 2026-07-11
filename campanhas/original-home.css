@@ -3329,3 +3329,413 @@ main .faq-answer strong {
     padding: 42px;
   }
 }
+
+/* Consolidação mobile 2026-07-10: leitura, jornada e preservação das imagens. */
+@media (max-width: 900px) {
+  .container {
+    width: min(100% - 24px, 1160px);
+  }
+
+  header .nav {
+    min-height: 64px;
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  header .brand {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  header .brand strong {
+    overflow: hidden;
+    font-size: clamp(18px, 4.9vw, 20px);
+    line-height: 1.05;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  header .brand span {
+    overflow: hidden;
+    font-size: clamp(8px, 2.2vw, 9px);
+    letter-spacing: -.015em;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  header .nav nav {
+    flex: 0 0 auto;
+    gap: 0;
+  }
+
+  header .nav-cta {
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .hero-copy {
+    padding: 30px 12px 18px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    max-width: 100%;
+    margin: 10px auto 13px;
+    font-size: clamp(36px, 10vw, 42px) !important;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .hero .eyebrow {
+    max-width: 34rem;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .hero .lead {
+    max-width: 38rem;
+    margin-inline: auto;
+    font-size: 16.25px;
+    line-height: 1.62;
+  }
+
+  .hero-actions {
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .hero-actions .btn {
+    min-height: 50px;
+  }
+
+  .hero-secondary-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 0;
+  }
+
+  .hero-secondary-links .text-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.25;
+  }
+
+  .hero-note {
+    margin-top: 10px;
+    font-size: 13.25px;
+    line-height: 1.55;
+  }
+
+  .hero-media {
+    padding: 0 12px 30px;
+  }
+
+  .hero-media img {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .credentials span {
+    display: grid;
+    min-height: 52px;
+    align-items: center;
+    padding: 10px 8px;
+    font-size: 11.5px;
+    line-height: 1.35;
+  }
+
+  section,
+  .other-section,
+  .doctor-section,
+  .proof-section,
+  .content-section,
+  .contact-flow-section,
+  .liv-section,
+  .results-section,
+  .faq-section,
+  .approach-section,
+  .journey-section {
+    padding-top: clamp(42px, 11vw, 52px);
+    padding-bottom: clamp(42px, 11vw, 52px);
+  }
+
+  .mobile-home-quick-nav {
+    padding: 14px 0;
+  }
+
+  .quick-nav-inner {
+    gap: 8px;
+  }
+
+  .quick-nav-inner a,
+  .quick-nav-inner button {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .section-head,
+  .compact-head,
+  .centered,
+  .doctor-copy,
+  .signature-copy,
+  .proof-copy,
+  .liv-copy,
+  .other-head,
+  .instagram-copy {
+    max-width: none;
+    margin-right: 0;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .section-head h2,
+  .consult-card h2,
+  .signature-copy h2,
+  .proof-copy h2,
+  .liv-section h2,
+  .cta h2,
+  .doctor-copy h2 {
+    margin: 8px 0 12px;
+    font-size: clamp(31px, 8.8vw, 38px);
+    line-height: 1.06;
+    text-wrap: balance;
+  }
+
+  .section-head p,
+  .signature-copy p,
+  .proof-copy p,
+  .liv-copy p,
+  .doctor-copy p,
+  .cta p,
+  .other-wrap p,
+  .path-card p,
+  .faq-item p,
+  .result-card p,
+  .journey-grid span,
+  .liv-feature p,
+  .contact-flow-grid p,
+  .content-card p,
+  .principle-grid p,
+  .content-expand-body p {
+    font-size: 16px;
+    line-height: 1.64;
+  }
+
+  .section-head,
+  .compact-head {
+    margin-bottom: 24px;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo,
+  .proof-copy,
+  .quote-card,
+  .path-card,
+  .other-procedure-card,
+  .principle-grid article,
+  .faq-item,
+  .content-card,
+  .journey-grid div,
+  .liv-feature,
+  .location-box,
+  .contact-flow-grid article {
+    padding: 18px;
+  }
+
+  .doctor-card,
+  .doctor-card-with-photo,
+  .split,
+  .signature-layout,
+  .liv-split,
+  .proof-layout,
+  .content-layout,
+  .cta-wrap {
+    gap: 24px;
+  }
+
+  .doctor-copy p + p {
+    margin-top: 14px;
+  }
+
+  .doctor-photo {
+    width: 100%;
+    max-height: none;
+    aspect-ratio: 760 / 929;
+    border-radius: 18px;
+  }
+
+  .doctor-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .mobile-disclosure-toggle {
+    min-height: 52px;
+    margin-top: 16px;
+    padding: 14px 15px;
+  }
+
+  .image-frame {
+    padding: 7px;
+  }
+
+  .image-frame-tall img {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+    object-fit: contain;
+  }
+
+  .liv-photo {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .location-box {
+    gap: 8px;
+  }
+
+  .location-box strong {
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  .results-section .result-card > img {
+    width: 100%;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    transform: none !important;
+    background: #fffaf7;
+  }
+
+  .results-section .result-card > div {
+    min-height: 126px;
+    padding: 18px;
+  }
+
+  .proof-layout {
+    align-items: stretch;
+  }
+
+  .proof-copy {
+    min-height: 0;
+  }
+
+  .proof-link-mobile {
+    min-height: 44px;
+    align-items: center;
+    justify-self: start;
+  }
+
+  .faq-grid {
+    gap: 12px;
+  }
+
+  details.home-faq-item summary {
+    min-height: 68px;
+    padding: 18px;
+  }
+
+  details.home-faq-item summary h3 {
+    font-size: 22px;
+    line-height: 1.18;
+  }
+
+  details.home-faq-item .faq-answer {
+    padding: 0 18px 18px;
+  }
+
+  .contact-price-note {
+    margin-bottom: 18px;
+    line-height: 1.35;
+  }
+
+  .cta-wrap,
+  .cta-wrap .eyebrow {
+    text-align: center;
+  }
+
+  .cta-wrap .btn {
+    min-height: 52px;
+  }
+
+  .whatsapp-float {
+    min-height: 52px;
+    border-radius: 999px;
+    box-shadow: 0 12px 34px rgba(63, 42, 35, .22);
+  }
+}
+
+@media (max-width: 760px) {
+  [data-mobile-scroll] {
+    scroll-padding-inline: 0 24px;
+    scrollbar-width: none;
+  }
+
+  [data-mobile-scroll]::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-mobile-scroll] > * {
+    flex-basis: min(84vw, 328px) !important;
+    max-width: min(84vw, 328px) !important;
+    scroll-snap-stop: always;
+  }
+
+  .mobile-scroll-hint {
+    margin: 0 0 12px;
+    font-size: 12px;
+  }
+
+  .path-card > .mini-link,
+  .other-primary,
+  .proof-link-mobile,
+  .curated-video-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 360px) {
+  header .nav {
+    gap: 6px;
+  }
+
+  header .brand strong {
+    font-size: 16px;
+  }
+
+  header .nav-cta {
+    min-height: 42px;
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 10.5px;
+  }
+
+  .hero-secondary-links .text-link {
+    font-size: 11.5px;
+  }
+}
