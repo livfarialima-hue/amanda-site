@@ -91,6 +91,38 @@
     });
   }
 
+  function integrateDoctorStoryOnMobile() {
+    var section = document.getElementById('video-amanda');
+    var doctorCard = document.querySelector('#quem-conduz .doctor-card');
+    if (!section || !doctorCard || section.dataset.doctorStoryReady === 'true') return;
+
+    var head = section.querySelector(':scope > .container > .section-head');
+    var toggle = section.querySelector('.mobile-disclosure-toggle');
+    var panel = section.querySelector('.mobile-disclosure-panel');
+    if (!head || !toggle || !panel) return;
+
+    function sync(event) {
+      var mobile = typeof event.matches === 'boolean' ? event.matches : mobileQuery.matches;
+      if (mobile) {
+        toggle.classList.add('doctor-story-toggle');
+        panel.classList.add('doctor-story-panel');
+        doctorCard.appendChild(toggle);
+        doctorCard.appendChild(panel);
+        section.classList.add('doctor-story-integrated');
+      } else {
+        head.insertAdjacentElement('afterend', toggle);
+        toggle.insertAdjacentElement('afterend', panel);
+        toggle.classList.remove('doctor-story-toggle');
+        panel.classList.remove('doctor-story-panel');
+        section.classList.remove('doctor-story-integrated');
+      }
+    }
+
+    sync(mobileQuery);
+    mobileQuery.addEventListener('change', sync);
+    section.dataset.doctorStoryReady = 'true';
+  }
+
   function installTargetDisclosures() {
     document.querySelectorAll('[data-mobile-collapse-target]').forEach(function (target) {
       if (target.dataset.mobileEnhanced === 'true') return;
@@ -280,14 +312,99 @@
     });
   }
 
+  function installImageLightbox() {
+    var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-image-lightbox]'));
+    if (!triggers.length) return;
+
+    var modal = document.createElement('div');
+    modal.className = 'image-lightbox';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('aria-label', 'Imagem ampliada');
+    modal.innerHTML = '<div class="image-lightbox-dialog"><button class="image-lightbox-close" type="button" aria-label="Fechar imagem ampliada">×</button><img alt=""></div>';
+    document.body.appendChild(modal);
+
+    var image = modal.querySelector('img');
+    var closeButton = modal.querySelector('.image-lightbox-close');
+    var lastFocus = null;
+
+    function close() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('image-lightbox-open');
+      image.removeAttribute('src');
+      if (lastFocus) lastFocus.focus();
+    }
+
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        var preview = trigger.querySelector('img');
+        lastFocus = trigger;
+        image.src = trigger.href;
+        image.alt = preview ? preview.alt : 'Imagem ampliada';
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('image-lightbox-open');
+        closeButton.focus();
+      });
+    });
+
+    closeButton.addEventListener('click', close);
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) close();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+  }
+
+  function standardizeInternalLinkArrows() {
+    document.querySelectorAll('main a[href]').forEach(function (anchor) {
+      if (anchor.hasAttribute('data-image-lightbox') || anchor.querySelector('img, video')) return;
+      try {
+        var url = new URL(anchor.href, window.location.href);
+        if (url.origin !== window.location.origin || url.pathname === window.location.pathname) return;
+        var text = (anchor.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!text || /→$/.test(text)) return;
+        anchor.appendChild(document.createTextNode(' →'));
+      } catch (e) {}
+    });
+  }
+
+  function installDetailedFooterMap() {
+    var navigation = document.querySelector('footer .footer-navigation');
+    if (!navigation || navigation.dataset.sitemapEnhanced === 'true') return;
+
+    navigation.setAttribute('aria-label', 'Mapa do site');
+    navigation.classList.remove('footer-navigation-compact');
+    navigation.innerHTML = '' +
+      '<div class="footer-nav-group"><strong>Face e pescoço</strong>' +
+        '<a href="/lifting-facial/">Lifting facial →</a><a href="/lifting-cervical/">Lifting cervical →</a><a href="/blefaroplastia/">Blefaroplastia →</a><a href="/otoplastia/">Otoplastia →</a><a href="/lipo-de-papada/">Lipo de papada →</a><a href="/injetaveis/">Injetáveis →</a>' +
+      '</div>' +
+      '<div class="footer-nav-group"><strong>Mamas</strong>' +
+        '<a href="/mama/">Cirurgias de mama →</a><a href="/mastopexia/">Mastopexia →</a><a href="/mastopexia-com-protese/">Mastopexia com prótese →</a><a href="/protese-de-mama/">Prótese de mama →</a><a href="/mamoplastia-redutora/">Mamoplastia redutora →</a>' +
+      '</div>' +
+      '<div class="footer-nav-group"><strong>Corpo e cirurgia íntima</strong>' +
+        '<a href="/contorno-corporal/">Contorno corporal →</a><a href="/abdominoplastia/">Abdominoplastia →</a><a href="/lipoaspiracao/">Lipoaspiração →</a><a href="/pos-bariatrica/">Pós-bariátrica →</a><a href="/ninfoplastia/">Cirurgia íntima →</a>' +
+      '</div>' +
+      '<div class="footer-nav-group footer-nav-group-compact"><strong>Conteúdos</strong><a href="/conteudos/">Conteúdos educativos →</a></div>';
+    navigation.dataset.sitemapEnhanced = 'true';
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     keepInternalLinksInSameTab();
     installMobileMenu();
     installSectionDisclosures();
+    integrateDoctorStoryOnMobile();
     installTargetDisclosures();
     installScrollRows();
     installAnchorAwareness();
     trackInternalNavigation();
+    installImageLightbox();
+    standardizeInternalLinkArrows();
+    installDetailedFooterMap();
   });
 })();
 
@@ -475,6 +592,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
   'use strict';
 
   var storageKey = 'amanda_journey_origin_v1';
+  var returnPendingKey = 'amanda_journey_return_pending_v1';
   var pageLabels = {
     '/': 'página inicial',
     '/lifting-facial/': 'Lifting facial',
@@ -575,6 +693,55 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     }
   }
 
+  function installJourneyPositionMemory() {
+    document.addEventListener('click', function (event) {
+      var anchor = event.target.closest('a[href]');
+      if (!anchor || anchor.classList.contains('journey-return-link')) return;
+
+      var destination = safeUrl(anchor.href);
+      var currentUrl = safeUrl(window.location.href);
+      var origin = readOrigin();
+      if (!destination || !currentUrl || !origin || !isSameSite(destination)) return;
+      if (normalizePath(currentUrl.pathname) !== origin.path || normalizePath(destination.pathname) === origin.path) return;
+
+      origin.sourcePath = normalizePath(destination.pathname);
+      origin.sourceText = (anchor.textContent || '').replace(/\s+/g, ' ').trim();
+      origin.sourceScrollY = Math.max(0, Math.round(window.scrollY + anchor.getBoundingClientRect().top - 96));
+      saveOrigin(origin);
+    });
+  }
+
+  function restoreJourneyPosition() {
+    var pending = false;
+    try {
+      pending = window.sessionStorage.getItem(returnPendingKey) === 'true';
+      if (pending) window.sessionStorage.removeItem(returnPendingKey);
+    } catch (error) {}
+    if (!pending) return;
+
+    var currentUrl = safeUrl(window.location.href);
+    var origin = readOrigin();
+    if (!currentUrl || !origin || normalizePath(currentUrl.pathname) !== origin.path) return;
+
+    window.setTimeout(function () {
+      var source = null;
+      if (origin.sourcePath) {
+        source = Array.prototype.find.call(document.querySelectorAll('a[href]'), function (anchor) {
+          var url = safeUrl(anchor.href);
+          var text = (anchor.textContent || '').replace(/\s+/g, ' ').trim();
+          return url && normalizePath(url.pathname) === origin.sourcePath && (!origin.sourceText || text === origin.sourceText);
+        });
+      }
+
+      if (source) {
+        source.scrollIntoView({ behavior: 'auto', block: 'center' });
+        source.focus({ preventScroll: true });
+      } else if (typeof origin.sourceScrollY === 'number') {
+        window.scrollTo({ top: origin.sourceScrollY, behavior: 'auto' });
+      }
+    }, 100);
+  }
+
   function journeyStartedHere() {
     if (!document.referrer) return true;
     var referrer = safeUrl(document.referrer);
@@ -609,6 +776,9 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     returnLink.href = origin.url;
     returnLink.innerHTML = '<span class="journey-return-arrow" aria-hidden="true">←</span><span><small>Sua página de entrada</small><strong></strong></span>';
     returnLink.querySelector('strong').textContent = isHome(originUrl) ? 'Voltar à página inicial' : 'Voltar para ' + origin.label;
+    returnLink.addEventListener('click', function () {
+      try { window.sessionStorage.setItem(returnPendingKey, 'true'); } catch (error) {}
+    });
     inner.appendChild(returnLink);
 
     var home = homeUrl();
@@ -627,5 +797,9 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     if (anchor) anchor.insertAdjacentElement('afterend', nav);
   }
 
-  document.addEventListener('DOMContentLoaded', installJourneyReturn);
+  document.addEventListener('DOMContentLoaded', function () {
+    installJourneyReturn();
+    installJourneyPositionMemory();
+    restoreJourneyPosition();
+  });
 })();
