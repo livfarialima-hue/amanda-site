@@ -514,7 +514,7 @@ footer {
 }
 @media (max-width: 900px) {
   .container { width: min(100% - 30px, 1120px); }
-  nav a:not(.btn) { display: none; }
+  header .nav > nav > a:not(.btn) { display: none; }
   .hero, .split, .cta-wrap, .instagram-layout { grid-template-columns: 1fr; }
   .hero { min-height: 0; background: var(--ivory); }
   .hero-copy { padding: 44px 15px 34px; }
