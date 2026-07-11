@@ -2099,6 +2099,30 @@ body.curated-video-open { overflow: hidden; }
   }
 }
 
+/* Páginas de face: reforço de posicionamento sem alegação de exclusividade. */
+.hero-focus {
+  max-width: 620px;
+  margin: 18px 0 0;
+  padding: 13px 15px;
+  border-left: 3px solid var(--soft);
+  background: rgba(255, 250, 247, .72);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.hero-focus strong {
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .hero-focus {
+    margin-top: 15px;
+    padding: 12px 13px;
+    font-size: 13px;
+  }
+}
+
 
 /* Retorno contextual para a página que iniciou a jornada do paciente. */
 .journey-return {

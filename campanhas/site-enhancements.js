@@ -797,7 +797,52 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     if (anchor) anchor.insertAdjacentElement('afterend', nav);
   }
 
+  function installFaceFocusPositioning() {
+    var procedure = document.documentElement.getAttribute('data-procedure');
+    var messages = {
+      'lifting-facial': {
+        eyebrow: 'Cirurgia plástica com foco principal na face · Lifting facial',
+        text: 'A avaliação integra face, olhar e pescoço para entender a causa da queixa e decidir se cirurgia, tratamento complementar ou acompanhamento fazem sentido.'
+      },
+      'lifting-cervical': {
+        eyebrow: 'Cirurgia plástica com foco principal na face · Pescoço e contorno',
+        text: 'Pescoço e linha mandibular são avaliados em conjunto com a face para diferenciar pele, gordura, músculos e estrutura antes de indicar uma técnica.'
+      },
+      blefaroplastia: {
+        eyebrow: 'Cirurgia plástica com foco principal na face · Blefaroplastia',
+        text: 'A avaliação do olhar não se limita às pálpebras: sobrancelhas, volume, pele e expressão são considerados dentro do conjunto facial.'
+      },
+      'lipo-de-papada': {
+        eyebrow: 'Cirurgia plástica com foco principal na face · Contorno cervical',
+        text: 'Nem toda papada é apenas gordura: a avaliação integrada identifica quando a lipo é suficiente e quando pele, músculos ou estrutura também precisam ser considerados.'
+      },
+      otoplastia: {
+        eyebrow: 'Cirurgia plástica com foco principal na face · Otoplastia',
+        text: 'A proporção das orelhas é avaliada dentro do conjunto facial, com atenção à anatomia e ao objetivo de preservar naturalidade.'
+      },
+      injetaveis: {
+        eyebrow: 'Planejamento facial · Tratamentos não cirúrgicos',
+        text: 'A formação em cirurgia plástica orienta a leitura de pele, volume e sustentação — inclusive para reconhecer quando o tratamento não cirúrgico não é a melhor indicação.'
+      }
+    };
+    var message = messages[procedure];
+    if (!message) return;
+
+    var heroInner = document.querySelector('.hero .hero-inner');
+    if (!heroInner) return;
+    var eyebrow = heroInner.querySelector('.eyebrow');
+    if (eyebrow) eyebrow.textContent = message.eyebrow;
+
+    var lead = heroInner.querySelector('.lead');
+    if (!lead || heroInner.querySelector('.hero-focus')) return;
+    var focus = document.createElement('p');
+    focus.className = 'hero-focus';
+    focus.innerHTML = '<strong>Foco principal na face.</strong> ' + message.text;
+    lead.insertAdjacentElement('afterend', focus);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    installFaceFocusPositioning();
     installJourneyReturn();
     installJourneyPositionMemory();
     restoreJourneyPosition();
