@@ -67,38 +67,41 @@
     if (window.AmandaConsent && window.AmandaConsent.updateDebugState) window.AmandaConsent.updateDebugState();
   }
 
-  function trackWhatsAppClick() {
+  function trackWhatsAppClick(link) {
     if (!googleMeasurementAvailable() || !config.googleAdsId || !config.googleAdsConversionLabel) return;
     if (!conversionNotYetSent('whatsapp_click')) return;
 
     var consented = fullConsentGranted();
     var mode = consented ? 'consented' : 'cookieless';
-    var clickParams = {
-      contact_channel: 'whatsapp',
-      measurement_state: mode,
-      transport_type: 'beacon'
-    };
-    var conversionParams = {
-      send_to: config.googleAdsId + '/' + config.googleAdsConversionLabel,
-      value: 1.0,
-      currency: 'BRL',
-      transport_type: 'beacon'
-    };
+    var root = document.documentElement;
+    var pageType = root.dataset.pageType || 'procedure';
+    var section = link.closest('[data-section]');
+    var location = link.dataset.ctaLocation || (section && section.dataset.section) || 'unknown';
+    var text = (link.textContent || '').trim();
 
-    if (!consented) {
-      clickParams.non_personalized_ads = true;
-      conversionParams.non_personalized_ads = true;
-      clickParams = sanitizePreConsentParams(clickParams);
-      conversionParams = sanitizePreConsentParams(conversionParams, preConsentConversionAllowedParams);
-    }
+    // Evento analítico: enviado somente ao GA4.
+    window.gtag('event', 'whatsapp_click', {
+      event_category: 'engagement',
+      event_label: pageType,
+      page_type: pageType,
+      content_group: pageType,
+      cta_location: location,
+      cta_text: text,
+      page_path: window.location.pathname,
+      transport_type: 'beacon',
+      send_to: 'G-49S7FB3PMV'
+    });
 
-    window.gtag('event', 'whatsapp_contact_click', clickParams);
-    window.gtag('event', 'conversion', conversionParams);
+    // Conversão genérica do Google Ads.
+    // Não enviar procedimento, página, diagnóstico ou dados pessoais.
+    window.gtag('event', 'conversion', {
+      send_to: 'AW-17157418677/Hc43CM7-qvsaELXdpfU_'
+    });
 
     if (metaConsentGranted() && typeof window.fbq === 'function') {
       window.fbq('trackCustom', 'WhatsAppContactClick', { contact_channel: 'whatsapp' });
     }
-    recordDebug('whatsapp_contact_click', mode);
+    recordDebug('whatsapp_click', mode);
   }
 
   document.addEventListener('click', function (event) {
