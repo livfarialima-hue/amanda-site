@@ -3345,3 +3345,128 @@ body.curated-video-open { overflow: hidden; }
   html:not([data-page-type="home"]) .footer-nav-group strong { font-size: 13px; }
   html:not([data-page-type="home"]) .footer-nav-group a { font-size: 12px; }
 }
+
+/* Seção corporal: hierarquia mais leve e navegação secundária recolhível. */
+@media (min-width: 901px) {
+  html[data-page-type="home"] #alem-da-face .other-secondary-links > summary { display: none; }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links > .other-topic-links,
+  html[data-page-type="home"] #alem-da-face .other-secondary-links:not([open]) > .other-topic-links { display: flex !important; }
+}
+
+@media (max-width: 900px) {
+  html[data-page-type="home"] #alem-da-face { padding-top: 40px; padding-bottom: 42px; }
+  html[data-page-type="home"] #alem-da-face .section-head { margin-bottom: 22px; padding: 0 3px; }
+  html[data-page-type="home"] #alem-da-face .section-head h2 {
+    max-width: 15ch;
+    margin: 8px 0 10px;
+    font-size: clamp(32px, 8.4vw, 38px) !important;
+    line-height: 1.03;
+  }
+  html[data-page-type="home"] #alem-da-face .section-head p {
+    max-width: 38ch;
+    margin: 0;
+    font-size: 14.5px !important;
+    line-height: 1.52 !important;
+  }
+  html[data-page-type="home"] #alem-da-face .other-procedure-grid { gap: 13px !important; }
+  html[data-page-type="home"] #alem-da-face .other-procedure-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0 !important;
+    padding: 19px !important;
+    border: 1px solid rgba(92, 65, 57, .12);
+    border-radius: 18px;
+    background: rgba(255, 250, 247, .94);
+    box-shadow: 0 8px 24px rgba(73, 49, 42, .055);
+  }
+  html[data-page-type="home"] #alem-da-face .other-procedure-card > span {
+    align-self: flex-start;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(143, 105, 94, .1);
+    font-size: 11px;
+    letter-spacing: .11em;
+    line-height: 1.2;
+  }
+  html[data-page-type="home"] #alem-da-face .other-procedure-card h3 {
+    max-width: 23ch;
+    margin: 12px 0 8px;
+    font-size: clamp(24px, 6.6vw, 28px);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  html[data-page-type="home"] #alem-da-face .other-procedure-card > p {
+    max-width: 40ch;
+    margin: 0;
+    color: #5c4a44;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  html[data-page-type="home"] #alem-da-face .other-actions {
+    width: 100%;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(92, 65, 57, .11);
+  }
+  html[data-page-type="home"] #alem-da-face .other-primary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 15px;
+    border: 0;
+    border-radius: 999px;
+    background: #7b5b52;
+    color: #fffaf7 !important;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(73, 49, 42, .12);
+  }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links { margin-top: 8px; }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    padding: 9px 3px;
+    color: #674940;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links > summary::-webkit-details-marker { display: none; }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links > summary::after {
+    content: "+";
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border: 1px solid rgba(92, 65, 57, .16);
+    border-radius: 50%;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    font-weight: 400;
+  }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links[open] > summary::after { content: "−"; }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links:not([open]) > .other-topic-links { display: none !important; }
+  html[data-page-type="home"] #alem-da-face .other-secondary-links[open] > .other-topic-links {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 7px;
+    margin-top: 2px;
+  }
+  html[data-page-type="home"] #alem-da-face .other-topic-links a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid rgba(92, 65, 57, .12);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .66);
+    font-size: 12.5px;
+  }
+}
