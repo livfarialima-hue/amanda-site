@@ -1332,6 +1332,164 @@ footer {
   }
 }
 
+/* Composição final da home: ritmo, alinhamento e proporções consistentes. */
+html[data-page-type="home"] main > section:not(.hero):not(.credential-strip):not(.mobile-home-quick-nav) {
+  padding-top: clamp(68px, 7vw, 92px);
+  padding-bottom: clamp(68px, 7vw, 92px);
+}
+
+html[data-page-type="home"] .section-head {
+  max-width: 780px;
+  margin-right: auto;
+  margin-bottom: clamp(28px, 3vw, 40px);
+  margin-left: auto;
+  text-align: center;
+}
+
+html[data-page-type="home"] .section-head p {
+  max-width: 680px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+html[data-page-type="home"] .split .section-head,
+html[data-page-type="home"] .doctor-copy .section-head,
+html[data-page-type="home"] .cta-wrap .section-head {
+  margin-left: 0;
+  text-align: left;
+}
+
+html[data-page-type="home"] .doctor-card-with-photo,
+html[data-page-type="home"] .signature-layout,
+html[data-page-type="home"] .split,
+html[data-page-type="home"] .liv-split,
+html[data-page-type="home"] .proof-layout,
+html[data-page-type="home"] .cta-wrap {
+  align-items: center;
+  gap: clamp(38px, 6vw, 78px);
+}
+
+html[data-page-type="home"] .content-layout {
+  grid-template-columns: minmax(320px, .9fr) minmax(0, 1.1fr);
+  gap: clamp(24px, 3vw, 38px);
+}
+
+html[data-page-type="home"] .path-grid,
+html[data-page-type="home"] .other-procedure-grid,
+html[data-page-type="home"] .principle-grid,
+html[data-page-type="home"] .journey-grid,
+html[data-page-type="home"] .result-grid,
+html[data-page-type="home"] .contact-flow-grid {
+  gap: clamp(16px, 2vw, 24px);
+}
+
+html[data-page-type="home"] .path-card,
+html[data-page-type="home"] .other-procedure-card,
+html[data-page-type="home"] .principle-grid article,
+html[data-page-type="home"] .journey-grid > div,
+html[data-page-type="home"] .contact-flow-grid > article {
+  height: 100%;
+  padding: clamp(20px, 2.2vw, 28px);
+}
+
+html[data-page-type="home"] .doctor-copy,
+html[data-page-type="home"] .signature-copy,
+html[data-page-type="home"] .split > div,
+html[data-page-type="home"] .proof-copy {
+  max-width: 620px;
+}
+
+@media (max-width: 900px) {
+  html[data-page-type="home"] main > section:not(.hero):not(.credential-strip):not(.mobile-home-quick-nav) {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  html[data-page-type="home"] .container {
+    width: min(100% - 24px, 1160px);
+  }
+
+  html[data-page-type="home"] .section-head,
+  html[data-page-type="home"] .split .section-head,
+  html[data-page-type="home"] .cta-wrap .section-head {
+    max-width: none;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  html[data-page-type="home"] .section-head h2 {
+    max-width: 22ch;
+    font-size: clamp(30px, 8.5vw, 38px);
+    line-height: 1.06;
+  }
+
+  html[data-page-type="home"] .section-head p {
+    max-width: none;
+    margin-left: 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  html[data-page-type="home"] .doctor-card-with-photo,
+  html[data-page-type="home"] .signature-layout,
+  html[data-page-type="home"] .split,
+  html[data-page-type="home"] .liv-split,
+  html[data-page-type="home"] .proof-layout,
+  html[data-page-type="home"] .cta-wrap,
+  html[data-page-type="home"] .content-layout {
+    gap: 24px;
+  }
+
+  html[data-page-type="home"] .path-grid,
+  html[data-page-type="home"] .other-procedure-grid,
+  html[data-page-type="home"] .principle-grid,
+  html[data-page-type="home"] .journey-grid,
+  html[data-page-type="home"] .result-grid,
+  html[data-page-type="home"] .contact-flow-grid,
+  html[data-page-type="home"] .faq-grid {
+    gap: 14px;
+  }
+
+  html[data-page-type="home"] .path-card,
+  html[data-page-type="home"] .other-procedure-card,
+  html[data-page-type="home"] .principle-grid article,
+  html[data-page-type="home"] .journey-grid > div,
+  html[data-page-type="home"] .contact-flow-grid > article {
+    padding: 18px;
+  }
+
+  html[data-page-type="home"] [data-mobile-scroll] > * {
+    flex-basis: min(86vw, 340px) !important;
+    max-width: min(86vw, 340px) !important;
+  }
+
+  html[data-page-type="home"] .cta-wrap,
+  html[data-page-type="home"] .cta-wrap .eyebrow {
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  html[data-page-type="home"] main > section:not(.hero):not(.credential-strip):not(.mobile-home-quick-nav) {
+    padding-top: 42px;
+    padding-bottom: 42px;
+  }
+
+  html[data-page-type="home"] .section-head {
+    margin-bottom: 20px;
+  }
+
+  html[data-page-type="home"] .doctor-card-with-photo,
+  html[data-page-type="home"] .signature-layout,
+  html[data-page-type="home"] .split,
+  html[data-page-type="home"] .liv-split,
+  html[data-page-type="home"] .proof-layout,
+  html[data-page-type="home"] .cta-wrap,
+  html[data-page-type="home"] .content-layout {
+    gap: 18px;
+  }
+}
+
 @media (max-width: 520px) {
   .container {
     width: min(100% - 20px, 1160px);
@@ -3746,5 +3904,165 @@ main .faq-answer strong {
 
   .hero-secondary-links .text-link {
     font-size: 11.5px;
+  }
+}
+
+/* Hero principal compacta: CTA e rosto visíveis mais cedo no primeiro viewport. */
+@media (max-width: 900px) {
+  .hero-copy {
+    padding: 10px 12px 6px;
+  }
+
+  .hero h1 {
+    margin-top: 5px;
+    margin-bottom: 8px;
+    font-size: clamp(32px, 9.2vw, 39px) !important;
+    line-height: 1;
+  }
+
+  .hero .lead {
+    font-size: 15.5px;
+    line-height: 1.46;
+  }
+
+  .hero-actions {
+    margin-top: 13px;
+  }
+
+  .hero-note {
+    margin-top: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .hero-media {
+    padding: 0 8px 20px;
+  }
+
+  .hero-media img,
+  .hero-media img.hero-photo-test {
+    max-height: 350px;
+    border-radius: 12px;
+    object-position: 50% 30%;
+  }
+}
+
+@media (min-width: 901px) {
+  .hero-copy {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .hero-media img.hero-photo-test {
+    object-position: 50% 38%;
+  }
+}
+
+/* Título de especialista: moldura proporcional ao documento, sem área vazia. */
+.credential-card {
+  grid-template-columns: minmax(260px, 380px) minmax(0, 1fr);
+  gap: clamp(22px, 3vw, 34px);
+}
+
+.credential-image-wrap {
+  width: min(100%, 380px);
+  justify-self: center;
+  padding: 6px;
+}
+
+.credential-image-wrap img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  padding: 0;
+}
+
+@media (max-width: 760px) {
+  .credential-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .credential-image-wrap {
+    width: min(100%, 310px);
+    padding: 4px;
+  }
+
+  .credential-image-wrap img {
+    aspect-ratio: auto;
+    padding: 0;
+  }
+}
+
+/* Alinhamento dos CTAs nos cards de Face e Além da face. */
+@media (min-width: 901px) {
+  html[data-page-type="home"] .face-grid,
+  html[data-page-type="home"] .other-procedure-grid {
+    align-items: stretch;
+  }
+
+  html[data-page-type="home"] .path-card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 22px;
+  }
+
+  html[data-page-type="home"] .path-card > .mini-link {
+    margin-top: auto;
+  }
+
+  html[data-page-type="home"] .other-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: auto;
+  }
+
+  html[data-page-type="home"] .other-topic-links {
+    align-content: flex-start;
+    min-height: 80px;
+  }
+}
+
+/* Cards informativos mais compactos no desktop. */
+@media (min-width: 901px) {
+  html[data-page-type="home"] .principle-grid {
+    margin-top: 22px;
+  }
+
+  html[data-page-type="home"] .principle-grid article {
+    min-height: 0;
+    height: auto;
+    padding: 18px 20px;
+  }
+
+  html[data-page-type="home"] .principle-grid h3 {
+    margin: 12px 0 6px;
+    font-size: 25px;
+  }
+
+  html[data-page-type="home"] .principle-grid p {
+    line-height: 1.5;
+  }
+
+  html[data-page-type="home"] .journey-grid > div {
+    min-height: 0;
+    height: auto;
+    padding: 16px 18px;
+  }
+
+  html[data-page-type="home"] .journey-grid strong {
+    margin-bottom: 6px;
+    font-size: 22px;
+    line-height: 1.12;
+  }
+
+  html[data-page-type="home"] .journey-grid span {
+    font-size: 14px;
+    line-height: 1.5;
   }
 }

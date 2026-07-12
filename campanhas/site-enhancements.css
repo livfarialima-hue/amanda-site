@@ -1409,11 +1409,6 @@ body.mobile-media-viewing .whatsapp-float {
   text-decoration: none;
 }
 
-.article-related-link::after {
-  content: " →";
-  color: #9a7b72;
-}
-
 .contact-price-note {
   display: inline-flex;
   margin: 0 0 20px;
@@ -2720,6 +2715,79 @@ body.curated-video-open { overflow: hidden; }
 .educational-video-copy h3 { margin: 0 0 8px; font-size: clamp(18px, 2vw, 22px); }
 .educational-video-copy p { margin: 0; color: var(--muted); line-height: 1.6; }
 .educational-video-note { margin: 22px 0 0; color: var(--muted); font-size: 13px; }
+
+/* Cabeçalho fixo da home: compacto e legível no mobile. */
+@media (max-width: 900px) {
+  html[data-page-type="home"] body > header {
+    border-bottom: 1px solid rgba(80, 55, 48, .12);
+    background: rgba(255, 250, 247, .94);
+    box-shadow: 0 8px 24px rgba(55, 35, 28, .06);
+    backdrop-filter: blur(14px);
+  }
+  html[data-page-type="home"] body > header .nav {
+    min-height: 64px;
+    padding: 7px 0;
+    transition: min-height .2s ease, padding .2s ease;
+  }
+  html[data-page-type="home"] body > header .brand { display: grid; gap: 2px; padding: 0; }
+  html[data-page-type="home"] body > header .brand strong {
+    font-size: clamp(16px, 4.5vw, 19px);
+    line-height: 1.05;
+    white-space: nowrap;
+  }
+  html[data-page-type="home"] body > header .brand span {
+    margin: 0;
+    overflow: hidden;
+    font-size: clamp(9.5px, 2.8vw, 11px);
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  html[data-page-type="home"] .mobile-menu-toggle {
+    width: auto;
+    min-width: 76px;
+    min-height: 42px;
+    flex-direction: row;
+    gap: 9px;
+    padding: 8px 12px;
+    border-color: rgba(80, 55, 48, .22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .72);
+    color: #51362f;
+  }
+  html[data-page-type="home"] .mobile-menu-label { font-size: 11px; letter-spacing: .06em; }
+  html[data-page-type="home"] .mobile-menu-enabled .nav > nav {
+    top: calc(100% + 8px);
+    right: -2px;
+    left: -2px;
+    padding: 10px;
+    border: 1px solid rgba(80, 55, 48, .14);
+    border-radius: 16px;
+    background: rgba(255, 250, 247, .99);
+    box-shadow: 0 22px 50px rgba(55, 35, 28, .16);
+  }
+  html[data-page-type="home"] .mobile-menu-enabled .nav > nav > a,
+  html[data-page-type="home"] .mobile-menu-enabled .nav > nav > a:not(.btn) {
+    min-height: 46px;
+    padding: 10px 13px;
+    border-bottom: 1px solid rgba(80, 55, 48, .08);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  html[data-page-type="home"] .mobile-menu-enabled .nav > nav > .nav-cta {
+    min-height: 48px;
+    margin-top: 7px;
+    border-bottom: 0;
+    border-radius: 999px;
+  }
+  html[data-page-type="home"] body > header.mobile-header-condensed .nav {
+    min-height: 54px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  html[data-page-type="home"] body > header.mobile-header-condensed .brand span { display: none; }
+  html[data-page-type="home"] body > header.mobile-header-condensed .mobile-menu-toggle { min-height: 40px; }
+}
 
 /* Foto profissional padronizada nas heroes auxiliares. */
 .hero-media img.auxiliary-professional-hero {

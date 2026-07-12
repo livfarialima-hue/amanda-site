@@ -168,7 +168,7 @@
       var hint = document.createElement('span');
       hint.className = 'mobile-scroll-hint';
       hint.setAttribute('aria-hidden', 'true');
-      hint.textContent = 'Deslize para ver mais →';
+      hint.textContent = 'Deslize para ver mais';
       row.parentNode.insertBefore(hint, row);
       row.dataset.mobileScrollEnhanced = 'true';
 
@@ -243,6 +243,14 @@
     header.classList.add('mobile-menu-enabled');
     navWrap.insertBefore(button, nav);
     nav.dataset.mobileMenuEnhanced = 'true';
+
+    if (pageType === 'home') {
+      var updateCompactHeader = function () {
+        header.classList.toggle('mobile-header-condensed', window.scrollY > 32);
+      };
+      window.addEventListener('scroll', updateCompactHeader, { passive: true });
+      updateCompactHeader();
+    }
   }
 
   function disclosureForElement(element) {
@@ -360,19 +368,6 @@
     });
   }
 
-  function standardizeInternalLinkArrows() {
-    document.querySelectorAll('main a[href]').forEach(function (anchor) {
-      if (anchor.hasAttribute('data-image-lightbox') || anchor.querySelector('img, video')) return;
-      try {
-        var url = new URL(anchor.href, window.location.href);
-        if (url.origin !== window.location.origin || url.pathname === window.location.pathname) return;
-        var text = (anchor.textContent || '').replace(/\s+/g, ' ').trim();
-        if (!text || /→$/.test(text)) return;
-        anchor.appendChild(document.createTextNode(' →'));
-      } catch (e) {}
-    });
-  }
-
   function installDetailedFooterMap() {
     var navigation = document.querySelector('footer .footer-navigation');
     if (!navigation || navigation.dataset.sitemapEnhanced === 'true') return;
@@ -381,15 +376,15 @@
     navigation.classList.remove('footer-navigation-compact');
     navigation.innerHTML = '' +
       '<div class="footer-nav-group"><strong>Face e pescoço</strong>' +
-        '<a href="/lifting-facial/">Lifting facial →</a><a href="/lifting-cervical/">Lifting cervical →</a><a href="/blefaroplastia/">Blefaroplastia →</a><a href="/otoplastia/">Otoplastia →</a><a href="/lipo-de-papada/">Lipo de papada →</a><a href="/injetaveis/">Injetáveis →</a>' +
+        '<a href="/lifting-facial/">Lifting facial</a><a href="/lifting-cervical/">Lifting cervical</a><a href="/blefaroplastia/">Blefaroplastia</a><a href="/otoplastia/">Otoplastia</a><a href="/lipo-de-papada/">Lipo de papada</a><a href="/injetaveis/">Injetáveis</a>' +
       '</div>' +
       '<div class="footer-nav-group"><strong>Mamas</strong>' +
-        '<a href="/mama/">Cirurgias de mama →</a><a href="/mastopexia/">Mastopexia →</a><a href="/mastopexia-com-protese/">Mastopexia com prótese →</a><a href="/protese-de-mama/">Prótese de mama →</a><a href="/mamoplastia-redutora/">Mamoplastia redutora →</a>' +
+        '<a href="/mama/">Cirurgias de mama</a><a href="/mastopexia/">Mastopexia</a><a href="/mastopexia-com-protese/">Mastopexia com prótese</a><a href="/protese-de-mama/">Prótese de mama</a><a href="/mamoplastia-redutora/">Mamoplastia redutora</a>' +
       '</div>' +
       '<div class="footer-nav-group"><strong>Corpo e cirurgia íntima</strong>' +
-        '<a href="/contorno-corporal/">Contorno corporal →</a><a href="/abdominoplastia/">Abdominoplastia →</a><a href="/lipoaspiracao/">Lipoaspiração →</a><a href="/pos-bariatrica/">Pós-bariátrica →</a><a href="/ninfoplastia/">Cirurgia íntima →</a>' +
+        '<a href="/contorno-corporal/">Contorno corporal</a><a href="/abdominoplastia/">Abdominoplastia</a><a href="/lipoaspiracao/">Lipoaspiração</a><a href="/pos-bariatrica/">Pós-bariátrica</a><a href="/ninfoplastia/">Cirurgia íntima</a>' +
       '</div>' +
-      '<div class="footer-nav-group footer-nav-group-compact"><strong>Conteúdos</strong><a href="/conteudos/">Conteúdos educativos →</a></div>';
+      '<div class="footer-nav-group footer-nav-group-compact"><strong>Conteúdos</strong><a href="/conteudos/">Conteúdos educativos</a></div>';
     var exploreGroup = navigation.querySelector('.footer-nav-group-compact');
     if (exploreGroup) {
       var exploreTitle = exploreGroup.querySelector('strong');
@@ -412,7 +407,6 @@
     installAnchorAwareness();
     trackInternalNavigation();
     installImageLightbox();
-    standardizeInternalLinkArrows();
     installDetailedFooterMap();
   });
 })();
