@@ -2958,6 +2958,125 @@ body.curated-video-open { overflow: hidden; }
   }
 }
 
+/* Correção final da composição dos cards e títulos da homepage no mobile. */
+@media (min-width: 901px) {
+  html[data-page-type="home"] #procedimentos-face .face-grid > .path-card {
+    grid-column: span 2 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  html[data-page-type="home"] #procedimentos-face .face-grid,
+  html[data-page-type="home"] #procedimentos-face .face-grid.mobile-carousel {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+  }
+
+  html[data-page-type="home"] #procedimentos-face .face-grid > .path-card {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    padding: 18px !important;
+    overflow: visible !important;
+  }
+
+  html[data-page-type="home"] #procedimentos-face .path-card :is(h3, p, span) {
+    width: 100%;
+    max-width: 100%;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
+  }
+
+  html[data-page-type="home"] #procedimentos-face .path-card h3 {
+    margin: 7px 0 8px;
+    font-size: clamp(23px, 6.4vw, 28px);
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  html[data-page-type="home"] #procedimentos-face .path-card p {
+    margin-bottom: 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  html[data-page-type="home"] #procedimentos-face .path-card > .mini-link,
+  html[data-page-type="home"] #procedimentos-face .path-card-links {
+    width: 100%;
+    margin-top: 16px !important;
+  }
+
+  html[data-page-type="home"] #procedimentos-face .path-card .mini-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 13px;
+    text-align: center;
+  }
+
+  html[data-page-type="home"] .other-procedure-card .other-primary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 46px;
+    text-align: center;
+  }
+
+  html[data-page-type="home"] :is(
+    #procedimentos-face,
+    #alem-da-face,
+    #resultados,
+    #quem-conduz,
+    #abordagem,
+    #seguranca,
+    .proof-section,
+    #clinica-liv,
+    #jornada,
+    #consulta
+  ) :is(.section-head, .proof-copy) {
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  html[data-page-type="home"] :is(.section-head, .proof-copy) h2 {
+    width: 100%;
+    max-width: 18ch;
+    margin-right: 0;
+    margin-left: 0;
+    text-wrap: balance;
+  }
+
+  html[data-page-type="home"] .proof-copy h2 {
+    max-width: 16ch;
+  }
+}
+
+@media (max-width: 430px) {
+  html[data-page-type="home"] :is(.section-head, .proof-copy) h2 {
+    font-size: clamp(29px, 8.4vw, 35px) !important;
+    line-height: 1.04;
+  }
+}
+
 @media (max-width: 900px) {
   .article-page > .article-hero.professional-article-hero {
     grid-template-columns: 1fr;
