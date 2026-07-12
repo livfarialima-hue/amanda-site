@@ -1079,6 +1079,30 @@ body.mobile-media-viewing .whatsapp-float {
   box-shadow: none;
 }
 
+.article-page > .article-hero.consultation-article-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 72px);
+}
+
+.consultation-hero-copy { min-width: 0; }
+
+.consultation-hero-media {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 20px 55px rgba(55, 35, 28, .11);
+}
+
+.consultation-hero-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 34%;
+}
+
 .content-hub-hero h1,
 .article-hero h1 {
   max-width: 900px;
@@ -1236,6 +1260,21 @@ body.mobile-media-viewing .whatsapp-float {
 }
 
 @media (max-width: 900px) {
+  .article-page > .article-hero.consultation-article-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .consultation-hero-media {
+    border-radius: 18px;
+  }
+
+  .consultation-hero-media img {
+    aspect-ratio: 4 / 3;
+    max-height: 430px;
+    object-position: 50% 30%;
+  }
+
   .footer-navigation { grid-template-columns: 1fr 1fr; }
   .content-intent-grid { grid-template-columns: 1fr; }
   .article-layout { grid-template-columns: 1fr; gap: 24px; }
@@ -2641,4 +2680,128 @@ body.curated-video-open { overflow: hidden; }
   .procedure-link-list small {
     font-size: 14px;
   }
+}
+/* Biblioteca de vídeos educativos nas páginas auxiliares. */
+.educational-videos {
+  padding: clamp(56px, 7vw, 92px) 0;
+  background: linear-gradient(180deg, rgba(247, 240, 236, .45), rgba(255, 255, 255, .92));
+}
+
+.educational-videos .section-head {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.educational-video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.educational-video-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(80, 55, 48, .13);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 16px 45px rgba(55, 35, 28, .08);
+}
+
+.educational-video-card video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  max-height: 620px;
+  background: #241c19;
+  object-fit: contain;
+}
+
+.educational-video-copy { padding: 19px 20px 22px; }
+.educational-video-copy h3 { margin: 0 0 8px; font-size: clamp(18px, 2vw, 22px); }
+.educational-video-copy p { margin: 0; color: var(--muted); line-height: 1.6; }
+.educational-video-note { margin: 22px 0 0; color: var(--muted); font-size: 13px; }
+
+/* Foto profissional padronizada nas heroes auxiliares. */
+.hero-media img.auxiliary-professional-hero {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: inherit !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: cover !important;
+  object-position: 50% 44% !important;
+}
+
+.article-page > .article-hero.professional-article-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
+  align-items: center;
+  gap: clamp(30px, 5vw, 68px);
+}
+
+.professional-hero-copy { min-width: 0; }
+
+.professional-hero-media {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 20px 55px rgba(55, 35, 28, .1);
+}
+
+.professional-hero-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+
+@media (max-width: 900px) {
+  .article-page > .article-hero.professional-article-hero {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .professional-hero-media {
+    border-radius: 18px;
+  }
+
+  .professional-hero-media img {
+    aspect-ratio: 4 / 3;
+    max-height: 430px;
+    object-position: 50% 36%;
+  }
+
+  .hero-media img.auxiliary-professional-hero {
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 4 / 3 !important;
+    object-position: 50% 38% !important;
+  }
+
+  .educational-video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .educational-videos { padding: 48px 0; overflow: hidden; }
+  .educational-videos .section-head { margin-bottom: 20px; }
+  .educational-video-grid {
+    display: flex;
+    gap: 14px;
+    margin-right: calc(50% - 50vw);
+    padding-right: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+  .educational-video-grid::-webkit-scrollbar { display: none; }
+  .educational-video-card {
+    flex: 0 0 min(82vw, 340px);
+    scroll-snap-align: start;
+    border-radius: 18px;
+  }
+  .educational-video-card video { max-height: 70vh; }
+  .educational-video-copy { padding: 16px 17px 19px; }
 }

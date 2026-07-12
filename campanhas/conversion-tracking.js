@@ -68,8 +68,9 @@
   }
 
   function trackWhatsAppClick(link) {
-    if (!googleMeasurementAvailable() || !config.googleAdsId || !config.googleAdsConversionLabel) return;
-    if (!conversionNotYetSent('whatsapp_click')) return;
+    // O Consent Mode mantém o gtag disponível mesmo sem aceite. Nesse estado,
+    // estes eventos são enviados como pings sem cookies.
+    if (!googleMeasurementAvailable()) return;
 
     var consented = fullConsentGranted();
     var mode = consented ? 'consented' : 'cookieless';

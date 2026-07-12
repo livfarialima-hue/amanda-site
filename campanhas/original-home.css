@@ -225,6 +225,11 @@ nav {
   object-position: center;
 }
 
+/* Teste reversível da foto profissional na hero principal. */
+.hero-media img.hero-photo-test {
+  object-position: 50% 44%;
+}
+
 .credential-strip {
   padding: 0;
   background: var(--paper);
@@ -3445,6 +3450,10 @@ main .faq-answer strong {
     border-radius: 18px;
     object-fit: cover;
     object-position: center top;
+  }
+
+  .hero-media img.hero-photo-test {
+    object-position: 50% 38%;
   }
 
   .credentials span {

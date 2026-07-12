@@ -850,7 +850,146 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     lead.insertAdjacentElement('afterend', focus);
   }
 
+  function installEducationalVideos() {
+    var path = window.location.pathname.replace(/\/+$/, '/') || '/';
+    var galleries = {
+      '/blefaroplastia/': {
+        eyebrow: 'Explicações em vídeo',
+        title: 'Entenda o envelhecimento do olhar e o planejamento da blefaroplastia.',
+        intro: 'Conteúdos curtos para visualizar anatomia, indicação, naturalidade e cicatrizes antes da consulta.',
+        items: [
+          ['envelhecimento-do-olho.mp4', 'Como o olhar envelhece', 'Pálpebras, bolsas e estruturas ao redor dos olhos mudam de maneiras diferentes.'],
+          ['blefaroplastia-em-jovens.mp4', 'Blefaroplastia em jovens', 'Idade isolada não define indicação; anatomia, queixa e função precisam ser avaliadas.'],
+          ['como-e-feita-a-blefaroplastia.mp4', 'Como é feita a blefaroplastia', 'Uma explicação visual das estruturas consideradas no planejamento cirúrgico.'],
+          ['sobrancelha-elevada-naturalidade.mp4', 'Sobrancelha elevada nem sempre é natural', 'Posição, formato e expressão devem ser analisados em conjunto.'],
+          ['cicatrizes-blefaroplastia-desenho.mp4', 'Onde ficam as cicatrizes', 'O desenho mostra como as incisões acompanham dobras e limites naturais.'],
+          ['olhar-envelhecido-blefaroplastia.mp4', 'Queixa e possíveis soluções', 'Nem todo aspecto cansado tem a mesma causa ou pede a mesma abordagem.'],
+          ['cicatriz-blefaroplastia.mp4', 'Evolução da cicatriz', 'A aparência muda ao longo dos meses e depende da resposta individual.']
+        ]
+      },
+      '/lifting-facial/': {
+        eyebrow: 'Planejamento em vídeo',
+        title: 'Recursos para entender volume, contorno e naturalidade.',
+        intro: 'Simulações e explicações ajudam a separar queixas diferentes antes de discutir uma técnica.',
+        items: [
+          ['lifting-com-enxertia-de-gordura.mp4', 'Lifting e enxertia de gordura', 'Uma simulação para diferenciar reposicionamento dos tecidos e recuperação de volume.'],
+          ['queixa-e-solucao-face.mp4', 'Da queixa ao plano facial', 'Cada incômodo precisa ser relacionado à estrutura que realmente o produz.'],
+          ['medo-de-resultados-exagerados.mp4', 'Medo de um resultado exagerado', 'Naturalidade depende de indicação, proporção e respeito à identidade facial.'],
+          ['lip-lifting.mp4', 'O que é lip lifting', 'Um procedimento específico para a relação entre o lábio superior e a base do nariz.']
+        ]
+      },
+      '/conteudos/cuidados-cicatrizacao-cirurgia/': {
+        eyebrow: 'Explicação em vídeo',
+        title: 'Fatores que influenciam a cicatrização.',
+        intro: 'Técnica, biologia, hábitos e cuidados pós-operatórios participam da evolução.',
+        items: [['fatores-cicatrizacao.mp4', 'Cicatrização é multifatorial', 'Uma visão prática dos fatores que podem favorecer ou dificultar a recuperação.']]
+      },
+      '/conteudos/consulta-cirurgia-plastica/': {
+        eyebrow: 'Antes da avaliação',
+        title: 'Como é uma consulta com a Dra. Amanda.',
+        intro: 'Queixa, anatomia, expectativas e segurança entram na conversa antes de qualquer decisão.',
+        items: [['como-funciona-a-consulta.mp4', 'Eu e você em consulta', 'A consulta organiza dúvidas e possibilidades antes de qualquer decisão sobre tratamento.']]
+      }
+    };
+    var gallery = galleries[path];
+    var main = document.querySelector('main');
+    if (!gallery || !main || main.querySelector('.educational-videos')) return;
+
+    var section = document.createElement('section');
+    var headingId = 'videos-educativos-' + path.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
+    section.className = 'educational-videos';
+    section.setAttribute('aria-labelledby', headingId);
+    section.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow"></span><h2 id="' + headingId + '"></h2><p class="educational-video-intro"></p></div><div class="educational-video-grid"></div><p class="educational-video-note">Conteúdo educativo. Os vídeos não substituem exame físico nem definem indicação individual.</p></div>';
+    section.querySelector('.eyebrow').textContent = gallery.eyebrow;
+    section.querySelector('h2').textContent = gallery.title;
+    section.querySelector('.educational-video-intro').textContent = gallery.intro;
+
+    var grid = section.querySelector('.educational-video-grid');
+    gallery.items.forEach(function (item) {
+      var card = document.createElement('article');
+      card.className = 'educational-video-card';
+      card.innerHTML = '<video controls playsinline preload="metadata" aria-label="' + item[1] + '"><source type="video/mp4"></video><div class="educational-video-copy"><h3></h3><p></p></div>';
+      card.querySelector('source').src = '/campanhas/assets/conteudos/videos/' + item[0];
+      card.querySelector('h3').textContent = item[1];
+      card.querySelector('p').textContent = item[2];
+      grid.appendChild(card);
+    });
+
+    var faq = main.querySelector('#faq');
+    if (faq) faq.insertAdjacentElement('beforebegin', section);
+    else main.appendChild(section);
+  }
+
+  function installConsultationArticleHeroImage() {
+    var path = window.location.pathname.replace(/\/+$/, '/') || '/';
+    if (path !== '/conteudos/consulta-cirurgia-plastica/') return;
+
+    var hero = document.querySelector('.article-page > .article-hero');
+    if (!hero || hero.querySelector('.consultation-hero-media')) return;
+
+    var copy = document.createElement('div');
+    copy.className = 'consultation-hero-copy';
+    while (hero.firstChild) copy.appendChild(hero.firstChild);
+
+    var media = document.createElement('div');
+    media.className = 'consultation-hero-media';
+    var photo = document.createElement('img');
+    photo.src = '/campanhas/assets/conteudos/amanda-atendendo-consulta.png';
+    photo.alt = 'Dra. Amanda Schroeder durante atendimento em consulta';
+    photo.width = 1146;
+    photo.height = 1400;
+    photo.decoding = 'async';
+    photo.loading = 'eager';
+    photo.setAttribute('fetchpriority', 'high');
+    media.appendChild(photo);
+
+    hero.classList.add('consultation-article-hero');
+    hero.appendChild(copy);
+    hero.appendChild(media);
+  }
+
+  function installAuxiliaryProfessionalHero() {
+    var path = window.location.pathname.replace(/\/+$/, '/') || '/';
+    var pageType = document.documentElement.dataset.pageType || '';
+    if (pageType === 'home' || /\/conteudos\/consulta-cirurgia-plastica\/$/.test(path)) return;
+
+    var photo = document.querySelector('.hero-media img');
+    if (photo) {
+      photo.src = '/campanhas/assets/amanda-profissional-hero.webp';
+      photo.removeAttribute('srcset');
+      photo.width = 1200;
+      photo.height = 1020;
+      photo.alt = 'Dra. Amanda Schroeder em ambiente profissional';
+      photo.classList.add('auxiliary-professional-hero');
+      return;
+    }
+
+    var articleHero = document.querySelector('.article-page > .article-hero');
+    if (!articleHero || articleHero.querySelector('.professional-hero-media')) return;
+    var copy = document.createElement('div');
+    copy.className = 'professional-hero-copy';
+    while (articleHero.firstChild) copy.appendChild(articleHero.firstChild);
+    var media = document.createElement('div');
+    media.className = 'professional-hero-media';
+    var articlePhoto = document.createElement('img');
+    articlePhoto.src = '/campanhas/assets/amanda-profissional-hero.webp';
+    articlePhoto.alt = 'Dra. Amanda Schroeder em ambiente profissional';
+    articlePhoto.width = 1200;
+    articlePhoto.height = 1020;
+    articlePhoto.decoding = 'async';
+    articlePhoto.loading = 'eager';
+    articlePhoto.setAttribute('fetchpriority', 'high');
+    media.appendChild(articlePhoto);
+    articleHero.classList.add('professional-article-hero');
+    articleHero.appendChild(copy);
+    articleHero.appendChild(media);
+  }
+
+  installAuxiliaryProfessionalHero();
+
   document.addEventListener('DOMContentLoaded', function () {
+    installConsultationArticleHeroImage();
+    installEducationalVideos();
     installFaceFocusPositioning();
     installJourneyReturn();
     installJourneyPositionMemory();
