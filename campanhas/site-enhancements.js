@@ -168,7 +168,7 @@
       var hint = document.createElement('span');
       hint.className = 'mobile-scroll-hint';
       hint.setAttribute('aria-hidden', 'true');
-      hint.textContent = 'Deslize para ver mais';
+      hint.textContent = 'Deslize para ver mais resultados';
       row.parentNode.insertBefore(hint, row);
       row.dataset.mobileScrollEnhanced = 'true';
 
