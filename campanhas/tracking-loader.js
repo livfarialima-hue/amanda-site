@@ -53,6 +53,7 @@
 
     if (!window.__amandaGoogleConfigured) {
       window.__amandaGoogleConfigured = true;
+      window.gtag('set', 'allow_ad_personalization_signals', false);
       window.gtag('js', new Date());
       if (config.ga4Id) {
         window.gtag('config', config.ga4Id, {
