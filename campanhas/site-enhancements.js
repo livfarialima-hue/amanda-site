@@ -390,6 +390,15 @@
         '<a href="/contorno-corporal/">Contorno corporal →</a><a href="/abdominoplastia/">Abdominoplastia →</a><a href="/lipoaspiracao/">Lipoaspiração →</a><a href="/pos-bariatrica/">Pós-bariátrica →</a><a href="/ninfoplastia/">Cirurgia íntima →</a>' +
       '</div>' +
       '<div class="footer-nav-group footer-nav-group-compact"><strong>Conteúdos</strong><a href="/conteudos/">Conteúdos educativos →</a></div>';
+    var exploreGroup = navigation.querySelector('.footer-nav-group-compact');
+    if (exploreGroup) {
+      var exploreTitle = exploreGroup.querySelector('strong');
+      if (exploreTitle) exploreTitle.textContent = 'Explore';
+      var proceduresLink = document.createElement('a');
+      proceduresLink.href = '/procedimentos/';
+      proceduresLink.textContent = 'Todos os procedimentos \u2192';
+      exploreGroup.insertBefore(proceduresLink, exploreGroup.querySelector('a'));
+    }
     navigation.dataset.sitemapEnhanced = 'true';
   }
 
