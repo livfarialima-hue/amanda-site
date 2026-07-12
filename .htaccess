@@ -1,6 +1,5 @@
 # Regras de redirecionamento e preservação de parâmetros de campanha.
 RewriteEngine On
-RewriteRule ^braquioplastia/?$ /pos-bariatrica/?area=bracos [R=301,L,NE,QSA]
 
 # Compressão e cache para melhorar Core Web Vitals.
 <IfModule mod_deflate.c>
