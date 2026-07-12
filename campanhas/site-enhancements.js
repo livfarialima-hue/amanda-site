@@ -190,12 +190,6 @@
   }
 
   function installMobileMenu() {
-    var root = document.documentElement;
-    var pageType = root.dataset.pageType || '';
-    var isContentPage = window.location.pathname.indexOf('/conteudos/') !== -1;
-    var enabled = pageType === 'home' || pageType === 'content-library' || isContentPage;
-    if (!enabled) return;
-
     var header = document.querySelector('body > header');
     var navWrap = header && header.querySelector(':scope > .container.nav');
     var nav = navWrap && navWrap.querySelector(':scope > nav');
@@ -244,13 +238,11 @@
     navWrap.insertBefore(button, nav);
     nav.dataset.mobileMenuEnhanced = 'true';
 
-    if (pageType === 'home') {
-      var updateCompactHeader = function () {
-        header.classList.toggle('mobile-header-condensed', window.scrollY > 32);
-      };
-      window.addEventListener('scroll', updateCompactHeader, { passive: true });
-      updateCompactHeader();
-    }
+    var updateCompactHeader = function () {
+      header.classList.toggle('mobile-header-condensed', window.scrollY > 32);
+    };
+    window.addEventListener('scroll', updateCompactHeader, { passive: true });
+    updateCompactHeader();
   }
 
   function disclosureForElement(element) {
@@ -391,7 +383,7 @@
       if (exploreTitle) exploreTitle.textContent = 'Explore';
       var proceduresLink = document.createElement('a');
       proceduresLink.href = '/procedimentos/';
-      proceduresLink.textContent = 'Todos os procedimentos \u2192';
+      proceduresLink.textContent = 'Todos os procedimentos';
       exploreGroup.insertBefore(proceduresLink, exploreGroup.querySelector('a'));
     }
     navigation.dataset.sitemapEnhanced = 'true';
