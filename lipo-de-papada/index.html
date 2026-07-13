@@ -212,10 +212,10 @@
         },
         {
           "@type": "Question",
-          "name": "Quando volto ao trabalho e à vida social? Quais riscos precisam ser discutidos?",
+          "name": "Quando outro planejamento pode ser mais adequado?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Muitas pacientes retomam atividades leves em cerca de 7 a 14 dias, mas edema e endurecimento podem persistir por semanas. Entre os riscos estão hematoma, infecção, seroma, assimetria, irregularidades, fibrose, alteração de sensibilidade, flacidez residual, cicatrização desfavorável, lesão nervosa e necessidade de revisão."
+            "text": "Quando a pele tem pouca capacidade de retração, há excesso de pele, o platisma participa de forma relevante ou face, queixo e mandíbula são determinantes do contorno, outro planejamento pode ser mais coerente. A avaliação explica limites, alternativas e possibilidade de associação."
           }
         }
       ]
@@ -567,27 +567,73 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
   .lp2-cause-card,.lp2-option-card{padding:21px}
 }
 
+/* Sistema aprovado: lipo de papada — 13/07/2026 */
+.lp2-header.is-unpinned{position:static}
+.lp2-header .lp2-btn{background:#176b4b;border-color:#176b4b}
+.lp2-header .lp2-btn:hover{background:#11543a}
+.lp2-results-grid--single{display:block}
+.lp2-result-card--main{max-width:1080px}
+.lp2-result-context{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.lp2-result-context span{padding:7px 10px;border:1px solid var(--lp-line);color:var(--lp-muted);font-size:13px;line-height:1.35}
+.lp2-result-notice{margin:18px 0 0;max-width:920px;color:var(--lp-muted);font-size:13px;line-height:1.62}
+.lp2-clinic-gallery,.lp2-media-carousel{display:flex;gap:16px;overflow-x:auto;margin:28px 0 0;padding:0 2px 8px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--lp-soft) transparent}
+.lp2-clinic-gallery figure,.lp2-media-carousel article,.lp2-media-carousel figure{flex:0 0 min(74%,360px);margin:0;overflow:hidden;border:1px solid var(--lp-line);background:var(--lp-paper);scroll-snap-align:start}
+.lp2-clinic-gallery img{display:block;width:100%;height:310px;object-fit:cover}
+.lp2-clinic-gallery .lp2-clinic-room{object-position:center 58%}
+.lp2-clinic-gallery .lp2-clinic-liv2{object-position:center 58%}
+.lp2-carousel-controls{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.lp2-carousel-control{width:48px;height:48px;border:1px solid var(--lp-line);background:var(--lp-paper);color:var(--lp-ink);font-size:19px;cursor:pointer}
+.lp2-carousel-control:disabled{border-color:rgba(78,58,52,.08);background:rgba(78,58,52,.06);color:rgba(47,38,35,.32);cursor:default}
+.lp2-carousel-hint{margin:18px 0 0;color:var(--lp-muted);font-size:14px;line-height:1.5}
+.lp2-carousel-hint strong{color:var(--lp-ink)}
+.lp2-media-carousel video,.lp2-media-carousel img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#251d1a}
+.lp2-media-carousel figcaption,.lp2-media-copy{padding:17px;color:var(--lp-muted);font-size:14px;line-height:1.55}
+.lp2-media-copy h3{margin:0;color:var(--lp-ink);font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;line-height:1.15}
+.lp2-media-copy p{margin:9px 0 0}
+.lp2-hospitals{margin-top:28px;padding:22px;border:1px solid var(--lp-line);background:var(--lp-paper)}
+.lp2-hospitals strong{display:block;font-size:15px}.lp2-hospitals p{margin:8px 0 0;color:var(--lp-muted);font-size:14px;line-height:1.6}
+.lp2-content-section{background:var(--lp-bg)}
+.lp2-footer-links{display:flex}
+.lp2-sticky{border-color:rgba(23,107,75,.26);background:rgba(255,255,255,.96)}
+.lp2-sticky .lp2-btn{background:#176b4b;border-color:#176b4b}.lp2-sticky .lp2-btn:hover{background:#11543a}
+@media (max-width:760px){
+  .lp2-header-inner{min-height:62px}.lp2-header .lp2-btn{width:auto;min-height:42px;padding:10px 12px;font-size:13px}
+  .lp2-brand strong{font-size:14px}.lp2-brand span{font-size:10px}
+  .lp2-hero{padding:20px 0 14px}.lp2-hero-grid{gap:18px}.lp2-hero h1{font-size:clamp(35px,10vw,39px);line-height:1.03}
+  html[data-page-type="procedure"] .lp2-hero-media img.auxiliary-professional-hero{height:210px!important;max-height:210px!important;aspect-ratio:16/9!important;object-fit:cover!important;object-position:center 16%!important}.lp2-hero-note{font-size:13px}
+  .lp2-trust-item span,.lp2-eyebrow,.lp2-disclaimer{font-size:13px}.lp2-result-context span{font-size:13px}
+  .lp2-clinic-gallery,.lp2-media-carousel{margin-top:22px}.lp2-clinic-gallery figure,.lp2-media-carousel article,.lp2-media-carousel figure{flex-basis:88%}
+  .lp2-clinic-gallery img{height:258px}.lp2-carousel-controls{justify-content:flex-start}
+  .lp2-section{padding:54px 0}.lp2-result-notice{font-size:13px}.lp2-hospitals{padding:18px}
+  .lp2-footer-links{display:none}
+}
+
 </style>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PW5LMQ66');</script>
+<!-- End Google Tag Manager -->
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PW5LMQ66"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
 <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo principal</a>
 
 <header class="lp2-header">
   <div class="lp2-shell lp2-header-inner">
     <a aria-label="Dra. Amanda Schroeder — página inicial" class="lp2-brand" href="../index.html">
       <strong>Dra. Amanda Schroeder</strong>
-      <span>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</span>
+      <span>MÉDICA · CRM-SP 191605 · Cirurgia Plástica · RQE 110472</span>
     </a>
-    <button aria-expanded="false" aria-label="Abrir menu" class="lp2-menu-button" type="button">Menu</button>
     <nav aria-label="Navegação da página" class="lp2-nav">
-      <a href="#resultados">Resultado</a>
-      <a href="#queixas">O que você percebe</a>
-      <a href="#causas">O que pode causar</a>
-      <a href="#indicacao">Indicação</a>
-      <a href="#consulta">Consulta</a>
-      <a href="#recuperacao">Recuperação</a>
-      <a href="#faq">Dúvidas</a>
-      <a class="lp2-btn" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Consultar disponibilidade</a>
+      <a class="lp2-btn" data-cta-location="header" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Falar com a equipe</a>
     </nav>
   </div>
 </header>
@@ -597,14 +643,13 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     <div class="lp2-shell lp2-hero-grid">
       <div class="lp2-hero-copy">
         <span class="lp2-eyebrow">Lipo de papada em São Paulo</span>
-        <h1>Mais definição entre queixo e pescoço — quando a gordura é realmente a causa.</h1>
-        <p class="lead">O volume abaixo do queixo pode vir de gordura, flacidez da pele, bandas musculares, projeção do queixo ou da combinação desses fatores. A avaliação identifica se a lipo de papada é suficiente ou se outra abordagem produziria um contorno mais coerente com o rosto.</p>
+        <h1>Lipo de papada: quando a gordura abaixo do queixo é parte principal da queixa.</h1>
+        <p class="lead">A lipo de papada pode ser uma possibilidade quando há gordura localizada abaixo do queixo. Pele, platisma, queixo, mandíbula e participação da face também são avaliados para confirmar se este é o caminho mais coerente para a sua queixa.</p>
         <p class="lp2-doctor-line">Dra. Amanda Schroeder · Cirurgia Plástica · CRM-SP 191605 · RQE 110472 · Pinheiros</p>
         <div class="lp2-hero-actions">
-          <a class="lp2-btn" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Consultar disponibilidade</a>
-          <a class="lp2-btn lp2-btn--ghost" href="#resultados">Ver resultado</a>
+          <a class="lp2-btn" data-cta-location="hero" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Falar com a equipe</a>
         </div>
-        <p class="lp2-hero-note">Consulta particular em Pinheiros · Nota fiscal para reembolso</p>
+        <p class="lp2-hero-note">Consulta particular na Clínica LIV Faria Lima · Nota fiscal para reembolso</p>
       </div>
       <figure class="lp2-hero-media">
         <img alt="Dra. Amanda Schroeder" decoding="async" fetchpriority="high" height="813" sizes="(max-width:760px) 92vw, 50vw" src="../campanhas/assets/amanda-hero.webp" srcset="../campanhas/assets/amanda-hero-480.webp 480w, ../campanhas/assets/amanda-hero-720.webp 720w, ../campanhas/assets/amanda-hero.webp 970w" width="970"/>
@@ -625,20 +670,20 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     <div class="lp2-shell">
       <div class="lp2-section-head">
         <span class="lp2-eyebrow">Resultado com contexto</span>
-        <h2>Quando a gordura é predominante, o perfil pode ganhar mais definição.</h2>
-        <p>Observe o volume abaixo do queixo, a transição com o pescoço e a relação do resultado com mandíbula e projeção do queixo.</p>
+        <h2>Um resultado real para observar com contexto.</h2>
+        <p>Veja a redução do volume abaixo do queixo e a transição entre mandíbula e pescoço. A mesma mudança não é esperada para todas as anatomias.</p>
       </div>
       <div class="lp2-results-grid">
         <article class="lp2-result-card lp2-result-card--main">
-          <img alt="Antes e depois educativo de lipo de papada em perfil" decoding="async" height="1536" loading="eager" src="../campanhas/assets/resultados/lipo-papada-antes-depois-perfil.png" width="3389"/>
+          <img alt="Antes e depois educativo de lipo de papada em perfil" decoding="async" height="1536" loading="eager" src="../campanhas/assets/resultados/lipo-papada-antes-depois-perfil.webp" width="3389"/>
           <div class="lp2-result-copy">
-            <h3>Lipo de papada — vista de perfil</h3>
-            <p>Redução individual do volume submentoniano e melhora da transição entre mandíbula e pescoço.</p>
-            <div class="lp2-observe"><span>Volume submentoniano</span><span>Linha mandibular</span><span>Transição com o pescoço</span></div>
+            <h3>Perfil — caso real</h3>
+            <p>O caso ilustra uma evolução individual de contorno. A indicação e o planejamento dependem do conjunto entre gordura, pele, músculo e estrutura facial.</p>
+            <div class="lp2-result-context"><span>Volume abaixo do queixo</span><span>Transição com o pescoço</span><span>Relação com a mandíbula</span></div>
           </div>
         </article>
       </div>
-      <p class="lp2-disclaimer">Imagem autorizada, com finalidade educativa. Resultados variam conforme anatomia, indicação, técnica, retração da pele, edema, cicatrização e cuidados pós-operatórios. Irregularidades, assimetrias, intercorrências, resultados insatisfatórios e necessidade de revisão são possíveis; os riscos individuais são discutidos na avaliação médica.</p>
+      <p class="lp2-result-notice">Imagem autorizada com finalidade educativa. Resultados variam conforme anatomia, indicação, técnica, pele, edema, cicatrização e cuidados pós-operatórios. A avaliação define o que pode fazer sentido em cada caso.</p>
     </div>
   </section>
 
@@ -646,17 +691,16 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     <div class="lp2-shell">
       <div class="lp2-section-head">
         <span class="lp2-eyebrow">A linguagem de quem procura ajuda</span>
-        <h2>O que você percebe — e o que isso pode representar.</h2>
-        <p>“Papada” é um nome simples para alterações que podem vir de estruturas diferentes. A forma como a pessoa descreve o incômodo ajuda a iniciar a conversa, mas não define sozinha o tratamento.</p>
+        <h2>O que você percebe ajuda a organizar a avaliação.</h2>
+        <p>“Papada” é uma forma comum de descrever mudanças que podem ter mais de uma origem. A queixa entra na conversa; a técnica é confirmada depois do exame.</p>
       </div>
       <div class="lp2-language-grid">
-        <article class="lp2-language-card"><h3>“Tenho papada mesmo sendo magra”</h3><p>O volume abaixo do queixo nem sempre acompanha o peso corporal. Genética, distribuição de gordura, estrutura facial e projeção do queixo também influenciam.</p></article>
-        <article class="lp2-language-card"><h3>“Meu queixo parece duplo”</h3><p>Pode existir gordura localizada, mas flacidez da pele e posição do queixo também modificam o perfil.</p></article>
-        <article class="lp2-language-card"><h3>“Minha mandíbula sumiu”</h3><p>A perda da linha mandibular pode vir do volume abaixo do queixo, da queda da face, da flacidez cervical ou da estrutura óssea.</p></article>
-        <article class="lp2-language-card"><h3>“Não gosto de fotos de perfil”</h3><p>O perfil depende da relação entre nariz, lábios, queixo, mandíbula e pescoço. Retirar gordura não corrige automaticamente todas essas proporções.</p></article>
-        <article class="lp2-language-card"><h3>“Depois que emagreci ficou pele sobrando”</h3><p>Quando a principal questão é flacidez, retirar mais gordura pode não melhorar o contorno e pode evidenciar a pele solta.</p></article>
+        <article class="lp2-language-card"><h3>“Tenho volume abaixo do queixo”</h3><p>Gordura localizada pode participar, mas não é o único componente possível.</p></article>
+        <article class="lp2-language-card"><h3>“Minha mandíbula perdeu definição”</h3><p>Pescoço, face, queixo, mandíbula e pele podem influenciar a leitura do contorno.</p></article>
+        <article class="lp2-language-card"><h3>“Depois de emagrecer, a pele ficou solta”</h3><p>Quando a flacidez predomina, retirar gordura isoladamente pode não ser o melhor caminho.</p></article>
+        <article class="lp2-language-card"><h3>“Quero saber se lipo resolve para mim”</h3><p>O procedimento pesquisado entra na conversa. O exame define se há indicação e quais são os limites.</p></article>
       </div>
-      <div class="lp2-language-bridge"><strong>A mesma queixa pode representar anatomias diferentes.</strong> A técnica é escolhida somente depois do exame.</div>
+      <div class="lp2-language-bridge"><strong>A mesma queixa pode representar anatomias diferentes.</strong> A decisão não é entre “lipo ou nada”, mas entre o que é coerente e seguro para você.</div>
     </div>
   </section>
 
@@ -664,15 +708,14 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     <div class="lp2-shell">
       <div class="lp2-section-head">
         <span class="lp2-eyebrow">Anatomia antes da técnica</span>
-        <h2>Nem toda papada é apenas gordura.</h2>
-        <p>A avaliação separa os componentes do contorno para evitar retirar gordura quando a causa principal está em outra estrutura.</p>
+        <h2>O contorno depende de mais do que gordura.</h2>
+        <p>A avaliação diferencia os componentes para não indicar retirada de gordura quando a origem principal da queixa está em outra estrutura.</p>
       </div>
       <div class="lp2-causes-grid">
-        <article class="lp2-cause-card"><span>Gordura superficial</span><h3>O alvo mais comum da lipo</h3><p>É o componente que pode responder melhor à lipoaspiração em pacientes selecionadas.</p></article>
-        <article class="lp2-cause-card"><span>Gordura profunda</span><h3>Planos diferentes</h3><p>Nem todo volume abaixo do queixo está em um plano adequado para lipoaspiração convencional.</p></article>
-        <article class="lp2-cause-card"><span>Pele</span><h3>Elasticidade e retração</h3><p>A pele precisa acomodar-se após a retirada de gordura. Flacidez relevante pode exigir outro planejamento.</p></article>
-        <article class="lp2-cause-card"><span>Platisma</span><h3>Bandas e ângulo cervical</h3><p>Alterações musculares podem interferir no contorno e não são corrigidas apenas retirando gordura.</p></article>
-        <article class="lp2-cause-card"><span>Estrutura facial</span><h3>Queixo, mandíbula e face</h3><p>Pouca projeção do queixo, estrutura mandibular e queda da face podem contribuir para a sensação de papada.</p></article>
+        <article class="lp2-cause-card"><span>Gordura</span><h3>Volume localizado</h3><p>É um componente que pode responder à lipoaspiração em casos selecionados.</p></article>
+        <article class="lp2-cause-card"><span>Pele</span><h3>Elasticidade e retração</h3><p>A pele precisa acomodar-se ao novo contorno; flacidez relevante pode mudar o plano.</p></article>
+        <article class="lp2-cause-card"><span>Platisma</span><h3>Músculo e ângulo cervical</h3><p>Bandas ou alterações musculares interferem no contorno e não são corrigidas apenas retirando gordura.</p></article>
+        <article class="lp2-cause-card"><span>Perfil</span><h3>Queixo, mandíbula e face</h3><p>Proporções e queda da face podem participar da sensação de menor definição.</p></article>
       </div>
       <div class="lp2-language-bridge"><strong>A avaliação observa o rosto de frente, de perfil, em movimento e em relação com o pescoço.</strong></div>
     </div>
@@ -691,26 +734,22 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
           <ul class="lp2-checks">
             <li>a gordura localizada é a principal causa do volume;</li>
             <li>a pele apresenta boa capacidade de retração;</li>
-            <li>não há flacidez cervical importante;</li>
-            <li>bandas musculares não são o componente predominante;</li>
-            <li>a estrutura do queixo e da mandíbula é compatível com o resultado esperado;</li>
-            <li>há busca por melhora localizada, compreendendo a evolução do edema.</li>
+            <li>pele e músculo não predominam sobre a gordura;</li>
+            <li>há expectativa realista para uma melhora localizada.</li>
           </ul>
         </div>
         <div class="lp2-fit-card lp2-fit-card--soft">
           <h3>Outro planejamento pode ser mais adequado quando:</h3>
           <ul class="lp2-checks">
-            <li>há pele frouxa ou pendente;</li>
-            <li>existe flacidez relevante após emagrecimento;</li>
-            <li>bandas do pescoço participam da queixa;</li>
-            <li>a queda da face apaga a linha da mandíbula;</li>
-            <li>pouca projeção do queixo é um componente importante;</li>
+            <li>há flacidez ou excesso de pele importante;</li>
+            <li>o músculo participa de forma relevante;</li>
+            <li>face, queixo ou mandíbula são o principal componente;</li>
             <li>retirar gordura isoladamente poderia evidenciar a pele;</li>
-            <li>saúde, rotina ou expectativas tornam outro momento mais seguro.</li>
+            <li>saúde, rotina ou expectativas indicam aguardar ou reavaliar.</li>
           </ul>
         </div>
       </div>
-      <p class="lp2-fit-note"><strong>Não é necessário chegar à consulta sabendo se deseja lipo de papada, lifting cervical ou associação.</strong> O plano é consequência do exame.</p>
+      <p class="lp2-fit-note"><strong>Você pode chegar à consulta procurando lipo de papada.</strong> O procedimento pesquisado é considerado; o plano final é consequência do exame.</p>
     </div>
   </section>
 
@@ -718,14 +757,14 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     <div class="lp2-shell">
       <div class="lp2-section-head">
         <span class="lp2-eyebrow">Abordagens diferentes</span>
-        <h2>Lipo de papada, lifting cervical ou outra abordagem?</h2>
-        <p>Mais de uma estrutura pode participar da mesma queixa. Combinações só devem ser propostas quando acrescentam benefício e permanecem seguras.</p>
+        <h2>Quando outro caminho pode ser mais coerente.</h2>
+        <p>Mais de uma estrutura pode participar da mesma queixa. Associações só são consideradas quando acrescentam benefício e mantêm segurança.</p>
       </div>
       <div class="lp2-options-grid">
         <article class="lp2-option-card"><span>Gordura</span><h3>Lipo de papada</h3><p>Pode ser indicada quando predomina gordura localizada e a pele apresenta retração adequada.</p></article>
-        <article class="lp2-option-card"><span>Pele e músculo</span><h3>Lifting cervical</h3><p>Pode fazer mais sentido quando flacidez, excesso de pele ou músculo platisma participam de forma relevante.</p></article>
+        <article class="lp2-option-card"><span>Pele e músculo</span><h3><a href="../lifting-cervical/">Lifting cervical</a></h3><p>Pode fazer mais sentido quando flacidez, excesso de pele ou platisma participam de forma relevante.</p></article>
         <article class="lp2-option-card"><span>Face</span><h3>Tratamento facial</h3><p>Pode ser necessário quando a queda da face contribui para a perda da linha mandibular.</p></article>
-        <article class="lp2-option-card"><span>Proporções</span><h3>Queixo e mandíbula</h3><p>Em alguns casos, a percepção de papada está relacionada às proporções do perfil e não apenas à gordura.</p></article>
+        <article class="lp2-option-card"><span>Proporções</span><h3>Queixo e mandíbula</h3><p>Em alguns casos, a percepção de papada está ligada às proporções do perfil e não apenas à gordura.</p></article>
       </div>
     </div>
   </section>
@@ -752,30 +791,34 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
 
   <section class="lp2-section lp2-consult" id="consulta">
     <div class="lp2-shell lp2-consult-grid">
-      <figure class="lp2-clinic-photo">
-        <img alt="Clínica LIV Faria Lima em Pinheiros" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/>
-      </figure>
+      <div>
+        <p class="lp2-carousel-hint"><strong>Deslize para ver a clínica</strong> →</p>
+        <div class="lp2-clinic-gallery" data-carousel="clinica" aria-label="Ambientes da Clínica LIV Faria Lima">
+          <figure><img alt="Recepção da Clínica LIV Faria Lima" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/></figure>
+          <figure><img alt="Consultório da Clínica LIV com quadro e mesa de atendimento" class="lp2-clinic-room" decoding="async" height="1792" loading="lazy" src="../campanhas/assets/blefaroplastia/clinica-liv-consultorio-quadro.jpg" width="1290"/></figure>
+          <figure><img alt="Ambiente de consulta da Clínica LIV Faria Lima" class="lp2-clinic-liv2" decoding="async" height="768" loading="lazy" src="../campanhas/assets/clinica-liv-ambiente-02.webp" width="1152"/></figure>
+        </div>
+        <div class="lp2-carousel-controls" aria-label="Controles da galeria da clínica"><button aria-label="Imagem anterior" class="lp2-carousel-control" data-carousel-action="previous" data-carousel-target="clinica" type="button">←</button><button aria-label="Próxima imagem" class="lp2-carousel-control" data-carousel-action="next" data-carousel-target="clinica" type="button">→</button></div>
+      </div>
       <div>
         <div class="lp2-section-head">
           <span class="lp2-eyebrow">Consulta presencial em Pinheiros</span>
           <h2>O que acontece na consulta.</h2>
-          <p>A consulta organiza a indicação, as alternativas, as pequenas incisões, os riscos, a anestesia, a recuperação e os próximos passos antes de qualquer decisão.</p>
+          <p>A consulta parte da sua queixa e avalia gordura, pele, músculo, queixo, mandíbula e participação da face para organizar indicação, limites, cicatrizes, recuperação e próximos passos.</p>
         </div>
         <div class="lp2-steps">
           <div class="lp2-step"><span>01</span><strong>Avaliação de frente, perfil, movimento e fotografias.</strong></div>
           <div class="lp2-step"><span>02</span><strong>Análise de gordura, pele, platisma, queixo, mandíbula e continuidade com a face.</strong></div>
-          <div class="lp2-step"><span>03</span><strong>Discussão de alternativas, incisões, riscos, anestesia e recuperação.</strong></div>
+          <div class="lp2-step"><span>03</span><strong>Discussão de alternativas, incisões, anestesia e recuperação.</strong></div>
           <div class="lp2-step"><span>04</span><strong>Definição de um plano individual, caso exista indicação.</strong></div>
         </div>
         <div class="lp2-consult-facts">
-          <span>Consulta particular</span>
           <span>Clínica LIV Faria Lima</span>
-          <span>R. Pais Leme, 215 — Pinheiros</span>
+          <span>R. Pais Leme, 215, cj. 710 · Pinheiros</span>
           <span>Nota fiscal para reembolso</span>
           <span>Teleconsulta inicial em casos selecionados</span>
-          <span>Avaliação presencial para o plano definitivo</span>
         </div>
-        <a class="lp2-btn" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Consultar disponibilidade</a>
+        <a class="lp2-btn" data-cta-location="consulta" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Agendar avaliação</a>
       </div>
     </div>
   </section>
@@ -784,22 +827,20 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     <div class="lp2-shell">
       <div class="lp2-section-head">
         <span class="lp2-eyebrow">Planejamento realista</span>
-        <h2>Pequenas incisões, recuperação progressiva.</h2>
-        <p>O resultado não deve ser avaliado nos primeiros dias. O edema pode esconder temporariamente a definição esperada.</p>
+        <h2>Recuperação progressiva, sem pressa para avaliar o contorno.</h2>
+        <p>Edema, equimoses, sensibilidade e endurecimento podem fazer parte da evolução. O contorno muda ao longo dos retornos e não deve ser avaliado nos primeiros dias.</p>
       </div>
       <div class="lp2-incision-box">
         <h3>Onde ficam as incisões?</h3>
         <p>A lipo de papada utiliza pequenas incisões posicionadas em pontos discretos, frequentemente abaixo do queixo e/ou próximas às orelhas, conforme a técnica e a anatomia. Embora pequenas, as cicatrizes existem e passam por amadurecimento.</p>
       </div>
       <div class="lp2-timeline">
-        <article class="lp2-time"><strong>Primeiros 2–3 dias</strong><p>Edema, equimoses, tensão e possível uso de faixa.</p></article>
-        <article class="lp2-time"><strong>Primeira semana</strong><p>Retorno, avaliação das incisões e adaptação dos cuidados.</p></article>
-        <article class="lp2-time"><strong>7 a 14 dias</strong><p>Muitas pacientes retomam atividades sociais leves.</p></article>
-        <article class="lp2-time"><strong>3 a 4 semanas</strong><p>O contorno começa a ficar mais perceptível.</p></article>
-        <article class="lp2-time"><strong>2 a 3 meses</strong><p>Redução progressiva do edema e evolução da retração da pele.</p></article>
-        <article class="lp2-time"><strong>Meses seguintes</strong><p>Refinamento do contorno e amadurecimento interno.</p></article>
+        <article class="lp2-time"><strong>Primeiros dias</strong><p>Edema, equimoses, tensão e cuidados locais fazem parte do planejamento.</p></article>
+        <article class="lp2-time"><strong>Retornos</strong><p>As incisões, o edema, a faixa quando indicada e a evolução são acompanhados pela equipe.</p></article>
+        <article class="lp2-time"><strong>Rotina e exercícios</strong><p>A liberação é progressiva conforme a técnica, a evolução e as orientações no retorno.</p></article>
+        <article class="lp2-time"><strong>Contorno</strong><p>A definição aparece gradualmente à medida que edema e tecidos evoluem.</p></article>
       </div>
-      <div class="lp2-margin-note"><strong>Planeje com margem:</strong> o edema, a fibrose e a retração da pele evoluem progressivamente e variam entre pacientes.</div>
+      <div class="lp2-margin-note"><strong>Planeje com margem:</strong> a evolução varia entre pessoas. A equipe orienta trabalho, vida social, exercícios, sono e uso de compressão quando isso fizer parte do plano.</div>
       <details>
         <summary>Faixa, drenagem, atividade física, sono e sensibilidade</summary>
         <p>O uso de faixa, a indicação de drenagem, a posição para dormir, o retorno ao exercício e os cuidados locais dependem da técnica e da evolução. Endurecimento, fibrose e alterações temporárias de sensibilidade podem ocorrer e são acompanhados nos retornos.</p>
@@ -815,13 +856,26 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
         <p>Segurança depende da avaliação clínica, do preparo, do ambiente, da anestesia, da técnica e do acompanhamento.</p>
       </div>
       <div class="lp2-safety-grid">
-        <article class="lp2-safety-card"><span>01</span><h3>Avaliação clínica</h3><p>Histórico de saúde, medicamentos, tabagismo e fatores de risco.</p></article>
+        <article class="lp2-safety-card"><span>01</span><h3>Avaliação clínica</h3><p>Histórico de saúde, medicamentos, tabagismo e fatores relevantes.</p></article>
         <article class="lp2-safety-card"><span>02</span><h3>Exames e preparo</h3><p>Solicitados conforme as condições clínicas, o porte e as associações.</p></article>
         <article class="lp2-safety-card"><span>03</span><h3>Ambiente e anestesia</h3><p>Estrutura e estratégia anestésica escolhidas de acordo com o plano individual.</p></article>
         <article class="lp2-safety-card"><span>04</span><h3>Retornos e contato</h3><p>Acompanhamento das incisões, do edema, do contorno e de sinais de atenção.</p></article>
       </div>
-      <p class="lp2-cardio-note">Quando houver indicação clínica, a avaliação cardiológica pré-operatória pode ser integrada na própria Clínica LIV, facilitando a comunicação entre cirurgia plástica, cardiologia e anestesia.</p>
-      <div class="lp2-risks"><strong>Riscos discutidos com transparência:</strong> sangramento ou hematoma, infecção, seroma, assimetria, irregularidades do contorno, fibrose, alteração de sensibilidade, flacidez residual, cicatrização desfavorável, lesão nervosa e necessidade de revisão.</div>
+      <div class="lp2-risks"><strong>Riscos discutidos com transparência:</strong> hematoma ou sangramento, infecção, seroma, alterações de sensibilidade, irregularidades ou assimetrias, flacidez residual, cicatrização desfavorável e possível revisão podem ocorrer. O risco individual é explicado na consulta.</div>
+      <div class="lp2-hospitals"><strong>Ambiente hospitalar definido conforme o plano.</strong><p>Quando houver indicação cirúrgica em ambiente hospitalar, a operação pode ser organizada no Hospital Sírio-Libanês, Hospital Nove de Julho, Hospital Oswaldo Cruz ou em outra instituição criteriosamente selecionada conforme o caso.</p></div>
+    </div>
+  </section>
+
+  <section class="lp2-section lp2-content-section" id="equipe">
+    <div class="lp2-shell">
+      <div class="lp2-section-head"><span class="lp2-eyebrow">Equipe e ambiente cirúrgico</span><h2>O cuidado também é construído em equipe.</h2><p>Dra. Amanda com parte de sua equipe cirúrgica. O ambiente, a anestesia e a composição da equipe são organizados conforme o plano e as necessidades de cada caso.</p></div>
+      <p class="lp2-carousel-hint"><strong>Deslize para conhecer a equipe</strong> →</p>
+      <div class="lp2-media-carousel" data-carousel="equipe" aria-label="Equipe e ambiente cirúrgico">
+        <figure><img alt="Dra. Amanda com parte de sua equipe cirúrgica" decoding="async" loading="lazy" src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg"/><figcaption>Parte da equipe cirúrgica em centro cirúrgico.</figcaption></figure>
+        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Planejamento também no ato cirúrgico</h3><p>Vídeo breve da Dra. Amanda em centro cirúrgico.</p></div></article>
+        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/equipe/anestesia-centro-cirurgico.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Segurança anestésica</h3><p>A estratégia anestésica é definida de acordo com o plano individual.</p></div></article>
+      </div>
+      <div class="lp2-carousel-controls" aria-label="Controles do carrossel da equipe"><button aria-label="Conteúdo anterior" class="lp2-carousel-control" data-carousel-action="previous" data-carousel-target="equipe" type="button">←</button><button aria-label="Próximo conteúdo" class="lp2-carousel-control" data-carousel-action="next" data-carousel-target="equipe" type="button">→</button></div>
     </div>
   </section>
 
@@ -841,12 +895,25 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     </div>
   </section>
 
+  <section class="lp2-section lp2-content-section" id="conteudos">
+    <div class="lp2-shell">
+      <div class="lp2-section-head"><span class="lp2-eyebrow">Conteúdos selecionados</span><h2>Explicações para continuar a decisão com calma.</h2><p>Materiais breves sobre consulta, segurança e ambiente. O plano definitivo continua sendo individual.</p></div>
+      <p class="lp2-carousel-hint"><strong>Deslize para assistir</strong> →</p>
+      <div class="lp2-media-carousel" data-carousel="conteudos" aria-label="Conteúdos selecionados">
+        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/como-funciona-a-consulta.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Como funciona a consulta</h3><p>Entenda como a conversa organiza queixa, indicação e próximos passos.</p></div></article>
+        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/anestesia-geral-seguranca.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Segurança anestésica</h3><p>Uma explicação breve sobre planejamento e segurança.</p></div></article>
+        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/clinica-liv-apresentacao.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Clínica LIV Faria Lima</h3><p>Conheça o ambiente de consulta em Pinheiros.</p></div></article>
+      </div>
+      <div class="lp2-carousel-controls" aria-label="Controles dos conteúdos selecionados"><button aria-label="Conteúdo anterior" class="lp2-carousel-control" data-carousel-action="previous" data-carousel-target="conteudos" type="button">←</button><button aria-label="Próximo conteúdo" class="lp2-carousel-control" data-carousel-action="next" data-carousel-target="conteudos" type="button">→</button></div>
+    </div>
+  </section>
+
   <section class="lp2-section lp2-faq" id="faq">
     <div class="lp2-shell">
       <div class="lp2-section-head">
         <span class="lp2-eyebrow">Dúvidas frequentes</span>
         <h2>O que costuma pesar na decisão por uma lipo de papada.</h2>
-        <p>As respostas são referências gerais. Indicação, técnica, anestesia, recuperação e riscos só podem ser definidos após exame e avaliação clínica.</p>
+        <p>As respostas são referências gerais. Indicação, técnica, anestesia e recuperação só podem ser definidas após exame e avaliação clínica.</p>
       </div>
       <div class="lp2-faq-list">
         
@@ -886,8 +953,8 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
     </details>
     
     <details>
-      <summary><h3>Quando volto ao trabalho e à vida social? Quais riscos precisam ser discutidos?</h3></summary>
-      <div class="lp2-faq-answer">Muitas pacientes retomam atividades leves em cerca de 7 a 14 dias, mas edema e endurecimento podem persistir por semanas. Entre os riscos estão hematoma, infecção, seroma, assimetria, irregularidades, fibrose, alteração de sensibilidade, flacidez residual, cicatrização desfavorável, lesão nervosa e necessidade de revisão.</div>
+      <summary><h3>Quando outro planejamento pode ser mais adequado?</h3></summary>
+      <div class="lp2-faq-answer">Quando a pele tem pouca capacidade de retração, há excesso de pele, o platisma participa de forma relevante ou face, queixo e mandíbula são determinantes do contorno, outro planejamento pode ser mais coerente. A avaliação explica limites, alternativas e possibilidade de associação.</div>
     </details>
     
       </div>
@@ -897,11 +964,11 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
   <section class="lp2-final" id="contato">
     <div class="lp2-shell lp2-final-grid">
       <div>
-        <h2>Entenda o que realmente participa do seu contorno.</h2>
-        <p>A consulta diferencia gordura, pele, músculo, queixo, mandíbula e participação da face para organizar indicação, recuperação e próximos passos antes de qualquer decisão.</p>
-        <div class="lp2-final-facts"><span>Consulta particular</span><span>Pinheiros, São Paulo</span><span>Nota fiscal para reembolso</span><span>Avaliação integrada de face e pescoço</span></div>
+        <h2>Converse com a equipe sobre sua avaliação.</h2>
+        <p>Receba informações sobre horários, consulta, localização e próximos passos. A indicação de lipo de papada, de outra abordagem ou de acompanhamento é definida após o exame.</p>
+        <div class="lp2-final-facts"><span>Consulta particular</span><span>Pinheiros, São Paulo</span><span>Nota fiscal para reembolso</span></div>
       </div>
-      <a class="lp2-btn" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Falar com a equipe</a>
+      <a class="lp2-btn" data-cta-location="final" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Agendar avaliação</a>
     </div>
   </section>
 </main>
@@ -910,26 +977,23 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
   <div class="lp2-shell lp2-footer-grid">
     <div>
       <strong>Dra. Amanda Schroeder</strong>
-      <p>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</p>
-      <p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a> · Seg–dom, 07:00 às 23:00</p>
-      <div class="lp2-footer-links"><a href="../privacidade/">Política de privacidade</a><a href="../conteudos/">Conteúdos</a><a href="../#clinica-liv">Clínica LIV</a></div>
+      <p>MÉDICA · CRM-SP 191605 · Cirurgia Plástica · RQE 110472</p>
+      <p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a></p>
+      <div class="lp2-footer-links"><a href="https://www.instagram.com/dra.amanda_plastica/" rel="noopener" target="_blank">Instagram da Dra. Amanda</a><a href="../#clinica-liv">Clínica LIV</a><a href="../privacidade/">Política de privacidade</a></div>
       <details>
         <summary>Navegação e procedimentos</summary>
-        <a href="../privacidade/">Política de privacidade</a>
-        <a href="../conteudos/">Conteúdos</a>
-        <a href="../#clinica-liv">Clínica LIV</a>
         <a href="../lifting-facial/">Lifting facial</a>
         <a href="../lifting-cervical/">Lifting cervical</a>
         <a href="../blefaroplastia/">Blefaroplastia</a>
+        <a href="../conteudos/">Conteúdos</a>
       </details>
-      <button class="lp2-privacy privacy-settings" data-privacy-settings="" type="button">Preferências de privacidade</button>
+      <button class="lp2-privacy privacy-settings" data-privacy-settings="" type="button">Configurar cookies</button>
     </div>
-    <div><strong>Atendimento</strong><p>Consulta particular em Pinheiros. A equipe orienta disponibilidade, formato e próximos passos pelo WhatsApp.</p></div>
   </div>
 </footer>
 
 <div aria-hidden="true" class="lp2-sticky" id="lp2-sticky">
-  <a class="lp2-btn" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Conversar com a equipe</a>
+  <a aria-label="Falar com a equipe pelo WhatsApp" class="lp2-btn" data-cta-location="sticky" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank"><span aria-hidden="true">●</span><span>Falar com a equipe</span></a>
 </div>
 
 <script defer src="../campanhas/tracking-config.js"></script>
@@ -937,23 +1001,9 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
 <script defer src="../campanhas/conversion-tracking.js"></script>
 <script defer src="../campanhas/instagram-loader.js"></script>
 <script defer src="../campanhas/landing-behavior.js"></script>
-<script defer src="../campanhas/site-enhancements.js?v=auxiliary-media-20260712-2"></script>
+<script defer src="../campanhas/site-enhancements.js?v=auxiliary-media-20260713-1"></script>
 <script>
 (function(){
-  const menuButton=document.querySelector('.lp2-menu-button');
-  const nav=document.querySelector('.lp2-nav');
-  if(menuButton&&nav){
-    menuButton.addEventListener('click',()=>{
-      const open=nav.classList.toggle('is-open');
-      menuButton.setAttribute('aria-expanded',String(open));
-      menuButton.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
-    });
-    nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
-      nav.classList.remove('is-open');
-      menuButton.setAttribute('aria-expanded','false');
-    }));
-  }
-
   document.querySelectorAll('.lp2-faq details').forEach(item=>{
     item.addEventListener('toggle',()=>{
       if(!item.open)return;
@@ -964,28 +1014,46 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
   });
 
   const sticky=document.getElementById('lp2-sticky');
-  const hero=document.querySelector('.lp2-hero');
-  const finalSection=document.querySelector('.lp2-final');
-  if(sticky&&hero&&finalSection&&'IntersectionObserver' in window){
-    let heroVisible=true;
-    let finalVisible=false;
+  const header=document.querySelector('.lp2-header');
+  const trust=document.querySelector('.lp2-trust');
+  if(sticky&&header&&trust){
     const refresh=()=>{
-      const show=!heroVisible&&!finalVisible&&window.innerWidth<=760;
-      sticky.classList.toggle('is-visible',show);
-      sticky.classList.toggle('is-hidden-near-final',finalVisible);
-      sticky.setAttribute('aria-hidden',String(!show));
+      const firstContent=document.getElementById('queixas');
+      const trustBottom=trust.offsetTop+trust.offsetHeight;
+      const boundary=window.innerWidth<=760&&firstContent?firstContent.offsetTop-header.offsetHeight:trustBottom;
+      const pastTrust=window.scrollY>=boundary;
+      header.classList.toggle('is-unpinned',pastTrust);
+      sticky.classList.toggle('is-visible',pastTrust);
+      sticky.setAttribute('aria-hidden',String(!pastTrust));
     };
-    new IntersectionObserver(entries=>{
-      heroVisible=entries[0].isIntersecting;
-      refresh();
-    },{threshold:.08}).observe(hero);
-    new IntersectionObserver(entries=>{
-      finalVisible=entries[0].isIntersecting;
-      refresh();
-    },{threshold:.15}).observe(finalSection);
+    let stickyTicking=false;
+    window.addEventListener('scroll',()=>{
+      if(stickyTicking)return;
+      stickyTicking=true;
+      requestAnimationFrame(()=>{refresh();stickyTicking=false;});
+    },{passive:true});
     window.addEventListener('resize',refresh,{passive:true});
     refresh();
   }
+
+  document.querySelectorAll('[data-carousel-action]').forEach(button=>{
+    const track=document.querySelector('[data-carousel="'+button.dataset.carouselTarget+'"]');
+    if(!track)return;
+    const buttons=[...document.querySelectorAll('[data-carousel-target="'+button.dataset.carouselTarget+'"]')];
+    const refresh=()=>{
+      const max=Math.max(0,track.scrollWidth-track.clientWidth-2);
+      buttons.forEach(control=>{
+        control.disabled=control.dataset.carouselAction==='previous'?track.scrollLeft<=2:track.scrollLeft>=max;
+      });
+    };
+    button.addEventListener('click',()=>{
+      const amount=Math.max(260,track.clientWidth*.86)*(button.dataset.carouselAction==='next'?1:-1);
+      track.scrollBy({left:amount,behavior:'smooth'});
+    });
+    track.addEventListener('scroll',refresh,{passive:true});
+    window.addEventListener('resize',refresh,{passive:true});
+    refresh();
+  });
 })();
 </script>
 </body>
