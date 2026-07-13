@@ -3082,20 +3082,34 @@ html:not([data-page-type="home"]) :is(
 @media (max-width: 760px) {
   html:not([data-page-type="home"]) .auxiliary-scroll-hint {
     display: flex;
-    justify-content: flex-end;
+    width: max-content;
+    max-width: 100%;
+    min-height: 38px;
     align-items: center;
-    gap: 7px;
-    margin: 18px 2px 8px;
-    color: #72574f;
-    font-size: 12px;
+    gap: 10px;
+    margin: 18px 0 12px auto;
+    padding: 8px 12px;
+    border: 1px solid rgba(92, 65, 57, .14);
+    border-radius: 999px;
+    background: rgba(255, 250, 247, .9);
+    color: #684b43;
+    font-size: 12.5px;
     font-weight: 600;
-    letter-spacing: .02em;
+    line-height: 1.2;
+    text-align: left;
+    box-shadow: 0 5px 16px rgba(73, 49, 42, .065);
   }
 
   html:not([data-page-type="home"]) .auxiliary-scroll-hint::after {
-    content: "\2192";
-    font-size: 17px;
-    line-height: 1;
+    content: "";
+    width: 28px;
+    height: 8px;
+    flex: 0 0 auto;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    opacity: .68;
+    transform: skewX(-34deg);
+    animation: results-swipe-cue 1.8s ease-in-out infinite;
   }
 
   html:not([data-page-type="home"]) .auxiliary-results-carousel {
@@ -3144,6 +3158,10 @@ html:not([data-page-type="home"]) :is(
     object-fit: contain !important;
     object-position: center !important;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-page-type="home"]) .auxiliary-scroll-hint::after { animation: none; }
 }
 
 /* Correção final da composição dos cards e títulos da homepage no mobile. */
