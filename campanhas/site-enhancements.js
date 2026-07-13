@@ -237,6 +237,7 @@
     });
 
     document.querySelectorAll(selectors).forEach(function (row) {
+      if (row.matches('[data-carousel]')) return;
       if (row.dataset.auxiliaryCarouselEnhanced === 'true') return;
       var cards = row.querySelectorAll(':scope > article, :scope > figure');
       if (cards.length < 2) return;
