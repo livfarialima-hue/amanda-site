@@ -608,6 +608,34 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
   .lp2-footer-links{display:none}
 }
 
+/* Sistema visual oficial — alinhado ao piloto de lifting cervical. */
+main#conteudo-principal{padding-top:72px}
+.lp2-btn{font-size:16px}
+.lp2-header{position:fixed;top:0;right:0;left:0;transition:transform .24s ease,visibility .24s ease}
+.lp2-header.is-unpinned{position:fixed;visibility:hidden!important;transform:translateY(-110%)!important;pointer-events:none}
+.lp2-brand-specialty{color:#965f50!important;font-weight:700}
+.lp2-brand-registration{color:var(--lp-muted)!important;font-weight:400}
+.lp2-header .lp2-btn{border-color:var(--lp-dark)!important;background:var(--lp-dark)!important;color:#fff!important}
+.lp2-header .lp2-btn:hover,.lp2-header .lp2-btn:focus-visible{border-color:#392d2a!important;background:#392d2a!important;color:#fff!important}
+.lp2-final .lp2-btn{border-color:#fff!important;background:#fff!important;color:var(--lp-dark)!important}
+.lp2-sticky{position:fixed;right:22px;left:auto;bottom:calc(18px + env(safe-area-inset-bottom));z-index:35;display:none;width:auto;transform:none;padding:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
+.lp2-sticky.is-visible,.lp2-sticky.is-visible.is-hidden-near-final,#lp2-sticky.is-visible{display:block!important}
+#lp2-sticky .lp2-btn{width:auto;min-height:50px;gap:9px;padding:12px 18px;border-radius:999px;border-color:#176e43!important;background:#176e43!important;color:#fff!important;box-shadow:0 12px 32px rgba(22,93,57,.32)}
+#lp2-sticky .lp2-btn:hover,#lp2-sticky .lp2-btn:focus-visible{border-color:#125b35!important;background:#125b35!important;color:#fff!important}
+.lp2-sticky svg{width:21px;height:21px;flex:0 0 auto;fill:currentColor}
+@media (max-width:980px){
+  .lp2-header .lp2-btn{width:auto;min-height:44px;padding:10px 16px;border-radius:999px;white-space:nowrap;font-size:13px}
+}
+@media (max-width:760px){
+  main#conteudo-principal{padding-top:64px}
+  .lp2-header-inner{min-height:64px}
+  .lp2-brand-registration{display:none}
+  .lp2-btn{width:100%;min-height:54px}
+  .lp2-header .lp2-btn{width:auto;min-height:42px;padding:10px 15px;border-radius:999px;font-size:13px}
+  .lp2-sticky{right:8px;bottom:calc(10px + env(safe-area-inset-bottom))}
+  #lp2-sticky .lp2-btn{width:auto;min-height:50px;padding:12px 18px;font-size:16px}
+}
+
 </style>
 
 <!-- Google Tag Manager -->
@@ -630,7 +658,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="lp2-shell lp2-header-inner">
     <a aria-label="Dra. Amanda Schroeder — página inicial" class="lp2-brand" href="../index.html">
       <strong>Dra. Amanda Schroeder</strong>
-      <span>MÉDICA · CRM-SP 191605 · Cirurgia Plástica · RQE 110472</span>
+      <span><span class="lp2-brand-specialty">Cirurgia Plástica Facial</span><span class="lp2-brand-registration"> · CRM-SP 191605 · RQE 110472</span></span>
     </a>
     <nav aria-label="Navegação da página" class="lp2-nav">
       <a class="lp2-btn" data-cta-location="header" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank">Falar com a equipe</a>
@@ -784,7 +812,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div><strong>Indicação responsável</strong><span>Lipo, lifting, associação ou acompanhamento podem ser decisões corretas.</span></div>
           <div><strong>Acompanhamento próximo</strong><span>Retornos adaptados à evolução e canal para dúvidas.</span></div>
         </div>
-        <a class="lp2-btn lp2-btn--ghost" href="#consulta">Entender como funciona a consulta</a>
       </div>
     </div>
   </section>
@@ -993,7 +1020,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
 
 <div aria-hidden="true" class="lp2-sticky" id="lp2-sticky">
-  <a aria-label="Falar com a equipe pelo WhatsApp" class="lp2-btn" data-cta-location="sticky" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank"><span aria-hidden="true">●</span><span>Falar com a equipe</span></a>
+  <a aria-label="Falar com a equipe pelo WhatsApp" class="lp2-btn" data-cta-location="sticky" data-procedure="lipo-de-papada" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LP01" rel="noopener" target="_blank"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="M19.11 17.53c-.28-.14-1.64-.81-1.89-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.88 1.09-.16.19-.32.21-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.73-1.38-1.64-1.54-1.92-.16-.28-.02-.43.12-.57.13-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.19.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47h-.53c-.19 0-.49.07-.74.35-.25.28-.97.95-.97 2.31s.99 2.68 1.13 2.86c.14.19 1.95 2.98 4.72 4.18.66.28 1.17.46 1.57.58.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.11-.25-.18-.53-.32zM16.04 27.5h-.01a11.4 11.4 0 0 1-5.81-1.59l-.42-.25-4.32 1.13 1.15-4.21-.27-.43a11.41 11.41 0 1 1 9.68 5.35zm9.7-21.1A13.62 13.62 0 0 0 4.3 22.84L2.37 29.9l7.23-1.9a13.62 13.62 0 1 0 16.14-21.6z"/></svg><span>Falar com a equipe</span></a>
 </div>
 
 <script defer src="../campanhas/tracking-config.js"></script>
