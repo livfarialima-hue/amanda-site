@@ -506,6 +506,7 @@ body{background:var(--bf-bg);color:var(--bf-ink)}
 .bf2-functional h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:400}
 .bf2-functional p{margin:12px 0 0;color:var(--bf-muted);font-size:15px;line-height:1.68}
 .bf2-scar-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,.8fr);gap:30px;align-items:start;margin-top:28px}
+.bf2-scar-layout--text-only{grid-template-columns:1fr}
 .bf2-scar-copy{display:grid;gap:15px}
 .bf2-scar-card{padding:23px;border:1px solid var(--bf-line);background:var(--bf-paper)}
 .bf2-scar-card h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:400}
@@ -705,7 +706,7 @@ body{background:var(--bf-bg);color:var(--bf-ink)}
   <section class="bf2-section bf2-authority" id="dra-amanda">
     <div class="bf2-shell bf2-authority-grid">
       <figure class="bf2-authority-media">
-        <img alt="Dra. Amanda Schroeder em atualização científica" decoding="async" height="688" loading="lazy" src="../campanhas/assets/amanda-congresso.jpg" width="517"/>
+        <picture><source height="929" media="(max-width: 980px)" srcset="../campanhas/assets/amanda-planejamento-congresso-mobile.webp" width="760"/><img alt="Dra. Amanda Schroeder em atualização científica" decoding="async" height="1003" loading="lazy" src="../campanhas/assets/amanda-planejamento-congresso.webp" width="820"/></picture>
       </figure>
       <div class="bf2-authority-copy">
         <span class="bf2-eyebrow">Quem conduz sua avaliação</span>
@@ -759,15 +760,11 @@ body{background:var(--bf-bg);color:var(--bf-ink)}
         <h2>Cicatrizes e recuperação: o que planejar.</h2>
         <p>A extensão do procedimento, o tratamento das pálpebras inferiores e as associações podem modificar o cronograma.</p>
       </div>
-      <div class="bf2-scar-layout">
+      <div class="bf2-scar-layout bf2-scar-layout--text-only">
         <div class="bf2-scar-copy">
           <article class="bf2-scar-card"><h3>Pálpebra superior</h3><p>A cicatriz costuma acompanhar a dobra natural da pálpebra e pode ter pequena extensão lateral. Ela começa mais visível e amadurece ao longo dos meses.</p></article>
           <article class="bf2-scar-card"><h3>Pálpebra inferior</h3><p>Quando há incisão externa, ela costuma ficar próxima à linha dos cílios. Em alguns casos, o acesso pode ser feito por dentro da pálpebra, sem cicatriz externa, dependendo do que precisa ser tratado.</p></article>
         </div>
-        <figure class="bf2-scar-photo">
-          <img alt="Cicatriz de blefaroplastia em fase de acompanhamento" decoding="async" height="938" loading="lazy" src="../campanhas/assets/cicatriz-blefaroplastia-01-site.webp" width="1920"/>
-          <figcaption>Exemplo de cicatriz em acompanhamento. Cor, relevo e visibilidade mudam durante o amadurecimento e variam entre pacientes.</figcaption>
-        </figure>
       </div>
       <div class="bf2-timeline">
         <article class="bf2-time"><strong>Primeiros 2–3 dias</strong><p>Edema e equimoses podem ficar mais evidentes antes de começar a regredir.</p></article>
@@ -834,7 +831,7 @@ body{background:var(--bf-bg);color:var(--bf-ink)}
           <div class="bf2-video-copy"><h3>Como o olhar envelhece</h3><p>Pálpebras, bolsas e estruturas ao redor dos olhos mudam de maneiras diferentes.</p></div>
         </article>
         <article class="bf2-video-card">
-          <video aria-label="Onde ficam as cicatrizes da blefaroplastia" controls playsinline preload="none" poster="../campanhas/assets/cicatriz-blefaroplastia-01-site.webp">
+          <video aria-label="Onde ficam as cicatrizes da blefaroplastia" controls playsinline preload="none" poster="../campanhas/assets/amanda-profissional-hero.webp">
             <source src="../campanhas/assets/conteudos/videos/cicatriz-blefaroplastia.mp4" type="video/mp4"/>
           </video>
           <div class="bf2-video-copy"><h3>Onde ficam as cicatrizes</h3><p>Localização, evolução e diferenças entre os acessos superior e inferior.</p></div>
