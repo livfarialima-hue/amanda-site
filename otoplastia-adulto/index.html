@@ -676,6 +676,30 @@ main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
   .ota2-footer{padding:30px 0 110px}.ota2-footer p,.ota2-footer a{font-size:14px}.ota2-sticky{right:8px;bottom:calc(10px + env(safe-area-inset-bottom));display:none}.ota2-sticky.is-visible{display:block}.ota2-sticky .ota2-btn{min-height:48px;padding:11px 15px;font-size:14px}
 }
 @keyframes ota2-carousel-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+
+/* Sistema visual oficial — alinhado ao piloto de lifting cervical. */
+.ota2-btn{font-size:16px}
+.ota2-brand-specialty{color:#965f50!important;font-style:normal;font-weight:700}
+.ota2-brand-registration{color:var(--ota-muted)!important;font-weight:400}
+.ota2-header.is-unpinned{visibility:hidden!important;transform:translateY(-110%)!important;pointer-events:none}
+.ota2-header .ota2-btn{border-color:var(--ota-dark)!important;background:var(--ota-dark)!important;color:#fff!important}
+.ota2-header .ota2-btn:hover,.ota2-header .ota2-btn:focus-visible{border-color:#392d2a!important;background:#392d2a!important;color:#fff!important}
+.ota2-final .ota2-btn{border-color:#fff!important;background:#fff!important;color:var(--ota-dark)!important}
+.ota2-sticky.is-visible,.ota2-sticky.is-visible.is-hidden-near-final,#ota2-sticky.is-visible{display:block!important}
+#ota2-sticky .ota2-btn,html[data-page-type="procedure"] #ota2-sticky .ota2-btn{width:auto;min-height:50px;gap:9px;padding:12px 18px;border-radius:999px;border-color:#176e43!important;background:#176e43!important;color:#fff!important;box-shadow:0 12px 32px rgba(22,93,57,.32)}
+#ota2-sticky .ota2-btn:hover,#ota2-sticky .ota2-btn:focus-visible{border-color:#125b35!important;background:#125b35!important;color:#fff!important}
+.ota2-sticky svg{width:21px;height:21px;flex:0 0 auto;fill:currentColor}
+@media (max-width:980px){
+  .ota2-header .ota2-btn{width:auto;min-height:44px;padding:10px 16px;border-radius:999px;white-space:nowrap;font-size:13px}
+}
+@media (max-width:760px){
+  main#conteudo-principal{padding-top:64px}
+  .ota2-header-inner{min-height:64px}
+  .ota2-brand-registration{display:none}
+  .ota2-btn{width:100%;min-height:54px}
+  .ota2-header .ota2-btn{width:auto;min-height:42px;padding:10px 15px;border-radius:999px;font-size:13px}
+  #ota2-sticky .ota2-btn{width:auto;min-height:50px;padding:12px 18px;font-size:16px}
+}
 </style>
 
 <!-- Google Tag Manager -->
@@ -698,17 +722,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="ota2-shell ota2-header-inner">
     <a aria-label="Dra. Amanda Schroeder — página inicial" class="ota2-brand" href="../index.html">
       <strong>Dra. Amanda Schroeder</strong>
-      <span><em>Cirurgia Plástica Facial</em> · CRM-SP 191605 · RQE 110472</span>
+      <span><span class="ota2-brand-specialty">Cirurgia Plástica Facial</span><span class="ota2-brand-registration"> · CRM-SP 191605 · RQE 110472</span></span>
     </a>
-    <button aria-expanded="false" aria-label="Abrir menu" class="ota2-menu-button" type="button">Menu</button>
     <nav aria-label="Navegação da página" class="ota2-nav">
-      <a href="#resultados">Resultados</a>
-      <a href="#queixas">O que você percebe</a>
-      <a href="#anatomia">Anatomia</a>
-      <a href="#indicacao">Indicação</a>
-      <a href="#consulta">Consulta</a>
-      <a href="#recuperacao">Recuperação</a>
-      <a href="#faq">Dúvidas</a>
       <a class="ota2-btn" data-cta-location="header" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Falar com a equipe</a>
     </nav>
   </div>
@@ -724,7 +740,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="ota2-doctor-line">Dra. Amanda Schroeder · Cirurgia Plástica · CRM-SP 191605 · RQE 110472 · Pinheiros</p>
         <div class="ota2-hero-actions">
           <a class="ota2-btn" data-cta-location="hero" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Falar com a equipe</a>
-          <a class="ota2-btn ota2-btn--ghost" href="#resultados">Ver resultados reais</a>
         </div>
         <p class="ota2-hero-note">Consulta particular em Pinheiros · Nota fiscal para reembolso</p>
       </div>
@@ -854,7 +869,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>Graduada em Medicina pela UNICAMP, a Dra. Amanda realizou as residências em Cirurgia Geral e Cirurgia Plástica na mesma instituição e complementou sua formação com pós-graduação em Cosmiatria pelo Hospital Israelita Albert Einstein.</p>
         <p>Sua prática tem foco principal em cirurgia facial, com avaliação individual da anatomia, da naturalidade, das cicatrizes e da organização da recuperação na vida adulta.</p>
         <div class="ota2-authority-points"><div><strong>Avaliação no contexto do rosto</strong><span>Projeção, dobras, cartilagem, assimetrias e proporções.</span></div><div><strong>Indicação sem técnica pronta</strong><span>Operar, aguardar ou não intervir podem ser decisões corretas.</span></div><div><strong>Acompanhamento próximo</strong><span>Retornos adaptados à evolução e canal para dúvidas.</span></div></div>
-        <a class="ota2-btn ota2-btn--ghost" href="#consulta">Entender como funciona a consulta</a>
       </div>
     </div>
   </section>
@@ -944,7 +958,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="ota2-shell ota2-footer-grid"><div><strong>Dra. Amanda Schroeder</strong><p>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</p><p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a></p><div class="ota2-footer-links"><a href="https://www.instagram.com/dra.amanda_plastica/" rel="noopener" target="_blank">Instagram da Dra. Amanda</a><a href="../#clinica-liv">Clínica LIV</a><a href="../privacidade/">Política de privacidade</a></div><details><summary>Navegação e procedimentos</summary><a href="../otoplastia-infantil/">Otoplastia infantil</a><a href="../blefaroplastia/">Blefaroplastia</a><a href="../lifting-facial/">Lifting facial</a><a href="../conteudos/">Conteúdos</a></details><button class="ota2-privacy privacy-settings" data-privacy-settings="" type="button">Configurar cookies</button></div></div>
 </footer>
 
-<div aria-hidden="true" class="ota2-sticky" id="ota2-sticky"><a aria-label="Falar com a equipe pelo WhatsApp" class="ota2-btn" data-cta-location="sticky" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank"><span aria-hidden="true">●</span><span>Falar com a equipe</span></a></div>
+<div aria-hidden="true" class="ota2-sticky" id="ota2-sticky"><a aria-label="Falar com a equipe pelo WhatsApp" class="ota2-btn" data-cta-location="sticky" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="M19.11 17.53c-.28-.14-1.64-.81-1.89-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.88 1.09-.16.19-.32.21-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.73-1.38-1.64-1.54-1.92-.16-.28-.02-.43.12-.57.13-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.19.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47h-.53c-.19 0-.49.07-.74.35-.25.28-.97.95-.97 2.31s.99 2.68 1.13 2.86c.14.19 1.95 2.98 4.72 4.18.66.28 1.17.46 1.57.58.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.11-.25-.18-.53-.32zM16.04 27.5h-.01a11.4 11.4 0 0 1-5.81-1.59l-.42-.25-4.32 1.13 1.15-4.21-.27-.43a11.41 11.41 0 1 1 9.68 5.35zm9.7-21.1A13.62 13.62 0 0 0 4.3 22.84L2.37 29.9l7.23-1.9a13.62 13.62 0 1 0 16.14-21.6z"/></svg><span>Falar com a equipe</span></a></div>
 
 <script defer src="../campanhas/tracking-config.js"></script>
 <script defer src="../campanhas/tracking-loader.js"></script>
