@@ -3683,3 +3683,39 @@ html:not([data-page-type="home"]) :is(
     max-width: 82vw !important;
   }
 }
+
+/* Auxiliary pages: show the doctor photograph in full in authority/consultation sections. */
+html:not([data-page-type="home"]) :is(
+  .portrait,
+  .lf2-authority-media,
+  .lc2-authority-media,
+  .bf2-authority-media,
+  .lp2-authority-media,
+  .ot2-authority-media,
+  .ota2-authority-media,
+  .oti2-authority-media
+) picture {
+  display: block;
+  width: 100%;
+}
+
+html:not([data-page-type="home"]) :is(
+  .portrait,
+  .lf2-authority-media,
+  .lc2-authority-media,
+  .bf2-authority-media,
+  .lp2-authority-media,
+  .ot2-authority-media,
+  .ota2-authority-media,
+  .oti2-authority-media
+) img {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+}
