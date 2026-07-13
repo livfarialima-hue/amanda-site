@@ -518,7 +518,7 @@ html[data-page-type="procedure"] .split .portrait img {
   width: 100%;
   height: auto !important;
   max-height: none !important;
-  aspect-ratio: auto !important;
+  aspect-ratio: var(--auxiliary-image-ratio, auto) !important;
   object-fit: contain !important;
   object-position: center !important;
   transform: none !important;
@@ -2844,7 +2844,7 @@ body.curated-video-open { overflow: hidden; }
   height: 100% !important;
   min-height: inherit !important;
   max-height: none !important;
-  aspect-ratio: auto !important;
+  aspect-ratio: var(--auxiliary-image-ratio, auto) !important;
   object-fit: cover !important;
   object-position: 50% 44% !important;
 }
@@ -3004,6 +3004,145 @@ body.curated-video-open { overflow: hidden; }
   html[data-page-type="home"] .result-grid-home-featured > .result-card {
     flex-basis: calc(100vw - 28px) !important;
     max-width: calc(100vw - 28px) !important;
+  }
+}
+
+/* Auxiliary pages: uncropped result galleries and consistent media treatment. */
+html:not([data-page-type="home"]) .auxiliary-scroll-hint {
+  display: none;
+}
+
+html:not([data-page-type="home"]) :is(
+  .result-card,
+  .lf2-result-card,
+  .lc2-result-card,
+  .bf2-result-card,
+  .lp2-result-card,
+  .ot2-result-card,
+  .ota2-result-card,
+  .oti2-result-card
+) img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+html:not([data-page-type="home"]) :is(
+  .clinic-photo,
+  .liv-photo,
+  .lf2-clinic-photo,
+  .lc2-clinic-photo,
+  .bf2-clinic-photo,
+  .lp2-clinic-photo,
+  .ot2-clinic-photo,
+  .ota2-clinic-photo,
+  .oti2-clinic-photo
+) img {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+html:not([data-page-type="home"]) :is(
+  .btn:not(.ghost),
+  .lf2-btn:not(.lf2-btn--ghost),
+  .lc2-btn:not(.lc2-btn--ghost),
+  .bf2-btn:not(.bf2-btn--ghost),
+  .lp2-btn:not(.lp2-btn--ghost),
+  .ot2-btn:not(.ot2-btn--ghost),
+  .ota2-btn:not(.ota2-btn--ghost),
+  .oti2-btn:not(.oti2-btn--ghost)
+) {
+  background: #72574f !important;
+  border-color: #72574f !important;
+  color: #fffaf7 !important;
+  text-shadow: none !important;
+}
+
+html:not([data-page-type="home"]) :is(
+  .btn:not(.ghost),
+  .lf2-btn:not(.lf2-btn--ghost),
+  .lc2-btn:not(.lc2-btn--ghost),
+  .bf2-btn:not(.bf2-btn--ghost),
+  .lp2-btn:not(.lp2-btn--ghost),
+  .ot2-btn:not(.ot2-btn--ghost),
+  .ota2-btn:not(.ota2-btn--ghost),
+  .oti2-btn:not(.oti2-btn--ghost)
+) :is(span, strong) {
+  color: inherit !important;
+}
+
+@media (max-width: 760px) {
+  html:not([data-page-type="home"]) .auxiliary-scroll-hint {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 7px;
+    margin: 18px 2px 8px;
+    color: #72574f;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+
+  html:not([data-page-type="home"]) .auxiliary-scroll-hint::after {
+    content: "\2192";
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  html:not([data-page-type="home"]) .auxiliary-results-carousel {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    padding: 0 8vw 8px 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  html:not([data-page-type="home"]) .auxiliary-results-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  html:not([data-page-type="home"]) .auxiliary-results-carousel > :is(article, figure) {
+    flex: 0 0 86vw !important;
+    width: 86vw !important;
+    min-width: 0 !important;
+    max-width: 380px !important;
+    grid-column: auto !important;
+    scroll-snap-align: start;
+  }
+
+  html:not([data-page-type="home"]) :is(
+    .lf2-hero-media,
+    .lc2-hero-media,
+    .bf2-hero-media,
+    .lp2-hero-media,
+    .ot2-hero-media,
+    .ota2-hero-media,
+    .oti2-hero-media
+  ) img.auxiliary-professional-hero {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
+    object-position: center !important;
   }
 }
 

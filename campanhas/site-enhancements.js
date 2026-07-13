@@ -189,6 +189,74 @@
     });
   }
 
+  function installAuxiliaryResultCarousels() {
+    var pageType = document.documentElement.dataset.pageType || '';
+    if (pageType === 'home') return;
+
+    var selectors = [
+      '.result-grid',
+      '.lf2-results-grid',
+      '.lc2-results-grid',
+      '.bf2-results-grid',
+      '.lp2-results-grid',
+      '.ot2-results-grid',
+      '.ota2-results-grid',
+      '.oti2-results-grid'
+    ].join(',');
+
+    document.querySelectorAll([
+      '.result-card img',
+      '.lf2-result-card img',
+      '.lc2-result-card img',
+      '.bf2-result-card img',
+      '.lp2-result-card img',
+      '.ot2-result-card img',
+      '.ota2-result-card img',
+      '.oti2-result-card img',
+      '.clinic-photo img',
+      '.liv-photo img',
+      '.lf2-clinic-photo img',
+      '.lc2-clinic-photo img',
+      '.bf2-clinic-photo img',
+      '.lp2-clinic-photo img',
+      '.ot2-clinic-photo img',
+      '.ota2-clinic-photo img',
+      '.oti2-clinic-photo img'
+    ].join(',')).forEach(function (image) {
+      var width = Number(image.getAttribute('width'));
+      var height = Number(image.getAttribute('height'));
+      if (width > 0 && height > 0) {
+        image.style.setProperty('--auxiliary-image-ratio', width + ' / ' + height);
+        image.style.setProperty('aspect-ratio', width + ' / ' + height, 'important');
+      }
+      image.style.setProperty('height', 'auto', 'important');
+      image.style.setProperty('max-height', 'none', 'important');
+      image.style.setProperty('object-fit', 'contain', 'important');
+      image.style.setProperty('object-position', 'center', 'important');
+    });
+
+    document.querySelectorAll(selectors).forEach(function (row) {
+      if (row.dataset.auxiliaryCarouselEnhanced === 'true') return;
+      var cards = row.querySelectorAll(':scope > article, :scope > figure');
+      if (cards.length < 2) return;
+
+      row.classList.add('auxiliary-results-carousel');
+      row.setAttribute('tabindex', '0');
+      row.setAttribute('role', 'region');
+      row.setAttribute('aria-label', 'Resultados; deslize horizontalmente para ver mais');
+
+      if (!row.previousElementSibling || !row.previousElementSibling.classList.contains('auxiliary-scroll-hint')) {
+        var hint = document.createElement('span');
+        hint.className = 'auxiliary-scroll-hint';
+        hint.setAttribute('aria-hidden', 'true');
+        hint.textContent = 'Deslize para ver mais resultados';
+        row.parentNode.insertBefore(hint, row);
+      }
+
+      row.dataset.auxiliaryCarouselEnhanced = 'true';
+    });
+  }
+
   function installMobileMenu() {
     var header = document.querySelector('body > header');
     var navWrap = header && header.querySelector(':scope > .container.nav');
@@ -396,6 +464,7 @@
     integrateDoctorStoryOnMobile();
     installTargetDisclosures();
     installScrollRows();
+    installAuxiliaryResultCarousels();
     installAnchorAwareness();
     trackInternalNavigation();
     installImageLightbox();
@@ -939,7 +1008,16 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     var pageType = document.documentElement.dataset.pageType || '';
     if (pageType === 'home' || /\/conteudos\/consulta-cirurgia-plastica\/$/.test(path)) return;
 
-    var photo = document.querySelector('.hero-media img');
+    var photo = document.querySelector([
+      '.hero-media img',
+      '.lf2-hero-media img',
+      '.lc2-hero-media img',
+      '.bf2-hero-media img',
+      '.lp2-hero-media img',
+      '.ot2-hero-media img',
+      '.ota2-hero-media img',
+      '.oti2-hero-media img'
+    ].join(','));
     if (photo) {
       photo.src = '/campanhas/assets/amanda-profissional-hero.webp';
       photo.removeAttribute('srcset');

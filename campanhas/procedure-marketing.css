@@ -275,7 +275,7 @@ html[data-marketing-refresh="true"] #resultados .result-pair-mobile img {
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
-  aspect-ratio: auto !important;
+  aspect-ratio: var(--auxiliary-image-ratio, auto) !important;
   padding: 0 !important;
   object-fit: contain !important;
   object-position: center !important;
@@ -566,4 +566,29 @@ html[data-marketing-refresh="true"] footer :is(a, span, strong, p, button) {
 
 @media (prefers-reduced-motion: reduce) {
   html[data-marketing-refresh="true"] { scroll-behavior: auto; }
+}
+
+@media (max-width: 760px) {
+  html[data-marketing-refresh="true"] #resultados .result-grid.auxiliary-results-carousel {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 8vw 8px 0 !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  html[data-marketing-refresh="true"] #resultados .result-grid.auxiliary-results-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  html[data-marketing-refresh="true"] #resultados .result-grid.auxiliary-results-carousel > .result-card {
+    flex: 0 0 86vw !important;
+    width: 86vw !important;
+    max-width: 380px !important;
+    scroll-snap-align: start;
+  }
 }
