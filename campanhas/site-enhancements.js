@@ -973,6 +973,20 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
 
   installAuxiliaryProfessionalHero();
 
+  document.addEventListener('click', function (event) {
+    var reviewLink = event.target.closest('a[data-google-review-tabs]');
+    if (!reviewLink || event.defaultPrevented) return;
+
+    event.preventDefault();
+
+    var doctorWindow = window.open(reviewLink.href, '_blank');
+    if (doctorWindow) doctorWindow.opener = null;
+
+    var clinicUrl = reviewLink.dataset.clinicReviewUrl;
+    var clinicWindow = clinicUrl && window.open(clinicUrl, '_blank');
+    if (clinicWindow) clinicWindow.opener = null;
+  });
+
   document.addEventListener('DOMContentLoaded', function () {
     installConsultationArticleHeroImage();
     installEducationalVideos();
