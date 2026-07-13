@@ -13,11 +13,11 @@
 window.AMANDA_TRACKING_CONFIG = {
   ga4Id: "G-49S7FB3PMV",        // Google Analytics 4 - Dra. Amanda Schroeder
   gtmId: "",                     // Ex.: "GTM-XXXXXXX". Use preferencialmente OU GTM OU GA4 direto para evitar duplicidade.
-  metaPixelId: "1407471497197720",               // Ex.: "123456789012345"
+  metaPixelId: "1501288525098716",               // Pixel Meta oficial. Carregado somente após consentimento.
   googleAdsId: "AW-17157418677",               // Ex.: "AW-123456789"
   googleAdsConversionLabel: "Hc43CM7-qvsaELXdpfU_",  // Conversão de clique no WhatsApp.
   advancedConsentMode: true,
-  measureOnlyWhatsAppClick: true,
+  trackMetaPageViews: true,
   sanitizePreConsentMeasurement: true,
   allowAdStorageAfterConsent: true,
   allowAdUserDataAfterConsent: true,

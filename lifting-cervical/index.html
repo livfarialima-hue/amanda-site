@@ -79,7 +79,7 @@
       "logo": "https://draamandaschroeder.com.br/campanhas/assets/logo-liv-faria-lima.png",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "R. Pais Leme, 215 - Pinheiros",
+        "streetAddress": "R. Pais Leme, 215, cj. 710 - Pinheiros",
         "addressLocality": "São Paulo",
         "addressRegion": "SP",
         "postalCode": "05424-150",
@@ -230,30 +230,33 @@
   --lc-paper:#fffaf7;
   --lc-ivory:#f2e8e2;
   --lc-ink:#2f2623;
-  --lc-muted:#6e5d57;
-  --lc-soft:#9f7f74;
+  --lc-muted:#5f504b;
+  --lc-soft:#80645c;
   --lc-line:rgba(78,58,52,.16);
   --lc-dark:#5b433d;
   --lc-shadow:0 18px 50px rgba(70,45,37,.08);
 }
-html{scroll-behavior:smooth;scroll-padding-top:88px}
+html{background:#251d1a;scroll-behavior:smooth;scroll-padding-top:88px}
 body{background:var(--lc-bg);color:var(--lc-ink)}
+main{padding-top:72px}
 .lc2-shell{width:min(1180px,calc(100% - 40px));margin-inline:auto}
-.lc2-eyebrow{display:block;margin-bottom:12px;color:var(--lc-soft);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
-.lc2-section{padding:80px 0}
+.lc2-eyebrow{display:block;margin-bottom:12px;color:var(--lc-soft);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.lc2-section{position:relative;padding:80px 0;border-top:1px solid rgba(78,58,52,.26);box-shadow:inset 0 12px 20px -24px rgba(46,31,26,.52)}
 .lc2-section-head{max-width:780px}
 .lc2-section-head h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(36px,5vw,58px);font-weight:400;line-height:1.06;letter-spacing:-.025em}
-.lc2-section-head p{margin:18px 0 0;color:var(--lc-muted);font-size:17px;line-height:1.72}
-.lc2-btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:14px 22px;border:1px solid var(--lc-dark);background:var(--lc-dark);color:#fff;text-decoration:none;font-size:15px;font-weight:600;line-height:1.2;transition:transform .2s ease,background .2s ease,color .2s ease}
+.lc2-section-head p{margin:18px 0 0;color:var(--lc-muted);font-size:18px;line-height:1.68}
+.lc2-btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:14px 22px;border:1px solid var(--lc-dark);background:var(--lc-dark);color:#fff;text-decoration:none;font-size:16px;font-weight:600;line-height:1.2;transition:transform .2s ease,background .2s ease,color .2s ease}
 .lc2-btn:hover{transform:translateY(-1px)}
 .lc2-btn--ghost{background:transparent;color:var(--lc-dark)}
 .lc2-btn:focus-visible,.lc2-menu-button:focus-visible,.lc2-nav a:focus-visible,summary:focus-visible{outline:3px solid rgba(91,67,61,.35);outline-offset:3px}
 
-.lc2-header{position:sticky;top:0;z-index:40;border-bottom:1px solid var(--lc-line);background:rgba(247,240,236,.94);backdrop-filter:blur(14px)}
+.lc2-header{position:fixed;top:0;right:0;left:0;z-index:40;border-bottom:1px solid var(--lc-line);background:rgba(247,240,236,.94);backdrop-filter:blur(14px);transition:transform .24s ease,visibility .24s ease}
+.lc2-header.is-unpinned{visibility:hidden;transform:translateY(-110%);pointer-events:none}
 .lc2-header-inner{display:flex;min-height:72px;align-items:center;justify-content:space-between;gap:24px}
 .lc2-brand{display:flex;flex-direction:column;color:var(--lc-ink);text-decoration:none}
 .lc2-brand strong{font-size:16px;line-height:1.2}
-.lc2-brand span{margin-top:3px;color:var(--lc-muted);font-size:11px;line-height:1.25}
+  .lc2-brand>span{margin-top:3px;color:var(--lc-muted);font-size:13px;line-height:1.3}
+.lc2-brand-specialty{color:#965f50;font-weight:700}
 .lc2-nav{display:flex;align-items:center;gap:22px}
 .lc2-nav>a:not(.lc2-btn){color:var(--lc-ink);text-decoration:none;font-size:14px}
 .lc2-menu-button{display:none;width:46px;height:46px;border:1px solid var(--lc-line);background:transparent;color:var(--lc-ink);font:inherit}
@@ -264,7 +267,10 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
 .lc2-hero .lead{max-width:720px;margin:24px 0 0;color:var(--lc-muted);font-size:19px;line-height:1.68}
 .lc2-doctor-line{margin:22px 0 0;color:var(--lc-ink);font-size:13px;font-weight:600;line-height:1.55}
 .lc2-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.lc2-hero-note{margin:14px 0 0;color:var(--lc-muted);font-size:13px;line-height:1.55}
+.lc2-section-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:28px}
+.lc2-section-actions .lc2-action-note{max-width:620px;margin:0;color:var(--lc-muted);font-size:15px;line-height:1.65}
+.lc2-carousel-controls,.lc2-carousel-hint{display:none}
+  .lc2-hero-note{margin:14px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.55}
 .lc2-hero-media{margin:0;overflow:hidden;background:#e7d8d0;box-shadow:var(--lc-shadow)}
 .lc2-hero-media img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 20%}
 
@@ -272,38 +278,56 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
 .lc2-trust-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--lc-line);border-bottom:1px solid var(--lc-line)}
 .lc2-trust-item{padding:18px 20px;border-right:1px solid var(--lc-line)}
 .lc2-trust-item:last-child{border-right:0}
-.lc2-trust-item strong{display:block;font-size:13px;line-height:1.35}
-.lc2-trust-item span{display:block;margin-top:5px;color:var(--lc-muted);font-size:12px;line-height:1.45}
+.lc2-trust-item strong{display:block;font-size:14px;line-height:1.4}
+.lc2-trust-item span{display:block;margin-top:5px;color:var(--lc-muted);font-size:13px;line-height:1.5}
 
-.lc2-results{background:var(--lc-paper)}
-.lc2-results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:34px}
-.lc2-result-card{margin:0;border:1px solid var(--lc-line);background:#fff;overflow:hidden}
-.lc2-result-card img{display:block;width:100%;aspect-ratio:16/8.7;object-fit:cover;background:#eadfd9}
-.lc2-result-copy{padding:22px}
-.lc2-result-copy h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:400}
-.lc2-result-copy p{margin:10px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.62}
-.lc2-observe{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.lc2-observe span{padding:6px 9px;border:1px solid var(--lc-line);color:var(--lc-muted);font-size:12px}
-.lc2-disclaimer{margin:20px 0 0;color:var(--lc-muted);font-size:12px;line-height:1.6}
+.lc2-results{position:relative;overflow:hidden;border-top-color:rgba(255,255,255,.22);background:#352a27;color:#fff}
+.lc2-results::before{content:"";position:absolute;top:-180px;right:-160px;width:420px;height:420px;border:1px solid rgba(255,255,255,.08);border-radius:50%;pointer-events:none}
+.lc2-results .lc2-shell{position:relative}
+.lc2-results .lc2-eyebrow{color:#ddb7aa}
+.lc2-results .lc2-section-head p,.lc2-results .lc2-disclaimer{color:rgba(255,255,255,.76)!important}
+.lc2-real-results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:30px}
+.lc2-real-result{overflow:hidden;border:1px solid rgba(255,255,255,.16);background:#fff;color:var(--lc-ink);box-shadow:0 18px 42px rgba(15,10,9,.22)}
+.lc2-before-after{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;background:var(--lc-line)}
+.lc2-ba-panel{position:relative;overflow:hidden;background:#ece5e1}
+  .lc2-ba-panel>span{position:absolute;top:10px;left:10px;z-index:2;padding:6px 9px;background:rgba(46,31,26,.82);color:#fff;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.lc2-ba-frame{position:relative;overflow:hidden;aspect-ratio:1/1}
+.lc2-real-result--wide .lc2-ba-frame{aspect-ratio:4/3}
+.lc2-real-result--profile .lc2-ba-frame{aspect-ratio:11/10}
+.lc2-real-result--composite .lc2-before-after{display:block;background:transparent}
+.lc2-real-result--composite .lc2-ba-frame{aspect-ratio:652/410;background:#ece5e1}
+.lc2-real-result--composite .lc2-ba-frame img{position:static;display:block;width:100%;height:100%;max-width:100%;object-fit:contain}
+.lc2-ba-frame img{position:absolute;top:0;height:100%;width:auto;max-width:none}
+.lc2-ba-frame--before img{left:0}
+.lc2-ba-frame--after img{right:0}
+.lc2-real-result-copy{padding:18px}
+  .lc2-real-result-copy span{display:block;color:var(--lc-soft);font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.lc2-real-result-copy h3{margin:7px 0 0;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;line-height:1.15}
+.lc2-real-result-copy p{margin:9px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.58}
+.lc2-disclaimer{margin:20px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.62}
+.lc2-results .lc2-disclaimer:first-of-type{padding-top:14px;border-top:1px solid rgba(255,255,255,.16)}
+.lc2-disclaimer--mobile{display:none}
 
 .lc2-authority{background:var(--lc-ivory)}
 .lc2-authority-grid{display:grid;grid-template-columns:minmax(320px,.82fr) minmax(0,1.18fr);gap:52px;align-items:center}
-.lc2-authority-media{margin:0;overflow:hidden;background:#decfc8}
+.lc2-authority-media{margin:0;overflow:hidden;border:1px solid rgba(91,67,61,.18);background:#decfc8;box-shadow:0 22px 54px rgba(70,45,37,.14)}
 .lc2-authority-media img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 22%}
 .lc2-authority-copy h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,5vw,60px);font-weight:400;line-height:1.05}
 .lc2-authority-copy p{margin:18px 0 0;color:var(--lc-muted);font-size:17px;line-height:1.72}
+.lc2-authority-copy .lc2-credentials{margin-top:24px;padding:19px 21px;border-left:4px solid #965f50;background:rgba(255,250,247,.88);box-shadow:0 10px 28px rgba(70,45,37,.07)}
+.lc2-authority-copy .lc2-credentials strong{color:var(--lc-ink);font-weight:700}
 .lc2-authority-points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
 .lc2-authority-points div{padding-top:14px;border-top:1px solid var(--lc-line)}
-.lc2-authority-points strong{display:block;font-size:14px}
-.lc2-authority-points span{display:block;margin-top:5px;color:var(--lc-muted);font-size:13px;line-height:1.5}
+.lc2-authority-points strong{display:block;font-size:15px}
+.lc2-authority-points span{display:block;margin-top:5px;color:var(--lc-muted);font-size:15px;line-height:1.55}
 .lc2-authority-copy .lc2-btn{margin-top:26px}
 
 .lc2-language{background:var(--lc-bg)}
 .lc2-language-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:30px}
 .lc2-language-card{padding:26px;border:1px solid var(--lc-line);background:var(--lc-paper)}
 .lc2-language-card h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:400;line-height:1.14}
-.lc2-language-card p{margin:12px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.65}
-.lc2-language-bridge{margin-top:18px;padding:20px 22px;border-left:3px solid var(--lc-soft);background:rgba(255,250,247,.7);color:var(--lc-muted);font-size:15px;line-height:1.65}
+.lc2-language-card p{margin:12px 0 0;color:var(--lc-muted);font-size:16px;line-height:1.62}
+.lc2-language-bridge{margin-top:18px;padding:20px 22px;border-left:3px solid var(--lc-soft);background:rgba(255,250,247,.7);color:var(--lc-muted);font-size:16px;line-height:1.62}
 .lc2-language-bridge strong{color:var(--lc-ink)}
 
 .lc2-fit{background:var(--lc-paper)}
@@ -312,50 +336,50 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
 .lc2-fit-card--soft{background:var(--lc-ivory)}
 .lc2-fit-card h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:400}
 .lc2-checks{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:13px}
-.lc2-checks li{position:relative;padding-left:26px;color:var(--lc-muted);font-size:15px;line-height:1.58}
+.lc2-checks li{position:relative;padding-left:26px;color:var(--lc-muted);font-size:16px;line-height:1.62}
 .lc2-checks li::before{content:"";position:absolute;left:0;top:.58em;width:10px;height:10px;border:1px solid var(--lc-soft);transform:rotate(45deg)}
-.lc2-fit-note{margin-top:20px;color:var(--lc-muted);font-size:15px;line-height:1.65}
+.lc2-fit-note{margin-top:20px;color:var(--lc-muted);font-size:16px;line-height:1.65}
 
 .lc2-consult{background:var(--lc-bg)}
 .lc2-consult-grid{display:grid;grid-template-columns:minmax(360px,.9fr) minmax(0,1.1fr);gap:48px;align-items:center}
 .lc2-clinic-photo{margin:0;overflow:hidden;background:#dfd1ca}
 .lc2-clinic-photo img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
 .lc2-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
-.lc2-step{padding:18px;border:1px solid var(--lc-line);background:var(--lc-paper)}
-.lc2-step span{color:var(--lc-soft);font-size:12px;font-weight:700;letter-spacing:.1em}
-.lc2-step strong{display:block;margin-top:8px;font-size:15px;line-height:1.4}
-.lc2-consult-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.lc2-consult-facts span{padding:8px 10px;border:1px solid var(--lc-line);background:rgba(255,250,247,.75);color:var(--lc-muted);font-size:12px;line-height:1.4}
+.lc2-step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;padding:18px;border:1px solid var(--lc-line);background:var(--lc-paper)}
+.lc2-step span{padding-top:3px;color:var(--lc-soft);font-size:12px;font-weight:700;letter-spacing:.1em}
+.lc2-step strong{display:block;margin:0;font-size:16px;line-height:1.45}
 .lc2-consult .lc2-btn{margin-top:24px}
 
 .lc2-recovery{background:var(--lc-paper)}
 .lc2-scar-box{display:grid;grid-template-columns:.75fr 1.25fr;gap:34px;margin-top:30px;padding:28px;border:1px solid var(--lc-line);background:#fff}
 .lc2-scar-box h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:32px;font-weight:400}
-.lc2-scar-box p{margin:0;color:var(--lc-muted);font-size:15px;line-height:1.68}
+.lc2-scar-box p{margin:0;color:var(--lc-muted);font-size:16px;line-height:1.68}
 .lc2-timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:24px}
 .lc2-time{padding:22px;border:1px solid var(--lc-line);background:var(--lc-bg)}
-.lc2-time strong{display:block;font-size:14px}
-.lc2-time p{margin:10px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.55}
-.lc2-margin-note{margin-top:18px;padding:18px 20px;border-left:3px solid var(--lc-soft);background:var(--lc-ivory);color:var(--lc-muted);font-size:14px;line-height:1.6}
+.lc2-time strong{display:block;font-size:15px}
+.lc2-time p{margin:10px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.6}
+.lc2-margin-note{margin-top:18px;padding:18px 20px;border-left:3px solid var(--lc-soft);background:var(--lc-ivory);color:var(--lc-muted);font-size:15px;line-height:1.65}
 .lc2-recovery details{margin-top:18px;border-top:1px solid var(--lc-line);border-bottom:1px solid var(--lc-line)}
 .lc2-recovery summary{padding:18px 0;cursor:pointer;font-weight:600}
-.lc2-recovery details p{margin:0 0 18px;color:var(--lc-muted);font-size:14px;line-height:1.65}
+.lc2-recovery details p{margin:0 0 18px;color:var(--lc-muted);font-size:15px;line-height:1.65}
 
 .lc2-safety{background:var(--lc-ivory)}
 .lc2-safety-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:28px}
+.lc2-safety-card--hospital{border-color:rgba(150,95,80,.42);background:#f7ebe5;box-shadow:0 12px 30px rgba(70,45,37,.08)}
+.lc2-safety-card--hospital h3{color:#7f4f43}
 .lc2-safety-card{padding:24px;border:1px solid var(--lc-line);background:rgba(255,250,247,.84)}
 .lc2-safety-card span{color:var(--lc-soft);font-size:12px;font-weight:700;letter-spacing:.1em}
 .lc2-safety-card h3{margin:9px 0 0;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400}
-.lc2-safety-card p{margin:10px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.6}
-.lc2-cardio-note{margin-top:18px;color:var(--lc-muted);font-size:13px;line-height:1.6}
+.lc2-safety-card p{margin:10px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.62}
+.lc2-cardio-note{margin-top:18px;color:var(--lc-muted);font-size:15px;line-height:1.62}
 
 .lc2-reviews{background:var(--lc-bg)}
 .lc2-review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
 .lc2-review{margin:0;padding:26px;border:1px solid var(--lc-line);background:var(--lc-paper)}
 .lc2-review blockquote{margin:0;color:var(--lc-ink);font-family:Georgia,"Times New Roman",serif;font-size:22px;line-height:1.45}
-.lc2-review cite{display:block;margin-top:18px;font-style:normal;font-size:13px;font-weight:600}
-.lc2-review span{display:block;margin-top:4px;color:var(--lc-muted);font-size:12px}
-.lc2-review-link{display:inline-block;margin-top:18px;color:var(--lc-dark);font-size:13px}
+.lc2-review cite{display:block;margin-top:18px;font-style:normal;font-size:15px;font-weight:600}
+.lc2-review span{display:block;margin-top:4px;color:var(--lc-muted);font-size:14px}
+.lc2-review-link{display:inline-block;margin-top:18px;color:var(--lc-dark);font-size:15px}
 
 .lc2-faq{background:var(--lc-paper)}
 .lc2-faq-list{margin-top:28px;border-top:1px solid var(--lc-line)}
@@ -367,34 +391,31 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
 .lc2-faq details[open] summary::after{content:"–"}
 .lc2-faq-answer{padding:0 34px 20px 0;color:var(--lc-muted);font-size:15px;line-height:1.68}
 
-.lc2-final{padding:72px 0;background:var(--lc-dark);color:#fff}
+.lc2-final{padding:72px 0;border-top:1px solid rgba(255,255,255,.22);box-shadow:inset 0 12px 20px -24px rgba(0,0,0,.72);background:var(--lc-dark);color:#fff}
 .lc2-final-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:34px;align-items:center}
 .lc2-final h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,5vw,60px);font-weight:400;line-height:1.05}
-.lc2-final p{max-width:760px;margin:16px 0 0;color:rgba(255,255,255,.78);font-size:16px;line-height:1.68}
-.lc2-final-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.lc2-final-facts span{padding:7px 9px;border:1px solid rgba(255,255,255,.25);font-size:12px}
+html[data-page-type="procedure"] .lc2-final p{max-width:760px;margin:16px 0 0;color:rgba(255,255,255,.9)!important;font-size:16px;line-height:1.68}
 .lc2-final .lc2-btn{border-color:#fff;background:#fff;color:var(--lc-dark)}
 
-.lc2-footer{padding:28px 0 96px;background:#251d1a;color:rgba(255,255,255,.78)}
-.lc2-footer-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:38px}
-.lc2-footer strong{color:#fff}
-.lc2-footer p,.lc2-footer a{color:rgba(255,255,255,.74);font-size:13px;line-height:1.65}
+.lc2-footer{padding:34px 0 40px;border-top:1px solid rgba(255,255,255,.12);background:#251d1a;color:rgba(255,255,255,.84)}
+.lc2-footer-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:38px;align-items:start}
+.lc2-footer strong{color:#fff;font-size:15px}
+.lc2-footer p,.lc2-footer a{color:rgba(255,255,255,.82);font-size:15px;line-height:1.7}
 .lc2-footer a{text-decoration:none}
 .lc2-footer-links{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:12px}
 .lc2-footer details{display:none}
-.lc2-privacy{margin-top:14px;border:0;background:transparent;color:rgba(255,255,255,.74);padding:0;font:inherit;font-size:13px;cursor:pointer}
+.lc2-privacy{margin-top:14px;border:0;background:transparent;color:rgba(255,255,255,.82);padding:0;font:inherit;font-size:15px;cursor:pointer}
 
-.lc2-sticky{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:35;display:none;width:min(430px,calc(100% - 24px));transform:translateX(-50%);padding:8px;border:1px solid rgba(91,67,61,.18);background:rgba(255,250,247,.96);box-shadow:0 12px 36px rgba(46,31,26,.18);backdrop-filter:blur(14px)}
-.lc2-sticky .lc2-btn{width:100%;min-height:50px}
+.lc2-sticky{position:fixed;right:22px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:35;display:none}
+#lc2-sticky .lc2-btn{width:auto;min-height:50px;gap:9px;padding:12px 18px;border-radius:999px;background:#176e43!important;border-color:#176e43!important;color:#fff!important;box-shadow:0 12px 32px rgba(22,93,57,.32)}
+#lc2-sticky .lc2-btn:hover,#lc2-sticky .lc2-btn:focus-visible{background:#125b35!important;border-color:#125b35!important;color:#fff!important}
+.lc2-sticky svg{width:21px;height:21px;flex:0 0 auto;fill:currentColor}
 .lc2-sticky.is-visible{display:block}
-.lc2-sticky.is-hidden-near-final{display:none}
 
 @media (max-width:980px){
   .lc2-nav>a:not(.lc2-btn){display:none}
-  .lc2-menu-button{display:inline-flex;align-items:center;justify-content:center}
-  .lc2-nav.is-open{position:absolute;left:20px;right:20px;top:72px;display:grid;gap:0;padding:10px;border:1px solid var(--lc-line);background:var(--lc-paper);box-shadow:var(--lc-shadow)}
-  .lc2-nav.is-open>a:not(.lc2-btn){display:block;padding:14px 10px;border-bottom:1px solid var(--lc-line)}
-  .lc2-nav.is-open .lc2-btn{display:none}
+  .lc2-menu-button{display:none}
+  .lc2-nav .lc2-btn{width:auto;min-height:44px;padding:10px 16px;border-radius:999px;white-space:nowrap;font-size:13px}
   .lc2-hero-grid,.lc2-authority-grid,.lc2-consult-grid{grid-template-columns:1fr}
   .lc2-hero-copy{order:1}
   .lc2-hero-media{order:2}
@@ -402,88 +423,158 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
   .lc2-authority-media img{aspect-ratio:4/3}
   .lc2-timeline,.lc2-safety-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lc2-footer-grid{grid-template-columns:1fr}
+  .lc2-footer-grid>div+div{padding-top:22px;border-top:1px solid rgba(255,255,255,.14)}
 }
 
 @media (max-width:760px){
   html{scroll-padding-top:76px}
-  .lc2-shell{width:min(100% - 40px,680px)}
-  .lc2-header-inner{min-height:66px}
-  .lc2-brand strong{font-size:15px}
-  .lc2-brand span{font-size:10px}
-  .lc2-nav.is-open{top:66px}
-  .lc2-section{padding:60px 0}
-  .lc2-section-head h2{font-size:clamp(30px,9.2vw,42px);line-height:1.08}
-  .lc2-section-head p{font-size:16px;line-height:1.62}
-  .lc2-hero{padding:30px 0 20px}
-  .lc2-hero-grid{gap:28px}
-  .lc2-hero h1{font-size:clamp(40px,12vw,54px);line-height:1.01}
-  .lc2-hero .lead{margin-top:18px;font-size:17px;line-height:1.6}
-  .lc2-doctor-line{font-size:12px}
-  .lc2-hero-actions{display:grid;grid-template-columns:1fr;margin-top:22px}
+  main{padding-top:64px}
+  .lc2-shell{width:min(100% - 32px,680px)}
+  .lc2-header{border-bottom-color:rgba(91,67,61,.12);background:rgba(255,250,247,.96);box-shadow:0 7px 24px rgba(52,41,37,.08)}
+  .lc2-header-inner{min-height:64px;gap:10px}
+  .lc2-brand{min-width:0}
+  .lc2-brand strong{font-family:Georgia,"Times New Roman",serif;font-size:16px;font-weight:400;letter-spacing:-.01em}
+  .lc2-brand>span{max-width:none;overflow:visible;font-size:13px;letter-spacing:.015em;white-space:nowrap}
+  .lc2-brand-registration{display:none}
+  .lc2-section{padding:40px 0}
+  .lc2-section-head h2{font-size:clamp(30px,8.4vw,38px);line-height:1.1}
+  .lc2-section-head p{margin-top:14px;font-size:17px;line-height:1.62}
+  .lc2-hero{padding:18px 0 12px}
+  .lc2-hero-grid{gap:16px}
+  .lc2-hero h1{font-size:clamp(35px,9.8vw,41px);line-height:1.02}
+  .lc2-hero .lead{margin-top:15px;font-size:17px;line-height:1.58}
+  .lc2-doctor-line{font-size:14px}
+  .lc2-hero-actions{display:grid;grid-template-columns:1fr;margin-top:18px}
   .lc2-btn{width:100%;min-height:54px}
-  .lc2-hero-media img{aspect-ratio:4/3;object-position:center 18%}
-  .lc2-trust{padding:8px 0 24px}
+  .lc2-nav .lc2-btn{width:auto;min-height:42px;padding:10px 15px;font-size:13px}
+  .lc2-hero-media img{aspect-ratio:16/10!important;object-position:center 18%}
+  .lc2-trust{padding:6px 0 10px}
   .lc2-trust-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lc2-trust-item{padding:14px 12px;border-right:1px solid var(--lc-line);border-bottom:1px solid var(--lc-line)}
   .lc2-trust-item:nth-child(2n){border-right:0}
   .lc2-trust-item:nth-last-child(-n+2){border-bottom:0}
-  .lc2-results-grid,.lc2-language-grid,.lc2-fit-grid,.lc2-review-grid,.lc2-authority-points,.lc2-steps{grid-template-columns:1fr}
-  .lc2-results-grid{gap:16px;margin-top:26px}
-  .lc2-result-card img{aspect-ratio:16/9}
-  .lc2-result-copy{padding:18px}
-  .lc2-result-copy h3{font-size:24px}
-  .lc2-authority-grid{gap:28px}
-  .lc2-authority-copy h2{font-size:clamp(32px,9.5vw,44px)}
+  .lc2-language-grid,.lc2-fit-grid,.lc2-review-grid,.lc2-authority-points,.lc2-steps{grid-template-columns:1fr}
+  .lc2-authority-grid{gap:22px}
+  .lc2-authority-media img,.lc2-clinic-photo img{aspect-ratio:16/10}
+  .lc2-authority-copy h2{font-size:clamp(30px,8.4vw,38px);line-height:1.1}
   .lc2-authority-copy p{font-size:16px;line-height:1.65}
-  .lc2-language-card,.lc2-fit-card{padding:22px}
+  .lc2-language-card,.lc2-fit-card{padding:20px}
   .lc2-language-card h3,.lc2-fit-card h3{font-size:26px}
-  .lc2-consult-grid{gap:26px}
-  .lc2-scar-box{grid-template-columns:1fr;gap:14px;padding:22px}
+  .lc2-consult-grid{gap:22px}
+  .lc2-scar-box{grid-template-columns:1fr;gap:12px;padding:20px}
   .lc2-timeline,.lc2-safety-grid{grid-template-columns:1fr}
   .lc2-review blockquote{font-size:20px}
   .lc2-faq summary{padding:18px 0}
   .lc2-faq summary h3{font-size:16px}
   .lc2-final{padding:58px 0}
   .lc2-final-grid{grid-template-columns:1fr}
-  .lc2-final h2{font-size:clamp(34px,10vw,46px)}
-  .lc2-footer{padding-bottom:110px}
+  .lc2-final h2{font-size:clamp(32px,8.8vw,40px);line-height:1.1}
+  .lc2-footer{padding:30px 0 36px}
   .lc2-footer-links{display:none}
   .lc2-footer details{display:block;border-top:1px solid rgba(255,255,255,.14)}
-  .lc2-footer summary{padding:14px 0;cursor:pointer;color:#fff;font-size:13px;font-weight:600}
+  .lc2-footer summary{padding:14px 0;cursor:pointer;color:#fff;font-size:15px;font-weight:600}
   .lc2-footer details a{display:block;padding:7px 0}
-  .lc2-sticky{display:none}
+  .lc2-sticky{right:8px;bottom:calc(10px + env(safe-area-inset-bottom));opacity:.98}
+  html[data-page-type="procedure"] .lc2-sticky .lc2-btn{width:auto;min-height:48px;padding:11px 15px;gap:8px;border-radius:999px;background:#176e43!important;border-color:#176e43!important;color:#fff!important;box-shadow:0 10px 25px rgba(22,93,57,.32)}
+  html[data-page-type="procedure"] .lc2-sticky .lc2-btn:hover,html[data-page-type="procedure"] .lc2-sticky .lc2-btn:focus-visible{background:#125b35!important;border-color:#125b35!important;color:#fff!important}
+  .lc2-sticky .lc2-btn>span{display:inline;font-size:14px;font-weight:700;letter-spacing:.01em}
+  .lc2-sticky .lc2-sticky-detail{display:inline}
+  .lc2-sticky svg{width:21px;height:21px}
+
+  .lc2-carousel-hint{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:10px;color:var(--lc-muted);font-size:13px;font-weight:700}
+  .lc2-carousel-hint b{display:inline-block;color:var(--lc-soft);font-size:22px;font-weight:400;animation:lc2-carousel-nudge 1.35s ease-in-out infinite}
+  .lc2-carousel-controls{display:flex;justify-content:flex-end;gap:6px;margin-top:4px}
+  .lc2-carousel-button{width:auto;min-height:48px;padding:10px 14px;border:1px solid var(--lc-dark);background:var(--lc-paper);color:var(--lc-ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+  .lc2-carousel-button:last-child{background:var(--lc-dark);color:#fff}
+  .lc2-carousel-button:disabled{cursor:default;opacity:.42}
+  .lc2-mobile-carousel-track{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column;grid-auto-columns:min(86vw,360px);align-items:start;gap:12px!important;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:0;padding:2px 16px 10px 0;margin-top:8px!important;margin-right:-16px;scrollbar-width:thin;transition:height .18s ease}
+  .lc2-mobile-carousel-track>*{height:auto;align-self:start;scroll-snap-align:start;scroll-snap-stop:always}
+  .lc2-mobile-carousel-track:focus-visible{outline:3px solid rgba(91,67,61,.35);outline-offset:3px}
+  .lc2-real-results-grid.lc2-mobile-carousel-track{grid-auto-columns:100%;margin-right:0;padding-right:0}
+  .lc2-real-result{border-color:rgba(91,67,61,.34);box-shadow:0 12px 28px rgba(52,41,37,.12)}
+  .lc2-real-result-copy h3{font-size:27px}
+  .lc2-results .lc2-carousel-hint{color:rgba(255,255,255,.78)}
+  .lc2-results .lc2-carousel-hint b{color:#ddb7aa}
+  .lc2-results .lc2-carousel-button{border-color:rgba(255,255,255,.76)}
+  .lc2-results .lc2-carousel-button:last-child{background:#fff;color:var(--lc-dark)}
+  .lc2-disclaimer--desktop{display:none}
+  .lc2-results .lc2-disclaimer--mobile{display:block;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);font-size:12px;line-height:1.5}
 }
+
+@keyframes lc2-carousel-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
-.lc2-results-grid--single{grid-template-columns:1fr}
-.lc2-results-grid--single .lc2-result-card{max-width:980px}
-.lc2-results-grid--single .lc2-result-card img{aspect-ratio:16/7.4;object-fit:cover}
+/* Módulo padrão de ambientes, cuidado e conteúdos selecionados. */
+.lc2-consult-media-gallery,.lc2-care-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.lc2-consult-media-gallery figure,.lc2-care-gallery figure{margin:0;overflow:hidden;border:1px solid var(--lc-line);background:var(--lc-paper)}
+.lc2-consult-media-gallery img,.lc2-care-gallery img{display:block;width:100%;height:auto!important;aspect-ratio:4/5;object-fit:cover}
+.lc2-consult-media-gallery img{object-position:center 58%}
+.lc2-consult-media-gallery .lc2-consult-room{object-position:left 58%}
+.lc2-consult-media-gallery .lc2-consult-liv2{object-position:center 42%}
+.lc2-care-gallery{margin-top:24px}
+.lc2-care-showcase{margin-top:28px;padding:26px;border:1px solid rgba(91,67,61,.18);background:linear-gradient(135deg,#f3e8e3 0%,#fffaf7 100%)}
+.lc2-care-showcase-head{max-width:720px}
+.lc2-care-showcase-head span{display:block;margin-bottom:8px;color:var(--lc-soft);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.lc2-care-showcase-head h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(27px,3vw,38px);font-weight:400;line-height:1.08}
+.lc2-care-showcase-head p{margin:12px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.65}
+.lc2-care-gallery{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:20px}
+.lc2-care-gallery img,.lc2-care-gallery video{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#211917}
+.lc2-care-gallery img{object-position:center 39%}
+.lc2-care-gallery video{object-fit:contain}
+.lc2-care-gallery figcaption{padding:14px 15px;color:var(--lc-muted);font-size:14px;line-height:1.58}
+.lc2-content-section{background:var(--lc-bg)}
+.lc2-content-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:28px}
+.lc2-content-card{overflow:hidden;border:1px solid var(--lc-line);background:var(--lc-paper)}
+.lc2-content-card video{display:block;width:100%;aspect-ratio:16/9;background:#191413;object-fit:cover}
+.lc2-content-copy{padding:20px}
+.lc2-content-copy h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:400;line-height:1.18}
+.lc2-content-copy p{margin:9px 0 0;color:var(--lc-muted);font-size:15px;line-height:1.62}
+@media (max-width:980px){
+  .lc2-consult-grid>*{min-width:0}
+}
+@media (max-width:760px){
+  .lc2-section-head{max-width:100%}
+  .lc2-content-grid{grid-template-columns:1fr}
+  .lc2-content-card video,.lc2-consult-media-gallery img,.lc2-care-gallery img{aspect-ratio:16/10}
+  .lc2-consult-media-gallery .lc2-consult-room,.lc2-consult-media-gallery .lc2-consult-liv2{aspect-ratio:1/1}
+  .lc2-consult-media-gallery .lc2-consult-liv2{object-position:center 20%}
+  .lc2-consult-media-gallery figure,.lc2-care-gallery figure{min-width:0}
+  .lc2-care-showcase{padding:20px 16px}
+  .lc2-care-gallery img,.lc2-care-gallery video{aspect-ratio:4/5}
+}
+
 .lc2-causes{background:var(--lc-bg)}
 .lc2-causes-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:30px}
 .lc2-cause-card{padding:24px;border:1px solid var(--lc-line);background:var(--lc-paper)}
-.lc2-cause-card span{color:var(--lc-soft);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .lc2-cause-card span{color:var(--lc-soft);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 .lc2-cause-card h3{margin:9px 0 0;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400}
-.lc2-cause-card p{margin:10px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.62}
+.lc2-cause-card p{margin:10px 0 0;color:var(--lc-muted);font-size:16px;line-height:1.62}
 .lc2-comparison{background:var(--lc-bg)}
 .lc2-comparison-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
 .lc2-comparison-card{padding:24px;border:1px solid var(--lc-line);background:var(--lc-paper)}
 .lc2-comparison-card h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:400}
-.lc2-comparison-card p{margin:11px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.62}
+.lc2-comparison-card p{margin:11px 0 0;color:var(--lc-muted);font-size:16px;line-height:1.62}
 .lc2-nonsurgical{display:grid;grid-template-columns:minmax(180px,.5fr) minmax(0,1.5fr);gap:24px;align-items:center;margin-top:24px;padding:22px;border:1px solid var(--lc-line);background:var(--lc-paper)}
 .lc2-nonsurgical img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
 .lc2-nonsurgical h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:400}
-.lc2-nonsurgical p{margin:10px 0 0;color:var(--lc-muted);font-size:14px;line-height:1.62}
+.lc2-nonsurgical p{margin:10px 0 0;color:var(--lc-muted);font-size:16px;line-height:1.62}
 @media (max-width:980px){
   .lc2-causes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:760px){
-  .lc2-results-grid--single .lc2-result-card img{aspect-ratio:16/9}
   .lc2-causes-grid,.lc2-comparison-grid{grid-template-columns:1fr}
-  .lc2-nonsurgical{grid-template-columns:1fr}
+  .lc2-nonsurgical{grid-template-columns:1fr;gap:18px;padding:18px}
+  .lc2-causes-grid,.lc2-comparison-grid{gap:12px!important}
+  .lc2-cause-card,.lc2-comparison-card{padding:20px}
+  .lc2-authority-copy .lc2-credentials{margin-top:20px;padding:16px 17px}
+  .lc2-authority-points{gap:12px;margin-top:22px}
+  .lc2-steps{gap:8px;margin-top:18px}
+  .lc2-step{grid-template-columns:28px minmax(0,1fr);gap:9px;padding:15px}
+  .lc2-language-card,.lc2-cause-card,.lc2-fit-card,.lc2-comparison-card,.lc2-step,.lc2-time,.lc2-safety-card,.lc2-review,.lc2-scar-box,.lc2-nonsurgical{border-radius:3px;box-shadow:0 8px 22px rgba(52,41,37,.045)}
 }
 
 </style>
@@ -495,18 +586,11 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
   <div class="lc2-shell lc2-header-inner">
     <a aria-label="Dra. Amanda Schroeder — página inicial" class="lc2-brand" href="../index.html">
       <strong>Dra. Amanda Schroeder</strong>
-      <span>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</span>
+      <span><span class="lc2-brand-specialty">Cirurgia Plástica Facial</span><span class="lc2-brand-registration"> · CRM-SP 191605 · RQE 110472</span></span>
     </a>
     <button aria-expanded="false" aria-label="Abrir menu" class="lc2-menu-button" type="button">Menu</button>
     <nav aria-label="Navegação da página" class="lc2-nav">
-      <a href="#resultados">Resultados</a>
-      <a href="#queixas">O que você percebe</a>
-      <a href="#causas">O que pode causar</a>
-      <a href="#indicacao">Indicação</a>
-      <a href="#consulta">Consulta</a>
-      <a href="#recuperacao">Recuperação</a>
-      <a href="#faq">Dúvidas</a>
-      <a class="lc2-btn" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Consultar disponibilidade</a>
+      <a class="lc2-btn" data-cta-location="header" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Falar com a equipe</a>
     </nav>
   </div>
 </header>
@@ -516,12 +600,11 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
     <div class="lc2-shell lc2-hero-grid">
       <div class="lc2-hero-copy">
         <span class="lc2-eyebrow">Lifting cervical em São Paulo</span>
-        <h1>Recuperar o contorno entre rosto e pescoço, sem aspecto esticado.</h1>
-        <p class="lead">Papada, pele solta, bandas no pescoço e perda da linha mandibular podem ter causas diferentes. A avaliação identifica quanto da queixa vem da pele, da gordura, do músculo e da relação com a face antes de definir se lifting, lipo ou outra abordagem faz sentido.</p>
+        <h1>Lifting cervical para recuperar o contorno entre rosto e pescoço, sem aspecto esticado.</h1>
+        <p class="lead">Quando o incômodo está na pele solta, nas bandas do pescoço, na papada ou na perda da linha mandibular, o lifting cervical pode ser uma possibilidade. A avaliação confirma se ele é suficiente, se deve ser associado ao tratamento da face ou se outra abordagem seria mais adequada.</p>
         <p class="lc2-doctor-line">Dra. Amanda Schroeder · Cirurgia Plástica · CRM-SP 191605 · RQE 110472 · Pinheiros</p>
         <div class="lc2-hero-actions">
-          <a class="lc2-btn" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Consultar disponibilidade</a>
-          <a class="lc2-btn lc2-btn--ghost" href="#resultados">Ver resultados</a>
+          <a class="lc2-btn" data-cta-location="hero" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Falar com a equipe</a>
         </div>
         <p class="lc2-hero-note">Consulta particular em Pinheiros · Nota fiscal para reembolso</p>
       </div>
@@ -531,33 +614,12 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
     </div>
   </section>
 
-  <section class="lc2-trust" aria-label="Pontos de confiança">
+  <section class="lc2-trust" id="inicio-percurso" aria-label="Pontos de confiança">
     <div class="lc2-shell lc2-trust-grid">
       <div class="lc2-trust-item"><strong>Formação pela UNICAMP</strong><span>Medicina, Cirurgia Geral e Cirurgia Plástica</span></div>
       <div class="lc2-trust-item"><strong>Foco em cirurgia facial</strong><span>Avaliação integrada de face e pescoço</span></div>
       <div class="lc2-trust-item"><strong>Ambiente hospitalar</strong><span>Estrutura definida conforme o plano</span></div>
       <div class="lc2-trust-item"><strong>Acompanhamento próximo</strong><span>Preparo, retornos e recuperação</span></div>
-    </div>
-  </section>
-
-  <section class="lc2-section lc2-results" id="resultados">
-    <div class="lc2-shell">
-      <div class="lc2-section-head">
-        <span class="lc2-eyebrow">Resultados com contexto</span>
-        <h2>Resultados que respeitam a continuidade entre face e pescoço.</h2>
-        <p>Observe a definição da mandíbula, o ângulo abaixo do queixo, a transição com o pescoço e a preservação da expressão.</p>
-      </div>
-      <div class="lc2-results-grid lc2-results-grid--single">
-        <article class="lc2-result-card">
-          <img alt="Resultado educativo de face e pescoço tratados em conjunto" decoding="async" fetchpriority="high" height="1121" src="../campanhas/assets/resultados/lifting-facial-resultado-01.png" width="2429"/>
-          <div class="lc2-result-copy">
-            <h3>Face e pescoço tratados em conjunto</h3>
-            <p>Neste caso, o planejamento incluiu face e região cervical. O resultado não representa um lifting cervical isolado.</p>
-            <div class="lc2-observe"><span>Linha mandibular</span><span>Ângulo cervical</span><span>Expressão preservada</span></div>
-          </div>
-        </article>
-      </div>
-      <p class="lc2-disclaimer">Imagem autorizada, com finalidade educativa. Resultados variam conforme anatomia, indicação, técnica, cicatrização e cuidados pós-operatórios. Intercorrências, complicações e resultados insatisfatórios são possíveis; riscos específicos e eventual necessidade de revisão são discutidos na avaliação médica.</p>
     </div>
   </section>
 
@@ -568,7 +630,7 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
         <h2>O que você percebe — e o que isso pode representar.</h2>
         <p>Os pacientes nem sempre usam termos médicos para descrever o pescoço. A avaliação traduz essas percepções em alterações anatômicas e diferencia pele, gordura, músculo e estrutura.</p>
       </div>
-      <div class="lc2-language-grid">
+      <div class="lc2-language-grid" data-mobile-carousel="Queixas e percepções">
         <article class="lc2-language-card"><h3>“Pescoço de peru”</h3><p>Pode representar sobra e perda de elasticidade da pele abaixo do queixo e ao longo do pescoço. Em alguns casos, há também participação do músculo e da face.</p></article>
         <article class="lc2-language-card"><h3>“Papada” ou “queixo duplo”</h3><p>Pode envolver gordura superficial, gordura mais profunda, flacidez de pele, posição do queixo ou uma combinação desses fatores. Lipo de papada e lifting cervical não são equivalentes.</p></article>
         <article class="lc2-language-card"><h3>“Cordas no pescoço”</h3><p>Bandas verticais que podem surgir pela ação do músculo platisma. A presença de bandas não significa automaticamente que uma cirurgia seja necessária.</p></article>
@@ -585,7 +647,7 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
         <h2>Nem toda perda de contorno é causada pela mesma estrutura.</h2>
         <p>A avaliação separa os componentes da queixa para evitar tratar apenas a parte mais visível quando a causa principal está em outra camada.</p>
       </div>
-      <div class="lc2-causes-grid">
+      <div class="lc2-causes-grid" data-mobile-carousel="Estruturas que podem participar da queixa">
         <article class="lc2-cause-card"><span>Pele</span><h3>Elasticidade e sobra</h3><p>A perda de elasticidade pode produzir flacidez. Retirar apenas gordura pode aumentar a percepção de pele solta em alguns casos.</p></article>
         <article class="lc2-cause-card"><span>Gordura</span><h3>Camadas diferentes</h3><p>O volume pode estar em planos superficiais ou mais profundos. A lipoaspiração trata apenas componentes selecionados.</p></article>
         <article class="lc2-cause-card"><span>Platisma</span><h3>Bandas e contorno</h3><p>Bandas e afastamento muscular podem alterar o ângulo do pescoço e exigir uma abordagem própria.</p></article>
@@ -625,7 +687,61 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
           </ul>
         </div>
       </div>
-      <p class="lc2-fit-note"><strong>Não é necessário chegar à consulta sabendo se deseja lifting cervical, lifting facial, lipo de papada ou associação.</strong> A técnica é consequência da avaliação.</p>
+      <p class="lc2-fit-note"><strong>Se você já considera o lifting cervical, a consulta parte dessa hipótese e verifica se ela corresponde à sua anatomia e aos seus objetivos.</strong> Se ainda não sabe qual procedimento procura, a avaliação também pode organizar as possibilidades sem pressão para decidir.</p>
+    </div>
+  </section>
+
+  <!-- A publicação definitiva deste conjunto depende da confirmação das autorizações expressas e da revisão médica final. -->
+  <section class="lc2-section lc2-results" id="resultados">
+    <div class="lc2-shell">
+      <div class="lc2-section-head">
+        <span class="lc2-eyebrow">Casos reais com contexto</span>
+        <h2>Resultados visíveis — sem transformar uma imagem em promessa.</h2>
+        <p>Depois de compreender o que pode causar a queixa e quando a cirurgia pode fazer sentido, observe contorno, continuidade entre face e pescoço e preservação das características individuais. Cada caso tem anatomia, técnica, associações e evolução próprias.</p>
+      </div>
+      <div class="lc2-real-results-grid" data-mobile-carousel="Resultados reais de tratamentos cervicofaciais" data-carousel-help="results">
+        <article class="lc2-real-result lc2-real-result--wide">
+          <div class="lc2-before-after">
+            <div class="lc2-ba-panel"><span>Antes</span><div class="lc2-ba-frame lc2-ba-frame--before"><img alt="Antes de lifting facial e cervical — caso real 1" decoding="async" height="269" loading="lazy" src="../campanhas/assets/resultados/lifting-facial-caso-03-frente.jpg" width="720"/></div></div>
+            <div class="lc2-ba-panel"><span>Depois</span><div class="lc2-ba-frame lc2-ba-frame--after"><img alt="Depois de lifting facial e cervical — caso real 1" decoding="async" height="269" loading="lazy" src="../campanhas/assets/resultados/lifting-facial-caso-03-frente.jpg" width="720"/></div></div>
+          </div>
+          <div class="lc2-real-result-copy"><span>Caso 1</span><h3>Lifting facial e cervical</h3><p>A vista frontal ajuda a observar contorno e continuidade sem avaliar apenas uma região isolada.</p></div>
+        </article>
+        <article class="lc2-real-result lc2-real-result--profile">
+          <div class="lc2-before-after">
+            <div class="lc2-ba-panel"><span>Antes</span><div class="lc2-ba-frame lc2-ba-frame--before"><img alt="Antes de lipo de papada — caso real 2" decoding="async" height="1536" loading="lazy" src="../campanhas/assets/resultados/lipo-papada-antes-depois-perfil.png" width="3389"/></div></div>
+            <div class="lc2-ba-panel"><span>Depois</span><div class="lc2-ba-frame lc2-ba-frame--after"><img alt="Depois de lipo de papada — caso real 2" decoding="async" height="1536" loading="lazy" src="../campanhas/assets/resultados/lipo-papada-antes-depois-perfil.png" width="3389"/></div></div>
+          </div>
+          <div class="lc2-real-result-copy"><span>Caso 2 · abordagem diferente</span><h3>Lipo de papada</h3><p>Este caso não representa lifting cervical. Ele ilustra por que gordura localizada e flacidez exigem indicações diferentes.</p></div>
+        </article>
+        <article class="lc2-real-result lc2-real-result--composite">
+          <div class="lc2-before-after lc2-before-after--composite">
+            <div class="lc2-ba-frame"><img alt="Antes e depois de lifting facial e cervical — caso real 3" decoding="async" height="410" loading="lazy" src="../campanhas/assets/resultados/lifting-cervical-caso-05.webp" width="652"/></div>
+          </div>
+          <div class="lc2-real-result-copy"><span>Caso 3</span><h3>Lifting cervical exclusivo</h3><p>A vista frontal permite observar a relação entre face, linha mandibular e região cervical, preservando as características individuais.</p></div>
+        </article>
+      </div>
+      <p class="lc2-disclaimer lc2-disclaimer--desktop">Casos reais com finalidade educativa; cada anatomia, indicação e evolução é individual, sem garantia de resultado semelhante. Riscos e eventuais revisões são discutidos na consulta.</p>
+      <p class="lc2-disclaimer lc2-disclaimer--mobile">Casos reais são educativos e não garantem resultado semelhante. Riscos, intercorrências e eventual revisão são avaliados individualmente na consulta.</p>
+    </div>
+  </section>
+
+  <section class="lc2-section lc2-comparison" id="alternativas">
+    <div class="lc2-shell">
+      <div class="lc2-section-head">
+        <span class="lc2-eyebrow">Abordagens diferentes</span>
+        <h2>Lipo de papada, lifting cervical ou tratamento da face?</h2>
+        <p>Os resultados ajudam a visualizar possibilidades, mas o nome da queixa e uma fotografia não determinam a técnica. Cada abordagem atua em componentes diferentes do contorno.</p>
+      </div>
+      <div class="lc2-comparison-grid" data-mobile-carousel="Alternativas de tratamento">
+        <article class="lc2-comparison-card"><h3>Lipo de papada</h3><p>Trata gordura localizada selecionada quando a pele tem elasticidade suficiente e o problema não depende principalmente do músculo ou da face.</p></article>
+        <article class="lc2-comparison-card"><h3>Lifting cervical</h3><p>Pode tratar flacidez, bandas do platisma e perda do contorno cervical quando uma intervenção estrutural é necessária.</p></article>
+        <article class="lc2-comparison-card"><h3>Lifting facial associado</h3><p>Pode ser considerado quando a queda da face participa da perda da linha mandibular e tratar apenas o pescoço seria insuficiente.</p></article>
+      </div>
+      <div class="lc2-nonsurgical">
+        <img alt="Exemplo educativo de tratamento não cirúrgico de bandas cervicais" decoding="async" height="692" loading="lazy" src="../campanhas/assets/pescoco-estetica.jpg" width="549"/>
+        <div><span class="lc2-eyebrow">Em casos selecionados</span><h3>Tratamento não cirúrgico</h3><p>A toxina botulínica pode atuar sobre bandas musculares leves em algumas anatomias. Não substitui o lifting quando predominam flacidez de pele, perda estrutural do contorno ou participação importante da face.</p></div>
+      </div>
     </div>
   </section>
 
@@ -633,28 +749,32 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
     <div class="lc2-shell lc2-authority-grid">
       <figure class="lc2-authority-media"><picture><source height="929" media="(max-width: 980px)" srcset="../campanhas/assets/amanda-planejamento-congresso-mobile.webp" width="760"/><img alt="Dra. Amanda Schroeder em congresso médico" decoding="async" height="1003" loading="lazy" src="../campanhas/assets/amanda-planejamento-congresso.webp" width="820"/></picture></figure>
       <div class="lc2-authority-copy">
-        <span class="lc2-eyebrow">Quem conduz sua avaliação</span>
-        <h2>Critério médico antes da técnica.</h2>
-        <p>Graduada em Medicina pela UNICAMP, a Dra. Amanda realizou as residências em Cirurgia Geral e Cirurgia Plástica na mesma instituição e complementou sua formação com pós-graduação em Cosmiatria pelo Hospital Israelita Albert Einstein.</p>
-        <p>Sua prática tem foco principal em cirurgia facial, com avaliação integrada de face e pescoço, planejamento individual e acompanhamento próximo durante a recuperação.</p>
+        <span class="lc2-eyebrow">Formação e critério médico</span>
+        <h2>Critério médico para decidir quanto tratar — e quando não tratar.</h2>
+        <p class="lc2-credentials">Graduada em Medicina pela <strong>UNICAMP</strong>, a Dra. Amanda realizou as residências em <strong>Cirurgia Geral e Cirurgia Plástica na mesma instituição</strong> e complementou sua formação com pós-graduação em Cosmiatria pelo <strong>Hospital Israelita Albert Einstein</strong>.</p>
+        <p>Sua atuação tem foco especial em cirurgia da face e do pescoço, com avaliação integrada, planejamento individual e acompanhamento próximo durante a recuperação.</p>
         <div class="lc2-authority-points">
           <div><strong>Leitura do conjunto</strong><span>Pele, gordura, platisma, mandíbula, queixo e participação da face.</span></div>
           <div><strong>Indicação responsável</strong><span>Lipo, lifting, associação, tratamento menor ou acompanhamento podem ser decisões corretas.</span></div>
           <div><strong>Acompanhamento próximo</strong><span>Retornos adaptados à evolução e canal para dúvidas.</span></div>
         </div>
-        <a class="lc2-btn lc2-btn--ghost" href="#consulta">Entender como funciona a consulta</a>
       </div>
     </div>
   </section>
 
   <section class="lc2-section lc2-consult" id="consulta">
     <div class="lc2-shell lc2-consult-grid">
-      <figure class="lc2-clinic-photo"><img alt="Clínica LIV Faria Lima em Pinheiros" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/></figure>
+      <div class="lc2-consult-media-gallery" data-mobile-carousel="Ambientes da consulta">
+        <figure><img alt="Clínica LIV Faria Lima em Pinheiros" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/></figure>
+        <figure><img alt="Dra. Amanda Schroeder preparando um esquema de tratamento na consulta" decoding="async" height="1918" loading="lazy" src="../campanhas/assets/blefaroplastia/amanda-planejamento-consulta.jpg" width="1440"/></figure>
+        <figure><img alt="Ambiente de consulta da Clínica LIV Faria Lima, em Pinheiros" class="lc2-consult-room" decoding="async" height="1918" loading="lazy" src="../campanhas/assets/blefaroplastia/clinica-liv-consultorio-quadro.jpg" width="1440"/></figure>
+        <figure><img alt="Ambiente interno da Clínica LIV Faria Lima com identificação da clínica" class="lc2-consult-liv2" decoding="async" height="1600" loading="lazy" src="../campanhas/assets/clinica-liv-ambiente-02.webp" width="900"/></figure>
+      </div>
       <div>
         <div class="lc2-section-head">
-          <span class="lc2-eyebrow">Consulta presencial em Pinheiros</span>
-          <h2>O que acontece na consulta.</h2>
-          <p>A consulta organiza a indicação, as alternativas, as cicatrizes, os riscos, a recuperação e os próximos passos antes de qualquer decisão.</p>
+          <span class="lc2-eyebrow">Planejamento na consulta</span>
+          <h2>Como a consulta organiza a decisão.</h2>
+          <p>O procedimento pesquisado entra na conversa. A técnica é confirmada depois do exame para endereçar sua queixa. Na consulta presencial em Pinheiros, a avaliação organiza indicação, alternativas, cicatrizes, riscos, recuperação e próximos passos antes de qualquer decisão.</p>
         </div>
         <div class="lc2-steps">
           <div class="lc2-step"><span>01</span><strong>Avaliação do pescoço em repouso, movimento e diferentes ângulos.</strong></div>
@@ -662,8 +782,9 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
           <div class="lc2-step"><span>03</span><strong>Discussão das alternativas, cicatrizes, riscos e recuperação.</strong></div>
           <div class="lc2-step"><span>04</span><strong>Definição de um plano individual, caso exista indicação.</strong></div>
         </div>
-        <div class="lc2-consult-facts"><span>Consulta particular</span><span>Clínica LIV Faria Lima</span><span>R. Pais Leme, 215 — Pinheiros</span><span>Nota fiscal para reembolso</span><span>Teleconsulta inicial em casos selecionados</span><span>Avaliação presencial para o plano definitivo</span></div>
-        <a class="lc2-btn" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Consultar disponibilidade</a>
+        <div class="lc2-section-actions">
+          <a class="lc2-btn" data-cta-location="consulta" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Agendar avaliação para lifting cervical</a>
+        </div>
       </div>
     </div>
   </section>
@@ -679,13 +800,13 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
         <h3>Onde podem ficar as cicatrizes?</h3>
         <p>As incisões podem acompanhar o contorno da orelha, seguir para a região posterior da orelha e a linha do cabelo. Pode existir uma pequena incisão abaixo do queixo. A extensão depende de o tratamento ser cervical isolado ou associado à face.</p>
       </div>
-      <div class="lc2-timeline">
-        <article class="lc2-time"><strong>Primeiros 3–4 dias</strong><p>Edema, tensão, equimoses, curativos e necessidade de apoio.</p></article>
+      <div class="lc2-timeline" data-mobile-carousel="Etapas da recuperação">
+        <article class="lc2-time"><strong>Primeiros dias</strong><p>Edema, tensão, equimoses, curativos e necessidade de apoio podem fazer parte desse período.</p></article>
         <article class="lc2-time"><strong>Primeira semana</strong><p>Retornos, avaliação das incisões e retomada gradual dos movimentos.</p></article>
-        <article class="lc2-time"><strong>10 a 14 dias</strong><p>Muitas pacientes retomam atividades sociais leves.</p></article>
-        <article class="lc2-time"><strong>3 a 4 semanas</strong><p>Redução progressiva dos sinais externos e retorno gradual à rotina.</p></article>
-        <article class="lc2-time"><strong>2 a 3 meses</strong><p>Contorno e sensibilidade mais próximos do habitual.</p></article>
-        <article class="lc2-time"><strong>Meses seguintes</strong><p>Amadurecimento das cicatrizes e do edema residual.</p></article>
+        <article class="lc2-time"><strong>Em torno de 10 a 14 dias</strong><p>Algumas pessoas conseguem retomar atividades sociais leves; outras precisam de mais tempo.</p></article>
+        <article class="lc2-time"><strong>Semanas seguintes</strong><p>Os sinais externos tendem a diminuir e o retorno à rotina é liberado de forma gradual.</p></article>
+        <article class="lc2-time"><strong>Meses seguintes</strong><p>Contorno, edema e sensibilidade continuam evoluindo.</p></article>
+        <article class="lc2-time"><strong>Fase tardia</strong><p>As cicatrizes e o edema residual continuam amadurecendo ao longo dos meses.</p></article>
       </div>
       <div class="lc2-margin-note"><strong>Planeje com margem:</strong> viagens, festas e compromissos importantes não devem depender do prazo mínimo.</div>
       <details>
@@ -702,32 +823,34 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
         <h2>Como a segurança é organizada.</h2>
         <p>Segurança não é um exame isolado. Ela depende da seleção adequada, do preparo, do ambiente, da anestesia e do acompanhamento.</p>
       </div>
-      <div class="lc2-safety-grid">
+      <div class="lc2-safety-grid" data-mobile-carousel="Pontos de segurança">
         <article class="lc2-safety-card"><span>01</span><h3>Avaliação clínica</h3><p>Histórico de saúde, medicamentos, tabagismo e fatores de risco.</p></article>
         <article class="lc2-safety-card"><span>02</span><h3>Exames e preparo</h3><p>Solicitados conforme idade, condições clínicas e porte do procedimento.</p></article>
-        <article class="lc2-safety-card"><span>03</span><h3>Hospital e anestesia</h3><p>Estrutura e estratégia anestésica escolhidas de acordo com o plano individual.</p></article>
+        <article class="lc2-safety-card lc2-safety-card--hospital"><span>03</span><h3>Hospital e anestesia</h3><p>Estrutura e estratégia anestésica escolhidas de acordo com o plano individual. Quando indicados, os procedimentos podem ser programados no <strong>Hospital Sírio-Libanês</strong>, <strong>Hospital Nove de Julho</strong>, <strong>Hospital Alemão Oswaldo Cruz</strong> ou outras instituições criteriosamente selecionadas.</p></article>
         <article class="lc2-safety-card"><span>04</span><h3>Retornos e contato</h3><p>Orientações claras, acompanhamento próximo e canal para dúvidas durante a recuperação.</p></article>
       </div>
+      <div class="lc2-care-showcase">
+        <div class="lc2-care-showcase-head">
+          <span>Equipe e ambiente cirúrgico</span>
+          <h3>O cuidado também acontece nos bastidores.</h3>
+          <p>Dra. Amanda atua com uma equipe cirúrgica organizada conforme o plano, o ambiente escolhido e as necessidades de cada caso.</p>
+        </div>
+        <div class="lc2-care-gallery" data-mobile-carousel="Equipe e ambiente cirúrgico">
+          <figure>
+            <img alt="Dra. Amanda Schroeder com parte de sua equipe cirúrgica" decoding="async" height="2096" loading="lazy" src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg" width="1179"/>
+            <figcaption>Dra. Amanda com parte de sua equipe cirúrgica.</figcaption>
+          </figure>
+          <figure>
+            <video aria-label="Dra. Amanda Schroeder durante uma cirurgia" controls playsinline preload="metadata" src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4"></video>
+            <figcaption>Dra. Amanda durante uma cirurgia, em um registro breve do ambiente cirúrgico.</figcaption>
+          </figure>
+          <figure>
+            <video aria-label="Anestesista da equipe no centro cirúrgico" controls playsinline preload="metadata" src="../campanhas/assets/equipe/anestesia-centro-cirurgico.mp4"></video>
+            <figcaption>Estratégias anestésicas e monitorização são definidas de acordo com o procedimento e as necessidades da paciente.</figcaption>
+          </figure>
+        </div>
+      </div>
       <p class="lc2-cardio-note">Quando houver indicação clínica, a avaliação cardiológica pré-operatória pode ser integrada na própria Clínica LIV, facilitando a comunicação entre cirurgia plástica, cardiologia e anestesia.</p>
-    </div>
-  </section>
-
-  <section class="lc2-section lc2-comparison" id="alternativas">
-    <div class="lc2-shell">
-      <div class="lc2-section-head">
-        <span class="lc2-eyebrow">Abordagens diferentes</span>
-        <h2>Lipo de papada, lifting cervical ou tratamento da face?</h2>
-        <p>O nome da queixa não determina a técnica. Cada abordagem atua em componentes diferentes do contorno.</p>
-      </div>
-      <div class="lc2-comparison-grid">
-        <article class="lc2-comparison-card"><h3>Lipo de papada</h3><p>Trata gordura localizada selecionada quando a pele tem elasticidade suficiente e o problema não depende principalmente do músculo ou da face.</p></article>
-        <article class="lc2-comparison-card"><h3>Lifting cervical</h3><p>Pode tratar flacidez, bandas do platisma e perda do contorno cervical quando uma intervenção estrutural é necessária.</p></article>
-        <article class="lc2-comparison-card"><h3>Lifting facial associado</h3><p>Pode ser considerado quando a queda da face participa da perda da linha mandibular e tratar apenas o pescoço seria insuficiente.</p></article>
-      </div>
-      <div class="lc2-nonsurgical">
-        <img alt="Exemplo educativo de tratamento não cirúrgico de bandas cervicais" decoding="async" height="692" loading="lazy" src="../campanhas/assets/pescoco-estetica.jpg" width="549"/>
-        <div><h3>Tratamento não cirúrgico em casos selecionados</h3><p>A toxina botulínica pode atuar sobre bandas musculares leves em algumas anatomias. Não substitui o lifting quando predominam flacidez de pele, perda estrutural do contorno ou participação importante da face.</p></div>
-      </div>
     </div>
   </section>
 
@@ -738,12 +861,40 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
         <h2>Confiança construída na indicação e no acompanhamento.</h2>
         <p>Relatos reais sobre coerência, explicação detalhada e cuidado durante a jornada.</p>
       </div>
-      <div class="lc2-review-grid">
+      <div class="lc2-review-grid" data-mobile-carousel="Avaliações públicas">
         <figure class="lc2-review"><blockquote>“Ótima formação profissional, coerência, acolhimento e me passa segurança.”</blockquote><cite>Raphaela Garofo</cite><span>Avaliação pública no Google</span></figure>
         <figure class="lc2-review"><blockquote>“Sempre foi muito cuidadosa e detalhista nos procedimentos que realizei.”</blockquote><cite>Nicoli Cadioli</cite><span>Avaliação pública no Google</span></figure>
         <figure class="lc2-review"><blockquote>“Sempre explica tudo com detalhes e tira todas as dúvidas.”</blockquote><cite>Tais Mascia</cite><span>Avaliação pública no Google</span></figure>
       </div>
       <a class="lc2-review-link" href="https://share.google/GGGUczihC6EOlCO4E" data-google-review-tabs="" data-clinic-review-url="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">Ver avaliações públicas no Google</a>
+    </div>
+  </section>
+
+  <section class="lc2-section lc2-content-section" id="conteudos-selecionados">
+    <div class="lc2-shell">
+      <div class="lc2-section-head">
+        <span class="lc2-eyebrow">Para aprofundar a decisão</span>
+        <h2>Conteúdos selecionados.</h2>
+        <p>Explicações em vídeo sobre indicação, planejamento, segurança e ambiente de atendimento. Novos formatos de conteúdo poderão ser reunidos aqui.</p>
+      </div>
+      <div class="lc2-content-grid" data-mobile-carousel="Conteúdos selecionados sobre cirurgia facial e consulta">
+        <article class="lc2-content-card">
+          <video aria-label="Quando o lifting facial pode ser indicado" controls playsinline preload="none" poster="../campanhas/assets/conteudos/videos/lifting-facial-indicacao-poster.webp"><source src="../campanhas/assets/conteudos/videos/lifting-facial-indicacao.mp4" type="video/mp4"/></video>
+          <div class="lc2-content-copy"><h3>Quando o lifting pode fazer sentido</h3><p>Indicação, anatomia e objetivos precisam ser compreendidos antes da escolha da técnica.</p></div>
+        </article>
+        <article class="lc2-content-card">
+          <video aria-label="Lifting facial associado à enxertia de gordura" controls playsinline preload="none" poster="../campanhas/assets/amanda-profissional-hero.webp"><source src="../campanhas/assets/conteudos/videos/lifting-com-enxertia-de-gordura.mp4" type="video/mp4"/></video>
+          <div class="lc2-content-copy"><h3>Lifting e enxertia de gordura</h3><p>Estruturas diferentes podem exigir estratégias complementares no mesmo planejamento.</p></div>
+        </article>
+        <article class="lc2-content-card">
+          <video aria-label="Medo de resultados exagerados em cirurgia facial" controls playsinline preload="none" poster="../campanhas/assets/amanda-profissional-hero.webp"><source src="../campanhas/assets/conteudos/videos/medo-de-resultados-exagerados.mp4" type="video/mp4"/></video>
+          <div class="lc2-content-copy"><h3>O receio de um resultado exagerado</h3><p>Como planejamento, proporção e preservação da identidade entram na conversa.</p></div>
+        </article>
+        <article class="lc2-content-card">
+          <video aria-label="Apresentação da Clínica LIV Faria Lima" controls playsinline preload="none" poster="../campanhas/assets/blefaroplastia/clinica-liv-consultorio-quadro.jpg"><source src="../campanhas/assets/conteudos/videos/clinica-liv-apresentacao.mp4" type="video/mp4"/></video>
+          <div class="lc2-content-copy"><h3>Conheça a Clínica LIV</h3><p>Um breve olhar sobre o ambiente da consulta em Pinheiros.</p></div>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -763,11 +914,10 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
   <section class="lc2-final" id="contato">
     <div class="lc2-shell lc2-final-grid">
       <div>
-        <h2>Entenda qual abordagem faz sentido para o seu pescoço.</h2>
-        <p>A consulta diferencia pele, gordura, músculo e participação da face para organizar indicação, cicatrizes, recuperação e próximos passos antes de qualquer decisão.</p>
-        <div class="lc2-final-facts"><span>Consulta particular</span><span>Pinheiros, São Paulo</span><span>Nota fiscal para reembolso</span><span>Avaliação integrada de face e pescoço</span></div>
+        <h2>Se você já considera o lifting cervical, confirme se ele é o caminho certo para o seu caso.</h2>
+        <p>A consulta parte da sua queixa e diferencia pele, gordura, músculo e participação da face para organizar indicação, limites, cicatrizes, recuperação e próximos passos.</p>
       </div>
-      <a class="lc2-btn" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Falar com a equipe</a>
+      <a class="lc2-btn" data-cta-location="final" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Agendar avaliação para lifting cervical</a>
     </div>
   </section>
 </main>
@@ -777,16 +927,15 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
     <div>
       <strong>Dra. Amanda Schroeder</strong>
       <p>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</p>
-      <p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a> · Seg–dom, 07:00 às 23:00</p>
-      <div class="lc2-footer-links"><a href="../privacidade/">Política de privacidade</a><a href="../conteudos/">Conteúdos</a><a href="../#clinica-liv">Clínica LIV</a></div>
-      <details><summary>Navegação e informações</summary><a href="../privacidade/">Política de privacidade</a><a href="../conteudos/">Conteúdos</a><a href="../#clinica-liv">Clínica LIV</a><a href="../lifting-facial/">Lifting facial</a><a href="../lipo-de-papada/">Lipo de papada</a></details>
-      <button class="lc2-privacy privacy-settings" data-privacy-settings="" type="button">Preferências de privacidade</button>
+      <p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215 · cj. 710 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a> · Seg–dom, 07:00 às 23:00</p>
+      <div class="lc2-footer-links"><a href="../privacidade/">Política de privacidade</a><a href="../conteudos/">Conteúdos</a><a href="https://www.instagram.com/dra.amanda_plastica/" rel="noopener" target="_blank">Instagram da Dra. Amanda</a><a href="https://livfarialima.com.br/" rel="noopener" target="_blank">Site da Clínica LIV</a></div>
+      <details><summary>Navegação e procedimentos</summary><a href="../lifting-facial/">Lifting facial</a><a href="../lipo-de-papada/">Lipo de papada</a><a href="../blefaroplastia/">Blefaroplastia</a></details>
+      <button class="lc2-privacy privacy-settings" data-privacy-settings="" type="button">Configurar cookies</button>
     </div>
-    <div><strong>Atendimento</strong><p>Consulta particular em Pinheiros. A equipe orienta disponibilidade, formato e próximos passos pelo WhatsApp.</p></div>
   </div>
 </footer>
 
-<div aria-hidden="true" class="lc2-sticky" id="lc2-sticky"><a class="lc2-btn" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank">Conversar com a equipe</a></div>
+<div aria-hidden="true" class="lc2-sticky" id="lc2-sticky"><a aria-label="Falar com a equipe pelo WhatsApp" class="lc2-btn" data-cta-location="sticky" data-procedure="lifting-cervical" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20LC01" rel="noopener" target="_blank"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="M19.11 17.53c-.28-.14-1.64-.81-1.89-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.88 1.09-.16.19-.32.21-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.73-1.38-1.64-1.54-1.92-.16-.28-.02-.43.12-.57.13-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.19.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47h-.53c-.19 0-.49.07-.74.35-.25.28-.97.95-.97 2.31s.99 2.68 1.13 2.86c.14.19 1.95 2.98 4.72 4.18.66.28 1.17.46 1.57.58.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.11-.25-.18-.53-.32zM16.04 27.5h-.01a11.4 11.4 0 0 1-5.81-1.59l-.42-.25-4.32 1.13 1.15-4.21-.27-.43a11.41 11.41 0 1 1 9.68 5.35zm9.7-21.1A13.62 13.62 0 0 0 4.3 22.84L2.37 29.9l7.23-1.9a13.62 13.62 0 1 0 16.14-21.6z"/></svg><span>Falar com <span class="lc2-sticky-detail">equipe</span></span></a></div>
 
 <script defer="" src="../campanhas/tracking-config.js"></script>
 <script defer="" src="../campanhas/tracking-loader.js"></script>
@@ -814,22 +963,123 @@ body{background:var(--lc-bg);color:var(--lc-ink)}
     });
   });
 
-  const sticky=document.getElementById('lc2-sticky');
-  const hero=document.querySelector('.lc2-hero');
-  const final=document.querySelector('.lc2-final');
-  if(sticky&&hero&&final&&'IntersectionObserver' in window){
-    let heroVisible=true;
-    let finalVisible=false;
-    const refresh=()=>{
-      sticky.classList.toggle('is-visible',!heroVisible&&!finalVisible&&window.innerWidth<=760);
-      sticky.classList.toggle('is-hidden-near-final',finalVisible);
-      sticky.setAttribute('aria-hidden',String(heroVisible||finalVisible||window.innerWidth>760));
+  document.querySelectorAll('[data-mobile-carousel]').forEach((track,carouselIndex)=>{
+    const items=Array.from(track.children);
+    if(items.length<2)return;
+
+    const label=track.getAttribute('data-mobile-carousel')||'Conteúdo';
+    const isResults=track.getAttribute('data-carousel-help')==='results';
+    const trackId=track.id||`lc2-carousel-${carouselIndex+1}`;
+    track.id=trackId;
+    const controls=document.createElement('div');
+    controls.className='lc2-carousel-controls';
+    controls.setAttribute('aria-label',`Controles do carrossel: ${label}`);
+    const hint=document.createElement('div');
+    hint.className='lc2-carousel-hint auxiliary-scroll-hint';
+    hint.setAttribute('aria-hidden','true');
+    hint.innerHTML='<span>Deslize para rolar</span>';
+    const previous=document.createElement('button');
+    previous.className='lc2-carousel-button';
+    previous.type='button';
+    previous.textContent='← Anterior';
+    previous.setAttribute('aria-label',`Ver item anterior de ${label}`);
+    previous.setAttribute('aria-controls',trackId);
+    const next=document.createElement('button');
+    next.className='lc2-carousel-button';
+    next.type='button';
+    next.textContent='Próximo →';
+    next.setAttribute('aria-label',`Ver próximo item de ${label}`);
+    next.setAttribute('aria-controls',trackId);
+
+    controls.append(previous,next);
+    if(!isResults)track.before(hint);
+    track.after(controls);
+    track.classList.add('lc2-mobile-carousel-track');
+    track.setAttribute('role','region');
+    track.setAttribute('aria-roledescription','carrossel');
+    track.setAttribute('aria-label',label);
+    track.tabIndex=0;
+
+    let current=0;
+    const positionOf=item=>item.offsetLeft-items[0].offsetLeft;
+    const syncTrackHeight=()=>{
+      if(window.innerWidth<=760){
+        track.style.height=`${items[current].offsetHeight+14}px`;
+      }else{
+        track.style.height='';
+      }
     };
-    new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;refresh();},{threshold:.08}).observe(hero);
-    new IntersectionObserver(entries=>{finalVisible=entries[0].isIntersecting;refresh();},{threshold:.15}).observe(final);
+    const update=()=>{
+      current=items.reduce((closest,item,index)=>{
+        const currentDistance=Math.abs(positionOf(items[closest])-track.scrollLeft);
+        const candidateDistance=Math.abs(positionOf(item)-track.scrollLeft);
+        return candidateDistance<currentDistance?index:closest;
+      },0);
+      previous.disabled=current===0;
+      next.disabled=current===items.length-1;
+      syncTrackHeight();
+    };
+    const move=direction=>{
+      const destination=Math.max(0,Math.min(items.length-1,current+direction));
+      track.scrollTo({left:positionOf(items[destination]),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    };
+    previous.addEventListener('click',()=>move(-1));
+    next.addEventListener('click',()=>move(1));
+    track.addEventListener('keydown',event=>{
+      if(event.key==='ArrowLeft'){event.preventDefault();move(-1);}
+      if(event.key==='ArrowRight'){event.preventDefault();move(1);}
+    });
+    let ticking=false;
+    track.addEventListener('scroll',()=>{
+      if(ticking)return;
+      ticking=true;
+      requestAnimationFrame(()=>{update();ticking=false;});
+    },{passive:true});
+    items.forEach(item=>item.querySelectorAll('img').forEach(img=>{
+      if(!img.complete)img.addEventListener('load',syncTrackHeight,{once:true});
+    }));
+    window.addEventListener('resize',update,{passive:true});
+    update();
+  });
+
+  const sticky=document.getElementById('lc2-sticky');
+  const header=document.querySelector('.lc2-header');
+  const trust=document.getElementById('inicio-percurso');
+  if(sticky&&header&&trust){
+    const refresh=()=>{
+      const trustBottom=trust.offsetTop+trust.offsetHeight;
+      const firstContent=document.getElementById('queixas');
+      const boundary=window.innerWidth<=760&&firstContent?firstContent.offsetTop-header.offsetHeight:trustBottom;
+      const pastTrust=window.scrollY>=boundary;
+      header.classList.toggle('is-unpinned',pastTrust);
+      sticky.classList.toggle('is-visible',pastTrust);
+      sticky.setAttribute('aria-hidden',String(!pastTrust));
+    };
+    let ticking=false;
+    window.addEventListener('scroll',()=>{
+      if(ticking)return;
+      ticking=true;
+      requestAnimationFrame(()=>{refresh();ticking=false;});
+    },{passive:true});
     window.addEventListener('resize',refresh,{passive:true});
     refresh();
   }
+
+  const heroImage=document.querySelector('.lc2-hero-media img');
+  const syncMobileHeroCrop=()=>{
+    if(!heroImage)return;
+    if(window.innerWidth<=760){
+      heroImage.style.setProperty('aspect-ratio','16 / 10','important');
+      heroImage.style.setProperty('object-fit','cover','important');
+      heroImage.style.setProperty('object-position','center 18%','important');
+    }else{
+      heroImage.style.removeProperty('aspect-ratio');
+      heroImage.style.removeProperty('object-fit');
+      heroImage.style.removeProperty('object-position');
+    }
+  };
+  window.addEventListener('resize',syncMobileHeroCrop,{passive:true});
+  document.addEventListener('DOMContentLoaded',syncMobileHeroCrop);
 })();
 </script>
 </body>

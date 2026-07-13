@@ -3080,6 +3080,15 @@ html:not([data-page-type="home"]) :is(
 }
 
 @media (max-width: 760px) {
+  html:not([data-page-type="home"]) button[class*="carousel-button"]:disabled {
+    cursor: default !important;
+    border-color: #d8cfca !important;
+    background: #d8cfca !important;
+    color: #756963 !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+
   html:not([data-page-type="home"]) .auxiliary-scroll-hint {
     display: flex;
     width: max-content;
@@ -3718,4 +3727,8 @@ html:not([data-page-type="home"]) :is(
   object-fit: contain !important;
   object-position: center !important;
   transform: none !important;
+}
+/* Contraste obrigatório dos textos nos fechamentos das páginas de campanha. */
+html:not([data-page-type="home"]) :is(.lf2-final, .lc2-final, .bf2-final, .lp2-final, .ot2-final, .ota2-final, .oti2-final) p {
+  color: #fff !important;
 }

@@ -40,7 +40,19 @@
     });
   }
 
-  function loadGoogleTags() {
+  function sendGa4PageView() {
+    if (!config.ga4Id || window.__amandaGa4PageViewSent) return;
+    window.gtag('event', 'page_view', {
+      send_to: config.ga4Id,
+      page_location: window.location.href,
+      page_path: window.location.pathname,
+      page_title: document.title
+    });
+    window.__amandaGa4PageViewSent = true;
+  }
+
+  function loadGoogleTags(options) {
+    options = options || {};
     if (!config.ga4Id && !config.googleAdsId) return;
 
     if (!document.getElementById(googleScriptId) && !document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
@@ -69,6 +81,7 @@
         });
       }
     }
+    if (options.sendPageView && getConsent() === 'granted') sendGa4PageView();
   }
 
   function loadMetaPixel() {
@@ -82,6 +95,10 @@
       s.parentNode.insertBefore(t,s)
     }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
     window.fbq('init', config.metaPixelId);
+    if (config.trackMetaPageViews !== false && !window.__amandaMetaPageViewSent) {
+      window.fbq('track', 'PageView');
+      window.__amandaMetaPageViewSent = true;
+    }
     window.__amandaMetaLoaded = true;
   }
 
@@ -131,12 +148,13 @@
     banner.className = 'cookie-consent';
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-label', 'Preferências de privacidade');
-    banner.innerHTML = '<strong>Privacidade e mensuração</strong><p> Usamos ferramentas para avaliar o desempenho de nossas comunicações. Se você recusar, cookies analíticos e de publicidade não serão ativados. Garantição de privacidade: dados clínicos nunca são compartilhados. </p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar cookies</button><button class="reject" type="button">Continuar sem aceitar</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
+    banner.innerHTML = '<strong>Privacidade e mensuração</strong><p> Usamos ferramentas para avaliar o desempenho de nossas comunicações. Se você recusar, cookies analíticos e de publicidade não serão ativados. Garantia de privacidade: dados clínicos nunca são compartilhados. </p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar cookies</button><button class="reject" type="button">Continuar sem aceitar</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
     document.body.appendChild(banner);
 
     banner.querySelector('.accept').addEventListener('click', function () {
       setConsent('granted');
       updateGoogleConsent(true);
+      loadGoogleTags({ sendPageView: true });
       loadMetaPixel();
       removeBanner();
       updateDebugState();
@@ -180,6 +198,9 @@
     getState: getConsent,
     fullConsentGranted: function () { return getConsent() === 'granted'; },
     loadMetaPixel: loadMetaPixel,
+    prepareMinimalWhatsAppMeasurement: function () {
+      loadGoogleTags({ sendPageView: false });
+    },
     openPreferences: function () {
       revokeConsent();
       injectConsentBanner(true);
@@ -190,8 +211,10 @@
 
   var initialConsent = getConsent();
   updateGoogleConsent(initialConsent === 'granted');
-  loadGoogleTags();
-  if (initialConsent === 'granted') loadMetaPixel();
+  if (initialConsent === 'granted') {
+    loadGoogleTags({ sendPageView: true });
+    loadMetaPixel();
+  }
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!getConsent()) injectConsentBanner(false);

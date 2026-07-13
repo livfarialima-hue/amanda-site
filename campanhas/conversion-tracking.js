@@ -68,36 +68,53 @@
   }
 
   function trackWhatsAppClick(link) {
-    // O Consent Mode mantém o gtag disponível mesmo sem aceite. Nesse estado,
-    // estes eventos são enviados como pings sem cookies.
-    if (!googleMeasurementAvailable()) return;
-
     var consented = fullConsentGranted();
     var mode = consented ? 'consented' : 'cookieless';
+
+    // Sem consentimento, a tag é carregada somente neste clique voluntário.
+    // Não há PageView, carregamento na entrada da página ou contexto clínico.
+    if (!consented && window.AmandaConsent && window.AmandaConsent.prepareMinimalWhatsAppMeasurement) {
+      window.AmandaConsent.prepareMinimalWhatsAppMeasurement();
+    }
+    if (!googleMeasurementAvailable()) return;
+
     var root = document.documentElement;
     var pageType = root.dataset.pageType || 'procedure';
     var section = link.closest('[data-section]');
     var location = link.dataset.ctaLocation || (section && section.dataset.section) || 'unknown';
     var text = (link.textContent || '').trim();
 
-    // Evento analítico: enviado somente ao GA4.
-    window.gtag('event', 'whatsapp_click', {
-      event_category: 'engagement',
-      event_label: pageType,
-      page_type: pageType,
-      content_group: pageType,
-      cta_location: location,
-      cta_text: text,
-      page_path: window.location.pathname,
-      transport_type: 'beacon',
-      send_to: 'G-49S7FB3PMV'
-    });
+    if (consented) {
+      window.gtag('event', 'whatsapp_click', {
+        event_category: 'engagement',
+        event_label: pageType,
+        page_type: pageType,
+        content_group: pageType,
+        cta_location: location,
+        cta_text: text,
+        page_path: window.location.pathname,
+        transport_type: 'beacon',
+        send_to: config.ga4Id
+      });
+    } else {
+      window.gtag('event', 'whatsapp_click', sanitizePreConsentParams({
+        contact_channel: 'whatsapp',
+        measurement_state: 'cookieless',
+        non_personalized_ads: true,
+        transport_type: 'beacon',
+        send_to: config.ga4Id
+      }));
+    }
 
-    // Conversão genérica do Google Ads.
-    // Não enviar procedimento, página, diagnóstico ou dados pessoais.
-    window.gtag('event', 'conversion', {
-      send_to: 'AW-17157418677/Hc43CM7-qvsaELXdpfU_'
-    });
+    // Conversão genérica e deduplicada. Nunca inclui procedimento,
+    // página, diagnóstico, texto da mensagem ou dado pessoal.
+    if (config.googleAdsId && config.googleAdsConversionLabel && conversionNotYetSent('whatsapp_click')) {
+      window.gtag('event', 'conversion', sanitizePreConsentParams({
+        send_to: config.googleAdsId + '/' + config.googleAdsConversionLabel,
+        non_personalized_ads: !consented,
+        transport_type: 'beacon'
+      }, preConsentConversionAllowedParams));
+    }
 
     if (metaConsentGranted() && typeof window.fbq === 'function') {
       window.fbq('trackCustom', 'WhatsAppContactClick', { contact_channel: 'whatsapp' });

@@ -197,6 +197,7 @@
       '.result-grid',
       '.lf2-results-grid',
       '.lc2-results-grid',
+      '.lc2-real-results-grid',
       '.bf2-results-grid',
       '.lp2-results-grid',
       '.ot2-results-grid',
@@ -947,7 +948,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     };
     var gallery = galleries[path];
     var main = document.querySelector('main');
-    if (!gallery || !main || main.querySelector('.educational-videos')) return;
+    if (!gallery || !main || main.querySelector('.educational-videos, .bf2-video-section, .lc2-content-section, #conteudos-selecionados')) return;
 
     var section = document.createElement('section');
     var headingId = 'videos-educativos-' + path.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
