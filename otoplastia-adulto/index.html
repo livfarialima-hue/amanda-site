@@ -79,7 +79,7 @@
       "logo": "https://draamandaschroeder.com.br/campanhas/assets/logo-liv-faria-lima.png",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "R. Pais Leme, 215 - Pinheiros",
+        "streetAddress": "R. Pais Leme, 215, cj. 710 - Pinheiros",
         "addressLocality": "São Paulo",
         "addressRegion": "SP",
         "postalCode": "05424-150",
@@ -626,7 +626,57 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
 }
 
 
- .ota2-results-grid img{height:auto!important;aspect-ratio:auto!important;object-fit:contain!important}</style>
+ .ota2-results-grid img{height:auto!important;aspect-ratio:auto!important;object-fit:contain!important}
+
+/* Padrão aprovado: ordem, contraste e gestos consistentes nas páginas auxiliares. */
+.ota2-brand em{color:#9a5e48;font-style:normal;font-weight:700}
+main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
+.ota2-header{position:fixed;right:0;left:0;transition:transform .24s ease,visibility .24s ease}
+.ota2-header.is-unpinned{visibility:hidden;transform:translateY(-110%);pointer-events:none}
+.ota2-sticky{right:22px;left:auto;bottom:calc(18px + env(safe-area-inset-bottom));width:auto;transform:none;padding:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
+.ota2-sticky .ota2-btn{width:auto;min-height:50px;padding:12px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(22,93,57,.32)}
+.ota2-sticky .ota2-btn:hover,.ota2-sticky .ota2-btn:focus-visible{background:#125b35;border-color:#125b35;color:#fff}
+.ota2-hero{order:1}.ota2-trust{order:2}.ota2-paths{order:3}.ota2-language{order:4}.ota2-anatomy{order:5}.ota2-fit{order:6}.ota2-results{order:7}.ota2-natural{order:8}.ota2-authority{order:9}.ota2-consult{order:10}.ota2-recovery{order:11}.ota2-safety{order:12}.ota2-reviews{order:13}.ota2-video-section{order:14}.ota2-faq{order:15}.ota2-final{order:16}
+.ota2-consult-media-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ota2-consult-media-gallery figure,.ota2-care-gallery figure{margin:0;overflow:hidden;border:1px solid var(--ota-line);background:var(--ota-paper)}
+.ota2-consult-media-gallery img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.ota2-consult-media-gallery .ota2-consult-room{object-position:left 58%}
+.ota2-consult-media-gallery .ota2-consult-liv2{object-position:center 42%}
+.ota2-care-block{margin-top:32px;padding-top:30px;border-top:1px solid var(--ota-line)}
+.ota2-care-copy{max-width:720px}.ota2-care-copy h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,4vw,44px);font-weight:400;line-height:1.1}.ota2-care-copy p{margin:14px 0 0;color:var(--ota-muted);font-size:16px;line-height:1.7}
+.ota2-care-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+.ota2-care-gallery img,.ota2-care-gallery video{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#211917}.ota2-care-gallery img{object-position:center 39%}.ota2-care-gallery video{object-fit:contain}
+.ota2-care-gallery figcaption{padding:14px 15px;color:var(--ota-muted);font-size:13px;line-height:1.55}
+.ota2-video-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ota2-final p,.ota2-final .ota2-final-grid p{color:#fff!important}
+.ota2-mobile-carousel-hint,.ota2-mobile-carousel-controls{display:none}
+.ota2-header{transition:transform .25s ease}html[data-page-type="procedure"] #ota2-sticky .ota2-btn{gap:9px;border-color:#176b4b!important;background:#176b4b!important;color:#fff!important}html[data-page-type="procedure"] #ota2-sticky .ota2-btn>span:first-child{font-size:16px;color:#d4ffdd}
+
+@media (max-width:760px){
+  .ota2-shell{width:min(100% - 32px,1180px)}
+  .ota2-section{padding:54px 0;border-top:1px solid rgba(78,58,52,.11)}
+  .ota2-section-head h2{font-size:clamp(31px,9vw,42px);line-height:1.1}
+  .ota2-section-head p,.ota2-care-copy p{font-size:16px;line-height:1.66;color:var(--ota-muted)!important}
+  .ota2-eyebrow,.ota2-trust-item span,.ota2-disclaimer,.ota2-care-gallery figcaption,.ota2-video-copy p{font-size:13px}
+  .ota2-header.is-intro-ended{transform:translateY(-110%)}
+  .ota2-hero{padding:22px 0 18px}.ota2-hero-grid{gap:20px}.ota2-hero h1{font-size:clamp(38px,11vw,48px);line-height:1.03}.ota2-hero .lead{font-size:17px;line-height:1.58}.ota2-hero-media img{aspect-ratio:16/10;object-position:center 18%}
+  .ota2-trust{padding:14px 0 22px}.ota2-trust-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ota2-trust-item{padding:14px 12px;border-bottom:1px solid var(--ota-line)}.ota2-trust-item:nth-child(2){border-right:0}.ota2-trust-item:nth-child(n+3){border-bottom:0}
+  .ota2-paths{padding:32px 0}.ota2-path-card{padding:20px}.ota2-path-card h3{font-size:25px}
+  .ota2-mobile-carousel-track{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column;grid-auto-columns:min(86vw,360px);align-items:start;gap:12px!important;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:0;padding:2px 16px 10px 0;margin-top:8px!important;margin-right:-16px;scrollbar-width:none}.ota2-mobile-carousel-track::-webkit-scrollbar{display:none}.ota2-mobile-carousel-track>*{height:auto;align-self:start;scroll-snap-align:start;scroll-snap-stop:always}
+  .ota2-results-grid.ota2-mobile-carousel-track{grid-auto-columns:100%;margin-right:0;padding-right:0}.ota2-results .ota2-result-card--adult{grid-column:auto;width:auto;justify-self:stretch}.ota2-results .ota2-result-card img{aspect-ratio:16/9!important;object-fit:cover!important}.ota2-results .ota2-result-card:first-child{box-shadow:0 12px 28px rgba(70,45,37,.14)}
+  .ota2-mobile-carousel-hint{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:12px 0 0;color:var(--ota-muted);font-size:13px;font-weight:700}.ota2-mobile-carousel-hint b{display:inline-block;color:var(--ota-soft);font-size:22px;font-weight:400;animation:ota2-carousel-nudge 1.35s ease-in-out infinite}
+  .ota2-mobile-carousel-controls{display:flex;justify-content:flex-end;gap:6px;margin-top:4px}.ota2-mobile-carousel-button{min-height:48px;padding:10px 14px;border:1px solid var(--ota-dark);background:var(--ota-paper);color:var(--ota-ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer}.ota2-mobile-carousel-button:last-child{background:var(--ota-dark);color:#fff}.ota2-mobile-carousel-button:disabled{border-color:var(--ota-line);background:#eee4df;color:#9b8c86;cursor:default}
+  .ota2-result-copy{padding:18px}.ota2-result-copy h3{font-size:24px}.ota2-disclaimer{line-height:1.58}
+  .ota2-lobule{margin-top:22px;padding:16px}.ota2-lobule img{aspect-ratio:16/10;object-fit:cover}.ota2-lobule h3{font-size:26px}
+  .ota2-anatomy-grid,.ota2-fit-grid,.ota2-natural-grid,.ota2-timeline,.ota2-safety-grid{display:grid!important;grid-auto-flow:column;grid-auto-columns:min(86vw,340px);grid-template-columns:none!important;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;padding:2px 16px 10px 0;margin-right:-16px;scrollbar-width:none}.ota2-anatomy-grid::-webkit-scrollbar,.ota2-fit-grid::-webkit-scrollbar,.ota2-natural-grid::-webkit-scrollbar,.ota2-timeline::-webkit-scrollbar,.ota2-safety-grid::-webkit-scrollbar{display:none}.ota2-anatomy-grid>*,.ota2-fit-grid>*,.ota2-natural-grid>*,.ota2-timeline>*,.ota2-safety-grid>*{scroll-snap-align:start}
+  .ota2-consult-grid{gap:26px}.ota2-consult-media-gallery{gap:9px}.ota2-consult-media-gallery img{aspect-ratio:4/4.6}.ota2-consult-facts span{font-size:13px}.ota2-steps{gap:10px}
+  .ota2-care-gallery{margin-right:-16px;padding-right:16px}.ota2-care-gallery figure{min-width:0}.ota2-care-gallery img,.ota2-care-gallery video{aspect-ratio:4/5}.ota2-care-copy h3{font-size:32px}
+  .ota2-video-grid{grid-auto-columns:min(86vw,360px)}.ota2-video-card video{aspect-ratio:16/10}.ota2-video-copy{padding:17px}.ota2-video-copy h3{font-size:25px}
+  .ota2-final{padding:54px 0}.ota2-final h2{font-size:clamp(34px,10vw,44px)}.ota2-final p{font-size:16px;line-height:1.65}.ota2-final-facts span{font-size:13px}
+  .ota2-footer{padding:30px 0 110px}.ota2-footer p,.ota2-footer a{font-size:14px}.ota2-sticky{right:8px;bottom:calc(10px + env(safe-area-inset-bottom));display:none}.ota2-sticky.is-visible{display:block}.ota2-sticky .ota2-btn{min-height:48px;padding:11px 15px;font-size:14px}
+}
+@keyframes ota2-carousel-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo principal</a>
@@ -635,7 +685,7 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
   <div class="ota2-shell ota2-header-inner">
     <a aria-label="Dra. Amanda Schroeder — página inicial" class="ota2-brand" href="../index.html">
       <strong>Dra. Amanda Schroeder</strong>
-      <span>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</span>
+      <span><em>Cirurgia Plástica Facial</em> · CRM-SP 191605 · RQE 110472</span>
     </a>
     <button aria-expanded="false" aria-label="Abrir menu" class="ota2-menu-button" type="button">Menu</button>
     <nav aria-label="Navegação da página" class="ota2-nav">
@@ -646,7 +696,7 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
       <a href="#consulta">Consulta</a>
       <a href="#recuperacao">Recuperação</a>
       <a href="#faq">Dúvidas</a>
-      <a class="ota2-btn" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Consultar disponibilidade</a>
+      <a class="ota2-btn" data-cta-location="header" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Falar com a equipe</a>
     </nav>
   </div>
 </header>
@@ -656,12 +706,12 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
     <div class="ota2-shell ota2-hero-grid">
       <div class="ota2-hero-copy">
         <span class="ota2-eyebrow">Otoplastia em adultos em São Paulo</span>
-        <h1>Um incômodo antigo pode ser tratado sem apagar as características do seu rosto.</h1>
-        <p class="lead">Orelhas proeminentes, diferenças entre os lados ou receio de expor as orelhas podem acompanhar a vida adulta por anos. A avaliação considera projeção, formato, cartilagem, assimetrias e o resultado que pareceria natural para cada rosto.</p>
+        <h1>Otoplastia em adultos: menos projeção, preservando as curvas naturais.</h1>
+        <p class="lead">Para quem já deseja avaliar a correção das orelhas proeminentes — e quer entender como projeção, formato, cartilagem e assimetrias entram em um resultado proporcional ao rosto.</p>
         <p class="ota2-doctor-line">Dra. Amanda Schroeder · Cirurgia Plástica · CRM-SP 191605 · RQE 110472 · Pinheiros</p>
         <div class="ota2-hero-actions">
-          <a class="ota2-btn" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Consultar disponibilidade</a>
-          <a class="ota2-btn ota2-btn--ghost" href="#resultados">Ver resultados</a>
+          <a class="ota2-btn" data-cta-location="hero" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Falar com a equipe</a>
+          <a class="ota2-btn ota2-btn--ghost" href="#resultados">Ver resultados reais</a>
         </div>
         <p class="ota2-hero-note">Consulta particular em Pinheiros · Nota fiscal para reembolso</p>
       </div>
@@ -697,24 +747,26 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
         <h2>Menos projeção, preservando as curvas naturais.</h2>
         <p>Observe a relação das orelhas com o rosto, a manutenção das dobras e a diferença entre melhorar a proporção e deixar a orelha excessivamente próxima da cabeça.</p>
       </div>
-      <div class="ota2-results-grid ota2-results-grid--two">
+      <div class="ota2-mobile-carousel-hint" aria-hidden="true"><span>Deslize para ver mais resultados</span><b>→</b></div>
+      <div class="ota2-results-grid ota2-results-grid--two ota2-mobile-carousel-track" data-carousel="resultados" tabindex="0">
         <article class="ota2-result-card ota2-result-card--adult">
           <img alt="Resultado autorizado de otoplastia em adulto, antes e depois em vista frontal" decoding="async" fetchpriority="high" height="1913" src="../campanhas/assets/resultados/otoplastia-adulto-antes-depois.jpg" width="3683"/>
-          <div class="ota2-result-copy"><h3>Otoplastia em adulto</h3><p>Resultado individual de redução da projeção das orelhas, preservando contornos e uma relação natural com o rosto.</p><div class="ota2-observe"><span>Paciente adulto</span><span>Vista frontal</span><span>Resultado individual</span></div></div>
+          <div class="ota2-result-copy"><h3>Caso 1 — paciente adulto</h3><p>Resultado individual de redução da projeção das orelhas, preservando contornos e uma relação natural com o rosto.</p><div class="ota2-observe"><span>Paciente adulto</span><span>Vista frontal</span><span>Resultado individual</span></div></div>
         </article>
         <article class="ota2-result-card">
           <img alt="Resultado autorizado de otoplastia em vista frontal" decoding="async" fetchpriority="high" height="424" src="../campanhas/assets/resultados/otoplastia-antes-depois.webp" width="1401"/>
-          <div class="ota2-result-copy"><h3>Otoplastia — caso 1</h3><p>Redução individual da projeção, preservando curvas e relação natural com o rosto.</p><div class="ota2-observe"><span>Projeção</span><span>Dobras preservadas</span><span>Contexto facial</span></div></div>
+          <div class="ota2-result-copy"><h3>Caso 2 — paciente infantil</h3><p>Redução individual da projeção, preservando curvas e relação natural com o rosto.</p><div class="ota2-observe"><span>Paciente infantil</span><span>Projeção</span><span>Dobras preservadas</span></div></div>
         </article>
         <article class="ota2-result-card">
           <img alt="Segundo resultado autorizado de otoplastia em vista frontal" decoding="async" height="754" loading="lazy" src="../campanhas/assets/resultados/otoplastia-caso-02-antes-depois.webp" width="1536"/>
-          <div class="ota2-result-copy"><h3>Otoplastia — caso 2</h3><p>Outro resultado individual de redução da projeção, com melhora da harmonia entre os lados.</p><div class="ota2-observe"><span>Assimetria</span><span>Contorno natural</span><span>Resultado individual</span></div></div>
-        </article>
+          <div class="ota2-result-copy"><h3>Caso 3 — paciente infantil</h3><p>Outro resultado individual de redução da projeção, com melhora da harmonia entre os lados.</p><div class="ota2-observe"><span>Paciente infantil</span><span>Assimetria</span><span>Contorno natural</span></div></div>
+      </article>
       </div>
-      <p class="ota2-disclaimer">Imagens autorizadas, com finalidade educativa. Não representam garantia de resultado. A evolução varia conforme anatomia, indicação, técnica, cartilagem, cicatrização e cuidados pós-operatórios. Assimetrias, intercorrências, complicações e necessidade de revisão são possíveis.</p>
+      <div class="ota2-mobile-carousel-controls"><button class="ota2-mobile-carousel-button" data-carousel-action="previous" data-carousel-target="resultados" type="button">Anterior</button><button class="ota2-mobile-carousel-button" data-carousel-action="next" data-carousel-target="resultados" type="button">Próximo</button></div>
+      <p class="ota2-disclaimer">Casos reais com finalidade educativa. A indicação, a anatomia, a cartilagem, a cicatrização e os cuidados influenciam a evolução; resultados semelhantes não são garantidos.</p>
       <div class="ota2-lobule">
         <img alt="Resultado educativo de lobuloplastia antes e depois" decoding="async" height="961" loading="lazy" src="../campanhas/assets/rejuvenescimento-orelha-site.webp" width="1600"/>
-        <div><h3>Alterações do lóbulo são outro planejamento</h3><p>Rasgos, alargamentos ou deformidades do lóbulo podem ser avaliados, mas não devem ser confundidos com a otoplastia para orelhas proeminentes.</p></div>
+        <div><h3>Lobuloplastia é outro planejamento</h3><p>Rasgos, alargamentos ou deformidades do lóbulo podem ser avaliados, mas não devem ser confundidos com a otoplastia para orelhas proeminentes.</p></div>
       </div>
     </div>
   </section>
@@ -727,7 +779,7 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
         <p>As expressões do cotidiano ajudam a reconhecer a questão, mas não revelam sozinhas quais estruturas precisam ser tratadas.</p>
       </div>
       <div class="ota2-language-grid">
-        <article class="ota2-language-card"><h3>“Sou refém do cabelo solto”</h3><p>Alguns adultos evitam penteados que exponham as orelhas mesmo depois de muitos anos convivendo com a projeção.</p></article>
+        <article class="ota2-language-card"><h3>“Evito prender o cabelo”</h3><p>Alguns adultos evitam penteados que exponham as orelhas, mesmo depois de muitos anos convivendo com a projeção.</p></article>
         <article class="ota2-language-card"><h3>“Tenho orelha de abano”</h3><p>Expressão popular para orelhas proeminentes. A projeção pode envolver dobras, concha, cartilagem e diferenças entre os lados.</p></article>
         <article class="ota2-language-card"><h3>“Uma aparece mais que a outra”</h3><p>Assimetrias de projeção, formato ou posição podem ficar mais evidentes de frente e em fotografias.</p></article>
         <article class="ota2-language-card"><h3>“Evito fotos de certos ângulos”</h3><p>A percepção pode variar com cabelo, iluminação e posição da cabeça, mas a avaliação é feita em diferentes vistas.</p></article>
@@ -768,14 +820,14 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
     </div>
   </section>
 
-  <section class="ota2-section ota2-natural" id="naturalidade">
+  <section class="ota2-section ota2-natural" id="possibilidades">
     <div class="ota2-shell">
-      <div class="ota2-section-head"><span class="ota2-eyebrow">Naturalidade</span><h2>O objetivo não é deixar a orelha “colada”.</h2><p>Uma correção natural procura reduzir a projeção preservando dobras, contornos e uma relação equilibrada com o rosto.</p></div>
+      <div class="ota2-section-head"><span class="ota2-eyebrow">Possibilidades de correção</span><h2>O plano não parte de uma técnica pronta.</h2><p>O objetivo é reduzir a projeção sem apagar as curvas naturais. A abordagem muda conforme as dobras, a concha, a cartilagem e as diferenças entre os lados.</p></div>
       <div class="ota2-natural-grid">
-        <article class="ota2-natural-card"><h3>Projeção proporcional</h3><p>Reduzir o excesso sem aproximar além do necessário.</p></article>
-        <article class="ota2-natural-card"><h3>Curvas preservadas</h3><p>Manter dobras e contornos compatíveis com a anatomia natural.</p></article>
-        <article class="ota2-natural-card"><h3>Cada lado é individual</h3><p>As técnicas podem variar entre as orelhas conforme suas diferenças.</p></article>
-        <article class="ota2-natural-card"><h3>Limites realistas</h3><p>Pequenas diferenças residuais podem permanecer e não significam falha.</p></article>
+        <article class="ota2-natural-card"><h3>Dobras e contornos</h3><p>A definição da anti-hélice pode ser parte do plano quando ela contribui para a projeção.</p></article>
+        <article class="ota2-natural-card"><h3>Concha e distância</h3><p>Em alguns casos, a profundidade ou posição da concha participa da relação com a cabeça.</p></article>
+        <article class="ota2-natural-card"><h3>Cartilagem e lados</h3><p>Espessura, resistência e diferenças entre as orelhas orientam a individualização.</p></article>
+        <article class="ota2-natural-card"><h3>Limites realistas</h3><p>Pequenas diferenças residuais podem permanecer; naturalidade não é sinônimo de simetria absoluta.</p></article>
       </div>
     </div>
   </section>
@@ -796,12 +848,17 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
 
   <section class="ota2-section ota2-consult" id="consulta">
     <div class="ota2-shell ota2-consult-grid">
-      <figure class="ota2-clinic-photo"><img alt="Clínica LIV Faria Lima em Pinheiros" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/></figure>
+      <div class="ota2-consult-media-gallery" aria-label="Ambientes da Clínica LIV Faria Lima">
+        <figure><img alt="Recepção da Clínica LIV Faria Lima" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/></figure>
+        <figure><img alt="Dra. Amanda planejando uma avaliação" decoding="async" height="1687" loading="lazy" src="../campanhas/assets/blefaroplastia/amanda-planejamento-consulta.jpg" width="1265"/></figure>
+        <figure><img alt="Consultório da Clínica LIV com quadro e mesa de atendimento" class="ota2-consult-room" decoding="async" height="1792" loading="lazy" src="../campanhas/assets/blefaroplastia/clinica-liv-consultorio-quadro.jpg" width="1290"/></figure>
+        <figure><img alt="Ambiente da Clínica LIV Faria Lima" class="ota2-consult-liv2" decoding="async" height="2048" loading="lazy" src="../campanhas/assets/clinica-liv-ambiente-02.webp" width="1152"/></figure>
+      </div>
       <div>
         <div class="ota2-section-head"><span class="ota2-eyebrow">Consulta presencial em Pinheiros</span><h2>O que acontece na consulta.</h2><p>A consulta organiza anatomia, naturalidade, cicatrizes, anestesia, riscos, recuperação e próximos passos antes de qualquer decisão.</p></div>
         <div class="ota2-steps"><div class="ota2-step"><span>01</span><strong>Avaliação de frente, perfil, cartilagem, dobras e assimetrias.</strong></div><div class="ota2-step"><span>02</span><strong>Conversa sobre o incômodo, os objetivos e o resultado considerado natural.</strong></div><div class="ota2-step"><span>03</span><strong>Discussão de técnica, cicatrizes, anestesia, riscos e recuperação.</strong></div><div class="ota2-step"><span>04</span><strong>Definição de um plano individual, caso exista indicação.</strong></div></div>
-        <div class="ota2-consult-facts"><span>Consulta particular</span><span>Clínica LIV Faria Lima</span><span>R. Pais Leme, 215 — Pinheiros</span><span>Nota fiscal para reembolso</span><span>Teleconsulta inicial em casos selecionados</span><span>Avaliação presencial para o plano definitivo</span></div>
-        <a class="ota2-btn" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Consultar disponibilidade</a>
+        <div class="ota2-consult-facts"><span>Clínica LIV Faria Lima</span><span>R. Pais Leme, 215, cj. 710 · Pinheiros</span><span>Nota fiscal para reembolso</span><span>Teleconsulta inicial em casos selecionados</span></div>
+        <a class="ota2-btn" data-cta-location="consulta" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Agendar avaliação para otoplastia</a>
       </div>
     </div>
   </section>
@@ -819,7 +876,16 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
     <div class="ota2-shell">
       <div class="ota2-section-head"><span class="ota2-eyebrow">Antes, durante e depois</span><h2>Como a segurança é organizada.</h2><p>Segurança depende da avaliação clínica, do ambiente, da anestesia, do preparo e do acompanhamento.</p></div>
       <div class="ota2-safety-grid"><article class="ota2-safety-card"><span>01</span><h3>Avaliação clínica</h3><p>Histórico de saúde, medicamentos, alergias, cicatrização e fatores de risco.</p></article><article class="ota2-safety-card"><span>02</span><h3>Ambiente e anestesia</h3><p>Escolhidos conforme extensão, condições clínicas e capacidade de colaboração.</p></article><article class="ota2-safety-card"><span>03</span><h3>Preparo individual</h3><p>Orientações sobre rotina, medicamentos, sono e proteção das orelhas.</p></article><article class="ota2-safety-card"><span>04</span><h3>Retornos e contato</h3><p>Acompanhamento das incisões, da cartilagem, da simetria e de sinais de atenção.</p></article></div>
-      <div class="ota2-risks"><strong>Riscos discutidos com transparência:</strong> sangramento ou hematoma, infecção, assimetria, alteração de sensibilidade, cicatriz desfavorável, hipertrófica ou queloide, pontos perceptíveis, irregularidades, correção insuficiente ou excessiva, mudança parcial da projeção e necessidade de revisão.</div>
+      <div class="ota2-risks"><strong>Riscos discutidos com transparência:</strong> hematoma, infecção, alteração de sensibilidade, cicatrização desfavorável, pontos perceptíveis, irregularidades, assimetria, correção insuficiente ou excessiva e possível revisão. O risco individual é explicado na consulta.</div>
+      <div class="ota2-care-block">
+        <div class="ota2-care-copy"><span class="ota2-eyebrow">Equipe e ambiente cirúrgico</span><h3>O cuidado também é construído em equipe.</h3><p>Dra. Amanda com parte de sua equipe cirúrgica. O ambiente, a anestesia e a composição da equipe são organizados conforme o plano e as necessidades de cada caso.</p></div>
+        <div class="ota2-care-gallery ota2-mobile-carousel-track" data-carousel="equipe" tabindex="0">
+          <figure><img alt="Dra. Amanda com parte de sua equipe cirúrgica" decoding="async" loading="lazy" src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg"/><figcaption>Parte da equipe cirúrgica em centro cirúrgico.</figcaption></figure>
+          <figure><video aria-label="Dra. Amanda em ambiente cirúrgico" controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"/></video><figcaption>Ambiente cirúrgico: cada caso é organizado de forma individual.</figcaption></figure>
+          <figure><video aria-label="Anestesia no centro cirúrgico" controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/equipe/anestesia-centro-cirurgico.mp4" type="video/mp4"/></video><figcaption>A anestesia é definida conforme avaliação, extensão e ambiente.</figcaption></figure>
+        </div>
+        <div class="ota2-mobile-carousel-controls"><button class="ota2-mobile-carousel-button" data-carousel-action="previous" data-carousel-target="equipe" type="button">Anterior</button><button class="ota2-mobile-carousel-button" data-carousel-action="next" data-carousel-target="equipe" type="button">Próximo</button></div>
+      </div>
     </div>
   </section>
 
@@ -840,20 +906,32 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
 </div><a class="ota2-review-link" href="https://share.google/GGGUczihC6EOlCO4E" data-google-review-tabs="" data-clinic-review-url="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">Ver avaliações públicas no Google</a></div>
   </section>
 
+  <section class="ota2-section ota2-video-section" id="conteudos-selecionados">
+    <div class="ota2-shell">
+      <div class="ota2-section-head"><span class="ota2-eyebrow">Conteúdos selecionados</span><h2>Explicações para continuar a decisão com calma.</h2><p>Materiais breves sobre consulta, segurança e ambiente. O plano definitivo continua sendo individual.</p></div>
+      <div class="ota2-video-grid ota2-mobile-carousel-track" data-carousel="conteudos" tabindex="0">
+        <article class="ota2-video-card"><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/como-funciona-a-consulta.mp4" type="video/mp4"/></video><div class="ota2-video-copy"><h3>Como funciona a consulta</h3><p>O que é observado antes de definir indicação, limites e próximos passos.</p></div></article>
+        <article class="ota2-video-card"><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata" poster="../campanhas/assets/conteudos/videos/anestesia-geral-seguranca-poster.webp"><source src="../campanhas/assets/conteudos/videos/anestesia-geral-seguranca.mp4" type="video/mp4"/></video><div class="ota2-video-copy"><h3>Segurança anestésica</h3><p>A modalidade é definida para cada caso, conforme plano e condições clínicas.</p></div></article>
+        <article class="ota2-video-card"><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/clinica-liv-apresentacao.mp4" type="video/mp4"/></video><div class="ota2-video-copy"><h3>Clínica LIV Faria Lima</h3><p>Conheça o ambiente de consulta em Pinheiros.</p></div></article>
+      </div>
+      <div class="ota2-mobile-carousel-controls"><button class="ota2-mobile-carousel-button" data-carousel-action="previous" data-carousel-target="conteudos" type="button">Anterior</button><button class="ota2-mobile-carousel-button" data-carousel-action="next" data-carousel-target="conteudos" type="button">Próximo</button></div>
+    </div>
+  </section>
+
   <section class="ota2-section ota2-faq" id="faq">
     <div class="ota2-shell"><div class="ota2-section-head"><span class="ota2-eyebrow">Dúvidas frequentes</span><h2>O que costuma pesar na decisão do adulto.</h2><p>As respostas são referências gerais. Indicação, anestesia, técnica, cicatrizes, recuperação e riscos dependem da avaliação individual.</p></div><div class="ota2-faq-list"><details><summary><h3>Otoplastia pode ser feita em qualquer fase da vida adulta?</h3></summary><div class="ota2-faq-answer">A idade isoladamente não define a indicação. A avaliação considera anatomia, saúde, qualidade dos tecidos, objetivos e possibilidade de cumprir os cuidados da recuperação.</div></details><details><summary><h3>A orelha pode ficar muito próxima da cabeça?</h3></summary><div class="ota2-faq-answer">O objetivo não é deixar a orelha colada. O planejamento busca reduzir a projeção preservando curvas, dobras e uma distância natural da cabeça. Correção excessiva continua sendo um risco discutido antes da cirurgia.</div></details><details><summary><h3>É possível corrigir totalmente a assimetria?</h3></summary><div class="ota2-faq-answer">As diferenças entre os lados podem ser tratadas de forma individual, mas simetria absoluta não deve ser prometida. Pequenas diferenças anatômicas podem permanecer mesmo após uma boa evolução.</div></details><details><summary><h3>Onde fica a cicatriz?</h3></summary><div class="ota2-faq-answer">As incisões costumam ficar em regiões discretas, frequentemente no sulco posterior da orelha. A extensão depende da anatomia e da técnica. Mesmo bem posicionadas, as cicatrizes existem e amadurecem ao longo dos meses.</div></details><details><summary><h3>Qual anestesia costuma ser utilizada em adultos?</h3></summary><div class="ota2-faq-answer">A modalidade anestésica depende da extensão do procedimento, das condições clínicas, da capacidade de colaboração e do ambiente cirúrgico. A recomendação é individual.</div></details><details><summary><h3>Quando é possível voltar ao trabalho?</h3></summary><div class="ota2-faq-answer">O retorno depende da atividade profissional, da evolução e da possibilidade de proteger as orelhas. Trabalho remoto ou atividades leves podem ser retomados antes de funções com esforço, atrito ou risco de impacto.</div></details><details><summary><h3>Quando posso voltar a usar óculos, dormir de lado e praticar esportes?</h3></summary><div class="ota2-faq-answer">Óculos, posição para dormir e esportes são liberados de forma progressiva. Atividades de contato e situações que pressionem ou dobrem as orelhas exigem mais cautela.</div></details><details><summary><h3>Quais riscos precisam ser discutidos?</h3></summary><div class="ota2-faq-answer">Entre os riscos estão sangramento ou hematoma, infecção, assimetria, alteração de sensibilidade, cicatriz desfavorável, pontos perceptíveis, irregularidades, correção insuficiente ou excessiva, mudança parcial da projeção e necessidade de revisão.</div></details></div></div>
   </section>
 
   <section class="ota2-final" id="contato">
-    <div class="ota2-shell ota2-final-grid"><div><h2>Entenda se a otoplastia faz sentido para você.</h2><p>A consulta organiza anatomia, naturalidade, cicatrizes, anestesia, recuperação e próximos passos antes de qualquer decisão.</p><div class="ota2-final-facts"><span>Consulta particular</span><span>Pinheiros, São Paulo</span><span>Nota fiscal para reembolso</span><span>Avaliação individual da anatomia e da recuperação</span></div></div><a class="ota2-btn" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Falar com a equipe</a></div>
+    <div class="ota2-shell ota2-final-grid"><div><h2>Entenda se a otoplastia faz sentido para você.</h2><p>A consulta organiza anatomia, naturalidade, cicatrizes, anestesia, recuperação e próximos passos antes de qualquer decisão.</p><div class="ota2-final-facts"><span>Clínica LIV Faria Lima</span><span>Pinheiros, São Paulo</span><span>Nota fiscal para reembolso</span></div></div><a class="ota2-btn" data-cta-location="final" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Agendar avaliação para otoplastia</a></div>
   </section>
 </main>
 
 <footer class="ota2-footer">
-  <div class="ota2-shell ota2-footer-grid"><div><strong>Dra. Amanda Schroeder</strong><p>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</p><p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a> · Seg–dom, 07:00 às 23:00</p><div class="ota2-footer-links"><a href="../privacidade/">Política de privacidade</a><a href="../otoplastia-infantil/">Otoplastia infantil</a><a href="../#clinica-liv">Clínica LIV</a></div><details><summary>Navegação e procedimentos</summary><a href="../otoplastia-infantil/">Otoplastia infantil</a><a href="../privacidade/">Política de privacidade</a><a href="../conteudos/">Conteúdos</a><a href="../#clinica-liv">Clínica LIV</a><a href="../blefaroplastia/">Blefaroplastia</a><a href="../lifting-facial/">Lifting facial</a></details><button class="ota2-privacy privacy-settings" data-privacy-settings="" type="button">Preferências de privacidade</button></div><div><strong>Atendimento</strong><p>Consulta particular em Pinheiros. A equipe orienta disponibilidade, formato e próximos passos pelo WhatsApp.</p></div></div>
+  <div class="ota2-shell ota2-footer-grid"><div><strong>Dra. Amanda Schroeder</strong><p>Cirurgia Plástica · CRM-SP 191605 · RQE 110472</p><p><a href="https://maps.app.goo.gl/yDFBmbcn5oDpHSM46" rel="noopener" target="_blank">R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo — SP, 05424-150</a><br/><a href="tel:+5511961957144">+55 11 96195-7144</a></p><div class="ota2-footer-links"><a href="https://www.instagram.com/dra.amanda_plastica/" rel="noopener" target="_blank">Instagram da Dra. Amanda</a><a href="../#clinica-liv">Clínica LIV</a><a href="../privacidade/">Política de privacidade</a></div><details><summary>Navegação e procedimentos</summary><a href="../otoplastia-infantil/">Otoplastia infantil</a><a href="../blefaroplastia/">Blefaroplastia</a><a href="../lifting-facial/">Lifting facial</a><a href="../conteudos/">Conteúdos</a></details><button class="ota2-privacy privacy-settings" data-privacy-settings="" type="button">Configurar cookies</button></div></div>
 </footer>
 
-<div aria-hidden="true" class="ota2-sticky" id="ota2-sticky"><a class="ota2-btn" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Conversar com a equipe</a></div>
+<div aria-hidden="true" class="ota2-sticky" id="ota2-sticky"><a aria-label="Falar com a equipe pelo WhatsApp" class="ota2-btn" data-cta-location="sticky" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank"><span aria-hidden="true">●</span><span>Falar com a equipe</span></a></div>
 
 <script defer src="../campanhas/tracking-config.js"></script>
 <script defer src="../campanhas/tracking-loader.js"></script>
@@ -886,28 +964,46 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
   });
 
   const sticky=document.getElementById('ota2-sticky');
-  const hero=document.querySelector('.ota2-hero');
-  const finalSection=document.querySelector('.ota2-final');
-  if(sticky&&hero&&finalSection&&'IntersectionObserver' in window){
-    let heroVisible=true;
-    let finalVisible=false;
+  const header=document.querySelector('.ota2-header');
+  const trust=document.querySelector('.ota2-trust');
+  if(sticky&&header&&trust){
     const refresh=()=>{
-      const show=!heroVisible&&!finalVisible&&window.innerWidth<=760;
-      sticky.classList.toggle('is-visible',show);
-      sticky.classList.toggle('is-hidden-near-final',finalVisible);
-      sticky.setAttribute('aria-hidden',String(!show));
+      const firstContent=document.getElementById('queixas');
+      const trustBottom=trust.offsetTop+trust.offsetHeight;
+      const boundary=window.innerWidth<=760&&firstContent?firstContent.offsetTop-header.offsetHeight:trustBottom;
+      const pastTrust=window.scrollY>=boundary;
+      header.classList.toggle('is-unpinned',pastTrust);
+      sticky.classList.toggle('is-visible',pastTrust);
+      sticky.setAttribute('aria-hidden',String(!pastTrust));
     };
-    new IntersectionObserver(entries=>{
-      heroVisible=entries[0].isIntersecting;
-      refresh();
-    },{threshold:.08}).observe(hero);
-    new IntersectionObserver(entries=>{
-      finalVisible=entries[0].isIntersecting;
-      refresh();
-    },{threshold:.15}).observe(finalSection);
+    let stickyTicking=false;
+    window.addEventListener('scroll',()=>{
+      if(stickyTicking)return;
+      stickyTicking=true;
+      requestAnimationFrame(()=>{refresh();stickyTicking=false;});
+    },{passive:true});
     window.addEventListener('resize',refresh,{passive:true});
     refresh();
   }
+
+  document.querySelectorAll('[data-carousel-action]').forEach(button=>{
+    const track=document.querySelector('[data-carousel="'+button.dataset.carouselTarget+'"]');
+    if(!track)return;
+    const buttons=[...document.querySelectorAll('[data-carousel-target="'+button.dataset.carouselTarget+'"]')];
+    const refresh=()=>{
+      const max=Math.max(0,track.scrollWidth-track.clientWidth-2);
+      buttons.forEach(control=>{
+        control.disabled=control.dataset.carouselAction==='previous'?track.scrollLeft<=2:track.scrollLeft>=max;
+      });
+    };
+    button.addEventListener('click',()=>{
+      const amount=Math.max(260,track.clientWidth*.86)*(button.dataset.carouselAction==='next'?1:-1);
+      track.scrollBy({left:amount,behavior:'smooth'});
+    });
+    track.addEventListener('scroll',refresh,{passive:true});
+    window.addEventListener('resize',refresh,{passive:true});
+    refresh();
+  });
 })();
 </script>
 </body>
