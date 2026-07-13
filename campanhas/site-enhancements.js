@@ -929,8 +929,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
         items: [
           ['lifting-com-enxertia-de-gordura.mp4', 'Lifting e enxertia de gordura', 'Uma simulação para diferenciar reposicionamento dos tecidos e recuperação de volume.'],
           ['queixa-e-solucao-face.mp4', 'Da queixa ao plano facial', 'Cada incômodo precisa ser relacionado à estrutura que realmente o produz.'],
-          ['medo-de-resultados-exagerados.mp4', 'Medo de um resultado exagerado', 'Naturalidade depende de indicação, proporção e respeito à identidade facial.'],
-          ['lip-lifting.mp4', 'O que é lip lifting', 'Um procedimento específico para a relação entre o lábio superior e a base do nariz.']
+          ['medo-de-resultados-exagerados.mp4', 'Medo de um resultado exagerado', 'Naturalidade depende de indicação, proporção e respeito à identidade facial.']
         ]
       },
       '/conteudos/cuidados-cicatrizacao-cirurgia/': {
