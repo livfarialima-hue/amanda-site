@@ -4321,6 +4321,46 @@ html[data-page-type="home"] :is(#areas, #procedimentos-face, #alem-da-face, #res
 .doctor-more-panel h3 { margin: 8px 0 9px; font-size: 24px; line-height: 1.15; }
 .doctor-more-panel p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .doctor-more-copy p + p { margin-top: 10px; }
+.doctor-more-panel--single { grid-template-columns: 1fr; }
+
+.doctor-story-trigger {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+  min-height: 132px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(112, 76, 63, .25);
+  border-radius: 18px;
+  background: rgba(255, 250, 247, .9);
+  color: var(--ink);
+  text-align: left;
+  box-shadow: 0 10px 28px rgba(74, 49, 39, .07);
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.doctor-story-trigger:hover { transform: translateY(-2px); border-color: rgba(112, 76, 63, .48); box-shadow: 0 16px 34px rgba(74, 49, 39, .11); }
+.doctor-story-trigger:focus-visible { outline: 3px solid rgba(135, 88, 69, .32); outline-offset: 4px; }
+.doctor-story-media { position: relative; display: block; width: 100%; height: 132px; overflow: hidden; background: #2a211e; }
+.doctor-story-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 34%; opacity: .92; }
+.doctor-story-play { position: absolute; inset: 50% auto auto 50%; display: grid; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.94); color: #5d3b31; font-size: 16px; transform: translate(-50%,-50%); box-shadow: 0 7px 20px rgba(0,0,0,.2); }
+.doctor-story-copy { display: grid; gap: 7px; padding: 17px 22px 17px 0; }
+.doctor-story-copy strong { font-family: Georgia,"Times New Roman",serif; font-size: clamp(24px,2.3vw,32px); font-weight: 400; line-height: 1.08; }
+.doctor-story-copy > span:not(.content-type) { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.doctor-story-copy b { color: #765044; font-size: 13px; }
+
+.liv-media { display: grid; }
+.liv-photo-picture { display: block; }
+.liv-video-trigger { display: grid; grid-template-columns: 48px minmax(0,1fr); gap: 12px; align-items: center; min-height: 72px; padding: 11px 16px; border: 1px solid var(--line); border-top: 0; background: rgba(255,250,247,.94); color: var(--ink); text-align: left; cursor: pointer; }
+.liv-video-trigger:hover { background: #fff; }
+.liv-video-trigger:focus-visible { outline: 3px solid rgba(135,88,69,.3); outline-offset: 3px; }
+.liv-video-play { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; background: #634239; color: #fff; font-size: 14px; box-shadow: 0 6px 16px rgba(74,49,39,.18); }
+.liv-video-trigger strong,.liv-video-trigger small { display: block; }
+.liv-video-trigger strong { font-family: Georgia,"Times New Roman",serif; font-size: 20px; font-weight: 400; line-height: 1.15; }
+.liv-video-trigger small { margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.35; }
 
 /* Resultados da home: mesma altura visual e nenhuma perda de conteúdo. */
 html[data-page-type="home"] .result-grid-home-featured .result-card > img,
@@ -4351,11 +4391,22 @@ html[data-page-type="home"] .result-grid-home-featured .result-img-body-frame im
   .doctor-more-video video { width: min(100%, 290px); margin: 0 auto; }
   .doctor-more-video,
   .doctor-more-copy { padding: 16px; }
+  .doctor-story-trigger { grid-template-columns: 108px minmax(0,1fr); min-height: 118px; gap: 14px; border-radius: 14px; }
+  .doctor-story-media { height: 118px; }
+  .doctor-story-copy { gap: 5px; padding: 12px 14px 12px 0; }
+  .doctor-story-copy strong { font-size: 22px; }
+  .doctor-story-copy > span:not(.content-type) { font-size: 13px; line-height: 1.42; }
 
   html[data-page-type="home"] .result-grid-home-featured .result-card > img,
   html[data-page-type="home"] .result-grid-home-featured .result-card > .result-img-body-frame {
     height: 280px !important;
   }
+}
+
+@media (max-width: 760px) {
+  .liv-media .liv-photo { width: 100%; height: auto; max-height: 310px !important; aspect-ratio: 4 / 3 !important; object-fit: cover; object-position: center 52%; }
+  .liv-video-trigger { min-height: 70px; padding: 10px 13px; }
+  .liv-video-trigger strong { font-size: 19px; }
 }
 
 /* Hero: menos vazio sob o cabeçalho e fotografia integrada ao texto. */

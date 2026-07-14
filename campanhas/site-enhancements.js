@@ -547,6 +547,7 @@
     var video = modal.querySelector('video');
     var title = modal.querySelector('h2');
     var summary = modal.querySelector('.curated-video-summary');
+    var eyebrow = modal.querySelector('.eyebrow');
     var close = modal.querySelector('.curated-video-close');
     var disclaimer = modal.querySelector('.disclaimer');
     var currentId = '';
@@ -586,6 +587,14 @@
         sent = {};
         title.textContent = trigger.dataset.videoTitle || 'Conteúdo educativo';
         summary.textContent = trigger.dataset.videoSummary || '';
+        eyebrow.textContent = trigger.dataset.videoEyebrow || 'Conteúdo educativo';
+        if (trigger.hasAttribute('data-video-disclaimer')) {
+          disclaimer.textContent = trigger.dataset.videoDisclaimer || '';
+          disclaimer.hidden = !trigger.dataset.videoDisclaimer;
+        } else {
+          disclaimer.textContent = 'O vídeo traz informação geral e não substitui avaliação médica individualizada.';
+          disclaimer.hidden = false;
+        }
         video.poster = trigger.dataset.videoPoster || '';
         video.src = trigger.dataset.videoSrc || '';
         modal.classList.add('is-open');
