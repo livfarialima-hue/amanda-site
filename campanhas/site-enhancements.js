@@ -1250,7 +1250,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     gallery.items.forEach(function (item) {
       var card = document.createElement('article');
       card.className = 'educational-video-card';
-      card.innerHTML = '<video controls playsinline preload="metadata" aria-label="' + item[1] + '"><source type="video/mp4"></video><div class="educational-video-copy"><h3></h3><p></p></div>';
+      card.innerHTML = '<video controls playsinline preload="metadata" poster="/campanhas/assets/amanda-apresentacao-poster.jpg" aria-label="' + item[1] + '"><source type="video/mp4"></video><div class="educational-video-copy"><h3></h3><p></p></div>';
       card.querySelector('source').src = '/campanhas/assets/conteudos/videos/' + item[0];
       card.querySelector('h3').textContent = item[1];
       card.querySelector('p').textContent = item[2];
@@ -1276,7 +1276,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     var media = document.createElement('div');
     media.className = 'consultation-hero-media';
     var photo = document.createElement('img');
-    photo.src = '/campanhas/assets/conteudos/amanda-atendendo-consulta.png';
+    photo.src = '/campanhas/assets/conteudos/amanda-atendendo-consulta.webp';
     photo.alt = 'Dra. Amanda Schroeder durante atendimento em consulta';
     photo.width = 1146;
     photo.height = 1400;
