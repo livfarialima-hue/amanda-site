@@ -3917,3 +3917,12 @@ html[data-page-type="home"] .whatsapp-float svg {
     translate: 0 0 !important;
   }
 }
+
+/* No desktop, preserva o enquadramento completo de todos os vídeos. */
+@media (min-width: 761px) {
+  html body video {
+    object-fit: contain !important;
+    object-position: center !important;
+    background: #171312;
+  }
+}

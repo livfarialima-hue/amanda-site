@@ -905,16 +905,15 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
 (function () {
   'use strict';
 
-  var defaultVideoPoster = '/campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg';
-  var amandaVideoPoster = '/campanhas/assets/amanda-operando.jpg';
+  var siteVideoPoster = '/campanhas/assets/amanda-profissional-hero.webp';
 
   function installVideoPosters() {
-    var procedure = document.documentElement.dataset.procedure || '';
-    if (document.documentElement.dataset.auxiliaryStandard !== 'true' && procedure !== 'mama') return;
-    document.querySelectorAll('video:not([poster])').forEach(function (video) {
+    document.querySelectorAll('video').forEach(function (video) {
       if (video.closest('.curated-video-modal')) return;
-      var label = (video.getAttribute('aria-label') || '').toLowerCase();
-      video.setAttribute('poster', label.indexOf('amanda') !== -1 ? amandaVideoPoster : defaultVideoPoster);
+      video.setAttribute('poster', siteVideoPoster);
+    });
+    document.querySelectorAll('[data-video-poster]').forEach(function (trigger) {
+      trigger.setAttribute('data-video-poster', siteVideoPoster);
     });
   }
 
@@ -1257,7 +1256,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
         eyebrow: 'Antes da avaliação',
         title: 'Como é uma consulta com a Dra. Amanda.',
         intro: 'Queixa, anatomia, expectativas e segurança entram na conversa antes de qualquer decisão.',
-        items: [['como-funciona-a-consulta.mp4', 'Eu e você em consulta', 'A consulta organiza dúvidas e possibilidades antes de qualquer decisão sobre tratamento.']]
+        items: [['medo-de-resultados-exagerados.mp4', 'Medo de um resultado exagerado', 'Naturalidade depende de indicação, proporção e respeito à identidade.']]
       }
     };
     var gallery = galleries[path];
