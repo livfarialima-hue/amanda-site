@@ -4358,6 +4358,7 @@ html[data-page-type="home"] :is(#areas, #procedimentos-face, #alem-da-face, #res
 .liv-carousel-slide { flex: 0 0 100%; min-width: 0; margin: 0; overflow: hidden; scroll-snap-align: start; }
 .liv-carousel-slide picture { display: block; }
 .liv-carousel-slide img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: center; border: 1px solid var(--line); box-shadow: 0 18px 48px rgba(63, 57, 52, .12); }
+.liv-carousel-slide img.liv-photo-full { aspect-ratio: auto; object-fit: contain; }
 .liv-carousel-controls { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
 .liv-carousel-control { width: 46px; height: 46px; border: 1px solid var(--line); background: rgba(255,250,247,.94); color: var(--ink); font-size: 19px; cursor: pointer; }
 .liv-carousel-control:disabled { background: rgba(255,255,255,.54); color: var(--muted); cursor: default; }
