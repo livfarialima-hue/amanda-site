@@ -8,7 +8,7 @@
       if(index<2){cta.textContent='Falar com a equipe';}
       if(index===1){cta.setAttribute('data-cta-location','hero');}
     });
-    document.querySelectorAll('.procedure-video-card video').forEach(function(video){video.preload='metadata';if(!video.poster)video.poster='../campanhas/assets/amanda-apresentacao-poster.jpg';});
+    document.querySelectorAll('.procedure-video-card video').forEach(function(video){video.preload='metadata';if(!video.poster)video.poster='../campanhas/assets/conteudos/amanda-atendendo-consulta.webp';});
   }
   if(procedure==='otoplastia'){
     document.querySelectorAll('[data-procedure="otoplastia"][data-track="whatsapp"]').forEach(function(cta,index){
