@@ -1,6 +1,33 @@
 (function () {
   'use strict';
 
+  document.querySelectorAll('[data-carousel]').forEach(function (carousel) {
+    var slides = Array.prototype.slice.call(carousel.querySelectorAll(':scope > .liv-carousel-slide'));
+    if (slides.length < 2) return;
+
+    var targetId = carousel.dataset.carousel;
+    var controls = document.querySelectorAll('[data-carousel-target="' + targetId + '"]');
+    var previous = document.querySelector('[data-carousel-target="' + targetId + '"][data-carousel-action="previous"]');
+    var next = document.querySelector('[data-carousel-target="' + targetId + '"][data-carousel-action="next"]');
+
+    function updateControls() {
+      var maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      if (previous) previous.disabled = carousel.scrollLeft <= 1;
+      if (next) next.disabled = carousel.scrollLeft >= maxScroll - 1;
+    }
+
+    controls.forEach(function (control) {
+      control.addEventListener('click', function () {
+        var direction = control.dataset.carouselAction === 'previous' ? -1 : 1;
+        carousel.scrollTo({ left: carousel.scrollLeft + direction * carousel.clientWidth, behavior: 'smooth' });
+      });
+    });
+
+    carousel.addEventListener('scroll', updateControls, { passive: true });
+    window.addEventListener('resize', updateControls);
+    updateControls();
+  });
+
   var mobileQuery = window.matchMedia('(max-width: 760px)');
   var counter = 0;
 
