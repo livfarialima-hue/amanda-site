@@ -110,11 +110,59 @@
     });
   }
 
+  function normalizeArticleCtas() {
+    if (document.documentElement.dataset.pageType !== 'article') return;
+    var headerCta = document.querySelector('.nav-cta[data-track="whatsapp"]');
+    if (headerCta) {
+      headerCta.textContent = 'Falar com a equipe';
+      headerCta.dataset.ctaLocation = 'header';
+    }
+    var heroCta = document.querySelector('.article-hero [data-track="whatsapp"], .hero[data-section="hero"] [data-track="whatsapp"]');
+    if (heroCta) {
+      heroCta.textContent = 'Falar com a equipe';
+      heroCta.dataset.ctaLocation = 'hero';
+    }
+    var finalCta = document.querySelector('.cta a.btn[data-track="whatsapp"]');
+    if (finalCta) {
+      finalCta.textContent = 'Agendar avaliação';
+      finalCta.dataset.ctaLocation = 'final';
+    }
+  }
+
+  function identifyWhatsAppCtaOrigins() {
+    var fallbackIndex = 0;
+    document.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
+      if (link.dataset.ctaLocation) return;
+
+      var container = link.closest('[data-section], header, footer, .hero, .hero-section, .whatsapp-float, .floating-whatsapp, .cta, .article-aside, .article-hero');
+      if (container && container.dataset.section) {
+        link.dataset.ctaLocation = container.dataset.section;
+      } else if (container && container.matches('header')) {
+        link.dataset.ctaLocation = 'header';
+      } else if (container && container.matches('footer')) {
+        link.dataset.ctaLocation = 'footer';
+      } else if (container && container.matches('.hero, .hero-section, .article-hero')) {
+        link.dataset.ctaLocation = 'hero';
+      } else if (container && container.matches('.whatsapp-float, .floating-whatsapp')) {
+        link.dataset.ctaLocation = 'floating';
+      } else if (container && container.matches('.cta')) {
+        link.dataset.ctaLocation = 'final';
+      } else if (container && container.matches('.article-aside')) {
+        link.dataset.ctaLocation = 'article_aside';
+      } else {
+        fallbackIndex += 1;
+        link.dataset.ctaLocation = 'cta_' + fallbackIndex;
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     pushEvent('page_context', pageContext());
     openCampaignProcedure();
     installContentSearch();
     installContentLinkTracking();
+    normalizeArticleCtas();
+    identifyWhatsAppCtaOrigins();
 
     document.querySelectorAll('[data-open-procedure]').forEach(function (link) {
       link.addEventListener('click', function (event) {
