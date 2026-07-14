@@ -531,8 +531,7 @@
   }
 
   function installCuratedVideoModal() {
-    var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-curated-video]'));
-    if (!triggers.length) return;
+    var triggers = [];
 
     var modal = document.createElement('div');
     modal.className = 'curated-video-modal';
@@ -605,6 +604,32 @@
       });
     });
 
+    document.addEventListener('click', function (event) {
+      var trigger = event.target.closest && event.target.closest('[data-curated-video]');
+      if (!trigger || !document.body.contains(trigger)) return;
+      event.preventDefault();
+      lastFocus = trigger;
+      currentId = trigger.dataset.contentId || '';
+      sent = {};
+      title.textContent = trigger.dataset.videoTitle || 'Conteúdo educativo';
+      summary.textContent = trigger.dataset.videoSummary || '';
+      eyebrow.textContent = trigger.dataset.videoEyebrow || 'Conteúdo educativo';
+      if (trigger.hasAttribute('data-video-disclaimer')) {
+        disclaimer.textContent = trigger.dataset.videoDisclaimer || '';
+        disclaimer.hidden = !trigger.dataset.videoDisclaimer;
+      } else {
+        disclaimer.textContent = 'O vídeo traz informação geral e não substitui avaliação médica individualizada.';
+        disclaimer.hidden = false;
+      }
+      video.poster = trigger.dataset.videoPoster || '';
+      video.src = trigger.dataset.videoSrc || '';
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('curated-video-open');
+      close.focus();
+      pushVideoEvent('native_video_open', { content_id: currentId });
+    });
+
     video.addEventListener('play', function () {
       if (sent.start) return;
       sent.start = true;
@@ -659,6 +684,62 @@
   }
 
 document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
+})();
+
+
+/* No mobile, qualquer vídeo editorial vira um botão que abre o visualizador em tela cheia. */
+(function () {
+  'use strict';
+
+  function getVideoSource(video) {
+    var source = video.getAttribute('src') || '';
+    if (!source) {
+      var sourceNode = video.querySelector('source[src]');
+      source = sourceNode ? sourceNode.getAttribute('src') : '';
+    }
+    return source;
+  }
+
+  function getVideoTitle(video) {
+    var label = video.getAttribute('aria-label');
+    if (label) return label;
+    var heading = video.parentElement && video.parentElement.querySelector('h3, h4');
+    if (heading) return heading.textContent.trim();
+    var caption = video.parentElement && video.parentElement.querySelector('figcaption');
+    return caption ? caption.textContent.trim() : 'Vídeo educativo';
+  }
+
+  function installMobileVideoTriggers() {
+    document.querySelectorAll('video:not([data-mobile-video-enhanced])').forEach(function (video, index) {
+      if (video.closest('.curated-video-modal')) return;
+      var source = getVideoSource(video);
+      if (!source) return;
+
+      var titleText = getVideoTitle(video);
+      var container = video.closest('article, figure, .article-media, section') || video.parentElement;
+      var heading = container && container.querySelector('h3, h4');
+      var summaryNode = container && container.querySelector('p, figcaption');
+      var trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'mobile-curated-video-trigger';
+      trigger.setAttribute('aria-label', 'Assistir ao vídeo: ' + titleText);
+      trigger.dataset.curatedVideo = '';
+      trigger.dataset.contentId = 'mobile-video-' + (index + 1);
+      trigger.dataset.videoEyebrow = 'Conteúdo educativo';
+      trigger.dataset.videoTitle = titleText;
+      trigger.dataset.videoSummary = summaryNode ? summaryNode.textContent.trim() : (heading ? heading.textContent.trim() : '');
+      trigger.dataset.videoSrc = source;
+      if (video.getAttribute('poster')) trigger.dataset.videoPoster = video.getAttribute('poster');
+      trigger.innerHTML = '<span class="mobile-curated-video-trigger-media"><span class="mobile-curated-video-play" aria-hidden="true">▶</span><span>Assistir ao vídeo</span></span>';
+      video.setAttribute('data-mobile-video-enhanced', 'true');
+      video.parentNode.insertBefore(trigger, video);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    installMobileVideoTriggers();
+    new MutationObserver(installMobileVideoTriggers).observe(document.body, { childList: true, subtree: true });
+  });
 })();
 
 

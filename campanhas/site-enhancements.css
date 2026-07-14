@@ -1576,13 +1576,15 @@ body.curated-video-open { overflow: hidden; }
 @media (max-width: 760px) {
   .curated-video-dialog {
     grid-template-columns: 1fr;
-    max-width: 520px;
-    max-height: 98vh;
-    border-radius: 16px;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
   }
-  .curated-video-modal { padding: 8px; }
-  .curated-video-media video { max-height: 64vh; }
-  .curated-video-copy { padding: 20px; }
+  .curated-video-modal { padding: 0; }
+  .curated-video-media video { max-height: 68dvh; }
+  .curated-video-copy { padding: 20px 18px 28px; }
   .curated-video-copy h2 { font-size: 26px; }
 }
 
@@ -2760,10 +2762,56 @@ body.curated-video-open { overflow: hidden; }
   object-fit: contain;
 }
 
+.mobile-curated-video-trigger {
+  display: none;
+  width: 100%;
+  min-height: 280px;
+  padding: 0;
+  border: 0;
+  color: #fff;
+  background: linear-gradient(145deg, #5b433d 0%, #241c19 100%);
+  cursor: pointer;
+  text-align: left;
+}
+.mobile-curated-video-trigger-media {
+  display: flex;
+  min-height: 280px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.mobile-curated-video-play {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 50%;
+  font-size: 21px;
+}
+.mobile-curated-video-trigger:focus-visible {
+  outline: 3px solid rgba(135, 88, 69, .5);
+  outline-offset: -3px;
+}
+
 .educational-video-copy { padding: 19px 20px 22px; }
 .educational-video-copy h3 { margin: 0 0 8px; font-size: clamp(18px, 2vw, 22px); }
 .educational-video-copy p { margin: 0; color: var(--muted); line-height: 1.6; }
 .educational-video-note { margin: 22px 0 0; color: var(--muted); font-size: 13px; }
+
+@media (max-width: 760px) {
+  video[data-mobile-video-enhanced] { display: none !important; }
+  .mobile-curated-video-trigger { display: block; }
+
+  /* Mantém a cabeça visível na foto da equipe em todos os carrosséis mobile. */
+  img[src$="equipe-cirurgica-01.jpg"] {
+    object-position: center 22% !important;
+  }
+}
 
 /* Cabeçalho fixo da home: compacto e legível no mobile. */
 @media (max-width: 900px) {
