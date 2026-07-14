@@ -847,15 +847,6 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     });
     inner.appendChild(returnLink);
 
-    var home = homeUrl();
-    if (home && !isHome(originUrl) && !isHome(currentUrl)) {
-      var homeLink = document.createElement('a');
-      homeLink.className = 'journey-home-link';
-      homeLink.href = home.href;
-      homeLink.textContent = 'Ir à página inicial';
-      inner.appendChild(homeLink);
-    }
-
     nav.appendChild(inner);
     var breadcrumb = document.querySelector('.breadcrumb');
     var header = document.querySelector('header');
