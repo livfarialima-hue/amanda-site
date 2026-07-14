@@ -4179,6 +4179,36 @@ html[data-page-type="home"] :is(#areas, #procedimentos-face, #alem-da-face, #res
   gap: 14px;
 }
 
+.consultation-journey {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 22px 0 14px;
+}
+
+.consultation-journey > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 12px 14px;
+  border: 1px solid rgba(154, 123, 114, .22);
+  background: #fffaf7;
+}
+
+.consultation-journey strong {
+  color: var(--rose);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.consultation-journey span {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
 .consultation-facts article {
   padding: 20px;
   border: 1px solid var(--line);
@@ -4226,6 +4256,7 @@ html[data-page-type="home"] :is(#areas, #procedimentos-face, #alem-da-face, #res
 
   .journey-grid-summary,
   .consultation-facts { grid-template-columns: 1fr; gap: 10px; }
+  .consultation-journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .consultation-action { justify-content: stretch; margin-top: 18px; }
   .consultation-action .btn { width: 100%; }
 }

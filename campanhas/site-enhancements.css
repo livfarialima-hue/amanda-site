@@ -3732,3 +3732,41 @@ html:not([data-page-type="home"]) :is(
 html:not([data-page-type="home"]) :is(.lf2-final, .lc2-final, .bf2-final, .lp2-final, .ot2-final, .ota2-final, .oti2-final) p {
   color: #fff !important;
 }
+
+/* Homepage: CTA fixo segue o padrão aprovado das páginas de campanha. */
+html[data-page-type="home"] .whatsapp-float {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-color: #176e43 !important;
+  background: #176e43 !important;
+  color: #fff !important;
+  box-shadow: 0 12px 32px rgba(22, 93, 57, .32);
+}
+
+html[data-page-type="home"] .whatsapp-float:hover,
+html[data-page-type="home"] .whatsapp-float:focus-visible {
+  border-color: #125b35 !important;
+  background: #125b35 !important;
+  color: #fff !important;
+}
+
+html[data-page-type="home"] .whatsapp-float svg {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
+  fill: currentColor;
+}
+
+@media (max-width: 760px) {
+  html[data-page-type="home"] .whatsapp-float {
+    right: 8px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: auto !important;
+    width: auto !important;
+    min-height: 48px;
+    padding: 11px 15px;
+    translate: 0 0 !important;
+  }
+}
