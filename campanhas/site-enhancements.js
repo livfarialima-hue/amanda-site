@@ -474,6 +474,193 @@
   });
 })();
 
+/* Sistema comum para páginas auxiliares de mama e contorno corporal. */
+(function () {
+  'use strict';
+
+  var pages = {
+    'mastopexia': {
+      suppressResults: true,
+      contents: [
+        ['Cirurgias de mama', 'Compare as possibilidades antes de decidir a técnica.', '../mama/'],
+        ['Queda e volume', 'Mastopexia com prótese: quando a associação entra na conversa.', '../mastopexia-com-protese/'],
+        ['Volume e proporção', 'Prótese de mama: medidas e objetivos antes dos mililitros.', '../protese-de-mama/']
+      ]
+    },
+    'mastopexia-com-protese': {
+      suppressResults: true,
+      contents: [
+        ['Queda sem implante', 'Mastopexia: quando o volume existente pode ser suficiente.', '../mastopexia/'],
+        ['Cirurgias de mama', 'Compare queda, volume, cicatriz e proporção.', '../mama/'],
+        ['Volume e proporção', 'Prótese de mama: o que o implante busca resolver.', '../protese-de-mama/']
+      ]
+    },
+    'protese-de-mama': {
+      suppressResults: true,
+      contents: [
+        ['Queda e remodelação', 'Mastopexia: quando elevar a mama faz parte da decisão.', '../mastopexia/'],
+        ['Cirurgias de mama', 'Compare as possibilidades antes de escolher uma técnica.', '../mama/'],
+        ['Peso e proporção', 'Mamoplastia redutora: conforto, volume e cicatriz.', '../mamoplastia-redutora/']
+      ]
+    },
+    'mamoplastia-redutora': {
+      suppressResults: true,
+      contents: [
+        ['Cirurgias de mama', 'Compare redução, mastopexia, prótese e associações.', '../mama/'],
+        ['Queda e remodelação', 'Mastopexia: o que muda quando a queixa é principalmente queda.', '../mastopexia/'],
+        ['Queda e volume', 'Mastopexia com prótese: uma associação para casos selecionados.', '../mastopexia-com-protese/']
+      ]
+    },
+    'contorno-corporal': {
+      suppressResults: true,
+      contents: [
+        ['Pele e parede abdominal', 'Abdominoplastia: o que pode ser avaliado no abdome.', '../abdominoplastia/'],
+        ['Gordura localizada', 'Lipoaspiração: limites e quando a pele muda a indicação.', '../lipoaspiracao/'],
+        ['Após grande perda de peso', 'Cirurgia pós-bariátrica: prioridades, etapas e recuperação.', '../pos-bariatrica/']
+      ]
+    },
+    'abdominoplastia': {
+      contents: [
+        ['Contorno corporal', 'Entenda como gordura, pele e parede abdominal mudam o plano.', '../contorno-corporal/'],
+        ['Gordura localizada', 'Lipoaspiração: quando pode complementar ou não o tratamento.', '../lipoaspiracao/'],
+        ['Após grande perda de peso', 'Cirurgia pós-bariátrica: planejamento por prioridades.', '../pos-bariatrica/']
+      ]
+    },
+    'lipoaspiracao': {
+      contents: [
+        ['Contorno corporal', 'Compare gordura localizada, pele e parede abdominal.', '../contorno-corporal/'],
+        ['Pele e abdome', 'Abdominoplastia: quando a retirada de pele entra na conversa.', '../abdominoplastia/'],
+        ['Braços', 'Braquioplastia: quando a queixa é excesso de pele.', '../braquioplastia/']
+      ]
+    },
+    'pos-bariatrica': {
+      contents: [
+        ['Contorno corporal', 'Entenda como as prioridades são organizadas por região.', '../contorno-corporal/'],
+        ['Pele e abdome', 'Abdominoplastia: uma das possibilidades após perda importante de peso.', '../abdominoplastia/'],
+        ['Braços', 'Braquioplastia: quando a pele dos braços permanece como queixa.', '../braquioplastia/']
+      ]
+    },
+    'braquioplastia': {
+      contents: [
+        ['Após grande perda de peso', 'Cirurgia pós-bariátrica: prioridades, etapas e recuperação.', '../pos-bariatrica/'],
+        ['Contorno corporal', 'Pele, gordura e proporção em uma avaliação integrada.', '../contorno-corporal/'],
+        ['Gordura localizada', 'Lipoaspiração: quando pode ou não ser suficiente.', '../lipoaspiracao/']
+      ]
+    }
+  };
+
+  function carouselControls(row) {
+    if (!row || row.dataset.auxiliaryCarouselReady === 'true') return;
+    var controls = document.createElement('div');
+    controls.className = 'auxiliary-carousel-controls';
+    controls.setAttribute('role', 'group');
+    controls.setAttribute('aria-label', 'Controles do carrossel');
+    controls.innerHTML = '<button type="button" aria-label="Conteúdo anterior">←</button><button type="button" aria-label="Próximo conteúdo">→</button>';
+    row.insertAdjacentElement('afterend', controls);
+
+    var previous = controls.querySelector('button:first-child');
+    var next = controls.querySelector('button:last-child');
+    function update() {
+      var first = row.firstElementChild;
+      var last = row.lastElementChild;
+      var bounds = row.getBoundingClientRect();
+      var atStart = !first || first.getBoundingClientRect().left >= bounds.left - 4;
+      var atEnd = !last || last.getBoundingClientRect().right <= bounds.right + 4;
+      previous.disabled = atStart;
+      next.disabled = atEnd;
+      next.classList.toggle('is-end', atEnd);
+    }
+    previous.addEventListener('click', function () { row.scrollBy({ left: -Math.min(row.clientWidth * .86, 330), behavior: 'smooth' }); });
+    next.addEventListener('click', function () { row.scrollBy({ left: Math.min(row.clientWidth * .86, 330), behavior: 'smooth' }); });
+    row.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    row.dataset.auxiliaryCarouselReady = 'true';
+    window.setTimeout(update, 0);
+  }
+
+  function normalizeCtas(main) {
+    var navCta = document.querySelector('.nav-cta[data-track="whatsapp"]');
+    var heroCta = main.querySelector('.hero-actions a[data-track="whatsapp"]');
+    var floating = document.querySelector('.whatsapp-float[data-track="whatsapp"]');
+    var finalCta = main.querySelector('.cta a[data-track="whatsapp"]');
+    if (navCta) { navCta.textContent = 'Falar com a equipe'; navCta.dataset.ctaLocation = 'header'; }
+    if (heroCta) { heroCta.textContent = 'Falar com a equipe'; heroCta.dataset.ctaLocation = 'hero'; }
+    if (floating) { floating.textContent = 'Falar com a equipe'; floating.dataset.ctaLocation = 'floating'; floating.setAttribute('aria-label', 'Falar com a equipe pelo WhatsApp'); }
+    if (finalCta) { finalCta.textContent = 'Agendar avaliação'; finalCta.dataset.ctaLocation = 'final_cta'; }
+    main.querySelectorAll('.hero-actions .ghost').forEach(function (link) { link.hidden = true; });
+    document.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
+      if (link.dataset.ctaLocation) return;
+      var section = link.closest('section');
+      link.dataset.ctaLocation = section && (section.dataset.section || section.id) || 'page';
+    });
+  }
+
+  function buildSections(main, config) {
+    if (main.querySelector('#auxiliary-team')) return;
+    var anchor = main.querySelector('#faq') || main.querySelector('.cta');
+    if (!anchor) return;
+
+    var team = document.createElement('section');
+    team.className = 'auxiliary-team-section';
+    team.id = 'auxiliary-team';
+    team.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Equipe e ambiente cirúrgico</span><h2>O cuidado é planejado por uma equipe, não apenas por uma técnica.</h2><p>Dra. Amanda com parte de sua equipe cirúrgica. Ambiente, anestesia e composição da equipe são organizados conforme o plano e as necessidades de cada caso.</p></div><div class="auxiliary-team-carousel" aria-label="Equipe e ambiente cirúrgico"><figure class="auxiliary-team-card auxiliary-team-card--video"><video aria-label="Dra. Amanda em ambiente cirúrgico" controls controlslist="nodownload" muted playsinline poster="../campanhas/assets/amanda-operando.jpg" preload="metadata"><source src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"></video><figcaption>Dra. Amanda em centro cirúrgico.</figcaption></figure><figure class="auxiliary-team-card"><img src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg" alt="Dra. Amanda com parte de sua equipe cirúrgica" loading="lazy" decoding="async"><figcaption>Parte da equipe cirúrgica que participa do cuidado em casos selecionados.</figcaption></figure></div><p class="auxiliary-hospital-note">Quando indicado, o procedimento pode ser realizado no Hospital Sírio-Libanês, Hospital Nove de Julho, Hospital Oswaldo Cruz ou em outra instituição criteriosamente selecionada.</p></div>';
+
+    var contents = document.createElement('section');
+    contents.className = 'auxiliary-content-section';
+    contents.id = 'conteudos';
+    var cards = config.contents.map(function (item) {
+      return '<a class="auxiliary-content-card" href="' + item[2] + '"><span>' + item[0] + '</span><strong>' + item[1] + '</strong><em>Entender melhor →</em></a>';
+    }).join('');
+    contents.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Conteúdos selecionados</span><h2>Escolha a pergunta que mais ajuda a sua decisão.</h2><p>As páginas relacionadas aprofundam alternativas sem antecipar a indicação antes do exame.</p></div><div class="auxiliary-content-grid">' + cards + '</div></div>';
+
+    var clinic = document.createElement('section');
+    clinic.className = 'auxiliary-clinic-section';
+    clinic.id = 'clinica-liv';
+    clinic.innerHTML = '<div class="container auxiliary-clinic-grid"><div><span class="eyebrow">Clínica LIV Faria Lima</span><h2>Consulta particular com privacidade para conversar e decidir.</h2><p>A consulta acontece em Pinheiros, com espaço para entender a queixa, examinar as estruturas envolvidas e discutir possibilidades, cicatrizes, recuperação e próximos passos.</p><p class="auxiliary-clinic-address">R. Pais Leme, 215 — cj. 710 — Pinheiros, São Paulo · Nota fiscal para reembolso.</p></div><div class="auxiliary-clinic-media"><img src="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" alt="Dra. Amanda Schroeder no consultório da Clínica LIV Faria Lima" loading="lazy" decoding="async"><button type="button" class="auxiliary-clinic-video" data-curated-video data-content-id="clinica-liv-apresentacao" data-video-disclaimer="" data-video-eyebrow="Clínica LIV Faria Lima" data-video-title="Conheça a Clínica LIV Faria Lima" data-video-summary="Um passeio breve pelo prédio e pelos ambientes de atendimento da Clínica LIV Faria Lima, em Pinheiros." data-video-poster="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" data-video-src="../campanhas/assets/video-apresentacao-clinica-liv.mp4"><span aria-hidden="true">▶</span><span><strong>Conheça a Clínica LIV</strong><small>Veja o prédio e os ambientes de atendimento</small></span></button></div></div>';
+
+    anchor.insertAdjacentElement('beforebegin', team);
+    anchor.insertAdjacentElement('beforebegin', contents);
+    anchor.insertAdjacentElement('beforebegin', clinic);
+    carouselControls(team.querySelector('.auxiliary-team-carousel'));
+  }
+
+  function refineResults(main, config) {
+    var results = main.querySelector('#resultados');
+    var resultsNav = document.querySelector('nav a[href="#resultados"]');
+    if (config.suppressResults && results) {
+      results.hidden = true;
+      if (resultsNav) resultsNav.remove();
+      return;
+    }
+    if (results && document.documentElement.dataset.procedure === 'abdominoplastia') {
+      var head = results.querySelector('.section-head');
+      if (head) {
+        var title = head.querySelector('h2');
+        var text = head.querySelector('p');
+        if (title) title.textContent = 'Um caso combinado de mama e abdome para orientar a leitura — não para prometer uma técnica isolada.';
+        if (text) text.textContent = 'Este caso reúne procedimentos de mama e abdome. As imagens ajudam a observar contorno e proporção, mas a indicação e a evolução variam de pessoa para pessoa.';
+      }
+      var disclaimer = results.querySelector('.disclaimer');
+      if (disclaimer) disclaimer.textContent = 'Caso real autorizado de cirurgia combinada de mama e abdome. As imagens não garantem resultado semelhante: anatomia, indicação, cicatrização e cuidados influenciam a evolução. Riscos e possibilidade de revisão são discutidos na consulta.';
+    }
+  }
+
+  function install() {
+    var procedure = document.documentElement.dataset.procedure || '';
+    var config = pages[procedure];
+    if (!config) return;
+    var main = document.querySelector('main');
+    if (!main) return;
+    document.documentElement.dataset.auxiliaryStandard = 'true';
+    normalizeCtas(main);
+    refineResults(main, config);
+    buildSections(main, config);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
+  else install();
+})();
+
 /* CTA flutuante: aparece apenas depois do hero e nunca disputa espaço com consentimento. */
 (function () {
   function installFloatingCtaBehavior() {
@@ -691,6 +878,19 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
 (function () {
   'use strict';
 
+  var defaultVideoPoster = '/campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg';
+  var amandaVideoPoster = '/campanhas/assets/amanda-operando.jpg';
+
+  function installVideoPosters() {
+    var procedure = document.documentElement.dataset.procedure || '';
+    if (document.documentElement.dataset.auxiliaryStandard !== 'true' && procedure !== 'mama') return;
+    document.querySelectorAll('video:not([poster])').forEach(function (video) {
+      if (video.closest('.curated-video-modal')) return;
+      var label = (video.getAttribute('aria-label') || '').toLowerCase();
+      video.setAttribute('poster', label.indexOf('amanda') !== -1 ? amandaVideoPoster : defaultVideoPoster);
+    });
+  }
+
   function getVideoSource(video) {
     var source = video.getAttribute('src') || '';
     if (!source) {
@@ -710,6 +910,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
   }
 
   function installMobileVideoTriggers() {
+    installVideoPosters();
     document.querySelectorAll('video:not([data-mobile-video-enhanced])').forEach(function (video, index) {
       if (video.closest('.curated-video-modal')) return;
       var source = getVideoSource(video);
@@ -730,6 +931,10 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
       trigger.dataset.videoSummary = summaryNode ? summaryNode.textContent.trim() : (heading ? heading.textContent.trim() : '');
       trigger.dataset.videoSrc = source;
       if (video.getAttribute('poster')) trigger.dataset.videoPoster = video.getAttribute('poster');
+      if (video.getAttribute('poster')) {
+        trigger.classList.add('has-video-poster');
+        trigger.style.setProperty('--mobile-video-poster', 'url("' + video.getAttribute('poster') + '")');
+      }
       trigger.innerHTML = '<span class="mobile-curated-video-trigger-media"><span class="mobile-curated-video-play" aria-hidden="true">▶</span><span>Assistir ao vídeo</span></span>';
       video.setAttribute('data-mobile-video-enhanced', 'true');
       video.parentNode.insertBefore(trigger, video);

@@ -139,12 +139,13 @@ html[data-procedure="mama"] .mama-clinic-section { padding-block: clamp(58px, 8v
 html[data-procedure="mama"] .mama-team-section { background: #4c3934; color: #fffaf7; }
 html[data-procedure="mama"] .mama-team-section .eyebrow,
 html[data-procedure="mama"] .mama-team-section .section-head p { color: #e8d9d2; }
+html[data-procedure="mama"] .mama-team-section .eyebrow { color: #fff !important; }
 html[data-procedure="mama"] .mama-team-section .section-head { max-width: 760px; }
 html[data-procedure="mama"] .mama-team-carousel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
 html[data-procedure="mama"] .mama-team-card { overflow: hidden; border: 1px solid rgba(255, 250, 247, .18); border-radius: 16px; background: rgba(255, 250, 247, .07); }
-html[data-procedure="mama"] .mama-team-card :is(img, video) { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #2d2421; }
+html[data-procedure="mama"] .mama-team-card :is(img, video) { display: block; width: 100%; height: 280px !important; aspect-ratio: auto; object-fit: cover; background: #2d2421; }
 html[data-procedure="mama"] .mama-team-card figcaption { padding: 15px 16px 17px; color: #f2e8e3; font-size: 14px; line-height: 1.45; }
-html[data-procedure="mama"] .mama-hospital-note { max-width: 860px; margin: 24px 0 0; color: #fff; font-size: 14px; line-height: 1.55; }
+html[data-procedure="mama"] .mama-hospital-note { max-width: 860px; margin: 24px 0 0; color: #fff !important; font-size: 14px; line-height: 1.55; }
 
 html[data-procedure="mama"] .mama-content-section { background: #fffaf7; }
 html[data-procedure="mama"] .mama-content-section .section-head { max-width: 760px; }
@@ -186,6 +187,7 @@ html[data-procedure="mama"] .whatsapp-float:hover { background: #116f40; }
   html[data-procedure="mama"] .patient-language-grid[data-mama-carousel].mobile-static-grid,
   html[data-procedure="mama"] .mama-team-carousel[data-mama-carousel] {
     display: flex !important;
+    align-items: flex-start;
     grid-template-columns: none !important;
     gap: 12px;
     width: calc(100% + 12px);
@@ -206,8 +208,19 @@ html[data-procedure="mama"] .whatsapp-float:hover { background: #116f40; }
   html[data-procedure="mama"] .patient-language-card p,
   html[data-procedure="mama"] .procedure-detail p,
   html[data-procedure="mama"] .mama-team-card figcaption { font-size: 14px; }
+  html[data-procedure="mama"] .mama-team-card img { height: 212px !important; }
   html[data-procedure="mama"] .mama-team-card .mobile-curated-video-trigger,
   html[data-procedure="mama"] .mama-team-card .mobile-curated-video-trigger-media { min-height: 212px; }
+  html[data-procedure="mama"] .mama-team-card--amanda-video .mobile-curated-video-trigger {
+    background:
+      linear-gradient(180deg, rgba(24, 15, 13, .12), rgba(24, 15, 13, .62)),
+      url("../campanhas/assets/amanda-operando.jpg") center 42% / cover no-repeat;
+  }
+  html[data-procedure="mama"] .mama-team-card--amanda-video .mobile-curated-video-trigger-media { background: transparent; }
+  html[data-procedure="mama"] :is(.mama-team-card--amanda-video, .mama-team-card--video) figcaption { display: none; }
+  html[data-procedure="mama"] .curated-video-dialog { align-content: start; }
+  html[data-procedure="mama"] .curated-video-media { min-height: 0; align-items: flex-start; }
+  html[data-procedure="mama"] .curated-video-media video { height: auto; max-height: none; }
   html[data-procedure="mama"] .mama-carousel-controls { display: flex; }
   html[data-procedure="mama"] .procedure-disclosures { grid-template-columns: 1fr; gap: 10px; }
   html[data-procedure="mama"] .procedure-disclosure summary { min-height: 112px; padding: 20px; }

@@ -2809,7 +2809,7 @@ body.curated-video-open { overflow: hidden; }
 
   /* Mantém a cabeça visível na foto da equipe em todos os carrosséis mobile. */
   img[src$="equipe-cirurgica-01.jpg"] {
-    object-position: center 22% !important;
+    object-position: center 35% !important;
   }
 }
 
@@ -3791,6 +3791,105 @@ html[data-page-type="home"] .whatsapp-float {
   background: #176e43 !important;
   color: #fff !important;
   box-shadow: 0 12px 32px rgba(22, 93, 57, .32);
+}
+
+/* Padrão das páginas auxiliares de mama e contorno corporal. */
+html[data-auxiliary-standard="true"] .hero-actions .ghost { display: none !important; }
+html[data-auxiliary-standard="true"] .whatsapp-float {
+  background: #176e43 !important;
+  border-color: #176e43 !important;
+  color: #fff !important;
+  box-shadow: 0 12px 32px rgba(22, 93, 57, .32);
+}
+html[data-auxiliary-standard="true"] .whatsapp-float:hover,
+html[data-auxiliary-standard="true"] .whatsapp-float:focus-visible { background: #125b35 !important; border-color: #125b35 !important; }
+html[data-auxiliary-standard="true"] footer a[href="../privacidade/"] { display: none; }
+html[data-auxiliary-standard="true"] #resultados[hidden] { display: none !important; }
+
+html[data-auxiliary-standard="true"] .auxiliary-team-section,
+html[data-auxiliary-standard="true"] .auxiliary-content-section,
+html[data-auxiliary-standard="true"] .auxiliary-clinic-section { padding-block: clamp(58px, 8vw, 92px); }
+html[data-auxiliary-standard="true"] .auxiliary-team-section { background: #4c3934 !important; color: #fffaf7; }
+html[data-auxiliary-standard="true"] .auxiliary-team-section .eyebrow,
+html[data-auxiliary-standard="true"] .auxiliary-team-section .section-head p,
+html[data-auxiliary-standard="true"] .auxiliary-hospital-note { color: #fff !important; }
+html[data-auxiliary-standard="true"] .auxiliary-team-section h2 { color: #fff !important; }
+html[data-auxiliary-standard="true"] .auxiliary-team-section .section-head { max-width: 760px; }
+html[data-auxiliary-standard="true"] .auxiliary-team-carousel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+html[data-auxiliary-standard="true"] .auxiliary-team-card { overflow: hidden; border: 1px solid rgba(255, 250, 247, .18); border-radius: 16px; background: rgba(255, 250, 247, .07); }
+html[data-auxiliary-standard="true"] .auxiliary-team-card :is(img, video) { display: block; width: 100%; height: 310px !important; object-fit: cover; background: #2d2421; }
+/* A foto vertical da equipe precisa privilegiar as pessoas — não o teto do centro cirúrgico. */
+html[data-auxiliary-standard="true"] .auxiliary-team-card:not(.auxiliary-team-card--video) img { object-position: center 35% !important; }
+html[data-auxiliary-standard="true"] .auxiliary-team-card figcaption { padding: 15px 16px 17px; color: #fffaf7 !important; font-size: 14px; line-height: 1.45; }
+html[data-auxiliary-standard="true"] .auxiliary-hospital-note { max-width: 860px; margin: 24px 0 0; font-size: 14px; line-height: 1.55; }
+html[data-auxiliary-standard="true"] .auxiliary-carousel-controls { display: none; }
+
+html[data-auxiliary-standard="true"] .auxiliary-content-section { background: #fffaf7; }
+html[data-auxiliary-standard="true"] .auxiliary-content-section .section-head { max-width: 710px; }
+html[data-auxiliary-standard="true"] .auxiliary-content-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+html[data-auxiliary-standard="true"] .auxiliary-content-card { display: flex; min-height: 188px; flex-direction: column; justify-content: space-between; padding: 22px; border: 1px solid #e3d7d0; border-radius: 16px; background: #fff; color: #342725; text-decoration: none; }
+html[data-auxiliary-standard="true"] .auxiliary-content-card:hover { border-color: #a77a69; transform: translateY(-2px); }
+html[data-auxiliary-standard="true"] .auxiliary-content-card span { color: #8c5b4e; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+html[data-auxiliary-standard="true"] .auxiliary-content-card strong { margin: 14px 0; font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 400; line-height: 1.2; }
+html[data-auxiliary-standard="true"] .auxiliary-content-card em { color: #6b4a42; font-size: 14px; font-style: normal; font-weight: 700; }
+
+html[data-auxiliary-standard="true"] .auxiliary-clinic-section { background: #f8f0ec; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 6vw, 76px); align-items: center; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-grid h2 { max-width: 540px; margin: 8px 0 14px; font-size: clamp(29px, 4vw, 48px); line-height: 1.07; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-grid p { max-width: 580px; color: #5f5551; line-height: 1.65; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-address { margin-top: 22px; font-size: 14px; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-media { overflow: hidden; border: 1px solid #e3d7d0; border-radius: 18px; background: #fffaf7; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-media > img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center 52%; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-video { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; min-height: 76px; padding: 12px 16px; border: 0; border-top: 1px solid #e3d7d0; background: #fffaf7; color: #342725; text-align: left; cursor: pointer; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-video > span:first-child { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; background: #5c392f; color: #fff; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-video strong,
+html[data-auxiliary-standard="true"] .auxiliary-clinic-video small { display: block; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-video strong { font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 400; }
+html[data-auxiliary-standard="true"] .auxiliary-clinic-video small { margin-top: 3px; color: #6a5b55; font-size: 13px; }
+
+.mobile-curated-video-trigger.has-video-poster {
+  background: linear-gradient(180deg, rgba(24, 15, 13, .12), rgba(24, 15, 13, .62)), var(--mobile-video-poster) center / cover no-repeat;
+}
+.mobile-curated-video-trigger.has-video-poster .mobile-curated-video-trigger-media { background: transparent; }
+
+@media (max-width: 760px) {
+  html[data-auxiliary-standard="true"] .hero { min-height: auto; padding-block: 2.75rem 2rem; }
+  html[data-auxiliary-standard="true"] .hero .hero-inner { padding-bottom: 22px; }
+  html[data-auxiliary-standard="true"] .hero h1 { font-size: clamp(2.28rem, 10.4vw, 2.82rem); line-height: .99; letter-spacing: -.035em; }
+  html[data-auxiliary-standard="true"] .hero .lead { font-size: 16px; line-height: 1.52; }
+  html[data-auxiliary-standard="true"] .hero .hero-media { height: 224px; overflow: hidden; }
+  html[data-auxiliary-standard="true"] .hero .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: center 34%; }
+  html[data-auxiliary-standard="true"] .auxiliary-team-carousel {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: calc(100% + 12px);
+    margin-right: -12px;
+    padding: 2px 12px 12px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  html[data-auxiliary-standard="true"] .auxiliary-team-carousel::-webkit-scrollbar { display: none; }
+  html[data-auxiliary-standard="true"] .auxiliary-team-carousel > * { flex: 0 0 min(84vw, 340px); scroll-snap-align: start; }
+  html[data-auxiliary-standard="true"] .auxiliary-team-card :is(img, video) { height: 212px !important; }
+  html[data-auxiliary-standard="true"] .auxiliary-team-card--video .mobile-curated-video-trigger,
+  html[data-auxiliary-standard="true"] .auxiliary-team-card--video .mobile-curated-video-trigger-media { min-height: 212px; }
+  html[data-auxiliary-standard="true"] .auxiliary-team-card--video figcaption { display: none; }
+  html[data-auxiliary-standard="true"] .auxiliary-carousel-controls { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+  html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button { width: 46px; height: 46px; border: 1px solid rgba(255, 250, 247, .36); border-radius: 50%; background: #fffaf7; color: #4c3934; font-size: 20px; cursor: pointer; }
+  html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button:disabled { opacity: .5; cursor: default; }
+  html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button.is-end { background: #5c392f; border-color: #5c392f; color: #fff; }
+  html[data-auxiliary-standard="true"] .auxiliary-content-grid { grid-template-columns: 1fr; }
+  html[data-auxiliary-standard="true"] .auxiliary-content-card { min-height: 144px; }
+  html[data-auxiliary-standard="true"] .auxiliary-clinic-grid { grid-template-columns: 1fr; gap: 24px; }
+  html[data-auxiliary-standard="true"] .auxiliary-clinic-media { order: -1; }
+  html[data-auxiliary-standard="true"] .auxiliary-clinic-media > img { max-height: 300px; }
+  html[data-auxiliary-standard="true"] .curated-video-dialog { align-content: start; }
+  html[data-auxiliary-standard="true"] .curated-video-media { min-height: 0; align-items: flex-start; }
+  html[data-auxiliary-standard="true"] .curated-video-media video { height: auto; max-height: none; }
 }
 
 html[data-page-type="home"] .whatsapp-float:hover,
