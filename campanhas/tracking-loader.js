@@ -218,8 +218,11 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!getConsent()) injectConsentBanner(false);
-    document.querySelectorAll('[data-privacy-settings]').forEach(function (button) {
-      button.addEventListener('click', function () { window.AmandaConsent.openPreferences(); });
+    document.querySelectorAll('[data-privacy-settings], [data-consent-open]').forEach(function (button) {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        window.AmandaConsent.openPreferences();
+      });
     });
     updateDebugState();
   });

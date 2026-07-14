@@ -6,6 +6,7 @@
     'contact_channel',
     'measurement_state',
     'non_personalized_ads',
+    'send_to',
     'transport_type'
   ];
   var preConsentConversionAllowedParams = [
@@ -39,8 +40,12 @@
     (allowedParams || preConsentAllowedParams).forEach(function (key) {
       if (!Object.prototype.hasOwnProperty.call(params, key)) return;
       var value = params[key];
-      var trustedConversionDestination = key === 'send_to' && value === config.googleAdsId + '/' + config.googleAdsConversionLabel;
-      if (!trustedConversionDestination && unsafeValue(value)) return;
+      var trustedDestination = key === 'send_to' && (
+        value === config.ga4Id ||
+        value === config.googleAdsId + '/' + config.googleAdsConversionLabel
+      );
+      if (key === 'send_to' && !trustedDestination) return;
+      if (!trustedDestination && unsafeValue(value)) return;
       if (typeof value === 'string' || typeof value === 'boolean' || typeof value === 'number') sanitized[key] = value;
     });
     return sanitized;
@@ -65,6 +70,30 @@
     window.__amandaWhatsAppConversionSent = true;
     window.__amandaLastMeasurementEvent = { name: eventName, mode: mode };
     if (window.AmandaConsent && window.AmandaConsent.updateDebugState) window.AmandaConsent.updateDebugState();
+  }
+
+  function campaignOriginCode() {
+    var value = '';
+    try { value = new URLSearchParams(window.location.search).get('origem') || ''; }
+    catch (error) { return ''; }
+    value = value.trim().toUpperCase();
+    return /^[A-Z][A-Z0-9]{4,15}$/.test(value) ? value : '';
+  }
+
+  function applyCampaignOriginCode() {
+    var code = campaignOriginCode();
+    if (!code) return;
+
+    document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp.com"]').forEach(function (link) {
+      try {
+        var url = new URL(link.href, window.location.href);
+        var message = url.searchParams.get('text');
+        if (!message) return;
+        message = message.replace(/\s+Ref(?:er[eê]ncia)?\.?\s*:?\s*[A-Z0-9-]+\.?\s*$/i, '');
+        url.searchParams.set('text', message.trim() + ' Ref. ' + code);
+        link.href = url.toString();
+      } catch (error) {}
+    });
   }
 
   function trackWhatsAppClick(link) {
@@ -121,6 +150,8 @@
     }
     recordDebug('whatsapp_click', mode);
   }
+
+  document.addEventListener('DOMContentLoaded', applyCampaignOriginCode);
 
   document.addEventListener('click', function (event) {
     var link = event.target.closest(

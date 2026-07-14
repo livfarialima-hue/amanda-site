@@ -20,6 +20,16 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Evitar closes depreciativos de partes do corpo e comparações que induzam vergonha.
 - Para cirurgia íntima, priorizar conteúdo orgânico e Google Pesquisa antes de testar Meta.
 
+### Contrato técnico do primeiro teste Meta
+
+- Campanha com destino direto ao WhatsApp: usar a referência genérica `M26F01W` na mensagem inicial.
+- Campanha com destino ao site: usar `https://draamandaschroeder.com.br/avaliacao-facial/?origem=M26F02S&utm_source=meta&utm_medium=paid_social&utm_campaign=M26F02S`.
+- O parâmetro `origem=M26F02S` substitui a referência interna do botão pelo código da campanha quando a pessoa abre o WhatsApp.
+- Pixel oficial: `1501288525098716`. Evento técnico do clique: `WhatsAppContactClick`.
+- O evento Meta contém somente o canal genérico `whatsapp`; não envia procedimento, texto da mensagem, telefone, nome, fotografia ou informação clínica.
+- Pixel e eventos Meta só carregam após consentimento. O Google Tag Manager permanece desativado para não duplicar GA4, Google Ads ou Meta Pixel.
+- O clique é um sinal técnico, não um contato qualificado. A decisão do teste continua baseada em contatos válidos, agendamentos e comparecimentos.
+
 ## Mapa de grupos e páginas
 
 | Página | Temas de busca para testar | Enquadramento recomendado do anúncio |
@@ -66,4 +76,3 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Corpo perfeito garantido
 - Resultado sem cicatriz
 - A melhor cirurgiã de São Paulo
-
