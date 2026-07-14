@@ -590,6 +590,10 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
 .lp2-media-carousel figcaption,.lp2-media-copy{padding:17px;color:var(--lp-muted);font-size:14px;line-height:1.55}
 .lp2-media-copy h3{margin:0;color:var(--lp-ink);font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;line-height:1.15}
 .lp2-media-copy p{margin:9px 0 0}
+.lp2-media-copy-title{display:block;color:var(--lp-ink);font-family:Georgia,"Times New Roman",serif;font-size:25px;line-height:1.15}.lp2-media-copy-description{display:block;margin-top:9px;color:var(--lp-muted);font-size:14px;line-height:1.55}
+.lp2-media-carousel>a{flex:0 0 min(74%,360px);margin:0;overflow:hidden;border:1px solid var(--lp-line);background:var(--lp-paper);scroll-snap-align:start;color:var(--lp-ink);text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+.lp2-media-carousel>a:hover{border-color:rgba(91,67,61,.48);box-shadow:0 14px 30px rgba(52,41,37,.1);transform:translateY(-2px)}.lp2-media-carousel>a:focus-visible{outline:3px solid rgba(91,67,61,.35);outline-offset:3px}
+.lp2-content-link-visual{display:flex;aspect-ratio:16/10;padding:22px;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#5b433d 0%,#2f2421 100%);color:#fff}.lp2-content-link-visual span{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.lp2-content-link-visual strong{max-width:14ch;font-family:Georgia,"Times New Roman",serif;font-size:31px;font-weight:400;line-height:1.06}.lp2-content-link-arrow{align-self:flex-end;font-size:26px;line-height:1}
 .lp2-hospitals{margin-top:28px;padding:22px;border:1px solid var(--lp-line);background:var(--lp-paper)}
 .lp2-hospitals strong{display:block;font-size:15px}.lp2-hospitals p{margin:8px 0 0;color:var(--lp-muted);font-size:14px;line-height:1.6}
 .lp2-content-section{background:var(--lp-bg)}
@@ -602,7 +606,7 @@ body{background:var(--lp-bg);color:var(--lp-ink)}
   .lp2-hero{padding:20px 0 14px}.lp2-hero-grid{gap:18px}.lp2-hero h1{font-size:clamp(35px,10vw,39px);line-height:1.03}
   html[data-page-type="procedure"] .lp2-hero-media img.auxiliary-professional-hero{height:210px!important;max-height:210px!important;aspect-ratio:16/9!important;object-fit:cover!important;object-position:center 16%!important}.lp2-hero-note{font-size:13px}
   .lp2-trust-item span,.lp2-eyebrow,.lp2-disclaimer{font-size:13px}.lp2-result-context span{font-size:13px}
-  .lp2-clinic-gallery,.lp2-media-carousel{margin-top:22px}.lp2-clinic-gallery figure,.lp2-media-carousel article,.lp2-media-carousel figure{flex-basis:88%}
+  .lp2-clinic-gallery,.lp2-media-carousel{margin-top:22px}.lp2-clinic-gallery figure,.lp2-media-carousel article,.lp2-media-carousel figure,.lp2-media-carousel>a{flex-basis:88%}
   .lp2-clinic-gallery img{height:258px}.lp2-carousel-controls{justify-content:flex-start}
   .lp2-section{padding:54px 0}.lp2-result-notice{font-size:13px}.lp2-hospitals{padding:18px}
   .lp2-footer-links{display:none}
@@ -823,7 +827,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="lp2-clinic-gallery" data-carousel="clinica" aria-label="Ambientes da Clínica LIV Faria Lima">
           <figure><img alt="Recepção da Clínica LIV Faria Lima" decoding="async" height="1050" loading="lazy" src="../campanhas/assets/clinica-liv-faria-lima.webp" width="1400"/></figure>
           <figure><img alt="Consultório da Clínica LIV com quadro e mesa de atendimento" class="lp2-clinic-room" decoding="async" height="1792" loading="lazy" src="../campanhas/assets/blefaroplastia/clinica-liv-consultorio-quadro.jpg" width="1290"/></figure>
-          <figure><img alt="Ambiente de consulta da Clínica LIV Faria Lima" class="lp2-clinic-liv2" decoding="async" height="768" loading="lazy" src="../campanhas/assets/clinica-liv-ambiente-02.webp" width="1152"/></figure>
+          <figure><img alt="Ambiente de consulta da Clínica LIV Faria Lima" class="lp2-clinic-liv2" decoding="async" height="860" loading="lazy" src="../campanhas/assets/clinica-liv-ambiente-02.webp" width="1194"/></figure>
         </div>
         <div class="lp2-carousel-controls" aria-label="Controles da galeria da clínica"><button aria-label="Imagem anterior" class="lp2-carousel-control" data-carousel-action="previous" data-carousel-target="clinica" type="button">←</button><button aria-label="Próxima imagem" class="lp2-carousel-control" data-carousel-action="next" data-carousel-target="clinica" type="button">→</button></div>
       </div>
@@ -924,12 +928,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <section class="lp2-section lp2-content-section" id="conteudos">
     <div class="lp2-shell">
-      <div class="lp2-section-head"><span class="lp2-eyebrow">Conteúdos selecionados</span><h2>Explicações para continuar a decisão com calma.</h2><p>Materiais breves sobre consulta, segurança e ambiente. O plano definitivo continua sendo individual.</p></div>
-      <p class="lp2-carousel-hint"><strong>Deslize para assistir</strong> →</p>
+      <div class="lp2-section-head"><span class="lp2-eyebrow">Conteúdos selecionados</span><h2>Explicações para continuar a decisão com calma.</h2><p>Materiais para entender os componentes do contorno antes de concluir que retirar gordura é a melhor estratégia.</p></div>
+      <p class="lp2-carousel-hint"><strong>Deslize para ver os conteúdos</strong> →</p>
       <div class="lp2-media-carousel" data-carousel="conteudos" aria-label="Conteúdos selecionados">
-        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/como-funciona-a-consulta.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Como funciona a consulta</h3><p>Entenda como a conversa organiza queixa, indicação e próximos passos.</p></div></article>
-        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/anestesia-geral-seguranca.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Segurança anestésica</h3><p>Uma explicação breve sobre planejamento e segurança.</p></div></article>
-        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/clinica-liv-apresentacao.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Clínica LIV Faria Lima</h3><p>Conheça o ambiente de consulta em Pinheiros.</p></div></article>
+        <article><video controls="" controlslist="nodownload" muted="" playsinline="" preload="metadata"><source src="../campanhas/assets/conteudos/videos/queixa-e-solucao-face.mp4" type="video/mp4"/></video><div class="lp2-media-copy"><h3>Da queixa à possibilidade</h3><p>Por que a mesma percepção de contorno pode ter causas diferentes.</p></div></article>
+        <a data-content-origin="lipo-papada-selecionados" href="../conteudos/papada-contorno-cervical/"><span class="lp2-content-link-visual"><span>Leitura · contorno cervical</span><strong>Nem toda papada tem a mesma causa.</strong><span class="lp2-content-link-arrow" aria-hidden="true">→</span></span><span class="lp2-media-copy"><span class="lp2-media-copy-title">Papada, flacidez e perda do contorno cervical</span><span class="lp2-media-copy-description">Entenda como gordura, pele, músculo e projeção do queixo mudam a escolha da estratégia.</span></span></a>
       </div>
       <div class="lp2-carousel-controls" aria-label="Controles dos conteúdos selecionados"><button aria-label="Conteúdo anterior" class="lp2-carousel-control" data-carousel-action="previous" data-carousel-target="conteudos" type="button">←</button><button aria-label="Próximo conteúdo" class="lp2-carousel-control" data-carousel-action="next" data-carousel-target="conteudos" type="button">→</button></div>
     </div>
