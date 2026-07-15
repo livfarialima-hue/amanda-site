@@ -111,46 +111,47 @@
     if (!consented && window.AmandaConsent && window.AmandaConsent.prepareMinimalWhatsAppMeasurement) {
       window.AmandaConsent.prepareMinimalWhatsAppMeasurement();
     }
-    if (!googleMeasurementAvailable()) return;
+    if (googleMeasurementAvailable()) {
+      var root = document.documentElement;
+      var pageType = root.dataset.pageType || 'procedure';
+      var section = link.closest('[data-section]');
+      var location = link.dataset.ctaLocation || (section && section.dataset.section) || 'unknown';
+      var text = (link.textContent || '').trim();
 
-    var root = document.documentElement;
-    var pageType = root.dataset.pageType || 'procedure';
-    var section = link.closest('[data-section]');
-    var location = link.dataset.ctaLocation || (section && section.dataset.section) || 'unknown';
-    var text = (link.textContent || '').trim();
+      if (consented) {
+        window.gtag('event', 'whatsapp_click', {
+          event_category: 'engagement',
+          event_label: pageType,
+          page_type: pageType,
+          content_group: pageType,
+          cta_location: location,
+          cta_text: text,
+          page_path: window.location.pathname,
+          transport_type: 'beacon',
+          send_to: config.ga4Id
+        });
+      } else {
+        window.gtag('event', 'whatsapp_click', sanitizePreConsentParams({
+          contact_channel: 'whatsapp',
+          measurement_state: 'cookieless',
+          non_personalized_ads: true,
+          transport_type: 'beacon',
+          send_to: config.ga4Id
+        }));
+      }
 
-    if (consented) {
-      window.gtag('event', 'whatsapp_click', {
-        event_category: 'engagement',
-        event_label: pageType,
-        page_type: pageType,
-        content_group: pageType,
-        cta_location: location,
-        cta_text: text,
-        page_path: window.location.pathname,
-        transport_type: 'beacon',
-        send_to: config.ga4Id
-      });
-    } else {
-      window.gtag('event', 'whatsapp_click', sanitizePreConsentParams({
-        contact_channel: 'whatsapp',
-        measurement_state: 'cookieless',
-        non_personalized_ads: true,
-        transport_type: 'beacon',
-        send_to: config.ga4Id
-      }));
+      // Conversão genérica e deduplicada. Nunca inclui procedimento,
+      // página, diagnóstico, texto da mensagem ou dado pessoal.
+      if (config.googleAdsId && config.googleAdsConversionLabel && conversionNotYetSent('whatsapp_click')) {
+        window.gtag('event', 'conversion', sanitizePreConsentParams({
+          send_to: config.googleAdsId + '/' + config.googleAdsConversionLabel,
+          non_personalized_ads: !consented,
+          transport_type: 'beacon'
+        }, preConsentConversionAllowedParams));
+      }
     }
 
-    // Conversão genérica e deduplicada. Nunca inclui procedimento,
-    // página, diagnóstico, texto da mensagem ou dado pessoal.
-    if (config.googleAdsId && config.googleAdsConversionLabel && conversionNotYetSent('whatsapp_click')) {
-      window.gtag('event', 'conversion', sanitizePreConsentParams({
-        send_to: config.googleAdsId + '/' + config.googleAdsConversionLabel,
-        non_personalized_ads: !consented,
-        transport_type: 'beacon'
-      }, preConsentConversionAllowedParams));
-    }
-
+    // A mensuração Meta é independente da disponibilidade das tags Google.
     if (metaConsentGranted() && typeof window.fbq === 'function') {
       // Evento padrão e sem parâmetros: representa somente o clique de contato.
       // Não confirma envio de mensagem nem contato qualificado.
