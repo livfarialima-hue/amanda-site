@@ -2,6 +2,12 @@
   'use strict';
 
   var config = window.AMANDA_TRACKING_CONFIG || {};
+  var whatsappSelector = [
+    'a[href*="wa.me"]',
+    'a[href*="api.whatsapp.com"]',
+    'a[href*="web.whatsapp.com"]',
+    'a[href*="whatsapp.com"]'
+  ].join(', ');
   var preConsentAllowedParams = [
     'contact_channel',
     'measurement_state',
@@ -146,21 +152,31 @@
     }
 
     if (metaConsentGranted() && typeof window.fbq === 'function') {
-      window.fbq('trackCustom', 'WhatsAppContactClick', { contact_channel: 'whatsapp' });
+      // Evento padrão e sem parâmetros: representa somente o clique de contato.
+      // Não confirma envio de mensagem nem contato qualificado.
+      window.fbq('track', 'Lead');
     }
     recordDebug('whatsapp_click', mode);
   }
 
-  document.addEventListener('DOMContentLoaded', applyCampaignOriginCode);
+  function bindWhatsAppTracking() {
+    document.querySelectorAll(whatsappSelector).forEach(function (link) {
+      if (link.dataset.amandaMeasurementBound === 'true') return;
+      link.dataset.amandaMeasurementBound = 'true';
+      // O listener fica no próprio link e em captura para cobrir também
+      // botões flutuantes e componentes que interrompam a propagação do clique.
+      link.addEventListener('click', function () { trackWhatsAppClick(link); }, true);
+    });
+  }
 
-  document.addEventListener('click', function (event) {
-    var link = event.target.closest(
-      'a[href*="wa.me"], ' +
-      'a[href*="api.whatsapp.com"], ' +
-      'a[href*="web.whatsapp.com"], ' +
-      'a[href*="whatsapp.com"]'
-    );
-    if (!link) return;
-    trackWhatsAppClick(link);
-  });
+  function initializeWhatsAppTracking() {
+    applyCampaignOriginCode();
+    bindWhatsAppTracking();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWhatsAppTracking);
+  } else {
+    initializeWhatsAppTracking();
+  }
 })();
