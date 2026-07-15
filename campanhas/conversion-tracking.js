@@ -32,10 +32,6 @@
     catch (error) { return false; }
   }
 
-  function metaConsentGranted() {
-    return fullConsentGranted();
-  }
-
   function unsafeValue(value) {
     if (typeof value !== 'string') return false;
     return value.length > 80 || /@|https?:|www\.|\?|utm_|gclid|gbraid|wbraid|fbclid|\+?\d[\d\s().-]{7,}|abdomin|blefaro|lifting|lipo|mamo|masto|ninfo|otoplast|bari[aá]tric|cirurg|diagn[oó]stic|paciente|mensagem/i.test(value);
@@ -151,12 +147,9 @@
       }
     }
 
-    // A mensuração Meta é independente da disponibilidade das tags Google.
-    if (metaConsentGranted() && typeof window.fbq === 'function') {
-      // Evento padrão e sem parâmetros: representa somente o clique de contato.
-      // Não confirma envio de mensagem nem contato qualificado.
-      window.fbq('track', 'Lead');
-    }
+    // Não enviamos eventos de contato à Meta neste site médico. A própria
+    // plataforma restringe esses eventos para esta categoria. O clique segue
+    // mensurado pelo Google e pelo contador técnico local acima.
     recordDebug('whatsapp_click', mode);
   }
 

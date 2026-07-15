@@ -25,10 +25,11 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Campanha com destino direto ao WhatsApp: usar a referência genérica `M26F01W` na mensagem inicial.
 - Campanha com destino ao site: usar `https://draamandaschroeder.com.br/avaliacao-facial/?origem=M26F02S&utm_source=meta&utm_medium=paid_social&utm_campaign=M26F02S`.
 - O parâmetro `origem=M26F02S` substitui a referência interna do botão pelo código da campanha quando a pessoa abre o WhatsApp.
-- Pixel oficial: `1501288525098716`. Evento técnico do clique: `Lead`, disparado diretamente pelo código em todos os links de WhatsApp.
-- O evento Meta não envia parâmetros: não contém procedimento, texto da mensagem, telefone, nome, fotografia ou informação clínica.
-- `Lead` significa apenas clique para contato; não confirma que a mensagem foi enviada nem que o contato é qualificado.
-- Não manter regras de botão criadas pela ferramenta visual da Meta, pois elas podem medir somente um CTA e duplicar o evento implementado no site.
+- Pixel oficial: `1501288525098716`. No site médico, a Meta recebe somente o evento-base permitido (`PageView`); o evento padrão `Lead` foi suprimido pela própria plataforma como evento restrito.
+- Não criar evento personalizado ou renomear o clique para tentar contornar a restrição. Os cliques no WhatsApp do site continuam medidos pelo Google e pelo contador técnico local, sem envio de procedimento, texto da mensagem, telefone, nome, fotografia ou informação clínica à Meta.
+- Na campanha com destino ao site (`M26F02S`), otimizar inicialmente para visualizações da página de destino, não para `Lead` do pixel.
+- Na campanha direta ao WhatsApp (`M26F01W`), usar a mensuração de conversas/mensagens da própria Meta e validar qualidade pelo código de origem no atendimento.
+- Remover regras de botão criadas pela ferramenta visual da Meta, pois elas podem medir somente um CTA e continuar tentando enviar eventos restritos.
 - Pixel e eventos Meta só carregam após consentimento. O Google Tag Manager permanece desativado para não duplicar GA4, Google Ads ou Meta Pixel.
 - O clique é um sinal técnico, não um contato qualificado. A decisão do teste continua baseada em contatos válidos, agendamentos e comparecimentos.
 
