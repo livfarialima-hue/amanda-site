@@ -508,6 +508,13 @@ main{padding-top:72px}
   .lf2-results .lf2-carousel-button{border-color:rgba(255,255,255,.76)}
   .lf2-results .lf2-carousel-button:last-child{background:#fff;color:var(--lf-dark)}
 }
+.lf2-featured-video{padding:58px 0 84px;background:linear-gradient(180deg,var(--lf-bg) 0%,#efe3dc 100%)}
+.lf2-featured-video-grid{display:grid;grid-template-columns:minmax(260px,.55fr) minmax(0,1.45fr);gap:48px;align-items:center}
+.lf2-featured-video-copy h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,4.5vw,58px);font-weight:400;line-height:1.06;letter-spacing:-.025em}
+.lf2-featured-video-copy p{max-width:430px;margin:18px 0 0;color:var(--lf-muted);font-size:17px;line-height:1.7}
+.lf2-featured-video-frame{display:flex;align-items:center;justify-content:center;margin:0;overflow:hidden;border:1px solid rgba(91,67,61,.22);background:#171312;box-shadow:0 22px 50px rgba(56,40,34,.16)}
+.lf2-featured-video-frame video{display:block;width:auto;max-width:100%;height:auto;max-height:min(78vh,860px);background:#171312;object-fit:contain}
+@media(max-width:760px){.lf2-featured-video{padding:46px 0 54px}.lf2-featured-video-grid{grid-template-columns:1fr;gap:24px}.lf2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.lf2-featured-video-copy p{font-size:16px;line-height:1.66}.lf2-featured-video-frame video{width:100%;max-height:none}}
 </style>
 </head>
 <body>
@@ -550,6 +557,22 @@ main{padding-top:72px}
       <div class="lf2-trust-item"><strong>Foco em cirurgia facial</strong><span>Avaliação integrada de face e pescoço</span></div>
       <div class="lf2-trust-item"><strong>Ambiente hospitalar</strong><span>Estrutura definida conforme o plano</span></div>
       <div class="lf2-trust-item"><strong>Acompanhamento próximo</strong><span>Preparo, retornos e recuperação</span></div>
+    </div>
+  </section>
+
+  <section class="lf2-featured-video" aria-labelledby="video-lifting-facial-title">
+    <div class="lf2-shell lf2-featured-video-grid">
+      <div class="lf2-featured-video-copy">
+        <span class="lf2-eyebrow">Vídeo em destaque</span>
+        <h2 id="video-lifting-facial-title">Lifting facial com planejamento e naturalidade.</h2>
+        <p>Assista à explicação da Dra. Amanda e conheça os pontos que ajudam a organizar uma decisão individual.</p>
+      </div>
+      <figure class="lf2-featured-video-frame">
+        <video aria-label="Vídeo em destaque sobre lifting facial" controls="" controlslist="nodownload" height="1920" playsinline="" preload="metadata" width="1080">
+          <source src="../campanhas/assets/lifting-facial/lifting-facial-final.mp4" type="video/mp4"/>
+          Seu navegador não oferece suporte a este vídeo.
+        </video>
+      </figure>
     </div>
   </section>
 
