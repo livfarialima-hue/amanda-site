@@ -939,6 +939,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
     installVideoPosters();
     document.querySelectorAll('video:not([data-mobile-video-enhanced])').forEach(function (video, index) {
       if (video.closest('.curated-video-modal')) return;
+      if (video.hasAttribute('data-inline-video')) return;
       var source = getVideoSource(video);
       if (!source) return;
 

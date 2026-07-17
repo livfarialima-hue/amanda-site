@@ -514,7 +514,8 @@ main{padding-top:72px}
 .lf2-featured-video-copy p{max-width:430px;margin:18px 0 0;color:var(--lf-muted);font-size:17px;line-height:1.7}
 .lf2-featured-video-frame{display:block;width:min(100%,484px);justify-self:center;margin:0 auto;overflow:hidden;border:1px solid rgba(91,67,61,.22);background:transparent;box-shadow:0 22px 50px rgba(56,40,34,.16)}
 .lf2-featured-video-frame video{display:block;width:100%;max-width:100%;height:auto;background:#171312}
-@media(max-width:760px){.lf2-featured-video{padding:46px 0 54px}.lf2-featured-video-grid{grid-template-columns:1fr;gap:24px}.lf2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.lf2-featured-video-copy p{font-size:16px;line-height:1.66}.lf2-featured-video-frame{width:min(100%,420px)}.lf2-featured-video-frame video{width:100%;height:auto}}
+.lf2-featured-video-frame>.mobile-curated-video-trigger{display:none!important}
+@media(max-width:760px){.lf2-featured-video{padding:46px 0 54px}.lf2-featured-video-grid{grid-template-columns:1fr;gap:24px}.lf2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.lf2-featured-video-copy p{font-size:16px;line-height:1.66}.lf2-featured-video-frame{width:min(100%,420px)}.lf2-featured-video-frame video,.lf2-featured-video-frame video[data-mobile-video-enhanced]{display:block!important;width:100%;height:auto}}
 </style>
 </head>
 <body>
@@ -568,7 +569,7 @@ main{padding-top:72px}
         <p>Assista à explicação da Dra. Amanda e conheça os pontos que ajudam a organizar uma decisão individual.</p>
       </div>
       <figure class="lf2-featured-video-frame">
-        <video aria-label="Vídeo em destaque sobre lifting facial" controls="" controlslist="nodownload" disablepictureinpicture="" height="1920" playsinline="" preload="metadata" width="1080">
+        <video aria-label="Vídeo em destaque sobre lifting facial" controls="" controlslist="nodownload" data-inline-video="" disablepictureinpicture="" height="1920" playsinline="" preload="metadata" width="1080">
           <source src="../campanhas/assets/lifting-facial/lifting-facial-mobile-v2.mp4" type="video/mp4"/>
         </video>
       </figure>
@@ -823,7 +824,7 @@ main{padding-top:72px}
 <script defer="" src="../campanhas/conversion-tracking.js?v=20260714-meta4"></script>
 <script defer="" src="../campanhas/instagram-loader.js"></script>
 <script defer="" src="../campanhas/landing-behavior.js"></script>
-<script defer="" src="../campanhas/site-enhancements.js?v=media-20260714-1"></script>
+<script defer="" src="../campanhas/site-enhancements.js?v=media-20260717-inline-featured-1"></script>
 <script>
 (function(){
   document.querySelectorAll('.lf2-faq details').forEach(item=>{

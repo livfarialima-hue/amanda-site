@@ -695,7 +695,8 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
 .oti2-featured-video-copy p{max-width:430px;margin:18px 0 0;color:var(--oti-muted);font-size:17px;line-height:1.7}
 .oti2-featured-video-frame{display:block;width:min(100%,484px);justify-self:center;margin:0 auto;border:1px solid rgba(91,67,61,.22);background:transparent;box-shadow:0 22px 50px rgba(56,40,34,.16);overflow:hidden}
 .oti2-featured-video-frame video{display:block;width:100%;max-width:100%;height:auto;background:#171312}
-@media (max-width:760px){.oti2-featured-video{padding:46px 0 54px}.oti2-featured-video-grid{grid-template-columns:1fr;gap:24px}.oti2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.oti2-featured-video-copy p{font-size:16px;line-height:1.66}.oti2-featured-video-frame{width:min(100%,420px)}.oti2-featured-video-frame video{width:100%;height:auto}}
+.oti2-featured-video-frame>.mobile-curated-video-trigger{display:none!important}
+@media (max-width:760px){.oti2-featured-video{padding:46px 0 54px}.oti2-featured-video-grid{grid-template-columns:1fr;gap:24px}.oti2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.oti2-featured-video-copy p{font-size:16px;line-height:1.66}.oti2-featured-video-frame{width:min(100%,420px)}.oti2-featured-video-frame video,.oti2-featured-video-frame video[data-mobile-video-enhanced]{display:block!important;width:100%;height:auto}}
 @media (max-width:980px){
   .oti2-header .oti2-btn{width:auto;min-height:44px;padding:10px 16px;border-radius:999px;white-space:nowrap;font-size:13px}
 }
@@ -762,7 +763,7 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
         <p>Assista à explicação da Dra. Amanda para responsáveis que querem entender melhor essa conversa em família.</p>
       </div>
       <figure class="oti2-featured-video-frame">
-        <video aria-label="Vídeo sobre otoplastia em criança" controls="" controlslist="nodownload" disablepictureinpicture="" height="1920" playsinline="" preload="metadata" width="1080">
+        <video aria-label="Vídeo sobre otoplastia em criança" controls="" controlslist="nodownload" data-inline-video="" disablepictureinpicture="" height="1920" playsinline="" preload="metadata" width="1080">
           <source src="../campanhas/assets/otoplastia-infantil/otoplastia-em-crianca.mp4" type="video/mp4"/>
         </video>
       </figure>
@@ -994,7 +995,7 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
 <script defer src="../campanhas/tracking-loader.js?v=20260714-meta1"></script>
 <script defer src="../campanhas/conversion-tracking.js?v=20260714-meta4"></script>
 <script defer src="../campanhas/landing-behavior.js"></script>
-<script defer src="../campanhas/site-enhancements.js?v=media-20260714-1"></script>
+<script defer src="../campanhas/site-enhancements.js?v=media-20260717-inline-featured-1"></script>
 <script>
 (function(){
   const menuButton=document.querySelector('.oti2-menu-button');

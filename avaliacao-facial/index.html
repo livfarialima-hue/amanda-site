@@ -120,6 +120,7 @@
     .af-featured-video-copy p{max-width:430px;margin:18px 0 0;color:var(--af-muted);font-size:17px;line-height:1.7}
     .af-featured-video-frame{display:block;width:min(100%,484px);justify-self:center;margin:0 auto;overflow:hidden;border:1px solid rgba(91,67,61,.22);border-radius:22px;background:transparent;box-shadow:var(--af-shadow)}
     .af-featured-video-frame video{display:block;width:100%;max-width:100%;height:auto;background:#171312}
+    .af-featured-video-frame>.mobile-curated-video-trigger{display:none!important}
     .af-trust{border-block:1px solid var(--af-line);background:var(--af-paper)}
     .af-trust-grid{display:grid;grid-template-columns:repeat(4,1fr)}
     .af-trust-item{min-height:112px;padding:24px;border-right:1px solid var(--af-line)}.af-trust-item:last-child{border-right:0}
@@ -145,7 +146,7 @@
     @media(max-width:900px){.af-hero-grid,.af-journey-wrap,.af-authority,.af-clinic-text{grid-template-columns:1fr}.af-hero-grid{gap:28px}.af-plan-image{position:static}.af-card-grid,.af-reviews{grid-template-columns:1fr}.af-trust-grid{grid-template-columns:repeat(2,1fr)}.af-trust-item:nth-child(2){border-right:0}.af-trust-item:nth-child(-n+2){border-bottom:1px solid var(--af-line)}.af-slide{flex-basis:68%}}
     @media(max-width:900px){.af-featured-video-grid{grid-template-columns:1fr;gap:28px}}
     @media(max-width:760px){html{scroll-padding-top:68px}.af-shell{width:min(100% - 32px,680px)}.af-header-inner{min-height:64px;gap:10px}.af-brand strong{font-size:16px}.af-brand>span{font-size:13px;white-space:nowrap}.af-brand-registration{display:none}.af-header .af-btn{min-height:42px;padding:10px 12px;font-size:13px}main{padding-top:64px}.af-hero{padding:20px 0 18px}.af-hero h1{font-size:clamp(37px,10.5vw,43px);line-height:1}.af-hero .lead{margin-top:18px;font-size:16px;line-height:1.55}.af-doctor-line,.af-note{font-size:13px}.af-hero-actions{margin-top:18px}.af-hero-media{border-radius:18px}.af-hero-media img{height:220px;object-position:center 20%}.af-trust-item{min-height:105px;padding:17px 13px}.af-trust-item strong{font-size:14px}.af-trust-item span{font-size:13px}.af-section{padding:56px 0}.af-head h2{font-size:clamp(35px,9.5vw,43px)}.af-head p{font-size:16px}.af-card-grid{margin-top:25px}.af-card{padding:21px}.af-certain{grid-template-columns:1fr;padding:22px}.af-mini-links{gap:8px}.af-journey-wrap{margin-top:25px}.af-step{grid-template-columns:42px 1fr;padding:18px 15px}.af-step>span{width:38px;height:38px}.af-step h3{font-size:21px}.af-plan-image img{height:240px;object-position:center 60%}.af-check-grid{grid-template-columns:1fr;margin-top:25px}.af-check{padding:22px}.af-paths{grid-template-columns:1fr;margin-top:25px}.af-link-card{padding:22px}.af-authority{gap:28px}.af-authority figure img{height:220px}.af-credentials{grid-template-columns:1fr}.af-carousel-hint{font-size:14px}.af-slide{flex-basis:88%}.af-slide img,.af-slide video{height:210px}.af-clinic .af-slide img{height:220px}.af-slide-copy p{font-size:13px}.af-controls{justify-content:flex-start}.af-reviews{margin-top:25px}.af-review blockquote{font-size:18px}.af-faq{grid-template-columns:1fr;margin-top:25px}.af-footer-grid{grid-template-columns:1fr}.af-footer-links{justify-content:flex-start}.af-sticky{right:12px;bottom:12px}.af-sticky .af-btn{min-height:48px;padding:12px 16px}}
-    @media(max-width:760px){.af-featured-video{padding:46px 0 54px}.af-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.af-featured-video-copy p{font-size:16px;line-height:1.66}.af-featured-video-frame{width:min(100%,420px);border-radius:18px}.af-featured-video-frame video{width:100%;height:auto}}
+    @media(max-width:760px){.af-featured-video{padding:46px 0 54px}.af-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.af-featured-video-copy p{font-size:16px;line-height:1.66}.af-featured-video-frame{width:min(100%,420px);border-radius:18px}.af-featured-video-frame video,.af-featured-video-frame video[data-mobile-video-enhanced]{display:block!important;width:100%;height:auto}}
     @media(max-width:900px){.af-header .af-btn{width:auto;min-height:44px;padding:10px 16px;border-radius:999px;white-space:nowrap;font-size:13px}}
     @media(max-width:760px){.af-header .af-btn{width:auto;min-height:42px;padding:10px 15px;border-radius:999px;font-size:13px}.af-hero-actions{display:grid;grid-template-columns:1fr}.af-hero-actions .af-btn{width:100%;min-height:54px}.af-sticky{right:8px;bottom:calc(10px + env(safe-area-inset-bottom))}#af-sticky .af-btn{min-height:50px;padding:12px 18px;font-size:16px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.af-carousel-hint span{animation:none}.af-btn,.af-header,.af-sticky{transition:none}}
@@ -205,7 +206,7 @@
           <p>Assista ao vídeo da Dra. Amanda e entenda por que uma conversa individual vem antes de qualquer indicação.</p>
         </div>
         <figure class="af-featured-video-frame">
-          <video aria-label="Vídeo sobre lifting facial" controls="" controlslist="nodownload" disablepictureinpicture="" height="1920" playsinline="" preload="metadata" width="1080">
+          <video aria-label="Vídeo sobre lifting facial" controls="" controlslist="nodownload" data-inline-video="" disablepictureinpicture="" height="1920" playsinline="" preload="metadata" width="1080">
             <source src="../campanhas/assets/avaliacao-facial/lifting-campanha-mobile-v2.mp4" type="video/mp4">
           </video>
         </figure>
@@ -359,7 +360,7 @@
   <script defer src="../campanhas/tracking-loader.js?v=20260714-meta1"></script>
   <script defer src="../campanhas/conversion-tracking.js?v=20260714-meta4"></script>
   <script defer src="../campanhas/instagram-loader.js"></script>
-  <script defer src="../campanhas/site-enhancements.js?v=media-20260714-1"></script>
+  <script defer src="../campanhas/site-enhancements.js?v=media-20260717-inline-featured-1"></script>
   <script>
   (()=>{
     const header=document.querySelector('.af-header');
