@@ -512,9 +512,9 @@ main{padding-top:72px}
 .lf2-featured-video-grid{display:grid;grid-template-columns:minmax(260px,.55fr) minmax(0,1.45fr);gap:48px;align-items:center}
 .lf2-featured-video-copy h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,4.5vw,58px);font-weight:400;line-height:1.06;letter-spacing:-.025em}
 .lf2-featured-video-copy p{max-width:430px;margin:18px 0 0;color:var(--lf-muted);font-size:17px;line-height:1.7}
-.lf2-featured-video-frame{display:flex;width:min(100%,484px);aspect-ratio:9/16;align-items:center;justify-content:center;justify-self:center;margin:0 auto;overflow:hidden;border:1px solid rgba(91,67,61,.22);background:#171312;box-shadow:0 22px 50px rgba(56,40,34,.16)}
-.lf2-featured-video-frame video{display:block;width:100%;max-width:none;height:100%;max-height:none;aspect-ratio:9/16;background:#171312;object-fit:contain;object-position:center}
-@media(max-width:760px){.lf2-featured-video{padding:46px 0 54px}.lf2-featured-video-grid{grid-template-columns:1fr;gap:24px}.lf2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.lf2-featured-video-copy p{font-size:16px;line-height:1.66}.lf2-featured-video-frame{width:min(100%,420px)}.lf2-featured-video-frame video{width:100%;height:100%;max-height:none}}
+.lf2-featured-video-frame{display:block;width:min(100%,484px);justify-self:center;margin:0 auto;overflow:hidden;border:1px solid rgba(91,67,61,.22);background:transparent;box-shadow:0 22px 50px rgba(56,40,34,.16)}
+.lf2-featured-video-frame video{display:block;width:100%;max-width:100%;height:auto;background:#171312}
+@media(max-width:760px){.lf2-featured-video{padding:46px 0 54px}.lf2-featured-video-grid{grid-template-columns:1fr;gap:24px}.lf2-featured-video-copy h2{font-size:clamp(32px,9vw,42px)}.lf2-featured-video-copy p{font-size:16px;line-height:1.66}.lf2-featured-video-frame{width:min(100%,420px)}.lf2-featured-video-frame video{width:100%;height:auto}}
 </style>
 </head>
 <body>
@@ -568,8 +568,8 @@ main{padding-top:72px}
         <p>Assista à explicação da Dra. Amanda e conheça os pontos que ajudam a organizar uma decisão individual.</p>
       </div>
       <figure class="lf2-featured-video-frame">
-        <video aria-label="Vídeo em destaque sobre lifting facial" controls="" controlslist="nodownload" playsinline="" preload="metadata">
-          <source src="../campanhas/assets/lifting-facial/lifting-facial-final.mp4" type="video/mp4"/>
+        <video aria-label="Vídeo em destaque sobre lifting facial" controls="" controlslist="nodownload" height="1920" playsinline="" preload="metadata" width="1080">
+          <source src="../campanhas/assets/lifting-facial/lifting-facial-mobile-v2.mp4" type="video/mp4"/>
         </video>
       </figure>
     </div>
