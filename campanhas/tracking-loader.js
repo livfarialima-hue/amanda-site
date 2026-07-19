@@ -3,7 +3,13 @@
 
   var config = window.AMANDA_TRACKING_CONFIG || {};
   var storageKey = 'amanda_tracking_consent';
-  var attributionKeys = ['amanda_attribution', 'amanda_first_touch'];
+  var attributionKeys = [
+    'amanda_attribution',
+    'amanda_first_touch',
+    'amanda_click_id_gclid',
+    'amanda_click_id_gbraid',
+    'amanda_click_id_wbraid'
+  ];
   var googleScriptId = 'amanda-google-gtag';
 
   window.dataLayer = window.dataLayer || [];
@@ -154,6 +160,7 @@
     banner.querySelector('.accept').addEventListener('click', function () {
       setConsent('granted');
       updateGoogleConsent(true);
+      document.dispatchEvent(new CustomEvent('amanda:consent-granted'));
       loadGoogleTags({ sendPageView: true });
       loadMetaPixel();
       removeBanner();

@@ -74,17 +74,65 @@
     if (window.AmandaConsent && window.AmandaConsent.updateDebugState) window.AmandaConsent.updateDebugState();
   }
 
-  function campaignOriginCode() {
-    var value = '';
-    try { value = new URLSearchParams(window.location.search).get('origem') || ''; }
-    catch (error) { return ''; }
+  var campaignOriginStorageKey = 'amanda_campaign_origin';
+  var clickIdParams = ['gclid', 'gbraid', 'wbraid'];
+  var clickIdStoragePrefix = 'amanda_click_id_';
+
+  function normalizeCampaignOriginCode(value) {
     value = value.trim().toUpperCase();
     return /^[A-Z][A-Z0-9]{4,15}$/.test(value) ? value : '';
   }
 
+  function campaignOriginCodeFromUrl() {
+    try {
+      return normalizeCampaignOriginCode(new URLSearchParams(window.location.search).get('origem') || '');
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function campaignOriginCode() {
+    var code = campaignOriginCodeFromUrl();
+    if (code) {
+      try { sessionStorage.setItem(campaignOriginStorageKey, code); } catch (error) {}
+      return code;
+    }
+
+    try { return normalizeCampaignOriginCode(sessionStorage.getItem(campaignOriginStorageKey) || ''); }
+    catch (error) { return ''; }
+  }
+
+  function normalizeClickId(value) {
+    value = (value || '').trim();
+    return /^[A-Za-z0-9._~-]{10,300}$/.test(value) ? value : '';
+  }
+
+  function clickAttributionIds() {
+    var ids = {};
+    if (!fullConsentGranted()) return ids;
+
+    var searchParams;
+    try { searchParams = new URLSearchParams(window.location.search); }
+    catch (error) { searchParams = null; }
+
+    clickIdParams.forEach(function (param) {
+      var value = normalizeClickId(searchParams ? searchParams.get(param) : '');
+      if (value) {
+        try { sessionStorage.setItem(clickIdStoragePrefix + param, value); } catch (error) {}
+      } else {
+        try { value = normalizeClickId(sessionStorage.getItem(clickIdStoragePrefix + param) || ''); }
+        catch (error) { value = ''; }
+      }
+      if (value) ids[param] = value;
+    });
+
+    return ids;
+  }
+
   function applyCampaignOriginCode() {
     var code = campaignOriginCode();
-    if (!code) return;
+    var clickIds = clickAttributionIds();
+    if (!code && !Object.keys(clickIds).length) return;
 
     document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp.com"]').forEach(function (link) {
       try {
@@ -92,7 +140,13 @@
         var message = url.searchParams.get('text');
         if (!message) return;
         message = message.replace(/\s+Ref(?:er[eê]ncia)?\.?\s*:?\s*[A-Z0-9-]+\.?\s*$/i, '');
-        url.searchParams.set('text', message.trim() + ' Ref. ' + code);
+        message = message.replace(/\s+ID Ads:\s*(?:GCLID|GBRAID|WBRAID)=[A-Za-z0-9._~;= -]+\s*$/i, '');
+        var references = [];
+        if (code) references.push('Ref. ' + code);
+        clickIdParams.forEach(function (param) {
+          if (clickIds[param]) references.push(param.toUpperCase() + '=' + clickIds[param]);
+        });
+        url.searchParams.set('text', message.trim() + (references.length ? '\n\nID Ads: ' + references.join('; ') : ''));
         link.href = url.toString();
       } catch (error) {}
     });
@@ -159,11 +213,17 @@
       link.dataset.amandaMeasurementBound = 'true';
       // O listener fica no próprio link e em captura para cobrir também
       // botões flutuantes e componentes que interrompam a propagação do clique.
-      link.addEventListener('click', function () { trackWhatsAppClick(link); }, true);
+      link.addEventListener('click', function () {
+        applyCampaignOriginCode();
+        trackWhatsAppClick(link);
+      }, true);
     });
   }
 
   function initializeWhatsAppTracking() {
+    // Mantem a referencia da campanha e os identificadores do clique apenas
+    // durante a sessao, depois do consentimento. Dados de contato ou saude nao
+    // sao incluidos na integracao com o Google Ads.
     applyCampaignOriginCode();
     bindWhatsAppTracking();
   }
@@ -173,4 +233,6 @@
   } else {
     initializeWhatsAppTracking();
   }
+
+  document.addEventListener('amanda:consent-granted', applyCampaignOriginCode);
 })();
