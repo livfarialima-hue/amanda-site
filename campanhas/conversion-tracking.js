@@ -174,6 +174,12 @@
       var explicitCode = normalizeCampaignOriginCode(searchParams.get('origem') || '');
       if (explicitCode) return explicitCode;
 
+      // O sufixo das campanhas do Google Ads ja envia o parametro
+      // utm_campaign={_camp}. Aceitamos esse codigo nao identificador como
+      // referencia da campanha sem depender do GCLID ou de cookies.
+      var utmCampaignCode = normalizeCampaignOriginCode(searchParams.get('utm_campaign') || '');
+      if (utmCampaignCode) return utmCampaignCode;
+
       // Sem consentimento, nunca copiamos nem persistimos o identificador
       // individual do clique. Usamos somente uma referência genérica para
       // distinguir Google Ads de busca orgânica, acesso direto ou indicação.

@@ -36,14 +36,16 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 ### Contrato técnico de atribuição Google Ads
 
 - Manter a marcação automática do Google Ads ativada.
-- Configurar o sufixo da URL final no nível de cada campanha. Modelo: `origem=CODIGO&utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_term={keyword}&utm_content={creative}`.
-- Usar estes códigos estáveis:
+- Preservar o sufixo completo que já está configurado nas seis campanhas: `utm_source=google&utm_medium=cpc&utm_campaign={_camp}&utm_id={campaignid}&utm_adgroup={_ag}&utm_content={creative}&utm_term={keyword}&matchtype={matchtype}&device={device}&network={network}&loc_physical_ms={loc_physical_ms}`.
+- O site reconhece o valor resolvido de `utm_campaign={_camp}` como referência não identificadora e o inclui na mensagem do WhatsApp, mesmo sem cookies. GCLID, GBRAID e WBRAID só são anexados depois de consentimento.
+- Padronizar gradualmente o parâmetro personalizado `{_camp}` com estes códigos estáveis:
   - `S_BR_SP_BLEFAROPLASTIA` → `G26BLEF`
   - `S_BR_SP_CIRURGIA_FACIAL` → `G26FACE`
   - `S_BR_SP_LIFTING_CERVICAL` → `G26CERV`
   - `S_BR_SP_LIFTING_FACIAL` → `G26LIFT`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
+- Em 19/07/2026, `S_BR_SP_LIFTING_CERVICAL` foi confirmado como `G26CERV`. Os códigos existentes das demais campanhas continuam válidos porque o site passou a aceitar `utm_campaign`; a padronização nominal deve ser concluída em uma sessão autorizada do Google Ads.
 - Se o clique contiver `GCLID`, `GBRAID` ou `WBRAID`, mas a campanha ainda não tiver o parâmetro `origem`, o site acrescenta a referência genérica `G26ADS` à mensagem do WhatsApp.
 - Sem consentimento, somente o código de campanha não identificador é acrescentado. O identificador individual do clique não é persistido nem copiado.
 - Após consentimento explícito, o identificador individual também pode ser incluído no bloco `ID Ads` da mensagem, permitindo preencher a conversão qualificada na planilha.
