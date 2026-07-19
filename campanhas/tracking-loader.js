@@ -6,6 +6,7 @@
   var attributionKeys = [
     'amanda_attribution',
     'amanda_first_touch',
+    'amanda_campaign_origin',
     'amanda_click_id_gclid',
     'amanda_click_id_gbraid',
     'amanda_click_id_wbraid'

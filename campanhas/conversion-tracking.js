@@ -77,10 +77,95 @@
   var campaignOriginStorageKey = 'amanda_campaign_origin';
   var clickIdParams = ['gclid', 'gbraid', 'wbraid'];
   var clickIdStoragePrefix = 'amanda_click_id_';
+  var attributionTtlMs = 90 * 24 * 60 * 60 * 1000;
+
+  function storeSessionValue(key, value) {
+    try {
+      sessionStorage.setItem(key, JSON.stringify({
+        value: value,
+        expiresAt: Date.now() + attributionTtlMs
+      }));
+    } catch (error) {}
+  }
+
+  function readSessionValue(key, normalize) {
+    try {
+      var raw = sessionStorage.getItem(key);
+      if (!raw) return '';
+
+      var stored;
+      try { stored = JSON.parse(raw); }
+      catch (error) { stored = null; }
+
+      if (!stored || typeof stored !== 'object') {
+        var legacyValue = normalize(raw);
+        if (legacyValue) storeSessionValue(key, legacyValue);
+        return legacyValue;
+      }
+      if (!stored.expiresAt || stored.expiresAt <= Date.now()) {
+        sessionStorage.removeItem(key);
+        return '';
+      }
+      return normalize(stored.value || '');
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function storePersistentValue(key, value) {
+    if (!fullConsentGranted() || !value) return;
+    try {
+      localStorage.setItem(key, JSON.stringify({
+        value: value,
+        expiresAt: Date.now() + attributionTtlMs
+      }));
+    } catch (error) {}
+  }
+
+  function readPersistentValue(key, normalize) {
+    if (!fullConsentGranted()) return '';
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return '';
+
+      var stored;
+      try { stored = JSON.parse(raw); }
+      catch (error) { stored = null; }
+
+      // Compatibilidade com um eventual valor simples salvo por uma versao anterior.
+      if (!stored || typeof stored !== 'object') {
+        var legacyValue = normalize(raw);
+        if (legacyValue) storePersistentValue(key, legacyValue);
+        return legacyValue;
+      }
+      if (!stored.expiresAt || stored.expiresAt <= Date.now()) {
+        localStorage.removeItem(key);
+        return '';
+      }
+      return normalize(stored.value || '');
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function storeAttributionValue(key, value) {
+    if (!value) return;
+    storeSessionValue(key, value);
+    storePersistentValue(key, value);
+  }
+
+  function readAttributionValue(key, normalize) {
+    var value = readSessionValue(key, normalize);
+    if (value) return value;
+
+    value = readPersistentValue(key, normalize);
+    if (value) storeSessionValue(key, value);
+    return value;
+  }
 
   function normalizeCampaignOriginCode(value) {
     value = value.trim().toUpperCase();
-    return /^[A-Z][A-Z0-9]{4,15}$/.test(value) ? value : '';
+    return /^[A-Z][A-Z0-9]{3,15}$/.test(value) ? value : '';
   }
 
   function campaignOriginCodeFromUrl() {
@@ -94,12 +179,13 @@
   function campaignOriginCode() {
     var code = campaignOriginCodeFromUrl();
     if (code) {
-      try { sessionStorage.setItem(campaignOriginStorageKey, code); } catch (error) {}
+      storeAttributionValue(campaignOriginStorageKey, code);
       return code;
     }
 
-    try { return normalizeCampaignOriginCode(sessionStorage.getItem(campaignOriginStorageKey) || ''); }
-    catch (error) { return ''; }
+    code = readAttributionValue(campaignOriginStorageKey, normalizeCampaignOriginCode);
+    if (code) storePersistentValue(campaignOriginStorageKey, code);
+    return code;
   }
 
   function normalizeClickId(value) {
@@ -118,10 +204,9 @@
     clickIdParams.forEach(function (param) {
       var value = normalizeClickId(searchParams ? searchParams.get(param) : '');
       if (value) {
-        try { sessionStorage.setItem(clickIdStoragePrefix + param, value); } catch (error) {}
+        storeAttributionValue(clickIdStoragePrefix + param, value);
       } else {
-        try { value = normalizeClickId(sessionStorage.getItem(clickIdStoragePrefix + param) || ''); }
-        catch (error) { value = ''; }
+        value = readAttributionValue(clickIdStoragePrefix + param, normalizeClickId);
       }
       if (value) ids[param] = value;
     });
@@ -140,7 +225,7 @@
         var message = url.searchParams.get('text');
         if (!message) return;
         message = message.replace(/\s+Ref(?:er[eê]ncia)?\.?\s*:?\s*[A-Z0-9-]+\.?\s*$/i, '');
-        message = message.replace(/\s+ID Ads:\s*(?:GCLID|GBRAID|WBRAID)=[A-Za-z0-9._~;= -]+\s*$/i, '');
+        message = message.replace(/\s+ID Ads:[^\r\n]*\s*$/i, '');
         var references = [];
         if (code) references.push('Ref. ' + code);
         clickIdParams.forEach(function (param) {
@@ -221,8 +306,8 @@
   }
 
   function initializeWhatsAppTracking() {
-    // Mantem a referencia da campanha e os identificadores do clique apenas
-    // durante a sessao, depois do consentimento. Dados de contato ou saude nao
+    // Mantem a referencia da campanha e os identificadores do clique por ate
+    // 90 dias, somente depois do consentimento. Dados de contato ou saude nao
     // sao incluidos na integracao com o Google Ads.
     applyCampaignOriginCode();
     bindWhatsAppTracking();
