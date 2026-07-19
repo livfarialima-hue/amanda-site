@@ -170,7 +170,17 @@
 
   function campaignOriginCodeFromUrl() {
     try {
-      return normalizeCampaignOriginCode(new URLSearchParams(window.location.search).get('origem') || '');
+      var searchParams = new URLSearchParams(window.location.search);
+      var explicitCode = normalizeCampaignOriginCode(searchParams.get('origem') || '');
+      if (explicitCode) return explicitCode;
+
+      // Sem consentimento, nunca copiamos nem persistimos o identificador
+      // individual do clique. Usamos somente uma referência genérica para
+      // distinguir Google Ads de busca orgânica, acesso direto ou indicação.
+      var hasGoogleAdsClick = clickIdParams.some(function (param) {
+        return !!normalizeClickId(searchParams.get(param) || '');
+      });
+      return hasGoogleAdsClick ? normalizeCampaignOriginCode(config.googleAdsFallbackOriginCode || 'G26ADS') : '';
     } catch (error) {
       return '';
     }
@@ -306,9 +316,9 @@
   }
 
   function initializeWhatsAppTracking() {
-    // Mantem a referencia da campanha e os identificadores do clique por ate
-    // 90 dias, somente depois do consentimento. Dados de contato ou saude nao
-    // sao incluidos na integracao com o Google Ads.
+    // Mantém a referência não identificadora da campanha durante a sessão.
+    // Identificadores individuais do clique só são persistidos e anexados
+    // depois do consentimento. Dados de contato ou saúde não são incluídos.
     applyCampaignOriginCode();
     bindWhatsAppTracking();
   }

@@ -16,6 +16,7 @@ window.AMANDA_TRACKING_CONFIG = {
   metaPixelId: "1501288525098716",               // Pixel Meta oficial. Carregado somente após consentimento.
   googleAdsId: "AW-17157418677",               // Ex.: "AW-123456789"
   googleAdsConversionLabel: "Hc43CM7-qvsaELXdpfU_",  // Conversão de clique no WhatsApp.
+  googleAdsFallbackOriginCode: "G26ADS",       // Referência genérica quando há clique do Google, mas não há código origem.
   advancedConsentMode: true,
   trackMetaPageViews: true,
   sanitizePreConsentMeasurement: true,

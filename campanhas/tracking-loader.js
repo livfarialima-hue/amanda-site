@@ -155,7 +155,7 @@
     banner.className = 'cookie-consent';
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-label', 'Preferências de privacidade');
-    banner.innerHTML = '<strong>Privacidade e mensuração</strong><p> Usamos ferramentas para avaliar o desempenho de nossas comunicações. Se você recusar, cookies analíticos e de publicidade não serão ativados. Garantia de privacidade: dados clínicos nunca são compartilhados. </p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar cookies</button><button class="reject" type="button">Continuar sem aceitar</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
+    banner.innerHTML = '<strong>Privacidade e mensuração</strong><p>Você escolhe se autoriza cookies de medição. Sem uma escolha, mantemos os cookies desativados e usamos somente uma referência não identificadora da campanha quando você abre o WhatsApp. Dados clínicos nunca são compartilhados.</p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar medição</button><button class="reject" type="button">Continuar sem medição</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
     document.body.appendChild(banner);
 
     banner.querySelector('.accept').addEventListener('click', function () {
