@@ -230,7 +230,118 @@
     return ids;
   }
 
+  // A atribuição de marketing no WhatsApp é independente da mensuração.
+  // Atua somente nos CTAs explicitamente marcados e usa uma lista fechada de
+  // códigos neutros de marketing.
+  var marketingAttributionStorageKey = 'amanda_marketing_attribution';
+  var marketingAttributionParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'origem'];
+
+  function sanitizeTrackingValue(value) {
+    value = typeof value === 'string' ? value.trim() : '';
+    return /^[A-Za-z0-9_-]{1,80}$/.test(value) ? value : '';
+  }
+
+  function readAttributionFromUrl() {
+    var attribution = {};
+    try {
+      var searchParams = new URLSearchParams(window.location.search);
+      marketingAttributionParams.forEach(function (param) {
+        var value = sanitizeTrackingValue(searchParams.get(param) || '');
+        if (value) attribution[param] = value;
+      });
+    } catch (error) {}
+    return attribution;
+  }
+
+  function saveAttribution(attribution) {
+    if (!Object.keys(attribution).length) return;
+    try { sessionStorage.setItem(marketingAttributionStorageKey, JSON.stringify(attribution)); }
+    catch (error) {}
+  }
+
+  function loadStoredAttribution() {
+    try {
+      var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
+      if (!stored || typeof stored !== 'object') return {};
+      var attribution = {};
+      marketingAttributionParams.forEach(function (param) {
+        var value = sanitizeTrackingValue(stored[param]);
+        if (value) attribution[param] = value;
+      });
+      return attribution;
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function getOriginalReference(link, message) {
+    var originalReference = sanitizeTrackingValue(link.dataset.originalReference || '');
+    if (originalReference) return originalReference;
+
+    var referenceMatch = message.match(/\bRef\.\s*([A-Za-z0-9_-]{1,80})(?=\s|$)/i);
+    if (!referenceMatch) return '';
+    originalReference = sanitizeTrackingValue(referenceMatch[1]);
+    if (originalReference) link.dataset.originalReference = originalReference;
+    return originalReference;
+  }
+
+  function buildReference(attribution, originalReference) {
+    var referenceParts = [];
+    var campaign = attribution.utm_campaign || attribution.origem || '';
+    if (campaign) referenceParts.push(campaign);
+    if (attribution.utm_content) referenceParts.push(attribution.utm_content);
+    referenceParts.push(originalReference);
+    return referenceParts.join('-');
+  }
+
+  function updateWhatsAppLink(link, attribution) {
+    if (!link.matches('a[data-track="whatsapp"]')) return;
+    try {
+      var url = new URL(link.href, window.location.href);
+      var message = url.searchParams.get('text');
+      if (!message) return;
+
+      var originalReference = getOriginalReference(link, message);
+      if (!originalReference) return;
+
+      var reference = buildReference(attribution, originalReference);
+      var updatedMessage = message.replace(/(\bRef\.\s*)[A-Za-z0-9_-]{1,80}(?=\s|$)/i, '$1' + reference);
+      if (updatedMessage === message) return;
+      url.searchParams.set('text', updatedMessage);
+      link.href = url.toString();
+    } catch (error) {}
+  }
+
+  function updateAllWhatsAppLinks() {
+    var attributionFromUrl = readAttributionFromUrl();
+    if (Object.keys(attributionFromUrl).length) saveAttribution(attributionFromUrl);
+    var attribution = Object.keys(attributionFromUrl).length ? attributionFromUrl : loadStoredAttribution();
+    document.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
+      updateWhatsAppLink(link, attribution);
+    });
+  }
+
+  function observeWhatsAppCtas() {
+    if (!window.MutationObserver || !document.body) return;
+    new MutationObserver(function (mutations) {
+      var attribution = loadStoredAttribution();
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType !== 1) return;
+          if (node.matches && node.matches('a[data-track="whatsapp"]')) updateWhatsAppLink(node, attribution);
+          if (node.querySelectorAll) node.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
+            updateWhatsAppLink(link, attribution);
+          });
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
   function applyCampaignOriginCode() {
+    // A implementação anterior modificava todos os links de WhatsApp e não
+    // preservava a referência-base do CTA. Ela foi desativada em favor da
+    // rotina acima, delimitada por data-track="whatsapp".
+    return;
     var code = campaignOriginCode();
     var clickIds = clickAttributionIds();
     if (!code && !Object.keys(clickIds).length) return;
@@ -315,18 +426,16 @@
       // O listener fica no próprio link e em captura para cobrir também
       // botões flutuantes e componentes que interrompam a propagação do clique.
       link.addEventListener('click', function () {
-        applyCampaignOriginCode();
+        updateAllWhatsAppLinks();
         trackWhatsAppClick(link);
       }, true);
     });
   }
 
   function initializeWhatsAppTracking() {
-    // Mantém a referência não identificadora da campanha durante a sessão.
-    // Identificadores individuais do clique só são persistidos e anexados
-    // depois do consentimento. Dados de contato ou saúde não são incluídos.
-    applyCampaignOriginCode();
+    updateAllWhatsAppLinks();
     bindWhatsAppTracking();
+    observeWhatsAppCtas();
   }
 
   if (document.readyState === 'loading') {
@@ -335,5 +444,5 @@
     initializeWhatsAppTracking();
   }
 
-  document.addEventListener('amanda:consent-granted', applyCampaignOriginCode);
+  document.addEventListener('amanda:consent-granted', updateAllWhatsAppLinks);
 })();
