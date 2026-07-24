@@ -235,18 +235,27 @@
   // códigos neutros de marketing.
   var marketingAttributionStorageKey = 'amanda_marketing_attribution';
   var marketingAttributionParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'origem'];
+  var marketingClickIdParams = ['gclid', 'gbraid', 'wbraid'];
 
   function sanitizeTrackingValue(value) {
     value = typeof value === 'string' ? value.trim() : '';
     return /^[A-Za-z0-9_-]{1,80}$/.test(value) ? value : '';
   }
 
+  function sanitizeMarketingAttributionValue(param, value) {
+    if (marketingClickIdParams.indexOf(param) !== -1) {
+      // Click IDs are case-sensitive and must remain unchanged.
+      return typeof value === 'string' && value ? value : '';
+    }
+    return sanitizeTrackingValue(value);
+  }
+
   function readAttributionFromUrl() {
     var attribution = {};
     try {
       var searchParams = new URLSearchParams(window.location.search);
-      marketingAttributionParams.forEach(function (param) {
-        var value = sanitizeTrackingValue(searchParams.get(param) || '');
+      marketingAttributionParams.concat(marketingClickIdParams).forEach(function (param) {
+        var value = sanitizeMarketingAttributionValue(param, searchParams.get(param));
         if (value) attribution[param] = value;
       });
     } catch (error) {}
@@ -255,7 +264,12 @@
 
   function saveAttribution(attribution) {
     if (!Object.keys(attribution).length) return;
-    try { sessionStorage.setItem(marketingAttributionStorageKey, JSON.stringify(attribution)); }
+    var mergedAttribution = loadStoredAttribution();
+    Object.keys(attribution).forEach(function (param) {
+      // An absent parameter never removes an ID already captured in this session.
+      if (attribution[param]) mergedAttribution[param] = attribution[param];
+    });
+    try { sessionStorage.setItem(marketingAttributionStorageKey, JSON.stringify(mergedAttribution)); }
     catch (error) {}
   }
 
@@ -264,8 +278,8 @@
       var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
       if (!stored || typeof stored !== 'object') return {};
       var attribution = {};
-      marketingAttributionParams.forEach(function (param) {
-        var value = sanitizeTrackingValue(stored[param]);
+      marketingAttributionParams.concat(marketingClickIdParams).forEach(function (param) {
+        var value = sanitizeMarketingAttributionValue(param, stored[param]);
         if (value) attribution[param] = value;
       });
       return attribution;
@@ -274,13 +288,19 @@
     }
   }
 
-  function getOriginalReference(link, message) {
+  function getOriginalReference(link, message, attribution) {
     var originalReference = sanitizeTrackingValue(link.dataset.originalReference || '');
     if (originalReference) return originalReference;
 
     var referenceMatch = message.match(/\bRef\.\s*([A-Za-z0-9_-]{1,80})(?=\s|$)/i);
     if (!referenceMatch) return '';
     originalReference = sanitizeTrackingValue(referenceMatch[1]);
+    var attributionPrefix = [attribution.utm_campaign || attribution.origem || '', attribution.utm_content || '']
+      .filter(function (value) { return !!value; })
+      .join('-');
+    if (attributionPrefix && originalReference.indexOf(attributionPrefix + '-') === 0) {
+      originalReference = originalReference.slice(attributionPrefix.length + 1);
+    }
     if (originalReference) link.dataset.originalReference = originalReference;
     return originalReference;
   }
@@ -301,11 +321,16 @@
       var message = url.searchParams.get('text');
       if (!message) return;
 
-      var originalReference = getOriginalReference(link, message);
+      var originalReference = getOriginalReference(link, message, attribution);
       if (!originalReference) return;
 
       var reference = buildReference(attribution, originalReference);
-      var updatedMessage = message.replace(/(\bRef\.\s*)[A-Za-z0-9_-]{1,80}(?=\s|$)/i, '$1' + reference);
+      var updatedMessage = message
+        .replace(/(?:\r?\n)+(?:GCLID|GBRAID|WBRAID):[^\r\n]*/gi, '')
+        .replace(/(\bRef\.\s*)[A-Za-z0-9_-]{1,80}(?=\s|$)/i, '$1' + reference);
+      marketingClickIdParams.forEach(function (param) {
+        if (attribution[param]) updatedMessage += '\n' + param.toUpperCase() + ': ' + attribution[param];
+      });
       if (updatedMessage === message) return;
       url.searchParams.set('text', updatedMessage);
       link.href = url.toString();
@@ -315,7 +340,7 @@
   function updateAllWhatsAppLinks() {
     var attributionFromUrl = readAttributionFromUrl();
     if (Object.keys(attributionFromUrl).length) saveAttribution(attributionFromUrl);
-    var attribution = Object.keys(attributionFromUrl).length ? attributionFromUrl : loadStoredAttribution();
+    var attribution = loadStoredAttribution();
     document.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
       updateWhatsAppLink(link, attribution);
     });
