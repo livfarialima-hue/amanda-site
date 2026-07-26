@@ -3,6 +3,10 @@ import {
   normalizeAutomationMode,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
+import {
+  normalizeDuplicateReason,
+  shouldSuppressAutomationForDuplicate,
+} from "./lib/lead-deduplication.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -372,6 +376,7 @@ async function deliverLead(lead) {
         duplicate:
           responseData?.duplicate === true ||
           isDuplicateConfirmation(responseData),
+        duplicateReason: normalizeDuplicateReason(responseData),
         inserted: responseData?.inserted === true,
       });
     }
@@ -471,8 +476,10 @@ export default async (request) => {
   const contactAt = message.sendTime || payload.createTime;
   const text = String(message.text?.body || "");
   const attribution = classifyAttribution(payload, message, text);
+  const messageId = message.wamid || message.id || eventId;
   const lead = {
     eventId: String(eventId),
+    messageId: String(messageId),
     phone,
     reference: attribution.reference,
     platform: attribution.platform,
@@ -482,10 +489,10 @@ export default async (request) => {
   if (contactAt) lead.contactAt = String(contactAt);
 
   const delivery = await deliverLead(lead);
-  const automationPlan = delivery.duplicate
+  const automationPlan = shouldSuppressAutomationForDuplicate(delivery)
     ? {
         route: "ignored_duplicate",
-        reason: "event_already_recorded",
+        reason: "message_already_processed",
         replyCode: null,
         professional: null,
         procedure: null,
@@ -511,6 +518,7 @@ export default async (request) => {
       referenceCategory: attribution.referenceCategory,
       leadDelivery: delivery.ok ? "success" : "failure",
       leadDuplicate: delivery.duplicate === true,
+      leadDuplicateReason: delivery.duplicateReason,
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
       automationMode,
@@ -538,6 +546,7 @@ export default async (request) => {
     received: true,
     leadRecorded: true,
     duplicate: delivery.duplicate === true,
+    duplicateReason: delivery.duplicateReason,
     automation: {
       mode: automationMode,
       route: automationPlan.route,

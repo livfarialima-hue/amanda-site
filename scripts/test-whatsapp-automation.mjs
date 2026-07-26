@@ -3,6 +3,10 @@ import {
   normalizeAutomationMode,
   planAutomation,
 } from "../netlify/functions/lib/whatsapp-automation.mjs";
+import {
+  normalizeDuplicateReason,
+  shouldSuppressAutomationForDuplicate,
+} from "../netlify/functions/lib/lead-deduplication.mjs";
 
 const cases = [
   {
@@ -83,4 +87,37 @@ assert.equal(normalizeAutomationMode(), "shadow");
 assert.equal(normalizeAutomationMode("ACTIVE"), "active");
 assert.equal(normalizeAutomationMode("invalid"), "shadow");
 
-console.log(`whatsapp automation: ${cases.length} cases passed`);
+assert.equal(
+  normalizeDuplicateReason({ duplicateReason: "message_id" }),
+  "message_id",
+);
+assert.equal(
+  normalizeDuplicateReason({ duplicateReason: "phone_window" }),
+  "phone_window",
+);
+assert.equal(
+  normalizeDuplicateReason({ duplicateReason: "unexpected" }),
+  null,
+);
+assert.equal(
+  shouldSuppressAutomationForDuplicate({
+    duplicate: true,
+    duplicateReason: "message_id",
+  }),
+  true,
+);
+assert.equal(
+  shouldSuppressAutomationForDuplicate({
+    duplicate: true,
+    duplicateReason: "phone_window",
+  }),
+  false,
+);
+assert.equal(
+  shouldSuppressAutomationForDuplicate({ duplicate: false }),
+  false,
+);
+
+console.log(
+  `whatsapp automation: ${cases.length} routing cases passed`,
+);
