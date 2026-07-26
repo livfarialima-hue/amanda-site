@@ -1,4 +1,8 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import {
+  normalizeAutomationMode,
+  planAutomation,
+} from "./lib/whatsapp-automation.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -293,8 +297,8 @@ const SAFE_DOWNSTREAM_ERROR_CODES = new Set([
   "internal_error_unknown",
 ]);
 
-function deliveryResult(ok, httpStatus, errorCode) {
-  return { ok, httpStatus, errorCode };
+function deliveryResult(ok, httpStatus, errorCode, details = {}) {
+  return { ok, httpStatus, errorCode, ...details };
 }
 
 function safeDownstreamErrorCode(data) {
@@ -364,7 +368,12 @@ async function deliverLead(lead) {
       (response.ok && responseData?.ok === true) ||
       (httpStatus < 500 && isDuplicateConfirmation(responseData))
     ) {
-      return deliveryResult(true, httpStatus, "none");
+      return deliveryResult(true, httpStatus, "none", {
+        duplicate:
+          responseData?.duplicate === true ||
+          isDuplicateConfirmation(responseData),
+        inserted: responseData?.inserted === true,
+      });
     }
 
     if (responseData?.ok === false) {
@@ -391,6 +400,9 @@ async function deliverLead(lead) {
 
 export default async (request) => {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
+  const automationMode = normalizeAutomationMode(
+    process.env.WHATSAPP_AUTOMATION_MODE,
+  );
 
   if (request.method === "GET") {
     return json({
@@ -404,6 +416,7 @@ export default async (request) => {
       sheetsSecretConfigured: Boolean(
         process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
       ),
+      automationMode,
     });
   }
 
@@ -469,6 +482,21 @@ export default async (request) => {
   if (contactAt) lead.contactAt = String(contactAt);
 
   const delivery = await deliverLead(lead);
+  const automationPlan = delivery.duplicate
+    ? {
+        route: "ignored_duplicate",
+        reason: "event_already_recorded",
+        replyCode: null,
+        professional: null,
+        procedure: null,
+        automaticAllowed: false,
+      }
+    : planAutomation({
+        text,
+        messageType: message.type,
+        reference: attribution.reference,
+        platform: attribution.platform,
+      });
 
   console.log(
     JSON.stringify({
@@ -482,8 +510,15 @@ export default async (request) => {
       hasReferral: Boolean(message.referral),
       referenceCategory: attribution.referenceCategory,
       leadDelivery: delivery.ok ? "success" : "failure",
+      leadDuplicate: delivery.duplicate === true,
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
+      automationMode,
+      automationRoute: automationPlan.route,
+      automationReason: automationPlan.reason,
+      automationReplyCode: automationPlan.replyCode,
+      automationProfessional: automationPlan.professional,
+      automationProcedure: automationPlan.procedure,
     }),
   );
 
@@ -499,7 +534,16 @@ export default async (request) => {
     );
   }
 
-  return json({ received: true, leadRecorded: true });
+  return json({
+    received: true,
+    leadRecorded: true,
+    duplicate: delivery.duplicate === true,
+    automation: {
+      mode: automationMode,
+      route: automationPlan.route,
+      replyCode: automationPlan.replyCode,
+    },
+  });
 };
 
 export const config = {
