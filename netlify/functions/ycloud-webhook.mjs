@@ -211,7 +211,7 @@ function classifyAttribution(payload, message, text) {
   if (referralIsMeta || hasMetaCode) {
     platform = "Meta";
   } else if (hasGoogleCode || hasGoogleClickId) {
-    platform = "Google Ads";
+    platform = "Google";
   } else if (
     hasSiteCtaCode ||
     referenceValue === "SITE-ORGANICO-SEM-CODIGO"
