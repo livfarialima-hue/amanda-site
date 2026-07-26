@@ -265,6 +265,29 @@ function isDuplicateConfirmation(data) {
   );
 }
 
+const SAFE_DOWNSTREAM_ERROR_CODES = new Set([
+  "unauthorized",
+  "unsupported_action",
+  "internal_error",
+]);
+
+function deliveryResult(ok, httpStatus, errorCode) {
+  return { ok, httpStatus, errorCode };
+}
+
+function safeDownstreamErrorCode(data) {
+  const candidates = [data?.error, data?.errorCode, data?.code];
+
+  for (const candidate of candidates) {
+    if (typeof candidate !== "string") continue;
+
+    const normalized = candidate.trim().toLowerCase();
+    if (SAFE_DOWNSTREAM_ERROR_CODES.has(normalized)) return normalized;
+  }
+
+  return null;
+}
+
 async function readResponseTextSafely(response, maxBytes = 100_000) {
   if (!response.body) return "";
 
@@ -300,7 +323,9 @@ async function deliverLead(lead) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   const secret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET;
 
-  if (!url || !secret) return false;
+  if (!url || !secret) {
+    return deliveryResult(false, null, "configuration_missing");
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 4500);
@@ -320,23 +345,45 @@ async function deliverLead(lead) {
       signal: controller.signal,
     });
 
+    const httpStatus = response.status;
     const responseText = await readResponseTextSafely(response);
-    let responseData = null;
 
-    if (responseText !== null) {
-      try {
-        responseData = JSON.parse(responseText);
-      } catch {
-        responseData = null;
-      }
+    if (responseText === null) {
+      return deliveryResult(false, httpStatus, "invalid_response");
     }
 
-    return (
+    let responseData;
+
+    try {
+      responseData = JSON.parse(responseText);
+    } catch {
+      return deliveryResult(false, httpStatus, "invalid_response");
+    }
+
+    if (
       (response.ok && responseData?.ok === true) ||
-      (response.status < 500 && isDuplicateConfirmation(responseData))
-    );
-  } catch {
-    return false;
+      (httpStatus < 500 && isDuplicateConfirmation(responseData))
+    ) {
+      return deliveryResult(true, httpStatus, "none");
+    }
+
+    if (responseData?.ok === false) {
+      const errorCode = safeDownstreamErrorCode(responseData);
+
+      return deliveryResult(
+        false,
+        httpStatus,
+        errorCode || "unconfirmed_response",
+      );
+    }
+
+    return deliveryResult(false, httpStatus, "unconfirmed_response");
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      return deliveryResult(false, null, "timeout");
+    }
+
+    return deliveryResult(false, null, "request_failed");
   } finally {
     clearTimeout(timeout);
   }
@@ -421,7 +468,7 @@ export default async (request) => {
 
   if (contactAt) lead.contactAt = String(contactAt);
 
-  const leadRecorded = await deliverLead(lead);
+  const delivery = await deliverLead(lead);
 
   console.log(
     JSON.stringify({
@@ -434,13 +481,20 @@ export default async (request) => {
       platform: attribution.platform,
       hasReferral: Boolean(message.referral),
       referenceCategory: attribution.referenceCategory,
-      leadDelivery: leadRecorded ? "success" : "failure",
+      leadDelivery: delivery.ok ? "success" : "failure",
+      downstreamStatus: delivery.httpStatus,
+      downstreamError: delivery.errorCode,
     }),
   );
 
-  if (!leadRecorded) {
+  if (!delivery.ok) {
     return json(
-      { received: false, error: "lead_delivery_failed" },
+      {
+        received: false,
+        error: "lead_delivery_failed",
+        downstreamStatus: delivery.httpStatus,
+        downstreamError: delivery.errorCode,
+      },
       502,
     );
   }
