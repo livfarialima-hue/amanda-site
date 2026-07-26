@@ -300,37 +300,6 @@ function safeDownstreamErrorCode(data) {
   return null;
 }
 
-async function readResponseTextSafely(response, maxBytes = 100_000) {
-  if (!response.body) return "";
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let bytesRead = 0;
-  let result = "";
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      bytesRead += value.byteLength;
-
-      if (bytesRead > maxBytes) {
-        await reader.cancel();
-        return null;
-      }
-
-      result += decoder.decode(value, { stream: true });
-    }
-
-    return result + decoder.decode();
-  } catch {
-    return null;
-  } finally {
-    reader.releaseLock();
-  }
-}
-
 async function deliverLead(lead) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   const secret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET;
@@ -358,10 +327,15 @@ async function deliverLead(lead) {
     });
 
     const httpStatus = response.status;
-    const responseText = await readResponseTextSafely(response);
+    const contentType = response.headers.get("content-type") || "";
+    const responseText = await response.text();
 
-    if (responseText === null) {
-      return deliveryResult(false, httpStatus, "invalid_response");
+    if (responseText.length > 100_000) {
+      return deliveryResult(false, httpStatus, "response_too_large");
+    }
+
+    if (!responseText.trim()) {
+      return deliveryResult(false, httpStatus, "empty_response");
     }
 
     let responseData;
@@ -369,7 +343,11 @@ async function deliverLead(lead) {
     try {
       responseData = JSON.parse(responseText);
     } catch {
-      return deliveryResult(false, httpStatus, "invalid_response");
+      const errorCode = contentType.toLowerCase().includes("text/html")
+        ? "html_response"
+        : "invalid_json_response";
+
+      return deliveryResult(false, httpStatus, errorCode);
     }
 
     if (
