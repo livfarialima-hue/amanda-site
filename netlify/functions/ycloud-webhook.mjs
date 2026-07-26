@@ -268,6 +268,7 @@ function isDuplicateConfirmation(data) {
 const SAFE_DOWNSTREAM_ERROR_CODES = new Set([
   "unauthorized",
   "unsupported_action",
+  "busy_retry",
   "internal_error",
   "internal_error_parse_body",
   "internal_error_normalize_lead",
