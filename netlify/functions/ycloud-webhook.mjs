@@ -269,6 +269,18 @@ const SAFE_DOWNSTREAM_ERROR_CODES = new Set([
   "unauthorized",
   "unsupported_action",
   "internal_error",
+  "internal_error_parse_body",
+  "internal_error_normalize_lead",
+  "internal_error_acquire_lock",
+  "internal_error_open_spreadsheet",
+  "internal_error_find_sheet",
+  "internal_error_assert_headers",
+  "internal_error_duplicate_check",
+  "internal_error_find_row",
+  "internal_error_prepare_row",
+  "internal_error_write_row",
+  "internal_error_flush",
+  "internal_error_unknown",
 ]);
 
 function deliveryResult(ok, httpStatus, errorCode) {
