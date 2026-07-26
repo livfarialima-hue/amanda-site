@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
-  URGENT_FIXED_REPLY,
   createSafetyIdentifier,
   parseOpenAIShadowResponse,
   runOpenAIShadow,
@@ -112,15 +111,21 @@ test("OpenAI failure does not throw to the webhook caller", async () => {
   );
 });
 
-test("urgency replaces the generated text with the fixed reply", () => {
+test("urgency forces silent human review without a patient reply", () => {
   const result = parseOpenAIShadowResponse(
     validResponse(validDecision({ urgent: true })),
     "fallback-model",
   );
 
   assert.equal(result.status, "completed");
-  assert.equal(result.decision.route, "urgent_fixed_reply");
-  assert.equal(result.decision.suggestedReply, URGENT_FIXED_REPLY);
+  assert.equal(result.decision.route, "human_review");
+  assert.equal(result.decision.automaticAllowed, false);
+  assert.equal(result.decision.replyCode, "ALERT-URG-01");
+  assert.equal(result.decision.suggestedReply, "");
+  assert.equal(
+    result.decision.reviewReason,
+    "possible_urgent_symptoms",
+  );
 });
 
 test("only OpenAI is called and the request omits the raw phone", async () => {
@@ -161,6 +166,7 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
     GOOGLE_SHEETS_WEBHOOK_SECRET: process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     WHATSAPP_AUTOMATION_MODE: process.env.WHATSAPP_AUTOMATION_MODE,
+    WHATSAPP_ALERT_NUMBER: process.env.WHATSAPP_ALERT_NUMBER,
   };
   const originalFetch = globalThis.fetch;
   const originalLog = console.log;
@@ -171,6 +177,7 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
   process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
   process.env.OPENAI_API_KEY = "openai-test-key";
   process.env.WHATSAPP_AUTOMATION_MODE = "shadow";
+  delete process.env.WHATSAPP_ALERT_NUMBER;
   console.log = () => {};
   globalThis.fetch = async (url) => {
     requests.push(url);
@@ -234,6 +241,7 @@ test("phone_window duplicate runs shadow AI but event_id duplicate does not", as
     GOOGLE_SHEETS_WEBHOOK_SECRET: process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     WHATSAPP_AUTOMATION_MODE: process.env.WHATSAPP_AUTOMATION_MODE,
+    WHATSAPP_ALERT_NUMBER: process.env.WHATSAPP_ALERT_NUMBER,
   };
   const originalFetch = globalThis.fetch;
   const originalLog = console.log;
@@ -245,6 +253,7 @@ test("phone_window duplicate runs shadow AI but event_id duplicate does not", as
   process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
   process.env.OPENAI_API_KEY = "openai-test-key";
   process.env.WHATSAPP_AUTOMATION_MODE = "shadow";
+  delete process.env.WHATSAPP_ALERT_NUMBER;
   console.log = () => {};
   globalThis.fetch = async (url) => {
     if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {

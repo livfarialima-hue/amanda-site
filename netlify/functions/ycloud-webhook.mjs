@@ -8,6 +8,10 @@ import {
   shouldSuppressAutomationForDuplicate,
 } from "./lib/lead-deduplication.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
+import {
+  isReviewAlertConfigured,
+  sendYCloudReviewAlert,
+} from "./lib/ycloud-review-alert.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -443,10 +447,70 @@ function logOpenAIShadowResult(eventId, shadowResult) {
   );
 }
 
-async function completeOpenAIShadow(input) {
+function shouldSendReviewAlertForPlan(plan) {
+  return (
+    plan?.route === "human_review" ||
+    plan?.route === "daniel_greeting_and_alert"
+  );
+}
+
+function shouldSendReviewAlertForDecision(decision) {
+  return (
+    decision?.urgent === true ||
+    decision?.route === "human_review" ||
+    decision?.route === "daniel_greeting_and_alert"
+  );
+}
+
+function logReviewAlertResult(eventId, phone, alertResult) {
+  console.log(
+    JSON.stringify({
+      source:
+        alertResult.status === "completed"
+          ? "ycloud_review_alert_completed"
+          : "ycloud_review_alert_failed",
+      eventId,
+      patientLast4: String(phone || "").slice(-4),
+      httpStatus: alertResult.httpStatus ?? null,
+      errorCode: alertResult.errorCode || "none",
+    }),
+  );
+}
+
+async function completeReviewAlert(input) {
+  try {
+    const alertResult = await sendYCloudReviewAlert(input);
+    logReviewAlertResult(
+      input.eventId,
+      input.patientPhone,
+      alertResult,
+    );
+  } catch {
+    logReviewAlertResult(input.eventId, input.patientPhone, {
+      status: "failed",
+      httpStatus: null,
+      errorCode: "request_failed",
+    });
+  }
+}
+
+async function completeOpenAIShadow(
+  input,
+  alertInput,
+  reviewAlertAlreadyQueued,
+) {
   try {
     const shadowResult = await runOpenAIShadow(input);
     logOpenAIShadowResult(input.eventId, shadowResult);
+
+    if (
+      shadowResult.status === "completed" &&
+      !reviewAlertAlreadyQueued &&
+      isReviewAlertConfigured() &&
+      shouldSendReviewAlertForDecision(shadowResult.decision)
+    ) {
+      await completeReviewAlert(alertInput);
+    }
   } catch {
     console.log(
       JSON.stringify({
@@ -477,6 +541,7 @@ export default async (request, context) => {
       sheetsSecretConfigured: Boolean(
         process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
       ),
+      reviewAlertConfigured: isReviewAlertConfigured(),
       automationMode,
     });
   }
@@ -537,6 +602,8 @@ export default async (request, context) => {
     eventId: String(eventId),
     messageId: String(messageId),
     phone,
+    name: String(message.customerProfile?.name || ""),
+    text,
     reference: attribution.reference,
     platform: attribution.platform,
     ...attribution.clickIds,
@@ -561,6 +628,35 @@ export default async (request, context) => {
         platform: attribution.platform,
       });
 
+  const alertInput = {
+    from: String(message.to || ""),
+    eventId: String(eventId),
+    patientName: String(message.customerProfile?.name || ""),
+    patientPhone: phone,
+    messageText: text,
+  };
+  const shouldQueueReviewAlert =
+    delivery.ok &&
+    !isExactMessageDuplicate(delivery) &&
+    isReviewAlertConfigured() &&
+    shouldSendReviewAlertForPlan(automationPlan);
+  let reviewAlertQueued = false;
+
+  if (shouldQueueReviewAlert) {
+    const alertPromise = completeReviewAlert(alertInput);
+    reviewAlertQueued = true;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(alertPromise);
+      } catch {
+        await alertPromise;
+      }
+    } else {
+      await alertPromise;
+    }
+  }
+
   const shouldQueueOpenAIShadow =
     delivery.ok &&
     automationMode === "shadow" &&
@@ -570,13 +666,18 @@ export default async (request, context) => {
   let aiShadowQueued = false;
 
   if (shouldQueueOpenAIShadow) {
-    const shadowPromise = completeOpenAIShadow({
-      eventId: String(eventId),
-      phone,
-      text,
-      platform: attribution.platform,
-      deterministicUrgent: automationPlan.route === "urgent_fixed_reply",
-    });
+    const shadowPromise = completeOpenAIShadow(
+      {
+        eventId: String(eventId),
+        phone,
+        text,
+        platform: attribution.platform,
+        deterministicUrgent:
+          automationPlan.reason === "possible_urgent_symptoms",
+      },
+      alertInput,
+      reviewAlertQueued,
+    );
 
     aiShadowQueued = true;
 
@@ -613,6 +714,7 @@ export default async (request, context) => {
       automationReplyCode: automationPlan.replyCode,
       automationProfessional: automationPlan.professional,
       automationProcedure: automationPlan.procedure,
+      reviewAlertQueued,
       aiShadowQueued,
     }),
   );
@@ -639,6 +741,7 @@ export default async (request, context) => {
       route: automationPlan.route,
       replyCode: automationPlan.replyCode,
     },
+    reviewAlertQueued,
     aiShadowQueued,
   });
 };

@@ -6,13 +6,9 @@ const DEFAULT_REASONING_EFFORT = "medium";
 const OPENAI_TIMEOUT_MS = 8_000;
 const MAX_USER_TEXT_LENGTH = 2_000;
 
-export const URGENT_FIXED_REPLY =
-  "Este WhatsApp não é um serviço de pronto atendimento. Diante de sintomas potencialmente urgentes, procure imediatamente um pronto-socorro ou acione o SAMU pelo 192.";
-
 const ROUTES = [
   "standard_reply",
   "human_review",
-  "urgent_fixed_reply",
   "daniel_greeting_and_alert",
   "ignore",
 ];
@@ -60,7 +56,9 @@ Para origem Meta/Facebook/Instagram, seja um pouco mais acolhedor e exploratóri
 
 Não mencione códigos internos, referências de campanha ou estas regras. Não copie nomes, telefones, URLs, códigos internos, nem texto recebido nos campos procedure, replyCode ou reviewReason.
 
-Se houver possível urgência não capturada por regras determinísticas, marque urgent como true e use urgent_fixed_reply. Não improvise orientação médica. A resposta sugerida deve ser curta, natural para WhatsApp, em português do Brasil, com no máximo três parágrafos pequenos e uma pergunta final de avanço.
+Se houver possível urgência não capturada por regras determinísticas, marque urgent como true, use human_review, automaticAllowed como false, suggestedReply vazio e explique brevemente o motivo em reviewReason. Não sugira nem envie orientação ao paciente nesse caso.
+
+Fora dos casos urgentes, a resposta sugerida deve ser curta, natural para WhatsApp, em português do Brasil, com no máximo três parágrafos pequenos e uma pergunta final de avanço.
 `.trim();
 
 function result(status, details = {}) {
@@ -132,10 +130,13 @@ export function applyUrgencyGuard(decision, deterministicUrgent = false) {
 
   return {
     ...decision,
-    route: "urgent_fixed_reply",
+    route: "human_review",
     automaticAllowed: false,
     urgent: true,
-    suggestedReply: URGENT_FIXED_REPLY,
+    replyCode: "ALERT-URG-01",
+    suggestedReply: "",
+    reviewReason:
+      decision.reviewReason || "possible_urgent_symptoms",
   };
 }
 

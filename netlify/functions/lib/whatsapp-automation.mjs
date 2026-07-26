@@ -192,12 +192,12 @@ export function planAutomation({
 
   if (matchesAny(normalizedText, URGENT_PATTERNS)) {
     return {
-      route: "urgent_fixed_reply",
+      route: "human_review",
       reason: "possible_urgent_symptoms",
-      replyCode: "SAFE-URG-01",
+      replyCode: "ALERT-URG-01",
       professional: null,
       procedure: procedure?.key || null,
-      automaticAllowed: true,
+      automaticAllowed: false,
     };
   }
 
