@@ -112,6 +112,10 @@ test("manual SMB echo marks takeover and suppresses later AI for the day", async
     assert.equal(echoBody.takeoverCreated, true);
     assert.equal(sheetActions[0].action, "mark_human_takeover");
     assert.equal(sheetActions[0].takeover.phone, PATIENT_PHONE);
+    assert.equal(
+      sheetActions[0].takeover.text,
+      "Assumi a conversa",
+    );
 
     const inboundResponse = await webhook(
       signedRequest({

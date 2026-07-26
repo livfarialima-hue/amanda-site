@@ -631,6 +631,7 @@ export default async (request, context) => {
       messageId: String(messageId),
       phone: patientPhone,
       takenAt: String(echo.sendTime || echo.createTime || payload.createTime || ""),
+      text: String(echo.text?.body || ""),
     });
 
     console.log(
