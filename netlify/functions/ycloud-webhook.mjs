@@ -284,12 +284,19 @@ const SAFE_DOWNSTREAM_ERROR_CODES = new Set([
   "busy_retry",
   "internal_error",
   "internal_error_parse_body",
+  "internal_error_normalize_takeover",
   "internal_error_normalize_lead",
   "internal_error_acquire_lock",
   "internal_error_open_spreadsheet",
   "internal_error_find_sheet",
   "internal_error_assert_headers",
+  "internal_error_event_sheet",
+  "internal_error_takeover_sheet",
+  "internal_error_record_takeover",
+  "internal_error_human_takeover_check",
   "internal_error_duplicate_check",
+  "internal_error_phone_lookup",
+  "internal_error_enrich_existing",
   "internal_error_find_row",
   "internal_error_prepare_row",
   "internal_error_write_row",
@@ -323,7 +330,7 @@ function safeDownstreamErrorCode(data) {
   return null;
 }
 
-async function deliverLead(lead) {
+async function deliverSheetsAction(action, payload) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   const secret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET;
 
@@ -342,8 +349,8 @@ async function deliverLead(lead) {
       },
       body: JSON.stringify({
         secret,
-        action: "append_lead",
-        lead,
+        action,
+        ...payload,
       }),
       redirect: "follow",
       signal: controller.signal,
@@ -378,12 +385,7 @@ async function deliverLead(lead) {
       (httpStatus < 500 && isDuplicateConfirmation(responseData))
     ) {
       return deliveryResult(true, httpStatus, "none", {
-        duplicate:
-          responseData?.duplicate === true ||
-          isDuplicateConfirmation(responseData),
-        duplicateReason: normalizeDuplicateReason(responseData),
-        inserted: responseData?.inserted === true,
-        updated: responseData?.updated === true,
+        responseData,
       });
     }
 
@@ -407,6 +409,38 @@ async function deliverLead(lead) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function deliverLead(lead) {
+  const result = await deliverSheetsAction("append_lead", { lead });
+
+  if (!result.ok) return result;
+
+  const responseData = result.responseData;
+
+  return deliveryResult(true, result.httpStatus, "none", {
+    duplicate:
+      responseData?.duplicate === true ||
+      isDuplicateConfirmation(responseData),
+    duplicateReason: normalizeDuplicateReason(responseData),
+    inserted: responseData?.inserted === true,
+    updated: responseData?.updated === true,
+    humanTakeoverToday: responseData?.humanTakeoverToday === true,
+  });
+}
+
+async function recordHumanTakeover(takeover) {
+  const result = await deliverSheetsAction(
+    "mark_human_takeover",
+    { takeover },
+  );
+
+  if (!result.ok) return result;
+
+  return deliveryResult(true, result.httpStatus, "none", {
+    marked: result.responseData?.marked === true,
+    created: result.responseData?.created === true,
+  });
 }
 
 function isExactMessageDuplicate(delivery) {
@@ -578,6 +612,60 @@ export default async (request, context) => {
     return json({ ok: false, error: "invalid_json" }, 400);
   }
 
+  if (payload.type === "whatsapp.smb.message.echoes") {
+    const echo = payload.whatsappMessage || {};
+    const patientPhone = normalizePhone(echo.to);
+    const eventId = payload.id || echo.id || echo.wamid;
+    const messageId = echo.wamid || echo.id || eventId;
+
+    if (!patientPhone) {
+      return json({ received: false, error: "invalid_phone" }, 400);
+    }
+
+    if (!eventId || !messageId) {
+      return json({ received: false, error: "missing_event_id" }, 400);
+    }
+
+    const takeoverDelivery = await recordHumanTakeover({
+      eventId: String(eventId),
+      messageId: String(messageId),
+      phone: patientPhone,
+      takenAt: String(echo.sendTime || echo.createTime || payload.createTime || ""),
+    });
+
+    console.log(
+      JSON.stringify({
+        source: "ycloud_human_takeover",
+        eventId: String(eventId),
+        eventType: payload.type,
+        messageId: String(messageId),
+        patientLast4: patientPhone.slice(-4),
+        takeoverDelivery: takeoverDelivery.ok ? "success" : "failure",
+        takeoverCreated: takeoverDelivery.created === true,
+        downstreamStatus: takeoverDelivery.httpStatus,
+        downstreamError: takeoverDelivery.errorCode,
+      }),
+    );
+
+    if (!takeoverDelivery.ok) {
+      return json(
+        {
+          received: false,
+          error: "takeover_delivery_failed",
+          downstreamStatus: takeoverDelivery.httpStatus,
+          downstreamError: takeoverDelivery.errorCode,
+        },
+        502,
+      );
+    }
+
+    return json({
+      received: true,
+      humanTakeoverRecorded: true,
+      takeoverCreated: takeoverDelivery.created === true,
+    });
+  }
+
   if (payload.type !== "whatsapp.inbound_message.received") {
     return json({ received: true, ignored: true });
   }
@@ -613,7 +701,16 @@ export default async (request, context) => {
   if (contactAt) lead.contactAt = String(contactAt);
 
   const delivery = await deliverLead(lead);
-  const automationPlan = shouldSuppressAutomationForDuplicate(delivery)
+  const automationPlan = delivery.humanTakeoverToday
+    ? {
+        route: "human_takeover_active",
+        reason: "manual_reply_today",
+        replyCode: "HUMAN-DAY-01",
+        professional: null,
+        procedure: null,
+        automaticAllowed: false,
+      }
+    : shouldSuppressAutomationForDuplicate(delivery)
     ? {
         route: "ignored_duplicate",
         reason: "message_already_processed",
@@ -660,6 +757,7 @@ export default async (request, context) => {
 
   const shouldQueueOpenAIShadow =
     delivery.ok &&
+    !delivery.humanTakeoverToday &&
     automationMode === "shadow" &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
@@ -709,6 +807,7 @@ export default async (request, context) => {
       leadDuplicateReason: delivery.duplicateReason,
       leadInserted: delivery.inserted === true,
       leadUpdated: delivery.updated === true,
+      humanTakeoverToday: delivery.humanTakeoverToday === true,
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
       automationMode,
@@ -739,6 +838,7 @@ export default async (request, context) => {
     leadRecorded: true,
     leadInserted: delivery.inserted === true,
     leadUpdated: delivery.updated === true,
+    humanTakeoverToday: delivery.humanTakeoverToday === true,
     duplicate: delivery.duplicate === true,
     duplicateReason: delivery.duplicateReason,
     automation: {
