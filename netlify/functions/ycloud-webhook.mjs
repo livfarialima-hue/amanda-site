@@ -7,6 +7,7 @@ import {
   normalizeDuplicateReason,
   shouldSuppressAutomationForDuplicate,
 } from "./lib/lead-deduplication.mjs";
+import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -403,7 +404,62 @@ async function deliverLead(lead) {
   }
 }
 
-export default async (request) => {
+function isExactMessageDuplicate(delivery) {
+  return (
+    delivery?.duplicate === true &&
+    ["event_id", "message_id"].includes(delivery.duplicateReason)
+  );
+}
+
+function logOpenAIShadowResult(eventId, shadowResult) {
+  if (shadowResult.status === "completed") {
+    console.log(
+      JSON.stringify({
+        source: "openai_shadow_completed",
+        eventId,
+        model: shadowResult.model,
+        route: shadowResult.decision.route,
+        confidence: shadowResult.decision.confidence,
+        automaticAllowed: shadowResult.decision.automaticAllowed,
+        urgent: shadowResult.decision.urgent,
+        professional: shadowResult.decision.professional,
+        procedure: shadowResult.decision.procedure,
+        replyCode: shadowResult.decision.replyCode,
+        suggestedReply: shadowResult.decision.suggestedReply,
+        reviewReason: shadowResult.decision.reviewReason,
+        usage: shadowResult.usage,
+      }),
+    );
+    return;
+  }
+
+  console.log(
+    JSON.stringify({
+      source: "openai_shadow_failed",
+      eventId,
+      httpStatus: shadowResult.httpStatus ?? null,
+      errorCode: shadowResult.errorCode || "unknown_failure",
+    }),
+  );
+}
+
+async function completeOpenAIShadow(input) {
+  try {
+    const shadowResult = await runOpenAIShadow(input);
+    logOpenAIShadowResult(input.eventId, shadowResult);
+  } catch {
+    console.log(
+      JSON.stringify({
+        source: "openai_shadow_failed",
+        eventId: input.eventId,
+        httpStatus: null,
+        errorCode: "request_failed",
+      }),
+    );
+  }
+}
+
+export default async (request, context) => {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const automationMode = normalizeAutomationMode(
     process.env.WHATSAPP_AUTOMATION_MODE,
@@ -505,6 +561,36 @@ export default async (request) => {
         platform: attribution.platform,
       });
 
+  const shouldQueueOpenAIShadow =
+    delivery.ok &&
+    automationMode === "shadow" &&
+    String(message.type || "").toLowerCase() === "text" &&
+    text.trim().length > 0 &&
+    !isExactMessageDuplicate(delivery);
+  let aiShadowQueued = false;
+
+  if (shouldQueueOpenAIShadow) {
+    const shadowPromise = completeOpenAIShadow({
+      eventId: String(eventId),
+      phone,
+      text,
+      platform: attribution.platform,
+      deterministicUrgent: automationPlan.route === "urgent_fixed_reply",
+    });
+
+    aiShadowQueued = true;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(shadowPromise);
+      } catch {
+        await shadowPromise;
+      }
+    } else {
+      await shadowPromise;
+    }
+  }
+
   console.log(
     JSON.stringify({
       source: "ycloud",
@@ -527,6 +613,7 @@ export default async (request) => {
       automationReplyCode: automationPlan.replyCode,
       automationProfessional: automationPlan.professional,
       automationProcedure: automationPlan.procedure,
+      aiShadowQueued,
     }),
   );
 
@@ -552,6 +639,7 @@ export default async (request) => {
       route: automationPlan.route,
       replyCode: automationPlan.replyCode,
     },
+    aiShadowQueued,
   });
 };
 
