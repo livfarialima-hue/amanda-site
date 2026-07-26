@@ -383,6 +383,7 @@ async function deliverLead(lead) {
           isDuplicateConfirmation(responseData),
         duplicateReason: normalizeDuplicateReason(responseData),
         inserted: responseData?.inserted === true,
+        updated: responseData?.updated === true,
       });
     }
 
@@ -706,6 +707,8 @@ export default async (request, context) => {
       leadDelivery: delivery.ok ? "success" : "failure",
       leadDuplicate: delivery.duplicate === true,
       leadDuplicateReason: delivery.duplicateReason,
+      leadInserted: delivery.inserted === true,
+      leadUpdated: delivery.updated === true,
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
       automationMode,
@@ -734,6 +737,8 @@ export default async (request, context) => {
   return json({
     received: true,
     leadRecorded: true,
+    leadInserted: delivery.inserted === true,
+    leadUpdated: delivery.updated === true,
     duplicate: delivery.duplicate === true,
     duplicateReason: delivery.duplicateReason,
     automation: {

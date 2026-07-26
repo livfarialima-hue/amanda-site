@@ -234,7 +234,7 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
   }
 });
 
-test("phone_window duplicate runs shadow AI but event_id duplicate does not", async () => {
+test("existing phone update runs shadow AI but exact event duplicate does not", async () => {
   const savedEnvironment = {
     YCLOUD_WEBHOOK_SECRET: process.env.YCLOUD_WEBHOOK_SECRET,
     GOOGLE_SHEETS_WEBHOOK_URL: process.env.GOOGLE_SHEETS_WEBHOOK_URL,
@@ -245,7 +245,13 @@ test("phone_window duplicate runs shadow AI but event_id duplicate does not", as
   };
   const originalFetch = globalThis.fetch;
   const originalLog = console.log;
-  let duplicateReason = "phone_window";
+  let sheetsResponse = {
+    ok: true,
+    inserted: false,
+    updated: true,
+    duplicate: false,
+    duplicateReason: null,
+  };
   let openAiCalls = 0;
 
   process.env.YCLOUD_WEBHOOK_SECRET = "webhook-test-secret";
@@ -258,11 +264,8 @@ test("phone_window duplicate runs shadow AI but event_id duplicate does not", as
   globalThis.fetch = async (url) => {
     if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
       return new Response(
-        JSON.stringify({
-          duplicate: true,
-          duplicateReason,
-        }),
-        { status: 409 },
+        JSON.stringify(sheetsResponse),
+        { status: 200 },
       );
     }
 
@@ -301,12 +304,24 @@ test("phone_window duplicate runs shadow AI but event_id duplicate does not", as
   }
 
   try {
-    const phoneWindow = await invoke("phone-window-event");
-    assert.equal(phoneWindow.aiShadowQueued, true);
+    const continuation = await invoke("existing-phone-event");
+    assert.equal(continuation.leadInserted, false);
+    assert.equal(continuation.leadUpdated, true);
+    assert.equal(continuation.duplicate, false);
+    assert.equal(continuation.aiShadowQueued, true);
     assert.equal(openAiCalls, 1);
 
-    duplicateReason = "event_id";
+    sheetsResponse = {
+      ok: true,
+      inserted: false,
+      updated: false,
+      duplicate: true,
+      duplicateReason: "event_id",
+    };
     const exactDuplicate = await invoke("event-id-duplicate");
+    assert.equal(exactDuplicate.leadInserted, false);
+    assert.equal(exactDuplicate.leadUpdated, false);
+    assert.equal(exactDuplicate.duplicate, true);
     assert.equal(exactDuplicate.aiShadowQueued, false);
     assert.equal(openAiCalls, 1);
   } finally {
