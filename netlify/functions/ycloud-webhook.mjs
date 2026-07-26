@@ -340,7 +340,7 @@ async function deliverLead(lead) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4500);
+  const timeout = setTimeout(() => controller.abort(), 8000);
 
   try {
     const response = await fetch(url, {
