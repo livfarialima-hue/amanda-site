@@ -87,6 +87,56 @@ test("YCloud failure is controlled and does not throw", async () => {
   });
 });
 
+test("health endpoint reports the final automation switches", async () => {
+  const environmentKeys = [
+    "YCLOUD_API_KEY",
+    "YCLOUD_WEBHOOK_SECRET",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_ALERT_NUMBER",
+    "WHATSAPP_APPOINTMENT_REVIEW_ENABLED",
+    "WHATSAPP_AUTOMATION_MODE",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+
+  Object.assign(process.env, {
+    YCLOUD_API_KEY: "ycloud-key",
+    YCLOUD_WEBHOOK_SECRET: "webhook-secret",
+    GOOGLE_SHEETS_WEBHOOK_URL:
+      "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-secret",
+    OPENAI_API_KEY: "openai-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    WHATSAPP_APPOINTMENT_REVIEW_ENABLED: "true",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+
+  try {
+    const response = await webhook(
+      new Request("https://example.test/webhook"),
+      {},
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.openAIConfigured, true);
+    assert.equal(body.reviewAlertConfigured, true);
+    assert.equal(body.appointmentReviewEnabled, true);
+    assert.equal(body.automationMode, "active");
+  } finally {
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  }
+});
+
 test("urgent webhook alerts Daniel and never sends to the patient", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",

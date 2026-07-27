@@ -916,7 +916,9 @@ export default async (request, context) => {
       sheetsSecretConfigured: Boolean(
         process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
       ),
+      openAIConfigured: Boolean(process.env.OPENAI_API_KEY),
       reviewAlertConfigured: isReviewAlertConfigured(),
+      appointmentReviewEnabled: isAppointmentAlertEnabled(),
       automationMode,
     });
   }
