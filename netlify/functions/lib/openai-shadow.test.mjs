@@ -154,9 +154,58 @@ test("only OpenAI is called and the request omits the raw phone", async () => {
   assert.equal(body.store, false);
   assert.equal(body.safety_identifier.includes(PHONE), false);
   assert.equal(calls[0].options.body.includes(PHONE), false);
-  assert.equal(JSON.parse(body.input).message.length, 2_000);
+  const input = JSON.parse(body.input);
+  assert.equal(input.currentMessage.length, 2_000);
+  assert.equal(input.whatsappProfileName, "");
+  assert.deepEqual(input.recentConversation, []);
   assert.equal(body.text.format.type, "json_schema");
   assert.equal(body.text.format.strict, true);
+});
+
+test("short conversation history is sent in full without the phone", async () => {
+  const calls = [];
+  const result = await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Superior",
+      platform: "WhatsApp direto",
+      patientProfileName: "Maria S.",
+      recentConversation: [
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Quero saber sobre blefaroplastia",
+        },
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "O que mais incomoda nas pálpebras?",
+        },
+      ],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  const requestBody = JSON.parse(calls[0].options.body);
+  const input = JSON.parse(requestBody.input);
+
+  assert.equal(input.currentMessage, "Superior");
+  assert.equal(input.whatsappProfileName, "Maria S.");
+  assert.equal(input.recentConversation.length, 2);
+  assert.equal(
+    input.recentConversation[1].text,
+    "O que mais incomoda nas pálpebras?",
+  );
+  assert.equal(calls[0].options.body.includes(PHONE), false);
 });
 
 test("OpenAI failure keeps the webhook successful and never sends to YCloud", async () => {

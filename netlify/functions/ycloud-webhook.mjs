@@ -17,6 +17,10 @@ import {
   normalizeDuplicateReason,
   shouldSuppressAutomationForDuplicate,
 } from "./lib/lead-deduplication.mjs";
+import {
+  appendConversationTurn,
+  toOpenAIConversation,
+} from "./lib/conversation-memory.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
   isReviewAlertConfigured,
@@ -693,6 +697,24 @@ async function completeOpenAIActive({
       body: activeResult.decision.suggestedReply,
     });
     logPatientReplyResult(input.eventId, to, replyResult);
+
+    if (replyResult.status === "completed") {
+      const memoryResult = await appendConversationTurn({
+        phone: to,
+        role: "assistant",
+        text: activeResult.decision.suggestedReply,
+        eventId: `${input.eventId}:bruna`,
+        source: "bruna",
+      });
+
+      console.log(
+        JSON.stringify({
+          source: "conversation_memory_reply",
+          eventId: input.eventId,
+          status: memoryResult.status,
+        }),
+      );
+    }
   } catch {
     console.log(
       JSON.stringify({
@@ -807,10 +829,25 @@ export default async (request, context) => {
       );
     }
 
+    const memoryResult = await appendConversationTurn({
+      phone: patientPhone,
+      role: "assistant",
+      text: String(echo.text?.body || ""),
+      eventId: String(eventId),
+      at: String(
+        echo.sendTime ||
+          echo.createTime ||
+          payload.createTime ||
+          "",
+      ),
+      source: "human",
+    });
+
     return json({
       received: true,
       humanTakeoverRecorded: true,
       takeoverCreated: takeoverDelivery.created === true,
+      conversationMemory: memoryResult.status,
     });
   }
 
@@ -861,6 +898,31 @@ export default async (request, context) => {
   lead.professional = preliminaryAutomationPlan.professional;
 
   const delivery = await deliverLead(lead);
+  let conversationHistory = [];
+  let conversationMemoryStatus = "skipped";
+  let conversationExpired = false;
+
+  if (
+    delivery.ok &&
+    !isExactMessageDuplicate(delivery) &&
+    String(message.type || "").toLowerCase() === "text" &&
+    text.trim().length > 0
+  ) {
+    const memoryResult = await appendConversationTurn({
+      phone,
+      role: "user",
+      text,
+      eventId: String(eventId),
+      at: contactAt,
+      source: "patient",
+    });
+    conversationMemoryStatus = memoryResult.status;
+    conversationExpired = memoryResult.expired === true;
+    conversationHistory = toOpenAIConversation(
+      memoryResult.historyBefore,
+    );
+  }
+
   const automationPlan = delivery.humanTakeoverToday
     ? {
         route: "human_takeover_active",
@@ -879,6 +941,15 @@ export default async (request, context) => {
         procedure: null,
         automaticAllowed: false,
       }
+    : conversationExpired
+      ? {
+          route: "human_review",
+          reason: "conversation_inactive_over_7_days",
+          replyCode: "MANUAL-RETURN-7D-01",
+          professional: preliminaryAutomationPlan.professional,
+          procedure: preliminaryAutomationPlan.procedure,
+          automaticAllowed: false,
+        }
     : preliminaryAutomationPlan;
 
   const alertInput = {
@@ -1004,6 +1075,10 @@ export default async (request, context) => {
         phone,
         text,
         platform: attribution.platform,
+        patientProfileName: String(
+          message.customerProfile?.name || "",
+        ),
+        recentConversation: conversationHistory,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -1031,6 +1106,10 @@ export default async (request, context) => {
         phone,
         text,
         platform: attribution.platform,
+        patientProfileName: String(
+          message.customerProfile?.name || "",
+        ),
+        recentConversation: conversationHistory,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -1074,6 +1153,9 @@ export default async (request, context) => {
       leadInserted: delivery.inserted === true,
       leadUpdated: delivery.updated === true,
       humanTakeoverToday: delivery.humanTakeoverToday === true,
+      conversationMemoryStatus,
+      conversationExpired,
+      conversationHistoryTurns: conversationHistory.length,
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
       automationMode,
@@ -1111,6 +1193,8 @@ export default async (request, context) => {
     humanTakeoverToday: delivery.humanTakeoverToday === true,
     duplicate: delivery.duplicate === true,
     duplicateReason: delivery.duplicateReason,
+    conversationMemory: conversationMemoryStatus,
+    conversationExpired,
     automation: {
       mode: automationMode,
       route: automationPlan.route,
