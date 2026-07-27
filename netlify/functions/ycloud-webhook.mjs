@@ -9,6 +9,10 @@ import {
   isAppointmentAlertEnabled,
 } from "./lib/appointment-suggestions.mjs";
 import {
+  buildPatientReply,
+  shouldSendAutomaticPatientReply,
+} from "./lib/patient-replies.mjs";
+import {
   normalizeDuplicateReason,
   shouldSuppressAutomationForDuplicate,
 } from "./lib/lead-deduplication.mjs";
@@ -17,6 +21,7 @@ import {
   isReviewAlertConfigured,
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
+import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -542,6 +547,21 @@ function logReviewAlertResult(eventId, phone, alertResult) {
   );
 }
 
+function logPatientReplyResult(eventId, phone, replyResult) {
+  console.log(
+    JSON.stringify({
+      source:
+        replyResult.status === "completed"
+          ? "ycloud_patient_reply_completed"
+          : "ycloud_patient_reply_failed",
+      eventId,
+      patientLast4: String(phone || "").slice(-4),
+      httpStatus: replyResult.httpStatus ?? null,
+      errorCode: replyResult.errorCode || "none",
+    }),
+  );
+}
+
 async function completeReviewAlert(input) {
   try {
     const alertResult = await sendYCloudReviewAlert(input);
@@ -827,6 +847,8 @@ export default async (request, context) => {
     shouldSendReviewAlertForPlan(automationPlan);
   let reviewAlertQueued = false;
   let appointmentReviewQueued = false;
+  let patientReplyQueued = false;
+  let patientReplySent = false;
 
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(alertInput);
@@ -860,6 +882,35 @@ export default async (request, context) => {
     } else {
       await appointmentPromise;
     }
+  }
+
+  const patientReplyBody = buildPatientReply({
+    replyCode: automationPlan.replyCode,
+    patientName: String(message.customerProfile?.name || ""),
+    procedure: automationPlan.procedure,
+  });
+  const shouldQueuePatientReply =
+    Boolean(patientReplyBody) &&
+    delivery.ok &&
+    shouldSendAutomaticPatientReply({
+      mode: automationMode,
+      plan: automationPlan,
+      humanTakeoverToday: delivery.humanTakeoverToday,
+      exactDuplicate: isExactMessageDuplicate(delivery),
+      schedulingRequest: appointmentReviewCandidate,
+      reviewAlertConfigured: isReviewAlertConfigured(),
+    });
+
+  if (shouldQueuePatientReply) {
+    patientReplyQueued = true;
+    const replyResult = await sendYCloudPatientText({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: String(eventId),
+      body: patientReplyBody,
+    });
+    patientReplySent = replyResult.status === "completed";
+    logPatientReplyResult(String(eventId), phone, replyResult);
   }
 
   const shouldQueueOpenAIShadow =
@@ -926,6 +977,8 @@ export default async (request, context) => {
       automationProcedure: automationPlan.procedure,
       reviewAlertQueued,
       appointmentReviewQueued,
+      patientReplyQueued,
+      patientReplySent,
       aiShadowQueued,
     }),
   );
@@ -957,6 +1010,8 @@ export default async (request, context) => {
     },
     reviewAlertQueued,
     appointmentReviewQueued,
+    patientReplyQueued,
+    patientReplySent,
     aiShadowQueued,
   });
 };
