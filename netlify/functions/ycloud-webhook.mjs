@@ -1,8 +1,13 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import {
+  isSchedulingRequest,
   normalizeAutomationMode,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
+import {
+  buildAppointmentSuggestion,
+  isAppointmentAlertEnabled,
+} from "./lib/appointment-suggestions.mjs";
 import {
   normalizeDuplicateReason,
   shouldSuppressAutomationForDuplicate,
@@ -443,6 +448,31 @@ async function recordHumanTakeover(takeover) {
   });
 }
 
+async function getAvailableAppointmentSlots(professional) {
+  const result = await deliverSheetsAction("get_available_slots", {
+    professional,
+    limit: 3,
+  });
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      httpStatus: result.httpStatus,
+      errorCode: result.errorCode,
+      slots: [],
+    };
+  }
+
+  return {
+    ok: true,
+    httpStatus: result.httpStatus,
+    errorCode: "none",
+    slots: Array.isArray(result.responseData?.slots)
+      ? result.responseData.slots.slice(0, 3)
+      : [],
+  };
+}
+
 function isExactMessageDuplicate(delivery) {
   return (
     delivery?.duplicate === true &&
@@ -527,6 +557,44 @@ async function completeReviewAlert(input) {
       errorCode: "request_failed",
     });
   }
+}
+
+function isAppointmentReviewCandidate(plan, text) {
+  return Boolean(
+    plan?.professional &&
+      ["amanda", "daniel"].includes(plan.professional) &&
+      isSchedulingRequest(text),
+  );
+}
+
+async function completeAppointmentReview(input) {
+  const availability = await getAvailableAppointmentSlots(
+    input.professional,
+  );
+  const suggestion = buildAppointmentSuggestion({
+    patientName: input.patientName,
+    professional: input.professional,
+    procedure: input.procedure,
+    slots: availability.slots,
+  });
+
+  console.log(
+    JSON.stringify({
+      source: "appointment_review_prepared",
+      eventId: input.eventId,
+      professional: input.professional,
+      procedure: input.procedure || null,
+      availabilityRead: availability.ok ? "success" : "failure",
+      availableSlots: availability.slots.length,
+      downstreamStatus: availability.httpStatus,
+      downstreamError: availability.errorCode,
+    }),
+  );
+
+  await completeReviewAlert({
+    ...input,
+    messageText: suggestion,
+  });
 }
 
 async function completeOpenAIShadow(
@@ -734,12 +802,25 @@ export default async (request, context) => {
     patientPhone: phone,
     messageText: text,
   };
+  const appointmentReviewCandidate = isAppointmentReviewCandidate(
+    automationPlan,
+    text,
+  );
+  const shouldQueueAppointmentReview =
+    delivery.ok &&
+    !delivery.humanTakeoverToday &&
+    !isExactMessageDuplicate(delivery) &&
+    appointmentReviewCandidate &&
+    isAppointmentAlertEnabled() &&
+    isReviewAlertConfigured();
   const shouldQueueReviewAlert =
     delivery.ok &&
     !isExactMessageDuplicate(delivery) &&
+    !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
     shouldSendReviewAlertForPlan(automationPlan);
   let reviewAlertQueued = false;
+  let appointmentReviewQueued = false;
 
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(alertInput);
@@ -753,6 +834,25 @@ export default async (request, context) => {
       }
     } else {
       await alertPromise;
+    }
+  }
+
+  if (shouldQueueAppointmentReview) {
+    const appointmentPromise = completeAppointmentReview({
+      ...alertInput,
+      professional: automationPlan.professional,
+      procedure: automationPlan.procedure,
+    });
+    appointmentReviewQueued = true;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(appointmentPromise);
+      } catch {
+        await appointmentPromise;
+      }
+    } else {
+      await appointmentPromise;
     }
   }
 
@@ -818,6 +918,7 @@ export default async (request, context) => {
       automationProfessional: automationPlan.professional,
       automationProcedure: automationPlan.procedure,
       reviewAlertQueued,
+      appointmentReviewQueued,
       aiShadowQueued,
     }),
   );
@@ -848,6 +949,7 @@ export default async (request, context) => {
       replyCode: automationPlan.replyCode,
     },
     reviewAlertQueued,
+    appointmentReviewQueued,
     aiShadowQueued,
   });
 };

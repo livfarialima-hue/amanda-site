@@ -28,7 +28,7 @@ const PRICE_PATTERN =
   /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento)\b/i;
 
 const SCHEDULING_PATTERN =
-  /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o)\b/i;
+  /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o|datas?)\b/i;
 
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
@@ -167,6 +167,10 @@ function detectProcedure(text, reference) {
 export function normalizeAutomationMode(value) {
   const mode = String(value || "shadow").trim().toLowerCase();
   return ["off", "shadow", "active"].includes(mode) ? mode : "shadow";
+}
+
+export function isSchedulingRequest(text) {
+  return SCHEDULING_PATTERN.test(String(text || ""));
 }
 
 export function planAutomation({
