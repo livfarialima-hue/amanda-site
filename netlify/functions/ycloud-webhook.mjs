@@ -12,6 +12,7 @@ import {
 } from "./lib/appointment-suggestions.mjs";
 import {
   buildPatientReply,
+  hasPendingReactivationHandoff,
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./lib/patient-replies.mjs";
@@ -134,6 +135,34 @@ function matchSiteCta(value, anchored = false) {
   return match ? match[1].toUpperCase() : null;
 }
 
+const SITE_PAGE_REFERENCES = [
+  ["Lifting Facial", /^\s*lifting\s+facial\b/i],
+  ["Lifting Cervical", /^\s*lifting\s+cervical\b/i],
+  ["Blefaroplastia", /^\s*blefaroplastia\b/i],
+  ["Otoplastia", /^\s*otoplastia\b/i],
+  ["Avaliacao Facial", /^\s*avalia[cç][aã]o\s+facial\b/i],
+  ["Lip Lifting", /^\s*(?:lip\s*lifting|lifting\s+labial)\b/i],
+  ["Lipo de Papada", /^\s*lipo\s+de\s+papada\b/i],
+  ["Lipoaspiracao", /^\s*lipoaspira[cç][aã]o\b/i],
+  ["Abdominoplastia", /^\s*abdominoplastia\b/i],
+  ["Mastopexia com Protese", /^\s*mastopexia\s+com\s+pr[oó]tese\b/i],
+  ["Mastopexia", /^\s*mastopexia\b/i],
+  ["Protese de Mama", /^\s*pr[oó]tese\s+de\s+mama\b/i],
+  ["Mamoplastia Redutora", /^\s*mamoplastia\s+redutora\b/i],
+  ["Braquioplastia", /^\s*braquioplastia\b/i],
+  ["Ninfoplastia", /^\s*ninfoplastia\b/i],
+  ["Contorno Corporal", /^\s*contorno\s+corporal\b/i],
+  ["Pos-Bariatrica", /^\s*p[oó]s[- ]bari[aá]trica\b/i],
+];
+
+function matchSitePageReference(value) {
+  for (const [canonical, pattern] of SITE_PAGE_REFERENCES) {
+    if (pattern.test(String(value || ""))) return canonical;
+  }
+
+  return null;
+}
+
 function matchNeutralCode(value, anchored = false) {
   const meta = matchMetaCode(value, anchored);
   if (meta) return { value: meta, family: "meta" };
@@ -148,6 +177,11 @@ function matchNeutralCode(value, anchored = false) {
 
   const siteCta = matchSiteCta(value, anchored);
   if (siteCta) return { value: siteCta, family: "site_cta" };
+
+  if (anchored) {
+    const sitePage = matchSitePageReference(value);
+    if (sitePage) return { value: sitePage, family: "site_page" };
+  }
 
   return null;
 }
@@ -193,7 +227,7 @@ function hasSafeSiteEvidence(payload, message) {
   );
 }
 
-function classifyAttribution(payload, message, text) {
+export function classifyAttribution(payload, message, text) {
   const referralIsMeta =
     String(message.referral?.source_type || "").trim().toLowerCase() ===
     "ad";
@@ -235,6 +269,7 @@ function classifyAttribution(payload, message, text) {
   const hasGoogleClickId = Object.keys(clickIds).length > 0;
   const hasSiteCtaCode =
     reference?.family === "site_cta" || Boolean(siteCta);
+  const hasSitePageReference = reference?.family === "site_page";
 
   let platform;
 
@@ -244,6 +279,7 @@ function classifyAttribution(payload, message, text) {
     platform = "Google";
   } else if (
     hasSiteCtaCode ||
+    hasSitePageReference ||
     referenceValue === "SITE-ORGANICO-SEM-CODIGO"
   ) {
     platform = "Orgânico/Conteúdo";
@@ -259,6 +295,8 @@ function classifyAttribution(payload, message, text) {
     referenceCategory = "google_coded";
   } else if (hasGoogleClickId) {
     referenceCategory = "google_click_id";
+  } else if (hasSitePageReference) {
+    referenceCategory = "site_page";
   } else if (hasSiteCtaCode) {
     referenceCategory = "site_cta";
   } else if (referenceValue === "SITE-ORGANICO-SEM-CODIGO") {
@@ -527,7 +565,8 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
 function shouldSendReviewAlertForPlan(plan) {
   return (
     plan?.route === "human_review" ||
-    plan?.route === "daniel_greeting_and_alert"
+    plan?.route === "daniel_greeting_and_alert" ||
+    plan?.route === "reactivation_notice"
   );
 }
 
@@ -942,6 +981,36 @@ export default async (request, context) => {
     platform: attribution.platform,
   });
 
+  if (
+    preliminaryAutomationPlan.route === "ignore" &&
+    preliminaryAutomationPlan.reason ===
+      "commercial_solicitation_or_partnership"
+  ) {
+    console.log(
+      JSON.stringify({
+        source: "ycloud",
+        eventId: String(eventId),
+        eventType: payload.type,
+        messageType: message.type || null,
+        senderLast4: phone.slice(-4),
+        ignored: true,
+        ignoreReason: preliminaryAutomationPlan.reason,
+        leadDelivery: "skipped",
+        aiShadowQueued: false,
+        aiActiveQueued: false,
+      }),
+    );
+
+    return json({
+      received: true,
+      ignored: true,
+      ignoreReason: preliminaryAutomationPlan.reason,
+      leadRecorded: false,
+      aiShadowQueued: false,
+      aiActiveQueued: false,
+    });
+  }
+
   // The spreadsheet uses this only to keep cardiology fully isolated from
   // the Amanda acquisition/conversion table. It never changes patient-facing
   // behavior.
@@ -972,6 +1041,8 @@ export default async (request, context) => {
       memoryResult.historyBefore,
     );
   }
+  const reactivationHandoffPending =
+    hasPendingReactivationHandoff(conversationHistory);
 
   const automationPlan = delivery.humanTakeoverToday
     ? {
@@ -993,7 +1064,7 @@ export default async (request, context) => {
       }
     : conversationExpired
       ? {
-          route: "human_review",
+          route: "reactivation_notice",
           reason: "conversation_inactive_over_7_days",
           replyCode: "MANUAL-RETURN-7D-01",
           professional: enrichAutomationPlanFromConversation(
@@ -1004,6 +1075,15 @@ export default async (request, context) => {
             preliminaryAutomationPlan,
             conversationHistory,
           ).procedure,
+          automaticAllowed: true,
+        }
+    : reactivationHandoffPending
+      ? {
+          route: "human_handoff_pending",
+          reason: "reactivation_waiting_for_human",
+          replyCode: null,
+          professional: null,
+          procedure: null,
           automaticAllowed: false,
         }
     : enrichAutomationPlanFromConversation(
@@ -1083,7 +1163,10 @@ export default async (request, context) => {
     procedure: automationPlan.procedure,
   });
   const shouldQueuePatientReply =
-    automationPlan.route === "daniel_greeting_and_alert" &&
+    [
+      "daniel_greeting_and_alert",
+      "reactivation_notice",
+    ].includes(automationPlan.route) &&
     Boolean(patientReplyBody) &&
     delivery.ok &&
     shouldSendAutomaticPatientReply({
@@ -1105,6 +1188,24 @@ export default async (request, context) => {
     });
     patientReplySent = replyResult.status === "completed";
     logPatientReplyResult(String(eventId), phone, replyResult);
+
+    if (patientReplySent) {
+      const memoryResult = await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: patientReplyBody,
+        eventId: `${eventId}:bruna`,
+        source: "bruna",
+      });
+
+      console.log(
+        JSON.stringify({
+          source: "conversation_memory_reply",
+          eventId: String(eventId),
+          status: memoryResult.status,
+        }),
+      );
+    }
   }
 
   const shouldQueueOpenAIShadow =
@@ -1136,6 +1237,8 @@ export default async (request, context) => {
         phone,
         text,
         platform: attribution.platform,
+        procedure: automationPlan.procedure,
+        referenceCategory: attribution.referenceCategory,
         patientProfileName: String(
           message.customerProfile?.name || "",
         ),
@@ -1168,6 +1271,8 @@ export default async (request, context) => {
         phone,
         text,
         platform: attribution.platform,
+        procedure: automationPlan.procedure,
+        referenceCategory: attribution.referenceCategory,
         patientProfileName: String(
           message.customerProfile?.name || "",
         ),
@@ -1217,6 +1322,7 @@ export default async (request, context) => {
       humanTakeoverToday: delivery.humanTakeoverToday === true,
       conversationMemoryStatus,
       conversationExpired,
+      reactivationHandoffPending,
       conversationHistoryTurns: conversationHistory.length,
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
@@ -1257,6 +1363,7 @@ export default async (request, context) => {
     duplicateReason: delivery.duplicateReason,
     conversationMemory: conversationMemoryStatus,
     conversationExpired,
+    reactivationHandoffPending,
     automation: {
       mode: automationMode,
       route: automationPlan.route,

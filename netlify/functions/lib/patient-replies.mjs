@@ -39,6 +39,12 @@ const PROCEDURE_REPLY_CODES = new Set([
   "G-LIFT-FAC-01",
 ]);
 
+export const REACTIVATION_REPLY = [
+  "Olá! Obrigada por retomar o contato.",
+  "Como já faz alguns dias desde nossa última conversa, vou direcionar sua mensagem à equipe para retomarmos seu atendimento com o contexto correto.",
+  "Em breve, continuaremos por aqui.",
+].join(" ");
+
 function firstName(value) {
   return String(value || "").trim().split(/\s+/)[0] || "";
 }
@@ -54,6 +60,10 @@ export function buildPatientReply({
   procedure,
 }) {
   const hello = greeting(patientName);
+
+  if (replyCode === "MANUAL-RETURN-7D-01") {
+    return REACTIVATION_REPLY;
+  }
 
   if (replyCode === "ORG-DIR-01") {
     return [
@@ -96,6 +106,23 @@ export function buildPatientReply({
   return null;
 }
 
+export function hasPendingReactivationHandoff(recentConversation) {
+  const turns = Array.isArray(recentConversation)
+    ? recentConversation
+    : [];
+  const handoffIndex = turns.findLastIndex(
+    (turn) =>
+      turn?.role === "assistant" &&
+      String(turn?.text || "").trim() === REACTIVATION_REPLY,
+  );
+
+  if (handoffIndex < 0) return false;
+
+  return !turns
+    .slice(handoffIndex + 1)
+    .some((turn) => turn?.source === "equipe_humana");
+}
+
 export function shouldSendAutomaticPatientReply({
   mode,
   plan,
@@ -115,7 +142,11 @@ export function shouldSendAutomaticPatientReply({
   }
 
   if (
-    !["standard_reply", "daniel_greeting_and_alert"].includes(
+    ![
+      "standard_reply",
+      "daniel_greeting_and_alert",
+      "reactivation_notice",
+    ].includes(
       plan?.route,
     )
   ) {

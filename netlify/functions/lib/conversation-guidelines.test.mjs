@@ -19,3 +19,17 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /Não repita credenciais/);
   assert.match(CONVERSATION_GUIDELINES, /não tiver sido executada/);
 });
+
+test("playbook uses approved site content to reduce barriers without pressure", () => {
+  assert.match(CONVERSATION_GUIDELINES, /siteResource/);
+  assert.match(CONVERSATION_GUIDELINES, /única URL autorizada/);
+  assert.match(CONVERSATION_GUIDELINES, /Não envie o link na primeira resposta/);
+  assert.match(CONVERSATION_GUIDELINES, /Nunca diga nem insinue.*jovem/);
+  assert.match(CONVERSATION_GUIDELINES, /preocupação financeira/);
+  assert.match(CONVERSATION_GUIDELINES, /resultado artificial/);
+});
+
+test("playbook ignores commercial solicitations without a courtesy response", () => {
+  assert.match(CONVERSATION_GUIDELINES, /proposta de parceria comercial/);
+  assert.match(CONVERSATION_GUIDELINES, /Não gaste uma resposta de cortesia/);
+});

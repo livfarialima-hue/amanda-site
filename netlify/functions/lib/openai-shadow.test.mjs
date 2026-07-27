@@ -6,7 +6,7 @@ import {
   parseOpenAIShadowResponse,
   runOpenAIShadow,
 } from "./openai-shadow.mjs";
-import webhook from "../ycloud-webhook.mjs";
+import webhook, { classifyAttribution } from "../ycloud-webhook.mjs";
 
 const PHONE = "+5511961957144";
 
@@ -57,6 +57,18 @@ test("missing configuration is skipped without throwing", async () => {
     status: "skipped",
     errorCode: "configuration_missing",
   });
+});
+
+test("recognizes the current site WhatsApp reference as a website visit", () => {
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "Olá, vim pela página da Dra. Amanda.\n\nReferência: Blefaroplastia",
+  );
+
+  assert.equal(attribution.platform, "Orgânico/Conteúdo");
+  assert.equal(attribution.referenceCategory, "site_page");
+  assert.equal(attribution.reference, "Blefaroplastia");
 });
 
 test("safety identifier is stable and does not contain the phone", () => {
@@ -232,6 +244,71 @@ test("short conversation history is sent in full without the phone", async () =>
   assert.equal(calls[0].options.body.includes(PHONE), false);
 });
 
+test("passes one approved procedure page only to eligible non-site conversations", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Tenho receio da recuperação",
+      platform: "Meta",
+      procedure: "blefaroplastia",
+      referenceCategory: "meta_uncoded",
+      recentConversation: [],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.cameFromWebsite, false);
+  assert.deepEqual(input.siteResource, {
+    title: "Blefaroplastia",
+    url: "https://draamandaschroeder.com.br/blefaroplastia/",
+  });
+});
+
+test("does not pass a site page back to a person who came from the site", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Quero saber mais",
+      platform: "Orgânico/Conteúdo",
+      procedure: "blefaroplastia",
+      referenceCategory: "site_page",
+      recentConversation: [],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.cameFromWebsite, true);
+  assert.equal(input.siteResource, null);
+});
+
 test("OpenAI failure keeps the webhook successful and never sends to YCloud", async () => {
   const savedEnvironment = {
     YCLOUD_WEBHOOK_SECRET: process.env.YCLOUD_WEBHOOK_SECRET,
@@ -303,6 +380,73 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
     for (const [key, value] of Object.entries(savedEnvironment)) {
       if (value === undefined) delete process.env[key];
       else process.env[key] = value;
+    }
+  }
+});
+
+test("commercial solicitation is ignored before Sheets, OpenAI or YCloud", async () => {
+  const savedSecret = process.env.YCLOUD_WEBHOOK_SECRET;
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  let fetchCalls = 0;
+
+  process.env.YCLOUD_WEBHOOK_SECRET = "webhook-test-secret";
+  console.log = () => {};
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error("commercial solicitation must not call downstream services");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "commercial-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "commercial-message",
+        from: "+5511900000001",
+        to: PHONE,
+        type: "text",
+        text: {
+          body:
+            "Olá, somos uma agência de marketing digital e gostaríamos de apresentar nossos serviços",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.ignored, true);
+    assert.equal(
+      body.ignoreReason,
+      "commercial_solicitation_or_partnership",
+    );
+    assert.equal(body.leadRecorded, false);
+    assert.equal(body.aiActiveQueued, false);
+    assert.equal(fetchCalls, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    if (savedSecret === undefined) {
+      delete process.env.YCLOUD_WEBHOOK_SECRET;
+    } else {
+      process.env.YCLOUD_WEBHOOK_SECRET = savedSecret;
     }
   }
 });

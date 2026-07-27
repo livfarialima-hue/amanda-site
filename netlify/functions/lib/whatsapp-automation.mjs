@@ -33,6 +33,17 @@ const SCHEDULING_PATTERN =
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
+const COMMERCIAL_SOLICITATION_PATTERNS = [
+  /\b(?:proposta|contato)\s+(?:comercial|de\s+parceria)\b/i,
+  /\b(?:propor|fazer)\s+(?:uma\s+)?parceria\b/i,
+  /\b(?:gostaria|queria|venho)\s+(?:de\s+)?(?:apresentar|oferecer)\s+(?:nossos?|meus?)\s+(?:servi[cç]os?|produtos?|solu[cç][oõ]es?)\b/i,
+  /\b(?:somos|falo\s+da)\s+(?:uma\s+)?(?:ag[eê]ncia|empresa|fornecedora?|representante)\b/i,
+  /\b(?:gest[aã]o\s+de\s+tr[aá]fego|social\s+media|marketing\s+digital|seo|cria[cç][aã]o\s+de\s+sites?)\b/i,
+  /\b(?:aumentar|captar)\s+(?:seus?\s+)?(?:seguidores|clientes|pacientes|vendas)\b/i,
+  /\b(?:publipost|permuta|patroc[ií]nio|parceria\s+(?:paga|comercial|de\s+divulga[cç][aã]o))\b/i,
+  /\b(?:maquininha|m[aá]quina)\s+de\s+cart[aã]o\b/i,
+];
+
 const PROCEDURES = [
   {
     key: "lifting_facial",
@@ -234,6 +245,17 @@ export function planAutomation({
       replyCode: null,
       professional: null,
       procedure: procedure?.key || null,
+      automaticAllowed: false,
+    };
+  }
+
+  if (matchesAny(normalizedText, COMMERCIAL_SOLICITATION_PATTERNS)) {
+    return {
+      route: "ignore",
+      reason: "commercial_solicitation_or_partnership",
+      replyCode: null,
+      professional: null,
+      procedure: null,
       automaticAllowed: false,
     };
   }

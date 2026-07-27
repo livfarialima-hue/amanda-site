@@ -36,6 +36,49 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("commercial solicitations are ignored before spending on AI", () => {
+  for (const text of [
+    "Olá, somos uma agência de marketing digital e gostaríamos de apresentar nossos serviços",
+    "Tenho uma proposta comercial para a clínica",
+    "Gostaria de oferecer nossos serviços de gestão de tráfego",
+    "Aceitam parceria de divulgação por permuta?",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.equal(plan.route, "ignore");
+    assert.equal(
+      plan.reason,
+      "commercial_solicitation_or_partnership",
+    );
+    assert.equal(plan.automaticAllowed, false);
+  }
+});
+
+test("patient questions about payment or insurance are not mistaken for sales", () => {
+  for (const text of [
+    "A consulta aceita convênio?",
+    "Posso pagar a cirurgia no cartão?",
+    "Quero uma avaliação para aumentar as mamas",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.notEqual(
+      plan.reason,
+      "commercial_solicitation_or_partnership",
+    );
+  }
+});
+
 test("recent conversation preserves Amanda and the procedure on a continuation", () => {
   const currentPlan = planAutomation({
     text: "Consigo de manhã segunda e quinta",

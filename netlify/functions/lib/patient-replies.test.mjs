@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildPatientReply,
+  hasPendingReactivationHandoff,
+  REACTIVATION_REPLY,
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
@@ -27,6 +29,51 @@ test("never includes a surgical price in the price reply", () => {
 
   assert.match(reply, /avaliação individual/);
   assert.doesNotMatch(reply, /R\$/);
+});
+
+test("builds the single fixed notice for a conversation resumed after seven days", () => {
+  const reply = buildPatientReply({
+    replyCode: "MANUAL-RETURN-7D-01",
+    patientName: "Maria",
+  });
+
+  assert.equal(reply, REACTIVATION_REPLY);
+  assert.match(reply, /direcionar sua mensagem à equipe/);
+  assert.match(reply, /continuaremos por aqui/);
+});
+
+test("keeps automation silent after the seven-day notice until a human answers", () => {
+  assert.equal(
+    hasPendingReactivationHandoff([
+      {
+        role: "assistant",
+        source: "bruna",
+        text: REACTIVATION_REPLY,
+      },
+      {
+        role: "patient",
+        source: "paciente",
+        text: "Tudo bem, aguardo",
+      },
+    ]),
+    true,
+  );
+
+  assert.equal(
+    hasPendingReactivationHandoff([
+      {
+        role: "assistant",
+        source: "bruna",
+        text: REACTIVATION_REPLY,
+      },
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Olá, vou continuar seu atendimento.",
+      },
+    ]),
+    false,
+  );
 });
 
 test("blocks automatic sending for schedules, takeover and shadow mode", () => {
@@ -58,6 +105,30 @@ test("blocks automatic sending for schedules, takeover and shadow mode", () => {
     }),
     false,
   );
+  assert.equal(
+    shouldSendAutomaticPatientReply({
+      ...base,
+      mode: "shadow",
+    }),
+    false,
+  );
+});
+
+test("allows the fixed reactivation notice only in active mode", () => {
+  const base = {
+    mode: "active",
+    plan: {
+      route: "reactivation_notice",
+      replyCode: "MANUAL-RETURN-7D-01",
+      automaticAllowed: true,
+    },
+    humanTakeoverToday: false,
+    exactDuplicate: false,
+    schedulingRequest: false,
+    reviewAlertConfigured: true,
+  };
+
+  assert.equal(shouldSendAutomaticPatientReply(base), true);
   assert.equal(
     shouldSendAutomaticPatientReply({
       ...base,

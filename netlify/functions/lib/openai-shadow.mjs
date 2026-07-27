@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
+import { getRecommendedSiteResource } from "./site-content.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -199,6 +200,8 @@ export async function runOpenAIShadow(
     phone,
     text,
     platform,
+    procedure,
+    referenceCategory,
     patientProfileName,
     recentConversation,
     deterministicUrgent = false,
@@ -217,6 +220,14 @@ export async function runOpenAIShadow(
   );
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), OPENAI_TIMEOUT_MS);
+  const normalizedConversation = normalizeRecentConversation(
+    recentConversation,
+  );
+  const siteResource = getRecommendedSiteResource({
+    procedure,
+    referenceCategory,
+    recentConversation: normalizedConversation,
+  });
 
   try {
     const response = await fetchImpl(OPENAI_RESPONSES_URL, {
@@ -234,13 +245,20 @@ export async function runOpenAIShadow(
         instructions: CONVERSATION_GUIDELINES,
         input: JSON.stringify({
           source: String(platform || "WhatsApp direto"),
+          procedureContext: limitText(procedure, 100),
+          cameFromWebsite: siteResource
+            ? false
+            : [
+                "site_cta",
+                "site_page",
+                "site_uncoded",
+              ].includes(String(referenceCategory || "")),
+          siteResource,
           whatsappProfileName: limitText(
             patientProfileName,
             MAX_PROFILE_NAME_LENGTH,
           ),
-          recentConversation: normalizeRecentConversation(
-            recentConversation,
-          ),
+          recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),
         text: {
