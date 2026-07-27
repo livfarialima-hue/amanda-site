@@ -150,17 +150,30 @@ test("a known WhatsApp profile name prevents asking the name again", () => {
 });
 
 test("a generic WhatsApp profile does not suppress the name question", () => {
-  const decision = validDecision({
-    suggestedReply: "Como posso te chamar?",
-  });
-  const result = parseOpenAIShadowResponse(
-    validResponse(decision),
-    "fallback-model",
-    { patientProfileName: "Paciente" },
-  );
+  for (const patientProfileName of [
+    "Paciente",
+    "Clínica Rosana",
+    "Studio RM",
+    "Rosana 2026",
+    "Loja da Rô",
+    "Dra. Amanda",
+    "Rosana 💙",
+  ]) {
+    const decision = validDecision({
+      suggestedReply: "Como posso te chamar?",
+    });
+    const result = parseOpenAIShadowResponse(
+      validResponse(decision),
+      "fallback-model",
+      { patientProfileName },
+    );
 
-  assert.equal(result.status, "completed");
-  assert.equal(result.decision.suggestedReply, "Como posso te chamar?");
+    assert.equal(result.status, "completed");
+    assert.equal(
+      result.decision.suggestedReply,
+      "Como posso te chamar?",
+    );
+  }
 });
 
 test("existing conversation history prevents asking the name even without a profile name", () => {
