@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import {
+  enrichAutomationPlanFromConversation,
   isSchedulingRequest,
   normalizeAutomationMode,
   planAutomation,
@@ -7,6 +8,7 @@ import {
 import {
   buildAppointmentSuggestion,
   isAppointmentAlertEnabled,
+  isAppointmentPreferenceReply,
 } from "./lib/appointment-suggestions.mjs";
 import {
   buildPatientReply,
@@ -461,7 +463,7 @@ async function recordHumanTakeover(takeover) {
 async function getAvailableAppointmentSlots(professional) {
   const result = await deliverSheetsAction("get_available_slots", {
     professional,
-    limit: 3,
+    limit: 50,
   });
 
   if (!result.ok) {
@@ -478,7 +480,7 @@ async function getAvailableAppointmentSlots(professional) {
     httpStatus: result.httpStatus,
     errorCode: "none",
     slots: Array.isArray(result.responseData?.slots)
-      ? result.responseData.slots.slice(0, 3)
+      ? result.responseData.slots.slice(0, 50)
       : [],
   };
 }
@@ -584,10 +586,17 @@ async function completeReviewAlert(input) {
   }
 }
 
-function isAppointmentReviewCandidate(plan, text) {
+function isAppointmentReviewCandidate(
+  plan,
+  text,
+  recentConversation = [],
+) {
   return Boolean(
     plan?.professional === "amanda" &&
-      isSchedulingRequest(text),
+      (
+        isSchedulingRequest(text) ||
+        isAppointmentPreferenceReply(text, recentConversation)
+      ),
   );
 }
 
@@ -600,6 +609,7 @@ async function completeAppointmentReview(input) {
     professional: input.professional,
     procedure: input.procedure,
     slots: availability.slots,
+    preferenceText: input.preferenceText || input.messageText,
   });
 
   console.log(
@@ -610,6 +620,9 @@ async function completeAppointmentReview(input) {
       procedure: input.procedure || null,
       availabilityRead: availability.ok ? "success" : "failure",
       availableSlots: availability.slots.length,
+      preferenceCaptured: Boolean(
+        input.preferenceText || input.messageText,
+      ),
       downstreamStatus: availability.httpStatus,
       downstreamError: availability.errorCode,
     }),
@@ -625,10 +638,29 @@ async function completeOpenAIShadow(
   input,
   alertInput,
   reviewAlertAlreadyQueued,
+  plan,
 ) {
   try {
     const shadowResult = await runOpenAIShadow(input);
     logOpenAIResult(input.eventId, shadowResult, "shadow");
+
+    if (
+      shadowResult.status === "completed" &&
+      shadowResult.decision.route === "appointment_review" &&
+      !reviewAlertAlreadyQueued &&
+      isAppointmentAlertEnabled() &&
+      isReviewAlertConfigured()
+    ) {
+      await completeAppointmentReview({
+        ...alertInput,
+        professional:
+          shadowResult.decision.professional || plan?.professional,
+        procedure:
+          shadowResult.decision.procedure || plan?.procedure,
+        preferenceText: input.text,
+      });
+      return;
+    }
 
     if (
       shadowResult.status === "completed" &&
@@ -666,6 +698,24 @@ async function completeOpenAIActive({
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
+      return;
+    }
+
+    if (activeResult.decision.route === "appointment_review") {
+      if (
+        !reviewAlertAlreadyQueued &&
+        isAppointmentAlertEnabled() &&
+        isReviewAlertConfigured()
+      ) {
+        await completeAppointmentReview({
+          ...alertInput,
+          professional:
+            activeResult.decision.professional || plan?.professional,
+          procedure:
+            activeResult.decision.procedure || plan?.procedure,
+          preferenceText: input.text,
+        });
+      }
       return;
     }
 
@@ -946,11 +996,20 @@ export default async (request, context) => {
           route: "human_review",
           reason: "conversation_inactive_over_7_days",
           replyCode: "MANUAL-RETURN-7D-01",
-          professional: preliminaryAutomationPlan.professional,
-          procedure: preliminaryAutomationPlan.procedure,
+          professional: enrichAutomationPlanFromConversation(
+            preliminaryAutomationPlan,
+            conversationHistory,
+          ).professional,
+          procedure: enrichAutomationPlanFromConversation(
+            preliminaryAutomationPlan,
+            conversationHistory,
+          ).procedure,
           automaticAllowed: false,
         }
-    : preliminaryAutomationPlan;
+    : enrichAutomationPlanFromConversation(
+        preliminaryAutomationPlan,
+        conversationHistory,
+      );
 
   const alertInput = {
     from: String(message.to || ""),
@@ -962,6 +1021,7 @@ export default async (request, context) => {
   const appointmentReviewCandidate = isAppointmentReviewCandidate(
     automationPlan,
     text,
+    conversationHistory,
   );
   const shouldQueueAppointmentReview =
     delivery.ok &&
@@ -1002,6 +1062,7 @@ export default async (request, context) => {
       ...alertInput,
       professional: automationPlan.professional,
       procedure: automationPlan.procedure,
+      preferenceText: text,
     });
     appointmentReviewQueued = true;
 
@@ -1084,6 +1145,7 @@ export default async (request, context) => {
       },
       alertInput,
       reviewAlertQueued,
+      automationPlan,
     );
 
     aiShadowQueued = true;

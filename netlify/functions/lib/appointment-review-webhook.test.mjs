@@ -121,6 +121,12 @@ test("scheduling request sends a three-slot suggestion to the reviewer only", as
       ),
       ["append_lead", "get_available_slots"],
     );
+    const scheduleRequest = requests.find(
+      (request) =>
+        request.url === SHEETS_URL &&
+        JSON.parse(request.options.body).action === "get_available_slots",
+    );
+    assert.equal(JSON.parse(scheduleRequest.options.body).limit, 50);
 
     const alertRequest = requests.find(
       (request) => request.url === "https://api.ycloud.com/v2/whatsapp/messages",

@@ -158,8 +158,32 @@ test("only OpenAI is called and the request omits the raw phone", async () => {
   assert.equal(input.currentMessage.length, 2_000);
   assert.equal(input.whatsappProfileName, "");
   assert.deepEqual(input.recentConversation, []);
+  assert.equal(body.text.verbosity, "low");
   assert.equal(body.text.format.type, "json_schema");
   assert.equal(body.text.format.strict, true);
+});
+
+test("appointment review is accepted as a strict structured route", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        route: "appointment_review",
+        automaticAllowed: true,
+        suggestedReply: "Mensagem que não pode ser enviada.",
+        reviewReason: "",
+      }),
+    ),
+    "fallback-model",
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.decision.route, "appointment_review");
+  assert.equal(result.decision.automaticAllowed, false);
+  assert.equal(result.decision.suggestedReply, "");
+  assert.equal(
+    result.decision.reviewReason,
+    "appointment_preference_captured",
+  );
 });
 
 test("short conversation history is sent in full without the phone", async () => {

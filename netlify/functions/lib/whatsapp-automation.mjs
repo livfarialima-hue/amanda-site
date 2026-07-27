@@ -173,6 +173,50 @@ export function isSchedulingRequest(text) {
   return SCHEDULING_PATTERN.test(String(text || ""));
 }
 
+export function enrichAutomationPlanFromConversation(
+  plan,
+  recentConversation = [],
+) {
+  if (!plan || !Array.isArray(recentConversation) || !recentConversation.length) {
+    return plan;
+  }
+
+  const hasClinicTurn = recentConversation.some(
+    (turn) =>
+      turn?.role === "assistant" ||
+      ["bruna", "equipe_humana"].includes(turn?.source),
+  );
+
+  if (!hasClinicTurn) return plan;
+
+  const contextText = recentConversation
+    .map((turn) => String(turn?.text || "").trim())
+    .filter(Boolean)
+    .join(" ");
+  const context = planAutomation({
+    text: contextText,
+    messageType: "text",
+    reference: "",
+    platform: "WhatsApp direto",
+  });
+  const mayContinueWithAI =
+    plan.route === "human_review" &&
+    ["outside_conservative_rules", "price_without_confirmed_procedure"]
+      .includes(plan.reason);
+
+  return {
+    ...plan,
+    route: mayContinueWithAI ? "standard_reply" : plan.route,
+    reason: mayContinueWithAI
+      ? "known_conversation_continuation"
+      : plan.reason,
+    replyCode: plan.replyCode || context.replyCode,
+    professional: plan.professional || context.professional,
+    procedure: plan.procedure || context.procedure,
+    automaticAllowed: mayContinueWithAI ? true : plan.automaticAllowed,
+  };
+}
+
 export function planAutomation({
   text,
   messageType,
