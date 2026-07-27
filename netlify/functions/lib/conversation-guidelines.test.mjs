@@ -17,7 +17,11 @@ test("conversion playbook defines the identity, progression and writing standard
 test("playbook protects price, scheduling, continuity and human handoff", () => {
   assert.match(CONVERSATION_GUIDELINES, /appointment_review/);
   assert.match(CONVERSATION_GUIDELINES, /três opções/);
-  assert.match(CONVERSATION_GUIDELINES, /nunca informe preço automaticamente/);
+  assert.match(CONVERSATION_GUIDELINES, /primeira pergunta de preço não informe faixa/);
+  assert.match(CONVERSATION_GUIDELINES, /R\$ 18\.000 a R\$ 35\.000/);
+  assert.match(CONVERSATION_GUIDELINES, /consulta presencial de R\$ 500/);
+  assert.match(CONVERSATION_GUIDELINES, /opções de parcelamento/);
+  assert.match(CONVERSATION_GUIDELINES, /qualquer outro procedimento sem faixa aprovada/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);
   assert.match(CONVERSATION_GUIDELINES, /Não repita credenciais/);
   assert.match(CONVERSATION_GUIDELINES, /não tiver sido executada/);

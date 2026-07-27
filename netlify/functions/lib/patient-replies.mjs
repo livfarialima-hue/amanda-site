@@ -2,6 +2,7 @@ const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
   lifting_cervical: "lifting cervical",
   blefaroplastia: "blefaroplastia",
+  frontoplastia: "frontoplastia",
   otoplastia: "otoplastia",
   avaliacao_facial: "avaliação facial",
   lip_lifting: "lifting labial",
@@ -22,6 +23,7 @@ const PROCEDURE_REPLY_CODES = new Set([
   "M-C06-WA-01",
   "G-LIFT-CERV-01",
   "G-BLEF-01",
+  "X-FRONTO-01",
   "G-OTO-01",
   "M-C01-WA-01",
   "X-LIPLIFT-01",
@@ -85,8 +87,9 @@ export function buildPatientReply({
   if (replyCode === "P-PRECO-01") {
     return [
       hello,
-      "O valor de uma cirurgia depende da avaliação individual e do planejamento indicado para cada paciente.",
-      "A consulta com a Dra. Amanda é o primeiro passo para entender seus objetivos e as possibilidades com segurança.",
+      "Entendo que é importante ter uma noção do investimento antes de decidir.",
+      "O valor depende da técnica indicada, hospital, anestesia e complexidade; segurança e acompanhamento no pré e pós-operatório também fazem parte dessa escolha.",
+      "A clínica oferece opções de parcelamento.",
       "Posso te explicar como funciona a avaliação?",
     ].join(" ");
   }

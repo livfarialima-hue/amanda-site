@@ -20,14 +20,17 @@ test("builds a natural routing greeting without internal codes", () => {
   assert.doesNotMatch(reply, /ORG-DIR-01/);
 });
 
-test("never includes a surgical price in the price reply", () => {
+test("first surgical price reply gives context and payment options without a range", () => {
   const reply = buildPatientReply({
     replyCode: "P-PRECO-01",
     patientName: "Maria",
     procedure: "blefaroplastia",
   });
 
-  assert.match(reply, /avaliação individual/);
+  assert.match(reply, /técnica indicada/);
+  assert.match(reply, /segurança/);
+  assert.match(reply, /pré e pós-operatório/);
+  assert.match(reply, /opções de parcelamento/);
   assert.doesNotMatch(reply, /R\$/);
 });
 

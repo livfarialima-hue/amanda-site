@@ -86,6 +86,15 @@ const PROCEDURES = [
     patterns: [/\bblefaroplastia\b/i, /\bcirurgia\s+d[ao]s?\s+p[aá]lpebras?\b/i],
   },
   {
+    key: "frontoplastia",
+    code: "X-FRONTO-01",
+    patterns: [
+      /\bfrontoplastia\b/i,
+      /\bredu[cç][aã]o\s+(?:da\s+)?testa\b/i,
+      /\bavan[cç]o\s+(?:da\s+)?linha\s+capilar\b/i,
+    ],
+  },
+  {
     key: "otoplastia",
     code: "G-OTO-01",
     patterns: [/\botoplastia\b/i, /\borelha\s+(?:de\s+)?abano\b/i],

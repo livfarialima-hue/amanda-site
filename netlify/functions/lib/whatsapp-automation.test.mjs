@@ -36,6 +36,20 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("frontoplasty is recognized with its own procedure key", () => {
+  const plan = planAutomation({
+    text: "Gostaria de saber o valor da frontoplastia",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.replyCode, "P-PRECO-01");
+  assert.equal(plan.procedure, "frontoplastia");
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("generic first message from a Meta ad remains eligible for Bruna", () => {
   const plan = planAutomation({
     text: "Olá, posso obter mais informações sobre isso?",
