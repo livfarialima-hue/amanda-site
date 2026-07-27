@@ -26,6 +26,10 @@ import {
 } from "./lib/conversation-memory.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
+  markLatestInboundForReply,
+  waitForLatestInboundReply,
+} from "./lib/reply-debounce.mjs";
+import {
   isReviewAlertConfigured,
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
@@ -813,8 +817,28 @@ async function completeOpenAIActive({
   schedulingRequest,
   from,
   to,
+  replyDebounceMarkerStatus,
 }) {
   try {
+    const debounceResult = await waitForLatestInboundReply({
+      phone: to,
+      eventId: input.eventId,
+      markerStatus: replyDebounceMarkerStatus,
+      configuredDelayMs: process.env.WHATSAPP_REPLY_DEBOUNCE_MS,
+    });
+
+    if (!debounceResult.shouldProcess) {
+      console.log(
+        JSON.stringify({
+          source: "openai_active_debounced",
+          eventId: input.eventId,
+          patientLast4: String(to || "").slice(-4),
+          delayMs: debounceResult.delayMs,
+        }),
+      );
+      return;
+    }
+
     const activeResult = await runOpenAIShadow(input);
     logOpenAIResult(input.eventId, activeResult, "active");
 
@@ -1102,6 +1126,15 @@ export default async (request, context) => {
   let conversationHistory = [];
   let conversationMemoryStatus = "skipped";
   let conversationExpired = false;
+  let replyDebounceMarkerStatus = "skipped";
+
+  if (delivery.ok && !isExactMessageDuplicate(delivery)) {
+    const markerResult = await markLatestInboundForReply({
+      phone,
+      eventId: String(eventId),
+    });
+    replyDebounceMarkerStatus = markerResult.status;
+  }
 
   if (
     delivery.ok &&
@@ -1372,6 +1405,7 @@ export default async (request, context) => {
       schedulingRequest: appointmentReviewCandidate,
       from: String(message.to || ""),
       to: phone,
+      replyDebounceMarkerStatus,
     });
 
     aiActiveQueued = true;
@@ -1422,6 +1456,7 @@ export default async (request, context) => {
       patientReplySent,
       aiShadowQueued,
       aiActiveQueued,
+      replyDebounceMarkerStatus,
     }),
   );
 

@@ -36,6 +36,80 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("existing patient documents are sent to human review without an automatic reply", () => {
+  for (const text of [
+    "Segue os documentos assinados",
+    "Encaminho os exames para dar seguimento ao trâmite da cirurgia",
+    "Documentos assinados para o procedimento",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.equal(plan.route, "human_review");
+    assert.equal(
+      plan.reason,
+      "existing_patient_administrative_followup",
+    );
+    assert.equal(plan.automaticAllowed, false);
+  }
+});
+
+test("a repeated greeting shortly after a clinic reply is silent", () => {
+  const plan = planAutomation({
+    text: "Olá",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const now = Date.parse("2026-07-27T16:30:00.000Z");
+  const enriched = enrichAutomationPlanFromConversation(
+    plan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Boa tarde, Rosana! Como posso ajudar?",
+        at: "2026-07-27T16:29:00.000Z",
+      },
+    ],
+    now,
+  );
+
+  assert.equal(enriched.route, "ignore");
+  assert.equal(
+    enriched.reason,
+    "repeated_greeting_after_recent_reply",
+  );
+  assert.equal(enriched.automaticAllowed, false);
+});
+
+test("a greeting after the short suppression window can restart the conversation", () => {
+  const plan = planAutomation({
+    text: "Boa tarde",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enriched = enrichAutomationPlanFromConversation(
+    plan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Como posso ajudar?",
+        at: "2026-07-27T16:20:00.000Z",
+      },
+    ],
+    Date.parse("2026-07-27T16:30:00.000Z"),
+  );
+
+  assert.equal(enriched.route, "standard_reply");
+});
+
 test("frontoplasty is recognized with its own procedure key", () => {
   const plan = planAutomation({
     text: "Gostaria de saber o valor da frontoplastia",

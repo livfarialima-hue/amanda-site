@@ -130,6 +130,60 @@ test("valid structured response is parsed", () => {
   });
 });
 
+test("a known WhatsApp profile name prevents asking the name again", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        suggestedReply:
+          "Boa tarde! Eu sou a Bruna, da Clínica LIV Faria Lima. Como posso te chamar?",
+      }),
+    ),
+    "fallback-model",
+    { patientProfileName: "Rosana Macedo" },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    result.decision.suggestedReply,
+    "Boa tarde! Eu sou a Bruna, da Clínica LIV Faria Lima. Como posso ajudar?",
+  );
+});
+
+test("a generic WhatsApp profile does not suppress the name question", () => {
+  const decision = validDecision({
+    suggestedReply: "Como posso te chamar?",
+  });
+  const result = parseOpenAIShadowResponse(
+    validResponse(decision),
+    "fallback-model",
+    { patientProfileName: "Paciente" },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.decision.suggestedReply, "Como posso te chamar?");
+});
+
+test("existing conversation history prevents asking the name even without a profile name", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        suggestedReply: "Tudo bem! Como posso te chamar?",
+      }),
+    ),
+    "fallback-model",
+    {
+      patientProfileName: "",
+      hasConversationHistory: true,
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    result.decision.suggestedReply,
+    "Tudo bem! Como posso ajudar?",
+  );
+});
+
 test("OpenAI HTTP error returns a controlled failure", async () => {
   const result = await runOpenAIShadow(
     { phone: PHONE, text: "Ola", platform: "Google" },

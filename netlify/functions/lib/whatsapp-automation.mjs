@@ -33,6 +33,15 @@ const SCHEDULING_PATTERN =
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
+const EXISTING_PATIENT_FOLLOW_UP_PATTERNS = [
+  /\b(?:segue|envio|encaminho|anexo).{0,60}\b(?:documentos?|exames?|termos?|contratos?)\b/i,
+  /\b(?:documentos?|exames?|termos?|contratos?).{0,50}\bassinad[oa]s?\b/i,
+  /\b(?:dar|dando|para\s+dar)\s+seguimento.{0,60}\b(?:cirurgia|procedimento|tr[âa]mite)\b/i,
+  /\b(?:tr[âa]mite|andamento).{0,60}\b(?:cirurgia|procedimento)\b/i,
+];
+
+const RECENT_GREETING_SUPPRESSION_MS = 3 * 60 * 1_000;
+
 const COMMERCIAL_SOLICITATION_PATTERNS = [
   /\b(?:proposta|contato)\s+(?:comercial|de\s+parceria)\b/i,
   /\b(?:propor|fazer)\s+(?:uma\s+)?parceria\b/i,
@@ -218,6 +227,7 @@ export function isSchedulingRequest(text) {
 export function enrichAutomationPlanFromConversation(
   plan,
   recentConversation = [],
+  now = Date.now(),
 ) {
   if (!plan || !Array.isArray(recentConversation) || !recentConversation.length) {
     return plan;
@@ -230,6 +240,30 @@ export function enrichAutomationPlanFromConversation(
   );
 
   if (!hasClinicTurn) return plan;
+
+  if (plan.reason === "simple_greeting") {
+    const lastClinicTurn = [...recentConversation]
+      .reverse()
+      .find(
+        (turn) =>
+          turn?.role === "assistant" ||
+          ["bruna", "equipe_humana"].includes(turn?.source),
+      );
+    const lastClinicTurnAt = new Date(lastClinicTurn?.at || 0).getTime();
+
+    if (
+      Number.isFinite(lastClinicTurnAt) &&
+      now - lastClinicTurnAt >= 0 &&
+      now - lastClinicTurnAt <= RECENT_GREETING_SUPPRESSION_MS
+    ) {
+      return {
+        ...plan,
+        route: "ignore",
+        reason: "repeated_greeting_after_recent_reply",
+        automaticAllowed: false,
+      };
+    }
+  }
 
   const contextText = recentConversation
     .map((turn) => String(turn?.text || "").trim())
@@ -303,6 +337,17 @@ export function planAutomation({
       replyCode: null,
       professional: null,
       procedure: null,
+      automaticAllowed: false,
+    };
+  }
+
+  if (matchesAny(normalizedText, EXISTING_PATIENT_FOLLOW_UP_PATTERNS)) {
+    return {
+      route: "human_review",
+      reason: "existing_patient_administrative_followup",
+      replyCode: null,
+      professional: null,
+      procedure: procedure?.key || null,
       automaticAllowed: false,
     };
   }

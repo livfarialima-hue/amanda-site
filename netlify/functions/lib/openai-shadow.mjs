@@ -68,16 +68,69 @@ function normalizeRecentConversation(value) {
 
   return value
     .slice(-MAX_RECENT_TURNS)
-    .map((turn) => ({
-      role: turn?.role === "assistant" ? "assistant" : "patient",
-      source: ["bruna", "equipe_humana", "paciente"].includes(turn?.source)
-        ? turn.source
-        : turn?.role === "assistant"
-          ? "bruna"
-          : "paciente",
-      text: limitText(turn?.text, MAX_RECENT_TURN_LENGTH),
-    }))
+    .map((turn) => {
+      const at = limitText(turn?.at, 40);
+
+      return {
+        role: turn?.role === "assistant" ? "assistant" : "patient",
+        source: ["bruna", "equipe_humana", "paciente"].includes(turn?.source)
+          ? turn.source
+          : turn?.role === "assistant"
+            ? "bruna"
+            : "paciente",
+        text: limitText(turn?.text, MAX_RECENT_TURN_LENGTH),
+        ...(at ? { at } : {}),
+      };
+    })
     .filter((turn) => turn.text);
+}
+
+function usableProfileFirstName(value) {
+  const firstName = limitText(value, MAX_PROFILE_NAME_LENGTH)
+    .split(/\s+/)[0]
+    .replace(/[^\p{L}'’-]/gu, "");
+  const normalized = firstName.toLocaleLowerCase("pt-BR");
+
+  if (
+    firstName.length < 2 ||
+    ["unknown", "desconhecido", "cliente", "paciente", "contato"].includes(
+      normalized,
+    )
+  ) {
+    return "";
+  }
+
+  return firstName;
+}
+
+export function applyKnownProfileNameGuard(
+  decision,
+  patientProfileName = "",
+  hasConversationHistory = false,
+) {
+  if (
+    (!usableProfileFirstName(patientProfileName) &&
+      !hasConversationHistory) ||
+    decision?.route !== "standard_reply" ||
+    !decision?.suggestedReply
+  ) {
+    return decision;
+  }
+
+  const suggestedReply = String(decision.suggestedReply)
+    .replace(
+      /\bComo\s+posso\s+(?:te|lhe)\s+chamar\s*\?/giu,
+      "Como posso ajudar?",
+    )
+    .replace(
+      /\b(?:Qual|Como)\s+(?:é|e)\s+(?:o\s+)?seu\s+nome\s*\?/giu,
+      "Como posso ajudar?",
+    );
+
+  return {
+    ...decision,
+    suggestedReply,
+  };
 }
 
 function normalizeReferralContext(value) {
@@ -204,7 +257,14 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
 
   return result("completed", {
     model: String(response?.model || fallbackModel),
-    decision: applyUrgencyGuard(decision, options.deterministicUrgent),
+    decision: applyUrgencyGuard(
+      applyKnownProfileNameGuard(
+        decision,
+        options.patientProfileName,
+        options.hasConversationHistory,
+      ),
+      options.deterministicUrgent,
+    ),
     usage: usageSummary(response?.usage),
   });
 }
@@ -310,6 +370,8 @@ export async function runOpenAIShadow(
 
     return parseOpenAIShadowResponse(responseData, model, {
       deterministicUrgent,
+      patientProfileName,
+      hasConversationHistory: normalizedConversation.length > 0,
     });
   } catch (error) {
     return result("failed", {

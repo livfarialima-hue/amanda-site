@@ -184,15 +184,22 @@ export async function appendConversationTurn(
 export function toOpenAIConversation(turns) {
   return (Array.isArray(turns) ? turns : [])
     .slice(-MAX_TURNS)
-    .map((turn) => ({
-      role: turn.role === "assistant" ? "assistant" : "patient",
-      text: text(turn.text, 500),
-      source:
-        turn.source === "human"
-          ? "equipe_humana"
-          : turn.source === "bruna"
-            ? "bruna"
-            : "paciente",
-    }))
+    .map((turn) => {
+      const parsedAt = new Date(turn.at || 0);
+      const hasValidAt =
+        Boolean(turn.at) && Number.isFinite(parsedAt.getTime());
+
+      return {
+        role: turn.role === "assistant" ? "assistant" : "patient",
+        text: text(turn.text, 500),
+        ...(hasValidAt ? { at: parsedAt.toISOString() } : {}),
+        source:
+          turn.source === "human"
+            ? "equipe_humana"
+            : turn.source === "bruna"
+              ? "bruna"
+              : "paciente",
+      };
+    })
     .filter((turn) => turn.text);
 }
