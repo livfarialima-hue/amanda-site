@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   buildPatientReply,
   shouldSendAutomaticPatientReply,
+  shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
 
 test("builds a natural routing greeting without internal codes", () => {
@@ -81,6 +82,88 @@ test("Daniel greeting requires the internal review alert configuration", () => {
       exactDuplicate: false,
       schedulingRequest: false,
       reviewAlertConfigured: false,
+    }),
+    false,
+  );
+});
+
+test("active AI reply requires a high-confidence explicit authorization", () => {
+  const base = {
+    mode: "active",
+    plan: {
+      route: "standard_reply",
+      automaticAllowed: true,
+    },
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      suggestedReply: "Olá! Posso te explicar como funciona a avaliação?",
+    },
+    humanTakeoverToday: false,
+    exactDuplicate: false,
+    schedulingRequest: false,
+  };
+
+  assert.equal(shouldSendOpenAIPatientReply(base), true);
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      decision: {
+        ...base.decision,
+        confidence: "medium",
+      },
+    }),
+    false,
+  );
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      decision: {
+        ...base.decision,
+        automaticAllowed: false,
+        route: "human_review",
+        suggestedReply: "",
+      },
+    }),
+    false,
+  );
+});
+
+test("active AI reply remains blocked for schedules and deterministic review", () => {
+  const base = {
+    mode: "active",
+    plan: {
+      route: "standard_reply",
+      automaticAllowed: true,
+    },
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      suggestedReply: "Resposta autorizada.",
+    },
+    humanTakeoverToday: false,
+    exactDuplicate: false,
+    schedulingRequest: false,
+  };
+
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      schedulingRequest: true,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      plan: {
+        route: "human_review",
+        automaticAllowed: false,
+      },
     }),
     false,
   );

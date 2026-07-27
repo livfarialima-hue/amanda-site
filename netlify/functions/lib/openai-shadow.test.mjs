@@ -334,3 +334,266 @@ test("existing phone update runs shadow AI but exact event duplicate does not", 
     }
   }
 });
+
+test("active mode sends only the high-confidence OpenAI reply", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  delete process.env.YCLOUD_ALERT_TEMPLATE_NAME;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: true,
+          updated: false,
+          duplicate: false,
+          humanTakeoverToday: false,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              suggestedReply:
+                "Olá! A avaliação é individual. O que você deseja melhorar?",
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "active-standard-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "active-standard-message",
+        from: "+5511900000000",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Maria" },
+        text: { body: "Quero saber sobre blefaroplastia" },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiShadowQueued, false);
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.patientReplyQueued, false);
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url ===
+        "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 1);
+    const patientBody = JSON.parse(patientRequests[0].options.body);
+    assert.equal(patientBody.type, "text");
+    assert.equal(
+      patientBody.text.body,
+      "Olá! A avaliação é individual. O que você deseja melhorar?",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("active price insistence alerts the reviewer and never replies to the patient", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+    "YCLOUD_ALERT_TEMPLATE_LANGUAGE",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    YCLOUD_ALERT_TEMPLATE_NAME: "alerta_revisao_liv_v1",
+    YCLOUD_ALERT_TEMPLATE_LANGUAGE: "pt_BR",
+  });
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              route: "human_review",
+              automaticAllowed: false,
+              suggestedReply: "",
+              reviewReason: "price_range_requested",
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "active-price-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "active-price-message",
+        from: "+5511900000000",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Maria" },
+        text: {
+          body:
+            "Qual o valor da blefaroplastia? Pode me passar uma média?",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, true);
+
+    const ycloudRequests = requests.filter(
+      (request) =>
+        request.url ===
+        "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(ycloudRequests.length, 1);
+    const alertBody = JSON.parse(ycloudRequests[0].options.body);
+    assert.equal(alertBody.type, "template");
+    assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
+    assert.equal(
+      ycloudRequests.some(
+        (request) =>
+          JSON.parse(request.options.body).type === "text",
+      ),
+      false,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

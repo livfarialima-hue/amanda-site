@@ -11,6 +11,7 @@ import {
 import {
   buildPatientReply,
   shouldSendAutomaticPatientReply,
+  shouldSendOpenAIPatientReply,
 } from "./lib/patient-replies.mjs";
 import {
   normalizeDuplicateReason,
@@ -485,23 +486,23 @@ function isExactMessageDuplicate(delivery) {
   );
 }
 
-function logOpenAIShadowResult(eventId, shadowResult) {
-  if (shadowResult.status === "completed") {
+function logOpenAIResult(eventId, result, executionMode = "shadow") {
+  if (result.status === "completed") {
     console.log(
       JSON.stringify({
-        source: "openai_shadow_completed",
+        source: `openai_${executionMode}_completed`,
         eventId,
-        model: shadowResult.model,
-        route: shadowResult.decision.route,
-        confidence: shadowResult.decision.confidence,
-        automaticAllowed: shadowResult.decision.automaticAllowed,
-        urgent: shadowResult.decision.urgent,
-        professional: shadowResult.decision.professional,
-        procedure: shadowResult.decision.procedure,
-        replyCode: shadowResult.decision.replyCode,
-        suggestedReply: shadowResult.decision.suggestedReply,
-        reviewReason: shadowResult.decision.reviewReason,
-        usage: shadowResult.usage,
+        model: result.model,
+        route: result.decision.route,
+        confidence: result.decision.confidence,
+        automaticAllowed: result.decision.automaticAllowed,
+        urgent: result.decision.urgent,
+        professional: result.decision.professional,
+        procedure: result.decision.procedure,
+        replyCode: result.decision.replyCode,
+        suggestedReply: result.decision.suggestedReply,
+        reviewReason: result.decision.reviewReason,
+        usage: result.usage,
       }),
     );
     return;
@@ -509,10 +510,10 @@ function logOpenAIShadowResult(eventId, shadowResult) {
 
   console.log(
     JSON.stringify({
-      source: "openai_shadow_failed",
+      source: `openai_${executionMode}_failed`,
       eventId,
-      httpStatus: shadowResult.httpStatus ?? null,
-      errorCode: shadowResult.errorCode || "unknown_failure",
+      httpStatus: result.httpStatus ?? null,
+      errorCode: result.errorCode || "unknown_failure",
     }),
   );
 }
@@ -623,7 +624,7 @@ async function completeOpenAIShadow(
 ) {
   try {
     const shadowResult = await runOpenAIShadow(input);
-    logOpenAIShadowResult(input.eventId, shadowResult);
+    logOpenAIResult(input.eventId, shadowResult, "shadow");
 
     if (
       shadowResult.status === "completed" &&
@@ -637,6 +638,65 @@ async function completeOpenAIShadow(
     console.log(
       JSON.stringify({
         source: "openai_shadow_failed",
+        eventId: input.eventId,
+        httpStatus: null,
+        errorCode: "request_failed",
+      }),
+    );
+  }
+}
+
+async function completeOpenAIActive({
+  input,
+  alertInput,
+  reviewAlertAlreadyQueued,
+  plan,
+  humanTakeoverToday,
+  exactDuplicate,
+  schedulingRequest,
+  from,
+  to,
+}) {
+  try {
+    const activeResult = await runOpenAIShadow(input);
+    logOpenAIResult(input.eventId, activeResult, "active");
+
+    if (activeResult.status !== "completed") {
+      return;
+    }
+
+    if (
+      !reviewAlertAlreadyQueued &&
+      isReviewAlertConfigured() &&
+      shouldSendReviewAlertForDecision(activeResult.decision)
+    ) {
+      await completeReviewAlert(alertInput);
+    }
+
+    if (
+      !shouldSendOpenAIPatientReply({
+        mode: "active",
+        plan,
+        decision: activeResult.decision,
+        humanTakeoverToday,
+        exactDuplicate,
+        schedulingRequest,
+      })
+    ) {
+      return;
+    }
+
+    const replyResult = await sendYCloudPatientText({
+      from,
+      to,
+      eventId: input.eventId,
+      body: activeResult.decision.suggestedReply,
+    });
+    logPatientReplyResult(input.eventId, to, replyResult);
+  } catch {
+    console.log(
+      JSON.stringify({
+        source: "openai_active_failed",
         eventId: input.eventId,
         httpStatus: null,
         errorCode: "request_failed",
@@ -849,6 +909,7 @@ export default async (request, context) => {
   let appointmentReviewQueued = false;
   let patientReplyQueued = false;
   let patientReplySent = false;
+  let aiActiveQueued = false;
 
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(alertInput);
@@ -890,6 +951,7 @@ export default async (request, context) => {
     procedure: automationPlan.procedure,
   });
   const shouldQueuePatientReply =
+    automationPlan.route === "daniel_greeting_and_alert" &&
     Boolean(patientReplyBody) &&
     delivery.ok &&
     shouldSendAutomaticPatientReply({
@@ -919,7 +981,19 @@ export default async (request, context) => {
     automationMode === "shadow" &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
+    automationPlan.route === "standard_reply" &&
     automationPlan.professional !== "daniel" &&
+    !appointmentReviewCandidate &&
+    !isExactMessageDuplicate(delivery);
+  const shouldQueueOpenAIActive =
+    delivery.ok &&
+    !delivery.humanTakeoverToday &&
+    automationMode === "active" &&
+    String(message.type || "").toLowerCase() === "text" &&
+    text.trim().length > 0 &&
+    automationPlan.route === "standard_reply" &&
+    automationPlan.professional !== "daniel" &&
+    !appointmentReviewCandidate &&
     !isExactMessageDuplicate(delivery);
   let aiShadowQueued = false;
 
@@ -947,6 +1021,39 @@ export default async (request, context) => {
       }
     } else {
       await shadowPromise;
+    }
+  }
+
+  if (shouldQueueOpenAIActive) {
+    const activePromise = completeOpenAIActive({
+      input: {
+        eventId: String(eventId),
+        phone,
+        text,
+        platform: attribution.platform,
+        deterministicUrgent:
+          automationPlan.reason === "possible_urgent_symptoms",
+      },
+      alertInput,
+      reviewAlertAlreadyQueued: reviewAlertQueued,
+      plan: automationPlan,
+      humanTakeoverToday: delivery.humanTakeoverToday,
+      exactDuplicate: isExactMessageDuplicate(delivery),
+      schedulingRequest: appointmentReviewCandidate,
+      from: String(message.to || ""),
+      to: phone,
+    });
+
+    aiActiveQueued = true;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(activePromise);
+      } catch {
+        await activePromise;
+      }
+    } else {
+      await activePromise;
     }
   }
 
@@ -980,6 +1087,7 @@ export default async (request, context) => {
       patientReplyQueued,
       patientReplySent,
       aiShadowQueued,
+      aiActiveQueued,
     }),
   );
 
@@ -1013,6 +1121,7 @@ export default async (request, context) => {
     patientReplyQueued,
     patientReplySent,
     aiShadowQueued,
+    aiActiveQueued,
   });
 };
 

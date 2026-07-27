@@ -131,3 +131,31 @@ export function shouldSendAutomaticPatientReply({
 
   return Boolean(plan.replyCode);
 }
+
+export function shouldSendOpenAIPatientReply({
+  mode,
+  plan,
+  decision,
+  humanTakeoverToday,
+  exactDuplicate,
+  schedulingRequest,
+}) {
+  if (
+    mode !== "active" ||
+    humanTakeoverToday ||
+    exactDuplicate ||
+    schedulingRequest ||
+    plan?.automaticAllowed !== true ||
+    plan?.route !== "standard_reply"
+  ) {
+    return false;
+  }
+
+  return Boolean(
+    decision?.automaticAllowed === true &&
+      decision?.urgent !== true &&
+      decision?.route === "standard_reply" &&
+      decision?.confidence === "high" &&
+      String(decision?.suggestedReply || "").trim(),
+  );
+}
