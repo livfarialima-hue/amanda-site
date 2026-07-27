@@ -981,11 +981,7 @@ export default async (request, context) => {
     platform: attribution.platform,
   });
 
-  if (
-    preliminaryAutomationPlan.route === "ignore" &&
-    preliminaryAutomationPlan.reason ===
-      "commercial_solicitation_or_partnership"
-  ) {
+  if (preliminaryAutomationPlan.route === "ignore") {
     console.log(
       JSON.stringify({
         source: "ycloud",

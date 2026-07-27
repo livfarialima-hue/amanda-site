@@ -79,6 +79,56 @@ test("patient questions about payment or insurance are not mistaken for sales", 
   }
 });
 
+test("personal invitations and unrelated small talk are ignored", () => {
+  for (const text of [
+    "Dra Amanda, vamos almoçar amanhã?",
+    "Queria te convidar para jantar",
+    "A Dra Amanda está solteira?",
+    "Me passa seu Instagram pessoal",
+    "Qual o seu signo?",
+    "Vai chover hoje?",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.equal(plan.route, "ignore");
+    assert.equal(plan.reason, "irrelevant_or_personal_contact");
+    assert.equal(plan.automaticAllowed, false);
+  }
+});
+
+test("recovery questions containing lunch or leaving remain available for review", () => {
+  for (const text of [
+    "Posso almoçar normalmente depois da cirurgia?",
+    "Quando posso sair de casa no pós-operatório?",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.notEqual(plan.reason, "irrelevant_or_personal_contact");
+  }
+});
+
+test("an unrelated short direct message is no longer treated as a clinic inquiry", () => {
+  const plan = planAutomation({
+    text: "Qual seu time?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.notEqual(plan.reason, "short_direct_initial_inquiry");
+  assert.equal(plan.automaticAllowed, false);
+});
+
 test("recent conversation preserves Amanda and the procedure on a continuation", () => {
   const currentPlan = planAutomation({
     text: "Consigo de manhã segunda e quinta",

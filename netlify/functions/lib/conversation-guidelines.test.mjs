@@ -33,3 +33,11 @@ test("playbook ignores commercial solicitations without a courtesy response", ()
   assert.match(CONVERSATION_GUIDELINES, /proposta de parceria comercial/);
   assert.match(CONVERSATION_GUIDELINES, /Não gaste uma resposta de cortesia/);
 });
+
+test("playbook ignores personal and unrelated approaches while preserving context", () => {
+  assert.match(CONVERSATION_GUIDELINES, /convite pessoal, flerte, paquera/);
+  assert.match(CONVERSATION_GUIDELINES, /assunto sem relação plausível/);
+  assert.match(CONVERSATION_GUIDELINES, /não tente redirecionar a conversa/);
+  assert.match(CONVERSATION_GUIDELINES, /use o histórico/);
+  assert.match(CONVERSATION_GUIDELINES, /prefira human_review a ignore/);
+});

@@ -384,7 +384,7 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
   }
 });
 
-test("commercial solicitation is ignored before Sheets, OpenAI or YCloud", async () => {
+test("commercial and clearly irrelevant contacts are ignored before downstream services", async () => {
   const savedSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const originalFetch = globalThis.fetch;
   const originalLog = console.log;
@@ -394,50 +394,63 @@ test("commercial solicitation is ignored before Sheets, OpenAI or YCloud", async
   console.log = () => {};
   globalThis.fetch = async () => {
     fetchCalls += 1;
-    throw new Error("commercial solicitation must not call downstream services");
+    throw new Error("ignored contact must not call downstream services");
   };
 
   try {
-    const rawBody = JSON.stringify({
-      id: "commercial-event",
-      type: "whatsapp.inbound_message.received",
-      whatsappInboundMessage: {
-        id: "commercial-message",
-        from: "+5511900000001",
-        to: PHONE,
-        type: "text",
-        text: {
-          body:
-            "Olá, somos uma agência de marketing digital e gostaríamos de apresentar nossos serviços",
-        },
+    const cases = [
+      {
+        id: "commercial",
+        text:
+          "Olá, somos uma agência de marketing digital e gostaríamos de apresentar nossos serviços",
+        reason: "commercial_solicitation_or_partnership",
       },
-    });
-    const timestamp = "1721908800";
-    const signature = createHmac(
-      "sha256",
-      process.env.YCLOUD_WEBHOOK_SECRET,
-    )
-      .update(`${timestamp}.${rawBody}`)
-      .digest("hex");
-    const response = await webhook(
-      new Request("http://localhost/api/ycloud/webhook", {
-        method: "POST",
-        headers: {
-          "YCloud-Signature": `t=${timestamp},s=${signature}`,
-        },
-        body: rawBody,
-      }),
-    );
-    const body = await response.json();
+      {
+        id: "personal",
+        text: "Dra Amanda, vamos almoçar amanhã?",
+        reason: "irrelevant_or_personal_contact",
+      },
+    ];
 
-    assert.equal(response.status, 200);
-    assert.equal(body.ignored, true);
-    assert.equal(
-      body.ignoreReason,
-      "commercial_solicitation_or_partnership",
-    );
-    assert.equal(body.leadRecorded, false);
-    assert.equal(body.aiActiveQueued, false);
+    for (const testCase of cases) {
+      const rawBody = JSON.stringify({
+        id: `${testCase.id}-event`,
+        type: "whatsapp.inbound_message.received",
+        whatsappInboundMessage: {
+          id: `${testCase.id}-message`,
+          from: "+5511900000001",
+          to: PHONE,
+          type: "text",
+          text: {
+            body: testCase.text,
+          },
+        },
+      });
+      const timestamp = "1721908800";
+      const signature = createHmac(
+        "sha256",
+        process.env.YCLOUD_WEBHOOK_SECRET,
+      )
+        .update(`${timestamp}.${rawBody}`)
+        .digest("hex");
+      const response = await webhook(
+        new Request("http://localhost/api/ycloud/webhook", {
+          method: "POST",
+          headers: {
+            "YCloud-Signature": `t=${timestamp},s=${signature}`,
+          },
+          body: rawBody,
+        }),
+      );
+      const body = await response.json();
+
+      assert.equal(response.status, 200);
+      assert.equal(body.ignored, true);
+      assert.equal(body.ignoreReason, testCase.reason);
+      assert.equal(body.leadRecorded, false);
+      assert.equal(body.aiActiveQueued, false);
+    }
+
     assert.equal(fetchCalls, 0);
   } finally {
     globalThis.fetch = originalFetch;

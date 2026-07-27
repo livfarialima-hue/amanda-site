@@ -44,6 +44,22 @@ const COMMERCIAL_SOLICITATION_PATTERNS = [
   /\b(?:maquininha|m[aá]quina)\s+de\s+cart[aã]o\b/i,
 ];
 
+const IRRELEVANT_PERSONAL_PATTERNS = [
+  /\b(?:vamos|quer|queria|gostaria|topa|aceita)\s+(?:ir\s+)?(?:almo[cç]ar|jantar|tomar\s+(?:um\s+)?caf[eé]|sair\s+comigo|dar\s+uma\s+volta)\b/i,
+  /\b(?:posso|queria|gostaria)\s+(?:te|lhe|a\s+dra\.?\s+amanda)\s+convidar\s+para\b/i,
+  /\b(?:dra\.?\s+amanda|voc[eê])\s+(?:est[aá]|[eé])\s+(?:solteira|casada|namorando)\b/i,
+  /\b(?:achei|acho)\s+(?:voc[eê]|a\s+dra\.?\s+amanda)\s+(?:linda|gata|bonita)\b/i,
+  /\bme\s+passa\s+(?:seu|o\s+seu)\s+(?:instagram|insta|telefone|whatsapp)\s+pessoal\b/i,
+  /\b(?:manda|envia)\s+(?:uma\s+)?(?:foto\s+sua|selfie|nude)\b/i,
+  /\b(?:o\s+que|onde)\s+(?:voc[eê]|a\s+dra\.?\s+amanda)\s+(?:vai\s+)?(?:almo[cç]ar|jantar)\b/i,
+  /\b(?:vamos|bora)\s+(?:beber|tomar\s+uma|pro\s+bar|para\s+o\s+bar)\b/i,
+  /\b(?:qual\s+(?:[eé]\s+)?(?:o\s+)?seu\s+signo|voc[eê]\s+acredita\s+em\s+astrologia)\b/i,
+  /\b(?:como\s+est[aá]\s+o\s+tempo|vai\s+chover|qual\s+a\s+previs[aã]o\s+do\s+tempo)\b/i,
+];
+
+const GENERIC_CLINIC_INTENT_PATTERN =
+  /\b(?:cl[ií]nica|consulta|atendimento|procedimento|cirurgia|tratamento|avalia[cç][aã]o|m[eé]dic[ao]|doutor[ae]?|dra?\.?|paciente|conv[eê]nio|particular|p[oó]s[- ]operat[oó]rio|recupera[cç][aã]o|cicatriz|endere[cç]o|localiza[cç][aã]o|informa[cç][oõ]es?|saber\s+mais)\b/i;
+
 const PROCEDURES = [
   {
     key: "lifting_facial",
@@ -260,6 +276,17 @@ export function planAutomation({
     };
   }
 
+  if (matchesAny(normalizedText, IRRELEVANT_PERSONAL_PATTERNS)) {
+    return {
+      route: "ignore",
+      reason: "irrelevant_or_personal_contact",
+      replyCode: null,
+      professional: null,
+      procedure: null,
+      automaticAllowed: false,
+    };
+  }
+
   if (matchesAny(normalizedText, URGENT_PATTERNS)) {
     return {
       route: "human_review",
@@ -332,7 +359,8 @@ export function planAutomation({
 
   if (
     String(reference || "").startsWith("WHATSAPP-DIRETO") &&
-    normalizedText.length <= 80
+    normalizedText.length <= 80 &&
+    GENERIC_CLINIC_INTENT_PATTERN.test(normalizedText)
   ) {
     return {
       route: "standard_reply",
