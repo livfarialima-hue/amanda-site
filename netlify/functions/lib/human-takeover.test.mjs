@@ -151,3 +151,56 @@ test("manual SMB echo marks takeover and suppresses later AI for the day", async
     }
   }
 });
+
+test("WhatsApp Business automatic greeting does not mark human takeover", async () => {
+  const savedSecret = process.env.YCLOUD_WEBHOOK_SECRET;
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  let downstreamCalls = 0;
+
+  process.env.YCLOUD_WEBHOOK_SECRET = WEBHOOK_SECRET;
+  console.log = () => {};
+  globalThis.fetch = async () => {
+    downstreamCalls += 1;
+    throw new Error("automatic greeting must not reach downstream services");
+  };
+
+  try {
+    const response = await webhook(
+      signedRequest({
+        id: "automatic-greeting-event",
+        type: "whatsapp.smb.message.echoes",
+        createTime: "2026-07-27T21:30:00.000Z",
+        whatsappMessage: {
+          id: "automatic-greeting-message",
+          wamid: "wamid.automatic-greeting-message",
+          status: "sent",
+          from: "+5511961957144",
+          to: PATIENT_PHONE,
+          type: "text",
+          text: { body: "Oi! Como podemos ajudar?" },
+          sendTime: "2026-07-27T21:29:59.000Z",
+        },
+      }),
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.received, true);
+    assert.equal(body.ignored, true);
+    assert.equal(
+      body.ignoreReason,
+      "whatsapp_business_automatic_greeting",
+    );
+    assert.equal(downstreamCalls, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    if (savedSecret === undefined) {
+      delete process.env.YCLOUD_WEBHOOK_SECRET;
+    } else {
+      process.env.YCLOUD_WEBHOOK_SECRET = savedSecret;
+    }
+  }
+});

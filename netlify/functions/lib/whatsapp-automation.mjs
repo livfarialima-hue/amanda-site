@@ -186,11 +186,11 @@ function detectProcedure(text, reference, referralContext) {
       : String(referralContext || "");
   const combined = `${reference || ""} ${referralText} ${text || ""}`;
 
-  if (/\bC06H\d{2}\b/i.test(combined)) {
+  if (/\bC06(?:H\d{2})?\b/i.test(combined)) {
     return { key: "lifting_facial", code: "M-C06-WA-01" };
   }
 
-  if (/\bC01H\d{2}\b/i.test(combined)) {
+  if (/\bC01(?:H\d{2})?\b/i.test(combined)) {
     return { key: "avaliacao_facial", code: "M-C01-WA-01" };
   }
 

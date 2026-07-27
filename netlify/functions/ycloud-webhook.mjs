@@ -83,6 +83,26 @@ function normalizePhone(value) {
   return null;
 }
 
+function normalizeComparableMessage(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function isWhatsAppBusinessAutomaticGreeting(echo) {
+  if (String(echo?.type || "").toLowerCase() !== "text") return false;
+
+  const text = normalizeComparableMessage(echo?.text?.body);
+
+  return new Set([
+    "oi como podemos ajudar",
+    "ola como podemos ajudar",
+  ]).has(text);
+}
+
 function boundedReferralText(value, maximumLength = 300) {
   return Array.from(
     String(value || "")
@@ -125,7 +145,7 @@ function matchMetaCode(value, anchored = false) {
   const boundary = anchored ? "^\\s*" : "\\b";
   const pattern = new RegExp(
     `${boundary}(M26[A-Z]\\d{2}[A-Z])` +
-      `(?:\\s*(?:-|\\|)\\s*(C\\d{2}H\\d{2}))?` +
+      `(?:\\s*(?:-|\\|)\\s*(C\\d{2}(?:H\\d{2})?))?` +
       `(?:\\s*(?:-|\\|)\\s*(AF\\d{2}))?` +
       `(?![A-Z0-9-])`,
     "i",
@@ -990,6 +1010,24 @@ export default async (request, context) => {
 
     if (!eventId || !messageId) {
       return json({ received: false, error: "missing_event_id" }, 400);
+    }
+
+    if (isWhatsAppBusinessAutomaticGreeting(echo)) {
+      console.log(
+        JSON.stringify({
+          source: "ycloud_automatic_greeting_ignored",
+          eventId: String(eventId),
+          eventType: payload.type,
+          messageId: String(messageId),
+          patientLast4: patientPhone.slice(-4),
+        }),
+      );
+
+      return json({
+        received: true,
+        ignored: true,
+        ignoreReason: "whatsapp_business_automatic_greeting",
+      });
     }
 
     const takeoverDelivery = await recordHumanTakeover({

@@ -110,6 +110,22 @@ test("a greeting after the short suppression window can restart the conversation
   assert.equal(enriched.route, "standard_reply");
 });
 
+test("incomplete C06 campaign reference still identifies lifting facial", () => {
+  const plan = planAutomation({
+    text: "Olá! Gostaria de saber mais sobre avaliação com a Dra. Amanda. Ref. M26F01W-C06",
+    messageType: "text",
+    reference: "M26F01W-C06",
+    platform: "Meta",
+    referralContext: null,
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "known_procedure");
+  assert.equal(plan.procedure, "lifting_facial");
+  assert.equal(plan.replyCode, "M-C06-WA-01");
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("frontoplasty is recognized with its own procedure key", () => {
   const plan = planAutomation({
     text: "Gostaria de saber o valor da frontoplastia",
