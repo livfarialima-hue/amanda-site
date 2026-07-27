@@ -561,8 +561,7 @@ async function completeReviewAlert(input) {
 
 function isAppointmentReviewCandidate(plan, text) {
   return Boolean(
-    plan?.professional &&
-      ["amanda", "daniel"].includes(plan.professional) &&
+    plan?.professional === "amanda" &&
       isSchedulingRequest(text),
   );
 }
@@ -769,6 +768,18 @@ export default async (request, context) => {
 
   if (contactAt) lead.contactAt = String(contactAt);
 
+  const preliminaryAutomationPlan = planAutomation({
+    text,
+    messageType: message.type,
+    reference: attribution.reference,
+    platform: attribution.platform,
+  });
+
+  // The spreadsheet uses this only to keep cardiology fully isolated from
+  // the Amanda acquisition/conversion table. It never changes patient-facing
+  // behavior.
+  lead.professional = preliminaryAutomationPlan.professional;
+
   const delivery = await deliverLead(lead);
   const automationPlan = delivery.humanTakeoverToday
     ? {
@@ -788,12 +799,7 @@ export default async (request, context) => {
         procedure: null,
         automaticAllowed: false,
       }
-    : planAutomation({
-        text,
-        messageType: message.type,
-        reference: attribution.reference,
-        platform: attribution.platform,
-      });
+    : preliminaryAutomationPlan;
 
   const alertInput = {
     from: String(message.to || ""),
@@ -862,6 +868,7 @@ export default async (request, context) => {
     automationMode === "shadow" &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
+    automationPlan.professional !== "daniel" &&
     !isExactMessageDuplicate(delivery);
   let aiShadowQueued = false;
 
