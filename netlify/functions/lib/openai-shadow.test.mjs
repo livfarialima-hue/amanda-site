@@ -71,6 +71,43 @@ test("recognizes the current site WhatsApp reference as a website visit", () => 
   assert.equal(attribution.reference, "Blefaroplastia");
 });
 
+test("maps known Meta ad IDs to complete campaign references", () => {
+  const attribution = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120250469052940627",
+      },
+    },
+    "Olá! Gostaria de saber mais. Ref. M26F01W-C01",
+  );
+
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_coded");
+  assert.equal(attribution.reference, "M26F01W-C01H01");
+});
+
+test("keeps an auditable Meta ad ID when the ad is not mapped yet", () => {
+  const attribution = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120999999999999999",
+      },
+    },
+    "Quero saber mais",
+  );
+
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_ad_id");
+  assert.equal(
+    attribution.reference,
+    "META-AD-120999999999999999",
+  );
+});
+
 test("safety identifier is stable and does not contain the phone", () => {
   const first = createSafetyIdentifier(PHONE);
   const second = createSafetyIdentifier(PHONE);
@@ -242,6 +279,51 @@ test("short conversation history is sent in full without the phone", async () =>
     "O que mais incomoda nas pálpebras?",
   );
   assert.equal(calls[0].options.body.includes(PHONE), false);
+});
+
+test("passes bounded Meta ad context without referral URLs", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Olá, posso obter mais informações sobre isso?",
+      platform: "Meta",
+      procedure: "avaliacao_facial",
+      referenceCategory: "meta_uncoded",
+      referralContext: {
+        sourceType: "ad",
+        mediaType: "video",
+        headline: "Como funciona a avaliação facial",
+        body: "Conheça a consulta da Dra. Amanda.",
+        sourceUrl: "https://facebook.example/private-tracking",
+      },
+      recentConversation: [],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const requestBody = JSON.parse(calls[0].options.body);
+  const input = JSON.parse(requestBody.input);
+
+  assert.deepEqual(input.metaAdContext, {
+    sourceType: "ad",
+    mediaType: "video",
+    headline: "Como funciona a avaliação facial",
+    body: "Conheça a consulta da Dra. Amanda.",
+  });
+  assert.equal(
+    calls[0].options.body.includes("facebook.example"),
+    false,
+  );
 });
 
 test("passes one approved procedure page only to eligible non-site conversations", async () => {

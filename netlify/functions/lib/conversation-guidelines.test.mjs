@@ -8,6 +8,9 @@ test("conversion playbook defines the identity, progression and writing standard
   assert.match(CONVERSATION_GUIDELINES, /uma única pergunta útil/);
   assert.match(CONVERSATION_GUIDELINES, /responda brevemente à intenção/);
   assert.match(CONVERSATION_GUIDELINES, /Meta\/Facebook\/Instagram/);
+  assert.match(CONVERSATION_GUIDELINES, /metaAdContext/);
+  assert.match(CONVERSATION_GUIDELINES, /interesse legítimo na clínica/);
+  assert.match(CONVERSATION_GUIDELINES, /não invente procedimento/);
   assert.match(CONVERSATION_GUIDELINES, /Google: intenção geralmente mais alta/);
 });
 
@@ -32,6 +35,7 @@ test("playbook uses approved site content to reduce barriers without pressure", 
 test("playbook ignores commercial solicitations without a courtesy response", () => {
   assert.match(CONVERSATION_GUIDELINES, /proposta de parceria comercial/);
   assert.match(CONVERSATION_GUIDELINES, /Não gaste uma resposta de cortesia/);
+  assert.match(CONVERSATION_GUIDELINES, /depois ficar claramente comercial/);
 });
 
 test("playbook ignores personal and unrelated approaches while preserving context", () => {

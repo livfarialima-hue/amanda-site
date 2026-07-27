@@ -36,6 +36,46 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("generic first message from a Meta ad remains eligible for Bruna", () => {
+  const plan = planAutomation({
+    text: "Olá, posso obter mais informações sobre isso?",
+    messageType: "text",
+    reference: "META-DIRETO-SEM-CODIGO",
+    platform: "Meta",
+    referralContext: {
+      sourceType: "ad",
+      mediaType: "video",
+      headline: "Conheça a Clínica LIV Faria Lima",
+    },
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "meta_referral_initial_inquiry");
+  assert.equal(plan.replyCode, "META-DIR-01");
+  assert.equal(plan.professional, "amanda");
+  assert.equal(plan.automaticAllowed, true);
+});
+
+test("Meta ad context identifies facial evaluation without inventing intent", () => {
+  const plan = planAutomation({
+    text: "Olá, posso obter mais informações sobre isso?",
+    messageType: "text",
+    reference: "META-DIRETO-SEM-CODIGO",
+    platform: "Meta",
+    referralContext: {
+      sourceType: "ad",
+      mediaType: "video",
+      headline: "Como funciona a avaliação facial",
+      body: "Entenda a consulta com a Dra. Amanda.",
+    },
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.replyCode, "M-C01-WA-01");
+  assert.equal(plan.procedure, "avaliacao_facial");
+  assert.equal(plan.professional, "amanda");
+});
+
 test("commercial solicitations are ignored before spending on AI", () => {
   for (const text of [
     "Olá, somos uma agência de marketing digital e gostaríamos de apresentar nossos serviços",
@@ -73,6 +113,30 @@ test("patient questions about payment or insurance are not mistaken for sales", 
     });
 
     assert.notEqual(
+      plan.reason,
+      "commercial_solicitation_or_partnership",
+    );
+  }
+});
+
+test("a later explicit offer of health insurance is ignored", () => {
+  for (const text of [
+    "Trabalho com seguros e queria apresentar uma proposta",
+    "Gostaria de oferecer um plano de saúde para a clínica",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "META-DIRETO-SEM-CODIGO",
+      platform: "Meta",
+      referralContext: {
+        sourceType: "ad",
+        headline: "Avaliação facial",
+      },
+    });
+
+    assert.equal(plan.route, "ignore");
+    assert.equal(
       plan.reason,
       "commercial_solicitation_or_partnership",
     );

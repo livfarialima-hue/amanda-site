@@ -79,6 +79,44 @@ function normalizePhone(value) {
   return null;
 }
 
+function boundedReferralText(value, maximumLength = 300) {
+  return Array.from(
+    String(value || "")
+      .replace(/[\u0000-\u001f\u007f]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim(),
+  )
+    .slice(0, maximumLength)
+    .join("");
+}
+
+function extractReferralContext(message) {
+  const referral = message?.referral;
+
+  if (!referral || typeof referral !== "object") return null;
+
+  const sourceType = boundedReferralText(
+    referral.source_type || referral.sourceType,
+    40,
+  ).toLowerCase();
+
+  if (sourceType !== "ad") return null;
+
+  const context = {
+    sourceType: "ad",
+    mediaType: boundedReferralText(
+      referral.media_type || referral.mediaType,
+      40,
+    ),
+    headline: boundedReferralText(referral.headline, 300),
+    body: boundedReferralText(referral.body, 500),
+  };
+
+  return Object.fromEntries(
+    Object.entries(context).filter(([, value]) => Boolean(value)),
+  );
+}
+
 function matchMetaCode(value, anchored = false) {
   const boundary = anchored ? "^\\s*" : "\\b";
   const pattern = new RegExp(
@@ -155,6 +193,28 @@ const SITE_PAGE_REFERENCES = [
   ["Pos-Bariatrica", /^\s*p[oó]s[- ]bari[aá]trica\b/i],
 ];
 
+const META_AD_REFERENCES = Object.freeze({
+  // M26F01W | C01H01 | Como funciona a avaliação | WA
+  "120250469052940627": "M26F01W-C01H01",
+  // M26F01W | C06H01 | Lifting
+  "120250446134900627": "M26F01W-C06H01",
+});
+
+function matchMetaAdReference(message) {
+  const sourceId = String(
+    message?.referral?.source_id ||
+    message?.referral?.sourceId ||
+    "",
+  ).trim();
+
+  if (!/^\d{5,30}$/.test(sourceId)) return null;
+
+  return {
+    value: META_AD_REFERENCES[sourceId] || `META-AD-${sourceId}`,
+    family: META_AD_REFERENCES[sourceId] ? "meta_mapped" : "meta_ad_id",
+  };
+}
+
 function matchSitePageReference(value) {
   for (const [canonical, pattern] of SITE_PAGE_REFERENCES) {
     if (pattern.test(String(value || ""))) return canonical;
@@ -229,8 +289,15 @@ function hasSafeSiteEvidence(payload, message) {
 
 export function classifyAttribution(payload, message, text) {
   const referralIsMeta =
-    String(message.referral?.source_type || "").trim().toLowerCase() ===
+    String(
+      message.referral?.source_type ||
+      message.referral?.sourceType ||
+      "",
+    ).trim().toLowerCase() ===
     "ad";
+  const referralReference = referralIsMeta
+    ? matchMetaAdReference(message)
+    : null;
   const explicitReference = extractExplicitReference(text);
   const metaCode = matchMetaCode(text);
   const googleCode = matchGoogleCode(text);
@@ -238,7 +305,7 @@ export function classifyAttribution(payload, message, text) {
   const siteCta = matchSiteCta(text);
   const clickIds = extractClickIds(text);
 
-  const reference =
+  const parsedReference =
     explicitReference ||
     (metaCode && { value: metaCode, family: "meta" }) ||
     (googleCode && { value: googleCode, family: "google" }) ||
@@ -247,6 +314,14 @@ export function classifyAttribution(payload, message, text) {
       family: "google_legacy",
     }) ||
     (siteCta && { value: siteCta, family: "site_cta" });
+  const parsedMetaReferenceIsIncomplete =
+    parsedReference?.family === "meta" &&
+    !/-C\d{2}H\d{2}\b/i.test(parsedReference.value);
+  const reference =
+    referralReference &&
+    (!parsedReference || parsedMetaReferenceIsIncomplete)
+      ? referralReference
+      : parsedReference;
 
   let referenceValue;
 
@@ -290,7 +365,14 @@ export function classifyAttribution(payload, message, text) {
   let referenceCategory;
 
   if (platform === "Meta") {
-    referenceCategory = hasMetaCode ? "meta_coded" : "meta_uncoded";
+    referenceCategory =
+      reference?.family === "meta_mapped"
+        ? "meta_coded"
+        : reference?.family === "meta_ad_id"
+          ? "meta_ad_id"
+          : hasMetaCode
+            ? "meta_coded"
+            : "meta_uncoded";
   } else if (hasGoogleCode) {
     referenceCategory = "google_coded";
   } else if (hasGoogleClickId) {
@@ -960,6 +1042,7 @@ export default async (request, context) => {
   const contactAt = message.sendTime || payload.createTime;
   const text = String(message.text?.body || "");
   const attribution = classifyAttribution(payload, message, text);
+  const referralContext = extractReferralContext(message);
   const messageId = message.wamid || message.id || eventId;
   const lead = {
     eventId: String(eventId),
@@ -979,6 +1062,7 @@ export default async (request, context) => {
     messageType: message.type,
     reference: attribution.reference,
     platform: attribution.platform,
+    referralContext,
   });
 
   if (preliminaryAutomationPlan.route === "ignore") {
@@ -1239,6 +1323,7 @@ export default async (request, context) => {
           message.customerProfile?.name || "",
         ),
         recentConversation: conversationHistory,
+        referralContext,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -1273,6 +1358,7 @@ export default async (request, context) => {
           message.customerProfile?.name || "",
         ),
         recentConversation: conversationHistory,
+        referralContext,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },

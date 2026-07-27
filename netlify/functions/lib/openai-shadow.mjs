@@ -10,6 +10,7 @@ const MAX_USER_TEXT_LENGTH = 2_000;
 const MAX_PROFILE_NAME_LENGTH = 120;
 const MAX_RECENT_TURNS = 8;
 const MAX_RECENT_TURN_LENGTH = 500;
+const MAX_REFERRAL_FIELD_LENGTH = 300;
 
 const ROUTES = [
   "standard_reply",
@@ -77,6 +78,19 @@ function normalizeRecentConversation(value) {
       text: limitText(turn?.text, MAX_RECENT_TURN_LENGTH),
     }))
     .filter((turn) => turn.text);
+}
+
+function normalizeReferralContext(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+
+  const normalized = {};
+
+  for (const key of ["sourceType", "mediaType", "headline", "body"]) {
+    const text = limitText(value[key], MAX_REFERRAL_FIELD_LENGTH);
+    if (text) normalized[key] = text;
+  }
+
+  return Object.keys(normalized).length ? normalized : null;
 }
 
 function extractOutputText(response) {
@@ -204,6 +218,7 @@ export async function runOpenAIShadow(
     referenceCategory,
     patientProfileName,
     recentConversation,
+    referralContext,
     deterministicUrgent = false,
   },
   { env = process.env, fetchImpl = fetch } = {},
@@ -258,6 +273,7 @@ export async function runOpenAIShadow(
             patientProfileName,
             MAX_PROFILE_NAME_LENGTH,
           ),
+          metaAdContext: normalizeReferralContext(referralContext),
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),

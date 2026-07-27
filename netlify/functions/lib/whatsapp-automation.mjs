@@ -42,6 +42,8 @@ const COMMERCIAL_SOLICITATION_PATTERNS = [
   /\b(?:aumentar|captar)\s+(?:seus?\s+)?(?:seguidores|clientes|pacientes|vendas)\b/i,
   /\b(?:publipost|permuta|patroc[ií]nio|parceria\s+(?:paga|comercial|de\s+divulga[cç][aã]o))\b/i,
   /\b(?:maquininha|m[aá]quina)\s+de\s+cart[aã]o\b/i,
+  /\b(?:trabalho|represento|atuo)\s+com\s+(?:seguros?|planos?\s+de\s+sa[uú]de)\b/i,
+  /\b(?:quero|gostaria|posso)\s+(?:de\s+)?(?:vender|oferecer|apresentar)\s+(?:um\s+)?(?:seguro|plano\s+de\s+sa[uú]de)\b/i,
 ];
 
 const IRRELEVANT_PERSONAL_PATTERNS = [
@@ -159,8 +161,12 @@ function matchesAny(text, patterns) {
   return patterns.some((pattern) => pattern.test(text));
 }
 
-function detectProcedure(text, reference) {
-  const combined = `${reference || ""} ${text || ""}`;
+function detectProcedure(text, reference, referralContext) {
+  const referralText =
+    referralContext && typeof referralContext === "object"
+      ? Object.values(referralContext).join(" ")
+      : String(referralContext || "");
+  const combined = `${reference || ""} ${referralText} ${text || ""}`;
 
   if (/\bC06H\d{2}\b/i.test(combined)) {
     return { key: "lifting_facial", code: "M-C06-WA-01" };
@@ -183,7 +189,7 @@ function detectProcedure(text, reference) {
   }
 
   for (const procedure of PROCEDURES) {
-    if (matchesAny(text, procedure.patterns)) {
+    if (matchesAny(combined, procedure.patterns)) {
       return { key: procedure.key, code: procedure.code };
     }
   }
@@ -249,10 +255,15 @@ export function planAutomation({
   messageType,
   reference,
   platform,
+  referralContext,
 }) {
   const normalizedText = String(text || "").trim();
   const normalizedType = String(messageType || "text").toLowerCase();
-  const procedure = detectProcedure(normalizedText, reference);
+  const procedure = detectProcedure(
+    normalizedText,
+    reference,
+    referralContext,
+  );
 
   if (normalizedType !== "text" || !normalizedText) {
     return {
@@ -353,6 +364,21 @@ export function planAutomation({
       replyCode: "ORG-DIR-01",
       professional: null,
       procedure: null,
+      automaticAllowed: true,
+    };
+  }
+
+  if (
+    String(platform || "").trim().toLowerCase() === "meta" &&
+    referralContext &&
+    typeof referralContext === "object"
+  ) {
+    return {
+      route: "standard_reply",
+      reason: "meta_referral_initial_inquiry",
+      replyCode: procedure?.code || "META-DIR-01",
+      professional: "amanda",
+      procedure: procedure?.key || null,
       automaticAllowed: true,
     };
   }
