@@ -1,5 +1,6 @@
 const RETOMADAS_CONFIG = Object.freeze({
-  destinatario: "amandaschh@hotmail.com",
+  destinatario:
+    "amandaschh@hotmail.com, daniel.added@gmail.com",
   planilhaMensagens: "_WHATSAPP_MENSAGENS",
   planilhaLeads: "Google Ads - Conversões",
   planilhaControle: "_WHATSAPP_RETOMADAS",
@@ -7,6 +8,7 @@ const RETOMADAS_CONFIG = Object.freeze({
   horaEmail: 8,
   minutoEmail: 0,
   intervaloMesmoContatoHoras: 6,
+  minimoHorasAposPromessaRetorno: 24,
   maximoDiasSemResposta: 14,
   maximoPacientesPorEmail: 50,
   horariosPrioritarios: [
@@ -501,6 +503,10 @@ function criarCandidatoRetomada_(
     return null;
   }
 
+  if (retornoFuturoRecente_(conversa, agora)) {
+    return null;
+  }
+
   const diasSemResposta = diferencaDiasLocaisRetomadas_(
     ultimaMensagem.dataHora,
     agora,
@@ -818,6 +824,42 @@ function mensagemSemRetomada_(texto) {
     /nao entraremos mais em contato|encerramos por aqui/.test(
       normalizado,
     )
+  );
+}
+
+function retornoFuturoRecente_(conversa, agora) {
+  const limite =
+    RETOMADAS_CONFIG.minimoHorasAposPromessaRetorno *
+    60 *
+    60 *
+    1000;
+
+  return conversa.some(function (mensagem) {
+    if (mensagem.direcao !== "IN") {
+      return false;
+    }
+
+    const instante = dataRetomadaValida_(mensagem.dataHora);
+
+    if (!instante) {
+      return false;
+    }
+
+    const tempoDecorrido = agora.getTime() - instante.getTime();
+
+    return (
+      tempoDecorrido >= 0 &&
+      tempoDecorrido < limite &&
+      mensagemIndicaRetornoFuturo_(mensagem.texto)
+    );
+  });
+}
+
+function mensagemIndicaRetornoFuturo_(texto) {
+  const normalizado = normalizarTextoRetomadas_(texto);
+
+  return /(?:vou|irei|pretendo) (?:entrar em contato|chamar|falar|retornar|procurar)|(?:entro|entrarei|retorno|retornarei|chamo|falarei|procuro|procurarei) (?:em contato|depois|mais tarde|voces|quando)|(?:te|lhes?) (?:chamo|aviso|procuro)|(?:falo|volto a falar) com (?:voces|a clinica)|mais pra frente|quando (?:eu )?(?:decidir|puder|conseguir)/.test(
+    normalizado,
   );
 }
 

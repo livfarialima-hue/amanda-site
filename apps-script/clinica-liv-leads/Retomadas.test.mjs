@@ -17,10 +17,47 @@ vm.runInContext(source, context, {
   filename: "Retomadas.gs",
 });
 
-test("sends the daily follow-up email to Amanda", () => {
+test("sends the daily follow-up email to Amanda and Daniel", () => {
   assert.match(
     source,
-    /destinatario:\s*"amandaschh@hotmail\.com"/,
+    /destinatario:\s*"amandaschh@hotmail\.com, daniel\.added@gmail\.com"/,
+  );
+});
+
+test("waits at least 24 hours when the patient says she will return", () => {
+  const patientMessageAt = new Date("2026-07-28T12:00:00.000Z");
+  const conversationWithPromise = [
+    {
+      direcao: "IN",
+      dataHora: patientMessageAt,
+      texto: "Obrigada, vou conversar com minha família e te chamo.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-07-28T12:01:00.000Z"),
+      texto: "Claro, fique à vontade.",
+    },
+  ];
+
+  assert.equal(
+    context.retornoFuturoRecente_(
+      conversationWithPromise,
+      new Date("2026-07-29T11:59:59.000Z"),
+    ),
+    true,
+  );
+  assert.equal(
+    context.retornoFuturoRecente_(
+      conversationWithPromise,
+      new Date("2026-07-29T12:00:00.000Z"),
+    ),
+    false,
+  );
+  assert.equal(
+    context.mensagemIndicaRetornoFuturo_(
+      "Mais pra frente eu entro em contato com vocês.",
+    ),
+    true,
   );
 });
 

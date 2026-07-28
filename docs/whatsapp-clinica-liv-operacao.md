@@ -8,7 +8,7 @@
 - Template de alerta: `alerta_revisao_liv_v1`
 - Destino dos alertas: WhatsApp pessoal da Amanda (`+55 19 99694-4518`)
 - Agenda: revisão humana obrigatória antes de oferecer horários
-- Resumo de retomadas: e-mail diário para `amandaschh@hotmail.com`
+- Resumo de retomadas: e-mail diário para `amandaschh@hotmail.com` e `daniel.added@gmail.com`
 
 O diagnóstico público do endpoint deve indicar:
 
@@ -109,12 +109,14 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 
 ### Todos os dias
 
-1. Conferir o e-mail informativo do plano de retomadas enviado por volta das 8h para `amandaschh@hotmail.com`.
+1. Conferir o e-mail informativo do plano de retomadas enviado por volta das 8h para Amanda e Daniel.
 2. Revisar o histórico antes de usar cada mensagem sugerida.
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
 O e-mail é apenas informativo: apresenta o plano completo do dia, indica o responsável sugerido e separa uma seção de ação para Amanda/equipe com as mensagens já redigidas. Ele não envia mensagens aos pacientes. Primeiras retomadas seguras, sem preço ou agenda, aparecem como candidatas à Bruna; até a rotina automática ser ativada e validar a janela do WhatsApp, continuam sendo apenas planejamento. Preço, agenda e retomadas posteriores permanecem com a equipe.
+
+Se a paciente disser que entrará em contato, que chamará a clínica, que falará mais tarde ou usar formulação equivalente, nenhuma retomada deve ser planejada nas 24 horas seguintes à mensagem. A regra usa horas corridas, não apenas a mudança da data no calendário.
 
 As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada pode entregar um conteúdo pertinente do site; a segunda continua especificamente o tema de preço ou agenda quando esse foi o ponto pendente e, nos demais casos, deixa o canal aberto sem pressa; a terceira encerra novos contatos de forma respeitosa. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
 
