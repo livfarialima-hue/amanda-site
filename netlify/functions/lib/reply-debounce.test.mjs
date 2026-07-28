@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  checkLatestInboundReply,
+  DEFAULT_DEBOUNCE_MS,
   getLatestInboundReplyMarker,
   markLatestInboundForReply,
   shouldRecoverExactDuplicateRetry,
@@ -58,7 +60,44 @@ test("only the latest inbound event may answer after the quiet window", async ()
 
   assert.equal(firstResult.shouldProcess, false);
   assert.equal(secondResult.shouldProcess, true);
-  assert.equal(secondResult.delayMs, 6_000);
+  assert.equal(secondResult.delayMs, 8_000);
+});
+
+test("default quiet window is eight seconds", () => {
+  assert.equal(DEFAULT_DEBOUNCE_MS, 8_000);
+});
+
+test("a newer message arriving during generation supersedes the older reply", async () => {
+  const blobs = fakeBlobs();
+  const first = await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "evt-1" },
+    blobs,
+  );
+
+  await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "evt-2" },
+    blobs,
+  );
+
+  const firstAfterGeneration = await checkLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "evt-1",
+      markerStatus: first.status,
+    },
+    blobs,
+  );
+  const secondAfterGeneration = await checkLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "evt-2",
+      markerStatus: "completed",
+    },
+    blobs,
+  );
+
+  assert.equal(firstAfterGeneration.shouldProcess, false);
+  assert.equal(secondAfterGeneration.shouldProcess, true);
 });
 
 test("a storage failure never loses the patient response", async () => {

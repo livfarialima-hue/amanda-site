@@ -2,7 +2,8 @@ import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-whatsapp-reply-debounce-v1";
-const DEFAULT_DEBOUNCE_MS = 6_000;
+const DEFAULT_DEBOUNCE_MS = 8_000;
+const MIN_DEBOUNCE_MS = 8_000;
 const MAX_DEBOUNCE_MS = 15_000;
 
 function key(phone) {
@@ -15,7 +16,10 @@ function debounceMs(value) {
   const parsed = Number.parseInt(String(value || ""), 10);
 
   if (!Number.isFinite(parsed)) return DEFAULT_DEBOUNCE_MS;
-  return Math.min(Math.max(parsed, 0), MAX_DEBOUNCE_MS);
+  return Math.min(
+    Math.max(parsed, MIN_DEBOUNCE_MS),
+    MAX_DEBOUNCE_MS,
+  );
 }
 
 function store(getStoreImpl = getStore) {
@@ -112,6 +116,36 @@ export async function waitForLatestInboundReply(
   const delayMs = debounceMs(configuredDelayMs);
   await waitImpl(delayMs);
 
+  const latestResult = await checkLatestInboundReply(
+    {
+      phone,
+      eventId,
+      markerStatus,
+    },
+    { getStoreImpl },
+  );
+
+  return {
+    ...latestResult,
+    delayMs,
+  };
+}
+
+export async function checkLatestInboundReply(
+  {
+    phone,
+    eventId,
+    markerStatus,
+  },
+  { getStoreImpl = getStore } = {},
+) {
+  if (markerStatus !== "completed") {
+    return {
+      status: "skipped",
+      shouldProcess: true,
+    };
+  }
+
   try {
     const latest = await store(getStoreImpl).get(key(phone), {
       type: "json",
@@ -121,13 +155,11 @@ export async function waitForLatestInboundReply(
     return {
       status: "completed",
       shouldProcess: latest?.eventId === String(eventId),
-      delayMs,
     };
   } catch {
     return {
       status: "failed",
       shouldProcess: true,
-      delayMs,
     };
   }
 }

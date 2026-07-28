@@ -26,6 +26,7 @@ import {
 } from "./lib/conversation-memory.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
+  checkLatestInboundReply,
   getLatestInboundReplyMarker,
   markLatestInboundForReply,
   shouldRecoverExactDuplicateRetry,
@@ -865,6 +866,23 @@ async function completeOpenAIActive({
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
+      return;
+    }
+
+    const latestAfterGeneration = await checkLatestInboundReply({
+      phone: to,
+      eventId: input.eventId,
+      markerStatus: replyDebounceMarkerStatus,
+    });
+
+    if (!latestAfterGeneration.shouldProcess) {
+      console.log(
+        JSON.stringify({
+          source: "openai_active_superseded_after_generation",
+          eventId: input.eventId,
+          patientLast4: String(to || "").slice(-4),
+        }),
+      );
       return;
     }
 

@@ -38,6 +38,8 @@ Google, Meta e WhatsApp direto seguem a mesma estratégia. A mensagem e o histó
 
 O site não deve ser enviado na primeira resposta por rotina. Ele entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereço deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explícito. Não enviar junto de preço, urgência ou pedido de agenda, nem repetir uma página já enviada.
 
+Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segundos. Depois de elaborar a resposta, o sistema confere novamente qual foi a mensagem mais recente. Se outra mensagem tiver chegado durante a elaboração, a resposta anterior é cancelada e somente a intenção mais nova pode responder usando o histórico completo. Uma pergunta explícita, como preço, localização ou consulta, sempre prevalece sobre o roteiro do anúncio.
+
 ## Quando não responder automaticamente
 
 - Pedido de preço cirúrgico sem faixa atual aprovada.
