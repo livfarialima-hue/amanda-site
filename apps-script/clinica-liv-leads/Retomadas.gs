@@ -7,6 +7,8 @@ const RETOMADAS_CONFIG = Object.freeze({
   fusoHorario: "America/Sao_Paulo",
   horaEmail: 8,
   minutoEmail: 0,
+  horaInicioRetomadas: 9,
+  horaFimRetomadas: 19,
   intervaloMesmoContatoHoras: 6,
   minimoHorasAposPromessaRetorno: 24,
   maximoDiasSemResposta: 14,
@@ -334,12 +336,15 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     return a.ultimoContato.getTime() - b.ultimoContato.getTime();
   });
 
-  const selecionados = candidatos.slice(
+  let selecionados = candidatos.slice(
     0,
     RETOMADAS_CONFIG.maximoPacientesPorEmail,
   );
 
   atribuirHorariosRetomadas_(selecionados);
+  selecionados = selecionados.filter(function (candidato) {
+    return Boolean(candidato.horario);
+  });
 
   selecionados.forEach(function (candidato) {
     candidato.responsavel = responsavelRetomada_(candidato);
@@ -683,16 +688,28 @@ function responsavelRetomada_(candidato) {
 }
 
 function horarioRetomadaPorIndice_(horarios, indice) {
+  let minutos;
+
   if (indice < horarios.length) {
-    return horarios[indice];
+    const partes = horarios[indice].split(":");
+    minutos = Number(partes[0]) * 60 + Number(partes[1]);
+  } else {
+    const ultimo = horarios[horarios.length - 1];
+    const partes = ultimo.split(":");
+    const minutosBase =
+      Number(partes[0]) * 60 + Number(partes[1]);
+    minutos =
+      minutosBase + (indice - horarios.length + 1) * 15;
   }
 
-  const ultimo = horarios[horarios.length - 1];
-  const partes = ultimo.split(":");
-  const minutosBase =
-    Number(partes[0]) * 60 + Number(partes[1]);
-  const minutos = minutosBase + (indice - horarios.length + 1) * 15;
-  const hora = Math.floor(minutos / 60) % 24;
+  const inicio = RETOMADAS_CONFIG.horaInicioRetomadas * 60;
+  const fim = RETOMADAS_CONFIG.horaFimRetomadas * 60;
+
+  if (minutos < inicio || minutos >= fim) {
+    return "";
+  }
+
+  const hora = Math.floor(minutos / 60);
   const minuto = minutos % 60;
 
   return (

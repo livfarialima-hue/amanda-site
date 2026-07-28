@@ -61,6 +61,25 @@ test("waits at least 24 hours when the patient says she will return", () => {
   );
 });
 
+test("never plans a commercial follow-up overnight", () => {
+  assert.equal(
+    context.horarioRetomadaPorIndice_(["10:30"], 0),
+    "10:30",
+  );
+  assert.equal(
+    context.horarioRetomadaPorIndice_(["17:45"], 4),
+    "18:45",
+  );
+  assert.equal(
+    context.horarioRetomadaPorIndice_(["17:45"], 5),
+    "",
+  );
+  assert.equal(
+    context.horarioRetomadaPorIndice_(["08:30"], 0),
+    "",
+  );
+});
+
 test("classifies only a safe first follow-up as planned for Bruna", () => {
   assert.equal(
     context.responsavelRetomada_({

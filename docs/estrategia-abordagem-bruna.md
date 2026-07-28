@@ -246,6 +246,8 @@ A retomada é manual e deve ser conferida no histórico antes do envio. Ela deve
 
 Quando a própria paciente disser que entrará em contato, que chamará a clínica ou que prefere voltar a falar mais tarde, respeitar um intervalo mínimo de 24 horas corridas antes de sequer incluir o contato no plano de retomadas. Não usar apenas a virada do dia como sinal de que já passou tempo suficiente.
 
+Toda retomada comercial deve ocorrer entre 09:00 e 19:00, no horário de São Paulo. Se não houver mais espaço aceitável no dia, adiar para o planejamento seguinte em vez de enviar à noite ou de madrugada.
+
 Essa sequência comercial é diferente da continuidade operacional após uma tomada humana. Quando Daniel assume uma conversa e a paciente envia uma nova mensagem sem receber resposta humana por 20 minutos, a Bruna pode continuar somente entre 08:00 e 20:00 e apenas com resposta de alta confiança. Preço cirúrgico, pagamento, agenda, confirmação de horário, segurança, sintomas, urgência, documentos, pré e pós-operatório, cardiologia e demais temas reservados continuam humanos. Na incerteza não sensível, a Bruna envia uma única mensagem informando que confirmará com a equipe, alerta Amanda e permanece em silêncio.
 
 - se houver procedimento ou dúvida conhecida, oferecer um único material específico do site;
