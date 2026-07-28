@@ -65,8 +65,32 @@ test("keeps surgical price and schedule confirmation human-only", () => {
 });
 
 test("does not reopen a conversation for a simple acknowledgment", () => {
+  for (const text of [
+    "Obrigada!",
+    "Ok obrigada",
+    "Ok, muito obrigada!",
+    "Perfeito, obrigada pela ajuda.",
+    "Obrigada, combinado. Até terça!",
+  ]) {
+    const result = classifyHumanResume({
+      text,
+      messageType: "text",
+      preliminaryPlan: {
+        route: "human_review",
+        reason: "outside_conservative_rules",
+        automaticAllowed: false,
+      },
+      enrichedPlan: standardPlan("known_conversation_continuation"),
+      recentConversation: [],
+    });
+
+    assert.equal(result.action, "no_action", text);
+  }
+});
+
+test("does not hide an actionable request that starts with thanks", () => {
   const result = classifyHumanResume({
-    text: "Obrigada!",
+    text: "Ok, obrigada, mas qual é o endereço?",
     messageType: "text",
     preliminaryPlan: {
       route: "human_review",
@@ -77,7 +101,7 @@ test("does not reopen a conversation for a simple acknowledgment", () => {
     recentConversation: [],
   });
 
-  assert.equal(result.action, "no_action");
+  assert.notEqual(result.action, "no_action");
 });
 
 test("uses a holding message only for a non-sensitive uncertainty", () => {

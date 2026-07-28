@@ -2,7 +2,7 @@ import { isAppointmentPreferenceReply } from "./appointment-suggestions.mjs";
 import { isSchedulingRequest } from "./whatsapp-automation.mjs";
 
 const CLOSING_PATTERN =
-  /^(?:obrigad[ao]|muito obrigad[ao]|agrade[cç]o|ok|okay|t[aá]\s+bom|tudo bem|entendi|perfeito|combinado|certo|beleza|j[aá]\s+entendi|sem problemas)[!.?\s]*$/i;
+  /^(?:(?:(?:muito\s+)?obrigad[ao](?:\s+pela\s+ajuda)?|agrade[cç]o|grata|valeu|ok(?:ay)?|t[aá]\s+bom|tudo bem|entendi|perfeito|combinado|certo|beleza|j[aá]\s+entendi|sem problemas|at[eé](?:\s+(?:mais|logo|amanh[aã]|segunda(?:-feira)?|ter[cç]a(?:-feira)?|quarta(?:-feira)?|quinta(?:-feira)?|sexta(?:-feira)?|s[aá]bado|domingo))?)[,!.?\s]*)+$/i;
 const SCHEDULING_CONTEXT_PATTERN =
   /\b(?:agenda|agendar|marcar|hor[aá]rio|data|dia|per[ií]odo|disponibilidade|consulta\s+(?:para|em)|\d{1,2}(?::|h)\d{0,2})\b/i;
 const CONFIRMATION_PATTERN =

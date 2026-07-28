@@ -204,3 +204,37 @@ test("new human activity cancels the automatic send and alert", async () => {
   assert.equal(deps.alerts.length, 0);
   assert.equal(deps.completions.length, 0);
 });
+
+test("an acknowledgment after a human booking confirmation stays silent", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      text: "Ok obrigada",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "Pode sim! Remanejamos e dá pra te receber às 11h.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Ok obrigada",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "no_action");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "human_active",
+  );
+});
