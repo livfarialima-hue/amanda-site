@@ -80,7 +80,8 @@ Se a paciente responder e não houver nova mensagem humana em 20 minutos, uma ro
 - uma nova mensagem humana cancela a retomada, inclusive durante a elaboração da resposta;
 - agradecimentos e encerramentos simples não provocam nova mensagem;
 - preço cirúrgico, condições de pagamento, agenda e confirmação de horário, sintomas, urgência, segurança, documentos, pré ou pós-operatório, cardiologia, sofrimento intenso e demais temas reservados permanecem em silêncio para a paciente e geram alerta;
-- se o tema não for reservado, mas a Bruna não tiver confiança para responder, ela envia uma única vez: “Recebi sua mensagem e vou confirmar essa informação com a equipe para te responder com segurança.” Em seguida, alerta Daniel e permanece em silêncio;
+- se o tema não for reservado, mas a Bruna não tiver confiança para responder, a mensagem de espera só é enviada quando há uma pergunta, pedido ou resposta a uma pergunta da clínica realmente pendente;
+- se não houver solicitação concreta pendente, a paciente não recebe uma mensagem artificial de espera: Daniel recebe o alerta para revisar a conversa;
 - depois de uma resposta segura da Bruna, a automação volta a conduzir normalmente a conversa;
 - depois da mensagem de espera ou de um bloqueio sensível, somente uma nova mensagem humana libera a conversa;
 - fora do horário, a avaliação fica adiada para a próxima abertura, sem mensagem imediata.
@@ -113,7 +114,7 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
-As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada pode entregar um conteúdo pertinente do site; a segunda deixa o canal aberto, sem pressa; a terceira encerra novos contatos de forma respeitosa. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
+As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada pode entregar um conteúdo pertinente do site; a segunda continua especificamente o tema de preço ou agenda quando esse foi o ponto pendente e, nos demais casos, deixa o canal aberto sem pressa; a terceira encerra novos contatos de forma respeitosa. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
 
 ### Quando assumir uma conversa
 

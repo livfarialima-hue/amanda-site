@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   classifyHumanResume,
+  hasConcreteResponseExpectation,
   isHumanResumeServiceOpen,
   nextHumanResumeServiceTime,
 } from "./human-resume-policy.mjs";
@@ -122,6 +123,62 @@ test("uses a holding message only for a non-sensitive uncertainty", () => {
   });
 
   assert.equal(result.action, "holding_and_alert");
+});
+
+test("alerts silently when uncertainty has no concrete unanswered request", () => {
+  const result = classifyHumanResume({
+    text: "Entendi, vou pensar com calma",
+    messageType: "text",
+    preliminaryPlan: {
+      route: "human_review",
+      reason: "outside_conservative_rules",
+      automaticAllowed: false,
+    },
+    enrichedPlan: {
+      route: "human_review",
+      reason: "outside_conservative_rules",
+      automaticAllowed: false,
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Aqui estão as informações sobre a consulta.",
+      },
+    ],
+  });
+
+  assert.equal(result.action, "alert_only");
+});
+
+test("recognizes both direct requests and answers to a pending question", () => {
+  assert.equal(
+    hasConcreteResponseExpectation(
+      "Você consegue verificar isso para mim?",
+      [],
+    ),
+    true,
+  );
+  assert.equal(
+    hasConcreteResponseExpectation(
+      "Contorno facial, flacidez e linhas marionetes.",
+      [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "O que você gostaria de melhorar?",
+        },
+      ],
+    ),
+    true,
+  );
+  assert.equal(
+    hasConcreteResponseExpectation(
+      "Perfeito, obrigada pela ajuda.",
+      [],
+    ),
+    false,
+  );
 });
 
 test("resumes only between 08:00 and 20:00 in São Paulo", () => {

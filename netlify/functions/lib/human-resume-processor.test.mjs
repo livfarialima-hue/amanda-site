@@ -178,6 +178,45 @@ test("low confidence sends one holding message and one alert", async () => {
   );
 });
 
+test("low confidence without a pending request alerts without an awkward holding message", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      text: "Entendi, vou pensar com calma",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "Aqui estão as informações sobre a consulta.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Entendi, vou pensar com calma",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "waiting_human");
+  assert.equal(result.holdingSent, false);
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 1);
+  assert.match(
+    deps.alerts[0].messageText,
+    /REVISAR CONVERSA/,
+  );
+  assert.match(
+    deps.alerts[0].messageText,
+    /Nenhuma mensagem automática foi enviada/,
+  );
+});
+
 test("new human activity cancels the automatic send and alert", async () => {
   const deps = dependencies();
   deps.isHumanResumeClaimCurrentImpl = async () => false;

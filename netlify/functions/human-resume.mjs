@@ -5,6 +5,7 @@ import {
 } from "./lib/whatsapp-automation.mjs";
 import {
   classifyHumanResume,
+  hasConcreteResponseExpectation,
   HUMAN_RESUME_HOLDING_MESSAGE,
   isHumanResumeServiceOpen,
   nextHumanResumeServiceTime,
@@ -29,11 +30,19 @@ function limitedText(value, maximumLength = 260) {
     .join("");
 }
 
-function alertText(job, { kind, reason, holdingSent = false }) {
-  const heading =
-    kind === "sensitive"
-      ? "RETOMADA HUMANA — TEMA RESERVADO"
-      : "RETOMADA HUMANA — RESPOSTA NECESSÁRIA";
+function alertText(
+  job,
+  {
+    kind,
+    reason,
+    holdingSent = false,
+    suggestedReply = "",
+  },
+) {
+  const heading = {
+    sensitive: "RETOMADA HUMANA — TEMA RESERVADO",
+    observation: "RETOMADA HUMANA — REVISAR CONVERSA",
+  }[kind] || "RETOMADA HUMANA — RESPOSTA NECESSÁRIA";
 
   return [
     heading,
@@ -43,7 +52,10 @@ function alertText(job, { kind, reason, holdingSent = false }) {
     holdingSent
       ? "A mensagem de espera foi enviada uma única vez. A automação permanecerá em silêncio até sua resposta."
       : "Nenhuma mensagem automática foi enviada à paciente.",
-  ].join("\n");
+    suggestedReply
+      ? `Sugestão para copiar após conferir: ${limitedText(suggestedReply, 300)}`
+      : "",
+  ].filter(Boolean).join("\n");
 }
 
 async function alertReviewer(job, details, dependencies = {}) {
@@ -160,6 +172,37 @@ async function holdAndAlert(job, reason, dependencies = {}) {
   };
 }
 
+async function alertOnly(
+  job,
+  reason,
+  dependencies = {},
+  suggestedReply = "",
+) {
+  const alertResult = await alertReviewer(
+    job,
+    {
+      kind: "observation",
+      reason,
+      holdingSent: false,
+      suggestedReply,
+    },
+    dependencies,
+  );
+  if (alertResult.status === "superseded") {
+    return {
+      status: "superseded",
+      reason: "newer_activity",
+    };
+  }
+
+  await finish(job, "waiting_human", dependencies);
+  return {
+    status: "waiting_human",
+    holdingSent: false,
+    reason,
+  };
+}
+
 export async function processHumanResumeJob(
   job,
   {
@@ -247,6 +290,10 @@ export async function processHumanResumeJob(
     return holdAndAlert(job, policy.reason, dependencies);
   }
 
+  if (policy.action === "alert_only") {
+    return alertOnly(job, policy.reason, dependencies);
+  }
+
   const runOpenAI =
     dependencies.runOpenAIShadowImpl || runOpenAIShadow;
   const aiResult = await runOpenAI(
@@ -277,12 +324,28 @@ export async function processHumanResumeJob(
     });
 
   if (!maySend) {
-    return holdAndAlert(
-      job,
+    const reason =
       aiResult.decision?.reviewReason ||
-        aiResult.errorCode ||
-        "low_confidence",
+      aiResult.errorCode ||
+      "low_confidence";
+    const suggestedReply = String(
+      aiResult.decision?.suggestedReply || "",
+    ).trim();
+
+    if (
+      hasConcreteResponseExpectation(
+        job.text,
+        job.recentConversation,
+      )
+    ) {
+      return holdAndAlert(job, reason, dependencies);
+    }
+
+    return alertOnly(
+      job,
+      reason,
       dependencies,
+      suggestedReply,
     );
   }
 

@@ -5,7 +5,7 @@ import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
 test("conversion playbook defines identity, progression and low-friction qualification", () => {
   assert.match(CONVERSATION_GUIDELINES, /Eu sou a Bruna/);
   assert.match(CONVERSATION_GUIDELINES, /Como posso te chamar/);
-  assert.match(CONVERSATION_GUIDELINES, /somente uma pergunta útil/);
+  assert.match(CONVERSATION_GUIDELINES, /no máximo uma pergunta útil/);
   assert.match(CONVERSATION_GUIDELINES, /Meta\/Facebook\/Instagram/);
   assert.match(CONVERSATION_GUIDELINES, /metaAdContext/);
   assert.match(CONVERSATION_GUIDELINES, /interesse legítimo na clínica/);
@@ -31,6 +31,22 @@ test("conversion playbook defines identity, progression and low-friction qualifi
   assert.match(
     CONVERSATION_GUIDELINES,
     /Não abra a conversa perguntando "o que incomoda"/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Identifique todas as perguntas, pedidos e informações novas/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /responda as duas antes de qualificar/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Uma pergunta de continuidade é opcional, não obrigatória/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não força avanço/,
   );
 });
 
@@ -118,6 +134,10 @@ test("playbook handles trust barriers without unsupported claims", () => {
   assert.match(CONVERSATION_GUIDELINES, /Não prometa ausência de risco/);
   assert.match(CONVERSATION_GUIDELINES, /Não prometa naturalidade ou resultado/);
   assert.match(CONVERSATION_GUIDELINES, /sem usar "investimento" como eufemismo/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não transforme a formação em bloco de abertura/,
+  );
 });
 
 test("playbook handles appearance insecurity without exploiting it", () => {
@@ -157,4 +177,23 @@ test("playbook ignores commercial and unrelated approaches while preserving cont
   assert.match(CONVERSATION_GUIDELINES, /convite pessoal, flerte, paquera/);
   assert.match(CONVERSATION_GUIDELINES, /use o histórico/);
   assert.match(CONVERSATION_GUIDELINES, /prefira human_review a ignore/);
+});
+
+test("playbook adapts to stage and does not manufacture conversational progress", () => {
+  assert.match(CONVERSATION_GUIDELINES, /Pesquisando:/);
+  assert.match(CONVERSATION_GUIDELINES, /Comparando ou com objeção:/);
+  assert.match(CONVERSATION_GUIDELINES, /Pronta para agendar:/);
+  assert.match(CONVERSATION_GUIDELINES, /Encerrando:/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /pare de qualificar, apresentar credenciais ou enviar links/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não contenha pergunta, pedido ou ação pendente/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /mencione pelo menos um elemento concreto do que ela disse/,
+  );
 });

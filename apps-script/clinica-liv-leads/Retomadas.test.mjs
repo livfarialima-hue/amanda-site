@@ -240,3 +240,25 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
   assert.match(last, /para não ser inconveniente/);
   assert.match(last, /em outro momento/);
 });
+
+test("second follow-up continues the pending price or scheduling thread", () => {
+  const price = context.sugerirMensagemRetomada_(
+    2,
+    true,
+    null,
+    false,
+    true,
+  );
+  const schedule = context.sugerirMensagemRetomada_(
+    2,
+    true,
+    null,
+    true,
+    false,
+  );
+
+  assert.match(price, /dúvida sobre valores/);
+  assert.match(price, /exatamente desse ponto/);
+  assert.match(schedule, /um dia possível/);
+  assert.match(schedule, /está tudo bem/);
+});

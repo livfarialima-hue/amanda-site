@@ -7,6 +7,10 @@ const SCHEDULING_CONTEXT_PATTERN =
   /\b(?:agenda|agendar|marcar|hor[aá]rio|data|dia|per[ií]odo|disponibilidade|consulta\s+(?:para|em)|\d{1,2}(?::|h)\d{0,2})\b/i;
 const CONFIRMATION_PATTERN =
   /\b(?:confirmo|confirmar|pode\s+ser|fechado|combinado|esse\s+hor[aá]rio|essa\s+data|nesse\s+dia)\b/i;
+const DIRECT_QUESTION_PATTERN =
+  /(?:\?|^(?:como|qual|quais|quanto|quantos|quando|onde|por\s+que|porque|quem|voc[eê]s|tem|h[aá]|pode|posso|ser[aá]|custa|atende|faz)\b)/i;
+const DIRECT_REQUEST_PATTERN =
+  /\b(?:quero|gostaria|preciso|poderia|consegue|conseguem|pode|podem|tenho\s+(?:uma\s+)?d[uú]vida|me\s+(?:explica|explique|diz|diga|informa|informe|manda|mande|envia|envie|avisa|avise|confirma|confirme|ajuda|ajude|passa|passe)|verifica|verifique|confirma|confirme|agenda|agende|marca|marque|reserva|reserve)\b/i;
 
 const SENSITIVE_REASONS = new Set([
   "surgical_price_review",
@@ -93,6 +97,33 @@ function hasSchedulingContext(recentConversation) {
     );
 }
 
+function lastAssistantTurn(recentConversation) {
+  return (Array.isArray(recentConversation) ? recentConversation : [])
+    .slice()
+    .reverse()
+    .find((turn) => turn?.role === "assistant");
+}
+
+export function hasConcreteResponseExpectation(
+  text,
+  recentConversation = [],
+) {
+  const normalizedText = String(text || "").trim();
+  if (!normalizedText || CLOSING_PATTERN.test(normalizedText)) {
+    return false;
+  }
+
+  if (
+    DIRECT_QUESTION_PATTERN.test(normalizedText) ||
+    DIRECT_REQUEST_PATTERN.test(normalizedText)
+  ) {
+    return true;
+  }
+
+  const previousAssistant = lastAssistantTurn(recentConversation);
+  return /\?/.test(String(previousAssistant?.text || ""));
+}
+
 export function classifyHumanResume({
   text,
   messageType,
@@ -167,8 +198,15 @@ export function classifyHumanResume({
     };
   }
 
+  const responseExpected = hasConcreteResponseExpectation(
+    normalizedText,
+    recentConversation,
+  );
+
   return {
-    action: "holding_and_alert",
+    action: responseExpected
+      ? "holding_and_alert"
+      : "alert_only",
     reason: enrichedPlan?.reason || "low_confidence",
   };
 }

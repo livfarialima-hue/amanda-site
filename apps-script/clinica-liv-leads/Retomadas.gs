@@ -702,6 +702,14 @@ function sugerirMensagemRetomada_(
   }
 
   if (etapa === 2) {
+    if (contextoPreco) {
+      return "Olá! Deixo o canal aberto para retomarmos sua dúvida sobre valores, caso ela ainda esteja pesando na sua pesquisa. Se quiser continuar, responda no seu tempo e seguimos exatamente desse ponto.";
+    }
+
+    if (contextoAgenda) {
+      return "Olá! Se a avaliação ainda fizer sentido para você, posso retomar a conversa sobre um dia possível, sem pressa. Se preferir deixar para outro momento, está tudo bem.";
+    }
+
     return "Olá! Só queria deixar o canal aberto caso você ainda esteja pensando no procedimento. Se quiser, posso retomar do ponto em que paramos, sem pressa.";
   }
 
