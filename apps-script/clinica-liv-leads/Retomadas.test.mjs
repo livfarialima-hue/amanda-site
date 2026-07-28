@@ -85,8 +85,9 @@ test("first follow-up offers a specific facial resource without pressure", () =>
     material.url,
     "https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/",
   );
-  assert.match(message, /avaliar com calma, sem compromisso/);
-  assert.match(message, /Ficou alguma dúvida/);
+  assert.match(message, /Lembrei da sua dúvida/);
+  assert.match(message, /Talvez ele ajude você a pensar com calma/);
+  assert.match(message, /Se quiser/);
 });
 
 test("does not add a site link to price, scheduling or website-origin follow-ups", () => {
@@ -167,4 +168,75 @@ test("suppresses commercial material for intense appearance distress", () => {
     ),
     null,
   );
+});
+
+test("excludes intense distress and explicit opt-out from commercial follow-up", () => {
+  const blockedContexts = [
+    "odeio meu rosto ele acabou com minha vida",
+    "nao quero mais interesse",
+    "nao me envie mensagens",
+    "nao entre mais em contato",
+    "pode encerrar o atendimento",
+  ];
+
+  for (const contextText of blockedContexts) {
+    assert.equal(
+      context.retomadaComercialPermitida_(contextText),
+      false,
+      contextText,
+    );
+  }
+
+  assert.equal(
+    context.retomadaComercialPermitida_(
+      "estou pesquisando lifting facial e ainda tenho duvidas",
+    ),
+    true,
+  );
+});
+
+test("follow-up sequence stays warm, unhurried and respectful", () => {
+  const price = context.sugerirMensagemRetomada_(
+    1,
+    true,
+    null,
+    false,
+    true,
+  );
+  const schedule = context.sugerirMensagemRetomada_(
+    1,
+    true,
+    null,
+    true,
+    false,
+  );
+  const general = context.sugerirMensagemRetomada_(
+    1,
+    false,
+    null,
+    false,
+    false,
+  );
+  const second = context.sugerirMensagemRetomada_(
+    2,
+    false,
+    null,
+    false,
+    false,
+  );
+  const last = context.sugerirMensagemRetomada_(
+    3,
+    false,
+    null,
+    false,
+    false,
+  );
+
+  assert.match(price, /É uma dúvida importante/);
+  assert.match(schedule, /pensar com calma/);
+  assert.match(schedule, /sem compromisso/);
+  assert.match(general, /não precisa decidir nada agora/);
+  assert.match(second, /sem pressa/);
+  assert.match(last, /para não ser inconveniente/);
+  assert.match(last, /em outro momento/);
 });

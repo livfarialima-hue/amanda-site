@@ -219,21 +219,30 @@ Ao receber dia ou período, a Bruna não promete horário. O sistema busca opç�
 
 ## Retomadas
 
-A retomada é manual e deve ser conferida no histórico antes do envio. A primeira retomada entrega utilidade em vez de apenas perguntar se a pessoa ainda tem interesse:
+A retomada é manual e deve ser conferida no histórico antes do envio. Ela deve soar como a continuação natural de uma conversa, nunca como cobrança, roteiro de vendas ou tentativa de provocar culpa pelo silêncio. A primeira retomada entrega utilidade em vez de apenas perguntar se a pessoa ainda tem interesse:
 
 - se houver procedimento ou dúvida conhecida, oferecer um único material específico do site;
 - se o assunto for naturalidade, segurança, recuperação, cicatriz ou comparação, preferir o artigo correspondente;
 - se o procedimento estiver definido e não houver dúvida mais específica, usar a página completa;
 - se ainda não houver procedimento, usar a página geral da Dra. Amanda;
-- não enviar link se a pessoa veio do próprio site, se um link já foi compartilhado, se a conversa está em preço ou agenda, ou se houver sofrimento intenso;
+- não enviar link se a pessoa veio do próprio site, se um link já foi compartilhado ou se a conversa está em preço ou agenda;
+- excluir completamente da lista quem pediu para não receber contato ou demonstrou sofrimento intenso relacionado à aparência;
 - apresentar o conteúdo como apoio para decidir com calma, nunca como prova de resultado semelhante;
-- terminar com uma pergunta simples sobre a dúvida que ficou.
+- usar expressões de autonomia, como “se quiser”, “sem pressa” e “você não precisa decidir agora”;
+- evitar “dando continuidade ao atendimento”, “dar o próximo passo”, “não deixar sua solicitação sem retorno” e outras construções que soem corporativas;
+- terminar abrindo espaço para a pessoa contar o que ficou em dúvida, sem exigir resposta.
 
 Exemplo:
 
-> Olá! Separei um material da Dra. Amanda sobre naturalidade e planejamento facial. Ele pode ajudar você a avaliar as possibilidades com calma, sem compromisso: https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/ Ficou alguma dúvida que eu possa esclarecer por aqui?
+> Olá! Lembrei da sua dúvida e separei um material da Dra. Amanda sobre naturalidade, identidade e planejamento facial. Ele explica como proporções, limites e preservação da expressão entram no planejamento. Talvez ele ajude você a pensar com calma: https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/ Se quiser, pode me contar o que ainda ficou em dúvida.
 
-A segunda retomada é curta e deixa a porta aberta. A terceira informa que é o último contato, sem urgência, desconto ou insistência.
+A segunda retomada é curta e deixa a porta aberta:
+
+> Olá! Só queria deixar o canal aberto caso você ainda esteja pensando no procedimento. Se quiser, posso retomar do ponto em que paramos, sem pressa.
+
+A terceira encerra o contato com respeito, sem urgência, desconto ou insistência:
+
+> Olá! Vou encerrar meus contatos por aqui para não ser inconveniente. Se em outro momento quiser retomar a conversa, será um prazer ajudar você.
 
 ## O que ainda precisa ser validado antes de automatizar
 

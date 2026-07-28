@@ -99,6 +99,8 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
+As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada pode entregar um conteúdo pertinente do site; a segunda deixa o canal aberto, sem pressa; a terceira encerra novos contatos de forma respeitosa. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
+
 ### Quando assumir uma conversa
 
 Responder pelo WhatsApp Business da clínica. O eco da mensagem registra automaticamente a tomada humana e bloqueia o bot naquele dia.

@@ -549,6 +549,11 @@ function criarCandidatoRetomada_(
     /valor|preco|orcamento|pagamento|parcel/.test(
       contextoPaciente,
     );
+
+  if (!retomadaComercialPermitida_(contextoPaciente)) {
+    return null;
+  }
+
   const prioritario = contextoAgenda || contextoPreco;
   const material = selecionarMaterialRetomada_(
     lead,
@@ -674,33 +679,33 @@ function sugerirMensagemRetomada_(
 ) {
   if (etapa === 1 && material) {
     return (
-      "Olá! Separei um material da Dra. Amanda " +
+      "Olá! Lembrei da sua dúvida e separei um material da Dra. Amanda " +
       material.sobre +
       ". " +
       material.descricao +
-      " e pode ajudar você a avaliar com calma, sem compromisso: " +
+      ". Talvez ele ajude você a pensar com calma: " +
       material.url +
-      " Ficou alguma dúvida que eu possa esclarecer por aqui?"
+      " Se quiser, pode me contar o que ainda ficou em dúvida."
     );
   }
 
   if (etapa === 1 && contextoPreco) {
-    return "Olá! Retomando sua dúvida sobre valores para não deixar você sem uma resposta clara. Se ainda fizer sentido, posso continuar exatamente desse ponto por aqui?";
+    return "Olá! Lembrei que você queria entender melhor os valores. É uma dúvida importante e não queria deixá-la sem resposta. Se ainda fizer sentido para você, posso retomar exatamente desse ponto e te ajudar por aqui.";
   }
 
   if (etapa === 1 && contextoAgenda) {
-    return "Olá! Passando para dar continuidade ao seu atendimento. Posso verificar as opções de horário para sua avaliação com a Dra. Amanda e te ajudar a escolher a mais confortável?";
+    return "Olá! Passei para saber se você conseguiu pensar com calma sobre a avaliação. Se ainda quiser, posso ajudar a encontrar um dia que fique confortável para você, sem compromisso.";
   }
 
   if (etapa === 1) {
-    return "Olá! Passando para deixar o canal aberto. A consulta não pressupõe cirurgia: ela serve para entender possibilidades e limites com calma. Ficou alguma dúvida que eu possa esclarecer por aqui?";
+    return "Olá! Passei para saber se ficou alguma dúvida da nossa conversa. Você não precisa decidir nada agora; se quiser continuar pesquisando ou entender melhor a avaliação, estou por aqui.";
   }
 
   if (etapa === 2) {
-    return "Olá! Retomando seu atendimento com cuidado: se ainda fizer sentido para você, posso esclarecer o que ficou pendente ou verificar possibilidades de avaliação com a Dra. Amanda.";
+    return "Olá! Só queria deixar o canal aberto caso você ainda esteja pensando no procedimento. Se quiser, posso retomar do ponto em que paramos, sem pressa.";
   }
 
-  return "Olá! Faço só um último contato para não deixar sua solicitação sem retorno. Se quiser retomar a conversa sobre o procedimento, estou à disposição para ajudar.";
+  return "Olá! Vou encerrar meus contatos por aqui para não ser inconveniente. Se em outro momento quiser retomar a conversa, será um prazer ajudar você.";
 }
 
 function selecionarMaterialRetomada_(
@@ -757,6 +762,16 @@ function conversaTemLinkSiteRetomada_(conversa) {
 
 function contextoSensivelRetomada_(contexto) {
   return /arruinou minha vida|acabou com minha vida|salvar (meu |o )?(casamento|relacionamento|emprego|trabalho)|preciso ser perfeita|nunca vou ficar satisfeita|odeio meu rosto|nao aguento mais minha aparencia/.test(
+    contexto,
+  );
+}
+
+function retomadaComercialPermitida_(contexto) {
+  if (contextoSensivelRetomada_(contexto)) {
+    return false;
+  }
+
+  return !/nao (?:quero|tenho) mais interesse|nao me (?:envie|mande) mensagens|nao entre mais em contato|pare de (?:me )?(?:enviar|mandar|ligar|contatar)|pode encerrar (?:o )?(?:atendimento|contato)/.test(
     contexto,
   );
 }
