@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildConsultationInformationReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
   REACTIVATION_REPLY,
@@ -33,6 +34,26 @@ test("price fallback is transparent about the consultation and clarifies the req
   assert.match(reply, /abatido/);
   assert.match(reply, /faixa atual de blefaroplastia/);
   assert.doesNotMatch(reply, /investimento/);
+});
+
+test("explains the consultation directly and uses the specific site material", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Rô de Souza",
+    siteResource: {
+      url: "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+    },
+  });
+
+  assert.match(reply, /^Olá, Rô! Claro\./);
+  assert.match(reply, /Na consulta, a Dra\. Amanda conversa/);
+  assert.match(reply, /sem pressupor cirurgia/);
+  assert.match(reply, /R\$ 500/);
+  assert.match(reply, /abatidos se a cirurgia/);
+  assert.match(
+    reply,
+    /https:\/\/draamandaschroeder\.com\.br\/conteudos\/consulta-cirurgia-plastica\//,
+  );
+  assert.match(reply, /Posso ver os horários/);
 });
 
 test("builds the single fixed notice for a conversation resumed after seven days", () => {

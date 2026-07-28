@@ -852,7 +852,127 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
-test("active price insistence alerts the reviewer and never replies to the patient", async () => {
+test("consultation information is answered deterministically without stopping", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "consultation-information-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "consultation-information-message",
+        from: "+5511900000000",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Rô de Souza" },
+        text: {
+          body:
+            "Estou fazendo uma pesquisa. Seria interessante saber como funciona a consulta.",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(
+      requests.some(
+        (request) =>
+          request.url === "https://api.openai.com/v1/responses",
+      ),
+      false,
+    );
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url ===
+          "https://api.ycloud.com/v2/whatsapp/messages" &&
+        JSON.parse(request.options.body).type === "text",
+    );
+    assert.equal(patientRequests.length, 1);
+    const patientReply = JSON.parse(
+      patientRequests[0].options.body,
+    ).text.body;
+    assert.match(patientReply, /^Olá, Rô! Claro\./);
+    assert.match(patientReply, /R\$ 500/);
+    assert.match(patientReply, /Posso ver os horários/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("surgical price alerts the reviewer directly with a suggestion and never replies to the patient", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -959,7 +1079,15 @@ test("active price insistence alerts the reviewer and never replies to the patie
     const body = await response.json();
     await Promise.all(pending);
 
-    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.reviewAlertQueued, true);
+    assert.equal(
+      requests.some(
+        (request) =>
+          request.url === "https://api.openai.com/v1/responses",
+      ),
+      false,
+    );
 
     const ycloudRequests = requests.filter(
       (request) =>
@@ -970,6 +1098,15 @@ test("active price insistence alerts the reviewer and never replies to the patie
     const alertBody = JSON.parse(ycloudRequests[0].options.body);
     assert.equal(alertBody.type, "template");
     assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
+    const alertText =
+      alertBody.template.components[0].parameters[2].text;
+    assert.match(
+      alertText,
+      /PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA/,
+    );
+    assert.match(alertText, /Sugestão para copiar após conferir/);
+    assert.match(alertText, /R\$ 19\.900 à vista/);
+    assert.match(alertText, /R\$ 21\.000 no valor parcelado/);
     assert.equal(
       ycloudRequests.some(
         (request) =>

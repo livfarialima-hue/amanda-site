@@ -26,6 +26,7 @@ O diagnóstico público do endpoint deve indicar:
 - Procura inicial por cirurgia plástica ou procedimento conhecido.
 - Continuação curta e coerente da conversa.
 - Dúvidas gerais seguras sobre avaliação e procedimentos.
+- Perguntas informativas como “como funciona a consulta?” ou “como funciona a avaliação?”, sem confundi-las com pedido de agenda.
 - Valor da consulta da Dra. Amanda: R$ 500, abatido se a cirurgia for realizada com a equipe.
 - Faixa cirúrgica somente quando houver um valor atual expressamente aprovado nas regras.
 - Apresentação correta da Dra. Amanda: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria pelo Einstein, CRM-SP 191605, RQE 110472 e atuação com foco em cirurgias da face.
@@ -49,14 +50,14 @@ Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segu
 - Dúvida fora do padrão ou que exija decisão humana.
 - Atendimento humano assumido no mesmo dia.
 
-Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`; nenhuma opção é enviada à paciente sem aprovação.
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta baseada na tabela de referência, incluindo honorários/equipe e a referência hospitalar quando houver correspondência confiável. Nenhuma dessas sugestões é enviada à paciente sem aprovação.
 
 ## Informações comerciais e localização
 
 - Consulta presencial com a Dra. Amanda: R$ 500.
 - O valor da consulta é abatido se a cirurgia for realizada com a equipe.
 - Existem opções de parcelamento, mas quantidade de parcelas, juros, meios, desconto à vista, parcelamento antecipado, cancelamento e reembolso não devem ser informados até serem aprovados e incluídos nas regras.
-- A planilha de preços do Dr. João de 2025 é referência histórica e não deve ser usada pelo bot como tabela atual da Dra. Amanda.
+- A planilha de preços do Dr. João de 2025 é referência histórica autorizada somente para preparar sugestões internas de preço. Ela não é apresentada como tabela atual da Dra. Amanda e não autoriza envio automático.
 - Nome correto: Clínica LIV Faria Lima.
 - Localização correta: Rua Pais Leme, 215, Pinheiros, próxima à Av. Faria Lima, São Paulo. Não dizer que a clínica fica na própria Avenida Faria Lima.
 

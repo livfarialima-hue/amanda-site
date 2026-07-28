@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   enrichAutomationPlanFromConversation,
+  isConsultationInformationRequest,
+  isSchedulingRequest,
   planAutomation,
 } from "./whatsapp-automation.mjs";
 
@@ -56,6 +58,42 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.route, "standard_reply");
   assert.equal(plan.replyCode, "G-BLEF-01");
   assert.equal(plan.automaticAllowed, true);
+});
+
+test("surgical price with a table reference goes directly to human review", () => {
+  const plan = planAutomation({
+    text: "Qual o valor do lifting facial?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.procedure, "lifting_facial");
+  assert.equal(plan.automaticAllowed, false);
+});
+
+test("asking how the consultation works stays in automatic conversation", () => {
+  for (const text of [
+    "Estou fazendo uma pesquisa. Seria interessante saber como funciona a consulta.",
+    "Como funciona a avaliação?",
+    "Queria entender o que acontece na consulta",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "M26F01W-C06H01",
+      platform: "Meta",
+    });
+
+    assert.equal(isConsultationInformationRequest(text), true, text);
+    assert.equal(isSchedulingRequest(text), false, text);
+    assert.equal(plan.route, "standard_reply", text);
+    assert.equal(plan.reason, "consultation_information_request", text);
+    assert.equal(plan.replyCode, "AMANDA-CONSULTA-INFO-01", text);
+    assert.equal(plan.automaticAllowed, true, text);
+  }
 });
 
 test("existing patient documents are sent to human review without an automatic reply", () => {

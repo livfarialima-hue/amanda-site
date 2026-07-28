@@ -46,6 +46,22 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /consulta presencial custa R\$ 500/);
   assert.match(CONVERSATION_GUIDELINES, /Há opções de parcelamento/);
   assert.match(CONVERSATION_GUIDELINES, /qualquer outro procedimento sem faixa aprovada/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Como funciona a consulta\/avaliação/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /pergunta informativa, não um pedido de agenda/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /sugestão baseada na tabela interna/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Nenhum desses valores pode ser enviado automaticamente/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /use human_review/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);
   assert.match(CONVERSATION_GUIDELINES, /Não repita a apresentação ou as credenciais/);

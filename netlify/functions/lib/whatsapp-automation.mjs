@@ -30,6 +30,9 @@ const PRICE_PATTERN =
 const SCHEDULING_PATTERN =
   /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o|datas?)\b/i;
 
+const CONSULTATION_INFORMATION_PATTERN =
+  /\b(?:(?:como|de\s+que\s+forma)\s+(?:funciona|[eé])|o\s+que\s+(?:acontece|[eé]\s+feito)|quer(?:o|ia)\s+entender\s+como\s+funciona).{0,50}\b(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,50}\b(?:como\s+funciona|passo\s+a\s+passo)\b/i;
+
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
@@ -230,7 +233,15 @@ export function normalizeAutomationMode(value) {
 }
 
 export function isSchedulingRequest(text) {
-  return SCHEDULING_PATTERN.test(String(text || ""));
+  const normalizedText = String(text || "");
+  return (
+    !isConsultationInformationRequest(normalizedText) &&
+    SCHEDULING_PATTERN.test(normalizedText)
+  );
+}
+
+export function isConsultationInformationRequest(text) {
+  return CONSULTATION_INFORMATION_PATTERN.test(String(text || ""));
 }
 
 export function enrichAutomationPlanFromConversation(
@@ -397,14 +408,38 @@ export function planAutomation({
   const mentionsAmanda = matchesAny(normalizedText, AMANDA_PATTERNS);
   const asksPrice = PRICE_PATTERN.test(normalizedText);
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
+  const asksConsultationInformation =
+    isConsultationInformationRequest(normalizedText);
 
   if (asksPrice && procedure) {
+    if (procedure.key !== "frontoplastia") {
+      return {
+        route: "human_review",
+        reason: "surgical_price_review",
+        replyCode: null,
+        professional: "amanda",
+        procedure: procedure.key,
+        automaticAllowed: false,
+      };
+    }
+
     return {
       route: "standard_reply",
       reason: "first_surgical_price_question",
       replyCode: "P-PRECO-01",
       professional: "amanda",
       procedure: procedure.key,
+      automaticAllowed: true,
+    };
+  }
+
+  if (asksConsultationInformation) {
+    return {
+      route: "standard_reply",
+      reason: "consultation_information_request",
+      replyCode: "AMANDA-CONSULTA-INFO-01",
+      professional: "amanda",
+      procedure: procedure?.key || null,
       automaticAllowed: true,
     };
   }

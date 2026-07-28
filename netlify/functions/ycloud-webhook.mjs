@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import {
   enrichAutomationPlanFromConversation,
+  isConsultationInformationRequest,
   isSchedulingRequest,
   normalizeAutomationMode,
   planAutomation,
@@ -11,6 +12,7 @@ import {
   isAppointmentPreferenceReply,
 } from "./lib/appointment-suggestions.mjs";
 import {
+  buildConsultationInformationReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
   shouldSendAutomaticPatientReply,
@@ -37,6 +39,11 @@ import {
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
+import { getRecommendedSiteResource } from "./lib/site-content.mjs";
+import {
+  buildPriceReviewAlert,
+  isSurgicalPriceReview,
+} from "./lib/surgical-price-review.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -717,6 +724,45 @@ function logPatientReplyResult(eventId, phone, replyResult) {
   );
 }
 
+function prepareReviewAlertInput(input, { decision, plan } = {}) {
+  const planReason = String(plan?.reason || "");
+  const priceReview =
+    isSurgicalPriceReview(decision, plan) ||
+    (
+      plan?.route === "human_review" &&
+      /(?:price|preco|valor|orcamento)/i.test(planReason)
+    );
+
+  if (priceReview) {
+    return {
+      ...input,
+      messageText: buildPriceReviewAlert({
+        patientName: input.patientName,
+        patientMessage: input.messageText,
+        procedure:
+          decision?.procedure ||
+          plan?.procedure ||
+          null,
+      }),
+    };
+  }
+
+  const suggestedReply = String(
+    decision?.suggestedReply || "",
+  ).trim();
+
+  if (!suggestedReply) return input;
+
+  return {
+    ...input,
+    messageText: [
+      input.messageText,
+      "Sugestão para copiar após conferir:",
+      suggestedReply,
+    ].filter(Boolean).join("\n"),
+  };
+}
+
 async function completeReviewAlert(input) {
   try {
     const alertResult = await sendYCloudReviewAlert(input);
@@ -816,7 +862,12 @@ async function completeOpenAIShadow(
       isReviewAlertConfigured() &&
       shouldSendReviewAlertForDecision(shadowResult.decision)
     ) {
-      await completeReviewAlert(alertInput);
+      await completeReviewAlert(
+        prepareReviewAlertInput(alertInput, {
+          decision: shadowResult.decision,
+          plan,
+        }),
+      );
     }
   } catch {
     console.log(
@@ -862,7 +913,41 @@ async function completeOpenAIActive({
       return;
     }
 
-    const activeResult = await runOpenAIShadow(input);
+    const consultationInformationRequest =
+      plan?.reason === "consultation_information_request" &&
+      isConsultationInformationRequest(input.text);
+    const siteResource = consultationInformationRequest
+      ? getRecommendedSiteResource({
+          procedure: plan?.procedure || input.procedure,
+          referenceCategory: input.referenceCategory,
+          recentConversation: input.recentConversation,
+          currentMessage: input.text,
+        })
+      : null;
+    const activeResult = consultationInformationRequest
+      ? {
+          status: "completed",
+          model: "deterministic-consultation-information",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure:
+              plan?.procedure ||
+              input.procedure ||
+              "",
+            replyCode: "AMANDA-CONSULTA-INFO-01",
+            suggestedReply: buildConsultationInformationReply({
+              patientName: input.patientProfileName,
+              siteResource,
+            }),
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : await runOpenAIShadow(input);
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
@@ -909,7 +994,12 @@ async function completeOpenAIActive({
       isReviewAlertConfigured() &&
       shouldSendReviewAlertForDecision(activeResult.decision)
     ) {
-      await completeReviewAlert(alertInput);
+      await completeReviewAlert(
+        prepareReviewAlertInput(alertInput, {
+          decision: activeResult.decision,
+          plan,
+        }),
+      );
     }
 
     if (
@@ -1311,7 +1401,11 @@ export default async (request, context) => {
   let aiActiveQueued = false;
 
   if (shouldQueueReviewAlert) {
-    const alertPromise = completeReviewAlert(alertInput);
+    const alertPromise = completeReviewAlert(
+      prepareReviewAlertInput(alertInput, {
+        plan: automationPlan,
+      }),
+    );
     reviewAlertQueued = true;
 
     if (typeof context?.waitUntil === "function") {

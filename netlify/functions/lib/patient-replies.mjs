@@ -56,6 +56,28 @@ function greeting(name) {
   return normalizedName ? `Olá, ${normalizedName}!` : "Olá!";
 }
 
+export function buildConsultationInformationReply({
+  patientName,
+  siteResource,
+}) {
+  const introduction = [
+    greeting(patientName),
+    "Claro.",
+    "Na consulta, a Dra. Amanda conversa sobre o que você quer melhorar e preservar, examina a região e explica possibilidades, limites, recuperação e orçamento, sem pressupor cirurgia.",
+    "A consulta presencial custa R$ 500, abatidos se a cirurgia for realizada com a equipe.",
+  ].join(" ");
+  const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
+    String(siteResource?.url || ""),
+  )
+    ? siteResource.url
+    : "";
+  const nextStep = resourceUrl
+    ? `Se quiser, este material detalha a consulta: ${resourceUrl} Posso ver os horários?`
+    : "Posso ver os horários?";
+
+  return `${introduction}\n\n${nextStep}`;
+}
+
 export function buildPatientReply({
   replyCode,
   patientName,
