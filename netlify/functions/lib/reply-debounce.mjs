@@ -44,6 +44,50 @@ export async function markLatestInboundForReply(
   }
 }
 
+export async function getLatestInboundReplyMarker(
+  { phone },
+  { getStoreImpl = getStore } = {},
+) {
+  if (!phone) {
+    return { status: "skipped", found: false };
+  }
+
+  try {
+    const latest = await store(getStoreImpl).get(key(phone), {
+      type: "json",
+      consistency: "strong",
+    });
+
+    return {
+      status: "completed",
+      found: Boolean(latest?.eventId),
+      eventId: latest?.eventId ? String(latest.eventId) : null,
+      markedAt: latest?.markedAt ? String(latest.markedAt) : null,
+    };
+  } catch {
+    return { status: "failed", found: false };
+  }
+}
+
+export function shouldRecoverExactDuplicateRetry({
+  marker,
+  eventId,
+  messageAt,
+}) {
+  if (marker?.status !== "completed" || !eventId) return false;
+  if (!marker.found) return true;
+  if (marker.eventId === String(eventId)) return false;
+
+  const markerTime = Date.parse(String(marker.markedAt || ""));
+  const messageTime = Date.parse(String(messageAt || ""));
+
+  return (
+    Number.isFinite(markerTime) &&
+    Number.isFinite(messageTime) &&
+    markerTime < messageTime
+  );
+}
+
 export async function waitForLatestInboundReply(
   {
     phone,

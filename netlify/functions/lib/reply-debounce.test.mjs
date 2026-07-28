@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  getLatestInboundReplyMarker,
   markLatestInboundForReply,
+  shouldRecoverExactDuplicateRetry,
   waitForLatestInboundReply,
 } from "./reply-debounce.mjs";
 
@@ -77,4 +79,73 @@ test("a storage failure never loses the patient response", async () => {
   assert.equal(result.shouldProcess, true);
   assert.equal(result.status, "skipped");
   assert.equal(waited, false);
+});
+
+test("an exact duplicate retry is recovered when the first attempt never marked it", async () => {
+  const blobs = fakeBlobs();
+  const marker = await getLatestInboundReplyMarker(
+    { phone: "+5511900000000" },
+    blobs,
+  );
+
+  assert.equal(marker.status, "completed");
+  assert.equal(marker.found, false);
+  assert.equal(
+    shouldRecoverExactDuplicateRetry({
+      marker,
+      eventId: "evt-retry",
+      messageAt: "2026-07-27T21:58:00-03:00",
+    }),
+    true,
+  );
+});
+
+test("an exact duplicate retry is suppressed after the event was marked", async () => {
+  const blobs = fakeBlobs();
+  await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "evt-processed" },
+    {
+      ...blobs,
+      now: Date.parse("2026-07-27T21:58:01-03:00"),
+    },
+  );
+  const marker = await getLatestInboundReplyMarker(
+    { phone: "+5511900000000" },
+    blobs,
+  );
+
+  assert.equal(marker.found, true);
+  assert.equal(marker.eventId, "evt-processed");
+  assert.equal(
+    shouldRecoverExactDuplicateRetry({
+      marker,
+      eventId: "evt-processed",
+      messageAt: "2026-07-27T21:58:00-03:00",
+    }),
+    false,
+  );
+});
+
+test("an older phone marker does not block recovery of a newer exact duplicate", async () => {
+  const blobs = fakeBlobs();
+  await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "evt-older" },
+    {
+      ...blobs,
+      now: Date.parse("2026-07-27T20:00:00-03:00"),
+    },
+  );
+  const marker = await getLatestInboundReplyMarker(
+    { phone: "+5511900000000" },
+    blobs,
+  );
+
+  assert.equal(
+    shouldRecoverExactDuplicateRetry({
+      marker,
+      eventId: "evt-newer",
+      messageAt: "2026-07-27T21:58:00-03:00",
+    }),
+    true,
+  );
 });

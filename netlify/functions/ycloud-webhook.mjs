@@ -26,7 +26,9 @@ import {
 } from "./lib/conversation-memory.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
+  getLatestInboundReplyMarker,
   markLatestInboundForReply,
+  shouldRecoverExactDuplicateRetry,
   waitForLatestInboundReply,
 } from "./lib/reply-debounce.mjs";
 import {
@@ -1165,8 +1167,22 @@ export default async (request, context) => {
   let conversationMemoryStatus = "skipped";
   let conversationExpired = false;
   let replyDebounceMarkerStatus = "skipped";
+  const exactMessageDuplicate = isExactMessageDuplicate(delivery);
+  let recoveredExactDuplicate = false;
 
-  if (delivery.ok && !isExactMessageDuplicate(delivery)) {
+  if (delivery.ok && exactMessageDuplicate) {
+    const latestMarker = await getLatestInboundReplyMarker({ phone });
+    recoveredExactDuplicate = shouldRecoverExactDuplicateRetry({
+      marker: latestMarker,
+      eventId: String(eventId),
+      messageAt: contactAt,
+    });
+  }
+
+  const suppressExactDuplicate =
+    exactMessageDuplicate && !recoveredExactDuplicate;
+
+  if (delivery.ok && !suppressExactDuplicate) {
     const markerResult = await markLatestInboundForReply({
       phone,
       eventId: String(eventId),
@@ -1176,7 +1192,7 @@ export default async (request, context) => {
 
   if (
     delivery.ok &&
-    !isExactMessageDuplicate(delivery) &&
+    !suppressExactDuplicate &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0
   ) {
@@ -1206,7 +1222,8 @@ export default async (request, context) => {
         procedure: null,
         automaticAllowed: false,
       }
-    : shouldSuppressAutomationForDuplicate(delivery)
+    : shouldSuppressAutomationForDuplicate(delivery) &&
+        !recoveredExactDuplicate
     ? {
         route: "ignored_duplicate",
         reason: "message_already_processed",
@@ -1259,13 +1276,13 @@ export default async (request, context) => {
   const shouldQueueAppointmentReview =
     delivery.ok &&
     !delivery.humanTakeoverToday &&
-    !isExactMessageDuplicate(delivery) &&
+    !suppressExactDuplicate &&
     appointmentReviewCandidate &&
     isAppointmentAlertEnabled() &&
     isReviewAlertConfigured();
   const shouldQueueReviewAlert =
     delivery.ok &&
-    !isExactMessageDuplicate(delivery) &&
+    !suppressExactDuplicate &&
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
     shouldSendReviewAlertForPlan(automationPlan);
@@ -1326,7 +1343,7 @@ export default async (request, context) => {
       mode: automationMode,
       plan: automationPlan,
       humanTakeoverToday: delivery.humanTakeoverToday,
-      exactDuplicate: isExactMessageDuplicate(delivery),
+      exactDuplicate: suppressExactDuplicate,
       schedulingRequest: appointmentReviewCandidate,
       reviewAlertConfigured: isReviewAlertConfigured(),
     });
@@ -1370,7 +1387,7 @@ export default async (request, context) => {
     automationPlan.route === "standard_reply" &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
-    !isExactMessageDuplicate(delivery);
+    !suppressExactDuplicate;
   const shouldQueueOpenAIActive =
     delivery.ok &&
     !delivery.humanTakeoverToday &&
@@ -1380,7 +1397,7 @@ export default async (request, context) => {
     automationPlan.route === "standard_reply" &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
-    !isExactMessageDuplicate(delivery);
+    !suppressExactDuplicate;
   let aiShadowQueued = false;
 
   if (shouldQueueOpenAIShadow) {
@@ -1439,7 +1456,7 @@ export default async (request, context) => {
       reviewAlertAlreadyQueued: reviewAlertQueued,
       plan: automationPlan,
       humanTakeoverToday: delivery.humanTakeoverToday,
-      exactDuplicate: isExactMessageDuplicate(delivery),
+      exactDuplicate: suppressExactDuplicate,
       schedulingRequest: appointmentReviewCandidate,
       from: String(message.to || ""),
       to: phone,
@@ -1473,6 +1490,7 @@ export default async (request, context) => {
       leadDelivery: delivery.ok ? "success" : "failure",
       leadDuplicate: delivery.duplicate === true,
       leadDuplicateReason: delivery.duplicateReason,
+      recoveredExactDuplicate,
       leadInserted: delivery.inserted === true,
       leadUpdated: delivery.updated === true,
       humanTakeoverToday: delivery.humanTakeoverToday === true,
@@ -1518,6 +1536,7 @@ export default async (request, context) => {
     humanTakeoverToday: delivery.humanTakeoverToday === true,
     duplicate: delivery.duplicate === true,
     duplicateReason: delivery.duplicateReason,
+    recoveredExactDuplicate,
     conversationMemory: conversationMemoryStatus,
     conversationExpired,
     reactivationHandoffPending,
