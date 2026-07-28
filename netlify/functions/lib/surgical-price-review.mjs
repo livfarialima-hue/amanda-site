@@ -178,7 +178,7 @@ export function buildSurgicalPriceSuggestedReply({
     greeting(patientName),
     "É uma dúvida importante.",
     `Como referência inicial, ${reference.label} costuma ficar aproximadamente entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
-    "Essa faixa considera os honorários da equipe médica — cirurgiã principal, auxiliar, anestesista e instrumentadora — e uma referência hospitalar, quando aplicável.",
+    "Essa faixa considera os honorários da equipe médica e uma referência hospitalar, quando aplicável.",
     "O orçamento final pode variar conforme o planejamento, a composição da equipe e o hospital definidos após a consulta.",
     `A consulta custa R$ ${CONSULTATION_PRICE} e esse valor é abatido se a cirurgia for realizada com a equipe.`,
   ].join(" ");

@@ -50,7 +50,7 @@ Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segu
 - Dúvida fora do padrão ou que exija decisão humana.
 - Atendimento humano assumido no mesmo dia.
 
-Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, incluindo a composição da equipe médica e a referência hospitalar quando houver correspondência confiável. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Daniel revisa e copia manualmente se estiver de acordo.
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, mencionando apenas equipe médica e referência hospitalar quando houver correspondência confiável, sem discriminar os integrantes da equipe. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Daniel revisa e copia manualmente se estiver de acordo.
 
 ## Informações comerciais e localização
 

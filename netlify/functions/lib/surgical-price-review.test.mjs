@@ -27,9 +27,10 @@ test("creates a patient-ready lifting facial price suggestion for human review",
   assert.match(reply, /^Olá, Rô!/);
   assert.match(reply, /entre R\$ 33\.000 e R\$ 42\.000/);
   assert.doesNotMatch(reply, /R\$ 36\.400|R\$ 38\.400/);
-  assert.match(
+  assert.match(reply, /honorários da equipe médica/);
+  assert.doesNotMatch(
     reply,
-    /cirurgiã principal, auxiliar, anestesista e instrumentadora/,
+    /cirurgiã principal|auxiliar|anestesista|instrumentadora/,
   );
   assert.match(reply, /referência hospitalar, quando aplicável/);
   assert.match(reply, /orçamento final pode variar/);
