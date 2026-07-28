@@ -412,24 +412,13 @@ export function planAutomation({
     isConsultationInformationRequest(normalizedText);
 
   if (asksPrice && procedure) {
-    if (procedure.key !== "frontoplastia") {
-      return {
-        route: "human_review",
-        reason: "surgical_price_review",
-        replyCode: null,
-        professional: "amanda",
-        procedure: procedure.key,
-        automaticAllowed: false,
-      };
-    }
-
     return {
-      route: "standard_reply",
-      reason: "first_surgical_price_question",
-      replyCode: "P-PRECO-01",
+      route: "human_review",
+      reason: "surgical_price_review",
+      replyCode: null,
       professional: "amanda",
       procedure: procedure.key,
-      automaticAllowed: true,
+      automaticAllowed: false,
     };
   }
 

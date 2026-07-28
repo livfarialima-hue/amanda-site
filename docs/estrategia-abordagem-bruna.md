@@ -119,20 +119,20 @@ Cirurgia com faixa aprovada:
 
 Sem faixa atual aprovada para envio automático, a Bruna aciona revisão humana e não envia uma justificativa evasiva. O alerta traz uma sugestão pronta baseada na tabela de referência, somando honorários/equipe e a referência hospitalar registrada. Daniel confere antes de copiar; o paciente não recebe esses valores automaticamente.
 
-Referências aproximadas usadas somente na sugestão interna do alerta:
+Faixas aproximadas usadas somente na sugestão interna do alerta. O mínimo corresponde a 10% abaixo da referência à vista e o máximo a 10% acima da referência parcelada, com arredondamento em milhares:
 
-| Procedimento | À vista | Parcelado |
-|---|---:|---:|
-| Lifting facial | R$ 36.400 | R$ 38.400 |
-| Blefaroplastia completa | R$ 19.900 | R$ 21.000 |
-| Otoplastia geral | R$ 20.400 | R$ 21.500 |
-| Rinoplastia com equipe completa | R$ 32.300 | R$ 34.100 |
-| Lipoaspiração | R$ 31.900 | R$ 33.700 |
-| Abdominoplastia | R$ 28.100 | R$ 29.500 |
-| Inclusão de prótese de mama | R$ 25.800 | R$ 27.200 |
-| Mamoplastia sem prótese | R$ 29.500 | R$ 31.000 |
-| Braquioplastia | R$ 25.400 | R$ 26.600 |
-| Ninfoplastia em ambiente hospitalar | R$ 14.800 | R$ 15.600 |
+| Procedimento | Faixa interna aproximada |
+|---|---:|
+| Lifting facial | R$ 33.000 a R$ 42.000 |
+| Blefaroplastia completa | R$ 18.000 a R$ 23.000 |
+| Otoplastia geral | R$ 18.000 a R$ 24.000 |
+| Rinoplastia com equipe completa | R$ 29.000 a R$ 38.000 |
+| Lipoaspiração | R$ 29.000 a R$ 37.000 |
+| Abdominoplastia | R$ 25.000 a R$ 32.000 |
+| Inclusão de prótese de mama | R$ 23.000 a R$ 30.000 |
+| Mamoplastia sem prótese | R$ 27.000 a R$ 34.000 |
+| Braquioplastia | R$ 23.000 a R$ 29.000 |
+| Ninfoplastia em ambiente hospitalar | R$ 13.000 a R$ 17.000 |
 
 Quando a tabela exigir uma definição antes do número — por exemplo, mastopexia com ou sem prótese, combinação de cirurgias ou região do contorno corporal — o alerta sugere primeiro essa pergunta de esclarecimento. Procedimentos sem correspondência separada na tabela continuam com confirmação humana, sem invenção de valor.
 
@@ -280,7 +280,7 @@ A tabela do Dr. João de 2025 continua sendo uma referência histórica, não um
 - regra de parcelamento antecipado;
 - cancelamento e reembolso.
 
-Até essa validação, a consulta pode ser informada automaticamente, a faixa de frontoplastia permanece a única faixa cirúrgica autorizada para resposta automática e os demais pedidos de preço seguem para revisão humana com uma sugestão pronta quando houver correspondência confiável na tabela.
+Até essa validação, a consulta pode ser informada automaticamente, mas nenhum valor cirúrgico é enviado automaticamente, inclusive para frontoplastia. Todo pedido de preço cirúrgico segue para revisão humana com uma sugestão pronta quando houver correspondência confiável na tabela.
 
 ## Bases utilizadas
 

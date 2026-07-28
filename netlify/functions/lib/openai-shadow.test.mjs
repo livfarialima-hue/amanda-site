@@ -1104,9 +1104,9 @@ test("surgical price alerts the reviewer directly with a suggestion and never re
       alertText,
       /PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA/,
     );
-    assert.match(alertText, /Sugestão para copiar após conferir/);
-    assert.match(alertText, /R\$ 19\.900 à vista/);
-    assert.match(alertText, /R\$ 21\.000 no valor parcelado/);
+    assert.match(alertText, /NÃO ENVIADO À PACIENTE/);
+    assert.match(alertText, /Revise e copie manualmente/);
+    assert.match(alertText, /entre R\$ 18\.000 e R\$ 23\.000/);
     assert.equal(
       ycloudRequests.some(
         (request) =>

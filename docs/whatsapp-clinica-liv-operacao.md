@@ -28,7 +28,7 @@ O diagnóstico público do endpoint deve indicar:
 - Dúvidas gerais seguras sobre avaliação e procedimentos.
 - Perguntas informativas como “como funciona a consulta?” ou “como funciona a avaliação?”, sem confundi-las com pedido de agenda.
 - Valor da consulta da Dra. Amanda: R$ 500, abatido se a cirurgia for realizada com a equipe.
-- Faixa cirúrgica somente quando houver um valor atual expressamente aprovado nas regras.
+- Nenhum valor cirúrgico é enviado automaticamente; pedidos de preço seguem para revisão humana.
 - Apresentação correta da Dra. Amanda: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria pelo Einstein, CRM-SP 191605, RQE 110472 e atuação com foco em cirurgias da face.
 - Esclarecimento sutil de barreiras como segurança, experiência, resultado artificial, preço, localização e pressão para decidir.
 - Oferta cuidadosa da página do procedimento, seção de resultados ou artigo específico sobre recuperação, segurança, cicatriz e comparações — ou da página geral quando o procedimento ainda não estiver definido — para quem não veio do site.
@@ -50,7 +50,7 @@ Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segu
 - Dúvida fora do padrão ou que exija decisão humana.
 - Atendimento humano assumido no mesmo dia.
 
-Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta baseada na tabela de referência, incluindo honorários/equipe e a referência hospitalar quando houver correspondência confiável. Nenhuma dessas sugestões é enviada à paciente sem aprovação.
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, incluindo a composição da equipe médica e a referência hospitalar quando houver correspondência confiável. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Daniel revisa e copia manualmente se estiver de acordo.
 
 ## Informações comerciais e localização
 

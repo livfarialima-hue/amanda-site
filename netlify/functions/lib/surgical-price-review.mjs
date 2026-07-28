@@ -1,4 +1,6 @@
 const CONSULTATION_PRICE = 500;
+const PRICE_RANGE_LOWER_FACTOR = 0.9;
+const PRICE_RANGE_UPPER_FACTOR = 1.1;
 
 const PRICE_REFERENCES = Object.freeze({
   lifting_facial: Object.freeze({
@@ -99,8 +101,8 @@ function greeting(value) {
   return name ? `Olá, ${name}!` : "Olá!";
 }
 
-function roundedHundreds(value) {
-  return Math.round(Number(value || 0) / 100) * 100;
+function roundedThousands(value) {
+  return Math.round(Number(value || 0) / 1000) * 1000;
 }
 
 function formatBRL(value) {
@@ -110,7 +112,7 @@ function formatBRL(value) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
-    .format(roundedHundreds(value))
+    .format(roundedThousands(value))
     .replace(/\u00a0/g, " ");
 }
 
@@ -152,6 +154,16 @@ export function getSurgicalPriceReference(procedure) {
     installmentTotal:
       reference.installmentProfessional +
       reference.hospitalReference,
+    rangeMinimum: roundedThousands(
+      (reference.cashProfessional + reference.hospitalReference) *
+        PRICE_RANGE_LOWER_FACTOR,
+    ),
+    rangeMaximum: roundedThousands(
+      (
+        reference.installmentProfessional +
+        reference.hospitalReference
+      ) * PRICE_RANGE_UPPER_FACTOR,
+    ),
   };
 }
 
@@ -165,8 +177,9 @@ export function buildSurgicalPriceSuggestedReply({
   return [
     greeting(patientName),
     "É uma dúvida importante.",
-    `Como referência, ${reference.label} fica em torno de ${formatBRL(reference.cashTotal)} à vista ou ${formatBRL(reference.installmentTotal)} no valor parcelado, considerando honorários, equipe e a referência hospitalar da tabela.`,
-    "O orçamento final pode variar conforme o planejamento e o hospital definidos após a consulta.",
+    `Como referência inicial, ${reference.label} costuma ficar aproximadamente entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
+    "Essa faixa considera os honorários da equipe médica — cirurgiã principal, auxiliar, anestesista e instrumentadora — e uma referência hospitalar, quando aplicável.",
+    "O orçamento final pode variar conforme o planejamento, a composição da equipe e o hospital definidos após a consulta.",
     `A consulta custa R$ ${CONSULTATION_PRICE} e esse valor é abatido se a cirurgia for realizada com a equipe.`,
   ].join(" ");
 }
@@ -191,7 +204,7 @@ export function buildPriceReviewAlert({
   return [
     "PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA",
     `Paciente: ${limitText(patientMessage, 160) || "Mensagem sem texto."}`,
-    "Sugestão para copiar após conferir:",
+    "NÃO ENVIADO À PACIENTE. Revise e copie manualmente se estiver de acordo:",
     suggestion,
   ].join("\n");
 }

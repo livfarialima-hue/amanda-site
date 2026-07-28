@@ -186,7 +186,7 @@ test("incomplete C06 campaign reference still identifies lifting facial", () => 
   assert.equal(plan.automaticAllowed, true);
 });
 
-test("frontoplasty is recognized with its own procedure key", () => {
+test("frontoplasty price is recognized but remains human-reviewed", () => {
   const plan = planAutomation({
     text: "Gostaria de saber o valor da frontoplastia",
     messageType: "text",
@@ -194,10 +194,11 @@ test("frontoplasty is recognized with its own procedure key", () => {
     platform: "WhatsApp direto",
   });
 
-  assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.replyCode, "P-PRECO-01");
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.replyCode, null);
   assert.equal(plan.procedure, "frontoplastia");
-  assert.equal(plan.automaticAllowed, true);
+  assert.equal(plan.automaticAllowed, false);
 });
 
 test("generic first message from a Meta ad remains eligible for Bruna", () => {
