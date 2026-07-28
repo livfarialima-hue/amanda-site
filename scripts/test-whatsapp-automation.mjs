@@ -15,8 +15,8 @@ const cases = [
       text: "Estou com dor forte no peito e falta de ar",
       messageType: "text",
     },
-    route: "urgent_fixed_reply",
-    code: "SAFE-URG-01",
+    route: "human_review",
+    code: "ALERT-URG-01",
   },
   {
     name: "cardiology",
@@ -44,8 +44,8 @@ const cases = [
       text: "Qual o valor da rinoplastia?",
       messageType: "text",
     },
-    route: "standard_reply",
-    code: "P-PRECO-01",
+    route: "human_review",
+    code: null,
   },
   {
     name: "direct greeting",

@@ -44,6 +44,11 @@ import {
   buildPriceReviewAlert,
   isSurgicalPriceReview,
 } from "./lib/surgical-price-review.mjs";
+import {
+  getHumanResumeControl,
+  markHumanTakeover,
+  scheduleHumanResume,
+} from "./lib/human-resume-queue.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -1140,6 +1145,16 @@ export default async (request, context) => {
       });
     }
 
+    const humanResumeControl = await markHumanTakeover({
+      phone: patientPhone,
+      eventId: String(eventId),
+      at: String(
+        echo.sendTime ||
+          echo.createTime ||
+          payload.createTime ||
+          "",
+      ),
+    });
     const takeoverDelivery = await recordHumanTakeover({
       eventId: String(eventId),
       messageId: String(messageId),
@@ -1193,6 +1208,7 @@ export default async (request, context) => {
       humanTakeoverRecorded: true,
       takeoverCreated: takeoverDelivery.created === true,
       conversationMemory: memoryResult.status,
+      humanResumeControl: humanResumeControl.status,
     });
   }
 
@@ -1272,6 +1288,7 @@ export default async (request, context) => {
 
   const delivery = await deliverLead(lead);
   let conversationHistory = [];
+  let conversationHistoryWithCurrent = [];
   let conversationMemoryStatus = "skipped";
   let conversationExpired = false;
   let replyDebounceMarkerStatus = "skipped";
@@ -1317,11 +1334,24 @@ export default async (request, context) => {
     conversationHistory = toOpenAIConversation(
       memoryResult.historyBefore,
     );
+    conversationHistoryWithCurrent = toOpenAIConversation(
+      memoryResult.historyAfter,
+    );
+  }
+  if (!conversationHistoryWithCurrent.length) {
+    conversationHistoryWithCurrent = conversationHistory;
   }
   const reactivationHandoffPending =
     hasPendingReactivationHandoff(conversationHistory);
+  const humanResumeControl =
+    delivery.humanTakeoverToday
+      ? await getHumanResumeControl(phone)
+      : null;
+  const humanTakeoverActive =
+    delivery.humanTakeoverToday &&
+    humanResumeControl?.status !== "bruna_resumed";
 
-  const automationPlan = delivery.humanTakeoverToday
+  const automationPlan = humanTakeoverActive
     ? {
         route: "human_takeover_active",
         reason: "manual_reply_today",
@@ -1383,7 +1413,7 @@ export default async (request, context) => {
   );
   const shouldQueueAppointmentReview =
     delivery.ok &&
-    !delivery.humanTakeoverToday &&
+    !humanTakeoverActive &&
     !suppressExactDuplicate &&
     appointmentReviewCandidate &&
     isAppointmentAlertEnabled() &&
@@ -1399,6 +1429,37 @@ export default async (request, context) => {
   let patientReplyQueued = false;
   let patientReplySent = false;
   let aiActiveQueued = false;
+  let humanResumeScheduleStatus = "skipped";
+
+  if (
+    delivery.ok &&
+    humanTakeoverActive &&
+    automationMode === "active" &&
+    !suppressExactDuplicate
+  ) {
+    const resumeContextPlan = enrichAutomationPlanFromConversation(
+      preliminaryAutomationPlan,
+      conversationHistory,
+    );
+    const scheduleResult = await scheduleHumanResume({
+      phone,
+      from: String(message.to || ""),
+      eventId: String(eventId),
+      patientName: String(message.customerProfile?.name || ""),
+      text,
+      messageType: String(message.type || ""),
+      platform: attribution.platform,
+      reference: attribution.reference,
+      referenceCategory: attribution.referenceCategory,
+      procedure: resumeContextPlan.procedure,
+      referralContext,
+      recentConversation: conversationHistoryWithCurrent,
+      receivedAt: String(
+        message.sendTime || payload.createTime || "",
+      ),
+    });
+    humanResumeScheduleStatus = scheduleResult.status;
+  }
 
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(
@@ -1454,7 +1515,7 @@ export default async (request, context) => {
     shouldSendAutomaticPatientReply({
       mode: automationMode,
       plan: automationPlan,
-      humanTakeoverToday: delivery.humanTakeoverToday,
+      humanTakeoverToday: humanTakeoverActive,
       exactDuplicate: suppressExactDuplicate,
       schedulingRequest: appointmentReviewCandidate,
       reviewAlertConfigured: isReviewAlertConfigured(),
@@ -1492,7 +1553,7 @@ export default async (request, context) => {
 
   const shouldQueueOpenAIShadow =
     delivery.ok &&
-    !delivery.humanTakeoverToday &&
+    !humanTakeoverActive &&
     automationMode === "shadow" &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
@@ -1502,7 +1563,7 @@ export default async (request, context) => {
     !suppressExactDuplicate;
   const shouldQueueOpenAIActive =
     delivery.ok &&
-    !delivery.humanTakeoverToday &&
+    !humanTakeoverActive &&
     automationMode === "active" &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
@@ -1567,7 +1628,7 @@ export default async (request, context) => {
       alertInput,
       reviewAlertAlreadyQueued: reviewAlertQueued,
       plan: automationPlan,
-      humanTakeoverToday: delivery.humanTakeoverToday,
+      humanTakeoverToday: humanTakeoverActive,
       exactDuplicate: suppressExactDuplicate,
       schedulingRequest: appointmentReviewCandidate,
       from: String(message.to || ""),
@@ -1605,7 +1666,12 @@ export default async (request, context) => {
       recoveredExactDuplicate,
       leadInserted: delivery.inserted === true,
       leadUpdated: delivery.updated === true,
-      humanTakeoverToday: delivery.humanTakeoverToday === true,
+      humanTakeoverToday: humanTakeoverActive,
+      sheetsHumanTakeoverToday:
+        delivery.humanTakeoverToday === true,
+      humanResumeControl:
+        humanResumeControl?.status || null,
+      humanResumeScheduleStatus,
       conversationMemoryStatus,
       conversationExpired,
       reactivationHandoffPending,
@@ -1645,7 +1711,12 @@ export default async (request, context) => {
     leadRecorded: true,
     leadInserted: delivery.inserted === true,
     leadUpdated: delivery.updated === true,
-    humanTakeoverToday: delivery.humanTakeoverToday === true,
+    humanTakeoverToday: humanTakeoverActive,
+    sheetsHumanTakeoverToday:
+      delivery.humanTakeoverToday === true,
+    humanResumeControl:
+      humanResumeControl?.status || null,
+    humanResumeScheduleStatus,
     duplicate: delivery.duplicate === true,
     duplicateReason: delivery.duplicateReason,
     recoveredExactDuplicate,

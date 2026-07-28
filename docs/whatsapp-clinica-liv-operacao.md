@@ -48,7 +48,7 @@ Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segu
 - Situação potencialmente urgente.
 - Cardiologia ou procura pelo Dr. Daniel.
 - Dúvida fora do padrão ou que exija decisão humana.
-- Atendimento humano assumido no mesmo dia.
+- Atendimento humano assumido e ainda dentro da janela protegida de 20 minutos.
 
 Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, mencionando apenas equipe médica e referência hospitalar quando houver correspondência confiável, sem discriminar os integrantes da equipe. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Daniel revisa e copia manualmente se estiver de acordo.
 
@@ -72,7 +72,20 @@ Esses contatos devem consumir o mínimo possível e não receber resposta autom�
 
 ## Atendimento humano
 
-Quando uma mensagem é enviada pelo WhatsApp Business da clínica para a pessoa, o sistema registra atendimento humano. As mensagens seguintes daquela pessoa, no mesmo dia, não recebem resposta do bot.
+Quando uma mensagem é enviada pelo WhatsApp Business da clínica para a pessoa, o sistema registra atendimento humano e cancela qualquer retomada automática pendente.
+
+Se a paciente responder e não houver nova mensagem humana em 20 minutos, uma rotina executada a cada cinco minutos reavalia a conversa:
+
+- entre 08:00 e 20:00, dúvidas simples e respostas de alta confiança podem ser retomadas pela Bruna;
+- uma nova mensagem humana cancela a retomada, inclusive durante a elaboração da resposta;
+- agradecimentos e encerramentos simples não provocam nova mensagem;
+- preço cirúrgico, condições de pagamento, agenda e confirmação de horário, sintomas, urgência, segurança, documentos, pré ou pós-operatório, cardiologia, sofrimento intenso e demais temas reservados permanecem em silêncio para a paciente e geram alerta;
+- se o tema não for reservado, mas a Bruna não tiver confiança para responder, ela envia uma única vez: “Recebi sua mensagem e vou confirmar essa informação com a equipe para te responder com segurança.” Em seguida, alerta Daniel e permanece em silêncio;
+- depois de uma resposta segura da Bruna, a automação volta a conduzir normalmente a conversa;
+- depois da mensagem de espera ou de um bloqueio sensível, somente uma nova mensagem humana libera a conversa;
+- fora do horário, a avaliação fica adiada para a próxima abertura, sem mensagem imediata.
+
+Cada tomada humana admite no máximo uma retomada automática. Uma nova mensagem enviada pelo WhatsApp Business inicia uma nova tomada e reinicia as proteções.
 
 ## Retomada após sete dias
 
@@ -104,7 +117,7 @@ As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a
 
 ### Quando assumir uma conversa
 
-Responder pelo WhatsApp Business da clínica. O eco da mensagem registra automaticamente a tomada humana e bloqueia o bot naquele dia.
+Responder pelo WhatsApp Business da clínica. O eco registra automaticamente uma nova tomada humana, cancela qualquer resposta pendente da Bruna e inicia a janela protegida.
 
 ## Pausa de emergência
 
