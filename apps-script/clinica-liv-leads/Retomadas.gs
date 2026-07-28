@@ -1,5 +1,5 @@
 const RETOMADAS_CONFIG = Object.freeze({
-  destinatario: "daniel.added@gmail.com",
+  destinatario: "amandaschh@hotmail.com",
   planilhaMensagens: "_WHATSAPP_MENSAGENS",
   planilhaLeads: "Google Ads - Conversões",
   planilhaControle: "_WHATSAPP_RETOMADAS",
@@ -339,22 +339,33 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
 
   atribuirHorariosRetomadas_(selecionados);
 
+  selecionados.forEach(function (candidato) {
+    candidato.responsavel = responsavelRetomada_(candidato);
+  });
+
+  const sugeridosParaEquipe = selecionados.filter(function (candidato) {
+    return candidato.responsavel === "equipe";
+  });
   const dataApresentacao = formatarDataRetomadas_(
     agora,
     "dd/MM/yyyy",
   );
   const assunto =
-    "Clínica LIV — retomadas manuais de " +
+    "Clínica LIV — plano de retomadas de " +
     dataApresentacao +
     " (" +
     selecionados.length +
-    ")";
+    " previstas • " +
+    sugeridosParaEquipe.length +
+    " para a equipe)";
   const corpoTexto = montarTextoEmailRetomadas_(
     selecionados,
+    sugeridosParaEquipe,
     dataApresentacao,
   );
   const corpoHtml = montarHtmlEmailRetomadas_(
     selecionados,
+    sugeridosParaEquipe,
     dataApresentacao,
   );
 
@@ -380,6 +391,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
       0,
       candidatos.length - selecionados.length,
     ),
+    sugeridosParaEquipe: sugeridosParaEquipe.length,
     destinatario: RETOMADAS_CONFIG.destinatario,
     assunto: assunto,
   };
@@ -571,6 +583,8 @@ function criarCandidatoRetomada_(
     diasSemResposta: diasSemResposta,
     etapa: etapa,
     prioritario: prioritario,
+    contextoAgenda: contextoAgenda,
+    contextoPreco: contextoPreco,
     horario: "",
     sugestao: sugerirMensagemRetomada_(
       etapa.numero,
@@ -648,6 +662,18 @@ function atribuirHorariosRetomadas_(candidatos) {
     );
     indiceRegular += 1;
   });
+}
+
+function responsavelRetomada_(candidato) {
+  if (
+    candidato.etapa.numero === 1 &&
+    !candidato.contextoAgenda &&
+    !candidato.contextoPreco
+  ) {
+    return "bruna";
+  }
+
+  return "equipe";
 }
 
 function horarioRetomadaPorIndice_(horarios, indice) {
@@ -915,14 +941,21 @@ function limparControleRetomadasAntigo_(planilha, agora) {
   }
 }
 
-function montarTextoEmailRetomadas_(candidatos, dataApresentacao) {
+function montarTextoEmailRetomadas_(
+  candidatos,
+  sugeridosParaEquipe,
+  dataApresentacao,
+) {
   const linhas = [
-    "Clínica LIV — retomadas manuais de " + dataApresentacao,
+    "Clínica LIV — plano de retomadas de " + dataApresentacao,
     "",
+    "Este e-mail é apenas informativo e não envia mensagens aos pacientes.",
+    "",
+    "PLANO DO DIA (" + candidatos.length + ")",
   ];
 
   if (!candidatos.length) {
-    linhas.push("Nenhuma retomada manual planejada para hoje.");
+    linhas.push("Nenhuma retomada planejada para hoje.");
   }
 
   candidatos.forEach(function (candidato, indice) {
@@ -932,6 +965,12 @@ function montarTextoEmailRetomadas_(candidatos, dataApresentacao) {
         candidato.horario +
         " — telefone " +
         candidato.telefone,
+    );
+    linhas.push(
+      "Responsável sugerido: " +
+        (candidato.responsavel === "bruna"
+          ? "Bruna — primeira retomada candidata à automação"
+          : "Amanda/equipe — conferir e enviar manualmente"),
     );
     linhas.push("Etapa: " + candidato.etapa.rotulo);
     linhas.push("Status: " + candidato.lead.status);
@@ -951,7 +990,6 @@ function montarTextoEmailRetomadas_(candidatos, dataApresentacao) {
       linhas.push("Próxima ação: " + candidato.lead.proximaAcao);
     }
 
-    linhas.push("Mensagem sugerida: " + candidato.sugestao);
     linhas.push(
       "Abrir WhatsApp: https://wa.me/" +
         candidato.telefone.replace(/\D/g, ""),
@@ -960,28 +998,61 @@ function montarTextoEmailRetomadas_(candidatos, dataApresentacao) {
   });
 
   linhas.push(
-    "Antes de enviar, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido.",
+    "AÇÃO SUGERIDA PARA AMANDA/EQUIPE (" +
+      sugeridosParaEquipe.length +
+      ")",
+  );
+
+  if (!sugeridosParaEquipe.length) {
+    linhas.push("Nenhuma retomada manual sugerida para hoje.");
+  }
+
+  sugeridosParaEquipe.forEach(function (candidato, indice) {
+    linhas.push("");
+    linhas.push(
+      String(indice + 1) +
+        ". " +
+        candidato.horario +
+        " — telefone " +
+        candidato.telefone,
+    );
+    linhas.push("Motivo: " + candidato.etapa.rotulo);
+    linhas.push("Mensagem sugerida: " + candidato.sugestao);
+    linhas.push(
+      "Abrir WhatsApp: https://wa.me/" +
+        candidato.telefone.replace(/\D/g, ""),
+    );
+  });
+
+  linhas.push("");
+  linhas.push(
+    "As linhas atribuídas à Bruna são apenas planejamento até a rotina automática ser ativada e confirmar a janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido.",
   );
 
   return linhas.join("\n");
 }
 
-function montarHtmlEmailRetomadas_(candidatos, dataApresentacao) {
-  let conteudo = "";
+function montarHtmlEmailRetomadas_(
+  candidatos,
+  sugeridosParaEquipe,
+  dataApresentacao,
+) {
+  let planoDoDia = "";
+  let acaoEquipe = "";
 
   if (!candidatos.length) {
-    conteudo =
+    planoDoDia =
       '<p style="font-size:16px;color:#374151;">' +
-      "Nenhuma retomada manual planejada para hoje." +
+      "Nenhuma retomada planejada para hoje." +
       "</p>";
   } else {
-    conteudo =
+    planoDoDia =
       '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
       '<thead><tr style="background:#f3f4f6;text-align:left;">' +
       '<th style="padding:10px;border:1px solid #e5e7eb;">Horário</th>' +
       '<th style="padding:10px;border:1px solid #e5e7eb;">Paciente</th>' +
+      '<th style="padding:10px;border:1px solid #e5e7eb;">Responsável sugerido</th>' +
       '<th style="padding:10px;border:1px solid #e5e7eb;">Contexto</th>' +
-      '<th style="padding:10px;border:1px solid #e5e7eb;">Mensagem sugerida</th>' +
       "</tr></thead><tbody>";
 
     candidatos.forEach(function (candidato) {
@@ -1002,8 +1073,12 @@ function montarHtmlEmailRetomadas_(candidatos, dataApresentacao) {
             escaparHtmlRetomadas_(candidato.lead.proximaAcao)
           : "",
       ].filter(Boolean).join("<br>");
+      const responsavel =
+        candidato.responsavel === "bruna"
+          ? "Bruna<br><span style=\"color:#6b7280;font-size:12px;\">primeira retomada candidata à automação</span>"
+          : "Amanda/equipe<br><span style=\"color:#6b7280;font-size:12px;\">conferir e enviar manualmente</span>";
 
-      conteudo +=
+      planoDoDia +=
         "<tr>" +
         '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;"><strong>' +
         escaparHtmlRetomadas_(candidato.horario) +
@@ -1018,26 +1093,76 @@ function montarHtmlEmailRetomadas_(candidatos, dataApresentacao) {
         escaparHtmlRetomadas_(candidato.telefone) +
         "</span></td>" +
         '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-        contexto +
+        responsavel +
         "</td>" +
         '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+        contexto +
+        "</td>" +
+        "</tr>";
+    });
+
+    planoDoDia += "</tbody></table>";
+  }
+
+  if (!sugeridosParaEquipe.length) {
+    acaoEquipe =
+      '<p style="font-size:16px;color:#374151;">' +
+      "Nenhuma retomada manual sugerida para hoje." +
+      "</p>";
+  } else {
+    acaoEquipe =
+      '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
+      '<thead><tr style="background:#ecfdf5;text-align:left;">' +
+      '<th style="padding:10px;border:1px solid #d1fae5;">Horário</th>' +
+      '<th style="padding:10px;border:1px solid #d1fae5;">Paciente</th>' +
+      '<th style="padding:10px;border:1px solid #d1fae5;">Mensagem sugerida</th>' +
+      "</tr></thead><tbody>";
+
+    sugeridosParaEquipe.forEach(function (candidato) {
+      const ultimosDigitos = candidato.telefone.slice(-4);
+      const link =
+        "https://wa.me/" +
+        candidato.telefone.replace(/\D/g, "");
+
+      acaoEquipe +=
+        "<tr>" +
+        '<td style="padding:10px;border:1px solid #d1fae5;vertical-align:top;"><strong>' +
+        escaparHtmlRetomadas_(candidato.horario) +
+        "</strong><br>" +
+        '<span style="color:#6b7280;font-size:12px;">' +
+        escaparHtmlRetomadas_(candidato.etapa.rotulo) +
+        "</span></td>" +
+        '<td style="padding:10px;border:1px solid #d1fae5;vertical-align:top;">' +
+        '<a href="' +
+        link +
+        '" style="color:#075e54;font-weight:bold;">Abrir WhatsApp • ' +
+        escaparHtmlRetomadas_(ultimosDigitos) +
+        "</a></td>" +
+        '<td style="padding:10px;border:1px solid #d1fae5;vertical-align:top;">' +
         escaparHtmlRetomadas_(candidato.sugestao) +
         "</td>" +
         "</tr>";
     });
 
-    conteudo += "</tbody></table>";
+    acaoEquipe += "</tbody></table>";
   }
 
   return (
     '<div style="max-width:980px;margin:auto;font-family:Arial,sans-serif;color:#111827;">' +
-    '<h2 style="color:#075e54;">Clínica LIV — retomadas manuais</h2>' +
-    '<p style="color:#4b5563;">Planejamento de ' +
+    '<h2 style="color:#075e54;">Clínica LIV — plano de retomadas</h2>' +
+    '<p style="color:#4b5563;">Resumo operacional de ' +
     escaparHtmlRetomadas_(dataApresentacao) +
-    ". Nenhuma mensagem foi enviada automaticamente aos pacientes.</p>" +
-    conteudo +
+    ". Este e-mail é apenas informativo e não envia mensagens aos pacientes.</p>" +
+    '<h3 style="margin-top:24px;">Plano do dia (' +
+    candidatos.length +
+    ")</h3>" +
+    planoDoDia +
+    '<h3 style="margin-top:28px;color:#075e54;">Ação sugerida para Amanda/equipe (' +
+    sugeridosParaEquipe.length +
+    ")</h3>" +
+    acaoEquipe +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
-    "Antes de enviar, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido." +
+    "As linhas atribuídas à Bruna são apenas planejamento até a rotina automática ser ativada e confirmar a janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido." +
     "</p></div>"
   );
 }

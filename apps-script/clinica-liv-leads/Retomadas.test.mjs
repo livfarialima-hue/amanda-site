@@ -7,10 +7,99 @@ const source = await readFile(
   new URL("./Retomadas.gs", import.meta.url),
   "utf8",
 );
-const context = vm.createContext({});
+const context = vm.createContext({
+  Utilities: {
+    formatDate: () => "27/07/2026 09:00",
+  },
+});
 
 vm.runInContext(source, context, {
   filename: "Retomadas.gs",
+});
+
+test("sends the daily follow-up email to Amanda", () => {
+  assert.match(
+    source,
+    /destinatario:\s*"amandaschh@hotmail\.com"/,
+  );
+});
+
+test("classifies only a safe first follow-up as planned for Bruna", () => {
+  assert.equal(
+    context.responsavelRetomada_({
+      etapa: { numero: 1 },
+      contextoAgenda: false,
+      contextoPreco: false,
+    }),
+    "bruna",
+  );
+  assert.equal(
+    context.responsavelRetomada_({
+      etapa: { numero: 1 },
+      contextoAgenda: false,
+      contextoPreco: true,
+    }),
+    "equipe",
+  );
+  assert.equal(
+    context.responsavelRetomada_({
+      etapa: { numero: 2 },
+      contextoAgenda: false,
+      contextoPreco: false,
+    }),
+    "equipe",
+  );
+});
+
+test("daily email is informational and drafts only the human actions", () => {
+  const common = {
+    telefone: "+5511999999999",
+    horario: "10:30",
+    ultimoContato: new Date("2026-07-27T12:00:00.000Z"),
+    etapa: { numero: 1, rotulo: "1ª retomada" },
+    lead: {
+      status: "Novo",
+      resumo: "Pesquisa sobre lifting facial",
+      proximaAcao: "",
+    },
+  };
+  const planned = {
+    ...common,
+    responsavel: "bruna",
+    sugestao: "Mensagem que não deve aparecer na ação humana.",
+  };
+  const human = {
+    ...common,
+    telefone: "+5511888888888",
+    responsavel: "equipe",
+    sugestao: "Mensagem sugerida para a equipe.",
+  };
+  const text = context.montarTextoEmailRetomadas_(
+    [planned, human],
+    [human],
+    "28/07/2026",
+  );
+  const html = context.montarHtmlEmailRetomadas_(
+    [planned, human],
+    [human],
+    "28/07/2026",
+  );
+
+  assert.match(text, /apenas informativo/);
+  assert.match(text, /PLANO DO DIA \(2\)/);
+  assert.match(text, /AÇÃO SUGERIDA PARA AMANDA\/EQUIPE \(1\)/);
+  assert.match(text, /Mensagem sugerida para a equipe/);
+  assert.doesNotMatch(
+    text,
+    /Mensagem que não deve aparecer na ação humana/,
+  );
+  assert.match(html, /Plano do dia \(2\)/);
+  assert.match(html, /Ação sugerida para Amanda\/equipe \(1\)/);
+  assert.match(html, /Mensagem sugerida para a equipe/);
+  assert.doesNotMatch(
+    html,
+    /Mensagem que não deve aparecer na ação humana/,
+  );
 });
 
 function lead(overrides = {}) {

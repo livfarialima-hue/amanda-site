@@ -6,9 +6,9 @@
 - Automação: `active`
 - Secretária virtual: Bruna
 - Template de alerta: `alerta_revisao_liv_v1`
-- Destino dos alertas: WhatsApp pessoal do Daniel
+- Destino dos alertas: WhatsApp pessoal da Amanda (`+55 19 99694-4518`)
 - Agenda: revisão humana obrigatória antes de oferecer horários
-- Resumo de retomadas: e-mail diário para `daniel.added@gmail.com`
+- Resumo de retomadas: e-mail diário para `amandaschh@hotmail.com`
 
 O diagnóstico público do endpoint deve indicar:
 
@@ -50,7 +50,7 @@ Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segu
 - Dúvida fora do padrão ou que exija decisão humana.
 - Atendimento humano assumido e ainda dentro da janela protegida de 20 minutos.
 
-Nesses casos, o sistema envia um alerta ao WhatsApp pessoal do Daniel quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, mencionando apenas equipe médica e referência hospitalar quando houver correspondência confiável, sem discriminar os integrantes da equipe. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Daniel revisa e copia manualmente se estiver de acordo.
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, mencionando apenas equipe médica e referência hospitalar quando houver correspondência confiável, sem discriminar os integrantes da equipe. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Amanda revisa e copia manualmente se estiver de acordo.
 
 ## Informações comerciais e localização
 
@@ -81,7 +81,7 @@ Se a paciente responder e não houver nova mensagem humana em 20 minutos, uma ro
 - agradecimentos e encerramentos simples não provocam nova mensagem;
 - preço cirúrgico, condições de pagamento, agenda e confirmação de horário, sintomas, urgência, segurança, documentos, pré ou pós-operatório, cardiologia, sofrimento intenso e demais temas reservados permanecem em silêncio para a paciente e geram alerta;
 - se o tema não for reservado, mas a Bruna não tiver confiança para responder, a mensagem de espera só é enviada quando há uma pergunta, pedido ou resposta a uma pergunta da clínica realmente pendente;
-- se não houver solicitação concreta pendente, a paciente não recebe uma mensagem artificial de espera: Daniel recebe o alerta para revisar a conversa;
+- se não houver solicitação concreta pendente, a paciente não recebe uma mensagem artificial de espera: Amanda recebe o alerta para revisar a conversa;
 - depois de uma resposta segura da Bruna, a automação volta a conduzir normalmente a conversa;
 - depois da mensagem de espera ou de um bloqueio sensível, somente uma nova mensagem humana libera a conversa;
 - fora do horário, a avaliação fica adiada para a próxima abertura, sem mensagem imediata.
@@ -109,10 +109,12 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 
 ### Todos os dias
 
-1. Conferir o e-mail de retomadas manuais enviado por volta das 8h.
+1. Conferir o e-mail informativo do plano de retomadas enviado por volta das 8h para `amandaschh@hotmail.com`.
 2. Revisar o histórico antes de usar cada mensagem sugerida.
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
+
+O e-mail é apenas informativo: apresenta o plano completo do dia, indica o responsável sugerido e separa uma seção de ação para Amanda/equipe com as mensagens já redigidas. Ele não envia mensagens aos pacientes. Primeiras retomadas seguras, sem preço ou agenda, aparecem como candidatas à Bruna; até a rotina automática ser ativada e validar a janela do WhatsApp, continuam sendo apenas planejamento. Preço, agenda e retomadas posteriores permanecem com a equipe.
 
 As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada pode entregar um conteúdo pertinente do site; a segunda continua especificamente o tema de preço ou agenda quando esse foi o ponto pendente e, nos demais casos, deixa o canal aberto sem pressa; a terceira encerra novos contatos de forma respeitosa. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
 
