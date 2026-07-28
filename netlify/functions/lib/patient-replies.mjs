@@ -85,12 +85,14 @@ export function buildPatientReply({
   }
 
   if (replyCode === "P-PRECO-01") {
+    const procedureLabel =
+      PROCEDURE_LABELS[procedure] || "uma cirurgia específica";
+
     return [
       hello,
-      "Entendo que é importante ter uma noção do investimento antes de decidir.",
-      "O valor depende da técnica indicada, hospital, anestesia e complexidade; segurança e acompanhamento no pré e pós-operatório também fazem parte dessa escolha.",
-      "A clínica oferece opções de parcelamento.",
-      "Posso te explicar como funciona a avaliação?",
+      "Faz sentido querer entender o preço antes de decidir.",
+      "A consulta presencial com a Dra. Amanda custa R$ 500 e esse valor é abatido se a cirurgia for realizada com a equipe.",
+      `Você quer saber da consulta ou da faixa atual de ${procedureLabel}?`,
     ].join(" ");
   }
 

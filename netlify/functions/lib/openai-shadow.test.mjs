@@ -403,7 +403,16 @@ test("passes one approved procedure page only to eligible non-site conversations
       platform: "Meta",
       procedure: "blefaroplastia",
       referenceCategory: "meta_uncoded",
-      recentConversation: [],
+      recentConversation: [
+        {
+          role: "assistant",
+          text: "Você está começando a pesquisar?",
+        },
+        {
+          role: "patient",
+          text: "Sim, e tenho receio da recuperação.",
+        },
+      ],
     },
     {
       env: { OPENAI_API_KEY: "test-key" },
@@ -424,6 +433,8 @@ test("passes one approved procedure page only to eligible non-site conversations
   assert.deepEqual(input.siteResource, {
     title: "Blefaroplastia",
     url: "https://draamandaschroeder.com.br/blefaroplastia/",
+    context:
+      "Página completa do procedimento, com explicações, consulta, recuperação, dúvidas e casos reais com antes e depois.",
   });
 });
 

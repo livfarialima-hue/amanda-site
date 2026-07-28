@@ -330,6 +330,7 @@ export async function runOpenAIShadow(
     procedure,
     referenceCategory,
     recentConversation: normalizedConversation,
+    currentMessage: text,
   });
 
   try {

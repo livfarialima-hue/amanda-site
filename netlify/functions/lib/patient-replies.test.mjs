@@ -20,18 +20,19 @@ test("builds a natural routing greeting without internal codes", () => {
   assert.doesNotMatch(reply, /ORG-DIR-01/);
 });
 
-test("first surgical price reply gives context and payment options without a range", () => {
+test("price fallback is transparent about the consultation and clarifies the requested price", () => {
   const reply = buildPatientReply({
     replyCode: "P-PRECO-01",
     patientName: "Maria",
     procedure: "blefaroplastia",
   });
 
-  assert.match(reply, /técnica indicada/);
-  assert.match(reply, /segurança/);
-  assert.match(reply, /pré e pós-operatório/);
-  assert.match(reply, /opções de parcelamento/);
-  assert.doesNotMatch(reply, /R\$/);
+  assert.match(reply, /preço antes de decidir/);
+  assert.match(reply, /consulta presencial/);
+  assert.match(reply, /R\$ 500/);
+  assert.match(reply, /abatido/);
+  assert.match(reply, /faixa atual de blefaroplastia/);
+  assert.doesNotMatch(reply, /investimento/);
 });
 
 test("builds the single fixed notice for a conversation resumed after seven days", () => {
