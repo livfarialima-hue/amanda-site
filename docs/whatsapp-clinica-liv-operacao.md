@@ -97,7 +97,26 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 - Leads da Dra. Amanda: uma linha visível por telefone, atualizada conforme a conversa evolui.
 - Leads do Dr. Daniel: aba separada, sem contaminar as métricas da Dra. Amanda.
 - Agenda semanal: aba `Datas Consulta`.
+- Consultas agendadas e realizadas: aba `Consultas`, que também controla os lembretes operacionais.
 - Histórico e controles técnicos: abas internas iniciadas por `_WHATSAPP_`.
+
+## Lembretes de consulta
+
+Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consulta confirmada` pode receber:
+
+1. a confirmação normal no momento do agendamento, dentro da própria conversa;
+2. um lembrete aproximadamente 48 horas antes;
+3. um lembrete curto cerca de três horas antes da consulta.
+
+Para consultas pela manhã, o segundo lembrete é antecipado para as 18h do dia anterior, evitando mensagens muito cedo. Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo.
+
+Consultas canceladas, realizadas, vencidas ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Lembrete 48h enviado`, `Lembrete no dia enviado`, `Última tentativa de lembrete`, `Erro do lembrete` e `Agendamento monitorado` impedem duplicidade e permitem auditoria.
+
+Os lembretes usam o modelo utilitário `lembrete_consulta_liv_v1`:
+
+> Olá, {{1}}! Este é um lembrete da sua consulta com {{2}}, marcada para {{3}} às {{4}}, {{5}}. Se precisar ajustar o horário, responda por aqui.
+
+O disparo automático permanece desligado até o modelo estar aprovado no WhatsApp/YCloud. Depois da aprovação, configurar `WHATSAPP_APPOINTMENT_REMINDERS_ENABLED=true` no Netlify e executar `ativarLembretesConsultas()` uma vez no Apps Script. O remetente é aprendido pelos eventos recebidos do número comercial; `WHATSAPP_SENDER_NUMBER` funciona como substituição explícita, se necessária.
 
 ## Rotinas
 

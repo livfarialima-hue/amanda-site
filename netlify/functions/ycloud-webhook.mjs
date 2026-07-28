@@ -49,6 +49,7 @@ import {
   markHumanTakeover,
   scheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
+import { rememberBusinessNumber } from "./lib/business-number-registry.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -1115,6 +1116,7 @@ export default async (request, context) => {
 
   if (payload.type === "whatsapp.smb.message.echoes") {
     const echo = payload.whatsappMessage || {};
+    await rememberBusinessNumber(echo.from);
     const patientPhone = normalizePhone(echo.to);
     const eventId = payload.id || echo.id || echo.wamid;
     const messageId = echo.wamid || echo.id || eventId;
@@ -1217,6 +1219,7 @@ export default async (request, context) => {
   }
 
   const message = payload.whatsappInboundMessage || {};
+  await rememberBusinessNumber(message.to);
   const phone = normalizePhone(message.from);
 
   if (!phone) {
