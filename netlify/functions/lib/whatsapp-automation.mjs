@@ -40,6 +40,15 @@ const EXISTING_PATIENT_FOLLOW_UP_PATTERNS = [
   /\b(?:tr[âa]mite|andamento).{0,60}\b(?:cirurgia|procedimento)\b/i,
 ];
 
+const APPEARANCE_DISTRESS_PATTERNS = [
+  /\b(?:minha\s+)?apar[eê]ncia.{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
+  /\b(?:meu\s+rosto|minha\s+face|meu\s+corpo).{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
+  /\b(?:odeio|detesto)\s+(?:o\s+)?(?:meu\s+rosto|minha\s+face|minha\s+apar[eê]ncia|meu\s+corpo)\b/i,
+  /\bpreciso\s+(?:operar|fazer\s+(?:a\s+)?cirurgia).{0,60}\b(?:salvar|manter)\s+(?:meu|minha|o|a)\s+(?:casamento|relacionamento|emprego|trabalho)\b/i,
+  /\b(?:preciso|quero|tenho\s+que)\s+ser\s+perfeit[oa]\b/i,
+  /\bnunca\s+(?:vou|irei)\s+ficar\s+satisfeit[oa]\b/i,
+];
+
 const RECENT_GREETING_SUPPRESSION_MS = 3 * 60 * 1_000;
 
 const COMMERCIAL_SOLICITATION_PATTERNS = [
@@ -358,6 +367,17 @@ export function planAutomation({
       reason: "possible_urgent_symptoms",
       replyCode: "ALERT-URG-01",
       professional: null,
+      procedure: procedure?.key || null,
+      automaticAllowed: false,
+    };
+  }
+
+  if (matchesAny(normalizedText, APPEARANCE_DISTRESS_PATTERNS)) {
+    return {
+      route: "human_review",
+      reason: "intense_appearance_distress",
+      replyCode: null,
+      professional: "amanda",
       procedure: procedure?.key || null,
       automaticAllowed: false,
     };

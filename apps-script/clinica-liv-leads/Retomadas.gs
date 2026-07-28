@@ -57,6 +57,179 @@ const RETOMADAS_STATUS_ENCERRADOS = Object.freeze([
   "perdido",
 ]);
 
+const RETOMADAS_MATERIAIS = Object.freeze([
+  Object.freeze({
+    padrao:
+      /artificial|esticad|exagerad|naturalidade|expressao|identidade|nao parecer eu/,
+    sobre: "sobre naturalidade, identidade e planejamento facial",
+    descricao:
+      "Ele explica como proporções, limites e preservação da expressão entram no planejamento",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/",
+  }),
+  Object.freeze({
+    padrao:
+      /(recuperacao|pos operatorio|incha|voltar ao trabalho).*(lifting|face|facial|pescoco)|(lifting|face|facial|pescoco).*(recuperacao|pos operatorio|incha|voltar ao trabalho)/,
+    sobre: "sobre recuperação do lifting facial e cervical",
+    descricao:
+      "Ele explica edema, rotina, apoio e retornos com calma",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/recuperacao-lifting-facial/",
+  }),
+  Object.freeze({
+    padrao: /seguranca|medo da cirurgia|risco|anestesia|hospital/,
+    sobre: "sobre segurança em cirurgia plástica",
+    descricao:
+      "Ele explica avaliação, estrutura, equipe e planejamento de segurança",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+  }),
+  Object.freeze({
+    padrao:
+      /(cicatriz|cicatrizes|marca).*(mama|seio|mastopexia|protese|reducao)|(mama|seio|mastopexia|protese|reducao).*(cicatriz|cicatrizes|marca)/,
+    sobre: "sobre cicatrizes em cirurgia de mama",
+    descricao:
+      "Ele explica os padrões de cicatriz e os fatores que influenciam sua evolução",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/cicatrizes-cirurgia-de-mama/",
+  }),
+  Object.freeze({
+    padrao: /cicatriz|cicatrizes|cicatrizacao|queloide/,
+    sobre: "sobre cuidados com a cicatrização",
+    descricao:
+      "Ele explica a evolução e os cuidados gerais com cicatrizes cirúrgicas",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/cuidados-cicatrizacao-cirurgia/",
+  }),
+  Object.freeze({
+    padrao:
+      /(lifting|cirurgia).*(botox|toxina|preenchimento|bioestimulador|injetavel)|(botox|toxina|preenchimento|bioestimulador|injetavel).*(lifting|cirurgia)/,
+    sobre: "comparando lifting facial e procedimentos injetáveis",
+    descricao:
+      "Ele mostra o que cada abordagem consegue tratar e por que a avaliação continua importante",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/lifting-facial-ou-injetaveis/",
+  }),
+  Object.freeze({
+    padrao: /blefaroplastia|palpebra|bolsa nos olhos|olhar cansado/,
+    sobre: "sobre blefaroplastia",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url: "https://draamandaschroeder.com.br/blefaroplastia/",
+  }),
+  Object.freeze({
+    padrao: /lifting cervical|pescoco|papada|contorno cervical/,
+    sobre: "sobre contorno do pescoço e lifting cervical",
+    descricao:
+      "A página explica as estruturas envolvidas e as possibilidades avaliadas em consulta",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/papada-contorno-cervical/",
+  }),
+  Object.freeze({
+    padrao: /lifting facial|facelift|ritidoplastia/,
+    sobre: "sobre lifting facial",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url: "https://draamandaschroeder.com.br/lifting-facial/",
+  }),
+  Object.freeze({
+    padrao: /otoplastia|orelha/,
+    sobre: "sobre otoplastia",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url: "https://draamandaschroeder.com.br/otoplastia/",
+  }),
+  Object.freeze({
+    padrao: /lip lifting|lifting labial|labio/,
+    sobre: "sobre lifting labial",
+    descricao:
+      "A página explica o procedimento, a avaliação e dúvidas frequentes",
+    url: "https://draamandaschroeder.com.br/lip-lifting/",
+  }),
+  Object.freeze({
+    padrao: /lipo de papada|papada/,
+    sobre: "sobre papada e contorno cervical",
+    descricao:
+      "O material explica por que estruturas diferentes podem alterar esse contorno",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/papada-contorno-cervical/",
+  }),
+  Object.freeze({
+    padrao: /abdominoplastia/,
+    sobre: "sobre abdominoplastia",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url: "https://draamandaschroeder.com.br/abdominoplastia/",
+  }),
+  Object.freeze({
+    padrao: /lipoaspiracao|\blipo\b/,
+    sobre: "sobre lipoaspiração",
+    descricao:
+      "A página explica o procedimento, recuperação e dúvidas frequentes",
+    url: "https://draamandaschroeder.com.br/lipoaspiracao/",
+  }),
+  Object.freeze({
+    padrao: /mastopexia|mama caida|seio caido/,
+    sobre: "sobre mastopexia",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url: "https://draamandaschroeder.com.br/mastopexia/",
+  }),
+  Object.freeze({
+    padrao: /protese de mama|silicone|implante mamario/,
+    sobre: "sobre prótese de mama",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url:
+      "https://draamandaschroeder.com.br/protese-de-mama/",
+  }),
+  Object.freeze({
+    padrao: /mamoplastia redutora|reducao de mama|reduzir (a )?mama/,
+    sobre: "sobre mamoplastia redutora",
+    descricao:
+      "A página reúne explicações, dúvidas frequentes e casos reais em contexto educativo",
+    url:
+      "https://draamandaschroeder.com.br/mamoplastia-redutora/",
+  }),
+  Object.freeze({
+    padrao: /braquioplastia|braco/,
+    sobre: "sobre braquioplastia",
+    descricao:
+      "A página explica o procedimento, a recuperação e dúvidas frequentes",
+    url: "https://draamandaschroeder.com.br/braquioplastia/",
+  }),
+  Object.freeze({
+    padrao: /ninfoplastia/,
+    sobre: "sobre ninfoplastia",
+    descricao:
+      "A página explica o procedimento, a avaliação e dúvidas frequentes",
+    url: "https://draamandaschroeder.com.br/ninfoplastia/",
+  }),
+  Object.freeze({
+    padrao: /contorno corporal|pos bariatrica|emagreci|emagrecimento/,
+    sobre: "sobre cirurgia plástica após emagrecimento",
+    descricao:
+      "O material explica prioridades, etapas e planejamento depois da perda de peso",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/cirurgia-plastica-apos-emagrecimento/",
+  }),
+  Object.freeze({
+    padrao: /avaliacao facial|rosto|face|facial|dra amanda/,
+    sobre: "sobre o trabalho facial da Dra. Amanda",
+    descricao:
+      "A página explica como funciona a avaliação facial e as possibilidades discutidas em consulta",
+    url:
+      "https://draamandaschroeder.com.br/avaliacao-facial/",
+  }),
+]);
+
+const RETOMADAS_MATERIAL_GERAL = Object.freeze({
+  sobre: "sobre o trabalho da Dra. Amanda",
+  descricao:
+    "O site reúne sua formação, foco de atuação e acesso aos procedimentos",
+  url: "https://draamandaschroeder.com.br/",
+});
+
 function instalarEmailDiarioRetomadas() {
   const nomeFuncao = "enviarEmailDiarioRetomadas";
 
@@ -237,8 +410,12 @@ function carregarLeadsRetomadas_(planilha) {
       status: String(linha[4] || "Novo").trim(),
       resumo: String(linha[16] || "").trim(),
       proximaAcao: String(linha[17] || "").trim(),
+      origemEvento: String(linha[18] || "").trim(),
       plataforma: String(linha[19] || "").trim(),
       campanha: String(linha[20] || "").trim(),
+      criativo: String(linha[21] || "").trim(),
+      destino: String(linha[23] || "").trim(),
+      referenciaCompleta: String(linha[24] || "").trim(),
     };
   });
 
@@ -345,17 +522,41 @@ function criarCandidatoRetomada_(
     return null;
   }
 
-  const contexto = normalizarTextoRetomadas_([
+  const contextoPaciente = normalizarTextoRetomadas_([
     lead.status,
     lead.resumo,
     lead.proximaAcao,
     lead.referencia,
-    ultimaMensagem.texto,
+    lead.plataforma,
+    lead.campanha,
+    lead.criativo,
+    lead.destino,
+    lead.referenciaCompleta,
+    conversa
+      .filter(function (mensagem) {
+        return mensagem.direcao === "IN";
+      })
+      .map(function (mensagem) {
+        return mensagem.texto;
+      })
+      .join(" "),
   ].join(" "));
-  const prioritario =
-    /agend|horar|consulta|avaliacao|valor|preco|orcamento|pagamento|parcel|ferias|data disponivel/.test(
-      contexto,
+  const contextoAgenda =
+    /agend|horar|consulta|avaliacao|ferias|data disponivel/.test(
+      contextoPaciente,
     );
+  const contextoPreco =
+    /valor|preco|orcamento|pagamento|parcel/.test(
+      contextoPaciente,
+    );
+  const prioritario = contextoAgenda || contextoPreco;
+  const material = selecionarMaterialRetomada_(
+    lead,
+    conversa,
+    contextoPaciente,
+    etapa.numero,
+    prioritario,
+  );
 
   return {
     telefone: telefone,
@@ -369,6 +570,9 @@ function criarCandidatoRetomada_(
     sugestao: sugerirMensagemRetomada_(
       etapa.numero,
       prioritario,
+      material,
+      contextoAgenda,
+      contextoPreco,
     ),
     chaveDiaria: [
       dataLocal,
@@ -461,13 +665,35 @@ function horarioRetomadaPorIndice_(horarios, indice) {
   );
 }
 
-function sugerirMensagemRetomada_(etapa, prioritario) {
-  if (etapa === 1 && prioritario) {
+function sugerirMensagemRetomada_(
+  etapa,
+  prioritario,
+  material,
+  contextoAgenda,
+  contextoPreco,
+) {
+  if (etapa === 1 && material) {
+    return (
+      "Olá! Separei um material da Dra. Amanda " +
+      material.sobre +
+      ". " +
+      material.descricao +
+      " e pode ajudar você a avaliar com calma, sem compromisso: " +
+      material.url +
+      " Ficou alguma dúvida que eu possa esclarecer por aqui?"
+    );
+  }
+
+  if (etapa === 1 && contextoPreco) {
+    return "Olá! Retomando sua dúvida sobre valores para não deixar você sem uma resposta clara. Se ainda fizer sentido, posso continuar exatamente desse ponto por aqui?";
+  }
+
+  if (etapa === 1 && contextoAgenda) {
     return "Olá! Passando para dar continuidade ao seu atendimento. Posso verificar as opções de horário para sua avaliação com a Dra. Amanda e te ajudar a escolher a mais confortável?";
   }
 
   if (etapa === 1) {
-    return "Olá! Passando para saber se ficou alguma dúvida sobre o procedimento e se posso ajudar você a dar o próximo passo com tranquilidade.";
+    return "Olá! Passando para deixar o canal aberto. A consulta não pressupõe cirurgia: ela serve para entender possibilidades e limites com calma. Ficou alguma dúvida que eu possa esclarecer por aqui?";
   }
 
   if (etapa === 2) {
@@ -475,6 +701,64 @@ function sugerirMensagemRetomada_(etapa, prioritario) {
   }
 
   return "Olá! Faço só um último contato para não deixar sua solicitação sem retorno. Se quiser retomar a conversa sobre o procedimento, estou à disposição para ajudar.";
+}
+
+function selecionarMaterialRetomada_(
+  lead,
+  conversa,
+  contexto,
+  etapa,
+  prioritario,
+) {
+  if (
+    etapa !== 1 ||
+    prioritario ||
+    origemSiteRetomada_(lead) ||
+    conversaTemLinkSiteRetomada_(conversa) ||
+    contextoSensivelRetomada_(contexto)
+  ) {
+    return null;
+  }
+
+  for (
+    let indice = 0;
+    indice < RETOMADAS_MATERIAIS.length;
+    indice += 1
+  ) {
+    if (RETOMADAS_MATERIAIS[indice].padrao.test(contexto)) {
+      return RETOMADAS_MATERIAIS[indice];
+    }
+  }
+
+  return RETOMADAS_MATERIAL_GERAL;
+}
+
+function origemSiteRetomada_(lead) {
+  const contexto = normalizarTextoRetomadas_([
+    lead.plataforma,
+    lead.referencia,
+    lead.referenciaCompleta,
+  ].join(" "));
+
+  return (
+    contexto.indexOf("organico/conteudo") >= 0 ||
+    contexto.indexOf("site-") >= 0 ||
+    contexto.indexOf("site_") >= 0
+  );
+}
+
+function conversaTemLinkSiteRetomada_(conversa) {
+  return conversa.some(function (mensagem) {
+    return /https?:\/\/(?:www\.)?draamandaschroeder\.com\.br\//i.test(
+      String(mensagem.texto || ""),
+    );
+  });
+}
+
+function contextoSensivelRetomada_(contexto) {
+  return /arruinou minha vida|acabou com minha vida|salvar (meu |o )?(casamento|relacionamento|emprego|trabalho)|preciso ser perfeita|nunca vou ficar satisfeita|odeio meu rosto|nao aguento mais minha aparencia/.test(
+    contexto,
+  );
 }
 
 function mensagemSemRetomada_(texto) {

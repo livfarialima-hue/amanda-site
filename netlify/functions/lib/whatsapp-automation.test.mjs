@@ -23,6 +23,28 @@ test("possible urgency never authorizes a patient response", () => {
   });
 });
 
+test("intense appearance distress is reviewed without commercial automation", () => {
+  const messages = [
+    "Odeio meu rosto, ele acabou com a minha vida",
+    "Preciso fazer a cirurgia para salvar meu relacionamento",
+    "Quero ser perfeita",
+    "Nunca vou ficar satisfeita com a minha aparência",
+  ];
+
+  for (const text of messages) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "M26F02S-C06H01",
+      platform: "Meta",
+    });
+
+    assert.equal(plan.route, "human_review", text);
+    assert.equal(plan.reason, "intense_appearance_distress", text);
+    assert.equal(plan.automaticAllowed, false, text);
+  }
+});
+
 test("known procedure remains eligible for a standard reply", () => {
   const plan = planAutomation({
     text: "Gostaria de saber sobre blefaroplastia",

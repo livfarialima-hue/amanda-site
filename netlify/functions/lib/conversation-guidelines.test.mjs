@@ -101,6 +101,37 @@ test("playbook handles trust barriers without unsupported claims", () => {
   assert.match(CONVERSATION_GUIDELINES, /sem usar "investimento" como eufemismo/);
 });
 
+test("playbook handles appearance insecurity without exploiting it", () => {
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /decisão informada, não convencê-la a operar/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /reconheça o sentimento sem confirmar que existe um defeito/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /o que gostaria de perceber diferente — e o que é importante continuar reconhecendo como seu/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /a consulta não pressupõe cirurgia/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não envie antes e depois e não faça retomada comercial/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não diagnostique condição psicológica pelo WhatsApp/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não use antes e depois para provocar comparação/,
+  );
+});
+
 test("playbook ignores commercial and unrelated approaches while preserving context", () => {
   assert.match(CONVERSATION_GUIDELINES, /proposta de parceria comercial/);
   assert.match(CONVERSATION_GUIDELINES, /Não gaste uma resposta de cortesia/);
