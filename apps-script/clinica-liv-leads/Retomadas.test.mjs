@@ -462,6 +462,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     "Pós-consulta elegível em",
     "Pós-consulta enviado",
     "Pós-consulta suprimido em",
+    "Erro pós-consulta",
     "Retomada pelo bot",
     "Data da próxima retomada",
     "Próxima ação",
@@ -490,6 +491,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
       "Checagem pós-consulta": "Sim",
       "Data prevista da checagem": "2026-07-29 09:00",
       "Pós-consulta elegível em": "2026-07-29 10:00",
+      "Erro pós-consulta": "post_consult_disabled",
     }),
     makeRow({
       "Telefone (E.164)": "+5511900000003",
@@ -533,7 +535,9 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
 
   assert.ok(categories.includes("Aniversário"));
   assert.ok(categories.includes("Lembrete de consulta"));
-  assert.ok(categories.includes("Pós-consulta automático"));
+  assert.ok(
+    categories.includes("Pós-consulta aguardando ativação"),
+  );
   assert.ok(
     categories.includes("Checagem humana pós-consulta"),
   );

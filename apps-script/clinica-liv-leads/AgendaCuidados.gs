@@ -5,6 +5,7 @@ const AGENDA_CUIDADOS_CONFIG = Object.freeze({
   horarioRetomadaCirurgica: "10:30",
   horarioRetomadaRegular: "16:30",
   horarioOrganizarJornada: "17:00",
+  postConsultAutomaticEnabled: false,
 });
 
 function diagnosticarAgendaCuidados() {
@@ -372,6 +373,18 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
     entrada.colunas,
     ["pos consulta suprimido em"],
   );
+  const erroPosConsulta = textoAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["erro pos consulta"],
+    ),
+  );
+  const aguardandoAtivacao =
+    !AGENDA_CUIDADOS_CONFIG.postConsultAutomaticEnabled ||
+    /disabled|template|configuration|http_400/i.test(
+      erroPosConsulta,
+    );
 
   if (
     posElegivelEm &&
@@ -380,7 +393,9 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
     !posSuprimido
   ) {
     entrada.adicionar({
-      categoria: "Pós-consulta automático",
+      categoria: aguardandoAtivacao
+        ? "Pós-consulta aguardando ativação"
+        : "Pós-consulta automático",
       telefone: entrada.telefone,
       nome: entrada.nome,
       horario: horarioSeguroAgendaCuidados_(
@@ -392,12 +407,20 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
       contexto:
         "Checagem inicial de acolhimento após a consulta" +
         (entrada.tema ? " sobre " + entrada.tema : "") +
-        ".",
-      responsavel: "Bruna/automação",
-      automatico: true,
+        (aguardandoAtivacao
+          ? " — automação ainda indisponível; revisar para contato manual."
+          : "."),
+      responsavel: aguardandoAtivacao
+        ? "Amanda/equipe"
+        : "Bruna/automação",
+      automatico: !aguardandoAtivacao,
       futuro: false,
-      prioridade: 3,
-      sugestao: "",
+      prioridade: aguardandoAtivacao ? 1 : 3,
+      sugestao: aguardandoAtivacao
+        ? "Oi, " +
+          entrada.primeiroNome +
+          "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida. Queremos que você se sinta tranquila e bem orientada em cada etapa."
+        : "",
     });
   }
 
