@@ -88,6 +88,8 @@ async function alertReviewer(job, details, dependencies = {}) {
     patientName: job.patientName,
     patientPhone: job.phone,
     messageText: alertText(job, details),
+    urgent:
+      details.reason === "possible_urgent_symptoms",
   });
 }
 

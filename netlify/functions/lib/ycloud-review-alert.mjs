@@ -1,3 +1,10 @@
+import { getHumanResumeControl } from "./human-resume-queue.mjs";
+import {
+  claimReviewAlertSlot,
+  completeReviewAlertSlot,
+  releaseReviewAlertSlot,
+} from "./review-alert-throttle.mjs";
+
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 const DEFAULT_TEMPLATE_NAME = "alerta_revisao_liv_v1";
@@ -127,8 +134,17 @@ export async function sendYCloudReviewAlert(
     patientName,
     patientPhone,
     messageText,
+    urgent = false,
   },
-  { env = process.env, fetchImpl = fetch } = {},
+  {
+    env = process.env,
+    fetchImpl = fetch,
+    getHumanResumeControlImpl = getHumanResumeControl,
+    claimReviewAlertSlotImpl = claimReviewAlertSlot,
+    completeReviewAlertSlotImpl = completeReviewAlertSlot,
+    releaseReviewAlertSlotImpl = releaseReviewAlertSlot,
+    now = Date.now(),
+  } = {},
 ) {
   const apiKey = env.YCLOUD_API_KEY;
   const sender = normalizePhone(from);
@@ -138,6 +154,43 @@ export async function sendYCloudReviewAlert(
     return result("skipped", {
       errorCode: "configuration_missing",
     });
+  }
+
+  const takeoverControl = await getHumanResumeControlImpl(
+    patientPhone,
+  ).catch(() => null);
+
+  if (takeoverControl?.status === "human_active") {
+    return result("skipped", {
+      errorCode: "human_takeover_active",
+    });
+  }
+
+  let alertSlot = null;
+  if (!urgent) {
+    const cooldownMinutes = Number(
+      env.WHATSAPP_REVIEW_ALERT_COOLDOWN_MINUTES,
+    );
+    alertSlot = await claimReviewAlertSlotImpl(
+      {
+        patientPhone,
+        eventId,
+      },
+      {
+        now,
+        cooldownMs:
+          Number.isFinite(cooldownMinutes) &&
+          cooldownMinutes > 0
+            ? cooldownMinutes * 60 * 1_000
+            : undefined,
+      },
+    );
+
+    if (alertSlot.status === "suppressed") {
+      return result("skipped", {
+        errorCode: alertSlot.reason,
+      });
+    }
   }
 
   const templateName = String(
@@ -203,6 +256,9 @@ export async function sendYCloudReviewAlert(
     });
 
     if (!response.ok) {
+      if (alertSlot) {
+        await releaseReviewAlertSlotImpl(alertSlot);
+      }
       return result("failed", {
         httpStatus: response.status,
         errorCode: "http_error",
@@ -228,10 +284,17 @@ export async function sendYCloudReviewAlert(
       duplicate: emailCopy.duplicate === true,
     }));
 
+    if (alertSlot) {
+      await completeReviewAlertSlotImpl(alertSlot, { now });
+    }
+
     return result("completed", {
       httpStatus: response.status,
     });
   } catch (error) {
+    if (alertSlot) {
+      await releaseReviewAlertSlotImpl(alertSlot);
+    }
     return result("failed", {
       httpStatus: null,
       errorCode:

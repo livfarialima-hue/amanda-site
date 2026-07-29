@@ -71,6 +71,87 @@ test("review alert uses the approved template shape", async () => {
   assert.equal(calls[0].options.body.includes("test-key"), false);
 });
 
+test("review alert stays silent after a human takes over", async () => {
+  const calls = [];
+  const result = await sendYCloudReviewAlert(INPUT, {
+    env: {
+      YCLOUD_API_KEY: "test-key",
+      WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    },
+    getHumanResumeControlImpl: async () => ({
+      status: "human_active",
+    }),
+    fetchImpl: async (...args) => {
+      calls.push(args);
+      return new Response('{"status":"accepted"}', {
+        status: 200,
+      });
+    },
+  });
+
+  assert.deepEqual(result, {
+    status: "skipped",
+    errorCode: "human_takeover_active",
+  });
+  assert.equal(calls.length, 0);
+});
+
+test("review alert suppresses repeated alerts in the same patient window", async () => {
+  const calls = [];
+  const result = await sendYCloudReviewAlert(INPUT, {
+    env: {
+      YCLOUD_API_KEY: "test-key",
+      WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    },
+    getHumanResumeControlImpl: async () => null,
+    claimReviewAlertSlotImpl: async () => ({
+      status: "suppressed",
+      reason: "same_patient_cooldown",
+    }),
+    fetchImpl: async (...args) => {
+      calls.push(args);
+      return new Response('{"status":"accepted"}', {
+        status: 200,
+      });
+    },
+  });
+
+  assert.deepEqual(result, {
+    status: "skipped",
+    errorCode: "same_patient_cooldown",
+  });
+  assert.equal(calls.length, 0);
+});
+
+test("urgent review alert bypasses the same-patient cooldown", async () => {
+  const calls = [];
+  const result = await sendYCloudReviewAlert(
+    {
+      ...INPUT,
+      urgent: true,
+    },
+    {
+      env: {
+        YCLOUD_API_KEY: "test-key",
+        WHATSAPP_ALERT_NUMBER: "+5511967743374",
+      },
+      getHumanResumeControlImpl: async () => null,
+      claimReviewAlertSlotImpl: async () => {
+        throw new Error("urgent alert must not claim a cooldown slot");
+      },
+      fetchImpl: async (...args) => {
+        calls.push(args);
+        return new Response('{"status":"accepted"}', {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(calls.length, 1);
+});
+
 test("accepted review alert is copied to Daniel by email", async () => {
   const calls = [];
   const env = {

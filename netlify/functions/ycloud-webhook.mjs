@@ -1579,6 +1579,8 @@ export default async (request, context) => {
     patientName: String(message.customerProfile?.name || ""),
     patientPhone: phone,
     messageText: text,
+    urgent:
+      automationPlan.reason === "possible_urgent_symptoms",
   };
   const appointmentReviewCandidate = isAppointmentReviewCandidate(
     automationPlan,
@@ -1601,6 +1603,7 @@ export default async (request, context) => {
   );
   const shouldQueueReviewAlert =
     delivery.ok &&
+    !humanTakeoverActive &&
     !suppressExactDuplicate &&
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
