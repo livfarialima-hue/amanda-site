@@ -7,14 +7,47 @@ const source = await readFile(
   new URL("./Retomadas.gs", import.meta.url),
   "utf8",
 );
+const agendaSource = await readFile(
+  new URL("./AgendaCuidados.gs", import.meta.url),
+  "utf8",
+);
 const context = vm.createContext({
   Utilities: {
-    formatDate: () => "27/07/2026 09:00",
+    formatDate: (date, _timezone, format) => {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(date);
+      const values = Object.fromEntries(
+        parts.map((part) => [part.type, part.value]),
+      );
+      const replacements = {
+        yyyy: values.year,
+        MM: values.month,
+        dd: values.day,
+        HH: values.hour,
+        H: String(Number(values.hour)),
+        mm: values.minute,
+      };
+
+      return format.replace(
+        /yyyy|MM|dd|HH|H|mm/g,
+        (token) => replacements[token],
+      );
+    },
   },
 });
 
 vm.runInContext(source, context, {
   filename: "Retomadas.gs",
+});
+vm.runInContext(agendaSource, context, {
+  filename: "AgendaCuidados.gs",
 });
 
 test("sends the daily follow-up email to Amanda and Daniel", () => {
@@ -142,6 +175,7 @@ test("daily email is informational and drafts only the human actions", () => {
   );
 
   assert.match(text, /apenas informativo/);
+  assert.match(text, /AGENDA DE CUIDADO DE HOJE \(0\)/);
   assert.match(text, /PLANO DO DIA \(2\)/);
   assert.match(text, /AÇÃO SUGERIDA PARA AMANDA\/EQUIPE \(1\)/);
   assert.match(text, /Mensagem sugerida para a equipe/);
@@ -150,6 +184,7 @@ test("daily email is informational and drafts only the human actions", () => {
     /Mensagem que não deve aparecer na ação humana/,
   );
   assert.match(html, /Plano do dia \(2\)/);
+  assert.match(html, /Agenda de cuidado de hoje \(0\)/);
   assert.match(html, /Ação sugerida para Amanda\/equipe \(1\)/);
   assert.match(html, /Mensagem sugerida para a equipe/);
   assert.doesNotMatch(
@@ -406,4 +441,149 @@ test("second follow-up continues the pending price or scheduling thread", () => 
   assert.match(price, /exatamente desse ponto/);
   assert.match(schedule, /um dia possível/);
   assert.match(schedule, /está tudo bem/);
+});
+
+test("daily care agenda consolidates appointments, post-consult, birthdays and surgical follow-up", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Tema / procedimento",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+    "Consentimento para contato",
+    "Data de nascimento",
+    "Aniversário pelo bot",
+    "Último aniversário contatado",
+    "Checagem pós-consulta",
+    "Data prevista da checagem",
+    "Data da checagem realizada",
+    "Pós-consulta elegível em",
+    "Pós-consulta enviado",
+    "Pós-consulta suprimido em",
+    "Retomada pelo bot",
+    "Data da próxima retomada",
+    "Próxima ação",
+    "Retomadas encerradas?",
+    "Lembrete 48h enviado",
+    "Lembrete no dia enviado",
+    "Confirmação da paciente",
+    "Motivo de supressão",
+  ];
+  const makeRow = (values) =>
+    headers.map((header) => values[header] ?? "");
+  const rows = [
+    makeRow({
+      "Telefone (E.164)": "+5511900000001",
+      "Nome do paciente": "Ana",
+      Status: "Consulta realizada",
+      "Consentimento para contato": "Sim",
+      "Data de nascimento": "1980-07-29",
+      "Aniversário pelo bot": "Sim",
+    }),
+    makeRow({
+      "Telefone (E.164)": "+5511900000002",
+      "Nome do paciente": "Beatriz",
+      Status: "Consulta realizada",
+      "Consentimento para contato": "Sim",
+      "Checagem pós-consulta": "Sim",
+      "Data prevista da checagem": "2026-07-29 09:00",
+      "Pós-consulta elegível em": "2026-07-29 10:00",
+    }),
+    makeRow({
+      "Telefone (E.164)": "+5511900000003",
+      "Nome do paciente": "Carla",
+      Profissional: "Dra. Amanda",
+      "Data agendada": "2026-07-30",
+      "Horário agendado": "10:00",
+      Status: "Consulta agendada",
+      "Consentimento para contato": "Sim",
+    }),
+    makeRow({
+      "Telefone (E.164)": "+5511900000004",
+      "Nome do paciente": "Diana",
+      Status: "Consulta realizada",
+      "Consentimento para contato": "Sim",
+      "Retomada pelo bot": "Sim",
+      "Data da próxima retomada": "2026-07-29",
+      "Próxima ação":
+        "Confirmar hospital e data da cirurgia",
+    }),
+    makeRow({
+      "Telefone (E.164)": "+5511900000005",
+      "Nome do paciente": "Elisa",
+      Status: "Consulta realizada",
+      "Consentimento para contato": "Não",
+      "Data de nascimento": "1985-07-29",
+      "Aniversário pelo bot": "Sim",
+    }),
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getDataRange: () => ({
+      getValues: () => [headers, ...rows],
+    }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-07-29T08:00:00-03:00"),
+  );
+  const categories = agenda.map((item) => item.categoria);
+
+  assert.ok(categories.includes("Aniversário"));
+  assert.ok(categories.includes("Lembrete de consulta"));
+  assert.ok(categories.includes("Pós-consulta automático"));
+  assert.ok(
+    categories.includes("Checagem humana pós-consulta"),
+  );
+  assert.ok(categories.includes("Jornada cirúrgica"));
+  assert.equal(
+    agenda.some((item) => item.nome === "Elisa"),
+    false,
+  );
+});
+
+test("care agenda appears before commercial follow-ups and drafts only manual care", () => {
+  const automatic = {
+    categoria: "Lembrete de consulta",
+    telefone: "+5511999999999",
+    nome: "Ana",
+    horario: "09:00",
+    contexto: "Consulta amanhã às 10:00",
+    responsavel: "Bruna/automação",
+    automatico: true,
+    futuro: false,
+    sugestao: "",
+  };
+  const manual = {
+    categoria: "Checagem humana pós-consulta",
+    telefone: "+5511888888888",
+    nome: "Bia",
+    horario: "11:00",
+    contexto: "Confirmar se ficaram dúvidas.",
+    responsavel: "Amanda/equipe",
+    automatico: false,
+    futuro: false,
+    sugestao: "Oi, Bia! Como você ficou depois da consulta?",
+  };
+  const text = context.montarTextoEmailRetomadas_(
+    [],
+    [],
+    "29/07/2026",
+    [automatic, manual],
+  );
+  const html = context.montarHtmlEmailRetomadas_(
+    [],
+    [],
+    "29/07/2026",
+    [automatic, manual],
+  );
+
+  assert.match(text, /AGENDA DE CUIDADO DE HOJE \(2\)/);
+  assert.match(text, /Checagem humana pós-consulta/);
+  assert.match(text, /Como você ficou depois da consulta/);
+  assert.match(html, /Agenda de cuidado de hoje \(2\)/);
+  assert.match(html, /automático/);
+  assert.match(html, /revisar e enviar/);
 });

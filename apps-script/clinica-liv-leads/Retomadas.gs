@@ -3,6 +3,7 @@ const RETOMADAS_CONFIG = Object.freeze({
     "amandaschh@hotmail.com, daniel.added@gmail.com",
   planilhaMensagens: "_WHATSAPP_MENSAGENS",
   planilhaLeads: "Google Ads - Conversões",
+  planilhaConsultas: "Consultas",
   planilhaControle: "_WHATSAPP_RETOMADAS",
   fusoHorario: "America/Sao_Paulo",
   horaEmail: 8,
@@ -280,6 +281,9 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
   const planilhaMensagens = arquivo.getSheetByName(
     RETOMADAS_CONFIG.planilhaMensagens,
   );
+  const planilhaConsultas = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaConsultas,
+  );
 
   if (!planilhaLeads) {
     throw new Error("Aba de leads da Dra. Amanda não encontrada.");
@@ -289,6 +293,9 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     throw new Error("Histórico de mensagens não encontrado.");
   }
 
+  const agendaCuidados = planilhaConsultas
+    ? criarAgendaCuidadosConsultas_(planilhaConsultas, agora)
+    : [];
   const planilhaControle = obterPlanilhaControleRetomadas_(arquivo);
   const dataLocal = formatarDataRetomadas_(agora, "yyyy-MM-dd");
   const chavesEnviadasHoje = obterChavesRetomadasEnviadas_(
@@ -358,22 +365,26 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     "dd/MM/yyyy",
   );
   const assunto =
-    "Clínica LIV — plano de retomadas de " +
+    "Clínica LIV — agenda de cuidado de " +
     dataApresentacao +
     " (" +
     selecionados.length +
-    " previstas • " +
-    sugeridosParaEquipe.length +
-    " para a equipe)";
+    " retomadas • " +
+    agendaCuidados.filter(function (item) {
+      return !item.futuro;
+    }).length +
+    " cuidados hoje)";
   const corpoTexto = montarTextoEmailRetomadas_(
     selecionados,
     sugeridosParaEquipe,
     dataApresentacao,
+    agendaCuidados,
   );
   const corpoHtml = montarHtmlEmailRetomadas_(
     selecionados,
     sugeridosParaEquipe,
     dataApresentacao,
+    agendaCuidados,
   );
 
   MailApp.sendEmail({
@@ -381,7 +392,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     subject: assunto,
     body: corpoTexto,
     htmlBody: corpoHtml,
-    name: "Clínica LIV — Retomadas",
+    name: "Clínica LIV — Agenda de cuidado",
   });
 
   registrarRetomadasEnviadas_(
@@ -399,6 +410,12 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
       candidatos.length - selecionados.length,
     ),
     sugeridosParaEquipe: sugeridosParaEquipe.length,
+    cuidadosHoje: agendaCuidados.filter(function (item) {
+      return !item.futuro;
+    }).length,
+    cuidadosFuturos: agendaCuidados.filter(function (item) {
+      return item.futuro;
+    }).length,
     destinatario: RETOMADAS_CONFIG.destinatario,
     assunto: assunto,
   };
@@ -1004,14 +1021,79 @@ function montarTextoEmailRetomadas_(
   candidatos,
   sugeridosParaEquipe,
   dataApresentacao,
+  agendaCuidados,
 ) {
+  const cuidados = agendaCuidados || [];
+  const cuidadosHoje = cuidados.filter(function (item) {
+    return !item.futuro;
+  });
+  const cuidadosFuturos = cuidados.filter(function (item) {
+    return item.futuro;
+  });
   const linhas = [
-    "Clínica LIV — plano de retomadas de " + dataApresentacao,
+    "Clínica LIV — agenda de cuidado de " + dataApresentacao,
     "",
     "Este e-mail é apenas informativo e não envia mensagens aos pacientes.",
     "",
-    "PLANO DO DIA (" + candidatos.length + ")",
+    "AGENDA DE CUIDADO DE HOJE (" +
+      cuidadosHoje.length +
+      ")",
   ];
+
+  if (!cuidadosHoje.length) {
+    linhas.push("Nenhum cuidado adicional planejado para hoje.");
+  }
+
+  cuidadosHoje.forEach(function (item, indice) {
+    linhas.push("");
+    linhas.push(
+      String(indice + 1) +
+        ". " +
+        (item.horario || "A definir") +
+        " — " +
+        item.categoria +
+        " — " +
+        (item.nome || item.telefone),
+    );
+    linhas.push("Responsável: " + item.responsavel);
+    linhas.push("Contexto: " + item.contexto);
+
+    if (item.sugestao) {
+      linhas.push("Mensagem sugerida: " + item.sugestao);
+    }
+
+    if (item.telefone) {
+      linhas.push(
+        "Abrir WhatsApp: https://wa.me/" +
+          item.telefone.replace(/\D/g, ""),
+      );
+    }
+  });
+
+  linhas.push("");
+  linhas.push(
+    "PRÓXIMOS MARCOS DE CUIDADO — 7 DIAS (" +
+      cuidadosFuturos.length +
+      ")",
+  );
+
+  if (!cuidadosFuturos.length) {
+    linhas.push("Nenhum marco futuro identificado.");
+  }
+
+  cuidadosFuturos.forEach(function (item) {
+    linhas.push(
+      "- " +
+        item.contexto +
+        " — " +
+        (item.nome || item.telefone),
+    );
+  });
+
+  linhas.push("");
+  linhas.push(
+    "PLANO DO DIA (" + candidatos.length + ")",
+  );
 
   if (!candidatos.length) {
     linhas.push("Nenhuma retomada planejada para hoje.");
@@ -1095,9 +1177,13 @@ function montarHtmlEmailRetomadas_(
   candidatos,
   sugeridosParaEquipe,
   dataApresentacao,
+  agendaCuidados,
 ) {
   let planoDoDia = "";
   let acaoEquipe = "";
+  const agendaHtml = montarHtmlAgendaCuidados_(
+    agendaCuidados || [],
+  );
 
   if (!candidatos.length) {
     planoDoDia =
@@ -1208,10 +1294,11 @@ function montarHtmlEmailRetomadas_(
 
   return (
     '<div style="max-width:980px;margin:auto;font-family:Arial,sans-serif;color:#111827;">' +
-    '<h2 style="color:#075e54;">Clínica LIV — plano de retomadas</h2>' +
+    '<h2 style="color:#075e54;">Clínica LIV — agenda de cuidado</h2>' +
     '<p style="color:#4b5563;">Resumo operacional de ' +
     escaparHtmlRetomadas_(dataApresentacao) +
     ". Este e-mail é apenas informativo e não envia mensagens aos pacientes.</p>" +
+    agendaHtml +
     '<h3 style="margin-top:24px;">Plano do dia (' +
     candidatos.length +
     ")</h3>" +
