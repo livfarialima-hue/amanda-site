@@ -979,7 +979,7 @@ test("consultation information is answered deterministically without stopping", 
   }
 });
 
-test("surgical price alerts the reviewer directly with a suggestion and never replies to the patient", async () => {
+test("surgical price acknowledges the patient and alerts the reviewer with a suggestion", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -1054,10 +1054,12 @@ test("surgical price alerts the reviewer directly with a suggestion and never re
     const rawBody = JSON.stringify({
       id: "active-price-event",
       type: "whatsapp.inbound_message.received",
+      createTime: "2026-07-29T11:10:00.000Z",
       whatsappInboundMessage: {
         id: "active-price-message",
         from: "+5511900000000",
         to: PHONE,
+        sendTime: "2026-07-29T11:10:00.000Z",
         type: "text",
         customerProfile: { name: "Maria" },
         text: {
@@ -1088,6 +1090,8 @@ test("surgical price alerts the reviewer directly with a suggestion and never re
 
     assert.equal(body.aiActiveQueued, false);
     assert.equal(body.reviewAlertQueued, true);
+    assert.equal(body.priceHoldingQueued, true);
+    assert.equal(body.priceHoldingSent, true);
     assert.equal(
       requests.some(
         (request) =>
@@ -1101,8 +1105,16 @@ test("surgical price alerts the reviewer directly with a suggestion and never re
         request.url ===
         "https://api.ycloud.com/v2/whatsapp/messages",
     );
-    assert.equal(ycloudRequests.length, 1);
-    const alertBody = JSON.parse(ycloudRequests[0].options.body);
+    assert.equal(ycloudRequests.length, 2);
+    const ycloudBodies = ycloudRequests.map(
+      (request) => JSON.parse(request.options.body),
+    );
+    const alertBody = ycloudBodies.find(
+      (request) => request.type === "template",
+    );
+    const patientBody = ycloudBodies.find(
+      (request) => request.type === "text",
+    );
     assert.equal(alertBody.type, "template");
     assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
     const alertText =
@@ -1111,16 +1123,24 @@ test("surgical price alerts the reviewer directly with a suggestion and never re
       alertText,
       /PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA/,
     );
-    assert.match(alertText, /NÃO ENVIADO À PACIENTE/);
+    assert.match(alertText, /VALOR NÃO ENVIADO À PACIENTE/);
     assert.match(alertText, /Revise e copie manualmente/);
-    assert.match(alertText, /entre R\$ 18\.000 e R\$ 23\.000/);
-    assert.equal(
-      ycloudRequests.some(
-        (request) =>
-          JSON.parse(request.options.body).type === "text",
-      ),
-      false,
+    assert.match(alertText, /entre R\$ 18 mil e R\$ 23 mil/);
+    assert.match(alertText, /condição à vista/);
+    assert.doesNotMatch(
+      alertText,
+      /Se quiser, posso te explicar o que costuma aproximar/,
     );
+    assert.equal(patientBody.to, "+5511900000000");
+    assert.match(
+      patientBody.text.body,
+      /faixa de referência para a blefaroplastia completa/,
+    );
+    assert.match(
+      patientBody.text.body,
+      /possibilidades de pagamento/,
+    );
+    assert.doesNotMatch(patientBody.text.body, /R\$/);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

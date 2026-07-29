@@ -59,7 +59,11 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /Transparência vem antes das condições de pagamento/,
   );
   assert.match(CONVERSATION_GUIDELINES, /consulta presencial custa R\$ 500/);
-  assert.match(CONVERSATION_GUIDELINES, /Há opções de parcelamento/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /pagamento antecipadamente até a cirurgia/,
+  );
+  assert.match(CONVERSATION_GUIDELINES, /condição à vista/);
   assert.match(
     CONVERSATION_GUIDELINES,
     /qualquer procedimento cirúrgico, inclusive frontoplastia/,
@@ -80,6 +84,14 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(
     CONVERSATION_GUIDELINES,
     /Nenhum valor cirúrgico pode ser enviado automaticamente/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /aguarde o prazo configurado de 20 minutos/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /envie a confirmação imediatamente/,
   );
   assert.match(CONVERSATION_GUIDELINES, /use human_review/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);

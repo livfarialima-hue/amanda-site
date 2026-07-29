@@ -86,6 +86,13 @@ const PROCEDURE_LABELS = Object.freeze({
   cirurgias_combinadas: "cirurgias combinadas",
 });
 
+const FACIAL_PROCEDURES = new Set([
+  "lifting_facial",
+  "blefaroplastia",
+  "otoplastia",
+  "rinoplastia",
+]);
+
 function firstName(value) {
   return String(value || "").trim().split(/\s+/)[0] || "";
 }
@@ -101,19 +108,35 @@ function greeting(value) {
   return name ? `Olá, ${name}!` : "Olá!";
 }
 
+function waitingGreeting(value) {
+  const name = firstName(value);
+  return name
+    ? `${name}, obrigada por aguardar.`
+    : "Obrigada por aguardar.";
+}
+
 function roundedThousands(value) {
   return Math.round(Number(value || 0) / 1000) * 1000;
 }
 
 function formatBRL(value) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })
-    .format(roundedThousands(value))
-    .replace(/\u00a0/g, " ");
+  return `R$ ${roundedThousands(value) / 1_000} mil`;
+}
+
+function priceVariation(procedure) {
+  if (procedure === "lifting_facial") {
+    return "O valor final varia conforme o planejamento envolva face, pescoço ou ambos e o hospital indicado.";
+  }
+
+  return "O valor final varia conforme a extensão do procedimento e o hospital indicado.";
+}
+
+function planningContext(procedure) {
+  if (FACIAL_PROCEDURES.has(procedure)) {
+    return "O planejamento é individualizado e feito pela Dra. Amanda, com foco em preservar os traços e a expressão.";
+  }
+
+  return "O planejamento é individualizado e feito pela Dra. Amanda, respeitando as características e os objetivos de cada pessoa.";
 }
 
 function clarificationFor(procedure, patientName) {
@@ -174,13 +197,39 @@ export function buildSurgicalPriceSuggestedReply({
   const reference = getSurgicalPriceReference(procedure);
   if (!reference) return clarificationFor(procedure, patientName);
 
-  return [
-    greeting(patientName),
-    "É uma dúvida importante.",
+  const priceContext = [
+    waitingGreeting(patientName),
     `Como referência inicial, ${reference.label} costuma ficar aproximadamente entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
-    "Essa faixa considera os honorários da equipe médica e uma referência hospitalar, quando aplicável.",
-    "O orçamento final pode variar conforme o planejamento, a composição da equipe e o hospital definidos após a consulta.",
-    `A consulta custa R$ ${CONSULTATION_PRICE} e esse valor é abatido se a cirurgia for realizada com a equipe.`,
+    `Essa faixa considera a equipe médica e uma referência hospitalar. ${priceVariation(procedure)}`,
+  ].join(" ");
+  const careAndPayment = [
+    planningContext(procedure),
+    "É possível organizar o pagamento antecipadamente até a cirurgia e há condição à vista.",
+    `A consulta custa R$ ${CONSULTATION_PRICE}, e esse valor é abatido se a cirurgia for realizada com a equipe.`,
+  ].join(" ");
+
+  return `${priceContext}\n\n${careAndPayment}`;
+}
+
+export function buildSurgicalPriceHoldingReply({
+  patientName,
+  procedure,
+  overnight = false,
+}) {
+  const name = firstName(patientName);
+  const opening = name ? `Claro, ${name}.` : "Claro.";
+  const reference = PRICE_REFERENCES[procedure];
+  const procedureContext = reference
+    ? ` para ${reference.label}`
+    : "";
+  const returnTiming = overnight
+    ? "pela manhã"
+    : "por aqui";
+
+  return [
+    opening,
+    `Consigo te passar uma faixa de referência${procedureContext} e também as possibilidades de pagamento.`,
+    `Vou confirmar os valores atuais com a equipe e te retorno ${returnTiming}.`,
   ].join(" ");
 }
 
@@ -204,7 +253,7 @@ export function buildPriceReviewAlert({
   return [
     "PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA",
     `Paciente: ${limitText(patientMessage, 160) || "Mensagem sem texto."}`,
-    "NÃO ENVIADO À PACIENTE. Revise e copie manualmente se estiver de acordo:",
+    "VALOR NÃO ENVIADO À PACIENTE. Revise e copie manualmente se estiver de acordo:",
     suggestion,
   ].join("\n");
 }

@@ -43,6 +43,7 @@ import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { getRecommendedSiteResource } from "./lib/site-content.mjs";
 import {
   buildPriceReviewAlert,
+  buildSurgicalPriceHoldingReply,
   isSurgicalPriceReview,
 } from "./lib/surgical-price-review.mjs";
 import {
@@ -1591,12 +1592,28 @@ export default async (request, context) => {
     appointmentReviewCandidate &&
     isAppointmentAlertEnabled() &&
     isReviewAlertConfigured();
+  const priceReviewCandidate = isSurgicalPriceReview(
+    {
+      route: automationPlan.route,
+      reviewReason: automationPlan.reason,
+    },
+    automationPlan,
+  );
   const shouldQueueReviewAlert =
     delivery.ok &&
     !suppressExactDuplicate &&
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
     shouldSendReviewAlertForPlan(automationPlan);
+  const outsideHumanServiceHours =
+    isOutsideHumanServiceHours(contactAt);
+  const shouldQueuePriceHolding =
+    delivery.ok &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    automationMode === "active" &&
+    priceReviewCandidate &&
+    shouldQueueReviewAlert;
   const overnightReason = overnightHandoffReason(
     automationPlan,
     appointmentReviewCandidate,
@@ -1605,8 +1622,9 @@ export default async (request, context) => {
     delivery.ok &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
+    !priceReviewCandidate &&
     Boolean(overnightReason) &&
-    isOutsideHumanServiceHours(contactAt) &&
+    outsideHumanServiceHours &&
     (
       shouldQueueReviewAlert ||
       shouldQueueAppointmentReview
@@ -1617,6 +1635,8 @@ export default async (request, context) => {
   let patientReplySent = false;
   let overnightHandoffQueued = false;
   let overnightHandoffSent = false;
+  let priceHoldingQueued = false;
+  let priceHoldingSent = false;
   let aiActiveQueued = false;
   let humanResumeScheduleStatus = "skipped";
 
@@ -1686,6 +1706,38 @@ export default async (request, context) => {
       }
     } else {
       await appointmentPromise;
+    }
+  }
+
+  if (shouldQueuePriceHolding) {
+    priceHoldingQueued = true;
+    const priceHoldingBody = buildSurgicalPriceHoldingReply({
+      patientName: String(message.customerProfile?.name || ""),
+      procedure: automationPlan.procedure,
+      overnight: outsideHumanServiceHours,
+    });
+    const priceHoldingResult = await sendYCloudPatientText({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-price-holding`,
+      body: priceHoldingBody,
+    });
+    priceHoldingSent =
+      priceHoldingResult.status === "completed";
+    logPatientReplyResult(
+      `${String(eventId)}-price-holding`,
+      phone,
+      priceHoldingResult,
+    );
+
+    if (priceHoldingSent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: priceHoldingBody,
+        eventId: `${String(eventId)}:price-holding`,
+        source: "bruna",
+      });
     }
   }
 
@@ -1909,6 +1961,8 @@ export default async (request, context) => {
       patientReplySent,
       overnightHandoffQueued,
       overnightHandoffSent,
+      priceHoldingQueued,
+      priceHoldingSent,
       aiShadowQueued,
       aiActiveQueued,
       replyDebounceMarkerStatus,
@@ -1956,6 +2010,8 @@ export default async (request, context) => {
     patientReplySent,
     overnightHandoffQueued,
     overnightHandoffSent,
+    priceHoldingQueued,
+    priceHoldingSent,
     aiShadowQueued,
     aiActiveQueued,
   });

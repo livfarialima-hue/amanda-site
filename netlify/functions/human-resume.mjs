@@ -21,8 +21,16 @@ import { shouldSendOpenAIPatientReply } from "./lib/patient-replies.mjs";
 import { appendConversationTurn } from "./lib/conversation-memory.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
+import {
+  buildSurgicalPriceHoldingReply,
+  buildSurgicalPriceSuggestedReply,
+} from "./lib/surgical-price-review.mjs";
 
 const MAX_JOBS_PER_RUN = 5;
+const PRICE_REVIEW_REASONS = new Set([
+  "surgical_price_review",
+  "price_without_confirmed_procedure",
+]);
 
 function limitedText(value, maximumLength = 260) {
   return Array.from(String(value || "").trim())
@@ -53,7 +61,7 @@ function alertText(
       ? "A mensagem de espera foi enviada uma única vez. A automação permanecerá em silêncio até sua resposta."
       : "Nenhuma mensagem automática foi enviada à paciente.",
     suggestedReply
-      ? `Sugestão para copiar após conferir: ${limitedText(suggestedReply, 300)}`
+      ? `Sugestão para copiar após conferir: ${limitedText(suggestedReply, 650)}`
       : "",
   ].filter(Boolean).join("\n");
 }
@@ -133,6 +141,7 @@ async function holdAndAlert(
   reason,
   dependencies = {},
   holdingMessage = HUMAN_RESUME_HOLDING_MESSAGE,
+  suggestedReply = "",
 ) {
   const holdingResult = await sendPatientMessage(
     job,
@@ -165,6 +174,7 @@ async function holdAndAlert(
       kind: "uncertain",
       reason,
       holdingSent,
+      suggestedReply,
     },
     dependencies,
   );
@@ -258,6 +268,27 @@ export async function processHumanResumeJob(
   }
 
   if (policy.action === "sensitive") {
+    if (PRICE_REVIEW_REASONS.has(policy.reason)) {
+      const priceProcedure =
+        enrichedPlan.procedure ||
+        job.procedure ||
+        null;
+      return holdAndAlert(
+        job,
+        policy.reason,
+        dependencies,
+        buildSurgicalPriceHoldingReply({
+          patientName: job.patientName,
+          procedure: priceProcedure,
+          overnight: outsideServiceHours,
+        }),
+        buildSurgicalPriceSuggestedReply({
+          patientName: job.patientName,
+          procedure: priceProcedure,
+        }),
+      );
+    }
+
     if (
       outsideServiceHours &&
       shouldSendOvernightHandoff(policy.reason)

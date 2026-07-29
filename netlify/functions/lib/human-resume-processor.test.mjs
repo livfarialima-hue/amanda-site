@@ -136,7 +136,7 @@ test("a safe active conversation continues at night", async () => {
   );
 });
 
-test("surgical price stays silent and alerts the reviewer", async () => {
+test("surgical price acknowledges the patient and alerts the reviewer with a suggestion", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
     job({
@@ -162,12 +162,29 @@ test("surgical price stays silent and alerts the reviewer", async () => {
   );
 
   assert.equal(result.status, "waiting_human");
-  assert.equal(result.holdingSent, false);
-  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(result.holdingSent, true);
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(
+    deps.patientMessages[0].body,
+    /faixa de referência para o lifting facial/,
+  );
+  assert.match(
+    deps.patientMessages[0].body,
+    /possibilidades de pagamento/,
+  );
+  assert.doesNotMatch(deps.patientMessages[0].body, /R\$/);
   assert.equal(deps.alerts.length, 1);
   assert.match(
     deps.alerts[0].messageText,
-    /Nenhuma mensagem automática foi enviada/,
+    /A mensagem de espera foi enviada uma única vez/,
+  );
+  assert.match(
+    deps.alerts[0].messageText,
+    /entre R\$ 33 mil e R\$ 42 mil/,
+  );
+  assert.match(
+    deps.alerts[0].messageText,
+    /pagamento antecipadamente até a cirurgia/,
   );
   assert.equal(
     deps.completions[0].options.controlStatus,
@@ -205,17 +222,21 @@ test("a surgical price request at night acknowledges receipt and defers the valu
   assert.equal(deps.patientMessages.length, 1);
   assert.match(
     deps.patientMessages[0].body,
-    /pergunta sobre valores/,
+    /faixa de referência para o lifting facial/,
   );
   assert.match(
     deps.patientMessages[0].body,
-    /amanhã pela manhã/,
+    /te retorno pela manhã/,
   );
   assert.doesNotMatch(
     deps.patientMessages[0].body,
     /R\$/,
   );
   assert.equal(deps.alerts.length, 1);
+  assert.match(
+    deps.alerts[0].messageText,
+    /entre R\$ 33 mil e R\$ 42 mil/,
+  );
 });
 
 test("low confidence sends one holding message and one alert", async () => {

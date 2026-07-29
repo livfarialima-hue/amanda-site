@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildPriceReviewAlert,
+  buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
   getSurgicalPriceReference,
   isSurgicalPriceReview,
@@ -24,18 +25,44 @@ test("creates a patient-ready lifting facial price suggestion for human review",
     procedure: "lifting_facial",
   });
 
-  assert.match(reply, /^Olá, Rô!/);
-  assert.match(reply, /entre R\$ 33\.000 e R\$ 42\.000/);
+  assert.match(reply, /^Rô, obrigada por aguardar\./);
+  assert.match(reply, /entre R\$ 33 mil e R\$ 42 mil/);
   assert.doesNotMatch(reply, /R\$ 36\.400|R\$ 38\.400/);
-  assert.match(reply, /honorários da equipe médica/);
+  assert.match(reply, /equipe médica e uma referência hospitalar/);
   assert.doesNotMatch(
     reply,
     /cirurgiã principal|auxiliar|anestesista|instrumentadora/,
   );
-  assert.match(reply, /referência hospitalar, quando aplicável/);
-  assert.match(reply, /orçamento final pode variar/);
+  assert.match(reply, /face, pescoço ou ambos/);
+  assert.match(reply, /preservar os traços e a expressão/);
+  assert.match(reply, /pagamento antecipadamente até a cirurgia/);
+  assert.match(reply, /condição à vista/);
   assert.match(reply, /consulta custa R\$ 500/);
   assert.match(reply, /valor é abatido/);
+  assert.doesNotMatch(
+    reply,
+    /Se quiser, posso te explicar o que costuma aproximar/,
+  );
+});
+
+test("acknowledges a price request while the approved value is pending", () => {
+  const daytime = buildSurgicalPriceHoldingReply({
+    patientName: "Van",
+    procedure: "lifting_facial",
+  });
+  const overnight = buildSurgicalPriceHoldingReply({
+    patientName: "Van",
+    procedure: "lifting_facial",
+    overnight: true,
+  });
+
+  assert.match(daytime, /^Claro, Van\./);
+  assert.match(daytime, /faixa de referência para o lifting facial/);
+  assert.match(daytime, /possibilidades de pagamento/);
+  assert.match(daytime, /te retorno por aqui/);
+  assert.doesNotMatch(daytime, /R\$/);
+  assert.match(overnight, /te retorno pela manhã/);
+  assert.doesNotMatch(overnight, /R\$/);
 });
 
 test("keeps ambiguous procedures useful without inventing a number", () => {
@@ -57,11 +84,13 @@ test("price review alert contains the original question and a copyable answer", 
 
   assert.match(alert, /PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA/);
   assert.match(alert, /Qual o valor da blefaroplastia/);
-  assert.match(alert, /NÃO ENVIADO À PACIENTE/);
+  assert.match(alert, /VALOR NÃO ENVIADO À PACIENTE/);
   assert.match(alert, /Revise e copie manualmente/);
-  assert.match(alert, /entre R\$ 18\.000 e R\$ 23\.000/);
+  assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
-  assert.ok(alert.length <= 700);
+  assert.match(alert, /pagamento antecipadamente até a cirurgia/);
+  assert.match(alert, /condição à vista/);
+  assert.ok(alert.length <= 900);
 });
 
 test("recognizes price decisions that must remain human-reviewed", () => {

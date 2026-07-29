@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 import test from "node:test";
 import webhook from "../ycloud-webhook.mjs";
 
-const WEBHOOK_SECRET = "overnight-webhook-secret";
+const WEBHOOK_SECRET = "price-holding-webhook-secret";
 const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
@@ -24,7 +24,7 @@ function requestFor(payload) {
   });
 }
 
-test("a nighttime surgical-price request gets one morning handoff without a value", async () => {
+test("a daytime surgical-price request gets an immediate holding reply and a review alert", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -88,18 +88,18 @@ test("a nighttime surgical-price request gets one morning handoff without a valu
   try {
     const response = await webhook(
       requestFor({
-        id: "overnight-price-event",
+        id: "daytime-price-event",
         type: "whatsapp.inbound_message.received",
-        createTime: "2026-07-29T00:31:00.000Z",
+        createTime: "2026-07-29T11:10:00.000Z",
         whatsappInboundMessage: {
-          id: "overnight-price-message",
+          id: "daytime-price-message",
           from: "+5511900000000",
           to: "+5511961957144",
-          sendTime: "2026-07-29T00:31:00.000Z",
+          sendTime: "2026-07-29T11:10:00.000Z",
           type: "text",
-          customerProfile: { name: "Maria" },
+          customerProfile: { name: "Van" },
           text: {
-            body: "Quanto custa o lifting facial?",
+            body: "Qual o valor do lifting facial?",
           },
         },
       }),
@@ -113,22 +113,42 @@ test("a nighttime surgical-price request gets one morning handoff without a valu
     assert.equal(body.priceHoldingQueued, true);
     assert.equal(body.priceHoldingSent, true);
     assert.equal(body.overnightHandoffQueued, false);
-    assert.equal(body.overnightHandoffSent, false);
 
     const ycloudRequests = requests.filter(
       (request) => request.url === YCLOUD_URL,
     );
     assert.equal(ycloudRequests.length, 2);
 
-    const patientRequest = ycloudRequests
-      .map((request) => JSON.parse(request.options.body))
-      .find((request) => request.to === "+5511900000000");
+    const messages = ycloudRequests.map(
+      (request) => JSON.parse(request.options.body),
+    );
+    const patientRequest = messages.find(
+      (request) => request.to === "+5511900000000",
+    );
+    const alertRequest = messages.find(
+      (request) => request.to === "+5511967743374",
+    );
+
     assert.equal(patientRequest.type, "text");
     assert.match(
       patientRequest.text.body,
-      /te retorno pela manhã/,
+      /faixa de referência para o lifting facial/,
     );
+    assert.match(
+      patientRequest.text.body,
+      /possibilidades de pagamento/,
+    );
+    assert.match(patientRequest.text.body, /te retorno por aqui/);
     assert.doesNotMatch(patientRequest.text.body, /R\$/);
+
+    assert.equal(alertRequest.type, "template");
+    const alertText = JSON.stringify(alertRequest);
+    assert.match(alertText, /R\\u0024 33 mil|R\$ 33 mil/);
+    assert.match(alertText, /condição à vista|condiçã/);
+    assert.doesNotMatch(
+      alertText,
+      /Se quiser, posso te explicar o que costuma aproximar/,
+    );
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;
