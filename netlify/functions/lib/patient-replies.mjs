@@ -59,21 +59,36 @@ function greeting(name) {
 export function buildConsultationInformationReply({
   patientName,
   siteResource,
+  procedure,
+  availabilityRequested = false,
+  introduceBruna = false,
 }) {
+  const procedureLabel = PROCEDURE_LABELS[procedure] || "";
+  const consultationContext = procedureLabel
+    ? `Na consulta para ${procedureLabel}, a Dra. Amanda avalia a região e conversa sobre objetivos, possibilidades, limites, recuperação e orçamento.`
+    : "Na consulta, a Dra. Amanda entende o que você gostaria de melhorar e preservar, avalia a região e conversa sobre possibilidades, limites, recuperação e orçamento.";
   const introduction = [
     greeting(patientName),
+    introduceBruna
+      ? "Eu sou a Bruna, da Clínica LIV Faria Lima."
+      : "",
     "Claro.",
-    "Na consulta, a Dra. Amanda conversa sobre o que você quer melhorar e preservar, examina a região e explica possibilidades, limites, recuperação e orçamento, sem pressupor cirurgia.",
-    "A consulta presencial custa R$ 500, abatidos se a cirurgia for realizada com a equipe.",
-  ].join(" ");
+    consultationContext,
+    "O valor é R$ 500 e é abatido se a cirurgia for realizada com a equipe.",
+  ].filter(Boolean).join(" ");
   const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
     String(siteResource?.url || ""),
   )
     ? siteResource.url
     : "";
-  const nextStep = resourceUrl
-    ? `Se quiser, este material detalha a consulta: ${resourceUrl} Posso ver os horários?`
-    : "Posso ver os horários?";
+  const nextStep = availabilityRequested
+    ? [
+        "Atendemos na Rua Pais Leme, 215, em Pinheiros, perto da Av. Faria Lima.",
+        "Se quiser que eu busque opções, você prefere manhã ou tarde?",
+      ].join(" ")
+    : resourceUrl
+      ? `Se ajudar na sua pesquisa, este material detalha a consulta: ${resourceUrl}`
+      : "Se quiser, posso esclarecer alguma dúvida sobre a consulta ou explicar como funciona a disponibilidade.";
 
   return `${introduction}\n\n${nextStep}`;
 }

@@ -915,7 +915,7 @@ test("consultation information is answered deterministically without stopping", 
         customerProfile: { name: "Rô de Souza" },
         text: {
           body:
-            "Estou fazendo uma pesquisa. Seria interessante saber como funciona a consulta.",
+            "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda e consultar a disponibilidade. Ref. g26f01-816509565979-LF01\nGBRAID: 0AAAAA_6pbrU6n3U3wv9Q9o9QVyBfretAU",
         },
       },
     });
@@ -958,9 +958,16 @@ test("consultation information is answered deterministically without stopping", 
     const patientReply = JSON.parse(
       patientRequests[0].options.body,
     ).text.body;
-    assert.match(patientReply, /^Olá, Rô! Claro\./);
+    assert.match(
+      patientReply,
+      /^Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima\. Claro\./,
+    );
+    assert.match(patientReply, /consulta para lifting facial/);
     assert.match(patientReply, /R\$ 500/);
-    assert.match(patientReply, /Posso ver os horários/);
+    assert.match(patientReply, /Se quiser que eu busque opções/);
+    assert.match(patientReply, /prefere manhã ou tarde/);
+    assert.doesNotMatch(patientReply, /Posso ver os horários/);
+    assert.doesNotMatch(patientReply, /https:\/\/draamandaschroeder/);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

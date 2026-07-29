@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   enrichAutomationPlanFromConversation,
+  isAvailabilityRequest,
   isConsultationInformationRequest,
   isSchedulingRequest,
   planAutomation,
@@ -93,6 +94,51 @@ test("asking how the consultation works stays in automatic conversation", () => 
     assert.equal(plan.reason, "consultation_information_request", text);
     assert.equal(plan.replyCode, "AMANDA-CONSULTA-INFO-01", text);
     assert.equal(plan.automaticAllowed, true, text);
+  }
+});
+
+test("prefilled Google availability interest does not become an appointment confirmation", () => {
+  const text = [
+    "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda",
+    "e consultar a disponibilidade. Ref. g26f01-816509565979-LF01",
+    "GBRAID: 0AAAAA_test",
+  ].join(" ");
+  const plan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "G26F01",
+    platform: "Google",
+  });
+
+  assert.equal(isConsultationInformationRequest(text), true);
+  assert.equal(isAvailabilityRequest(text), true);
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "consultation_information_request");
+  assert.equal(plan.procedure, "lifting_facial");
+  assert.equal(plan.automaticAllowed, true);
+});
+
+test("Google codes personalize the procedure without implying scheduling", () => {
+  const cases = [
+    ["G26LIFT", "lifting_facial"],
+    ["G26CERV", "lifting_cervical"],
+    ["G26BLEF", "blefaroplastia"],
+    ["G26OTO", "otoplastia"],
+    ["G26FACE", "avaliacao_facial"],
+  ];
+
+  for (const [reference, procedure] of cases) {
+    const plan = planAutomation({
+      text: "Gostaria de saber mais",
+      messageType: "text",
+      reference,
+      platform: "Google",
+    });
+
+    assert.equal(plan.route, "standard_reply", reference);
+    assert.equal(plan.reason, "known_procedure", reference);
+    assert.equal(plan.procedure, procedure, reference);
+    assert.equal(isAvailabilityRequest("Gostaria de saber mais"), false);
   }
 });
 

@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import {
   enrichAutomationPlanFromConversation,
+  isAvailabilityRequest,
   isConsultationInformationRequest,
   isSchedulingRequest,
   normalizeAutomationMode,
@@ -949,7 +950,12 @@ async function completeOpenAIActive({
     const consultationInformationRequest =
       plan?.reason === "consultation_information_request" &&
       isConsultationInformationRequest(input.text);
-    const siteResource = consultationInformationRequest
+    const availabilityRequested =
+      consultationInformationRequest &&
+      isAvailabilityRequest(input.text);
+    const siteResource =
+      consultationInformationRequest &&
+      !availabilityRequested
       ? getRecommendedSiteResource({
           procedure: plan?.procedure || input.procedure,
           referenceCategory: input.referenceCategory,
@@ -975,6 +981,18 @@ async function completeOpenAIActive({
             suggestedReply: buildConsultationInformationReply({
               patientName: input.patientProfileName,
               siteResource,
+              procedure:
+                plan?.procedure ||
+                input.procedure ||
+                "",
+              availabilityRequested,
+              introduceBruna: !input.recentConversation.some(
+                (turn) =>
+                  turn?.role === "assistant" ||
+                  ["bruna", "equipe_humana"].includes(
+                    turn?.source,
+                  ),
+              ),
             }),
             reviewReason: "",
           },

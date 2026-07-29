@@ -39,21 +39,44 @@ test("price fallback is transparent about the consultation and clarifies the req
 test("explains the consultation directly and uses the specific site material", () => {
   const reply = buildConsultationInformationReply({
     patientName: "Rô de Souza",
+    procedure: "lifting_facial",
+    introduceBruna: true,
     siteResource: {
       url: "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
     },
   });
 
-  assert.match(reply, /^Olá, Rô! Claro\./);
-  assert.match(reply, /Na consulta, a Dra\. Amanda conversa/);
-  assert.match(reply, /sem pressupor cirurgia/);
+  assert.match(
+    reply,
+    /^Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima\. Claro\./,
+  );
+  assert.match(reply, /Na consulta para lifting facial/);
   assert.match(reply, /R\$ 500/);
-  assert.match(reply, /abatidos se a cirurgia/);
+  assert.match(reply, /abatido se a cirurgia/);
   assert.match(
     reply,
     /https:\/\/draamandaschroeder\.com\.br\/conteudos\/consulta-cirurgia-plastica\//,
   );
-  assert.match(reply, /Posso ver os horários/);
+  assert.doesNotMatch(reply, /Posso ver os horários/);
+});
+
+test("availability in a prefilled inquiry is offered without assuming booking intent", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Van",
+    procedure: "lifting_facial",
+    availabilityRequested: true,
+    introduceBruna: true,
+    siteResource: {
+      url: "https://draamandaschroeder.com.br/lifting-facial/",
+    },
+  });
+
+  assert.match(reply, /consulta para lifting facial/);
+  assert.match(reply, /Rua Pais Leme, 215/);
+  assert.match(reply, /Se quiser que eu busque opções/);
+  assert.match(reply, /prefere manhã ou tarde/);
+  assert.doesNotMatch(reply, /Posso ver os horários/);
+  assert.doesNotMatch(reply, /https:\/\/draamandaschroeder/);
 });
 
 test("builds the single fixed notice for a conversation resumed after seven days", () => {

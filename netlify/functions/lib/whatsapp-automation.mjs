@@ -33,6 +33,9 @@ const SCHEDULING_PATTERN =
 const CONSULTATION_INFORMATION_PATTERN =
   /\b(?:(?:como|de\s+que\s+forma)\s+(?:funciona|[eé])|o\s+que\s+(?:acontece|[eé]\s+feito)|quer(?:o|ia)\s+entender\s+como\s+funciona).{0,50}\b(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,50}\b(?:como\s+funciona|passo\s+a\s+passo)\b/i;
 
+const AVAILABILITY_REQUEST_PATTERN =
+  /\b(?:consultar|conferir|ver|saber)\s+(?:a\s+)?disponibilidade\b|\b(?:quais?|ver|consultar|conferir|saber)\b.{0,35}\b(?:hor[aá]rios?|datas?)\b|\b(?:agendar|marcar)\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o)\b/i;
+
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
@@ -206,16 +209,24 @@ function detectProcedure(text, reference, referralContext) {
     return { key: "avaliacao_facial", code: "M-C01-WA-01" };
   }
 
-  if (/\bLF\d{2}\b/i.test(combined)) {
+  if (/\b(?:G26LIFT|LF\d{2})\b/i.test(combined)) {
     return { key: "lifting_facial", code: "G-LIFT-FAC-01" };
   }
 
-  if (/\bLC\d{2}\b/i.test(combined)) {
+  if (/\b(?:G26CERV|LC\d{2})\b/i.test(combined)) {
     return { key: "lifting_cervical", code: "G-LIFT-CERV-01" };
   }
 
-  if (/\bBF\d{2}\b/i.test(combined)) {
+  if (/\b(?:G26BLEF|BF\d{2})\b/i.test(combined)) {
     return { key: "blefaroplastia", code: "G-BLEF-01" };
+  }
+
+  if (/\bG26OTO\b/i.test(combined)) {
+    return { key: "otoplastia", code: "G-OTO-01" };
+  }
+
+  if (/\bG26FACE\b/i.test(combined)) {
+    return { key: "avaliacao_facial", code: "M-C01-WA-01" };
   }
 
   for (const procedure of PROCEDURES) {
@@ -242,6 +253,10 @@ export function isSchedulingRequest(text) {
 
 export function isConsultationInformationRequest(text) {
   return CONSULTATION_INFORMATION_PATTERN.test(String(text || ""));
+}
+
+export function isAvailabilityRequest(text) {
+  return AVAILABILITY_REQUEST_PATTERN.test(String(text || ""));
 }
 
 export function enrichAutomationPlanFromConversation(
