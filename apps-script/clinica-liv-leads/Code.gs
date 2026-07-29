@@ -3,6 +3,8 @@ const CONFIG = Object.freeze({
   sheetName: "Google Ads - Conversões",
   secretProperty: "LEADS_INGEST_SECRET",
   eventSheetName: "_WHATSAPP_EVENTOS",
+  alertEmailSheetName: "_WHATSAPP_ALERTAS_EMAIL",
+  reviewAlertEmail: "daniel.added@gmail.com",
   timezone: "America/Sao_Paulo",
   totalColumns: 25,
   leadWindowHours: 24,
@@ -62,7 +64,8 @@ function doPost(e) {
       body.action !== "append_lead" &&
       body.action !== "upsert_appointment" &&
       body.action !== "touch_appointment" &&
-      body.action !== "update_appointment_status"
+      body.action !== "update_appointment_status" &&
+      body.action !== "send_review_alert_email"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
     }
@@ -116,6 +119,23 @@ function doPost(e) {
       return json_({
         ok: statusResult.ok === true,
         ...statusResult,
+      });
+    }
+
+    if (body.action === "send_review_alert_email") {
+      stage = "send_review_alert_email";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const emailResult = sendReviewAlertEmail_(
+        body.alert || {},
+      );
+
+      return json_({
+        ok: emailResult.ok === true,
+        ...emailResult,
       });
     }
 
@@ -267,6 +287,7 @@ function doPost(e) {
       "upsert_appointment",
       "touch_appointment",
       "update_appointment_status",
+      "send_review_alert_email",
     ]);
 
     const safeStage = allowedStages.has(stage) ? stage : "unknown";
@@ -352,11 +373,116 @@ function normalizePhone_(value) {
 }
 
 function safeText_(value, maximumLength) {
-  const text = String(value || "")
-    .trim()
-    .slice(0, maximumLength);
+  const text = boundedText_(value, maximumLength);
 
   return /^[=+\-@]/.test(text) ? `'${text}` : text;
+}
+
+function boundedText_(value, maximumLength) {
+  return String(value || "")
+    .trim()
+    .slice(0, maximumLength);
+}
+
+function sendReviewAlertEmail_(input) {
+  const eventId = boundedText_(input.eventId, 200);
+
+  if (!eventId) {
+    throw new Error("Event ID do alerta ausente.");
+  }
+
+  const patientName =
+    boundedText_(input.patientName, 120) || "Não informado";
+  const patientPhone =
+    normalizePhone_(input.patientPhone) || "Não informado";
+  const messageText =
+    boundedText_(input.messageText, 700) || "Mensagem sem texto.";
+  const recipient = CONFIG.reviewAlertEmail;
+  const spreadsheet = SpreadsheetApp.openById(
+    CONFIG.spreadsheetId,
+  );
+  const sheet = getOrCreateAlertEmailSheet_(spreadsheet);
+  const existingRow = findAlertEmailEvent_(
+    sheet,
+    eventId,
+    recipient,
+  );
+
+  if (existingRow) {
+    return {
+      ok: true,
+      sent: false,
+      duplicate: true,
+    };
+  }
+
+  MailApp.sendEmail({
+    to: recipient,
+    subject: "[Clínica LIV] Alerta para revisão",
+    body: [
+      "ALERTA DA CLÍNICA LIV",
+      "",
+      `Paciente: ${patientName}`,
+      `WhatsApp: ${patientPhone}`,
+      "",
+      messageText,
+    ].join("\n"),
+    name: "Clínica LIV",
+  });
+
+  sheet.appendRow([
+    safeText_(eventId, 200),
+    recipient,
+    new Date(),
+    safeText_(patientName, 120),
+    patientPhone,
+  ]);
+
+  return {
+    ok: true,
+    sent: true,
+    duplicate: false,
+  };
+}
+
+function getOrCreateAlertEmailSheet_(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(
+    CONFIG.alertEmailSheetName,
+  );
+
+  if (sheet) return sheet;
+
+  sheet = spreadsheet.insertSheet(CONFIG.alertEmailSheetName);
+  sheet.getRange(1, 1, 1, 5).setValues([[
+    "Event ID",
+    "Destinatário",
+    "Data do envio",
+    "Paciente",
+    "WhatsApp",
+  ]]);
+  sheet.setFrozenRows(1);
+  sheet.hideSheet();
+
+  return sheet;
+}
+
+function findAlertEmailEvent_(sheet, eventId, recipient) {
+  if (sheet.getLastRow() < 2) return null;
+
+  const values = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, 2)
+    .getDisplayValues();
+
+  for (let index = 0; index < values.length; index += 1) {
+    if (
+      String(values[index][0] || "").trim() === eventId &&
+      String(values[index][1] || "").trim() === recipient
+    ) {
+      return index + 2;
+    }
+  }
+
+  return null;
 }
 
 function assertHeaders_(sheet) {

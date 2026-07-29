@@ -71,6 +71,50 @@ test("review alert uses the approved template shape", async () => {
   assert.equal(calls[0].options.body.includes("test-key"), false);
 });
 
+test("accepted review alert is copied to Daniel by email", async () => {
+  const calls = [];
+  const env = {
+    YCLOUD_API_KEY: "test-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    GOOGLE_SHEETS_WEBHOOK_URL:
+      "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-secret",
+  };
+
+  const result = await sendYCloudReviewAlert(INPUT, {
+    env,
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+
+      if (url === env.GOOGLE_SHEETS_WEBHOOK_URL) {
+        return new Response(
+          '{"ok":true,"sent":true,"duplicate":false}',
+          { status: 200 },
+        );
+      }
+
+      return new Response('{"status":"accepted"}', {
+        status: 200,
+      });
+    },
+  });
+
+  assert.equal(result.status, "completed");
+  assert.equal(calls.length, 2);
+
+  const emailRequest = calls.find(
+    (call) => call.url === env.GOOGLE_SHEETS_WEBHOOK_URL,
+  );
+  const body = JSON.parse(emailRequest.options.body);
+
+  assert.equal(body.action, "send_review_alert_email");
+  assert.equal(body.secret, "sheets-secret");
+  assert.equal(body.alert.eventId, INPUT.eventId);
+  assert.equal(body.alert.patientName, INPUT.patientName);
+  assert.equal(body.alert.patientPhone, INPUT.patientPhone);
+  assert.equal(body.alert.messageText, INPUT.messageText);
+});
+
 test("YCloud failure is controlled and does not throw", async () => {
   const result = await sendYCloudReviewAlert(INPUT, {
     env: {
@@ -218,7 +262,7 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     assert.equal(responseBody.automation.route, "human_review");
     assert.equal(responseBody.automation.replyCode, "ALERT-URG-01");
     assert.equal(responseBody.reviewAlertQueued, true);
-    assert.equal(requests.length, 2);
+    assert.equal(requests.length, 3);
     assert.equal(
       requests[0].url,
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
@@ -226,6 +270,14 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     assert.equal(
       requests[1].url,
       "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(
+      requests[2].url,
+      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+    );
+    assert.equal(
+      JSON.parse(requests[2].options.body).action,
+      "send_review_alert_email",
     );
 
     const alertBody = JSON.parse(requests[1].options.body);

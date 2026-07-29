@@ -119,7 +119,11 @@ test("scheduling request sends a three-slot suggestion to the reviewer only", as
       requests.filter((request) => request.url === SHEETS_URL).map(
         (request) => JSON.parse(request.options.body).action,
       ),
-      ["append_lead", "get_available_slots"],
+      [
+        "append_lead",
+        "get_available_slots",
+        "send_review_alert_email",
+      ],
     );
     const scheduleRequest = requests.find(
       (request) =>
