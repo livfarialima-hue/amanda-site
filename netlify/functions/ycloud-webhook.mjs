@@ -52,6 +52,7 @@ import {
   markHumanTakeover,
   scheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
+import { guardAutomaticReplyAgainstHumanRace } from "./lib/automatic-reply-guard.mjs";
 import { rememberBusinessNumber } from "./lib/business-number-registry.mjs";
 import {
   detectConfirmedAppointment,
@@ -1029,6 +1030,26 @@ async function completeOpenAIActive({
           source: "openai_active_superseded_after_generation",
           eventId: input.eventId,
           patientLast4: String(to || "").slice(-4),
+        }),
+      );
+      return;
+    }
+
+    const finalHumanGuard =
+      await guardAutomaticReplyAgainstHumanRace({
+        phone: to,
+        configuredDelayMs:
+          process.env.WHATSAPP_HUMAN_REPLY_GUARD_MS,
+      });
+
+    if (!finalHumanGuard.shouldSend) {
+      console.log(
+        JSON.stringify({
+          source: "openai_active_cancelled_by_human_reply",
+          eventId: input.eventId,
+          patientLast4: String(to || "").slice(-4),
+          controlStatus: finalHumanGuard.controlStatus,
+          delayMs: finalHumanGuard.delayMs,
         }),
       );
       return;
