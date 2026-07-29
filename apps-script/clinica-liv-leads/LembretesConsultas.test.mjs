@@ -80,17 +80,44 @@ test("explicit refusal of contact blocks reminders", () => {
   );
 });
 
-test("48-hour reminder is due before the same-day reminder", () => {
+test("the primary reminder is due 24 to 36 hours before the consultation", () => {
   const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-28T14:15:00-03:00"),
+      now: new Date("2026-07-29T08:15:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: "",
+      patientConfirmed: false,
     }),
     "48h",
+  );
+
+  assert.equal(
+    context.definirTipoLembreteConsulta_({
+      now: new Date("2026-07-29T15:00:00-03:00"),
+      appointment,
+      reminder48hSent: "",
+      sameDaySent: "",
+      patientConfirmed: false,
+    }),
+    "",
+  );
+});
+
+test("same-day reminder is reserved for an unconfirmed consultation", () => {
+  const appointment = new Date("2026-07-30T14:00:00-03:00");
+
+  assert.equal(
+    context.definirTipoLembreteConsulta_({
+      now: new Date("2026-07-30T11:00:00-03:00"),
+      appointment,
+      reminder48hSent: new Date(),
+      sameDaySent: "",
+      patientConfirmed: false,
+    }),
+    "same_day",
   );
 
   assert.equal(
@@ -99,8 +126,9 @@ test("48-hour reminder is due before the same-day reminder", () => {
       appointment,
       reminder48hSent: new Date(),
       sameDaySent: "",
+      patientConfirmed: true,
     }),
-    "same_day",
+    "",
   );
 });
 
@@ -113,6 +141,7 @@ test("same-day reminder prevents a late duplicate 48-hour reminder", () => {
       appointment,
       reminder48hSent: "",
       sameDaySent: new Date(),
+      patientConfirmed: false,
     }),
     "",
   );
@@ -124,6 +153,19 @@ test("morning appointments use the previous evening", () => {
     context.horarioAlvoLembreteNoDia_(appointment);
 
   assert.equal(target.toISOString(), "2026-07-29T21:00:00.000Z");
+});
+
+test("only explicit patient confirmation is treated as confirmed", () => {
+  assert.equal(
+    context.statusIndicaConfirmacaoDaPaciente_(
+      "Consulta confirmada",
+    ),
+    true,
+  );
+  assert.equal(
+    context.statusIndicaConfirmacaoDaPaciente_("Confirmada"),
+    false,
+  );
 });
 
 test("reminder processing never operates overnight", () => {

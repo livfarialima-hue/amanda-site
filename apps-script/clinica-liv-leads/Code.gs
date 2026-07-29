@@ -60,8 +60,65 @@ function doPost(e) {
       return json_({ ok: false, error: "unauthorized" });
     }
 
-    if (body.action !== "append_lead") {
+    if (
+      body.action !== "append_lead" &&
+      body.action !== "upsert_appointment" &&
+      body.action !== "touch_appointment" &&
+      body.action !== "update_appointment_status"
+    ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "upsert_appointment") {
+      stage = "normalize_appointment";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      stage = "upsert_appointment";
+      const appointmentResult = upsertConsultaRecebida_(
+        body.appointment || {},
+      );
+
+      return json_({
+        ok: appointmentResult.ok === true,
+        ...appointmentResult,
+      });
+    }
+
+    if (body.action === "touch_appointment") {
+      stage = "touch_appointment";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const touchResult = registrarInteracaoHumanaDaConsulta_(
+        body.appointment || {},
+      );
+
+      return json_({
+        ok: touchResult.ok === true,
+        ...touchResult,
+      });
+    }
+
+    if (body.action === "update_appointment_status") {
+      stage = "update_appointment_status";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const statusResult = registrarRespostaPacienteDaConsulta_(
+        body.appointment || {},
+      );
+
+      return json_({
+        ok: statusResult.ok === true,
+        ...statusResult,
+      });
     }
 
     stage = "normalize_lead";
@@ -191,6 +248,7 @@ function doPost(e) {
     const allowedStages = new Set([
       "parse_body",
       "normalize_lead",
+      "normalize_appointment",
       "acquire_lock",
       "open_spreadsheet",
       "find_sheet",
@@ -209,6 +267,9 @@ function doPost(e) {
       "write_destination",
       "flush",
       "record_event",
+      "upsert_appointment",
+      "touch_appointment",
+      "update_appointment_status",
     ]);
 
     const safeStage = allowedStages.has(stage) ? stage : "unknown";

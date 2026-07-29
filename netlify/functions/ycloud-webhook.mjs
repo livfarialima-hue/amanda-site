@@ -50,6 +50,10 @@ import {
   scheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
 import { rememberBusinessNumber } from "./lib/business-number-registry.mjs";
+import {
+  detectConfirmedAppointment,
+  detectPatientAppointmentReply,
+} from "./lib/appointment-confirmation.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -1204,6 +1208,66 @@ export default async (request, context) => {
       ),
       source: "human",
     });
+    const confirmedAppointment = detectConfirmedAppointment({
+      currentText: String(echo.text?.body || ""),
+      recentConversation: memoryResult.historyAfter,
+      at: String(
+        echo.sendTime ||
+          echo.createTime ||
+          payload.createTime ||
+          "",
+      ),
+    });
+    let appointmentSyncStatus = "not_detected";
+
+    if (confirmedAppointment) {
+      const appointmentSync = await deliverSheetsAction(
+        "upsert_appointment",
+        {
+          appointment: {
+            ...confirmedAppointment,
+            eventId: String(eventId),
+            appointmentId: `whatsapp-${String(messageId)}`,
+            phone: patientPhone,
+          },
+        },
+      );
+      appointmentSyncStatus = appointmentSync.ok
+        ? "completed"
+        : appointmentSync.errorCode;
+
+      console.log(
+        JSON.stringify({
+          source: "appointment_confirmation_sync",
+          eventId: String(eventId),
+          patientLast4: patientPhone.slice(-4),
+          status: appointmentSyncStatus,
+        }),
+      );
+    }
+
+    const humanInteractionSync = await deliverSheetsAction(
+      "touch_appointment",
+      {
+        appointment: {
+          appointmentId: confirmedAppointment
+            ? `whatsapp-${String(messageId)}`
+            : "",
+          phone: patientPhone,
+          at: String(
+            echo.sendTime ||
+              echo.createTime ||
+              payload.createTime ||
+              "",
+          ),
+        },
+      },
+    );
+    const humanInteractionSyncStatus = humanInteractionSync.ok
+      ? humanInteractionSync.updated
+        ? "updated"
+        : "not_found"
+      : humanInteractionSync.errorCode;
 
     return json({
       received: true,
@@ -1211,6 +1275,8 @@ export default async (request, context) => {
       takeoverCreated: takeoverDelivery.created === true,
       conversationMemory: memoryResult.status,
       humanResumeControl: humanResumeControl.status,
+      appointmentSyncStatus,
+      humanInteractionSyncStatus,
     });
   }
 
@@ -1259,6 +1325,43 @@ export default async (request, context) => {
   });
 
   if (preliminaryAutomationPlan.route === "ignore") {
+    let appointmentReplySyncStatus = "not_detected";
+
+    if (
+      String(message.type || "").toLowerCase() === "text" &&
+      text.trim()
+    ) {
+      const ignoredMemory = await appendConversationTurn({
+        phone,
+        role: "user",
+        text,
+        eventId: String(eventId),
+        at: contactAt,
+        source: "patient",
+      });
+      const appointmentReply = detectPatientAppointmentReply({
+        currentText: text,
+        recentConversation: ignoredMemory.historyAfter,
+        at: contactAt,
+      });
+
+      if (appointmentReply) {
+        const statusSync = await deliverSheetsAction(
+          "update_appointment_status",
+          {
+            appointment: {
+              ...appointmentReply,
+              phone,
+              at: contactAt,
+            },
+          },
+        );
+        appointmentReplySyncStatus = statusSync.ok
+          ? "completed"
+          : statusSync.errorCode;
+      }
+    }
+
     console.log(
       JSON.stringify({
         source: "ycloud",
@@ -1269,6 +1372,7 @@ export default async (request, context) => {
         ignored: true,
         ignoreReason: preliminaryAutomationPlan.reason,
         leadDelivery: "skipped",
+        appointmentReplySyncStatus,
         aiShadowQueued: false,
         aiActiveQueued: false,
       }),
@@ -1279,6 +1383,7 @@ export default async (request, context) => {
       ignored: true,
       ignoreReason: preliminaryAutomationPlan.reason,
       leadRecorded: false,
+      appointmentReplySyncStatus,
       aiShadowQueued: false,
       aiActiveQueued: false,
     });
@@ -1295,6 +1400,8 @@ export default async (request, context) => {
   let conversationMemoryStatus = "skipped";
   let conversationExpired = false;
   let replyDebounceMarkerStatus = "skipped";
+  let patientAppointmentReply = null;
+  let patientAppointmentReplySyncStatus = "not_detected";
   const exactMessageDuplicate = isExactMessageDuplicate(delivery);
   let recoveredExactDuplicate = false;
 
@@ -1340,10 +1447,32 @@ export default async (request, context) => {
     conversationHistoryWithCurrent = toOpenAIConversation(
       memoryResult.historyAfter,
     );
+    patientAppointmentReply = detectPatientAppointmentReply({
+      currentText: text,
+      recentConversation: memoryResult.historyAfter,
+      at: contactAt,
+    });
   }
   if (!conversationHistoryWithCurrent.length) {
     conversationHistoryWithCurrent = conversationHistory;
   }
+
+  if (patientAppointmentReply) {
+    const statusSync = await deliverSheetsAction(
+      "update_appointment_status",
+      {
+        appointment: {
+          ...patientAppointmentReply,
+          phone,
+          at: contactAt,
+        },
+      },
+    );
+    patientAppointmentReplySyncStatus = statusSync.ok
+      ? "completed"
+      : statusSync.errorCode;
+  }
+
   const reactivationHandoffPending =
     hasPendingReactivationHandoff(conversationHistory);
   const humanResumeControl =
@@ -1676,6 +1805,7 @@ export default async (request, context) => {
         humanResumeControl?.status || null,
       humanResumeScheduleStatus,
       conversationMemoryStatus,
+      patientAppointmentReplySyncStatus,
       conversationExpired,
       reactivationHandoffPending,
       conversationHistoryTurns: conversationHistory.length,
@@ -1724,6 +1854,7 @@ export default async (request, context) => {
     duplicateReason: delivery.duplicateReason,
     recoveredExactDuplicate,
     conversationMemory: conversationMemoryStatus,
+    patientAppointmentReplySyncStatus,
     conversationExpired,
     reactivationHandoffPending,
     automation: {

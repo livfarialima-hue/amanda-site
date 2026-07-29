@@ -5,6 +5,8 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
   timezone: "America/Sao_Paulo",
   startHour: 9,
   endHour: 19,
+  primaryReminderHoursBefore: 30,
+  minimumHoursForPrimaryReminder: 24,
   endpoint:
     "https://draamandaschroeder.com.br/.netlify/functions/appointment-reminder",
   secretProperty: "LEADS_INGEST_SECRET",
@@ -23,6 +25,8 @@ const LEMBRETES_CONSULTAS_HEADERS = Object.freeze({
   time: "Horário agendado",
   status: "Status",
   consent: "Consentimento para contato",
+  patientConfirmedAt: "Confirmação da paciente",
+  suppressionReason: "Motivo de supressão",
   reminder48h: "Lembrete 48h enviado",
   reminderSameDay: "Lembrete no dia enviado",
   lastAttempt: "Última tentativa de lembrete",
@@ -214,7 +218,8 @@ function processarLembretesConsultasInterno_(
       !statusPermiteLembreteConsulta_(row[columns.status]) ||
       !consentimentoPermiteLembreteConsulta_(
         row[columns.consent],
-      )
+      ) ||
+      Boolean(row[columns.suppressionReason])
     ) {
       continue;
     }
@@ -224,6 +229,9 @@ function processarLembretesConsultasInterno_(
       appointment,
       reminder48hSent: row[columns.reminder48h],
       sameDaySent: row[columns.reminderSameDay],
+      patientConfirmed:
+        Boolean(row[columns.patientConfirmedAt]) ||
+        statusIndicaConfirmacaoDaPaciente_(row[columns.status]),
     });
 
     if (!reminderKind) continue;
@@ -354,7 +362,11 @@ function definirTipoLembreteConsulta_(input) {
   const sameDayTarget =
     horarioAlvoLembreteNoDia_(appointment);
 
+  const hoursUntilAppointment =
+    (appointment.getTime() - now.getTime()) / (60 * 60 * 1000);
+
   if (
+    !input.patientConfirmed &&
     !input.sameDaySent &&
     now.getTime() >= sameDayTarget.getTime()
   ) {
@@ -363,13 +375,19 @@ function definirTipoLembreteConsulta_(input) {
 
   if (input.sameDaySent) return "";
 
-  const reminder48hTarget = new Date(
-    appointment.getTime() - 48 * 60 * 60 * 1000,
+  const primaryReminderTarget = new Date(
+    appointment.getTime() -
+      LEMBRETES_CONSULTAS_CONFIG.primaryReminderHoursBefore *
+        60 *
+        60 *
+        1000,
   );
 
   if (
     !input.reminder48hSent &&
-    now.getTime() >= reminder48hTarget.getTime() &&
+    hoursUntilAppointment >=
+      LEMBRETES_CONSULTAS_CONFIG.minimumHoursForPrimaryReminder &&
+    now.getTime() >= primaryReminderTarget.getTime() &&
     now.getTime() < sameDayTarget.getTime()
   ) {
     return "48h";
@@ -444,6 +462,13 @@ function statusPermiteLembreteConsulta_(value) {
     "consulta agendada",
     "consulta confirmada",
   ].includes(normalized);
+}
+
+function statusIndicaConfirmacaoDaPaciente_(value) {
+  return [
+    "consulta confirmada",
+    "confirmada pela paciente",
+  ].includes(normalizarTextoLembretesConsultas_(value));
 }
 
 function consentimentoPermiteLembreteConsulta_(value) {
@@ -557,6 +582,8 @@ function garantirEstruturaLembretesConsultas_(sheet) {
     LEMBRETES_CONSULTAS_HEADERS.lastAttempt,
     LEMBRETES_CONSULTAS_HEADERS.lastError,
     LEMBRETES_CONSULTAS_HEADERS.monitoredAppointment,
+    LEMBRETES_CONSULTAS_HEADERS.patientConfirmedAt,
+    LEMBRETES_CONSULTAS_HEADERS.suppressionReason,
   ];
 
   required.forEach(function (header) {

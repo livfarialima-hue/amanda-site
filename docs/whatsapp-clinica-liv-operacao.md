@@ -100,17 +100,27 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 - Consultas agendadas e realizadas: aba `Consultas`, que também controla os lembretes operacionais.
 - Histórico e controles técnicos: abas internas iniciadas por `_WHATSAPP_`.
 
+Ao alterar `Situação do lead` para `Consulta agendada`, a automação cria ou atualiza a linha correspondente em `Consultas`, usando ID e telefone para evitar duplicidade. Se data e horário ainda não estiverem disponíveis, a linha é criada sem inventá-los e fica pronta para complemento. Uma confirmação explícita no WhatsApp também pode preencher a aba quando a conversa contiver data e horário inequívocos; sem os dois elementos, o sistema não presume um agendamento.
+
+Ao alterar o status para `Consulta realizada`, a consulta é atualizada e o pós-consulta entra em uma fila única. O contato é feito somente uma vez, aproximadamente duas horas depois da marcação e entre 09:00 e 19:00; se esse horário cair à noite, fica para a próxima manhã. Recusa de contato, cancelamento, ausência de telefone válido ou envio já registrado impedem novo disparo. Se houver interação humana posterior à consulta, o pós-consulta é suprimido e a razão fica registrada na própria linha.
+
+O pós-consulta usa o modelo utilitário `pos_consulta_cuidado_liv_v1`:
+
+> Olá! Aqui é a Bruna, da Clínica LIV. Passando para saber se ficou alguma dúvida depois da sua consulta com {{1}}. Se quiser conversar sobre alguma orientação ou próximo passo, pode responder por aqui. Estamos à disposição.
+
+O modelo deve estar aprovado antes de configurar `WHATSAPP_POST_CONSULT_ENABLED=true`. Até lá, a fila permanece registrada e nenhuma mensagem é enviada.
+
 ## Lembretes de consulta
 
 Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consulta confirmada` pode receber:
 
 1. a confirmação normal no momento do agendamento, dentro da própria conversa;
-2. um lembrete aproximadamente 48 horas antes;
-3. um lembrete curto cerca de três horas antes da consulta.
+2. um lembrete principal entre 24 e 36 horas antes;
+3. um lembrete curto no mesmo dia somente se a paciente ainda não tiver confirmado ou houver necessidade logística relevante.
 
-Para consultas pela manhã, o segundo lembrete é antecipado para as 18h do dia anterior, evitando mensagens muito cedo. Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo.
+Para consultas pela manhã, o lembrete no mesmo dia é antecipado para as 18h do dia anterior, evitando mensagens muito cedo. Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Consultas marcadas com menos de 24 horas de antecedência não recebem o lembrete principal duplicado.
 
-Consultas canceladas, realizadas, vencidas ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Lembrete 48h enviado`, `Lembrete no dia enviado`, `Última tentativa de lembrete`, `Erro do lembrete` e `Agendamento monitorado` impedem duplicidade e permitem auditoria.
+Consultas canceladas, realizadas, vencidas, com pedido de reagendamento ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Confirmação da paciente`, `Última interação humana`, `Próxima ação` e `Motivo de supressão` deixam o contexto explícito; os controles de lembrete impedem duplicidade e permitem auditoria.
 
 Os lembretes usam o modelo utilitário `lembrete_consulta_liv_v1`:
 
