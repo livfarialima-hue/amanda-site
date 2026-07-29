@@ -46,6 +46,12 @@ const EXISTING_PATIENT_FOLLOW_UP_PATTERNS = [
   /\b(?:tr[âa]mite|andamento).{0,60}\b(?:cirurgia|procedimento)\b/i,
 ];
 
+const PENDING_HOSPITAL_QUOTE_PATTERNS = [
+  /\b(?:valor|pre[c\u00e7]o|custo|or[c\u00e7]amento).{0,45}\b(?:do|de|referente\s+ao)\s+hospital\b/i,
+  /\bhospital.{0,45}\b(?:valor|pre[c\u00e7]o|custo|or[c\u00e7]amento)\b/i,
+  /\b(?:quando|assim\s+que).{0,40}\b(?:tiver|souber|confirmar).{0,40}\b(?:valor|or[c\u00e7]amento).{0,40}\bhospital\b/i,
+];
+
 const APPEARANCE_DISTRESS_PATTERNS = [
   /\b(?:minha\s+)?apar[eê]ncia.{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
   /\b(?:meu\s+rosto|minha\s+face|meu\s+corpo).{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
@@ -372,6 +378,17 @@ export function planAutomation({
       replyCode: null,
       professional: null,
       procedure: null,
+      automaticAllowed: false,
+    };
+  }
+
+  if (matchesAny(normalizedText, PENDING_HOSPITAL_QUOTE_PATTERNS)) {
+    return {
+      route: "human_review",
+      reason: "pending_hospital_quote_followup",
+      replyCode: null,
+      professional: "amanda",
+      procedure: procedure?.key || null,
       automaticAllowed: false,
     };
   }

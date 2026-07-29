@@ -237,7 +237,23 @@ export function isSurgicalPriceReview(decision, plan) {
   if (decision?.route !== "human_review") return false;
 
   const reason = `${decision?.reviewReason || ""} ${plan?.reason || ""}`;
+  if (/pending_hospital_quote_followup/i.test(reason)) return false;
   return /(?:price|preco|valor|orcamento)/i.test(reason);
+}
+
+export function buildPendingHospitalQuoteAlert({
+  patientName,
+  patientMessage,
+}) {
+  const hello = greeting(patientName);
+  const suggestion = `${hello} Obrigada pela visita e pela mensagem. Estamos confirmando o valor do hospital e retornaremos assim que tivermos essa informa\u00e7\u00e3o.`;
+
+  return [
+    "OR\u00c7AMENTO HOSPITALAR \u2014 RESPOSTA HUMANA NECESS\u00c1RIA",
+    `Paciente: ${limitText(patientMessage, 180) || "Mensagem sem texto."}`,
+    "N\u00c3O RESPONDER AUTOMATICAMENTE. Sugest\u00e3o para revisar e copiar:",
+    suggestion,
+  ].join("\n");
 }
 
 export function buildPriceReviewAlert({

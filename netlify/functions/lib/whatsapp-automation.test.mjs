@@ -75,6 +75,39 @@ test("surgical price with a table reference goes directly to human review", () =
   assert.equal(plan.automaticAllowed, false);
 });
 
+test("pending hospital quote remains human-only even with conversation context", () => {
+  const text = [
+    "Dra., quando voc\u00ea tiver o valor do hospital, poderia, por favor, me informar?",
+    "Gostaria de realizar a cirurgia o mais r\u00e1pido poss\u00edvel.",
+  ].join(" ");
+  const preliminaryPlan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Obrigada pelo aviso.",
+        at: "2026-07-29T14:47:00.000Z",
+      },
+    ],
+  );
+
+  assert.equal(preliminaryPlan.route, "human_review");
+  assert.equal(
+    preliminaryPlan.reason,
+    "pending_hospital_quote_followup",
+  );
+  assert.equal(preliminaryPlan.automaticAllowed, false);
+  assert.equal(enrichedPlan.route, "human_review");
+  assert.equal(enrichedPlan.automaticAllowed, false);
+});
+
 test("asking how the consultation works stays in automatic conversation", () => {
   for (const text of [
     "Estou fazendo uma pesquisa. Seria interessante saber como funciona a consulta.",

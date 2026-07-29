@@ -42,6 +42,7 @@ import {
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { getRecommendedSiteResource } from "./lib/site-content.mjs";
 import {
+  buildPendingHospitalQuoteAlert,
   buildPriceReviewAlert,
   buildSurgicalPriceHoldingReply,
   isSurgicalPriceReview,
@@ -761,6 +762,16 @@ function logPatientReplyResult(eventId, phone, replyResult) {
 
 function prepareReviewAlertInput(input, { decision, plan } = {}) {
   const planReason = String(plan?.reason || "");
+  if (planReason === "pending_hospital_quote_followup") {
+    return {
+      ...input,
+      messageText: buildPendingHospitalQuoteAlert({
+        patientName: input.patientName,
+        patientMessage: input.messageText,
+      }),
+    };
+  }
+
   const priceReview =
     isSurgicalPriceReview(decision, plan) ||
     (

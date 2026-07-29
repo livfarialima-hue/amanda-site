@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildPendingHospitalQuoteAlert,
   buildPriceReviewAlert,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
@@ -115,4 +116,22 @@ test("recognizes price decisions that must remain human-reviewed", () => {
     ),
     false,
   );
+});
+
+test("pending hospital quote creates only a copyable human alert", () => {
+  const plan = {
+    route: "human_review",
+    reason: "pending_hospital_quote_followup",
+  };
+  const alert = buildPendingHospitalQuoteAlert({
+    patientName: "M\u00f4nica Mussolino",
+    patientMessage:
+      "Quando tiver o valor do hospital, poderia me informar?",
+  });
+
+  assert.equal(isSurgicalPriceReview(plan, plan), false);
+  assert.match(alert, /OR\u00c7AMENTO HOSPITALAR/);
+  assert.match(alert, /N\u00c3O RESPONDER AUTOMATICAMENTE/);
+  assert.match(alert, /Estamos confirmando o valor do hospital/);
+  assert.match(alert, /retornaremos assim que tivermos/);
 });
