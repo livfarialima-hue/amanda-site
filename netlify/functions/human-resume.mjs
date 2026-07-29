@@ -4,17 +4,17 @@ import {
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
 import {
+  buildOvernightHandoffMessage,
   classifyHumanResume,
   hasConcreteResponseExpectation,
   HUMAN_RESUME_HOLDING_MESSAGE,
   isHumanResumeServiceOpen,
-  nextHumanResumeServiceTime,
+  shouldSendOvernightHandoff,
 } from "./lib/human-resume-policy.mjs";
 import {
   claimDueHumanResumes,
   completeHumanResume,
   isHumanResumeClaimCurrent,
-  rescheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import { shouldSendOpenAIPatientReply } from "./lib/patient-replies.mjs";
@@ -128,10 +128,15 @@ async function finish(job, controlStatus, dependencies = {}) {
   return complete(job, { controlStatus });
 }
 
-async function holdAndAlert(job, reason, dependencies = {}) {
+async function holdAndAlert(
+  job,
+  reason,
+  dependencies = {},
+  holdingMessage = HUMAN_RESUME_HOLDING_MESSAGE,
+) {
   const holdingResult = await sendPatientMessage(
     job,
-    HUMAN_RESUME_HOLDING_MESSAGE,
+    holdingMessage,
     "human-resume-holding",
     dependencies,
   );
@@ -148,7 +153,7 @@ async function holdAndAlert(job, reason, dependencies = {}) {
   if (holdingSent) {
     await recordBrunaTurn(
       job,
-      HUMAN_RESUME_HOLDING_MESSAGE,
+      holdingMessage,
       "human-resume-holding-memory",
       dependencies,
     );
@@ -222,17 +227,7 @@ export async function processHumanResumeJob(
     return { status: "automation_inactive" };
   }
 
-  if (!isHumanResumeServiceOpen(now, env)) {
-    const reschedule =
-      dependencies.rescheduleHumanResumeImpl ||
-      rescheduleHumanResume;
-    const dueAt = nextHumanResumeServiceTime(now, env);
-    await reschedule(job, dueAt);
-    return {
-      status: "outside_service_hours",
-      dueAt: new Date(dueAt).toISOString(),
-    };
-  }
+  const outsideServiceHours = !isHumanResumeServiceOpen(now, env);
 
   const preliminaryPlan = planAutomation({
     text: job.text,
@@ -263,6 +258,18 @@ export async function processHumanResumeJob(
   }
 
   if (policy.action === "sensitive") {
+    if (
+      outsideServiceHours &&
+      shouldSendOvernightHandoff(policy.reason)
+    ) {
+      return holdAndAlert(
+        job,
+        policy.reason,
+        dependencies,
+        buildOvernightHandoffMessage(policy.reason),
+      );
+    }
+
     const alertResult = await alertReviewer(
       job,
       {
@@ -287,7 +294,14 @@ export async function processHumanResumeJob(
   }
 
   if (policy.action === "holding_and_alert") {
-    return holdAndAlert(job, policy.reason, dependencies);
+    return holdAndAlert(
+      job,
+      policy.reason,
+      dependencies,
+      outsideServiceHours
+        ? buildOvernightHandoffMessage(policy.reason)
+        : HUMAN_RESUME_HOLDING_MESSAGE,
+    );
   }
 
   if (policy.action === "alert_only") {

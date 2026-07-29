@@ -4,6 +4,7 @@ import { processHumanResumeJob } from "../human-resume.mjs";
 import { HUMAN_RESUME_HOLDING_MESSAGE } from "./human-resume-policy.mjs";
 
 const NOW = Date.parse("2026-07-28T15:30:00.000Z");
+const NIGHT_NOW = Date.parse("2026-07-29T00:31:00.000Z");
 const ACTIVE_ENV = {
   WHATSAPP_AUTOMATION_MODE: "active",
   HUMAN_RESUME_TIME_ZONE: "America/Sao_Paulo",
@@ -105,6 +106,36 @@ test("a safe high-confidence answer resumes Bruna without an alert", async () =>
   );
 });
 
+test("a safe active conversation continues at night", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      suggestedReply:
+        "Claro. A consulta serve para entender seus objetivos e esclarecer as possibilidades com calma.",
+      reviewReason: "",
+    },
+  });
+
+  const result = await processHumanResumeJob(job(), {
+    env: ACTIVE_ENV,
+    now: NIGHT_NOW,
+    ...deps,
+  });
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.equal(deps.alerts.length, 0);
+  assert.match(
+    deps.patientMessages[0].body,
+    /consulta serve para entender/,
+  );
+});
+
 test("surgical price stays silent and alerts the reviewer", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
@@ -142,6 +173,49 @@ test("surgical price stays silent and alerts the reviewer", async () => {
     deps.completions[0].options.controlStatus,
     "waiting_human",
   );
+});
+
+test("a surgical price request at night acknowledges receipt and defers the value", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      text: "Quanto custa o lifting facial?",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "O lifting é avaliado individualmente.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Quanto custa o lifting facial?",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NIGHT_NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "waiting_human");
+  assert.equal(result.holdingSent, true);
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(
+    deps.patientMessages[0].body,
+    /pergunta sobre valores/,
+  );
+  assert.match(
+    deps.patientMessages[0].body,
+    /amanhã pela manhã/,
+  );
+  assert.doesNotMatch(
+    deps.patientMessages[0].body,
+    /R\$/,
+  );
+  assert.equal(deps.alerts.length, 1);
 });
 
 test("low confidence sends one holding message and one alert", async () => {

@@ -54,6 +54,11 @@ import {
   detectConfirmedAppointment,
   detectPatientAppointmentReply,
 } from "./lib/appointment-confirmation.mjs";
+import {
+  buildOvernightHandoffMessage,
+  isHumanResumeServiceOpen,
+  shouldSendOvernightHandoff,
+} from "./lib/human-resume-policy.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -63,6 +68,24 @@ function json(data, status = 200) {
       "cache-control": "no-store",
     },
   });
+}
+
+function overnightHandoffReason(
+  plan,
+  appointmentReviewCandidate,
+) {
+  if (appointmentReviewCandidate) {
+    return "scheduling_or_confirmation";
+  }
+
+  const reason = String(plan?.reason || "");
+  return shouldSendOvernightHandoff(reason) ? reason : "";
+}
+
+function isOutsideHumanServiceHours(value, env = process.env) {
+  const timestamp = new Date(value || "").getTime();
+  if (!Number.isFinite(timestamp)) return false;
+  return !isHumanResumeServiceOpen(timestamp, env);
 }
 
 function verifySignature(rawBody, signatureHeader, secret) {
@@ -1556,10 +1579,26 @@ export default async (request, context) => {
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
     shouldSendReviewAlertForPlan(automationPlan);
+  const overnightReason = overnightHandoffReason(
+    automationPlan,
+    appointmentReviewCandidate,
+  );
+  const shouldQueueOvernightHandoff =
+    delivery.ok &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    Boolean(overnightReason) &&
+    isOutsideHumanServiceHours(contactAt) &&
+    (
+      shouldQueueReviewAlert ||
+      shouldQueueAppointmentReview
+    );
   let reviewAlertQueued = false;
   let appointmentReviewQueued = false;
   let patientReplyQueued = false;
   let patientReplySent = false;
+  let overnightHandoffQueued = false;
+  let overnightHandoffSent = false;
   let aiActiveQueued = false;
   let humanResumeScheduleStatus = "skipped";
 
@@ -1629,6 +1668,35 @@ export default async (request, context) => {
       }
     } else {
       await appointmentPromise;
+    }
+  }
+
+  if (shouldQueueOvernightHandoff) {
+    overnightHandoffQueued = true;
+    const overnightBody =
+      buildOvernightHandoffMessage(overnightReason);
+    const overnightResult = await sendYCloudPatientText({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-overnight-handoff`,
+      body: overnightBody,
+    });
+    overnightHandoffSent =
+      overnightResult.status === "completed";
+    logPatientReplyResult(
+      `${String(eventId)}-overnight-handoff`,
+      phone,
+      overnightResult,
+    );
+
+    if (overnightHandoffSent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: overnightBody,
+        eventId: `${String(eventId)}:overnight-handoff`,
+        source: "bruna",
+      });
     }
   }
 
@@ -1821,6 +1889,8 @@ export default async (request, context) => {
       appointmentReviewQueued,
       patientReplyQueued,
       patientReplySent,
+      overnightHandoffQueued,
+      overnightHandoffSent,
       aiShadowQueued,
       aiActiveQueued,
       replyDebounceMarkerStatus,
@@ -1866,6 +1936,8 @@ export default async (request, context) => {
     appointmentReviewQueued,
     patientReplyQueued,
     patientReplySent,
+    overnightHandoffQueued,
+    overnightHandoffSent,
     aiShadowQueued,
     aiActiveQueued,
   });

@@ -21,6 +21,11 @@ const SENSITIVE_REASONS = new Set([
   "unsupported_or_empty_message",
   "cardiology_or_dr_daniel",
 ]);
+const OVERNIGHT_HANDOFF_REASONS = new Set([
+  "scheduling_or_confirmation",
+  "surgical_price_review",
+  "price_without_confirmed_procedure",
+]);
 
 function localHour(now, timeZone) {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -87,6 +92,25 @@ export function nextHumanResumeServiceTime(
   }
 
   return now + 12 * 60 * 60 * 1_000;
+}
+
+export function shouldSendOvernightHandoff(reason) {
+  return OVERNIGHT_HANDOFF_REASONS.has(String(reason || ""));
+}
+
+export function buildOvernightHandoffMessage(reason) {
+  if (
+    ["surgical_price_review", "price_without_confirmed_procedure"]
+      .includes(String(reason || ""))
+  ) {
+    return "Recebi sua pergunta sobre valores. Para te passar a informação correta, vou confirmar com a equipe e retornamos por aqui amanhã pela manhã.";
+  }
+
+  if (String(reason || "") === "scheduling_or_confirmation") {
+    return "Recebi sua mensagem sobre o agendamento. Vou confirmar essa informação com a equipe e retornamos por aqui amanhã pela manhã.";
+  }
+
+  return "Recebi sua mensagem. Para te passar essa informação com segurança, vou confirmar com a equipe e retornamos por aqui amanhã pela manhã.";
 }
 
 function hasSchedulingContext(recentConversation) {

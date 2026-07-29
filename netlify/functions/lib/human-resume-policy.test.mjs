@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildOvernightHandoffMessage,
   classifyHumanResume,
   hasConcreteResponseExpectation,
   isHumanResumeServiceOpen,
   nextHumanResumeServiceTime,
+  shouldSendOvernightHandoff,
 } from "./human-resume-policy.mjs";
 
 function standardPlan(reason = "known_procedure") {
@@ -181,7 +183,7 @@ test("recognizes both direct requests and answers to a pending question", () => 
   );
 });
 
-test("resumes only between 08:00 and 20:00 in São Paulo", () => {
+test("identifies the daytime human-service window in São Paulo", () => {
   const env = {
     HUMAN_RESUME_TIME_ZONE: "America/Sao_Paulo",
     HUMAN_RESUME_START_HOUR: "8",
@@ -217,5 +219,24 @@ test("resumes only between 08:00 and 20:00 in São Paulo", () => {
       ),
     ).toISOString(),
     "2026-07-29T11:00:00.000Z",
+  );
+});
+
+test("overnight handoff is limited to price and scheduling", () => {
+  assert.equal(
+    shouldSendOvernightHandoff("surgical_price_review"),
+    true,
+  );
+  assert.equal(
+    shouldSendOvernightHandoff("scheduling_or_confirmation"),
+    true,
+  );
+  assert.equal(
+    shouldSendOvernightHandoff("possible_urgent_symptoms"),
+    false,
+  );
+  assert.match(
+    buildOvernightHandoffMessage("scheduling_or_confirmation"),
+    /retornamos por aqui amanhã pela manhã/,
   );
 });

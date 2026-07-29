@@ -4,7 +4,7 @@ const CONFIG = Object.freeze({
   secretProperty: "LEADS_INGEST_SECRET",
   eventSheetName: "_WHATSAPP_EVENTOS",
   timezone: "America/Sao_Paulo",
-  totalColumns: 27,
+  totalColumns: 25,
   leadWindowHours: 24,
 });
 
@@ -27,8 +27,6 @@ const EXPECTED_HEADERS = Object.freeze([
   "Moeda",
   "Observação administrativa",
   "Planejamento Individual",
-  "Consentimento para medição",
-  "Observação administrativa",
   "Origem do evento",
   "Plataforma de aquisição",
   "Campanha",
@@ -262,7 +260,6 @@ function doPost(e) {
       "write_status",
       "write_primary_consent",
       "write_click_id",
-      "write_secondary_consent",
       "write_origin",
       "write_destination",
       "flush",
@@ -626,17 +623,14 @@ function writeLead_(sheet, row, lead, setStage) {
     sheet.getRange(row, 13).setValue(lead.wbraid);
   }
 
-  setStage("write_secondary_consent");
-  sheet.getRange(row, 19).setValue("Não informado");
-
   setStage("write_origin");
-  sheet.getRange(row, 21, 1, 2).setValues([[
+  sheet.getRange(row, 19, 1, 2).setValues([[
     "WHATSAPP",
     lead.platform,
   ]]);
 
   setStage("write_destination");
-  sheet.getRange(row, 26, 1, 2).setValues([[
+  sheet.getRange(row, 24, 1, 2).setValues([[
     "WhatsApp",
     lead.reference,
   ]]);
