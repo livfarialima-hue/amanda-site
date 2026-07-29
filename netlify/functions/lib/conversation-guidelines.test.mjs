@@ -71,6 +71,10 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /margem de 10% abaixo/);
   assert.match(
     CONVERSATION_GUIDELINES,
+    /não diga que ela inclui, engloba ou considera hospital/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
     /Como funciona a consulta\/avaliação/,
   );
   assert.match(

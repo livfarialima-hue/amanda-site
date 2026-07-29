@@ -125,10 +125,10 @@ function formatBRL(value) {
 
 function priceVariation(procedure) {
   if (procedure === "lifting_facial") {
-    return "O valor final varia conforme o planejamento envolva face, pescoço ou ambos e o hospital indicado.";
+    return "O valor final varia conforme o planejamento envolva face, pescoço ou ambos.";
   }
 
-  return "O valor final varia conforme a extensão do procedimento e o hospital indicado.";
+  return "O valor final varia conforme a extensão do procedimento.";
 }
 
 function planningContext(procedure) {
@@ -200,7 +200,7 @@ export function buildSurgicalPriceSuggestedReply({
   const priceContext = [
     waitingGreeting(patientName),
     `Como referência inicial, ${reference.label} costuma ficar aproximadamente entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
-    `Essa faixa considera a equipe médica e uma referência hospitalar. ${priceVariation(procedure)}`,
+    priceVariation(procedure),
   ].join(" ");
   const careAndPayment = [
     planningContext(procedure),
