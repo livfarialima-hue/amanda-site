@@ -231,7 +231,7 @@ function sharedSiteUrls(recentConversation) {
   return urls;
 }
 
-function asksForSiteDirectly(currentMessage) {
+export function isDirectSiteRequest(currentMessage) {
   const text = String(currentMessage || "");
 
   return (
@@ -319,7 +319,7 @@ export function getRecommendedSiteResource({
     ? recentConversation
     : [];
   const sharedUrls = sharedSiteUrls(conversation);
-  const directRequest = asksForSiteDirectly(currentMessage);
+  const directRequest = isDirectSiteRequest(currentMessage);
 
   if (!conversation.length && !directRequest) return null;
   if (sharedUrls.size && !directRequest) return null;
@@ -333,10 +333,19 @@ export function getRecommendedSiteResource({
   if (requestedResults && !approvedResultsResource) return null;
 
   const mainProcedureResource = procedureResource(procedureKey);
+  const topical = topicalResources(procedureKey, currentMessage);
+  const genericConsultationResources = topical.filter((resource) =>
+    /\/conteudos\/consulta-cirurgia-plastica\/$/i.test(resource.url),
+  );
+  const specificTopicalResources = topical.filter(
+    (resource) =>
+      !/\/conteudos\/consulta-cirurgia-plastica\/$/i.test(resource.url),
+  );
   const candidates = [
     approvedResultsResource,
-    ...topicalResources(procedureKey, currentMessage),
+    ...specificTopicalResources,
     mainProcedureResource,
+    ...genericConsultationResources,
     ...(!mainProcedureResource ? [{ ...GENERAL_SITE_RESOURCE }] : []),
   ].filter(Boolean);
 

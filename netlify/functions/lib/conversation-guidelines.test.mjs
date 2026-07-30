@@ -26,7 +26,10 @@ test("conversion playbook defines identity, progression and low-friction qualifi
     CONVERSATION_GUIDELINES,
     /Qual é sua principal dúvida agora: o procedimento, a recuperação, os valores ou a consulta/,
   );
-  assert.match(CONVERSATION_GUIDELINES, /Você está começando a pesquisar/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /O que seria mais útil entender primeiro: como funciona o procedimento, a recuperação, os valores ou a avaliação/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /O que você gostaria de entender ou melhorar/);
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -120,7 +123,11 @@ test("playbook uses approved site content at a strategic moment", () => {
     /Não envie o link automaticamente na primeira resposta/,
   );
   assert.match(CONVERSATION_GUIDELINES, /página geral/);
-  assert.match(CONVERSATION_GUIDELINES, /depois da primeira resposta significativa/);
+  assert.match(CONVERSATION_GUIDELINES, /depois dessa resposta significativa/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /prefira a página completa desse procedimento/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /seção de resultados/);
   assert.match(CONVERSATION_GUIDELINES, /casos reais ou antes e depois/);
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);

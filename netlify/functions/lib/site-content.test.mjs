@@ -119,6 +119,23 @@ test("selects a comparison article when the patient is deciding between approach
   );
 });
 
+test("prefers the complete procedure page over the generic consultation article", () => {
+  assert.deepEqual(
+    getRecommendedSiteResource({
+      procedure: "lifting_facial",
+      referenceCategory: "meta_coded",
+      recentConversation: RESEARCH_CONVERSATION,
+      currentMessage: "Como funciona a avaliação para lifting facial?",
+    }),
+    {
+      title: "Lifting facial",
+      url: "https://draamandaschroeder.com.br/lifting-facial/",
+      context:
+        "Página completa do procedimento, com explicações, consulta, recuperação, dúvidas e casos reais com antes e depois.",
+    },
+  );
+});
+
 test("routes common objections and comparisons to the matching educational material", () => {
   const cases = [
     [

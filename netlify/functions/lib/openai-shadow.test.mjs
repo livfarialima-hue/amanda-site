@@ -985,8 +985,9 @@ test("consultation information is answered deterministically without stopping", 
       patientReply,
       /^Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima\. Claro\./,
     );
-    assert.match(patientReply, /consulta para lifting facial/);
-    assert.match(patientReply, /R\$ 500/);
+    assert.match(patientReply, /se o lifting faz sentido/);
+    assert.match(patientReply, /Nada precisa ser decidido nesse momento/);
+    assert.doesNotMatch(patientReply, /R\$ 500/);
     assert.match(patientReply, /Se quiser que eu busque opções/);
     assert.match(patientReply, /prefere manhã ou tarde/);
     assert.doesNotMatch(patientReply, /Posso ver os horários/);

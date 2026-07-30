@@ -39,7 +39,10 @@ import {
   isReviewAlertConfigured,
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
-import { getRecommendedSiteResource } from "./lib/site-content.mjs";
+import {
+  getRecommendedSiteResource,
+  isDirectSiteRequest,
+} from "./lib/site-content.mjs";
 import {
   buildPendingHospitalQuoteAlert,
   buildPriceReviewAlert,
@@ -1202,9 +1205,13 @@ async function completeOpenAIActive({
     const availabilityRequested =
       consultationInformationRequest &&
       isAvailabilityRequest(input.text);
+    const siteRequested =
+      consultationInformationRequest &&
+      isDirectSiteRequest(input.text);
     const siteResource =
       consultationInformationRequest &&
-      !availabilityRequested
+      !availabilityRequested &&
+      siteRequested
       ? getRecommendedSiteResource({
           procedure: plan?.procedure || input.procedure,
           referenceCategory: input.referenceCategory,
@@ -1235,6 +1242,7 @@ async function completeOpenAIActive({
                 input.procedure ||
                 "",
               availabilityRequested,
+              siteRequested,
               introduceBruna: !input.recentConversation.some(
                 (turn) =>
                   turn?.role === "assistant" ||

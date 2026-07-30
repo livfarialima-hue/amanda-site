@@ -56,26 +56,63 @@ function greeting(name) {
   return normalizedName ? `Olá, ${normalizedName}!` : "Olá!";
 }
 
+function consultationDescription(procedure, procedureLabel) {
+  if (procedure === "lifting_facial") {
+    return [
+      "A avaliação começa com uma conversa sobre o que você percebe no rosto e o que gostaria de melhorar ou preservar.",
+      "A Dra. Amanda examina a face e o pescoço em repouso e em movimento para entender se a questão está mais relacionada à flacidez, aos volumes, à pele ou ao contorno.",
+      "Depois, explica se o lifting faz sentido, quais são as possibilidades e como seria a recuperação.",
+      "Nada precisa ser decidido nesse momento.",
+    ].join(" ");
+  }
+
+  if (procedureLabel) {
+    return [
+      "A avaliação começa com uma conversa sobre o que você percebe e o que gostaria de melhorar ou preservar.",
+      `A Dra. Amanda examina a região e, a partir disso, explica se ${procedureLabel} faz sentido, quais são as possibilidades e como seria a recuperação.`,
+      "Nada precisa ser decidido nesse momento.",
+    ].join(" ");
+  }
+
+  return [
+    "A avaliação começa com uma conversa sobre o que você percebe e o que gostaria de melhorar ou preservar.",
+    "A Dra. Amanda examina a região e depois explica as possibilidades, os limites e como seria a recuperação.",
+    "Nada precisa ser decidido nesse momento.",
+  ].join(" ");
+}
+
+function consultationExplorationQuestion(procedure, procedureLabel) {
+  if (procedure === "lifting_facial") {
+    return "O que despertou seu interesse pelo lifting: a flacidez do rosto, o contorno da mandíbula, o pescoço ou outro ponto?";
+  }
+
+  if (procedureLabel) {
+    return `O que despertou seu interesse por ${procedureLabel}?`;
+  }
+
+  return "Você já tem algum procedimento em mente ou prefere começar entendendo as possibilidades da avaliação?";
+}
+
 export function buildConsultationInformationReply({
   patientName,
   siteResource,
   procedure,
   availabilityRequested = false,
   introduceBruna = false,
+  siteRequested = false,
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
-  const consultationContext = procedureLabel
-    ? `Na consulta para ${procedureLabel}, a Dra. Amanda avalia a região e conversa sobre objetivos, possibilidades, limites, recuperação e orçamento.`
-    : "Na consulta, a Dra. Amanda entende o que você gostaria de melhorar e preservar, avalia a região e conversa sobre possibilidades, limites, recuperação e orçamento.";
-  const introduction = [
-    greeting(patientName),
-    introduceBruna
-      ? "Eu sou a Bruna, da Clínica LIV Faria Lima."
-      : "",
-    "Claro.",
-    consultationContext,
-    "O valor é R$ 500 e é abatido se a cirurgia for realizada com a equipe.",
-  ].filter(Boolean).join(" ");
+  const introduction = introduceBruna
+    ? [
+        greeting(patientName),
+        "Eu sou a Bruna, da Clínica LIV Faria Lima.",
+        "Claro.",
+      ].join(" ")
+    : "Claro.";
+  const consultationContext = consultationDescription(
+    procedure,
+    procedureLabel,
+  );
   const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
     String(siteResource?.url || ""),
   )
@@ -86,11 +123,18 @@ export function buildConsultationInformationReply({
         "Atendemos na Rua Pais Leme, 215, em Pinheiros, perto da Av. Faria Lima.",
         "Se quiser que eu busque opções, você prefere manhã ou tarde?",
       ].join(" ")
-    : resourceUrl
-      ? `Se ajudar na sua pesquisa, este material detalha a consulta: ${resourceUrl}`
-      : "Se quiser, posso esclarecer alguma dúvida sobre a consulta ou explicar como funciona a disponibilidade.";
+    : siteRequested && resourceUrl
+      ? [
+          /casos reais|antes e depois/i.test(
+            String(siteResource?.context || ""),
+          )
+            ? "Esta página reúne explicações sobre o procedimento, a consulta, a recuperação e casos reais em contexto educativo:"
+            : "Esta página reúne explicações sobre o procedimento e a consulta:",
+          resourceUrl,
+        ].join(" ")
+      : consultationExplorationQuestion(procedure, procedureLabel);
 
-  return `${introduction}\n\n${nextStep}`;
+  return `${introduction} ${consultationContext}\n\n${nextStep}`;
 }
 
 export function buildPatientReply({

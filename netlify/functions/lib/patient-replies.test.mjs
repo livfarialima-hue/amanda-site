@@ -36,7 +36,7 @@ test("price fallback is transparent about the consultation and clarifies the req
   assert.doesNotMatch(reply, /investimento/);
 });
 
-test("explains the consultation directly and uses the specific site material", () => {
+test("explains the consultation gradually without anticipating price or a link", () => {
   const reply = buildConsultationInformationReply({
     patientName: "Rô de Souza",
     procedure: "lifting_facial",
@@ -50,14 +50,37 @@ test("explains the consultation directly and uses the specific site material", (
     reply,
     /^Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima\. Claro\./,
   );
-  assert.match(reply, /Na consulta para lifting facial/);
-  assert.match(reply, /R\$ 500/);
-  assert.match(reply, /abatido se a cirurgia/);
+  assert.match(reply, /conversa sobre o que você percebe no rosto/);
+  assert.match(reply, /face e o pescoço em repouso e em movimento/);
+  assert.match(reply, /Nada precisa ser decidido nesse momento/);
+  assert.match(reply, /contorno da mandíbula/);
+  assert.doesNotMatch(reply, /R\$ 500/);
+  assert.doesNotMatch(reply, /abatido se a cirurgia/);
+  assert.doesNotMatch(reply, /https:\/\/draamandaschroeder\.com\.br/);
+  assert.doesNotMatch(reply, /Posso ver os horários/);
+});
+
+test("uses the complete procedure page only when the patient requests it", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Edilene",
+    procedure: "lifting_facial",
+    introduceBruna: false,
+    siteRequested: true,
+    siteResource: {
+      url: "https://draamandaschroeder.com.br/lifting-facial/",
+      context:
+        "Página completa com consulta, recuperação e casos reais com antes e depois.",
+    },
+  });
+
+  assert.match(reply, /^Claro\./);
+  assert.doesNotMatch(reply, /Olá, Edilene/);
+  assert.match(reply, /casos reais em contexto educativo/);
   assert.match(
     reply,
-    /https:\/\/draamandaschroeder\.com\.br\/conteudos\/consulta-cirurgia-plastica\//,
+    /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
   );
-  assert.doesNotMatch(reply, /Posso ver os horários/);
+  assert.doesNotMatch(reply, /R\$ 500/);
 });
 
 test("availability in a prefilled inquiry is offered without assuming booking intent", () => {
@@ -71,10 +94,11 @@ test("availability in a prefilled inquiry is offered without assuming booking in
     },
   });
 
-  assert.match(reply, /consulta para lifting facial/);
+  assert.match(reply, /se o lifting faz sentido/);
   assert.match(reply, /Rua Pais Leme, 215/);
   assert.match(reply, /Se quiser que eu busque opções/);
   assert.match(reply, /prefere manhã ou tarde/);
+  assert.doesNotMatch(reply, /R\$ 500/);
   assert.doesNotMatch(reply, /Posso ver os horários/);
   assert.doesNotMatch(reply, /https:\/\/draamandaschroeder/);
 });
