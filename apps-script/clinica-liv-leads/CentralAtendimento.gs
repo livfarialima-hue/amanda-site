@@ -177,7 +177,6 @@ function atualizarCentralAtendimentoInterno_(
     conversations,
     leads,
     profiles,
-    humanTakeovers,
     now,
   ).forEach(function (item) {
     adicionarItemCentral_(itemsByPatient, item);

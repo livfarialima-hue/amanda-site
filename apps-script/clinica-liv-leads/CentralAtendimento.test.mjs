@@ -219,3 +219,35 @@ test("a later human response removes the patient from the answer-now queue", () 
 
   assert.equal(items.length, 0);
 });
+
+test("the central refresh passes the current Date to the follow-up loader", () => {
+  const context = loadContext();
+  const now = new Date("2026-07-30T14:00:00-03:00");
+  let receivedNow = null;
+
+  context.obterOuCriarPlanilhaCentral_ = () => ({});
+  context.carregarControlesCentral_ = () => ({});
+  context.escreverCentralAtendimento_ = () => {};
+  context.carregarRetomadasCentral_ = (
+    _spreadsheet,
+    _conversations,
+    _leads,
+    _profiles,
+    currentDate,
+  ) => {
+    receivedNow = currentDate;
+    return [];
+  };
+
+  const result = context.atualizarCentralAtendimentoInterno_(
+    {
+      getSheetByName() {
+        return null;
+      },
+    },
+    now,
+  );
+
+  assert.equal(receivedNow, now);
+  assert.equal(result.ok, true);
+});
