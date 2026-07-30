@@ -5,7 +5,10 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
   timezone: "America/Sao_Paulo",
   startHour: 9,
   endHour: 19,
-  primaryReminderHoursBefore: 30,
+  primaryReminderDaysBefore: 2,
+  primaryReminderTime: "10:00",
+  confirmationDaysBefore: 1,
+  confirmationTime: "16:30",
   minimumHoursForPrimaryReminder: 24,
   endpoint:
     "https://draamandaschroeder.com.br/.netlify/functions/appointment-reminder",
@@ -359,8 +362,8 @@ function definirTipoLembreteConsulta_(input) {
     return "";
   }
 
-  const sameDayTarget =
-    horarioAlvoLembreteNoDia_(appointment);
+  const confirmationTarget =
+    horarioAlvoConfirmacaoConsulta_(appointment);
 
   const hoursUntilAppointment =
     (appointment.getTime() - now.getTime()) / (60 * 60 * 1000);
@@ -368,27 +371,24 @@ function definirTipoLembreteConsulta_(input) {
   if (
     !input.patientConfirmed &&
     !input.sameDaySent &&
-    now.getTime() >= sameDayTarget.getTime()
+    now.getTime() >= confirmationTarget.getTime()
   ) {
     return "same_day";
   }
 
   if (input.sameDaySent) return "";
 
-  const primaryReminderTarget = new Date(
-    appointment.getTime() -
-      LEMBRETES_CONSULTAS_CONFIG.primaryReminderHoursBefore *
-        60 *
-        60 *
-        1000,
-  );
+  const primaryReminderTarget =
+    horarioAlvoLembretePrincipalConsulta_(
+      appointment,
+    );
 
   if (
     !input.reminder48hSent &&
     hoursUntilAppointment >=
       LEMBRETES_CONSULTAS_CONFIG.minimumHoursForPrimaryReminder &&
     now.getTime() >= primaryReminderTarget.getTime() &&
-    now.getTime() < sameDayTarget.getTime()
+    now.getTime() < confirmationTarget.getTime()
   ) {
     return "48h";
   }
@@ -396,50 +396,42 @@ function definirTipoLembreteConsulta_(input) {
   return "";
 }
 
-function horarioAlvoLembreteNoDia_(appointment) {
-  const localDate = formatarDataLembretesConsultas_(
-    appointment,
-    "yyyy-MM-dd",
-  );
-  const localHour = Number(
-    formatarDataLembretesConsultas_(appointment, "H"),
-  );
-
-  if (localHour < 12) {
-    const previousDay = new Date(
-      appointment.getTime() - 24 * 60 * 60 * 1000,
-    );
-    return criarDataSaoPauloLembretesConsultas_(
-      formatarDataLembretesConsultas_(
-        previousDay,
-        "yyyy-MM-dd",
-      ),
-      "18:00",
-    );
-  }
-
-  const target = new Date(
-    appointment.getTime() - 3 * 60 * 60 * 1000,
-  );
-  const targetHour = Number(
-    formatarDataLembretesConsultas_(target, "H"),
+function horarioAlvoLembretePrincipalConsulta_(appointment) {
+  const previousDate = new Date(
+    appointment.getTime() -
+      LEMBRETES_CONSULTAS_CONFIG.primaryReminderDaysBefore *
+        24 *
+        60 *
+        60 *
+        1000,
   );
 
-  if (targetHour < LEMBRETES_CONSULTAS_CONFIG.startHour) {
-    return criarDataSaoPauloLembretesConsultas_(
-      localDate,
-      "09:00",
-    );
-  }
+  return criarDataSaoPauloLembretesConsultas_(
+    formatarDataLembretesConsultas_(
+      previousDate,
+      "yyyy-MM-dd",
+    ),
+    LEMBRETES_CONSULTAS_CONFIG.primaryReminderTime,
+  );
+}
 
-  if (targetHour >= LEMBRETES_CONSULTAS_CONFIG.endHour) {
-    return criarDataSaoPauloLembretesConsultas_(
-      localDate,
-      "18:00",
-    );
-  }
+function horarioAlvoConfirmacaoConsulta_(appointment) {
+  const previousDate = new Date(
+    appointment.getTime() -
+      LEMBRETES_CONSULTAS_CONFIG.confirmationDaysBefore *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
 
-  return target;
+  return criarDataSaoPauloLembretesConsultas_(
+    formatarDataLembretesConsultas_(
+      previousDate,
+      "yyyy-MM-dd",
+    ),
+    LEMBRETES_CONSULTAS_CONFIG.confirmationTime,
+  );
 }
 
 function estaNoHorarioLembretesConsultas_(date) {

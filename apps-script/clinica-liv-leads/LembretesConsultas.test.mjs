@@ -80,12 +80,12 @@ test("explicit refusal of contact blocks reminders", () => {
   );
 });
 
-test("the primary reminder is due 24 to 36 hours before the consultation", () => {
+test("the primary reminder is due at 10am two days before the consultation", () => {
   const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T08:15:00-03:00"),
+      now: new Date("2026-07-28T10:00:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: "",
@@ -106,12 +106,12 @@ test("the primary reminder is due 24 to 36 hours before the consultation", () =>
   );
 });
 
-test("same-day reminder is reserved for an unconfirmed consultation", () => {
+test("previous-day confirmation is reserved for an unconfirmed consultation", () => {
   const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-30T11:00:00-03:00"),
+      now: new Date("2026-07-29T16:30:00-03:00"),
       appointment,
       reminder48hSent: new Date(),
       sameDaySent: "",
@@ -122,7 +122,7 @@ test("same-day reminder is reserved for an unconfirmed consultation", () => {
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-30T11:00:00-03:00"),
+      now: new Date("2026-07-29T16:30:00-03:00"),
       appointment,
       reminder48hSent: new Date(),
       sameDaySent: "",
@@ -147,12 +147,12 @@ test("same-day reminder prevents a late duplicate 48-hour reminder", () => {
   );
 });
 
-test("morning appointments use the previous evening", () => {
+test("all appointments use a 4:30pm confirmation on the previous day", () => {
   const appointment = new Date("2026-07-30T09:00:00-03:00");
   const target =
-    context.horarioAlvoLembreteNoDia_(appointment);
+    context.horarioAlvoConfirmacaoConsulta_(appointment);
 
-  assert.equal(target.toISOString(), "2026-07-29T21:00:00.000Z");
+  assert.equal(target.toISOString(), "2026-07-29T19:30:00.000Z");
 });
 
 test("only explicit patient confirmation is treated as confirmed", () => {

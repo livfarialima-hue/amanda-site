@@ -175,7 +175,14 @@ test("daily email is informational and drafts only the human actions", () => {
   );
 
   assert.match(text, /apenas informativo/);
-  assert.match(text, /AGENDA DE CUIDADO DE HOJE \(0\)/);
+  assert.match(
+    text,
+    /ENVIOS AUTOMÁTICOS PREVISTOS HOJE \(0\)/,
+  );
+  assert.match(
+    text,
+    /AÇÕES HUMANAS SUGERIDAS HOJE \(0\)/,
+  );
   assert.match(text, /PLANO DO DIA \(2\)/);
   assert.match(text, /AÇÃO SUGERIDA PARA AMANDA\/EQUIPE \(1\)/);
   assert.match(text, /Mensagem sugerida para a equipe/);
@@ -184,7 +191,14 @@ test("daily email is informational and drafts only the human actions", () => {
     /Mensagem que não deve aparecer na ação humana/,
   );
   assert.match(html, /Plano do dia \(2\)/);
-  assert.match(html, /Agenda de cuidado de hoje \(0\)/);
+  assert.match(
+    html,
+    /Envios automáticos previstos hoje \(0\)/,
+  );
+  assert.match(
+    html,
+    /Ações humanas sugeridas hoje \(0\)/,
+  );
   assert.match(html, /Ação sugerida para Amanda\/equipe \(1\)/);
   assert.match(html, /Mensagem sugerida para a equipe/);
   assert.doesNotMatch(
@@ -459,6 +473,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     "Checagem pós-consulta",
     "Data prevista da checagem",
     "Data da checagem realizada",
+    "Data realizada",
     "Pós-consulta elegível em",
     "Pós-consulta enviado",
     "Pós-consulta suprimido em",
@@ -490,6 +505,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
       "Consentimento para contato": "Sim",
       "Checagem pós-consulta": "Sim",
       "Data prevista da checagem": "2026-07-29 09:00",
+      "Data realizada": "2026-07-29",
       "Pós-consulta elegível em": "2026-07-29 10:00",
       "Erro pós-consulta": "post_consult_disabled",
     }),
@@ -584,10 +600,82 @@ test("care agenda appears before commercial follow-ups and drafts only manual ca
     [automatic, manual],
   );
 
-  assert.match(text, /AGENDA DE CUIDADO DE HOJE \(2\)/);
+  assert.match(
+    text,
+    /ENVIOS AUTOMÁTICOS PREVISTOS HOJE \(1\)/,
+  );
+  assert.match(
+    text,
+    /AÇÕES HUMANAS SUGERIDAS HOJE \(1\)/,
+  );
   assert.match(text, /Checagem humana pós-consulta/);
   assert.match(text, /Como você ficou depois da consulta/);
-  assert.match(html, /Agenda de cuidado de hoje \(2\)/);
-  assert.match(html, /automático/);
-  assert.match(html, /revisar e enviar/);
+  assert.match(
+    html,
+    /Envios automáticos previstos hoje \(1\)/,
+  );
+  assert.match(
+    html,
+    /Ações humanas sugeridas hoje \(1\)/,
+  );
+  assert.match(html, /Nada desta seção é enviado automaticamente/);
+});
+
+test("later post-consult and old-client contacts stay manual with a ready message", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Tema / procedimento",
+    "Status",
+    "Consentimento para contato",
+    "Data realizada",
+    "Retomada pelo bot",
+    "Periodicidade da retomada",
+    "Retomadas encerradas?",
+  ];
+  const makeRow = (values) =>
+    headers.map((header) => values[header] ?? "");
+  const rows = [
+    makeRow({
+      "Telefone (E.164)": "+5511900000010",
+      "Nome do paciente": "Fernanda",
+      "Tema / procedimento": "lifting facial",
+      Status: "Consulta realizada",
+      "Consentimento para contato": "Sim",
+      "Data realizada": "2026-07-26",
+    }),
+    makeRow({
+      "Telefone (E.164)": "+5511900000011",
+      "Nome do paciente": "Gabriela",
+      Status: "Consulta realizada",
+      "Consentimento para contato": "Sim",
+      "Data realizada": "2026-01-30",
+      "Retomada pelo bot": "Sim",
+    }),
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getDataRange: () => ({
+      getValues: () => [headers, ...rows],
+    }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-07-29T08:00:00-03:00"),
+  );
+  const postConsult = agenda.find(
+    (item) =>
+      item.categoria === "Follow-up pós-consulta — 3 dias",
+  );
+  const oldClient = agenda.find(
+    (item) =>
+      item.categoria === "Cliente antigo — retomada humana",
+  );
+
+  assert.equal(postConsult.automatico, false);
+  assert.equal(postConsult.horario, "11:00");
+  assert.match(postConsult.sugestao, /bem orientada/);
+  assert.equal(oldClient.automatico, false);
+  assert.equal(oldClient.horario, "16:30");
+  assert.match(oldClient.sugestao, /Como você está/);
 });

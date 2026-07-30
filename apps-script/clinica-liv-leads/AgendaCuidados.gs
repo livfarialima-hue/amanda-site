@@ -1,9 +1,12 @@
 const AGENDA_CUIDADOS_CONFIG = Object.freeze({
   diasAntecedenciaAniversario: 7,
-  horarioAniversario: "10:00",
+  diasAntecedenciaAgenda: 7,
+  horarioAniversario: "10:30",
   horarioChecagemPosConsulta: "11:00",
+  horarioFollowUpDecisao: "16:30",
   horarioRetomadaCirurgica: "10:30",
   horarioRetomadaRegular: "16:30",
+  horarioClienteAntigo: "16:30",
   horarioOrganizarJornada: "17:00",
   postConsultAutomaticEnabled: false,
 });
@@ -174,6 +177,20 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       adicionar: adicionar,
     });
 
+    adicionarFollowUpConsultaAgendaCuidados_({
+      linha: linha,
+      colunas: colunas,
+      agora: agora,
+      hoje: hoje,
+      telefone: telefone,
+      nome: identidade,
+      primeiroNome: primeiroNome,
+      tema: tema,
+      status: status,
+      retomadaEncerrada: retomadaEncerrada,
+      adicionar: adicionar,
+    });
+
     adicionarRetomadaPlanejadaAgendaCuidados_({
       linha: linha,
       colunas: colunas,
@@ -183,6 +200,20 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       primeiroNome: primeiroNome,
       status: status,
       proximaAcao: proximaAcao,
+      retomadaEncerrada: retomadaEncerrada,
+      adicionar: adicionar,
+    });
+
+    adicionarClienteAntigoAgendaCuidados_({
+      linha: linha,
+      colunas: colunas,
+      agora: agora,
+      hoje: hoje,
+      telefone: telefone,
+      nome: identidade,
+      primeiroNome: primeiroNome,
+      tema: tema,
+      status: status,
       retomadaEncerrada: retomadaEncerrada,
       adicionar: adicionar,
     });
@@ -220,7 +251,9 @@ function adicionarAniversarioAgendaCuidados_(entrada) {
 
   if (
     !dataNascimento ||
-    !valorAtivoAgendaCuidados_(aniversarioAtivo)
+    !valorExplicitamenteAtivoAgendaCuidados_(
+      aniversarioAtivo,
+    )
   ) {
     return;
   }
@@ -324,38 +357,96 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     ),
   });
 
-  if (!lembretes.length) return;
+  if (lembretes.length) {
+    entrada.adicionar({
+      categoria: "Lembrete de consulta",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario: lembretes[0].horario,
+      dataReferencia: entrada.hoje,
+      contexto:
+        formatarDataRetomadas_(
+          consulta,
+          "dd/MM/yyyy HH:mm",
+        ) +
+        " com " +
+        entrada.profissional +
+        " — " +
+        lembretes
+          .map(function (lembrete) {
+            return lembrete.rotulo + " às " + lembrete.horario;
+          })
+          .join("; "),
+      responsavel: "Bruna/automação",
+      automatico: true,
+      futuro: false,
+      prioridade: 2,
+      sugestao: "",
+    });
+  }
 
-  entrada.adicionar({
-    categoria: "Lembrete de consulta",
-    telefone: entrada.telefone,
-    nome: entrada.nome,
-    horario: lembretes[0].horario,
-    dataReferencia: entrada.hoje,
-    contexto:
-      formatarDataRetomadas_(
-        consulta,
-        "dd/MM/yyyy HH:mm",
-      ) +
-      " com " +
-      entrada.profissional +
-      " — " +
-      lembretes
-        .map(function (lembrete) {
-          return lembrete.rotulo + " às " + lembrete.horario;
-        })
-        .join("; "),
-    responsavel: "Bruna/automação",
-    automatico: true,
-    futuro: false,
-    prioridade: 2,
-    sugestao: "",
+  planejarLembretesConsultaFuturos_({
+    agora: entrada.agora,
+    consulta: consulta,
+    fimHoje: entrada.fimHoje,
+    lembretePrincipalEnviado: valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["lembrete 48h enviado"],
+    ),
+    lembreteNoDiaEnviado: valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["lembrete no dia enviado"],
+    ),
+    confirmado: valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["confirmacao da paciente"],
+    ),
+  }).forEach(function (lembrete) {
+    entrada.adicionar({
+      categoria: "Lembrete de consulta programado",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario: lembrete.horario,
+      dataReferencia: lembrete.dataReferencia,
+      contexto:
+        lembrete.rotulo +
+        " em " +
+        formatarDataRetomadas_(
+          lembrete.dataHora,
+          "dd/MM/yyyy",
+        ) +
+        " às " +
+        lembrete.horario +
+        " — consulta em " +
+        formatarDataRetomadas_(
+          consulta,
+          "dd/MM/yyyy HH:mm",
+        ) +
+        " com " +
+        entrada.profissional +
+        ".",
+      responsavel: "Bruna/automação",
+      automatico: true,
+      futuro: true,
+      prioridade: 8,
+      sugestao: "",
+    });
   });
 }
 
 function adicionarPosConsultaAgendaCuidados_(entrada) {
   if (!statusConsultaRealizadaAgenda_(entrada.status)) return;
 
+  const dataRealizada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data realizada", "data da consulta realizada"],
+    ),
+  );
   const posElegivelEm = dataAgendaCuidados_(
     valorAgendaCuidados_(
       entrada.linha,
@@ -385,10 +476,24 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
     /disabled|template|configuration|http_400/i.test(
       erroPosConsulta,
     );
+  const horasDesdeElegibilidade = posElegivelEm
+    ? (entrada.agora.getTime() - posElegivelEm.getTime()) /
+      (60 * 60 * 1000)
+    : null;
+  const diasDesdeConsulta = dataRealizada
+    ? diferencaDiasLocaisRetomadas_(
+        dataRealizada,
+        entrada.agora,
+      )
+    : null;
 
   if (
+    dataRealizada &&
+    diasDesdeConsulta >= 0 &&
+    diasDesdeConsulta <= 1 &&
     posElegivelEm &&
     posElegivelEm.getTime() <= entrada.fimHoje.getTime() &&
+    horasDesdeElegibilidade <= 48 &&
     !posEnviado &&
     !posSuprimido
   ) {
@@ -470,6 +575,135 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
   }
 }
 
+function adicionarFollowUpConsultaAgendaCuidados_(entrada) {
+  if (
+    !statusConsultaRealizadaAgenda_(entrada.status) ||
+    entrada.retomadaEncerrada
+  ) {
+    return;
+  }
+
+  const dataRealizada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data realizada", "data da consulta realizada"],
+    ),
+  );
+  const checagemRealizada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data da checagem realizada"],
+    ),
+  );
+  const checagemPlanejada =
+    valorExplicitamenteAtivoAgendaCuidados_(
+      valorAgendaCuidados_(
+        entrada.linha,
+        entrada.colunas,
+        ["checagem pos consulta"],
+      ),
+    ) ||
+    Boolean(
+      dataAgendaCuidados_(
+        valorAgendaCuidados_(
+          entrada.linha,
+          entrada.colunas,
+          ["data prevista da checagem"],
+        ),
+      ),
+    );
+  const ultimaRetomada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["ultima retomada"],
+    ),
+  );
+  const dataRetomadaExplicita = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data da proxima retomada"],
+    ),
+  );
+
+  if (!dataRealizada || dataRetomadaExplicita) return;
+
+  const diasDesdeConsulta = diferencaDiasLocaisRetomadas_(
+    dataRealizada,
+    entrada.agora,
+  );
+  const contatoDepoisDaConsulta =
+    checagemRealizada ||
+    (ultimaRetomada &&
+      ultimaRetomada.getTime() >= dataRealizada.getTime());
+
+  if (
+    diasDesdeConsulta >= 3 &&
+    diasDesdeConsulta <= 5 &&
+    !checagemPlanejada &&
+    !contatoDepoisDaConsulta
+  ) {
+    entrada.adicionar({
+      categoria: "Follow-up pós-consulta — 3 dias",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario:
+        AGENDA_CUIDADOS_CONFIG.horarioChecagemPosConsulta,
+      dataReferencia: entrada.hoje,
+      contexto:
+        "Contato humano de acolhimento e esclarecimento" +
+        (entrada.tema ? " sobre " + entrada.tema : "") +
+        ".",
+      responsavel: "Amanda/equipe",
+      automatico: false,
+      futuro: false,
+      prioridade: 2,
+      sugestao:
+        "Oi, " +
+        entrada.primeiroNome +
+        "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida ao pensar com mais calma. Queremos que você se sinta bem orientada; se eu puder esclarecer algo, estou por aqui.",
+    });
+    return;
+  }
+
+  const houveContatoRecente =
+    ultimaRetomada &&
+    diferencaDiasLocaisRetomadas_(
+      ultimaRetomada,
+      entrada.agora,
+    ) < 7;
+
+  if (
+    diasDesdeConsulta >= 14 &&
+    diasDesdeConsulta <= 17 &&
+    !houveContatoRecente
+  ) {
+    entrada.adicionar({
+      categoria: "Follow-up pós-consulta — 14 dias",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario:
+        AGENDA_CUIDADOS_CONFIG.horarioFollowUpDecisao,
+      dataReferencia: entrada.hoje,
+      contexto:
+        "Retomada humana tardia, sem pressão, para dúvidas ou organização do próximo passo" +
+        (entrada.tema ? " sobre " + entrada.tema : "") +
+        ".",
+      responsavel: "Amanda/equipe",
+      automatico: false,
+      futuro: false,
+      prioridade: 5,
+      sugestao:
+        "Oi, " +
+        entrada.primeiroNome +
+        "! Depois de alguns dias da sua consulta, quis deixar o canal aberto caso tenha surgido alguma dúvida ou se você quiser retomar algum ponto do que foi conversado. Fique à vontade, sem pressa.",
+    });
+  }
+}
+
 function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
   const dataRetomada = dataAgendaCuidados_(
     valorAgendaCuidados_(
@@ -487,6 +721,52 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
     /cirurg|hospital|pre.?oper|exame|retorno/.test(
       normalizarTextoRetomadas_(entrada.proximaAcao),
     );
+  const diasAteRetomada = dataRetomada
+    ? diferencaDiasLocaisRetomadas_(
+        new Date(`${entrada.hoje}T12:00:00-03:00`),
+        dataRetomada,
+      )
+    : null;
+
+  if (
+    dataRetomada &&
+    diasAteRetomada > 0 &&
+    diasAteRetomada <=
+      AGENDA_CUIDADOS_CONFIG.diasAntecedenciaAgenda &&
+    valorAtivoAgendaCuidados_(retomadaAtiva) &&
+    !entrada.retomadaEncerrada
+  ) {
+    entrada.adicionar({
+      categoria: contextoCirurgico
+        ? "Jornada cirúrgica programada"
+        : "Retomada manual programada",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario: contextoCirurgico
+        ? AGENDA_CUIDADOS_CONFIG.horarioRetomadaCirurgica
+        : AGENDA_CUIDADOS_CONFIG.horarioRetomadaRegular,
+      dataReferencia: formatarDataRetomadas_(
+        dataRetomada,
+        "yyyy-MM-dd",
+      ),
+      contexto:
+        "Contato manual previsto para " +
+        formatarDataRetomadas_(dataRetomada, "dd/MM/yyyy") +
+        " às " +
+        (contextoCirurgico
+          ? AGENDA_CUIDADOS_CONFIG.horarioRetomadaCirurgica
+          : AGENDA_CUIDADOS_CONFIG.horarioRetomadaRegular) +
+        " — " +
+        (entrada.proximaAcao ||
+          "retomada registrada na aba Consultas") +
+        ".",
+      responsavel: "Amanda/equipe",
+      automatico: false,
+      futuro: true,
+      prioridade: contextoCirurgico ? 6 : 8,
+      sugestao: "",
+    });
+  }
 
   if (
     dataRetomada &&
@@ -552,6 +832,115 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
   }
 }
 
+function adicionarClienteAntigoAgendaCuidados_(entrada) {
+  if (
+    !statusConsultaRealizadaAgenda_(entrada.status) ||
+    entrada.retomadaEncerrada
+  ) {
+    return;
+  }
+
+  const dataRealizada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data realizada", "data da consulta realizada"],
+    ),
+  );
+  const ultimaRetomada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["ultima retomada"],
+    ),
+  );
+  const proximaRetomada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data da proxima retomada"],
+    ),
+  );
+  const retomadaAtiva = valorAgendaCuidados_(
+    entrada.linha,
+    entrada.colunas,
+    ["retomada pelo bot"],
+  );
+  const periodicidade = textoAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["periodicidade da retomada"],
+    ),
+  );
+
+  if (
+    !dataRealizada ||
+    proximaRetomada ||
+    (!valorExplicitamenteAtivoAgendaCuidados_(
+      retomadaAtiva,
+    ) &&
+      !periodicidade)
+  ) {
+    return;
+  }
+
+  const base = ultimaRetomada || dataRealizada;
+  const diasDesdeBase = diferencaDiasLocaisRetomadas_(
+    base,
+    entrada.agora,
+  );
+  const intervalo =
+    interpretarPeriodicidadeAgendaCuidados_(periodicidade) ||
+    (ultimaRetomada ? null : 180);
+
+  if (
+    !intervalo ||
+    diasDesdeBase < intervalo ||
+    diasDesdeBase > intervalo + 7
+  ) {
+    return;
+  }
+
+  entrada.adicionar({
+    categoria: "Cliente antigo — retomada humana",
+    telefone: entrada.telefone,
+    nome: entrada.nome,
+    horario: AGENDA_CUIDADOS_CONFIG.horarioClienteAntigo,
+    dataReferencia: entrada.hoje,
+    contexto:
+      "Reativação manual e personalizada após " +
+      intervalo +
+      " dias, sem oferta automática" +
+      (entrada.tema ? " — histórico: " + entrada.tema : "") +
+      ".",
+    responsavel: "Amanda/equipe",
+    automatico: false,
+    futuro: false,
+    prioridade: 7,
+    sugestao:
+      "Oi, " +
+      entrada.primeiroNome +
+      "! Faz algum tempo desde o seu contato com a Clínica LIV e lembramos de você. Como você está? Se quiser atualizar alguma dúvida ou retomar seu acompanhamento, será um prazer te orientar por aqui.",
+  });
+}
+
+function interpretarPeriodicidadeAgendaCuidados_(valor) {
+  const texto = normalizarTextoRetomadas_(valor);
+  if (!texto) return null;
+
+  const numero = Number(
+    (texto.match(/\d+/) || [])[0],
+  );
+  if (!numero) return null;
+
+  if (/ano/.test(texto)) return numero * 365;
+  if (/mes/.test(texto)) return numero * 30;
+  if (/semana/.test(texto)) return numero * 7;
+  if (/dia/.test(texto)) return numero;
+  return null;
+}
+
 function mapearCabecalhosAgendaCuidados_(cabecalhos) {
   const resultado = {};
 
@@ -607,6 +996,17 @@ function valorAtivoAgendaCuidados_(valor) {
     "0",
     "inativo",
     "desativado",
+  ].includes(normalizarTextoRetomadas_(valor));
+}
+
+function valorExplicitamenteAtivoAgendaCuidados_(valor) {
+  return [
+    "sim",
+    "true",
+    "verdadeiro",
+    "1",
+    "ativo",
+    "ativado",
   ].includes(normalizarTextoRetomadas_(valor));
 }
 
@@ -720,27 +1120,9 @@ function statusConsultaRealizadaAgenda_(status) {
 function planejarLembretesConsultaHoje_(entrada) {
   const resultados = [];
   const consulta = entrada.consulta;
-  const alvoPrincipal = new Date(
-    consulta.getTime() - 30 * 60 * 60 * 1000,
-  );
-  const horaConsulta = Number(
-    formatarDataRetomadas_(consulta, "H"),
-  );
-  let alvoNoDia;
-
-  if (horaConsulta < 12) {
-    const vespera = new Date(
-      consulta.getTime() - 24 * 60 * 60 * 1000,
-    );
-    alvoNoDia = new Date(
-      formatarDataRetomadas_(vespera, "yyyy-MM-dd") +
-        "T18:00:00-03:00",
-    );
-  } else {
-    alvoNoDia = new Date(
-      consulta.getTime() - 3 * 60 * 60 * 1000,
-    );
-  }
+  const alvos = alvosLembretesConsultaAgenda_(consulta);
+  const alvoPrincipal = alvos.principal;
+  const alvoConfirmacao = alvos.confirmacao;
 
   if (
     !entrada.lembretePrincipalEnviado &&
@@ -758,7 +1140,9 @@ function planejarLembretesConsultaHoje_(entrada) {
 
     if (
       horarioPrincipal.getTime() < entrada.fimHoje.getTime() &&
-      horasAteConsulta >= 24
+      horasAteConsulta >= 24 &&
+      horarioPrincipal.getTime() <
+        alvoConfirmacao.getTime()
     ) {
       resultados.push({
         rotulo: "lembrete principal",
@@ -773,21 +1157,25 @@ function planejarLembretesConsultaHoje_(entrada) {
   if (
     !entrada.confirmado &&
     !entrada.lembreteNoDiaEnviado &&
-    alvoNoDia.getTime() <= entrada.fimHoje.getTime() &&
+    alvoConfirmacao.getTime() <=
+      entrada.fimHoje.getTime() &&
     consulta.getTime() > entrada.agora.getTime()
   ) {
-    const horarioNoDia = new Date(
+    const horarioConfirmacao = new Date(
       Math.max(
-        alvoNoDia.getTime(),
+        alvoConfirmacao.getTime(),
         entrada.inicioHoje.getTime(),
       ),
     );
 
-    if (horarioNoDia.getTime() < entrada.fimHoje.getTime()) {
+    if (
+      horarioConfirmacao.getTime() <
+      entrada.fimHoje.getTime()
+    ) {
       resultados.push({
-        rotulo: "confirmação mais próxima",
+        rotulo: "confirmação da véspera",
         horario: formatarDataRetomadas_(
-          horarioNoDia,
+          horarioConfirmacao,
           "HH:mm",
         ),
       });
@@ -795,6 +1183,87 @@ function planejarLembretesConsultaHoje_(entrada) {
   }
 
   return resultados;
+}
+
+function planejarLembretesConsultaFuturos_(entrada) {
+  const alvos = alvosLembretesConsultaAgenda_(
+    entrada.consulta,
+  );
+  const limite = new Date(
+    entrada.fimHoje.getTime() +
+      AGENDA_CUIDADOS_CONFIG.diasAntecedenciaAgenda *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
+  const resultados = [];
+
+  if (
+    !entrada.lembretePrincipalEnviado &&
+    alvos.principal.getTime() >
+      entrada.fimHoje.getTime() &&
+    alvos.principal.getTime() <= limite.getTime()
+  ) {
+    resultados.push({
+      rotulo: "Lembrete automático principal",
+      dataHora: alvos.principal,
+      dataReferencia: formatarDataRetomadas_(
+        alvos.principal,
+        "yyyy-MM-dd",
+      ),
+      horario: formatarDataRetomadas_(
+        alvos.principal,
+        "HH:mm",
+      ),
+    });
+  }
+
+  if (
+    !entrada.confirmado &&
+    !entrada.lembreteNoDiaEnviado &&
+    alvos.confirmacao.getTime() >
+      entrada.fimHoje.getTime() &&
+    alvos.confirmacao.getTime() <= limite.getTime()
+  ) {
+    resultados.push({
+      rotulo:
+        "Confirmação automática se ainda não houver resposta",
+      dataHora: alvos.confirmacao,
+      dataReferencia: formatarDataRetomadas_(
+        alvos.confirmacao,
+        "yyyy-MM-dd",
+      ),
+      horario: formatarDataRetomadas_(
+        alvos.confirmacao,
+        "HH:mm",
+      ),
+    });
+  }
+
+  return resultados;
+}
+
+function alvosLembretesConsultaAgenda_(consulta) {
+  const doisDiasAntes = new Date(
+    consulta.getTime() - 2 * 24 * 60 * 60 * 1000,
+  );
+  const vespera = new Date(
+    consulta.getTime() - 24 * 60 * 60 * 1000,
+  );
+
+  return {
+    principal: new Date(
+      formatarDataRetomadas_(
+        doisDiasAntes,
+        "yyyy-MM-dd",
+      ) + "T10:00:00-03:00",
+    ),
+    confirmacao: new Date(
+      formatarDataRetomadas_(vespera, "yyyy-MM-dd") +
+        "T16:30:00-03:00",
+    ),
+  };
 }
 
 function horarioSeguroAgendaCuidados_(
@@ -812,101 +1281,142 @@ function horarioSeguroAgendaCuidados_(
 
 function montarHtmlAgendaCuidados_(agendaCuidados) {
   const cuidados = agendaCuidados || [];
-  const hoje = cuidados.filter(function (item) {
-    return !item.futuro;
+  const automaticosHoje = cuidados.filter(function (item) {
+    return !item.futuro && item.automatico;
+  });
+  const manuaisHoje = cuidados.filter(function (item) {
+    return !item.futuro && !item.automatico;
   });
   const futuros = cuidados.filter(function (item) {
     return item.futuro;
   });
-  let htmlHoje = "";
-  let htmlFuturos = "";
-
-  if (!hoje.length) {
-    htmlHoje =
-      '<p style="font-size:16px;color:#374151;">' +
-      "Nenhum cuidado adicional planejado para hoje." +
-      "</p>";
-  } else {
-    htmlHoje =
-      '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
-      '<thead><tr style="background:#eef8f4;text-align:left;">' +
-      '<th style="padding:10px;border:1px solid #d1e7dd;">Horário</th>' +
-      '<th style="padding:10px;border:1px solid #d1e7dd;">Cuidado</th>' +
-      '<th style="padding:10px;border:1px solid #d1e7dd;">Paciente</th>' +
-      '<th style="padding:10px;border:1px solid #d1e7dd;">Contexto e ação</th>' +
-      "</tr></thead><tbody>";
-
-    hoje.forEach(function (item) {
-      const link = item.telefone
-        ? "https://wa.me/" +
-          item.telefone.replace(/\D/g, "")
-        : "";
-      const paciente = link
-        ? '<a href="' +
-          link +
-          '" style="color:#075e54;font-weight:bold;">' +
-          escaparHtmlRetomadas_(item.nome || item.telefone) +
-          "</a>"
-        : escaparHtmlRetomadas_(item.nome || "");
-      const acao = [
-        escaparHtmlRetomadas_(item.contexto),
-        "<strong>Responsável:</strong> " +
-          escaparHtmlRetomadas_(item.responsavel),
-        item.sugestao
-          ? "<strong>Mensagem sugerida:</strong> " +
-            escaparHtmlRetomadas_(item.sugestao)
-          : "",
-      ].filter(Boolean).join("<br><br>");
-
-      htmlHoje +=
-        "<tr>" +
-        '<td style="padding:10px;border:1px solid #d1e7dd;vertical-align:top;"><strong>' +
-        escaparHtmlRetomadas_(item.horario || "A definir") +
-        "</strong></td>" +
-        '<td style="padding:10px;border:1px solid #d1e7dd;vertical-align:top;">' +
-        escaparHtmlRetomadas_(item.categoria) +
-        (item.automatico
-          ? '<br><span style="font-size:12px;color:#047857;">automático</span>'
-          : '<br><span style="font-size:12px;color:#92400e;">revisar e enviar</span>') +
-        "</td>" +
-        '<td style="padding:10px;border:1px solid #d1e7dd;vertical-align:top;">' +
-        paciente +
-        "</td>" +
-        '<td style="padding:10px;border:1px solid #d1e7dd;vertical-align:top;">' +
-        acao +
-        "</td>" +
-        "</tr>";
-    });
-
-    htmlHoje += "</tbody></table>";
-  }
-
-  if (!futuros.length) {
-    htmlFuturos =
-      '<p style="font-size:15px;color:#6b7280;">' +
-      "Nenhum marco futuro identificado." +
-      "</p>";
-  } else {
-    htmlFuturos = "<ul>";
-    futuros.forEach(function (item) {
-      htmlFuturos +=
-        "<li style=\"margin-bottom:8px;\">" +
-        escaparHtmlRetomadas_(item.contexto) +
-        " — <strong>" +
-        escaparHtmlRetomadas_(item.nome || item.telefone) +
-        "</strong></li>";
-    });
-    htmlFuturos += "</ul>";
-  }
+  const htmlAutomaticos = montarTabelaCuidadosAgenda_(
+    automaticosHoje,
+    true,
+  );
+  const htmlManuais = montarTabelaCuidadosAgenda_(
+    manuaisHoje,
+    false,
+  );
+  const htmlFuturos = montarTabelaFuturosAgenda_(futuros);
 
   return (
-    '<h3 style="margin-top:24px;color:#075e54;">Agenda de cuidado de hoje (' +
-    hoje.length +
+    '<h3 style="margin-top:24px;color:#075e54;">Envios automáticos previstos hoje (' +
+    automaticosHoje.length +
     ")</h3>" +
-    htmlHoje +
+    '<p style="color:#4b5563;">Estes são os únicos itens programados para disparo sem ação da equipe.</p>' +
+    htmlAutomaticos +
+    '<h3 style="margin-top:28px;color:#92400e;">Ações humanas sugeridas hoje (' +
+    manuaisHoje.length +
+    ")</h3>" +
+    '<p style="color:#4b5563;">Nada desta seção é enviado automaticamente. Revise o histórico e use a mensagem sugerida.</p>' +
+    htmlManuais +
     '<h3 style="margin-top:28px;">Próximos marcos de cuidado — 7 dias (' +
     futuros.length +
     ")</h3>" +
     htmlFuturos
   );
+}
+
+function montarTabelaCuidadosAgenda_(itens, automatico) {
+  if (!itens.length) {
+    return (
+      '<p style="font-size:15px;color:#6b7280;">' +
+      (automatico
+        ? "Nenhum envio automático previsto."
+        : "Nenhuma ação manual sugerida.") +
+      "</p>"
+    );
+  }
+
+  let html =
+    '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
+    '<thead><tr style="background:' +
+    (automatico ? "#eef8f4" : "#fff7ed") +
+    ';text-align:left;">' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Horário</th>' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Cuidado</th>' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Paciente</th>' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Contexto e ação</th>' +
+    "</tr></thead><tbody>";
+
+  itens.forEach(function (item) {
+    const link = item.telefone
+      ? "https://wa.me/" +
+        item.telefone.replace(/\D/g, "")
+      : "";
+    const paciente = link
+      ? '<a href="' +
+        link +
+        '" style="color:#075e54;font-weight:bold;">' +
+        escaparHtmlRetomadas_(item.nome || item.telefone) +
+        "</a>"
+      : escaparHtmlRetomadas_(item.nome || "");
+    const acao = [
+      escaparHtmlRetomadas_(item.contexto),
+      "<strong>Responsável:</strong> " +
+        escaparHtmlRetomadas_(item.responsavel),
+      item.sugestao
+        ? "<strong>Mensagem sugerida:</strong> " +
+          escaparHtmlRetomadas_(item.sugestao)
+        : "",
+    ].filter(Boolean).join("<br><br>");
+
+    html +=
+      "<tr>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;"><strong>' +
+      escaparHtmlRetomadas_(item.horario || "A definir") +
+      "</strong></td>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+      escaparHtmlRetomadas_(item.categoria) +
+      "</td>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+      paciente +
+      "</td>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+      acao +
+      "</td>" +
+      "</tr>";
+  });
+
+  return html + "</tbody></table>";
+}
+
+function montarTabelaFuturosAgenda_(itens) {
+  if (!itens.length) {
+    return (
+      '<p style="font-size:15px;color:#6b7280;">' +
+      "Nenhum marco futuro identificado." +
+      "</p>"
+    );
+  }
+
+  let html =
+    '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
+    '<thead><tr style="background:#f3f4f6;text-align:left;">' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Tipo</th>' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Paciente</th>' +
+    '<th style="padding:10px;border:1px solid #e5e7eb;">Data, horário e contexto</th>' +
+    "</tr></thead><tbody>";
+
+  itens.forEach(function (item) {
+    html +=
+      "<tr>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+      (item.automatico
+        ? '<strong style="color:#047857;">Automático</strong>'
+        : '<strong style="color:#92400e;">Manual</strong>') +
+      "<br>" +
+      escaparHtmlRetomadas_(item.categoria) +
+      "</td>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+      escaparHtmlRetomadas_(item.nome || item.telefone) +
+      "</td>" +
+      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
+      escaparHtmlRetomadas_(item.contexto) +
+      "</td>" +
+      "</tr>";
+  });
+
+  return html + "</tbody></table>";
 }

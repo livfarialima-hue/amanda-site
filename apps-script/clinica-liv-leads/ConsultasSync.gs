@@ -9,7 +9,7 @@ const CONSULTAS_SYNC_CONFIG = Object.freeze({
   timezone: "America/Sao_Paulo",
   startHour: 9,
   endHour: 19,
-  postConsultDelayMinutes: 120,
+  postConsultDelayMinutes: 180,
   postConsultRetryMinutes: 30,
   postConsultDisabledRetryMinutes: 360,
   postConsultEndpoint:

@@ -116,10 +116,10 @@ O modelo deve estar aprovado antes de configurar `WHATSAPP_POST_CONSULT_ENABLED=
 Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consulta confirmada` pode receber:
 
 1. a confirmação normal no momento do agendamento, dentro da própria conversa;
-2. um lembrete principal entre 24 e 36 horas antes;
-3. um lembrete curto no mesmo dia somente se a paciente ainda não tiver confirmado ou houver necessidade logística relevante.
+2. um lembrete principal automático às 10h, dois dias antes;
+3. uma confirmação automática às 16h30 da véspera somente se a paciente ainda não tiver confirmado.
 
-Para consultas pela manhã, o lembrete no mesmo dia é antecipado para as 18h do dia anterior, evitando mensagens muito cedo. Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Consultas marcadas com menos de 24 horas de antecedência não recebem o lembrete principal duplicado.
+Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Consultas marcadas com menos de 24 horas de antecedência não recebem o lembrete principal duplicado; se ainda não estiverem confirmadas, entram apenas na confirmação mais próxima que ainda seja útil.
 
 Consultas canceladas, realizadas, vencidas, com pedido de reagendamento ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Confirmação da paciente`, `Última interação humana`, `Próxima ação` e `Motivo de supressão` deixam o contexto explícito; os controles de lembrete impedem duplicidade e permitem auditoria.
 
@@ -144,7 +144,21 @@ O disparo automático permanece desligado até o modelo estar aprovado no WhatsA
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
-O e-mail é apenas informativo: apresenta o plano completo do dia, indica o responsável sugerido e separa uma seção de ação para Amanda/equipe com as mensagens já redigidas. Ele não envia mensagens aos pacientes. Primeiras retomadas seguras, sem preço ou agenda, aparecem como candidatas à Bruna; até a rotina automática ser ativada e validar a janela do WhatsApp, continuam sendo apenas planejamento. Preço, agenda e retomadas posteriores permanecem com a equipe.
+O e-mail é apenas informativo e separa com clareza:
+
+1. os envios automáticos realmente programados, com horário;
+2. as ações humanas sugeridas, com horário e mensagem pronta;
+3. os marcos dos próximos sete dias, identificados como automáticos ou manuais.
+
+Primeiras retomadas seguras, sem preço ou agenda, aparecem como candidatas à Bruna, mas continuam sendo apenas planejamento enquanto não existir uma rotina específica e uma janela válida do WhatsApp. Preço, agenda, follow-ups tardios, aniversários, datas especiais e reativações de clientes antigos permanecem manuais.
+
+### Cadência de relacionamento
+
+1. Procura inicial: primeira retomada no dia seguinte; segunda entre o quarto e o quinto dia; encerramento entre o nono e o décimo dia. Cada contato deve acrescentar utilidade ou reduzir uma dúvida, nunca apenas perguntar se a pessoa viu a mensagem.
+2. Pós-consulta: acolhimento inicial cerca de três horas após a consulta quando a automação estiver habilitada; checagem humana no terceiro dia; contato humano no décimo quarto dia apenas se ainda fizer sentido e não houver interação recente.
+3. Aniversário: mensagem humana às 10h30, sem oferta comercial e sem mencionar procedimento.
+4. Datas especiais e jornada cirúrgica: somente quando registradas na aba `Consultas`, sempre com revisão humana.
+5. Cliente antigo: reativação manual às 16h30, conforme a periodicidade registrada ou o primeiro marco de seis meses. Depois disso, o próximo contato deve ser registrado explicitamente; não existe sequência automática contínua.
 
 Se a paciente disser que entrará em contato, que chamará a clínica, que falará mais tarde ou usar formulação equivalente, nenhuma retomada deve ser planejada nas 24 horas seguintes à mensagem. A regra usa horas corridas, não apenas a mudança da data no calendário.
 

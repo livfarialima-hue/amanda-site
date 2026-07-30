@@ -12,7 +12,7 @@ const RETOMADAS_CONFIG = Object.freeze({
   horaFimRetomadas: 19,
   intervaloMesmoContatoHoras: 6,
   minimoHorasAposPromessaRetorno: 24,
-  maximoDiasSemResposta: 14,
+  maximoDiasSemResposta: 10,
   maximoPacientesPorEmail: 50,
   horariosPrioritarios: [
     "10:30",
@@ -41,14 +41,14 @@ const RETOMADAS_ETAPAS = Object.freeze([
   }),
   Object.freeze({
     numero: 2,
-    diasMinimos: 3,
+    diasMinimos: 4,
     diasMaximos: 5,
     rotulo: "2ª retomada",
   }),
   Object.freeze({
     numero: 3,
-    diasMinimos: 7,
-    diasMaximos: 9,
+    diasMinimos: 9,
+    diasMaximos: 10,
     rotulo: "última retomada",
   }),
 ]);
@@ -671,24 +671,26 @@ function contarContatosSaidaRetomadas_(conversa) {
 }
 
 function atribuirHorariosRetomadas_(candidatos) {
-  let indicePrioritario = 0;
-  let indiceRegular = 0;
+  let indiceAutomatico = 0;
+  let indiceManual = 0;
 
   candidatos.forEach(function (candidato) {
-    if (candidato.prioritario) {
+    candidato.responsavel = responsavelRetomada_(candidato);
+
+    if (candidato.responsavel === "bruna") {
       candidato.horario = horarioRetomadaPorIndice_(
         RETOMADAS_CONFIG.horariosPrioritarios,
-        indicePrioritario,
+        indiceAutomatico,
       );
-      indicePrioritario += 1;
+      indiceAutomatico += 1;
       return;
     }
 
     candidato.horario = horarioRetomadaPorIndice_(
       RETOMADAS_CONFIG.horariosRegulares,
-      indiceRegular,
+      indiceManual,
     );
-    indiceRegular += 1;
+    indiceManual += 1;
   });
 }
 
@@ -1024,8 +1026,11 @@ function montarTextoEmailRetomadas_(
   agendaCuidados,
 ) {
   const cuidados = agendaCuidados || [];
-  const cuidadosHoje = cuidados.filter(function (item) {
-    return !item.futuro;
+  const automaticosHoje = cuidados.filter(function (item) {
+    return !item.futuro && item.automatico;
+  });
+  const manuaisHoje = cuidados.filter(function (item) {
+    return !item.futuro && !item.automatico;
   });
   const cuidadosFuturos = cuidados.filter(function (item) {
     return item.futuro;
@@ -1035,16 +1040,16 @@ function montarTextoEmailRetomadas_(
     "",
     "Este e-mail é apenas informativo e não envia mensagens aos pacientes.",
     "",
-    "AGENDA DE CUIDADO DE HOJE (" +
-      cuidadosHoje.length +
+    "ENVIOS AUTOMÁTICOS PREVISTOS HOJE (" +
+      automaticosHoje.length +
       ")",
   ];
 
-  if (!cuidadosHoje.length) {
-    linhas.push("Nenhum cuidado adicional planejado para hoje.");
+  if (!automaticosHoje.length) {
+    linhas.push("Nenhum envio automático previsto.");
   }
 
-  cuidadosHoje.forEach(function (item, indice) {
+  automaticosHoje.forEach(function (item, indice) {
     linhas.push("");
     linhas.push(
       String(indice + 1) +
@@ -1057,11 +1062,36 @@ function montarTextoEmailRetomadas_(
     );
     linhas.push("Responsável: " + item.responsavel);
     linhas.push("Contexto: " + item.contexto);
+  });
 
-    if (item.sugestao) {
-      linhas.push("Mensagem sugerida: " + item.sugestao);
-    }
+  linhas.push("");
+  linhas.push(
+    "AÇÕES HUMANAS SUGERIDAS HOJE (" +
+      manuaisHoje.length +
+      ")",
+  );
+  linhas.push(
+    "Nada desta seção é enviado automaticamente. Revise o histórico antes de usar a mensagem.",
+  );
 
+  if (!manuaisHoje.length) {
+    linhas.push("Nenhuma ação manual sugerida.");
+  }
+
+  manuaisHoje.forEach(function (item, indice) {
+    linhas.push("");
+    linhas.push(
+      String(indice + 1) +
+        ". " +
+        (item.horario || "A definir") +
+        " — " +
+        item.categoria +
+        " — " +
+        (item.nome || item.telefone),
+    );
+    linhas.push("Responsável: " + item.responsavel);
+    linhas.push("Contexto: " + item.contexto);
+    linhas.push("Mensagem sugerida: " + item.sugestao);
     if (item.telefone) {
       linhas.push(
         "Abrir WhatsApp: https://wa.me/" +
@@ -1083,7 +1113,9 @@ function montarTextoEmailRetomadas_(
 
   cuidadosFuturos.forEach(function (item) {
     linhas.push(
-      "- " +
+      "- [" +
+        (item.automatico ? "AUTOMÁTICO" : "MANUAL") +
+        "] " +
         item.contexto +
         " — " +
         (item.nome || item.telefone),
@@ -1110,7 +1142,7 @@ function montarTextoEmailRetomadas_(
     linhas.push(
       "Responsável sugerido: " +
         (candidato.responsavel === "bruna"
-          ? "Bruna — primeira retomada candidata à automação"
+          ? "Bruna — primeira retomada segura, ainda apenas planejada no e-mail"
           : "Amanda/equipe — conferir e enviar manualmente"),
     );
     linhas.push("Etapa: " + candidato.etapa.rotulo);
@@ -1167,7 +1199,7 @@ function montarTextoEmailRetomadas_(
 
   linhas.push("");
   linhas.push(
-    "As linhas atribuídas à Bruna são apenas planejamento até a rotina automática ser ativada e confirmar a janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido.",
+    "Somente os itens expressamente listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. As retomadas comerciais, inclusive a primeira, permanecem apenas planejadas enquanto não houver uma rotina própria e uma janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido.",
   );
 
   return linhas.join("\n");
@@ -1220,7 +1252,7 @@ function montarHtmlEmailRetomadas_(
       ].filter(Boolean).join("<br>");
       const responsavel =
         candidato.responsavel === "bruna"
-          ? "Bruna<br><span style=\"color:#6b7280;font-size:12px;\">primeira retomada candidata à automação</span>"
+          ? "Bruna<br><span style=\"color:#6b7280;font-size:12px;\">primeira retomada segura; ainda apenas planejada no e-mail</span>"
           : "Amanda/equipe<br><span style=\"color:#6b7280;font-size:12px;\">conferir e enviar manualmente</span>";
 
       planoDoDia +=
@@ -1308,7 +1340,7 @@ function montarHtmlEmailRetomadas_(
     ")</h3>" +
     acaoEquipe +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
-    "As linhas atribuídas à Bruna são apenas planejamento até a rotina automática ser ativada e confirmar a janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido." +
+    "Somente os itens expressamente listados em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. As retomadas comerciais, inclusive a primeira, permanecem apenas planejadas enquanto não houver uma rotina própria e uma janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido." +
     "</p></div>"
   );
 }
