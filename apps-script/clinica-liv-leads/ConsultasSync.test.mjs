@@ -62,6 +62,145 @@ test("post-consult queue is limited to completed consultations", () => {
   );
 });
 
+test("historical Drive imports require explicit contact permission", () => {
+  assert.equal(
+    context.consentimentoPermiteContatoConsultas_(
+      "",
+      "Prontuário Google Drive",
+    ),
+    false,
+  );
+  assert.equal(
+    context.consentimentoPermiteContatoConsultas_(
+      "Não informado",
+      "Prontuário Google Drive",
+    ),
+    false,
+  );
+  assert.equal(
+    context.consentimentoPermiteContatoConsultas_(
+      "Sim",
+      "Prontuário Google Drive",
+    ),
+    true,
+  );
+  assert.equal(
+    context.consentimentoPermiteContatoConsultas_(
+      "",
+      "WhatsApp / atendimento atual",
+    ),
+    true,
+  );
+});
+
+test("post-consult recency rejects historical and future dates", () => {
+  const now = new Date("2026-07-30T15:00:00Z");
+
+  assert.equal(
+    context.validarRecenciaPosConsulta_(
+      new Date("2026-07-29T15:00:00Z"),
+      now,
+    ).ok,
+    true,
+  );
+  assert.equal(
+    context.validarRecenciaPosConsulta_(
+      new Date("2026-07-20T15:00:00Z"),
+      now,
+    ).reason,
+    "historical_completed_at",
+  );
+  assert.equal(
+    context.validarRecenciaPosConsulta_(
+      new Date("2026-07-31T15:00:00Z"),
+      now,
+    ).reason,
+    "future_completed_at",
+  );
+});
+
+test("eligibility accepts only recent due operational records", () => {
+  const headers = [
+    "Status",
+    "Data realizada",
+    "Consentimento para contato",
+    "Origem do registro",
+    "Pós-consulta elegível em",
+    "Pós-consulta enviado",
+    "Pós-consulta suprimido em",
+  ];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const now = new Date("2026-07-30T15:00:00Z");
+  const recentRow = [
+    "Consulta realizada",
+    new Date("2026-07-30T11:00:00Z"),
+    "",
+    "WhatsApp / atendimento atual",
+    new Date("2026-07-30T14:00:00Z"),
+    "",
+    "",
+  ];
+
+  assert.equal(
+    context.avaliarElegibilidadePosConsulta_(
+      recentRow,
+      columns,
+      now,
+    ).eligible,
+    true,
+  );
+
+  const importedRow = [...recentRow];
+  importedRow[3] = "Prontuário Google Drive";
+  assert.equal(
+    context.avaliarElegibilidadePosConsulta_(
+      importedRow,
+      columns,
+      now,
+    ).reason,
+    "consent_not_confirmed",
+  );
+});
+
+test("preparation never queues an unconsented Drive import", () => {
+  const headers = [
+    "Data realizada",
+    "Consentimento para contato",
+    "Origem do registro",
+    "Pós-consulta elegível em",
+    "Pós-consulta enviado",
+  ];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const row = [
+    new Date("2026-07-30T11:00:00Z"),
+    "",
+    "Prontuário Google Drive",
+    "",
+    "",
+  ];
+  let writes = 0;
+  const sheet = {
+    getRange() {
+      writes += 1;
+      return {
+        setValue() {},
+      };
+    },
+  };
+
+  const result = context.prepararPosConsultaNaLinha_(
+    sheet,
+    2,
+    columns,
+    row,
+    new Date("2026-07-30T15:00:00Z"),
+  );
+
+  assert.equal(result.queued, false);
+  assert.equal(result.reason, "consent_not_confirmed");
+  assert.equal(writes, 0);
+});
+
 test("normalizes Brazilian phone numbers and refuses short values", () => {
   assert.equal(
     context.normalizarTelefoneConsultasSync_(
@@ -113,6 +252,15 @@ test("maps headers despite invisible spacing and punctuation changes", () => {
   ]);
 
   assert.equal(columns["Telefone (E.164)"], 1);
+});
+
+test("record origin prefers the lead origin over sync metadata", () => {
+  const columns = context.mapearCabecalhosConsultas_([
+    "Fonte da sincronização",
+    "Origem do lead",
+  ]);
+
+  assert.equal(columns["Origem do registro"], 1);
 });
 
 test("classifies the patient journey without exposing clinical detail", () => {

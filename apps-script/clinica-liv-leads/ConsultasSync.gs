@@ -10,6 +10,7 @@ const CONSULTAS_SYNC_CONFIG = Object.freeze({
   startHour: 9,
   endHour: 19,
   postConsultDelayMinutes: 180,
+  postConsultMaxAgeDays: 7,
   postConsultRetryMinutes: 30,
   postConsultDisabledRetryMinutes: 360,
   postConsultEndpoint:
@@ -172,6 +173,34 @@ function desativarAutomacaoConsultas() {
   removerGatilhosConsultas_(
     CONSULTAS_SYNC_CONFIG.syncTriggerFunction,
   );
+  removerGatilhosConsultas_(
+    CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
+  );
+
+  return { ok: true, active: false };
+}
+
+function ativarPosConsulta() {
+  removerGatilhosConsultas_(
+    CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
+  );
+
+  ScriptApp.newTrigger(
+    CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
+  )
+    .timeBased()
+    .everyMinutes(15)
+    .create();
+
+  return {
+    ok: true,
+    active: existeGatilhoConsultas_(
+      CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
+    ),
+  };
+}
+
+function desativarPosConsulta() {
   removerGatilhosConsultas_(
     CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
   );
@@ -362,14 +391,14 @@ function processarEdicaoNaAbaConsultas_(e) {
 
     if (!statusConsultaRealizada_(status)) continue;
 
-    prepararPosConsultaNaLinha_(
+    const preparation = prepararPosConsultaNaLinha_(
       sheet,
       rowNumber,
       refreshedColumns,
       row,
       new Date(),
     );
-    queued += 1;
+    if (preparation && preparation.queued) queued += 1;
   }
 
   return { ok: true, queued };
@@ -1380,12 +1409,43 @@ function prepararPosConsultaNaLinha_(
     columns[CONSULTAS_SYNC_HEADERS.postEligibleAt];
   const completedColumn =
     columns[CONSULTAS_SYNC_HEADERS.completedDate];
+  const consentColumn =
+    columns[CONSULTAS_SYNC_HEADERS.consent];
+  const sourceColumn =
+    columns[CONSULTAS_SYNC_HEADERS.source];
 
-  if (sentColumn === undefined || eligibleColumn === undefined) {
-    return;
+  if (
+    sentColumn === undefined ||
+    eligibleColumn === undefined ||
+    completedColumn === undefined
+  ) {
+    return { queued: false, reason: "missing_columns" };
   }
 
-  if (row[sentColumn]) return;
+  if (row[sentColumn]) {
+    return { queued: false, reason: "already_sent" };
+  }
+
+  if (
+    !consentimentoPermiteContatoConsultas_(
+      consentColumn === undefined ? "" : row[consentColumn],
+      sourceColumn === undefined ? "" : row[sourceColumn],
+    )
+  ) {
+    return {
+      queued: false,
+      reason: "consent_not_confirmed",
+    };
+  }
+
+  const completedAt =
+    dataConsultasSync_(row[completedColumn]) || now;
+  const completionCheck =
+    validarRecenciaPosConsulta_(completedAt, now);
+
+  if (!completionCheck.ok) {
+    return { queued: false, reason: completionCheck.reason };
+  }
 
   if (!row[completedColumn]) {
     sheet
@@ -1407,6 +1467,8 @@ function prepararPosConsultaNaLinha_(
         ),
       );
   }
+
+  return { queued: true, reason: "prepared" };
 }
 
 function proximoHorarioDeCuidadoConsultas_(date) {
@@ -1512,39 +1574,27 @@ function processarPosConsultaInterno_(
   const columns = mapearCabecalhosConsultas_(values[0]);
   let sent = 0;
   let failed = 0;
+  let suppressed = 0;
+  const skipped = {};
 
   for (let index = 1; index < values.length; index += 1) {
     const row = values[index];
-    const status = normalizarTextoConsultasSync_(
-      row[columns[CONSULTAS_SYNC_HEADERS.status]],
-    );
+    const rowNumber = index + 1;
 
-    if (!statusConsultaRealizada_(status)) continue;
-    if (row[columns[CONSULTAS_SYNC_HEADERS.postSentAt]]) {
-      continue;
-    }
-    if (row[columns[CONSULTAS_SYNC_HEADERS.postSuppressedAt]]) {
-      continue;
-    }
-    if (
-      !consentimentoPermiteContatoConsultas_(
-        row[columns[CONSULTAS_SYNC_HEADERS.consent]],
-      )
-    ) {
+    try {
+      const eligibility = avaliarElegibilidadePosConsulta_(
+        row,
+        columns,
+        now,
+      );
+
+    if (!eligibility.eligible) {
+      skipped[eligibility.reason] =
+        (skipped[eligibility.reason] || 0) + 1;
       continue;
     }
 
-    const eligibleAt = dataConsultasSync_(
-      row[columns[CONSULTAS_SYNC_HEADERS.postEligibleAt]],
-    );
-
-    if (!eligibleAt || eligibleAt.getTime() > now.getTime()) {
-      continue;
-    }
-
-    const completedAt = dataConsultasSync_(
-      row[columns[CONSULTAS_SYNC_HEADERS.completedDate]],
-    );
+    const completedAt = eligibility.completedAt;
     const humanInteractionAt = dataConsultasSync_(
       row[
         columns[CONSULTAS_SYNC_HEADERS.lastHumanInteractionAt]
@@ -1556,7 +1606,6 @@ function processarPosConsultaInterno_(
       humanInteractionAt &&
       humanInteractionAt.getTime() >= completedAt.getTime()
     ) {
-      const rowNumber = index + 1;
       sheet
         .getRange(
           rowNumber,
@@ -1571,6 +1620,7 @@ function processarPosConsultaInterno_(
         .setValue(
           "Pós-consulta dispensado: houve interação humana posterior.",
         );
+      suppressed += 1;
       continue;
     }
 
@@ -1592,6 +1642,7 @@ function processarPosConsultaInterno_(
       now.getTime() - lastAttempt.getTime() <
         retryMinutes * 60 * 1000
     ) {
+      skipped.retry_wait = (skipped.retry_wait || 0) + 1;
       continue;
     }
 
@@ -1611,8 +1662,6 @@ function processarPosConsultaInterno_(
       secret,
       properties,
     );
-    const rowNumber = index + 1;
-
     sheet
       .getRange(
         rowNumber,
@@ -1653,9 +1702,25 @@ function processarPosConsultaInterno_(
         );
       failed += 1;
     }
+    } catch (error) {
+      failed += 1;
+      registrarFalhaLinhaPosConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        now,
+        error,
+      );
+    }
   }
 
-  return { ok: failed === 0, sent, failed };
+  return {
+    ok: failed === 0,
+    sent,
+    failed,
+    suppressed,
+    skipped,
+  };
 }
 
 function enviarPosConsulta_(payload, secret, properties) {
@@ -1663,10 +1728,9 @@ function enviarPosConsulta_(payload, secret, properties) {
     properties.getProperty(
       CONSULTAS_SYNC_CONFIG.postConsultEndpointProperty,
     ) || CONSULTAS_SYNC_CONFIG.postConsultEndpoint;
-  let response;
 
   try {
-    response = UrlFetchApp.fetch(endpoint, {
+    const response = UrlFetchApp.fetch(endpoint, {
       method: "post",
       contentType: "application/json; charset=utf-8",
       headers: {
@@ -1675,6 +1739,23 @@ function enviarPosConsulta_(payload, secret, properties) {
       payload: JSON.stringify(payload),
       muteHttpExceptions: true,
     });
+    const responseCode = response.getResponseCode();
+    let body = {};
+
+    try {
+      body = JSON.parse(response.getContentText() || "{}");
+    } catch (error) {
+      body = {};
+    }
+
+    return {
+      ok:
+        responseCode >= 200 &&
+        responseCode < 300 &&
+        body.ok === true,
+      sent: body.sent === true,
+      error: body.error || `http_${String(responseCode)}`,
+    };
   } catch (error) {
     return {
       ok: false,
@@ -1682,25 +1763,196 @@ function enviarPosConsulta_(payload, secret, properties) {
       error: "request_failed",
     };
   }
+}
 
-  let body = {};
+function diagnosticarPosConsultaSemEnvio() {
+  const now = new Date();
+  const spreadsheet = SpreadsheetApp.openById(
+    CONSULTAS_SYNC_CONFIG.spreadsheetId,
+  );
+  const sheet = spreadsheet.getSheetByName(
+    CONSULTAS_SYNC_CONFIG.consultationsSheetName,
+  );
 
-  try {
-    body = JSON.parse(response.getContentText() || "{}");
-  } catch (error) {
-    body = {};
+  if (!sheet) {
+    throw new Error("A aba Consultas não foi encontrada.");
   }
 
-  return {
-    ok:
-      response.getResponseCode() >= 200 &&
-      response.getResponseCode() < 300 &&
-      body.ok === true,
-    sent: body.sent === true,
-    error:
-      body.error ||
-      `http_${String(response.getResponseCode())}`,
+  if (sheet.getLastRow() < 2) {
+    return { ok: true, candidates: 0, counts: {} };
+  }
+
+  const values = sheet.getDataRange().getValues();
+  const columns = mapearCabecalhosConsultas_(values[0]);
+  const counts = {};
+  let candidates = 0;
+
+  for (let index = 1; index < values.length; index += 1) {
+    const eligibility = avaliarElegibilidadePosConsulta_(
+      values[index],
+      columns,
+      now,
+    );
+    const reason = eligibility.eligible
+      ? "eligible"
+      : eligibility.reason;
+
+    counts[reason] = (counts[reason] || 0) + 1;
+    if (eligibility.eligible) candidates += 1;
+  }
+
+  const result = {
+    ok: true,
+    checked: Math.max(values.length - 1, 0),
+    candidates,
+    counts,
   };
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function avaliarElegibilidadePosConsulta_(row, columns, now) {
+  const requiredHeaders = [
+    CONSULTAS_SYNC_HEADERS.status,
+    CONSULTAS_SYNC_HEADERS.completedDate,
+    CONSULTAS_SYNC_HEADERS.consent,
+    CONSULTAS_SYNC_HEADERS.source,
+    CONSULTAS_SYNC_HEADERS.postEligibleAt,
+    CONSULTAS_SYNC_HEADERS.postSentAt,
+    CONSULTAS_SYNC_HEADERS.postSuppressedAt,
+  ];
+
+  if (
+    requiredHeaders.some(function (header) {
+      return columns[header] === undefined;
+    })
+  ) {
+    return { eligible: false, reason: "missing_columns" };
+  }
+
+  const status = normalizarTextoConsultasSync_(
+    row[columns[CONSULTAS_SYNC_HEADERS.status]],
+  );
+
+  if (!statusConsultaRealizada_(status)) {
+    return { eligible: false, reason: "not_completed" };
+  }
+  if (row[columns[CONSULTAS_SYNC_HEADERS.postSentAt]]) {
+    return { eligible: false, reason: "already_sent" };
+  }
+  if (row[columns[CONSULTAS_SYNC_HEADERS.postSuppressedAt]]) {
+    return { eligible: false, reason: "already_suppressed" };
+  }
+  if (
+    !consentimentoPermiteContatoConsultas_(
+      row[columns[CONSULTAS_SYNC_HEADERS.consent]],
+      row[columns[CONSULTAS_SYNC_HEADERS.source]],
+    )
+  ) {
+    return {
+      eligible: false,
+      reason: "consent_not_confirmed",
+    };
+  }
+
+  const completedAt = dataConsultasSync_(
+    row[columns[CONSULTAS_SYNC_HEADERS.completedDate]],
+  );
+  const completionCheck = validarRecenciaPosConsulta_(
+    completedAt,
+    now,
+  );
+
+  if (!completionCheck.ok) {
+    return {
+      eligible: false,
+      reason: completionCheck.reason,
+    };
+  }
+
+  const eligibleAt = dataConsultasSync_(
+    row[columns[CONSULTAS_SYNC_HEADERS.postEligibleAt]],
+  );
+
+  if (!eligibleAt) {
+    return { eligible: false, reason: "missing_eligible_at" };
+  }
+  if (eligibleAt.getTime() > now.getTime()) {
+    return { eligible: false, reason: "not_due" };
+  }
+
+  return { eligible: true, reason: "eligible", completedAt };
+}
+
+function validarRecenciaPosConsulta_(completedAt, now) {
+  if (!completedAt) {
+    return { ok: false, reason: "missing_completed_at" };
+  }
+
+  const ageMilliseconds = now.getTime() - completedAt.getTime();
+
+  if (ageMilliseconds < -5 * 60 * 1000) {
+    return { ok: false, reason: "future_completed_at" };
+  }
+  if (
+    ageMilliseconds >
+    CONSULTAS_SYNC_CONFIG.postConsultMaxAgeDays *
+      24 *
+      60 *
+      60 *
+      1000
+  ) {
+    return { ok: false, reason: "historical_completed_at" };
+  }
+
+  return { ok: true, reason: "recent_completed_at" };
+}
+
+function registrarFalhaLinhaPosConsulta_(
+  sheet,
+  rowNumber,
+  columns,
+  now,
+  error,
+) {
+  const errorCode = "row_processing_failed";
+
+  try {
+    const attemptColumn =
+      columns[CONSULTAS_SYNC_HEADERS.postLastAttempt];
+    const errorColumn =
+      columns[CONSULTAS_SYNC_HEADERS.postLastError];
+
+    if (attemptColumn !== undefined) {
+      sheet
+        .getRange(rowNumber, attemptColumn + 1)
+        .setValue(now);
+    }
+    if (errorColumn !== undefined) {
+      sheet
+        .getRange(rowNumber, errorColumn + 1)
+        .setValue(errorCode);
+    }
+  } catch (writeError) {
+    console.error(
+      JSON.stringify({
+        event: "post_consult_error_record_failed",
+        row: rowNumber,
+      }),
+    );
+  }
+
+  console.error(
+    JSON.stringify({
+      event: "post_consult_row_failed",
+      row: rowNumber,
+      code: errorCode,
+      detail: textoConsultasSync_(
+        error && error.message ? error.message : error,
+        120,
+      ),
+    }),
+  );
 }
 
 function atualizarStatusLeadDaConsulta_(
@@ -1871,8 +2123,8 @@ function mapearCabecalhosConsultas_(headers) {
 
   const aliases = {
     [CONSULTAS_SYNC_HEADERS.source]: [
-      "fonte da sincronizacao",
       "origem do lead",
+      "fonte da sincronizacao",
     ],
     [CONSULTAS_SYNC_HEADERS.notes]: [
       "resumo administrativo",
@@ -2085,15 +2337,35 @@ function statusConsultaRealizada_(status) {
   return ["realizada", "consulta realizada"].includes(status);
 }
 
-function consentimentoPermiteContatoConsultas_(value) {
-  return ![
+function consentimentoPermiteContatoConsultas_(value, source) {
+  const normalizedValue = normalizarTextoConsultasSync_(value);
+  const normalizedSource = normalizarTextoConsultasSync_(source);
+  const explicitNegative = [
     "nao",
     "nao autorizado",
     "sem consentimento",
     "false",
     "falso",
     "0",
-  ].includes(normalizarTextoConsultasSync_(value));
+  ];
+  const explicitPositive = [
+    "sim",
+    "autorizado",
+    "autorizada",
+    "permitido",
+    "permitida",
+    "true",
+    "verdadeiro",
+    "1",
+  ];
+
+  if (explicitNegative.includes(normalizedValue)) return false;
+  if (explicitPositive.includes(normalizedValue)) return true;
+
+  return !(
+    normalizedSource.includes("prontuario") &&
+    normalizedSource.includes("google drive")
+  );
 }
 
 function estaNoHorarioConsultasSync_(date) {
