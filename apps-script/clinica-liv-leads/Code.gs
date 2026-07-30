@@ -6,6 +6,9 @@ const CONFIG = Object.freeze({
   alertEmailSheetName: "_WHATSAPP_ALERTAS_EMAIL",
   reviewAlertEmail: "daniel.added@gmail.com",
   timezone: "America/Sao_Paulo",
+  appointmentSlotsSheetName: "Datas Consulta",
+  appointmentSlotsHeaderRow: 6,
+  appointmentSlotsColumns: 7,
   totalColumns: 25,
   leadWindowHours: 24,
 });
@@ -65,9 +68,23 @@ function doPost(e) {
       body.action !== "upsert_appointment" &&
       body.action !== "touch_appointment" &&
       body.action !== "update_appointment_status" &&
+      body.action !== "get_available_slots" &&
       body.action !== "send_review_alert_email"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "get_available_slots") {
+      stage = "get_available_slots";
+      const slotsResult = getAvailableAppointmentSlots_({
+        professional: body.professional,
+        limit: body.limit,
+      });
+
+      return json_({
+        ok: true,
+        slots: slotsResult,
+      });
     }
 
     if (body.action === "upsert_appointment") {
@@ -287,6 +304,7 @@ function doPost(e) {
       "upsert_appointment",
       "touch_appointment",
       "update_appointment_status",
+      "get_available_slots",
       "send_review_alert_email",
     ]);
 
@@ -309,6 +327,168 @@ function parseBody_(e) {
   }
 
   return JSON.parse(e.postData.contents);
+}
+
+function normalizeScheduleText_(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function parseScheduleDateTime_(dateValue, timeValue) {
+  const dateMatch = String(dateValue || "")
+    .trim()
+    .match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const timeMatch = String(timeValue || "")
+    .trim()
+    .match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!dateMatch || !timeMatch) return null;
+
+  const dateTime = new Date(
+    Number(dateMatch[3]),
+    Number(dateMatch[2]) - 1,
+    Number(dateMatch[1]),
+    Number(timeMatch[1]),
+    Number(timeMatch[2]),
+    0,
+    0,
+  );
+
+  return Number.isNaN(dateTime.getTime()) ? null : dateTime;
+}
+
+function findScheduleColumn_(headers, expectedName) {
+  const normalizedExpected = normalizeScheduleText_(expectedName);
+
+  for (let index = 0; index < headers.length; index += 1) {
+    if (
+      normalizeScheduleText_(headers[index]) === normalizedExpected
+    ) {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+function getAvailableAppointmentSlots_(input) {
+  const professional = normalizeScheduleText_(
+    input && input.professional,
+  );
+  const requestedLimit = Number(input && input.limit);
+  const limit = Number.isFinite(requestedLimit)
+    ? Math.max(1, Math.min(100, Math.floor(requestedLimit)))
+    : 50;
+  const spreadsheet = SpreadsheetApp.openById(
+    CONFIG.spreadsheetId,
+  );
+  const sheet = spreadsheet.getSheetByName(
+    CONFIG.appointmentSlotsSheetName,
+  );
+
+  if (!sheet) {
+    throw new Error("Aba Datas Consulta não encontrada.");
+  }
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= CONFIG.appointmentSlotsHeaderRow) return [];
+
+  const values = sheet.getRange(
+    CONFIG.appointmentSlotsHeaderRow,
+    1,
+    lastRow - CONFIG.appointmentSlotsHeaderRow + 1,
+    CONFIG.appointmentSlotsColumns,
+  ).getDisplayValues();
+  const headers = values[0] || [];
+  const columns = {
+    date: findScheduleColumn_(headers, "Data"),
+    day: findScheduleColumn_(headers, "Dia"),
+    time: findScheduleColumn_(headers, "Horário"),
+    status: findScheduleColumn_(headers, "Status"),
+    professional: findScheduleColumn_(headers, "Profissional"),
+  };
+
+  if (Object.keys(columns).some(function missingColumn(key) {
+    return columns[key] < 0;
+  })) {
+    throw new Error("Estrutura inesperada na aba Datas Consulta.");
+  }
+
+  const now = new Date();
+  const slots = [];
+
+  for (let index = 1; index < values.length; index += 1) {
+    const row = values[index];
+    const status = normalizeScheduleText_(row[columns.status]);
+    const rowProfessional = normalizeScheduleText_(
+      row[columns.professional],
+    );
+    const dateTime = parseScheduleDateTime_(
+      row[columns.date],
+      row[columns.time],
+    );
+
+    if (
+      status !== "disponivel" ||
+      !dateTime ||
+      dateTime.getTime() <= now.getTime()
+    ) {
+      continue;
+    }
+
+    if (
+      professional &&
+      !rowProfessional.includes(professional)
+    ) {
+      continue;
+    }
+
+    slots.push({
+      date: String(row[columns.date] || "").trim(),
+      day: String(row[columns.day] || "").trim(),
+      time: String(row[columns.time] || "").trim().padStart(5, "0"),
+      professional:
+        String(row[columns.professional] || "").trim(),
+      timestamp: dateTime.getTime(),
+    });
+  }
+
+  slots.sort(function chronologicalOrder(left, right) {
+    return left.timestamp - right.timestamp;
+  });
+
+  return slots.slice(0, limit).map(function publicSlot(slot) {
+    return {
+      date: slot.date,
+      day: slot.day,
+      time: slot.time,
+      professional: slot.professional,
+    };
+  });
+}
+
+function diagnosticarHorariosDisponiveis() {
+  const amanda = getAvailableAppointmentSlots_({
+    professional: "amanda",
+    limit: 50,
+  });
+  const daniel = getAvailableAppointmentSlots_({
+    professional: "daniel",
+    limit: 50,
+  });
+  const result = {
+    ok: true,
+    amanda: amanda.length,
+    daniel: daniel.length,
+    primeiraOpcaoAmanda: amanda[0] || null,
+    primeiraOpcaoDaniel: daniel[0] || null,
+  };
+
+  console.log(JSON.stringify(result));
+  return result;
 }
 
 function normalizeLead_(input) {

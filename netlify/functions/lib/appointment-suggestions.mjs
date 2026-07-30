@@ -198,12 +198,21 @@ export function buildAppointmentSuggestion({
     : "a avaliação";
 
   if (!normalizedSlots.length) {
+    const patientGreeting = patientName
+      ? `Olá, ${String(patientName).trim().split(/\s+/)[0]}!`
+      : "Olá!";
+    const fallbackReply = String(preferenceText || "").trim()
+      ? `${patientGreeting} Vou conferir outras opções compatíveis com essa preferência e retorno por aqui assim que possível.`
+      : `${patientGreeting} Vou conferir os horários disponíveis com a equipe e retorno por aqui. Se puder me dizer quais dias e se manhã ou tarde costumam funcionar melhor, isso ajuda a buscar opções mais adequadas.`;
+
     return limitText(
       [
         "AGENDAMENTO — revisão necessária",
         `${patientName || "Paciente"} pediu horários para ${subject} com ${clinician}.`,
         displayPreference(preferenceText),
         "Não há horários disponíveis cadastrados em Datas Consulta.",
+        "Sugestão para copiar ao paciente:",
+        fallbackReply,
       ].filter(Boolean).join("\n"),
     );
   }

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
+  ensureReviewAlertSuggestion,
   isReviewAlertConfigured,
   sendYCloudReviewAlert,
 } from "./ycloud-review-alert.mjs";
@@ -65,7 +66,7 @@ test("review alert uses the approved template shape", async () => {
     [
       INPUT.patientName,
       INPUT.patientPhone,
-      INPUT.messageText,
+      ensureReviewAlertSuggestion(INPUT),
     ],
   );
   assert.equal(calls[0].options.body.includes("test-key"), false);
@@ -193,7 +194,38 @@ test("accepted review alert is copied to Daniel by email", async () => {
   assert.equal(body.alert.eventId, INPUT.eventId);
   assert.equal(body.alert.patientName, INPUT.patientName);
   assert.equal(body.alert.patientPhone, INPUT.patientPhone);
-  assert.equal(body.alert.messageText, INPUT.messageText);
+  assert.equal(
+    body.alert.messageText,
+    ensureReviewAlertSuggestion(INPUT),
+  );
+});
+
+test("every review alert includes one copyable suggested reply", () => {
+  const enriched = ensureReviewAlertSuggestion(INPUT);
+
+  assert.match(enriched, /Sugestão para copiar após conferir:/);
+  assert.match(enriched, /Olá, Maria!/);
+
+  const alreadyPrepared = ensureReviewAlertSuggestion({
+    ...INPUT,
+    messageText:
+      "Horários encontrados.\nSugestão para copiar ao paciente:\nOlá, Maria!",
+  });
+
+  assert.equal(
+    alreadyPrepared.match(/Sugestão para copiar/g)?.length,
+    1,
+  );
+});
+
+test("urgent alerts receive a safety-aware suggested reply", () => {
+  const enriched = ensureReviewAlertSuggestion({
+    ...INPUT,
+    urgent: true,
+  });
+
+  assert.match(enriched, /revisada pela equipe/);
+  assert.match(enriched, /atendimento médico de urgência/);
 });
 
 test("YCloud failure is controlled and does not throw", async () => {

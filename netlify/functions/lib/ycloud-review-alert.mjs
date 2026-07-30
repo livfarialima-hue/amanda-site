@@ -36,6 +36,42 @@ function externalIdFor(eventId) {
   return normalized ? `liv-review-${normalized}` : undefined;
 }
 
+export function ensureReviewAlertSuggestion({
+  messageText,
+  patientName,
+  urgent = false,
+}) {
+  const original =
+    String(messageText || "").trim() || "Mensagem sem texto.";
+
+  if (
+    (
+      /sugest[aã]o\s+(?:para copiar|de resposta)/i.test(original) ||
+      /revise e copie manualmente/i.test(original)
+    )
+  ) {
+    return limitText(original, MAX_ALERT_TEXT_LENGTH);
+  }
+
+  const firstName =
+    String(patientName || "").trim().split(/\s+/)[0] || "";
+  const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
+  const reply = urgent
+    ? `${greeting} Recebemos sua mensagem e ela será revisada pela equipe. Se você estiver com sintomas intensos, piora rápida ou se sentir em risco, procure atendimento médico de urgência.`
+    : `${greeting} Recebi sua mensagem. Vou conferir essa informação com a equipe e retorno por aqui assim que possível.`;
+  const suffix = [
+    "Sugestão para copiar após conferir:",
+    reply,
+  ].join("\n");
+  const prefixLimit = Math.max(
+    0,
+    MAX_ALERT_TEXT_LENGTH - Array.from(suffix).length - 2,
+  );
+  const prefix = limitText(original, prefixLimit);
+
+  return [prefix, suffix].filter(Boolean).join("\n\n");
+}
+
 async function sendReviewAlertEmailCopy(
   {
     eventId,
@@ -166,6 +202,12 @@ export async function sendYCloudReviewAlert(
     });
   }
 
+  const alertMessageText = ensureReviewAlertSuggestion({
+    messageText,
+    patientName,
+    urgent,
+  });
+
   let alertSlot = null;
   if (!urgent) {
     const cooldownMinutes = Number(
@@ -243,7 +285,7 @@ export async function sendYCloudReviewAlert(
                   type: "text",
                   text:
                     limitText(
-                      messageText,
+                      alertMessageText,
                       MAX_ALERT_TEXT_LENGTH,
                     ) || "Mensagem sem texto.",
                 },
@@ -270,7 +312,7 @@ export async function sendYCloudReviewAlert(
         eventId,
         patientName,
         patientPhone,
-        messageText,
+        messageText: alertMessageText,
       },
       { env, fetchImpl },
     );

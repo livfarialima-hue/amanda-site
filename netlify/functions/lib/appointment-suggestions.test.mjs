@@ -27,7 +27,7 @@ test("formats no more than three approved appointment options", () => {
   assert.match(text, /Se nenhum destes horários for possível/);
 });
 
-test("reports a missing schedule without creating a patient suggestion", () => {
+test("reports a missing schedule with a safe patient suggestion", () => {
   const text = buildAppointmentSuggestion({
     patientName: "Maria Silva",
     professional: "daniel",
@@ -37,7 +37,8 @@ test("reports a missing schedule without creating a patient suggestion", () => {
 
   assert.match(text, /revisão necessária/);
   assert.match(text, /Não há horários disponíveis/);
-  assert.doesNotMatch(text, /Sugestão para copiar ao paciente/);
+  assert.match(text, /Sugestão para copiar ao paciente/);
+  assert.match(text, /Vou conferir os horários disponíveis/);
 });
 
 test("appointment alert remains disabled unless explicitly enabled", () => {
