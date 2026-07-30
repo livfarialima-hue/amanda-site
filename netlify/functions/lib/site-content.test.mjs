@@ -39,6 +39,73 @@ test("does not offer a site link routinely in the first response", () => {
   );
 });
 
+test("does not treat the ad template as a meaningful patient reply", () => {
+  assert.equal(
+    getRecommendedSiteResource({
+      procedure: "lifting_facial",
+      referenceCategory: "meta_coded",
+      recentConversation: [
+        {
+          role: "patient",
+          text:
+            "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. " +
+            "Ref. M26F01W-C06H01",
+        },
+        {
+          role: "assistant",
+          text:
+            "Eu sou a Bruna. O que seria mais \u00fatil entender primeiro?",
+        },
+      ],
+      currentMessage: "Como funciona a avalia\u00e7\u00e3o?",
+    }),
+    null,
+  );
+});
+
+test("offers the procedure page after the first real research reply", () => {
+  assert.equal(
+    getRecommendedSiteResource({
+      procedure: "lifting_facial",
+      referenceCategory: "meta_coded",
+      recentConversation: [
+        {
+          role: "patient",
+          text:
+            "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. " +
+            "Ref. M26F01W-C06H01",
+        },
+        {
+          role: "assistant",
+          text:
+            "Eu sou a Bruna. O que seria mais \u00fatil entender primeiro?",
+        },
+      ],
+      currentMessage: "Estou come\u00e7ando a pesquisar.",
+    })?.url,
+    "https://draamandaschroeder.com.br/lifting-facial/",
+  );
+});
+
+test("blocks proactive links during price, scheduling and closing turns", () => {
+  for (const currentMessage of [
+    "Qual \u00e9 o valor da cirurgia?",
+    "Quais hor\u00e1rios voc\u00eas t\u00eam amanh\u00e3?",
+    "Vou pensar e depois entro em contato.",
+  ]) {
+    assert.equal(
+      getRecommendedSiteResource({
+        procedure: "lifting_facial",
+        referenceCategory: "meta_coded",
+        recentConversation: RESEARCH_CONVERSATION,
+        currentMessage,
+      }),
+      null,
+      currentMessage,
+    );
+  }
+});
+
 test("answers a direct request for the site even in the first response", () => {
   assert.deepEqual(
     getRecommendedSiteResource({

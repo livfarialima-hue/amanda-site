@@ -1,3 +1,5 @@
+import { isLikelyMarketingPrefilledMessage } from "./whatsapp-automation.mjs";
+
 const SITE_BASE_URL = "https://draamandaschroeder.com.br";
 
 const PROCEDURE_PAGES = Object.freeze({
@@ -248,6 +250,83 @@ export function isDirectSiteRequest(currentMessage) {
   );
 }
 
+function foldConversationText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isPatientTurn(turn) {
+  return (
+    ["patient", "user"].includes(String(turn?.role || "")) ||
+    String(turn?.source || "") === "patient"
+  );
+}
+
+function isClinicTurn(turn) {
+  return (
+    String(turn?.role || "") === "assistant" ||
+    ["bruna", "equipe_humana"].includes(
+      String(turn?.source || ""),
+    )
+  );
+}
+
+function isMeaningfulPatientReply(text) {
+  const normalized = foldConversationText(text);
+
+  if (!normalized || normalized.length < 8) return false;
+  if (isLikelyMarketingPrefilledMessage({ text })) return false;
+
+  return !/^(?:oi|ola|sim|nao|ok|certo|entendi|obrigad[oa]|perfeito|combinado|tudo bem|ta bom|beleza)[!,. ]*$/i.test(
+    normalized,
+  );
+}
+
+function isBlockedProactiveLinkMoment(text) {
+  const normalized = foldConversationText(text);
+
+  return (
+    /\b(?:preco|valor|quanto custa|quanto fica|media|orcamento)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:agenda|agendar|agendamento|marcar|horarios?|disponibilidade|datas?|amanha|manha|tarde|segunda(?:-feira)?|terca(?:-feira)?|quarta(?:-feira)?|quinta(?:-feira)?|sexta(?:-feira)?|sabado|domingo)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:as\s+)?\d{1,2}(?::\d{2}|h(?:\d{2})?)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:hospital|confirmar|confirmacao|retorno da equipe|aguardando retorno)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:vou pensar|depois eu volto|entro em contato|qualquer coisa volto|nao tenho interesse|deixa para depois)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:odeio|detesto).{0,35}\b(?:meu rosto|minha face|minha aparencia|meu corpo)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:aparencia|meu rosto|minha face|meu corpo).{0,45}\b(?:arruinou|acabou com).{0,20}\bminha vida\b/i.test(
+      normalized,
+    )
+  );
+}
+
+function isConsultationInformationQuestion(text) {
+  const normalized = foldConversationText(text);
+
+  return (
+    /\b(?:como funciona|o que acontece|o que e feito).{0,45}\b(?:consulta|avaliacao)\b/i.test(
+      normalized,
+    ) ||
+    /\b(?:consulta|avaliacao)\b.{0,45}\bcomo funciona\b/i.test(
+      normalized,
+    )
+  );
+}
+
 function asksForResults(currentMessage) {
   return /\b(?:antes\s+e\s+depois|casos?\s+reais|fotos?\s+de\s+resultados?|ver\s+resultados?)\b/i.test(
     String(currentMessage || ""),
@@ -321,7 +400,25 @@ export function getRecommendedSiteResource({
   const sharedUrls = sharedSiteUrls(conversation);
   const directRequest = isDirectSiteRequest(currentMessage);
 
-  if (!conversation.length && !directRequest) return null;
+  if (!directRequest) {
+    const hasClinicReply = conversation.some(isClinicTurn);
+    const hasEarlierMeaningfulPatientReply = conversation.some(
+      (turn) =>
+        isPatientTurn(turn) &&
+        isMeaningfulPatientReply(turn?.text),
+    );
+
+    if (!hasClinicReply) return null;
+    if (!isMeaningfulPatientReply(currentMessage)) return null;
+    if (isBlockedProactiveLinkMoment(currentMessage)) return null;
+    if (
+      isConsultationInformationQuestion(currentMessage) &&
+      !hasEarlierMeaningfulPatientReply
+    ) {
+      return null;
+    }
+  }
+
   if (sharedUrls.size && !directRequest) return null;
 
   const procedureKey = String(procedure || "");

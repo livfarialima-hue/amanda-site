@@ -4,6 +4,7 @@ import {
   enrichAutomationPlanFromConversation,
   isAvailabilityRequest,
   isConsultationInformationRequest,
+  isLikelyMarketingPrefilledMessage,
   isSchedulingRequest,
   planAutomation,
 } from "./whatsapp-automation.mjs";
@@ -130,7 +131,7 @@ test("asking how the consultation works stays in automatic conversation", () => 
   }
 });
 
-test("prefilled Google availability interest does not become an appointment confirmation", () => {
+test("prefilled Google consultation text is treated as campaign context", () => {
   const text = [
     "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda",
     "e consultar a disponibilidade. Ref. g26f01-816509565979-LF01",
@@ -145,10 +146,60 @@ test("prefilled Google availability interest does not become an appointment conf
 
   assert.equal(isConsultationInformationRequest(text), true);
   assert.equal(isAvailabilityRequest(text), true);
+  assert.equal(
+    isLikelyMarketingPrefilledMessage({
+      text,
+      reference: "G26F01",
+      platform: "Google",
+    }),
+    true,
+  );
   assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "consultation_information_request");
+  assert.equal(plan.reason, "known_procedure");
   assert.equal(plan.procedure, "lifting_facial");
   assert.equal(plan.automaticAllowed, true);
+});
+
+test("prefilled Meta procedure text is context while a real consultation question is answered", () => {
+  const prefilled =
+    "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01";
+  const prefilledPlan = planAutomation({
+    text: prefilled,
+    messageType: "text",
+    reference: "M26F01W-C06H01",
+    platform: "Meta",
+  });
+  const realQuestionPlan = planAutomation({
+    text: "Como funciona a avalia\u00e7\u00e3o?",
+    messageType: "text",
+    reference: "M26F01W-C06H01",
+    platform: "Meta",
+  });
+
+  assert.equal(
+    isLikelyMarketingPrefilledMessage({
+      text: prefilled,
+      reference: "M26F01W-C06H01",
+      platform: "Meta",
+    }),
+    true,
+  );
+  assert.equal(prefilledPlan.reason, "known_procedure");
+  assert.equal(realQuestionPlan.reason, "consultation_information_request");
+});
+
+test("an explicit price question added to a marketing template still requires review", () => {
+  const plan = planAutomation({
+    text:
+      "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. " +
+      "Ref. M26F01W-C06H01. Qual \u00e9 o valor da cirurgia?",
+    messageType: "text",
+    reference: "M26F01W-C06H01",
+    platform: "Meta",
+  });
+
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "surgical_price_review");
 });
 
 test("Google codes personalize the procedure without implying scheduling", () => {

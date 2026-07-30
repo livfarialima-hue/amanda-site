@@ -265,6 +265,55 @@ export function isAvailabilityRequest(text) {
   return AVAILABILITY_REQUEST_PATTERN.test(String(text || ""));
 }
 
+function foldMarketingText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function isLikelyMarketingPrefilledMessage({
+  text,
+  reference,
+  platform,
+  referralContext,
+} = {}) {
+  const normalizedText = foldMarketingText(text);
+  const sourceContext = foldMarketingText(
+    [
+      platform,
+      reference,
+      referralContext && typeof referralContext === "object"
+        ? JSON.stringify(referralContext)
+        : referralContext,
+    ].join(" "),
+  );
+  const hasEmbeddedAttribution =
+    /\bgbraid\s*:|\bref\.?(?:\s*:)?\s*[a-z0-9-]{5,}/i.test(
+      normalizedText,
+    );
+  const hasMarketingSource =
+    hasEmbeddedAttribution ||
+    /\b(?:google|meta|facebook|instagram)\b/i.test(sourceContext) ||
+    /\b(?:g26|m26|lf\d{2}|c0[16])\b/i.test(sourceContext);
+
+  if (!hasMarketingSource) return false;
+
+  const googleConsultationTemplate =
+    /\bgostaria de saber como funciona a consulta com a dra\.? amanda\b/i.test(
+      normalizedText,
+    ) &&
+    /\bconsultar a disponibilidade\b/i.test(normalizedText);
+  const metaProcedureTemplate =
+    /\b(?:quero|gostaria de) saber sobre .{2,100}\bcom a dra\.? amanda\b/i.test(
+      normalizedText,
+    );
+
+  return googleConsultationTemplate || metaProcedureTemplate;
+}
+
 export function enrichAutomationPlanFromConversation(
   plan,
   recentConversation = [],
@@ -440,7 +489,15 @@ export function planAutomation({
   const mentionsAmanda = matchesAny(normalizedText, AMANDA_PATTERNS);
   const asksPrice = PRICE_PATTERN.test(normalizedText);
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
+  const marketingPrefilledMessage =
+    isLikelyMarketingPrefilledMessage({
+      text: normalizedText,
+      reference,
+      platform,
+      referralContext,
+    });
   const asksConsultationInformation =
+    !marketingPrefilledMessage &&
     isConsultationInformationRequest(normalizedText);
 
   if (asksPrice && procedure) {

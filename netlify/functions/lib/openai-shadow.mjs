@@ -401,15 +401,17 @@ export async function runOpenAIShadow(
       String(text || ""),
     );
   const siteResource =
-    normalizedPatientRelationship.knownPatient &&
-    !explicitResourceRequest
+    normalizedPatientRelationship.hasPendingHumanTask
       ? null
-      : getRecommendedSiteResource({
-          procedure,
-          referenceCategory,
-          recentConversation: normalizedConversation,
-          currentMessage: text,
-        });
+      : normalizedPatientRelationship.knownPatient &&
+          !explicitResourceRequest
+        ? null
+        : getRecommendedSiteResource({
+            procedure,
+            referenceCategory,
+            recentConversation: normalizedConversation,
+            currentMessage: text,
+          });
 
   try {
     const response = await fetchImpl(OPENAI_RESPONSES_URL, {

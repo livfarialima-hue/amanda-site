@@ -492,6 +492,51 @@ test("does not pass a site page back to a person who came from the site", async 
   assert.equal(input.siteResource, null);
 });
 
+test("does not pass a site resource while a human task is pending", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Quero entender melhor a recuperação",
+      platform: "Meta",
+      procedure: "lifting_facial",
+      referenceCategory: "meta_coded",
+      patientRelationship: {
+        knownPatient: false,
+        state: "lead",
+        hasPendingHumanTask: true,
+      },
+      recentConversation: [
+        {
+          role: "assistant",
+          text: "O que você gostaria de entender primeiro?",
+        },
+        {
+          role: "patient",
+          text: "Quero conhecer melhor a recuperação.",
+        },
+      ],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.siteResource, null);
+  assert.equal(input.patientRelationship.hasPendingHumanTask, true);
+});
+
 test("OpenAI failure keeps the webhook successful and never sends to YCloud", async () => {
   const savedEnvironment = {
     YCLOUD_WEBHOOK_SECRET: process.env.YCLOUD_WEBHOOK_SECRET,
@@ -875,7 +920,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
-test("consultation information is answered deterministically without stopping", async () => {
+test("a prefilled Google consultation template becomes a contextual opening", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -915,6 +960,23 @@ test("consultation information is answered deterministically without stopping", 
           duplicate: false,
           humanTakeoverToday: false,
         }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              procedure: "lifting_facial",
+              suggestedReply:
+                "Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima. " +
+                "Vi que seu interesse é em lifting facial. O que seria mais útil " +
+                "entender primeiro: o procedimento, a recuperação, os valores ou a avaliação?",
+            }),
+          ),
+        ),
         { status: 200 },
       );
     }
@@ -968,7 +1030,7 @@ test("consultation information is answered deterministically without stopping", 
         (request) =>
           request.url === "https://api.openai.com/v1/responses",
       ),
-      false,
+      true,
     );
 
     const patientRequests = requests.filter(
@@ -981,16 +1043,11 @@ test("consultation information is answered deterministically without stopping", 
     const patientReply = JSON.parse(
       patientRequests[0].options.body,
     ).text.body;
-    assert.match(
-      patientReply,
-      /^Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima\. Claro\./,
-    );
-    assert.match(patientReply, /se o lifting faz sentido/);
-    assert.match(patientReply, /Nada precisa ser decidido nesse momento/);
+    assert.match(patientReply, /interesse é em lifting facial/i);
+    assert.match(patientReply, /mais útil entender primeiro/i);
     assert.doesNotMatch(patientReply, /R\$ 500/);
-    assert.match(patientReply, /Se quiser que eu busque opções/);
-    assert.match(patientReply, /prefere manhã ou tarde/);
-    assert.doesNotMatch(patientReply, /Posso ver os horários/);
+    assert.doesNotMatch(patientReply, /prefere manhã ou tarde/i);
+    assert.doesNotMatch(patientReply, /possibilidades, limites/i);
     assert.doesNotMatch(patientReply, /https:\/\/draamandaschroeder/);
   } finally {
     globalThis.fetch = originalFetch;
