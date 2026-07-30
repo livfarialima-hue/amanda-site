@@ -202,6 +202,14 @@ function sincronizarConsultasAoEditar(e) {
   const sheetName = sheet.getName();
 
   if (
+    typeof CENTRAL_ATENDIMENTO_CONFIG !== "undefined" &&
+    sheetName === CENTRAL_ATENDIMENTO_CONFIG.sheetName &&
+    typeof processarEdicaoCentralAtendimento_ === "function"
+  ) {
+    return processarEdicaoCentralAtendimento_(e);
+  }
+
+  if (
     sheetName ===
     CONSULTAS_SYNC_CONFIG.consultationsSheetName
   ) {

@@ -489,6 +489,18 @@ function textoCompromissoPaciente_(valor, limite) {
 
 function enviarEmailDiarioRetomadasInterno_(agora) {
   const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  if (
+    typeof atualizarCentralAtendimentoInterno_ === "function"
+  ) {
+    try {
+      atualizarCentralAtendimentoInterno_(arquivo, agora);
+    } catch (error) {
+      console.error(
+        "Não foi possível atualizar a Central de Atendimento antes do e-mail diário.",
+        error,
+      );
+    }
+  }
   const planilhaLeads = arquivo.getSheetByName(
     RETOMADAS_CONFIG.planilhaLeads,
   );
