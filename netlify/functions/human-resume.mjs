@@ -15,6 +15,7 @@ import {
   claimDueHumanResumes,
   completeHumanResume,
   isHumanResumeClaimCurrent,
+  rescheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import { shouldSendOpenAIPatientReply } from "./lib/patient-replies.mjs";
@@ -25,6 +26,13 @@ import {
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
 } from "./lib/surgical-price-review.mjs";
+import {
+  CONVERSATION_ACTIONS,
+  decideConversationAction,
+} from "./lib/conversation-action-controller.mjs";
+import {
+  sendControlledPatientReply,
+} from "./lib/outbound-reply-gate.mjs";
 
 const MAX_JOBS_PER_RUN = 5;
 const PRICE_REVIEW_REASONS = new Set([
@@ -93,7 +101,13 @@ async function alertReviewer(job, details, dependencies = {}) {
   });
 }
 
-async function sendPatientMessage(job, body, suffix, dependencies = {}) {
+async function sendPatientMessage(
+  job,
+  body,
+  suffix,
+  conversationAction,
+  dependencies = {},
+) {
   const currentCheck =
     dependencies.isHumanResumeClaimCurrentImpl ||
     isHumanResumeClaimCurrent;
@@ -107,13 +121,20 @@ async function sendPatientMessage(job, body, suffix, dependencies = {}) {
   }
 
   const sendPatient =
-    dependencies.sendYCloudPatientTextImpl ||
-    sendYCloudPatientText;
+    dependencies.sendControlledPatientReplyImpl ||
+    sendControlledPatientReply;
   return sendPatient({
     from: job.from,
     to: job.phone,
     eventId: `${job.eventId}-${suffix}`,
     body,
+    currentText: job.text,
+    recentConversation: job.recentConversation,
+    conversationAction,
+  }, {
+    sendYCloudPatientTextImpl:
+      dependencies.sendYCloudPatientTextImpl ||
+      sendYCloudPatientText,
   });
 }
 
@@ -144,11 +165,21 @@ async function holdAndAlert(
   dependencies = {},
   holdingMessage = HUMAN_RESUME_HOLDING_MESSAGE,
   suggestedReply = "",
+  conversationAction = null,
 ) {
+  const holdingAction =
+    conversationAction?.action ===
+      CONVERSATION_ACTIONS.WAIT_TEAM
+      ? conversationAction
+      : {
+          action: CONVERSATION_ACTIONS.WAIT_TEAM,
+          allowHoldingReply: true,
+        };
   const holdingResult = await sendPatientMessage(
     job,
     holdingMessage,
     "human-resume-holding",
+    holdingAction,
     dependencies,
   );
   const holdingSent = holdingResult.status === "completed";
@@ -260,6 +291,15 @@ export async function processHumanResumeJob(
     enrichedPlan,
     recentConversation: job.recentConversation,
   });
+  const conversationAction = decideConversationAction({
+    text: job.text,
+    messageType: job.messageType,
+    plan: enrichedPlan,
+    recentConversation: job.recentConversation,
+    humanTakeoverActive: false,
+    schedulingRequest:
+      policy.reason === "scheduling_or_confirmation",
+  });
 
   if (policy.action === "no_action") {
     await finish(job, "human_active", dependencies);
@@ -288,6 +328,7 @@ export async function processHumanResumeJob(
           patientName: job.patientName,
           procedure: priceProcedure,
         }),
+        conversationAction,
       );
     }
 
@@ -300,6 +341,8 @@ export async function processHumanResumeJob(
         policy.reason,
         dependencies,
         buildOvernightHandoffMessage(policy.reason),
+        "",
+        conversationAction,
       );
     }
 
@@ -334,6 +377,8 @@ export async function processHumanResumeJob(
       outsideServiceHours
         ? buildOvernightHandoffMessage(policy.reason)
         : HUMAN_RESUME_HOLDING_MESSAGE,
+      "",
+      conversationAction,
     );
   }
 
@@ -385,7 +430,17 @@ export async function processHumanResumeJob(
         job.recentConversation,
       )
     ) {
-      return holdAndAlert(job, reason, dependencies);
+      return holdAndAlert(
+        job,
+        reason,
+        dependencies,
+        HUMAN_RESUME_HOLDING_MESSAGE,
+        "",
+        {
+          action: CONVERSATION_ACTIONS.WAIT_TEAM,
+          allowHoldingReply: true,
+        },
+      );
     }
 
     return alertOnly(
@@ -401,6 +456,7 @@ export async function processHumanResumeJob(
     job,
     reply,
     "human-resume-reply",
+    conversationAction,
     dependencies,
   );
 

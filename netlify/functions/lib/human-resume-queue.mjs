@@ -244,6 +244,20 @@ export async function scheduleHumanResume(
   }
 }
 
+export async function cancelPendingHumanResume(
+  phone,
+  { getStoreImpl = getStore } = {},
+) {
+  if (!normalizedPhone(phone)) return { status: "skipped" };
+
+  try {
+    await resumeStore(getStoreImpl).delete(pendingKey(phone));
+    return { status: "completed" };
+  } catch {
+    return { status: "failed" };
+  }
+}
+
 export async function claimDueHumanResumes(
   {
     getStoreImpl = getStore,

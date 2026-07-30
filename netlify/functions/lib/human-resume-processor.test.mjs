@@ -76,6 +76,28 @@ function dependencies() {
   };
 }
 
+test("inactive automation reschedules the job without attempting a reply", async () => {
+  const deps = dependencies();
+  const reschedules = [];
+  deps.rescheduleHumanResumeImpl = async (input, dueAt) => {
+    reschedules.push({ input, dueAt });
+    return { status: "rescheduled" };
+  };
+
+  const result = await processHumanResumeJob(job(), {
+    env: {
+      ...ACTIVE_ENV,
+      WHATSAPP_AUTOMATION_MODE: "shadow",
+    },
+    now: NOW,
+    ...deps,
+  });
+
+  assert.equal(result.status, "automation_inactive");
+  assert.equal(reschedules.length, 1);
+  assert.equal(deps.patientMessages.length, 0);
+});
+
 test("a safe high-confidence answer resumes Bruna without an alert", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({

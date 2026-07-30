@@ -54,7 +54,7 @@ test("a patient choice reserves the offered slot and receives the final confirma
       assert.deepEqual(receivedControl, baselineControl);
       return { shouldSend: true };
     },
-    sendYCloudPatientTextImpl: async (message) => {
+    sendControlledPatientReplyImpl: async (message) => {
       patientMessages.push(message);
       return {
         status: "completed",
@@ -115,7 +115,7 @@ test("an unavailable slot is not booked and creates a review alert with a sugges
     completeReviewAlertImpl: async (alert) => {
       alerts.push(alert);
     },
-    sendYCloudPatientTextImpl: async (message) => {
+    sendControlledPatientReplyImpl: async (message) => {
       patientMessages.push(message);
       return { status: "completed" };
     },
@@ -153,7 +153,7 @@ test("a new human response cancels only the automatic confirmation, not the rese
     guardBookedAppointmentReplyImpl: async () => ({
       shouldSend: false,
     }),
-    sendYCloudPatientTextImpl: async (message) => {
+    sendControlledPatientReplyImpl: async (message) => {
       patientMessages.push(message);
       return { status: "completed" };
     },

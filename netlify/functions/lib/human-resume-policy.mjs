@@ -1,20 +1,16 @@
 import { isAppointmentPreferenceReply } from "./appointment-suggestions.mjs";
 import { isSchedulingRequest } from "./whatsapp-automation.mjs";
+import {
+  CONVERSATION_ACTIONS,
+  decideConversationAction,
+  hasUnresolvedPatientRequest,
+  isExplicitDeferralWithoutRequest,
+} from "./conversation-action-controller.mjs";
 
-const CLOSING_PATTERN =
-  /^(?:(?:(?:muito\s+)?obrigad[ao](?:\s+pela\s+ajuda)?|agrade[cç]o|grata|valeu|ok(?:ay)?|t[aá]\s+bom|tudo bem|entendi|perfeito|combinado|certo|beleza|j[aá]\s+entendi|sem problemas|at[eé](?:\s+(?:mais|logo|amanh[aã]|segunda(?:-feira)?|ter[cç]a(?:-feira)?|quarta(?:-feira)?|quinta(?:-feira)?|sexta(?:-feira)?|s[aá]bado|domingo))?)[,!.?\s]*)+$/i;
 const SCHEDULING_CONTEXT_PATTERN =
   /\b(?:agenda|agendar|marcar|hor[aá]rio|data|dia|per[ií]odo|disponibilidade|consulta\s+(?:para|em)|\d{1,2}(?::|h)\d{0,2})\b/i;
 const CONFIRMATION_PATTERN =
   /\b(?:confirmo|confirmar|pode\s+ser|fechado|combinado|esse\s+hor[aá]rio|essa\s+data|nesse\s+dia)\b/i;
-const DIRECT_QUESTION_PATTERN =
-  /(?:\?|^(?:como|qual|quais|quanto|quantos|quando|onde|por\s+que|porque|quem|voc[eê]s|tem|h[aá]|pode|posso|ser[aá]|custa|atende|faz)\b)/i;
-const DIRECT_REQUEST_PATTERN =
-  /\b(?:quero|gostaria|preciso|poderia|consegue|conseguem|pode|podem|tenho\s+(?:uma\s+)?d[uú]vida|me\s+(?:explica|explique|diz|diga|informa|informe|manda|mande|envia|envie|avisa|avise|confirma|confirme|ajuda|ajude|passa|passe)|verifica|verifique|confirma|confirme|agenda|agende|marca|marque|reserva|reserve)\b/i;
-const EXPLICIT_DEFERRAL_PATTERN =
-  /\b(?:ainda\s+estou\s+(?:pensando|avaliando|decidindo)|vou\s+(?:pensar|avaliar|analisar|decidir)(?:\s+com\s+calma)?|por\s+enquanto\s+(?:vou\s+)?(?:pensar|avaliar|analisar)|qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo)|se\s+eu\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo))\b/i;
-const EXPLICIT_RETURN_LATER_PATTERN =
-  /\b(?:qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo)|se\s+eu\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo))\b/i;
 
 const SENSITIVE_REASONS = new Set([
   "surgical_price_review",
@@ -125,58 +121,9 @@ function hasSchedulingContext(recentConversation) {
     );
 }
 
-function lastAssistantTurn(recentConversation) {
-  return (Array.isArray(recentConversation) ? recentConversation : [])
-    .slice()
-    .reverse()
-    .find((turn) => turn?.role === "assistant");
-}
-
-export function isExplicitDeferralWithoutRequest(text) {
-  const normalizedText = String(text || "").trim();
-  if (!normalizedText) return false;
-
-  return (
-    EXPLICIT_DEFERRAL_PATTERN.test(normalizedText) &&
-    !DIRECT_QUESTION_PATTERN.test(normalizedText) &&
-    !DIRECT_REQUEST_PATTERN.test(normalizedText)
-  );
-}
-
-function isExplicitReturnLaterClosure(text) {
-  const normalizedText = String(text || "").trim();
-  if (!normalizedText) return false;
-
-  return (
-    EXPLICIT_RETURN_LATER_PATTERN.test(normalizedText) &&
-    !DIRECT_QUESTION_PATTERN.test(normalizedText) &&
-    !DIRECT_REQUEST_PATTERN.test(normalizedText)
-  );
-}
-
-export function hasConcreteResponseExpectation(
-  text,
-  recentConversation = [],
-) {
-  const normalizedText = String(text || "").trim();
-  if (
-    !normalizedText ||
-    CLOSING_PATTERN.test(normalizedText) ||
-    isExplicitDeferralWithoutRequest(normalizedText)
-  ) {
-    return false;
-  }
-
-  if (
-    DIRECT_QUESTION_PATTERN.test(normalizedText) ||
-    DIRECT_REQUEST_PATTERN.test(normalizedText)
-  ) {
-    return true;
-  }
-
-  const previousAssistant = lastAssistantTurn(recentConversation);
-  return /\?/.test(String(previousAssistant?.text || ""));
-}
+export const hasConcreteResponseExpectation =
+  hasUnresolvedPatientRequest;
+export { isExplicitDeferralWithoutRequest };
 
 export function classifyHumanResume({
   text,
@@ -186,29 +133,6 @@ export function classifyHumanResume({
   recentConversation,
 }) {
   const normalizedText = String(text || "").trim();
-
-  if (
-    String(messageType || "text").toLowerCase() !== "text" ||
-    !normalizedText
-  ) {
-    return {
-      action: "sensitive",
-      reason: "unsupported_or_empty_message",
-    };
-  }
-
-  if (
-    preliminaryPlan?.route === "ignore" ||
-    enrichedPlan?.route === "ignore" ||
-    CLOSING_PATTERN.test(normalizedText) ||
-    isExplicitReturnLaterClosure(normalizedText)
-  ) {
-    return {
-      action: "no_action",
-      reason: "conversation_closing_or_ignored",
-    };
-  }
-
   const scheduling =
     isSchedulingRequest(normalizedText) ||
     isAppointmentPreferenceReply(
@@ -219,6 +143,34 @@ export function classifyHumanResume({
       CONFIRMATION_PATTERN.test(normalizedText) &&
       hasSchedulingContext(recentConversation)
     );
+  const conversationAction = decideConversationAction({
+    text: normalizedText,
+    messageType,
+    plan: enrichedPlan || preliminaryPlan,
+    recentConversation,
+    humanTakeoverActive: false,
+    schedulingRequest: scheduling,
+  });
+
+  if (
+    conversationAction.action ===
+    CONVERSATION_ACTIONS.CLOSED
+  ) {
+    return {
+      action: "no_action",
+      reason: "conversation_closing_or_ignored",
+    };
+  }
+
+  if (
+    conversationAction.action ===
+    CONVERSATION_ACTIONS.WAIT_PATIENT
+  ) {
+    return {
+      action: "alert_only",
+      reason: conversationAction.reason,
+    };
+  }
 
   if (scheduling) {
     return {
@@ -253,13 +205,8 @@ export function classifyHumanResume({
     };
   }
 
-  const responseExpected = hasConcreteResponseExpectation(
-    normalizedText,
-    recentConversation,
-  );
-
   return {
-    action: responseExpected
+    action: conversationAction.allowHoldingReply
       ? "holding_and_alert"
       : "alert_only",
     reason: enrichedPlan?.reason || "low_confidence",

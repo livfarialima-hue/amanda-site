@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  cancelPendingHumanResume,
   claimDueHumanResumes,
   completeHumanResume,
   getHumanResumeControl,
@@ -167,6 +168,41 @@ test("a new human message cancels a queued resume", async () => {
   assert.equal(claim.jobs.length, 0);
   assert.equal(control.status, "human_active");
   assert.equal(control.generation, "human-event-2");
+});
+
+test("a newer patient closing cancels the older queued resume", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const now = Date.parse("2026-07-28T15:00:00.000Z");
+
+  await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-event-1",
+    },
+    { getStoreImpl, now },
+  );
+  await scheduleHumanResume(sampleInput(), {
+    getStoreImpl,
+    now,
+    delayMs: 1,
+  });
+  const cancellation = await cancelPendingHumanResume(
+    "+5511900000000",
+    { getStoreImpl },
+  );
+  const claim = await claimDueHumanResumes({
+    getStoreImpl,
+    now: now + 2,
+  });
+  const control = await getHumanResumeControl(
+    "+5511900000000",
+    { getStoreImpl },
+  );
+
+  assert.equal(cancellation.status, "completed");
+  assert.equal(claim.jobs.length, 0);
+  assert.equal(control.status, "human_active");
 });
 
 test("successful automatic continuation releases the human block", async () => {

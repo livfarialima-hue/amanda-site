@@ -39,7 +39,6 @@ import {
   isReviewAlertConfigured,
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
-import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { getRecommendedSiteResource } from "./lib/site-content.mjs";
 import {
   buildPendingHospitalQuoteAlert,
@@ -48,6 +47,7 @@ import {
   isSurgicalPriceReview,
 } from "./lib/surgical-price-review.mjs";
 import {
+  cancelPendingHumanResume,
   getHumanResumeControl,
   markHumanTakeover,
   scheduleHumanResume,
@@ -68,6 +68,12 @@ import {
   isHumanResumeServiceOpen,
   shouldSendOvernightHandoff,
 } from "./lib/human-resume-policy.mjs";
+import {
+  decideConversationAction,
+} from "./lib/conversation-action-controller.mjs";
+import {
+  sendControlledPatientReply,
+} from "./lib/outbound-reply-gate.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -895,7 +901,8 @@ export async function completeSelectedAppointment(
     completeReviewAlertImpl = completeReviewAlert,
     guardBookedAppointmentReplyImpl =
       guardBookedAppointmentReplyAgainstHumanRace,
-    sendYCloudPatientTextImpl = sendYCloudPatientText,
+    sendControlledPatientReplyImpl =
+      sendControlledPatientReply,
     appendConversationTurnImpl = appendConversationTurn,
   } = {},
 ) {
@@ -973,11 +980,18 @@ export async function completeSelectedAppointment(
     };
   }
 
-  const confirmation = await sendYCloudPatientTextImpl({
+  const confirmation = await sendControlledPatientReplyImpl({
     from,
     to: patientPhone,
     eventId: `${eventId}-booking-confirmed`,
     body,
+    currentText:
+      `Escolha do horário ${selection.scheduledDate} ${selection.scheduledTime}`,
+    recentConversation: [],
+    conversationAction: {
+      action: "respond",
+      allowHoldingReply: false,
+    },
   });
   logPatientReplyResult(
     `${eventId}-booking-confirmed`,
@@ -1111,6 +1125,7 @@ async function completeOpenAIActive({
   from,
   to,
   replyDebounceMarkerStatus,
+  conversationAction,
 }) {
   try {
     const debounceResult = await waitForLatestInboundReply({
@@ -1271,11 +1286,14 @@ async function completeOpenAIActive({
       return;
     }
 
-    const replyResult = await sendYCloudPatientText({
+    const replyResult = await sendControlledPatientReply({
       from,
       to,
       eventId: input.eventId,
       body: activeResult.decision.suggestedReply,
+      currentText: input.text,
+      recentConversation: input.recentConversation,
+      conversationAction,
     });
     logPatientReplyResult(input.eventId, to, replyResult);
 
@@ -1306,6 +1324,55 @@ async function completeOpenAIActive({
       }),
     );
   }
+}
+
+async function sendCurrentInboundReply({
+  from,
+  to,
+  eventId,
+  revisionEventId = eventId,
+  body,
+  currentText,
+  recentConversation,
+  conversationAction,
+  replyDebounceMarkerStatus,
+}) {
+  const debounceResult = await waitForLatestInboundReply({
+    phone: to,
+    eventId: revisionEventId,
+    markerStatus: replyDebounceMarkerStatus,
+    configuredDelayMs: process.env.WHATSAPP_REPLY_DEBOUNCE_MS,
+  });
+
+  if (!debounceResult.shouldProcess) {
+    return {
+      status: "superseded",
+      errorCode: "newer_patient_message",
+    };
+  }
+
+  const finalHumanGuard =
+    await guardAutomaticReplyAgainstHumanRace({
+      phone: to,
+      configuredDelayMs:
+        process.env.WHATSAPP_HUMAN_REPLY_GUARD_MS,
+    });
+  if (!finalHumanGuard.shouldSend) {
+    return {
+      status: "superseded",
+      errorCode: "human_reply_detected",
+    };
+  }
+
+  return sendControlledPatientReply({
+    from,
+    to,
+    eventId,
+    body,
+    currentText,
+    recentConversation,
+    conversationAction,
+  });
 }
 
 export default async (request, context) => {
@@ -1881,10 +1948,20 @@ export default async (request, context) => {
     text,
     conversationHistory,
   );
+  const conversationAction = decideConversationAction({
+    text,
+    messageType: message.type,
+    plan: automationPlan,
+    recentConversation: conversationHistory,
+    humanTakeoverActive,
+    exactDuplicate: suppressExactDuplicate,
+    schedulingRequest: appointmentReviewCandidate,
+  });
   const shouldQueueAppointmentReview =
     delivery.ok &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
+    conversationAction.allowAlert &&
     appointmentReviewCandidate &&
     isAppointmentAlertEnabled() &&
     isReviewAlertConfigured();
@@ -1899,6 +1976,7 @@ export default async (request, context) => {
     delivery.ok &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
+    conversationAction.allowAlert &&
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
     shouldSendReviewAlertForPlan(automationPlan);
@@ -1908,6 +1986,7 @@ export default async (request, context) => {
     delivery.ok &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
+    conversationAction.allowHoldingReply &&
     automationMode === "active" &&
     priceReviewCandidate &&
     shouldQueueReviewAlert;
@@ -1919,6 +1998,7 @@ export default async (request, context) => {
     delivery.ok &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
+    conversationAction.allowHoldingReply &&
     !priceReviewCandidate &&
     Boolean(overnightReason) &&
     outsideHumanServiceHours &&
@@ -1941,7 +2021,8 @@ export default async (request, context) => {
     delivery.ok &&
     humanTakeoverActive &&
     automationMode === "active" &&
-    !suppressExactDuplicate
+    !suppressExactDuplicate &&
+    conversationAction.scheduleHumanResume
   ) {
     const resumeContextPlan = enrichAutomationPlanFromConversation(
       preliminaryAutomationPlan,
@@ -1965,6 +2046,18 @@ export default async (request, context) => {
       ),
     });
     humanResumeScheduleStatus = scheduleResult.status;
+  } else if (
+    delivery.ok &&
+    humanTakeoverActive &&
+    automationMode === "active" &&
+    !suppressExactDuplicate
+  ) {
+    const cancelResult =
+      await cancelPendingHumanResume(phone);
+    humanResumeScheduleStatus =
+      cancelResult.status === "completed"
+        ? "cancelled_no_pending_request"
+        : cancelResult.status;
   }
 
   if (shouldQueueReviewAlert) {
@@ -2013,11 +2106,16 @@ export default async (request, context) => {
       procedure: automationPlan.procedure,
       overnight: outsideHumanServiceHours,
     });
-    const priceHoldingResult = await sendYCloudPatientText({
+    const priceHoldingResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
       to: phone,
       eventId: `${String(eventId)}-price-holding`,
+      revisionEventId: String(eventId),
       body: priceHoldingBody,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
     });
     priceHoldingSent =
       priceHoldingResult.status === "completed";
@@ -2042,11 +2140,16 @@ export default async (request, context) => {
     overnightHandoffQueued = true;
     const overnightBody =
       buildOvernightHandoffMessage(overnightReason);
-    const overnightResult = await sendYCloudPatientText({
+    const overnightResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
       to: phone,
       eventId: `${String(eventId)}-overnight-handoff`,
+      revisionEventId: String(eventId),
       body: overnightBody,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
     });
     overnightHandoffSent =
       overnightResult.status === "completed";
@@ -2077,6 +2180,7 @@ export default async (request, context) => {
       "daniel_greeting_and_alert",
       "reactivation_notice",
     ].includes(automationPlan.route) &&
+    conversationAction.allowAutomaticReply &&
     Boolean(patientReplyBody) &&
     delivery.ok &&
     shouldSendAutomaticPatientReply({
@@ -2090,11 +2194,15 @@ export default async (request, context) => {
 
   if (shouldQueuePatientReply) {
     patientReplyQueued = true;
-    const replyResult = await sendYCloudPatientText({
+    const replyResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
       to: phone,
       eventId: String(eventId),
       body: patientReplyBody,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
     });
     patientReplySent = replyResult.status === "completed";
     logPatientReplyResult(String(eventId), phone, replyResult);
@@ -2125,6 +2233,7 @@ export default async (request, context) => {
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
     automationPlan.route === "standard_reply" &&
+    conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
     !suppressExactDuplicate;
@@ -2135,6 +2244,7 @@ export default async (request, context) => {
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
     automationPlan.route === "standard_reply" &&
+    conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
     !suppressExactDuplicate;
@@ -2201,6 +2311,7 @@ export default async (request, context) => {
       from: String(message.to || ""),
       to: phone,
       replyDebounceMarkerStatus,
+      conversationAction,
     });
 
     aiActiveQueued = true;
@@ -2252,6 +2363,12 @@ export default async (request, context) => {
       automationReplyCode: automationPlan.replyCode,
       automationProfessional: automationPlan.professional,
       automationProcedure: automationPlan.procedure,
+      conversationAction: conversationAction.action,
+      conversationActionReason: conversationAction.reason,
+      conversationUnresolvedRequest:
+        conversationAction.unresolvedRequest,
+      conversationFollowupPolicy:
+        conversationAction.followupPolicy,
       reviewAlertQueued,
       appointmentReviewQueued,
       patientReplyQueued,
@@ -2300,6 +2417,16 @@ export default async (request, context) => {
       mode: automationMode,
       route: automationPlan.route,
       replyCode: automationPlan.replyCode,
+    },
+    conversationAction: {
+      action: conversationAction.action,
+      reason: conversationAction.reason,
+      unresolvedRequest:
+        conversationAction.unresolvedRequest,
+      followupPolicy:
+        conversationAction.followupPolicy,
+      minimumFollowupDelayHours:
+        conversationAction.minimumFollowupDelayHours,
     },
     reviewAlertQueued,
     appointmentReviewQueued,
