@@ -11,6 +11,10 @@ const DIRECT_QUESTION_PATTERN =
   /(?:\?|^(?:como|qual|quais|quanto|quantos|quando|onde|por\s+que|porque|quem|voc[eê]s|tem|h[aá]|pode|posso|ser[aá]|custa|atende|faz)\b)/i;
 const DIRECT_REQUEST_PATTERN =
   /\b(?:quero|gostaria|preciso|poderia|consegue|conseguem|pode|podem|tenho\s+(?:uma\s+)?d[uú]vida|me\s+(?:explica|explique|diz|diga|informa|informe|manda|mande|envia|envie|avisa|avise|confirma|confirme|ajuda|ajude|passa|passe)|verifica|verifique|confirma|confirme|agenda|agende|marca|marque|reserva|reserve)\b/i;
+const EXPLICIT_DEFERRAL_PATTERN =
+  /\b(?:ainda\s+estou\s+(?:pensando|avaliando|decidindo)|vou\s+(?:pensar|avaliar|analisar|decidir)(?:\s+com\s+calma)?|por\s+enquanto\s+(?:vou\s+)?(?:pensar|avaliar|analisar)|qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo)|se\s+eu\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo))\b/i;
+const EXPLICIT_RETURN_LATER_PATTERN =
+  /\b(?:qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo)|se\s+eu\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo))\b/i;
 
 const SENSITIVE_REASONS = new Set([
   "surgical_price_review",
@@ -128,12 +132,38 @@ function lastAssistantTurn(recentConversation) {
     .find((turn) => turn?.role === "assistant");
 }
 
+export function isExplicitDeferralWithoutRequest(text) {
+  const normalizedText = String(text || "").trim();
+  if (!normalizedText) return false;
+
+  return (
+    EXPLICIT_DEFERRAL_PATTERN.test(normalizedText) &&
+    !DIRECT_QUESTION_PATTERN.test(normalizedText) &&
+    !DIRECT_REQUEST_PATTERN.test(normalizedText)
+  );
+}
+
+function isExplicitReturnLaterClosure(text) {
+  const normalizedText = String(text || "").trim();
+  if (!normalizedText) return false;
+
+  return (
+    EXPLICIT_RETURN_LATER_PATTERN.test(normalizedText) &&
+    !DIRECT_QUESTION_PATTERN.test(normalizedText) &&
+    !DIRECT_REQUEST_PATTERN.test(normalizedText)
+  );
+}
+
 export function hasConcreteResponseExpectation(
   text,
   recentConversation = [],
 ) {
   const normalizedText = String(text || "").trim();
-  if (!normalizedText || CLOSING_PATTERN.test(normalizedText)) {
+  if (
+    !normalizedText ||
+    CLOSING_PATTERN.test(normalizedText) ||
+    isExplicitDeferralWithoutRequest(normalizedText)
+  ) {
     return false;
   }
 
@@ -170,7 +200,8 @@ export function classifyHumanResume({
   if (
     preliminaryPlan?.route === "ignore" ||
     enrichedPlan?.route === "ignore" ||
-    CLOSING_PATTERN.test(normalizedText)
+    CLOSING_PATTERN.test(normalizedText) ||
+    isExplicitReturnLaterClosure(normalizedText)
   ) {
     return {
       action: "no_action",

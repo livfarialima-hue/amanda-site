@@ -4,6 +4,7 @@ import {
   buildOvernightHandoffMessage,
   classifyHumanResume,
   hasConcreteResponseExpectation,
+  isExplicitDeferralWithoutRequest,
   isHumanResumeServiceOpen,
   nextHumanResumeServiceTime,
   shouldSendOvernightHandoff,
@@ -89,6 +90,59 @@ test("does not reopen a conversation for a simple acknowledgment", () => {
 
     assert.equal(result.action, "no_action", text);
   }
+});
+
+test("an explicit decision to think and return later closes the conversation", () => {
+  const exactMessage =
+    "Legal, obrigada. Ainda estou pensando mas qlqr coisa volto com vc";
+  const result = classifyHumanResume({
+    text: exactMessage,
+    messageType: "text",
+    preliminaryPlan: {
+      route: "human_review",
+      reason: "outside_conservative_rules",
+      automaticAllowed: false,
+    },
+    enrichedPlan: standardPlan("known_conversation_continuation"),
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Você gostaria que eu verificasse mais alguma informação?",
+      },
+    ],
+  });
+
+  assert.equal(
+    isExplicitDeferralWithoutRequest(exactMessage),
+    true,
+  );
+  assert.equal(
+    hasConcreteResponseExpectation(exactMessage, [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Você gostaria que eu verificasse mais alguma informação?",
+      },
+    ]),
+    false,
+  );
+  assert.equal(result.action, "no_action");
+  assert.equal(
+    result.reason,
+    "conversation_closing_or_ignored",
+  );
+});
+
+test("a deferral followed by a real question is not silenced", () => {
+  const text =
+    "Ainda estou pensando, mas qual é o endereço da clínica?";
+
+  assert.equal(isExplicitDeferralWithoutRequest(text), false);
+  assert.equal(
+    hasConcreteResponseExpectation(text, []),
+    true,
+  );
 });
 
 test("does not hide an actionable request that starts with thanks", () => {

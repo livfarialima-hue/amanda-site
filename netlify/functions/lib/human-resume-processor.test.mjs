@@ -372,3 +372,39 @@ test("an acknowledgment after a human booking confirmation stays silent", async 
     "human_active",
   );
 });
+
+test("thinking and promising to return later stays silent even after a clinic question", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      text:
+        "Legal, obrigada. Ainda estou pensando mas qlqr coisa volto com vc",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "Você gostaria que eu verificasse mais alguma informação?",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text:
+            "Legal, obrigada. Ainda estou pensando mas qlqr coisa volto com vc",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "no_action");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "human_active",
+  );
+});
