@@ -1073,6 +1073,33 @@ async function completeOpenAIShadow(
   }
 }
 
+export async function supersedePendingReplyForIgnoredInbound(
+  {
+    phone,
+    eventId,
+    messageType,
+    text,
+  },
+  {
+    markLatestInboundForReplyImpl =
+      markLatestInboundForReply,
+  } = {},
+) {
+  if (
+    String(messageType || "").toLowerCase() !== "text" ||
+    !String(text || "").trim() ||
+    !phone ||
+    !eventId
+  ) {
+    return { status: "skipped" };
+  }
+
+  return markLatestInboundForReplyImpl({
+    phone,
+    eventId: String(eventId),
+  });
+}
+
 async function completeOpenAIActive({
   input,
   alertInput,
@@ -1545,6 +1572,13 @@ export default async (request, context) => {
 
   if (preliminaryAutomationPlan.route === "ignore") {
     let appointmentReplySyncStatus = "not_detected";
+    const ignoredReplyMarker =
+      await supersedePendingReplyForIgnoredInbound({
+        phone,
+        eventId: String(eventId),
+        messageType: message.type,
+        text,
+      });
 
     if (
       String(message.type || "").toLowerCase() === "text" &&
@@ -1629,6 +1663,8 @@ export default async (request, context) => {
         ignoreReason: preliminaryAutomationPlan.reason,
         leadDelivery: "skipped",
         appointmentReplySyncStatus,
+        replyDebounceMarkerStatus:
+          ignoredReplyMarker.status,
         aiShadowQueued: false,
         aiActiveQueued: false,
       }),
@@ -1640,6 +1676,8 @@ export default async (request, context) => {
       ignoreReason: preliminaryAutomationPlan.reason,
       leadRecorded: false,
       appointmentReplySyncStatus,
+      replyDebounceMarkerStatus:
+        ignoredReplyMarker.status,
       aiShadowQueued: false,
       aiActiveQueued: false,
     });

@@ -100,6 +100,14 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /use human_review/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);
   assert.match(CONVERSATION_GUIDELINES, /Não repita a apresentação ou as credenciais/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /responda somente ao detalhe novo/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /permaneça em silêncio/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /não tiver sido executada/);
 });
 
