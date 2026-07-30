@@ -74,6 +74,13 @@ import {
 import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
+import {
+  applyPatientRelationshipPolicy,
+  buildPatientCommitment,
+  buildRelationshipAlertMessage,
+  patientRelationshipPromptContext,
+  prependRelationshipAlertContext,
+} from "./lib/patient-relationship.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -645,6 +652,8 @@ async function deliverLead(lead) {
     inserted: responseData?.inserted === true,
     updated: responseData?.updated === true,
     humanTakeoverToday: responseData?.humanTakeoverToday === true,
+    patientRelationship:
+      responseData?.patientRelationship || null,
   });
 }
 
@@ -660,6 +669,28 @@ async function recordHumanTakeover(takeover) {
     marked: result.responseData?.marked === true,
     created: result.responseData?.created === true,
   });
+}
+
+async function recordPatientCommitment(commitment) {
+  if (!commitment) {
+    return deliveryResult(true, null, "none", {
+      skipped: true,
+    });
+  }
+
+  return deliverSheetsAction(
+    "record_patient_commitment",
+    { commitment },
+  );
+}
+
+async function resolvePatientCommitments(phone, at) {
+  return deliverSheetsAction(
+    "resolve_patient_commitments",
+    {
+      resolution: { phone, at },
+    },
+  );
 }
 
 async function getAvailableAppointmentSlots(professional) {
@@ -777,9 +808,12 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
   if (planReason === "pending_hospital_quote_followup") {
     return {
       ...input,
-      messageText: buildPendingHospitalQuoteAlert({
-        patientName: input.patientName,
-        patientMessage: input.messageText,
+      messageText: prependRelationshipAlertContext({
+        relationship: input.relationship,
+        messageText: buildPendingHospitalQuoteAlert({
+          patientName: input.patientName,
+          patientMessage: input.messageText,
+        }),
       }),
     };
   }
@@ -794,13 +828,16 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
   if (priceReview) {
     return {
       ...input,
-      messageText: buildPriceReviewAlert({
-        patientName: input.patientName,
-        patientMessage: input.messageText,
-        procedure:
-          decision?.procedure ||
-          plan?.procedure ||
-          null,
+      messageText: prependRelationshipAlertContext({
+        relationship: input.relationship,
+        messageText: buildPriceReviewAlert({
+          patientName: input.patientName,
+          patientMessage: input.messageText,
+          procedure:
+            decision?.procedure ||
+            plan?.procedure ||
+            null,
+        }),
       }),
     };
   }
@@ -809,12 +846,24 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
     decision?.suggestedReply || "",
   ).trim();
 
-  if (!suggestedReply) return input;
+  if (!suggestedReply) {
+    return {
+      ...input,
+      messageText: buildRelationshipAlertMessage({
+        messageText: input.messageText,
+        patientName: input.patientName,
+        relationship: input.relationship,
+      }),
+    };
+  }
 
   return {
     ...input,
     messageText: [
-      input.messageText,
+      prependRelationshipAlertContext({
+        messageText: input.messageText,
+        relationship: input.relationship,
+      }),
       "Sugestão para copiar após conferir:",
       suggestedReply,
     ].filter(Boolean).join("\n"),
@@ -1581,6 +1630,16 @@ export default async (request, context) => {
         ? "updated"
         : "not_found"
       : humanInteractionSync.errorCode;
+    const commitmentResolution =
+      await resolvePatientCommitments(
+        patientPhone,
+        String(
+          echo.sendTime ||
+            echo.createTime ||
+            payload.createTime ||
+            "",
+        ),
+      );
 
     return json({
       received: true,
@@ -1590,6 +1649,8 @@ export default async (request, context) => {
       humanResumeControl: humanResumeControl.status,
       appointmentSyncStatus,
       humanInteractionSyncStatus,
+      commitmentsResolved:
+        commitmentResolution.ok === true,
     });
   }
 
@@ -1756,6 +1817,14 @@ export default async (request, context) => {
   lead.professional = preliminaryAutomationPlan.professional;
 
   const delivery = await deliverLead(lead);
+  const patientRelationship = {
+    ...(delivery.patientRelationship || {}),
+    lookupStatus: delivery.patientRelationship
+      ? "completed"
+      : delivery.ok
+        ? "not_returned"
+        : delivery.errorCode,
+  };
   let conversationHistory = [];
   let conversationHistoryWithCurrent = [];
   let conversationMemoryStatus = "skipped";
@@ -1886,7 +1955,7 @@ export default async (request, context) => {
     delivery.humanTakeoverToday &&
     humanResumeControl?.status !== "bruna_resumed";
 
-  const automationPlan = humanTakeoverActive
+  const baseAutomationPlan = humanTakeoverActive
     ? {
         route: "human_takeover_active",
         reason: "manual_reply_today",
@@ -1933,6 +2002,10 @@ export default async (request, context) => {
         preliminaryAutomationPlan,
         conversationHistory,
       );
+  const automationPlan = applyPatientRelationshipPolicy(
+    baseAutomationPlan,
+    patientRelationship,
+  );
 
   const alertInput = {
     from: String(message.to || ""),
@@ -1940,14 +2013,24 @@ export default async (request, context) => {
     patientName: String(message.customerProfile?.name || ""),
     patientPhone: phone,
     messageText: text,
+    relationship: patientRelationship,
     urgent:
       automationPlan.reason === "possible_urgent_symptoms",
   };
-  const appointmentReviewCandidate = isAppointmentReviewCandidate(
-    automationPlan,
-    text,
-    conversationHistory,
-  );
+  const appointmentReviewCandidate =
+    isAppointmentReviewCandidate(
+      automationPlan,
+      text,
+      conversationHistory,
+    ) &&
+    ![
+      "appointment_scheduled",
+      "consultation_completed",
+      "surgical_planning",
+      "active_postop",
+    ].includes(
+      automationPlan.patientRelationship?.state,
+    );
   const conversationAction = decideConversationAction({
     text,
     messageType: message.type,
@@ -2016,6 +2099,35 @@ export default async (request, context) => {
   let priceHoldingSent = false;
   let aiActiveQueued = false;
   let humanResumeScheduleStatus = "skipped";
+  let commitmentSyncStatus = "skipped";
+
+  const patientCommitment =
+    delivery.ok &&
+    !suppressExactDuplicate &&
+    conversationAction.allowAlert
+      ? buildPatientCommitment({
+          eventId: String(eventId),
+          phone,
+          plan: automationPlan,
+          appointmentReview:
+            shouldQueueAppointmentReview,
+          receivedAt: String(
+            message.sendTime ||
+              payload.createTime ||
+              "",
+          ),
+        })
+      : null;
+
+  if (patientCommitment) {
+    const commitmentResult =
+      await recordPatientCommitment(patientCommitment);
+    commitmentSyncStatus = commitmentResult.ok
+      ? commitmentResult.responseData?.duplicate
+        ? "duplicate"
+        : "completed"
+      : commitmentResult.errorCode;
+  }
 
   if (
     delivery.ok &&
@@ -2264,6 +2376,10 @@ export default async (request, context) => {
         ),
         recentConversation: conversationHistory,
         referralContext,
+        patientRelationship:
+          patientRelationshipPromptContext(
+            patientRelationship,
+          ),
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -2299,6 +2415,10 @@ export default async (request, context) => {
         ),
         recentConversation: conversationHistory,
         referralContext,
+        patientRelationship:
+          patientRelationshipPromptContext(
+            patientRelationship,
+          ),
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -2350,6 +2470,7 @@ export default async (request, context) => {
       humanResumeControl:
         humanResumeControl?.status || null,
       humanResumeScheduleStatus,
+      commitmentSyncStatus,
       conversationMemoryStatus,
       patientAppointmentReplySyncStatus,
       conversationExpired,
@@ -2363,6 +2484,10 @@ export default async (request, context) => {
       automationReplyCode: automationPlan.replyCode,
       automationProfessional: automationPlan.professional,
       automationProcedure: automationPlan.procedure,
+      patientRelationship:
+        automationPlan.patientRelationship?.state || "unknown",
+      patientRelationshipLookup:
+        patientRelationship.lookupStatus || "unknown",
       conversationAction: conversationAction.action,
       conversationActionReason: conversationAction.reason,
       conversationUnresolvedRequest:
@@ -2406,6 +2531,7 @@ export default async (request, context) => {
     humanResumeControl:
       humanResumeControl?.status || null,
     humanResumeScheduleStatus,
+    commitmentSyncStatus,
     duplicate: delivery.duplicate === true,
     duplicateReason: delivery.duplicateReason,
     recoveredExactDuplicate,
@@ -2417,6 +2543,8 @@ export default async (request, context) => {
       mode: automationMode,
       route: automationPlan.route,
       replyCode: automationPlan.replyCode,
+      patientRelationship:
+        automationPlan.patientRelationship?.state || "unknown",
     },
     conversationAction: {
       action: conversationAction.action,

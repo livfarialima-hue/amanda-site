@@ -410,6 +410,234 @@ function upsertConsultaRecebida_(input) {
   return result;
 }
 
+function obterRelacionamentoPaciente_(input) {
+  const phone = normalizarTelefoneConsultasSync_(
+    input.phone,
+  );
+
+  if (!phone) {
+    return relacionamentoPacienteDesconhecido_();
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(
+    CONSULTAS_SYNC_CONFIG.spreadsheetId,
+  );
+  const sheet = spreadsheet.getSheetByName(
+    CONSULTAS_SYNC_CONFIG.consultationsSheetName,
+  );
+
+  if (!sheet || sheet.getLastRow() < 2) {
+    return relacionamentoPacienteDesconhecido_();
+  }
+
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosConsultas_(headers);
+  const values = sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      sheet.getLastColumn(),
+    )
+    .getValues();
+  let best = null;
+
+  values.forEach(function (row, index) {
+    const rowPhone = normalizarTelefoneConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.phone,
+      ),
+    );
+
+    if (!rowPhone || rowPhone !== phone) return;
+
+    const completedAt = dataConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.completedDate,
+      ),
+    );
+    const scheduledAt = dataConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.scheduledDate,
+      ),
+    );
+    const lastHumanAt = dataConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.lastHumanInteractionAt,
+      ),
+    );
+    const timestamp = Math.max(
+      completedAt ? completedAt.getTime() : 0,
+      scheduledAt ? scheduledAt.getTime() : 0,
+      lastHumanAt ? lastHumanAt.getTime() : 0,
+      index + 1,
+    );
+
+    if (!best || timestamp >= best.timestamp) {
+      best = {
+        row: row,
+        timestamp: timestamp,
+        completedAt: completedAt,
+        scheduledAt: scheduledAt,
+      };
+    }
+  });
+
+  if (!best) {
+    return relacionamentoPacienteDesconhecido_();
+  }
+
+  const status = normalizarTextoConsultasSync_(
+    valorDaLinhaConsultas_(
+      best.row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.status,
+    ),
+  );
+  const nextAction = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      best.row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+    ),
+    220,
+  );
+  const context = normalizarTextoConsultasSync_(
+    [status, nextAction].join(" "),
+  );
+  const state = classificarEstadoRelacionamentoPaciente_({
+    status: status,
+    context: context,
+    completedAt: best.completedAt,
+    scheduledAt: best.scheduledAt,
+    now: new Date(),
+  });
+  const pendingTaskType =
+    classificarPendenciaRelacionamentoPaciente_(context);
+  const normalizedNextAction =
+    normalizarTextoConsultasSync_(nextAction);
+  const hasPendingHumanTask =
+    Boolean(normalizedNextAction) &&
+    !/^(?:nenhuma|nenhum|sem pendencia|concluida|concluido|encerrada|encerrado)$/.test(
+      normalizedNextAction,
+    );
+
+  return {
+    found: true,
+    relationshipState: state,
+    patientName: textoConsultasSync_(
+      valorDaLinhaConsultas_(
+        best.row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.name,
+      ),
+      120,
+    ),
+    professional: textoConsultasSync_(
+      valorDaLinhaConsultas_(
+        best.row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.professional,
+      ),
+      80,
+    ),
+    hasPendingHumanTask: hasPendingHumanTask,
+    pendingTaskType: hasPendingHumanTask
+      ? pendingTaskType
+      : "",
+  };
+}
+
+function relacionamentoPacienteDesconhecido_() {
+  return {
+    found: false,
+    relationshipState: "unknown",
+    patientName: "",
+    professional: "",
+    hasPendingHumanTask: false,
+    pendingTaskType: "",
+  };
+}
+
+function classificarEstadoRelacionamentoPaciente_(input) {
+  const context = normalizarTextoConsultasSync_(
+    input.context,
+  );
+
+  if (
+    /pos operatorio|pos cirurgia|operad|cirurgia realizada|curativo|dreno|retorno pos/.test(
+      context,
+    )
+  ) {
+    return "active_postop";
+  }
+
+  if (
+    /planejamento|orcamento.{0,30}hospital|valor.{0,30}hospital|pre operatorio|exames pre|cirurgia agendada|aguardando cirurgia|programar cirurgia/.test(
+      context,
+    )
+  ) {
+    return "surgical_planning";
+  }
+
+  if (
+    /consulta agendada|agendada|confirmada/.test(
+      normalizarTextoConsultasSync_(input.status),
+    )
+  ) {
+    return "appointment_scheduled";
+  }
+
+  if (
+    statusConsultaRealizada_(
+      normalizarTextoConsultasSync_(input.status),
+    )
+  ) {
+    const completedAt = dataConsultasSync_(
+      input.completedAt,
+    );
+    const now = dataConsultasSync_(input.now) || new Date();
+    const recent =
+      completedAt &&
+      now.getTime() - completedAt.getTime() <=
+        45 * 24 * 60 * 60 * 1000;
+
+    return recent
+      ? "consultation_completed"
+      : "former_patient";
+  }
+
+  return "known_patient";
+}
+
+function classificarPendenciaRelacionamentoPaciente_(context) {
+  const normalized = normalizarTextoConsultasSync_(context);
+
+  if (/hospital|orcamento|valor/.test(normalized)) {
+    return "quote_or_price";
+  }
+  if (/agenda|horario|data|confirm/.test(normalized)) {
+    return "scheduling";
+  }
+  if (/document|exame|laudo|termo/.test(normalized)) {
+    return "documents_or_exams";
+  }
+  if (/cirurg|pre operatorio|pos operatorio|retorno/.test(normalized)) {
+    return "care_journey";
+  }
+  return normalized ? "other" : "";
+}
+
 function reservarHorarioEAgendarConsulta_(input) {
   const spreadsheet = SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,

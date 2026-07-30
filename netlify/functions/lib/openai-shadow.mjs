@@ -11,6 +11,17 @@ const MAX_PROFILE_NAME_LENGTH = 120;
 const MAX_RECENT_TURNS = 8;
 const MAX_RECENT_TURN_LENGTH = 500;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
+const PATIENT_RELATIONSHIP_STATES = new Set([
+  "new_lead",
+  "engaged_lead",
+  "appointment_scheduled",
+  "consultation_completed",
+  "surgical_planning",
+  "active_postop",
+  "former_patient",
+  "known_patient",
+  "unknown",
+]);
 
 const ROUTES = [
   "standard_reply",
@@ -161,6 +172,32 @@ export function applyKnownProfileNameGuard(
   };
 }
 
+export function applyReturningPatientReplyGuard(
+  decision,
+  patientRelationship,
+) {
+  if (
+    patientRelationship?.knownPatient !== true ||
+    decision?.route !== "standard_reply" ||
+    !decision?.suggestedReply
+  ) {
+    return decision;
+  }
+
+  const suggestedReply = String(decision.suggestedReply)
+    .replace(
+      /^(Ol[aá](?:,\s*[^!?.]+)?[!,.]?\s*)?(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
+      (_match, greeting) =>
+        `${greeting || ""}Que bom falar com você novamente. `,
+    )
+    .trim();
+
+  return {
+    ...decision,
+    suggestedReply,
+  };
+}
+
 function normalizeReferralContext(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
 
@@ -172,6 +209,31 @@ function normalizeReferralContext(value) {
   }
 
   return Object.keys(normalized).length ? normalized : null;
+}
+
+function normalizePatientRelationshipContext(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {
+      knownPatient: false,
+      state: "unknown",
+      label: "histórico não localizado",
+      hasPendingHumanTask: false,
+    };
+  }
+
+  const state = String(value.state || "unknown")
+    .trim()
+    .toLowerCase();
+
+  return {
+    knownPatient: value.knownPatient === true,
+    state: PATIENT_RELATIONSHIP_STATES.has(state)
+      ? state
+      : "unknown",
+    label: limitText(value.label, 80),
+    hasPendingHumanTask:
+      value.hasPendingHumanTask === true,
+  };
 }
 
 function extractOutputText(response) {
@@ -286,10 +348,13 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
   return result("completed", {
     model: String(response?.model || fallbackModel),
     decision: applyUrgencyGuard(
-      applyKnownProfileNameGuard(
-        decision,
-        options.patientProfileName,
-        options.hasConversationHistory,
+      applyReturningPatientReplyGuard(
+        applyKnownProfileNameGuard(
+          decision,
+          options.patientProfileName,
+          options.hasConversationHistory,
+        ),
+        options.patientRelationship,
       ),
       options.deterministicUrgent,
     ),
@@ -307,6 +372,7 @@ export async function runOpenAIShadow(
     patientProfileName,
     recentConversation,
     referralContext,
+    patientRelationship,
     deterministicUrgent = false,
   },
   { env = process.env, fetchImpl = fetch } = {},
@@ -326,12 +392,24 @@ export async function runOpenAIShadow(
   const normalizedConversation = normalizeRecentConversation(
     recentConversation,
   );
-  const siteResource = getRecommendedSiteResource({
-    procedure,
-    referenceCategory,
-    recentConversation: normalizedConversation,
-    currentMessage: text,
-  });
+  const normalizedPatientRelationship =
+    normalizePatientRelationshipContext(
+      patientRelationship,
+    );
+  const explicitResourceRequest =
+    /\b(?:site|link|material|casos?|antes\s+e\s+depois|resultados?)\b/i.test(
+      String(text || ""),
+    );
+  const siteResource =
+    normalizedPatientRelationship.knownPatient &&
+    !explicitResourceRequest
+      ? null
+      : getRecommendedSiteResource({
+          procedure,
+          referenceCategory,
+          recentConversation: normalizedConversation,
+          currentMessage: text,
+        });
 
   try {
     const response = await fetchImpl(OPENAI_RESPONSES_URL, {
@@ -363,6 +441,8 @@ export async function runOpenAIShadow(
             MAX_PROFILE_NAME_LENGTH,
           ),
           metaAdContext: normalizeReferralContext(referralContext),
+          patientRelationship:
+            normalizedPatientRelationship,
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),
@@ -401,6 +481,8 @@ export async function runOpenAIShadow(
       deterministicUrgent,
       patientProfileName,
       hasConversationHistory: normalizedConversation.length > 0,
+      patientRelationship:
+        normalizedPatientRelationship,
     });
   } catch (error) {
     return result("failed", {

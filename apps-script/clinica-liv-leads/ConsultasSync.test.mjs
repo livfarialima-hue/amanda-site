@@ -114,3 +114,47 @@ test("maps headers despite invisible spacing and punctuation changes", () => {
 
   assert.equal(columns["Telefone (E.164)"], 1);
 });
+
+test("classifies the patient journey without exposing clinical detail", () => {
+  assert.equal(
+    context.classificarEstadoRelacionamentoPaciente_({
+      status: "Consulta agendada",
+      context: "",
+      now: new Date("2026-07-30T12:00:00Z"),
+    }),
+    "appointment_scheduled",
+  );
+  assert.equal(
+    context.classificarEstadoRelacionamentoPaciente_({
+      status: "Consulta realizada",
+      context: "aguardando orçamento do hospital",
+      completedAt: new Date("2026-07-29T12:00:00Z"),
+      now: new Date("2026-07-30T12:00:00Z"),
+    }),
+    "surgical_planning",
+  );
+  assert.equal(
+    context.classificarEstadoRelacionamentoPaciente_({
+      status: "Consulta realizada",
+      context: "",
+      completedAt: new Date("2025-07-29T12:00:00Z"),
+      now: new Date("2026-07-30T12:00:00Z"),
+    }),
+    "former_patient",
+  );
+});
+
+test("classifies only the operational type of a pending task", () => {
+  assert.equal(
+    context.classificarPendenciaRelacionamentoPaciente_(
+      "Confirmar valor do hospital",
+    ),
+    "quote_or_price",
+  );
+  assert.equal(
+    context.classificarPendenciaRelacionamentoPaciente_(
+      "Aguardar laudo e exames",
+    ),
+    "documents_or_exams",
+  );
+});

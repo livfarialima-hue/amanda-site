@@ -221,3 +221,22 @@ test("playbook adapts to stage and does not manufacture conversational progress"
     /mencione pelo menos um elemento concreto do que ela disse/,
   );
 });
+
+test("playbook separates returning patients from acquisition leads", () => {
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /patientRelationship informa somente o estado operacional/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não trate a pessoa como lead novo/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /appointment_scheduled, consultation_completed, surgical_planning ou active_postop/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não envie site espontaneamente/i,
+  );
+});

@@ -5,6 +5,7 @@ const RETOMADAS_CONFIG = Object.freeze({
   planilhaLeads: "Google Ads - Conversões",
   planilhaConsultas: "Consultas",
   planilhaControle: "_WHATSAPP_RETOMADAS",
+  planilhaCompromissos: "_WHATSAPP_COMPROMISSOS",
   fusoHorario: "America/Sao_Paulo",
   horaEmail: 8,
   minutoEmail: 0,
@@ -273,6 +274,219 @@ function testarEmailDiarioRetomadas() {
   return enviarEmailDiarioRetomadasInterno_(new Date());
 }
 
+function obterPlanilhaCompromissos_(arquivo) {
+  let planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaCompromissos,
+  );
+
+  if (planilha) return planilha;
+
+  planilha = arquivo.insertSheet(
+    RETOMADAS_CONFIG.planilhaCompromissos,
+  );
+  planilha
+    .getRange(1, 1, 1, 10)
+    .setValues([[
+      "Event ID",
+      "Telefone",
+      "Tipo",
+      "Resumo operacional",
+      "Responsável",
+      "Criado em",
+      "Prazo",
+      "Status",
+      "Resolvido em",
+      "Origem",
+    ]]);
+  planilha.setFrozenRows(1);
+  planilha.hideSheet();
+
+  return planilha;
+}
+
+function registrarCompromissoPaciente_(input) {
+  const telefone = normalizarTelefoneRetomadas_(
+    input.phone,
+  );
+  const eventId = String(input.eventId || "").trim();
+
+  if (!telefone || !eventId) {
+    return { ok: false, error: "invalid_commitment" };
+  }
+
+  const arquivo = SpreadsheetApp.openById(
+    CONFIG.spreadsheetId,
+  );
+  const planilha = obterPlanilhaCompromissos_(arquivo);
+  const ultimaLinha = planilha.getLastRow();
+  const kind = textoCompromissoPaciente_(
+    input.kind,
+    80,
+  );
+
+  if (ultimaLinha >= 2) {
+    const compromissos = planilha
+      .getRange(2, 1, ultimaLinha - 1, 8)
+      .getDisplayValues();
+    const duplicado = compromissos.some(function (linha) {
+      return (
+        String(linha[0] || "").trim() === eventId ||
+        (
+          normalizarTelefoneRetomadas_(linha[1]) === telefone &&
+          normalizarTextoRetomadas_(linha[2]) ===
+            normalizarTextoRetomadas_(kind) &&
+          normalizarTextoRetomadas_(linha[7]) === "pendente"
+        )
+      );
+    });
+
+    if (duplicado) {
+      return { ok: true, duplicate: true };
+    }
+  }
+
+  const agora = new Date();
+  const prazo =
+    dataRetomadaValida_(input.dueAt) ||
+    new Date(agora.getTime() + 4 * 60 * 60 * 1000);
+  planilha.appendRow([
+    eventId,
+    telefone,
+    kind,
+    textoCompromissoPaciente_(input.summary, 180),
+    textoCompromissoPaciente_(
+      input.owner || "Amanda/equipe",
+      80,
+    ),
+    agora,
+    prazo,
+    "Pendente",
+    "",
+    textoCompromissoPaciente_(
+      input.source || "WhatsApp",
+      80,
+    ),
+  ]);
+
+  return { ok: true, created: true };
+}
+
+function resolverCompromissosPaciente_(input) {
+  const telefone = normalizarTelefoneRetomadas_(
+    input.phone,
+  );
+
+  if (!telefone) {
+    return { ok: false, error: "invalid_phone" };
+  }
+
+  const arquivo = SpreadsheetApp.openById(
+    CONFIG.spreadsheetId,
+  );
+  const planilha = obterPlanilhaCompromissos_(arquivo);
+
+  if (planilha.getLastRow() < 2) {
+    return { ok: true, resolved: 0 };
+  }
+
+  const valores = planilha
+    .getRange(
+      2,
+      1,
+      planilha.getLastRow() - 1,
+      10,
+    )
+    .getValues();
+  let resolvidos = 0;
+  const agora =
+    dataRetomadaValida_(input.at) || new Date();
+
+  valores.forEach(function (linha, indice) {
+    if (
+      normalizarTelefoneRetomadas_(linha[1]) !== telefone ||
+      normalizarTextoRetomadas_(linha[7]) !== "pendente"
+    ) {
+      return;
+    }
+
+    planilha.getRange(indice + 2, 8).setValue("Resolvido");
+    planilha.getRange(indice + 2, 9).setValue(agora);
+    resolvidos += 1;
+  });
+
+  return { ok: true, resolved: resolvidos };
+}
+
+function carregarAgendaCompromissosPendentes_(arquivo, agora) {
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaCompromissos,
+  );
+
+  if (!planilha || planilha.getLastRow() < 2) return [];
+
+  const hoje = formatarDataRetomadas_(agora, "yyyy-MM-dd");
+  const valores = planilha
+    .getRange(
+      2,
+      1,
+      planilha.getLastRow() - 1,
+      10,
+    )
+    .getValues();
+
+  return valores.reduce(function (itens, linha) {
+    if (normalizarTextoRetomadas_(linha[7]) !== "pendente") {
+      return itens;
+    }
+
+    const prazo = dataRetomadaValida_(linha[6]);
+    if (!prazo) return itens;
+
+    const diasAte = diferencaDiasLocaisRetomadas_(
+      agora,
+      prazo,
+    );
+    if (diasAte > 7) return itens;
+
+    const tipo = String(linha[2] || "pendência");
+    const resumo =
+      String(linha[3] || "").trim() ||
+      "Solicitação aguardando retorno humano.";
+    const primeiroNome = "paciente";
+
+    itens.push({
+      categoria:
+        diasAte < 0
+          ? "Pendência humana atrasada"
+          : "Pendência humana",
+      telefone: normalizarTelefoneRetomadas_(linha[1]),
+      nome: "",
+      horario: formatarDataRetomadas_(prazo, "HH:mm"),
+      dataReferencia: formatarDataRetomadas_(
+        prazo,
+        "yyyy-MM-dd",
+      ),
+      contexto: tipo + " — " + resumo,
+      responsavel:
+        String(linha[4] || "").trim() || "Amanda/equipe",
+      automatico: false,
+      futuro:
+        formatarDataRetomadas_(prazo, "yyyy-MM-dd") > hoje,
+      prioridade: diasAte < 0 ? 0 : 1,
+      sugestao:
+        "Oi! Retomando o ponto que ficou pendente: já conferimos a informação e podemos seguir por aqui. Obrigada por aguardar.",
+    });
+
+    return itens;
+  }, []);
+}
+
+function textoCompromissoPaciente_(valor, limite) {
+  return Array.from(String(valor || "").trim())
+    .slice(0, limite)
+    .join("");
+}
+
 function enviarEmailDiarioRetomadasInterno_(agora) {
   const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const planilhaLeads = arquivo.getSheetByName(
@@ -293,9 +507,21 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     throw new Error("Histórico de mensagens não encontrado.");
   }
 
-  const agendaCuidados = planilhaConsultas
+  const agendaCuidadosConsultas = planilhaConsultas
     ? criarAgendaCuidadosConsultas_(planilhaConsultas, agora)
     : [];
+  const agendaCuidados = agendaCuidadosConsultas.concat(
+    carregarAgendaCompromissosPendentes_(arquivo, agora),
+  );
+  const telefonesComCompromisso = new Set(
+    agendaCuidados
+      .filter(function (item) {
+        return /^Pendência humana/.test(item.categoria);
+      })
+      .map(function (item) {
+        return item.telefone;
+      }),
+  );
   const planilhaControle = obterPlanilhaControleRetomadas_(arquivo);
   const dataLocal = formatarDataRetomadas_(agora, "yyyy-MM-dd");
   const chavesEnviadasHoje = obterChavesRetomadasEnviadas_(
@@ -311,7 +537,11 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
   Object.keys(conversasPorTelefone).forEach(function (telefone) {
     const lead = leadsPorTelefone[telefone];
 
-    if (!lead || statusRetomadaEncerrado_(lead.status)) {
+    if (
+      !lead ||
+      statusRetomadaEncerrado_(lead.status) ||
+      telefonesComCompromisso.has(telefone)
+    ) {
       return;
     }
 
@@ -529,6 +759,10 @@ function criarCandidatoRetomada_(
     return null;
   }
 
+  if (conversaTemPromessaHumanaPendente_(conversa)) {
+    return null;
+  }
+
   const diasSemResposta = diferencaDiasLocaisRetomadas_(
     ultimaMensagem.dataHora,
     agora,
@@ -542,10 +776,13 @@ function criarCandidatoRetomada_(
   }
 
   const quantidadeContatos = contarContatosSaidaRetomadas_(conversa);
+  const engajamento = classificarEngajamentoRetomada_(conversa);
+  const maximoContatos =
+    engajamento === "engajado" ? 3 : 2;
 
   if (
     quantidadeContatos < 1 ||
-    quantidadeContatos > RETOMADAS_ETAPAS.length
+    quantidadeContatos > maximoContatos
   ) {
     return null;
   }
@@ -613,6 +850,7 @@ function criarCandidatoRetomada_(
     prioritario: prioritario,
     contextoAgenda: contextoAgenda,
     contextoPreco: contextoPreco,
+    engajamento: engajamento,
     horario: "",
     sugestao: sugerirMensagemRetomada_(
       etapa.numero,
@@ -864,31 +1102,32 @@ function mensagemSemRetomada_(texto) {
 }
 
 function retornoFuturoRecente_(conversa, agora) {
-  const limite =
-    RETOMADAS_CONFIG.minimoHorasAposPromessaRetorno *
-    60 *
-    60 *
-    1000;
-
-  return conversa.some(function (mensagem) {
-    if (mensagem.direcao !== "IN") {
-      return false;
-    }
-
-    const instante = dataRetomadaValida_(mensagem.dataHora);
-
-    if (!instante) {
-      return false;
-    }
-
-    const tempoDecorrido = agora.getTime() - instante.getTime();
-
-    return (
-      tempoDecorrido >= 0 &&
-      tempoDecorrido < limite &&
-      mensagemIndicaRetornoFuturo_(mensagem.texto)
-    );
+  const entradas = conversa.filter(function (mensagem) {
+    return mensagem.direcao === "IN";
   });
+
+  if (!entradas.length) return false;
+
+  const ultimaEntrada = entradas[entradas.length - 1];
+
+  if (mensagemIndicaRetornoFuturo_(ultimaEntrada.texto)) {
+    return true;
+  }
+
+  if (!mensagemIndicaReflexao_(ultimaEntrada.texto)) {
+    return false;
+  }
+
+  const instante = dataRetomadaValida_(
+    ultimaEntrada.dataHora,
+  );
+  if (!instante) return false;
+
+  const limite = 96 * 60 * 60 * 1000;
+  const tempoDecorrido =
+    agora.getTime() - instante.getTime();
+
+  return tempoDecorrido >= 0 && tempoDecorrido < limite;
 }
 
 function mensagemIndicaRetornoFuturo_(texto) {
@@ -897,6 +1136,58 @@ function mensagemIndicaRetornoFuturo_(texto) {
   return /(?:vou|irei|pretendo) (?:entrar em contato|chamar|falar|retornar|procurar)|(?:entro|entrarei|retorno|retornarei|chamo|falarei|procuro|procurarei) (?:em contato|depois|mais tarde|voces|quando)|(?:te|lhes?) (?:chamo|aviso|procuro)|(?:falo|volto a falar) com (?:voces|a clinica)|mais pra frente|quando (?:eu )?(?:decidir|puder|conseguir)/.test(
     normalizado,
   );
+}
+
+function mensagemIndicaReflexao_(texto) {
+  const normalizado = normalizarTextoRetomadas_(texto);
+
+  return /vou (?:pensar|avaliar|ver com calma|conversar com)|preciso (?:pensar|avaliar|conversar com)|ainda estou (?:pensando|avaliando)/.test(
+    normalizado,
+  );
+}
+
+function conversaTemPromessaHumanaPendente_(conversa) {
+  if (!conversa.length) return false;
+
+  const ultima = conversa[conversa.length - 1];
+  if (ultima.direcao !== "OUT") return false;
+
+  const texto = normalizarTextoRetomadas_(ultima.texto);
+
+  return /vou (?:confirmar|verificar|checar|alinhar)|estou (?:confirmando|verificando|checando)|retorn(?:o|aremos?) (?:assim que|com|pela manha)|vou falar com a equipe/.test(
+    texto,
+  );
+}
+
+function classificarEngajamentoRetomada_(conversa) {
+  const entradas = conversa.filter(function (mensagem) {
+    return (
+      mensagem.direcao === "IN" &&
+      String(mensagem.texto || "").trim()
+    );
+  });
+  const caracteres = entradas.reduce(function (total, mensagem) {
+    return total + String(mensagem.texto || "").trim().length;
+  }, 0);
+  const contexto = normalizarTextoRetomadas_(
+    entradas
+      .map(function (mensagem) {
+        return mensagem.texto;
+      })
+      .join(" "),
+  );
+
+  if (
+    entradas.length >= 2 ||
+    caracteres >= 80 ||
+    /valor|preco|orcamento|agenda|horario|disponibilidade/.test(
+      contexto,
+    )
+  ) {
+    return "engajado";
+  }
+
+  return "passivo";
 }
 
 function statusRetomadaEncerrado_(status) {

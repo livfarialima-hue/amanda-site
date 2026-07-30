@@ -72,7 +72,10 @@ function doPost(e) {
       body.action !== "update_appointment_status" &&
       body.action !== "get_available_slots" &&
       body.action !== "reserve_appointment_slot" &&
-      body.action !== "send_review_alert_email"
+      body.action !== "send_review_alert_email" &&
+      body.action !== "get_patient_relationship" &&
+      body.action !== "record_patient_commitment" &&
+      body.action !== "resolve_patient_commitments"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
     }
@@ -194,6 +197,66 @@ function doPost(e) {
       });
     }
 
+    if (body.action === "get_patient_relationship") {
+      stage = "get_patient_relationship";
+      const relationshipResult =
+        obterRelacionamentoPaciente_(
+          body.patient || {},
+        );
+
+      return json_({
+        ok: true,
+        relationship: relationshipResult,
+      });
+    }
+
+    if (body.action === "record_patient_commitment") {
+      stage = "record_patient_commitment";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const commitmentResult =
+        registrarCompromissoPaciente_(
+          body.commitment || {},
+        );
+
+      return json_({
+        ok: commitmentResult.ok === true,
+        ...commitmentResult,
+      });
+    }
+
+    if (body.action === "resolve_patient_commitments") {
+      stage = "resolve_patient_commitments";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const resolutionResult =
+        resolverCompromissosPaciente_(
+          body.resolution || {},
+        );
+
+      return json_({
+        ok: resolutionResult.ok === true,
+        ...resolutionResult,
+      });
+    }
+
+    stage = "get_patient_relationship";
+    const patientRelationship =
+      typeof obterRelacionamentoPaciente_ === "function"
+        ? obterRelacionamentoPaciente_({
+            phone: body.lead && body.lead.phone,
+          })
+        : {
+            found: false,
+            relationshipState: "unknown",
+          };
+
     stage = "normalize_lead";
     const lead = normalizeLead_(body.lead || {});
 
@@ -243,6 +306,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        patientRelationship,
       });
     }
 
@@ -269,6 +333,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        patientRelationship,
       });
     }
 
@@ -297,6 +362,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        patientRelationship,
       });
     }
 
@@ -324,6 +390,7 @@ function doPost(e) {
       eventId: lead.eventId,
       messageId: lead.messageId,
       humanTakeoverToday,
+      patientRelationship,
     });
   } catch (error) {
     console.error(error && error.stack ? error.stack : error);

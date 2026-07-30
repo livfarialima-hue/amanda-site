@@ -187,6 +187,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       primeiroNome: primeiroNome,
       tema: tema,
       status: status,
+      proximaAcao: proximaAcao,
       retomadaEncerrada: retomadaEncerrada,
       adicionar: adicionar,
     });
@@ -675,11 +676,16 @@ function adicionarFollowUpConsultaAgendaCuidados_(entrada) {
       ultimaRetomada,
       entrada.agora,
     ) < 7;
+  const avaliandoProximoPasso =
+    /pens|avali|decid|cirurg|orcament|proximo passo|retom/.test(
+      normalizarTextoRetomadas_(entrada.proximaAcao),
+    );
 
   if (
     diasDesdeConsulta >= 14 &&
     diasDesdeConsulta <= 17 &&
-    !houveContatoRecente
+    !houveContatoRecente &&
+    avaliandoProximoPasso
   ) {
     entrada.adicionar({
       categoria: "Follow-up pós-consulta — 14 dias",
@@ -911,9 +917,7 @@ function adicionarClienteAntigoAgendaCuidados_(entrada) {
     contexto:
       "Reativação manual e personalizada após " +
       intervalo +
-      " dias, sem oferta automática" +
-      (entrada.tema ? " — histórico: " + entrada.tema : "") +
-      ".",
+      " dias, sem oferta automática e sem expor o histórico clínico.",
     responsavel: "Amanda/equipe",
     automatico: false,
     futuro: false,
@@ -921,7 +925,7 @@ function adicionarClienteAntigoAgendaCuidados_(entrada) {
     sugestao:
       "Oi, " +
       entrada.primeiroNome +
-      "! Faz algum tempo desde o seu contato com a Clínica LIV e lembramos de você. Como você está? Se quiser atualizar alguma dúvida ou retomar seu acompanhamento, será um prazer te orientar por aqui.",
+      "! Tudo bem? Lembrei de você e quis saber como está. Se fizer sentido, podemos ajudar a retomar seu acompanhamento ou esclarecer alguma dúvida, com calma e sem compromisso.",
   });
 }
 

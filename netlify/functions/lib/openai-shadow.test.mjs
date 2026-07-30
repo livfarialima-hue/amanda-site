@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
+  applyReturningPatientReplyGuard,
   createSafetyIdentifier,
   parseOpenAIShadowResponse,
   runOpenAIShadow,
@@ -24,6 +25,28 @@ function validDecision(overrides = {}) {
     ...overrides,
   };
 }
+
+test("returning-patient guard removes a repeated Bruna introduction", () => {
+  const guarded = applyReturningPatientReplyGuard(
+    validDecision({
+      suggestedReply:
+        "Olá, Ana! Eu sou a Bruna, da Clínica LIV Faria Lima. Como posso ajudar?",
+    }),
+    {
+      knownPatient: true,
+      state: "former_patient",
+    },
+  );
+
+  assert.match(
+    guarded.suggestedReply,
+    /Que bom falar com você novamente/i,
+  );
+  assert.doesNotMatch(
+    guarded.suggestedReply,
+    /Eu sou a Bruna/i,
+  );
+});
 
 function validResponse(decision = validDecision()) {
   return {

@@ -121,6 +121,7 @@ test("scheduling request sends a three-slot suggestion to the reviewer only", as
       ),
       [
         "append_lead",
+        "record_patient_commitment",
         "get_available_slots",
         "send_review_alert_email",
       ],

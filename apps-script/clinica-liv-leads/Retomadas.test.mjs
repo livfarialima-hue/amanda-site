@@ -57,7 +57,7 @@ test("sends the daily follow-up email to Amanda and Daniel", () => {
   );
 });
 
-test("waits at least 24 hours when the patient says she will return", () => {
+test("keeps follow-up suppressed when the patient says she will return", () => {
   const patientMessageAt = new Date("2026-07-28T12:00:00.000Z");
   const conversationWithPromise = [
     {
@@ -82,14 +82,95 @@ test("waits at least 24 hours when the patient says she will return", () => {
   assert.equal(
     context.retornoFuturoRecente_(
       conversationWithPromise,
-      new Date("2026-07-29T12:00:00.000Z"),
+      new Date("2026-08-29T12:00:00.000Z"),
     ),
-    false,
+    true,
   );
   assert.equal(
     context.mensagemIndicaRetornoFuturo_(
       "Mais pra frente eu entro em contato com vocês.",
     ),
+    true,
+  );
+});
+
+test("a later patient message reopens a previously deferred conversation", () => {
+  const conversationWithReturn = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-07-20T12:00:00.000Z"),
+      texto: "Quando eu decidir, entro em contato.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-07-20T12:01:00.000Z"),
+      texto: "Claro, fique à vontade.",
+    },
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-07-30T12:00:00.000Z"),
+      texto: "Agora gostaria de ver horários.",
+    },
+  ];
+
+  assert.equal(
+    context.retornoFuturoRecente_(
+      conversationWithReturn,
+      new Date("2026-07-30T13:00:00.000Z"),
+    ),
+    false,
+  );
+});
+
+test("reflection receives a four-day pause without permanent suppression", () => {
+  const conversationThinking = [{
+    direcao: "IN",
+    dataHora: new Date("2026-07-28T12:00:00.000Z"),
+    texto: "Vou pensar com calma.",
+  }];
+
+  assert.equal(
+    context.retornoFuturoRecente_(
+      conversationThinking,
+      new Date("2026-07-30T12:00:00.000Z"),
+    ),
+    true,
+  );
+  assert.equal(
+    context.retornoFuturoRecente_(
+      conversationThinking,
+      new Date("2026-08-02T12:00:01.000Z"),
+    ),
+    false,
+  );
+});
+
+test("engagement controls the maximum follow-up budget", () => {
+  assert.equal(
+    context.classificarEngajamentoRetomada_([
+      { direcao: "IN", texto: "Quero saber mais" },
+      { direcao: "OUT", texto: "Claro" },
+    ]),
+    "passivo",
+  );
+  assert.equal(
+    context.classificarEngajamentoRetomada_([
+      { direcao: "IN", texto: "Qual o valor?" },
+      { direcao: "OUT", texto: "Vou confirmar" },
+    ]),
+    "engajado",
+  );
+});
+
+test("a human promise blocks commercial follow-up", () => {
+  assert.equal(
+    context.conversaTemPromessaHumanaPendente_([
+      { direcao: "IN", texto: "Qual o valor?" },
+      {
+        direcao: "OUT",
+        texto: "Vou confirmar com a equipe e te retorno.",
+      },
+    ]),
     true,
   );
 });
@@ -677,5 +758,6 @@ test("later post-consult and old-client contacts stay manual with a ready messag
   assert.match(postConsult.sugestao, /bem orientada/);
   assert.equal(oldClient.automatico, false);
   assert.equal(oldClient.horario, "16:30");
-  assert.match(oldClient.sugestao, /Como você está/);
+  assert.match(oldClient.sugestao, /quis saber como está/);
+  assert.doesNotMatch(oldClient.contexto, /lifting facial/i);
 });
