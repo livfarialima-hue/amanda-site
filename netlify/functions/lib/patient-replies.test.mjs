@@ -60,6 +60,40 @@ test("explains the consultation gradually without anticipating price or a link",
   assert.doesNotMatch(reply, /Posso ver os horários/);
 });
 
+test("uses a low-friction exploration question for the main facial procedures", () => {
+  const cases = [
+    [
+      "lifting_cervical",
+      /contorno do pescoço, a papada, a linha da mandíbula ou a recuperação/,
+    ],
+    [
+      "blefaroplastia",
+      /pálpebras superiores, as bolsas abaixo dos olhos, a recuperação ou como funciona a avaliação/,
+    ],
+    [
+      "otoplastia",
+      /para um adulto, uma criança ou um adolescente/,
+    ],
+  ];
+
+  for (const [procedure, expectedQuestion] of cases) {
+    const reply = buildConsultationInformationReply({
+      patientName: "Maria",
+      procedure,
+      introduceBruna: false,
+    });
+
+    assert.match(reply, expectedQuestion, procedure);
+    assert.doesNotMatch(reply, /o que mais incomoda/i, procedure);
+    assert.doesNotMatch(reply, /R\$ 500/, procedure);
+    assert.doesNotMatch(
+      reply,
+      /https:\/\/draamandaschroeder\.com\.br/,
+      procedure,
+    );
+  }
+});
+
 test("uses the complete procedure page only when the patient requests it", () => {
   const reply = buildConsultationInformationReply({
     patientName: "Edilene",

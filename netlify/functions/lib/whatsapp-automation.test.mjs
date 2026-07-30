@@ -226,6 +226,30 @@ test("Google codes personalize the procedure without implying scheduling", () =>
   }
 });
 
+test("procedure-page CTA codes preserve cervical, blepharoplasty and otoplasty context", () => {
+  const cases = [
+    ["LC01", "lifting_cervical"],
+    ["BF01", "blefaroplastia"],
+    ["OT01", "otoplastia"],
+  ];
+
+  for (const [reference, procedure] of cases) {
+    const plan = planAutomation({
+      text:
+        "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda " +
+        `e consultar a disponibilidade. Ref. ${reference}`,
+      messageType: "text",
+      reference,
+      platform: "Orgânico/Conteúdo",
+    });
+
+    assert.equal(plan.route, "standard_reply", reference);
+    assert.equal(plan.reason, "known_procedure", reference);
+    assert.equal(plan.procedure, procedure, reference);
+    assert.equal(plan.automaticAllowed, true, reference);
+  }
+});
+
 test("existing patient documents are sent to human review without an automatic reply", () => {
   for (const text of [
     "Segue os documentos assinados",

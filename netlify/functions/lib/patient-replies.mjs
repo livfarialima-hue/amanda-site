@@ -86,6 +86,18 @@ function consultationExplorationQuestion(procedure, procedureLabel) {
     return "O que despertou seu interesse pelo lifting: a flacidez do rosto, o contorno da mandíbula, o pescoço ou outro ponto?";
   }
 
+  if (procedure === "lifting_cervical") {
+    return "O que seria mais útil entender primeiro: o contorno do pescoço, a papada, a linha da mandíbula ou a recuperação?";
+  }
+
+  if (procedure === "blefaroplastia") {
+    return "O que seria mais útil entender primeiro: as pálpebras superiores, as bolsas abaixo dos olhos, a recuperação ou como funciona a avaliação?";
+  }
+
+  if (procedure === "otoplastia") {
+    return "A avaliação seria para um adulto, uma criança ou um adolescente? Assim consigo orientar a conversa de forma mais adequada.";
+  }
+
   if (procedureLabel) {
     return `O que despertou seu interesse por ${procedureLabel}?`;
   }

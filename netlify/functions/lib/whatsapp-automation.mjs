@@ -227,7 +227,7 @@ function detectProcedure(text, reference, referralContext) {
     return { key: "blefaroplastia", code: "G-BLEF-01" };
   }
 
-  if (/\bG26OTO\b/i.test(combined)) {
+  if (/\b(?:G26OTO|OT\d{2})\b/i.test(combined)) {
     return { key: "otoplastia", code: "G-OTO-01" };
   }
 
@@ -297,7 +297,9 @@ export function isLikelyMarketingPrefilledMessage({
   const hasMarketingSource =
     hasEmbeddedAttribution ||
     /\b(?:google|meta|facebook|instagram)\b/i.test(sourceContext) ||
-    /\b(?:g26|m26|lf\d{2}|c0[16])\b/i.test(sourceContext);
+    /\b(?:g26|m26|(?:lf|lc|bf|ot)\d{2}|c0[16])\b/i.test(
+      sourceContext,
+    );
 
   if (!hasMarketingSource) return false;
 
