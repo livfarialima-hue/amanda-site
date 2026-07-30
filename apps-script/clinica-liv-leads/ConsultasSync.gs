@@ -410,6 +410,281 @@ function upsertConsultaRecebida_(input) {
   return result;
 }
 
+function reservarHorarioEAgendarConsulta_(input) {
+  const spreadsheet = SpreadsheetApp.openById(
+    CONSULTAS_SYNC_CONFIG.spreadsheetId,
+  );
+  const scheduleSheet = spreadsheet.getSheetByName(
+    CONFIG.appointmentSlotsSheetName,
+  );
+  const consultationSheet = spreadsheet.getSheetByName(
+    CONSULTAS_SYNC_CONFIG.consultationsSheetName,
+  );
+
+  if (!scheduleSheet) {
+    return { ok: false, error: "schedule_sheet_missing" };
+  }
+  if (!consultationSheet) {
+    return { ok: false, error: "consultations_sheet_missing" };
+  }
+
+  garantirEstruturaSincronizacaoConsultas_(
+    consultationSheet,
+  );
+  const requestedDate =
+    extrairDataConsultasSync_(input.scheduledDate);
+  const requestedTime =
+    extrairHorarioConsultasSync_(input.scheduledTime);
+  const requestedProfessional = normalizarTextoConsultasSync_(
+    input.professional || "Dra. Amanda",
+  );
+
+  if (!requestedDate || !requestedTime) {
+    return { ok: false, error: "invalid_schedule" };
+  }
+
+  const consultationHeaders = consultationSheet
+    .getRange(
+      1,
+      1,
+      1,
+      consultationSheet.getLastColumn(),
+    )
+    .getDisplayValues()[0];
+  const consultationColumns =
+    mapearCabecalhosConsultas_(consultationHeaders);
+  const existingAppointmentRow =
+    localizarConsultaExistente_(
+      consultationSheet,
+      consultationColumns,
+      {
+        id: input.appointmentId || input.eventId,
+        phone: input.phone,
+        scheduledDate: requestedDate,
+        scheduledTime: requestedTime,
+        incomingStatus: "Consulta agendada",
+      },
+    );
+
+  if (existingAppointmentRow) {
+    const existingAppointment = consultationSheet
+      .getRange(
+        existingAppointmentRow,
+        1,
+        1,
+        consultationSheet.getLastColumn(),
+      )
+      .getValues()[0];
+    const sameSchedule =
+      mesmaDataConsulta_(
+        existingAppointment[
+          consultationColumns[
+            CONSULTAS_SYNC_HEADERS.scheduledDate
+          ]
+        ],
+        requestedDate,
+      ) &&
+      mesmoHorarioConsulta_(
+        existingAppointment[
+          consultationColumns[
+            CONSULTAS_SYNC_HEADERS.scheduledTime
+          ]
+        ],
+        requestedTime,
+      );
+
+    if (sameSchedule) {
+      return {
+        ok: true,
+        reserved: true,
+        duplicate: true,
+        appointmentRow: existingAppointmentRow,
+        appointmentId:
+          input.appointmentId || input.eventId,
+        scheduledDate: requestedDate,
+        scheduledTime: requestedTime,
+      };
+    }
+  }
+
+  const lastRow = scheduleSheet.getLastRow();
+  if (lastRow <= CONFIG.appointmentSlotsHeaderRow) {
+    return { ok: false, error: "slot_not_available" };
+  }
+
+  const values = scheduleSheet.getRange(
+    CONFIG.appointmentSlotsHeaderRow,
+    1,
+    lastRow - CONFIG.appointmentSlotsHeaderRow + 1,
+    CONFIG.appointmentSlotsColumns,
+  ).getDisplayValues();
+  const headers = values[0] || [];
+  const columns = {
+    date: findScheduleColumn_(headers, "Data"),
+    time: findScheduleColumn_(headers, "Horário"),
+    status: findScheduleColumn_(headers, "Status"),
+    professional: findScheduleColumn_(
+      headers,
+      "Profissional",
+    ),
+    observation: findScheduleColumn_(
+      headers,
+      "Observação",
+    ),
+  };
+
+  if (
+    columns.date < 0 ||
+    columns.time < 0 ||
+    columns.status < 0 ||
+    columns.professional < 0
+  ) {
+    return {
+      ok: false,
+      error: "unexpected_schedule_structure",
+    };
+  }
+
+  let selectedRow = null;
+
+  for (let index = 1; index < values.length; index += 1) {
+    const row = values[index];
+    const rowDate = extrairDataConsultasSync_(
+      row[columns.date],
+    );
+    const rowTime = extrairHorarioConsultasSync_(
+      row[columns.time],
+    );
+    const rowProfessional = normalizarTextoConsultasSync_(
+      row[columns.professional],
+    );
+
+    if (
+      rowDate !== requestedDate ||
+      rowTime !== requestedTime ||
+      (
+        requestedProfessional &&
+        !rowProfessional.includes(
+          requestedProfessional.includes("daniel")
+            ? "daniel"
+            : "amanda",
+        )
+      )
+    ) {
+      continue;
+    }
+
+    if (
+      normalizarTextoConsultasSync_(
+        row[columns.status],
+      ) !== "disponivel"
+    ) {
+      return { ok: false, error: "slot_not_available" };
+    }
+
+    selectedRow = {
+      rowNumber:
+        CONFIG.appointmentSlotsHeaderRow + index,
+      status: row[columns.status],
+      observation:
+        columns.observation >= 0
+          ? row[columns.observation]
+          : "",
+    };
+    break;
+  }
+
+  if (!selectedRow) {
+    return { ok: false, error: "slot_not_available" };
+  }
+
+  const statusRange = scheduleSheet.getRange(
+    selectedRow.rowNumber,
+    columns.status + 1,
+  );
+  const observationRange =
+    columns.observation >= 0
+      ? scheduleSheet.getRange(
+          selectedRow.rowNumber,
+          columns.observation + 1,
+        )
+      : null;
+
+  statusRange.setValue("Bloqueado");
+  if (observationRange) {
+    observationRange.setValue(
+      "Agendamento confirmado via WhatsApp em " +
+        Utilities.formatDate(
+          new Date(),
+          CONSULTAS_SYNC_CONFIG.timezone,
+          "dd/MM/yyyy HH:mm",
+        ),
+    );
+  }
+  SpreadsheetApp.flush();
+
+  try {
+    const consultationResult = upsertConsulta_(
+      consultationSheet,
+      {
+        appointmentId:
+          input.appointmentId || input.eventId,
+        phone: input.phone,
+        name: input.name,
+        professional:
+          input.professional || "Dra. Amanda",
+        consultationType:
+          input.consultationType ||
+          "Consulta presencial",
+        topic: input.topic,
+        location:
+          input.location || "Clínica LIV Faria Lima",
+        scheduledDate: requestedDate,
+        scheduledTime: requestedTime,
+        status: "Consulta agendada",
+        source:
+          input.source ||
+          "WhatsApp — opção de horário escolhida pela paciente",
+        notes: input.notes,
+        now: new Date(),
+      },
+    );
+
+    if (!consultationResult.ok) {
+      throw new Error(
+        consultationResult.error || "consultation_upsert_failed",
+      );
+    }
+
+    atualizarStatusLeadDaConsulta_(
+      spreadsheet,
+      input.phone,
+      input.professional || "Dra. Amanda",
+      "Consulta agendada",
+    );
+    SpreadsheetApp.flush();
+
+    return {
+      ok: true,
+      reserved: true,
+      scheduleRow: selectedRow.rowNumber,
+      appointmentRow: consultationResult.row,
+      appointmentId: consultationResult.appointmentId,
+      scheduledDate: requestedDate,
+      scheduledTime: requestedTime,
+    };
+  } catch (error) {
+    statusRange.setValue(selectedRow.status || "Disponível");
+    if (observationRange) {
+      observationRange.setValue(
+        selectedRow.observation || "",
+      );
+    }
+    SpreadsheetApp.flush();
+    throw error;
+  }
+}
+
 function registrarInteracaoHumanaDaConsulta_(input) {
   const spreadsheet = SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,

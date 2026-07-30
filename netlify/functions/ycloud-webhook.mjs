@@ -52,10 +52,15 @@ import {
   markHumanTakeover,
   scheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
-import { guardAutomaticReplyAgainstHumanRace } from "./lib/automatic-reply-guard.mjs";
+import {
+  guardAutomaticReplyAgainstHumanRace,
+  guardBookedAppointmentReplyAgainstHumanRace,
+} from "./lib/automatic-reply-guard.mjs";
 import { rememberBusinessNumber } from "./lib/business-number-registry.mjs";
 import {
+  buildBookedAppointmentReply,
   detectConfirmedAppointment,
+  detectPatientAppointmentSelection,
   detectPatientAppointmentReply,
 } from "./lib/appointment-confirmation.mjs";
 import {
@@ -875,6 +880,146 @@ async function completeAppointmentReview(input) {
   });
 }
 
+export async function completeSelectedAppointment(
+  {
+    from,
+    eventId,
+    messageId,
+    patientName,
+    patientPhone,
+    selection,
+  },
+  {
+    getHumanResumeControlImpl = getHumanResumeControl,
+    deliverSheetsActionImpl = deliverSheetsAction,
+    completeReviewAlertImpl = completeReviewAlert,
+    guardBookedAppointmentReplyImpl =
+      guardBookedAppointmentReplyAgainstHumanRace,
+    sendYCloudPatientTextImpl = sendYCloudPatientText,
+    appendConversationTurnImpl = appendConversationTurn,
+  } = {},
+) {
+  const baselineControl =
+    await getHumanResumeControlImpl(patientPhone);
+  const reservation = await deliverSheetsActionImpl(
+    "reserve_appointment_slot",
+    {
+      appointment: {
+        ...selection,
+        eventId,
+        appointmentId: `whatsapp-${messageId || eventId}`,
+        phone: patientPhone,
+        name: patientName,
+      },
+    },
+  );
+
+  if (!reservation.ok || reservation.responseData?.reserved !== true) {
+    const firstName =
+      String(patientName || "").trim().split(/\s+/)[0] || "";
+    const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
+    const unavailable =
+      reservation.errorCode === "slot_not_available";
+    const suggestedReply = unavailable
+      ? `${greeting} Esse horário não está mais disponível. Vou conferir outras opções e retorno por aqui.`
+      : `${greeting} Vou confirmar esse horário com a equipe e retorno por aqui assim que possível.`;
+
+    await completeReviewAlertImpl({
+      from,
+      eventId: `${eventId}-booking-review`,
+      patientName,
+      patientPhone,
+      messageText: [
+        "AGENDAMENTO — reserva não concluída",
+        `Data escolhida: ${selection.scheduledDate}`,
+        `Horário escolhido: ${selection.scheduledTime}`,
+        `Motivo técnico: ${reservation.errorCode || "unknown_failure"}`,
+        "Sugestão para copiar após conferir:",
+        suggestedReply,
+      ].join("\n"),
+    });
+
+    return {
+      status: "review_required",
+      reserved: false,
+      confirmationSent: false,
+      errorCode:
+        reservation.errorCode || "reservation_failed",
+    };
+  }
+
+  const body = buildBookedAppointmentReply({
+    patientName,
+    ...selection,
+  });
+  const humanGuard =
+    await guardBookedAppointmentReplyImpl({
+      phone: patientPhone,
+      baselineControl,
+      configuredDelayMs:
+        process.env.WHATSAPP_HUMAN_REPLY_GUARD_MS,
+    });
+
+  if (!humanGuard.shouldSend || !body) {
+    return {
+      status: humanGuard.shouldSend
+        ? "confirmation_unavailable"
+        : "confirmation_cancelled_by_human",
+      reserved: true,
+      confirmationSent: false,
+      errorCode: humanGuard.shouldSend
+        ? "confirmation_body_missing"
+        : "new_human_reply",
+    };
+  }
+
+  const confirmation = await sendYCloudPatientTextImpl({
+    from,
+    to: patientPhone,
+    eventId: `${eventId}-booking-confirmed`,
+    body,
+  });
+  logPatientReplyResult(
+    `${eventId}-booking-confirmed`,
+    patientPhone,
+    confirmation,
+  );
+  const confirmationSent =
+    confirmation.status === "completed";
+
+  if (confirmationSent) {
+    await appendConversationTurnImpl({
+      phone: patientPhone,
+      role: "assistant",
+      text: body,
+      eventId: `${eventId}:booking-confirmed`,
+      source: "bruna",
+    });
+  } else {
+    await completeReviewAlertImpl({
+      from,
+      eventId: `${eventId}-booking-send-failed`,
+      patientName,
+      patientPhone,
+      messageText: [
+        "AGENDAMENTO REGISTRADO, MAS A CONFIRMAÇÃO NÃO FOI ENVIADA.",
+        "Sugestão para copiar ao paciente:",
+        body,
+      ].join("\n"),
+    });
+  }
+
+  return {
+    status: confirmationSent
+      ? "completed"
+      : "confirmation_failed",
+    reserved: true,
+    confirmationSent,
+    errorCode:
+      confirmation.errorCode || "none",
+  };
+}
+
 async function completeOpenAIShadow(
   input,
   alertInput,
@@ -1413,6 +1558,43 @@ export default async (request, context) => {
         at: contactAt,
         source: "patient",
       });
+      const appointmentSelection =
+        detectPatientAppointmentSelection({
+          currentText: text,
+          recentConversation:
+            ignoredMemory.historyAfter,
+        });
+
+      if (appointmentSelection) {
+        const bookingResult =
+          await completeSelectedAppointment({
+            from: String(message.to || ""),
+            eventId: String(eventId),
+            messageId: String(messageId),
+            patientName: String(
+              message.customerProfile?.name || "",
+            ),
+            patientPhone: phone,
+            selection: appointmentSelection,
+          });
+
+        return json({
+          received: true,
+          ignored: false,
+          leadRecorded: false,
+          appointmentSelectionDetected: true,
+          appointmentReserved: bookingResult.reserved,
+          appointmentConfirmationSent:
+            bookingResult.confirmationSent,
+          appointmentSelectionStatus:
+            bookingResult.status,
+          appointmentSelectionError:
+            bookingResult.errorCode,
+          aiShadowQueued: false,
+          aiActiveQueued: false,
+        });
+      }
+
       const appointmentReply = detectPatientAppointmentReply({
         currentText: text,
         recentConversation: ignoredMemory.historyAfter,
@@ -1474,6 +1656,7 @@ export default async (request, context) => {
   let conversationMemoryStatus = "skipped";
   let conversationExpired = false;
   let replyDebounceMarkerStatus = "skipped";
+  let patientAppointmentSelection = null;
   let patientAppointmentReply = null;
   let patientAppointmentReplySyncStatus = "not_detected";
   const exactMessageDuplicate = isExactMessageDuplicate(delivery);
@@ -1521,14 +1704,55 @@ export default async (request, context) => {
     conversationHistoryWithCurrent = toOpenAIConversation(
       memoryResult.historyAfter,
     );
-    patientAppointmentReply = detectPatientAppointmentReply({
-      currentText: text,
-      recentConversation: memoryResult.historyAfter,
-      at: contactAt,
-    });
+    patientAppointmentSelection =
+      detectPatientAppointmentSelection({
+        currentText: text,
+        recentConversation: memoryResult.historyAfter,
+      });
+    patientAppointmentReply = patientAppointmentSelection
+      ? null
+      : detectPatientAppointmentReply({
+          currentText: text,
+          recentConversation: memoryResult.historyAfter,
+          at: contactAt,
+        });
   }
   if (!conversationHistoryWithCurrent.length) {
     conversationHistoryWithCurrent = conversationHistory;
+  }
+
+  if (patientAppointmentSelection) {
+    const bookingResult =
+      await completeSelectedAppointment({
+        from: String(message.to || ""),
+        eventId: String(eventId),
+        messageId: String(messageId),
+        patientName: String(
+          message.customerProfile?.name || "",
+        ),
+        patientPhone: phone,
+        selection: patientAppointmentSelection,
+      });
+
+    return json({
+      received: true,
+      leadRecorded: delivery.ok,
+      leadInserted: delivery.inserted === true,
+      leadUpdated: delivery.updated === true,
+      duplicate: delivery.duplicate === true,
+      duplicateReason: delivery.duplicateReason,
+      conversationMemory: conversationMemoryStatus,
+      appointmentSelectionDetected: true,
+      appointmentReserved: bookingResult.reserved,
+      appointmentConfirmationSent:
+        bookingResult.confirmationSent,
+      appointmentSelectionStatus:
+        bookingResult.status,
+      appointmentSelectionError:
+        bookingResult.errorCode,
+      aiShadowQueued: false,
+      aiActiveQueued: false,
+    });
   }
 
   if (patientAppointmentReply) {

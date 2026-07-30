@@ -3,6 +3,7 @@ const CONFIG = Object.freeze({
   sheetName: "Google Ads - Conversões",
   secretProperty: "LEADS_INGEST_SECRET",
   eventSheetName: "_WHATSAPP_EVENTOS",
+  humanTakeoverSheetName: "_WHATSAPP_ATENDIMENTO_HUMANO",
   alertEmailSheetName: "_WHATSAPP_ALERTAS_EMAIL",
   reviewAlertEmail: "daniel.added@gmail.com",
   timezone: "America/Sao_Paulo",
@@ -65,13 +66,32 @@ function doPost(e) {
 
     if (
       body.action !== "append_lead" &&
+      body.action !== "mark_human_takeover" &&
       body.action !== "upsert_appointment" &&
       body.action !== "touch_appointment" &&
       body.action !== "update_appointment_status" &&
       body.action !== "get_available_slots" &&
+      body.action !== "reserve_appointment_slot" &&
       body.action !== "send_review_alert_email"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "mark_human_takeover") {
+      stage = "mark_human_takeover";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const takeoverResult = registrarAtendimentoHumano_(
+        body.takeover || {},
+      );
+
+      return json_({
+        ...takeoverResult,
+        ok: takeoverResult.ok === true,
+      });
     }
 
     if (body.action === "get_available_slots") {
@@ -84,6 +104,24 @@ function doPost(e) {
       return json_({
         ok: true,
         slots: slotsResult,
+      });
+    }
+
+    if (body.action === "reserve_appointment_slot") {
+      stage = "reserve_appointment_slot";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const reservationResult =
+        reservarHorarioEAgendarConsulta_(
+          body.appointment || {},
+        );
+
+      return json_({
+        ...reservationResult,
+        ok: reservationResult.ok === true,
       });
     }
 
@@ -182,6 +220,12 @@ function doPost(e) {
 
     stage = "event_sheet";
     const eventSheet = getOrCreateEventSheet_(spreadsheet);
+    const humanTakeoverToday =
+      houveAtendimentoHumanoNoDia_(
+        spreadsheet,
+        lead.phone,
+        lead.contactAt,
+      );
 
     stage = "duplicate_check";
     const processedEvent = findProcessedEvent_(
@@ -198,6 +242,7 @@ function doPost(e) {
         row: processedEvent.leadRow,
         eventId: lead.eventId,
         messageId: lead.messageId,
+        humanTakeoverToday,
       });
     }
 
@@ -223,6 +268,7 @@ function doPost(e) {
         row: legacyDuplicateRow,
         eventId: lead.eventId,
         messageId: lead.messageId,
+        humanTakeoverToday,
       });
     }
 
@@ -250,6 +296,7 @@ function doPost(e) {
         row: existingLeadRow,
         eventId: lead.eventId,
         messageId: lead.messageId,
+        humanTakeoverToday,
       });
     }
 
@@ -276,6 +323,7 @@ function doPost(e) {
       row,
       eventId: lead.eventId,
       messageId: lead.messageId,
+      humanTakeoverToday,
     });
   } catch (error) {
     console.error(error && error.stack ? error.stack : error);
@@ -284,6 +332,7 @@ function doPost(e) {
       "parse_body",
       "normalize_lead",
       "normalize_appointment",
+      "mark_human_takeover",
       "acquire_lock",
       "open_spreadsheet",
       "find_sheet",
@@ -305,6 +354,7 @@ function doPost(e) {
       "touch_appointment",
       "update_appointment_status",
       "get_available_slots",
+      "reserve_appointment_slot",
       "send_review_alert_email",
     ]);
 
@@ -702,6 +752,129 @@ function getOrCreateEventSheet_(spreadsheet) {
   sheet.hideSheet();
 
   return sheet;
+}
+
+function getOrCreateHumanTakeoverSheet_(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(
+    CONFIG.humanTakeoverSheetName,
+  );
+
+  if (sheet) return sheet;
+
+  sheet = spreadsheet.insertSheet(
+    CONFIG.humanTakeoverSheetName,
+  );
+  sheet.getRange(1, 1, 1, 6).setValues([[
+    "Event ID",
+    "Message ID",
+    "Telefone",
+    "Data e hora",
+    "Data local",
+    "Mensagem",
+  ]]);
+  sheet.setFrozenRows(1);
+  sheet.hideSheet();
+
+  return sheet;
+}
+
+function registrarAtendimentoHumano_(input) {
+  const eventId = boundedText_(input.eventId, 200);
+  const messageId = boundedText_(
+    input.messageId || eventId,
+    500,
+  );
+  const phone = normalizePhone_(input.phone);
+  const takenAt = new Date(input.takenAt || Date.now());
+
+  if (!eventId || !messageId || !phone) {
+    return { ok: false, error: "invalid_takeover" };
+  }
+  if (Number.isNaN(takenAt.getTime())) {
+    return { ok: false, error: "invalid_takeover_date" };
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(
+    CONFIG.spreadsheetId,
+  );
+  const sheet = getOrCreateHumanTakeoverSheet_(spreadsheet);
+  const existing = sheet.getLastRow() >= 2
+    ? sheet
+        .getRange(2, 1, sheet.getLastRow() - 1, 2)
+        .getDisplayValues()
+        .some(function sameTakeover(row) {
+          return (
+            String(row[0] || "").trim() === eventId ||
+            String(row[1] || "").trim() === messageId
+          );
+        })
+    : false;
+
+  if (existing) {
+    return {
+      ok: true,
+      marked: true,
+      created: false,
+      duplicate: true,
+    };
+  }
+
+  sheet.appendRow([
+    safeText_(eventId, 200),
+    safeText_(messageId, 500),
+    phone,
+    takenAt,
+    Utilities.formatDate(
+      takenAt,
+      CONFIG.timezone,
+      "yyyy-MM-dd",
+    ),
+    safeText_(input.text, 500),
+  ]);
+
+  return {
+    ok: true,
+    marked: true,
+    created: true,
+    duplicate: false,
+  };
+}
+
+function houveAtendimentoHumanoNoDia_(
+  spreadsheet,
+  phoneValue,
+  referenceDate,
+) {
+  const phone = normalizePhone_(phoneValue);
+  const sheet = spreadsheet.getSheetByName(
+    CONFIG.humanTakeoverSheetName,
+  );
+
+  if (!phone || !sheet || sheet.getLastRow() < 2) {
+    return false;
+  }
+
+  const localDate = Utilities.formatDate(
+    referenceDate instanceof Date
+      ? referenceDate
+      : new Date(referenceDate || Date.now()),
+    CONFIG.timezone,
+    "yyyy-MM-dd",
+  );
+  const values = sheet
+    .getRange(2, 3, sheet.getLastRow() - 1, 3)
+    .getDisplayValues();
+
+  for (let index = values.length - 1; index >= 0; index -= 1) {
+    if (
+      normalizePhone_(values[index][0]) === phone &&
+      String(values[index][2] || "").trim() === localDate
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function findProcessedEvent_(sheet, identifiers) {

@@ -202,6 +202,252 @@ function detectConsultationType(text) {
   return "Consulta presencial";
 }
 
+function offeredAppointmentSlots(recentConversation) {
+  const turns = Array.isArray(recentConversation)
+    ? recentConversation.slice(-12)
+    : [];
+
+  for (let turnIndex = turns.length - 1; turnIndex >= 0; turnIndex -= 1) {
+    const turn = turns[turnIndex];
+    if (
+      turn?.role === "user" ||
+      turn?.role === "patient"
+    ) {
+      continue;
+    }
+
+    const text = String(turn?.text || "");
+    const matches = [
+      ...text.matchAll(
+        /(?:^|\n)\s*(\d{1,2})[.)-]\s*[^\n(]*\((\d{1,2})\/(\d{1,2})\/(\d{4})\)\s*(?:às|as)\s*(\d{1,2}):(\d{2})/giu,
+      ),
+    ];
+
+    if (!matches.length) continue;
+
+    const professional = detectProfessional(text);
+    const consultationType = detectConsultationType(text);
+
+    return matches.map((match) => ({
+      option: Number(match[1]),
+      scheduledDate: [
+        match[4],
+        String(match[3]).padStart(2, "0"),
+        String(match[2]).padStart(2, "0"),
+      ].join("-"),
+      scheduledTime: [
+        String(match[5]).padStart(2, "0"),
+        match[6],
+      ].join(":"),
+      professional,
+      consultationType,
+      location:
+        consultationType === "Teleconsulta"
+          ? "Teleconsulta"
+          : "Clínica LIV Faria Lima",
+    }));
+  }
+
+  return [];
+}
+
+function selectedOptionNumber(text) {
+  const comparable = normalize(text);
+  const numeric = comparable.match(
+    /\b(?:opcao|horario|alternativa)\s*(?:numero\s*)?([1-9])\b/,
+  );
+  if (numeric) return Number(numeric[1]);
+
+  if (/^[1-9]$/.test(comparable)) return Number(comparable);
+
+  const ordinals = [
+    ["primeira", 1],
+    ["primeiro", 1],
+    ["segunda opcao", 2],
+    ["segundo", 2],
+    ["terceira", 3],
+    ["terceiro", 3],
+  ];
+
+  return ordinals.find(([label]) =>
+    comparable.includes(label),
+  )?.[1] || null;
+}
+
+function selectedWeekday(text) {
+  const comparable = normalize(text);
+
+  for (const [label, weekday] of Object.entries(WEEKDAYS)) {
+    if (
+      new RegExp(`\\b${label}\\b`).test(comparable) &&
+      !new RegExp(`\\b${label}\\s+opcao\\b`).test(comparable)
+    ) {
+      return weekday;
+    }
+  }
+
+  return null;
+}
+
+function weekdayForIsoDate(value) {
+  const date = new Date(`${value}T12:00:00-03:00`);
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.getUTCDay();
+}
+
+function explicitOfferedDate(text, offeredSlots) {
+  const comparable = normalize(text);
+  const match = comparable.match(
+    /\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/,
+  );
+
+  if (!match) return null;
+
+  return offeredSlots.find((slot) => {
+    const [year, month, day] = slot.scheduledDate
+      .split("-")
+      .map(Number);
+    const requestedYear = match[3]
+      ? Number(match[3]) < 100
+        ? Number(match[3]) + 2000
+        : Number(match[3])
+      : year;
+
+    return (
+      day === Number(match[1]) &&
+      month === Number(match[2]) &&
+      year === requestedYear
+    );
+  })?.scheduledDate || null;
+}
+
+function hasSelectionIntent(text) {
+  const comparable = normalize(text);
+
+  return (
+    /\b(?:pode ser|prefiro|fico com|quero|confirmo|essa|esse|serve|funciona|consigo|fechado|combinado)\b/.test(
+      comparable,
+    ) ||
+    comparable.length <= 80
+  );
+}
+
+export function detectPatientAppointmentSelection({
+  currentText,
+  recentConversation = [],
+} = {}) {
+  if (!hasSelectionIntent(currentText)) return null;
+
+  const slots = offeredAppointmentSlots(recentConversation);
+  if (!slots.length) return null;
+
+  const option = selectedOptionNumber(currentText);
+  if (option) {
+    const selected = slots.find(
+      (slot) => slot.option === option,
+    );
+    return selected
+      ? {
+          ...selected,
+          status: "Consulta agendada",
+          source:
+            "WhatsApp — opção de horário escolhida pela paciente",
+        }
+      : null;
+  }
+
+  const requestedDate = explicitOfferedDate(
+    currentText,
+    slots,
+  );
+  const requestedTime = extractTime(currentText);
+  const requestedWeekday = selectedWeekday(currentText);
+  const candidates = slots.filter((slot) => {
+    if (
+      requestedDate &&
+      slot.scheduledDate !== requestedDate
+    ) {
+      return false;
+    }
+    if (
+      requestedTime &&
+      slot.scheduledTime !== requestedTime
+    ) {
+      return false;
+    }
+    if (
+      requestedWeekday !== null &&
+      weekdayForIsoDate(slot.scheduledDate) !==
+        requestedWeekday
+    ) {
+      return false;
+    }
+    return true;
+  });
+  const suppliedSpecificChoice =
+    Boolean(requestedDate || requestedTime) ||
+    requestedWeekday !== null;
+
+  if (!suppliedSpecificChoice || candidates.length !== 1) {
+    return null;
+  }
+
+  return {
+    ...candidates[0],
+    status: "Consulta agendada",
+    source:
+      "WhatsApp — opção de horário escolhida pela paciente",
+  };
+}
+
+function displayAppointmentTime(value) {
+  const [hour, minute] = String(value || "").split(":");
+  return minute === "00"
+    ? `${Number(hour)}h`
+    : `${Number(hour)}h${minute}`;
+}
+
+export function buildBookedAppointmentReply({
+  patientName,
+  scheduledDate,
+  scheduledTime,
+  professional = "Dra. Amanda",
+  location = "Clínica LIV Faria Lima",
+} = {}) {
+  const date = new Date(
+    `${scheduledDate}T12:00:00-03:00`,
+  );
+  if (
+    Number.isNaN(date.getTime()) ||
+    !scheduledTime
+  ) {
+    return "";
+  }
+
+  const firstName =
+    String(patientName || "").trim().split(/\s+/)[0] || "";
+  const greeting = firstName
+    ? `Perfeito, ${firstName}!`
+    : "Perfeito!";
+  const dateLabel = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TIMEZONE,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(date);
+  const locationLabel =
+    location === "Teleconsulta"
+      ? "por teleconsulta"
+      : `na ${location}`;
+
+  return (
+    `${greeting} Sua consulta com ${professional} ficou agendada ` +
+    `para ${dateLabel}, às ${displayAppointmentTime(scheduledTime)}, ` +
+    `${locationLabel}. Mais perto da data, enviaremos um lembrete por aqui.`
+  );
+}
+
 function hasConfirmedAppointmentContext(recentConversation, at) {
   const turns = Array.isArray(recentConversation)
     ? recentConversation.slice(-10)

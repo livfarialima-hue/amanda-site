@@ -38,4 +38,53 @@ export async function guardAutomaticReplyAgainstHumanRace(
   };
 }
 
+export async function guardBookedAppointmentReplyAgainstHumanRace(
+  { phone, baselineControl, configuredDelayMs },
+  {
+    waitImpl = (milliseconds) =>
+      new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    getHumanResumeControlImpl = getHumanResumeControl,
+  } = {},
+) {
+  const delayMs = guardDelayMs(configuredDelayMs);
+  await waitImpl(delayMs);
+
+  const currentControl =
+    await getHumanResumeControlImpl(phone);
+  const baselineStatus =
+    String(baselineControl?.status || "");
+  const baselineGeneration =
+    String(baselineControl?.generation || "");
+  const baselineUpdatedAt =
+    String(baselineControl?.updatedAt || "");
+  const currentStatus =
+    String(currentControl?.status || "");
+  const currentGeneration =
+    String(currentControl?.generation || "");
+  const currentUpdatedAt =
+    String(currentControl?.updatedAt || "");
+  const baselineHadHuman =
+    ["human_active", "waiting_human"].includes(
+      baselineStatus,
+    );
+  const currentHasHuman =
+    ["human_active", "waiting_human"].includes(
+      currentStatus,
+    );
+  const humanChanged = baselineHadHuman
+    ? (
+        !currentControl ||
+        currentGeneration !== baselineGeneration ||
+        currentUpdatedAt !== baselineUpdatedAt
+      )
+    : currentHasHuman;
+
+  return {
+    shouldSend: !humanChanged,
+    humanChanged,
+    controlStatus: currentStatus || null,
+    delayMs,
+  };
+}
+
 export { DEFAULT_GUARD_DELAY_MS };
