@@ -220,6 +220,104 @@ test("a later human response removes the patient from the answer-now queue", () 
   assert.equal(items.length, 0);
 });
 
+test("acknowledgements, automated openers and solicitations do not create false work", () => {
+  const context = loadContext();
+
+  assert.equal(
+    context.mensagemExigeRespostaCentral_("Que maravilha"),
+    false,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_("Ok, brigadaa!"),
+    false,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
+      "Olá! Quero saber sobre lifting facial. Ref. M26F01W-C06H01",
+    ),
+    false,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
+      "Estamos com uma oferta especial para a clínica.",
+    ),
+    false,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
+      "Qual é o valor do procedimento?",
+    ),
+    true,
+  );
+});
+
+test("answer-now only includes a recent message that still needs a reply", () => {
+  const context = loadContext();
+  const now = new Date("2026-07-30T14:00:00-03:00");
+  const oldPhone = "+5511999999998";
+  const currentPhone = "+5511999999999";
+  const items = context.carregarRespostasPendentesCentral_(
+    {
+      [oldPhone]: [{
+        direcao: "IN",
+        dataHora: new Date("2026-07-28T12:00:00-03:00"),
+        messageId: "old-question",
+        texto: "Qual é o valor?",
+      }],
+      [currentPhone]: [{
+        direcao: "IN",
+        dataHora: new Date("2026-07-30T13:30:00-03:00"),
+        messageId: "current-question",
+        texto: "Qual é o valor?",
+      }],
+    },
+    {},
+    {},
+    {},
+    now,
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].phone, currentPhone);
+});
+
+test("marketing follow-up is not reused for an established patient", () => {
+  const context = loadContext();
+
+  assert.equal(
+    context.relacionamentoPermiteRetomadaMarketingCentral_(
+      "former_patient",
+    ),
+    false,
+  );
+  assert.equal(
+    context.relacionamentoPermiteRetomadaMarketingCentral_(
+      "consultation_completed",
+    ),
+    false,
+  );
+  assert.equal(
+    context.relacionamentoPermiteRetomadaMarketingCentral_(
+      "new_lead",
+    ),
+    true,
+  );
+});
+
+test("local ISO dates keep the intended day in scheduled actions", () => {
+  const context = loadContext();
+  const time = new Date("2026-07-29T10:30:00-03:00");
+  const combined = context.combinarDataHorarioCentral_(
+    "2026-07-30",
+    time,
+  );
+
+  assert.equal(
+    combined.toISOString(),
+    "2026-07-30T13:30:00.000Z",
+  );
+});
+
 test("the central refresh passes the current Date to the follow-up loader", () => {
   const context = loadContext();
   const now = new Date("2026-07-30T14:00:00-03:00");

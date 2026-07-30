@@ -10,6 +10,7 @@ const CENTRAL_ATENDIMENTO_CONFIG = Object.freeze({
   triggerFunction: "atualizarCentralAtendimento",
   timezone: "America/Sao_Paulo",
   activeConversationDays: 14,
+  pendingResponseHours: 36,
   completedVisibilityHours: 24,
   maximumRows: 300,
 });
@@ -300,6 +301,13 @@ function carregarRespostasPendentesCentral_(
         60 *
         1000,
   );
+  const pendingResponseDate = new Date(
+    now.getTime() -
+      CENTRAL_ATENDIMENTO_CONFIG.pendingResponseHours *
+        60 *
+        60 *
+        1000,
+  );
 
   return Object.keys(conversations).reduce(function (
     items,
@@ -313,6 +321,8 @@ function carregarRespostasPendentesCentral_(
       !last ||
       last.direcao !== "IN" ||
       last.dataHora.getTime() < minimumDate.getTime() ||
+      last.dataHora.getTime() < pendingResponseDate.getTime() ||
+      !mensagemExigeRespostaCentral_(last.texto) ||
       (
         lastHuman &&
         lastHuman.dataHora.getTime() >=
@@ -479,6 +489,18 @@ function carregarRetomadasCentral_(
     .filter(function (candidate) {
       return Boolean(candidate.horario);
     })
+    .filter(function (candidate) {
+      const profile = profiles[candidate.telefone] || {};
+      const relationship =
+        profile.relationship ||
+        relacionamentoLeadCentral_(
+          candidate.lead.status,
+        );
+
+      return relacionamentoPermiteRetomadaMarketingCentral_(
+        relationship,
+      );
+    })
     .slice(0, 50)
     .map(function (candidate) {
       const profile = profiles[candidate.telefone] || {};
@@ -542,14 +564,24 @@ function carregarRetomadasRegistradasCentral_(
 
       const phone = normalizarTelefoneCentral_(row[2]);
       const profile = profiles[phone] || {};
+      const relationship =
+        profile.relationship ||
+        relacionamentoLeadCentral_(row[6]);
+
+      if (
+        !relacionamentoPermiteRetomadaMarketingCentral_(
+          relationship,
+        )
+      ) {
+        return items;
+      }
+
       items.push(criarItemCentral_({
         queue: "Ação manual hoje",
         dueAt: combinarDataHorarioCentral_(today, row[5]),
         name: profile.name,
         phone: phone,
-        relationship:
-          profile.relationship ||
-          relacionamentoLeadCentral_(row[6]),
+        relationship: relationship,
         origin: profile.origin,
         lastInteractionAt: null,
         nextAction:
@@ -1455,6 +1487,60 @@ function sugerirRespostaCentral_(
     "Obrigada pela mensagem. Responda primeiro ao ponto que a paciente trouxe e, depois, faça no máximo uma pergunta útil para avançar.";
 }
 
+function mensagemExigeRespostaCentral_(message) {
+  const normalized = normalizarTextoCentral_(message);
+
+  if (!normalized) return false;
+
+  if (mensagemInicialAutomatizadaCentral_(normalized)) {
+    return false;
+  }
+
+  if (mensagemEncerramentoCentral_(normalized)) {
+    return false;
+  }
+
+  if (mensagemComercialNaoPacienteCentral_(normalized)) {
+    return false;
+  }
+
+  return true;
+}
+
+function mensagemInicialAutomatizadaCentral_(normalized) {
+  return (
+    /\bref\.?\s*[a-z0-9-]{5,}/.test(normalized) &&
+    /quero saber|gostaria de saber|gostaria de agendar|consultar disponibilidade/.test(
+      normalized,
+    )
+  );
+}
+
+function mensagemEncerramentoCentral_(normalized) {
+  const compact = normalized
+    .replace(/[!.,;:()[\]{}'"`~_\-\/\\]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (
+    /^(?:ok|okay|certo|perfeito|entendi|combinado|beleza|show|legal|otimo|excelente|que maravilha|valeu|agradeco|muito obrigad[oa]+|obrigad[oa]+|brigad[oa]+)(?:\s+(?:viu|mesmo|pela ajuda|pelo retorno|por tudo|obrigad[oa]+|brigad[oa]+))*$/.test(
+      compact,
+    )
+  ) {
+    return true;
+  }
+
+  return /^[\u{1F300}-\u{1FAFF}\u2600-\u27BF\s]+$/u.test(
+    compact,
+  );
+}
+
+function mensagemComercialNaoPacienteCentral_(normalized) {
+  return /(?:estamos|estou) com (?:uma )?oferta especial|(?:somos|falo) da (?:empresa|agencia)|servico de (?:marketing|trafego|divulgacao)|gestao de trafego|apresentar (?:uma )?(?:proposta|solucao comercial)|parceria comercial|aumentar (?:seus|os) (?:clientes|agendamentos|resultados)/.test(
+    normalized,
+  );
+}
+
 function proximaAcaoRespostaCentral_(message) {
   const normalized = normalizarTextoCentral_(message);
 
@@ -1502,6 +1588,14 @@ function relacionamentoExigeHumanoCentral_(relationship) {
     "surgical_planning",
     "active_postop",
   ].includes(relationship);
+}
+
+function relacionamentoPermiteRetomadaMarketingCentral_(
+  relationship,
+) {
+  return ["new_lead", "engaged_lead", "unknown"].includes(
+    relationship || "unknown",
+  );
 }
 
 function relacionamentoLeadCentral_(status) {
@@ -1628,6 +1722,20 @@ function dataCentralValida_(value) {
   if (!value) return null;
   if (typeof value === "string") {
     const trimmed = value.trim();
+    const isoLocalDate = trimmed.match(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
+    );
+    if (isoLocalDate) {
+      return new Date(
+        Number(isoLocalDate[1]),
+        Number(isoLocalDate[2]) - 1,
+        Number(isoLocalDate[3]),
+        0,
+        0,
+        0,
+        0,
+      );
+    }
     const brazilian = trimmed.match(
       /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[,\s]+(\d{1,2}):(\d{2}))?$/,
     );
