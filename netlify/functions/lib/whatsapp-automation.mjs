@@ -33,9 +33,6 @@ const SCHEDULING_PATTERN =
 const CONSULTATION_INFORMATION_PATTERN =
   /\b(?:(?:como|de\s+que\s+forma)\s+(?:funciona|[eé])|o\s+que\s+(?:acontece|[eé]\s+feito)|quer(?:o|ia)\s+entender\s+como\s+funciona).{0,50}\b(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,50}\b(?:como\s+funciona|passo\s+a\s+passo)\b/i;
 
-const INSURANCE_INFORMATION_PATTERN =
-  /\b(?:aceita(?:m|mos)?|atende(?:m|mos)?|trabalha(?:m|mos)?\s+com).{0,35}\b(?:conv[eê]nio|plano\s+de\s+sa[uú]de)\b|\b(?:conv[eê]nio|plano\s+de\s+sa[uú]de)\b.{0,45}\b(?:aceita(?:m|mos)?|atende(?:m|mos)?|reembolso|nota\s+fiscal)\b|\b(?:reembolso|nota\s+fiscal).{0,45}\b(?:consulta|plano\s+de\s+sa[uú]de|conv[eê]nio)\b/i;
-
 const AVAILABILITY_REQUEST_PATTERN =
   /\b(?:consultar|conferir|ver|saber)\s+(?:a\s+)?disponibilidade\b|\b(?:quais?|ver|consultar|conferir|saber)\b.{0,35}\b(?:hor[aá]rios?|datas?)\b|\b(?:agendar|marcar)\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o)\b/i;
 
@@ -333,22 +330,10 @@ export function enrichAutomationPlanFromConversation(
       turn?.role === "assistant" ||
       ["bruna", "equipe_humana"].includes(turn?.source),
   );
-  const hasAcquisitionContext = recentConversation.some((turn) => {
-    const isPatientTurn =
-      ["patient", "user"].includes(String(turn?.role || "")) ||
-      String(turn?.source || "") === "patient";
-    const turnText = String(turn?.text || "");
 
-    return (
-      isPatientTurn &&
-      (isLikelyMarketingPrefilledMessage({ text: turnText }) ||
-        Boolean(detectProcedure(turnText, "", null)))
-    );
-  });
+  if (!hasClinicTurn) return plan;
 
-  if (!hasClinicTurn && !hasAcquisitionContext) return plan;
-
-  if (hasClinicTurn && plan.reason === "simple_greeting") {
+  if (plan.reason === "simple_greeting") {
     const lastClinicTurn = [...recentConversation]
       .reverse()
       .find(
@@ -506,8 +491,6 @@ export function planAutomation({
   const mentionsAmanda = matchesAny(normalizedText, AMANDA_PATTERNS);
   const asksPrice = PRICE_PATTERN.test(normalizedText);
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
-  const asksInsuranceInformation =
-    INSURANCE_INFORMATION_PATTERN.test(normalizedText);
   const marketingPrefilledMessage =
     isLikelyMarketingPrefilledMessage({
       text: normalizedText,
@@ -535,17 +518,6 @@ export function planAutomation({
       route: "standard_reply",
       reason: "consultation_information_request",
       replyCode: "AMANDA-CONSULTA-INFO-01",
-      professional: "amanda",
-      procedure: procedure?.key || null,
-      automaticAllowed: true,
-    };
-  }
-
-  if (asksInsuranceInformation) {
-    return {
-      route: "standard_reply",
-      reason: "insurance_information_request",
-      replyCode: "AMANDA-INSURANCE-01",
       professional: "amanda",
       procedure: procedure?.key || null,
       automaticAllowed: true,

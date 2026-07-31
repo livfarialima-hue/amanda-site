@@ -4,14 +4,6 @@ import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
 
 test("conversion playbook defines identity, progression and low-friction qualification", () => {
   assert.match(CONVERSATION_GUIDELINES, /Eu sou a Bruna/);
-  assert.match(
-    CONVERSATION_GUIDELINES,
-    /todas as mensagens consecutivas da pessoa desde o último turno da clínica como uma única fala/,
-  );
-  assert.match(
-    CONVERSATION_GUIDELINES,
-    /apresentação da Bruna, reconhecimento específico do contexto, resposta direta e um único próximo passo pertinente/,
-  );
   assert.match(CONVERSATION_GUIDELINES, /Como posso te chamar/);
   assert.match(CONVERSATION_GUIDELINES, /no máximo uma pergunta útil/);
   assert.match(CONVERSATION_GUIDELINES, /Meta\/Facebook\/Instagram/);
@@ -120,11 +112,6 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /permaneça em silêncio/,
   );
   assert.match(CONVERSATION_GUIDELINES, /não tiver sido executada/);
-  assert.match(
-    CONVERSATION_GUIDELINES,
-    /o atendimento é particular e a clínica emite nota fiscal para que a pessoa possa solicitar reembolso ao plano/,
-  );
-  assert.match(CONVERSATION_GUIDELINES, /reembolso é garantido/);
 });
 
 test("playbook uses approved site content at a strategic moment", () => {
