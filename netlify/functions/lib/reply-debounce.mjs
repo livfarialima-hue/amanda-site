@@ -2,10 +2,10 @@ import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-whatsapp-reply-debounce-v1";
-const DEFAULT_DEBOUNCE_MS = 30_000;
-const MIN_DEBOUNCE_MS = 30_000;
-const MAX_DEBOUNCE_MS = 30_000;
-const SUPERSEDED_CHECK_INTERVAL_MS = 5_000;
+const DEFAULT_DEBOUNCE_MS = 120_000;
+const MIN_DEBOUNCE_MS = 120_000;
+const MAX_DEBOUNCE_MS = 180_000;
+const SUPERSEDED_CHECK_INTERVAL_MS = 10_000;
 
 function key(phone) {
   return createHash("sha256")
