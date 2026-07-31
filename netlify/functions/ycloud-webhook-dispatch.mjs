@@ -11,8 +11,8 @@ import { isReviewAlertConfigured } from "./lib/ycloud-review-alert.mjs";
 import { verifyYCloudSignature } from "./lib/ycloud-webhook-security.mjs";
 
 export const DURABLE_YCLOUD_EVENT = "liv.ycloud.webhook.received";
-export const DEFAULT_DURABLE_DELAY_MS = 22_000;
-const MIN_DURABLE_DELAY_MS = 15_000;
+export const DEFAULT_DURABLE_DELAY_MS = 0;
+const MIN_DURABLE_DELAY_MS = 0;
 const MAX_DURABLE_DELAY_MS = 52_000;
 
 function json(data, status = 200) {
@@ -40,6 +40,9 @@ function health(env = process.env) {
     appointmentReviewEnabled: isAppointmentAlertEnabled(env),
     automationMode: normalizeAutomationMode(env.WHATSAPP_AUTOMATION_MODE),
     processingMode: "durable_async_workload",
+    initialQueueDelayMs: durableDelayMs(
+      env.WHATSAPP_DURABLE_QUEUE_DELAY_MS,
+    ),
     asyncWorkloadsConfigured: Boolean(
       env.AWL_API_KEY || env.AWL_API_KEY_P100,
     ),

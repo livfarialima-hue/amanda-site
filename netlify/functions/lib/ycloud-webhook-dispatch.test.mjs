@@ -58,7 +58,7 @@ test("durable dispatcher rejects an invalid YCloud signature", async () => {
   assert.equal(queueCalls, 0);
 });
 
-test("durable dispatcher records text context and queues it after the grouping window", async () => {
+test("durable dispatcher records text context and queues it immediately", async () => {
   const calls = { marker: [], memory: [], queue: [] };
   const now = Date.parse("2026-07-31T17:00:00.000Z");
   const response = await dispatchYCloudWebhook(signedRequest(inboundPayload()), {
@@ -89,10 +89,7 @@ test("durable dispatcher records text context and queues it after the grouping w
   assert.equal(calls.memory[0].text, "Gostaria de saber mais sobre lifting facial");
   assert.equal(calls.queue.length, 1);
   assert.equal(calls.queue[0][0], DURABLE_YCLOUD_EVENT);
-  assert.equal(
-    calls.queue[0][1].delayUntil,
-    now + DEFAULT_DURABLE_DELAY_MS,
-  );
+  assert.equal(calls.queue[0][1].delayUntil, undefined);
   assert.equal(calls.queue[0][1].data.isTextInbound, true);
 });
 
@@ -149,4 +146,5 @@ test("durable dispatcher health exposes the active processing mode", async () =>
 
   assert.equal(body.processingMode, "durable_async_workload");
   assert.equal(body.asyncWorkloadsConfigured, true);
+  assert.equal(body.initialQueueDelayMs, 0);
 });
