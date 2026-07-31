@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
 import {
   enrichAutomationPlanFromConversation,
   isAvailabilityRequest,
@@ -83,7 +84,6 @@ import {
   patientRelationshipPromptContext,
   prependRelationshipAlertContext,
 } from "./lib/patient-relationship.mjs";
-import { verifyYCloudSignature } from "./lib/ycloud-webhook-security.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -111,6 +111,35 @@ function isOutsideHumanServiceHours(value, env = process.env) {
   const timestamp = new Date(value || "").getTime();
   if (!Number.isFinite(timestamp)) return false;
   return !isHumanResumeServiceOpen(timestamp, env);
+}
+
+function verifySignature(rawBody, signatureHeader, secret) {
+  if (!signatureHeader || !secret) return false;
+
+  const parts = {};
+
+  for (const item of signatureHeader.split(",")) {
+    const separator = item.indexOf("=");
+    if (separator === -1) continue;
+
+    const key = item.slice(0, separator).trim();
+    const value = item.slice(separator + 1).trim();
+    parts[key] = value;
+  }
+
+  if (!parts.t || !parts.s) return false;
+
+  const expected = createHmac("sha256", secret)
+    .update(`${parts.t}.${rawBody}`)
+    .digest("hex");
+
+  const expectedBuffer = Buffer.from(expected, "hex");
+  const receivedBuffer = Buffer.from(parts.s, "hex");
+
+  return (
+    expectedBuffer.length === receivedBuffer.length &&
+    timingSafeEqual(expectedBuffer, receivedBuffer)
+  );
 }
 
 function normalizePhone(value) {
@@ -1442,7 +1471,7 @@ export default async (request, context) => {
   const rawBody = await request.text();
 
   if (
-    !verifyYCloudSignature(
+    !verifySignature(
       rawBody,
       request.headers.get("YCloud-Signature"),
       webhookSecret,
@@ -2158,7 +2187,16 @@ export default async (request, context) => {
       }),
     );
     reviewAlertQueued = true;
-    await alertPromise;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(alertPromise);
+      } catch {
+        await alertPromise;
+      }
+    } else {
+      await alertPromise;
+    }
   }
 
   if (shouldQueueAppointmentReview) {
@@ -2169,7 +2207,16 @@ export default async (request, context) => {
       preferenceText: text,
     });
     appointmentReviewQueued = true;
-    await appointmentPromise;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(appointmentPromise);
+      } catch {
+        await appointmentPromise;
+      }
+    } else {
+      await appointmentPromise;
+    }
   }
 
   if (shouldQueuePriceHolding) {
@@ -2350,7 +2397,16 @@ export default async (request, context) => {
     );
 
     aiShadowQueued = true;
-    await shadowPromise;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(shadowPromise);
+      } catch {
+        await shadowPromise;
+      }
+    } else {
+      await shadowPromise;
+    }
   }
 
   if (shouldQueueOpenAIActive) {
@@ -2387,7 +2443,16 @@ export default async (request, context) => {
     });
 
     aiActiveQueued = true;
-    await activePromise;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(activePromise);
+      } catch {
+        await activePromise;
+      }
+    } else {
+      await activePromise;
+    }
   }
 
   console.log(
@@ -2513,6 +2578,5 @@ export default async (request, context) => {
 };
 
 export const config = {
-  path: "/api/ycloud/webhook-worker",
-  background: true,
+  path: "/api/ycloud/webhook",
 };
