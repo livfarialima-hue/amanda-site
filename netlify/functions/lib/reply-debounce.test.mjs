@@ -60,11 +60,39 @@ test("only the latest inbound event may answer after the quiet window", async ()
 
   assert.equal(firstResult.shouldProcess, false);
   assert.equal(secondResult.shouldProcess, true);
-  assert.equal(secondResult.delayMs, 8_000);
+  assert.equal(secondResult.delayMs, 120_000);
 });
 
-test("default quiet window is eight seconds", () => {
-  assert.equal(DEFAULT_DEBOUNCE_MS, 8_000);
+test("default quiet window is two minutes", () => {
+  assert.equal(DEFAULT_DEBOUNCE_MS, 120_000);
+});
+
+test("an earlier burst event exits on the first superseded check", async () => {
+  const blobs = fakeBlobs();
+  const first = await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "evt-1" },
+    blobs,
+  );
+  await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "evt-2" },
+    blobs,
+  );
+  const waits = [];
+
+  const result = await waitForLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "evt-1",
+      markerStatus: first.status,
+    },
+    {
+      ...blobs,
+      waitImpl: async (delayMs) => waits.push(delayMs),
+    },
+  );
+
+  assert.equal(result.shouldProcess, false);
+  assert.deepEqual(waits, [10_000]);
 });
 
 test("a newer message arriving during generation supersedes the older reply", async () => {

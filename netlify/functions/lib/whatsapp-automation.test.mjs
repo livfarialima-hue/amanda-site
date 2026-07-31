@@ -438,6 +438,26 @@ test("patient questions about payment or insurance are not mistaken for sales", 
   }
 });
 
+test("health plan and reimbursement questions are safe administrative information", () => {
+  for (const text of [
+    "A primeira pergunta: vocês aceitam plano de saúde?",
+    "A consulta aceita convênio?",
+    "Vocês emitem nota fiscal para reembolso da consulta?",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.equal(plan.route, "standard_reply", text);
+    assert.equal(plan.reason, "insurance_information_request", text);
+    assert.equal(plan.replyCode, "AMANDA-INSURANCE-01", text);
+    assert.equal(plan.automaticAllowed, true, text);
+  }
+});
+
 test("a later explicit offer of health insurance is ignored", () => {
   for (const text of [
     "Trabalho com seguros e queria apresentar uma proposta",
@@ -535,4 +555,33 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.route, "standard_reply");
   assert.equal(enriched.professional, "amanda");
   assert.equal(enriched.procedure, "blefaroplastia");
+});
+
+test("a patient-only Google burst preserves campaign procedure before the first reply", () => {
+  const currentPlan = planAutomation({
+    text: "A primeira pergunta: vocês aceitam plano de saúde?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enriched = enrichAutomationPlanFromConversation(currentPlan, [
+    {
+      role: "patient",
+      source: "patient",
+      text: [
+        "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda",
+        "e consultar a disponibilidade. Ref. g26f05-816612405034-OT01",
+        "GCLID: test GBRAID: test",
+      ].join(" "),
+    },
+    { role: "patient", source: "patient", text: "Boa tarde" },
+    { role: "patient", source: "patient", text: "Já vi seu site" },
+    { role: "patient", source: "patient", text: "Muito legal" },
+  ]);
+
+  assert.equal(enriched.route, "standard_reply");
+  assert.equal(enriched.reason, "insurance_information_request");
+  assert.equal(enriched.professional, "amanda");
+  assert.equal(enriched.procedure, "otoplastia");
+  assert.equal(enriched.automaticAllowed, true);
 });

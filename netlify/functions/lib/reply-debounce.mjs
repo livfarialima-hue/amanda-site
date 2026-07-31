@@ -2,9 +2,10 @@ import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-whatsapp-reply-debounce-v1";
-const DEFAULT_DEBOUNCE_MS = 8_000;
-const MIN_DEBOUNCE_MS = 8_000;
-const MAX_DEBOUNCE_MS = 15_000;
+const DEFAULT_DEBOUNCE_MS = 120_000;
+const MIN_DEBOUNCE_MS = 120_000;
+const MAX_DEBOUNCE_MS = 180_000;
+const SUPERSEDED_CHECK_INTERVAL_MS = 10_000;
 
 function key(phone) {
   return createHash("sha256")
@@ -114,16 +115,30 @@ export async function waitForLatestInboundReply(
   }
 
   const delayMs = debounceMs(configuredDelayMs);
-  await waitImpl(delayMs);
+  let elapsedMs = 0;
+  let latestResult = {
+    status: "completed",
+    shouldProcess: true,
+  };
 
-  const latestResult = await checkLatestInboundReply(
-    {
-      phone,
-      eventId,
-      markerStatus,
-    },
-    { getStoreImpl },
-  );
+  while (elapsedMs < delayMs) {
+    const intervalMs = Math.min(
+      SUPERSEDED_CHECK_INTERVAL_MS,
+      delayMs - elapsedMs,
+    );
+    await waitImpl(intervalMs);
+    elapsedMs += intervalMs;
+    latestResult = await checkLatestInboundReply(
+      {
+        phone,
+        eventId,
+        markerStatus,
+      },
+      { getStoreImpl },
+    );
+
+    if (!latestResult.shouldProcess) break;
+  }
 
   return {
     ...latestResult,
