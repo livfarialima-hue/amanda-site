@@ -2513,6 +2513,5 @@ export default async (request, context) => {
 };
 
 export const config = {
-  path: "/api/ycloud/webhook-worker",
-  background: true,
+  path: "/api/ycloud/webhook-processor",
 };

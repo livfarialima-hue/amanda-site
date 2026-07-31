@@ -27,7 +27,7 @@ function health(env = process.env) {
     reviewAlertConfigured: isReviewAlertConfigured(env),
     appointmentReviewEnabled: isAppointmentAlertEnabled(env),
     automationMode: normalizeAutomationMode(env.WHATSAPP_AUTOMATION_MODE),
-    processingMode: "background",
+    processingMode: "wait_until",
   };
 }
 
@@ -84,7 +84,7 @@ export async function dispatchYCloudWebhook(
     });
   } catch {
     return json(
-      { received: false, error: "background_dispatch_failed" },
+      { received: false, error: "worker_dispatch_failed" },
       502,
     );
   }
@@ -93,7 +93,7 @@ export async function dispatchYCloudWebhook(
     return json(
       {
         received: false,
-        error: "background_dispatch_rejected",
+        error: "worker_dispatch_rejected",
         workerStatus: workerResponse.status,
       },
       502,

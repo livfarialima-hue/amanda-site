@@ -4,7 +4,8 @@ import test from "node:test";
 import dispatchYCloudWebhook, {
   config as dispatchConfig,
 } from "../ycloud-webhook-dispatch.mjs";
-import { config as workerConfig } from "../ycloud-webhook.mjs";
+import { config as processorConfig } from "../ycloud-webhook.mjs";
+import { config as workerConfig } from "../ycloud-webhook-worker.mjs";
 
 const SECRET = "webhook-test-secret";
 
@@ -27,17 +28,19 @@ function signedRequest(body, {
   });
 }
 
-test("production webhook remains synchronous while the worker is background", () => {
+test("dispatcher and queued worker remain synchronous", () => {
   assert.deepEqual(dispatchConfig, {
     path: "/api/ycloud/webhook",
   });
   assert.deepEqual(workerConfig, {
     path: "/api/ycloud/webhook-worker",
-    background: true,
+  });
+  assert.deepEqual(processorConfig, {
+    path: "/api/ycloud/webhook-processor",
   });
 });
 
-test("dispatcher validates the signature before queueing the background worker", async () => {
+test("dispatcher validates the signature before queueing the deferred worker", async () => {
   let called = false;
   const response = await dispatchYCloudWebhook(
     new Request("https://example.test/api/ycloud/webhook", {
@@ -58,7 +61,7 @@ test("dispatcher validates the signature before queueing the background worker",
   assert.equal(called, false);
 });
 
-test("dispatcher queues the exact signed event in the background", async () => {
+test("dispatcher queues the exact signed event for deferred processing", async () => {
   const body = JSON.stringify({
     id: "evt-background-test",
     type: "whatsapp.inbound_message.received",
@@ -105,12 +108,12 @@ test("dispatcher asks YCloud to retry when the worker cannot be queued", async (
   assert.equal(response.status, 502);
   assert.deepEqual(await response.json(), {
     received: false,
-    error: "background_dispatch_rejected",
+    error: "worker_dispatch_rejected",
     workerStatus: 503,
   });
 });
 
-test("health endpoint exposes that processing is background", async () => {
+test("health endpoint exposes waitUntil processing", async () => {
   const response = await dispatchYCloudWebhook(
     new Request("https://example.test/api/ycloud/webhook"),
     {
@@ -129,5 +132,5 @@ test("health endpoint exposes that processing is background", async () => {
   assert.equal(response.status, 200);
   assert.equal(body.signatureProtection, "active");
   assert.equal(body.automationMode, "active");
-  assert.equal(body.processingMode, "background");
+  assert.equal(body.processingMode, "wait_until");
 });

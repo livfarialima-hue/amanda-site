@@ -60,11 +60,11 @@ test("only the latest inbound event may answer after the quiet window", async ()
 
   assert.equal(firstResult.shouldProcess, false);
   assert.equal(secondResult.shouldProcess, true);
-  assert.equal(secondResult.delayMs, 120_000);
+  assert.equal(secondResult.delayMs, 30_000);
 });
 
-test("default quiet window is two minutes", () => {
-  assert.equal(DEFAULT_DEBOUNCE_MS, 120_000);
+test("default quiet window fits inside the synchronous execution limit", () => {
+  assert.equal(DEFAULT_DEBOUNCE_MS, 30_000);
 });
 
 test("an earlier burst event exits on the first superseded check", async () => {
@@ -92,7 +92,7 @@ test("an earlier burst event exits on the first superseded check", async () => {
   );
 
   assert.equal(result.shouldProcess, false);
-  assert.deepEqual(waits, [10_000]);
+  assert.deepEqual(waits, [5_000]);
 });
 
 test("a newer message arriving during generation supersedes the older reply", async () => {
