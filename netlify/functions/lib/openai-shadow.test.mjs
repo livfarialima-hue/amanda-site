@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
+  applyFirstReplyGreetingGuard,
   applyReturningPatientReplyGuard,
   createSafetyIdentifier,
   parseOpenAIShadowResponse,
@@ -46,6 +47,77 @@ test("returning-patient guard removes a repeated Bruna introduction", () => {
     guarded.suggestedReply,
     /Eu sou a Bruna/i,
   );
+});
+
+test("first acquisition reply always starts with a human greeting and Bruna introduction", () => {
+  const guarded = applyFirstReplyGreetingGuard(
+    validDecision({
+      suggestedReply:
+        "Eu sou a Bruna, da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
+    }),
+    {
+      patientProfileName: "Rosana Macedo",
+      recentConversation: [],
+      patientRelationship: { knownPatient: false, state: "new_lead" },
+    },
+  );
+
+  assert.equal(
+    guarded.suggestedReply,
+    "Olá, Rosana! Eu sou a Bruna, da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
+  );
+});
+
+test("first acquisition reply inserts the introduction when the model omits it", () => {
+  const guarded = applyFirstReplyGreetingGuard(
+    validDecision({
+      suggestedReply: "Oi! Posso te orientar sobre o lifting facial.",
+    }),
+    {
+      patientProfileName: "",
+      recentConversation: [],
+      patientRelationship: { knownPatient: false, state: "new_lead" },
+    },
+  );
+
+  assert.equal(
+    guarded.suggestedReply,
+    "Olá! Eu sou a Bruna, da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial.",
+  );
+});
+
+test("known patient receives a greeting without a new-lead introduction", () => {
+  const guarded = applyFirstReplyGreetingGuard(
+    validDecision({
+      suggestedReply: "Claro, vou te ajudar com isso.",
+    }),
+    {
+      patientProfileName: "Mônica Mussolino",
+      recentConversation: [],
+      patientRelationship: { knownPatient: true, state: "former_patient" },
+    },
+  );
+
+  assert.equal(
+    guarded.suggestedReply,
+    "Olá, Mônica! Claro, vou te ajudar com isso.",
+  );
+  assert.doesNotMatch(guarded.suggestedReply, /Eu sou a Bruna/i);
+});
+
+test("greeting guard does not repeat the greeting in an ongoing conversation", () => {
+  const decision = validDecision({
+    suggestedReply: "Claro, posso explicar melhor.",
+  });
+  const guarded = applyFirstReplyGreetingGuard(decision, {
+    patientProfileName: "Rosana",
+    recentConversation: [
+      { role: "assistant", source: "bruna", text: "Olá, Rosana!" },
+    ],
+    patientRelationship: { knownPatient: false, state: "engaged_lead" },
+  });
+
+  assert.deepEqual(guarded, decision);
 });
 
 function validResponse(decision = validDecision()) {
@@ -907,7 +979,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
     assert.equal(patientBody.type, "text");
     assert.equal(
       patientBody.text.body,
-      "Olá! A avaliação é individual. O que você deseja melhorar?",
+      "Olá, Maria! Eu sou a Bruna, da Clínica LIV Faria Lima. A avaliação é individual. O que você deseja melhorar?",
     );
   } finally {
     globalThis.fetch = originalFetch;

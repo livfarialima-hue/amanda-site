@@ -198,6 +198,54 @@ export function applyReturningPatientReplyGuard(
   };
 }
 
+export function applyFirstReplyGreetingGuard(
+  decision,
+  {
+    patientProfileName = "",
+    recentConversation = null,
+    patientRelationship = null,
+  } = {},
+) {
+  if (
+    decision?.route !== "standard_reply" ||
+    !decision?.suggestedReply ||
+    !Array.isArray(recentConversation)
+  ) {
+    return decision;
+  }
+
+  const hasPreviousClinicReply = recentConversation.some(
+    (turn) =>
+      turn?.role === "assistant" ||
+      ["bruna", "equipe_humana"].includes(turn?.source),
+  );
+  if (hasPreviousClinicReply) return decision;
+
+  const firstName = usableProfileFirstName(patientProfileName);
+  const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
+  const introduction = "Eu sou a Bruna, da Clínica LIV Faria Lima.";
+  const knownPatient = patientRelationship?.knownPatient === true;
+  let body = String(decision.suggestedReply)
+    .trim()
+    .replace(
+      /^(?:ol[áa]|oi|bom\s+dia|boa\s+tarde|boa\s+noite)(?:,\s*[^!?.\n]+)?[!?.]?\s*/iu,
+      "",
+    )
+    .trim();
+
+  if (
+    !knownPatient &&
+    !/\b(?:eu\s+sou|aqui\s+[ée])\s+(?:a\s+)?Bruna\b/iu.test(body)
+  ) {
+    body = `${introduction} ${body}`.trim();
+  }
+
+  return {
+    ...decision,
+    suggestedReply: `${greeting}${body ? ` ${body}` : ""}`,
+  };
+}
+
 function normalizeReferralContext(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
 
@@ -348,13 +396,20 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
   return result("completed", {
     model: String(response?.model || fallbackModel),
     decision: applyUrgencyGuard(
-      applyReturningPatientReplyGuard(
-        applyKnownProfileNameGuard(
-          decision,
-          options.patientProfileName,
-          options.hasConversationHistory,
+      applyFirstReplyGreetingGuard(
+        applyReturningPatientReplyGuard(
+          applyKnownProfileNameGuard(
+            decision,
+            options.patientProfileName,
+            options.hasConversationHistory,
+          ),
+          options.patientRelationship,
         ),
-        options.patientRelationship,
+        {
+          patientProfileName: options.patientProfileName,
+          recentConversation: options.recentConversation,
+          patientRelationship: options.patientRelationship,
+        },
       ),
       options.deterministicUrgent,
     ),
@@ -485,6 +540,7 @@ export async function runOpenAIShadow(
       hasConversationHistory: normalizedConversation.length > 0,
       patientRelationship:
         normalizedPatientRelationship,
+      recentConversation: normalizedConversation,
     });
   } catch (error) {
     return result("failed", {

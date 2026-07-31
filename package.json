@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@netlify/async-workloads": "0.0.106",
     "@netlify/blobs": "10.7.10"
   }
 }

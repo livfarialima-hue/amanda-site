@@ -4,6 +4,14 @@ import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
 
 test("conversion playbook defines identity, progression and low-friction qualification", () => {
   assert.match(CONVERSATION_GUIDELINES, /Eu sou a Bruna/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /comece sempre com "Olá"/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Nunca inicie diretamente por "Eu sou a Bruna"/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /Como posso te chamar/);
   assert.match(CONVERSATION_GUIDELINES, /no máximo uma pergunta útil/);
   assert.match(CONVERSATION_GUIDELINES, /Meta\/Facebook\/Instagram/);

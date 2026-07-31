@@ -1,4 +1,3 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import {
   enrichAutomationPlanFromConversation,
   isAvailabilityRequest,
@@ -84,6 +83,7 @@ import {
   patientRelationshipPromptContext,
   prependRelationshipAlertContext,
 } from "./lib/patient-relationship.mjs";
+import { verifyYCloudSignature } from "./lib/ycloud-webhook-security.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -111,35 +111,6 @@ function isOutsideHumanServiceHours(value, env = process.env) {
   const timestamp = new Date(value || "").getTime();
   if (!Number.isFinite(timestamp)) return false;
   return !isHumanResumeServiceOpen(timestamp, env);
-}
-
-function verifySignature(rawBody, signatureHeader, secret) {
-  if (!signatureHeader || !secret) return false;
-
-  const parts = {};
-
-  for (const item of signatureHeader.split(",")) {
-    const separator = item.indexOf("=");
-    if (separator === -1) continue;
-
-    const key = item.slice(0, separator).trim();
-    const value = item.slice(separator + 1).trim();
-    parts[key] = value;
-  }
-
-  if (!parts.t || !parts.s) return false;
-
-  const expected = createHmac("sha256", secret)
-    .update(`${parts.t}.${rawBody}`)
-    .digest("hex");
-
-  const expectedBuffer = Buffer.from(expected, "hex");
-  const receivedBuffer = Buffer.from(parts.s, "hex");
-
-  return (
-    expectedBuffer.length === receivedBuffer.length &&
-    timingSafeEqual(expectedBuffer, receivedBuffer)
-  );
 }
 
 function normalizePhone(value) {
@@ -1111,7 +1082,7 @@ async function completeOpenAIShadow(
           shadowResult.decision.procedure || plan?.procedure,
         preferenceText: input.text,
       });
-      return;
+      return { status: "superseded", replySent: false };
     }
 
     if (
@@ -1196,7 +1167,7 @@ async function completeOpenAIActive({
           delayMs: debounceResult.delayMs,
         }),
       );
-      return;
+      return { status: "superseded", replySent: false };
     }
 
     const consultationInformationRequest =
@@ -1259,7 +1230,11 @@ async function completeOpenAIActive({
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
-      return;
+      return {
+        status: "failed",
+        errorCode: activeResult.errorCode || "openai_failed",
+        replySent: false,
+      };
     }
 
     const latestAfterGeneration = await checkLatestInboundReply({
@@ -1276,7 +1251,7 @@ async function completeOpenAIActive({
           patientLast4: String(to || "").slice(-4),
         }),
       );
-      return;
+      return { status: "superseded", replySent: false };
     }
 
     const finalHumanGuard =
@@ -1296,7 +1271,7 @@ async function completeOpenAIActive({
           delayMs: finalHumanGuard.delayMs,
         }),
       );
-      return;
+      return { status: "superseded", replySent: false };
     }
 
     if (activeResult.decision.route === "appointment_review") {
@@ -1314,7 +1289,7 @@ async function completeOpenAIActive({
           preferenceText: input.text,
         });
       }
-      return;
+      return { status: "reviewed", replySent: false };
     }
 
     if (
@@ -1340,7 +1315,7 @@ async function completeOpenAIActive({
         schedulingRequest,
       })
     ) {
-      return;
+      return { status: "completed_no_reply", replySent: false };
     }
 
     const replyResult = await sendControlledPatientReply({
@@ -1371,6 +1346,24 @@ async function completeOpenAIActive({
         }),
       );
     }
+
+    if (replyResult.status === "completed") {
+      return { status: "completed", replySent: true };
+    }
+
+    if (["duplicate", "blocked", "superseded"].includes(replyResult.status)) {
+      return {
+        status: "completed_no_reply",
+        errorCode: replyResult.errorCode || replyResult.status,
+        replySent: false,
+      };
+    }
+
+    return {
+      status: "failed",
+      errorCode: replyResult.errorCode || "patient_reply_failed",
+      replySent: false,
+    };
   } catch {
     console.log(
       JSON.stringify({
@@ -1380,6 +1373,11 @@ async function completeOpenAIActive({
         errorCode: "request_failed",
       }),
     );
+    return {
+      status: "failed",
+      errorCode: "request_failed",
+      replySent: false,
+    };
   }
 }
 
@@ -1437,6 +1435,8 @@ export default async (request, context) => {
   const automationMode = normalizeAutomationMode(
     process.env.WHATSAPP_AUTOMATION_MODE,
   );
+  const durableRetry =
+    request.headers.get("X-LIV-Durable-Retry") === "1";
 
   if (request.method === "GET") {
     return json({
@@ -1471,7 +1471,7 @@ export default async (request, context) => {
   const rawBody = await request.text();
 
   if (
-    !verifySignature(
+    !verifyYCloudSignature(
       rawBody,
       request.headers.get("YCloud-Signature"),
       webhookSecret,
@@ -1854,7 +1854,7 @@ export default async (request, context) => {
   }
 
   const suppressExactDuplicate =
-    exactMessageDuplicate && !recoveredExactDuplicate;
+    exactMessageDuplicate && !recoveredExactDuplicate && !durableRetry;
 
   if (delivery.ok && !suppressExactDuplicate) {
     const markerResult = await markLatestInboundForReply({
@@ -1881,7 +1881,9 @@ export default async (request, context) => {
     conversationMemoryStatus = memoryResult.status;
     conversationExpired = memoryResult.expired === true;
     conversationHistory = toOpenAIConversation(
-      memoryResult.historyBefore,
+      memoryResult.historyBefore.filter(
+        (turn) => turn.eventId !== String(eventId),
+      ),
     );
     conversationHistoryWithCurrent = toOpenAIConversation(
       memoryResult.historyAfter,
@@ -2106,6 +2108,8 @@ export default async (request, context) => {
   let priceHoldingQueued = false;
   let priceHoldingSent = false;
   let aiActiveQueued = false;
+  let aiActiveStatus = "not_queued";
+  let aiActiveReplySent = false;
   let humanResumeScheduleStatus = "skipped";
   let commitmentSyncStatus = "skipped";
 
@@ -2445,13 +2449,18 @@ export default async (request, context) => {
     aiActiveQueued = true;
 
     if (typeof context?.waitUntil === "function") {
+      aiActiveStatus = "deferred";
       try {
         context.waitUntil(activePromise);
       } catch {
-        await activePromise;
+        const outcome = await activePromise;
+        aiActiveStatus = outcome?.status || "failed";
+        aiActiveReplySent = outcome?.replySent === true;
       }
     } else {
-      await activePromise;
+      const outcome = await activePromise;
+      aiActiveStatus = outcome?.status || "failed";
+      aiActiveReplySent = outcome?.replySent === true;
     }
   }
 
@@ -2512,6 +2521,8 @@ export default async (request, context) => {
       priceHoldingSent,
       aiShadowQueued,
       aiActiveQueued,
+      aiActiveStatus,
+      aiActiveReplySent,
       replyDebounceMarkerStatus,
     }),
   );
@@ -2574,9 +2585,11 @@ export default async (request, context) => {
     priceHoldingSent,
     aiShadowQueued,
     aiActiveQueued,
+    aiActiveStatus,
+    aiActiveReplySent,
   });
 };
 
 export const config = {
-  path: "/api/ycloud/webhook",
+  path: "/api/ycloud/webhook-processor",
 };
