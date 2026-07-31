@@ -68,6 +68,12 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /Transparência vem antes das condições de pagamento/,
   );
   assert.match(CONVERSATION_GUIDELINES, /consulta presencial custa R\$ 500/);
+  assert.match(CONVERSATION_GUIDELINES, /emissão de nota fiscal/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /comprovante de despesa médica na declaração do Imposto de Renda/,
+  );
+  assert.match(CONVERSATION_GUIDELINES, /Nunca prometa dedução, restituição/);
   assert.match(
     CONVERSATION_GUIDELINES,
     /pagamento antecipadamente até a cirurgia/,

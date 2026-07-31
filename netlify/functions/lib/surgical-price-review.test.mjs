@@ -9,6 +9,19 @@ import {
   isSurgicalPriceReview,
 } from "./surgical-price-review.mjs";
 
+test("consultation price suggestion includes the invoice without promising tax savings", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "avaliacao_facial",
+  });
+
+  assert.match(reply, /R\$ 500/);
+  assert.match(reply, /nota fiscal/);
+  assert.match(reply, /comprovante de despesa médica/);
+  assert.match(reply, /Imposto de Renda/);
+  assert.doesNotMatch(reply, /(?:garante|garantida|restituição|economia tributária)/i);
+});
+
 test("combines professional and hospital references for lifting facial", () => {
   const reference = getSurgicalPriceReference("lifting_facial");
 

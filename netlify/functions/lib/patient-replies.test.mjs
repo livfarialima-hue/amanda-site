@@ -32,6 +32,9 @@ test("price fallback is transparent about the consultation and clarifies the req
   assert.match(reply, /consulta presencial/);
   assert.match(reply, /R\$ 500/);
   assert.match(reply, /abatido/);
+  assert.match(reply, /nota fiscal/);
+  assert.match(reply, /comprovante de despesa médica/);
+  assert.match(reply, /Imposto de Renda/);
   assert.match(reply, /faixa atual de blefaroplastia/);
   assert.doesNotMatch(reply, /investimento/);
 });
