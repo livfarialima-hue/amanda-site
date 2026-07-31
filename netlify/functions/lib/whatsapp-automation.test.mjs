@@ -536,3 +536,38 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.professional, "amanda");
   assert.equal(enriched.procedure, "blefaroplastia");
 });
+
+test("standalone lifting is preserved as lifting facial on the next turn", () => {
+  const initialPlan = planAutomation({
+    text: "Oi, quero saber mais sobre lifting",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(initialPlan.procedure, "lifting_facial");
+
+  const continuationPlan = planAutomation({
+    text: "Como funciona?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enriched = enrichAutomationPlanFromConversation(
+    continuationPlan,
+    [
+      {
+        role: "patient",
+        source: "paciente",
+        text: "Oi, quero saber mais sobre lifting",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Olá! Eu sou a Bruna, da Clínica LIV Faria Lima.",
+      },
+    ],
+  );
+
+  assert.equal(enriched.procedure, "lifting_facial");
+});

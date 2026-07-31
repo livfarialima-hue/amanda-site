@@ -241,6 +241,13 @@ function detectProcedure(text, reference, referralContext) {
     }
   }
 
+  // Em conversas sobre cirurgia da face, pacientes frequentemente usam apenas
+  // "lifting" para se referir ao lifting facial. As variações com região
+  // (cervical, mamas, braços ou lábios) já foram resolvidas acima.
+  if (/\blifting\b/i.test(combined)) {
+    return { key: "lifting_facial", code: "M-C06-WA-01" };
+  }
+
   return null;
 }
 

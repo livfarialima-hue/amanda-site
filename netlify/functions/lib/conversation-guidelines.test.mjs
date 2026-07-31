@@ -30,13 +30,11 @@ test("conversion playbook defines identity, progression and low-friction qualifi
     CONVERSATION_GUIDELINES,
     /nunca presuma que alguém está pronto para agendar por ter vindo do Google/,
   );
-  assert.match(
+  assert.match(CONVERSATION_GUIDELINES, /Não ofereça quatro caminhos em forma de menu/);
+  assert.match(CONVERSATION_GUIDELINES, /pergunte de forma aberta/);
+  assert.doesNotMatch(
     CONVERSATION_GUIDELINES,
     /Qual é sua principal dúvida agora: o procedimento, a recuperação, os valores ou a consulta/,
-  );
-  assert.match(
-    CONVERSATION_GUIDELINES,
-    /O que seria mais útil entender primeiro: como funciona o procedimento, a recuperação, os valores ou a avaliação/,
   );
   assert.match(CONVERSATION_GUIDELINES, /O que você gostaria de entender ou melhorar/);
   assert.match(
@@ -141,6 +139,15 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
   assert.match(CONVERSATION_GUIDELINES, /não repita URL ou página/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /responda primeiro como o procedimento funciona em linguagem simples/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /envie a página completa daquele procedimento, nunca a página geral/,
+  );
+  assert.match(CONVERSATION_GUIDELINES, /reposiciona tecidos que perderam sustentação/);
 });
 
 test("playbook states credentials and location precisely", () => {
