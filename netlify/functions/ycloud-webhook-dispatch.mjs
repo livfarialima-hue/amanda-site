@@ -221,5 +221,7 @@ export async function dispatchYCloudWebhook(
 export default dispatchYCloudWebhook;
 
 export const config = {
-  path: "/api/ycloud/webhook",
+  // Retain the durable queue as an isolated diagnostic endpoint, but do not
+  // place it between YCloud and the normal patient response path.
+  path: "/api/ycloud/webhook-queued",
 };

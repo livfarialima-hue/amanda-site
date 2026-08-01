@@ -1458,6 +1458,7 @@ export default async (request, context) => {
       reviewAlertConfigured: isReviewAlertConfigured(),
       appointmentReviewEnabled: isAppointmentAlertEnabled(),
       automationMode,
+      processingMode: "direct_with_background_completion",
     });
   }
 
@@ -2642,5 +2643,9 @@ export default async (request, context) => {
 };
 
 export const config = {
-  path: "/api/ycloud/webhook-processor",
+  // Keep the patient-facing webhook on the simplest path. Expensive reply
+  // work still uses `context.waitUntil` when Netlify provides it, while the
+  // final outbound lock prevents a concurrent human or retry from duplicating
+  // the response.
+  path: "/api/ycloud/webhook",
 };
