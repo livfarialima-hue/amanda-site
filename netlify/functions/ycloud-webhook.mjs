@@ -77,6 +77,10 @@ import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
 import {
+  completeInboundRecovery,
+  registerInboundRecovery,
+} from "./lib/inbound-recovery.mjs";
+import {
   applyPatientRelationshipPolicy,
   buildPatientCommitment,
   buildRelationshipAlertMessage,
@@ -1824,6 +1828,20 @@ export default async (request, context) => {
   // behavior.
   lead.professional = preliminaryAutomationPlan.professional;
 
+  const recoveryRegistration =
+    String(message.type || "").toLowerCase() === "text" &&
+    text.trim()
+      ? await registerInboundRecovery({
+          rawBody,
+          signature: request.headers.get("YCloud-Signature"),
+          contentType:
+            request.headers.get("content-type") || "application/json",
+          origin: new URL(request.url).origin,
+          eventId: String(eventId),
+          phone,
+        })
+      : { status: "skipped" };
+
   const delivery = await deliverLead(lead);
   const patientRelationship = {
     ...(delivery.patientRelationship || {}),
@@ -2107,6 +2125,9 @@ export default async (request, context) => {
   let overnightHandoffSent = false;
   let priceHoldingQueued = false;
   let priceHoldingSent = false;
+  let priceHoldingStatus = "not_queued";
+  let overnightHandoffStatus = "not_queued";
+  let patientReplyStatus = "not_queued";
   let aiActiveQueued = false;
   let aiActiveStatus = "not_queued";
   let aiActiveReplySent = false;
@@ -2243,6 +2264,7 @@ export default async (request, context) => {
     });
     priceHoldingSent =
       priceHoldingResult.status === "completed";
+    priceHoldingStatus = priceHoldingResult.status;
     logPatientReplyResult(
       `${String(eventId)}-price-holding`,
       phone,
@@ -2277,6 +2299,7 @@ export default async (request, context) => {
     });
     overnightHandoffSent =
       overnightResult.status === "completed";
+    overnightHandoffStatus = overnightResult.status;
     logPatientReplyResult(
       `${String(eventId)}-overnight-handoff`,
       phone,
@@ -2329,6 +2352,7 @@ export default async (request, context) => {
       replyDebounceMarkerStatus,
     });
     patientReplySent = replyResult.status === "completed";
+    patientReplyStatus = replyResult.status;
     logPatientReplyResult(String(eventId), phone, replyResult);
 
     if (patientReplySent) {
@@ -2464,6 +2488,31 @@ export default async (request, context) => {
     }
   }
 
+  const terminalSendStatuses = new Set([
+    "completed",
+    "duplicate",
+    "blocked",
+    "superseded",
+  ]);
+  const automaticWorkFinished =
+    delivery.ok &&
+    (!aiActiveQueued || !["failed", "deferred"].includes(aiActiveStatus)) &&
+    (!priceHoldingQueued || terminalSendStatuses.has(priceHoldingStatus)) &&
+    (!overnightHandoffQueued || terminalSendStatuses.has(overnightHandoffStatus)) &&
+    (!patientReplyQueued || terminalSendStatuses.has(patientReplyStatus));
+  let recoveryStatus = recoveryRegistration.status;
+  if (automaticWorkFinished && recoveryRegistration.status !== "skipped") {
+    const recoveryCompletion = await completeInboundRecovery(
+      { eventId: String(eventId) },
+      {
+        outcome: humanTakeoverActive
+          ? "human_takeover"
+          : "processed",
+      },
+    );
+    recoveryStatus = recoveryCompletion.status;
+  }
+
   console.log(
     JSON.stringify({
       source: "ycloud",
@@ -2524,6 +2573,7 @@ export default async (request, context) => {
       aiActiveStatus,
       aiActiveReplySent,
       replyDebounceMarkerStatus,
+      recoveryStatus,
     }),
   );
 
@@ -2587,6 +2637,7 @@ export default async (request, context) => {
     aiActiveQueued,
     aiActiveStatus,
     aiActiveReplySent,
+    recoveryStatus,
   });
 };
 
