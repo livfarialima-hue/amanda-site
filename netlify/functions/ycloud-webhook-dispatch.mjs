@@ -6,6 +6,9 @@ import {
 import {
   markLatestInboundForReply,
 } from "./lib/reply-debounce.mjs";
+import {
+  registerInboundRecovery,
+} from "./lib/inbound-recovery.mjs";
 import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
 import { isReviewAlertConfigured } from "./lib/ycloud-review-alert.mjs";
 import { verifyYCloudSignature } from "./lib/ycloud-webhook-security.mjs";
@@ -123,6 +126,7 @@ export async function dispatchYCloudWebhook(
     sendEventImpl,
     markLatestInboundForReplyImpl = markLatestInboundForReply,
     appendConversationTurnImpl = appendConversationTurn,
+    registerInboundRecoveryImpl = registerInboundRecovery,
     now = Date.now(),
   } = {},
 ) {
@@ -160,6 +164,17 @@ export async function dispatchYCloudWebhook(
   const delayMs = isTextInbound
     ? durableDelayMs(env.WHATSAPP_DURABLE_QUEUE_DELAY_MS)
     : 0;
+  const recovery = isTextInbound
+    ? await registerInboundRecoveryImpl({
+        rawBody,
+        signature,
+        contentType:
+          request.headers.get("content-type") || "application/json",
+        origin: new URL(request.url).origin,
+        eventId: inbound.eventId,
+        phone: inbound.phone,
+      })
+    : { status: "skipped" };
   const send = sendEventImpl || (async (eventName, options) => {
     const client = new AsyncWorkloadsClient({
       baseUrl: new URL(request.url).origin,
@@ -199,6 +214,7 @@ export async function dispatchYCloudWebhook(
     delayMs,
     markerStatus: preparation.markerStatus,
     memoryStatus: preparation.memoryStatus,
+    recoveryStatus: recovery.status,
   });
 }
 
