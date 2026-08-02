@@ -247,6 +247,19 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
 }
 
 /* Clínica: recupera o contexto visual da versão anterior. */
+.cv-consult-material {
+  margin-top: 30px;
+  border-radius: calc(var(--radius) + 6px);
+  padding: clamp(28px, 5vw, 54px);
+  background: var(--paper-2);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.cv-consult-material .cv-eyebrow { color: var(--green); }
+.cv-consult-material .cv-clinic-copy > p,
+.cv-consult-material .cv-clinic-feature p,
+.cv-consult-material .cv-clinic-video p,
+.cv-consult-material .cv-clinic-address p { color: var(--muted); }
 .cv-clinic-grid {
   display: grid;
   grid-template-columns: minmax(270px, .82fr) minmax(0, 1.18fr);
@@ -447,6 +460,7 @@ body.curated-video-open { overflow: hidden; }
   .cv-nav { gap: 10px; }
   .cv-story { margin-top: 38px; padding: 24px 20px; }
   .cv-story-media { width: min(100%, 330px); }
+  .cv-consult-material { margin-top: 20px; padding: 24px 16px; }
   .cv-clinic-gallery { grid-template-columns: 1fr 1fr; }
   .cv-clinic-gallery figure:first-child { grid-column: 1 / -1; grid-row: auto; }
   .cv-clinic-gallery figure:first-child img { min-height: 270px; }
