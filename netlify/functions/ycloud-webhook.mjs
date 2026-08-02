@@ -61,10 +61,14 @@ import {
 import { rememberBusinessNumber } from "./lib/business-number-registry.mjs";
 import {
   buildBookedAppointmentReply,
-  detectConfirmedAppointment,
+  detectManualAppointment,
   detectPatientAppointmentSelection,
   detectPatientAppointmentReply,
 } from "./lib/appointment-confirmation.mjs";
+import {
+  buildAppointmentReviewUrl,
+  createAppointmentReview,
+} from "./lib/appointment-review-store.mjs";
 import {
   buildOvernightHandoffMessage,
   isHumanResumeServiceOpen,
@@ -929,6 +933,7 @@ export async function completeSelectedAppointment(
     getHumanResumeControlImpl = getHumanResumeControl,
     deliverSheetsActionImpl = deliverSheetsAction,
     completeReviewAlertImpl = completeReviewAlert,
+    sendAppointmentEmailImpl = sendAppointmentEmailNotification,
     guardBookedAppointmentReplyImpl =
       guardBookedAppointmentReplyAgainstHumanRace,
     sendControlledPatientReplyImpl =
@@ -961,7 +966,7 @@ export async function completeSelectedAppointment(
       ? `${greeting} Esse horário não está mais disponível. Vou conferir outras opções e retorno por aqui.`
       : `${greeting} Vou confirmar esse horário com a equipe e retorno por aqui assim que possível.`;
 
-    await completeReviewAlertImpl({
+    const reviewAlert = {
       from,
       eventId: `${eventId}-booking-review`,
       patientName,
@@ -974,7 +979,11 @@ export async function completeSelectedAppointment(
         "Sugestão para copiar após conferir:",
         suggestedReply,
       ].join("\n"),
+    };
+    await sendAppointmentEmailImpl(reviewAlert, {
+      deliverSheetsActionImpl,
     });
+    await completeReviewAlertImpl(reviewAlert);
 
     return {
       status: "review_required",
@@ -983,6 +992,23 @@ export async function completeSelectedAppointment(
       errorCode:
         reservation.errorCode || "reservation_failed",
     };
+  }
+
+  if (reservation.responseData?.duplicate !== true) {
+    await sendAppointmentEmailImpl(
+      {
+        eventId: `${eventId}-booking-confirmed-email`,
+        patientName,
+        patientPhone,
+        messageText: appointmentEmailBody({
+          heading: "AGENDAMENTO CONFIRMADO E REGISTRADO",
+          appointment: selection,
+          detail:
+            "A consulta foi registrada na aba Consultas e o horário foi retirado dos disponíveis.",
+        }),
+      },
+      { deliverSheetsActionImpl },
+    );
   }
 
   const body = buildBookedAppointmentReply({
@@ -1388,6 +1414,60 @@ async function completeOpenAIActive({
   }
 }
 
+async function sendAppointmentEmailNotification(
+  input,
+  { deliverSheetsActionImpl = deliverSheetsAction } = {},
+) {
+  const result = await deliverSheetsActionImpl(
+    "send_review_alert_email",
+    {
+      alert: {
+        eventId: String(input.eventId || ""),
+        patientName: String(input.patientName || ""),
+        patientPhone: String(input.patientPhone || ""),
+        messageText: String(input.messageText || ""),
+      },
+    },
+  );
+
+  console.log(
+    JSON.stringify({
+      source: "appointment_email_notification",
+      eventId: String(input.eventId || ""),
+      patientLast4: String(input.patientPhone || "").slice(-4),
+      status: result.ok ? "completed" : "failed",
+      errorCode: result.errorCode,
+    }),
+  );
+  return result;
+}
+
+function appointmentEmailBody({
+  heading,
+  appointment,
+  detail,
+  reviewUrl,
+}) {
+  return [
+    heading,
+    `Data: ${appointment.scheduledDate}`,
+    `Horário: ${appointment.scheduledTime}`,
+    `Profissional: ${appointment.professional || "Dra. Amanda"}`,
+    detail,
+    reviewUrl
+      ? [
+          "",
+          "Revise o caso e confirme com segurança neste link:",
+          reviewUrl,
+          "",
+          "A agenda só será alterada depois de clicar em Confirmar agendamento.",
+        ].join("\n")
+      : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function enrichPricePlanFromPatientRelationship(
   plan,
   relationship,
@@ -1419,6 +1499,107 @@ function enrichPricePlanFromPatientRelationship(
     professional: plan.professional || "amanda",
     procedure: contextPlan.procedure,
     automaticAllowed: false,
+  };
+}
+
+export async function completeManualAppointmentDetection(
+  {
+    eventId,
+    messageId,
+    patientName,
+    patientPhone,
+    detection,
+  },
+  {
+    deliverSheetsActionImpl = deliverSheetsAction,
+    sendAppointmentEmailImpl = sendAppointmentEmailNotification,
+    createAppointmentReviewImpl = createAppointmentReview,
+    buildAppointmentReviewUrlImpl = buildAppointmentReviewUrl,
+  } = {},
+) {
+  if (!detection) {
+    return { status: "not_detected", reserved: false };
+  }
+
+  const { confidence, ...appointment } = detection;
+  const appointmentId = `manual-${String(messageId || eventId)}`;
+  const appointmentPayload = {
+    ...appointment,
+    appointmentId,
+    eventId: String(eventId || ""),
+    phone: patientPhone,
+    name: patientName,
+  };
+
+  if (confidence === "confirmed") {
+    const reservation = await deliverSheetsActionImpl(
+      "reserve_appointment_slot",
+      { appointment: appointmentPayload },
+    );
+    const reserved =
+      reservation.ok &&
+      reservation.responseData?.reserved === true;
+    const duplicate = reservation.responseData?.duplicate === true;
+    if (!duplicate || !reserved) {
+      await sendAppointmentEmailImpl(
+        {
+          eventId: `${eventId}-manual-booking-email`,
+          patientName,
+          patientPhone,
+          messageText: appointmentEmailBody({
+            heading: reserved
+              ? "AGENDAMENTO MANUAL CONFIRMADO E REGISTRADO"
+              : "CONFIRMAÇÃO MANUAL DETECTADA — REVISÃO NECESSÁRIA",
+            appointment: appointmentPayload,
+            detail: reserved
+              ? "A consulta foi registrada e o horário foi retirado dos disponíveis."
+              : `O sistema não conseguiu reservar automaticamente. Motivo: ${reservation.errorCode || "reservation_failed"}.`,
+          }),
+        },
+        { deliverSheetsActionImpl },
+      );
+    }
+
+    return {
+      status: reserved ? "completed" : "review_required",
+      reserved,
+      duplicate,
+      errorCode: reserved
+        ? "none"
+        : reservation.errorCode || "reservation_failed",
+    };
+  }
+
+  let review = null;
+  try {
+    review = await createAppointmentReviewImpl(appointmentPayload);
+  } catch {
+    review = { ok: false, errorCode: "review_store_failed" };
+  }
+  const reviewUrl = review?.ok
+    ? buildAppointmentReviewUrlImpl(review)
+    : "";
+  await sendAppointmentEmailImpl(
+    {
+      eventId: `${eventId}-possible-booking-email`,
+      patientName,
+      patientPhone,
+      messageText: appointmentEmailBody({
+        heading: "POSSÍVEL AGENDAMENTO MANUAL — CONFIRME",
+        appointment: appointmentPayload,
+        detail:
+          "A conversa parece indicar um agendamento, mas não foi segura o bastante para alterar a agenda automaticamente.",
+        reviewUrl,
+      }),
+    },
+    { deliverSheetsActionImpl },
+  );
+
+  return {
+    status: review?.ok ? "approval_requested" : "review_store_failed",
+    reserved: false,
+    reviewCreated: review?.ok === true,
+    errorCode: review?.errorCode || "none",
   };
 }
 
@@ -1620,7 +1801,7 @@ export default async (request, context) => {
       ),
       source: "human",
     });
-    const confirmedAppointment = detectConfirmedAppointment({
+    const manualAppointment = detectManualAppointment({
       currentText: String(echo.text?.body || ""),
       recentConversation: memoryResult.historyAfter,
       at: String(
@@ -1631,22 +1812,22 @@ export default async (request, context) => {
       ),
     });
     let appointmentSyncStatus = "not_detected";
+    let manualAppointmentResult = null;
 
-    if (confirmedAppointment) {
-      const appointmentSync = await deliverSheetsAction(
-        "upsert_appointment",
-        {
-          appointment: {
-            ...confirmedAppointment,
-            eventId: String(eventId),
-            appointmentId: `whatsapp-${String(messageId)}`,
-            phone: patientPhone,
-          },
-        },
-      );
-      appointmentSyncStatus = appointmentSync.ok
-        ? "completed"
-        : appointmentSync.errorCode;
+    if (manualAppointment) {
+      manualAppointmentResult =
+        await completeManualAppointmentDetection({
+          eventId: String(eventId),
+          messageId: String(messageId),
+          patientName: String(
+            echo.customerProfile?.name ||
+              payload.customerProfile?.name ||
+              "",
+          ),
+          patientPhone,
+          detection: manualAppointment,
+        });
+      appointmentSyncStatus = manualAppointmentResult.status;
 
       console.log(
         JSON.stringify({
@@ -1654,6 +1835,7 @@ export default async (request, context) => {
           eventId: String(eventId),
           patientLast4: patientPhone.slice(-4),
           status: appointmentSyncStatus,
+          confidence: manualAppointment.confidence,
         }),
       );
     }
@@ -1662,8 +1844,8 @@ export default async (request, context) => {
       "touch_appointment",
       {
         appointment: {
-          appointmentId: confirmedAppointment
-            ? `whatsapp-${String(messageId)}`
+          appointmentId: manualAppointmentResult?.reserved
+            ? `manual-${String(messageId)}`
             : "",
           phone: patientPhone,
           at: String(
@@ -1775,6 +1957,7 @@ export default async (request, context) => {
           currentText: text,
           recentConversation:
             ignoredMemory.historyAfter,
+          at: contactAt,
         });
 
       if (appointmentSelection) {
@@ -1948,6 +2131,7 @@ export default async (request, context) => {
       detectPatientAppointmentSelection({
         currentText: text,
         recentConversation: memoryResult.historyAfter,
+        at: contactAt,
       });
     patientAppointmentReply = patientAppointmentSelection
       ? null

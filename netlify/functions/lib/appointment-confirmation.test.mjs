@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   buildBookedAppointmentReply,
   detectConfirmedAppointment,
+  detectManualAppointment,
   detectPatientAppointmentSelection,
   detectPatientAppointmentReply,
 } from "./appointment-confirmation.mjs";
@@ -194,6 +195,80 @@ test("does not choose an ambiguous or unoffered slot", () => {
     }),
     null,
   );
+});
+
+test("captures a manually negotiated slot from natural conversation", () => {
+  const recentConversation = [
+    {
+      role: "assistant",
+      at: "2026-08-01T15:40:04-03:00",
+      text: [
+        "Temos segunda 03/08 às 10h",
+        "segunda 10/08 às 10h",
+        "sexta 28/08 às 14h.",
+      ].join("\n"),
+    },
+    {
+      role: "assistant",
+      at: "2026-08-01T17:45:27-03:00",
+      text: "Consegui segunda às 08h, te atenderia?",
+    },
+    {
+      role: "assistant",
+      at: "2026-08-01T17:47:18-03:00",
+      text: "Caso sábado fique melhor, dia 22/08 às 08h também é possível.",
+    },
+    { role: "user", text: "essa segunda agora?" },
+    { role: "user", text: "pode sim" },
+  ];
+
+  const result = detectPatientAppointmentSelection({
+    currentText: "pode sim",
+    recentConversation,
+    at: "2026-08-01T18:08:04-03:00",
+  });
+
+  assert.equal(result?.scheduledDate, "2026-08-03");
+  assert.equal(result?.scheduledTime, "08:00");
+});
+
+test("recognizes the manual closing used after the patient accepted", () => {
+  const result = detectManualAppointment({
+    currentText: "Combinado então! Agradecemos e até lá",
+    at: "2026-08-01T18:08:22-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        at: "2026-08-01T17:45:27-03:00",
+        text: "Consegui segunda às 08h, te atenderia?",
+      },
+      { role: "user", text: "essa segunda agora?" },
+      { role: "user", text: "pode sim" },
+    ],
+  });
+
+  assert.equal(result?.confidence, "confirmed");
+  assert.equal(result?.scheduledDate, "2026-08-03");
+  assert.equal(result?.scheduledTime, "08:00");
+});
+
+test("flags a plausible manual closing for email review when acceptance is unclear", () => {
+  const result = detectManualAppointment({
+    currentText: "Combinado então",
+    at: "2026-08-01T18:08:22-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        at: "2026-08-01T17:45:27-03:00",
+        text: "Para a consulta, consegui segunda às 08h. Te atenderia?",
+      },
+      { role: "user", text: "Vou verificar e aviso" },
+    ],
+  });
+
+  assert.equal(result?.confidence, "possible");
+  assert.equal(result?.scheduledDate, "2026-08-03");
+  assert.equal(result?.scheduledTime, "08:00");
 });
 
 test("builds a complete deterministic booking confirmation", () => {

@@ -180,6 +180,8 @@ function isConfirmation(text) {
     /\bte esperamos?\b/,
     /\bvamos te receber\b/,
     /\bda pra te receber\b/,
+    /\bcombinado(?: entao)?\b/,
+    /\bagradecemos e ate la\b/,
   ].some((pattern) => pattern.test(comparable));
 }
 
@@ -202,10 +204,50 @@ function detectConsultationType(text) {
   return "Consulta presencial";
 }
 
-function offeredAppointmentSlots(recentConversation) {
+function publicAppointmentSlot(slot) {
+  if (!slot) return null;
+  const { _turnIndex, ...publicSlot } = slot;
+  return publicSlot;
+}
+
+function manualAppointmentSlotsFromText(text, baseDate, turnIndex) {
+  const fragments = String(text || "")
+    .split(/\r?\n|\s+[•·]\s+|\s+[-–—]\s+(?=\D{0,24}\d{1,2}(?::\d{2}|h))/u)
+    .map((fragment) => fragment.trim())
+    .filter(Boolean);
+  const slots = [];
+
+  for (const fragment of fragments) {
+    const scheduledDate = extractDate(fragment, baseDate);
+    const scheduledTime = extractTime(fragment);
+
+    if (!scheduledDate || !scheduledTime) continue;
+
+    const professional = detectProfessional(fragment);
+    const consultationType = detectConsultationType(fragment);
+    slots.push({
+      option: null,
+      scheduledDate,
+      scheduledTime,
+      professional,
+      consultationType,
+      location:
+        consultationType === "Teleconsulta"
+          ? "Teleconsulta"
+          : "Clínica LIV Faria Lima",
+      _turnIndex: turnIndex,
+    });
+  }
+
+  return slots;
+}
+
+function offeredAppointmentSlots(recentConversation, at = new Date()) {
   const turns = Array.isArray(recentConversation)
     ? recentConversation.slice(-12)
     : [];
+  const baseDate = new Date(at);
+  const slots = [];
 
   for (let turnIndex = turns.length - 1; turnIndex >= 0; turnIndex -= 1) {
     const turn = turns[turnIndex];
@@ -223,32 +265,50 @@ function offeredAppointmentSlots(recentConversation) {
       ),
     ];
 
-    if (!matches.length) continue;
+    if (matches.length) {
+      const professional = detectProfessional(text);
+      const consultationType = detectConsultationType(text);
 
-    const professional = detectProfessional(text);
-    const consultationType = detectConsultationType(text);
+      slots.push(...matches.map((match) => ({
+        option: Number(match[1]),
+        scheduledDate: [
+          match[4],
+          String(match[3]).padStart(2, "0"),
+          String(match[2]).padStart(2, "0"),
+        ].join("-"),
+        scheduledTime: [
+          String(match[5]).padStart(2, "0"),
+          match[6],
+        ].join(":"),
+        professional,
+        consultationType,
+        location:
+          consultationType === "Teleconsulta"
+            ? "Teleconsulta"
+            : "Clínica LIV Faria Lima",
+        _turnIndex: turnIndex,
+      })));
+      continue;
+    }
 
-    return matches.map((match) => ({
-      option: Number(match[1]),
-      scheduledDate: [
-        match[4],
-        String(match[3]).padStart(2, "0"),
-        String(match[2]).padStart(2, "0"),
-      ].join("-"),
-      scheduledTime: [
-        String(match[5]).padStart(2, "0"),
-        match[6],
-      ].join(":"),
-      professional,
-      consultationType,
-      location:
-        consultationType === "Teleconsulta"
-          ? "Teleconsulta"
-          : "Clínica LIV Faria Lima",
-    }));
+    if (!Number.isNaN(baseDate.getTime())) {
+      slots.push(
+        ...manualAppointmentSlotsFromText(
+          text,
+          turn?.at ? new Date(turn.at) : baseDate,
+          turnIndex,
+        ),
+      );
+    }
   }
 
-  return [];
+  const seen = new Set();
+  return slots.filter((slot) => {
+    const key = `${slot.scheduledDate}|${slot.scheduledTime}|${slot.professional}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function selectedOptionNumber(text) {
@@ -336,20 +396,32 @@ function hasSelectionIntent(text) {
 export function detectPatientAppointmentSelection({
   currentText,
   recentConversation = [],
+  at = new Date(),
 } = {}) {
   if (!hasSelectionIntent(currentText)) return null;
 
-  const slots = offeredAppointmentSlots(recentConversation);
+  const slots = offeredAppointmentSlots(recentConversation, at);
   if (!slots.length) return null;
 
-  const option = selectedOptionNumber(currentText);
+  const patientSelectionTexts = [
+    currentText,
+    ...recentConversation
+      .slice(-6)
+      .reverse()
+      .filter((turn) => turn?.role === "user" || turn?.role === "patient")
+      .map((turn) => turn?.text)
+      .filter((text) => text && text !== currentText),
+  ];
+  const option = patientSelectionTexts
+    .map(selectedOptionNumber)
+    .find(Boolean);
   if (option) {
     const selected = slots.find(
       (slot) => slot.option === option,
     );
     return selected
       ? {
-          ...selected,
+          ...publicAppointmentSlot(selected),
           status: "Consulta agendada",
           source:
             "WhatsApp — opção de horário escolhida pela paciente",
@@ -357,12 +429,22 @@ export function detectPatientAppointmentSelection({
       : null;
   }
 
-  const requestedDate = explicitOfferedDate(
-    currentText,
-    slots,
-  );
-  const requestedTime = extractTime(currentText);
-  const requestedWeekday = selectedWeekday(currentText);
+  const baseDate = new Date(at);
+  const requestedDate = patientSelectionTexts
+    .map((text) =>
+      explicitOfferedDate(text, slots) ||
+      (!Number.isNaN(baseDate.getTime())
+        ? extractRelativeDate(text, baseDate)
+        : null),
+    )
+    .find(Boolean);
+  const requestedTime = patientSelectionTexts
+    .map(extractTime)
+    .find(Boolean);
+  const requestedWeekday =
+    patientSelectionTexts
+      .map(selectedWeekday)
+      .find((value) => value !== null && value !== undefined) ?? null;
   const candidates = slots.filter((slot) => {
     if (
       requestedDate &&
@@ -389,15 +471,152 @@ export function detectPatientAppointmentSelection({
     Boolean(requestedDate || requestedTime) ||
     requestedWeekday !== null;
 
-  if (!suppliedSpecificChoice || candidates.length !== 1) {
+  if (!suppliedSpecificChoice || !candidates.length) {
     return null;
   }
 
+  const newestTurnIndex = Math.max(
+    ...candidates.map((candidate) => candidate._turnIndex),
+  );
+  const newestCandidates = candidates.filter(
+    (candidate) => candidate._turnIndex === newestTurnIndex,
+  );
+
+  if (newestCandidates.length !== 1) return null;
+
   return {
-    ...candidates[0],
+    ...publicAppointmentSlot(newestCandidates[0]),
     status: "Consulta agendada",
     source:
       "WhatsApp — opção de horário escolhida pela paciente",
+  };
+}
+
+function isExplicitManualConfirmation(text) {
+  const comparable = normalize(text);
+  return [
+    /\bconfirmad[oa]?\b/,
+    /\bagendad[oa]?\b/,
+    /\breservad[oa]?\b/,
+    /\bficou (?:marcad[oa]|agendad[oa]|combinad[oa])\b/,
+  ].some((pattern) => pattern.test(comparable));
+}
+
+function isManualClosingPhrase(text) {
+  const comparable = normalize(text);
+  return [
+    /\bcombinado(?: entao)?\b/,
+    /\bagradecemos e ate la\b/,
+    /\bte esperamos?\b/,
+    /\bvamos te receber\b/,
+    /\bda pra te receber\b/,
+  ].some((pattern) => pattern.test(comparable));
+}
+
+function hasAppointmentConversationContext(recentConversation) {
+  const context = (Array.isArray(recentConversation)
+    ? recentConversation.slice(-12)
+    : [])
+    .map((turn) => turn?.text)
+    .filter(Boolean)
+    .join(" ");
+  const comparable = normalize(context);
+  return /\b(?:consulta|avaliacao|agendar|agendamento|horario|dra amanda|recepcao|atender)\w*\b/.test(
+    comparable,
+  );
+}
+
+function recentPatientAccepted(recentConversation) {
+  const patientTurns = (Array.isArray(recentConversation)
+    ? recentConversation.slice(-6)
+    : [])
+    .filter((turn) => turn?.role === "user" || turn?.role === "patient")
+    .map((turn) => normalize(turn?.text));
+
+  return patientTurns.some((text) =>
+    /^(?:sim|pode sim|pode ser|confirmo|combinado|perfeito|ok(?: obrigada| obrigado)?)$/.test(
+      text,
+    ),
+  );
+}
+
+function fallbackAppointmentFromConversation(recentConversation, at) {
+  const texts = (Array.isArray(recentConversation)
+    ? recentConversation.slice(-10)
+    : [])
+    .map((turn) => turn?.text)
+    .filter(Boolean);
+  let scheduledDate = null;
+  let scheduledTime = null;
+
+  for (let index = texts.length - 1; index >= 0; index -= 1) {
+    if (!scheduledDate) scheduledDate = extractDate(texts[index], at);
+    if (!scheduledTime) scheduledTime = extractTime(texts[index]);
+    if (scheduledDate && scheduledTime) break;
+  }
+
+  if (!scheduledDate || !scheduledTime) return null;
+  const context = texts.join(" ");
+  const professional = detectProfessional(context);
+  const consultationType = detectConsultationType(context);
+  return {
+    scheduledDate,
+    scheduledTime,
+    professional,
+    consultationType,
+    location:
+      consultationType === "Teleconsulta"
+        ? "Teleconsulta"
+        : "Clínica LIV Faria Lima",
+  };
+}
+
+export function detectManualAppointment({
+  currentText,
+  recentConversation = [],
+  at = new Date(),
+} = {}) {
+  const baseDate = new Date(at);
+  if (Number.isNaN(baseDate.getTime())) return null;
+
+  const explicit = isExplicitManualConfirmation(currentText);
+  const closing = isManualClosingPhrase(currentText);
+  if (!explicit && !closing) return null;
+
+  const lastPatientText = [...recentConversation]
+    .reverse()
+    .find((turn) => turn?.role === "user" || turn?.role === "patient")
+    ?.text;
+  const selected = lastPatientText
+    ? detectPatientAppointmentSelection({
+        currentText: lastPatientText,
+        recentConversation,
+        at: baseDate,
+      })
+    : null;
+  const appointment =
+    selected ||
+    fallbackAppointmentFromConversation(
+      [...recentConversation, { role: "assistant", text: currentText }],
+      baseDate,
+    );
+
+  if (!appointment) return null;
+  const appointmentContext = hasAppointmentConversationContext(
+    recentConversation,
+  );
+  if (!explicit && !appointmentContext) return null;
+
+  const confidence =
+    explicit || (closing && recentPatientAccepted(recentConversation))
+      ? "confirmed"
+      : "possible";
+
+  return {
+    ...publicAppointmentSlot(appointment),
+    status: "Consulta agendada",
+    source: "WhatsApp — confirmação manual de agendamento detectada",
+    confidence,
   };
 }
 
@@ -478,7 +697,7 @@ function isPatientConfirmation(text) {
   const comparable = normalize(text);
 
   return [
-    /^(?:sim|confirmo|confirmada|confirmado|combinado|perfeito|tudo certo|ok(?: obrigada)?|ok(?: obrigado)?|estarei la|estarei aí)$/,
+    /^(?:sim|pode sim|pode ser|confirmo|confirmada|confirmado|combinado|perfeito|tudo certo|ok(?: obrigada)?|ok(?: obrigado)?|estarei la|estarei aí)$/,
     /\b(?:pode manter|pode confirmar|esta confirmado|está confirmado)\b/,
   ].some((pattern) => pattern.test(comparable));
 }
@@ -529,48 +748,18 @@ export function detectConfirmedAppointment({
   recentConversation = [],
   at = new Date(),
 } = {}) {
-  if (!isConfirmation(currentText)) return null;
-
-  const baseDate = new Date(at);
-  if (Number.isNaN(baseDate.getTime())) return null;
-
-  const texts = [
-    ...(Array.isArray(recentConversation)
-      ? recentConversation.map((turn) => turn?.text)
-      : []),
+  const detection = detectManualAppointment({
     currentText,
-  ]
-    .filter(Boolean)
-    .slice(-10);
-  let scheduledDate = null;
-  let scheduledTime = null;
-
-  for (let index = texts.length - 1; index >= 0; index -= 1) {
-    if (!scheduledDate) {
-      scheduledDate = extractDate(texts[index], baseDate);
-    }
-    if (!scheduledTime) {
-      scheduledTime = extractTime(texts[index]);
-    }
-    if (scheduledDate && scheduledTime) break;
+    recentConversation,
+    at,
+  });
+  if (!detection || detection.confidence !== "confirmed") {
+    return null;
   }
-
-  if (!scheduledDate || !scheduledTime) return null;
-
-  const context = texts.join(" ");
-  const professional = detectProfessional(context);
-  const consultationType = detectConsultationType(context);
+  const { confidence, ...appointment } = detection;
 
   return {
-    scheduledDate,
-    scheduledTime,
-    professional,
-    consultationType,
-    location:
-      consultationType === "Teleconsulta"
-        ? "Teleconsulta"
-        : "Clínica LIV Faria Lima",
-    status: "Consulta agendada",
+    ...appointment,
     source: "WhatsApp — confirmação de agendamento detectada",
   };
 }

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  completeManualAppointmentDetection,
   completeSelectedAppointment,
 } from "../ycloud-webhook.mjs";
 
@@ -73,7 +74,7 @@ test("a patient choice reserves the offered slot and receives the final confirma
     confirmationSent: true,
     errorCode: "none",
   });
-  assert.equal(sheetActions.length, 1);
+  assert.equal(sheetActions.length, 2);
   assert.equal(
     sheetActions[0].action,
     "reserve_appointment_slot",
@@ -85,6 +86,14 @@ test("a patient choice reserves the offered slot and receives the final confirma
   assert.equal(
     sheetActions[0].payload.appointment.scheduledTime,
     "10:00",
+  );
+  assert.equal(
+    sheetActions[1].action,
+    "send_review_alert_email",
+  );
+  assert.match(
+    sheetActions[1].payload.alert.messageText,
+    /AGENDAMENTO CONFIRMADO E REGISTRADO/,
   );
   assert.equal(patientMessages.length, 1);
   assert.equal(
@@ -165,4 +174,132 @@ test("a new human response cancels only the automatic confirmation, not the rese
     "confirmation_cancelled_by_human",
   );
   assert.equal(patientMessages.length, 0);
+});
+
+test("a clear manual confirmation reserves the slot and emails Daniel", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "manual-event",
+      messageId: "manual-message",
+      patientName: "Lais Valério Ikoma",
+      patientPhone: "+5511944411011",
+      detection: {
+        scheduledDate: "2026-08-03",
+        scheduledTime: "08:00",
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        status: "Consulta agendada",
+        source: "WhatsApp — confirmação manual",
+        confidence: "confirmed",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        if (action === "reserve_appointment_slot") {
+          return {
+            ok: true,
+            responseData: { ok: true, reserved: true },
+          };
+        }
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.reserved, true);
+  assert.equal(actions[0].action, "reserve_appointment_slot");
+  assert.equal(actions[1].action, "send_review_alert_email");
+  assert.match(
+    actions[1].payload.alert.messageText,
+    /AGENDAMENTO MANUAL CONFIRMADO E REGISTRADO/,
+  );
+});
+
+test("a doubtful manual closing emails a secure approval link without changing the agenda", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "possible-event",
+      messageId: "possible-message",
+      patientName: "Maria",
+      patientPhone: "+5511900001111",
+      detection: {
+        scheduledDate: "2026-08-10",
+        scheduledTime: "10:00",
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        status: "Consulta agendada",
+        source: "WhatsApp — possível confirmação manual",
+        confidence: "possible",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+      createAppointmentReviewImpl: async () => ({
+        ok: true,
+        id: "review-1",
+        expiresAt: 123,
+        signature: "signature",
+      }),
+      buildAppointmentReviewUrlImpl: () =>
+        "https://example.com/review?id=review-1",
+    },
+  );
+
+  assert.equal(result.status, "approval_requested");
+  assert.equal(result.reserved, false);
+  assert.equal(actions.length, 1);
+  assert.equal(actions[0].action, "send_review_alert_email");
+  assert.match(
+    actions[0].payload.alert.messageText,
+    /Confirmar agendamento/,
+  );
+  assert.match(
+    actions[0].payload.alert.messageText,
+    /https:\/\/example\.com\/review/,
+  );
+});
+
+test("a manual confirmation does not send a second email when the same slot is already registered", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "duplicate-event",
+      messageId: "duplicate-message",
+      patientName: "Lais",
+      patientPhone: "+5511944411011",
+      detection: {
+        scheduledDate: "2026-08-03",
+        scheduledTime: "08:00",
+        professional: "Dra. Amanda",
+        confidence: "confirmed",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        return {
+          ok: true,
+          responseData: {
+            ok: true,
+            reserved: true,
+            duplicate: true,
+          },
+        };
+      },
+    },
+  );
+
+  assert.equal(result.reserved, true);
+  assert.equal(result.duplicate, true);
+  assert.equal(actions.length, 1);
+  assert.equal(actions[0].action, "reserve_appointment_slot");
 });

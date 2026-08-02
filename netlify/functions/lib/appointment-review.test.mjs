@@ -1,0 +1,145 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import {
+  buildAppointmentReviewUrl,
+  createAppointmentReview,
+  getAppointmentReview,
+  verifyAppointmentReviewToken,
+} from "./appointment-review-store.mjs";
+import { handleAppointmentReview } from "../appointment-review.mjs";
+
+function memoryStore() {
+  const values = new Map();
+  return {
+    async setJSON(key, value) {
+      values.set(key, structuredClone(value));
+    },
+    async get(key) {
+      return values.has(key) ? structuredClone(values.get(key)) : null;
+    },
+  };
+}
+
+const APPOINTMENT = {
+  appointmentId: "manual-review-1",
+  eventId: "event-1",
+  phone: "+5511900001234",
+  name: "Maria Silva",
+  professional: "Dra. Amanda",
+  scheduledDate: "2026-08-10",
+  scheduledTime: "10:00",
+};
+
+test("creates an opaque signed review link and verifies it", async () => {
+  const backing = memoryStore();
+  const env = {
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "review-secret",
+    URL: "https://example.com",
+  };
+  const review = await createAppointmentReview(APPOINTMENT, {
+    env,
+    getStoreImpl: () => backing,
+    now: 1_000,
+    ttlMs: 60_000,
+    id: "review-id",
+  });
+  const url = buildAppointmentReviewUrl(review, { env });
+
+  assert.equal(review.ok, true);
+  assert.match(url, /id=review-id/);
+  assert.doesNotMatch(url, /5511900001234|Maria/);
+  assert.equal(
+    verifyAppointmentReviewToken(
+      {
+        id: review.id,
+        expiresAt: review.expiresAt,
+        signature: review.signature,
+      },
+      { env, now: 2_000 },
+    ).ok,
+    true,
+  );
+  assert.equal(
+    (await getAppointmentReview("review-id", {
+      getStoreImpl: () => backing,
+    }))?.appointment?.scheduledTime,
+    "10:00",
+  );
+});
+
+test("GET only displays the review and POST performs the reservation", async () => {
+  const env = {
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "review-secret",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://script.example.com/webhook",
+  };
+  const review = {
+    id: "review-id",
+    status: "pending",
+    appointment: APPOINTMENT,
+  };
+  const token = {
+    id: "review-id",
+    expiresAt: String(Date.now() + 60_000),
+    signature: "signature",
+  };
+  let fetchCalls = 0;
+  const updates = [];
+  const dependencies = {
+    env,
+    fetchImpl: async (_url, options) => {
+      fetchCalls += 1;
+      const body = JSON.parse(options.body);
+      if (body.action === "reserve_appointment_slot") {
+        return new Response(
+          JSON.stringify({ ok: true, reserved: true }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      }
+      return new Response(
+        JSON.stringify({ ok: true, sent: true }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      );
+    },
+    verifyTokenImpl: () => ({ ok: true, id: "review-id" }),
+    getAppointmentReviewImpl: async () => review,
+    updateAppointmentReviewImpl: async (_id, patch) => {
+      updates.push(patch);
+      return { ...review, ...patch };
+    },
+  };
+  const query = new URLSearchParams({
+    id: token.id,
+    exp: token.expiresAt,
+    sig: token.signature,
+  });
+  const getResponse = await handleAppointmentReview(
+    new Request(`https://example.com/review?${query}`),
+    dependencies,
+  );
+
+  assert.equal(getResponse.status, 200);
+  assert.equal(fetchCalls, 0);
+  assert.match(await getResponse.text(), /Confirmar e atualizar agenda/);
+
+  const form = new URLSearchParams({
+    id: token.id,
+    exp: token.expiresAt,
+    sig: token.signature,
+    action: "confirm",
+  });
+  const postResponse = await handleAppointmentReview(
+    new Request("https://example.com/review", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      body: form,
+    }),
+    dependencies,
+  );
+
+  assert.equal(postResponse.status, 200);
+  assert.equal(fetchCalls, 2);
+  assert.equal(updates[0].status, "approved");
+  assert.match(await postResponse.text(), /horário foi retirado/);
+});
