@@ -1,3 +1,5 @@
+import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
+
 const URGENT_PATTERNS = [
   /\b(?:dor|aperto|press[aã]o|peso)\s+(?:forte\s+)?no\s+peito\b/i,
   /\bfalta\s+de\s+ar\b/i,
@@ -524,6 +526,17 @@ export function planAutomation({
   const asksConsultationInformation =
     !marketingPrefilledMessage &&
     isConsultationInformationRequest(normalizedText);
+
+  if (isProfessionalExperienceDetailRequest(normalizedText)) {
+    return {
+      route: "human_review",
+      reason: "professional_experience_detail_review",
+      replyCode: "AMANDA-EXPERIENCE-PARTIAL-01",
+      professional: "amanda",
+      procedure: procedure?.key || null,
+      automaticAllowed: false,
+    };
+  }
 
   if (asksPrice && procedure) {
     return {

@@ -563,6 +563,20 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.procedure, "blefaroplastia");
 });
 
+test("exact professional experience remains partially answerable and human-reviewed", () => {
+  const plan = planAutomation({
+    text: "Há quanto tempo a Dra. Amanda atua na cirurgia plástica?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "professional_experience_detail_review");
+  assert.equal(plan.replyCode, "AMANDA-EXPERIENCE-PARTIAL-01");
+  assert.equal(plan.automaticAllowed, false);
+});
+
 test("standalone lifting is preserved as lifting facial on the next turn", () => {
   const initialPlan = planAutomation({
     text: "Oi, quero saber mais sobre lifting",
