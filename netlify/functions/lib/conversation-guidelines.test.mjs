@@ -171,6 +171,10 @@ test("playbook states credentials and location precisely", () => {
   assert.match(CONVERSATION_GUIDELINES, /atuação com foco em cirurgias da face/);
   assert.match(CONVERSATION_GUIDELINES, /CRM-SP 191605/);
   assert.match(CONVERSATION_GUIDELINES, /RQE 110472/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /membro da Sociedade Brasileira de Cirurgia Plástica \(SBCP\)/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /Rua Pais Leme, 215/);
   assert.match(CONVERSATION_GUIDELINES, /próxima à Av\. Faria Lima/);
   assert.match(

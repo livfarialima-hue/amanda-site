@@ -32,6 +32,10 @@ test("answers verified facts and leaves only the duration pending", () => {
   assert.match(review.safeReply, /Sim, a Dra\. Amanda realiza lifting facial/);
   assert.match(review.safeReply, /residência médica em Cirurgia Plástica pela Unicamp/);
   assert.match(review.safeReply, /RQE 110472/);
+  assert.match(
+    review.safeReply,
+    /membro da Sociedade Brasileira de Cirurgia Plástica \(SBCP\)/,
+  );
   assert.match(review.safeReply, /vou confirmar essa informação/);
   assert.doesNotMatch(review.safeReply, /mais de 10 anos|exclusivamente/i);
 });

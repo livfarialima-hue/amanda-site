@@ -80,8 +80,8 @@ export function buildProfessionalFactPartialReview({
       : ""
     : greeting(patientName);
   const verifiedFact = lifting
-    ? "Sim, a Dra. Amanda realiza lifting facial. Ela é médica cirurgiã plástica, com residência médica em Cirurgia Plástica pela Unicamp, RQE 110472 e atuação com foco em cirurgias da face."
-    : "A Dra. Amanda é médica cirurgiã plástica, com residência médica em Cirurgia Plástica pela Unicamp, RQE 110472 e atuação com foco em cirurgias da face.";
+    ? "Sim, a Dra. Amanda realiza lifting facial. Ela é médica cirurgiã plástica, com residência médica em Cirurgia Plástica pela Unicamp, RQE 110472, membro da Sociedade Brasileira de Cirurgia Plástica (SBCP) e atuação com foco em cirurgias da face."
+    : "A Dra. Amanda é médica cirurgiã plástica, com residência médica em Cirurgia Plástica pela Unicamp, RQE 110472, membro da Sociedade Brasileira de Cirurgia Plástica (SBCP) e atuação com foco em cirurgias da face.";
   const safeReply = [
     opening,
     verifiedFact,
