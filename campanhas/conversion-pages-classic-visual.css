@@ -347,6 +347,135 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
 }
 .cv-clinic-compact-media img:last-child { object-position: center; }
 
+/* Autoridade objetiva antes de preço ou argumentos de identificação. */
+.cv-authority {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+.cv-authority-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.cv-authority-item {
+  min-width: 0;
+  padding: 22px clamp(16px, 2.3vw, 30px);
+  border-right: 1px solid var(--line);
+}
+.cv-authority-item:first-child { padding-left: 0; }
+.cv-authority-item:last-child { border-right: 0; padding-right: 0; }
+.cv-authority-item strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.02rem;
+  font-weight: 400;
+}
+.cv-authority-item span {
+  display: block;
+  color: var(--muted);
+  font-size: .74rem;
+  line-height: 1.45;
+}
+
+/* Prova de prática cirúrgica sem transformar idade ou gênero em justificativa. */
+.cv-surgical-proof {
+  display: grid;
+  grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 60px);
+  margin-top: 34px;
+  border: 1px solid var(--line);
+  padding: clamp(24px, 4vw, 42px);
+  background: #fffaf7;
+  color: var(--ink);
+}
+.cv-surgical-proof-media { margin: 0; overflow: hidden; }
+.cv-surgical-proof-media img {
+  width: 100%;
+  height: clamp(280px, 34vw, 430px);
+  object-fit: cover;
+  object-position: center 34%;
+}
+.cv-surgical-proof-copy p { color: var(--muted); }
+.cv-proof-points { display: grid; gap: 11px; margin-top: 22px; }
+.cv-proof-points div { border-left: 3px solid var(--green); padding-left: 14px; }
+.cv-proof-points strong { display: block; font-size: .9rem; }
+.cv-proof-points span { display: block; color: var(--muted); font-size: .8rem; }
+
+/* Comparação rápida entre cirurgia, opções menores e acompanhamento. */
+.cv-decision-grid .cv-card { position: relative; overflow: hidden; padding-top: 34px; }
+.cv-decision-grid .cv-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--green);
+  content: "";
+}
+.cv-decision-grid .cv-card:nth-child(2)::before { background: #a77969; }
+.cv-decision-grid .cv-card:nth-child(3)::before { background: #80736d; }
+.cv-decision-kicker {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--green-dark);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.cv-section--dark .cv-decision-kicker { color: #d9eddf; }
+
+/* Chamada visual compacta para o vídeo completo da clínica. */
+.cv-clinic-preview {
+  position: relative;
+  display: block;
+  grid-column: 1 / -1;
+  overflow: hidden;
+  min-height: 170px;
+  color: #fff;
+  text-decoration: none;
+}
+.cv-clinic-preview img { width: 100%; height: 100%; min-height: 170px; object-fit: cover; }
+.cv-clinic-preview::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(36, 24, 20, .76), rgba(36, 24, 20, .12));
+  content: "";
+}
+.cv-clinic-preview span {
+  position: absolute;
+  z-index: 1;
+  left: 22px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 260px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+.cv-clinic-preview span::before {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--green-dark);
+  content: "▶";
+  font-size: .78rem;
+}
+.cv-swipe-hint { display: none; }
+
+/* Durante a rolagem, o CTA móvel sai de cena e reaparece quando a leitura pausa. */
+.cv-sticky.cv-sticky--reading {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(100% + 24px));
+}
+
 /* Rodapé completo, com o mapa do site que existia anteriormente. */
 .cv-footer { padding: 56px 0 104px; }
 .cv-footer-grid {
@@ -442,7 +571,8 @@ body.curated-video-open { overflow: hidden; }
 @media (max-width: 920px) {
   .cv-story,
   .cv-clinic-grid,
-  .cv-clinic-compact { grid-template-columns: 1fr; }
+  .cv-clinic-compact,
+  .cv-surgical-proof { grid-template-columns: 1fr; }
   .cv-clinic-copy { max-width: 720px; }
   .cv-footer-grid { grid-template-columns: 1fr; }
 }
@@ -452,12 +582,44 @@ body.curated-video-open { overflow: hidden; }
   .cv-brand span {
     display: block;
     overflow: hidden;
-    font-size: .57rem;
+    font-size: .59rem;
     letter-spacing: .025em;
-    text-overflow: ellipsis;
     white-space: nowrap;
   }
   .cv-nav { gap: 10px; }
+  .cv-nav > .cv-links .cv-btn { min-height: 42px; padding: 9px 12px; font-size: .72rem; }
+  .cv-hero { padding: 24px 0 34px; }
+  .cv-hero-grid { gap: 22px !important; }
+  .cv-hero .cv-lead { font-size: 1rem; line-height: 1.58; }
+  .cv-hero .cv-actions { margin-top: 21px; gap: 13px; }
+  .cv-hero .cv-trust-line { margin-top: 16px; font-size: .76rem; }
+  .cv-authority-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cv-authority-item { padding: 16px 14px; border-bottom: 1px solid var(--line); }
+  .cv-authority-item:first-child { padding-left: 0; }
+  .cv-authority-item:nth-child(2) { border-right: 0; padding-right: 0; }
+  .cv-authority-item:nth-child(3) { border-bottom: 0; padding-left: 0; }
+  .cv-authority-item:nth-child(4) { border-right: 0; border-bottom: 0; padding-right: 0; }
+  .cv-authority-item strong { font-size: .94rem; }
+  .cv-authority-item span { font-size: .69rem; }
+  .cv-surgical-proof { margin-top: 24px; padding: 18px; }
+  .cv-surgical-proof-media img { height: 240px; }
+  .cv-decision-grid { gap: 12px; }
+  .cv-decision-grid .cv-card { padding-top: 28px; }
+  .cv-clinic-preview { min-height: 145px; }
+  .cv-clinic-preview img { min-height: 145px; }
+  .cv-clinic-preview span { left: 16px; bottom: 15px; font-size: .8rem; }
+  .cv-swipe-hint {
+    display: block;
+    margin: 0 0 12px;
+    color: inherit;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  html[data-procedure="lifting-facial"] .cv-results .cv-result { flex-basis: min(78vw, 320px); }
+  .cv-sticky { bottom: calc(8px + env(safe-area-inset-bottom)); width: min(390px, calc(100% - 28px)); }
+  .cv-sticky .cv-btn { min-height: 46px; padding-block: 10px; }
   .cv-story { margin-top: 38px; padding: 24px 20px; }
   .cv-story-media { width: min(100%, 330px); }
   .cv-consult-material { margin-top: 20px; padding: 24px 16px; }
