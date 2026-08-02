@@ -204,3 +204,268 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
 @media (prefers-reduced-motion: reduce) {
   .cv-results { scroll-behavior: auto; }
 }
+
+/* Cabeçalho mais estratégico: especialidade, localização e atalhos da página. */
+.cv-brand span {
+  letter-spacing: .045em;
+  text-transform: none;
+}
+.cv-links { gap: 18px; }
+
+/* Apresentação da médica sem conteúdo escondido em acordeão. */
+.cv-story {
+  display: grid;
+  grid-template-columns: minmax(260px, .8fr) minmax(280px, 1.2fr);
+  align-items: center;
+  gap: clamp(30px, 5vw, 66px);
+  margin-top: 54px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  padding: clamp(28px, 5vw, 54px);
+  background: rgba(255, 255, 255, .065);
+}
+.cv-story-copy p { max-width: 520px; color: #eadbd3; }
+.cv-story-copy .cv-text-link { color: #fff; }
+.cv-story-media {
+  width: min(100%, 390px);
+  margin: 0 auto;
+}
+.cv-story-media video {
+  display: block !important;
+  width: 100%;
+  height: auto;
+  max-height: 640px;
+  border-radius: 10px;
+  background: #171312;
+  box-shadow: 0 20px 46px rgba(14, 8, 7, .28);
+}
+.cv-video-fallback {
+  display: inline-block;
+  margin-top: 12px;
+  color: inherit;
+  font-size: .82rem;
+  text-underline-offset: 3px;
+}
+
+/* Clínica: recupera o contexto visual da versão anterior. */
+.cv-clinic-grid {
+  display: grid;
+  grid-template-columns: minmax(270px, .82fr) minmax(0, 1.18fr);
+  align-items: start;
+  gap: clamp(34px, 5vw, 66px);
+}
+.cv-clinic-copy > p { max-width: 570px; }
+.cv-clinic-features {
+  display: grid;
+  gap: 13px;
+  margin-top: 28px;
+}
+.cv-clinic-feature {
+  border-left: 3px solid var(--green);
+  padding: 3px 0 3px 17px;
+}
+.cv-clinic-feature strong { display: block; margin-bottom: 3px; }
+.cv-clinic-feature p { margin: 0; color: var(--muted); font-size: .88rem; }
+.cv-clinic-gallery {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 12px;
+}
+.cv-clinic-gallery figure {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  background: #e8ddd7;
+}
+.cv-clinic-gallery figure:first-child { grid-row: span 2; }
+.cv-clinic-gallery img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  object-fit: cover;
+}
+.cv-clinic-gallery figure:first-child img { min-height: 480px; }
+.cv-clinic-video {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(230px, .9fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 44px);
+  margin-top: 30px;
+  border: 1px solid var(--line);
+  padding: clamp(22px, 4vw, 38px);
+  background: #fffaf7;
+}
+.cv-clinic-video video {
+  display: block !important;
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  background: #171312;
+  object-fit: contain;
+}
+.cv-clinic-address {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  padding: 20px 24px;
+  background: #f3e9e3;
+}
+.cv-clinic-address p { margin: 0; color: var(--muted); font-size: .9rem; }
+.cv-clinic-compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, .9fr);
+  align-items: center;
+  gap: clamp(34px, 5vw, 62px);
+}
+.cv-clinic-compact-media {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 12px;
+}
+.cv-clinic-compact-media img {
+  display: block;
+  width: 100%;
+  height: 330px;
+  object-fit: cover;
+}
+.cv-clinic-compact-media img:last-child { object-position: center; }
+
+/* Rodapé completo, com o mapa do site que existia anteriormente. */
+.cv-footer { padding: 56px 0 104px; }
+.cv-footer-grid {
+  display: grid;
+  grid-template-columns: minmax(230px, .75fr) minmax(0, 1.8fr);
+  gap: clamp(36px, 6vw, 78px);
+}
+.cv-footer-brand strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+.cv-footer-brand .cv-btn { margin-top: 18px; }
+.cv-footer-map {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+}
+.cv-footer-group { display: flex; flex-direction: column; gap: 8px; }
+.cv-footer-group strong { margin-bottom: 4px; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+.cv-footer-group a { color: #584940; font-size: .82rem; text-decoration: none; }
+.cv-footer-group a:hover { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+.cv-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 18px;
+  margin-top: 38px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  color: var(--muted);
+  font-size: .76rem;
+}
+.cv-footer-meta a,
+.cv-footer-meta button {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #584940;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* O script compartilhado cria este visualizador. Estas páginas não carregam
+   a folha legada completa, então mantemos aqui apenas o CSS necessário. */
+.curated-video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(25, 18, 16, .78);
+  backdrop-filter: blur(8px);
+}
+.curated-video-modal.is-open { display: flex; }
+.curated-video-dialog {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) 1fr;
+  width: min(920px, 100%);
+  max-height: 94vh;
+  overflow: auto;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .38);
+  overscroll-behavior: contain;
+}
+.curated-video-media { display: flex; align-items: center; background: #111; }
+.curated-video-media video { display: block; width: 100%; max-height: 90vh; background: #000; }
+.curated-video-copy { align-self: center; padding: clamp(26px, 4vw, 46px); }
+.curated-video-copy h2 { margin: 8px 0 14px; font-size: clamp(28px, 4vw, 44px); line-height: 1.08; }
+.curated-video-copy p { color: #5f5652; line-height: 1.7; }
+.curated-video-close {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+  font-size: 24px;
+  cursor: pointer;
+}
+.curated-video-close:focus-visible { outline: 3px solid #8b5a49; outline-offset: 3px; }
+body.curated-video-open { overflow: hidden; }
+
+@media (max-width: 920px) {
+  .cv-story,
+  .cv-clinic-grid,
+  .cv-clinic-compact { grid-template-columns: 1fr; }
+  .cv-clinic-copy { max-width: 720px; }
+  .cv-footer-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 680px) {
+  .cv-brand { max-width: 190px; }
+  .cv-brand span {
+    display: block;
+    overflow: hidden;
+    font-size: .57rem;
+    letter-spacing: .025em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cv-nav { gap: 10px; }
+  .cv-story { margin-top: 38px; padding: 24px 20px; }
+  .cv-story-media { width: min(100%, 330px); }
+  .cv-clinic-gallery { grid-template-columns: 1fr 1fr; }
+  .cv-clinic-gallery figure:first-child { grid-column: 1 / -1; grid-row: auto; }
+  .cv-clinic-gallery figure:first-child img { min-height: 270px; }
+  .cv-clinic-gallery img { min-height: 155px; }
+  .cv-clinic-video { grid-template-columns: 1fr; padding: 20px; }
+  .cv-clinic-video video { max-height: none; }
+  .cv-clinic-address { align-items: flex-start; padding: 19px; }
+  .cv-clinic-compact-media img { height: 220px; }
+  .cv-footer-map { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 18px; }
+  .curated-video-modal { padding: 0; }
+  .curated-video-dialog {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+  }
+  .curated-video-media video { max-height: 68dvh; }
+  .curated-video-copy { padding: 20px 18px 28px; }
+  .curated-video-copy h2 { font-size: 26px; }
+}

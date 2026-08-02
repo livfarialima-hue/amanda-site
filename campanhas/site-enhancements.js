@@ -910,6 +910,7 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
   function installVideoPosters() {
     document.querySelectorAll('video').forEach(function (video) {
       if (video.closest('.curated-video-modal')) return;
+      if (video.hasAttribute('data-preserve-poster')) return;
       video.setAttribute('poster', siteVideoPoster);
     });
     document.querySelectorAll('[data-video-poster]').forEach(function (trigger) {
