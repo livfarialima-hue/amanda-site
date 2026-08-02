@@ -206,7 +206,7 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
   );
   assert.match(
     deps.alerts[0].messageText,
-    /pagamento antecipadamente até a cirurgia/,
+    /pagamento antecipado até a cirurgia/,
   );
   assert.equal(
     deps.completions[0].options.controlStatus,

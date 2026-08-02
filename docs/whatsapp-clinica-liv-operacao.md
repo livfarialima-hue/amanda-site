@@ -28,7 +28,7 @@ O diagnóstico público do endpoint deve indicar:
 - Dúvidas gerais seguras sobre avaliação e procedimentos.
 - Perguntas informativas como “como funciona a consulta?” ou “como funciona a avaliação?”, sem confundi-las com pedido de agenda.
 - Valor da consulta da Dra. Amanda: R$ 500, abatido se a cirurgia for realizada com a equipe.
-- Nenhum valor cirúrgico é enviado automaticamente; pedidos de preço seguem para revisão humana.
+- Nenhum valor cirúrgico é enviado automaticamente; pedidos de preço recebem uma confirmação curta de que os valores serão conferidos e seguem para revisão humana.
 - Apresentação correta da Dra. Amanda: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria pelo Einstein, CRM-SP 191605, RQE 110472 e atuação com foco em cirurgias da face.
 - Esclarecimento sutil de barreiras como segurança, experiência, resultado artificial, preço, localização e pressão para decidir.
 - Oferta cuidadosa da página do procedimento, seção de resultados ou artigo específico sobre recuperação, segurança, cicatriz e comparações — ou da página geral quando o procedimento ainda não estiver definido — para quem não veio do site.
@@ -37,7 +37,7 @@ A abordagem deve ser acolhedora, breve e progressiva: apresentação, estágio d
 
 Google, Meta e WhatsApp direto seguem a mesma estratégia. A mensagem e o histórico prevalecem sobre a origem. No Meta, a abertura pode reconhecer o anúncio; no Google, o procedimento ou a página pesquisada. O bot nunca presume que alguém está pronto para agendar apenas porque veio do Google.
 
-O site não deve ser enviado na primeira resposta por rotina. Ele entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereço deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explícito. Não enviar junto de preço, urgência ou pedido de agenda, nem repetir uma página já enviada.
+O site não deve ser enviado na primeira resposta por rotina. Ele entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereço deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explícito. Não enviar junto de urgência ou pedido de agenda, nem repetir uma página já enviada. A resposta humana revisada sobre preço pode incluir o guia específico de custos, pois ele ajuda a explicar o orçamento total sem substituir a avaliação individual.
 
 Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segundos. Depois de elaborar a resposta, o sistema confere novamente qual foi a mensagem mais recente. Se outra mensagem tiver chegado durante a elaboração, a resposta anterior é cancelada e somente a intenção mais nova pode responder usando o histórico completo. Uma pergunta explícita, como preço, localização ou consulta, sempre prevalece sobre o roteiro do anúncio.
 
@@ -50,7 +50,7 @@ Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segu
 - Dúvida fora do padrão ou que exija decisão humana.
 - Atendimento humano assumido e ainda dentro da janela protegida de 20 minutos.
 
-Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, o alerta contém a pergunta da paciente e uma sugestão pronta em faixa baseada na tabela de referência, mencionando apenas equipe médica e referência hospitalar quando houver correspondência confiável, sem discriminar os integrantes da equipe. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. A mensagem não é enviada à paciente: Amanda revisa e copia manualmente se estiver de acordo.
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, a paciente recebe automaticamente apenas uma confirmação curta, sem valor, informando que a faixa atual será conferida. O alerta interno contém a pergunta e uma sugestão comercial completa em faixa baseada na tabela de referência quando houver correspondência confiável. A sugestão explica que o orçamento definitivo detalha equipe médica, anestesia, hospital, materiais e acompanhamento, informa consulta e pagamento já aprovados, oferece o guia de custos e termina com convite para avaliação. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. O valor final continua dependendo de avaliação individual; Amanda revisa e envia manualmente a resposta completa se estiver de acordo.
 
 ## Informações comerciais e localização
 

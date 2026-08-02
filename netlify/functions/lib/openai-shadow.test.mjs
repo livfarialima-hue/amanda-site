@@ -1274,9 +1274,9 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
       alertBody.template.components[0].parameters[2].text;
     assert.match(
       alertText,
-      /PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA/,
+      /PREÇO CIRÚRGICO — REVISAR/,
     );
-    assert.match(alertText, /VALOR NÃO ENVIADO À PACIENTE/);
+    assert.match(alertText, /VALOR NÃO ENVIADO/);
     assert.match(alertText, /Revise e copie manualmente/);
     assert.match(alertText, /entre R\$ 18 mil e R\$ 23 mil/);
     assert.match(alertText, /condição à vista/);

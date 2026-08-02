@@ -10,7 +10,7 @@ const YCLOUD_MESSAGES_URL =
 const DEFAULT_TEMPLATE_NAME = "alerta_revisao_liv_v1";
 const DEFAULT_TEMPLATE_LANGUAGE = "pt_BR";
 const ALERT_TIMEOUT_MS = 6_000;
-const MAX_ALERT_TEXT_LENGTH = 700;
+const MAX_ALERT_TEXT_LENGTH = 1_024;
 const EMAIL_COPY_TIMEOUT_MS = 6_000;
 
 function result(status, details = {}) {

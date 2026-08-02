@@ -782,8 +782,10 @@ function logPatientReplyResult(eventId, phone, replyResult) {
 }
 
 function prepareReviewAlertInput(input, { decision, plan } = {}) {
-  const planReason = String(plan?.reason || "");
-  if (planReason === "pending_hospital_quote_followup") {
+  const planReason = [plan?.reason, plan?.requestReason]
+    .filter(Boolean)
+    .join(" ");
+  if (/\bpending_hospital_quote_followup\b/.test(planReason)) {
     return {
       ...input,
       messageText: prependRelationshipAlertContext({
@@ -1383,6 +1385,40 @@ async function completeOpenAIActive({
       replySent: false,
     };
   }
+}
+
+function enrichPricePlanFromPatientRelationship(
+  plan,
+  relationship,
+) {
+  if (
+    !plan ||
+    plan.procedure ||
+    plan.reason !== "price_without_confirmed_procedure"
+  ) {
+    return plan;
+  }
+
+  const procedureTopic = String(
+    relationship?.procedureTopic || "",
+  ).trim();
+  if (!procedureTopic) return plan;
+
+  const contextPlan = planAutomation({
+    text: procedureTopic,
+    messageType: "text",
+    reference: "",
+    platform: "WhatsApp direto",
+  });
+  if (!contextPlan.procedure) return plan;
+
+  return {
+    ...plan,
+    reason: "surgical_price_review",
+    professional: plan.professional || "amanda",
+    procedure: contextPlan.procedure,
+    automaticAllowed: false,
+  };
 }
 
 async function sendCurrentInboundReply({
@@ -2031,8 +2067,13 @@ export default async (request, context) => {
         preliminaryAutomationPlan,
         conversationHistory,
       );
+  const relationshipAwarePlan =
+    enrichPricePlanFromPatientRelationship(
+      baseAutomationPlan,
+      patientRelationship,
+    );
   const automationPlan = applyPatientRelationshipPolicy(
-    baseAutomationPlan,
+    relationshipAwarePlan,
     patientRelationship,
   );
 

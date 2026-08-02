@@ -693,7 +693,7 @@ function sendReviewAlertEmail_(input) {
   const patientPhone =
     normalizePhone_(input.patientPhone) || "Não informado";
   const messageText =
-    boundedText_(input.messageText, 700) || "Mensagem sem texto.";
+    boundedText_(input.messageText, 1024) || "Mensagem sem texto.";
   const recipient = CONFIG.reviewAlertEmail;
   const spreadsheet = SpreadsheetApp.openById(
     CONFIG.spreadsheetId,

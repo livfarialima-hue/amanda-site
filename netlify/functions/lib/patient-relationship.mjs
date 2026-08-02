@@ -57,6 +57,7 @@ export function normalizePatientRelationship(value) {
     label: LABELS[normalizedState],
     patientName: limitText(value?.patientName, 120),
     professional: limitText(value?.professional, 80),
+    procedureTopic: limitText(value?.procedureTopic, 160),
     hasPendingHumanTask: value?.hasPendingHumanTask === true,
     pendingTaskType: limitText(value?.pendingTaskType, 80),
   };
@@ -86,6 +87,8 @@ export function applyPatientRelationshipPolicy(
     return {
       ...plan,
       route: "human_review",
+      requestReason:
+        plan?.requestReason || plan?.reason || "",
       reason:
         relationship.state === "active_postop"
           ? "known_patient_active_postop"
@@ -165,7 +168,7 @@ export function prependRelationshipAlertContext({
 
   if (!isKnownPatientRelationship(relationship)) return raw;
 
-  const original = limitText(raw, 650);
+  const original = limitText(raw, 980);
 
   return [
     `Relacionamento: ${relationship.label}.`,
@@ -191,7 +194,9 @@ export function buildPatientCommitment({
     return null;
   }
 
-  const reason = String(plan?.reason || "");
+  const reason = [plan?.reason, plan?.requestReason]
+    .filter(Boolean)
+    .join(" ");
   let kind = "human_review";
   let summary = "Revisar a solicitação e responder pelo WhatsApp.";
 

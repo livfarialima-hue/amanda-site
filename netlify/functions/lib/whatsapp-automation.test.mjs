@@ -76,6 +76,32 @@ test("surgical price with a table reference goes directly to human review", () =
   assert.equal(plan.automaticAllowed, false);
 });
 
+test("a generic price question keeps human review and reuses the procedure from the conversation", () => {
+  const preliminaryPlan = planAutomation({
+    text: "O preço da cirurgia?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Posso te explicar como funciona o lifting facial.",
+        at: "2026-08-02T11:00:00.000Z",
+      },
+    ],
+  );
+
+  assert.equal(preliminaryPlan.reason, "price_without_confirmed_procedure");
+  assert.equal(enrichedPlan.route, "human_review");
+  assert.equal(enrichedPlan.reason, "surgical_price_review");
+  assert.equal(enrichedPlan.procedure, "lifting_facial");
+  assert.equal(enrichedPlan.automaticAllowed, false);
+});
+
 test("pending hospital quote remains human-only even with conversation context", () => {
   const text = [
     "Dra., quando voc\u00ea tiver o valor do hospital, poderia, por favor, me informar?",

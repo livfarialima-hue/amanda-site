@@ -588,6 +588,14 @@ function obterRelacionamentoPaciente_(input) {
       ),
       80,
     ),
+    procedureTopic: textoConsultasSync_(
+      valorDaLinhaConsultas_(
+        best.row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.topic,
+      ),
+      160,
+    ),
     hasPendingHumanTask: hasPendingHumanTask,
     pendingTaskType: hasPendingHumanTask
       ? pendingTaskType
@@ -601,6 +609,7 @@ function relacionamentoPacienteDesconhecido_() {
     relationshipState: "unknown",
     patientName: "",
     professional: "",
+    procedureTopic: "",
     hasPendingHumanTask: false,
     pendingTaskType: "",
   };

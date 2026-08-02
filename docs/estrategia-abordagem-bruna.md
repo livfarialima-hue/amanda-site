@@ -221,6 +221,7 @@ Materiais selecionados automaticamente conforme a dúvida:
 | Cuidados com a cicatrização | https://draamandaschroeder.com.br/conteudos/cuidados-cicatrizacao-cirurgia/ |
 | Segurança em cirurgia plástica | https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/ |
 | Como funciona a consulta | https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/ |
+| Quanto custa cirurgia plástica facial em São Paulo | https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ |
 
 ## Convite para consulta
 

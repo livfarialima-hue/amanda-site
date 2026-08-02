@@ -42,17 +42,24 @@ test("creates a patient-ready lifting facial price suggestion for human review",
   assert.match(reply, /^Rô, obrigada por aguardar\./);
   assert.match(reply, /entre R\$ 33 mil e R\$ 42 mil/);
   assert.doesNotMatch(reply, /R\$ 36\.400|R\$ 38\.400/);
-  assert.doesNotMatch(reply, /hospital|hospitalar/i);
+  assert.doesNotMatch(reply, /referência hospitalar|valor do hospital/i);
   assert.doesNotMatch(
     reply,
     /cirurgiã principal|auxiliar|anestesista|instrumentadora/,
   );
   assert.match(reply, /face, pescoço ou ambos/);
-  assert.match(reply, /preservar os traços e a expressão/);
-  assert.match(reply, /pagamento antecipadamente até a cirurgia/);
+  assert.match(reply, /avaliação individual/);
+  assert.match(reply, /pagamento antecipado até a cirurgia/);
   assert.match(reply, /condição à vista/);
   assert.match(reply, /consulta custa R\$ 500/);
-  assert.match(reply, /valor é abatido/);
+  assert.match(reply, /é abatida se a cirurgia/);
+  assert.match(reply, /equipe médica, anestesia, hospital, materiais e acompanhamento/);
+  assert.match(reply, /custo total da jornada/);
+  assert.match(
+    reply,
+    /conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+  assert.match(reply, /verificar um horário/);
   assert.doesNotMatch(
     reply,
     /Se quiser, posso te explicar o que costuma aproximar/,
@@ -89,6 +96,23 @@ test("keeps ambiguous procedures useful without inventing a number", () => {
   assert.doesNotMatch(reply, /R\$ \d/);
 });
 
+test("an unspecified surgery asks for the procedure but still supports conversion", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Roseli",
+    procedure: null,
+  });
+
+  assert.match(reply, /qual cirurgia está pesquisando/);
+  assert.match(reply, /R\$ 500/);
+  assert.match(reply, /nota fiscal/);
+  assert.match(reply, /equipe médica, anestesia, hospital, materiais e acompanhamento/);
+  assert.match(
+    reply,
+    /conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+  assert.doesNotMatch(reply, /R\$ (?:1[89]|2[349]|3[38]|4[2]) mil/);
+});
+
 test("price review alert contains the original question and a copyable answer", () => {
   const alert = buildPriceReviewAlert({
     patientName: "Maria",
@@ -96,15 +120,34 @@ test("price review alert contains the original question and a copyable answer", 
     procedure: "blefaroplastia",
   });
 
-  assert.match(alert, /PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA/);
+  assert.match(alert, /PREÇO CIRÚRGICO — REVISAR/);
   assert.match(alert, /Qual o valor da blefaroplastia/);
-  assert.match(alert, /VALOR NÃO ENVIADO À PACIENTE/);
+  assert.match(alert, /VALOR NÃO ENVIADO/);
   assert.match(alert, /Revise e copie manualmente/);
   assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
-  assert.match(alert, /pagamento antecipadamente até a cirurgia/);
+  assert.match(alert, /pagamento antecipado até a cirurgia/);
   assert.match(alert, /condição à vista/);
-  assert.ok(alert.length <= 900);
+  assert.match(alert, /custo total da jornada/);
+  assert.match(alert, /verificar um horário/);
+  assert.ok(alert.length <= 1100);
+});
+
+test("recognizes a price request preserved under a known-patient policy", () => {
+  assert.equal(
+    isSurgicalPriceReview(
+      {
+        route: "human_review",
+        reviewReason: "known_patient_active_care",
+      },
+      {
+        route: "human_review",
+        reason: "known_patient_active_care",
+        requestReason: "surgical_price_review",
+      },
+    ),
+    true,
+  );
 });
 
 test("recognizes price decisions that must remain human-reviewed", () => {

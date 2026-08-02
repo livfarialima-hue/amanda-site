@@ -60,6 +60,17 @@ function alertText(
     observation: "RETOMADA HUMANA — REVISAR CONVERSA",
   }[kind] || "RETOMADA HUMANA — RESPOSTA NECESSÁRIA";
 
+  if (suggestedReply) {
+    return [
+      heading,
+      `Mensagem: ${limitedText(job.text, 100) || "Sem texto."}`,
+      holdingSent
+        ? "A mensagem de espera foi enviada uma única vez. A automação permanecerá em silêncio até sua resposta."
+        : "Nenhuma mensagem automática foi enviada à paciente.",
+      `Sugestão para copiar após conferir: ${limitedText(suggestedReply, 820)}`,
+    ].join("\n");
+  }
+
   return [
     heading,
     "A paciente aguardou mais de 20 minutos após a tomada humana.",
@@ -68,9 +79,6 @@ function alertText(
     holdingSent
       ? "A mensagem de espera foi enviada uma única vez. A automação permanecerá em silêncio até sua resposta."
       : "Nenhuma mensagem automática foi enviada à paciente.",
-    suggestedReply
-      ? `Sugestão para copiar após conferir: ${limitedText(suggestedReply, 650)}`
-      : "",
   ].filter(Boolean).join("\n");
 }
 

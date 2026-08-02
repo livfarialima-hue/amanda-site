@@ -124,6 +124,23 @@ test("review alert email preserves message punctuation exactly", () => {
   );
 });
 
+test("review alert email preserves a complete 1024-character commercial answer", () => {
+  const {
+    sendReviewAlertEmail_,
+    sentEmails,
+  } = loadCode();
+  const messageText = "R".repeat(1024);
+
+  sendReviewAlertEmail_({
+    eventId: "evt-review-long",
+    patientName: "Maria Silva",
+    patientPhone: "+5511900000000",
+    messageText,
+  });
+
+  assert.match(sentEmails[0].body, new RegExp(`${messageText}$`));
+});
+
 test("review alert email is not sent twice for the same event", () => {
   const {
     sendReviewAlertEmail_,

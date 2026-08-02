@@ -374,10 +374,26 @@ export function enrichAutomationPlanFromConversation(
     reference: "",
     platform: "WhatsApp direto",
   });
+  const surgicalPriceContinuation =
+    plan.reason === "price_without_confirmed_procedure";
+
+  if (surgicalPriceContinuation) {
+    return {
+      ...plan,
+      reason: context.procedure
+        ? "surgical_price_review"
+        : plan.reason,
+      replyCode: plan.replyCode || context.replyCode,
+      professional:
+        plan.professional || context.professional || "amanda",
+      procedure: plan.procedure || context.procedure,
+      automaticAllowed: false,
+    };
+  }
+
   const mayContinueWithAI =
     plan.route === "human_review" &&
-    ["outside_conservative_rules", "price_without_confirmed_procedure"]
-      .includes(plan.reason);
+    plan.reason === "outside_conservative_rules";
 
   return {
     ...plan,
@@ -520,6 +536,18 @@ export function planAutomation({
     };
   }
 
+  if (asksPrice) {
+    return {
+      route: "human_review",
+      reason: "price_without_confirmed_procedure",
+      replyCode: null,
+      professional: mentionsAmanda ? "amanda" : null,
+      procedure: null,
+      automaticAllowed: false,
+      platform: platform || null,
+    };
+  }
+
   if (asksConsultationInformation) {
     return {
       route: "standard_reply",
@@ -596,9 +624,7 @@ export function planAutomation({
 
   return {
     route: "human_review",
-    reason: asksPrice
-      ? "price_without_confirmed_procedure"
-      : "outside_conservative_rules",
+    reason: "outside_conservative_rules",
     replyCode: null,
     professional: mentionsAmanda ? "amanda" : null,
     procedure: null,

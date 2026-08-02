@@ -24,7 +24,7 @@ function requestFor(payload) {
   });
 }
 
-test("a daytime surgical-price request gets an immediate holding reply and a review alert", async () => {
+test("a known patient asking a generic surgical price gets an immediate holding reply and a complete review alert", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -71,6 +71,14 @@ test("a daytime surgical-price request gets an immediate holding reply and a rev
           updated: false,
           duplicate: false,
           humanTakeoverToday: false,
+          patientRelationship: {
+            found: true,
+            relationshipState: "surgical_planning",
+            patientName: "Van",
+            professional: "Dra. Amanda",
+            procedureTopic: "Lifting facial",
+            hasPendingHumanTask: false,
+          },
         }),
         { status: 200 },
       );
@@ -99,7 +107,7 @@ test("a daytime surgical-price request gets an immediate holding reply and a rev
           type: "text",
           customerProfile: { name: "Van" },
           text: {
-            body: "Qual o valor do lifting facial?",
+            body: "O preço da cirurgia?",
           },
         },
       }),
@@ -145,6 +153,15 @@ test("a daytime surgical-price request gets an immediate holding reply and a rev
     const alertText = JSON.stringify(alertRequest);
     assert.match(alertText, /R\\u0024 33 mil|R\$ 33 mil/);
     assert.match(alertText, /condição à vista|condiçã/);
+    assert.match(
+      alertText,
+      /equipe médica, anestesia, hospital, materiais e acompanhamento/,
+    );
+    assert.match(
+      alertText,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    );
+    assert.match(alertText, /verificar um horário/);
     assert.doesNotMatch(
       alertText,
       /Se quiser, posso te explicar o que costuma aproximar/,

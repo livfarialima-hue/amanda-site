@@ -24,7 +24,33 @@ test("active care always pauses acquisition automation", () => {
 
   assert.equal(result.route, "human_review");
   assert.equal(result.reason, "known_patient_active_care");
+  assert.equal(result.requestReason, "known_procedure");
   assert.equal(result.automaticAllowed, false);
+});
+
+test("active care preserves a surgical-price request for the alert and holding reply", () => {
+  const result = applyPatientRelationshipPolicy(
+    {
+      route: "human_review",
+      reason: "surgical_price_review",
+      procedure: "lifting_facial",
+      automaticAllowed: false,
+    },
+    {
+      found: true,
+      relationshipState: "surgical_planning",
+      procedureTopic: "Lifting facial",
+    },
+  );
+
+  assert.equal(result.route, "human_review");
+  assert.equal(result.reason, "known_patient_active_care");
+  assert.equal(result.requestReason, "surgical_price_review");
+  assert.equal(result.procedure, "lifting_facial");
+  assert.equal(
+    result.patientRelationship.procedureTopic,
+    "Lifting facial",
+  );
 });
 
 test("former patient with a new interest keeps a personalized AI route", () => {

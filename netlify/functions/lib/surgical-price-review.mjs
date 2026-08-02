@@ -1,4 +1,6 @@
 const CONSULTATION_PRICE = 500;
+const PRICE_GUIDE_URL =
+  "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
 const PRICE_RANGE_LOWER_FACTOR = 0.9;
 const PRICE_RANGE_UPPER_FACTOR = 1.1;
 
@@ -86,13 +88,6 @@ const PROCEDURE_LABELS = Object.freeze({
   cirurgias_combinadas: "cirurgias combinadas",
 });
 
-const FACIAL_PROCEDURES = new Set([
-  "lifting_facial",
-  "blefaroplastia",
-  "otoplastia",
-  "rinoplastia",
-]);
-
 function firstName(value) {
   return String(value || "").trim().split(/\s+/)[0] || "";
 }
@@ -125,25 +120,22 @@ function formatBRL(value) {
 
 function priceVariation(procedure) {
   if (procedure === "lifting_facial") {
-    return "O valor final varia conforme o planejamento envolva face, pescoço ou ambos.";
+    return "O valor final depende de o planejamento incluir face, pescoço ou ambos e da avaliação individual.";
   }
 
-  return "O valor final varia conforme a extensão do procedimento.";
-}
-
-function planningContext(procedure) {
-  if (FACIAL_PROCEDURES.has(procedure)) {
-    return "O planejamento é individualizado e feito pela Dra. Amanda, com foco em preservar os traços e a expressão.";
-  }
-
-  return "O planejamento é individualizado e feito pela Dra. Amanda, respeitando as características e os objetivos de cada pessoa.";
+  return "O valor final depende da extensão do procedimento e da avaliação individual.";
 }
 
 function clarificationFor(procedure, patientName) {
   const hello = greeting(patientName);
 
   if (!procedure) {
-    return `${hello} Você quer saber o valor de qual cirurgia? Assim consigo consultar a referência correta e te responder de forma clara.`;
+    return [
+      `${hello} Para te passar a faixa correta, você me conta qual cirurgia está pesquisando? Os valores mudam bastante conforme o procedimento e o planejamento individual.`,
+      `A consulta com a Dra. Amanda custa R$ ${CONSULTATION_PRICE}, com nota fiscal, e esse valor é abatido se a cirurgia for realizada com a equipe.`,
+      `Este guia explica o que compõe o orçamento completo — equipe médica, anestesia, hospital, materiais e acompanhamento: ${PRICE_GUIDE_URL}`,
+      "Me dizendo o procedimento, eu consulto a referência e também te explico as formas de pagamento.",
+    ].join("\n\n");
   }
 
   if (procedure === "mastopexia") {
@@ -199,16 +191,27 @@ export function buildSurgicalPriceSuggestedReply({
 
   const priceContext = [
     waitingGreeting(patientName),
-    `Como referência inicial, ${reference.label} costuma ficar aproximadamente entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
+    `Como referência inicial, ${reference.label} costuma ficar entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
     priceVariation(procedure),
   ].join(" ");
+  const budgetContext =
+    "No orçamento, detalhamos equipe médica, anestesia, hospital, materiais e acompanhamento, para você comparar o custo total da jornada, não só o preço inicial.";
   const careAndPayment = [
-    planningContext(procedure),
-    "É possível organizar o pagamento antecipadamente até a cirurgia e há condição à vista.",
-    `A consulta custa R$ ${CONSULTATION_PRICE}, e esse valor é abatido se a cirurgia for realizada com a equipe.`,
+    "Há pagamento antecipado até a cirurgia e condição à vista.",
+    `A consulta custa R$ ${CONSULTATION_PRICE} e é abatida se a cirurgia for realizada com a equipe.`,
   ].join(" ");
+  const guide =
+    `Este guia explica o que comparar e quando uma alternativa menor pode fazer sentido: ${PRICE_GUIDE_URL}`;
+  const callToAction =
+    "Se essa faixa fizer sentido, posso explicar a avaliação e verificar um horário para você.";
 
-  return `${priceContext}\n\n${careAndPayment}`;
+  return [
+    priceContext,
+    budgetContext,
+    careAndPayment,
+    guide,
+    callToAction,
+  ].join("\n\n");
 }
 
 export function buildSurgicalPriceHoldingReply({
@@ -236,7 +239,13 @@ export function buildSurgicalPriceHoldingReply({
 export function isSurgicalPriceReview(decision, plan) {
   if (decision?.route !== "human_review") return false;
 
-  const reason = `${decision?.reviewReason || ""} ${plan?.reason || ""}`;
+  const reason = [
+    decision?.reviewReason,
+    plan?.reason,
+    plan?.requestReason,
+  ]
+    .filter(Boolean)
+    .join(" ");
   if (/pending_hospital_quote_followup/i.test(reason)) return false;
   return /(?:price|preco|valor|orcamento)/i.test(reason);
 }
@@ -267,9 +276,9 @@ export function buildPriceReviewAlert({
   });
 
   return [
-    "PREÇO CIRÚRGICO — REVISÃO NECESSÁRIA",
-    `Paciente: ${limitText(patientMessage, 160) || "Mensagem sem texto."}`,
-    "VALOR NÃO ENVIADO À PACIENTE. Revise e copie manualmente se estiver de acordo:",
+    "PREÇO CIRÚRGICO — REVISAR",
+    `Pergunta: ${limitText(patientMessage, 80) || "Mensagem sem texto."}`,
+    "VALOR NÃO ENVIADO. Revise e copie manualmente:",
     suggestion,
   ].join("\n");
 }
