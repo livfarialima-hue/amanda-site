@@ -1,7 +1,7 @@
 import { runLeadClassifier } from "./lib/lead-classifier.mjs";
 import { callClassificationSheets } from "./lib/sheets-classification-client.mjs";
 
-const MAX_JOBS_PER_RUN = 3;
+const MAX_JOBS_PER_RUN = 8;
 
 async function processJob(job) {
   const classificationResult = await runLeadClassifier({
@@ -115,5 +115,5 @@ export default async () => {
 };
 
 export const config = {
-  schedule: "0 6 * * *",
+  schedule: "*/30 * * * *",
 };

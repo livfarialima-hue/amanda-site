@@ -5,13 +5,15 @@ const CONFIG = Object.freeze({
   eventSheetName: "_WHATSAPP_EVENTOS",
   humanTakeoverSheetName: "_WHATSAPP_ATENDIMENTO_HUMANO",
   alertEmailSheetName: "_WHATSAPP_ALERTAS_EMAIL",
+  messageSheetName: "_WHATSAPP_MENSAGENS",
+  classificationSheetName: "_WHATSAPP_CLASSIFICACAO",
   reviewAlertEmail: "daniel.added@gmail.com",
   timezone: "America/Sao_Paulo",
   appointmentSlotsSheetName: "Datas Consulta",
   appointmentSlotsHeaderRow: 6,
   appointmentSlotsColumns: 7,
   totalColumns: 25,
-  leadWindowHours: 24,
+  classificationDelayMinutes: 10,
 });
 
 const EXPECTED_HEADERS = Object.freeze([
@@ -46,7 +48,7 @@ function doGet() {
   return json_({
     ok: true,
     service: "clinica-liv-leads",
-    leadWindowHours: CONFIG.leadWindowHours,
+    deduplication: "one_row_per_phone",
   });
 }
 
@@ -73,11 +75,44 @@ function doPost(e) {
       body.action !== "get_available_slots" &&
       body.action !== "reserve_appointment_slot" &&
       body.action !== "send_review_alert_email" &&
+      body.action !== "claim_due_classifications" &&
+      body.action !== "complete_classification" &&
+      body.action !== "fail_classification" &&
       body.action !== "get_patient_relationship" &&
       body.action !== "record_patient_commitment" &&
       body.action !== "resolve_patient_commitments"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "claim_due_classifications") {
+      stage = "claim_due_classifications";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const claimResult = claimDueLeadClassifications_(body.limit);
+      return json_({ ok: true, ...claimResult });
+    }
+
+    if (body.action === "complete_classification") {
+      stage = "complete_classification";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const completionResult = completeLeadClassification_(
+        body.job || {},
+        body.classification || {},
+      );
+      return json_({ ok: true, ...completionResult });
+    }
+
+    if (body.action === "fail_classification") {
+      stage = "fail_classification";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const failureResult = failLeadClassification_(body.job || {});
+      return json_({ ok: true, ...failureResult });
     }
 
     if (body.action === "mark_human_takeover") {
@@ -337,27 +372,35 @@ function doPost(e) {
       });
     }
 
-    stage = "phone_window_check";
-    const existingLeadRow = findRecentLeadRow_(
-      sheet,
-      lead.phone,
-      lead.contactAt,
-    );
+    stage = "phone_identity_check";
+    const existingLeadRow = findLeadRowByPhone_(sheet, lead.phone);
 
     if (existingLeadRow) {
+      stage = "merge_existing_lead";
+      mergeLeadIntoExistingRow_(sheet, existingLeadRow, lead);
+
       stage = "record_event";
       recordProcessedEvent_(
         eventSheet,
         lead,
         existingLeadRow,
-        "phone_window",
+        "phone_identity",
+      );
+
+      stage = "queue_classification";
+      recordLeadMessageAndQueue_(
+        spreadsheet,
+        existingLeadRow,
+        lead,
+        "IN",
       );
 
       return json_({
         ok: true,
         inserted: false,
         duplicate: true,
-        duplicateReason: "phone_window",
+        duplicateReason: "phone_identity",
+        updated: true,
         row: existingLeadRow,
         eventId: lead.eventId,
         messageId: lead.messageId,
@@ -380,6 +423,9 @@ function doPost(e) {
       row,
       "inserted",
     );
+
+    stage = "queue_classification";
+    recordLeadMessageAndQueue_(spreadsheet, row, lead, "IN");
 
     return json_({
       ok: true,
@@ -406,7 +452,12 @@ function doPost(e) {
       "assert_headers",
       "event_sheet",
       "duplicate_check",
-      "phone_window_check",
+      "phone_identity_check",
+      "merge_existing_lead",
+      "queue_classification",
+      "claim_due_classifications",
+      "complete_classification",
+      "fail_classification",
       "find_row",
       "write_identity",
       "write_contact",
@@ -661,6 +712,8 @@ function normalizeLead_(input) {
     gclid,
     gbraid,
     wbraid,
+    name: safeText_(input.name, 120),
+    text: safeText_(input.text, 4000),
   };
 }
 
@@ -899,6 +952,26 @@ function registrarAtendimentoHumano_(input) {
     safeText_(input.text, 500),
   ]);
 
+  const leadsSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  const leadRow = leadsSheet
+    ? findLeadRowByPhone_(leadsSheet, phone)
+    : null;
+
+  if (leadRow) {
+    recordLeadMessageAndQueue_(
+      spreadsheet,
+      leadRow,
+      {
+        phone,
+        contactAt: takenAt,
+        messageId,
+        eventId,
+        text: safeText_(input.text, 4000),
+      },
+      "OUT",
+    );
+  }
+
   return {
     ok: true,
     marked: true,
@@ -1043,44 +1116,54 @@ function findExactDuplicateRow_(sheet, identifiers) {
   return null;
 }
 
-function findRecentLeadRow_(sheet, phone, contactAt) {
+function findLeadRowByPhone_(sheet, phone) {
   const lastRow = Math.max(sheet.getLastRow(), 2);
 
   if (lastRow < 2) return null;
 
-  const values = sheet
-    .getRange(2, 1, lastRow - 1, 3)
-    .getDisplayValues();
+  const values = sheet.getRange(2, 3, lastRow - 1, 1).getDisplayValues();
 
   const normalizedPhone = normalizePhone_(phone);
-  const windowMilliseconds =
-    CONFIG.leadWindowHours * 60 * 60 * 1000;
-  let bestRow = null;
-  let smallestDifference = Number.POSITIVE_INFINITY;
-
   for (let index = 0; index < values.length; index += 1) {
-    const rowPhone = normalizePhone_(values[index][2]);
+    const rowPhone = normalizePhone_(values[index][0]);
 
-    if (!rowPhone || rowPhone !== normalizedPhone) continue;
-
-    const rowDate = parseSheetContactDate_(values[index][0]);
-
-    if (!rowDate) continue;
-
-    const difference = Math.abs(
-      contactAt.getTime() - rowDate.getTime(),
-    );
-
-    if (
-      difference <= windowMilliseconds &&
-      difference < smallestDifference
-    ) {
-      bestRow = index + 2;
-      smallestDifference = difference;
-    }
+    if (rowPhone && rowPhone === normalizedPhone) return index + 2;
   }
 
-  return bestRow;
+  return null;
+}
+
+function findRecentLeadRow_(sheet, phone) {
+  return findLeadRowByPhone_(sheet, phone);
+}
+
+function mergeLeadIntoExistingRow_(sheet, row, lead) {
+  const values = sheet.getRange(row, 1, 1, CONFIG.totalColumns).getDisplayValues()[0];
+  const existingPlatform = String(values[19] || "").trim();
+  const platformPriority = {
+    "": 0,
+    "Não identificada": 0,
+    "WhatsApp direto": 1,
+    "Orgânico/Conteúdo": 2,
+    Meta: 3,
+    Google: 4,
+  };
+  const existingPriority = platformPriority[existingPlatform] || 0;
+  const incomingPriority = platformPriority[lead.platform] || 0;
+
+  if (incomingPriority > existingPriority) {
+    sheet.getRange(row, 2).setValue(lead.reference);
+    sheet.getRange(row, 20).setValue(lead.platform);
+    sheet.getRange(row, 25).setValue(lead.reference);
+  }
+
+  if (!values[10] && !values[11] && !values[12]) {
+    if (lead.gclid) sheet.getRange(row, 11).setValue(lead.gclid);
+    else if (lead.gbraid) sheet.getRange(row, 12).setValue(lead.gbraid);
+    else if (lead.wbraid) sheet.getRange(row, 13).setValue(lead.wbraid);
+  }
+
+  SpreadsheetApp.flush();
 }
 
 function parseSheetContactDate_(value) {

@@ -6,6 +6,7 @@ const EXACT_MESSAGE_DUPLICATE_REASONS = new Set([
 const ALLOWED_DUPLICATE_REASONS = new Set([
   ...EXACT_MESSAGE_DUPLICATE_REASONS,
   "phone_window",
+  "phone_identity",
 ]);
 
 export function normalizeDuplicateReason(data) {

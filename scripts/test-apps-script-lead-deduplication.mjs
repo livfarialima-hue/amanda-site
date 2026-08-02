@@ -12,42 +12,38 @@ const source = readFileSync(
 
 const tests = `
 (() => {
-  const rowsInsideWindow = [
-    ["25/07/2026 11:00", "REF-01", "+5511999990000"],
-    ["24/07/2026 08:00", "REF-02", "+5511888880000"],
+  const canonicalRows = [
+    ["+5511999990000"],
+    ["+5511888880000"],
   ];
-  const sheetInsideWindow = {
-    getLastRow: () => rowsInsideWindow.length + 1,
+  const canonicalSheet = {
+    getLastRow: () => canonicalRows.length + 1,
     getRange: () => ({
-      getDisplayValues: () => rowsInsideWindow,
+      getDisplayValues: () => canonicalRows,
     }),
   };
 
-  const rowsOutsideWindow = [
-    ["24/07/2026 09:59", "REF-01", "+5511999990000"],
+  const unrelatedRows = [
+    ["+5511777770000"],
   ];
-  const sheetOutsideWindow = {
-    getLastRow: () => rowsOutsideWindow.length + 1,
+  const unrelatedSheet = {
+    getLastRow: () => unrelatedRows.length + 1,
     getRange: () => ({
-      getDisplayValues: () => rowsOutsideWindow,
+      getDisplayValues: () => unrelatedRows,
     }),
   };
-
-  const incoming = new Date(2026, 6, 26, 10, 0, 0, 0);
 
   globalThis.__testResults = {
     normalizedPhone: normalizePhone_("(11) 99999-0000"),
     parsedTimestamp:
       parseSheetContactDate_("25/07/2026 11:00").getTime(),
-    insideWindow: findRecentLeadRow_(
-      sheetInsideWindow,
+    canonicalRow: findRecentLeadRow_(
+      canonicalSheet,
       "+5511999990000",
-      incoming,
     ),
-    outsideWindow: findRecentLeadRow_(
-      sheetOutsideWindow,
+    noMatch: findRecentLeadRow_(
+      unrelatedSheet,
       "+5511999990000",
-      incoming,
     ),
   };
 })();
@@ -60,7 +56,7 @@ vm.runInNewContext(`${source}\n${tests}`, context, {
 
 assert.equal(context.__testResults.normalizedPhone, "+11999990000");
 assert.ok(Number.isFinite(context.__testResults.parsedTimestamp));
-assert.equal(context.__testResults.insideWindow, 2);
-assert.equal(context.__testResults.outsideWindow, null);
+assert.equal(context.__testResults.canonicalRow, 2);
+assert.equal(context.__testResults.noMatch, null);
 
 console.log("apps script lead deduplication: 4 cases passed");
