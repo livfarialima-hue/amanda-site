@@ -499,6 +499,8 @@ function isExplicitManualConfirmation(text) {
     /\bagendad[oa]?\b/,
     /\breservad[oa]?\b/,
     /\bficou (?:marcad[oa]|agendad[oa]|combinad[oa])\b/,
+    /\b(?:consulta|avaliacao)\b.{0,100}\bmarcad[oa]\b/,
+    /\bmarcad[oa]\b.{0,80}\b(?:para|dia)\b/,
   ].some((pattern) => pattern.test(comparable));
 }
 
@@ -521,7 +523,7 @@ function hasAppointmentConversationContext(recentConversation) {
     .filter(Boolean)
     .join(" ");
   const comparable = normalize(context);
-  return /\b(?:consulta|avaliacao|agendar|agendamento|horario|dra amanda|recepcao|atender)\w*\b/.test(
+  return /\b(?:consulta|avaliacao|agendar|agendamento|horario|dra amanda|recepcao|atender|funciona|funcionaria)\w*\b/.test(
     comparable,
   );
 }
@@ -536,27 +538,37 @@ function recentPatientAccepted(recentConversation) {
   return patientTurns.some((text) =>
     /^(?:sim|pode sim|pode ser|confirmo|combinado|perfeito|ok(?: obrigada| obrigado)?)$/.test(
       text,
+    ) ||
+    /\b(?:seria otimo|seria perfeito|fica otimo|funciona para mim|funcionaria para mim)\b/.test(
+      text,
     ),
   );
 }
 
 function fallbackAppointmentFromConversation(recentConversation, at) {
-  const texts = (Array.isArray(recentConversation)
+  const turns = (Array.isArray(recentConversation)
     ? recentConversation.slice(-10)
-    : [])
-    .map((turn) => turn?.text)
-    .filter(Boolean);
+    : []).filter((turn) => turn?.text);
   let scheduledDate = null;
   let scheduledTime = null;
 
-  for (let index = texts.length - 1; index >= 0; index -= 1) {
-    if (!scheduledDate) scheduledDate = extractDate(texts[index], at);
-    if (!scheduledTime) scheduledTime = extractTime(texts[index]);
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const text = turns[index].text;
+    const turnDate = turns[index].at
+      ? new Date(turns[index].at)
+      : at;
+    if (!scheduledDate) {
+      scheduledDate = extractDate(
+        text,
+        Number.isNaN(turnDate.getTime()) ? at : turnDate,
+      );
+    }
+    if (!scheduledTime) scheduledTime = extractTime(text);
     if (scheduledDate && scheduledTime) break;
   }
 
-  if (!scheduledDate || !scheduledTime) return null;
-  const context = texts.join(" ");
+  if (!scheduledDate && !scheduledTime) return null;
+  const context = turns.map((turn) => turn.text).join(" ");
   const professional = detectProfessional(context);
   const consultationType = detectConsultationType(context);
   return {
@@ -607,16 +619,34 @@ export function detectManualAppointment({
   );
   if (!explicit && !appointmentContext) return null;
 
-  const confidence =
-    explicit || (closing && recentPatientAccepted(recentConversation))
+  const accepted =
+    explicit || (closing && recentPatientAccepted(recentConversation));
+  const completeSchedule = Boolean(
+    appointment.scheduledDate && appointment.scheduledTime,
+  );
+  const confidence = accepted
+    ? completeSchedule
       ? "confirmed"
-      : "possible";
+      : "confirmed_partial"
+    : "possible";
+
+  if (!completeSchedule && confidence === "possible") {
+    return null;
+  }
 
   return {
     ...publicAppointmentSlot(appointment),
     status: "Consulta agendada",
     source: "WhatsApp — confirmação manual de agendamento detectada",
     confidence,
+    ...(completeSchedule
+      ? {}
+      : {
+          missingFields: [
+            !appointment.scheduledDate ? "scheduledDate" : null,
+            !appointment.scheduledTime ? "scheduledTime" : null,
+          ].filter(Boolean),
+        }),
   };
 }
 

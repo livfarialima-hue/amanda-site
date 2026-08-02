@@ -2174,7 +2174,30 @@ function definirValorConsulta_(
 ) {
   const column = columns[header];
   if (column === undefined) return;
-  sheet.getRange(row, column + 1).setValue(value);
+  const safeValue =
+    header === CONSULTAS_SYNC_HEADERS.status
+      ? statusCanonicoConsultas_(value)
+      : value;
+  sheet.getRange(row, column + 1).setValue(safeValue);
+}
+
+function statusCanonicoConsultas_(value) {
+  const normalized = normalizarTextoConsultasSync_(value);
+  const statuses = {
+    "aguardando confirmacao": "Aguardando confirmação",
+    agendada: "Agendada",
+    "consulta agendada": "Agendada",
+    confirmada: "Confirmada",
+    "consulta confirmada": "Confirmada",
+    realizada: "Realizada",
+    "consulta realizada": "Realizada",
+    remarcada: "Remarcada",
+    "reagendamento solicitado": "Remarcada",
+    cancelada: "Cancelada",
+    "nao compareceu": "Não compareceu",
+  };
+
+  return statuses[normalized] || value;
 }
 
 function valorDaLinhaConsultas_(row, columns, header) {

@@ -252,6 +252,59 @@ test("recognizes the manual closing used after the patient accepted", () => {
   assert.equal(result?.scheduledTime, "08:00");
 });
 
+test("preserves a confirmed manual appointment when the closing omits the time", () => {
+  const result = detectManualAppointment({
+    currentText: "Combinado então! Agradecemos e até lá",
+    at: "2026-08-01T18:08:22-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        at: "2026-08-01T17:45:27-03:00",
+        text: "Consegui segunda 03/08, te atender?",
+      },
+      { role: "user", text: "essa segunda agora?" },
+      { role: "user", text: "pode sim" },
+    ],
+  });
+
+  assert.equal(result?.confidence, "confirmed_partial");
+  assert.equal(result?.scheduledDate, "2026-08-03");
+  assert.equal(result?.scheduledTime, null);
+  assert.deepEqual(result?.missingFields, ["scheduledTime"]);
+});
+
+test("recognizes the natural negotiation used for a Tuesday evening slot", () => {
+  const result = detectManualAppointment({
+    currentText: "Combinado!",
+    at: "2026-08-01T19:39:20-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        at: "2026-08-01T19:38:00-03:00",
+        text: "Terça às 16h ou 20h funcionaria para você?",
+      },
+      { role: "user", text: "Às 20 seria ótimo" },
+    ],
+  });
+
+  assert.equal(result?.confidence, "confirmed");
+  assert.equal(result?.scheduledDate, "2026-08-04");
+  assert.equal(result?.scheduledTime, "20:00");
+});
+
+test("recognizes a sent reminder as an explicit complete appointment record", () => {
+  const result = detectManualAppointment({
+    currentText:
+      "Este é um lembrete da sua consulta com Dra. Amanda, marcada para 03/08/2026, amanhã, às 08:00.",
+    at: "2026-08-02T15:08:00-03:00",
+    recentConversation: [],
+  });
+
+  assert.equal(result?.confidence, "confirmed");
+  assert.equal(result?.scheduledDate, "2026-08-03");
+  assert.equal(result?.scheduledTime, "08:00");
+});
+
 test("flags a plausible manual closing for email review when acceptance is unclear", () => {
   const result = detectManualAppointment({
     currentText: "Combinado então",

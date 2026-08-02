@@ -51,6 +51,21 @@ test("recognizes only scheduling and completed statuses", () => {
   assert.equal(context.statusAgendaConsulta_("novo"), false);
 });
 
+test("writes consultation statuses using the visible dropdown vocabulary", () => {
+  assert.equal(
+    context.statusCanonicoConsultas_("Consulta agendada"),
+    "Agendada",
+  );
+  assert.equal(
+    context.statusCanonicoConsultas_("Consulta confirmada"),
+    "Confirmada",
+  );
+  assert.equal(
+    context.statusCanonicoConsultas_("Reagendamento solicitado"),
+    "Remarcada",
+  );
+});
+
 test("post-consult queue is limited to completed consultations", () => {
   assert.equal(
     context.statusConsultaRealizada_("consulta realizada"),

@@ -92,6 +92,10 @@ import {
   prependRelationshipAlertContext,
 } from "./lib/patient-relationship.mjs";
 import { verifyYCloudSignature } from "./lib/ycloud-webhook-security.mjs";
+import {
+  buildProfessionalFactPartialReview,
+  buildProfessionalFactReviewAlert,
+} from "./lib/professional-fact-review.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -1450,8 +1454,8 @@ function appointmentEmailBody({
 }) {
   return [
     heading,
-    `Data: ${appointment.scheduledDate}`,
-    `Horário: ${appointment.scheduledTime}`,
+    `Data: ${appointment.scheduledDate || "não identificada — completar na planilha"}`,
+    `Horário: ${appointment.scheduledTime || "não identificado — completar na planilha"}`,
     `Profissional: ${appointment.professional || "Dra. Amanda"}`,
     detail,
     reviewUrl
@@ -1531,6 +1535,59 @@ export async function completeManualAppointmentDetection(
     name: patientName,
   };
 
+  if (confidence === "confirmed_partial") {
+    const missingFields = Array.isArray(appointment.missingFields)
+      ? appointment.missingFields
+      : [];
+    const missingLabel = missingFields.includes("scheduledTime")
+      ? "horário"
+      : "data";
+    const incompletePayload = {
+      ...appointmentPayload,
+      status: "Aguardando confirmação",
+      source:
+        "WhatsApp — confirmação manual com agenda incompleta",
+      notes:
+        `Confirmação humana detectada, mas o ${missingLabel} não apareceu ` +
+        "de forma inequívoca na conversa. Completar na aba Consultas.",
+    };
+    const registration = await deliverSheetsActionImpl(
+      "upsert_appointment",
+      { appointment: incompletePayload },
+    );
+    const recorded =
+      registration.ok && registration.responseData?.ok !== false;
+
+    await sendAppointmentEmailImpl(
+      {
+        eventId: `${eventId}-manual-booking-incomplete-email`,
+        patientName,
+        patientPhone,
+        messageText: appointmentEmailBody({
+          heading: recorded
+            ? "AGENDAMENTO MANUAL REGISTRADO — COMPLETAR DADOS"
+            : "AGENDAMENTO MANUAL INCOMPLETO — REVISÃO NECESSÁRIA",
+          appointment: incompletePayload,
+          detail: recorded
+            ? `A linha foi criada em Consultas sem inventar o ${missingLabel}. Complete esse dado para ativar os lembretes.`
+            : `Não foi possível criar a linha. Motivo: ${registration.errorCode || "registration_failed"}.`,
+        }),
+      },
+      { deliverSheetsActionImpl },
+    );
+
+    return {
+      status: recorded ? "recorded_incomplete" : "review_required",
+      reserved: false,
+      recorded,
+      appointmentId:
+        registration.responseData?.appointmentId || appointmentId,
+      errorCode: recorded
+        ? "missing_schedule_data"
+        : registration.errorCode || "registration_failed",
+    };
+  }
+
   if (confidence === "confirmed") {
     const reservation = await deliverSheetsActionImpl(
       "reserve_appointment_slot",
@@ -1540,6 +1597,27 @@ export async function completeManualAppointmentDetection(
       reservation.ok &&
       reservation.responseData?.reserved === true;
     const duplicate = reservation.responseData?.duplicate === true;
+    let registration = null;
+    let recorded = reserved;
+
+    if (!reserved) {
+      registration = await deliverSheetsActionImpl(
+        "upsert_appointment",
+        {
+          appointment: {
+            ...appointmentPayload,
+            status: "Agendada",
+            source:
+              "WhatsApp — confirmação manual fora da grade automática",
+            notes:
+              "A equipe confirmou este horário no WhatsApp. A linha foi preservada em Consultas mesmo sem reserva automática; conferir a grade de horários.",
+          },
+        },
+      );
+      recorded =
+        registration.ok && registration.responseData?.ok !== false;
+    }
+
     if (!duplicate || !reserved) {
       await sendAppointmentEmailImpl(
         {
@@ -1549,11 +1627,15 @@ export async function completeManualAppointmentDetection(
           messageText: appointmentEmailBody({
             heading: reserved
               ? "AGENDAMENTO MANUAL CONFIRMADO E REGISTRADO"
-              : "CONFIRMAÇÃO MANUAL DETECTADA — REVISÃO NECESSÁRIA",
+              : recorded
+                ? "AGENDAMENTO MANUAL REGISTRADO — CONFERIR GRADE"
+                : "CONFIRMAÇÃO MANUAL DETECTADA — REVISÃO NECESSÁRIA",
             appointment: appointmentPayload,
             detail: reserved
               ? "A consulta foi registrada e o horário foi retirado dos disponíveis."
-              : `O sistema não conseguiu reservar automaticamente. Motivo: ${reservation.errorCode || "reservation_failed"}.`,
+              : recorded
+                ? `A consulta foi registrada em Consultas, mas o horário não foi bloqueado na grade automática. Motivo: ${reservation.errorCode || "slot_not_available"}.`
+                : `O sistema não conseguiu registrar nem reservar automaticamente. Motivo: ${registration?.errorCode || reservation.errorCode || "registration_failed"}.`,
           }),
         },
         { deliverSheetsActionImpl },
@@ -1561,12 +1643,23 @@ export async function completeManualAppointmentDetection(
     }
 
     return {
-      status: reserved ? "completed" : "review_required",
+      status: reserved
+        ? "completed"
+        : recorded
+          ? "completed_with_schedule_review"
+          : "review_required",
       reserved,
+      recorded,
       duplicate,
-      errorCode: reserved
+      appointmentId:
+        reservation.responseData?.appointmentId ||
+        registration?.responseData?.appointmentId ||
+        appointmentId,
+      errorCode: reserved || recorded
         ? "none"
-        : reservation.errorCode || "reservation_failed",
+        : registration?.errorCode ||
+          reservation.errorCode ||
+          "registration_failed",
     };
   }
 
@@ -1844,9 +1937,8 @@ export default async (request, context) => {
       "touch_appointment",
       {
         appointment: {
-          appointmentId: manualAppointmentResult?.reserved
-            ? `manual-${String(messageId)}`
-            : "",
+          appointmentId:
+            manualAppointmentResult?.appointmentId || "",
           phone: patientPhone,
           at: String(
             echo.sendTime ||
@@ -2273,6 +2365,13 @@ export default async (request, context) => {
     urgent:
       automationPlan.reason === "possible_urgent_symptoms",
   };
+  const professionalFactReview =
+    buildProfessionalFactPartialReview({
+      currentText: text,
+      recentConversation: conversationHistory,
+      patientName: String(message.customerProfile?.name || ""),
+      procedure: automationPlan.procedure,
+    });
   const appointmentReviewCandidate =
     isAppointmentReviewCandidate(
       automationPlan,
@@ -2361,6 +2460,8 @@ export default async (request, context) => {
   let aiActiveReplySent = false;
   let humanResumeScheduleStatus = "skipped";
   let commitmentSyncStatus = "skipped";
+  let professionalFactReplySent = false;
+  let professionalFactReplyStatus = "not_queued";
 
   const patientCommitment =
     delivery.ok &&
@@ -2433,11 +2534,58 @@ export default async (request, context) => {
         : cancelResult.status;
   }
 
+  if (
+    professionalFactReview &&
+    delivery.ok &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    automationMode === "active"
+  ) {
+    const partialReplyResult = await sendCurrentInboundReply({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-verified-partial`,
+      revisionEventId: String(eventId),
+      body: professionalFactReview.safeReply,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
+    });
+    professionalFactReplySent =
+      partialReplyResult.status === "completed";
+    professionalFactReplyStatus = partialReplyResult.status;
+    logPatientReplyResult(
+      `${String(eventId)}-verified-partial`,
+      phone,
+      partialReplyResult,
+    );
+
+    if (professionalFactReplySent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: professionalFactReview.safeReply,
+        eventId: `${String(eventId)}:verified-partial`,
+        source: "bruna",
+      });
+    }
+  }
+
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(
-      prepareReviewAlertInput(alertInput, {
-        plan: automationPlan,
-      }),
+      professionalFactReview
+        ? {
+            ...alertInput,
+            messageText: buildProfessionalFactReviewAlert({
+              review: professionalFactReview,
+              patientMessage: text,
+              safeReplySent: professionalFactReplySent,
+            }),
+          }
+        : prepareReviewAlertInput(alertInput, {
+            plan: automationPlan,
+          }),
     );
     reviewAlertQueued = true;
 
@@ -2612,7 +2760,8 @@ export default async (request, context) => {
     conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
-    !suppressExactDuplicate;
+    !suppressExactDuplicate &&
+    !professionalFactReview;
   const shouldQueueOpenAIActive =
     delivery.ok &&
     !humanTakeoverActive &&
@@ -2623,7 +2772,8 @@ export default async (request, context) => {
     conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
-    !suppressExactDuplicate;
+    !suppressExactDuplicate &&
+    !professionalFactReview;
   let aiShadowQueued = false;
 
   if (shouldQueueOpenAIShadow) {
@@ -2800,6 +2950,8 @@ export default async (request, context) => {
       aiActiveQueued,
       aiActiveStatus,
       aiActiveReplySent,
+      professionalFactReplySent,
+      professionalFactReplyStatus,
       replyDebounceMarkerStatus,
       recoveryStatus,
     }),
@@ -2865,6 +3017,8 @@ export default async (request, context) => {
     aiActiveQueued,
     aiActiveStatus,
     aiActiveReplySent,
+    professionalFactReplySent,
+    professionalFactReplyStatus,
     recoveryStatus,
   });
 };

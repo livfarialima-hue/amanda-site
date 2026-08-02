@@ -219,6 +219,119 @@ test("a clear manual confirmation reserves the slot and emails Daniel", async ()
   );
 });
 
+test("a confirmed human slot is still recorded when it is outside the automatic grid", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "outside-grid-event",
+      messageId: "outside-grid-message",
+      patientName: "Hilda Vieira de Araújo",
+      patientPhone: "+5511950638808",
+      detection: {
+        scheduledDate: "2026-08-04",
+        scheduledTime: "20:00",
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        confidence: "confirmed",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        if (action === "reserve_appointment_slot") {
+          return {
+            ok: false,
+            errorCode: "slot_not_available",
+            responseData: { ok: false },
+          };
+        }
+        if (action === "upsert_appointment") {
+          return {
+            ok: true,
+            responseData: {
+              ok: true,
+              appointmentId: "manual-outside-grid-message",
+            },
+          };
+        }
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed_with_schedule_review");
+  assert.equal(result.reserved, false);
+  assert.equal(result.recorded, true);
+  assert.deepEqual(
+    actions.map(({ action }) => action),
+    [
+      "reserve_appointment_slot",
+      "upsert_appointment",
+      "send_review_alert_email",
+    ],
+  );
+  assert.equal(
+    actions[1].payload.appointment.status,
+    "Agendada",
+  );
+  assert.match(
+    actions[2].payload.alert.messageText,
+    /REGISTRADO — CONFERIR GRADE/,
+  );
+});
+
+test("a confirmed appointment with missing time creates an incomplete consultation row", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "partial-event",
+      messageId: "partial-message",
+      patientName: "Laís Valério Ikoma",
+      patientPhone: "+5511944411011",
+      detection: {
+        scheduledDate: "2026-08-03",
+        scheduledTime: null,
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        confidence: "confirmed_partial",
+        missingFields: ["scheduledTime"],
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        if (action === "upsert_appointment") {
+          return {
+            ok: true,
+            responseData: {
+              ok: true,
+              appointmentId: "manual-partial-message",
+            },
+          };
+        }
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+    },
+  );
+
+  assert.equal(result.status, "recorded_incomplete");
+  assert.equal(result.recorded, true);
+  assert.deepEqual(
+    actions.map(({ action }) => action),
+    ["upsert_appointment", "send_review_alert_email"],
+  );
+  assert.equal(
+    actions[0].payload.appointment.status,
+    "Aguardando confirmação",
+  );
+  assert.match(
+    actions[1].payload.alert.messageText,
+    /COMPLETAR DADOS/,
+  );
+});
+
 test("a doubtful manual closing emails a secure approval link without changing the agenda", async () => {
   const actions = [];
   const result = await completeManualAppointmentDetection(
