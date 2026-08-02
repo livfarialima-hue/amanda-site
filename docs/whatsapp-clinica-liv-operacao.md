@@ -116,10 +116,9 @@ O modelo deve estar aprovado antes de configurar `WHATSAPP_POST_CONSULT_ENABLED=
 Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consulta confirmada` pode receber:
 
 1. a confirmação normal no momento do agendamento, dentro da própria conversa;
-2. um lembrete principal automático às 10h, dois dias antes;
-3. uma confirmação automática às 16h30 da véspera somente se a paciente ainda não tiver confirmado.
+2. um único lembrete automático às 10h do dia anterior.
 
-Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Consultas marcadas com menos de 24 horas de antecedência não recebem o lembrete principal duplicado; se ainda não estiverem confirmadas, entram apenas na confirmação mais próxima que ainda seja útil.
+Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Se qualquer uma das colunas históricas de lembrete já estiver preenchida, a consulta não recebe outra mensagem. Assim, pacientes que receberam um lembrete pelo fluxo anterior não recebem um segundo lembrete durante a migração.
 
 Consultas canceladas, realizadas, vencidas, com pedido de reagendamento ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Confirmação da paciente`, `Última interação humana`, `Próxima ação` e `Motivo de supressão` deixam o contexto explícito; os controles de lembrete impedem duplicidade e permitem auditoria.
 

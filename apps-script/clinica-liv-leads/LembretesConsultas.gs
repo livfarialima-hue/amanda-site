@@ -5,11 +5,8 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
   timezone: "America/Sao_Paulo",
   startHour: 9,
   endHour: 19,
-  primaryReminderDaysBefore: 2,
-  primaryReminderTime: "10:00",
-  confirmationDaysBefore: 1,
-  confirmationTime: "16:30",
-  minimumHoursForPrimaryReminder: 24,
+  singleReminderDaysBefore: 1,
+  singleReminderTime: "10:00",
   endpoint:
     "https://draamandaschroeder.com.br/.netlify/functions/appointment-reminder",
   secretProperty: "LEADS_INGEST_SECRET",
@@ -232,9 +229,6 @@ function processarLembretesConsultasInterno_(
       appointment,
       reminder48hSent: row[columns.reminder48h],
       sameDaySent: row[columns.reminderSameDay],
-      patientConfirmed:
-        Boolean(row[columns.patientConfirmedAt]) ||
-        statusIndicaConfirmacaoDaPaciente_(row[columns.status]),
     });
 
     if (!reminderKind) continue;
@@ -362,34 +356,19 @@ function definirTipoLembreteConsulta_(input) {
     return "";
   }
 
-  const confirmationTarget =
-    horarioAlvoConfirmacaoConsulta_(appointment);
+  // As duas colunas antigas permanecem como histórico. Qualquer uma
+  // preenchida significa que este agendamento já recebeu seu único
+  // lembrete e não deve receber outro.
+  if (input.reminder48hSent || input.sameDaySent) return "";
 
-  const hoursUntilAppointment =
-    (appointment.getTime() - now.getTime()) / (60 * 60 * 1000);
-
-  if (
-    !input.patientConfirmed &&
-    !input.sameDaySent &&
-    now.getTime() >= confirmationTarget.getTime()
-  ) {
-    return "same_day";
-  }
-
-  if (input.sameDaySent) return "";
-
-  const primaryReminderTarget =
+  const singleReminderTarget =
     horarioAlvoLembretePrincipalConsulta_(
       appointment,
     );
 
-  if (
-    !input.reminder48hSent &&
-    hoursUntilAppointment >=
-      LEMBRETES_CONSULTAS_CONFIG.minimumHoursForPrimaryReminder &&
-    now.getTime() >= primaryReminderTarget.getTime() &&
-    now.getTime() < confirmationTarget.getTime()
-  ) {
+  if (now.getTime() >= singleReminderTarget.getTime()) {
+    // Mantém o identificador legado "48h" para compatibilidade com o
+    // endpoint e com o template já aprovado na YCloud.
     return "48h";
   }
 
@@ -399,7 +378,7 @@ function definirTipoLembreteConsulta_(input) {
 function horarioAlvoLembretePrincipalConsulta_(appointment) {
   const previousDate = new Date(
     appointment.getTime() -
-      LEMBRETES_CONSULTAS_CONFIG.primaryReminderDaysBefore *
+      LEMBRETES_CONSULTAS_CONFIG.singleReminderDaysBefore *
         24 *
         60 *
         60 *
@@ -411,26 +390,7 @@ function horarioAlvoLembretePrincipalConsulta_(appointment) {
       previousDate,
       "yyyy-MM-dd",
     ),
-    LEMBRETES_CONSULTAS_CONFIG.primaryReminderTime,
-  );
-}
-
-function horarioAlvoConfirmacaoConsulta_(appointment) {
-  const previousDate = new Date(
-    appointment.getTime() -
-      LEMBRETES_CONSULTAS_CONFIG.confirmationDaysBefore *
-        24 *
-        60 *
-        60 *
-        1000,
-  );
-
-  return criarDataSaoPauloLembretesConsultas_(
-    formatarDataLembretesConsultas_(
-      previousDate,
-      "yyyy-MM-dd",
-    ),
-    LEMBRETES_CONSULTAS_CONFIG.confirmationTime,
+    LEMBRETES_CONSULTAS_CONFIG.singleReminderTime,
   );
 }
 

@@ -80,79 +80,64 @@ test("explicit refusal of contact blocks reminders", () => {
   );
 });
 
-test("the primary reminder is due at 10am two days before the consultation", () => {
+test("the single reminder is due at 10am on the previous day", () => {
   const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-28T10:00:00-03:00"),
+      now: new Date("2026-07-29T09:59:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: "",
-      patientConfirmed: false,
+    }),
+    "",
+  );
+
+  assert.equal(
+    context.definirTipoLembreteConsulta_({
+      now: new Date("2026-07-29T10:00:00-03:00"),
+      appointment,
+      reminder48hSent: "",
+      sameDaySent: "",
     }),
     "48h",
   );
+});
+
+test("an appointment that already received the old 48h reminder gets no second reminder", () => {
+  const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T15:00:00-03:00"),
+      now: new Date("2026-07-29T10:00:00-03:00"),
       appointment,
-      reminder48hSent: "",
+      reminder48hSent: new Date(),
       sameDaySent: "",
-      patientConfirmed: false,
     }),
     "",
   );
 });
 
-test("previous-day confirmation is reserved for an unconfirmed consultation", () => {
+test("an appointment that already received the old same-day reminder gets no new reminder", () => {
   const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T16:30:00-03:00"),
-      appointment,
-      reminder48hSent: new Date(),
-      sameDaySent: "",
-      patientConfirmed: false,
-    }),
-    "same_day",
-  );
-
-  assert.equal(
-    context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T16:30:00-03:00"),
-      appointment,
-      reminder48hSent: new Date(),
-      sameDaySent: "",
-      patientConfirmed: true,
-    }),
-    "",
-  );
-});
-
-test("same-day reminder prevents a late duplicate 48-hour reminder", () => {
-  const appointment = new Date("2026-07-30T14:00:00-03:00");
-
-  assert.equal(
-    context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-30T12:00:00-03:00"),
+      now: new Date("2026-07-29T10:00:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: new Date(),
-      patientConfirmed: false,
     }),
     "",
   );
 });
 
-test("all appointments use a 4:30pm confirmation on the previous day", () => {
+test("all appointments use a 10am reminder on the previous day", () => {
   const appointment = new Date("2026-07-30T09:00:00-03:00");
   const target =
-    context.horarioAlvoConfirmacaoConsulta_(appointment);
+    context.horarioAlvoLembretePrincipalConsulta_(appointment);
 
-  assert.equal(target.toISOString(), "2026-07-29T19:30:00.000Z");
+  assert.equal(target.toISOString(), "2026-07-29T13:00:00.000Z");
 });
 
 test("only explicit patient confirmation is treated as confirmed", () => {
