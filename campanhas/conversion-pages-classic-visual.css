@@ -1,0 +1,206 @@
+/*
+ * Recupera a linguagem visual anterior das páginas comerciais sem alterar
+ * conteúdo, navegação, SEO, CTAs ou rastreamento.
+ */
+
+/* Fotografias voltam a molduras retangulares e proporcionais. */
+.cv-hero { padding: 42px 0 54px; }
+html[data-page-type="home"] .cv-hero h1 {
+  font-size: clamp(3rem, 5vw, 4.35rem);
+}
+html[data-procedure="avaliacao-facial"] .cv-hero h1,
+html[data-procedure="lifting-facial"] .cv-hero h1 {
+  font-size: clamp(2.9rem, 4.6vw, 4.15rem);
+}
+.cv-hero-media::before { display: none; }
+.cv-hero-media img,
+.cv-hero-media video {
+  border-radius: 12px;
+  box-shadow: 0 18px 48px rgba(63, 45, 38, .13);
+  object-fit: cover;
+}
+
+.cv-split-media { margin: 0; overflow: hidden; }
+.cv-split-media img,
+.cv-split-media video {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* Resultados inteiros, sem cortar antes/depois. */
+.cv-results { align-items: start; gap: 18px; }
+.cv-result {
+  align-self: start;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 0;
+  box-shadow: 0 18px 42px rgba(35, 23, 19, .13);
+}
+.cv-result img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  background: #eee6e1;
+  object-fit: contain;
+  object-position: center;
+}
+.cv-result figcaption { padding: 20px; }
+
+/* Página principal: composição fotográfica usada antes da simplificação. */
+html[data-page-type="home"] .cv-hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(420px, .95fr);
+  gap: clamp(38px, 5vw, 64px);
+}
+html[data-page-type="home"] .cv-hero-media img {
+  width: 100%;
+  height: clamp(500px, calc(100svh - 155px), 660px);
+  aspect-ratio: auto;
+  border-radius: 12px;
+  object-position: 50% 35%;
+}
+html[data-page-type="home"] .cv-results .cv-result img {
+  height: clamp(300px, 32vw, 390px);
+  object-fit: contain;
+}
+html[data-page-type="home"] #quem-conduz .cv-split-media img {
+  height: 560px;
+  object-position: center 22%;
+}
+
+/* Avaliação facial: retratos mais baixos e elegantes, como na versão anterior. */
+html[data-procedure="avaliacao-facial"] .cv-hero-grid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(390px, .95fr);
+  gap: 48px;
+}
+html[data-procedure="avaliacao-facial"] .cv-hero-media {
+  overflow: hidden;
+  border-radius: 26px;
+  background: #eadbd4;
+}
+html[data-procedure="avaliacao-facial"] .cv-hero-media img {
+  height: min(64vh, 620px);
+  aspect-ratio: auto;
+  border-radius: 0;
+  object-position: center 22%;
+}
+html[data-procedure="avaliacao-facial"] .cv-split-media {
+  border-radius: 22px;
+  background: #eee6e1;
+}
+html[data-procedure="avaliacao-facial"] .cv-split-media img {
+  height: 420px;
+  border-radius: 0;
+  object-position: center;
+}
+html[data-procedure="avaliacao-facial"] .cv-card,
+html[data-procedure="avaliacao-facial"] .cv-review { border-radius: 16px; }
+
+/* Lifting: enquadramento amplo e resultados nas proporções originais. */
+html[data-procedure="lifting-facial"] .cv-hero-grid {
+  grid-template-columns: minmax(0, 1.02fr) minmax(420px, .98fr);
+  gap: 58px;
+}
+html[data-procedure="lifting-facial"] .cv-hero-media {
+  overflow: hidden;
+  background: #e7d8d0;
+  box-shadow: 0 18px 48px rgba(63, 45, 38, .13);
+}
+html[data-procedure="lifting-facial"] .cv-hero-media img {
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+  box-shadow: none;
+  object-position: center 20%;
+}
+html[data-procedure="lifting-facial"] .cv-result { box-shadow: 0 18px 42px rgba(15, 10, 9, .22); }
+html[data-procedure="lifting-facial"] .cv-card,
+html[data-procedure="lifting-facial"] .cv-review { border-radius: 0; }
+html[data-procedure="lifting-facial"] details .cv-grid figure img {
+  height: 420px !important;
+  aspect-ratio: 4 / 5 !important;
+  border-radius: 0 !important;
+  object-fit: cover !important;
+  object-position: center 22%;
+}
+
+@media (max-width: 920px) {
+  html[data-page-type="home"] .cv-hero-grid,
+  html[data-procedure="avaliacao-facial"] .cv-hero-grid,
+  html[data-procedure="lifting-facial"] .cv-hero-grid { grid-template-columns: 1fr; }
+
+  html[data-page-type="home"] .cv-hero-media img {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-position: center 28%;
+  }
+
+  html[data-procedure="avaliacao-facial"] .cv-hero-media img {
+    height: 300px;
+    object-position: center 20%;
+  }
+
+  html[data-procedure="lifting-facial"] .cv-hero-media img {
+    aspect-ratio: 16 / 10;
+    object-position: center 18%;
+  }
+}
+
+@media (max-width: 680px) {
+  .cv-hero { padding: 28px 0 48px; }
+  html[data-page-type="home"] .cv-hero h1,
+  html[data-procedure="avaliacao-facial"] .cv-hero h1,
+  html[data-procedure="lifting-facial"] .cv-hero h1 {
+    font-size: clamp(2.35rem, 10vw, 3rem);
+  }
+
+  .cv-hero-media img,
+  .cv-hero-media video { border-radius: 10px; }
+
+  /* O carrossel visual anterior evita uma sequência vertical de fotos grandes. */
+  .cv-results {
+    display: flex;
+    width: calc(100% + 14px);
+    margin-right: -14px;
+    padding: 2px 14px 14px 0;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .cv-results::-webkit-scrollbar { display: none; }
+  .cv-results .cv-result {
+    flex: 0 0 min(86vw, 350px);
+    scroll-snap-align: start;
+  }
+  .cv-result figcaption { padding: 18px; }
+
+  html[data-page-type="home"] .cv-results .cv-result img { height: 280px; }
+  html[data-page-type="home"] #quem-conduz .cv-split-media img {
+    height: 300px;
+    object-position: center 20%;
+  }
+
+  html[data-procedure="avaliacao-facial"] .cv-hero-media { border-radius: 18px; }
+  html[data-procedure="avaliacao-facial"] .cv-hero-media img {
+    height: 220px;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+  html[data-procedure="avaliacao-facial"] .cv-split-media img {
+    height: 220px;
+    object-position: center 48%;
+  }
+
+  html[data-procedure="lifting-facial"] .cv-hero-media img {
+    border-radius: 0;
+    aspect-ratio: 16 / 10;
+  }
+  html[data-procedure="lifting-facial"] details .cv-grid figure img {
+    height: auto !important;
+    aspect-ratio: 16 / 10 !important;
+    object-position: center 18%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-results { scroll-behavior: auto; }
+}
