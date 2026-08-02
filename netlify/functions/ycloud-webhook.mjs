@@ -817,6 +817,7 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
             decision?.procedure ||
             plan?.procedure ||
             null,
+          recentConversation: input.recentConversation,
         }),
       }),
     };
@@ -2083,6 +2084,7 @@ export default async (request, context) => {
     patientName: String(message.customerProfile?.name || ""),
     patientPhone: phone,
     messageText: text,
+    recentConversation: conversationHistoryWithCurrent,
     relationship: patientRelationship,
     urgent:
       automationPlan.reason === "possible_urgent_symptoms",

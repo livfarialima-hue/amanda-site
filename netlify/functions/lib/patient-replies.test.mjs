@@ -31,6 +31,7 @@ test("price fallback is transparent about the consultation and clarifies the req
   assert.match(reply, /preço antes de decidir/);
   assert.match(reply, /consulta presencial/);
   assert.match(reply, /R\$ 500/);
+  assert.match(reply, /Pix, débito ou parcelamento/);
   assert.match(reply, /abatido/);
   assert.match(reply, /nota fiscal/);
   assert.match(reply, /comprovante de despesa médica/);

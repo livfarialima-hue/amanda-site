@@ -208,9 +208,55 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
     deps.alerts[0].messageText,
     /pagamento antecipado até a cirurgia/,
   );
+  assert.match(
+    deps.alerts[0].messageText,
+    /utm_source=whatsapp/,
+  );
+  assert.match(
+    deps.alerts[0].messageText,
+    /verificar um horário para a avaliação/,
+  );
+  assert.ok(deps.alerts[0].messageText.length <= 1_024);
   assert.equal(
     deps.completions[0].options.controlStatus,
     "waiting_human",
+  );
+});
+
+test("surgical price resume does not suggest the facial guide twice", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      text: "Quanto custa o lifting facial?",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text:
+            "Guia: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Quanto custa o lifting facial?",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "waiting_human");
+  assert.match(
+    deps.alerts[0].messageText,
+    /entre R\$ 33 mil e R\$ 42 mil/,
+  );
+  assert.doesNotMatch(
+    deps.alerts[0].messageText,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
 });
 

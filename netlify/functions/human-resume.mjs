@@ -335,6 +335,7 @@ export async function processHumanResumeJob(
         buildSurgicalPriceSuggestedReply({
           patientName: job.patientName,
           procedure: priceProcedure,
+          recentConversation: job.recentConversation,
         }),
         conversationAction,
       );

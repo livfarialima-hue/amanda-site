@@ -1,8 +1,24 @@
 const CONSULTATION_PRICE = 500;
+const PRICE_GUIDE_PATH =
+  "/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
 const PRICE_GUIDE_URL =
-  "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
+  `https://draamandaschroeder.com.br${PRICE_GUIDE_PATH}` +
+  "?utm_source=whatsapp&utm_medium=atendimento" +
+  "&utm_campaign=guia_custos_face" +
+  "&utm_content=resposta_preco_cirurgia";
 const PRICE_RANGE_LOWER_FACTOR = 0.9;
 const PRICE_RANGE_UPPER_FACTOR = 1.1;
+
+const FACIAL_PRICE_GUIDE_PROCEDURES = new Set([
+  "lifting_facial",
+  "lifting_cervical",
+  "blefaroplastia",
+  "otoplastia",
+  "rinoplastia",
+  "frontoplastia",
+  "lip_lifting",
+  "lipo_papada",
+]);
 
 const PRICE_REFERENCES = Object.freeze({
   lifting_facial: Object.freeze({
@@ -118,24 +134,40 @@ function formatBRL(value) {
   return `R$ ${roundedThousands(value) / 1_000} mil`;
 }
 
+function conversationContainsPriceGuide(recentConversation) {
+  return (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) => {
+    const text = String(turn?.text || "");
+    return (
+    text.includes(PRICE_GUIDE_PATH.slice(0, -1)) ||
+      /refer[eê]ncia:\s*custos de cirurgia facial/i.test(text) ||
+      /li o conte[uú]do sobre custos de cirurgia facial/i.test(text)
+    );
+  });
+}
+
+function shouldIncludePriceGuide(procedure, recentConversation) {
+  return (
+    FACIAL_PRICE_GUIDE_PROCEDURES.has(procedure) &&
+    !conversationContainsPriceGuide(recentConversation)
+  );
+}
+
 function priceVariation(procedure) {
   if (procedure === "lifting_facial") {
-    return "O valor final depende de o planejamento incluir face, pescoço ou ambos e da avaliação individual.";
+    return "O valor final pode variar conforme o plano envolva face, pescoço ou ambos.";
   }
 
-  return "O valor final depende da extensão do procedimento e da avaliação individual.";
+  return "O valor final pode variar conforme a extensão do procedimento.";
 }
 
 function clarificationFor(procedure, patientName) {
   const hello = greeting(patientName);
 
   if (!procedure) {
-    return [
-      `${hello} Para te passar a faixa correta, você me conta qual cirurgia está pesquisando? Os valores mudam bastante conforme o procedimento e o planejamento individual.`,
-      `A consulta com a Dra. Amanda custa R$ ${CONSULTATION_PRICE}, com nota fiscal, e esse valor é abatido se a cirurgia for realizada com a equipe.`,
-      `Este guia explica o que compõe o orçamento completo — equipe médica, anestesia, hospital, materiais e acompanhamento: ${PRICE_GUIDE_URL}`,
-      "Me dizendo o procedimento, eu consulto a referência e também te explico as formas de pagamento.",
-    ].join("\n\n");
+    return `${hello} Para te passar a faixa correta, você me conta qual cirurgia está pesquisando? Os valores mudam conforme o procedimento.`;
   }
 
   if (procedure === "mastopexia") {
@@ -151,7 +183,7 @@ function clarificationFor(procedure, patientName) {
   }
 
   if (procedure === "avaliacao_facial") {
-    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500, com emissão de nota fiscal. Esse valor é abatido se a cirurgia for realizada com a equipe. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis. Você gostaria de entender como funciona a consulta?`;
+    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Emitimos nota fiscal, e esse valor é abatido se a cirurgia for realizada com a equipe. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis. Você gostaria de entender como funciona a consulta?`;
   }
 
   const label = PROCEDURE_LABELS[procedure] || "esse procedimento";
@@ -185,25 +217,30 @@ export function getSurgicalPriceReference(procedure) {
 export function buildSurgicalPriceSuggestedReply({
   patientName,
   procedure,
+  recentConversation = [],
 }) {
   const reference = getSurgicalPriceReference(procedure);
   if (!reference) return clarificationFor(procedure, patientName);
 
   const priceContext = [
     waitingGreeting(patientName),
-    `Como referência inicial, ${reference.label} costuma ficar entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
+    `Como referência, ${reference.label} costuma ficar entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
     priceVariation(procedure),
   ].join(" ");
   const budgetContext =
-    "No orçamento, detalhamos equipe médica, anestesia, hospital, materiais e acompanhamento, para você comparar o custo total da jornada, não só o preço inicial.";
+    "O orçamento separa equipe médica, anestesia, hospital, materiais e acompanhamento, para você comparar o conjunto.";
   const careAndPayment = [
-    "Há pagamento antecipado até a cirurgia e condição à vista.",
-    `A consulta custa R$ ${CONSULTATION_PRICE} e é abatida se a cirurgia for realizada com a equipe.`,
+    "Há condição à vista e pagamento antecipado até a cirurgia.",
+    `A consulta custa R$ ${CONSULTATION_PRICE}, aceita Pix, débito ou parcelamento e é abatida se houver cirurgia com a equipe.`,
   ].join(" ");
-  const guide =
-    `Este guia explica o que comparar e quando uma alternativa menor pode fazer sentido: ${PRICE_GUIDE_URL}`;
+  const guide = shouldIncludePriceGuide(
+    procedure,
+    recentConversation,
+  )
+    ? `Guia sobre o que comparar além do preço: ${PRICE_GUIDE_URL}`
+    : "";
   const callToAction =
-    "Se essa faixa fizer sentido, posso explicar a avaliação e verificar um horário para você.";
+    "Se a faixa fizer sentido, posso verificar um horário para a avaliação.";
 
   return [
     priceContext,
@@ -211,7 +248,7 @@ export function buildSurgicalPriceSuggestedReply({
     careAndPayment,
     guide,
     callToAction,
-  ].join("\n\n");
+  ].filter(Boolean).join("\n\n");
 }
 
 export function buildSurgicalPriceHoldingReply({
@@ -269,10 +306,12 @@ export function buildPriceReviewAlert({
   patientName,
   patientMessage,
   procedure,
+  recentConversation = [],
 }) {
   const suggestion = buildSurgicalPriceSuggestedReply({
     patientName,
     procedure,
+    recentConversation,
   });
 
   return [

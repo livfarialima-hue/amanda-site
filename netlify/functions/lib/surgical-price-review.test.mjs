@@ -16,6 +16,7 @@ test("consultation price suggestion includes the invoice without promising tax s
   });
 
   assert.match(reply, /R\$ 500/);
+  assert.match(reply, /Pix, débito ou parcelamento/);
   assert.match(reply, /nota fiscal/);
   assert.match(reply, /comprovante de despesa médica/);
   assert.match(reply, /Imposto de Renda/);
@@ -48,16 +49,22 @@ test("creates a patient-ready lifting facial price suggestion for human review",
     /cirurgiã principal|auxiliar|anestesista|instrumentadora/,
   );
   assert.match(reply, /face, pescoço ou ambos/);
-  assert.match(reply, /avaliação individual/);
   assert.match(reply, /pagamento antecipado até a cirurgia/);
   assert.match(reply, /condição à vista/);
   assert.match(reply, /consulta custa R\$ 500/);
-  assert.match(reply, /é abatida se a cirurgia/);
+  assert.match(reply, /é abatida se houver cirurgia/);
   assert.match(reply, /equipe médica, anestesia, hospital, materiais e acompanhamento/);
-  assert.match(reply, /custo total da jornada/);
   assert.match(
     reply,
     /conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+  assert.match(reply, /utm_source=whatsapp/);
+  assert.match(reply, /utm_medium=atendimento/);
+  assert.match(reply, /utm_campaign=guia_custos_face/);
+  assert.match(reply, /utm_content=resposta_preco_cirurgia/);
+  assert.ok(
+    reply.indexOf("entre R$ 33 mil e R$ 42 mil") <
+      reply.indexOf("utm_source=whatsapp"),
   );
   assert.match(reply, /verificar um horário/);
   assert.doesNotMatch(
@@ -103,14 +110,72 @@ test("an unspecified surgery asks for the procedure but still supports conversio
   });
 
   assert.match(reply, /qual cirurgia está pesquisando/);
-  assert.match(reply, /R\$ 500/);
-  assert.match(reply, /nota fiscal/);
-  assert.match(reply, /equipe médica, anestesia, hospital, materiais e acompanhamento/);
-  assert.match(
+  assert.doesNotMatch(reply, /R\$ 500/);
+  assert.doesNotMatch(
     reply,
     /conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
   assert.doesNotMatch(reply, /R\$ (?:1[89]|2[349]|3[38]|4[2]) mil/);
+});
+
+test("does not offer the facial guide for breast or body procedures", () => {
+  for (const procedure of [
+    "mastopexia",
+    "protese_mama",
+    "abdominoplastia",
+    "lipoaspiracao",
+    "ninfoplastia",
+  ]) {
+    const reply = buildSurgicalPriceSuggestedReply({
+      patientName: "Maria",
+      procedure,
+    });
+
+    assert.doesNotMatch(
+      reply,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    );
+  }
+});
+
+test("offers the facial guide only once in the conversation", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "blefaroplastia",
+    recentConversation: [
+      {
+        role: "assistant",
+        text:
+          "Veja este guia: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo?utm_source=whatsapp",
+      },
+    ],
+  });
+
+  assert.match(reply, /entre R\$ 18 mil e R\$ 23 mil/);
+  assert.doesNotMatch(
+    reply,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+});
+
+test("does not repeat the guide when the patient came from that page", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "lifting_facial",
+    recentConversation: [
+      {
+        role: "user",
+        text:
+          "Olá, li o conteúdo sobre custos de cirurgia facial. Referência: custos de cirurgia facial",
+      },
+    ],
+  });
+
+  assert.match(reply, /entre R\$ 33 mil e R\$ 42 mil/);
+  assert.doesNotMatch(
+    reply,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
 });
 
 test("price review alert contains the original question and a copyable answer", () => {
@@ -128,9 +193,31 @@ test("price review alert contains the original question and a copyable answer", 
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
   assert.match(alert, /pagamento antecipado até a cirurgia/);
   assert.match(alert, /condição à vista/);
-  assert.match(alert, /custo total da jornada/);
+  assert.match(alert, /comparar o conjunto/);
+  assert.match(alert, /utm_source=whatsapp/);
   assert.match(alert, /verificar um horário/);
   assert.ok(alert.length <= 1100);
+});
+
+test("price review alert preserves the one-guide-per-conversation rule", () => {
+  const alert = buildPriceReviewAlert({
+    patientName: "Maria",
+    patientMessage: "Qual o valor da blefaroplastia?",
+    procedure: "blefaroplastia",
+    recentConversation: [
+      {
+        role: "assistant",
+        text:
+          "Guia: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+      },
+    ],
+  });
+
+  assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
+  assert.doesNotMatch(
+    alert,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
 });
 
 test("recognizes a price request preserved under a known-patient policy", () => {

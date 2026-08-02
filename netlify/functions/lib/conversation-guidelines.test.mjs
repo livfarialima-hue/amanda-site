@@ -68,6 +68,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /Transparência vem antes das condições de pagamento/,
   );
   assert.match(CONVERSATION_GUIDELINES, /consulta presencial custa R\$ 500/);
+  assert.match(CONVERSATION_GUIDELINES, /Pix, débito ou parcelamento/);
   assert.match(CONVERSATION_GUIDELINES, /emissão de nota fiscal/);
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -145,6 +146,8 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
   assert.match(CONVERSATION_GUIDELINES, /não repita URL ou página/);
+  assert.match(CONVERSATION_GUIDELINES, /guia de custos pode vir depois da faixa/);
+  assert.match(CONVERSATION_GUIDELINES, /Não ofereça o guia de custos faciais para cirurgia de mama/);
   assert.match(
     CONVERSATION_GUIDELINES,
     /responda primeiro como o procedimento funciona em linguagem simples/,
