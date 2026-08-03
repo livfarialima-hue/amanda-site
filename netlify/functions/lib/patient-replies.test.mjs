@@ -2,12 +2,30 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildConsultationInformationReply,
+  buildMarketingPrefilledOpeningReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
   REACTIVATION_REPLY,
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("opens a prefilled site inquiry without assuming scheduling intent", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Fabrícia Silva",
+    procedure: "avaliacao_facial",
+    introduceBruna: true,
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Fabrícia! Eu sou a Bruna, da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre avaliação facial. " +
+      "O que você gostaria de entender primeiro sobre avaliação facial?",
+  );
+  assert.doesNotMatch(reply, /manhã|tarde|noite|horário/i);
+  assert.doesNotMatch(reply, /obrigada pela confiança/i);
+});
 
 test("builds a natural routing greeting without internal codes", () => {
   const reply = buildPatientReply({
@@ -121,7 +139,7 @@ test("uses the complete procedure page only when the patient requests it", () =>
   assert.doesNotMatch(reply, /R\$ 500/);
 });
 
-test("availability in a prefilled inquiry is offered without assuming booking intent", () => {
+test("an explicit availability request can advance to period preference", () => {
   const reply = buildConsultationInformationReply({
     patientName: "Van",
     procedure: "lifting_facial",

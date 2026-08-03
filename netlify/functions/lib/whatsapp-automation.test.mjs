@@ -563,6 +563,29 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.procedure, "blefaroplastia");
 });
 
+test("prefilled site availability text is context rather than scheduling intent", () => {
+  const text = [
+    "Olá, gostaria de consultar os horários para uma avaliação facial com a Dra. Amanda.",
+    "Referência: Avaliação facial",
+  ].join("\n\n");
+  const plan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "Avaliação facial",
+    platform: "Orgânico/Conteúdo",
+  });
+
+  assert.equal(isAvailabilityRequest(text), true);
+  assert.equal(
+    isLikelyMarketingPrefilledMessage({ text }),
+    true,
+  );
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "known_procedure");
+  assert.equal(plan.procedure, "avaliacao_facial");
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("exact professional experience remains partially answerable and human-reviewed", () => {
   const plan = planAutomation({
     text: "Há quanto tempo a Dra. Amanda atua na cirurgia plástica?",

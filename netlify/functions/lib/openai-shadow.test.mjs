@@ -992,7 +992,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
-test("a prefilled Google consultation template becomes a contextual opening", async () => {
+test("a prefilled site availability template becomes a contextual opening", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -1069,10 +1069,10 @@ test("a prefilled Google consultation template becomes a contextual opening", as
         from: "+5511900000000",
         to: PHONE,
         type: "text",
-        customerProfile: { name: "Rô de Souza" },
+        customerProfile: { name: "Fabrícia Silva" },
         text: {
           body:
-            "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda e consultar a disponibilidade. Ref. g26f01-816509565979-LF01\nGBRAID: 0AAAAA_6pbrU6n3U3wv9Q9o9QVyBfretAU",
+            "Olá, gostaria de consultar os horários para uma avaliação facial com a Dra. Amanda.\n\nReferência: Avaliação facial",
         },
       },
     });
@@ -1102,7 +1102,7 @@ test("a prefilled Google consultation template becomes a contextual opening", as
         (request) =>
           request.url === "https://api.openai.com/v1/responses",
       ),
-      true,
+      false,
     );
 
     const patientRequests = requests.filter(
@@ -1115,10 +1115,15 @@ test("a prefilled Google consultation template becomes a contextual opening", as
     const patientReply = JSON.parse(
       patientRequests[0].options.body,
     ).text.body;
-    assert.match(patientReply, /interesse é em lifting facial/i);
-    assert.match(patientReply, /mais útil entender primeiro/i);
+    assert.equal(
+      patientReply,
+      "Olá, Fabrícia! Eu sou a Bruna, da Clínica LIV Faria Lima. " +
+        "Posso te orientar sobre avaliação facial. " +
+        "O que você gostaria de entender primeiro sobre avaliação facial?",
+    );
     assert.doesNotMatch(patientReply, /R\$ 500/);
-    assert.doesNotMatch(patientReply, /prefere manhã ou tarde/i);
+    assert.doesNotMatch(patientReply, /manhã|tarde|noite|horário/i);
+    assert.doesNotMatch(patientReply, /obrigada pela confiança/i);
     assert.doesNotMatch(patientReply, /possibilidades, limites/i);
     assert.doesNotMatch(patientReply, /https:\/\/draamandaschroeder/);
   } finally {

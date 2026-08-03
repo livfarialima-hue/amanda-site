@@ -300,7 +300,7 @@ export function isLikelyMarketingPrefilledMessage({
     ].join(" "),
   );
   const hasEmbeddedAttribution =
-    /\bgbraid\s*:|\bref\.?(?:\s*:)?\s*[a-z0-9-]{5,}/i.test(
+    /\bgbraid\s*:|\bref\.?(?:\s*:)?\s*[a-z0-9-]{5,}|\breferencia\s*:/i.test(
       normalizedText,
     );
   const hasMarketingSource =
@@ -321,8 +321,17 @@ export function isLikelyMarketingPrefilledMessage({
     /\b(?:quero|gostaria de) saber sobre .{2,100}\bcom a dra\.? amanda\b/i.test(
       normalizedText,
     );
+  const siteConsultationTemplate =
+    /\bgostaria de (?:consultar os horarios|ver horarios)\b/i.test(
+      normalizedText,
+    ) &&
+    /\b(?:consulta|avaliacao|dra\.? amanda)\b/i.test(normalizedText);
 
-  return googleConsultationTemplate || metaProcedureTemplate;
+  return (
+    googleConsultationTemplate ||
+    metaProcedureTemplate ||
+    siteConsultationTemplate
+  );
 }
 
 export function enrichAutomationPlanFromConversation(

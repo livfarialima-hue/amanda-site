@@ -56,6 +56,25 @@ function greeting(name) {
   return normalizedName ? `Olá, ${normalizedName}!` : "Olá!";
 }
 
+export function buildMarketingPrefilledOpeningReply({
+  patientName,
+  procedure,
+  introduceBruna = true,
+}) {
+  const procedureLabel = PROCEDURE_LABELS[procedure] || "";
+  const introduction = introduceBruna
+    ? `${greeting(patientName)} Eu sou a Bruna, da Clínica LIV Faria Lima.`
+    : "Claro.";
+  const context = procedureLabel
+    ? `Posso te orientar sobre ${procedureLabel}.`
+    : "Posso te orientar.";
+  const question = procedureLabel
+    ? `O que você gostaria de entender primeiro sobre ${procedureLabel}?`
+    : "O que você gostaria de entender primeiro?";
+
+  return `${introduction} ${context} ${question}`;
+}
+
 function consultationDescription(procedure, procedureLabel) {
   if (procedure === "lifting_facial") {
     return [

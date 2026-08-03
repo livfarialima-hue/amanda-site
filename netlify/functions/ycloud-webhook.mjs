@@ -2,6 +2,7 @@ import {
   enrichAutomationPlanFromConversation,
   isAvailabilityRequest,
   isConsultationInformationRequest,
+  isLikelyMarketingPrefilledMessage,
   isSchedulingRequest,
   normalizeAutomationMode,
   planAutomation,
@@ -13,6 +14,7 @@ import {
 } from "./lib/appointment-suggestions.mjs";
 import {
   buildConsultationInformationReply,
+  buildMarketingPrefilledOpeningReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
   shouldSendAutomaticPatientReply,
@@ -881,7 +883,12 @@ function isAppointmentReviewCandidate(
   text,
   recentConversation = [],
 ) {
+  const standaloneMarketingPrefilledMessage =
+    plan?.reason === "known_procedure" &&
+    isLikelyMarketingPrefilledMessage({ text });
+
   return Boolean(
+    !standaloneMarketingPrefilledMessage &&
     plan?.professional === "amanda" &&
       (
         isSchedulingRequest(text) ||
@@ -1207,6 +1214,14 @@ async function completeOpenAIActive({
       return { status: "superseded", replySent: false };
     }
 
+    const standaloneMarketingPrefilledMessage =
+      plan?.route === "standard_reply" &&
+      plan?.reason === "known_procedure" &&
+      isLikelyMarketingPrefilledMessage({
+        text: input.text,
+        platform: input.platform,
+        referralContext: input.referralContext,
+      });
     const consultationInformationRequest =
       plan?.reason === "consultation_information_request" &&
       isConsultationInformationRequest(input.text);
@@ -1227,7 +1242,33 @@ async function completeOpenAIActive({
           currentMessage: input.text,
         })
       : null;
-    const activeResult = consultationInformationRequest
+    const introduceBruna = !input.recentConversation.some(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
+    const activeResult = standaloneMarketingPrefilledMessage
+      ? {
+          status: "completed",
+          model: "deterministic-marketing-prefill-opening",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode: "MARKETING-PREFILL-OPENING-01",
+            suggestedReply: buildMarketingPrefilledOpeningReply({
+              patientName: input.patientProfileName,
+              procedure: plan?.procedure || input.procedure || "",
+              introduceBruna,
+            }),
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : consultationInformationRequest
       ? {
           status: "completed",
           model: "deterministic-consultation-information",
@@ -1251,13 +1292,7 @@ async function completeOpenAIActive({
                 "",
               availabilityRequested,
               siteRequested,
-              introduceBruna: !input.recentConversation.some(
-                (turn) =>
-                  turn?.role === "assistant" ||
-                  ["bruna", "equipe_humana"].includes(
-                    turn?.source,
-                  ),
-              ),
+              introduceBruna,
             }),
             reviewReason: "",
           },
