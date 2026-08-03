@@ -55,6 +55,44 @@ html[data-design="facial-premium"] .cv-hero h1 {
   object-position: center;
 }
 .cv-result figcaption { padding: 20px; }
+.cv-results--neck { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cv-results--neck .cv-result img {
+  height: clamp(220px, 25vw, 300px);
+  object-fit: contain;
+}
+.cv-result-kicker {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--green);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+/* Fotos verticais de segurança: enquadramento previsível sem alongar a página. */
+.cv-safety-media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: none;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.cv-safety-team {
+  grid-template-columns: minmax(220px, .72fr) minmax(0, 1.28fr);
+}
+.cv-safety-team > img {
+  width: 100%;
+  height: 260px;
+  border-radius: 10px;
+  object-fit: cover;
+  object-position: center 32%;
+}
+.cv-list > div strong,
+.cv-list > div span {
+  display: block;
+}
+.cv-list > div strong { margin-bottom: 4px; }
 
 /* Página principal: composição fotográfica usada antes da simplificação. */
 html[data-page-type="home"] .cv-hero-grid {
@@ -161,7 +199,7 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
   /* O carrossel visual anterior evita uma sequência vertical de fotos grandes. */
   .cv-results {
     display: flex;
-    width: calc(100% + 14px);
+    width: 100%;
     margin-right: -14px;
     padding: 2px 14px 14px 0;
     overflow-x: auto;
@@ -176,6 +214,22 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
   }
   .cv-result figcaption { padding: 18px; }
   .cv-results--three .cv-result img { height: 240px; }
+  .cv-results--neck .cv-result img { height: 210px; }
+
+  .cv-safety-media img {
+    height: 220px;
+    aspect-ratio: auto;
+    object-position: center 28%;
+  }
+  .cv-safety-team {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 18px;
+  }
+  .cv-safety-team > img {
+    height: 210px;
+    object-position: center 32%;
+  }
 
   html[data-page-type="home"] .cv-results .cv-result img { height: 280px; }
   html[data-page-type="home"] #quem-conduz .cv-split-media img {

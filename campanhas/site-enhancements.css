@@ -2548,6 +2548,43 @@ body.curated-video-open { overflow: hidden; }
   max-width: 760px;
 }
 
+.procedure-directory-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, .72fr);
+  align-items: center;
+  gap: clamp(36px, 7vw, 92px);
+}
+
+.procedure-directory-hero-copy {
+  min-width: 0;
+}
+
+.procedure-directory-hero-media {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #eee4df;
+  box-shadow: 0 22px 54px rgba(53, 37, 31, .14);
+}
+
+.procedure-directory-hero-media img {
+  display: block;
+  width: 100%;
+  height: clamp(420px, 44vw, 560px);
+  aspect-ratio: auto;
+  object-fit: cover;
+  object-position: center 28%;
+}
+
+.procedure-directory-trust {
+  max-width: 720px;
+  margin: 24px 0 0;
+  color: var(--muted, #645b57);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
 .procedure-directory-jumps {
   position: sticky;
   top: 0;
@@ -2676,7 +2713,38 @@ body.curated-video-open { overflow: hidden; }
   font-weight: 400;
 }
 
+.procedure-link-list b::before {
+  content: "→";
+}
+
+.procedure-directory-group--non-surgical {
+  padding: clamp(28px, 4vw, 46px);
+  border: 1px solid rgba(23, 107, 75, .18);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(231, 243, 235, .72), rgba(255, 253, 251, .95));
+}
+
 @media (max-width: 760px) {
+  .procedure-directory-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .procedure-directory-hero-media {
+    border-radius: 18px;
+  }
+
+  .procedure-directory-hero-media img {
+    height: 230px;
+    aspect-ratio: auto;
+    object-position: center 24%;
+  }
+
+  .procedure-directory-trust {
+    margin-top: 18px;
+    font-size: 12px;
+  }
+
   .procedure-directory-jumps {
     position: relative;
   }
@@ -2706,6 +2774,11 @@ body.curated-video-open { overflow: hidden; }
 
   .procedure-directory-heading h2 {
     font-size: 32px;
+  }
+
+  .procedure-directory-group--non-surgical {
+    padding: 26px 20px;
+    border-radius: 18px;
   }
 
   .procedure-link-list > a {
