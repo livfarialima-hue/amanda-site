@@ -28,6 +28,7 @@ function job(overrides = {}) {
     reference: "WHATSAPP-DIRETO-SEM-CODIGO",
     referenceCategory: "direct",
     procedure: "lifting_facial",
+    receivedAt: "2026-07-28T15:00:00.000Z",
     referralContext: null,
     recentConversation: [
       {
@@ -56,6 +57,10 @@ function dependencies() {
     alerts,
     completions,
     memory,
+    readConversationTurnsImpl: async () => ({
+      status: "completed",
+      turns: [],
+    }),
     isHumanResumeClaimCurrentImpl: async () => true,
     sendYCloudPatientTextImpl: async (input) => {
       patientMessages.push(input);
@@ -443,6 +448,45 @@ test("new human activity cancels the automatic send and alert", async () => {
   assert.equal(deps.patientMessages.length, 0);
   assert.equal(deps.alerts.length, 0);
   assert.equal(deps.completions.length, 0);
+});
+
+test("a reply sent after the patient message cancels a stale resume job", async () => {
+  const deps = dependencies();
+  deps.readConversationTurnsImpl = async () => ({
+    status: "completed",
+    turns: [
+      {
+        role: "user",
+        source: "patient",
+        text: "Pode ser realizado pelo convênio?",
+        at: "2026-07-28T15:00:00.000Z",
+      },
+      {
+        role: "assistant",
+        source: "human",
+        text: "Pode ser avaliado durante a consulta.",
+        at: "2026-07-28T15:01:00.000Z",
+      },
+    ],
+  });
+  deps.runOpenAIShadowImpl = async () => {
+    throw new Error("AI must not run after the question was answered");
+  };
+
+  const result = await processHumanResumeJob(job(), {
+    env: ACTIVE_ENV,
+    now: NOW,
+    ...deps,
+  });
+
+  assert.equal(result.status, "superseded");
+  assert.equal(result.reason, "newer_outbound_reply");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "human_active",
+  );
 });
 
 test("an acknowledgment after a human booking confirmation stays silent", async () => {

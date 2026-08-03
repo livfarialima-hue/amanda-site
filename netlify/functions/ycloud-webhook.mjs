@@ -2732,6 +2732,8 @@ export default async (request, context) => {
       procedure: resumeContextPlan.procedure,
       referralContext,
       recentConversation: conversationHistoryWithCurrent,
+      expectedHumanGeneration:
+        humanResumeControl?.generation || "",
       receivedAt: String(
         message.sendTime || payload.createTime || "",
       ),

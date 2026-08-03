@@ -20,7 +20,10 @@ import {
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import { shouldSendOpenAIPatientReply } from "./lib/patient-replies.mjs";
-import { appendConversationTurn } from "./lib/conversation-memory.mjs";
+import {
+  appendConversationTurn,
+  readConversationTurns,
+} from "./lib/conversation-memory.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
 import {
@@ -40,6 +43,21 @@ const PRICE_REVIEW_REASONS = new Set([
   "surgical_price_review",
   "price_without_confirmed_procedure",
 ]);
+
+function timeMs(value) {
+  const parsed = new Date(value || 0).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function hasNewerOutboundReply(job, turns) {
+  const patientAt = timeMs(job?.receivedAt);
+  if (!patientAt) return false;
+
+  return (Array.isArray(turns) ? turns : []).some((turn) => (
+    turn?.role === "assistant" &&
+    timeMs(turn.at) > patientAt
+  ));
+}
 
 function limitedText(value, maximumLength = 260) {
   return Array.from(String(value || "").trim())
@@ -277,6 +295,22 @@ export async function processHumanResumeJob(
       now + 15 * 60 * 1_000,
     );
     return { status: "automation_inactive" };
+  }
+
+  const readCurrentConversation =
+    dependencies.readConversationTurnsImpl ||
+    readConversationTurns;
+  const currentConversation =
+    await readCurrentConversation(job.phone);
+  if (
+    currentConversation?.status === "completed" &&
+    hasNewerOutboundReply(job, currentConversation.turns)
+  ) {
+    await finish(job, "human_active", dependencies);
+    return {
+      status: "superseded",
+      reason: "newer_outbound_reply",
+    };
   }
 
   const outsideServiceHours = !isHumanResumeServiceOpen(now, env);

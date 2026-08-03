@@ -195,6 +195,35 @@ export async function scheduleHumanResume(
   try {
     const store = resumeStore(getStoreImpl);
     let control = await readControl(phone, getStoreImpl);
+    const receivedAt = parsedTime(input.receivedAt, now);
+    const expectedGeneration = limitedText(
+      input.expectedHumanGeneration,
+      100,
+    );
+
+    if (
+      expectedGeneration &&
+      control?.generation !== expectedGeneration
+    ) {
+      return {
+        status: "superseded",
+        reason: "newer_human_activity",
+      };
+    }
+
+    const controlUpdatedAt = new Date(
+      control?.updatedAt || 0,
+    ).getTime();
+    if (
+      control?.status === "human_active" &&
+      Number.isFinite(controlUpdatedAt) &&
+      controlUpdatedAt > receivedAt
+    ) {
+      return {
+        status: "superseded",
+        reason: "human_replied_after_patient",
+      };
+    }
 
     if (control?.status === "waiting_human") {
       return { status: "waiting_human" };
@@ -210,7 +239,6 @@ export async function scheduleHumanResume(
       await store.setJSON(controlKey(phone), control);
     }
 
-    const receivedAt = parsedTime(input.receivedAt, now);
     const dueAt = Math.max(now, receivedAt) + Math.max(1, delayMs);
     await store.setJSON(pendingKey(phone), {
       version: VERSION,

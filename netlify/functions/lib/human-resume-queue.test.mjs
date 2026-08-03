@@ -170,6 +170,52 @@ test("a new human message cancels a queued resume", async () => {
   assert.equal(control.generation, "human-event-2");
 });
 
+test("an older inbound cannot recreate a resume after a newer human reply", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const patientAt = Date.parse("2026-07-28T15:00:00.000Z");
+
+  await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-before-patient",
+      at: "2026-07-28T14:50:00.000Z",
+    },
+    { getStoreImpl, now: patientAt - 10 * 60 * 1_000 },
+  );
+  const baseline = await getHumanResumeControl(
+    "+5511900000000",
+    { getStoreImpl },
+  );
+  await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-after-patient",
+      at: "2026-07-28T15:01:00.000Z",
+    },
+    { getStoreImpl, now: patientAt + 60 * 1_000 },
+  );
+
+  const scheduled = await scheduleHumanResume(
+    sampleInput({
+      expectedHumanGeneration: baseline.generation,
+    }),
+    {
+      getStoreImpl,
+      now: patientAt + 2 * 60 * 1_000,
+      delayMs: 1,
+    },
+  );
+  const claim = await claimDueHumanResumes({
+    getStoreImpl,
+    now: patientAt + 3 * 60 * 1_000,
+  });
+
+  assert.equal(scheduled.status, "superseded");
+  assert.equal(scheduled.reason, "newer_human_activity");
+  assert.equal(claim.jobs.length, 0);
+});
+
 test("a newer patient closing cancels the older queued resume", async () => {
   const store = memoryStore();
   const getStoreImpl = () => store;
