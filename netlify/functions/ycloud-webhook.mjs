@@ -14,6 +14,7 @@ import {
 } from "./lib/appointment-suggestions.mjs";
 import {
   buildConsultationInformationReply,
+  buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
@@ -1214,6 +1215,10 @@ async function completeOpenAIActive({
       return { status: "superseded", replySent: false };
     }
 
+    const insuranceCoverageReply = buildInsuranceCoverageReply({
+      text: input.text,
+      procedure: plan?.procedure || input.procedure || "",
+    });
     const standaloneMarketingPrefilledMessage =
       plan?.route === "standard_reply" &&
       plan?.reason === "known_procedure" &&
@@ -1247,7 +1252,24 @@ async function completeOpenAIActive({
         turn?.role === "assistant" ||
         ["bruna", "equipe_humana"].includes(turn?.source),
     );
-    const activeResult = standaloneMarketingPrefilledMessage
+    const activeResult = insuranceCoverageReply
+      ? {
+          status: "completed",
+          model: "deterministic-insurance-coverage",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode: "BLEF-CONVENIO-01",
+            suggestedReply: insuranceCoverageReply,
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : standaloneMarketingPrefilledMessage
       ? {
           status: "completed",
           model: "deterministic-marketing-prefill-opening",

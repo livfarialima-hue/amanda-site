@@ -563,6 +563,28 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.procedure, "blefaroplastia");
 });
 
+test("an insurance follow-up preserves blepharoplasty from the conversation", () => {
+  const plan = enrichAutomationPlanFromConversation(
+    planAutomation({
+      text: "Pode ser realizado através do convênio?",
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    }),
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Posso te orientar sobre a blefaroplastia.",
+      },
+    ],
+  );
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.procedure, "blefaroplastia");
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("prefilled site availability text is context rather than scheduling intent", () => {
   const text = [
     "Olá, gostaria de consultar os horários para uma avaliação facial com a Dra. Amanda.",

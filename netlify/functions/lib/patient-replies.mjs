@@ -75,6 +75,31 @@ export function buildMarketingPrefilledOpeningReply({
   return `${introduction} ${context} ${question}`;
 }
 
+export function buildInsuranceCoverageReply({ text, procedure }) {
+  const normalizedText = String(text || "");
+  const mentionsInsurance =
+    /\b(?:conv[eê]nio|plano\s+de\s+sa[uú]de|cobertura)\b/i.test(
+      normalizedText,
+    );
+  const asksAboutCoverage =
+    /\b(?:cobr(?:e|ir|iria)|pag(?:a|ar|aria)|aceit(?:a|am)|autoriz(?:a|ar|aria)|realiz(?:ar|ado|ada)|faz(?:er)?|pelo|atrav[eé]s)\b/i.test(
+      normalizedText,
+    ) || /\?\s*$/.test(normalizedText);
+
+  if (
+    !mentionsInsurance ||
+    !asksAboutCoverage ||
+    procedure !== "blefaroplastia"
+  ) {
+    return null;
+  }
+
+  return [
+    "Pode ser avaliado, sim. Na consulta, a Dra. Amanda verifica se há indicação funcional além da estética, como possível impacto no campo visual. A autorização e a eventual cobertura dependem da análise do convênio.",
+    "A consulta é particular e emitimos a documentação necessária quando houver indicação.",
+  ].join("\n\n");
+}
+
 function consultationDescription(procedure, procedureLabel) {
   if (procedure === "lifting_facial") {
     return [

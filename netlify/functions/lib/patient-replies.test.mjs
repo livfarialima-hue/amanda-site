@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildConsultationInformationReply,
+  buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
@@ -9,6 +10,37 @@ import {
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("answers blepharoplasty insurance without promising coverage or pushing scheduling", () => {
+  const reply = buildInsuranceCoverageReply({
+    text: "Pode ser realizado através do convênio?",
+    procedure: "blefaroplastia",
+  });
+
+  assert.equal(
+    reply,
+    "Pode ser avaliado, sim. Na consulta, a Dra. Amanda verifica se há indicação funcional além da estética, como possível impacto no campo visual. A autorização e a eventual cobertura dependem da análise do convênio.\n\n" +
+      "A consulta é particular e emitimos a documentação necessária quando houver indicação.",
+  );
+  assert.doesNotMatch(reply, /mais chance|garant|manhã|tarde|horário/i);
+});
+
+test("does not invent insurance guidance for another or unknown procedure", () => {
+  assert.equal(
+    buildInsuranceCoverageReply({
+      text: "O convênio cobre?",
+      procedure: "lifting_facial",
+    }),
+    null,
+  );
+  assert.equal(
+    buildInsuranceCoverageReply({
+      text: "Meu convênio negou a cobertura.",
+      procedure: "blefaroplastia",
+    }),
+    null,
+  );
+});
 
 test("opens a prefilled site inquiry without assuming scheduling intent", () => {
   const reply = buildMarketingPrefilledOpeningReply({
