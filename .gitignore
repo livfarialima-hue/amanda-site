@@ -1,1 +1,13 @@
 node_modules/
+
+# Dependências e ferramentas instaladas apenas para análises locais
+.tools/
+
+# Arquivos temporários criados durante tarefas do Codex
+tmp/
+
+# Anexos de conversas podem conter dados pessoais de pacientes
+.codex-remote-attachments/
+
+# Materiais brutos de análise de mídia não fazem parte da publicação do site
+analysis/meta-video-review/
