@@ -54,6 +54,20 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
   const fimHoje = new Date(`${hoje}T19:00:00-03:00`);
   const itens = [];
   const chaves = new Set();
+  let preferencesByPhone = {};
+
+  if (
+    typeof carregarPreferenciasContatoPorTelefone_ ===
+      "function" &&
+    typeof planilha.getParent === "function"
+  ) {
+    const parent = planilha.getParent();
+    const leadsSheet = parent
+      ? parent.getSheetByName(RETOMADAS_CONFIG.planilhaLeads)
+      : null;
+    preferencesByPhone =
+      carregarPreferenciasContatoPorTelefone_(leadsSheet);
+  }
 
   function adicionar(item) {
     const chave = [
@@ -83,6 +97,10 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
     );
 
     if (!telefone && !nomeCompleto) return;
+
+    const contactPreferences = telefone
+      ? preferencesByPhone[telefone] || {}
+      : {};
 
     const consentimento = valorAgendaCuidados_(
       linha,
@@ -137,16 +155,18 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
     ].includes(retomadasEncerradas);
     const identidade = nomeCompleto || telefone;
 
-    adicionarAniversarioAgendaCuidados_({
-      linha: linha,
-      colunas: colunas,
-      agora: agora,
-      hoje: hoje,
-      telefone: telefone,
-      nome: identidade,
-      primeiroNome: primeiroNome,
-      adicionar: adicionar,
-    });
+    if (contactPreferences.neverFollowUp !== true) {
+      adicionarAniversarioAgendaCuidados_({
+        linha: linha,
+        colunas: colunas,
+        agora: agora,
+        hoje: hoje,
+        telefone: telefone,
+        nome: identidade,
+        primeiroNome: primeiroNome,
+        adicionar: adicionar,
+      });
+    }
 
     adicionarLembretesConsultaAgendaCuidados_({
       linha: linha,
@@ -159,65 +179,69 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       nome: identidade,
       profissional: profissional,
       status: status,
+      neverBotReply:
+        contactPreferences.neverBotReply === true,
       adicionar: adicionar,
     });
 
-    adicionarPosConsultaAgendaCuidados_({
-      linha: linha,
-      colunas: colunas,
-      agora: agora,
-      hoje: hoje,
-      inicioHoje: inicioHoje,
-      fimHoje: fimHoje,
-      telefone: telefone,
-      nome: identidade,
-      primeiroNome: primeiroNome,
-      tema: tema,
-      status: status,
-      adicionar: adicionar,
-    });
+    if (contactPreferences.neverFollowUp !== true) {
+      adicionarPosConsultaAgendaCuidados_({
+        linha: linha,
+        colunas: colunas,
+        agora: agora,
+        hoje: hoje,
+        inicioHoje: inicioHoje,
+        fimHoje: fimHoje,
+        telefone: telefone,
+        nome: identidade,
+        primeiroNome: primeiroNome,
+        tema: tema,
+        status: status,
+        adicionar: adicionar,
+      });
 
-    adicionarFollowUpConsultaAgendaCuidados_({
-      linha: linha,
-      colunas: colunas,
-      agora: agora,
-      hoje: hoje,
-      telefone: telefone,
-      nome: identidade,
-      primeiroNome: primeiroNome,
-      tema: tema,
-      status: status,
-      proximaAcao: proximaAcao,
-      retomadaEncerrada: retomadaEncerrada,
-      adicionar: adicionar,
-    });
+      adicionarFollowUpConsultaAgendaCuidados_({
+        linha: linha,
+        colunas: colunas,
+        agora: agora,
+        hoje: hoje,
+        telefone: telefone,
+        nome: identidade,
+        primeiroNome: primeiroNome,
+        tema: tema,
+        status: status,
+        proximaAcao: proximaAcao,
+        retomadaEncerrada: retomadaEncerrada,
+        adicionar: adicionar,
+      });
 
-    adicionarRetomadaPlanejadaAgendaCuidados_({
-      linha: linha,
-      colunas: colunas,
-      hoje: hoje,
-      telefone: telefone,
-      nome: identidade,
-      primeiroNome: primeiroNome,
-      status: status,
-      proximaAcao: proximaAcao,
-      retomadaEncerrada: retomadaEncerrada,
-      adicionar: adicionar,
-    });
+      adicionarRetomadaPlanejadaAgendaCuidados_({
+        linha: linha,
+        colunas: colunas,
+        hoje: hoje,
+        telefone: telefone,
+        nome: identidade,
+        primeiroNome: primeiroNome,
+        status: status,
+        proximaAcao: proximaAcao,
+        retomadaEncerrada: retomadaEncerrada,
+        adicionar: adicionar,
+      });
 
-    adicionarClienteAntigoAgendaCuidados_({
-      linha: linha,
-      colunas: colunas,
-      agora: agora,
-      hoje: hoje,
-      telefone: telefone,
-      nome: identidade,
-      primeiroNome: primeiroNome,
-      tema: tema,
-      status: status,
-      retomadaEncerrada: retomadaEncerrada,
-      adicionar: adicionar,
-    });
+      adicionarClienteAntigoAgendaCuidados_({
+        linha: linha,
+        colunas: colunas,
+        agora: agora,
+        hoje: hoje,
+        telefone: telefone,
+        nome: identidade,
+        primeiroNome: primeiroNome,
+        tema: tema,
+        status: status,
+        retomadaEncerrada: retomadaEncerrada,
+        adicionar: adicionar,
+      });
+    }
   });
 
   return itens.sort(function (a, b) {
@@ -336,6 +360,17 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     return;
   }
 
+  const manualOnly = entrada.neverBotReply === true;
+  const manualSuggestion = manualOnly
+    ? "Oi! Passando para lembrar da sua consulta com " +
+      entrada.profissional +
+      " em " +
+      formatarDataRetomadas_(consulta, "dd/MM/yyyy") +
+      " às " +
+      formatarDataRetomadas_(consulta, "HH:mm") +
+      ". Se precisar de alguma orientação antes, estamos por aqui."
+    : "";
+
   const lembretes = planejarLembretesConsultaHoje_({
     agora: entrada.agora,
     consulta: consulta,
@@ -378,11 +413,13 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
             return lembrete.rotulo + " às " + lembrete.horario;
           })
           .join("; "),
-      responsavel: "Bruna/automação",
-      automatico: true,
+      responsavel: manualOnly
+        ? "Amanda/equipe"
+        : "Bruna/automação",
+      automatico: !manualOnly,
       futuro: false,
       prioridade: 2,
-      sugestao: "",
+      sugestao: manualSuggestion,
     });
   }
 
@@ -429,11 +466,13 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
         " com " +
         entrada.profissional +
         ".",
-      responsavel: "Bruna/automação",
-      automatico: true,
+      responsavel: manualOnly
+        ? "Amanda/equipe"
+        : "Bruna/automação",
+      automatico: !manualOnly,
       futuro: true,
       prioridade: 8,
-      sugestao: "",
+      sugestao: manualSuggestion,
     });
   });
 }

@@ -83,10 +83,44 @@ export function hasUnresolvedPatientRequest(
 function result(action, reason, details = {}) {
   const unresolvedRequest =
     details.unresolvedRequest === true;
+  const canonical = {
+    [CONVERSATION_ACTIONS.RESPOND]: {
+      state: "bot_active",
+      owner: "bruna",
+      nextAction: "send_patient_message",
+    },
+    [CONVERSATION_ACTIONS.WAIT_TEAM]: {
+      state: "waiting_team",
+      owner: "human_team",
+      nextAction: "alert_team",
+    },
+    [CONVERSATION_ACTIONS.WAIT_PATIENT]: {
+      state: "waiting_patient",
+      owner: "patient",
+      nextAction: "none",
+    },
+    [CONVERSATION_ACTIONS.CLOSED]: {
+      state: "closed",
+      owner: "none",
+      nextAction: "none",
+    },
+    [CONVERSATION_ACTIONS.IGNORE_DUPLICATE]: {
+      state: "duplicate_ignored",
+      owner: "none",
+      nextAction: "none",
+    },
+  }[action] || {
+    state: "waiting_team",
+    owner: "human_team",
+    nextAction: "alert_team",
+  };
 
   return {
     action,
     reason,
+    state: canonical.state,
+    owner: canonical.owner,
+    nextAction: canonical.nextAction,
     unresolvedRequest,
     allowAutomaticReply:
       action === CONVERSATION_ACTIONS.RESPOND,

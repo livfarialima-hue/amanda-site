@@ -89,6 +89,7 @@ import {
 } from "./lib/inbound-recovery.mjs";
 import {
   applyPatientRelationshipPolicy,
+  blocksAutomatedPatientMessages,
   buildPatientCommitment,
   buildRelationshipAlertMessage,
   patientRelationshipPromptContext,
@@ -1194,6 +1195,7 @@ async function completeOpenAIActive({
   to,
   replyDebounceMarkerStatus,
   conversationAction,
+  patientRelationship,
 }) {
   try {
     const debounceResult = await waitForLatestInboundReply({
@@ -1412,6 +1414,18 @@ async function completeOpenAIActive({
       return { status: "completed_no_reply", replySent: false };
     }
 
+    const contactPreferenceGuard =
+      await guardAutomaticContactPreference({
+        phone: to,
+        fallbackRelationship: patientRelationship,
+      });
+    if (!contactPreferenceGuard.shouldSend) {
+      return {
+        status: contactPreferenceGuard.status,
+        replySent: false,
+      };
+    }
+
     const replyResult = await sendControlledPatientReply({
       from,
       to,
@@ -1473,6 +1487,49 @@ async function completeOpenAIActive({
       replySent: false,
     };
   }
+}
+
+async function lookupPatientRelationship(phone) {
+  if (!phone) {
+    return deliveryResult(false, null, "missing_phone");
+  }
+
+  const result = await deliverSheetsAction(
+    "get_patient_relationship",
+    { patient: { phone } },
+  );
+
+  if (!result.ok) return result;
+
+  return deliveryResult(true, result.httpStatus, "none", {
+    relationship: result.responseData?.relationship || null,
+  });
+}
+
+async function guardAutomaticContactPreference({
+  phone,
+  fallbackRelationship = null,
+}) {
+  const lookup = await lookupPatientRelationship(phone);
+  const relationship = lookup.ok
+    ? lookup.relationship
+    : fallbackRelationship;
+
+  if (blocksAutomatedPatientMessages(relationship)) {
+    return {
+      shouldSend: false,
+      status: "blocked_contact_preference",
+      relationship,
+      lookupStatus: lookup.ok ? "completed" : lookup.errorCode,
+    };
+  }
+
+  return {
+    shouldSend: true,
+    status: "allowed",
+    relationship,
+    lookupStatus: lookup.ok ? "completed" : lookup.errorCode,
+  };
 }
 
 async function sendAppointmentEmailNotification(
@@ -1763,6 +1820,7 @@ async function sendCurrentInboundReply({
   recentConversation,
   conversationAction,
   replyDebounceMarkerStatus,
+  patientRelationship,
 }) {
   const debounceResult = await waitForLatestInboundReply({
     phone: to,
@@ -1788,6 +1846,18 @@ async function sendCurrentInboundReply({
     return {
       status: "superseded",
       errorCode: "human_reply_detected",
+    };
+  }
+
+  const contactPreferenceGuard =
+    await guardAutomaticContactPreference({
+      phone: to,
+      fallbackRelationship: patientRelationship,
+    });
+  if (!contactPreferenceGuard.shouldSend) {
+    return {
+      status: contactPreferenceGuard.status,
+      errorCode: "contact_preference_no_bot",
     };
   }
 
@@ -2294,7 +2364,10 @@ export default async (request, context) => {
     conversationHistoryWithCurrent = conversationHistory;
   }
 
-  if (patientAppointmentSelection) {
+  if (
+    patientAppointmentSelection &&
+    !blocksAutomatedPatientMessages(patientRelationship)
+  ) {
     const bookingResult =
       await completeSelectedAppointment({
         from: String(message.to || ""),
@@ -2608,6 +2681,7 @@ export default async (request, context) => {
       recentConversation: conversationHistory,
       conversationAction,
       replyDebounceMarkerStatus,
+      patientRelationship,
     });
     professionalFactReplySent =
       partialReplyResult.status === "completed";
@@ -2694,6 +2768,7 @@ export default async (request, context) => {
       recentConversation: conversationHistory,
       conversationAction,
       replyDebounceMarkerStatus,
+      patientRelationship,
     });
     priceHoldingSent =
       priceHoldingResult.status === "completed";
@@ -2729,6 +2804,7 @@ export default async (request, context) => {
       recentConversation: conversationHistory,
       conversationAction,
       replyDebounceMarkerStatus,
+      patientRelationship,
     });
     overnightHandoffSent =
       overnightResult.status === "completed";
@@ -2783,6 +2859,7 @@ export default async (request, context) => {
       recentConversation: conversationHistory,
       conversationAction,
       replyDebounceMarkerStatus,
+      patientRelationship,
     });
     patientReplySent = replyResult.status === "completed";
     patientReplyStatus = replyResult.status;
@@ -2903,6 +2980,7 @@ export default async (request, context) => {
       to: phone,
       replyDebounceMarkerStatus,
       conversationAction,
+      patientRelationship,
     });
 
     aiActiveQueued = true;
@@ -2991,6 +3069,9 @@ export default async (request, context) => {
         patientRelationship.lookupStatus || "unknown",
       conversationAction: conversationAction.action,
       conversationActionReason: conversationAction.reason,
+      conversationState: conversationAction.state,
+      conversationOwner: conversationAction.owner,
+      conversationNextAction: conversationAction.nextAction,
       conversationUnresolvedRequest:
         conversationAction.unresolvedRequest,
       conversationFollowupPolicy:

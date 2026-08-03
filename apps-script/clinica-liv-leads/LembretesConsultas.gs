@@ -173,11 +173,37 @@ function processarLembretesConsultasInterno_(
   }
 
   const columns = mapearColunasLembretesConsultas_(values[0]);
+  const leadsSheet = spreadsheet.getSheetByName(
+    typeof CONFIG !== "undefined"
+      ? CONFIG.sheetName
+      : "Google Ads - Conversões",
+  );
+  const preferencesByPhone =
+    typeof carregarPreferenciasContatoPorTelefone_ ===
+    "function"
+      ? carregarPreferenciasContatoPorTelefone_(leadsSheet)
+      : {};
   let sent = 0;
   let failed = 0;
+  let blockedByPreference = 0;
 
   for (let rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
     const row = values[rowIndex];
+    const normalizedPhone =
+      typeof normalizarTelefonePreferenciaContato_ ===
+      "function"
+        ? normalizarTelefonePreferenciaContato_(
+            row[columns.phone],
+          )
+        : String(row[columns.phone] || "").replace(/\D/g, "");
+    const contactPreferences =
+      preferencesByPhone[normalizedPhone] || {};
+
+    if (contactPreferences.neverBotReply === true) {
+      blockedByPreference += 1;
+      continue;
+    }
+
     const appointment = combinarDataHorarioLembretesConsultas_(
       row[columns.date],
       row[columns.time],
@@ -292,7 +318,13 @@ function processarLembretesConsultasInterno_(
     }
   }
 
-  return { ok: failed === 0, active: true, sent, failed };
+  return {
+    ok: failed === 0,
+    active: true,
+    sent,
+    failed,
+    blockedByPreference,
+  };
 }
 
 function enviarLembreteConsulta_(

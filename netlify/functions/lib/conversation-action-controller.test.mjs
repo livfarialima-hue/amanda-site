@@ -63,6 +63,9 @@ test("a real question reopens a deferred conversation", () => {
 
   assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
   assert.equal(decision.unresolvedRequest, true);
+  assert.equal(decision.state, "bot_active");
+  assert.equal(decision.owner, "bruna");
+  assert.equal(decision.nextAction, "send_patient_message");
 });
 
 test("human takeover schedules a resume only for a concrete pending request", () => {

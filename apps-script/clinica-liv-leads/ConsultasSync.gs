@@ -459,12 +459,24 @@ function obterRelacionamentoPaciente_(input) {
   const spreadsheet = SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,
   );
+  const contactPreferences =
+    typeof obterPreferenciasContatoLeads_ === "function"
+      ? obterPreferenciasContatoLeads_(spreadsheet, phone)
+      : {
+          found: false,
+          neverFollowUp: false,
+          neverBotReply: false,
+          blockReason: "",
+        };
   const sheet = spreadsheet.getSheetByName(
     CONSULTAS_SYNC_CONFIG.consultationsSheetName,
   );
 
   if (!sheet || sheet.getLastRow() < 2) {
-    return relacionamentoPacienteDesconhecido_();
+    return anexarPreferenciasRelacionamentoConsultas_(
+      relacionamentoPacienteDesconhecido_(),
+      contactPreferences,
+    );
   }
 
   const headers = sheet
@@ -531,7 +543,10 @@ function obterRelacionamentoPaciente_(input) {
   });
 
   if (!best) {
-    return relacionamentoPacienteDesconhecido_();
+    return anexarPreferenciasRelacionamentoConsultas_(
+      relacionamentoPacienteDesconhecido_(),
+      contactPreferences,
+    );
   }
 
   const status = normalizarTextoConsultasSync_(
@@ -569,7 +584,7 @@ function obterRelacionamentoPaciente_(input) {
       normalizedNextAction,
     );
 
-  return {
+  return anexarPreferenciasRelacionamentoConsultas_({
     found: true,
     relationshipState: state,
     patientName: textoConsultasSync_(
@@ -600,7 +615,33 @@ function obterRelacionamentoPaciente_(input) {
     pendingTaskType: hasPendingHumanTask
       ? pendingTaskType
       : "",
-  };
+  }, contactPreferences);
+}
+
+function anexarPreferenciasRelacionamentoConsultas_(
+  relationship,
+  preferences,
+) {
+  if (
+    typeof anexarPreferenciasContatoRelacionamento_ ===
+    "function"
+  ) {
+    return anexarPreferenciasContatoRelacionamento_(
+      relationship,
+      preferences,
+    );
+  }
+
+  return Object.assign({}, relationship || {}, {
+    contactPreferencesFound: preferences && preferences.found === true,
+    neverFollowUp:
+      preferences && preferences.neverFollowUp === true,
+    neverBotReply:
+      preferences && preferences.neverBotReply === true,
+    blockReason: String(
+      (preferences && preferences.blockReason) || "",
+    ).slice(0, 240),
+  });
 }
 
 function relacionamentoPacienteDesconhecido_() {
@@ -612,6 +653,10 @@ function relacionamentoPacienteDesconhecido_() {
     procedureTopic: "",
     hasPendingHumanTask: false,
     pendingTaskType: "",
+    contactPreferencesFound: false,
+    neverFollowUp: false,
+    neverBotReply: false,
+    blockReason: "",
   };
 }
 
@@ -1581,6 +1626,12 @@ function processarPosConsultaInterno_(
 
   const values = sheet.getDataRange().getValues();
   const columns = mapearCabecalhosConsultas_(values[0]);
+  const leadsSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  const preferencesByPhone =
+    typeof carregarPreferenciasContatoPorTelefone_ ===
+    "function"
+      ? carregarPreferenciasContatoPorTelefone_(leadsSheet)
+      : {};
   let sent = 0;
   let failed = 0;
   let suppressed = 0;
@@ -1589,6 +1640,24 @@ function processarPosConsultaInterno_(
   for (let index = 1; index < values.length; index += 1) {
     const row = values[index];
     const rowNumber = index + 1;
+
+    const normalizedPhone =
+      typeof normalizarTelefonePreferenciaContato_ ===
+      "function"
+        ? normalizarTelefonePreferenciaContato_(
+            row[columns[CONSULTAS_SYNC_HEADERS.phone]],
+          )
+        : "";
+    const contactPreferences =
+      preferencesByPhone[normalizedPhone] || {};
+    if (
+      contactPreferences.neverFollowUp === true ||
+      contactPreferences.neverBotReply === true
+    ) {
+      skipped.contact_preference =
+        (skipped.contact_preference || 0) + 1;
+      continue;
+    }
 
     try {
       const eligibility = avaliarElegibilidadePosConsulta_(

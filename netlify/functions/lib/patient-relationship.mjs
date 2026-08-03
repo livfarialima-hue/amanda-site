@@ -41,6 +41,14 @@ function limitText(value, maximumLength) {
     .join("");
 }
 
+function activeBoolean(value) {
+  if (value === true || value === 1) return true;
+
+  return ["true", "sim", "1", "yes"].includes(
+    String(value || "").trim().toLowerCase(),
+  );
+}
+
 export function normalizePatientRelationship(value) {
   const state = String(value?.state || value?.relationshipState || "unknown")
     .trim()
@@ -60,7 +68,18 @@ export function normalizePatientRelationship(value) {
     procedureTopic: limitText(value?.procedureTopic, 160),
     hasPendingHumanTask: value?.hasPendingHumanTask === true,
     pendingTaskType: limitText(value?.pendingTaskType, 80),
+    contactPreferencesFound:
+      value?.contactPreferencesFound === true,
+    neverFollowUp: activeBoolean(value?.neverFollowUp),
+    neverBotReply: activeBoolean(value?.neverBotReply),
+    // Administrative only. Never include this field in model prompts or
+    // patient-facing copy.
+    blockReason: limitText(value?.blockReason, 240),
   };
+}
+
+export function blocksAutomatedPatientMessages(value) {
+  return normalizePatientRelationship(value).neverBotReply;
 }
 
 export function isKnownPatientRelationship(value) {
@@ -75,6 +94,19 @@ export function applyPatientRelationshipPolicy(
 ) {
   const relationship =
     normalizePatientRelationship(relationshipValue);
+
+  if (relationship.neverBotReply) {
+    return {
+      ...plan,
+      route: "human_review",
+      requestReason:
+        plan?.requestReason || plan?.reason || "",
+      reason: "contact_preference_no_bot",
+      replyCode: null,
+      automaticAllowed: false,
+      patientRelationship: relationship,
+    };
+  }
 
   if (!isKnownPatientRelationship(relationship)) {
     return { ...plan, patientRelationship: relationship };

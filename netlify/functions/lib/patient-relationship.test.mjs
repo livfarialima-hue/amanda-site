@@ -2,11 +2,41 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   applyPatientRelationshipPolicy,
+  blocksAutomatedPatientMessages,
   buildPatientCommitment,
   buildRelationshipAlertMessage,
   normalizePatientRelationship,
   patientRelationshipPromptContext,
 } from "./patient-relationship.mjs";
+
+test("permanent no-bot preference forces human review", () => {
+  const result = applyPatientRelationshipPolicy(
+    {
+      route: "standard_reply",
+      reason: "known_procedure",
+      automaticAllowed: true,
+    },
+    {
+      relationshipState: "unknown",
+      neverBotReply: true,
+      neverFollowUp: false,
+      blockReason: "administrative only",
+    },
+  );
+
+  assert.equal(result.route, "human_review");
+  assert.equal(result.reason, "contact_preference_no_bot");
+  assert.equal(result.automaticAllowed, false);
+  assert.equal(
+    blocksAutomatedPatientMessages(result.patientRelationship),
+    true,
+  );
+  assert.equal(
+    patientRelationshipPromptContext(result.patientRelationship)
+      .blockReason,
+    undefined,
+  );
+});
 
 test("active care always pauses acquisition automation", () => {
   const result = applyPatientRelationshipPolicy(

@@ -11,6 +11,10 @@ const agendaSource = await readFile(
   new URL("./AgendaCuidados.gs", import.meta.url),
   "utf8",
 );
+const contactPreferencesSource = await readFile(
+  new URL("./ContactPreferences.gs", import.meta.url),
+  "utf8",
+);
 const context = vm.createContext({
   Utilities: {
     formatDate: (date, _timezone, format) => {
@@ -43,6 +47,9 @@ const context = vm.createContext({
   },
 });
 
+vm.runInContext(contactPreferencesSource, context, {
+  filename: "ContactPreferences.gs",
+});
 vm.runInContext(source, context, {
   filename: "Retomadas.gs",
 });
@@ -305,6 +312,8 @@ function conversation(texts) {
 }
 
 test("reads acquisition context from the current 25-column lead layout", () => {
+  const headers = Array(25).fill("");
+  headers[2] = "Telefone (E.164)";
   const row = Array(25).fill("");
   row[1] = "M26F02S-C06H01";
   row[2] = "+5511999999999";
@@ -318,11 +327,14 @@ test("reads acquisition context from the current 25-column lead layout", () => {
   const sheet = {
     getLastRow: () => 2,
     getRange: (startRow, startColumn, rowCount, columnCount) => {
-      assert.deepEqual(
-        [startRow, startColumn, rowCount, columnCount],
-        [2, 1, 1, 25],
-      );
-      return { getDisplayValues: () => [row] };
+      assert.equal(startColumn, 1);
+      assert.equal(rowCount, 1);
+      assert.equal(columnCount, 25);
+      return {
+        getDisplayValues: () => [
+          startRow === 1 ? headers : row,
+        ],
+      };
     },
   };
 
@@ -335,6 +347,34 @@ test("reads acquisition context from the current 25-column lead layout", () => {
   assert.equal(loaded.criativo, "C06H01");
   assert.equal(loaded.destino, "WhatsApp");
   assert.equal(loaded.referenciaCompleta, "M26F02S-C06H01");
+});
+
+test("reads permanent follow-up and bot blocks after the 25-column schema", () => {
+  const headers = Array(28).fill("");
+  headers[2] = "Telefone (E.164)";
+  headers[25] = "Nunca retomar";
+  headers[26] = "Nunca responder com robô";
+  headers[27] = "Motivo / observação do bloqueio";
+  const row = Array(28).fill("");
+  row[2] = "+5511999999999";
+  row[25] = true;
+  row[26] = "Sim";
+  const sheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => 28,
+    getRange: (startRow) => ({
+      getDisplayValues: () => [
+        startRow === 1 ? headers : row,
+      ],
+    }),
+  };
+
+  const loaded = context.carregarLeadsRetomadas_(sheet)[
+    "+5511999999999"
+  ];
+
+  assert.equal(loaded.neverFollowUp, true);
+  assert.equal(loaded.neverBotReply, true);
 });
 
 test("first follow-up offers a specific facial resource without pressure", () => {

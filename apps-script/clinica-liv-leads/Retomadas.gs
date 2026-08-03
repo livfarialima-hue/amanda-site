@@ -551,6 +551,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
 
     if (
       !lead ||
+      lead.neverFollowUp ||
       statusRetomadaEncerrado_(lead.status) ||
       telefonesComCompromisso.has(telefone)
     ) {
@@ -671,9 +672,32 @@ function carregarLeadsRetomadas_(planilha) {
     return resultado;
   }
 
+  const totalColumns = Math.max(
+    typeof planilha.getLastColumn === "function"
+      ? planilha.getLastColumn()
+      : 25,
+    25,
+  );
+  const headers = planilha
+    .getRange(1, 1, 1, totalColumns)
+    .getDisplayValues()[0];
   const valores = planilha
-    .getRange(2, 1, ultimaLinha - 1, 25)
+    .getRange(2, 1, ultimaLinha - 1, totalColumns)
     .getDisplayValues();
+  const neverFollowUpColumn =
+    typeof indiceCabecalhoPreferenciaContato_ === "function"
+      ? indiceCabecalhoPreferenciaContato_(
+          headers,
+          "Nunca retomar",
+        )
+      : -1;
+  const neverBotReplyColumn =
+    typeof indiceCabecalhoPreferenciaContato_ === "function"
+      ? indiceCabecalhoPreferenciaContato_(
+          headers,
+          "Nunca responder com robô",
+        )
+      : -1;
 
   valores.forEach(function (linha, indice) {
     const telefone = normalizarTelefoneRetomadas_(linha[2]);
@@ -694,6 +718,18 @@ function carregarLeadsRetomadas_(planilha) {
       criativo: String(linha[21] || "").trim(),
       destino: String(linha[23] || "").trim(),
       referenciaCompleta: String(linha[24] || "").trim(),
+      neverFollowUp:
+        neverFollowUpColumn >= 0 &&
+        typeof valorAtivoPreferenciaContato_ === "function" &&
+        valorAtivoPreferenciaContato_(
+          linha[neverFollowUpColumn],
+        ),
+      neverBotReply:
+        neverBotReplyColumn >= 0 &&
+        typeof valorAtivoPreferenciaContato_ === "function" &&
+        valorAtivoPreferenciaContato_(
+          linha[neverBotReplyColumn],
+        ),
     };
   });
 
