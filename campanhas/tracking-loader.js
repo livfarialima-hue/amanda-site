@@ -9,7 +9,8 @@
     'amanda_campaign_origin',
     'amanda_click_id_gclid',
     'amanda_click_id_gbraid',
-    'amanda_click_id_wbraid'
+    'amanda_click_id_wbraid',
+    'amanda_marketing_attribution'
   ];
   var googleScriptId = 'amanda-google-gtag';
 
@@ -172,6 +173,7 @@
       setConsent('denied');
       clearSiteAttribution();
       updateGoogleConsent(false);
+      document.dispatchEvent(new CustomEvent('amanda:consent-denied'));
       removeBanner();
       updateDebugState();
     });
@@ -182,6 +184,7 @@
     updateGoogleConsent(false);
     clearSiteAttribution();
     deleteMeasurementCookies();
+    document.dispatchEvent(new CustomEvent('amanda:consent-denied'));
     updateDebugState();
   }
 

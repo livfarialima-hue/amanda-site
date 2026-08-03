@@ -9,6 +9,7 @@ const source = readFileSync(
 );
 
 function loadCode(rows, now = "2026-07-29T14:00:00-03:00") {
+  const writes = [];
   const RealDate = Date;
   class FixedDate extends RealDate {
     constructor(...args) {
@@ -24,7 +25,14 @@ function loadCode(rows, now = "2026-07-29T14:00:00-03:00") {
       return rows.length + 5;
     },
     getRange(row, column, rowCount, columnCount) {
-      assert.equal(row, 6);
+      if (row !== 6) {
+        return {
+          setValue(value) {
+            writes.push({ row, column, value });
+          },
+        };
+      }
+
       assert.equal(column, 1);
       assert.equal(columnCount, 7);
 
@@ -66,7 +74,7 @@ globalThis.__test = {
     sandbox,
   );
 
-  return sandbox.__test;
+  return { ...sandbox.__test, writes };
 }
 
 const HEADERS = [
@@ -119,7 +127,7 @@ test("returns only future available slots for the requested professional", () =>
       "27/07–01/08",
     ],
   ];
-  const { getAvailableAppointmentSlots_ } = loadCode(rows);
+  const { getAvailableAppointmentSlots_, writes } = loadCode(rows);
   const slots = getAvailableAppointmentSlots_({
     professional: "amanda",
     limit: 50,
@@ -132,6 +140,9 @@ test("returns only future available slots for the requested professional", () =>
       time: "16:00",
       professional: "Dra. Amanda",
     },
+  ]);
+  assert.deepEqual(writes, [
+    { row: 7, column: 4, value: "Indisponível" },
   ]);
 });
 

@@ -254,7 +254,11 @@
     var attribution = {};
     try {
       var searchParams = new URLSearchParams(window.location.search);
-      marketingAttributionParams.concat(marketingClickIdParams).forEach(function (param) {
+      var allowedParams = marketingAttributionParams.slice();
+      if (fullConsentGranted()) {
+        allowedParams = allowedParams.concat(marketingClickIdParams);
+      }
+      allowedParams.forEach(function (param) {
         var value = sanitizeMarketingAttributionValue(param, searchParams.get(param));
         if (value) attribution[param] = value;
       });
@@ -262,7 +266,33 @@
     return attribution;
   }
 
+  function removeMarketingClickIds(attribution) {
+    attribution = attribution && typeof attribution === 'object' ? attribution : {};
+    marketingClickIdParams.forEach(function (param) {
+      delete attribution[param];
+    });
+    return attribution;
+  }
+
+  function clearStoredMarketingClickIds() {
+    try {
+      var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
+      stored = removeMarketingClickIds(stored);
+      if (Object.keys(stored).length) {
+        sessionStorage.setItem(marketingAttributionStorageKey, JSON.stringify(stored));
+      } else {
+        sessionStorage.removeItem(marketingAttributionStorageKey);
+      }
+    } catch (error) {
+      try { sessionStorage.removeItem(marketingAttributionStorageKey); } catch (storageError) {}
+    }
+  }
+
   function saveAttribution(attribution) {
+    if (!fullConsentGranted()) {
+      attribution = removeMarketingClickIds(attribution);
+      clearStoredMarketingClickIds();
+    }
     if (!Object.keys(attribution).length) return;
     var mergedAttribution = loadStoredAttribution();
     Object.keys(attribution).forEach(function (param) {
@@ -278,7 +308,13 @@
       var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
       if (!stored || typeof stored !== 'object') return {};
       var attribution = {};
-      marketingAttributionParams.concat(marketingClickIdParams).forEach(function (param) {
+      var allowedParams = marketingAttributionParams.slice();
+      if (fullConsentGranted()) {
+        allowedParams = allowedParams.concat(marketingClickIdParams);
+      } else {
+        clearStoredMarketingClickIds();
+      }
+      allowedParams.forEach(function (param) {
         var value = sanitizeMarketingAttributionValue(param, stored[param]);
         if (value) attribution[param] = value;
       });
@@ -338,6 +374,7 @@
   }
 
   function updateAllWhatsAppLinks() {
+    if (!fullConsentGranted()) clearStoredMarketingClickIds();
     var attributionFromUrl = readAttributionFromUrl();
     if (Object.keys(attributionFromUrl).length) saveAttribution(attributionFromUrl);
     var attribution = loadStoredAttribution();
@@ -470,4 +507,14 @@
   }
 
   document.addEventListener('amanda:consent-granted', updateAllWhatsAppLinks);
+  document.addEventListener('amanda:consent-denied', updateAllWhatsAppLinks);
+
+  if (config.debug) {
+    window.AmandaAttributionDebug = {
+      readAttributionFromUrl: readAttributionFromUrl,
+      loadStoredAttribution: loadStoredAttribution,
+      clearStoredMarketingClickIds: clearStoredMarketingClickIds,
+      updateAllWhatsAppLinks: updateAllWhatsAppLinks
+    };
+  }
 })();

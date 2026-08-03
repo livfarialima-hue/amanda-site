@@ -166,7 +166,7 @@ test("playbook states credentials and location precisely", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /pós-graduação em Cosmiatria pelo Einstein/,
+    /pós-graduação em Cosmiatria e Procedimentos pelo Einstein/,
   );
   assert.match(CONVERSATION_GUIDELINES, /atuação com foco em cirurgias da face/);
   assert.match(CONVERSATION_GUIDELINES, /CRM-SP 191605/);

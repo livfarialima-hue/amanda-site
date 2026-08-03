@@ -587,6 +587,7 @@ function getAvailableAppointmentSlots_(input) {
 
   const now = new Date();
   const slots = [];
+  const expiredRows = [];
 
   for (let index = 1; index < values.length; index += 1) {
     const row = values[index];
@@ -600,10 +601,15 @@ function getAvailableAppointmentSlots_(input) {
     );
 
     if (
-      status !== "disponivel" ||
-      !dateTime ||
+      status === "disponivel" &&
+      dateTime &&
       dateTime.getTime() <= now.getTime()
     ) {
+      expiredRows.push(CONFIG.appointmentSlotsHeaderRow + index);
+      continue;
+    }
+
+    if (status !== "disponivel" || !dateTime) {
       continue;
     }
 
@@ -627,6 +633,11 @@ function getAvailableAppointmentSlots_(input) {
   slots.sort(function chronologicalOrder(left, right) {
     return left.timestamp - right.timestamp;
   });
+
+  expiredRows.forEach(function expirePastSlot(row) {
+    sheet.getRange(row, columns.status + 1).setValue("Indisponível");
+  });
+  if (expiredRows.length) SpreadsheetApp.flush();
 
   return slots.slice(0, limit).map(function publicSlot(slot) {
     return {

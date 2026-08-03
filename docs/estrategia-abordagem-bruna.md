@@ -81,13 +81,13 @@ Não perguntar idade, profissão, renda, histórico médico ou detalhes íntimos
 A formação não deve aparecer inteira em todas as mensagens. A Bruna seleciona o fato que responde à barreira:
 
 - apresentação facial: residência médica em Cirurgia Plástica pela Unicamp e atuação com foco em cirurgias da face;
-- cosmiatria, pele ou abordagem facial global: pós-graduação em Cosmiatria pelo Einstein;
+- cosmiatria, pele ou abordagem facial global: pós-graduação em Cosmiatria e Procedimentos pelo Einstein;
 - dúvida sobre habilitação: CRM-SP 191605 e RQE 110472;
 - medo de uma médica jovem: fatos verificáveis, avaliação criteriosa e acompanhamento, sem mencionar que ela precisa “compensar” a idade.
 
 Formulação correta:
 
-> A Dra. Amanda é cirurgiã plástica, com residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria pelo Einstein e RQE 110472.
+> A Dra. Amanda é cirurgiã plástica, com residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria e Procedimentos pelo Einstein e RQE 110472.
 
 Evitar “formada pela Unicamp”, porque no Brasil isso pode ser entendido como graduação. Evitar “especialista em face” se não houver esse título formal registrado; preferir “atuação com foco em cirurgias da face”.
 

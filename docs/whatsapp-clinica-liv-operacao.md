@@ -29,7 +29,7 @@ O diagnóstico público do endpoint deve indicar:
 - Perguntas informativas como “como funciona a consulta?” ou “como funciona a avaliação?”, sem confundi-las com pedido de agenda.
 - Valor da consulta da Dra. Amanda: R$ 500, abatido se a cirurgia for realizada com a equipe.
 - Nenhum valor cirúrgico é enviado automaticamente; pedidos de preço recebem uma confirmação curta de que os valores serão conferidos e seguem para revisão humana.
-- Apresentação correta da Dra. Amanda: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria pelo Einstein, CRM-SP 191605, RQE 110472 e atuação com foco em cirurgias da face.
+- Apresentação correta da Dra. Amanda: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria e Procedimentos pelo Einstein, CRM-SP 191605, RQE 110472 e atuação com foco em cirurgias da face.
 - Esclarecimento sutil de barreiras como segurança, experiência, resultado artificial, preço, localização e pressão para decidir.
 - Oferta cuidadosa da página do procedimento, seção de resultados ou artigo específico sobre recuperação, segurança, cicatriz e comparações — ou da página geral quando o procedimento ainda não estiver definido — para quem não veio do site.
 

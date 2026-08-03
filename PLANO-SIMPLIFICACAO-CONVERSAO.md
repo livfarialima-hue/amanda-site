@@ -222,7 +222,7 @@ H2:
 
 Texto 1:
 
-> Dra. Amanda Schroeder é médica formada pela UNICAMP, com formação em Cirurgia Geral e Cirurgia Plástica, CRM-SP 191605 e RQE 110472, além de pós-graduação em Cosmiatria pelo Einstein.
+> Dra. Amanda Schroeder é médica formada pela UNICAMP, com formação em Cirurgia Geral e Cirurgia Plástica, CRM-SP 191605 e RQE 110472, além de pós-graduação em Cosmiatria e Procedimentos pelo Einstein.
 
 Texto 2:
 
@@ -470,7 +470,7 @@ H2:
 
 Texto:
 
-> Dra. Amanda Schroeder é médica formada pela UNICAMP, com formação em Cirurgia Geral e Cirurgia Plástica, CRM-SP 191605 e RQE 110472, além de pós-graduação em Cosmiatria pelo Einstein. A avaliação integra queixa, anatomia, segurança e preservação das características individuais antes de definir qualquer plano.
+> Dra. Amanda Schroeder é médica formada pela UNICAMP, com formação em Cirurgia Geral e Cirurgia Plástica, CRM-SP 191605 e RQE 110472, além de pós-graduação em Cosmiatria e Procedimentos pelo Einstein. A avaliação integra queixa, anatomia, segurança e preservação das características individuais antes de definir qualquer plano.
 
 Manter três avaliações públicas atuais, sem alterar as falas.
 
