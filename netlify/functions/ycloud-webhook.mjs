@@ -1897,6 +1897,7 @@ export default async (request, context) => {
       appointmentReviewEnabled: isAppointmentAlertEnabled(),
       automationMode,
       processingMode: "direct_with_background_completion",
+      contactPreferencesGuard: "active",
     });
   }
 
