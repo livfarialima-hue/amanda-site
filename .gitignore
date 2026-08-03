@@ -11,3 +11,6 @@ tmp/
 
 # Materiais brutos de análise de mídia não fazem parte da publicação do site
 analysis/meta-video-review/
+
+# Local Netlify folder
+.netlify

@@ -3,6 +3,7 @@ const CONTACT_PREFERENCES_CONFIG = Object.freeze({
   phoneHeader: "Telefone (E.164)",
   neverFollowUpHeader: "Nunca retomar",
   neverBotReplyHeader: "Nunca responder com robô",
+  suspendAutomaticFollowUpHeader: "Suspender retomada automática",
   reasonHeader: "Motivo / observação do bloqueio",
 });
 
@@ -33,6 +34,7 @@ function garantirEstruturaPreferenciasContato_(sheet) {
   const requiredHeaders = [
     CONTACT_PREFERENCES_CONFIG.neverFollowUpHeader,
     CONTACT_PREFERENCES_CONFIG.neverBotReplyHeader,
+    CONTACT_PREFERENCES_CONFIG.suspendAutomaticFollowUpHeader,
     CONTACT_PREFERENCES_CONFIG.reasonHeader,
   ];
 
@@ -55,6 +57,11 @@ function garantirEstruturaPreferenciasContato_(sheet) {
       headers,
       CONTACT_PREFERENCES_CONFIG.neverBotReplyHeader,
     ) + 1;
+  const suspendAutomaticFollowUpColumn =
+    indiceCabecalhoPreferenciaContato_(
+      headers,
+      CONTACT_PREFERENCES_CONFIG.suspendAutomaticFollowUpHeader,
+    ) + 1;
   const reasonColumn =
     indiceCabecalhoPreferenciaContato_(
       headers,
@@ -73,6 +80,9 @@ function garantirEstruturaPreferenciasContato_(sheet) {
     .getRange(2, neverBotReplyColumn, availableRows, 1)
     .setDataValidation(checkboxRule);
   sheet
+    .getRange(2, suspendAutomaticFollowUpColumn, availableRows, 1)
+    .setDataValidation(checkboxRule);
+  sheet
     .getRange(1, neverFollowUpColumn)
     .setNote(
       "Marque para impedir retomadas comerciais, aniversários, contatos de pacientes antigos e demais contatos proativos. Uma nova mensagem da própria pessoa ainda pode ser respondida.",
@@ -81,6 +91,11 @@ function garantirEstruturaPreferenciasContato_(sheet) {
     .getRange(1, neverBotReplyColumn)
     .setNote(
       "Marque para impedir qualquer mensagem automática ao paciente, inclusive respostas, lembretes e acompanhamentos. O sistema pode continuar emitindo alerta interno para resposta humana.",
+    );
+  sheet
+    .getRange(1, suspendAutomaticFollowUpColumn)
+    .setNote(
+      "Marque para suspender apenas a primeira retomada automática programada. Respostas normais do bot, lembretes de consulta e ações humanas não são bloqueados por este campo.",
     );
   sheet
     .getRange(1, reasonColumn)
@@ -92,6 +107,8 @@ function garantirEstruturaPreferenciasContato_(sheet) {
     ok: true,
     neverFollowUpColumn: neverFollowUpColumn,
     neverBotReplyColumn: neverBotReplyColumn,
+    suspendAutomaticFollowUpColumn:
+      suspendAutomaticFollowUpColumn,
     reasonColumn: reasonColumn,
   };
 }
@@ -132,6 +149,11 @@ function obterPreferenciasContatoLeads_(spreadsheet, phone) {
     headers,
     CONTACT_PREFERENCES_CONFIG.neverBotReplyHeader,
   );
+  const suspendAutomaticFollowUpColumn =
+    indiceCabecalhoPreferenciaContato_(
+      headers,
+      CONTACT_PREFERENCES_CONFIG.suspendAutomaticFollowUpHeader,
+    );
   const reasonColumn = indiceCabecalhoPreferenciaContato_(
     headers,
     CONTACT_PREFERENCES_CONFIG.reasonHeader,
@@ -167,6 +189,11 @@ function obterPreferenciasContatoLeads_(spreadsheet, phone) {
     neverBotReply:
       neverBotReplyColumn >= 0 &&
       valorAtivoPreferenciaContato_(match[neverBotReplyColumn]),
+    suspendAutomaticFollowUp:
+      suspendAutomaticFollowUpColumn >= 0 &&
+      valorAtivoPreferenciaContato_(
+        match[suspendAutomaticFollowUpColumn],
+      ),
     blockReason:
       reasonColumn >= 0
         ? textoPreferenciaContato_(match[reasonColumn], 240)
@@ -195,6 +222,11 @@ function carregarPreferenciasContatoPorTelefone_(sheet) {
     headers,
     CONTACT_PREFERENCES_CONFIG.neverBotReplyHeader,
   );
+  const suspendAutomaticFollowUpColumn =
+    indiceCabecalhoPreferenciaContato_(
+      headers,
+      CONTACT_PREFERENCES_CONFIG.suspendAutomaticFollowUpHeader,
+    );
   const reasonColumn = indiceCabecalhoPreferenciaContato_(
     headers,
     CONTACT_PREFERENCES_CONFIG.reasonHeader,
@@ -223,6 +255,11 @@ function carregarPreferenciasContatoPorTelefone_(sheet) {
           valorAtivoPreferenciaContato_(
             row[neverBotReplyColumn],
           ),
+        suspendAutomaticFollowUp:
+          suspendAutomaticFollowUpColumn >= 0 &&
+          valorAtivoPreferenciaContato_(
+            row[suspendAutomaticFollowUpColumn],
+          ),
         blockReason:
           reasonColumn >= 0
             ? textoPreferenciaContato_(row[reasonColumn], 240)
@@ -245,6 +282,8 @@ function anexarPreferenciasContatoRelacionamento_(
     contactPreferencesFound: safePreferences.found === true,
     neverFollowUp: safePreferences.neverFollowUp === true,
     neverBotReply: safePreferences.neverBotReply === true,
+    suspendAutomaticFollowUp:
+      safePreferences.suspendAutomaticFollowUp === true,
     blockReason: textoPreferenciaContato_(
       safePreferences.blockReason,
       240,
@@ -257,6 +296,7 @@ function preferenciasContatoDesconhecidas_() {
     found: false,
     neverFollowUp: false,
     neverBotReply: false,
+    suspendAutomaticFollowUp: false,
     blockReason: "",
   };
 }

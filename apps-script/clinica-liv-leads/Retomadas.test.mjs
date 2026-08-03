@@ -228,7 +228,7 @@ test("classifies only a safe first follow-up as planned for Bruna", () => {
   );
 });
 
-test("daily email is informational and drafts only the human actions", () => {
+test("daily email shows the exact automatic message and drafts human actions", () => {
   const common = {
     telefone: "+5511999999999",
     horario: "10:30",
@@ -243,7 +243,8 @@ test("daily email is informational and drafts only the human actions", () => {
   const planned = {
     ...common,
     responsavel: "bruna",
-    sugestao: "Mensagem que não deve aparecer na ação humana.",
+    automatico: true,
+    sugestao: "Mensagem exata da retomada automática.",
   };
   const human = {
     ...common,
@@ -262,10 +263,10 @@ test("daily email is informational and drafts only the human actions", () => {
     "28/07/2026",
   );
 
-  assert.match(text, /apenas informativo/);
+  assert.match(text, /será enviada automaticamente/);
   assert.match(
     text,
-    /ENVIOS AUTOMÁTICOS PREVISTOS HOJE \(0\)/,
+    /ENVIOS AUTOMÁTICOS PREVISTOS HOJE \(1\)/,
   );
   assert.match(
     text,
@@ -274,14 +275,11 @@ test("daily email is informational and drafts only the human actions", () => {
   assert.match(text, /PLANO DO DIA \(2\)/);
   assert.match(text, /AÇÃO SUGERIDA PARA AMANDA\/EQUIPE \(1\)/);
   assert.match(text, /Mensagem sugerida para a equipe/);
-  assert.doesNotMatch(
-    text,
-    /Mensagem que não deve aparecer na ação humana/,
-  );
+  assert.match(text, /Mensagem exata da retomada automática/);
   assert.match(html, /Plano do dia \(2\)/);
   assert.match(
     html,
-    /Envios automáticos previstos hoje \(0\)/,
+    /Envios automáticos previstos hoje \(1\)/,
   );
   assert.match(
     html,
@@ -289,10 +287,7 @@ test("daily email is informational and drafts only the human actions", () => {
   );
   assert.match(html, /Ação sugerida para Amanda\/equipe \(1\)/);
   assert.match(html, /Mensagem sugerida para a equipe/);
-  assert.doesNotMatch(
-    html,
-    /Mensagem que não deve aparecer na ação humana/,
-  );
+  assert.match(html, /Mensagem exata da retomada automática/);
 });
 
 function lead(overrides = {}) {
@@ -349,19 +344,21 @@ test("reads acquisition context from the current 25-column lead layout", () => {
   assert.equal(loaded.referenciaCompleta, "M26F02S-C06H01");
 });
 
-test("reads permanent follow-up and bot blocks after the 25-column schema", () => {
-  const headers = Array(28).fill("");
+test("reads permanent blocks and the automatic follow-up suspension", () => {
+  const headers = Array(29).fill("");
   headers[2] = "Telefone (E.164)";
   headers[25] = "Nunca retomar";
   headers[26] = "Nunca responder com robô";
   headers[27] = "Motivo / observação do bloqueio";
-  const row = Array(28).fill("");
+  headers[28] = "Suspender retomada automática";
+  const row = Array(29).fill("");
   row[2] = "+5511999999999";
   row[25] = true;
   row[26] = "Sim";
+  row[28] = true;
   const sheet = {
     getLastRow: () => 2,
-    getLastColumn: () => 28,
+    getLastColumn: () => 29,
     getRange: (startRow) => ({
       getDisplayValues: () => [
         startRow === 1 ? headers : row,
@@ -375,6 +372,72 @@ test("reads permanent follow-up and bot blocks after the 25-column schema", () =
 
   assert.equal(loaded.neverFollowUp, true);
   assert.equal(loaded.neverBotReply, true);
+  assert.equal(loaded.suspendAutomaticFollowUp, true);
+});
+
+test("automatic follow-up revalidation cancels suspension and new activity", () => {
+  const now = new Date("2026-08-03T10:35:00-03:00");
+  const leadData = {
+    status: "Novo",
+    resumo: "Pesquisa sobre lifting facial",
+    proximaAcao: "",
+    neverFollowUp: false,
+    neverBotReply: false,
+    suspendAutomaticFollowUp: false,
+  };
+  const conversationData = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-08-02T18:00:00-03:00"),
+      messageId: "in-1",
+      texto: "Quero entender melhor o lifting facial.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-08-02T18:01:00-03:00"),
+      messageId: "out-1",
+      texto: "Claro, posso te orientar.",
+    },
+  ];
+  const plan = {
+    etapa: 1,
+    atrasoMinutos: 5,
+    messageIdBase: "out-1",
+    sugestao: "Olá! Fiquei à disposição para continuar.",
+  };
+
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData,
+      now,
+    ).ok,
+    true,
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      { ...leadData, suspendAutomaticFollowUp: true },
+      conversationData,
+      now,
+    ).reason,
+    "suspended_in_leads",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData.concat({
+        direcao: "IN",
+        dataHora: new Date("2026-08-03T10:31:00-03:00"),
+        messageId: "in-2",
+        texto: "Obrigada, já resolvi.",
+      }),
+      now,
+    ).reason,
+    "conversation_changed",
+  );
 });
 
 test("first follow-up offers a specific facial resource without pressure", () => {

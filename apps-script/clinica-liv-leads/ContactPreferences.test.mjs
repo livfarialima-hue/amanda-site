@@ -96,6 +96,7 @@ test("unknown phone defaults to no block", () => {
       found: false,
       neverFollowUp: false,
       neverBotReply: false,
+      suspendAutomaticFollowUp: false,
       blockReason: "",
     },
   );

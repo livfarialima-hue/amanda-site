@@ -1,0 +1,12 @@
+.git/
+.agents/
+.codex/
+.codex-remote-attachments/
+analysis/
+apps-script/
+docs/
+node_modules/
+scripts/
+tmp/
+**/*.test.mjs
+PLANO-SIMPLIFICACAO-CONVERSAO.md

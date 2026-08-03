@@ -15,6 +15,15 @@ const RETOMADAS_CONFIG = Object.freeze({
   minimoHorasAposPromessaRetorno: 24,
   maximoDiasSemResposta: 10,
   maximoPacientesPorEmail: 50,
+  maximoAtrasoAutomaticoMinutos: 240,
+  janelaWhatsAppMinutos: 1430,
+  endpointRetomadaAutomatica:
+    "https://draamandaschroeder.com.br/.netlify/functions/scheduled-followup",
+  propriedadeEndpointRetomadaAutomatica:
+    "RETOMADAS_AUTOMATICAS_ENDPOINT",
+  propriedadeSegredo: "LEADS_INGEST_SECRET",
+  propriedadeAtiva: "RETOMADAS_AUTOMATICAS_ATIVAS",
+  funcaoGatilhoAutomatico: "processarRetomadasAutomaticas",
   horariosPrioritarios: [
     "10:30",
     "10:45",
@@ -32,6 +41,24 @@ const RETOMADAS_CONFIG = Object.freeze({
     "17:45",
   ],
 });
+
+const RETOMADAS_CONTROLE_HEADERS = Object.freeze([
+  "Chave diária",
+  "Data do e-mail",
+  "Telefone",
+  "Message ID",
+  "Etapa",
+  "Horário planejado",
+  "Status do lead",
+  "Resumo",
+  "Sugestão",
+  "Modo",
+  "Status do envio",
+  "Data/hora programada",
+  "Última tentativa",
+  "Enviado em",
+  "Erro do envio",
+]);
 
 const RETOMADAS_ETAPAS = Object.freeze([
   Object.freeze({
@@ -264,6 +291,64 @@ function instalarEmailDiarioRetomadas() {
       String(RETOMADAS_CONFIG.minutoEmail).padStart(2, "0"),
     destinatario: RETOMADAS_CONFIG.destinatario,
   };
+}
+
+function ativarRetomadasAutomaticas() {
+  const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const planilhaLeads = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaLeads,
+  );
+
+  if (!planilhaLeads) {
+    throw new Error("Aba de leads da Dra. Amanda não encontrada.");
+  }
+
+  if (typeof garantirEstruturaPreferenciasContato_ === "function") {
+    garantirEstruturaPreferenciasContato_(planilhaLeads);
+  }
+
+  obterPlanilhaControleRetomadas_(arquivo);
+  PropertiesService.getScriptProperties().setProperty(
+    RETOMADAS_CONFIG.propriedadeAtiva,
+    "true",
+  );
+  instalarGatilhoRetomadasAutomaticas_();
+
+  return {
+    ok: true,
+    active: true,
+    intervalMinutes: 5,
+  };
+}
+
+function desativarRetomadasAutomaticas() {
+  PropertiesService.getScriptProperties().setProperty(
+    RETOMADAS_CONFIG.propriedadeAtiva,
+    "false",
+  );
+  removerGatilhosRetomadasAutomaticas_();
+  return { ok: true, active: false };
+}
+
+function instalarGatilhoRetomadasAutomaticas_() {
+  removerGatilhosRetomadasAutomaticas_();
+  ScriptApp.newTrigger(
+    RETOMADAS_CONFIG.funcaoGatilhoAutomatico,
+  )
+    .timeBased()
+    .everyMinutes(5)
+    .create();
+}
+
+function removerGatilhosRetomadasAutomaticas_() {
+  ScriptApp.getProjectTriggers().forEach(function (trigger) {
+    if (
+      trigger.getHandlerFunction() ===
+      RETOMADAS_CONFIG.funcaoGatilhoAutomatico
+    ) {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
 }
 
 function enviarEmailDiarioRetomadas() {
@@ -519,6 +604,10 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     throw new Error("Histórico de mensagens não encontrado.");
   }
 
+  if (typeof garantirEstruturaPreferenciasContato_ === "function") {
+    garantirEstruturaPreferenciasContato_(planilhaLeads);
+  }
+
   const agendaCuidadosConsultas = planilhaConsultas
     ? criarAgendaCuidadosConsultas_(planilhaConsultas, agora)
     : [];
@@ -598,6 +687,14 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
 
   selecionados.forEach(function (candidato) {
     candidato.responsavel = responsavelRetomada_(candidato);
+    candidato.automatico =
+      candidato.responsavel === "bruna" &&
+      !candidato.lead.suspendAutomaticFollowUp;
+    candidato.modo = candidato.lead.suspendAutomaticFollowUp
+      ? "Suspensa na planilha"
+      : candidato.automatico
+        ? "Automático"
+        : "Manual";
   });
 
   const sugeridosParaEquipe = selecionados.filter(function (candidato) {
@@ -698,6 +795,13 @@ function carregarLeadsRetomadas_(planilha) {
           "Nunca responder com robô",
         )
       : -1;
+  const suspendAutomaticFollowUpColumn =
+    typeof indiceCabecalhoPreferenciaContato_ === "function"
+      ? indiceCabecalhoPreferenciaContato_(
+          headers,
+          "Suspender retomada automática",
+        )
+      : -1;
 
   valores.forEach(function (linha, indice) {
     const telefone = normalizarTelefoneRetomadas_(linha[2]);
@@ -729,6 +833,12 @@ function carregarLeadsRetomadas_(planilha) {
         typeof valorAtivoPreferenciaContato_ === "function" &&
         valorAtivoPreferenciaContato_(
           linha[neverBotReplyColumn],
+        ),
+      suspendAutomaticFollowUp:
+        suspendAutomaticFollowUpColumn >= 0 &&
+        typeof valorAtivoPreferenciaContato_ === "function" &&
+        valorAtivoPreferenciaContato_(
+          linha[suspendAutomaticFollowUpColumn],
         ),
     };
   });
@@ -1249,28 +1359,17 @@ function obterPlanilhaControleRetomadas_(arquivo) {
     RETOMADAS_CONFIG.planilhaControle,
   );
 
-  if (planilha) {
-    return planilha;
+  if (!planilha) {
+    planilha = arquivo.insertSheet(
+      RETOMADAS_CONFIG.planilhaControle,
+    );
+    planilha.setFrozenRows(1);
+    planilha.hideSheet();
   }
 
-  planilha = arquivo.insertSheet(
-    RETOMADAS_CONFIG.planilhaControle,
-  );
   planilha
-    .getRange(1, 1, 1, 9)
-    .setValues([[
-      "Chave diária",
-      "Data do e-mail",
-      "Telefone",
-      "Message ID",
-      "Etapa",
-      "Horário planejado",
-      "Status do lead",
-      "Resumo",
-      "Sugestão",
-    ]]);
-  planilha.setFrozenRows(1);
-  planilha.hideSheet();
+    .getRange(1, 1, 1, RETOMADAS_CONTROLE_HEADERS.length)
+    .setValues([RETOMADAS_CONTROLE_HEADERS]);
 
   return planilha;
 }
@@ -1319,6 +1418,18 @@ function registrarRetomadasEnviadas_(planilha, candidatos, agora) {
       candidato.lead.status,
       candidato.lead.resumo,
       candidato.sugestao,
+      candidato.modo || "Manual",
+      candidato.automatico
+        ? "Programada"
+        : candidato.lead.suspendAutomaticFollowUp
+          ? "Suspensa na planilha"
+          : "Ação manual",
+      candidato.automatico
+        ? dataHoraProgramadaRetomada_(agora, candidato.horario)
+        : "",
+      "",
+      "",
+      "",
     ];
   });
 
@@ -1327,9 +1438,421 @@ function registrarRetomadasEnviadas_(planilha, candidatos, agora) {
       planilha.getLastRow() + 1,
       1,
       linhas.length,
-      9,
+      RETOMADAS_CONTROLE_HEADERS.length,
     )
     .setValues(linhas);
+}
+
+function processarRetomadasAutomaticas() {
+  const propriedades = PropertiesService.getScriptProperties();
+
+  if (
+    propriedades.getProperty(
+      RETOMADAS_CONFIG.propriedadeAtiva,
+    ) !== "true"
+  ) {
+    return { ok: true, active: false, sent: 0 };
+  }
+
+  const agora = new Date();
+
+  if (!estaNoHorarioRetomadasAutomaticas_(agora)) {
+    return {
+      ok: true,
+      active: true,
+      sent: 0,
+      reason: "outside_send_window",
+    };
+  }
+
+  const segredo = propriedades.getProperty(
+    RETOMADAS_CONFIG.propriedadeSegredo,
+  );
+
+  if (!segredo) {
+    throw new Error(
+      "A propriedade LEADS_INGEST_SECRET não está configurada.",
+    );
+  }
+
+  const lock = LockService.getScriptLock();
+
+  if (!lock.tryLock(5000)) {
+    return { ok: false, active: true, sent: 0, error: "busy_retry" };
+  }
+
+  try {
+    return processarRetomadasAutomaticasInterno_(
+      agora,
+      segredo,
+      propriedades,
+    );
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function estaNoHorarioRetomadasAutomaticas_(data) {
+  const partes = formatarDataRetomadas_(data, "HH:mm")
+    .split(":")
+    .map(Number);
+  const minutos = partes[0] * 60 + partes[1];
+
+  return (
+    minutos >= RETOMADAS_CONFIG.horaInicioRetomadas * 60 &&
+    minutos < RETOMADAS_CONFIG.horaFimRetomadas * 60
+  );
+}
+
+function processarRetomadasAutomaticasInterno_(
+  agora,
+  segredo,
+  propriedades,
+) {
+  const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const planilhaControle = obterPlanilhaControleRetomadas_(arquivo);
+  const planilhaLeads = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaLeads,
+  );
+  const planilhaMensagens = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaMensagens,
+  );
+
+  if (!planilhaLeads || !planilhaMensagens) {
+    throw new Error("Estrutura de leads ou mensagens não encontrada.");
+  }
+
+  if (typeof garantirEstruturaPreferenciasContato_ === "function") {
+    garantirEstruturaPreferenciasContato_(planilhaLeads);
+  }
+
+  const ultimaLinha = planilhaControle.getLastRow();
+
+  if (ultimaLinha < 2) {
+    return { ok: true, active: true, sent: 0, cancelled: 0 };
+  }
+
+  const linhas = planilhaControle
+    .getRange(
+      2,
+      1,
+      ultimaLinha - 1,
+      RETOMADAS_CONTROLE_HEADERS.length,
+    )
+    .getValues();
+  const leadsPorTelefone = carregarLeadsRetomadas_(planilhaLeads);
+  const conversasPorTelefone = carregarConversasRetomadas_(
+    planilhaMensagens,
+  );
+  let enviados = 0;
+  let cancelados = 0;
+  let falhas = 0;
+
+  for (let indice = 0; indice < linhas.length; indice += 1) {
+    if (enviados + falhas >= 10) break;
+
+    const linha = linhas[indice];
+    const numeroLinha = indice + 2;
+    const modo = String(linha[9] || "").trim();
+    const statusEnvio = String(linha[10] || "").trim();
+    const programadaPara = dataRetomadaValida_(linha[11]);
+
+    if (
+      modo !== "Automático" ||
+      statusEnvio !== "Programada" ||
+      !programadaPara ||
+      programadaPara.getTime() > agora.getTime()
+    ) {
+      continue;
+    }
+
+    const atrasoMinutos = Math.floor(
+      (agora.getTime() - programadaPara.getTime()) / 60000,
+    );
+    const telefone = normalizarTelefoneRetomadas_(linha[2]);
+    const lead = leadsPorTelefone[telefone];
+    const conversa = conversasPorTelefone[telefone] || [];
+    const validacao = validarRetomadaAutomatica_(
+      {
+        telefone: telefone,
+        messageIdBase: String(linha[3] || "").trim(),
+        etapa: Number(linha[4] || 0),
+        sugestao: String(linha[8] || "").trim(),
+        atrasoMinutos: atrasoMinutos,
+      },
+      lead,
+      conversa,
+      agora,
+    );
+
+    if (!validacao.ok) {
+      planilhaControle
+        .getRange(numeroLinha, 11, 1, 5)
+        .setValues([[
+          "Cancelada — " + validacao.reason,
+          programadaPara,
+          agora,
+          "",
+          validacao.reason,
+        ]]);
+      cancelados += 1;
+      continue;
+    }
+
+    planilhaControle
+      .getRange(numeroLinha, 11, 1, 5)
+      .setValues([[
+        "Enviando",
+        programadaPara,
+        agora,
+        "",
+        "",
+      ]]);
+    SpreadsheetApp.flush();
+
+    const resultado = enviarRetomadaAutomatica_(
+      {
+        planId: String(linha[0] || "").trim(),
+        patientPhone: telefone,
+        body: validacao.sugestao,
+      },
+      segredo,
+      propriedades,
+    );
+
+    if (!resultado.ok || !resultado.sent) {
+      planilhaControle
+        .getRange(numeroLinha, 11, 1, 5)
+        .setValues([[
+          "Falha — revisar",
+          programadaPara,
+          agora,
+          "",
+          resultado.error || "send_failed",
+        ]]);
+      falhas += 1;
+      continue;
+    }
+
+    planilhaControle
+      .getRange(numeroLinha, 11, 1, 5)
+      .setValues([[
+        "Enviada",
+        programadaPara,
+        agora,
+        agora,
+        "",
+      ]]);
+    registrarMensagemRetomadaAutomatica_(
+      arquivo,
+      lead,
+      telefone,
+      String(linha[0] || "").trim(),
+      validacao.sugestao,
+      agora,
+    );
+    enviados += 1;
+  }
+
+  return {
+    ok: falhas === 0,
+    active: true,
+    sent: enviados,
+    cancelled: cancelados,
+    failed: falhas,
+  };
+}
+
+function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
+  if (!lead) return { ok: false, reason: "lead_not_found" };
+  if (plano.etapa !== 1) {
+    return { ok: false, reason: "only_first_followup" };
+  }
+  if (
+    lead.neverFollowUp ||
+    lead.neverBotReply ||
+    lead.suspendAutomaticFollowUp
+  ) {
+    return { ok: false, reason: "suspended_in_leads" };
+  }
+  if (statusRetomadaEncerrado_(lead.status)) {
+    return { ok: false, reason: "lead_closed" };
+  }
+  if (
+    plano.atrasoMinutos < 0 ||
+    plano.atrasoMinutos >
+      RETOMADAS_CONFIG.maximoAtrasoAutomaticoMinutos
+  ) {
+    return { ok: false, reason: "stale_schedule" };
+  }
+  if (!plano.sugestao || !conversa.length) {
+    return { ok: false, reason: "missing_context" };
+  }
+
+  const ultima = conversa[conversa.length - 1];
+
+  if (
+    ultima.direcao !== "OUT" ||
+    ultima.messageId !== plano.messageIdBase
+  ) {
+    return { ok: false, reason: "conversation_changed" };
+  }
+  if (
+    mensagemSemRetomada_(ultima.texto) ||
+    retornoFuturoRecente_(conversa, agora) ||
+    conversaTemPromessaHumanaPendente_(conversa)
+  ) {
+    return { ok: false, reason: "followup_not_appropriate" };
+  }
+
+  const ultimaEntrada = conversa
+    .slice()
+    .reverse()
+    .find(function (mensagem) {
+      return mensagem.direcao === "IN";
+    });
+
+  if (!ultimaEntrada) {
+    return { ok: false, reason: "no_inbound_message" };
+  }
+
+  const minutosDesdeEntrada = Math.floor(
+    (agora.getTime() - ultimaEntrada.dataHora.getTime()) / 60000,
+  );
+
+  if (
+    minutosDesdeEntrada < 0 ||
+    minutosDesdeEntrada > RETOMADAS_CONFIG.janelaWhatsAppMinutos
+  ) {
+    return { ok: false, reason: "whatsapp_window_closed" };
+  }
+
+  const contexto = normalizarTextoRetomadas_([
+    lead.status,
+    lead.resumo,
+    lead.proximaAcao,
+    conversa.map(function (mensagem) {
+      return mensagem.texto;
+    }).join(" "),
+  ].join(" "));
+
+  if (!retomadaComercialPermitida_(contexto)) {
+    return { ok: false, reason: "sensitive_context" };
+  }
+  if (/valor|preco|orcamento|pagamento|parcel|agend|horar/.test(contexto)) {
+    return { ok: false, reason: "human_review_required" };
+  }
+
+  return { ok: true, sugestao: plano.sugestao };
+}
+
+function enviarRetomadaAutomatica_(payload, segredo, propriedades) {
+  const endpoint =
+    propriedades.getProperty(
+      RETOMADAS_CONFIG.propriedadeEndpointRetomadaAutomatica,
+    ) || RETOMADAS_CONFIG.endpointRetomadaAutomatica;
+  let resposta;
+
+  try {
+    resposta = UrlFetchApp.fetch(endpoint, {
+      method: "post",
+      contentType: "application/json; charset=utf-8",
+      headers: { "x-liv-secret": segredo },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true,
+    });
+  } catch (error) {
+    return { ok: false, sent: false, error: "request_failed" };
+  }
+
+  let corpo = {};
+
+  try {
+    corpo = JSON.parse(resposta.getContentText() || "{}");
+  } catch (error) {
+    corpo = {};
+  }
+
+  return {
+    ok:
+      resposta.getResponseCode() >= 200 &&
+      resposta.getResponseCode() < 300 &&
+      corpo.ok === true,
+    sent: corpo.sent === true,
+    error:
+      corpo.error ||
+      "http_" + String(resposta.getResponseCode()),
+  };
+}
+
+function registrarMensagemRetomadaAutomatica_(
+  arquivo,
+  lead,
+  telefone,
+  planId,
+  texto,
+  agora,
+) {
+  const identificador =
+    "scheduled-followup-" +
+    String(planId || agora.getTime())
+      .replace(/[^A-Za-z0-9_-]/g, "-")
+      .slice(0, 120);
+
+  if (typeof recordLeadMessageAndQueue_ === "function") {
+    recordLeadMessageAndQueue_(
+      arquivo,
+      lead.linha,
+      {
+        phone: telefone,
+        messageId: identificador,
+        eventId: identificador,
+        contactAt: agora,
+        text: texto,
+      },
+      "OUT",
+    );
+    return;
+  }
+
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaMensagens,
+  );
+  planilha.appendRow([
+    telefone,
+    "OUT",
+    agora,
+    identificador,
+    identificador,
+    texto,
+    lead.linha,
+  ]);
+}
+
+function dataHoraProgramadaRetomada_(dataBase, horario) {
+  const dataLocal = formatarDataRetomadas_(dataBase, "yyyy-MM-dd");
+  const partesData = dataLocal.split("-").map(Number);
+  const partesHora = String(horario || "").split(":").map(Number);
+
+  if (
+    partesData.length !== 3 ||
+    partesHora.length !== 2 ||
+    partesData.concat(partesHora).some(function (valor) {
+      return !Number.isFinite(valor);
+    })
+  ) {
+    return "";
+  }
+
+  return new Date(
+    partesData[0],
+    partesData[1] - 1,
+    partesData[2],
+    partesHora[0],
+    partesHora[1],
+    0,
+    0,
+  );
 }
 
 function limparControleRetomadasAntigo_(planilha, agora) {
@@ -1367,7 +1890,13 @@ function montarTextoEmailRetomadas_(
   const cuidados = agendaCuidados || [];
   const automaticosHoje = cuidados.filter(function (item) {
     return !item.futuro && item.automatico;
-  });
+  }).concat(
+    candidatos
+      .filter(function (candidato) {
+        return candidato.automatico;
+      })
+      .map(converterRetomadaParaCuidadoEmail_),
+  );
   const manuaisHoje = cuidados.filter(function (item) {
     return !item.futuro && !item.automatico;
   });
@@ -1377,7 +1906,7 @@ function montarTextoEmailRetomadas_(
   const linhas = [
     "Clínica LIV — agenda de cuidado de " + dataApresentacao,
     "",
-    "Este e-mail é apenas informativo e não envia mensagens aos pacientes.",
+    "Este e-mail informa os envios do dia. A primeira retomada simples será enviada automaticamente no horário indicado, salvo se estiver suspensa na planilha Leads.",
     "",
     "ENVIOS AUTOMÁTICOS PREVISTOS HOJE (" +
       automaticosHoje.length +
@@ -1401,6 +1930,7 @@ function montarTextoEmailRetomadas_(
     );
     linhas.push("Responsável: " + item.responsavel);
     linhas.push("Contexto: " + item.contexto);
+    linhas.push("Mensagem que será enviada: " + item.sugestao);
   });
 
   linhas.push("");
@@ -1481,7 +2011,11 @@ function montarTextoEmailRetomadas_(
     linhas.push(
       "Responsável sugerido: " +
         (candidato.responsavel === "bruna"
-          ? "Bruna — primeira retomada segura, ainda apenas planejada no e-mail"
+          ? candidato.automatico
+            ? "Bruna — envio automático programado"
+            : candidato.lead.suspendAutomaticFollowUp
+              ? "Suspensa na planilha — não enviar"
+              : "Bruna — revisar"
           : "Amanda/equipe — conferir e enviar manualmente"),
     );
     linhas.push("Etapa: " + candidato.etapa.rotulo);
@@ -1538,10 +2072,26 @@ function montarTextoEmailRetomadas_(
 
   linhas.push("");
   linhas.push(
-    "Somente os itens expressamente listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. As retomadas comerciais, inclusive a primeira, permanecem apenas planejadas enquanto não houver uma rotina própria e uma janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido.",
+    "Somente os itens expressamente listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. A rotina revalida a conversa e as preferências imediatamente antes do envio; se houver resposta nova, bloqueio, suspensão, tema sensível ou janela inválida do WhatsApp, o disparo é cancelado. As retomadas tardias continuam manuais. Para suspender, marque “Suspender retomada automática” na linha da pessoa na aba Google Ads - Conversões.",
   );
 
   return linhas.join("\n");
+}
+
+function converterRetomadaParaCuidadoEmail_(candidato) {
+  return {
+    futuro: false,
+    automatico: true,
+    horario: candidato.horario,
+    categoria: candidato.etapa.rotulo,
+    nome: candidato.lead.referencia || candidato.telefone,
+    telefone: candidato.telefone,
+    responsavel: "Bruna — envio automático",
+    contexto:
+      candidato.lead.resumo ||
+      "Primeira retomada simples após contato inicial",
+    sugestao: candidato.sugestao,
+  };
 }
 
 function montarHtmlEmailRetomadas_(
@@ -1553,7 +2103,13 @@ function montarHtmlEmailRetomadas_(
   let planoDoDia = "";
   let acaoEquipe = "";
   const agendaHtml = montarHtmlAgendaCuidados_(
-    agendaCuidados || [],
+    (agendaCuidados || []).concat(
+      candidatos
+        .filter(function (candidato) {
+          return candidato.automatico;
+        })
+        .map(converterRetomadaParaCuidadoEmail_),
+    ),
   );
 
   if (!candidatos.length) {
@@ -1591,7 +2147,11 @@ function montarHtmlEmailRetomadas_(
       ].filter(Boolean).join("<br>");
       const responsavel =
         candidato.responsavel === "bruna"
-          ? "Bruna<br><span style=\"color:#6b7280;font-size:12px;\">primeira retomada segura; ainda apenas planejada no e-mail</span>"
+          ? candidato.automatico
+            ? "Bruna<br><span style=\"color:#166534;font-size:12px;\">envio automático programado; mensagem exibida acima</span>"
+            : candidato.lead.suspendAutomaticFollowUp
+              ? "Suspensa na planilha<br><span style=\"color:#9a3412;font-size:12px;\">nenhum envio será feito</span>"
+              : "Bruna<br><span style=\"color:#6b7280;font-size:12px;\">revisar</span>"
           : "Amanda/equipe<br><span style=\"color:#6b7280;font-size:12px;\">conferir e enviar manualmente</span>";
 
       planoDoDia +=
@@ -1668,7 +2228,7 @@ function montarHtmlEmailRetomadas_(
     '<h2 style="color:#075e54;">Clínica LIV — agenda de cuidado</h2>' +
     '<p style="color:#4b5563;">Resumo operacional de ' +
     escaparHtmlRetomadas_(dataApresentacao) +
-    ". Este e-mail é apenas informativo e não envia mensagens aos pacientes.</p>" +
+    ". A primeira retomada simples será enviada automaticamente no horário indicado, salvo se estiver suspensa na planilha Leads.</p>" +
     agendaHtml +
     '<h3 style="margin-top:24px;">Plano do dia (' +
     candidatos.length +
@@ -1679,7 +2239,7 @@ function montarHtmlEmailRetomadas_(
     ")</h3>" +
     acaoEquipe +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
-    "Somente os itens expressamente listados em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. As retomadas comerciais, inclusive a primeira, permanecem apenas planejadas enquanto não houver uma rotina própria e uma janela válida do WhatsApp. Antes de qualquer envio manual, confira o histórico. Não retome se a paciente respondeu por outro canal, pediu para não receber mensagens ou se o caso deixou de fazer sentido." +
+    "Somente os itens expressamente listados em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. A conversa e as preferências são revalidadas imediatamente antes do envio. Para suspender, marque <strong>Suspender retomada automática</strong> na linha da pessoa em <strong>Google Ads - Conversões</strong>. Retomadas tardias continuam manuais." +
     "</p></div>"
   );
 }
