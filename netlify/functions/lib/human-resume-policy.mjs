@@ -11,6 +11,14 @@ const SCHEDULING_CONTEXT_PATTERN =
   /\b(?:agenda|agendar|marcar|hor[aá]rio|data|dia|per[ií]odo|disponibilidade|consulta\s+(?:para|em)|\d{1,2}(?::|h)\d{0,2})\b/i;
 const CONFIRMATION_PATTERN =
   /\b(?:confirmo|confirmar|pode\s+ser|fechado|combinado|esse\s+hor[aá]rio|essa\s+data|nesse\s+dia)\b/i;
+const SIMPLE_COORDINATION_COMMITMENT_PATTERN =
+  /\b(?:vou|iremos|tentarei|vamos)\s+(?:tentar\s+)?(?:acessar|achar|buscar|encaminhar|enviar|localizar|mandar|passar|separar)\b/i;
+const SIMPLE_COORDINATION_PERMISSION_PATTERN =
+  /\b(?:pode|podem)\s+(?:dar\s+andamento|emitir|encaminhar|enviar|fazer|mandar|prosseguir)(?:\s+(?:sim|tranquilamente|sem\s+problemas))?\b/i;
+const SIMPLE_COORDINATION_REQUEST_PATTERN =
+  /\b(?:(?:você|vocês)\s+(?:pode|podem|consegue|conseguem)|(?:me|nos)\s+(?:avisa|avise|confirma|confirme|envia|envie|manda|mande)|gostaria|preciso|quero)\b/i;
+const SIMPLE_COORDINATION_RISK_PATTERN =
+  /\b(?:alergia|complica[cç][aã]o|desmaio|dor\s+(?:forte|intensa)|febre|falta\s+de\s+ar|medica[cç][aã]o|rem[eé]dio|sangramento|secre[cç][aã]o|urgente|urgência)\b/i;
 
 const SENSITIVE_REASONS = new Set([
   "surgical_price_review",
@@ -121,6 +129,80 @@ function hasSchedulingContext(recentConversation) {
     );
 }
 
+function coordinationSubstance(text) {
+  return String(text || "")
+    .trim()
+    .replace(
+      /^(?:oi[,!\s]*)?(?:tudo\s+bem|como\s+vai)\s*\?+\s*/i,
+      "",
+    )
+    .replace(
+      /[,!\s]*(?:ok|tudo\s+bem|certo|combinado)\s*\?+\s*$/i,
+      "",
+    )
+    .trim();
+}
+
+export function classifySimpleCoordinationAcknowledgement(
+  text,
+  recentConversation = [],
+) {
+  const value = coordinationSubstance(text);
+  const hasConversationContext = (
+    Array.isArray(recentConversation)
+      ? recentConversation
+      : []
+  ).some((turn) => turn?.role === "assistant");
+
+  if (
+    !value ||
+    !hasConversationContext ||
+    value.includes("?") ||
+    SIMPLE_COORDINATION_REQUEST_PATTERN.test(value) ||
+    SIMPLE_COORDINATION_RISK_PATTERN.test(value)
+  ) {
+    return null;
+  }
+
+  if (SIMPLE_COORDINATION_COMMITMENT_PATTERN.test(value)) {
+    return /\bexames?\b/i.test(value)
+      ? "send_exams_later"
+      : "send_material_later";
+  }
+
+  if (SIMPLE_COORDINATION_PERMISSION_PATTERN.test(value)) {
+    return "permission_confirmed";
+  }
+
+  return null;
+}
+
+function usableFirstName(value) {
+  const firstName = String(value || "")
+    .trim()
+    .split(/\s+/)[0]
+    ?.replace(/[^\p{L}\p{M}'’-]/gu, "");
+  return firstName && firstName.length >= 2 ? firstName : "";
+}
+
+export function buildSimpleCoordinationReply({
+  kind,
+  patientName,
+} = {}) {
+  const firstName = usableFirstName(patientName);
+  const opening = firstName ? `Perfeito, ${firstName}.` : "Perfeito.";
+
+  if (kind === "send_exams_later") {
+    return `${opening} Pode nos enviar os exames quando conseguir.`;
+  }
+
+  if (kind === "send_material_later") {
+    return `${opening} Pode nos enviar quando conseguir.`;
+  }
+
+  return `${opening} Obrigada pela confirmação.`;
+}
+
 export const hasConcreteResponseExpectation =
   hasUnresolvedPatientRequest;
 export { isExplicitDeferralWithoutRequest };
@@ -176,6 +258,19 @@ export function classifyHumanResume({
     return {
       action: "sensitive",
       reason: "scheduling_or_confirmation",
+    };
+  }
+
+  const simpleCoordination =
+    classifySimpleCoordinationAcknowledgement(
+      normalizedText,
+      recentConversation,
+    );
+  if (simpleCoordination) {
+    return {
+      action: "acknowledge",
+      reason: "simple_coordination_acknowledgement",
+      replyKind: simpleCoordination,
     };
   }
 

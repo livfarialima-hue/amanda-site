@@ -5,6 +5,7 @@ import {
 } from "./lib/whatsapp-automation.mjs";
 import {
   buildOvernightHandoffMessage,
+  buildSimpleCoordinationReply,
   classifyHumanResume,
   hasConcreteResponseExpectation,
   HUMAN_RESUME_HOLDING_MESSAGE,
@@ -313,6 +314,47 @@ export async function processHumanResumeJob(
     await finish(job, "human_active", dependencies);
     return {
       status: "no_action",
+      reason: policy.reason,
+    };
+  }
+
+  if (policy.action === "acknowledge") {
+    const reply = buildSimpleCoordinationReply({
+      kind: policy.replyKind,
+      patientName: job.patientName,
+    });
+    const sendResult = await sendPatientMessage(
+      job,
+      reply,
+      "human-resume-coordination",
+      conversationAction,
+      dependencies,
+    );
+
+    if (sendResult.status !== "completed") {
+      if (sendResult.status === "superseded") {
+        return {
+          status: "superseded",
+          reason: "newer_activity",
+        };
+      }
+      await finish(job, "waiting_human", dependencies);
+      return {
+        status: "delivery_failed",
+        reason: sendResult.errorCode,
+      };
+    }
+
+    await recordBrunaTurn(
+      job,
+      reply,
+      "human-resume-coordination-memory",
+      dependencies,
+    );
+    await finish(job, "bruna_resumed", dependencies);
+
+    return {
+      status: "bruna_resumed",
       reason: policy.reason,
     };
   }

@@ -128,6 +128,44 @@ test("a safe high-confidence answer resumes Bruna without an alert", async () =>
   );
 });
 
+test("a known patient coordination receives a short contextual acknowledgment", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      patientName: "Geraldo",
+      text:
+        "Tudo bem? Eu acho que pode emitir sim. Vou tentar acessar os exames, se conseguir te passo, OK?",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "Estou te devendo uma NF também. Posso emitir?",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text:
+            "Tudo bem? Eu acho que pode emitir sim. Vou tentar acessar os exames, se conseguir te passo, OK?",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.patientMessages.length, 1);
+  assert.equal(
+    deps.patientMessages[0].body,
+    "Perfeito, Geraldo. Pode nos enviar os exames quando conseguir.",
+  );
+  assert.equal(deps.memory.length, 1);
+});
+
 test("a safe active conversation continues at night", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({

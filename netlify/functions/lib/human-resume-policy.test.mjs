@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildOvernightHandoffMessage,
+  buildSimpleCoordinationReply,
   classifyHumanResume,
+  classifySimpleCoordinationAcknowledgement,
   hasConcreteResponseExpectation,
   isExplicitDeferralWithoutRequest,
   isHumanResumeServiceOpen,
@@ -90,6 +92,67 @@ test("does not reopen a conversation for a simple acknowledgment", () => {
 
     assert.equal(result.action, "no_action", text);
   }
+});
+
+test("recognizes a safe operational continuation without inventing a team check", () => {
+  const text =
+    "Tudo bem? Eu acho que pode emitir sim. Vou tentar acessar os exames, se conseguir te passo, OK?";
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "Estou te devendo uma NF também. Posso emitir?",
+    },
+  ];
+  const result = classifyHumanResume({
+    text,
+    messageType: "text",
+    preliminaryPlan: {
+      route: "human_review",
+      reason: "existing_patient_administrative_followup",
+      automaticAllowed: false,
+    },
+    enrichedPlan: {
+      route: "human_review",
+      reason: "existing_patient_administrative_followup",
+      automaticAllowed: false,
+    },
+    recentConversation,
+  });
+
+  assert.equal(
+    classifySimpleCoordinationAcknowledgement(
+      text,
+      recentConversation,
+    ),
+    "send_exams_later",
+  );
+  assert.equal(result.action, "acknowledge");
+  assert.equal(
+    buildSimpleCoordinationReply({
+      kind: result.replyKind,
+      patientName: "Geraldo Silva",
+    }),
+    "Perfeito, Geraldo. Pode nos enviar os exames quando conseguir.",
+  );
+});
+
+test("does not treat a real administrative request as simple coordination", () => {
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "A nota fiscal ainda não foi emitida.",
+    },
+  ];
+
+  assert.equal(
+    classifySimpleCoordinationAcknowledgement(
+      "Você pode emitir a nota fiscal para mim?",
+      recentConversation,
+    ),
+    null,
+  );
 });
 
 test("an explicit decision to think and return later closes the conversation", () => {
