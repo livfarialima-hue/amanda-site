@@ -30,6 +30,11 @@ html[data-procedure="lifting-facial"] .cv-hero h1 {
 
 /* Resultados inteiros, sem cortar antes/depois. */
 .cv-results { align-items: start; gap: 18px; }
+.cv-results--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cv-results--three .cv-result img {
+  height: 260px;
+  object-fit: contain;
+}
 .cv-result {
   align-self: start;
   border: 1px solid rgba(255, 255, 255, .16);
@@ -67,21 +72,27 @@ html[data-page-type="home"] #quem-conduz .cv-split-media img {
   object-position: center 22%;
 }
 
-/* Avaliação facial: retratos mais baixos e elegantes, como na versão anterior. */
-html[data-procedure="avaliacao-facial"] .cv-hero-grid {
-  grid-template-columns: minmax(0, 1.05fr) minmax(390px, .95fr);
-  gap: 48px;
+/* Páginas faciais: a mesma composição visual da página principal. */
+html[data-procedure="avaliacao-facial"] .cv-hero-grid,
+html[data-procedure="lifting-facial"] .cv-hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(420px, .95fr);
+  gap: clamp(38px, 5vw, 64px);
 }
-html[data-procedure="avaliacao-facial"] .cv-hero-media {
+html[data-procedure="avaliacao-facial"] .cv-hero-media,
+html[data-procedure="lifting-facial"] .cv-hero-media {
   overflow: hidden;
-  border-radius: 26px;
+  border-radius: 12px;
   background: #eadbd4;
+  box-shadow: 0 18px 48px rgba(63, 45, 38, .13);
 }
-html[data-procedure="avaliacao-facial"] .cv-hero-media img {
-  height: min(64vh, 620px);
+html[data-procedure="avaliacao-facial"] .cv-hero-media img,
+html[data-procedure="lifting-facial"] .cv-hero-media img {
+  width: 100%;
+  height: clamp(500px, calc(100svh - 155px), 660px);
   aspect-ratio: auto;
-  border-radius: 0;
-  object-position: center 22%;
+  border-radius: 12px;
+  box-shadow: none;
+  object-position: 50% 35%;
 }
 html[data-procedure="avaliacao-facial"] .cv-split-media {
   border-radius: 22px;
@@ -95,25 +106,10 @@ html[data-procedure="avaliacao-facial"] .cv-split-media img {
 html[data-procedure="avaliacao-facial"] .cv-card,
 html[data-procedure="avaliacao-facial"] .cv-review { border-radius: 16px; }
 
-/* Lifting: enquadramento amplo e resultados nas proporções originais. */
-html[data-procedure="lifting-facial"] .cv-hero-grid {
-  grid-template-columns: minmax(0, 1.02fr) minmax(420px, .98fr);
-  gap: 58px;
-}
-html[data-procedure="lifting-facial"] .cv-hero-media {
-  overflow: hidden;
-  background: #e7d8d0;
-  box-shadow: 0 18px 48px rgba(63, 45, 38, .13);
-}
-html[data-procedure="lifting-facial"] .cv-hero-media img {
-  aspect-ratio: 4 / 3;
-  border-radius: 0;
-  box-shadow: none;
-  object-position: center 20%;
-}
+/* Lifting: resultados nas proporções originais. */
 html[data-procedure="lifting-facial"] .cv-result { box-shadow: 0 18px 42px rgba(15, 10, 9, .22); }
 html[data-procedure="lifting-facial"] .cv-card,
-html[data-procedure="lifting-facial"] .cv-review { border-radius: 0; }
+html[data-procedure="lifting-facial"] .cv-review { border-radius: 16px; }
 html[data-procedure="lifting-facial"] details .cv-grid figure img {
   height: 420px !important;
   aspect-ratio: 4 / 5 !important;
@@ -127,20 +123,12 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
   html[data-procedure="avaliacao-facial"] .cv-hero-grid,
   html[data-procedure="lifting-facial"] .cv-hero-grid { grid-template-columns: 1fr; }
 
-  html[data-page-type="home"] .cv-hero-media img {
+  html[data-page-type="home"] .cv-hero-media img,
+  html[data-procedure="avaliacao-facial"] .cv-hero-media img,
+  html[data-procedure="lifting-facial"] .cv-hero-media img {
     height: auto;
     aspect-ratio: 16 / 10;
     object-position: center 28%;
-  }
-
-  html[data-procedure="avaliacao-facial"] .cv-hero-media img {
-    height: 300px;
-    object-position: center 20%;
-  }
-
-  html[data-procedure="lifting-facial"] .cv-hero-media img {
-    aspect-ratio: 16 / 10;
-    object-position: center 18%;
   }
 }
 
@@ -172,6 +160,7 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
     scroll-snap-align: start;
   }
   .cv-result figcaption { padding: 18px; }
+  .cv-results--three .cv-result img { height: 240px; }
 
   html[data-page-type="home"] .cv-results .cv-result img { height: 280px; }
   html[data-page-type="home"] #quem-conduz .cv-split-media img {
@@ -179,21 +168,15 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
     object-position: center 20%;
   }
 
-  html[data-procedure="avaliacao-facial"] .cv-hero-media { border-radius: 18px; }
-  html[data-procedure="avaliacao-facial"] .cv-hero-media img {
-    height: 220px;
-    aspect-ratio: auto;
-    border-radius: 0;
-  }
+  html[data-procedure="avaliacao-facial"] .cv-hero-media,
+  html[data-procedure="lifting-facial"] .cv-hero-media,
+  html[data-procedure="avaliacao-facial"] .cv-hero-media img,
+  html[data-procedure="lifting-facial"] .cv-hero-media img { border-radius: 10px; }
   html[data-procedure="avaliacao-facial"] .cv-split-media img {
     height: 220px;
     object-position: center 48%;
   }
 
-  html[data-procedure="lifting-facial"] .cv-hero-media img {
-    border-radius: 0;
-    aspect-ratio: 16 / 10;
-  }
   html[data-procedure="lifting-facial"] details .cv-grid figure img {
     height: auto !important;
     aspect-ratio: 16 / 10 !important;
@@ -211,6 +194,7 @@ html[data-procedure="lifting-facial"] details .cv-grid figure img {
   text-transform: none;
 }
 .cv-links { gap: 18px; }
+main [id] { scroll-margin-top: 86px; }
 
 /* Apresentação da médica sem conteúdo escondido em acordeão. */
 .cv-story {
@@ -574,6 +558,7 @@ body.curated-video-open { overflow: hidden; }
   .cv-clinic-compact,
   .cv-surgical-proof { grid-template-columns: 1fr; }
   .cv-clinic-copy { max-width: 720px; }
+  .cv-results--three { grid-template-columns: 1fr; }
   .cv-footer-grid { grid-template-columns: 1fr; }
 }
 
