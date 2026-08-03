@@ -181,6 +181,37 @@ export async function appendConversationTurn(
   }
 }
 
+export async function readConversationTurns(
+  phone,
+  {
+    getStoreImpl = getStore,
+    now = Date.now(),
+  } = {},
+) {
+  if (!phone) {
+    return { status: "skipped", expired: false, turns: [] };
+  }
+
+  try {
+    const conversationStore = store(getStoreImpl);
+    const normalized = normalizeConversation(
+      await conversationStore.get(conversationKey(phone), {
+        type: "json",
+        consistency: "strong",
+      }),
+      now,
+    );
+
+    return {
+      status: "completed",
+      expired: normalized.expired,
+      turns: normalized.conversation.turns,
+    };
+  } catch {
+    return { status: "failed", expired: false, turns: [] };
+  }
+}
+
 export function toOpenAIConversation(turns) {
   return (Array.isArray(turns) ? turns : [])
     .slice(-MAX_TURNS)

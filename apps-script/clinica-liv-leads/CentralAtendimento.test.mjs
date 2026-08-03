@@ -349,3 +349,20 @@ test("the central refresh passes the current Date to the follow-up loader", () =
   assert.equal(receivedNow, now);
   assert.equal(result.ok, true);
 });
+
+test("excludes Dr. Henrique appointments without hiding a referral", () => {
+  const context = loadContext();
+  const excluded = context.identificarTelefonesProfissionaisExternosCentral_({
+    "+5511999990001": [
+      {
+        texto: "Agendamento confirmado. Data: 05/08/2026. Horário: 15h. Médico: Dr. Henrique Lane Staniak.",
+      },
+    ],
+    "+5511999990002": [
+      { texto: "O Dr. Henrique Staniak indicou a Dra. Amanda." },
+    ],
+  });
+
+  assert.equal(excluded["+5511999990001"], true);
+  assert.equal(excluded["+5511999990002"], undefined);
+});

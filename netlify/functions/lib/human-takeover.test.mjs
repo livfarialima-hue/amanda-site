@@ -204,3 +204,87 @@ test("WhatsApp Business automatic greeting does not mark human takeover", async 
     }
   }
 });
+
+test("Dr. Henrique appointment echo cleans the spreadsheet and never takes over Amanda scheduling", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const sheetActions = [];
+
+  process.env.YCLOUD_WEBHOOK_SECRET = WEBHOOK_SECRET;
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = SHEETS_URL;
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    if (url !== SHEETS_URL) {
+      throw new Error(`unexpected destination: ${url}`);
+    }
+    const body = JSON.parse(options.body);
+    sheetActions.push(body);
+    return new Response(
+      JSON.stringify({ ok: true, leadRowsCleared: 1 }),
+      { status: 200 },
+    );
+  };
+
+  try {
+    const response = await webhook(
+      signedRequest({
+        id: "henrique-appointment-echo",
+        type: "whatsapp.smb.message.echoes",
+        createTime: "2026-08-03T14:41:00.000Z",
+        whatsappMessage: {
+          id: "henrique-appointment-message",
+          wamid: "wamid.henrique-appointment-message",
+          status: "sent",
+          from: "+5511961957144",
+          to: PATIENT_PHONE,
+          type: "text",
+          text: {
+            body:
+              "Agendamento confirmado. Nome: Jacqueline. Data: 05/08/2026. Horário: 16h00. Médico: Dr. Henrique Lane Staniak.",
+          },
+          sendTime: "2026-08-03T14:41:00.000Z",
+        },
+      }),
+    );
+    const body = await response.json();
+
+    assert.equal(body.ignored, true);
+    assert.equal(
+      body.ignoreReason,
+      "external_dr_henrique_appointment",
+    );
+    const cleanupActions = sheetActions.filter(
+      (action) =>
+        action.action ===
+        "remove_external_professional_contact",
+    );
+    assert.equal(cleanupActions.length, 1);
+    assert.equal(
+      sheetActions.some(
+        (action) => action.action === "mark_human_takeover",
+      ),
+      false,
+    );
+    assert.equal(
+      cleanupActions[0].action,
+      "remove_external_professional_contact",
+    );
+    assert.equal(cleanupActions[0].contact.phone, PATIENT_PHONE);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

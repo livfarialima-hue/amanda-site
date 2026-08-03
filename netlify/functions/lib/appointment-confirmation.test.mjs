@@ -305,6 +305,17 @@ test("recognizes a sent reminder as an explicit complete appointment record", ()
   assert.equal(result?.scheduledTime, "08:00");
 });
 
+test("never records or blocks a slot for Dr. Henrique Staniak", () => {
+  const result = detectManualAppointment({
+    currentText:
+      "Agendamento confirmado. Nome: José Carlos. Data: 05/08/2026. Horário: 15h00. Médico: Dr. Henrique Lane Staniak.",
+    at: "2026-08-03T09:10:00-03:00",
+    recentConversation: [],
+  });
+
+  assert.equal(result, null);
+});
+
 test("flags a plausible manual closing for email review when acceptance is unclear", () => {
   const result = detectManualAppointment({
     currentText: "Combinado então",

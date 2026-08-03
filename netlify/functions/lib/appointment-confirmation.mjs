@@ -591,6 +591,20 @@ export function detectManualAppointment({
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
 
+  const fullContext = [
+    ...(Array.isArray(recentConversation)
+      ? recentConversation.map((turn) => turn?.text)
+      : []),
+    currentText,
+  ].join(" ");
+  if (
+    /\bdr\.?\s*henrique(?:\s+lane)?\s+staniak\b/i.test(
+      fullContext.normalize("NFD").replace(/\p{Diacritic}/gu, ""),
+    )
+  ) {
+    return null;
+  }
+
   const explicit = isExplicitManualConfirmation(currentText);
   const closing = isManualClosingPhrase(currentText);
   if (!explicit && !closing) return null;

@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   appendConversationTurn,
   conversationKey,
+  readConversationTurns,
   toOpenAIConversation,
 } from "./conversation-memory.mjs";
 
@@ -28,6 +29,33 @@ test("conversation key is stable and omits the phone", () => {
   assert.equal(key, conversationKey(phone));
   assert.equal(key.includes(phone), false);
   assert.match(key, /^[a-f0-9]{64}$/);
+});
+
+test("reads recent conversation turns without changing them", async () => {
+  const blobs = fakeBlobs({
+    version: 1,
+    updatedAt: "2026-08-03T15:00:00.000Z",
+    turns: [
+      {
+        role: "assistant",
+        text: "Agendamento confirmado. Médico: Dr. Henrique Lane Staniak. Data: 05/08/2026. Horário: 15h.",
+        eventId: "appointment",
+        at: "2026-08-03T15:00:00.000Z",
+        source: "human",
+      },
+    ],
+  });
+  const result = await readConversationTurns(
+    "+5511900000000",
+    {
+      getStoreImpl: blobs.getStoreImpl,
+      now: Date.parse("2026-08-03T15:01:00.000Z"),
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.turns.length, 1);
+  assert.match(result.turns[0].text, /Henrique Lane Staniak/);
 });
 
 test("a patient turn returns the previous history and persists safely", async () => {

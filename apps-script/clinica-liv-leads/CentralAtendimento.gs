@@ -145,6 +145,13 @@ function atualizarCentralAtendimentoInterno_(
     typeof carregarLeadsRetomadas_ === "function"
       ? carregarLeadsRetomadas_(leadsSheet)
       : {};
+  const externalProfessionalPhones =
+    identificarTelefonesProfissionaisExternosCentral_(conversations);
+  Object.keys(externalProfessionalPhones).forEach(function (phone) {
+    delete conversations[phone];
+    delete leads[phone];
+    delete profiles[phone];
+  });
   const itemsByPatient = {};
 
   carregarCompromissosCentral_(
@@ -226,6 +233,32 @@ function atualizarCentralAtendimentoInterno_(
     queues: counts,
     sheetName: CENTRAL_ATENDIMENTO_CONFIG.sheetName,
   };
+}
+
+function identificarTelefonesProfissionaisExternosCentral_(conversations) {
+  const result = {};
+
+  Object.keys(conversations || {}).forEach(function (phone) {
+    const text = (conversations[phone] || [])
+      .map(function (message) {
+        return String(message && message.texto || "");
+      })
+      .join(" ");
+    const normalized = normalizarTextoCentral_(text);
+    const namesDoctor = /\bdr\.? henrique(?: lane)? staniak\b/.test(
+      normalized,
+    );
+    const structuredAppointment =
+      /\b(?:agendamento confirmado|medico:)\b/.test(normalized) &&
+      /\bdata:/.test(normalized) &&
+      /\bhorario:/.test(normalized);
+
+    if (namesDoctor && structuredAppointment) {
+      result[phone] = true;
+    }
+  });
+
+  return result;
 }
 
 function carregarCompromissosCentral_(

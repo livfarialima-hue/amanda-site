@@ -80,7 +80,8 @@ function doPost(e) {
       body.action !== "fail_classification" &&
       body.action !== "get_patient_relationship" &&
       body.action !== "record_patient_commitment" &&
-      body.action !== "resolve_patient_commitments"
+      body.action !== "resolve_patient_commitments" &&
+      body.action !== "remove_external_professional_contact"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
     }
@@ -278,6 +279,23 @@ function doPost(e) {
       return json_({
         ok: resolutionResult.ok === true,
         ...resolutionResult,
+      });
+    }
+
+    if (body.action === "remove_external_professional_contact") {
+      stage = "remove_external_professional_contact";
+
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+
+      const cleanupResult = removerContatoProfissionalExterno_(
+        body.contact || {},
+      );
+
+      return json_({
+        ok: cleanupResult.ok === true,
+        ...cleanupResult,
       });
     }
 
@@ -487,6 +505,91 @@ function doPost(e) {
       lock.releaseLock();
     }
   }
+}
+
+function removerContatoProfissionalExterno_(input) {
+  const phone = normalizePhone_(input && input.phone);
+  if (!phone) {
+    return { ok: false, error: "invalid_phone" };
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const leadSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  let leadRowsCleared = 0;
+
+  if (leadSheet) {
+    const leadRow = findLeadRowByPhone_(leadSheet, phone);
+    if (leadRow) {
+      leadSheet
+        .getRange(leadRow, 1, 1, leadSheet.getLastColumn())
+        .clearContent();
+      leadRowsCleared = 1;
+    }
+  }
+
+  const derivedSheetNames = [
+    "Consultas",
+    "_WHATSAPP_RETOMADAS",
+    "_WHATSAPP_COMPROMISSOS",
+    "_WHATSAPP_MENSAGENS",
+    "_WHATSAPP_ATENDIMENTO_HUMANO",
+    "_WHATSAPP_ALERTAS_EMAIL",
+  ];
+  const removedBySheet = {};
+
+  derivedSheetNames.forEach(function (sheetName) {
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet) return;
+    const removed = removerLinhasPorTelefone_(sheet, phone);
+    if (removed) removedBySheet[sheetName] = removed;
+  });
+
+  if (typeof atualizarCentralAtendimento === "function") {
+    atualizarCentralAtendimento();
+  }
+
+  return {
+    ok: true,
+    professional:
+      String(input && input.professional || "").trim() ||
+      "Dr. Henrique Lane Staniak",
+    leadRowsCleared,
+    removedBySheet,
+  };
+}
+
+function removerLinhasPorTelefone_(sheet, phone) {
+  if (!sheet || sheet.getLastRow() < 2) return 0;
+
+  const lastColumn = sheet.getLastColumn();
+  const headers = sheet
+    .getRange(1, 1, 1, lastColumn)
+    .getDisplayValues()[0]
+    .map(function (value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase();
+    });
+  const phoneColumn = headers.findIndex(function (header) {
+    return header === "telefone" || header.indexOf("telefone (") === 0;
+  });
+
+  if (phoneColumn < 0) return 0;
+
+  const values = sheet
+    .getRange(2, phoneColumn + 1, sheet.getLastRow() - 1, 1)
+    .getDisplayValues();
+  let removed = 0;
+
+  for (let index = values.length - 1; index >= 0; index -= 1) {
+    if (normalizePhone_(values[index][0]) !== phone) continue;
+    sheet.deleteRow(index + 2);
+    removed += 1;
+  }
+
+  return removed;
 }
 
 function parseBody_(e) {

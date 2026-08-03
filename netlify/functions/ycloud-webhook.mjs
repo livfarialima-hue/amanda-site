@@ -27,8 +27,16 @@ import {
 } from "./lib/lead-deduplication.mjs";
 import {
   appendConversationTurn,
+  readConversationTurns,
   toOpenAIConversation,
 } from "./lib/conversation-memory.mjs";
+import {
+  clearExternalProfessionalContext,
+  getExternalProfessionalContext,
+  isExternalProfessionalAppointmentMessage,
+  isExplicitAmandaInquiry,
+  markExternalProfessionalContext,
+} from "./lib/external-professional-context.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
   checkLatestInboundReply,
@@ -1965,6 +1973,38 @@ export default async (request, context) => {
       });
     }
 
+    const echoText = String(echo.text?.body || "");
+    if (isExternalProfessionalAppointmentMessage(echoText)) {
+      const externalContext = await markExternalProfessionalContext({
+        phone: patientPhone,
+        at: String(
+          echo.sendTime ||
+            echo.createTime ||
+            payload.createTime ||
+            "",
+        ),
+      });
+      const cleanup = await deliverSheetsAction(
+        "remove_external_professional_contact",
+        {
+          contact: {
+            phone: patientPhone,
+            professional: "Dr. Henrique Lane Staniak",
+          },
+        },
+      );
+
+      return json({
+        received: true,
+        ignored: true,
+        ignoreReason: "external_dr_henrique_appointment",
+        externalContextStatus: externalContext.status,
+        spreadsheetCleanupStatus: cleanup.ok
+          ? "completed"
+          : cleanup.errorCode,
+      });
+    }
+
     const humanResumeControl = await markHumanTakeover({
       phone: patientPhone,
       eventId: String(eventId),
@@ -2126,6 +2166,52 @@ export default async (request, context) => {
 
   const contactAt = message.sendTime || payload.createTime;
   const text = String(message.text?.body || "");
+  let externalProfessionalContext =
+    await getExternalProfessionalContext(phone);
+  const directExternalProfessionalRequest =
+    isExternalProfessionalAppointmentMessage(text);
+  if (!externalProfessionalContext) {
+    const rememberedConversation = await readConversationTurns(phone);
+    const rememberedExternalAppointment = rememberedConversation.turns.some(
+      (turn) => isExternalProfessionalAppointmentMessage(turn.text),
+    );
+
+    if (directExternalProfessionalRequest || rememberedExternalAppointment) {
+      await markExternalProfessionalContext({ phone, at: contactAt });
+      externalProfessionalContext = {
+        professional: "dr_henrique_staniak",
+      };
+      await deliverSheetsAction(
+        "remove_external_professional_contact",
+        {
+          contact: {
+            phone,
+            professional: "Dr. Henrique Lane Staniak",
+          },
+        },
+      );
+    }
+  }
+  if (
+    externalProfessionalContext &&
+    !isExplicitAmandaInquiry(text)
+  ) {
+    return json({
+      received: true,
+      ignored: true,
+      ignoreReason: "external_dr_henrique_conversation",
+      leadRecorded: false,
+      appointmentReserved: false,
+      aiShadowQueued: false,
+      aiActiveQueued: false,
+    });
+  }
+  if (
+    externalProfessionalContext &&
+    isExplicitAmandaInquiry(text)
+  ) {
+    await clearExternalProfessionalContext(phone);
+  }
   const attribution = classifyAttribution(payload, message, text);
   const referralContext = extractReferralContext(message);
   const messageId = message.wamid || message.id || eventId;
