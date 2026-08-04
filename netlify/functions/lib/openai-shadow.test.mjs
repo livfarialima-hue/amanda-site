@@ -166,6 +166,43 @@ test("recognizes the current site WhatsApp reference as a website visit", () => 
   assert.equal(attribution.reference, "Blefaroplastia");
 });
 
+test("recognizes the stable organic SITE reference created by every page", () => {
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "Olá, vim pelo site.\n\nRef. SITE-lifting-facial",
+  );
+
+  assert.equal(attribution.platform, "Orgânico/Conteúdo");
+  assert.equal(attribution.referenceCategory, "site_page");
+  assert.equal(attribution.reference, "SITE-lifting-facial");
+});
+
+test("recognizes Google Ads without exposing a click ID before consent", () => {
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "Olá, gostaria de uma avaliação.\n\nRef. G26ADS-lifting-facial",
+  );
+
+  assert.equal(attribution.platform, "Google");
+  assert.equal(attribution.referenceCategory, "google_coded");
+  assert.equal(attribution.reference, "G26ADS-lifting-facial");
+  assert.deepEqual(attribution.clickIds, {});
+});
+
+test("recognizes a complete Meta site journey with creative and page codes", () => {
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "Olá, gostaria de saber mais.\n\nRef. M26O01W-DbHKuWfGP_N-OT02",
+  );
+
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_coded");
+  assert.equal(attribution.reference, "M26O01W-DbHKuWfGP_N-OT02");
+});
+
 test("maps known Meta ad IDs to complete campaign references", () => {
   const attribution = classifyAttribution(
     {},

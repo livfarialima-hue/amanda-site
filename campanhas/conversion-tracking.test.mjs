@@ -93,6 +93,55 @@ test("does not read click IDs before marketing consent", () => {
   );
 });
 
+test("uses a generic Google Ads reference before consent without exposing the click ID", () => {
+  const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "hero", procedure: "lifting-facial" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.%0A%0ARefer%C3%AAncia%3A%20Lifting%20facial",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+
+  const { debug } = loadAttribution({
+    consent: "denied",
+    links: [link],
+    readyState: "complete",
+    search: `?gclid=${gclid}`,
+  });
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(debug.readAttributionFromUrl())),
+    { origem: "G26ADS" },
+  );
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /Ref\. G26ADS-lifting-facial$/);
+  assert.doesNotMatch(message, /GCLID:/);
+});
+
+test("every organic site CTA gets a stable SITE reference", () => {
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "hero", procedure: "avaliacao-facial" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1%2C%20vim%20pelo%20site.",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+
+  loadAttribution({
+    consent: "denied",
+    links: [link],
+    readyState: "complete",
+  });
+
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /Ref\. SITE-avaliacao-facial$/);
+});
+
 test("keeps exact click IDs after explicit consent", () => {
   const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
   const { debug } = loadAttribution({
@@ -101,6 +150,30 @@ test("keeps exact click IDs after explicit consent", () => {
   });
 
   assert.equal(debug.readAttributionFromUrl().gclid, gclid);
+});
+
+test("adds the exact click ID to WhatsApp only after explicit consent", () => {
+  const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "hero", procedure: "lifting-facial" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.%0A%0ARefer%C3%AAncia%3A%20Lifting%20facial",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+
+  loadAttribution({
+    consent: "granted",
+    links: [link],
+    readyState: "complete",
+    search: `?gclid=${gclid}`,
+  });
+
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /Ref\. G26ADS-lifting-facial/);
+  assert.match(message, new RegExp(`GCLID: ${gclid}$`));
 });
 
 test("revocation removes stored click IDs but keeps neutral campaign codes", () => {

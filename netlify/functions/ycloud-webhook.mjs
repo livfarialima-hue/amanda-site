@@ -265,6 +265,29 @@ function matchSiteCta(value, anchored = false) {
   return match ? match[1].toUpperCase() : null;
 }
 
+function matchStructuredSiteReference(value, anchored = false) {
+  const boundary = anchored ? "^\\s*" : "\\b";
+  const pattern = new RegExp(
+    `${boundary}(` +
+      `(?:SITE-[A-Z0-9_]+(?:-[A-Z0-9_]+)*)|` +
+      `(?:G26[A-Z0-9]{2,16}(?:-[A-Z0-9_]+)*)|` +
+      `(?:M26[A-Z]\\d{2}[A-Z](?:-[A-Z0-9_]+)*)` +
+      `)(?![A-Z0-9_-])`,
+    "i",
+  );
+  const match = String(value || "").match(pattern);
+  if (!match) return null;
+
+  const reference = match[1];
+  if (/^SITE-/i.test(reference)) {
+    return { value: reference, family: "site_page" };
+  }
+  if (/^G26/i.test(reference)) {
+    return { value: reference, family: "google" };
+  }
+  return { value: reference, family: "meta" };
+}
+
 const SITE_PAGE_REFERENCES = [
   ["Lifting Facial", /^\s*lifting\s+facial\b/i],
   ["Lifting Cervical", /^\s*lifting\s+cervical\b/i],
@@ -316,6 +339,9 @@ function matchSitePageReference(value) {
 }
 
 function matchNeutralCode(value, anchored = false) {
+  const structuredSiteReference = matchStructuredSiteReference(value, anchored);
+  if (structuredSiteReference) return structuredSiteReference;
+
   const meta = matchMetaCode(value, anchored);
   if (meta) return { value: meta, family: "meta" };
 

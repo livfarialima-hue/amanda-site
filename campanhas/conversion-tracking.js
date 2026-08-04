@@ -262,6 +262,19 @@
         var value = sanitizeMarketingAttributionValue(param, searchParams.get(param));
         if (value) attribution[param] = value;
       });
+
+      // A referência de origem não depende do consentimento de marketing.
+      // Quando a marcação automática identifica um clique do Google, mas a
+      // campanha não trouxe um código estável, preservamos somente o código
+      // genérico G26ADS. O identificador individual continua restrito ao
+      // fluxo consentido abaixo.
+      var hasGoogleClickId = marketingClickIdParams.some(function (param) {
+        return !!normalizeClickId(searchParams.get(param) || '');
+      });
+      var isGooglePaidVisit = attribution.utm_source === 'google' && attribution.utm_medium === 'cpc';
+      if (!attribution.utm_campaign && !attribution.origem && (hasGoogleClickId || isGooglePaidVisit)) {
+        attribution.origem = normalizeCampaignOriginCode(config.googleAdsFallbackOriginCode || 'G26ADS') || 'G26ADS';
+      }
     } catch (error) {}
     return attribution;
   }
@@ -329,8 +342,17 @@
     if (originalReference) return originalReference;
 
     var referenceMatch = message.match(/\bRef\.\s*([A-Za-z0-9_-]{1,80})(?=\s|$)/i);
-    if (!referenceMatch) return '';
-    originalReference = sanitizeTrackingValue(referenceMatch[1]);
+    if (referenceMatch) originalReference = sanitizeTrackingValue(referenceMatch[1]);
+
+    // A maioria das páginas usa uma referência descritiva e legível, como
+    // "Referência: Lifting facial". O data-procedure é o código estável e
+    // fechado que permite transformar qualquer CTA do site em uma referência
+    // técnica sem depender da redação visível da mensagem.
+    if (!originalReference) {
+      originalReference = sanitizeTrackingValue(link.dataset.procedure || '');
+    }
+    if (!originalReference) return '';
+
     var attributionPrefix = [attribution.utm_campaign || attribution.origem || '', attribution.utm_content || '']
       .filter(function (value) { return !!value; })
       .join('-');
@@ -346,6 +368,7 @@
     var campaign = attribution.utm_campaign || attribution.origem || '';
     if (campaign) referenceParts.push(campaign);
     if (attribution.utm_content) referenceParts.push(attribution.utm_content);
+    if (!referenceParts.length) referenceParts.push('SITE');
     referenceParts.push(originalReference);
     return referenceParts.join('-');
   }
@@ -362,8 +385,22 @@
 
       var reference = buildReference(attribution, originalReference);
       var updatedMessage = message
-        .replace(/(?:\r?\n)+(?:GCLID|GBRAID|WBRAID):[^\r\n]*/gi, '')
-        .replace(/(\bRef\.\s*)[A-Za-z0-9_-]{1,80}(?=\s|$)/i, '$1' + reference);
+        .replace(/(?:\r?\n)+(?:GCLID|GBRAID|WBRAID):[^\r\n]*/gi, '');
+
+      if (/\bRef\.\s*[A-Za-z0-9_-]{1,80}(?=\s|$)/i.test(updatedMessage)) {
+        updatedMessage = updatedMessage.replace(
+          /(\bRef\.\s*)[A-Za-z0-9_-]{1,80}(?=\s|$)/i,
+          '$1' + reference
+        );
+      } else if (/\bRefer[eê]ncia\s*:[^\r\n]*/i.test(updatedMessage)) {
+        updatedMessage = updatedMessage.replace(
+          /\bRefer[eê]ncia\s*:[^\r\n]*/i,
+          'Ref. ' + reference
+        );
+      } else {
+        updatedMessage = updatedMessage.replace(/\s+$/, '') + '\n\nRef. ' + reference;
+      }
+
       marketingClickIdParams.forEach(function (param) {
         if (attribution[param]) updatedMessage += '\n' + param.toUpperCase() + ': ' + attribution[param];
       });
