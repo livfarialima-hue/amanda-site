@@ -228,9 +228,16 @@ function isConfirmation(text) {
 
 function detectProfessional(text) {
   const comparable = normalize(text);
-  return /\bdr\.?\s*daniel\b|\bdaniel\b.*\bcardio/.test(
-    comparable,
-  )
+  const genericSiteServicePicker =
+    /cirurgia plastica\s*\/?\s*estetica/.test(comparable) &&
+    /\bcardiologia\b/.test(comparable) &&
+    /origem do contato:\s*site liv faria lima/.test(comparable);
+  const explicitDaniel =
+    /\bdr\.?\s*daniel\b|\bdaniel\b.*\bcardio/.test(comparable) ||
+    (!genericSiteServicePicker &&
+      /\bcardiologia\b|\bcardiologista\b/.test(comparable));
+
+  return explicitDaniel
     ? "Dr. Daniel"
     : "Dra. Amanda";
 }
@@ -578,6 +585,12 @@ function isExplicitManualConfirmation(text) {
   ].some((pattern) => pattern.test(comparable));
 }
 
+export function isManualAppointmentSyncCommand(text) {
+  return /^confirmado seu agendamento(?:\b|[!.:,])/i.test(
+    normalize(text),
+  );
+}
+
 function isManualClosingPhrase(text) {
   const comparable = normalize(text);
   return [
@@ -597,7 +610,7 @@ function hasAppointmentConversationContext(recentConversation) {
     .filter(Boolean)
     .join(" ");
   const comparable = normalize(context);
-  return /\b(?:consulta|avaliacao|agendar|agendamento|horario|dra amanda|recepcao|atender|funciona|funcionaria)\w*\b/.test(
+  return /\b(?:consulta|avaliacao|agendar|agendamento|horario|dra amanda|dr daniel|cardiologia|cardiologista|recepcao|atender|funciona|funcionaria)\w*\b/.test(
     comparable,
   );
 }
@@ -671,9 +684,12 @@ export function detectManualAppointment({
       : []),
     currentText,
   ].join(" ");
+  const normalizedFullContext = fullContext
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "");
   if (
-    /\bdr\.?\s*henrique(?:\s+lane)?\s+staniak\b/i.test(
-      fullContext.normalize("NFD").replace(/\p{Diacritic}/gu, ""),
+    /\b(?:dr\.?\s*henrique(?:\s+lane)?\s+staniak|dra\.?\s*marina|dr\.?\s*laerte)\b/i.test(
+      normalizedFullContext,
     )
   ) {
     return null;
@@ -702,6 +718,7 @@ export function detectManualAppointment({
     );
 
   if (!appointment) return null;
+  const supportedProfessional = detectProfessional(fullContext);
   const appointmentContext = hasAppointmentConversationContext(
     recentConversation,
   );
@@ -724,6 +741,7 @@ export function detectManualAppointment({
 
   return {
     ...publicAppointmentSlot(appointment),
+    professional: supportedProfessional,
     status: "Consulta agendada",
     source: "WhatsApp — confirmação manual de agendamento detectada",
     confidence,

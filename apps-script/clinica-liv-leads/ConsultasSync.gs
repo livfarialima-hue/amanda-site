@@ -19,6 +19,13 @@ const CONSULTAS_SYNC_CONFIG = Object.freeze({
   postConsultEndpointProperty: "POS_CONSULTA_ENDPOINT",
   syncTriggerFunction: "sincronizarConsultasAoEditar",
   postConsultTriggerFunction: "processarPosConsulta",
+  defaultAppointmentDurationMinutes: 60,
+  roomCalendars: Object.freeze({
+    "Sala 1":
+      "257c2b41ddae349c5187ad3e422a19bd57b515435f14fa7ac4f933cdac8cb164@group.calendar.google.com",
+    "Sala 2":
+      "8ba6ec7ba5cfca4acf42ed4ea8fb2ceb99b31ddd88e6e36da868037374d9e0bd@group.calendar.google.com",
+  }),
 });
 
 const CONSULTAS_SYNC_HEADERS = Object.freeze({
@@ -26,6 +33,7 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
   phone: "Telefone (E.164)",
   name: "Nome do paciente",
   professional: "Profissional",
+  room: "Sala",
   consultationType: "Tipo de consulta",
   topic: "Tema / procedimento",
   location: "Local / modalidade",
@@ -45,6 +53,11 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
   lastHumanInteractionAt: "Última interação humana",
   nextAction: "Próxima ação",
   suppressionReason: "Motivo de supressão",
+  durationMinutes: "Duração (min)",
+  calendarId: "ID da agenda Google",
+  calendarEventId: "ID do evento Google",
+  calendarSyncStatus: "Sincronização Google Agenda",
+  calendarSyncError: "Erro Google Agenda",
 });
 
 const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
@@ -56,7 +69,176 @@ const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
   campaign: "Campanha",
   creative: "Criativo",
   notes: "Observação administrativa",
+  appointmentDate: "Data da consulta",
+  appointmentTime: "Horário da consulta",
+  appointmentProfessional: "Profissional da consulta",
+  appointmentRoom: "Sala da consulta",
 });
+
+function chaveProfissionalConsulta_(value) {
+  const normalized = normalizarTextoConsultasSync_(value);
+
+  if (normalized.includes("amanda")) return "amanda";
+  if (normalized.includes("henrique")) return "henrique";
+  if (normalized.includes("marina")) return "marina";
+  if (normalized.includes("laerte")) return "laerte";
+  if (normalized.includes("daniel")) return "daniel";
+
+  return "";
+}
+
+function salasPermitidasProfissional_(professional) {
+  const key = chaveProfissionalConsulta_(professional);
+
+  if (key === "amanda") return ["Sala 1"];
+  if (key === "henrique" || key === "daniel") {
+    return ["Sala 2"];
+  }
+  if (key === "marina" || key === "laerte") {
+    return ["Sala 1", "Sala 2"];
+  }
+
+  return [];
+}
+
+function profissionalPermitidoAutomacaoConsulta_(professional) {
+  const key = chaveProfissionalConsulta_(professional);
+  return key === "amanda" || key === "daniel";
+}
+
+function normalizarSalaConsulta_(value) {
+  const normalized = normalizarTextoConsultasSync_(value);
+  if (/\bsala\s*1\b/.test(normalized)) return "Sala 1";
+  if (/\bsala\s*2\b/.test(normalized)) return "Sala 2";
+  return "";
+}
+
+function consultaOcupaSala_(input) {
+  const context = normalizarTextoConsultasSync_(
+    [input && input.consultationType, input && input.location].join(" "),
+  );
+
+  return !/teleconsulta|online|videochamada/.test(context);
+}
+
+function duracaoConsultaMinutos_(value) {
+  const duration = Number(value);
+  if (Number.isFinite(duration)) {
+    return Math.max(15, Math.min(480, Math.round(duration)));
+  }
+
+  return CONSULTAS_SYNC_CONFIG.defaultAppointmentDurationMinutes;
+}
+
+function intervaloConsultaAgenda_(dateValue, timeValue, durationValue) {
+  const date = extrairDataConsultasSync_(dateValue);
+  const time = extrairHorarioConsultasSync_(timeValue);
+  if (!date || !time) return null;
+
+  const dateParts = date.split("-").map(Number);
+  const timeParts = time.split(":").map(Number);
+  const start = new Date(
+    dateParts[0],
+    dateParts[1] - 1,
+    dateParts[2],
+    timeParts[0],
+    timeParts[1],
+    0,
+    0,
+  );
+
+  if (Number.isNaN(start.getTime())) return null;
+
+  const durationMinutes = duracaoConsultaMinutos_(durationValue);
+  const end = new Date(
+    start.getTime() + durationMinutes * 60 * 1000,
+  );
+
+  return { start, end, durationMinutes };
+}
+
+function salaEstaLivreConsulta_(
+  room,
+  start,
+  end,
+  ignoredEventId,
+) {
+  const calendarId = CONSULTAS_SYNC_CONFIG.roomCalendars[room];
+  const calendar = CalendarApp.getCalendarById(calendarId);
+
+  if (!calendar) {
+    throw new Error("calendar_not_accessible_" + room.replace(/\s/g, "_"));
+  }
+
+  const events = calendar.getEvents(start, end);
+  const ignored = textoConsultasSync_(ignoredEventId, 240);
+  const conflict = events.some(function (event) {
+    return !ignored || event.getId() !== ignored;
+  });
+
+  return {
+    free: !conflict,
+    calendar,
+    calendarId,
+  };
+}
+
+function escolherSalaDisponivelConsulta_(input) {
+  if (!consultaOcupaSala_(input || {})) {
+    return { ok: true, room: "", remote: true };
+  }
+
+  const interval = intervaloConsultaAgenda_(
+    input && input.scheduledDate,
+    input && input.scheduledTime,
+    input && input.durationMinutes,
+  );
+  if (!interval) return { ok: false, error: "invalid_schedule" };
+
+  const allowed = salasPermitidasProfissional_(
+    input && input.professional,
+  );
+  if (!allowed.length) {
+    return { ok: false, error: "professional_room_rule_missing" };
+  }
+
+  const preferred = normalizarSalaConsulta_(
+    input && (input.room || input.preferredRoom),
+  );
+  const ordered = allowed.slice();
+  if (preferred && allowed.includes(preferred)) {
+    ordered.splice(ordered.indexOf(preferred), 1);
+    ordered.unshift(preferred);
+  }
+
+  for (let index = 0; index < ordered.length; index += 1) {
+    const room = ordered[index];
+    const ignoredEventId =
+      normalizarSalaConsulta_(input && input.currentRoom) === room
+        ? input && input.calendarEventId
+        : "";
+    const availability = salaEstaLivreConsulta_(
+      room,
+      interval.start,
+      interval.end,
+      ignoredEventId,
+    );
+
+    if (!availability.free) continue;
+
+    return {
+      ok: true,
+      room,
+      calendar: availability.calendar,
+      calendarId: availability.calendarId,
+      start: interval.start,
+      end: interval.end,
+      durationMinutes: interval.durationMinutes,
+    };
+  }
+
+  return { ok: false, error: "room_not_available" };
+}
 
 function prepararAutomacaoConsultas() {
   const spreadsheet = SpreadsheetApp.openById(
@@ -71,6 +253,10 @@ function prepararAutomacaoConsultas() {
   }
 
   garantirEstruturaSincronizacaoConsultas_(sheet);
+  CONSULTAS_SYNC_CONFIG.leadSheetNames.forEach(function (sheetName) {
+    const leadSheet = spreadsheet.getSheetByName(sheetName);
+    if (leadSheet) garantirEstruturaAgendaVisivelLeads_(leadSheet);
+  });
 
   return {
     ok: true,
@@ -80,6 +266,37 @@ function prepararAutomacaoConsultas() {
     postConsultTriggerInstalled: existeGatilhoConsultas_(
       CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
     ),
+  };
+}
+
+function diagnosticarAgendaSalas() {
+  const calendars = Object.keys(
+    CONSULTAS_SYNC_CONFIG.roomCalendars,
+  ).map(function (room) {
+    const calendarId =
+      CONSULTAS_SYNC_CONFIG.roomCalendars[room];
+    const calendar = CalendarApp.getCalendarById(calendarId);
+
+    return {
+      room,
+      calendarId,
+      accessible: Boolean(calendar),
+      calendarName: calendar ? calendar.getName() : "",
+    };
+  });
+
+  return {
+    ok: calendars.every(function (calendar) {
+      return calendar.accessible;
+    }),
+    calendars,
+    roomRules: {
+      Amanda: salasPermitidasProfissional_("Dra. Amanda"),
+      Henrique: salasPermitidasProfissional_("Dr. Henrique"),
+      Marina: salasPermitidasProfissional_("Dra. Marina"),
+      Laerte: salasPermitidasProfissional_("Dr. Laerte"),
+      Daniel: salasPermitidasProfissional_("Dr. Daniel"),
+    },
   };
 }
 
@@ -325,6 +542,23 @@ function processarEdicaoNaAbaLeads_(e) {
         CONSULTAS_SYNC_LEAD_HEADERS.phone,
       ),
       professional,
+      room: valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom,
+      ),
+      consultationType: "Consulta presencial",
+      location: "Clínica LIV Faria Lima",
+      scheduledDate: valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentDate,
+      ),
+      scheduledTime: valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime,
+      ),
       status: completed
         ? "Consulta realizada"
         : "Consulta agendada",
@@ -339,7 +573,52 @@ function processarEdicaoNaAbaLeads_(e) {
       now,
     });
 
-    if (result.ok) synced += 1;
+    if (result.ok) {
+      synced += 1;
+      const consultationHeaders = consultationSheet
+        .getRange(1, 1, 1, consultationSheet.getLastColumn())
+        .getDisplayValues()[0];
+      const consultationColumns =
+        mapearCabecalhosConsultas_(consultationHeaders);
+      const consultationRow = consultationSheet
+        .getRange(
+          result.row,
+          1,
+          1,
+          consultationSheet.getLastColumn(),
+        )
+        .getValues()[0];
+      const calendarResult = sincronizarConsultaComAgendaNaLinha_(
+        consultationSheet,
+        result.row,
+        consultationColumns,
+        consultationRow,
+      );
+      if (calendarResult.room) {
+        atualizarAgendaVisivelNoLead_(
+          spreadsheet,
+          valorDaLinhaConsultas_(
+            row,
+            columns,
+            CONSULTAS_SYNC_LEAD_HEADERS.phone,
+          ),
+          professional,
+          {
+            scheduledDate: valorDaLinhaConsultas_(
+              row,
+              columns,
+              CONSULTAS_SYNC_LEAD_HEADERS.appointmentDate,
+            ),
+            scheduledTime: valorDaLinhaConsultas_(
+              row,
+              columns,
+              CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime,
+            ),
+            room: calendarResult.room,
+          },
+        );
+      }
+    }
   }
 
   return { ok: true, synced };
@@ -351,15 +630,30 @@ function processarEdicaoNaAbaConsultas_(e) {
     .getRange(1, 1, 1, sheet.getLastColumn())
     .getDisplayValues()[0];
   const columns = mapearCabecalhosConsultas_(headers);
-  const statusColumn =
-    columns[CONSULTAS_SYNC_HEADERS.status];
+  const operationalHeaders = [
+    CONSULTAS_SYNC_HEADERS.professional,
+    CONSULTAS_SYNC_HEADERS.room,
+    CONSULTAS_SYNC_HEADERS.consultationType,
+    CONSULTAS_SYNC_HEADERS.location,
+    CONSULTAS_SYNC_HEADERS.scheduledDate,
+    CONSULTAS_SYNC_HEADERS.scheduledTime,
+    CONSULTAS_SYNC_HEADERS.durationMinutes,
+    CONSULTAS_SYNC_HEADERS.status,
+  ];
+  const editedFirstColumn = e.range.getColumn();
+  const editedLastColumn = e.range.getLastColumn();
+  const affectsSchedule = operationalHeaders.some(function (header) {
+    const column = columns[header];
+    return (
+      column !== undefined &&
+      column + 1 >= editedFirstColumn &&
+      column + 1 <= editedLastColumn
+    );
+  });
 
   if (
-    statusColumn === undefined ||
     e.range.getRow() < 2 ||
-    statusColumn + 1 < e.range.getColumn() ||
-    statusColumn + 1 >
-      e.range.getLastColumn()
+    !affectsSchedule
   ) {
     return { ok: true, ignored: true };
   }
@@ -371,6 +665,8 @@ function processarEdicaoNaAbaConsultas_(e) {
   const refreshedColumns =
     mapearCabecalhosConsultas_(refreshedHeaders);
   let queued = 0;
+  let calendarSynced = 0;
+  let calendarErrors = 0;
 
   for (
     let rowNumber = Math.max(2, e.range.getRow());
@@ -389,6 +685,54 @@ function processarEdicaoNaAbaConsultas_(e) {
       row[refreshedColumns[CONSULTAS_SYNC_HEADERS.status]],
     );
 
+    const calendarResult = sincronizarConsultaComAgendaNaLinha_(
+      sheet,
+      rowNumber,
+      refreshedColumns,
+      row,
+    );
+    if (calendarResult.ok) calendarSynced += 1;
+    else calendarErrors += 1;
+
+    const phone = valorDaLinhaConsultas_(
+      row,
+      refreshedColumns,
+      CONSULTAS_SYNC_HEADERS.phone,
+    );
+    const professional = valorDaLinhaConsultas_(
+      row,
+      refreshedColumns,
+      CONSULTAS_SYNC_HEADERS.professional,
+    );
+    const room = calendarResult.room || valorDaLinhaConsultas_(
+      row,
+      refreshedColumns,
+      CONSULTAS_SYNC_HEADERS.room,
+    );
+    atualizarStatusLeadDaConsulta_(
+      sheet.getParent(),
+      phone,
+      professional,
+      valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.status,
+      ),
+    );
+    atualizarAgendaVisivelNoLead_(sheet.getParent(), phone, professional, {
+      scheduledDate: valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.scheduledDate,
+      ),
+      scheduledTime: valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.scheduledTime,
+      ),
+      room,
+    });
+
     if (!statusConsultaRealizada_(status)) continue;
 
     const preparation = prepararPosConsultaNaLinha_(
@@ -401,7 +745,7 @@ function processarEdicaoNaAbaConsultas_(e) {
     if (preparation && preparation.queued) queued += 1;
   }
 
-  return { ok: true, queued };
+  return { ok: true, queued, calendarSynced, calendarErrors };
 }
 
 function upsertConsultaRecebida_(input) {
@@ -417,19 +761,27 @@ function upsertConsultaRecebida_(input) {
   }
 
   garantirEstruturaSincronizacaoConsultas_(sheet);
+  const professional = input.professional || "Dra. Amanda";
+  const status = input.status || "Consulta agendada";
+
+  if (!profissionalPermitidoAutomacaoConsulta_(professional)) {
+    return { ok: false, error: "unsupported_professional" };
+  }
 
   const result = upsertConsulta_(sheet, {
     appointmentId: input.appointmentId || input.eventId,
     phone: input.phone,
     name: input.name,
-    professional: input.professional || "Dra. Amanda",
+    professional,
+    room: input.room,
     consultationType: input.consultationType,
     topic: input.topic,
     location:
       input.location || "Clínica LIV Faria Lima",
     scheduledDate: input.scheduledDate,
     scheduledTime: input.scheduledTime,
-    status: input.status || "Consulta agendada",
+    durationMinutes: input.durationMinutes,
+    status,
     source:
       input.source ||
       "WhatsApp — confirmação de agendamento detectada",
@@ -437,14 +789,42 @@ function upsertConsultaRecebida_(input) {
     now: new Date(),
   });
 
+  let calendarResult = { ok: true, skipped: true, room: "" };
+  if (result.ok && result.row) {
+    const headers = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getDisplayValues()[0];
+    const columns = mapearCabecalhosConsultas_(headers);
+    const row = sheet
+      .getRange(result.row, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+    calendarResult = sincronizarConsultaComAgendaNaLinha_(
+      sheet,
+      result.row,
+      columns,
+      row,
+    );
+  }
+
   atualizarStatusLeadDaConsulta_(
     spreadsheet,
     input.phone,
-    input.professional,
-    input.status || "Consulta agendada",
+    professional,
+    status,
   );
 
-  return result;
+  atualizarAgendaVisivelNoLead_(spreadsheet, input.phone, professional, {
+    scheduledDate: input.scheduledDate,
+    scheduledTime: input.scheduledTime,
+    room: calendarResult.room || input.room,
+  });
+
+  return Object.assign({}, result, {
+    calendarSynced: calendarResult.ok === true,
+    room: calendarResult.room || input.room || "",
+    calendarError:
+      calendarResult.ok === true ? "" : calendarResult.error,
+  });
 }
 
 function obterRelacionamentoPaciente_(input) {
@@ -754,9 +1134,17 @@ function reservarHorarioEAgendarConsulta_(input) {
     extrairDataConsultasSync_(input.scheduledDate);
   const requestedTime =
     extrairHorarioConsultasSync_(input.scheduledTime);
+  const professionalName =
+    input.professional || "Dra. Amanda";
   const requestedProfessional = normalizarTextoConsultasSync_(
-    input.professional || "Dra. Amanda",
+    professionalName,
   );
+  const requestedProfessionalKey =
+    chaveProfissionalConsulta_(requestedProfessional);
+
+  if (!profissionalPermitidoAutomacaoConsulta_(professionalName)) {
+    return { ok: false, error: "unsupported_professional" };
+  }
 
   if (!requestedDate || !requestedTime) {
     return { ok: false, error: "invalid_schedule" };
@@ -813,6 +1201,13 @@ function reservarHorarioEAgendarConsulta_(input) {
       );
 
     if (sameSchedule) {
+      const duplicateCalendarResult =
+        sincronizarConsultaComAgendaNaLinha_(
+          consultationSheet,
+          existingAppointmentRow,
+          consultationColumns,
+          existingAppointment,
+        );
       return {
         ok: true,
         reserved: true,
@@ -822,6 +1217,14 @@ function reservarHorarioEAgendarConsulta_(input) {
           input.appointmentId || input.eventId,
         scheduledDate: requestedDate,
         scheduledTime: requestedTime,
+        room:
+          duplicateCalendarResult.room ||
+          valorDaLinhaConsultas_(
+            existingAppointment,
+            consultationColumns,
+            CONSULTAS_SYNC_HEADERS.room,
+          ),
+        calendarSynced: duplicateCalendarResult.ok === true,
       };
     }
   }
@@ -883,11 +1286,8 @@ function reservarHorarioEAgendarConsulta_(input) {
       rowTime !== requestedTime ||
       (
         requestedProfessional &&
-        !rowProfessional.includes(
-          requestedProfessional.includes("daniel")
-            ? "daniel"
-            : "amanda",
-        )
+        (!requestedProfessionalKey ||
+          !rowProfessional.includes(requestedProfessionalKey))
       )
     ) {
       continue;
@@ -915,6 +1315,24 @@ function reservarHorarioEAgendarConsulta_(input) {
 
   if (!selectedRow) {
     return { ok: false, error: "slot_not_available" };
+  }
+
+  const roomSelection = escolherSalaDisponivelConsulta_({
+    professional: professionalName,
+    room: input.room,
+    consultationType:
+      input.consultationType || "Consulta presencial",
+    location: input.location || "Clínica LIV Faria Lima",
+    scheduledDate: requestedDate,
+    scheduledTime: requestedTime,
+    durationMinutes: input.durationMinutes,
+  });
+
+  if (!roomSelection.ok) {
+    return {
+      ok: false,
+      error: roomSelection.error,
+    };
   }
 
   const statusRange = scheduleSheet.getRange(
@@ -950,8 +1368,8 @@ function reservarHorarioEAgendarConsulta_(input) {
           input.appointmentId || input.eventId,
         phone: input.phone,
         name: input.name,
-        professional:
-          input.professional || "Dra. Amanda",
+        professional: professionalName,
+        room: roomSelection.room,
         consultationType:
           input.consultationType ||
           "Consulta presencial",
@@ -960,6 +1378,7 @@ function reservarHorarioEAgendarConsulta_(input) {
           input.location || "Clínica LIV Faria Lima",
         scheduledDate: requestedDate,
         scheduledTime: requestedTime,
+        durationMinutes: roomSelection.durationMinutes,
         status: "Consulta agendada",
         source:
           input.source ||
@@ -975,12 +1394,37 @@ function reservarHorarioEAgendarConsulta_(input) {
       );
     }
 
+    const refreshedHeaders = consultationSheet
+      .getRange(1, 1, 1, consultationSheet.getLastColumn())
+      .getDisplayValues()[0];
+    const refreshedColumns =
+      mapearCabecalhosConsultas_(refreshedHeaders);
+    const consultationRow = consultationSheet
+      .getRange(
+        consultationResult.row,
+        1,
+        1,
+        consultationSheet.getLastColumn(),
+      )
+      .getValues()[0];
+    const calendarResult = sincronizarConsultaComAgendaNaLinha_(
+      consultationSheet,
+      consultationResult.row,
+      refreshedColumns,
+      consultationRow,
+    );
+
     atualizarStatusLeadDaConsulta_(
       spreadsheet,
       input.phone,
-      input.professional || "Dra. Amanda",
+      professionalName,
       "Consulta agendada",
     );
+    atualizarAgendaVisivelNoLead_(spreadsheet, input.phone, professionalName, {
+      scheduledDate: requestedDate,
+      scheduledTime: requestedTime,
+      room: calendarResult.room || roomSelection.room,
+    });
     SpreadsheetApp.flush();
 
     return {
@@ -991,6 +1435,10 @@ function reservarHorarioEAgendarConsulta_(input) {
       appointmentId: consultationResult.appointmentId,
       scheduledDate: requestedDate,
       scheduledTime: requestedTime,
+      room: calendarResult.room || roomSelection.room,
+      calendarSynced: calendarResult.ok === true,
+      calendarError:
+        calendarResult.ok === true ? "" : calendarResult.error,
     };
   } catch (error) {
     statusRange.setValue(selectedRow.status || "Disponível");
@@ -1266,6 +1714,7 @@ function upsertConsulta_(sheet, input) {
       CONSULTAS_SYNC_HEADERS.professional,
       input.professional || "Dra. Amanda",
     ],
+    [CONSULTAS_SYNC_HEADERS.room, input.room],
     [
       CONSULTAS_SYNC_HEADERS.consultationType,
       input.consultationType,
@@ -1279,6 +1728,10 @@ function upsertConsulta_(sheet, input) {
     [
       CONSULTAS_SYNC_HEADERS.scheduledTime,
       input.scheduledTime,
+    ],
+    [
+      CONSULTAS_SYNC_HEADERS.durationMinutes,
+      input.durationMinutes,
     ],
     [CONSULTAS_SYNC_HEADERS.status, input.status],
     [CONSULTAS_SYNC_HEADERS.source, input.source],
@@ -1349,6 +1802,342 @@ function upsertConsulta_(sheet, input) {
     row: rowNumber,
     appointmentId,
   };
+}
+
+function statusCancelaAgendaConsulta_(value) {
+  return ["cancelada", "consulta cancelada"].includes(
+    normalizarTextoConsultasSync_(value),
+  );
+}
+
+function excluirEventoAgendaConsulta_(calendarId, eventId) {
+  if (!calendarId || !eventId) return false;
+
+  const calendar = CalendarApp.getCalendarById(calendarId);
+  if (!calendar) return false;
+
+  const event = calendar.getEventById(eventId);
+  if (!event) return false;
+
+  event.deleteEvent();
+  return true;
+}
+
+function sincronizarConsultaComAgendaNaLinha_(
+  sheet,
+  rowNumber,
+  columns,
+  row,
+) {
+  const professional = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.professional,
+    ),
+    80,
+  );
+  const scheduledDate = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.scheduledDate,
+  );
+  const scheduledTime = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.scheduledTime,
+  );
+  const consultationType = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.consultationType,
+  );
+  const location = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.location,
+  );
+  const durationMinutes = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.durationMinutes,
+  );
+  const currentRoom = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.room,
+  );
+  const currentCalendarId = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarId,
+    ),
+    240,
+  );
+  const currentEventId = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarEventId,
+    ),
+    240,
+  );
+  const status = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.status,
+  );
+
+  try {
+    if (statusCancelaAgendaConsulta_(status)) {
+      excluirEventoAgendaConsulta_(
+        currentCalendarId,
+        currentEventId,
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarEventId,
+        "",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+        "Cancelado no Google Agenda",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncError,
+        "",
+      );
+      return {
+        ok: true,
+        cancelled: true,
+        room: normalizarSalaConsulta_(currentRoom),
+      };
+    }
+
+    if (!professional || !scheduledDate || !scheduledTime) {
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+        "Pendente — completar profissional, data e horário",
+      );
+      return {
+        ok: true,
+        skipped: true,
+        room: normalizarSalaConsulta_(currentRoom),
+      };
+    }
+
+    const selection = escolherSalaDisponivelConsulta_({
+      professional,
+      room: currentRoom,
+      currentRoom,
+      consultationType,
+      location,
+      scheduledDate,
+      scheduledTime,
+      durationMinutes,
+      calendarEventId: currentEventId,
+    });
+
+    if (!selection.ok) {
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+        "Erro de sincronização",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncError,
+        selection.error,
+      );
+      return {
+        ok: false,
+        error: selection.error,
+        room: normalizarSalaConsulta_(currentRoom),
+      };
+    }
+
+    if (selection.remote) {
+      excluirEventoAgendaConsulta_(
+        currentCalendarId,
+        currentEventId,
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.room,
+        "",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarId,
+        "",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarEventId,
+        "",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+        "Não se aplica — atendimento remoto",
+      );
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarSyncError,
+        "",
+      );
+      return { ok: true, skipped: true, remote: true, room: "" };
+    }
+
+    const title = "Consulta — " + professional;
+    const description =
+      "Reserva operacional vinculada à aba Consultas. " +
+      "Dados da paciente permanecem somente na planilha.";
+    const eventLocation =
+      "Clínica LIV Faria Lima — " + selection.room;
+    let event = null;
+
+    if (
+      currentEventId &&
+      currentCalendarId === selection.calendarId
+    ) {
+      event = selection.calendar.getEventById(currentEventId);
+    }
+
+    if (!event) {
+      event = selection.calendar.createEvent(
+        title,
+        selection.start,
+        selection.end,
+        {
+          description,
+          location: eventLocation,
+        },
+      );
+
+      if (
+        currentEventId &&
+        currentCalendarId &&
+        currentCalendarId !== selection.calendarId
+      ) {
+        excluirEventoAgendaConsulta_(
+          currentCalendarId,
+          currentEventId,
+        );
+      }
+    } else {
+      event.setTitle(title);
+      event.setTime(selection.start, selection.end);
+      event.setDescription(description);
+      event.setLocation(eventLocation);
+    }
+
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.room,
+      selection.room,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.durationMinutes,
+      selection.durationMinutes,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarId,
+      selection.calendarId,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarEventId,
+      event.getId(),
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+      "Sincronizado em " +
+        Utilities.formatDate(
+          new Date(),
+          CONSULTAS_SYNC_CONFIG.timezone,
+          "dd/MM/yyyy HH:mm",
+        ),
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarSyncError,
+      "",
+    );
+
+    return {
+      ok: true,
+      room: selection.room,
+      calendarId: selection.calendarId,
+      calendarEventId: event.getId(),
+    };
+  } catch (error) {
+    const message = textoConsultasSync_(
+      error && error.message ? error.message : error,
+      240,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+      "Erro de sincronização",
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarSyncError,
+      message,
+    );
+
+    return {
+      ok: false,
+      error: message || "calendar_sync_failed",
+      room: normalizarSalaConsulta_(currentRoom),
+    };
+  }
 }
 
 function localizarConsultaExistente_(sheet, columns, input) {
@@ -2043,12 +2832,8 @@ function atualizarStatusLeadDaConsulta_(
 
   if (!phone) return;
 
-  const preferredSheet =
-    normalizarTextoConsultasSync_(professional).includes(
-      "daniel",
-    )
-      ? "Leads Dr. Daniel"
-      : "Google Ads - Conversões";
+  const preferredSheet = nomePlanilhaLeadProfissional_(professional);
+  if (!preferredSheet) return;
   const sheet = spreadsheet.getSheetByName(preferredSheet);
 
   if (!sheet || sheet.getLastRow() < 2) return;
@@ -2100,6 +2885,124 @@ function atualizarStatusLeadDaConsulta_(
   }
 }
 
+function nomePlanilhaLeadProfissional_(professional) {
+  const key = chaveProfissionalConsulta_(professional);
+  if (key === "amanda") return "Google Ads - Conversões";
+  if (key === "daniel") return "Leads Dr. Daniel";
+  return "";
+}
+
+function garantirEstruturaAgendaVisivelLeads_(sheet) {
+  const lastColumn = Math.max(sheet.getLastColumn(), 1);
+  const headers = sheet
+    .getRange(1, 1, 1, lastColumn)
+    .getDisplayValues()[0]
+    .map(function (value) {
+      return String(value || "").trim();
+    });
+  const appointmentHeaders = [
+    CONSULTAS_SYNC_LEAD_HEADERS.appointmentDate,
+    CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime,
+    CONSULTAS_SYNC_LEAD_HEADERS.appointmentProfessional,
+    CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom,
+  ];
+
+  appointmentHeaders.forEach(function (header) {
+    if (mapearCabecalhosConsultas_(headers)[header] !== undefined) {
+      return;
+    }
+    if (
+      typeof sheet.getMaxColumns === "function" &&
+      typeof sheet.insertColumnsAfter === "function" &&
+      headers.length >= sheet.getMaxColumns()
+    ) {
+      sheet.insertColumnsAfter(sheet.getMaxColumns(), 4);
+    }
+    headers.push(header);
+    sheet.getRange(1, headers.length).setValue(header);
+  });
+
+  const columns = mapearCabecalhosConsultas_(headers);
+  const widths = {
+    [CONSULTAS_SYNC_LEAD_HEADERS.appointmentDate]: 125,
+    [CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime]: 125,
+    [CONSULTAS_SYNC_LEAD_HEADERS.appointmentProfessional]: 180,
+    [CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom]: 110,
+  };
+  Object.keys(widths).forEach(function (header) {
+    sheet.setColumnWidth(columns[header] + 1, widths[header]);
+  });
+
+  return columns;
+}
+
+function formatarDataVisivelConsulta_(value) {
+  const iso = extrairDataConsultasSync_(value);
+  if (!iso) return "";
+  const parts = iso.split("-");
+  return [parts[2], parts[1], parts[0]].join("/");
+}
+
+function atualizarAgendaVisivelNoLead_(
+  spreadsheet,
+  phoneValue,
+  professional,
+  appointment,
+) {
+  const phone = normalizarTelefoneConsultasSync_(phoneValue);
+  const preferredSheet = nomePlanilhaLeadProfissional_(professional);
+  if (!phone || !preferredSheet) return false;
+
+  const sheet = spreadsheet.getSheetByName(preferredSheet);
+  if (!sheet || sheet.getLastRow() < 2) return false;
+
+  const columns = garantirEstruturaAgendaVisivelLeads_(sheet);
+  const phoneColumn = columns[CONSULTAS_SYNC_LEAD_HEADERS.phone];
+  if (phoneColumn === undefined) return false;
+
+  const phones = sheet
+    .getRange(2, phoneColumn + 1, sheet.getLastRow() - 1, 1)
+    .getDisplayValues();
+
+  for (let index = phones.length - 1; index >= 0; index -= 1) {
+    if (
+      normalizarTelefoneConsultasSync_(phones[index][0]) !== phone
+    ) {
+      continue;
+    }
+
+    const rowNumber = index + 2;
+    const values = [
+      [
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentDate,
+        formatarDataVisivelConsulta_(appointment.scheduledDate),
+      ],
+      [
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime,
+        extrairHorarioConsultasSync_(appointment.scheduledTime),
+      ],
+      [
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentProfessional,
+        professional,
+      ],
+      [
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom,
+        normalizarSalaConsulta_(appointment.room),
+      ],
+    ];
+
+    values.forEach(function (entry) {
+      if (entry[1] === "") return;
+      sheet
+        .getRange(rowNumber, columns[entry[0]] + 1)
+        .setValue(entry[1]);
+    });
+    return true;
+  }
+
+  return false;
+}
+
 function garantirEstruturaSincronizacaoConsultas_(sheet) {
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   const headers = sheet
@@ -2125,6 +3028,12 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
   });
 
   [
+    CONSULTAS_SYNC_HEADERS.room,
+    CONSULTAS_SYNC_HEADERS.durationMinutes,
+    CONSULTAS_SYNC_HEADERS.calendarId,
+    CONSULTAS_SYNC_HEADERS.calendarEventId,
+    CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+    CONSULTAS_SYNC_HEADERS.calendarSyncError,
     CONSULTAS_SYNC_HEADERS.postEligibleAt,
     CONSULTAS_SYNC_HEADERS.postSentAt,
     CONSULTAS_SYNC_HEADERS.postLastAttempt,
@@ -2136,6 +3045,13 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
     CONSULTAS_SYNC_HEADERS.suppressionReason,
   ].forEach(function (header) {
     if (columns[header] === undefined) {
+      if (
+        typeof sheet.getMaxColumns === "function" &&
+        typeof sheet.insertColumnsAfter === "function" &&
+        headers.length >= sheet.getMaxColumns()
+      ) {
+        sheet.insertColumnsAfter(sheet.getMaxColumns(), 10);
+      }
       headers.push(header);
       sheet.getRange(1, headers.length).setValue(header);
       columns[header] = headers.length - 1;
@@ -2143,6 +3059,12 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
   });
 
   const controlWidths = {
+    [CONSULTAS_SYNC_HEADERS.room]: 90,
+    [CONSULTAS_SYNC_HEADERS.durationMinutes]: 105,
+    [CONSULTAS_SYNC_HEADERS.calendarId]: 210,
+    [CONSULTAS_SYNC_HEADERS.calendarEventId]: 210,
+    [CONSULTAS_SYNC_HEADERS.calendarSyncStatus]: 210,
+    [CONSULTAS_SYNC_HEADERS.calendarSyncError]: 220,
     [CONSULTAS_SYNC_HEADERS.postEligibleAt]: 170,
     [CONSULTAS_SYNC_HEADERS.postSentAt]: 155,
     [CONSULTAS_SYNC_HEADERS.postLastAttempt]: 195,
@@ -2226,12 +3148,28 @@ function mapearCabecalhosConsultas_(headers) {
 }
 
 function normalizarCabecalhoConsultas_(value) {
-  return String(value || "")
+  return corrigirMojibakeCabecalhoConsultas_(value)
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-zA-Z0-9]+/g, " ")
     .trim()
     .toLowerCase();
+}
+
+function corrigirMojibakeCabecalhoConsultas_(value) {
+  return String(value || "")
+    .replace(/Ã¡/g, "á")
+    .replace(/Ã¢/g, "â")
+    .replace(/Ã£/g, "ã")
+    .replace(/Ã©/g, "é")
+    .replace(/Ãª/g, "ê")
+    .replace(/Ã­/g, "í")
+    .replace(/Ã³/g, "ó")
+    .replace(/Ã´/g, "ô")
+    .replace(/Ãµ/g, "õ")
+    .replace(/Ãº/g, "ú")
+    .replace(/Ã§/g, "ç")
+    .replace(/Â/g, "");
 }
 
 function definirValorConsulta_(

@@ -6,6 +6,7 @@ import {
   detectManualAppointment,
   detectPatientAppointmentSelection,
   detectPatientAppointmentReply,
+  isManualAppointmentSyncCommand,
 } from "./appointment-confirmation.mjs";
 
 test("detects a confirmed appointment from recent Portuguese context", () => {
@@ -153,6 +154,7 @@ test("recognizes an exact numbered option from the proposed slots", () => {
 test("recognizes a unique weekday and time from the proposed slots", () => {
   const result = detectPatientAppointmentSelection({
     currentText: "Terça às 10h funciona para mim",
+    at: "2026-08-02T10:00:00-03:00",
     recentConversation: [
       {
         role: "assistant",
@@ -345,6 +347,87 @@ test("never records or blocks a slot for Dr. Henrique Staniak", () => {
       "Agendamento confirmado. Nome: José Carlos. Data: 05/08/2026. Horário: 15h00. Médico: Dr. Henrique Lane Staniak.",
     at: "2026-08-03T09:10:00-03:00",
     recentConversation: [],
+  });
+
+  assert.equal(result, null);
+});
+
+test("the exact manual sync command records an Amanda appointment from context", () => {
+  const result = detectManualAppointment({
+    currentText: "Confirmado seu agendamento",
+    at: "2026-08-04T10:00:00-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        text: "Tenho 12/08/2026 às 11h com a Dra. Amanda.",
+      },
+      { role: "user", text: "Pode ser" },
+    ],
+  });
+
+  assert.equal(
+    isManualAppointmentSyncCommand("Confirmado seu agendamento"),
+    true,
+  );
+  assert.equal(result?.confidence, "confirmed");
+  assert.equal(result?.professional, "Dra. Amanda");
+  assert.equal(result?.scheduledDate, "2026-08-12");
+  assert.equal(result?.scheduledTime, "11:00");
+});
+
+test("the exact manual sync command records a Daniel appointment from context", () => {
+  const result = detectManualAppointment({
+    currentText: "Confirmado seu agendamento!",
+    at: "2026-08-04T10:00:00-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        text: "Consulta de cardiologia com o Dr. Daniel em 13/08/2026 às 14h.",
+      },
+      { role: "user", text: "Perfeito" },
+    ],
+  });
+
+  assert.equal(result?.confidence, "confirmed");
+  assert.equal(result?.professional, "Dr. Daniel");
+  assert.equal(result?.scheduledDate, "2026-08-13");
+  assert.equal(result?.scheduledTime, "14:00");
+});
+
+test("the generic site service picker does not turn an Amanda appointment into Daniel", () => {
+  const result = detectManualAppointment({
+    currentText: "Confirmado seu agendamento",
+    at: "2026-08-04T10:00:00-03:00",
+    recentConversation: [
+      {
+        role: "user",
+        text: "Olá, vim pelo site da Clínica LIV. Meu interesse é: cirurgia plástica/estética, cardiologia ou dúvida sobre procedimento. Origem do contato: site LIV Faria Lima",
+      },
+      {
+        role: "assistant",
+        text: "Agendamos sua avaliação com a Dra. Amanda em 14/08/2026 às 10h.",
+      },
+      { role: "user", text: "Combinado" },
+    ],
+  });
+
+  assert.equal(result?.confidence, "confirmed");
+  assert.equal(result?.professional, "Dra. Amanda");
+  assert.equal(result?.scheduledDate, "2026-08-14");
+  assert.equal(result?.scheduledTime, "10:00");
+});
+
+test("the manual sync command never schedules other professionals", () => {
+  const result = detectManualAppointment({
+    currentText: "Confirmado seu agendamento",
+    at: "2026-08-04T10:00:00-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        text: "Consulta com a Dra. Marina em 13/08/2026 às 14h.",
+      },
+      { role: "user", text: "Perfeito" },
+    ],
   });
 
   assert.equal(result, null);

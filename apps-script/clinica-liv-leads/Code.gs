@@ -44,7 +44,22 @@ const EXPECTED_HEADERS = Object.freeze([
   "Referência completa",
 ]);
 
-function doGet() {
+function doGet(e) {
+  const view = String(
+    e && e.parameter && e.parameter.view
+      ? e.parameter.view
+      : "",
+  ).trim();
+
+  if (
+    view === "salas" &&
+    typeof renderFormularioReservaSalas_ === "function"
+  ) {
+    return renderFormularioReservaSalas_(
+      e && e.parameter ? e.parameter.key : "",
+    );
+  }
+
   return json_({
     ok: true,
     service: "clinica-liv-leads",
@@ -723,12 +738,29 @@ function getAvailableAppointmentSlots_(input) {
       continue;
     }
 
+    let room = "";
+    if (
+      typeof escolherSalaDisponivelConsulta_ === "function"
+    ) {
+      const roomSelection = escolherSalaDisponivelConsulta_({
+        professional:
+          String(row[columns.professional] || "").trim(),
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        scheduledDate: String(row[columns.date] || "").trim(),
+        scheduledTime: String(row[columns.time] || "").trim(),
+      });
+      if (!roomSelection.ok) continue;
+      room = roomSelection.room || "";
+    }
+
     slots.push({
       date: String(row[columns.date] || "").trim(),
       day: String(row[columns.day] || "").trim(),
       time: String(row[columns.time] || "").trim().padStart(5, "0"),
       professional:
         String(row[columns.professional] || "").trim(),
+      room,
       timestamp: dateTime.getTime(),
     });
   }
@@ -743,12 +775,14 @@ function getAvailableAppointmentSlots_(input) {
   if (expiredRows.length) SpreadsheetApp.flush();
 
   return slots.slice(0, limit).map(function publicSlot(slot) {
-    return {
+    const publicResult = {
       date: slot.date,
       day: slot.day,
       time: slot.time,
       professional: slot.professional,
     };
+    if (slot.room) publicResult.room = slot.room;
+    return publicResult;
   });
 }
 

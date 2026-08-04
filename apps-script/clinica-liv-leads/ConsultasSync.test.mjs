@@ -51,6 +51,73 @@ test("recognizes only scheduling and completed statuses", () => {
   assert.equal(context.statusAgendaConsulta_("novo"), false);
 });
 
+test("assigns fixed rooms and keeps Marina and Laerte flexible", () => {
+  assert.deepEqual(
+    Array.from(context.salasPermitidasProfissional_("Dra. Amanda")),
+    ["Sala 1"],
+  );
+  assert.deepEqual(
+    Array.from(context.salasPermitidasProfissional_("Dr. Henrique")),
+    ["Sala 2"],
+  );
+  assert.deepEqual(
+    Array.from(context.salasPermitidasProfissional_("Dr. Daniel")),
+    ["Sala 2"],
+  );
+  assert.deepEqual(
+    Array.from(context.salasPermitidasProfissional_("Dra. Marina")),
+    ["Sala 1", "Sala 2"],
+  );
+  assert.deepEqual(
+    Array.from(context.salasPermitidasProfissional_("Dr. Laerte")),
+    ["Sala 1", "Sala 2"],
+  );
+});
+
+test("WhatsApp appointment automation is limited to Amanda and Daniel", () => {
+  assert.equal(
+    context.profissionalPermitidoAutomacaoConsulta_("Dra. Amanda"),
+    true,
+  );
+  assert.equal(
+    context.profissionalPermitidoAutomacaoConsulta_("Dr. Daniel"),
+    true,
+  );
+  assert.equal(
+    context.profissionalPermitidoAutomacaoConsulta_("Dr. Henrique"),
+    false,
+  );
+  assert.equal(
+    context.profissionalPermitidoAutomacaoConsulta_("Dra. Marina"),
+    false,
+  );
+});
+
+test("uses the other room for a flexible professional when the first is busy", () => {
+  let calendarReads = 0;
+  context.CalendarApp = {
+    getCalendarById() {
+      calendarReads += 1;
+      return {
+        getEvents() {
+          return calendarReads === 1
+            ? [{ getId: () => "busy-event" }]
+            : [];
+        },
+      };
+    },
+  };
+
+  const result = context.escolherSalaDisponivelConsulta_({
+    professional: "Dra. Marina",
+    scheduledDate: "2026-08-04",
+    scheduledTime: "10:00",
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.room, "Sala 2");
+});
+
 test("writes consultation statuses using the visible dropdown vocabulary", () => {
   assert.equal(
     context.statusCanonicoConsultas_("Consulta agendada"),
@@ -267,6 +334,17 @@ test("maps headers despite invisible spacing and punctuation changes", () => {
   ]);
 
   assert.equal(columns["Telefone (E.164)"], 1);
+});
+
+test("maps legacy headers that were saved with UTF-8 mojibake", () => {
+  const columns = context.mapearCabecalhosConsultas_([
+    "Telefone (E.164)",
+    "SituaÃ§Ã£o do lead",
+    "Data da situaÃ§Ã£o",
+  ]);
+
+  assert.equal(columns["Situação do lead"], 1);
+  assert.equal(columns["Data da situação"], 2);
 });
 
 test("record origin prefers the lead origin over sync metadata", () => {
