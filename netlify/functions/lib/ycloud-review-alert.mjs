@@ -72,14 +72,14 @@ export function ensureReviewAlertSuggestion({
   return [prefix, suffix].filter(Boolean).join("\n\n");
 }
 
-async function sendReviewAlertEmailCopy(
+export async function sendReviewAlertEmailCopy(
   {
     eventId,
     patientName,
     patientPhone,
     messageText,
   },
-  { env, fetchImpl },
+  { env = process.env, fetchImpl = fetch } = {},
 ) {
   const url = String(
     env.GOOGLE_SHEETS_WEBHOOK_URL || "",
@@ -180,6 +180,7 @@ export async function sendYCloudReviewAlert(
     completeReviewAlertSlotImpl = completeReviewAlertSlot,
     releaseReviewAlertSlotImpl = releaseReviewAlertSlot,
     now = Date.now(),
+    sendEmailCopy = true,
   } = {},
 ) {
   const apiKey = env.YCLOUD_API_KEY;
@@ -307,15 +308,19 @@ export async function sendYCloudReviewAlert(
       });
     }
 
-    const emailCopy = await sendReviewAlertEmailCopy(
-      {
-        eventId,
-        patientName,
-        patientPhone,
-        messageText: alertMessageText,
-      },
-      { env, fetchImpl },
-    );
+    const emailCopy = sendEmailCopy
+      ? await sendReviewAlertEmailCopy(
+          {
+            eventId,
+            patientName,
+            patientPhone,
+            messageText: alertMessageText,
+          },
+          { env, fetchImpl },
+        )
+      : result("skipped", {
+          errorCode: "email_copy_handled_separately",
+        });
 
     console.log(JSON.stringify({
       event: "review_alert_email_copy",

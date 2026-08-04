@@ -7,7 +7,10 @@ import {
 import {
   getLatestInboundReplyMarker,
 } from "./lib/reply-debounce.mjs";
-import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
+import {
+  sendReviewAlertEmailCopy,
+  sendYCloudReviewAlert,
+} from "./lib/ycloud-review-alert.mjs";
 
 const MAX_JOBS_PER_RUN = 5;
 const MAX_RECOVERY_ATTEMPTS = 3;
@@ -34,9 +37,10 @@ function recoveryAlert(job) {
     patientName,
     patientPhone: String(message.from || job.phone || ""),
     messageText: [
-      "FALHA TÉCNICA — mensagem sem desfecho automático.",
+      "FALHA DE REGISTRO — lead não inserido na planilha LEADS após 3 tentativas.",
       `Mensagem da paciente: ${String(message.text?.body || "Mensagem sem texto.")}`,
-      "Sugestão para copiar:",
+      "Ação interna: cadastrar o contato manualmente na LEADS e conferir a conversa no WhatsApp.",
+      "Sugestão para copiar somente se a paciente ainda estiver sem resposta:",
       `${greeting} Eu sou a Bruna, da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Posso te ajudar por aqui.`,
     ].join("\n"),
   };
@@ -55,6 +59,7 @@ export async function processInboundRecoveryJob(
     completeInboundRecoveryImpl = completeInboundRecovery,
     rescheduleInboundRecoveryImpl = rescheduleInboundRecovery,
     sendYCloudReviewAlertImpl = sendYCloudReviewAlert,
+    sendReviewAlertEmailCopyImpl = sendReviewAlertEmailCopy,
   } = {},
 ) {
   const latest = await getLatestInboundReplyMarkerImpl({
@@ -126,18 +131,30 @@ export async function processInboundRecoveryJob(
     };
   }
 
-  const alert = await sendYCloudReviewAlertImpl(recoveryAlert(job));
-  if (["completed", "duplicate"].includes(alert?.status)) {
+  const alertInput = recoveryAlert(job);
+  const email = await sendReviewAlertEmailCopyImpl(alertInput);
+  const alert = await sendYCloudReviewAlertImpl(alertInput, {
+    sendEmailCopy: false,
+  });
+  if (email?.status === "completed") {
     await completeInboundRecoveryImpl(job, {
-      outcome: "human_alerted_after_failure",
+      outcome: "human_alerted_by_email_after_lead_failure",
     });
-    return { status: "alerted" };
+    return {
+      status: "alerted",
+      emailStatus: email.status,
+      whatsappAlertStatus: alert?.status || "unknown",
+    };
   }
 
   await rescheduleInboundRecoveryImpl(job, {
     delayMs: 5 * 60_000,
   });
-  return { status: "alert_failed_rescheduled" };
+  return {
+    status: "alert_failed_rescheduled",
+    emailStatus: email?.status || "failed",
+    whatsappAlertStatus: alert?.status || "unknown",
+  };
 }
 
 export default async () => {

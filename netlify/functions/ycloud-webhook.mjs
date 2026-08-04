@@ -1950,6 +1950,7 @@ export default async (request, context) => {
       processingMode: "direct_with_background_completion",
       contactPreferencesGuard: "active",
       leadDeliveryFallback: "acquisition_only",
+      leadFailureEmailAlert: "required_after_retries",
     });
   }
 
