@@ -96,6 +96,7 @@ import {
 import {
   completeInboundRecovery,
   registerInboundRecovery,
+  shouldCompleteInboundRecovery,
 } from "./lib/inbound-recovery.mjs";
 import {
   canContinuePatientAutomationWithoutLeadDelivery,
@@ -3190,7 +3191,14 @@ export default async (request, context) => {
     (!overnightHandoffQueued || terminalSendStatuses.has(overnightHandoffStatus)) &&
     (!patientReplyQueued || terminalSendStatuses.has(patientReplyStatus));
   let recoveryStatus = recoveryRegistration.status;
-  if (automaticWorkFinished && recoveryRegistration.status !== "skipped") {
+  if (
+    recoveryRegistration.status !== "skipped" &&
+    shouldCompleteInboundRecovery({
+      automaticWorkFinished,
+      recoveryRegistration,
+      suppressExactDuplicate,
+    })
+  ) {
     const recoveryCompletion = await completeInboundRecovery(
       { eventId: String(eventId) },
       {

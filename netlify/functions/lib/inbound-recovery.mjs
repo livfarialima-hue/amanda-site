@@ -39,6 +39,29 @@ function recoveryStore(getStoreImpl = getStore) {
   });
 }
 
+export function shouldCompleteInboundRecovery({
+  automaticWorkFinished,
+  recoveryRegistration,
+  suppressExactDuplicate,
+}) {
+  if (!automaticWorkFinished) return false;
+
+  // A regular YCloud retry can arrive while the first invocation still has
+  // deferred work pending. In that case Sheets already knows the message, but
+  // the patient reply/review alert has not necessarily finished. Completing
+  // the durable recovery here would silently discard the only retry capable
+  // of finishing that work.
+  if (
+    suppressExactDuplicate &&
+    recoveryRegistration?.status === "duplicate" &&
+    recoveryRegistration?.reason === "already_pending"
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function normalizedPending(value) {
   if (!value || typeof value !== "object") return null;
 

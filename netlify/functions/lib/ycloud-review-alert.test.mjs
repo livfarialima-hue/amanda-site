@@ -124,6 +124,42 @@ test("review alert suppresses repeated alerts in the same patient window", async
   assert.equal(calls.length, 0);
 });
 
+test("email copy still arrives when WhatsApp alert is on cooldown", async () => {
+  const calls = [];
+  const env = {
+    YCLOUD_API_KEY: "test-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    GOOGLE_SHEETS_WEBHOOK_URL:
+      "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-secret",
+  };
+  const result = await sendYCloudReviewAlert(INPUT, {
+    env,
+    getHumanResumeControlImpl: async () => null,
+    claimReviewAlertSlotImpl: async () => ({
+      status: "suppressed",
+      reason: "same_patient_cooldown",
+    }),
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return new Response('{"ok":true,"sent":true}', {
+        status: 200,
+      });
+    },
+  });
+
+  assert.deepEqual(result, {
+    status: "skipped",
+    errorCode: "same_patient_cooldown",
+  });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, env.GOOGLE_SHEETS_WEBHOOK_URL);
+  assert.equal(
+    JSON.parse(calls[0].options.body).action,
+    "send_review_alert_email",
+  );
+});
+
 test("urgent review alert bypasses the same-patient cooldown", async () => {
   const calls = [];
   const result = await sendYCloudReviewAlert(
@@ -242,6 +278,41 @@ test("YCloud failure is controlled and does not throw", async () => {
     httpStatus: 400,
     errorCode: "http_error",
   });
+});
+
+test("YCloud failure does not suppress the email copy", async () => {
+  const calls = [];
+  const env = {
+    YCLOUD_API_KEY: "test-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    GOOGLE_SHEETS_WEBHOOK_URL:
+      "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-secret",
+  };
+  const result = await sendYCloudReviewAlert(INPUT, {
+    env,
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      if (url === env.GOOGLE_SHEETS_WEBHOOK_URL) {
+        return new Response('{"ok":true,"sent":true}', {
+          status: 200,
+        });
+      }
+      return new Response("rejected", { status: 400 });
+    },
+  });
+
+  assert.deepEqual(result, {
+    status: "failed",
+    httpStatus: 400,
+    errorCode: "http_error",
+  });
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].url, env.GOOGLE_SHEETS_WEBHOOK_URL);
+  assert.equal(
+    JSON.parse(calls[0].options.body).action,
+    "send_review_alert_email",
+  );
 });
 
 test("health endpoint reports the final automation switches", async () => {
@@ -396,18 +467,18 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     );
     assert.equal(
       requests[2].url,
-      "https://api.ycloud.com/v2/whatsapp/messages",
-    );
-    assert.equal(
-      requests[3].url,
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
     );
     assert.equal(
-      JSON.parse(requests[3].options.body).action,
+      JSON.parse(requests[2].options.body).action,
       "send_review_alert_email",
     );
+    assert.equal(
+      requests[3].url,
+      "https://api.ycloud.com/v2/whatsapp/messages",
+    );
 
-    const alertBody = JSON.parse(requests[2].options.body);
+    const alertBody = JSON.parse(requests[3].options.body);
     assert.equal(alertBody.from, "+5511961957144");
     assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
     assert.notEqual(alertBody.to, payload.whatsappInboundMessage.from);

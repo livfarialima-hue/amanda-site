@@ -209,6 +209,32 @@ export async function sendYCloudReviewAlert(
     urgent,
   });
 
+  // Email is an independent safety channel. A WhatsApp cooldown or a YCloud
+  // delivery failure must not hide a new question that needs human review.
+  // The Apps Script endpoint deduplicates this copy by eventId.
+  const emailCopy = sendEmailCopy
+    ? await sendReviewAlertEmailCopy(
+        {
+          eventId,
+          patientName,
+          patientPhone,
+          messageText: alertMessageText,
+        },
+        { env, fetchImpl },
+      )
+    : result("skipped", {
+        errorCode: "email_copy_handled_separately",
+      });
+
+  console.log(JSON.stringify({
+    event: "review_alert_email_copy",
+    eventId: limitText(eventId, 200) || null,
+    status: emailCopy.status,
+    httpStatus: emailCopy.httpStatus || null,
+    errorCode: emailCopy.errorCode || null,
+    duplicate: emailCopy.duplicate === true,
+  }));
+
   let alertSlot = null;
   if (!urgent) {
     const cooldownMinutes = Number(
@@ -307,29 +333,6 @@ export async function sendYCloudReviewAlert(
         errorCode: "http_error",
       });
     }
-
-    const emailCopy = sendEmailCopy
-      ? await sendReviewAlertEmailCopy(
-          {
-            eventId,
-            patientName,
-            patientPhone,
-            messageText: alertMessageText,
-          },
-          { env, fetchImpl },
-        )
-      : result("skipped", {
-          errorCode: "email_copy_handled_separately",
-        });
-
-    console.log(JSON.stringify({
-      event: "review_alert_email_copy",
-      eventId: limitText(eventId, 200) || null,
-      status: emailCopy.status,
-      httpStatus: emailCopy.httpStatus || null,
-      errorCode: emailCopy.errorCode || null,
-      duplicate: emailCopy.duplicate === true,
-    }));
 
     if (alertSlot) {
       await completeReviewAlertSlotImpl(alertSlot, { now });
