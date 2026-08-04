@@ -745,6 +745,8 @@
   }
 
   function installCuratedVideoModal() {
+    if (!document.querySelector('[data-curated-video], video:not([data-inline-video])')) return;
+
     var triggers = [];
 
     var modal = document.createElement('div');
