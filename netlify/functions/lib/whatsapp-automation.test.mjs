@@ -563,6 +563,38 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.procedure, "blefaroplastia");
 });
 
+test("a named health-plan acceptance question receives a safe automatic route", () => {
+  const plan = planAutomation({
+    text: "Aceitam Amil?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "insurance_acceptance_request");
+  assert.equal(plan.automaticAllowed, true);
+  assert.equal(plan.professional, null);
+});
+
+test("the generic LIV site service picker is not misclassified as cardiology", () => {
+  const text = [
+    "Ola, vim pelo site da Clinica LIV. Gostaria de agendar uma consulta. Meu interesse e: cirurgia plastica/estetica, cardiologia ou duvida sobre procedimento.",
+    "Origem do contato: site LIV Faria Lima",
+  ].join("\n\n");
+  const plan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "marketing_prefilled_without_procedure");
+  assert.equal(plan.professional, null);
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("an insurance follow-up preserves blepharoplasty from the conversation", () => {
   const plan = enrichAutomationPlanFromConversation(
     planAutomation({

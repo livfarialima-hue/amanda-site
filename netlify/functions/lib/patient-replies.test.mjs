@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildConsultationInformationReply,
+  buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
   buildPatientReply,
@@ -10,6 +11,22 @@ import {
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("answers a named health plan directly while clarifying the requested specialty", () => {
+  const reply = buildInsuranceAcceptanceReply({
+    text: "Aceitam Amil?",
+    patientName: "alexandre ccimabi",
+    professional: null,
+  });
+
+  assert.match(reply, /^Olá, Alexandre!/);
+  assert.match(reply, /atendimentos da clínica são particulares/i);
+  assert.match(reply, /nota fiscal/i);
+  assert.match(reply, /reembolso ao plano Amil/i);
+  assert.match(reply, /Dra\. Amanda/);
+  assert.match(reply, /Dr\. Daniel/);
+  assert.doesNotMatch(reply, /vou conferir|retorno assim que possível/i);
+});
 
 test("answers blepharoplasty insurance without promising coverage or pushing scheduling", () => {
   const reply = buildInsuranceCoverageReply({

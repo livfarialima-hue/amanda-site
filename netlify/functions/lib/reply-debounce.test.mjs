@@ -100,6 +100,63 @@ test("a newer message arriving during generation supersedes the older reply", as
   assert.equal(secondAfterGeneration.shouldProcess, true);
 });
 
+test("a repeated low-priority entry template cannot supersede a recent patient question", async () => {
+  const blobs = fakeBlobs();
+  const now = Date.parse("2026-08-04T10:48:00-03:00");
+  await markLatestInboundForReply(
+    {
+      phone: "+5511999913021",
+      eventId: "amil-question",
+      eventAt: "2026-08-04T10:45:10-03:00",
+      priority: 100,
+    },
+    { ...blobs, now },
+  );
+  const repeatedTemplate = await markLatestInboundForReply(
+    {
+      phone: "+5511999913021",
+      eventId: "site-template-again",
+      eventAt: "2026-08-04T10:48:00-03:00",
+      priority: 10,
+    },
+    { ...blobs, now: now + 1_000 },
+  );
+  const marker = await getLatestInboundReplyMarker(
+    { phone: "+5511999913021" },
+    blobs,
+  );
+
+  assert.equal(repeatedTemplate.preserved, true);
+  assert.equal(marker.eventId, "amil-question");
+});
+
+test("an out-of-order older event cannot replace a newer inbound marker", async () => {
+  const blobs = fakeBlobs();
+  await markLatestInboundForReply(
+    {
+      phone: "+5511999913021",
+      eventId: "newer-event",
+      eventAt: "2026-08-04T10:48:00-03:00",
+    },
+    blobs,
+  );
+  const older = await markLatestInboundForReply(
+    {
+      phone: "+5511999913021",
+      eventId: "older-event",
+      eventAt: "2026-08-04T10:45:00-03:00",
+    },
+    blobs,
+  );
+  const marker = await getLatestInboundReplyMarker(
+    { phone: "+5511999913021" },
+    blobs,
+  );
+
+  assert.equal(older.preserved, true);
+  assert.equal(marker.eventId, "newer-event");
+});
+
 test("a storage failure never loses the patient response", async () => {
   let waited = false;
   const result = await waitForLatestInboundReply(

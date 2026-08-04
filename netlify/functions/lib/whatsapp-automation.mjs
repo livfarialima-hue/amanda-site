@@ -283,6 +283,42 @@ function foldMarketingText(value) {
     .trim();
 }
 
+export function isSiteServicePickerPrefill(text) {
+  const normalizedText = foldMarketingText(text);
+  return (
+    /\borigem do contato\s*:\s*site liv faria lima\b/i.test(
+      normalizedText,
+    ) &&
+    /\bgostaria de (?:agendar|marcar) uma consulta\b/i.test(
+      normalizedText,
+    ) &&
+    /\bcirurgia plastica\/estetica\b/i.test(normalizedText) &&
+    /\bcardiologia\b/i.test(normalizedText)
+  );
+}
+
+export function inboundReplyPriority(text) {
+  const normalizedText = foldMarketingText(text);
+  if (isSiteServicePickerPrefill(normalizedText)) return 10;
+  if (/^(?:oi|ola|bom dia|boa tarde|boa noite)[!.\s]*$/i.test(normalizedText)) {
+    return 30;
+  }
+  return 100;
+}
+
+export function isInsuranceAcceptanceRequest(text) {
+  const normalizedText = foldMarketingText(text);
+  const mentionsInsurance =
+    /\b(?:convenio|plano de saude|amil|unimed|bradesco saude|sulamerica|sul america|porto saude|omint|care plus|notredame|hapvida)\b/i.test(
+      normalizedText,
+    );
+  const asksAcceptance =
+    /\b(?:aceita|aceitam|atende|atendem|trabalha|trabalham|passa)\b/i.test(
+      normalizedText,
+    );
+  return mentionsInsurance && asksAcceptance;
+}
+
 export function isLikelyMarketingPrefilledMessage({
   text,
   reference,
@@ -300,7 +336,7 @@ export function isLikelyMarketingPrefilledMessage({
     ].join(" "),
   );
   const hasEmbeddedAttribution =
-    /\bgbraid\s*:|\bref\.?(?:\s*:)?\s*[a-z0-9-]{5,}|\breferencia\s*:/i.test(
+    /\bgbraid\s*:|\bref\.?(?:\s*:)?\s*[a-z0-9-]{5,}|\breferencia\s*:|\borigem do contato\s*:\s*site liv faria lima/i.test(
       normalizedText,
     );
   const hasMarketingSource =
@@ -326,11 +362,14 @@ export function isLikelyMarketingPrefilledMessage({
       normalizedText,
     ) &&
     /\b(?:consulta|avaliacao|dra\.? amanda)\b/i.test(normalizedText);
+  const siteServicePickerTemplate =
+    isSiteServicePickerPrefill(normalizedText);
 
   return (
     googleConsultationTemplate ||
     metaProcedureTemplate ||
-    siteConsultationTemplate
+    siteConsultationTemplate ||
+    siteServicePickerTemplate
   );
 }
 
@@ -433,6 +472,8 @@ export function planAutomation({
     reference,
     referralContext,
   );
+  const siteServicePickerPrefill =
+    isSiteServicePickerPrefill(normalizedText);
 
   if (normalizedType !== "text" || !normalizedText) {
     return {
@@ -511,7 +552,10 @@ export function planAutomation({
     };
   }
 
-  if (matchesAny(normalizedText, DANIEL_PATTERNS)) {
+  if (
+    !siteServicePickerPrefill &&
+    matchesAny(normalizedText, DANIEL_PATTERNS)
+  ) {
     return {
       route: "daniel_greeting_and_alert",
       reason: "cardiology_or_dr_daniel",
@@ -535,6 +579,19 @@ export function planAutomation({
   const asksConsultationInformation =
     !marketingPrefilledMessage &&
     isConsultationInformationRequest(normalizedText);
+  const asksInsuranceAcceptance =
+    isInsuranceAcceptanceRequest(normalizedText);
+
+  if (asksInsuranceAcceptance) {
+    return {
+      route: "standard_reply",
+      reason: "insurance_acceptance_request",
+      replyCode: "INSURANCE-ACCEPTANCE-01",
+      professional: mentionsAmanda ? "amanda" : null,
+      procedure: procedure?.key || null,
+      automaticAllowed: true,
+    };
+  }
 
   if (isProfessionalExperienceDetailRequest(normalizedText)) {
     return {
@@ -577,6 +634,17 @@ export function planAutomation({
       replyCode: "AMANDA-CONSULTA-INFO-01",
       professional: "amanda",
       procedure: procedure?.key || null,
+      automaticAllowed: true,
+    };
+  }
+
+  if (marketingPrefilledMessage && !procedure) {
+    return {
+      route: "standard_reply",
+      reason: "marketing_prefilled_without_procedure",
+      replyCode: "ORG-DIR-01",
+      professional: null,
+      procedure: null,
       automaticAllowed: true,
     };
   }

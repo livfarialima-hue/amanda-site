@@ -5,6 +5,7 @@ const STORE_NAME = "liv-whatsapp-reply-debounce-v1";
 const DEFAULT_DEBOUNCE_MS = 8_000;
 const MIN_DEBOUNCE_MS = 8_000;
 const MAX_DEBOUNCE_MS = 15_000;
+const PRIORITY_HOLD_MS = 10 * 60 * 1_000;
 
 function key(phone) {
   return createHash("sha256")
@@ -30,7 +31,7 @@ function store(getStoreImpl = getStore) {
 }
 
 export async function markLatestInboundForReply(
-  { phone, eventId },
+  { phone, eventId, eventAt, priority = 100 },
   { getStoreImpl = getStore, now = Date.now() } = {},
 ) {
   if (!phone || !eventId) {
@@ -38,8 +39,44 @@ export async function markLatestInboundForReply(
   }
 
   try {
-    await store(getStoreImpl).setJSON(key(phone), {
+    const replyStore = store(getStoreImpl);
+    const current = await replyStore.get(key(phone), {
+      type: "json",
+      consistency: "strong",
+    });
+    const incomingAt = Date.parse(String(eventAt || ""));
+    const currentEventAt = Date.parse(String(current?.eventAt || ""));
+    const currentMarkedAt = Date.parse(String(current?.markedAt || ""));
+    const incomingPriority = Number(priority) || 0;
+    const currentPriority = Number(current?.priority) || 0;
+    const currentIsRecent =
+      Number.isFinite(currentMarkedAt) &&
+      now - currentMarkedAt >= 0 &&
+      now - currentMarkedAt <= PRIORITY_HOLD_MS;
+    const currentIsNewer =
+      Number.isFinite(incomingAt) &&
+      Number.isFinite(currentEventAt) &&
+      currentEventAt > incomingAt;
+    const protectsMoreSpecificMessage =
+      current?.eventId &&
+      current.eventId !== String(eventId) &&
+      currentIsRecent &&
+      currentPriority > incomingPriority;
+
+    if (currentIsNewer || protectsMoreSpecificMessage) {
+      return {
+        status: "completed",
+        preserved: true,
+        eventId: String(current.eventId),
+      };
+    }
+
+    await replyStore.setJSON(key(phone), {
       eventId: String(eventId),
+      eventAt: Number.isFinite(incomingAt)
+        ? new Date(incomingAt).toISOString()
+        : null,
+      priority: incomingPriority,
       markedAt: new Date(now).toISOString(),
     });
     return { status: "completed" };

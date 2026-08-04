@@ -1,5 +1,6 @@
 import {
   enrichAutomationPlanFromConversation,
+  inboundReplyPriority,
   isAvailabilityRequest,
   isConsultationInformationRequest,
   isLikelyMarketingPrefilledMessage,
@@ -14,6 +15,7 @@ import {
 } from "./lib/appointment-suggestions.mjs";
 import {
   buildConsultationInformationReply,
+  buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
   buildPatientReply,
@@ -1245,6 +1247,11 @@ async function completeOpenAIActive({
       text: input.text,
       procedure: plan?.procedure || input.procedure || "",
     });
+    const insuranceAcceptanceReply = buildInsuranceAcceptanceReply({
+      text: input.text,
+      patientName: input.patientProfileName,
+      professional: plan?.professional || "",
+    });
     const standaloneMarketingPrefilledMessage =
       plan?.route === "standard_reply" &&
       plan?.reason === "known_procedure" &&
@@ -1278,7 +1285,24 @@ async function completeOpenAIActive({
         turn?.role === "assistant" ||
         ["bruna", "equipe_humana"].includes(turn?.source),
     );
-    const activeResult = insuranceCoverageReply
+    const activeResult = insuranceAcceptanceReply
+      ? {
+          status: "completed",
+          model: "deterministic-insurance-acceptance",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: plan?.professional || null,
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode: "INSURANCE-ACCEPTANCE-01",
+            suggestedReply: insuranceAcceptanceReply,
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : insuranceCoverageReply
       ? {
           status: "completed",
           model: "deterministic-insurance-coverage",
@@ -2190,6 +2214,8 @@ export default async (request, context) => {
     const markerResult = await markLatestInboundForReply({
       phone,
       eventId: String(eventId),
+      eventAt: contactAt,
+      priority: inboundReplyPriority(text),
     });
     replyDebounceMarkerStatus = markerResult.status;
   }

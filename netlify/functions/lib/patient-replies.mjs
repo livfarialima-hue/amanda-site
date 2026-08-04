@@ -52,7 +52,14 @@ function firstName(value) {
 }
 
 function greeting(name) {
-  const normalizedName = firstName(name);
+  const rawName = firstName(name);
+  const normalizedName =
+    rawName &&
+    (rawName === rawName.toLowerCase() ||
+      rawName === rawName.toUpperCase())
+      ? rawName.charAt(0).toUpperCase() +
+        rawName.slice(1).toLowerCase()
+      : rawName;
   return normalizedName ? `Olá, ${normalizedName}!` : "Olá!";
 }
 
@@ -98,6 +105,48 @@ export function buildInsuranceCoverageReply({ text, procedure }) {
     "Pode ser avaliado, sim. Na consulta, a Dra. Amanda verifica se há indicação funcional além da estética, como possível impacto no campo visual. A autorização e a eventual cobertura dependem da análise do convênio.",
     "A consulta é particular e emitimos a documentação necessária quando houver indicação.",
   ].join("\n\n");
+}
+
+export function buildInsuranceAcceptanceReply({
+  text,
+  patientName,
+  professional,
+}) {
+  const normalizedText = String(text || "");
+  const insurerMatch = normalizedText.match(
+    /\b(amil|unimed|bradesco\s+sa[uú]de|sul(?:am[eé]rica| america)|porto\s+sa[uú]de|omint|care\s+plus|notredame|hapvida)\b/i,
+  );
+  const mentionsInsurance =
+    Boolean(insurerMatch) ||
+    /\b(?:conv[eê]nio|plano\s+de\s+sa[uú]de)\b/i.test(normalizedText);
+  const asksAcceptance =
+    /\b(?:aceit(?:a|am)|atend(?:e|em)|trabalh(?:a|am)|passa)\b/i.test(
+      normalizedText,
+    );
+
+  if (!mentionsInsurance || !asksAcceptance) return null;
+
+  const insurer = insurerMatch
+    ? insurerMatch[1]
+        .split(/\s+/)
+        .map((part) =>
+          part.length <= 3
+            ? part.toUpperCase()
+            : part[0].toUpperCase() + part.slice(1).toLowerCase(),
+        )
+        .join(" ")
+    : "seu convênio";
+  const introduction = `${greeting(patientName)} Eu sou a Bruna, da Clínica LIV Faria Lima.`;
+
+  if (professional === "amanda") {
+    return `${introduction} A consulta com a Dra. Amanda é particular. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Posso te orientar sobre a avaliação em cirurgia plástica ou estética?`;
+  }
+
+  if (professional === "daniel") {
+    return `${introduction} A consulta com o Dr. Daniel é particular. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Vou direcionar seu atendimento de cardiologia para a equipe.`;
+  }
+
+  return `${introduction} Os atendimentos da clínica são particulares. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Seu interesse é em cirurgia plástica ou estética com a Dra. Amanda, ou em cardiologia com o Dr. Daniel?`;
 }
 
 function consultationDescription(procedure, procedureLabel) {
