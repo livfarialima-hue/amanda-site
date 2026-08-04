@@ -284,6 +284,7 @@ test("health endpoint reports the final automation switches", async () => {
     assert.equal(body.appointmentReviewEnabled, true);
     assert.equal(body.automationMode, "active");
     assert.equal(body.contactPreferencesGuard, "active");
+    assert.equal(body.leadDeliveryFallback, "acquisition_only");
   } finally {
     for (const [key, value] of Object.entries(savedEnvironment)) {
       if (value === undefined) {

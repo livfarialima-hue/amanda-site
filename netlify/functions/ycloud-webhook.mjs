@@ -1949,6 +1949,7 @@ export default async (request, context) => {
       automationMode,
       processingMode: "direct_with_background_completion",
       contactPreferencesGuard: "active",
+      leadDeliveryFallback: "acquisition_only",
     });
   }
 
