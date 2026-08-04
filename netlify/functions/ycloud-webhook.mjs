@@ -98,6 +98,9 @@ import {
   registerInboundRecovery,
 } from "./lib/inbound-recovery.mjs";
 import {
+  canContinuePatientAutomationWithoutLeadDelivery,
+} from "./lib/lead-delivery-fallback.mjs";
+import {
   applyPatientRelationshipPolicy,
   blocksAutomatedPatientMessages,
   buildPatientCommitment,
@@ -2454,7 +2457,6 @@ export default async (request, context) => {
     exactMessageDuplicate && !recoveredExactDuplicate && !durableRetry;
 
   if (
-    delivery.ok &&
     !suppressExactDuplicate &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0
@@ -2614,6 +2616,18 @@ export default async (request, context) => {
     relationshipAwarePlan,
     patientRelationship,
   );
+  const leadDeliveryFallbackActive =
+    !delivery.ok &&
+    canContinuePatientAutomationWithoutLeadDelivery({
+      automationMode,
+      messageType: message.type,
+      text,
+      plan: automationPlan,
+      attribution,
+      recentConversation: conversationHistory,
+    });
+  const patientAutomationReady =
+    delivery.ok || leadDeliveryFallbackActive;
 
   const alertInput = {
     from: String(message.to || ""),
@@ -3031,7 +3045,7 @@ export default async (request, context) => {
     !suppressExactDuplicate &&
     !professionalFactReview;
   const shouldQueueOpenAIActive =
-    delivery.ok &&
+    patientAutomationReady &&
     !humanTakeoverActive &&
     automationMode === "active" &&
     String(message.type || "").toLowerCase() === "text" &&
@@ -3172,6 +3186,7 @@ export default async (request, context) => {
       hasReferral: Boolean(message.referral),
       referenceCategory: attribution.referenceCategory,
       leadDelivery: delivery.ok ? "success" : "failure",
+      leadDeliveryFallbackActive,
       leadDuplicate: delivery.duplicate === true,
       leadDuplicateReason: delivery.duplicateReason,
       recoveredExactDuplicate,
@@ -3229,7 +3244,7 @@ export default async (request, context) => {
     }),
   );
 
-  if (!delivery.ok) {
+  if (!delivery.ok && !leadDeliveryFallbackActive) {
     return json(
       {
         received: false,
@@ -3239,6 +3254,24 @@ export default async (request, context) => {
       },
       502,
     );
+  }
+
+  if (!delivery.ok) {
+    return json({
+      received: true,
+      leadRecorded: false,
+      degradedMode: "sheets_delivery_fallback",
+      downstreamStatus: delivery.httpStatus,
+      downstreamError: delivery.errorCode,
+      automationMode,
+      automationRoute: automationPlan.route,
+      automationReason: automationPlan.reason,
+      aiActiveQueued,
+      aiActiveStatus,
+      aiActiveReplySent,
+      replyDebounceMarkerStatus,
+      recoveryStatus,
+    });
   }
 
   return json({

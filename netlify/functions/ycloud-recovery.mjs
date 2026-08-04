@@ -100,6 +100,7 @@ export async function processInboundRecoveryJob(
   const completed = Boolean(
     response?.ok &&
     body &&
+    body?.leadRecorded !== false &&
     !["failed", "deferred"].includes(activeStatus),
   );
   if (completed) {

@@ -992,6 +992,113 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
+test("coded acquisition lead is answered once when Sheets times out", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL:
+      "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      const error = new Error("Sheets timeout");
+      error.name = "AbortError";
+      throw error;
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "sheets-fallback-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "sheets-fallback-message",
+        from: "+5511976360209",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Marisa" },
+        referral: { source_type: "ad" },
+        text: {
+          body:
+            "Olá! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.received, true);
+    assert.equal(body.leadRecorded, false);
+    assert.equal(body.degradedMode, "sheets_delivery_fallback");
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.aiActiveReplySent, true);
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url ===
+        "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 1);
+    const patientBody = JSON.parse(patientRequests[0].options.body);
+    assert.match(patientBody.text.body, /Olá, Marisa!/i);
+    assert.match(patientBody.text.body, /Bruna/i);
+    assert.match(patientBody.text.body, /lifting facial/i);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test("a prefilled site availability template becomes a contextual opening", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
