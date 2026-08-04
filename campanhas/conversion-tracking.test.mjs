@@ -11,6 +11,10 @@ const loaderSource = readFileSync(
   new URL("./tracking-loader.js", import.meta.url),
   "utf8",
 );
+const otoplastySource = readFileSync(
+  new URL("./otoplasty-campaign.js", import.meta.url),
+  "utf8",
+);
 
 function storage(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -27,17 +31,24 @@ function storage(initial = {}) {
   };
 }
 
-function loadAttribution({ consent = "denied", search = "" } = {}) {
+function loadAttribution({
+  consent = "denied",
+  links = [],
+  procedure = "",
+  readyState = "loading",
+  search = "",
+  setupSource = "",
+} = {}) {
   const localStorage = storage({ amanda_tracking_consent: consent });
   const sessionStorage = storage();
   const document = {
-    readyState: "loading",
+    readyState,
     addEventListener() {},
     querySelectorAll() {
-      return [];
+      return links;
     },
     body: null,
-    documentElement: { dataset: {} },
+    documentElement: { dataset: { procedure } },
   };
   const window = {
     AMANDA_TRACKING_CONFIG: { debug: true },
@@ -65,8 +76,9 @@ function loadAttribution({ consent = "denied", search = "" } = {}) {
     window,
   };
 
+  if (setupSource) vm.runInNewContext(setupSource, sandbox);
   vm.runInNewContext(conversionSource, sandbox);
-  return { debug: window.AmandaAttributionDebug, localStorage, sessionStorage };
+  return { debug: window.AmandaAttributionDebug, links, localStorage, sessionStorage };
 }
 
 test("does not read click IDs before marketing consent", () => {
@@ -111,4 +123,33 @@ test("revocation removes stored click IDs but keeps neutral campaign codes", () 
 test("the consent loader clears WhatsApp attribution and announces denial", () => {
   assert.match(loaderSource, /'amanda_marketing_attribution'/);
   assert.match(loaderSource, /CustomEvent\('amanda:consent-denied'\)/);
+});
+
+test("otoplasty campaign keeps campaign, creative and child journey in the WhatsApp reference", () => {
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "hero" },
+    href: "https://wa.me/5511961957144?text=Mensagem%20antiga.%20Ref.%20OT02",
+    matches() {
+      return true;
+    },
+    querySelector() {
+      return null;
+    },
+    textContent: "Falar com a equipe",
+  };
+
+  loadAttribution({
+    links: [link],
+    procedure: "otoplastia-infantil",
+    readyState: "complete",
+    search: "?origem=M26O01W&utm_source=instagram&utm_medium=paid_social&utm_campaign=M26O01W&utm_content=DbHKuWfGP_N",
+    setupSource: otoplastySource,
+  });
+
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /criança ou adolescente/);
+  assert.match(message, /Ref\. M26O01W-DbHKuWfGP_N-OT02$/);
+  assert.equal(link.dataset.originalReference, "OT02");
+  assert.equal(link.textContent, "Entender a avaliação");
 });

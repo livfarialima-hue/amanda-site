@@ -135,6 +135,7 @@
       "name": "Otoplastia Infantil em São Paulo | Dra. Amanda Schroeder",
       "description": "Otoplastia infantil em São Paulo com avaliação da anatomia, vontade da criança, participação da família, anestesia, escola, recuperação e naturalidade.",
       "inLanguage": "pt-BR",
+      "dateModified": "2026-08-04",
       "about": {
         "@type": "MedicalProcedure",
         "name": "Otoplastia infantil",
@@ -269,8 +270,9 @@ body{background:var(--oti-bg);color:var(--oti-ink)}
 .oti2-doctor-line{margin:22px 0 0;color:var(--oti-ink);font-size:13px;font-weight:600;line-height:1.55}
 .oti2-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
 .oti2-hero-note{margin:14px 0 0;color:var(--oti-muted);font-size:13px;line-height:1.55}
+.oti2-hero-note a{color:var(--oti-dark);font-weight:700;text-underline-offset:3px}
 .oti2-hero-media{margin:0;overflow:hidden;background:#e7d8d0;box-shadow:var(--oti-shadow)}
-.oti2-hero-media img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 20%}
+.oti2-hero-media img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:center 20%}
 
 .oti2-trust{padding:22px 0 30px}
 .oti2-trust-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--oti-line);border-bottom:1px solid var(--oti-line)}
@@ -585,6 +587,11 @@ body{background:var(--oti-bg);color:var(--oti-ink)}
 .oti2-path-card span{display:block;color:var(--oti-soft);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 .oti2-path-card h3{margin:9px 0 0;font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:400;line-height:1.18}
 .oti2-path-card p{margin:12px 0 0;color:var(--oti-muted);font-size:15px;line-height:1.65}
+.oti2-barriers{padding:56px 0;background:var(--oti-paper)}
+.oti2-barrier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+.oti2-barrier-card{padding:24px;border-top:2px solid var(--oti-soft);background:var(--oti-bg)}
+.oti2-barrier-card h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;line-height:1.2}
+.oti2-barrier-card p{margin:12px 0 0;color:var(--oti-muted);font-size:15px;line-height:1.66}
 .oti2-results-grid--two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .oti2-result-card img{object-fit:cover}
 .oti2-child{background:var(--oti-bg)}
@@ -628,6 +635,9 @@ body{background:var(--oti-bg);color:var(--oti-ink)}
 }
 @media (max-width:760px){
   .oti2-path-grid,.oti2-results-grid--two,.oti2-child-grid,.oti2-adult-grid,.oti2-anatomy-grid,.oti2-natural-grid,.oti2-consult-audiences{grid-template-columns:1fr}
+  .oti2-barrier-grid{grid-template-columns:1fr;gap:12px}
+  .oti2-barriers{padding:42px 0}
+  .oti2-barrier-card{padding:20px}
   .oti2-lobule{grid-template-columns:1fr}
   .oti2-path-card,.oti2-child-card,.oti2-adult-card,.oti2-anatomy-card,.oti2-natural-card{padding:21px}
 }
@@ -731,12 +741,12 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
       <div class="oti2-hero-copy">
         <span class="oti2-eyebrow">Otoplastia infantil em São Paulo</span>
         <h1>Otoplastia infantil: uma decisão em família, com a criança ouvida.</h1>
-        <p class="lead">Mais do que uma idade mínima, a indicação considera anatomia, desenvolvimento, saúde, vontade da criança e capacidade da família de organizar os cuidados. A consulta ajuda a decidir se este é o momento de operar, acompanhar ou aguardar.</p>
+        <p class="lead">Às vezes, a conversa começa quando situações simples — prender o cabelo, aparecer em fotos ou deixar o boné de lado — ganham um peso que antes não tinham. A avaliação não parte da pressão para operar: considera anatomia, desenvolvimento, saúde, vontade da criança e capacidade da família de organizar os cuidados, inclusive quando a melhor decisão é acompanhar ou aguardar.</p>
         <p class="oti2-doctor-line">Dra. Amanda Schroeder · MÉDICA · CRM-SP 191605 · RQE 110472</p>
         <div class="oti2-hero-actions">
           <a class="oti2-btn" data-cta-location="hero" data-procedure="otoplastia-infantil" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT02" rel="noopener" target="_blank">Falar com a equipe</a>
         </div>
-        <p class="oti2-hero-note">Consulta com criança e responsáveis · Pinheiros</p>
+        <p class="oti2-hero-note">Consulta com criança e responsáveis · Pinheiros<br/>A avaliação é para você? <a data-audience-route="adult" href="../otoplastia-adulto/">Veja otoplastia em adultos</a>.</p>
       </div>
       <figure class="oti2-hero-media">
         <img alt="Dra. Amanda Schroeder" decoding="async" fetchpriority="high" height="813" sizes="(max-width:760px) 92vw, 50vw" src="../campanhas/assets/amanda-hero.webp" srcset="../campanhas/assets/amanda-hero-480.webp 480w, ../campanhas/assets/amanda-hero-720.webp 720w, ../campanhas/assets/amanda-hero.webp 970w" width="970"/>
@@ -770,6 +780,17 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
     </div>
   </section>
 
+  <section class="oti2-barriers" aria-labelledby="oti2-barriers-title">
+    <div class="oti2-shell">
+      <div class="oti2-section-head"><span class="oti2-eyebrow">Antes de pensar em cirurgia</span><h2 id="oti2-barriers-title">Três dúvidas que merecem resposta sem pressa.</h2><p>Uma boa avaliação reduz ansiedade sem empurrar a família para uma decisão.</p></div>
+      <div class="oti2-barrier-grid">
+        <article class="oti2-barrier-card"><h3>Existe uma idade certa?</h3><p>Não existe um número que decida tudo. Desenvolvimento, anatomia, saúde, maturidade e organização familiar precisam ser considerados em conjunto.</p></article>
+        <article class="oti2-barrier-card"><h3>A criança precisa querer?</h3><p>Ela precisa ser ouvida e participar de forma compatível com sua idade. A consulta não serve para convencer a operar.</p></article>
+        <article class="oti2-barrier-card"><h3>A orelha fica “colada”?</h3><p>O objetivo é reduzir a projeção preservando dobras, contornos e uma distância natural da cabeça — não produzir uma correção artificial.</p></article>
+      </div>
+    </div>
+  </section>
+
   <section class="oti2-section oti2-results" id="resultados">
     <div class="oti2-shell">
       <div class="oti2-section-head">
@@ -786,10 +807,6 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
         <article class="oti2-result-card">
           <img alt="Segundo resultado autorizado de otoplastia em vista frontal" decoding="async" height="754" loading="lazy" src="../campanhas/assets/resultados/otoplastia-caso-02-antes-depois.webp" width="1536"/>
           <div class="oti2-result-copy"><h3>Otoplastia infantil — caso 2</h3><p>Outro resultado individual de redução da projeção, com melhora da harmonia entre os lados.</p><div class="oti2-observe"><span>Resultado infantil</span><span>Contorno natural</span><span>Resultado individual</span></div></div>
-        </article>
-        <article class="oti2-result-card">
-          <img alt="Resultado autorizado de otoplastia em paciente adulta" decoding="async" height="1164" loading="lazy" src="../campanhas/assets/resultados/otoplastia-adulto-antes-depois.jpg" width="2048"/>
-          <div class="oti2-result-copy"><h3>Otoplastia adulta — caso 3</h3><p>Exemplo de correção em paciente adulta, apresentado para ampliar a compreensão das possibilidades conforme a anatomia.</p><div class="oti2-observe"><span>Resultado adulto</span><span>Proporção</span><span>Planejamento individual</span></div></div>
         </article>
       </div>
       <div class="oti2-mobile-carousel-controls" role="group" aria-label="Navegação dos resultados"><button class="oti2-mobile-carousel-button" data-carousel-action="previous" data-carousel-target="resultados" type="button">Anterior</button><button class="oti2-mobile-carousel-button" data-carousel-action="next" data-carousel-target="resultados" type="button">Próximo</button></div>
@@ -993,6 +1010,7 @@ html[data-page-type="procedure"] #oti2-sticky .oti2-btn>span:first-child{font-si
 
 <script defer src="../campanhas/tracking-config.js?v=20260719-attribution2"></script>
 <script defer src="../campanhas/tracking-loader.js?v=20260719-attribution2"></script>
+<script defer src="../campanhas/otoplasty-campaign.js?v=20260804-2"></script>
 <script defer src="../campanhas/conversion-tracking.js?v=20260719-attribution2"></script>
 <script defer src="../campanhas/landing-behavior.js"></script>
 <script defer src="../campanhas/site-enhancements.js?v=media-20260717-inline-featured-1"></script>

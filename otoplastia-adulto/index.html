@@ -135,6 +135,7 @@
       "name": "Otoplastia em Adultos em São Paulo | Dra. Amanda Schroeder",
       "description": "Otoplastia em adultos em São Paulo para orelhas proeminentes, assimetrias e incômodo antigo, com planejamento voltado à naturalidade e recuperação.",
       "inLanguage": "pt-BR",
+      "dateModified": "2026-08-04",
       "about": {
         "@type": "MedicalProcedure",
         "name": "Otoplastia em adultos",
@@ -269,8 +270,9 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
 .ota2-doctor-line{margin:22px 0 0;color:var(--ota-ink);font-size:13px;font-weight:600;line-height:1.55}
 .ota2-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
 .ota2-hero-note{margin:14px 0 0;color:var(--ota-muted);font-size:13px;line-height:1.55}
+.ota2-hero-note a{color:var(--ota-dark);font-weight:700;text-underline-offset:3px}
 .ota2-hero-media{margin:0;overflow:hidden;background:#e7d8d0;box-shadow:var(--ota-shadow)}
-.ota2-hero-media img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 20%}
+.ota2-hero-media img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:center 20%}
 
 .ota2-trust{padding:22px 0 30px}
 .ota2-trust-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ota-line);border-bottom:1px solid var(--ota-line)}
@@ -585,6 +587,11 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
 .ota2-path-card span{display:block;color:var(--ota-soft);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 .ota2-path-card h3{margin:9px 0 0;font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:400;line-height:1.18}
 .ota2-path-card p{margin:12px 0 0;color:var(--ota-muted);font-size:15px;line-height:1.65}
+.ota2-barriers{padding:56px 0;background:var(--ota-paper)}
+.ota2-barrier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+.ota2-barrier-card{padding:24px;border-top:2px solid var(--ota-soft);background:var(--ota-bg)}
+.ota2-barrier-card h3{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;line-height:1.2}
+.ota2-barrier-card p{margin:12px 0 0;color:var(--ota-muted);font-size:15px;line-height:1.66}
 .ota2-results-grid--two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .ota2-result-card img{object-fit:cover}
 .ota2-result-card--adult{grid-column:1/-1;width:min(100%,980px);justify-self:center}
@@ -629,6 +636,9 @@ body{background:var(--ota-bg);color:var(--ota-ink)}
 }
 @media (max-width:760px){
   .ota2-path-grid,.ota2-results-grid--two,.ota2-child-grid,.ota2-adult-grid,.ota2-anatomy-grid,.ota2-natural-grid,.ota2-consult-audiences{grid-template-columns:1fr}
+  .ota2-barrier-grid{grid-template-columns:1fr;gap:12px}
+  .ota2-barriers{padding:42px 0}
+  .ota2-barrier-card{padding:20px}
   .ota2-lobule{grid-template-columns:1fr}
   .ota2-path-card,.ota2-child-card,.ota2-adult-card,.ota2-anatomy-card,.ota2-natural-card{padding:21px}
 }
@@ -644,7 +654,7 @@ main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
 .ota2-sticky{right:22px;left:auto;bottom:calc(18px + env(safe-area-inset-bottom));width:auto;transform:none;padding:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
 .ota2-sticky .ota2-btn{width:auto;min-height:50px;padding:12px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(22,93,57,.32)}
 .ota2-sticky .ota2-btn:hover,.ota2-sticky .ota2-btn:focus-visible{background:#125b35;border-color:#125b35;color:#fff}
-.ota2-hero{order:1}.ota2-trust{order:2}.ota2-paths{order:3}.ota2-language{order:4}.ota2-anatomy{order:5}.ota2-fit{order:6}.ota2-results{order:7}.ota2-natural{order:8}.ota2-authority{order:9}.ota2-consult{order:10}.ota2-recovery{order:11}.ota2-safety{order:12}.ota2-reviews{order:13}.ota2-video-section{order:14}.ota2-faq{order:15}.ota2-final{order:16}
+.ota2-hero{order:1}.ota2-trust{order:2}.ota2-paths{order:3}.ota2-barriers{order:4}.ota2-language{order:5}.ota2-anatomy{order:6}.ota2-fit{order:7}.ota2-results{order:8}.ota2-natural{order:9}.ota2-authority{order:10}.ota2-consult{order:11}.ota2-recovery{order:12}.ota2-safety{order:13}.ota2-reviews{order:14}.ota2-video-section{order:15}.ota2-faq{order:16}.ota2-final{order:17}
 .ota2-consult-media-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .ota2-consult-media-gallery figure,.ota2-care-gallery figure{margin:0;overflow:hidden;border:1px solid var(--ota-line);background:var(--ota-paper)}
 .ota2-consult-media-gallery img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
@@ -731,12 +741,12 @@ main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
       <div class="ota2-hero-copy">
         <span class="ota2-eyebrow">Otoplastia em adultos em São Paulo</span>
         <h1>Otoplastia em adultos: menos projeção, preservando as curvas naturais.</h1>
-        <p class="lead">Para quem já deseja avaliar a correção das orelhas proeminentes — e quer entender como projeção, formato, cartilagem e assimetrias entram em um resultado proporcional ao rosto.</p>
+        <p class="lead">Muitos adultos chegam à consulta depois de anos escolhendo penteados, ângulos em fotos ou acessórios para se sentirem mais à vontade. Não existe uma fase “tarde demais” para conversar sobre isso: a avaliação organiza projeção, formato, cartilagem, assimetrias e rotina antes de qualquer decisão.</p>
         <p class="ota2-doctor-line">Dra. Amanda Schroeder · Cirurgia Plástica · CRM-SP 191605 · RQE 110472 · Pinheiros</p>
         <div class="ota2-hero-actions">
           <a class="ota2-btn" data-cta-location="hero" data-procedure="otoplastia-adulto" data-track="whatsapp" href="https://wa.me/5511961957144?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20como%20funciona%20a%20consulta%20com%20a%20Dra.%20Amanda%20e%20consultar%20a%20disponibilidade.%20Ref.%20OT01" rel="noopener" target="_blank">Falar com a equipe</a>
         </div>
-        <p class="ota2-hero-note">Consulta particular em Pinheiros · Nota fiscal para reembolso</p>
+        <p class="ota2-hero-note">Consulta particular em Pinheiros · Nota fiscal para reembolso<br/>Buscando para uma criança? <a data-audience-route="child" href="../otoplastia-infantil/">Veja otoplastia infantil</a>.</p>
       </div>
       <figure class="ota2-hero-media">
         <img alt="Dra. Amanda Schroeder" decoding="async" fetchpriority="high" height="813" sizes="(max-width:760px) 92vw, 50vw" src="../campanhas/assets/amanda-hero.webp" srcset="../campanhas/assets/amanda-hero-480.webp 480w, ../campanhas/assets/amanda-hero-720.webp 720w, ../campanhas/assets/amanda-hero.webp 970w" width="970"/>
@@ -763,6 +773,17 @@ main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
     </div>
   </section>
 
+  <section class="ota2-barriers" aria-labelledby="ota2-barriers-title">
+    <div class="ota2-shell">
+      <div class="ota2-section-head"><span class="ota2-eyebrow">Antes de decidir</span><h2 id="ota2-barriers-title">Três barreiras que podem ser esclarecidas na avaliação.</h2><p>O próximo passo não é escolher uma técnica: é entender se a cirurgia combina com a sua anatomia, seus objetivos e sua rotina.</p></div>
+      <div class="ota2-barrier-grid">
+        <article class="ota2-barrier-card"><h3>Já passou da idade?</h3><p>A idade isoladamente não impede a conversa. Saúde, tecidos, objetivos e capacidade de cumprir os cuidados orientam a indicação.</p></article>
+        <article class="ota2-barrier-card"><h3>Vai ficar artificial?</h3><p>O planejamento busca reduzir a projeção preservando curvas, dobras e uma distância natural da cabeça. Simetria absoluta não é prometida.</p></article>
+        <article class="ota2-barrier-card"><h3>Como conciliar a recuperação?</h3><p>Trabalho, óculos, sono, atividade física e exposição a impactos são organizados antes da cirurgia para tornar o período mais previsível.</p></article>
+      </div>
+    </div>
+  </section>
+
   <section class="ota2-section ota2-results" id="resultados">
     <div class="ota2-shell">
       <div class="ota2-section-head">
@@ -770,22 +791,12 @@ main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
         <h2>Menos projeção, preservando as curvas naturais.</h2>
         <p>Observe a relação das orelhas com o rosto, a manutenção das dobras e a diferença entre melhorar a proporção e deixar a orelha excessivamente próxima da cabeça.</p>
       </div>
-      <div class="ota2-mobile-carousel-hint" aria-hidden="true"><span>Deslize para ver mais resultados</span><b>→</b></div>
-      <div class="ota2-results-grid ota2-results-grid--two ota2-mobile-carousel-track" data-carousel="resultados" tabindex="0">
+      <div class="ota2-results-grid ota2-results-grid--single">
         <article class="ota2-result-card ota2-result-card--adult">
           <img alt="Resultado autorizado de otoplastia em adulto, antes e depois em vista frontal" decoding="async" fetchpriority="high" height="1913" src="../campanhas/assets/resultados/otoplastia-adulto-antes-depois.jpg" width="3683"/>
           <div class="ota2-result-copy"><h3>Caso 1 — paciente adulto</h3><p>Resultado individual de redução da projeção das orelhas, preservando contornos e uma relação natural com o rosto.</p><div class="ota2-observe"><span>Paciente adulto</span><span>Vista frontal</span><span>Resultado individual</span></div></div>
         </article>
-        <article class="ota2-result-card">
-          <img alt="Resultado autorizado de otoplastia em vista frontal" decoding="async" fetchpriority="high" height="424" src="../campanhas/assets/resultados/otoplastia-antes-depois.webp" width="1401"/>
-          <div class="ota2-result-copy"><h3>Caso 2 — paciente infantil</h3><p>Redução individual da projeção, preservando curvas e relação natural com o rosto.</p><div class="ota2-observe"><span>Paciente infantil</span><span>Projeção</span><span>Dobras preservadas</span></div></div>
-        </article>
-        <article class="ota2-result-card">
-          <img alt="Segundo resultado autorizado de otoplastia em vista frontal" decoding="async" height="754" loading="lazy" src="../campanhas/assets/resultados/otoplastia-caso-02-antes-depois.webp" width="1536"/>
-          <div class="ota2-result-copy"><h3>Caso 3 — paciente infantil</h3><p>Outro resultado individual de redução da projeção, com melhora da harmonia entre os lados.</p><div class="ota2-observe"><span>Paciente infantil</span><span>Assimetria</span><span>Contorno natural</span></div></div>
-      </article>
       </div>
-      <div class="ota2-mobile-carousel-controls"><button class="ota2-mobile-carousel-button" data-carousel-action="previous" data-carousel-target="resultados" type="button">Anterior</button><button class="ota2-mobile-carousel-button" data-carousel-action="next" data-carousel-target="resultados" type="button">Próximo</button></div>
       <p class="ota2-disclaimer">Casos reais com finalidade educativa. A indicação, a anatomia, a cartilagem, a cicatrização e os cuidados influenciam a evolução; resultados semelhantes não são garantidos.</p>
       <div class="ota2-lobule">
         <img alt="Resultado educativo de lobuloplastia antes e depois" decoding="async" height="961" loading="lazy" src="../campanhas/assets/rejuvenescimento-orelha-site.webp" width="1600"/>
@@ -958,6 +969,7 @@ main#conteudo-principal{display:flex;flex-direction:column;padding-top:72px}
 
 <script defer src="../campanhas/tracking-config.js?v=20260719-attribution2"></script>
 <script defer src="../campanhas/tracking-loader.js?v=20260719-attribution2"></script>
+<script defer src="../campanhas/otoplasty-campaign.js?v=20260804-2"></script>
 <script defer src="../campanhas/conversion-tracking.js?v=20260719-attribution2"></script>
 <script defer src="../campanhas/landing-behavior.js"></script>
 <script defer src="../campanhas/site-enhancements.js?v=media-20260714-1"></script>

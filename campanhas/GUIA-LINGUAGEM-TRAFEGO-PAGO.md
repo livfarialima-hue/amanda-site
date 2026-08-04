@@ -33,6 +33,16 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Pixel e eventos Meta só carregam após consentimento. O Google Tag Manager permanece desativado para não duplicar GA4, Google Ads ou Meta Pixel.
 - O clique é um sinal técnico, não um contato qualificado. A decisão do teste continua baseada em contatos válidos, agendamentos e comparecimentos.
 
+### Campanha Meta de otoplastia
+
+- Campanha infantil com destino direto ao WhatsApp: usar a referência `M26O01W` na mensagem inicial.
+- Quando o site for usado como destino ou material de apoio, enviar para `https://draamandaschroeder.com.br/otoplastia-infantil/?origem=M26O01W&utm_source=instagram&utm_medium=paid_social&utm_campaign=M26O01W&utm_content=DbHKuWfGP_N`.
+- A página infantil preserva `OT02` como referência-base. Com os parâmetros acima, o WhatsApp recebe `M26O01W-DbHKuWfGP_N-OT02`, permitindo distinguir campanha, criativo e jornada sem incluir dado clínico ou pessoal.
+- A página geral `/otoplastia/` funciona como roteador e oferece dois caminhos explícitos: criança ou adolescente; adulto.
+- A página infantil mostra somente casos identificados como infantis e oferece um acesso discreto à jornada adulta para não perder procura de adultos atraída pelo tema.
+- A página adulta preserva `OT01` como referência-base, utiliza mensagem própria no WhatsApp e mostra somente o caso identificado como adulto.
+- Não reutilizar o reel infantil como anúncio adulto. Um eventual teste adulto deve ter criativo e código próprios, sugerido como `M26O02W`.
+
 ### Contrato técnico de atribuição Google Ads
 
 - Manter a marcação automática do Google Ads ativada.

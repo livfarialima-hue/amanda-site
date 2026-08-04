@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #21312b;
+        --muted: #66736e;
+        --line: #dfe6e2;
+        --paper: #ffffff;
+        --wash: #f4f7f5;
+        --accent: #296a53;
+        --accent-dark: #1f523f;
+        --danger: #9b332f;
+        --success: #236143;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--wash);
+        color: var(--ink);
+        font: 16px/1.45 Arial, sans-serif;
+      }
+
+      main {
+        width: min(100% - 32px, 560px);
+        margin: 36px auto;
+      }
+
+      .brand {
+        margin: 0 0 8px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 6vw, 38px);
+        letter-spacing: -.03em;
+        line-height: 1.08;
+      }
+
+      .intro {
+        margin: 12px 0 24px;
+        color: var(--muted);
+      }
+
+      form {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--paper);
+        box-shadow: 0 14px 40px rgba(29, 54, 44, .08);
+      }
+
+      .field { margin-bottom: 18px; }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      input, select, textarea, button {
+        width: 100%;
+        border-radius: 10px;
+        font: inherit;
+      }
+
+      input, select, textarea {
+        border: 1px solid #bfcac5;
+        background: #fff;
+        color: var(--ink);
+        padding: 12px 13px;
+      }
+
+      input:focus, select:focus, textarea:focus {
+        outline: 3px solid rgba(41, 106, 83, .18);
+        border-color: var(--accent);
+      }
+
+      textarea { min-height: 88px; resize: vertical; }
+
+      .rule {
+        min-height: 22px;
+        margin: -6px 0 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      button {
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        padding: 14px 18px;
+        font-weight: 700;
+      }
+
+      button:hover { background: var(--accent-dark); }
+      button:disabled { cursor: wait; opacity: .65; }
+
+      .message {
+        display: none;
+        margin-top: 18px;
+        border-radius: 10px;
+        padding: 13px 14px;
+        font-weight: 700;
+      }
+
+      .message.error {
+        display: block;
+        background: #fff0ef;
+        color: var(--danger);
+      }
+
+      .message.success {
+        display: block;
+        background: #eaf7f0;
+        color: var(--success);
+      }
+
+      .privacy {
+        margin: 16px 4px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 520px) {
+        main { margin: 24px auto; }
+        form { padding: 20px; border-radius: 15px; }
+        .grid { grid-template-columns: 1fr; gap: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="brand">Clínica LIV · Faria Lima</p>
+      <h1>Reservar uma sala</h1>
+      <p class="intro">
+        Escolha o horário. A reserva só será confirmada se a sala
+        correspondente continuar disponível.
+      </p>
+
+      <form id="booking-form">
+        <div class="field">
+          <label for="professional">Profissional</label>
+          <select id="professional" name="professional" required>
+            <option value="">Selecione</option>
+            <option value="Dra. Amanda">Dra. Amanda</option>
+            <option value="Dr. Henrique">Dr. Henrique</option>
+            <option value="Dra. Marina">Dra. Marina</option>
+            <option value="Dr. Laerte">Dr. Laerte</option>
+            <option value="Dr. Daniel">Dr. Daniel</option>
+          </select>
+        </div>
+
+        <p class="rule" id="room-rule" aria-live="polite"></p>
+
+        <div class="field">
+          <label for="patient-name">Nome do paciente (opcional)</label>
+          <input id="patient-name" name="patientName" type="text" maxlength="120"
+            placeholder="Fica somente na planilha administrativa">
+        </div>
+
+        <div class="field">
+          <label for="consultation-type">Tipo de consulta</label>
+          <select id="consultation-type" name="consultationType">
+            <option value="Primeira consulta" selected>Primeira consulta</option>
+            <option value="Retorno">Retorno</option>
+            <option value="Pré-operatório">Pré-operatório</option>
+            <option value="Pós-operatório">Pós-operatório</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="scheduled-date">Data</label>
+            <input id="scheduled-date" name="scheduledDate" type="date" required>
+          </div>
+          <div class="field">
+            <label for="scheduled-time">Horário</label>
+            <input id="scheduled-time" name="scheduledTime" type="time" step="1800" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="duration">Duração</label>
+          <select id="duration" name="durationMinutes">
+            <option value="30">30 minutos</option>
+            <option value="60" selected>1 hora</option>
+            <option value="90">1 hora e 30 minutos</option>
+            <option value="120">2 horas</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="notes">Observação administrativa (opcional)</label>
+          <textarea id="notes" name="notes" maxlength="240"
+            placeholder="Ex.: retorno, reunião ou necessidade de equipamento"></textarea>
+        </div>
+
+        <button id="submit-button" type="submit">Verificar e reservar</button>
+        <div class="message" id="message" role="status" aria-live="polite"></div>
+      </form>
+
+      <p class="privacy">
+        O Google Agenda recebe apenas o nome do profissional, a sala e o
+        horário. O nome do paciente fica somente na planilha administrativa.
+      </p>
+    </main>
+
+    <script>
+      const accessToken = <?!= JSON.stringify(accessToken) ?>;
+      const form = document.getElementById("booking-form");
+      const professional = document.getElementById("professional");
+      const dateInput = document.getElementById("scheduled-date");
+      const roomRule = document.getElementById("room-rule");
+      const message = document.getElementById("message");
+      const submitButton = document.getElementById("submit-button");
+
+      const today = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date());
+      dateInput.min = today;
+
+      const rules = {
+        "Dra. Amanda": "Reserva sempre na Sala 1.",
+        "Dr. Henrique": "Reserva sempre na Sala 2.",
+        "Dra. Marina": "O sistema escolherá a primeira sala livre.",
+        "Dr. Laerte": "O sistema escolherá a primeira sala livre.",
+        "Dr. Daniel": "Reserva sempre na Sala 2.",
+      };
+
+      professional.addEventListener("change", () => {
+        roomRule.textContent = rules[professional.value] || "";
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        message.className = "message";
+        message.textContent = "";
+        submitButton.disabled = true;
+        submitButton.textContent = "Verificando disponibilidade…";
+
+        const data = new FormData(form);
+        google.script.run
+          .withSuccessHandler(showResult)
+          .withFailureHandler(() => showResult({
+            ok: false,
+            error: "reservation_failed",
+          }))
+          .reservarSalaPeloFormulario({
+            accessToken,
+            professional: data.get("professional"),
+            patientName: data.get("patientName"),
+            consultationType: data.get("consultationType"),
+            scheduledDate: data.get("scheduledDate"),
+            scheduledTime: data.get("scheduledTime"),
+            durationMinutes: Number(data.get("durationMinutes")),
+            notes: data.get("notes"),
+          });
+      });
+
+      function showResult(result) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Verificar e reservar";
+
+        if (result && result.ok) {
+          message.className = "message success";
+          message.textContent =
+            `Confirmado: ${result.room}, dia ${result.formattedDate}, ` +
+            `às ${result.scheduledTime}, por ${result.durationMinutes} minutos.`;
+          form.reset();
+          roomRule.textContent = "";
+          dateInput.min = today;
+          return;
+        }
+
+        const errors = {
+          room_not_available:
+            "Esse horário acabou de ser ocupado. Escolha outro horário.",
+          invalid_schedule: "Confira a data e o horário informados.",
+          past_schedule: "Escolha um horário futuro.",
+          schedule_too_far: "Escolha uma data dentro dos próximos 12 meses.",
+          busy_retry: "O sistema está processando outra reserva. Tente novamente.",
+          invalid_link: "Este link não é mais válido. Peça um novo à Clínica LIV.",
+        };
+        message.className = "message error";
+        message.textContent = errors[result && result.error] ||
+          "Não foi possível reservar agora. Tente novamente em instantes.";
+      }
+    </script>
+  </body>
+</html>

@@ -4,6 +4,8 @@
 .codex-remote-attachments/
 analysis/
 apps-script/
+relatorios/
+campanhas/*.md
 docs/
 node_modules/
 scripts/

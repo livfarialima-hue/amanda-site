@@ -1,0 +1,293 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Plano Meta para otoplastia infantil",
+    "description": "Recomendação de timing, orçamento, estrutura e critérios de decisão para promover o reel de otoplastia infantil da Dra. Amanda.",
+    "generatedAt": "2026-08-03T17:37:56-03:00",
+    "filters": [],
+    "cards": [],
+    "charts": [
+      {
+        "id": "meta-funnel",
+        "title": "Funil dos contatos Meta reconhecidos na planilha",
+        "subtitle": "19 de julho a 3 de agosto de 2026; 11 de 56 contatos chegaram a qualificado ou melhor",
+        "showDescription": true,
+        "intent": "progression",
+        "question": "Quantos contatos atribuídos à campanha Meta avançaram no funil comercial?",
+        "rationale": "Barras horizontais permitem comparar três estágios ordenados com rótulos longos sem sugerir precisão causal.",
+        "type": "horizontalBar",
+        "dataset": "meta-funnel-data",
+        "sourceId": "sheet-funnel",
+        "source": {
+          "query": {
+            "engine": "Google Sheets",
+            "sql": "SELECT stage, COUNT(*) AS count, COUNT(*) / 56.0 AS share_of_attributed_leads, '2026-07-19 a 2026-08-03' AS period FROM Funil_Comercial WHERE platform = 'Meta' AND attribution IN ('campaign_key', 'META-DIRETO') GROUP BY stage",
+            "description": "Agrega os 56 contatos Meta reconhecidos na aba Funil Comercial em três estágios: todos, qualificados ou melhor e consulta agendada.",
+            "id": "meta-funnel-2026-08-03",
+            "executed_at": "2026-08-03T17:25:00-03:00"
+          }
+        },
+        "encodings": {
+          "x": {
+            "field": "stage",
+            "type": "ordinal",
+            "label": "Etapa"
+          },
+          "y": {
+            "field": "count",
+            "type": "quantitative",
+            "aggregate": "none",
+            "format": "number",
+            "label": "Contatos"
+          },
+          "tooltip": [
+            {
+              "field": "share_of_attributed_leads",
+              "type": "quantitative",
+              "format": "percent",
+              "label": "% dos contatos atribuídos"
+            },
+            {
+              "field": "period",
+              "type": "text",
+              "label": "Período"
+            }
+          ]
+        },
+        "xAxisTitle": "Etapa do funil",
+        "yAxisTitle": "Número de contatos",
+        "valueFormat": "number",
+        "maxRows": 3,
+        "compatibleTypes": ["bar", "horizontalBar", "funnel"]
+      }
+    ],
+    "tables": [],
+    "sources": [
+      {
+        "id": "meta-ads",
+        "label": "Meta Ads Manager — conta Dra Amanda Schroeder",
+        "href": "https://adsmanager.facebook.com/adsmanager/manage/ads?act=1643959806249995&business_id=1308068619887667",
+        "query": {
+          "engine": "Meta Ads Manager",
+          "description": "Leitura das campanhas e anúncios ativos no período máximo disponível até 3 de agosto de 2026.",
+          "executed_at": "2026-08-03T17:25:00-03:00",
+          "tables_used": ["Campanhas", "Anúncios"],
+          "filters": ["Conta Dra Amanda Schroeder", "Período máximo até 03/08/2026", "Campanhas M26F01W e M26F02S"],
+          "metric_definitions": [
+            "Conversa iniciada e custo por conversa são métricas reportadas pela Meta e podem incluir modelagem estatística.",
+            "Orçamento é o limite total de cada campanha de 30 dias.",
+            "Valor usado foi aproximado por resultados multiplicados pelo custo médio exibido, sujeito a arredondamento."
+          ]
+        }
+      },
+      {
+        "id": "sheet-funnel",
+        "label": "Google Sheets — LEADS, aba Funil Comercial",
+        "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit?gid=249078399#gid=249078399",
+        "query": {
+          "engine": "Google Sheets",
+          "description": "Leitura das linhas do Funil Comercial e contagem por plataforma, campanha e situação atual.",
+          "language": "A1 range",
+          "executed_at": "2026-08-03T17:12:00-03:00",
+          "tables_used": ["LEADS.Funil Comercial"],
+          "filters": ["Data do contato de 19/07/2026 a 03/08/2026", "Plataforma = Meta", "Campanha/chave associada ao teste M26F01W"],
+          "metric_definitions": [
+            "Contatos atribuídos: linhas do funil associadas ao teste Meta por plataforma, campanha ou chave operacional.",
+            "Qualificados ou melhor: situação atual igual a Qualificado, Consulta agendada, Consulta realizada ou Fechado.",
+            "Consultas agendadas: situação atual igual a Consulta agendada."
+          ]
+        }
+      },
+      {
+        "id": "instagram-reel",
+        "label": "Instagram — reel de otoplastia infantil da Dra. Amanda",
+        "href": "https://www.instagram.com/dra.amanda_plastica/reel/DbHKuWfGP_N/",
+        "query": {
+          "engine": "Instagram",
+          "description": "Inspeção do reel publicado em 22 de julho de 2026, incluindo formato, duração, legenda e sinais orgânicos visíveis.",
+          "executed_at": "2026-08-03T17:27:00-03:00",
+          "filters": ["Perfil @dra.amanda_plastica", "Reel DbHKuWfGP_N"],
+          "metric_definitions": ["Visualizações, curtidas, comentários e repostagens são contagens visíveis no Instagram no momento da leitura."]
+        }
+      },
+      {
+        "id": "cfm-manual",
+        "label": "CFM — Manual de Publicidade Médica",
+        "href": "https://publicidademedica.cfm.org.br/"
+      },
+      {
+        "id": "meta-review-policy",
+        "label": "Meta for Business — revisão e políticas de anúncios",
+        "href": "https://www.facebook.com/business/ads/review-policy-guidelines"
+      },
+      {
+        "id": "meta-teen-ads",
+        "label": "Meta Help Center — regras de anúncios para adolescentes",
+        "href": "https://www.facebook.com/help/980264326141711/"
+      },
+      {
+        "id": "paid-guide",
+        "label": "Guia interno de linguagem e tráfego pago",
+        "path": "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md"
+      },
+      {
+        "id": "landing-page",
+        "label": "Landing page — Otoplastia infantil",
+        "href": "https://draamandaschroeder.com.br/otoplastia-infantil/"
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# Plano Meta para otoplastia infantil"
+      },
+      {
+        "id": "executive-summary",
+        "type": "markdown",
+        "body": "## Executive Summary\n\n- **Sim, é um bom momento para testar — mas não para escalar forte.** O anúncio específico de lifting já responde por 60 das 61 conversas da campanha atual, sinal de que vídeos centrados em um procedimento funcionam melhor do que comunicação genérica.\n- **Recomendação: adicionar R$ 300 por 15 dias, sem retirar verba das campanhas atuais.** Isso equivale a R$ 20/dia e aumenta em 25% o orçamento total originalmente autorizado na Meta.\n- **O teste deve ser de otoplastia infantil, não de otoplastia geral.** O reel fala de crianças, decisão compartilhada e participação da família; ele tende a atrair responsáveis, não adultos interessados na própria cirurgia.\n- **Usar o post existente com destino ao WhatsApp.** O reel vertical de 49 segundos já tem prova social orgânica e o canal de mensagens é o que hoje produz sinal comercial mensurável."
+      },
+      {
+        "id": "winning-pattern",
+        "type": "markdown",
+        "sourceId": "meta-ads",
+        "body": "## O padrão vencedor atual favorece um teste específico\n\nA campanha de WhatsApp acumulou **61 conversas a R$ 6,49 por conversa**, com gasto aproximado de R$ 396. Dentro dela, o anúncio de lifting gerou **60 conversas a R$ 6,06**, enquanto o anúncio genérico de avaliação gerou apenas uma conversa a R$ 32,26.\n\n**Implicação:** a conta já demonstrou que um vídeo educativo de procedimento pode superar amplamente uma peça genérica. Otoplastia deve entrar como campanha própria, para não disputar orçamento nem misturar aprendizado com lifting."
+      },
+      {
+        "id": "funnel-intro",
+        "type": "markdown",
+        "sourceId": "sheet-funnel",
+        "body": "## Há sinal comercial, mas a amostra ainda é inicial\n\nA planilha reconhece **56 contatos do teste Meta**, dos quais **11 estão qualificados ou em etapa melhor** e **2 têm consulta agendada**. Isso representa 19,6% de avanço para qualificado ou melhor e 3,6% para agendamento.\n\nO gráfico usa apenas a planilha como denominador. A Meta reporta cinco conversas a mais, por isso os números de mídia e funil não foram fundidos."
+      },
+      {
+        "id": "funnel-chart",
+        "type": "chart",
+        "chartId": "meta-funnel"
+      },
+      {
+        "id": "funnel-implication",
+        "type": "markdown",
+        "body": "### O que isso autoriza\n\nO funil autoriza **um teste incremental controlado**, não um aumento amplo de orçamento. Os dois agendamentos ainda precisam ser acompanhados até consulta realizada; por isso o retorno financeiro da campanha não está comprovado."
+      },
+      {
+        "id": "recommended-test",
+        "type": "markdown",
+        "body": "## Teste recomendado: R$ 300 em 15 dias\n\n**Estrutura**\n\n- Campanha: `M26O01W | Otoplastia infantil SP | WhatsApp | 15 dias`\n- Orçamento: R$ 300 total, R$ 20/dia\n- Objetivo: conversas por mensagem iniciadas no WhatsApp\n- Criativo: usar a publicação existente `DbHKuWfGP_N`\n- Público: adultos de 30 a 54 anos, São Paulo e raio de atendimento; ambos os gêneros; expansão ampla, sem interesses ligados a condição física ou saúde\n- Posicionamentos: Advantage+, preservando Reels, Stories e Feed\n- Uma campanha, um conjunto e um anúncio no início; não dividir R$ 20/dia entre variações\n\n**Mensagem inicial sugerida**\n\n`Olá! Vi o vídeo sobre otoplastia infantil e gostaria de entender como funciona a avaliação com a Dra. Amanda. Ref. M26O01W`\n\nA primeira resposta deve oferecer três caminhos simples: como funciona a avaliação; idade e recuperação; valor e disponibilidade. Não pedir dados de saúde nem nome/idade da criança no anúncio ou em formulário da Meta."
+      },
+      {
+        "id": "copy-plan",
+        "type": "markdown",
+        "body": "## Manter o vídeo; neutralizar a legenda paga\n\nO reel tem formato adequado para mídia — **9:16, 49 segundos** — e sinal orgânico razoável: cerca de **978 visualizações, 49 curtidas, um comentário e dois reposts** na leitura de 3 de agosto. Ele não mostra antes e depois, não promete resultado e mantém caráter educativo.\n\nTexto principal recomendado:\n\n> Otoplastia infantil: a decisão deve considerar idade, anatomia e participação da própria criança. A Dra. Amanda explica quando a avaliação pode fazer sentido, como é o planejamento e quais cuidados entram nessa conversa. Atendimento em Pinheiros, São Paulo.\n\nTítulo: `Entenda como funciona a avaliação`\n\nCTA: `Enviar mensagem`\n\nEvitar frases como “seu filho tem orelha de abano?”, closes depreciativos, promessa de autoestima ou segmentação por interesse em uma condição física. O CFM permite publicidade médica e conteúdo educativo, e informa que CRM/RQE podem constar na bio nas peças sociais; a Meta revisa vídeo, texto, segmentação e destino e pode revisar novamente após a publicação."
+      },
+      {
+        "id": "decision-gates",
+        "type": "markdown",
+        "body": "## Critérios de pausa, continuidade e escala\n\n**Após R$ 100 gastos**\n\n- Continuar se houver pelo menos 7 conversas iniciadas e 1 contato qualificado.\n- Revisar abertura, legenda ou público se não houver nenhum qualificado.\n\n**Após R$ 200 gastos**\n\n- Continuar se o custo por conversa estiver em até R$ 15 e o custo por contato qualificado em até R$ 60.\n- Pausar se houver conversa barata, mas nenhuma intenção real de consulta, preço ou agenda.\n\n**Ao final de R$ 300**\n\n- Manter por mais 15 dias somente se houver pelo menos 3 contatos qualificados ou 1 agendamento.\n- Escalar em no máximo 20% a cada três dias apenas depois de um agendamento confirmado e qualidade estável.\n- Se o anúncio atrair majoritariamente adultos interessados na própria otoplastia, criar depois um vídeo específico para adultos; não forçar esse reel infantil a servir aos dois públicos."
+      },
+      {
+        "id": "further-questions",
+        "type": "markdown",
+        "body": "## O que precisa ser respondido pelo teste\n\n- O reel gera responsáveis realmente interessados em avaliação ou apenas curiosidade e dúvidas gerais?\n- O custo por contato qualificado de otoplastia permanece dentro de R$ 60?\n- A equipe consegue responder às conversas em tempo adequado e registrar corretamente `M26O01W`?\n- Quantos agendamentos comparecem e quantos chegam a proposta cirúrgica?"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "body": "## Caveats and assumptions\n\n- Os números da Meta são de uma campanha facial geral; eles servem como referência operacional, não como previsão de custo para otoplastia.\n- Otoplastia infantil é um nicho menor, então o custo por conversa pode ficar acima dos R$ 6,49 atuais.\n- A Meta reporta 61 conversas, enquanto a planilha reconhece 56 contatos atribuídos. A cobertura observada é 91,8%; custos usam a Meta e qualidade usa a planilha.\n- Os dois agendamentos do teste atual ainda não comprovam comparecimento, receita ou cirurgia. A recomendação é, portanto, **compartilhar e agir com essas ressalvas**.\n- Antes de publicar, confirmar que a conta do Instagram está conectada ao ativo correto e que o post existente aparece como opção de publicação na criação do anúncio."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-03T17:37:56-03:00",
+    "status": "ready",
+    "datasets": {
+      "meta-funnel-data": [
+        {
+          "stage": "Contatos atribuídos",
+          "count": 56,
+          "share_of_attributed_leads": 1,
+          "period": "19 jul–3 ago 2026",
+          "period_start": "2026-07-19",
+          "period_end": "2026-08-03",
+          "channel": "Meta",
+          "definition": "Linhas associadas ao teste M26F01W"
+        },
+        {
+          "stage": "Qualificados ou melhor",
+          "count": 11,
+          "share_of_attributed_leads": 0.1964285714,
+          "period": "19 jul–3 ago 2026",
+          "period_start": "2026-07-19",
+          "period_end": "2026-08-03",
+          "channel": "Meta",
+          "definition": "Qualificado, agendado, realizado ou fechado"
+        },
+        {
+          "stage": "Consultas agendadas",
+          "count": 2,
+          "share_of_attributed_leads": 0.0357142857,
+          "period": "19 jul–3 ago 2026",
+          "period_start": "2026-07-19",
+          "period_end": "2026-08-03",
+          "channel": "Meta",
+          "definition": "Situação atual igual a Consulta agendada"
+        }
+      ]
+    },
+    "accessIssues": []
+  },
+  "sources": [
+    {
+      "id": "meta-ads",
+      "label": "Meta Ads Manager — conta Dra Amanda Schroeder",
+      "href": "https://adsmanager.facebook.com/adsmanager/manage/ads?act=1643959806249995&business_id=1308068619887667"
+    },
+    {
+      "id": "sheet-funnel",
+      "label": "Google Sheets — LEADS, aba Funil Comercial",
+      "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit?gid=249078399#gid=249078399"
+    },
+    {
+      "id": "instagram-reel",
+      "label": "Instagram — reel de otoplastia infantil da Dra. Amanda",
+      "href": "https://www.instagram.com/dra.amanda_plastica/reel/DbHKuWfGP_N/"
+    },
+    {
+      "id": "cfm-manual",
+      "label": "CFM — Manual de Publicidade Médica",
+      "href": "https://publicidademedica.cfm.org.br/"
+    },
+    {
+      "id": "meta-review-policy",
+      "label": "Meta for Business — revisão e políticas de anúncios",
+      "href": "https://www.facebook.com/business/ads/review-policy-guidelines"
+    },
+    {
+      "id": "meta-teen-ads",
+      "label": "Meta Help Center — regras de anúncios para adolescentes",
+      "href": "https://www.facebook.com/help/980264326141711/"
+    },
+    {
+      "id": "paid-guide",
+      "label": "Guia interno de linguagem e tráfego pago",
+      "path": "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md"
+    },
+    {
+      "id": "landing-page",
+      "label": "Landing page — Otoplastia infantil",
+      "href": "https://draamandaschroeder.com.br/otoplastia-infantil/"
+    }
+  ],
+  "package_info": {
+    "audience": "product stakeholders",
+    "analysis_as_of": "2026-08-03T17:37:56-03:00",
+    "source_notes": [
+      "Required structure mapped to title, Executive Summary, winning pattern, funnel evidence, recommended test, decision gates, further questions, and caveats.",
+      "Chart map: funnel section; question = advancement of Meta-attributed contacts; family = progression; type = horizontalBar; fields = stage/count; claim = the current sample supports a controlled test, not aggressive scaling; palette = single-series neutral; delivery = portable HTML.",
+      "Validation: Meta is controlling source for spend/conversations; Funil Comercial is controlling source for qualification and appointments; 61 versus 56 is retained as a source mismatch, not reconciled by joining.",
+      "No table included because the action plan is clearer as a short ordered narrative and exact lookup is not the primary task."
+    ]
+  }
+}
