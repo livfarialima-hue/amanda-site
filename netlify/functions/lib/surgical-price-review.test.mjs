@@ -93,6 +93,21 @@ test("acknowledges a price request while the approved value is pending", () => {
   assert.doesNotMatch(overnight, /R\$/);
 });
 
+test("answers a location question immediately while the surgical price waits for review", () => {
+  const reply = buildSurgicalPriceHoldingReply({
+    patientName: "nady",
+    procedure: "lifting_facial",
+    currentText: "ONDE FICA E QUAL O VALOR?",
+  });
+
+  assert.match(reply, /^Claro, Nady\./);
+  assert.match(reply, /Rua Pais Leme, 215/);
+  assert.match(reply, /Pinheiros/);
+  assert.match(reply, /pr[oó]xima à Av\. Faria Lima/i);
+  assert.match(reply, /faixa de refer[eê]ncia para o lifting facial/i);
+  assert.doesNotMatch(reply, /R\$ 500/);
+});
+
 test("keeps ambiguous procedures useful without inventing a number", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Maria",

@@ -112,6 +112,52 @@ test("a patient choice reserves the offered slot and receives the final confirma
   assert.equal(alerts.length, 0);
 });
 
+test("an agreement already closed by the human team is recorded without another patient message", async () => {
+  const patientMessages = [];
+  const cancellations = [];
+  const result = await completeSelectedAppointment(
+    {
+      ...INPUT,
+      selection: {
+        ...INPUT.selection,
+        source:
+          "WhatsApp — confirmação após acordo com a equipe humana",
+        silentConfirmation: true,
+      },
+    },
+    {
+      getHumanResumeControlImpl: async () => ({
+        status: "human_active",
+        generation: "human-agreement",
+      }),
+      deliverSheetsActionImpl: async () => ({
+        ok: true,
+        responseData: {
+          ok: true,
+          reserved: true,
+        },
+      }),
+      cancelPendingHumanResumeImpl: async (phone) => {
+        cancellations.push(phone);
+        return { status: "completed" };
+      },
+      sendControlledPatientReplyImpl: async (message) => {
+        patientMessages.push(message);
+        return { status: "completed" };
+      },
+    },
+  );
+
+  assert.deepEqual(result, {
+    status: "recorded_silently",
+    reserved: true,
+    confirmationSent: false,
+    errorCode: "none",
+  });
+  assert.deepEqual(cancellations, [INPUT.patientPhone]);
+  assert.equal(patientMessages.length, 0);
+});
+
 test("an unavailable slot is not booked and creates a review alert with a suggested answer", async () => {
   const patientMessages = [];
   const alerts = [];

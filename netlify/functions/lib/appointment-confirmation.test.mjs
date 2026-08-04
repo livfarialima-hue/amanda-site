@@ -232,6 +232,40 @@ test("captures a manually negotiated slot from natural conversation", () => {
   assert.equal(result?.scheduledTime, "08:00");
 });
 
+test("assembles a day and time negotiated across messages and confirms silently", () => {
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "Temos horário nos dias 12 ou 13.",
+    },
+    {
+      role: "user",
+      text: "Pode ser no dia 12, poderia ser às 11h?",
+    },
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "Este horário está perfeito. Podemos combinar?",
+    },
+    {
+      role: "user",
+      text: "Podemos! Combinado",
+    },
+  ];
+
+  const result = detectPatientAppointmentSelection({
+    currentText: "Podemos! Combinado",
+    recentConversation,
+    at: "2026-08-03T20:56:00-03:00",
+  });
+
+  assert.equal(result?.scheduledDate, "2026-08-12");
+  assert.equal(result?.scheduledTime, "11:00");
+  assert.equal(result?.professional, "Dra. Amanda");
+  assert.equal(result?.silentConfirmation, true);
+});
+
 test("recognizes the manual closing used after the patient accepted", () => {
   const result = detectManualAppointment({
     currentText: "Combinado então! Agradecemos e até lá",

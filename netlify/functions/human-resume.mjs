@@ -407,6 +407,7 @@ export async function processHumanResumeJob(
           patientName: job.patientName,
           procedure: priceProcedure,
           overnight: outsideServiceHours,
+          currentText: job.text,
         }),
         buildSurgicalPriceSuggestedReply({
           patientName: job.patientName,

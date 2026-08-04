@@ -94,6 +94,34 @@ test("does not reopen a conversation for a simple acknowledgment", () => {
   }
 });
 
+test("does not send an overnight holding message after a negotiated appointment is accepted", () => {
+  const recentConversation = [
+    {
+      role: "user",
+      text: "Pode ser no dia 12, poderia ser às 11h?",
+    },
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "Este horário está perfeito. Podemos combinar?",
+    },
+  ];
+  const result = classifyHumanResume({
+    text: "Podemos! Combinado",
+    messageType: "text",
+    preliminaryPlan: {
+      route: "human_review",
+      reason: "outside_conservative_rules",
+      automaticAllowed: false,
+    },
+    enrichedPlan: standardPlan("known_conversation_continuation"),
+    recentConversation,
+  });
+
+  assert.equal(result.action, "no_action");
+  assert.equal(result.reason, "conversation_closing_or_ignored");
+});
+
 test("recognizes a safe operational continuation without inventing a team check", () => {
   const text =
     "Tudo bem? Eu acho que pode emitir sim. Vou tentar acessar os exames, se conseguir te passo, OK?";

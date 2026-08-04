@@ -133,10 +133,49 @@ function extractRelativeDate(text, baseDate) {
   return null;
 }
 
+function extractDayOfMonthDate(text, baseDate) {
+  const match = normalize(text).match(/\bdia\s+(\d{1,2})\b/);
+  if (!match) return null;
+
+  const requestedDay = Number(match[1]);
+  if (requestedDay < 1 || requestedDay > 31) return null;
+
+  const base = localParts(baseDate);
+  let year = base.year;
+  let month = base.month;
+  let candidate = dateAtNoon({
+    year,
+    month,
+    day: requestedDay,
+  });
+
+  if (
+    Number.isNaN(candidate.getTime()) ||
+    localParts(candidate).day !== requestedDay
+  ) {
+    return null;
+  }
+
+  if (candidate.getTime() < baseDate.getTime()) {
+    month += 1;
+    if (month > 12) {
+      month = 1;
+      year += 1;
+    }
+    candidate = dateAtNoon({ year, month, day: requestedDay });
+  }
+
+  return Number.isNaN(candidate.getTime()) ||
+    localParts(candidate).day !== requestedDay
+    ? null
+    : formatDate(candidate);
+}
+
 function extractDate(text, baseDate) {
   return (
     extractExplicitDate(text, baseDate) ||
-    extractRelativeDate(text, baseDate)
+    extractRelativeDate(text, baseDate) ||
+    extractDayOfMonthDate(text, baseDate)
   );
 }
 
@@ -182,6 +221,8 @@ function isConfirmation(text) {
     /\bda pra te receber\b/,
     /\bcombinado(?: entao)?\b/,
     /\bagradecemos e ate la\b/,
+    /\b(?:este|esse|o) horario (?:esta|fica) (?:perfeito|disponivel)\b/,
+    /\bpodemos combinar\b/,
   ].some((pattern) => pattern.test(comparable));
 }
 
@@ -400,6 +441,40 @@ export function detectPatientAppointmentSelection({
 } = {}) {
   if (!hasSelectionIntent(currentText)) return null;
 
+  const baseDate = new Date(at);
+  const acceptedNegotiatedAppointment =
+    isPatientConfirmation(currentText) &&
+    !Number.isNaN(baseDate.getTime())
+      ? hasConfirmedAppointmentContext(
+          recentConversation,
+          baseDate,
+        )
+      : null;
+  if (acceptedNegotiatedAppointment) {
+    const contextText = (Array.isArray(recentConversation)
+      ? recentConversation
+      : [])
+      .slice(-10)
+      .map((turn) => String(turn?.text || ""))
+      .join(" ");
+    const professional = detectProfessional(contextText);
+    const consultationType = detectConsultationType(contextText);
+
+    return {
+      ...acceptedNegotiatedAppointment,
+      professional,
+      consultationType,
+      location:
+        consultationType === "Teleconsulta"
+          ? "Teleconsulta"
+          : "Clínica LIV Faria Lima",
+      status: "Consulta agendada",
+      source:
+        "WhatsApp — confirmação após acordo com a equipe humana",
+      silentConfirmation: true,
+    };
+  }
+
   const slots = offeredAppointmentSlots(recentConversation, at);
   if (!slots.length) return null;
 
@@ -429,7 +504,6 @@ export function detectPatientAppointmentSelection({
       : null;
   }
 
-  const baseDate = new Date(at);
   const requestedDate = patientSelectionTexts
     .map((text) =>
       explicitOfferedDate(text, slots) ||
@@ -742,6 +816,7 @@ function isPatientConfirmation(text) {
 
   return [
     /^(?:sim|pode sim|pode ser|confirmo|confirmada|confirmado|combinado|perfeito|tudo certo|ok(?: obrigada)?|ok(?: obrigado)?|estarei la|estarei aí)$/,
+    /^(?:podemos(?: sim)?|vamos)\s+(?:combinado|fechado|perfeito)$/,
     /\b(?:pode manter|pode confirmar|esta confirmado|está confirmado)\b/,
   ].some((pattern) => pattern.test(comparable));
 }

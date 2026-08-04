@@ -8,6 +8,8 @@ const PRICE_GUIDE_URL =
   "&utm_content=resposta_preco_cirurgia";
 const PRICE_RANGE_LOWER_FACTOR = 0.9;
 const PRICE_RANGE_UPPER_FACTOR = 1.1;
+const LOCATION_REQUEST_PATTERN =
+  /\b(?:onde\s+fica|qual\s+(?:e|é)\s+o\s+endere[cç]o|endere[cç]o|localiza[cç][aã]o|como\s+chegar)\b/i;
 
 const FACIAL_PRICE_GUIDE_PROCEDURES = new Set([
   "lifting_facial",
@@ -105,7 +107,14 @@ const PROCEDURE_LABELS = Object.freeze({
 });
 
 function firstName(value) {
-  return String(value || "").trim().split(/\s+/)[0] || "";
+  const name = String(value || "").trim().split(/\s+/)[0] || "";
+  if (!name) return "";
+
+  if (name === name.toLowerCase() || name === name.toUpperCase()) {
+    return `${name.charAt(0).toUpperCase()}${name.slice(1).toLowerCase()}`;
+  }
+
+  return name;
 }
 
 function limitText(value, maximumLength) {
@@ -255,6 +264,7 @@ export function buildSurgicalPriceHoldingReply({
   patientName,
   procedure,
   overnight = false,
+  currentText = "",
 }) {
   const name = firstName(patientName);
   const opening = name ? `Claro, ${name}.` : "Claro.";
@@ -265,12 +275,17 @@ export function buildSurgicalPriceHoldingReply({
   const returnTiming = overnight
     ? "pela manhã"
     : "por aqui";
+  const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
+    ? "A Clínica LIV Faria Lima fica em Pinheiros, na Rua Pais Leme, 215, próxima à Av. Faria Lima, em São Paulo."
+    : "";
 
   return [
-    opening,
-    `Consigo te passar uma faixa de referência${procedureContext} e também as possibilidades de pagamento.`,
-    `Vou confirmar os valores atuais com a equipe e te retorno ${returnTiming}.`,
-  ].join(" ");
+    [opening, location].filter(Boolean).join(" "),
+    [
+      `Consigo te passar uma faixa de referência${procedureContext} e também as possibilidades de pagamento.`,
+      `Vou confirmar os valores atuais com a equipe e te retorno ${returnTiming}.`,
+    ].join(" "),
+  ].filter(Boolean).join("\n\n");
 }
 
 export function isSurgicalPriceReview(decision, plan) {

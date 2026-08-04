@@ -8,6 +8,8 @@ export const CONVERSATION_ACTIONS = Object.freeze({
 
 const SIMPLE_CLOSING_PATTERN =
   /^(?:(?:(?:muito\s+)?obrigad[ao](?:\s+pela\s+ajuda)?|agrade[cç]o|grata|valeu|ok(?:ay)?|t[áa]\s+bom|tudo bem|entendi|perfeito|combinado|certo|beleza|j[áa]\s+entendi|sem problemas|at[ée](?:\s+(?:mais|logo|amanh[ãa]|segunda(?:-feira)?|ter[cç]a(?:-feira)?|quarta(?:-feira)?|quinta(?:-feira)?|sexta(?:-feira)?|s[áa]bado|domingo))?)[,!.?\s]*)+$/i;
+const AGREEMENT_CLOSING_PATTERN =
+  /^(?:(?:sim|claro)[,!.\s]+)?(?:podemos(?:\s+sim)?|vamos)[,!.\s]+(?:combinado|fechado|perfeito)(?:[,!.\s]+(?:obrigad[ao]|at[ée]\s+(?:l[áa]|logo)))?[,!.\s]*$/i;
 const DIRECT_QUESTION_PATTERN =
   /(?:\?|^(?:como|qual|quais|quanto|quantos|quando|onde|por\s+que|porque|quem|voc[êe]s|tem|h[áa]|pode|posso|ser[áa]|custa|atende|faz)\b)/i;
 const DIRECT_REQUEST_PATTERN =
@@ -40,7 +42,11 @@ export function hasDirectPatientRequest(text) {
 }
 
 export function isSimpleConversationClosing(text) {
-  return SIMPLE_CLOSING_PATTERN.test(normalized(text));
+  const value = normalized(text);
+  return (
+    SIMPLE_CLOSING_PATTERN.test(value) ||
+    AGREEMENT_CLOSING_PATTERN.test(value)
+  );
 }
 
 export function isExplicitDeferralWithoutRequest(text) {

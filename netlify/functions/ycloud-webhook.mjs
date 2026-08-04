@@ -960,15 +960,20 @@ export async function completeSelectedAppointment(
     sendControlledPatientReplyImpl =
       sendControlledPatientReply,
     appendConversationTurnImpl = appendConversationTurn,
+    cancelPendingHumanResumeImpl = cancelPendingHumanResume,
   } = {},
 ) {
+  const {
+    silentConfirmation = false,
+    ...appointmentSelection
+  } = selection || {};
   const baselineControl =
     await getHumanResumeControlImpl(patientPhone);
   const reservation = await deliverSheetsActionImpl(
     "reserve_appointment_slot",
     {
       appointment: {
-        ...selection,
+        ...appointmentSelection,
         eventId,
         appointmentId: `whatsapp-${messageId || eventId}`,
         phone: patientPhone,
@@ -1023,7 +1028,7 @@ export async function completeSelectedAppointment(
         patientPhone,
         messageText: appointmentEmailBody({
           heading: "AGENDAMENTO CONFIRMADO E REGISTRADO",
-          appointment: selection,
+          appointment: appointmentSelection,
           detail:
             "A consulta foi registrada na aba Consultas e o horário foi retirado dos disponíveis.",
         }),
@@ -1032,9 +1037,20 @@ export async function completeSelectedAppointment(
     );
   }
 
+  await cancelPendingHumanResumeImpl(patientPhone);
+
+  if (silentConfirmation) {
+    return {
+      status: "recorded_silently",
+      reserved: true,
+      confirmationSent: false,
+      errorCode: "none",
+    };
+  }
+
   const body = buildBookedAppointmentReply({
     patientName,
-    ...selection,
+    ...appointmentSelection,
   });
   const humanGuard =
     await guardBookedAppointmentReplyImpl({
@@ -1063,7 +1079,7 @@ export async function completeSelectedAppointment(
     eventId: `${eventId}-booking-confirmed`,
     body,
     currentText:
-      `Escolha do horário ${selection.scheduledDate} ${selection.scheduledTime}`,
+      `Escolha do horário ${appointmentSelection.scheduledDate} ${appointmentSelection.scheduledTime}`,
     recentConversation: [],
     conversationAction: {
       action: "respond",
@@ -2166,6 +2182,17 @@ export default async (request, context) => {
 
   const contactAt = message.sendTime || payload.createTime;
   const text = String(message.text?.body || "");
+  let replyDebounceMarkerStatus = "skipped";
+  if (
+    String(message.type || "").toLowerCase() === "text" &&
+    text.trim()
+  ) {
+    const markerResult = await markLatestInboundForReply({
+      phone,
+      eventId: String(eventId),
+    });
+    replyDebounceMarkerStatus = markerResult.status;
+  }
   let externalProfessionalContext =
     await getExternalProfessionalContext(phone);
   const directExternalProfessionalRequest =
@@ -2382,7 +2409,6 @@ export default async (request, context) => {
   let conversationHistoryWithCurrent = [];
   let conversationMemoryStatus = "skipped";
   let conversationExpired = false;
-  let replyDebounceMarkerStatus = "skipped";
   let patientAppointmentSelection = null;
   let patientAppointmentReply = null;
   let patientAppointmentReplySyncStatus = "not_detected";
@@ -2400,14 +2426,6 @@ export default async (request, context) => {
 
   const suppressExactDuplicate =
     exactMessageDuplicate && !recoveredExactDuplicate && !durableRetry;
-
-  if (delivery.ok && !suppressExactDuplicate) {
-    const markerResult = await markLatestInboundForReply({
-      phone,
-      eventId: String(eventId),
-    });
-    replyDebounceMarkerStatus = markerResult.status;
-  }
 
   if (
     delivery.ok &&
@@ -2846,6 +2864,7 @@ export default async (request, context) => {
       patientName: String(message.customerProfile?.name || ""),
       procedure: automationPlan.procedure,
       overnight: outsideHumanServiceHours,
+      currentText: text,
     });
     const priceHoldingResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
