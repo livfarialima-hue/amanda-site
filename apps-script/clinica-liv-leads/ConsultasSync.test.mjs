@@ -131,6 +131,25 @@ test("writes consultation statuses using the visible dropdown vocabulary", () =>
     context.statusCanonicoConsultas_("Reagendamento solicitado"),
     "Remarcada",
   );
+  assert.equal(
+    context.statusCanonicoConsultas_("Não compareceu"),
+    "Não compareceu",
+  );
+});
+
+test("treats no-show as a closed appointment without calling it completed", () => {
+  assert.equal(
+    context.statusNaoCompareceuConsulta_("Não compareceu"),
+    true,
+  );
+  assert.equal(
+    context.statusConsultaEncerrada_("Não compareceu"),
+    true,
+  );
+  assert.equal(
+    context.statusConsultaRealizada_("Não compareceu"),
+    false,
+  );
 });
 
 test("post-consult queue is limited to completed consultations", () => {
@@ -281,6 +300,258 @@ test("preparation never queues an unconsented Drive import", () => {
   assert.equal(result.queued, false);
   assert.equal(result.reason, "consent_not_confirmed");
   assert.equal(writes, 0);
+});
+
+test("no-show follow-up is eligible only when due and consented", () => {
+  const headers = [
+    "Status",
+    "Não comparecimento registrado em",
+    "Retomada de ausência elegível em",
+    "Retomada de ausência enviada",
+    "Retomada de ausência suprimida em",
+    "Consentimento para contato",
+    "Origem do registro",
+    "Erro na retomada de ausência",
+    "Última tentativa de retomada de ausência",
+  ];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const now = new Date("2026-08-04T15:00:00Z");
+  const row = [
+    "Não compareceu",
+    new Date("2026-08-04T12:00:00Z"),
+    new Date("2026-08-04T14:00:00Z"),
+    "",
+    "",
+    "Sim",
+    "WhatsApp / atendimento atual",
+    "",
+    "",
+  ];
+
+  assert.equal(
+    context.avaliarElegibilidadeRetomadaNaoComparecimento_(
+      row,
+      columns,
+      now,
+    ).eligible,
+    true,
+  );
+
+  const imported = [...row];
+  imported[5] = "";
+  imported[6] = "Prontuário Google Drive";
+  assert.equal(
+    context.avaliarElegibilidadeRetomadaNaoComparecimento_(
+      imported,
+      columns,
+      now,
+    ).reason,
+    "consent_not_confirmed",
+  );
+});
+
+test("no-show message is empathetic and names Daniel naturally", () => {
+  const headers = ["Nome do paciente", "Profissional"];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const message = context.mensagemRetomadaNaoComparecimento_(
+    ["Carlos Silva", "Dr. Daniel"],
+    columns,
+  );
+
+  assert.match(message, /Oi, Carlos\./);
+  assert.match(message, /esperamos que esteja tudo bem/);
+  assert.match(message, /com o Dr\. Daniel/);
+  assert.doesNotMatch(message, /faltou|penalidade|cobrança/i);
+});
+
+test("counts no-shows per phone and professional", () => {
+  const headers = ["Telefone (E.164)", "Profissional", "Status"];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const rows = [
+    ["+5511999990000", "Dra. Amanda", "Não compareceu"],
+    ["+5511999990000", "Dra. Amanda", "Não compareceu"],
+    ["+5511999990000", "Dr. Daniel", "Não compareceu"],
+    ["+5511999990000", "Dra. Amanda", "Realizada"],
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getLastColumn: () => headers.length,
+    getRange: () => ({ getValues: () => rows }),
+  };
+
+  assert.equal(
+    context.contarNaoComparecimentosConsulta_(
+      sheet,
+      columns,
+      "+5511999990000",
+      "Dra. Amanda",
+    ),
+    2,
+  );
+});
+
+test("sends the first no-show care message only inside the open WhatsApp window", () => {
+  const headers = [
+    "ID da consulta",
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Status",
+    "Consentimento para contato",
+    "Origem do registro",
+    "Não comparecimento registrado em",
+    "Retomada de ausência elegível em",
+    "Retomada de ausência enviada",
+    "Retomada de ausência suprimida em",
+    "Última tentativa de retomada de ausência",
+    "Erro na retomada de ausência",
+    "Retomada manual de ausência sugerida em",
+    "Última interação humana",
+    "Próxima ação",
+  ];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const row = [
+    "consulta-99",
+    "+5511999990099",
+    "Luciana Silva",
+    "Dra. Amanda",
+    "Não compareceu",
+    "Sim",
+    "WhatsApp / atendimento atual",
+    new Date("2026-08-04T12:00:00Z"),
+    new Date("2026-08-04T14:00:00Z"),
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ];
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => headers.length,
+    getParent: () => ({}),
+    getRange(rowNumber, columnNumber, rowCount) {
+      if (rowCount) return { getValues: () => [row] };
+      return {
+        setValue(value) {
+          writes.push({ rowNumber, columnNumber, value });
+        },
+      };
+    },
+  };
+  let delivered = 0;
+  context.enviarRetomadaNaoComparecimento_ = () => {
+    delivered += 1;
+    return { ok: true, sent: true };
+  };
+  context.registrarMensagemNaoComparecimento_ = () => {};
+
+  const result = context.processarRetomadaNaoComparecimentoNaLinha_(
+    sheet,
+    2,
+    columns,
+    row,
+    new Date("2026-08-04T15:00:00Z"),
+    "secret",
+    { getProperty: () => "" },
+    {},
+    [
+      {
+        direcao: "IN",
+        dataHora: new Date("2026-08-04T11:30:00Z"),
+        texto: "Confirmado",
+      },
+    ],
+  );
+
+  assert.equal(result.sent, true);
+  assert.equal(delivered, 1);
+  assert.equal(
+    writes.some(
+      (write) =>
+        write.columnNumber ===
+        columns["Retomada de ausência enviada"] + 1,
+    ),
+    true,
+  );
+});
+
+test("moves a no-show follow-up to the manual email when the WhatsApp window is closed", () => {
+  const headers = [
+    "ID da consulta",
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Status",
+    "Consentimento para contato",
+    "Origem do registro",
+    "Não comparecimento registrado em",
+    "Retomada de ausência elegível em",
+    "Retomada de ausência enviada",
+    "Retomada de ausência suprimida em",
+    "Última tentativa de retomada de ausência",
+    "Erro na retomada de ausência",
+    "Retomada manual de ausência sugerida em",
+    "Última interação humana",
+  ];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const row = [
+    "consulta-100",
+    "+5511999990100",
+    "Marina Silva",
+    "Dra. Amanda",
+    "Não compareceu",
+    "Sim",
+    "WhatsApp / atendimento atual",
+    new Date("2026-08-04T12:00:00Z"),
+    new Date("2026-08-04T14:00:00Z"),
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ];
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => headers.length,
+    getParent: () => ({}),
+    getRange(rowNumber, columnNumber, rowCount) {
+      if (rowCount) return { getValues: () => [row] };
+      return {
+        setValue(value) {
+          writes.push({ rowNumber, columnNumber, value });
+        },
+      };
+    },
+  };
+
+  const result = context.processarRetomadaNaoComparecimentoNaLinha_(
+    sheet,
+    2,
+    columns,
+    row,
+    new Date("2026-08-04T15:00:00Z"),
+    "secret",
+    { getProperty: () => "" },
+    {},
+    [],
+  );
+
+  assert.equal(result.manual, true);
+  assert.equal(result.reason, "whatsapp_window_closed_manual");
+  assert.equal(
+    writes.some(
+      (write) =>
+        write.columnNumber ===
+        columns["Retomada manual de ausência sugerida em"] + 1,
+    ),
+    true,
+  );
 });
 
 test("normalizes Brazilian phone numbers and refuses short values", () => {

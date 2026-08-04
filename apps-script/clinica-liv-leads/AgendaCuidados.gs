@@ -112,19 +112,23 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         "motivo de supressao",
       ]),
     );
+    const status = normalizarTextoRetomadas_(
+      valorAgendaCuidados_(linha, colunas, ["status"]),
+    );
+    const naoCompareceu = [
+      "nao compareceu",
+      "consulta nao compareceu",
+    ].includes(status);
 
     if (
       !contatoPermitidoAgendaCuidados_(consentimento) ||
-      motivoSupressao
+      (motivoSupressao && !naoCompareceu)
     ) {
       return;
     }
 
     const primeiroNome =
       nomeCompleto.split(/\s+/)[0] || "paciente";
-    const status = normalizarTextoRetomadas_(
-      valorAgendaCuidados_(linha, colunas, ["status"]),
-    );
     const profissional =
       textoAgendaCuidados_(
         valorAgendaCuidados_(linha, colunas, [
@@ -185,6 +189,21 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
     });
 
     if (contactPreferences.neverFollowUp !== true) {
+      adicionarNaoComparecimentoAgendaCuidados_({
+        linha: linha,
+        colunas: colunas,
+        agora: agora,
+        hoje: hoje,
+        telefone: telefone,
+        nome: identidade,
+        primeiroNome: primeiroNome,
+        profissional: profissional,
+        status: status,
+        neverBotReply:
+          contactPreferences.neverBotReply === true,
+        adicionar: adicionar,
+      });
+
       adicionarPosConsultaAgendaCuidados_({
         linha: linha,
         colunas: colunas,
@@ -474,6 +493,111 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
       prioridade: 8,
       sugestao: manualSuggestion,
     });
+  });
+}
+
+function adicionarNaoComparecimentoAgendaCuidados_(entrada) {
+  if (
+    ![
+      "nao compareceu",
+      "consulta nao compareceu",
+    ].includes(entrada.status)
+  ) {
+    return;
+  }
+
+  const noShowAt = dataAgendaCuidados_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "nao comparecimento registrado em",
+    ]),
+  );
+  const eligibleAt = dataAgendaCuidados_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "retomada de ausencia elegivel em",
+    ]),
+  );
+  const sentAt = dataAgendaCuidados_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "retomada de ausencia enviada",
+    ]),
+  );
+  const suppressedAt = dataAgendaCuidados_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "retomada de ausencia suprimida em",
+    ]),
+  );
+  const manualAt = dataAgendaCuidados_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "retomada manual de ausencia sugerida em",
+    ]),
+  );
+  const lastHumanAt = dataAgendaCuidados_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "ultima interacao humana",
+    ]),
+  );
+  const lastError = normalizarTextoRetomadas_(
+    valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+      "erro na retomada de ausencia",
+    ]),
+  );
+
+  if (
+    suppressedAt ||
+    (noShowAt &&
+      lastHumanAt &&
+      lastHumanAt.getTime() >= noShowAt.getTime())
+  ) {
+    return;
+  }
+
+  const manualRequired = Boolean(
+    manualAt ||
+      entrada.neverBotReply ||
+      /manual|whatsapp window closed/.test(lastError),
+  );
+  if (sentAt && !manualAt) return;
+
+  const target = manualAt || eligibleAt;
+  if (!target) return;
+
+  const targetDate = formatarDataRetomadas_(target, "yyyy-MM-dd");
+  const future = targetDate > entrada.hoje;
+  const professionalArticle =
+    normalizarTextoRetomadas_(entrada.profissional).includes("daniel")
+      ? "o "
+      : "a ";
+  const suggestion =
+    "Oi, " +
+    entrada.primeiroNome +
+    ". Sentimos sua falta na consulta e esperamos que esteja tudo bem. " +
+    "Se ainda fizer sentido para você, posso te ajudar a encontrar um novo horário com " +
+    professionalArticle +
+    entrada.profissional +
+    ", com calma.";
+
+  entrada.adicionar({
+    categoria: manualRequired
+      ? "Não comparecimento — retomada humana"
+      : "Não comparecimento — acolhimento",
+    telefone: entrada.telefone,
+    nome: entrada.nome,
+    horario: future
+      ? ""
+      : formatarDataRetomadas_(target, "HH:mm"),
+    dataReferencia: targetDate,
+    contexto: sentAt
+      ? "Não houve resposta após o primeiro acolhimento; avaliar uma última retomada manual para reagendamento."
+      : manualRequired
+        ? "Retomar manualmente, sem cobrança e sem mencionar penalidade."
+        : "Primeiro acolhimento após ausência; o sistema revalida a janela do WhatsApp antes do envio.",
+    responsavel: manualRequired
+      ? "Amanda/equipe"
+      : "Bruna/automação",
+    automatico: !manualRequired,
+    futuro: future,
+    prioridade: manualRequired ? 2 : 3,
+    sugestao: suggestion,
   });
 }
 

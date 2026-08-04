@@ -13,10 +13,16 @@ const CONSULTAS_SYNC_CONFIG = Object.freeze({
   postConsultMaxAgeDays: 7,
   postConsultRetryMinutes: 30,
   postConsultDisabledRetryMinutes: 360,
+  noShowDelayMinutes: 120,
+  noShowManualDelayDays: 5,
+  noShowWhatsappWindowMinutes: 1430,
   postConsultEndpoint:
     "https://draamandaschroeder.com.br/.netlify/functions/post-consult-followup",
   secretProperty: "LEADS_INGEST_SECRET",
   postConsultEndpointProperty: "POS_CONSULTA_ENDPOINT",
+  noShowEndpoint:
+    "https://draamandaschroeder.com.br/api/scheduled-followup",
+  noShowEndpointProperty: "NAO_COMPARECEU_ENDPOINT",
   syncTriggerFunction: "sincronizarConsultasAoEditar",
   postConsultTriggerFunction: "processarPosConsulta",
   defaultAppointmentDurationMinutes: 60,
@@ -58,6 +64,13 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
   calendarEventId: "ID do evento Google",
   calendarSyncStatus: "Sincronização Google Agenda",
   calendarSyncError: "Erro Google Agenda",
+  noShowAt: "Não comparecimento registrado em",
+  noShowEligibleAt: "Retomada de ausência elegível em",
+  noShowSentAt: "Retomada de ausência enviada",
+  noShowLastAttempt: "Última tentativa de retomada de ausência",
+  noShowLastError: "Erro na retomada de ausência",
+  noShowSuppressedAt: "Retomada de ausência suprimida em",
+  noShowManualAt: "Retomada manual de ausência sugerida em",
 });
 
 const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
@@ -73,6 +86,9 @@ const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
   appointmentTime: "Horário da consulta",
   appointmentProfessional: "Profissional da consulta",
   appointmentRoom: "Sala da consulta",
+  appointmentOutcome: "Resultado do último agendamento",
+  lastNoShowAt: "Último não comparecimento",
+  noShowCount: "Total de não comparecimentos",
 });
 
 function chaveProfissionalConsulta_(value) {
@@ -665,6 +681,7 @@ function processarEdicaoNaAbaConsultas_(e) {
   const refreshedColumns =
     mapearCabecalhosConsultas_(refreshedHeaders);
   let queued = 0;
+  let noShowQueued = 0;
   let calendarSynced = 0;
   let calendarErrors = 0;
 
@@ -684,6 +701,18 @@ function processarEdicaoNaAbaConsultas_(e) {
     const status = normalizarTextoConsultasSync_(
       row[refreshedColumns[CONSULTAS_SYNC_HEADERS.status]],
     );
+    const now = new Date();
+
+    if (statusNaoCompareceuConsulta_(status)) {
+      const noShowPreparation = prepararNaoComparecimentoNaLinha_(
+        sheet,
+        rowNumber,
+        refreshedColumns,
+        row,
+        now,
+      );
+      if (noShowPreparation.queued) noShowQueued += 1;
+    }
 
     const calendarResult = sincronizarConsultaComAgendaNaLinha_(
       sheet,
@@ -709,16 +738,25 @@ function processarEdicaoNaAbaConsultas_(e) {
       refreshedColumns,
       CONSULTAS_SYNC_HEADERS.room,
     );
-    atualizarStatusLeadDaConsulta_(
-      sheet.getParent(),
-      phone,
-      professional,
-      valorDaLinhaConsultas_(
-        row,
-        refreshedColumns,
-        CONSULTAS_SYNC_HEADERS.status,
-      ),
-    );
+    if (statusNaoCompareceuConsulta_(status)) {
+      atualizarResumoNaoComparecimentoNoLead_(
+        sheet.getParent(),
+        sheet,
+        phone,
+        professional,
+      );
+    } else {
+      atualizarStatusLeadDaConsulta_(
+        sheet.getParent(),
+        phone,
+        professional,
+        valorDaLinhaConsultas_(
+          row,
+          refreshedColumns,
+          CONSULTAS_SYNC_HEADERS.status,
+        ),
+      );
+    }
     atualizarAgendaVisivelNoLead_(sheet.getParent(), phone, professional, {
       scheduledDate: valorDaLinhaConsultas_(
         row,
@@ -733,6 +771,7 @@ function processarEdicaoNaAbaConsultas_(e) {
       room,
     });
 
+    if (statusNaoCompareceuConsulta_(status)) continue;
     if (!statusConsultaRealizada_(status)) continue;
 
     const preparation = prepararPosConsultaNaLinha_(
@@ -740,12 +779,18 @@ function processarEdicaoNaAbaConsultas_(e) {
       rowNumber,
       refreshedColumns,
       row,
-      new Date(),
+      now,
     );
     if (preparation && preparation.queued) queued += 1;
   }
 
-  return { ok: true, queued, calendarSynced, calendarErrors };
+  return {
+    ok: true,
+    queued,
+    noShowQueued,
+    calendarSynced,
+    calendarErrors,
+  };
 }
 
 function upsertConsultaRecebida_(input) {
@@ -1625,7 +1670,8 @@ function localizarConsultaParaAtualizacao_(
       row[columns[CONSULTAS_SYNC_HEADERS.status]],
     );
     const completed = statusConsultaRealizada_(status);
-    if (apenasAtiva && completed) continue;
+    const closed = statusConsultaEncerrada_(status);
+    if (apenasAtiva && closed) continue;
 
     const completedAt = dataConsultasSync_(
       row[columns[CONSULTAS_SYNC_HEADERS.completedDate]],
@@ -1807,6 +1853,21 @@ function upsertConsulta_(sheet, input) {
 function statusCancelaAgendaConsulta_(value) {
   return ["cancelada", "consulta cancelada"].includes(
     normalizarTextoConsultasSync_(value),
+  );
+}
+
+function statusNaoCompareceuConsulta_(value) {
+  return ["nao compareceu", "consulta nao compareceu"].includes(
+    normalizarTextoConsultasSync_(value),
+  );
+}
+
+function statusConsultaEncerrada_(value) {
+  const normalized = normalizarTextoConsultasSync_(value);
+  return (
+    statusConsultaRealizada_(normalized) ||
+    statusCancelaAgendaConsulta_(normalized) ||
+    statusNaoCompareceuConsulta_(normalized)
   );
 }
 
@@ -2015,10 +2076,16 @@ function sincronizarConsultaComAgendaNaLinha_(
       return { ok: true, skipped: true, remote: true, room: "" };
     }
 
-    const title = "Consulta — " + professional;
+    const noShow = statusNaoCompareceuConsulta_(status);
+    const title =
+      (noShow ? "Não compareceu — " : "Consulta — ") +
+      professional;
     const description =
       "Reserva operacional vinculada à aba Consultas. " +
-      "Dados da paciente permanecem somente na planilha.";
+      "Dados da paciente permanecem somente na planilha." +
+      (noShow
+        ? " Resultado operacional: não compareceu."
+        : "");
     const eventLocation =
       "Clínica LIV Faria Lima — " + selection.room;
     let event = null;
@@ -2201,6 +2268,8 @@ function localizarConsultaExistente_(sheet, columns, input) {
       "realizada",
       "cancelada",
       "consulta cancelada",
+      "nao compareceu",
+      "consulta nao compareceu",
     ].includes(rowStatus);
 
     if (!active && !incomingCompleted) continue;
@@ -2237,6 +2306,213 @@ function primeiraLinhaLivreConsultas_(sheet, columns) {
 
   sheet.insertRowsAfter(maximumRows, 100);
   return maximumRows + 1;
+}
+
+function dataHoraAgendadaConsulta_(row, columns) {
+  const interval = intervaloConsultaAgenda_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.scheduledDate,
+    ),
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.scheduledTime,
+    ),
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.durationMinutes,
+    ),
+  );
+
+  return interval ? interval.start : null;
+}
+
+function contarNaoComparecimentosConsulta_(
+  sheet,
+  columns,
+  phoneValue,
+  professionalValue,
+) {
+  const phone = normalizarTelefoneConsultasSync_(phoneValue);
+  const professional = chaveProfissionalConsulta_(professionalValue);
+
+  if (!phone || !professional || sheet.getLastRow() < 2) return 0;
+
+  const values = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+    .getValues();
+
+  return values.filter(function (row) {
+    return (
+      normalizarTelefoneConsultasSync_(
+        row[columns[CONSULTAS_SYNC_HEADERS.phone]],
+      ) === phone &&
+      chaveProfissionalConsulta_(
+        row[columns[CONSULTAS_SYNC_HEADERS.professional]],
+      ) === professional &&
+      statusNaoCompareceuConsulta_(
+        row[columns[CONSULTAS_SYNC_HEADERS.status]],
+      )
+    );
+  }).length;
+}
+
+function proximaRetomadaManualAusencia_(date) {
+  const target = new Date(
+    date.getTime() +
+      CONSULTAS_SYNC_CONFIG.noShowManualDelayDays *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
+  const localDate = Utilities.formatDate(
+    target,
+    CONSULTAS_SYNC_CONFIG.timezone,
+    "yyyy-MM-dd",
+  );
+
+  return new Date(`${localDate}T10:30:00-03:00`);
+}
+
+function prepararNaoComparecimentoNaLinha_(
+  sheet,
+  rowNumber,
+  columns,
+  row,
+  now,
+) {
+  const scheduledAt = dataHoraAgendadaConsulta_(row, columns);
+
+  if (!scheduledAt) {
+    return { queued: false, reason: "missing_schedule" };
+  }
+  if (scheduledAt.getTime() > now.getTime() + 5 * 60 * 1000) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+      "Revisar: não comparecimento marcado antes do horário da consulta.",
+    );
+    return { queued: false, reason: "appointment_not_due" };
+  }
+
+  const sentAt = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowSentAt,
+  );
+  const suppressedAt = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowSuppressedAt,
+  );
+  if (sentAt || suppressedAt) {
+    return { queued: false, reason: "already_resolved" };
+  }
+
+  const registeredAt =
+    dataConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.noShowAt,
+      ),
+    ) || now;
+  const baseEligibility = new Date(
+    scheduledAt.getTime() +
+      CONSULTAS_SYNC_CONFIG.noShowDelayMinutes * 60 * 1000,
+  );
+  const eligibleAt = proximoHorarioDeCuidadoConsultas_(
+    new Date(
+      Math.max(
+        baseEligibility.getTime(),
+        now.getTime() + 5 * 60 * 1000,
+      ),
+    ),
+  );
+  const phone = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.phone,
+  );
+  const professional = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.professional,
+  );
+  const count = contarNaoComparecimentosConsulta_(
+    sheet,
+    columns,
+    phone,
+    professional,
+  );
+
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowAt,
+    registeredAt,
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowEligibleAt,
+    eligibleAt,
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.postSuppressedAt,
+    now,
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.suppressionReason,
+    "Pós-consulta não se aplica: paciente não compareceu.",
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.nextAction,
+    count >= 2
+      ? "Equipe: avaliar pessoalmente um eventual reagendamento; há faltas anteriores."
+      : "Retomar com acolhimento para oferecer reagendamento, sem cobrança.",
+  );
+
+  if (count >= 2) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowLastError,
+      "repeat_no_show_manual",
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowManualAt,
+      eligibleAt,
+    );
+  }
+
+  return {
+    queued: count < 2,
+    manual: count >= 2,
+    count,
+    eligibleAt,
+  };
 }
 
 function prepararPosConsultaNaLinha_(
@@ -2421,9 +2697,22 @@ function processarPosConsultaInterno_(
     "function"
       ? carregarPreferenciasContatoPorTelefone_(leadsSheet)
       : {};
+  const messagesSheet = spreadsheet.getSheetByName(
+    typeof CONFIG !== "undefined" && CONFIG.messageSheetName
+      ? CONFIG.messageSheetName
+      : "_WHATSAPP_MENSAGENS",
+  );
+  const conversationsByPhone =
+    messagesSheet &&
+    typeof carregarConversasRetomadas_ === "function"
+      ? carregarConversasRetomadas_(messagesSheet)
+      : {};
   let sent = 0;
   let failed = 0;
   let suppressed = 0;
+  let noShowSent = 0;
+  let noShowManual = 0;
+  let noShowSuppressed = 0;
   const skipped = {};
 
   for (let index = 1; index < values.length; index += 1) {
@@ -2439,16 +2728,44 @@ function processarPosConsultaInterno_(
         : "";
     const contactPreferences =
       preferencesByPhone[normalizedPhone] || {};
-    if (
-      contactPreferences.neverFollowUp === true ||
-      contactPreferences.neverBotReply === true
-    ) {
-      skipped.contact_preference =
-        (skipped.contact_preference || 0) + 1;
-      continue;
-    }
-
     try {
+      const rowStatus = valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.status,
+      );
+      if (statusNaoCompareceuConsulta_(rowStatus)) {
+        const noShowResult = processarRetomadaNaoComparecimentoNaLinha_(
+          sheet,
+          rowNumber,
+          columns,
+          row,
+          now,
+          secret,
+          properties,
+          contactPreferences,
+          conversationsByPhone[normalizedPhone] || [],
+        );
+        if (noShowResult.sent) noShowSent += 1;
+        if (noShowResult.manual) noShowManual += 1;
+        if (noShowResult.suppressed) noShowSuppressed += 1;
+        if (noShowResult.failed) failed += 1;
+        if (noShowResult.reason) {
+          skipped[noShowResult.reason] =
+            (skipped[noShowResult.reason] || 0) + 1;
+        }
+        continue;
+      }
+
+      if (
+        contactPreferences.neverFollowUp === true ||
+        contactPreferences.neverBotReply === true
+      ) {
+        skipped.contact_preference =
+          (skipped.contact_preference || 0) + 1;
+        continue;
+      }
+
       const eligibility = avaliarElegibilidadePosConsulta_(
         row,
         columns,
@@ -2586,6 +2903,9 @@ function processarPosConsultaInterno_(
     sent,
     failed,
     suppressed,
+    noShowSent,
+    noShowManual,
+    noShowSuppressed,
     skipped,
   };
 }
@@ -2630,6 +2950,491 @@ function enviarPosConsulta_(payload, secret, properties) {
       error: "request_failed",
     };
   }
+}
+
+function avaliarElegibilidadeRetomadaNaoComparecimento_(
+  row,
+  columns,
+  now,
+) {
+  const requiredHeaders = [
+    CONSULTAS_SYNC_HEADERS.status,
+    CONSULTAS_SYNC_HEADERS.noShowAt,
+    CONSULTAS_SYNC_HEADERS.noShowEligibleAt,
+    CONSULTAS_SYNC_HEADERS.noShowSentAt,
+    CONSULTAS_SYNC_HEADERS.noShowSuppressedAt,
+  ];
+  if (
+    requiredHeaders.some(function (header) {
+      return columns[header] === undefined;
+    })
+  ) {
+    return { eligible: false, reason: "missing_columns" };
+  }
+  if (
+    !statusNaoCompareceuConsulta_(
+      row[columns[CONSULTAS_SYNC_HEADERS.status]],
+    )
+  ) {
+    return { eligible: false, reason: "not_no_show" };
+  }
+  if (row[columns[CONSULTAS_SYNC_HEADERS.noShowSentAt]]) {
+    return { eligible: false, reason: "already_sent" };
+  }
+  if (row[columns[CONSULTAS_SYNC_HEADERS.noShowSuppressedAt]]) {
+    return { eligible: false, reason: "already_suppressed" };
+  }
+  if (
+    !consentimentoPermiteContatoConsultas_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.consent,
+      ),
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.source,
+      ),
+    )
+  ) {
+    return { eligible: false, reason: "consent_not_confirmed" };
+  }
+
+  const lastError = String(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowLastError,
+    ) || "",
+  );
+  if (/manual|whatsapp_window_closed/i.test(lastError)) {
+    return { eligible: false, reason: "manual_required" };
+  }
+  const lastAttempt = dataConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowLastAttempt,
+    ),
+  );
+  if (
+    lastAttempt &&
+    now.getTime() - lastAttempt.getTime() <
+      CONSULTAS_SYNC_CONFIG.postConsultRetryMinutes * 60 * 1000
+  ) {
+    return { eligible: false, reason: "retry_wait" };
+  }
+
+  const noShowAt = dataConsultasSync_(
+    row[columns[CONSULTAS_SYNC_HEADERS.noShowAt]],
+  );
+  const eligibleAt = dataConsultasSync_(
+    row[columns[CONSULTAS_SYNC_HEADERS.noShowEligibleAt]],
+  );
+  if (!noShowAt || !eligibleAt) {
+    return { eligible: false, reason: "missing_schedule" };
+  }
+  if (eligibleAt.getTime() > now.getTime()) {
+    return { eligible: false, reason: "not_due" };
+  }
+  if (
+    now.getTime() - noShowAt.getTime() >
+    14 * 24 * 60 * 60 * 1000
+  ) {
+    return { eligible: false, reason: "historical_no_show" };
+  }
+
+  return { eligible: true, noShowAt, eligibleAt };
+}
+
+function mensagemRetomadaNaoComparecimento_(row, columns) {
+  const name = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.name,
+    ),
+    120,
+  );
+  const firstName = name ? name.split(/\s+/)[0] : "";
+  const professional = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.professional,
+    ),
+    120,
+  ) || "Dra. Amanda";
+  const article = chaveProfissionalConsulta_(professional) === "daniel"
+    ? "o "
+    : "a ";
+
+  return (
+    "Oi" +
+    (firstName ? ", " + firstName : "") +
+    ". Sentimos sua falta na consulta de hoje e esperamos que esteja tudo bem. " +
+    "Se ainda fizer sentido para você, posso te ajudar a encontrar um novo horário com " +
+    article +
+    professional +
+    ", com calma."
+  );
+}
+
+function marcarRetomadaAusenciaManual_(
+  sheet,
+  rowNumber,
+  columns,
+  now,
+  reason,
+) {
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowLastAttempt,
+    now,
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowLastError,
+    reason,
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowManualAt,
+    proximoHorarioDeCuidadoConsultas_(now),
+  );
+  return { manual: true, reason };
+}
+
+function enviarRetomadaNaoComparecimento_(
+  payload,
+  secret,
+  properties,
+) {
+  const endpoint =
+    properties.getProperty(
+      CONSULTAS_SYNC_CONFIG.noShowEndpointProperty,
+    ) || CONSULTAS_SYNC_CONFIG.noShowEndpoint;
+
+  try {
+    const response = UrlFetchApp.fetch(endpoint, {
+      method: "post",
+      contentType: "application/json; charset=utf-8",
+      headers: { "x-liv-secret": secret },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true,
+    });
+    const responseCode = response.getResponseCode();
+    let body = {};
+    try {
+      body = JSON.parse(response.getContentText() || "{}");
+    } catch (error) {
+      body = {};
+    }
+
+    return {
+      ok:
+        responseCode >= 200 &&
+        responseCode < 300 &&
+        body.ok === true,
+      sent: body.sent === true,
+      error: body.error || `http_${String(responseCode)}`,
+    };
+  } catch (error) {
+    return { ok: false, sent: false, error: "request_failed" };
+  }
+}
+
+function registrarMensagemNaoComparecimento_(
+  spreadsheet,
+  row,
+  columns,
+  phone,
+  appointmentId,
+  text,
+  now,
+) {
+  const professional = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.professional,
+  );
+  const leadSheetName = nomePlanilhaLeadProfissional_(professional);
+  const leadSheet = leadSheetName
+    ? spreadsheet.getSheetByName(leadSheetName)
+    : null;
+  const leadRow =
+    leadSheet && typeof findLeadRowByPhone_ === "function"
+      ? findLeadRowByPhone_(leadSheet, phone)
+      : null;
+  const identifier =
+    "no-show-followup-" +
+    String(appointmentId || now.getTime())
+      .replace(/[^A-Za-z0-9_-]/g, "-")
+      .slice(0, 120);
+
+  if (
+    leadSheet &&
+    leadRow &&
+    typeof recordLeadMessageAndQueue_ === "function"
+  ) {
+    recordLeadMessageAndQueue_(
+      spreadsheet,
+      leadRow,
+      {
+        phone,
+        messageId: identifier,
+        eventId: identifier,
+        contactAt: now,
+        text,
+      },
+      "OUT",
+    );
+    return;
+  }
+
+  const messageSheet = spreadsheet.getSheetByName(
+    typeof CONFIG !== "undefined" && CONFIG.messageSheetName
+      ? CONFIG.messageSheetName
+      : "_WHATSAPP_MENSAGENS",
+  );
+  if (messageSheet) {
+    messageSheet.appendRow([
+      phone,
+      "OUT",
+      now,
+      identifier,
+      identifier,
+      text,
+      leadRow || "",
+    ]);
+  }
+}
+
+function processarRetomadaNaoComparecimentoNaLinha_(
+  sheet,
+  rowNumber,
+  columns,
+  row,
+  now,
+  secret,
+  properties,
+  contactPreferences,
+  conversation,
+) {
+  const eligibility = avaliarElegibilidadeRetomadaNaoComparecimento_(
+    row,
+    columns,
+    now,
+  );
+  if (!eligibility.eligible) {
+    return {
+      manual: eligibility.reason === "manual_required",
+      reason: eligibility.reason,
+    };
+  }
+
+  if (
+    contactPreferences.neverFollowUp === true ||
+    contactPreferences.neverBotReply === true
+  ) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowSuppressedAt,
+      now,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.suppressionReason,
+      "Retomada de ausência suprimida pelas preferências de contato.",
+    );
+    return { suppressed: true, reason: "contact_preference" };
+  }
+
+  const humanInteractionAt = dataConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.lastHumanInteractionAt,
+    ),
+  );
+  const changedAfterNoShow = (conversation || []).some(function (message) {
+    return (
+      message.dataHora &&
+      message.dataHora.getTime() >= eligibility.noShowAt.getTime()
+    );
+  });
+  if (
+    changedAfterNoShow ||
+    (humanInteractionAt &&
+      humanInteractionAt.getTime() >= eligibility.noShowAt.getTime())
+  ) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowSuppressedAt,
+      now,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.suppressionReason,
+      "Retomada de ausência dispensada: houve interação posterior.",
+    );
+    return { suppressed: true, reason: "conversation_changed" };
+  }
+
+  const phone = normalizarTelefoneConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.phone,
+    ),
+  );
+  const professional = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.professional,
+  );
+  const noShowCount = contarNaoComparecimentosConsulta_(
+    sheet,
+    columns,
+    phone,
+    professional,
+  );
+  if (noShowCount >= 2) {
+    return marcarRetomadaAusenciaManual_(
+      sheet,
+      rowNumber,
+      columns,
+      now,
+      "repeat_no_show_manual",
+    );
+  }
+
+  const lastInbound = (conversation || [])
+    .slice()
+    .reverse()
+    .find(function (message) {
+      return message.direcao === "IN";
+    });
+  const minutesSinceInbound = lastInbound
+    ? Math.floor(
+        (now.getTime() - lastInbound.dataHora.getTime()) / 60000,
+      )
+    : Infinity;
+  if (
+    !lastInbound ||
+    minutesSinceInbound < 0 ||
+    minutesSinceInbound >
+      CONSULTAS_SYNC_CONFIG.noShowWhatsappWindowMinutes
+  ) {
+    return marcarRetomadaAusenciaManual_(
+      sheet,
+      rowNumber,
+      columns,
+      now,
+      "whatsapp_window_closed_manual",
+    );
+  }
+
+  const text = mensagemRetomadaNaoComparecimento_(row, columns);
+  const appointmentId = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.id,
+    ),
+    160,
+  ) || `consulta-linha-${rowNumber}`;
+  const result = enviarRetomadaNaoComparecimento_(
+    {
+      planId: `no-show-${appointmentId}`,
+      patientPhone: phone,
+      body: text,
+    },
+    secret,
+    properties,
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowLastAttempt,
+    now,
+  );
+
+  if (result.ok && result.sent) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowSentAt,
+      now,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowLastError,
+      "",
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowManualAt,
+      proximaRetomadaManualAusencia_(now),
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+      "Aguardar resposta; se não houver, avaliar uma última retomada manual em 5 dias.",
+    );
+    registrarMensagemNaoComparecimento_(
+      sheet.getParent(),
+      row,
+      columns,
+      phone,
+      appointmentId,
+      text,
+      now,
+    );
+    return { sent: true };
+  }
+
+  const error = String(result.error || "delivery_failed");
+  if (/disabled|http_400|window|template/i.test(error)) {
+    return marcarRetomadaAusenciaManual_(
+      sheet,
+      rowNumber,
+      columns,
+      now,
+      error + "_manual",
+    );
+  }
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.noShowLastError,
+    error,
+  );
+  return { failed: true, reason: error };
 }
 
 function diagnosticarPosConsultaSemEnvio() {
@@ -2828,6 +3633,8 @@ function atualizarStatusLeadDaConsulta_(
   professional,
   status,
 ) {
+  if (statusNaoCompareceuConsulta_(status)) return;
+
   const phone = normalizarTelefoneConsultasSync_(phoneValue);
 
   if (!phone) return;
@@ -2905,6 +3712,9 @@ function garantirEstruturaAgendaVisivelLeads_(sheet) {
     CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime,
     CONSULTAS_SYNC_LEAD_HEADERS.appointmentProfessional,
     CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom,
+    CONSULTAS_SYNC_LEAD_HEADERS.appointmentOutcome,
+    CONSULTAS_SYNC_LEAD_HEADERS.lastNoShowAt,
+    CONSULTAS_SYNC_LEAD_HEADERS.noShowCount,
   ];
 
   appointmentHeaders.forEach(function (header) {
@@ -2916,7 +3726,7 @@ function garantirEstruturaAgendaVisivelLeads_(sheet) {
       typeof sheet.insertColumnsAfter === "function" &&
       headers.length >= sheet.getMaxColumns()
     ) {
-      sheet.insertColumnsAfter(sheet.getMaxColumns(), 4);
+      sheet.insertColumnsAfter(sheet.getMaxColumns(), 7);
     }
     headers.push(header);
     sheet.getRange(1, headers.length).setValue(header);
@@ -2928,6 +3738,9 @@ function garantirEstruturaAgendaVisivelLeads_(sheet) {
     [CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime]: 125,
     [CONSULTAS_SYNC_LEAD_HEADERS.appointmentProfessional]: 180,
     [CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom]: 110,
+    [CONSULTAS_SYNC_LEAD_HEADERS.appointmentOutcome]: 170,
+    [CONSULTAS_SYNC_LEAD_HEADERS.lastNoShowAt]: 170,
+    [CONSULTAS_SYNC_LEAD_HEADERS.noShowCount]: 160,
   };
   Object.keys(widths).forEach(function (header) {
     sheet.setColumnWidth(columns[header] + 1, widths[header]);
@@ -3003,6 +3816,107 @@ function atualizarAgendaVisivelNoLead_(
   return false;
 }
 
+function atualizarResumoNaoComparecimentoNoLead_(
+  spreadsheet,
+  consultationSheet,
+  phoneValue,
+  professional,
+) {
+  const phone = normalizarTelefoneConsultasSync_(phoneValue);
+  const preferredSheet = nomePlanilhaLeadProfissional_(professional);
+  if (!phone || !preferredSheet) return false;
+
+  const leadSheet = spreadsheet.getSheetByName(preferredSheet);
+  if (!leadSheet || leadSheet.getLastRow() < 2) return false;
+
+  const consultationHeaders = consultationSheet
+    .getRange(1, 1, 1, consultationSheet.getLastColumn())
+    .getDisplayValues()[0];
+  const consultationColumns = mapearCabecalhosConsultas_(
+    consultationHeaders,
+  );
+  const count = contarNaoComparecimentosConsulta_(
+    consultationSheet,
+    consultationColumns,
+    phone,
+    professional,
+  );
+  const rows = consultationSheet.getLastRow() >= 2
+    ? consultationSheet
+        .getRange(
+          2,
+          1,
+          consultationSheet.getLastRow() - 1,
+          consultationSheet.getLastColumn(),
+        )
+        .getValues()
+    : [];
+  let latest = null;
+
+  rows.forEach(function (row) {
+    if (
+      normalizarTelefoneConsultasSync_(
+        row[consultationColumns[CONSULTAS_SYNC_HEADERS.phone]],
+      ) !== phone ||
+      chaveProfissionalConsulta_(
+        row[consultationColumns[CONSULTAS_SYNC_HEADERS.professional]],
+      ) !== chaveProfissionalConsulta_(professional) ||
+      !statusNaoCompareceuConsulta_(
+        row[consultationColumns[CONSULTAS_SYNC_HEADERS.status]],
+      )
+    ) {
+      return;
+    }
+
+    const candidate =
+      dataConsultasSync_(
+        row[consultationColumns[CONSULTAS_SYNC_HEADERS.noShowAt]],
+      ) ||
+      dataConsultasSync_(
+        row[consultationColumns[CONSULTAS_SYNC_HEADERS.scheduledDate]],
+      );
+    if (candidate && (!latest || candidate.getTime() > latest.getTime())) {
+      latest = candidate;
+    }
+  });
+
+  const columns = garantirEstruturaAgendaVisivelLeads_(leadSheet);
+  const phoneColumn = columns[CONSULTAS_SYNC_LEAD_HEADERS.phone];
+  const phones = leadSheet
+    .getRange(2, phoneColumn + 1, leadSheet.getLastRow() - 1, 1)
+    .getDisplayValues();
+
+  for (let index = phones.length - 1; index >= 0; index -= 1) {
+    if (normalizarTelefoneConsultasSync_(phones[index][0]) !== phone) {
+      continue;
+    }
+    const rowNumber = index + 2;
+    leadSheet
+      .getRange(
+        rowNumber,
+        columns[CONSULTAS_SYNC_LEAD_HEADERS.appointmentOutcome] + 1,
+      )
+      .setValue("Não compareceu");
+    leadSheet
+      .getRange(
+        rowNumber,
+        columns[CONSULTAS_SYNC_LEAD_HEADERS.noShowCount] + 1,
+      )
+      .setValue(count);
+    if (latest) {
+      leadSheet
+        .getRange(
+          rowNumber,
+          columns[CONSULTAS_SYNC_LEAD_HEADERS.lastNoShowAt] + 1,
+        )
+        .setValue(latest);
+    }
+    return true;
+  }
+
+  return false;
+}
+
 function garantirEstruturaSincronizacaoConsultas_(sheet) {
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   const headers = sheet
@@ -3034,6 +3948,13 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
     CONSULTAS_SYNC_HEADERS.calendarEventId,
     CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
     CONSULTAS_SYNC_HEADERS.calendarSyncError,
+    CONSULTAS_SYNC_HEADERS.noShowAt,
+    CONSULTAS_SYNC_HEADERS.noShowEligibleAt,
+    CONSULTAS_SYNC_HEADERS.noShowSentAt,
+    CONSULTAS_SYNC_HEADERS.noShowLastAttempt,
+    CONSULTAS_SYNC_HEADERS.noShowLastError,
+    CONSULTAS_SYNC_HEADERS.noShowSuppressedAt,
+    CONSULTAS_SYNC_HEADERS.noShowManualAt,
     CONSULTAS_SYNC_HEADERS.postEligibleAt,
     CONSULTAS_SYNC_HEADERS.postSentAt,
     CONSULTAS_SYNC_HEADERS.postLastAttempt,
@@ -3065,6 +3986,13 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
     [CONSULTAS_SYNC_HEADERS.calendarEventId]: 210,
     [CONSULTAS_SYNC_HEADERS.calendarSyncStatus]: 210,
     [CONSULTAS_SYNC_HEADERS.calendarSyncError]: 220,
+    [CONSULTAS_SYNC_HEADERS.noShowAt]: 190,
+    [CONSULTAS_SYNC_HEADERS.noShowEligibleAt]: 210,
+    [CONSULTAS_SYNC_HEADERS.noShowSentAt]: 190,
+    [CONSULTAS_SYNC_HEADERS.noShowLastAttempt]: 220,
+    [CONSULTAS_SYNC_HEADERS.noShowLastError]: 210,
+    [CONSULTAS_SYNC_HEADERS.noShowSuppressedAt]: 210,
+    [CONSULTAS_SYNC_HEADERS.noShowManualAt]: 230,
     [CONSULTAS_SYNC_HEADERS.postEligibleAt]: 170,
     [CONSULTAS_SYNC_HEADERS.postSentAt]: 155,
     [CONSULTAS_SYNC_HEADERS.postLastAttempt]: 195,

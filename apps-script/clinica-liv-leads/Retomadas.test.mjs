@@ -748,6 +748,48 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
   );
 });
 
+test("no-show appears as a gentle manual rebooking action", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Status",
+    "Consentimento para contato",
+    "Não comparecimento registrado em",
+    "Retomada de ausência elegível em",
+    "Retomada manual de ausência sugerida em",
+    "Erro na retomada de ausência",
+  ];
+  const row = headers.map((header) => ({
+    "Telefone (E.164)": "+5511900000099",
+    "Nome do paciente": "Luciana",
+    Profissional: "Dra. Amanda",
+    Status: "Não compareceu",
+    "Consentimento para contato": "Sim",
+    "Não comparecimento registrado em": "2026-08-04 11:00",
+    "Retomada de ausência elegível em": "2026-08-04 13:00",
+    "Retomada manual de ausência sugerida em": "2026-08-04 13:00",
+    "Erro na retomada de ausência": "whatsapp_window_closed_manual",
+  })[header] ?? "");
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({ getValues: () => [headers, row] }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-08-04T12:00:00-03:00"),
+  );
+  const item = agenda.find(
+    (entry) =>
+      entry.categoria === "Não comparecimento — retomada humana",
+  );
+
+  assert.equal(item.automatico, false);
+  assert.equal(item.responsavel, "Amanda/equipe");
+  assert.match(item.sugestao, /esperamos que esteja tudo bem/);
+  assert.doesNotMatch(item.sugestao, /penalidade|cobrança/i);
+});
+
 test("care agenda appears before commercial follow-ups and drafts only manual care", () => {
   const automatic = {
     categoria: "Lembrete de consulta",
