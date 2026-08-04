@@ -71,6 +71,27 @@ test("prioritizes overdue commitments over other queues", () => {
   );
 });
 
+test("normalizes every automatic Bruna label to the panel vocabulary", () => {
+  const context = loadContext();
+
+  assert.equal(
+    context.normalizarResponsavelCentral_("Bruna/automação"),
+    "Bruna/bot",
+  );
+  assert.equal(
+    context.criarItemCentral_({
+      queue: "Consultas e cuidados",
+      phone: "+5511999999999",
+      owner: "Bruna/automação",
+    }).owner,
+    "Bruna/bot",
+  );
+  assert.equal(
+    context.normalizarResponsavelCentral_("responsável desconhecido"),
+    "Equipe",
+  );
+});
+
 test("price questions create a direct operational suggestion", () => {
   const context = loadContext();
   const suggestion = context.sugerirRespostaCentral_(

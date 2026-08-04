@@ -907,7 +907,7 @@ function criarItemCentral_(input) {
       input.lastInteractionAt,
     ),
     nextAction: textoCentral_(input.nextAction, 260),
-    owner: textoCentral_(input.owner, 80) || "Equipe",
+    owner: normalizarResponsavelCentral_(input.owner),
     mode: input.mode || "Manual",
     suggestion: textoCentral_(input.suggestion, 900),
     context: textoCentral_(input.context, 700),
@@ -1204,7 +1204,7 @@ function escreverCentralAtendimento_(sheet, items, now) {
         item.origin,
         item.lastInteractionAt || "",
         item.nextAction,
-        item.owner,
+        normalizarResponsavelCentral_(item.owner),
         item.mode,
         item.suggestion,
         item.context,
@@ -1743,6 +1743,24 @@ function normalizarTextoCentral_(value) {
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function normalizarResponsavelCentral_(value) {
+  const original = textoCentral_(value, 80);
+  const normalized = normalizarTextoCentral_(original);
+
+  if (!normalized) return "Equipe";
+  if (normalized.includes("bruna")) return "Bruna/bot";
+  if (
+    normalized.includes("amanda") &&
+    normalized.includes("equipe")
+  ) {
+    return "Amanda/equipe";
+  }
+  if (normalized === "amanda") return "Amanda";
+  if (normalized === "daniel") return "Daniel";
+  if (normalized.includes("equipe")) return "Equipe";
+  return "Equipe";
 }
 
 function textoCentral_(value, limit) {
