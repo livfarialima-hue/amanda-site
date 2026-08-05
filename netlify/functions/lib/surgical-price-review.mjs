@@ -2,10 +2,11 @@ const CONSULTATION_PRICE = 500;
 const PRICE_GUIDE_PATH =
   "/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
 const PRICE_GUIDE_URL =
-  `https://draamandaschroeder.com.br${PRICE_GUIDE_PATH}` +
-  "?utm_source=whatsapp&utm_medium=atendimento" +
-  "&utm_campaign=guia_custos_face" +
-  "&utm_content=resposta_preco_cirurgia";
+  `https://draamandaschroeder.com.br${PRICE_GUIDE_PATH}`;
+const LIFTING_PAGE_PATH = "/lifting-facial/";
+const LIFTING_PAGE_URL =
+  `https://draamandaschroeder.com.br${LIFTING_PAGE_PATH}`;
+const INVISIBLE_LINK_CHARACTERS = /[\u200B-\u200D\u2060\uFEFF]/g;
 const PRICE_RANGE_LOWER_FACTOR = 0.9;
 const PRICE_RANGE_UPPER_FACTOR = 1.1;
 const LOCATION_REQUEST_PATTERN =
@@ -28,6 +29,7 @@ const PRICE_REFERENCES = Object.freeze({
     cashProfessional: 26422.2,
     installmentProfessional: 28435.32,
     hospitalReference: 10000,
+    rangeMinimumOverride: 26000,
     source: "CIRURGIAS 2025!A14:C14 + Página7!A11:D11",
   }),
   blefaroplastia: Object.freeze({
@@ -123,6 +125,12 @@ function limitText(value, maximumLength) {
     .join("");
 }
 
+function safeLink(value) {
+  return String(value || "")
+    .replace(INVISIBLE_LINK_CHARACTERS, "")
+    .trim();
+}
+
 function greeting(value) {
   const name = firstName(value);
   return name ? `Olá, ${name}!` : "Olá!";
@@ -155,6 +163,56 @@ function conversationContainsPriceGuide(recentConversation) {
       /li o conte[uú]do sobre custos de cirurgia facial/i.test(text)
     );
   });
+}
+
+function conversationContainsLiftingPage(recentConversation) {
+  return (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) =>
+    String(turn?.text || "").includes(
+      LIFTING_PAGE_PATH.slice(0, -1),
+    ),
+  );
+}
+
+function conversationStartedFromLiftingPage(recentConversation) {
+  return (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) =>
+    /(?:refer[eê]ncia|ref)\.?\s*:\s*lifting\s+facial\b/i.test(
+      String(turn?.text || ""),
+    ),
+  );
+}
+
+function sourceIsLiftingPage(referenceCategory, sourceReference) {
+  if (
+    !["site_page", "site_cta"].includes(
+      String(referenceCategory || "").toLowerCase(),
+    )
+  ) {
+    return false;
+  }
+
+  return /lifting[\s_-]*facial/i.test(
+    String(sourceReference || ""),
+  );
+}
+
+function shouldIncludeLiftingPage({
+  procedure,
+  recentConversation,
+  referenceCategory,
+  sourceReference,
+}) {
+  return Boolean(
+    procedure === "lifting_facial" &&
+    !conversationContainsLiftingPage(recentConversation) &&
+    !conversationStartedFromLiftingPage(recentConversation) &&
+    !sourceIsLiftingPage(referenceCategory, sourceReference)
+  );
 }
 
 function shouldIncludePriceGuide(procedure, recentConversation) {
@@ -211,8 +269,11 @@ export function getSurgicalPriceReference(procedure) {
       reference.installmentProfessional +
       reference.hospitalReference,
     rangeMinimum: roundedThousands(
-      (reference.cashProfessional + reference.hospitalReference) *
-        PRICE_RANGE_LOWER_FACTOR,
+      reference.rangeMinimumOverride ||
+        (
+          reference.cashProfessional +
+          reference.hospitalReference
+        ) * PRICE_RANGE_LOWER_FACTOR,
     ),
     rangeMaximum: roundedThousands(
       (
@@ -227,13 +288,49 @@ export function buildSurgicalPriceSuggestedReply({
   patientName,
   procedure,
   recentConversation = [],
+  referenceCategory = "",
+  sourceReference = "",
 }) {
-  const reference = getSurgicalPriceReference(procedure);
-  if (!reference) return clarificationFor(procedure, patientName);
+  const priceReference = getSurgicalPriceReference(procedure);
+  if (!priceReference) {
+    return clarificationFor(procedure, patientName);
+  }
+
+  if (procedure === "lifting_facial") {
+    const guide = shouldIncludePriceGuide(
+      procedure,
+      recentConversation,
+    )
+      ? `Entenda como funcionam esses gastos: ${safeLink(PRICE_GUIDE_URL)}`
+      : "";
+    const liftingPage = shouldIncludeLiftingPage({
+      procedure,
+      recentConversation,
+      referenceCategory,
+      sourceReference,
+    })
+      ? `Conheça o lifting, a recuperação e casos reais: ${safeLink(LIFTING_PAGE_URL)}`
+      : "";
+
+    return [
+      waitingGreeting(patientName),
+      [
+        "Estas são as faixas de referência:",
+        "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+        "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+      ].join("\n"),
+      "A indicação considera regiões, flacidez e resultado desejado. A Dra. Amanda planeja com segurança, naturalidade e preservação das suas características.",
+      "Hospital, anestesista, auxiliar, instrumentador e acompanhamento variam por caso. Compare o conjunto de cuidados.",
+      "Há condição à vista e parcelamento antecipado até a data da cirurgia.",
+      guide,
+      liftingPage,
+      "Posso verificar horários para a avaliação. Prefere manhã ou tarde?",
+    ].filter(Boolean).join("\n\n");
+  }
 
   const priceContext = [
     waitingGreeting(patientName),
-    `Como referência, ${reference.label} costuma ficar entre ${formatBRL(reference.rangeMinimum)} e ${formatBRL(reference.rangeMaximum)}.`,
+    `Como referência, ${priceReference.label} costuma ficar entre ${formatBRL(priceReference.rangeMinimum)} e ${formatBRL(priceReference.rangeMaximum)}.`,
     priceVariation(procedure),
   ].join(" ");
   const budgetContext =
@@ -322,11 +419,15 @@ export function buildPriceReviewAlert({
   patientMessage,
   procedure,
   recentConversation = [],
+  referenceCategory = "",
+  sourceReference = "",
 }) {
   const suggestion = buildSurgicalPriceSuggestedReply({
     patientName,
     procedure,
     recentConversation,
+    referenceCategory,
+    sourceReference,
   });
 
   return [

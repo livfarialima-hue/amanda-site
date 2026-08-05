@@ -245,19 +245,19 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
   );
   assert.match(
     deps.alerts[0].messageText,
-    /entre R\$ 33 mil e R\$ 42 mil/,
+    /Minilifting: entre R\$ 18 mil e R\$ 25 mil/,
   );
   assert.match(
     deps.alerts[0].messageText,
-    /pagamento antecipado até a cirurgia/,
+    /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/,
   );
   assert.match(
     deps.alerts[0].messageText,
-    /utm_source=whatsapp/,
+    /parcelamento antecipado/,
   );
   assert.match(
     deps.alerts[0].messageText,
-    /verificar um horário para a avaliação/,
+    /Prefere manhã ou tarde/,
   );
   assert.ok(deps.alerts[0].messageText.length <= 1_024);
   assert.equal(
@@ -295,7 +295,7 @@ test("surgical price resume does not suggest the facial guide twice", async () =
   assert.equal(result.status, "waiting_human");
   assert.match(
     deps.alerts[0].messageText,
-    /entre R\$ 33 mil e R\$ 42 mil/,
+    /entre R\$ 26 mil e R\$ 42 mil/,
   );
   assert.doesNotMatch(
     deps.alerts[0].messageText,
@@ -346,7 +346,7 @@ test("a surgical price request at night acknowledges receipt and defers the valu
   assert.equal(deps.alerts.length, 1);
   assert.match(
     deps.alerts[0].messageText,
-    /entre R\$ 33 mil e R\$ 42 mil/,
+    /entre R\$ 26 mil e R\$ 42 mil/,
   );
 });
 

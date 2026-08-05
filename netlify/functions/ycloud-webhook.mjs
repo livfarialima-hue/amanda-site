@@ -870,6 +870,8 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
             plan?.procedure ||
             null,
           recentConversation: input.recentConversation,
+          referenceCategory: input.referenceCategory,
+          sourceReference: input.reference,
         }),
       }),
     };
@@ -2665,6 +2667,8 @@ export default async (request, context) => {
     patientPhone: phone,
     messageText: text,
     recentConversation: conversationHistoryWithCurrent,
+    reference: attribution.reference,
+    referenceCategory: attribution.referenceCategory,
     relationship: patientRelationship,
     urgent:
       automationPlan.reason === "possible_urgent_symptoms",

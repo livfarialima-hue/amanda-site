@@ -413,6 +413,8 @@ export async function processHumanResumeJob(
           patientName: job.patientName,
           procedure: priceProcedure,
           recentConversation: job.recentConversation,
+          referenceCategory: job.referenceCategory,
+          sourceReference: job.reference,
         }),
         conversationAction,
       );

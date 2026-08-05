@@ -151,17 +151,28 @@ test("a known patient asking a generic surgical price gets an immediate holding 
 
     assert.equal(alertRequest.type, "template");
     const alertText = JSON.stringify(alertRequest);
-    assert.match(alertText, /R\\u0024 33 mil|R\$ 33 mil/);
+    const alertMessage =
+      alertRequest.template.components[0].parameters[2].text;
+    assert.ok(alertMessage.length <= 1_024);
+    assert.match(
+      alertMessage,
+      /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
+    );
+    assert.doesNotMatch(
+      alertMessage,
+      /[\u200B-\u200D\u2060\uFEFF]/,
+    );
+    assert.match(alertText, /R\\u0024 26 mil|R\$ 26 mil/);
     assert.match(alertText, /condição à vista|condiçã/);
     assert.match(
       alertText,
-      /equipe médica, anestesia, hospital, materiais e acompanhamento/,
+      /hospital, anestesista, auxiliar, instrumentador e acompanhamento/i,
     );
     assert.match(
       alertText,
       /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
     );
-    assert.match(alertText, /verificar um horário/);
+    assert.match(alertText, /Prefere manhã ou tarde/);
     assert.doesNotMatch(
       alertText,
       /Se quiser, posso te explicar o que costuma aproximar/,
