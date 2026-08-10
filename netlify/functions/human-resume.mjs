@@ -27,6 +27,7 @@ import {
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
 import {
+  buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
 } from "./lib/surgical-price-review.mjs";
@@ -42,6 +43,9 @@ const MAX_JOBS_PER_RUN = 5;
 const PRICE_REVIEW_REASONS = new Set([
   "surgical_price_review",
   "price_without_confirmed_procedure",
+  "surgical_price_range_review",
+  "price_range_without_confirmed_procedure",
+  "surgical_price_terms_review",
 ]);
 
 function timeMs(value) {
@@ -472,6 +476,77 @@ export async function processHumanResumeJob(
 
   if (policy.action === "alert_only") {
     return alertOnly(job, policy.reason, dependencies);
+  }
+
+  const approvedPriceReplyKind =
+    enrichedPlan.reason === "price_initial_information"
+      ? "initial_information"
+      : enrichedPlan.reason === "lifting_price_range_direct" &&
+          enrichedPlan.procedure === "lifting_facial"
+        ? "lifting_range"
+        : "";
+  if (policy.action === "attempt_reply" && approvedPriceReplyKind) {
+    const reply = approvedPriceReplyKind === "initial_information"
+      ? buildSurgicalInitialPriceReply({
+          patientName: job.patientName,
+          procedure: enrichedPlan.procedure || job.procedure,
+          recentConversation: job.recentConversation,
+          currentText: job.text,
+        })
+      : buildSurgicalPriceSuggestedReply({
+          patientName: job.patientName,
+          procedure: "lifting_facial",
+          recentConversation: job.recentConversation,
+          referenceCategory: job.referenceCategory,
+          sourceReference: job.reference,
+          directToPatient: true,
+          currentText: job.text,
+        });
+    const sendResult = await sendPatientMessage(
+      job,
+      reply,
+      "human-resume-lifting-price",
+      conversationAction,
+      dependencies,
+    );
+
+    if (sendResult.status !== "completed") {
+      if (sendResult.status === "superseded") {
+        return {
+          status: "superseded",
+          reason: "newer_activity",
+        };
+      }
+      await alertReviewer(
+        job,
+        {
+          kind: "uncertain",
+          reason:
+            sendResult.errorCode ||
+            "approved_price_delivery_failed",
+          holdingSent: false,
+          suggestedReply: reply,
+        },
+        dependencies,
+      );
+      await finish(job, "waiting_human", dependencies);
+      return {
+        status: "delivery_failed",
+        reason: sendResult.errorCode,
+      };
+    }
+
+    await recordBrunaTurn(
+      job,
+      reply,
+      "human-resume-approved-price-memory",
+      dependencies,
+    );
+    await finish(job, "bruna_resumed", dependencies);
+    return {
+      status: "bruna_resumed",
+      reason: enrichedPlan.reason,
+    };
   }
 
   const runOpenAI =

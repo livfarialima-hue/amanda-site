@@ -41,6 +41,13 @@ const PROCEDURE_REPLY_CODES = new Set([
   "G-LIFT-FAC-01",
 ]);
 
+export const AMANDA_INSTAGRAM_URL =
+  "https://www.instagram.com/dra.amanda_plastica/";
+export const AMANDA_SITE_URL =
+  "https://draamandaschroeder.com.br/";
+export const LIFTING_FACIAL_URL =
+  "https://draamandaschroeder.com.br/lifting-facial/";
+
 export const REACTIVATION_REPLY = [
   "Olá! Obrigada por retomar o contato.",
   "Como já faz alguns dias desde nossa última conversa, vou direcionar sua mensagem à equipe para retomarmos seu atendimento com o contexto correto.",
@@ -63,6 +70,49 @@ function greeting(name) {
   return normalizedName ? `Olá, ${normalizedName}!` : "Olá!";
 }
 
+export function buildOfficialChannelsReply({
+  patientName,
+  procedure,
+  introduceBruna = false,
+  explainCampaignReference = false,
+}) {
+  const opening = introduceBruna
+    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Claro!`
+    : "Claro!";
+  const siteLine =
+    procedure === "lifting_facial"
+      ? `E esta é a página completa sobre lifting facial:\n${LIFTING_FACIAL_URL}`
+      : `E este é o site oficial da Dra. Amanda:\n${AMANDA_SITE_URL}`;
+  const referenceLine = explainCampaignReference
+    ? 'A referência que apareceu na primeira mensagem é apenas um código interno para identificarmos o anúncio pelo qual você chegou. Não é um termo médico e você pode desconsiderá-la.'
+    : "";
+
+  return [
+    `${opening} Este é o Instagram oficial da Dra. Amanda:\n${AMANDA_INSTAGRAM_URL}`,
+    siteLine,
+    referenceLine,
+    "Pode olhar com calma. Se quiser, depois me conte o que mais gostaria de entender.",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+export function buildCampaignReferenceExplanationReply({
+  patientName,
+  introduceBruna = false,
+}) {
+  const opening = introduceBruna
+    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    : "";
+
+  return [
+    opening,
+    'Essa referência é apenas um código interno para identificarmos o anúncio pelo qual você chegou. Não é um termo médico, não muda seu atendimento e você pode desconsiderá-la.',
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 export function buildMarketingPrefilledOpeningReply({
   patientName,
   procedure,
@@ -70,7 +120,7 @@ export function buildMarketingPrefilledOpeningReply({
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
   const introduction = introduceBruna
-    ? `${greeting(patientName)} Eu sou a Bruna, da Clínica LIV Faria Lima.`
+    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
   const context = procedureLabel
     ? `Posso te orientar sobre ${procedureLabel}.`
@@ -136,7 +186,7 @@ export function buildInsuranceAcceptanceReply({
         )
         .join(" ")
     : "seu convênio";
-  const introduction = `${greeting(patientName)} Eu sou a Bruna, da Clínica LIV Faria Lima.`;
+  const introduction = `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`;
 
   if (professional === "amanda") {
     return `${introduction} A consulta com a Dra. Amanda é particular. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Posso te orientar sobre a avaliação em cirurgia plástica ou estética?`;
@@ -210,7 +260,7 @@ export function buildConsultationInformationReply({
   const introduction = introduceBruna
     ? [
         greeting(patientName),
-        "Eu sou a Bruna, da Clínica LIV Faria Lima.",
+        "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
         "Claro.",
       ].join(" ")
     : "Claro.";
@@ -242,6 +292,35 @@ export function buildConsultationInformationReply({
   return `${introduction} ${consultationContext}\n\n${nextStep}`;
 }
 
+export function buildImageAcknowledgementReply({
+  patientName,
+  greetPatient = true,
+  introduceBruna = true,
+}) {
+  const opening = [
+    greetPatient ? greeting(patientName) : "",
+    introduceBruna
+      ? "Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+      : "",
+  ].filter(Boolean).join(" ");
+  const acknowledgement = [
+    "Obrigada por confiar em nós e enviar a foto.",
+    "Vou encaminhá-la à equipe para que seja vista com o cuidado necessário.",
+    "Não fazemos diagnóstico nem definimos indicação apenas pela imagem; a equipe continuará com você por aqui.",
+  ].join(" ");
+
+  return [opening, acknowledgement].filter(Boolean).join(" ");
+}
+
+export function buildAppearanceDistressReviewReply({ patientName }) {
+  return [
+    greeting(patientName),
+    "Obrigada por confiar em nós e compartilhar algo tão sensível.",
+    "Sinto muito que isso esteja sendo difícil.",
+    "Quero acolher você com cuidado e sem julgamentos; antes de falarmos sobre qualquer procedimento, posso entender um pouco melhor como você está se sentindo?",
+  ].join(" ");
+}
+
 export function buildPatientReply({
   replyCode,
   patientName,
@@ -256,7 +335,7 @@ export function buildPatientReply({
   if (replyCode === "ORG-DIR-01") {
     return [
       hello,
-      "Seja bem-vindo(a) à Clínica LIV Faria Lima.",
+      "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
       "Você procura uma avaliação com a Dra. Amanda ou uma consulta de cardiologia com o Dr. Daniel?",
     ].join(" ");
   }
@@ -264,7 +343,7 @@ export function buildPatientReply({
   if (replyCode === "DANIEL-ENC-01") {
     return [
       hello,
-      "Seja bem-vindo(a) à Clínica LIV Faria Lima.",
+      "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
       "Recebemos sua procura pela cardiologia com o Dr. Daniel.",
       "Em breve continuaremos o atendimento por aqui.",
     ].join(" ");

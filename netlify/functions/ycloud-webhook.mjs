@@ -1,5 +1,6 @@
 import {
   enrichAutomationPlanFromConversation,
+  hasCampaignReferenceCode,
   inboundReplyPriority,
   isAvailabilityRequest,
   isConsultationInformationRequest,
@@ -9,15 +10,22 @@ import {
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
 import {
+  buildAppointmentPreferenceCollectionReply,
   buildAppointmentSuggestion,
+  hasAppointmentPreferenceInConversation,
   isAppointmentAlertEnabled,
+  isAppointmentOfferAcceptance,
   isAppointmentPreferenceReply,
 } from "./lib/appointment-suggestions.mjs";
 import {
+  buildAppearanceDistressReviewReply,
+  buildCampaignReferenceExplanationReply,
   buildConsultationInformationReply,
+  buildImageAcknowledgementReply,
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
+  buildOfficialChannelsReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
   shouldSendAutomaticPatientReply,
@@ -41,6 +49,16 @@ import {
 } from "./lib/external-professional-context.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
+  buildUnknownHoldingReply,
+  classifyLearningRisk,
+  isKnowledgeDecision,
+  isUnknownClarificationDecision,
+  isUnknownReviewDecision,
+  knowledgeRuleId,
+  learningSubject,
+  shouldDigestLearningDecision,
+} from "./lib/knowledge-learning.mjs";
+import {
   checkLatestInboundReply,
   getLatestInboundReplyMarker,
   markLatestInboundForReply,
@@ -58,7 +76,9 @@ import {
 import {
   buildPendingHospitalQuoteAlert,
   buildPriceReviewAlert,
+  buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
+  buildSurgicalPriceSuggestedReply,
   isSurgicalPriceReview,
 } from "./lib/surgical-price-review.mjs";
 import {
@@ -714,6 +734,40 @@ async function recordPatientCommitment(commitment) {
   );
 }
 
+async function getBotKnowledgeContext(knowledge) {
+  const result = await deliverSheetsAction(
+    "get_bot_knowledge_context",
+    { knowledge },
+  );
+  return result.ok
+    ? {
+        candidates: result.responseData?.candidates || [],
+        pendingQuestion: result.responseData?.pendingQuestion || null,
+      }
+    : { candidates: [], pendingQuestion: null };
+}
+
+async function recordBotUnknownQuestion(learning) {
+  return deliverSheetsAction(
+    "record_bot_unknown_question",
+    { learning },
+  );
+}
+
+async function recordHumanLearningAnswer(answer) {
+  return deliverSheetsAction(
+    "record_human_learning_answer",
+    { answer },
+  );
+}
+
+async function recordBotKnowledgeUsage(usage) {
+  return deliverSheetsAction(
+    "record_bot_knowledge_usage",
+    { usage },
+  );
+}
+
 async function resolvePatientCommitments(phone, at) {
   return deliverSheetsAction(
     "resolve_patient_commitments",
@@ -796,6 +850,7 @@ function shouldSendReviewAlertForPlan(plan) {
 }
 
 function shouldSendReviewAlertForDecision(decision) {
+  if (shouldDigestLearningDecision(decision)) return false;
   return (
     decision?.urgent === true ||
     decision?.route === "human_review" ||
@@ -837,6 +892,23 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
   const planReason = [plan?.reason, plan?.requestReason]
     .filter(Boolean)
     .join(" ");
+  if (/\bintense_appearance_distress\b/.test(planReason)) {
+    return {
+      ...input,
+      messageText: [
+        buildRelationshipAlertMessage({
+          messageText: input.messageText,
+          patientName: input.patientName,
+          relationship: input.relationship,
+        }),
+        "Sugestão para copiar após conferir:",
+        buildAppearanceDistressReviewReply({
+          patientName: input.patientName,
+        }),
+      ].filter(Boolean).join("\n"),
+    };
+  }
+
   if (/\bpending_hospital_quote_followup\b/.test(planReason)) {
     return {
       ...input,
@@ -936,6 +1008,7 @@ function isAppointmentReviewCandidate(
     plan?.professional === "amanda" &&
       (
         isSchedulingRequest(text) ||
+        isAppointmentOfferAcceptance(text, recentConversation) ||
         isAppointmentPreferenceReply(text, recentConversation)
       ),
   );
@@ -1292,6 +1365,15 @@ async function completeOpenAIActive({
         platform: input.platform,
         referralContext: input.referralContext,
       });
+    const officialInstagramRequest =
+      plan?.reason === "official_instagram_request";
+    const campaignReferenceQuestion =
+      plan?.reason === "campaign_reference_explanation";
+    const campaignReferencePreviouslyShown =
+      hasCampaignReferenceCode(input.text) ||
+      (input.recentConversation || []).some((turn) =>
+        hasCampaignReferenceCode(turn?.text),
+      );
     const consultationInformationRequest =
       plan?.reason === "consultation_information_request" &&
       isConsultationInformationRequest(input.text);
@@ -1317,7 +1399,50 @@ async function completeOpenAIActive({
         turn?.role === "assistant" ||
         ["bruna", "equipe_humana"].includes(turn?.source),
     );
-    const activeResult = insuranceAcceptanceReply
+    const activeResult = officialInstagramRequest
+      ? {
+          status: "completed",
+          model: "deterministic-official-channels",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode: "AMANDA-OFFICIAL-LINKS-01",
+            suggestedReply: buildOfficialChannelsReply({
+              patientName: input.patientProfileName,
+              procedure: plan?.procedure || input.procedure || "",
+              introduceBruna,
+              explainCampaignReference:
+                campaignReferencePreviouslyShown,
+            }),
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : campaignReferenceQuestion
+      ? {
+          status: "completed",
+          model: "deterministic-campaign-reference",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode: "CAMPAIGN-REFERENCE-01",
+            suggestedReply: buildCampaignReferenceExplanationReply({
+              patientName: input.patientProfileName,
+              introduceBruna,
+            }),
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : insuranceAcceptanceReply
       ? {
           status: "completed",
           model: "deterministic-insurance-acceptance",
@@ -1466,6 +1591,103 @@ async function completeOpenAIActive({
         });
       }
       return { status: "reviewed", replySent: false };
+    }
+
+    const unknownClarification =
+      isUnknownClarificationDecision(activeResult.decision);
+    const unknownReview =
+      isUnknownReviewDecision(activeResult.decision);
+    const learningRisk = classifyLearningRisk({
+      text: input.text,
+      reviewReason: activeResult.decision.reviewReason,
+      procedure: activeResult.decision.procedure || plan?.procedure,
+    });
+
+    if (unknownClarification || unknownReview) {
+      await recordBotUnknownQuestion({
+        eventId: String(input.eventId),
+        phone: to,
+        patientName: input.patientProfileName,
+        receivedAt: input.receivedAt || "",
+        question: input.text,
+        subject: learningSubject(activeResult.decision),
+        context: (input.recentConversation || [])
+          .slice(-4)
+          .map((turn) => `${turn.source || turn.role}: ${turn.text || ""}`)
+          .join("\n"),
+        risk: learningRisk,
+        clarificationCount: unknownClarification ? 1 : 0,
+        status: unknownClarification
+          ? "Aguardando esclarecimento"
+          : "Aguardando resposta humana",
+        priority:
+          learningRisk === "Alto" ? "Imediata" : "Resumo diário",
+        procedure:
+          activeResult.decision.procedure || plan?.procedure || "",
+      });
+    }
+
+    if (unknownReview) {
+      if (
+        learningRisk === "Alto" &&
+        !reviewAlertAlreadyQueued &&
+        isReviewAlertConfigured()
+      ) {
+        await completeReviewAlert(
+          prepareReviewAlertInput(alertInput, {
+            decision: activeResult.decision,
+            plan,
+          }),
+        );
+      }
+
+      const contactPreferenceGuard =
+        await guardAutomaticContactPreference({
+          phone: to,
+          fallbackRelationship: patientRelationship,
+        });
+      if (!contactPreferenceGuard.shouldSend) {
+        return {
+          status: contactPreferenceGuard.status,
+          replySent: false,
+        };
+      }
+
+      const holdingReply = buildUnknownHoldingReply({
+        patientName: input.patientProfileName,
+        introduceBruna,
+      });
+      const holdingResult = await sendControlledPatientReply({
+        from,
+        to,
+        eventId: `${input.eventId}-unknown-holding`,
+        body: holdingReply,
+        currentText: input.text,
+        recentConversation: input.recentConversation,
+        conversationAction,
+      });
+      logPatientReplyResult(
+        `${input.eventId}-unknown-holding`,
+        to,
+        holdingResult,
+      );
+
+      if (holdingResult.status === "completed") {
+        await appendConversationTurn({
+          phone: to,
+          role: "assistant",
+          text: holdingReply,
+          eventId: `${input.eventId}:unknown-holding`,
+          source: "bruna",
+        });
+        return { status: "awaiting_human_learning", replySent: true };
+      }
+
+      return {
+        status: "completed_no_reply",
+        errorCode: holdingResult.errorCode || holdingResult.status,
+        replySent: false,
+      };
     }
 
     if (
@@ -1673,7 +1895,10 @@ function enrichPricePlanFromPatientRelationship(
   if (
     !plan ||
     plan.procedure ||
-    plan.reason !== "price_without_confirmed_procedure"
+    ![
+      "price_initial_information",
+      "price_range_without_confirmed_procedure",
+    ].includes(plan.reason)
   ) {
     return plan;
   }
@@ -1691,12 +1916,28 @@ function enrichPricePlanFromPatientRelationship(
   });
   if (!contextPlan.procedure) return plan;
 
+  if (plan.reason === "price_initial_information") {
+    return {
+      ...plan,
+      professional: plan.professional || "amanda",
+      procedure: contextPlan.procedure,
+    };
+  }
+
+  const directLiftingRange =
+    contextPlan.procedure === "lifting_facial";
+
   return {
     ...plan,
-    reason: "surgical_price_review",
+    route: directLiftingRange
+      ? "standard_reply"
+      : "human_review",
+    reason: directLiftingRange
+      ? "lifting_price_range_direct"
+      : "surgical_price_range_review",
     professional: plan.professional || "amanda",
     procedure: contextPlan.procedure,
-    automaticAllowed: false,
+    automaticAllowed: directLiftingRange,
   };
 }
 
@@ -2136,6 +2377,21 @@ export default async (request, context) => {
       ),
       source: "human",
     });
+    const humanLearning = echoText.trim()
+      ? await recordHumanLearningAnswer({
+          phone: patientPhone,
+          answer: echoText,
+          eventId: String(eventId),
+          at: String(
+            echo.sendTime ||
+              echo.createTime ||
+              payload.createTime ||
+              "",
+          ),
+        })
+      : deliveryResult(true, null, "none", {
+          responseData: { captured: false, correction: false },
+        });
     const manualAppointment = detectManualAppointment({
       currentText: String(echo.text?.body || ""),
       recentConversation: memoryResult.historyAfter,
@@ -2173,6 +2429,18 @@ export default async (request, context) => {
           confidence: manualAppointment.confidence,
         }),
       );
+
+      if (isKnowledgeDecision(activeResult.decision)) {
+        await recordBotKnowledgeUsage({
+          eventId: String(input.eventId),
+          phone: to,
+          ruleId: knowledgeRuleId(activeResult.decision),
+          question: input.text,
+          answer: activeResult.decision.suggestedReply,
+          at: input.receivedAt || "",
+          result: "Enviada",
+        });
+      }
     }
 
     const humanInteractionSync = await deliverSheetsAction(
@@ -2212,6 +2480,13 @@ export default async (request, context) => {
       humanTakeoverRecorded: true,
       takeoverCreated: takeoverDelivery.created === true,
       conversationMemory: memoryResult.status,
+      humanLearningStatus: humanLearning.ok
+        ? humanLearning.responseData?.captured
+          ? "candidate_captured"
+          : humanLearning.responseData?.correction
+            ? "possible_correction"
+            : "nothing_pending"
+        : humanLearning.errorCode,
       humanResumeControl: humanResumeControl.status,
       appointmentSyncStatus,
       humanInteractionSyncStatus,
@@ -2240,9 +2515,12 @@ export default async (request, context) => {
 
   const contactAt = message.sendTime || payload.createTime;
   const text = String(message.text?.body || "");
+  const normalizedMessageType = String(message.type || "")
+    .trim()
+    .toLowerCase();
   let replyDebounceMarkerStatus = "skipped";
   if (
-    String(message.type || "").toLowerCase() === "text" &&
+    normalizedMessageType === "text" &&
     text.trim()
   ) {
     const markerResult = await markLatestInboundForReply({
@@ -2489,7 +2767,7 @@ export default async (request, context) => {
 
   if (
     !suppressExactDuplicate &&
-    String(message.type || "").toLowerCase() === "text" &&
+    normalizedMessageType === "text" &&
     text.trim().length > 0
   ) {
     const memoryResult = await appendConversationTurn({
@@ -2523,6 +2801,28 @@ export default async (request, context) => {
           recentConversation: memoryResult.historyAfter,
           at: contactAt,
         });
+  } else if (
+    !suppressExactDuplicate &&
+    normalizedMessageType === "image"
+  ) {
+    const memoryResult = await appendConversationTurn({
+      phone,
+      role: "user",
+      text: "A paciente enviou uma foto.",
+      eventId: String(eventId),
+      at: contactAt,
+      source: "patient",
+    });
+    conversationMemoryStatus = memoryResult.status;
+    conversationExpired = memoryResult.expired === true;
+    conversationHistory = toOpenAIConversation(
+      memoryResult.historyBefore.filter(
+        (turn) => turn.eventId !== String(eventId),
+      ),
+    );
+    conversationHistoryWithCurrent = toOpenAIConversation(
+      memoryResult.historyAfter,
+    );
   }
   if (!conversationHistoryWithCurrent.length) {
     conversationHistoryWithCurrent = conversationHistory;
@@ -2659,13 +2959,16 @@ export default async (request, context) => {
     });
   const patientAutomationReady =
     delivery.ok || leadDeliveryFallbackActive;
-
   const alertInput = {
     from: String(message.to || ""),
     eventId: String(eventId),
     patientName: String(message.customerProfile?.name || ""),
     patientPhone: phone,
-    messageText: text,
+    messageText:
+      text ||
+      (normalizedMessageType === "image"
+        ? "A paciente enviou uma foto no WhatsApp. Revise a imagem e dê continuidade com acolhimento, sem concluir diagnóstico ou indicação somente pela foto."
+        : "Mensagem sem texto."),
     recentConversation: conversationHistoryWithCurrent,
     reference: attribution.reference,
     referenceCategory: attribution.referenceCategory,
@@ -2680,7 +2983,7 @@ export default async (request, context) => {
       patientName: String(message.customerProfile?.name || ""),
       procedure: automationPlan.procedure,
     });
-  const appointmentReviewCandidate =
+  const appointmentRequestCandidate =
     isAppointmentReviewCandidate(
       automationPlan,
       text,
@@ -2694,6 +2997,17 @@ export default async (request, context) => {
     ].includes(
       automationPlan.patientRelationship?.state,
     );
+  const appointmentNeedsPreference =
+    appointmentRequestCandidate &&
+    !isAvailabilityRequest(text) &&
+    !isAppointmentOfferAcceptance(text, conversationHistory) &&
+    !isAppointmentPreferenceReply(text, conversationHistory) &&
+    !hasAppointmentPreferenceInConversation(
+      text,
+      conversationHistory,
+    );
+  const appointmentReviewCandidate =
+    appointmentRequestCandidate && !appointmentNeedsPreference;
   const conversationAction = decideConversationAction({
     text,
     messageType: message.type,
@@ -2718,6 +3032,23 @@ export default async (request, context) => {
     },
     automationPlan,
   );
+  const approvedPriceReplyKind =
+    relationshipAwarePlan.reason === "price_initial_information"
+      ? "initial_information"
+      : relationshipAwarePlan.reason === "lifting_price_range_direct"
+        ? "lifting_range"
+        : "";
+  const approvedPriceReplyCandidate =
+    Boolean(approvedPriceReplyKind) &&
+    automationPlan.route === "standard_reply" &&
+    automationPlan.automaticAllowed === true;
+  const shouldQueueApprovedPriceReply =
+    patientAutomationReady &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    automationMode === "active" &&
+    conversationAction.allowAutomaticReply &&
+    approvedPriceReplyCandidate;
   const shouldQueueReviewAlert =
     delivery.ok &&
     !humanTakeoverActive &&
@@ -2726,6 +3057,15 @@ export default async (request, context) => {
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
     shouldSendReviewAlertForPlan(automationPlan);
+  const shouldQueueImageAcknowledgement =
+    delivery.ok &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    automationMode === "active" &&
+    normalizedMessageType === "image" &&
+    automationPlan.reason === "unsupported_or_empty_message" &&
+    conversationAction.allowHoldingReply &&
+    shouldQueueReviewAlert;
   const outsideHumanServiceHours =
     isOutsideHumanServiceHours(contactAt);
   const shouldQueuePriceHolding =
@@ -2770,6 +3110,14 @@ export default async (request, context) => {
   let commitmentSyncStatus = "skipped";
   let professionalFactReplySent = false;
   let professionalFactReplyStatus = "not_queued";
+  let approvedPriceReplyQueued = false;
+  let approvedPriceReplySent = false;
+  let approvedPriceReplyStatus = "not_queued";
+  let appointmentPreferenceReplySent = false;
+  let appointmentPreferenceReplyStatus = "not_queued";
+  let imageAcknowledgementQueued = false;
+  let imageAcknowledgementSent = false;
+  let imageAcknowledgementStatus = "not_queued";
 
   const patientCommitment =
     delivery.ok &&
@@ -2810,25 +3158,35 @@ export default async (request, context) => {
       preliminaryAutomationPlan,
       conversationHistory,
     );
-    const scheduleResult = await scheduleHumanResume({
-      phone,
-      from: String(message.to || ""),
-      eventId: String(eventId),
-      patientName: String(message.customerProfile?.name || ""),
-      text,
-      messageType: String(message.type || ""),
-      platform: attribution.platform,
-      reference: attribution.reference,
-      referenceCategory: attribution.referenceCategory,
-      procedure: resumeContextPlan.procedure,
-      referralContext,
-      recentConversation: conversationHistoryWithCurrent,
-      expectedHumanGeneration:
-        humanResumeControl?.generation || "",
-      receivedAt: String(
-        message.sendTime || payload.createTime || "",
-      ),
-    });
+    const safeResumeDelay =
+      resumeContextPlan.route === "standard_reply" &&
+      classifyLearningRisk({
+        text,
+        reviewReason: resumeContextPlan.reason,
+        procedure: resumeContextPlan.procedure,
+      }) === "Baixo";
+    const scheduleResult = await scheduleHumanResume(
+      {
+        phone,
+        from: String(message.to || ""),
+        eventId: String(eventId),
+        patientName: String(message.customerProfile?.name || ""),
+        text,
+        messageType: String(message.type || ""),
+        platform: attribution.platform,
+        reference: attribution.reference,
+        referenceCategory: attribution.referenceCategory,
+        procedure: resumeContextPlan.procedure,
+        referralContext,
+        recentConversation: conversationHistoryWithCurrent,
+        expectedHumanGeneration:
+          humanResumeControl?.generation || "",
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
+      },
+      { delayMs: safeResumeDelay ? 5 * 60 * 1000 : 20 * 60 * 1000 },
+    );
     humanResumeScheduleStatus = scheduleResult.status;
   } else if (
     delivery.ok &&
@@ -2883,6 +3241,111 @@ export default async (request, context) => {
     }
   }
 
+  if (
+    appointmentNeedsPreference &&
+    patientAutomationReady &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    automationMode === "active" &&
+    conversationAction.allowAutomaticReply
+  ) {
+    const introduceBruna = !conversationHistory.some(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
+    const preferenceReply =
+      buildAppointmentPreferenceCollectionReply({
+        patientName: String(message.customerProfile?.name || ""),
+        introduceBruna,
+      });
+    const preferenceResult = await sendCurrentInboundReply({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-appointment-preference`,
+      revisionEventId: String(eventId),
+      body: preferenceReply,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
+      patientRelationship,
+    });
+    appointmentPreferenceReplySent =
+      preferenceResult.status === "completed";
+    appointmentPreferenceReplyStatus = preferenceResult.status;
+    logPatientReplyResult(
+      `${String(eventId)}-appointment-preference`,
+      phone,
+      preferenceResult,
+    );
+
+    if (appointmentPreferenceReplySent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: preferenceReply,
+        eventId: `${String(eventId)}:appointment-preference`,
+        source: "bruna",
+      });
+    }
+  }
+
+  if (shouldQueueApprovedPriceReply) {
+    approvedPriceReplyQueued = true;
+    const directPriceBody =
+      approvedPriceReplyKind === "initial_information"
+        ? buildSurgicalInitialPriceReply({
+            patientName: String(message.customerProfile?.name || ""),
+            procedure: automationPlan.procedure,
+            recentConversation: conversationHistory,
+            currentText: text,
+          })
+        : buildSurgicalPriceSuggestedReply({
+            patientName: String(message.customerProfile?.name || ""),
+            procedure: "lifting_facial",
+            recentConversation: conversationHistory,
+            referenceCategory: attribution.referenceCategory,
+            sourceReference: attribution.reference,
+            directToPatient: true,
+            currentText: text,
+          });
+    const priceReplyEventSuffix =
+      approvedPriceReplyKind === "initial_information"
+        ? "price-initial-information"
+        : "lifting-price-range";
+    const directPriceResult = await sendCurrentInboundReply({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-${priceReplyEventSuffix}`,
+      revisionEventId: String(eventId),
+      body: directPriceBody,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
+      patientRelationship,
+    });
+    approvedPriceReplySent =
+      directPriceResult.status === "completed";
+    approvedPriceReplyStatus = directPriceResult.status;
+    logPatientReplyResult(
+      `${String(eventId)}-${priceReplyEventSuffix}`,
+      phone,
+      directPriceResult,
+    );
+
+    if (approvedPriceReplySent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: directPriceBody,
+        eventId: `${String(eventId)}:${priceReplyEventSuffix}`,
+        source: "bruna",
+      });
+    }
+  }
+
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(
       professionalFactReview
@@ -2914,7 +3377,7 @@ export default async (request, context) => {
   if (shouldQueueAppointmentReview) {
     const appointmentPromise = completeAppointmentReview({
       ...alertInput,
-      professional: automationPlan.professional,
+      professional: automationPlan.professional || "amanda",
       procedure: automationPlan.procedure,
       preferenceText: text,
     });
@@ -3065,6 +3528,22 @@ export default async (request, context) => {
     }
   }
 
+  const learningContext =
+    patientAutomationReady &&
+    !humanTakeoverActive &&
+    ["active", "shadow"].includes(automationMode) &&
+    String(message.type || "").toLowerCase() === "text" &&
+    automationPlan.route === "standard_reply" &&
+    !appointmentReviewCandidate &&
+    !appointmentNeedsPreference &&
+    !professionalFactReview &&
+    !approvedPriceReplyCandidate
+      ? await getBotKnowledgeContext({
+          phone,
+          question: text,
+          procedure: automationPlan.procedure || "",
+        })
+      : { candidates: [], pendingQuestion: null };
   const shouldQueueOpenAIShadow =
     delivery.ok &&
     !humanTakeoverActive &&
@@ -3075,6 +3554,7 @@ export default async (request, context) => {
     conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
+    !appointmentNeedsPreference &&
     !suppressExactDuplicate &&
     !professionalFactReview;
   const shouldQueueOpenAIActive =
@@ -3087,14 +3567,19 @@ export default async (request, context) => {
     conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
+    !appointmentNeedsPreference &&
     !suppressExactDuplicate &&
-    !professionalFactReview;
+    !professionalFactReview &&
+    !approvedPriceReplyCandidate;
   let aiShadowQueued = false;
 
   if (shouldQueueOpenAIShadow) {
     const shadowPromise = completeOpenAIShadow(
       {
         eventId: String(eventId),
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
         phone,
         text,
         platform: attribution.platform,
@@ -3109,6 +3594,7 @@ export default async (request, context) => {
           patientRelationshipPromptContext(
             patientRelationship,
           ),
+        learningContext,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -3134,6 +3620,9 @@ export default async (request, context) => {
     const activePromise = completeOpenAIActive({
       input: {
         eventId: String(eventId),
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
         phone,
         text,
         platform: attribution.platform,
@@ -3148,6 +3637,7 @@ export default async (request, context) => {
           patientRelationshipPromptContext(
             patientRelationship,
           ),
+        learningContext,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -3182,6 +3672,55 @@ export default async (request, context) => {
     }
   }
 
+  if (shouldQueueImageAcknowledgement) {
+    imageAcknowledgementQueued = true;
+    const hasPreviousClinicReply = conversationHistory.some(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
+    const imageAcknowledgementBody =
+      buildImageAcknowledgementReply({
+        patientName: String(message.customerProfile?.name || ""),
+        greetPatient: !hasPreviousClinicReply,
+        introduceBruna:
+          !hasPreviousClinicReply &&
+          patientRelationship?.knownPatient !== true,
+      });
+    const imageAcknowledgementResult =
+      await sendCurrentInboundReply({
+        from: String(message.to || ""),
+        to: phone,
+        eventId: `${String(eventId)}-image-acknowledgement`,
+        revisionEventId: String(eventId),
+        body: imageAcknowledgementBody,
+        currentText: text,
+        recentConversation: conversationHistory,
+        conversationAction,
+        replyDebounceMarkerStatus,
+        patientRelationship,
+      });
+    imageAcknowledgementSent =
+      imageAcknowledgementResult.status === "completed";
+    imageAcknowledgementStatus =
+      imageAcknowledgementResult.status;
+    logPatientReplyResult(
+      `${String(eventId)}-image-acknowledgement`,
+      phone,
+      imageAcknowledgementResult,
+    );
+
+    if (imageAcknowledgementSent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: imageAcknowledgementBody,
+        eventId: `${String(eventId)}:image-acknowledgement`,
+        source: "bruna",
+      });
+    }
+  }
+
   const terminalSendStatuses = new Set([
     "completed",
     "duplicate",
@@ -3192,7 +3731,9 @@ export default async (request, context) => {
     delivery.ok &&
     (!aiActiveQueued || !["failed", "deferred"].includes(aiActiveStatus)) &&
     (!priceHoldingQueued || terminalSendStatuses.has(priceHoldingStatus)) &&
+    (!approvedPriceReplyQueued || terminalSendStatuses.has(approvedPriceReplyStatus)) &&
     (!overnightHandoffQueued || terminalSendStatuses.has(overnightHandoffStatus)) &&
+    (!imageAcknowledgementQueued || terminalSendStatuses.has(imageAcknowledgementStatus)) &&
     (!patientReplyQueued || terminalSendStatuses.has(patientReplyStatus));
   let recoveryStatus = recoveryRegistration.status;
   if (
@@ -3267,12 +3808,22 @@ export default async (request, context) => {
         conversationAction.followupPolicy,
       reviewAlertQueued,
       appointmentReviewQueued,
+      appointmentNeedsPreference,
+      appointmentPreferenceReplySent,
+      appointmentPreferenceReplyStatus,
+      imageAcknowledgementQueued,
+      imageAcknowledgementSent,
+      imageAcknowledgementStatus,
       patientReplyQueued,
       patientReplySent,
       overnightHandoffQueued,
       overnightHandoffSent,
       priceHoldingQueued,
       priceHoldingSent,
+      approvedPriceReplyKind,
+      approvedPriceReplyQueued,
+      approvedPriceReplySent,
+      approvedPriceReplyStatus,
       aiShadowQueued,
       aiActiveQueued,
       aiActiveStatus,
@@ -3309,6 +3860,16 @@ export default async (request, context) => {
       aiActiveQueued,
       aiActiveStatus,
       aiActiveReplySent,
+      approvedPriceReplyKind,
+      approvedPriceReplyQueued,
+      approvedPriceReplySent,
+      approvedPriceReplyStatus,
+      directLiftingPriceQueued:
+        approvedPriceReplyKind === "lifting_range" &&
+        approvedPriceReplyQueued,
+      directLiftingPriceSent:
+        approvedPriceReplyKind === "lifting_range" &&
+        approvedPriceReplySent,
       replyDebounceMarkerStatus,
       recoveryStatus,
     });
@@ -3352,12 +3913,28 @@ export default async (request, context) => {
     },
     reviewAlertQueued,
     appointmentReviewQueued,
+    appointmentNeedsPreference,
+    appointmentPreferenceReplySent,
+    appointmentPreferenceReplyStatus,
+    imageAcknowledgementQueued,
+    imageAcknowledgementSent,
+    imageAcknowledgementStatus,
     patientReplyQueued,
     patientReplySent,
     overnightHandoffQueued,
     overnightHandoffSent,
     priceHoldingQueued,
     priceHoldingSent,
+    approvedPriceReplyKind,
+    approvedPriceReplyQueued,
+    approvedPriceReplySent,
+    approvedPriceReplyStatus,
+    directLiftingPriceQueued:
+      approvedPriceReplyKind === "lifting_range" &&
+      approvedPriceReplyQueued,
+    directLiftingPriceSent:
+      approvedPriceReplyKind === "lifting_range" &&
+      approvedPriceReplySent,
     aiShadowQueued,
     aiActiveQueued,
     aiActiveStatus,

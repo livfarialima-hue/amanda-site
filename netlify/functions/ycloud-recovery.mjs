@@ -41,7 +41,7 @@ function recoveryAlert(job) {
       `Mensagem da paciente: ${String(message.text?.body || "Mensagem sem texto.")}`,
       "Ação interna: cadastrar o contato manualmente na LEADS e conferir a conversa no WhatsApp.",
       "Sugestão para copiar somente se a paciente ainda estiver sem resposta:",
-      `${greeting} Eu sou a Bruna, da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Posso te ajudar por aqui.`,
+      `${greeting} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Posso te ajudar por aqui.`,
     ].join("\n"),
   };
 }

@@ -492,3 +492,124 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     }
   }
 });
+
+test("image webhook acknowledges the photo as Bruna and keeps human review", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+    "YCLOUD_ALERT_TEMPLATE_LANGUAGE",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_HUMAN_REPLY_GUARD_MS",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+
+  process.env.YCLOUD_WEBHOOK_SECRET = "webhook-secret";
+  process.env.YCLOUD_API_KEY = "ycloud-key";
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL =
+    "https://sheets.example.test/webhook";
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-secret";
+  process.env.WHATSAPP_ALERT_NUMBER = "+5511967743374";
+  process.env.YCLOUD_ALERT_TEMPLATE_NAME =
+    "alerta_revisao_liv_v1";
+  process.env.YCLOUD_ALERT_TEMPLATE_LANGUAGE = "pt_BR";
+  process.env.WHATSAPP_AUTOMATION_MODE = "active";
+  process.env.WHATSAPP_HUMAN_REPLY_GUARD_MS = "500";
+  delete process.env.OPENAI_API_KEY;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response('{"ok":true}', { status: 200 });
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const payload = {
+      id: "patient-image-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "patient-image-message",
+        from: "+5511900000001",
+        to: "+5511961957144",
+        type: "image",
+        customerProfile: { name: "Mariana Silva" },
+        image: { id: "image-01", mimeType: "image/jpeg" },
+      },
+    };
+    const rawBody = JSON.stringify(payload);
+    const timestamp = "1721908801";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+    );
+    const responseBody = await response.json();
+    const ycloudBodies = requests
+      .filter(
+        (request) =>
+          request.url ===
+          "https://api.ycloud.com/v2/whatsapp/messages",
+      )
+      .map((request) => JSON.parse(request.options.body));
+    const patientReply = ycloudBodies.find(
+      (body) =>
+        body.type === "text" &&
+        body.to === payload.whatsappInboundMessage.from,
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(responseBody.automation.route, "human_review");
+    assert.equal(responseBody.reviewAlertQueued, true);
+    assert.equal(responseBody.imageAcknowledgementQueued, true);
+    assert.equal(responseBody.imageAcknowledgementSent, true);
+    assert.ok(patientReply);
+    assert.match(
+      patientReply.text.body,
+      /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
+    );
+    assert.match(patientReply.text.body, /Obrigada por confiar em nós/i);
+    assert.match(patientReply.text.body, /Não fazemos diagnóstico/i);
+    assert.ok(
+      ycloudBodies.some(
+        (body) =>
+          body.type === "template" &&
+          body.to === process.env.WHATSAPP_ALERT_NUMBER,
+      ),
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

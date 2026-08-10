@@ -31,7 +31,7 @@ test("returning-patient guard removes a repeated Bruna introduction", () => {
   const guarded = applyReturningPatientReplyGuard(
     validDecision({
       suggestedReply:
-        "Olá, Ana! Eu sou a Bruna, da Clínica LIV Faria Lima. Como posso ajudar?",
+        "Olá, Ana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso ajudar?",
     }),
     {
       knownPatient: true,
@@ -53,7 +53,7 @@ test("first acquisition reply always starts with a human greeting and Bruna intr
   const guarded = applyFirstReplyGreetingGuard(
     validDecision({
       suggestedReply:
-        "Eu sou a Bruna, da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
+        "Eu sou a Bruna, concierge da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
     }),
     {
       patientProfileName: "Rosana Macedo",
@@ -64,7 +64,7 @@ test("first acquisition reply always starts with a human greeting and Bruna intr
 
   assert.equal(
     guarded.suggestedReply,
-    "Olá, Rosana! Eu sou a Bruna, da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
+    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
   );
 });
 
@@ -82,7 +82,7 @@ test("first acquisition reply inserts the introduction when the model omits it",
 
   assert.equal(
     guarded.suggestedReply,
-    "Olá! Eu sou a Bruna, da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial.",
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial.",
   );
 });
 
@@ -267,7 +267,7 @@ test("a known WhatsApp profile name prevents asking the name again", () => {
     validResponse(
       validDecision({
         suggestedReply:
-          "Boa tarde! Eu sou a Bruna, da Clínica LIV Faria Lima. Como posso te chamar?",
+          "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso te chamar?",
       }),
     ),
     "fallback-model",
@@ -277,7 +277,7 @@ test("a known WhatsApp profile name prevents asking the name again", () => {
   assert.equal(result.status, "completed");
   assert.equal(
     result.decision.suggestedReply,
-    "Boa tarde! Eu sou a Bruna, da Clínica LIV Faria Lima. Como posso ajudar?",
+    "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso ajudar?",
   );
 });
 
@@ -708,6 +708,7 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
     assert.equal((await response.json()).aiShadowQueued, true);
     assert.deepEqual(requests, [
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
       "https://api.openai.com/v1/responses",
     ]);
   } finally {
@@ -1016,7 +1017,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
     assert.equal(patientBody.type, "text");
     assert.equal(
       patientBody.text.body,
-      "Olá, Maria! Eu sou a Bruna, da Clínica LIV Faria Lima. A avaliação é individual. O que você deseja melhorar?",
+      "Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. A avaliação é individual. O que você deseja melhorar?",
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -1187,7 +1188,7 @@ test("a prefilled site availability template becomes a contextual opening", asyn
             validDecision({
               procedure: "lifting_facial",
               suggestedReply:
-                "Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima. " +
+                "Olá, Rô! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
                 "Vi que seu interesse é em lifting facial. O que seria mais útil " +
                 "entender primeiro: o procedimento, a recuperação, os valores ou a avaliação?",
             }),
@@ -1261,7 +1262,7 @@ test("a prefilled site availability template becomes a contextual opening", asyn
     ).text.body;
     assert.equal(
       patientReply,
-      "Olá, Fabrícia! Eu sou a Bruna, da Clínica LIV Faria Lima. " +
+      "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
         "Posso te orientar sobre avaliação facial. " +
         "O que você gostaria de entender primeiro sobre avaliação facial?",
     );
@@ -1281,7 +1282,7 @@ test("a prefilled site availability template becomes a contextual opening", asyn
   }
 });
 
-test("surgical price acknowledges the patient and alerts the reviewer with a suggestion", async () => {
+test("the first surgical price question uses the approved institutional reply", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -1391,9 +1392,12 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
     await Promise.all(pending);
 
     assert.equal(body.aiActiveQueued, false);
-    assert.equal(body.reviewAlertQueued, true);
-    assert.equal(body.priceHoldingQueued, true);
-    assert.equal(body.priceHoldingSent, true);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(body.priceHoldingQueued, false);
+    assert.equal(body.priceHoldingSent, false);
+    assert.equal(body.approvedPriceReplyKind, "initial_information");
+    assert.equal(body.approvedPriceReplyQueued, true);
+    assert.equal(body.approvedPriceReplySent, true);
     assert.equal(
       requests.some(
         (request) =>
@@ -1407,40 +1411,20 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
         request.url ===
         "https://api.ycloud.com/v2/whatsapp/messages",
     );
-    assert.equal(ycloudRequests.length, 2);
+    assert.equal(ycloudRequests.length, 1);
     const ycloudBodies = ycloudRequests.map(
       (request) => JSON.parse(request.options.body),
-    );
-    const alertBody = ycloudBodies.find(
-      (request) => request.type === "template",
     );
     const patientBody = ycloudBodies.find(
       (request) => request.type === "text",
     );
-    assert.equal(alertBody.type, "template");
-    assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
-    const alertText =
-      alertBody.template.components[0].parameters[2].text;
-    assert.match(
-      alertText,
-      /PREÇO CIRÚRGICO — REVISAR/,
-    );
-    assert.match(alertText, /VALOR NÃO ENVIADO/);
-    assert.match(alertText, /Revise e copie manualmente/);
-    assert.match(alertText, /entre R\$ 18 mil e R\$ 23 mil/);
-    assert.match(alertText, /condição à vista/);
-    assert.doesNotMatch(
-      alertText,
-      /Se quiser, posso te explicar o que costuma aproximar/,
-    );
     assert.equal(patientBody.to, "+5511900000000");
+    assert.match(patientBody.text.body, /valores competitivos/i);
+    assert.match(patientBody.text.body, /parcelamento antecipado/i);
+    assert.match(patientBody.text.body, /hospital, anestesia/i);
     assert.match(
       patientBody.text.body,
-      /faixa de referência para a blefaroplastia completa/,
-    );
-    assert.match(
-      patientBody.text.body,
-      /possibilidades de pagamento/,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
     );
     assert.doesNotMatch(patientBody.text.body, /R\$/);
   } finally {

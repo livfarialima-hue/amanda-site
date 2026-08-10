@@ -6,12 +6,15 @@
   var attributionKeys = [
     'amanda_attribution',
     'amanda_first_touch',
-    'amanda_campaign_origin',
+    'amanda_campaign_origin'
+  ];
+  var consentIndependentClickIdKeys = [
     'amanda_click_id_gclid',
     'amanda_click_id_gbraid',
-    'amanda_click_id_wbraid',
-    'amanda_marketing_attribution'
+    'amanda_click_id_wbraid'
   ];
+  var marketingAttributionStorageKey = 'amanda_marketing_attribution';
+  var marketingClickIdParams = ['gclid', 'gbraid', 'wbraid'];
   var googleScriptId = 'amanda-google-gtag';
 
   window.dataLayer = window.dataLayer || [];
@@ -110,11 +113,38 @@
     window.__amandaMetaLoaded = true;
   }
 
+  function clearPersistentClickIdStorage() {
+    consentIndependentClickIdKeys.forEach(function (key) {
+      try { localStorage.removeItem(key); } catch (error) {}
+    });
+    try { localStorage.removeItem(marketingAttributionStorageKey); } catch (error) {}
+  }
+
   function clearSiteAttribution() {
     attributionKeys.forEach(function (key) {
       try { localStorage.removeItem(key); } catch (error) {}
       try { sessionStorage.removeItem(key); } catch (error) {}
     });
+
+    // A recusa remove persistência e sinais opcionais, mas não apaga o click
+    // ID da sessão atual. Ele só acompanha a mensagem se a pessoa clicar
+    // voluntariamente para abrir o WhatsApp.
+    clearPersistentClickIdStorage();
+    try {
+      var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
+      var clickIds = {};
+      marketingClickIdParams.forEach(function (param) {
+        var value = stored && typeof stored[param] === 'string' ? stored[param].trim() : '';
+        if (/^[A-Za-z0-9._~-]{10,300}$/.test(value)) clickIds[param] = value;
+      });
+      if (Object.keys(clickIds).length) {
+        sessionStorage.setItem(marketingAttributionStorageKey, JSON.stringify(clickIds));
+      } else {
+        sessionStorage.removeItem(marketingAttributionStorageKey);
+      }
+    } catch (error) {
+      try { sessionStorage.removeItem(marketingAttributionStorageKey); } catch (storageError) {}
+    }
   }
 
   function rootCookieDomain() {
@@ -156,7 +186,7 @@
     banner.className = 'cookie-consent';
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-label', 'Preferências de privacidade');
-    banner.innerHTML = '<strong class="cookie-consent-title">Sua privacidade, sempre em primeiro lugar</strong><p>Usamos cookies opcionais de medição para entender como as pessoas encontram nosso site e melhorar sua experiência.</p><p>Eles só são ativados com a sua autorização. Mesmo sem aceitar, você pode navegar pelo site e falar com nossa equipe normalmente.</p><p class="privacy-note">Informações clínicas não são usadas para publicidade ou mensuração.</p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar e continuar</button><button class="reject" type="button">Continuar sem cookies</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
+    banner.innerHTML = '<strong class="cookie-consent-title">Sua privacidade, sempre em primeiro lugar</strong><p>Usamos cookies opcionais de medição para entender como as pessoas encontram nosso site e melhorar sua experiência.</p><p>Eles só são ativados com a sua autorização. Mesmo sem aceitar, você pode navegar pelo site e falar com nossa equipe normalmente.</p><p class="privacy-note">O identificador técnico do anúncio pode acompanhar a mensagem no WhatsApp; informações clínicas não são usadas para publicidade ou mensuração.</p><div class="cookie-consent-actions"><button class="accept" type="button">Aceitar e continuar</button><button class="reject" type="button">Continuar sem cookies</button><a class="privacy-policy" href="/privacidade/">Política de privacidade</a></div>';
     document.body.appendChild(banner);
 
     banner.querySelector('.accept').addEventListener('click', function () {
@@ -209,9 +239,6 @@
     getState: getConsent,
     fullConsentGranted: function () { return getConsent() === 'granted'; },
     loadMetaPixel: loadMetaPixel,
-    prepareMinimalWhatsAppMeasurement: function () {
-      loadGoogleTags({ sendPageView: false });
-    },
     openPreferences: function () {
       revokeConsent();
       injectConsentBanner(true);
@@ -221,6 +248,7 @@
   };
 
   var initialConsent = getConsent();
+  clearPersistentClickIdStorage();
   updateGoogleConsent(initialConsent === 'granted');
   if (initialConsent === 'granted') {
     loadGoogleTags({ sendPageView: true });

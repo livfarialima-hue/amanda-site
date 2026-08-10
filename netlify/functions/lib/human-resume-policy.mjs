@@ -23,6 +23,9 @@ const SIMPLE_COORDINATION_RISK_PATTERN =
 const SENSITIVE_REASONS = new Set([
   "surgical_price_review",
   "price_without_confirmed_procedure",
+  "surgical_price_range_review",
+  "price_range_without_confirmed_procedure",
+  "surgical_price_terms_review",
   "possible_urgent_symptoms",
   "intense_appearance_distress",
   "existing_patient_administrative_followup",
@@ -33,6 +36,9 @@ const OVERNIGHT_HANDOFF_REASONS = new Set([
   "scheduling_or_confirmation",
   "surgical_price_review",
   "price_without_confirmed_procedure",
+  "surgical_price_range_review",
+  "price_range_without_confirmed_procedure",
+  "surgical_price_terms_review",
 ]);
 
 function localHour(now, timeZone) {
@@ -108,7 +114,13 @@ export function shouldSendOvernightHandoff(reason) {
 
 export function buildOvernightHandoffMessage(reason) {
   if (
-    ["surgical_price_review", "price_without_confirmed_procedure"]
+    [
+      "surgical_price_review",
+      "price_without_confirmed_procedure",
+      "surgical_price_range_review",
+      "price_range_without_confirmed_procedure",
+      "surgical_price_terms_review",
+    ]
       .includes(String(reason || ""))
   ) {
     return "Recebi sua pergunta sobre valores. Para te passar a informação correta, vou confirmar com a equipe e retornamos por aqui amanhã pela manhã.";
@@ -278,15 +290,18 @@ export function classifyHumanResume({
     preliminaryPlan?.reason,
     enrichedPlan?.reason,
   ].filter(Boolean);
+  const sensitiveReason = reasons.find((reason) =>
+    SENSITIVE_REASONS.has(reason),
+  );
 
   if (
     preliminaryPlan?.route === "daniel_greeting_and_alert" ||
     enrichedPlan?.route === "daniel_greeting_and_alert" ||
-    reasons.some((reason) => SENSITIVE_REASONS.has(reason))
+    sensitiveReason
   ) {
     return {
       action: "sensitive",
-      reason: reasons[0] || "reserved_topic",
+      reason: sensitiveReason || reasons[0] || "reserved_topic",
     };
   }
 

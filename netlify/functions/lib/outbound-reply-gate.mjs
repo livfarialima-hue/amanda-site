@@ -9,6 +9,7 @@ import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 
 const STORE_NAME = "liv-whatsapp-outbound-replies-v1";
 const CLAIM_TTL_MS = 2 * 60 * 1_000;
+const MAX_REPLY_LENGTH = 1_500;
 
 function normalizedPhone(value) {
   const compact = String(value || "").replace(/[\s()-]/g, "");
@@ -34,6 +35,25 @@ function normalizedText(value) {
 
 function urls(value) {
   return limited(value).match(/https?:\/\/[^\s)]+/gi) || [];
+}
+
+function unsafeReplyContentReason(value) {
+  const text = String(value || "");
+
+  if (/BEGIN:VCARD|END:VCARD|VERSION:3\.0|(?:item\d+\.)?TEL(?:;|:)/i.test(text)) {
+    return "contact_card_content";
+  }
+  if (/\[(?:nome|name|primeiro nome)\]|\{\{\s*(?:nome|name)\s*\}\}|<nome>/i.test(text)) {
+    return "unresolved_placeholder";
+  }
+  if (/https?:\/\/(?:www\.)?draamandaschroeder(?!\.com\.br)(?:[\s/]|$)/i.test(text)) {
+    return "malformed_clinic_url";
+  }
+  if (/\b(\d{1,2}(?::\d{2}|h(?:\d{2})?))\b\s*[,;\/-]\s*\1\b/i.test(text)) {
+    return "duplicated_time";
+  }
+
+  return "";
 }
 
 function tokens(value) {
@@ -84,8 +104,18 @@ export function validateOutboundReply({
   recentConversation = [],
   conversationAction,
 }) {
-  const reply = limited(body);
+  const rawReply = String(body || "").trim();
+  if (Array.from(rawReply).length > MAX_REPLY_LENGTH) {
+    return { allowed: false, reason: "reply_too_long" };
+  }
+
+  const reply = limited(rawReply, MAX_REPLY_LENGTH);
   if (!reply) return { allowed: false, reason: "empty_reply" };
+
+  const unsafeReason = unsafeReplyContentReason(reply);
+  if (unsafeReason) {
+    return { allowed: false, reason: unsafeReason };
+  }
 
   const action = conversationAction?.action;
   const permitted =
@@ -143,7 +173,7 @@ export function validateOutboundReply({
     };
   }
 
-  return { allowed: true, reason: "allowed" };
+  return { allowed: true, reason: "allowed", body: reply };
 }
 
 export async function claimOutboundReply(
@@ -300,7 +330,7 @@ export async function sendControlledPatientReply(
     from,
     to,
     eventId,
-    body,
+    body: validation.body,
   });
   if (claim.status === "completed") {
     await updateClaim(

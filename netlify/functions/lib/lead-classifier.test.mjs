@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   createClassifierSafetyIdentifier,
+  isLikelyClassifierMarketingPrefill,
   parseLeadClassificationResponse,
   runLeadClassifier,
 } from "./lead-classifier.mjs";
@@ -84,6 +85,21 @@ test("unexpected classification field is rejected", () => {
   });
 });
 
+test("marketing templates are treated as prefilled context", () => {
+  assert.equal(
+    isLikelyClassifierMarketingPrefill(
+      "Gostaria de saber como funciona a consulta com a Dra. Amanda e consultar a disponibilidade.",
+    ),
+    true,
+  );
+  assert.equal(
+    isLikelyClassifierMarketingPrefill(
+      "Quero consultar a disponibilidade para terça à tarde.",
+    ),
+    false,
+  );
+});
+
 test("request is private, structured, bounded and excludes raw phone", async () => {
   let requestBody;
 
@@ -93,6 +109,10 @@ test("request is private, structured, bounded and excludes raw phone", async () 
       currentStatus: "Novo",
       currentSummary: "",
       currentNextAction: "",
+      patientRelationship: {
+        found: true,
+        relationshipState: "known_patient",
+      },
       messages: Array.from({ length: 20 }, (_, index) => ({
         direction: index % 2 ? "OUT" : "IN",
         at: `2026-07-26T12:${String(index).padStart(2, "0")}:00.000Z`,
@@ -126,6 +146,10 @@ test("request is private, structured, bounded and excludes raw phone", async () 
   assert.equal(JSON.stringify(requestBody).includes(PHONE), false);
 
   const input = JSON.parse(requestBody.input);
+  assert.deepEqual(input.patientRelationship, {
+    found: true,
+    relationshipState: "known_patient",
+  });
   assert.equal(input.messages.length, 8);
   assert.ok(
     input.messages.every(
@@ -138,6 +162,8 @@ test("request is private, structured, bounded and excludes raw phone", async () 
       0,
     ) <= 8000,
   );
+  assert.match(requestBody.instructions, /marketingPrefill true/);
+  assert.match(requestBody.instructions, /continuidade, não de nova aquisição/);
 });
 
 test("missing API configuration skips classification", async () => {

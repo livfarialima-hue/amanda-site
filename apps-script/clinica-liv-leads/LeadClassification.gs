@@ -66,7 +66,7 @@ function hasMessageInSheet_(sheet, messageId) {
   );
 }
 
-function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
+function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
   const phone = normalizePhone_(lead.phone);
   const messageId = safeText_(lead.messageId || lead.eventId, 500);
   const eventId = safeText_(lead.eventId || messageId, 200);
@@ -74,7 +74,7 @@ function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
     ? lead.contactAt
     : new Date(lead.contactAt || Date.now());
 
-  if (!phone || !messageId || Number.isNaN(at.getTime())) return;
+  if (!phone || !messageId || Number.isNaN(at.getTime())) return null;
 
   const messageSheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
@@ -90,9 +90,30 @@ function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
       messageId,
       eventId,
       safeText_(lead.text, 4000),
-      leadRow,
+      Number(leadRow) > 0 ? Number(leadRow) : "",
     ]);
   }
+
+  return {
+    phone: phone,
+    messageId: messageId,
+    at: at,
+  };
+}
+
+function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
+  const recorded = recordLeadMessageOnly_(
+    spreadsheet,
+    leadRow,
+    lead,
+    direction,
+  );
+
+  if (!recorded) return;
+
+  const phone = recorded.phone;
+  const messageId = recorded.messageId;
+  const at = recorded.at;
 
   const queueSheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
@@ -191,6 +212,10 @@ function claimDueLeadClassifications_(requestedLimit) {
   const now = new Date();
   const leaseUntil = new Date(now.getTime() + 10 * 60 * 1000);
   const jobs = [];
+  const classificationGuidance =
+    typeof carregarOrientacoesClassificacaoBot_ === "function"
+      ? carregarOrientacoesClassificacaoBot_(spreadsheet)
+      : [];
 
   if (!leadsSheet || queueSheet.getLastRow() < 2) return { jobs };
   const queueValues = queueSheet
@@ -228,6 +253,13 @@ function claimDueLeadClassifications_(requestedLimit) {
 
     const throughMessageId = String(row[8] || messages[messages.length - 1].messageId || "");
     const attempts = Number(row[14] || 0) + 1;
+    const relationship =
+      typeof obterRelacionamentoPaciente_ === "function"
+        ? obterRelacionamentoPaciente_({ phone: phone })
+        : {
+            found: false,
+            relationshipState: "unknown",
+          };
     queueSheet.getRange(index + 2, 2).setValue(leadRow);
     queueSheet.getRange(index + 2, 5, 1, 2).setValues([["running", leaseUntil]]);
     queueSheet.getRange(index + 2, 15).setValue(attempts);
@@ -239,6 +271,14 @@ function claimDueLeadClassifications_(requestedLimit) {
       currentStatus: String(leadValues[4] || "Novo"),
       currentSummary: String(leadValues[16] || ""),
       currentNextAction: String(leadValues[17] || ""),
+      patientRelationship: {
+        found: relationship && relationship.found === true,
+        relationshipState: safeText_(
+          relationship && relationship.relationshipState,
+          80,
+        ) || "unknown",
+      },
+      classificationGuidance,
       messages,
     });
   }
@@ -304,7 +344,7 @@ function ensureQualifiedGoogleConversion_(sheet, row, phone, conversionAt) {
   sheet.getRange(row, 7, 1, 3).setValues([[
     "Sim",
     "Lead qualificado",
-    0,
+    1,
   ]]);
   sheet.getRange(row, 14, 1, 3).setValues([[
     values[13] || googleConversionTimestamp_(conversionDate),
@@ -344,6 +384,12 @@ function completeLeadClassification_(job, classification) {
     proposedStatus,
     confidence,
   ) ? proposedStatus : currentStatus;
+  const needsClassificationReview =
+    confidence === "low" ||
+    (
+      proposedStatus !== currentStatus &&
+      statusToKeep === currentStatus
+    );
 
   if (statusToKeep !== currentStatus) {
     leadsSheet.getRange(leadRow, 5, 1, 2).setValues([[
@@ -389,6 +435,26 @@ function completeLeadClassification_(job, classification) {
     "",
     0,
   ]]);
+
+  if (
+    needsClassificationReview &&
+    typeof registrarRevisaoClassificacaoBot_ === "function"
+  ) {
+    registrarRevisaoClassificacaoBot_({
+      phone,
+      key: [phone, throughMessageId || latestMessageId].join(":"),
+      confidence,
+      context: [
+        "Status atual: " + currentStatus,
+        "Resumo: " + String(classification.summary || ""),
+        "Evidência: " + String(classification.evidence || ""),
+      ].join("\n"),
+      suggestion: [
+        "Status sugerido: " + proposedStatus,
+        "Próxima ação: " + String(classification.nextAction || ""),
+      ].join("\n"),
+    });
+  }
 
   SpreadsheetApp.flush();
   return {

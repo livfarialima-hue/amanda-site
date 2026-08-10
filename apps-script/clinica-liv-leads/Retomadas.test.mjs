@@ -169,6 +169,15 @@ test("engagement controls the maximum follow-up budget", () => {
   );
 });
 
+test("commercial follow-up has only the 24h and 72h stages", () => {
+  const stages = vm.runInContext("RETOMADAS_ETAPAS", context);
+
+  assert.equal(stages.length, 2);
+  assert.equal(stages[0].diasMinimos, 1);
+  assert.equal(stages[1].diasMinimos, 3);
+  assert.match(stages[1].rotulo, /última/);
+});
+
 test("a human promise blocks commercial follow-up", () => {
   assert.equal(
     context.conversaTemPromessaHumanaPendente_([
@@ -263,31 +272,115 @@ test("daily email shows the exact automatic message and drafts human actions", (
     "28/07/2026",
   );
 
-  assert.match(text, /será enviada automaticamente/);
+  assert.match(text, /Agenda única do dia/);
   assert.match(
     text,
     /ENVIOS AUTOMÁTICOS PREVISTOS HOJE \(1\)/,
   );
   assert.match(
     text,
-    /AÇÕES HUMANAS SUGERIDAS HOJE \(0\)/,
+    /AÇÕES HUMANAS SUGERIDAS HOJE \(1\)/,
   );
-  assert.match(text, /PLANO DO DIA \(2\)/);
-  assert.match(text, /AÇÃO SUGERIDA PARA AMANDA\/EQUIPE \(1\)/);
   assert.match(text, /Mensagem sugerida para a equipe/);
   assert.match(text, /Mensagem exata da retomada automática/);
-  assert.match(html, /Plano do dia \(2\)/);
+  assert.doesNotMatch(text, /PLANO DO DIA|AÇÃO SUGERIDA PARA/);
   assert.match(
     html,
     /Envios automáticos previstos hoje \(1\)/,
   );
   assert.match(
     html,
-    /Ações humanas sugeridas hoje \(0\)/,
+    /Ações humanas sugeridas hoje \(1\)/,
   );
-  assert.match(html, /Ação sugerida para Amanda\/equipe \(1\)/);
   assert.match(html, /Mensagem sugerida para a equipe/);
   assert.match(html, /Mensagem exata da retomada automática/);
+  assert.doesNotMatch(html, /Plano do dia|Ação sugerida para Amanda/);
+  assert.equal(
+    (text.match(/Mensagem sugerida para a equipe/g) || []).length,
+    1,
+  );
+  assert.equal(
+    (html.match(/Mensagem sugerida para a equipe/g) || []).length,
+    1,
+  );
+});
+
+test("follow-up items receive a secure cancel link with a confirmation step", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_WEB_APP_URL"
+            ? "https://script.google.com/macros/s/test/exec"
+            : "",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = () => [1, 2, 3];
+  context.Utilities.base64EncodeWebSafe = () => "AQID=";
+
+  const link = context.linkCancelamentoRetomadas_(
+    "+55 11 99999-0000",
+    false,
+  );
+  const confirmation = context.linkCancelamentoRetomadas_(
+    "+55 11 99999-0000",
+    true,
+  );
+
+  assert.match(link, /view=cancelar_retomadas/);
+  assert.match(link, /phone=%2B5511999990000/);
+  assert.match(link, /token=AQID/);
+  assert.doesNotMatch(link, /confirmar=1/);
+  assert.match(confirmation, /confirmar=1/);
+  assert.equal(
+    context.tokenCancelamentoRetomadasValido_(
+      "+5511999990000",
+      "AQID",
+    ),
+    true,
+  );
+});
+
+test("cancel action stops only pending plans for the selected phone", () => {
+  const rows = [
+    Array(15).fill(""),
+    Array(15).fill(""),
+    Array(15).fill(""),
+  ];
+  rows[0][2] = "+5511999990000";
+  rows[0][10] = "Programada";
+  rows[0][11] = new Date("2026-08-09T13:30:00-03:00");
+  rows[1][2] = "+5511888880000";
+  rows[1][10] = "Programada";
+  rows[2][2] = "+5511999990000";
+  rows[2][10] = "Enviada";
+  const writes = [];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getRange(row, column, rowCount, columnCount) {
+      if (row === 2 && column === 1) {
+        return { getValues: () => rows };
+      }
+      return {
+        setValues(values) {
+          writes.push({ row, column, rowCount, columnCount, values });
+        },
+      };
+    },
+  };
+  const now = new Date("2026-08-09T13:00:00-03:00");
+  const cancelled = context.cancelarPlanosPendentesRetomadas_(
+    { getSheetByName: () => sheet },
+    "+55 11 99999-0000",
+    now,
+  );
+
+  assert.equal(cancelled, 1);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].row, 2);
+  assert.equal(writes[0].values[0][0], "Cancelada — nunca retomar");
+  assert.equal(writes[0].values[0][4], "never_follow_up");
 });
 
 function lead(overrides = {}) {
@@ -440,7 +533,7 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
   );
 });
 
-test("first follow-up offers a specific facial resource without pressure", () => {
+test("first follow-up addresses the objection and second sends one proof", () => {
   const material = context.selecionarMaterialRetomada_(
     lead(),
     conversation([
@@ -448,36 +541,45 @@ test("first follow-up offers a specific facial resource without pressure", () =>
       "A avaliação respeita sua identidade.",
     ]),
     "tenho medo de ficar com o rosto artificial lifting facial",
-    1,
+    2,
     false,
   );
-  const message = context.sugerirMensagemRetomada_(
+  const first = context.sugerirMensagemRetomada_(
     1,
+    false,
+    null,
+    false,
+    false,
+    "manter naturalidade, expressão e identidade",
+    true,
+  );
+  const second = context.sugerirMensagemRetomada_(
+    2,
     false,
     material,
     false,
     false,
+    "manter naturalidade, expressão e identidade",
+    true,
   );
 
   assert.equal(
     material.url,
     "https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/",
   );
-  assert.match(message, /Lembrei da sua dúvida/);
-  assert.match(message, /Talvez ele ajude você a pensar com calma/);
-  assert.match(message, /Se quiser/);
+  assert.match(first, /principal preocupação/);
+  assert.match(first, /duas opções reais de horário/);
+  assert.doesNotMatch(first, /https:/);
+  assert.match(second, /referência concreta/);
+  assert.match(second, /última retomada/);
+  assert.match(second, /https:/);
 });
 
-test("does not add a site link to price, scheduling or website-origin follow-ups", () => {
+test("does not repeat a site link or use a generic link for price", () => {
   const cases = [
     {
       patientLead: lead(),
       contextText: "qual o valor da cirurgia",
-      priority: true,
-    },
-    {
-      patientLead: lead(),
-      contextText: "quero agendar uma consulta",
       priority: true,
     },
     {
@@ -496,7 +598,7 @@ test("does not add a site link to price, scheduling or website-origin follow-ups
         item.patientLead,
         conversation(["Olá", "Como posso ajudar?"]),
         item.contextText,
-        1,
+        2,
         item.priority,
       ),
       null,
@@ -504,7 +606,7 @@ test("does not add a site link to price, scheduling or website-origin follow-ups
   }
 });
 
-test("does not repeat a site link or use material in later follow-ups", () => {
+test("does not repeat a site link and reserves material for the last follow-up", () => {
   const withLink = conversation([
     "Quero saber sobre lifting",
     "Veja https://draamandaschroeder.com.br/lifting-facial/",
@@ -515,7 +617,7 @@ test("does not repeat a site link or use material in later follow-ups", () => {
       lead(),
       withLink,
       "lifting facial",
-      1,
+      2,
       false,
     ),
     null,
@@ -525,7 +627,7 @@ test("does not repeat a site link or use material in later follow-ups", () => {
       lead(),
       conversation(["Lifting", "Como posso ajudar?"]),
       "lifting facial",
-      2,
+      1,
       false,
     ),
     null,
@@ -541,7 +643,7 @@ test("suppresses commercial material for intense appearance distress", () => {
         "Entendo como isso pode pesar.",
       ]),
       "odeio meu rosto ele acabou com minha vida",
-      1,
+      2,
       false,
     ),
     null,
@@ -555,6 +657,8 @@ test("excludes intense distress and explicit opt-out from commercial follow-up",
     "nao me envie mensagens",
     "nao entre mais em contato",
     "pode encerrar o atendimento",
+    "somos uma agencia de marketing e temos uma proposta comercial",
+    "oferecemos gestao de trafego pago para captar mais pacientes",
   ];
 
   for (const contextText of blockedContexts) {
@@ -602,24 +706,14 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     false,
     false,
   );
-  const last = context.sugerirMensagemRetomada_(
-    3,
-    false,
-    null,
-    false,
-    false,
-  );
-
-  assert.match(price, /É uma dúvida importante/);
-  assert.match(schedule, /pensar com calma/);
-  assert.match(schedule, /sem compromisso/);
+  assert.match(price, /o valor e o que está incluído/);
+  assert.match(schedule, /duas opções reais/);
   assert.match(general, /não precisa decidir nada agora/);
-  assert.match(second, /sem pressa/);
-  assert.match(last, /para não ser inconveniente/);
-  assert.match(last, /em outro momento/);
+  assert.match(second, /encerrar minhas retomadas/);
+  assert.match(second, /para não ser inconveniente/);
 });
 
-test("second follow-up continues the pending price or scheduling thread", () => {
+test("second follow-up gives one concrete proof and closes proactive contact", () => {
   const price = context.sugerirMensagemRetomada_(
     2,
     true,
@@ -635,10 +729,10 @@ test("second follow-up continues the pending price or scheduling thread", () => 
     false,
   );
 
-  assert.match(price, /dúvida sobre valores/);
-  assert.match(price, /exatamente desse ponto/);
-  assert.match(schedule, /um dia possível/);
-  assert.match(schedule, /está tudo bem/);
+  assert.match(price, /orçamento cirúrgico completo/);
+  assert.match(price, /honorários, hospital, anestesia, materiais e acompanhamento/);
+  assert.match(schedule, /indicação, alternativas, limites, recuperação e orçamento/);
+  assert.match(schedule, /última retomada/);
 });
 
 test("daily care agenda consolidates appointments, post-consult, birthdays and surgical follow-up", () => {
@@ -742,6 +836,10 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     categories.includes("Checagem humana pós-consulta"),
   );
   assert.ok(categories.includes("Jornada cirúrgica"));
+  assert.equal(
+    agenda.every((item) => String(item.sugestao || "").trim()),
+    true,
+  );
   assert.equal(
     agenda.some((item) => item.nome === "Elisa"),
     false,

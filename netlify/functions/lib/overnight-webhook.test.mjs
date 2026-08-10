@@ -24,7 +24,7 @@ function requestFor(payload) {
   });
 }
 
-test("a nighttime surgical-price request gets one morning handoff without a value", async () => {
+test("a first nighttime price request receives the approved institutional reply", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -99,7 +99,7 @@ test("a nighttime surgical-price request gets one morning handoff without a valu
           type: "text",
           customerProfile: { name: "Maria" },
           text: {
-            body: "Quanto custa o lifting facial?",
+            body: "Quanto custa a blefaroplastia?",
           },
         },
       }),
@@ -109,25 +109,28 @@ test("a nighttime surgical-price request gets one morning handoff without a valu
     await Promise.all(pending);
 
     assert.equal(response.status, 200);
-    assert.equal(body.reviewAlertQueued, true);
-    assert.equal(body.priceHoldingQueued, true);
-    assert.equal(body.priceHoldingSent, true);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(body.priceHoldingQueued, false);
+    assert.equal(body.priceHoldingSent, false);
+    assert.equal(body.approvedPriceReplyKind, "initial_information");
+    assert.equal(body.approvedPriceReplyQueued, true);
+    assert.equal(body.approvedPriceReplySent, true);
     assert.equal(body.overnightHandoffQueued, false);
     assert.equal(body.overnightHandoffSent, false);
 
     const ycloudRequests = requests.filter(
       (request) => request.url === YCLOUD_URL,
     );
-    assert.equal(ycloudRequests.length, 2);
+    assert.equal(ycloudRequests.length, 1);
 
     const patientRequest = ycloudRequests
       .map((request) => JSON.parse(request.options.body))
       .find((request) => request.to === "+5511900000000");
     assert.equal(patientRequest.type, "text");
-    assert.match(
-      patientRequest.text.body,
-      /te retorno pela manhã/,
-    );
+    assert.match(patientRequest.text.body, /valores competitivos/i);
+    assert.match(patientRequest.text.body, /parcelamento antecipado/i);
+    assert.match(patientRequest.text.body, /hospital, anestesia/i);
+    assert.doesNotMatch(patientRequest.text.body, /retorno pela manhã/i);
     assert.doesNotMatch(patientRequest.text.body, /R\$/);
   } finally {
     globalThis.fetch = originalFetch;

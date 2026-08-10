@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   enrichAutomationPlanFromConversation,
+  hasCampaignReferenceCode,
   isAvailabilityRequest,
   isConsultationInformationRequest,
   isLikelyMarketingPrefilledMessage,
   isSchedulingRequest,
   planAutomation,
 } from "./whatsapp-automation.mjs";
+
+const INITIAL_PRICE_REPLY =
+  "Os valores das cirurgias variam conforme a avaliação. Trabalhamos com valores competitivos e parcelamento. Veja https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
 
 test("possible urgency never authorizes a patient response", () => {
   const plan = planAutomation({
@@ -62,7 +66,7 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.automaticAllowed, true);
 });
 
-test("surgical price with a table reference goes directly to human review", () => {
+test("the first lifting price question receives only the approved initial information", () => {
   const plan = planAutomation({
     text: "Qual o valor do lifting facial?",
     messageType: "text",
@@ -70,15 +74,16 @@ test("surgical price with a table reference goes directly to human review", () =
     platform: "WhatsApp direto",
   });
 
-  assert.equal(plan.route, "human_review");
-  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "price_initial_information");
   assert.equal(plan.procedure, "lifting_facial");
-  assert.equal(plan.automaticAllowed, false);
+  assert.equal(plan.priceRequestKind, "amount");
+  assert.equal(plan.automaticAllowed, true);
 });
 
-test("a generic price question keeps human review and reuses the procedure from the conversation", () => {
+test("a repeated lifting price question receives the approved ranges automatically", () => {
   const preliminaryPlan = planAutomation({
-    text: "O preço da cirurgia?",
+    text: "Mas qual é a média do minilifting?",
     messageType: "text",
     reference: "WHATSAPP-DIRETO-SEM-CODIGO",
     platform: "WhatsApp direto",
@@ -89,17 +94,55 @@ test("a generic price question keeps human review and reuses the procedure from 
       {
         role: "assistant",
         source: "bruna",
-        text: "Posso te explicar como funciona o lifting facial.",
+        text: INITIAL_PRICE_REPLY,
         at: "2026-08-02T11:00:00.000Z",
       },
     ],
   );
 
-  assert.equal(preliminaryPlan.reason, "price_without_confirmed_procedure");
-  assert.equal(enrichedPlan.route, "human_review");
-  assert.equal(enrichedPlan.reason, "surgical_price_review");
+  assert.equal(preliminaryPlan.reason, "price_initial_information");
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.procedure, "lifting_facial");
-  assert.equal(enrichedPlan.automaticAllowed, false);
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("a repeated price question for another surgery goes to human review with its procedure", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Qual o valor da blefaroplastia?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  const plan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [{ role: "assistant", source: "bruna", text: INITIAL_PRICE_REPLY }],
+  );
+
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "surgical_price_range_review");
+  assert.equal(plan.procedure, "blefaroplastia");
+  assert.equal(plan.automaticAllowed, false);
+});
+
+test("installment and hospital composition questions can receive the first price response", () => {
+  for (const text of [
+    "Vcs parcelam em quantas vezes?",
+    "O valor que vocês passam já inclui hospital e anestesia?",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.equal(plan.route, "standard_reply", text);
+    assert.equal(plan.reason, "price_initial_information", text);
+    assert.equal(plan.priceRequestKind, "terms", text);
+    assert.equal(plan.automaticAllowed, true, text);
+  }
 });
 
 test("pending hospital quote remains human-only even with conversation context", () => {
@@ -214,7 +257,7 @@ test("prefilled Meta procedure text is context while a real consultation questio
   assert.equal(realQuestionPlan.reason, "consultation_information_request");
 });
 
-test("an explicit price question added to a marketing template still requires review", () => {
+test("an explicit lifting price question added to a marketing template uses the initial price route", () => {
   const plan = planAutomation({
     text:
       "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. " +
@@ -224,8 +267,8 @@ test("an explicit price question added to a marketing template still requires re
     platform: "Meta",
   });
 
-  assert.equal(plan.route, "human_review");
-  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "price_initial_information");
 });
 
 test("Google codes personalize the procedure without implying scheduling", () => {
@@ -366,7 +409,7 @@ test("incomplete C06 campaign reference still identifies lifting facial", () => 
   assert.equal(plan.automaticAllowed, true);
 });
 
-test("frontoplasty price is recognized but remains human-reviewed", () => {
+test("the first frontoplasty price question receives the same initial information", () => {
   const plan = planAutomation({
     text: "Gostaria de saber o valor da frontoplastia",
     messageType: "text",
@@ -374,11 +417,11 @@ test("frontoplasty price is recognized but remains human-reviewed", () => {
     platform: "WhatsApp direto",
   });
 
-  assert.equal(plan.route, "human_review");
-  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "price_initial_information");
   assert.equal(plan.replyCode, null);
   assert.equal(plan.procedure, "frontoplastia");
-  assert.equal(plan.automaticAllowed, false);
+  assert.equal(plan.automaticAllowed, true);
 });
 
 test("generic first message from a Meta ad remains eligible for Bruna", () => {
@@ -563,6 +606,57 @@ test("recent conversation preserves Amanda and the procedure on a continuation",
   assert.equal(enriched.procedure, "blefaroplastia");
 });
 
+test("an official Instagram request is answered and inherits the lifting context", () => {
+  const currentPlan = planAutomation({
+    text: "Posso ver o Instagram?",
+    messageType: "text",
+    reference: "META-DIRETO-SEM-CODIGO",
+    platform: "Meta",
+  });
+  const enriched = enrichAutomationPlanFromConversation(currentPlan, [
+    {
+      role: "patient",
+      source: "paciente",
+      text: "Olá! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01",
+    },
+    {
+      role: "assistant",
+      source: "bruna",
+      text: "Posso te orientar sobre lifting facial.",
+    },
+  ]);
+
+  assert.equal(enriched.route, "standard_reply");
+  assert.equal(enriched.reason, "official_instagram_request");
+  assert.equal(enriched.replyCode, "AMANDA-OFFICIAL-LINKS-01");
+  assert.equal(enriched.professional, "amanda");
+  assert.equal(enriched.procedure, "lifting_facial");
+  assert.equal(enriched.automaticAllowed, true);
+});
+
+test("campaign reference questions are explained without human review", () => {
+  for (const text of [
+    "Não entendi essas referências dra. Amanda?",
+    "O que significa essa Ref.?",
+    "Para que serve esse código?",
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "M26F01W-C06H01",
+      platform: "Meta",
+    });
+
+    assert.equal(plan.route, "standard_reply", text);
+    assert.equal(plan.reason, "campaign_reference_explanation", text);
+    assert.equal(plan.replyCode, "CAMPAIGN-REFERENCE-01", text);
+    assert.equal(plan.automaticAllowed, true, text);
+  }
+
+  assert.equal(hasCampaignReferenceCode("Ref. M26F01W-C06H01"), true);
+  assert.equal(hasCampaignReferenceCode("Sem código de campanha"), false);
+});
+
 test("a named health-plan acceptance question receives a safe automatic route", () => {
   const plan = planAutomation({
     text: "Aceitam Amil?",
@@ -681,7 +775,7 @@ test("standalone lifting is preserved as lifting facial on the next turn", () =>
       {
         role: "assistant",
         source: "bruna",
-        text: "Olá! Eu sou a Bruna, da Clínica LIV Faria Lima.",
+        text: "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
       },
     ],
   );

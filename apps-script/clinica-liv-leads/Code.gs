@@ -52,6 +52,15 @@ function doGet(e) {
   ).trim();
 
   if (
+    view === "cancelar_retomadas" &&
+    typeof renderCancelamentoRetomadas_ === "function"
+  ) {
+    return renderCancelamentoRetomadas_(
+      e && e.parameter ? e.parameter : {},
+    );
+  }
+
+  if (
     view === "salas" &&
     typeof renderFormularioReservaSalas_ === "function"
   ) {
@@ -96,7 +105,11 @@ function doPost(e) {
       body.action !== "get_patient_relationship" &&
       body.action !== "record_patient_commitment" &&
       body.action !== "resolve_patient_commitments" &&
-      body.action !== "remove_external_professional_contact"
+      body.action !== "remove_external_professional_contact" &&
+      body.action !== "get_bot_knowledge_context" &&
+      body.action !== "record_bot_unknown_question" &&
+      body.action !== "record_human_learning_answer" &&
+      body.action !== "record_bot_knowledge_usage"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
     }
@@ -297,6 +310,56 @@ function doPost(e) {
       });
     }
 
+    if (body.action === "get_bot_knowledge_context") {
+      stage = "get_bot_knowledge_context";
+      const knowledgeResult = obterContextoConhecimentoBot_(
+        body.knowledge || {},
+      );
+      return json_({ ok: true, ...knowledgeResult });
+    }
+
+    if (body.action === "record_bot_unknown_question") {
+      stage = "record_bot_unknown_question";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const learningResult = registrarDuvidaBot_(
+        body.learning || {},
+      );
+      return json_({
+        ...learningResult,
+        ok: learningResult.ok === true,
+      });
+    }
+
+    if (body.action === "record_human_learning_answer") {
+      stage = "record_human_learning_answer";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const answerResult = registrarRespostaHumanaAprendizado_(
+        body.learning || {},
+      );
+      return json_({
+        ...answerResult,
+        ok: answerResult.ok === true,
+      });
+    }
+
+    if (body.action === "record_bot_knowledge_usage") {
+      stage = "record_bot_knowledge_usage";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const usageResult = registrarUsoConhecimentoBot_(
+        body.usage || {},
+      );
+      return json_({
+        ...usageResult,
+        ok: usageResult.ok === true,
+      });
+    }
+
     if (body.action === "remove_external_professional_contact") {
       stage = "remove_external_professional_contact";
 
@@ -409,8 +472,10 @@ function doPost(e) {
     const existingLeadRow = findLeadRowByPhone_(sheet, lead.phone);
 
     if (existingLeadRow) {
-      stage = "merge_existing_lead";
-      mergeLeadIntoExistingRow_(sheet, existingLeadRow, lead);
+      if (!isKnownPatientRelationship_(patientRelationship)) {
+        stage = "merge_existing_lead";
+        mergeLeadIntoExistingRow_(sheet, existingLeadRow, lead);
+      }
 
       stage = "record_event";
       recordProcessedEvent_(
@@ -421,12 +486,21 @@ function doPost(e) {
       );
 
       stage = "queue_classification";
-      recordLeadMessageAndQueue_(
-        spreadsheet,
-        existingLeadRow,
-        lead,
-        "IN",
-      );
+      if (isKnownPatientRelationship_(patientRelationship)) {
+        recordLeadMessageOnly_(
+          spreadsheet,
+          existingLeadRow,
+          lead,
+          "IN",
+        );
+      } else {
+        recordLeadMessageAndQueue_(
+          spreadsheet,
+          existingLeadRow,
+          lead,
+          "IN",
+        );
+      }
 
       return json_({
         ok: true,
@@ -439,6 +513,32 @@ function doPost(e) {
         messageId: lead.messageId,
         humanTakeoverToday,
         patientRelationship,
+        knownPatient: isKnownPatientRelationship_(patientRelationship),
+      });
+    }
+
+    if (isKnownPatientRelationship_(patientRelationship)) {
+      stage = "known_patient_no_lead";
+      recordProcessedEvent_(
+        eventSheet,
+        lead,
+        "",
+        "known_patient",
+      );
+      recordLeadMessageOnly_(spreadsheet, "", lead, "IN");
+
+      return json_({
+        ok: true,
+        inserted: false,
+        duplicate: false,
+        duplicateReason: null,
+        updated: false,
+        row: null,
+        eventId: lead.eventId,
+        messageId: lead.messageId,
+        humanTakeoverToday,
+        patientRelationship,
+        knownPatient: true,
       });
     }
 
@@ -487,6 +587,7 @@ function doPost(e) {
       "duplicate_check",
       "phone_identity_check",
       "merge_existing_lead",
+      "known_patient_no_lead",
       "queue_classification",
       "claim_due_classifications",
       "complete_classification",
@@ -507,6 +608,10 @@ function doPost(e) {
       "get_available_slots",
       "reserve_appointment_slot",
       "send_review_alert_email",
+      "get_bot_knowledge_context",
+      "record_bot_unknown_question",
+      "record_human_learning_answer",
+      "record_bot_knowledge_usage",
     ]);
 
     const safeStage = allowedStages.has(stage) ? stage : "unknown";
@@ -868,6 +973,10 @@ function normalizeLead_(input) {
 function normalizePhone_(value) {
   const digits = String(value || "").replace(/\D/g, "");
   return digits ? `+${digits}` : "";
+}
+
+function isKnownPatientRelationship_(value) {
+  return Boolean(value && value.found === true);
 }
 
 function safeText_(value, maximumLength) {

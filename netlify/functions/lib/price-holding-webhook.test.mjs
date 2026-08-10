@@ -24,7 +24,7 @@ function requestFor(payload) {
   });
 }
 
-test("a known patient asking a generic surgical price gets an immediate holding reply and a complete review alert", async () => {
+test("a first lifting price question receives the approved initial information without an alert", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -71,14 +71,7 @@ test("a known patient asking a generic surgical price gets an immediate holding 
           updated: false,
           duplicate: false,
           humanTakeoverToday: false,
-          patientRelationship: {
-            found: true,
-            relationshipState: "surgical_planning",
-            patientName: "Van",
-            professional: "Dra. Amanda",
-            procedureTopic: "Lifting facial",
-            hasPendingHumanTask: false,
-          },
+          patientRelationship: { found: false },
         }),
         { status: 200 },
       );
@@ -107,7 +100,7 @@ test("a known patient asking a generic surgical price gets an immediate holding 
           type: "text",
           customerProfile: { name: "Van" },
           text: {
-            body: "O preço da cirurgia?",
+            body: "Quanto custa o lifting facial?",
           },
         },
       }),
@@ -117,15 +110,20 @@ test("a known patient asking a generic surgical price gets an immediate holding 
     await Promise.all(pending);
 
     assert.equal(response.status, 200);
-    assert.equal(body.reviewAlertQueued, true);
-    assert.equal(body.priceHoldingQueued, true);
-    assert.equal(body.priceHoldingSent, true);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(body.priceHoldingQueued, false);
+    assert.equal(body.priceHoldingSent, false);
+    assert.equal(body.approvedPriceReplyKind, "initial_information");
+    assert.equal(body.approvedPriceReplyQueued, true);
+    assert.equal(body.approvedPriceReplySent, true);
+    assert.equal(body.directLiftingPriceQueued, false);
+    assert.equal(body.directLiftingPriceSent, false);
     assert.equal(body.overnightHandoffQueued, false);
 
     const ycloudRequests = requests.filter(
       (request) => request.url === YCLOUD_URL,
     );
-    assert.equal(ycloudRequests.length, 2);
+    assert.equal(ycloudRequests.length, 1);
 
     const messages = ycloudRequests.map(
       (request) => JSON.parse(request.options.body),
@@ -133,48 +131,31 @@ test("a known patient asking a generic surgical price gets an immediate holding 
     const patientRequest = messages.find(
       (request) => request.to === "+5511900000000",
     );
-    const alertRequest = messages.find(
-      (request) => request.to === "+5511967743374",
-    );
-
     assert.equal(patientRequest.type, "text");
-    assert.match(
-      patientRequest.text.body,
-      /faixa de referência para o lifting facial/,
-    );
-    assert.match(
-      patientRequest.text.body,
-      /possibilidades de pagamento/,
-    );
-    assert.match(patientRequest.text.body, /te retorno por aqui/);
-    assert.doesNotMatch(patientRequest.text.body, /R\$/);
-
-    assert.equal(alertRequest.type, "template");
-    const alertText = JSON.stringify(alertRequest);
-    const alertMessage =
-      alertRequest.template.components[0].parameters[2].text;
-    assert.ok(alertMessage.length <= 1_024);
-    assert.match(
-      alertMessage,
-      /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
+    assert.doesNotMatch(patientRequest.text.body, /R\$ 18 mil|R\$ 26 mil/);
+    assert.equal(
+      (patientRequest.text.body.match(/https?:\/\//g) || []).length,
+      1,
     );
     assert.doesNotMatch(
-      alertMessage,
+      patientRequest.text.body,
       /[\u200B-\u200D\u2060\uFEFF]/,
     );
-    assert.match(alertText, /R\\u0024 26 mil|R\$ 26 mil/);
-    assert.match(alertText, /condição à vista|condiçã/);
+    assert.match(patientRequest.text.body, /valores competitivos/i);
+    assert.match(patientRequest.text.body, /condição à vista/);
+    assert.match(patientRequest.text.body, /parcelamento antecipado/i);
     assert.match(
-      alertText,
-      /hospital, anestesista, auxiliar, instrumentador e acompanhamento/i,
+      patientRequest.text.body,
+      /hospital, anestesia, materiais e acompanhamento/i,
     );
     assert.match(
-      alertText,
+      patientRequest.text.body,
       /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
     );
-    assert.match(alertText, /Prefere manhã ou tarde/);
+    assert.match(patientRequest.text.body, /média para o lifting facial/i);
+    assert.ok(Array.from(patientRequest.text.body).length <= 650);
     assert.doesNotMatch(
-      alertText,
+      patientRequest.text.body,
       /Se quiser, posso te explicar o que costuma aproximar/,
     );
   } finally {

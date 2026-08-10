@@ -180,9 +180,8 @@
       var utmCampaignCode = normalizeCampaignOriginCode(searchParams.get('utm_campaign') || '');
       if (utmCampaignCode) return utmCampaignCode;
 
-      // Sem consentimento, nunca copiamos nem persistimos o identificador
-      // individual do clique. Usamos somente uma referência genérica para
-      // distinguir Google Ads de busca orgânica, acesso direto ou indicação.
+      // A referência genérica continua útil para leitura operacional, enquanto
+      // o click ID exato segue separadamente na sessão e no clique voluntário.
       var hasGoogleAdsClick = clickIdParams.some(function (param) {
         return !!normalizeClickId(searchParams.get(param) || '');
       });
@@ -211,7 +210,6 @@
 
   function clickAttributionIds() {
     var ids = {};
-    if (!fullConsentGranted()) return ids;
 
     var searchParams;
     try { searchParams = new URLSearchParams(window.location.search); }
@@ -220,9 +218,9 @@
     clickIdParams.forEach(function (param) {
       var value = normalizeClickId(searchParams ? searchParams.get(param) : '');
       if (value) {
-        storeAttributionValue(clickIdStoragePrefix + param, value);
+        storeSessionValue(clickIdStoragePrefix + param, value);
       } else {
-        value = readAttributionValue(clickIdStoragePrefix + param, normalizeClickId);
+        value = readSessionValue(clickIdStoragePrefix + param, normalizeClickId);
       }
       if (value) ids[param] = value;
     });
@@ -245,7 +243,7 @@
   function sanitizeMarketingAttributionValue(param, value) {
     if (marketingClickIdParams.indexOf(param) !== -1) {
       // Click IDs are case-sensitive and must remain unchanged.
-      return typeof value === 'string' && value ? value : '';
+      return normalizeClickId(value);
     }
     return sanitizeTrackingValue(value);
   }
@@ -254,10 +252,10 @@
     var attribution = {};
     try {
       var searchParams = new URLSearchParams(window.location.search);
-      var allowedParams = marketingAttributionParams.slice();
-      if (fullConsentGranted()) {
-        allowedParams = allowedParams.concat(marketingClickIdParams);
-      }
+      // GCLID, GBRAID e WBRAID acompanham somente a sessão e a mensagem
+      // voluntária do WhatsApp. Essa atribuição técnica independe do aceite
+      // dado a cookies, pixels, pageviews e demais sinais de marketing.
+      var allowedParams = marketingAttributionParams.concat(marketingClickIdParams);
       allowedParams.forEach(function (param) {
         var value = sanitizeMarketingAttributionValue(param, searchParams.get(param));
         if (value) attribution[param] = value;
@@ -265,9 +263,8 @@
 
       // A referência de origem não depende do consentimento de marketing.
       // Quando a marcação automática identifica um clique do Google, mas a
-      // campanha não trouxe um código estável, preservamos somente o código
-      // genérico G26ADS. O identificador individual continua restrito ao
-      // fluxo consentido abaixo.
+      // campanha não trouxe um código estável, usamos o código G26ADS junto
+      // do click ID de sessão para manter a origem legível e reconciliável.
       var hasGoogleClickId = marketingClickIdParams.some(function (param) {
         return !!normalizeClickId(searchParams.get(param) || '');
       });
@@ -302,10 +299,6 @@
   }
 
   function saveAttribution(attribution) {
-    if (!fullConsentGranted()) {
-      attribution = removeMarketingClickIds(attribution);
-      clearStoredMarketingClickIds();
-    }
     if (!Object.keys(attribution).length) return;
     var mergedAttribution = loadStoredAttribution();
     Object.keys(attribution).forEach(function (param) {
@@ -321,12 +314,7 @@
       var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
       if (!stored || typeof stored !== 'object') return {};
       var attribution = {};
-      var allowedParams = marketingAttributionParams.slice();
-      if (fullConsentGranted()) {
-        allowedParams = allowedParams.concat(marketingClickIdParams);
-      } else {
-        clearStoredMarketingClickIds();
-      }
+      var allowedParams = marketingAttributionParams.concat(marketingClickIdParams);
       allowedParams.forEach(function (param) {
         var value = sanitizeMarketingAttributionValue(param, stored[param]);
         if (value) attribution[param] = value;
@@ -411,7 +399,6 @@
   }
 
   function updateAllWhatsAppLinks() {
-    if (!fullConsentGranted()) clearStoredMarketingClickIds();
     var attributionFromUrl = readAttributionFromUrl();
     if (Object.keys(attributionFromUrl).length) saveAttribution(attributionFromUrl);
     var attribution = loadStoredAttribution();
@@ -465,48 +452,35 @@
 
   function trackWhatsAppClick(link) {
     var consented = fullConsentGranted();
-    var mode = consented ? 'consented' : 'cookieless';
+    var mode = consented ? 'consented' : 'attribution_only';
 
-    // Sem consentimento, a tag é carregada somente neste clique voluntário.
-    // Não há PageView, carregamento na entrada da página ou contexto clínico.
-    if (!consented && window.AmandaConsent && window.AmandaConsent.prepareMinimalWhatsAppMeasurement) {
-      window.AmandaConsent.prepareMinimalWhatsAppMeasurement();
-    }
-    if (googleMeasurementAvailable()) {
+    // Sem consentimento, o click ID segue somente na mensagem voluntária do
+    // WhatsApp. Nenhuma tag, pageview, pixel ou conversão externa é disparada.
+    if (consented && googleMeasurementAvailable()) {
       var root = document.documentElement;
       var pageType = root.dataset.pageType || 'procedure';
       var section = link.closest('[data-section]');
       var location = link.dataset.ctaLocation || (section && section.dataset.section) || 'unknown';
       var text = (link.textContent || '').trim();
 
-      if (consented) {
-        window.gtag('event', 'whatsapp_click', {
-          event_category: 'engagement',
-          event_label: pageType,
-          page_type: pageType,
-          content_group: pageType,
-          cta_location: location,
-          cta_text: text,
-          page_path: window.location.pathname,
-          transport_type: 'beacon',
-          send_to: config.ga4Id
-        });
-      } else {
-        window.gtag('event', 'whatsapp_click', sanitizePreConsentParams({
-          contact_channel: 'whatsapp',
-          measurement_state: 'cookieless',
-          non_personalized_ads: true,
-          transport_type: 'beacon',
-          send_to: config.ga4Id
-        }));
-      }
+      window.gtag('event', 'whatsapp_click', {
+        event_category: 'engagement',
+        event_label: pageType,
+        page_type: pageType,
+        content_group: pageType,
+        cta_location: location,
+        cta_text: text,
+        page_path: window.location.pathname,
+        transport_type: 'beacon',
+        send_to: config.ga4Id
+      });
 
       // Conversão genérica e deduplicada. Nunca inclui procedimento,
       // página, diagnóstico, texto da mensagem ou dado pessoal.
       if (config.googleAdsId && config.googleAdsConversionLabel && conversionNotYetSent('whatsapp_click')) {
         window.gtag('event', 'conversion', sanitizePreConsentParams({
           send_to: config.googleAdsId + '/' + config.googleAdsConversionLabel,
-          non_personalized_ads: !consented,
+          non_personalized_ads: false,
           transport_type: 'beacon'
         }, preConsentConversionAllowedParams));
       }

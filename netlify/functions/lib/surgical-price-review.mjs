@@ -143,6 +143,21 @@ function waitingGreeting(value) {
     : "Obrigada por aguardar.";
 }
 
+function directPriceGreeting(value, recentConversation) {
+  const name = firstName(value);
+  const hasPriorClinicTurn = (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) => turn?.role === "assistant");
+
+  if (hasPriorClinicTurn) {
+    return name ? `Claro, ${name}.` : "Claro.";
+  }
+
+  const hello = name ? `Olá, ${name}!` : "Olá!";
+  return `${hello} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`;
+}
+
 function roundedThousands(value) {
   return Math.round(Number(value || 0) / 1000) * 1000;
 }
@@ -284,12 +299,45 @@ export function getSurgicalPriceReference(procedure) {
   };
 }
 
+export function buildSurgicalInitialPriceReply({
+  patientName,
+  procedure,
+  recentConversation = [],
+  currentText = "",
+}) {
+  const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
+    ? "A Clínica LIV Faria Lima fica na Rua Pais Leme, 215, em Pinheiros, próxima à Av. Faria Lima, em São Paulo."
+    : "";
+  const guide = conversationContainsPriceGuide(recentConversation)
+    ? ""
+    : `Veja o que compõe os custos de uma cirurgia: ${safeLink(PRICE_GUIDE_URL)}`;
+  const procedureLabel =
+    PRICE_REFERENCES[procedure]?.label ||
+    PROCEDURE_LABELS[procedure] ||
+    "";
+  const nextStep = procedureLabel
+    ? `Se depois quiser uma média para ${procedureLabel}, posso te orientar.`
+    : "Qual cirurgia você está pesquisando? Se depois quiser uma média, posso te orientar.";
+
+  return [
+    directPriceGreeting(patientName, recentConversation),
+    location,
+    "Os valores variam conforme o procedimento e o planejamento definido na avaliação.",
+    "Trabalhamos com valores competitivos, condição à vista e parcelamento antecipado até a cirurgia.",
+    "O orçamento discrimina equipe, hospital, anestesia, materiais e acompanhamento, conforme o caso.",
+    guide,
+    nextStep,
+  ].filter(Boolean).join("\n\n");
+}
+
 export function buildSurgicalPriceSuggestedReply({
   patientName,
   procedure,
   recentConversation = [],
   referenceCategory = "",
   sourceReference = "",
+  directToPatient = false,
+  currentText = "",
 }) {
   const priceReference = getSurgicalPriceReference(procedure);
   if (!priceReference) {
@@ -311,9 +359,30 @@ export function buildSurgicalPriceSuggestedReply({
     })
       ? `Conheça o lifting, a recuperação e casos reais: ${safeLink(LIFTING_PAGE_URL)}`
       : "";
+    const location =
+      directToPatient &&
+      LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
+        ? "A Clínica LIV Faria Lima fica na Rua Pais Leme, 215, em Pinheiros, próxima à Av. Faria Lima, em São Paulo."
+        : "";
+
+    if (directToPatient) {
+      return [
+        directPriceGreeting(patientName, recentConversation),
+        location,
+        [
+          "Faixas de referência:",
+          "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+          "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+        ].join("\n"),
+        "O valor final varia conforme a extensão do planejamento e os custos de equipe e hospital. Há condição à vista e parcelamento antecipado até a data da cirurgia.",
+        guide,
+        "Se a faixa fizer sentido, posso verificar horários para a avaliação. Prefere manhã ou tarde?",
+      ].filter(Boolean).join("\n\n");
+    }
 
     return [
       waitingGreeting(patientName),
+      location,
       [
         "Estas são as faixas de referência:",
         "• Minilifting: entre R$ 18 mil e R$ 25 mil",
@@ -334,19 +403,19 @@ export function buildSurgicalPriceSuggestedReply({
     priceVariation(procedure),
   ].join(" ");
   const budgetContext =
-    "O orçamento separa equipe médica, anestesia, hospital, materiais e acompanhamento, para você comparar o conjunto.";
+    "A indicação e o valor final variam conforme o planejamento. A Dra. Amanda prioriza segurança, naturalidade e preservação das suas características.";
   const careAndPayment = [
-    "Há condição à vista e pagamento antecipado até a cirurgia.",
-    `A consulta custa R$ ${CONSULTATION_PRICE}, aceita Pix, débito ou parcelamento e é abatida se houver cirurgia com a equipe.`,
+    "Hospital, anestesista, auxiliar, instrumentador, materiais e acompanhamento variam por caso.",
+    "Há condição à vista e parcelamento antecipado até a cirurgia.",
   ].join(" ");
   const guide = shouldIncludePriceGuide(
     procedure,
     recentConversation,
   )
-    ? `Guia sobre o que comparar além do preço: ${PRICE_GUIDE_URL}`
+    ? `Entenda como funcionam esses gastos: ${safeLink(PRICE_GUIDE_URL)}`
     : "";
   const callToAction =
-    "Se a faixa fizer sentido, posso verificar um horário para a avaliação.";
+    "Se a faixa fizer sentido, posso verificar horários para a avaliação. Prefere manhã ou tarde?";
 
   return [
     priceContext,

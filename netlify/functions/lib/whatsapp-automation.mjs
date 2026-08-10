@@ -26,8 +26,14 @@ const AMANDA_PATTERNS = [
   /\bprocedimento\s+est[eé]tico\b/i,
 ];
 
-const PRICE_PATTERN =
-  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento)\b/i;
+const PRICE_AMOUNT_PATTERN =
+  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento|faixa(?:\s+de\s+pre[cç]o)?)\b/i;
+
+const PRICE_TERMS_PATTERN =
+  /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
+
+const INITIAL_PRICE_REPLY_PATTERN =
+  /quanto-custa-cirurgia-plastica-facial-sao-paulo|trabalhamos\s+com\s+valores\s+competitivos/i;
 
 const SCHEDULING_PATTERN =
   /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o|datas?)\b/i;
@@ -40,6 +46,21 @@ const AVAILABILITY_REQUEST_PATTERN =
 
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
+
+const OPEN_CLINIC_QUESTION_PATTERN =
+  /\b(?:cl[ií]nica|consulta|avalia[cç][aã]o|cirurgia|procedimento|doutor[ae]?|dra\.?|dr\.?|paciente|acompanhante|endere[cç]o|estacionamento|acessibilidade|nota\s+fiscal|recibo|pagamento|pix|cart[aã]o|hor[aá]rio|atendimento|retorno)\b/i;
+
+const OFFICIAL_INSTAGRAM_REQUEST_PATTERN =
+  /\b(?:instagram|insta|perfil\s+(?:oficial|da\s+dra\.?\s+amanda)|rede(?:s)?\s+social(?:is)?|arroba\s+da\s+dra\.?\s+amanda)\b/i;
+
+const CAMPAIGN_REFERENCE_QUESTION_PATTERN =
+  /\b(?:n[aã]o\s+entendi|o\s+que\s+(?:[eé]|significa)|que\s+c[oó]digo\s+[eé]\s+esse|para\s+que\s+serve|pra\s+que\s+serve)\b.{0,55}\b(?:ref\.?|refer[eê]ncias?|c[oó]digo)\b|\b(?:ref\.?|refer[eê]ncias?|c[oó]digo)\b.{0,55}\b(?:n[aã]o\s+entendi|o\s+que\s+(?:[eé]|significa)|para\s+que\s+serve|pra\s+que\s+serve)\b/i;
+
+const CAMPAIGN_REFERENCE_CODE_PATTERN =
+  /\b(?:M26|G26)[A-Z0-9_-]+\b/i;
+
+const LEGACY_ADMINISTRATIVE_REQUEST_PATTERN =
+  /\b(?:nota\s+fiscal|recibo|documento|cadastro)\b.{0,50}\b(?:antig[oa]|anterior|corrigir|alterar|segunda\s+via)\b|\b(?:antig[oa]|anterior)\b.{0,50}\b(?:nota\s+fiscal|recibo|documento|cadastro)\b/i;
 
 const EXISTING_PATIENT_FOLLOW_UP_PATTERNS = [
   /\b(?:segue|envio|encaminho|anexo).{0,60}\b(?:documentos?|exames?|termos?|contratos?)\b/i,
@@ -100,6 +121,7 @@ const PROCEDURES = [
     code: "M-C06-WA-01",
     patterns: [
       /\blifting\s+facial\b/i,
+      /\bmini[\s-]*lifting\b/i,
       /\brejuvenescimento\s+facial\b/i,
       /\britidoplastia\b/i,
     ],
@@ -424,20 +446,48 @@ export function enrichAutomationPlanFromConversation(
     reference: "",
     platform: "WhatsApp direto",
   });
-  const surgicalPriceContinuation =
-    plan.reason === "price_without_confirmed_procedure";
+  const priceRequest =
+    plan.reason === "price_initial_information";
 
-  if (surgicalPriceContinuation) {
+  if (priceRequest) {
+    const procedure = plan.procedure || context.procedure;
+    const previousInitialPriceReply = recentConversation.some(
+      (turn) =>
+        (
+          turn?.role === "assistant" ||
+          ["bruna", "equipe_humana"].includes(turn?.source)
+        ) &&
+        INITIAL_PRICE_REPLY_PATTERN.test(String(turn?.text || "")),
+    );
+
+    if (!previousInitialPriceReply) {
+      return {
+        ...plan,
+        professional: plan.professional || "amanda",
+        procedure,
+      };
+    }
+
+    const asksForAmount = plan.priceRequestKind === "amount";
+    const directLiftingRange =
+      asksForAmount && procedure === "lifting_facial";
     return {
       ...plan,
-      reason: context.procedure
-        ? "surgical_price_review"
-        : plan.reason,
+      route: directLiftingRange
+        ? "standard_reply"
+        : "human_review",
+      reason: directLiftingRange
+        ? "lifting_price_range_direct"
+        : asksForAmount
+          ? procedure
+            ? "surgical_price_range_review"
+            : "price_range_without_confirmed_procedure"
+          : "surgical_price_terms_review",
       replyCode: plan.replyCode || context.replyCode,
       professional:
         plan.professional || context.professional || "amanda",
-      procedure: plan.procedure || context.procedure,
-      automaticAllowed: false,
+      procedure,
+      automaticAllowed: directLiftingRange,
     };
   }
 
@@ -567,7 +617,9 @@ export function planAutomation({
   }
 
   const mentionsAmanda = matchesAny(normalizedText, AMANDA_PATTERNS);
-  const asksPrice = PRICE_PATTERN.test(normalizedText);
+  const asksPriceAmount = PRICE_AMOUNT_PATTERN.test(normalizedText);
+  const asksPriceTerms = PRICE_TERMS_PATTERN.test(normalizedText);
+  const asksPrice = asksPriceAmount || asksPriceTerms;
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
   const marketingPrefilledMessage =
     isLikelyMarketingPrefilledMessage({
@@ -593,6 +645,39 @@ export function planAutomation({
     };
   }
 
+  if (CAMPAIGN_REFERENCE_QUESTION_PATTERN.test(normalizedText)) {
+    return {
+      route: "standard_reply",
+      reason: "campaign_reference_explanation",
+      replyCode: "CAMPAIGN-REFERENCE-01",
+      professional: "amanda",
+      procedure: procedure?.key || null,
+      automaticAllowed: true,
+    };
+  }
+
+  if (OFFICIAL_INSTAGRAM_REQUEST_PATTERN.test(normalizedText)) {
+    return {
+      route: "standard_reply",
+      reason: "official_instagram_request",
+      replyCode: "AMANDA-OFFICIAL-LINKS-01",
+      professional: "amanda",
+      procedure: procedure?.key || null,
+      automaticAllowed: true,
+    };
+  }
+
+  if (LEGACY_ADMINISTRATIVE_REQUEST_PATTERN.test(normalizedText)) {
+    return {
+      route: "human_review",
+      reason: "existing_patient_administrative_followup",
+      replyCode: null,
+      professional: null,
+      procedure: procedure?.key || null,
+      automaticAllowed: false,
+    };
+  }
+
   if (isProfessionalExperienceDetailRequest(normalizedText)) {
     return {
       route: "human_review",
@@ -604,25 +689,15 @@ export function planAutomation({
     };
   }
 
-  if (asksPrice && procedure) {
-    return {
-      route: "human_review",
-      reason: "surgical_price_review",
-      replyCode: null,
-      professional: "amanda",
-      procedure: procedure.key,
-      automaticAllowed: false,
-    };
-  }
-
   if (asksPrice) {
     return {
-      route: "human_review",
-      reason: "price_without_confirmed_procedure",
+      route: "standard_reply",
+      reason: "price_initial_information",
       replyCode: null,
-      professional: mentionsAmanda ? "amanda" : null,
-      procedure: null,
-      automaticAllowed: false,
+      professional: "amanda",
+      procedure: procedure?.key || null,
+      automaticAllowed: true,
+      priceRequestKind: asksPriceTerms ? "terms" : "amount",
       platform: platform || null,
     };
   }
@@ -712,13 +787,26 @@ export function planAutomation({
     };
   }
 
+  const openClinicQuestion =
+    OPEN_CLINIC_QUESTION_PATTERN.test(normalizedText) &&
+    (/\?/.test(normalizedText) ||
+      /\b(?:como|onde|qual|quais|quanto|tem|pode|aceita|funciona)\b/i.test(
+        normalizedText,
+      ));
+
   return {
-    route: "human_review",
-    reason: "outside_conservative_rules",
+    route: openClinicQuestion ? "standard_reply" : "human_review",
+    reason: openClinicQuestion
+      ? "open_question_for_ai"
+      : "outside_conservative_rules",
     replyCode: null,
     professional: mentionsAmanda ? "amanda" : null,
     procedure: null,
-    automaticAllowed: false,
+    automaticAllowed: openClinicQuestion,
     platform: platform || null,
   };
+}
+
+export function hasCampaignReferenceCode(value) {
+  return CAMPAIGN_REFERENCE_CODE_PATTERN.test(String(value || ""));
 }

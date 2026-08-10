@@ -1255,12 +1255,6 @@ document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
         title: 'Fatores que influenciam a cicatrização.',
         intro: 'Técnica, biologia, hábitos e cuidados pós-operatórios participam da evolução.',
         items: [['fatores-cicatrizacao.mp4', 'Cicatrização é multifatorial', 'Uma visão prática dos fatores que podem favorecer ou dificultar a recuperação.']]
-      },
-      '/conteudos/consulta-cirurgia-plastica/': {
-        eyebrow: 'Antes da avaliação',
-        title: 'Como é uma consulta com a Dra. Amanda.',
-        intro: 'Queixa, anatomia, expectativas e segurança entram na conversa antes de qualquer decisão.',
-        items: [['medo-de-resultados-exagerados.mp4', 'Medo de um resultado exagerado', 'Naturalidade depende de indicação, proporção e respeito à identidade.']]
       }
     };
     var gallery = galleries[path];

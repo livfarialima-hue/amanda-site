@@ -9,6 +9,8 @@ async function processJob(job) {
     currentStatus: job.currentStatus,
     currentSummary: job.currentSummary,
     currentNextAction: job.currentNextAction,
+    patientRelationship: job.patientRelationship,
+    classificationGuidance: job.classificationGuidance,
     messages: job.messages,
   });
 

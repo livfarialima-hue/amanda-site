@@ -44,7 +44,7 @@ const cases = [
       text: "Qual o valor da rinoplastia?",
       messageType: "text",
     },
-    route: "human_review",
+    route: "standard_reply",
     code: null,
   },
   {

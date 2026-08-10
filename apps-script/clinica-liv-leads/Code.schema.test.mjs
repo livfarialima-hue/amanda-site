@@ -31,7 +31,7 @@ function loadCode() {
 
   vm.runInNewContext(
     `${source}
-globalThis.__test = { CONFIG, EXPECTED_HEADERS, writeLead_ };`,
+globalThis.__test = { CONFIG, EXPECTED_HEADERS, writeLead_, isKnownPatientRelationship_ };`,
     sandbox,
   );
 
@@ -69,6 +69,25 @@ test("lead ingestion schema matches the 25 live spreadsheet headers", () => {
     "Destino",
     "Referência completa",
   ]);
+});
+
+test("known patients are recognized before acquisition ingestion", () => {
+  const { isKnownPatientRelationship_ } = loadCode();
+
+  assert.equal(
+    isKnownPatientRelationship_({
+      found: true,
+      relationshipState: "appointment_scheduled",
+    }),
+    true,
+  );
+  assert.equal(
+    isKnownPatientRelationship_({
+      found: false,
+      relationshipState: "unknown",
+    }),
+    false,
+  );
 });
 
 test("lead writes origin and destination into the live column positions", () => {

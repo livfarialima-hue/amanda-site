@@ -3,11 +3,47 @@ import test from "node:test";
 import {
   buildPendingHospitalQuoteAlert,
   buildPriceReviewAlert,
+  buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
   getSurgicalPriceReference,
   isSurgicalPriceReview,
 } from "./surgical-price-review.mjs";
+
+test("creates the approved first response for price, installments and cost composition", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Eliana",
+    currentText: [
+      "Qual o valor de uma cirurgia facial?",
+      "Vcs parcelam em quantas vezes?",
+      "O valor já inclui hospital e anestesia?",
+    ].join(" "),
+  });
+
+  assert.match(reply, /^Olá, Eliana! Eu sou a Bruna/);
+  assert.match(reply, /variam conforme o procedimento e o planejamento definido na avaliação/i);
+  assert.match(reply, /valores competitivos/i);
+  assert.match(reply, /parcelamento antecipado até a cirurgia/i);
+  assert.match(reply, /hospital, anestesia, materiais e acompanhamento/i);
+  assert.match(
+    reply,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+  assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.ok(Array.from(reply).length <= 650);
+});
+
+test("the first price response does not ask for a procedure already identified", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Maria",
+    procedure: "lifting_facial",
+  });
+
+  assert.match(reply, /média para o lifting facial/i);
+  assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
+  assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+});
 
 test("consultation price suggestion includes the invoice without promising tax savings", () => {
   const reply = buildSurgicalPriceSuggestedReply({
@@ -65,6 +101,40 @@ test("creates a patient-ready lifting facial price suggestion for human review",
     reply,
     /Se quiser, posso te explicar o que costuma aproximar/,
   );
+});
+
+test("creates the approved lifting price reply for direct patient delivery", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "lifting_facial",
+    directToPatient: true,
+  });
+
+  assert.match(
+    reply,
+    /^Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+  );
+  assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
+  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /parcelamento antecipado até a data da cirurgia/);
+  assert.match(reply, /Prefere manhã ou tarde/);
+  assert.doesNotMatch(reply, /obrigada por aguardar/i);
+  assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
+  assert.ok(Array.from(reply).length <= 650);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+});
+
+test("direct lifting price answers location in the same first reply", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "lifting_facial",
+    directToPatient: true,
+    currentText: "Onde fica e qual o valor do lifting?",
+  });
+
+  assert.match(reply, /Rua Pais Leme, 215/);
+  assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
+  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
 });
 
 test("acknowledges a price request while the approved value is pending", () => {
@@ -253,11 +323,12 @@ test("price review alert contains the original question and a copyable answer", 
   assert.match(alert, /Revise e copie manualmente/);
   assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
-  assert.match(alert, /pagamento antecipado até a cirurgia/);
+  assert.match(alert, /parcelamento antecipado até a cirurgia/);
   assert.match(alert, /condição à vista/);
-  assert.match(alert, /comparar o conjunto/);
+  assert.match(alert, /segurança, naturalidade/);
+  assert.match(alert, /hospital, anestesista, auxiliar, instrumentador/i);
   assert.match(alert, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
-  assert.match(alert, /verificar um horário/);
+  assert.match(alert, /Prefere manhã ou tarde/);
   assert.ok(alert.length <= 1100);
 });
 

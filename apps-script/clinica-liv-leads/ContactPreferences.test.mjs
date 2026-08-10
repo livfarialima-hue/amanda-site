@@ -18,6 +18,19 @@ function loadContext() {
     Object,
     String,
     console,
+    SpreadsheetApp: {
+      newDataValidation: () => ({
+        requireCheckbox() {
+          return this;
+        },
+        setAllowInvalid() {
+          return this;
+        },
+        build() {
+          return {};
+        },
+      }),
+    },
   });
   vm.runInContext(source, context, {
     filename: "ContactPreferences.gs",
@@ -29,15 +42,32 @@ function fakeSheet(rows) {
   return {
     getLastRow: () => rows.length,
     getLastColumn: () => rows[0].length,
+    getMaxRows: () => rows.length,
     getRange(row, column, rowCount, columnCount) {
+      const requestedRows = rowCount ?? 1;
+      const requestedColumns = columnCount ?? 1;
       const values = rows
-        .slice(row - 1, row - 1 + rowCount)
+        .slice(row - 1, row - 1 + requestedRows)
         .map((sourceRow) =>
-          sourceRow.slice(column - 1, column - 1 + columnCount),
+          sourceRow.slice(
+            column - 1,
+            column - 1 + requestedColumns,
+          ),
         );
       return {
         getDisplayValues: () => values,
         getValues: () => values,
+        getDisplayValue: () => values[0][0],
+        setValue(value) {
+          rows[row - 1][column - 1] = value;
+          return this;
+        },
+        setDataValidation() {
+          return this;
+        },
+        setNote() {
+          return this;
+        },
       };
     },
   };
@@ -116,4 +146,29 @@ test("bulk map uses the same normalized E.164 key", () => {
 
   assert.equal(result["+5511988880000"].neverBotReply, true);
   assert.equal(result["+5511988880000"].neverFollowUp, false);
+});
+
+test("marks Never follow up on the matching Leads row", () => {
+  const context = loadContext();
+  const rows = [
+    [
+      "Telefone (E.164)",
+      "Nunca retomar",
+      "Nunca responder com robô",
+      "Suspender retomada automática",
+      "Motivo / observação do bloqueio",
+    ],
+    ["+55 11 97777-0000", false, false, false, ""],
+  ];
+  const sheet = fakeSheet(rows);
+  const result = context.marcarNuncaRetomarPorTelefone_(
+    { getSheetByName: () => sheet },
+    "11977770000",
+    "Cancelado pela agenda diária",
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.alreadyBlocked, false);
+  assert.equal(rows[1][1], true);
+  assert.equal(rows[1][4], "Cancelado pela agenda diária");
 });

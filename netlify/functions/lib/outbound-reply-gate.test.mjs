@@ -82,6 +82,26 @@ test("final validation blocks a substantially repeated answer", () => {
   assert.equal(result.reason, "substantially_repeated_reply");
 });
 
+test("final validation blocks unsafe or unfinished outbound content", () => {
+  const cases = [
+    ["BEGIN:VCARD\nVERSION:3.0\nTEL:+5511000000000\nEND:VCARD", "contact_card_content"],
+    ["Olá, [nome]! Posso ajudar?", "unresolved_placeholder"],
+    ["Veja https://draamandaschroeder/lifting-facial/", "malformed_clinic_url"],
+    ["Confirmado para 12:00, 12:00.", "duplicated_time"],
+    ["x".repeat(1501), "reply_too_long"],
+  ];
+
+  for (const [body, reason] of cases) {
+    const result = validateOutboundReply({
+      body,
+      currentText: "Pode me confirmar?",
+      conversationAction: respond,
+    });
+    assert.equal(result.allowed, false, reason);
+    assert.equal(result.reason, reason);
+  }
+});
+
 test("one conversation revision permits only one simultaneous claim", async () => {
   const blobs = fakeBlobs();
   const input = {
@@ -125,6 +145,32 @@ test("controlled send delivers once and suppresses a retry", async () => {
   assert.equal(first.status, "completed");
   assert.equal(retry.status, "duplicate");
   assert.equal(sends, 1);
+});
+
+test("controlled send uses the validated trimmed body", async () => {
+  const blobs = fakeBlobs();
+  let deliveredBody = "";
+  const result = await sendControlledPatientReply(
+    {
+      from: "+5511000000000",
+      to: "+5511900000000",
+      eventId: "event-trimmed",
+      body: "  Claro. Posso ajudar com essa informação.  ",
+      currentText: "Pode me ajudar?",
+      recentConversation: [],
+      conversationAction: respond,
+    },
+    {
+      ...blobs,
+      sendYCloudPatientTextImpl: async ({ body }) => {
+        deliveredBody = body;
+        return { status: "completed", errorCode: "none" };
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(deliveredBody, "Claro. Posso ajudar com essa informação.");
 });
 
 test("a team holding reply requires a real pending request", () => {

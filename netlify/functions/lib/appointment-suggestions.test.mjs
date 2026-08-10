@@ -2,12 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildAppointmentSuggestion,
+  isAppointmentOfferAcceptance,
   isAppointmentPreferenceReply,
   isAppointmentAlertEnabled,
   selectAppointmentSlots,
 } from "./appointment-suggestions.mjs";
 
-test("formats no more than three approved appointment options", () => {
+test("formats exactly two real appointment options for review", () => {
   const text = buildAppointmentSuggestion({
     patientName: "Maria Silva",
     professional: "amanda",
@@ -22,9 +23,10 @@ test("formats no more than three approved appointment options", () => {
 
   assert.match(text, /Olá, Maria!/);
   assert.match(text, /1\. segunda-feira \(27\/07\/2026\) às 08:00/);
-  assert.match(text, /3\. quarta-feira \(29\/07\/2026\) às 13:00/);
+  assert.doesNotMatch(text, /quarta-feira \(29\/07\/2026\) às 13:00/);
   assert.doesNotMatch(text, /14:00/);
-  assert.match(text, /Se nenhum destes horários for possível/);
+  assert.match(text, /duas opções reais na agenda/);
+  assert.match(text, /Alguma delas funciona para você/);
 });
 
 test("reports a missing schedule with a safe patient suggestion", () => {
@@ -75,7 +77,7 @@ test("recognizes a day and period only when the clinic was discussing scheduling
   );
 });
 
-test("prioritizes three slots compatible with weekday and period", () => {
+test("prioritizes two slots compatible with weekday and period", () => {
   const selected = selectAppointmentSlots(
     [
       { day: "segunda-feira", date: "27/07/2026", time: "08:00" },
@@ -93,8 +95,22 @@ test("prioritizes three slots compatible with weekday and period", () => {
     [
       "segunda-feira-08:00",
       "segunda-feira-10:00",
-      "quinta-feira-08:00",
     ],
+  );
+});
+
+test("recognizes acceptance after Bruna offers to check two real slots", () => {
+  const history = [{
+    role: "assistant",
+    source: "bruna",
+    text: "Posso verificar duas opções reais de horário para você?",
+  }];
+
+  assert.equal(isAppointmentOfferAcceptance("Sim, por favor", history), true);
+  assert.equal(isAppointmentOfferAcceptance("Sim, por favor", []), false);
+  assert.equal(
+    isAppointmentOfferAcceptance("Quero entender os riscos", history),
+    false,
   );
 });
 

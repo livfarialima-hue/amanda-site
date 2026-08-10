@@ -35,7 +35,7 @@ function failureAlertInput(data) {
       "FALHA TÉCNICA — atendimento automático não concluído após as tentativas.",
       `Mensagem da paciente: ${String(message.text?.body || "Mensagem sem texto.")}`,
       "Sugestão para copiar:",
-      `${greeting} Eu sou a Bruna, da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Estou acompanhando por aqui. Como posso te ajudar?`,
+      `${greeting} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Estou acompanhando por aqui. Como posso te ajudar?`,
     ].join("\n"),
   };
 }

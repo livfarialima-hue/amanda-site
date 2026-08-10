@@ -113,6 +113,95 @@ function garantirEstruturaPreferenciasContato_(sheet) {
   };
 }
 
+/**
+ * Bloqueia de forma permanente as retomadas de um contato. Esta é a mesma
+ * preferência exposta como checkbox na aba Leads, para que o cancelamento
+ * feito pela agenda diária não crie um segundo estado concorrente.
+ */
+function marcarNuncaRetomarPorTelefone_(spreadsheet, phone, reason) {
+  const normalizedPhone = normalizarTelefonePreferenciaContato_(phone);
+
+  if (!normalizedPhone) {
+    return { ok: false, error: "invalid_phone" };
+  }
+
+  const file = spreadsheet || SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const configuredSheetName =
+    typeof CONFIG !== "undefined" && CONFIG.sheetName
+      ? CONFIG.sheetName
+      : CONTACT_PREFERENCES_CONFIG.sheetName;
+  const sheet =
+    file.getSheetByName(configuredSheetName) ||
+    file.getSheetByName(CONTACT_PREFERENCES_CONFIG.sheetName);
+
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { ok: false, error: "lead_not_found" };
+  }
+
+  garantirEstruturaPreferenciasContato_(sheet);
+
+  const lastColumn = sheet.getLastColumn();
+  const headers = sheet
+    .getRange(1, 1, 1, lastColumn)
+    .getDisplayValues()[0];
+  const phoneColumn = indiceCabecalhoPreferenciaContato_(
+    headers,
+    CONTACT_PREFERENCES_CONFIG.phoneHeader,
+  );
+  const neverFollowUpColumn = indiceCabecalhoPreferenciaContato_(
+    headers,
+    CONTACT_PREFERENCES_CONFIG.neverFollowUpHeader,
+  );
+  const reasonColumn = indiceCabecalhoPreferenciaContato_(
+    headers,
+    CONTACT_PREFERENCES_CONFIG.reasonHeader,
+  );
+
+  if (phoneColumn < 0 || neverFollowUpColumn < 0) {
+    return { ok: false, error: "invalid_leads_schema" };
+  }
+
+  const rows = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, lastColumn)
+    .getValues();
+  let matchedRow = 0;
+
+  rows.forEach(function (row, index) {
+    if (
+      normalizarTelefonePreferenciaContato_(row[phoneColumn]) ===
+      normalizedPhone
+    ) {
+      matchedRow = index + 2;
+    }
+  });
+
+  if (!matchedRow) {
+    return { ok: false, error: "lead_not_found" };
+  }
+
+  sheet
+    .getRange(matchedRow, neverFollowUpColumn + 1)
+    .setValue(true);
+
+  if (reasonColumn >= 0) {
+    const reasonCell = sheet.getRange(matchedRow, reasonColumn + 1);
+    const existingReason = String(reasonCell.getDisplayValue() || "").trim();
+
+    if (!existingReason && reason) {
+      reasonCell.setValue(textoPreferenciaContato_(reason, 240));
+    }
+  }
+
+  return {
+    ok: true,
+    phone: normalizedPhone,
+    row: matchedRow,
+    alreadyBlocked: valorAtivoPreferenciaContato_(
+      rows[matchedRow - 2][neverFollowUpColumn],
+    ),
+  };
+}
+
 function obterPreferenciasContatoLeads_(spreadsheet, phone) {
   const normalizedPhone = normalizarTelefonePreferenciaContato_(phone);
 

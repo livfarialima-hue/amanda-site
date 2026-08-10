@@ -10,6 +10,13 @@ const source = fs.readFileSync(
 );
 
 const TEST_ACCESS_TOKEN = "room-booking-test-token";
+const FUTURE_APPOINTMENT_DATE = (() => {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() + 7);
+  while (date.getDay() !== 3) date.setDate(date.getDate() + 1);
+  return date.toISOString().slice(0, 10);
+})();
 const TEST_ACCESS_TOKEN_HASH = crypto
   .createHash("sha256")
   .update(TEST_ACCESS_TOKEN)
@@ -178,7 +185,7 @@ test("creates the calendar event and records the reservation", () => {
   const result = context.reservarSalaPeloFormulario({
     accessToken: TEST_ACCESS_TOKEN,
     professional: "Dra. Marina",
-    scheduledDate: "2026-08-05",
+    scheduledDate: FUTURE_APPOINTMENT_DATE,
     scheduledTime: "10:00",
     durationMinutes: 60,
     patientName: "Paciente Exemplo",
@@ -217,7 +224,7 @@ test("does not write when no room is available", () => {
   const result = context.reservarSalaPeloFormulario({
     accessToken: TEST_ACCESS_TOKEN,
     professional: "Dr. Laerte",
-    scheduledDate: "2026-08-05",
+    scheduledDate: FUTURE_APPOINTMENT_DATE,
     scheduledTime: "10:00",
     durationMinutes: 60,
   });

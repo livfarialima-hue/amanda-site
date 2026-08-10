@@ -1,6 +1,10 @@
 import { createHash } from "node:crypto";
 import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
 import { getRecommendedSiteResource } from "./site-content.mjs";
+import {
+  applyKnowledgeDecisionGuard,
+  normalizeKnowledgeContext,
+} from "./knowledge-learning.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -186,7 +190,7 @@ export function applyReturningPatientReplyGuard(
 
   const suggestedReply = String(decision.suggestedReply)
     .replace(
-      /^(Ol[aá](?:,\s*[^!?.]+)?[!,.]?\s*)?(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
+      /^(Ol[aá](?:,\s*[^!?.]+)?[!,.]?\s*)?(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:(?:concierge\s+)?da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
       (_match, greeting) =>
         `${greeting || ""}Que bom falar com você novamente. `,
     )
@@ -223,7 +227,8 @@ export function applyFirstReplyGreetingGuard(
 
   const firstName = usableProfileFirstName(patientProfileName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
-  const introduction = "Eu sou a Bruna, da Clínica LIV Faria Lima.";
+  const introduction =
+    "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.";
   const knownPatient = patientRelationship?.knownPatient === true;
   let body = String(decision.suggestedReply)
     .trim()
@@ -399,7 +404,10 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
       applyFirstReplyGreetingGuard(
         applyReturningPatientReplyGuard(
           applyKnownProfileNameGuard(
-            decision,
+            applyKnowledgeDecisionGuard(
+              decision,
+              options.learningContext,
+            ),
             options.patientProfileName,
             options.hasConversationHistory,
           ),
@@ -428,6 +436,7 @@ export async function runOpenAIShadow(
     recentConversation,
     referralContext,
     patientRelationship,
+    learningContext,
     deterministicUrgent = false,
   },
   { env = process.env, fetchImpl = fetch } = {},
@@ -451,6 +460,9 @@ export async function runOpenAIShadow(
     normalizePatientRelationshipContext(
       patientRelationship,
     );
+  const normalizedLearningContext = normalizeKnowledgeContext(
+    learningContext,
+  );
   const explicitResourceRequest =
     /\b(?:site|link|material|casos?|antes\s+e\s+depois|resultados?)\b/i.test(
       String(text || ""),
@@ -500,6 +512,9 @@ export async function runOpenAIShadow(
           metaAdContext: normalizeReferralContext(referralContext),
           patientRelationship:
             normalizedPatientRelationship,
+          approvedKnowledge: normalizedLearningContext.candidates,
+          pendingUnknownQuestion:
+            normalizedLearningContext.pendingQuestion,
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),
@@ -541,6 +556,7 @@ export async function runOpenAIShadow(
       patientRelationship:
         normalizedPatientRelationship,
       recentConversation: normalizedConversation,
+      learningContext: normalizedLearningContext,
     });
   } catch (error) {
     return result("failed", {

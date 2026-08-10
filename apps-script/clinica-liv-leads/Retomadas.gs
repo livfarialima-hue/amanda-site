@@ -24,6 +24,7 @@ const RETOMADAS_CONFIG = Object.freeze({
   propriedadeSegredo: "LEADS_INGEST_SECRET",
   propriedadeAtiva: "RETOMADAS_AUTOMATICAS_ATIVAS",
   funcaoGatilhoAutomatico: "processarRetomadasAutomaticas",
+  propriedadeUrlAplicativo: "RETOMADAS_WEB_APP_URL",
   horariosPrioritarios: [
     "10:30",
     "10:45",
@@ -41,6 +42,203 @@ const RETOMADAS_CONFIG = Object.freeze({
     "17:45",
   ],
 });
+
+function assinaturaCancelamentoRetomadas_(telefone) {
+  if (
+    typeof PropertiesService === "undefined" ||
+    typeof Utilities === "undefined"
+  ) {
+    return "";
+  }
+
+  const segredo = PropertiesService
+    .getScriptProperties()
+    .getProperty(RETOMADAS_CONFIG.propriedadeSegredo);
+  const normalizado = normalizarTelefoneRetomadas_(telefone);
+
+  if (!segredo || !normalizado) return "";
+
+  const assinatura = Utilities.computeHmacSha256Signature(
+    "cancelar_retomadas|" + normalizado,
+    segredo,
+  );
+
+  return Utilities.base64EncodeWebSafe(assinatura).replace(/=+$/g, "");
+}
+
+function linkCancelamentoRetomadas_(telefone, confirmar) {
+  if (typeof PropertiesService === "undefined") return "";
+
+  const normalizado = normalizarTelefoneRetomadas_(telefone);
+  const assinatura = assinaturaCancelamentoRetomadas_(normalizado);
+  const propriedades = PropertiesService.getScriptProperties();
+  const servico =
+    typeof ScriptApp !== "undefined" && ScriptApp.getService
+      ? ScriptApp.getService()
+      : null;
+  const baseUrl =
+    propriedades.getProperty(
+      RETOMADAS_CONFIG.propriedadeUrlAplicativo,
+    ) ||
+    (servico && servico.getUrl ? servico.getUrl() : "");
+
+  if (!baseUrl || !assinatura) return "";
+
+  return (
+    baseUrl +
+    "?view=cancelar_retomadas&phone=" +
+    encodeURIComponent(normalizado) +
+    "&token=" +
+    encodeURIComponent(assinatura) +
+    (confirmar ? "&confirmar=1" : "")
+  );
+}
+
+function tokenCancelamentoRetomadasValido_(telefone, token) {
+  const esperado = assinaturaCancelamentoRetomadas_(telefone);
+  const recebido = String(token || "").trim();
+
+  return Boolean(
+    esperado &&
+      recebido &&
+      esperado.length === recebido.length &&
+      esperado === recebido,
+  );
+}
+
+function renderCancelamentoRetomadas_(parameters) {
+  const params = parameters || {};
+  const telefone = normalizarTelefoneRetomadas_(params.phone);
+  const tokenValido = tokenCancelamentoRetomadasValido_(
+    telefone,
+    params.token,
+  );
+
+  if (!tokenValido) {
+    return HtmlService.createHtmlOutput(
+      paginaCancelamentoRetomadas_(
+        "Link inválido",
+        "Este link de cancelamento não é válido. Nenhuma preferência foi alterada.",
+        "",
+      ),
+    ).setTitle("Clínica LIV — retomadas");
+  }
+
+  if (String(params.confirmar || "") !== "1") {
+    const confirmUrl = linkCancelamentoRetomadas_(telefone, true);
+    return HtmlService.createHtmlOutput(
+      paginaCancelamentoRetomadas_(
+        "Não retomar mais este contato?",
+        "Ao confirmar, a aba Leads será marcada com “Nunca retomar” e este contato deixará de aparecer nas próximas agendas de retomada.",
+        confirmUrl,
+      ),
+    ).setTitle("Clínica LIV — confirmar cancelamento");
+  }
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) {
+    return HtmlService.createHtmlOutput(
+      paginaCancelamentoRetomadas_(
+        "Tente novamente",
+        "A planilha está sendo atualizada neste momento. Volte à mensagem e tente novamente em alguns segundos.",
+        "",
+      ),
+    ).setTitle("Clínica LIV — retomadas");
+  }
+
+  try {
+    const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const resultado = marcarNuncaRetomarPorTelefone_(
+      arquivo,
+      telefone,
+      "Retomadas canceladas pela agenda diária em " +
+        formatarDataRetomadas_(new Date(), "dd/MM/yyyy HH:mm"),
+    );
+
+    if (!resultado.ok) {
+      return HtmlService.createHtmlOutput(
+        paginaCancelamentoRetomadas_(
+          "Contato não encontrado",
+          "Não foi possível localizar este telefone na aba Leads. Nenhuma preferência foi alterada.",
+          "",
+        ),
+      ).setTitle("Clínica LIV — retomadas");
+    }
+
+    cancelarPlanosPendentesRetomadas_(arquivo, telefone, new Date());
+
+    return HtmlService.createHtmlOutput(
+      paginaCancelamentoRetomadas_(
+        "Retomadas canceladas",
+        "Pronto. A linha deste contato foi marcada como “Nunca retomar” na aba Leads e nenhum envio de retomada pendente será feito.",
+        "",
+      ),
+    ).setTitle("Clínica LIV — retomadas canceladas");
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function paginaCancelamentoRetomadas_(titulo, mensagem, confirmUrl) {
+  const botao = confirmUrl
+    ? '<a href="' +
+      escaparHtmlRetomadas_(confirmUrl) +
+      '" style="display:inline-block;margin-top:18px;padding:12px 18px;border-radius:8px;background:#9a3412;color:#fff;text-decoration:none;font-weight:bold;">Confirmar: não retomar mais</a>'
+    : "";
+
+  return (
+    '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>' +
+    '<body style="margin:0;background:#f3f4f6;font-family:Arial,sans-serif;color:#111827;"><main style="max-width:560px;margin:48px auto;padding:28px;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.08);">' +
+    '<div style="color:#075e54;font-size:14px;font-weight:bold;">CLÍNICA LIV</div><h1 style="font-size:24px;margin:10px 0 12px;">' +
+    escaparHtmlRetomadas_(titulo) +
+    '</h1><p style="line-height:1.6;color:#4b5563;">' +
+    escaparHtmlRetomadas_(mensagem) +
+    "</p>" +
+    botao +
+    "</main></body></html>"
+  );
+}
+
+function cancelarPlanosPendentesRetomadas_(arquivo, telefone, agora) {
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaControle,
+  );
+  const normalizado = normalizarTelefoneRetomadas_(telefone);
+
+  if (!planilha || planilha.getLastRow() < 2 || !normalizado) return 0;
+
+  const linhas = planilha
+    .getRange(
+      2,
+      1,
+      planilha.getLastRow() - 1,
+      RETOMADAS_CONTROLE_HEADERS.length,
+    )
+    .getValues();
+  let cancelados = 0;
+
+  linhas.forEach(function (linha, indice) {
+    if (
+      normalizarTelefoneRetomadas_(linha[2]) !== normalizado ||
+      String(linha[10] || "").trim() !== "Programada"
+    ) {
+      return;
+    }
+
+    planilha
+      .getRange(indice + 2, 11, 1, 5)
+      .setValues([[
+        "Cancelada — nunca retomar",
+        linha[11] || "",
+        agora,
+        "",
+        "never_follow_up",
+      ]]);
+    cancelados += 1;
+  });
+
+  return cancelados;
+}
 
 const RETOMADAS_CONTROLE_HEADERS = Object.freeze([
   "Chave diária",
@@ -65,19 +263,13 @@ const RETOMADAS_ETAPAS = Object.freeze([
     numero: 1,
     diasMinimos: 1,
     diasMaximos: 2,
-    rotulo: "1ª retomada",
+    rotulo: "1ª retomada — cerca de 24h",
   }),
   Object.freeze({
     numero: 2,
-    diasMinimos: 4,
-    diasMaximos: 5,
-    rotulo: "2ª retomada",
-  }),
-  Object.freeze({
-    numero: 3,
-    diasMinimos: 9,
-    diasMaximos: 10,
-    rotulo: "última retomada",
+    diasMinimos: 3,
+    diasMaximos: 4,
+    rotulo: "2ª e última retomada — cerca de 72h",
   }),
 ]);
 
@@ -91,6 +283,15 @@ const RETOMADAS_STATUS_ENCERRADOS = Object.freeze([
 ]);
 
 const RETOMADAS_MATERIAIS = Object.freeze([
+  Object.freeze({
+    padrao:
+      /consulta|avaliacao|agendar|agendamento|horario|disponibilidade/,
+    sobre: "sobre como funciona a consulta de cirurgia plástica",
+    descricao:
+      "O material mostra o que é avaliado e como possibilidades, limites, recuperação e próximos passos são discutidos sem pressupor cirurgia",
+    url:
+      "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+  }),
   Object.freeze({
     padrao:
       /artificial|esticad|exagerad|naturalidade|expressao|identidade|nao parecer eu/,
@@ -611,8 +812,13 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
   const agendaCuidadosConsultas = planilhaConsultas
     ? criarAgendaCuidadosConsultas_(planilhaConsultas, agora)
     : [];
+  const agendaAprendizado =
+    typeof carregarAgendaAprendizadoBot_ === "function"
+      ? carregarAgendaAprendizadoBot_(arquivo, agora)
+      : [];
   const agendaCuidados = agendaCuidadosConsultas.concat(
     carregarAgendaCompromissosPendentes_(arquivo, agora),
+    agendaAprendizado,
   );
   const telefonesComCompromisso = new Set(
     agendaCuidados
@@ -713,7 +919,9 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     agendaCuidados.filter(function (item) {
       return !item.futuro;
     }).length +
-    " cuidados hoje)";
+    " cuidados hoje • " +
+    agendaAprendizado.length +
+    " revisões do bot)";
   const corpoTexto = montarTextoEmailRetomadas_(
     selecionados,
     sugeridosParaEquipe,
@@ -756,6 +964,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     cuidadosFuturos: agendaCuidados.filter(function (item) {
       return item.futuro;
     }).length,
+    revisoesBot: agendaAprendizado.length,
     destinatario: RETOMADAS_CONFIG.destinatario,
     assunto: assunto,
   };
@@ -935,8 +1144,7 @@ function criarCandidatoRetomada_(
 
   const quantidadeContatos = contarContatosSaidaRetomadas_(conversa);
   const engajamento = classificarEngajamentoRetomada_(conversa);
-  const maximoContatos =
-    engajamento === "engajado" ? 3 : 2;
+  const maximoContatos = 2;
 
   if (
     quantidadeContatos < 1 ||
@@ -984,6 +1192,12 @@ function criarCandidatoRetomada_(
     /valor|preco|orcamento|pagamento|parcel/.test(
       contextoPaciente,
     );
+  const contextoQualificado =
+    normalizarTextoRetomadas_(lead.status) === "qualificado" ||
+    /interesse real|quer (?:fazer|marcar|agendar)|gostaria de (?:fazer|marcar|agendar)/.test(
+      contextoPaciente,
+    );
+  const objecao = classificarObjecaoRetomada_(contextoPaciente);
 
   if (!retomadaComercialPermitida_(contextoPaciente)) {
     return null;
@@ -1008,6 +1222,8 @@ function criarCandidatoRetomada_(
     prioritario: prioritario,
     contextoAgenda: contextoAgenda,
     contextoPreco: contextoPreco,
+    contextoQualificado: contextoQualificado,
+    objecao: objecao,
     engajamento: engajamento,
     horario: "",
     sugestao: sugerirMensagemRetomada_(
@@ -1016,6 +1232,8 @@ function criarCandidatoRetomada_(
       material,
       contextoAgenda,
       contextoPreco,
+      objecao,
+      contextoQualificado,
     ),
     chaveDiaria: [
       dataLocal,
@@ -1140,44 +1358,91 @@ function sugerirMensagemRetomada_(
   material,
   contextoAgenda,
   contextoPreco,
+  objecao,
+  contextoQualificado,
 ) {
-  if (etapa === 1 && material) {
-    return (
-      "Olá! Lembrei da sua dúvida e separei um material da Dra. Amanda " +
-      material.sobre +
-      ". " +
-      material.descricao +
-      ". Talvez ele ajude você a pensar com calma: " +
-      material.url +
-      " Se quiser, pode me contar o que ainda ficou em dúvida."
-    );
-  }
-
   if (etapa === 1 && contextoPreco) {
-    return "Olá! Lembrei que você queria entender melhor os valores. É uma dúvida importante e não queria deixá-la sem resposta. Se ainda fizer sentido para você, posso retomar exatamente desse ponto e te ajudar por aqui.";
+    return "Olá! Lembrei que o valor e o que está incluído eram pontos importantes para você. Posso retomar exatamente essa dúvida e explicar como o orçamento completo é definido. Se depois fizer sentido, também posso separar duas opções reais de horário para a avaliação.";
   }
 
   if (etapa === 1 && contextoAgenda) {
-    return "Olá! Passei para saber se você conseguiu pensar com calma sobre a avaliação. Se ainda quiser, posso ajudar a encontrar um dia que fique confortável para você, sem compromisso.";
+    return "Olá! Na nossa conversa, você demonstrou interesse na avaliação. Se ainda fizer sentido, posso consultar a agenda e separar duas opções reais de horário para você escolher.";
+  }
+
+  if (etapa === 1 && objecao) {
+    return (
+      "Olá! Lembrei que sua principal preocupação era " +
+      objecao +
+      ". Posso retomar exatamente desse ponto, sem pressa." +
+      (contextoQualificado
+        ? " Se a avaliação fizer sentido, também posso separar duas opções reais de horário."
+        : "")
+    );
+  }
+
+  if (etapa === 1 && contextoQualificado) {
+    return "Olá! Pelo que você me contou, a avaliação pode ser um bom próximo passo para entender a indicação e as possibilidades com calma. Posso consultar a agenda e separar duas opções reais de horário para você?";
   }
 
   if (etapa === 1) {
     return "Olá! Passei para saber se ficou alguma dúvida da nossa conversa. Você não precisa decidir nada agora; se quiser continuar pesquisando ou entender melhor a avaliação, estou por aqui.";
   }
 
-  if (etapa === 2) {
-    if (contextoPreco) {
-      return "Olá! Deixo o canal aberto para retomarmos sua dúvida sobre valores, caso ela ainda esteja pesando na sua pesquisa. Se quiser continuar, responda no seu tempo e seguimos exatamente desse ponto.";
-    }
-
-    if (contextoAgenda) {
-      return "Olá! Se a avaliação ainda fizer sentido para você, posso retomar a conversa sobre um dia possível, sem pressa. Se preferir deixar para outro momento, está tudo bem.";
-    }
-
-    return "Olá! Só queria deixar o canal aberto caso você ainda esteja pensando no procedimento. Se quiser, posso retomar do ponto em que paramos, sem pressa.";
+  if (etapa === 2 && material) {
+    return (
+      "Olá! Para deixar uma referência concreta " +
+      material.sobre +
+      ", separei este conteúdo da Dra. Amanda. " +
+      material.descricao +
+      ": " +
+      material.url +
+      " Esta é minha última retomada para não ser inconveniente. Se quiser continuar, é só me chamar."
+    );
   }
 
-  return "Olá! Vou encerrar meus contatos por aqui para não ser inconveniente. Se em outro momento quiser retomar a conversa, será um prazer ajudar você.";
+  if (etapa === 2 && contextoPreco) {
+    return "Olá! Como referência concreta sobre sua dúvida: o orçamento cirúrgico completo é definido após a avaliação e considera honorários, hospital, anestesia, materiais e acompanhamento; a equipe também explica as formas de pagamento. Esta é minha última retomada para não ser inconveniente. Se quiser continuar, é só me chamar.";
+  }
+
+  if (etapa === 2 && contextoAgenda) {
+    return "Olá! Como referência, a consulta serve para examinar a região e discutir indicação, alternativas, limites, recuperação e orçamento, sem pressupor que você precise decidir pela cirurgia naquele momento. Esta é minha última retomada para não ser inconveniente. Se quiser ver duas opções reais de horário, é só me chamar.";
+  }
+
+  return "Olá! Vou encerrar minhas retomadas por aqui para não ser inconveniente. Se em outro momento quiser continuar a conversa, será um prazer ajudar você.";
+}
+
+function classificarObjecaoRetomada_(contexto) {
+  const texto = normalizarTextoRetomadas_(contexto);
+  const regras = [
+    {
+      padrao: /artificial|esticad|exagerad|naturalidade|expressao|identidade/,
+      descricao: "manter naturalidade, expressão e identidade",
+    },
+    {
+      padrao: /seguranca|medo da cirurgia|risco|anestesia|hospital/,
+      descricao: "a segurança da cirurgia e da anestesia",
+    },
+    {
+      padrao: /recuperacao|pos operatorio|incha|voltar ao trabalho/,
+      descricao: "a recuperação e o tempo para retomar sua rotina",
+    },
+    {
+      padrao: /cicatriz|cicatrizes|cicatrizacao|queloide/,
+      descricao: "as cicatrizes e como elas evoluem",
+    },
+    {
+      padrao: /jovem|idade|experiencia|formacao|confiar|confiança|qualificacao/,
+      descricao: "a formação, a experiência e o critério da Dra. Amanda",
+    },
+  ];
+
+  for (let indice = 0; indice < regras.length; indice += 1) {
+    if (regras[indice].padrao.test(texto)) {
+      return regras[indice].descricao;
+    }
+  }
+
+  return "";
 }
 
 function selecionarMaterialRetomada_(
@@ -1188,11 +1453,11 @@ function selecionarMaterialRetomada_(
   prioritario,
 ) {
   if (
-    etapa !== 1 ||
-    prioritario ||
+    etapa !== 2 ||
     origemSiteRetomada_(lead) ||
     conversaTemLinkSiteRetomada_(conversa) ||
-    contextoSensivelRetomada_(contexto)
+    contextoSensivelRetomada_(contexto) ||
+    /valor|preco|orcamento|pagamento|parcel/.test(contexto)
   ) {
     return null;
   }
@@ -1243,7 +1508,17 @@ function retomadaComercialPermitida_(contexto) {
     return false;
   }
 
-  return !/nao (?:quero|tenho) mais interesse|nao me (?:envie|mande) mensagens|nao entre mais em contato|pare de (?:me )?(?:enviar|mandar|ligar|contatar)|pode encerrar (?:o )?(?:atendimento|contato)/.test(
+  if (
+    (typeof mensagemComercialNaoPacienteCentral_ === "function" &&
+      mensagemComercialNaoPacienteCentral_(contexto)) ||
+    /(?:agencia|assessoria|consultoria|empresa) (?:de )?(?:marketing|publicidade|trafego|comunicacao)|(?:servico|gestao) de (?:marketing|trafego pago|redes sociais|instagram|seo)|captar (?:mais )?(?:pacientes|clientes)|proposta (?:comercial|de parceria)|parceria comercial|melhorar (?:seu )?posicionamento digital/.test(
+      contexto,
+    )
+  ) {
+    return false;
+  }
+
+  return !/nao (?:quero|tenho)(?: mais)? interesse|sem interesse|nao quero (?:seguir|continuar|agendar|marcar)|nao me (?:envie|mande) mensagens|nao entre mais em contato|pare de (?:me )?(?:enviar|mandar|ligar|contatar)|pode encerrar (?:o )?(?:atendimento|contato)/.test(
     contexto,
   );
 }
@@ -1887,16 +2162,12 @@ function montarTextoEmailRetomadas_(
   dataApresentacao,
   agendaCuidados,
 ) {
-  const cuidados = agendaCuidados || [];
+  const cuidados = (agendaCuidados || []).concat(
+    (candidatos || []).map(converterRetomadaParaCuidadoEmail_),
+  );
   const automaticosHoje = cuidados.filter(function (item) {
     return !item.futuro && item.automatico;
-  }).concat(
-    candidatos
-      .filter(function (candidato) {
-        return candidato.automatico;
-      })
-      .map(converterRetomadaParaCuidadoEmail_),
-  );
+  });
   const manuaisHoje = cuidados.filter(function (item) {
     return !item.futuro && !item.automatico;
   });
@@ -1906,7 +2177,7 @@ function montarTextoEmailRetomadas_(
   const linhas = [
     "Clínica LIV — agenda de cuidado de " + dataApresentacao,
     "",
-    "Este e-mail informa os envios do dia. A primeira retomada simples será enviada automaticamente no horário indicado, salvo se estiver suspensa na planilha Leads.",
+    "Agenda única do dia: cada retomada aparece uma vez, com contexto, responsável e mensagem sugerida.",
     "",
     "ENVIOS AUTOMÁTICOS PREVISTOS HOJE (" +
       automaticosHoje.length +
@@ -1930,7 +2201,11 @@ function montarTextoEmailRetomadas_(
     );
     linhas.push("Responsável: " + item.responsavel);
     linhas.push("Contexto: " + item.contexto);
-    linhas.push("Mensagem que será enviada: " + item.sugestao);
+    linhas.push(
+      "Mensagem que será enviada: " +
+        mensagemSugeridaItemRetomada_(item),
+    );
+    adicionarLinksItemRetomadaTexto_(linhas, item);
   });
 
   linhas.push("");
@@ -1960,13 +2235,11 @@ function montarTextoEmailRetomadas_(
     );
     linhas.push("Responsável: " + item.responsavel);
     linhas.push("Contexto: " + item.contexto);
-    linhas.push("Mensagem sugerida: " + item.sugestao);
-    if (item.telefone) {
-      linhas.push(
-        "Abrir WhatsApp: https://wa.me/" +
-          item.telefone.replace(/\D/g, ""),
-      );
-    }
+    linhas.push(
+      "Mensagem sugerida: " +
+        mensagemSugeridaItemRetomada_(item),
+    );
+    adicionarLinksItemRetomadaTexto_(linhas, item);
   });
 
   linhas.push("");
@@ -1980,113 +2253,104 @@ function montarTextoEmailRetomadas_(
     linhas.push("Nenhum marco futuro identificado.");
   }
 
-  cuidadosFuturos.forEach(function (item) {
+  cuidadosFuturos.forEach(function (item, indice) {
+    linhas.push("");
     linhas.push(
-      "- [" +
+      String(indice + 1) +
+        ". [" +
         (item.automatico ? "AUTOMÁTICO" : "MANUAL") +
         "] " +
-        item.contexto +
+        (item.nome || item.telefone) +
         " — " +
-        (item.nome || item.telefone),
+        item.contexto,
     );
+    linhas.push(
+      "Mensagem sugerida: " +
+        mensagemSugeridaItemRetomada_(item),
+    );
+    adicionarLinksItemRetomadaTexto_(linhas, item);
   });
 
   linhas.push("");
   linhas.push(
-    "PLANO DO DIA (" + candidatos.length + ")",
-  );
-
-  if (!candidatos.length) {
-    linhas.push("Nenhuma retomada planejada para hoje.");
-  }
-
-  candidatos.forEach(function (candidato, indice) {
-    linhas.push(
-      String(indice + 1) +
-        ". " +
-        candidato.horario +
-        " — telefone " +
-        candidato.telefone,
-    );
-    linhas.push(
-      "Responsável sugerido: " +
-        (candidato.responsavel === "bruna"
-          ? candidato.automatico
-            ? "Bruna — envio automático programado"
-            : candidato.lead.suspendAutomaticFollowUp
-              ? "Suspensa na planilha — não enviar"
-              : "Bruna — revisar"
-          : "Amanda/equipe — conferir e enviar manualmente"),
-    );
-    linhas.push("Etapa: " + candidato.etapa.rotulo);
-    linhas.push("Status: " + candidato.lead.status);
-    linhas.push(
-      "Último contato: " +
-        formatarDataRetomadas_(
-          candidato.ultimoContato,
-          "dd/MM/yyyy HH:mm",
-        ),
-    );
-
-    if (candidato.lead.resumo) {
-      linhas.push("Resumo: " + candidato.lead.resumo);
-    }
-
-    if (candidato.lead.proximaAcao) {
-      linhas.push("Próxima ação: " + candidato.lead.proximaAcao);
-    }
-
-    linhas.push(
-      "Abrir WhatsApp: https://wa.me/" +
-        candidato.telefone.replace(/\D/g, ""),
-    );
-    linhas.push("");
-  });
-
-  linhas.push(
-    "AÇÃO SUGERIDA PARA AMANDA/EQUIPE (" +
-      sugeridosParaEquipe.length +
-      ")",
-  );
-
-  if (!sugeridosParaEquipe.length) {
-    linhas.push("Nenhuma retomada manual sugerida para hoje.");
-  }
-
-  sugeridosParaEquipe.forEach(function (candidato, indice) {
-    linhas.push("");
-    linhas.push(
-      String(indice + 1) +
-        ". " +
-        candidato.horario +
-        " — telefone " +
-        candidato.telefone,
-    );
-    linhas.push("Motivo: " + candidato.etapa.rotulo);
-    linhas.push("Mensagem sugerida: " + candidato.sugestao);
-    linhas.push(
-      "Abrir WhatsApp: https://wa.me/" +
-        candidato.telefone.replace(/\D/g, ""),
-    );
-  });
-
-  linhas.push("");
-  linhas.push(
-    "Somente os itens expressamente listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. A rotina revalida a conversa e as preferências imediatamente antes do envio; se houver resposta nova, bloqueio, suspensão, tema sensível ou janela inválida do WhatsApp, o disparo é cancelado. As retomadas tardias continuam manuais. Para suspender, marque “Suspender retomada automática” na linha da pessoa na aba Google Ads - Conversões.",
+    "Somente os itens listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. Para retirar um contato desta e das próximas agendas, use o link “Não retomar mais” do próprio item; ele marca “Nunca retomar” na aba Leads após confirmação.",
   );
 
   return linhas.join("\n");
 }
 
+function mensagemSugeridaItemRetomada_(item) {
+  return (
+    String(item && item.sugestao ? item.sugestao : "").trim() ||
+    "Oi! Passando para retomar o ponto que combinamos. Se ainda fizer sentido, seguimos por aqui, sem pressa."
+  );
+}
+
+function itemPermiteCancelamentoRetomada_(item) {
+  if (!item || !item.telefone) return false;
+
+  return /retomada|follow-up|cliente antigo|aniversario|pos-consulta|nao comparecimento|jornada cirurgica/.test(
+    normalizarTextoRetomadas_(item.categoria),
+  );
+}
+
+function adicionarLinksItemRetomadaTexto_(linhas, item) {
+  if (!item || !item.telefone) return;
+
+  linhas.push(
+    "Abrir WhatsApp: https://wa.me/" +
+      item.telefone.replace(/\D/g, ""),
+  );
+
+  if (itemPermiteCancelamentoRetomada_(item)) {
+    const cancelUrl = linkCancelamentoRetomadas_(
+      item.telefone,
+      false,
+    );
+    if (cancelUrl) {
+      linhas.push("Não retomar mais: " + cancelUrl);
+    }
+  }
+}
+
+function montarAcoesItemRetomadaHtml_(item) {
+  if (!item || !item.telefone) return "";
+
+  const whatsapp =
+    "https://wa.me/" + item.telefone.replace(/\D/g, "");
+  let html =
+    '<a href="' +
+    whatsapp +
+    '" style="display:inline-block;margin-top:10px;padding:8px 11px;border-radius:7px;background:#075e54;color:#fff;text-decoration:none;font-size:13px;font-weight:bold;">Abrir WhatsApp</a>';
+
+  if (itemPermiteCancelamentoRetomada_(item)) {
+    const cancelUrl = linkCancelamentoRetomadas_(
+      item.telefone,
+      false,
+    );
+    if (cancelUrl) {
+      html +=
+        ' <a href="' +
+        escaparHtmlRetomadas_(cancelUrl) +
+        '" style="display:inline-block;margin-top:10px;padding:8px 11px;border:1px solid #c2410c;border-radius:7px;color:#9a3412;text-decoration:none;font-size:13px;font-weight:bold;">Não retomar mais</a>';
+    }
+  }
+
+  return html;
+}
+
 function converterRetomadaParaCuidadoEmail_(candidato) {
   return {
     futuro: false,
-    automatico: true,
+    automatico: candidato.automatico === true,
     horario: candidato.horario,
     categoria: candidato.etapa.rotulo,
     nome: candidato.lead.referencia || candidato.telefone,
     telefone: candidato.telefone,
-    responsavel: "Bruna — envio automático",
+    responsavel:
+      candidato.automatico === true
+        ? "Bruna — envio automático"
+        : "Amanda/equipe — envio manual",
     contexto:
       candidato.lead.resumo ||
       "Primeira retomada simples após contato inicial",
@@ -2100,146 +2364,21 @@ function montarHtmlEmailRetomadas_(
   dataApresentacao,
   agendaCuidados,
 ) {
-  let planoDoDia = "";
-  let acaoEquipe = "";
   const agendaHtml = montarHtmlAgendaCuidados_(
     (agendaCuidados || []).concat(
-      candidatos
-        .filter(function (candidato) {
-          return candidato.automatico;
-        })
-        .map(converterRetomadaParaCuidadoEmail_),
+      (candidatos || []).map(converterRetomadaParaCuidadoEmail_),
     ),
   );
-
-  if (!candidatos.length) {
-    planoDoDia =
-      '<p style="font-size:16px;color:#374151;">' +
-      "Nenhuma retomada planejada para hoje." +
-      "</p>";
-  } else {
-    planoDoDia =
-      '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
-      '<thead><tr style="background:#f3f4f6;text-align:left;">' +
-      '<th style="padding:10px;border:1px solid #e5e7eb;">Horário</th>' +
-      '<th style="padding:10px;border:1px solid #e5e7eb;">Paciente</th>' +
-      '<th style="padding:10px;border:1px solid #e5e7eb;">Responsável sugerido</th>' +
-      '<th style="padding:10px;border:1px solid #e5e7eb;">Contexto</th>' +
-      "</tr></thead><tbody>";
-
-    candidatos.forEach(function (candidato) {
-      const ultimosDigitos = candidato.telefone.slice(-4);
-      const link =
-        "https://wa.me/" +
-        candidato.telefone.replace(/\D/g, "");
-      const contexto = [
-        "<strong>" +
-          escaparHtmlRetomadas_(candidato.etapa.rotulo) +
-          "</strong>",
-        escaparHtmlRetomadas_(candidato.lead.status),
-        candidato.lead.resumo
-          ? escaparHtmlRetomadas_(candidato.lead.resumo)
-          : "",
-        candidato.lead.proximaAcao
-          ? "Próxima ação: " +
-            escaparHtmlRetomadas_(candidato.lead.proximaAcao)
-          : "",
-      ].filter(Boolean).join("<br>");
-      const responsavel =
-        candidato.responsavel === "bruna"
-          ? candidato.automatico
-            ? "Bruna<br><span style=\"color:#166534;font-size:12px;\">envio automático programado; mensagem exibida acima</span>"
-            : candidato.lead.suspendAutomaticFollowUp
-              ? "Suspensa na planilha<br><span style=\"color:#9a3412;font-size:12px;\">nenhum envio será feito</span>"
-              : "Bruna<br><span style=\"color:#6b7280;font-size:12px;\">revisar</span>"
-          : "Amanda/equipe<br><span style=\"color:#6b7280;font-size:12px;\">conferir e enviar manualmente</span>";
-
-      planoDoDia +=
-        "<tr>" +
-        '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;"><strong>' +
-        escaparHtmlRetomadas_(candidato.horario) +
-        "</strong></td>" +
-        '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-        '<a href="' +
-        link +
-        '" style="color:#075e54;font-weight:bold;">Abrir WhatsApp • ' +
-        escaparHtmlRetomadas_(ultimosDigitos) +
-        "</a><br>" +
-        '<span style="color:#6b7280;font-size:12px;">' +
-        escaparHtmlRetomadas_(candidato.telefone) +
-        "</span></td>" +
-        '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-        responsavel +
-        "</td>" +
-        '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-        contexto +
-        "</td>" +
-        "</tr>";
-    });
-
-    planoDoDia += "</tbody></table>";
-  }
-
-  if (!sugeridosParaEquipe.length) {
-    acaoEquipe =
-      '<p style="font-size:16px;color:#374151;">' +
-      "Nenhuma retomada manual sugerida para hoje." +
-      "</p>";
-  } else {
-    acaoEquipe =
-      '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
-      '<thead><tr style="background:#ecfdf5;text-align:left;">' +
-      '<th style="padding:10px;border:1px solid #d1fae5;">Horário</th>' +
-      '<th style="padding:10px;border:1px solid #d1fae5;">Paciente</th>' +
-      '<th style="padding:10px;border:1px solid #d1fae5;">Mensagem sugerida</th>' +
-      "</tr></thead><tbody>";
-
-    sugeridosParaEquipe.forEach(function (candidato) {
-      const ultimosDigitos = candidato.telefone.slice(-4);
-      const link =
-        "https://wa.me/" +
-        candidato.telefone.replace(/\D/g, "");
-
-      acaoEquipe +=
-        "<tr>" +
-        '<td style="padding:10px;border:1px solid #d1fae5;vertical-align:top;"><strong>' +
-        escaparHtmlRetomadas_(candidato.horario) +
-        "</strong><br>" +
-        '<span style="color:#6b7280;font-size:12px;">' +
-        escaparHtmlRetomadas_(candidato.etapa.rotulo) +
-        "</span></td>" +
-        '<td style="padding:10px;border:1px solid #d1fae5;vertical-align:top;">' +
-        '<a href="' +
-        link +
-        '" style="color:#075e54;font-weight:bold;">Abrir WhatsApp • ' +
-        escaparHtmlRetomadas_(ultimosDigitos) +
-        "</a></td>" +
-        '<td style="padding:10px;border:1px solid #d1fae5;vertical-align:top;">' +
-        escaparHtmlRetomadas_(candidato.sugestao) +
-        "</td>" +
-        "</tr>";
-    });
-
-    acaoEquipe += "</tbody></table>";
-  }
 
   return (
     '<div style="max-width:980px;margin:auto;font-family:Arial,sans-serif;color:#111827;">' +
     '<h2 style="color:#075e54;">Clínica LIV — agenda de cuidado</h2>' +
     '<p style="color:#4b5563;">Resumo operacional de ' +
     escaparHtmlRetomadas_(dataApresentacao) +
-    ". A primeira retomada simples será enviada automaticamente no horário indicado, salvo se estiver suspensa na planilha Leads.</p>" +
+    ". Cada contato aparece uma única vez, com a mensagem sugerida e as ações disponíveis.</p>" +
     agendaHtml +
-    '<h3 style="margin-top:24px;">Plano do dia (' +
-    candidatos.length +
-    ")</h3>" +
-    planoDoDia +
-    '<h3 style="margin-top:28px;color:#075e54;">Ação sugerida para Amanda/equipe (' +
-    sugeridosParaEquipe.length +
-    ")</h3>" +
-    acaoEquipe +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
-    "Somente os itens expressamente listados em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. A conversa e as preferências são revalidadas imediatamente antes do envio. Para suspender, marque <strong>Suspender retomada automática</strong> na linha da pessoa em <strong>Google Ads - Conversões</strong>. Retomadas tardias continuam manuais." +
+    "Somente os itens em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. Para impedir esta e as próximas retomadas de um contato, use <strong>Não retomar mais</strong>; após a confirmação, a linha será marcada como <strong>Nunca retomar</strong> na aba Leads." +
     "</p></div>"
   );
 }

@@ -1,0 +1,178 @@
+/*
+ * Páginas premium de mama e contorno corporal.
+ * Complementa o sistema de conversão sem recortar ou deformar mídias clínicas.
+ */
+
+html[data-design="body-premium"] .cv-hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(420px, .95fr);
+  gap: clamp(38px, 5vw, 64px);
+}
+
+html[data-design="body-premium"] .cv-hero-media {
+  overflow: hidden;
+  border-radius: 12px;
+  background: #eadbd4;
+  box-shadow: 0 18px 48px rgba(63, 45, 38, .13);
+}
+
+html[data-design="body-premium"] .cv-hero-media::before { display: none; }
+
+html[data-design="body-premium"] .cv-hero-media img {
+  width: 100%;
+  height: clamp(500px, calc(100svh - 155px), 660px);
+  aspect-ratio: auto;
+  border-radius: 12px;
+  box-shadow: none;
+  object-fit: cover;
+  object-position: 50% 35%;
+}
+
+html[data-design="body-premium"] .cv-card,
+html[data-design="body-premium"] .cv-review,
+html[data-design="body-premium"] .cv-result { border-radius: 16px; }
+
+.cv-body-results {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.cv-body-results .cv-result {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  background: #fffaf7;
+}
+
+.cv-body-results .cv-result img {
+  width: 100%;
+  height: clamp(180px, 18vw, 245px);
+  aspect-ratio: auto;
+  padding: 10px;
+  background: #2a211e;
+  object-fit: contain;
+  object-position: center;
+}
+
+.cv-body-results .cv-result figcaption { flex: 1; }
+
+.cv-body-results .cv-result-kicker { color: var(--green); }
+
+.cv-body-results-note {
+  max-width: 880px;
+  margin: 24px auto 0;
+  color: #eadbd3;
+  font-size: .78rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.cv-body-proof .cv-story-media video {
+  width: 100%;
+  height: auto;
+  max-height: 620px;
+  background: #171312;
+  object-fit: contain;
+}
+
+.cv-body-doctor .cv-split-media {
+  overflow: hidden;
+  border-radius: 16px;
+  background: #e9dfda;
+  box-shadow: var(--shadow);
+}
+
+.cv-body-doctor .cv-split-media img {
+  width: 100%;
+  height: 520px;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+.cv-body-clinic-video video {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  background: #171312;
+  object-fit: contain;
+}
+
+.cv-body-paths .cv-card {
+  position: relative;
+  overflow: hidden;
+  padding-top: 34px;
+}
+
+.cv-body-paths .cv-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--green);
+  content: "";
+}
+
+.cv-body-paths .cv-card:nth-child(2)::before { background: #a77969; }
+.cv-body-paths .cv-card:nth-child(3)::before { background: #806e67; }
+.cv-body-paths .cv-card:nth-child(4)::before { background: #b69787; }
+
+.cv-body-kicker {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--green-dark);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.cv-body-quiet {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .58);
+}
+
+@media (max-width: 920px) {
+  html[data-design="body-premium"] .cv-hero-grid { grid-template-columns: 1fr; }
+
+  html[data-design="body-premium"] .cv-hero-media img {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-position: center 28%;
+  }
+
+  .cv-body-results { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 680px) {
+  html[data-design="body-premium"] .cv-hero { padding: 24px 0 34px; }
+
+  html[data-design="body-premium"] .cv-hero h1 {
+    font-size: clamp(2.35rem, 10vw, 3rem);
+  }
+
+  html[data-design="body-premium"] .cv-hero-media,
+  html[data-design="body-premium"] .cv-hero-media img { border-radius: 10px; }
+
+  .cv-body-results {
+    display: flex;
+    grid-template-columns: none;
+  }
+
+  .cv-body-results .cv-result {
+    flex: 0 0 min(86vw, 350px);
+  }
+
+  .cv-body-results .cv-result img {
+    height: 210px;
+    aspect-ratio: auto;
+    padding: 8px;
+  }
+
+  .cv-body-doctor .cv-split-media img {
+    height: 300px;
+    object-position: center 20%;
+  }
+
+  .cv-body-proof .cv-story-media { width: min(100%, 320px); }
+}

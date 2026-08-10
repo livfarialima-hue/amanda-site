@@ -37,10 +37,11 @@ function loadAttribution({
   procedure = "",
   readyState = "loading",
   search = "",
+  sessionInitial = {},
   setupSource = "",
 } = {}) {
   const localStorage = storage({ amanda_tracking_consent: consent });
-  const sessionStorage = storage();
+  const sessionStorage = storage(sessionInitial);
   const document = {
     readyState,
     addEventListener() {},
@@ -78,22 +79,67 @@ function loadAttribution({
 
   if (setupSource) vm.runInNewContext(setupSource, sandbox);
   vm.runInNewContext(conversionSource, sandbox);
-  return { debug: window.AmandaAttributionDebug, links, localStorage, sessionStorage };
+  return {
+    debug: window.AmandaAttributionDebug,
+    links,
+    localStorage,
+    sessionStorage,
+    window,
+  };
 }
 
-test("does not read click IDs before marketing consent", () => {
+function loadConsentManager({ local = {}, session = {} } = {}) {
+  const localStorage = storage(local);
+  const sessionStorage = storage(session);
+  const dispatched = [];
+  const document = {
+    cookie: "",
+    addEventListener() {},
+    dispatchEvent(event) {
+      dispatched.push(event.type);
+    },
+    querySelector() {
+      return null;
+    },
+    querySelectorAll() {
+      return [];
+    },
+  };
+  const window = {
+    AMANDA_TRACKING_CONFIG: {},
+    location: { hostname: "draamandaschroeder.com.br" },
+  };
+  vm.runInNewContext(loaderSource, {
+    CustomEvent: class CustomEvent {
+      constructor(type) {
+        this.type = type;
+      }
+    },
+    Date,
+    JSON,
+    Object,
+    document,
+    localStorage,
+    sessionStorage,
+    window,
+  });
+  return { dispatched, localStorage, sessionStorage, window };
+}
+
+test("reads exact Google click IDs without marketing consent", () => {
+  const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
   const { debug } = loadAttribution({
     consent: "denied",
-    search: "?utm_campaign=LF01&gclid=CjwKCAjwsrbTBhAvEiwA0Bpp4example",
+    search: `?utm_campaign=LF01&gclid=${gclid}`,
   });
 
   assert.deepEqual(
     JSON.parse(JSON.stringify(debug.readAttributionFromUrl())),
-    { utm_campaign: "LF01" },
+    { utm_campaign: "LF01", gclid },
   );
 });
 
-test("uses a generic Google Ads reference before consent without exposing the click ID", () => {
+test("adds the exact click ID to WhatsApp without consent", () => {
   const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
   const link = {
     addEventListener() {},
@@ -114,11 +160,128 @@ test("uses a generic Google Ads reference before consent without exposing the cl
 
   assert.deepEqual(
     JSON.parse(JSON.stringify(debug.readAttributionFromUrl())),
-    { origem: "G26ADS" },
+    { gclid, origem: "G26ADS" },
   );
   const message = new URL(link.href).searchParams.get("text");
-  assert.match(message, /Ref\. G26ADS-lifting-facial$/);
-  assert.doesNotMatch(message, /GCLID:/);
+  assert.match(message, /Ref\. G26ADS-lifting-facial/);
+  assert.match(message, new RegExp(`GCLID: ${gclid}$`));
+});
+
+test("keeps the Google click ID across pages in the same unconsented session", () => {
+  const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4session";
+  const firstPage = loadAttribution({
+    consent: "denied",
+    readyState: "complete",
+    search: `?gclid=${gclid}`,
+  });
+  const stored = firstPage.sessionStorage.getItem(
+    "amanda_marketing_attribution",
+  );
+
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "final", procedure: "blefaroplastia" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() {
+      return true;
+    },
+    textContent: "Ver horários",
+  };
+  loadAttribution({
+    consent: "denied",
+    links: [link],
+    readyState: "complete",
+    sessionInitial: { amanda_marketing_attribution: stored },
+  });
+
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /Ref\. G26ADS-blefaroplastia/);
+  assert.match(message, new RegExp(`GCLID: ${gclid}$`));
+});
+
+test("treats GBRAID and WBRAID as consent-independent Google click IDs", () => {
+  for (const param of ["gbraid", "wbraid"]) {
+    const value = `0AAAAA_${param}_example`;
+    const { debug } = loadAttribution({
+      consent: "denied",
+      search: `?${param}=${value}`,
+    });
+    assert.equal(debug.readAttributionFromUrl()[param], value);
+  }
+});
+
+test("does not load or send any external measurement on an unconsented click", () => {
+  const listeners = {};
+  const link = {
+    addEventListener(type, listener) {
+      listeners[type] = listener;
+    },
+    closest() {
+      return null;
+    },
+    dataset: { ctaLocation: "hero", procedure: "lifting-facial" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+  const { window } = loadAttribution({
+    consent: "denied",
+    links: [link],
+    readyState: "complete",
+    search: "?gclid=CjwKCAjwsrbTBhAvEiwA0Bpp4nomeasure",
+    setupSource: `
+      window.__measurementCalls = [];
+      window.gtag = function () { window.__measurementCalls.push(Array.from(arguments)); };
+      window.AmandaConsent = {
+        prepareMinimalWhatsAppMeasurement: function () { window.__minimalPrepared = true; }
+      };
+    `,
+  });
+
+  listeners.click();
+
+  assert.equal(window.__measurementCalls.length, 0);
+  assert.equal(window.__minimalPrepared, undefined);
+  assert.equal(window.__amandaLastMeasurementEvent.mode, "attribution_only");
+});
+
+test("sends Google measurement after consent is granted", () => {
+  const listeners = {};
+  const link = {
+    addEventListener(type, listener) {
+      listeners[type] = listener;
+    },
+    closest() {
+      return null;
+    },
+    dataset: { ctaLocation: "final", procedure: "blefaroplastia" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() {
+      return true;
+    },
+    textContent: "Ver horários",
+  };
+  const { window } = loadAttribution({
+    consent: "granted",
+    links: [link],
+    readyState: "complete",
+    setupSource: `
+      window.AMANDA_TRACKING_CONFIG.ga4Id = "G-TEST";
+      window.AMANDA_TRACKING_CONFIG.googleAdsId = "AW-TEST";
+      window.AMANDA_TRACKING_CONFIG.googleAdsConversionLabel = "LABEL";
+      window.__measurementCalls = [];
+      window.gtag = function () { window.__measurementCalls.push(Array.from(arguments)); };
+    `,
+  });
+
+  listeners.click();
+
+  assert.equal(window.__measurementCalls.length, 2);
+  assert.equal(window.__measurementCalls[0][1], "whatsapp_click");
+  assert.equal(window.__measurementCalls[1][1], "conversion");
+  assert.equal(window.__amandaLastMeasurementEvent.mode, "consented");
 });
 
 test("every organic site CTA gets a stable SITE reference", () => {
@@ -152,7 +315,7 @@ test("keeps exact click IDs after explicit consent", () => {
   assert.equal(debug.readAttributionFromUrl().gclid, gclid);
 });
 
-test("adds the exact click ID to WhatsApp only after explicit consent", () => {
+test("continues adding the exact click ID after explicit consent", () => {
   const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
   const link = {
     addEventListener() {},
@@ -176,26 +339,69 @@ test("adds the exact click ID to WhatsApp only after explicit consent", () => {
   assert.match(message, new RegExp(`GCLID: ${gclid}$`));
 });
 
-test("revocation removes stored click IDs but keeps neutral campaign codes", () => {
-  const { debug, sessionStorage } = loadAttribution({ consent: "denied" });
-  sessionStorage.setItem(
-    "amanda_marketing_attribution",
-    JSON.stringify({ utm_campaign: "LF01", gclid: "previous-click-id" }),
-  );
+test("stored click IDs remain available in the session without consent", () => {
+  const gclid = "previous-click-id";
+  const { debug, sessionStorage } = loadAttribution({
+    consent: "denied",
+    sessionInitial: {
+      amanda_marketing_attribution: JSON.stringify({
+        utm_campaign: "LF01",
+        gclid,
+      }),
+    },
+  });
 
   assert.deepEqual(
     JSON.parse(JSON.stringify(debug.loadStoredAttribution())),
-    { utm_campaign: "LF01" },
+    { utm_campaign: "LF01", gclid },
   );
   assert.deepEqual(
     JSON.parse(sessionStorage.getItem("amanda_marketing_attribution")),
-    { utm_campaign: "LF01" },
+    { utm_campaign: "LF01", gclid },
   );
 });
 
-test("the consent loader clears WhatsApp attribution and announces denial", () => {
+test("the consent loader preserves session click IDs while announcing denial", () => {
   assert.match(loaderSource, /'amanda_marketing_attribution'/);
+  assert.match(loaderSource, /consentIndependentClickIdKeys/);
+  assert.match(loaderSource, /sessionStorage\.setItem\(marketingAttributionStorageKey/);
   assert.match(loaderSource, /CustomEvent\('amanda:consent-denied'\)/);
+});
+
+test("revoking consent clears optional attribution but preserves session click IDs", () => {
+  const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4revoke";
+  const manager = loadConsentManager({
+    local: {
+      amanda_tracking_consent: "granted",
+      amanda_click_id_gclid: "legacy-persistent-id",
+      amanda_marketing_attribution: JSON.stringify({ gclid }),
+      amanda_first_touch: "optional",
+    },
+    session: {
+      amanda_click_id_gclid: JSON.stringify({
+        value: gclid,
+        expiresAt: Date.now() + 60_000,
+      }),
+      amanda_marketing_attribution: JSON.stringify({
+        utm_campaign: "LF01",
+        gclid,
+      }),
+      amanda_first_touch: "optional",
+    },
+  });
+
+  manager.window.AmandaConsent.revoke();
+
+  assert.equal(manager.localStorage.getItem("amanda_click_id_gclid"), null);
+  assert.equal(manager.localStorage.getItem("amanda_marketing_attribution"), null);
+  assert.equal(manager.localStorage.getItem("amanda_first_touch"), null);
+  assert.ok(manager.sessionStorage.getItem("amanda_click_id_gclid"));
+  assert.deepEqual(
+    JSON.parse(manager.sessionStorage.getItem("amanda_marketing_attribution")),
+    { gclid },
+  );
+  assert.equal(manager.sessionStorage.getItem("amanda_first_touch"), null);
+  assert.ok(manager.dispatched.includes("amanda:consent-denied"));
 });
 
 test("otoplasty campaign keeps campaign, creative and child journey in the WhatsApp reference", () => {

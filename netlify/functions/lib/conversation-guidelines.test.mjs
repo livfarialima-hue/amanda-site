@@ -3,7 +3,10 @@ import test from "node:test";
 import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
 
 test("conversion playbook defines identity, progression and low-friction qualification", () => {
-  assert.match(CONVERSATION_GUIDELINES, /Eu sou a Bruna/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
+  );
   assert.match(
     CONVERSATION_GUIDELINES,
     /comece sempre com "Olá"/,
@@ -61,8 +64,8 @@ test("conversion playbook defines identity, progression and low-friction qualifi
 
 test("playbook protects price, scheduling, continuity and human handoff", () => {
   assert.match(CONVERSATION_GUIDELINES, /appointment_review/);
-  assert.match(CONVERSATION_GUIDELINES, /três opções/);
-  assert.match(CONVERSATION_GUIDELINES, /não responda apenas que "depende"/);
+  assert.match(CONVERSATION_GUIDELINES, /duas opções/);
+  assert.match(CONVERSATION_GUIDELINES, /não responda apenas que "depende"/i);
   assert.match(
     CONVERSATION_GUIDELINES,
     /Transparência vem antes das condições de pagamento/,
@@ -82,7 +85,15 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /condição à vista/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /qualquer procedimento cirúrgico, inclusive frontoplastia/,
+    /média ou faixa de qualquer outro procedimento/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /minilifting entre R\$ 18 mil e R\$ 25 mil/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /lifting facial entre R\$ 26 mil e R\$ 42 mil/,
   );
   assert.match(CONVERSATION_GUIDELINES, /margem de 10% abaixo/);
   assert.match(
@@ -99,19 +110,19 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /sugestão em faixa baseada na tabela interna/,
+    /resposta padrão em faixa baseada na tabela interna/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Nenhum valor cirúrgico pode ser enviado automaticamente/,
+    /Não envie faixa nessa primeira resposta/i,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /aguarde o prazo configurado de 20 minutos/,
+    /valores competitivos, condição à vista e parcelamento antecipado/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /envie a confirmação imediatamente/,
+    /hospital, anestesia, materiais e acompanhamento/,
   );
   assert.match(CONVERSATION_GUIDELINES, /use human_review/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);
@@ -125,6 +136,10 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /permaneça em silêncio/,
   );
   assert.match(CONVERSATION_GUIDELINES, /não tiver sido executada/);
+  assert.match(CONVERSATION_GUIDELINES, /duas opções reais de horário/);
+  assert.match(CONVERSATION_GUIDELINES, /cerca de 24 horas/);
+  assert.match(CONVERSATION_GUIDELINES, /cerca de 72 horas/);
+  assert.match(CONVERSATION_GUIDELINES, /Depois de duas retomadas/);
 });
 
 test("playbook uses approved site content at a strategic moment", () => {
@@ -146,7 +161,7 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
   assert.match(CONVERSATION_GUIDELINES, /não repita URL ou página/);
-  assert.match(CONVERSATION_GUIDELINES, /guia de custos pode vir depois da faixa/);
+  assert.match(CONVERSATION_GUIDELINES, /guia de custos faciais pertence à primeira resposta institucional/);
   assert.match(CONVERSATION_GUIDELINES, /Não ofereça o guia de custos faciais para cirurgia de mama/);
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -228,6 +243,33 @@ test("playbook handles appearance insecurity without exploiting it", () => {
     CONVERSATION_GUIDELINES,
     /Não use antes e depois para provocar comparação/,
   );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não repita nem amplifique esse rótulo/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Seja sempre educada, empática, gentil e respeitosa/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Quando a pessoa enviar uma foto, agradecer a confiança/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Nunca elogie, critique, compare ou interprete o corpo mostrado/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não transforme a vulnerabilidade em argumento para consulta ou cirurgia/,
+  );
+});
+
+test("playbook prohibits unfinished or contaminated outbound content", () => {
+  assert.match(CONVERSATION_GUIDELINES, /Nunca produza placeholders/);
+  assert.match(CONVERSATION_GUIDELINES, /cartões vCard/);
+  assert.match(CONVERSATION_GUIDELINES, /links incompletos/);
+  assert.match(CONVERSATION_GUIDELINES, /horário duplicados/);
 });
 
 test("playbook ignores commercial and unrelated approaches while preserving context", () => {

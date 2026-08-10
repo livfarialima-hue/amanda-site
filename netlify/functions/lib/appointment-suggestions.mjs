@@ -1,6 +1,10 @@
 const MAX_ALERT_TEXT_LENGTH = 650;
 const SCHEDULING_CONTEXT_PATTERN =
   /\b(?:agend|horari|disponib|periodo|dia|data|avaliacao|consulta)\w*/i;
+const APPOINTMENT_OFFER_PATTERN =
+  /\b(?:duas?\s+op[cç][oõ]es|ver\s+(?:os\s+)?hor[aá]rios|ver\s+(?:a\s+)?agenda|posso\s+(?:verificar|separar|mostrar)|quer\s+(?:que\s+eu\s+)?(?:veja|ver|receber)|agendar|marcar\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o))\b/i;
+const APPOINTMENT_ACCEPTANCE_PATTERN =
+  /^(?:sim|claro|pode|por\s+favor|sim[,!]?\s+por\s+favor|quero|gostaria|vamos|pode\s+ser|quero\s+sim)[.!\s]*$/i;
 const PERIODS = {
   morning: ["manha", "matutino"],
   afternoon: ["tarde", "vespertino"],
@@ -113,6 +117,31 @@ export function hasAppointmentPreference(value) {
   );
 }
 
+export function hasAppointmentPreferenceInConversation(
+  value,
+  recentConversation = [],
+) {
+  if (hasAppointmentPreference(value)) return true;
+
+  return recentConversation
+    .filter((turn) => turn?.role !== "assistant" && turn?.source !== "bruna")
+    .slice(-4)
+    .some((turn) => hasAppointmentPreference(turn?.text));
+}
+
+export function buildAppointmentPreferenceCollectionReply({
+  patientName,
+  introduceBruna = false,
+} = {}) {
+  const firstName = String(patientName || "").trim().split(/\s+/)[0];
+  const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
+  const introduction = introduceBruna
+    ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+    : "";
+
+  return `${greeting}${introduction} Claro, posso te ajudar com o agendamento. Quais dias da semana e qual período — manhã ou tarde — costumam funcionar melhor para você?`;
+}
+
 export function isAppointmentPreferenceReply(
   value,
   recentConversation = [],
@@ -131,6 +160,29 @@ export function isAppointmentPreferenceReply(
       SCHEDULING_CONTEXT_PATTERN.test(normalize(turn?.text))
     );
   });
+}
+
+export function isAppointmentOfferAcceptance(
+  value,
+  recentConversation = [],
+) {
+  const current = String(value || "").trim();
+
+  if (!APPOINTMENT_ACCEPTANCE_PATTERN.test(current)) return false;
+
+  return recentConversation
+    .slice()
+    .reverse()
+    .some((turn) => {
+      const isClinic =
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source);
+
+      return (
+        isClinic &&
+        APPOINTMENT_OFFER_PATTERN.test(String(turn?.text || ""))
+      );
+    });
 }
 
 export function selectAppointmentSlots(slots, preferenceText = "") {
@@ -160,7 +212,7 @@ export function selectAppointmentSlots(slots, preferenceText = "") {
       return { slot, index, score };
     })
     .sort((left, right) => left.score - right.score || left.index - right.index)
-    .slice(0, 3)
+    .slice(0, 2)
     .map(({ slot }) => slot);
 }
 
@@ -229,9 +281,9 @@ export function buildAppointmentSuggestion({
       `AGENDAMENTO — ${clinician}`,
       displayPreference(preferenceText),
       "Sugestão para copiar ao paciente:",
-      `${patientGreeting} Para ${subject} com ${clinician}, temos estas opções:`,
+      `${patientGreeting} ${clinician} consegue avaliar esse ponto e explicar qual abordagem faz mais sentido. Neste momento, há duas opções reais na agenda para ${subject}:`,
       options,
-      "Se nenhum destes horários for possível, posso procurar outras opções.",
+      "Alguma delas funciona para você? Se não, me diga quais dias ou períodos costumam ser melhores e procuro outras opções.",
     ].filter(Boolean).join("\n"),
   );
 }

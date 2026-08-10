@@ -1,16 +1,56 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildAppearanceDistressReviewReply,
+  buildCampaignReferenceExplanationReply,
   buildConsultationInformationReply,
+  buildImageAcknowledgementReply,
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
+  buildOfficialChannelsReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
   REACTIVATION_REPLY,
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("acknowledges a patient photo gently without interpreting it", () => {
+  const firstReply = buildImageAcknowledgementReply({
+    patientName: "Mariana Silva",
+  });
+
+  assert.match(
+    firstReply,
+    /^Olá, Mariana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+  );
+  assert.match(firstReply, /Obrigada por confiar em nós/i);
+  assert.match(firstReply, /encaminhá-la à equipe/i);
+  assert.match(firstReply, /Não fazemos diagnóstico/i);
+  assert.match(firstReply, /apenas pela imagem/i);
+  assert.doesNotMatch(firstReply, /defeito|corrigir|bonit[ao]|feio/i);
+
+  const continuation = buildImageAcknowledgementReply({
+    patientName: "Mariana Silva",
+    greetPatient: false,
+    introduceBruna: false,
+  });
+  assert.doesNotMatch(continuation, /Olá|Eu sou a Bruna/);
+  assert.match(continuation, /^Obrigada por confiar em nós/i);
+});
+
+test("suggests an empathetic human response for intense body distress", () => {
+  const reply = buildAppearanceDistressReviewReply({
+    patientName: "Mariana Silva",
+  });
+
+  assert.match(reply, /^Olá, Mariana!/);
+  assert.match(reply, /compartilhar algo tão sensível/i);
+  assert.match(reply, /sem julgamentos/i);
+  assert.match(reply, /como você está se sentindo/i);
+  assert.doesNotMatch(reply, /defeito|corrigir|cirurgia vai|autoestima/i);
+});
 
 test("answers a named health plan directly while clarifying the requested specialty", () => {
   const reply = buildInsuranceAcceptanceReply({
@@ -68,12 +108,47 @@ test("opens a prefilled site inquiry without assuming scheduling intent", () => 
 
   assert.equal(
     reply,
-    "Olá, Fabrícia! Eu sou a Bruna, da Clínica LIV Faria Lima. " +
+    "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre avaliação facial. " +
       "O que você gostaria de entender primeiro sobre avaliação facial?",
   );
   assert.doesNotMatch(reply, /manhã|tarde|noite|horário/i);
   assert.doesNotMatch(reply, /obrigada pela confiança/i);
+});
+
+test("sends the official Instagram and lifting page without asking the team", () => {
+  const reply = buildOfficialChannelsReply({
+    patientName: "MARINA",
+    procedure: "lifting_facial",
+    introduceBruna: false,
+    explainCampaignReference: true,
+  });
+
+  assert.match(reply, /^Claro!/);
+  assert.match(
+    reply,
+    /https:\/\/www\.instagram\.com\/dra\.amanda_plastica\//,
+  );
+  assert.match(
+    reply,
+    /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
+  );
+  assert.match(reply, /apenas um código interno/i);
+  assert.match(reply, /Não é um termo médico/i);
+  assert.doesNotMatch(reply, /vou confirmar|com a equipe|segurança/i);
+});
+
+test("explains the campaign reference directly and uses natural name casing", () => {
+  const reply = buildCampaignReferenceExplanationReply({
+    patientName: "MARINA",
+    introduceBruna: true,
+  });
+
+  assert.match(reply, /^Olá, Marina!/);
+  assert.match(reply, /código interno/i);
+  assert.match(reply, /não muda seu atendimento/i);
+  assert.doesNotMatch(reply, /Olá, MARINA/);
+  assert.doesNotMatch(reply, /vou confirmar|equipe/i);
 });
 
 test("builds a natural routing greeting without internal codes", () => {
@@ -83,6 +158,10 @@ test("builds a natural routing greeting without internal codes", () => {
   });
 
   assert.match(reply, /^Olá, Maria!/);
+  assert.match(
+    reply,
+    /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
+  );
   assert.match(reply, /Dra\. Amanda/);
   assert.match(reply, /Dr\. Daniel/);
   assert.doesNotMatch(reply, /ORG-DIR-01/);
@@ -119,7 +198,7 @@ test("explains the consultation gradually without anticipating price or a link",
 
   assert.match(
     reply,
-    /^Olá, Rô! Eu sou a Bruna, da Clínica LIV Faria Lima\. Claro\./,
+    /^Olá, Rô! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\. Claro\./,
   );
   assert.match(reply, /conversa sobre o que você percebe no rosto/);
   assert.match(reply, /face e o pescoço em repouso e em movimento/);

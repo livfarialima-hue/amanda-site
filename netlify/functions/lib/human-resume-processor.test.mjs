@@ -12,6 +12,8 @@ const ACTIVE_ENV = {
   HUMAN_RESUME_END_HOUR: "20",
   OPENAI_API_KEY: "test-key",
 };
+const INITIAL_PRICE_REPLY =
+  "Os valores variam conforme a avaliação. Trabalhamos com valores competitivos e parcelamento. Veja https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
 
 function job(overrides = {}) {
   return {
@@ -201,7 +203,7 @@ test("a safe active conversation continues at night", async () => {
   );
 });
 
-test("surgical price acknowledges the patient and alerts the reviewer with a suggestion", async () => {
+test("the initial price information is sent after the human-resume window without an alert", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
     job({
@@ -226,47 +228,68 @@ test("surgical price acknowledges the patient and alerts the reviewer with a sug
     },
   );
 
-  assert.equal(result.status, "waiting_human");
-  assert.equal(result.holdingSent, true);
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(result.reason, "price_initial_information");
   assert.equal(deps.patientMessages.length, 1);
+  assert.doesNotMatch(
+    deps.patientMessages[0].body,
+    /R\$ 18 mil|R\$ 26 mil/,
+  );
+  assert.match(deps.patientMessages[0].body, /valores competitivos/i);
+  assert.match(deps.patientMessages[0].body, /parcelamento antecipado/);
   assert.match(
     deps.patientMessages[0].body,
-    /faixa de referência para o lifting facial/,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
-  assert.match(
-    deps.patientMessages[0].body,
-    /possibilidades de pagamento/,
-  );
-  assert.doesNotMatch(deps.patientMessages[0].body, /R\$/);
-  assert.equal(deps.alerts.length, 1);
-  assert.match(
-    deps.alerts[0].messageText,
-    /A mensagem de espera foi enviada uma única vez/,
-  );
-  assert.match(
-    deps.alerts[0].messageText,
-    /Minilifting: entre R\$ 18 mil e R\$ 25 mil/,
-  );
-  assert.match(
-    deps.alerts[0].messageText,
-    /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/,
-  );
-  assert.match(
-    deps.alerts[0].messageText,
-    /parcelamento antecipado/,
-  );
-  assert.match(
-    deps.alerts[0].messageText,
-    /Prefere manhã ou tarde/,
-  );
-  assert.ok(deps.alerts[0].messageText.length <= 1_024);
+  assert.equal(deps.alerts.length, 0);
   assert.equal(
     deps.completions[0].options.controlStatus,
-    "waiting_human",
+    "bruna_resumed",
   );
 });
 
-test("surgical price resume does not suggest the facial guide twice", async () => {
+test("another surgical price still waits for human review with a complete suggestion", async () => {
+  const deps = dependencies();
+  deps.sendControlledPatientReplyImpl = async (input) => {
+    deps.patientMessages.push(input);
+    return { status: "completed" };
+  };
+  const result = await processHumanResumeJob(
+    job({
+      eventId: "patient-price-blefaroplasty",
+      procedure: "blefaroplastia",
+      text: "Quanto custa a blefaroplastia?",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: INITIAL_PRICE_REPLY,
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Quanto custa a blefaroplastia?",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "waiting_human");
+  assert.equal(result.holdingSent, true);
+  assert.equal(deps.patientMessages.length, 1);
+  assert.doesNotMatch(deps.patientMessages[0].body, /R\$/);
+  assert.equal(deps.alerts.length, 1);
+  assert.match(deps.alerts[0].messageText, /entre R\$ 18 mil e R\$ 23 mil/);
+  assert.match(deps.alerts[0].messageText, /segurança, naturalidade/);
+  assert.match(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
+});
+
+test("direct lifting price resume does not suggest the facial guide twice", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
     job({
@@ -292,18 +315,19 @@ test("surgical price resume does not suggest the facial guide twice", async () =
     },
   );
 
-  assert.equal(result.status, "waiting_human");
+  assert.equal(result.status, "bruna_resumed");
   assert.match(
-    deps.alerts[0].messageText,
+    deps.patientMessages[0].body,
     /entre R\$ 26 mil e R\$ 42 mil/,
   );
   assert.doesNotMatch(
-    deps.alerts[0].messageText,
+    deps.patientMessages[0].body,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
+  assert.equal(deps.alerts.length, 0);
 });
 
-test("a surgical price request at night acknowledges receipt and defers the value", async () => {
+test("the approved lifting price may continue directly at night", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
     job({
@@ -312,7 +336,7 @@ test("a surgical price request at night acknowledges receipt and defers the valu
         {
           role: "assistant",
           source: "equipe_humana",
-          text: "O lifting é avaliado individualmente.",
+          text: INITIAL_PRICE_REPLY,
         },
         {
           role: "patient",
@@ -328,26 +352,14 @@ test("a surgical price request at night acknowledges receipt and defers the valu
     },
   );
 
-  assert.equal(result.status, "waiting_human");
-  assert.equal(result.holdingSent, true);
+  assert.equal(result.status, "bruna_resumed");
   assert.equal(deps.patientMessages.length, 1);
   assert.match(
     deps.patientMessages[0].body,
-    /faixa de referência para o lifting facial/,
+    /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/,
   );
-  assert.match(
-    deps.patientMessages[0].body,
-    /te retorno pela manhã/,
-  );
-  assert.doesNotMatch(
-    deps.patientMessages[0].body,
-    /R\$/,
-  );
-  assert.equal(deps.alerts.length, 1);
-  assert.match(
-    deps.alerts[0].messageText,
-    /entre R\$ 26 mil e R\$ 42 mil/,
-  );
+  assert.doesNotMatch(deps.patientMessages[0].body, /retorno pela manhã/);
+  assert.equal(deps.alerts.length, 0);
 });
 
 test("low confidence sends one holding message and one alert", async () => {

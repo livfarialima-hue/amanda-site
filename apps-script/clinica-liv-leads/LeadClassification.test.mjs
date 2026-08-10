@@ -98,7 +98,7 @@ test("a qualified row with GCLID becomes ready for IMPORT_GCLID", () => {
   );
   assert.deepEqual(
     JSON.parse(JSON.stringify(writes[0].values)),
-    [["Sim", "Lead qualificado", 0]],
+    [["Sim", "Lead qualificado", 1]],
   );
   assert.match(writes[1].values[0][1], /^WA-20260802-G26F03-7777$/);
 });

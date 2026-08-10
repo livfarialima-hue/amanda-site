@@ -20,7 +20,7 @@ function requestFor(payload) {
   });
 }
 
-test("scheduling request sends a three-slot suggestion to the reviewer only", async () => {
+test("explicit availability request immediately prepares two real slots for review", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -47,7 +47,7 @@ test("scheduling request sends a three-slot suggestion to the reviewer only", as
     WHATSAPP_ALERT_NUMBER: "+5511967743374",
     WHATSAPP_APPOINTMENT_REVIEW_ENABLED: "true",
     YCLOUD_ALERT_TEMPLATE_NAME: "alerta_revisao_liv_v1",
-    WHATSAPP_AUTOMATION_MODE: "off",
+    WHATSAPP_AUTOMATION_MODE: "active",
   });
   console.log = () => {};
   globalThis.fetch = async (url, options) => {
@@ -114,6 +114,8 @@ test("scheduling request sends a three-slot suggestion to the reviewer only", as
 
     assert.equal(response.status, 200);
     assert.equal(body.appointmentReviewQueued, true);
+    assert.equal(body.appointmentNeedsPreference, false);
+    assert.equal(body.appointmentPreferenceReplySent, false);
     assert.equal(body.reviewAlertQueued, false);
     assert.deepEqual(
       requests.filter((request) => request.url === SHEETS_URL).map(
@@ -126,23 +128,16 @@ test("scheduling request sends a three-slot suggestion to the reviewer only", as
         "send_review_alert_email",
       ],
     );
-    const scheduleRequest = requests.find(
-      (request) =>
-        request.url === SHEETS_URL &&
-        JSON.parse(request.options.body).action === "get_available_slots",
-    );
-    assert.equal(JSON.parse(scheduleRequest.options.body).limit, 50);
-
-    const alertRequest = requests.find(
+    const reviewRequest = requests.find(
       (request) => request.url === "https://api.ycloud.com/v2/whatsapp/messages",
     );
-    const alertBody = JSON.parse(alertRequest.options.body);
-    assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
-    assert.notEqual(alertBody.to, "+5511900000000");
-    assert.match(
-      alertBody.template.components[0].parameters[2].text,
-      /1\. segunda-feira \(27\/07\/2026\) às 08:00/,
-    );
+    const reviewBody = JSON.parse(reviewRequest.options.body);
+    const serializedReview = JSON.stringify(reviewBody);
+    assert.equal(reviewBody.to, "+5511967743374");
+    assert.match(serializedReview, /duas opções reais na agenda/i);
+    assert.match(serializedReview, /08:00/);
+    assert.match(serializedReview, /10:00/);
+    assert.doesNotMatch(serializedReview, /13:00/);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

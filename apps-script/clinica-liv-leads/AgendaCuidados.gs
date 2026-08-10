@@ -380,15 +380,14 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
   }
 
   const manualOnly = entrada.neverBotReply === true;
-  const manualSuggestion = manualOnly
-    ? "Oi! Passando para lembrar da sua consulta com " +
-      entrada.profissional +
-      " em " +
-      formatarDataRetomadas_(consulta, "dd/MM/yyyy") +
-      " às " +
-      formatarDataRetomadas_(consulta, "HH:mm") +
-      ". Se precisar de alguma orientação antes, estamos por aqui."
-    : "";
+  const reminderSuggestion =
+    "Oi! Passando para lembrar da sua consulta com " +
+    entrada.profissional +
+    " em " +
+    formatarDataRetomadas_(consulta, "dd/MM/yyyy") +
+    " às " +
+    formatarDataRetomadas_(consulta, "HH:mm") +
+    ". Se precisar de alguma orientação antes, estamos por aqui.";
 
   const lembretes = planejarLembretesConsultaHoje_({
     agora: entrada.agora,
@@ -438,7 +437,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
       automatico: !manualOnly,
       futuro: false,
       prioridade: 2,
-      sugestao: manualSuggestion,
+      sugestao: reminderSuggestion,
     });
   }
 
@@ -491,7 +490,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
       automatico: !manualOnly,
       futuro: true,
       prioridade: 8,
-      sugestao: manualSuggestion,
+      sugestao: reminderSuggestion,
     });
   });
 }
@@ -685,11 +684,10 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
       automatico: !aguardandoAtivacao,
       futuro: false,
       prioridade: aguardandoAtivacao ? 1 : 3,
-      sugestao: aguardandoAtivacao
-        ? "Oi, " +
-          entrada.primeiroNome +
-          "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida. Queremos que você se sinta tranquila e bem orientada em cada etapa."
-        : "",
+      sugestao:
+        "Oi, " +
+        entrada.primeiroNome +
+        "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida. Queremos que você se sinta tranquila e bem orientada em cada etapa.",
     });
   }
 
@@ -933,7 +931,17 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       automatico: false,
       futuro: true,
       prioridade: contextoCirurgico ? 6 : 8,
-      sugestao: "",
+      sugestao:
+        "Oi, " +
+        entrada.primeiroNome +
+        "! Passando para acompanhar com calma o próximo passo que combinamos. " +
+        (entrada.proximaAcao
+          ? "Sobre " +
+            entrada.proximaAcao.charAt(0).toLowerCase() +
+            entrada.proximaAcao.slice(1) +
+            ", "
+          : "") +
+        "se precisar esclarecer algo antes, estamos por aqui.",
     });
   }
 
@@ -996,7 +1004,10 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       automatico: false,
       futuro: false,
       prioridade: 6,
-      sugestao: "",
+      sugestao:
+        "Oi, " +
+        entrada.primeiroNome +
+        "! Quero organizar com você o próximo passo que conversamos. Quando for um bom momento, posso confirmar os detalhes e deixar tudo alinhado por aqui.",
     });
   }
 }
@@ -1523,10 +1534,10 @@ function montarTabelaCuidadosAgenda_(itens, automatico) {
       escaparHtmlRetomadas_(item.contexto),
       "<strong>Responsável:</strong> " +
         escaparHtmlRetomadas_(item.responsavel),
-      item.sugestao
-        ? "<strong>Mensagem sugerida:</strong> " +
-          escaparHtmlRetomadas_(item.sugestao)
-        : "",
+      "<strong>Mensagem sugerida:</strong> " +
+        escaparHtmlRetomadas_(
+          mensagemSugeridaItemRetomada_(item),
+        ),
     ].filter(Boolean).join("<br><br>");
 
     html +=
@@ -1542,6 +1553,7 @@ function montarTabelaCuidadosAgenda_(itens, automatico) {
       "</td>" +
       '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
       acao +
+      montarAcoesItemRetomadaHtml_(item) +
       "</td>" +
       "</tr>";
   });
@@ -1581,6 +1593,11 @@ function montarTabelaFuturosAgenda_(itens) {
       "</td>" +
       '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
       escaparHtmlRetomadas_(item.contexto) +
+      "<br><br><strong>Mensagem sugerida:</strong> " +
+      escaparHtmlRetomadas_(
+        mensagemSugeridaItemRetomada_(item),
+      ) +
+      montarAcoesItemRetomadaHtml_(item) +
       "</td>" +
       "</tr>";
   });

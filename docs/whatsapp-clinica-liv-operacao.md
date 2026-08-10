@@ -28,7 +28,7 @@ O diagnóstico público do endpoint deve indicar:
 - Dúvidas gerais seguras sobre avaliação e procedimentos.
 - Perguntas informativas como “como funciona a consulta?” ou “como funciona a avaliação?”, sem confundi-las com pedido de agenda.
 - Valor da consulta da Dra. Amanda: R$ 500, abatido se a cirurgia for realizada com a equipe.
-- Nenhum valor cirúrgico é enviado automaticamente; pedidos de preço recebem uma confirmação curta de que os valores serão conferidos e seguem para revisão humana.
+- A primeira pergunta sobre preço cirúrgico recebe uma resposta institucional curta, sem faixa: valores variam conforme avaliação e planejamento, a clínica trabalha com valores competitivos, oferece condição à vista e parcelamento antecipado, discrimina equipe, hospital, anestesia, materiais e acompanhamento e envia uma vez o guia de composição dos custos. Se a pessoa voltar a pedir média, lifting/minilifting pode receber automaticamente as faixas aprovadas; os demais procedimentos seguem para revisão humana com resposta em faixa sugerida.
 - Apresentação correta da Dra. Amanda: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria e Procedimentos pelo Einstein, CRM-SP 191605, RQE 110472 e atuação com foco em cirurgias da face.
 - Esclarecimento sutil de barreiras como segurança, experiência, resultado artificial, preço, localização e pressão para decidir.
 - Oferta cuidadosa da página do procedimento, seção de resultados ou artigo específico sobre recuperação, segurança, cicatriz e comparações — ou da página geral quando o procedimento ainda não estiver definido — para quem não veio do site.
@@ -37,20 +37,20 @@ A abordagem deve ser acolhedora, breve e progressiva: apresentação, estágio d
 
 Google, Meta e WhatsApp direto seguem a mesma estratégia. A mensagem e o histórico prevalecem sobre a origem. No Meta, a abertura pode reconhecer o anúncio; no Google, o procedimento ou a página pesquisada. O bot nunca presume que alguém está pronto para agendar apenas porque veio do Google.
 
-O site não deve ser enviado na primeira resposta por rotina. Ele entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereço deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explícito. Não enviar junto de urgência ou pedido de agenda, nem repetir uma página já enviada. A resposta humana revisada sobre preço pode incluir o guia específico de custos, pois ele ajuda a explicar o orçamento total sem substituir a avaliação individual.
+O site não deve ser enviado na primeira resposta por rotina. A exceção é a primeira resposta institucional sobre preço cirúrgico, que pode trazer o guia específico de composição dos custos. Nos demais temas, o site entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereço deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explícito. Não enviar junto de urgência ou pedido de agenda, nem repetir uma página já enviada.
 
 Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segundos. Depois de elaborar a resposta, o sistema confere novamente qual foi a mensagem mais recente. Se outra mensagem tiver chegado durante a elaboração, a resposta anterior é cancelada e somente a intenção mais nova pode responder usando o histórico completo. Uma pergunta explícita, como preço, localização ou consulta, sempre prevalece sobre o roteiro do anúncio.
 
 ## Quando não responder automaticamente
 
-- Pedido de preço cirúrgico sem faixa atual aprovada.
+- Segunda pergunta por média de cirurgia que não seja lifting/minilifting, ou pedido de quantidade de parcelas, desconto, juros e composição exata do orçamento.
 - Preferência de data, dia, período ou horário para agendamento.
 - Situação potencialmente urgente.
 - Cardiologia ou procura pelo Dr. Daniel.
 - Dúvida fora do padrão ou que exija decisão humana.
 - Atendimento humano assumido e ainda dentro da janela protegida de 20 minutos.
 
-Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando aplicável. Em agendamento, o alerta contém até três opções da aba `Datas Consulta`. Em preço cirúrgico, a paciente recebe automaticamente apenas uma confirmação curta, sem valor, informando que a faixa atual será conferida. O alerta interno contém a pergunta e uma sugestão comercial completa em faixa baseada na tabela de referência quando houver correspondência confiável. A sugestão explica que o orçamento definitivo detalha equipe médica, anestesia, hospital, materiais e acompanhamento, informa consulta e pagamento já aprovados, oferece o guia de custos e termina com convite para avaliação. A faixa usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. O valor final continua dependendo de avaliação individual; Amanda revisa e envia manualmente a resposta completa se estiver de acordo.
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando aplicável. Em agendamento, a Bruna primeiro pergunta quais dias e se manhã ou tarde funcionam melhor. O alerta só é criado depois que a preferência existe e contém até três opções da aba `Datas Consulta`. A primeira pergunta sobre preço é respondida diretamente sem faixa. Se houver nova pergunta por média de lifting/minilifting, a paciente recebe as faixas aprovadas: R$ 18 mil a R$ 25 mil e R$ 26 mil a R$ 42 mil. Para outro procedimento, a paciente recebe apenas uma confirmação curta e a equipe recebe uma sugestão em faixa baseada na tabela de referência quando houver correspondência confiável. A faixa interna usa 10% abaixo da referência à vista e 10% acima da referência parcelada, arredondada em milhares. Amanda revisa e envia manualmente se estiver de acordo.
 
 ## Informações comerciais e localização
 
@@ -74,12 +74,12 @@ Esses contatos devem consumir o mínimo possível e não receber resposta autom�
 
 Quando uma mensagem é enviada pelo WhatsApp Business da clínica para a pessoa, o sistema registra atendimento humano e cancela qualquer retomada automática pendente.
 
-Se a paciente responder e não houver nova mensagem humana em 20 minutos, uma rotina executada a cada cinco minutos reavalia a conversa:
+Se a paciente responder depois de uma mensagem humana, uma rotina executada a cada cinco minutos reavalia a conversa. Assuntos administrativos e seguros podem voltar para a Bruna após cerca de 5 minutos; temas sensíveis preservam a janela de 20 minutos:
 
 - dúvidas simples e respostas de alta confiança podem ser retomadas pela Bruna em qualquer horário, pois são continuação de uma conversa ativa;
 - uma nova mensagem humana cancela a retomada, inclusive durante a elaboração da resposta;
 - agradecimentos e encerramentos simples não provocam nova mensagem;
-- preço cirúrgico, condições de pagamento, agenda e confirmação de horário continuam dependendo da equipe; à noite ou de madrugada recebem uma única mensagem curta informando que haverá retorno pela manhã, sem revelar valor ou disponibilidade;
+- a resposta inicial de preço e a segunda resposta de lifting/minilifting podem ser enviadas em conversa ativa a qualquer horário; média de outras cirurgias, condições exatas de pagamento, agenda e confirmação continuam dependendo da equipe e, à noite ou de madrugada, recebem uma única mensagem curta informando que haverá retorno pela manhã;
 - sintomas, possível urgência, segurança, documentos, pré ou pós-operatório, cardiologia, sofrimento intenso e demais temas reservados seguem para revisão humana; situações potencialmente urgentes nunca recebem promessa de aguardar até a manhã;
 - se o tema não for reservado, mas a Bruna não tiver confiança para responder, a mensagem de espera só é enviada quando há uma pergunta, pedido ou resposta a uma pergunta da clínica realmente pendente;
 - se não houver solicitação concreta pendente, a paciente não recebe uma mensagem artificial de espera: Amanda recebe o alerta para revisar a conversa;
@@ -88,6 +88,20 @@ Se a paciente responder e não houver nova mensagem humana em 20 minutos, uma ro
 - o horário não interrompe uma conversa que a própria paciente iniciou ou manteve.
 
 Cada tomada humana admite no máximo uma retomada automática. Uma nova mensagem enviada pelo WhatsApp Business inicia uma nova tomada e reinicia as proteções.
+
+## Aprendizado supervisionado
+
+Quando a Bruna recebe uma pergunta segura que ainda não sabe responder, ela segue esta ordem:
+
+1. procura uma resposta com status `Aprovada` na aba `Respostas Aprovadas` e usa o texto exatamente como foi aprovado;
+2. se faltar uma única informação essencial, faz uma pergunta curta de esclarecimento — no máximo uma vez;
+3. se a dúvida continuar sem resposta, avisa que confirmará a informação e registra o caso para o resumo diário, sem gerar alerta imediato a cada dúvida segura;
+4. quando Amanda ou a equipe responde pelo WhatsApp Business, a resposta humana é capturada como regra candidata com status `Revisar`;
+5. somente depois de revisão da equipe e mudança para `Aprovada` uma regra de baixo risco pode responder automaticamente.
+
+Regras de risco médio nascem como `Sugestão interna`. Regras de risco alto nascem como `Nunca automática`. Urgência, complicação, pós-operatório, diagnóstico, foto ou exame, prescrição, preço exato ou negociado, confirmação final de agenda e cardiologia nunca são liberados por esse aprendizado.
+
+A aba `Revisões do Bot` reúne classificações de baixa confiança, regras novas e possíveis correções. Quando a equipe marca uma revisão de classificação como `Concluída` e registra a decisão correta, essa orientação passa a ser usada como exemplo nas classificações futuras. O e-mail diário inclui as dúvidas sem resposta e as regras aguardando aprovação.
 
 ## Retomada após sete dias
 
@@ -99,6 +113,8 @@ Na primeira mensagem após mais de sete dias, a Bruna informa que está direcion
 - Leads do Dr. Daniel: aba separada, sem contaminar as métricas da Dra. Amanda.
 - Agenda semanal: aba `Datas Consulta`.
 - Consultas agendadas e realizadas: aba `Consultas`, que também controla os lembretes operacionais.
+- Respostas reutilizáveis: aba `Respostas Aprovadas`; somente linhas aprovadas e de baixo risco podem ser automáticas.
+- Exceções e correções: aba `Revisões do Bot`; os campos amarelos são destinados à decisão da equipe.
 - Histórico e controles técnicos: abas internas iniciadas por `_WHATSAPP_`.
 
 ### Preferências permanentes de contato
@@ -117,7 +133,7 @@ Ao alterar o status para `Consulta realizada`, a consulta é atualizada e o pós
 
 O pós-consulta usa o modelo utilitário `pos_consulta_cuidado_liv_v1`:
 
-> Olá! Aqui é a Bruna, da Clínica LIV. Passando para saber se ficou alguma dúvida depois da sua consulta com {{1}}. Se quiser conversar sobre alguma orientação ou próximo passo, pode responder por aqui. Estamos à disposição.
+> Olá! Aqui é a Bruna, concierge da Clínica LIV Faria Lima. Passando para saber se ficou alguma dúvida depois da sua consulta com {{1}}. Se quiser conversar sobre alguma orientação ou próximo passo, pode responder por aqui. Estamos à disposição.
 
 O modelo deve estar aprovado antes de configurar `WHATSAPP_POST_CONSULT_ENABLED=true`. Até lá, a fila permanece registrada e nenhuma mensagem é enviada.
 
@@ -164,8 +180,8 @@ O disparo automático permanece desligado até o modelo estar aprovado no WhatsA
 
 ### Todos os dias
 
-1. Conferir o e-mail informativo do plano de retomadas enviado por volta das 8h para Amanda e Daniel.
-2. Revisar o histórico antes de usar cada mensagem sugerida.
+1. Conferir o e-mail informativo do plano de retomadas enviado por volta das 8h para Amanda e Daniel; ele também mostra dúvidas ainda sem resposta e regras novas aguardando aprovação.
+2. Revisar o histórico antes de usar cada mensagem sugerida e decidir as linhas abertas em `Revisões do Bot`.
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
@@ -175,7 +191,7 @@ O e-mail é apenas informativo e separa com clareza:
 2. as ações humanas sugeridas, com horário e mensagem pronta;
 3. os marcos dos próximos sete dias, identificados como automáticos ou manuais.
 
-Primeiras retomadas seguras, sem preço ou agenda, aparecem como candidatas à Bruna, mas continuam sendo apenas planejamento enquanto não existir uma rotina específica e uma janela válida do WhatsApp. Preço, agenda, follow-ups tardios, aniversários, datas especiais e reativações de clientes antigos permanecem manuais.
+Primeiras retomadas seguras, sem agenda ou decisão humana, aparecem como candidatas à Bruna, mas continuam sendo apenas planejamento enquanto não existir uma rotina específica e uma janela válida do WhatsApp. A resposta inicial de preço e a faixa repetida de lifting seguem o fluxo automático aprovado; agenda, demais preços, follow-ups tardios, aniversários, datas especiais e reativações de clientes antigos permanecem manuais.
 
 ### Cadência de relacionamento
 
