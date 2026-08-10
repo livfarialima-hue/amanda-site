@@ -492,6 +492,31 @@
     recordDebug('whatsapp_click', mode);
   }
 
+  function trackContentDepthClick(link) {
+    if (!fullConsentGranted() || !googleMeasurementAvailable() || !config.ga4Id) return;
+
+    var trackId = String(link.dataset.trackId || '').trim().toLowerCase();
+    if (!/^[a-z0-9_-]{1,60}$/.test(trackId)) return;
+
+    var root = document.documentElement;
+    var pageType = root.dataset.pageType || 'content';
+    window.gtag('event', 'content_depth_click', {
+      event_category: 'navigation',
+      link_role: trackId,
+      page_type: pageType,
+      cta_location: link.dataset.ctaLocation || 'content',
+      transport_type: 'beacon',
+      send_to: config.ga4Id
+    });
+  }
+
+  function handleTrackedNavigationClick(event) {
+    var target = event && event.target;
+    if (!target || typeof target.closest !== 'function') return;
+    var link = target.closest('a[data-track="content-depth"]');
+    if (link) trackContentDepthClick(link);
+  }
+
   function bindWhatsAppTracking() {
     document.querySelectorAll(whatsappSelector).forEach(function (link) {
       if (link.dataset.amandaMeasurementBound === 'true') return;
@@ -519,6 +544,7 @@
 
   document.addEventListener('amanda:consent-granted', updateAllWhatsAppLinks);
   document.addEventListener('amanda:consent-denied', updateAllWhatsAppLinks);
+  document.addEventListener('click', handleTrackedNavigationClick, true);
 
   if (config.debug) {
     window.AmandaAttributionDebug = {

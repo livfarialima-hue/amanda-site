@@ -1,5 +1,7 @@
 # Estratégia de abordagem da Bruna
 
+> **Governança:** este arquivo é o manual detalhado da conversa no WhatsApp. O posicionamento, o funil e as decisões estratégicas de aquisição ficam em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
+
 ## Objetivo
 
 A Bruna deve transformar a procura em uma conversa segura, informativa e sem pressão. A meta não é prolongar o atendimento nem convencer alguém a operar: é responder à dúvida real, reduzir a principal barreira daquele momento e conduzir a pessoa ao próximo passo adequado.
@@ -222,6 +224,7 @@ Materiais selecionados automaticamente conforme a dúvida:
 | Segurança em cirurgia plástica | https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/ |
 | Como funciona a consulta | https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/ |
 | Quanto custa cirurgia plástica facial em São Paulo | https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ |
+| Quanto custa lifting facial em São Paulo | https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/ |
 
 ## Convite para consulta
 
@@ -243,7 +246,7 @@ Ao receber dia ou período, a Bruna não promete horário. O sistema busca opç�
 
 ## Retomadas
 
-A retomada é manual e deve ser conferida no histórico antes do envio. Ela deve soar como a continuação natural de uma conversa, nunca como cobrança, roteiro de vendas ou tentativa de provocar culpa pelo silêncio. A primeira retomada entrega utilidade em vez de apenas perguntar se a pessoa ainda tem interesse:
+A retomada deve ser conferida no histórico antes do envio. Ela deve soar como a continuação natural de uma conversa, nunca como cobrança, roteiro de vendas ou tentativa de provocar culpa pelo silêncio. A primeira retomada acontece após cerca de 24 horas, reconhece a objeção específica e entrega utilidade em vez de apenas perguntar se a pessoa ainda tem interesse:
 
 Quando a própria paciente disser que entrará em contato, que chamará a clínica ou que prefere voltar a falar mais tarde, respeitar um intervalo mínimo de 24 horas corridas antes de sequer incluir o contato no plano de retomadas. Não usar apenas a virada do dia como sinal de que já passou tempo suficiente.
 
@@ -268,13 +271,11 @@ Exemplo:
 
 > Olá! Lembrei da sua dúvida e separei um material da Dra. Amanda sobre naturalidade, identidade e planejamento facial. Ele explica como proporções, limites e preservação da expressão entram no planejamento. Talvez ele ajude você a pensar com calma: https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/ Se quiser, pode me contar o que ainda ficou em dúvida.
 
-A segunda retomada é curta e deixa a porta aberta:
+A segunda e última retomada acontece após cerca de 72 horas e oferece uma única prova pertinente à objeção, sem repetir material já enviado. Quando não houver prova adicional adequada, ela apenas deixa a porta aberta:
 
 > Olá! Só queria deixar o canal aberto caso você ainda esteja pensando no procedimento. Se quiser, posso retomar do ponto em que paramos, sem pressa.
 
-A terceira encerra o contato com respeito, sem urgência, desconto ou insistência:
-
-> Olá! Vou encerrar meus contatos por aqui para não ser inconveniente. Se em outro momento quiser retomar a conversa, será um prazer ajudar você.
+Depois de duas retomadas sem resposta, os contatos proativos são encerrados. Uma recusa clara, um pedido para não receber mensagens ou a decisão da própria pessoa de voltar a falar quando quiser encerram a sequência antes disso.
 
 ## O que ainda precisa ser validado antes de automatizar
 

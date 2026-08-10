@@ -1,5 +1,7 @@
 # Planejamento de mídia — agosto de 2026
 
+> **Governança:** este arquivo preserva o registro operacional das alterações. O posicionamento, os objetivos, as métricas e as regras de decisão vigentes ficam em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
+
 ## Registro de alterações
 
 ### 4 de agosto de 2026 — Google Ads | Otoplastia

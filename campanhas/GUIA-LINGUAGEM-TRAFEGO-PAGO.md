@@ -1,5 +1,7 @@
 # Linguagem de busca e tráfego pago
 
+> **Governança:** o norte estratégico canônico está em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`. Este arquivo é um guia técnico de linguagem e atribuição. Em caso de divergência estratégica, o norte canônico prevalece.
+
 Este guia organiza as expressões populares incorporadas ao site. Elas servem para melhorar correspondência entre busca, anúncio e página, mas não devem ser tratadas como diagnóstico nem usadas de modo a constranger a paciente.
 
 ## Regra de uso por canal
@@ -10,6 +12,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Manter o título do anúncio clínico e sóbrio: problema percebido + avaliação + localização.
 - Levar cada grupo à página específica que repete naturalmente aquela linguagem.
 - Separar intenção informativa de intenção de consulta; não misturar lifting, procedimentos minimamente invasivos e preço no mesmo grupo.
+- Para buscas como `lifting facial preço`, `valor do lifting` e `quanto custa lifting facial`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`. Para indicação, técnica, resultados e recuperação, preservar `https://draamandaschroeder.com.br/lifting-facial/` como destino principal.
 - Evitar promessas, superlativos, urgência artificial e afirmações como “resultado garantido”.
 
 ### Meta

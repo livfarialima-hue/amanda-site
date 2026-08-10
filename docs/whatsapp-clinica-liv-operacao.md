@@ -1,5 +1,7 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+> **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
+
 ## Estado de produção
 
 - Endpoint: `https://draamandaschroeder.com.br/api/ycloud/webhook`
@@ -195,7 +197,7 @@ Primeiras retomadas seguras, sem agenda ou decisão humana, aparecem como candid
 
 ### Cadência de relacionamento
 
-1. Procura inicial: primeira retomada no dia seguinte; segunda entre o quarto e o quinto dia; encerramento entre o nono e o décimo dia. Cada contato deve acrescentar utilidade ou reduzir uma dúvida, nunca apenas perguntar se a pessoa viu a mensagem.
+1. Procura inicial: primeira retomada após cerca de 24 horas, retomando a objeção específica; segunda e última após cerca de 72 horas, com uma prova pertinente. Depois de duas tentativas sem resposta, não há novo contato proativo. Cada mensagem deve acrescentar utilidade ou reduzir uma dúvida, nunca apenas perguntar se a pessoa viu a mensagem.
 2. Pós-consulta: acolhimento inicial cerca de três horas após a consulta quando a automação estiver habilitada; checagem humana no terceiro dia; contato humano no décimo quarto dia apenas se ainda fizer sentido e não houver interação recente.
 3. Aniversário: mensagem humana às 10h30, sem oferta comercial e sem mencionar procedimento.
 4. Datas especiais e jornada cirúrgica: somente quando registradas na aba `Consultas`, sempre com revisão humana.
@@ -207,7 +209,7 @@ Retomadas comerciais só podem ser planejadas entre 09:00 e 19:00, no fuso de S�
 
 Essa restrição vale para retomadas iniciadas pela clínica depois de silêncio. Quando a própria paciente inicia ou mantém uma conversa à noite, a Bruna pode continuar respondendo até o encerramento natural, respeitando os limites de preço, agenda, confirmação e segurança descritos acima.
 
-As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada pode entregar um conteúdo pertinente do site; a segunda continua especificamente o tema de preço ou agenda quando esse foi o ponto pendente e, nos demais casos, deixa o canal aberto sem pressa; a terceira encerra novos contatos de forma respeitosa. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
+As mensagens sugeridas devem parecer continuação de uma conversa: reconhecer a dúvida, retirar pressão por decisão e permitir que a pessoa responda no próprio ritmo. A primeira retomada continua a objeção específica registrada. A segunda e última acrescenta uma única prova pertinente, como material específico, explicação da consulta, credencial verificável ou composição de custos, sem repetir link já usado. Depois disso, os contatos proativos são encerrados. Sofrimento intenso relacionado à aparência e pedidos explícitos de interrupção excluem automaticamente o contato da lista.
 
 ### Quando assumir uma conversa
 

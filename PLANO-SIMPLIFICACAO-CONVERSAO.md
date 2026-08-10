@@ -1,6 +1,10 @@
 # Plano de simplificação e conversão do site
 
+> **Governança:** este arquivo registra a implementação do site. O norte estratégico vigente para aquisição e conversão do Google Ads fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
+
 Status: implementado, validado e preparado para publicação em 2 de agosto de 2026, após autorização expressa do responsável pelo site.
+
+Extensão de 9 de agosto de 2026: o guia geral de custos foi preservado como hub e passou a direcionar por procedimento. Uma página própria de preço de lifting facial foi criada para responder às buscas específicas, sem duplicar o conteúdo genérico.
 
 ## 1. Objetivo
 

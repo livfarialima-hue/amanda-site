@@ -42,9 +42,12 @@ function loadAttribution({
 } = {}) {
   const localStorage = storage({ amanda_tracking_consent: consent });
   const sessionStorage = storage(sessionInitial);
+  const documentListeners = {};
   const document = {
     readyState,
-    addEventListener() {},
+    addEventListener(type, listener) {
+      documentListeners[type] = listener;
+    },
     querySelectorAll() {
       return links;
     },
@@ -81,12 +84,54 @@ function loadAttribution({
   vm.runInNewContext(conversionSource, sandbox);
   return {
     debug: window.AmandaAttributionDebug,
+    documentListeners,
     links,
     localStorage,
     sessionStorage,
     window,
   };
 }
+
+test("measures the bridge from a price guide to the main procedure page only after consent", () => {
+  const link = {
+    dataset: {
+      ctaLocation: "price_explanation",
+      trackId: "procedure_overview",
+    },
+    closest(selector) {
+      return selector === 'a[data-track="content-depth"]' ? this : null;
+    },
+  };
+  const measured = loadAttribution({
+    consent: "granted",
+    links: [],
+    readyState: "complete",
+    setupSource: `
+      window.AMANDA_TRACKING_CONFIG.ga4Id = "G-TEST";
+      window.__measurementCalls = [];
+      window.gtag = function () { window.__measurementCalls.push(Array.from(arguments)); };
+    `,
+  });
+
+  measured.documentListeners.click({ target: link });
+
+  assert.equal(measured.window.__measurementCalls.length, 1);
+  assert.equal(measured.window.__measurementCalls[0][1], "content_depth_click");
+  assert.equal(measured.window.__measurementCalls[0][2].link_role, "procedure_overview");
+
+  const denied = loadAttribution({
+    consent: "denied",
+    links: [],
+    readyState: "complete",
+    setupSource: `
+      window.AMANDA_TRACKING_CONFIG.ga4Id = "G-TEST";
+      window.__measurementCalls = [];
+      window.gtag = function () { window.__measurementCalls.push(Array.from(arguments)); };
+    `,
+  });
+  denied.documentListeners.click({ target: link });
+  assert.equal(denied.window.__measurementCalls.length, 0);
+});
 
 function loadConsentManager({ local = {}, session = {} } = {}) {
   const localStorage = storage(local);
