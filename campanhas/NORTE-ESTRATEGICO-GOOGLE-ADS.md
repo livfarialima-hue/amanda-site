@@ -575,6 +575,17 @@ Decisão final:
 - **Regra para manter:** manter se a fila drenar sem leases vencidas e a auditoria confirmar a primeira aba, deduplicação e isolamento profissional.
 - **Regra para reverter:** pausar o classificador e retornar a importação à aba anterior caso apareça duplicidade, perda de histórico ou exclusão indevida; preservar todos os ledgers e o arquivo de quarentena para restauração.
 
+### 12 de agosto de 2026 — otimização das Functions sem alterar a jornada
+
+- **Status:** publicada e em aferição em produção.
+- **Mudança:** retirada do Async Workload antigo que já não participava do endpoint público e redução da varredura de recuperação de um para cinco minutos. O webhook direto, as travas contra duplicidade, a fila de recuperação, a integração com a planilha, a classificação e a retomada humana foram preservados.
+- **Motivo e evidência:** o projeto consumiu 93.934 de 125.000 invocações e 75 de 100 horas até 12 de agosto. Nas 24 horas auditadas, os dois runners auxiliares do Async Workload somaram 3.364 invocações, embora o endpoint público já operasse em direct_with_background_completion; ycloud-recovery acrescentava até 1.440 verificações por dia ao rodar a cada minuto.
+- **Hipótese:** remover o mecanismo órfão e reduzir apenas polling ocioso diminuirá mais de 70% das invocações sem alterar tempo de resposta das conversas normais ou a qualidade do registro de leads.
+- **Métrica principal:** invocações e GB-hora diários das Functions, com conferência adicional de mensagens recebidas, respostas únicas, registros na LEADS, fila de classificação e exceções recuperadas.
+- **Guardrails:** webhook e planilha permanecem imediatos; zero mensagem duplicada ou perdida; recuperação de exceção em até aproximadamente sete minutos na primeira tentativa; classificação e retomada humana mantidas em cinco minutos.
+- **Data de revisão:** 13 e 14 de agosto de 2026, após duas janelas completas de 24 horas.
+- **Regra para manter:** manter se as Functions caírem para menos de 1.500 invocações e 1,5 GB-hora por dia, sem aumento de erros operacionais.
+- **Regra para reverter:** restaurar temporariamente a frequência anterior da recuperação se houver falha real não retomada dentro da janela prevista; não restaurar o Async Workload órfão sem prova de necessidade no caminho público.
 ## 17. Documentos subordinados
 
 - `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`: linguagem, códigos e contrato técnico de atribuição.
