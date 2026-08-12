@@ -589,7 +589,7 @@ Decisão final:
 
 ### 12 de agosto de 2026 — recuperação durável de mensagens consecutivas
 
-- **Status:** correção validada em 468 testes e autorizada para publicação imediata.
+- **Status:** publicada em produção; 468 testes aprovados, Apps Script versão 70 e código da recuperação no Netlify deploy `6a7cd0fa1d5f6c0008d2d24d`.
 - **Mudança:** toda mensagem de entrada passa a entrar na fila durável antes das consultas de contexto. Uma mensagem consecutiva sem nova referência de campanha herda a única oportunidade ativa do telefone e repara em lugar o evento `route_pending`. A recuperação só conclui quando o roteamento e o trabalho automático também concluírem; uma duplicata ou um HTTP 200 não bastam. Se Amanda e Daniel tiverem oportunidades ativas simultâneas, o sistema bloqueia a herança e encaminha para revisão.
 - **Motivo e evidência:** uma lead de lifting do Meta enviou duas mensagens em 16 segundos. A primeira foi vinculada à oportunidade da Amanda, mas seu envio foi corretamente cancelado pelo debounce em favor da segunda. A segunda perdeu o contexto de campanha, ficou `route_pending` e a recuperação antiga interpretou a resposta técnica como suficiente. Resultado: linha de lead existente, pergunta sem resposta e nenhuma conclusão automática.
 - **Hipótese:** registrar a recuperação antes de operações lentas e exigir conclusão ponta a ponta eliminará silêncios em rajadas de mensagens sem aumentar respostas duplicadas nem contaminar os profissionais.
