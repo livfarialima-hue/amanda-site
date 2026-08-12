@@ -37,9 +37,9 @@ function recoveryAlert(job) {
     patientName,
     patientPhone: String(message.from || job.phone || ""),
     messageText: [
-      "FALHA DE REGISTRO — lead não inserido na planilha LEADS após 3 tentativas.",
+      "FALHA DE PROCESSAMENTO — mensagem não concluída pela Bruna/LEADS após 3 tentativas.",
       `Mensagem da paciente: ${String(message.text?.body || "Mensagem sem texto.")}`,
-      "Ação interna: cadastrar o contato manualmente na LEADS e conferir a conversa no WhatsApp.",
+        "Ação interna: conferir o roteamento na planilha LEADS, cadastrar o contato manualmente se ainda faltar e verificar se a paciente recebeu resposta.",
       "Sugestão para copiar somente se a paciente ainda estiver sem resposta:",
       `${greeting} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Posso te ajudar por aqui.`,
     ].join("\n"),
@@ -106,6 +106,7 @@ export async function processInboundRecoveryJob(
     response?.ok &&
     body &&
     body?.leadRecorded !== false &&
+    body?.automaticWorkFinished === true &&
     !["failed", "deferred"].includes(activeStatus),
   );
   if (completed) {
@@ -128,6 +129,10 @@ export async function processInboundRecoveryJob(
       status: "rescheduled",
       httpStatus: response?.status || null,
       aiActiveStatus: activeStatus || "unknown",
+      leadRouted: body?.leadRouted === true,
+      leadRouteStatus: String(body?.leadRouteStatus || "unknown"),
+      automaticWorkFinished:
+        body?.automaticWorkFinished === true,
     };
   }
 

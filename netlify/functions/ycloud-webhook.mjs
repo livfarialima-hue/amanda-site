@@ -2559,6 +2559,18 @@ export default async (request, context) => {
   const normalizedMessageType = String(message.type || "")
     .trim()
     .toLowerCase();
+  const recoveryRegistration =
+    normalizedMessageType === "text" && text.trim()
+      ? await registerInboundRecovery({
+          rawBody,
+          signature: request.headers.get("YCloud-Signature"),
+          contentType:
+            request.headers.get("content-type") || "application/json",
+          origin: new URL(request.url).origin,
+          eventId: String(eventId),
+          phone,
+        })
+      : { status: "skipped" };
   let replyDebounceMarkerStatus = "skipped";
   if (
     normalizedMessageType === "text" &&
@@ -2572,6 +2584,16 @@ export default async (request, context) => {
     });
     replyDebounceMarkerStatus = markerResult.status;
   }
+  const finishEarlyRecovery = async (outcome) => {
+    if (!["completed", "duplicate"].includes(recoveryRegistration.status)) {
+      return recoveryRegistration.status;
+    }
+    const completion = await completeInboundRecovery(
+      { eventId: String(eventId) },
+      { outcome },
+    );
+    return completion.status;
+  };
   let externalProfessionalContext =
     await getExternalProfessionalContext(phone);
   const directExternalProfessionalRequest =
@@ -2627,6 +2649,9 @@ export default async (request, context) => {
         ].join("\n"),
       });
     }
+    const recoveryStatus = await finishEarlyRecovery(
+      "external_professional_handoff",
+    );
     return json({
       received: true,
       ignored: true,
@@ -2635,6 +2660,7 @@ export default async (request, context) => {
       appointmentReserved: false,
       aiShadowQueued: false,
       aiActiveQueued: false,
+      recoveryStatus,
     });
   }
   if (
@@ -2710,6 +2736,9 @@ export default async (request, context) => {
             professional: appointmentSelection.professional,
             selection: appointmentSelection,
           });
+        const recoveryStatus = await finishEarlyRecovery(
+          "appointment_selection_processed",
+        );
 
         return json({
           received: true,
@@ -2725,6 +2754,7 @@ export default async (request, context) => {
             bookingResult.errorCode,
           aiShadowQueued: false,
           aiActiveQueued: false,
+          recoveryStatus,
         });
       }
 
@@ -2769,6 +2799,10 @@ export default async (request, context) => {
       }),
     );
 
+    const recoveryStatus = await finishEarlyRecovery(
+      "ignored_inbound_processed",
+    );
+
     return json({
       received: true,
       ignored: true,
@@ -2779,6 +2813,7 @@ export default async (request, context) => {
         ignoredReplyMarker.status,
       aiShadowQueued: false,
       aiActiveQueued: false,
+      recoveryStatus,
     });
   }
 
@@ -2786,20 +2821,6 @@ export default async (request, context) => {
   // the Amanda acquisition/conversion table. It never changes patient-facing
   // behavior.
   lead.professional = preliminaryAutomationPlan.professional;
-
-  const recoveryRegistration =
-    String(message.type || "").toLowerCase() === "text" &&
-    text.trim()
-      ? await registerInboundRecovery({
-          rawBody,
-          signature: request.headers.get("YCloud-Signature"),
-          contentType:
-            request.headers.get("content-type") || "application/json",
-          origin: new URL(request.url).origin,
-          eventId: String(eventId),
-          phone,
-        })
-      : { status: "skipped" };
 
   const delivery = await deliverLead(lead);
   const patientRelationship = {
@@ -2914,11 +2935,25 @@ export default async (request, context) => {
         selection: patientAppointmentSelection,
       });
 
+    const appointmentAutomaticWorkFinished =
+      delivery.ok &&
+      (
+        delivery.routed !== false ||
+        delivery.routeStatus === "nonlead"
+      ) &&
+      !["failed", "deferred"].includes(bookingResult.status);
+    const recoveryStatus = appointmentAutomaticWorkFinished
+      ? await finishEarlyRecovery("appointment_selection_processed")
+      : recoveryRegistration.status;
+
     return json({
       received: true,
       leadRecorded: delivery.ok,
       leadInserted: delivery.inserted === true,
       leadUpdated: delivery.updated === true,
+      leadRouted: delivery.routed !== false,
+      leadRouteStatus: delivery.routeStatus || "unknown",
+      automaticWorkFinished: appointmentAutomaticWorkFinished,
       duplicate: delivery.duplicate === true,
       duplicateReason: delivery.duplicateReason,
       conversationMemory: conversationMemoryStatus,
@@ -2932,6 +2967,7 @@ export default async (request, context) => {
         bookingResult.errorCode,
       aiShadowQueued: false,
       aiActiveQueued: false,
+      recoveryStatus,
     });
   }
 
@@ -3797,8 +3833,14 @@ export default async (request, context) => {
     "blocked",
     "superseded",
   ]);
-  const automaticWorkFinished =
+  const leadRoutingFinished =
     delivery.ok &&
+    (
+      delivery.routed !== false ||
+      delivery.routeStatus === "nonlead"
+    );
+  const automaticWorkFinished =
+    leadRoutingFinished &&
     (!aiActiveQueued || !["failed", "deferred"].includes(aiActiveStatus)) &&
     (!priceHoldingQueued || terminalSendStatuses.has(priceHoldingStatus)) &&
     (!approvedPriceReplyQueued || terminalSendStatuses.has(approvedPriceReplyStatus)) &&
@@ -3912,6 +3954,7 @@ export default async (request, context) => {
         error: "lead_delivery_failed",
         downstreamStatus: delivery.httpStatus,
         downstreamError: delivery.errorCode,
+        automaticWorkFinished: false,
       },
       502,
     );
@@ -3921,6 +3964,9 @@ export default async (request, context) => {
     return json({
       received: true,
       leadRecorded: false,
+      leadRouted: false,
+      leadRouteStatus: delivery.routeStatus || "unknown",
+      automaticWorkFinished: false,
       degradedMode: "sheets_delivery_fallback",
       downstreamStatus: delivery.httpStatus,
       downstreamError: delivery.errorCode,
@@ -3948,6 +3994,9 @@ export default async (request, context) => {
   return json({
     received: true,
     leadRecorded: true,
+    leadRouted: delivery.routed !== false,
+    leadRouteStatus: delivery.routeStatus || "resolved",
+    automaticWorkFinished,
     leadInserted: delivery.inserted === true,
     leadUpdated: delivery.updated === true,
     humanTakeoverToday: humanTakeoverActive,
