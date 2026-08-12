@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  config,
   processInboundRecoveryJob,
 } from "../ycloud-recovery.mjs";
+
+test("recovery checks the fallback queue every five minutes", () => {
+  assert.equal(config.schedule, "*/5 * * * *");
+});
 
 test("recovery remains pending until the lead reaches Sheets", async () => {
   let completed = false;
@@ -56,6 +61,106 @@ test("recovery remains pending until the lead reaches Sheets", async () => {
   assert.equal(result.status, "rescheduled");
   assert.equal(completed, false);
   assert.equal(rescheduled, true);
+});
+
+test("route_pending is never completed as a harmless duplicate", async () => {
+  let completed = false;
+  let rescheduled = false;
+
+  const result = await processInboundRecoveryJob(
+    {
+      eventId: "pending-route-event",
+      phone: "+5511947555416",
+      attempts: 1,
+      rawBody: "{}",
+      signature: "signature",
+      contentType: "application/json",
+      origin: "https://example.test",
+      queueKey: "pending/pending-route-event",
+      claimToken: "claim-token",
+    },
+    {
+      getLatestInboundReplyMarkerImpl: async () => ({
+        status: "completed",
+        found: true,
+        eventId: "pending-route-event",
+      }),
+      processImpl: async () =>
+        new Response(
+          JSON.stringify({
+            received: true,
+            leadRecorded: true,
+            leadRouted: false,
+            leadRouteStatus: "pending",
+            automaticWorkFinished: false,
+            aiActiveStatus: "completed_no_reply",
+          }),
+          { status: 200 },
+        ),
+      completeInboundRecoveryImpl: async () => {
+        completed = true;
+        return { status: "completed" };
+      },
+      rescheduleInboundRecoveryImpl: async () => {
+        rescheduled = true;
+        return { status: "completed" };
+      },
+    },
+  );
+
+  assert.equal(result.status, "rescheduled");
+  assert.equal(result.leadRouted, false);
+  assert.equal(result.leadRouteStatus, "pending");
+  assert.equal(result.automaticWorkFinished, false);
+  assert.equal(completed, false);
+  assert.equal(rescheduled, true);
+});
+
+test("recovery completes only after routing and automatic work finish", async () => {
+  let completedOutcome = "";
+
+  const result = await processInboundRecoveryJob(
+    {
+      eventId: "fully-processed-event",
+      phone: "+5511947555416",
+      attempts: 1,
+      rawBody: "{}",
+      signature: "signature",
+      contentType: "application/json",
+      origin: "https://example.test",
+      queueKey: "pending/fully-processed-event",
+      claimToken: "claim-token",
+    },
+    {
+      getLatestInboundReplyMarkerImpl: async () => ({
+        status: "completed",
+        found: true,
+        eventId: "fully-processed-event",
+      }),
+      processImpl: async () =>
+        new Response(
+          JSON.stringify({
+            received: true,
+            leadRecorded: true,
+            leadRouted: true,
+            leadRouteStatus: "resolved_by_open_opportunity",
+            automaticWorkFinished: true,
+            aiActiveStatus: "completed",
+          }),
+          { status: 200 },
+        ),
+      completeInboundRecoveryImpl: async (_job, { outcome }) => {
+        completedOutcome = outcome;
+        return { status: "completed" };
+      },
+      rescheduleInboundRecoveryImpl: async () => {
+        throw new Error("should not reschedule");
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(completedOutcome, "processed");
 });
 
 test("final lead failure is completed only after the email is confirmed", async () => {
