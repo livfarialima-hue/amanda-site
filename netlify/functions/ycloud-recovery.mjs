@@ -190,5 +190,9 @@ export default async () => {
 };
 
 export const config = {
-  schedule: "*/1 * * * *",
+  // O webhook principal processa cada mensagem imediatamente e registra uma
+  // recuperacao duravel somente como rede de seguranca. Verificar a fila a
+  // cada cinco minutos preserva o fallback sem gastar uma invocacao ociosa
+  // por minuto durante todo o mes.
+  schedule: "*/5 * * * *",
 };
