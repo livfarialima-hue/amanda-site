@@ -1,9 +1,8 @@
-name: Apply reminder address patch
+name: Remove temporary reminder release files
 
 on:
   push:
     paths:
-      - codex-reminder-address-20260812.zip
       - .github/workflows/apply-reminder-address.yml
   workflow_dispatch:
 
@@ -11,23 +10,16 @@ permissions:
   contents: write
 
 jobs:
-  apply:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply patch archive
-        run: unzip -o codex-reminder-address-20260812.zip
-      - name: Remove temporary release files
+      - name: Remove temporary files
         run: rm -f codex-reminder-address-20260812.zip .github/workflows/apply-reminder-address.yml
-      - name: Validate project
-        run: npm test
-      - name: Commit final source
+      - name: Commit cleanup
         run: |
           git config user.name "Codex"
           git config user.email "codex@users.noreply.github.com"
           git add -A
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git commit -m "Inclui endereço e mapa nos lembretes"
+          git commit -m "Remove arquivos temporários de publicação"
           git push
