@@ -1,0 +1,44 @@
+name: Aplicar release auditado da Bruna
+
+on:
+  push:
+    branches:
+      - reestruturacao-site
+    paths:
+      - clinica-liv-release-20260812.zip
+      - .github/workflows/codex-sync-20260812.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: codex-sync-20260812
+  cancel-in-progress: false
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+        with:
+          ref: reestruturacao-site
+          fetch-depth: 0
+
+      - name: Aplicar arquivos validados
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -o clinica-liv-release-20260812.zip -d .
+          rm -f clinica-liv-release-20260812.zip
+          rm -f .github/workflows/codex-sync-20260812.yml
+
+      - name: Publicar o release no ramo de produção
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Clínica LIV Automation"
+          git config user.email "livfarialima@gmail.com"
+          git add -A
+          git commit -m "Integra Bruna, Leads e fonte canônica do Google Ads"
+          git push origin HEAD:reestruturacao-site
