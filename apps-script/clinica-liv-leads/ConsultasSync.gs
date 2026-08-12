@@ -903,7 +903,7 @@ function upsertConsultaRecebida_(input) {
   });
 }
 
-function obterRelacionamentoPaciente_(input) {
+function obterRelacionamentoPaciente_(input, spreadsheetOverride) {
   const phone = normalizarTelefoneConsultasSync_(
     input.phone,
   );
@@ -915,7 +915,7 @@ function obterRelacionamentoPaciente_(input) {
     input && input.professional,
   );
 
-  const spreadsheet = SpreadsheetApp.openById(
+  const spreadsheet = spreadsheetOverride || SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,
   );
   const contactPreferences =

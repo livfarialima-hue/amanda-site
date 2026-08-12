@@ -377,15 +377,18 @@ function findClassificationQueueRow_(
   return null;
 }
 
+function findMessageRowInSheet_(sheet, messageId) {
+  if (!messageId || !sheet || sheet.getLastRow() < 2) return null;
+  const match = sheet
+    .getRange(2, 4, sheet.getLastRow() - 1, 1)
+    .createTextFinder(String(messageId))
+    .matchEntireCell(true)
+    .findNext();
+  return match ? match.getRow() : null;
+}
+
 function hasMessageInSheet_(sheet, messageId) {
-  if (!messageId || !sheet || sheet.getLastRow() < 2) return false;
-  return Boolean(
-    sheet
-      .getRange(2, 4, sheet.getLastRow() - 1, 1)
-      .createTextFinder(String(messageId))
-      .matchEntireCell(true)
-      .findNext(),
-  );
+  return Boolean(findMessageRowInSheet_(sheet, messageId));
 }
 
 function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
@@ -404,7 +407,11 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
     LEAD_MESSAGE_HEADERS,
   );
 
-  if (!hasMessageInSheet_(messageSheet, messageId)) {
+  const existingMessageRow = findMessageRowInSheet_(
+    messageSheet,
+    messageId,
+  );
+  if (!existingMessageRow) {
     messageSheet.appendRow([
       phone,
       direction === "OUT" ? "OUT" : "IN",
@@ -417,6 +424,23 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
       safeText_(lead.professional, 80),
       safeText_(lead.leadSheetName, 120),
     ]);
+  } else if (
+    Number(leadRow) > 0 ||
+    lead.opportunityId ||
+    lead.professional ||
+    lead.leadSheetName
+  ) {
+    const currentLink = messageSheet
+      .getRange(existingMessageRow, 7, 1, 4)
+      .getValues()[0];
+    messageSheet
+      .getRange(existingMessageRow, 7, 1, 4)
+      .setValues([[
+        Number(leadRow) > 0 ? Number(leadRow) : currentLink[0],
+        safeText_(lead.opportunityId, 120) || currentLink[1],
+        safeText_(lead.professional, 80) || currentLink[2],
+        safeText_(lead.leadSheetName, 120) || currentLink[3],
+      ]]);
   }
 
   return {

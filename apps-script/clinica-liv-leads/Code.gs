@@ -428,8 +428,14 @@ function doPost(e) {
 
     stage = "normalize_lead";
     const lead = normalizeLead_(body.lead || {});
-    const route = typeof resolverRotaLead_ === "function"
-      ? resolverRotaLead_(lead)
+    stage = "open_spreadsheet_context";
+    const spreadsheet = SpreadsheetApp.openById(
+      CONFIG.spreadsheetId,
+    );
+    const route = typeof resolverRotaLeadComContexto_ === "function"
+      ? resolverRotaLeadComContexto_(spreadsheet, lead)
+      : typeof resolverRotaLead_ === "function"
+        ? resolverRotaLead_(lead)
       : {
           professional: lead.professional || "unknown",
           routeStatus: lead.professional ? "resolved" : "pending",
@@ -439,8 +445,12 @@ function doPost(e) {
               ? CONFIG.sheetName
               : "",
         };
+    if (route.opportunityId && !lead.opportunityId) {
+      lead.opportunityId = route.opportunityId;
+    }
     lead.professional = route.professional;
     lead.routeStatus = route.routeStatus;
+    lead.leadSheetName = route.sheetName || "";
 
     stage = "get_patient_relationship";
     const patientRelationship =
@@ -449,7 +459,7 @@ function doPost(e) {
         ? obterRelacionamentoPaciente_({
             phone: lead.phone,
             professional: route.professional,
-          })
+          }, spreadsheet)
         : {
             found: false,
             relationshipState: "unknown",
@@ -462,9 +472,6 @@ function doPost(e) {
     }
 
     stage = "open_spreadsheet";
-    const spreadsheet = SpreadsheetApp.openById(
-      CONFIG.spreadsheetId,
-    );
 
     stage = "event_sheet";
     const eventSheet = getOrCreateEventSheet_(spreadsheet);
@@ -481,19 +488,107 @@ function doPost(e) {
       [lead.messageId, lead.eventId],
     );
 
+    if (
+      processedEvent &&
+      processedEvent.result === "route_pending" &&
+      route.sheetName
+    ) {
+      stage = "recover_pending_route";
+      const recoveredSheet = spreadsheet.getSheetByName(route.sheetName);
+      if (!recoveredSheet) {
+        throw new Error("Aba de recuperação não encontrada.");
+      }
+      if (route.professional === "amanda") {
+        assertHeaders_(recoveredSheet);
+      }
+      if (typeof garantirEstruturaIntegradaLead_ === "function") {
+        garantirEstruturaIntegradaLead_(recoveredSheet);
+      }
+
+      let recoveredLeadRow =
+        typeof localizarLeadPorOportunidadeOuTelefone_ === "function"
+          ? localizarLeadPorOportunidadeOuTelefone_(
+              recoveredSheet,
+              lead.opportunityId,
+              lead.phone,
+            )
+          : findLeadRowByPhone_(recoveredSheet, lead.phone);
+      let insertedDuringRecovery = false;
+      if (!recoveredLeadRow) {
+        recoveredLeadRow = findFirstAvailableRow_(recoveredSheet);
+        writeRoutedLead_(
+          recoveredSheet,
+          recoveredLeadRow,
+          lead,
+          route.professional,
+          function setRecoveryStage(nextStage) {
+            stage = nextStage;
+          },
+        );
+        insertedDuringRecovery = true;
+      }
+
+      const recoveredOpportunity = garantirOportunidadeLead_(
+        spreadsheet,
+        lead,
+        recoveredSheet,
+        recoveredLeadRow,
+      );
+      lead.opportunityId = recoveredOpportunity.opportunityId;
+      lead.leadSheetName = route.sheetName;
+      resolvePendingProcessedEvent_(
+        eventSheet,
+        processedEvent.eventRow,
+        recoveredLeadRow,
+        lead.opportunityId,
+        route.professional,
+        route.routeStatus,
+      );
+      recordLeadMessageAndQueue_(
+        spreadsheet,
+        recoveredLeadRow,
+        lead,
+        "IN",
+      );
+
+      return json_({
+        ok: true,
+        inserted: insertedDuringRecovery,
+        updated: !insertedDuringRecovery,
+        duplicate: true,
+        duplicateReason: "route_pending_recovered",
+        routed: true,
+        row: recoveredLeadRow,
+        eventId: lead.eventId,
+        messageId: lead.messageId,
+        humanTakeoverToday,
+        patientRelationship,
+        opportunityId: lead.opportunityId,
+        professional: route.professional,
+        routeStatus: route.routeStatus,
+      });
+    }
+
     if (processedEvent) {
+      const duplicateRouted =
+        processedEvent.result !== "route_pending" &&
+        processedEvent.routeStatus !== "pending";
       return json_({
         ok: true,
         inserted: false,
         duplicate: true,
         duplicateReason: "message_id",
+        routed: duplicateRouted,
         row: processedEvent.leadRow,
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
         patientRelationship,
-        professional: route.professional,
-        routeStatus: route.routeStatus,
+        opportunityId: processedEvent.opportunityId,
+        professional:
+          processedEvent.professional || route.professional,
+        routeStatus:
+          processedEvent.routeStatus || route.routeStatus,
       });
     }
 
@@ -735,11 +830,13 @@ function doPost(e) {
       "normalize_appointment",
       "mark_human_takeover",
       "acquire_lock",
+      "open_spreadsheet_context",
       "open_spreadsheet",
       "find_sheet",
       "assert_headers",
       "event_sheet",
       "duplicate_check",
+      "recover_pending_route",
       "phone_identity_check",
       "merge_existing_lead",
       "known_patient_no_lead",
@@ -1682,15 +1779,20 @@ function findProcessedEvent_(sheet, identifiers) {
 
     if (!match) continue;
 
-    const leadRow = Number(
-      sheet.getRange(match.getRow(), 5).getValue(),
-    );
+    const eventValues = sheet
+      .getRange(match.getRow(), 5, 1, 5)
+      .getDisplayValues()[0];
+    const leadRow = Number(eventValues[0]);
 
     return {
       eventRow: match.getRow(),
       leadRow: Number.isFinite(leadRow) && leadRow > 0
         ? leadRow
         : null,
+      result: String(eventValues[1] || ""),
+      opportunityId: String(eventValues[2] || ""),
+      professional: String(eventValues[3] || ""),
+      routeStatus: String(eventValues[4] || ""),
     };
   }
 
@@ -1723,6 +1825,24 @@ function recordProcessedEvent_(
     professional || lead.professional || "unknown",
     routeStatus || lead.routeStatus || "pending",
   ]);
+}
+
+function resolvePendingProcessedEvent_(
+  sheet,
+  eventRow,
+  leadRow,
+  opportunityId,
+  professional,
+  routeStatus,
+) {
+  if (!sheet || !eventRow) return;
+  sheet.getRange(eventRow, 5, 1, 5).setValues([[
+    leadRow || "",
+    "route_recovered",
+    opportunityId || "",
+    professional || "unknown",
+    routeStatus || "resolved",
+  ]]);
 }
 
 function findExactDuplicateRow_(sheet, identifiers) {

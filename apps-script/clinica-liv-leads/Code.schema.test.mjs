@@ -31,7 +31,14 @@ function loadCode() {
 
   vm.runInNewContext(
     `${source}
-globalThis.__test = { CONFIG, EXPECTED_HEADERS, writeLead_, isKnownPatientRelationship_ };`,
+globalThis.__test = {
+  CONFIG,
+  EXPECTED_HEADERS,
+  writeLead_,
+  isKnownPatientRelationship_,
+  findProcessedEvent_,
+  resolvePendingProcessedEvent_,
+};`,
     sandbox,
   );
 
@@ -141,4 +148,78 @@ test("lead writes origin and destination into the live column positions", () => 
     ),
     false,
   );
+});
+
+test("a duplicate keeps the pending route state visible to the caller", () => {
+  const { findProcessedEvent_ } = loadCode();
+  const sheet = {
+    getLastRow: () => 2,
+    getRange(row, column, rows, columns) {
+      if (row === 2 && column === 1 && rows === 1 && columns === 2) {
+        return {
+          createTextFinder: () => ({
+            matchEntireCell: () => ({
+              findNext: () => ({ getRow: () => 2 }),
+            }),
+          }),
+        };
+      }
+      if (row === 2 && column === 5 && rows === 1 && columns === 5) {
+        return {
+          getDisplayValues: () => [[
+            "",
+            "route_pending",
+            "",
+            "unknown",
+            "pending",
+          ]],
+        };
+      }
+      throw new Error(`Unexpected range ${row}:${column}:${rows}:${columns}`);
+    },
+  };
+
+  const event = findProcessedEvent_(sheet, ["message-1"]);
+
+  assert.equal(event.leadRow, null);
+  assert.equal(event.result, "route_pending");
+  assert.equal(event.routeStatus, "pending");
+  assert.equal(event.professional, "unknown");
+});
+
+test("route recovery updates the existing event instead of appending another", () => {
+  const { resolvePendingProcessedEvent_ } = loadCode();
+  let update = null;
+  const sheet = {
+    getRange(row, column, rows, columns) {
+      return {
+        setValues(values) {
+          update = { row, column, rows, columns, values };
+        },
+      };
+    },
+  };
+
+  resolvePendingProcessedEvent_(
+    sheet,
+    628,
+    127,
+    "opp-amanda-1",
+    "amanda",
+    "resolved_by_open_opportunity",
+  );
+
+  assert.deepEqual(JSON.parse(JSON.stringify(update)), {
+    row: 628,
+    column: 5,
+    rows: 1,
+    columns: 5,
+    values: [[
+      127,
+      "route_recovered",
+      "opp-amanda-1",
+      "amanda",
+      "resolved_by_open_opportunity",
+    ]],
+  });
 });

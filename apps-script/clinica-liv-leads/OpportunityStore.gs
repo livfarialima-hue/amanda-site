@@ -283,6 +283,68 @@ function localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone) {
   return null;
 }
 
+function localizarContextoRotaUnicoPorTelefone_(spreadsheet, phone) {
+  const sheet = spreadsheet.getSheetByName(
+    OPPORTUNITY_STORE_CONFIG.sheetName,
+  );
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  const normalizedPhone = normalizePhone_(phone);
+  if (!normalizedPhone) return null;
+  const values = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, OPPORTUNITY_HEADERS.length)
+    .getDisplayValues();
+  const active = values.filter(function filterOpportunity(row) {
+    return (
+      normalizePhone_(row[1]) === normalizedPhone &&
+      profissionalPermitidoOportunidade_(row[3]) &&
+      !/^(?:closed|voided|encerrada)$/i.test(String(row[6] || ""))
+    );
+  });
+  if (!active.length) return null;
+  const professionals = active.reduce(function collect(result, row) {
+    const professional = normalizarProfissionalOportunidade_(row[3]);
+    if (result.indexOf(professional) < 0) result.push(professional);
+    return result;
+  }, []);
+  // Falha fechada: duas oportunidades ativas de profissionais distintos
+  // nunca podem contaminar uma a outra sem atribuicao explicita.
+  if (professionals.length !== 1) return null;
+  const row = active[active.length - 1];
+  return {
+    opportunityId: String(row[0] || ""),
+    professional: professionals[0],
+    sheetName: String(row[4] || ""),
+    leadRow: Number(row[5]) || null,
+  };
+}
+
+function resolverRotaLeadComContexto_(spreadsheet, lead) {
+  const directRoute = resolverRotaLead_(lead);
+  if (directRoute.routeStatus !== "pending") return directRoute;
+
+  const opportunity = localizarContextoRotaUnicoPorTelefone_(
+    spreadsheet,
+    lead && lead.phone,
+  );
+  if (!opportunity) return directRoute;
+
+  const professional = normalizarProfissionalOportunidade_(
+    opportunity.professional,
+  );
+  if (!profissionalPermitidoOportunidade_(professional)) {
+    return directRoute;
+  }
+
+  return {
+    professional: professional,
+    routeStatus: "resolved_by_open_opportunity",
+    sheetName:
+      opportunity.sheetName || nomeAbaLeadOportunidade_(professional),
+    opportunityId: opportunity.opportunityId,
+    leadRow: opportunity.leadRow,
+  };
+}
+
 function definirCampoPorCabecalho_(sheet, row, columns, header, value) {
   const column = columns[header];
   if (!column) return;

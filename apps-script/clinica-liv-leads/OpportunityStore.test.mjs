@@ -30,7 +30,7 @@ function load() {
     },
   };
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { resolverRotaLead_, criarOpportunityId_, OPPORTUNITY_STORE_CONFIG };`,
+    `${source}\nglobalThis.__test = { resolverRotaLead_, resolverRotaLeadComContexto_, criarOpportunityId_, OPPORTUNITY_STORE_CONFIG, OPPORTUNITY_HEADERS };`,
     sandbox,
   );
   return sandbox.__test;
@@ -71,4 +71,80 @@ test("the same event produces different opportunity ids by professional", () => 
     criarOpportunityId_("amanda", "event-1"),
     criarOpportunityId_("daniel", "event-1"),
   );
+});
+
+test("a follow-up without attribution inherits its open Amanda opportunity", () => {
+  const {
+    resolverRotaLeadComContexto_,
+    OPPORTUNITY_HEADERS,
+    OPPORTUNITY_STORE_CONFIG,
+  } = load();
+  const opportunityRow = Array(OPPORTUNITY_HEADERS.length).fill("");
+  opportunityRow[0] = "opp-amanda-1";
+  opportunityRow[1] = "+5511947555416";
+  opportunityRow[3] = "amanda";
+  opportunityRow[4] = OPPORTUNITY_STORE_CONFIG.amandaSheetName;
+  opportunityRow[5] = "127";
+  opportunityRow[6] = "open";
+  const opportunitySheet = {
+    getLastRow: () => 2,
+    getRange: () => ({
+      getDisplayValues: () => [opportunityRow],
+    }),
+  };
+  const spreadsheet = {
+    getSheetByName: (name) =>
+      name === OPPORTUNITY_STORE_CONFIG.sheetName
+        ? opportunitySheet
+        : null,
+  };
+
+  const route = resolverRotaLeadComContexto_(spreadsheet, {
+    phone: "+5511947555416",
+    platform: "WhatsApp direto",
+    text: "Aonde fica seu endereço?",
+  });
+
+  assert.equal(route.professional, "amanda");
+  assert.equal(route.routeStatus, "resolved_by_open_opportunity");
+  assert.equal(route.opportunityId, "opp-amanda-1");
+  assert.equal(route.leadRow, 127);
+  assert.equal(route.sheetName, "Google Ads - Conversões");
+});
+
+test("an ambiguous open opportunity never crosses Amanda and Daniel", () => {
+  const {
+    resolverRotaLeadComContexto_,
+    OPPORTUNITY_HEADERS,
+    OPPORTUNITY_STORE_CONFIG,
+  } = load();
+  const amanda = Array(OPPORTUNITY_HEADERS.length).fill("");
+  amanda[0] = "opp-amanda-1";
+  amanda[1] = "+5511999999999";
+  amanda[3] = "amanda";
+  amanda[4] = OPPORTUNITY_STORE_CONFIG.amandaSheetName;
+  amanda[6] = "open";
+  const daniel = [...amanda];
+  daniel[0] = "opp-daniel-1";
+  daniel[3] = "daniel";
+  daniel[4] = OPPORTUNITY_STORE_CONFIG.danielSheetName;
+  const opportunitySheet = {
+    getLastRow: () => 3,
+    getRange: () => ({ getDisplayValues: () => [amanda, daniel] }),
+  };
+  const spreadsheet = {
+    getSheetByName: (name) =>
+      name === OPPORTUNITY_STORE_CONFIG.sheetName
+        ? opportunitySheet
+        : null,
+  };
+
+  const route = resolverRotaLeadComContexto_(spreadsheet, {
+    phone: "+5511999999999",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(route.professional, "unknown");
+  assert.equal(route.routeStatus, "pending");
+  assert.equal(route.sheetName, "");
 });
