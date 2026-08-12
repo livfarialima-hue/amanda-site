@@ -577,15 +577,28 @@ Decisão final:
 
 ### 12 de agosto de 2026 — otimização das Functions sem alterar a jornada
 
-- **Status:** publicada e em aferição em produção.
+- **Status:** publicada e em aferição em produção; commits `1685c54`, `cbe72bb` e `63fea18`.
 - **Mudança:** retirada do Async Workload antigo que já não participava do endpoint público e redução da varredura de recuperação de um para cinco minutos. O webhook direto, as travas contra duplicidade, a fila de recuperação, a integração com a planilha, a classificação e a retomada humana foram preservados.
-- **Motivo e evidência:** o projeto consumiu 93.934 de 125.000 invocações e 75 de 100 horas até 12 de agosto. Nas 24 horas auditadas, os dois runners auxiliares do Async Workload somaram 3.364 invocações, embora o endpoint público já operasse em direct_with_background_completion; ycloud-recovery acrescentava até 1.440 verificações por dia ao rodar a cada minuto.
+- **Motivo e evidência:** o projeto consumiu 93.934 de 125.000 invocações e 75 de 100 horas até 12 de agosto. Nas 24 horas auditadas, os dois runners auxiliares do Async Workload somaram 3.364 invocações, embora o endpoint público já operasse em `direct_with_background_completion`; `ycloud-recovery` acrescentava até 1.440 verificações por dia ao rodar a cada minuto.
 - **Hipótese:** remover o mecanismo órfão e reduzir apenas polling ocioso diminuirá mais de 70% das invocações sem alterar tempo de resposta das conversas normais ou a qualidade do registro de leads.
 - **Métrica principal:** invocações e GB-hora diários das Functions, com conferência adicional de mensagens recebidas, respostas únicas, registros na LEADS, fila de classificação e exceções recuperadas.
 - **Guardrails:** webhook e planilha permanecem imediatos; zero mensagem duplicada ou perdida; recuperação de exceção em até aproximadamente sete minutos na primeira tentativa; classificação e retomada humana mantidas em cinco minutos.
 - **Data de revisão:** 13 e 14 de agosto de 2026, após duas janelas completas de 24 horas.
 - **Regra para manter:** manter se as Functions caírem para menos de 1.500 invocações e 1,5 GB-hora por dia, sem aumento de erros operacionais.
 - **Regra para reverter:** restaurar temporariamente a frequência anterior da recuperação se houver falha real não retomada dentro da janela prevista; não restaurar o Async Workload órfão sem prova de necessidade no caminho público.
+
+### 12 de agosto de 2026 — recuperação durável de mensagens consecutivas
+
+- **Status:** correção validada em 468 testes e autorizada para publicação imediata.
+- **Mudança:** toda mensagem de entrada passa a entrar na fila durável antes das consultas de contexto. Uma mensagem consecutiva sem nova referência de campanha herda a única oportunidade ativa do telefone e repara em lugar o evento `route_pending`. A recuperação só conclui quando o roteamento e o trabalho automático também concluírem; uma duplicata ou um HTTP 200 não bastam. Se Amanda e Daniel tiverem oportunidades ativas simultâneas, o sistema bloqueia a herança e encaminha para revisão.
+- **Motivo e evidência:** uma lead de lifting do Meta enviou duas mensagens em 16 segundos. A primeira foi vinculada à oportunidade da Amanda, mas seu envio foi corretamente cancelado pelo debounce em favor da segunda. A segunda perdeu o contexto de campanha, ficou `route_pending` e a recuperação antiga interpretou a resposta técnica como suficiente. Resultado: linha de lead existente, pergunta sem resposta e nenhuma conclusão automática.
+- **Hipótese:** registrar a recuperação antes de operações lentas e exigir conclusão ponta a ponta eliminará silêncios em rajadas de mensagens sem aumentar respostas duplicadas nem contaminar os profissionais.
+- **Métrica principal:** zero mensagem de lead paga sem resposta ou alerta; zero `route_pending` aberto por mais de sete minutos; zero duplicação; tempo entre entrada e resposta final; correspondência entre evento, mensagem, oportunidade e profissional.
+- **Guardrails:** somente a oportunidade ativa única pode ser herdada; ambiguidade Amanda/Daniel falha fechada; debounce de oito segundos e verificação da mensagem mais recente permanecem; nenhuma mensagem retrospectiva é enviada a uma paciente durante a reparação sem confirmação humana.
+- **Data de revisão:** 13 de agosto de 2026, com auditoria antecipada na primeira nova rajada de mensagens.
+- **Regra para manter:** manter com zero silêncio, duplicidade ou cruzamento profissional nas novas conversas.
+- **Regra para reverter:** colocar a automação em `shadow` e preservar a fila para auditoria se ocorrer envio duplicado, rota incorreta ou encerramento de recuperação antes da conclusão real.
+
 ## 17. Documentos subordinados
 
 - `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`: linguagem, códigos e contrato técnico de atribuição.
