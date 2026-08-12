@@ -1,12 +1,6 @@
-import {
-  asyncWorkloadFn,
-  ErrorDoNotRetry,
-  ErrorRetryAfterDelay,
-} from "@netlify/async-workloads";
 import processYCloudWebhook from "./ycloud-webhook.mjs";
 import { getLatestInboundReplyMarker } from "./lib/reply-debounce.mjs";
 import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
-import { DURABLE_YCLOUD_EVENT } from "./ycloud-webhook-dispatch.mjs";
 
 const MAX_RETRIES = 4;
 
@@ -41,11 +35,7 @@ function failureAlertInput(data) {
 }
 
 function retryableProcessingFailure(message, error) {
-  return new ErrorRetryAfterDelay({
-    message,
-    retryDelay: "30 seconds",
-    error,
-  });
+  return new Error(message, error ? { cause: error } : undefined);
 }
 
 export async function processDurableYCloudEvent(
@@ -57,13 +47,8 @@ export async function processDurableYCloudEvent(
   } = {},
 ) {
   const data = event?.eventData;
-  if (
-    !data ||
-    !data.rawBody ||
-    !data.signature ||
-    !data.origin
-  ) {
-    throw new ErrorDoNotRetry("invalid_durable_ycloud_event");
+  if (!data || !data.rawBody || !data.signature || !data.origin) {
+    throw new Error("invalid_durable_ycloud_event");
   }
 
   if (data.isTextInbound && data.phone && data.eventId) {
@@ -125,12 +110,25 @@ export async function processDurableYCloudEvent(
   }
 }
 
-export default asyncWorkloadFn(processDurableYCloudEvent);
+// Mantém a lógica legada importável para testes e auditoria, mas deixa de
+// registrá-la como Async Workload. O webhook público já usa o caminho direto
+// com fila própria de recuperação e travas contra duplicidade.
+export default async () =>
+  new Response(
+    JSON.stringify({
+      ok: false,
+      error: "legacy_async_workload_disabled",
+      replacement: "direct_webhook_with_recovery_queue",
+    }),
+    {
+      status: 410,
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    },
+  );
 
-export const asyncWorkloadConfig = {
-  name: "Clínica LIV — atendimento WhatsApp durável",
-  events: [DURABLE_YCLOUD_EVENT],
-  maxRetries: MAX_RETRIES,
-  backoffSchedule: (attempt) =>
-    [30_000, 60_000, 120_000, 300_000][attempt] || 300_000,
+export const config = {
+  path: "/api/ycloud/webhook-queued-disabled",
 };
