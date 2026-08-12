@@ -1,5 +1,6 @@
 const CONTACT_PREFERENCES_CONFIG = Object.freeze({
   sheetName: "Google Ads - Conversões",
+  additionalSheetNames: Object.freeze(["Leads Dr. Daniel"]),
   phoneHeader: "Telefone (E.164)",
   neverFollowUpHeader: "Nunca retomar",
   neverBotReplyHeader: "Nunca responder com robô",
@@ -20,7 +21,28 @@ function garantirPreferenciasContatoLeads() {
     throw new Error("A aba de leads não foi encontrada.");
   }
 
-  return garantirEstruturaPreferenciasContato_(sheet);
+  const result = garantirEstruturaPreferenciasContato_(sheet);
+  CONTACT_PREFERENCES_CONFIG.additionalSheetNames.forEach(function (name) {
+    const additional = spreadsheet.getSheetByName(name);
+    if (additional) garantirEstruturaPreferenciasContato_(additional);
+  });
+  return result;
+}
+
+function planilhasPreferenciasContato_(file) {
+  const names = [
+    typeof CONFIG !== "undefined" && CONFIG.sheetName
+      ? CONFIG.sheetName
+      : CONTACT_PREFERENCES_CONFIG.sheetName,
+  ].concat(CONTACT_PREFERENCES_CONFIG.additionalSheetNames || []);
+  return names
+    .filter(function unique(name, index) {
+      return name && names.indexOf(name) === index;
+    })
+    .map(function find(name) {
+      return file.getSheetByName(name);
+    })
+    .filter(Boolean);
 }
 
 function garantirEstruturaPreferenciasContato_(sheet) {
@@ -126,79 +148,62 @@ function marcarNuncaRetomarPorTelefone_(spreadsheet, phone, reason) {
   }
 
   const file = spreadsheet || SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const configuredSheetName =
-    typeof CONFIG !== "undefined" && CONFIG.sheetName
-      ? CONFIG.sheetName
-      : CONTACT_PREFERENCES_CONFIG.sheetName;
-  const sheet =
-    file.getSheetByName(configuredSheetName) ||
-    file.getSheetByName(CONTACT_PREFERENCES_CONFIG.sheetName);
-
-  if (!sheet || sheet.getLastRow() < 2) {
-    return { ok: false, error: "lead_not_found" };
-  }
-
-  garantirEstruturaPreferenciasContato_(sheet);
-
-  const lastColumn = sheet.getLastColumn();
-  const headers = sheet
-    .getRange(1, 1, 1, lastColumn)
-    .getDisplayValues()[0];
-  const phoneColumn = indiceCabecalhoPreferenciaContato_(
-    headers,
-    CONTACT_PREFERENCES_CONFIG.phoneHeader,
-  );
-  const neverFollowUpColumn = indiceCabecalhoPreferenciaContato_(
-    headers,
-    CONTACT_PREFERENCES_CONFIG.neverFollowUpHeader,
-  );
-  const reasonColumn = indiceCabecalhoPreferenciaContato_(
-    headers,
-    CONTACT_PREFERENCES_CONFIG.reasonHeader,
-  );
-
-  if (phoneColumn < 0 || neverFollowUpColumn < 0) {
-    return { ok: false, error: "invalid_leads_schema" };
-  }
-
-  const rows = sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, lastColumn)
-    .getValues();
-  let matchedRow = 0;
-
-  rows.forEach(function (row, index) {
-    if (
-      normalizarTelefonePreferenciaContato_(row[phoneColumn]) ===
-      normalizedPhone
-    ) {
-      matchedRow = index + 2;
-    }
+  const matches = [];
+  planilhasPreferenciasContato_(file).forEach(function (sheet) {
+    if (sheet.getLastRow() < 2) return;
+    garantirEstruturaPreferenciasContato_(sheet);
+    const lastColumn = sheet.getLastColumn();
+    const headers = sheet
+      .getRange(1, 1, 1, lastColumn)
+      .getDisplayValues()[0];
+    const phoneColumn = indiceCabecalhoPreferenciaContato_(
+      headers,
+      CONTACT_PREFERENCES_CONFIG.phoneHeader,
+    );
+    const neverFollowUpColumn = indiceCabecalhoPreferenciaContato_(
+      headers,
+      CONTACT_PREFERENCES_CONFIG.neverFollowUpHeader,
+    );
+    const reasonColumn = indiceCabecalhoPreferenciaContato_(
+      headers,
+      CONTACT_PREFERENCES_CONFIG.reasonHeader,
+    );
+    if (phoneColumn < 0 || neverFollowUpColumn < 0) return;
+    const rows = sheet
+      .getRange(2, 1, sheet.getLastRow() - 1, lastColumn)
+      .getValues();
+    rows.forEach(function (row, index) {
+      if (
+        normalizarTelefonePreferenciaContato_(row[phoneColumn]) !==
+        normalizedPhone
+      ) return;
+      const rowNumber = index + 2;
+      const alreadyBlocked = valorAtivoPreferenciaContato_(
+        row[neverFollowUpColumn],
+      );
+      sheet.getRange(rowNumber, neverFollowUpColumn + 1).setValue(true);
+      if (reasonColumn >= 0 && reason) {
+        const reasonCell = sheet.getRange(rowNumber, reasonColumn + 1);
+        if (!String(reasonCell.getDisplayValue() || "").trim()) {
+          reasonCell.setValue(textoPreferenciaContato_(reason, 240));
+        }
+      }
+      matches.push({
+        sheet: typeof sheet.getName === "function" ? sheet.getName() : "Leads",
+        row: rowNumber,
+        alreadyBlocked,
+      });
+    });
   });
-
-  if (!matchedRow) {
-    return { ok: false, error: "lead_not_found" };
-  }
-
-  sheet
-    .getRange(matchedRow, neverFollowUpColumn + 1)
-    .setValue(true);
-
-  if (reasonColumn >= 0) {
-    const reasonCell = sheet.getRange(matchedRow, reasonColumn + 1);
-    const existingReason = String(reasonCell.getDisplayValue() || "").trim();
-
-    if (!existingReason && reason) {
-      reasonCell.setValue(textoPreferenciaContato_(reason, 240));
-    }
-  }
-
+  if (!matches.length) return { ok: false, error: "lead_not_found" };
   return {
     ok: true,
     phone: normalizedPhone,
-    row: matchedRow,
-    alreadyBlocked: valorAtivoPreferenciaContato_(
-      rows[matchedRow - 2][neverFollowUpColumn],
-    ),
+    row: matches[0].row,
+    matches,
+    alreadyBlocked: matches.every(function (match) {
+      return match.alreadyBlocked;
+    }),
   };
 }
 
@@ -210,18 +215,37 @@ function obterPreferenciasContatoLeads_(spreadsheet, phone) {
   }
 
   const file = spreadsheet || SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const configuredSheetName =
-    typeof CONFIG !== "undefined" && CONFIG.sheetName
-      ? CONFIG.sheetName
-      : CONTACT_PREFERENCES_CONFIG.sheetName;
-  const sheet =
-    file.getSheetByName(configuredSheetName) ||
-    file.getSheetByName(CONTACT_PREFERENCES_CONFIG.sheetName);
+  const matches = planilhasPreferenciasContato_(file)
+    .map(function read(sheet) {
+      return lerPreferenciasContatoNaPlanilha_(sheet, normalizedPhone);
+    })
+    .filter(function found(value) {
+      return value.found;
+    });
+  if (!matches.length) return preferenciasContatoDesconhecidas_();
+  return {
+    found: true,
+    neverFollowUp: matches.some(function (value) {
+      return value.neverFollowUp;
+    }),
+    neverBotReply: matches.some(function (value) {
+      return value.neverBotReply;
+    }),
+    suspendAutomaticFollowUp: matches.some(function (value) {
+      return value.suspendAutomaticFollowUp;
+    }),
+    blockReason: matches
+      .map(function (value) { return value.blockReason; })
+      .filter(Boolean)
+      .join(" | ")
+      .slice(0, 240),
+  };
+}
 
+function lerPreferenciasContatoNaPlanilha_(sheet, normalizedPhone) {
   if (!sheet || sheet.getLastRow() < 2) {
     return preferenciasContatoDesconhecidas_();
   }
-
   const lastColumn = sheet.getLastColumn();
   const headers = sheet
     .getRange(1, 1, 1, lastColumn)
@@ -230,6 +254,7 @@ function obterPreferenciasContatoLeads_(spreadsheet, phone) {
     headers,
     CONTACT_PREFERENCES_CONFIG.phoneHeader,
   );
+  if (phoneColumn < 0) return preferenciasContatoDesconhecidas_();
   const neverFollowUpColumn = indiceCabecalhoPreferenciaContato_(
     headers,
     CONTACT_PREFERENCES_CONFIG.neverFollowUpHeader,
@@ -238,38 +263,25 @@ function obterPreferenciasContatoLeads_(spreadsheet, phone) {
     headers,
     CONTACT_PREFERENCES_CONFIG.neverBotReplyHeader,
   );
-  const suspendAutomaticFollowUpColumn =
-    indiceCabecalhoPreferenciaContato_(
-      headers,
-      CONTACT_PREFERENCES_CONFIG.suspendAutomaticFollowUpHeader,
-    );
+  const suspendColumn = indiceCabecalhoPreferenciaContato_(
+    headers,
+    CONTACT_PREFERENCES_CONFIG.suspendAutomaticFollowUpHeader,
+  );
   const reasonColumn = indiceCabecalhoPreferenciaContato_(
     headers,
     CONTACT_PREFERENCES_CONFIG.reasonHeader,
   );
-
-  if (phoneColumn < 0) {
-    return preferenciasContatoDesconhecidas_();
-  }
-
-  const values = sheet
+  const rows = sheet
     .getRange(2, 1, sheet.getLastRow() - 1, lastColumn)
     .getValues();
   let match = null;
-
-  values.forEach(function (row) {
+  rows.forEach(function find(row) {
     if (
       normalizarTelefonePreferenciaContato_(row[phoneColumn]) ===
       normalizedPhone
-    ) {
-      match = row;
-    }
+    ) match = row;
   });
-
-  if (!match) {
-    return preferenciasContatoDesconhecidas_();
-  }
-
+  if (!match) return preferenciasContatoDesconhecidas_();
   return {
     found: true,
     neverFollowUp:
@@ -279,14 +291,10 @@ function obterPreferenciasContatoLeads_(spreadsheet, phone) {
       neverBotReplyColumn >= 0 &&
       valorAtivoPreferenciaContato_(match[neverBotReplyColumn]),
     suspendAutomaticFollowUp:
-      suspendAutomaticFollowUpColumn >= 0 &&
-      valorAtivoPreferenciaContato_(
-        match[suspendAutomaticFollowUpColumn],
-      ),
-    blockReason:
-      reasonColumn >= 0
-        ? textoPreferenciaContato_(match[reasonColumn], 240)
-        : "",
+      suspendColumn >= 0 && valorAtivoPreferenciaContato_(match[suspendColumn]),
+    blockReason: reasonColumn >= 0
+      ? textoPreferenciaContato_(match[reasonColumn], 240)
+      : "",
   };
 }
 

@@ -36,6 +36,7 @@ const CONSULTAS_SYNC_CONFIG = Object.freeze({
 
 const CONSULTAS_SYNC_HEADERS = Object.freeze({
   id: "ID da consulta",
+  opportunityId: "Opportunity ID",
   phone: "Telefone (E.164)",
   name: "Nome do paciente",
   professional: "Profissional",
@@ -536,6 +537,35 @@ function processarEdicaoNaAbaLeads_(e) {
       row[statusColumn],
     );
 
+    if (
+      sheet.getName() === "Google Ads - Conversões" &&
+      typeof recordLeadStageEvent_ === "function"
+    ) {
+      const displayRow = sheet
+        .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+        .getDisplayValues()[0];
+      const phone = valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_LEAD_HEADERS.phone,
+      );
+      recordLeadStageEvent_(spreadsheet, {
+        opportunityId: typeof leadOpportunityId_ === "function"
+          ? leadOpportunityId_(displayRow, phone)
+          : "",
+        phone,
+        source: "human_sheet_edit",
+        fromStatus: e.range.getNumRows() === 1
+          ? String(e.oldValue || "")
+          : "",
+        proposedStatus: String(row[statusColumn] || ""),
+        appliedStatus: String(row[statusColumn] || ""),
+        confidence: "human",
+        decision: "human_override",
+        evidence: "Edição manual na fase do lead",
+      });
+    }
+
     if (!statusAgendaConsulta_(status)) continue;
 
     const completed = statusConsultaRealizada_(status);
@@ -806,7 +836,7 @@ function upsertConsultaRecebida_(input) {
   }
 
   garantirEstruturaSincronizacaoConsultas_(sheet);
-  const professional = input.professional || "Dra. Amanda";
+  const professional = input.professional || "";
   const status = input.status || "Consulta agendada";
 
   if (!profissionalPermitidoAutomacaoConsulta_(professional)) {
@@ -815,6 +845,7 @@ function upsertConsultaRecebida_(input) {
 
   const result = upsertConsulta_(sheet, {
     appointmentId: input.appointmentId || input.eventId,
+    opportunityId: input.opportunityId,
     phone: input.phone,
     name: input.name,
     professional,
@@ -880,6 +911,9 @@ function obterRelacionamentoPaciente_(input) {
   if (!phone) {
     return relacionamentoPacienteDesconhecido_();
   }
+  const requestedProfessional = chaveProfissionalConsulta_(
+    input && input.professional,
+  );
 
   const spreadsheet = SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,
@@ -928,6 +962,19 @@ function obterRelacionamentoPaciente_(input) {
     );
 
     if (!rowPhone || rowPhone !== phone) return;
+    const rowProfessional = chaveProfissionalConsulta_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.professional,
+      ),
+    );
+    if (
+      requestedProfessional &&
+      rowProfessional !== requestedProfessional
+    ) {
+      return;
+    }
 
     const completedAt = dataConsultasSync_(
       valorDaLinhaConsultas_(
@@ -1643,6 +1690,9 @@ function localizarConsultaParaAtualizacao_(
     180,
   );
   const phone = normalizarTelefoneConsultasSync_(input.phone);
+  const requestedProfessional = chaveProfissionalConsulta_(
+    input.professional,
+  );
   const values = sheet
     .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
     .getValues();
@@ -1662,6 +1712,14 @@ function localizarConsultaParaAtualizacao_(
       normalizarTelefoneConsultasSync_(
         row[columns[CONSULTAS_SYNC_HEADERS.phone]],
       ) !== phone
+    ) {
+      continue;
+    }
+    if (
+      requestedProfessional &&
+      chaveProfissionalConsulta_(
+        row[columns[CONSULTAS_SYNC_HEADERS.professional]],
+      ) !== requestedProfessional
     ) {
       continue;
     }
@@ -1720,7 +1778,9 @@ function upsertConsulta_(sheet, input) {
     columns,
     {
       id: input.appointmentId,
+      opportunityId: input.opportunityId,
       phone,
+      professional: input.professional,
       scheduledDate: input.scheduledDate,
       scheduledTime: input.scheduledTime,
       incomingStatus: input.status,
@@ -1746,6 +1806,15 @@ function upsertConsulta_(sheet, input) {
     CONSULTAS_SYNC_HEADERS.id,
     appointmentId,
   );
+  if (input.opportunityId) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.opportunityId,
+      textoConsultasSync_(input.opportunityId, 180),
+    );
+  }
   definirValorConsulta_(
     sheet,
     rowNumber,
@@ -1758,7 +1827,7 @@ function upsertConsulta_(sheet, input) {
     [CONSULTAS_SYNC_HEADERS.name, input.name],
     [
       CONSULTAS_SYNC_HEADERS.professional,
-      input.professional || "Dra. Amanda",
+      input.professional || "",
     ],
     [CONSULTAS_SYNC_HEADERS.room, input.room],
     [
@@ -2219,8 +2288,15 @@ function localizarConsultaExistente_(sheet, columns, input) {
     )
     .getValues();
   const requestedId = textoConsultasSync_(input.id, 180);
+  const requestedOpportunityId = textoConsultasSync_(
+    input.opportunityId,
+    180,
+  );
   const requestedPhone =
     normalizarTelefoneConsultasSync_(input.phone);
+  const requestedProfessional = chaveProfissionalConsulta_(
+    input.professional,
+  );
   const incomingCompleted = statusConsultaRealizada_(
     normalizarTextoConsultasSync_(input.incomingStatus),
   );
@@ -2238,12 +2314,30 @@ function localizarConsultaExistente_(sheet, columns, input) {
     if (requestedId && rowId === requestedId) {
       return rowNumber;
     }
+    const rowOpportunityId = textoConsultasSync_(
+      row[columns[CONSULTAS_SYNC_HEADERS.opportunityId]],
+      180,
+    );
+    if (
+      requestedOpportunityId &&
+      rowOpportunityId === requestedOpportunityId
+    ) {
+      return rowNumber;
+    }
 
     const rowPhone = normalizarTelefoneConsultasSync_(
       row[columns[CONSULTAS_SYNC_HEADERS.phone]],
     );
 
     if (!rowPhone || rowPhone !== requestedPhone) continue;
+    if (
+      requestedProfessional &&
+      chaveProfissionalConsulta_(
+        row[columns[CONSULTAS_SYNC_HEADERS.professional]],
+      ) !== requestedProfessional
+    ) {
+      continue;
+    }
 
     if (
       input.scheduledDate &&
@@ -3627,13 +3721,31 @@ function registrarFalhaLinhaPosConsulta_(
   );
 }
 
+function statusCanonicoLeadDaConsulta_(status) {
+  const normalized = normalizarTextoConsultasSync_(status);
+  if (statusConsultaRealizada_(normalized)) {
+    return "Consulta realizada";
+  }
+  if ([
+    "agendada",
+    "confirmada",
+    "remarcada",
+    "consulta agendada",
+    "consulta confirmada",
+  ].includes(normalized)) {
+    return "Consulta agendada";
+  }
+  return "";
+}
+
 function atualizarStatusLeadDaConsulta_(
   spreadsheet,
   phoneValue,
   professional,
   status,
 ) {
-  if (statusNaoCompareceuConsulta_(status)) return;
+  const canonicalStatus = statusCanonicoLeadDaConsulta_(status);
+  if (!canonicalStatus) return;
 
   const phone = normalizarTelefoneConsultasSync_(phoneValue);
 
@@ -3673,9 +3785,19 @@ function atualizarStatusLeadDaConsulta_(
     }
 
     const rowNumber = index + 2;
+    const currentStatus = String(
+      sheet.getRange(rowNumber, statusColumn + 1).getDisplayValue() ||
+      "Novo",
+    );
+    const shouldApply = typeof shouldApplyLeadStatus_ === "function"
+      ? shouldApplyLeadStatus_(currentStatus, canonicalStatus, "high")
+      : currentStatus !== "Paciente convertido";
+
+    if (!shouldApply) return;
+
     sheet
       .getRange(rowNumber, statusColumn + 1)
-      .setValue(status);
+      .setValue(canonicalStatus);
 
     if (statusDateColumn !== undefined) {
       sheet
@@ -3687,6 +3809,28 @@ function atualizarStatusLeadDaConsulta_(
             "dd/MM/yyyy",
           ),
         );
+    }
+
+    if (
+      sheet.getName() === "Google Ads - Conversões" &&
+      typeof recordLeadStageEvent_ === "function"
+    ) {
+      const leadValues = sheet
+        .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+        .getDisplayValues()[0];
+      recordLeadStageEvent_(spreadsheet, {
+        opportunityId: typeof leadOpportunityId_ === "function"
+          ? leadOpportunityId_(leadValues, phone)
+          : "",
+        phone,
+        source: "consultas_sync",
+        fromStatus: currentStatus,
+        proposedStatus: canonicalStatus,
+        appliedStatus: canonicalStatus,
+        confidence: "structured",
+        decision: "applied",
+        evidence: "Status estruturado da aba Consultas",
+      });
     }
     return;
   }
@@ -3942,6 +4086,7 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
   });
 
   [
+    CONSULTAS_SYNC_HEADERS.opportunityId,
     CONSULTAS_SYNC_HEADERS.room,
     CONSULTAS_SYNC_HEADERS.durationMinutes,
     CONSULTAS_SYNC_HEADERS.calendarId,
@@ -3980,6 +4125,7 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
   });
 
   const controlWidths = {
+    [CONSULTAS_SYNC_HEADERS.opportunityId]: 190,
     [CONSULTAS_SYNC_HEADERS.room]: 90,
     [CONSULTAS_SYNC_HEADERS.durationMinutes]: 105,
     [CONSULTAS_SYNC_HEADERS.calendarId]: 210,

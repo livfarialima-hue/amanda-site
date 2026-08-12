@@ -14,3 +14,12 @@ analysis/meta-video-review/
 
 # Local Netlify folder
 .netlify
+
+# Caches e perfis locais usados apenas para publicacao/diagnostico
+.netlify-runtime/
+.netlify-cli-profile/
+.npm-cache/
+
+# Saidas locais de auditoria que podem conter dados operacionais
+analysis/
+relatorios/*.csv

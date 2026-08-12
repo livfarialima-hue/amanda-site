@@ -116,6 +116,22 @@ test("opens a prefilled site inquiry without assuming scheduling intent", () => 
   assert.doesNotMatch(reply, /obrigada pela confiança/i);
 });
 
+test("asks the name instead of addressing a long concatenated profile identifier", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "soniamariamontoromenezes",
+    procedure: "lifting_facial",
+    introduceBruna: true,
+  });
+
+  assert.equal(
+    reply,
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre lifting facial. Como posso te chamar?",
+  );
+  assert.doesNotMatch(reply, /Soniamariamontoromenezes/i);
+  assert.doesNotMatch(reply, /O que você gostaria de entender primeiro/i);
+});
+
 test("sends the official Instagram and lifting page without asking the team", () => {
   const reply = buildOfficialChannelsReply({
     patientName: "MARINA",

@@ -24,7 +24,7 @@ const INPUT = {
   },
 };
 
-test("a patient choice reserves the offered slot and receives the final confirmation", async () => {
+test("a patient choice is recorded for human confirmation without reserving the agenda", async () => {
   const sheetActions = [];
   const patientMessages = [];
   const memoryTurns = [];
@@ -69,15 +69,16 @@ test("a patient choice reserves the offered slot and receives the final confirma
   });
 
   assert.deepEqual(result, {
-    status: "completed",
-    reserved: true,
-    confirmationSent: true,
+    status: "pending_human_confirmation",
+    reserved: false,
+    confirmationSent: false,
+    pendingRecorded: true,
     errorCode: "none",
   });
   assert.equal(sheetActions.length, 2);
   assert.equal(
     sheetActions[0].action,
-    "reserve_appointment_slot",
+    "record_pending_appointment_selection",
   );
   assert.equal(
     sheetActions[0].payload.appointment.scheduledDate,
@@ -93,23 +94,11 @@ test("a patient choice reserves the offered slot and receives the final confirma
   );
   assert.match(
     sheetActions[1].payload.alert.messageText,
-    /AGENDAMENTO CONFIRMADO E REGISTRADO/,
+    /AGUARDANDO CONFIRMAÇÃO HUMANA/,
   );
-  assert.equal(patientMessages.length, 1);
-  assert.equal(
-    patientMessages[0].to,
-    INPUT.patientPhone,
-  );
-  assert.match(
-    patientMessages[0].body,
-    /terça-feira, 4 de agosto, às 10h/,
-  );
-  assert.match(
-    patientMessages[0].body,
-    /Clínica LIV Faria Lima/,
-  );
-  assert.equal(memoryTurns.length, 1);
-  assert.equal(alerts.length, 0);
+  assert.equal(patientMessages.length, 0);
+  assert.equal(memoryTurns.length, 0);
+  assert.equal(alerts.length, 1);
 });
 
 test("an agreement already closed by the human team is recorded without another patient message", async () => {
@@ -158,14 +147,14 @@ test("an agreement already closed by the human team is recorded without another 
   assert.equal(patientMessages.length, 0);
 });
 
-test("an unavailable slot is not booked and creates a review alert with a suggested answer", async () => {
+test("a failed pending record still creates a human review alert", async () => {
   const patientMessages = [];
   const alerts = [];
   const result = await completeSelectedAppointment(INPUT, {
     getHumanResumeControlImpl: async () => null,
     deliverSheetsActionImpl: async () => ({
       ok: false,
-      errorCode: "slot_not_available",
+      errorCode: "pending_record_failed",
     }),
     completeReviewAlertImpl: async (alert) => {
       alerts.push(alert);
@@ -177,20 +166,20 @@ test("an unavailable slot is not booked and creates a review alert with a sugges
   });
 
   assert.equal(result.reserved, false);
-  assert.equal(result.status, "review_required");
+  assert.equal(result.status, "pending_human_confirmation");
   assert.equal(patientMessages.length, 0);
   assert.equal(alerts.length, 1);
   assert.match(
     alerts[0].messageText,
-    /Sugestão para copiar após conferir:/,
+    /Após conferir e registrar o horário, envie:/,
   );
   assert.match(
     alerts[0].messageText,
-    /não está mais disponível/,
+    /Registro pendente:/,
   );
 });
 
-test("a new human response cancels only the automatic confirmation, not the reservation", async () => {
+test("patient selection never sends an automatic confirmation", async () => {
   const patientMessages = [];
   const result = await completeSelectedAppointment(INPUT, {
     getHumanResumeControlImpl: async () => ({
@@ -214,10 +203,10 @@ test("a new human response cancels only the automatic confirmation, not the rese
     },
   });
 
-  assert.equal(result.reserved, true);
+  assert.equal(result.reserved, false);
   assert.equal(
     result.status,
-    "confirmation_cancelled_by_human",
+    "pending_human_confirmation",
   );
   assert.equal(patientMessages.length, 0);
 });

@@ -26,6 +26,12 @@ const BOT_KNOWLEDGE_HEADERS = Object.freeze([
   "Último uso",
   "Correções",
   "Origem",
+  "Versão da regra",
+  "Estado de promoção",
+  "Versão do snapshot",
+  "Aprovador da promoção",
+  "Promovida em",
+  "Substitui",
 ]);
 
 const BOT_UNKNOWN_HEADERS = Object.freeze([
@@ -199,14 +205,27 @@ function dataConhecimentoValida_(value) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function regraConhecimentoAtiva_(row, now) {
+function snapshotConhecimentoAtivo_() {
+  return String(
+    PropertiesService.getScriptProperties().getProperty(
+      "BRUNA_KB_SNAPSHOT",
+    ) || "",
+  ).trim();
+}
+
+function regraConhecimentoAtiva_(row, now, activeSnapshot) {
   const status = normalizarTextoConhecimento_(row[1]);
   const mode = normalizarTextoConhecimento_(row[2]);
   const risk = normalizarTextoConhecimento_(row[3]);
   const validUntil = dataConhecimentoValida_(row[11]);
+  const promotionState = normalizarTextoConhecimento_(row[17]);
+  const snapshotVersion = String(row[18] || "").trim();
   return status === "aprovada" &&
     ["automatica", "sugestao interna"].includes(mode) &&
     risk !== "alto" &&
+    promotionState === "active" &&
+    Boolean(activeSnapshot) &&
+    snapshotVersion === activeSnapshot &&
     String(row[6] || "").trim() &&
     (!validUntil || validUntil.getTime() >= now.getTime());
 }
@@ -240,6 +259,7 @@ function obterContextoConhecimentoBot_(input) {
   const approvedSheet = obterPlanilhaRespostasAprovadas_(spreadsheet);
   const questionsSheet = obterPlanilhaDuvidasBot_(spreadsheet);
   const now = new Date();
+  const activeSnapshot = snapshotConhecimentoAtivo_();
   const candidates = [];
 
   if (approvedSheet.getLastRow() >= 2 && question) {
@@ -253,7 +273,7 @@ function obterContextoConhecimentoBot_(input) {
       .getValues();
 
     rows.forEach(function (row) {
-      if (!regraConhecimentoAtiva_(row, now)) return;
+      if (!regraConhecimentoAtiva_(row, now, activeSnapshot)) return;
       const score = pontuarConhecimento_(question, row[4], row[5], row[8]);
       if (score <= 0) return;
       candidates.push({
@@ -265,6 +285,8 @@ function obterContextoConhecimentoBot_(input) {
         answer: String(row[6] || "").trim(),
         boundaries: String(row[7] || "").trim(),
         procedure: String(row[8] || "").trim(),
+        version: String(row[16] || "").trim(),
+        snapshotVersion: String(row[18] || "").trim(),
         score: Math.round(score * 100) / 100,
       });
     });
@@ -276,6 +298,7 @@ function obterContextoConhecimentoBot_(input) {
   const pending = obterDuvidaPendentePorTelefone_(questionsSheet, phone);
 
   return {
+    snapshotVersion: activeSnapshot,
     candidates: candidates.slice(0, BOT_KNOWLEDGE_CONFIG.maximumCandidates),
     pendingQuestion: pending ? {
       eventId: String(pending.values[0] || "").trim(),
@@ -674,4 +697,59 @@ function carregarAgendaAprendizadoBot_(spreadsheet, now) {
     });
   }
   return items;
+}
+
+function promoverSnapshotConhecimentoBot(snapshotVersion, ruleIds) {
+  const version = textoSeguroConhecimento_(snapshotVersion, 80);
+  const selectedIds = new Set(
+    (Array.isArray(ruleIds) ? ruleIds : [])
+      .map(function normalizeId(value) {
+        return String(value || "").trim();
+      })
+      .filter(Boolean),
+  );
+  if (!version || !selectedIds.size) {
+    throw new Error("Informe a versão do snapshot e ao menos uma regra.");
+  }
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("busy_retry");
+  try {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const sheet = obterPlanilhaRespostasAprovadas_(spreadsheet);
+    if (sheet.getLastRow() < 2) throw new Error("Nenhuma regra disponível.");
+    const rows = sheet
+      .getRange(2, 1, sheet.getLastRow() - 1, BOT_KNOWLEDGE_HEADERS.length)
+      .getValues();
+    const now = new Date();
+    let promoted = 0;
+    rows.forEach(function promote(row, index) {
+      const id = String(row[0] || "").trim();
+      const approved = normalizarTextoConhecimento_(row[1]) === "aprovada";
+      const selected = selectedIds.has(id);
+      if (selected && !approved) {
+        throw new Error("A regra " + id + " ainda não está aprovada.");
+      }
+      row[16] = row[16] || "1";
+      row[17] = selected ? "active" : row[17] === "active" ? "retired" : row[17];
+      if (selected) {
+        row[18] = version;
+        row[19] = Session.getActiveUser().getEmail() || "revisão humana";
+        row[20] = now;
+        promoted += 1;
+      }
+      sheet
+        .getRange(index + 2, 17, 1, 5)
+        .setValues([[row[16], row[17], row[18], row[19], row[20]]]);
+    });
+    if (promoted !== selectedIds.size) {
+      throw new Error("Uma ou mais regras selecionadas não foram encontradas.");
+    }
+    PropertiesService.getScriptProperties().setProperty(
+      "BRUNA_KB_SNAPSHOT",
+      version,
+    );
+    return { ok: true, snapshotVersion: version, promoted };
+  } finally {
+    lock.releaseLock();
+  }
 }

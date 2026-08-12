@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   clearExternalProfessionalContext,
+  detectExternalProfessionalAppointment,
   getExternalProfessionalContext,
   isDrHenriqueOperationalAppointmentRequest,
   isDrHenriqueStaniakAppointmentMessage,
@@ -65,13 +66,45 @@ test("recognizes a scheduling request for a Dr. Henrique patient", () => {
   );
 });
 
+test("recognizes Marina, Laerte and another named professional without capturing referrals", () => {
+  assert.equal(
+    detectExternalProfessionalAppointment(
+      "Quero marcar consulta com a Dra. Marina Silva na quinta às 14h.",
+    )?.key,
+    "dra_marina_silva",
+  );
+  assert.equal(
+    detectExternalProfessionalAppointment(
+      "Agendamento com Dr. Laerte amanhã às 10h.",
+    )?.key,
+    "dr_laerte",
+  );
+  assert.equal(
+    detectExternalProfessionalAppointment(
+      "Gostaria de agendar com a Dra. Beatriz Souza na terça às 11h.",
+    )?.displayName,
+    "Dra. Beatriz Souza",
+  );
+  assert.equal(
+    detectExternalProfessionalAppointment(
+      "O Dr. Henrique indicou a Dra. Amanda para lifting facial.",
+    ),
+    null,
+  );
+});
+
 test("external context expires and can be released for an Amanda inquiry", async () => {
   const storage = fakeStore();
   const phone = "+5511999990000";
   const now = Date.parse("2026-08-03T15:00:00.000Z");
 
   await markExternalProfessionalContext(
-    { phone, at: now },
+    {
+      phone,
+      at: now,
+      professional: "dr_henrique_staniak",
+      displayName: "Dr. Henrique Lane Staniak",
+    },
     { getStoreImpl: storage.getStoreImpl, now },
   );
   assert.equal(

@@ -1,12 +1,18 @@
 const CONFIG = Object.freeze({
   spreadsheetId: "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
   sheetName: "Google Ads - Conversões",
+  danielSheetName: "Leads Dr. Daniel",
   secretProperty: "LEADS_INGEST_SECRET",
   eventSheetName: "_WHATSAPP_EVENTOS",
   humanTakeoverSheetName: "_WHATSAPP_ATENDIMENTO_HUMANO",
   alertEmailSheetName: "_WHATSAPP_ALERTAS_EMAIL",
   messageSheetName: "_WHATSAPP_MENSAGENS",
   classificationSheetName: "_WHATSAPP_CLASSIFICACAO",
+  leadStageEventSheetName: "_LEAD_FASE_EVENTOS",
+  googleAdsEventSheetName: "_GOOGLE_ADS_EVENTOS",
+  googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
+  nonLeadArchiveSheetName: "_CONTATOS_NAO_LEADS",
+  qualifiedConversionName: "Lead qualificado GCLID",
   reviewAlertEmail: "daniel.added@gmail.com",
   timezone: "America/Sao_Paulo",
   appointmentSlotsSheetName: "Datas Consulta",
@@ -14,6 +20,8 @@ const CONFIG = Object.freeze({
   appointmentSlotsColumns: 7,
   totalColumns: 25,
   classificationDelayMinutes: 10,
+  classificationLeaseMinutes: 10,
+  classificationMaxAttempts: 8,
 });
 
 const EXPECTED_HEADERS = Object.freeze([
@@ -72,7 +80,7 @@ function doGet(e) {
   return json_({
     ok: true,
     service: "clinica-liv-leads",
-    deduplication: "one_row_per_phone",
+    deduplication: "one_open_opportunity_per_contact_and_professional",
   });
 }
 
@@ -98,20 +106,36 @@ function doPost(e) {
       body.action !== "update_appointment_status" &&
       body.action !== "get_available_slots" &&
       body.action !== "reserve_appointment_slot" &&
+      body.action !== "record_pending_appointment_selection" &&
       body.action !== "send_review_alert_email" &&
       body.action !== "claim_due_classifications" &&
+      body.action !== "hydrate_classification_jobs" &&
       body.action !== "complete_classification" &&
       body.action !== "fail_classification" &&
       body.action !== "get_patient_relationship" &&
       body.action !== "record_patient_commitment" &&
       body.action !== "resolve_patient_commitments" &&
+      body.action !== "record_external_professional_contact" &&
       body.action !== "remove_external_professional_contact" &&
       body.action !== "get_bot_knowledge_context" &&
       body.action !== "record_bot_unknown_question" &&
       body.action !== "record_human_learning_answer" &&
-      body.action !== "record_bot_knowledge_usage"
+      body.action !== "record_bot_knowledge_usage" &&
+      body.action !== "archive_nonlead_contact"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "archive_nonlead_contact") {
+      stage = "archive_nonlead_contact";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const archiveResult = arquivarContatoNaoLead_(
+        SpreadsheetApp.openById(CONFIG.spreadsheetId),
+        body.contact || {},
+      );
+      return json_({ ok: true, ...archiveResult });
     }
 
     if (body.action === "claim_due_classifications") {
@@ -121,6 +145,14 @@ function doPost(e) {
       }
       const claimResult = claimDueLeadClassifications_(body.limit);
       return json_({ ok: true, ...claimResult });
+    }
+
+    if (body.action === "hydrate_classification_jobs") {
+      stage = "hydrate_classification_jobs";
+      const hydrationResult = hydrateLeadClassificationJobs_(
+        body.jobs || [],
+      );
+      return json_({ ok: true, ...hydrationResult });
     }
 
     if (body.action === "complete_classification") {
@@ -310,6 +342,20 @@ function doPost(e) {
       });
     }
 
+    if (body.action === "record_pending_appointment_selection") {
+      stage = "record_pending_appointment_selection";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const pendingResult = registrarSelecaoPendenteAgendamento_(
+        body.appointment || {},
+      );
+      return json_({
+        ...pendingResult,
+        ok: pendingResult.ok === true,
+      });
+    }
+
     if (body.action === "get_bot_knowledge_context") {
       stage = "get_bot_knowledge_context";
       const knowledgeResult = obterContextoConhecimentoBot_(
@@ -360,14 +406,17 @@ function doPost(e) {
       });
     }
 
-    if (body.action === "remove_external_professional_contact") {
-      stage = "remove_external_professional_contact";
+    if (
+      body.action === "record_external_professional_contact" ||
+      body.action === "remove_external_professional_contact"
+    ) {
+      stage = "record_external_professional_contact";
 
       if (!lock.tryLock(5000)) {
         return json_({ ok: false, error: "busy_retry" });
       }
 
-      const cleanupResult = removerContatoProfissionalExterno_(
+      const cleanupResult = registrarContatoProfissionalExterno_(
         body.contact || {},
       );
 
@@ -377,19 +426,34 @@ function doPost(e) {
       });
     }
 
+    stage = "normalize_lead";
+    const lead = normalizeLead_(body.lead || {});
+    const route = typeof resolverRotaLead_ === "function"
+      ? resolverRotaLead_(lead)
+      : {
+          professional: lead.professional || "unknown",
+          routeStatus: lead.professional ? "resolved" : "pending",
+          sheetName: lead.professional === "daniel"
+            ? CONFIG.danielSheetName
+            : lead.professional === "amanda"
+              ? CONFIG.sheetName
+              : "",
+        };
+    lead.professional = route.professional;
+    lead.routeStatus = route.routeStatus;
+
     stage = "get_patient_relationship";
     const patientRelationship =
-      typeof obterRelacionamentoPaciente_ === "function"
+      typeof obterRelacionamentoPaciente_ === "function" &&
+      (route.professional === "amanda" || route.professional === "daniel")
         ? obterRelacionamentoPaciente_({
-            phone: body.lead && body.lead.phone,
+            phone: lead.phone,
+            professional: route.professional,
           })
         : {
             found: false,
             relationshipState: "unknown",
           };
-
-    stage = "normalize_lead";
-    const lead = normalizeLead_(body.lead || {});
 
     stage = "acquire_lock";
 
@@ -401,16 +465,6 @@ function doPost(e) {
     const spreadsheet = SpreadsheetApp.openById(
       CONFIG.spreadsheetId,
     );
-
-    stage = "find_sheet";
-    const sheet = spreadsheet.getSheetByName(CONFIG.sheetName);
-
-    if (!sheet) {
-      throw new Error("Aba configurada não encontrada.");
-    }
-
-    stage = "assert_headers";
-    assertHeaders_(sheet);
 
     stage = "event_sheet";
     const eventSheet = getOrCreateEventSheet_(spreadsheet);
@@ -438,21 +492,79 @@ function doPost(e) {
         messageId: lead.messageId,
         humanTakeoverToday,
         patientRelationship,
+        professional: route.professional,
+        routeStatus: route.routeStatus,
       });
     }
 
-    const legacyDuplicateRow = findExactDuplicateRow_(
-      sheet,
-      [lead.messageId, lead.eventId],
-    );
+    if (!route.sheetName) {
+      stage = "record_event";
+      recordProcessedEvent_(
+        eventSheet,
+        lead,
+        "",
+        route.routeStatus === "pending"
+          ? "route_pending"
+          : "nonlead",
+        "",
+        route.professional,
+        route.routeStatus,
+      );
+      if (route.routeStatus === "pending") {
+        recordLeadMessageOnly_(spreadsheet, "", lead, "IN");
+      }
+      return json_({
+        ok: true,
+        inserted: false,
+        updated: false,
+        routed: false,
+        row: null,
+        eventId: lead.eventId,
+        messageId: lead.messageId,
+        humanTakeoverToday,
+        patientRelationship,
+        professional: route.professional,
+        routeStatus: route.routeStatus,
+      });
+    }
+
+    stage = "find_sheet";
+    const sheet = spreadsheet.getSheetByName(route.sheetName);
+
+    if (!sheet) {
+      throw new Error("Aba configurada não encontrada.");
+    }
+
+    stage = "assert_headers";
+    if (route.professional === "amanda") assertHeaders_(sheet);
+    if (typeof garantirEstruturaIntegradaLead_ === "function") {
+      garantirEstruturaIntegradaLead_(sheet);
+    }
+
+    const legacyDuplicateRow = route.professional === "amanda"
+      ? findExactDuplicateRow_(
+          sheet,
+          [lead.messageId, lead.eventId],
+        )
+      : null;
 
     if (legacyDuplicateRow) {
       stage = "record_event";
+      const existingOpportunity = garantirOportunidadeLead_(
+        spreadsheet,
+        lead,
+        sheet,
+        legacyDuplicateRow,
+      );
+      lead.opportunityId = existingOpportunity.opportunityId;
       recordProcessedEvent_(
         eventSheet,
         lead,
         legacyDuplicateRow,
         "message_id_backfill",
+        lead.opportunityId,
+        route.professional,
+        route.routeStatus,
       );
 
       return json_({
@@ -465,17 +577,41 @@ function doPost(e) {
         messageId: lead.messageId,
         humanTakeoverToday,
         patientRelationship,
+        opportunityId: lead.opportunityId,
+        professional: route.professional,
+        routeStatus: route.routeStatus,
       });
     }
 
     stage = "phone_identity_check";
-    const existingLeadRow = findLeadRowByPhone_(sheet, lead.phone);
+    const existingLeadRow =
+      typeof localizarLeadPorOportunidadeOuTelefone_ === "function"
+        ? localizarLeadPorOportunidadeOuTelefone_(
+            sheet,
+            lead.opportunityId,
+            lead.phone,
+          )
+        : findLeadRowByPhone_(sheet, lead.phone);
 
     if (existingLeadRow) {
       if (!isKnownPatientRelationship_(patientRelationship)) {
         stage = "merge_existing_lead";
-        mergeLeadIntoExistingRow_(sheet, existingLeadRow, lead);
+        mergeRoutedLeadIntoExistingRow_(
+          sheet,
+          existingLeadRow,
+          lead,
+          route.professional,
+        );
       }
+
+      const existingOpportunity = garantirOportunidadeLead_(
+        spreadsheet,
+        lead,
+        sheet,
+        existingLeadRow,
+      );
+      lead.opportunityId = existingOpportunity.opportunityId;
+      lead.leadSheetName = route.sheetName;
 
       stage = "record_event";
       recordProcessedEvent_(
@@ -483,24 +619,20 @@ function doPost(e) {
         lead,
         existingLeadRow,
         "phone_identity",
+        lead.opportunityId,
+        route.professional,
+        route.routeStatus,
       );
 
       stage = "queue_classification";
-      if (isKnownPatientRelationship_(patientRelationship)) {
-        recordLeadMessageOnly_(
-          spreadsheet,
-          existingLeadRow,
-          lead,
-          "IN",
-        );
-      } else {
-        recordLeadMessageAndQueue_(
-          spreadsheet,
-          existingLeadRow,
-          lead,
-          "IN",
-        );
-      }
+      // Uma paciente conhecida ainda pode avançar nesta oportunidade.
+      // Se já existe uma linha de lead, toda mensagem volta ao classificador.
+      recordLeadMessageAndQueue_(
+        spreadsheet,
+        existingLeadRow,
+        lead,
+        "IN",
+      );
 
       return json_({
         ok: true,
@@ -514,6 +646,9 @@ function doPost(e) {
         humanTakeoverToday,
         patientRelationship,
         knownPatient: isKnownPatientRelationship_(patientRelationship),
+        opportunityId: lead.opportunityId,
+        professional: route.professional,
+        routeStatus: route.routeStatus,
       });
     }
 
@@ -524,6 +659,9 @@ function doPost(e) {
         lead,
         "",
         "known_patient",
+        "",
+        route.professional,
+        route.routeStatus,
       );
       recordLeadMessageOnly_(spreadsheet, "", lead, "IN");
 
@@ -539,15 +677,26 @@ function doPost(e) {
         humanTakeoverToday,
         patientRelationship,
         knownPatient: true,
+        professional: route.professional,
+        routeStatus: route.routeStatus,
       });
     }
 
     stage = "find_row";
     const row = findFirstAvailableRow_(sheet);
 
-    writeLead_(sheet, row, lead, function setStage(nextStage) {
+    writeRoutedLead_(sheet, row, lead, route.professional, function setStage(nextStage) {
       stage = nextStage;
     });
+
+    const opportunity = garantirOportunidadeLead_(
+      spreadsheet,
+      lead,
+      sheet,
+      row,
+    );
+    lead.opportunityId = opportunity.opportunityId;
+    lead.leadSheetName = route.sheetName;
 
     stage = "record_event";
     recordProcessedEvent_(
@@ -555,6 +704,9 @@ function doPost(e) {
       lead,
       row,
       "inserted",
+      lead.opportunityId,
+      route.professional,
+      route.routeStatus,
     );
 
     stage = "queue_classification";
@@ -570,6 +722,9 @@ function doPost(e) {
       messageId: lead.messageId,
       humanTakeoverToday,
       patientRelationship,
+      opportunityId: lead.opportunityId,
+      professional: route.professional,
+      routeStatus: route.routeStatus,
     });
   } catch (error) {
     console.error(error && error.stack ? error.stack : error);
@@ -590,6 +745,7 @@ function doPost(e) {
       "known_patient_no_lead",
       "queue_classification",
       "claim_due_classifications",
+      "hydrate_classification_jobs",
       "complete_classification",
       "fail_classification",
       "find_row",
@@ -607,11 +763,14 @@ function doPost(e) {
       "update_appointment_status",
       "get_available_slots",
       "reserve_appointment_slot",
+      "record_pending_appointment_selection",
       "send_review_alert_email",
       "get_bot_knowledge_context",
       "record_bot_unknown_question",
       "record_human_learning_answer",
       "record_bot_knowledge_usage",
+      "record_external_professional_contact",
+      "archive_nonlead_contact",
     ]);
 
     const safeStage = allowedStages.has(stage) ? stage : "unknown";
@@ -627,55 +786,254 @@ function doPost(e) {
   }
 }
 
-function removerContatoProfissionalExterno_(input) {
+function registrarContatoProfissionalExterno_(input) {
   const phone = normalizePhone_(input && input.phone);
   if (!phone) {
     return { ok: false, error: "invalid_phone" };
   }
 
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const leadSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
-  let leadRowsCleared = 0;
-
-  if (leadSheet) {
-    const leadRow = findLeadRowByPhone_(leadSheet, phone);
-    if (leadRow) {
-      leadSheet
-        .getRange(leadRow, 1, 1, leadSheet.getLastColumn())
-        .clearContent();
-      leadRowsCleared = 1;
-    }
-  }
-
-  const derivedSheetNames = [
-    "Consultas",
-    "_WHATSAPP_RETOMADAS",
-    "_WHATSAPP_COMPROMISSOS",
-    "_WHATSAPP_MENSAGENS",
-    "_WHATSAPP_ATENDIMENTO_HUMANO",
-    "_WHATSAPP_ALERTAS_EMAIL",
+  const sheetName = "_WHATSAPP_ROTAS_EXTERNAS";
+  const headers = [
+    "Event ID",
+    "Message ID",
+    "Telefone",
+    "Profissional",
+    "Data e hora",
+    "Estado",
   ];
-  const removedBySheet = {};
-
-  derivedSheetNames.forEach(function (sheetName) {
-    const sheet = spreadsheet.getSheetByName(sheetName);
-    if (!sheet) return;
-    const removed = removerLinhasPorTelefone_(sheet, phone);
-    if (removed) removedBySheet[sheetName] = removed;
-  });
-
-  if (typeof atualizarCentralAtendimento === "function") {
-    atualizarCentralAtendimento();
+  let sheet = spreadsheet.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(sheetName);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    sheet.hideSheet();
   }
+  const eventId = safeText_(input && input.eventId, 200);
+  const messageId = safeText_(input && input.messageId, 500);
+  const duplicate = sheet.getLastRow() >= 2 && (eventId || messageId)
+    ? sheet
+        .getRange(2, 1, sheet.getLastRow() - 1, 2)
+        .getDisplayValues()
+        .some(function sameEvent(row) {
+          return (
+            (eventId && String(row[0] || "") === eventId) ||
+            (messageId && String(row[1] || "") === messageId)
+          );
+        })
+    : false;
+  if (!duplicate) {
+    sheet.appendRow([
+      eventId,
+      messageId,
+      phone,
+      safeText_(input && input.professional, 120) || "Outro profissional",
+      new Date(input && input.at || Date.now()),
+      "Encaminhar ao humano — sem criar lead",
+    ]);
+  }
+
+  const archive = input && input.opportunityId
+    ? arquivarContatoNaoLead_(spreadsheet, {
+        phone: phone,
+        opportunityId: input.opportunityId,
+        professional: "external",
+        reason: safeText_(input && input.professional, 120) ||
+          "Outro profissional",
+        eventId: eventId,
+        at: input && input.at,
+      })
+    : { archivedLeadRows: 0 };
 
   return {
     ok: true,
     professional:
       String(input && input.professional || "").trim() ||
       "Dr. Henrique Lane Staniak",
-    leadRowsCleared,
-    removedBySheet,
+    preserved: true,
+    archivedLeadRows: archive.archivedLeadRows,
+    created: !duplicate,
+    duplicate,
   };
+}
+
+function removerContatoProfissionalExterno_(input) {
+  return registrarContatoProfissionalExterno_(input);
+}
+
+function obterOuCriarArquivoNaoLeads_(spreadsheet) {
+  const headers = [
+    "Data do arquivamento",
+    "Motivo",
+    "Profissional detectado",
+    "Aba de origem",
+    "Linha de origem",
+    "Opportunity ID",
+    "Telefone (E.164)",
+    "Event ID",
+    "Dados administrativos originais (JSON)",
+  ];
+  let sheet = spreadsheet.getSheetByName(CONFIG.nonLeadArchiveSheetName);
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(CONFIG.nonLeadArchiveSheetName);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    sheet.hideSheet();
+  }
+  return sheet;
+}
+
+function atualizarLinhasVisiveisAposExclusao_(
+  spreadsheet,
+  sheetName,
+  deletedRow,
+) {
+  const crm = spreadsheet.getSheetByName("_CRM_OPORTUNIDADES");
+  if (!crm || crm.getLastRow() < 2) return;
+  const columns = mapaCabecalhosOportunidade_(crm);
+  const values = crm
+    .getRange(2, 1, crm.getLastRow() - 1, crm.getLastColumn())
+    .getDisplayValues();
+  values.forEach(function updateVisibleRow(row, index) {
+    if (String(row[(columns["Aba visível"] || 0) - 1] || "") !== sheetName) {
+      return;
+    }
+    const currentRow = Number(
+      row[(columns["Linha visível"] || 0) - 1] || 0,
+    );
+    if (currentRow > deletedRow) {
+      crm
+        .getRange(index + 2, columns["Linha visível"])
+        .setValue(currentRow - 1);
+    }
+  });
+}
+
+function arquivarContatoNaoLead_(spreadsheet, input) {
+  const phone = normalizePhone_(input && input.phone);
+  if (!phone) return { archivedLeadRows: 0 };
+  const archive = obterOuCriarArquivoNaoLeads_(spreadsheet);
+  const leadSheets = [CONFIG.sheetName, CONFIG.danielSheetName];
+  let archivedLeadRows = 0;
+
+  leadSheets.forEach(function archiveFromLeadSheet(sheetName) {
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    const columns = mapaCabecalhosOportunidade_(sheet);
+    const phoneColumn = columns["Telefone (E.164)"] || 3;
+    const opportunityColumn = columns["Opportunity ID"] || 0;
+    const values = sheet
+      .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+      .getDisplayValues();
+    for (let index = values.length - 1; index >= 0; index -= 1) {
+      const row = values[index];
+      if (normalizePhone_(row[phoneColumn - 1]) !== phone) continue;
+      const opportunityId = String(
+        row[opportunityColumn - 1] || "",
+      );
+      if (
+        input && input.opportunityId &&
+        opportunityId !== String(input.opportunityId)
+      ) {
+        continue;
+      }
+      archive.appendRow([
+        new Date(input && input.at || Date.now()),
+        safeText_(input && input.reason, 200),
+        safeText_(input && input.professional, 80),
+        sheetName,
+        index + 2,
+        opportunityId,
+        phone,
+        safeText_(input && input.eventId, 200),
+        safeText_(JSON.stringify(row), 20000),
+      ]);
+      if (opportunityId && typeof encerrarOportunidadeNaoLead_ === "function") {
+        if (
+          typeof invalidarConversoesGoogleAdsOportunidade_ === "function"
+        ) {
+          invalidarConversoesGoogleAdsOportunidade_(
+            spreadsheet,
+            opportunityId,
+          );
+        }
+        encerrarOportunidadeNaoLead_(spreadsheet, {
+          opportunityId: opportunityId,
+          professional: input && input.professional,
+          archiveSheetName: CONFIG.nonLeadArchiveSheetName,
+          archiveRow: archive.getLastRow(),
+          reason: input && input.reason,
+        });
+      }
+      {
+        const queue = spreadsheet.getSheetByName(CONFIG.classificationSheetName);
+        if (queue && queue.getLastRow() >= 2) {
+          const queueValues = queue
+            .getRange(2, 1, queue.getLastRow() - 1, 17)
+            .getDisplayValues();
+          queueValues.forEach(function excludeQueueRow(queueRow, queueIndex) {
+            const matchesOpportunity = opportunityId &&
+              String(queueRow[16] || "") === opportunityId;
+            const matchesLegacyPhone = !opportunityId &&
+              normalizePhone_(queueRow[0]) === phone;
+            if (!matchesOpportunity && !matchesLegacyPhone) return;
+            queue.getRange(queueIndex + 2, 5, 1, 2).setValues([[
+              "excluded",
+              "",
+            ]]);
+            queue.getRange(queueIndex + 2, 14, 1, 3).setValues([[
+              "archived_nonlead",
+              0,
+              "",
+            ]]);
+            queue.getRange(queueIndex + 2, 18, 1, 2).setValues([[
+              safeText_(input && input.professional, 80),
+              CONFIG.nonLeadArchiveSheetName,
+            ]]);
+          });
+        }
+      }
+      const deletedRow = index + 2;
+      sheet.deleteRow(deletedRow);
+      atualizarLinhasVisiveisAposExclusao_(
+        spreadsheet,
+        sheetName,
+        deletedRow,
+      );
+      archivedLeadRows += 1;
+    }
+  });
+  return { archivedLeadRows: archivedLeadRows };
+}
+
+function limparContatosNaoLeadsAuditados20260812() {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const audited = [
+    ["5511967743374", "", "nonpatient", "Teste interno de classificação"],
+    ["5519996944518", "opp_01c21d563552df9cd96f", "nonpatient", "Conversa privada/teste interno"],
+    ["5511992089404", "opp_92d0a63317ac6372d5f2", "nonpatient", "Fornecedor de gráfica"],
+    ["5511943274607", "opp_f7525bf64bb9afed0d37", "external", "Consulta solicitada para Dra. Marina Silva"],
+    ["5511981300008", "opp_23759ac9d63bf3a1cd54", "external", "Retorno solicitado para Dr. Henrique"],
+    ["5511926272030", "opp_79a573d085496825dca2", "nonpatient", "Entrega de fornecedor"],
+    ["5511966071383", "opp_3b245fe2260caf4ad15b", "nonpatient", "Pedido de emprego"],
+    ["551153043707", "opp_104b600abca17b762d4a", "nonpatient", "Oferta comercial"],
+    ["5511988230528", "opp_1fd0d7832179953d532c", "nonpatient", "Oferta de marketing"],
+    ["5515997125089", "opp_27962694a91fcd130ee5", "nonpatient", "Conversa privada sem intenção de paciente"],
+  ];
+  let archivedLeadRows = 0;
+  audited.forEach(function archiveAudited(item) {
+    const result = arquivarContatoNaoLead_(spreadsheet, {
+      phone: item[0],
+      opportunityId: item[1],
+      professional: item[2],
+      reason: item[3],
+      eventId: "audit_20260812_" + stableLeadHash_(item.join("|")),
+      at: new Date(),
+    });
+    archivedLeadRows += Number(result.archivedLeadRows || 0);
+  });
+  SpreadsheetApp.flush();
+  return { archivedLeadRows: archivedLeadRows };
 }
 
 function removerLinhasPorTelefone_(sheet, phone) {
@@ -965,6 +1323,8 @@ function normalizeLead_(input) {
     gclid,
     gbraid,
     wbraid,
+    professional: safeText_(input.professional, 80),
+    opportunityId: safeText_(input.opportunityId, 120),
     name: safeText_(input.name, 120),
     text: safeText_(input.text, 4000),
   };
@@ -1113,20 +1473,23 @@ function assertHeaders_(sheet) {
 
 function getOrCreateEventSheet_(spreadsheet) {
   let sheet = spreadsheet.getSheetByName(CONFIG.eventSheetName);
-
-  if (sheet) return sheet;
-
-  sheet = spreadsheet.insertSheet(CONFIG.eventSheetName);
-  sheet.getRange(1, 1, 1, 6).setValues([[
+  const headers = [
     "Message ID",
     "Event ID",
     "Telefone",
     "Data do evento",
     "Linha do lead",
     "Resultado",
-  ]]);
-  sheet.setFrozenRows(1);
-  sheet.hideSheet();
+    "Opportunity ID",
+    "Profissional",
+    "Status de roteamento",
+  ];
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(CONFIG.eventSheetName);
+    sheet.setFrozenRows(1);
+    sheet.hideSheet();
+  }
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
   return sheet;
 }
@@ -1209,10 +1572,22 @@ function registrarAtendimentoHumano_(input) {
     safeText_(input.text, 500),
   ]);
 
-  const leadsSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
-  const leadRow = leadsSheet
-    ? findLeadRowByPhone_(leadsSheet, phone)
+  const opportunity =
+    typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
+      ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone)
+      : null;
+  const leadsSheet = opportunity
+    ? spreadsheet.getSheetByName(opportunity.sheetName)
     : null;
+  const leadRow = opportunity && opportunity.leadRow
+    ? opportunity.leadRow
+    : leadsSheet
+      ? localizarLeadPorOportunidadeOuTelefone_(
+          leadsSheet,
+          opportunity && opportunity.opportunityId,
+          phone,
+        )
+      : null;
 
   if (leadRow) {
     recordLeadMessageAndQueue_(
@@ -1224,6 +1599,9 @@ function registrarAtendimentoHumano_(input) {
         messageId,
         eventId,
         text: safeText_(input.text, 4000),
+        opportunityId: opportunity && opportunity.opportunityId,
+        professional: opportunity && opportunity.professional,
+        leadSheetName: opportunity && opportunity.sheetName,
       },
       "OUT",
     );
@@ -1324,6 +1702,9 @@ function recordProcessedEvent_(
   lead,
   leadRow,
   result,
+  opportunityId,
+  professional,
+  routeStatus,
 ) {
   const processedAt = Utilities.formatDate(
     lead.contactAt,
@@ -1338,6 +1719,9 @@ function recordProcessedEvent_(
     processedAt,
     leadRow,
     result,
+    opportunityId || lead.opportunityId || "",
+    professional || lead.professional || "unknown",
+    routeStatus || lead.routeStatus || "pending",
   ]);
 }
 
@@ -1420,6 +1804,30 @@ function mergeLeadIntoExistingRow_(sheet, row, lead) {
     else if (lead.wbraid) sheet.getRange(row, 13).setValue(lead.wbraid);
   }
 
+  SpreadsheetApp.flush();
+}
+
+function mergeRoutedLeadIntoExistingRow_(
+  sheet,
+  row,
+  lead,
+  professional,
+) {
+  if (professional === "amanda") {
+    return mergeLeadIntoExistingRow_(sheet, row, lead);
+  }
+
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const writes = [
+    ["Nome", lead.name],
+    ["Última mensagem", lead.text],
+    ["Atualizado em", lead.contactAt],
+  ];
+  writes.forEach(function writeIfPresent(entry) {
+    if (columns[entry[0]] && entry[1]) {
+      sheet.getRange(row, columns[entry[0]]).setValue(entry[1]);
+    }
+  });
   SpreadsheetApp.flush();
 }
 
@@ -1523,6 +1931,46 @@ function writeLead_(sheet, row, lead, setStage) {
 
   setStage("flush");
   SpreadsheetApp.flush();
+}
+
+function writeDanielLead_(sheet, row, lead, setStage) {
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const contactDateTime = Utilities.formatDate(
+    lead.contactAt,
+    CONFIG.timezone,
+    "dd/MM/yyyy HH:mm",
+  );
+  const statusDate = Utilities.formatDate(
+    lead.contactAt,
+    CONFIG.timezone,
+    "dd/MM/yyyy",
+  );
+  const values = {
+    "Data do contato": contactDateTime,
+    "Telefone (E.164)": lead.phone,
+    "Nome": lead.name,
+    "Última mensagem": lead.text,
+    "Situação do lead": "Novo",
+    "Data da situação": statusDate,
+    "Referência de origem": lead.reference,
+    "Origem": lead.platform,
+    "Atualizado em": lead.contactAt,
+  };
+  setStage("write_contact");
+  Object.keys(values).forEach(function writeValue(header) {
+    const column = columns[header];
+    if (!column || values[header] === "") return;
+    sheet.getRange(row, column).setValue(values[header]);
+  });
+  setStage("flush");
+  SpreadsheetApp.flush();
+}
+
+function writeRoutedLead_(sheet, row, lead, professional, setStage) {
+  if (professional === "daniel") {
+    return writeDanielLead_(sheet, row, lead, setStage);
+  }
+  return writeLead_(sheet, row, lead, setStage);
 }
 
 function json_(payload) {

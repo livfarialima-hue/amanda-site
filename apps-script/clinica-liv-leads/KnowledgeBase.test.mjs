@@ -29,25 +29,33 @@ test("knowledge matching ignores common words and prioritizes the subject", () =
   assert.ok(score > 0.8);
 });
 
-test("only approved, current and non-high-risk rules become candidates", () => {
+test("only promoted rules from the active snapshot become candidates", () => {
   const context = runtime();
   const active = vm.runInContext(
     `regraConhecimentoAtiva_([
       "KB-1", "Aprovada", "Automática", "Baixo", "Assunto", "", "Resposta",
-      "", "", "", "", ""
-    ], new Date("2026-08-09T12:00:00Z"))`,
+      "", "", "", "", "", "", "", "", "", "1", "active", "kb-2026-08-11"
+    ], new Date("2026-08-09T12:00:00Z"), "kb-2026-08-11")`,
     context,
   );
   const highRisk = vm.runInContext(
     `regraConhecimentoAtiva_([
       "KB-2", "Aprovada", "Automática", "Alto", "Assunto", "", "Resposta",
-      "", "", "", "", ""
-    ], new Date("2026-08-09T12:00:00Z"))`,
+      "", "", "", "", "", "", "", "", "", "1", "active", "kb-2026-08-11"
+    ], new Date("2026-08-09T12:00:00Z"), "kb-2026-08-11")`,
     context,
   );
 
   assert.equal(active, true);
   assert.equal(highRisk, false);
+  const draft = vm.runInContext(
+    `regraConhecimentoAtiva_([
+      "KB-3", "Aprovada", "Automática", "Baixo", "Assunto", "", "Resposta",
+      "", "", "", "", "", "", "", "", "", "1", "review", "kb-2026-08-11"
+    ], new Date("2026-08-09T12:00:00Z"), "kb-2026-08-11")`,
+    context,
+  );
+  assert.equal(draft, false);
 });
 
 test("captured human answers default to safer modes by risk", () => {

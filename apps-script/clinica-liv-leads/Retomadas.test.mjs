@@ -342,6 +342,56 @@ test("follow-up items receive a secure cancel link with a confirmation step", ()
   );
 });
 
+test("cancel link prefers the active web app deployment over a stale configured URL", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_WEB_APP_URL"
+            ? "https://script.google.com/macros/s/old-deployment/exec"
+            : "",
+    }),
+  };
+  context.ScriptApp = {
+    getService: () => ({
+      getUrl: () =>
+        "https://script.google.com/macros/s/current-deployment/exec",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = () => [1, 2, 3];
+  context.Utilities.base64EncodeWebSafe = () => "AQID=";
+
+  const link = context.linkCancelamentoRetomadas_(
+    "+55 11 99999-0000",
+    false,
+  );
+
+  assert.match(link, /macros\/s\/current-deployment\/exec\?/);
+  assert.doesNotMatch(link, /old-deployment/);
+});
+
+test("cancel link rejects editor, development and malformed Apps Script URLs", () => {
+  for (const invalidUrl of [
+    "https://script.google.com/home/projects/test/edit",
+    "https://script.google.com/macros/s/test/dev",
+    "https://drive.google.com/file/d/test/view",
+    "javascript:alert(1)",
+  ]) {
+    assert.equal(
+      context.normalizarUrlAplicativoRetomadas_(invalidUrl),
+      "",
+    );
+  }
+
+  assert.equal(
+    context.normalizarUrlAplicativoRetomadas_(
+      "https://script.google.com/macros/s/current/exec?cache=old#link",
+    ),
+    "https://script.google.com/macros/s/current/exec",
+  );
+});
+
 test("cancel action stops only pending plans for the selected phone", () => {
   const rows = [
     Array(15).fill(""),

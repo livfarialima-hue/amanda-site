@@ -1,3 +1,5 @@
+import { usableProfileFirstName } from "./profile-name.mjs";
+
 const CONSULTATION_PRICE = 500;
 const PRICE_GUIDE_PATH =
   "/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
@@ -109,7 +111,7 @@ const PROCEDURE_LABELS = Object.freeze({
 });
 
 function firstName(value) {
-  const name = String(value || "").trim().split(/\s+/)[0] || "";
+  const name = usableProfileFirstName(value);
   if (!name) return "";
 
   if (name === name.toLowerCase() || name === name.toUpperCase()) {
@@ -316,15 +318,15 @@ export function buildSurgicalInitialPriceReply({
     PROCEDURE_LABELS[procedure] ||
     "";
   const nextStep = procedureLabel
-    ? `Se depois quiser uma média para ${procedureLabel}, posso te orientar.`
-    : "Qual cirurgia você está pesquisando? Se depois quiser uma média, posso te orientar.";
-
+    ? `Posso informar a média para ${procedureLabel}.`
+    : "Qual cirurgia você está pesquisando?";
   return [
     directPriceGreeting(patientName, recentConversation),
     location,
     "Os valores variam conforme o procedimento e o planejamento definido na avaliação.",
-    "Trabalhamos com valores competitivos, condição à vista e parcelamento antecipado até a cirurgia.",
-    "O orçamento discrimina equipe, hospital, anestesia, materiais e acompanhamento, conforme o caso.",
+    "Trabalhamos com valores competitivos: há condição à vista por Pix ou débito e parcelamento antecipado até a cirurgia.",
+    "O orçamento inclui hospital, anestesia, materiais e acompanhamento.",
+    "Hospitais: Sírio-Libanês, Nove de Julho, Oswaldo Cruz e opções mais econômicas. Convênio depende de autorização, sem garantia.",
     guide,
     nextStep,
   ].filter(Boolean).join("\n\n");
@@ -374,7 +376,8 @@ export function buildSurgicalPriceSuggestedReply({
           "• Minilifting: entre R$ 18 mil e R$ 25 mil",
           "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
         ].join("\n"),
-        "O valor final varia conforme a extensão do planejamento e os custos de equipe e hospital. Há condição à vista e parcelamento antecipado até a data da cirurgia.",
+        "O valor final varia conforme plano e hospital. Há condição à vista por Pix ou débito e parcelamento antecipado até a data da cirurgia.",
+        "Sírio-Libanês, Nove de Julho, Oswaldo Cruz e opções econômicas. Convênio depende de autorização, sem garantia.",
         guide,
         "Se a faixa fizer sentido, posso verificar horários para a avaliação. Prefere manhã ou tarde?",
       ].filter(Boolean).join("\n\n");
@@ -390,7 +393,7 @@ export function buildSurgicalPriceSuggestedReply({
       ].join("\n"),
       "A indicação considera regiões, flacidez e resultado desejado. A Dra. Amanda planeja com segurança, naturalidade e preservação das suas características.",
       "Hospital, anestesista, auxiliar, instrumentador e acompanhamento variam por caso. Compare o conjunto de cuidados.",
-      "Há condição à vista e parcelamento antecipado até a data da cirurgia.",
+      "Há condição à vista por Pix ou débito e parcelamento antecipado até a data da cirurgia.",
       guide,
       liftingPage,
       "Posso verificar horários para a avaliação. Prefere manhã ou tarde?",

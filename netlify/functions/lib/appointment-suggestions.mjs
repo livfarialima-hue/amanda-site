@@ -1,3 +1,5 @@
+import { usableProfileFirstName } from "./profile-name.mjs";
+
 const MAX_ALERT_TEXT_LENGTH = 650;
 const SCHEDULING_CONTEXT_PATTERN =
   /\b(?:agend|horari|disponib|periodo|dia|data|avaliacao|consulta)\w*/i;
@@ -133,7 +135,7 @@ export function buildAppointmentPreferenceCollectionReply({
   patientName,
   introduceBruna = false,
 } = {}) {
-  const firstName = String(patientName || "").trim().split(/\s+/)[0];
+  const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
     ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
@@ -248,11 +250,12 @@ export function buildAppointmentSuggestion({
   const subject = procedureLabel
     ? `a avaliação de ${procedureLabel.replaceAll("_", " ")}`
     : "a avaliação";
+  const patientFirstName = usableProfileFirstName(patientName);
+  const patientGreeting = patientFirstName
+    ? `Olá, ${patientFirstName}!`
+    : "Olá!";
 
   if (!normalizedSlots.length) {
-    const patientGreeting = patientName
-      ? `Olá, ${String(patientName).trim().split(/\s+/)[0]}!`
-      : "Olá!";
     const fallbackReply = String(preferenceText || "").trim()
       ? `${patientGreeting} Vou conferir outras opções compatíveis com essa preferência e retorno por aqui assim que possível.`
       : `${patientGreeting} Vou conferir os horários disponíveis com a equipe e retorno por aqui. Se puder me dizer quais dias e se manhã ou tarde costumam funcionar melhor, isso ajuda a buscar opções mais adequadas.`;
@@ -260,7 +263,7 @@ export function buildAppointmentSuggestion({
     return limitText(
       [
         "AGENDAMENTO — revisão necessária",
-        `${patientName || "Paciente"} pediu horários para ${subject} com ${clinician}.`,
+        `${patientFirstName || "Paciente"} pediu horários para ${subject} com ${clinician}.`,
         displayPreference(preferenceText),
         "Não há horários disponíveis cadastrados em Datas Consulta.",
         "Sugestão para copiar ao paciente:",
@@ -272,10 +275,6 @@ export function buildAppointmentSuggestion({
   const options = normalizedSlots
     .map((slot, index) => `${index + 1}. ${displaySlot(slot)}`)
     .join("\n");
-  const patientGreeting = patientName
-    ? `Olá, ${String(patientName).trim().split(/\s+/)[0]}!`
-    : "Olá!";
-
   return limitText(
     [
       `AGENDAMENTO — ${clinician}`,

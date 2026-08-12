@@ -215,9 +215,10 @@ function processarLembretesConsultasInterno_(
       appointment,
       "yyyy-MM-dd HH:mm",
     );
-    const storedAppointmentKey = String(
-      row[columns.monitoredAppointment] || "",
-    ).trim();
+    const storedAppointmentKey =
+      normalizarChaveAgendamentoMonitorado_(
+        row[columns.monitoredAppointment],
+      );
 
     if (storedAppointmentKey !== appointmentKey) {
       sheet
@@ -227,16 +228,25 @@ function processarLembretesConsultasInterno_(
         .getRange(rowIndex + 1, columns.reminderSameDay + 1)
         .clearContent();
       sheet
-        .getRange(rowIndex + 1, columns.lastError + 1)
+        .getRange(rowIndex + 1, columns.lastAttempt + 1)
         .clearContent();
       sheet
-        .getRange(
-          rowIndex + 1,
-          columns.monitoredAppointment + 1,
-        )
-        .setValue(appointmentKey);
+        .getRange(rowIndex + 1, columns.lastError + 1)
+        .clearContent();
+      const monitoredAppointmentRange = sheet.getRange(
+        rowIndex + 1,
+        columns.monitoredAppointment + 1,
+      );
+
+      // Sem o formato de texto, o Sheets converte automaticamente
+      // "2026-08-11 16:00" em Date. Na execução seguinte essa
+      // conversão parecia uma alteração do agendamento, limpava a
+      // marca de envio e liberava o mesmo lembrete novamente.
+      monitoredAppointmentRange.setNumberFormat("@");
+      monitoredAppointmentRange.setValue(appointmentKey);
       row[columns.reminder48h] = "";
       row[columns.reminderSameDay] = "";
+      row[columns.lastAttempt] = "";
       row[columns.monitoredAppointment] = appointmentKey;
     }
 
@@ -255,6 +265,7 @@ function processarLembretesConsultasInterno_(
       appointment,
       reminder48hSent: row[columns.reminder48h],
       sameDaySent: row[columns.reminderSameDay],
+      lastAttempt: row[columns.lastAttempt],
     });
 
     if (!reminderKind) continue;
@@ -262,6 +273,16 @@ function processarLembretesConsultasInterno_(
     const appointmentId =
       String(row[columns.id] || "").trim() ||
       `consulta-linha-${rowIndex + 1}`;
+    // Reserva a tentativa antes da chamada externa. Assim, mesmo que a
+    // resposta da YCloud se perca ou a execução seja interrompida depois
+    // do envio, nenhuma execução futura repete o lembrete. Uma falha fica
+    // registrada para revisão humana e não é reenviada automaticamente.
+    sheet
+      .getRange(rowIndex + 1, columns.lastAttempt + 1)
+      .setValue(now);
+    row[columns.lastAttempt] = now;
+    SpreadsheetApp.flush();
+
     const response = enviarLembreteConsulta_(
       {
         appointmentId,
@@ -288,10 +309,6 @@ function processarLembretesConsultasInterno_(
       secret,
       properties,
     );
-
-    sheet
-      .getRange(rowIndex + 1, columns.lastAttempt + 1)
-      .setValue(now);
 
     if (response.ok && response.sent) {
       const sentColumn =
@@ -391,7 +408,13 @@ function definirTipoLembreteConsulta_(input) {
   // As duas colunas antigas permanecem como histórico. Qualquer uma
   // preenchida significa que este agendamento já recebeu seu único
   // lembrete e não deve receber outro.
-  if (input.reminder48hSent || input.sameDaySent) return "";
+  if (
+    input.reminder48hSent ||
+    input.sameDaySent ||
+    input.lastAttempt
+  ) {
+    return "";
+  }
 
   const singleReminderTarget =
     horarioAlvoLembretePrincipalConsulta_(
@@ -550,6 +573,50 @@ function criarDataSaoPauloLembretesConsultas_(
   timePart,
 ) {
   return new Date(`${datePart}T${timePart}:00-03:00`);
+}
+
+function normalizarChaveAgendamentoMonitorado_(value) {
+  if (
+    value instanceof Date &&
+    !Number.isNaN(value.getTime())
+  ) {
+    return formatarDataLembretesConsultas_(
+      value,
+      "yyyy-MM-dd HH:mm",
+    );
+  }
+
+  const text = String(value || "").trim();
+
+  if (!text) return "";
+
+  const isoMatch = text.match(
+    /^(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})/,
+  );
+
+  if (isoMatch) {
+    return [
+      `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`,
+      `${String(Number(isoMatch[4])).padStart(2, "0")}:${isoMatch[5]}`,
+    ].join(" ");
+  }
+
+  const brazilianMatch = text.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})[ ,T]+(\d{1,2}):(\d{2})/,
+  );
+
+  if (brazilianMatch) {
+    return [
+      [
+        brazilianMatch[3],
+        String(Number(brazilianMatch[2])).padStart(2, "0"),
+        String(Number(brazilianMatch[1])).padStart(2, "0"),
+      ].join("-"),
+      `${String(Number(brazilianMatch[4])).padStart(2, "0")}:${brazilianMatch[5]}`,
+    ].join(" ");
+  }
+
+  return text;
 }
 
 function garantirEstruturaLembretesConsultas_(sheet) {

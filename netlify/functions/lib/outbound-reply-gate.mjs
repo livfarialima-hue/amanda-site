@@ -239,6 +239,17 @@ export async function claimOutboundReply(
           reason: "concurrent_claim",
         };
   } catch {
+    if (
+      getStoreImpl === getStore &&
+      process.env.NETLIFY !== "true" &&
+      !process.env.CONTEXT
+    ) {
+      return {
+        status: "completed",
+        key: `local-development:${replyKey(recipient, normalizedEventId)}`,
+        claimToken: "local-development",
+      };
+    }
     return { status: "failed", reason: "storage_failed" };
   }
 }
@@ -325,6 +336,12 @@ export async function sendControlledPatientReply(
       errorCode: claim.reason,
     };
   }
+  if (claim.status !== "completed") {
+    return {
+      status: "blocked",
+      errorCode: "reply_claim_unavailable",
+    };
+  }
 
   const delivery = await sendYCloudPatientTextImpl({
     from,
@@ -332,13 +349,11 @@ export async function sendControlledPatientReply(
     eventId,
     body: validation.body,
   });
-  if (claim.status === "completed") {
-    await updateClaim(
-      claim,
-      delivery.status === "completed" ? "sent" : "released",
-      { getStoreImpl, now },
-    );
-  }
+  await updateClaim(
+    claim,
+    delivery.status === "completed" ? "sent" : "released",
+    { getStoreImpl, now },
+  );
 
   return delivery;
 }

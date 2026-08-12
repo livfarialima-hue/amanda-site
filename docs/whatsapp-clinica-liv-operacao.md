@@ -2,6 +2,8 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
+> **Produção:** pacote integrado publicado em 11/08/2026 — Apps Script versão 67 e Netlify deploy `6a7bce34a97a27d96320aebf`. A planilha migrada e os históricos técnicos foram auditados após a publicação.
+
 ## Estado de produção
 
 - Endpoint: `https://draamandaschroeder.com.br/api/ycloud/webhook`
@@ -109,15 +111,25 @@ A aba `Revisões do Bot` reúne classificações de baixa confiança, regras nov
 
 Na primeira mensagem após mais de sete dias, a Bruna informa que está direcionando o atendimento para a equipe. Depois disso, permanece em silêncio até uma resposta humana.
 
-## Planilhas
+## Planilha única e oportunidades
 
-- Leads da Dra. Amanda: uma linha visível por telefone, atualizada conforme a conversa evolui.
-- Leads do Dr. Daniel: aba separada, sem contaminar as métricas da Dra. Amanda.
+Há um único arquivo Google Sheets chamado `LEADS`, e somente ele é conectado ao Google Ads. As abas não são planilhas diferentes: são áreas internas do mesmo arquivo.
+
+- Leads da Dra. Amanda: aba `Google Ads - Conversões`, com uma oportunidade identificada por `Opportunity ID`; é a única fonte elegível para o Google Ads.
+- Leads do Dr. Daniel: aba `Leads Dr. Daniel`, no mesmo arquivo, sem click IDs elegíveis e sem contaminar as métricas da Dra. Amanda.
+- Henrique, Marina e qualquer outro profissional: não são incluídos em nenhuma aba de leads; o contato vai para o registro interno de roteamento e para atendimento humano.
+- Emprego, currículo, marketing, fornecedor e parceria comercial: são ignorados e não viram lead.
 - Agenda semanal: aba `Datas Consulta`.
 - Consultas agendadas e realizadas: aba `Consultas`, que também controla os lembretes operacionais.
 - Respostas reutilizáveis: aba `Respostas Aprovadas`; somente linhas aprovadas e de baixo risco podem ser automáticas.
 - Exceções e correções: aba `Revisões do Bot`; os campos amarelos são destinados à decisão da equipe.
 - Histórico e controles técnicos: abas internas iniciadas por `_WHATSAPP_`.
+
+A aba interna `_CRM_OPORTUNIDADES` é o vínculo canônico entre conversa, profissional, linha visível, classificação, consulta e eventual conversão offline. Ela não é um segundo arquivo de leads. A mesma pessoa pode ter uma oportunidade de Amanda e outra de Daniel, cada uma com profissional e histórico próprios. A atribuição da Amanda é fixada na criação e nunca é herdada por Daniel.
+
+As colunas operacionais adicionadas às abas visíveis são auditáveis, mas não alteram a estrutura exigida pelo Google Ads: `Opportunity ID`, profissional responsável, versão, último evento, status operacional, resumo, próxima ação, objeção, relacionamento, responsável, parte aguardada, roteamento e data de fixação da atribuição.
+
+Quando a paciente escolhe uma das duas datas sugeridas, a seleção entra na aba interna `_AGENDAMENTOS_PENDENTES`. Isso não confirma a consulta e não cria evento. A equipe recebe a resposta sugerida e somente a confirmação humana finaliza o registro em `Consultas` e na Google Agenda.
 
 ### Preferências permanentes de contato
 
@@ -162,7 +174,7 @@ Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consul
 1. a confirmação normal no momento do agendamento, dentro da própria conversa;
 2. um único lembrete automático às 10h do dia anterior.
 
-Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Se qualquer uma das colunas históricas de lembrete já estiver preenchida, a consulta não recebe outra mensagem. Assim, pacientes que receberam um lembrete pelo fluxo anterior não recebem um segundo lembrete durante a migração.
+Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Se qualquer uma das colunas históricas de lembrete ou `Última tentativa de lembrete` já estiver preenchida, a consulta não recebe outra mensagem. A tentativa é registrada antes da chamada ao WhatsApp: mesmo que a resposta do provedor se perca, o sistema não repete automaticamente. Falhas ficam em `Erro do lembrete` para revisão humana. Assim, pacientes que receberam ou podem ter recebido um lembrete pelo fluxo anterior não recebem um segundo lembrete durante a migração.
 
 Consultas canceladas, realizadas, vencidas, com pedido de reagendamento ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Confirmação da paciente`, `Última interação humana`, `Próxima ação` e `Motivo de supressão` deixam o contexto explícito; os controles de lembrete impedem duplicidade e permitem auditoria.
 

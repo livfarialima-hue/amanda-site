@@ -4,6 +4,7 @@ import {
   completeReviewAlertSlot,
   releaseReviewAlertSlot,
 } from "./review-alert-throttle.mjs";
+import { usableProfileFirstName } from "./profile-name.mjs";
 
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
@@ -53,8 +54,7 @@ export function ensureReviewAlertSuggestion({
     return limitText(original, MAX_ALERT_TEXT_LENGTH);
   }
 
-  const firstName =
-    String(patientName || "").trim().split(/\s+/)[0] || "";
+  const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const reply = urgent
     ? `${greeting} Recebemos sua mensagem e ela será revisada pela equipe. Se você estiver com sintomas intensos, piora rápida ou se sentir em risco, procure atendimento médico de urgência.`

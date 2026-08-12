@@ -290,6 +290,7 @@ test("a generic WhatsApp profile does not suppress the name question", () => {
     "Loja da Rô",
     "Dra. Amanda",
     "Rosana 💙",
+    "soniamariamontoromenezes",
   ]) {
     const decision = validDecision({
       suggestedReply: "Como posso te chamar?",

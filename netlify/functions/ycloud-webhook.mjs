@@ -42,8 +42,8 @@ import {
 } from "./lib/conversation-memory.mjs";
 import {
   clearExternalProfessionalContext,
+  detectExternalProfessionalAppointment,
   getExternalProfessionalContext,
-  isExternalProfessionalAppointmentMessage,
   isExplicitAmandaInquiry,
   markExternalProfessionalContext,
 } from "./lib/external-professional-context.mjs";
@@ -134,6 +134,7 @@ import {
   buildProfessionalFactPartialReview,
   buildProfessionalFactReviewAlert,
 } from "./lib/professional-fact-review.mjs";
+import { usableProfileFirstName } from "./lib/profile-name.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -701,6 +702,10 @@ async function deliverLead(lead) {
     duplicateReason: normalizeDuplicateReason(responseData),
     inserted: responseData?.inserted === true,
     updated: responseData?.updated === true,
+    routed: responseData?.routed !== false,
+    opportunityId: String(responseData?.opportunityId || ""),
+    professional: String(responseData?.professional || ""),
+    routeStatus: String(responseData?.routeStatus || ""),
     humanTakeoverToday: responseData?.humanTakeoverToday === true,
     patientRelationship:
       responseData?.patientRelationship || null,
@@ -823,8 +828,15 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
         professional: result.decision.professional,
         procedure: result.decision.procedure,
         replyCode: result.decision.replyCode,
-        suggestedReply: result.decision.suggestedReply,
+        suggestedReplyLength: String(
+          result.decision.suggestedReply || "",
+        ).length,
         reviewReason: result.decision.reviewReason,
+        policyVersion: process.env.BRUNA_POLICY_VERSION || "unversioned",
+        promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
+        knowledgeSnapshot:
+          process.env.BRUNA_KB_SNAPSHOT || "unversioned",
+        schemaVersion: "bruna-decision-v1",
         usage: result.usage,
       }),
     );
@@ -1055,6 +1067,8 @@ export async function completeSelectedAppointment(
     messageId,
     patientName,
     patientPhone,
+    opportunityId,
+    professional,
     selection,
   },
   {
@@ -1074,6 +1088,62 @@ export async function completeSelectedAppointment(
     silentConfirmation = false,
     ...appointmentSelection
   } = selection || {};
+  const selectedProfessional =
+    appointmentSelection.professional || professional || "";
+  const requiresHumanConfirmation =
+    String(
+      process.env.APPOINTMENT_PATIENT_SELECTION_REQUIRES_HUMAN || "true",
+    ).toLowerCase() !== "false";
+  if (requiresHumanConfirmation && !silentConfirmation) {
+    const pendingRecord = await deliverSheetsActionImpl(
+      "record_pending_appointment_selection",
+      {
+        appointment: {
+          ...appointmentSelection,
+          eventId,
+          opportunityId,
+          phone: patientPhone,
+          name: patientName,
+          professional: selectedProfessional,
+        },
+      },
+    );
+    const suggestedConfirmation = buildBookedAppointmentReply({
+      patientName,
+      ...appointmentSelection,
+      professional: selectedProfessional,
+    });
+    const reviewAlert = {
+      from,
+      eventId: `${eventId}-booking-human-confirmation`,
+      patientName,
+      patientPhone,
+      messageText: [
+        "HORÁRIO ESCOLHIDO — AGUARDANDO CONFIRMAÇÃO HUMANA",
+        `Data escolhida: ${appointmentSelection.scheduledDate || "não informada"}`,
+        `Horário escolhido: ${appointmentSelection.scheduledTime || "não informado"}`,
+        `Profissional: ${selectedProfessional || "confirmar"}`,
+        pendingRecord.ok
+          ? "A escolha foi registrada na planilha, sem reservar a agenda."
+          : `Registro pendente: ${pendingRecord.errorCode || "falha técnica"}`,
+        "Após conferir e registrar o horário, envie:",
+        suggestedConfirmation || "Confirmar manualmente com a paciente.",
+      ].join("\n"),
+    };
+    await sendAppointmentEmailImpl(reviewAlert, {
+      deliverSheetsActionImpl,
+    });
+    await completeReviewAlertImpl(reviewAlert);
+    return {
+      status: "pending_human_confirmation",
+      reserved: false,
+      confirmationSent: false,
+      pendingRecorded: pendingRecord.ok === true,
+      errorCode: pendingRecord.ok
+        ? "none"
+        : pendingRecord.errorCode || "pending_record_failed",
+    };
+  }
   const baselineControl =
     await getHumanResumeControlImpl(patientPhone);
   const reservation = await deliverSheetsActionImpl(
@@ -1090,8 +1160,7 @@ export async function completeSelectedAppointment(
   );
 
   if (!reservation.ok || reservation.responseData?.reserved !== true) {
-    const firstName =
-      String(patientName || "").trim().split(/\s+/)[0] || "";
+    const firstName = usableProfileFirstName(patientName);
     const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
     const unavailable =
       reservation.errorCode === "slot_not_available";
@@ -1243,38 +1312,11 @@ async function completeOpenAIShadow(
   try {
     const shadowResult = await runOpenAIShadow(input);
     logOpenAIResult(input.eventId, shadowResult, "shadow");
-
-    if (
-      shadowResult.status === "completed" &&
-      shadowResult.decision.route === "appointment_review" &&
-      !reviewAlertAlreadyQueued &&
-      isAppointmentAlertEnabled() &&
-      isReviewAlertConfigured()
-    ) {
-      await completeAppointmentReview({
-        ...alertInput,
-        professional:
-          shadowResult.decision.professional || plan?.professional,
-        procedure:
-          shadowResult.decision.procedure || plan?.procedure,
-        preferenceText: input.text,
-      });
-      return { status: "superseded", replySent: false };
-    }
-
-    if (
-      shadowResult.status === "completed" &&
-      !reviewAlertAlreadyQueued &&
-      isReviewAlertConfigured() &&
-      shouldSendReviewAlertForDecision(shadowResult.decision)
-    ) {
-      await completeReviewAlert(
-        prepareReviewAlertInput(alertInput, {
-          decision: shadowResult.decision,
-          plan,
-        }),
-      );
-    }
+    return {
+      status: shadowResult.status,
+      replySent: false,
+      sideEffects: false,
+    };
   } catch {
     console.log(
       JSON.stringify({
@@ -1284,6 +1326,7 @@ async function completeOpenAIShadow(
         errorCode: "request_failed",
       }),
     );
+    return { status: "failed", replySent: false, sideEffects: false };
   }
 }
 
@@ -2289,9 +2332,13 @@ export default async (request, context) => {
     }
 
     const echoText = String(echo.text?.body || "");
-    if (isExternalProfessionalAppointmentMessage(echoText)) {
+    const echoExternalProfessional =
+      detectExternalProfessionalAppointment(echoText);
+    if (echoExternalProfessional) {
       const externalContext = await markExternalProfessionalContext({
         phone: patientPhone,
+        professional: echoExternalProfessional.key,
+        displayName: echoExternalProfessional.displayName,
         at: String(
           echo.sendTime ||
             echo.createTime ||
@@ -2300,11 +2347,16 @@ export default async (request, context) => {
         ),
       });
       const cleanup = await deliverSheetsAction(
-        "remove_external_professional_contact",
+        "record_external_professional_contact",
         {
           contact: {
             phone: patientPhone,
-            professional: "Dr. Henrique Lane Staniak",
+            professional: echoExternalProfessional.displayName,
+            eventId: String(eventId),
+            messageId: String(messageId),
+            at: String(
+              echo.sendTime || echo.createTime || payload.createTime || "",
+            ),
           },
         },
       );
@@ -2312,7 +2364,7 @@ export default async (request, context) => {
       return json({
         received: true,
         ignored: true,
-        ignoreReason: "external_dr_henrique_appointment",
+        ignoreReason: "external_professional_appointment",
         externalContextStatus: externalContext.status,
         spreadsheetCleanupStatus: cleanup.ok
           ? "completed"
@@ -2430,17 +2482,6 @@ export default async (request, context) => {
         }),
       );
 
-      if (isKnowledgeDecision(activeResult.decision)) {
-        await recordBotKnowledgeUsage({
-          eventId: String(input.eventId),
-          phone: to,
-          ruleId: knowledgeRuleId(activeResult.decision),
-          question: input.text,
-          answer: activeResult.decision.suggestedReply,
-          at: input.receivedAt || "",
-          result: "Enviada",
-        });
-      }
     }
 
     const humanInteractionSync = await deliverSheetsAction(
@@ -2534,24 +2575,35 @@ export default async (request, context) => {
   let externalProfessionalContext =
     await getExternalProfessionalContext(phone);
   const directExternalProfessionalRequest =
-    isExternalProfessionalAppointmentMessage(text);
+    detectExternalProfessionalAppointment(text);
   if (!externalProfessionalContext) {
     const rememberedConversation = await readConversationTurns(phone);
-    const rememberedExternalAppointment = rememberedConversation.turns.some(
-      (turn) => isExternalProfessionalAppointmentMessage(turn.text),
-    );
+    const rememberedExternalAppointment = rememberedConversation.turns
+      .map((turn) => detectExternalProfessionalAppointment(turn.text))
+      .find(Boolean);
 
     if (directExternalProfessionalRequest || rememberedExternalAppointment) {
-      await markExternalProfessionalContext({ phone, at: contactAt });
+      const detectedProfessional =
+        directExternalProfessionalRequest || rememberedExternalAppointment;
+      await markExternalProfessionalContext({
+        phone,
+        at: contactAt,
+        professional: detectedProfessional.key,
+        displayName: detectedProfessional.displayName,
+      });
       externalProfessionalContext = {
-        professional: "dr_henrique_staniak",
+        professional: detectedProfessional.key,
+        displayName: detectedProfessional.displayName,
       };
       await deliverSheetsAction(
-        "remove_external_professional_contact",
+        "record_external_professional_contact",
         {
           contact: {
             phone,
-            professional: "Dr. Henrique Lane Staniak",
+            professional: detectedProfessional.displayName,
+            eventId: String(eventId),
+            messageId: String(message.wamid || message.id || eventId),
+            at: contactAt,
           },
         },
       );
@@ -2561,10 +2613,24 @@ export default async (request, context) => {
     externalProfessionalContext &&
     !isExplicitAmandaInquiry(text)
   ) {
+    if (isReviewAlertConfigured()) {
+      await completeReviewAlert({
+        from: String(message.to || ""),
+        eventId: `${String(eventId)}-external-professional`,
+        patientName: String(message.customerProfile?.name || ""),
+        patientPhone: phone,
+        messageText: [
+          "OUTRO PROFISSIONAL — atendimento humano",
+          "A conversa não foi incluída nos Leads da Amanda nem do Daniel.",
+          "Encaminhar manualmente ao profissional solicitado.",
+          `Mensagem recebida: ${text}`,
+        ].join("\n"),
+      });
+    }
     return json({
       received: true,
       ignored: true,
-      ignoreReason: "external_dr_henrique_conversation",
+      ignoreReason: "external_professional_conversation",
       leadRecorded: false,
       appointmentReserved: false,
       aiShadowQueued: false,
@@ -2641,6 +2707,7 @@ export default async (request, context) => {
               message.customerProfile?.name || "",
             ),
             patientPhone: phone,
+            professional: appointmentSelection.professional,
             selection: appointmentSelection,
           });
 
@@ -2841,6 +2908,9 @@ export default async (request, context) => {
           message.customerProfile?.name || "",
         ),
         patientPhone: phone,
+        opportunityId: delivery.opportunityId,
+        professional:
+          delivery.professional || patientAppointmentSelection.professional,
         selection: patientAppointmentSelection,
       });
 

@@ -1,3 +1,5 @@
+import { usableProfileFirstName } from "./profile-name.mjs";
+
 const TIMEZONE = "America/Sao_Paulo";
 
 const WEEKDAYS = Object.freeze({
@@ -780,8 +782,7 @@ export function buildBookedAppointmentReply({
     return "";
   }
 
-  const firstName =
-    String(patientName || "").trim().split(/\s+/)[0] || "";
+  const firstName = usableProfileFirstName(patientName);
   const greeting = firstName
     ? `Perfeito, ${firstName}!`
     : "Perfeito!";

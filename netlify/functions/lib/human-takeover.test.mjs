@@ -205,7 +205,7 @@ test("WhatsApp Business automatic greeting does not mark human takeover", async 
   }
 });
 
-test("Dr. Henrique appointment echo cleans the spreadsheet and never takes over Amanda scheduling", async () => {
+test("Dr. Henrique appointment echo preserves history and never takes over Amanda scheduling", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "GOOGLE_SHEETS_WEBHOOK_URL",
@@ -229,7 +229,7 @@ test("Dr. Henrique appointment echo cleans the spreadsheet and never takes over 
     const body = JSON.parse(options.body);
     sheetActions.push(body);
     return new Response(
-      JSON.stringify({ ok: true, leadRowsCleared: 1 }),
+      JSON.stringify({ ok: true, preserved: true }),
       { status: 200 },
     );
   };
@@ -260,12 +260,12 @@ test("Dr. Henrique appointment echo cleans the spreadsheet and never takes over 
     assert.equal(body.ignored, true);
     assert.equal(
       body.ignoreReason,
-      "external_dr_henrique_appointment",
+      "external_professional_appointment",
     );
     const cleanupActions = sheetActions.filter(
       (action) =>
         action.action ===
-        "remove_external_professional_contact",
+        "record_external_professional_contact",
     );
     assert.equal(cleanupActions.length, 1);
     assert.equal(
@@ -276,7 +276,7 @@ test("Dr. Henrique appointment echo cleans the spreadsheet and never takes over 
     );
     assert.equal(
       cleanupActions[0].action,
-      "remove_external_professional_contact",
+      "record_external_professional_contact",
     );
     assert.equal(cleanupActions[0].contact.phone, PATIENT_PHONE);
   } finally {

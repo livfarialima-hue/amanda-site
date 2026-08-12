@@ -97,6 +97,10 @@ const COMMERCIAL_SOLICITATION_PATTERNS = [
   /\b(?:maquininha|m[aá]quina)\s+de\s+cart[aã]o\b/i,
   /\b(?:trabalho|represento|atuo)\s+com\s+(?:seguros?|planos?\s+de\s+sa[uú]de)\b/i,
   /\b(?:quero|gostaria|posso)\s+(?:de\s+)?(?:vender|oferecer|apresentar)\s+(?:um\s+)?(?:seguro|plano\s+de\s+sa[uú]de)\b/i,
+  /\b(?:procuro|busco|quero|gostaria\s+de)\s+(?:uma\s+)?(?:vaga|emprego|oportunidade\s+de\s+trabalho)\b/i,
+  /\b(?:est[aá]o|tem|h[aá])\s+(?:com\s+)?(?:vaga|vagas|contratando)\b/i,
+  /\b(?:posso|gostaria\s+de|quero)\s+(?:enviar|mandar|encaminhar)\s+(?:meu\s+)?curr[ií]culo\b/i,
+  /\bcurr[ií]culo\b.{0,60}\b(?:vaga|emprego|trabalho|contrata[cç][aã]o)\b/i,
 ];
 
 const IRRELEVANT_PERSONAL_PATTERNS = [

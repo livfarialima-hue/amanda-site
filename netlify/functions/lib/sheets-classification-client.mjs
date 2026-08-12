@@ -8,7 +8,11 @@ function result(status, details = {}) {
 export async function callClassificationSheets(
   action,
   payload = {},
-  { env = process.env, fetchImpl = fetch } = {},
+  {
+    env = process.env,
+    fetchImpl = fetch,
+    timeoutMs = SHEETS_TIMEOUT_MS,
+  } = {},
 ) {
   const url = env.GOOGLE_SHEETS_WEBHOOK_URL;
   const secret = env.GOOGLE_SHEETS_WEBHOOK_SECRET;
@@ -23,7 +27,7 @@ export async function callClassificationSheets(
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
-    SHEETS_TIMEOUT_MS,
+    timeoutMs,
   );
 
   try {

@@ -5,13 +5,16 @@ import {
   applyKnowledgeDecisionGuard,
   normalizeKnowledgeContext,
 } from "./knowledge-learning.mjs";
+import {
+  usableProfileFirstName,
+  usableProfileName,
+} from "./profile-name.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
 const DEFAULT_REASONING_EFFORT = "medium";
 const OPENAI_TIMEOUT_MS = 8_000;
 const MAX_USER_TEXT_LENGTH = 2_000;
-const MAX_PROFILE_NAME_LENGTH = 120;
 const MAX_RECENT_TURNS = 8;
 const MAX_RECENT_TURN_LENGTH = 500;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
@@ -98,52 +101,6 @@ function normalizeRecentConversation(value) {
       };
     })
     .filter((turn) => turn.text);
-}
-
-function usableProfileFirstName(value) {
-  const profileName = limitText(value, MAX_PROFILE_NAME_LENGTH)
-    .replace(/\s+/g, " ")
-    .trim();
-  const normalizedProfileName = profileName.toLocaleLowerCase("pt-BR");
-  const suspiciousProfilePattern =
-    /\b(?:cl[ií]nica|consult[oó]rio|hospital|empresa|loja|store|shop|studio|est[uú]dio|est[eé]tica|sal[aã]o|oficial|atendimento|recep[cç][aã]o|comercial|vendas|marketing|equipe|grupo|cirurgia|pl[aá]stica|odontologia|ltda|fam[ií]lia|mam[aã]e?|papai|amor|vida|trabalho|n[uú]mero\s+novo|sem\s+nome)\b/i;
-
-  if (
-    !profileName ||
-    profileName.length > 80 ||
-    !/^[\p{L}\p{M}'’.\-\s]+$/u.test(profileName) ||
-    suspiciousProfilePattern.test(profileName)
-  ) {
-    return "";
-  }
-
-  const words = profileName.split(/\s+/).filter(Boolean);
-  if (words.length > 4) return "";
-
-  const firstName = words[0].replace(/[^\p{L}\p{M}'’-]/gu, "");
-  const normalized = firstName.toLocaleLowerCase("pt-BR");
-
-  if (
-    firstName.length < 2 ||
-    [
-      "unknown",
-      "desconhecido",
-      "cliente",
-      "paciente",
-      "contato",
-      "dra",
-      "dr",
-      "doutora",
-      "doutor",
-      "admin",
-      "adm",
-    ].includes(normalized) ||
-    normalizedProfileName.startsWith("@")
-  ) {
-    return "";
-  }
-
-  return firstName;
 }
 
 export function applyKnownProfileNameGuard(
@@ -447,9 +404,13 @@ export async function runOpenAIShadow(
     return result("skipped", { errorCode: "configuration_missing" });
   }
 
-  const model = String(env.OPENAI_MODEL || DEFAULT_MODEL);
+  const model = String(
+    env.OPENAI_BRUNA_MODEL || env.OPENAI_MODEL || DEFAULT_MODEL,
+  );
   const reasoningEffort = String(
-    env.OPENAI_REASONING_EFFORT || DEFAULT_REASONING_EFFORT,
+    env.OPENAI_BRUNA_REASONING_EFFORT ||
+      env.OPENAI_REASONING_EFFORT ||
+      DEFAULT_REASONING_EFFORT,
   );
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), OPENAI_TIMEOUT_MS);
@@ -505,10 +466,7 @@ export async function runOpenAIShadow(
                 "site_uncoded",
               ].includes(String(referenceCategory || "")),
           siteResource,
-          whatsappProfileName: limitText(
-            patientProfileName,
-            MAX_PROFILE_NAME_LENGTH,
-          ),
+          whatsappProfileName: usableProfileName(patientProfileName),
           metaAdContext: normalizeReferralContext(referralContext),
           patientRelationship:
             normalizedPatientRelationship,

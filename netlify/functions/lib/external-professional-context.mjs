@@ -61,11 +61,87 @@ export function isDrHenriqueOperationalAppointmentRequest(text) {
   return namesDoctor && requestsAppointment && containsSchedulingDetail;
 }
 
-export function isExternalProfessionalAppointmentMessage(text) {
-  return (
-    isDrHenriqueStaniakAppointmentMessage(text) ||
-    isDrHenriqueOperationalAppointmentRequest(text)
+const KNOWN_EXTERNAL_PROFESSIONALS = [
+  {
+    key: "dr_henrique_staniak",
+    displayName: "Dr. Henrique Lane Staniak",
+    pattern: /\bdr\.? henrique(?: lane)?(?: staniak)?\b/,
+  },
+  {
+    key: "dra_marina_silva",
+    displayName: "Dra. Marina Silva",
+    pattern: /\bdra\.? marina(?: silva)?\b/,
+  },
+  {
+    key: "dr_laerte",
+    displayName: "Dr. Laerte",
+    pattern: /\bdr\.? laerte(?: [a-z]{2,})?\b/,
+  },
+];
+
+function hasAppointmentIntent(value) {
+  return /\b(?:agendar|agendamento|marcar|consulta|consultar|horario|agenda|paciente|confirmad[oa])\b/.test(
+    value,
   );
+}
+
+function hasSchedulingDetail(value) {
+  return (
+    /\b(?:segunda|terca|quarta|quinta|sexta|sabado|domingo|amanha|hoje)\b/.test(
+      value,
+    ) ||
+    /\b\d{1,2}(?::\d{2}|h(?:\d{2})?)\b/.test(value) ||
+    /\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/.test(value)
+  );
+}
+
+function titleCase(value) {
+  return String(value || "")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export function detectExternalProfessionalAppointment(text) {
+  const value = normalize(text);
+  const structuredAppointment =
+    /\b(?:agendamento confirmado|medico:)\b/.test(value) &&
+    /\bdata:/.test(value) &&
+    /\bhorario:/.test(value);
+  const schedulingContext =
+    structuredAppointment ||
+    (hasAppointmentIntent(value) && hasSchedulingDetail(value));
+
+  if (!schedulingContext) return null;
+
+  for (const professional of KNOWN_EXTERNAL_PROFESSIONALS) {
+    if (professional.pattern.test(value)) return professional;
+  }
+
+  const generic = value.match(
+    /\b(dr|dra)\.?\s+([a-z]{3,}(?:\s+[a-z]{2,}){0,2})\b/,
+  );
+  if (!generic) return null;
+
+  const name = String(generic[2] || "").replace(
+    /\s+(?:tem|esta|para|em|na|no|dia|hoje|amanha)$/,
+    "",
+  );
+  if (/^(?:amanda|amanda schroeder|daniel)\b/.test(name)) return null;
+
+  const title = generic[1] === "dra" ? "Dra." : "Dr.";
+  return {
+    key: `external_${createHash("sha256")
+      .update(name)
+      .digest("hex")
+      .slice(0, 12)}`,
+    displayName: `${title} ${titleCase(name)}`,
+  };
+}
+
+export function isExternalProfessionalAppointmentMessage(text) {
+  return Boolean(detectExternalProfessionalAppointment(text));
 }
 
 export function isExplicitAmandaInquiry(text) {
@@ -79,7 +155,7 @@ export function isExplicitAmandaInquiry(text) {
 }
 
 export async function markExternalProfessionalContext(
-  { phone, at },
+  { phone, at, professional, displayName },
   { getStoreImpl = getStore, now = Date.now() } = {},
 ) {
   const normalized = normalizedPhone(phone);
@@ -88,7 +164,8 @@ export async function markExternalProfessionalContext(
   try {
     await store(getStoreImpl).setJSON(key(normalized), {
       version: VERSION,
-      professional: "dr_henrique_staniak",
+      professional: String(professional || "external_professional"),
+      displayName: String(displayName || "Outro profissional"),
       updatedAt: new Date(at || now).toISOString(),
       expiresAt: new Date(now + CONTEXT_TTL_MS).toISOString(),
     });
@@ -113,7 +190,7 @@ export async function getExternalProfessionalContext(
     const expiresAt = new Date(context?.expiresAt || 0).getTime();
     if (
       context?.version !== VERSION ||
-      context?.professional !== "dr_henrique_staniak" ||
+      !String(context?.professional || "") ||
       !Number.isFinite(expiresAt) ||
       expiresAt <= now
     ) {

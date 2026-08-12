@@ -173,6 +173,34 @@ test("controlled send uses the validated trimmed body", async () => {
   assert.equal(deliveredBody, "Claro. Posso ajudar com essa informação.");
 });
 
+test("storage failure blocks the send instead of risking a duplicate", async () => {
+  let sends = 0;
+  const result = await sendControlledPatientReply(
+    {
+      from: "+5511000000000",
+      to: "+5511900000000",
+      eventId: "event-storage-failure",
+      body: "Claro. Posso ajudar com essa informação.",
+      currentText: "Pode me ajudar?",
+      recentConversation: [],
+      conversationAction: respond,
+    },
+    {
+      getStoreImpl: () => {
+        throw new Error("storage unavailable");
+      },
+      sendYCloudPatientTextImpl: async () => {
+        sends += 1;
+        return { status: "completed" };
+      },
+    },
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.errorCode, "reply_claim_unavailable");
+  assert.equal(sends, 0);
+});
+
 test("a team holding reply requires a real pending request", () => {
   const result = validateOutboundReply({
     body: "Vou confirmar essa informação com a equipe.",

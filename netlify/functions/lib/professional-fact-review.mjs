@@ -1,10 +1,12 @@
+import { usableProfileFirstName } from "./profile-name.mjs";
+
 const EXPERIENCE_DETAIL_PATTERN =
   /\b(?:h[aá]\s+quanto\s+tempo|quanto\s+tempo|quantos?\s+anos?|desde\s+quando|em\s+que\s+ano|quando)\b[\s\S]{0,120}\b(?:atua|atende|trabalha|formou|formada|concluiu|terminou|resid[eê]ncia|cirurgia\s+pl[aá]stica|experi[eê]ncia)\b|\b(?:tempo|anos?)\s+(?:de\s+)?(?:atua[cç][aã]o|experi[eê]ncia)\b/i;
 
 const LIFTING_PATTERN = /\blifting\s+(?:facial|da\s+face)|\britidoplastia\b/i;
 
 function firstName(value) {
-  return String(value || "").trim().split(/\s+/)[0] || "";
+  return usableProfileFirstName(value);
 }
 
 function greeting(value) {

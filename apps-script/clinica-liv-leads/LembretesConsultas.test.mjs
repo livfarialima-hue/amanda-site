@@ -132,12 +132,51 @@ test("an appointment that already received the old same-day reminder gets no new
   );
 });
 
+test("a reminder attempt is never repeated even when the delivery response was lost", () => {
+  const appointment = new Date("2026-07-30T14:00:00-03:00");
+
+  assert.equal(
+    context.definirTipoLembreteConsulta_({
+      now: new Date("2026-07-29T10:15:00-03:00"),
+      appointment,
+      reminder48hSent: "",
+      sameDaySent: "",
+      lastAttempt: new Date("2026-07-29T10:00:00-03:00"),
+    }),
+    "",
+  );
+});
+
 test("all appointments use a 10am reminder on the previous day", () => {
   const appointment = new Date("2026-07-30T09:00:00-03:00");
   const target =
     context.horarioAlvoLembretePrincipalConsulta_(appointment);
 
   assert.equal(target.toISOString(), "2026-07-29T13:00:00.000Z");
+});
+
+test("a monitored appointment converted to Date by Sheets keeps the same key", () => {
+  assert.equal(
+    context.normalizarChaveAgendamentoMonitorado_(
+      new Date("2026-08-11T16:00:00-03:00"),
+    ),
+    "2026-08-11 16:00",
+  );
+});
+
+test("text representations of a monitored appointment keep a stable key", () => {
+  assert.equal(
+    context.normalizarChaveAgendamentoMonitorado_(
+      "2026-08-11 16:00:00",
+    ),
+    "2026-08-11 16:00",
+  );
+  assert.equal(
+    context.normalizarChaveAgendamentoMonitorado_(
+      "11/08/2026, 16:00:00",
+    ),
+    "2026-08-11 16:00",
+  );
 });
 
 test("only explicit patient confirmation is treated as confirmed", () => {

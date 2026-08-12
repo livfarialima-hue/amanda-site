@@ -6,8 +6,8 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 9 de agosto de 2026
-**Próxima revisão prevista:** após a reunião com a equipe do Google Ads ou quando houver dados novos suficientes
+**Última revisão estratégica:** 11 de agosto de 2026
+**Próxima revisão prevista:** 25 de agosto de 2026 ou antes, se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
 
 ## 1. Regra de governança
 
@@ -32,7 +32,7 @@ A estratégia não é competir por menor preço nem tentar apresentar a Dra. Ama
 
 O Google Ads deve captar pessoas com intenção real de avaliar um procedimento, conduzi-las a uma página coerente com a pesquisa e transformar essa procura em uma conversa qualificada no WhatsApp. O resultado de negócio não é o clique nem a mensagem iniciada: é, progressivamente, o lead qualificado, a consulta agendada, a consulta realizada e a cirurgia.
 
-O problema atual não deve ser tratado apenas como falta de volume. No recorte de 12 de julho a 9 de agosto de 2026, o Google gerou 17 leads, dos quais 8 foram classificados como qualificados, mas nenhum chegou a consulta agendada. A amostra é pequena, porém indica que o gargalo imediato está entre interesse qualificado, confiança e decisão de consultar. Também é necessário confirmar se o Google está de fato aprendendo com a conversão qualificada correta.
+O problema atual não deve ser tratado apenas como falta de volume. No recorte reconciliado de 12 de julho a 10 de agosto de 2026, o Google Ads registrou 1.495 cliques e 40 cliques no WhatsApp, mas a planilha registrou 18 conversas reais atribuídas ao Google, 5 leads classificados como qualificados e nenhuma consulta agendada. A ação de conversão qualificada tinha apenas 1 ocorrência aceita no Google Ads. A amostra ainda é pequena, mas mostra que o gargalo imediato está na passagem de clique para conversa real e, principalmente, de lead qualificado para consulta. O clique no WhatsApp não pode ser usado como substituto do resultado clínico.
 
 ## 3. Posicionamento da Dra. Amanda
 
@@ -121,11 +121,11 @@ CTR, CPC, força do anúncio e nota de otimização não são resultados finais 
 
 ## 6. Estado atual conhecido
 
-### 6.1 Recorte do funil — 12 de julho a 9 de agosto de 2026
+### 6.1 Recorte reconciliado do funil — 12 de julho a 10 de agosto de 2026
 
-- Leads atribuídos ao Google: **17**.
-- Leads qualificados ou melhores: **8**.
-- Taxa de qualificação observada: **47,1%**.
+- Conversas reais atribuídas ao Google: **18**.
+- Leads classificados como qualificados: **5**.
+- Taxa de qualificação observada: **27,8%**.
 - Consultas agendadas provenientes do Google: **0**.
 - Cirurgias: **0**.
 
@@ -135,8 +135,11 @@ Esses números são direcionais. A amostra ainda não permite conclusões estat�
 
 - A marcação automática do Google Ads deve permanecer ativa.
 - O site preserva UTMs e códigos internos de campanha.
-- GCLID, GBRAID ou WBRAID podem ser preservados depois do consentimento e registrados no fluxo de atendimento.
+- GCLID, GBRAID ou WBRAID podem ser preservados na sessão de origem e registrados no fluxo de atendimento sem texto clínico ou identificadores pessoais.
 - A planilha importa a ação `Lead qualificado GCLID` para o Google Ads.
+- O nome da ação é histórico: a nova fila aceita exatamente um entre GCLID, GBRAID ou WBRAID. Cada oportunidade gera no máximo um evento `qualified_lead`, com ID de transação determinístico e sem nome, telefone, e-mail ou conteúdo da conversa.
+- O campo manual de consentimento para contato não é critério de elegibilidade da importação padrão por identificador de clique. Isso não autoriza marcar consentimento como concedido: Consent Mode, aviso de privacidade e a configuração padrão de consentimento da conexão no Data Manager devem permanecer corretos e auditáveis.
+- Não usar conversões otimizadas para leads com nome, telefone, e-mail ou outro identificador fornecido pela paciente nesse funil de saúde. A mensuração offline deve permanecer no modo padrão por click ID.
 - No registro visual de 9 de agosto de 2026, essa ação aparecia como **secundária**. É obrigatório confirmar na conta se ela continua secundária ou se participa de uma meta personalizada usada nos lances.
 - Clique no WhatsApp é um sinal intermediário e não deve substituir o lead qualificado como objetivo de negócio.
 
@@ -301,7 +304,9 @@ Mensuração implantada nas páginas de preço:
 
 - `content_depth_click` no GA4 mede, depois do consentimento, o clique que leva do guia de preço à página principal do procedimento e registra `link_role`, `page_type` e `cta_location`;
 - `whatsapp_click` mede o clique voluntário no WhatsApp, enquanto a mensagem preserva a referência da página, campanha e identificadores de clique disponíveis na sessão;
-- a qualificação é registrada na linha do lead e, quando existe GCLID válido, alimenta a conversão offline `Lead qualificado`;
+- a qualificação é registrada na linha do lead e, quando existe GCLID, GBRAID ou WBRAID válido, gera uma única conversão offline `Lead qualificado GCLID` por oportunidade;
+- a aba `IMPORT_GOOGLE_ADS` é a visão sem dados pessoais para a conexão do Data Manager; `_GOOGLE_ADS_EVENTOS` é o ledger interno de deduplicação e auditoria;
+- `IMPORT_GOOGLE_ADS` é a primeira aba da planilha e a origem canônica a conectar ao Google Ads. Ela reúne o histórico elegível de `IMPORT_GCLID` com os novos eventos deduplicados; `IMPORT_GCLID` permanece apenas como referência legada e não deve receber novos registros;
 - o agendamento é registrado na mesma linha, com status e dados da consulta, preservando a referência de origem para leitura do funil;
 - consulta agendada ainda não é uma ação de conversão separada no Google Ads. Essa importação só deve ser ativada depois de validarmos volume, deduplicação e correspondência dos identificadores.
 
@@ -314,6 +319,36 @@ Se o volume de leads qualificados for insuficiente para lances automáticos, uma
 - Não alterar orçamento e estratégia de lances simultaneamente sem necessidade documentada.
 - Depois de uma mudança relevante, respeitar uma janela mínima de observação proporcional ao volume.
 - Toda recomendação automática deve ser julgada pelo efeito esperado em leads qualificados, consultas e custo de negócio.
+
+### 11.3 Estado após a reunião com a equipe do Google — 11 de agosto de 2026
+
+Configuração encontrada na auditoria:
+
+- `S_BR_SP_LIFTING_FACIAL`: Maximizar conversões com CPA desejado de R$ 43;
+- `S_BR_SP_BLEFAROPLASTIA`, `S_BR_SP_LIFTING_CERVICAL` e `S_BR_SP_CIRURGIA_FACIAL`: Maximizar conversões sem CPA desejado;
+- `S_BR_SP_OTOPLASTIA` e `S_BR_SP_MARCA`: Maximizar cliques;
+- quatro tipos de recomendação automática de lances ativados: migrar para Maximizar conversões, migrar para Maximizar valor da conversão, definir CPA desejado e ajustar metas de CPA;
+- Performance Max não ativada;
+- inserção dinâmica `{Keyword:}` recomendada pela equipe do Google, mas não encontrada no anúncio de lifting facial inspecionado na auditoria.
+
+Configuração estratégica executada na conta em 11 de agosto de 2026 e atualmente em observação:
+
+- as quatro recomendações automáticas de lances foram desativadas e a tela foi recarregada com `0 de 14 selecionados`;
+- o CPA desejado de R$ 43 foi retirado, porque ele coincidia com o CPA histórico do clique no WhatsApp e não com o CPL qualificado;
+- o teste de Maximizar conversões ficou concentrado apenas em lifting facial, sem CPA desejado, por 14 dias;
+- blefaroplastia, lifting cervical e cirurgia facial voltaram temporariamente a Maximizar cliques; otoplastia e marca foram preservadas nessa estratégia;
+- os orçamentos diários permaneceram inalterados: lifting facial R$ 24, blefaroplastia R$ 23, lifting cervical R$ 12, cirurgia facial R$ 8, otoplastia R$ 15 e marca R$ 5;
+- palavras-chave e grupos de anúncios foram preservados nesta intervenção, incluindo `plástica das pálpebras` e o grupo de preço de lifting;
+- não ativar Performance Max antes de existir mensuração qualificada estável e algum volume de agendamentos;
+- não usar `{Keyword:}` vazio nem aplicar indiscriminadamente a todas as campanhas. Quando testada, a sintaxe deve conter texto padrão específico do grupo, por exemplo `{KeyWord:Lifting Facial em SP}`.
+
+Critérios para a próxima decisão:
+
+- revisar em 14 dias mesmo que o volume continue baixo;
+- considerar CPA desejado somente depois de aproximadamente 20 a 30 conversões qualificadas aceitas em 30 dias e usar um alvo próximo do CPA real;
+- manter o teste de Maximizar conversões somente se não houver supressão relevante de tráfego e se a taxa de qualificados melhorar;
+- reverter o teste se o volume cair sem ganho de qualidade, se o custo por qualificado piorar ou se a importação deixar de corresponder à planilha;
+- manter Performance Max fora do plano até haver dados de qualidade suficientes para uma campanha separada, com orçamento limitado, exclusões e controle de URLs e ativos.
 
 ## 12. Rotina de otimização
 
@@ -398,6 +433,57 @@ Decisão final:
 
 ## 16. Histórico estratégico
 
+### 11 de agosto de 2026 — integração por oportunidade na única planilha LEADS
+
+- **Status:** implementação concluída localmente, com publicação e migração idempotente programadas no mesmo release.
+- **Mudança:** o arquivo Google Sheets `LEADS` permanece único. Dentro dele, a aba `Google Ads - Conversões` passa a representar exclusivamente oportunidades da Dra. Amanda e `Leads Dr. Daniel` exclusivamente oportunidades do Dr. Daniel. Uma aba técnica oculta `_CRM_OPORTUNIDADES` vincula conversa, linha visível, classificação, consulta e evento por `Opportunity ID`. Contatos de Henrique, Marina ou outros profissionais não entram nas abas de leads. Agenda depende de confirmação humana final. O runtime da Bruna usa Terra médio; a classificação usa Terra baixo; aprendizado automático exige regra de baixo risco aprovada e snapshot promovido.
+- **Motivo e evidência:** a auditoria encontrou que o webhook identificava o profissional, mas o Apps Script descartava esse campo e gravava todos os contatos na aba da Amanda; o classificador também ignorava o profissional e consultas podiam ser reconciliadas apenas pelo telefone. Isso permitia contaminar o tráfego pago e o Google Ads. Também havia risco de resposta duplicada quando a reserva idempotente falhava e de confirmação de agenda sem decisão humana final.
+- **Hipótese:** identidade estável por oportunidade e profissional reduzirá divergências, impedirá sinais falsos no Google Ads e diminuirá trabalho manual sem perder segurança na agenda e nas retomadas.
+- **Métrica principal:** zero evento de Daniel ou terceiro no Google Ads; zero confirmação de agenda sem ação humana; zero resposta duplicada; cobertura entre conversas Amanda, oportunidades, fases, consultas e eventos de conversão; tempo até primeira resposta e taxa de qualificado para consulta.
+- **Guardrails:** um único workbook; somente Amanda elegível ao Ads; atribuição fixada na criação; nenhum dado clínico ou identificador pessoal na importação; retomadas de clientes antigos sempre humanas; duas retomadas no máximo para leads novos; falha no armazenamento bloqueia envio automático em produção; conhecimento de risco médio/alto nunca é promovido para resposta automática.
+- **Data de revisão:** 18 de agosto de 2026 para integridade operacional e 25 de agosto de 2026 para qualidade do funil Google Ads.
+- **Regra para manter:** manter se a auditoria não encontrar contaminação entre profissionais, duplicidade, confirmação indevida ou regressão de cobertura, e se a equipe conseguir operar pendências pela visão única.
+- **Regra para reverter:** colocar `WHATSAPP_AUTOMATION_MODE=shadow`, preservar todos os ledgers e retornar temporariamente a confirmação e retomadas ao fluxo humano se surgir qualquer mensagem indevida, duplicidade, erro de roteamento ou associação incorreta ao Ads.
+
+### 11 de agosto de 2026 — classificador resiliente e conversão offline deduplicada
+
+- **Status:** publicado e em observação; Apps Script versão 65 e Netlify deploy `6a7badc29eaf8394dd2ae658`.
+- **Mudança:** a fila usa lease token, oito tentativas máximas, dead letter, prioridade para itens com menos tentativas e reprocessamento a cada cinco minutos. O cron apenas despacha uma função de background autenticada; cada invocação aluga uma conversa, hidrata mensagens e contexto em uma etapa idempotente e persiste a conclusão de forma protegida. Pacientes conhecidas com linha de lead voltam a ser classificadas. A aba `Consultas` escreve somente fases canônicas, sem rebaixar conversões. Toda decisão gera evento de fase e a primeira qualificação com click ID gera um único evento de Google Ads para GCLID, GBRAID ou WBRAID.
+- **Motivo e evidência:** a fila tinha itens `running` sem worker, tentativas que chegaram a centenas e starvation dos itens novos. A causa foi confirmada em produção: o claim monolítico levava de 20 a 31 segundos, excedia o cliente e era repetido; a conclusão individual levava cerca de seis segundos e podia ultrapassar o teto da função agendada. A migração zerou somente leases e tentativas inválidas, preservou mensagens e histórico e criou os ledgers. No teste final, dois despachos de background elevaram `done` de 25 para 27 e terminaram com zero `running` e zero lease token ativo. A fila restante ficou com 41 `pending`, 8 `orphaned` e 1 `waiting_messages`, para drenagem gradual. Pacientes conhecidas antes eram excluídas da fila, impedindo casos como Laís de avançar. A importação anterior aceitava somente GCLID.
+- **Hipótese:** eliminar starvation e estados órfãos fará as fases convergirem para as conversas e para `Consultas`; deduplicar por oportunidade e marco elevará a cobertura de sinais verdadeiros sem inflar resultados.
+- **Métrica principal:** idade p95 da fila, itens em dead letter, taxa de conclusões, divergências entre conversa/Consulta/fase, eventos elegíveis versus aceitos pelo Google e duplicidade por ID de transação.
+- **Guardrails:** nenhuma informação pessoal ou clínica no arquivo de importação; exatamente um click ID por evento; nenhuma conversão otimizada para leads; clique no WhatsApp continua secundário; não marcar consentimento `GRANTED` por inferência.
+- **Data de revisão:** 18 de agosto de 2026 para operação da fila e 25 de agosto de 2026 para correspondência no Google Ads.
+- **Regra para manter:** durante a drenagem inicial, nenhuma lease expirada sem recuperação, zero duplicidade e crescimento contínuo de `done`; depois da drenagem, p95 inferior a uma hora e correspondência entre planilha e Google. Subir o lote de 1 para 2 somente após uma semana sem timeout ou lease presa.
+- **Regra para reverter:** suspender a nova visão de importação se houver rejeição de mapeamento, duplicidade, exposição de dado pessoal ou divergência de ação; preservar o ledger para auditoria e retornar temporariamente à visão GCLID anterior.
+
+### 11 de agosto de 2026 — auditoria das mudanças recomendadas pela equipe do Google
+
+- **Status:** correções executadas; teste em observação.
+- **Responsável pela execução:** Codex, na sessão autenticada do Google Ads, sob autorização de Daniel.
+- **Mudança observada:** quatro campanhas migraram para Maximizar conversões, lifting facial recebeu CPA desejado de R$ 43 e quatro tipos de recomendação automática de lances foram habilitados. Otoplastia e marca permaneceram em Maximizar cliques. Performance Max foi recusada.
+- **Correção executada:** lifting facial permaneceu em Maximizar conversões sem CPA desejado; blefaroplastia, lifting cervical e cirurgia facial voltaram a Maximizar cliques; otoplastia e marca foram mantidas em Maximizar cliques; as quatro aplicações automáticas de lances foram desativadas. A conferência final preservou todos os orçamentos e mostrou CPA desejado vazio nas seis campanhas ativas.
+- **Escopo preservado:** nenhuma palavra-chave ou grupo de anúncios foi alterado; `plástica das pálpebras` e o grupo de preço de lifting permaneceram ativos e inalterados.
+- **Motivo informado:** recomendação da equipe do Google para aumentar conversões e aproveitar a automação da plataforma.
+- **Evidência reconciliada:** de 12 de julho a 10 de agosto, houve 1.495 cliques, R$ 2.313,40 de gasto, 40 cliques rastreados no WhatsApp, 18 conversas reais do Google, 5 qualificadas e 0 agendamentos. O CPL qualificado observado foi aproximadamente R$ 462,68, enquanto o CPA de R$ 43 se aproxima do custo histórico por clique no WhatsApp do lifting. A conta tinha apenas 1 conversão qualificada aceita no Google Ads.
+- **Hipótese:** concentrar a automação somente no lifting, sem um CPA artificialmente baixo, preservará a capacidade de testar a IA sem dispersar dados escassos; as demais campanhas ficam comparáveis em Maximizar cliques.
+- **Métrica principal:** custo por lead qualificado aceito, taxa de clique para conversa real, taxa de conversa para qualificado e taxa de qualificado para agendamento.
+- **Guardrails:** clique no WhatsApp permanece secundário; não aumentar orçamento; não ativar Performance Max; não permitir aplicação automática de estratégia ou meta de lance.
+- **Data de revisão:** 25 de agosto de 2026, com checagem antecipada se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas.
+- **Regra para manter:** manter o teste apenas se tráfego, qualidade e custo por qualificado forem estáveis ou melhores.
+- **Regra para reverter:** retornar o lifting a Maximizar cliques se o volume cair sem ganho de qualidade, se o CPA qualificado piorar ou se a importação divergir da planilha.
+
+### 11 de agosto de 2026 — avaliação de inserção dinâmica e Performance Max
+
+- **Status:** não adotar de forma ampla neste momento.
+- **Mudança proposta pelo Google:** usar `{Keyword:}` em um título de todas as campanhas e ativar Performance Max.
+- **Motivo e evidência:** os anúncios atuais já apresentam qualidade Excelente na maior parte da conta; somente um anúncio de lifting cervical aparecia como Médio. A recomendação de Performance Max exibida na conta também fazia referência a Merchant Center e produtos, sinais pouco aderentes a uma clínica particular. A conversão qualificada ainda tem volume insuficiente.
+- **Hipótese:** títulos específicos por procedimento preservam gramática, posicionamento e intenção melhor do que inserção dinâmica universal; Pesquisa continuará oferecendo maior controle até o funil qualificado estabilizar.
+- **Métrica principal:** CTR, conversa real por clique, qualificado por clique, custo por qualificado e agendamentos.
+- **Data de revisão:** depois de 20 a 30 conversões qualificadas aceitas em 30 dias ou quando existirem agendamentos suficientes para avaliar qualidade por campanha.
+- **Regra para manter:** testar `{KeyWord:texto padrão}` apenas em grupos estreitos e manter se melhorar qualificados, não apenas CTR.
+- **Regra para reverter:** remover se produzir textos estranhos, tráfego genérico ou queda de qualidade; Performance Max continua bloqueada até cumprir os pré-requisitos documentados.
+
 ### 9 de agosto de 2026 — mensuração do funil de custos e guias de mama e corpo
 
 - **Status:** incluído no release autorizado para publicação em 9 de agosto de 2026.
@@ -464,6 +550,30 @@ Decisão final:
 - **Motivo:** campanha indicada como limitada pelo orçamento.
 - **Estratégia preservada:** Maximizar cliques.
 - **Regra:** não combinar imediatamente com mudança para Maximizar conversões; revisar termos, qualidade, GCLID e custos.
+
+### 11 de agosto de 2026 — publicação da integração Bruna, LEADS e Google Ads
+
+- **Status:** publicada em produção.
+- **Mudança:** adoção de uma única planilha `LEADS`, com Amanda em `Google Ads - Conversões`, Daniel em `Leads Dr. Daniel` e um cadastro técnico oculto de oportunidades no mesmo arquivo. A Bruna passou a registrar oportunidade, profissional, responsável atual, próxima ação e objeção; terceiros e contatos não comerciais não entram nas abas de leads. Agendamentos de Amanda e Daniel só são confirmados após ação humana.
+- **Motivo e evidência:** a auditoria encontrou risco de misturar Daniel e outros profissionais com a aquisição da Amanda e risco de reprocessamento da classificação. Após a migração, 135 linhas com telefone da Amanda e uma do Daniel têm Opportunity ID; os 132 IDs únicos visíveis estão no cadastro canônico; Daniel não tem click ID; os 37 eventos históricos de fase e o evento de Ads ficaram vinculados a oportunidades existentes e identificados como Amanda.
+- **Publicação:** Apps Script versão 67 e Netlify deploy `6a7bce34a97a27d96320aebf`; 464 testes automatizados aprovados; endpoints de saúde ativos com assinatura, Sheets, OpenAI, alertas e proteção de preferências configurados.
+- **Hipótese:** separar aquisição por profissional e persistir o estado da oportunidade reduzirá retrabalho, duplicidade e contaminação do aprendizado do Google, permitindo que a Bruna use Terra médio com regras determinísticas e escalonamento humano.
+- **Métrica principal:** consulta agendada e realizada da Amanda por Opportunity ID; custo por lead qualificado; duplicidades; mensagens indevidas; falsos envios ao Ads; tempo até resposta humana nas exceções.
+- **Data de revisão:** auditoria diária por sete dias e revisão consolidada em 18 de agosto de 2026.
+- **Regra para manter:** zero Daniel/terceiro no fluxo de Ads, zero mensagem duplicada, confirmação humana de agenda e correspondência integral entre evento de Ads e oportunidade da Amanda.
+- **Regra para reverter:** colocar `WHATSAPP_AUTOMATION_MODE=shadow` imediatamente se houver mensagem indevida, duplicidade, profissional incorreto, agendamento sem confirmação humana ou associação incorreta ao Google Ads.
+
+### 12 de agosto de 2026 — auditoria corretiva da Bruna, fila e primeira aba do Google Ads
+
+- **Status:** planilha e Apps Script publicados na versão 68; código da Bruna validado em 466 testes e incluído no release de produção de 12 de agosto.
+- **Mudança:** `IMPORT_GOOGLE_ADS` passa a ser a primeira aba e a única fonte canônica de importação offline, reunindo também o histórico deduplicado de `IMPORT_GCLID`. A classificação passa a carregar Opportunity ID, profissional, versão e aba em todas as confirmações; o claim grava somente a linha alugada e os tempos de resposta foram ajustados. Henrique, Marina, Laerte, outros profissionais, emprego, marketing e fornecedores passam a ser classificados como `external` ou `nonpatient`, arquivados em `_CONTATOS_NAO_LEADS` e impedidos de gerar sinal ao Ads.
+- **Motivo e evidência:** a auditoria ao vivo encontrou `IMPORT_GOOGLE_ADS` na posição 31, enquanto o Google lê a primeira aba; nove leases em execução estavam vencidas e os logs mostraram `stale_lease`, `lead_not_found`, `hydrate_invalid_response` e timeouts. O código descartava o Opportunity ID ao concluir a classificação e regravava toda a fila para alugar um item. A migração confirmou `IMPORT_GOOGLE_ADS` no índice zero com quatro transações históricas únicas e arquivou, com trilha de auditoria, dez linhas indevidas correspondentes a nove contatos de profissionais externos, fornecedores, marketing, emprego ou conversas privadas.
+- **Hipótese:** a identidade completa e a gravação mínima eliminarão starvation e divergências; a quarentena preservará auditoria sem contaminar o funil da Amanda; a primeira aba canônica tornará a importação previsível.
+- **Métrica principal:** zero lease vencida, zero `stale_lease`/`lead_not_found` causado pelo contrato de persistência, idade p95 da fila inferior a uma hora após drenagem, zero terceiro/não-paciente nas abas Amanda/Daniel e correspondência integral entre primeira aba e eventos elegíveis.
+- **Guardrails:** nenhuma informação pessoal ou clínica na primeira aba; deduplicação por ID da transação; apenas Amanda elegível ao Ads; contatos arquivados permanecem auditáveis e qualquer evento ainda não importado é invalidado; não apagar uma oportunidade legítima da Amanda apenas porque a mesma pessoa mencionou outro profissional.
+- **Data de revisão:** 13 de agosto de 2026 para a fila e 18 de agosto de 2026 para integridade do funil.
+- **Regra para manter:** manter se a fila drenar sem leases vencidas e a auditoria confirmar a primeira aba, deduplicação e isolamento profissional.
+- **Regra para reverter:** pausar o classificador e retornar a importação à aba anterior caso apareça duplicidade, perda de histórico ou exclusão indevida; preservar todos os ledgers e o arquivo de quarentena para restauração.
 
 ## 17. Documentos subordinados
 

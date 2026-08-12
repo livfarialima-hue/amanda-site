@@ -70,6 +70,20 @@ test("valid strict classification is parsed", () => {
   });
 });
 
+test("external professionals and non-patient contacts are valid exclusion routes", () => {
+  for (const professional of ["external", "nonpatient"]) {
+    const result = parseLeadClassificationResponse(
+      validResponse(validClassification({
+        recommendedStatus: "Não qualificado",
+        professional,
+      })),
+      "fallback",
+    );
+    assert.equal(result.status, "completed");
+    assert.equal(result.classification.professional, professional);
+  }
+});
+
 test("unexpected classification field is rejected", () => {
   const result = parseLeadClassificationResponse(
     validResponse(
@@ -109,6 +123,7 @@ test("request is private, structured, bounded and excludes raw phone", async () 
       currentStatus: "Novo",
       currentSummary: "",
       currentNextAction: "",
+      currentProfessional: "amanda",
       patientRelationship: {
         found: true,
         relationshipState: "known_patient",
@@ -150,7 +165,8 @@ test("request is private, structured, bounded and excludes raw phone", async () 
     found: true,
     relationshipState: "known_patient",
   });
-  assert.equal(input.messages.length, 8);
+  assert.equal(input.currentProfessional, "amanda");
+  assert.equal(input.messages.length, 16);
   assert.ok(
     input.messages.every(
       (message) => Array.from(message.text).length <= 1000,
@@ -160,10 +176,13 @@ test("request is private, structured, bounded and excludes raw phone", async () 
     input.messages.reduce(
       (total, message) => total + message.text.length,
       0,
-    ) <= 8000,
+    ) <= 16000,
   );
   assert.match(requestBody.instructions, /marketingPrefill true/);
-  assert.match(requestBody.instructions, /continuidade, não de nova aquisição/);
+  assert.match(requestBody.instructions, /não congela a oportunidade atual/);
+  assert.match(requestBody.instructions, /Somente mensagens IN/);
+  assert.match(requestBody.instructions, /external/);
+  assert.match(requestBody.instructions, /nonpatient/);
 });
 
 test("missing API configuration skips classification", async () => {

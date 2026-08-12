@@ -1,3 +1,5 @@
+import { usableProfileFirstName } from "./profile-name.mjs";
+
 const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
   lifting_cervical: "lifting cervical",
@@ -55,7 +57,7 @@ export const REACTIVATION_REPLY = [
 ].join(" ");
 
 function firstName(value) {
-  return String(value || "").trim().split(/\s+/)[0] || "";
+  return usableProfileFirstName(value);
 }
 
 function greeting(name) {
@@ -119,15 +121,19 @@ export function buildMarketingPrefilledOpeningReply({
   introduceBruna = true,
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
+  const hasUsableName = Boolean(firstName(patientName));
   const introduction = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
   const context = procedureLabel
     ? `Posso te orientar sobre ${procedureLabel}.`
     : "Posso te orientar.";
-  const question = procedureLabel
-    ? `O que você gostaria de entender primeiro sobre ${procedureLabel}?`
-    : "O que você gostaria de entender primeiro?";
+  const question =
+    introduceBruna && !hasUsableName
+      ? "Como posso te chamar?"
+      : procedureLabel
+        ? `O que você gostaria de entender primeiro sobre ${procedureLabel}?`
+        : "O que você gostaria de entender primeiro?";
 
   return `${introduction} ${context} ${question}`;
 }

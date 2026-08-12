@@ -4,9 +4,9 @@ const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
 const DEFAULT_REASONING_EFFORT = "low";
 const OPENAI_TIMEOUT_MS = 10_000;
-const MAX_MESSAGES = 12;
+const MAX_MESSAGES = 24;
 const MAX_MESSAGE_LENGTH = 1_000;
-const MAX_TOTAL_TEXT_LENGTH = 8_000;
+const MAX_TOTAL_TEXT_LENGTH = 16_000;
 const MAX_CLASSIFICATION_GUIDANCE = 8;
 
 const STATUSES = [
@@ -18,7 +18,13 @@ const STATUSES = [
   "Não qualificado",
 ];
 const CONFIDENCES = ["low", "medium", "high"];
-const PROFESSIONALS = ["amanda", "daniel", "unknown"];
+const PROFESSIONALS = [
+  "amanda",
+  "daniel",
+  "external",
+  "nonpatient",
+  "unknown",
+];
 const COMMERCIAL_REASONS = [
   "Em andamento",
   "Sem resposta",
@@ -104,9 +110,23 @@ Use exatamente estas definições:
 - Paciente convertido: há evidência explícita de que fechou o procedimento.
 - Não qualificado: há evidência comercial explícita de inadequação, recusa definitiva ou encerramento como não qualificado.
 
+Use professional para proteger a separação das bases:
+- amanda: a pessoa procura explicitamente atendimento da Dra. Amanda ou cirurgia plástica/injetáveis oferecidos por ela.
+- daniel: a pessoa procura explicitamente atendimento do Dr. Daniel.
+- external: a conversa é para agenda ou atendimento de Henrique, Marina, Laerte ou qualquer outro profissional que não seja Amanda nem Daniel.
+- nonpatient: emprego, marketing, fornecedor, venda, entrega, parceria comercial ou contato sem intenção de ser paciente.
+- unknown: não há evidência suficiente de quem é o profissional procurado.
+Uma simples menção, indicação ou encaminhamento feito por outro médico não torna a conversa external: identifique quem a pessoa realmente quer consultar. Quando external ou nonpatient estiver claro, use Não qualificado e confiança high para que o contato seja retirado das abas de leads, mas preserve evidência administrativa curta.
+
 Mensagens com marketingPrefill true foram compostas pelo anúncio ou pelo site. Elas indicam somente a origem e o tema provável; não provam que a pessoa pediu agenda, disponibilidade, avaliação ou pagamento. Só avance a classificação quando uma mensagem pessoal posterior trouxer essa intenção de forma concreta.
 Pergunta apenas de preço, pesquisa inicial, curiosidade ou comparação sem pedido prático continua como Novo. Uma recusa explícita e definitiva pode ser Não qualificado; silêncio sozinho nunca pode.
-Se patientRelationship.found for true, trata-se de uma conversa de continuidade, não de nova aquisição. Preserve currentStatus, não gere nova progressão comercial e indique no resumo e na próxima ação que o acompanhamento deve ocorrer no fluxo operacional de consultas.
+patientRelationship informa o contexto operacional da pessoa, mas não congela a oportunidade atual. Use-o assim:
+- appointment_scheduled sustenta Consulta agendada quando se refere à oportunidade atual.
+- consultation_completed sustenta Consulta realizada quando se refere à oportunidade atual.
+- surgical_planning, active_postop, former_patient ou known_patient, sozinhos, não provam conversão desta oportunidade.
+- uma paciente conhecida pode avançar normalmente se a conversa trouxer nova evidência de agenda, consulta realizada ou procedimento fechado.
+
+Somente mensagens IN, escritas pela pessoa, comprovam interesse, recusa ou fechamento. Mensagens OUT da clínica podem fornecer contexto, mas uma oferta, pergunta ou afirmação da equipe sem confirmação da pessoa nunca basta para avançar a fase.
 
 Não deduza consulta realizada ou paciente convertido apenas pela passagem do tempo. Não rebaixe uma etapa por silêncio. Se não houver evidência suficiente para avançar, mantenha a situação atual.
 
@@ -322,6 +342,7 @@ export async function runLeadClassifier(
     currentStatus,
     currentSummary,
     currentNextAction,
+    currentProfessional,
     patientRelationship,
     classificationGuidance,
     messages,
@@ -337,9 +358,7 @@ export async function runLeadClassifier(
   }
 
   const model = String(
-    env.OPENAI_CLASSIFIER_MODEL ||
-      env.OPENAI_MODEL ||
-      DEFAULT_MODEL,
+    env.OPENAI_CLASSIFIER_MODEL || DEFAULT_MODEL,
   );
   const reasoningEffort = String(
     env.OPENAI_CLASSIFIER_REASONING_EFFORT ||
@@ -371,6 +390,9 @@ export async function runLeadClassifier(
           currentSummary: String(currentSummary || ""),
           currentNextAction: String(
             currentNextAction || "",
+          ),
+          currentProfessional: String(
+            currentProfessional || "unknown",
           ),
           patientRelationship:
             sanitizePatientRelationship(patientRelationship),

@@ -1,3 +1,5 @@
+import { usableProfileFirstName } from "./profile-name.mjs";
+
 const KNOWLEDGE_PREFIX = "KB:";
 
 export const UNKNOWN_CLARIFICATION_CODE = "UNKNOWN-CLARIFY-01";
@@ -138,9 +140,9 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
       (item) => item.id.toLowerCase() === ruleId.toLowerCase(),
     );
     const automaticMode = normalizeMode(candidate?.mode) === "automatica";
-    const highRisk = normalizeMode(candidate?.risk) === "alto";
+    const lowRisk = normalizeMode(candidate?.risk) === "baixo";
 
-    if (!candidate || !automaticMode || highRisk) {
+    if (!candidate || !automaticMode || !lowRisk) {
       return invalidKnowledgeDecision(decision, "resposta_aprovada_invalida");
     }
 
@@ -190,7 +192,7 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
 }
 
 export function buildUnknownHoldingReply({ patientName, introduceBruna } = {}) {
-  const firstName = limitText(patientName, 80).split(/\s+/)[0];
+  const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
     ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."

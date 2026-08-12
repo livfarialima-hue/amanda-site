@@ -115,6 +115,10 @@ Primeira pergunta sobre preço cirúrgico, qualquer que seja o procedimento:
 
 > Os valores das cirurgias variam conforme o procedimento e o planejamento definido na avaliação. Trabalhamos com valores competitivos, condição à vista e parcelamento antecipado até a data da cirurgia. O orçamento final discrimina honorários da equipe, hospital, anestesia, materiais e acompanhamento, conforme cada caso. Veja o que compõe os custos de uma cirurgia: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/
 
+Quando a objeção envolver onde a cirurgia será feita ou como reduzir o custo hospitalar, complementar sem prometer disponibilidade:
+
+> A Dra. Amanda opera em hospitais como Sírio-Libanês, Nove de Julho e Oswaldo Cruz, além de outras opções com custo mais acessível quando forem adequadas ao procedimento e ao caso. Em algumas situações, o convênio pode autorizar parte dos custos de internação, mas isso depende das regras e da análise do plano e não pode ser garantido.
+
 Se a pessoa voltar a pedir média de lifting ou minilifting:
 
 > Para uma referência inicial, o minilifting costuma ficar entre R$ 18 mil e R$ 25 mil, e o lifting facial entre R$ 26 mil e R$ 42 mil. A indicação e o valor final dependem do planejamento individual. Há condição à vista e parcelamento antecipado até a data da cirurgia.
@@ -138,7 +142,22 @@ Faixas aproximadas usadas somente na sugestão interna do alerta. O mínimo corr
 
 Quando a tabela exigir uma definição antes do número — por exemplo, mastopexia com ou sem prótese, combinação de cirurgias ou região do contorno corporal — o alerta sugere primeiro essa pergunta de esclarecimento. Procedimentos sem correspondência separada na tabela continuam com confirmação humana, sem invenção de valor.
 
-A primeira resposta pode informar condição à vista e parcelamento antecipado até a cirurgia. Número de parcelas, juros, desconto, cancelamento e reembolso dependem de confirmação humana. A comunicação deve explicar condições objetivamente, sem “facilidades”, “cabe no seu bolso”, “realize seu sonho” ou urgência comercial.
+A primeira resposta pode informar pagamento à vista por Pix ou débito e parcelamento antecipado até a cirurgia. Número de parcelas, juros, desconto, cancelamento e reembolso dependem de confirmação humana. A comunicação deve explicar condições objetivamente, sem “facilidades”, “cabe no seu bolso”, “realize seu sonho” ou urgência comercial.
+
+## Integração com a única planilha LEADS
+
+Existe um único arquivo Google Sheets chamado `LEADS`, que é o arquivo conectado ao Google Ads. Dentro dele, cada oportunidade recebe um `Opportunity ID` estável e um profissional fixado:
+
+- Dra. Amanda: aparece na aba `Google Ads - Conversões` e pode gerar sinal offline somente quando existir um click ID elegível e um marco verdadeiro;
+- Dr. Daniel: aparece na aba `Leads Dr. Daniel`, sem alimentar o Google Ads da Amanda;
+- Henrique, Marina e qualquer outro profissional: não entram em nenhuma aba de leads; recebem apenas roteamento interno para atendimento humano;
+- emprego, currículo, marketing e fornecedores: são ignorados e não viram oportunidade.
+
+Telefone identifica a pessoa; `Opportunity ID` identifica a oportunidade com um profissional. Assim, a mesma pessoa pode ter uma oportunidade legítima com Amanda e outra com Daniel sem mistura de histórico, agenda, fase ou atribuição. Origem e click ID ficam congelados na criação da oportunidade e não são trocados por classificações posteriores.
+
+A Bruna registra automaticamente resumo, objeção principal, próxima ação, relacionamento, responsável atual e de quem se espera a próxima ação. Campos humanos de fase e observação não são sobrescritos silenciosamente. Uma escolha de horário fica `selected_pending_human`: a equipe recebe duas opções e a mensagem sugerida, mas somente uma confirmação humana cria ou confirma o evento na Google Agenda.
+
+O aprendizado é supervisionado. Respostas humanas viram candidatas, não regras ativas. Somente conteúdo de baixo risco que foi revisado, aprovado e promovido para o snapshot vigente pode ser enviado automaticamente. Risco médio gera sugestão interna; risco alto permanece humano. O pacote versionado fica em `netlify/functions/lib/bruna-policy/`.
 
 ### Localização
 

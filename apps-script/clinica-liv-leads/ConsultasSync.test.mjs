@@ -137,6 +137,29 @@ test("writes consultation statuses using the visible dropdown vocabulary", () =>
   );
 });
 
+test("maps consultation vocabulary to canonical lead phases", () => {
+  assert.equal(
+    context.statusCanonicoLeadDaConsulta_("Confirmada"),
+    "Consulta agendada",
+  );
+  assert.equal(
+    context.statusCanonicoLeadDaConsulta_("Remarcada"),
+    "Consulta agendada",
+  );
+  assert.equal(
+    context.statusCanonicoLeadDaConsulta_("Realizada"),
+    "Consulta realizada",
+  );
+  assert.equal(
+    context.statusCanonicoLeadDaConsulta_("Cancelada"),
+    "",
+  );
+  assert.equal(
+    context.statusCanonicoLeadDaConsulta_("Não compareceu"),
+    "",
+  );
+});
+
 test("treats no-show as a closed appointment without calling it completed", () => {
   assert.equal(
     context.statusNaoCompareceuConsulta_("Não compareceu"),

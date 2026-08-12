@@ -64,6 +64,32 @@ test("an invalid or non-automatic knowledge rule is held for review", () => {
   assert.equal(shouldDigestLearningDecision(guarded), true);
 });
 
+test("medium-risk knowledge can never be sent automatically", () => {
+  const decision = {
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    professional: "amanda",
+    procedure: "lifting facial",
+    replyCode: "KB:kb-medium",
+    suggestedReply: "Texto gerado",
+    reviewReason: "",
+  };
+  const guarded = applyKnowledgeDecisionGuard(decision, {
+    candidates: [
+      {
+        id: "kb-medium",
+        answer: "Resposta aprovada",
+        mode: "Automática",
+        risk: "Médio",
+      },
+    ],
+  });
+  assert.equal(guarded.route, "human_review");
+  assert.equal(guarded.automaticAllowed, false);
+});
+
 test("the bot can ask only one clarification for the same pending question", () => {
   const first = applyKnowledgeDecisionGuard(
     decision({

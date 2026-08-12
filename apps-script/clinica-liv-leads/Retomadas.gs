@@ -71,16 +71,7 @@ function linkCancelamentoRetomadas_(telefone, confirmar) {
 
   const normalizado = normalizarTelefoneRetomadas_(telefone);
   const assinatura = assinaturaCancelamentoRetomadas_(normalizado);
-  const propriedades = PropertiesService.getScriptProperties();
-  const servico =
-    typeof ScriptApp !== "undefined" && ScriptApp.getService
-      ? ScriptApp.getService()
-      : null;
-  const baseUrl =
-    propriedades.getProperty(
-      RETOMADAS_CONFIG.propriedadeUrlAplicativo,
-    ) ||
-    (servico && servico.getUrl ? servico.getUrl() : "");
+  const baseUrl = urlAplicativoRetomadas_();
 
   if (!baseUrl || !assinatura) return "";
 
@@ -92,6 +83,37 @@ function linkCancelamentoRetomadas_(telefone, confirmar) {
     encodeURIComponent(assinatura) +
     (confirmar ? "&confirmar=1" : "")
   );
+}
+
+function normalizarUrlAplicativoRetomadas_(value) {
+  const url = String(value || "")
+    .trim()
+    .replace(/[?#].*$/, "")
+    .replace(/\/+$/, "");
+
+  return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/i.test(
+    url,
+  )
+    ? url
+    : "";
+}
+
+function urlAplicativoRetomadas_() {
+  const propriedades = PropertiesService.getScriptProperties();
+  const servico =
+    typeof ScriptApp !== "undefined" && ScriptApp.getService
+      ? ScriptApp.getService()
+      : null;
+  const urlImplantacaoAtiva = normalizarUrlAplicativoRetomadas_(
+    servico && servico.getUrl ? servico.getUrl() : "",
+  );
+  const urlConfigurada = normalizarUrlAplicativoRetomadas_(
+    propriedades.getProperty(
+      RETOMADAS_CONFIG.propriedadeUrlAplicativo,
+    ),
+  );
+
+  return urlImplantacaoAtiva || urlConfigurada;
 }
 
 function tokenCancelamentoRetomadasValido_(telefone, token) {
