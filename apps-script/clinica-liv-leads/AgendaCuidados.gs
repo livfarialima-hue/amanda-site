@@ -387,7 +387,9 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     formatarDataRetomadas_(consulta, "dd/MM/yyyy") +
     " às " +
     formatarDataRetomadas_(consulta, "HH:mm") +
-    ". Se precisar de alguma orientação antes, estamos por aqui.";
+    ". O endereço é Rua Pais Leme, 215, Pinheiros, São Paulo. " +
+    "Google Maps: https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo. " +
+    "Se precisar de alguma orientação antes, estamos por aqui.";
 
   const lembretes = planejarLembretesConsultaHoje_({
     agora: entrada.agora,

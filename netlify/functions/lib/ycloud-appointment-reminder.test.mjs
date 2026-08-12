@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  appointmentReminderLocation,
   isAppointmentReminderConfigured,
   sendYCloudAppointmentReminder,
 } from "./ycloud-appointment-reminder.mjs";
@@ -15,6 +16,28 @@ const INPUT = {
   appointmentTime: "14:30",
   location: "na Clínica LIV Faria Lima",
 };
+
+const FULL_CLINIC_LOCATION =
+  "na Clínica LIV Faria Lima, Rua Pais Leme, 215, Pinheiros, São Paulo\n" +
+  "Google Maps: https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo";
+
+test("clinic reminders include the full address and Google Maps link", () => {
+  assert.equal(
+    appointmentReminderLocation("na Clínica LIV Faria Lima"),
+    FULL_CLINIC_LOCATION,
+  );
+  assert.equal(
+    appointmentReminderLocation(""),
+    FULL_CLINIC_LOCATION,
+  );
+});
+
+test("a custom appointment location is preserved", () => {
+  assert.equal(
+    appointmentReminderLocation("Teleconsulta"),
+    "Teleconsulta",
+  );
+});
 
 test("appointment reminder requires API key and sender number", () => {
   assert.equal(isAppointmentReminderConfigured({}), false);
@@ -78,7 +101,7 @@ test("appointment reminder uses the approved utility template", async () => {
       "Dra. Amanda",
       "30/07/2026",
       "14:30",
-      "na Clínica LIV Faria Lima",
+      FULL_CLINIC_LOCATION,
     ],
   );
 });

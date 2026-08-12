@@ -15,6 +15,12 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
   triggerFunction: "processarLembretesConsultas",
 });
 
+const LEMBRETES_CONSULTAS_LOCAL_CLINICA = Object.freeze({
+  address: "Rua Pais Leme, 215, Pinheiros, São Paulo",
+  mapsUrl:
+    "https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo",
+});
+
 const LEMBRETES_CONSULTAS_HEADERS = Object.freeze({
   id: "ID da consulta",
   phone: "Telefone (E.164)",
@@ -302,9 +308,9 @@ function processarLembretesConsultasInterno_(
           appointment,
           "HH:mm",
         ),
-        location:
-          String(row[columns.location] || "").trim() ||
-          "na Clínica LIV Faria Lima",
+        location: formatarLocalLembreteConsulta_(
+          row[columns.location],
+        ),
       },
       secret,
       properties,
@@ -342,6 +348,41 @@ function processarLembretesConsultasInterno_(
     failed,
     blockedByPreference,
   };
+}
+
+function formatarLocalLembreteConsulta_(value) {
+  const location = String(value || "").trim();
+
+  if (
+    /maps\.google\.com|google\.com\/maps|maps\.app\.goo\.gl/i.test(
+      location,
+    )
+  ) {
+    return location;
+  }
+
+  if (/rua\s+pais\s+leme\s*,?\s*215/i.test(location)) {
+    return (
+      location +
+      "\nGoogle Maps: " +
+      LEMBRETES_CONSULTAS_LOCAL_CLINICA.mapsUrl
+    );
+  }
+
+  if (
+    !location ||
+    /cl[ií]nica\s+liv|faria\s+lima/i.test(location)
+  ) {
+    return (
+      (location || "na Clínica LIV Faria Lima") +
+      ", " +
+      LEMBRETES_CONSULTAS_LOCAL_CLINICA.address +
+      "\nGoogle Maps: " +
+      LEMBRETES_CONSULTAS_LOCAL_CLINICA.mapsUrl
+    );
+  }
+
+  return location;
 }
 
 function enviarLembreteConsulta_(

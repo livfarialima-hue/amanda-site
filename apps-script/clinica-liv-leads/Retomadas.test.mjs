@@ -894,6 +894,11 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     agenda.some((item) => item.nome === "Elisa"),
     false,
   );
+  const appointmentReminder = agenda.find(
+    (item) => item.nome === "Carla",
+  );
+  assert.match(appointmentReminder.sugestao, /Rua Pais Leme, 215/);
+  assert.match(appointmentReminder.sugestao, /maps\.google\.com/);
 });
 
 test("no-show appears as a gentle manual rebooking action", () => {

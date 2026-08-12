@@ -212,3 +212,19 @@ test("reminder processing never operates overnight", () => {
     false,
   );
 });
+
+test("clinic reminder location includes address and Google Maps", () => {
+  const location = context.formatarLocalLembreteConsulta_(
+    "Clínica LIV Faria Lima",
+  );
+
+  assert.match(location, /Rua Pais Leme, 215/);
+  assert.match(location, /maps\.google\.com/);
+});
+
+test("custom reminder locations are not replaced", () => {
+  assert.equal(
+    context.formatarLocalLembreteConsulta_("Teleconsulta"),
+    "Teleconsulta",
+  );
+});
