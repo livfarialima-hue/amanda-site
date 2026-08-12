@@ -14,6 +14,36 @@
 - Agenda: revisão humana obrigatória antes de oferecer horários
 - Resumo de retomadas: e-mail diário para `amandaschh@hotmail.com` e `daniel.added@gmail.com`
 
+### Continuidade e consumo das Functions
+
+O endpoint público processa cada evento da YCloud diretamente. O recebimento,
+o registro na planilha e a resposta elegível da Bruna não dependem de uma
+varredura periódica. Antes de qualquer resposta, as travas por evento,
+conversa e atividade humana continuam impedindo duplicidade.
+
+Cada mensagem de texto também cria um registro temporário na fila de
+recuperação. Em operação normal, o próprio webhook conclui e remove esse
+registro. Se houver falha de planilha, IA ou entrega, `ycloud-recovery` verifica
+a fila a cada cinco minutos, tenta novamente com deduplicação e, depois do
+limite seguro, envia a exceção para revisão humana. Portanto, o intervalo de
+cinco minutos afeta somente falhas excepcionais; mensagens normais continuam
+imediatas.
+
+A recuperação só termina quando a mensagem estiver vinculada à oportunidade
+correta e todo o trabalho automático aplicável tiver chegado a um estado final.
+Uma resposta HTTP bem-sucedida, um evento duplicado ou um registro
+`route_pending` isoladamente não encerram a fila. Se a pessoa enviar uma segunda
+mensagem sem repetir o código do anúncio, o sistema herda a única oportunidade
+ativa daquele telefone. Se existirem ao mesmo tempo oportunidades ativas de
+Amanda e Daniel, falha de forma fechada e pede revisão, sem misturar os
+profissionais. Ao recuperar uma rota pendente, atualiza o evento e o vínculo da
+mensagem existentes, sem criar duplicidade.
+
+O antigo Async Workload da Netlify foi retirado em 12/08/2026. Ele já não fazia
+parte do caminho público, mas mantinha runners e schedulers auxiliares ativos e
+gerava milhares de invocações ociosas. Classificação de leads e retomada após
+intervenção humana continuam executadas a cada cinco minutos.
+
 O diagnóstico público do endpoint deve indicar:
 
 - `apiKeyConfigured: true`
