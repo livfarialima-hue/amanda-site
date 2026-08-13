@@ -4,7 +4,7 @@ import { getStore } from "@netlify/blobs";
 const STORE_NAME = "liv-whatsapp-conversations-v1";
 const MEMORY_VERSION = 1;
 const MEMORY_TTL_MS = 7 * 24 * 60 * 60 * 1_000;
-const MAX_TURNS = 8;
+const MAX_TURNS = 16;
 const MAX_TURN_TEXT_LENGTH = 700;
 
 function text(value, maximumLength = MAX_TURN_TEXT_LENGTH) {
