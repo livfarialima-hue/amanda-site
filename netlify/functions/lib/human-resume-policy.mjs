@@ -1,4 +1,5 @@
 import { isAppointmentPreferenceReply } from "./appointment-suggestions.mjs";
+import { detectPatientAppointmentReply } from "./appointment-confirmation.mjs";
 import { isSchedulingRequest } from "./whatsapp-automation.mjs";
 import {
   CONVERSATION_ACTIONS,
@@ -253,6 +254,17 @@ export function classifyHumanResume({
     return {
       action: "no_action",
       reason: "conversation_closing_or_ignored",
+    };
+  }
+
+  const appointmentReply = detectPatientAppointmentReply({
+    currentText: normalizedText,
+    recentConversation,
+  });
+  if (appointmentReply?.state === "confirmed") {
+    return {
+      action: "no_action",
+      reason: "appointment_attendance_confirmed",
     };
   }
 

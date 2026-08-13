@@ -122,6 +122,37 @@ test("does not send an overnight holding message after a negotiated appointment 
   assert.equal(result.reason, "conversation_closing_or_ignored");
 });
 
+test("keeps a greeting plus attendance confirmation silent", () => {
+  const result = classifyHumanResume({
+    text: "Bom dia! Pode sim",
+    messageType: "text",
+    preliminaryPlan: {
+      route: "human_review",
+      reason: "outside_conservative_rules",
+      automaticAllowed: false,
+    },
+    enrichedPlan: standardPlan("known_conversation_continuation"),
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text:
+          "Você tem um horário agendado hoje às 15:00. Posso confirmar sua presença?",
+      },
+      {
+        role: "patient",
+        source: "paciente",
+        text: "Bom dia! Pode sim",
+      },
+    ],
+  });
+
+  assert.deepEqual(result, {
+    action: "no_action",
+    reason: "appointment_attendance_confirmed",
+  });
+});
+
 test("recognizes a safe operational continuation without inventing a team check", () => {
   const text =
     "Tudo bem? Eu acho que pode emitir sim. Vou tentar acessar os exames, se conseguir te passo, OK?";

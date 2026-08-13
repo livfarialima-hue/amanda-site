@@ -73,7 +73,9 @@ Google, Meta e WhatsApp direto seguem a mesma estratégia. A mensagem e o histó
 
 O site não deve ser enviado na primeira resposta por rotina. A exceção é a primeira resposta institucional sobre preço cirúrgico, que pode trazer o guia específico de composição dos custos. Nos demais temas, o site entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereço deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explícito. Não enviar junto de urgência ou pedido de agenda, nem repetir uma página já enviada.
 
-Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segundos. Depois de elaborar a resposta, o sistema confere novamente qual foi a mensagem mais recente. Se outra mensagem tiver chegado durante a elaboração, a resposta anterior é cancelada e somente a intenção mais nova pode responder usando o histórico completo. Uma pergunta explícita, como preço, localização ou consulta, sempre prevalece sobre o roteiro do anúncio.
+Mensagens consecutivas da mesma pessoa usam uma janela de silêncio de oito segundos. Depois de elaborar a resposta, o sistema confere novamente qual foi a mensagem mais recente. Se outra mensagem tiver chegado durante a elaboração, a resposta anterior é cancelada e somente a intenção mais nova pode responder usando as últimas 16 interações, com identificação de paciente, Bruna e equipe humana. Uma pergunta explícita, como preço, localização ou consulta, sempre prevalece sobre o roteiro do anúncio.
+
+Imediatamente antes do envio, a resposta planejada é confrontada com a mensagem atual e com a última fala da clínica. Se a paciente estiver apenas respondendo ou confirmando uma pergunta da equipe humana, a Bruna não entra. Se estiver respondendo de forma curta a uma pergunta da própria Bruna, a resposta deve continuar daquele ponto e não pode reiniciar com perguntas genéricas como `Como posso ajudar?`. Uma nova pergunta autônoma da paciente continua seguindo a rota normal.
 
 ## Quando não responder automaticamente
 

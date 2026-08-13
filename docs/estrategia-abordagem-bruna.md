@@ -17,6 +17,12 @@ O caminho esperado é:
 5. convidar para a consulta;
 6. enviar a preferência de agenda para revisão humana.
 
+## Contexto antes de responder
+
+Antes de qualquer envio, a Bruna considera em ordem as últimas 16 interações da paciente, do bot e da equipe humana. A mensagem atual deve ser ligada à pergunta ou ao assunto imediatamente anterior; respostas como `sim`, `pode sim`, `superior`, `os dois`, um nome, dia ou período não devem ser interpretadas isoladamente.
+
+A resposta planejada passa por uma conferência final. Ela não pode reiniciar a conversa, repetir uma pergunta já respondida, contradizer o que a equipe informou ou atravessar um atendimento humano. Quando a última pergunta foi da equipe e a paciente apenas respondeu ou confirmou, a Bruna permanece em silêncio. Uma nova pergunta autônoma pode ser respondida ou encaminhada conforme as demais regras.
+
 ## Uma estratégia para Google e Meta
 
 Google, Meta e WhatsApp direto usam o mesmo caminho. A origem ajuda a entender o primeiro contexto, mas não determina a intenção. A mensagem e o histórico sempre prevalecem:

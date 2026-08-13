@@ -47,11 +47,18 @@ function loadFunctions() {
     `${codeSource}\n${classificationSource}\n` +
       "globalThis.__test = { findLeadRowByPhone_, " +
       "shouldApplyLeadStatus_, ensureQualifiedGoogleConversion_, " +
-      "compareClassificationCandidates_, classificationLeaseMatches_ };",
+      "compareClassificationCandidates_, classificationLeaseMatches_, " +
+      "GOOGLE_ADS_IMPORT_HEADERS };",
     sandbox,
   );
   return sandbox.__test;
 }
+
+test("Google Ads import preserves the mapped conversion value header", () => {
+  const { GOOGLE_ADS_IMPORT_HEADERS } = loadFunctions();
+
+  assert.equal(GOOGLE_ADS_IMPORT_HEADERS[6], "Valor (R$)");
+});
 
 test("one phone always resolves to the first canonical lead row", () => {
   const { findLeadRowByPhone_ } = loadFunctions();

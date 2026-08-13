@@ -152,6 +152,142 @@ test("manual SMB echo marks takeover and suppresses later AI for the day", async
   }
 });
 
+test("attendance confirmation after a human reminder updates the appointment and stays silent", async () => {
+  const patientPhone = "+5511900004321";
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const sheetActions = [];
+  let patientFacingCalls = 0;
+
+  process.env.YCLOUD_WEBHOOK_SECRET = WEBHOOK_SECRET;
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = SHEETS_URL;
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
+  process.env.OPENAI_API_KEY = "openai-test-key";
+  process.env.WHATSAPP_AUTOMATION_MODE = "active";
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+
+  globalThis.fetch = async (url, options) => {
+    if (url === SHEETS_URL) {
+      const body = JSON.parse(options.body);
+      sheetActions.push(body);
+
+      if (body.action === "append_lead") {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            inserted: false,
+            updated: true,
+            duplicate: false,
+            humanTakeoverToday: true,
+            patientRelationship: {
+              found: true,
+              state: "appointment_scheduled",
+            },
+          }),
+          { status: 200 },
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          marked: true,
+          created: true,
+          updated: true,
+          reserved: true,
+          sent: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (
+      url === "https://api.openai.com/v1/responses" ||
+      url === "https://api.ycloud.com/v2/whatsapp/messages"
+    ) {
+      patientFacingCalls += 1;
+      throw new Error("attendance confirmation must stay silent");
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    await webhook(
+      signedRequest({
+        id: "attendance-reminder-echo",
+        type: "whatsapp.smb.message.echoes",
+        createTime: "2026-08-13T12:41:00.000Z",
+        whatsappMessage: {
+          id: "attendance-reminder-message",
+          wamid: "wamid.attendance-reminder-message",
+          status: "sent",
+          from: "+5511961957144",
+          to: patientPhone,
+          type: "text",
+          text: {
+            body:
+              "Bom dia, tudo bem? Você tem um horário agendado com a Dra. Amanda hoje às 15:00. Posso confirmar sua presença?",
+          },
+          sendTime: "2026-08-13T12:41:00.000Z",
+        },
+      }),
+    );
+
+    const inboundResponse = await webhook(
+      signedRequest({
+        id: "attendance-confirmation-inbound",
+        type: "whatsapp.inbound_message.received",
+        createTime: "2026-08-13T12:59:00.000Z",
+        whatsappInboundMessage: {
+          id: "attendance-confirmation-message",
+          wamid: "wamid.attendance-confirmation-message",
+          from: patientPhone,
+          to: "+5511961957144",
+          type: "text",
+          text: { body: "Bom dia! Pode sim" },
+          sendTime: "2026-08-13T12:59:00.000Z",
+        },
+      }),
+    );
+    const inboundBody = await inboundResponse.json();
+
+    assert.equal(inboundResponse.status, 200);
+    assert.equal(inboundBody.appointmentReplyDetected, true);
+    assert.equal(inboundBody.appointmentReplyState, "confirmed");
+    assert.equal(inboundBody.appointmentReplySyncStatus, "completed");
+    assert.equal(inboundBody.aiShadowQueued, false);
+    assert.equal(inboundBody.aiActiveQueued, false);
+    assert.equal(patientFacingCalls, 0);
+    assert.equal(
+      sheetActions.some(
+        (action) => action.action === "update_appointment_status",
+      ),
+      true,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test("WhatsApp Business automatic greeting does not mark human takeover", async () => {
   const savedSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const originalFetch = globalThis.fetch;

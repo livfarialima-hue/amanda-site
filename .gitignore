@@ -23,3 +23,11 @@ analysis/meta-video-review/
 # Saidas locais de auditoria que podem conter dados operacionais
 analysis/
 relatorios/*.csv
+analises/*/artifact.json
+analises/*/*.sql
+analises/*/strategy.md
+analises/*/*.verification-failure.png
+
+# Pacotes transitórios usados para sincronizar releases pela interface web
+.codex-sync-*.zip
+clinica-liv-release-*.zip

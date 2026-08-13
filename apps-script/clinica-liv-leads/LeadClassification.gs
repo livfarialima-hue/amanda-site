@@ -75,7 +75,7 @@ const GOOGLE_ADS_IMPORT_HEADERS = Object.freeze([
   "WBRAID",
   "Nome da conversão",
   "Data e hora da conversão",
-  "Valor",
+  "Valor (R$)",
   "Moeda",
 ]);
 

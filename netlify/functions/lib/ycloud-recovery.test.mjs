@@ -70,7 +70,7 @@ test("route_pending is never completed as a harmless duplicate", async () => {
   const result = await processInboundRecoveryJob(
     {
       eventId: "pending-route-event",
-      phone: "+5511947555416",
+      phone: "+5511900005416",
       attempts: 1,
       rawBody: "{}",
       signature: "signature",
@@ -122,7 +122,7 @@ test("recovery completes only after routing and automatic work finish", async ()
   const result = await processInboundRecoveryJob(
     {
       eventId: "fully-processed-event",
-      phone: "+5511947555416",
+      phone: "+5511900005416",
       attempts: 1,
       rawBody: "{}",
       signature: "signature",

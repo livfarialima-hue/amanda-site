@@ -535,6 +535,42 @@ test("an acknowledgment after a human booking confirmation stays silent", async 
   );
 });
 
+test("an attendance confirmation after a human reminder stays silent", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(
+    job({
+      text: "Bom dia! Pode sim",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text:
+            "Você tem um horário agendado com a Dra. Amanda hoje às 15:00. Posso confirmar sua presença?",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Bom dia! Pode sim",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "no_action");
+  assert.equal(result.reason, "appointment_attendance_confirmed");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "human_active",
+  );
+});
+
 test("thinking and promising to return later stays silent even after a clinic question", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(

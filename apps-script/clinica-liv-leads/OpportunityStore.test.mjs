@@ -81,7 +81,7 @@ test("a follow-up without attribution inherits its open Amanda opportunity", () 
   } = load();
   const opportunityRow = Array(OPPORTUNITY_HEADERS.length).fill("");
   opportunityRow[0] = "opp-amanda-1";
-  opportunityRow[1] = "+5511947555416";
+  opportunityRow[1] = "+5511900005416";
   opportunityRow[3] = "amanda";
   opportunityRow[4] = OPPORTUNITY_STORE_CONFIG.amandaSheetName;
   opportunityRow[5] = "127";
@@ -100,7 +100,7 @@ test("a follow-up without attribution inherits its open Amanda opportunity", () 
   };
 
   const route = resolverRotaLeadComContexto_(spreadsheet, {
-    phone: "+5511947555416",
+    phone: "+5511900005416",
     platform: "WhatsApp direto",
     text: "Aonde fica seu endereço?",
   });

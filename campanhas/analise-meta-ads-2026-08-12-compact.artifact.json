@@ -1,0 +1,124 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Meta Ads",
+    "description": "Análise de 13/07 a 11/08/2026 com Meta Ads, CRM e norte estratégico.",
+    "generatedAt": "2026-08-12T18:00:00-03:00",
+    "sources": [
+      {
+        "id": "meta",
+        "label": "Meta Ads Manager — Dra Amanda Schroeder",
+        "href": "https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=1643959806249995&business_id=1308068619887667",
+        "query": {
+          "engine": "Meta Ads Manager UI",
+          "description": "Métricas de campanhas e anúncios no período de 13/07 a 11/08/2026.",
+          "executed_at": "2026-08-12T18:00:00-03:00",
+          "filters": ["Campanhas M26F01W, M26F02S e M26O01W"],
+          "tables_used": ["Meta Ads Manager: campanhas", "Meta Ads Manager: anúncios"]
+        }
+      },
+      {
+        "id": "crm",
+        "label": "CRM LEADS — Google Sheets",
+        "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
+        "query": {
+          "engine": "Google Sheets",
+          "description": "Referências de campanhas e oportunidades nas abas Google Ads - Conversões e Consultas.",
+          "executed_at": "2026-08-12T18:00:00-03:00",
+          "filters": ["Contatos alinhados até 11/08/2026"],
+          "tables_used": ["LEADS!Google Ads - Conversões", "LEADS!Consultas"]
+        }
+      },
+      {
+        "id": "funnel_sql",
+        "label": "Funil CRM revisado",
+        "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
+        "query": {
+          "engine": "DuckDB",
+          "sql": "WITH f(stage, count, share) AS (\n  VALUES\n    ('Contatos', 70, 1.0),\n    ('Qualificados+', 11, 11.0 / 70.0),\n    ('Agendadas', 2, 2.0 / 70.0)\n)\nSELECT stage, count, share\nFROM f\nORDER BY count DESC;",
+          "description": "Transformação das contagens revisadas no CRM para o funil M26F01W.",
+          "executed_at": "2026-08-12T18:00:00-03:00",
+          "language": "sql",
+          "filters": ["M26F01W", "Contatos até 11/08/2026"],
+          "metric_definitions": ["share = quantidade da etapa dividida por 70 contatos CRM."],
+          "tables_used": ["LEADS!Google Ads - Conversões", "LEADS!Consultas"]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "funnel",
+        "title": "Funil CRM",
+        "type": "bar",
+        "dataset": "funnel",
+        "sourceId": "funnel_sql",
+        "layout": "full",
+        "question": "Quantos contatos avançaram no funil?",
+        "rationale": "Barras comparam três etapas discretas da mesma métrica.",
+        "encodings": {
+          "x": {"field": "stage", "type": "ordinal", "label": "Etapa"},
+          "y": {"field": "count", "type": "quantitative", "format": "number", "label": "Quantidade"},
+          "tooltip": [
+            {"field": "count", "type": "quantitative", "format": "number", "label": "Quantidade"},
+            {"field": "share", "type": "quantitative", "format": "percent", "label": "% dos contatos"}
+          ]
+        },
+        "valueFormat": "number",
+        "maxRows": 3,
+        "surface": {"compact": true, "interactiveLegend": false, "showControls": false, "viewMode": "table"},
+        "emptyState": "Sem dados de funil."
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Meta Ads\n\n**Rota, vídeos e otoplastia** · 13 de julho a 11 de agosto de 2026"
+      },
+      {
+        "id": "executive",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Resumo executivo\n\n**WhatsApp direto é a rota principal hoje.** M26F01W gerou 79 conversas Meta, 70 contatos CRM, 11 qualificados+ e 2 agendamentos. M26F02S trouxe 1.723 LPVs a R$ 0,30, mas zero contatos identificados; provou tráfego, não captação. **C06H01 — Lifting** é o melhor vídeo de intenção: 78/79 conversas a R$ 6,70 e as 2 consultas agendadas. **C01H01 — Avaliação** é o melhor para site: 1.483 LPVs a R$ 0,28. Otoplastia gastou R$ 143,03 e gerou zero contato: não ampliar antes de corrigir criativo e jornada."
+      },
+      {
+        "id": "decision",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Decisão\n\n1. Manter WhatsApp direto; C06H01 é o controle.\n2. Auditar CTA móvel e código M26F02S até o CRM.\n3. Fechar o desfecho das consultas de 04/08.\n4. Depois, teste pareado: mesmo vídeo, público e verba.\n5. Otoplastia: novo vídeo para pais sobre indicação, segurança e recuperação; médica nos 2 primeiros segundos e CTA ao WhatsApp."
+      },
+      {
+        "id": "funnel_block",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "funnel"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Limitações\n\nObjetivos Meta diferentes não são comparáveis por custo bruto. Há diferença de 9 entre conversas Meta e contatos CRM. Zero códigos de site/otoplastia pode ser ausência de contatos ou falha de passagem/registro. Consulta agendada não prova realização. Nenhuma campanha, orçamento ou rascunho foi alterado."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-12T18:00:00-03:00",
+    "status": "ready",
+    "datasets": {
+      "funnel": [
+        {"stage": "Contatos", "count": 70, "share": 1.0},
+        {"stage": "Qualificados+", "count": 11, "share": 0.157143},
+        {"stage": "Agendadas", "count": 2, "share": 0.028571}
+      ]
+    }
+  },
+  "sources": [
+    {"id": "meta", "label": "Meta Ads Manager — Dra Amanda Schroeder", "href": "https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=1643959806249995&business_id=1308068619887667"},
+    {"id": "crm", "label": "CRM LEADS — Google Sheets", "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit"},
+    {"id": "funnel_sql", "label": "Funil CRM revisado", "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit", "query": {"engine": "DuckDB", "sql": "WITH f(stage, count, share) AS (\n  VALUES ('Contatos', 70, 1.0), ('Qualificados+', 11, 11.0 / 70.0), ('Agendadas', 2, 2.0 / 70.0)\n)\nSELECT stage, count, share FROM f ORDER BY count DESC;", "language": "sql"}}
+  ]
+}

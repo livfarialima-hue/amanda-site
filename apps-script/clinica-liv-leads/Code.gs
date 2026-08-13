@@ -1103,36 +1103,6 @@ function arquivarContatoNaoLead_(spreadsheet, input) {
   return { archivedLeadRows: archivedLeadRows };
 }
 
-function limparContatosNaoLeadsAuditados20260812() {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const audited = [
-    ["5511967743374", "", "nonpatient", "Teste interno de classificação"],
-    ["5519996944518", "opp_01c21d563552df9cd96f", "nonpatient", "Conversa privada/teste interno"],
-    ["5511992089404", "opp_92d0a63317ac6372d5f2", "nonpatient", "Fornecedor de gráfica"],
-    ["5511943274607", "opp_f7525bf64bb9afed0d37", "external", "Consulta solicitada para Dra. Marina Silva"],
-    ["5511981300008", "opp_23759ac9d63bf3a1cd54", "external", "Retorno solicitado para Dr. Henrique"],
-    ["5511926272030", "opp_79a573d085496825dca2", "nonpatient", "Entrega de fornecedor"],
-    ["5511966071383", "opp_3b245fe2260caf4ad15b", "nonpatient", "Pedido de emprego"],
-    ["551153043707", "opp_104b600abca17b762d4a", "nonpatient", "Oferta comercial"],
-    ["5511988230528", "opp_1fd0d7832179953d532c", "nonpatient", "Oferta de marketing"],
-    ["5515997125089", "opp_27962694a91fcd130ee5", "nonpatient", "Conversa privada sem intenção de paciente"],
-  ];
-  let archivedLeadRows = 0;
-  audited.forEach(function archiveAudited(item) {
-    const result = arquivarContatoNaoLead_(spreadsheet, {
-      phone: item[0],
-      opportunityId: item[1],
-      professional: item[2],
-      reason: item[3],
-      eventId: "audit_20260812_" + stableLeadHash_(item.join("|")),
-      at: new Date(),
-    });
-    archivedLeadRows += Number(result.archivedLeadRows || 0);
-  });
-  SpreadsheetApp.flush();
-  return { archivedLeadRows: archivedLeadRows };
-}
-
 function removerLinhasPorTelefone_(sheet, phone) {
   if (!sheet || sheet.getLastRow() < 2) return 0;
 
