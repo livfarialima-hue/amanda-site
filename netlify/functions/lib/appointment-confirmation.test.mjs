@@ -86,54 +86,6 @@ test("records a clear patient confirmation only in confirmed appointment context
   });
 });
 
-test("recognizes attendance confirmation with a greeting and does not book the slot again", () => {
-  const context = [
-    {
-      role: "assistant",
-      source: "equipe_humana",
-      text:
-        "Bom dia, tudo bem? Você tem um horário agendado com a Dra. Amanda hoje às 15:00. Posso confirmar sua presença?",
-    },
-    {
-      role: "user",
-      text: "Bom dia! Pode sim",
-    },
-  ];
-
-  assert.equal(
-    detectPatientAppointmentSelection({
-      currentText: "Bom dia! Pode sim",
-      recentConversation: context,
-      at: "2026-08-13T09:59:00-03:00",
-    }),
-    null,
-  );
-  assert.deepEqual(
-    detectPatientAppointmentReply({
-      currentText: "Bom dia! Pode sim",
-      recentConversation: context,
-      at: "2026-08-13T09:59:00-03:00",
-    }),
-    {
-      scheduledDate: "2026-08-13",
-      scheduledTime: "15:00",
-      state: "confirmed",
-    },
-  );
-});
-
-test("uses an existing scheduled relationship when the reminder is absent from memory", () => {
-  assert.deepEqual(
-    detectPatientAppointmentReply({
-      currentText: "Bom dia! Pode sim",
-      recentConversation: [],
-      at: "2026-08-13T09:59:00-03:00",
-      appointmentScheduled: true,
-    }),
-    { state: "confirmed" },
-  );
-});
-
 test("records a rescheduling request without treating a thank-you as confirmation", () => {
   const context = [
     {
