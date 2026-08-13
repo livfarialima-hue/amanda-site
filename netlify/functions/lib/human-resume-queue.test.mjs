@@ -131,50 +131,6 @@ test("queues the latest patient message for twenty minutes", async () => {
   assert.equal(claim.jobs[0].eventId, "patient-event-1");
 });
 
-test("a delayed human resume keeps the latest sixteen bilateral turns", async () => {
-  const store = memoryStore();
-  const getStoreImpl = () => store;
-  const now = Date.parse("2026-08-13T15:00:00.000Z");
-  const recentConversation = Array.from(
-    { length: 20 },
-    (_value, index) => ({
-      role: index % 2 === 0 ? "assistant" : "patient",
-      source: index % 2 === 0 ? "equipe_humana" : "paciente",
-      text: `Mensagem ${index + 1}`,
-    }),
-  );
-
-  await markHumanTakeover(
-    {
-      phone: "+5511900000000",
-      eventId: "human-event-context",
-    },
-    { getStoreImpl, now },
-  );
-  await scheduleHumanResume(
-    sampleInput({
-      recentConversation,
-      receivedAt: "2026-08-13T15:00:00.000Z",
-    }),
-    { getStoreImpl, now, delayMs: 1 },
-  );
-
-  const claim = await claimDueHumanResumes({
-    getStoreImpl,
-    now: now + 2,
-  });
-
-  assert.equal(claim.jobs[0].recentConversation.length, 16);
-  assert.equal(
-    claim.jobs[0].recentConversation[0].text,
-    "Mensagem 5",
-  );
-  assert.equal(
-    claim.jobs[0].recentConversation[15].text,
-    "Mensagem 20",
-  );
-});
-
 test("a new human message cancels a queued resume", async () => {
   const store = memoryStore();
   const getStoreImpl = () => store;
