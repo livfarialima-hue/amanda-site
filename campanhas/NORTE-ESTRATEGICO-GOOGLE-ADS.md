@@ -437,7 +437,7 @@ Decisão final:
 
 ### 13 de agosto de 2026 — contexto bilateral e validação final da resposta da Bruna
 
-- **Status:** implementado localmente; aguardando publicação e observação em produção.
+- **Status:** publicado em produção em 13 de agosto de 2026; 480 testes aprovados, commit `8a162bf` e Netlify deploy `6a7e0e1b1802ef0008868ae9` com 11 funções implantadas.
 - **Responsável:** Codex, sob solicitação de Daniel.
 - **Mudança:** a memória operacional, o contexto enviado ao Terra e a retomada protegida passam de 8 para 16 interações recentes, preservando a origem de cada fala. O bloqueio imediatamente anterior ao envio compara mensagem atual, última fala da clínica e resposta planejada. Resposta ou confirmação a uma pergunta humana não pode receber intervenção da Bruna; resposta curta a uma pergunta da Bruna não pode gerar reinício genérico da conversa.
 - **Motivo e evidência:** uma paciente com consulta marcada respondeu `Bom dia! Pode sim` ao pedido humano de confirmação de presença, mas o bot enviou uma mensagem dizendo que confirmaria a informação com a equipe. O histórico recente existia, porém a validação final verificava principalmente repetição, links e encerramentos; não conferia de forma explícita se a resposta planejada atravessava a última fala humana.
