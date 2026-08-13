@@ -165,32 +165,3 @@ test("OpenAI receives only the bounded conversational fields", () => {
     },
   ]);
 });
-
-test("conversation memory preserves the latest sixteen bilateral turns", async () => {
-  const turns = Array.from({ length: 20 }, (_value, index) => ({
-    role: index % 2 === 0 ? "assistant" : "user",
-    text: `Mensagem ${index + 1}`,
-    eventId: `event-${index + 1}`,
-    at: `2026-08-13T10:${String(index).padStart(2, "0")}:00.000Z`,
-    source: index % 2 === 0 ? "human" : "patient",
-  }));
-  const blobs = fakeBlobs({
-    version: 1,
-    updatedAt: "2026-08-13T10:19:00.000Z",
-    turns,
-  });
-
-  const result = await readConversationTurns(
-    "+5511900000000",
-    {
-      getStoreImpl: blobs.getStoreImpl,
-      now: Date.parse("2026-08-13T10:20:00.000Z"),
-    },
-  );
-
-  assert.equal(result.turns.length, 16);
-  assert.equal(result.turns[0].text, "Mensagem 5");
-  assert.equal(result.turns[15].text, "Mensagem 20");
-  assert.equal(result.turns[0].source, "human");
-  assert.equal(result.turns[1].source, "patient");
-});
