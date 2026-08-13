@@ -481,6 +481,46 @@ test("short conversation history is sent in full without the phone", async () =>
   assert.equal(calls[0].options.body.includes(PHONE), false);
 });
 
+test("the model receives the latest sixteen turns with speaker sources", async () => {
+  const calls = [];
+  const recentConversation = Array.from(
+    { length: 20 },
+    (_value, index) => ({
+      role: index % 2 === 0 ? "assistant" : "patient",
+      source: index % 4 === 0 ? "equipe_humana" : index % 2 === 0 ? "bruna" : "paciente",
+      text: `Mensagem ${index + 1}`,
+    }),
+  );
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Pode sim",
+      platform: "WhatsApp direto",
+      recentConversation,
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.recentConversation.length, 16);
+  assert.equal(input.recentConversation[0].text, "Mensagem 5");
+  assert.equal(input.recentConversation[0].source, "equipe_humana");
+  assert.equal(input.recentConversation[15].text, "Mensagem 20");
+  assert.equal(input.recentConversation[15].source, "paciente");
+});
+
 test("passes bounded Meta ad context without referral URLs", async () => {
   const calls = [];
 
