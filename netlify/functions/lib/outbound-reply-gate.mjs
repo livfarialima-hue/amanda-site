@@ -83,6 +83,70 @@ function lastAssistantTurn(recentConversation) {
     .find((turn) => turn?.role === "assistant");
 }
 
+function lastConversationTurn(recentConversation) {
+  const turns = Array.isArray(recentConversation)
+    ? recentConversation
+    : [];
+  return turns.length ? turns[turns.length - 1] : null;
+}
+
+function isHumanClinicTurn(turn) {
+  return (
+    turn?.role === "assistant" &&
+    ["human", "equipe_humana"].includes(String(turn?.source || ""))
+  );
+}
+
+function hasClinicQuestion(turn) {
+  const text = normalizedText(turn?.text);
+  return (
+    /\?/.test(String(turn?.text || "")) ||
+    /\b(?:posso|podemos|pode|confirma|confirmar|prefere|gostaria|consegue|qual|quando|onde|como|quanto|horario|periodo|dia)\b/.test(
+      text,
+    )
+  );
+}
+
+function patientIntroducesNewQuestion(value) {
+  const raw = limited(value);
+  const text = normalizedText(value)
+    .replace(
+      /^(?:(?:oi|ola|bom dia|boa tarde|boa noite)\s+)+/,
+      "",
+    )
+    .trim();
+
+  return (
+    /\?/.test(raw) ||
+    /^(?:como|qual|quais|quanto|quantos|quando|onde|por que|porque|quem|tem|ha|custa|atende|faz)\b/.test(
+      text,
+    ) ||
+    /\b(?:pode|poderia|consegue|conseguem)\s+(?:me\s+)?(?:explicar|explica|informar|informa|dizer|diz|enviar|envia|confirmar|confirma|verificar|verifica|ajudar|ajuda)\b/.test(
+      text,
+    )
+  );
+}
+
+function isContextualPatientAnswer(currentText, previousClinicTurn) {
+  if (!hasClinicQuestion(previousClinicTurn)) return false;
+  return !patientIntroducesNewQuestion(currentText);
+}
+
+function genericContextResetReason(reply) {
+  const text = normalizedText(reply);
+
+  if (
+    /\b(?:como|em que) posso (?:te |lhe )?ajudar\b/.test(text) ||
+    /\bqual (?:e )?(?:a )?sua (?:duvida|pergunta)\b/.test(text) ||
+    /\bo que (?:voce )?gostaria de (?:saber|entender)\b/.test(text) ||
+    /\bpoderia (?:me )?(?:explicar|dizer) (?:melhor )?\b/.test(text)
+  ) {
+    return "planned_reply_restarts_context";
+  }
+
+  return "";
+}
+
 function store(getStoreImpl = getStore) {
   return getStoreImpl({
     name: STORE_NAME,
@@ -140,6 +204,31 @@ export function validateOutboundReply({
       allowed: false,
       reason: "patient_closed_or_deferred",
     };
+  }
+
+  const previousTurn = lastConversationTurn(recentConversation);
+  const contextualPatientAnswer =
+    previousTurn?.role === "assistant" &&
+    isContextualPatientAnswer(currentText, previousTurn);
+
+  if (
+    contextualPatientAnswer &&
+    isHumanClinicTurn(previousTurn)
+  ) {
+    return {
+      allowed: false,
+      reason: "patient_answer_belongs_to_human_context",
+    };
+  }
+
+  if (contextualPatientAnswer) {
+    const contextResetReason = genericContextResetReason(reply);
+    if (contextResetReason) {
+      return {
+        allowed: false,
+        reason: contextResetReason,
+      };
+    }
   }
 
   const previousAssistant = lastAssistantTurn(recentConversation);

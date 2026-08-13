@@ -443,6 +443,29 @@ function hasSelectionIntent(text) {
   );
 }
 
+function hasAttendanceConfirmationContext(recentConversation) {
+  const latestAssistantText = (Array.isArray(recentConversation)
+    ? recentConversation
+    : [])
+    .slice()
+    .reverse()
+    .find((turn) => turn?.role !== "user" && turn?.role !== "patient")
+    ?.text;
+  const comparable = normalize(latestAssistantText);
+
+  return (
+    /\b(?:confirmar|confirme|confirmacao)\b.{0,80}\b(?:presenca|comparecimento)\b/.test(
+      comparable,
+    ) ||
+    /\b(?:presenca|comparecimento)\b.{0,80}\b(?:confirmar|confirme|confirmacao)\b/.test(
+      comparable,
+    ) ||
+    /\blembrete\b.{0,180}\b(?:consulta|avaliacao)\b/.test(
+      comparable,
+    )
+  );
+}
+
 export function detectPatientAppointmentSelection({
   currentText,
   recentConversation = [],
@@ -451,6 +474,12 @@ export function detectPatientAppointmentSelection({
   if (!hasSelectionIntent(currentText)) return null;
 
   const baseDate = new Date(at);
+  if (
+    isPatientConfirmation(currentText) &&
+    hasAttendanceConfirmationContext(recentConversation)
+  ) {
+    return null;
+  }
   const acceptedNegotiatedAppointment =
     isPatientConfirmation(currentText) &&
     !Number.isNaN(baseDate.getTime())
@@ -831,7 +860,13 @@ function hasConfirmedAppointmentContext(recentConversation, at) {
 }
 
 function isPatientConfirmation(text) {
-  const comparable = normalize(text);
+  const comparable = normalize(text)
+    .replace(
+      /^(?:(?:oi|ola|bom dia|boa tarde|boa noite)\s+)+/,
+      "",
+    )
+    .replace(/\s+(?:obrigad[oa]|agradeco)$/, "")
+    .trim();
 
   return [
     /^(?:sim|pode sim|pode ser|confirmo|confirmada|confirmado|combinado|perfeito|tudo certo|ok(?: obrigada)?|ok(?: obrigado)?|estarei la|estarei aí)$/,
@@ -854,6 +889,7 @@ export function detectPatientAppointmentReply({
   currentText,
   recentConversation = [],
   at = new Date(),
+  appointmentScheduled = false,
 } = {}) {
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
@@ -862,18 +898,18 @@ export function detectPatientAppointmentReply({
     recentConversation,
     baseDate,
   );
-  if (!context) return null;
+  if (!context && !appointmentScheduled) return null;
 
   if (isRescheduleRequest(currentText)) {
     return {
-      ...context,
+      ...(context || {}),
       state: "reschedule_requested",
     };
   }
 
   if (isPatientConfirmation(currentText)) {
     return {
-      ...context,
+      ...(context || {}),
       state: "confirmed",
     };
   }

@@ -126,6 +126,7 @@ import {
   blocksAutomatedPatientMessages,
   buildPatientCommitment,
   buildRelationshipAlertMessage,
+  normalizePatientRelationship,
   patientRelationshipPromptContext,
   prependRelationshipAlertContext,
 } from "./lib/patient-relationship.mjs";
@@ -2888,6 +2889,9 @@ export default async (request, context) => {
           currentText: text,
           recentConversation: memoryResult.historyAfter,
           at: contactAt,
+          appointmentScheduled:
+            normalizePatientRelationship(patientRelationship).state ===
+            "appointment_scheduled",
         });
   } else if (
     !suppressExactDuplicate &&
@@ -2985,6 +2989,35 @@ export default async (request, context) => {
     patientAppointmentReplySyncStatus = statusSync.ok
       ? "completed"
       : statusSync.errorCode;
+
+    if (patientAppointmentReply.state === "confirmed") {
+      const cancelResult = await cancelPendingHumanResume(phone);
+      const automaticWorkFinished = delivery.ok && statusSync.ok;
+      const recoveryStatus = automaticWorkFinished
+        ? await finishEarlyRecovery("appointment_attendance_confirmed")
+        : recoveryRegistration.status;
+
+      return json({
+        received: true,
+        leadRecorded: delivery.ok,
+        leadInserted: delivery.inserted === true,
+        leadUpdated: delivery.updated === true,
+        leadRouted: delivery.routed !== false,
+        leadRouteStatus: delivery.routeStatus || "unknown",
+        automaticWorkFinished,
+        appointmentReplyDetected: true,
+        appointmentReplyState: "confirmed",
+        appointmentReplySyncStatus:
+          patientAppointmentReplySyncStatus,
+        humanResumeScheduleStatus:
+          cancelResult.status === "completed"
+            ? "cancelled_appointment_confirmed"
+            : cancelResult.status,
+        aiShadowQueued: false,
+        aiActiveQueued: false,
+        recoveryStatus,
+      });
+    }
   }
 
   const reactivationHandoffPending =

@@ -6,7 +6,7 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 11 de agosto de 2026
+**Última revisão estratégica:** 13 de agosto de 2026
 **Próxima revisão prevista:** 25 de agosto de 2026 ou antes, se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
 
 ## 1. Regra de governança
@@ -256,6 +256,8 @@ O fluxo esperado é:
 
 A Bruna não presume que alguém vindo do Google está pronto para agendar. Também não devolve automaticamente à pessoa uma página que ela acabou de visitar.
 
+Antes de qualquer envio automático, o sistema deve reconstruir as últimas 16 interações em ordem, preservando paciente, Bruna e equipe humana, e confrontar a resposta planejada com a mensagem atual. Uma resposta curta deve ser interpretada como continuação da pergunta anterior quando houver esse contexto. Se a paciente apenas responder ou confirmar uma pergunta feita pela equipe humana, a Bruna permanece em silêncio; somente uma nova pergunta autônoma pode reabrir a avaliação de resposta automática. A validação final bloqueia respostas que reiniciem a conversa, repitam o que já foi tratado ou atravessem o atendimento humano.
+
 Para lead qualificado:
 
 - resposta idealmente em menos de cinco minutos;
@@ -432,6 +434,19 @@ Decisão final:
 ```
 
 ## 16. Histórico estratégico
+
+### 13 de agosto de 2026 — contexto bilateral e validação final da resposta da Bruna
+
+- **Status:** implementado localmente; aguardando publicação e observação em produção.
+- **Responsável:** Codex, sob solicitação de Daniel.
+- **Mudança:** a memória operacional, o contexto enviado ao Terra e a retomada protegida passam de 8 para 16 interações recentes, preservando a origem de cada fala. O bloqueio imediatamente anterior ao envio compara mensagem atual, última fala da clínica e resposta planejada. Resposta ou confirmação a uma pergunta humana não pode receber intervenção da Bruna; resposta curta a uma pergunta da Bruna não pode gerar reinício genérico da conversa.
+- **Motivo e evidência:** uma paciente com consulta marcada respondeu `Bom dia! Pode sim` ao pedido humano de confirmação de presença, mas o bot enviou uma mensagem dizendo que confirmaria a informação com a equipe. O histórico recente existia, porém a validação final verificava principalmente repetição, links e encerramentos; não conferia de forma explícita se a resposta planejada atravessava a última fala humana.
+- **Hipótese:** contexto bilateral mais amplo e conferência final da resposta reduzirão entradas indevidas, reinícios e respostas desconectadas sem exigir uma segunda chamada de IA.
+- **Métrica principal:** zero resposta automática após confirmação dirigida à equipe humana; zero reinício genérico após resposta curta contextual; taxa de bloqueios corretos e falsos bloqueios; tempo até resposta humana quando o bot permanece em silêncio.
+- **Guardrails:** o CRM, a agenda, tarefa humana pendente e atendimento humano prevalecem sobre a interpretação do modelo; uma nova pergunta autônoma da paciente continua podendo ser tratada pela rota apropriada; nenhum texto ou característica da página de lifting foi alterado.
+- **Data de revisão:** 20 de agosto de 2026 ou antes se houver nova entrada indevida ou falso bloqueio relevante.
+- **Regra para manter:** manter se não houver entrada da Bruna em resposta destinada à equipe e se perguntas novas continuarem recebendo resposta ou encaminhamento adequado.
+- **Regra para reverter:** retornar temporariamente o limite para 8 interações ou desativar apenas o novo bloqueio se houver regressão de latência, perda de contexto recente ou bloqueio recorrente de perguntas autônomas; preservar o bloqueio determinístico de confirmação de consulta.
 
 ### 11 de agosto de 2026 — integração por oportunidade na única planilha LEADS
 
