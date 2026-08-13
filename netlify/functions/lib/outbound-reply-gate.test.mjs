@@ -82,6 +82,82 @@ test("final validation blocks a substantially repeated answer", () => {
   assert.equal(result.reason, "substantially_repeated_reply");
 });
 
+test("final validation keeps the bot out of an answer to the human team", () => {
+  const result = validateOutboundReply({
+    body:
+      "Recebi sua mensagem e vou confirmar essa informação com a equipe para te responder com segurança.",
+    currentText: "Bom dia! Pode sim",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text:
+          "Bom dia, tudo bem? Sua consulta está marcada para hoje às 15h. Posso confirmar sua presença?",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(
+    result.reason,
+    "patient_answer_belongs_to_human_context",
+  );
+});
+
+test("a new standalone question can reopen a human exchange", () => {
+  const result = validateOutboundReply({
+    body: "Claro. A Clínica LIV fica na Rua Pais Leme, 215, em Pinheiros.",
+    currentText: "Pode sim. Qual é o endereço?",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Posso confirmar sua presença?",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+});
+
+test("final validation blocks a planned reply that restarts bot context", () => {
+  const result = validateOutboundReply({
+    body: "Entendi. Como posso te ajudar?",
+    currentText: "Superior",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "A queixa é maior na pálpebra superior ou inferior?",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "planned_reply_restarts_context");
+});
+
+test("final validation permits a planned reply that uses the bot context", () => {
+  const result = validateOutboundReply({
+    body:
+      "Entendi, a sua dúvida é sobre a pálpebra superior. Nessa região, a avaliação observa pele, bolsas e a posição das sobrancelhas.",
+    currentText: "Superior",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "A queixa é maior na pálpebra superior ou inferior?",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+});
+
 test("final validation blocks unsafe or unfinished outbound content", () => {
   const cases = [
     ["BEGIN:VCARD\nVERSION:3.0\nTEL:+5511000000000\nEND:VCARD", "contact_card_content"],
