@@ -519,6 +519,16 @@ function garantirOportunidadeLead_(spreadsheet, lead, leadSheet, leadRow) {
     opportunity,
     route.routeStatus,
   );
+  if (typeof atualizarLinhaFunilCanonicoPorOportunidade_ === "function") {
+    try {
+      atualizarLinhaFunilCanonicoPorOportunidade_(spreadsheet, opportunityId);
+    } catch (dashboardError) {
+      console.error(
+        "FUNNEL_DASHBOARD_INCREMENTAL_ERROR " +
+        String(dashboardError && dashboardError.message || dashboardError),
+      );
+    }
+  }
   return Object.assign({ created: !found }, opportunity, {
     routeStatus: route.routeStatus,
   });
@@ -781,6 +791,16 @@ function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
     const pointerChanged = String(found.values[4] || "") !== leadSheetName ||
       Number(found.values[5] || 0) !== leadResult.row;
     if (!stageChanged && !metadataChanged && !pointerChanged) {
+      if (typeof atualizarLinhaFunilCanonicoPorOportunidade_ === "function") {
+        try {
+          atualizarLinhaFunilCanonicoPorOportunidade_(spreadsheet, opportunityId);
+        } catch (dashboardError) {
+          console.error(
+            "FUNNEL_DASHBOARD_INCREMENTAL_ERROR " +
+            String(dashboardError && dashboardError.message || dashboardError),
+          );
+        }
+      }
       return {
         ok: true,
         changed: false,
@@ -862,6 +882,16 @@ function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
     ) {
       SpreadsheetApp.flush();
     }
+    if (typeof atualizarLinhaFunilCanonicoPorOportunidade_ === "function") {
+      try {
+        atualizarLinhaFunilCanonicoPorOportunidade_(spreadsheet, opportunityId);
+      } catch (dashboardError) {
+        console.error(
+          "FUNNEL_DASHBOARD_INCREMENTAL_ERROR " +
+          String(dashboardError && dashboardError.message || dashboardError),
+        );
+      }
+    }
 
     return {
       ok: true,
@@ -917,6 +947,19 @@ function encerrarOportunidadeNaoLead_(spreadsheet, input) {
     now,
     now,
   ]]);
+  if (typeof atualizarLinhaFunilCanonicoPorOportunidade_ === "function") {
+    try {
+      atualizarLinhaFunilCanonicoPorOportunidade_(
+        spreadsheet,
+        input.opportunityId,
+      );
+    } catch (dashboardError) {
+      console.error(
+        "FUNNEL_DASHBOARD_INCREMENTAL_ERROR " +
+        String(dashboardError && dashboardError.message || dashboardError),
+      );
+    }
+  }
   return true;
 }
 
