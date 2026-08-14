@@ -911,6 +911,80 @@ function resumirSimulacaoCorrecaoIntegrada_(result) {
   return summary;
 }
 
+function executarSimulacaoCorrecaoIntegrada_(name, callback) {
+  let summary;
+  try {
+    summary = resumirSimulacaoCorrecaoIntegrada_(callback());
+  } catch (error) {
+    summary = {
+      ok: false,
+      error: String(error && error.message || error || "unknown"),
+    };
+  }
+  const report = {
+    name,
+    apply: false,
+    generatedAt: new Date().toISOString(),
+    result: summary,
+  };
+  console.log("INTEGRATED_DRY_RUN_CHECK " + JSON.stringify(report));
+  return report;
+}
+
+function simularCorrecao01IntegridadeFunil() {
+  return executarSimulacaoCorrecaoIntegrada_("integridade_funil", function run() {
+    return auditarIntegridadeFunilLocal_();
+  });
+}
+
+function simularCorrecao02Deduplicacao() {
+  return executarSimulacaoCorrecaoIntegrada_("deduplicacao", function run() {
+    return executarDeduplicacaoReversivelLeads({ apply: false });
+  });
+}
+
+function simularCorrecao03FasesHistoricas() {
+  return executarSimulacaoCorrecaoIntegrada_("fases_historicas", function run() {
+    return reconciliarFasesHistoricasLeads({ apply: false });
+  });
+}
+
+function simularCorrecao04ConsultasHistoricas() {
+  return executarSimulacaoCorrecaoIntegrada_("consultas_historicas", function run() {
+    return reconciliarConsultasHistoricas({ apply: false });
+  });
+}
+
+function simularCorrecao05AtribuicaoHistorica() {
+  return executarSimulacaoCorrecaoIntegrada_("atribuicao_historica", function run() {
+    return reconciliarAtribuicaoHistoricaLeads({ apply: false });
+  });
+}
+
+function simularCorrecao06GoogleAds() {
+  return executarSimulacaoCorrecaoIntegrada_("google_ads", function run() {
+    return reconciliarGoogleAdsLedgerEImportacao({ apply: false });
+  });
+}
+
+function simularCorrecao07FunilCanonico() {
+  return executarSimulacaoCorrecaoIntegrada_("funil_canonico", function run() {
+    return reconstruirFonteFunilCanonico({ apply: false });
+  });
+}
+
+function simularCorrecao08ReaperClassificacao() {
+  return executarSimulacaoCorrecaoIntegrada_("reaper_classificacao", function run() {
+    return executarReaperFilaClassificacao({ apply: false });
+  });
+}
+
+function simularCorrecao09SlaOperacional() {
+  return executarSimulacaoCorrecaoIntegrada_("sla_operacional", function run() {
+    return auditarSlaOperacional();
+  });
+}
+
 function executarSimulacoesCorrecaoIntegrada() {
   const checks = [
     ["integridade_funil", function runIntegrity() {

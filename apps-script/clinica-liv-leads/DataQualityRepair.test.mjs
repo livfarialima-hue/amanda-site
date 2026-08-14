@@ -104,3 +104,17 @@ test("integrated repair runner keeps every mutating repair in dry-run mode", () 
   assert.doesNotMatch(runner, /apply:\s*true/);
   assert.match(runner, /INTEGRATED_DRY_RUN/);
 });
+
+test("split repair runners expose every check without enabling writes", () => {
+  const start = source.indexOf(
+    "function executarSimulacaoCorrecaoIntegrada_",
+  );
+  assert.notEqual(start, -1);
+  const runners = source.slice(start);
+
+  for (let index = 1; index <= 9; index += 1) {
+    assert.match(runners, new RegExp(`function simularCorrecao0${index}`));
+  }
+  assert.match(runners, /INTEGRATED_DRY_RUN_CHECK/);
+  assert.doesNotMatch(runners, /apply:\s*true/);
+});
