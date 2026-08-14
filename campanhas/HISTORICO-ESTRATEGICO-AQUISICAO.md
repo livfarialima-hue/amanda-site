@@ -6,6 +6,20 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 14 de agosto de 2026 — aprovação do cenário corretivo e dos gates de crescimento
+
+- **Status:** planejada e em implementação local; nenhuma mudança externa, publicação, renovação ou aumento de orçamento foi autorizada por esta entrada.
+- **Responsável:** Codex, sob autorização de Daniel para iniciar o plano em Sol extra-alto.
+- **Área/campanha:** funil integrado, Google Ads, Meta Ads, site, CRM, Calendar e bot.
+- **Mudança:** adoção do cenário 1 da auditoria: corrigir e reconciliar antes de aumentar investimento. WhatsApp direto `M26F01W` passa a ser o controle Meta; Site `M26F02S` fica sem verba nova até o QA ponta a ponta e, depois do gate, poderá receber teste isolado de até R$ 300 mediante nova autorização. Google não recebe escala, tCPA, Performance Max ou correspondência ampla enquanto a conversão qualificada não estiver saudável. A página `/lifting-facial/` permanece integralmente protegida.
+- **Motivo e evidência:** a auditoria encontrou 26 divergências de fase em 126 oportunidades da Amanda, 129 linhas visíveis para 126 oportunidades, apenas 1 de 10 IDs de consulta conciliado ao Calendar, conversão Google em `Requer atenção`, 1.290 visualizações da página Meta Site sem registro sob o código exato `M26F02S` e painéis com denominadores inflados por fórmulas vazias.
+- **Hipótese:** corrigir chave, fase, consulta, agenda, conversão e atribuição antes de escalar reduzirá falsos sinais, desperdício e decisões baseadas em cliques ou conversas não qualificadas.
+- **Métrica principal:** divergência CRM–aba, duplicidade por `Opportunity ID`, cobertura consulta–Calendar, saúde/aceitação da conversão Google e cobertura clique–conversa–oportunidade de `M26F02S`.
+- **Guardrail:** nenhum PII/PHI em mídia; nenhuma alteração externa sem autorização específica; nenhum texto, layout, vídeo, CTA ou característica de `/lifting-facial/`; uma mudança material por vez.
+- **Data de revisão:** 20 de agosto de 2026 para os gates técnicos e 27 de agosto de 2026 para a primeira janela operacional.
+- **Resultado:** pendente.
+- **Regra para manter, ampliar ou reverter:** manter o cenário 1 até cumprir integralmente os gates canônicos; ampliar somente após comprovação e capacidade; interromper a mudança afetada diante de duplicidade, PII/PHI, divergência acima do limite, falha de agenda ou rota ambígua do bot.
+
 ## 13 de agosto de 2026 — preparação do norte para a auditoria integrada
 
 - **Status:** revisão documental concluída; nenhuma configuração de mídia, site, mensuração ou atendimento foi alterada.

@@ -6,8 +6,8 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 13 de agosto de 2026
-**Próxima revisão prevista:** na aprovação da auditoria integrada, até 25 de agosto de 2026, ou antes se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
+**Última revisão estratégica:** 14 de agosto de 2026
+**Próxima revisão prevista:** 20 de agosto de 2026 para os gates técnicos e 27 de agosto de 2026 para a primeira janela operacional, ou antes se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
 
 ## 1. Regra de governança
 
@@ -181,6 +181,28 @@ O orçamento total informado para Google Ads é de aproximadamente **R$ 2.800 po
 A auditoria pode propor realocação ou aumento do investimento. Todo aumento deve apresentar cenário conservador, base e agressivo; demanda e capacidade necessárias; impacto esperado em intervalo; custo por lead qualificado, consulta e cirurgia; duração mínima; risco; e regra para interromper, manter ou ampliar. Até que essa análise seja aprovada, o valor atual e a distribuição vigente permanecem apenas como estado conhecido, não como recomendação definitiva.
 
 Em 4 de agosto de 2026, `S_BR_SP_OTOPLASTIA` passou de R$ 8 para R$ 15 por dia porque estava limitada pelo orçamento. A estratégia de lances permaneceu em Maximizar cliques para não combinar duas mudanças relevantes na mesma janela de observação.
+
+### 6.4 Decisão vigente após a auditoria integrada — correção antes de escala
+
+A auditoria integrada de 13 de agosto de 2026 foi aprovada como base do trabalho corretivo em 14 de agosto. Até que os gates abaixo sejam cumpridos, vale o **cenário 1: correção e realocação sem aumento líquido**. A execução local das correções não autoriza publicação, renovação, aumento de orçamento nem mudança nas plataformas; cada ação externa continua sujeita a autorização específica.
+
+- **Google Ads:** manter o orçamento total atual como limite operacional e não adotar tCPA, Performance Max, correspondência ampla nem aumento enquanto `Lead qualificado GCLID` estiver em alerta ou sem reconciliação ponta a ponta.
+- **Meta:** usar WhatsApp direto `M26F01W` como controle. A rota Site `M26F02S` recebe R$ 0 de verba nova até passar no teste ponta a ponta; depois do gate, pode receber teste isolado de até R$ 300, ainda sujeito a autorização de publicação.
+- **Qualidade do funil:** nenhum painel, CPL qualificado, consulta ou ROAS deve orientar escala enquanto oportunidade, fase, consulta, Calendar e evento de mídia não estiverem reconciliados no mesmo grão.
+- **Otoplastia:** não atribuir o problema atual ao vídeo sem teste prospectivo que mantenha destino, público e orçamento iguais entre variantes e compare contato válido, qualificado e consulta.
+- **Lifting facial:** por instrução expressa de Daniel, não alterar texto, layout, vídeo, CTA ou qualquer característica de `/lifting-facial/` neste ciclo corretivo.
+
+Gates mínimos para liberar crescimento:
+
+1. conversão Google sem alerta por sete dias, com eventos elegíveis, enviados, aceitos e rejeitados reconciliados, sem duplicidade ou PII;
+2. zero divergência nova entre CRM e aba visível por 14 dias e duplicidades tratadas de forma reversível;
+3. pelo menos 95% das novas consultas com `Opportunity ID` e evento válido no Calendar, sem confirmação sem sala ou equipe;
+4. cobertura de pelo menos 80% no teste consentido Meta Site entre clique, conversa e oportunidade, com duplicidade inferior a 2%;
+5. SLA calculável em pelo menos 95% das novas conversas, rota válida em pelo menos 99% e nenhum P0/P1 operacional vencido.
+
+**Regra para manter ou ampliar:** só avançar de cenário depois que todos os gates aplicáveis estiverem comprovados na fonte canônica e a capacidade da equipe estiver confirmada.
+
+**Regra para interromper ou reverter:** pausar a mudança correspondente se surgir duplicidade, exposição de PII/PHI, divergência plataforma–CRM acima de 10% depois da latência acordada, reconciliação Calendar abaixo de 95%, resposta do bot em rota ambígua ou P0/P1 vencido.
 
 ## 7. Estratégia de Google Ads
 
