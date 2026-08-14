@@ -2,7 +2,7 @@
 
 **Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação, a reconciliação das fases históricas e, em bloco posterior, a reconciliação segura de consultas e Calendar. Funil, atribuição, fórmulas e mídia continuam fora dessa autorização.
 
-**Resultado:** Apps Script versão 80 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas e o subconjunto seguro de consultas aplicados em blocos separados, com backups, travas e pós-voos idempotentes. Casos ambíguos de consultas, atribuição, funil, fórmulas e mídia permanecem pendentes de autorização específica.
+**Resultado:** Apps Script versão 81 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads aplicados em blocos separados, com backups, travas e pós-voos idempotentes. Casos ambíguos de consultas, atribuição, funil e fórmulas permanecem pendentes de autorização específica; a saúde da ação Google segue em observação.
 
 ## Versões e backup
 
@@ -63,7 +63,7 @@
 
 ## Decisão do gate
 
-A aplicação integral continua reprovada por identidades de consultas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda insuficiente. Deduplicação, fases e o subconjunto seguro de consultas foram concluídos como blocos isolados. O próximo bloco deve ser escolhido e autorizado separadamente entre revisão manual das consultas bloqueadas, atribuição, funil canônico/painéis, Google Ads ou reaper operacional.
+A aplicação integral continua reprovada por identidades de consultas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda insuficiente. Deduplicação, fases, subconjunto seguro de consultas e Google Ads foram concluídos como blocos isolados. O próximo bloco deve ser escolhido e autorizado separadamente entre revisão manual das consultas bloqueadas, atribuição, funil canônico/painéis ou reaper operacional. O Google permanece em observação por sete dias, sem escala.
 
 ## Reconciliação segura de consultas e Calendar
 
@@ -83,3 +83,14 @@ A aplicação integral continua reprovada por identidades de consultas não reco
 - A versão 80 do Apps Script foi publicada; Netlify e site não receberam código funcional novo neste bloco.
 - `/lifting-facial/` não foi alterada.
 - Nenhum identificador de paciente, telefone, mensagem ou dado clínico foi persistido neste registro.
+
+## Reconciliação offline Google Ads
+
+- Pré-voo protegido: 5 linhas na primeira aba, 2 registros no ledger, 3 nomes de ação divergentes, 5 nomes visíveis divergentes, 3 registros de ledger ausentes e zero linha inválida, duplicada ou em revisão.
+- Backup nativo imediatamente anterior: [LEADS — backup antes da reconciliação Google Ads — 2026-08-14 13h45](https://docs.google.com/spreadsheets/d/189twUMP5jeE6eTU0F4-xqqDbpvz2nWqG7AOtEPOiL6M/edit?usp=drivesdk), com 36 abas e `IMPORT_GOOGLE_ADS` preservada como primeira aba.
+- Aplicação protegida: 3 registros de ledger reconstruídos; nenhum registro de importação criado; nomes normalizados somente nas 5 transações elegíveis da Dra. Amanda.
+- Diferença exata contra o backup: 3 células em `IMPORT_GOOGLE_ADS` (linhas 3–5, coluna do nome da conversão), 3 novas linhas em `_GOOGLE_ADS_EVENTOS` (campos operacionais previstos) e 5 células em `Google Ads - Conversões` (linhas elegíveis, coluna do nome da conversão). Nenhuma outra célula planejada mudou.
+- Pós-voo interno e simulação fresca: 5 linhas de importação, 5 registros no ledger, zero nome divergente, duplicidade, ausência, conflito de identidade, linha inválida ou revisão pendente. A repetição é inócua.
+- Google Ads ao vivo: ação `Lead qualificado GCLID` permaneceu Principal e oriunda de importação de cliques; a ação antiga permaneceu Secundária/Inativa. A conexão `LEADS` manteve cinco campos mapeados, execução diária e histórico automático de 5 linhas com 0 erros. Uma importação manual foi iniciada às 13:59 após o reparo; o status da ação ainda exige observação e não autoriza Smart Bidding ou escala.
+- Validação local: Apps Script versão 81 no mesmo deployment, commit `8dbe985`, **522 de 522 testes aprovados**, inspeção visual da primeira aba e nenhuma alteração em campanhas, orçamento, palavras-chave, atribuição histórica, painéis ou `/lifting-facial/`.
+- Nenhum alerta por e-mail foi disparado: todas as escritas foram estruturadas e de alta confiança; qualquer caso fora da identidade exata teria bloqueado o lote inteiro.

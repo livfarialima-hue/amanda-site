@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 80; deduplicação, fases históricas e o subconjunto seguro de consultas aplicados e validados; Netlify e site publicados no commit `fc433da`; teste sintético aprovado; casos ambíguos de consultas, funil, atribuição e fórmulas ainda não migrados
+**Estado:** Apps Script publicado na versão 81; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads aplicados e validados; Netlify e site publicados no commit `fc433da`; teste sintético aprovado; casos ambíguos de consultas, funil, atribuição e fórmulas ainda não migrados
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -98,6 +98,17 @@ O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-COR
 - O primeiro pós-voo na mesma execução apresentou um falso negativo causado por literais Unicode inválidos na comparação de metadados. O código foi corrigido antes de nova tentativa; a auditoria fresca encontrou 0 reparo seguro pendente, e a repetição retornou `alreadyReconciled: true` sem nova escrita.
 - A versão 80 foi publicada no mesmo deployment; o endpoint respondeu HTTP 200 com `ok: true`, a suíte local passou com **520 de 520 testes** e a aba `Consultas` foi inspecionada visualmente em produção.
 - Atribuição, `_FUNIL_CANONICO`, fórmulas dos painéis, mídia e `/lifting-facial/` não foram alterados neste bloco.
+
+### Reconciliação offline Google Ads autorizada
+
+- O executor `aplicarReconciliacaoGoogleAdsSeguraAutorizada`, no commit `8dbe985`, usa trava exclusiva, pré-voo fixado, escrita em duas fases e pós-voo idempotente. A simulação não cria abas nem corrige cabeçalhos implicitamente.
+- A identidade só é aceita quando primeira aba, ledger, oportunidade da Dra. Amanda e linha visível concordam exatamente, com um único GCLID, GBRAID ou WBRAID. Profissional divergente, valor ou tipo diferente, duplicidade ou mais de um click ID bloqueiam todo o lote antes da escrita.
+- A cópia nativa imediatamente anterior tinha 36 abas e preservou `IMPORT_GOOGLE_ADS` como primeira aba. A execução normalizou 3 nomes na importação, 5 nomes nas linhas visíveis elegíveis e reconstruiu 3 registros ausentes do ledger.
+- O pós-voo e uma auditoria fresca fecharam em 5 linhas de importação, 5 registros de ledger e zero item inválido, duplicado, ausente, divergente ou em revisão. Nenhuma linha sem transação elegível foi alterada.
+- A comparação com o backup mostrou apenas 3 células alteradas em `IMPORT_GOOGLE_ADS`, 3 novas linhas em `_GOOGLE_ADS_EVENTOS` e 5 células alteradas em `Google Ads - Conversões`; a inspeção visual confirmou cabeçalho, congelamento, ordem e layout íntegros.
+- O Apps Script versão 81 foi publicado no mesmo deployment. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e execução diária; a execução automática anterior concluiu 5 linhas com 0 erros, e uma importação manual foi iniciada após a reconciliação.
+- A suíte final passou com **522 de 522 testes**. Nenhuma campanha, meta, lance, orçamento, palavra-chave, atribuição histórica, fórmula de painel, Calendar, Netlify, site ou `/lifting-facial/` foi modificada neste bloco.
+- A ação permanece em observação: consistência e envio técnico não equivalem a ação saudável. O gate exige aceite/rejeição reconciliados e sete dias estáveis antes de qualquer ampliação de uso em lances.
 
 ## Gates que permanecem externos
 

@@ -1,6 +1,6 @@
 # Runbook da correção integrada — 14 de agosto de 2026
 
-**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 80 publicado; deduplicação, fases históricas e o subconjunto seguro de consultas da etapa 3 concluídos; publicação técnica e teste sintético da etapa 5 concluídos no commit `fc433da`
+**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 81 publicado; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads da etapa 3 concluídos; publicação técnica e teste sintético da etapa 5 concluídos no commit `fc433da`
 
 **Norte canônico:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -65,7 +65,7 @@ Somente depois da revisão das simulações e da autorização específica de mi
 
 Depois de cada item, repetir sua simulação. Se o segundo resultado não for idempotente ou surgir erro, parar a sequência.
 
-**Execução de 14/08/2026:** item 1 concluído por `aplicarDeduplicacaoReversivelAutorizada`; os 3 `Backup ID` estão no registro de execução e a repetição foi idempotente. Item 2 concluído por `aplicarReconciliacaoFasesHistoricasAutorizada`: 27 reparadas, zero conflito e zero divergência no pós-voo. O subconjunto seguro do item 3 foi concluído por `aplicarReconciliacaoConsultasSegurasAutorizada`: 3 fases e 9 metadados de eventos reparados, 0 duplicata, 0 mudança de data/hora e repetição inócua. O Apps Script versão 80 respondeu HTTP 200. Itens 4 a 7 permanecem pendentes de autorização por bloco; os casos bloqueados do item 3 exigem revisão humana.
+**Execução de 14/08/2026:** item 1 concluído por `aplicarDeduplicacaoReversivelAutorizada`; os 3 `Backup ID` estão no registro de execução e a repetição foi idempotente. Item 2 concluído por `aplicarReconciliacaoFasesHistoricasAutorizada`: 27 reparadas, zero conflito e zero divergência no pós-voo. O subconjunto seguro do item 3 foi concluído por `aplicarReconciliacaoConsultasSegurasAutorizada`: 3 fases e 9 metadados de eventos reparados, 0 duplicata, 0 mudança de data/hora e repetição inócua. O item 5 foi concluído por `aplicarReconciliacaoGoogleAdsSeguraAutorizada`: 5 transações reconciliadas, 3 registros de ledger reconstruídos e zero divergência no pós-voo; uma importação manual foi iniciada na conexão `LEADS`. O Apps Script versão 81 preserva o mesmo deployment. Itens 4, 6 e 7 permanecem pendentes de autorização por bloco; os casos bloqueados do item 3 exigem revisão humana.
 
 ## Etapa 4 — Reconciliar os painéis
 
@@ -90,7 +90,7 @@ O monitor diário comprova Netlify → Apps Script, autenticação, persistênci
 
 **Resultado de 14/08/2026:** Netlify e site publicados no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. O diagnóstico ficou saudável, as páginas técnicas responderam HTTP 200, a página `/lifting-facial/` permaneceu idêntica e o teste sintético sem dados de paciente concluiu persistência, classificação e handoff com resultado `ok`. Isso valida o caminho Netlify → Apps Script, mas ainda não prova entrega do provedor YCloud nem os gates longitudinais.
 
-O checkpoint agregado posterior confirmou zero nova duplicidade. O bloco de fases eliminou as 27 divergências gerais. O bloco seguro de consultas avançou 3 fases e saneou 9 eventos existentes; 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 divergência de horário/metadados e 1 link inválido permaneceram sem alteração automática. Portanto, os itens 4 a 7 da etapa 3, os casos bloqueados do item 3 e a etapa 4 continuam sujeitos a simulação atualizada e autorização específica de escrita.
+O checkpoint agregado posterior confirmou zero nova duplicidade. O bloco de fases eliminou as 27 divergências gerais. O bloco seguro de consultas avançou 3 fases e saneou 9 eventos existentes; 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 divergência de horário/metadados e 1 link inválido permaneceram sem alteração automática. O bloco Google Ads reconciliou as 5 transações elegíveis, normalizou o nome da ação canônica e fechou o ledger em 5/5, sem tocar linhas não elegíveis. Portanto, os itens 4, 6 e 7 da etapa 3, os casos bloqueados do item 3 e a etapa 4 continuam sujeitos a simulação atualizada e autorização específica de escrita. O gate externo do Google permanece aberto até a ação ficar saudável e completar sete dias sem divergência.
 
 ## Etapa 6 — Verificações externas
 

@@ -95,6 +95,8 @@ As abas `IMPORT_GOOGLE_ADS` e `IMPORT_GCLID`, os cinco flags visíveis de envio 
 
 Há, porém, dois nomes de ação em circulação: dois registros usam `Lead qualificado GCLID` e três usam `Lead qualificado`, enquanto a aba operacional ainda marca os cinco com o nome antigo. A integridade técnica do arquivo não confirma que todos chegam à mesma ação principal no Google Ads. Essa confirmação deve ocorrer do lado da conta antes de usar a importação como sinal de lance.
 
+**Atualização pós-auditoria — 14/08/2026:** o bloco `DAT-08` foi executado com backup e identidade exata. As 5 transações passaram a usar `Lead qualificado GCLID`, o ledger ficou em 5/5 após reconstruir 3 registros ausentes e o pós-voo terminou com zero divergência, duplicidade, ausência, linha inválida ou revisão. A conexão do Google Ads iniciou uma importação manual de verificação. O achado técnico está corrigido; o gate gerencial continua aberto até aceite/rejeição reconciliados e sete dias com a ação saudável.
+
 ## Painéis e derivados
 
 ### `Funil Comercial` e `Painel Econômico`

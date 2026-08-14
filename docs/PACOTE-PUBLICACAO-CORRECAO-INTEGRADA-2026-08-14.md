@@ -1,6 +1,6 @@
 # Pacote de publicação da correção integrada — 14 de agosto de 2026
 
-**Situação:** Apps Script publicado na versão 80; deduplicação, fases históricas e o subconjunto seguro de consultas aplicados; casos ambíguos de consultas, atribuição, funil, fórmulas e mídia ainda pendentes por bloco
+**Situação:** Apps Script publicado na versão 81; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads aplicados; casos ambíguos de consultas, atribuição, funil e fórmulas ainda pendentes por bloco; saúde da ação Google permanece em observação
 
 Este manifesto separa o que está no repositório do que ainda depende de autorização e validação ao vivo.
 
@@ -19,6 +19,7 @@ Este manifesto separa o que está no repositório do que ainda depende de autori
 | `b0da4b6` | deduplicação com trava exclusiva, rollback por grupo e IDs exatos de restauração |
 | `d6cb72d` | executor autorizado de fases com trava, pré-voo fixo e pós-voo idempotente |
 | `fc0785a` | auditoria e executor protegido da reconciliação segura de consultas e Calendar |
+| `8dbe985` | reconciliação offline Google Ads com identidade exata, pré/pós-voo fixos e trava exclusiva |
 
 O commit que contém este manifesto apenas fecha documentação e QA; ele também deve fazer parte do mesmo pacote aprovado.
 
@@ -26,7 +27,7 @@ O commit que contém este manifesto apenas fecha documentação e QA; ele també
 
 ### Apps Script
 
-**Publicado:** versão 80 em 14/08/2026. A versão 77 endureceu a deduplicação; a versão 78 acrescentou o executor protegido das fases; a versão 80 preservou o mesmo deployment e publicou o executor seguro de consultas após corrigir a comparação Unicode da auditoria. O endpoint respondeu HTTP 200 com `ok: true` depois da publicação.
+**Publicado:** versão 81 em 14/08/2026. A versão 77 endureceu a deduplicação; a versão 78 acrescentou o executor protegido das fases; a versão 80 publicou o executor seguro de consultas; a versão 81 preservou o mesmo deployment e publicou o executor protegido da reconciliação offline Google Ads.
 
 - identidade e fase canônicas;
 - deduplicação arquivável/restaurável;
@@ -56,15 +57,15 @@ O commit que contém este manifesto apenas fecha documentação e QA; ele també
 
 ### Planilha e Calendar — execução separada por bloco
 
-A deduplicação foi autorizada e concluída isoladamente: 2 grupos, 3 linhas arquivadas e 3 IDs exatos de restauração, sem conflito ou rollback. Em outro bloco autorizado, 27 fases foram sincronizadas e a verificação independente confirmou zero divergência nas 131 oportunidades ativas. O bloco seguro de consultas seguinte avançou 3 fases e atualizou somente os metadados de 9 eventos existentes, sem alterar data/hora, criar eventos ou gerar duplicatas. Permaneceram bloqueados 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 evento com divergência de horário/metadados e 1 consulta sem link válido. Atribuição, `_FUNIL_CANONICO`, fórmulas e mídia não foram alterados.
+A deduplicação foi autorizada e concluída isoladamente: 2 grupos, 3 linhas arquivadas e 3 IDs exatos de restauração, sem conflito ou rollback. Em outro bloco autorizado, 27 fases foram sincronizadas e a verificação independente confirmou zero divergência nas 131 oportunidades ativas. O bloco seguro de consultas seguinte avançou 3 fases e atualizou somente os metadados de 9 eventos existentes, sem alterar data/hora, criar eventos ou gerar duplicatas. Permaneceram bloqueados 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 evento com divergência de horário/metadados e 1 consulta sem link válido. O bloco Google Ads reconciliou 5/5 transações: normalizou 3 nomes na primeira aba, 5 nomes nas linhas visíveis elegíveis e reconstruiu 3 registros ausentes do ledger. Atribuição histórica, `_FUNIL_CANONICO` e fórmulas não foram alterados.
 
 ### Plataformas de mídia — verificação separada
 
-Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, público, criativo ou campanha. Google Ads requer verificação de aceite das conversões; Meta Site requer prova de rastreabilidade antes de qualquer teste de verba.
+Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, público, criativo ou campanha. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e importação diária. A execução automática anterior concluiu 5 linhas e 0 erros; depois da reconciliação foi iniciada uma execução manual de verificação. O status `Requer atenção` da ação não é considerado resolvido até a conclusão dessa execução e do gate de sete dias. Meta Site requer prova de rastreabilidade antes de qualquer teste de verba.
 
 ## QA concluído
 
-- `npm.cmd test`: **520/520 aprovados** no estado final documentado.
+- `npm.cmd test`: **522/522 aprovados** no estado final documentado.
 - `git diff --check`: aprovado.
 - `git diff --name-only -- lifting-facial`: vazio.
 - fluxos ambíguos ou sem rota: silenciosos para o paciente e encaminhados à revisão;
@@ -74,9 +75,9 @@ Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, p�
 ## Ordem de publicação quando autorizada
 
 1. registrar versões e backups — **concluído**;
-2. publicar Apps Script — **concluído na versão 80**;
+2. publicar Apps Script — **concluído na versão 81**;
 3. executar e revisar todas as simulações — **concluído; lote integral reprovado antes de escrita**;
-4. executar somente as migrações expressamente autorizadas — **deduplicação, fases e subconjunto seguro de consultas concluídos; demais blocos pendentes**;
+4. executar somente as migrações expressamente autorizadas — **deduplicação, fases, subconjunto seguro de consultas e Google Ads concluídos; demais blocos pendentes**;
 5. reconciliar fórmulas célula a célula;
 6. publicar Netlify e validar rotas/handoffs;
 7. publicar o lote técnico do site e comprovar lifting intacto;

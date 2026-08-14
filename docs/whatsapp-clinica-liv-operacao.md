@@ -2,7 +2,7 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
-> **Produção:** base do Apps Script na versão 80, vinculada ao commit `fc0785a`; Netlify e site foram publicados em 14/08/2026 no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. Na reconciliação segura seguinte, 3 fases derivadas de consultas foram avançadas e 9 eventos existentes do Google Calendar tiveram somente metadados operacionais saneados, sem mudar data/hora nem criar duplicatas. Permaneceram bloqueados para revisão humana 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 evento com divergência de horário e metadados e 1 consulta sem link válido. Fórmulas dos painéis, atribuição, mídia e `/lifting-facial/` não foram alteradas nesse bloco.
+> **Produção:** base do Apps Script na versão 81, vinculada ao commit `8dbe985`; Netlify e site foram publicados em 14/08/2026 no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. Na reconciliação segura seguinte, 3 fases derivadas de consultas foram avançadas e 9 eventos existentes do Google Calendar tiveram somente metadados operacionais saneados, sem mudar data/hora nem criar duplicatas. O bloco Google Ads posterior reconciliou as 5 conversões elegíveis entre importação, ledger e linhas visíveis e iniciou uma importação manual de verificação. Permaneceram bloqueados para revisão humana os casos de consulta sem identidade inequívoca; fórmulas dos painéis, atribuição histórica, campanhas, orçamento e `/lifting-facial/` não foram alterados nesse bloco.
 
 ## Estado de produção
 
@@ -174,6 +174,14 @@ Há um único arquivo Google Sheets chamado `LEADS`, e somente ele é conectado 
 A aba interna `_CRM_OPORTUNIDADES` é o vínculo canônico entre conversa, profissional, linha visível, classificação, consulta e eventual conversão offline. Ela não é um segundo arquivo de leads. A mesma pessoa pode ter uma oportunidade de Amanda e outra de Daniel, cada uma com profissional e histórico próprios. A atribuição da Amanda é fixada na criação e nunca é herdada por Daniel.
 
 As colunas operacionais adicionadas às abas visíveis são auditáveis, mas não alteram a estrutura exigida pelo Google Ads: `Opportunity ID`, profissional responsável, versão, último evento, status operacional, resumo, próxima ação, objeção, relacionamento, responsável, parte aguardada, roteamento e data de fixação da atribuição.
+
+### Conversão qualificada do Google Ads
+
+A conversão offline canônica é `Lead qualificado GCLID`. O reparo protegido só altera uma transação quando `IMPORT_GOOGLE_ADS`, `_GOOGLE_ADS_EVENTOS`, a oportunidade da Dra. Amanda e a linha visível concordam exatamente sobre identidade, tipo, valor e o único identificador de clique. Qualquer duplicidade, ambiguidade, profissional diferente, mais de um click ID ou diferença de valor bloqueia o lote inteiro antes da primeira escrita.
+
+Em 14/08/2026, uma cópia nativa da planilha foi criada antes da execução. A reconciliação normalizou 3 nomes na primeira aba, 5 nomes nas linhas visíveis elegíveis e reconstruiu 3 registros ausentes do ledger. O pós-voo e uma nova simulação ficaram com 5 linhas de importação, 5 registros de ledger e zero item inválido, duplicado, ausente, divergente ou em revisão. Nenhuma linha sem transação elegível foi modificada. A conexão `LEADS` do Google Ads permaneceu vinculada à primeira aba, com cinco campos mapeados e execução diária; a importação automática anterior havia concluído 5 linhas com 0 erros, e uma execução manual foi iniciada após a correção.
+
+Essa consistência não libera escala por si só. Enquanto a ação continuar em `Requer atenção`, deve-se acompanhar aceite/rejeição e correspondência por sete dias. Não ativar tCPA, Performance Max, correspondência ampla ou aumento de orçamento com base apenas nessa correção.
 
 Quando a paciente escolhe uma das duas datas sugeridas, a seleção entra na aba interna `_AGENDAMENTOS_PENDENTES`. Isso não confirma a consulta e não cria evento. A equipe recebe a resposta sugerida e somente a confirmação humana finaliza o registro em `Consultas` e na Google Agenda.
 
