@@ -106,7 +106,7 @@ O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-COR
 - A cópia nativa imediatamente anterior tinha 36 abas e preservou `IMPORT_GOOGLE_ADS` como primeira aba. A execução normalizou 3 nomes na importação, 5 nomes nas linhas visíveis elegíveis e reconstruiu 3 registros ausentes do ledger.
 - O pós-voo e uma auditoria fresca fecharam em 5 linhas de importação, 5 registros de ledger e zero item inválido, duplicado, ausente, divergente ou em revisão. Nenhuma linha sem transação elegível foi alterada.
 - A comparação com o backup mostrou apenas 3 células alteradas em `IMPORT_GOOGLE_ADS`, 3 novas linhas em `_GOOGLE_ADS_EVENTOS` e 5 células alteradas em `Google Ads - Conversões`; a inspeção visual confirmou cabeçalho, congelamento, ordem e layout íntegros.
-- O Apps Script versão 81 foi publicado no mesmo deployment. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e execução diária; a execução automática anterior concluiu 5 linhas com 0 erros, e uma importação manual foi iniciada após a reconciliação.
+- O Apps Script versão 81 foi publicado no mesmo deployment e respondeu HTTP 200 com `ok: true`. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e execução diária; a execução automática anterior concluiu 5 linhas com 0 erros, e uma importação manual foi iniciada após a reconciliação.
 - A suíte final passou com **522 de 522 testes**. Nenhuma campanha, meta, lance, orçamento, palavra-chave, atribuição histórica, fórmula de painel, Calendar, Netlify, site ou `/lifting-facial/` foi modificada neste bloco.
 - A ação permanece em observação: consistência e envio técnico não equivalem a ação saudável. O gate exige aceite/rejeição reconciliados e sete dias estáveis antes de qualquer ampliação de uso em lances.
 

@@ -27,7 +27,7 @@ O commit que contém este manifesto apenas fecha documentação e QA; ele també
 
 ### Apps Script
 
-**Publicado:** versão 81 em 14/08/2026. A versão 77 endureceu a deduplicação; a versão 78 acrescentou o executor protegido das fases; a versão 80 publicou o executor seguro de consultas; a versão 81 preservou o mesmo deployment e publicou o executor protegido da reconciliação offline Google Ads.
+**Publicado:** versão 81 em 14/08/2026. A versão 77 endureceu a deduplicação; a versão 78 acrescentou o executor protegido das fases; a versão 80 publicou o executor seguro de consultas; a versão 81 preservou o mesmo deployment e publicou o executor protegido da reconciliação offline Google Ads. O endpoint respondeu HTTP 200 com `ok: true` depois da publicação.
 
 - identidade e fase canônicas;
 - deduplicação arquivável/restaurável;
