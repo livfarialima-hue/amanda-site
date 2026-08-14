@@ -1736,19 +1736,19 @@ function sugerirMensagemRetomada_(
       material.descricao +
       ": " +
       material.url +
-      " Esta é minha última retomada para não ser inconveniente. Se quiser continuar, é só me chamar."
+      " Espero que ajude você a pensar com calma. Quando fizer sentido, pode me chamar, mesmo que seja só para conversar sobre uma dúvida que surgiu."
     );
   }
 
   if (etapa === 2 && contextoPreco) {
-    return "Olá! Como referência concreta sobre sua dúvida: o orçamento cirúrgico completo é definido após a avaliação e considera honorários, hospital, anestesia, materiais e acompanhamento; a equipe também explica as formas de pagamento. Esta é minha última retomada para não ser inconveniente. Se quiser continuar, é só me chamar.";
+    return "Olá! Como referência concreta sobre sua dúvida: o orçamento cirúrgico completo é definido após a avaliação e considera honorários, hospital, anestesia, materiais e acompanhamento; a equipe também explica as formas de pagamento. Espero que isso ajude você a avaliar com calma. Quando fizer sentido, pode me chamar, mesmo que seja só para esclarecer uma dúvida sobre valores. Vou ficar feliz em continuar de onde paramos.";
   }
 
   if (etapa === 2 && contextoAgenda) {
-    return "Olá! Como referência, a consulta serve para examinar a região e discutir indicação, alternativas, limites, recuperação e orçamento, sem pressupor que você precise decidir pela cirurgia naquele momento. Esta é minha última retomada para não ser inconveniente. Se quiser ver duas opções reais de horário, é só me chamar.";
+    return "Olá! Como referência, a consulta serve para examinar a região e discutir indicação, alternativas, limites, recuperação e orçamento, sem pressupor que você precise decidir pela cirurgia naquele momento. Entendo que essa decisão pode precisar de tempo. Quando fizer sentido para você, posso continuar de onde paramos e consultar duas opções reais de horário.";
   }
 
-  return "Olá! Vou encerrar minhas retomadas por aqui para não ser inconveniente. Se em outro momento quiser continuar a conversa, será um prazer ajudar você.";
+  return "Olá! Entendo que uma decisão assim pode precisar de tempo. Fique à vontade para pensar com calma e, quando fizer sentido para você, pode me chamar, mesmo que seja só para esclarecer uma dúvida. Vou ficar feliz em continuar de onde paramos.";
 }
 
 function classificarObjecaoRetomada_(contexto) {

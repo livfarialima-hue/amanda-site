@@ -300,6 +300,12 @@ A segunda e última retomada acontece após cerca de 72 horas e oferece uma úni
 
 > Olá! Só queria deixar o canal aberto caso você ainda esteja pensando no procedimento. Se quiser, posso retomar do ponto em que paramos, sem pressa.
 
+Texto operacional quando não houver uma prova adicional adequada:
+
+> Olá! Entendo que uma decisão assim pode precisar de tempo. Fique à vontade para pensar com calma e, quando fizer sentido para você, pode me chamar, mesmo que seja só para esclarecer uma dúvida. Vou ficar feliz em continuar de onde paramos.
+
+Não mencionar “encerrar retomadas”, “última tentativa” ou receio de “ser inconveniente”. Essas expressões expõem o processo interno e podem criar culpa pelo silêncio. O encerramento deve transmitir autonomia, preservar o contexto da conversa e reduzir o esforço necessário para voltar.
+
 Depois de duas retomadas sem resposta, os contatos proativos são encerrados. Uma recusa clara, um pedido para não receber mensagens ou a decisão da própria pessoa de voltar a falar quando quiser encerram a sequência antes disso.
 
 ## O que ainda precisa ser validado antes de automatizar

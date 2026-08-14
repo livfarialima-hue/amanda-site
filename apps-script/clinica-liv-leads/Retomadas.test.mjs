@@ -849,7 +849,9 @@ test("first follow-up addresses the objection and second sends one proof", () =>
   assert.match(first, /duas opções reais de horário/);
   assert.doesNotMatch(first, /https:/);
   assert.match(second, /referência concreta/);
-  assert.match(second, /última retomada/);
+  assert.match(second, /pensar com calma/);
+  assert.match(second, /Quando fizer sentido/);
+  assert.doesNotMatch(second, /última retomada|inconveniente/);
   assert.match(second, /https:/);
 });
 
@@ -987,8 +989,15 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
   assert.match(price, /o valor e o que está incluído/);
   assert.match(schedule, /duas opções reais/);
   assert.match(general, /não precisa decidir nada agora/);
-  assert.match(second, /encerrar minhas retomadas/);
-  assert.match(second, /para não ser inconveniente/);
+  assert.match(second, /Entendo que uma decisão assim pode precisar de tempo/);
+  assert.match(second, /Fique à vontade para pensar com calma/);
+  assert.match(second, /quando fizer sentido para você/);
+  assert.match(second, /mesmo que seja só para esclarecer uma dúvida/);
+  assert.match(second, /continuar de onde paramos/);
+  assert.doesNotMatch(
+    second,
+    /encerrar minhas retomadas|última retomada|inconveniente/,
+  );
 });
 
 test("second follow-up gives one concrete proof and closes proactive contact", () => {
@@ -1009,8 +1018,14 @@ test("second follow-up gives one concrete proof and closes proactive contact", (
 
   assert.match(price, /orçamento cirúrgico completo/);
   assert.match(price, /honorários, hospital, anestesia, materiais e acompanhamento/);
+  assert.match(price, /dúvida sobre valores/);
   assert.match(schedule, /indicação, alternativas, limites, recuperação e orçamento/);
-  assert.match(schedule, /última retomada/);
+  assert.match(schedule, /Entendo que essa decisão pode precisar de tempo/);
+  assert.match(schedule, /duas opções reais de horário/);
+  assert.doesNotMatch(
+    price + schedule,
+    /última retomada|inconveniente/,
+  );
 });
 
 test("daily care agenda consolidates appointments, post-consult, birthdays and surgical follow-up", () => {
