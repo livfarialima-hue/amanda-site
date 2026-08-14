@@ -259,6 +259,7 @@ export function buildConsultationInformationReply({
   siteResource,
   procedure,
   availabilityRequested = false,
+  consultationPriceRequested = false,
   introduceBruna = false,
   siteRequested = false,
 }) {
@@ -274,6 +275,9 @@ export function buildConsultationInformationReply({
     procedure,
     procedureLabel,
   );
+  const consultationPrice = consultationPriceRequested
+    ? "A consulta presencial custa R$ 500, pode ser paga por Pix, débito ou parcelamento, tem emissão de nota fiscal e esse valor é abatido se a cirurgia for realizada com a equipe."
+    : "";
   const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
     String(siteResource?.url || ""),
   )
@@ -295,7 +299,11 @@ export function buildConsultationInformationReply({
         ].join(" ")
       : consultationExplorationQuestion(procedure, procedureLabel);
 
-  return `${introduction} ${consultationContext}\n\n${nextStep}`;
+  return [
+    `${introduction} ${consultationContext}`,
+    consultationPrice,
+    nextStep,
+  ].filter(Boolean).join("\n\n");
 }
 
 export function buildImageAcknowledgementReply({

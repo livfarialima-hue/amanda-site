@@ -226,6 +226,23 @@ test("explains the consultation gradually without anticipating price or a link",
   assert.doesNotMatch(reply, /Posso ver os horários/);
 });
 
+test("answers the consultation value when the patient asks for access and price", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Renata",
+    consultationPriceRequested: true,
+    availabilityRequested: true,
+    introduceBruna: true,
+  });
+
+  assert.match(reply, /^Olá, Renata!/);
+  assert.match(reply, /consulta presencial custa R\$ 500/i);
+  assert.match(reply, /Pix, débito ou parcelamento/i);
+  assert.match(reply, /nota fiscal/i);
+  assert.match(reply, /abatido se a cirurgia/i);
+  assert.match(reply, /prefere manhã ou tarde/i);
+  assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
+});
+
 test("uses a low-friction exploration question for the main facial procedures", () => {
   const cases = [
     [

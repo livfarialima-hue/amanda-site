@@ -6,6 +6,8 @@
 
 ## Estado de produção
 
+> **Correção local pendente de publicação — 14/08/2026:** os registros de produção mostraram que uma pergunta válida sobre acesso e valor da consulta ficou sem resposta porque `append_lead` no Apps Script ultrapassou o timeout de 8 segundos. A planilha concluiu a gravação depois, mas o webhook já havia falhado de forma fechada; a recuperação repetiu o mesmo caminho lento. A correção local reserva até 20 segundos apenas para `append_lead` (limite configurável entre 8 e 25 segundos), desconta do debounce o tempo já gasto no roteamento, classifica “como passar em consulta e o valor” como informação de consulta — não preço cirúrgico — e prioriza o nome informado pela própria pessoa sobre um nome de perfil incompatível. Esta correção ainda não está no deploy de produção e só será publicada após autorização explícita.
+
 - Endpoint: `https://draamandaschroeder.com.br/api/ycloud/webhook`
 - Automação: `active`
 - Secretária virtual: Bruna

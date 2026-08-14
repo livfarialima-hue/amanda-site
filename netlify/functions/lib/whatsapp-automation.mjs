@@ -41,6 +41,12 @@ const SCHEDULING_PATTERN =
 const CONSULTATION_INFORMATION_PATTERN =
   /\b(?:(?:como|de\s+que\s+forma)\s+(?:funciona|[eé])|o\s+que\s+(?:acontece|[eé]\s+feito)|quer(?:o|ia)\s+entender\s+como\s+funciona).{0,50}\b(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,50}\b(?:como\s+funciona|passo\s+a\s+passo)\b/i;
 
+const CONSULTATION_ACCESS_PATTERN =
+  /\bcomo\s+(?:eu\s+)?fa[cç]o\s+para\s+(?:passar|marcar|agendar)\s+(?:em|uma)?\s*(?:consulta|avalia[cç][aã]o)\b/i;
+
+const CONSULTATION_PRICE_PATTERN =
+  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica)\b.{0,45}\b(?:da\s+)?(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,45}\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica)\b/i;
+
 const AVAILABILITY_REQUEST_PATTERN =
   /\b(?:consultar|conferir|ver|saber)\s+(?:a\s+)?disponibilidade\b|\b(?:quais?|ver|consultar|conferir|saber)\b.{0,35}\b(?:hor[aá]rios?|datas?)\b|\b(?:agendar|marcar)\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o)\b/i;
 
@@ -293,11 +299,24 @@ export function isSchedulingRequest(text) {
 }
 
 export function isConsultationInformationRequest(text) {
-  return CONSULTATION_INFORMATION_PATTERN.test(String(text || ""));
+  const value = String(text || "");
+  return (
+    CONSULTATION_INFORMATION_PATTERN.test(value) ||
+    CONSULTATION_ACCESS_PATTERN.test(value) ||
+    CONSULTATION_PRICE_PATTERN.test(value)
+  );
+}
+
+export function isConsultationPriceRequest(text) {
+  return CONSULTATION_PRICE_PATTERN.test(String(text || ""));
 }
 
 export function isAvailabilityRequest(text) {
-  return AVAILABILITY_REQUEST_PATTERN.test(String(text || ""));
+  const value = String(text || "");
+  return (
+    AVAILABILITY_REQUEST_PATTERN.test(value) ||
+    CONSULTATION_ACCESS_PATTERN.test(value)
+  );
 }
 
 function foldMarketingText(value) {
@@ -693,6 +712,19 @@ export function planAutomation({
     };
   }
 
+  if (asksConsultationInformation) {
+    return {
+      route: "standard_reply",
+      reason: "consultation_information_request",
+      replyCode: "AMANDA-CONSULTA-INFO-01",
+      professional: "amanda",
+      procedure: procedure?.key || null,
+      automaticAllowed: true,
+      consultationPriceRequested:
+        isConsultationPriceRequest(normalizedText),
+    };
+  }
+
   if (asksPrice) {
     return {
       route: "standard_reply",
@@ -703,17 +735,6 @@ export function planAutomation({
       automaticAllowed: true,
       priceRequestKind: asksPriceTerms ? "terms" : "amount",
       platform: platform || null,
-    };
-  }
-
-  if (asksConsultationInformation) {
-    return {
-      route: "standard_reply",
-      reason: "consultation_information_request",
-      replyCode: "AMANDA-CONSULTA-INFO-01",
-      professional: "amanda",
-      procedure: procedure?.key || null,
-      automaticAllowed: true,
     };
   }
 

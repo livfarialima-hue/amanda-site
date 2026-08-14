@@ -4,6 +4,7 @@ import {
   inboundReplyPriority,
   isAvailabilityRequest,
   isConsultationInformationRequest,
+  isConsultationPriceRequest,
   isLikelyMarketingPrefilledMessage,
   isSchedulingRequest,
   normalizeAutomationMode,
@@ -132,7 +133,10 @@ import {
   buildProfessionalFactPartialReview,
   buildProfessionalFactReviewAlert,
 } from "./lib/professional-fact-review.mjs";
-import { usableProfileFirstName } from "./lib/profile-name.mjs";
+import {
+  resolvePatientDisplayName,
+  usableProfileFirstName,
+} from "./lib/profile-name.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -605,6 +609,13 @@ function safeDownstreamErrorCode(data) {
   return null;
 }
 
+export function sheetsActionTimeoutMs(action, configuredValue) {
+  if (String(action || "") !== "append_lead") return 8_000;
+  const configured = Number.parseInt(String(configuredValue || ""), 10);
+  if (!Number.isFinite(configured)) return 20_000;
+  return Math.min(Math.max(configured, 8_000), 25_000);
+}
+
 async function deliverSheetsAction(action, payload) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   const secret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET;
@@ -614,7 +625,13 @@ async function deliverSheetsAction(action, payload) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const timeout = setTimeout(
+    () => controller.abort(),
+    sheetsActionTimeoutMs(
+      action,
+      process.env.GOOGLE_SHEETS_APPEND_TIMEOUT_MS,
+    ),
+  );
 
   try {
     const response = await fetch(url, {
@@ -1599,6 +1616,8 @@ async function completeOpenAIActive({
                 input.procedure ||
                 "",
               availabilityRequested,
+              consultationPriceRequested:
+                isConsultationPriceRequest(input.text),
               siteRequested,
               introduceBruna,
             }),
@@ -2739,7 +2758,10 @@ export default async (request, context) => {
     eventId: String(eventId),
     messageId: String(messageId),
     phone,
-    name: String(message.customerProfile?.name || ""),
+    name: resolvePatientDisplayName({
+      profileName: String(message.customerProfile?.name || ""),
+      currentText: text,
+    }),
     text,
     reference: attribution.reference,
     platform: attribution.platform,
@@ -3148,6 +3170,11 @@ export default async (request, context) => {
     relationshipAwarePlan,
     patientRelationship,
   );
+  const patientDisplayName = resolvePatientDisplayName({
+    profileName: String(message.customerProfile?.name || ""),
+    currentText: text,
+    recentConversation: conversationHistoryWithCurrent,
+  });
   const leadDeliveryFallbackActive = false;
   const patientAutomationReady =
     delivery.ok &&
@@ -3156,7 +3183,7 @@ export default async (request, context) => {
   const alertInput = {
     from: String(message.to || ""),
     eventId: String(eventId),
-    patientName: String(message.customerProfile?.name || ""),
+    patientName: patientDisplayName,
     patientPhone: phone,
     messageText:
       text ||
@@ -3174,7 +3201,7 @@ export default async (request, context) => {
     buildProfessionalFactPartialReview({
       currentText: text,
       recentConversation: conversationHistory,
-      patientName: String(message.customerProfile?.name || ""),
+      patientName: patientDisplayName,
       procedure: automationPlan.procedure,
     });
   const appointmentRequestCandidate =
@@ -3364,7 +3391,7 @@ export default async (request, context) => {
         phone,
         from: String(message.to || ""),
         eventId: String(eventId),
-        patientName: String(message.customerProfile?.name || ""),
+        patientName: patientDisplayName,
         text,
         messageType: String(message.type || ""),
         platform: attribution.platform,
@@ -3452,7 +3479,7 @@ export default async (request, context) => {
     );
     const preferenceReply =
       buildAppointmentPreferenceCollectionReply({
-        patientName: String(message.customerProfile?.name || ""),
+        patientName: patientDisplayName,
         introduceBruna,
       });
     const preferenceResult = await sendCurrentInboundReply({
@@ -3494,13 +3521,13 @@ export default async (request, context) => {
     const directPriceBody =
       approvedPriceReplyKind === "initial_information"
         ? buildSurgicalInitialPriceReply({
-            patientName: String(message.customerProfile?.name || ""),
+            patientName: patientDisplayName,
             procedure: automationPlan.procedure,
             recentConversation: conversationHistory,
             currentText: text,
           })
         : buildSurgicalPriceSuggestedReply({
-            patientName: String(message.customerProfile?.name || ""),
+            patientName: patientDisplayName,
             procedure: "lifting_facial",
             recentConversation: conversationHistory,
             referenceCategory: attribution.referenceCategory,
@@ -3597,7 +3624,7 @@ export default async (request, context) => {
   if (shouldQueuePriceHolding) {
     priceHoldingQueued = true;
     const priceHoldingBody = buildSurgicalPriceHoldingReply({
-      patientName: String(message.customerProfile?.name || ""),
+      patientName: patientDisplayName,
       procedure: automationPlan.procedure,
       overnight: outsideHumanServiceHours,
       currentText: text,
@@ -3676,7 +3703,7 @@ export default async (request, context) => {
 
   const patientReplyBody = buildPatientReply({
     replyCode: automationPlan.replyCode,
-    patientName: String(message.customerProfile?.name || ""),
+    patientName: patientDisplayName,
     procedure: automationPlan.procedure,
   });
   const shouldQueuePatientReply =
@@ -3791,9 +3818,7 @@ export default async (request, context) => {
         platform: attribution.platform,
         procedure: automationPlan.procedure,
         referenceCategory: attribution.referenceCategory,
-        patientProfileName: String(
-          message.customerProfile?.name || "",
-        ),
+        patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         referralContext,
         patientRelationship:
@@ -3836,9 +3861,7 @@ export default async (request, context) => {
         platform: attribution.platform,
         procedure: automationPlan.procedure,
         referenceCategory: attribution.referenceCategory,
-        patientProfileName: String(
-          message.customerProfile?.name || "",
-        ),
+        patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         referralContext,
         patientRelationship:
@@ -3889,7 +3912,7 @@ export default async (request, context) => {
     );
     const imageAcknowledgementBody =
       buildImageAcknowledgementReply({
-        patientName: String(message.customerProfile?.name || ""),
+        patientName: patientDisplayName,
         greetPatient: !hasPreviousClinicReply,
         introduceBruna:
           !hasPreviousClinicReply &&

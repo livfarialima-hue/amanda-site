@@ -140,6 +140,7 @@ export async function waitForLatestInboundReply(
     getStoreImpl = getStore,
     waitImpl = (milliseconds) =>
       new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    now = Date.now(),
   } = {},
 ) {
   if (markerStatus !== "completed") {
@@ -150,8 +151,37 @@ export async function waitForLatestInboundReply(
     };
   }
 
-  const delayMs = debounceMs(configuredDelayMs);
-  await waitImpl(delayMs);
+  const configuredQuietWindowMs = debounceMs(configuredDelayMs);
+  let delayMs = configuredQuietWindowMs;
+
+  try {
+    const latestBeforeWait = await store(getStoreImpl).get(key(phone), {
+      type: "json",
+      consistency: "strong",
+    });
+    if (
+      latestBeforeWait?.eventId &&
+      latestBeforeWait.eventId !== String(eventId)
+    ) {
+      return {
+        status: "completed",
+        shouldProcess: false,
+        delayMs: 0,
+      };
+    }
+
+    const markedAt = Date.parse(String(latestBeforeWait?.markedAt || ""));
+    if (Number.isFinite(markedAt) && now >= markedAt) {
+      delayMs = Math.max(
+        0,
+        configuredQuietWindowMs - (now - markedAt),
+      );
+    }
+  } catch {
+    delayMs = configuredQuietWindowMs;
+  }
+
+  if (delayMs > 0) await waitImpl(delayMs);
 
   const latestResult = await checkLatestInboundReply(
     {

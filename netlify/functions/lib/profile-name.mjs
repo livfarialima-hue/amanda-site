@@ -54,3 +54,33 @@ export function usableProfileFirstName(value) {
   const profileName = usableProfileName(value);
   return profileName ? profileName.split(/\s+/)[0] : "";
 }
+
+const SELF_IDENTIFICATION_PATTERN =
+  /\b(?:(?:eu\s+)?sou\s+(?:a|o)?\s*|me\s+chamo\s+|meu\s+nome\s+(?:[eé]\s+))([\p{L}\p{M}][\p{L}\p{M}'’–-]{1,17})\b/iu;
+
+export function resolvePatientDisplayName({
+  profileName,
+  currentText = "",
+  recentConversation = [],
+} = {}) {
+  const patientTexts = (Array.isArray(recentConversation)
+    ? recentConversation
+    : [])
+    .filter(
+      (turn) =>
+        turn?.role === "user" || turn?.source === "patient",
+    )
+    .map((turn) => String(turn?.text || "").trim())
+    .filter(Boolean);
+  if (String(currentText || "").trim()) {
+    patientTexts.push(String(currentText).trim());
+  }
+
+  for (const text of patientTexts.reverse()) {
+    const match = text.match(SELF_IDENTIFICATION_PATTERN);
+    const identifiedName = usableProfileName(match?.[1] || "");
+    if (identifiedName) return identifiedName;
+  }
+
+  return usableProfileName(profileName);
+}

@@ -5,6 +5,7 @@ import {
   hasCampaignReferenceCode,
   isAvailabilityRequest,
   isConsultationInformationRequest,
+  isConsultationPriceRequest,
   isLikelyMarketingPrefilledMessage,
   isSchedulingRequest,
   planAutomation,
@@ -198,6 +199,26 @@ test("asking how the consultation works stays in automatic conversation", () => 
     assert.equal(plan.replyCode, "AMANDA-CONSULTA-INFO-01", text);
     assert.equal(plan.automaticAllowed, true, text);
   }
+});
+
+test("consultation access and price are not mistaken for surgical price", () => {
+  const text =
+    "Gostaria de saber como faço para passar em consulta com a Dra. e o valor?";
+  const plan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(isConsultationInformationRequest(text), true);
+  assert.equal(isConsultationPriceRequest(text), true);
+  assert.equal(isAvailabilityRequest(text), true);
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "consultation_information_request");
+  assert.equal(plan.professional, "amanda");
+  assert.equal(plan.consultationPriceRequested, true);
+  assert.equal(plan.automaticAllowed, true);
 });
 
 test("prefilled Google consultation text is treated as campaign context", () => {

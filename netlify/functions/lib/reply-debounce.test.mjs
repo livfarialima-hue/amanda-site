@@ -27,16 +27,18 @@ function fakeBlobs() {
 
 test("only the latest inbound event may answer after the quiet window", async () => {
   const blobs = fakeBlobs();
+  const now = Date.parse("2026-08-14T10:35:00-03:00");
   const first = await markLatestInboundForReply(
     { phone: "+5511900000000", eventId: "evt-1" },
-    blobs,
+    { ...blobs, now },
   );
   const second = await markLatestInboundForReply(
     { phone: "+5511900000000", eventId: "evt-2" },
-    blobs,
+    { ...blobs, now },
   );
   const options = {
     ...blobs,
+    now,
     waitImpl: async () => {},
   };
   const firstResult = await waitForLatestInboundReply(
@@ -65,6 +67,39 @@ test("only the latest inbound event may answer after the quiet window", async ()
 
 test("default quiet window is eight seconds", () => {
   assert.equal(DEFAULT_DEBOUNCE_MS, 8_000);
+});
+
+test("slow lead routing consumes the quiet window instead of adding another delay", async () => {
+  const blobs = fakeBlobs();
+  const markedAt = Date.parse("2026-08-14T10:36:22-03:00");
+  await markLatestInboundForReply(
+    {
+      phone: "+5511900000000",
+      eventId: "slow-route-event",
+      eventAt: "2026-08-14T10:36:22-03:00",
+    },
+    { ...blobs, now: markedAt },
+  );
+  let waitedFor = null;
+  const result = await waitForLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "slow-route-event",
+      markerStatus: "completed",
+      configuredDelayMs: 8_000,
+    },
+    {
+      ...blobs,
+      now: markedAt + 14_000,
+      waitImpl: async (milliseconds) => {
+        waitedFor = milliseconds;
+      },
+    },
+  );
+
+  assert.equal(result.shouldProcess, true);
+  assert.equal(result.delayMs, 0);
+  assert.equal(waitedFor, null);
 });
 
 test("a newer message arriving during generation supersedes the older reply", async () => {
