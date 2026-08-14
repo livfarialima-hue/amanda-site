@@ -145,7 +145,9 @@ function doPost(e) {
       if (!lock.tryLock(5000)) {
         return json_({ ok: false, error: "busy_retry" });
       }
-      const healthResult = executarTesteSinteticoIntegracoes_();
+      const healthResult = executarTesteSinteticoIntegracoes_(
+        body.attributionProbe || {},
+      );
       return json_({ ok: healthResult.ok === true, ...healthResult });
     }
 
@@ -1415,6 +1417,35 @@ function normalizeLead_(input) {
     ? input.platform
     : "Não identificada";
 
+  const allowedReferenceCategories = new Set([
+    "meta_coded",
+    "meta_ad_id",
+    "meta_uncoded",
+    "google_coded",
+    "google_click_id",
+    "site_page",
+    "site_cta",
+    "site_uncoded",
+    "whatsapp_uncoded",
+  ]);
+  const referenceCategory = allowedReferenceCategories.has(
+    String(input.referenceCategory || "").trim(),
+  )
+    ? String(input.referenceCategory).trim()
+    : "unknown";
+  const allowedFallbackReasons = new Set([
+    "meta_referral_without_mapped_code",
+    "meta_ad_id_without_campaign_mapping",
+    "google_click_without_campaign_code",
+    "site_source_without_campaign_code",
+    "direct_or_unknown_without_code",
+  ]);
+  const attributionFallbackReason = allowedFallbackReasons.has(
+    String(input.attributionFallbackReason || "").trim(),
+  )
+    ? String(input.attributionFallbackReason).trim()
+    : "";
+
   const gclid = safeText_(input.gclid, 500);
   const gbraid = gclid ? "" : safeText_(input.gbraid, 500);
   const wbraid = gclid || gbraid
@@ -1431,6 +1462,8 @@ function normalizeLead_(input) {
       200,
     ),
     platform,
+    referenceCategory,
+    attributionFallbackReason,
     gclid,
     gbraid,
     wbraid,
@@ -1637,11 +1670,21 @@ function getOrCreateEventSheet_(spreadsheet) {
     "Opportunity ID",
     "Profissional",
     "Status de roteamento",
+    "Categoria da referência",
+    "Motivo do fallback",
+    "Referência de origem",
+    "Plataforma de aquisição",
   ];
   if (!sheet) {
     sheet = spreadsheet.insertSheet(CONFIG.eventSheetName);
     sheet.setFrozenRows(1);
     sheet.hideSheet();
+  }
+  if (sheet.getMaxColumns() < headers.length) {
+    sheet.insertColumnsAfter(
+      sheet.getMaxColumns(),
+      headers.length - sheet.getMaxColumns(),
+    );
   }
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
@@ -1911,6 +1954,10 @@ function recordProcessedEvent_(
     opportunityId || lead.opportunityId || "",
     professional || lead.professional || "unknown",
     routeStatus || lead.routeStatus || "pending",
+    lead.referenceCategory || "unknown",
+    lead.attributionFallbackReason || "",
+    lead.reference || "",
+    lead.platform || "Não identificada",
   ]);
 }
 

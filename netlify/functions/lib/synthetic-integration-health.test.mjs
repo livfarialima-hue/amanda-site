@@ -25,6 +25,12 @@ test("synthetic health probe contains no patient or WhatsApp payload", async () 
   assert.deepEqual(payload, {
     secret: "test-secret",
     action: "run_synthetic_health_check",
+    attributionProbe: {
+      reference: "M26F02S-C01H01-avaliacao-facial",
+      platform: "Meta",
+      referenceCategory: "meta_coded",
+      fallbackReason: "",
+    },
   });
   assert.equal(JSON.stringify(payload).includes("phone"), false);
   assert.equal(JSON.stringify(payload).includes("message"), false);

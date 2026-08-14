@@ -10,7 +10,23 @@ const SYNTHETIC_HEALTH_HEADERS = Object.freeze([
   "Detalhe técnico",
 ]);
 
-function avaliarContratosTesteSintetico_(now) {
+function avaliarContratoAtribuicaoMetaSite_(probe) {
+  const input = probe && typeof probe === "object" ? probe : {};
+  const reference = String(input.reference || "").trim().slice(0, 200);
+  const platform = String(input.platform || "").trim();
+  const referenceCategory = String(input.referenceCategory || "").trim();
+  const fallbackReason = String(input.fallbackReason || "").trim();
+  const decomposition = decomporReferenciaAquisicao_(reference);
+
+  return platform === "Meta" &&
+    referenceCategory === "meta_coded" &&
+    fallbackReason === "" &&
+    decomposition.campaign === "M26F02S" &&
+    decomposition.creative === "C01H01" &&
+    decomposition.cta === "avaliacao-facial";
+}
+
+function avaliarContratosTesteSintetico_(now, attributionProbe) {
   const classificationRow = Array(20).fill("");
   classificationRow[4] = "running";
   classificationRow[5] = new Date(now.getTime() - 60 * 60 * 1000);
@@ -32,18 +48,20 @@ function avaliarContratosTesteSintetico_(now) {
     classificationOk: classification.action === "requeue",
     handoffOk: handoff.ok === true &&
       handoff.type === "human_handoff_queued",
+    attributionOk: avaliarContratoAtribuicaoMetaSite_(attributionProbe),
   };
 }
 
-function executarTesteSinteticoIntegracoes_() {
+function executarTesteSinteticoIntegracoes_(attributionProbe) {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  getOrCreateEventSheet_(spreadsheet);
   const sheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
     SYNTHETIC_HEALTH_SHEET,
     SYNTHETIC_HEALTH_HEADERS,
   );
   const now = new Date();
-  const runId = "synthetic_" + Utilities.formatDate(
+  const runId = "synthetic_attribution_v1_" + Utilities.formatDate(
     now,
     CONFIG.timezone,
     "yyyyMMdd",
@@ -70,14 +88,20 @@ function executarTesteSinteticoIntegracoes_() {
   const row = sheet.getLastRow();
   SpreadsheetApp.flush();
   const persisted = String(sheet.getRange(row, 1).getDisplayValue()) === runId;
-  const contracts = avaliarContratosTesteSintetico_(now);
-  const ok = persisted && contracts.classificationOk && contracts.handoffOk;
+  const contracts = avaliarContratosTesteSintetico_(now, attributionProbe);
+  const ok = persisted &&
+    contracts.classificationOk &&
+    contracts.handoffOk &&
+    contracts.attributionOk;
   const detail = [
     persisted ? "persistence_ok" : "persistence_failed",
     contracts.classificationOk
       ? "classification_contract_ok"
       : "classification_contract_failed",
     contracts.handoffOk ? "handoff_contract_ok" : "handoff_contract_failed",
+    contracts.attributionOk
+      ? "meta_attribution_contract_ok"
+      : "meta_attribution_contract_failed",
   ].join("|");
   sheet.getRange(row, 3, 1, 5).setValues([[
     persisted ? "ok" : "failed",

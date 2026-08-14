@@ -14,6 +14,12 @@ export async function runSyntheticIntegrationHealth({
       body: JSON.stringify({
         secret,
         action: "run_synthetic_health_check",
+        attributionProbe: {
+          reference: "M26F02S-C01H01-avaliacao-facial",
+          platform: "Meta",
+          referenceCategory: "meta_coded",
+          fallbackReason: "",
+        },
       }),
     });
     const data = await response.json().catch(() => null);

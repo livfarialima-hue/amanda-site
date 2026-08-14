@@ -429,6 +429,23 @@ function hasSafeSiteEvidence(payload, message) {
   );
 }
 
+export function attributionFallbackReason(referenceCategory) {
+  switch (String(referenceCategory || "")) {
+    case "meta_uncoded":
+      return "meta_referral_without_mapped_code";
+    case "meta_ad_id":
+      return "meta_ad_id_without_campaign_mapping";
+    case "google_click_id":
+      return "google_click_without_campaign_code";
+    case "site_uncoded":
+      return "site_source_without_campaign_code";
+    case "whatsapp_uncoded":
+      return "direct_or_unknown_without_code";
+    default:
+      return "";
+  }
+}
+
 export function classifyAttribution(payload, message, text) {
   const referralIsMeta =
     String(
@@ -533,6 +550,7 @@ export function classifyAttribution(payload, message, text) {
     reference: referenceValue,
     platform,
     referenceCategory,
+    fallbackReason: attributionFallbackReason(referenceCategory),
     clickIds,
   };
 }
@@ -2765,6 +2783,8 @@ export default async (request, context) => {
     text,
     reference: attribution.reference,
     platform: attribution.platform,
+    referenceCategory: attribution.referenceCategory,
+    attributionFallbackReason: attribution.fallbackReason,
     ...attribution.clickIds,
   };
 

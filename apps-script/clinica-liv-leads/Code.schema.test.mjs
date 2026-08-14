@@ -34,10 +34,12 @@ function loadCode() {
 globalThis.__test = {
   CONFIG,
   EXPECTED_HEADERS,
+  normalizeLead_,
   writeLead_,
   decomporReferenciaAquisicao_,
   isKnownPatientRelationship_,
   findProcessedEvent_,
+  recordProcessedEvent_,
   resolvePendingProcessedEvent_,
   resolucaoLeadBloqueiaInsercao_,
 };`,
@@ -202,6 +204,59 @@ test("Meta creative and CTA remain independently auditable", () => {
       reference: "M26O01W-DbHKuWfGP_N-OT02",
     },
   );
+});
+
+test("lead normalization keeps only bounded attribution diagnostics", () => {
+  const { normalizeLead_ } = loadCode();
+  const lead = normalizeLead_({
+    eventId: "event-1",
+    messageId: "message-1",
+    phone: "+5511900000000",
+    contactAt: "2026-08-14T12:00:00.000Z",
+    reference: "M26F02S-C01H01-avaliacao-facial",
+    platform: "Meta",
+    referenceCategory: "meta_coded",
+    attributionFallbackReason: "arbitrary_reason",
+  });
+
+  assert.equal(lead.referenceCategory, "meta_coded");
+  assert.equal(lead.attributionFallbackReason, "");
+});
+
+test("processed lead event persists campaign coverage and fallback reason", () => {
+  const { recordProcessedEvent_ } = loadCode();
+  let appended = null;
+  const sheet = {
+    appendRow(values) {
+      appended = values;
+    },
+  };
+
+  recordProcessedEvent_(
+    sheet,
+    {
+      messageId: "message-1",
+      eventId: "event-1",
+      phone: "+5511900000000",
+      contactAt: new Date("2026-08-14T12:00:00.000Z"),
+      referenceCategory: "meta_uncoded",
+      attributionFallbackReason: "meta_referral_without_mapped_code",
+      reference: "META-DIRETO-SEM-CODIGO",
+      platform: "Meta",
+    },
+    27,
+    "inserted",
+    "opp-amanda-1",
+    "amanda",
+    "resolved",
+  );
+
+  assert.deepEqual(JSON.parse(JSON.stringify(appended.slice(9))), [
+    "meta_uncoded",
+    "meta_referral_without_mapped_code",
+    "META-DIRETO-SEM-CODIGO",
+    "Meta",
+  ]);
 });
 
 test("a duplicate keeps the pending route state visible to the caller", () => {

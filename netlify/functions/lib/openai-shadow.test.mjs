@@ -8,7 +8,10 @@ import {
   parseOpenAIShadowResponse,
   runOpenAIShadow,
 } from "./openai-shadow.mjs";
-import webhook, { classifyAttribution } from "../ycloud-webhook.mjs";
+import webhook, {
+  attributionFallbackReason,
+  classifyAttribution,
+} from "../ycloud-webhook.mjs";
 
 const PHONE = "+5511961957144";
 
@@ -213,7 +216,21 @@ test("recognizes the exact M26F02S site journey used by the active campaign", ()
   assert.equal(attribution.platform, "Meta");
   assert.equal(attribution.referenceCategory, "meta_coded");
   assert.equal(attribution.reference, "M26F02S-avaliacao-facial");
+  assert.equal(attribution.fallbackReason, "");
   assert.deepEqual(attribution.clickIds, {});
+});
+
+test("uncoded acquisition sources carry an explicit bounded fallback reason", () => {
+  assert.equal(
+    attributionFallbackReason("meta_uncoded"),
+    "meta_referral_without_mapped_code",
+  );
+  assert.equal(
+    attributionFallbackReason("site_uncoded"),
+    "site_source_without_campaign_code",
+  );
+  assert.equal(attributionFallbackReason("meta_coded"), "");
+  assert.equal(attributionFallbackReason("unexpected"), "");
 });
 
 test("maps known Meta ad IDs to complete campaign references", () => {
