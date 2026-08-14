@@ -90,6 +90,8 @@ O monitor diário comprova Netlify → Apps Script, autenticação, persistênci
 
 **Resultado de 14/08/2026:** Netlify e site publicados no deploy `6a7f2c57550d2700084f51f3`, commit `bf95bb4`. O diagnóstico ficou saudável, as páginas técnicas responderam HTTP 200, a página `/lifting-facial/` permaneceu idêntica e o teste sintético sem dados de paciente concluiu persistência, classificação e handoff com resultado `ok`. Isso valida o caminho Netlify → Apps Script, mas ainda não prova entrega do provedor YCloud nem os gates longitudinais.
 
+O checkpoint agregado posterior confirmou zero nova duplicidade, mas ainda encontrou 27 divergências de fase, 33 consultas sem `Opportunity ID`, ausência de `_FUNIL_CANONICO` e fórmulas legadas nos painéis. Portanto, a publicação técnica não libera diretamente os itens 2 a 7 da etapa 3 nem a etapa 4; cada bloco continua sujeito à simulação atualizada e autorização específica de escrita.
+
 ## Etapa 6 — Verificações externas
 
 - Google Ads: conferir que `Lead qualificado GCLID` continua Principal/incluída, importar apenas linhas válidas, registrar aceite/rejeição por transação e observar sete dias. Não ativar tCPA, Performance Max, correspondência ampla ou aumento de orçamento durante o gate.

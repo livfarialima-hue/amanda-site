@@ -92,3 +92,12 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - `/lifting-facial/` permaneceu idêntica ao arquivo local depois de normalizar somente quebras de linha; nenhum texto, layout, vídeo, CTA ou característica mudou.
 - O monitor `synthetic-integration-health` foi executado manualmente porque o horário diário já havia passado. A aba oculta `_INTEGRATION_HEALTH_SYNTHETIC` registrou um único teste sem PII/PHI, com persistência, contrato de classificação, handoff e resultado final `ok`.
 - A publicação não alterou campanhas, Calendar, fases históricas, atribuição histórica ou fórmulas dos painéis.
+
+### Checkpoint agregado após a publicação
+
+- O CRM contém 141 oportunidades: 128 de Amanda, 3 de Daniel e 10 arquivadas ou de outros fluxos. As abas visíveis contêm exatamente 128 e 3 IDs únicos, respectivamente, sem nova duplicidade.
+- Permanecem 27 divergências de fase entre CRM e aba visível; nenhuma foi corrigida neste checkpoint.
+- `Consultas` contém 43 registros: 10 com `Opportunity ID` e ID de evento Google; 33 sem `Opportunity ID`, sendo 22 encerrados e 11 ativos ou sem desfecho inequívoco.
+- `_FUNIL_CANONICO` ainda não existe. `Saúde das Integrações` continua referenciando `IMPORT_GCLID` e contém uma fórmula `#VALUE!` por intervalos de tamanhos diferentes.
+- No recorte de sete dias, `Painel do Bot` registra 198 mensagens recebidas, 41 pessoas, 173 mensagens humanas, 2 pendências vencidas e 8 erros de classificação. A métrica antiga “Conversas assumidas” ainda lê `_WHATSAPP_ATENDIMENTO` e mostra zero, portanto não deve ser usada.
+- Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem exportação de nome, telefone, e-mail, conversa ou dado clínico. Eles confirmam a ordem do próximo bloco, mas não autorizam as escritas históricas.
