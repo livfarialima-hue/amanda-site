@@ -2,7 +2,7 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
-> **Produção:** base do Apps Script na versão 78; Netlify e site publicados em 14/08/2026 no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. O teste sintético Netlify → Apps Script foi executado sem dados de paciente e confirmou persistência, contrato de classificação e handoff. Fórmulas dos painéis, consultas, atribuição, Calendar e mídia não foram alterados no bloco de fases.
+> **Produção:** base do Apps Script na versão 80, vinculada ao commit `fc0785a`; Netlify e site foram publicados em 14/08/2026 no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. Na reconciliação segura seguinte, 3 fases derivadas de consultas foram avançadas e 9 eventos existentes do Google Calendar tiveram somente metadados operacionais saneados, sem mudar data/hora nem criar duplicatas. Permaneceram bloqueados para revisão humana 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 evento com divergência de horário e metadados e 1 consulta sem link válido. Fórmulas dos painéis, atribuição, mídia e `/lifting-facial/` não foram alteradas nesse bloco.
 
 ## Estado de produção
 

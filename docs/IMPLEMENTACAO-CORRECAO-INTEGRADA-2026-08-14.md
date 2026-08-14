@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 78; deduplicação reversível e reconciliação das fases históricas aplicadas e validadas; Netlify e site publicados no commit `fc433da`; teste sintético aprovado; funil, consultas, atribuição e fórmulas ainda não migrados
+**Estado:** Apps Script publicado na versão 80; deduplicação, fases históricas e o subconjunto seguro de consultas aplicados e validados; Netlify e site publicados no commit `fc433da`; teste sintético aprovado; casos ambíguos de consultas, funil, atribuição e fórmulas ainda não migrados
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -89,6 +89,16 @@
 
 O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-CORRECAO-INTEGRADA-2026-08-14.md`. O inventário exato do pacote está em `docs/PACOTE-PUBLICACAO-CORRECAO-INTEGRADA-2026-08-14.md`.
 
+### Reconciliação segura de consultas autorizada
+
+- O executor protegido `aplicarReconciliacaoConsultasSegurasAutorizada`, no commit `fc0785a`, usa trava exclusiva, pré-voo fixado e resolução indexada por oportunidade, telefone e profissional. Profissionais externos não são convertidos em oportunidades de Amanda ou Daniel.
+- Uma cópia nativa privada com 36 abas foi criada imediatamente antes da escrita. A comparação posterior com essa cópia confirmou o escopo exato das células alteradas.
+- A aplicação avançou 3 fases apoiadas por status estruturado de consulta e registrou 3 eventos de fase. Atualizou no próprio evento os metadados operacionais de 9 vínculos do Google Calendar que já tinham data e hora corretas.
+- Nenhum evento foi criado, removido ou duplicado; datas e horários permaneceram intactos. Um caso com divergência temporal e um link inválido foram bloqueados, assim como 26 registros sem oportunidade correspondente e 1 vínculo incompatível com o profissional.
+- O primeiro pós-voo na mesma execução apresentou um falso negativo causado por literais Unicode inválidos na comparação de metadados. O código foi corrigido antes de nova tentativa; a auditoria fresca encontrou 0 reparo seguro pendente, e a repetição retornou `alreadyReconciled: true` sem nova escrita.
+- A versão 80 foi publicada no mesmo deployment; o endpoint respondeu HTTP 200 com `ok: true`, a suíte local passou com **520 de 520 testes** e a aba `Consultas` foi inspecionada visualmente em produção.
+- Atribuição, `_FUNIL_CANONICO`, fórmulas dos painéis, mídia e `/lifting-facial/` não foram alterados neste bloco.
+
 ## Gates que permanecem externos
 
 A aprovação deste trabalho local não prova os gates de produção. Depois da autorização de publicação, a observação deve demonstrar: sete dias de conversão Google saudável; 14 dias sem nova divergência CRM–aba; pelo menos 95% de reconciliação de novas consultas com Calendar; pelo menos 80% de cobertura consentida para `M26F02S`; SLA calculável em pelo menos 95% das novas conversas e nenhum P0/P1 vencido.
@@ -110,4 +120,4 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - `Consultas` contém 43 registros: 10 com `Opportunity ID` e ID de evento Google; 33 sem `Opportunity ID`, sendo 22 encerrados e 11 ativos ou sem desfecho inequívoco.
 - `_FUNIL_CANONICO` ainda não existe. `Saúde das Integrações` continua referenciando `IMPORT_GCLID` e contém uma fórmula `#VALUE!` por intervalos de tamanhos diferentes.
 - No recorte de sete dias, `Painel do Bot` registra 198 mensagens recebidas, 41 pessoas, 173 mensagens humanas, 2 pendências vencidas e 8 erros de classificação. A métrica antiga “Conversas assumidas” ainda lê `_WHATSAPP_ATENDIMENTO` e mostra zero, portanto não deve ser usada.
-- Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem persistir nome, telefone, e-mail, conversa ou dado clínico no relatório. Consultas, atribuição, funil e fórmulas continuam exigindo autorização própria.
+- Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem persistir nome, telefone, e-mail, conversa ou dado clínico no relatório. O subconjunto seguro de consultas foi executado depois e está documentado acima; os casos bloqueados, a atribuição, o funil e as fórmulas continuam exigindo autorização própria.

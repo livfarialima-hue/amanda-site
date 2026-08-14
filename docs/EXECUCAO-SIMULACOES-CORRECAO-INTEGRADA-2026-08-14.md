@@ -1,8 +1,8 @@
 # Execução das simulações da correção integrada — 14 de agosto de 2026
 
-**Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação isolada. Em autorização posterior, liberou apenas a reconciliação das 27 fases históricas. Funil, consultas, atribuição, fórmulas, Calendar e mídia continuam fora dessa autorização.
+**Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação, a reconciliação das fases históricas e, em bloco posterior, a reconciliação segura de consultas e Calendar. Funil, atribuição, fórmulas e mídia continuam fora dessa autorização.
 
-**Resultado:** Apps Script versão 78 publicado; nove simulações iniciais concluídas; deduplicação e fases históricas aplicadas em blocos separados, com backups, travas e pós-voos idempotentes. Consultas, atribuição, funil, fórmulas, Calendar e mídia permanecem pendentes de autorização específica.
+**Resultado:** Apps Script versão 80 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas e o subconjunto seguro de consultas aplicados em blocos separados, com backups, travas e pós-voos idempotentes. Casos ambíguos de consultas, atribuição, funil, fórmulas e mídia permanecem pendentes de autorização específica.
 
 ## Versões e backup
 
@@ -11,11 +11,15 @@
 - Versão usada nas simulações iniciais: **76**, de 14/08/2026 às 08:27.
 - Versão publicada para a deduplicação auditável: **77**, de 14/08/2026 às 10:03.
 - Versão publicada para a reconciliação protegida das fases: **78**, de 14/08/2026 às 12:21.
+- Versão intermediária da reconciliação de consultas: **79**.
+- Versão publicada após corrigir a comparação Unicode e validar a reconciliação segura: **80**, de 14/08/2026 às 13:15.
 - Deployment ID preservado: `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`.
 - Endpoint validado por HTTP: status 200, `ok: true`, serviço `clinica-liv-leads`.
 - Commits de diagnóstico: `0cba7a7`, `6b9e676` e `fe7cd27`.
 - Commit da deduplicação com trava, rollback e IDs de restauração: `b0da4b6`.
+- Commit da reconciliação segura de consultas: `fc0785a`.
 - Backup nativo criado antes da etapa: [LEADS — backup antes da correção integrada — 2026-08-14](https://docs.google.com/spreadsheets/d/1OxPqMNNJCAifcbPxz9dMFmqw3vJxjWz7WvrdfcjMOj4/edit).
+- Backup nativo criado imediatamente antes da reconciliação segura: [LEADS — backup antes da reconciliação segura de consultas — 2026-08-14 13h07](https://docs.google.com/spreadsheets/d/1xaBUZNczhRn8AVH3v8a-YQYyPNKoLWVMwMpx601PJfA/edit).
 - Integridade estrutural do backup: 33 abas; `IMPORT_GOOGLE_ADS` permanece na primeira posição.
 - Backup nativo imediatamente anterior à escrita: [LEADS — backup antes da deduplicação reversível — 2026-08-14 09-58](https://docs.google.com/spreadsheets/d/1vurtQrmroJNvYvavoh4bl5v6UNDpsv2R34omJQ2a-xU/edit).
 - Integridade estrutural do backup pré-escrita: 34 abas; `IMPORT_GOOGLE_ADS` permanece na primeira posição.
@@ -59,12 +63,23 @@
 
 ## Decisão do gate
 
-A aplicação integral continua reprovada por identidades de consultas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda insuficiente. Deduplicação e fases foram concluídas como blocos isolados. O próximo bloco deve ser escolhido e autorizado separadamente entre consultas, atribuição, funil canônico/painéis, Google Ads ou reaper operacional.
+A aplicação integral continua reprovada por identidades de consultas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda insuficiente. Deduplicação, fases e o subconjunto seguro de consultas foram concluídos como blocos isolados. O próximo bloco deve ser escolhido e autorizado separadamente entre revisão manual das consultas bloqueadas, atribuição, funil canônico/painéis, Google Ads ou reaper operacional.
+
+## Reconciliação segura de consultas e Calendar
+
+- Pré-voo: 43 registros inspecionados; 36 elegíveis à identidade e 7 não aplicáveis; 9 identidades já consistentes; 26 sem oportunidade correspondente; 1 vínculo incompatível com o profissional; nenhum vínculo de identidade era seguro para preenchimento automático.
+- Fase: 8 registros elegíveis, 5 já consistentes e 3 reparáveis. A execução avançou as 3 fases pelo caminho canônico e acrescentou 3 eventos de auditoria, sem rebaixamento de estágio.
+- Calendar: 11 registros elegíveis; 9 eventos tinham data/hora corretas e somente metadados operacionais legados, por isso foram atualizados no mesmo ID. Um evento com divergência de horário e metadados e uma consulta sem link válido permaneceram bloqueados.
+- Integridade externa: 18 eventos continuaram distribuídos entre as duas agendas; nenhum evento foi criado, excluído ou duplicado e nenhuma data/hora foi alterada.
+- Diferença exata contra o backup: 9 células em `_CRM_OPORTUNIDADES`, 9 em `Google Ads - Conversões`, 9 em `Consultas` e 3 novas linhas em `_LEAD_FASE_EVENTOS`; `Leads Dr. Daniel` ficou sem alteração.
+- O primeiro retorno pós-escrita marcou `ok: false` porque literais Unicode inválidos fizeram a mesma execução classificar novamente os 9 metadados já corrigidos. A escrita havia sido aplicada corretamente; o código foi corrigido antes de qualquer nova ação. Uma auditoria fresca confirmou 9 eventos consistentes, 0 reparo seguro pendente e 2 bloqueios; a repetição protegida retornou `alreadyReconciled: true` e não escreveu novamente.
+- Validação final: Apps Script versão 80, endpoint HTTP 200 com `ok: true`, **520 de 520 testes locais aprovados** e inspeção visual da aba `Consultas` sem dano a cabeçalhos, filtros, congelamento ou layout.
+- Nenhum alerta por e-mail foi disparado: os reparos executados eram estruturados e de alta confiança; os casos de baixa confiança não foram modificados e permaneceram na revisão humana.
 
 ## Limites preservados
 
-- Somente a deduplicação e as fases autorizadas foram executadas com escrita; cada linha removida foi arquivada antes da limpeza e possui `Backup ID` exato.
-- Nenhuma fórmula, consulta, atribuição, evento do Calendar, conversão do Google Ads ou campanha foi alterada no bloco de fases.
-- A versão 78 do Apps Script foi publicada; Netlify e site não receberam código funcional novo neste bloco.
+- Somente a deduplicação, as fases e os reparos seguros de consultas autorizados foram executados com escrita; cada linha removida foi arquivada antes da limpeza e possui `Backup ID` exato.
+- Nenhuma fórmula, atribuição, conversão do Google Ads ou campanha foi alterada no bloco de consultas; datas/horários das consultas e dos eventos permaneceram intactos.
+- A versão 80 do Apps Script foi publicada; Netlify e site não receberam código funcional novo neste bloco.
 - `/lifting-facial/` não foi alterada.
 - Nenhum identificador de paciente, telefone, mensagem ou dado clínico foi persistido neste registro.

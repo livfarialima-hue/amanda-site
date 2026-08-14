@@ -1,6 +1,6 @@
 # Runbook da correção integrada — 14 de agosto de 2026
 
-**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 78 publicado; deduplicação e fases históricas da etapa 3 concluídas; publicação técnica e teste sintético da etapa 5 concluídos no commit `fc433da`
+**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 80 publicado; deduplicação, fases históricas e o subconjunto seguro de consultas da etapa 3 concluídos; publicação técnica e teste sintético da etapa 5 concluídos no commit `fc433da`
 
 **Norte canônico:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -49,7 +49,7 @@ auditarSlaOperacional();
 
 Reprovar a migração se houver identidade ambígua, conflito de fase equivalente, atribuição já preenchida em desacordo, mais de um click ID, transação duplicada não resolvida, Calendar sem vínculo único ou diferença material não explicada em relação ao diagnóstico anterior.
 
-**Resultado de 14/08/2026:** as nove simulações terminaram com `apply: false` e reprovaram a aplicação integral. A deduplicação reversível foi depois autorizada isoladamente e concluída: 2 grupos, 3 linhas arquivadas, 0 conflito e 0 rollback. Em um segundo bloco autorizado, uma nova simulação confirmou 131 oportunidades, 27 fases reparáveis e zero conflito; a aplicação corrigiu as 27 e o pós-voo ficou com zero divergência. Consultas e atribuição continuam separadas por seus bloqueios. Ver `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
+**Resultado de 14/08/2026:** as nove simulações terminaram com `apply: false` e reprovaram a aplicação integral. A deduplicação reversível foi depois autorizada isoladamente e concluída: 2 grupos, 3 linhas arquivadas, 0 conflito e 0 rollback. Em um segundo bloco autorizado, uma nova simulação confirmou 131 oportunidades, 27 fases reparáveis e zero conflito; a aplicação corrigiu as 27 e o pós-voo ficou com zero divergência. Em um terceiro bloco, o executor seguro de consultas aplicou apenas 3 avanços de fase e saneou os metadados de 9 eventos existentes do Calendar, sem alterar horários ou criar eventos. Os demais casos de identidade ou Calendar permaneceram bloqueados; atribuição continua separada por seus próprios conflitos. Ver `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 ## Etapa 3 — Aplicar os reparos reversíveis
 
@@ -57,7 +57,7 @@ Somente depois da revisão das simulações e da autorização específica de mi
 
 1. `executarDeduplicacaoReversivelLeads({ apply: true })` — arquiva a linha integral em `_LEADS_DUPLICADOS_ARQUIVO` antes de retirar o excesso. Guardar todos os `Backup ID`.
 2. `aplicarReconciliacaoFasesHistoricasAutorizada()` — exige contagem e conflito idênticos ao pré-voo autorizado, sincroniza CRM e aba visível pelo caminho canônico e repete a auditoria; qualquer desvio bloqueia antes da escrita.
-3. `reconciliarConsultasHistoricas({ apply: true })` — preenche somente vínculos únicos. Consultas encerradas não recriam eventos antigos.
+3. `aplicarReconciliacaoConsultasSegurasAutorizada()` — exige o pré-voo fixado, aplica somente fases inequivocamente derivadas de status estruturado e corrige apenas metadados de eventos já vinculados quando data e hora coincidem. Divergência de horário, vínculo inválido, identidade ambígua ou ausência de oportunidade bloqueia a linha.
 4. `reconciliarAtribuicaoHistoricaLeads({ apply: true })` — preenche apenas campos vazios; qualquer divergência bloqueia a linha.
 5. `reconciliarGoogleAdsLedgerEImportacao({ apply: true })` — reconcilia ledger e primeira aba por transação, sem afirmar aceite pelo Google.
 6. `reconstruirFonteFunilCanonico({ apply: true })` — gera `_FUNIL_CANONICO` com uma linha por oportunidade ativa e sem PII.
@@ -65,7 +65,7 @@ Somente depois da revisão das simulações e da autorização específica de mi
 
 Depois de cada item, repetir sua simulação. Se o segundo resultado não for idempotente ou surgir erro, parar a sequência.
 
-**Execução de 14/08/2026:** item 1 concluído por `aplicarDeduplicacaoReversivelAutorizada`; os 3 `Backup ID` estão no registro de execução e a repetição foi idempotente. Item 2 concluído por `aplicarReconciliacaoFasesHistoricasAutorizada`: 27 reparadas, zero conflito, zero divergência no pós-voo e endpoint versão 78 saudável. Itens 3 a 7 permanecem pendentes de autorização por bloco.
+**Execução de 14/08/2026:** item 1 concluído por `aplicarDeduplicacaoReversivelAutorizada`; os 3 `Backup ID` estão no registro de execução e a repetição foi idempotente. Item 2 concluído por `aplicarReconciliacaoFasesHistoricasAutorizada`: 27 reparadas, zero conflito e zero divergência no pós-voo. O subconjunto seguro do item 3 foi concluído por `aplicarReconciliacaoConsultasSegurasAutorizada`: 3 fases e 9 metadados de eventos reparados, 0 duplicata, 0 mudança de data/hora e repetição inócua. O Apps Script versão 80 respondeu HTTP 200. Itens 4 a 7 permanecem pendentes de autorização por bloco; os casos bloqueados do item 3 exigem revisão humana.
 
 ## Etapa 4 — Reconciliar os painéis
 
@@ -90,7 +90,7 @@ O monitor diário comprova Netlify → Apps Script, autenticação, persistênci
 
 **Resultado de 14/08/2026:** Netlify e site publicados no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. O diagnóstico ficou saudável, as páginas técnicas responderam HTTP 200, a página `/lifting-facial/` permaneceu idêntica e o teste sintético sem dados de paciente concluiu persistência, classificação e handoff com resultado `ok`. Isso valida o caminho Netlify → Apps Script, mas ainda não prova entrega do provedor YCloud nem os gates longitudinais.
 
-O checkpoint agregado posterior confirmou zero nova duplicidade. O bloco de fases autorizado em seguida eliminou as 27 divergências sem tocar nas 33 consultas sem `Opportunity ID`, na ausência de `_FUNIL_CANONICO` ou nas fórmulas legadas dos painéis. Portanto, os itens 3 a 7 da etapa 3 e a etapa 4 continuam sujeitos a simulação atualizada e autorização específica de escrita.
+O checkpoint agregado posterior confirmou zero nova duplicidade. O bloco de fases eliminou as 27 divergências gerais. O bloco seguro de consultas avançou 3 fases e saneou 9 eventos existentes; 26 registros sem oportunidade correspondente, 1 vínculo incompatível com o profissional, 1 divergência de horário/metadados e 1 link inválido permaneceram sem alteração automática. Portanto, os itens 4 a 7 da etapa 3, os casos bloqueados do item 3 e a etapa 4 continuam sujeitos a simulação atualizada e autorização específica de escrita.
 
 ## Etapa 6 — Verificações externas
 
