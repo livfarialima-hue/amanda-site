@@ -296,6 +296,15 @@ O e-mail organiza a agenda diária e separa com clareza:
 
 Nas retomadas comerciais que aparecem como ação humana, o e-mail também pode mostrar o botão `Passar para a Bruna`. Ele não envia a mensagem no primeiro clique: abre uma página que repete o texto sugerido e exige confirmação explícita. Depois da confirmação, somente aquele plano entra na fila automática, com registro da data e da origem da aprovação.
 
+Para aprovar várias de uma vez, usar a aba `Central de Atendimento`:
+
+1. revisar o histórico e a coluna `Resposta sugerida` de cada retomada;
+2. marcar `Aprovar com a Bruna` nas linhas desejadas;
+3. abrir `Central LIV > Aprovar retomadas marcadas`;
+4. conferir a quantidade exibida e confirmar uma única vez.
+
+A marcação da caixa, isoladamente, nunca envia mensagem. O comando do menu processa somente linhas de `Retomada de marketing` que continuam em modo `Manual`, com status `Programado` e texto sugerido preenchido. Linhas marcadas por engano permanecem humanas e recebem uma observação com o motivo. As aprovadas passam a `Bruna/bot` e `Automático`, preservam o horário planejado e continuam sujeitas à validação final individual.
+
 Antes de usar o botão:
 
 1. abrir o WhatsApp e ler o histórico recente da paciente e da clínica;

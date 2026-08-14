@@ -387,3 +387,186 @@ test("excludes Dr. Henrique appointments without hiding a referral", () => {
   assert.equal(excluded["+5511999990001"], true);
   assert.equal(excluded["+5511999990002"], undefined);
 });
+
+test("central exposes a batch approval checkbox and menu without making it an on-edit send", () => {
+  assert.match(source, /"Aprovar com a Bruna"/);
+  assert.match(source, /"Aprovar retomadas marcadas"/);
+  assert.match(source, /insertCheckboxes\(\)/);
+  assert.match(source, /ui\.ButtonSet\.YES_NO/);
+  assert.doesNotMatch(
+    source,
+    /processarEdicaoCentralAtendimento_[\s\S]{0,1800}aprovarPlanoRetomadaParaBot_/,
+  );
+});
+
+test("registered manual follow-ups are eligible while approved plans are shown as automatic", () => {
+  const context = loadContext();
+  const manual = Array(17).fill("");
+  manual[0] = "2026-08-14|manual";
+  manual[1] = new Date("2026-08-14T08:00:00-03:00");
+  manual[2] = "+5511999990001";
+  manual[4] = 2;
+  manual[5] = "16:30";
+  manual[6] = "Qualificado";
+  manual[8] = "Mensagem humana sugerida.";
+  manual[9] = "Manual";
+  manual[10] = "Ação manual";
+
+  const automatic = Array(17).fill("");
+  automatic[0] = "2026-08-14|automatic";
+  automatic[1] = new Date("2026-08-14T08:00:00-03:00");
+  automatic[2] = "+5511999990002";
+  automatic[4] = 2;
+  automatic[5] = "16:45";
+  automatic[6] = "Qualificado";
+  automatic[8] = "Mensagem já aprovada.";
+  automatic[9] = "Automático aprovado";
+  automatic[10] = "Programada";
+  automatic[11] = new Date("2026-08-14T16:45:00-03:00");
+
+  const sheet = {
+    getLastRow: () => 3,
+    getRange: () => ({ getValues: () => [manual, automatic] }),
+  };
+  const items = context.carregarRetomadasRegistradasCentral_(
+    { getSheetByName: () => sheet },
+    {
+      "+5511999990001": { relationship: "engaged_lead" },
+      "+5511999990002": { relationship: "engaged_lead" },
+    },
+    new Date("2026-08-14T09:00:00-03:00"),
+  );
+
+  assert.equal(items.length, 2);
+  assert.equal(items[0].mode, "Manual");
+  assert.equal(items[0].approvalBrunaEligible, true);
+  assert.equal(items[1].mode, "Automático");
+  assert.equal(items[1].owner, "Bruna/bot");
+  assert.equal(items[1].approvalBrunaEligible, false);
+});
+
+test("refresh preserves a checked approval only while the follow-up remains eligible", () => {
+  const context = loadContext();
+  const now = new Date("2026-08-14T10:00:00-03:00");
+  const controls = {
+    "followup:plan-1": {
+      approveBruna: true,
+      teamNote: "",
+      lastTeamActionAt: null,
+      deferUntil: null,
+      status: "",
+    },
+  };
+  const eligible = context.criarItemCentral_({
+    queue: "Ação manual hoje",
+    phone: "+5511999990001",
+    approvalBrunaEligible: true,
+    sourceKey: "followup:plan-1",
+  });
+  const ineligible = context.criarItemCentral_({
+    queue: "Consultas e cuidados",
+    phone: "+5511999990002",
+    approvalBrunaEligible: false,
+    sourceKey: "followup:plan-1",
+  });
+
+  context.aplicarControleCentral_(eligible, controls, now);
+  context.aplicarControleCentral_(ineligible, controls, now);
+
+  assert.equal(eligible.approveBruna, true);
+  assert.equal(ineligible.approveBruna, false);
+});
+
+test("checked eligible rows are approved in one batch and ineligible rows remain human", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const eligible = Array(headers.length).fill("");
+  eligible[columns["Responsável"]] = "Equipe";
+  eligible[columns["Modo"]] = "Manual";
+  eligible[columns["Resposta sugerida"]] = "Mensagem aprovada.";
+  eligible[columns["Status operacional"]] = "Programado";
+  eligible[columns["Aprovar com a Bruna"]] = true;
+  eligible[columns.Fonte] = "Retomada de marketing";
+  eligible[columns["Chave operacional"]] = "followup:plan-1";
+
+  const ineligible = Array(headers.length).fill("");
+  ineligible[columns["Responsável"]] = "Equipe";
+  ineligible[columns["Modo"]] = "Manual";
+  ineligible[columns["Resposta sugerida"]] = "Cuidado humano.";
+  ineligible[columns["Status operacional"]] = "Programado";
+  ineligible[columns["Aprovar com a Bruna"]] = true;
+  ineligible[columns.Fonte] = "Consultas";
+  ineligible[columns["Chave operacional"]] = "appointment:1";
+
+  const rows = [eligible, ineligible];
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 3,
+    getRange(row, column, rowCount, columnCount) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      if (row === 2 && column === 1 && rowCount === 2) {
+        return { getValues: () => rows };
+      }
+      return {
+        setValue(value) {
+          writes.push({ row, column, value });
+        },
+      };
+    },
+  };
+  context.assinaturaAprovacaoRetomadaBot_ = (key) =>
+    "token:" + key;
+  context.aprovarPlanoRetomadaParaBot_ = (
+    _spreadsheet,
+    token,
+  ) =>
+    token === "token:plan-1"
+      ? { ok: true }
+      : { ok: false, reason: "plan_not_found" };
+
+  const selected = context.coletarRetomadasMarcadasCentral_(sheet);
+  const result = context.aprovarRetomadasMarcadasCentralInterno_(
+    {},
+    sheet,
+    new Date("2026-08-14T10:00:00-03:00"),
+    selected,
+  );
+
+  assert.equal(selected.length, 2);
+  assert.equal(selected[0].eligible, true);
+  assert.equal(selected[1].eligible, false);
+  assert.equal(result.approved, 1);
+  assert.equal(result.skipped, 1);
+  assert.ok(
+    writes.some(
+      (write) =>
+        write.row === 2 &&
+        write.column === columns["Modo"] + 1 &&
+        write.value === "Automático",
+    ),
+  );
+  assert.equal(
+    writes.filter(
+      (write) =>
+        write.column === columns["Aprovar com a Bruna"] + 1 &&
+        write.value === false,
+    ).length,
+    2,
+  );
+  assert.ok(
+    writes.some(
+      (write) =>
+        write.row === 3 &&
+        write.column === columns["Observação da equipe"] + 1 &&
+        /não programada/i.test(write.value),
+    ),
+  );
+});

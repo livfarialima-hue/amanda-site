@@ -13,6 +13,7 @@ const CENTRAL_ATENDIMENTO_CONFIG = Object.freeze({
   pendingResponseHours: 36,
   completedVisibilityHours: 24,
   maximumRows: 300,
+  followUpColumns: 17,
 });
 
 const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
@@ -34,6 +35,7 @@ const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
   "Observação da equipe",
   "Última ação da equipe",
   "Atualizado em",
+  "Aprovar com a Bruna",
   "Fonte",
   "Chave operacional",
 ]);
@@ -48,6 +50,11 @@ function onOpen() {
     .addItem(
       "Diagnosticar Central",
       "diagnosticarCentralAtendimento",
+    )
+    .addSeparator()
+    .addItem(
+      "Aprovar retomadas marcadas",
+      "aprovarRetomadasMarcadasCentral",
     )
     .addToUi();
 }
@@ -578,6 +585,7 @@ function carregarRetomadasCentral_(
           candidate.lead.resumo ||
           candidate.lead.proximaAcao,
         status: "Programado",
+        approvalBrunaEligible: false,
         source: "Retomada de marketing",
         sourceKey:
           "followup:" + candidate.chaveDiaria,
@@ -598,7 +606,12 @@ function carregarRetomadasRegistradasCentral_(
 
   const today = formatarDataCentral_(now, "yyyy-MM-dd");
   return sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, 9)
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      CENTRAL_ATENDIMENTO_CONFIG.followUpColumns,
+    )
     .getValues()
     .reduce(function (items, row) {
       const recordDate = dataCentralValida_(row[1]);
@@ -624,9 +637,21 @@ function carregarRetomadasRegistradasCentral_(
         return items;
       }
 
+      const planMode = textoCentral_(row[9], 80);
+      const sendStatus = textoCentral_(row[10], 120);
+      const normalizedMode = normalizarTextoCentral_(planMode);
+      const normalizedStatus = normalizarTextoCentral_(sendStatus);
+      const automatic = normalizedMode.indexOf("automatico") === 0;
+      const sent = normalizedStatus === "enviada";
+      const approvalEligible =
+        normalizedMode === "manual" &&
+        normalizedStatus === "acao manual";
+
       items.push(criarItemCentral_({
-        queue: "Ação manual hoje",
-        dueAt: combinarDataHorarioCentral_(today, row[5]),
+        queue: automatic ? "Automático hoje" : "Ação manual hoje",
+        dueAt:
+          (automatic && dataCentralValida_(row[11])) ||
+          combinarDataHorarioCentral_(today, row[5]),
         name: profile.name,
         phone: phone,
         relationship: relationship,
@@ -634,11 +659,12 @@ function carregarRetomadasRegistradasCentral_(
         lastInteractionAt: null,
         nextAction:
           textoCentral_(row[4], 60) + "ª retomada",
-        owner: "Equipe",
-        mode: "Manual",
+        owner: automatic ? "Bruna/bot" : "Equipe",
+        mode: automatic ? "Automático" : "Manual",
         suggestion: textoCentral_(row[8], 700),
         context: textoCentral_(row[7], 420),
-        status: "Programado",
+        status: sent ? "Concluído" : "Programado",
+        approvalBrunaEligible: approvalEligible,
         source: "Retomada de marketing",
         sourceKey:
           "followup:" + textoCentral_(row[0], 260),
@@ -931,6 +957,9 @@ function criarItemCentral_(input) {
     teamNote: "",
     lastTeamActionAt: null,
     updatedAt: new Date(),
+    approvalBrunaEligible:
+      input.approvalBrunaEligible === true,
+    approveBruna: false,
     source: textoCentral_(input.source, 100),
     sourceKey:
       textoCentral_(input.sourceKey, 300) ||
@@ -990,6 +1019,8 @@ function aplicarControleCentral_(item, controls, now) {
   item.teamNote = control.teamNote || "";
   item.lastTeamActionAt = control.lastTeamActionAt;
   item.deferUntil = control.deferUntil;
+  item.approveBruna =
+    item.approvalBrunaEligible && control.approveBruna === true;
 
   if (control.status) {
     item.status = control.status;
@@ -1078,6 +1109,13 @@ function carregarControlesCentral_(sheet) {
           "ultima acao da equipe",
         ),
       ),
+      approveBruna: valorCheckboxCentral_(
+        valorLinhaCentral_(
+          row,
+          columns,
+          "aprovar com a bruna",
+        ),
+      ),
     };
   });
 
@@ -1156,6 +1194,261 @@ function processarEdicaoCentralAtendimento_(event) {
   };
 }
 
+function aprovarRetomadasMarcadasCentral() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = spreadsheet.getSheetByName(
+    CENTRAL_ATENDIMENTO_CONFIG.sheetName,
+  );
+  const ui = SpreadsheetApp.getUi();
+
+  if (!sheet) {
+    ui.alert("A aba Central de Atendimento não foi encontrada.");
+    return { ok: false, error: "central_not_found" };
+  }
+
+  const selected = coletarRetomadasMarcadasCentral_(sheet);
+  if (!selected.length) {
+    ui.alert(
+      "Marque pelo menos uma caixa em “Aprovar com a Bruna”.",
+    );
+    return { ok: true, approved: 0, skipped: 0 };
+  }
+
+  const confirmation = ui.alert(
+    "Aprovar retomadas com a Bruna?",
+    "Você selecionou " +
+      selected.length +
+      " mensagem(ns). Elas serão enviadas exatamente como aparecem em “Resposta sugerida”, no horário planejado, e serão revalidadas antes do disparo.",
+    ui.ButtonSet.YES_NO,
+  );
+
+  if (confirmation !== ui.Button.YES) {
+    return {
+      ok: true,
+      cancelled: true,
+      approved: 0,
+      skipped: 0,
+    };
+  }
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) {
+    ui.alert(
+      "A Central está sendo atualizada. Tente novamente em alguns segundos.",
+    );
+    return { ok: false, error: "busy_retry" };
+  }
+
+  try {
+    const result = aprovarRetomadasMarcadasCentralInterno_(
+      spreadsheet,
+      sheet,
+      new Date(),
+      selected,
+    );
+
+    atualizarCentralAtendimentoInterno_(spreadsheet, new Date());
+
+    ui.alert(
+      "Aprovação concluída",
+      result.approved +
+        " retomada(s) programada(s) com a Bruna. " +
+        result.skipped +
+        " retomada(s) não programada(s) e mantida(s) com a equipe.",
+      ui.ButtonSet.OK,
+    );
+    return result;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function coletarRetomadasMarcadasCentral_(sheet) {
+  if (!sheet || sheet.getLastRow() < 2) return [];
+
+  const headers = sheet
+    .getRange(
+      1,
+      1,
+      1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosCentral_(headers);
+  const approvalColumn = columns["aprovar com a bruna"];
+
+  if (approvalColumn === undefined) return [];
+
+  const rows = sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getValues();
+
+  return rows.reduce(function (selected, row, index) {
+    if (!valorCheckboxCentral_(row[approvalColumn])) {
+      return selected;
+    }
+
+    const sourceKey = textoCentral_(
+      valorLinhaCentral_(
+        row,
+        columns,
+        "chave operacional",
+      ),
+      300,
+    );
+    const source = normalizarTextoCentral_(
+      valorLinhaCentral_(row, columns, "fonte"),
+    );
+    const mode = normalizarTextoCentral_(
+      valorLinhaCentral_(row, columns, "modo"),
+    );
+    const status = normalizarTextoCentral_(
+      valorLinhaCentral_(
+        row,
+        columns,
+        "status operacional",
+      ),
+    );
+    const suggestion = textoCentral_(
+      valorLinhaCentral_(
+        row,
+        columns,
+        "resposta sugerida",
+      ),
+      900,
+    );
+    const eligible =
+      source === "retomada de marketing" &&
+      sourceKey.indexOf("followup:") === 0 &&
+      mode === "manual" &&
+      status === "programado" &&
+      Boolean(suggestion);
+
+    selected.push({
+      rowNumber: index + 2,
+      sourceKey: sourceKey,
+      planKey:
+        sourceKey.indexOf("followup:") === 0
+          ? sourceKey.slice("followup:".length)
+          : "",
+      suggestion: suggestion,
+      eligible: eligible,
+    });
+    return selected;
+  }, []);
+}
+
+function aprovarRetomadasMarcadasCentralInterno_(
+  spreadsheet,
+  sheet,
+  now,
+  selected,
+) {
+  const rows = selected || coletarRetomadasMarcadasCentral_(sheet);
+  const headers = sheet
+    .getRange(
+      1,
+      1,
+      1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosCentral_(headers);
+  let approved = 0;
+  let skipped = 0;
+  const results = [];
+
+  rows.forEach(function (item) {
+    let result = { ok: false, reason: "plan_not_eligible" };
+
+    if (
+      item.eligible &&
+      item.planKey &&
+      typeof assinaturaAprovacaoRetomadaBot_ === "function" &&
+      typeof aprovarPlanoRetomadaParaBot_ === "function"
+    ) {
+      const token = assinaturaAprovacaoRetomadaBot_(item.planKey);
+      result = token
+        ? aprovarPlanoRetomadaParaBot_(
+            spreadsheet,
+            token,
+            now,
+          )
+        : { ok: false, reason: "approval_token_missing" };
+    }
+
+    const note = result.ok
+      ? "Retomada aprovada em lote para a Bruna em " +
+        formatarDataCentral_(now, "yyyy-MM-dd") +
+        "."
+      : "Retomada não programada: " +
+        rotuloFalhaAprovacaoCentral_(result.reason) +
+        ".";
+
+    sheet
+      .getRange(
+        item.rowNumber,
+        columns["aprovar com a bruna"] + 1,
+      )
+      .setValue(false);
+    sheet
+      .getRange(
+        item.rowNumber,
+        columns["observacao da equipe"] + 1,
+      )
+      .setValue(note);
+    sheet
+      .getRange(
+        item.rowNumber,
+        columns["ultima acao da equipe"] + 1,
+      )
+      .setValue(now);
+
+    if (result.ok) {
+      sheet
+        .getRange(item.rowNumber, columns.responsavel + 1)
+        .setValue("Bruna/bot");
+      sheet
+        .getRange(item.rowNumber, columns.modo + 1)
+        .setValue("Automático");
+      approved += 1;
+    } else {
+      skipped += 1;
+    }
+
+    results.push({
+      rowNumber: item.rowNumber,
+      ok: result.ok === true,
+      reason: result.reason || "",
+    });
+  });
+
+  return {
+    ok: skipped === 0,
+    selected: rows.length,
+    approved: approved,
+    skipped: skipped,
+    results: results,
+  };
+}
+
+function rotuloFalhaAprovacaoCentral_(reason) {
+  const labels = {
+    automation_disabled: "automação desligada",
+    outside_send_window: "fora do horário permitido",
+    plan_not_found: "plano não encontrado",
+    plan_not_eligible: "item não elegível",
+    missing_context: "contexto incompleto",
+    approval_token_missing: "aprovação indisponível",
+  };
+  return labels[reason] || "estado da conversa alterado";
+}
+
 function resolverCompromissoCentral_(eventId, now) {
   if (!eventId) return { ok: false, error: "missing_event_id" };
 
@@ -1228,6 +1521,9 @@ function escreverCentralAtendimento_(sheet, items, now) {
         item.teamNote,
         item.lastTeamActionAt || "",
         now,
+        item.approvalBrunaEligible
+          ? item.approveBruna === true
+          : "",
         item.source,
         item.sourceKey,
       ];
@@ -1255,6 +1551,41 @@ function escreverCentralAtendimento_(sheet, items, now) {
       .createFilter();
   } else {
     formatarCentralAtendimento_(sheet, items.length);
+  }
+
+  configurarAprovacoesBrunaCentral_(sheet, items);
+}
+
+function configurarAprovacoesBrunaCentral_(sheet, items) {
+  const headers = mapearCabecalhosCentral_(
+    Array.from(CENTRAL_ATENDIMENTO_HEADERS),
+  );
+  const approvalColumn = headers["aprovar com a bruna"];
+  if (approvalColumn === undefined) return;
+
+  const column = approvalColumn + 1;
+  const validationRows = Math.max(
+    CENTRAL_ATENDIMENTO_CONFIG.maximumRows,
+    (items || []).length + 1,
+  );
+  sheet.showColumns(column, 1);
+  sheet
+    .getRange(2, column, validationRows - 1, 1)
+    .clearDataValidations();
+
+  const eligibleRanges = (items || []).reduce(function (
+    ranges,
+    item,
+    index,
+  ) {
+    if (item.approvalBrunaEligible) {
+      ranges.push(sheet.getRange(index + 2, column).getA1Notation());
+    }
+    return ranges;
+  }, []);
+
+  if (eligibleRanges.length) {
+    sheet.getRangeList(eligibleRanges).insertCheckboxes();
   }
 }
 
@@ -1370,12 +1701,13 @@ function formatarCentralAtendimento_(sheet, itemCount) {
 
   const widths = [
     170, 90, 145, 190, 135, 165, 135, 145, 220, 115,
-    95, 340, 320, 145, 145, 240, 145, 145, 150, 220,
+    95, 340, 320, 145, 145, 240, 145, 145, 125, 150, 220,
   ];
   widths.forEach(function (width, index) {
     sheet.setColumnWidth(index + 1, width);
   });
-  sheet.hideColumns(19, 2);
+  sheet.showColumns(19, 1);
+  sheet.hideColumns(20, 2);
 
   const filterRows = Math.max(itemCount + 1, 2);
   sheet
@@ -1743,6 +2075,13 @@ function valorLinhaCentral_(row, columns, header) {
     .trim();
   const index = columns[normalized];
   return index === undefined ? "" : row[index];
+}
+
+function valorCheckboxCentral_(value) {
+  if (value === true) return true;
+  return ["true", "sim", "1", "yes"].includes(
+    normalizarTextoCentral_(value),
+  );
 }
 
 function normalizarTelefoneCentral_(value) {
