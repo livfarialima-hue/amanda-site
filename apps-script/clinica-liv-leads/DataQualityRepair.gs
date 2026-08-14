@@ -760,9 +760,351 @@ function aplicarReconciliacaoFasesHistoricasAutorizada() {
   }
 }
 
+function construirIndiceOportunidadesConsultas_(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(
+    OPPORTUNITY_STORE_CONFIG.sheetName,
+  );
+  const index = {
+    sheet,
+    byOpportunityId: {},
+    byIdentity: {},
+  };
+  if (!sheet || sheet.getLastRow() < 2) return index;
+
+  const rows = sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      OPPORTUNITY_HEADERS.length,
+    )
+    .getDisplayValues();
+  rows.forEach(function indexOpportunity(row, rowIndex) {
+    const entry = { row: rowIndex + 2, values: row };
+    const opportunityId = String(row[0] || "").trim();
+    if (opportunityId) {
+      if (!index.byOpportunityId[opportunityId]) {
+        index.byOpportunityId[opportunityId] = [];
+      }
+      index.byOpportunityId[opportunityId].push(entry);
+    }
+
+    if (/^(?:closed|voided|encerrada)$/i.test(String(row[6] || ""))) {
+      return;
+    }
+    const phone = normalizePhone_(row[1]);
+    const professional = normalizarProfissionalOportunidade_(row[3]);
+    if (!phone || !profissionalPermitidoOportunidade_(professional)) return;
+    const key = professional + "|" + phone;
+    if (!index.byIdentity[key]) index.byIdentity[key] = [];
+    index.byIdentity[key].push(entry);
+  });
+  return index;
+}
+
+function resolverOportunidadeConsultaIndexada_(index, input) {
+  if (!index || !index.sheet) {
+    return { ok: false, reason: "crm_missing" };
+  }
+  const opportunityId = String(input && input.opportunityId || "").trim();
+  if (opportunityId) {
+    const matches = index.byOpportunityId[opportunityId] || [];
+    if (matches.length !== 1) {
+      return {
+        ok: false,
+        reason: matches.length
+          ? "duplicate_opportunity_id"
+          : "opportunity_id_not_found",
+        matchCount: matches.length,
+      };
+    }
+    const phone = normalizePhone_(input && input.phone);
+    const professional = normalizarProfissionalOportunidade_(
+      input && input.professional,
+    );
+    const foundPhone = normalizePhone_(matches[0].values[1]);
+    const foundProfessional = normalizarProfissionalOportunidade_(
+      matches[0].values[3],
+    );
+    if (!phone || !profissionalPermitidoOportunidade_(professional)) {
+      return {
+        ok: false,
+        reason: profissionalPermitidoOportunidade_(professional)
+          ? "missing_canonical_identity"
+          : "unsupported_professional_opportunity_link",
+      };
+    }
+    if (professional !== foundProfessional) {
+      return { ok: false, reason: "opportunity_professional_mismatch" };
+    }
+    if (phone !== foundPhone) {
+      return { ok: false, reason: "opportunity_phone_mismatch" };
+    }
+    return {
+      ok: true,
+      sheet: index.sheet,
+      found: matches[0],
+      opportunityId,
+      matchedBy: "opportunity_id",
+    };
+  }
+
+  const phone = normalizePhone_(input && input.phone);
+  const professional = normalizarProfissionalOportunidade_(
+    input && input.professional,
+  );
+  if (!phone || !profissionalPermitidoOportunidade_(professional)) {
+    return { ok: false, reason: "missing_canonical_identity" };
+  }
+  const matches = index.byIdentity[professional + "|" + phone] || [];
+  return matches.length === 1
+    ? {
+      ok: true,
+      sheet: index.sheet,
+      found: matches[0],
+      opportunityId: String(matches[0].values[0] || ""),
+      matchedBy: "unique_active_professional_phone",
+    }
+    : {
+      ok: false,
+      reason: matches.length
+        ? "ambiguous_active_opportunity"
+        : "opportunity_not_found",
+      matchCount: matches.length,
+    };
+}
+
+function auditarFaseConsultaIndexada_(visibleIndex, identity, stage) {
+  if (!stage) return { ok: true, state: "not_applicable" };
+  const found = identity && identity.found;
+  const opportunity = found && found.values;
+  if (!opportunity) {
+    return { ok: false, state: "review", reason: "opportunity_missing" };
+  }
+  const opportunityId = String(opportunity[0] || "");
+  const entry = visibleIndex[String(opportunity[4] || "")];
+  const lead = resolverLinhaLeadIndexada_(
+    entry,
+    opportunityId,
+    opportunity[1],
+  );
+  if (!lead.ok) {
+    return { ok: false, state: "review", reason: lead.reason };
+  }
+  const visibleStage = String(
+    statusLinhaQualidade_(entry.rows[lead.row - 2], entry.columns) || "",
+  );
+  const phase = resolverFaseSincronizada_(
+    String(opportunity[7] || ""),
+    visibleStage,
+    { stage },
+  );
+  if (!phase.ok) {
+    return { ok: false, state: "review", reason: phase.reason };
+  }
+  const consistent = visibleStage === phase.stage &&
+    String(opportunity[7] || "") === phase.stage &&
+    Number(opportunity[5] || 0) === lead.row;
+  const stageMismatch = visibleStage !== phase.stage ||
+    String(opportunity[7] || "") !== phase.stage;
+  return {
+    ok: true,
+    state: consistent ? "consistent" : "repairable",
+    reason: consistent
+      ? ""
+      : stageMismatch
+        ? "stage_mismatch"
+        : "visible_pointer_mismatch",
+    targetStage: phase.stage,
+  };
+}
+
+function diagnosticarEventoAgendaConsulta_(event, expected) {
+  if (!event || !expected) {
+    return { consistent: false, reason: "calendar_event_missing" };
+  }
+  const normalizedDescription = String(event.getDescription() || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const acceptedDescriptions = (expected.acceptedDescriptions || [
+    expected.description,
+  ]).map(function normalizeDescription(value) {
+    return String(value || "").replace(/\s+/g, " ").trim();
+  });
+  const checks = {
+    time: event.getStartTime().getTime() === expected.start.getTime() &&
+      event.getEndTime().getTime() === expected.end.getTime(),
+    title: String(event.getTitle() || "") === expected.title,
+    description: acceptedDescriptions.indexOf(normalizedDescription) >= 0,
+    location: String(event.getLocation() || "") === expected.location,
+  };
+  const failed = Object.keys(checks).filter(function failedCheck(key) {
+    return !checks[key];
+  });
+  return {
+    consistent: failed.length === 0,
+    reason: failed.length ? "calendar_drift_" + failed.join("_") : "",
+  };
+}
+
+function eventoAgendaConsultaConsistente_(event, expected) {
+  return diagnosticarEventoAgendaConsulta_(event, expected).consistent;
+}
+
+function auditarAgendaConsultaHistorica_(row, columns) {
+  const status = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.status,
+  );
+  const scheduledDate = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.scheduledDate,
+  );
+  const scheduledTime = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.scheduledTime,
+  );
+  if (!scheduledDate || !scheduledTime || statusConsultaEncerrada_(status)) {
+    return { ok: true, state: "not_applicable" };
+  }
+
+  const professional = textoConsultasSync_(valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.professional,
+  ), 80);
+  const consultationType = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.consultationType,
+  );
+  const location = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.location,
+  );
+  const room = normalizarSalaConsulta_(valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.room,
+  ));
+  const calendarId = textoConsultasSync_(valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.calendarId,
+  ), 240);
+  const eventId = textoConsultasSync_(valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.calendarEventId,
+  ), 240);
+
+  if (!consultaOcupaSala_({ consultationType, location })) {
+    const needsRepair = Boolean(room || calendarId || eventId);
+    return {
+      ok: true,
+      state: needsRepair ? "repairable" : "consistent",
+      safeToApply: false,
+      reason: needsRepair
+        ? "remote_consultation_has_room_event"
+        : "",
+    };
+  }
+  if (!professional) {
+    return { ok: false, state: "review", reason: "professional_missing" };
+  }
+  const interval = intervaloConsultaAgenda_(
+    scheduledDate,
+    scheduledTime,
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.durationMinutes,
+    ),
+  );
+  if (!interval) {
+    return { ok: false, state: "review", reason: "invalid_schedule" };
+  }
+  const allowedRooms = salasPermitidasProfissional_(professional);
+  const expectedCalendarId = CONSULTAS_SYNC_CONFIG.roomCalendars[room];
+  if (
+    !room ||
+    allowedRooms.indexOf(room) < 0 ||
+    !calendarId ||
+    calendarId !== expectedCalendarId ||
+    !eventId
+  ) {
+    return {
+      ok: true,
+      state: "repairable",
+      safeToApply: false,
+      reason: "calendar_link_missing_or_invalid",
+    };
+  }
+
+  try {
+    const calendar = CalendarApp.getCalendarById(calendarId);
+    if (!calendar) {
+      return { ok: false, state: "review", reason: "calendar_not_accessible" };
+    }
+    const event = calendar.getEventById(eventId);
+    if (!event) {
+      return {
+        ok: true,
+        state: "repairable",
+        safeToApply: false,
+        reason: "calendar_event_missing",
+      };
+    }
+    const noShow = statusNaoCompareceuConsulta_(status);
+    const expected = {
+      start: interval.start,
+      end: interval.end,
+      title: (noShow
+        ? "N\u00e3o compareceu \u2014 "
+        : "Consulta \u2014 ") + professional,
+      description:
+        "Reserva operacional vinculada \u00e0 aba Consultas. " +
+        "Dados da paciente permanecem somente na planilha." +
+        (noShow
+          ? " Resultado operacional: n\u00e3o compareceu."
+          : ""),
+      acceptedDescriptions: [
+        "Reserva operacional vinculada \u00e0 aba Consultas. " +
+          "Dados da paciente permanecem somente na planilha." +
+          (noShow
+            ? " Resultado operacional: n\u00e3o compareceu."
+            : ""),
+        "Reserva realizada pelo formul\u00e1rio da Cl\u00ednica LIV. " +
+          "Nenhum dado de paciente \u00e9 inclu\u00eddo no Google Agenda.",
+      ],
+      location: "Cl\u00ednica LIV Faria Lima \u2014 " + room,
+    };
+    const diagnostic = diagnosticarEventoAgendaConsulta_(event, expected);
+    return {
+      ok: true,
+      state: diagnostic.consistent ? "consistent" : "repairable",
+      safeToApply: !diagnostic.consistent &&
+        diagnostic.reason.indexOf("time") < 0,
+      reason: diagnostic.reason,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      state: "review",
+      reason: "calendar_audit_failed",
+    };
+  }
+}
+
 function reconciliarConsultasHistoricas(input) {
   const apply = Boolean(input && input.apply === true);
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const opportunityIndex = construirIndiceOportunidadesConsultas_(spreadsheet);
+  const visibleIndex = construirIndiceLeadsVisiveis_(spreadsheet);
   const sheet = spreadsheet.getSheetByName(
     CONSULTAS_SYNC_CONFIG.consultationsSheetName,
   );
@@ -770,15 +1112,27 @@ function reconciliarConsultasHistoricas(input) {
     ok: true,
     applied: apply,
     inspected: 0,
+    identityEligible: 0,
+    identityAlreadyConsistent: 0,
+    identityNotApplicable: 0,
     identityMissing: 0,
     identityRepairable: 0,
     identityRepaired: 0,
+    phaseEligible: 0,
+    phaseAlreadyConsistent: 0,
     phaseRepairable: 0,
     phaseRepaired: 0,
+    phaseNotApplicable: 0,
+    calendarEligible: 0,
+    calendarAlreadyConsistent: 0,
     calendarRepairable: 0,
+    calendarSafeRepairable: 0,
+    calendarBlockedRepairable: 0,
     calendarRepaired: 0,
+    calendarNotApplicable: 0,
     reviewRequired: 0,
     issues: [],
+    repairs: [],
   };
   if (!sheet) {
     return Object.assign(result, { ok: false, error: "consultations_missing" });
@@ -789,56 +1143,82 @@ function reconciliarConsultasHistoricas(input) {
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getDisplayValues()[0],
   );
-  for (let rowNumber = 2; rowNumber <= sheet.getLastRow(); rowNumber += 1) {
-    let row = sheet
-      .getRange(rowNumber, 1, 1, sheet.getLastColumn())
-      .getValues()[0];
+  const rows = sheet.getLastRow() >= 2
+    ? sheet
+      .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+      .getValues()
+    : [];
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+    const rowNumber = rowIndex + 2;
+    let row = rows[rowIndex];
     const phone = valorDaLinhaConsultas_(
       row,
       columns,
       CONSULTAS_SYNC_HEADERS.phone,
     );
-    if (!normalizarTelefoneConsultasSync_(phone)) continue;
-    result.inspected += 1;
     const professional = valorDaLinhaConsultas_(
       row,
       columns,
       CONSULTAS_SYNC_HEADERS.professional,
     );
+    const professionalKey = normalizarProfissionalOportunidade_(professional);
     let opportunityId = String(valorDaLinhaConsultas_(
       row,
       columns,
       CONSULTAS_SYNC_HEADERS.opportunityId,
     ) || "");
-    const identity = resolverOpportunityIdConsulta_(spreadsheet, {
-      opportunityId,
-      phone,
-      professional,
-    });
-    if (!opportunityId) result.identityMissing += 1;
-    if (!identity.ok) {
-      result.reviewRequired += 1;
-      result.issues.push({
-        consultationRow: rowNumber,
-        reason: identity.reason,
+    const hasOperationalContent = Boolean(
+      normalizarTelefoneConsultasSync_(phone) ||
+      opportunityId ||
+      String(professional || "").trim() ||
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.scheduledDate,
+      ) ||
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.status,
+      ),
+    );
+    if (!hasOperationalContent) continue;
+    result.inspected += 1;
+    const identityRequired = opportunityId ||
+      profissionalPermitidoOportunidade_(professionalKey);
+    let identity = null;
+    if (!identityRequired) {
+      result.identityNotApplicable += 1;
+    } else {
+      result.identityEligible += 1;
+      identity = resolverOportunidadeConsultaIndexada_(opportunityIndex, {
+        opportunityId,
+        phone,
+        professional,
       });
-      continue;
-    }
-    if (!opportunityId) {
-      opportunityId = identity.opportunityId;
-      result.identityRepairable += 1;
-      if (apply) {
-        definirValorConsulta_(
-          sheet,
-          rowNumber,
-          columns,
-          CONSULTAS_SYNC_HEADERS.opportunityId,
-          opportunityId,
-        );
-        result.identityRepaired += 1;
-        row = sheet
-          .getRange(rowNumber, 1, 1, sheet.getLastColumn())
-          .getValues()[0];
+      if (!opportunityId) result.identityMissing += 1;
+      if (!identity.ok) {
+        result.reviewRequired += 1;
+        result.issues.push({
+          consultationRow: rowNumber,
+          reason: identity.reason,
+        });
+      } else if (!opportunityId) {
+        opportunityId = identity.opportunityId;
+        result.identityRepairable += 1;
+        if (apply) {
+          definirValorConsulta_(
+            sheet,
+            rowNumber,
+            columns,
+            CONSULTAS_SYNC_HEADERS.opportunityId,
+            opportunityId,
+          );
+          result.identityRepaired += 1;
+          row[columns[CONSULTAS_SYNC_HEADERS.opportunityId]] = opportunityId;
+        }
+      } else {
+        result.identityAlreadyConsistent += 1;
       }
     }
 
@@ -848,9 +1228,30 @@ function reconciliarConsultasHistoricas(input) {
       CONSULTAS_SYNC_HEADERS.status,
     );
     const canonicalStage = statusCanonicoLeadDaConsulta_(status);
-    if (canonicalStage) {
-      result.phaseRepairable += 1;
-      if (apply) {
+    const phaseAudit = identity && identity.ok
+      ? auditarFaseConsultaIndexada_(visibleIndex, identity, canonicalStage)
+      : { ok: true, state: "not_applicable" };
+    if (phaseAudit.state === "not_applicable") {
+      result.phaseNotApplicable += 1;
+    } else {
+      result.phaseEligible += 1;
+      if (!phaseAudit.ok) {
+        result.reviewRequired += 1;
+        result.issues.push({
+          consultationRow: rowNumber,
+          reason: phaseAudit.reason || "phase_audit_failed",
+        });
+      } else if (phaseAudit.state === "consistent") {
+        result.phaseAlreadyConsistent += 1;
+      } else if (phaseAudit.state === "repairable") {
+        result.phaseRepairable += 1;
+        result.repairs.push({
+          consultationRow: rowNumber,
+          area: "phase",
+          reason: phaseAudit.reason || "phase_repair_required",
+        });
+      }
+      if (apply && phaseAudit.ok && phaseAudit.state === "repairable") {
         const phase = atualizarStatusLeadDaConsulta_(
           spreadsheet,
           phone,
@@ -869,23 +1270,41 @@ function reconciliarConsultasHistoricas(input) {
       }
     }
 
-    const scheduledDate = valorDaLinhaConsultas_(
-      row,
-      columns,
-      CONSULTAS_SYNC_HEADERS.scheduledDate,
-    );
-    const scheduledTime = valorDaLinhaConsultas_(
-      row,
-      columns,
-      CONSULTAS_SYNC_HEADERS.scheduledTime,
-    );
-    if (
-      !scheduledDate ||
-      !scheduledTime ||
-      statusConsultaEncerrada_(status)
-    ) continue;
+    const calendarAudit = auditarAgendaConsultaHistorica_(row, columns);
+    if (calendarAudit.state === "not_applicable") {
+      result.calendarNotApplicable += 1;
+      continue;
+    }
+    result.calendarEligible += 1;
+    if (!calendarAudit.ok) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        consultationRow: rowNumber,
+        reason: calendarAudit.reason || "calendar_audit_failed",
+      });
+      continue;
+    }
+    if (calendarAudit.state === "consistent") {
+      result.calendarAlreadyConsistent += 1;
+      continue;
+    }
     result.calendarRepairable += 1;
-    if (!apply) continue;
+    if (calendarAudit.safeToApply) {
+      result.calendarSafeRepairable += 1;
+    } else {
+      result.calendarBlockedRepairable += 1;
+      result.reviewRequired += 1;
+      result.issues.push({
+        consultationRow: rowNumber,
+        reason: calendarAudit.reason || "calendar_repair_blocked",
+      });
+    }
+    result.repairs.push({
+      consultationRow: rowNumber,
+      area: "calendar",
+      reason: calendarAudit.reason || "calendar_repair_required",
+    });
+    if (!apply || !calendarAudit.safeToApply) continue;
     const calendar = sincronizarConsultaComAgendaNaLinha_(
       sheet,
       rowNumber,
@@ -904,6 +1323,127 @@ function reconciliarConsultasHistoricas(input) {
   result.ok = result.reviewRequired === 0;
   if (apply) SpreadsheetApp.flush();
   return result;
+}
+
+function aplicarReconciliacaoConsultasSegurasAutorizada() {
+  const expected = Object.freeze({
+    inspected: 43,
+    identityAlreadyConsistent: 9,
+    identityMissing: 26,
+    identityRepairable: 0,
+    identityNotApplicable: 7,
+    phaseRepairable: 3,
+    calendarSafeRepairable: 9,
+    calendarBlockedRepairable: 2,
+    reviewRequired: 29,
+  });
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    throw new Error("safe_consultation_reconciliation_lock_timeout");
+  }
+
+  function summarize(result) {
+    return {
+      ok: Boolean(result && result.ok),
+      applied: Boolean(result && result.applied),
+      inspected: Number(result && result.inspected || 0),
+      identityAlreadyConsistent: Number(
+        result && result.identityAlreadyConsistent || 0,
+      ),
+      identityMissing: Number(result && result.identityMissing || 0),
+      identityRepairable: Number(result && result.identityRepairable || 0),
+      identityNotApplicable: Number(
+        result && result.identityNotApplicable || 0,
+      ),
+      phaseRepairable: Number(result && result.phaseRepairable || 0),
+      phaseRepaired: Number(result && result.phaseRepaired || 0),
+      calendarSafeRepairable: Number(
+        result && result.calendarSafeRepairable || 0,
+      ),
+      calendarBlockedRepairable: Number(
+        result && result.calendarBlockedRepairable || 0,
+      ),
+      calendarRepaired: Number(result && result.calendarRepaired || 0),
+      reviewRequired: Number(result && result.reviewRequired || 0),
+      issuesCount: Array.isArray(result && result.issues)
+        ? result.issues.length
+        : 0,
+    };
+  }
+
+  function matchesExpected(summary, allowSafeRepairs) {
+    return summary.inspected === expected.inspected &&
+      summary.identityAlreadyConsistent ===
+        expected.identityAlreadyConsistent &&
+      summary.identityMissing === expected.identityMissing &&
+      summary.identityRepairable === expected.identityRepairable &&
+      summary.identityNotApplicable === expected.identityNotApplicable &&
+      summary.phaseRepairable === (allowSafeRepairs
+        ? expected.phaseRepairable
+        : 0) &&
+      summary.calendarSafeRepairable === (allowSafeRepairs
+        ? expected.calendarSafeRepairable
+        : 0) &&
+      summary.calendarBlockedRepairable ===
+        expected.calendarBlockedRepairable &&
+      summary.reviewRequired === expected.reviewRequired &&
+      summary.issuesCount === expected.reviewRequired;
+  }
+
+  try {
+    const preflight = summarize(
+      reconciliarConsultasHistoricas({ apply: false }),
+    );
+    if (matchesExpected(preflight, false)) {
+      const alreadyReconciled = {
+        ok: true,
+        applied: false,
+        alreadyReconciled: true,
+        preflight,
+      };
+      console.log(
+        "SAFE_CONSULTATION_RECONCILIATION_APPLY " +
+          JSON.stringify(alreadyReconciled),
+      );
+      return alreadyReconciled;
+    }
+    if (!matchesExpected(preflight, true)) {
+      const blocked = {
+        ok: false,
+        applied: false,
+        reason: "preflight_mismatch",
+        expected,
+        preflight,
+      };
+      console.log(
+        "SAFE_CONSULTATION_RECONCILIATION_APPLY " + JSON.stringify(blocked),
+      );
+      return blocked;
+    }
+
+    const write = summarize(
+      reconciliarConsultasHistoricas({ apply: true }),
+    );
+    const postflight = summarize(
+      reconciliarConsultasHistoricas({ apply: false }),
+    );
+    const result = {
+      ok: write.phaseRepaired >= 1 &&
+        write.phaseRepaired <= expected.phaseRepairable &&
+        write.calendarRepaired === expected.calendarSafeRepairable &&
+        matchesExpected(postflight, false),
+      applied: true,
+      preflight,
+      write,
+      postflight,
+    };
+    console.log(
+      "SAFE_CONSULTATION_RECONCILIATION_APPLY " + JSON.stringify(result),
+    );
+    return result;
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function reconciliarAtribuicaoHistoricaLeads(input) {
@@ -1118,6 +1658,19 @@ function resumirSimulacaoCorrecaoIntegrada_(result) {
       if (key === "issues") {
         summary.issueReasons = value.reduce(function countReasons(counts, issue) {
           const reason = String(issue && issue.reason || "unknown");
+          counts[reason] = Number(counts[reason] || 0) + 1;
+          return counts;
+        }, {});
+      }
+      if (key === "repairs") {
+        summary.repairReasons = value.reduce(function countRepairs(
+          counts,
+          repair,
+        ) {
+          const reason = [
+            String(repair && repair.area || "unknown"),
+            String(repair && repair.reason || "unknown"),
+          ].join(":");
           counts[reason] = Number(counts[reason] || 0) + 1;
           return counts;
         }, {});
