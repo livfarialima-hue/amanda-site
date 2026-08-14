@@ -19,6 +19,8 @@ function validClassification(overrides = {}) {
     nextAction: "Oferecer datas disponíveis para avaliação.",
     commercialReason: "Em andamento",
     evidence: "Pediu datas para agendar uma avaliação.",
+    appointmentOutcome: "none",
+    procedureMilestone: "none",
     ...overrides,
   };
 }
@@ -89,6 +91,19 @@ test("unexpected classification field is rejected", () => {
     validResponse(
       validClassification({ extra: "not allowed" }),
     ),
+    "fallback",
+  );
+
+  assert.deepEqual(result, {
+    status: "failed",
+    httpStatus: 200,
+    errorCode: "invalid_response",
+  });
+});
+
+test("invalid administrative milestones are rejected", () => {
+  const result = parseLeadClassificationResponse(
+    validResponse(validClassification({ appointmentOutcome: "rescheduled" })),
     "fallback",
   );
 
@@ -180,7 +195,9 @@ test("request is private, structured, bounded and excludes raw phone", async () 
   );
   assert.match(requestBody.instructions, /marketingPrefill true/);
   assert.match(requestBody.instructions, /não congela a oportunidade atual/);
-  assert.match(requestBody.instructions, /Somente mensagens IN/);
+  assert.match(requestBody.instructions, /marcos administrativos/);
+  assert.match(requestBody.instructions, /quote_sent isolado nunca é conversão/);
+  assert.match(requestBody.instructions, /respostas curtas da pessoa no contexto imediato/);
   assert.match(requestBody.instructions, /external/);
   assert.match(requestBody.instructions, /nonpatient/);
 });

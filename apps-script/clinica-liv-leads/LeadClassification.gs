@@ -618,6 +618,7 @@ function collectLeadMessagesForOpportunity_(
   phone,
   professional,
   limit,
+  includeUnassignedUnknown,
 ) {
   if (!messageSheet || messageSheet.getLastRow() < 2) return [];
   const values = messageSheet
@@ -625,14 +626,31 @@ function collectLeadMessagesForOpportunity_(
     .getValues();
   const normalizedPhone = normalizePhone_(phone);
   const normalizedProfessional = String(professional || "");
-  const matching = values.filter(function matchMessage(row) {
+  const firstLinkedIndex = opportunityId
+    ? values.findIndex(function findFirstLinkedMessage(row) {
+        return String(row[7] || "") === String(opportunityId);
+      })
+    : -1;
+  const matching = values.filter(function matchMessage(row, index) {
     if (opportunityId && String(row[7] || "") === String(opportunityId)) {
       return true;
     }
+    const rowProfessional = String(row[8] || "");
+    const canRecoverUnassigned = Boolean(
+      includeUnassignedUnknown &&
+      opportunityId &&
+      firstLinkedIndex >= 0 &&
+      index >= firstLinkedIndex &&
+      (!rowProfessional || rowProfessional === "unknown"),
+    );
     return (
       !row[7] &&
       normalizePhone_(row[0]) === normalizedPhone &&
-      (!row[8] || String(row[8]) === normalizedProfessional)
+      (
+        !rowProfessional ||
+        rowProfessional === normalizedProfessional ||
+        canRecoverUnassigned
+      )
     );
   });
   return matching.slice(-Math.max(1, Number(limit) || 12)).map(function (row) {
@@ -649,12 +667,103 @@ function relationshipFromCanonicalLeadStatus_(status) {
   const states = {
     "Consulta agendada": "appointment_scheduled",
     "Consulta realizada": "consultation_completed",
-    "Paciente convertido": "converted",
+    "Paciente convertido": "surgical_planning",
   };
   return {
     found: Boolean(states[String(status || "")]),
     relationshipState: states[String(status || "")] || "unknown",
   };
+}
+
+function classificationAdministrativeSignal_(classification) {
+  const appointmentOutcome = String(
+    classification && classification.appointmentOutcome || "none",
+  );
+  const procedureMilestone = String(
+    classification && classification.procedureMilestone || "none",
+  );
+  const validAppointmentOutcomes = ["confirmed", "missed", "attended"];
+  const validProcedureMilestones = [
+    "quote_sent",
+    "accepted",
+    "completed",
+    "payment_confirmed",
+  ];
+
+  return {
+    appointmentOutcome: validAppointmentOutcomes.includes(appointmentOutcome)
+      ? appointmentOutcome
+      : "none",
+    procedureMilestone: validProcedureMilestones.includes(procedureMilestone)
+      ? procedureMilestone
+      : "none",
+  };
+}
+
+function administrativeLeadStatus_(classification) {
+  const signal = classificationAdministrativeSignal_(classification);
+  if (["accepted", "completed", "payment_confirmed"].includes(
+    signal.procedureMilestone,
+  )) {
+    return "Paciente convertido";
+  }
+  if (signal.appointmentOutcome === "attended") {
+    return "Consulta realizada";
+  }
+  if (signal.appointmentOutcome === "confirmed") {
+    return "Consulta agendada";
+  }
+  return "";
+}
+
+function effectiveLeadStatusFromClassification_(
+  currentStatus,
+  classification,
+) {
+  const signal = classificationAdministrativeSignal_(classification);
+  const conversionConfirmed = [
+    "accepted",
+    "completed",
+    "payment_confirmed",
+  ].includes(signal.procedureMilestone);
+  const administrativeStatus = administrativeLeadStatus_(classification);
+  let proposedStatus = String(
+    classification && classification.recommendedStatus || currentStatus,
+  );
+
+  if (proposedStatus === "Paciente convertido" && !conversionConfirmed) {
+    proposedStatus = administrativeStatus || String(currentStatus || "Novo");
+  }
+  if (
+    administrativeStatus &&
+    leadStatusRank_(administrativeStatus) > leadStatusRank_(proposedStatus)
+  ) {
+    proposedStatus = administrativeStatus;
+  }
+  return proposedStatus;
+}
+
+function relationshipFromClassification_(status, classification, fallback) {
+  const signal = classificationAdministrativeSignal_(classification);
+  if (signal.procedureMilestone === "completed") return "active_postop";
+  if ([
+    "quote_sent",
+    "accepted",
+    "payment_confirmed",
+  ].includes(signal.procedureMilestone)) {
+    return "surgical_planning";
+  }
+  const mapped = relationshipFromCanonicalLeadStatus_(status);
+  return mapped.found ? mapped.relationshipState : String(fallback || "unknown");
+}
+
+function shouldAlertLowConfidenceAdministrativeChange_(classification) {
+  if (String(classification && classification.confidence) !== "low") {
+    return false;
+  }
+  const signal = classificationAdministrativeSignal_(classification);
+  return signal.appointmentOutcome !== "none" ||
+    signal.procedureMilestone !== "none";
 }
 
 function claimDueLeadClassifications_(requestedLimit) {
@@ -836,12 +945,22 @@ function hydrateLeadClassificationJobs_(claimedJobs) {
       const nextActionColumn = headers["Próxima ação automática"] || 0;
       const versionColumn = headers["Versão da oportunidade"] || 0;
       const currentStatus = String(leadValues[statusColumn - 1] || "Novo");
+      const uniqueRouteContext =
+        typeof localizarContextoRotaUnicoPorTelefone_ === "function"
+          ? localizarContextoRotaUnicoPorTelefone_(spreadsheet, phone)
+          : null;
+      const canRecoverUnassignedMessages = Boolean(
+        uniqueRouteContext &&
+        String(uniqueRouteContext.opportunityId || "") === opportunityId &&
+        String(uniqueRouteContext.professional || "") === professional,
+      );
       const messages = collectLeadMessagesForOpportunity_(
         messageSheet,
         opportunityId,
         phone,
         professional,
         24,
+        canRecoverUnassignedMessages,
       );
       if (!messages.length) {
         return Object.assign(base, { errorCode: "waiting_messages" });
@@ -888,8 +1007,13 @@ function leadStatusRank_(status) {
   }[String(status || "")] || 0;
 }
 
-function shouldApplyLeadStatus_(currentStatus, proposedStatus, confidence) {
-  if (confidence === "low") return false;
+function shouldApplyLeadStatus_(
+  currentStatus,
+  proposedStatus,
+  confidence,
+  allowLowConfidenceAdministrative,
+) {
+  if (confidence === "low" && !allowLowConfidenceAdministrative) return false;
   if (proposedStatus === "Não qualificado") {
     return confidence === "high" && leadStatusRank_(currentStatus) <= 2;
   }
@@ -1041,16 +1165,34 @@ function completeLeadClassification_(job, classification) {
     return { status: "ignored", error: "stale_row_version" };
   }
   const currentStatus = String(currentValues[statusColumn - 1] || "Novo");
-  const proposedStatus = String(classification.recommendedStatus || currentStatus);
+  const rawProposedStatus = String(
+    classification.recommendedStatus || currentStatus,
+  );
+  const proposedStatus = effectiveLeadStatusFromClassification_(
+    currentStatus,
+    classification,
+  );
   const confidence = String(classification.confidence || "low");
+  const administrativeSignal = classificationAdministrativeSignal_(
+    classification,
+  );
+  const hasAdministrativeEvidence = Boolean(
+    String(classification.evidence || "").trim() &&
+    (
+      administrativeSignal.appointmentOutcome !== "none" ||
+      administrativeSignal.procedureMilestone !== "none"
+    ),
+  );
   const now = new Date();
   const statusToKeep = shouldApplyLeadStatus_(
     currentStatus,
     proposedStatus,
     confidence,
+    hasAdministrativeEvidence,
   ) ? proposedStatus : currentStatus;
   const needsClassificationReview =
     confidence === "low" ||
+    rawProposedStatus !== proposedStatus ||
     (
       proposedStatus !== currentStatus &&
       statusToKeep === currentStatus
@@ -1123,6 +1265,19 @@ function completeLeadClassification_(job, classification) {
     );
   }
 
+  const appointmentUpdate =
+    administrativeSignal.appointmentOutcome !== "none" &&
+    typeof registrarMarcoAdministrativoClassificado_ === "function"
+      ? registrarMarcoAdministrativoClassificado_(spreadsheet, {
+          phone,
+          professional,
+          outcome: administrativeSignal.appointmentOutcome,
+          at: now,
+          confidence,
+          evidence: classification.evidence,
+        })
+      : { updated: false, reason: "no_appointment_signal" };
+
   if (
     professional === "amanda" &&
     leadStatusRank_(statusToKeep) >= leadStatusRank_("Qualificado")
@@ -1138,9 +1293,11 @@ function completeLeadClassification_(job, classification) {
     "Resumo automático": safeText_(classification.summary, 600),
     "Próxima ação automática": safeText_(classification.nextAction, 300),
     "Objeção principal": safeText_(classification.commercialReason, 80),
-    "Relacionamento": String(
+    "Relacionamento": relationshipFromClassification_(
+      statusToKeep,
+      classification,
       job.patientRelationship && job.patientRelationship.relationshipState ||
-      "unknown",
+        "unknown",
     ),
     "Responsável atual": "bruna",
     "Aguardando ação de": /aguardar retorno/i.test(
@@ -1227,12 +1384,55 @@ function completeLeadClassification_(job, classification) {
         "Status atual: " + currentStatus,
         "Resumo: " + String(classification.summary || ""),
         "Evidência: " + String(classification.evidence || ""),
+        "Resultado da consulta: " + administrativeSignal.appointmentOutcome,
+        "Marco do procedimento: " + administrativeSignal.procedureMilestone,
       ].join("\n"),
       suggestion: [
-        "Status sugerido: " + proposedStatus,
+        "Status sugerido pelo classificador: " + rawProposedStatus,
+        "Status protegido aplicado: " + statusToKeep,
         "Próxima ação: " + String(classification.nextAction || ""),
       ].join("\n"),
     });
+  }
+
+  let lowConfidenceAlert = { sent: false, skipped: true };
+  if (
+    shouldAlertLowConfidenceAdministrativeChange_(classification) &&
+    typeof sendReviewAlertEmail_ === "function"
+  ) {
+    try {
+      const nameColumn = columns["Nome"] || columns["Nome do paciente"] || 0;
+      lowConfidenceAlert = sendReviewAlertEmail_({
+        eventId: [
+          "classification-low-confidence",
+          canonicalOpportunityId,
+          throughMessageId || latestMessageId,
+          administrativeSignal.appointmentOutcome,
+          administrativeSignal.procedureMilestone,
+        ].join(":"),
+        patientName: nameColumn
+          ? String(currentValues[nameColumn - 1] || "")
+          : "",
+        patientPhone: phone,
+        messageText: [
+          "A planilha foi atualizada por um marco administrativo com baixa confiança.",
+          "Status anterior: " + currentStatus,
+          "Status aplicado: " + statusToKeep,
+          "Resultado da consulta: " + administrativeSignal.appointmentOutcome,
+          "Marco do procedimento: " + administrativeSignal.procedureMilestone,
+          "Consulta localizada: " + (appointmentUpdate.updated ? "sim" : "não"),
+          "Evidência administrativa: " + String(classification.evidence || ""),
+          "Revise a linha do lead e a aba Revisões do Bot.",
+        ].join("\n"),
+      });
+    } catch (alertError) {
+      console.error(JSON.stringify({
+        event: "classification_low_confidence_email_failed",
+        opportunityId: canonicalOpportunityId,
+        detail: safeText_(alertError && alertError.message, 160),
+      }));
+      lowConfidenceAlert = { sent: false, error: "email_failed" };
+    }
   }
 
   SpreadsheetApp.flush();
@@ -1240,6 +1440,8 @@ function completeLeadClassification_(job, classification) {
     status: "completed",
     leadRow,
     appliedStatus: statusToKeep,
+    appointmentUpdated: appointmentUpdate.updated === true,
+    lowConfidenceAlertSent: lowConfidenceAlert.sent === true,
     googleConversionReady:
       professional === "amanda" &&
       String(leadsSheet.getRange(leadRow, 7).getDisplayValue()) === "Sim",

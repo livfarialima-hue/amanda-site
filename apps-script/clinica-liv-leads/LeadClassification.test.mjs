@@ -48,6 +48,9 @@ function loadFunctions() {
       "globalThis.__test = { findLeadRowByPhone_, " +
       "shouldApplyLeadStatus_, ensureQualifiedGoogleConversion_, " +
       "compareClassificationCandidates_, classificationLeaseMatches_, " +
+      "collectLeadMessagesForOpportunity_, classificationAdministrativeSignal_, " +
+      "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
+      "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
       "GOOGLE_ADS_IMPORT_HEADERS };",
     sandbox,
   );
@@ -77,6 +80,60 @@ test("one phone always resolves to the first canonical lead row", () => {
   assert.equal(findLeadRowByPhone_(sheet, "5511988887777"), 3);
 });
 
+test("classification recovers later unknown messages only for a verified opportunity", () => {
+  const { collectLeadMessagesForOpportunity_ } = loadFunctions();
+  const row = ({ id, opportunity = "", professional = "unknown" }) => [
+    "+5511900005416",
+    "IN",
+    "2026-08-12T15:00:00.000Z",
+    id,
+    `evt-${id}`,
+    `texto ${id}`,
+    "",
+    opportunity,
+    professional,
+    "",
+  ];
+  const values = [
+    row({ id: "unknown-before" }),
+    row({ id: "linked", opportunity: "opp-amanda", professional: "amanda" }),
+    row({ id: "unknown-after" }),
+    row({ id: "explicit-amanda", professional: "amanda" }),
+    row({ id: "explicit-daniel", professional: "daniel" }),
+    row({ id: "other-opportunity", opportunity: "opp-other", professional: "amanda" }),
+  ];
+  const sheet = {
+    getLastRow: () => values.length + 1,
+    getRange: () => ({ getValues: () => values }),
+  };
+
+  const withoutRecovery = collectLeadMessagesForOpportunity_(
+    sheet,
+    "opp-amanda",
+    "+5511900005416",
+    "amanda",
+    24,
+    false,
+  );
+  assert.deepEqual(
+    withoutRecovery.map((message) => message.messageId),
+    ["linked", "explicit-amanda"],
+  );
+
+  const withRecovery = collectLeadMessagesForOpportunity_(
+    sheet,
+    "opp-amanda",
+    "+5511900005416",
+    "amanda",
+    24,
+    true,
+  );
+  assert.deepEqual(
+    withRecovery.map((message) => message.messageId),
+    ["linked", "unknown-after", "explicit-amanda"],
+  );
+});
+
 test("automatic classification advances but never downgrades the funnel", () => {
   const { shouldApplyLeadStatus_ } = loadFunctions();
 
@@ -86,6 +143,70 @@ test("automatic classification advances but never downgrades the funnel", () => 
     false,
   );
   assert.equal(shouldApplyLeadStatus_("Novo", "Não qualificado", "low"), false);
+});
+
+test("administrative milestones protect funnel updates", () => {
+  const {
+    administrativeLeadStatus_,
+    effectiveLeadStatusFromClassification_,
+    shouldApplyLeadStatus_,
+  } = loadFunctions();
+
+  assert.equal(
+    effectiveLeadStatusFromClassification_("Consulta realizada", {
+      recommendedStatus: "Paciente convertido",
+      procedureMilestone: "quote_sent",
+    }),
+    "Consulta realizada",
+  );
+  assert.equal(
+    administrativeLeadStatus_({ procedureMilestone: "accepted" }),
+    "Paciente convertido",
+  );
+  assert.equal(
+    administrativeLeadStatus_({ appointmentOutcome: "attended" }),
+    "Consulta realizada",
+  );
+  assert.equal(
+    shouldApplyLeadStatus_("Novo", "Consulta agendada", "low", true),
+    true,
+  );
+});
+
+test("low-confidence administrative changes are flagged for email review", () => {
+  const {
+    relationshipFromClassification_,
+    shouldAlertLowConfidenceAdministrativeChange_,
+  } = loadFunctions();
+
+  assert.equal(
+    shouldAlertLowConfidenceAdministrativeChange_({
+      confidence: "low",
+      appointmentOutcome: "confirmed",
+      procedureMilestone: "none",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldAlertLowConfidenceAdministrativeChange_({
+      confidence: "medium",
+      appointmentOutcome: "attended",
+      procedureMilestone: "none",
+    }),
+    false,
+  );
+  assert.equal(
+    relationshipFromClassification_("Paciente convertido", {
+      procedureMilestone: "completed",
+    }),
+    "active_postop",
+  );
+  assert.equal(
+    relationshipFromClassification_("Consulta realizada", {
+      procedureMilestone: "quote_sent",
+    }),
+    "surgical_planning",
+  );
 });
 
 test("fresh queue items run before poison retries and oldest wins ties", () => {

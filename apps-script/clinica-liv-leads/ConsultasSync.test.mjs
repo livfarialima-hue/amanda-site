@@ -137,6 +137,22 @@ test("writes consultation statuses using the visible dropdown vocabulary", () =>
   );
 });
 
+test("maps classified administrative outcomes to consultation rows", () => {
+  assert.equal(
+    context.statusConsultaDoMarcoClassificado_("confirmed"),
+    "Confirmada",
+  );
+  assert.equal(
+    context.statusConsultaDoMarcoClassificado_("missed"),
+    "Não compareceu",
+  );
+  assert.equal(
+    context.statusConsultaDoMarcoClassificado_("attended"),
+    "Realizada",
+  );
+  assert.equal(context.statusConsultaDoMarcoClassificado_("none"), "");
+});
+
 test("maps consultation vocabulary to canonical lead phases", () => {
   assert.equal(
     context.statusCanonicoLeadDaConsulta_("Confirmada"),

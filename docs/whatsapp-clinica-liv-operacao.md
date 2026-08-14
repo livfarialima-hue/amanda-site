@@ -139,6 +139,18 @@ Regras de risco médio nascem como `Sugestão interna`. Regras de risco alto nas
 
 A aba `Revisões do Bot` reúne classificações de baixa confiança, regras novas e possíveis correções. Quando a equipe marca uma revisão de classificação como `Concluída` e registra a decisão correta, essa orientação passa a ser usada como exemplo nas classificações futuras. O e-mail diário inclui as dúvidas sem resposta e as regras aguardando aprovação.
 
+### Marcos administrativos aprendidos da conversa
+
+O classificador sempre lê as últimas mensagens da clínica e da paciente em conjunto. Ele pode atualizar o funil e a aba `Consultas` quando identificar:
+
+- confirmação explícita de data e horário: `Consulta agendada` e consulta `Confirmada`;
+- falta ou não comparecimento explícito: consulta `Não compareceu`, sem rebaixar o funil;
+- comparecimento explícito: `Consulta realizada` e consulta `Realizada`;
+- aceite, realização ou pagamento confirmado do procedimento: `Paciente convertido`;
+- envio de orçamento pelo WhatsApp ou aviso de envio por e-mail: relacionamento em planejamento, sem considerar fechamento isoladamente.
+
+Respostas curtas como “sim”, “deu tudo certo” e “pode seguir” só valem quando a pergunta ou afirmação imediatamente anterior deixa claro o que está sendo confirmado. Com baixa confiança, a planilha ainda é atualizada, a revisão fica aberta em `Revisões do Bot` e a equipe recebe um e-mail deduplicado. Essa atualização nunca dispara, por si só, mensagem automática ao paciente.
+
 ## Retomada após sete dias
 
 Na primeira mensagem após mais de sete dias, a Bruna informa que está direcionando o atendimento para a equipe. Depois disso, permanece em silêncio até uma resposta humana.

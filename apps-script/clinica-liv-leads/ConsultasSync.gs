@@ -1676,6 +1676,151 @@ function registrarRespostaPacienteDaConsulta_(input) {
   return { ok: true, updated: true, row: rowNumber, state };
 }
 
+function statusConsultaDoMarcoClassificado_(outcome) {
+  return {
+    confirmed: "Confirmada",
+    missed: "Não compareceu",
+    attended: "Realizada",
+  }[String(outcome || "")] || "";
+}
+
+function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
+  const outcome = String(input && input.outcome || "");
+  const targetStatus = statusConsultaDoMarcoClassificado_(outcome);
+  if (!targetStatus) {
+    return { ok: true, updated: false, reason: "unsupported_outcome" };
+  }
+
+  const sheet = spreadsheet.getSheetByName(
+    CONSULTAS_SYNC_CONFIG.consultationsSheetName,
+  );
+  if (!sheet) {
+    return { ok: true, updated: false, reason: "consultations_sheet_missing" };
+  }
+
+  garantirEstruturaSincronizacaoConsultas_(sheet);
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosConsultas_(headers);
+  const now = dataConsultasSync_(input.at) || new Date();
+  let rowNumber = localizarConsultaParaAtualizacao_(
+    sheet,
+    columns,
+    input,
+    now,
+    true,
+  );
+  if (!rowNumber && outcome === "attended") {
+    rowNumber = localizarConsultaParaAtualizacao_(
+      sheet,
+      columns,
+      input,
+      now,
+      false,
+    );
+  }
+  if (!rowNumber) {
+    return { ok: true, updated: false, reason: "appointment_not_found" };
+  }
+
+  const row = sheet
+    .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+    .getValues()[0];
+  const currentStatus = String(
+    valorDaLinhaConsultas_(row, columns, CONSULTAS_SYNC_HEADERS.status) || "",
+  );
+  if (outcome === "missed") {
+    const scheduledAt = dataHoraAgendadaConsulta_(row, columns);
+    if (scheduledAt && scheduledAt.getTime() > now.getTime() + 5 * 60 * 1000) {
+      return { ok: true, updated: false, reason: "appointment_not_due" };
+    }
+  }
+
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.status,
+    targetStatus,
+  );
+
+  if (outcome === "confirmed") {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.patientConfirmedAt,
+      now,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+      String(input.confidence) === "low"
+        ? "Equipe: revisar confirmação identificada com baixa confiança."
+        : "",
+    );
+  } else if (outcome === "missed") {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.noShowAt,
+      now,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+      String(input.confidence) === "low"
+        ? "Equipe: revisar falta identificada com baixa confiança antes de contatar."
+        : "Retomar com acolhimento para oferecer reagendamento, sem cobrança.",
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.suppressionReason,
+      "Automação ao paciente não disparada pela classificação da conversa.",
+    );
+    atualizarResumoNaoComparecimentoNoLead_(
+      spreadsheet,
+      sheet,
+      input.phone,
+      input.professional,
+    );
+  } else if (outcome === "attended") {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.completedDate,
+      now,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+      String(input.confidence) === "low"
+        ? "Equipe: revisar comparecimento identificado com baixa confiança."
+        : "",
+    );
+  }
+
+  return {
+    ok: true,
+    updated: true,
+    row: rowNumber,
+    outcome,
+    previousStatus: currentStatus,
+    status: targetStatus,
+  };
+}
+
 function localizarConsultaParaAtualizacao_(
   sheet,
   columns,

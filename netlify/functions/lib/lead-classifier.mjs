@@ -18,6 +18,14 @@ const STATUSES = [
   "Não qualificado",
 ];
 const CONFIDENCES = ["low", "medium", "high"];
+const APPOINTMENT_OUTCOMES = ["none", "confirmed", "missed", "attended"];
+const PROCEDURE_MILESTONES = [
+  "none",
+  "quote_sent",
+  "accepted",
+  "completed",
+  "payment_confirmed",
+];
 const PROFESSIONALS = [
   "amanda",
   "daniel",
@@ -57,6 +65,8 @@ const CLASSIFICATION_SCHEMA = {
     "nextAction",
     "commercialReason",
     "evidence",
+    "appointmentOutcome",
+    "procedureMilestone",
   ],
   properties: {
     recommendedStatus: {
@@ -90,6 +100,14 @@ const CLASSIFICATION_SCHEMA = {
     evidence: {
       type: "string",
       maxLength: 300,
+    },
+    appointmentOutcome: {
+      type: "string",
+      enum: APPOINTMENT_OUTCOMES,
+    },
+    procedureMilestone: {
+      type: "string",
+      enum: PROCEDURE_MILESTONES,
     },
   },
 };
@@ -126,7 +144,19 @@ patientRelationship informa o contexto operacional da pessoa, mas não congela a
 - surgical_planning, active_postop, former_patient ou known_patient, sozinhos, não provam conversão desta oportunidade.
 - uma paciente conhecida pode avançar normalmente se a conversa trouxer nova evidência de agenda, consulta realizada ou procedimento fechado.
 
-Somente mensagens IN, escritas pela pessoa, comprovam interesse, recusa ou fechamento. Mensagens OUT da clínica podem fornecer contexto, mas uma oferta, pergunta ou afirmação da equipe sem confirmação da pessoa nunca basta para avançar a fase.
+Identifique também marcos administrativos, sempre com base nas últimas mensagens de ambas as partes e no encadeamento da conversa:
+- appointmentOutcome confirmed: a pessoa confirmou explicitamente a data e o horário da consulta.
+- appointmentOutcome missed: há afirmação explícita de que a pessoa faltou ou não compareceu. Pedido de remarcação não é falta.
+- appointmentOutcome attended: há evidência explícita de que a consulta aconteceu ou de que a pessoa compareceu.
+- procedureMilestone quote_sent: a clínica enviou o orçamento pelo WhatsApp ou informou que o enviou por e-mail. Isso prova apenas que houve proposta, não que o procedimento foi fechado.
+- procedureMilestone accepted: a pessoa aceitou o procedimento, pediu para seguir, combinou sua realização ou confirmou que vai fazê-lo.
+- procedureMilestone completed: há evidência explícita de que o procedimento foi realizado.
+- procedureMilestone payment_confirmed: há evidência explícita de pagamento confirmado.
+- Use none quando o respectivo marco não estiver presente.
+
+Mensagens OUT da clínica são evidência administrativa válida de uma ação praticada pela própria clínica, como "enviei o orçamento por e-mail". Elas não comprovam, sozinhas, interesse, aceite, comparecimento ou fechamento pela pessoa. Para Paciente convertido, exija procedureMilestone accepted, completed ou payment_confirmed; quote_sent isolado nunca é conversão.
+
+Considere respostas curtas da pessoa no contexto imediato das mensagens anteriores. "Sim", "confirmo", "deu tudo certo", "pode seguir" e equivalentes podem confirmar agenda, comparecimento ou aceite quando o objeto da resposta estiver claro no turno anterior. Se houver mais de uma interpretação plausível, use confidence low.
 
 Não deduza consulta realizada ou paciente convertido apenas pela passagem do tempo. Não rebaixe uma etapa por silêncio. Se não houver evidência suficiente para avançar, mantenha a situação atual.
 
@@ -198,7 +228,9 @@ function isValidClassification(value) {
     typeof value.summary === "string" &&
     typeof value.nextAction === "string" &&
     COMMERCIAL_REASONS.includes(value.commercialReason) &&
-    typeof value.evidence === "string"
+    typeof value.evidence === "string" &&
+    APPOINTMENT_OUTCOMES.includes(value.appointmentOutcome) &&
+    PROCEDURE_MILESTONES.includes(value.procedureMilestone)
   );
 }
 
