@@ -1,6 +1,6 @@
 # Pacote de publicação da correção integrada — 14 de agosto de 2026
 
-**Situação:** Apps Script publicado na versão 76; demais componentes e migrações ainda não publicados
+**Situação:** Apps Script publicado na versão 77; deduplicação reversível aplicada; demais componentes e migrações ainda não publicados
 
 Este manifesto separa o que está no repositório do que ainda depende de autorização e validação ao vivo.
 
@@ -16,6 +16,7 @@ Este manifesto separa o que está no repositório do que ainda depende de autori
 | `0cba7a7` | executor agregado das simulações somente leitura |
 | `6b9e676` | nove executores de diagnóstico para evitar o limite de tempo |
 | `fe7cd27` | auditoria indexada, rápida e sem reparo implícito de cabeçalhos em `apply: false` |
+| `b0da4b6` | deduplicação com trava exclusiva, rollback por grupo e IDs exatos de restauração |
 
 O commit que contém este manifesto apenas fecha documentação e QA; ele também deve fazer parte do mesmo pacote aprovado.
 
@@ -23,7 +24,7 @@ O commit que contém este manifesto apenas fecha documentação e QA; ele també
 
 ### Apps Script
 
-**Publicado:** versão 76 em 14/08/2026; endpoint validado com HTTP 200 e `ok: true`. As simulações foram concluídas sem `apply: true`.
+**Publicado:** versão 77 em 14/08/2026. O endpoint havia sido validado com HTTP 200 e `ok: true` na versão 76; a versão 77 preservou o mesmo deployment e acrescentou apenas o endurecimento da deduplicação.
 
 - identidade e fase canônicas;
 - deduplicação arquivável/restaurável;
@@ -51,9 +52,9 @@ O commit que contém este manifesto apenas fecha documentação e QA; ele també
 
 `/lifting-facial/` está excluída do lote e deve permanecer byte a byte sem alteração atribuível a este pacote.
 
-### Planilha e Calendar — migração separada e ainda não autorizada
+### Planilha e Calendar — execução separada por bloco
 
-As funções estão prontas, mas não foram executadas com `apply: true`. A publicação do código não autoriza deduplicação, backfill, fórmulas, criação/remoção de eventos ou alteração de painéis. A execução segue o runbook e exige autorização específica.
+A deduplicação foi autorizada e concluída isoladamente: 2 grupos, 3 linhas arquivadas e 3 IDs exatos de restauração, sem conflito ou rollback. Nenhum backfill de fase, fórmula, evento de Calendar ou painel foi alterado. Cada próximo bloco continua exigindo autorização específica.
 
 ### Plataformas de mídia — verificação separada
 
@@ -61,7 +62,7 @@ Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, p�
 
 ## QA concluído
 
-- `npm.cmd test`: **507/507 aprovados** no estado final documentado.
+- `npm.cmd test`: **508/508 aprovados** no estado final documentado.
 - `git diff --check`: aprovado.
 - `git diff --name-only -- lifting-facial`: vazio.
 - fluxos ambíguos ou sem rota: silenciosos para o paciente e encaminhados à revisão;
@@ -71,9 +72,9 @@ Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, p�
 ## Ordem de publicação quando autorizada
 
 1. registrar versões e backups — **concluído**;
-2. publicar Apps Script — **concluído na versão 76**;
+2. publicar Apps Script — **concluído na versão 77**;
 3. executar e revisar todas as simulações — **concluído; lote integral reprovado antes de escrita**;
-4. executar somente as migrações expressamente autorizadas;
+4. executar somente as migrações expressamente autorizadas — **deduplicação concluída; demais blocos pendentes**;
 5. reconciliar fórmulas célula a célula;
 6. publicar Netlify e validar rotas/handoffs;
 7. publicar o lote técnico do site e comprovar lifting intacto;

@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** base do Apps Script publicada na versão 76; simulações ao vivo concluídas; migrações de dados, fórmulas, Netlify e site não publicadas
+**Estado:** base do Apps Script publicada na versão 77; deduplicação reversível aplicada e validada; fases, funil, consultas, atribuição, fórmulas, Netlify e site não alterados
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -69,11 +69,12 @@
 ## Execução autorizada em 14/08/2026
 
 - Foi criada uma cópia nativa da planilha antes da execução e sua estrutura de 33 abas foi confirmada.
-- A base do Apps Script foi publicada na versão 76, vinculada ao commit local `fe7cd27`; o endpoint respondeu HTTP 200 com `ok: true`.
+- A base do Apps Script foi publicada inicialmente na versão 76, vinculada ao commit local `fe7cd27`; o endpoint respondeu HTTP 200 com `ok: true`.
 - O executor monolítico excedeu seis minutos sem produzir escrita. Ele foi dividido em nove verificações independentes, e as leituras repetidas das abas visíveis foram substituídas por um índice em memória. A auditoria equivalente caiu de aproximadamente 3min39s para menos de 8s e preservou exatamente as mesmas contagens.
 - As nove verificações foram concluídas com `apply: false`. O lote integral foi reprovado antes da primeira escrita por 2 grupos duplicados/3 linhas excedentes, 26 consultas históricas sem oportunidade correspondente, 2 conflitos de atribuição congelada, 8 itens de classificação que exigem atenção e cobertura de SLA ainda igual a zero.
-- A deduplicação reversível é o único primeiro reparo elegível no resultado atual; sua aplicação depende de nova autorização específica.
-- Testes após o endurecimento do diagnóstico: **507 de 507 aprovados**.
+- Após autorização específica, a deduplicação recebeu trava exclusiva, rollback por grupo e retorno de IDs de restauração no commit `b0da4b6`; o Apps Script correspondente foi publicado na versão 77.
+- A execução arquivou 3 linhas excedentes em 2 grupos, sem conflito nem rollback. A repetição encontrou zero duplicidade. Permanecem 27 fases reparáveis, ainda sem autorização de escrita.
+- Testes após o endurecimento da deduplicação: **508 de 508 aprovados**.
 - Registro detalhado: `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-CORRECAO-INTEGRADA-2026-08-14.md`. O inventário exato do pacote está em `docs/PACOTE-PUBLICACAO-CORRECAO-INTEGRADA-2026-08-14.md`.

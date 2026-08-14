@@ -1,6 +1,6 @@
 # Runbook da correção integrada — 14 de agosto de 2026
 
-**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 76 publicado; nenhuma migração com `apply: true` executada
+**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 77 publicado; primeiro bloco da etapa 3 (deduplicação reversível) concluído e validado
 
 **Norte canônico:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -49,7 +49,7 @@ auditarSlaOperacional();
 
 Reprovar a migração se houver identidade ambígua, conflito de fase equivalente, atribuição já preenchida em desacordo, mais de um click ID, transação duplicada não resolvida, Calendar sem vínculo único ou diferença material não explicada em relação ao diagnóstico anterior.
 
-**Resultado de 14/08/2026:** as nove simulações terminaram com `apply: false` e reprovaram a aplicação integral. A ordem segura identificada é deduplicação reversível isolada, nova simulação de integridade/fases/funil e tratamento separado das 26 consultas sem oportunidade correspondente e dos 2 conflitos de atribuição. Ver `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
+**Resultado de 14/08/2026:** as nove simulações terminaram com `apply: false` e reprovaram a aplicação integral. A deduplicação reversível foi depois autorizada isoladamente e concluída: 2 grupos, 3 linhas arquivadas, 0 conflito e 0 rollback. As repetições confirmaram 0 duplicidades, 27 fases reparáveis sem ambiguidade e 130 linhas canônicas geráveis. Consultas e atribuição continuam separadas por seus bloqueios. Ver `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 ## Etapa 3 — Aplicar os reparos reversíveis
 
@@ -64,6 +64,8 @@ Somente depois da revisão das simulações e da autorização específica de mi
 7. `executarReaperFilaClassificacao({ apply: true })` — recupera leases expirados e move órfãos/tentativas esgotadas para a fila de exceção sem zerar tentativas.
 
 Depois de cada item, repetir sua simulação. Se o segundo resultado não for idempotente ou surgir erro, parar a sequência.
+
+**Execução de 14/08/2026:** item 1 concluído por `aplicarDeduplicacaoReversivelAutorizada`; os 3 `Backup ID` estão no registro de execução. A repetição foi idempotente. Itens 2 a 7 permanecem pendentes de autorização por bloco.
 
 ## Etapa 4 — Reconciliar os painéis
 
