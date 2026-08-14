@@ -18,6 +18,9 @@ function load() {
     Number,
     Object,
     String,
+    normalizePhone_(value) {
+      return String(value || "").replace(/\D/g, "");
+    },
     rankFaseOportunidade_(value) {
       return {
         Novo: 1,
@@ -30,7 +33,7 @@ function load() {
     },
   };
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { escolherLinhaCanonicaDuplicidade_, agruparLinhasPorOportunidade_ };`,
+    `${source}\nglobalThis.__test = { escolherLinhaCanonicaDuplicidade_, agruparLinhasPorOportunidade_, resolverLinhaLeadIndexada_ };`,
     sandbox,
   );
   return sandbox.__test;
@@ -85,6 +88,25 @@ test("groups only non-empty opportunity ids", () => {
   assert.equal(groups["opp-1"].length, 2);
 });
 
+test("indexed lead resolution preserves duplicate and unique-match safety", () => {
+  const { resolverLinhaLeadIndexada_ } = load();
+  const entry = {
+    columns: { "Opportunity ID": 2 },
+    byOpportunityId: { duplicated: [2, 9], unique: [8] },
+    byPhone: { 5511999999999: [8] },
+  };
+
+  assert.equal(resolverLinhaLeadIndexada_(entry, "unique", "").row, 8);
+  assert.equal(
+    resolverLinhaLeadIndexada_(entry, "duplicated", "").reason,
+    "duplicate_opportunity_id_in_visible_sheet",
+  );
+  assert.equal(
+    resolverLinhaLeadIndexada_(entry, "", "+55 11 99999-9999").row,
+    8,
+  );
+});
+
 test("integrated repair runner keeps every mutating repair in dry-run mode", () => {
   const start = source.indexOf(
     "function executarSimulacoesCorrecaoIntegrada()",
@@ -117,4 +139,17 @@ test("split repair runners expose every check without enabling writes", () => {
   }
   assert.match(runners, /INTEGRATED_DRY_RUN_CHECK/);
   assert.doesNotMatch(runners, /apply:\s*true/);
+});
+
+test("read-only repair paths use cached visible rows and do not repair headers", () => {
+  assert.match(source, /function construirIndiceLeadsVisiveis_/);
+  assert.match(source, /function resolverLinhaLeadIndexada_/);
+  assert.match(
+    source,
+    /if \(apply\) garantirEstruturaSincronizacaoConsultas_\(sheet\)/,
+  );
+  assert.match(
+    source,
+    /const columns = apply\s*\? garantirEstruturaIntegradaLead_\(sheet\)\s*:\s*mapaCabecalhosOportunidade_\(sheet\)/,
+  );
 });

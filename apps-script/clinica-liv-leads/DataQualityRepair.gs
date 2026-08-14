@@ -34,6 +34,75 @@ function statusLinhaQualidade_(row, columns) {
   return String(row[column - 1] || "");
 }
 
+function construirIndiceLeadsVisiveis_(spreadsheet) {
+  const index = {};
+  [
+    OPPORTUNITY_STORE_CONFIG.amandaSheetName,
+    OPPORTUNITY_STORE_CONFIG.danielSheetName,
+  ].forEach(function indexSheet(sheetName) {
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    const columns = mapaCabecalhosOportunidade_(sheet);
+    const rows = sheet
+      .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+      .getDisplayValues();
+    const byOpportunityId = {};
+    const byPhone = {};
+    const opportunityColumn = columns["Opportunity ID"];
+    const phoneColumn = columns["Telefone (E.164)"] || 3;
+    rows.forEach(function indexRow(row, rowIndex) {
+      const rowNumber = rowIndex + 2;
+      const opportunityId = opportunityColumn
+        ? String(row[opportunityColumn - 1] || "").trim()
+        : "";
+      if (opportunityId) {
+        if (!byOpportunityId[opportunityId]) byOpportunityId[opportunityId] = [];
+        byOpportunityId[opportunityId].push(rowNumber);
+      }
+      const phone = normalizePhone_(row[phoneColumn - 1]);
+      if (phone) {
+        if (!byPhone[phone]) byPhone[phone] = [];
+        byPhone[phone].push(rowNumber);
+      }
+    });
+    index[sheetName] = {
+      sheet,
+      columns,
+      rows,
+      byOpportunityId,
+      byPhone,
+    };
+  });
+  return index;
+}
+
+function resolverLinhaLeadIndexada_(entry, opportunityId, phone) {
+  if (!entry) return { ok: false, reason: "visible_sheet_not_found" };
+  let matches;
+  if (opportunityId && entry.columns["Opportunity ID"]) {
+    matches = entry.byOpportunityId[String(opportunityId)] || [];
+    return matches.length === 1
+      ? { ok: true, row: matches[0], matchedBy: "opportunity_id" }
+      : {
+        ok: false,
+        reason: matches.length
+          ? "duplicate_opportunity_id_in_visible_sheet"
+          : "opportunity_id_not_found_in_visible_sheet",
+        matchCount: matches.length,
+      };
+  }
+  const normalizedPhone = normalizePhone_(phone);
+  if (!normalizedPhone) return { ok: false, reason: "invalid_phone" };
+  matches = entry.byPhone[normalizedPhone] || [];
+  return matches.length === 1
+    ? { ok: true, row: matches[0], matchedBy: "unique_phone" }
+    : {
+      ok: false,
+      reason: matches.length ? "ambiguous_phone" : "phone_not_found",
+      matchCount: matches.length,
+    };
+}
+
 function agruparLinhasPorOportunidade_(rows, columns) {
   const opportunityColumn = columns["Opportunity ID"];
   const groups = {};
@@ -148,7 +217,7 @@ function planejarDeduplicacaoLeads_(spreadsheet) {
   ].forEach(function inspectSheet(sheetName) {
     const sheet = spreadsheet.getSheetByName(sheetName);
     if (!sheet || sheet.getLastRow() < 2) return;
-    const columns = garantirEstruturaIntegradaLead_(sheet);
+    const columns = mapaCabecalhosOportunidade_(sheet);
     const rows = sheet
       .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
       .getValues();
@@ -313,6 +382,7 @@ function restaurarLeadDuplicadoArquivado(input) {
 
 function auditarIntegridadeFunilLocal_() {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const visibleIndex = construirIndiceLeadsVisiveis_(spreadsheet);
   const opportunitySheet = spreadsheet.getSheetByName(
     OPPORTUNITY_STORE_CONFIG.sheetName,
   );
@@ -334,12 +404,10 @@ function auditarIntegridadeFunilLocal_() {
     OPPORTUNITY_STORE_CONFIG.amandaSheetName,
     OPPORTUNITY_STORE_CONFIG.danielSheetName,
   ].forEach(function auditVisible(sheetName) {
-    const sheet = spreadsheet.getSheetByName(sheetName);
-    if (!sheet || sheet.getLastRow() < 2) return;
-    const columns = garantirEstruturaIntegradaLead_(sheet);
-    const rows = sheet
-      .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
-      .getDisplayValues();
+    const entry = visibleIndex[sheetName];
+    if (!entry) return;
+    const columns = entry.columns;
+    const rows = entry.rows;
     const phoneColumn = columns["Telefone (E.164)"] || 3;
     const opportunityColumn = columns["Opportunity ID"];
     rows.forEach(function auditRow(row) {
@@ -371,18 +439,16 @@ function auditarIntegridadeFunilLocal_() {
       .getDisplayValues();
     rows.forEach(function auditOpportunity(row) {
       if (/^(?:closed|voided|encerrada)$/i.test(String(row[6] || ""))) return;
-      const sheet = spreadsheet.getSheetByName(String(row[4] || ""));
-      const resolution = sheet
-        ? resolverLinhaLeadCanonica_(sheet, row[0], row[1])
-        : { ok: false };
+      const entry = visibleIndex[String(row[4] || "")];
+      const resolution = resolverLinhaLeadIndexada_(entry, row[0], row[1]);
       if (!resolution.ok) {
         result.missingVisibleRows += 1;
         return;
       }
-      const columns = mapaCabecalhosOportunidade_(sheet);
-      const visibleStage = sheet
-        .getRange(resolution.row, columns["Situação do lead"] || 5)
-        .getDisplayValue();
+      const columns = entry.columns;
+      const visibleStage = entry.rows[resolution.row - 2][
+        (columns["Situação do lead"] || 5) - 1
+      ];
       if (String(visibleStage || "") !== String(row[7] || "")) {
         result.stageMismatches += 1;
       }
@@ -460,6 +526,7 @@ function auditarIntegridadeFunilLocal_() {
 function reconciliarFasesHistoricasLeads(input) {
   const apply = Boolean(input && input.apply === true);
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const visibleIndex = apply ? null : construirIndiceLeadsVisiveis_(spreadsheet);
   const opportunitySheet = spreadsheet.getSheetByName(
     OPPORTUNITY_STORE_CONFIG.sheetName,
   );
@@ -488,13 +555,17 @@ function reconciliarFasesHistoricasLeads(input) {
     if (/^(?:closed|voided|encerrada)$/i.test(String(row[6] || ""))) return;
     result.inspected += 1;
     const opportunityId = String(row[0] || "");
-    const sheet = spreadsheet.getSheetByName(String(row[4] || ""));
-    if (!sheet) {
+    const sheetName = String(row[4] || "");
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    const indexed = visibleIndex && visibleIndex[sheetName];
+    if (!sheet || (!apply && !indexed)) {
       result.reviewRequired += 1;
       result.issues.push({ opportunityId, reason: "visible_sheet_not_found" });
       return;
     }
-    const leadResult = resolverLinhaLeadCanonica_(sheet, opportunityId, row[1]);
+    const leadResult = apply
+      ? resolverLinhaLeadCanonica_(sheet, opportunityId, row[1])
+      : resolverLinhaLeadIndexada_(indexed, opportunityId, row[1]);
     if (!leadResult.ok) {
       result.reviewRequired += 1;
       result.issues.push({
@@ -503,12 +574,16 @@ function reconciliarFasesHistoricasLeads(input) {
       });
       return;
     }
-    const columns = mapaCabecalhosOportunidade_(sheet);
-    const visibleStage = String(
-      sheet
+    const columns = apply
+      ? mapaCabecalhosOportunidade_(sheet)
+      : indexed.columns;
+    const visibleStage = String(apply
+      ? sheet
         .getRange(leadResult.row, columns["Situação do lead"] || 5)
-        .getDisplayValue() || "",
-    );
+        .getDisplayValue() || ""
+      : indexed.rows[leadResult.row - 2][
+        (columns["Situação do lead"] || 5) - 1
+      ] || "");
     const phaseResult = resolverFaseSincronizada_(
       String(row[7] || ""),
       visibleStage,
@@ -570,7 +645,7 @@ function reconciliarConsultasHistoricas(input) {
   if (!sheet) {
     return Object.assign(result, { ok: false, error: "consultations_missing" });
   }
-  garantirEstruturaSincronizacaoConsultas_(sheet);
+  if (apply) garantirEstruturaSincronizacaoConsultas_(sheet);
   const columns = mapearCabecalhosConsultas_(
     sheet
       .getRange(1, 1, 1, sheet.getLastColumn())
@@ -713,7 +788,9 @@ function reconciliarAtribuicaoHistoricaLeads(input) {
   ].forEach(function reconcileSheet(sheetName) {
     const sheet = spreadsheet.getSheetByName(sheetName);
     if (!sheet || sheet.getLastRow() < 2) return;
-    const columns = garantirEstruturaIntegradaLead_(sheet);
+    const columns = apply
+      ? garantirEstruturaIntegradaLead_(sheet)
+      : mapaCabecalhosOportunidade_(sheet);
     const width = sheet.getLastColumn();
     const rows = sheet
       .getRange(2, 1, sheet.getLastRow() - 1, width)
@@ -776,6 +853,7 @@ function reconciliarAtribuicaoHistoricaLeads(input) {
 }
 
 function construirFonteFunilCanonico_(spreadsheet) {
+  const visibleIndex = construirIndiceLeadsVisiveis_(spreadsheet);
   const opportunitySheet = spreadsheet.getSheetByName(
     OPPORTUNITY_STORE_CONFIG.sheetName,
   );
@@ -803,10 +881,12 @@ function construirFonteFunilCanonico_(spreadsheet) {
     const professional = normalizarProfissionalOportunidade_(opportunity[3]);
     if (professional !== "amanda" && professional !== "daniel") return;
     const opportunityId = String(opportunity[0] || "");
-    const sheet = spreadsheet.getSheetByName(String(opportunity[4] || ""));
-    const identity = sheet
-      ? resolverLinhaLeadCanonica_(sheet, opportunityId, opportunity[1])
-      : { ok: false, reason: "visible_sheet_not_found" };
+    const entry = visibleIndex[String(opportunity[4] || "")];
+    const identity = resolverLinhaLeadIndexada_(
+      entry,
+      opportunityId,
+      opportunity[1],
+    );
     if (!identity.ok) {
       result.reviewRequired += 1;
       result.issues.push({
@@ -815,10 +895,8 @@ function construirFonteFunilCanonico_(spreadsheet) {
       });
       return;
     }
-    const columns = mapaCabecalhosOportunidade_(sheet);
-    const row = sheet
-      .getRange(identity.row, 1, 1, sheet.getLastColumn())
-      .getDisplayValues()[0];
+    const columns = entry.columns;
+    const row = entry.rows[identity.row - 2];
     function value(header, fallback) {
       const column = columns[header] || fallback || 0;
       return column ? row[column - 1] || "" : "";
