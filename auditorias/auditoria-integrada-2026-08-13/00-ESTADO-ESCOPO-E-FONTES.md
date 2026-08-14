@@ -148,6 +148,8 @@ Campanhas pausadas, encerradas, excluídas, arquivadas, rascunhos, experimentos 
 
 **Atualização de agenda em 14/08/2026:** o commit `f40cc50` e o Apps Script versão 86 expiraram os 32 horários passados que ainda estavam disponíveis, preservando todas as linhas e alterando somente o status. A reconciliação contra o backup confirmou 32/32 mudanças na coluna `Status` e nenhuma outra diferença; o check de saúde passou a `OK / 0`. A atualização da Central repete a manutenção a cada 15 minutos. `OPS-03` está concluído.
 
+**Atualização do reaper em 14/08/2026:** a simulação e a aplicação inspecionaram 88 jobs, sem lease vencido, retry seguro ou dead-letter pendente. Os 8 órfãos históricos já estavam registrados uma única vez na fila de exceções; a aplicação produziu zero diferença na fila e nas exceções. `BOT-05` está concluído no controle técnico, mas os 8 casos permanecem revisão humana e o contador 170 continua preservado como anomalia histórica.
+
 ### Fase 5 — Estratégia e crescimento
 
 - **Status:** concluída em 13/08/2026.

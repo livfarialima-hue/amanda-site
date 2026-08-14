@@ -2,7 +2,7 @@
 
 **Autorização:** o usuário autorizou iniciar e continuar a execução em 14/08/2026. As escritas foram separadas em blocos com backup, pré-voo e pós-voo: deduplicação, fases, subconjunto seguro de consultas/Calendar, Google Ads, observabilidade Meta Site, painel/SLA e, por último, fonte canônica, saúde e taxonomia de falhas. Campanhas e a página protegida de lifting permaneceram fora deste bloco.
 
-**Resultado:** Apps Script versão 86 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde, taxonomia de falhas e expiração da agenda aplicados em blocos separados, com backups, travas e pós-voos. `_FUNIL_CANONICO` foi criado com 131 oportunidades, mas os painéis gerenciais ainda não foram migrados. Casos históricos ambíguos, Google, cobertura Meta e cobertura do SLA seguem em observação.
+**Resultado:** Apps Script versão 86 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde, taxonomia de falhas, reaper/fila de exceções e expiração da agenda aplicados em blocos separados, com backups, travas e pós-voos. `_FUNIL_CANONICO` foi criado com 131 oportunidades, mas os painéis gerenciais ainda não foram migrados. Casos históricos ambíguos, Google, cobertura Meta e cobertura do SLA seguem em observação.
 
 ## Versões e backup
 
@@ -134,3 +134,10 @@ A aplicação integral continua reprovada por identidades de consultas não reco
 - Pós-voo: o check `Horários passados ainda disponíveis` passou de `ATENÇÃO / 32` para `OK / 0`.
 - Prevenção: a atualização da Central chama a manutenção a cada 15 minutos. A regra só atua sobre data/hora válida e já vencida com status ainda disponível; a repetição é inócua.
 - Validação final: Apps Script versão 86, endpoint HTTP 200 com `ok: true`, commit `f40cc50`, **535 de 535 testes aprovados**, `git diff --check` limpo e `/lifting-facial/` fora do diff.
+
+## Reaper e exceções de classificação — `BOT-05`
+
+- Backup nativo imediatamente anterior: [LEADS — backup antes do reaper de classificação — 2026-08-14 16h00](https://docs.google.com/spreadsheets/d/1F_PQ4NwLVIHGn-sEjQ9GeEV69SFkl_Z48UUJ1pGegCY/edit?usp=drivesdk).
+- Dry-run: 88 inspecionados, zero requeueable, zero dead-letterable e 8 attention-required históricos.
+- Aplicação: zero diferença na fila principal e zero diferença na fila de exceções; os oito incidentes já estavam registrados e a deduplicação por chave impediu repetição.
+- Decisão: controle técnico de `BOT-05` concluído. Nenhum job foi reprocessado, nenhum paciente recebeu mensagem e o contador anômalo foi preservado. Os oito casos continuam na revisão humana e não contam como fila saudável resolvida.

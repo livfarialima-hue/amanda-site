@@ -168,3 +168,10 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - A comparação contra o backup encontrou exatamente 32 mudanças, todas na coluna `Status`, de `Disponível` para `Indisponível`. Nenhuma linha foi apagada e nenhuma data, hora, profissional, observação ou semana mudou.
 - A manutenção passou a rodar junto da Central a cada 15 minutos. A função é idempotente, falha se os cabeçalhos obrigatórios estiverem ausentes e nunca altera status reservado, bloqueado, inválido ou futuro.
 - `Saúde das Integrações` fechou em `OK / 0`. Apps Script versão 86 no deployment preservado; endpoint HTTP 200 com `ok: true`; **535/535 testes locais aprovados**; `/lifting-facial/` fora do diff.
+
+### Checkpoint `BOT-05`
+
+- Backup anterior à planilha: [LEADS — backup antes do reaper de classificação — 2026-08-14 16h00](https://docs.google.com/spreadsheets/d/1F_PQ4NwLVIHGn-sEjQ9GeEV69SFkl_Z48UUJ1pGegCY/edit?usp=drivesdk).
+- A simulação inspecionou 88 jobs e encontrou zero `requeueable`, zero `deadLetterable` e 8 `attentionRequired`. A regra não permite reprocessar automaticamente `orphaned` ou `dead_letter`; esses estados são encaminhados à revisão.
+- A aplicação protegida foi inócua: a fila principal permaneceu com 88 linhas e zero diferença de célula contra o backup; a fila de exceções permaneceu com 9 linhas e zero diferença porque os incidentes já existiam com a mesma chave idempotente.
+- `BOT-05` está concluído quanto a lease, limite de tentativas, dead-letter e registro único de exceção. Os oito casos históricos permanecem backlog humano; o contador 170 foi preservado e não deve ser interpretado como 170 incidentes independentes.

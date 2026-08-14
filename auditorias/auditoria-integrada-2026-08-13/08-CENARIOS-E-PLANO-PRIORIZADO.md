@@ -168,6 +168,8 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 **Checkpoint Agenda de 14/08/2026:** `OPS-03` foi concluído no commit `f40cc50`/Apps Script versão 86. Os 32 horários vencidos foram preservados e marcados `Indisponível`; o check passou a `OK / 0`, e a Central repete a manutenção a cada 15 minutos. O bloco não altera Calendar, consultas confirmadas, campanhas ou conteúdo do site.
 
+**Checkpoint Reaper de 14/08/2026:** `BOT-05` foi validado em produção com 88 jobs inspecionados, zero lease vencido, zero retry/dead-letter seguro e 8 exceções históricas já registradas sem duplicação. O controle técnico está concluído, mas os oito casos continuam na revisão humana; nenhum deles deve ser reprocessado automaticamente nem usado para declarar o classificador saudável.
+
 ### Correções críticas
 
 1. `GAD-03`: validar autorização e guardrail do aumento de lifting cervical.

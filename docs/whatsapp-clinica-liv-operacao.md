@@ -30,6 +30,13 @@
 - Só expira um horário quando data e hora são válidas, o status ainda é `Disponível` e o instante é anterior ou igual ao momento da execução. Registro inválido, reservado, bloqueado ou futuro permanece intacto.
 - Validação: Apps Script versão 86 no mesmo deployment, endpoint HTTP 200 com `ok: true`, commit `f40cc50` e **535 de 535 testes aprovados**. `OPS-03` está concluído; o check de saúde continua sendo o alerta de regressão.
 
+### Reaper e fila de exceções — `BOT-05`
+
+- Backup anterior à execução: [LEADS — backup antes do reaper de classificação — 2026-08-14 16h00](https://docs.google.com/spreadsheets/d/1F_PQ4NwLVIHGn-sEjQ9GeEV69SFkl_Z48UUJ1pGegCY/edit?usp=drivesdk).
+- O dry-run inspecionou 88 jobs: zero lease vencido para requeue, zero item elegível a dead-letter e 8 estados históricos de atenção humana. Nenhum deles foi reprocessado ou enviado novamente ao paciente.
+- A aplicação confirmou idempotência: `_WHATSAPP_CLASSIFICACAO` permaneceu 88/88 sem nenhuma célula alterada, e `_WHATSAPP_CLASSIFICACAO_EXCECOES` permaneceu 9/9 porque todos os oito incidentes já estavam registrados por chave estável.
+- O contador histórico de 170 tentativas foi preservado como evidência; não foi convertido em 170 falhas nem zerado artificialmente. `BOT-05` está concluído no controle técnico. O backlog de 8 exceções continua aberto para revisão humana e não autoriza declarar a classificação saudável.
+
 ## Estado de produção
 
 > **Correção publicada — 14/08/2026:** os registros de produção mostraram que uma pergunta válida sobre acesso e valor da consulta ficou sem resposta porque `append_lead` no Apps Script ultrapassou o timeout de 8 segundos. A planilha concluiu a gravação depois, mas o webhook já havia falhado de forma fechada; a recuperação repetiu o mesmo caminho lento. O deploy `6a7f2efadac1ed0008dffffa` reserva até 20 segundos apenas para `append_lead` (limite configurável entre 8 e 25 segundos), desconta do debounce o tempo já gasto no roteamento, classifica “como passar em consulta e o valor” como informação de consulta — não preço cirúrgico — e prioriza o nome informado pela própria pessoa sobre um nome de perfil incompatível.

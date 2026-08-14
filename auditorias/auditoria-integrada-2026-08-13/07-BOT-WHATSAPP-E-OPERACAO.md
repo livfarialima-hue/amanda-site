@@ -262,6 +262,10 @@ O indicador misto foi substituído por `Falhas técnicas de classificação`, ca
 
 A versão 86 inspecionou 51 linhas da agenda e expirou os 32 horários vencidos ainda disponíveis. A comparação com o backup encontrou somente 32 mudanças na coluna `Status`, todas de `Disponível` para `Indisponível`; o histórico e as demais colunas foram preservados. O check de saúde ficou em `OK / 0` e a atualização da Central passou a executar a mesma regra idempotente a cada 15 minutos. `OPS-03` está concluído.
 
+### Checkpoint `BOT-05` — 14/08/2026
+
+O reaper inspecionou 88 jobs e encontrou zero lease vencido, zero retry seguro, zero dead-letter pendente e 8 exceções históricas que exigem revisão humana. A execução protegida foi idempotente: zero célula mudou na fila principal e na fila de exceções, pois todos os incidentes já estavam registrados. O controle técnico de `BOT-05` está concluído; os oito casos históricos continuam no backlog humano e o contador 170 permanece apenas como anomalia de um registro, não como 170 incidentes.
+
 ## Matriz de risco operacional
 
 | Risco | Severidade | Probabilidade | Evidência | Efeito possível |
@@ -278,7 +282,7 @@ A versão 86 inspecionou 51 linhas da agenda e expirou os 32 horários vencidos 
 
 ## Recomendações rastreáveis
 
-As ações abaixo registram o baseline da auditoria. Os checkpoints acima atualizam `BOT-03`, `BOT-04` e `BOT-06`; as demais permanecem propostas até registro explícito de execução.
+As ações abaixo registram o baseline da auditoria. Os checkpoints acima atualizam `BOT-03`, `BOT-04`, `BOT-05`, `BOT-06` e `OPS-03`; as demais permanecem propostas até registro explícito de execução.
 
 | ID | Prioridade | Mudança proposta | Evidência | Métrica de aceite | Guardrail / regra de decisão | Dono sugerido | Esforço |
 |---|---|---|---|---|---|---|---|

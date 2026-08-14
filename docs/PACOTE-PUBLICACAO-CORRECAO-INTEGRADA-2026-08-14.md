@@ -1,6 +1,6 @@
 # Pacote de publicação da correção integrada — 14 de agosto de 2026
 
-**Situação:** Apps Script publicado na versão 86; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde das integrações, taxonomia de falhas e expiração segura da agenda aplicados; fonte canônica criada, mas Funil Comercial e Painel Econômico ainda não migrados; Google, cobertura Meta e cobertura do SLA permanecem em observação
+**Situação:** Apps Script publicado na versão 86; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde das integrações, taxonomia de falhas, reaper/fila de exceções e expiração segura da agenda aplicados; fonte canônica criada, mas Funil Comercial e Painel Econômico ainda não migrados; Google, cobertura Meta e cobertura do SLA permanecem em observação
 
 Este manifesto separa o que está no repositório do que ainda depende de autorização e validação ao vivo.
 
