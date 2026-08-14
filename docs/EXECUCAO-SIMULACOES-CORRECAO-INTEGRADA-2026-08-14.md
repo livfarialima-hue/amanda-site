@@ -1,8 +1,8 @@
 # Execução das simulações da correção integrada — 14 de agosto de 2026
 
-**Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a primeira correção reversível: a deduplicação isolada. Fases, funil, consultas, atribuição, fórmulas, Netlify, site e mídia continuam fora dessa autorização.
+**Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação isolada. Em autorização posterior, liberou apenas a reconciliação das 27 fases históricas. Funil, consultas, atribuição, fórmulas, Calendar e mídia continuam fora dessa autorização.
 
-**Resultado:** Apps Script publicado; nove simulações iniciais concluídas; deduplicação aplicada com backup por linha, sem conflito e sem rollback. A repetição ficou idempotente. As demais migrações permanecem pendentes de autorização específica.
+**Resultado:** Apps Script versão 78 publicado; nove simulações iniciais concluídas; deduplicação e fases históricas aplicadas em blocos separados, com backups, travas e pós-voos idempotentes. Consultas, atribuição, funil, fórmulas, Calendar e mídia permanecem pendentes de autorização específica.
 
 ## Versões e backup
 
@@ -10,6 +10,7 @@
 - Versões intermediárias publicadas durante a preparação: 73, 74 e 75.
 - Versão usada nas simulações iniciais: **76**, de 14/08/2026 às 08:27.
 - Versão publicada para a deduplicação auditável: **77**, de 14/08/2026 às 10:03.
+- Versão publicada para a reconciliação protegida das fases: **78**, de 14/08/2026 às 12:21.
 - Deployment ID preservado: `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`.
 - Endpoint validado por HTTP: status 200, `ok: true`, serviço `clinica-liv-leads`.
 - Commits de diagnóstico: `0cba7a7`, `6b9e676` e `fe7cd27`.
@@ -18,6 +19,7 @@
 - Integridade estrutural do backup: 33 abas; `IMPORT_GOOGLE_ADS` permanece na primeira posição.
 - Backup nativo imediatamente anterior à escrita: [LEADS — backup antes da deduplicação reversível — 2026-08-14 09-58](https://docs.google.com/spreadsheets/d/1vurtQrmroJNvYvavoh4bl5v6UNDpsv2R34omJQ2a-xU/edit).
 - Integridade estrutural do backup pré-escrita: 34 abas; `IMPORT_GOOGLE_ADS` permanece na primeira posição.
+- Antes da reconciliação das fases, foi criada outra cópia nativa privada. Fonte e cópia tinham 36 abas e IDs distintos; o identificador da cópia não é persistido neste repositório.
 
 ## Resultado consolidado das simulações
 
@@ -45,14 +47,24 @@
 - Funil canônico após a deduplicação: 130 linhas geráveis, 0 revisões e 0 problemas.
 - Suíte local após o endurecimento: **508 de 508 testes aprovados**.
 
+## Fases históricas autorizadas e verificações posteriores
+
+- Executor: `aplicarReconciliacaoFasesHistoricasAutorizada`, registrado no commit `d6cb72d`, com trava exclusiva, pré-voo fixado em 131 oportunidades/27 reparos/zero conflito e retorno inócuo quando já reconciliado.
+- Simulação imediatamente anterior: 131 inspecionadas, 104 consistentes, 27 reparáveis, 0 revisão e 0 problema.
+- Escrita: 27 reparáveis, 27 reparadas, 0 revisão e 0 erro.
+- Pós-voo interno: 131 inspecionadas, 131 consistentes, 0 reparável, 0 revisão e 0 problema.
+- Verificação independente no Google Sheets: 141 oportunidades totais, 131 ativas, 10 encerradas/arquivadas, 131 vínculos visíveis comparados, 0 linha ausente, 0 divergência de fase, 0 divergência de ponteiro e 0 ID duplicado.
+- Estruturas não autorizadas: os valores ou fórmulas informados de `Consultas`, atribuição, `Saúde das Integrações`, `Funil Comercial`, `Painel Econômico` e `Painel do Bot` conservaram o mesmo hash do baseline; `_FUNIL_CANONICO` permaneceu ausente.
+- Validação técnica: endpoint versão 78 com HTTP 200 e `ok: true`; **516 de 516 testes locais aprovados**; formatação e validação das células de fase preservadas.
+
 ## Decisão do gate
 
-A aplicação integral continua reprovada por identidades históricas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda nula. A deduplicação foi concluída como bloco isolado. O próximo bloco elegível, ainda não autorizado, é sincronizar as 27 fases reparáveis, repetir a auditoria e só então decidir a reconstrução do funil canônico.
+A aplicação integral continua reprovada por identidades de consultas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda insuficiente. Deduplicação e fases foram concluídas como blocos isolados. O próximo bloco deve ser escolhido e autorizado separadamente entre consultas, atribuição, funil canônico/painéis, Google Ads ou reaper operacional.
 
 ## Limites preservados
 
-- Somente a deduplicação autorizada foi executada com escrita; cada linha removida foi arquivada antes da limpeza e possui `Backup ID` exato.
-- Nenhuma fase, fórmula, evento do Calendar, conversão do Google Ads ou campanha foi alterada.
-- Netlify e site não foram publicados nesta etapa.
+- Somente a deduplicação e as fases autorizadas foram executadas com escrita; cada linha removida foi arquivada antes da limpeza e possui `Backup ID` exato.
+- Nenhuma fórmula, consulta, atribuição, evento do Calendar, conversão do Google Ads ou campanha foi alterada no bloco de fases.
+- A versão 78 do Apps Script foi publicada; Netlify e site não receberam código funcional novo neste bloco.
 - `/lifting-facial/` não foi alterada.
 - Nenhum identificador de paciente, telefone, mensagem ou dado clínico foi persistido neste registro.

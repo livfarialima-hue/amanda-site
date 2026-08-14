@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** base do Apps Script publicada na versão 77; deduplicação reversível aplicada e validada; Netlify e site publicados no commit `bf95bb4`; teste sintético aprovado; fases históricas, funil, consultas, atribuição e fórmulas ainda não migrados
+**Estado:** Apps Script publicado na versão 78; deduplicação reversível e reconciliação das fases históricas aplicadas e validadas; Netlify e site publicados no commit `fc433da`; teste sintético aprovado; funil, consultas, atribuição e fórmulas ainda não migrados
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -77,6 +77,16 @@
 - Testes após o endurecimento da deduplicação: **508 de 508 aprovados**.
 - Registro detalhado: `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
 
+### Reconciliação histórica de fases autorizada
+
+- Uma nova cópia nativa privada foi criada imediatamente antes deste bloco; a cópia e a fonte tinham 36 abas e IDs distintos.
+- O executor protegido foi registrado no commit `d6cb72d` e publicado como Apps Script versão 78 às 12:21. Ele exige 131 oportunidades inspecionadas, exatamente 27 reparos e zero conflito antes de permitir a escrita; uma segunda execução sem pendências é inócua.
+- A simulação imediatamente anterior à escrita confirmou 131 oportunidades, 104 já consistentes, 27 reparáveis, zero revisão e zero problema.
+- A execução das 12:22 às 12:26 corrigiu 27 de 27 pares CRM–aba visível. O pós-voo interno encontrou 131 consistentes, zero reparável, zero revisão e zero erro.
+- Uma leitura independente da planilha confirmou 141 oportunidades totais, sendo 131 ativas e 10 encerradas/arquivadas; as 131 ativas possuem linha visível única, zero divergência de fase, zero divergência de ponteiro e zero ID duplicado.
+- Os valores ou fórmulas informados de `Consultas`, atribuição, `Saúde das Integrações`, `Funil Comercial`, `Painel Econômico` e `Painel do Bot` ficaram idênticos ao baseline. `_FUNIL_CANONICO` não foi criado e nenhum evento do Calendar foi alterado.
+- O endpoint da versão 78 respondeu HTTP 200 com `ok: true`. A suíte local passou com **516 de 516 testes**.
+
 O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-CORRECAO-INTEGRADA-2026-08-14.md`. O inventário exato do pacote está em `docs/PACOTE-PUBLICACAO-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 ## Gates que permanecem externos
@@ -85,8 +95,8 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 
 ## Publicação e validação do Netlify — 14/08/2026
 
-- A branch pública `reestruturacao-site` foi atualizada de `3955095` para `bf95bb4` após confirmação explícita do escopo; o worktree local e a origem ficaram iguais.
-- O Netlify publicou o deploy de produção `6a7f2c57550d2700084f51f3` a partir do commit `bf95bb4`.
+- Antes deste bloco, a branch pública `reestruturacao-site`, o worktree e a produção estavam alinhados no commit `fc433da`.
+- O Netlify havia publicado o deploy de produção `6a7f2efadac1ed0008dffffa` a partir do commit `fc433da`.
 - O diagnóstico público confirmou `ok`, automação ativa, Sheets, secret, OpenAI e alerta de revisão configurados.
 - Página inicial, avaliação facial, otoplastia adulta, otoplastia infantil, lifting facial e `robots.txt` responderam HTTP 200.
 - `/lifting-facial/` permaneceu idêntica ao arquivo local depois de normalizar somente quebras de linha; nenhum texto, layout, vídeo, CTA ou característica mudou.
@@ -96,8 +106,8 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 ### Checkpoint agregado após a publicação
 
 - O CRM contém 141 oportunidades: 128 de Amanda, 3 de Daniel e 10 arquivadas ou de outros fluxos. As abas visíveis contêm exatamente 128 e 3 IDs únicos, respectivamente, sem nova duplicidade.
-- Permanecem 27 divergências de fase entre CRM e aba visível; nenhuma foi corrigida neste checkpoint.
+- As 27 divergências de fase foram corrigidas no bloco autorizado posterior. A verificação independente passou a indicar zero divergência entre as 131 oportunidades ativas e suas linhas visíveis.
 - `Consultas` contém 43 registros: 10 com `Opportunity ID` e ID de evento Google; 33 sem `Opportunity ID`, sendo 22 encerrados e 11 ativos ou sem desfecho inequívoco.
 - `_FUNIL_CANONICO` ainda não existe. `Saúde das Integrações` continua referenciando `IMPORT_GCLID` e contém uma fórmula `#VALUE!` por intervalos de tamanhos diferentes.
 - No recorte de sete dias, `Painel do Bot` registra 198 mensagens recebidas, 41 pessoas, 173 mensagens humanas, 2 pendências vencidas e 8 erros de classificação. A métrica antiga “Conversas assumidas” ainda lê `_WHATSAPP_ATENDIMENTO` e mostra zero, portanto não deve ser usada.
-- Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem exportação de nome, telefone, e-mail, conversa ou dado clínico. Eles confirmam a ordem do próximo bloco, mas não autorizam as escritas históricas.
+- Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem persistir nome, telefone, e-mail, conversa ou dado clínico no relatório. Consultas, atribuição, funil e fórmulas continuam exigindo autorização própria.

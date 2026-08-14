@@ -2,11 +2,11 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
-> **Produção:** base do Apps Script na versão 77; Netlify e site publicados em 14/08/2026 no deploy `6a7f2c57550d2700084f51f3`, commit `bf95bb4`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente. O teste sintético Netlify → Apps Script foi executado sem dados de paciente e confirmou persistência, contrato de classificação e handoff. Fases históricas, fórmulas dos painéis, Calendar e mídia não foram alterados nesta etapa.
+> **Produção:** base do Apps Script na versão 78; Netlify e site publicados em 14/08/2026 no deploy `6a7f2efadac1ed0008dffffa`, commit `fc433da`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. O teste sintético Netlify → Apps Script foi executado sem dados de paciente e confirmou persistência, contrato de classificação e handoff. Fórmulas dos painéis, consultas, atribuição, Calendar e mídia não foram alterados no bloco de fases.
 
 ## Estado de produção
 
-> **Correção publicada — 14/08/2026:** os registros de produção mostraram que uma pergunta válida sobre acesso e valor da consulta ficou sem resposta porque `append_lead` no Apps Script ultrapassou o timeout de 8 segundos. A planilha concluiu a gravação depois, mas o webhook já havia falhado de forma fechada; a recuperação repetiu o mesmo caminho lento. O deploy `6a7f2c57550d2700084f51f3` reserva até 20 segundos apenas para `append_lead` (limite configurável entre 8 e 25 segundos), desconta do debounce o tempo já gasto no roteamento, classifica “como passar em consulta e o valor” como informação de consulta — não preço cirúrgico — e prioriza o nome informado pela própria pessoa sobre um nome de perfil incompatível.
+> **Correção publicada — 14/08/2026:** os registros de produção mostraram que uma pergunta válida sobre acesso e valor da consulta ficou sem resposta porque `append_lead` no Apps Script ultrapassou o timeout de 8 segundos. A planilha concluiu a gravação depois, mas o webhook já havia falhado de forma fechada; a recuperação repetiu o mesmo caminho lento. O deploy `6a7f2efadac1ed0008dffffa` reserva até 20 segundos apenas para `append_lead` (limite configurável entre 8 e 25 segundos), desconta do debounce o tempo já gasto no roteamento, classifica “como passar em consulta e o valor” como informação de consulta — não preço cirúrgico — e prioriza o nome informado pela própria pessoa sobre um nome de perfil incompatível.
 
 - Endpoint: `https://draamandaschroeder.com.br/api/ycloud/webhook`
 - Automação: `active`
