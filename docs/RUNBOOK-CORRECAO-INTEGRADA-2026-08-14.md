@@ -1,6 +1,6 @@
 # Runbook da correção integrada — 14 de agosto de 2026
 
-**Estado:** preparado e validado localmente; nenhuma publicação ou migração ao vivo autorizada por este documento
+**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 76 publicado; nenhuma migração com `apply: true` executada
 
 **Norte canônico:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -48,6 +48,8 @@ auditarSlaOperacional();
 ```
 
 Reprovar a migração se houver identidade ambígua, conflito de fase equivalente, atribuição já preenchida em desacordo, mais de um click ID, transação duplicada não resolvida, Calendar sem vínculo único ou diferença material não explicada em relação ao diagnóstico anterior.
+
+**Resultado de 14/08/2026:** as nove simulações terminaram com `apply: false` e reprovaram a aplicação integral. A ordem segura identificada é deduplicação reversível isolada, nova simulação de integridade/fases/funil e tratamento separado das 26 consultas sem oportunidade correspondente e dos 2 conflitos de atribuição. Ver `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 ## Etapa 3 — Aplicar os reparos reversíveis
 

@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** concluído e validado localmente; não publicado
+**Estado:** base do Apps Script publicada na versão 76; simulações ao vivo concluídas; migrações de dados, fórmulas, Netlify e site não publicadas
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -64,7 +64,17 @@
 - Proteção de lifting: `git diff --name-only -- lifting-facial` permaneceu vazio; nenhum texto, layout, vídeo, CTA ou característica foi alterado.
 - Testes finais: **503 de 503 aprovados** depois da remoção do fallback legado; `git diff --check` sem erro.
 - Commits locais deste fechamento: `ec30d47` (operação e SLA) e `f5ffe76` (estabilidade técnica do site).
-- Nenhuma função com `apply: true`, alteração de fórmula, criação/remoção de evento, upload ao Google Ads, mudança de campanha, push ou publicação foi executada.
+- No fechamento local anterior, nenhuma função com `apply: true`, alteração de fórmula, criação/remoção de evento, upload ao Google Ads, mudança de campanha, push ou publicação havia sido executada. A seção seguinte atualiza esse estado apenas para a publicação autorizada do Apps Script.
+
+## Execução autorizada em 14/08/2026
+
+- Foi criada uma cópia nativa da planilha antes da execução e sua estrutura de 33 abas foi confirmada.
+- A base do Apps Script foi publicada na versão 76, vinculada ao commit local `fe7cd27`; o endpoint respondeu HTTP 200 com `ok: true`.
+- O executor monolítico excedeu seis minutos sem produzir escrita. Ele foi dividido em nove verificações independentes, e as leituras repetidas das abas visíveis foram substituídas por um índice em memória. A auditoria equivalente caiu de aproximadamente 3min39s para menos de 8s e preservou exatamente as mesmas contagens.
+- As nove verificações foram concluídas com `apply: false`. O lote integral foi reprovado antes da primeira escrita por 2 grupos duplicados/3 linhas excedentes, 26 consultas históricas sem oportunidade correspondente, 2 conflitos de atribuição congelada, 8 itens de classificação que exigem atenção e cobertura de SLA ainda igual a zero.
+- A deduplicação reversível é o único primeiro reparo elegível no resultado atual; sua aplicação depende de nova autorização específica.
+- Testes após o endurecimento do diagnóstico: **506 de 506 aprovados**.
+- Registro detalhado: `docs/EXECUCAO-SIMULACOES-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-CORRECAO-INTEGRADA-2026-08-14.md`. O inventário exato do pacote está em `docs/PACOTE-PUBLICACAO-CORRECAO-INTEGRADA-2026-08-14.md`.
 

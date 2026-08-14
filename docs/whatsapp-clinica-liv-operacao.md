@@ -2,7 +2,7 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
-> **Produção:** pacote integrado atualizado em 13/08/2026 — Apps Script versão 72 e classificador de marcos administrativos no Netlify deploy `6a7e6de85173db0008162365`, commit `1ada277`. A planilha, as filas e os históricos técnicos foram auditados após a publicação.
+> **Produção:** base do Apps Script atualizada em 14/08/2026 para a versão 76, commit local `fe7cd27`; endpoint validado com HTTP 200. O webhook do Netlify permanece no deploy `6a7e6de85173db0008162365`, commit `1ada277`. Nenhuma migração com `apply: true`, fórmula, Calendar, site ou mídia foi alterada nesta etapa.
 
 ## Estado de produção
 
