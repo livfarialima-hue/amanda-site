@@ -1,6 +1,6 @@
 # Pacote de publicação da correção integrada — 14 de agosto de 2026
 
-**Situação:** Apps Script publicado na versão 81; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads aplicados; casos ambíguos de consultas, atribuição, funil e fórmulas ainda pendentes por bloco; saúde da ação Google permanece em observação
+**Situação:** Apps Script publicado na versão 82; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads e observabilidade prospectiva Meta Site aplicados; histórico ambíguo de consultas/atribuição, funil e fórmulas ainda pendentes; Google e cobertura Meta permanecem em observação
 
 Este manifesto separa o que está no repositório do que ainda depende de autorização e validação ao vivo.
 
@@ -20,6 +20,7 @@ Este manifesto separa o que está no repositório do que ainda depende de autori
 | `d6cb72d` | executor autorizado de fases com trava, pré-voo fixo e pós-voo idempotente |
 | `fc0785a` | auditoria e executor protegido da reconciliação segura de consultas e Calendar |
 | `8dbe985` | reconciliação offline Google Ads com identidade exata, pré/pós-voo fixos e trava exclusiva |
+| `7480022` | categoria e motivo de fallback na atribuição Meta Site, ledger prospectivo e sonda M26F02S sem PII |
 
 O commit que contém este manifesto apenas fecha documentação e QA; ele também deve fazer parte do mesmo pacote aprovado.
 
@@ -27,7 +28,7 @@ O commit que contém este manifesto apenas fecha documentação e QA; ele també
 
 ### Apps Script
 
-**Publicado:** versão 81 em 14/08/2026. A versão 77 endureceu a deduplicação; a versão 78 acrescentou o executor protegido das fases; a versão 80 publicou o executor seguro de consultas; a versão 81 preservou o mesmo deployment e publicou o executor protegido da reconciliação offline Google Ads. O endpoint respondeu HTTP 200 com `ok: true` depois da publicação.
+**Publicado:** versão 82 em 14/08/2026. A versão 77 endureceu a deduplicação; a versão 78 acrescentou o executor protegido das fases; a versão 80 publicou o executor seguro de consultas; a versão 81 publicou a reconciliação offline Google Ads; a versão 82 preservou o deployment e publicou a observabilidade prospectiva Meta Site. O endpoint respondeu HTTP 200 com `ok: true` depois da publicação.
 
 - identidade e fase canônicas;
 - deduplicação arquivável/restaurável;
@@ -65,7 +66,7 @@ Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, p�
 
 ## QA concluído
 
-- `npm.cmd test`: **522/522 aprovados** no estado final documentado.
+- `npm.cmd test`: **526/526 aprovados** no estado final documentado.
 - `git diff --check`: aprovado.
 - `git diff --name-only -- lifting-facial`: vazio.
 - fluxos ambíguos ou sem rota: silenciosos para o paciente e encaminhados à revisão;
@@ -75,7 +76,7 @@ Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, p�
 ## Ordem de publicação quando autorizada
 
 1. registrar versões e backups — **concluído**;
-2. publicar Apps Script — **concluído na versão 81**;
+2. publicar Apps Script — **concluído na versão 82**;
 3. executar e revisar todas as simulações — **concluído; lote integral reprovado antes de escrita**;
 4. executar somente as migrações expressamente autorizadas — **deduplicação, fases, subconjunto seguro de consultas e Google Ads concluídos; demais blocos pendentes**;
 5. reconciliar fórmulas célula a célula;

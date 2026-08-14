@@ -261,6 +261,8 @@ Esses resultados são positivos, mas não equivalem a conformidade WCAG. Não fo
 - **Métrica e guardrails:** `% de cliques conciliados`, conversa válida, lead qualificado, consulta confirmada; guardrails de zero PII/PHI em analytics, taxa de duplicidade <2% e nenhuma redução do consentimento.
 - **Duração e decisão:** validar por 14 dias e pelo menos 30 desfechos conciliados. Manter se cobertura ≥80% e duplicidade <2%; expandir para valor somente após reconciliação financeira; reverter importação externa se houver vazamento, duplicidade ou atribuição não auditável.
 
+**Checkpoint pós-auditoria — 14/08/2026:** a ponte técnica página → WhatsApp → Apps Script foi validada sem criar paciente nem enviar WhatsApp. Todos os 6 CTAs públicos mantiveram o código completo, o ledger ganhou categoria/motivo de fallback e a sonda registrou `meta_attribution_contract_ok`. Isso fecha o QA técnico inicial de `WEB-01`, não a conciliação de pessoas ou consultas: o gate de 14 dias, ≥30 desfechos, cobertura ≥80% e duplicidade <2% continua obrigatório.
+
 ### WEB-02 — Reconciliar `whatsapp_click` com o status de evento principal
 
 - **Problema:** 49 eventos, mas apenas 35 eventos principais, o que torna relatórios e metas inconsistentes.

@@ -96,6 +96,8 @@ O checkpoint agregado posterior confirmou zero nova duplicidade. O bloco de fase
 
 - Google Ads: conferir que `Lead qualificado GCLID` continua Principal/incluída, importar apenas linhas válidas, registrar aceite/rejeição por transação e observar sete dias. Não ativar tCPA, Performance Max, correspondência ampla ou aumento de orçamento durante o gate.
 - Meta Site `M26F02S`: manter orçamento em zero até a rastreabilidade consentida estar comprovada. Um teste isolado de R$ 300 depende de autorização futura própria.
+
+**Checkpoint técnico de 14/08/2026:** os 6 CTAs da landing pública preservaram `M26F02S-C01H01-avaliacao-facial`. O Apps Script versão 82 e o Netlify no commit `7480022` passaram a registrar categoria/motivo de fallback nos novos eventos. A sonda sem paciente concluiu com `meta_attribution_contract_ok`. Isso autoriza observação prospectiva, mas não libera verba: manter o orçamento em zero até a amostra real atingir os gates abaixo.
 - Meta WhatsApp `M26F01W`: permanece controle; conversa reportada pela Meta não equivale a lead qualificado ou consulta sem reconciliação no CRM.
 - Calendar: conferir novas consultas pelo `Opportunity ID` e ID exato do evento.
 - Bot: revisar rotas, handoffs, respostas humanas, exceções e SLA sem ler ou expor mais conteúdo do que o necessário.

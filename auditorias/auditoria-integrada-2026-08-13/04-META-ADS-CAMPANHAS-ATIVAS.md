@@ -165,6 +165,8 @@ O único recorte por anúncio disponível cruzava as edições de 27/07 e foi ex
 - **Manter/ampliar/reverter:** manter se diferenças forem explicadas; ampliar só com CPL qualificado/consulta aceitável; interromper escala se correspondência for baixa.
 - **Responsável/aprovação:** dados/CRM + mídia; implementação externa requer aprovação.
 
+**Checkpoint pós-auditoria — 14/08/2026:** o defeito técnico observável foi corrigido sem alterar campanha, orçamento, público, criativo ou landing. Os 6 CTAs testados preservaram `M26F02S-C01H01-avaliacao-facial`; os novos eventos registram categoria e motivo de fallback; a sonda ao vivo concluiu com HTTP 200 e contrato de atribuição aprovado. `MAD-01` permanece parcialmente aberto até formar a coorte real clique → contato → oportunidade → qualificado → consulta; LPV histórico continua sendo proxy, não lead.
+
 ### MAD-02 — decidir o encerramento de 16/08 sem contaminar o teste
 
 - **Problema:** as duas campanhas têm término em 16/08 e orçamento total quase consumido.

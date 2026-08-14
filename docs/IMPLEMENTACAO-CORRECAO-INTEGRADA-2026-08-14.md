@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 81; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads aplicados e validados; Netlify e site publicados no commit `fc433da`; teste sintético aprovado; casos ambíguos de consultas, funil, atribuição e fórmulas ainda não migrados
+**Estado:** Apps Script publicado na versão 82; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads e observabilidade prospectiva de atribuição Meta Site aplicados e validados; Netlify publicado no commit `7480022`; casos históricos ambíguos de consultas/atribuição, funil e fórmulas ainda não migrados
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -109,6 +109,15 @@ O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-COR
 - O Apps Script versão 81 foi publicado no mesmo deployment e respondeu HTTP 200 com `ok: true`. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e execução diária; a execução automática anterior e a importação manual posterior à reconciliação concluíram 5 linhas com 0 erros.
 - A suíte final passou com **522 de 522 testes**. Nenhuma campanha, meta, lance, orçamento, palavra-chave, atribuição histórica, fórmula de painel, Calendar, Netlify, site ou `/lifting-facial/` foi modificada neste bloco.
 - A ação permanece em observação: consistência e envio técnico não equivalem a ação saudável. O gate exige aceite/rejeição reconciliados e sete dias estáveis antes de qualquer ampliação de uso em lances.
+
+### Observabilidade Meta Site autorizada
+
+- O teste público da landing confirmou que os 6 CTAs de WhatsApp preservam `M26F02S`, `C01H01` e `avaliacao-facial`; a página, o texto e a mídia não foram alterados.
+- O webhook agora classifica cada nova referência em uma categoria limitada e produz um motivo limitado de fallback quando não houver código de campanha mapeado. O Apps Script persiste categoria, motivo, referência e plataforma em `_WHATSAPP_EVENTOS`, sem ampliar o payload analítico com nome, mensagem, e-mail ou dado clínico.
+- O monitor Netlify envia somente a referência técnica `M26F02S-C01H01-avaliacao-facial`. A execução ao vivo concluiu com HTTP 200 e a planilha registrou `persistence_ok`, `classification_contract_ok`, `handoff_contract_ok` e `meta_attribution_contract_ok`.
+- O Apps Script versão 82 preservou o deployment anterior; o endpoint respondeu HTTP 200 com `ok: true`. O Netlify publicou o commit `7480022` no deploy `6a7f54a074e9be0008883571`.
+- A suíte final passou com **526 de 526 testes**, `git diff --check` ficou limpo e `/lifting-facial/` permaneceu fora do diff.
+- Essa prova fecha o defeito técnico prospectivo de cobertura, não o gate de negócio. As 1.290 LPVs históricas e o zero de oportunidades com código exato não podem ser reclassificados retroativamente; escala continua bloqueada até medir ≥80% de cobertura no teste e ≥95% de novos contatos pagos com código esperado ou motivo explícito, sem duplicidade ≥2%.
 
 ## Gates que permanecem externos
 

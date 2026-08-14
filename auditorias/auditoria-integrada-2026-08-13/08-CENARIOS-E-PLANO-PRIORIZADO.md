@@ -160,6 +160,8 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 **Checkpoint de 14/08/2026:** `GAD-01` + `DAT-08` tiveram o reparo técnico concluído: 5/5 transações reconciliadas, ledger completo, nome canônico único e importação manual concluída com 5 linhas e 0 erros. O item permanece em observação, não encerrado para escala, até a ação permanecer saudável por sete dias. A próxima implementação independente continua sendo escolhida entre os demais bloqueadores acima, sem alterar verba durante o gate.
 
+**Checkpoint Meta Site de 14/08/2026:** `WEB-01` + `MAD-01` + `DAT-07` tiveram o caminho técnico prospectivo publicado no commit `7480022`: 6/6 CTAs preservam o código M26F02S, novos eventos registram cobertura/fallback e a sonda sem PII foi aprovada. O item continua bloqueador de escala até a coorte real cumprir cobertura ≥80%, novos contatos pagos com código ou motivo ≥95%, duplicidade <2% e desfechos conciliados; nenhum orçamento foi liberado por este checkpoint.
+
 ### Correções críticas
 
 1. `GAD-03`: validar autorização e guardrail do aumento de lifting cervical.

@@ -2,7 +2,7 @@
 
 **Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação, a reconciliação das fases históricas e, em bloco posterior, a reconciliação segura de consultas e Calendar. Funil, atribuição, fórmulas e mídia continuam fora dessa autorização.
 
-**Resultado:** Apps Script versão 81 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas e reconciliação offline do Google Ads aplicados em blocos separados, com backups, travas e pós-voos idempotentes. Casos ambíguos de consultas, atribuição, funil e fórmulas permanecem pendentes de autorização específica; a saúde da ação Google segue em observação.
+**Resultado:** Apps Script versão 82 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads e observabilidade prospectiva Meta Site aplicados em blocos separados, com backups, travas e pós-voos idempotentes. Casos históricos ambíguos de consultas/atribuição, funil e fórmulas permanecem pendentes; Google e cobertura Meta seguem em observação.
 
 ## Versões e backup
 
@@ -93,4 +93,12 @@ A aplicação integral continua reprovada por identidades de consultas não reco
 - Pós-voo interno e simulação fresca: 5 linhas de importação, 5 registros no ledger, zero nome divergente, duplicidade, ausência, conflito de identidade, linha inválida ou revisão pendente. A repetição é inócua.
 - Google Ads ao vivo: ação `Lead qualificado GCLID` permaneceu Principal e oriunda de importação de cliques; a ação antiga permaneceu Secundária/Inativa. A conexão `LEADS` manteve cinco campos mapeados e execução diária. A importação manual iniciada às 13:59 após o reparo concluiu 5 linhas com 0 erros, repetindo o resultado íntegro da execução automática anterior. O status da ação ainda exige observação e não autoriza Smart Bidding ou escala.
 - Validação local: Apps Script versão 81 no mesmo deployment, endpoint HTTP 200 com `ok: true`, commit `8dbe985`, **522 de 522 testes aprovados**, inspeção visual da primeira aba e nenhuma alteração em campanhas, orçamento, palavras-chave, atribuição histórica, painéis ou `/lifting-facial/`.
+
+### Bloco prospectivo Meta Site — `WEB-01` + `MAD-01` + `DAT-07`
+
+- O caminho público da landing foi testado com a URL ativa: os 6 CTAs produziram `M26F02S-C01H01-avaliacao-facial` sem alteração de texto, layout, vídeo ou CTA.
+- O commit `7480022` adicionou categorias e motivos de fallback limitados ao webhook e quatro colunas prospectivas no ledger de eventos. Nenhuma atribuição congelada ou linha histórica foi reescrita.
+- O Apps Script versão 82 preservou o deployment. O Netlify publicou o mesmo commit no deploy `6a7f54a074e9be0008883571`; endpoint e sonda responderam HTTP 200.
+- A execução sintética sem paciente, telefone, mensagem ou envio de WhatsApp terminou com `meta_attribution_contract_ok`. O cabeçalho do ledger foi confirmado com 13 colunas e os registros anteriores permaneceram intactos.
+- A suíte passou com **526 de 526 testes**; `/lifting-facial/` continuou fora do diff. O bloco fecha a instrumentação prospectiva, não a atribuição histórica nem o gate de cobertura/amostra para verba.
 - Nenhum alerta por e-mail foi disparado: todas as escritas foram estruturadas e de alta confiança; qualquer caso fora da identidade exata teria bloqueado o lote inteiro.
