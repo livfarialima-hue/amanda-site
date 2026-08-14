@@ -4,6 +4,12 @@
 **Modo:** somente leitura nas plataformas e sistemas de produção<br>
 **Escopo de mídia:** exclusivamente as seis campanhas Google Ads e as duas campanhas Meta Ads confirmadas ativas ao vivo
 
+## Atualização de execução — 14 de agosto de 2026
+
+Os principais reparos técnicos autorizados foram executados depois do snapshot de auditoria. `Funil Comercial` e `Painel Econômico` agora usam oportunidades canônicas e fecham em 128 registros, com 32 qualificadas, 11 agendadas, 7 realizadas e 2 convertidas. Os 10 registros de consulta que têm `event_id` conciliam 10/10 com o Calendar por ID e agenda exatos. O Google Ads já recebeu 3 conversões na ação principal e classifica a qualidade dos dados importados como excelente; as recomendações automáticas estão totalmente desativadas. Esses avanços corrigem a tubulação, mas **não liberam aumento de investimento**: Google, Meta Site e SLA ainda precisam completar suas janelas de observação, e há duas revisões humanas vencidas.
+
+Permanecem dependências externas que não podem ser resolvidas com segurança por inferência: o domínio antigo `.com` está sem resolução DNS e exige acesso ao registrador/Wix para um 301 preservando serviços; o horário físico da LIV precisa ser confirmado antes de alinhar GBP/site/schema; e o rascunho Meta que altera nome, posicionamento e público precisa de decisão explícita do proprietário. A página `/lifting-facial/` permaneceu intocada.
+
 ## Diagnóstico
 
 Existe demanda, mas ainda não existe uma cadeia de mensuração confiável até consulta e cirurgia. Hoje o sistema consegue demonstrar tráfego barato no Site e conversas no WhatsApp, porém perde ou contradiz informação ao atravessar atribuição, CRM, planilha, agenda e marcos comerciais. A consequência é importante: **aumentar investimento agora ampliaria sinais intermediários, não resultados de negócio comprovados**.

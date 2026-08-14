@@ -194,3 +194,10 @@ Em 13/08, durante a coleta, o total do dia era dinâmico e chegou a 725 impress�
 - Não julgar as novas palavras-chave com dados anteriores a 13/08.
 - Não usar clique no WhatsApp como substituto do lead qualificado.
 - Não reverter nem manter definitivamente o aumento de cervical sem decisão explícita e registro estratégico.
+
+## Atualização ao vivo — 14/08/2026
+
+- As seis campanhas Search permanecem ativas com orçamento total de R$ 98/dia. Lifting cervical continua em R$ 23/dia; nenhum novo aumento foi feito neste checkpoint.
+- As configurações de aplicação automática estão zeradas: 0/7 recomendações de manutenção e 0/14 de crescimento selecionadas. `GAD-04` está concluído e deve ser revisto mensalmente.
+- `Lead qualificado GCLID` permanece Principal e já mostra 3 conversões, com última conversão em 12/08. O diagnóstico informa qualidade excelente dos dados importados; o aviso remanescente é ausência recente de dados de conversões otimizadas.
+- A alteração de cervical foi tratada como autorizada pelo comando anterior de aplicar os ajustes sugeridos. A permanência em R$ 23/dia continua condicionada à janela de sete dias e à qualidade, sem novo aumento, tCPA, Performance Max ou correspondência ampla.

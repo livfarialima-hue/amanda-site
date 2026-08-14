@@ -170,19 +170,21 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 **Checkpoint Reaper de 14/08/2026:** `BOT-05` foi validado em produção com 88 jobs inspecionados, zero lease vencido, zero retry/dead-letter seguro e 8 exceções históricas já registradas sem duplicação. O controle técnico está concluído, mas os oito casos continuam na revisão humana; nenhum deles deve ser reprocessado automaticamente nem usado para declarar o classificador saudável.
 
+**Checkpoint final de 14/08/2026:** `DAT-06` foi concluído no commit `7f2a5a4`/Apps Script versão 88: 128 oportunidades únicas alimentam `Funil Comercial` e `Painel Econômico`, 2 registros manuais órfãos foram arquivados de modo reversível e o total fecha em 128. Calendar passou a 10/10 vínculos exatos entre os registros que possuem `event_id`; isso não autoriza inventar vínculo para 33 consultas históricas sem ID. Google Ads está com autoaplicação 0/21 e a ação principal tem 3 conversões, qualidade de importação excelente e aviso de recência; `GAD-04` está concluído, enquanto `GAD-01` permanece no gate de sete dias. `SEO-07` está concluído. `SEO-01`, `SEO-03`, `OPS-01`, `BOT-04` e o rascunho `MAD-05` continuam bloqueados por acesso, confirmação factual, ação humana ou janela de observação — não por falta de implementação local.
+
 ### Correções críticas
 
-1. `GAD-03`: validar autorização e guardrail do aumento de lifting cervical.
-2. `GAD-04`: confirmar que recomendações automáticas de lance permanecem desativadas.
-3. `OPS-02`: unificar escolha, confirmação humana e Calendar.
-4. `SEO-01` + `SEO-03`: consolidar domínio antigo e reconciliar horários públicos.
+1. `GAD-03`: observar por sete dias a alteração autorizada de lifting cervical; não fazer novo aumento.
+2. `OPS-02`: medir por 30 dias se todas as novas consultas continuam com identidade e Calendar válidos.
+3. `SEO-01`: recuperar controle/DNS do `.com` e preparar 301 com inventário de serviços.
+4. `SEO-03`: obter da direção LIV os horários reais de porta, consulta e WhatsApp antes de alterar qualquer fonte.
 
 ### Ganhos rápidos
 
-- migrar e reconciliar `Funil Comercial` e `Painel Econômico` na fonte canônica (`DAT-06`); `DAT-09` já foi concluído;
-- revisar o rascunho Meta antes de qualquer publicação (`MAD-05`);
+- monitorar `Funil Comercial` e `Painel Econômico` já migrados (`DAT-06`) por 14 dias;
+- decidir se o rascunho Meta identificado deve ser publicado ou descartado (`MAD-05`);
 - fechar pendências vencidas (`OPS-01`); `OPS-03` já foi concluído;
-- formalizar política separada de OAI-SearchBot/GPTBot (`SEO-07`).
+- revisar semestralmente a política já explícita de OAI-SearchBot/GPTBot (`SEO-07`).
 
 ### Testes
 

@@ -219,3 +219,9 @@ O único recorte por anúncio disponível cruzava as edições de 27/07 e foi ex
 - Não chamar conversa reportada de lead qualificado.
 - Não estender as campanhas e trocar criativo/objetivo simultaneamente.
 - Não enviar PII/PHI ao Pixel, CAPI ou conversões avançadas.
+
+## Atualização ao vivo — 14/08/2026
+
+- O Gerenciador mostrou um rascunho em `Conferir e publicar (1)`. A revisão identifica alterações de nome, posicionamento e público em um conjunto de anúncios. Como a autoria não foi comprovada, o rascunho não foi publicado nem descartado.
+- A interface atual exibiu uma campanha de otoplastia infantil/WhatsApp ativa e o total “Resultados de 5 campanhas”. A tabela virtualizada não expôs todas as linhas de forma confiável no checkpoint; por isso o inventário de 13/08 deve ser tratado como snapshot histórico, não como prova do estado atual completo.
+- Não houve mudança de orçamento, criativo, público, posicionamento, objetivo ou veiculação nesta atualização.

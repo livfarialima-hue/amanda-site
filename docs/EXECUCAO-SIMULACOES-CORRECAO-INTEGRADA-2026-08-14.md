@@ -2,7 +2,7 @@
 
 **Autorização:** o usuário autorizou iniciar e continuar a execução em 14/08/2026. As escritas foram separadas em blocos com backup, pré-voo e pós-voo: deduplicação, fases, subconjunto seguro de consultas/Calendar, Google Ads, observabilidade Meta Site, painel/SLA e, por último, fonte canônica, saúde e taxonomia de falhas. Campanhas e a página protegida de lifting permaneceram fora deste bloco.
 
-**Resultado:** Apps Script versão 86 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde, taxonomia de falhas, reaper/fila de exceções e expiração da agenda aplicados em blocos separados, com backups, travas e pós-voos. `_FUNIL_CANONICO` foi criado com 131 oportunidades, mas os painéis gerenciais ainda não foram migrados. Casos históricos ambíguos, Google, cobertura Meta e cobertura do SLA seguem em observação.
+**Resultado:** Apps Script versão 88 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde, taxonomia de falhas, reaper/fila de exceções, expiração da agenda e migração dos painéis canônicos aplicados em blocos separados, com backups, travas e pós-voos. Casos históricos ambíguos e os gates longitudinais de Google, Meta e SLA seguem em observação.
 
 ## Versões e backup
 
@@ -16,6 +16,10 @@
 - Versão publicada para a reconciliação offline Google Ads: **81**.
 - Versão publicada para a observabilidade prospectiva Meta Site: **82**.
 - Versão publicada para o painel humano e o resumo de SLA: **83**.
+- Versão publicada para os reparos finais de saúde/classificação: **85**.
+- Versão publicada para expiração segura da agenda: **86**.
+- Versão intermediária sem aplicação de dados durante a correção do editor: **87**.
+- Versão publicada para a migração canônica dos painéis: **88**.
 - Deployment ID preservado: `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`.
 - Endpoint validado por HTTP: status 200, `ok: true`, serviço `clinica-liv-leads`.
 - Commits de diagnóstico: `0cba7a7`, `6b9e676` e `fe7cd27`.
@@ -141,3 +145,20 @@ A aplicação integral continua reprovada por identidades de consultas não reco
 - Dry-run: 88 inspecionados, zero requeueable, zero dead-letterable e 8 attention-required históricos.
 - Aplicação: zero diferença na fila principal e zero diferença na fila de exceções; os oito incidentes já estavam registrados e a deduplicação por chave impediu repetição.
 - Decisão: controle técnico de `BOT-05` concluído. Nenhum job foi reprocessado, nenhum paciente recebeu mensagem e o contador anômalo foi preservado. Os oito casos continuam na revisão humana e não contam como fila saudável resolvida.
+
+## Migração canônica dos painéis — `DAT-06`
+
+- Backup nativo imediatamente anterior: [LEADS — backup antes da migração dos painéis — 2026-08-14 17h30](https://docs.google.com/spreadsheets/d/1uXvGIrocEmVIyIij0S7JLWV2vXSCcMPOX60mVBtbcC8/edit?usp=drivesdk).
+- Dry-run da versão 88: 131 linhas canônicas, 128 linhas elegíveis, zero revisão, 2 registros manuais órfãos e nenhuma escrita.
+- Aplicação: 128 oportunidades únicas no `Funil Comercial`, 128 no total do `Painel Econômico`, 2 órfãos preservados em `_FUNIL_MANUAL_ORFAOS` e zero divergência de contagem.
+- Pós-voo: 32 qualificadas, 11 agendadas, 7 realizadas e 2 convertidas; a tabela por plataforma fecha em 128 e inclui 25 WhatsApp direto. O gancho incremental foi instalado nos fluxos de criação, atualização e fechamento de oportunidade.
+- Validação final: Apps Script versão 88 no deployment preservado, commit `7f2a5a4`, **542 de 542 testes aprovados**, `git diff --check` limpo e `/lifting-facial/` fora do diff.
+
+## Checkpoint externo e operacional final
+
+- Calendar: 43 registros em `Consultas`; os 10 que possuem `ID do evento Google` conciliam 10/10 por ID e agenda exatos na janela 01/07–30/09. Oito eventos adicionais das salas não têm chave inequívoca da Dra. Amanda e não foram vinculados.
+- SLA: 21 entradas, 5 primeiras respostas mensuráveis, cobertura 23,8%, 12 eventos humanos com pai válido, 0 pai ausente e 12 pausas. A baixa cobertura ainda atravessa período anterior à instrumentação; a decisão permanece observar uma janela limpa, sem fabricar resposta.
+- Operação: 46 compromissos, 44 resolvidos e 2 revisões humanas vencidas. Elas permaneceram abertas por não haver evidência suficiente para encerramento automático.
+- Google Ads: autoaplicação 0/7 e 0/14; `Lead qualificado GCLID` principal com 3 conversões e qualidade de importação excelente. O aviso atual decorre da ausência recente de dados de conversões otimizadas, portanto o gate de sete dias ainda não está encerrado.
+- Meta Ads: o rascunho pendente foi identificado como alteração de nome, posicionamento e público de um conjunto; permaneceu não publicado e não descartado.
+- SEO: `SEO-07` já está materializado em `robots.txt`; `.com` não resolveu DNS no checkpoint e `SEO-01` depende do registrador/Wix; `SEO-03` depende de confirmação da direção da LIV.

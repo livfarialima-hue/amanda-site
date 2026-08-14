@@ -366,3 +366,9 @@ Consultadas em 13/08/2026:
 - [Google Business Profile — representação de empresas e profissionais individuais](https://support.google.com/business/answer/3038177?hl=en)
 - [Google Business Profile — categorias](https://support.google.com/business/answer/7249669?hl=en)
 - [OpenAI — Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)
+
+## Atualização técnica — 14/08/2026
+
+- `SEO-07` já está implementado: `robots.txt` contém blocos próprios com `Allow: /` para `OAI-SearchBot` e `GPTBot`, além da regra geral e do sitemap. A política deve ser revisada semestralmente, sem promessa de citação.
+- O domínio antigo `draamandaschroeder.com` não resolveu DNS neste checkpoint, enquanto `.com.br` resolveu normalmente. Isso interrompe o conflito de conteúdo ao vivo, mas não constitui consolidação: backlinks e serviços podem estar sendo perdidos. `SEO-01` exige acesso ao registrador/Wix e inventário antes do 301.
+- `SEO-03` permanece bloqueado por uma decisão factual: não é seguro substituir 07h–23h ou 05h–00h sem distinguir porta física, consulta e WhatsApp e sem confirmação da direção da LIV.

@@ -288,3 +288,9 @@ Regra de manutenção: considerar o funil apto para decisão de orçamento apena
 ## Conclusão
 
 Há uma espinha dorsal recuperável: IDs únicos no CRM, ponteiros válidos e atribuição preenchida. A prioridade não é trocar de ferramenta, mas fechar a transação entre oportunidade, fase e agenda. Até isso ocorrer, a operação pode usar a planilha para atuar caso a caso, porém mídia e gestão devem tratar qualificação datada, confirmação, comparecimento, fechamento e receita como métricas incompletas. As duas campanhas Meta ativas não têm evidência CRM suficiente para uma decisão causal de orçamento.
+
+## Atualização pós-execução — 14/08/2026
+
+`DAT-06` foi concluído em produção na versão 88. `Funil Comercial` e `Painel Econômico` agora usam 128 oportunidades únicas da fonte canônica; o painel fecha em 32 qualificadas, 11 agendadas, 7 realizadas e 2 convertidas. Dois registros manuais sem oportunidade foram preservados em aba oculta de órfãos, não apagados. A tabela por plataforma fecha em 128 e inclui 25 WhatsApp direto.
+
+Na reconciliação Calendar, os 10 registros que possuem `ID do evento Google` conciliam 10/10 com a agenda correta em janela delimitada. Os 33 registros históricos sem ID permanecem sem vínculo inferido. Portanto, a correção estrutural foi concluída, mas a meta de cobertura deve ser avaliada prospectivamente por 30 dias.

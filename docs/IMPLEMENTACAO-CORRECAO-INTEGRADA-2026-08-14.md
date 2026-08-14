@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 86; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site, painel humano/SLA, saúde das integrações, taxonomia de falhas e expiração segura da agenda aplicados e validados; `_FUNIL_CANONICO` criado, mas Funil Comercial e Painel Econômico ainda não migrados; casos históricos ambíguos permanecem bloqueados e o gate operacional do SLA segue reprovado por cobertura insuficiente
+**Estado:** Apps Script publicado na versão 88; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site, painel humano/SLA, saúde das integrações, taxonomia de falhas, expiração segura da agenda e migração canônica de `Funil Comercial`/`Painel Econômico` aplicados e validados; casos históricos ambíguos permanecem bloqueados e os gates longitudinais de Google, Meta Site e SLA seguem em observação
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -175,3 +175,15 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - A simulação inspecionou 88 jobs e encontrou zero `requeueable`, zero `deadLetterable` e 8 `attentionRequired`. A regra não permite reprocessar automaticamente `orphaned` ou `dead_letter`; esses estados são encaminhados à revisão.
 - A aplicação protegida foi inócua: a fila principal permaneceu com 88 linhas e zero diferença de célula contra o backup; a fila de exceções permaneceu com 9 linhas e zero diferença porque os incidentes já existiam com a mesma chave idempotente.
 - `BOT-05` está concluído quanto a lease, limite de tentativas, dead-letter e registro único de exceção. Os oito casos históricos permanecem backlog humano; o contador 170 foi preservado e não deve ser interpretado como 170 incidentes independentes.
+
+### Checkpoint final `DAT-06`, Calendar, Google e governança externa
+
+- O commit `7f2a5a4` migrou `Funil Comercial` e `Painel Econômico` para a fonte canônica. A execução protegida da versão 88 foi precedida pelo backup [LEADS — backup antes da migração dos painéis — 2026-08-14 17h30](https://docs.google.com/spreadsheets/d/1uXvGIrocEmVIyIij0S7JLWV2vXSCcMPOX60mVBtbcC8/edit?usp=drivesdk).
+- Pré-voo: 131 oportunidades canônicas, 128 linhas elegíveis para o funil da Dra. Amanda, zero item em revisão e 2 linhas manuais órfãs. Aplicação: 128 linhas únicas, 2 órfãs arquivadas de modo reversível em `_FUNIL_MANUAL_ORFAOS` e total do painel igual a 128.
+- O painel passou a mostrar 128 oportunidades, 32 qualificadas, 11 agendadas, 7 realizadas e 2 convertidas. A distribuição por plataforma fecha no mesmo total e inclui 25 entradas de WhatsApp direto, antes omitidas.
+- O Calendar foi relido em janela delimitada de 01/07 a 30/09: os 10 registros da planilha com `ID do evento Google` existem no calendário correto e fecham 10/10 por ID exato. Oito outros eventos das salas não têm ID de consulta nem menção inequívoca à Dra. Amanda; permaneceram sem vínculo para evitar associação histórica falsa.
+- O SLA corrente registra 21 entradas, 5 primeiras respostas mensuráveis e cobertura de 23,8%. Os 12 eventos humanos novos têm `Parent Event ID` existente e dentro da janela, sem vínculo ausente. O denominador de sete dias ainda inclui entradas anteriores à instrumentação; por isso `BOT-04` exige uma janela limpa e não deve ser “corrigido” por inferência.
+- Em Google Ads, as configurações de aplicação automática estão em 0/7 e 0/14. A ação principal `Lead qualificado GCLID` mostra 3 conversões, última em 12/08, qualidade dos dados importados “excelente” e aviso apenas por ausência recente de dados de conversões otimizadas. O gate de sete dias continua obrigatório.
+- O orçamento de lifting cervical permanece em R$ 23/dia, dentro da alteração autorizada em 13/08; nenhum novo aumento foi feito. Na Meta, um rascunho segue sem publicação e contém alteração de nome, posicionamento e público de um conjunto. Sem autoria inequívoca, ele não foi publicado nem descartado.
+- `robots.txt` já contém blocos explícitos e independentes para `OAI-SearchBot` e `GPTBot`; `SEO-07` está concluído. O domínio antigo `.com` não resolveu DNS no checkpoint de 14/08, portanto a consolidação 301 depende de acesso ao registrador/Wix. A divergência de horários depende da confirmação do horário físico pela direção da LIV e não foi alterada por suposição.
+- Validação local: **542/542 testes aprovados**, `git diff --check` limpo e `/lifting-facial/` fora do diff. A publicação da versão 88 preservou o deployment existente.

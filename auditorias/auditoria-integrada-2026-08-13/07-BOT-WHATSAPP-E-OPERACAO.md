@@ -325,3 +325,10 @@ Critério para manter/expandir automação: por 14 dias, ≥99% das novas entrad
 ## Conclusão
 
 O desenho do bot é prudente — idempotência, rota antes de resposta, guarda final, pausa humana e agenda confirmada por pessoa — e a saúde pública indica configuração ativa. A lacuna principal não é um único bug de resposta, mas a distância entre contrato, execução e medição: ledgers não totalmente conciliados, painel em fonte legada, fila histórica com exceções e agenda quase sem vínculo verificável. A prioridade é recuperar observabilidade e fechar o handoff antes de aumentar autonomia ou usar o painel para dimensionar equipe, avaliar campanha ou calcular retorno.
+
+## Atualização pós-execução — 14/08/2026
+
+- O painel já usa a fonte humana vigente e os painéis de funil foram migrados para oportunidade canônica.
+- O SLA corrente tem 21 entradas, 5 primeiras respostas mensuráveis e 23,8% de cobertura. Foram validados 12 eventos `human_reply_sent`: todos têm `Parent Event ID` existente e dentro da janela; não há falha de vínculo nesses eventos. A cobertura baixa ainda mistura entradas anteriores à instrumentação, então é necessário completar uma janela limpa, não alterar o denominador para melhorar artificialmente o indicador.
+- Há 46 compromissos: 44 resolvidos e 2 revisões humanas vencidas. Elas não foram encerradas automaticamente porque não existe evidência suficiente de resolução.
+- O controle técnico de fila/reaper está implementado; os casos históricos órfãos continuam backlog humano e não devem ser reprocessados em massa.

@@ -135,3 +135,12 @@ Após qualquer rollback, executar novamente as simulações, a auditoria de inte
 ## Registro obrigatório do fechamento ao vivo
 
 Documentar: autorização recebida, commit publicado, versões anterior/nova, horários, totais antes/depois, conflitos não aplicados, IDs opacos de backup/eventos, testes executados, resultado dos gates, eventual rollback e próxima data de revisão. Não incluir PII/PHI.
+
+## Fechamento executado em 14/08/2026
+
+- Versão final do Apps Script: 88, no deployment já existente.
+- Commit técnico dos painéis: `7f2a5a4`.
+- Backup final: `1uXvGIrocEmVIyIij0S7JLWV2vXSCcMPOX60mVBtbcC8`.
+- Resultado: 128 linhas únicas no funil e painel; 2 órfãos manuais arquivados; 10/10 consultas com `event_id` conciliadas; 542/542 testes aprovados.
+- Gates ainda abertos: sete dias de Google, 14 dias de Meta Site/SLA e 30 dias de consultas novas. Dependências humanas/externas: 2 revisões vencidas, decisão do rascunho Meta, acesso ao domínio `.com` e confirmação dos horários da LIV.
+- Proteção confirmada: nenhum texto, layout, vídeo, CTA ou característica de `/lifting-facial/` foi alterado.
