@@ -1,6 +1,6 @@
 # Runbook da correção integrada — 14 de agosto de 2026
 
-**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 77 publicado; primeiro bloco da etapa 3 (deduplicação reversível) concluído e validado
+**Estado:** etapas 1 e 2 executadas em 14/08/2026; Apps Script versão 77 publicado; primeiro bloco da etapa 3 concluído; publicação técnica e teste sintético da etapa 5 concluídos no commit `bf95bb4`
 
 **Norte canônico:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -87,6 +87,8 @@ Aplicar célula a célula, registrar intervalos alterados e verificar que os tot
 6. Comparar checksum/diff de `/lifting-facial/` com a versão anterior: deve permanecer idêntico.
 
 O monitor diário comprova Netlify → Apps Script, autenticação, persistência e contratos. Ele não substitui um teste separado do provedor YCloud.
+
+**Resultado de 14/08/2026:** Netlify e site publicados no deploy `6a7f2c57550d2700084f51f3`, commit `bf95bb4`. O diagnóstico ficou saudável, as páginas técnicas responderam HTTP 200, a página `/lifting-facial/` permaneceu idêntica e o teste sintético sem dados de paciente concluiu persistência, classificação e handoff com resultado `ok`. Isso valida o caminho Netlify → Apps Script, mas ainda não prova entrega do provedor YCloud nem os gates longitudinais.
 
 ## Etapa 6 — Verificações externas
 

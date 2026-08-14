@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** base do Apps Script publicada na versão 77; deduplicação reversível aplicada e validada; fases, funil, consultas, atribuição, fórmulas, Netlify e site não alterados
+**Estado:** base do Apps Script publicada na versão 77; deduplicação reversível aplicada e validada; Netlify e site publicados no commit `bf95bb4`; teste sintético aprovado; fases históricas, funil, consultas, atribuição e fórmulas ainda não migrados
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -82,3 +82,13 @@ O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-COR
 ## Gates que permanecem externos
 
 A aprovação deste trabalho local não prova os gates de produção. Depois da autorização de publicação, a observação deve demonstrar: sete dias de conversão Google saudável; 14 dias sem nova divergência CRM–aba; pelo menos 95% de reconciliação de novas consultas com Calendar; pelo menos 80% de cobertura consentida para `M26F02S`; SLA calculável em pelo menos 95% das novas conversas e nenhum P0/P1 vencido.
+
+## Publicação e validação do Netlify — 14/08/2026
+
+- A branch pública `reestruturacao-site` foi atualizada de `3955095` para `bf95bb4` após confirmação explícita do escopo; o worktree local e a origem ficaram iguais.
+- O Netlify publicou o deploy de produção `6a7f2c57550d2700084f51f3` a partir do commit `bf95bb4`.
+- O diagnóstico público confirmou `ok`, automação ativa, Sheets, secret, OpenAI e alerta de revisão configurados.
+- Página inicial, avaliação facial, otoplastia adulta, otoplastia infantil, lifting facial e `robots.txt` responderam HTTP 200.
+- `/lifting-facial/` permaneceu idêntica ao arquivo local depois de normalizar somente quebras de linha; nenhum texto, layout, vídeo, CTA ou característica mudou.
+- O monitor `synthetic-integration-health` foi executado manualmente porque o horário diário já havia passado. A aba oculta `_INTEGRATION_HEALTH_SYNTHETIC` registrou um único teste sem PII/PHI, com persistência, contrato de classificação, handoff e resultado final `ok`.
+- A publicação não alterou campanhas, Calendar, fases históricas, atribuição histórica ou fórmulas dos painéis.
