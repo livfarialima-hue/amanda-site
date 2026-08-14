@@ -61,7 +61,7 @@ Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, p�
 
 ## QA concluído
 
-- `npm.cmd test`: **506/506 aprovados** no estado final documentado.
+- `npm.cmd test`: **507/507 aprovados** no estado final documentado.
 - `git diff --check`: aprovado.
 - `git diff --name-only -- lifting-facial`: vazio.
 - fluxos ambíguos ou sem rota: silenciosos para o paciente e encaminhados à revisão;
