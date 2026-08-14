@@ -43,8 +43,13 @@
 - Ingestão: uma identidade ambígua não cria uma nova linha; o evento falha fechado para revisão.
 - Consulta: criação, reserva, fase, dados visíveis e não comparecimento propagam `Opportunity ID`; uma consulta nova sem identidade única é recusada.
 - Classificador: fase e resumo operacional são persistidos pelo mesmo caminho canônico; falha de reconciliação vira revisão em vez de atualização parcial.
-- Testes após este primeiro lote: **490 de 490 aprovados**.
-- Ainda pendente neste bloco: migração reversível das duplicidades históricas e reconciliação dos eventos Calendar já existentes.
+- Reparo histórico: deduplicação usa simulação por padrão, escolhe a linha canônica conservadoramente, arquiva a linha integral antes de limpá-la e oferece restauração por `Backup ID`; conflito de fase equivalente exige revisão humana.
+- Consulta histórica: backfill de `Opportunity ID`, fase e Calendar foi preparado com simulação por padrão; consultas encerradas não recriam eventos passados.
+- Google Ads: import e ledger agora podem ser reconciliados pela transação, exigem exatamente um click ID e não enviam PII; isso valida consistência local, não a aceitação do Google.
+- Meta Site: o teste cobre `M26F02S` por duas páginas sem consentimento de marketing, recepção no webhook e persistência separada em `Campanha`, `Criativo`, `CTA` e `Referência completa`. O backfill histórico só preenche vazios e bloqueia conflito com atribuição já fixada.
+- Funil: foi preparada uma fonte `_FUNIL_CANONICO`, sem PII e com exatamente uma linha por oportunidade ativa; a troca das fórmulas dos painéis depende da inspeção e autorização ao vivo.
+- Testes após este lote: **498 de 498 aprovados**.
+- Nenhuma simulação com `apply: true`, migração de planilha, alteração de Calendar, importação no Google ou publicação do site foi executada.
 
 ## Gates que permanecem externos
 

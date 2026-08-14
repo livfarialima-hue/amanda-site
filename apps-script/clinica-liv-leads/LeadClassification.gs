@@ -79,6 +79,34 @@ const GOOGLE_ADS_IMPORT_HEADERS = Object.freeze([
   "Moeda",
 ]);
 
+function validarLinhaImportacaoGoogleAds_(row) {
+  const values = Array.isArray(row) ? row : [];
+  const transactionId = String(values[0] || "").trim();
+  const identifiers = [
+    { type: "GCLID", value: String(values[1] || "").trim() },
+    { type: "GBRAID", value: String(values[2] || "").trim() },
+    { type: "WBRAID", value: String(values[3] || "").trim() },
+  ].filter(function present(identifier) {
+    return Boolean(identifier.value);
+  });
+  const errors = [];
+  if (!transactionId) errors.push("missing_transaction_id");
+  if (identifiers.length !== 1) errors.push("click_id_cardinality");
+  if (!String(values[5] || "").trim()) errors.push("missing_timestamp");
+  if (!String(values[7] || "").trim()) errors.push("missing_currency");
+  return {
+    ok: errors.length === 0,
+    errors,
+    transactionId,
+    identifierType: identifiers.length === 1 ? identifiers[0].type : "",
+    clickId: identifiers.length === 1 ? identifiers[0].value : "",
+    conversionName: String(values[4] || "").trim(),
+    conversionTimestamp: String(values[5] || "").trim(),
+    value: values[6],
+    currency: String(values[7] || "").trim(),
+  };
+}
+
 function prepararFonteGoogleAdsPrimeiraAba() {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const target = getOrCreateLeadAuxiliarySheet_(
@@ -264,6 +292,240 @@ function enqueueGoogleAdsMilestone_(spreadsheet, details) {
     details.professional || "amanda",
   ]);
   return { created: true, row: sheet.getLastRow() };
+}
+
+function reconciliarGoogleAdsLedgerEImportacao(input) {
+  const apply = Boolean(input && input.apply === true);
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const importSheet = getOrCreateLeadAuxiliarySheet_(
+    spreadsheet,
+    CONFIG.googleAdsImportSheetName,
+    GOOGLE_ADS_IMPORT_HEADERS,
+  );
+  const eventSheet = getOrCreateLeadAuxiliarySheet_(
+    spreadsheet,
+    CONFIG.googleAdsEventSheetName,
+    GOOGLE_ADS_EVENT_HEADERS,
+  );
+  const result = {
+    ok: true,
+    applied: apply,
+    importRows: Math.max(importSheet.getLastRow() - 1, 0),
+    ledgerRows: Math.max(eventSheet.getLastRow() - 1, 0),
+    invalidImportRows: 0,
+    duplicateTransactions: 0,
+    conversionNameMismatches: 0,
+    missingLedger: 0,
+    reconstructedLedger: 0,
+    missingImport: 0,
+    reconstructedImport: 0,
+    reviewRequired: 0,
+    issues: [],
+  };
+  const importRows = importSheet.getLastRow() >= 2
+    ? importSheet
+        .getRange(
+          2,
+          1,
+          importSheet.getLastRow() - 1,
+          GOOGLE_ADS_IMPORT_HEADERS.length,
+        )
+        .getValues()
+    : [];
+  const importsByTransaction = {};
+  importRows.forEach(function indexImport(row, index) {
+    const validation = validarLinhaImportacaoGoogleAds_(row);
+    if (!validation.ok) {
+      result.invalidImportRows += 1;
+      result.reviewRequired += 1;
+      result.issues.push({
+        importRow: index + 2,
+        reason: validation.errors.join(","),
+      });
+      return;
+    }
+    if (importsByTransaction[validation.transactionId]) {
+      result.duplicateTransactions += 1;
+      result.reviewRequired += 1;
+      result.issues.push({
+        importRow: index + 2,
+        reason: "duplicate_transaction_id",
+      });
+      return;
+    }
+    importsByTransaction[validation.transactionId] = {
+      row: index + 2,
+      validation,
+    };
+    if (validation.conversionName !== CONFIG.qualifiedConversionName) {
+      result.conversionNameMismatches += 1;
+      if (apply) {
+        importSheet
+          .getRange(index + 2, 5)
+          .setValue(CONFIG.qualifiedConversionName);
+        validation.conversionName = CONFIG.qualifiedConversionName;
+      }
+    }
+  });
+
+  const ledgersByTransaction = {};
+  const ledgerRows = eventSheet.getLastRow() >= 2
+    ? eventSheet
+        .getRange(
+          2,
+          1,
+          eventSheet.getLastRow() - 1,
+          GOOGLE_ADS_EVENT_HEADERS.length,
+        )
+        .getValues()
+    : [];
+  ledgerRows.forEach(function indexLedger(row, index) {
+    const transactionId = String(row[9] || "").trim();
+    if (!transactionId) {
+      result.reviewRequired += 1;
+      result.issues.push({ ledgerRow: index + 2, reason: "missing_transaction_id" });
+      return;
+    }
+    if (ledgersByTransaction[transactionId]) {
+      result.duplicateTransactions += 1;
+      result.reviewRequired += 1;
+      result.issues.push({ ledgerRow: index + 2, reason: "duplicate_ledger_transaction" });
+      return;
+    }
+    ledgersByTransaction[transactionId] = { row: index + 2, values: row };
+    if (String(row[5] || "") !== CONFIG.qualifiedConversionName) {
+      result.conversionNameMismatches += 1;
+      if (apply) {
+        eventSheet
+          .getRange(index + 2, 6)
+          .setValue(CONFIG.qualifiedConversionName);
+      }
+    }
+  });
+
+  const visibleByTransaction = {};
+  const leadSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  if (leadSheet && leadSheet.getLastRow() >= 2) {
+    const columns = garantirEstruturaIntegradaLead_(leadSheet);
+    const rows = leadSheet
+      .getRange(2, 1, leadSheet.getLastRow() - 1, leadSheet.getLastColumn())
+      .getDisplayValues();
+    rows.forEach(function indexVisible(row, index) {
+      const transactionId = String(
+        row[(columns["ID da transação"] || 15) - 1] || "",
+      ).trim();
+      if (!transactionId) return;
+      if (!visibleByTransaction[transactionId]) {
+        visibleByTransaction[transactionId] = [];
+      }
+      visibleByTransaction[transactionId].push({
+        row: index + 2,
+        opportunityId: String(
+          row[(columns["Opportunity ID"] || 0) - 1] || "",
+        ),
+        professional: String(
+          row[(columns["Profissional responsável"] || 0) - 1] || "amanda",
+        ),
+      });
+      if (
+        apply &&
+        String(row[(columns["Nome da conversão"] || 8) - 1] || "") !==
+          CONFIG.qualifiedConversionName
+      ) {
+        leadSheet
+          .getRange(index + 2, columns["Nome da conversão"] || 8)
+          .setValue(CONFIG.qualifiedConversionName);
+      }
+    });
+  }
+
+  Object.keys(importsByTransaction).forEach(function repairLedger(transactionId) {
+    if (ledgersByTransaction[transactionId]) return;
+    result.missingLedger += 1;
+    const visible = visibleByTransaction[transactionId] || [];
+    if (
+      visible.length !== 1 ||
+      !visible[0].opportunityId ||
+      normalizarProfissionalOportunidade_(visible[0].professional) !== "amanda"
+    ) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        transactionId,
+        reason: visible.length > 1
+          ? "ambiguous_visible_transaction"
+          : "visible_transaction_not_found",
+      });
+      return;
+    }
+    if (!apply) return;
+    const details = importsByTransaction[transactionId].validation;
+    const milestone = "qualified_lead";
+    const eventId = "ga_" + stableLeadHash_(
+      visible[0].opportunityId + "|" + milestone,
+    );
+    eventSheet.appendRow([
+      eventId,
+      visible[0].opportunityId,
+      milestone,
+      details.identifierType,
+      details.clickId,
+      CONFIG.qualifiedConversionName,
+      details.conversionTimestamp,
+      details.value,
+      details.currency,
+      transactionId,
+      "ready",
+      "",
+      new Date(),
+      new Date(),
+      "amanda",
+    ]);
+    result.reconstructedLedger += 1;
+  });
+
+  Object.keys(ledgersByTransaction).forEach(function repairImport(transactionId) {
+    if (importsByTransaction[transactionId]) return;
+    result.missingImport += 1;
+    const row = ledgersByTransaction[transactionId].values;
+    const validation = validarLinhaImportacaoGoogleAds_([
+      transactionId,
+      String(row[3] || "") === "GCLID" ? row[4] : "",
+      String(row[3] || "") === "GBRAID" ? row[4] : "",
+      String(row[3] || "") === "WBRAID" ? row[4] : "",
+      CONFIG.qualifiedConversionName,
+      row[6],
+      row[7],
+      row[8],
+    ]);
+    if (!validation.ok || String(row[14] || "") !== "amanda") {
+      result.reviewRequired += 1;
+      result.issues.push({ transactionId, reason: "invalid_ledger_payload" });
+      return;
+    }
+    if (!apply) return;
+    importSheet.appendRow([
+      validation.transactionId,
+      validation.identifierType === "GCLID" ? validation.clickId : "",
+      validation.identifierType === "GBRAID" ? validation.clickId : "",
+      validation.identifierType === "WBRAID" ? validation.clickId : "",
+      CONFIG.qualifiedConversionName,
+      validation.conversionTimestamp,
+      validation.value,
+      validation.currency,
+    ]);
+    result.reconstructedImport += 1;
+  });
+
+  if (apply) {
+    importSheet.showSheet();
+    spreadsheet.setActiveSheet(importSheet);
+    spreadsheet.moveActiveSheet(1);
+    SpreadsheetApp.flush();
+  }
+  result.ok = result.reviewRequired === 0 &&
+    result.invalidImportRows === 0 &&
+    result.duplicateTransactions === 0;
+  return result;
 }
 
 function invalidarConversoesGoogleAdsOportunidade_(spreadsheet, opportunityId) {

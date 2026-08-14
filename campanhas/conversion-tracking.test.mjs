@@ -350,6 +350,37 @@ test("every organic site CTA gets a stable SITE reference", () => {
   assert.match(message, /Ref\. SITE-avaliacao-facial$/);
 });
 
+test("M26F02S survives the site journey without consent or duplicate prefixes", () => {
+  const firstPage = loadAttribution({
+    consent: "denied",
+    readyState: "complete",
+    search: "?origem=M26F02S&utm_source=meta&utm_medium=paid_social&utm_campaign=M26F02S",
+  });
+  const stored = firstPage.sessionStorage.getItem(
+    "amanda_marketing_attribution",
+  );
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "hero", procedure: "avaliacao-facial" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1%2C%20vim%20pelo%20site.",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+  const secondPage = loadAttribution({
+    consent: "denied",
+    links: [link],
+    readyState: "complete",
+    sessionInitial: { amanda_marketing_attribution: stored },
+  });
+
+  secondPage.debug.updateAllWhatsAppLinks();
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /Ref\. M26F02S-avaliacao-facial$/);
+  assert.equal((message.match(/M26F02S/g) || []).length, 1);
+});
+
 test("keeps exact click IDs after explicit consent", () => {
   const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4example";
   const { debug } = loadAttribution({

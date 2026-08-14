@@ -203,6 +203,19 @@ test("recognizes a complete Meta site journey with creative and page codes", () 
   assert.equal(attribution.reference, "M26O01W-DbHKuWfGP_N-OT02");
 });
 
+test("recognizes the exact M26F02S site journey used by the active campaign", () => {
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "OlÃ¡, gostaria de saber mais.\n\nRef. M26F02S-avaliacao-facial",
+  );
+
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_coded");
+  assert.equal(attribution.reference, "M26F02S-avaliacao-facial");
+  assert.deepEqual(attribution.clickIds, {});
+});
+
 test("maps known Meta ad IDs to complete campaign references", () => {
   const attribution = classifyAttribution(
     {},

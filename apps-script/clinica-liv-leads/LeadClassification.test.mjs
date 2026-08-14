@@ -51,7 +51,7 @@ function loadFunctions() {
       "collectLeadMessagesForOpportunity_, classificationAdministrativeSignal_, " +
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
-      "GOOGLE_ADS_IMPORT_HEADERS };",
+      "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS };",
     sandbox,
   );
   return sandbox.__test;
@@ -61,6 +61,35 @@ test("Google Ads import preserves the mapped conversion value header", () => {
   const { GOOGLE_ADS_IMPORT_HEADERS } = loadFunctions();
 
   assert.equal(GOOGLE_ADS_IMPORT_HEADERS[6], "Valor (R$)");
+});
+
+test("Google Ads import accepts exactly one click id and all required fields", () => {
+  const { validarLinhaImportacaoGoogleAds_ } = loadFunctions();
+  const valid = validarLinhaImportacaoGoogleAds_([
+    "transaction-1",
+    "gclid-1",
+    "",
+    "",
+    "Lead qualificado GCLID",
+    "2026-08-14 12:00:00-03:00",
+    1,
+    "BRL",
+  ]);
+  assert.equal(valid.ok, true);
+  assert.equal(valid.identifierType, "GCLID");
+
+  const invalid = validarLinhaImportacaoGoogleAds_([
+    "transaction-2",
+    "gclid-2",
+    "gbraid-2",
+    "",
+    "Lead qualificado GCLID",
+    "2026-08-14 12:00:00-03:00",
+    1,
+    "BRL",
+  ]);
+  assert.equal(invalid.ok, false);
+  assert.deepEqual(Array.from(invalid.errors), ["click_id_cardinality"]);
 });
 
 test("one phone always resolves to the first canonical lead row", () => {

@@ -35,6 +35,7 @@ globalThis.__test = {
   CONFIG,
   EXPECTED_HEADERS,
   writeLead_,
+  decomporReferenciaAquisicao_,
   isKnownPatientRelationship_,
   findProcessedEvent_,
   resolvePendingProcessedEvent_,
@@ -158,9 +159,9 @@ test("lead writes origin and destination into the live column positions", () => 
   );
   assert.deepEqual(
     JSON.parse(JSON.stringify(
-      writes.find((write) => write.column === 24)?.values,
+      writes.find((write) => write.column === 21)?.values,
     )),
-    [["WhatsApp", "M26F01W-C06H01"]],
+    [["M26F01W", "C06H01", "", "WhatsApp", "M26F01W-C06H01"]],
   );
   assert.equal(
     writes.some(
@@ -168,6 +169,38 @@ test("lead writes origin and destination into the live column positions", () => 
         write.column + (write.columns || 1) - 1 > 25,
     ),
     false,
+  );
+});
+
+test("Meta site reference fills the canonical campaign and page fields", () => {
+  const { decomporReferenciaAquisicao_ } = loadCode();
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(
+      decomporReferenciaAquisicao_("M26F02S-avaliacao-facial"),
+    )),
+    {
+      campaign: "M26F02S",
+      creative: "",
+      cta: "avaliacao-facial",
+      reference: "M26F02S-avaliacao-facial",
+    },
+  );
+});
+
+test("Meta creative and CTA remain independently auditable", () => {
+  const { decomporReferenciaAquisicao_ } = loadCode();
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(
+      decomporReferenciaAquisicao_("M26O01W-DbHKuWfGP_N-OT02"),
+    )),
+    {
+      campaign: "M26O01W",
+      creative: "DbHKuWfGP_N",
+      cta: "OT02",
+      reference: "M26O01W-DbHKuWfGP_N-OT02",
+    },
   );
 });
 

@@ -1416,6 +1416,49 @@ function normalizeLead_(input) {
   };
 }
 
+function decomporReferenciaAquisicao_(value) {
+  const reference = boundedText_(value, 200);
+  const result = {
+    campaign: "",
+    creative: "",
+    cta: "",
+    reference: reference,
+  };
+  if (!reference) return result;
+
+  const campaignMatch = reference.match(
+    /^(M26[A-Z]\d{2}[A-Z]|G26[A-Z0-9]{2,16})(?:-(.+))?$/i,
+  );
+  if (campaignMatch) {
+    result.campaign = campaignMatch[1].toUpperCase();
+    const suffix = String(campaignMatch[2] || "").trim();
+    if (!suffix) return result;
+
+    const explicitCreative = suffix.match(
+      /^(C\d{2}(?:H\d{2})?)(?:-(.+))?$/i,
+    );
+    if (explicitCreative) {
+      result.creative = explicitCreative[1].toUpperCase();
+      result.cta = String(explicitCreative[2] || "").trim();
+      return result;
+    }
+
+    const explicitCta = suffix.match(/^(.+)-((?:AF|OT)\d{2})$/i);
+    if (explicitCta) {
+      result.creative = explicitCta[1];
+      result.cta = explicitCta[2].toUpperCase();
+      return result;
+    }
+
+    result.cta = suffix;
+    return result;
+  }
+
+  const organicMatch = reference.match(/^SITE-(.+)$/i);
+  if (organicMatch) result.cta = organicMatch[1];
+  return result;
+}
+
 function normalizePhone_(value) {
   const digits = String(value || "").replace(/\D/g, "");
   return digits ? `+${digits}` : "";
@@ -1910,9 +1953,33 @@ function mergeLeadIntoExistingRow_(sheet, row, lead) {
   const incomingPriority = platformPriority[lead.platform] || 0;
 
   if (incomingPriority > existingPriority) {
+    const attribution = decomporReferenciaAquisicao_(lead.reference);
     sheet.getRange(row, 2).setValue(lead.reference);
     sheet.getRange(row, 20).setValue(lead.platform);
-    sheet.getRange(row, 25).setValue(lead.reference);
+    sheet.getRange(row, 21, 1, 5).setValues([[
+      attribution.campaign,
+      attribution.creative,
+      attribution.cta,
+      "WhatsApp",
+      attribution.reference,
+    ]]);
+  } else {
+    const frozenReference = String(values[24] || values[1] || "").trim();
+    const frozenAttribution = decomporReferenciaAquisicao_(frozenReference);
+    const missingAttribution = [20, 21, 22].some(function missing(index) {
+      return !String(values[index] || "").trim();
+    });
+    if (frozenReference && missingAttribution) {
+      if (!String(values[20] || "").trim() && frozenAttribution.campaign) {
+        sheet.getRange(row, 21).setValue(frozenAttribution.campaign);
+      }
+      if (!String(values[21] || "").trim() && frozenAttribution.creative) {
+        sheet.getRange(row, 22).setValue(frozenAttribution.creative);
+      }
+      if (!String(values[22] || "").trim() && frozenAttribution.cta) {
+        sheet.getRange(row, 23).setValue(frozenAttribution.cta);
+      }
+    }
   }
 
   if (!values[10] && !values[11] && !values[12]) {
@@ -2041,9 +2108,13 @@ function writeLead_(sheet, row, lead, setStage) {
   ]]);
 
   setStage("write_destination");
-  sheet.getRange(row, 24, 1, 2).setValues([[
+  const attribution = decomporReferenciaAquisicao_(lead.reference);
+  sheet.getRange(row, 21, 1, 5).setValues([[
+    attribution.campaign,
+    attribution.creative,
+    attribution.cta,
     "WhatsApp",
-    lead.reference,
+    attribution.reference,
   ]]);
 
   setStage("flush");
