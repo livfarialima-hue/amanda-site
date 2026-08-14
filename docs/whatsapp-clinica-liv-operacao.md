@@ -283,18 +283,29 @@ O disparo automático permanece desligado até o modelo estar aprovado no WhatsA
 
 ### Todos os dias
 
-1. Conferir o e-mail informativo do plano de retomadas enviado por volta das 8h para Amanda e Daniel; ele também mostra dúvidas ainda sem resposta e regras novas aguardando aprovação.
+1. Conferir o e-mail diário do plano de retomadas enviado por volta das 8h para Amanda e Daniel; ele também mostra dúvidas ainda sem resposta e regras novas aguardando aprovação.
 2. Revisar o histórico antes de usar cada mensagem sugerida e decidir as linhas abertas em `Revisões do Bot`.
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
-O e-mail é apenas informativo e separa com clareza:
+O e-mail organiza a agenda diária e separa com clareza:
 
 1. os envios automáticos realmente programados, com horário;
 2. as ações humanas sugeridas, com horário e mensagem pronta;
 3. os marcos dos próximos sete dias, identificados como automáticos ou manuais.
 
-Primeiras retomadas seguras, sem agenda ou decisão humana, aparecem como candidatas à Bruna, mas continuam sendo apenas planejamento enquanto não existir uma rotina específica e uma janela válida do WhatsApp. A resposta inicial de preço e a faixa repetida de lifting seguem o fluxo automático aprovado; agenda, demais preços, follow-ups tardios, aniversários, datas especiais e reativações de clientes antigos permanecem manuais.
+Nas retomadas comerciais que aparecem como ação humana, o e-mail também pode mostrar o botão `Passar para a Bruna`. Ele não envia a mensagem no primeiro clique: abre uma página que repete o texto sugerido e exige confirmação explícita. Depois da confirmação, somente aquele plano entra na fila automática, com registro da data e da origem da aprovação.
+
+Antes de usar o botão:
+
+1. abrir o WhatsApp e ler o histórico recente da paciente e da clínica;
+2. confirmar que a mensagem sugerida continua adequada e que a equipe não respondeu por outro canal;
+3. clicar em `Passar para a Bruna` e conferir novamente o texto na tela de confirmação;
+4. confirmar somente se a mensagem puder ser enviada exatamente como está.
+
+A aprovação humana não elimina as proteções técnicas. Imediatamente antes do disparo, o sistema verifica novamente se a conversa não mudou, se a paciente não respondeu, se nenhuma pessoa da equipe interveio, se a janela do WhatsApp continua aberta, se o lead ainda está elegível e se não existe `Nunca retomar`, `Nunca responder com robô`, suspensão automática ou contexto sensível. Se qualquer condição mudar, o plano é cancelado. O botão não aparece para aniversários, reativações de clientes antigos, jornada cirúrgica ou cuidados clínicos; esses itens continuam humanos.
+
+Primeiras retomadas seguras, sem agenda ou decisão humana, aparecem como candidatas à Bruna, mas continuam sendo apenas planejamento enquanto não existir uma rotina específica e uma janela válida do WhatsApp. A resposta inicial de preço e a faixa repetida de lifting seguem o fluxo automático aprovado. Agenda, demais preços e follow-ups tardios continuam dependendo de decisão humana; quando o botão estiver disponível, a equipe pode autorizar o bot apenas a entregar o texto exato já revisado. Aniversários, datas especiais e reativações de clientes antigos permanecem integralmente manuais.
 
 ### Cadência de relacionamento
 

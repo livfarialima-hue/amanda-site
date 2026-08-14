@@ -70,6 +70,15 @@ function doGet(e) {
   }
 
   if (
+    view === "aprovar_retomada_bot" &&
+    typeof renderAprovacaoRetomadaBot_ === "function"
+  ) {
+    return renderAprovacaoRetomadaBot_(
+      e && e.parameter ? e.parameter : {},
+    );
+  }
+
+  if (
     view === "salas" &&
     typeof renderFormularioReservaSalas_ === "function"
   ) {

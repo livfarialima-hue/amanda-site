@@ -1489,7 +1489,7 @@ function montarHtmlAgendaCuidados_(agendaCuidados) {
     '<h3 style="margin-top:28px;color:#92400e;">Ações humanas sugeridas hoje (' +
     manuaisHoje.length +
     ")</h3>" +
-    '<p style="color:#4b5563;">Nada desta seção é enviado automaticamente. Revise o histórico e use a mensagem sugerida.</p>' +
+    '<p style="color:#4b5563;">Nada desta seção é enviado automaticamente sem aprovação. Revise o histórico; nas retomadas elegíveis, use <strong>Passar para a Bruna</strong> somente se a mensagem sugerida estiver apropriada.</p>' +
     htmlManuais +
     '<h3 style="margin-top:28px;">Próximos marcos de cuidado — 7 dias (' +
     futuros.length +

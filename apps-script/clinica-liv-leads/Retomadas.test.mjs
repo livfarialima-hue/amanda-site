@@ -342,6 +342,150 @@ test("follow-up items receive a secure cancel link with a confirmation step", ()
   );
 });
 
+test("manual commercial follow-up receives an opaque approval button for Bruna", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_WEB_APP_URL"
+            ? "https://script.google.com/macros/s/test/exec"
+            : "",
+    }),
+  };
+  context.ScriptApp = undefined;
+  context.Utilities.computeHmacSha256Signature = () => [4, 5, 6];
+  context.Utilities.base64EncodeWebSafe = () => "BAUG=";
+
+  const candidate = {
+    telefone: "+5511999990000",
+    horario: "16:30",
+    ultimoContato: new Date("2026-08-13T12:00:00-03:00"),
+    etapa: { numero: 2, rotulo: "2ª retomada" },
+    chaveDiaria:
+      "2026-08-14|+5511999990000|out-1|2",
+    modo: "Manual",
+    automatico: false,
+    responsavel: "equipe",
+    sugestao: "Mensagem revisável pela equipe.",
+    lead: {
+      referencia: "Paciente",
+      status: "Qualificado",
+      resumo: "Retomada sobre valor",
+      proximaAcao: "",
+    },
+  };
+  const text = context.montarTextoEmailRetomadas_(
+    [candidate],
+    [candidate],
+    "14/08/2026",
+  );
+  const html = context.montarHtmlEmailRetomadas_(
+    [candidate],
+    [candidate],
+    "14/08/2026",
+  );
+
+  assert.match(text, /Passar para a Bruna:/);
+  assert.match(html, />Passar para a Bruna</);
+  assert.match(html, /approval=BAUG/);
+  const approvalHref = html.match(
+    /href="([^"]*view=aprovar_retomada_bot[^"]*)"/,
+  )[1];
+  assert.doesNotMatch(approvalHref, /5511999990000/);
+  assert.doesNotMatch(approvalHref, /2026-08-14%7C/);
+
+  const confirmationPage = context.paginaAprovacaoRetomadaBot_(
+    "Confirmar",
+    "Revise antes.",
+    candidate.sugestao,
+    "BAUG",
+  );
+  assert.match(confirmationPage, /<form method="get"/);
+  assert.match(confirmationPage, /name="confirmar" value="1"/);
+  assert.match(confirmationPage, /Mensagem revisável pela equipe/);
+});
+
+test("approval moves only the selected manual plan to the bot queue and is idempotent", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_AUTOMATICAS_ATIVAS"
+            ? "true"
+            : "",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = () => [7, 8, 9];
+  context.Utilities.base64EncodeWebSafe = () => "BwgJ=";
+
+  const row = Array(17).fill("");
+  row[0] = "2026-08-14|opaque-plan";
+  row[2] = "+5511999990000";
+  row[3] = "out-1";
+  row[4] = 2;
+  row[5] = "16:30";
+  row[8] = "Mensagem aprovada pela equipe.";
+  row[9] = "Manual";
+  row[10] = "Ação manual";
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column, rowCount, columnCount) {
+      if (rowNumber === 2 && column === 1) {
+        return { getValues: () => [row] };
+      }
+      return {
+        setValues(values) {
+          writes.push({
+            rowNumber,
+            column,
+            rowCount,
+            columnCount,
+            values,
+          });
+        },
+      };
+    },
+  };
+  const file = { getSheetByName: () => sheet };
+  const now = new Date("2026-08-14T08:15:00-03:00");
+  const approved = context.aprovarPlanoRetomadaParaBot_(
+    file,
+    "BwgJ",
+    now,
+  );
+
+  assert.equal(approved.ok, true);
+  assert.equal(approved.alreadyApproved, false);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].column, 10);
+  assert.equal(writes[0].columnCount, 8);
+  assert.equal(writes[0].values[0][0], "Automático aprovado");
+  assert.equal(writes[0].values[0][1], "Programada");
+  assert.equal(writes[0].values[0][7], "E-mail diário");
+  assert.equal(
+    context.formatarDataRetomadas_(
+      writes[0].values[0][2],
+      "HH:mm",
+    ),
+    "16:30",
+  );
+
+  row[9] = "Automático aprovado";
+  row[10] = "Programada";
+  row[11] = writes[0].values[0][2];
+  const repeated = context.aprovarPlanoRetomadaParaBot_(
+    file,
+    "BwgJ",
+    now,
+  );
+  assert.equal(repeated.ok, true);
+  assert.equal(repeated.alreadyApproved, true);
+  assert.equal(writes.length, 1);
+});
+
 test("cancel link prefers the active web app deployment over a stale configured URL", () => {
   context.PropertiesService = {
     getScriptProperties: () => ({
@@ -576,6 +720,90 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
         dataHora: new Date("2026-08-03T10:31:00-03:00"),
         messageId: "in-2",
         texto: "Obrigada, já resolvi.",
+      }),
+      now,
+    ).reason,
+    "conversation_changed",
+  );
+});
+
+test("human approval permits the exact second or price follow-up but never bypasses safety", () => {
+  const now = new Date("2026-08-14T10:35:00-03:00");
+  const leadData = {
+    status: "Qualificado",
+    resumo: "Paciente perguntou o valor do procedimento",
+    proximaAcao: "",
+    neverFollowUp: false,
+    neverBotReply: false,
+    suspendAutomaticFollowUp: false,
+  };
+  const conversationData = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-08-13T18:00:00-03:00"),
+      messageId: "in-1",
+      texto: "Queria entender o valor.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-08-13T18:01:00-03:00"),
+      messageId: "out-1",
+      texto: "Vou deixar essa informação para a equipe revisar.",
+    },
+  ];
+  const plan = {
+    etapa: 2,
+    atrasoMinutos: 5,
+    messageIdBase: "out-1",
+    sugestao: "Mensagem exata revisada pela equipe.",
+    aprovadoPelaEquipe: true,
+  };
+
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData,
+      now,
+    ).ok,
+    true,
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      { ...plan, aprovadoPelaEquipe: false },
+      leadData,
+      conversationData,
+      now,
+    ).reason,
+    "only_first_followup",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      { ...leadData, neverFollowUp: true },
+      conversationData,
+      now,
+    ).reason,
+    "suspended_in_leads",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      { ...leadData, resumo: "A aparência arruinou minha vida" },
+      conversationData,
+      now,
+    ).reason,
+    "sensitive_context",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData.concat({
+        direcao: "IN",
+        dataHora: new Date("2026-08-14T10:34:00-03:00"),
+        messageId: "in-2",
+        texto: "Não precisa mais, obrigada.",
       }),
       now,
     ).reason,

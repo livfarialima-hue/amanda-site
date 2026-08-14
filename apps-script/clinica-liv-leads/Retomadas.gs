@@ -221,6 +221,308 @@ function paginaCancelamentoRetomadas_(titulo, mensagem, confirmUrl) {
   );
 }
 
+function assinaturaAprovacaoRetomadaBot_(chavePlano) {
+  if (
+    typeof PropertiesService === "undefined" ||
+    typeof Utilities === "undefined"
+  ) {
+    return "";
+  }
+
+  const segredo = PropertiesService
+    .getScriptProperties()
+    .getProperty(RETOMADAS_CONFIG.propriedadeSegredo);
+  const chave = String(chavePlano || "").trim().slice(0, 500);
+
+  if (!segredo || !chave) return "";
+
+  const assinatura = Utilities.computeHmacSha256Signature(
+    "aprovar_retomada_bot|" + chave,
+    segredo,
+  );
+
+  return Utilities.base64EncodeWebSafe(assinatura).replace(/=+$/g, "");
+}
+
+function linkAprovacaoRetomadaBot_(chavePlano, confirmar) {
+  const token = assinaturaAprovacaoRetomadaBot_(chavePlano);
+  const baseUrl = urlAplicativoRetomadas_();
+
+  if (!baseUrl || !token) return "";
+
+  return (
+    baseUrl +
+    "?view=aprovar_retomada_bot&approval=" +
+    encodeURIComponent(token) +
+    (confirmar ? "&confirmar=1" : "")
+  );
+}
+
+function localizarPlanoRetomadaPorAprovacao_(planilha, token) {
+  const recebido = String(token || "").trim();
+
+  if (!planilha || planilha.getLastRow() < 2 || !recebido) {
+    return null;
+  }
+
+  const linhas = planilha
+    .getRange(
+      2,
+      1,
+      planilha.getLastRow() - 1,
+      RETOMADAS_CONTROLE_HEADERS.length,
+    )
+    .getValues();
+
+  for (let indice = linhas.length - 1; indice >= 0; indice -= 1) {
+    const linha = linhas[indice];
+    const esperado = assinaturaAprovacaoRetomadaBot_(linha[0]);
+
+    if (
+      esperado &&
+      esperado.length === recebido.length &&
+      esperado === recebido
+    ) {
+      return { numeroLinha: indice + 2, valores: linha };
+    }
+  }
+
+  return null;
+}
+
+function dataHoraAprovacaoRetomadaBot_(agora, horarioPlanejado) {
+  const partes = formatarDataRetomadas_(agora, "HH:mm")
+    .split(":")
+    .map(Number);
+  const minutos = partes[0] * 60 + partes[1];
+  const inicio = RETOMADAS_CONFIG.horaInicioRetomadas * 60;
+  const fim = RETOMADAS_CONFIG.horaFimRetomadas * 60;
+
+  if (minutos >= fim) return null;
+
+  const horario = String(horarioPlanejado || "").trim();
+  const planejada = /^\d{2}:\d{2}$/.test(horario)
+    ? dataHoraProgramadaRetomada_(agora, horario)
+    : null;
+
+  if (planejada && planejada.getTime() > agora.getTime()) {
+    return planejada;
+  }
+
+  if (minutos < inicio) {
+    return dataHoraProgramadaRetomada_(agora, "09:00");
+  }
+
+  return agora;
+}
+
+function aprovarPlanoRetomadaParaBot_(arquivo, token, agora) {
+  const propriedades = PropertiesService.getScriptProperties();
+
+  if (
+    propriedades.getProperty(
+      RETOMADAS_CONFIG.propriedadeAtiva,
+    ) !== "true"
+  ) {
+    return { ok: false, reason: "automation_disabled" };
+  }
+
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaControle,
+  );
+  const plano = localizarPlanoRetomadaPorAprovacao_(
+    planilha,
+    token,
+  );
+
+  if (!plano) return { ok: false, reason: "plan_not_found" };
+
+  const linha = plano.valores;
+  const modo = String(linha[9] || "").trim();
+  const statusEnvio = String(linha[10] || "").trim();
+
+  if (
+    modo === "Automático aprovado" &&
+    statusEnvio === "Programada"
+  ) {
+    return {
+      ok: true,
+      alreadyApproved: true,
+      scheduledAt: dataRetomadaValida_(linha[11]),
+    };
+  }
+
+  if (modo !== "Manual" || statusEnvio !== "Ação manual") {
+    return { ok: false, reason: "plan_not_eligible" };
+  }
+
+  if (
+    !String(linha[2] || "").trim() ||
+    !String(linha[3] || "").trim() ||
+    !String(linha[8] || "").trim()
+  ) {
+    return { ok: false, reason: "missing_context" };
+  }
+
+  const programadaPara = dataHoraAprovacaoRetomadaBot_(
+    agora,
+    linha[5],
+  );
+  if (!programadaPara) {
+    return { ok: false, reason: "outside_send_window" };
+  }
+
+  planilha
+    .getRange(plano.numeroLinha, 10, 1, 8)
+    .setValues([[
+      "Automático aprovado",
+      "Programada",
+      programadaPara,
+      "",
+      "",
+      "",
+      agora,
+      "E-mail diário",
+    ]]);
+
+  return {
+    ok: true,
+    alreadyApproved: false,
+    scheduledAt: programadaPara,
+  };
+}
+
+function renderAprovacaoRetomadaBot_(parameters) {
+  const params = parameters || {};
+  const token = String(params.approval || "").trim();
+  const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaControle,
+  );
+  const plano = localizarPlanoRetomadaPorAprovacao_(planilha, token);
+
+  if (!plano) {
+    return HtmlService.createHtmlOutput(
+      paginaAprovacaoRetomadaBot_(
+        "Link inválido ou expirado",
+        "Não foi possível localizar esta retomada. Nenhuma mensagem foi programada.",
+        "",
+        "",
+      ),
+    ).setTitle("Clínica LIV — retomada com a Bruna");
+  }
+
+  const sugestao = String(plano.valores[8] || "").trim();
+
+  if (String(params.confirmar || "") !== "1") {
+    return HtmlService.createHtmlOutput(
+      paginaAprovacaoRetomadaBot_(
+        "Aprovar esta mensagem para a Bruna?",
+        "Confirme somente depois de revisar o histórico no WhatsApp. O envio não é imediato: ele entra na fila e será validado novamente antes do disparo.",
+        sugestao,
+        token,
+      ),
+    ).setTitle("Clínica LIV — confirmar retomada");
+  }
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) {
+    return HtmlService.createHtmlOutput(
+      paginaAprovacaoRetomadaBot_(
+        "Tente novamente",
+        "A agenda está sendo atualizada. Volte ao e-mail e tente novamente em alguns segundos.",
+        sugestao,
+        "",
+      ),
+    ).setTitle("Clínica LIV — retomada com a Bruna");
+  }
+
+  try {
+    const resultado = aprovarPlanoRetomadaParaBot_(
+      arquivo,
+      token,
+      new Date(),
+    );
+
+    if (!resultado.ok) {
+      const mensagens = {
+        automation_disabled:
+          "A automação de retomadas está desligada. A mensagem continua como ação humana e não será enviada pelo bot.",
+        outside_send_window:
+          "Já passou do horário permitido para retomadas automáticas. A mensagem continua como ação humana.",
+        plan_not_eligible:
+          "Esta retomada já mudou de estado ou não está mais disponível para envio automático.",
+        missing_context:
+          "Faltam dados seguros para programar esta retomada. Ela continuará como ação humana.",
+      };
+      return HtmlService.createHtmlOutput(
+        paginaAprovacaoRetomadaBot_(
+          "Mensagem não programada",
+          mensagens[resultado.reason] ||
+            "A retomada não está mais disponível. Nenhuma mensagem foi programada.",
+          sugestao,
+          "",
+        ),
+      ).setTitle("Clínica LIV — retomada com a Bruna");
+    }
+
+    const quando = resultado.scheduledAt
+      ? formatarDataRetomadas_(
+          resultado.scheduledAt,
+          "dd/MM/yyyy HH:mm",
+        )
+      : "próximo processamento";
+    return HtmlService.createHtmlOutput(
+      paginaAprovacaoRetomadaBot_(
+        resultado.alreadyApproved
+          ? "Mensagem já aprovada"
+          : "Mensagem aprovada",
+        "A Bruna fará uma nova validação da conversa antes do envio previsto para " +
+          quando +
+          ". Se o paciente responder, a equipe intervier ou surgir um bloqueio, o envio será cancelado.",
+        sugestao,
+        "",
+      ),
+    ).setTitle("Clínica LIV — retomada aprovada");
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function paginaAprovacaoRetomadaBot_(
+  titulo,
+  mensagem,
+  sugestao,
+  confirmToken,
+) {
+  const blocoMensagem = sugestao
+    ? '<div style="margin-top:18px;padding:14px;border-left:4px solid #075e54;background:#eef8f4;border-radius:8px;line-height:1.55;white-space:pre-wrap;">' +
+      escaparHtmlRetomadas_(sugestao) +
+      "</div>"
+    : "";
+  const actionUrl = urlAplicativoRetomadas_();
+  const botao = confirmToken && actionUrl
+    ? '<form method="get" action="' +
+      escaparHtmlRetomadas_(actionUrl) +
+      '" style="margin:18px 0 0;"><input type="hidden" name="view" value="aprovar_retomada_bot"><input type="hidden" name="approval" value="' +
+      escaparHtmlRetomadas_(confirmToken) +
+      '"><input type="hidden" name="confirmar" value="1"><button type="submit" style="border:0;padding:12px 18px;border-radius:8px;background:#075e54;color:#fff;font-weight:bold;cursor:pointer;">Confirmar e passar para a Bruna</button></form>'
+    : "";
+
+  return (
+    '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>' +
+    '<body style="margin:0;background:#f3f4f6;font-family:Arial,sans-serif;color:#111827;"><main style="max-width:620px;margin:48px auto;padding:28px;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.08);">' +
+    '<div style="color:#075e54;font-size:14px;font-weight:bold;">CLÍNICA LIV</div><h1 style="font-size:24px;margin:10px 0 12px;">' +
+    escaparHtmlRetomadas_(titulo) +
+    '</h1><p style="line-height:1.6;color:#4b5563;">' +
+    escaparHtmlRetomadas_(mensagem) +
+    "</p>" +
+    blocoMensagem +
+    botao +
+    "</main></body></html>"
+  );
+}
+
 function cancelarPlanosPendentesRetomadas_(arquivo, telefone, agora) {
   const planilha = arquivo.getSheetByName(
     RETOMADAS_CONFIG.planilhaControle,
@@ -278,6 +580,8 @@ const RETOMADAS_CONTROLE_HEADERS = Object.freeze([
   "Última tentativa",
   "Enviado em",
   "Erro do envio",
+  "Aprovada pela equipe em",
+  "Origem da aprovação",
 ]);
 
 const RETOMADAS_ETAPAS = Object.freeze([
@@ -1727,6 +2031,8 @@ function registrarRetomadasEnviadas_(planilha, candidatos, agora) {
       "",
       "",
       "",
+      "",
+      "",
     ];
   });
 
@@ -1854,8 +2160,10 @@ function processarRetomadasAutomaticasInterno_(
     const statusEnvio = String(linha[10] || "").trim();
     const programadaPara = dataRetomadaValida_(linha[11]);
 
+    const aprovadoPelaEquipe = modo === "Automático aprovado";
+
     if (
-      modo !== "Automático" ||
+      !["Automático", "Automático aprovado"].includes(modo) ||
       statusEnvio !== "Programada" ||
       !programadaPara ||
       programadaPara.getTime() > agora.getTime()
@@ -1876,6 +2184,7 @@ function processarRetomadasAutomaticasInterno_(
         etapa: Number(linha[4] || 0),
         sugestao: String(linha[8] || "").trim(),
         atrasoMinutos: atrasoMinutos,
+        aprovadoPelaEquipe: aprovadoPelaEquipe,
       },
       lead,
       conversa,
@@ -1962,7 +2271,7 @@ function processarRetomadasAutomaticasInterno_(
 
 function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
   if (!lead) return { ok: false, reason: "lead_not_found" };
-  if (plano.etapa !== 1) {
+  if (plano.etapa !== 1 && !plano.aprovadoPelaEquipe) {
     return { ok: false, reason: "only_first_followup" };
   }
   if (
@@ -2036,7 +2345,10 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
   if (!retomadaComercialPermitida_(contexto)) {
     return { ok: false, reason: "sensitive_context" };
   }
-  if (/valor|preco|orcamento|pagamento|parcel|agend|horar/.test(contexto)) {
+  if (
+    !plano.aprovadoPelaEquipe &&
+    /valor|preco|orcamento|pagamento|parcel|agend|horar/.test(contexto)
+  ) {
     return { ok: false, reason: "human_review_required" };
   }
 
@@ -2237,7 +2549,7 @@ function montarTextoEmailRetomadas_(
       ")",
   );
   linhas.push(
-    "Nada desta seção é enviado automaticamente. Revise o histórico antes de usar a mensagem.",
+    "Nada desta seção é enviado automaticamente sem aprovação. Revise o histórico e, se a mensagem estiver apropriada, use o link “Passar para a Bruna”.",
   );
 
   if (!manuaisHoje.length) {
@@ -2295,7 +2607,7 @@ function montarTextoEmailRetomadas_(
 
   linhas.push("");
   linhas.push(
-    "Somente os itens listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. Para retirar um contato desta e das próximas agendas, use o link “Não retomar mais” do próprio item; ele marca “Nunca retomar” na aba Leads após confirmação.",
+    "Somente os itens listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. Uma ação humana só passa para a Bruna depois de confirmação explícita no botão do item e de nova validação da conversa. Para retirar um contato desta e das próximas agendas, use “Não retomar mais”.",
   );
 
   return linhas.join("\n");
@@ -2333,6 +2645,16 @@ function adicionarLinksItemRetomadaTexto_(linhas, item) {
       linhas.push("Não retomar mais: " + cancelUrl);
     }
   }
+
+  if (item.aprovacaoBotDisponivel && item.chavePlanoRetomada) {
+    const approvalUrl = linkAprovacaoRetomadaBot_(
+      item.chavePlanoRetomada,
+      false,
+    );
+    if (approvalUrl) {
+      linhas.push("Passar para a Bruna: " + approvalUrl);
+    }
+  }
 }
 
 function montarAcoesItemRetomadaHtml_(item) {
@@ -2358,6 +2680,19 @@ function montarAcoesItemRetomadaHtml_(item) {
     }
   }
 
+  if (item.aprovacaoBotDisponivel && item.chavePlanoRetomada) {
+    const approvalUrl = linkAprovacaoRetomadaBot_(
+      item.chavePlanoRetomada,
+      false,
+    );
+    if (approvalUrl) {
+      html +=
+        ' <a href="' +
+        escaparHtmlRetomadas_(approvalUrl) +
+        '" style="display:inline-block;margin-top:10px;padding:8px 11px;border-radius:7px;background:#2563eb;color:#fff;text-decoration:none;font-size:13px;font-weight:bold;">Passar para a Bruna</a>';
+    }
+  }
+
   return html;
 }
 
@@ -2377,6 +2712,9 @@ function converterRetomadaParaCuidadoEmail_(candidato) {
       candidato.lead.resumo ||
       "Primeira retomada simples após contato inicial",
     sugestao: candidato.sugestao,
+    chavePlanoRetomada: candidato.chaveDiaria,
+    aprovacaoBotDisponivel:
+      candidato.automatico !== true && candidato.modo === "Manual",
   };
 }
 
@@ -2400,7 +2738,7 @@ function montarHtmlEmailRetomadas_(
     ". Cada contato aparece uma única vez, com a mensagem sugerida e as ações disponíveis.</p>" +
     agendaHtml +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
-    "Somente os itens em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. Para impedir esta e as próximas retomadas de um contato, use <strong>Não retomar mais</strong>; após a confirmação, a linha será marcada como <strong>Nunca retomar</strong> na aba Leads." +
+    "Somente os itens em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. Nas ações manuais, <strong>Passar para a Bruna</strong> exige confirmação e preserva a validação final da conversa. Para impedir esta e as próximas retomadas, use <strong>Não retomar mais</strong>." +
     "</p></div>"
   );
 }
