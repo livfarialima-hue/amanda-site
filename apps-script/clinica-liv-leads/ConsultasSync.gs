@@ -75,6 +75,7 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
 });
 
 const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
+  opportunityId: "Opportunity ID",
   phone: "Telefone (E.164)",
   status: "Situação do lead",
   statusDate: "Data da situação",
@@ -524,6 +525,8 @@ function processarEdicaoNaAbaLeads_(e) {
       ? "Dr. Daniel"
       : "Dra. Amanda";
   let synced = 0;
+  let stageSynced = 0;
+  let stageSyncErrors = 0;
 
   for (
     let rowNumber = Math.max(2, e.range.getRow());
@@ -536,6 +539,29 @@ function processarEdicaoNaAbaLeads_(e) {
     const status = normalizarTextoConsultasSync_(
       row[statusColumn],
     );
+    const phone = valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_LEAD_HEADERS.phone,
+    );
+    const opportunityId = valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_LEAD_HEADERS.opportunityId,
+    );
+    const phaseSync = typeof sincronizarFaseOportunidadeELead_ === "function"
+      ? sincronizarFaseOportunidadeELead_(spreadsheet, {
+          opportunityId,
+          phone,
+          professional,
+          stage: String(row[statusColumn] || ""),
+          humanOverride: true,
+          source: "human_sheet_edit",
+          at: new Date(),
+        })
+      : { ok: false, reason: "canonical_stage_sync_unavailable" };
+    if (phaseSync.ok) stageSynced += 1;
+    else stageSyncErrors += 1;
 
     if (
       sheet.getName() === "Google Ads - Conversões" &&
@@ -544,15 +570,11 @@ function processarEdicaoNaAbaLeads_(e) {
       const displayRow = sheet
         .getRange(rowNumber, 1, 1, sheet.getLastColumn())
         .getDisplayValues()[0];
-      const phone = valorDaLinhaConsultas_(
-        row,
-        columns,
-        CONSULTAS_SYNC_LEAD_HEADERS.phone,
-      );
       recordLeadStageEvent_(spreadsheet, {
-        opportunityId: typeof leadOpportunityId_ === "function"
-          ? leadOpportunityId_(displayRow, phone)
-          : "",
+        opportunityId: phaseSync.opportunityId || opportunityId ||
+          (typeof leadOpportunityId_ === "function"
+            ? leadOpportunityId_(displayRow, phone)
+            : ""),
         phone,
         source: "human_sheet_edit",
         fromStatus: e.range.getNumRows() === 1
@@ -561,32 +583,29 @@ function processarEdicaoNaAbaLeads_(e) {
         proposedStatus: String(row[statusColumn] || ""),
         appliedStatus: String(row[statusColumn] || ""),
         confidence: "human",
-        decision: "human_override",
-        evidence: "Edição manual na fase do lead",
+        decision: phaseSync.ok ? "human_override" : "review_required",
+        evidence: phaseSync.ok
+          ? "Edição manual na fase do lead"
+          : "Falha fechada ao sincronizar fase: " +
+            String(phaseSync.reason || "unknown"),
       });
     }
 
     if (!statusAgendaConsulta_(status)) continue;
+    if (!phaseSync.ok) continue;
 
     const completed = statusConsultaRealizada_(status);
     const now = new Date();
+    const canonicalOpportunityId = phaseSync.opportunityId || opportunityId;
     const result = upsertConsulta_(consultationSheet, {
       appointmentId:
-        "lead-" +
-        normalizarTelefoneConsultasSync_(
-          valorDaLinhaConsultas_(
-            row,
-            columns,
-            CONSULTAS_SYNC_LEAD_HEADERS.phone,
-          ),
-        ).replace(/\D/g, "") +
-        "-" +
-        rowNumber,
-      phone: valorDaLinhaConsultas_(
-        row,
-        columns,
-        CONSULTAS_SYNC_LEAD_HEADERS.phone,
-      ),
+        canonicalOpportunityId
+          ? "lead-" + String(canonicalOpportunityId)
+          : "lead-" +
+            normalizarTelefoneConsultasSync_(phone).replace(/\D/g, "") +
+            "-" + rowNumber,
+      opportunityId: canonicalOpportunityId,
+      phone,
       professional,
       room: valorDaLinhaConsultas_(
         row,
@@ -662,12 +681,13 @@ function processarEdicaoNaAbaLeads_(e) {
             ),
             room: calendarResult.room,
           },
+          canonicalOpportunityId,
         );
       }
     }
   }
 
-  return { ok: true, synced };
+  return { ok: true, synced, stageSynced, stageSyncErrors };
 }
 
 function processarEdicaoNaAbaConsultas_(e) {
@@ -758,6 +778,11 @@ function processarEdicaoNaAbaConsultas_(e) {
       refreshedColumns,
       CONSULTAS_SYNC_HEADERS.phone,
     );
+    const opportunityId = valorDaLinhaConsultas_(
+      row,
+      refreshedColumns,
+      CONSULTAS_SYNC_HEADERS.opportunityId,
+    );
     const professional = valorDaLinhaConsultas_(
       row,
       refreshedColumns,
@@ -774,6 +799,7 @@ function processarEdicaoNaAbaConsultas_(e) {
         sheet,
         phone,
         professional,
+        opportunityId,
       );
     } else {
       atualizarStatusLeadDaConsulta_(
@@ -785,6 +811,7 @@ function processarEdicaoNaAbaConsultas_(e) {
           refreshedColumns,
           CONSULTAS_SYNC_HEADERS.status,
         ),
+        opportunityId,
       );
     }
     atualizarAgendaVisivelNoLead_(sheet.getParent(), phone, professional, {
@@ -799,7 +826,7 @@ function processarEdicaoNaAbaConsultas_(e) {
         CONSULTAS_SYNC_HEADERS.scheduledTime,
       ),
       room,
-    });
+    }, opportunityId);
 
     if (statusNaoCompareceuConsulta_(status)) continue;
     if (!statusConsultaRealizada_(status)) continue;
@@ -823,6 +850,19 @@ function processarEdicaoNaAbaConsultas_(e) {
   };
 }
 
+function resolverOpportunityIdConsulta_(spreadsheet, input) {
+  if (typeof resolverOportunidadeCanonica_ !== "function") {
+    return { ok: false, reason: "canonical_opportunity_resolver_unavailable" };
+  }
+  const result = resolverOportunidadeCanonica_(spreadsheet, input || {});
+  if (!result.ok) return result;
+  return {
+    ok: true,
+    opportunityId: String(result.found.values[0] || ""),
+    matchedBy: result.matchedBy,
+  };
+}
+
 function upsertConsultaRecebida_(input) {
   const spreadsheet = SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,
@@ -842,10 +882,23 @@ function upsertConsultaRecebida_(input) {
   if (!profissionalPermitidoAutomacaoConsulta_(professional)) {
     return { ok: false, error: "unsupported_professional" };
   }
+  const opportunityResult = resolverOpportunityIdConsulta_(spreadsheet, {
+    opportunityId: input.opportunityId,
+    phone: input.phone,
+    professional,
+  });
+  if (!opportunityResult.ok) {
+    return {
+      ok: false,
+      error: "opportunity_identity_required",
+      reason: opportunityResult.reason,
+    };
+  }
+  const opportunityId = opportunityResult.opportunityId;
 
   const result = upsertConsulta_(sheet, {
     appointmentId: input.appointmentId || input.eventId,
-    opportunityId: input.opportunityId,
+    opportunityId,
     phone: input.phone,
     name: input.name,
     professional,
@@ -887,13 +940,14 @@ function upsertConsultaRecebida_(input) {
     input.phone,
     professional,
     status,
+    opportunityId,
   );
 
   atualizarAgendaVisivelNoLead_(spreadsheet, input.phone, professional, {
     scheduledDate: input.scheduledDate,
     scheduledTime: input.scheduledTime,
     room: calendarResult.room || input.room,
-  });
+  }, opportunityId);
 
   return Object.assign({}, result, {
     calendarSynced: calendarResult.ok === true,
@@ -1238,6 +1292,20 @@ function reservarHorarioEAgendarConsulta_(input) {
     return { ok: false, error: "unsupported_professional" };
   }
 
+  const opportunityResult = resolverOpportunityIdConsulta_(spreadsheet, {
+    opportunityId: input.opportunityId,
+    phone: input.phone,
+    professional: professionalName,
+  });
+  if (!opportunityResult.ok) {
+    return {
+      ok: false,
+      error: "opportunity_identity_required",
+      reason: opportunityResult.reason,
+    };
+  }
+  const opportunityId = opportunityResult.opportunityId;
+
   if (!requestedDate || !requestedTime) {
     return { ok: false, error: "invalid_schedule" };
   }
@@ -1258,6 +1326,7 @@ function reservarHorarioEAgendarConsulta_(input) {
       consultationColumns,
       {
         id: input.appointmentId || input.eventId,
+        opportunityId,
         phone: input.phone,
         scheduledDate: requestedDate,
         scheduledTime: requestedTime,
@@ -1307,6 +1376,7 @@ function reservarHorarioEAgendarConsulta_(input) {
         appointmentRow: existingAppointmentRow,
         appointmentId:
           input.appointmentId || input.eventId,
+        opportunityId,
         scheduledDate: requestedDate,
         scheduledTime: requestedTime,
         room:
@@ -1458,6 +1528,7 @@ function reservarHorarioEAgendarConsulta_(input) {
       {
         appointmentId:
           input.appointmentId || input.eventId,
+        opportunityId,
         phone: input.phone,
         name: input.name,
         professional: professionalName,
@@ -1511,12 +1582,13 @@ function reservarHorarioEAgendarConsulta_(input) {
       input.phone,
       professionalName,
       "Consulta agendada",
+      opportunityId,
     );
     atualizarAgendaVisivelNoLead_(spreadsheet, input.phone, professionalName, {
       scheduledDate: requestedDate,
       scheduledTime: requestedTime,
       room: calendarResult.room || roomSelection.room,
-    });
+    }, opportunityId);
     SpreadsheetApp.flush();
 
     return {
@@ -1664,6 +1736,15 @@ function registrarRespostaPacienteDaConsulta_(input) {
     return { ok: true, updated: false, reason: "unsupported_state" };
   }
 
+  const refreshedRow = sheet
+    .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+    .getValues()[0];
+  const opportunityId = input.opportunityId || valorDaLinhaConsultas_(
+    refreshedRow,
+    columns,
+    CONSULTAS_SYNC_HEADERS.opportunityId,
+  );
+
   atualizarStatusLeadDaConsulta_(
     spreadsheet,
     input.phone,
@@ -1671,6 +1752,7 @@ function registrarRespostaPacienteDaConsulta_(input) {
     state === "confirmed"
       ? "Consulta confirmada"
       : "Reagendamento solicitado",
+    opportunityId,
   );
 
   return { ok: true, updated: true, row: rowNumber, state };
@@ -1791,6 +1873,11 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
       sheet,
       input.phone,
       input.professional,
+      input.opportunityId || valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.opportunityId,
+      ),
     );
   } else if (outcome === "attended") {
     definirValorConsulta_(
@@ -2574,6 +2661,7 @@ function contarNaoComparecimentosConsulta_(
   columns,
   phoneValue,
   professionalValue,
+  opportunityId,
 ) {
   const phone = normalizarTelefoneConsultasSync_(phoneValue);
   const professional = chaveProfissionalConsulta_(professionalValue);
@@ -2592,6 +2680,9 @@ function contarNaoComparecimentosConsulta_(
       chaveProfissionalConsulta_(
         row[columns[CONSULTAS_SYNC_HEADERS.professional]],
       ) === professional &&
+      (!opportunityId || String(
+        row[columns[CONSULTAS_SYNC_HEADERS.opportunityId]] || "",
+      ) === String(opportunityId)) &&
       statusNaoCompareceuConsulta_(
         row[columns[CONSULTAS_SYNC_HEADERS.status]],
       )
@@ -3888,97 +3979,48 @@ function atualizarStatusLeadDaConsulta_(
   phoneValue,
   professional,
   status,
+  opportunityId,
 ) {
   const canonicalStatus = statusCanonicoLeadDaConsulta_(status);
-  if (!canonicalStatus) return;
+  if (!canonicalStatus) {
+    return { ok: true, changed: false, reason: "non_stage_status" };
+  }
 
   const phone = normalizarTelefoneConsultasSync_(phoneValue);
-
-  if (!phone) return;
-
-  const preferredSheet = nomePlanilhaLeadProfissional_(professional);
-  if (!preferredSheet) return;
-  const sheet = spreadsheet.getSheetByName(preferredSheet);
-
-  if (!sheet || sheet.getLastRow() < 2) return;
-
-  const headers = sheet
-    .getRange(1, 1, 1, sheet.getLastColumn())
-    .getDisplayValues()[0];
-  const columns = mapearCabecalhosConsultas_(headers);
-  const phoneColumn =
-    columns[CONSULTAS_SYNC_LEAD_HEADERS.phone];
-  const statusColumn =
-    columns[CONSULTAS_SYNC_LEAD_HEADERS.status];
-  const statusDateColumn =
-    columns[CONSULTAS_SYNC_LEAD_HEADERS.statusDate];
-
-  if (phoneColumn === undefined || statusColumn === undefined) {
-    return;
+  if (!phone || typeof sincronizarFaseOportunidadeELead_ !== "function") {
+    return { ok: false, reason: phone
+      ? "canonical_stage_sync_unavailable"
+      : "invalid_phone" };
   }
 
-  const phones = sheet
-    .getRange(2, phoneColumn + 1, sheet.getLastRow() - 1, 1)
-    .getDisplayValues();
-
-  for (let index = phones.length - 1; index >= 0; index -= 1) {
-    if (
-      normalizarTelefoneConsultasSync_(phones[index][0]) !==
-      phone
-    ) {
-      continue;
-    }
-
-    const rowNumber = index + 2;
-    const currentStatus = String(
-      sheet.getRange(rowNumber, statusColumn + 1).getDisplayValue() ||
-      "Novo",
-    );
-    const shouldApply = typeof shouldApplyLeadStatus_ === "function"
-      ? shouldApplyLeadStatus_(currentStatus, canonicalStatus, "high")
-      : currentStatus !== "Paciente convertido";
-
-    if (!shouldApply) return;
-
-    sheet
-      .getRange(rowNumber, statusColumn + 1)
-      .setValue(canonicalStatus);
-
-    if (statusDateColumn !== undefined) {
-      sheet
-        .getRange(rowNumber, statusDateColumn + 1)
-        .setValue(
-          Utilities.formatDate(
-            new Date(),
-            CONSULTAS_SYNC_CONFIG.timezone,
-            "dd/MM/yyyy",
-          ),
-        );
-    }
-
-    if (
-      sheet.getName() === "Google Ads - Conversões" &&
-      typeof recordLeadStageEvent_ === "function"
-    ) {
-      const leadValues = sheet
-        .getRange(rowNumber, 1, 1, sheet.getLastColumn())
-        .getDisplayValues()[0];
-      recordLeadStageEvent_(spreadsheet, {
-        opportunityId: typeof leadOpportunityId_ === "function"
-          ? leadOpportunityId_(leadValues, phone)
-          : "",
-        phone,
-        source: "consultas_sync",
-        fromStatus: currentStatus,
-        proposedStatus: canonicalStatus,
-        appliedStatus: canonicalStatus,
-        confidence: "structured",
-        decision: "applied",
-        evidence: "Status estruturado da aba Consultas",
-      });
-    }
-    return;
+  const result = sincronizarFaseOportunidadeELead_(spreadsheet, {
+    opportunityId,
+    phone,
+    professional,
+    stage: canonicalStatus,
+    source: "consultas_sync",
+    at: new Date(),
+  });
+  if (
+    result.ok &&
+    result.changed &&
+    nomePlanilhaLeadProfissional_(professional) ===
+      "Google Ads - Conversões" &&
+    typeof recordLeadStageEvent_ === "function"
+  ) {
+    recordLeadStageEvent_(spreadsheet, {
+      opportunityId: result.opportunityId,
+      phone,
+      source: "consultas_sync",
+      fromStatus: result.previousStage || "",
+      proposedStatus: canonicalStatus,
+      appliedStatus: result.stage,
+      confidence: "structured",
+      decision: "applied",
+      evidence: "Status estruturado da aba Consultas",
+    });
   }
+  return result;
 }
 
 function nomePlanilhaLeadProfissional_(professional) {
@@ -4050,6 +4092,7 @@ function atualizarAgendaVisivelNoLead_(
   phoneValue,
   professional,
   appointment,
+  opportunityId,
 ) {
   const phone = normalizarTelefoneConsultasSync_(phoneValue);
   const preferredSheet = nomePlanilhaLeadProfissional_(professional);
@@ -4059,22 +4102,12 @@ function atualizarAgendaVisivelNoLead_(
   if (!sheet || sheet.getLastRow() < 2) return false;
 
   const columns = garantirEstruturaAgendaVisivelLeads_(sheet);
-  const phoneColumn = columns[CONSULTAS_SYNC_LEAD_HEADERS.phone];
-  if (phoneColumn === undefined) return false;
-
-  const phones = sheet
-    .getRange(2, phoneColumn + 1, sheet.getLastRow() - 1, 1)
-    .getDisplayValues();
-
-  for (let index = phones.length - 1; index >= 0; index -= 1) {
-    if (
-      normalizarTelefoneConsultasSync_(phones[index][0]) !== phone
-    ) {
-      continue;
-    }
-
-    const rowNumber = index + 2;
-    const values = [
+  const leadResult = typeof resolverLinhaLeadCanonica_ === "function"
+    ? resolverLinhaLeadCanonica_(sheet, opportunityId, phone)
+    : { ok: false, reason: "canonical_lead_resolver_unavailable" };
+  if (!leadResult.ok) return false;
+  const rowNumber = leadResult.row;
+  const values = [
       [
         CONSULTAS_SYNC_LEAD_HEADERS.appointmentDate,
         formatarDataVisivelConsulta_(appointment.scheduledDate),
@@ -4091,18 +4124,15 @@ function atualizarAgendaVisivelNoLead_(
         CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom,
         normalizarSalaConsulta_(appointment.room),
       ],
-    ];
+  ];
 
-    values.forEach(function (entry) {
-      if (entry[1] === "") return;
-      sheet
-        .getRange(rowNumber, columns[entry[0]] + 1)
-        .setValue(entry[1]);
-    });
-    return true;
-  }
-
-  return false;
+  values.forEach(function (entry) {
+    if (entry[1] === "") return;
+    sheet
+      .getRange(rowNumber, columns[entry[0]] + 1)
+      .setValue(entry[1]);
+  });
+  return true;
 }
 
 function atualizarResumoNaoComparecimentoNoLead_(
@@ -4110,6 +4140,7 @@ function atualizarResumoNaoComparecimentoNoLead_(
   consultationSheet,
   phoneValue,
   professional,
+  opportunityId,
 ) {
   const phone = normalizarTelefoneConsultasSync_(phoneValue);
   const preferredSheet = nomePlanilhaLeadProfissional_(professional);
@@ -4129,6 +4160,7 @@ function atualizarResumoNaoComparecimentoNoLead_(
     consultationColumns,
     phone,
     professional,
+    opportunityId,
   );
   const rows = consultationSheet.getLastRow() >= 2
     ? consultationSheet
@@ -4150,6 +4182,9 @@ function atualizarResumoNaoComparecimentoNoLead_(
       chaveProfissionalConsulta_(
         row[consultationColumns[CONSULTAS_SYNC_HEADERS.professional]],
       ) !== chaveProfissionalConsulta_(professional) ||
+      (opportunityId && String(
+        row[consultationColumns[CONSULTAS_SYNC_HEADERS.opportunityId]] || "",
+      ) !== String(opportunityId)) ||
       !statusNaoCompareceuConsulta_(
         row[consultationColumns[CONSULTAS_SYNC_HEADERS.status]],
       )
@@ -4170,40 +4205,32 @@ function atualizarResumoNaoComparecimentoNoLead_(
   });
 
   const columns = garantirEstruturaAgendaVisivelLeads_(leadSheet);
-  const phoneColumn = columns[CONSULTAS_SYNC_LEAD_HEADERS.phone];
-  const phones = leadSheet
-    .getRange(2, phoneColumn + 1, leadSheet.getLastRow() - 1, 1)
-    .getDisplayValues();
-
-  for (let index = phones.length - 1; index >= 0; index -= 1) {
-    if (normalizarTelefoneConsultasSync_(phones[index][0]) !== phone) {
-      continue;
-    }
-    const rowNumber = index + 2;
+  const leadResult = typeof resolverLinhaLeadCanonica_ === "function"
+    ? resolverLinhaLeadCanonica_(leadSheet, opportunityId, phone)
+    : { ok: false, reason: "canonical_lead_resolver_unavailable" };
+  if (!leadResult.ok) return false;
+  const rowNumber = leadResult.row;
+  leadSheet
+    .getRange(
+      rowNumber,
+      columns[CONSULTAS_SYNC_LEAD_HEADERS.appointmentOutcome] + 1,
+    )
+    .setValue("Não compareceu");
+  leadSheet
+    .getRange(
+      rowNumber,
+      columns[CONSULTAS_SYNC_LEAD_HEADERS.noShowCount] + 1,
+    )
+    .setValue(count);
+  if (latest) {
     leadSheet
       .getRange(
         rowNumber,
-        columns[CONSULTAS_SYNC_LEAD_HEADERS.appointmentOutcome] + 1,
+        columns[CONSULTAS_SYNC_LEAD_HEADERS.lastNoShowAt] + 1,
       )
-      .setValue("Não compareceu");
-    leadSheet
-      .getRange(
-        rowNumber,
-        columns[CONSULTAS_SYNC_LEAD_HEADERS.noShowCount] + 1,
-      )
-      .setValue(count);
-    if (latest) {
-      leadSheet
-        .getRange(
-          rowNumber,
-          columns[CONSULTAS_SYNC_LEAD_HEADERS.lastNoShowAt] + 1,
-        )
-        .setValue(latest);
-    }
-    return true;
+      .setValue(latest);
   }
-
-  return false;
+  return true;
 }
 
 function garantirEstruturaSincronizacaoConsultas_(sheet) {

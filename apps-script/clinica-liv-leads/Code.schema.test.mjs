@@ -38,6 +38,7 @@ globalThis.__test = {
   isKnownPatientRelationship_,
   findProcessedEvent_,
   resolvePendingProcessedEvent_,
+  resolucaoLeadBloqueiaInsercao_,
 };`,
     sandbox,
   );
@@ -93,6 +94,26 @@ test("known patients are recognized before acquisition ingestion", () => {
       found: false,
       relationshipState: "unknown",
     }),
+    false,
+  );
+});
+
+test("ambiguous lead identity blocks insertion while a genuinely new phone does not", () => {
+  const { resolucaoLeadBloqueiaInsercao_ } = loadCode();
+
+  assert.equal(
+    resolucaoLeadBloqueiaInsercao_({ ok: false, reason: "ambiguous_phone" }),
+    true,
+  );
+  assert.equal(
+    resolucaoLeadBloqueiaInsercao_({
+      ok: false,
+      reason: "duplicate_opportunity_id_in_visible_sheet",
+    }),
+    true,
+  );
+  assert.equal(
+    resolucaoLeadBloqueiaInsercao_({ ok: false, reason: "phone_not_found" }),
     false,
   );
 });

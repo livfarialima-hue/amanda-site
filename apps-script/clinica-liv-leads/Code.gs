@@ -505,14 +505,25 @@ function doPost(e) {
         garantirEstruturaIntegradaLead_(recoveredSheet);
       }
 
-      let recoveredLeadRow =
-        typeof localizarLeadPorOportunidadeOuTelefone_ === "function"
-          ? localizarLeadPorOportunidadeOuTelefone_(
+      const recoveredLeadResolution =
+        typeof resolverLinhaLeadCanonica_ === "function"
+          ? resolverLinhaLeadCanonica_(
               recoveredSheet,
               lead.opportunityId,
               lead.phone,
             )
-          : findLeadRowByPhone_(recoveredSheet, lead.phone);
+          : { ok: true, row: findLeadRowByPhone_(recoveredSheet, lead.phone) };
+      if (resolucaoLeadBloqueiaInsercao_(recoveredLeadResolution)) {
+        return json_({
+          ok: false,
+          inserted: false,
+          error: "lead_identity_ambiguous",
+          reason: recoveredLeadResolution.reason,
+        });
+      }
+      let recoveredLeadRow = recoveredLeadResolution.ok
+        ? recoveredLeadResolution.row
+        : null;
       let insertedDuringRecovery = false;
       if (!recoveredLeadRow) {
         recoveredLeadRow = findFirstAvailableRow_(recoveredSheet);
@@ -679,14 +690,22 @@ function doPost(e) {
     }
 
     stage = "phone_identity_check";
-    const existingLeadRow =
-      typeof localizarLeadPorOportunidadeOuTelefone_ === "function"
-        ? localizarLeadPorOportunidadeOuTelefone_(
-            sheet,
-            lead.opportunityId,
-            lead.phone,
-          )
-        : findLeadRowByPhone_(sheet, lead.phone);
+    const leadResolution = typeof resolverLinhaLeadCanonica_ === "function"
+      ? resolverLinhaLeadCanonica_(
+          sheet,
+          lead.opportunityId,
+          lead.phone,
+        )
+      : { ok: true, row: findLeadRowByPhone_(sheet, lead.phone) };
+    if (resolucaoLeadBloqueiaInsercao_(leadResolution)) {
+      return json_({
+        ok: false,
+        inserted: false,
+        error: "lead_identity_ambiguous",
+        reason: leadResolution.reason,
+      });
+    }
+    const existingLeadRow = leadResolution.ok ? leadResolution.row : null;
 
     if (existingLeadRow) {
       if (!isKnownPatientRelationship_(patientRelationship)) {
@@ -1845,6 +1864,14 @@ function findExactDuplicateRow_(sheet, identifiers) {
   }
 
   return null;
+}
+
+function resolucaoLeadBloqueiaInsercao_(resolution) {
+  if (!resolution || resolution.ok) return false;
+  return ![
+    "lead_sheet_empty",
+    "phone_not_found",
+  ].includes(String(resolution.reason || ""));
 }
 
 function findLeadRowByPhone_(sheet, phone) {

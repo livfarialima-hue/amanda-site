@@ -1190,7 +1190,7 @@ function completeLeadClassification_(job, classification) {
     confidence,
     hasAdministrativeEvidence,
   ) ? proposedStatus : currentStatus;
-  const needsClassificationReview =
+  let needsClassificationReview =
     confidence === "low" ||
     rawProposedStatus !== proposedStatus ||
     (
@@ -1258,37 +1258,6 @@ function completeLeadClassification_(job, classification) {
     };
   }
 
-  if (statusToKeep !== currentStatus) {
-    leadsSheet.getRange(leadRow, statusColumn).setValue(statusToKeep);
-    leadsSheet.getRange(leadRow, statusDateColumn).setValue(
-      Utilities.formatDate(now, CONFIG.timezone, "dd/MM/yyyy"),
-    );
-  }
-
-  const appointmentUpdate =
-    administrativeSignal.appointmentOutcome !== "none" &&
-    typeof registrarMarcoAdministrativoClassificado_ === "function"
-      ? registrarMarcoAdministrativoClassificado_(spreadsheet, {
-          phone,
-          professional,
-          outcome: administrativeSignal.appointmentOutcome,
-          at: now,
-          confidence,
-          evidence: classification.evidence,
-        })
-      : { updated: false, reason: "no_appointment_signal" };
-
-  if (
-    professional === "amanda" &&
-    leadStatusRank_(statusToKeep) >= leadStatusRank_("Qualificado")
-  ) {
-    ensureQualifiedGoogleConversion_(leadsSheet, leadRow, phone, now, {
-      opportunityId: canonicalOpportunityId,
-      professional,
-    });
-  }
-
-  const integrationColumns = garantirEstruturaIntegradaLead_(leadsSheet);
   const automaticValues = {
     "Resumo automático": safeText_(classification.summary, 600),
     "Próxima ação automática": safeText_(classification.nextAction, 300),
@@ -1304,16 +1273,48 @@ function completeLeadClassification_(job, classification) {
       String(classification.nextAction || ""),
     ) ? "patient" : "clinic",
   };
-  Object.keys(automaticValues).forEach(function writeAutomatic(header) {
-    if (!integrationColumns[header]) return;
-    leadsSheet
-      .getRange(leadRow, integrationColumns[header])
-      .setValue(automaticValues[header]);
-  });
-  if (integrationColumns["Versão da oportunidade"]) {
-    leadsSheet
-      .getRange(leadRow, integrationColumns["Versão da oportunidade"])
-      .setValue(currentVersion + 1);
+  const phaseSync = typeof sincronizarFaseOportunidadeELead_ === "function"
+    ? sincronizarFaseOportunidadeELead_(spreadsheet, {
+        opportunityId: canonicalOpportunityId,
+        phone,
+        professional,
+        stage: statusToKeep,
+        relationship: automaticValues["Relacionamento"],
+        owner: automaticValues["Responsável atual"],
+        expectedParty: automaticValues["Aguardando ação de"],
+        objection: automaticValues["Objeção principal"],
+        summary: automaticValues["Resumo automático"],
+        nextAction: automaticValues["Próxima ação automática"],
+        source: "whatsapp_classifier",
+        at: now,
+      })
+    : { ok: false, reason: "canonical_stage_sync_unavailable" };
+  const appliedStatus = phaseSync.ok ? phaseSync.stage : currentStatus;
+  if (!phaseSync.ok) needsClassificationReview = true;
+
+  const appointmentUpdate =
+    administrativeSignal.appointmentOutcome !== "none" &&
+    typeof registrarMarcoAdministrativoClassificado_ === "function"
+      ? registrarMarcoAdministrativoClassificado_(spreadsheet, {
+          phone,
+          professional,
+          opportunityId: canonicalOpportunityId,
+          outcome: administrativeSignal.appointmentOutcome,
+          at: now,
+          confidence,
+          evidence: classification.evidence,
+        })
+      : { updated: false, reason: "no_appointment_signal" };
+
+  if (
+    professional === "amanda" &&
+    phaseSync.ok &&
+    leadStatusRank_(appliedStatus) >= leadStatusRank_("Qualificado")
+  ) {
+    ensureQualifiedGoogleConversion_(leadsSheet, leadRow, phone, now, {
+      opportunityId: canonicalOpportunityId,
+      professional,
+    });
   }
 
   recordLeadStageEvent_(spreadsheet, {
@@ -1322,10 +1323,10 @@ function completeLeadClassification_(job, classification) {
     source: "whatsapp_classifier",
     fromStatus: currentStatus,
     proposedStatus,
-    appliedStatus: statusToKeep,
+    appliedStatus,
     confidence,
     throughMessageId: job.throughMessageId,
-    decision: statusToKeep !== currentStatus
+    decision: phaseSync.ok && appliedStatus !== currentStatus
       ? "applied"
       : needsClassificationReview
         ? "review_required"
@@ -1334,19 +1335,6 @@ function completeLeadClassification_(job, classification) {
     professional,
     at: now,
   });
-
-  if (typeof atualizarOportunidadeClassificada_ === "function") {
-    atualizarOportunidadeClassificada_(spreadsheet, {
-      opportunityId: canonicalOpportunityId,
-      stage: statusToKeep,
-      relationship: automaticValues["Relacionamento"],
-      owner: automaticValues["Responsável atual"],
-      expectedParty: automaticValues["Aguardando ação de"],
-      objection: automaticValues["Objeção principal"],
-      summary: automaticValues["Resumo automático"],
-      nextAction: automaticValues["Próxima ação automática"],
-    });
-  }
 
   const latestMessageId = String(
     queueSheet.getRange(queueRow, 9).getDisplayValue() || "",
@@ -1389,7 +1377,10 @@ function completeLeadClassification_(job, classification) {
       ].join("\n"),
       suggestion: [
         "Status sugerido pelo classificador: " + rawProposedStatus,
-        "Status protegido aplicado: " + statusToKeep,
+        "Status protegido aplicado: " + appliedStatus,
+        "Sincronização canônica: " + (phaseSync.ok
+          ? "ok"
+          : String(phaseSync.reason || "falhou")),
         "Próxima ação: " + String(classification.nextAction || ""),
       ].join("\n"),
     });
@@ -1417,7 +1408,7 @@ function completeLeadClassification_(job, classification) {
         messageText: [
           "A planilha foi atualizada por um marco administrativo com baixa confiança.",
           "Status anterior: " + currentStatus,
-          "Status aplicado: " + statusToKeep,
+          "Status aplicado: " + appliedStatus,
           "Resultado da consulta: " + administrativeSignal.appointmentOutcome,
           "Marco do procedimento: " + administrativeSignal.procedureMilestone,
           "Consulta localizada: " + (appointmentUpdate.updated ? "sim" : "não"),
@@ -1439,7 +1430,7 @@ function completeLeadClassification_(job, classification) {
   return {
     status: "completed",
     leadRow,
-    appliedStatus: statusToKeep,
+    appliedStatus,
     appointmentUpdated: appointmentUpdate.updated === true,
     lowConfidenceAlertSent: lowConfidenceAlert.sent === true,
     googleConversionReady:

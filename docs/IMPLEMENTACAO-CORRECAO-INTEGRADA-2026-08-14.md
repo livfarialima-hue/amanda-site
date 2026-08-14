@@ -36,6 +36,16 @@
 - Testes antes das correções: **486 de 486 aprovados**.
 - Publicação externa nesta implementação: **não autorizada**.
 
+## Progresso local
+
+- `f0ef62a`: decisão estratégica, gates e contrato de execução registrados.
+- Fase canônica: CRM e aba visível agora usam uma rotina comum com trava, versão compartilhada, compensação em caso de falha, idempotência e precedência do `Opportunity ID`.
+- Ingestão: uma identidade ambígua não cria uma nova linha; o evento falha fechado para revisão.
+- Consulta: criação, reserva, fase, dados visíveis e não comparecimento propagam `Opportunity ID`; uma consulta nova sem identidade única é recusada.
+- Classificador: fase e resumo operacional são persistidos pelo mesmo caminho canônico; falha de reconciliação vira revisão em vez de atualização parcial.
+- Testes após este primeiro lote: **490 de 490 aprovados**.
+- Ainda pendente neste bloco: migração reversível das duplicidades históricas e reconciliação dos eventos Calendar já existentes.
+
 ## Gates que permanecem externos
 
 A aprovação deste trabalho local não prova os gates de produção. Depois da autorização de publicação, a observação deve demonstrar: sete dias de conversão Google saudável; 14 dias sem nova divergência CRM–aba; pelo menos 95% de reconciliação de novas consultas com Calendar; pelo menos 80% de cobertura consentida para `M26F02S`; SLA calculável em pelo menos 95% das novas conversas e nenhum P0/P1 vencido.

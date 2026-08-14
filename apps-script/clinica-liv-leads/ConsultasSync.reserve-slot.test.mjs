@@ -113,6 +113,11 @@ function loadReservation({
   };
 
   vm.runInNewContext(source, sandbox);
+  sandbox.resolverOportunidadeCanonica_ = (_spreadsheet, input) => ({
+    ok: true,
+    found: { values: [input.opportunityId] },
+    matchedBy: "opportunity_id",
+  });
   sandbox.garantirEstruturaSincronizacaoConsultas_ = () => {};
   sandbox.localizarConsultaExistente_ = () => null;
   sandbox.escolherSalaDisponivelConsulta_ = () => ({
@@ -148,6 +153,7 @@ test("atomically blocks the selected slot and schedules the consultation", () =>
   const { reserve, writes } = loadReservation();
   const result = reserve({
     appointmentId: "whatsapp-selection-1",
+    opportunityId: "opp-amanda-1",
     phone: "+5511900000000",
     name: "Maria Silva",
     professional: "Dra. Amanda",
@@ -178,6 +184,7 @@ test("refuses a slot that is no longer available", () => {
   });
   const result = reserve({
     appointmentId: "whatsapp-selection-2",
+    opportunityId: "opp-amanda-2",
     phone: "+5511900000000",
     professional: "Dra. Amanda",
     scheduledDate: "2026-08-04",
@@ -198,6 +205,7 @@ test("blocks a Daniel slot and assigns Sala 2", () => {
   });
   const result = reserve({
     appointmentId: "whatsapp-daniel-1",
+    opportunityId: "opp-daniel-1",
     phone: "+5511900000001",
     name: "Paciente Daniel",
     professional: "Dr. Daniel",

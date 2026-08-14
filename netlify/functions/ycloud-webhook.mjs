@@ -1154,6 +1154,7 @@ export async function completeSelectedAppointment(
         ...appointmentSelection,
         eventId,
         appointmentId: `whatsapp-${messageId || eventId}`,
+        opportunityId,
         phone: patientPhone,
         name: patientName,
       },

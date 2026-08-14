@@ -11,6 +11,7 @@ const INPUT = {
   messageId: "selection-message",
   patientName: "Maria Silva",
   patientPhone: "+5511900007777",
+  opportunityId: "opp-amanda-1",
   selection: {
     option: 2,
     scheduledDate: "2026-08-04",
@@ -89,6 +90,10 @@ test("a patient choice is recorded for human confirmation without reserving the 
     "10:00",
   );
   assert.equal(
+    sheetActions[0].payload.appointment.opportunityId,
+    INPUT.opportunityId,
+  );
+  assert.equal(
     sheetActions[1].action,
     "send_review_alert_email",
   );
@@ -104,6 +109,7 @@ test("a patient choice is recorded for human confirmation without reserving the 
 test("an agreement already closed by the human team is recorded without another patient message", async () => {
   const patientMessages = [];
   const cancellations = [];
+  const reservations = [];
   const result = await completeSelectedAppointment(
     {
       ...INPUT,
@@ -119,13 +125,16 @@ test("an agreement already closed by the human team is recorded without another 
         status: "human_active",
         generation: "human-agreement",
       }),
-      deliverSheetsActionImpl: async () => ({
-        ok: true,
-        responseData: {
+      deliverSheetsActionImpl: async (action, payload) => {
+        reservations.push({ action, payload });
+        return {
           ok: true,
-          reserved: true,
-        },
-      }),
+          responseData: {
+            ok: true,
+            reserved: true,
+          },
+        };
+      },
       cancelPendingHumanResumeImpl: async (phone) => {
         cancellations.push(phone);
         return { status: "completed" };
@@ -144,6 +153,10 @@ test("an agreement already closed by the human team is recorded without another 
     errorCode: "none",
   });
   assert.deepEqual(cancellations, [INPUT.patientPhone]);
+  assert.equal(
+    reservations[0].payload.appointment.opportunityId,
+    INPUT.opportunityId,
+  );
   assert.equal(patientMessages.length, 0);
 });
 

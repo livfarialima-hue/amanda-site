@@ -2,7 +2,50 @@ const OPPORTUNITY_STORE_CONFIG = Object.freeze({
   sheetName: "_CRM_OPORTUNIDADES",
   amandaSheetName: "Google Ads - Conversões",
   danielSheetName: "Leads Dr. Daniel",
+  timezone: "America/Sao_Paulo",
 });
+
+const OPPORTUNITY_STAGE_VALUES = Object.freeze([
+  "Novo",
+  "Qualificado",
+  "Não qualificado",
+  "Consulta agendada",
+  "Consulta realizada",
+  "Paciente convertido",
+]);
+
+const OPPORTUNITY_SYNC_FIELDS = Object.freeze([
+  Object.freeze({
+    input: "relationship",
+    visible: "Relacionamento",
+    opportunityIndex: 8,
+  }),
+  Object.freeze({
+    input: "owner",
+    visible: "Responsável atual",
+    opportunityIndex: 9,
+  }),
+  Object.freeze({
+    input: "expectedParty",
+    visible: "Aguardando ação de",
+    opportunityIndex: 10,
+  }),
+  Object.freeze({
+    input: "objection",
+    visible: "Objeção principal",
+    opportunityIndex: 11,
+  }),
+  Object.freeze({
+    input: "summary",
+    visible: "Resumo automático",
+    opportunityIndex: 12,
+  }),
+  Object.freeze({
+    input: "nextAction",
+    visible: "Próxima ação automática",
+    opportunityIndex: 13,
+  }),
+]);
 
 const OPPORTUNITY_HEADERS = Object.freeze([
   "Opportunity ID",
@@ -486,51 +529,367 @@ function localizarLeadPorOportunidadeOuTelefone_(
   opportunityId,
   phone,
 ) {
-  if (!sheet || sheet.getLastRow() < 2) return null;
+  const result = resolverLinhaLeadCanonica_(sheet, opportunityId, phone);
+  return result.ok ? result.row : null;
+}
+
+function resolverLinhaLeadCanonica_(sheet, opportunityId, phone) {
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { ok: false, reason: "lead_sheet_empty" };
+  }
   const columns = garantirEstruturaIntegradaLead_(sheet);
   if (opportunityId && columns["Opportunity ID"]) {
-    const match = sheet
+    const ids = sheet
       .getRange(2, columns["Opportunity ID"], sheet.getLastRow() - 1, 1)
-      .createTextFinder(String(opportunityId))
-      .matchEntireCell(true)
-      .findNext();
-    if (match) return match.getRow();
+      .getDisplayValues();
+    const matches = [];
+    ids.forEach(function collectId(row, index) {
+      if (String(row[0] || "") === String(opportunityId)) {
+        matches.push(index + 2);
+      }
+    });
+    if (matches.length === 1) {
+      return { ok: true, row: matches[0], matchedBy: "opportunity_id" };
+    }
+    return {
+      ok: false,
+      reason: matches.length
+        ? "duplicate_opportunity_id_in_visible_sheet"
+        : "opportunity_id_not_found_in_visible_sheet",
+      matchCount: matches.length,
+    };
   }
   const headers = mapaCabecalhosOportunidade_(sheet);
   const phoneColumn = headers["Telefone (E.164)"] || 3;
   const normalizedPhone = normalizePhone_(phone);
+  if (!normalizedPhone) {
+    return { ok: false, reason: "invalid_phone" };
+  }
   const values = sheet
     .getRange(2, phoneColumn, sheet.getLastRow() - 1, 1)
     .getDisplayValues();
-  for (let index = values.length - 1; index >= 0; index -= 1) {
+  const matches = [];
+  for (let index = 0; index < values.length; index += 1) {
     if (normalizePhone_(values[index][0]) === normalizedPhone) {
-      return index + 2;
+      matches.push(index + 2);
     }
   }
-  return null;
+  if (matches.length === 1) {
+    return { ok: true, row: matches[0], matchedBy: "unique_phone" };
+  }
+  return {
+    ok: false,
+    reason: matches.length ? "ambiguous_phone" : "phone_not_found",
+    matchCount: matches.length,
+  };
+}
+
+function rankFaseOportunidade_(value) {
+  return {
+    Novo: 1,
+    Qualificado: 2,
+    "Não qualificado": 2,
+    "Consulta agendada": 3,
+    "Consulta realizada": 4,
+    "Paciente convertido": 5,
+  }[String(value || "")] || 0;
+}
+
+function faseOportunidadeValida_(value) {
+  return OPPORTUNITY_STAGE_VALUES.indexOf(String(value || "")) >= 0;
+}
+
+function resolverOportunidadeCanonica_(spreadsheet, input) {
+  const sheet = obterOuCriarPlanilhaOportunidades_(spreadsheet);
+  if (input.opportunityId) {
+    const found = localizarOportunidadePorId_(sheet, input.opportunityId);
+    return found
+      ? { ok: true, sheet, found, matchedBy: "opportunity_id" }
+      : { ok: false, reason: "opportunity_id_not_found" };
+  }
+
+  const phone = normalizePhone_(input.phone);
+  const professional = normalizarProfissionalOportunidade_(
+    input.professional,
+  );
+  if (!phone || !profissionalPermitidoOportunidade_(professional)) {
+    return { ok: false, reason: "missing_canonical_identity" };
+  }
+  if (sheet.getLastRow() < 2) {
+    return { ok: false, reason: "opportunity_not_found" };
+  }
+  const values = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, OPPORTUNITY_HEADERS.length)
+    .getDisplayValues();
+  const matches = [];
+  values.forEach(function collectOpportunity(row, index) {
+    if (
+      normalizePhone_(row[1]) === phone &&
+      normalizarProfissionalOportunidade_(row[3]) === professional &&
+      !/^(?:closed|voided|encerrada)$/i.test(String(row[6] || ""))
+    ) {
+      matches.push({ row: index + 2, values: row });
+    }
+  });
+  if (matches.length !== 1) {
+    return {
+      ok: false,
+      reason: matches.length
+        ? "ambiguous_active_opportunity"
+        : "opportunity_not_found",
+      matchCount: matches.length,
+    };
+  }
+  return {
+    ok: true,
+    sheet,
+    found: matches[0],
+    matchedBy: "unique_active_professional_phone",
+  };
+}
+
+function resolverFaseSincronizada_(crmStage, visibleStage, input) {
+  const requestedStage = String(input.stage || "");
+  if (requestedStage && !faseOportunidadeValida_(requestedStage)) {
+    return { ok: false, reason: "invalid_stage" };
+  }
+  if (input.humanOverride) {
+    return requestedStage
+      ? { ok: true, stage: requestedStage }
+      : { ok: false, reason: "human_stage_required" };
+  }
+
+  const crm = faseOportunidadeValida_(crmStage) ? String(crmStage) : "";
+  const visible = faseOportunidadeValida_(visibleStage)
+    ? String(visibleStage)
+    : "";
+  if (
+    crm &&
+    visible &&
+    crm !== visible &&
+    rankFaseOportunidade_(crm) === rankFaseOportunidade_(visible)
+  ) {
+    return { ok: false, reason: "ambiguous_stage_conflict" };
+  }
+
+  let stage = rankFaseOportunidade_(visible) > rankFaseOportunidade_(crm)
+    ? visible
+    : crm;
+  if (!stage) stage = "Novo";
+  if (!requestedStage || requestedStage === stage) {
+    return { ok: true, stage };
+  }
+  if (requestedStage === "Não qualificado") {
+    if (
+      input.allowNonQualified === true &&
+      rankFaseOportunidade_(stage) <= rankFaseOportunidade_("Qualificado")
+    ) {
+      return { ok: true, stage: requestedStage };
+    }
+    return { ok: true, stage };
+  }
+  return {
+    ok: true,
+    stage: rankFaseOportunidade_(requestedStage) >
+      rankFaseOportunidade_(stage)
+      ? requestedStage
+      : stage,
+  };
+}
+
+function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
+  const lock = typeof LockService !== "undefined" &&
+    typeof LockService.getDocumentLock === "function"
+    ? LockService.getDocumentLock()
+    : null;
+  if (lock && typeof lock.waitLock === "function") lock.waitLock(15000);
+
+  const rollback = [];
+  function writeCell(range, value) {
+    rollback.push({ range, value: range.getValue() });
+    range.setValue(value);
+  }
+
+  try {
+    const opportunityResult = resolverOportunidadeCanonica_(
+      spreadsheet,
+      input || {},
+    );
+    if (!opportunityResult.ok) return opportunityResult;
+
+    const opportunitySheet = opportunityResult.sheet;
+    const found = localizarOportunidadePorId_(
+      opportunitySheet,
+      opportunityResult.found.values[0],
+    );
+    if (!found) return { ok: false, reason: "opportunity_disappeared" };
+
+    const opportunityId = String(found.values[0] || "");
+    const professional = normalizarProfissionalOportunidade_(
+      found.values[3] || input.professional,
+    );
+    const leadSheetName = String(found.values[4] || "") ||
+      nomeAbaLeadOportunidade_(professional);
+    const leadSheet = spreadsheet.getSheetByName(leadSheetName);
+    if (!leadSheet) return { ok: false, reason: "visible_sheet_not_found" };
+
+    const leadResult = resolverLinhaLeadCanonica_(
+      leadSheet,
+      opportunityId,
+      input.phone || found.values[1],
+    );
+    if (!leadResult.ok) return leadResult;
+
+    const leadColumns = garantirEstruturaIntegradaLead_(leadSheet);
+    const visibleHeaders = mapaCabecalhosOportunidade_(leadSheet);
+    const statusColumn = visibleHeaders["Situação do lead"] || 5;
+    const statusDateColumn = visibleHeaders["Data da situação"] || 6;
+    const visibleStage = String(
+      leadSheet.getRange(leadResult.row, statusColumn).getDisplayValue() || "",
+    );
+    const phaseResult = resolverFaseSincronizada_(
+      String(found.values[7] || ""),
+      visibleStage,
+      input || {},
+    );
+    if (!phaseResult.ok) return phaseResult;
+
+    const fieldChanges = OPPORTUNITY_SYNC_FIELDS.map(function mapField(field) {
+      if (!Object.prototype.hasOwnProperty.call(input, field.input)) {
+        return null;
+      }
+      const value = input[field.input];
+      const visibleColumn = leadColumns[field.visible];
+      const visibleValue = visibleColumn
+        ? leadSheet.getRange(leadResult.row, visibleColumn).getValue()
+        : undefined;
+      return {
+        field,
+        value,
+        visibleColumn,
+        visibleChanged: visibleColumn && String(visibleValue || "") !==
+          String(value || ""),
+        opportunityChanged: String(found.values[field.opportunityIndex] || "") !==
+          String(value || ""),
+      };
+    }).filter(Boolean);
+    const stageChanged = visibleStage !== phaseResult.stage ||
+      String(found.values[7] || "") !== phaseResult.stage;
+    const metadataChanged = fieldChanges.some(function hasChange(change) {
+      return change.visibleChanged || change.opportunityChanged;
+    });
+    const pointerChanged = String(found.values[4] || "") !== leadSheetName ||
+      Number(found.values[5] || 0) !== leadResult.row;
+    if (!stageChanged && !metadataChanged && !pointerChanged) {
+      return {
+        ok: true,
+        changed: false,
+        opportunityId,
+        row: leadResult.row,
+        stage: phaseResult.stage,
+        previousStage: visibleStage || String(found.values[7] || ""),
+        matchedBy: opportunityResult.matchedBy,
+      };
+    }
+
+    const now = input.at instanceof Date ? input.at : new Date();
+    const visibleVersion = Number(
+      leadSheet
+        .getRange(leadResult.row, leadColumns["Versão da oportunidade"])
+        .getValue() || 0,
+    );
+    const nextVersion = Math.max(
+      Number(found.values[22] || 0),
+      visibleVersion,
+    ) + 1;
+
+    if (visibleStage !== phaseResult.stage) {
+      writeCell(
+        leadSheet.getRange(leadResult.row, statusColumn),
+        phaseResult.stage,
+      );
+      if (statusDateColumn) {
+        writeCell(
+          leadSheet.getRange(leadResult.row, statusDateColumn),
+          Utilities.formatDate(
+            now,
+            OPPORTUNITY_STORE_CONFIG.timezone,
+            "dd/MM/yyyy",
+          ),
+        );
+      }
+    }
+    fieldChanges.forEach(function writeVisibleField(change) {
+      if (!change.visibleChanged) return;
+      writeCell(
+        leadSheet.getRange(leadResult.row, change.visibleColumn),
+        change.value,
+      );
+    });
+    writeCell(
+      leadSheet.getRange(
+        leadResult.row,
+        leadColumns["Versão da oportunidade"],
+      ),
+      nextVersion,
+    );
+
+    if (pointerChanged) {
+      writeCell(opportunitySheet.getRange(found.row, 5), leadSheetName);
+      writeCell(opportunitySheet.getRange(found.row, 6), leadResult.row);
+    }
+    if (String(found.values[7] || "") !== phaseResult.stage) {
+      writeCell(opportunitySheet.getRange(found.row, 8), phaseResult.stage);
+    }
+    fieldChanges.forEach(function writeOpportunityField(change) {
+      if (!change.opportunityChanged) return;
+      writeCell(
+        opportunitySheet.getRange(
+          found.row,
+          change.field.opportunityIndex + 1,
+        ),
+        change.value,
+      );
+    });
+    writeCell(opportunitySheet.getRange(found.row, 23), nextVersion);
+    if (!found.values[23]) {
+      writeCell(opportunitySheet.getRange(found.row, 24), now);
+    }
+    writeCell(opportunitySheet.getRange(found.row, 25), now);
+    if (
+      typeof SpreadsheetApp !== "undefined" &&
+      typeof SpreadsheetApp.flush === "function"
+    ) {
+      SpreadsheetApp.flush();
+    }
+
+    return {
+      ok: true,
+      changed: true,
+      opportunityId,
+      row: leadResult.row,
+      stage: phaseResult.stage,
+      previousStage: visibleStage || String(found.values[7] || ""),
+      version: nextVersion,
+      matchedBy: opportunityResult.matchedBy,
+    };
+  } catch (error) {
+    for (let index = rollback.length - 1; index >= 0; index -= 1) {
+      try {
+        rollback[index].range.setValue(rollback[index].value);
+      } catch (_rollbackError) {
+        // A falha será exposta ao chamador; a reconciliação posterior repara o par.
+      }
+    }
+    throw error;
+  } finally {
+    if (lock && typeof lock.releaseLock === "function") lock.releaseLock();
+  }
 }
 
 function atualizarOportunidadeClassificada_(spreadsheet, input) {
-  const sheet = obterOuCriarPlanilhaOportunidades_(spreadsheet);
-  const found = localizarOportunidadePorId_(sheet, input.opportunityId);
-  if (!found) return false;
-  const now = new Date();
-  const nextVersion = Number(found.values[22] || 0) + 1;
-  sheet.getRange(found.row, 8, 1, 7).setValues([[
-    input.stage || found.values[7],
-    input.relationship || found.values[8],
-    input.owner || found.values[9],
-    input.expectedParty || found.values[10],
-    input.objection || found.values[11],
-    input.summary || found.values[12],
-    input.nextAction || found.values[13],
-  ]]);
-  sheet.getRange(found.row, 23, 1, 3).setValues([[
-    nextVersion,
-    found.values[23] || now,
-    now,
-  ]]);
-  return true;
+  const result = sincronizarFaseOportunidadeELead_(spreadsheet, input || {});
+  return Boolean(result && result.ok);
 }
 
 function encerrarOportunidadeNaoLead_(spreadsheet, input) {
@@ -889,13 +1248,21 @@ function registrarSelecaoPendenteAgendamento_(input) {
     return { ok: false, error: "invalid_pending_appointment" };
   }
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const opportunity = input.opportunityId
+  const resolvedOpportunity = resolverOportunidadeCanonica_(spreadsheet, {
+    opportunityId: input.opportunityId,
+    phone,
+    professional,
+  });
+  const opportunity = resolvedOpportunity.ok
     ? {
-        opportunityId: String(input.opportunityId),
-        professional,
-        sheetName: nomeAbaLeadOportunidade_(professional),
+        opportunityId: String(resolvedOpportunity.found.values[0] || ""),
+        professional: normalizarProfissionalOportunidade_(
+          resolvedOpportunity.found.values[3],
+        ),
+        sheetName: String(resolvedOpportunity.found.values[4] || "") ||
+          nomeAbaLeadOportunidade_(professional),
       }
-    : localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone);
+    : null;
   if (
     !opportunity ||
     normalizarProfissionalOportunidade_(opportunity.professional) !== professional
