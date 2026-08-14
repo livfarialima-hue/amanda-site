@@ -409,8 +409,9 @@ html[data-secondary-premium="true"] .secondary-practical__grid {
   box-shadow: var(--secondary-shadow);
 }
 
-html[data-secondary-premium="true"] .secondary-practical .eyebrow,
-html[data-secondary-premium="true"] .secondary-practical p { color: #f0dfd7; }
+html[data-secondary-premium="true"] main .secondary-practical :is(.eyebrow, h2, p) {
+  color: #fffaf7;
+}
 html[data-secondary-premium="true"] .secondary-practical h2 { margin-bottom: 16px; }
 html[data-secondary-premium="true"] .secondary-practical .btn { margin-top: 18px; background: #fff; color: var(--secondary-deep); box-shadow: none; }
 
@@ -490,7 +491,15 @@ html[data-secondary-premium="true"] footer {
 }
 
 html[data-secondary-premium="true"] .footer-navigation { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-html[data-secondary-premium="true"] .footer-nav-group a { color: #584940; }
+html[data-secondary-premium="true"] footer :is(a, span, strong, p, button) {
+  color: #584940;
+}
+html[data-secondary-premium="true"] footer .footer-navigation .footer-nav-group > strong,
+html[data-secondary-premium="true"] footer .footer-navigation .footer-nav-group a,
+html[data-secondary-premium="true"] footer .footer-navigation .footer-nav-group a:hover,
+html[data-secondary-premium="true"] footer .footer-navigation .footer-nav-group a:focus-visible {
+  color: #584940;
+}
 
 html[data-secondary-premium="true"] .whatsapp-float {
   bottom: calc(8px + env(safe-area-inset-bottom));
