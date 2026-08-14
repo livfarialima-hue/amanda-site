@@ -258,6 +258,10 @@ O indicador misto foi substituído por `Falhas técnicas de classificação`, ca
 
 `BOT-06` está concluído quanto à taxonomia e à fórmula, mas os nove eventos continuam sendo incidentes reais a investigar. A correção não os silencia nem autoriza declarar o classificador saudável. O Apps Script ficou na versão 85, o endpoint respondeu HTTP 200 com `ok: true` e a suíte passou com 532/532 testes.
 
+### Checkpoint `OPS-03` — 14/08/2026
+
+A versão 86 inspecionou 51 linhas da agenda e expirou os 32 horários vencidos ainda disponíveis. A comparação com o backup encontrou somente 32 mudanças na coluna `Status`, todas de `Disponível` para `Indisponível`; o histórico e as demais colunas foram preservados. O check de saúde ficou em `OK / 0` e a atualização da Central passou a executar a mesma regra idempotente a cada 15 minutos. `OPS-03` está concluído.
+
 ## Matriz de risco operacional
 
 | Risco | Severidade | Probabilidade | Evidência | Efeito possível |

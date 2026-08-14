@@ -166,6 +166,8 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 **Checkpoint Saúde/Classificação de 14/08/2026:** `DAT-09` e a taxonomia de `BOT-06` foram concluídos no commit `47ec00a`/Apps Script versão 85. O painel de saúde usa a fonte vigente e tem zero erro de fórmula; `_FUNIL_CANONICO` contém 131 oportunidades ativas; o painel do bot mostra 9 falhas técnicas reais, sem misturar exclusões de negócio. Isso não libera `DAT-06`: `Funil Comercial` e `Painel Econômico` ainda precisam migrar para a fonte canônica. Também não encerra `OPS-03`, pois há 32 slots passados ainda disponíveis.
 
+**Checkpoint Agenda de 14/08/2026:** `OPS-03` foi concluído no commit `f40cc50`/Apps Script versão 86. Os 32 horários vencidos foram preservados e marcados `Indisponível`; o check passou a `OK / 0`, e a Central repete a manutenção a cada 15 minutos. O bloco não altera Calendar, consultas confirmadas, campanhas ou conteúdo do site.
+
 ### Correções críticas
 
 1. `GAD-03`: validar autorização e guardrail do aumento de lifting cervical.
@@ -177,7 +179,7 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 - migrar e reconciliar `Funil Comercial` e `Painel Econômico` na fonte canônica (`DAT-06`); `DAT-09` já foi concluído;
 - revisar o rascunho Meta antes de qualquer publicação (`MAD-05`);
-- expirar slots passados e fechar pendências vencidas (`OPS-01`, `OPS-03`);
+- fechar pendências vencidas (`OPS-01`); `OPS-03` já foi concluído;
 - formalizar política separada de OAI-SearchBot/GPTBot (`SEO-07`).
 
 ### Testes

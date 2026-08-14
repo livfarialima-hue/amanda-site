@@ -2,7 +2,7 @@
 
 **Autorização:** o usuário autorizou iniciar e continuar a execução em 14/08/2026. As escritas foram separadas em blocos com backup, pré-voo e pós-voo: deduplicação, fases, subconjunto seguro de consultas/Calendar, Google Ads, observabilidade Meta Site, painel/SLA e, por último, fonte canônica, saúde e taxonomia de falhas. Campanhas e a página protegida de lifting permaneceram fora deste bloco.
 
-**Resultado:** Apps Script versão 85 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde e taxonomia de falhas aplicados em blocos separados, com backups, travas e pós-voos. `_FUNIL_CANONICO` foi criado com 131 oportunidades, mas os painéis gerenciais ainda não foram migrados. Casos históricos ambíguos, Google, cobertura Meta e cobertura do SLA seguem em observação.
+**Resultado:** Apps Script versão 86 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde, taxonomia de falhas e expiração da agenda aplicados em blocos separados, com backups, travas e pós-voos. `_FUNIL_CANONICO` foi criado com 131 oportunidades, mas os painéis gerenciais ainda não foram migrados. Casos históricos ambíguos, Google, cobertura Meta e cobertura do SLA seguem em observação.
 
 ## Versões e backup
 
@@ -125,3 +125,12 @@ A aplicação integral continua reprovada por identidades de consultas não reco
 - Verificação célula a célula: `REGRA DE EDIÇÃO` preservada em `A13`, instrução vigente em `A14`, revisão estrutural em `B15`, fórmula técnica e nota em `D8:E8`; a aba canônica permanece oculta.
 - Decisão: `DAT-09` e a separação taxonômica de `BOT-06` concluídos. Os nove incidentes técnicos continuam abertos para tratamento, `OPS-03` continua aberto pelos 32 slots e `DAT-06` permanece parcial até migrar e reconciliar `Funil Comercial` e `Painel Econômico`.
 - Validação final: Apps Script versão 85, endpoint HTTP 200 com `ok: true`, commit `47ec00a`, **532 de 532 testes aprovados**, `git diff --check` limpo e `/lifting-facial/` fora do diff.
+
+## Expiração de horários passados — `OPS-03`
+
+- Backup nativo imediatamente anterior: [LEADS — backup antes de expirar horários passados — 2026-08-14 15h50](https://docs.google.com/spreadsheets/d/1e8Z6zlbM4xLeJIQZJ8B9SUAJ6G2fJhOUR-J5KNu4pjE/edit?usp=drivesdk).
+- Aplicação: 51 linhas inspecionadas, 32 estados vencidos alterados de `Disponível` para `Indisponível`, zero linha apagada.
+- Diferença exata contra o backup: 32 células e somente a coluna `Status`; todas as demais colunas ficaram idênticas.
+- Pós-voo: o check `Horários passados ainda disponíveis` passou de `ATENÇÃO / 32` para `OK / 0`.
+- Prevenção: a atualização da Central chama a manutenção a cada 15 minutos. A regra só atua sobre data/hora válida e já vencida com status ainda disponível; a repetição é inócua.
+- Validação final: Apps Script versão 86, endpoint HTTP 200 com `ok: true`, commit `f40cc50`, **535 de 535 testes aprovados**, `git diff --check` limpo e `/lifting-facial/` fora do diff.

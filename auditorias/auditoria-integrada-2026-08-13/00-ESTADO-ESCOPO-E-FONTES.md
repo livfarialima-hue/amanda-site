@@ -146,6 +146,8 @@ Campanhas pausadas, encerradas, excluídas, arquivadas, rascunhos, experimentos 
 
 **Atualização de qualidade em 14/08/2026:** o commit `47ec00a` e o Apps Script versão 85 criaram `_FUNIL_CANONICO` com 131 oportunidades ativas e zero item em revisão, corrigiram `Saúde das Integrações` para a fonte `IMPORT_GOOGLE_ADS` e separaram falha técnica de exclusão de negócio no painel. A leitura independente encontrou zero erro de fórmula, 9 falhas técnicas tipadas e 32 slots passados ainda disponíveis. `DAT-09` e a fórmula/taxonomia de `BOT-06` estão concluídos; `DAT-06` permanece parcial, `OPS-03` permanece aberto e os 9 incidentes técnicos não devem ser ocultados.
 
+**Atualização de agenda em 14/08/2026:** o commit `f40cc50` e o Apps Script versão 86 expiraram os 32 horários passados que ainda estavam disponíveis, preservando todas as linhas e alterando somente o status. A reconciliação contra o backup confirmou 32/32 mudanças na coluna `Status` e nenhuma outra diferença; o check de saúde passou a `OK / 0`. A atualização da Central repete a manutenção a cada 15 minutos. `OPS-03` está concluído.
+
 ### Fase 5 — Estratégia e crescimento
 
 - **Status:** concluída em 13/08/2026.

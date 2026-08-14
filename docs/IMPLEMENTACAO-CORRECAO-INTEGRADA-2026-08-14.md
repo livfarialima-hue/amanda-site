@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 85; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site, painel humano/SLA, saúde das integrações e taxonomia de falhas aplicados e validados; `_FUNIL_CANONICO` criado, mas Funil Comercial e Painel Econômico ainda não migrados; casos históricos ambíguos permanecem bloqueados e o gate operacional do SLA segue reprovado por cobertura insuficiente
+**Estado:** Apps Script publicado na versão 86; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site, painel humano/SLA, saúde das integrações, taxonomia de falhas e expiração segura da agenda aplicados e validados; `_FUNIL_CANONICO` criado, mas Funil Comercial e Painel Econômico ainda não migrados; casos históricos ambíguos permanecem bloqueados e o gate operacional do SLA segue reprovado por cobertura insuficiente
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -160,3 +160,11 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - O painel passou de uma mistura de exclusões com erros para `Falhas técnicas de classificação`, calculada exclusivamente pela categoria `technical_failure`. A leitura atual é 9. `BOT-06` encerra a correção de definição/fórmula, mas não encerra esses nove incidentes.
 - A comparação célula a célula confirmou `REGRA DE EDIÇÃO` em `A13`, a regra atual em `A14`, a data em `B15`, o indicador técnico em `D8:E8` do painel e a nova aba oculta; nenhum cabeçalho ou métrica vizinha foi perdido.
 - Apps Script versão 85 no mesmo deployment; endpoint HTTP 200 com `ok: true`; **532/532 testes locais aprovados**; nenhuma campanha, Calendar, atribuição histórica, conteúdo do site ou característica de `/lifting-facial/` foi alterada.
+
+### Checkpoint `OPS-03`
+
+- Backup anterior à planilha: [LEADS — backup antes de expirar horários passados — 2026-08-14 15h50](https://docs.google.com/spreadsheets/d/1e8Z6zlbM4xLeJIQZJ8B9SUAJ6G2fJhOUR-J5KNu4pjE/edit?usp=drivesdk).
+- A aplicação da versão 86 inspecionou 51 linhas de `Datas Consulta` e expirou 32 horários vencidos. O pós-voo mostrou zero horário passado ofertável.
+- A comparação contra o backup encontrou exatamente 32 mudanças, todas na coluna `Status`, de `Disponível` para `Indisponível`. Nenhuma linha foi apagada e nenhuma data, hora, profissional, observação ou semana mudou.
+- A manutenção passou a rodar junto da Central a cada 15 minutos. A função é idempotente, falha se os cabeçalhos obrigatórios estiverem ausentes e nunca altera status reservado, bloqueado, inválido ou futuro.
+- `Saúde das Integrações` fechou em `OK / 0`. Apps Script versão 86 no deployment preservado; endpoint HTTP 200 com `ok: true`; **535/535 testes locais aprovados**; `/lifting-facial/` fora do diff.

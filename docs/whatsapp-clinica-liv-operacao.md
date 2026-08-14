@@ -2,7 +2,7 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
-> **Produção:** base do Apps Script na versão 85, vinculada ao commit `47ec00a`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. Na reconciliação segura seguinte, 3 fases derivadas de consultas foram avançadas e 9 eventos existentes do Google Calendar tiveram somente metadados operacionais saneados, sem mudar data/hora nem criar duplicatas. O bloco Google Ads reconciliou as 5 conversões elegíveis e sua importação manual concluiu 5 linhas com 0 erros. O bloco Meta Site passou a registrar categoria da referência, motivo de fallback, referência de origem e plataforma nos novos eventos; o teste sintético `M26F02S-C01H01-avaliacao-facial` concluiu com contrato de atribuição aprovado. O painel operacional usa a fonte humana vigente e exibe cobertura, mediana, p95 e handoffs a partir de eventos tipados. A saúde das integrações usa a importação atual, e o painel separa falha técnica de exclusão de negócio. Permanecem bloqueados os casos históricos sem identidade inequívoca e os gates estatísticos de cobertura; campanhas, orçamento e `/lifting-facial/` não foram alterados.
+> **Produção:** base do Apps Script na versão 86, vinculada ao commit `f40cc50`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas 131 oportunidades ativas. Na reconciliação segura seguinte, 3 fases derivadas de consultas foram avançadas e 9 eventos existentes do Google Calendar tiveram somente metadados operacionais saneados, sem mudar data/hora nem criar duplicatas. O bloco Google Ads reconciliou as 5 conversões elegíveis e sua importação manual concluiu 5 linhas com 0 erros. O bloco Meta Site passou a registrar categoria da referência, motivo de fallback, referência de origem e plataforma nos novos eventos; o teste sintético `M26F02S-C01H01-avaliacao-facial` concluiu com contrato de atribuição aprovado. O painel operacional usa a fonte humana vigente e exibe cobertura, mediana, p95 e handoffs a partir de eventos tipados. A saúde das integrações usa a importação atual, o painel separa falha técnica de exclusão de negócio e a atualização da Central expira horários passados. Permanecem bloqueados os casos históricos sem identidade inequívoca e os gates estatísticos de cobertura; campanhas, orçamento e `/lifting-facial/` não foram alterados.
 
 ### Painel humano e SLA operacional — `BOT-03` + `BOT-04`
 
@@ -21,6 +21,14 @@
 - O indicador do painel agora se chama `Falhas técnicas de classificação` e conta somente a categoria tipada `technical_failure`. A leitura atual é 9; exclusão de negócio, espera esperada e revisão humana não entram mais como erro técnico.
 - `DAT-09` e a correção taxonômica de `BOT-06` estão concluídos. As 9 falhas continuam sendo incidentes operacionais a tratar, e não um falso verde. `DAT-06` avançou apenas com a fonte canônica: `Funil Comercial` e `Painel Econômico` ainda não foram migrados e não estão liberados para decisão gerencial.
 - Validação: Apps Script versão 85 no deployment preservado, endpoint HTTP 200 com `ok: true`, commit `47ec00a` e **532 de 532 testes aprovados**. O título `REGRA DE EDIÇÃO`, a regra em `A14` e a data em `B15` foram conferidos célula a célula.
+
+### Expiração segura da agenda — `OPS-03`
+
+- Backup anterior à escrita: [LEADS — backup antes de expirar horários passados — 2026-08-14 15h50](https://docs.google.com/spreadsheets/d/1e8Z6zlbM4xLeJIQZJ8B9SUAJ6G2fJhOUR-J5KNu4pjE/edit?usp=drivesdk).
+- A execução inspecionou 51 linhas e alterou 32 estados vencidos de `Disponível` para `Indisponível`. A comparação com o backup encontrou exatamente 32 diferenças, todas na coluna `Status`, sem apagar linhas ou mudar data, hora, profissional, observação ou semana.
+- `Saúde das Integrações` passou de `ATENÇÃO / 32` para `OK / 0` no check de horários passados. A atualização já existente da Central, executada a cada 15 minutos, agora repete a manutenção de forma idempotente.
+- Só expira um horário quando data e hora são válidas, o status ainda é `Disponível` e o instante é anterior ou igual ao momento da execução. Registro inválido, reservado, bloqueado ou futuro permanece intacto.
+- Validação: Apps Script versão 86 no mesmo deployment, endpoint HTTP 200 com `ok: true`, commit `f40cc50` e **535 de 535 testes aprovados**. `OPS-03` está concluído; o check de saúde continua sendo o alerta de regressão.
 
 ## Estado de produção
 
