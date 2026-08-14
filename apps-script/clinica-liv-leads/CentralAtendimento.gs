@@ -119,6 +119,12 @@ function atualizarCentralAtendimentoInterno_(
   spreadsheet,
   now,
 ) {
+  const scheduleMaintenance =
+    typeof expirarHorariosPassadosInterno_ === "function"
+      ? expirarHorariosPassadosInterno_(spreadsheet, now, {
+          apply: true,
+        })
+      : null;
   const sheet = obterOuCriarPlanilhaCentral_(spreadsheet);
   const controls = carregarControlesCentral_(sheet);
   const consultationSheet = spreadsheet.getSheetByName(
@@ -240,6 +246,7 @@ function atualizarCentralAtendimentoInterno_(
     queues: counts,
     sheetName: CENTRAL_ATENDIMENTO_CONFIG.sheetName,
     sla,
+    scheduleMaintenance,
   };
 }
 
