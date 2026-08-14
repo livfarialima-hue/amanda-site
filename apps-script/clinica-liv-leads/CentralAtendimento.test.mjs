@@ -266,6 +266,18 @@ test("acknowledgements, automated openers and solicitations do not create false 
   );
   assert.equal(
     context.mensagemExigeRespostaCentral_(
+      "Trabalho com gestão e otimização do Perfil da Empresa no Google para conquistar clientes.",
+    ),
+    false,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
+      "Pode enviar a localização da clínica no Google Maps?",
+    ),
+    true,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
       "Qual é o valor do procedimento?",
     ),
     true,
@@ -386,6 +398,126 @@ test("excludes Dr. Henrique appointments without hiding a referral", () => {
 
   assert.equal(excluded["+5511999990001"], true);
   assert.equal(excluded["+5511999990002"], undefined);
+});
+
+test("old commercial commitments are downgraded to silent exclusion review", () => {
+  const context = loadContext();
+  const phone = "+5511999990001";
+  const createdAt = new Date("2026-08-03T14:20:00-03:00");
+  const row = [
+    "evt-commercial",
+    phone,
+    "human_review",
+    "Revisar a solicitação e responder pelo WhatsApp.",
+    "Amanda/equipe",
+    createdAt,
+    new Date("2026-08-03T18:20:00-03:00"),
+    "Pendente",
+    "",
+    "WhatsApp — revisão humana",
+  ];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [row] }),
+  };
+  const items = context.carregarCompromissosCentral_(
+    { getSheetByName: () => sheet },
+    new Date("2026-08-14T12:00:00-03:00"),
+    {},
+    {
+      [phone]: [{
+        direcao: "IN",
+        dataHora: createdAt,
+        messageId: "evt-commercial",
+        texto:
+          "Trabalho com gestão e otimização do Perfil da Empresa no Google para conquistar clientes.",
+      }],
+    },
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].queue, "Revisar exclusão comercial");
+  assert.equal(items[0].priority.label, "Normal");
+  assert.equal(items[0].mode, "Silêncio");
+  assert.equal(items[0].suggestion, "");
+  assert.match(items[0].nextAction, /Encerrar/);
+  assert.doesNotMatch(items[0].context, /seguir por aqui/i);
+});
+
+test("commercial close status resolves, archives and records the decision", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const values = Array(headers.length).fill("");
+  const index = Object.fromEntries(
+    headers.map((header, column) => [header, column]),
+  );
+  values[index.Telefone] = "+5511999990001";
+  values[index["Status operacional"]] =
+    "Encerrar — comercial/não paciente";
+  values[index["Chave operacional"]] =
+    "commitment:evt-commercial";
+  const writes = [];
+  const spreadsheet = {};
+  const sheet = {
+    getName: () => "Central de Atendimento",
+    getParent: () => spreadsheet,
+    getRange(row, column) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      return {
+        getValue: () => values[column - 1],
+        setValue(value) {
+          values[column - 1] = value;
+          writes.push({ column, value });
+        },
+      };
+    },
+  };
+  let resolved = null;
+  let closed = null;
+  context.resolverCompromissoCentral_ = (
+    eventId,
+    _now,
+    file,
+    reason,
+  ) => {
+    resolved = { eventId, file, reason };
+  };
+  context.encerrarContatoComercialCentral_ = (file, input) => {
+    closed = { file, input };
+  };
+
+  const result = context.processarEdicaoCentralAtendimento_({
+    range: {
+      getSheet: () => sheet,
+      getRow: () => 2,
+      getColumn: () => index["Status operacional"] + 1,
+    },
+  });
+
+  assert.equal(result.ok, true);
+  assert.deepEqual(resolved, {
+    eventId: "evt-commercial",
+    file: spreadsheet,
+    reason:
+      "Contato comercial/marketing — não paciente. Encerrado sem resposta.",
+  });
+  assert.equal(closed.file, spreadsheet);
+  assert.equal(closed.input.phone, "+5511999990001");
+  assert.equal(closed.input.eventId, "evt-commercial");
+  assert.match(
+    String(values[index["Observação da equipe"]]),
+    /comercial\/marketing/i,
+  );
+  assert.ok(writes.length >= 2);
+});
+
+test("status validation exposes one-step commercial closure", () => {
+  assert.match(source, /"Encerrar — comercial\/não paciente"/);
 });
 
 test("central exposes a batch approval checkbox and menu without making it an on-edit send", () => {

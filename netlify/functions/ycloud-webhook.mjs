@@ -3375,6 +3375,7 @@ export default async (request, context) => {
               payload.createTime ||
               "",
           ),
+          messageText: text,
         })
       : null;
 

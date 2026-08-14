@@ -1,3 +1,5 @@
+import { isCommercialSolicitation } from "./commercial-contact.mjs";
+
 const RELATIONSHIP_STATES = new Set([
   "new_lead",
   "engaged_lead",
@@ -214,10 +216,12 @@ export function buildPatientCommitment({
   plan,
   appointmentReview = false,
   receivedAt,
+  messageText,
 }) {
   if (
     !eventId ||
     !phone ||
+    isCommercialSolicitation(messageText) ||
     (
       plan?.route !== "human_review" &&
       !appointmentReview

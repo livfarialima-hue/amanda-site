@@ -171,6 +171,7 @@ function atualizarCentralAtendimentoInterno_(
     spreadsheet,
     now,
     profiles,
+    conversations,
   ).forEach(function (item) {
     adicionarItemCentral_(itemsByPatient, item);
   });
@@ -287,6 +288,7 @@ function carregarCompromissosCentral_(
   spreadsheet,
   now,
   profiles,
+  conversations,
 ) {
   const sheet = spreadsheet.getSheetByName(
     CENTRAL_ATENDIMENTO_CONFIG.commitmentsSheetName,
@@ -306,6 +308,15 @@ function carregarCompromissosCentral_(
       const dueAt = dataCentralValida_(row[6]);
       const profile = profiles[phone] || {};
       const overdue = dueAt && dueAt.getTime() < now.getTime();
+      const eventId = textoCentral_(row[0], 180);
+      const sourceMessage = mensagemOrigemCompromissoCentral_(
+        conversations && conversations[phone],
+        eventId,
+        row[5],
+      );
+      const commercialContact = mensagemComercialNaoPacienteCentral_(
+        sourceMessage,
+      );
       const summary =
         textoCentral_(row[3], 300) ||
         "Solicitação aguardando retorno da equipe.";
@@ -313,32 +324,77 @@ function carregarCompromissosCentral_(
       if (!phone) return items;
 
       items.push(criarItemCentral_({
-        queue: overdue
-          ? "Pendência vencida"
-          : "Ação manual hoje",
+        queue: commercialContact
+          ? "Revisar exclusão comercial"
+          : overdue
+            ? "Pendência vencida"
+            : "Ação manual hoje",
         dueAt: dueAt || now,
         name: profile.name,
         phone: phone,
-        relationship: profile.relationship,
-        origin: profile.origin || textoCentral_(row[9], 80),
+        relationship: commercialContact
+          ? "Não paciente"
+          : profile.relationship,
+        origin: commercialContact
+          ? "WhatsApp — oferta comercial"
+          : profile.origin || textoCentral_(row[9], 80),
         lastInteractionAt: profile.lastHumanAt,
-        nextAction:
-          textoCentral_(row[2], 100) ||
-          "Resolver pendência prometida à paciente",
+        nextAction: commercialContact
+          ? "Selecionar “Encerrar — comercial/não paciente”"
+          : textoCentral_(row[2], 100) ||
+            "Resolver pendência prometida à paciente",
         owner:
           textoCentral_(row[4], 80) || "Amanda/equipe",
-        mode: "Manual",
-        suggestion:
-          "Oi! Retomando o ponto que ficou pendente: já conferimos a informação e podemos seguir por aqui. Obrigada por aguardar.",
-        context: summary,
+        mode: commercialContact ? "Silêncio" : "Manual",
+        suggestion: commercialContact
+          ? ""
+          : "Oi! Retomando o ponto que ficou pendente: já conferimos a informação e podemos seguir por aqui. Obrigada por aguardar.",
+        context: commercialContact
+          ? "Oferta comercial detectada. Não responder. Confirme o encerramento para arquivar o contato e cancelar qualquer retomada pendente."
+          : summary,
         status: "Aberto",
         source: "Compromisso humano",
-        sourceKey:
-          "commitment:" + textoCentral_(row[0], 180),
+        sourceKey: "commitment:" + eventId,
       }));
 
       return items;
     }, []);
+}
+
+function mensagemOrigemCompromissoCentral_(
+  conversation,
+  eventId,
+  createdAtValue,
+) {
+  const messages = Array.isArray(conversation) ? conversation : [];
+  const exact = messages.find(function (message) {
+    return String(message && message.messageId || "").trim() === eventId;
+  });
+  if (exact) return String(exact.texto || "");
+
+  const createdAt = dataCentralValida_(createdAtValue);
+  if (!createdAt) return "";
+  const minimum = createdAt.getTime() - 20 * 60 * 1000;
+  const maximum = createdAt.getTime() + 2 * 60 * 1000;
+  const closest = messages.reduce(function (best, message) {
+    const messageAt = dataCentralValida_(message && message.dataHora);
+    if (
+      !messageAt ||
+      (message && message.direcao === "OUT") ||
+      messageAt.getTime() < minimum ||
+      messageAt.getTime() > maximum
+    ) {
+      return best;
+    }
+    if (!best || messageAt.getTime() > best.dataHora.getTime()) {
+      return {
+        dataHora: messageAt,
+        texto: String(message && message.texto || ""),
+      };
+    }
+    return best;
+  }, null);
+  return closest ? closest.texto : "";
 }
 
 function carregarRespostasPendentesCentral_(
@@ -1153,6 +1209,7 @@ function processarEdicaoCentralAtendimento_(event) {
   const noteColumn = columns["observacao da equipe"];
   const actionColumn = columns["ultima acao da equipe"];
   const keyColumn = columns["chave operacional"];
+  const phoneColumn = columns.telefone;
   const editedColumn = event.range.getColumn() - 1;
 
   if (
@@ -1172,19 +1229,50 @@ function processarEdicaoCentralAtendimento_(event) {
   const status = normalizarTextoCentral_(
     sheet.getRange(row, statusColumn + 1).getValue(),
   );
+  const statusAction = status
+    .replace(/[—–/\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
   const sourceKey = textoCentral_(
     sheet.getRange(row, keyColumn + 1).getValue(),
     300,
   );
+  const phone = normalizarTelefoneCentral_(
+    sheet.getRange(row, phoneColumn + 1).getValue(),
+  );
 
   if (
-    status === "concluido" &&
+    (
+      status === "concluido" ||
+      statusAction === "encerrar comercial nao paciente"
+    ) &&
     sourceKey.indexOf("commitment:") === 0
   ) {
+    const spreadsheet = typeof sheet.getParent === "function"
+      ? sheet.getParent()
+      : null;
     resolverCompromissoCentral_(
       sourceKey.slice("commitment:".length),
       now,
+      spreadsheet,
+      statusAction === "encerrar comercial nao paciente"
+        ? "Contato comercial/marketing — não paciente. Encerrado sem resposta."
+        : "Concluído pela equipe na Central de Atendimento.",
     );
+
+    if (statusAction === "encerrar comercial nao paciente") {
+      encerrarContatoComercialCentral_(spreadsheet, {
+        phone: phone,
+        eventId: sourceKey.slice("commitment:".length),
+        now: now,
+      });
+      const noteCell = sheet.getRange(row, noteColumn + 1);
+      if (!textoCentral_(noteCell.getValue(), 500)) {
+        noteCell.setValue(
+          "Contato comercial/marketing — não paciente. Encerrado sem resposta.",
+        );
+      }
+    }
   }
 
   return {
@@ -1449,10 +1537,15 @@ function rotuloFalhaAprovacaoCentral_(reason) {
   return labels[reason] || "estado da conversa alterado";
 }
 
-function resolverCompromissoCentral_(eventId, now) {
+function resolverCompromissoCentral_(
+  eventId,
+  now,
+  spreadsheetOverride,
+  resolutionReason,
+) {
   if (!eventId) return { ok: false, error: "missing_event_id" };
 
-  const spreadsheet = SpreadsheetApp.openById(
+  const spreadsheet = spreadsheetOverride || SpreadsheetApp.openById(
     CENTRAL_ATENDIMENTO_CONFIG.spreadsheetId,
   );
   const sheet = spreadsheet.getSheetByName(
@@ -1478,10 +1571,59 @@ function resolverCompromissoCentral_(eventId, now) {
 
     sheet.getRange(index + 2, 8).setValue("Resolvido");
     sheet.getRange(index + 2, 9).setValue(now);
+    if (resolutionReason) {
+      if (
+        typeof sheet.getMaxColumns === "function" &&
+        sheet.getMaxColumns() < 11 &&
+        typeof sheet.insertColumnsAfter === "function"
+      ) {
+        sheet.insertColumnsAfter(
+          sheet.getMaxColumns(),
+          11 - sheet.getMaxColumns(),
+        );
+      }
+      sheet.getRange(1, 11).setValue("Motivo da resolução");
+      sheet.getRange(index + 2, 11).setValue(
+        textoCentral_(resolutionReason, 300),
+      );
+    }
     resolved += 1;
   });
 
   return { ok: true, resolved: resolved };
+}
+
+function encerrarContatoComercialCentral_(spreadsheetOverride, input) {
+  const spreadsheet = spreadsheetOverride || SpreadsheetApp.openById(
+    CENTRAL_ATENDIMENTO_CONFIG.spreadsheetId,
+  );
+  const phone = normalizarTelefoneCentral_(input && input.phone);
+  const eventId = textoCentral_(input && input.eventId, 180);
+  const now = dataCentralValida_(input && input.now) || new Date();
+
+  if (!phone) return { ok: false, error: "invalid_phone" };
+
+  const cancelledFollowUps =
+    typeof cancelarPlanosPendentesRetomadas_ === "function"
+      ? cancelarPlanosPendentesRetomadas_(spreadsheet, phone, now)
+      : 0;
+  const archiveResult =
+    typeof arquivarContatoNaoLead_ === "function"
+      ? arquivarContatoNaoLead_(spreadsheet, {
+          phone: phone,
+          professional: "commercial",
+          reason: "Contato comercial/marketing confirmado pela Central de Atendimento",
+          eventId: eventId,
+          at: now,
+        })
+      : { archivedLeadRows: 0 };
+
+  return {
+    ok: true,
+    phone: phone,
+    cancelledFollowUps: cancelledFollowUps,
+    archivedLeadRows: Number(archiveResult.archivedLeadRows || 0),
+  };
 }
 
 function escreverCentralAtendimento_(sheet, items, now) {
@@ -1691,6 +1833,7 @@ function formatarCentralAtendimento_(sheet, itemCount) {
             "Em andamento",
             "Aguardando paciente",
             "Concluído",
+            "Encerrar — comercial/não paciente",
             "Suspenso",
           ],
           true,
@@ -1916,9 +2059,33 @@ function mensagemEncerramentoCentral_(normalized) {
 }
 
 function mensagemComercialNaoPacienteCentral_(normalized) {
-  return /(?:estamos|estou) com (?:uma )?oferta especial|(?:somos|falo) da (?:empresa|agencia)|servico de (?:marketing|trafego|divulgacao)|gestao de trafego|apresentar (?:uma )?(?:proposta|solucao comercial)|parceria comercial|aumentar (?:seus|os) (?:clientes|agendamentos|resultados)/.test(
-    normalized,
-  );
+  const text = normalizarTextoCentral_(normalized);
+  return [
+    /(?:proposta|contato) (?:comercial|de parceria)/,
+    /(?:propor|fazer) (?:uma )?parceria/,
+    /(?:gostaria|queria|venho) (?:de )?(?:apresentar|oferecer) (?:nossos?|meus?) (?:servicos?|produtos?|solucoes?)/,
+    /(?:estamos|estou) com (?:uma )?oferta especial/,
+    /(?:somos|falo da) (?:uma )?(?:empresa|agencia|fornecedor|representante)/,
+    /servico de (?:marketing|trafego|divulgacao)/,
+    /(?:gestao de trafego|social media|marketing digital|seo|criacao de sites?)/,
+    /apresentar (?:uma )?(?:proposta|solucao comercial)/,
+    /parceria comercial/,
+    /aumentar (?:seus|os) (?:clientes|agendamentos|resultados)/,
+    /(?:gestao|otimizacao) (?:e (?:gestao|otimizacao) )?d[oa] (?:perfil da empresa|google meu negocio|google business profile)/,
+    /(?:perfil da empresa no google|google meu negocio|google business profile)/,
+    /(?:google|google maps).{0,90}(?:visibilidade|posicionamento|captacao|atrair|conquistar).{0,55}(?:clientes|pacientes|agendamentos)/,
+    /(?:visibilidade|posicionamento|captacao|atrair|conquistar).{0,55}(?:clientes|pacientes|agendamentos).{0,90}(?:google|google maps|buscas)/,
+    /(?:publipost|permuta|patrocinio|parceria (?:paga|comercial|de divulgacao))/,
+    /(?:maquininha|maquina) de cartao/,
+    /(?:trabalho|represento|atuo) com (?:seguros?|planos? de saude)/,
+    /(?:quero|gostaria|posso) (?:de )?(?:vender|oferecer|apresentar) (?:um )?(?:seguro|plano de saude)/,
+    /(?:procuro|busco|quero|gostaria de) (?:uma )?(?:vaga|emprego|oportunidade de trabalho)/,
+    /(?:estao|tem|ha) (?:com )?(?:vaga|vagas|contratando)/,
+    /(?:posso|gostaria de|quero) (?:enviar|mandar|encaminhar) (?:meu )?curriculo/,
+    /curriculo.{0,60}(?:vaga|emprego|trabalho|contratacao)/,
+  ].some(function (pattern) {
+    return pattern.test(text);
+  });
 }
 
 function proximaAcaoRespostaCentral_(message) {

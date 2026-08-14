@@ -491,6 +491,7 @@ test("commercial solicitations are ignored before spending on AI", () => {
     "Tenho uma proposta comercial para a clínica",
     "Gostaria de oferecer nossos serviços de gestão de tráfego",
     "Aceitam parceria de divulgação por permuta?",
+    "Trabalho com gestão e otimização do Perfil da Empresa no Google para ampliar a visibilidade no Google Maps e conquistar clientes de forma orgânica.",
   ]) {
     const plan = planAutomation({
       text,
@@ -513,6 +514,7 @@ test("patient questions about payment or insurance are not mistaken for sales", 
     "A consulta aceita convênio?",
     "Posso pagar a cirurgia no cartão?",
     "Quero uma avaliação para aumentar as mamas",
+    "Pode me enviar a localização da clínica no Google Maps?",
   ]) {
     const plan = planAutomation({
       text,

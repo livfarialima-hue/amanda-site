@@ -891,13 +891,26 @@ function obterPlanilhaCompromissos_(arquivo) {
     RETOMADAS_CONFIG.planilhaCompromissos,
   );
 
-  if (planilha) return planilha;
+  if (planilha) {
+    if (
+      typeof planilha.getMaxColumns === "function" &&
+      planilha.getMaxColumns() < 11 &&
+      typeof planilha.insertColumnsAfter === "function"
+    ) {
+      planilha.insertColumnsAfter(
+        planilha.getMaxColumns(),
+        11 - planilha.getMaxColumns(),
+      );
+    }
+    planilha.getRange(1, 11).setValue("Motivo da resolução");
+    return planilha;
+  }
 
   planilha = arquivo.insertSheet(
     RETOMADAS_CONFIG.planilhaCompromissos,
   );
   planilha
-    .getRange(1, 1, 1, 10)
+    .getRange(1, 1, 1, 11)
     .setValues([[
       "Event ID",
       "Telefone",
@@ -909,6 +922,7 @@ function obterPlanilhaCompromissos_(arquivo) {
       "Status",
       "Resolvido em",
       "Origem",
+      "Motivo da resolução",
     ]]);
   planilha.setFrozenRows(1);
   planilha.hideSheet();

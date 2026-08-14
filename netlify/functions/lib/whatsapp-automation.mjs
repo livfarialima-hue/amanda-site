@@ -1,4 +1,5 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
+import { isCommercialSolicitation } from "./commercial-contact.mjs";
 
 const URGENT_PATTERNS = [
   /\b(?:dor|aperto|press[aã]o|peso)\s+(?:forte\s+)?no\s+peito\b/i,
@@ -91,23 +92,6 @@ const APPEARANCE_DISTRESS_PATTERNS = [
 ];
 
 const RECENT_GREETING_SUPPRESSION_MS = 3 * 60 * 1_000;
-
-const COMMERCIAL_SOLICITATION_PATTERNS = [
-  /\b(?:proposta|contato)\s+(?:comercial|de\s+parceria)\b/i,
-  /\b(?:propor|fazer)\s+(?:uma\s+)?parceria\b/i,
-  /\b(?:gostaria|queria|venho)\s+(?:de\s+)?(?:apresentar|oferecer)\s+(?:nossos?|meus?)\s+(?:servi[cç]os?|produtos?|solu[cç][oõ]es?)\b/i,
-  /\b(?:somos|falo\s+da)\s+(?:uma\s+)?(?:ag[eê]ncia|empresa|fornecedora?|representante)\b/i,
-  /\b(?:gest[aã]o\s+de\s+tr[aá]fego|social\s+media|marketing\s+digital|seo|cria[cç][aã]o\s+de\s+sites?)\b/i,
-  /\b(?:aumentar|captar)\s+(?:seus?\s+)?(?:seguidores|clientes|pacientes|vendas)\b/i,
-  /\b(?:publipost|permuta|patroc[ií]nio|parceria\s+(?:paga|comercial|de\s+divulga[cç][aã]o))\b/i,
-  /\b(?:maquininha|m[aá]quina)\s+de\s+cart[aã]o\b/i,
-  /\b(?:trabalho|represento|atuo)\s+com\s+(?:seguros?|planos?\s+de\s+sa[uú]de)\b/i,
-  /\b(?:quero|gostaria|posso)\s+(?:de\s+)?(?:vender|oferecer|apresentar)\s+(?:um\s+)?(?:seguro|plano\s+de\s+sa[uú]de)\b/i,
-  /\b(?:procuro|busco|quero|gostaria\s+de)\s+(?:uma\s+)?(?:vaga|emprego|oportunidade\s+de\s+trabalho)\b/i,
-  /\b(?:est[aá]o|tem|h[aá])\s+(?:com\s+)?(?:vaga|vagas|contratando)\b/i,
-  /\b(?:posso|gostaria\s+de|quero)\s+(?:enviar|mandar|encaminhar)\s+(?:meu\s+)?curr[ií]culo\b/i,
-  /\bcurr[ií]culo\b.{0,60}\b(?:vaga|emprego|trabalho|contrata[cç][aã]o)\b/i,
-];
 
 const IRRELEVANT_PERSONAL_PATTERNS = [
   /\b(?:vamos|quer|queria|gostaria|topa|aceita)\s+(?:ir\s+)?(?:almo[cç]ar|jantar|tomar\s+(?:um\s+)?caf[eé]|sair\s+comigo|dar\s+uma\s+volta)\b/i,
@@ -559,7 +543,7 @@ export function planAutomation({
     };
   }
 
-  if (matchesAny(normalizedText, COMMERCIAL_SOLICITATION_PATTERNS)) {
+  if (isCommercialSolicitation(normalizedText)) {
     return {
       route: "ignore",
       reason: "commercial_solicitation_or_partnership",

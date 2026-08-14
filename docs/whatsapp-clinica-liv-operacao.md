@@ -136,10 +136,13 @@ Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando apl
 
 - Venda de produtos ou serviços.
 - Proposta comercial ou parceria sem interesse assistencial.
+- Oferta de gestão ou otimização do Perfil da Empresa no Google, Google Meu Negócio, Google Business Profile, Google Maps, SEO, tráfego ou captação de clientes.
 - Convite pessoal, conversa imprópria ou assunto alheio à clínica.
 - Mensagem claramente impertinente depois de esclarecido o contexto.
 
 Esses contatos devem consumir o mínimo possível e não receber resposta automática.
+
+O detector comercial é aplicado antes da IA e novamente, de forma independente, antes da criação de qualquer compromisso humano. Assim, uma falha de roteamento isolada não pode transformar uma oferta comercial reconhecida em “Pendência vencida”. Perguntas reais de pacientes sobre endereço ou localização no Google Maps continuam permitidas porque localização, sozinha, não caracteriza venda.
 
 ## Atendimento humano
 
@@ -304,6 +307,8 @@ Para aprovar várias de uma vez, usar a aba `Central de Atendimento`:
 4. conferir a quantidade exibida e confirmar uma única vez.
 
 A marcação da caixa, isoladamente, nunca envia mensagem. O comando do menu processa somente linhas de `Retomada de marketing` que continuam em modo `Manual`, com status `Programado` e texto sugerido preenchido. Linhas marcadas por engano permanecem humanas e recebem uma observação com o motivo. As aprovadas passam a `Bruna/bot` e `Automático`, preservam o horário planejado e continuam sujeitas à validação final individual.
+
+Quando um compromisso antigo puder ser reconciliado com uma oferta comercial, ele aparece como `Revisar exclusão comercial`, prioridade normal, modo `Silêncio` e sem resposta sugerida. Depois de conferir o histórico, selecionar `Encerrar — comercial/não paciente` em `Status operacional`. Essa única ação resolve o compromisso, cancela retomadas pendentes, arquiva eventual linha de lead como não paciente e registra a observação `Contato comercial/marketing — não paciente. Encerrado sem resposta.` Não responder ao contato e não marcar `Aprovar com a Bruna`.
 
 Publicação de 14/08/2026: Apps Script versão 89 no deployment preservado. O endpoint respondeu HTTP 200 com `ok: true`; a atualização ao vivo da `Central de Atendimento` concluiu com 21 colunas, `Aprovar com a Bruna` na coluna 19, uma retomada elegível com caixa nativa e nenhuma caixa previamente marcada. Validação local: **549/549 testes aprovados**.
 

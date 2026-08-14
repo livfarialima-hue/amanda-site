@@ -172,3 +172,19 @@ test("automatic reply does not create a human commitment", () => {
     null,
   );
 });
+
+test("commercial text cannot create a commitment even after a routing error", () => {
+  assert.equal(
+    buildPatientCommitment({
+      eventId: "evt-commercial",
+      phone: "+5511999999999",
+      plan: {
+        route: "human_review",
+        reason: "unsupported_or_empty_message",
+      },
+      messageText:
+        "Trabalho com gestão e otimização do Perfil da Empresa no Google para conquistar clientes.",
+    }),
+    null,
+  );
+});
