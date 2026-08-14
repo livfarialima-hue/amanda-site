@@ -259,83 +259,129 @@ function planejarDeduplicacaoLeads_(spreadsheet) {
 }
 
 function executarDeduplicacaoReversivelLeads(input) {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const plan = planejarDeduplicacaoLeads_(spreadsheet);
-  if (!input || input.apply !== true) {
+  const apply = Boolean(input && input.apply === true);
+  if (!apply) {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const plan = planejarDeduplicacaoLeads_(spreadsheet);
     return Object.assign({ applied: false }, plan);
   }
-
-  const archive = obterOuCriarArquivoDuplicidades_(spreadsheet);
-  let archivedRows = 0;
-  let rolledBackGroups = 0;
-  const applyIssues = plan.issues.slice();
-  plan.actions.forEach(function applyGroup(action) {
-    const sheet = spreadsheet.getSheetByName(action.sheetName);
-    if (!sheet) return;
-    const backupRows = [];
-    action.duplicateRows.forEach(function backup(rowNumber) {
-      const values = sheet
-        .getRange(rowNumber, 1, 1, sheet.getLastColumn())
-        .getValues()[0];
-      const backupId = "dup_" + Utilities.getUuid();
-      archive.appendRow([
-        backupId,
-        new Date(),
-        action.sheetName,
-        action.opportunityId,
-        action.canonicalRow,
-        rowNumber,
-        JSON.stringify(values),
-        "pending",
-      ]);
-      backupRows.push({
-        backupId,
-        archiveRow: archive.getLastRow(),
-        rowNumber,
-        values,
-      });
-      sheet
-        .getRange(rowNumber, 1, 1, sheet.getLastColumn())
-        .clearContent();
-    });
-
-    const syncResult = sincronizarFaseOportunidadeELead_(spreadsheet, {
-      opportunityId: action.opportunityId,
-      stage: action.targetStage,
-      source: "duplicate_repair",
-      at: new Date(),
-    });
-    if (!syncResult.ok) {
-      backupRows.forEach(function rollback(entry) {
-        sheet
-          .getRange(entry.rowNumber, 1, 1, entry.values.length)
-          .setValues([entry.values]);
-        archive.getRange(entry.archiveRow, 8).setValue("rolled_back");
-      });
-      rolledBackGroups += 1;
-      applyIssues.push({
-        sheetName: action.sheetName,
-        opportunityId: action.opportunityId,
-        reason: "canonical_sync_failed_" +
-          String(syncResult.reason || "unknown"),
-      });
-      return;
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    return { ok: false, applied: false, error: "deduplication_lock_timeout" };
+  }
+  try {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const plan = planejarDeduplicacaoLeads_(spreadsheet);
+    if (!plan.ok || plan.reviewRequired > 0) {
+      return Object.assign({ applied: false }, plan);
     }
-    backupRows.forEach(function commitBackup(entry) {
-      archive.getRange(entry.archiveRow, 8).setValue("archived");
-      archivedRows += 1;
+    const archive = obterOuCriarArquivoDuplicidades_(spreadsheet);
+    let archivedRows = 0;
+    let rolledBackGroups = 0;
+    const backupIds = [];
+    const applyIssues = plan.issues.slice();
+    plan.actions.forEach(function applyGroup(action) {
+      const sheet = spreadsheet.getSheetByName(action.sheetName);
+      if (!sheet) {
+        rolledBackGroups += 1;
+        applyIssues.push({
+          sheetName: action.sheetName,
+          opportunityId: action.opportunityId,
+          reason: "visible_sheet_not_found_during_apply",
+        });
+        return;
+      }
+      const backupRows = [];
+      try {
+        action.duplicateRows.forEach(function backup(rowNumber) {
+          const values = sheet
+            .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+            .getValues()[0];
+          const backupId = "dup_" + Utilities.getUuid();
+          archive.appendRow([
+            backupId,
+            new Date(),
+            action.sheetName,
+            action.opportunityId,
+            action.canonicalRow,
+            rowNumber,
+            JSON.stringify(values),
+            "pending",
+          ]);
+          backupRows.push({
+            backupId,
+            archiveRow: archive.getLastRow(),
+            rowNumber,
+            values,
+          });
+          sheet
+            .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+            .clearContent();
+        });
+
+        const syncResult = sincronizarFaseOportunidadeELead_(spreadsheet, {
+          opportunityId: action.opportunityId,
+          stage: action.targetStage,
+          source: "duplicate_repair",
+          at: new Date(),
+        });
+        if (!syncResult.ok) {
+          throw new Error(
+            "canonical_sync_failed_" + String(syncResult.reason || "unknown"),
+          );
+        }
+        backupRows.forEach(function commitBackup(entry) {
+          archive.getRange(entry.archiveRow, 8).setValue("archived");
+          backupIds.push(entry.backupId);
+          archivedRows += 1;
+        });
+      } catch (error) {
+        backupRows.forEach(function rollback(entry) {
+          sheet
+            .getRange(entry.rowNumber, 1, 1, entry.values.length)
+            .setValues([entry.values]);
+          archive.getRange(entry.archiveRow, 8).setValue("rolled_back");
+        });
+        rolledBackGroups += 1;
+        applyIssues.push({
+          sheetName: action.sheetName,
+          opportunityId: action.opportunityId,
+          reason: String(error && error.message || error || "apply_failed"),
+        });
+      }
     });
-  });
-  SpreadsheetApp.flush();
-  return {
-    ok: rolledBackGroups === 0 && plan.reviewRequired === 0,
-    applied: true,
-    duplicateGroups: plan.duplicateGroups,
-    archivedRows,
-    reviewRequired: plan.reviewRequired,
-    rolledBackGroups,
-    issues: applyIssues,
-  };
+    SpreadsheetApp.flush();
+    return {
+      ok: rolledBackGroups === 0 && plan.reviewRequired === 0,
+      applied: true,
+      duplicateGroups: plan.duplicateGroups,
+      archivedRows,
+      backupIds,
+      reviewRequired: plan.reviewRequired,
+      rolledBackGroups,
+      issues: applyIssues,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function aplicarDeduplicacaoReversivelAutorizada() {
+  const result = executarDeduplicacaoReversivelLeads({ apply: true });
+  console.log("DEDUPLICATION_APPLY " + JSON.stringify({
+    ok: Boolean(result && result.ok),
+    applied: Boolean(result && result.applied),
+    duplicateGroups: Number(result && result.duplicateGroups || 0),
+    archivedRows: Number(result && result.archivedRows || 0),
+    backupIds: result && result.backupIds || [],
+    reviewRequired: Number(result && result.reviewRequired || 0),
+    rolledBackGroups: Number(result && result.rolledBackGroups || 0),
+    issuesCount: Array.isArray(result && result.issues)
+      ? result.issues.length
+      : 0,
+    error: String(result && result.error || ""),
+  }));
+  return result;
 }
 
 function restaurarLeadDuplicadoArquivado(input) {

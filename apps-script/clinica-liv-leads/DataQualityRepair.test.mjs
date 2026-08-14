@@ -153,3 +153,23 @@ test("read-only repair paths use cached visible rows and do not repair headers",
     /const columns = apply\s*\? garantirEstruturaIntegradaLead_\(sheet\)\s*:\s*mapaCabecalhosOportunidade_\(sheet\)/,
   );
 });
+
+test("authorized deduplication is locked, reversible and exposes opaque backup ids", () => {
+  const start = source.indexOf(
+    "function executarDeduplicacaoReversivelLeads(input)",
+  );
+  const end = source.indexOf(
+    "function restaurarLeadDuplicadoArquivado(input)",
+  );
+  assert.notEqual(start, -1);
+  assert.notEqual(end, -1);
+  const applyFlow = source.slice(start, end);
+
+  assert.match(applyFlow, /LockService\.getScriptLock\(\)/);
+  assert.match(applyFlow, /lock\.tryLock\(30000\)/);
+  assert.match(applyFlow, /finally\s*{\s*lock\.releaseLock\(\)/);
+  assert.match(applyFlow, /setValue\("rolled_back"\)/);
+  assert.match(applyFlow, /backupIds\.push\(entry\.backupId\)/);
+  assert.match(applyFlow, /function aplicarDeduplicacaoReversivelAutorizada/);
+  assert.match(applyFlow, /DEDUPLICATION_APPLY/);
+});
