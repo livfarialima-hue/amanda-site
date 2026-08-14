@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** em execução local; não publicado
+**Estado:** concluído e validado localmente; não publicado
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -50,6 +50,23 @@
 - Funil: foi preparada uma fonte `_FUNIL_CANONICO`, sem PII e com exatamente uma linha por oportunidade ativa; a troca das fórmulas dos painéis depende da inspeção e autorização ao vivo.
 - Testes após este lote: **498 de 498 aprovados**.
 - Nenhuma simulação com `apply: true`, migração de planilha, alteração de Calendar, importação no Google ou publicação do site foi executada.
+
+## Fechamento local
+
+- Bot e operação: respostas automáticas agora dependem de rota única e confirmada pela planilha; ausência, ambiguidade ou profissional fora de Amanda/Daniel falham fechadas e preservam revisão humana. O fallback legado que permitia responder sem confirmação da planilha foi removido.
+- Contexto: a decisão usa a janela bilateral recente e mantém `Opportunity ID`, profissional, origem e estado operacional; uma resposta humana pausa a automação.
+- Auditoria operacional: `_WHATSAPP_OPERACAO_EVENTOS` registra apenas eventos tipados e identificadores opacos, sem texto de conversa, nome, telefone ou dado clínico. O SLA passa a ser calculável pelo vínculo entre entrada e resposta/handoff.
+- Filas: o reaper separa espera esperada, exclusão comercial, revisão humana e falha técnica; tentativas esgotadas ou órfãs vão para `_WHATSAPP_CLASSIFICACAO_EXCECOES` sem reiniciar loops.
+- Marcos comerciais: orçamento enviado, aceite, procedimento realizado e pagamento confirmado têm ledger tipado por oportunidade. Baixa confiança mantém a atualização marcada para revisão e envia o alerta interno já existente.
+- Saúde sintética: foi preparado um teste diário Netlify → Apps Script sem paciente, telefone, mensagem ou envio de WhatsApp. Ele comprova autenticação, persistência e contratos; não deve ser descrito como teste integral do provedor YCloud.
+- Pós-consulta: documentação e configuração foram reconciliadas em três horas.
+- Site: dimensões ausentes de imagens, poster de vídeo e diretiva explícita para GPTBot foram corrigidos. O vídeo de otoplastia não foi recomprimido porque ainda não há evidência causal suficiente nem ferramenta de mídia instalada no ambiente.
+- Proteção de lifting: `git diff --name-only -- lifting-facial` permaneceu vazio; nenhum texto, layout, vídeo, CTA ou característica foi alterado.
+- Testes finais: **503 de 503 aprovados** depois da remoção do fallback legado; `git diff --check` sem erro.
+- Commits locais deste fechamento: `ec30d47` (operação e SLA) e `f5ffe76` (estabilidade técnica do site).
+- Nenhuma função com `apply: true`, alteração de fórmula, criação/remoção de evento, upload ao Google Ads, mudança de campanha, push ou publicação foi executada.
+
+O procedimento de publicação, migração e rollback está em `docs/RUNBOOK-CORRECAO-INTEGRADA-2026-08-14.md`. O inventário exato do pacote está em `docs/PACOTE-PUBLICACAO-CORRECAO-INTEGRADA-2026-08-14.md`.
 
 ## Gates que permanecem externos
 
