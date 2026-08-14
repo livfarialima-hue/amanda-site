@@ -173,3 +173,29 @@ test("authorized deduplication is locked, reversible and exposes opaque backup i
   assert.match(applyFlow, /function aplicarDeduplicacaoReversivelAutorizada/);
   assert.match(applyFlow, /DEDUPLICATION_APPLY/);
 });
+
+test("authorized historical stage reconciliation is guarded and idempotent", () => {
+  const start = source.indexOf(
+    "function aplicarReconciliacaoFasesHistoricasAutorizada()",
+  );
+  const end = source.indexOf(
+    "function reconciliarConsultasHistoricas(input)",
+  );
+  assert.notEqual(start, -1);
+  assert.notEqual(end, -1);
+  const applyFlow = source.slice(start, end);
+
+  assert.match(applyFlow, /expectedInspected = 131/);
+  assert.match(applyFlow, /expectedRepairable = 27/);
+  assert.match(applyFlow, /LockService\.getScriptLock\(\)/);
+  assert.match(applyFlow, /lock\.tryLock\(30000\)/);
+  assert.match(applyFlow, /preflight_mismatch/);
+  assert.match(applyFlow, /alreadyReconciled: true/);
+  assert.match(
+    applyFlow,
+    /reconciliarFasesHistoricasLeads\(\{ apply: true \}\)/,
+  );
+  assert.match(applyFlow, /postflightSummary\.repairable === 0/);
+  assert.match(applyFlow, /finally\s*{\s*lock\.releaseLock\(\)/);
+  assert.match(applyFlow, /HISTORICAL_STAGE_RECONCILIATION_APPLY/);
+});

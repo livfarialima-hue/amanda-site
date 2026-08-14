@@ -668,6 +668,98 @@ function reconciliarFasesHistoricasLeads(input) {
   return result;
 }
 
+function aplicarReconciliacaoFasesHistoricasAutorizada() {
+  const expectedInspected = 131;
+  const expectedRepairable = 27;
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    throw new Error("historical_stage_reconciliation_lock_timeout");
+  }
+
+  function summarize(result) {
+    return {
+      ok: Boolean(result && result.ok),
+      applied: Boolean(result && result.applied),
+      inspected: Number(result && result.inspected || 0),
+      alreadyConsistent: Number(result && result.alreadyConsistent || 0),
+      repairable: Number(result && result.repairable || 0),
+      repaired: Number(result && result.repaired || 0),
+      reviewRequired: Number(result && result.reviewRequired || 0),
+      issuesCount: Array.isArray(result && result.issues)
+        ? result.issues.length
+        : 0,
+      error: String(result && result.error || ""),
+    };
+  }
+
+  try {
+    const preflight = reconciliarFasesHistoricasLeads({ apply: false });
+    const preflightSummary = summarize(preflight);
+    if (
+      preflightSummary.ok &&
+      preflightSummary.inspected === expectedInspected &&
+      preflightSummary.repairable === 0 &&
+      preflightSummary.reviewRequired === 0
+    ) {
+      const alreadyReconciled = {
+        ok: true,
+        applied: false,
+        alreadyReconciled: true,
+        preflight: preflightSummary,
+      };
+      console.log(
+        "HISTORICAL_STAGE_RECONCILIATION_APPLY " +
+          JSON.stringify(alreadyReconciled),
+      );
+      return alreadyReconciled;
+    }
+    if (
+      !preflightSummary.ok ||
+      preflightSummary.inspected !== expectedInspected ||
+      preflightSummary.repairable !== expectedRepairable ||
+      preflightSummary.reviewRequired !== 0 ||
+      preflightSummary.issuesCount !== 0
+    ) {
+      const blocked = {
+        ok: false,
+        applied: false,
+        reason: "preflight_mismatch",
+        expectedInspected,
+        expectedRepairable,
+        preflight: preflightSummary,
+      };
+      console.log(
+        "HISTORICAL_STAGE_RECONCILIATION_APPLY " + JSON.stringify(blocked),
+      );
+      return blocked;
+    }
+
+    const applied = reconciliarFasesHistoricasLeads({ apply: true });
+    const postflight = reconciliarFasesHistoricasLeads({ apply: false });
+    const appliedSummary = summarize(applied);
+    const postflightSummary = summarize(postflight);
+    const result = {
+      ok: appliedSummary.ok &&
+        appliedSummary.repaired === expectedRepairable &&
+        appliedSummary.reviewRequired === 0 &&
+        postflightSummary.ok &&
+        postflightSummary.inspected === expectedInspected &&
+        postflightSummary.repairable === 0 &&
+        postflightSummary.reviewRequired === 0,
+      applied: true,
+      preflight: preflightSummary,
+      write: appliedSummary,
+      postflight: postflightSummary,
+    };
+    console.log(
+      "HISTORICAL_STAGE_RECONCILIATION_APPLY " + JSON.stringify(result),
+    );
+    return result;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function reconciliarConsultasHistoricas(input) {
   const apply = Boolean(input && input.apply === true);
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
