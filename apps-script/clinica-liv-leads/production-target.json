@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "service": "clinica-liv-leads",
+  "projectTitle": "Clínica LIV - Integração de Leads",
+  "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+  "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+  "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+  "projectUrl": "https://script.google.com/home/projects/1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly/edit",
+  "webAppUrl": "https://script.google.com/macros/s/AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A/exec",
+  "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
+  "sourceRoot": "apps-script/clinica-liv-leads",
+  "productionBranch": "reestruturacao-site",
+  "lastVerifiedVersion": 89,
+  "lastVerifiedAt": "2026-08-14T20:10:50-03:00",
+  "knownNonProductionProjects": [
+    {
+      "scriptId": "1PfTPOQvQzqjKbnn1hRce5JuY50Rf0zA1f7k12nrw0l9y5F-qkkdP1m_r",
+      "label": "ARQUIVO — NÃO PUBLICAR — Clínica LIV (sem deployment)",
+      "reason": "Cópia confirmada sem deployment ativo e rotulada em 2026-08-14."
+    }
+  ]
+}
