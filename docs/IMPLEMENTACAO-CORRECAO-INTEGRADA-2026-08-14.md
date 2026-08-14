@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 82; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads e observabilidade prospectiva de atribuição Meta Site aplicados e validados; Netlify publicado no commit `7480022`; casos históricos ambíguos de consultas/atribuição, funil e fórmulas ainda não migrados
+**Estado:** Apps Script publicado na versão 83; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site e correção do painel humano/SLA aplicados e validados; Netlify publicado no commit `e941390`; casos históricos ambíguos de consultas/atribuição e funil ainda não migrados; gate operacional do SLA reprovado por cobertura insuficiente
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -139,5 +139,14 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - As 27 divergências de fase foram corrigidas no bloco autorizado posterior. A verificação independente passou a indicar zero divergência entre as 131 oportunidades ativas e suas linhas visíveis.
 - `Consultas` contém 43 registros: 10 com `Opportunity ID` e ID de evento Google; 33 sem `Opportunity ID`, sendo 22 encerrados e 11 ativos ou sem desfecho inequívoco.
 - `_FUNIL_CANONICO` ainda não existe. `Saúde das Integrações` continua referenciando `IMPORT_GCLID` e contém uma fórmula `#VALUE!` por intervalos de tamanhos diferentes.
-- No recorte de sete dias, `Painel do Bot` registra 198 mensagens recebidas, 41 pessoas, 173 mensagens humanas, 2 pendências vencidas e 8 erros de classificação. A métrica antiga “Conversas assumidas” ainda lê `_WHATSAPP_ATENDIMENTO` e mostra zero, portanto não deve ser usada.
+- O checkpoint anterior do `Painel do Bot` registrava 198 mensagens recebidas, 41 pessoas, 173 mensagens humanas, 2 pendências vencidas e 8 erros de classificação; “Conversas assumidas” ainda lia `_WHATSAPP_ATENDIMENTO` e mostrava zero. Esse defeito foi corrigido no bloco `BOT-03` + `BOT-04` abaixo.
 - Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem persistir nome, telefone, e-mail, conversa ou dado clínico no relatório. O subconjunto seguro de consultas foi executado depois e está documentado acima; os casos bloqueados, a atribuição, o funil e as fórmulas continuam exigindo autorização própria.
+
+### Checkpoint `BOT-03` + `BOT-04`
+
+- O commit `e941390` criou o resumo oculto `_BOT_METRICAS`, com cálculo testado da primeira resposta em minutos úteis dentro da janela publicada de 08:00–20:00, todos os dias. A atualização da Central também recalcula o resumo.
+- Backup anterior à planilha: [LEADS — backup antes do painel SLA — 2026-08-14 15h05](https://docs.google.com/spreadsheets/d/1OuEDNiSizZQC9jVGR17uVSw9eGX12R6trcNg7ekS080/edit?usp=drivesdk).
+- O painel passou a contar 43 pessoas únicas com ação humana na fonte vigente. As métricas preexistentes da linha seguinte foram restauradas exatamente em fórmula e rótulo após a comparação com o backup; o novo SLA ocupa uma linha própria.
+- Primeira leitura ao vivo: 19 entradas roteadas, 4 respostas vinculadas, cobertura 21,1%, mediana 11,1 min úteis, p95 276,8 min úteis, 9 pausas e 0 handoffs tipados. A medição é válida para diagnosticar cobertura, mas ainda não sustenta meta de desempenho nem expansão.
+- `BOT-03` está concluído. `BOT-04` está publicado e mensurável, porém permanece aberto no gate: exigir cobertura ≥95%, autoria/vínculo confiáveis e nenhum P0/P1 vencido por 14 dias.
+- Apps Script versão 83 e Netlify no commit `e941390`; endpoint HTTP 200 com `ok: true`; **528/528 testes locais aprovados**; `/lifting-facial/` fora do diff.

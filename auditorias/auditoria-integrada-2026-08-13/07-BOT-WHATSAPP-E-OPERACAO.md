@@ -239,6 +239,19 @@ Parte dos números está correta isoladamente, mas o conjunto não é comparáve
 
 Conclusão: o painel não representa um funil de sete dias e não deve embasar dimensionamento de equipe ou automação.
 
+### Checkpoint pós-auditoria — 14/08/2026
+
+O bloco `BOT-03` + `BOT-04` foi publicado depois deste diagnóstico. A fórmula humana legada foi substituída pela fonte vigente e reconciliou 43 pessoas com ação humana em sete dias. Uma aba oculta de resumo operacional passou a calcular a primeira resposta por `Parent Event ID`, dentro da janela 08:00–20:00, todos os dias.
+
+Na primeira leitura: 19 entradas roteadas, 4 respostas mensuráveis, cobertura 21,1%, mediana 11,1 minutos úteis, p95 276,8 minutos úteis, 9 pausas e zero handoffs tipados. Portanto:
+
+- `BOT-03`: correção concluída e painel reconciliado;
+- `BOT-04`: instrumentação concluída, mas gate operacional reprovado; cobertura precisa alcançar pelo menos 95% e permanecer estável por 14 dias;
+- nenhuma expansão de autonomia ou volume é autorizada por esse resultado;
+- zero handoff é ausência de evento tipado no recorte, não prova de ausência de necessidade clínica.
+
+A planilha foi copiada antes da escrita, as métricas antigas do painel foram preservadas e a nova linha foi validada visualmente. O Apps Script ficou na versão 83, o endpoint respondeu HTTP 200 com `ok: true` e a suíte passou com 528/528 testes. Nenhuma campanha, página ou característica de `/lifting-facial/` mudou.
+
 ## Matriz de risco operacional
 
 | Risco | Severidade | Probabilidade | Evidência | Efeito possível |
@@ -255,7 +268,7 @@ Conclusão: o painel não representa um funil de sete dias e não deve embasar d
 
 ## Recomendações rastreáveis
 
-As ações abaixo são propostas; nenhuma foi executada.
+As ações abaixo registram o baseline da auditoria. O checkpoint acima atualiza `BOT-03` e `BOT-04`; as demais permanecem propostas até registro explícito de execução.
 
 | ID | Prioridade | Mudança proposta | Evidência | Métrica de aceite | Guardrail / regra de decisão | Dono sugerido | Esforço |
 |---|---|---|---|---|---|---|---|

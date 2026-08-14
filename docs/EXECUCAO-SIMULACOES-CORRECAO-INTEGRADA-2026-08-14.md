@@ -2,7 +2,7 @@
 
 **Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação, a reconciliação das fases históricas e, em bloco posterior, a reconciliação segura de consultas e Calendar. Funil, atribuição, fórmulas e mídia continuam fora dessa autorização.
 
-**Resultado:** Apps Script versão 82 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads e observabilidade prospectiva Meta Site aplicados em blocos separados, com backups, travas e pós-voos idempotentes. Casos históricos ambíguos de consultas/atribuição, funil e fórmulas permanecem pendentes; Google e cobertura Meta seguem em observação.
+**Resultado:** Apps Script versão 83 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site e painel humano/SLA aplicados em blocos separados, com backups, travas e pós-voos. Casos históricos ambíguos de consultas/atribuição e funil permanecem pendentes; Google, cobertura Meta e cobertura do SLA seguem em observação.
 
 ## Versões e backup
 
@@ -13,6 +13,9 @@
 - Versão publicada para a reconciliação protegida das fases: **78**, de 14/08/2026 às 12:21.
 - Versão intermediária da reconciliação de consultas: **79**.
 - Versão publicada após corrigir a comparação Unicode e validar a reconciliação segura: **80**, de 14/08/2026 às 13:15.
+- Versão publicada para a reconciliação offline Google Ads: **81**.
+- Versão publicada para a observabilidade prospectiva Meta Site: **82**.
+- Versão publicada para o painel humano e o resumo de SLA: **83**.
 - Deployment ID preservado: `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`.
 - Endpoint validado por HTTP: status 200, `ok: true`, serviço `clinica-liv-leads`.
 - Commits de diagnóstico: `0cba7a7`, `6b9e676` e `fe7cd27`.
@@ -22,6 +25,7 @@
 - Backup nativo criado imediatamente antes da reconciliação segura: [LEADS — backup antes da reconciliação segura de consultas — 2026-08-14 13h07](https://docs.google.com/spreadsheets/d/1xaBUZNczhRn8AVH3v8a-YQYyPNKoLWVMwMpx601PJfA/edit).
 - Integridade estrutural do backup: 33 abas; `IMPORT_GOOGLE_ADS` permanece na primeira posição.
 - Backup nativo imediatamente anterior à escrita: [LEADS — backup antes da deduplicação reversível — 2026-08-14 09-58](https://docs.google.com/spreadsheets/d/1vurtQrmroJNvYvavoh4bl5v6UNDpsv2R34omJQ2a-xU/edit).
+- Backup nativo criado antes do painel/SLA: [LEADS — backup antes do painel SLA — 2026-08-14 15h05](https://docs.google.com/spreadsheets/d/1OuEDNiSizZQC9jVGR17uVSw9eGX12R6trcNg7ekS080/edit?usp=drivesdk).
 - Integridade estrutural do backup pré-escrita: 34 abas; `IMPORT_GOOGLE_ADS` permanece na primeira posição.
 - Antes da reconciliação das fases, foi criada outra cópia nativa privada. Fonte e cópia tinham 36 abas e IDs distintos; o identificador da cópia não é persistido neste repositório.
 
@@ -37,7 +41,7 @@
 | Google Ads | 5 linhas de importação; 2 no ledger; zero linha inválida ou transação duplicada; 3 nomes de conversão divergentes; 3 registros sem ledger | reparo técnico elegível após autorização e nova conferência |
 | Funil canônico | 128 linhas geráveis; 2 bloqueios causados pelas duplicidades | reconstruir somente após deduplicação e nova simulação |
 | Reaper da classificação | 87 itens inspecionados; zero refileirável ou dead-letter automático; 8 exigem atenção | revisar os 8 casos antes de fechar o gate operacional |
-| SLA operacional | 13 entradas; nenhuma resposta mensurável; cobertura 0%; mediana e p95 indisponíveis | instrumentação publicada, mas gate de SLA ainda não demonstrado |
+| SLA operacional | Baseline: 13 entradas e nenhuma resposta mensurável. Pós-versão 83: 19 entradas, 4 respostas vinculadas, cobertura 21,1%, mediana 11,1 min úteis e p95 276,8 min úteis | medição publicada; gate reprovado até cobertura ≥95% e estabilidade por 14 dias |
 
 ## Deduplicação autorizada e verificações posteriores
 
@@ -64,6 +68,15 @@
 ## Decisão do gate
 
 A aplicação integral continua reprovada por identidades de consultas não reconciliadas, conflitos de atribuição congelada e cobertura de SLA ainda insuficiente. Deduplicação, fases, subconjunto seguro de consultas e Google Ads foram concluídos como blocos isolados. O próximo bloco deve ser escolhido e autorizado separadamente entre revisão manual das consultas bloqueadas, atribuição, funil canônico/painéis ou reaper operacional. O Google permanece em observação por sete dias, sem escala.
+
+## Painel humano e SLA operacional
+
+- O commit `e941390` foi publicado no Apps Script versão 83 e no Netlify, com o deployment do Apps Script preservado. A suíte integral passou com **528/528 testes**.
+- O painel passou de zero “Conversas assumidas” em fonte legada para 43 `Pessoas com ação humana` na fonte vigente; a fórmula ao vivo reconciliou com a query de controle.
+- O resumo `_BOT_METRICAS` usa eventos tipados e o mesmo `Parent Event ID` para ligar entrada à primeira resposta. A janela de minutos úteis é 08:00–20:00, todos os dias.
+- No recorte de sete dias: 19 entradas roteadas, 4 respostas mensuráveis, cobertura 21,1%, 0 primeiras respostas automáticas, 4 humanas, mediana 11,1 min, p95 276,8 min, 9 pausas, 0 handoffs tipados e 0 fechamentos tipados.
+- A comparação com o backup confirmou que `Média de mensagens/pessoa`, `Nunca retomar`, `Compromissos abertos` e `Taxa de qualificação` foram preservados; a nova leitura ocupa a linha antes do gráfico.
+- Decisão: `BOT-03` concluído. `BOT-04` instrumentado, mas reprovado no gate; não ampliar autonomia nem volume com cobertura abaixo de 95%.
 
 ## Reconciliação segura de consultas e Calendar
 

@@ -142,6 +142,8 @@ Campanhas pausadas, encerradas, excluídas, arquivadas, rascunhos, experimentos 
 - **Arquivo produzido:** `07-BOT-WHATSAPP-E-OPERACAO.md`.
 - **Próxima fase:** integrar bloqueadores, cenários, recomendações e regras de decisão.
 
+**Atualização pós-auditoria em 14/08/2026:** o commit `e941390` e o Apps Script versão 83 corrigiram a fonte humana do painel e materializaram o SLA operacional. O painel reconciliou 43 pessoas com ação humana; o primeiro recorte mensurável teve 4/19 respostas vinculadas (21,1%), mediana 11,1 min úteis e p95 276,8 min úteis. `BOT-03` está concluído; `BOT-04` está instrumentado, mas reprovado até cobertura ≥95% e estabilidade por 14 dias. O proxy histórico permanece apenas como baseline e não deve ser misturado com a nova definição.
+
 ### Fase 5 — Estratégia e crescimento
 
 - **Status:** concluída em 13/08/2026.

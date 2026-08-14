@@ -162,6 +162,8 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 **Checkpoint Meta Site de 14/08/2026:** `WEB-01` + `MAD-01` + `DAT-07` tiveram o caminho técnico prospectivo publicado no commit `7480022`: 6/6 CTAs preservam o código M26F02S, novos eventos registram cobertura/fallback e a sonda sem PII foi aprovada. O item continua bloqueador de escala até a coorte real cumprir cobertura ≥80%, novos contatos pagos com código ou motivo ≥95%, duplicidade <2% e desfechos conciliados; nenhum orçamento foi liberado por este checkpoint.
 
+**Checkpoint Bot/SLA de 14/08/2026:** `BOT-03` foi concluído no commit `e941390`: o painel trocou a fonte legada por 43 pessoas com ação humana reconciliadas. `BOT-04` foi instrumentado na versão 83, porém reprovou o gate inicial: 4/19 primeiras respostas vinculadas (21,1%), mediana 11,1 min úteis, p95 276,8 min úteis e nenhum handoff tipado. Não aumentar autonomia, orçamento ou volume por causa deste bloco; corrigir vínculo/autoria até cobertura ≥95% e observar por 14 dias.
+
 ### Correções críticas
 
 1. `GAD-03`: validar autorização e guardrail do aumento de lifting cervical.
