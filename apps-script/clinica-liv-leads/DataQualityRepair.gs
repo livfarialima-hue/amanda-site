@@ -882,3 +882,83 @@ function reconstruirFonteFunilCanonico(input) {
   SpreadsheetApp.flush();
   return publicResult;
 }
+
+function resumirSimulacaoCorrecaoIntegrada_(result) {
+  if (!result || typeof result !== "object") return result;
+  const summary = {};
+  Object.keys(result).forEach(function summarizeField(key) {
+    const value = result[key];
+    if (
+      value === null ||
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean"
+    ) {
+      summary[key] = value;
+      return;
+    }
+    if (Array.isArray(value)) {
+      summary[key + "Count"] = value.length;
+      if (key === "issues") {
+        summary.issueReasons = value.reduce(function countReasons(counts, issue) {
+          const reason = String(issue && issue.reason || "unknown");
+          counts[reason] = Number(counts[reason] || 0) + 1;
+          return counts;
+        }, {});
+      }
+    }
+  });
+  return summary;
+}
+
+function executarSimulacoesCorrecaoIntegrada() {
+  const checks = [
+    ["integridade_funil", function runIntegrity() {
+      return auditarIntegridadeFunilLocal_();
+    }],
+    ["deduplicacao", function runDeduplication() {
+      return executarDeduplicacaoReversivelLeads({ apply: false });
+    }],
+    ["fases_historicas", function runStages() {
+      return reconciliarFasesHistoricasLeads({ apply: false });
+    }],
+    ["consultas_historicas", function runAppointments() {
+      return reconciliarConsultasHistoricas({ apply: false });
+    }],
+    ["atribuicao_historica", function runAttribution() {
+      return reconciliarAtribuicaoHistoricaLeads({ apply: false });
+    }],
+    ["google_ads", function runGoogleAds() {
+      return reconciliarGoogleAdsLedgerEImportacao({ apply: false });
+    }],
+    ["funil_canonico", function runCanonicalFunnel() {
+      return reconstruirFonteFunilCanonico({ apply: false });
+    }],
+    ["reaper_classificacao", function runClassificationReaper() {
+      return executarReaperFilaClassificacao({ apply: false });
+    }],
+    ["sla_operacional", function runOperationalSla() {
+      return auditarSlaOperacional();
+    }],
+  ];
+  const report = {
+    ok: true,
+    apply: false,
+    generatedAt: new Date().toISOString(),
+    checks: {},
+  };
+  checks.forEach(function runCheck(entry) {
+    const name = entry[0];
+    try {
+      report.checks[name] = resumirSimulacaoCorrecaoIntegrada_(entry[1]());
+    } catch (error) {
+      report.ok = false;
+      report.checks[name] = {
+        ok: false,
+        error: String(error && error.message || error || "unknown"),
+      };
+    }
+  });
+  console.log("INTEGRATED_DRY_RUN " + JSON.stringify(report));
+  return report;
+}

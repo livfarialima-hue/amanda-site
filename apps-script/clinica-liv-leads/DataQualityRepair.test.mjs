@@ -84,3 +84,23 @@ test("groups only non-empty opportunity ids", () => {
   assert.deepEqual(Object.keys(groups), ["opp-1"]);
   assert.equal(groups["opp-1"].length, 2);
 });
+
+test("integrated repair runner keeps every mutating repair in dry-run mode", () => {
+  const start = source.indexOf(
+    "function executarSimulacoesCorrecaoIntegrada()",
+  );
+  assert.notEqual(start, -1);
+  const runner = source.slice(start);
+
+  assert.match(runner, /auditarIntegridadeFunilLocal_\(\)/);
+  assert.match(runner, /executarDeduplicacaoReversivelLeads\(\{ apply: false \}\)/);
+  assert.match(runner, /reconciliarFasesHistoricasLeads\(\{ apply: false \}\)/);
+  assert.match(runner, /reconciliarConsultasHistoricas\(\{ apply: false \}\)/);
+  assert.match(runner, /reconciliarAtribuicaoHistoricaLeads\(\{ apply: false \}\)/);
+  assert.match(runner, /reconciliarGoogleAdsLedgerEImportacao\(\{ apply: false \}\)/);
+  assert.match(runner, /reconstruirFonteFunilCanonico\(\{ apply: false \}\)/);
+  assert.match(runner, /executarReaperFilaClassificacao\(\{ apply: false \}\)/);
+  assert.match(runner, /auditarSlaOperacional\(\)/);
+  assert.doesNotMatch(runner, /apply:\s*true/);
+  assert.match(runner, /INTEGRATED_DRY_RUN/);
+});
