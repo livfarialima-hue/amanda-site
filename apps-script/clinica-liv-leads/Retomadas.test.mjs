@@ -988,7 +988,14 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
   );
   assert.match(price, /o valor e o que está incluído/);
   assert.match(schedule, /duas opções reais/);
-  assert.match(general, /não precisa decidir nada agora/);
+  assert.match(general, /esclarecer uma dúvida sobre o procedimento/);
+  assert.match(general, /entender como funciona a avaliação/);
+  assert.match(general, /consultar possibilidades de horário/);
+  assert.match(general, /continuo por ele, sem pressa/);
+  assert.doesNotMatch(
+    general,
+    /ficou alguma dúvida da nossa conversa|estou por aqui/,
+  );
   assert.match(second, /Entendo que uma decisão assim pode precisar de tempo/);
   assert.match(second, /Fique à vontade para pensar com calma/);
   assert.match(second, /quando fizer sentido para você/);

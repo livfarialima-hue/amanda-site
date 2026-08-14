@@ -1725,7 +1725,7 @@ function sugerirMensagemRetomada_(
   }
 
   if (etapa === 1) {
-    return "Olá! Passei para saber se ficou alguma dúvida da nossa conversa. Você não precisa decidir nada agora; se quiser continuar pesquisando ou entender melhor a avaliação, estou por aqui.";
+    return "Olá! Lembrei da nossa conversa e queria saber o que seria mais útil para você agora: esclarecer uma dúvida sobre o procedimento, entender como funciona a avaliação ou consultar possibilidades de horário. Se quiser, me diga qual desses caminhos faz mais sentido e eu continuo por ele, sem pressa.";
   }
 
   if (etapa === 2 && material) {
