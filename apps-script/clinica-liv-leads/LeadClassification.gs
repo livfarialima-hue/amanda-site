@@ -34,6 +34,22 @@ const LEAD_CLASSIFICATION_HEADERS = Object.freeze([
   "Versão reivindicada",
 ]);
 
+const CLASSIFICATION_EXCEPTION_HEADERS = Object.freeze([
+  "Incident ID",
+  "Linha da fila",
+  "Opportunity ID",
+  "Estado",
+  "Categoria",
+  "Erro",
+  "Tentativas",
+  "Detectado em",
+  "Última atividade",
+  "Ação",
+  "Resolvido em",
+]);
+
+const CLASSIFICATION_EXCEPTION_SHEET = "_WHATSAPP_CLASSIFICACAO_EXCECOES";
+
 const LEAD_STAGE_EVENT_HEADERS = Object.freeze([
   "Data e hora",
   "Event ID",
@@ -807,6 +823,60 @@ function compareClassificationCandidates_(left, right) {
   return leftTime - rightTime || left.index - right.index;
 }
 
+function categoriaExcecaoClassificacao_(state, error) {
+  const normalizedState = String(state || "");
+  const normalizedError = String(error || "");
+  if (normalizedState === "waiting_messages") return "expected_wait";
+  if (/^(?:external|nonpatient|business_exclusion)/.test(normalizedError)) {
+    return "business_exclusion";
+  }
+  if (/review|confidence|ambiguous/.test(normalizedError)) {
+    return "human_review";
+  }
+  return "technical_failure";
+}
+
+function classificarAcaoReaperClassificacao_(row, now) {
+  const state = String(row && row[4] || "");
+  const lease = parseClassificationDate_(row && row[5]);
+  const error = String(row && row[13] || "");
+  const attempts = Number(row && row[14] || 0);
+  const maximumAttempts = Number(CONFIG.classificationMaxAttempts || 8);
+  const category = categoriaExcecaoClassificacao_(state, error);
+  if (state === "orphaned" || state === "dead_letter") {
+    return {
+      action: "exception_review",
+      category,
+      reason: error || state,
+    };
+  }
+  if (attempts >= maximumAttempts) {
+    return {
+      action: "dead_letter",
+      category: "technical_failure",
+      reason: "max_attempts_exceeded",
+    };
+  }
+  if (state === "running" && (!lease || lease <= now)) {
+    return {
+      action: "requeue",
+      category: "technical_failure",
+      reason: "expired_lease",
+    };
+  }
+  if (
+    state === "failed" &&
+    /^(?:complete_|hydrate_|lead_not_found|stale_lease)/.test(error)
+  ) {
+    return {
+      action: "requeue",
+      category: "technical_failure",
+      reason: error,
+    };
+  }
+  return { action: "none", category, reason: "" };
+}
+
 function collectLeadMessages_(messageSheet, phone, limit) {
   if (!messageSheet || messageSheet.getLastRow() < 2) return [];
   const normalizedPhone = normalizePhone_(phone);
@@ -1031,6 +1101,10 @@ function shouldAlertLowConfidenceAdministrativeChange_(classification) {
 function claimDueLeadClassifications_(requestedLimit) {
   const limit = Math.min(Math.max(Number(requestedLimit) || 5, 1), 20);
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const reaper = executarReaperFilaClassificacaoInterno_(
+    spreadsheet,
+    true,
+  );
   const queueSheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
     CONFIG.classificationSheetName,
@@ -1041,7 +1115,7 @@ function claimDueLeadClassifications_(requestedLimit) {
     now.getTime() + CONFIG.classificationLeaseMinutes * 60 * 1000,
   );
   const jobs = [];
-  if (queueSheet.getLastRow() < 2) return { jobs };
+  if (queueSheet.getLastRow() < 2) return { jobs, reaper };
   const queueValues = queueSheet
     .getRange(
       2,
@@ -1124,7 +1198,7 @@ function claimDueLeadClassifications_(requestedLimit) {
       .setValues([update.values]);
   });
 
-  return { jobs };
+  return { jobs, reaper };
 }
 
 function hydrateLeadClassificationJobs_(claimedJobs) {
@@ -1568,6 +1642,23 @@ function completeLeadClassification_(job, classification) {
         })
       : { updated: false, reason: "no_appointment_signal" };
 
+  const businessMilestone =
+    administrativeSignal.procedureMilestone !== "none" &&
+    typeof registrarMarcoOportunidade_ === "function"
+      ? registrarMarcoOportunidade_(spreadsheet, {
+          eventId: "milestone_" + stableLeadHash_([
+            canonicalOpportunityId,
+            String(job.throughMessageId || ""),
+            administrativeSignal.procedureMilestone,
+          ].join("|")),
+          opportunityId: canonicalOpportunityId,
+          milestone: administrativeSignal.procedureMilestone,
+          at: now,
+          source: "whatsapp_classifier",
+          confidence,
+        })
+      : { ok: true, created: false, reason: "no_procedure_milestone" };
+
   if (
     professional === "amanda" &&
     phaseSync.ok &&
@@ -1694,6 +1785,7 @@ function completeLeadClassification_(job, classification) {
     leadRow,
     appliedStatus,
     appointmentUpdated: appointmentUpdate.updated === true,
+    businessMilestoneRecorded: businessMilestone.created === true,
     lowConfidenceAlertSent: lowConfidenceAlert.sent === true,
     googleConversionReady:
       professional === "amanda" &&
@@ -1760,55 +1852,134 @@ function failLeadClassification_(job) {
   return { status: "failed", retryMinutes };
 }
 
-function repararFilaClassificacaoTravada() {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+function obterOuCriarExcecoesClassificacao_(spreadsheet) {
+  return getOrCreateLeadAuxiliarySheet_(
+    spreadsheet,
+    CLASSIFICATION_EXCEPTION_SHEET,
+    CLASSIFICATION_EXCEPTION_HEADERS,
+  );
+}
+
+function registrarExcecaoClassificacao_(sheet, incident) {
+  const incidentId = "class_" + hashOportunidade_([
+    incident.queueRow,
+    incident.opportunityId,
+    incident.state,
+    incident.error,
+    incident.attempts,
+    incident.action,
+  ].join("|"));
+  if (sheet.getLastRow() >= 2) {
+    const duplicate = sheet
+      .getRange(2, 1, sheet.getLastRow() - 1, 1)
+      .createTextFinder(incidentId)
+      .matchEntireCell(true)
+      .findNext();
+    if (duplicate) return false;
+  }
+  sheet.appendRow([
+    incidentId,
+    incident.queueRow,
+    incident.opportunityId,
+    incident.state,
+    incident.category,
+    incident.error,
+    incident.attempts,
+    new Date(),
+    incident.lastActivity,
+    incident.action,
+    "",
+  ]);
+  return true;
+}
+
+function executarReaperFilaClassificacaoInterno_(spreadsheet, apply) {
   const queueSheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
     CONFIG.classificationSheetName,
     LEAD_CLASSIFICATION_HEADERS,
   );
-  if (queueSheet.getLastRow() < 2) return { repaired: 0 };
+  const result = {
+    applied: apply === true,
+    inspected: 0,
+    requeueable: 0,
+    requeued: 0,
+    deadLetterable: 0,
+    deadLettered: 0,
+    attentionRequired: 0,
+    incidentsCreated: 0,
+  };
+  if (queueSheet.getLastRow() < 2) return result;
   const now = new Date();
   const values = queueSheet
     .getRange(2, 1, queueSheet.getLastRow() - 1, LEAD_CLASSIFICATION_HEADERS.length)
     .getValues();
-  let repaired = 0;
-  values.forEach(function repairQueueRow(row, index) {
+  const exceptionSheet = apply
+    ? obterOuCriarExcecoesClassificacao_(spreadsheet)
+    : null;
+  values.forEach(function inspectQueueRow(row, index) {
+    result.inspected += 1;
+    const decision = classificarAcaoReaperClassificacao_(row, now);
+    if (decision.action === "none") return;
+    const queueRow = index + 2;
     const state = String(row[4] || "");
-    const lease = parseClassificationDate_(row[5]);
-    if (state === "running" && (!lease || lease <= now)) {
-      queueSheet.getRange(index + 2, 4, 1, 3).setValues([[
+    const error = String(row[13] || "");
+    const attempts = Number(row[14] || 0);
+    if (decision.action === "requeue") result.requeueable += 1;
+    if (decision.action === "dead_letter") result.deadLetterable += 1;
+    if (decision.action === "exception_review") {
+      result.attentionRequired += 1;
+    }
+    if (!apply) return;
+    if (registrarExcecaoClassificacao_(exceptionSheet, {
+      queueRow,
+      opportunityId: String(row[16] || ""),
+      state,
+      category: decision.category,
+      error: error || decision.reason,
+      attempts,
+      lastActivity: row[2] || "",
+      action: decision.action,
+    })) {
+      result.incidentsCreated += 1;
+    }
+    if (decision.action === "requeue") {
+      queueSheet.getRange(queueRow, 4, 1, 3).setValues([[
         now,
         "pending",
         "",
       ]]);
-      queueSheet.getRange(index + 2, 14, 1, 3).setValues([[
-        "lease_expirada_reparada_2026-08-12",
-        0,
-        "",
-      ]]);
-      repaired += 1;
+      queueSheet.getRange(queueRow, 14).setValue(
+        safeText_("reaper_requeued:" + decision.reason, 120),
+      );
+      queueSheet.getRange(queueRow, 16).setValue("");
+      result.requeued += 1;
       return;
     }
-    if (
-      ["failed", "dead_letter"].includes(state) &&
-      /^(?:complete_|hydrate_|lead_not_found|stale_lease)/.test(
-        String(row[13] || ""),
-      )
-    ) {
-      queueSheet.getRange(index + 2, 4, 1, 3).setValues([[
-        now,
-        "pending",
+    if (decision.action === "dead_letter") {
+      queueSheet.getRange(queueRow, 5, 1, 2).setValues([[
+        "dead_letter",
         "",
       ]]);
-      queueSheet.getRange(index + 2, 14, 1, 3).setValues([[
-        "reprocessamento_pos_correcao_2026-08-12",
-        0,
-        "",
-      ]]);
-      repaired += 1;
+      queueSheet.getRange(queueRow, 14).setValue(
+        safeText_("max_attempts_exceeded:" + (error || "unknown"), 120),
+      );
+      queueSheet.getRange(queueRow, 16).setValue("");
+      result.deadLettered += 1;
     }
   });
-  SpreadsheetApp.flush();
-  return { repaired: repaired };
+  if (apply) SpreadsheetApp.flush();
+  return result;
+}
+
+function executarReaperFilaClassificacao(input) {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  return executarReaperFilaClassificacaoInterno_(
+    spreadsheet,
+    Boolean(input && input.apply === true),
+  );
+}
+
+function repararFilaClassificacaoTravada() {
+  return executarReaperFilaClassificacao({ apply: true });
 }

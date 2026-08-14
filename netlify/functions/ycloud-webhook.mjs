@@ -119,9 +119,6 @@ import {
   shouldCompleteInboundRecovery,
 } from "./lib/inbound-recovery.mjs";
 import {
-  canContinuePatientAutomationWithoutLeadDelivery,
-} from "./lib/lead-delivery-fallback.mjs";
-import {
   applyPatientRelationshipPolicy,
   blocksAutomatedPatientMessages,
   buildPatientCommitment,
@@ -772,6 +769,43 @@ async function recordBotKnowledgeUsage(usage) {
     "record_bot_knowledge_usage",
     { usage },
   );
+}
+
+async function recordOperationalEvent(event) {
+  return deliverSheetsAction(
+    "record_operational_event",
+    { event },
+  );
+}
+
+async function recordAutomaticReplyOperationally({
+  result,
+  eventId,
+  parentEventId,
+  opportunityId,
+  phone,
+  professional,
+}) {
+  if (!["completed", "duplicate"].includes(result?.status)) return;
+  try {
+    await recordOperationalEvent({
+      eventId,
+      parentEventId,
+      opportunityId,
+      phone,
+      professional,
+      type: "automatic_reply_sent",
+      source: "bruna",
+      at: new Date().toISOString(),
+      outcome: result.status,
+    });
+  } catch (error) {
+    console.error(JSON.stringify({
+      source: "operational_event_write_failed",
+      eventId,
+      errorCode: "request_failed",
+    }));
+  }
 }
 
 async function resolvePatientCommitments(phone, at) {
@@ -1711,6 +1745,14 @@ async function completeOpenAIActive({
         recentConversation: input.recentConversation,
         conversationAction,
       });
+      await recordAutomaticReplyOperationally({
+        result: holdingResult,
+        eventId: `${input.eventId}-unknown-holding`,
+        parentEventId: input.eventId,
+        opportunityId: input.opportunityId,
+        phone: to,
+        professional: input.professional,
+      });
       logPatientReplyResult(
         `${input.eventId}-unknown-holding`,
         to,
@@ -1781,6 +1823,14 @@ async function completeOpenAIActive({
       currentText: input.text,
       recentConversation: input.recentConversation,
       conversationAction,
+    });
+    await recordAutomaticReplyOperationally({
+      result: replyResult,
+      eventId: input.eventId,
+      parentEventId: input.eventId,
+      opportunityId: input.opportunityId,
+      phone: to,
+      professional: input.professional,
     });
     logPatientReplyResult(input.eventId, to, replyResult);
 
@@ -2187,6 +2237,8 @@ async function sendCurrentInboundReply({
   conversationAction,
   replyDebounceMarkerStatus,
   patientRelationship,
+  opportunityId = "",
+  professional = "",
 }) {
   const debounceResult = await waitForLatestInboundReply({
     phone: to,
@@ -2227,7 +2279,7 @@ async function sendCurrentInboundReply({
     };
   }
 
-  return sendControlledPatientReply({
+  const result = await sendControlledPatientReply({
     from,
     to,
     eventId,
@@ -2236,6 +2288,15 @@ async function sendCurrentInboundReply({
     recentConversation,
     conversationAction,
   });
+  await recordAutomaticReplyOperationally({
+    result,
+    eventId,
+    parentEventId: revisionEventId,
+    opportunityId,
+    phone: to,
+    professional,
+  });
+  return result;
 }
 
 export default async (request, context) => {
@@ -3087,18 +3148,11 @@ export default async (request, context) => {
     relationshipAwarePlan,
     patientRelationship,
   );
-  const leadDeliveryFallbackActive =
-    !delivery.ok &&
-    canContinuePatientAutomationWithoutLeadDelivery({
-      automationMode,
-      messageType: message.type,
-      text,
-      plan: automationPlan,
-      attribution,
-      recentConversation: conversationHistory,
-    });
+  const leadDeliveryFallbackActive = false;
   const patientAutomationReady =
-    delivery.ok || leadDeliveryFallbackActive;
+    delivery.ok &&
+    delivery.routed !== false &&
+    ["amanda", "daniel"].includes(delivery.professional);
   const alertInput = {
     from: String(message.to || ""),
     eventId: String(eventId),
@@ -3190,7 +3244,7 @@ export default async (request, context) => {
     conversationAction.allowAutomaticReply &&
     approvedPriceReplyCandidate;
   const shouldQueueReviewAlert =
-    delivery.ok &&
+    (delivery.ok || alertInput.urgent) &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     conversationAction.allowAlert &&
@@ -3360,6 +3414,8 @@ export default async (request, context) => {
       conversationAction,
       replyDebounceMarkerStatus,
       patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
     });
     professionalFactReplySent =
       partialReplyResult.status === "completed";
@@ -3410,6 +3466,8 @@ export default async (request, context) => {
       conversationAction,
       replyDebounceMarkerStatus,
       patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
     });
     appointmentPreferenceReplySent =
       preferenceResult.status === "completed";
@@ -3465,6 +3523,8 @@ export default async (request, context) => {
       conversationAction,
       replyDebounceMarkerStatus,
       patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
     });
     approvedPriceReplySent =
       directPriceResult.status === "completed";
@@ -3553,6 +3613,8 @@ export default async (request, context) => {
       conversationAction,
       replyDebounceMarkerStatus,
       patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
     });
     priceHoldingSent =
       priceHoldingResult.status === "completed";
@@ -3589,6 +3651,8 @@ export default async (request, context) => {
       conversationAction,
       replyDebounceMarkerStatus,
       patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
     });
     overnightHandoffSent =
       overnightResult.status === "completed";
@@ -3644,6 +3708,8 @@ export default async (request, context) => {
       conversationAction,
       replyDebounceMarkerStatus,
       patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
     });
     patientReplySent = replyResult.status === "completed";
     patientReplyStatus = replyResult.status;
@@ -3760,6 +3826,8 @@ export default async (request, context) => {
     const activePromise = completeOpenAIActive({
       input: {
         eventId: String(eventId),
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
         receivedAt: String(
           message.sendTime || payload.createTime || "",
         ),
@@ -3839,6 +3907,8 @@ export default async (request, context) => {
         conversationAction,
         replyDebounceMarkerStatus,
         patientRelationship,
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
       });
     imageAcknowledgementSent =
       imageAcknowledgementResult.status === "completed";
@@ -3859,6 +3929,20 @@ export default async (request, context) => {
         source: "bruna",
       });
     }
+  }
+
+  if ((reviewAlertQueued || appointmentReviewQueued) && delivery.ok) {
+    await recordOperationalEvent({
+      eventId: `${String(eventId)}-human-handoff`,
+      parentEventId: String(eventId),
+      opportunityId: delivery.opportunityId,
+      phone,
+      professional: delivery.professional,
+      type: "human_handoff_queued",
+      source: "bruna",
+      at: new Date().toISOString(),
+      outcome: "queued",
+    });
   }
 
   const terminalSendStatuses = new Set([
@@ -3981,7 +4065,7 @@ export default async (request, context) => {
     }),
   );
 
-  if (!delivery.ok && !leadDeliveryFallbackActive) {
+  if (!delivery.ok) {
     return json(
       {
         received: false,
@@ -3992,37 +4076,6 @@ export default async (request, context) => {
       },
       502,
     );
-  }
-
-  if (!delivery.ok) {
-    return json({
-      received: true,
-      leadRecorded: false,
-      leadRouted: false,
-      leadRouteStatus: delivery.routeStatus || "unknown",
-      automaticWorkFinished: false,
-      degradedMode: "sheets_delivery_fallback",
-      downstreamStatus: delivery.httpStatus,
-      downstreamError: delivery.errorCode,
-      automationMode,
-      automationRoute: automationPlan.route,
-      automationReason: automationPlan.reason,
-      aiActiveQueued,
-      aiActiveStatus,
-      aiActiveReplySent,
-      approvedPriceReplyKind,
-      approvedPriceReplyQueued,
-      approvedPriceReplySent,
-      approvedPriceReplyStatus,
-      directLiftingPriceQueued:
-        approvedPriceReplyKind === "lifting_range" &&
-        approvedPriceReplyQueued,
-      directLiftingPriceSent:
-        approvedPriceReplyKind === "lifting_range" &&
-        approvedPriceReplySent,
-      replyDebounceMarkerStatus,
-      recoveryStatus,
-    });
   }
 
   return json({

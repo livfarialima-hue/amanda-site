@@ -71,6 +71,10 @@ test("a first nighttime price request receives the approved institutional reply"
           updated: false,
           duplicate: false,
           humanTakeoverToday: false,
+          opportunityId: "opp-overnight-price",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
         }),
         { status: 200 },
       );

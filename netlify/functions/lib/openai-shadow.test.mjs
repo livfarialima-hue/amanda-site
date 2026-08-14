@@ -762,7 +762,6 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
     assert.equal((await response.json()).aiShadowQueued, true);
     assert.deepEqual(requests, [
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
-      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
       "https://api.openai.com/v1/responses",
     ]);
   } finally {
@@ -998,6 +997,10 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
           updated: false,
           duplicate: false,
           humanTakeoverToday: false,
+          opportunityId: "opp-active-standard",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
         }),
         { status: 200 },
       );
@@ -1073,6 +1076,18 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
       patientBody.text.body,
       "Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. A avaliação é individual. O que você deseja melhorar?",
     );
+    const operationalRequest = requests.find((request) => {
+      if (request.url !== process.env.GOOGLE_SHEETS_WEBHOOK_URL) return false;
+      return JSON.parse(request.options.body).action ===
+        "record_operational_event";
+    });
+    assert.ok(operationalRequest);
+    const operationalEvent = JSON.parse(
+      operationalRequest.options.body,
+    ).event;
+    assert.equal(operationalEvent.opportunityId, "opp-active-standard");
+    assert.equal(operationalEvent.type, "automatic_reply_sent");
+    assert.equal(Object.hasOwn(operationalEvent, "text"), false);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;
@@ -1084,7 +1099,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
-test("coded acquisition lead is answered once when Sheets times out", async () => {
+test("coded acquisition remains silent when Sheets cannot establish a route", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -1163,23 +1178,17 @@ test("coded acquisition lead is answered once when Sheets times out", async () =
     );
     const body = await response.json();
 
-    assert.equal(response.status, 200);
-    assert.equal(body.received, true);
-    assert.equal(body.leadRecorded, false);
-    assert.equal(body.degradedMode, "sheets_delivery_fallback");
-    assert.equal(body.aiActiveQueued, true);
-    assert.equal(body.aiActiveReplySent, true);
+    assert.equal(response.status, 502);
+    assert.equal(body.received, false);
+    assert.equal(body.error, "lead_delivery_failed");
+    assert.equal(body.automaticWorkFinished, false);
 
     const patientRequests = requests.filter(
       (request) =>
         request.url ===
         "https://api.ycloud.com/v2/whatsapp/messages",
     );
-    assert.equal(patientRequests.length, 1);
-    const patientBody = JSON.parse(patientRequests[0].options.body);
-    assert.match(patientBody.text.body, /Olá, Marisa!/i);
-    assert.match(patientBody.text.body, /Bruna/i);
-    assert.match(patientBody.text.body, /lifting facial/i);
+    assert.equal(patientRequests.length, 0);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;
@@ -1230,6 +1239,10 @@ test("a prefilled site availability template becomes a contextual opening", asyn
           updated: true,
           duplicate: false,
           humanTakeoverToday: false,
+          opportunityId: "opp-consultation-information",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
         }),
         { status: 200 },
       );
@@ -1379,6 +1392,10 @@ test("the first surgical price question uses the approved institutional reply", 
           updated: true,
           duplicate: false,
           humanTakeoverToday: false,
+          opportunityId: "opp-active-price",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
         }),
         { status: 200 },
       );

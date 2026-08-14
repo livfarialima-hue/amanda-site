@@ -8,6 +8,7 @@ const CONFIG = Object.freeze({
   alertEmailSheetName: "_WHATSAPP_ALERTAS_EMAIL",
   messageSheetName: "_WHATSAPP_MENSAGENS",
   classificationSheetName: "_WHATSAPP_CLASSIFICACAO",
+  operationalEventSheetName: "_WHATSAPP_OPERACAO_EVENTOS",
   leadStageEventSheetName: "_LEAD_FASE_EVENTOS",
   googleAdsEventSheetName: "_GOOGLE_ADS_EVENTOS",
   googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
@@ -121,9 +122,31 @@ function doPost(e) {
       body.action !== "record_bot_unknown_question" &&
       body.action !== "record_human_learning_answer" &&
       body.action !== "record_bot_knowledge_usage" &&
-      body.action !== "archive_nonlead_contact"
+      body.action !== "archive_nonlead_contact" &&
+      body.action !== "record_operational_event" &&
+      body.action !== "run_synthetic_health_check"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "record_operational_event") {
+      stage = "record_operational_event";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const operationalResult = registrarEventoOperacional_(
+        body.event || {},
+      );
+      return json_({ ok: operationalResult.ok === true, ...operationalResult });
+    }
+
+    if (body.action === "run_synthetic_health_check") {
+      stage = "run_synthetic_health_check";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const healthResult = executarTesteSinteticoIntegracoes_();
+      return json_({ ok: healthResult.ok === true, ...healthResult });
     }
 
     if (body.action === "archive_nonlead_contact") {
@@ -887,6 +910,8 @@ function doPost(e) {
       "record_bot_knowledge_usage",
       "record_external_professional_contact",
       "archive_nonlead_contact",
+      "record_operational_event",
+      "run_synthetic_health_check",
     ]);
 
     const safeStage = allowedStages.has(stage) ? stage : "unknown";
@@ -1734,6 +1759,36 @@ function registrarAtendimentoHumano_(input) {
       },
       "OUT",
     );
+  }
+
+  if (
+    opportunity &&
+    opportunity.opportunityId &&
+    typeof registrarEventoOperacionalInterno_ === "function" &&
+    typeof encontrarUltimoEventoEntradaOportunidade_ === "function"
+  ) {
+    registrarEventoOperacionalInterno_(spreadsheet, {
+      eventId: eventId,
+      parentEventId: encontrarUltimoEventoEntradaOportunidade_(
+        spreadsheet,
+        opportunity.opportunityId,
+        takenAt,
+      ),
+      opportunityId: opportunity.opportunityId,
+      type: "human_reply_sent",
+      source: "equipe_humana",
+      at: takenAt,
+      outcome: "recorded",
+    });
+    registrarEventoOperacionalInterno_(spreadsheet, {
+      eventId: eventId + ":pause",
+      parentEventId: eventId,
+      opportunityId: opportunity.opportunityId,
+      type: "automation_paused",
+      source: "equipe_humana",
+      at: takenAt,
+      outcome: "human_takeover",
+    });
   }
 
   return {

@@ -452,7 +452,7 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     assert.equal(responseBody.automation.route, "human_review");
     assert.equal(responseBody.automation.replyCode, "ALERT-URG-01");
     assert.equal(responseBody.reviewAlertQueued, true);
-    assert.equal(requests.length, 4);
+    assert.equal(requests.length, 5);
     assert.equal(
       requests[0].url,
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
@@ -482,6 +482,14 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     assert.equal(alertBody.from, "+5511961957144");
     assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
     assert.notEqual(alertBody.to, payload.whatsappInboundMessage.from);
+    assert.equal(
+      JSON.parse(requests[4].options.body).action,
+      "record_operational_event",
+    );
+    assert.equal(
+      JSON.parse(requests[4].options.body).event.type,
+      "human_handoff_queued",
+    );
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

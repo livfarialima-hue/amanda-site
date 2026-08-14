@@ -51,7 +51,8 @@ function loadFunctions() {
       "collectLeadMessagesForOpportunity_, classificationAdministrativeSignal_, " +
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
-      "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS };",
+      "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
+      "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
   );
   return sandbox.__test;
@@ -90,6 +91,52 @@ test("Google Ads import accepts exactly one click id and all required fields", (
   ]);
   assert.equal(invalid.ok, false);
   assert.deepEqual(Array.from(invalid.errors), ["click_id_cardinality"]);
+});
+
+test("classification reaper separates retries, dead letters and orphan review", () => {
+  const { classificarAcaoReaperClassificacao_ } = loadFunctions();
+  const now = new Date("2026-08-14T15:00:00.000Z");
+  const row = () => Array(20).fill("");
+
+  const expired = row();
+  expired[4] = "running";
+  expired[5] = "2026-08-14T14:00:00.000Z";
+  expired[14] = 2;
+  assert.equal(
+    classificarAcaoReaperClassificacao_(expired, now).action,
+    "requeue",
+  );
+
+  const exhausted = row();
+  exhausted[4] = "failed";
+  exhausted[13] = "request_failed";
+  exhausted[14] = 8;
+  assert.equal(
+    classificarAcaoReaperClassificacao_(exhausted, now).action,
+    "dead_letter",
+  );
+
+  const orphan = row();
+  orphan[4] = "orphaned";
+  orphan[13] = "lead_not_found";
+  orphan[14] = 170;
+  assert.equal(
+    classificarAcaoReaperClassificacao_(orphan, now).action,
+    "exception_review",
+  );
+});
+
+test("business exclusion is not reported as a technical failure", () => {
+  const { categoriaExcecaoClassificacao_ } = loadFunctions();
+
+  assert.equal(
+    categoriaExcecaoClassificacao_("completed", "business_exclusion"),
+    "business_exclusion",
+  );
+  assert.equal(
+    categoriaExcecaoClassificacao_("failed", "request_failed"),
+    "technical_failure",
+  );
 });
 
 test("one phone always resolves to the first canonical lead row", () => {

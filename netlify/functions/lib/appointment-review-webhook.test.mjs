@@ -64,6 +64,10 @@ test("explicit availability request immediately prepares two real slots for revi
             updated: false,
             duplicate: false,
             humanTakeoverToday: false,
+            opportunityId: "opp-appointment-review",
+            professional: "amanda",
+            routeStatus: "resolved",
+            routed: true,
           }),
           { status: 200 },
         );
@@ -125,6 +129,7 @@ test("explicit availability request immediately prepares two real slots for revi
         "append_lead",
         "record_patient_commitment",
         "get_available_slots",
+        "record_operational_event",
         "send_review_alert_email",
       ],
     );

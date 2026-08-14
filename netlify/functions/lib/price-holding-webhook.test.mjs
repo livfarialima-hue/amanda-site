@@ -72,6 +72,10 @@ test("a first lifting price question receives the approved initial information w
           duplicate: false,
           humanTakeoverToday: false,
           patientRelationship: { found: false },
+          opportunityId: "opp-daytime-price",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
         }),
         { status: 200 },
       );
