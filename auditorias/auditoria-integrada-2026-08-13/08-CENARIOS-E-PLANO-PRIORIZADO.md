@@ -164,6 +164,8 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 **Checkpoint Bot/SLA de 14/08/2026:** `BOT-03` foi concluído no commit `e941390`: o painel trocou a fonte legada por 43 pessoas com ação humana reconciliadas. `BOT-04` foi instrumentado na versão 83, porém reprovou o gate inicial: 4/19 primeiras respostas vinculadas (21,1%), mediana 11,1 min úteis, p95 276,8 min úteis e nenhum handoff tipado. Não aumentar autonomia, orçamento ou volume por causa deste bloco; corrigir vínculo/autoria até cobertura ≥95% e observar por 14 dias.
 
+**Checkpoint Saúde/Classificação de 14/08/2026:** `DAT-09` e a taxonomia de `BOT-06` foram concluídos no commit `47ec00a`/Apps Script versão 85. O painel de saúde usa a fonte vigente e tem zero erro de fórmula; `_FUNIL_CANONICO` contém 131 oportunidades ativas; o painel do bot mostra 9 falhas técnicas reais, sem misturar exclusões de negócio. Isso não libera `DAT-06`: `Funil Comercial` e `Painel Econômico` ainda precisam migrar para a fonte canônica. Também não encerra `OPS-03`, pois há 32 slots passados ainda disponíveis.
+
 ### Correções críticas
 
 1. `GAD-03`: validar autorização e guardrail do aumento de lifting cervical.
@@ -173,7 +175,7 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 
 ### Ganhos rápidos
 
-- corrigir painel de saúde e fórmulas (`DAT-06`, `DAT-09`);
+- migrar e reconciliar `Funil Comercial` e `Painel Econômico` na fonte canônica (`DAT-06`); `DAT-09` já foi concluído;
 - revisar o rascunho Meta antes de qualquer publicação (`MAD-05`);
 - expirar slots passados e fechar pendências vencidas (`OPS-01`, `OPS-03`);
 - formalizar política separada de OAI-SearchBot/GPTBot (`SEO-07`).

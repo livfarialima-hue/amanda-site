@@ -252,6 +252,12 @@ Na primeira leitura: 19 entradas roteadas, 4 respostas mensuráveis, cobertura 2
 
 A planilha foi copiada antes da escrita, as métricas antigas do painel foram preservadas e a nova linha foi validada visualmente. O Apps Script ficou na versão 83, o endpoint respondeu HTTP 200 com `ok: true` e a suíte passou com 528/528 testes. Nenhuma campanha, página ou característica de `/lifting-facial/` mudou.
 
+### Checkpoint `BOT-06` — 14/08/2026
+
+O indicador misto foi substituído por `Falhas técnicas de classificação`, calculado somente a partir da categoria tipada `technical_failure` em `_WHATSAPP_CLASSIFICACAO_EXCECOES`. A leitura ao vivo retornou 9 falhas técnicas; exclusão de negócio, espera esperada e revisão humana deixaram de inflar o erro. A nota do indicador publica essa definição.
+
+`BOT-06` está concluído quanto à taxonomia e à fórmula, mas os nove eventos continuam sendo incidentes reais a investigar. A correção não os silencia nem autoriza declarar o classificador saudável. O Apps Script ficou na versão 85, o endpoint respondeu HTTP 200 com `ok: true` e a suíte passou com 532/532 testes.
+
 ## Matriz de risco operacional
 
 | Risco | Severidade | Probabilidade | Evidência | Efeito possível |
@@ -268,7 +274,7 @@ A planilha foi copiada antes da escrita, as métricas antigas do painel foram pr
 
 ## Recomendações rastreáveis
 
-As ações abaixo registram o baseline da auditoria. O checkpoint acima atualiza `BOT-03` e `BOT-04`; as demais permanecem propostas até registro explícito de execução.
+As ações abaixo registram o baseline da auditoria. Os checkpoints acima atualizam `BOT-03`, `BOT-04` e `BOT-06`; as demais permanecem propostas até registro explícito de execução.
 
 | ID | Prioridade | Mudança proposta | Evidência | Métrica de aceite | Guardrail / regra de decisão | Dono sugerido | Esforço |
 |---|---|---|---|---|---|---|---|

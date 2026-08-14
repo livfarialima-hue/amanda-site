@@ -144,6 +144,8 @@ Campanhas pausadas, encerradas, excluídas, arquivadas, rascunhos, experimentos 
 
 **Atualização pós-auditoria em 14/08/2026:** o commit `e941390` e o Apps Script versão 83 corrigiram a fonte humana do painel e materializaram o SLA operacional. O painel reconciliou 43 pessoas com ação humana; o primeiro recorte mensurável teve 4/19 respostas vinculadas (21,1%), mediana 11,1 min úteis e p95 276,8 min úteis. `BOT-03` está concluído; `BOT-04` está instrumentado, mas reprovado até cobertura ≥95% e estabilidade por 14 dias. O proxy histórico permanece apenas como baseline e não deve ser misturado com a nova definição.
 
+**Atualização de qualidade em 14/08/2026:** o commit `47ec00a` e o Apps Script versão 85 criaram `_FUNIL_CANONICO` com 131 oportunidades ativas e zero item em revisão, corrigiram `Saúde das Integrações` para a fonte `IMPORT_GOOGLE_ADS` e separaram falha técnica de exclusão de negócio no painel. A leitura independente encontrou zero erro de fórmula, 9 falhas técnicas tipadas e 32 slots passados ainda disponíveis. `DAT-09` e a fórmula/taxonomia de `BOT-06` estão concluídos; `DAT-06` permanece parcial, `OPS-03` permanece aberto e os 9 incidentes técnicos não devem ser ocultados.
+
 ### Fase 5 — Estratégia e crescimento
 
 - **Status:** concluída em 13/08/2026.

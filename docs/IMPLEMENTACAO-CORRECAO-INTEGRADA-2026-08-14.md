@@ -1,6 +1,6 @@
 # Implementação da correção integrada — 14 de agosto de 2026
 
-**Estado:** Apps Script publicado na versão 83; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site e correção do painel humano/SLA aplicados e validados; Netlify publicado no commit `e941390`; casos históricos ambíguos de consultas/atribuição e funil ainda não migrados; gate operacional do SLA reprovado por cobertura insuficiente
+**Estado:** Apps Script publicado na versão 85; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva de atribuição Meta Site, painel humano/SLA, saúde das integrações e taxonomia de falhas aplicados e validados; `_FUNIL_CANONICO` criado, mas Funil Comercial e Painel Econômico ainda não migrados; casos históricos ambíguos permanecem bloqueados e o gate operacional do SLA segue reprovado por cobertura insuficiente
 
 **Fonte estratégica:** `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 
@@ -138,7 +138,7 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - O CRM contém 141 oportunidades: 128 de Amanda, 3 de Daniel e 10 arquivadas ou de outros fluxos. As abas visíveis contêm exatamente 128 e 3 IDs únicos, respectivamente, sem nova duplicidade.
 - As 27 divergências de fase foram corrigidas no bloco autorizado posterior. A verificação independente passou a indicar zero divergência entre as 131 oportunidades ativas e suas linhas visíveis.
 - `Consultas` contém 43 registros: 10 com `Opportunity ID` e ID de evento Google; 33 sem `Opportunity ID`, sendo 22 encerrados e 11 ativos ou sem desfecho inequívoco.
-- `_FUNIL_CANONICO` ainda não existe. `Saúde das Integrações` continua referenciando `IMPORT_GCLID` e contém uma fórmula `#VALUE!` por intervalos de tamanhos diferentes.
+- Nesse checkpoint intermediário, `_FUNIL_CANONICO` ainda não existia e `Saúde das Integrações` ainda referenciava `IMPORT_GCLID`, com uma fórmula `#VALUE!`. O bloco `DAT-09` + `BOT-06` posterior, documentado abaixo, corrigiu esse estado.
 - O checkpoint anterior do `Painel do Bot` registrava 198 mensagens recebidas, 41 pessoas, 173 mensagens humanas, 2 pendências vencidas e 8 erros de classificação; “Conversas assumidas” ainda lia `_WHATSAPP_ATENDIMENTO` e mostrava zero. Esse defeito foi corrigido no bloco `BOT-03` + `BOT-04` abaixo.
 - Esses números foram lidos diretamente da planilha em `America/Sao_Paulo`, sem persistir nome, telefone, e-mail, conversa ou dado clínico no relatório. O subconjunto seguro de consultas foi executado depois e está documentado acima; os casos bloqueados, a atribuição, o funil e as fórmulas continuam exigindo autorização própria.
 
@@ -150,3 +150,13 @@ A aprovação deste trabalho local não prova os gates de produção. Depois da 
 - Primeira leitura ao vivo: 19 entradas roteadas, 4 respostas vinculadas, cobertura 21,1%, mediana 11,1 min úteis, p95 276,8 min úteis, 9 pausas e 0 handoffs tipados. A medição é válida para diagnosticar cobertura, mas ainda não sustenta meta de desempenho nem expansão.
 - `BOT-03` está concluído. `BOT-04` está publicado e mensurável, porém permanece aberto no gate: exigir cobertura ≥95%, autoria/vínculo confiáveis e nenhum P0/P1 vencido por 14 dias.
 - Apps Script versão 83 e Netlify no commit `e941390`; endpoint HTTP 200 com `ok: true`; **528/528 testes locais aprovados**; `/lifting-facial/` fora do diff.
+
+### Checkpoint `DAT-09` + `BOT-06` e fonte de `DAT-06`
+
+- O commit `47ec00a` adicionou uma aplicação protegida por trava e pré-voo. A execução recusa qualquer lote com item em revisão e retorna somente agregados opacos.
+- Backup anterior à planilha: [LEADS — backup antes de saúde e classificação — 2026-08-14 15h25](https://docs.google.com/spreadsheets/d/1TrI4-mvb84Z-q3lJvkDM9EyfR1AUC2lMmdUf68MaYj8/edit?usp=drivesdk).
+- A aba oculta `_FUNIL_CANONICO` foi criada com 131 oportunidades ativas de Amanda e Daniel e zero item em revisão. Ela é a fonte técnica para a próxima migração, mas `Funil Comercial` e `Painel Econômico` continuam nas fórmulas anteriores; `DAT-06` não está concluído.
+- `Saúde das Integrações` foi migrada para `IMPORT_GOOGLE_ADS`, recebeu intervalos compatíveis e passou a comparar CRM ativo com o funil canônico. A leitura independente de `B5:C11` encontrou zero `#VALUE!` ou outro erro; quatro checks de reconciliação ficaram em `OK` e o check de agenda permaneceu em `ATENÇÃO` por 32 horários passados ainda disponíveis.
+- O painel passou de uma mistura de exclusões com erros para `Falhas técnicas de classificação`, calculada exclusivamente pela categoria `technical_failure`. A leitura atual é 9. `BOT-06` encerra a correção de definição/fórmula, mas não encerra esses nove incidentes.
+- A comparação célula a célula confirmou `REGRA DE EDIÇÃO` em `A13`, a regra atual em `A14`, a data em `B15`, o indicador técnico em `D8:E8` do painel e a nova aba oculta; nenhum cabeçalho ou métrica vizinha foi perdido.
+- Apps Script versão 85 no mesmo deployment; endpoint HTTP 200 com `ok: true`; **532/532 testes locais aprovados**; nenhuma campanha, Calendar, atribuição histórica, conteúdo do site ou característica de `/lifting-facial/` foi alterada.

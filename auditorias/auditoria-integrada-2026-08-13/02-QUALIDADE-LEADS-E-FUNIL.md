@@ -265,6 +265,8 @@ As ações abaixo são propostas; nenhuma foi executada nesta auditoria.
 | `DAT-09` | P2 | Corrigir o painel de saúde e fazê-lo testar a aba/importador atual | `#VALUE!` e referência legada | zero erro de fórmula; checks cobrem a fonte vigente | Check obsoleto deve falhar explicitamente, não ficar verde | Engenharia | Baixo |
 | `DAT-10` | P1 | Criar reconciliação diária agregada por campanha ativa: contato, qualificação, solicitação, confirmação, realização e fechamento | funil Meta incompleto e não causal | diferença entre origem e CRM <2%; completude de marcos ≥95% | Sem projeção causal abaixo do volume mínimo ou com cobertura abaixo do limite | Dados + mídia + operação | Médio |
 
+**Checkpoint `DAT-09` + fonte de `DAT-06` — 14/08/2026:** a versão 85 materializou 131/131 oportunidades ativas em `_FUNIL_CANONICO`, com zero item em revisão, e corrigiu `Saúde das Integrações` para `IMPORT_GOOGLE_ADS` e intervalos compatíveis. A leitura independente de `B5:C11` encontrou zero erro de fórmula e diferença zero nos quatro checks de reconciliação. `DAT-09` está concluído. `DAT-06` avançou somente na fonte: `Funil Comercial` e `Painel Econômico` ainda usam suas derivações anteriores e continuam bloqueados para decisão gerencial até a migração e reconciliação célula a célula.
+
 ### Ordem recomendada
 
 1. `DAT-01` a `DAT-04`: reparar identidade, fase e consulta antes de usar o funil para decisão.

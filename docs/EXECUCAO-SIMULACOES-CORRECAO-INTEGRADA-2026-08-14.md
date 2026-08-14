@@ -1,8 +1,8 @@
 # Execução das simulações da correção integrada — 14 de agosto de 2026
 
-**Autorização:** o usuário autorizou iniciar a etapa em 14/08/2026 e, depois de revisar o plano, autorizou a deduplicação, a reconciliação das fases históricas e, em bloco posterior, a reconciliação segura de consultas e Calendar. Funil, atribuição, fórmulas e mídia continuam fora dessa autorização.
+**Autorização:** o usuário autorizou iniciar e continuar a execução em 14/08/2026. As escritas foram separadas em blocos com backup, pré-voo e pós-voo: deduplicação, fases, subconjunto seguro de consultas/Calendar, Google Ads, observabilidade Meta Site, painel/SLA e, por último, fonte canônica, saúde e taxonomia de falhas. Campanhas e a página protegida de lifting permaneceram fora deste bloco.
 
-**Resultado:** Apps Script versão 83 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site e painel humano/SLA aplicados em blocos separados, com backups, travas e pós-voos. Casos históricos ambíguos de consultas/atribuição e funil permanecem pendentes; Google, cobertura Meta e cobertura do SLA seguem em observação.
+**Resultado:** Apps Script versão 85 publicado; nove simulações iniciais concluídas; deduplicação, fases históricas, subconjunto seguro de consultas, reconciliação offline do Google Ads, observabilidade prospectiva Meta Site, painel humano/SLA, saúde e taxonomia de falhas aplicados em blocos separados, com backups, travas e pós-voos. `_FUNIL_CANONICO` foi criado com 131 oportunidades, mas os painéis gerenciais ainda não foram migrados. Casos históricos ambíguos, Google, cobertura Meta e cobertura do SLA seguem em observação.
 
 ## Versões e backup
 
@@ -115,3 +115,13 @@ A aplicação integral continua reprovada por identidades de consultas não reco
 - A execução sintética sem paciente, telefone, mensagem ou envio de WhatsApp terminou com `meta_attribution_contract_ok`. O cabeçalho do ledger foi confirmado com 13 colunas e os registros anteriores permaneceram intactos.
 - A suíte passou com **526 de 526 testes**; `/lifting-facial/` continuou fora do diff. O bloco fecha a instrumentação prospectiva, não a atribuição histórica nem o gate de cobertura/amostra para verba.
 - Nenhum alerta por e-mail foi disparado: todas as escritas foram estruturadas e de alta confiança; qualquer caso fora da identidade exata teria bloqueado o lote inteiro.
+
+## Painéis de qualidade — `DAT-09` + `BOT-06`
+
+- Pré-voo protegido: 131 oportunidades ativas elegíveis, zero item em revisão e aplicação bloqueada se a reconstrução não fechar exatamente.
+- Backup nativo imediatamente anterior: [LEADS — backup antes de saúde e classificação — 2026-08-14 15h25](https://docs.google.com/spreadsheets/d/1TrI4-mvb84Z-q3lJvkDM9EyfR1AUC2lMmdUf68MaYj8/edit?usp=drivesdk).
+- Aplicação: criação da aba oculta `_FUNIL_CANONICO`; correção dos checks de `Saúde das Integrações`; substituição do indicador misto por `Falhas técnicas de classificação` em `Painel do Bot`.
+- Pós-voo: 131 linhas canônicas, zero revisão, zero erro de fórmula, quatro checks de reconciliação em `OK`, 32 horários passados ainda disponíveis em `ATENÇÃO` e 9 falhas técnicas tipadas.
+- Verificação célula a célula: `REGRA DE EDIÇÃO` preservada em `A13`, instrução vigente em `A14`, revisão estrutural em `B15`, fórmula técnica e nota em `D8:E8`; a aba canônica permanece oculta.
+- Decisão: `DAT-09` e a separação taxonômica de `BOT-06` concluídos. Os nove incidentes técnicos continuam abertos para tratamento, `OPS-03` continua aberto pelos 32 slots e `DAT-06` permanece parcial até migrar e reconciliar `Funil Comercial` e `Painel Econômico`.
+- Validação final: Apps Script versão 85, endpoint HTTP 200 com `ok: true`, commit `47ec00a`, **532 de 532 testes aprovados**, `git diff --check` limpo e `/lifting-facial/` fora do diff.
