@@ -17,6 +17,26 @@ const OPERATIONAL_EVENT_TYPES = Object.freeze([
   "processing_closed",
 ]);
 
+const BOT_SLA_SUMMARY_SHEET = "_BOT_METRICAS";
+const BOT_SLA_START_HOUR = 8;
+const BOT_SLA_END_HOUR = 20;
+const BOT_SLA_SUMMARY_HEADERS = Object.freeze([
+  "Atualizado em",
+  "Período (dias)",
+  "Entradas roteadas",
+  "Respostas mensuráveis",
+  "Cobertura da primeira resposta",
+  "Primeiras respostas automáticas",
+  "Primeiras respostas humanas",
+  "Mediana da primeira resposta (min úteis)",
+  "P95 da primeira resposta (min úteis)",
+  "Handoffs no período",
+  "Pausas no período",
+  "Fechamentos no período",
+  "Janela do SLA",
+  "Regra",
+]);
+
 function obterOuCriarEventosOperacionais_(spreadsheet) {
   let sheet = spreadsheet.getSheetByName(CONFIG.operationalEventSheetName);
   if (!sheet) {
@@ -202,8 +222,40 @@ function percentileOperacional_(values, percentile) {
   return sorted[index];
 }
 
-function auditarSlaOperacional() {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+function minutosUteisSlaOperacional_(startedAt, finishedAt) {
+  const start = parseDataEventoOperacional_(startedAt);
+  const finish = parseDataEventoOperacional_(finishedAt);
+  if (!start || !finish || finish.getTime() <= start.getTime()) return 0;
+
+  let totalMinutes = 0;
+  const cursor = new Date(start.getTime());
+  cursor.setHours(0, 0, 0, 0);
+  const finalDay = new Date(finish.getTime());
+  finalDay.setHours(0, 0, 0, 0);
+
+  while (cursor.getTime() <= finalDay.getTime()) {
+    const windowStart = new Date(cursor.getTime());
+    windowStart.setHours(BOT_SLA_START_HOUR, 0, 0, 0);
+    const windowEnd = new Date(cursor.getTime());
+    windowEnd.setHours(BOT_SLA_END_HOUR, 0, 0, 0);
+    const overlapStart = Math.max(start.getTime(), windowStart.getTime());
+    const overlapEnd = Math.min(finish.getTime(), windowEnd.getTime());
+    if (overlapEnd > overlapStart) {
+      totalMinutes += (overlapEnd - overlapStart) / 60000;
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return totalMinutes;
+}
+
+function auditarSlaOperacionalInterno_(spreadsheet, options) {
+  const config = options && typeof options === "object" ? options : {};
+  const now = parseDataEventoOperacional_(config.now) || new Date();
+  const parsedDays = Number(config.periodDays);
+  const periodDays = Number.isFinite(parsedDays) && parsedDays >= 1
+    ? Math.min(90, Math.floor(parsedDays))
+    : 7;
+  const cutoff = new Date(now.getTime() - periodDays * 24 * 60 * 60 * 1000);
   const inboundSheet = spreadsheet.getSheetByName(CONFIG.eventSheetName);
   const operationalSheet = spreadsheet.getSheetByName(
     CONFIG.operationalEventSheetName,
@@ -218,6 +270,10 @@ function auditarSlaOperacional() {
     medianMinutes: null,
     p95Minutes: null,
     handoffs: 0,
+    pauses: 0,
+    closures: 0,
+    periodDays,
+    slaWindow: `${BOT_SLA_START_HOUR}:00-${BOT_SLA_END_HOUR}:00`,
   };
   if (!inboundSheet || inboundSheet.getLastRow() < 2) return result;
   const inbound = {};
@@ -228,7 +284,13 @@ function auditarSlaOperacional() {
       const eventId = String(row[1] || "");
       const opportunityId = String(row[6] || "");
       const at = parseDataEventoOperacional_(row[3]);
-      if (!eventId || !opportunityId || !at) return;
+      if (
+        !eventId ||
+        !opportunityId ||
+        !at ||
+        at.getTime() < cutoff.getTime() ||
+        at.getTime() > now.getTime()
+      ) return;
       inbound[eventId] = { opportunityId, at };
     });
   result.inboundEvents = Object.keys(inbound).length;
@@ -246,15 +308,20 @@ function auditarSlaOperacional() {
       const parentEventId = String(row[1] || "");
       const type = String(row[3] || "");
       const at = parseDataEventoOperacional_(row[5]);
-      if (type === "human_handoff_queued") result.handoffs += 1;
+      const inPeriod = at &&
+        at.getTime() >= cutoff.getTime() &&
+        at.getTime() <= now.getTime();
+      if (inPeriod && type === "human_handoff_queued") result.handoffs += 1;
+      if (inPeriod && type === "automation_paused") result.pauses += 1;
+      if (inPeriod && type === "processing_closed") result.closures += 1;
       if (
         !inbound[parentEventId] ||
         !at ||
         !["automatic_reply_sent", "human_reply_sent"].includes(type)
       ) return;
-      const latency = Math.max(
-        0,
-        (at.getTime() - inbound[parentEventId].at.getTime()) / 60000,
+      const latency = minutosUteisSlaOperacional_(
+        inbound[parentEventId].at,
+        at,
       );
       if (
         !firstResponse[parentEventId] ||
@@ -280,4 +347,58 @@ function auditarSlaOperacional() {
   result.medianMinutes = percentileOperacional_(latencies, 0.5);
   result.p95Minutes = percentileOperacional_(latencies, 0.95);
   return result;
+}
+
+function auditarSlaOperacional(options) {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  return auditarSlaOperacionalInterno_(spreadsheet, options || {});
+}
+
+function obterOuCriarResumoSlaOperacional_(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(BOT_SLA_SUMMARY_SHEET);
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(BOT_SLA_SUMMARY_SHEET);
+    sheet.setFrozenRows(1);
+    sheet.hideSheet();
+  }
+  if (sheet.getMaxColumns() < BOT_SLA_SUMMARY_HEADERS.length) {
+    sheet.insertColumnsAfter(
+      sheet.getMaxColumns(),
+      BOT_SLA_SUMMARY_HEADERS.length - sheet.getMaxColumns(),
+    );
+  }
+  sheet
+    .getRange(1, 1, 1, BOT_SLA_SUMMARY_HEADERS.length)
+    .setValues([[...BOT_SLA_SUMMARY_HEADERS]]);
+  return sheet;
+}
+
+function atualizarResumoSlaOperacionalInterno_(spreadsheet, options) {
+  const audit = auditarSlaOperacionalInterno_(spreadsheet, options || {});
+  const sheet = obterOuCriarResumoSlaOperacional_(spreadsheet);
+  sheet.getRange(2, 1, 1, BOT_SLA_SUMMARY_HEADERS.length).setValues([[
+    new Date(),
+    audit.periodDays,
+    audit.inboundEvents,
+    audit.measurableResponses,
+    audit.coverage,
+    audit.automaticResponses,
+    audit.humanResponses,
+    audit.medianMinutes === null ? "" : audit.medianMinutes,
+    audit.p95Minutes === null ? "" : audit.p95Minutes,
+    audit.handoffs,
+    audit.pauses,
+    audit.closures,
+    audit.slaWindow,
+    "Minutos corridos somente dentro da janela 08:00-20:00, todos os dias",
+  ]]);
+  return audit;
+}
+
+function atualizarResumoSlaOperacional(periodDays) {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  return atualizarResumoSlaOperacionalInterno_(spreadsheet, {
+    periodDays: periodDays || 7,
+    now: new Date(),
+  });
 }

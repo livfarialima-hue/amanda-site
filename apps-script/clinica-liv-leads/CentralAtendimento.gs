@@ -221,6 +221,13 @@ function atualizarCentralAtendimentoInterno_(
 
   escreverCentralAtendimento_(sheet, items, now);
 
+  const sla = typeof atualizarResumoSlaOperacionalInterno_ === "function"
+    ? atualizarResumoSlaOperacionalInterno_(spreadsheet, {
+        periodDays: 7,
+        now,
+      })
+    : null;
+
   const counts = items.reduce(function (result, item) {
     result[item.queue] = (result[item.queue] || 0) + 1;
     return result;
@@ -232,6 +239,7 @@ function atualizarCentralAtendimentoInterno_(
     total: items.length,
     queues: counts,
     sheetName: CENTRAL_ATENDIMENTO_CONFIG.sheetName,
+    sla,
   };
 }
 
