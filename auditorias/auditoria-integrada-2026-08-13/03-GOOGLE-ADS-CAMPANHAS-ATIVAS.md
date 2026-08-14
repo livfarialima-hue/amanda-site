@@ -124,7 +124,7 @@ Em 13/08, durante a coleta, o total do dia era dinâmico e chegou a 725 impress�
 - **Manter/ampliar/reverter:** manter se CRM e Ads reconciliarem; só usar para Smart Bidding com volume estável; reverter qualquer automação nova se o status piorar ou houver divergência.
 - **Responsável/aprovação:** Daniel + responsável técnico; não requer mudança de mídia para diagnosticar, mas qualquer alteração de meta requer aprovação expressa.
 
-**Atualização pós-auditoria — 14/08/2026:** a reconciliação técnica de `GAD-01` + `DAT-08` foi aplicada com backup, trava e pós-voo. `IMPORT_GOOGLE_ADS`, ledger e linhas visíveis fecharam em 5/5, com nome canônico único, exatamente um click ID por evento e zero PII/PHI. A conexão `LEADS` manteve cinco campos mapeados; a execução automática anterior registrou 5 linhas e 0 erros, e uma importação manual foi iniciada após o reparo. A ação ainda aparece como `Requer atenção`, portanto o diagnóstico de 48 horas e o gate de sete dias permanecem; não houve mudança de meta, campanha, lance ou orçamento.
+**Atualização pós-auditoria — 14/08/2026:** a reconciliação técnica de `GAD-01` + `DAT-08` foi aplicada com backup, trava e pós-voo. `IMPORT_GOOGLE_ADS`, ledger e linhas visíveis fecharam em 5/5, com nome canônico único, exatamente um click ID por evento e zero PII/PHI. A conexão `LEADS` manteve cinco campos mapeados; a execução automática anterior e a importação manual após o reparo registraram 5 linhas e 0 erros. A ação ainda aparece como `Requer atenção`, portanto o diagnóstico de 48 horas e o gate de sete dias permanecem; não houve mudança de meta, campanha, lance ou orçamento.
 
 ### GAD-02 — congelar novas mudanças materiais e iniciar nova janela
 

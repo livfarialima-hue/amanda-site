@@ -158,7 +158,7 @@ Depois dos gates, um novo teste Meta pode isolar a hipótese criativa: vídeo es
 3. `WEB-01` + `MAD-01`: fechar clique/conversa/oportunidade e o código `M26F02S`.
 4. `BOT-03` + `BOT-04`: substituir fonte legada do painel humano e criar SLA por evento.
 
-**Checkpoint de 14/08/2026:** `GAD-01` + `DAT-08` tiveram o reparo técnico concluído: 5/5 transações reconciliadas, ledger completo, nome canônico único e importação manual iniciada. O item permanece em observação, não encerrado para escala, até o Google concluir o processamento e a ação permanecer saudável por sete dias. A próxima implementação independente continua sendo escolhida entre os demais bloqueadores acima, sem alterar verba durante o gate.
+**Checkpoint de 14/08/2026:** `GAD-01` + `DAT-08` tiveram o reparo técnico concluído: 5/5 transações reconciliadas, ledger completo, nome canônico único e importação manual concluída com 5 linhas e 0 erros. O item permanece em observação, não encerrado para escala, até a ação permanecer saudável por sete dias. A próxima implementação independente continua sendo escolhida entre os demais bloqueadores acima, sem alterar verba durante o gate.
 
 ### Correções críticas
 

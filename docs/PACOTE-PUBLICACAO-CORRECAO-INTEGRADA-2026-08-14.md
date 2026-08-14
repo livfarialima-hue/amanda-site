@@ -61,7 +61,7 @@ A deduplicação foi autorizada e concluída isoladamente: 2 grupos, 3 linhas ar
 
 ### Plataformas de mídia — verificação separada
 
-Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, público, criativo ou campanha. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e importação diária. A execução automática anterior concluiu 5 linhas e 0 erros; depois da reconciliação foi iniciada uma execução manual de verificação. O status `Requer atenção` da ação não é considerado resolvido até a conclusão dessa execução e do gate de sete dias. Meta Site requer prova de rastreabilidade antes de qualquer teste de verba.
+Não há neste pacote mudança de orçamento, palavra-chave, negativa, lance, público, criativo ou campanha. A conexão Google Sheets `LEADS` manteve cinco campos mapeados e importação diária. A execução automática anterior e a execução manual posterior à reconciliação concluíram 5 linhas com 0 erros. O status `Requer atenção` da ação não é considerado resolvido até o gate de sete dias, apesar do upload íntegro. Meta Site requer prova de rastreabilidade antes de qualquer teste de verba.
 
 ## QA concluído
 
