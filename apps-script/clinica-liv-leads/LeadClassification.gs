@@ -310,33 +310,101 @@ function enqueueGoogleAdsMilestone_(spreadsheet, details) {
   return { created: true, row: sheet.getLastRow() };
 }
 
+function obterPlanilhaGoogleAdsExistente_(spreadsheet, name, expectedHeaders) {
+  const sheet = spreadsheet.getSheetByName(name);
+  if (!sheet) throw new Error("missing_google_ads_sheet:" + name);
+  const headers = sheet
+    .getRange(1, 1, 1, expectedHeaders.length)
+    .getDisplayValues()[0]
+    .map(function normalizeHeader(value) {
+      return String(value || "").trim();
+    });
+  expectedHeaders.forEach(function validateHeader(expected, index) {
+    if (headers[index] !== expected) {
+      throw new Error(
+        "invalid_google_ads_header:" + name + ":" + (index + 1),
+      );
+    }
+  });
+  return sheet;
+}
+
+function motivoVinculoVisivelGoogleAds_(visibleRows, details, opportunityId) {
+  if (!visibleRows || visibleRows.length === 0) {
+    return "visible_transaction_not_found";
+  }
+  if (visibleRows.length > 1) return "ambiguous_visible_transaction";
+  const visible = visibleRows[0];
+  if (!visible.opportunityId) return "visible_opportunity_missing";
+  if (visible.professional !== "amanda") return "visible_professional_mismatch";
+  if (
+    opportunityId &&
+    String(visible.opportunityId) !== String(opportunityId)
+  ) {
+    return "visible_opportunity_mismatch";
+  }
+  if (visible.clickIdCount !== 1) return "visible_click_id_cardinality";
+  if (
+    visible.identifierType !== details.identifierType ||
+    String(visible.clickId) !== String(details.clickId)
+  ) {
+    return "visible_click_id_mismatch";
+  }
+  return "";
+}
+
+function motivoVinculoLedgerGoogleAds_(ledgerRow, details, opportunityId) {
+  if (!ledgerRow) return "";
+  if (String(ledgerRow[1] || "") !== String(opportunityId || "")) {
+    return "ledger_opportunity_mismatch";
+  }
+  if (String(ledgerRow[14] || "") !== "amanda") {
+    return "ledger_professional_mismatch";
+  }
+  if (
+    String(ledgerRow[3] || "") !== String(details.identifierType || "") ||
+    String(ledgerRow[4] || "") !== String(details.clickId || "")
+  ) {
+    return "ledger_click_id_mismatch";
+  }
+  return "";
+}
+
 function reconciliarGoogleAdsLedgerEImportacao(input) {
   const apply = Boolean(input && input.apply === true);
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const importSheet = getOrCreateLeadAuxiliarySheet_(
+  const importSheet = obterPlanilhaGoogleAdsExistente_(
     spreadsheet,
     CONFIG.googleAdsImportSheetName,
     GOOGLE_ADS_IMPORT_HEADERS,
   );
-  const eventSheet = getOrCreateLeadAuxiliarySheet_(
+  const eventSheet = obterPlanilhaGoogleAdsExistente_(
     spreadsheet,
     CONFIG.googleAdsEventSheetName,
     GOOGLE_ADS_EVENT_HEADERS,
   );
   const result = {
     ok: true,
-    applied: apply,
+    applied: false,
     importRows: Math.max(importSheet.getLastRow() - 1, 0),
     ledgerRows: Math.max(eventSheet.getLastRow() - 1, 0),
     invalidImportRows: 0,
     duplicateTransactions: 0,
     conversionNameMismatches: 0,
+    visibleConversionNameMismatches: 0,
     missingLedger: 0,
     reconstructedLedger: 0,
     missingImport: 0,
     reconstructedImport: 0,
     reviewRequired: 0,
     issues: [],
+  };
+  const plans = {
+    importNameRows: [],
+    ledgerNameRows: [],
+    visibleNameRows: [],
+    ledgerRows: [],
+    importRows: [],
   };
   const importRows = importSheet.getLastRow() >= 2
     ? importSheet
@@ -375,12 +443,8 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
     };
     if (validation.conversionName !== CONFIG.qualifiedConversionName) {
       result.conversionNameMismatches += 1;
-      if (apply) {
-        importSheet
-          .getRange(index + 2, 5)
-          .setValue(CONFIG.qualifiedConversionName);
-        validation.conversionName = CONFIG.qualifiedConversionName;
-      }
+      plans.importNameRows.push(index + 2);
+      validation.conversionName = CONFIG.qualifiedConversionName;
     }
   });
 
@@ -411,18 +475,27 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
     ledgersByTransaction[transactionId] = { row: index + 2, values: row };
     if (String(row[5] || "") !== CONFIG.qualifiedConversionName) {
       result.conversionNameMismatches += 1;
-      if (apply) {
-        eventSheet
-          .getRange(index + 2, 6)
-          .setValue(CONFIG.qualifiedConversionName);
-      }
+      plans.ledgerNameRows.push(index + 2);
     }
   });
 
   const visibleByTransaction = {};
   const leadSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
   if (leadSheet && leadSheet.getLastRow() >= 2) {
-    const columns = garantirEstruturaIntegradaLead_(leadSheet);
+    const columns = mapaCabecalhosOportunidade_(leadSheet);
+    [
+      "ID da transação",
+      "Opportunity ID",
+      "Profissional responsável",
+      "Nome da conversão",
+      "GCLID",
+      "GBRAID",
+      "WBRAID",
+    ].forEach(function requireVisibleHeader(header) {
+      if (!columns[header]) {
+        throw new Error("missing_google_ads_visible_header:" + header);
+      }
+    });
     const rows = leadSheet
       .getRange(2, 1, leadSheet.getLastRow() - 1, leadSheet.getLastColumn())
       .getDisplayValues();
@@ -436,21 +509,56 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
       }
       visibleByTransaction[transactionId].push({
         row: index + 2,
-        opportunityId: String(
-          row[(columns["Opportunity ID"] || 0) - 1] || "",
+        opportunityId: String(row[columns["Opportunity ID"] - 1] || ""),
+        professional: normalizarProfissionalOportunidade_(
+          row[columns["Profissional responsável"] - 1],
         ),
-        professional: String(
-          row[(columns["Profissional responsável"] || 0) - 1] || "amanda",
+        conversionName: String(
+          row[columns["Nome da conversão"] - 1] || "",
+        ),
+        clickIdCount: ["GCLID", "GBRAID", "WBRAID"].filter(
+          function hasVisibleClickId(header) {
+            return Boolean(String(row[columns[header] - 1] || "").trim());
+          },
+        ).length,
+        identifierType: ["GCLID", "GBRAID", "WBRAID"].find(
+          function findVisibleClickId(header) {
+            return Boolean(String(row[columns[header] - 1] || "").trim());
+          },
+        ) || "",
+        clickId: ["GCLID", "GBRAID", "WBRAID"].reduce(
+          function readVisibleClickId(found, header) {
+            return found || String(row[columns[header] - 1] || "").trim();
+          },
+          "",
         ),
       });
-      if (
-        apply &&
-        String(row[(columns["Nome da conversão"] || 8) - 1] || "") !==
-          CONFIG.qualifiedConversionName
-      ) {
-        leadSheet
-          .getRange(index + 2, columns["Nome da conversão"] || 8)
-          .setValue(CONFIG.qualifiedConversionName);
+    });
+
+    Object.keys(importsByTransaction).forEach(function planVisibleName(
+      transactionId,
+    ) {
+      const visible = visibleByTransaction[transactionId] || [];
+      const details = importsByTransaction[transactionId].validation;
+      let reason = motivoVinculoVisivelGoogleAds_(visible, details, "");
+      if (!reason && ledgersByTransaction[transactionId]) {
+        reason = motivoVinculoLedgerGoogleAds_(
+          ledgersByTransaction[transactionId].values,
+          details,
+          visible[0].opportunityId,
+        );
+      }
+      if (reason) {
+        result.reviewRequired += 1;
+        result.issues.push({ transactionId, reason });
+        return;
+      }
+      if (visible[0].conversionName !== CONFIG.qualifiedConversionName) {
+        result.visibleConversionNameMismatches += 1;
+        plans.visibleNameRows.push({
+          row: visible[0].row,
+          column: columns["Nome da conversão"],
+        });
       }
     });
   }
@@ -459,27 +567,25 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
     if (ledgersByTransaction[transactionId]) return;
     result.missingLedger += 1;
     const visible = visibleByTransaction[transactionId] || [];
-    if (
-      visible.length !== 1 ||
-      !visible[0].opportunityId ||
-      normalizarProfissionalOportunidade_(visible[0].professional) !== "amanda"
-    ) {
+    const details = importsByTransaction[transactionId].validation;
+    const visibleReason = motivoVinculoVisivelGoogleAds_(
+      visible,
+      details,
+      "",
+    );
+    if (visibleReason) {
       result.reviewRequired += 1;
       result.issues.push({
         transactionId,
-        reason: visible.length > 1
-          ? "ambiguous_visible_transaction"
-          : "visible_transaction_not_found",
+        reason: visibleReason,
       });
       return;
     }
-    if (!apply) return;
-    const details = importsByTransaction[transactionId].validation;
     const milestone = "qualified_lead";
     const eventId = "ga_" + stableLeadHash_(
       visible[0].opportunityId + "|" + milestone,
     );
-    eventSheet.appendRow([
+    plans.ledgerRows.push([
       eventId,
       visible[0].opportunityId,
       milestone,
@@ -496,7 +602,6 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
       new Date(),
       "amanda",
     ]);
-    result.reconstructedLedger += 1;
   });
 
   Object.keys(ledgersByTransaction).forEach(function repairImport(transactionId) {
@@ -513,13 +618,23 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
       row[7],
       row[8],
     ]);
-    if (!validation.ok || String(row[14] || "") !== "amanda") {
+    const visible = visibleByTransaction[transactionId] || [];
+    const visibleReason = validation.ok
+      ? motivoVinculoVisivelGoogleAds_(visible, validation, row[1])
+      : "invalid_ledger_payload";
+    if (
+      !validation.ok ||
+      String(row[14] || "") !== "amanda" ||
+      visibleReason
+    ) {
       result.reviewRequired += 1;
-      result.issues.push({ transactionId, reason: "invalid_ledger_payload" });
+      result.issues.push({
+        transactionId,
+        reason: visibleReason || "invalid_ledger_payload",
+      });
       return;
     }
-    if (!apply) return;
-    importSheet.appendRow([
+    plans.importRows.push([
       validation.transactionId,
       validation.identifierType === "GCLID" ? validation.clickId : "",
       validation.identifierType === "GBRAID" ? validation.clickId : "",
@@ -529,18 +644,37 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
       validation.value,
       validation.currency,
     ]);
-    result.reconstructedImport += 1;
   });
 
-  if (apply) {
+  result.ok = result.reviewRequired === 0 &&
+    result.invalidImportRows === 0 &&
+    result.duplicateTransactions === 0;
+  if (apply && result.ok) {
+    plans.importNameRows.forEach(function repairImportName(row) {
+      importSheet.getRange(row, 5).setValue(CONFIG.qualifiedConversionName);
+    });
+    plans.ledgerNameRows.forEach(function repairLedgerName(row) {
+      eventSheet.getRange(row, 6).setValue(CONFIG.qualifiedConversionName);
+    });
+    plans.visibleNameRows.forEach(function repairVisibleName(target) {
+      leadSheet
+        .getRange(target.row, target.column)
+        .setValue(CONFIG.qualifiedConversionName);
+    });
+    plans.ledgerRows.forEach(function appendLedger(row) {
+      eventSheet.appendRow(row);
+      result.reconstructedLedger += 1;
+    });
+    plans.importRows.forEach(function appendImport(row) {
+      importSheet.appendRow(row);
+      result.reconstructedImport += 1;
+    });
     importSheet.showSheet();
     spreadsheet.setActiveSheet(importSheet);
     spreadsheet.moveActiveSheet(1);
     SpreadsheetApp.flush();
+    result.applied = true;
   }
-  result.ok = result.reviewRequired === 0 &&
-    result.invalidImportRows === 0 &&
-    result.duplicateTransactions === 0;
   return result;
 }
 

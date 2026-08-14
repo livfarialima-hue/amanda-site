@@ -292,17 +292,19 @@ test("integrated repair runner keeps every mutating repair in dry-run mode", () 
 });
 
 test("split repair runners expose every check without enabling writes", () => {
-  const start = source.indexOf(
-    "function executarSimulacaoCorrecaoIntegrada_",
+  const wrapper = source.match(
+    /function executarSimulacaoCorrecaoIntegrada_\([\s\S]*?\n\}/,
   );
-  assert.notEqual(start, -1);
-  const runners = source.slice(start);
-
+  assert.ok(wrapper);
+  assert.match(wrapper[0], /INTEGRATED_DRY_RUN_CHECK/);
+  assert.doesNotMatch(wrapper[0], /apply:\s*true/);
   for (let index = 1; index <= 9; index += 1) {
-    assert.match(runners, new RegExp(`function simularCorrecao0${index}`));
+    const runner = source.match(
+      new RegExp(`function simularCorrecao0${index}[\\s\\S]*?\\n\\}`),
+    );
+    assert.ok(runner);
+    assert.doesNotMatch(runner[0], /apply:\s*true/);
   }
-  assert.match(runners, /INTEGRATED_DRY_RUN_CHECK/);
-  assert.doesNotMatch(runners, /apply:\s*true/);
 });
 
 test("read-only repair paths use cached visible rows and do not repair headers", () => {
@@ -395,4 +397,25 @@ test("authorized consultation reconciliation applies only the locked safe subset
   assert.match(applyFlow, /matchesExpected\(postflight, false\)/);
   assert.match(applyFlow, /finally\s*{\s*lock\.releaseLock\(\)/);
   assert.match(applyFlow, /SAFE_CONSULTATION_RECONCILIATION_APPLY/);
+});
+
+test("authorized Google Ads reconciliation is locked, bounded and idempotent", () => {
+  const source = readFileSync(
+    new URL("./DataQualityRepair.gs", import.meta.url),
+    "utf8",
+  );
+  const runner = source.match(
+    /function aplicarReconciliacaoGoogleAdsSeguraAutorizada\(\) \{[\s\S]*?\n\}/,
+  );
+
+  assert.ok(runner);
+  assert.match(runner[0], /tryLock\(30000\)/);
+  assert.match(runner[0], /importRows: 5/);
+  assert.match(runner[0], /ledgerRows: 2/);
+  assert.match(runner[0], /visibleConversionNameMismatches: 5/);
+  assert.match(runner[0], /missingLedger: 3/);
+  assert.match(runner[0], /ledgerRows: 5/);
+  assert.match(runner[0], /alreadyReconciled: true/);
+  assert.match(runner[0], /reconstructedLedger !== 3/);
+  assert.match(runner[0], /finally \{\s*lock\.releaseLock\(\)/);
 });

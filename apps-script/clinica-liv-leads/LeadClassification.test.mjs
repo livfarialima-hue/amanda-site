@@ -52,6 +52,7 @@ function loadFunctions() {
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
+      "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
   );
@@ -91,6 +92,60 @@ test("Google Ads import accepts exactly one click id and all required fields", (
   ]);
   assert.equal(invalid.ok, false);
   assert.deepEqual(Array.from(invalid.errors), ["click_id_cardinality"]);
+});
+
+test("Google Ads reconciliation accepts only exact visible and ledger identities", () => {
+  const {
+    motivoVinculoVisivelGoogleAds_,
+    motivoVinculoLedgerGoogleAds_,
+  } = loadFunctions();
+  const details = {
+    identifierType: "GCLID",
+    clickId: "gclid-1",
+  };
+  const visible = [{
+    opportunityId: "opp-1",
+    professional: "amanda",
+    clickIdCount: 1,
+    identifierType: "GCLID",
+    clickId: "gclid-1",
+  }];
+
+  assert.equal(
+    motivoVinculoVisivelGoogleAds_(visible, details, "opp-1"),
+    "",
+  );
+  assert.equal(
+    motivoVinculoVisivelGoogleAds_(visible, details, "opp-2"),
+    "visible_opportunity_mismatch",
+  );
+  assert.equal(
+    motivoVinculoVisivelGoogleAds_(
+      [{ ...visible[0], clickId: "other-click" }],
+      details,
+      "opp-1",
+    ),
+    "visible_click_id_mismatch",
+  );
+  assert.equal(
+    motivoVinculoVisivelGoogleAds_([visible[0], visible[0]], details, "opp-1"),
+    "ambiguous_visible_transaction",
+  );
+  const ledger = Array(15).fill("");
+  ledger[1] = "opp-1";
+  ledger[3] = "GCLID";
+  ledger[4] = "gclid-1";
+  ledger[14] = "amanda";
+  assert.equal(
+    motivoVinculoLedgerGoogleAds_(ledger, details, "opp-1"),
+    "",
+  );
+  const wrongLedger = Array.from(ledger);
+  wrongLedger[4] = "other-click";
+  assert.equal(
+    motivoVinculoLedgerGoogleAds_(wrongLedger, details, "opp-1"),
+    "ledger_click_id_mismatch",
+  );
 });
 
 test("classification reaper separates retries, dead letters and orphan review", () => {

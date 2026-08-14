@@ -1736,6 +1736,99 @@ function simularCorrecao06GoogleAds() {
   });
 }
 
+function resumoReconciliacaoGoogleAdsCorresponde_(summary, expected) {
+  return Object.keys(expected).every(function compareExpected(key) {
+    return Number(summary && summary[key]) === Number(expected[key]);
+  });
+}
+
+function aplicarReconciliacaoGoogleAdsSeguraAutorizada() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    throw new Error("google_ads_reconciliation_lock_unavailable");
+  }
+  try {
+    const expectedBefore = {
+      importRows: 5,
+      ledgerRows: 2,
+      invalidImportRows: 0,
+      duplicateTransactions: 0,
+      conversionNameMismatches: 3,
+      visibleConversionNameMismatches: 5,
+      missingLedger: 3,
+      missingImport: 0,
+      reviewRequired: 0,
+    };
+    const expectedAfter = {
+      importRows: 5,
+      ledgerRows: 5,
+      invalidImportRows: 0,
+      duplicateTransactions: 0,
+      conversionNameMismatches: 0,
+      visibleConversionNameMismatches: 0,
+      missingLedger: 0,
+      missingImport: 0,
+      reviewRequired: 0,
+    };
+    const before = reconciliarGoogleAdsLedgerEImportacao({ apply: false });
+    if (resumoReconciliacaoGoogleAdsCorresponde_(before, expectedAfter)) {
+      return {
+        ok: true,
+        applied: false,
+        alreadyReconciled: true,
+        before,
+        after: before,
+      };
+    }
+    if (
+      !before.ok ||
+      !resumoReconciliacaoGoogleAdsCorresponde_(before, expectedBefore)
+    ) {
+      throw new Error(
+        "google_ads_reconciliation_preflight_mismatch:" +
+          JSON.stringify(resumirSimulacaoCorrecaoIntegrada_(before)),
+      );
+    }
+    const applied = reconciliarGoogleAdsLedgerEImportacao({ apply: true });
+    if (
+      !applied.ok ||
+      !applied.applied ||
+      applied.reconstructedLedger !== 3 ||
+      applied.reconstructedImport !== 0
+    ) {
+      throw new Error(
+        "google_ads_reconciliation_apply_failed:" +
+          JSON.stringify(resumirSimulacaoCorrecaoIntegrada_(applied)),
+      );
+    }
+    const after = reconciliarGoogleAdsLedgerEImportacao({ apply: false });
+    if (
+      !after.ok ||
+      !resumoReconciliacaoGoogleAdsCorresponde_(after, expectedAfter)
+    ) {
+      throw new Error(
+        "google_ads_reconciliation_postflight_failed:" +
+          JSON.stringify(resumirSimulacaoCorrecaoIntegrada_(after)),
+      );
+    }
+    const report = {
+      ok: true,
+      applied: true,
+      alreadyReconciled: false,
+      reconstructedLedger: applied.reconstructedLedger,
+      reconstructedImport: applied.reconstructedImport,
+      before: resumirSimulacaoCorrecaoIntegrada_(before),
+      after: resumirSimulacaoCorrecaoIntegrada_(after),
+    };
+    console.log(
+      "SAFE_GOOGLE_ADS_RECONCILIATION_APPLY " + JSON.stringify(report),
+    );
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function simularCorrecao07FunilCanonico() {
   return executarSimulacaoCorrecaoIntegrada_("funil_canonico", function run() {
     return reconstruirFonteFunilCanonico({ apply: false });
