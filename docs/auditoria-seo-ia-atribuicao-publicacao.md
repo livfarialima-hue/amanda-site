@@ -356,11 +356,13 @@ Não criar lead falso para fechar esse gate. Antes da AUT-08, escolher explicita
 1. autorizar e implementar um harness sintético isolado, com namespace e expurgo auditável; ou
 2. ativar em janela controlada e observar o primeiro contato real consentido, sem alterar Meta, com plano de rollback imediato.
 
-A escolha é decisão externa; este runbook não presume autorização.
+A operação escolheu formalmente a alternativa 2 em 15/08/2026 ao aceitar o risco residual do JID. Essa escolha não é a autorização AUT-08: a feature continua desligada até autorização específica de ativação e fechamento dos demais gates.
 
 ## 13. Fase 8 — decisão explícita sobre flag e linha JID
 
 AUT-08 deve declarar que a pessoa verá uma linha técnica `JID: J1_<token opaco>` na mensagem pré-preenchida do WhatsApp. Isso é mudança de comunicação não clínica, embora não contenha PII nem código de campanha.
+
+O risco de a linha ser removida, editada ou encaminhada antes do primeiro claim foi aceito formalmente por Daniel em 15/08/2026. A aceitação elimina a busca obrigatória por um transportador oculto, mas preserva todos os guardrails e não liga a flag automaticamente.
 
 Só ativar quando:
 

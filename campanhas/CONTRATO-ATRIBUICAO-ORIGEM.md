@@ -118,6 +118,12 @@ Após a extração transitória a partir do texto bruto, a linha `JID` deve ser 
 
 O claim atômico não impede encaminhamento antes do primeiro resgate. Se outra pessoa receber a linha `JID` e resgatá-la primeiro dentro da janela, o token fica vinculado ao C1 desse primeiro evento. Esse risco reduz a confiança da atribuição e bloqueia a ativação enquanto a operação não aceitar explicitamente o risco ou comprovar um transporte que preserve a associação sem expor uma credencial encaminhável.
 
+### 5.1 Aceitação formal do risco residual
+
+Em 15 de agosto de 2026, Daniel aceitou formalmente o risco residual da linha `JID` visível, editável e encaminhável. A decisão reconhece que remover ou alterar a linha pode perder a resolução e que um encaminhamento resgatado antes da mensagem original pode associar a jornada ao destinatário. Com essa aceitação, um transportador oculto deixa de ser condição obrigatória isolada para propor a ativação.
+
+A aceitação não autoriza por si só ligar a feature, habilitar o schema, migrar dados, alterar Meta ou liberar verba. Também não aceita PII, persistência do JID, reuso depois do primeiro claim, overwrite de first touch, duplicidade ou divergência silenciosa. Esses eventos permanecem falhas P0 e acionam rollback imediato para o caminho legado.
+
 ## 6. Precedência e projeções
 
 Quando existir jornada v1 resolvida e válida, suas dimensões normalizadas prevalecem para as projeções de jornada. A evidência legada permanece disponível para auditoria e fallback, sem sobrescrever first touch.
@@ -177,7 +183,7 @@ A ativação só pode ser proposta quando todos os itens abaixo estiverem compro
 8. LEADS=CRM para a mesma oportunidade em sonda sintética/controlada;
 9. logs sem PII, conteúdo ou IDs reversíveis;
 10. ausência de regressão clínica, de mensagem, de roteamento e de idempotência;
-11. risco de encaminhamento antes do primeiro resgate formalmente aceito ou mitigado por transporte comprovado; sem isso, a ativação permanece bloqueada e a confiança não pode ser `observed` apenas pelo J1;
+11. risco de encaminhamento antes do primeiro resgate formalmente aceito em 15/08/2026; o gate de decisão está satisfeito, sem transformar J1 isolado em prova infalível nem dispensar os demais gates;
 12. publicação vinculada a commit e artefato aprovados;
 13. smoke test live autorizado, sem confundir clique com lead qualificado.
 
@@ -196,9 +202,9 @@ Rollback técnico, nesta ordem:
 
 Rollback não reescreve first touch e não transforma dados ausentes em zero.
 
-## 11. Snapshot local e lacunas conhecidas em 2026-08-15
+## 11. Snapshot publicado default-off e lacunas conhecidas em 2026-08-15
 
-O estado local inspecionado implementa, sem publicação:
+O núcleo técnico foi publicado em modo default-off no commit `50d7ea1` e no Apps Script versão 91. A feature do site e o schema do Apps Script continuam desligados; portanto publicação de código não equivale a ativação ou migração. O estado implementa:
 
 - J0 no navegador, J1 rotacionado por tentativa, claim atômico e J2 durável;
 - TTL absoluto: dez minutos para resgate J1 e 30 dias para J0, J2 e retenção do claim/tombstone;
@@ -211,13 +217,13 @@ O estado local inspecionado implementa, sem publicação:
 
 Ainda permanecem abertos:
 
-- a suíte integral local está verde (`651/651`) e o purge tem testes próprios aprovados, mas execução, retenção e remoção física em produção permanecem N/D;
-- o agendamento diário, o segredo do purge e a remoção física não foram publicados, configurados ou observados em produção;
+- a suíte integral local estava verde (`651/651`) no fechamento do pacote e o purge tem testes próprios aprovados, mas execução, retenção e remoção física em produção permanecem N/D;
+- o agendamento diário do purge foi publicado; a primeira execução física ainda não foi observada e o segredo de acionamento manual permanece propositalmente ausente;
 - ainda não há produtor de `reported_origin`: nenhum texto ou contexto é interpretado automaticamente, e o campo permanece vazio sem declaração estruturada explícita;
-- J1 ainda depende de uma linha `JID` visível/editável no texto pré-preenchido; remover ou alterar a linha perde a resolução, e nenhum transportador oculto foi comprovado;
+- J1 ainda depende de uma linha `JID` visível/editável no texto pré-preenchido; remover ou alterar a linha perde a resolução e encaminhamento pré-claim pode atribuir ao destinatário. O risco foi aceito formalmente em 15/08/2026, mas a ativação continua separada e condicionada aos demais gates;
 - o registro v1 considera `M26O01W` conflitante para o caminho quando não há landing/CTA, pois seu uso histórico inclui WhatsApp direto e site;
 - o alerta agregado previsto em ATR-008 não foi comprovado;
 - retenção, acesso, backups e expurgo de Sheets, CRM e sistemas externos não foram definidos;
-- não houve publicação, ativação de flags/schema, migração, sonda live ou validação de estado de produção neste trabalho.
+- não houve ativação de flags/schema, migração, sonda live ou validação ponta a ponta da atribuição rica.
 
 Esses itens são bloqueadores de ativação, não evidência de falha live, pois o estado live não foi inspecionado nem alterado.

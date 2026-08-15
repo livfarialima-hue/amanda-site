@@ -6,6 +6,21 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — aceitação do risco residual do JID
+
+- **Status:** risco formalmente aceito; feature e schema permanecem desligados.
+- **Responsável:** Daniel, com registro técnico pelo Codex.
+- **Área:** atribuição Meta/Google por passagem no site e transporte site → WhatsApp.
+- **Mudança:** deixa de ser obrigatório criar um transportador oculto antes de propor a ativação da jornada rica. A operação aceita que a linha técnica `JID: J1_<token opaco>` seja visível e editável na mensagem pré-preenchida e que possa ser encaminhada antes do primeiro resgate.
+- **Motivo e evidência:** o claim C1 impede que outro evento assuma o token depois do primeiro resgate, o webhook remove o JID antes do bot, Apps Script, Sheets, CRM, logs e modelos, e o token não contém PII nem código de campanha. O risco residual não eliminado é temporal: edição/remoção causa perda de resolução e encaminhamento pré-claim pode associar a jornada ao primeiro destinatário que a enviar.
+- **Hipótese:** aceitar esse risco controlado permite testar a atribuição rica sem acrescentar outra arquitetura de transporte, preservando atendimento legado e rollback imediato.
+- **Métrica principal:** percentual de JID resolvido, fallback por JID ausente/alterado/expirado, divergência LEADS–CRM, duplicidade e qualquer atribuição incorreta comprovada.
+- **Guardrails:** `attributionJourneyEnabled=false` e schema off até autorização própria; zero PII ou JID persistido; first touch imutável; nenhum aumento Meta; teste em janela isolada; atendimento nunca depende da resolução.
+- **Data de revisão:** 24 horas, 7 dias e 14 dias após eventual ativação.
+- **Regra para manter:** manter somente se não houver atribuição incorreta, persistência indevida, duplicidade, overwrite ou regressão do atendimento e se fallback permanecer explicitamente mensurável.
+- **Regra para reverter:** desligar imediatamente a feature e usar o caminho legado diante de encaminhamento atribuído à pessoa errada, JID fora do resolvedor, first touch alterado, duplicidade ou perda operacional. A aceitação do risco não impede esse rollback.
+- **Resultado atual:** gate de aceitação do risco concluído; ativação, schema, migração, privacidade, purge observado e sonda E2E continuam pendentes e exigem autorizações próprias.
+
 ## 15 de agosto de 2026 — retirada das faixas cirúrgicas públicas e preservação da intenção de preço
 
 - **Status:** site, bot, backend e Apps Script publicados em 15/08/2026; Google Ads permaneceu sem alteração ao vivo até o fechamento técnico.
@@ -266,7 +281,7 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Motivo e evidência:** a auditoria não comprovou `M26F02S` ponta a ponta e encontrou mistura potencial de dimensões iniciais e posteriores, inferência indevida de acesso direto, IDs em texto/log, ambiguidade histórica de `M26O01W` e risco de mutação durante dry-run. A suíte local `651/651`, o gate `44/44` e o build isolado passaram a cobrir claim HMAC, remoção do token, envelope J2 imutável, retries divergentes/stale/corrida, first touch imutável, origem informada separada, campanhas inicial e atual separadas, conflito de código legado, dry-run sem escrita, duplicatas de cabeçalho, expiração absoluta, purge, migração atômica de Calendar, SLA e entrega completa webhook → payload de Sheets. Esses resultados são locais e não comprovam produção.
 - **Hipótese:** a trilha versionada reduzirá origem desconhecida e permitirá distinguir Meta direto de Meta → site → WhatsApp sem sobrescrever a origem inicial nem expor identificadores nos logs.
 - **Métrica principal:** cobertura Meta Site consentida entre clique, conversa e oportunidade; campanha/conjunto/anúncio/criativo identificados; divergência LEADS–CRM; duplicidade; origem desconhecida; registros preparados, enviados, aceitos e atribuídos no Google.
-- **Guardrails:** `M26F02S` continua sem verba nova; `attributionJourneyEnabled=false`; não ativar antes de revisar a política de privacidade e o `JID` visível; não criar first touch por inferência; nenhuma migração sem dry-run, confirmação e rollback; local, commit e publicado devem apontar para a mesma versão aprovada.
+- **Guardrails naquele fechamento:** `M26F02S` continua sem verba nova; `attributionJourneyEnabled=false`; não ativar antes de revisar a política de privacidade e decidir sobre o `JID` visível; não criar first touch por inferência; nenhuma migração sem dry-run, confirmação e rollback; local, commit e publicado devem apontar para a mesma versão aprovada. A decisão posterior sobre o risco do `JID` está registrada na entrada mais recente deste histórico.
 - **Data de revisão:** primeira sonda controlada após publicação autorizada; checagens em 24 horas, 7 dias e 14 dias.
 - **Regra para manter:** cobertura consentida Meta Site de pelo menos 80%, duplicidade inferior a 2%, 100% da sonda controlada reconciliada e nenhuma exposição de PII/PHI.
 - **Regra para reverter:** desativar imediatamente a flag e manter o parser legado se houver perda de mensagens, referência incorreta, duplicidade, origem inicial sobrescrita, retenção indevida ou divergência entre evento, LEADS e CRM.

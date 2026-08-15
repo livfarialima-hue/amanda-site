@@ -18,7 +18,7 @@ As pendências materiais que ainda impedem a ativação são:
 1. o purge agendado foi publicado, mas a primeira execução física e a retenção live ainda não foram observadas; o segredo manual de purge continua propositalmente ausente porque nenhum expurgo manual foi autorizado;
 2. retenção e acesso de Sheets, CRM, backups e plataformas externas continuam sem decisão;
 3. a origem informada possui campo e projeção separados, mas ainda não tem produtor estruturado; nenhum texto é interpretado automaticamente;
-4. a trilha rica ainda depende de uma linha `JID` visível/editável no texto pré-preenchido e não pode ser ativada antes de decisão de comunicação/privacidade ou de um transportador alternativo comprovado;
+4. a trilha rica ainda depende de uma linha `JID` visível/editável no texto pré-preenchido; Daniel aceitou formalmente esse risco residual em 15/08/2026, mas a ativação continua pendente dos demais gates e de autorização própria;
 5. alerta agregado de ATR-008, reconciliação live LEADS=CRM, estado real de Calendar/SLA e prova Meta → site não foram comprovados.
 
 O contrato técnico está em `campanhas/CONTRATO-ATRIBUICAO-ORIGEM.md`. O arquivo `17-STATUS-RECOMENDACOES.csv` preserva o estado imediatamente anterior à publicação; este registro é a fonte de verdade para o deploy default-off de 15/08/2026.
@@ -58,7 +58,7 @@ A classificação é conservadora: presença de código e teste local não prova
 
 - **ATR-002/ATR-003/DAT-003:** existem estrutura de jornada e projeções separadas; testes locais preservam first touch e avançam current touch somente por evidência mais recente. O ledger E2E e a equivalência live LEADS=CRM não foram comprovados.
 - **ATR-004:** os prazos locais são absolutos: J0 no navegador por 30 dias, resgate J1 por dez minutos e J2/claim por 30 dias. Repetir save ou resolve não renova os prazos. O primeiro registro congela o envelope J2 inteiro; retry equivalente não o regrava e retry divergente, vencido ou perdedor de corrida falha fechado.
-- **ATR-005, parcial:** J1 é rotacionado por tentativa, associado no backend a J2 e resgatado atomicamente por C1, um claimant HMAC derivado do provider Event ID. Depois do primeiro resgate, apenas o mesmo C1 pode repetir a resolução. O webhook usa o texto bruto somente para a resolução e remove a linha `JID` antes do bot, de `lead.text`, Apps Script e Sheets. A ativação permanece bloqueada porque a linha técnica ainda é visível, editável e encaminhável no WhatsApp; remoção ou edição impede a resolução e encaminhamento antes do primeiro resgate pode atribuir a jornada ao destinatário.
+- **ATR-005, decisão de risco concluída; ativação pendente:** J1 é rotacionado por tentativa, associado no backend a J2 e resgatado atomicamente por C1, um claimant HMAC derivado do provider Event ID. Depois do primeiro resgate, apenas o mesmo C1 pode repetir a resolução. O webhook usa o texto bruto somente para a resolução e remove a linha `JID` antes do bot, de `lead.text`, Apps Script e Sheets. Daniel aceitou formalmente em 15/08/2026 que a linha técnica seja visível, editável e encaminhável e que remoção/edição possa perder a resolução ou um encaminhamento pré-claim possa atribuir ao destinatário. Isso remove este bloqueador isolado, sem autorizar ligar a feature ou dispensar privacidade, purge, schema, reconciliação e sonda.
 - **ATR-007, parcial:** as allowlists locais incluem fontes pagas, orgânicas, IA, indicação, direto e desconhecida. `reported_origin` agora é campo próprio, aceita apenas enum fechado, recebe confiança fixa `patient_reported` e é projetado separadamente em eventos, CRM e LEADS sem sobrescrever first/current observados. Ainda não há produtor estruturado ou operação live.
 - **ATR-008:** logs locais têm categorias, motivos, timestamps, correlation ID e testes de sanitização; idempotência operacional preexistente é preservada. Não foi comprovado alerta agregado.
 - **ATR-009, parcial:** foi criado um registro versionado de códigos e a separação entre valor bruto e projeção resolvida foi desenhada e parcialmente materializada. Ainda não existe ledger comum que prove essa separação ponta a ponta. O backfill trata `M26O01W` como caminho conflitante/N/D, pois o mesmo código foi documentado para WhatsApp direto e passagem pelo site. Aliases externos e reconciliação histórica ainda dependem de evidência determinística.
@@ -147,7 +147,7 @@ Limites do QA:
 
 1. Definir o alerta agregado de ATR-008 sem incluir PII, conteúdo ou IDs reversíveis.
 2. Definir um produtor estruturado para `reported_origin`, sem inferência por texto e sem substituir origem observada.
-3. Aprovar o contrato, a linha técnica `JID`, a decisão de privacidade e a política externa de retenção/acesso antes de habilitar feature/schema.
+3. A aceitação do risco da linha técnica `JID` foi registrada em 15/08/2026. Ainda é necessário aprovar a decisão de privacidade e a política externa de retenção/acesso antes de habilitar feature/schema.
 4. Configurar segredo e agendamento do purge somente no pacote de publicação autorizado; depois verificar a primeira execução sem dados pessoais nos logs.
 5. Executar reconciliação live de Calendar, SLA/rota e Meta → site somente após publicação e migração autorizadas.
 
