@@ -168,10 +168,10 @@ Esses números são direcionais. A amostra ainda não permite conclusões estat�
 - O site preserva UTMs e códigos internos de campanha.
 - GCLID, GBRAID ou WBRAID podem ser preservados na sessão de origem e registrados no fluxo de atendimento sem texto clínico ou identificadores pessoais.
 - A planilha importa a ação `Lead qualificado GCLID` para o Google Ads.
-- O nome da ação é histórico: a nova fila aceita exatamente um entre GCLID, GBRAID ou WBRAID. Cada oportunidade gera no máximo um evento `qualified_lead`, com ID de transação determinístico e sem nome, telefone, e-mail ou conteúdo da conversa.
+- O nome da ação é histórico: a nova fila aceita exatamente um entre GCLID, GBRAID ou WBRAID. Cada oportunidade gera no máximo um evento `qualified_lead`, com ID de transação opaco no formato `LIV-QL-v1-<HMAC-SHA256 base64url>`, calculado sobre conta, `Opportunity ID` e marco com segredo guardado fora da planilha. O ID não contém nome, telefone, e-mail, `wamid`, click ID, referência ou conteúdo da conversa.
 - O campo manual de consentimento para contato não é critério de elegibilidade da importação padrão por identificador de clique. Isso não autoriza marcar consentimento como concedido: Consent Mode, aviso de privacidade e a configuração padrão de consentimento da conexão no Data Manager devem permanecer corretos e auditáveis.
 - Não usar conversões otimizadas para leads com nome, telefone, e-mail ou outro identificador fornecido pela paciente nesse funil de saúde. A mensuração offline deve permanecer no modo padrão por click ID.
-- No registro visual de 9 de agosto de 2026, essa ação aparecia como **secundária**. É obrigatório confirmar na conta se ela continua secundária ou se participa de uma meta personalizada usada nos lances.
+- Em 15 de agosto de 2026, a ação foi confirmada ao vivo como **Principal**, incluída nas metas e na meta personalizada das seis campanhas, porém com status `Requer atenção`. A programação diária da conexão `LEADS` foi pausada durante a contenção; cinco eventos legados foram colocados em `quarantined_legacy` e não devem ser reenviados sem recibo. A automação só poderá ser religada após teste controlado, sem PII, que reconcilie preparado, enviado, aceito ou rejeitado e atribuído.
 - Clique no WhatsApp é um sinal intermediário e não deve substituir o lead qualificado como objetivo de negócio.
 
 ### 6.3 Orçamento
@@ -180,7 +180,7 @@ O orçamento total informado para Google Ads é de aproximadamente **R$ 2.800 po
 
 A auditoria pode propor realocação ou aumento do investimento. Todo aumento deve apresentar cenário conservador, base e agressivo; demanda e capacidade necessárias; impacto esperado em intervalo; custo por lead qualificado, consulta e cirurgia; duração mínima; risco; e regra para interromper, manter ou ampliar. Até que essa análise seja aprovada, o valor atual e a distribuição vigente permanecem apenas como estado conhecido, não como recomendação definitiva.
 
-Em 4 de agosto de 2026, `S_BR_SP_OTOPLASTIA` passou de R$ 8 para R$ 15 por dia porque estava limitada pelo orçamento. A estratégia de lances permaneceu em Maximizar cliques para não combinar duas mudanças relevantes na mesma janela de observação.
+Desde 15 de agosto de 2026, a distribuição operacional autorizada soma **R$ 87 por dia**: blefaroplastia R$ 23, lifting facial R$ 24, lifting cervical R$ 12, otoplastia R$ 15, cirurgia facial R$ 8 e marca R$ 5. Em 4 de agosto de 2026, `S_BR_SP_OTOPLASTIA` passou de R$ 8 para R$ 15 por dia porque estava limitada pelo orçamento. A estratégia de lances permaneceu em Maximizar cliques para não combinar duas mudanças relevantes na mesma janela de observação.
 
 ### 6.4 Decisão vigente após a auditoria integrada — correção antes de escala
 

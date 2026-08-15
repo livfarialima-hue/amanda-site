@@ -12,6 +12,8 @@ const CONFIG = Object.freeze({
   leadStageEventSheetName: "_LEAD_FASE_EVENTOS",
   googleAdsEventSheetName: "_GOOGLE_ADS_EVENTOS",
   googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
+  googleAdsCustomerId: "9953344486",
+  googleAdsTransactionSecretProperty: "GOOGLE_ADS_TRANSACTION_HMAC_SECRET",
   nonLeadArchiveSheetName: "_CONTATOS_NAO_LEADS",
   qualifiedConversionName: "Lead qualificado GCLID",
   reviewAlertEmail: "daniel.added@gmail.com",
@@ -2176,11 +2178,11 @@ function writeLead_(sheet, row, lead, setStage) {
     "dd/MM/yyyy",
   );
 
-  // Persist the stable WhatsApp message ID first. If a later write
-  // fails and YCloud retries, the same message is not appended again.
+  // Message/event deduplication lives in the processed-events ledger.
+  // Column 15 is reserved exclusively for the opaque Google Ads
+  // transaction ID and must stay empty until a qualified milestone exists.
   setStage("write_identity");
-  sheet.getRange(row, 15, 1, 3).setValues([[
-    lead.messageId,
+  sheet.getRange(row, 16, 1, 2).setValues([[
     "BRL",
     "Contato inicial recebido automaticamente pelo WhatsApp.",
   ]]);

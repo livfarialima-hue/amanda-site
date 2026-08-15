@@ -6,6 +6,23 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — execução autorizada da auditoria de Google Ads de 14/08
+
+- **Status:** correções imediatas publicadas; importação offline em contenção; experimentos editoriais programados de forma sequencial.
+- **Responsável:** Codex, sob autorização de Daniel para executar todas as etapas da primeira auditoria de Google Ads.
+- **Área/campanhas:** conta Google Ads 995-334-4486, Apps Script de LEADS, Data Manager, planilha e documentação canônica.
+- **Mudança:** a conexão diária `LEADS` foi pausada; IDs de transação passaram a usar HMAC-SHA256 opaco `LIV-QL-v1`; cinco eventos legados foram quarentenados e 102 IDs visíveis legados foram removidos da coluna reservada; a versão 90 do Apps Script foi publicada. As seis campanhas receberam `_camp` canônico; lifting cervical voltou de R$ 23 para R$ 12/dia, restaurando R$ 87/dia no total; o sitelink de lipo perdeu a barra duplicada; e `[lifting facial preço]` e `[mini lifting facial preço]` foram adicionadas como negativas exatas somente em `AG_LIFTING_FACIAL`.
+- **Motivo e evidência:** 3/5 IDs preparados e 102 IDs históricos visíveis usavam formatos derivados de WhatsApp; `Lead qualificado GCLID` estava Principal e nas metas, mas em `Requer atenção`, sem recibo por evento. O aumento cervical de 13/08 não estava ratificado no norte. Termos de preço estavam entrando no grupo genérico apesar da existência do grupo próprio.
+- **Hipótese:** impedir reenvio inseguro, restaurar o orçamento canônico, estabilizar os códigos e separar intenção genérica de intenção de preço produzirá mensuração mais confiável e testes posteriores interpretáveis.
+- **Métrica principal:** zero ID inseguro, 100% dos novos eventos com estado verificável, cobertura de campanha/grupo por conversa, CPQL e avanço a consulta; títulos serão avaliados por contato válido e lead qualificado, não por clique isolado.
+- **Guardrails:** conexão permanece pausada até o teste controlado; nenhum legado é reenviado; nenhuma PII/PHI no identificador; não combinar orçamento, palavra-chave e RSA no mesmo teste; manter Pesquisa Google, sem PMax, ampla, tCPA ou aumento; preservar buscas leigas e de preço legítimas.
+- **Janelas:** 20/08 para prova controlada e, se aprovada, início do RSA de otoplastia; 27/08 para saúde de sete dias; 03/09 para decisão de 14 dias e início do próximo experimento. Os demais RSAs seguem em série, nunca em paralelo.
+- **Regra para manter:** manter HMAC, códigos, orçamento, negativas e URL quando testes técnicos passarem, não houver PII/duplicidade e a qualidade não piorar além dos guardrails da auditoria.
+- **Regra para reverter:** parar a projeção ou o experimento afetado diante de PII, duplicidade, perda de click ID/código, reprovação editorial, CTR abaixo do guardrail sem ganho de qualidade ou CPC acima do limite; nunca restaurar IDs inseguros.
+- **Resultado parcial observado:** 573/573 testes locais aprovados; web app versão 90 respondeu HTTP 200; fonte de importação sem linhas; cinco ledgers seguros em `quarantined_legacy`; programação da conexão `LEADS` em `Não programado`. Aceite, rejeição e atribuição histórica permanecem N/D até recibo.
+
+Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçamento, códigos ou papel da conversão. A frase histórica de 14/08 que protegia absolutamente `/lifting-facial/` também foi substituída pela decisão canônica posterior: a página pode ser analisada e só muda com justificativa, isolamento e autorização específica.
+
 ## 15 de agosto de 2026 — imagem social institucional e retirada da proibição absoluta de lifting
 
 - **Status:** autorizada para publicação por Daniel.

@@ -13,6 +13,9 @@ const classificationSource = readFileSync(
 );
 
 function loadFunctions() {
+  const scriptProperties = new Map([
+    ["GOOGLE_ADS_TRANSACTION_HMAC_SECRET", "S".repeat(43)],
+  ]);
   const sandbox = {
     console,
     Date,
@@ -33,11 +36,32 @@ function loadFunctions() {
           bytes[index % Math.max(bytes.length, 1)] || index,
         );
       },
+      computeHmacSha256Signature(value, secret) {
+        const input = `${value}|${secret}`;
+        return Array.from({ length: 32 }, (_, index) =>
+          input.charCodeAt(index % input.length) % 256,
+        );
+      },
+      base64EncodeWebSafe(bytes) {
+        const alphabet =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+        return Array.from({ length: 43 }, (_, index) =>
+          alphabet[Math.abs(bytes[index % bytes.length]) % alphabet.length],
+        ).join("");
+      },
       getUuid: () => "test-uuid",
       formatDate(_date, _timezone, pattern) {
         if (pattern === "yyyyMMdd") return "20260802";
         if (pattern.includes("XXX")) return "2026-08-02 12:00:00-03:00";
         return "02/08/2026";
+      },
+    },
+    PropertiesService: {
+      getScriptProperties() {
+        return {
+          getProperty: (key) => scriptProperties.get(key) || null,
+          setProperty: (key, value) => scriptProperties.set(key, value),
+        };
       },
     },
     SpreadsheetApp: { flush() {} },
@@ -52,6 +76,7 @@ function loadFunctions() {
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
+      "googleAdsTransactionIdSeguro_, googleConversionTransactionId_, " +
       "linhaExigeNomeConversaoQualificadoGoogleAds_, " +
       "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
@@ -69,7 +94,7 @@ test("Google Ads import preserves the mapped conversion value header", () => {
 test("Google Ads import accepts exactly one click id and all required fields", () => {
   const { validarLinhaImportacaoGoogleAds_ } = loadFunctions();
   const valid = validarLinhaImportacaoGoogleAds_([
-    "transaction-1",
+    `LIV-QL-v1-${"A".repeat(43)}`,
     "gclid-1",
     "",
     "",
@@ -82,7 +107,7 @@ test("Google Ads import accepts exactly one click id and all required fields", (
   assert.equal(valid.identifierType, "GCLID");
 
   const invalid = validarLinhaImportacaoGoogleAds_([
-    "transaction-2",
+    `LIV-QL-v1-${"B".repeat(43)}`,
     "gclid-2",
     "gbraid-2",
     "",
@@ -93,6 +118,36 @@ test("Google Ads import accepts exactly one click id and all required fields", (
   ]);
   assert.equal(invalid.ok, false);
   assert.deepEqual(Array.from(invalid.errors), ["click_id_cardinality"]);
+});
+
+test("Google Ads import rejects legacy or personally-derived transaction ids", () => {
+  const { validarLinhaImportacaoGoogleAds_ } = loadFunctions();
+  const invalid = validarLinhaImportacaoGoogleAds_([
+    "WA-legacy-last4",
+    "gclid-1",
+    "",
+    "",
+    "Lead qualificado GCLID",
+    "2026-08-14 12:00:00-03:00",
+    1,
+    "BRL",
+  ]);
+  assert.equal(invalid.ok, false);
+  assert.deepEqual(Array.from(invalid.errors), ["unsafe_transaction_id"]);
+});
+
+test("Google Ads transaction ids use the opaque HMAC v1 contract", () => {
+  const {
+    googleAdsTransactionIdSeguro_,
+    googleConversionTransactionId_,
+  } = loadFunctions();
+  const transactionId = googleConversionTransactionId_(
+    "opp_synthetic",
+    "qualified_lead",
+  );
+  assert.equal(googleAdsTransactionIdSeguro_(transactionId), true);
+  assert.match(transactionId, /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/);
+  assert.doesNotMatch(transactionId, /opp_synthetic|qualified_lead/);
 });
 
 test("visible Google Ads rows use the canonical name only with one click id", () => {
@@ -401,13 +456,12 @@ test("a stale worker cannot complete a newer lease", () => {
   );
 });
 
-test("a qualified row with GCLID becomes ready for IMPORT_GCLID", () => {
+test("a qualified row with GCLID becomes ready for IMPORT_GOOGLE_ADS", () => {
   const { ensureQualifiedGoogleConversion_ } = loadFunctions();
   const writes = [];
   const values = Array(25).fill("");
   values[1] = "G26F03";
   values[10] = "test-gclid";
-  values[14] = "wamid.old-message";
   const sheet = {
     getRange(row, column, rows, columns) {
       return {
@@ -432,7 +486,10 @@ test("a qualified row with GCLID becomes ready for IMPORT_GCLID", () => {
     JSON.parse(JSON.stringify(writes[0].values)),
     [["Sim", "Lead qualificado GCLID", 1]],
   );
-  assert.match(writes[1].values[0][1], /^LIV-[a-f0-9]{20}$/);
+  assert.match(
+    writes[1].values[0][1],
+    /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/,
+  );
 });
 
 test("GBRAID and WBRAID are eligible even without GCLID", () => {
@@ -468,12 +525,12 @@ test("GBRAID and WBRAID are eligible even without GCLID", () => {
   }
 });
 
-test("an event already marked for Google preserves its transaction id", () => {
+test("an event already marked for Google preserves a safe transaction id", () => {
   const { ensureQualifiedGoogleConversion_ } = loadFunctions();
   const values = Array(25).fill("");
   values[6] = "Sim";
   values[10] = "existing-gclid";
-  values[14] = "existing-order-id";
+  values[14] = `LIV-QL-v1-${"C".repeat(43)}`;
   const writes = [];
   const sheet = {
     getRange() {
@@ -492,7 +549,36 @@ test("an event already marked for Google preserves its transaction id", () => {
     "+5511988887777",
     new Date("2026-08-02T15:00:00Z"),
   );
-  assert.equal(writes[1][0][1], "existing-order-id");
+  assert.equal(writes[1][0][1], `LIV-QL-v1-${"C".repeat(43)}`);
+});
+
+test("an unsafe legacy transaction is quarantined instead of re-exported", () => {
+  const { ensureQualifiedGoogleConversion_ } = loadFunctions();
+  const values = Array(25).fill("");
+  values[6] = "Sim";
+  values[10] = "existing-gclid";
+  values[14] = "WA-legacy-last4";
+  const writes = [];
+  const sheet = {
+    getRange() {
+      return {
+        getDisplayValues: () => [values],
+        setValues(next) { writes.push(next); },
+      };
+    },
+  };
+
+  assert.equal(
+    ensureQualifiedGoogleConversion_(
+      sheet,
+      2,
+      "+5511900000000",
+      new Date("2026-08-02T15:00:00Z"),
+    ),
+    false,
+  );
+  assert.equal(writes[0][0][0], "Não");
+  assert.match(writes[1][0][1], /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/);
 });
 
 test("Daniel is never eligible for the Google Ads import", () => {

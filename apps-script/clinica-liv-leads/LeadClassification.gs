@@ -95,6 +95,12 @@ const GOOGLE_ADS_IMPORT_HEADERS = Object.freeze([
   "Moeda",
 ]);
 
+const GOOGLE_ADS_TRANSACTION_ID_PATTERN =
+  /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/;
+const GOOGLE_ADS_QUARANTINE_STATE = "quarantined_legacy";
+const GOOGLE_ADS_QUARANTINE_REASON =
+  "legacy_source_imported; attribution_result_nd";
+
 function validarLinhaImportacaoGoogleAds_(row) {
   const values = Array.isArray(row) ? row : [];
   const transactionId = String(values[0] || "").trim();
@@ -107,7 +113,18 @@ function validarLinhaImportacaoGoogleAds_(row) {
   });
   const errors = [];
   if (!transactionId) errors.push("missing_transaction_id");
+  if (
+    transactionId &&
+    !GOOGLE_ADS_TRANSACTION_ID_PATTERN.test(transactionId)
+  ) {
+    errors.push("unsafe_transaction_id");
+  }
   if (identifiers.length !== 1) errors.push("click_id_cardinality");
+  if (
+    String(values[4] || "").trim() !== CONFIG.qualifiedConversionName
+  ) {
+    errors.push("invalid_conversion_name");
+  }
   if (!String(values[5] || "").trim()) errors.push("missing_timestamp");
   if (!String(values[7] || "").trim()) errors.push("missing_currency");
   return {
@@ -207,6 +224,7 @@ function prepararFonteGoogleAdsPrimeiraAba() {
   );
   const legacy = spreadsheet.getSheetByName("IMPORT_GCLID");
   let migrated = 0;
+  let quarantinedLegacyRows = 0;
 
   if (legacy && legacy.getLastRow() >= 2) {
     const legacyRows = legacy
@@ -225,6 +243,10 @@ function prepararFonteGoogleAdsPrimeiraAba() {
       const transactionId = String(row[5] || "").trim();
       const gclid = String(row[0] || "").trim();
       if (!transactionId || !gclid || existingTransactions[transactionId]) {
+        return;
+      }
+      if (!GOOGLE_ADS_TRANSACTION_ID_PATTERN.test(transactionId)) {
+        quarantinedLegacyRows += 1;
         return;
       }
       target.appendRow([
@@ -265,6 +287,7 @@ function prepararFonteGoogleAdsPrimeiraAba() {
     ok: true,
     firstSheet: target.getName(),
     migratedLegacyRows: migrated,
+    quarantinedLegacyRows,
     totalConversions: Math.max(target.getLastRow() - 1, 0),
   };
 }
@@ -281,6 +304,62 @@ function stableLeadHash_(value) {
     })
     .join("")
     .slice(0, 20);
+}
+
+function googleAdsTransactionIdSeguro_(value) {
+  return GOOGLE_ADS_TRANSACTION_ID_PATTERN.test(String(value || "").trim());
+}
+
+function googleAdsTransactionSecret_() {
+  const secret = String(
+    PropertiesService
+      .getScriptProperties()
+      .getProperty(CONFIG.googleAdsTransactionSecretProperty) || "",
+  );
+  if (secret.length < 43) {
+    throw new Error("missing_google_ads_transaction_hmac_secret");
+  }
+  return secret;
+}
+
+function googleAdsBase64UrlSemPadding_(bytes) {
+  return Utilities.base64EncodeWebSafe(bytes).replace(/=+$/g, "");
+}
+
+function provisionarSegredoTransacaoGoogleAds() {
+  const properties = PropertiesService.getScriptProperties();
+  const existing = String(
+    properties.getProperty(CONFIG.googleAdsTransactionSecretProperty) || "",
+  );
+  if (existing.length >= 43) {
+    return {
+      ok: true,
+      created: false,
+      fingerprint: stableLeadHash_(existing),
+    };
+  }
+
+  const seed = [
+    Utilities.getUuid(),
+    Utilities.getUuid(),
+    Utilities.getUuid(),
+    String(new Date().getTime()),
+  ].join("|");
+  const secretBytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    seed,
+    Utilities.Charset.UTF_8,
+  );
+  const secret = googleAdsBase64UrlSemPadding_(secretBytes);
+  if (secret.length !== 43) {
+    throw new Error("invalid_google_ads_transaction_hmac_secret");
+  }
+  properties.setProperty(CONFIG.googleAdsTransactionSecretProperty, secret);
+  return {
+    ok: true,
+    created: true,
+    fingerprint: stableLeadHash_(secret),
+  };
 }
 
 function leadOpportunityId_(leadValues, phone) {
@@ -338,9 +417,7 @@ function ensureGoogleAdsImportRow_(spreadsheet, details) {
   );
   sheet.showSheet();
   const transactionId = String(details.transactionId || "");
-  if (findGoogleAdsEventRow_(sheet, transactionId)) return false;
-
-  sheet.appendRow([
+  const row = [
     transactionId,
     details.identifierType === "GCLID" ? details.clickId : "",
     details.identifierType === "GBRAID" ? details.clickId : "",
@@ -349,7 +426,16 @@ function ensureGoogleAdsImportRow_(spreadsheet, details) {
     details.conversionTimestamp,
     details.value,
     details.currency,
-  ]);
+  ];
+  const validation = validarLinhaImportacaoGoogleAds_(row);
+  if (!validation.ok) {
+    throw new Error(
+      "invalid_google_ads_import_row:" + validation.errors.join(","),
+    );
+  }
+  if (findGoogleAdsEventRow_(sheet, transactionId)) return false;
+
+  sheet.appendRow(row);
   return true;
 }
 
@@ -361,7 +447,10 @@ function enqueueGoogleAdsMilestone_(spreadsheet, details) {
   );
   const eventId = String(details.eventId || "");
   const existingRow = findGoogleAdsEventRow_(sheet, eventId);
-  ensureGoogleAdsImportRow_(spreadsheet, details);
+  const state = String(details.state || "ready");
+  if (state === "ready") {
+    ensureGoogleAdsImportRow_(spreadsheet, details);
+  }
   if (existingRow) return { created: false, row: existingRow };
 
   const now = new Date();
@@ -376,8 +465,8 @@ function enqueueGoogleAdsMilestone_(spreadsheet, details) {
     details.value,
     details.currency,
     details.transactionId,
-    "ready",
-    "",
+    state,
+    String(details.error || ""),
     now,
     now,
     details.professional || "amanda",
@@ -548,6 +637,16 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
       return;
     }
     ledgersByTransaction[transactionId] = { row: index + 2, values: row };
+    if (
+      String(row[10] || "") === "ready" &&
+      !googleAdsTransactionIdSeguro_(transactionId)
+    ) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        ledgerRow: index + 2,
+        reason: "unsafe_ready_transaction_id",
+      });
+    }
     if (String(row[5] || "") !== CONFIG.qualifiedConversionName) {
       result.conversionNameMismatches += 1;
       plans.ledgerNameRows.push(index + 2);
@@ -683,6 +782,10 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
     if (importsByTransaction[transactionId]) return;
     result.missingImport += 1;
     const row = ledgersByTransaction[transactionId].values;
+    if (String(row[10] || "") !== "ready") {
+      result.missingImport -= 1;
+      return;
+    }
     const validation = validarLinhaImportacaoGoogleAds_([
       transactionId,
       String(row[3] || "") === "GCLID" ? row[4] : "",
@@ -750,6 +853,277 @@ function reconciliarGoogleAdsLedgerEImportacao(input) {
     SpreadsheetApp.flush();
     result.applied = true;
   }
+  return result;
+}
+
+function quarantinarConversoesGoogleAdsLegadas(input) {
+  const apply = Boolean(
+    input &&
+    input.apply === true &&
+    input.confirmation === "QUARANTINE_LEGACY_GOOGLE_ADS",
+  );
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const importSheet = obterPlanilhaGoogleAdsExistente_(
+    spreadsheet,
+    CONFIG.googleAdsImportSheetName,
+    GOOGLE_ADS_IMPORT_HEADERS,
+  );
+  const eventSheet = obterPlanilhaGoogleAdsExistente_(
+    spreadsheet,
+    CONFIG.googleAdsEventSheetName,
+    GOOGLE_ADS_EVENT_HEADERS,
+  );
+  const leadSheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  if (!leadSheet) throw new Error("missing_google_ads_visible_sheet");
+  const columns = mapaCabecalhosOportunidade_(leadSheet);
+  [
+    "Enviar ao Google Ads?",
+    "Nome da conversão",
+    "ID da transação",
+  ].forEach(function requireHeader(header) {
+    if (!columns[header]) {
+      throw new Error("missing_google_ads_visible_header:" + header);
+    }
+  });
+
+  const legacySheet = spreadsheet.getSheetByName("IMPORT_GCLID");
+  const importRows = importSheet.getLastRow() >= 2
+    ? importSheet
+        .getRange(
+          2,
+          1,
+          importSheet.getLastRow() - 1,
+          GOOGLE_ADS_IMPORT_HEADERS.length,
+        )
+        .getValues()
+    : [];
+  const ledgerRows = eventSheet.getLastRow() >= 2
+    ? eventSheet
+        .getRange(
+          2,
+          1,
+          eventSheet.getLastRow() - 1,
+          GOOGLE_ADS_EVENT_HEADERS.length,
+        )
+        .getValues()
+    : [];
+  const ledgersByLegacyTransaction = {};
+  ledgerRows.forEach(function indexLedger(row, index) {
+    const transactionId = String(row[9] || "").trim();
+    if (!transactionId) return;
+    if (!ledgersByLegacyTransaction[transactionId]) {
+      ledgersByLegacyTransaction[transactionId] = [];
+    }
+    ledgersByLegacyTransaction[transactionId].push({
+      row: index + 2,
+      values: row,
+    });
+  });
+
+  const visibleByLegacyTransaction = {};
+  if (leadSheet.getLastRow() >= 2) {
+    const transactionValues = leadSheet
+      .getRange(
+        2,
+        columns["ID da transação"],
+        leadSheet.getLastRow() - 1,
+        1,
+      )
+      .getDisplayValues();
+    transactionValues.forEach(function indexVisible(row, index) {
+      const transactionId = String(row[0] || "").trim();
+      if (!transactionId) return;
+      if (!visibleByLegacyTransaction[transactionId]) {
+        visibleByLegacyTransaction[transactionId] = [];
+      }
+      visibleByLegacyTransaction[transactionId].push(index + 2);
+    });
+  }
+
+  const legacyRowsByTransaction = {};
+  if (legacySheet && legacySheet.getLastRow() >= 2) {
+    legacySheet
+      .getRange(2, 6, legacySheet.getLastRow() - 1, 1)
+      .getDisplayValues()
+      .forEach(function indexLegacy(row, index) {
+        const transactionId = String(row[0] || "").trim();
+        if (!transactionId) return;
+        if (!legacyRowsByTransaction[transactionId]) {
+          legacyRowsByTransaction[transactionId] = [];
+        }
+        legacyRowsByTransaction[transactionId].push(index + 2);
+      });
+  }
+
+  const plans = [];
+  const result = {
+    ok: true,
+    applied: false,
+    unsafeSourceRows: 0,
+    quarantinedRows: 0,
+    reviewRequired: 0,
+    issues: [],
+  };
+  importRows.forEach(function planQuarantine(row, index) {
+    const legacyTransactionId = String(row[0] || "").trim();
+    if (googleAdsTransactionIdSeguro_(legacyTransactionId)) return;
+    result.unsafeSourceRows += 1;
+    const ledgers = ledgersByLegacyTransaction[legacyTransactionId] || [];
+    const visibleRows = visibleByLegacyTransaction[legacyTransactionId] || [];
+    if (ledgers.length !== 1 || visibleRows.length !== 1) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        importRow: index + 2,
+        reason: ledgers.length !== 1
+          ? "legacy_ledger_cardinality"
+          : "legacy_visible_cardinality",
+      });
+      return;
+    }
+    const opportunityId = String(ledgers[0].values[1] || "").trim();
+    const milestone = String(ledgers[0].values[2] || "qualified_lead").trim();
+    if (!opportunityId) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        importRow: index + 2,
+        reason: "legacy_opportunity_missing",
+      });
+      return;
+    }
+    plans.push({
+      importRow: index + 2,
+      ledgerRow: ledgers[0].row,
+      visibleRow: visibleRows[0],
+      legacyRows: legacyRowsByTransaction[legacyTransactionId] || [],
+      safeTransactionId: googleConversionTransactionId_(
+        opportunityId,
+        milestone,
+      ),
+    });
+  });
+
+  result.ok = result.reviewRequired === 0 &&
+    plans.length === result.unsafeSourceRows;
+  if (!apply || !result.ok) return result;
+
+  const now = new Date();
+  plans.forEach(function applyQuarantine(plan) {
+    eventSheet.getRange(plan.ledgerRow, 10, 1, 5).setValues([[
+      plan.safeTransactionId,
+      GOOGLE_ADS_QUARANTINE_STATE,
+      GOOGLE_ADS_QUARANTINE_REASON,
+      eventSheet.getRange(plan.ledgerRow, 13).getValue() || now,
+      now,
+    ]]);
+    leadSheet
+      .getRange(plan.visibleRow, columns["Enviar ao Google Ads?"])
+      .setValue("Não");
+    leadSheet
+      .getRange(plan.visibleRow, columns["Nome da conversão"])
+      .setValue(CONFIG.qualifiedConversionName);
+    leadSheet
+      .getRange(plan.visibleRow, columns["ID da transação"])
+      .setValue(plan.safeTransactionId);
+    plan.legacyRows.forEach(function updateLegacy(row) {
+      legacySheet.getRange(row, 6).setValue(plan.safeTransactionId);
+    });
+    result.quarantinedRows += 1;
+  });
+  plans
+    .map(function importRow(plan) { return plan.importRow; })
+    .sort(function descending(a, b) { return b - a; })
+    .forEach(function removeUnsafeSource(row) {
+      importSheet.deleteRow(row);
+    });
+  if (legacySheet) legacySheet.hideSheet();
+  SpreadsheetApp.flush();
+  result.applied = true;
+  return result;
+}
+
+function planejarQuarentenaConversoesGoogleAdsLegadas() {
+  const result = quarantinarConversoesGoogleAdsLegadas({ apply: false });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function aplicarQuarentenaConversoesGoogleAdsLegadas() {
+  const result = quarantinarConversoesGoogleAdsLegadas({
+    apply: true,
+    confirmation: "QUARANTINE_LEGACY_GOOGLE_ADS",
+  });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function higienizarIdsTransacaoVisiveisLegados(input) {
+  const apply = Boolean(
+    input &&
+    input.apply === true &&
+    input.confirmation === "CLEAR_VISIBLE_LEGACY_TRANSACTION_IDS",
+  );
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const sheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  if (!sheet) throw new Error("missing_google_ads_visible_sheet");
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const sendColumn = Number(columns["Enviar ao Google Ads?"] || 0);
+  const transactionColumn = Number(columns["ID da transação"] || 0);
+  if (!sendColumn || !transactionColumn) {
+    throw new Error("missing_google_ads_visible_transaction_headers");
+  }
+
+  const result = {
+    ok: true,
+    applied: false,
+    legacyIdsFound: 0,
+    clearedRows: 0,
+    reviewRequired: 0,
+  };
+  if (sheet.getLastRow() < 2) return result;
+  const startColumn = Math.min(sendColumn, transactionColumn);
+  const width = Math.abs(transactionColumn - sendColumn) + 1;
+  const rows = sheet
+    .getRange(2, startColumn, sheet.getLastRow() - 1, width)
+    .getDisplayValues();
+  const sendOffset = sendColumn - startColumn;
+  const transactionOffset = transactionColumn - startColumn;
+  const rowsToClear = [];
+  rows.forEach(function planVisibleCleanup(row, index) {
+    const transactionId = String(row[transactionOffset] || "").trim();
+    if (!transactionId || googleAdsTransactionIdSeguro_(transactionId)) {
+      return;
+    }
+    result.legacyIdsFound += 1;
+    if (String(row[sendOffset] || "").trim() === "Sim") {
+      result.reviewRequired += 1;
+      return;
+    }
+    rowsToClear.push(index + 2);
+  });
+  result.ok = result.reviewRequired === 0;
+  if (!apply || !result.ok) return result;
+
+  rowsToClear.forEach(function clearLegacyId(row) {
+    sheet.getRange(row, transactionColumn).clearContent();
+    result.clearedRows += 1;
+  });
+  SpreadsheetApp.flush();
+  result.applied = true;
+  return result;
+}
+
+function planejarHigieneIdsTransacaoVisiveisLegados() {
+  const result = higienizarIdsTransacaoVisiveisLegados({ apply: false });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function aplicarHigieneIdsTransacaoVisiveisLegados() {
+  const result = higienizarIdsTransacaoVisiveisLegados({
+    apply: true,
+    confirmation: "CLEAR_VISIBLE_LEGACY_TRANSACTION_IDS",
+  });
+  console.log(JSON.stringify(result));
   return result;
 }
 
@@ -1574,10 +1948,22 @@ function googleConversionTimestamp_(date) {
 }
 
 function googleConversionTransactionId_(opportunityId, milestone) {
-  return "LIV-" + stableLeadHash_([
+  const payload = [
+    CONFIG.googleAdsCustomerId,
     opportunityId,
     milestone,
-  ].join("|"));
+  ].join("|");
+  const signature = Utilities.computeHmacSha256Signature(
+    payload,
+    googleAdsTransactionSecret_(),
+    Utilities.Charset.UTF_8,
+  );
+  const transactionId =
+    "LIV-QL-v1-" + googleAdsBase64UrlSemPadding_(signature);
+  if (!googleAdsTransactionIdSeguro_(transactionId)) {
+    throw new Error("invalid_google_ads_transaction_id");
+  }
+  return transactionId;
 }
 
 function ensureQualifiedGoogleConversion_(
@@ -1605,11 +1991,12 @@ function ensureQualifiedGoogleConversion_(
     { type: "GBRAID", value: String(values[11] || "").trim() },
     { type: "WBRAID", value: String(values[12] || "").trim() },
   ];
-  const identifier = clickIdentifiers.find(function hasValue(item) {
+  const identifiers = clickIdentifiers.filter(function hasValue(item) {
     return Boolean(item.value);
   });
 
-  if (!identifier) return false;
+  if (identifiers.length !== 1) return false;
+  const identifier = identifiers[0];
 
   const conversionDate = conversionAt instanceof Date
     ? conversionAt
@@ -1618,15 +2005,20 @@ function ensureQualifiedGoogleConversion_(
     leadOpportunityId_(values, phone);
   const milestone = "qualified_lead";
   const existingTransactionId = String(values[14] || "").trim();
+  const existingTransactionIsSafe = googleAdsTransactionIdSeguro_(
+    existingTransactionId,
+  );
+  const quarantinedLegacy = Boolean(existingTransactionId) &&
+    !existingTransactionIsSafe;
   const transactionId = String(values[6] || "") === "Sim" &&
-    existingTransactionId
+    existingTransactionIsSafe
     ? existingTransactionId
     : googleConversionTransactionId_(opportunityId, milestone);
   const conversionTimestamp = values[13] ||
     googleConversionTimestamp_(conversionDate);
 
   sheet.getRange(row, 7, 1, 3).setValues([[
-    "Sim",
+    quarantinedLegacy ? "Não" : "Sim",
     CONFIG.qualifiedConversionName,
     1,
   ]]);
@@ -1649,9 +2041,11 @@ function ensureQualifiedGoogleConversion_(
       currency: "BRL",
       transactionId,
       professional: "amanda",
+      state: quarantinedLegacy ? GOOGLE_ADS_QUARANTINE_STATE : "ready",
+      error: quarantinedLegacy ? GOOGLE_ADS_QUARANTINE_REASON : "",
     });
   }
-  return true;
+  return !quarantinedLegacy;
 }
 
 function completeLeadClassification_(job, classification) {

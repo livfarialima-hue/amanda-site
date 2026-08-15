@@ -172,6 +172,16 @@ test("lead writes origin and destination into the live column positions", () => 
     ),
     false,
   );
+  assert.equal(
+    writes.some((write) => write.column === 15),
+    false,
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(
+      writes.find((write) => write.column === 16)?.values,
+    )),
+    [["BRL", "Contato inicial recebido automaticamente pelo WhatsApp."]],
+  );
 });
 
 test("Meta site reference fills the canonical campaign and page fields", () => {
