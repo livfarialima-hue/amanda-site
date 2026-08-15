@@ -486,6 +486,10 @@ function sincronizarConsultasAoEditar(e) {
     return { ok: true, ignored: true };
   }
 
+  if (typeof normalizarNomeConversaoGoogleAdsAoEditar_ === "function") {
+    normalizarNomeConversaoGoogleAdsAoEditar_(e);
+  }
+
   return processarEdicaoNaAbaLeads_(e);
 }
 

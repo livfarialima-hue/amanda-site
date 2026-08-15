@@ -39,6 +39,13 @@ vm.runInContext(source, context, {
   filename: "ConsultasSync.gs",
 });
 
+test("the edit trigger invokes the canonical Google Ads conversion guard", () => {
+  assert.match(
+    source,
+    /normalizarNomeConversaoGoogleAdsAoEditar_\(e\)/,
+  );
+});
+
 test("recognizes only scheduling and completed statuses", () => {
   assert.equal(
     context.statusAgendaConsulta_("consulta agendada"),

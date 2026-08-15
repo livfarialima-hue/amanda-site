@@ -52,6 +52,7 @@ function loadFunctions() {
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
+      "linhaExigeNomeConversaoQualificadoGoogleAds_, " +
       "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
@@ -92,6 +93,38 @@ test("Google Ads import accepts exactly one click id and all required fields", (
   ]);
   assert.equal(invalid.ok, false);
   assert.deepEqual(Array.from(invalid.errors), ["click_id_cardinality"]);
+});
+
+test("visible Google Ads rows use the canonical name only with one click id", () => {
+  const { linhaExigeNomeConversaoQualificadoGoogleAds_ } = loadFunctions();
+  const columns = {
+    "Enviar ao Google Ads?": 7,
+    "Nome da conversão": 8,
+    GCLID: 11,
+    GBRAID: 12,
+    WBRAID: 13,
+  };
+  const eligible = Array(13).fill("");
+  eligible[6] = "Sim";
+  eligible[10] = "gclid-1";
+  assert.equal(
+    linhaExigeNomeConversaoQualificadoGoogleAds_(eligible, columns),
+    true,
+  );
+
+  const notSent = eligible.slice();
+  notSent[6] = "Não";
+  assert.equal(
+    linhaExigeNomeConversaoQualificadoGoogleAds_(notSent, columns),
+    false,
+  );
+
+  const ambiguous = eligible.slice();
+  ambiguous[11] = "gbraid-1";
+  assert.equal(
+    linhaExigeNomeConversaoQualificadoGoogleAds_(ambiguous, columns),
+    false,
+  );
 });
 
 test("Google Ads reconciliation accepts only exact visible and ledger identities", () => {

@@ -2,6 +2,13 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
+## Correção de 14/08/2026 — nome da conversão do Google Ads
+
+- A ação canônica permanece `Lead qualificado GCLID`; esse é o nome exato enviado por `IMPORT_GOOGLE_ADS` e reconhecido pela ação principal no Google Ads.
+- O menu nativo da coluna `Nome da conversão`, na aba `Google Ads - Conversões`, passou a incluir essa opção sem remover os valores históricos.
+- Linhas marcadas como `Enviar ao Google Ads? = Sim` e com exatamente um identificador entre GCLID, GBRAID e WBRAID são normalizadas automaticamente para o nome canônico após edição manual.
+- Valores históricos como `Lead qualificado` podem continuar visíveis em linhas que não são enviadas. Eles não devem ser usados em uma linha marcada para envio.
+
 > **Produção:** base do Apps Script na versão 89, com migração canônica de `Funil Comercial` e `Painel Econômico` vinculada ao commit `7f2a5a4` e aprovação segura de retomadas humanas vinculada aos commits `d9e3fd8` e `1d5b549`. A deduplicação reversível autorizada arquivou 3 linhas excedentes e ficou idempotente; o bloco posterior reconciliou 27 fases e deixou zero divergência nas oportunidades então ativas. Na reconciliação segura seguinte, 3 fases derivadas de consultas foram avançadas e 9 eventos existentes do Google Calendar tiveram somente metadados operacionais saneados, sem mudar data/hora nem criar duplicatas. O bloco Google Ads reconciliou as conversões elegíveis e sua importação; o bloco Meta Site passou a registrar categoria da referência, motivo de fallback, referência de origem e plataforma nos novos eventos. O painel operacional usa a fonte humana vigente e exibe cobertura, mediana, p95 e handoffs a partir de eventos tipados. A saúde das integrações usa a importação atual, o painel separa falha técnica de exclusão de negócio, a atualização da Central expira horários passados e os painéis gerenciais fecham em 128 oportunidades únicas. Permanecem bloqueados os casos históricos sem identidade inequívoca e os gates estatísticos de cobertura; `/lifting-facial/` não foi alterado.
 
 ### Painel humano e SLA operacional — `BOT-03` + `BOT-04`

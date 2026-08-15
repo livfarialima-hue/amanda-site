@@ -123,6 +123,81 @@ function validarLinhaImportacaoGoogleAds_(row) {
   };
 }
 
+function linhaExigeNomeConversaoQualificadoGoogleAds_(row, columns) {
+  const values = Array.isArray(row) ? row : [];
+  const headerMap = columns || {};
+  const sendColumn = Number(headerMap["Enviar ao Google Ads?"] || 0);
+  if (!sendColumn) return false;
+
+  const sendValue = String(values[sendColumn - 1] || "")
+    .trim()
+    .toLowerCase();
+  if (sendValue !== "sim") return false;
+
+  const clickIdCount = ["GCLID", "GBRAID", "WBRAID"].filter(
+    function hasClickId(header) {
+      const column = Number(headerMap[header] || 0);
+      return column && Boolean(String(values[column - 1] || "").trim());
+    },
+  ).length;
+
+  return clickIdCount === 1;
+}
+
+function normalizarNomeConversaoGoogleAdsAoEditar_(e) {
+  if (!e || !e.range) {
+    return { ok: false, error: "missing_edit_event" };
+  }
+
+  const sheet = e.range.getSheet();
+  if (sheet.getName() !== CONFIG.sheetName || e.range.getLastRow() < 2) {
+    return { ok: true, ignored: true, corrected: 0 };
+  }
+
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const requiredHeaders = [
+    "Enviar ao Google Ads?",
+    "Nome da conversão",
+    "GCLID",
+    "GBRAID",
+    "WBRAID",
+  ];
+  if (requiredHeaders.some(function missing(header) { return !columns[header]; })) {
+    return { ok: false, error: "missing_google_ads_visible_header" };
+  }
+
+  const editedFirstColumn = e.range.getColumn();
+  const editedLastColumn = e.range.getLastColumn();
+  const touchesRelevantColumn = requiredHeaders.some(function touched(header) {
+    const column = columns[header];
+    return column >= editedFirstColumn && column <= editedLastColumn;
+  });
+  if (!touchesRelevantColumn) {
+    return { ok: true, ignored: true, corrected: 0 };
+  }
+
+  let corrected = 0;
+  const firstRow = Math.max(2, e.range.getRow());
+  for (let row = firstRow; row <= e.range.getLastRow(); row += 1) {
+    const values = sheet
+      .getRange(row, 1, 1, sheet.getLastColumn())
+      .getDisplayValues()[0];
+    const conversionColumn = columns["Nome da conversão"];
+    if (
+      linhaExigeNomeConversaoQualificadoGoogleAds_(values, columns) &&
+      String(values[conversionColumn - 1] || "").trim() !==
+        CONFIG.qualifiedConversionName
+    ) {
+      sheet
+        .getRange(row, conversionColumn)
+        .setValue(CONFIG.qualifiedConversionName);
+      corrected += 1;
+    }
+  }
+
+  return { ok: true, ignored: false, corrected };
+}
+
 function prepararFonteGoogleAdsPrimeiraAba() {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const target = getOrCreateLeadAuxiliarySheet_(
