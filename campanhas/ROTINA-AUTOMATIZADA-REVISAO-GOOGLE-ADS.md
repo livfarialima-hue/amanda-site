@@ -115,4 +115,3 @@ Rollback:
 - Google Ads Scripts — envio com `MailApp`: https://developers.google.com/google-ads/scripts/docs/examples/mailapp
 - Google Ads Scripts — exemplo oficial de relatório semanal às segundas-feiras: https://developers.google.com/google-ads/scripts/docs/solutions/ad-performance
 - Google Ads Scripts — recomendação de aguardar a latência diária dos dados: https://developers.google.com/google-ads/scripts/docs/solutions/account-summary
-
