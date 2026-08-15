@@ -113,6 +113,16 @@ O problema atual não deve ser tratado apenas como falta de volume. No recorte r
 
 A prioridade descreve onde queremos concentrar posicionamento, atenção e aprendizado; não fixa antecipadamente a divisão de verba. A frente secundária deve buscar demanda incremental compatível com a formação, a capacidade e a economia da clínica, sem transformar o site em um catálogo indiferenciado nem retirar recursos eficientes de face sem evidência.
 
+### 4.5 Diretriz etária das campanhas faciais
+
+- **Decisão vigente para Meta Ads:** manter as campanhas faciais `M26F01W` e `M26F02S` com referência operacional de **40 anos ou mais**. Não reduzir esse piso nem ampliar a entrega por decisão automática da plataforma. Na próxima conferência, verificar se a configuração Advantage+ trata 40+ como controle efetivo ou sugestão e medir eventual entrega abaixo de 40; o nome do conjunto, isoladamente, não prova a idade entregue.
+- **Exceções:** otoplastia não entra nessa regra. Rinoplastia também não entra enquanto não houver página, campanha e estratégia próprias. Campanha de marca não deve receber exclusão etária por esta decisão.
+- **Google Ads:** não alterar a idade antes do gate agendado para 20 de agosto de 2026. Nesse gate, avaliar a exclusão das faixas conhecidas `18–24` e `25–34` somente em `S_BR_SP_LIFTING_FACIAL`, `S_BR_SP_BLEFAROPLASTIA`, `S_BR_SP_LIFTING_CERVICAL` e `S_BR_SP_CIRURGIA_FACIAL`. Manter sempre a faixa `Desconhecida`, porque ela pode conter pacientes elegíveis e já apresenta sinais de conversão.
+- **Evidência atual:** de 16 de julho a 14 de agosto de 2026, as faixas conhecidas de 18 a 34 anos somaram 65 cliques e R$ 92,77 nas quatro frentes faciais não otoplastia, cerca de 4,7% do gasto dessas frentes. A interface atribuiu duas conversões a esse recorte, mas a coluna mistura clique no WhatsApp com lead qualificado; consultas, comparecimentos e procedimentos por idade são N/D.
+- **Hipótese:** retirar do Google apenas as faixas conhecidas abaixo de 35 pode reduzir tráfego de baixa probabilidade sem impedir pessoas de 35 a 39 anos, agrupadas pelo Google em `35–44`, nem pessoas de idade desconhecida.
+- **Métricas e guardrails:** decidir por contato válido, lead qualificado, consulta agendada/realizada e gasto por faixa, nunca por CTR isolado; não combinar a mudança etária com orçamento, lance, palavra-chave, anúncio ou página na mesma janela; preservar otoplastia, marca e `Desconhecida`.
+- **Revisão:** decisão em 20 de agosto de 2026 após a prova técnica e a reconciliação disponível; se aplicada, primeira leitura em 27 de agosto e avaliação mínima após 14 dias completos. Manter somente se reduzir desperdício sem queda material de volume ou qualidade em 35+; reverter se houver perda relevante de contatos válidos/consultas, classificação etária inconsistente ou mensuração insuficiente.
+
 ## 5. Objetivos e métricas
 
 ### 5.1 Objetivo principal de negócio

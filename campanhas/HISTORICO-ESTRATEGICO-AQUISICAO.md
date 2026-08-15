@@ -6,6 +6,21 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — manutenção de Meta facial em 40+ e programação da decisão etária no Google
+
+- **Status:** decisão Meta vigente; nenhuma campanha alterada neste registro; avaliação Google programada.
+- **Responsável:** Daniel, com registro e programação pelo Codex.
+- **Área/campanhas:** Meta facial `M26F01W` e `M26F02S`; Google `S_BR_SP_LIFTING_FACIAL`, `S_BR_SP_BLEFAROPLASTIA`, `S_BR_SP_LIFTING_CERVICAL` e `S_BR_SP_CIRURGIA_FACIAL`.
+- **Mudança:** manter a referência operacional de 40+ nas campanhas faciais do Meta. Não alterar idade no Google agora; incluir no gate de 20/08 a decisão sobre excluir apenas `18–24` e `25–34` nas quatro campanhas faciais não otoplastia, sempre preservando `Desconhecida`. Otoplastia, marca e futura rinoplastia ficam fora desse escopo.
+- **Motivo e evidência:** segundo a operação, pacientes das cirurgias faciais, exceto otoplastia e rinoplastia, têm pelo menos 35 anos. Na conta Google, entre 16/07 e 14/08, 18–34 acumulou 65 cliques, R$ 92,77 e cerca de 4,7% do gasto das quatro frentes; as duas conversões exibidas misturam proxy de WhatsApp e qualificação, e consulta/procedimento por idade continuam N/D. No Meta, a configuração facial visível usa referência 40+, mas o efeito real do Advantage+ abaixo desse piso ainda deve ser conferido.
+- **Hipótese:** manter Meta em 40+ preserva a estratégia já adotada; no Google, excluir somente as duas faixas conhecidas abaixo de 35 pode reduzir gasto improvável sem bloquear 35–39 nem idade desconhecida.
+- **Métrica principal:** contatos válidos, leads qualificados, consultas agendadas/realizadas e gasto por faixa etária; distribuição efetiva de idade no Meta.
+- **Guardrails:** nenhuma exclusão de `Desconhecida`; nenhuma mudança em otoplastia, marca ou rinoplastia; nenhuma mudança etária junto com orçamento, lance, palavras, anúncios ou página; confirmar comportamento efetivo do Advantage+; N/D não vira zero.
+- **Data de revisão:** decisão Google em 20/08/2026; se aplicada, checagem em 27/08/2026 e leitura após 14 dias completos.
+- **Regra para manter:** manter Meta 40+ enquanto houver coerência operacional e ausência de perda comprovada; manter eventual exclusão Google se reduzir gasto abaixo de 35 sem perda material de contatos válidos/consultas em 35+.
+- **Regra para reverter:** restaurar as faixas Google se houver queda material de volume/qualidade, classificação inconsistente ou rastreamento insuficiente; revisar o piso Meta se a entrega real não respeitar a intenção ou surgir evidência de demanda qualificada abaixo de 40.
+- **Resultado atual:** cronograma e lembretes atualizados; nenhuma configuração de mídia alterada.
+
 ## 15 de agosto de 2026 — aceitação do risco residual do JID
 
 - **Status:** risco formalmente aceito; feature e schema permanecem desligados.

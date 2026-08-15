@@ -19,17 +19,19 @@
 - `Lead qualificado GCLID` ativa e totalmente otimizada na interface em 15/08;
 - alerta de 50% isolado na ação antiga `Lead qualificado`, último upload 25/07;
 - nenhuma nova campanha, PMax, ampla, tCPA ou aumento;
+- Meta facial mantido com referência operacional de 40+; confirmar entrega efetiva do Advantage+;
+- nenhuma exclusão etária aplicada no Google antes do gate de 20/08; preservar `Desconhecida`, otoplastia, marca e futura rinoplastia;
 - experimentos de RSA em série, nunca em paralelo.
 
 ## Agenda externa criada
 
 | Data | Bloco | Resultado esperado |
 |---|---|---|
-| 20/08 09:00 | Prova segura e possível início do RSA OTO adulto | recibo por evento, E2E reconciliado e decisão de religar ou manter pausado |
+| 20/08 09:00 | Prova segura, decisão etária Google e possível início do RSA OTO adulto | recibo por evento, E2E reconciliado; Meta facial confirmado em 40+; decidir se exclui somente `18–24` e `25–34` em LIFT/BLEF/CERV/FACE, mantendo `Desconhecida` |
 | 20/08 11:15 | Baseline 4G/CWV, vídeos e recursos | medianas de laboratório/campo e causas completas dos logotipos |
 | 20/08 14:00 | Compliance de galerias e Codame/jurídico | inventário documental e parecer humano registrado |
-| 27/08 09:00 | Saúde de sete dias | reconciliação de aceite, duplicidade, origem e funil |
-| 03/09 09:00 | Decisão OTO e início CERV | um teste encerrado antes do próximo |
+| 27/08 09:00 | Saúde de sete dias | reconciliação de aceite, duplicidade, origem e funil; se a idade Google mudar, primeira leitura isolada por faixa sem decisão prematura |
+| 03/09 09:00 | Decisão OTO, início CERV e leitura etária de 14 dias se aplicável | um teste encerrado antes do próximo; eventual exclusão `18–34` mantida ou revertida por gasto e qualidade, nunca por CTR isolado |
 | 17/09 09:00 | Decisão CERV e início BLEF | decisão por contato válido/qualificado |
 | 01/10 09:00 | Decisão BLEF e início FACE | decisão por funil, não CTR isolado |
 | 15/10 09:00 | Decisão FACE e início da variante de composição em LIFT preço | início somente após encerramento de FACE; não prometer faixa pública |
