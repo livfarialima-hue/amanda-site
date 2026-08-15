@@ -1,5 +1,21 @@
 # Instruções permanentes do projeto
 
+## Governança entre repositório, Drive e plataformas
+
+Antes de qualquer trabalho que envolva campanhas, site, bot, WhatsApp, planilha LEADS, CRM, Apps Script, atribuição, auditoria, publicação ou monitoramento, leia:
+
+`docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md`
+
+Esse documento define onde cada informação deve ser consultada e alterada. Em resumo:
+
+- o repositório é a fonte canônica de código, estratégia, contratos, testes, runbooks e histórico de execução;
+- o Google Drive guarda originais de mídia, exportações, evidências e cópias fechadas de auditorias, sem concorrer com o repositório;
+- a planilha LEADS, os gerenciadores de anúncios, o Calendar, o GA4 e as demais plataformas ao vivo são a fonte do estado operacional atual de cada sistema;
+- código, estratégia, contratos, planilhas ou auditorias em andamento não devem ser duplicados para criar uma segunda fonte editável;
+- toda mudança deve seguir a sequência local, testes, commit intencional, autorização explícita, publicação do commit aprovado, verificação e registro.
+
+Se houver divergência entre uma cópia no Drive e um documento versionado no repositório, o documento local commitado prevalece, salvo para dados operacionais que existam somente na plataforma ao vivo. A divergência deve ser registrada e corrigida, não reconciliada por suposição.
+
 ## Fonte canônica da estratégia
 
 Antes de analisar, propor ou executar qualquer mudança que afete Google Ads, posicionamento de aquisição, público, orçamento, estrutura de campanhas, conversões, lances, páginas de destino, qualificação, preço ou passagem do lead para consulta, leia:
