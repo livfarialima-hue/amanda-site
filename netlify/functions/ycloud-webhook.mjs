@@ -117,7 +117,10 @@ import {
 import {
   completeInboundRecovery,
   registerInboundRecovery,
+  settleDeferredInboundRecovery,
+  shouldAwaitActiveReplyBeforeAcknowledgement,
   shouldCompleteInboundRecovery,
+  shouldSuppressExactInboundDuplicate,
 } from "./lib/inbound-recovery.mjs";
 import {
   applyPatientRelationshipPolicy,
@@ -2955,8 +2958,12 @@ export default async (request, context) => {
     });
   }
 
-  const suppressExactDuplicate =
-    exactMessageDuplicate && !recoveredExactDuplicate && !durableRetry;
+  const suppressExactDuplicate = shouldSuppressExactInboundDuplicate({
+    exactMessageDuplicate,
+    recoveredExactDuplicate,
+    durableRetry,
+    recoveryRegistration,
+  });
 
   if (
     !suppressExactDuplicate &&
@@ -3869,6 +3876,13 @@ export default async (request, context) => {
   }
 
   if (shouldQueueOpenAIActive) {
+    const deterministicMarketingOpening =
+      automationPlan.reason === "known_procedure" &&
+      isLikelyMarketingPrefilledMessage({
+        text,
+        platform: attribution.platform,
+        referralContext,
+      });
     const activePromise = completeOpenAIActive({
       input: {
         eventId: String(eventId),
@@ -3908,12 +3922,30 @@ export default async (request, context) => {
 
     aiActiveQueued = true;
 
-    if (typeof context?.waitUntil === "function") {
+    const mustFinishBeforeAcknowledgement =
+      shouldAwaitActiveReplyBeforeAcknowledgement({
+        deterministicReply: deterministicMarketingOpening,
+        recoveryRegistration,
+      });
+
+    if (
+      typeof context?.waitUntil === "function" &&
+      !mustFinishBeforeAcknowledgement
+    ) {
       aiActiveStatus = "deferred";
+      const trackedActivePromise = settleDeferredInboundRecovery(
+        activePromise,
+        {
+          eventId: String(eventId),
+          outcome: humanTakeoverActive
+            ? "human_takeover"
+            : "processed",
+        },
+      );
       try {
-        context.waitUntil(activePromise);
+        context.waitUntil(trackedActivePromise);
       } catch {
-        const outcome = await activePromise;
+        const outcome = await trackedActivePromise;
         aiActiveStatus = outcome?.status || "failed";
         aiActiveReplySent = outcome?.replySent === true;
       }

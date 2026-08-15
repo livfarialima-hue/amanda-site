@@ -62,6 +62,84 @@ export function shouldCompleteInboundRecovery({
   return true;
 }
 
+export function shouldSuppressExactInboundDuplicate({
+  exactMessageDuplicate,
+  recoveredExactDuplicate,
+  durableRetry,
+  recoveryRegistration,
+}) {
+  if (!exactMessageDuplicate) return false;
+  if (recoveredExactDuplicate || durableRetry) return false;
+
+  // The spreadsheet can already contain the inbound event even though the
+  // patient-facing reply failed later in the same invocation. We may silence
+  // an exact provider retry only when the durable lifecycle itself proves that
+  // all applicable automatic work was completed. Outbound delivery remains
+  // idempotent by event id, so retrying an unfinished event cannot send twice.
+  return (
+    recoveryRegistration?.status === "duplicate" &&
+    recoveryRegistration?.reason === "already_completed"
+  );
+}
+
+export function shouldAwaitActiveReplyBeforeAcknowledgement({
+  deterministicReply,
+  recoveryRegistration,
+}) {
+  return (
+    deterministicReply === true ||
+    recoveryRegistration?.status === "failed"
+  );
+}
+
+const TERMINAL_DEFERRED_OUTCOMES = new Set([
+  "awaiting_human_learning",
+  "blocked_contact_preference",
+  "completed",
+  "completed_no_reply",
+  "duplicate",
+  "reviewed",
+  "superseded",
+]);
+
+export async function settleDeferredInboundRecovery(
+  work,
+  {
+    eventId,
+    outcome = "processed",
+    completeInboundRecoveryImpl = completeInboundRecovery,
+  } = {},
+) {
+  let result;
+  try {
+    result = await work;
+  } catch {
+    return {
+      status: "failed",
+      errorCode: "deferred_work_rejected",
+      replySent: false,
+      recoveryStatus: "pending",
+    };
+  }
+
+  const status = String(result?.status || "");
+  if (!TERMINAL_DEFERRED_OUTCOMES.has(status)) {
+    return {
+      ...(result || { status: "failed", replySent: false }),
+      recoveryStatus: "pending",
+    };
+  }
+
+  const completion = await completeInboundRecoveryImpl(
+    { eventId: String(eventId || "") },
+    { outcome },
+  );
+  return {
+    ...result,
+    recoveryStatus: completion.status,
+  };
+}
+
 function normalizedPending(value) {
   if (!value || typeof value !== "object") return null;
 
