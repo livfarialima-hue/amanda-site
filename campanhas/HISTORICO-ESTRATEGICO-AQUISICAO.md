@@ -6,6 +6,20 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — imagem social institucional e retirada da proibição absoluta de lifting
+
+- **Status:** autorizada para publicação por Daniel.
+- **Responsável:** Codex, sob autorização explícita de Daniel.
+- **Área:** metadados sociais do site, incluindo `/lifting-facial/`.
+- **Mudança:** padronização de `og:image` em 43 páginas e de `twitter:image` em 32 delas com a foto da Dra. Amanda palestrando em congresso. A regra canônica de lifting passa a exigir justificativa, autorização específica, isolamento e mensuração, em vez de proibir absolutamente qualquer mudança.
+- **Motivo e evidência:** as alterações locais já existentes foram auditadas e continham exclusivamente a troca da imagem de compartilhamento; não havia mudança de texto, layout, vídeo, CTA, conteúdo visível ou funcionamento. Daniel revisou esse escopo e autorizou a publicação.
+- **Hipótese:** uma imagem de congresso pode reforçar autoridade profissional nas prévias compartilhadas sem modificar a experiência da página.
+- **Métrica principal:** aparência correta da prévia em WhatsApp, Facebook e demais plataformas; tráfego social para as páginas permanece como indicador diagnóstico.
+- **Guardrail:** preservar textos, layout, vídeo, CTA e conteúdo visível; não interpretar a troca como teste causal de conversão; revisar recortes automáticos porque a imagem de origem é vertical.
+- **Data de revisão:** na primeira inspeção de prévia após a publicação e novamente em 29 de agosto de 2026.
+- **Regra para manter:** manter se as plataformas exibirem a Dra. Amanda e o contexto profissional de forma legível, sem recorte inadequado.
+- **Regra para reverter:** restaurar a imagem horizontal anterior ou publicar uma derivação horizontal aprovada se a prévia cortar a médica, o contexto do congresso ou produzir composição inadequada.
+
 ## 14 de agosto de 2026 — aprovação do cenário corretivo e dos gates de crescimento
 
 - **Status:** planejada e em implementação local; nenhuma mudança externa, publicação, renovação ou aumento de orçamento foi autorizada por esta entrada.

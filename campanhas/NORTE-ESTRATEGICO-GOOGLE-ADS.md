@@ -6,7 +6,7 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 14 de agosto de 2026
+**Última revisão estratégica:** 15 de agosto de 2026
 **Próxima revisão prevista:** 20 de agosto de 2026 para os gates técnicos e 27 de agosto de 2026 para a primeira janela operacional, ou antes se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
 
 ## 1. Regra de governança
@@ -190,7 +190,7 @@ A auditoria integrada de 13 de agosto de 2026 foi aprovada como base do trabalho
 - **Meta:** usar WhatsApp direto `M26F01W` como controle. A rota Site `M26F02S` recebe R$ 0 de verba nova até passar no teste ponta a ponta; depois do gate, pode receber teste isolado de até R$ 300, ainda sujeito a autorização de publicação.
 - **Qualidade do funil:** nenhum painel, CPL qualificado, consulta ou ROAS deve orientar escala enquanto oportunidade, fase, consulta, Calendar e evento de mídia não estiverem reconciliados no mesmo grão.
 - **Otoplastia:** não atribuir o problema atual ao vídeo sem teste prospectivo que mantenha destino, público e orçamento iguais entre variantes e compare contato válido, qualificado e consulta.
-- **Lifting facial:** por instrução expressa de Daniel, não alterar texto, layout, vídeo, CTA ou qualquer característica de `/lifting-facial/` neste ciclo corretivo.
+- **Lifting facial:** a página `/lifting-facial/` pode ser analisada e modificada quando houver justificativa e autorização específica de Daniel. Mudanças devem ser isoladas, documentadas e avaliadas pela métrica correspondente; não existe proibição absoluta. Em 15/08/2026 foi autorizada somente a troca da imagem de prévia social (`og:image` e `twitter:image`) pela foto da Dra. Amanda palestrando em congresso, sem alterar texto, layout, vídeo, CTA ou conteúdo visível da página.
 
 Gates mínimos para liberar crescimento:
 
