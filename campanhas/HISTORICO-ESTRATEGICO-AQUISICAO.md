@@ -8,7 +8,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 15 de agosto de 2026 — rotina automatizada de revisão e sugestões do Google Ads
 
-- **Status:** código local testado; publicação e programação na conta em andamento neste trabalho.
+- **Status:** ativo na conta, somente leitura, com programação diária verificada.
 - **Responsável:** Codex, sob solicitação de Daniel.
 - **Área/conta:** Google Ads `995-334-4486 — Dra Amanda Schroeder`.
 - **Mudança:** criação de uma rotina somente leitura com execução diária entre 09:00 e 10:00. Ela envia apenas alertas críticos nos dias comuns, um relatório completo toda segunda-feira e uma leitura ampliada de 90 dias no primeiro dia útil do mês. O relatório cobre campanhas, termos, positivas, negativas diretas, ações de conversão, políticas, mudanças recentes, parcela de impressões e sugestões priorizadas. Nenhuma recomendação é aplicada automaticamente.
@@ -19,7 +19,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 - **Data de revisão:** conferir os três primeiros relatórios completos; primeira revisão estrutural em 1º de setembro de 2026.
 - **Regra para manter:** manter se o relatório chegar no prazo, não gerar falso positivo recorrente e ajudar decisões rastreáveis sem alterar a conta.
 - **Regra para reverter:** pausar a programação diante de e-mail indevido, consulta de conta errada, sugestão sistematicamente perigosa, falha de privacidade ou qualquer mutação; corrigir localmente antes de reativar.
-- **Resultado atual:** testes locais específicos aprovados; estado externo será completado após prévia, autorização da conta, envio de teste e programação verificável.
+- **Resultado atual:** código versionado e publicado na conta como script `12117745 — LIV — Revisão Google Ads — somente leitura`; autorização concluída; visualização de 15/08/2026 às 20:45 BRT finalizada em 10 segundos, sem mudanças na conta; registro confirmou envio do relatório para `daniel.added@gmail.com`; programação diária `09:00–10:00` visível e ativa. A primeira revisão semanal automática ocorrerá em 17/08/2026.
 
 ## 15 de agosto de 2026 — manutenção de Meta facial em 40+ e programação da decisão etária no Google
 

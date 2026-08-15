@@ -1,6 +1,6 @@
 # Rotina automatizada de revisão do Google Ads
 
-**Status:** contrato operacional subordinado ao Norte Estratégico
+**Status:** ativo na conta; contrato operacional subordinado ao Norte Estratégico
 
 **Conta:** `995-334-4486 — Dra Amanda Schroeder`
 
@@ -9,6 +9,12 @@
 **Destinatário operacional:** Daniel
 
 **Código versionado:** `google-ads-scripts/google-ads-search-review-email.js`
+
+**Script na conta:** `12117745 — LIV — Revisão Google Ads — somente leitura`
+
+**Programação verificada:** diariamente, entre `09:00` e `10:00`, no fuso da conta
+
+**Ativação:** 15/08/2026; visualização concluída sem mudanças e e-mail de teste enviado para `daniel.added@gmail.com`
 
 ## 1. Objetivo
 
@@ -87,12 +93,12 @@ O e-mail não autoriza clicar em recomendações automáticas do Google e não a
 
 ## 7. Teste, monitoramento e rollback
 
-Antes de ativar:
+Gates de ativação concluídos em 15/08/2026:
 
 - testes locais verdes;
 - conta validada pelo ID;
 - prévia do Google Ads Script sem chamada de mutação;
-- e-mail de teste recebido;
+- e-mail de teste enviado pelo script;
 - programação diária visível na conta.
 
 Após ativar:
