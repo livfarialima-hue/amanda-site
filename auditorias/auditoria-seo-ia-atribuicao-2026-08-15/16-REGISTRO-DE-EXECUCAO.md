@@ -1,24 +1,27 @@
-# Registro de execução — implementação local não publicada
+# Registro de execução — publicação coordenada default-off
 
 **Data de corte:** 2026-08-15, America/Sao_Paulo.
-**Base Git observada:** `84a16ca466d1a55fe2d10ecee563b7e1d2d18a55`.
-**Estado:** worktree compartilhado com mudanças locais não commitadas de múltiplos subpacotes.
-**Publicação:** não executada.
-**Produção:** não inspecionada nem alterada nesta etapa.
+**Commit candidato publicado:** `50d7ea175cd5e1f5bb60c6afed8912da50931d42`.
+**Estado:** pacote técnico versionado e publicado em modo default-off.
+**Netlify:** deploy de produção `6a80bef31b7d69000853db97`, concluído e publicado.
+**Apps Script:** versão 91 no deployment canônico preservado `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`.
+**Produção:** inspecionada por smoke tests não destrutivos após a publicação.
 
 ## Resultado
 
-Há implementação local relevante para contenção de IDs, logs seguros, gate de artefato, jornada de atribuição, schema aditivo default-off, projeções de first/current touch, origem informada separada, reconciliação segura de Calendar e gates operacionais de SLA/rota. O snapshot atual também remove `JID` antes de bot/Sheets, preserva TTLs absolutos, vincula o resgate a claimant HMAC e impede que o código conflitante `M26O01W` seja retropreenchido como WhatsApp direto sem evidência. Nada disso deve ser descrito como live: não existe commit único que identifique o conjunto atual, não houve deploy nem ativação do schema ou da feature. A única escrita externa desta etapa foram lembretes de projeto no Google Calendar, solicitados pelo usuário e sem dados de pacientes.
+O pacote técnico de contenção de IDs, logs seguros, gate de artefato, jornada de atribuição, schema aditivo, projeções de first/current touch, origem informada separada, reconciliação segura de Calendar e gates operacionais de SLA/rota foi publicado. O JavaScript público permanece com `attributionJourneyEnabled=false`, e a propriedade `ATTRIBUTION_SCHEMA_VERSION` permaneceu ausente; portanto a jornada rica, a linha `JID`, as novas colunas e as migrações não foram ativadas. O código publicado remove `JID` antes de bot/Sheets quando o modo rico vier a ser autorizado, preserva TTLs absolutos, vincula o resgate a claimant HMAC e impede que `M26O01W` seja retropreenchido como WhatsApp direto sem evidência.
+
+Os smoke tests observaram: home, página de custo, `robots.txt`, `sitemap.xml`, tracking e web app com HTTP 200; arquivo sentinela de auditoria com HTTP 404; endpoint de jornada com HTTP 405 para GET; flag pública desligada; nenhuma faixa antiga na página de custo; nenhum `JID` no HTML público; e versão canônica de cache `20260815-attribution4` carregada.
 
 As pendências materiais que ainda impedem a ativação são:
 
-1. o agendamento e o segredo do purge não foram publicados ou verificados;
+1. o purge agendado foi publicado, mas a primeira execução física e a retenção live ainda não foram observadas; o segredo manual de purge continua propositalmente ausente porque nenhum expurgo manual foi autorizado;
 2. retenção e acesso de Sheets, CRM, backups e plataformas externas continuam sem decisão;
 3. a origem informada possui campo e projeção separados, mas ainda não tem produtor estruturado; nenhum texto é interpretado automaticamente;
 4. a trilha rica ainda depende de uma linha `JID` visível/editável no texto pré-preenchido e não pode ser ativada antes de decisão de comunicação/privacidade ou de um transportador alternativo comprovado;
 5. alerta agregado de ATR-008, reconciliação live LEADS=CRM, estado real de Calendar/SLA e prova Meta → site não foram comprovados.
 
-O contrato técnico que fixa a correção esperada está em `campanhas/CONTRATO-ATRIBUICAO-ORIGEM.md`. A situação dos 59 IDs está em `17-STATUS-RECOMENDACOES.csv`.
+O contrato técnico está em `campanhas/CONTRATO-ATRIBUICAO-ORIGEM.md`. O arquivo `17-STATUS-RECOMENDACOES.csv` preserva o estado imediatamente anterior à publicação; este registro é a fonte de verdade para o deploy default-off de 15/08/2026.
 
 ## Fontes e método
 

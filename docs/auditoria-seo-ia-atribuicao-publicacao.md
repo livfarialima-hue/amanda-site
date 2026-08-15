@@ -44,7 +44,7 @@ Todo registro operacional desta execução deve conter apenas data, versão, com
 | Deploy/commit Netlify ativo | N/D | não consultado em sessão autenticada | capturar antes de publicar |
 | Flag efetiva em produção | N/D | não consultada no artefato publicado | comprovar antes e depois |
 | Presença dos novos segredos em produção | N/D | valores e presença não foram consultados | verificar apenas presença/fingerprint, nunca valor |
-| `ATTRIBUTION_SCHEMA_VERSION` ao vivo | N/D | Script Properties não consultadas | se estiver `v1`, interromper o plano default-off |
+| `ATTRIBUTION_SCHEMA_VERSION` ao vivo | ausente em 15/08/2026 16:20 BRT | Script Properties no alvo canônico, antes do deploy | modo default-off confirmado |
 | URLs/parâmetros atuais dos objetos Meta | N/D | conta não consultada neste snapshot | inventariar em modo somente leitura antes de qualquer edição |
 | Estado live de LEADS e CRM para o schema novo | N/D | nenhuma sonda ponta a ponta foi executada | não afirmar funcionamento nem taxa zero |
 | Comando efetivo de deploy Netlify | N/D | não há script de deploy no `package.json` nem workflow versionado | usar somente o fluxo operacional já aprovado e registrar o método |

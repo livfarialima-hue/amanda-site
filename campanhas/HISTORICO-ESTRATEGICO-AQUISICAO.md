@@ -8,7 +8,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 15 de agosto de 2026 — retirada das faixas cirúrgicas públicas e preservação da intenção de preço
 
-- **Status:** implementação local concluída e não publicada; Google Ads consultado somente em leitura e sem alteração ao vivo.
+- **Status:** site, bot, backend e Apps Script publicados em 15/08/2026; Google Ads permaneceu sem alteração ao vivo até o fechamento técnico.
 - **Responsável:** Codex, sob solicitação de Daniel para reduzir o risco da divulgação pública de faixas e preservar uma resposta útil para quem pesquisa preço.
 - **Área/campanha:** páginas públicas de lifting e custos, atendimento privado no WhatsApp e campanha `S_BR_SP_LIFTING_FACIAL`.
 - **Mudança:** as faixas numéricas de minilifting e lifting foram retiradas da página específica de custos, do FAQ e schema da página principal de lifting, do guia geral de custos faciais e dos cards públicos relacionados. O guia específico permanece ativo para explicar equipe médica, hospital, anestesia, materiais, exames, eventual pernoite, acompanhamento, extensão e necessidades clínicas. No WhatsApp, a primeira pergunta sobre preço recebe composição e orçamento individual; somente diante de pedido explícito reiterado pode ser enviada uma faixa aprovada, no mesmo texto que informa ser estimativa geral, não orçamento, proposta ou garantia, que o valor final pode ficar fora da faixa e que depende da avaliação, com link para o guia. A faixa não é repetida automaticamente na mesma conversa e outros procedimentos seguem para revisão humana.
@@ -20,7 +20,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 - **Data de revisão:** leitura preliminar após 28 dias completos da publicação; decisão de manter, pausar ou testar consolidação somente com rastreamento até o funil validado e, preferencialmente, pelo menos 100 cliques no grupo de preço. Revisão Codame/jurídica quando disponível.
 - **Regra para manter:** manter as duas intenções separadas se o grupo de preço gerar contatos válidos, qualificados ou consultas com custo aceitável e o atendimento permanecer seguro; manter a política privada se não houver faixa pública nem respostas fora dos guardrails.
 - **Regra para reverter:** interromper a resposta automática com faixa diante de mensagem ambígua, erro de contexto, repetição, reclamação ou orientação jurídica contrária; testar consolidação somente depois da amostra e da mensuração mínimas, removendo antes as cinco negativas exatas de roteamento. Não restaurar números públicos sem nova decisão formal e autorização específica.
-- **Resultado:** pendente de commit e publicação autorizada; nenhuma mudança foi executada no Google Ads nesta etapa.
+- **Resultado:** publicado no commit candidato `50d7ea1`, deploy Netlify `6a80bef31b7d69000853db97` e Apps Script versão 91, preservando o deployment canônico. A página pública ficou sem faixas cirúrgicas; o bot mantém a resposta privada condicionada; a jornada rica e o schema novo permaneceram desligados. Nenhuma mudança foi executada no Google Ads até este registro.
 
 ## 15 de agosto de 2026 — execução autorizada da auditoria de Google Ads de 14/08
 

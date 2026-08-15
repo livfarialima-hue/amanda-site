@@ -1,6 +1,6 @@
 # Contrato de atribuição de origem
 
-**Status:** rascunho técnico local v1, não publicado e não ativado em produção.
+**Status:** contrato técnico v1 e scaffold publicados em modo default-off; jornada rica e schema não ativados.
 **Data de referência:** 2026-08-15, America/Sao_Paulo.
 **Escopo:** aquisição e mensuração; este documento não altera texto clínico, mensagem ao paciente, preço, público, orçamento, lances ou estratégia.
 

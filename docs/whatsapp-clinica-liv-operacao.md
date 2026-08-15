@@ -361,3 +361,15 @@ Se houver comportamento inesperado, alterar no Netlify:
 Nesse modo, a IA continua sendo avaliada nos registros, mas não envia respostas aos pacientes. Para desligar também a avaliação, usar:
 
 `WHATSAPP_AUTOMATION_MODE=off`
+
+## Publicação técnica default-off de 15/08/2026
+
+- Alvo canônico confirmado por projeto, deployment e planilha antes da primeira escrita.
+- Apps Script publicado como versão 91, preservando o deployment existente.
+- Netlify publicado a partir do commit candidato `50d7ea1`, deploy `6a80bef31b7d69000853db97`.
+- `LEAD_IDENTITY_HMAC_SECRET` foi provisionado sem registrar seu valor; a key version ficou em `k1`.
+- `ATTRIBUTION_CLAIM_SECRET` foi provisionado apenas no contexto de produção do Netlify, sem registrar seu valor.
+- `attributionJourneyEnabled=false` permaneceu no JavaScript público e `ATTRIBUTION_SCHEMA_VERSION` permaneceu ausente. Nenhuma migração, backfill, nova coluna ou lead sintético foi executado.
+- Validação local: 657/657 testes, 44/44 URLs no gate técnico e artefato de 173 arquivos sem `auditorias/**`.
+- Smoke live: páginas, tracking, `robots.txt`, `sitemap.xml` e web app HTTP 200; sentinela de auditoria HTTP 404; endpoint de jornada HTTP 405 em GET; nenhuma faixa antiga ou `JID` no HTML público.
+- Rollback: Netlify para o deploy anterior `6a808fcc31dd650008489886`; Apps Script para a versão 90 no mesmo deployment.
