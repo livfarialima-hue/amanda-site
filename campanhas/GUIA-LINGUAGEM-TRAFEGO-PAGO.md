@@ -58,6 +58,16 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `S_BR_SP_LIFTING_FACIAL` → `G26LIFT`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
+- Os nove grupos ativos usam estes códigos estáveis em `{_ag}`; todos foram conferidos em 15/08/2026 e as quatro lacunas foram corrigidas no mesmo dia:
+  - `AG_BLEFAROPLASTIA` → `ag_blefaroplastia`
+  - `AG_CIRURGIA_FACIAL` → `ag_cirurgia_facial`
+  - `AG_CERVICOPLASTIA` → `ag_lifting_cervical`
+  - `AG_LIPO_PAPADA` → `ag_lipo_papada`
+  - `AG_LIFTING_FACIAL` → `ag_lifting_facial`
+  - `AG_LIFTING_FACIAL_PRECO` → `ag_lifting_facial_preco`
+  - `AG_MARCA` → `ag_marca`
+  - `Adulto` em `S_BR_SP_OTOPLASTIA` → `ag_otoplastia_adulto`
+  - `AG_OTOPLASTIA_INFANTIL` → `ag_otoplastia_infantil`
 - Os aliases históricos continuam legíveis para preservar o passado, mas não devem ser usados em novas configurações.
 - Se o clique contiver `GCLID`, `GBRAID` ou `WBRAID`, mas a campanha ainda não tiver o parâmetro `origem`, o site acrescenta a referência genérica `G26ADS` à mensagem do WhatsApp.
 - Sem consentimento, GA4, Google Ads e Meta continuam bloqueados. A preservação operacional da referência e de um click ID já presente na URL ocorre sem criar cookie de publicidade e sem marcar consentimento como concedido; nenhum nome, telefone, e-mail ou conteúdo clínico deve ser transportado como parâmetro de mídia.

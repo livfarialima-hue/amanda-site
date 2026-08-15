@@ -171,7 +171,7 @@ Esses números são direcionais. A amostra ainda não permite conclusões estat�
 - O nome da ação é histórico: a nova fila aceita exatamente um entre GCLID, GBRAID ou WBRAID. Cada oportunidade gera no máximo um evento `qualified_lead`, com ID de transação opaco no formato `LIV-QL-v1-<HMAC-SHA256 base64url>`, calculado sobre conta, `Opportunity ID` e marco com segredo guardado fora da planilha. O ID não contém nome, telefone, e-mail, `wamid`, click ID, referência ou conteúdo da conversa.
 - O campo manual de consentimento para contato não é critério de elegibilidade da importação padrão por identificador de clique. Isso não autoriza marcar consentimento como concedido: Consent Mode, aviso de privacidade e a configuração padrão de consentimento da conexão no Data Manager devem permanecer corretos e auditáveis.
 - Não usar conversões otimizadas para leads com nome, telefone, e-mail ou outro identificador fornecido pela paciente nesse funil de saúde. A mensuração offline deve permanecer no modo padrão por click ID.
-- Em 15 de agosto de 2026, a ação foi confirmada ao vivo como **Principal**, incluída nas metas e na meta personalizada das seis campanhas, porém com status `Requer atenção`. A programação diária da conexão `LEADS` foi pausada durante a contenção; cinco eventos legados foram colocados em `quarantined_legacy` e não devem ser reenviados sem recibo. A automação só poderá ser religada após teste controlado, sem PII, que reconcilie preparado, enviado, aceito ou rejeitado e atribuído.
+- Em 15 de agosto de 2026, a ação foi confirmada ao vivo como **Principal**, incluída nas metas e na meta personalizada das seis campanhas. Na revisão posterior do mesmo dia, `Lead qualificado GCLID` apareceu como **ativa e totalmente otimizada**, com último upload exibido em 13/08. O alerta `Muitos campos estão sendo enviados — 50%` pertence à ação antiga `Lead qualificado`, com último upload em 25/07; por isso o diagnóstico agregado da fonte ainda exige atenção e não comprova recibo dos eventos atuais. A programação diária da conexão `LEADS` foi pausada durante a contenção; cinco eventos legados foram colocados em `quarantined_legacy` e não devem ser reenviados sem recibo. A automação só poderá ser religada após teste controlado, sem PII, que reconcilie preparado, enviado, aceito ou rejeitado e atribuído.
 - Clique no WhatsApp é um sinal intermediário e não deve substituir o lead qualificado como objetivo de negócio.
 
 ### 6.3 Orçamento
@@ -232,6 +232,8 @@ Busca orgânica, presença local e descoberta em buscadores com IA devem ser des
 | `S_BR_SP_LIFTING_FACIAL` | `G26LIFT` | Envelhecimento facial e lifting |
 | `S_BR_SP_MARCA` | `G26MARCA` | Pessoas que já procuram a Dra. Amanda ou a clínica |
 | `S_BR_SP_OTOPLASTIA` | `G26OTO` | Otoplastia, com distinção entre intenção adulta e infantil |
+
+Os nove grupos ativos têm um parâmetro `{_ag}` canônico. O mapa operacional completo fica em `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`; em 15/08/2026 a cobertura foi confirmada em 9/9 depois da correção das quatro lacunas de lipo de papada, otoplastia adulta, lifting de preço e otoplastia infantil. A prova de valor resolvido no clique, no site, no WhatsApp, em LEADS e no CRM continua sendo gate separado.
 
 Esta tabela descreve as campanhas conhecidas, não o portfólio futuro obrigatório. Qualquer nova campanha deve ser sustentada por intenção, página, mensuração, capacidade e hipótese econômica, e acrescentada à tabela antes ou no momento da ativação.
 
