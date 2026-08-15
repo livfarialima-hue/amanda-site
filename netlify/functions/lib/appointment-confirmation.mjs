@@ -254,6 +254,139 @@ function detectConsultationType(text) {
   return "Consulta presencial";
 }
 
+function cleanStructuredFieldValue(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^\*+|\*+$/g, "")
+    .trim();
+}
+
+function structuredAppointmentFields(text) {
+  const lines = String(text || "").split(/\r?\n/);
+  const hasReceiptHeading = lines.some(
+    (line) =>
+      normalize(line).replace(/:+$/, "") ===
+      "comprovante de agendamento",
+  );
+
+  if (!hasReceiptHeading) return null;
+
+  const fields = {};
+  for (const line of lines) {
+    const match = line.match(
+      /^\s*\*?\s*([^:*]+?)\s*:\s*\*?\s*(.*?)\s*\*?\s*$/u,
+    );
+    if (!match) continue;
+
+    const label = normalize(match[1]);
+    if (!label || Object.hasOwn(fields, label)) continue;
+    fields[label] = cleanStructuredFieldValue(match[2]);
+  }
+
+  return fields;
+}
+
+function validStructuredPatientName(value) {
+  const name = cleanStructuredFieldValue(value);
+  if (
+    name.length < 2 ||
+    name.length > 120 ||
+    /\d|@|https?:|www\./i.test(name) ||
+    !/^[\p{L}][\p{L}\s'.-]*$/u.test(name)
+  ) {
+    return null;
+  }
+
+  return name.replace(/\s+/g, " ");
+}
+
+function explicitStructuredProfessional(value) {
+  const comparable = normalize(value);
+  if (/\b(?:dr\s+)?daniel(?:\s+added)?\b/.test(comparable)) {
+    return "Dr. Daniel";
+  }
+  if (/\b(?:dra\s+)?amanda(?:\s+schroeder)?\b/.test(comparable)) {
+    return "Dra. Amanda";
+  }
+  return null;
+}
+
+function strictStructuredDate(value, baseDate) {
+  const raw = cleanStructuredFieldValue(value);
+  const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(.*)$/u);
+  if (!match) return null;
+
+  const requested = {
+    year: Number(match[3]),
+    month: Number(match[2]),
+    day: Number(match[1]),
+  };
+  const candidate = dateAtNoon(requested);
+  if (Number.isNaN(candidate.getTime())) return null;
+
+  const actual = localParts(candidate);
+  if (
+    actual.year !== requested.year ||
+    actual.month !== requested.month ||
+    actual.day !== requested.day
+  ) {
+    return null;
+  }
+
+  const scheduledDate = formatDate(candidate);
+  const today = formatDate(dateAtNoon(localParts(baseDate)));
+  if (scheduledDate < today) return null;
+
+  const declaredWeekday = normalize(match[4]).match(
+    /\b([2-6])\s*(?:a|ª)?\s*feira\b/,
+  );
+  if (
+    declaredWeekday &&
+    weekdayForIsoDate(scheduledDate) !== Number(declaredWeekday[1]) - 1
+  ) {
+    return null;
+  }
+
+  return scheduledDate;
+}
+
+function structuredAppointmentReceipt(text, baseDate) {
+  const fields = structuredAppointmentFields(text);
+  if (!fields) return null;
+
+  const patientName = validStructuredPatientName(fields.nome);
+  const scheduledDate = strictStructuredDate(fields.data, baseDate);
+  const scheduledTime = extractTime(fields.horario);
+  const professional = explicitStructuredProfessional(fields.medico);
+
+  if (
+    !patientName ||
+    !scheduledDate ||
+    !scheduledTime ||
+    !professional
+  ) {
+    return null;
+  }
+
+  const consultationType = detectConsultationType(
+    `${fields.endereco || ""} ${text}`,
+  );
+  return {
+    patientName,
+    scheduledDate,
+    scheduledTime,
+    professional,
+    consultationType,
+    location:
+      consultationType === "Teleconsulta"
+        ? "Teleconsulta"
+        : "ClÃ­nica LIV Faria Lima",
+    status: "Consulta agendada",
+    source: "WhatsApp - comprovante estruturado de agendamento",
+    confidence: "confirmed",
+  };
+}
+
 function publicAppointmentSlot(slot) {
   if (!slot) return null;
   const { _turnIndex, ...publicSlot } = slot;
@@ -708,6 +841,12 @@ export function detectManualAppointment({
 } = {}) {
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
+
+  const structuredReceipt = structuredAppointmentReceipt(
+    currentText,
+    baseDate,
+  );
+  if (structuredReceipt) return structuredReceipt;
 
   const fullContext = [
     ...(Array.isArray(recentConversation)

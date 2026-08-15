@@ -230,6 +230,14 @@ Essa consistência não libera escala por si só. Enquanto a ação continuar em
 
 Quando a paciente escolhe uma das duas datas sugeridas, a seleção entra na aba interna `_AGENDAMENTOS_PENDENTES`. Isso não confirma a consulta e não cria evento. A equipe recebe a resposta sugerida e somente a confirmação humana finaliza o registro em `Consultas` e na Google Agenda.
 
+### Comprovante estruturado de agendamento
+
+Uma mensagem humana com o cabeçalho `Comprovante de Agendamento` passa a valer como confirmação explícita somente quando trouxer, na própria mensagem, os quatro campos obrigatórios: `Nome`, `Data`, `Horário` e `Médico`. O médico deve ser identificado inequivocamente como Dra. Amanda Schroeder ou Dr. Daniel Added; a data precisa ser válida, não pode estar no passado e, quando o dia da semana for informado, ele deve coincidir com a data.
+
+Quando esses critérios forem atendidos, o sistema usa o nome escrito no comprovante, registra ou atualiza a consulta pelo fluxo canônico, projeta o agendamento na planilha e sincroniza a Google Agenda. O identificador da mensagem, a oportunidade, o telefone, a data, o horário e o profissional preservam a deduplicação: o mesmo comprovante processado novamente não deve criar uma segunda consulta nem um segundo evento.
+
+`Endereço`, `Retorno`, `Valor da consulta` e `Formas de pagamento` são informativos e não participam da decisão automática. Esses dados financeiros não são copiados para a Google Agenda. Comprovante incompleto, data impossível, divergência de dia da semana ou profissional não suportado não altera planilha nem agenda e deve seguir para conferência humana.
+
 ### Preferências permanentes de contato
 
 Na aba `Google Ads - Conversões`, as três colunas administrativas após o cadastro normal do lead são:

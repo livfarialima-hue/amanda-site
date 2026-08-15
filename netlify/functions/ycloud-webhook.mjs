@@ -2257,14 +2257,21 @@ export async function completeManualAppointmentDetection(
     return { status: "not_detected", reserved: false };
   }
 
-  const { confidence, ...appointment } = detection;
+  const {
+    confidence,
+    patientName: detectedPatientName,
+    ...appointment
+  } = detection;
+  const resolvedPatientName = String(
+    detectedPatientName || patientName || "",
+  ).trim();
   const appointmentId = `manual-${String(messageId || eventId)}`;
   const appointmentPayload = {
     ...appointment,
     appointmentId,
     eventId: String(eventId || ""),
     phone: patientPhone,
-    name: patientName,
+    name: resolvedPatientName,
   };
 
   if (confidence === "confirmed_partial") {
@@ -2293,7 +2300,7 @@ export async function completeManualAppointmentDetection(
     await sendAppointmentEmailImpl(
       {
         eventId: `${eventId}-manual-booking-incomplete-email`,
-        patientName,
+        patientName: resolvedPatientName,
         patientPhone,
         messageText: appointmentEmailBody({
           heading: recorded
@@ -2354,7 +2361,7 @@ export async function completeManualAppointmentDetection(
       await sendAppointmentEmailImpl(
         {
           eventId: `${eventId}-manual-booking-email`,
-          patientName,
+          patientName: resolvedPatientName,
           patientPhone,
           messageText: appointmentEmailBody({
             heading: reserved
@@ -2407,7 +2414,7 @@ export async function completeManualAppointmentDetection(
   await sendAppointmentEmailImpl(
     {
       eventId: `${eventId}-possible-booking-email`,
-      patientName,
+      patientName: resolvedPatientName,
       patientPhone,
       messageText: appointmentEmailBody({
         heading: "POSSÍVEL AGENDAMENTO MANUAL — CONFIRME",

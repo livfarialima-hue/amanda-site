@@ -267,6 +267,55 @@ test("a clear manual confirmation reserves the slot and emails Daniel", async ()
   );
 });
 
+test("a structured receipt uses its patient name in the canonical reservation payload", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "receipt-event",
+      messageId: "receipt-message",
+      patientName: "Nome incorreto do perfil",
+      patientPhone: "+5511900001234",
+      detection: {
+        patientName: "Paciente Exemplo",
+        scheduledDate: "2026-08-18",
+        scheduledTime: "14:00",
+        professional: "Dr. Daniel",
+        consultationType: "Consulta presencial",
+        location: "ClÃ­nica LIV Faria Lima",
+        status: "Consulta agendada",
+        source: "WhatsApp - comprovante estruturado de agendamento",
+        confidence: "confirmed",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        if (action === "reserve_appointment_slot") {
+          return {
+            ok: true,
+            responseData: { ok: true, reserved: true },
+          };
+        }
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    actions[0].payload.appointment.name,
+    "Paciente Exemplo",
+  );
+  assert.equal(
+    actions[0].payload.appointment.professional,
+    "Dr. Daniel",
+  );
+  assert.equal(
+    actions[1].payload.alert.patientName,
+    "Paciente Exemplo",
+  );
+});
+
 test("a confirmed human slot is still recorded when it is outside the automatic grid", async () => {
   const actions = [];
   const result = await completeManualAppointmentDetection(

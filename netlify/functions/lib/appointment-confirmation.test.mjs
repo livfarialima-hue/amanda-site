@@ -336,6 +336,98 @@ test("recognizes the manual closing used after the patient accepted", () => {
   assert.equal(result?.scheduledTime, "08:00");
 });
 
+test("treats a complete structured booking receipt as a confirmed Daniel appointment", () => {
+  const result = detectManualAppointment({
+    currentText: `*Comprovante de Agendamento:*
+
+*Nome:* Paciente Exemplo
+
+*Data:* 18/08/2026 - 3\u00aa Feira
+*Hor\u00e1rio:* 14h00
+*M\u00e9dico:* Dr. Daniel Added
+*Endere\u00e7o:* Rua Pais Leme, 215, Conjunto 710, Pinheiros, S\u00e3o Paulo - SP
+*Retorno*: Em at\u00e9 30 dias
+
+*Valor da consulta:* R$ 700,00
+*Formas de pagamento:* Dinheiro ou PIX
+
+Atenciosamente, Bruna`,
+    at: "2026-08-15T10:00:00-03:00",
+  });
+
+  assert.deepEqual(result, {
+    patientName: "Paciente Exemplo",
+    scheduledDate: "2026-08-18",
+    scheduledTime: "14:00",
+    professional: "Dr. Daniel",
+    consultationType: "Consulta presencial",
+    location: "ClÃ­nica LIV Faria Lima",
+    status: "Consulta agendada",
+    source: "WhatsApp - comprovante estruturado de agendamento",
+    confidence: "confirmed",
+  });
+});
+
+test("accepts the same structured receipt for Dra. Amanda", () => {
+  const result = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Ana Maria
+Data: 19/08/2026 - 4\u00aa Feira
+Hor\u00e1rio: 09:30
+M\u00e9dico: Dra. Amanda Schroeder`,
+    at: "2026-08-15T10:00:00-03:00",
+  });
+
+  assert.equal(result?.patientName, "Ana Maria");
+  assert.equal(result?.professional, "Dra. Amanda");
+  assert.equal(result?.scheduledDate, "2026-08-19");
+  assert.equal(result?.scheduledTime, "09:30");
+  assert.equal(result?.confidence, "confirmed");
+});
+
+test("does not schedule an incomplete or internally inconsistent structured receipt", () => {
+  const missingDoctor = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Ana Maria
+Data: 19/08/2026
+Hor\u00e1rio: 09:30`,
+    at: "2026-08-15T10:00:00-03:00",
+  });
+  const wrongWeekday = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Ana Maria
+Data: 19/08/2026 - 3\u00aa Feira
+Hor\u00e1rio: 09:30
+M\u00e9dico: Dra. Amanda`,
+    at: "2026-08-15T10:00:00-03:00",
+  });
+  const invalidDate = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Ana Maria
+Data: 31/02/2026
+Hor\u00e1rio: 09:30
+M\u00e9dico: Dra. Amanda`,
+    at: "2026-01-15T10:00:00-03:00",
+  });
+
+  assert.equal(missingDoctor, null);
+  assert.equal(wrongWeekday, null);
+  assert.equal(invalidDate, null);
+});
+
+test("does not schedule a structured receipt for an unsupported professional", () => {
+  const result = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Ana Maria
+Data: 19/08/2026
+Hor\u00e1rio: 09:30
+M\u00e9dico: Dr. Henrique Lane Staniak`,
+    at: "2026-08-15T10:00:00-03:00",
+  });
+
+  assert.equal(result, null);
+});
+
 test("preserves a confirmed manual appointment when the closing omits the time", () => {
   const result = detectManualAppointment({
     currentText: "Combinado então! Agradecemos e até lá",
