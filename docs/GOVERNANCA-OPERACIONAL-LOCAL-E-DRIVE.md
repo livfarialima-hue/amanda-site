@@ -52,6 +52,7 @@ Diretórios de entrada:
 | Necessidade | Começar por |
 |---|---|
 | Google Ads, Meta Ads, orçamento, campanhas, palavras, páginas e conversões | `AGENTS.md`, este documento, `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md` e `campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md` |
+| Rotina automatizada de revisão do Google Ads | `campanhas/ROTINA-AUTOMATIZADA-REVISAO-GOOGLE-ADS.md` e `google-ads-scripts/google-ads-search-review-email.js` |
 | Atribuição e códigos | `campanhas/CONTRATO-ATRIBUICAO-ORIGEM.md`, `campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md` e código correspondente |
 | Bot e atendimento | `docs/whatsapp-clinica-liv-operacao.md`, `netlify/functions/` e testes correspondentes |
 | LEADS, CRM e Apps Script | `apps-script/clinica-liv-leads/README.md`, `production-target.json` e arquivos `.gs` |

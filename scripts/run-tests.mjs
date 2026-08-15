@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 
 const roots = [
   "apps-script/clinica-liv-leads",
+  "google-ads-scripts",
   "netlify/functions",
 ];
 

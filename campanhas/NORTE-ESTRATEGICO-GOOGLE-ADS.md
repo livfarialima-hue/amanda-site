@@ -453,13 +453,27 @@ Critérios para a próxima decisão:
 
 ## 12. Rotina de otimização
 
-### Semanalmente
+### Automação somente leitura
 
-- Revisar termos de pesquisa.
-- Adicionar negativas evidentes, como curso, emprego, SUS, grátis e solução caseira, quando incompatíveis.
-- Relacionar gasto, contato, qualificação e agendamento por campanha.
-- Verificar falhas de origem ou GCLID.
-- Registrar mudanças e hipóteses, evitando várias alterações simultâneas.
+A conta deve ter uma única rotina automatizada e versionada em `google-ads-scripts/google-ads-search-review-email.js`, descrita por `campanhas/ROTINA-AUTOMATIZADA-REVISAO-GOOGLE-ADS.md`. Ela consulta dados e envia sugestões; não pode alterar campanhas, palavras, negativas, anúncios, conversões, lances ou orçamentos.
+
+- **Diariamente, entre 09:00 e 10:00:** verificar apenas saúde crítica — gasto anormal, campanha que deixou de entregar, reprovação/política, erro da rotina e ausência de sinal qualificado com gasto relevante. Fora de segunda-feira e do primeiro dia útil do mês, enviar e-mail apenas se existir alerta crítico.
+- **Toda segunda-feira, entre 09:00 e 10:00:** revisar a semana anterior completa e o contexto de 30 dias; enviar termos, positivas, negativas diretas, ações de conversão, políticas, mudanças recentes, orçamento, ranking e sugestões priorizadas.
+- **No primeiro dia útil do mês:** acrescentar ao mesmo relatório uma leitura de 90 dias para decisões estruturais.
+- **Depois de mudança material:** preservar os checkpoints próprios de 7 e 14 dias no Plano Executivo; o e-mail recorrente não substitui a janela do experimento.
+
+Decisões diárias sobre termos ou palavras são proibidas como rotina: o volume atual é insuficiente e a latência de conversão pode criar falsos sinais. A análise diária serve somente para saúde.
+
+### Regras para termos, positivas e negativas
+
+- Negativa inequívoca pode ser sugerida depois de pelo menos R$ 5 de gasto, inicialmente em correspondência exata e no menor nível seguro; nunca é aplicada automaticamente.
+- Linguagem leiga compatível, inclusive `plástica das pálpebras`, `cirurgia de pálpebras`, `orelha de abano` e `papada`, é protegida contra classificação automática como irrelevante.
+- `Preço`, `valor`, `custo` e `quanto custa` são intenções de roteamento, não negativas genéricas.
+- Positiva exata pode ser sugerida quando um termo compatível tem pelo menos três cliques ou uma conversão exibida e não existe palavra exata igual no grupo; inclusão exige conferência humana de canibalização e continuidade termo → anúncio → página.
+- Gasto sem conversão exige reconciliação; não autoriza pausa. Ausência de medição não vira zero.
+- Listas compartilhadas, contatos válidos, qualificados, consultas e procedimentos devem ser conferidos na interface e nas fontes operacionais antes da decisão.
+
+O relatório classifica cada recomendação como corrigir, testar, observar ou não alterar, com prioridade, evidência, confiança e guardrail. A rotina não aceita recomendações automáticas do Google.
 
 ### A cada ciclo de decisão
 
@@ -553,6 +567,7 @@ Toda nova mudança estratégica deve atualizar a seção vigente correspondente 
 - `campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md`: registro histórico completo das mudanças, evidências, hipóteses, métricas e regras de reversão.
 - `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`: linguagem, códigos e contrato técnico de atribuição.
 - `campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md`: catálogo versionado de códigos canônicos, fallbacks e sinais legados que não podem ser reinterpretados sem evidência.
+- `campanhas/ROTINA-AUTOMATIZADA-REVISAO-GOOGLE-ADS.md`: cadência, regras de sugestão, envio, limites e rollback da rotina somente leitura da conta.
 - `campanhas/PLANEJAMENTO-MIDIA-AGOSTO-2026.md`: registro operacional detalhado de mudanças de mídia.
 - `PLANO-SIMPLIFICACAO-CONVERSAO.md`: implementação da jornada e dos textos do site.
 - `docs/estrategia-abordagem-bruna.md`: biblioteca detalhada de mensagens e objeções do WhatsApp.

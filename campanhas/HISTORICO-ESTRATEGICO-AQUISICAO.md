@@ -6,6 +6,21 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — rotina automatizada de revisão e sugestões do Google Ads
+
+- **Status:** código local testado; publicação e programação na conta em andamento neste trabalho.
+- **Responsável:** Codex, sob solicitação de Daniel.
+- **Área/conta:** Google Ads `995-334-4486 — Dra Amanda Schroeder`.
+- **Mudança:** criação de uma rotina somente leitura com execução diária entre 09:00 e 10:00. Ela envia apenas alertas críticos nos dias comuns, um relatório completo toda segunda-feira e uma leitura ampliada de 90 dias no primeiro dia útil do mês. O relatório cobre campanhas, termos, positivas, negativas diretas, ações de conversão, políticas, mudanças recentes, parcela de impressões e sugestões priorizadas. Nenhuma recomendação é aplicada automaticamente.
+- **Motivo e evidência:** termos e palavras precisam de observação recorrente, mas o orçamento de R$ 87/dia e o baixo volume de conversões qualificadas tornam decisões diárias ruidosas. A documentação oficial do Google recomenda relatório semanal na segunda-feira com a semana anterior e reconhece atraso de até aproximadamente três horas nas estatísticas; por isso o horário escolhido é depois das 09:00 e a rotina diária serve apenas à saúde.
+- **Hipótese:** uma revisão semanal consistente reduzirá desperdício e atraso de diagnóstico sem excluir linguagem legítima nem contaminar experimentos com ajustes reativos.
+- **Métrica principal:** sugestões revisadas por semana; negativas aprovadas/rejeitadas; termos novos convertidos em positivas; custo evitado por irrelevância confirmada; contatos válidos, qualificados e consultas após as mudanças humanas.
+- **Guardrails:** zero mutação automática; negativas inicialmente exatas e no menor nível; preservar linguagem leiga e preço legítimo; não pausar por zero de conversão com mensuração insuficiente; não decidir por CTR/CPC isolados; não misturar mudanças materiais; listas compartilhadas e funil permanecem sujeitos a reconciliação humana.
+- **Data de revisão:** conferir os três primeiros relatórios completos; primeira revisão estrutural em 1º de setembro de 2026.
+- **Regra para manter:** manter se o relatório chegar no prazo, não gerar falso positivo recorrente e ajudar decisões rastreáveis sem alterar a conta.
+- **Regra para reverter:** pausar a programação diante de e-mail indevido, consulta de conta errada, sugestão sistematicamente perigosa, falha de privacidade ou qualquer mutação; corrigir localmente antes de reativar.
+- **Resultado atual:** testes locais específicos aprovados; estado externo será completado após prévia, autorização da conta, envio de teste e programação verificável.
+
 ## 15 de agosto de 2026 — manutenção de Meta facial em 40+ e programação da decisão etária no Google
 
 - **Status:** decisão Meta vigente; nenhuma campanha alterada neste registro; avaliação Google programada.

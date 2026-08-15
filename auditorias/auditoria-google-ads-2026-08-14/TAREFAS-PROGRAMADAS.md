@@ -25,6 +25,8 @@
 
 ## Agenda externa criada
 
+Além dos checkpoints abaixo, a conta deve executar diariamente, entre 09:00 e 10:00, o script versionado `google-ads-scripts/google-ads-search-review-email.js`. Ele fica silencioso quando a saúde está normal, envia revisão completa toda segunda-feira e acrescenta leitura de 90 dias no primeiro dia útil do mês. O e-mail é somente sugestivo e não autoriza mutação na conta.
+
 | Data | Bloco | Resultado esperado |
 |---|---|---|
 | 20/08 09:00 | Prova segura, decisão etária Google e possível início do RSA OTO adulto | recibo por evento, E2E reconciliado; Meta facial confirmado em 40+; decidir se exclui somente `18–24` e `25–34` em LIFT/BLEF/CERV/FACE, mantendo `Desconhecida` |
