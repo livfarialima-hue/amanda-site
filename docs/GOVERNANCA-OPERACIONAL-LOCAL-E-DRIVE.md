@@ -29,6 +29,7 @@ A regra central é:
 | Ativos otimizados do site | repositório local | site público | original pode permanecer no Drive | a versão do site deve sair do commit, não de upload manual avulso |
 | Auditorias em andamento | pasta `auditorias/` no repositório | fontes consultadas ao vivo | nenhum rascunho concorrente | trabalhar e revisar localmente |
 | Auditorias concluídas | versão local commitada | não se aplica | cópia fechada para consulta em `05 — Auditorias...` | se divergir, regenerar o arquivo do Drive a partir do commit; não editar os dois separadamente |
+| Pendências e prazos das auditorias | `docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md` | Calendar apenas como lembrete | projeção executiva atualizada no mesmo arquivo | o plano local prevalece; evento ou matriz desatualizada deve ser corrigido |
 | SEO, analytics e descoberta por IA | código, contratos e planos locais | GSC, GA4, Bing e site público | snapshots e evidências datadas | fatos atuais vêm das plataformas; mudanças técnicas nascem no repositório |
 | Agenda e consultas | regras locais do Apps Script | Calendar e LEADS ao vivo | evidência somente quando necessária | reconciliar Calendar e Opportunity ID; não usar export antigo como agenda atual |
 | Segredos e credenciais | gerenciador seguro da plataforma | variáveis configuradas no ambiente | nenhum segredo | nunca salvar valores secretos no repositório ou Drive |
@@ -56,6 +57,7 @@ Diretórios de entrada:
 | LEADS, CRM e Apps Script | `apps-script/clinica-liv-leads/README.md`, `production-target.json` e arquivos `.gs` |
 | Site, SEO e publicação Netlify | páginas/componentes, `docs/seo-technical-quality-gates.md`, `netlify.toml` e testes técnicos |
 | Auditoria ativa | `auditorias/<auditoria-datada>/` e as fontes vivas descritas no escopo |
+| Próxima etapa, prazo ou momento de publicação | `docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md` |
 | Publicação da auditoria SEO/IA/atribuição | `docs/auditoria-seo-ia-atribuicao-publicacao.md` |
 
 Não devem entrar no repositório:
@@ -81,6 +83,7 @@ O Drive é a área de consulta humana, arquivos originais, exportações e evid�
 - exportações datadas de Google Ads, Meta Ads, GA4, Search Console e outros sistemas;
 - cópias fechadas de auditorias concluídas e respectivos anexos;
 - evidências de publicação e monitoramento que não pertençam ao código;
+- uma projeção de leitura do plano executivo de pendências, sempre atualizada no mesmo arquivo;
 - materiais operacionais que precisem ser compartilhados com a equipe;
 - exportações sensíveis somente na área restrita e com permissões revisadas.
 
@@ -183,6 +186,7 @@ Nunca editar uma cópia da LEADS como se fosse produção.
 3. Revisar, remover PII e commitá-la.
 4. Salvar no Drive uma cópia fechada sob `05 — Auditorias, execuções e monitoramento`.
 5. Se a auditoria continuar sendo executada, atualizar o registro local e substituir a cópia fechada no Drive; não criar `versão final 2`.
+6. Atualizar o plano executivo local e sua projeção única no Drive, inclusive quando a próxima data mudar.
 
 ## 8. Estados de uma mudança
 

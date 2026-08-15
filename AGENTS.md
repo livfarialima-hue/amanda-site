@@ -16,6 +16,12 @@ Esse documento define onde cada informação deve ser consultada e alterada. Em 
 
 Se houver divergência entre uma cópia no Drive e um documento versionado no repositório, o documento local commitado prevalece, salvo para dados operacionais que existam somente na plataforma ao vivo. A divergência deve ser registrada e corrigida, não reconciliada por suposição.
 
+Antes de retomar recomendações de auditorias, executar uma tarefa agendada ou decidir se chegou o momento de publicar, leia também:
+
+`docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md`
+
+Esse é o único painel executivo de pendências, prazos e gates. Matrizes e registros individuais continuam sendo evidência técnica, mas não devem ser usados isoladamente para decidir a próxima execução. Ao concluir, adiar, bloquear ou reverter uma etapa, atualize o painel local e substitua a mesma projeção no Drive; nunca crie um segundo arquivo de planejamento concorrente.
+
 ## Fonte canônica da estratégia
 
 Antes de analisar, propor ou executar qualquer mudança que afete Google Ads, posicionamento de aquisição, público, orçamento, estrutura de campanhas, conversões, lances, páginas de destino, qualificação, preço ou passagem do lead para consulta, leia:

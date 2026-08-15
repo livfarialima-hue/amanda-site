@@ -6,6 +6,8 @@
 
 **Pasta no Drive:** `Amanda marketing / auditoria-google-ads-2026-08-14`
 
+> **Governança:** este arquivo preserva o cronograma técnico da auditoria Google Ads. Para saber a próxima tarefa, o prazo vigente e se já chegou o momento de executar ou publicar, use `docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md` e sua projeção única no Drive. Em caso de data divergente, o Plano Executivo prevalece após confirmação do estado ao vivo.
+
 ## Estado que a próxima execução deve preservar
 
 - orçamento diário total: R$ 87;

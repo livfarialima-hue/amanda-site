@@ -7,6 +7,8 @@
 **Apps Script:** versão 91 no deployment canônico preservado `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`.
 **Produção:** inspecionada por smoke tests não destrutivos após a publicação.
 
+> **Governança:** este arquivo é o registro técnico do deploy default-off e contém também trechos históricos do estado anterior à publicação. Para pendências, prazos e momento de executar/publicar, use `docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md` e sua projeção única no Drive. O arquivo `17-STATUS-RECOMENDACOES.csv` é baseline anterior ao deploy e não deve ser usado sozinho para decidir a próxima etapa.
+
 ## Resultado
 
 O pacote técnico de contenção de IDs, logs seguros, gate de artefato, jornada de atribuição, schema aditivo, projeções de first/current touch, origem informada separada, reconciliação segura de Calendar e gates operacionais de SLA/rota foi publicado. O JavaScript público permanece com `attributionJourneyEnabled=false`, e a propriedade `ATTRIBUTION_SCHEMA_VERSION` permaneceu ausente; portanto a jornada rica, a linha `JID`, as novas colunas e as migrações não foram ativadas. O código publicado remove `JID` antes de bot/Sheets quando o modo rico vier a ser autorizado, preserva TTLs absolutos, vincula o resgate a claimant HMAC e impede que `M26O01W` seja retropreenchido como WhatsApp direto sem evidência.
