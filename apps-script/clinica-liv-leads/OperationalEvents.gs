@@ -23,7 +23,7 @@ const BOT_SLA_END_HOUR = 20;
 const BOT_SLA_SUMMARY_HEADERS = Object.freeze([
   "Atualizado em",
   "Período (dias)",
-  "Entradas roteadas",
+  "Entradas inbound elegíveis",
   "Respostas mensuráveis",
   "Cobertura da primeira resposta",
   "Primeiras respostas automáticas",
@@ -35,6 +35,26 @@ const BOT_SLA_SUMMARY_HEADERS = Object.freeze([
   "Fechamentos no período",
   "Janela do SLA",
   "Regra",
+  "Entradas com rota válida",
+  "Rotas pendentes",
+  "Rotas inválidas",
+  "Entradas não lead excluídas",
+  "Cobertura de rota válida",
+  "Gate cobertura SLA >=95%",
+  "Gate rota válida >=99%",
+  "P0/P1 vencidos",
+  "Gate P0/P1",
+  "Gate operacional",
+  "Respostas anteriores ao inbound excluídas",
+  "Respostas futuras excluídas",
+  "Intervalos inválidos excluídos",
+  "Entradas com data inválida excluídas",
+]);
+
+const BOT_SLA_VALID_ROUTE_STATUSES = Object.freeze([
+  "resolved",
+  "resolved_by_acquisition",
+  "resolved_by_open_opportunity",
 ]);
 
 function obterOuCriarEventosOperacionais_(spreadsheet) {
@@ -225,7 +245,8 @@ function percentileOperacional_(values, percentile) {
 function minutosUteisSlaOperacional_(startedAt, finishedAt) {
   const start = parseDataEventoOperacional_(startedAt);
   const finish = parseDataEventoOperacional_(finishedAt);
-  if (!start || !finish || finish.getTime() <= start.getTime()) return 0;
+  if (!start || !finish || finish.getTime() < start.getTime()) return null;
+  if (finish.getTime() === start.getTime()) return 0;
 
   let totalMinutes = 0;
   const cursor = new Date(start.getTime());
@@ -248,6 +269,41 @@ function minutosUteisSlaOperacional_(startedAt, finishedAt) {
   return totalMinutes;
 }
 
+function classificarRotaInboundSla_(row) {
+  const result = String(row && row[5] || "").trim().toLowerCase();
+  const opportunityId = String(row && row[6] || "").trim();
+  const professional = String(row && row[7] || "").trim().toLowerCase();
+  const routeStatus = String(row && row[8] || "").trim().toLowerCase();
+  if (routeStatus === "nonlead" || result === "nonlead") return "nonlead";
+  if (routeStatus === "pending" || result === "route_pending") return "pending";
+  if (
+    opportunityId &&
+    ["amanda", "daniel"].includes(professional) &&
+    BOT_SLA_VALID_ROUTE_STATUSES.includes(routeStatus)
+  ) return "valid";
+  return "invalid";
+}
+
+function gateCompostoSla_(states) {
+  if (states.some(function failed(state) { return state === false; })) {
+    return false;
+  }
+  return states.every(function passed(state) { return state === true; })
+    ? true
+    : null;
+}
+
+function rotuloGateSla_(value) {
+  return value === true ? "APROVADO" : value === false ? "REPROVADO" : "N/D";
+}
+
+function valorMetricaSla_(value) {
+  return value === null || value === undefined ||
+    (typeof value === "number" && !Number.isFinite(value))
+    ? "N/D"
+    : value;
+}
+
 function auditarSlaOperacionalInterno_(spreadsheet, options) {
   const config = options && typeof options === "object" ? options : {};
   const now = parseDataEventoOperacional_(config.now) || new Date();
@@ -263,8 +319,14 @@ function auditarSlaOperacionalInterno_(spreadsheet, options) {
   const result = {
     ok: true,
     inboundEvents: 0,
+    validRouteEvents: 0,
+    pendingRouteEvents: 0,
+    invalidRouteEvents: 0,
+    excludedNonLeadEvents: 0,
+    invalidInboundDates: 0,
+    routeCoverage: null,
     measurableResponses: 0,
-    coverage: 0,
+    coverage: null,
     automaticResponses: 0,
     humanResponses: 0,
     medianMinutes: null,
@@ -272,10 +334,31 @@ function auditarSlaOperacionalInterno_(spreadsheet, options) {
     handoffs: 0,
     pauses: 0,
     closures: 0,
+    preInboundResponsesExcluded: 0,
+    futureResponsesExcluded: 0,
+    invalidResponseIntervals: 0,
+    responseCoverageGate: null,
+    routeCoverageGate: null,
+    overdueP0P1: Number.isInteger(config.overdueP0P1) &&
+      config.overdueP0P1 >= 0
+      ? config.overdueP0P1
+      : null,
+    overdueP0P1Gate: null,
+    operationalGate: null,
     periodDays,
     slaWindow: `${BOT_SLA_START_HOUR}:00-${BOT_SLA_END_HOUR}:00`,
   };
-  if (!inboundSheet || inboundSheet.getLastRow() < 2) return result;
+  result.overdueP0P1Gate = result.overdueP0P1 === null
+    ? null
+    : result.overdueP0P1 === 0;
+  if (!inboundSheet || inboundSheet.getLastRow() < 2) {
+    result.operationalGate = gateCompostoSla_([
+      result.responseCoverageGate,
+      result.routeCoverageGate,
+      result.overdueP0P1Gate,
+    ]);
+    return result;
+  }
   const inbound = {};
   inboundSheet
     .getRange(2, 1, inboundSheet.getLastRow() - 1, 9)
@@ -284,17 +367,56 @@ function auditarSlaOperacionalInterno_(spreadsheet, options) {
       const eventId = String(row[1] || "");
       const opportunityId = String(row[6] || "");
       const at = parseDataEventoOperacional_(row[3]);
-      if (
-        !eventId ||
-        !opportunityId ||
-        !at ||
-        at.getTime() < cutoff.getTime() ||
-        at.getTime() > now.getTime()
-      ) return;
-      inbound[eventId] = { opportunityId, at };
+      if (!eventId) return;
+      if (!at) {
+        result.invalidInboundDates += 1;
+        return;
+      }
+      if (at.getTime() < cutoff.getTime() || at.getTime() > now.getTime()) {
+        return;
+      }
+      const route = classificarRotaInboundSla_(row);
+      if (route === "nonlead") {
+        result.excludedNonLeadEvents += 1;
+        return;
+      }
+      inbound[eventId] = { opportunityId, at, route };
     });
   result.inboundEvents = Object.keys(inbound).length;
-  if (!operationalSheet || operationalSheet.getLastRow() < 2) return result;
+  Object.keys(inbound).forEach(function countRoute(eventId) {
+    const route = inbound[eventId].route;
+    if (route === "valid") result.validRouteEvents += 1;
+    else if (route === "pending") result.pendingRouteEvents += 1;
+    else result.invalidRouteEvents += 1;
+  });
+  result.routeCoverage = result.inboundEvents
+    ? result.validRouteEvents / result.inboundEvents
+    : null;
+  result.routeCoverageGate = result.routeCoverage === null
+    ? null
+    : result.routeCoverage >= 0.99;
+  if (!operationalSheet) {
+    result.coverage = null;
+    result.responseCoverageGate = null;
+    result.operationalGate = gateCompostoSla_([
+      result.responseCoverageGate,
+      result.routeCoverageGate,
+      result.overdueP0P1Gate,
+    ]);
+    return result;
+  }
+  if (operationalSheet.getLastRow() < 2) {
+    result.coverage = result.inboundEvents ? 0 : null;
+    result.responseCoverageGate = result.coverage === null
+      ? null
+      : result.coverage >= 0.95;
+    result.operationalGate = gateCompostoSla_([
+      result.responseCoverageGate,
+      result.routeCoverageGate,
+      result.overdueP0P1Gate,
+    ]);
+    return result;
+  }
   const firstResponse = {};
   operationalSheet
     .getRange(
@@ -316,13 +438,37 @@ function auditarSlaOperacionalInterno_(spreadsheet, options) {
       if (inPeriod && type === "processing_closed") result.closures += 1;
       if (
         !inbound[parentEventId] ||
-        !at ||
         !["automatic_reply_sent", "human_reply_sent"].includes(type)
       ) return;
+      if (!at) {
+        result.invalidResponseIntervals += 1;
+        return;
+      }
+      if (at.getTime() > now.getTime()) {
+        result.futureResponsesExcluded += 1;
+        return;
+      }
+      if (at.getTime() < inbound[parentEventId].at.getTime()) {
+        result.preInboundResponsesExcluded += 1;
+        return;
+      }
+      const responseOpportunityId = String(row[2] || "").trim();
+      if (
+        responseOpportunityId &&
+        inbound[parentEventId].opportunityId &&
+        responseOpportunityId !== inbound[parentEventId].opportunityId
+      ) {
+        result.invalidResponseIntervals += 1;
+        return;
+      }
       const latency = minutosUteisSlaOperacional_(
         inbound[parentEventId].at,
         at,
       );
+      if (latency === null) {
+        result.invalidResponseIntervals += 1;
+        return;
+      }
       if (
         !firstResponse[parentEventId] ||
         at < firstResponse[parentEventId].at
@@ -336,7 +482,10 @@ function auditarSlaOperacionalInterno_(spreadsheet, options) {
   result.measurableResponses = responses.length;
   result.coverage = result.inboundEvents
     ? responses.length / result.inboundEvents
-    : 0;
+    : null;
+  result.responseCoverageGate = result.coverage === null
+    ? null
+    : result.coverage >= 0.95;
   result.automaticResponses = responses.filter(function automatic(response) {
     return response.type === "automatic_reply_sent";
   }).length;
@@ -346,6 +495,11 @@ function auditarSlaOperacionalInterno_(spreadsheet, options) {
   });
   result.medianMinutes = percentileOperacional_(latencies, 0.5);
   result.p95Minutes = percentileOperacional_(latencies, 0.95);
+  result.operationalGate = gateCompostoSla_([
+    result.responseCoverageGate,
+    result.routeCoverageGate,
+    result.overdueP0P1Gate,
+  ]);
   return result;
 }
 
@@ -381,24 +535,39 @@ function atualizarResumoSlaOperacionalInterno_(spreadsheet, options) {
     audit.periodDays,
     audit.inboundEvents,
     audit.measurableResponses,
-    audit.coverage,
+    valorMetricaSla_(audit.coverage),
     audit.automaticResponses,
     audit.humanResponses,
-    audit.medianMinutes === null ? "" : audit.medianMinutes,
-    audit.p95Minutes === null ? "" : audit.p95Minutes,
+    valorMetricaSla_(audit.medianMinutes),
+    valorMetricaSla_(audit.p95Minutes),
     audit.handoffs,
     audit.pauses,
     audit.closures,
     audit.slaWindow,
-    "Minutos corridos somente dentro da janela 08:00-20:00, todos os dias",
+    "Denominador: inbound elegível, incluindo rota pendente e excluindo nonlead; intervalos inválidos são N/D; gates SLA >=95%, rota >=99% e P0/P1 vencidos = 0",
+    audit.validRouteEvents,
+    audit.pendingRouteEvents,
+    audit.invalidRouteEvents,
+    audit.excludedNonLeadEvents,
+    valorMetricaSla_(audit.routeCoverage),
+    rotuloGateSla_(audit.responseCoverageGate),
+    rotuloGateSla_(audit.routeCoverageGate),
+    valorMetricaSla_(audit.overdueP0P1),
+    rotuloGateSla_(audit.overdueP0P1Gate),
+    rotuloGateSla_(audit.operationalGate),
+    audit.preInboundResponsesExcluded,
+    audit.futureResponsesExcluded,
+    audit.invalidResponseIntervals,
+    audit.invalidInboundDates,
   ]]);
   return audit;
 }
 
-function atualizarResumoSlaOperacional(periodDays) {
+function atualizarResumoSlaOperacional(periodDays, overdueP0P1) {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   return atualizarResumoSlaOperacionalInterno_(spreadsheet, {
     periodDays: periodDays || 7,
+    overdueP0P1,
     now: new Date(),
   });
 }

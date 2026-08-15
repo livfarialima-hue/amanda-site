@@ -38,6 +38,11 @@ import {
 import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
+import {
+  logCorrelationId,
+  writeOperationalLog,
+} from "./lib/operational-log.mjs";
+export { buildOperationalLogRecord } from "./lib/operational-log.mjs";
 
 const MAX_JOBS_PER_RUN = 5;
 const PRICE_REVIEW_REASONS = new Set([
@@ -668,16 +673,16 @@ export default async () => {
   });
 
   if (claim.status !== "completed" || !claim.jobs.length) {
-    console.log(
-      JSON.stringify({
-        source: "human_resume_schedule",
-        status:
-          claim.status === "completed"
-            ? "idle"
-            : "claim_failed",
+    const status = claim.status === "completed" ? "idle" : "claim_failed";
+    writeOperationalLog({
+      source: "human_resume_schedule",
+      category: "human_resume_schedule",
+      reason: status,
+      fields: {
+        status,
         jobs: 0,
-      }),
-    );
+      },
+    });
     return;
   }
 
@@ -685,20 +690,21 @@ export default async () => {
   for (const job of claim.jobs) {
     const result = await processHumanResumeJob(job);
     results.push({
-      patientLast4: job.phone.slice(-4),
-      eventId: job.eventId,
+      correlationId: logCorrelationId(job.eventId),
       ...result,
     });
   }
 
-  console.log(
-    JSON.stringify({
-      source: "human_resume_schedule",
+  writeOperationalLog({
+    source: "human_resume_schedule",
+    category: "human_resume_schedule",
+    reason: "processed",
+    fields: {
       status: "processed",
       jobs: results.length,
       results,
-    }),
-  );
+    },
+  });
 };
 
 export const config = {

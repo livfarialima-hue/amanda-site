@@ -10,6 +10,10 @@ import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 const STORE_NAME = "liv-whatsapp-outbound-replies-v1";
 const CLAIM_TTL_MS = 2 * 60 * 1_000;
 const MAX_REPLY_LENGTH = 1_500;
+const LIFTING_PRICE_GUIDE_PATTERN =
+  /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/?$/i;
+const FULL_LIFTING_RANGE_PATTERN =
+  /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
 
 function normalizedPhone(value) {
   const compact = String(value || "").replace(/[\s()-]/g, "");
@@ -35,6 +39,19 @@ function normalizedText(value) {
 
 function urls(value) {
   return limited(value).match(/https?:\/\/[^\s)]+/gi) || [];
+}
+
+function isProtectedLiftingRangeReply(value) {
+  const text = normalizedText(value);
+  return (
+    FULL_LIFTING_RANGE_PATTERN.test(String(value || "")) &&
+    /nao e orcamento proposta nem garantia de preco/.test(text) &&
+    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
+      text,
+    ) &&
+    /nao representa honorarios isolados/.test(text) &&
+    urls(value).some((url) => LIFTING_PRICE_GUIDE_PATTERN.test(url))
+  );
 }
 
 function unsafeReplyContentReason(value) {
@@ -251,11 +268,20 @@ export function validateOutboundReply({
       .flatMap((turn) => urls(turn?.text))
       .map((url) => url.toLowerCase()),
   );
-  if (
-    urls(reply).some((url) =>
-      previousUrls.has(url.toLowerCase()),
-    )
-  ) {
+  const repeatedUrls = urls(reply).filter((url) =>
+    previousUrls.has(url.toLowerCase()),
+  );
+  const priorFullLiftingRange = (
+    Array.isArray(recentConversation) ? recentConversation : []
+  ).some((turn) =>
+    FULL_LIFTING_RANGE_PATTERN.test(String(turn?.text || "")),
+  );
+  const permittedPriceGuideRepeat =
+    repeatedUrls.length > 0 &&
+    repeatedUrls.every((url) => LIFTING_PRICE_GUIDE_PATTERN.test(url)) &&
+    isProtectedLiftingRangeReply(reply) &&
+    !priorFullLiftingRange;
+  if (repeatedUrls.length > 0 && !permittedPriceGuideRepeat) {
     return {
       allowed: false,
       reason: "repeated_resource",

@@ -234,6 +234,306 @@
   var marketingAttributionStorageKey = 'amanda_marketing_attribution';
   var marketingAttributionParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'origem'];
   var marketingClickIdParams = ['gclid', 'gbraid', 'wbraid'];
+  var journeyStorageKey = 'amanda_attribution_journey_v1';
+  var journeySessionIdKey = 'amanda_attribution_session_v1';
+  var journeyTtlMs = 30 * 24 * 60 * 60 * 1000;
+  var journeyEndpoint = '/.netlify/functions/attribution-journey';
+  var journeyMetaParams = ['meta_campaign_id', 'meta_adset_id', 'meta_ad_id'];
+
+  function attributionJourneyEnabled() {
+    return config.attributionJourneyEnabled === true;
+  }
+
+  function randomBase64Url(prefix) {
+    if (!window.crypto || typeof window.crypto.getRandomValues !== 'function') return '';
+    try {
+      var bytes = new Uint8Array(16);
+      window.crypto.getRandomValues(bytes);
+      var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+      var output = '';
+      var buffer = 0;
+      var bits = 0;
+      bytes.forEach(function (byte) {
+        buffer = (buffer << 8) | byte;
+        bits += 8;
+        while (bits >= 6) {
+          bits -= 6;
+          output += alphabet[(buffer >>> bits) & 63];
+        }
+      });
+      if (bits > 0) output += alphabet[(buffer << (6 - bits)) & 63];
+      return prefix + output;
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function normalizeMetaId(value) {
+    value = typeof value === 'string' ? value.trim() : '';
+    return /^\d{5,30}$/.test(value) ? value : '';
+  }
+
+  function normalizePagePath(value) {
+    value = typeof value === 'string' ? value.trim() : '';
+    return /^\/[A-Za-z0-9%/_~.-]{0,180}$/.test(value) ? value : '';
+  }
+
+  function currentJourneySessionId() {
+    try {
+      var current = sessionStorage.getItem(journeySessionIdKey) || '';
+      if (/^S1_[A-Za-z0-9_-]{22}$/.test(current)) return current;
+      current = randomBase64Url('S1_');
+      if (current) sessionStorage.setItem(journeySessionIdKey, current);
+      return current;
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function referrerClassification() {
+    var referrer = String(document.referrer || '').trim();
+    // Referrer can be absent for many reasons (privacy controls, apps, copied
+    // links, redirects). Absence alone is not evidence of a direct visit.
+    if (!referrer) return { origin: 'Desconhecida', channel: 'unknown', referrer_type: 'missing' };
+    try {
+      var host = new URL(referrer).hostname.toLowerCase();
+      if (/(^|\.)google\./.test(host)) return { origin: 'Google orgânico', channel: 'organic_search', referrer_type: 'google' };
+      if (/(^|\.)bing\.com$/.test(host)) return { origin: 'Bing orgânico', channel: 'organic_search', referrer_type: 'bing' };
+      if (/(^|\.)chatgpt\.com$|(^|\.)chat\.openai\.com$/.test(host)) return { origin: 'ChatGPT', channel: 'ai_referral', referrer_type: 'chatgpt', ai_source: 'chatgpt' };
+      if (/(^|\.)perplexity\.ai$/.test(host)) return { origin: 'Perplexity', channel: 'ai_referral', referrer_type: 'perplexity', ai_source: 'perplexity' };
+      if (/(^|\.)copilot\.microsoft\.com$/.test(host)) return { origin: 'Copilot', channel: 'ai_referral', referrer_type: 'copilot', ai_source: 'copilot' };
+      if (/(^|\.)gemini\.google\.com$/.test(host)) return { origin: 'Gemini', channel: 'ai_referral', referrer_type: 'gemini', ai_source: 'gemini' };
+      if (/(^|\.)instagram\.com$/.test(host)) return { origin: 'Instagram orgânico', channel: 'social_organic', referrer_type: 'instagram' };
+      if (host === window.location.hostname) return { origin: 'Desconhecida', channel: 'unknown', referrer_type: 'internal' };
+      return { origin: 'Desconhecida', channel: 'referral', referrer_type: 'external' };
+    } catch (error) {
+      return { origin: 'Desconhecida', channel: 'unknown', referrer_type: 'invalid' };
+    }
+  }
+
+  function classifyJourneyOrigin(attribution) {
+    var source = String(attribution.utm_source || '').toLowerCase();
+    var medium = String(attribution.utm_medium || '').toLowerCase();
+    var campaign = String(attribution.utm_campaign || attribution.origem || '').toUpperCase();
+    if (/^M26/.test(campaign) || /^(?:meta|facebook|instagram)$/.test(source) && /paid|cpc/.test(medium)) {
+      return { origin: 'Meta Ads', channel: 'meta_ads', referrer_type: 'meta_paid' };
+    }
+    if (/^G26/.test(campaign) || marketingClickIdParams.some(function (field) { return !!attribution[field]; }) || source === 'google' && medium === 'cpc') {
+      return { origin: 'Google Ads', channel: 'google_ads', referrer_type: 'google_paid' };
+    }
+    if (/^(?:chatgpt|openai)$/.test(source)) return { origin: 'ChatGPT', channel: 'ai_referral', referrer_type: 'chatgpt', ai_source: 'chatgpt' };
+    if (source === 'perplexity') return { origin: 'Perplexity', channel: 'ai_referral', referrer_type: 'perplexity', ai_source: 'perplexity' };
+    if (source === 'copilot') return { origin: 'Copilot', channel: 'ai_referral', referrer_type: 'copilot', ai_source: 'copilot' };
+    if (source === 'gemini') return { origin: 'Gemini', channel: 'ai_referral', referrer_type: 'gemini', ai_source: 'gemini' };
+    return referrerClassification();
+  }
+
+  function touchFromCurrentPage(attribution) {
+    var classification = classifyJourneyOrigin(attribution);
+    var searchParams;
+    try { searchParams = new URLSearchParams(window.location.search); }
+    catch (error) { searchParams = null; }
+    var metaCampaignId = normalizeMetaId(searchParams ? searchParams.get('meta_campaign_id') : '');
+    if (!metaCampaignId && classification.channel === 'meta_ads') {
+      metaCampaignId = normalizeMetaId(searchParams ? searchParams.get('utm_id') : '');
+    }
+    return {
+      occurred_at: new Date().toISOString(),
+      session_id: currentJourneySessionId(),
+      origin: classification.origin,
+      channel: classification.channel,
+      source: sanitizeTrackingValue(attribution.utm_source || ''),
+      medium: sanitizeTrackingValue(attribution.utm_medium || ''),
+      campaign_code: sanitizeTrackingValue(attribution.utm_campaign || attribution.origem || '').toUpperCase(),
+      adgroup_code: sanitizeTrackingValue(searchParams ? searchParams.get('utm_adgroup') : '').toUpperCase(),
+      creative_code: sanitizeTrackingValue(attribution.utm_content || '').toUpperCase(),
+      meta_campaign_id: metaCampaignId,
+      meta_adset_id: normalizeMetaId(searchParams ? searchParams.get('meta_adset_id') : ''),
+      meta_ad_id: normalizeMetaId(searchParams ? searchParams.get('meta_ad_id') : ''),
+      page_path: normalizePagePath(window.location.pathname),
+      referrer_type: classification.referrer_type || '',
+      ai_source: classification.ai_source || ''
+    };
+  }
+
+  function validJourneyState(value) {
+    return value && typeof value === 'object' && value.version === 1 &&
+      /^J0_[A-Za-z0-9_-]{22}$/.test(String(value.journey_id || '')) &&
+      Number(value.expires_at || 0) > Date.now() && value.first_touch;
+  }
+
+  function readJourneyState() {
+    var candidate = null;
+    try { candidate = JSON.parse(sessionStorage.getItem(journeyStorageKey) || 'null'); }
+    catch (error) { candidate = null; }
+    if (validJourneyState(candidate)) return candidate;
+    if (fullConsentGranted()) {
+      try { candidate = JSON.parse(localStorage.getItem(journeyStorageKey) || 'null'); }
+      catch (error) { candidate = null; }
+      if (validJourneyState(candidate)) {
+        try { sessionStorage.setItem(journeyStorageKey, JSON.stringify(candidate)); } catch (error) {}
+        return candidate;
+      }
+    }
+    return null;
+  }
+
+  function writeJourneyState(state) {
+    if (!validJourneyState(state)) return;
+    try { sessionStorage.setItem(journeyStorageKey, JSON.stringify(state)); } catch (error) {}
+    try {
+      if (fullConsentGranted()) localStorage.setItem(journeyStorageKey, JSON.stringify(state));
+      else localStorage.removeItem(journeyStorageKey);
+    } catch (error) {}
+  }
+
+  function nonDirectTouch(touch) {
+    return touch && ['direct', 'unknown'].indexOf(touch.channel) === -1;
+  }
+
+  function updateJourneyFromCurrentPage() {
+    if (!attributionJourneyEnabled()) return null;
+    var attributionFromUrl = readAttributionFromUrl();
+    var currentTouch = touchFromCurrentPage(attributionFromUrl);
+    var state = readJourneyState();
+    if (!state) {
+      var journeyId = randomBase64Url('J0_');
+      if (!journeyId) return null;
+      state = {
+        version: 1,
+        journey_id: journeyId,
+        created_at: Date.now(),
+        expires_at: Date.now() + journeyTtlMs,
+        first_touch: currentTouch,
+        last_touch: currentTouch,
+        last_non_direct_touch: nonDirectTouch(currentTouch) ? currentTouch : null,
+        pages: []
+      };
+    } else {
+      state.last_touch = currentTouch;
+      if (nonDirectTouch(currentTouch)) state.last_non_direct_touch = currentTouch;
+    }
+    state.pages = Array.isArray(state.pages) ? state.pages : [];
+    var previousPage = state.pages[state.pages.length - 1];
+    if (!previousPage || previousPage.page_path !== currentTouch.page_path || previousPage.session_id !== currentTouch.session_id) {
+      state.pages.push({
+        occurred_at: currentTouch.occurred_at,
+        session_id: currentTouch.session_id,
+        page_path: currentTouch.page_path
+      });
+      state.pages = state.pages.slice(-12);
+    }
+    writeJourneyState(state);
+    return state;
+  }
+
+  function conversionPathForJourney(state) {
+    var first = state && state.first_touch || {};
+    var paid = state && state.last_non_direct_touch || first;
+    var returning = Boolean(first.session_id && currentJourneySessionId() && first.session_id !== currentJourneySessionId());
+    if (paid.channel === 'meta_ads') return returning ? 'meta_site_return_whatsapp' : 'meta_site_whatsapp';
+    if (paid.channel === 'google_ads') return 'google_site_whatsapp';
+    if (paid.channel === 'ai_referral') return 'ai_site_whatsapp';
+    if (paid.channel === 'organic_search' || paid.channel === 'social_organic' || paid.channel === 'referral') return 'organic_site_whatsapp';
+    if (paid.channel === 'direct') return 'direct_whatsapp';
+    return 'unknown';
+  }
+
+  function journeyConfidence(state) {
+    var paid = state && (state.last_non_direct_touch || state.first_touch) || {};
+    if (paid.channel === 'meta_ads') {
+      return paid.campaign_code && paid.meta_campaign_id && paid.meta_adset_id && paid.meta_ad_id ? 'observed' : 'partial';
+    }
+    if (paid.channel === 'google_ads') return paid.campaign_code ? 'observed' : 'partial';
+    return paid.channel && paid.channel !== 'unknown' ? 'observed' : 'unknown';
+  }
+
+  function journeyFallbackReason(state) {
+    var paid = state && (state.last_non_direct_touch || state.first_touch) || {};
+    if (paid.channel === 'meta_ads' && !(paid.meta_campaign_id && paid.meta_adset_id && paid.meta_ad_id)) return 'meta_dimensions_incomplete';
+    if (paid.channel === 'google_ads' && !paid.campaign_code) return 'google_campaign_missing';
+    if (!paid.channel || paid.channel === 'unknown') return 'origin_unknown';
+    return '';
+  }
+
+  function journeyEnvelopeForLink(link, rotateTransportToken) {
+    if (!attributionJourneyEnabled()) return null;
+    var state = updateJourneyFromCurrentPage();
+    if (!state) return null;
+    var token = sanitizeTrackingValue(link.dataset.attributionJourneyToken || '');
+    if (rotateTransportToken === true || !/^J1_[A-Za-z0-9_-]{22}$/.test(token)) {
+      token = randomBase64Url('J1_');
+      if (!token) return null;
+      link.dataset.attributionJourneyToken = token;
+    }
+    var attribution = loadStoredAttribution();
+    var clickIds = {};
+    marketingClickIdParams.forEach(function (field) {
+      if (attribution[field]) clickIds[field] = attribution[field];
+    });
+    return {
+      token: token,
+      first_touch: state.first_touch,
+      last_touch: state.last_touch,
+      last_non_direct_touch: state.last_non_direct_touch || state.first_touch,
+      conversion_path: conversionPathForJourney(state),
+      cta: {
+        page_path: normalizePagePath(window.location.pathname),
+        location: sanitizeTrackingValue(link.dataset.ctaLocation || 'unknown').toLowerCase()
+      },
+      click_ids: clickIds,
+      confidence: journeyConfidence(state),
+      fallback_reason: journeyFallbackReason(state)
+    };
+  }
+
+  function appendJourneyTokenToMessage(message, token) {
+    var cleaned = String(message || '').replace(/(?:\r?\n)+JID\s*:\s*J1_[A-Za-z0-9_-]{22}/gi, '');
+    return cleaned.replace(/\s+$/, '') + '\nJID: ' + token;
+  }
+
+  function addJourneyTokenToLink(link, rotateTransportToken) {
+    var envelope = journeyEnvelopeForLink(link, rotateTransportToken);
+    if (!envelope) return null;
+    try {
+      var url = new URL(link.href, window.location.href);
+      var message = url.searchParams.get('text');
+      if (!message) return envelope;
+      url.searchParams.set('text', appendJourneyTokenToMessage(message, envelope.token));
+      link.href = url.toString();
+      return envelope;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function registerAttributionJourney(link) {
+    if (!attributionJourneyEnabled()) return false;
+    // J1 is a short transport credential, not the durable journey ID. Rotate
+    // it for every user-initiated attempt so a second click never reuses an
+    // already claimed token.
+    var envelope = addJourneyTokenToLink(link, true);
+    if (!envelope) return false;
+    var body = JSON.stringify(envelope);
+    try {
+      if (window.navigator && typeof window.navigator.sendBeacon === 'function') {
+        return window.navigator.sendBeacon(journeyEndpoint, body);
+      }
+    } catch (error) {}
+    try {
+      if (typeof window.fetch === 'function') {
+        window.fetch(journeyEndpoint, {
+          method: 'POST',
+          headers: { 'content-type': 'text/plain;charset=UTF-8' },
+          body: body,
+          credentials: 'same-origin',
+          keepalive: true
+        }).catch(function () {});
+        return true;
+      }
+    } catch (error) {}
+    return false;
+  }
 
   function sanitizeTrackingValue(value) {
     value = typeof value === 'string' ? value.trim() : '';
@@ -389,9 +689,15 @@
         updatedMessage = updatedMessage.replace(/\s+$/, '') + '\n\nRef. ' + reference;
       }
 
-      marketingClickIdParams.forEach(function (param) {
-        if (attribution[param]) updatedMessage += '\n' + param.toUpperCase() + ': ' + attribution[param];
-      });
+      // Legacy/default-off path keeps the current operational contract. Once
+      // the first-party journey is explicitly enabled, click IDs travel only
+      // inside the short-lived server envelope and never in visible WhatsApp
+      // text.
+      if (!attributionJourneyEnabled()) {
+        marketingClickIdParams.forEach(function (param) {
+          if (attribution[param]) updatedMessage += '\n' + param.toUpperCase() + ': ' + attribution[param];
+        });
+      }
       if (updatedMessage === message) return;
       url.searchParams.set('text', updatedMessage);
       link.href = url.toString();
@@ -401,9 +707,11 @@
   function updateAllWhatsAppLinks() {
     var attributionFromUrl = readAttributionFromUrl();
     if (Object.keys(attributionFromUrl).length) saveAttribution(attributionFromUrl);
+    updateJourneyFromCurrentPage();
     var attribution = loadStoredAttribution();
     document.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
       updateWhatsAppLink(link, attribution);
+      addJourneyTokenToLink(link);
     });
   }
 
@@ -414,9 +722,15 @@
       mutations.forEach(function (mutation) {
         mutation.addedNodes.forEach(function (node) {
           if (node.nodeType !== 1) return;
-          if (node.matches && node.matches('a[data-track="whatsapp"]')) updateWhatsAppLink(node, attribution);
+          if (node.matches && node.matches('a[data-track="whatsapp"]')) {
+            updateWhatsAppLink(node, attribution);
+            addJourneyTokenToLink(node);
+            bindWhatsAppLink(node);
+          }
           if (node.querySelectorAll) node.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
             updateWhatsAppLink(link, attribution);
+            addJourneyTokenToLink(link);
+            bindWhatsAppLink(link);
           });
         });
       });
@@ -457,20 +771,12 @@
     // Sem consentimento, o click ID segue somente na mensagem voluntária do
     // WhatsApp. Nenhuma tag, pageview, pixel ou conversão externa é disparada.
     if (consented && googleMeasurementAvailable()) {
-      var root = document.documentElement;
-      var pageType = root.dataset.pageType || 'procedure';
-      var section = link.closest('[data-section]');
-      var location = link.dataset.ctaLocation || (section && section.dataset.section) || 'unknown';
-      var text = (link.textContent || '').trim();
-
+      // Keep this event generic. Page, procedure and CTA semantics are handled
+      // by the first-party attribution contract, not sent as GA4 custom data.
       window.gtag('event', 'whatsapp_click', {
         event_category: 'engagement',
-        event_label: pageType,
-        page_type: pageType,
-        content_group: pageType,
-        cta_location: location,
-        cta_text: text,
-        page_path: window.location.pathname,
+        contact_channel: 'whatsapp',
+        measurement_state: 'consented',
         transport_type: 'beacon',
         send_to: config.ga4Id
       });
@@ -517,17 +823,20 @@
     if (link) trackContentDepthClick(link);
   }
 
+  function bindWhatsAppLink(link) {
+    if (!link || link.dataset.amandaMeasurementBound === 'true') return;
+    link.dataset.amandaMeasurementBound = 'true';
+    // O listener fica no próprio link e em captura para cobrir também
+    // botões flutuantes e componentes que interrompam a propagação do clique.
+    link.addEventListener('click', function () {
+      updateAllWhatsAppLinks();
+      registerAttributionJourney(link);
+      trackWhatsAppClick(link);
+    }, true);
+  }
+
   function bindWhatsAppTracking() {
-    document.querySelectorAll(whatsappSelector).forEach(function (link) {
-      if (link.dataset.amandaMeasurementBound === 'true') return;
-      link.dataset.amandaMeasurementBound = 'true';
-      // O listener fica no próprio link e em captura para cobrir também
-      // botões flutuantes e componentes que interrompam a propagação do clique.
-      link.addEventListener('click', function () {
-        updateAllWhatsAppLinks();
-        trackWhatsAppClick(link);
-      }, true);
-    });
+    document.querySelectorAll(whatsappSelector).forEach(bindWhatsAppLink);
   }
 
   function initializeWhatsAppTracking() {
@@ -551,7 +860,10 @@
       readAttributionFromUrl: readAttributionFromUrl,
       loadStoredAttribution: loadStoredAttribution,
       clearStoredMarketingClickIds: clearStoredMarketingClickIds,
-      updateAllWhatsAppLinks: updateAllWhatsAppLinks
+      updateAllWhatsAppLinks: updateAllWhatsAppLinks,
+      updateJourneyFromCurrentPage: updateJourneyFromCurrentPage,
+      journeyEnvelopeForLink: journeyEnvelopeForLink,
+      registerAttributionJourney: registerAttributionJourney
     };
   }
 })();

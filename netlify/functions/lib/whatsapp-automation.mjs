@@ -34,7 +34,10 @@ const PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
 
 const INITIAL_PRICE_REPLY_PATTERN =
-  /quanto-custa-cirurgia-plastica-facial-sao-paulo|trabalhamos\s+com\s+valores\s+competitivos/i;
+  /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|trabalhamos\s+com\s+valores\s+competitivos/i;
+
+const LIFTING_PRICE_RANGE_REPLY_PATTERN =
+  /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
 
 const SCHEDULING_PATTERN =
   /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o|datas?)\b/i;
@@ -466,6 +469,16 @@ export function enrichAutomationPlanFromConversation(
         ) &&
         INITIAL_PRICE_REPLY_PATTERN.test(String(turn?.text || "")),
     );
+    const previousLiftingRangeReply = recentConversation.some(
+      (turn) =>
+        (
+          turn?.role === "assistant" ||
+          ["bruna", "equipe_humana"].includes(turn?.source)
+        ) &&
+        LIFTING_PRICE_RANGE_REPLY_PATTERN.test(
+          String(turn?.text || ""),
+        ),
+    );
 
     if (!previousInitialPriceReply) {
       return {
@@ -478,6 +491,17 @@ export function enrichAutomationPlanFromConversation(
     const asksForAmount = plan.priceRequestKind === "amount";
     const directLiftingRange =
       asksForAmount && procedure === "lifting_facial";
+    if (directLiftingRange && previousLiftingRangeReply) {
+      return {
+        ...plan,
+        route: "human_review",
+        reason: "lifting_price_range_already_sent_review",
+        professional:
+          plan.professional || context.professional || "amanda",
+        procedure,
+        automaticAllowed: false,
+      };
+    }
     return {
       ...plan,
       route: directLiftingRange

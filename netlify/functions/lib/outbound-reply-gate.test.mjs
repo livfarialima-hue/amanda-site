@@ -82,6 +82,75 @@ test("final validation blocks a substantially repeated answer", () => {
   assert.equal(result.reason, "substantially_repeated_reply");
 });
 
+test("the protected lifting range may repeat only its required composition URL", () => {
+  const body = [
+    "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
+    "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+    "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+    "Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+  ].join("\n\n");
+  const result = validateOutboundReply({
+    body,
+    currentText: "Mas qual é a faixa?",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+      },
+      {
+        role: "patient",
+        source: "paciente",
+        text: "Mas qual é a faixa?",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+});
+
+test("the full lifting range and its URL are blocked when already sent", () => {
+  const range = [
+    "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
+    "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+    "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Não representa honorários isolados.",
+    "Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+  ].join("\n");
+  const result = validateOutboundReply({
+    body: range,
+    currentText: "Pode repetir a faixa?",
+    recentConversation: [
+      { role: "assistant", source: "bruna", text: range },
+      { role: "patient", source: "paciente", text: "Pode repetir?" },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "substantially_repeated_reply");
+});
+
+test("an ordinary resource remains blocked when its URL was already shared", () => {
+  const result = validateOutboundReply({
+    body: "Veja novamente: https://draamandaschroeder.com.br/lifting-facial/",
+    currentText: "Pode mandar o link?",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Material: https://draamandaschroeder.com.br/lifting-facial/",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "repeated_resource");
+});
+
 test("final validation keeps the bot out of an answer to the human team", () => {
   const result = validateOutboundReply({
     body:

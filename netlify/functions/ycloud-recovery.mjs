@@ -11,6 +11,11 @@ import {
   sendReviewAlertEmailCopy,
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
+import {
+  logCorrelationId,
+  writeOperationalLog,
+} from "./lib/operational-log.mjs";
+export { buildOperationalLogRecord } from "./lib/operational-log.mjs";
 
 const MAX_JOBS_PER_RUN = 5;
 const MAX_RECOVERY_ATTEMPTS = 3;
@@ -167,11 +172,13 @@ export default async () => {
     limit: MAX_JOBS_PER_RUN,
   });
   if (claim.status !== "completed" || !claim.jobs.length) {
-    console.log(JSON.stringify({
+    const status = claim.status === "completed" ? "idle" : "claim_failed";
+    writeOperationalLog({
       source: "ycloud_recovery_schedule",
-      status: claim.status === "completed" ? "idle" : "claim_failed",
-      jobs: 0,
-    }));
+      category: "ycloud_recovery_schedule",
+      reason: status,
+      fields: { status, jobs: 0 },
+    });
     return;
   }
 
@@ -179,19 +186,22 @@ export default async () => {
   for (const job of claim.jobs) {
     const result = await processInboundRecoveryJob(job);
     results.push({
-      eventId: job.eventId,
-      patientLast4: job.phone.slice(-4),
+      correlationId: logCorrelationId(job.eventId),
       attempts: job.attempts,
       ...result,
     });
   }
 
-  console.log(JSON.stringify({
+  writeOperationalLog({
     source: "ycloud_recovery_schedule",
-    status: "processed",
-    jobs: results.length,
-    results,
-  }));
+    category: "ycloud_recovery_schedule",
+    reason: "processed",
+    fields: {
+      status: "processed",
+      jobs: results.length,
+      results,
+    },
+  });
 };
 
 export const config = {

@@ -30,8 +30,8 @@
 | 03/09 09:00 | Decisão OTO e início CERV | um teste encerrado antes do próximo |
 | 17/09 09:00 | Decisão CERV e início BLEF | decisão por contato válido/qualificado |
 | 01/10 09:00 | Decisão BLEF e início FACE | decisão por funil, não CTR isolado |
-| 15/10 09:00 | Decisão FACE e início LIFT preço | início somente após encerramento de FACE |
-| 12/11 09:00 | Decisão final LIFT preço | GAD-01 a GAD-18 com estado final |
+| 15/10 09:00 | Decisão FACE e início da variante de composição em LIFT preço | início somente após encerramento de FACE; não prometer faixa pública |
+| 12/11 09:00 | Leitura preliminar LIFT preço | decidir apenas com tracking validado e, preferencialmente, ≥100 cliques; senão prolongar observação |
 
 Todos os eventos são privados e usam lembrete por e-mail com 1 dia e popup com 1 hora.
 

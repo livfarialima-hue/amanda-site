@@ -60,6 +60,14 @@ test("economic formulas count canonical populated IDs and current funnel stages"
   assert.match(formulas.qualified, /Consulta agendada/);
   assert.match(formulas.qualified, /Paciente convertido/);
   assert.match(formulas.responseCoverage, /_BOT_METRICAS/);
+  assert.match(formulas.responseCoverage, /"N\/D"/);
+  assert.doesNotMatch(formulas.responseCoverage, /;0\)/);
+  assert.match(formulas.responseMedian, /"N\/D"/);
+  assert.match(formulas.responseP95, /"N\/D"/);
+  assert.match(formulas.routeCoverage, /\$S\$2/);
+  assert.match(formulas.pendingRoutes, /\$P\$2/);
+  assert.match(formulas.overdueP0P1, /\$V\$2/);
+  assert.match(formulas.operationalGate, /\$X\$2/);
   assert.doesNotMatch(formulas.total, /COUNTA/);
 });
 

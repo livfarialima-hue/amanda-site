@@ -6,6 +6,8 @@ Status: implementado, validado e preparado para publicação em 2 de agosto de 2
 
 Extensão de 9 de agosto de 2026: o guia geral de custos foi preservado como hub e passou a direcionar por procedimento. Uma página própria de preço de lifting facial foi criada para responder às buscas específicas, sem duplicar o conteúdo genérico.
 
+Extensão de 15 de agosto de 2026: as faixas numéricas de lifting foram retiradas de todas as páginas públicas. O guia específico continua respondendo à intenção “quanto custa”, mas agora explica somente a composição e os fatores do orçamento individual. A faixa aprovada permanece disponível apenas em conversa individual de WhatsApp, depois de pedido explícito reiterado e com ressalvas no mesmo envio.
+
 ## 1. Objetivo
 
 Simplificar a experiência sem apagar páginas que podem captar buscas no Google, Bing e ferramentas de IA.
@@ -27,12 +29,12 @@ Páginas que serão revisadas:
 5. `/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/` — conteúdo de apoio para a objeção de preço.
 6. Cabeçalho, rodapé, botões e mensagens de WhatsApp dessas páginas.
 
-Fora do escopo desta primeira etapa:
+Fora do escopo da primeira etapa original (a extensão autorizada de 15/08/2026 substitui o item de faixas abaixo):
 
 - Reescrever todas as páginas de mama, corpo ou outros procedimentos.
 - Trocar domínios ou criar redirecionamentos.
 - Apagar URLs existentes.
-- Mudar faixas de preço cirúrgico.
+- Mudar faixas de preço cirúrgico — restrição histórica superada pela decisão de retirar as faixas públicas.
 - Alterar depoimentos, fotos de resultados ou informações médicas sem nova validação.
 
 ## 3. Papel definitivo de cada página
@@ -43,7 +45,7 @@ Fora do escopo desta primeira etapa:
 | Avaliação facial | Tem uma queixa, mas não sabe a técnica | Explicar a avaliação e reduzir insegurança | Ver horários da consulta |
 | Lifting facial | Já pesquisa lifting | Confirmar indicação, limites, recuperação e confiança | Ver horários para avaliação de lifting |
 | Como funciona a consulta | Quer entender o encontro antes de marcar | Remover a objeção sobre a consulta | Ver horários da consulta |
-| Guia de custos | Está comparando preço | Explicar faixa de referência versus orçamento final | Ver horários da avaliação |
+| Guia de custos | Está comparando preço | Explicar componentes, fatores de variação e orçamento individual | Ver horários da avaliação |
 
 As páginas “Como funciona a consulta” e “Guia de custos” continuam indexadas e acessíveis, mas deixam de competir com os botões principais das páginas comerciais.
 
@@ -895,9 +897,9 @@ Botão:
 
 ### 9.1 O que muda
 
-- Continuar indexado e utilizável pelo atendimento depois da faixa de preço.
-- Corrigir a divergência entre o site e o novo fluxo de WhatsApp: uma faixa de referência pode ser informada quando houver dado aprovado, mas o orçamento final depende da consulta.
-- Explicar uma única vez a diferença entre faixa, orçamento e custo total.
+- Continuar indexado e utilizável pelo atendimento para responder à intenção de preço sem publicar números de cirurgia.
+- Explicar a diferença entre componentes, orçamento individual e custo total da jornada.
+- Reservar eventual faixa aprovada para conversa individual no WhatsApp, somente depois de pedido reiterado e sem tratá-la como orçamento, proposta ou garantia.
 - Reduzir repetições do valor de R$ 500.
 - Unir as duas seções finais de CTA em apenas uma.
 - Manter o checklist, mas torná-lo mais curto e escaneável no mobile.
@@ -923,7 +925,7 @@ H1:
 
 Texto:
 
-> Os valores variam porque nem todos os planos incluem a mesma cirurgia, anestesia, hospital, materiais e acompanhamento. Uma faixa de referência ajuda a começar a conversa; o orçamento final só pode ser definido depois da avaliação e do exame.
+> Os valores variam porque nem todos os planos incluem a mesma cirurgia, anestesia, hospital, materiais e acompanhamento. A página explica o que compõe o custo; o orçamento final só pode ser definido depois da avaliação e do exame.
 
 Linha prática:
 
@@ -945,7 +947,7 @@ Texto:
 
 Texto:
 
-> Quando existe uma faixa de referência aprovada para o procedimento, a equipe pode informá-la pelo WhatsApp. Ela serve para orientar a decisão inicial, mas não substitui o orçamento individual.
+> A equipe pode explicar pelo WhatsApp como o orçamento é formado. Se a pessoa insistir por uma média de lifting ou minilifting, a faixa aprovada pode ser informada uma única vez como estimativa geral, sem caráter de orçamento, proposta ou garantia, acompanhada do link para este guia.
 
 #### O que entra no orçamento
 
@@ -978,16 +980,16 @@ Card 5:
 > **Acompanhamento**  
 > Retornos, orientações da recuperação e avaliação das cicatrizes.
 
-#### Faixa, orçamento e custo total
+#### Composição, orçamento e custo total
 
 H2:
 
-> Faixa de referência e custo total não são a mesma coisa.
+> Entender os componentes é diferente de receber um orçamento individual.
 
 Item 1:
 
-> **Faixa de referência**  
-> Ajuda a saber se o investimento inicial está dentro do que a paciente considera possível.
+> **Composição do valor**
+> Mostra quais profissionais, estruturas, materiais, exames e etapas podem participar do planejamento.
 
 Item 2:
 
@@ -1058,7 +1060,7 @@ Pergunta:
 
 Resposta nova e obrigatória:
 
-> Em alguns procedimentos, a equipe pode informar uma faixa de referência aprovada. O orçamento final só é preparado depois da consulta, do exame e da definição do plano individual.
+> A equipe pode explicar a composição pelo WhatsApp. Para lifting e minilifting, uma faixa aprovada só pode ser enviada depois de pedido explícito reiterado, como estimativa geral e sem caráter de orçamento, proposta ou garantia. O valor final só é preparado depois da consulta, do exame e da definição do plano individual.
 
 Manter também:
 
@@ -1126,7 +1128,7 @@ Não é necessária uma reescrita completa nesta etapa. Fazer somente estes ajus
 - Atualizar FAQs estruturadas para corresponder exatamente às perguntas que continuarem visíveis.
 - Preservar CRM-SP 191605, RQE 110472, endereço, telefone e fontes institucionais.
 - Não inventar certificações, resultados, número de cirurgias ou taxas de satisfação.
-- Não afirmar que uma faixa de referência é orçamento final.
+- Não publicar faixa ou valor numérico de cirurgia no site. Quando uma faixa for enviada de forma privada após insistência, não apresentá-la como orçamento, proposta ou garantia.
 - Não prometer reembolso, dedução fiscal, resultado ou prazo de recuperação individual.
 
 ## 13. Rastreamento e avaliação de conversão
@@ -1157,7 +1159,7 @@ O principal indicador do site é `agendamentos originados por página de entrada
 3. Reescrever a avaliação facial.
 4. Reorganizar a página de lifting facial.
 5. Enxugar o conteúdo sobre a consulta.
-6. Alinhar o guia de custos ao fluxo de faixa de referência do WhatsApp.
+6. Alinhar o guia de custos à explicação pública dos componentes e ao fluxo privado de faixa condicionada no WhatsApp.
 7. Fazer os pequenos ajustes na página de conteúdos.
 8. Atualizar metadados, schemas e datas.
 9. Validar links, mensagens de WhatsApp e eventos GA4.
@@ -1172,7 +1174,7 @@ O principal indicador do site é `agendamentos originados por página de entrada
 - A página de lifting continua completa para busca, mas não repete a mesma explicação em seções diferentes.
 - Conteúdos educativos não interrompem o caminho até o primeiro CTA completo.
 - Valor da consulta, Pix, débito, parcelamento e nota fiscal aparecem de forma consistente.
-- O guia informa corretamente que uma faixa pode ser fornecida pelo WhatsApp quando aprovada, mas que o orçamento final depende de avaliação.
+- O guia público não contém faixa cirúrgica numérica e explica os componentes; o WhatsApp só informa a faixa aprovada de lifting/minilifting depois de pedido reiterado, com ressalvas e link para o guia.
 - A mensagem do WhatsApp do guia preserva a referência usada para evitar reenvio.
 - Nenhuma URL existente é removida ou redirecionada.
 - Todos os links e testes automatizados passam.

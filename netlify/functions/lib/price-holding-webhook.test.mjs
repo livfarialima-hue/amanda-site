@@ -145,18 +145,19 @@ test("a first lifting price question receives the approved initial information w
       patientRequest.text.body,
       /[\u200B-\u200D\u2060\uFEFF]/,
     );
-    assert.match(patientRequest.text.body, /valores competitivos/i);
-    assert.match(patientRequest.text.body, /condição à vista/);
-    assert.match(patientRequest.text.body, /parcelamento antecipado/i);
+    assert.match(patientRequest.text.body, /definidos individualmente/i);
+    assert.match(patientRequest.text.body, /técnica, a complexidade/i);
     assert.match(
       patientRequest.text.body,
-      /hospital, anestesia, materiais e acompanhamento/i,
+      /equipe, o hospital, a anestesia, os materiais e o acompanhamento/i,
     );
+    assert.match(patientRequest.text.body, /não apresentamos um honorário isolado/i);
     assert.match(
       patientRequest.text.body,
-      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+      /quanto-custa-lifting-facial-sao-paulo/,
     );
-    assert.match(patientRequest.text.body, /média para o lifting facial/i);
+    assert.match(patientRequest.text.body, /explicar como funciona a avaliação/i);
+    assert.doesNotMatch(patientRequest.text.body, /(?:informar|passar).{0,20}(?:média|faixa)/i);
     assert.ok(Array.from(patientRequest.text.body).length <= 650);
     assert.doesNotMatch(
       patientRequest.text.body,

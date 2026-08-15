@@ -12,7 +12,8 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Manter o título do anúncio clínico e sóbrio: problema percebido + avaliação + localização.
 - Levar cada grupo à página específica que repete naturalmente aquela linguagem.
 - Separar intenção informativa de intenção de consulta; não misturar lifting, procedimentos minimamente invasivos e preço no mesmo grupo.
-- Para buscas como `lifting facial preço`, `valor do lifting` e `quanto custa lifting facial`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`. Para indicação, técnica, resultados e recuperação, preservar `https://draamandaschroeder.com.br/lifting-facial/` como destino principal.
+- Para buscas como `lifting facial preço`, `valor do lifting` e `quanto custa lifting facial`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`. A promessa do anúncio é explicar componentes, fatores de variação e orçamento individual, não publicar faixa cirúrgica. Para indicação, técnica, resultados e recuperação, preservar `https://draamandaschroeder.com.br/lifting-facial/` como destino principal.
+- Manter separados `AG_LIFTING_FACIAL` e `AG_LIFTING_FACIAL_PRECO`. No grupo geral, usar negativas **exatas** de roteamento para as cinco formas canônicas de preço: `[lifting facial preço]`, `[mini lifting facial preço]`, `[preço mini lifting facial]`, `[quanto custa lifting facial]` e `[valor lifting facial]`. As duas primeiras já estão aplicadas; as três restantes dependem de autorização específica. Nunca negativar `preço`, `valor`, `custo`, `quanto custa` ou `valor médio` em nível de campanha, conta ou lista compartilhada enquanto o grupo de preço estiver ativo.
 - Evitar promessas, superlativos, urgência artificial e afirmações como “resultado garantido”.
 
 ### Meta
@@ -69,6 +70,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `Adulto` em `S_BR_SP_OTOPLASTIA` → `ag_otoplastia_adulto`
   - `AG_OTOPLASTIA_INFANTIL` → `ag_otoplastia_infantil`
 - Os aliases históricos continuam legíveis para preservar o passado, mas não devem ser usados em novas configurações.
+- O catálogo e as regras de resolução ficam em `campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md`. Em especial, `M26O01W` isolado não prova o caminho porque foi documentado tanto para WhatsApp direto quanto para passagem pelo site; sem landing/CTA verificável, o caminho é `N/D` e não recebe backfill como direto.
 - Se o clique contiver `GCLID`, `GBRAID` ou `WBRAID`, mas a campanha ainda não tiver o parâmetro `origem`, o site acrescenta a referência genérica `G26ADS` à mensagem do WhatsApp.
 - Sem consentimento, GA4, Google Ads e Meta continuam bloqueados. A preservação operacional da referência e de um click ID já presente na URL ocorre sem criar cookie de publicidade e sem marcar consentimento como concedido; nenhum nome, telefone, e-mail ou conteúdo clínico deve ser transportado como parâmetro de mídia.
 - Após consentimento explícito, as tags de medição também podem registrar os eventos permitidos. O click ID permanece no bloco técnico `ID Ads` da mensagem em ambos os estados para permitir preencher a conversão qualificada na planilha.

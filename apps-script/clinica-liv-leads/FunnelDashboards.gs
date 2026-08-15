@@ -93,10 +93,14 @@ function formulasPainelEconomicoCanonico_() {
     scheduled: "=" + stageCount("", stages.scheduled),
     realized: "=" + stageCount("", stages.realized),
     converted: "=" + stageCount("", stages.converted),
-    responseCoverage: "=IFERROR('_BOT_METRICAS'!$E$2;0)",
-    responseMedian: "=IFERROR('_BOT_METRICAS'!$H$2;0)",
-    responseP95: "=IFERROR('_BOT_METRICAS'!$I$2;0)",
-    handoffs: "=IFERROR('_BOT_METRICAS'!$J$2;0)",
+    responseCoverage: "=IFERROR('_BOT_METRICAS'!$E$2;\"N/D\")",
+    responseMedian: "=IFERROR('_BOT_METRICAS'!$H$2;\"N/D\")",
+    responseP95: "=IFERROR('_BOT_METRICAS'!$I$2;\"N/D\")",
+    handoffs: "=IFERROR('_BOT_METRICAS'!$J$2;\"N/D\")",
+    routeCoverage: "=IFERROR('_BOT_METRICAS'!$S$2;\"N/D\")",
+    pendingRoutes: "=IFERROR('_BOT_METRICAS'!$P$2;\"N/D\")",
+    overdueP0P1: "=IFERROR('_BOT_METRICAS'!$V$2;\"N/D\")",
+    operationalGate: "=IFERROR('_BOT_METRICAS'!$X$2;\"N/D\")",
     platformQualified: function platformQualified(platformCell) {
       return "=" + stageCount(platformCell, stages.qualified);
     },
@@ -233,6 +237,20 @@ function atualizarPainelEconomicoCanonico_(economicSheet) {
   ]);
   economicSheet.getRange("K5").setNumberFormat("0.0%");
   economicSheet.getRange("K6:K9").setNumberFormat("0.0");
+  economicSheet.getRange("J10:J13").setValues([
+    ["Cobertura de rota válida"],
+    ["Rotas pendentes"],
+    ["P0/P1 vencidos"],
+    ["Gate operacional"],
+  ]);
+  economicSheet.getRange("K10:K13").setFormulas([
+    [formulas.routeCoverage],
+    [formulas.pendingRoutes],
+    [formulas.overdueP0P1],
+    [formulas.operationalGate],
+  ]);
+  economicSheet.getRange("K10").setNumberFormat("0.0%");
+  economicSheet.getRange("K11:K12").setNumberFormat("0.0");
 
   const platforms = [
     "Google",

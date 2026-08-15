@@ -13,7 +13,7 @@ const ACTIVE_ENV = {
   OPENAI_API_KEY: "test-key",
 };
 const INITIAL_PRICE_REPLY =
-  "Os valores variam conforme a avaliação. Trabalhamos com valores competitivos e parcelamento. Veja https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
+  "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
 function job(overrides = {}) {
   return {
@@ -235,11 +235,11 @@ test("the initial price information is sent after the human-resume window withou
     deps.patientMessages[0].body,
     /R\$ 18 mil|R\$ 26 mil/,
   );
-  assert.match(deps.patientMessages[0].body, /valores competitivos/i);
-  assert.match(deps.patientMessages[0].body, /parcelamento antecipado/);
+  assert.match(deps.patientMessages[0].body, /definidos individualmente/i);
+  assert.match(deps.patientMessages[0].body, /não apresentamos um honorário isolado/i);
   assert.match(
     deps.patientMessages[0].body,
-    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    /quanto-custa-lifting-facial-sao-paulo/,
   );
   assert.equal(deps.alerts.length, 0);
   assert.equal(
@@ -289,7 +289,7 @@ test("another surgical price still waits for human review with a complete sugges
   assert.match(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
 });
 
-test("direct lifting price resume does not suggest the facial guide twice", async () => {
+test("direct lifting price resume includes the specific composition guide with the range", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
     job({
@@ -324,6 +324,12 @@ test("direct lifting price resume does not suggest the facial guide twice", asyn
     deps.patientMessages[0].body,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
+  assert.match(
+    deps.patientMessages[0].body,
+    /quanto-custa-lifting-facial-sao-paulo/,
+  );
+  assert.match(deps.patientMessages[0].body, /não é orçamento, proposta nem garantia/i);
+  assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
   assert.equal(deps.alerts.length, 0);
 });
 
@@ -358,6 +364,11 @@ test("the approved lifting price may continue directly at night", async () => {
     deps.patientMessages[0].body,
     /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/,
   );
+  assert.match(
+    deps.patientMessages[0].body,
+    /quanto-custa-lifting-facial-sao-paulo/,
+  );
+  assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /retorno pela manhã/);
   assert.equal(deps.alerts.length, 0);
 });

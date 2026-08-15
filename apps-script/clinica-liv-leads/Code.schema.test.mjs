@@ -8,7 +8,10 @@ const source = readFileSync(
   "utf8",
 );
 
-function loadCode() {
+function loadCode({ schemaEnabled = true } = {}) {
+  const properties = new Map(
+    schemaEnabled ? [["ATTRIBUTION_SCHEMA_VERSION", "v1"]] : [],
+  );
   const sandbox = {
     console,
     Date,
@@ -27,6 +30,15 @@ function loadCode() {
     SpreadsheetApp: {
       flush() {},
     },
+    PropertiesService: {
+      getScriptProperties() {
+        return {
+          getProperty: (key) => properties.get(key) || null,
+          setProperty: (key, value) => properties.set(key, String(value)),
+          deleteProperty: (key) => properties.delete(key),
+        };
+      },
+    },
   };
 
   vm.runInNewContext(
@@ -34,12 +46,16 @@ function loadCode() {
 globalThis.__test = {
   CONFIG,
   EXPECTED_HEADERS,
+  WHATSAPP_EVENT_HEADERS,
   normalizeLead_,
   writeLead_,
+  mergeLeadIntoExistingRow_,
   decomporReferenciaAquisicao_,
   isKnownPatientRelationship_,
   findProcessedEvent_,
   recordProcessedEvent_,
+  attributionSchemaEnabled_,
+  cabecalhosEventosWhatsAppAtivos_,
   resolvePendingProcessedEvent_,
   resolucaoLeadBloqueiaInsercao_,
 };`,
@@ -216,6 +232,73 @@ test("Meta creative and CTA remain independently auditable", () => {
   );
 });
 
+test("legacy first-touch fields are filled independently and never overwritten", () => {
+  const { mergeLeadIntoExistingRow_ } = loadCode();
+  const existing = Array(25).fill("");
+  existing[1] = "SITE-avaliacao-facial";
+  existing[19] = "Orgânico/Conteúdo";
+  existing[20] = "ORIGINAL_CAMPAIGN";
+  existing[24] = "SITE-avaliacao-facial";
+  const writes = [];
+  const sheet = {
+    getRange(row, column, rows = 1, columns = 1) {
+      return {
+        getDisplayValues() {
+          return [existing.slice(column - 1, column - 1 + columns)];
+        },
+        setValue(value) {
+          writes.push({ row, column, value });
+        },
+      };
+    },
+  };
+
+  mergeLeadIntoExistingRow_(sheet, 2, {
+    reference: "M26F02S-C01H01-avaliacao-facial",
+    platform: "Meta",
+    gclid: "",
+    gbraid: "",
+    wbraid: "",
+  });
+
+  assert.equal(writes.some((write) => write.column === 2), false);
+  assert.equal(writes.some((write) => write.column === 20), false);
+  assert.equal(writes.some((write) => write.column === 21), false);
+  assert.equal(writes.some((write) => write.column === 25), false);
+  assert.equal(writes.some((write) => write.column === 24), true);
+});
+
+test("a frozen legacy reference never borrows platform from a later touch", () => {
+  const { mergeLeadIntoExistingRow_ } = loadCode();
+  const existing = Array(25).fill("");
+  existing[1] = "SITE-avaliacao-facial";
+  existing[19] = "";
+  existing[24] = "SITE-avaliacao-facial";
+  const writes = [];
+  const sheet = {
+    getRange(row, column, rows = 1, columns = 1) {
+      return {
+        getDisplayValues: () => [existing.slice(column - 1, column - 1 + columns)],
+        setValue(value) { writes.push({ row, column, value }); },
+      };
+    },
+  };
+
+  mergeLeadIntoExistingRow_(sheet, 2, {
+    reference: "M26F02S-C01H01",
+    platform: "Meta",
+  });
+
+  assert.deepEqual(
+    writes.filter((write) => write.column === 20),
+    [{ row: 2, column: 20, value: "Orgânico/Conteúdo" }],
+  );
+  assert.equal(
+    writes.some((write) => write.column === 20 && write.value === "Meta"),
+    false,
+  );
+});
+
 test("lead normalization keeps only bounded attribution diagnostics", () => {
   const { normalizeLead_ } = loadCode();
   const lead = normalizeLead_({
@@ -234,9 +317,19 @@ test("lead normalization keeps only bounded attribution diagnostics", () => {
 });
 
 test("processed lead event persists campaign coverage and fallback reason", () => {
-  const { recordProcessedEvent_ } = loadCode();
+  const { recordProcessedEvent_, WHATSAPP_EVENT_HEADERS } = loadCode();
   let appended = null;
   const sheet = {
+    getLastColumn() {
+      return WHATSAPP_EVENT_HEADERS.length;
+    },
+    getRange() {
+      return {
+        getDisplayValues() {
+          return [Array.from(WHATSAPP_EVENT_HEADERS)];
+        },
+      };
+    },
     appendRow(values) {
       appended = values;
     },
@@ -253,6 +346,21 @@ test("processed lead event persists campaign coverage and fallback reason", () =
       attributionFallbackReason: "meta_referral_without_mapped_code",
       reference: "META-DIRETO-SEM-CODIGO",
       platform: "Meta",
+      attribution: {
+        resolved: true,
+        initialOrigin: "Google orgânico",
+        initialChannel: "organic_search",
+        initialCampaignCode: "",
+        initialCreativeCode: "",
+        currentOrigin: "Meta Ads",
+        currentChannel: "meta_ads",
+        currentCampaignCode: "M26F02S",
+        currentCreativeCode: "C01H01",
+        conversionPath: "meta_site_return_whatsapp",
+        journeyStatus: "resolved",
+        reportedOrigin: "Indicação",
+        reportedOriginConfidence: "patient_reported",
+      },
     },
     27,
     "inserted",
@@ -261,12 +369,157 @@ test("processed lead event persists campaign coverage and fallback reason", () =
     "resolved",
   );
 
-  assert.deepEqual(JSON.parse(JSON.stringify(appended.slice(9))), [
+  assert.deepEqual(JSON.parse(JSON.stringify(appended.slice(9, 13))), [
     "meta_uncoded",
     "meta_referral_without_mapped_code",
     "META-DIRETO-SEM-CODIGO",
     "Meta",
   ]);
+  const column = Object.fromEntries(
+    WHATSAPP_EVENT_HEADERS.map((header, index) => [header, index]),
+  );
+  assert.equal(appended[column["Origem inicial canônica"]], "Google orgânico");
+  assert.equal(appended[column["Campanha inicial da jornada"]], "");
+  assert.equal(appended[column["Origem da conversa atual"]], "Meta Ads");
+  assert.equal(appended[column["Campanha da conversa atual"]], "M26F02S");
+  assert.equal(appended[column["Criativo da conversa atual"]], "C01H01");
+  assert.equal(appended[column["Status da jornada"]], "resolved");
+  assert.equal(
+    appended[column["Origem informada pelo paciente"]],
+    "Indicação",
+  );
+  assert.equal(
+    appended[column["Confiança da origem informada"]],
+    "patient_reported",
+  );
+});
+
+test("disabled attribution schema leaves additive event columns blank", () => {
+  const {
+    recordProcessedEvent_,
+    WHATSAPP_EVENT_HEADERS,
+    attributionSchemaEnabled_,
+    cabecalhosEventosWhatsAppAtivos_,
+  } = loadCode({ schemaEnabled: false });
+  let appended = null;
+  const sheet = {
+    getLastColumn: () => WHATSAPP_EVENT_HEADERS.length,
+    getRange: () => ({
+      getDisplayValues: () => [Array.from(WHATSAPP_EVENT_HEADERS)],
+    }),
+    appendRow(values) { appended = values; },
+  };
+
+  recordProcessedEvent_(sheet, {
+    messageId: "message-schema-off",
+    eventId: "event-schema-off",
+    phone: "+5511900000000",
+    contactAt: new Date("2026-08-15T12:00:00.000Z"),
+    reference: "M26F02S-C01H01",
+    platform: "Meta",
+    attribution: {
+      initialOrigin: "Meta Ads",
+      initialChannel: "meta_ads",
+      conversionPath: "meta_site_whatsapp",
+    },
+  }, 2, "inserted", "opp-1", "amanda", "resolved");
+
+  assert.equal(attributionSchemaEnabled_(), false);
+  assert.equal(cabecalhosEventosWhatsAppAtivos_().length, 13);
+  assert.equal(appended.length, WHATSAPP_EVENT_HEADERS.length);
+  assert.deepEqual(appended.slice(13), Array(WHATSAPP_EVENT_HEADERS.length - 13).fill(""));
+});
+
+test("lead normalization preserves only the closed journey data contract", () => {
+  const { normalizeLead_ } = loadCode();
+  const lead = normalizeLead_({
+    eventId: "event-journey",
+    messageId: "message-journey",
+    phone: "+5511900000000",
+    platform: "Meta",
+    attribution: {
+      resolved: true,
+      journeyStatus: "resolved",
+      initialOrigin: "Meta Ads",
+      initialChannel: "meta_ads",
+      currentOrigin: "Acesso direto",
+      currentChannel: "direct",
+      conversionPath: "meta_site_return_whatsapp",
+      initialCampaignCode: "M26F02S",
+      initialAdgroupCode: "AG01",
+      initialCreativeCode: "C01H01",
+      initialMetaCampaignId: "120000000000000000",
+      initialMetaAdsetId: "not-an-id",
+      currentCampaignCode: "M26F03S",
+      currentAdgroupCode: "AG03",
+      currentCreativeCode: "C03H01",
+      currentMetaCampaignId: "120000000000000003",
+      currentMetaAdsetId: "120000000000000004",
+      currentMetaAdId: "120000000000000005",
+      landingPage: "/avaliacao-facial/",
+      ctaPage: "https://malicious.example/",
+      ctaLocation: "hero",
+      confidence: "observed",
+      fallbackReason: "",
+      firstTouchAt: "2026-08-15T10:00:00.000Z",
+      lastTouchAt: "2026-08-15T12:00:00.000Z",
+      reportedOrigin: " indicação ",
+      reportedOriginConfidence: "observed",
+    },
+  });
+
+  assert.equal(lead.attribution.initialOrigin, "Meta Ads");
+  assert.equal(lead.attribution.conversionPath, "meta_site_return_whatsapp");
+  assert.equal(lead.attribution.metaCampaignId, "120000000000000000");
+  assert.equal(lead.attribution.metaAdsetId, "");
+  assert.equal(lead.attribution.initialCampaignCode, "M26F02S");
+  assert.equal(lead.attribution.currentCampaignCode, "M26F03S");
+  assert.equal(lead.attribution.currentAdgroupCode, "AG03");
+  assert.equal(lead.attribution.currentCreativeCode, "C03H01");
+  assert.equal(lead.attribution.currentMetaCampaignId, "120000000000000003");
+  assert.equal(lead.attribution.currentMetaAdsetId, "120000000000000004");
+  assert.equal(lead.attribution.currentMetaAdId, "120000000000000005");
+  assert.equal(lead.attribution.landingPage, "/avaliacao-facial/");
+  assert.equal(lead.attribution.ctaPage, "");
+  assert.equal(lead.attribution.journeyStatus, "resolved");
+  assert.equal(lead.attribution.reportedOrigin, "Indicação");
+  assert.equal(
+    lead.attribution.reportedOriginConfidence,
+    "patient_reported",
+  );
+});
+
+test("patient-reported origin is never inferred into observed attribution", () => {
+  const { normalizeLead_ } = loadCode();
+  const lead = normalizeLead_({
+    eventId: "event-reported-separation",
+    messageId: "message-reported-separation",
+    phone: "+5511900000000",
+    attribution: {
+      initialOrigin: "Origem informada pelo paciente",
+      initialChannel: "patient_reported",
+      currentOrigin: "Meta Ads",
+      currentChannel: "meta_ads",
+      confidence: "patient_reported",
+    },
+  });
+
+  assert.equal(lead.attribution.initialOrigin, "Desconhecida");
+  assert.equal(lead.attribution.initialChannel, "unknown");
+  assert.equal(lead.attribution.currentOrigin, "Meta Ads");
+  assert.equal(lead.attribution.currentChannel, "meta_ads");
+  assert.equal(lead.attribution.confidence, "unknown");
+  assert.equal(lead.attribution.reportedOrigin, "");
+  assert.equal(lead.attribution.reportedOriginConfidence, "");
+
+  const invalid = normalizeLead_({
+    eventId: "event-invalid-reported-origin",
+    messageId: "message-invalid-reported-origin",
+    phone: "+5511900000000",
+    attribution: { reportedOrigin: "TikTok ou texto livre" },
+  });
+  assert.equal(invalid.attribution.reportedOrigin, "");
+  assert.equal(invalid.attribution.reportedOriginConfidence, "");
 });
 
 test("a duplicate keeps the pending route state visible to the caller", () => {

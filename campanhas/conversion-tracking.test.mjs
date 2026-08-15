@@ -33,36 +33,76 @@ function storage(initial = {}) {
 
 function loadAttribution({
   consent = "denied",
+  journeyEnabled = false,
   links = [],
+  localInitial = {},
+  pathname = "/",
   procedure = "",
+  randomSeed = 3,
   readyState = "loading",
+  runLoaderFirst = false,
   search = "",
   sessionInitial = {},
   setupSource = "",
 } = {}) {
-  const localStorage = storage({ amanda_tracking_consent: consent });
+  const localStorage = storage({
+    ...localInitial,
+    amanda_tracking_consent: consent,
+  });
   const sessionStorage = storage(sessionInitial);
   const documentListeners = {};
   const document = {
+    cookie: "",
+    title: "Test page",
     readyState,
     addEventListener(type, listener) {
       documentListeners[type] = listener;
     },
-    querySelectorAll() {
-      return links;
+    dispatchEvent() {},
+    querySelector() {
+      return null;
     },
+    querySelectorAll(selector) {
+      return /wa\.me|whatsapp/i.test(String(selector || "")) ? links : [];
+    },
+    getElementById() { return null; },
+    createElement() { return { setAttribute() {}, style: {} }; },
+    head: { appendChild() {} },
     body: null,
     documentElement: { dataset: { procedure } },
   };
   const window = {
-    AMANDA_TRACKING_CONFIG: { debug: true },
+    AMANDA_TRACKING_CONFIG: {
+      attributionJourneyEnabled: journeyEnabled,
+      debug: true,
+    },
     location: {
       search,
       href: `https://example.test/${search}`,
-      pathname: "/",
+      hostname: "example.test",
+      pathname,
     },
     MutationObserver: null,
   };
+  if (journeyEnabled) {
+    let randomCalls = 0;
+    window.__beaconCalls = [];
+    window.crypto = {
+      getRandomValues(values) {
+        for (let index = 0; index < values.length; index += 1) {
+          values[index] = (randomSeed + randomCalls * 29 + index * 17) % 256;
+        }
+        randomCalls += 1;
+        return values;
+      },
+    };
+    window.navigator = {
+      sendBeacon(url, body) {
+        window.__beaconCalls.push({ url, body });
+        return true;
+      },
+    };
+  }
   const sandbox = {
     console,
     Date,
@@ -74,12 +114,17 @@ function loadAttribution({
     String,
     URL,
     URLSearchParams,
+    Uint8Array,
+    CustomEvent: class CustomEvent {
+      constructor(type) { this.type = type; }
+    },
     document,
     localStorage,
     sessionStorage,
     window,
   };
 
+  if (runLoaderFirst) vm.runInNewContext(loaderSource, sandbox);
   if (setupSource) vm.runInNewContext(setupSource, sandbox);
   vm.runInNewContext(conversionSource, sandbox);
   return {
@@ -325,6 +370,26 @@ test("sends Google measurement after consent is granted", () => {
 
   assert.equal(window.__measurementCalls.length, 2);
   assert.equal(window.__measurementCalls[0][1], "whatsapp_click");
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(window.__measurementCalls[0][2])),
+    {
+      event_category: "engagement",
+      contact_channel: "whatsapp",
+      measurement_state: "consented",
+      transport_type: "beacon",
+      send_to: "G-TEST",
+    },
+  );
+  for (const forbidden of [
+    "event_label",
+    "page_type",
+    "content_group",
+    "cta_location",
+    "cta_text",
+    "page_path",
+  ]) {
+    assert.equal(Object.hasOwn(window.__measurementCalls[0][2], forbidden), false);
+  }
   assert.equal(window.__measurementCalls[1][1], "conversion");
   assert.equal(window.__amandaLastMeasurementEvent.mode, "consented");
 });
@@ -348,6 +413,25 @@ test("every organic site CTA gets a stable SITE reference", () => {
 
   const message = new URL(link.href).searchParams.get("text");
   assert.match(message, /Ref\. SITE-avaliacao-facial$/);
+});
+
+test("does not infer direct traffic from an absent referrer", () => {
+  const { debug } = loadAttribution({
+    consent: "denied",
+    journeyEnabled: true,
+    pathname: "/avaliacao-facial/",
+    readyState: "complete",
+  });
+  const state = debug.updateJourneyFromCurrentPage();
+  assert.equal(state.first_touch.origin, "Desconhecida");
+  assert.equal(state.first_touch.channel, "unknown");
+  assert.equal(state.first_touch.referrer_type, "missing");
+  const envelope = debug.journeyEnvelopeForLink({
+    dataset: { ctaLocation: "hero" },
+  });
+  assert.equal(envelope.conversion_path, "unknown");
+  assert.equal(envelope.confidence, "unknown");
+  assert.equal(envelope.fallback_reason, "origin_unknown");
 });
 
 test("M26F02S survives the site journey without consent or duplicate prefixes", () => {
@@ -379,6 +463,142 @@ test("M26F02S survives the site journey without consent or duplicate prefixes", 
   const message = new URL(link.href).searchParams.get("text");
   assert.match(message, /Ref\. M26F02S-avaliacao-facial$/);
   assert.equal((message.match(/M26F02S/g) || []).length, 1);
+});
+
+test("creates a PII-free journey envelope for Meta site and registers it on click", () => {
+  const listeners = {};
+  const link = {
+    addEventListener(type, listener) {
+      listeners[type] = listener;
+    },
+    closest() {
+      return null;
+    },
+    dataset: { ctaLocation: "hero", procedure: "avaliacao-facial" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1%2C%20vim%20pelo%20site.",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+  const loaded = loadAttribution({
+    consent: "denied",
+    journeyEnabled: true,
+    links: [link],
+    pathname: "/avaliacao-facial/",
+    readyState: "complete",
+    search:
+      "?origem=M26F02S&utm_source=meta&utm_medium=paid_social" +
+      "&utm_campaign=M26F02S&utm_content=C01H01" +
+      "&meta_campaign_id=120000000000000000" +
+      "&meta_adset_id=120000000000000001" +
+      "&meta_ad_id=120000000000000002",
+  });
+
+  const message = new URL(link.href).searchParams.get("text");
+  const preparedToken = message.match(/JID: (J1_[A-Za-z0-9_-]{22})/)[1];
+  assert.match(message, /Ref\. M26F02S-C01H01-avaliacao-facial/);
+  listeners.click();
+  assert.equal(loaded.window.__beaconCalls.length, 1);
+  assert.equal(
+    loaded.window.__beaconCalls[0].url,
+    "/.netlify/functions/attribution-journey",
+  );
+  const envelope = JSON.parse(loaded.window.__beaconCalls[0].body);
+  const clickedMessage = new URL(link.href).searchParams.get("text");
+  const clickedToken = clickedMessage.match(/JID: (J1_[A-Za-z0-9_-]{22})/)[1];
+  assert.notEqual(clickedToken, preparedToken);
+  assert.equal(envelope.token, clickedToken);
+  assert.equal(envelope.first_touch.origin, "Meta Ads");
+  assert.equal(envelope.first_touch.campaign_code, "M26F02S");
+  assert.equal(envelope.first_touch.creative_code, "C01H01");
+  assert.equal(envelope.first_touch.meta_adset_id, "120000000000000001");
+  assert.equal(envelope.cta.page_path, "/avaliacao-facial/");
+  assert.equal(envelope.cta.location, "hero");
+  assert.equal(envelope.conversion_path, "meta_site_whatsapp");
+  assert.equal(envelope.confidence, "observed");
+  assert.equal(/5511961957144|OlÃ¡|mensagem/i.test(loaded.window.__beaconCalls[0].body), false);
+
+  listeners.click();
+  assert.equal(loaded.window.__beaconCalls.length, 2);
+  const secondEnvelope = JSON.parse(loaded.window.__beaconCalls[1].body);
+  const secondMessage = new URL(link.href).searchParams.get("text");
+  const secondToken = secondMessage.match(/JID: (J1_[A-Za-z0-9_-]{22})/)[1];
+  assert.notEqual(secondToken, clickedToken);
+  assert.equal(secondEnvelope.token, secondToken);
+});
+
+test("enabled journey transports Google click IDs without exposing them in WhatsApp text", () => {
+  const listeners = {};
+  const link = {
+    addEventListener(type, listener) { listeners[type] = listener; },
+    closest() { return null; },
+    dataset: { ctaLocation: "hero", procedure: "blefaroplastia" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() { return true; },
+    textContent: "Falar com a equipe",
+  };
+  const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4journey";
+  const loaded = loadAttribution({
+    consent: "denied",
+    journeyEnabled: true,
+    links: [link],
+    pathname: "/blefaroplastia/",
+    readyState: "complete",
+    search: `?utm_source=google&utm_medium=cpc&utm_campaign=G26BLEF&gclid=${gclid}`,
+  });
+  listeners.click();
+  const message = new URL(link.href).searchParams.get("text");
+  const envelope = JSON.parse(loaded.window.__beaconCalls[0].body);
+  assert.equal(message.includes(gclid), false);
+  assert.doesNotMatch(message, /\bGCLID:/);
+  assert.match(message, /JID: J1_[A-Za-z0-9_-]{22}/);
+  assert.equal(envelope.click_ids.gclid, gclid);
+});
+
+test("preserves first Meta touch and classifies a consented later return", () => {
+  const firstPage = loadAttribution({
+    consent: "granted",
+    journeyEnabled: true,
+    pathname: "/avaliacao-facial/",
+    randomSeed: 5,
+    readyState: "complete",
+    search:
+      "?origem=M26F02S&utm_source=meta&utm_medium=paid_social" +
+      "&utm_campaign=M26F02S&utm_content=C01H01",
+  });
+  const persisted = firstPage.localStorage.getItem(
+    "amanda_attribution_journey_v1",
+  );
+  assert.ok(persisted);
+
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "final", procedure: "blefaroplastia" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+  const returnPage = loadAttribution({
+    consent: "granted",
+    journeyEnabled: true,
+    links: [link],
+    localInitial: { amanda_attribution_journey_v1: persisted },
+    pathname: "/blefaroplastia/",
+    randomSeed: 71,
+    readyState: "complete",
+    runLoaderFirst: true,
+  });
+  const envelope = returnPage.debug.journeyEnvelopeForLink(link);
+  assert.equal(envelope.first_touch.origin, "Meta Ads");
+  assert.equal(envelope.first_touch.page_path, "/avaliacao-facial/");
+  assert.equal(envelope.last_touch.channel, "unknown");
+  assert.equal(envelope.last_touch.referrer_type, "missing");
+  assert.equal(envelope.last_non_direct_touch.campaign_code, "M26F02S");
+  assert.equal(envelope.cta.page_path, "/blefaroplastia/");
+  assert.equal(envelope.conversion_path, "meta_site_return_whatsapp");
 });
 
 test("keeps exact click IDs after explicit consent", () => {
@@ -452,6 +672,7 @@ test("revoking consent clears optional attribution but preserves session click I
       amanda_click_id_gclid: "legacy-persistent-id",
       amanda_marketing_attribution: JSON.stringify({ gclid }),
       amanda_first_touch: "optional",
+      amanda_attribution_journey_v1: JSON.stringify({ version: 1, persistent: true }),
     },
     session: {
       amanda_click_id_gclid: JSON.stringify({
@@ -463,6 +684,7 @@ test("revoking consent clears optional attribution but preserves session click I
         gclid,
       }),
       amanda_first_touch: "optional",
+      amanda_attribution_journey_v1: JSON.stringify({ version: 1, operational: true }),
     },
   });
 
@@ -471,12 +693,14 @@ test("revoking consent clears optional attribution but preserves session click I
   assert.equal(manager.localStorage.getItem("amanda_click_id_gclid"), null);
   assert.equal(manager.localStorage.getItem("amanda_marketing_attribution"), null);
   assert.equal(manager.localStorage.getItem("amanda_first_touch"), null);
+  assert.equal(manager.localStorage.getItem("amanda_attribution_journey_v1"), null);
   assert.ok(manager.sessionStorage.getItem("amanda_click_id_gclid"));
   assert.deepEqual(
     JSON.parse(manager.sessionStorage.getItem("amanda_marketing_attribution")),
     { gclid },
   );
   assert.equal(manager.sessionStorage.getItem("amanda_first_touch"), null);
+  assert.ok(manager.sessionStorage.getItem("amanda_attribution_journey_v1"));
   assert.ok(manager.dispatched.includes("amanda:consent-denied"));
 });
 

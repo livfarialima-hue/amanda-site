@@ -14,6 +14,7 @@
     'amanda_click_id_wbraid'
   ];
   var marketingAttributionStorageKey = 'amanda_marketing_attribution';
+  var journeyStorageKey = 'amanda_attribution_journey_v1';
   var marketingClickIdParams = ['gclid', 'gbraid', 'wbraid'];
   var googleScriptId = 'amanda-google-gtag';
 
@@ -118,6 +119,7 @@
       try { localStorage.removeItem(key); } catch (error) {}
     });
     try { localStorage.removeItem(marketingAttributionStorageKey); } catch (error) {}
+    try { localStorage.removeItem(journeyStorageKey); } catch (error) {}
   }
 
   function clearSiteAttribution() {
@@ -127,8 +129,10 @@
     });
 
     // A recusa remove persistência e sinais opcionais, mas não apaga o click
-    // ID da sessão atual. Ele só acompanha a mensagem se a pessoa clicar
-    // voluntariamente para abrir o WhatsApp.
+    // ID nem a jornada operacional da sessão atual. Esses dados ficam apenas
+    // nesta aba/sessão e só acompanham a conversa se a pessoa clicar
+    // voluntariamente para abrir o WhatsApp. A cópia persistente da jornada é
+    // sempre removida sem consentimento.
     clearPersistentClickIdStorage();
     try {
       var stored = JSON.parse(sessionStorage.getItem(marketingAttributionStorageKey) || '{}');
@@ -248,7 +252,11 @@
   };
 
   var initialConsent = getConsent();
-  clearPersistentClickIdStorage();
+  // A inicialização jamais apaga uma jornada persistente consentida antes de
+  // conversion-tracking.js poder restaurá-la. Sem consentimento, limpamos
+  // somente a persistência opcional; a atribuição operacional da sessão é
+  // tratada pelo script do CTA.
+  if (initialConsent !== 'granted') clearPersistentClickIdStorage();
   updateGoogleConsent(initialConsent === 'granted');
   if (initialConsent === 'granted') {
     loadGoogleTags({ sendPageView: true });

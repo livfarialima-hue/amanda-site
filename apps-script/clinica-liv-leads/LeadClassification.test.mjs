@@ -15,6 +15,8 @@ const classificationSource = readFileSync(
 function loadFunctions() {
   const scriptProperties = new Map([
     ["GOOGLE_ADS_TRANSACTION_HMAC_SECRET", "S".repeat(43)],
+    ["LEAD_IDENTITY_HMAC_SECRET", "I".repeat(43)],
+    ["LEAD_IDENTITY_HMAC_KEY_VERSION", "k1"],
   ]);
   const sandbox = {
     console,
@@ -77,6 +79,8 @@ function loadFunctions() {
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
       "googleAdsTransactionIdSeguro_, googleConversionTransactionId_, " +
+      "pseudonimoIdentidadeLead_, " +
+      "leadOpportunityId_, " +
       "linhaExigeNomeConversaoQualificadoGoogleAds_, " +
       "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
@@ -148,6 +152,29 @@ test("Google Ads transaction ids use the opaque HMAC v1 contract", () => {
   assert.equal(googleAdsTransactionIdSeguro_(transactionId), true);
   assert.match(transactionId, /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/);
   assert.doesNotMatch(transactionId, /opp_synthetic|qualified_lead/);
+});
+
+test("person pseudonyms use a versioned HMAC and never expose the phone", () => {
+  const { pseudonimoIdentidadeLead_ } = loadFunctions();
+  const phone = "+5511900000000";
+  const first = pseudonimoIdentidadeLead_(phone);
+  const second = pseudonimoIdentidadeLead_(phone);
+
+  assert.equal(first, second);
+  assert.match(first, /^pid_k1_[A-Za-z0-9_-]{43}$/);
+  assert.equal(first.includes(phone.replace(/\D/g, "")), false);
+});
+
+test("legacy opportunity fallback is deterministic HMAC rather than raw-event hash", () => {
+  const { leadOpportunityId_ } = loadFunctions();
+  const row = ["15/08/2026 10:00", "M26F02S"];
+  const phone = "+5511900000000";
+  const first = leadOpportunityId_(row, phone);
+  const second = leadOpportunityId_(row, phone);
+
+  assert.equal(first, second);
+  assert.match(first, /^opp_legacy_k1_[A-Za-z0-9_-]{43}$/);
+  assert.equal(first.includes(phone.replace(/\D/g, "")), false);
 });
 
 test("visible Google Ads rows use the canonical name only with one click id", () => {

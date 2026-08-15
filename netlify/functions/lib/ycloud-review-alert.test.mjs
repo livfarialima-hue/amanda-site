@@ -72,6 +72,67 @@ test("review alert uses the approved template shape", async () => {
   assert.equal(calls[0].options.body.includes("test-key"), false);
 });
 
+test("review alert console log contains only the safe operational envelope", async () => {
+  const sensitiveInput = {
+    from: "+5511961957144",
+    eventId: "evt_provider_sensitive_987",
+    patientName: "Sensitive Patient Name",
+    patientPhone: "+5511900000000",
+    messageText: "Sensitive clinical message content",
+    urgent: true,
+  };
+  const env = {
+    YCLOUD_API_KEY: "test-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-secret",
+    LOG_CORRELATION_SECRET: "test-only-correlation-secret",
+    LOG_CORRELATION_KEY_VERSION: "k9",
+  };
+  const logged = [];
+  const originalLog = console.log;
+  console.log = (value) => logged.push(String(value));
+
+  try {
+    const result = await sendYCloudReviewAlert(sensitiveInput, {
+      env,
+      getHumanResumeControlImpl: async () => null,
+      fetchImpl: async (url) => (
+        url === env.GOOGLE_SHEETS_WEBHOOK_URL
+          ? new Response('{"ok":true,"sent":true}', { status: 200 })
+          : new Response('{"status":"accepted"}', { status: 200 })
+      ),
+    });
+
+    assert.equal(result.status, "completed");
+  } finally {
+    console.log = originalLog;
+  }
+
+  assert.equal(logged.length, 1);
+  const record = JSON.parse(logged[0]);
+  assert.equal(record.source, "review_alert_email_copy");
+  assert.equal(record.category, "review_alert_delivery");
+  assert.equal(record.reason, "completed");
+  assert.equal(record.status, "completed");
+  assert.match(record.loggedAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.match(record.correlationId, /^lc1-k9-[a-f0-9]{24}$/);
+
+  const serialized = JSON.stringify(record);
+  for (const forbidden of [
+    sensitiveInput.eventId,
+    sensitiveInput.from,
+    sensitiveInput.patientName,
+    sensitiveInput.patientPhone,
+    sensitiveInput.messageText,
+  ]) {
+    assert.doesNotMatch(
+      serialized,
+      new RegExp(forbidden.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+    );
+  }
+});
+
 test("review alert stays silent after a human takes over", async () => {
   const calls = [];
   const result = await sendYCloudReviewAlert(INPUT, {

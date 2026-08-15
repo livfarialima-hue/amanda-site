@@ -12,7 +12,7 @@ import {
 } from "./whatsapp-automation.mjs";
 
 const INITIAL_PRICE_REPLY =
-  "Os valores das cirurgias variam conforme a avaliação. Trabalhamos com valores competitivos e parcelamento. Veja https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
+  "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
 test("possible urgency never authorizes a patient response", () => {
   const plan = planAutomation({
@@ -106,6 +106,42 @@ test("a repeated lifting price question receives the approved ranges automatical
   assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.procedure, "lifting_facial");
   assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("the bot does not send the full lifting range twice in the same recent context", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Pode repetir a faixa do lifting?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: INITIAL_PRICE_REPLY,
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: [
+          "Como estimativa geral e apenas informativa:",
+          "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+          "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+        ].join("\n"),
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "human_review");
+  assert.equal(
+    enrichedPlan.reason,
+    "lifting_price_range_already_sent_review",
+  );
+  assert.equal(enrichedPlan.procedure, "lifting_facial");
+  assert.equal(enrichedPlan.automaticAllowed, false);
 });
 
 test("a repeated price question for another surgery goes to human review with its procedure", () => {

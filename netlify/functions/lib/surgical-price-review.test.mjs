@@ -13,6 +13,7 @@ import {
 test("creates the approved first response for price, installments and cost composition", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Eliana",
+    procedure: "blefaroplastia",
     currentText: [
       "Qual o valor de uma cirurgia facial?",
       "Vcs parcelam em quantas vezes?",
@@ -21,10 +22,10 @@ test("creates the approved first response for price, installments and cost compo
   });
 
   assert.match(reply, /^Olá, Eliana! Eu sou a Bruna/);
-  assert.match(reply, /variam conforme o procedimento e o planejamento definido na avaliação/i);
-  assert.match(reply, /valores competitivos/i);
-  assert.match(reply, /parcelamento antecipado até a cirurgia/i);
-  assert.match(reply, /hospital, anestesia, materiais e acompanhamento/i);
+  assert.match(reply, /definidos individualmente após a avaliação e o planejamento/i);
+  assert.match(reply, /técnica, a complexidade, as necessidades de cada pessoa/i);
+  assert.match(reply, /equipe, o hospital, a anestesia, os materiais e o acompanhamento/i);
+  assert.match(reply, /não apresentamos um honorário isolado/i);
   assert.match(
     reply,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
@@ -40,9 +41,15 @@ test("the first price response does not ask for a procedure already identified",
     procedure: "lifting_facial",
   });
 
-  assert.match(reply, /média para o lifting facial/i);
+  assert.match(reply, /explicar como funciona a avaliação/i);
+  assert.match(
+    reply,
+    /quanto-custa-lifting-facial-sao-paulo/,
+  );
   assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
+  assert.doesNotMatch(reply, /(?:informar|passar).{0,20}(?:média|faixa)/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
 test("consultation price suggestion includes the invoice without promising tax savings", () => {
@@ -79,24 +86,26 @@ test("creates a patient-ready lifting facial price suggestion for human review",
   assert.match(reply, /^Rô, obrigada por aguardar\./);
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
   assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /estimativas gerais, apenas informativas/i);
+  assert.match(reply, /não são orçamento, proposta nem garantia de preço/i);
   assert.doesNotMatch(reply, /R\$ 36\.400|R\$ 38\.400/);
   assert.doesNotMatch(reply, /referência hospitalar|valor do hospital/i);
-  assert.match(reply, /hospital, anestesista, auxiliar, instrumentador e acompanhamento/i);
-  assert.match(reply, /resultado desejado/);
-  assert.match(reply, /parcelamento antecipado/);
-  assert.match(reply, /até a data da cirurgia/);
-  assert.match(reply, /condição à vista/);
+  assert.match(reply, /valor final é definido após avaliação e planejamento/i);
+  assert.match(reply, /pode ficar fora dessa faixa/i);
+  assert.match(reply, /técnica, complexidade, necessidades individuais/i);
+  assert.match(reply, /equipe, hospital, anestesia, materiais e acompanhamento/i);
+  assert.match(reply, /não representa honorários isolados/i);
   assert.match(
     reply,
-    /conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    /conteudos\/quanto-custa-lifting-facial-sao-paulo/,
   );
-  assert.match(reply, /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//);
+  assert.doesNotMatch(reply, /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
   assert.ok(
     reply.indexOf("entre R$ 26 mil e R$ 42 mil") <
-      reply.indexOf("quanto-custa-cirurgia-plastica-facial"),
+      reply.indexOf("quanto-custa-lifting-facial"),
   );
-  assert.match(reply, /Prefere manhã ou tarde/);
+  assert.match(reply, /explico a avaliação/i);
   assert.doesNotMatch(
     reply,
     /Se quiser, posso te explicar o que costuma aproximar/,
@@ -116,8 +125,13 @@ test("creates the approved lifting price reply for direct patient delivery", () 
   );
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
   assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
-  assert.match(reply, /parcelamento antecipado até a data da cirurgia/);
-  assert.match(reply, /Prefere manhã ou tarde/);
+  assert.match(reply, /apenas informativa/i);
+  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
+  assert.match(reply, /valor final é definido após avaliação e planejamento/i);
+  assert.match(reply, /pode ficar fora dessa faixa/i);
+  assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
+  assert.match(reply, /explico a avaliação/i);
   assert.doesNotMatch(reply, /obrigada por aguardar/i);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
   assert.ok(Array.from(reply).length <= 650);
@@ -237,7 +251,7 @@ test("offers the facial guide only once in the conversation", () => {
   );
 });
 
-test("does not repeat the guide when the patient came from that page", () => {
+test("the range message includes the composition guide even if it appeared earlier", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Maria",
     procedure: "lifting_facial",
@@ -245,19 +259,49 @@ test("does not repeat the guide when the patient came from that page", () => {
       {
         role: "user",
         text:
-          "Olá, li o conteúdo sobre custos de cirurgia facial. Referência: custos de cirurgia facial",
+          "Olá, li o conteúdo sobre o valor do lifting facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
       },
     ],
   });
 
   assert.match(reply, /entre R\$ 26 mil e R\$ 42 mil/);
-  assert.doesNotMatch(
+  assert.match(
     reply,
-    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    /quanto-custa-lifting-facial-sao-paulo/,
   );
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
-test("does not send the lifting page back to a patient who came from it", () => {
+test("the first lifting price answer does not repeat a guide already in the history", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Maria",
+    procedure: "lifting_facial",
+    recentConversation: [
+      {
+        role: "assistant",
+        text: "Veja https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+      },
+    ],
+  });
+
+  assert.match(reply, /definidos individualmente/i);
+  assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+  assert.doesNotMatch(reply, /https?:\/\//);
+});
+
+test("the first price answer does not attach a facial guide to another region", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Maria",
+    procedure: "abdominoplastia",
+  });
+
+  assert.match(reply, /definidos individualmente/i);
+  assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+  assert.doesNotMatch(reply, /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)/);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
+});
+
+test("does not replace the composition guide with the main lifting page", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Maria",
     procedure: "lifting_facial",
@@ -266,13 +310,14 @@ test("does not send the lifting page back to a patient who came from it", () => 
   });
 
   assert.match(reply, /entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.doesNotMatch(
     reply,
     /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
   );
 });
 
-test("does not repeat a lifting page already sent in the conversation", () => {
+test("keeps only the composition guide in a lifting price answer", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Maria",
     procedure: "lifting_facial",
@@ -289,6 +334,8 @@ test("does not repeat a lifting page already sent in the conversation", () => {
     reply,
     /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
   );
+  assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
 test("lifting links remain complete and free of invisible characters", () => {
@@ -301,12 +348,9 @@ test("lifting links remain complete and free of invisible characters", () => {
 
   assert.match(
     reply,
-    /https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo\//,
+    /https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\//,
   );
-  assert.match(
-    reply,
-    /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
-  );
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
 });
 

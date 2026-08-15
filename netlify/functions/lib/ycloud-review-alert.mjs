@@ -4,6 +4,7 @@ import {
   completeReviewAlertSlot,
   releaseReviewAlertSlot,
 } from "./review-alert-throttle.mjs";
+import { writeOperationalLog } from "./operational-log.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 
 const YCLOUD_MESSAGES_URL =
@@ -226,14 +227,19 @@ export async function sendYCloudReviewAlert(
         errorCode: "email_copy_handled_separately",
       });
 
-  console.log(JSON.stringify({
-    event: "review_alert_email_copy",
-    eventId: limitText(eventId, 200) || null,
-    status: emailCopy.status,
-    httpStatus: emailCopy.httpStatus || null,
-    errorCode: emailCopy.errorCode || null,
-    duplicate: emailCopy.duplicate === true,
-  }));
+  writeOperationalLog({
+    source: "review_alert_email_copy",
+    category: "review_alert_delivery",
+    reason: emailCopy.status || "unknown",
+    sourceId: eventId,
+    env,
+    fields: {
+      status: emailCopy.status,
+      httpStatus: emailCopy.httpStatus || null,
+      errorCode: emailCopy.errorCode || null,
+      duplicate: emailCopy.duplicate === true,
+    },
+  });
 
   let alertSlot = null;
   if (!urgent) {

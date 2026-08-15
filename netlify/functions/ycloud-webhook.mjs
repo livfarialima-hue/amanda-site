@@ -115,6 +115,16 @@ import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
 import {
+  attributionClaimantId,
+  writeOperationalLog,
+} from "./lib/operational-log.mjs";
+export { buildOperationalLogRecord } from "./lib/operational-log.mjs";
+import {
+  extractAttributionJourneyToken,
+  resolveAttributionJourney,
+} from "./lib/attribution-journey-store.mjs";
+
+import {
   completeInboundRecovery,
   registerInboundRecovery,
   settleDeferredInboundRecovery,
@@ -449,7 +459,130 @@ export function attributionFallbackReason(referenceCategory) {
   }
 }
 
-export function classifyAttribution(payload, message, text) {
+function platformFromJourneyChannel(channel) {
+  switch (String(channel || "")) {
+    case "meta_ads":
+      return "Meta";
+    case "google_ads":
+      return "Google";
+    case "organic_search":
+    case "ai_referral":
+    case "social_organic":
+    case "referral":
+      return "Orgânico/Conteúdo";
+    case "direct":
+      return "WhatsApp direto";
+    default:
+      return "Não identificada";
+  }
+}
+
+function referenceCategoryFromJourney(journey, platform) {
+  const campaignCode = String(
+    journey?.first_touch?.campaign_code || "",
+  );
+  if (platform === "Meta") return campaignCode ? "meta_coded" : "meta_uncoded";
+  if (platform === "Google") {
+    return campaignCode ? "google_coded" : "google_click_id";
+  }
+  if (platform === "Orgânico/Conteúdo") return "site_page";
+  return "whatsapp_uncoded";
+}
+
+export function normalizeResolvedJourneyAttribution(journey) {
+  if (!journey || journey.version !== 1 || !journey.first_touch) return null;
+  const first = journey.first_touch || {};
+  const current = journey.last_touch || first;
+  const platform = platformFromJourneyChannel(first.channel);
+  const referenceCategory = referenceCategoryFromJourney(journey, platform);
+  const confidence = String(journey.confidence || "unknown");
+  const fallbackReason = String(
+    journey.fallback_reason || attributionFallbackReason(referenceCategory),
+  );
+
+  return {
+    resolved: true,
+    initialOrigin: String(first.origin || "Desconhecida"),
+    initialChannel: String(first.channel || "unknown"),
+    currentOrigin: String(current.origin || "Desconhecida"),
+    currentChannel: String(current.channel || "unknown"),
+    conversionPath: String(journey.conversion_path || "unknown"),
+    // Backward-compatible aliases always describe the first touch. Never mix
+    // a later paid touch into columns labelled as initial.
+    campaignCode: String(first.campaign_code || ""),
+    adgroupCode: String(first.adgroup_code || ""),
+    creativeCode: String(first.creative_code || ""),
+    metaCampaignId: String(first.meta_campaign_id || ""),
+    metaAdsetId: String(first.meta_adset_id || ""),
+    metaAdId: String(first.meta_ad_id || ""),
+    initialCampaignCode: String(first.campaign_code || ""),
+    initialAdgroupCode: String(first.adgroup_code || ""),
+    initialCreativeCode: String(first.creative_code || ""),
+    initialMetaCampaignId: String(first.meta_campaign_id || ""),
+    initialMetaAdsetId: String(first.meta_adset_id || ""),
+    initialMetaAdId: String(first.meta_ad_id || ""),
+    currentCampaignCode: String(current.campaign_code || ""),
+    currentAdgroupCode: String(current.adgroup_code || ""),
+    currentCreativeCode: String(current.creative_code || ""),
+    currentMetaCampaignId: String(current.meta_campaign_id || ""),
+    currentMetaAdsetId: String(current.meta_adset_id || ""),
+    currentMetaAdId: String(current.meta_ad_id || ""),
+    landingPage: String(first.page_path || ""),
+    ctaPage: String(journey.cta?.page_path || ""),
+    ctaLocation: String(journey.cta?.location || ""),
+    firstTouchAt: String(first.occurred_at || ""),
+    lastTouchAt: String(current.occurred_at || ""),
+    confidence,
+    fallbackReason,
+    platform,
+    referenceCategory,
+    clickIds: { ...(journey.click_ids || {}) },
+  };
+}
+
+function canonicalReferenceFromJourney(attribution) {
+  if (!attribution || !attribution.initialCampaignCode) return "";
+  const landingSlug = String(attribution.landingPage || "")
+    .split("/")
+    .filter(Boolean)
+    .pop() || "";
+  return [
+    attribution.initialCampaignCode,
+    attribution.initialCreativeCode,
+    landingSlug,
+  ].filter(Boolean).join("-");
+}
+
+export async function resolveInboundAttributionJourney(
+  text,
+  {
+    resolveImpl = resolveAttributionJourney,
+    claimantId = "",
+  } = {},
+) {
+  const token = extractAttributionJourneyToken(text);
+  if (!token) return { status: "absent", journey: null };
+  if (!claimantId) return { status: "unavailable", journey: null };
+  try {
+    const journey = await resolveImpl(token, { claimantId });
+    return journey
+      ? { status: "resolved", journey }
+      : { status: "not_found", journey: null };
+  } catch {
+    return { status: "unavailable", journey: null };
+  }
+}
+
+export function stripAttributionTransportToken(text) {
+  return String(text || "")
+    .replace(
+      /(?:\r?\n)?\s*JID\s*:\s*J1_[A-Za-z0-9_-]{22}(?![A-Za-z0-9_-])/gi,
+      "",
+    )
+    .trim();
+}
+
+export function classifyAttribution(payload, message, text, resolvedJourney) {
   const referralIsMeta =
     String(
       message.referral?.source_type ||
@@ -465,7 +598,13 @@ export function classifyAttribution(payload, message, text) {
   const googleCode = matchGoogleCode(text);
   const legacyGoogleCode = matchLegacyGoogleCode(text);
   const siteCta = matchSiteCta(text);
-  const clickIds = extractClickIds(text);
+  const journeyAttribution = normalizeResolvedJourneyAttribution(
+    resolvedJourney,
+  );
+  const clickIds = {
+    ...extractClickIds(text),
+    ...(journeyAttribution?.clickIds || {}),
+  };
 
   const parsedReference =
     explicitReference ||
@@ -549,12 +688,24 @@ export function classifyAttribution(payload, message, text) {
     referenceCategory = "whatsapp_uncoded";
   }
 
-  return {
+  const legacyResult = {
     reference: referenceValue,
     platform,
     referenceCategory,
     fallbackReason: attributionFallbackReason(referenceCategory),
     clickIds,
+  };
+
+  if (!journeyAttribution) return legacyResult;
+  return {
+    ...legacyResult,
+    reference: canonicalReferenceFromJourney(journeyAttribution) ||
+      legacyResult.reference,
+    platform: journeyAttribution.platform,
+    referenceCategory: journeyAttribution.referenceCategory,
+    fallbackReason: journeyAttribution.fallbackReason,
+    clickIds,
+    journey: journeyAttribution,
   };
 }
 
@@ -838,11 +989,13 @@ async function recordAutomaticReplyOperationally({
       outcome: result.status,
     });
   } catch (error) {
-    console.error(JSON.stringify({
+    writeOperationalLog({
       source: "operational_event_write_failed",
-      eventId,
-      errorCode: "request_failed",
-    }));
+      category: "operational_event",
+      reason: "request_failed",
+      sourceId: eventId,
+      fields: { errorCode: "request_failed" },
+    }, "error");
   }
 }
 
@@ -889,41 +1042,40 @@ function isExactMessageDuplicate(delivery) {
 
 function logOpenAIResult(eventId, result, executionMode = "shadow") {
   if (result.status === "completed") {
-    console.log(
-      JSON.stringify({
-        source: `openai_${executionMode}_completed`,
-        eventId,
+    writeOperationalLog({
+      source: `openai_${executionMode}_completed`,
+      category: "openai_execution",
+      reason: "completed",
+      sourceId: eventId,
+      fields: {
         model: result.model,
         route: result.decision.route,
         confidence: result.decision.confidence,
         automaticAllowed: result.decision.automaticAllowed,
-        urgent: result.decision.urgent,
-        professional: result.decision.professional,
-        procedure: result.decision.procedure,
-        replyCode: result.decision.replyCode,
         suggestedReplyLength: String(
           result.decision.suggestedReply || "",
         ).length,
-        reviewReason: result.decision.reviewReason,
         policyVersion: process.env.BRUNA_POLICY_VERSION || "unversioned",
         promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
         knowledgeSnapshot:
           process.env.BRUNA_KB_SNAPSHOT || "unversioned",
         schemaVersion: "bruna-decision-v1",
         usage: result.usage,
-      }),
-    );
+      },
+    });
     return;
   }
 
-  console.log(
-    JSON.stringify({
-      source: `openai_${executionMode}_failed`,
-      eventId,
+  writeOperationalLog({
+    source: `openai_${executionMode}_failed`,
+    category: "openai_execution",
+    reason: "failed",
+    sourceId: eventId,
+    fields: {
       httpStatus: result.httpStatus ?? null,
       errorCode: result.errorCode || "unknown_failure",
-    }),
-  );
+    },
+  });
 }
 
 function shouldSendReviewAlertForPlan(plan) {
@@ -944,33 +1096,35 @@ function shouldSendReviewAlertForDecision(decision) {
 }
 
 function logReviewAlertResult(eventId, phone, alertResult) {
-  console.log(
-    JSON.stringify({
-      source:
-        alertResult.status === "completed"
-          ? "ycloud_review_alert_completed"
-          : "ycloud_review_alert_failed",
-      eventId,
-      patientLast4: String(phone || "").slice(-4),
+  const completed = alertResult.status === "completed";
+  writeOperationalLog({
+    source: completed
+      ? "ycloud_review_alert_completed"
+      : "ycloud_review_alert_failed",
+    category: "review_alert_delivery",
+    reason: completed ? "completed" : "failed",
+    sourceId: eventId,
+    fields: {
       httpStatus: alertResult.httpStatus ?? null,
       errorCode: alertResult.errorCode || "none",
-    }),
-  );
+    },
+  });
 }
 
 function logPatientReplyResult(eventId, phone, replyResult) {
-  console.log(
-    JSON.stringify({
-      source:
-        replyResult.status === "completed"
-          ? "ycloud_patient_reply_completed"
-          : "ycloud_patient_reply_failed",
-      eventId,
-      patientLast4: String(phone || "").slice(-4),
+  const completed = replyResult.status === "completed";
+  writeOperationalLog({
+    source: completed
+      ? "ycloud_patient_reply_completed"
+      : "ycloud_patient_reply_failed",
+    category: "reply_delivery",
+    reason: completed ? "completed" : "failed",
+    sourceId: eventId,
+    fields: {
       httpStatus: replyResult.httpStatus ?? null,
       errorCode: replyResult.errorCode || "none",
-    }),
-  );
+    },
+  });
 }
 
 function prepareReviewAlertInput(input, { decision, plan } = {}) {
@@ -1111,12 +1265,12 @@ async function completeAppointmentReview(input) {
     preferenceText: input.preferenceText || input.messageText,
   });
 
-  console.log(
-    JSON.stringify({
-      source: "appointment_review_prepared",
-      eventId: input.eventId,
-      professional: input.professional,
-      procedure: input.procedure || null,
+  writeOperationalLog({
+    source: "appointment_review_prepared",
+    category: "appointment_review",
+    reason: "prepared",
+    sourceId: input.eventId,
+    fields: {
       availabilityRead: availability.ok ? "success" : "failure",
       availableSlots: availability.slots.length,
       preferenceCaptured: Boolean(
@@ -1124,8 +1278,8 @@ async function completeAppointmentReview(input) {
       ),
       downstreamStatus: availability.httpStatus,
       downstreamError: availability.errorCode,
-    }),
-  );
+    },
+  });
 
   await completeReviewAlert({
     ...input,
@@ -1392,14 +1546,16 @@ async function completeOpenAIShadow(
       sideEffects: false,
     };
   } catch {
-    console.log(
-      JSON.stringify({
-        source: "openai_shadow_failed",
-        eventId: input.eventId,
+    writeOperationalLog({
+      source: "openai_shadow_failed",
+      category: "openai_execution",
+      reason: "request_failed",
+      sourceId: input.eventId,
+      fields: {
         httpStatus: null,
         errorCode: "request_failed",
-      }),
-    );
+      },
+    });
     return { status: "failed", replySent: false, sideEffects: false };
   }
 }
@@ -1454,14 +1610,15 @@ async function completeOpenAIActive({
     });
 
     if (!debounceResult.shouldProcess) {
-      console.log(
-        JSON.stringify({
-          source: "openai_active_debounced",
-          eventId: input.eventId,
-          patientLast4: String(to || "").slice(-4),
+      writeOperationalLog({
+        source: "openai_active_debounced",
+        category: "reply_control",
+        reason: "debounced",
+        sourceId: input.eventId,
+        fields: {
           delayMs: debounceResult.delayMs,
-        }),
-      );
+        },
+      });
       return { status: "superseded", replySent: false };
     }
 
@@ -1664,13 +1821,12 @@ async function completeOpenAIActive({
     });
 
     if (!latestAfterGeneration.shouldProcess) {
-      console.log(
-        JSON.stringify({
-          source: "openai_active_superseded_after_generation",
-          eventId: input.eventId,
-          patientLast4: String(to || "").slice(-4),
-        }),
-      );
+      writeOperationalLog({
+        source: "openai_active_superseded_after_generation",
+        category: "reply_control",
+        reason: "superseded_after_generation",
+        sourceId: input.eventId,
+      });
       return { status: "superseded", replySent: false };
     }
 
@@ -1682,15 +1838,16 @@ async function completeOpenAIActive({
       });
 
     if (!finalHumanGuard.shouldSend) {
-      console.log(
-        JSON.stringify({
-          source: "openai_active_cancelled_by_human_reply",
-          eventId: input.eventId,
-          patientLast4: String(to || "").slice(-4),
+      writeOperationalLog({
+        source: "openai_active_cancelled_by_human_reply",
+        category: "reply_control",
+        reason: "cancelled_by_human_reply",
+        sourceId: input.eventId,
+        fields: {
           controlStatus: finalHumanGuard.controlStatus,
           delayMs: finalHumanGuard.delayMs,
-        }),
-      );
+        },
+      });
       return { status: "superseded", replySent: false };
     }
 
@@ -1883,13 +2040,15 @@ async function completeOpenAIActive({
         source: "bruna",
       });
 
-      console.log(
-        JSON.stringify({
-          source: "conversation_memory_reply",
-          eventId: input.eventId,
+      writeOperationalLog({
+        source: "conversation_memory_reply",
+        category: "conversation_memory",
+        reason: "reply_recorded",
+        sourceId: input.eventId,
+        fields: {
           status: memoryResult.status,
-        }),
-      );
+        },
+      });
     }
 
     if (replyResult.status === "completed") {
@@ -1910,14 +2069,16 @@ async function completeOpenAIActive({
       replySent: false,
     };
   } catch {
-    console.log(
-      JSON.stringify({
-        source: "openai_active_failed",
-        eventId: input.eventId,
+    writeOperationalLog({
+      source: "openai_active_failed",
+      category: "openai_execution",
+      reason: "request_failed",
+      sourceId: input.eventId,
+      fields: {
         httpStatus: null,
         errorCode: "request_failed",
-      }),
-    );
+      },
+    });
     return {
       status: "failed",
       errorCode: "request_failed",
@@ -1985,15 +2146,16 @@ async function sendAppointmentEmailNotification(
     },
   );
 
-  console.log(
-    JSON.stringify({
-      source: "appointment_email_notification",
-      eventId: String(input.eventId || ""),
-      patientLast4: String(input.patientPhone || "").slice(-4),
+  writeOperationalLog({
+    source: "appointment_email_notification",
+    category: "appointment_notification",
+    reason: result.ok ? "completed" : "failed",
+    sourceId: input.eventId,
+    fields: {
       status: result.ok ? "completed" : "failed",
       errorCode: result.errorCode,
-    }),
-  );
+    },
+  });
   return result;
 }
 
@@ -2339,7 +2501,11 @@ async function sendCurrentInboundReply({
   return result;
 }
 
-export default async (request, context) => {
+export async function handleYCloudWebhook(
+  request,
+  context,
+  { resolveAttributionImpl = resolveAttributionJourney } = {},
+) {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const automationMode = normalizeAutomationMode(
     process.env.WHATSAPP_AUTOMATION_MODE,
@@ -2417,15 +2583,15 @@ export default async (request, context) => {
     }
 
     if (isWhatsAppBusinessAutomaticGreeting(echo)) {
-      console.log(
-        JSON.stringify({
-          source: "ycloud_automatic_greeting_ignored",
-          eventId: String(eventId),
+      writeOperationalLog({
+        source: "ycloud_automatic_greeting_ignored",
+        category: "inbound_control",
+        reason: "automatic_greeting_ignored",
+        sourceId: eventId,
+        fields: {
           eventType: payload.type,
-          messageId: String(messageId),
-          patientLast4: patientPhone.slice(-4),
-        }),
-      );
+        },
+      });
 
       return json({
         received: true,
@@ -2493,19 +2659,19 @@ export default async (request, context) => {
       text: String(echo.text?.body || ""),
     });
 
-    console.log(
-      JSON.stringify({
-        source: "ycloud_human_takeover",
-        eventId: String(eventId),
+    writeOperationalLog({
+      source: "ycloud_human_takeover",
+      category: "human_takeover",
+      reason: takeoverDelivery.ok ? "completed" : "failed",
+      sourceId: eventId,
+      fields: {
         eventType: payload.type,
-        messageId: String(messageId),
-        patientLast4: patientPhone.slice(-4),
         takeoverDelivery: takeoverDelivery.ok ? "success" : "failure",
         takeoverCreated: takeoverDelivery.created === true,
         downstreamStatus: takeoverDelivery.httpStatus,
         downstreamError: takeoverDelivery.errorCode,
-      }),
-    );
+      },
+    });
 
     if (!takeoverDelivery.ok) {
       return json(
@@ -2575,15 +2741,16 @@ export default async (request, context) => {
         });
       appointmentSyncStatus = manualAppointmentResult.status;
 
-      console.log(
-        JSON.stringify({
-          source: "appointment_confirmation_sync",
-          eventId: String(eventId),
-          patientLast4: patientPhone.slice(-4),
+      writeOperationalLog({
+        source: "appointment_confirmation_sync",
+        category: "appointment_sync",
+        reason: appointmentSyncStatus || "unknown",
+        sourceId: eventId,
+        fields: {
           status: appointmentSyncStatus,
           confidence: manualAppointment.confidence,
-        }),
-      );
+        },
+      });
 
     }
 
@@ -2658,7 +2825,8 @@ export default async (request, context) => {
   }
 
   const contactAt = message.sendTime || payload.createTime;
-  const text = String(message.text?.body || "");
+  const rawInboundText = String(message.text?.body || "");
+  const text = stripAttributionTransportToken(rawInboundText);
   const normalizedMessageType = String(message.type || "")
     .trim()
     .toLowerCase();
@@ -2772,7 +2940,16 @@ export default async (request, context) => {
   ) {
     await clearExternalProfessionalContext(phone);
   }
-  const attribution = classifyAttribution(payload, message, text);
+  const journeyResolution = await resolveInboundAttributionJourney(rawInboundText, {
+    claimantId: attributionClaimantId(String(eventId)),
+    resolveImpl: resolveAttributionImpl,
+  });
+  const attribution = classifyAttribution(
+    payload,
+    message,
+    text,
+    journeyResolution.journey,
+  );
   const referralContext = extractReferralContext(message);
   const messageId = message.wamid || message.id || eventId;
   const lead = {
@@ -2790,6 +2967,19 @@ export default async (request, context) => {
     attributionFallbackReason: attribution.fallbackReason,
     ...attribution.clickIds,
   };
+  if (attribution.journey) {
+    lead.attribution = {
+      ...attribution.journey,
+      journeyStatus: journeyResolution.status,
+    };
+  } else if (journeyResolution.status !== "absent") {
+    lead.attribution = {
+      journeyStatus: journeyResolution.status,
+      resolved: false,
+      confidence: "unknown",
+      fallbackReason: "journey_not_resolved",
+    };
+  }
 
   if (contactAt) lead.contactAt = String(contactAt);
 
@@ -2889,23 +3079,23 @@ export default async (request, context) => {
       }
     }
 
-    console.log(
-      JSON.stringify({
-        source: "ycloud",
-        eventId: String(eventId),
+    writeOperationalLog({
+      source: "ycloud",
+      category: "inbound_processing",
+      reason: "ignored",
+      sourceId: eventId,
+      fields: {
         eventType: payload.type,
         messageType: message.type || null,
-        senderLast4: phone.slice(-4),
         ignored: true,
-        ignoreReason: preliminaryAutomationPlan.reason,
         leadDelivery: "skipped",
         appointmentReplySyncStatus,
         replyDebounceMarkerStatus:
           ignoredReplyMarker.status,
         aiShadowQueued: false,
         aiActiveQueued: false,
-      }),
-    );
+      },
+    });
 
     const recoveryStatus = await finishEarlyRecovery(
       "ignored_inbound_processed",
@@ -3779,13 +3969,15 @@ export default async (request, context) => {
         source: "bruna",
       });
 
-      console.log(
-        JSON.stringify({
-          source: "conversation_memory_reply",
-          eventId: String(eventId),
+      writeOperationalLog({
+        source: "conversation_memory_reply",
+        category: "conversation_memory",
+        reason: "reply_recorded",
+        sourceId: eventId,
+        fields: {
           status: memoryResult.status,
-        }),
-      );
+        },
+      });
     }
   }
 
@@ -4061,14 +4253,14 @@ export default async (request, context) => {
     recoveryStatus = recoveryCompletion.status;
   }
 
-  console.log(
-    JSON.stringify({
-      source: "ycloud",
-      eventId: String(eventId),
+  writeOperationalLog({
+    source: "ycloud",
+    category: "inbound_processing",
+    reason: delivery.ok ? "processed" : "delivery_failed",
+    sourceId: eventId,
+    fields: {
       eventType: payload.type,
-      messageId: message.id || message.wamid || null,
       messageType: message.type || null,
-      senderLast4: phone.slice(-4),
       platform: attribution.platform,
       hasReferral: Boolean(message.referral),
       referenceCategory: attribution.referenceCategory,
@@ -4095,23 +4287,10 @@ export default async (request, context) => {
       downstreamError: delivery.errorCode,
       automationMode,
       automationRoute: automationPlan.route,
-      automationReason: automationPlan.reason,
-      automationReplyCode: automationPlan.replyCode,
-      automationProfessional: automationPlan.professional,
-      automationProcedure: automationPlan.procedure,
-      patientRelationship:
-        automationPlan.patientRelationship?.state || "unknown",
-      patientRelationshipLookup:
-        patientRelationship.lookupStatus || "unknown",
       conversationAction: conversationAction.action,
-      conversationActionReason: conversationAction.reason,
       conversationState: conversationAction.state,
       conversationOwner: conversationAction.owner,
       conversationNextAction: conversationAction.nextAction,
-      conversationUnresolvedRequest:
-        conversationAction.unresolvedRequest,
-      conversationFollowupPolicy:
-        conversationAction.followupPolicy,
       reviewAlertQueued,
       appointmentReviewQueued,
       appointmentNeedsPreference,
@@ -4120,13 +4299,10 @@ export default async (request, context) => {
       imageAcknowledgementQueued,
       imageAcknowledgementSent,
       imageAcknowledgementStatus,
-      patientReplyQueued,
-      patientReplySent,
       overnightHandoffQueued,
       overnightHandoffSent,
       priceHoldingQueued,
       priceHoldingSent,
-      approvedPriceReplyKind,
       approvedPriceReplyQueued,
       approvedPriceReplySent,
       approvedPriceReplyStatus,
@@ -4134,12 +4310,10 @@ export default async (request, context) => {
       aiActiveQueued,
       aiActiveStatus,
       aiActiveReplySent,
-      professionalFactReplySent,
-      professionalFactReplyStatus,
       replyDebounceMarkerStatus,
       recoveryStatus,
-    }),
-  );
+    },
+  });
 
   if (!delivery.ok) {
     return json(
@@ -4225,7 +4399,9 @@ export default async (request, context) => {
     professionalFactReplyStatus,
     recoveryStatus,
   });
-};
+}
+
+export default handleYCloudWebhook;
 
 export const config = {
   // Keep the patient-facing webhook on the simplest path. Expensive reply

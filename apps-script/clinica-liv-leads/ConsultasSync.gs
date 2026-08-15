@@ -74,6 +74,18 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
   noShowManualAt: "Retomada manual de ausência sugerida em",
 });
 
+const CONSULTAS_SYNC_CALENDAR_TRIGGER_HEADERS = Object.freeze([
+  CONSULTAS_SYNC_HEADERS.opportunityId,
+  CONSULTAS_SYNC_HEADERS.professional,
+  CONSULTAS_SYNC_HEADERS.room,
+  CONSULTAS_SYNC_HEADERS.consultationType,
+  CONSULTAS_SYNC_HEADERS.location,
+  CONSULTAS_SYNC_HEADERS.scheduledDate,
+  CONSULTAS_SYNC_HEADERS.scheduledTime,
+  CONSULTAS_SYNC_HEADERS.durationMinutes,
+  CONSULTAS_SYNC_HEADERS.status,
+]);
+
 const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
   opportunityId: "Opportunity ID",
   phone: "Telefone (E.164)",
@@ -155,6 +167,22 @@ function intervaloConsultaAgenda_(dateValue, timeValue, durationValue) {
 
   const dateParts = date.split("-").map(Number);
   const timeParts = time.split(":").map(Number);
+  if (
+    dateParts.length !== 3 ||
+    timeParts.length !== 2 ||
+    dateParts.some((part) => !Number.isInteger(part)) ||
+    timeParts.some((part) => !Number.isInteger(part)) ||
+    dateParts[1] < 1 ||
+    dateParts[1] > 12 ||
+    dateParts[2] < 1 ||
+    dateParts[2] > 31 ||
+    timeParts[0] < 0 ||
+    timeParts[0] > 23 ||
+    timeParts[1] < 0 ||
+    timeParts[1] > 59
+  ) {
+    return null;
+  }
   const start = new Date(
     dateParts[0],
     dateParts[1] - 1,
@@ -165,7 +193,16 @@ function intervaloConsultaAgenda_(dateValue, timeValue, durationValue) {
     0,
   );
 
-  if (Number.isNaN(start.getTime())) return null;
+  if (
+    Number.isNaN(start.getTime()) ||
+    start.getFullYear() !== dateParts[0] ||
+    start.getMonth() !== dateParts[1] - 1 ||
+    start.getDate() !== dateParts[2] ||
+    start.getHours() !== timeParts[0] ||
+    start.getMinutes() !== timeParts[1]
+  ) {
+    return null;
+  }
 
   const durationMinutes = duracaoConsultaMinutos_(durationValue);
   const end = new Date(
@@ -700,26 +737,18 @@ function processarEdicaoNaAbaConsultas_(e) {
     .getRange(1, 1, 1, sheet.getLastColumn())
     .getDisplayValues()[0];
   const columns = mapearCabecalhosConsultas_(headers);
-  const operationalHeaders = [
-    CONSULTAS_SYNC_HEADERS.professional,
-    CONSULTAS_SYNC_HEADERS.room,
-    CONSULTAS_SYNC_HEADERS.consultationType,
-    CONSULTAS_SYNC_HEADERS.location,
-    CONSULTAS_SYNC_HEADERS.scheduledDate,
-    CONSULTAS_SYNC_HEADERS.scheduledTime,
-    CONSULTAS_SYNC_HEADERS.durationMinutes,
-    CONSULTAS_SYNC_HEADERS.status,
-  ];
   const editedFirstColumn = e.range.getColumn();
   const editedLastColumn = e.range.getLastColumn();
-  const affectsSchedule = operationalHeaders.some(function (header) {
-    const column = columns[header];
-    return (
-      column !== undefined &&
-      column + 1 >= editedFirstColumn &&
-      column + 1 <= editedLastColumn
-    );
-  });
+  const affectsSchedule = CONSULTAS_SYNC_CALENDAR_TRIGGER_HEADERS.some(
+    function (header) {
+      const column = columns[header];
+      return (
+        column !== undefined &&
+        column + 1 >= editedFirstColumn &&
+        column + 1 <= editedLastColumn
+      );
+    },
+  );
 
   if (
     e.range.getRow() < 2 ||
@@ -774,8 +803,11 @@ function processarEdicaoNaAbaConsultas_(e) {
       refreshedColumns,
       row,
     );
-    if (calendarResult.ok) calendarSynced += 1;
-    else calendarErrors += 1;
+    if (calendarResult.ok && !calendarResult.skipped) {
+      calendarSynced += 1;
+    } else if (!calendarResult.ok) {
+      calendarErrors += 1;
+    }
 
     const phone = valorDaLinhaConsultas_(
       row,
@@ -2195,6 +2227,11 @@ function sincronizarConsultaComAgendaNaLinha_(
   columns,
   row,
 ) {
+  const opportunityId = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.opportunityId,
+  );
   const professional = textoConsultasSync_(
     valorDaLinhaConsultas_(
       row,
@@ -2249,17 +2286,79 @@ function sincronizarConsultaComAgendaNaLinha_(
     ),
     240,
   );
-  const status = valorDaLinhaConsultas_(
-    row,
-    columns,
-    CONSULTAS_SYNC_HEADERS.status,
+  const status = normalizarTextoConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.status,
+    ),
   );
+  const normalizedRoom = normalizarSalaConsulta_(currentRoom);
+
+  if (!opportunityIdValidoConsulta_(opportunityId)) {
+    return {
+      ok: true,
+      skipped: true,
+      reason: "missing_or_invalid_opportunity_id",
+      room: normalizedRoom,
+    };
+  }
 
   try {
-    if (statusCancelaAgendaConsulta_(status)) {
-      excluirEventoAgendaConsulta_(
-        currentCalendarId,
-        currentEventId,
+    if (
+      statusCancelaAgendaConsulta_(status) ||
+      statusNaoCompareceuConsulta_(status)
+    ) {
+      if (!chaveProfissionalConsulta_(professional)) {
+        return {
+          ok: true,
+          skipped: true,
+          reason: "invalid_professional",
+          room: normalizedRoom,
+        };
+      }
+      if (!intervaloConsultaAgenda_(scheduledDate, scheduledTime, durationMinutes)) {
+        return {
+          ok: true,
+          skipped: true,
+          reason: "incomplete_or_invalid_schedule",
+          room: normalizedRoom,
+        };
+      }
+      const allowedRooms = salasPermitidasProfissional_(professional);
+      const expectedCalendarId = normalizedRoom
+        ? CONSULTAS_SYNC_CONFIG.roomCalendars[normalizedRoom]
+        : "";
+      if (
+        !normalizedRoom ||
+        !allowedRooms.includes(normalizedRoom) ||
+        !expectedCalendarId ||
+        currentCalendarId !== expectedCalendarId
+      ) {
+        return {
+          ok: true,
+          skipped: true,
+          reason: "invalid_room_or_calendar_link",
+          room: normalizedRoom,
+        };
+      }
+      if (!currentEventId) {
+        return {
+          ok: true,
+          skipped: true,
+          reason: "calendar_event_link_missing",
+          room: normalizedRoom,
+        };
+      }
+      if (!excluirEventoAgendaConsulta_(currentCalendarId, currentEventId)) {
+        throw new Error("calendar_event_not_found");
+      }
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.calendarId,
+        "",
       );
       definirValorConsulta_(
         sheet,
@@ -2273,7 +2372,7 @@ function sincronizarConsultaComAgendaNaLinha_(
         rowNumber,
         columns,
         CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
-        "Cancelado no Google Agenda",
+        "Removido do Google Agenda",
       );
       definirValorConsulta_(
         sheet,
@@ -2284,23 +2383,38 @@ function sincronizarConsultaComAgendaNaLinha_(
       );
       return {
         ok: true,
-        cancelled: true,
-        room: normalizarSalaConsulta_(currentRoom),
+        removed: true,
+        reason: statusCancelaAgendaConsulta_(status)
+          ? "consultation_cancelled"
+          : "consultation_no_show",
+        room: normalizedRoom,
       };
     }
 
-    if (!professional || !scheduledDate || !scheduledTime) {
-      definirValorConsulta_(
-        sheet,
-        rowNumber,
-        columns,
-        CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
-        "Pendente — completar profissional, data e horário",
-      );
+    if (!statusAgendaConsulta_(status)) {
       return {
         ok: true,
         skipped: true,
-        room: normalizarSalaConsulta_(currentRoom),
+        reason: "status_not_calendar_eligible",
+        room: normalizedRoom,
+      };
+    }
+
+    if (!chaveProfissionalConsulta_(professional)) {
+      return {
+        ok: true,
+        skipped: true,
+        reason: "invalid_professional",
+        room: normalizedRoom,
+      };
+    }
+
+    if (!intervaloConsultaAgenda_(scheduledDate, scheduledTime, durationMinutes)) {
+      return {
+        ok: true,
+        skipped: true,
+        reason: "incomplete_or_invalid_schedule",
+        room: normalizedRoom,
       };
     }
 
@@ -2339,10 +2453,30 @@ function sincronizarConsultaComAgendaNaLinha_(
     }
 
     if (selection.remote) {
-      excluirEventoAgendaConsulta_(
-        currentCalendarId,
-        currentEventId,
+      const hasCalendarLink = Boolean(
+        currentCalendarId || currentEventId,
       );
+      if (hasCalendarLink) {
+        const expectedCurrentCalendarId = normalizedRoom
+          ? CONSULTAS_SYNC_CONFIG.roomCalendars[normalizedRoom]
+          : "";
+        if (
+          !currentCalendarId ||
+          !currentEventId ||
+          !expectedCurrentCalendarId ||
+          currentCalendarId !== expectedCurrentCalendarId
+        ) {
+          throw new Error("invalid_room_or_calendar_link");
+        }
+        if (
+          !excluirEventoAgendaConsulta_(
+            currentCalendarId,
+            currentEventId,
+          )
+        ) {
+          throw new Error("calendar_event_not_found");
+        }
+      }
       definirValorConsulta_(
         sheet,
         rowNumber,
@@ -2381,16 +2515,10 @@ function sincronizarConsultaComAgendaNaLinha_(
       return { ok: true, skipped: true, remote: true, room: "" };
     }
 
-    const noShow = statusNaoCompareceuConsulta_(status);
-    const title =
-      (noShow ? "Não compareceu — " : "Consulta — ") +
-      professional;
+    const title = "Consulta — " + professional;
     const description =
       "Reserva operacional vinculada à aba Consultas. " +
-      "Dados da paciente permanecem somente na planilha." +
-      (noShow
-        ? " Resultado operacional: não compareceu."
-        : "");
+      "Dados da paciente permanecem somente na planilha.";
     const eventLocation =
       "Clínica LIV Faria Lima — " + selection.room;
     let event = null;
@@ -2403,6 +2531,49 @@ function sincronizarConsultaComAgendaNaLinha_(
     }
 
     if (!event) {
+      if (Boolean(currentCalendarId) !== Boolean(currentEventId)) {
+        throw new Error("calendar_event_link_incomplete");
+      }
+
+      if (
+        currentEventId &&
+        currentCalendarId &&
+        currentCalendarId !== selection.calendarId
+      ) {
+        const expectedCurrentCalendarId = normalizedRoom
+          ? CONSULTAS_SYNC_CONFIG.roomCalendars[normalizedRoom]
+          : "";
+        if (
+          !expectedCurrentCalendarId ||
+          currentCalendarId !== expectedCurrentCalendarId
+        ) {
+          throw new Error("invalid_room_or_calendar_link");
+        }
+        if (
+          !excluirEventoAgendaConsulta_(
+            currentCalendarId,
+            currentEventId,
+          )
+        ) {
+          throw new Error("calendar_event_not_found");
+        }
+
+        definirValorConsulta_(
+          sheet,
+          rowNumber,
+          columns,
+          CONSULTAS_SYNC_HEADERS.calendarId,
+          "",
+        );
+        definirValorConsulta_(
+          sheet,
+          rowNumber,
+          columns,
+          CONSULTAS_SYNC_HEADERS.calendarEventId,
+          "",
+        );
+      }
+
       event = selection.calendar.createEvent(
         title,
         selection.start,
@@ -2412,17 +2583,6 @@ function sincronizarConsultaComAgendaNaLinha_(
           location: eventLocation,
         },
       );
-
-      if (
-        currentEventId &&
-        currentCalendarId &&
-        currentCalendarId !== selection.calendarId
-      ) {
-        excluirEventoAgendaConsulta_(
-          currentCalendarId,
-          currentEventId,
-        );
-      }
     } else {
       event.setTitle(title);
       event.setTime(selection.start, selection.end);
@@ -4601,6 +4761,15 @@ function textoConsultasSync_(value, maximumLength) {
   return String(value || "")
     .trim()
     .slice(0, maximumLength);
+}
+
+function opportunityIdValidoConsulta_(value) {
+  const opportunityId = String(value || "").trim();
+  return (
+    opportunityId.length > 0 &&
+    opportunityId.length <= 180 &&
+    /^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(opportunityId)
+  );
 }
 
 function normalizarTextoConsultasSync_(value) {

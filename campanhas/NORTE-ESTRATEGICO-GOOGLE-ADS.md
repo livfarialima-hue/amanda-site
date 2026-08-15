@@ -157,10 +157,10 @@ CTR, CPC, força do anúncio e nota de otimização não são resultados finais 
 - Conversas reais atribuídas ao Google: **18**.
 - Leads classificados como qualificados: **5**.
 - Taxa de qualificação observada: **27,8%**.
-- Consultas agendadas provenientes do Google: **0**.
-- Cirurgias: **0**.
+- Consultas agendadas provenientes do Google: **0 registros vinculados no snapshot; resultado real N/D** enquanto Calendar, Opportunity ID e CRM não estiverem reconciliados no mesmo grão.
+- Cirurgias: **0 registros vinculados no snapshot; resultado real N/D** pela mesma limitação.
 
-Esses números são direcionais. A amostra ainda não permite conclusões estatísticas fortes, mas já justifica auditar a mensuração e trabalhar a passagem de qualificado para consulta.
+Esses números são direcionais. A amostra ainda não permite conclusões estatísticas fortes. O drop-off observado pode representar perda comercial, falha de mensuração ou ambos; não deve ser tratado como causalidade antes da reconciliação.
 
 ### 6.2 Mensuração conhecida
 
@@ -173,6 +173,7 @@ Esses números são direcionais. A amostra ainda não permite conclusões estat�
 - Não usar conversões otimizadas para leads com nome, telefone, e-mail ou outro identificador fornecido pela paciente nesse funil de saúde. A mensuração offline deve permanecer no modo padrão por click ID.
 - Em 15 de agosto de 2026, a ação foi confirmada ao vivo como **Principal**, incluída nas metas e na meta personalizada das seis campanhas. Na revisão posterior do mesmo dia, `Lead qualificado GCLID` apareceu como **ativa e totalmente otimizada**, com último upload exibido em 13/08. O alerta `Muitos campos estão sendo enviados — 50%` pertence à ação antiga `Lead qualificado`, com último upload em 25/07; por isso o diagnóstico agregado da fonte ainda exige atenção e não comprova recibo dos eventos atuais. A programação diária da conexão `LEADS` foi pausada durante a contenção; cinco eventos legados foram colocados em `quarantined_legacy` e não devem ser reenviados sem recibo. A automação só poderá ser religada após teste controlado, sem PII, que reconcilie preparado, enviado, aceito ou rejeitado e atribuído.
 - Clique no WhatsApp é um sinal intermediário e não deve substituir o lead qualificado como objetivo de negócio.
+- Em 15 de agosto de 2026 foi preparado **somente localmente** um contrato first-party de jornada: `J0` no navegador, `J1` de transporte com resgate em até dez minutos, `J2` durável e claim `C1` HMAC com expiração absoluta de 30 dias. O desenho separa first touch, conversa atual e último toque não direto, não classifica ausência de referrer como acesso direto e remove click IDs do texto visível quando o modo rico estiver ativo. `attributionJourneyEnabled` permanece `false`; schema, migrações, segredos, deploy, parâmetros Meta e sonda continuam não publicados. A ativação exige atualização prévia da política de privacidade, decisão explícita sobre o `JID` visível e confirmação dos gates abaixo.
 
 ### 6.3 Orçamento
 
@@ -264,19 +265,28 @@ A estratégia é:
 
 - medir separadamente os termos de preço;
 - avaliar se eles produzem leads qualificados e consultas, não apenas cliques;
-- levar a uma página que explique faixa de referência, componentes do custo e orçamento individual;
+- levar a uma página que explique os componentes do custo, os fatores que individualizam o planejamento e como o orçamento é definido depois da avaliação, sem publicar faixa numérica de cirurgia;
 - não anunciar somente o honorário da cirurgiã como se representasse o custo total;
 - não competir por “cirurgia barata”.
 
 Arquitetura aprovada para páginas de preço:
 
 - `conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/` permanece como guia geral e como material da Bruna para dúvidas genéricas sobre custos de cirurgia facial;
-- `conteudos/quanto-custa-lifting-facial-sao-paulo/` atende pesquisas e anúncios específicos de preço de lifting, apresenta as faixas aprovadas e conduz tanto à página principal de lifting quanto ao WhatsApp;
+- `conteudos/quanto-custa-lifting-facial-sao-paulo/` atende pesquisas e anúncios específicos de preço de lifting, explica os componentes e fatores do orçamento sem publicar faixa cirúrgica e conduz tanto à página principal de lifting quanto ao WhatsApp;
 - `conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/` e `conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/` respondem dúvidas recorrentes de custo com conteúdo próprio de cada região, explicam a composição e o pagamento e encaminham para a página principal correspondente ou para o WhatsApp;
 - termos genéricos sobre lifting, indicação, técnica, resultados ou recuperação continuam levando à página principal `lifting-facial/`;
 - dúvidas recorrentes sobre técnicas nomeadas, como `deep plane`, devem receber uma confirmação breve de que a Dra. Amanda realiza a abordagem quando indicada, preservando a avaliação individual e sem apresentar uma técnica como universalmente superior;
-- a comunicação pública da página de preço deve ser direta e positiva: mostrar faixas, explicar honorários profissionais, anestesia, hospital, materiais, preparo e recuperação; apresentar opções como Sírio-Libanês, Nove de Julho, Oswaldo Cruz e hospitais com custo mais acessível; e informar pagamento à vista por Pix ou débito ou parcelamento antecipado, concluído até a data da cirurgia, sem expor decisões internas ou usar tom defensivo;
+- a comunicação pública da página de preço deve ser direta e positiva: não publicar faixas ou valores numéricos da cirurgia; explicar honorários profissionais, anestesia, hospital, materiais, exames, preparo, eventual pernoite e acompanhamento; apresentar opções como Sírio-Libanês, Nove de Julho, Oswaldo Cruz e hospitais com custo mais acessível; e informar pagamento à vista por Pix ou débito ou parcelamento antecipado, concluído até a data da cirurgia, sem expor decisões internas ou usar tom defensivo;
 - os guias de mama e corpo não apresentam faixas cirúrgicas enquanto não houver valores atuais, aprovados e documentados; também não recebem tráfego pago específico antes de existir campanha ou volume de pesquisa que justifique o teste. Não criar quase clones apenas para ampliar cobertura de busca.
+
+Decisão vigente para `S_BR_SP_LIFTING_FACIAL` em 15 de agosto de 2026:
+
+- manter `AG_LIFTING_FACIAL` e `AG_LIFTING_FACIAL_PRECO` como grupos separados. Eles não são anúncios redundantes: o primeiro atende indicação, técnica, naturalidade e recuperação em `/lifting-facial/`; o segundo atende `preço`, `valor` e `quanto custa` no guia específico de composição;
+- a retirada das faixas numéricas do site não elimina a intenção de preço. O RSA do grupo de preço deve prometer explicação de equipe, hospital, anestesia, materiais, fatores de variação e orçamento individual, nunca uma faixa pública;
+- manter `[lifting facial preço]` e `[mini lifting facial preço]` como negativas exatas somente em `AG_LIFTING_FACIAL`, para direcionar essas consultas ao grupo de preço;
+- planejar, sob autorização específica na conta, as negativas exatas `[preço mini lifting facial]`, `[quanto custa lifting facial]` e `[valor lifting facial]` também somente em `AG_LIFTING_FACIAL`. Não negativar `preço`, `valor`, `custo`, `quanto custa` ou `valor médio` em nível de campanha, conta ou lista compartilhada;
+- não consolidar os grupos com base no zero atual do grupo de preço. De 9 a 14 de agosto, ele acumulou apenas 39 cliques, R$ 50,67 e zero conversão exibida; o grupo geral teve 16 cliques-proxy no WhatsApp e apenas um lead qualificado em 30 dias. A comparação de consulta e cirurgia por grupo continua N/D;
+- abrir uma leitura preliminar após 28 dias completos da publicação da página revisada e só decidir pausa ou consolidação com rastreamento validado e, preferencialmente, pelo menos 100 cliques no grupo de preço. Manter se houver contato válido, lead qualificado ou consulta a custo aceitável; testar consolidação apenas se o grupo continuar sem contato válido depois dessa amostra. CTR e CPC permanecem métricas diagnósticas.
 
 ## 8. Estratégia das páginas de destino
 
@@ -298,7 +308,7 @@ O clique abre o WhatsApp e não deve fingir que o agendamento já foi concluído
 
 A página não deve tentar responder todas as dúvidas de todos os procedimentos. Deve confirmar coerência com a pesquisa e reduzir a principal barreira daquele estágio.
 
-Quando uma busca de preço tiver volume e resposta própria aprovada, usar uma página específica que resolva aquela intenção sem duplicar o guia geral. A página específica deve responder a faixa logo no início, explicar o que altera o orçamento, conectar ao conteúdo principal do procedimento e preservar um CTA direto para avaliação.
+Quando uma busca de preço tiver volume e resposta própria aprovada, usar uma página específica que resolva aquela intenção sem duplicar o guia geral. A página específica deve explicar logo no início que o orçamento é individual, apresentar o que o compõe e o que pode alterá-lo, conectar ao conteúdo principal do procedimento e preservar um CTA direto para avaliação. A ausência de faixa pública não autoriza esconder a intenção de preço nem responder apenas “depende”.
 
 ### 8.1 Descoberta orgânica, local e em buscadores com IA
 
@@ -349,24 +359,29 @@ Para lead qualificado:
 - Consulta presencial particular: **R$ 500**.
 - O valor é abatido se a cirurgia for realizada com a equipe.
 - Pagamento conforme as condições vigentes e aprovadas pela clínica.
+- O valor da consulta é tratado separadamente da precificação de procedimentos. A orientação oficial do CFM permite informar valores de consultas, meios e formas de pagamento; esta decisão não autoriza publicar antecipadamente valores de cirurgia.
 
 ### 10.2 Primeira pergunta sobre cirurgia
 
 Explicar que:
 
-- os valores variam conforme avaliação e planejamento;
-- os preços são competitivos para uma clínica particular;
-- existe pagamento à vista por Pix ou débito e parcelamento antecipado, que deve estar concluído até a data da cirurgia;
-- o orçamento discrimina equipe, hospital, anestesia, materiais e acompanhamento;
-- o guia de composição dos custos pode ser enviado uma vez.
+- o valor é individual e só é definido após avaliação e planejamento;
+- técnica, complexidade, necessidades da pessoa, equipe, hospital, anestesia, materiais e acompanhamento podem compor e alterar o total;
+- o orçamento final discrimina os itens aplicáveis e nenhum honorário isolado deve ser apresentado como preço total;
+- para lifting ou minilifting, o guia específico de composição pode ser enviado uma vez na primeira resposta;
+- não convidar a pessoa a pedir média ou faixa; se o procedimento não estiver identificado, perguntar qual cirurgia ela pesquisa antes de selecionar um guia;
+- condições de pagamento só devem ser respondidas com a informação vigente e aprovada, sem transformar a conversa em oferta fechada de procedimento antes da avaliação.
 
 Não responder apenas “depende” e não usar um discurso genérico de segurança para fugir da pergunta.
 
 ### 10.3 Segunda pergunta por média
 
-- Lifting e minilifting podem receber as faixas previamente aprovadas.
+- Lifting e minilifting podem receber as faixas previamente aprovadas somente em conversa individual de WhatsApp e depois de um pedido explícito reiterado por média ou faixa.
+- A mensagem que contiver a faixa deve dizer, no mesmo envio, que se trata de estimativa geral informativa, sem caráter de orçamento, proposta comercial, garantia de preço ou indicação para aquele caso; que o valor final pode ficar fora da faixa conforme avaliação, técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais; e que o orçamento só é definido depois da consulta e do planejamento.
+- A mensagem que contiver a faixa deve incluir por extenso `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`, explicando que a página detalha os componentes do valor. A faixa automática não deve ser enviada mais de uma vez na mesma conversa sem nova validação humana.
 - Outros procedimentos exigem revisão humana até que exista uma faixa atual, aprovada e documentada.
 - Honorários isolados da Dra. Amanda não devem ser divulgados como se fossem o preço da cirurgia.
+- As ressalvas reduzem o risco de a estimativa ser confundida com preço individual, mas não substituem parecer da Codame ou assessoria jurídica e não garantem conformidade. Uma orientação formal contrária suspende imediatamente o envio automático da faixa.
 
 ## 11. Conversões e lances
 
@@ -379,7 +394,7 @@ Não responder apenas “depende” e não usar um discurso genérico de seguran
 Mensuração implantada nas páginas de preço:
 
 - `content_depth_click` no GA4 mede, depois do consentimento, o clique que leva do guia de preço à página principal do procedimento e registra `link_role`, `page_type` e `cta_location`;
-- `whatsapp_click` mede o clique voluntário no WhatsApp, enquanto a mensagem preserva a referência da página, campanha e identificadores de clique disponíveis na sessão;
+- `whatsapp_click` mede apenas o clique genérico e consentido no WhatsApp, sem procedimento, página, posição ou texto como parâmetros personalizados. No caminho vigente e default-off, a mensagem ainda preserva a referência e os identificadores de clique disponíveis na sessão. No modo first-party proposto, ainda não ativo, os click IDs deixam o texto visível e seguem somente no envelope protegido; esse modo depende de revisão de privacidade, publicação e sonda autorizadas;
 - a qualificação é registrada na linha do lead e, quando existe GCLID, GBRAID ou WBRAID válido, gera uma única conversão offline `Lead qualificado GCLID` por oportunidade;
 - a aba `IMPORT_GOOGLE_ADS` é a visão sem dados pessoais para a conexão do Data Manager; `_GOOGLE_ADS_EVENTOS` é o ledger interno de deduplicação e auditoria;
 - `IMPORT_GOOGLE_ADS` é a primeira aba da planilha e a origem canônica a conectar ao Google Ads. Ela reúne o histórico elegível de `IMPORT_GCLID` com os novos eventos deduplicados; `IMPORT_GCLID` permanece apenas como referência legada e não deve receber novos registros;
@@ -527,6 +542,7 @@ Toda nova mudança estratégica deve atualizar a seção vigente correspondente 
 
 - `campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md`: registro histórico completo das mudanças, evidências, hipóteses, métricas e regras de reversão.
 - `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`: linguagem, códigos e contrato técnico de atribuição.
+- `campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md`: catálogo versionado de códigos canônicos, fallbacks e sinais legados que não podem ser reinterpretados sem evidência.
 - `campanhas/PLANEJAMENTO-MIDIA-AGOSTO-2026.md`: registro operacional detalhado de mudanças de mídia.
 - `PLANO-SIMPLIFICACAO-CONVERSAO.md`: implementação da jornada e dos textos do site.
 - `docs/estrategia-abordagem-bruna.md`: biblioteca detalhada de mensagens e objeções do WhatsApp.

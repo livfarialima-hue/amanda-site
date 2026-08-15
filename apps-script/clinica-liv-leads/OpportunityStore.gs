@@ -76,6 +76,57 @@ const OPPORTUNITY_HEADERS = Object.freeze([
   "Encerrado em",
 ]);
 
+const OPPORTUNITY_ATTRIBUTION_HEADERS = Object.freeze([
+  "Origem inicial canônica",
+  "Canal inicial",
+  "Caminho de conversão inicial",
+  "Campanha inicial",
+  "Grupo/conjunto inicial",
+  "Criativo inicial",
+  "Meta Campaign ID inicial",
+  "Meta Adset ID inicial",
+  "Meta Ad ID inicial",
+  "Landing page inicial",
+  "Página do CTA inicial",
+  "Local do CTA inicial",
+  "Confiança inicial",
+  "Motivo fallback inicial",
+  "Primeiro toque em",
+  "Origem da conversa atual",
+  "Canal da conversa atual",
+  "Caminho de conversão atual",
+  "Campanha atual",
+  "Grupo/conjunto atual",
+  "Criativo atual",
+  "Meta Campaign ID atual",
+  "Meta Adset ID atual",
+  "Meta Ad ID atual",
+  "Último toque em",
+  "Status da jornada",
+  "Origem informada pelo paciente",
+  "Confiança da origem informada",
+]);
+
+const OPPORTUNITY_INITIAL_ATTRIBUTION_HEADERS = Object.freeze(
+  OPPORTUNITY_ATTRIBUTION_HEADERS.slice(0, 15),
+);
+
+const OPPORTUNITY_REPORTED_ATTRIBUTION_HEADERS = Object.freeze([
+  "Origem informada pelo paciente",
+  "Confiança da origem informada",
+]);
+
+const OPPORTUNITY_CURRENT_ATTRIBUTION_HEADERS = Object.freeze(
+  OPPORTUNITY_ATTRIBUTION_HEADERS.slice(
+    OPPORTUNITY_INITIAL_ATTRIBUTION_HEADERS.length,
+    -OPPORTUNITY_REPORTED_ATTRIBUTION_HEADERS.length,
+  ),
+);
+
+const OPPORTUNITY_ALL_HEADERS = Object.freeze(
+  OPPORTUNITY_HEADERS.concat(OPPORTUNITY_ATTRIBUTION_HEADERS),
+);
+
 const LEAD_INTEGRATION_HEADERS = Object.freeze([
   "Opportunity ID",
   "Profissional responsável",
@@ -91,6 +142,264 @@ const LEAD_INTEGRATION_HEADERS = Object.freeze([
   "Status de roteamento",
   "Atribuição fixada em",
 ]);
+
+const LEAD_ATTRIBUTION_HEADERS = Object.freeze([
+  "Origem inicial canônica",
+  "Canal inicial",
+  "Caminho de conversão inicial",
+  "Campanha inicial canônica",
+  "Grupo/conjunto inicial",
+  "Criativo inicial canônico",
+  "Landing page inicial",
+  "Página do CTA",
+  "Origem da conversa atual",
+  "Canal da conversa atual",
+  "Caminho da conversa atual",
+  "Campanha da conversa atual",
+  "Grupo/conjunto da conversa atual",
+  "Criativo da conversa atual",
+  "Meta Campaign ID atual",
+  "Meta Adset ID atual",
+  "Meta Ad ID atual",
+  "Confiança da atribuição",
+  "Motivo fallback da atribuição",
+  "Primeiro toque em",
+  "Último toque em",
+  "Origem informada pelo paciente",
+  "Confiança da origem informada",
+]);
+
+const LEAD_REPORTED_ATTRIBUTION_HEADERS = Object.freeze([
+  "Origem informada pelo paciente",
+  "Confiança da origem informada",
+]);
+
+const LEAD_ALL_INTEGRATION_HEADERS = Object.freeze(
+  LEAD_INTEGRATION_HEADERS.concat(LEAD_ATTRIBUTION_HEADERS),
+);
+
+function esquemaAtribuicaoAtivo_() {
+  return typeof attributionSchemaEnabled_ === "function" &&
+    attributionSchemaEnabled_();
+}
+
+function cabecalhosOportunidadeAtivos_() {
+  return esquemaAtribuicaoAtivo_()
+    ? OPPORTUNITY_ALL_HEADERS
+    : OPPORTUNITY_HEADERS;
+}
+
+function cabecalhosIntegracaoLeadAtivos_() {
+  return esquemaAtribuicaoAtivo_()
+    ? LEAD_ALL_INTEGRATION_HEADERS
+    : LEAD_INTEGRATION_HEADERS;
+}
+
+function normalizarAtribuicaoOportunidade_(lead) {
+  const input = lead && lead.attribution || {};
+  const parsed = typeof decomporReferenciaAquisicao_ === "function"
+    ? decomporReferenciaAquisicao_(lead && lead.reference || "")
+    : { campaign: "", creative: "" };
+  const platform = String(lead && lead.platform || "").trim();
+  const platformDefaults = {
+    Google: { origin: "Google Ads", channel: "google_ads" },
+    Meta: { origin: "Meta Ads", channel: "meta_ads" },
+    "Orgânico/Conteúdo": {
+      origin: "Desconhecida",
+      channel: "unknown",
+    },
+    "WhatsApp direto": {
+      origin: "Desconhecida",
+      channel: "unknown",
+    },
+  };
+  const fallback = platformDefaults[platform] || {
+    origin: "Desconhecida",
+    channel: "unknown",
+  };
+  const journeyResolved = input.resolved === true;
+  const initialOrigin = journeyResolved
+    ? input.initialOrigin
+    : fallback.origin;
+  const initialChannel = journeyResolved
+    ? input.initialChannel
+    : fallback.channel;
+  const campaign = journeyResolved
+    ? input.initialCampaignCode || input.campaignCode || ""
+    : input.initialCampaignCode ||
+      input.campaignCode ||
+      parsed.campaign ||
+      "";
+  const creative = journeyResolved
+    ? input.initialCreativeCode || input.creativeCode || ""
+    : input.initialCreativeCode ||
+      input.creativeCode ||
+      parsed.creative ||
+      "";
+  const currentCampaign = journeyResolved
+    ? input.currentCampaignCode || ""
+    : campaign;
+  const currentCreative = journeyResolved
+    ? input.currentCreativeCode || ""
+    : creative;
+  const reportedOrigin = normalizarOrigemInformadaOportunidade_(
+    input.reportedOrigin,
+  );
+
+  return {
+    "Origem inicial canônica": initialOrigin || "Desconhecida",
+    "Canal inicial": initialChannel || "unknown",
+    "Caminho de conversão inicial": input.conversionPath || "unknown",
+    "Campanha inicial": campaign,
+    "Grupo/conjunto inicial": input.initialAdgroupCode || input.adgroupCode || "",
+    "Criativo inicial": creative,
+    "Meta Campaign ID inicial": input.initialMetaCampaignId || input.metaCampaignId || "",
+    "Meta Adset ID inicial": input.initialMetaAdsetId || input.metaAdsetId || "",
+    "Meta Ad ID inicial": input.initialMetaAdId || input.metaAdId || "",
+    "Landing page inicial": input.landingPage || "",
+    "Página do CTA inicial": input.ctaPage || "",
+    "Local do CTA inicial": input.ctaLocation || "",
+    "Confiança inicial": journeyResolved
+      ? input.confidence || "unknown"
+      : platform === "Google" || platform === "Meta"
+        ? "partial"
+        : "unknown",
+    "Motivo fallback inicial": input.fallbackReason ||
+      lead && lead.attributionFallbackReason || "",
+    "Primeiro toque em": input.firstTouchAt || lead && lead.contactAt || "",
+    "Origem da conversa atual": input.currentOrigin || initialOrigin || "Desconhecida",
+    "Canal da conversa atual": input.currentChannel || initialChannel || "unknown",
+    "Caminho de conversão atual": input.conversionPath || "unknown",
+    "Campanha atual": currentCampaign,
+    "Grupo/conjunto atual": journeyResolved
+      ? input.currentAdgroupCode || ""
+      : input.initialAdgroupCode || input.adgroupCode || "",
+    "Criativo atual": currentCreative,
+    "Meta Campaign ID atual": journeyResolved
+      ? input.currentMetaCampaignId || ""
+      : input.initialMetaCampaignId || input.metaCampaignId || "",
+    "Meta Adset ID atual": journeyResolved
+      ? input.currentMetaAdsetId || ""
+      : input.initialMetaAdsetId || input.metaAdsetId || "",
+    "Meta Ad ID atual": journeyResolved
+      ? input.currentMetaAdId || ""
+      : input.initialMetaAdId || input.metaAdId || "",
+    "Último toque em": input.lastTouchAt || lead && lead.contactAt || "",
+    "Status da jornada": input.journeyStatus || "absent",
+    "Origem informada pelo paciente": reportedOrigin,
+    "Confiança da origem informada": reportedOrigin
+      ? "patient_reported"
+      : "",
+  };
+}
+
+function normalizarOrigemInformadaOportunidade_(value) {
+  const allowed = {
+    indicacao: "Indicação",
+    instagram: "Instagram",
+    google: "Google",
+    ia: "IA",
+    retorno: "Retorno",
+    outro: "Outro",
+    "nao sabe": "Não sabe",
+  };
+  const normalized = String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+  return allowed[normalized] || "";
+}
+
+function valoresAtribuicaoOportunidade_(attribution) {
+  return OPPORTUNITY_ATTRIBUTION_HEADERS.map(function mapField(header) {
+    return Object.prototype.hasOwnProperty.call(attribution, header)
+      ? attribution[header]
+      : "";
+  });
+}
+
+function aplicarAtribuicaoOportunidade_(sheet, row, attribution, options) {
+  if (!esquemaAtribuicaoAtivo_() || !sheet || !row || !attribution) return;
+  options = options && typeof options === "object" ? options : {};
+  const columns = garantirCabecalhosAditivos_(
+    sheet,
+    OPPORTUNITY_ALL_HEADERS,
+  );
+  if (options.allowInitialFill === true) {
+    OPPORTUNITY_INITIAL_ATTRIBUTION_HEADERS.forEach(
+      function preserveFirstTouch(header) {
+        const column = columns[header];
+        if (!column || !attribution[header]) return;
+        const current = sheet.getRange(row, column).getValue();
+        if (!String(current || "").trim()) {
+          sheet.getRange(row, column).setValue(attribution[header]);
+        }
+      },
+    );
+  }
+
+  const lastTouchHeader = "Último toque em";
+  const currentLastTouch = columns[lastTouchHeader]
+    ? sheet.getRange(row, columns[lastTouchHeader]).getValue()
+    : "";
+  const currentAt = new Date(currentLastTouch || 0).getTime();
+  const incomingAt = new Date(attribution[lastTouchHeader] || 0).getTime();
+  if (
+    !Number.isFinite(currentAt) ||
+    !currentLastTouch ||
+    (Number.isFinite(incomingAt) && incomingAt >= currentAt)
+  ) {
+    OPPORTUNITY_CURRENT_ATTRIBUTION_HEADERS.forEach(
+      function updateCurrentTouch(header) {
+        const column = columns[header];
+        if (column && attribution[header] !== undefined) {
+          sheet.getRange(row, column).setValue(attribution[header]);
+        }
+      },
+    );
+  }
+
+  if (attribution["Origem informada pelo paciente"]) {
+    OPPORTUNITY_REPORTED_ATTRIBUTION_HEADERS.forEach(
+      function fillReportedOriginOnlyWhenBlank(header) {
+        const column = columns[header];
+        if (!column || !attribution[header]) return;
+        const current = sheet.getRange(row, column).getValue();
+        if (!String(current || "").trim()) {
+          sheet.getRange(row, column).setValue(attribution[header]);
+        }
+      },
+    );
+  }
+}
+
+function lerAtribuicaoOportunidade_(sheet, row) {
+  if (!esquemaAtribuicaoAtivo_()) return {};
+  const columns = garantirCabecalhosAditivos_(
+    sheet,
+    OPPORTUNITY_ALL_HEADERS,
+  );
+  return OPPORTUNITY_ATTRIBUTION_HEADERS.reduce(function readField(result, header) {
+    const column = columns[header];
+    result[header] = column
+      ? sheet.getRange(row, column).getValue()
+      : "";
+    return result;
+  }, {});
+}
+
+function appendOportunidadePorCabecalho_(sheet, values) {
+  const activeHeaders = cabecalhosOportunidadeAtivos_();
+  const columns = garantirCabecalhosAditivos_(sheet, activeHeaders);
+  const width = Math.max(sheet.getLastColumn(), activeHeaders.length);
+  const row = Array(width).fill("");
+  Object.keys(values || {}).forEach(function mapValue(header) {
+    const column = columns[header];
+    if (column) row[column - 1] = values[header];
+  });
+  sheet.appendRow(row);
+}
 
 function normalizarProfissionalOportunidade_(value) {
   const normalized = String(value || "")
@@ -188,22 +497,17 @@ function garantirCabecalhosAditivos_(sheet, expectedHeaders) {
 
   expectedHeaders.forEach(function ensureHeader(header) {
     if (existing.includes(header)) return;
-    let targetColumn = existing.findIndex(function findEmpty(value) {
-      return !String(value || "").trim();
-    }) + 1;
-    if (!targetColumn) {
-      if (
-        typeof sheet.getMaxColumns === "function" &&
-        typeof sheet.insertColumnsAfter === "function" &&
-        existing.length >= sheet.getMaxColumns()
-      ) {
-        sheet.insertColumnsAfter(sheet.getMaxColumns(), 5);
-      }
-      existing.push(header);
-      targetColumn = existing.length;
-    } else {
-      existing[targetColumn - 1] = header;
+    if (
+      typeof sheet.getMaxColumns === "function" &&
+      typeof sheet.insertColumnsAfter === "function" &&
+      existing.length >= sheet.getMaxColumns()
+    ) {
+      sheet.insertColumnsAfter(sheet.getMaxColumns(), 5);
     }
+    // Always append additive fields. Reusing a blank header between legacy
+    // positional columns can silently shift appendRow payloads.
+    existing.push(header);
+    const targetColumn = existing.length;
     const newColumnRange = sheet.getRange(
       1,
       targetColumn,
@@ -220,7 +524,10 @@ function garantirCabecalhosAditivos_(sheet, expectedHeaders) {
 }
 
 function garantirEstruturaIntegradaLead_(sheet) {
-  return garantirCabecalhosAditivos_(sheet, LEAD_INTEGRATION_HEADERS);
+  return garantirCabecalhosAditivos_(
+    sheet,
+    cabecalhosIntegracaoLeadAtivos_(),
+  );
 }
 
 function obterOuCriarPlanilhaOportunidades_(spreadsheet) {
@@ -232,8 +539,399 @@ function obterOuCriarPlanilhaOportunidades_(spreadsheet) {
     sheet.setFrozenRows(1);
     sheet.hideSheet();
   }
-  garantirCabecalhosAditivos_(sheet, OPPORTUNITY_HEADERS);
+  garantirCabecalhosAditivos_(sheet, cabecalhosOportunidadeAtivos_());
   return sheet;
+}
+
+function cabecalhosDuplicadosPlanilha_(sheet) {
+  if (!sheet || sheet.getLastColumn() < 1) return [];
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0]
+    .map(function normalize(value) { return String(value || "").trim(); });
+  const firstByHeader = {};
+  const duplicates = [];
+  headers.forEach(function collect(header, index) {
+    if (!header) return;
+    if (!firstByHeader[header]) {
+      firstByHeader[header] = index + 1;
+      return;
+    }
+    duplicates.push({
+      header: header,
+      firstColumn: firstByHeader[header],
+      duplicateColumn: index + 1,
+    });
+  });
+  return duplicates;
+}
+
+function normalizarCabecalhoLegadoDuplicado_(sheet, duplicate) {
+  if (
+    !sheet ||
+    !duplicate ||
+    duplicate.header !== "Encerrado em"
+  ) {
+    return false;
+  }
+  const base = "Encerrado em (legado duplicado)";
+  const existing = mapaCabecalhosOportunidade_(sheet);
+  let target = base;
+  let suffix = 2;
+  while (existing[target]) {
+    target = base + " " + suffix;
+    suffix += 1;
+  }
+  // Header-only rename: values and column position remain untouched.
+  sheet.getRange(1, duplicate.duplicateColumn).setValue(target);
+  return true;
+}
+
+function atribuicaoLegadaOportunidade_(row, columns) {
+  function value(header) {
+    const column = columns[header];
+    return column ? row[column - 1] : "";
+  }
+  const reference = String(value("Referência inicial") || "").trim();
+  const platform = String(value("Plataforma inicial") || "").trim();
+  const parsed = typeof decomporReferenciaAquisicao_ === "function"
+    ? decomporReferenciaAquisicao_(reference)
+    : { campaign: "", creative: "" };
+  let origin = "Desconhecida";
+  let channel = "unknown";
+  let path = "unknown";
+  const legacyPathConflict = /^M26O01W(?:-|$)/i.test(reference);
+  if (platform === "Google" || /^G26/i.test(reference)) {
+    origin = "Google Ads";
+    channel = "google_ads";
+    path = "google_site_whatsapp";
+  } else if (platform === "Meta" || /^M26/i.test(reference)) {
+    origin = "Meta Ads";
+    channel = "meta_ads";
+    if (/^M26F02S(?:-|$)/i.test(reference)) {
+      path = "meta_site_whatsapp";
+    } else if (
+      !legacyPathConflict &&
+      /^M26[A-Z]\d{2}W(?:-|$)/i.test(reference)
+    ) {
+      path = "meta_whatsapp_direct";
+    }
+  }
+  // “Orgânico/Conteúdo”, SITE and an absent referrer are not enough to
+  // distinguish search, AI, social, referral or direct. Preserve the legacy
+  // fields and leave the canonical source unknown instead of inventing it.
+  const recognizedPaidSource = origin === "Google Ads" || origin === "Meta Ads";
+  return {
+    "Origem inicial canônica": origin,
+    "Canal inicial": channel,
+    "Caminho de conversão inicial": path,
+    "Campanha inicial": parsed.campaign || "",
+    "Grupo/conjunto inicial": "",
+    "Criativo inicial": parsed.creative || "",
+    "Meta Campaign ID inicial": "",
+    "Meta Adset ID inicial": "",
+    "Meta Ad ID inicial": "",
+    "Landing page inicial": "",
+    "Página do CTA inicial": "",
+    "Local do CTA inicial": "",
+    "Confiança inicial": recognizedPaidSource ? "partial" : "unknown",
+    "Motivo fallback inicial": legacyPathConflict
+      ? "legacy_path_conflict"
+      : recognizedPaidSource
+        ? "legacy_paid_backfill"
+        : "legacy_source_ambiguous",
+    // Neither “Criado em” nor “Atribuição fixada em” proves the timestamp of
+    // the first website touch. Keep the canonical timestamp unavailable.
+    "Primeiro toque em": "",
+    "Origem da conversa atual": "",
+    "Canal da conversa atual": "",
+    "Caminho de conversão atual": "",
+    "Campanha atual": "",
+    "Grupo/conjunto atual": "",
+    "Criativo atual": "",
+    "Meta Campaign ID atual": "",
+    "Meta Adset ID atual": "",
+    "Meta Ad ID atual": "",
+    "Último toque em": "",
+    "Status da jornada": "absent",
+    "Origem informada pelo paciente": "",
+    "Confiança da origem informada": "",
+  };
+}
+
+function migrarSchemaAtribuicaoV1(input) {
+  input = input && typeof input === "object" ? input : {};
+  const apply = input.apply === true;
+  if (apply && input.confirmation !== "APLICAR_SCHEMA_ATRIBUICAO_V1") {
+    throw new Error("attribution_schema_migration_confirmation_required");
+  }
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const opportunitySheet = spreadsheet.getSheetByName(
+    OPPORTUNITY_STORE_CONFIG.sheetName,
+  );
+  const eventSheet = spreadsheet.getSheetByName(CONFIG.eventSheetName);
+  const visibleSheets = [
+    OPPORTUNITY_STORE_CONFIG.amandaSheetName,
+    OPPORTUNITY_STORE_CONFIG.danielSheetName,
+  ].map(function resolveVisible(name) {
+    return { name: name, sheet: spreadsheet.getSheetByName(name) };
+  });
+  const opportunityDuplicates = opportunitySheet
+    ? cabecalhosDuplicadosPlanilha_(opportunitySheet)
+    : [];
+  const eventDuplicates = eventSheet
+    ? cabecalhosDuplicadosPlanilha_(eventSheet)
+    : [];
+  const visibleDuplicates = visibleSheets.reduce(function collect(result, item) {
+    if (!item.sheet) return result;
+    return result.concat(
+      cabecalhosDuplicadosPlanilha_(item.sheet).map(function withSheet(duplicate) {
+        return Object.assign({ sheet: item.name }, duplicate);
+      }),
+    );
+  }, []);
+  const unsupportedOpportunityDuplicates = opportunityDuplicates.filter(
+    function unsupported(item) {
+    return item.header !== "Encerrado em";
+    },
+  );
+  const unsupportedDuplicates = unsupportedOpportunityDuplicates
+    .map(function withSheet(item) {
+      return Object.assign({ sheet: OPPORTUNITY_STORE_CONFIG.sheetName }, item);
+    })
+    .concat(eventDuplicates.map(function withSheet(item) {
+      return Object.assign({ sheet: CONFIG.eventSheetName }, item);
+    }))
+    .concat(visibleDuplicates);
+  const missingVisibleSheets = visibleSheets.filter(function missing(item) {
+    return !item.sheet;
+  }).map(function name(item) { return item.name; });
+  const identityHmacReady =
+    typeof segredoIdentidadeLead_ === "function" &&
+    Boolean(segredoIdentidadeLead_(true));
+  const result = {
+    ok: Boolean(
+      opportunitySheet &&
+      eventSheet &&
+      missingVisibleSheets.length === 0 &&
+      identityHmacReady
+    ),
+    blocked:
+      !opportunitySheet ||
+      !eventSheet ||
+      missingVisibleSheets.length > 0 ||
+      !identityHmacReady ||
+      unsupportedDuplicates.length > 0,
+    mode: apply ? "applied" : "dry_run",
+    opportunitySheetFound: Boolean(opportunitySheet),
+    eventSheetFound: Boolean(eventSheet),
+    visibleSheetsFound: visibleSheets.filter(function found(item) {
+      return Boolean(item.sheet);
+    }).map(function name(item) { return item.name; }),
+    duplicateHeaders: opportunityDuplicates.map(function safeDuplicate(item) {
+      return {
+        sheet: OPPORTUNITY_STORE_CONFIG.sheetName,
+        header: item.header,
+        firstColumn: item.firstColumn,
+        duplicateColumn: item.duplicateColumn,
+      };
+    }),
+    eventDuplicateHeaders: eventDuplicates.map(function safeDuplicate(item) {
+      return {
+        sheet: CONFIG.eventSheetName,
+        header: item.header,
+        firstColumn: item.firstColumn,
+        duplicateColumn: item.duplicateColumn,
+      };
+    }),
+    visibleDuplicateHeaders: visibleDuplicates,
+    missingVisibleSheets: missingVisibleSheets,
+    unsupportedDuplicateHeaders: unsupportedDuplicates.length,
+    identityHmacReady: identityHmacReady,
+    opportunityRowsScanned: 0,
+    opportunityRowsToBackfill: 0,
+    visibleRowsToProject: 0,
+    eventHeadersToAdd: 0,
+    opportunityHeadersToAdd: 0,
+    visibleHeadersToAdd: 0,
+  };
+  if (result.blocked) return result;
+
+  function missingHeaderCount(sheet, headers) {
+    const map = mapaCabecalhosOportunidade_(sheet);
+    return headers.filter(function missing(header) { return !map[header]; }).length;
+  }
+  result.eventHeadersToAdd = missingHeaderCount(eventSheet, WHATSAPP_EVENT_HEADERS);
+  result.opportunityHeadersToAdd = missingHeaderCount(
+    opportunitySheet,
+    OPPORTUNITY_ALL_HEADERS,
+  );
+  visibleSheets.forEach(function countVisible(item) {
+    if (!item.sheet) return;
+    result.visibleHeadersToAdd += missingHeaderCount(
+      item.sheet,
+      LEAD_ALL_INTEGRATION_HEADERS,
+    );
+  });
+
+  const currentOpportunityColumns = mapaCabecalhosOportunidade_(opportunitySheet);
+  let opportunityRows = [];
+  if (opportunitySheet.getLastRow() >= 2) {
+    opportunityRows = opportunitySheet.getRange(
+      2,
+      1,
+      opportunitySheet.getLastRow() - 1,
+      opportunitySheet.getLastColumn(),
+    ).getValues();
+  }
+  result.opportunityRowsScanned = opportunityRows.length;
+  result.opportunityRowsToBackfill = opportunityRows.filter(function needs(row) {
+    const initialColumn = currentOpportunityColumns["Origem inicial canônica"];
+    if (initialColumn && String(row[initialColumn - 1] || "").trim()) {
+      return false;
+    }
+    return (
+      atribuicaoLegadaOportunidade_(row, currentOpportunityColumns)[
+        "Origem inicial canônica"
+      ] !== "Desconhecida"
+    );
+  }).length;
+
+  visibleSheets.forEach(function countProjection(item) {
+    if (!item.sheet || item.sheet.getLastRow() < 2) return;
+    const columns = mapaCabecalhosOportunidade_(item.sheet);
+    const opportunityColumn = columns["Opportunity ID"];
+    if (!opportunityColumn) return;
+    const values = item.sheet.getRange(
+      2,
+      opportunityColumn,
+      item.sheet.getLastRow() - 1,
+      1,
+    ).getDisplayValues();
+    result.visibleRowsToProject += values.filter(function linked(row) {
+      return Boolean(String(row[0] || "").trim());
+    }).length;
+  });
+
+  if (!apply) return result;
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    opportunityDuplicates.forEach(function renameKnownDuplicate(item) {
+      normalizarCabecalhoLegadoDuplicado_(opportunitySheet, item);
+    });
+    garantirCabecalhosAditivos_(eventSheet, WHATSAPP_EVENT_HEADERS);
+    const opportunityColumns = garantirCabecalhosAditivos_(
+      opportunitySheet,
+      OPPORTUNITY_ALL_HEADERS,
+    );
+    const attributionByOpportunity = {};
+    opportunityRows.forEach(function backfill(row, index) {
+      const opportunityId = String(
+        row[(currentOpportunityColumns["Opportunity ID"] || 1) - 1] || "",
+      ).trim();
+      if (!opportunityId) return;
+      const legacy = atribuicaoLegadaOportunidade_(
+        row,
+        currentOpportunityColumns,
+      );
+      const existingInitialOriginColumn =
+        currentOpportunityColumns["Origem inicial canônica"];
+      const existingInitialOrigin = existingInitialOriginColumn
+        ? String(row[existingInitialOriginColumn - 1] || "").trim()
+        : "";
+      const canBackfillInitial =
+        !existingInitialOrigin &&
+        legacy["Origem inicial canônica"] !== "Desconhecida";
+      const resolvedAttribution = {};
+      OPPORTUNITY_INITIAL_ATTRIBUTION_HEADERS.forEach(
+        function fillOnlyBlank(header) {
+          const column = opportunityColumns[header];
+          if (!column) return;
+          const current = opportunitySheet.getRange(index + 2, column).getValue();
+          if (
+            canBackfillInitial &&
+            !String(current || "").trim() &&
+            legacy[header]
+          ) {
+            opportunitySheet.getRange(index + 2, column).setValue(legacy[header]);
+            resolvedAttribution[header] = legacy[header];
+            return;
+          }
+          resolvedAttribution[header] = current || "";
+        },
+      );
+      OPPORTUNITY_REPORTED_ATTRIBUTION_HEADERS.forEach(
+        function preserveReportedOrigin(header) {
+          const column = opportunityColumns[header];
+          resolvedAttribution[header] = column
+            ? opportunitySheet.getRange(index + 2, column).getValue()
+            : "";
+        },
+      );
+      const statusColumn = opportunityColumns["Status da jornada"];
+      if (statusColumn) {
+        const currentStatus = opportunitySheet
+          .getRange(index + 2, statusColumn)
+          .getValue();
+        if (!String(currentStatus || "").trim()) {
+          opportunitySheet.getRange(index + 2, statusColumn).setValue("absent");
+        }
+      }
+      attributionByOpportunity[opportunityId] = resolvedAttribution;
+    });
+
+    visibleSheets.forEach(function projectVisible(item) {
+      if (!item.sheet || item.sheet.getLastRow() < 2) return;
+      const columns = garantirCabecalhosAditivos_(
+        item.sheet,
+        LEAD_ALL_INTEGRATION_HEADERS,
+      );
+      const opportunityColumn = columns["Opportunity ID"];
+      if (!opportunityColumn) return;
+      const ids = item.sheet.getRange(
+        2,
+        opportunityColumn,
+        item.sheet.getLastRow() - 1,
+        1,
+      ).getDisplayValues();
+      ids.forEach(function project(row, index) {
+        const attribution = attributionByOpportunity[
+          String(row[0] || "").trim()
+        ];
+        if (!attribution) return;
+        const values = {
+          "Origem inicial canônica": attribution["Origem inicial canônica"],
+          "Canal inicial": attribution["Canal inicial"],
+          "Caminho de conversão inicial": attribution["Caminho de conversão inicial"],
+          "Campanha inicial canônica": attribution["Campanha inicial"],
+          "Grupo/conjunto inicial": attribution["Grupo/conjunto inicial"],
+          "Criativo inicial canônico": attribution["Criativo inicial"],
+          "Landing page inicial": attribution["Landing page inicial"],
+          "Página do CTA": attribution["Página do CTA inicial"],
+          "Confiança da atribuição": attribution["Confiança inicial"],
+          "Motivo fallback da atribuição": attribution["Motivo fallback inicial"],
+          "Primeiro toque em": attribution["Primeiro toque em"],
+          "Origem informada pelo paciente":
+            attribution["Origem informada pelo paciente"],
+          "Confiança da origem informada":
+            attribution["Confiança da origem informada"],
+        };
+        Object.keys(values).forEach(function fillVisible(header) {
+          const column = columns[header];
+          if (!column || !values[header]) return;
+          const current = item.sheet.getRange(index + 2, column).getValue();
+          if (!String(current || "").trim()) {
+            item.sheet.getRange(index + 2, column).setValue(values[header]);
+          }
+        });
+      });
+    });
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+  return result;
 }
 
 function hashOportunidade_(value) {
@@ -254,10 +952,151 @@ function hashOportunidade_(value) {
 }
 
 function criarOpportunityId_(professional, eventId) {
-  return "opp_" + hashOportunidade_([
-    normalizarProfissionalOportunidade_(professional),
-    String(eventId || Utilities.getUuid()),
-  ].join("|"));
+  const owner = normalizarProfissionalOportunidade_(professional);
+  const randomId = String(Utilities.getUuid()).replace(/[^A-Za-z0-9-]/g, "");
+  return ["opp_v2", owner || "unknown", randomId].join("_");
+}
+
+function pseudonimoTelefoneOportunidade_(phone) {
+  return typeof pseudonimoIdentidadeLead_ === "function"
+    ? pseudonimoIdentidadeLead_(normalizePhone_(phone))
+    : "";
+}
+
+function migrarPseudonimosIdentidadeLead(input) {
+  input = input && typeof input === "object" ? input : {};
+  const apply = input.apply === true;
+  if (apply && input.confirmation !== "APLICAR_HMAC_IDENTIDADE_K1") {
+    throw new Error("identity_migration_confirmation_required");
+  }
+  if (typeof segredoIdentidadeLead_ !== "function") {
+    throw new Error("identity_hmac_not_available");
+  }
+  segredoIdentidadeLead_(false);
+
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const opportunitySheet = spreadsheet.getSheetByName(
+    OPPORTUNITY_STORE_CONFIG.sheetName,
+  );
+  const opportunityColumns = opportunitySheet
+    ? mapaCabecalhosOportunidade_(opportunitySheet)
+    : {};
+  const missingOpportunityHeaders = [
+    "Opportunity ID",
+    "Telefone (E.164)",
+    "Telefone hash",
+  ].filter(function missing(header) { return !opportunityColumns[header]; });
+  const stageSheet = spreadsheet.getSheetByName(
+    CONFIG.leadStageEventSheetName,
+  );
+  const stageColumns = stageSheet
+    ? mapaCabecalhosOportunidade_(stageSheet)
+    : {};
+  const missingStageHeaders = stageSheet
+    ? ["Opportunity ID", "Telefone hash"].filter(function missing(header) {
+        return !stageColumns[header];
+      })
+    : [];
+  const blocked =
+    !opportunitySheet ||
+    missingOpportunityHeaders.length > 0 ||
+    missingStageHeaders.length > 0;
+  if (blocked) {
+    return {
+      ok: false,
+      blocked: true,
+      mode: apply ? "apply_blocked" : "dry_run",
+      keyVersion: versaoChaveIdentidadeLead_(),
+      opportunitySheetFound: Boolean(opportunitySheet),
+      stageSheetFound: Boolean(stageSheet),
+      missingOpportunityHeaders: missingOpportunityHeaders,
+      missingStageHeaders: missingStageHeaders,
+      opportunityRowsScanned: 0,
+      opportunityRowsToUpdate: 0,
+      stageRowsToUpdate: 0,
+    };
+  }
+  const opportunityIdColumn = opportunityColumns["Opportunity ID"];
+  const phoneColumn = opportunityColumns["Telefone (E.164)"];
+  const hashColumn = opportunityColumns["Telefone hash"];
+  const mapping = {};
+  const opportunityUpdates = [];
+  if (opportunitySheet.getLastRow() >= 2) {
+    const rows = opportunitySheet
+      .getRange(
+        2,
+        1,
+        opportunitySheet.getLastRow() - 1,
+        opportunitySheet.getLastColumn(),
+      )
+      .getDisplayValues();
+    rows.forEach(function planOpportunity(row, index) {
+      const opportunityId = String(row[opportunityIdColumn - 1] || "").trim();
+      const phone = normalizePhone_(row[phoneColumn - 1]);
+      if (!opportunityId || !phone) return;
+      const target = pseudonimoIdentidadeLead_(phone);
+      if (!target) throw new Error("identity_pseudonym_unavailable");
+      mapping[opportunityId] = target;
+      const current = String(row[hashColumn - 1] || "").trim();
+      if (current !== target) {
+        opportunityUpdates.push({ row: index + 2, value: target });
+      }
+    });
+  }
+
+  const stageUpdates = [];
+  if (stageSheet && stageSheet.getLastRow() >= 2) {
+    const rows = stageSheet
+      .getRange(2, 1, stageSheet.getLastRow() - 1, stageSheet.getLastColumn())
+      .getDisplayValues();
+    rows.forEach(function planStageEvent(row, index) {
+      const opportunityId = String(
+        row[stageColumns["Opportunity ID"] - 1] || "",
+      ).trim();
+      const target = mapping[opportunityId];
+      if (!target) return;
+      const current = String(
+        row[stageColumns["Telefone hash"] - 1] || "",
+      ).trim();
+      if (current !== target) {
+        stageUpdates.push({
+          row: index + 2,
+          column: stageColumns["Telefone hash"],
+          value: target,
+        });
+      }
+    });
+  }
+
+  if (apply) {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(30000);
+    try {
+      opportunityUpdates.forEach(function updateOpportunity(update) {
+        opportunitySheet
+          .getRange(update.row, hashColumn)
+          .setValue(update.value);
+      });
+      stageUpdates.forEach(function updateStageEvent(update) {
+        stageSheet
+          .getRange(update.row, update.column)
+          .setValue(update.value);
+      });
+      SpreadsheetApp.flush();
+    } finally {
+      lock.releaseLock();
+    }
+  }
+
+  return {
+    ok: true,
+    blocked: false,
+    mode: apply ? "applied" : "dry_run",
+    keyVersion: versaoChaveIdentidadeLead_(),
+    opportunityRowsScanned: Object.keys(mapping).length,
+    opportunityRowsToUpdate: opportunityUpdates.length,
+    stageRowsToUpdate: stageUpdates.length,
+  };
 }
 
 function localizarOportunidadeAtiva_(sheet, phone, professional) {
@@ -411,19 +1250,64 @@ function vincularOportunidadeAoLead_(sheet, row, opportunity, routeStatus) {
     "Aguardando ação de": opportunity.expectedParty || "patient",
     "Status de roteamento": routeStatus || "resolved",
     "Atribuição fixada em": opportunity.attributionLockedAt || now,
+    "Origem inicial canônica": opportunity.attribution &&
+      opportunity.attribution["Origem inicial canônica"],
+    "Canal inicial": opportunity.attribution &&
+      opportunity.attribution["Canal inicial"],
+    "Caminho de conversão inicial": opportunity.attribution &&
+      opportunity.attribution["Caminho de conversão inicial"],
+    "Campanha inicial canônica": opportunity.attribution &&
+      opportunity.attribution["Campanha inicial"],
+    "Grupo/conjunto inicial": opportunity.attribution &&
+      opportunity.attribution["Grupo/conjunto inicial"],
+    "Criativo inicial canônico": opportunity.attribution &&
+      opportunity.attribution["Criativo inicial"],
+    "Landing page inicial": opportunity.attribution &&
+      opportunity.attribution["Landing page inicial"],
+    "Página do CTA": opportunity.attribution &&
+      opportunity.attribution["Página do CTA inicial"],
+    "Origem da conversa atual": opportunity.attribution &&
+      opportunity.attribution["Origem da conversa atual"],
+    "Canal da conversa atual": opportunity.attribution &&
+      opportunity.attribution["Canal da conversa atual"],
+    "Caminho da conversa atual": opportunity.attribution &&
+      opportunity.attribution["Caminho de conversão atual"],
+    "Campanha da conversa atual": opportunity.attribution &&
+      opportunity.attribution["Campanha atual"],
+    "Grupo/conjunto da conversa atual": opportunity.attribution &&
+      opportunity.attribution["Grupo/conjunto atual"],
+    "Criativo da conversa atual": opportunity.attribution &&
+      opportunity.attribution["Criativo atual"],
+    "Meta Campaign ID atual": opportunity.attribution &&
+      opportunity.attribution["Meta Campaign ID atual"],
+    "Meta Adset ID atual": opportunity.attribution &&
+      opportunity.attribution["Meta Adset ID atual"],
+    "Meta Ad ID atual": opportunity.attribution &&
+      opportunity.attribution["Meta Ad ID atual"],
+    "Confiança da atribuição": opportunity.attribution &&
+      opportunity.attribution["Confiança inicial"],
+    "Motivo fallback da atribuição": opportunity.attribution &&
+      opportunity.attribution["Motivo fallback inicial"],
+    "Primeiro toque em": opportunity.attribution &&
+      opportunity.attribution["Primeiro toque em"],
+    "Último toque em": opportunity.attribution &&
+      opportunity.attribution["Último toque em"],
+    "Origem informada pelo paciente": opportunity.attribution &&
+      opportunity.attribution["Origem informada pelo paciente"],
+    "Confiança da origem informada": opportunity.attribution &&
+      opportunity.attribution["Confiança da origem informada"],
   };
-  const startColumn = columns[LEAD_INTEGRATION_HEADERS[0]];
-  const currentValues = sheet
-    .getRange(row, startColumn, 1, LEAD_INTEGRATION_HEADERS.length)
-    .getValues()[0];
-  const output = LEAD_INTEGRATION_HEADERS.map(function buildField(header, index) {
-    return Object.prototype.hasOwnProperty.call(values, header)
-      ? values[header]
-      : currentValues[index];
+  cabecalhosIntegracaoLeadAtivos_().forEach(function writeMappedField(header) {
+    if (!Object.prototype.hasOwnProperty.call(values, header)) return;
+    const column = columns[header];
+    if (!column || values[header] === undefined) return;
+    if (LEAD_REPORTED_ATTRIBUTION_HEADERS.includes(header)) {
+      if (!values[header]) return;
+      const current = sheet.getRange(row, column).getValue();
+      if (String(current || "").trim()) return;
+    }
+    sheet.getRange(row, column).setValue(values[header]);
   });
-  sheet
-    .getRange(row, startColumn, 1, LEAD_INTEGRATION_HEADERS.length)
-    .setValues([output]);
 }
 
 function garantirOportunidadeLead_(spreadsheet, lead, leadSheet, leadRow) {
@@ -459,36 +1343,41 @@ function garantirOportunidadeLead_(spreadsheet, lead, leadSheet, leadRow) {
   const clickIds = route.professional === "amanda"
     ? [lead.gclid || "", lead.gbraid || "", lead.wbraid || ""]
     : ["", "", ""];
+  let opportunityAttribution = esquemaAtribuicaoAtivo_()
+    ? normalizarAtribuicaoOportunidade_(lead)
+    : {};
 
   if (!found) {
-    sheet.appendRow([
-      opportunityId,
-      lead.phone,
-      hashOportunidade_(normalizePhone_(lead.phone)),
-      route.professional,
-      route.sheetName,
-      leadRow || "",
-      "open",
-      "Novo",
-      "new_lead",
-      "bruna",
-      "patient",
-      "",
-      "",
-      "",
-      lead.reference || "",
-      lead.platform || "",
-      clickIds[0],
-      clickIds[1],
-      clickIds[2],
-      attributionLockedAt,
-      lead.eventId,
-      lead.eventId,
-      1,
-      now,
-      now,
-      "",
-    ]);
+    const opportunityValues = {
+      "Opportunity ID": opportunityId,
+      "Telefone (E.164)": lead.phone,
+      "Telefone hash": pseudonimoTelefoneOportunidade_(lead.phone),
+      "Profissional": route.professional,
+      "Aba visível": route.sheetName,
+      "Linha visível": leadRow || "",
+      "Estado": "open",
+      "Fase": "Novo",
+      "Relacionamento": "new_lead",
+      "Responsável atual": "bruna",
+      "Aguardando ação de": "patient",
+      "Referência inicial": lead.reference || "",
+      "Plataforma inicial": lead.platform || "",
+      "GCLID": clickIds[0],
+      "GBRAID": clickIds[1],
+      "WBRAID": clickIds[2],
+      "Atribuição fixada em": attributionLockedAt,
+      "Primeiro Event ID": lead.eventId,
+      "Último Event ID": lead.eventId,
+      "Versão": 1,
+      "Criado em": now,
+      "Atualizado em": now,
+    };
+    if (esquemaAtribuicaoAtivo_()) {
+      OPPORTUNITY_ATTRIBUTION_HEADERS.forEach(function addAttribution(header) {
+        opportunityValues[header] = opportunityAttribution[header] || "";
+      });
+    }
+    appendOportunidadePorCabecalho_(sheet, opportunityValues);
   } else {
     const row = found.row;
     const version = Number(found.values[22] || 0) + 1;
@@ -502,6 +1391,15 @@ function garantirOportunidadeLead_(spreadsheet, lead, leadSheet, leadRow) {
       found.values[23] || now,
       now,
     ]]);
+    aplicarAtribuicaoOportunidade_(
+      sheet,
+      row,
+      opportunityAttribution,
+      { allowInitialFill: false },
+    );
+    opportunityAttribution = esquemaAtribuicaoAtivo_()
+      ? lerAtribuicaoOportunidade_(sheet, row)
+      : {};
   }
 
   const opportunity = {
@@ -512,6 +1410,7 @@ function garantirOportunidadeLead_(spreadsheet, lead, leadSheet, leadRow) {
     owner: "bruna",
     expectedParty: "patient",
     attributionLockedAt,
+    attribution: opportunityAttribution,
   };
   vincularOportunidadeAoLead_(
     leadSheet,

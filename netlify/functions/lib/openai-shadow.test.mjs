@@ -11,6 +11,9 @@ import {
 import webhook, {
   attributionFallbackReason,
   classifyAttribution,
+  normalizeResolvedJourneyAttribution,
+  resolveInboundAttributionJourney,
+  stripAttributionTransportToken,
 } from "../ycloud-webhook.mjs";
 
 const PHONE = "+5511961957144";
@@ -218,6 +221,312 @@ test("recognizes the exact M26F02S site journey used by the active campaign", ()
   assert.equal(attribution.reference, "M26F02S-avaliacao-facial");
   assert.equal(attribution.fallbackReason, "");
   assert.deepEqual(attribution.clickIds, {});
+});
+
+test("resolved journey enriches the lead contract without exposing its token", async () => {
+  const claimantId = `C1_${"a".repeat(43)}`;
+  const journey = {
+    version: 1,
+    first_touch: {
+      occurred_at: "2026-08-15T10:00:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      creative_code: "C01H01",
+      meta_campaign_id: "120000000000000000",
+      meta_adset_id: "120000000000000001",
+      meta_ad_id: "120000000000000002",
+      page_path: "/avaliacao-facial/",
+    },
+    last_touch: {
+      occurred_at: "2026-08-15T12:00:00.000Z",
+      origin: "Acesso direto",
+      channel: "direct",
+      page_path: "/blefaroplastia/",
+    },
+    last_non_direct_touch: {
+      occurred_at: "2026-08-15T10:00:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      creative_code: "C01H01",
+      meta_campaign_id: "120000000000000000",
+      meta_adset_id: "120000000000000001",
+      meta_ad_id: "120000000000000002",
+      page_path: "/avaliacao-facial/",
+    },
+    conversion_path: "meta_site_return_whatsapp",
+    cta: { page_path: "/blefaroplastia/", location: "final" },
+    click_ids: {},
+    confidence: "observed",
+    fallback_reason: "",
+  };
+  const resolution = await resolveInboundAttributionJourney(
+    `Mensagem\nJID: J1_${"A".repeat(22)}`,
+    {
+      claimantId,
+      resolveImpl: async (_token, options) => {
+        assert.equal(options.claimantId, claimantId);
+        return journey;
+      },
+    },
+  );
+  assert.equal(resolution.status, "resolved");
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "Mensagem sem referência",
+    resolution.journey,
+  );
+
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_coded");
+  assert.equal(attribution.journey.initialOrigin, "Meta Ads");
+  assert.equal(attribution.journey.currentChannel, "direct");
+  assert.equal(attribution.journey.initialCampaignCode, "M26F02S");
+  assert.equal(attribution.journey.currentCampaignCode, "");
+  assert.equal(
+    attribution.journey.conversionPath,
+    "meta_site_return_whatsapp",
+  );
+  assert.equal(attribution.journey.landingPage, "/avaliacao-facial/");
+  assert.equal(attribution.journey.ctaPage, "/blefaroplastia/");
+  assert.equal("token" in attribution.journey, false);
+  assert.equal(
+    "token" in normalizeResolvedJourneyAttribution(journey),
+    false,
+  );
+});
+
+test("first-touch dimensions never absorb a later paid campaign", () => {
+  const journey = {
+    version: 1,
+    first_touch: {
+      occurred_at: "2026-08-15T10:00:00.000Z",
+      origin: "Google orgânico",
+      channel: "organic_search",
+      page_path: "/avaliacao-facial/",
+    },
+    last_touch: {
+      occurred_at: "2026-08-15T12:00:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      adgroup_code: "ADSET01",
+      creative_code: "C01H01",
+      meta_campaign_id: "120000000000000000",
+      meta_adset_id: "120000000000000001",
+      meta_ad_id: "120000000000000002",
+      page_path: "/blefaroplastia/",
+    },
+    last_non_direct_touch: {
+      occurred_at: "2026-08-15T12:00:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      creative_code: "C01H01",
+      page_path: "/blefaroplastia/",
+    },
+    conversion_path: "meta_site_return_whatsapp",
+    cta: { page_path: "/blefaroplastia/", location: "hero" },
+    confidence: "partial",
+  };
+  const normalized = normalizeResolvedJourneyAttribution(journey);
+  assert.equal(normalized.initialOrigin, "Google orgânico");
+  assert.equal(normalized.campaignCode, "");
+  assert.equal(normalized.initialCampaignCode, "");
+  assert.equal(normalized.initialMetaCampaignId, "");
+  assert.equal(normalized.currentOrigin, "Meta Ads");
+  assert.equal(normalized.currentCampaignCode, "M26F02S");
+  assert.equal(normalized.currentCreativeCode, "C01H01");
+  assert.equal(normalized.currentMetaAdsetId, "120000000000000001");
+  assert.equal(normalized.currentMetaAdId, "120000000000000002");
+  assert.equal(normalized.platform, "Orgânico/Conteúdo");
+});
+
+test("full webhook claims J1, strips it, and delivers resolved attribution to Sheets", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "ATTRIBUTION_CLAIM_SECRET",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const sheetsRequests = [];
+  const token = `J1_${"D".repeat(22)}`;
+  const eventId = "synthetic-meta-site-event";
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    ATTRIBUTION_CLAIM_SECRET:
+      "dedicated-attribution-claim-secret-with-adequate-length",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    WHATSAPP_AUTOMATION_MODE: "off",
+  });
+  delete process.env.OPENAI_API_KEY;
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      const request = JSON.parse(options.body);
+      sheetsRequests.push(request);
+      return new Response(JSON.stringify({
+        ok: true,
+        inserted: true,
+        updated: false,
+        duplicate: false,
+        opportunityId: "opp_v2_amanda_synthetic",
+        professional: "amanda",
+        routeStatus: "resolved",
+        routed: true,
+      }), { status: 200 });
+    }
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  const journey = {
+    version: 1,
+    first_touch: {
+      occurred_at: "2026-08-15T10:00:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      adgroup_code: "ADSET01",
+      creative_code: "C01H01",
+      meta_campaign_id: "120000000000000000",
+      meta_adset_id: "120000000000000001",
+      meta_ad_id: "120000000000000002",
+      page_path: "/avaliacao-facial/",
+    },
+    last_touch: {
+      occurred_at: "2026-08-15T10:03:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      adgroup_code: "ADSET01",
+      creative_code: "C01H01",
+      meta_campaign_id: "120000000000000000",
+      meta_adset_id: "120000000000000001",
+      meta_ad_id: "120000000000000002",
+      page_path: "/blefaroplastia/",
+    },
+    last_non_direct_touch: {
+      occurred_at: "2026-08-15T10:03:00.000Z",
+      origin: "Meta Ads",
+      channel: "meta_ads",
+      campaign_code: "M26F02S",
+      creative_code: "C01H01",
+      page_path: "/blefaroplastia/",
+    },
+    conversion_path: "meta_site_whatsapp",
+    cta: { page_path: "/blefaroplastia/", location: "hero" },
+    confidence: "observed",
+    fallback_reason: "",
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: eventId,
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "synthetic-meta-site-message",
+        from: "+5511900000000",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Paciente Teste" },
+        text: { body: `Olá, quero uma avaliação.\nJID: ${token}` },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    ).update(`${timestamp}.${rawBody}`).digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: { "YCloud-Signature": `t=${timestamp},s=${signature}` },
+        body: rawBody,
+      }),
+      undefined,
+      {
+        resolveAttributionImpl: async (receivedToken, options) => {
+          assert.equal(receivedToken, token);
+          assert.match(options.claimantId, /^C1_[A-Za-z0-9_-]{43}$/);
+          assert.equal(options.claimantId.includes(eventId), false);
+          return journey;
+        },
+      },
+    );
+    assert.equal(response.status, 200);
+    const append = sheetsRequests.find((request) => request.action === "append_lead");
+    assert.ok(append);
+    assert.equal(append.lead.text, "Olá, quero uma avaliação.");
+    assert.equal(append.lead.reference, "M26F02S-C01H01-avaliacao-facial");
+    assert.equal(append.lead.attribution.initialOrigin, "Meta Ads");
+    assert.equal(append.lead.attribution.initialCampaignCode, "M26F02S");
+    assert.equal(append.lead.attribution.currentCampaignCode, "M26F02S");
+    assert.equal(append.lead.attribution.journeyStatus, "resolved");
+    assert.equal(JSON.stringify(append.lead).includes(token), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("a missing journey fails open to the legacy attribution parser", async () => {
+  const resolution = await resolveInboundAttributionJourney(
+    `Mensagem\nJID: J1_${"B".repeat(22)}`,
+    {
+      claimantId: `C1_${"b".repeat(43)}`,
+      resolveImpl: async () => null,
+    },
+  );
+  assert.equal(resolution.status, "not_found");
+  assert.equal(resolution.journey, null);
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "Olá. Ref. M26F02S-C01H01",
+    resolution.journey,
+  );
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_coded");
+});
+
+test("a transport token without an opaque claimant fails closed", async () => {
+  let called = false;
+  const resolution = await resolveInboundAttributionJourney(
+    `Mensagem\nJID: J1_${"C".repeat(22)}`,
+    { resolveImpl: async () => { called = true; return {}; } },
+  );
+  assert.equal(resolution.status, "unavailable");
+  assert.equal(resolution.journey, null);
+  assert.equal(called, false);
+});
+
+test("the transport token is removed before message, bot or Sheets persistence", () => {
+  const token = `J1_${"D".repeat(22)}`;
+  assert.equal(
+    stripAttributionTransportToken(`Quero saber mais.\nJID: ${token}`),
+    "Quero saber mais.",
+  );
+  assert.equal(
+    stripAttributionTransportToken(`JID: ${token}\nMensagem personalizada`),
+    "Mensagem personalizada",
+  );
 });
 
 test("uncoded acquisition sources carry an explicit bounded fallback reason", () => {
@@ -1507,9 +1816,10 @@ test("the first surgical price question uses the approved institutional reply", 
       (request) => request.type === "text",
     );
     assert.equal(patientBody.to, "+5511900000000");
-    assert.match(patientBody.text.body, /valores competitivos/i);
-    assert.match(patientBody.text.body, /parcelamento antecipado/i);
-    assert.match(patientBody.text.body, /hospital, anestesia/i);
+    assert.match(patientBody.text.body, /definidos individualmente/i);
+    assert.match(patientBody.text.body, /técnica, a complexidade/i);
+    assert.match(patientBody.text.body, /hospital, a anestesia/i);
+    assert.match(patientBody.text.body, /não apresentamos um honorário isolado/i);
     assert.match(
       patientBody.text.body,
       /quanto-custa-cirurgia-plastica-facial-sao-paulo/,

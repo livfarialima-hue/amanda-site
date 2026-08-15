@@ -7,6 +7,10 @@ const roots = [
   "netlify/functions",
 ];
 
+const standaloneTests = [
+  "campanhas/site-technical-regression.test.mjs",
+];
+
 function collectTests(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
@@ -15,7 +19,10 @@ function collectTests(directory) {
   });
 }
 
-const tests = roots.flatMap(collectTests).sort();
+const tests = [
+  ...roots.flatMap(collectTests),
+  ...standaloneTests,
+].sort();
 const result = spawnSync(process.execPath, [
   "--test",
   ...tests,

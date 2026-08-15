@@ -306,6 +306,80 @@ function stableLeadHash_(value) {
     .slice(0, 20);
 }
 
+function segredoIdentidadeLead_(allowMissing) {
+  const secret = String(
+    PropertiesService
+      .getScriptProperties()
+      .getProperty(CONFIG.leadIdentitySecretProperty) || "",
+  );
+  if (secret.length < 43 && !allowMissing) {
+    throw new Error("missing_lead_identity_hmac_secret");
+  }
+  return secret.length >= 43 ? secret : "";
+}
+
+function versaoChaveIdentidadeLead_() {
+  const version = String(
+    PropertiesService
+      .getScriptProperties()
+      .getProperty(CONFIG.leadIdentityKeyVersionProperty) || "k1",
+  ).trim();
+  return /^k\d{1,4}$/.test(version) ? version : "k1";
+}
+
+function pseudonimoIdentidadeLead_(value) {
+  const secret = segredoIdentidadeLead_(true);
+  const normalized = String(value || "").trim();
+  if (!secret || !normalized) return "";
+  const signature = Utilities.computeHmacSha256Signature(
+    "lead_identity_v1|" + normalized,
+    secret,
+    Utilities.Charset.UTF_8,
+  );
+  return [
+    "pid",
+    versaoChaveIdentidadeLead_(),
+    googleAdsBase64UrlSemPadding_(signature),
+  ].join("_");
+}
+
+function provisionarSegredoIdentidadeLead() {
+  const properties = PropertiesService.getScriptProperties();
+  const existing = segredoIdentidadeLead_(true);
+  if (existing) {
+    return {
+      ok: true,
+      created: false,
+      keyVersion: versaoChaveIdentidadeLead_(),
+      fingerprint: stableLeadHash_(existing),
+    };
+  }
+  const seed = [
+    Utilities.getUuid(),
+    Utilities.getUuid(),
+    Utilities.getUuid(),
+    String(new Date().getTime()),
+  ].join("|");
+  const secret = googleAdsBase64UrlSemPadding_(
+    Utilities.computeDigest(
+      Utilities.DigestAlgorithm.SHA_256,
+      seed,
+      Utilities.Charset.UTF_8,
+    ),
+  );
+  if (secret.length !== 43) {
+    throw new Error("invalid_lead_identity_hmac_secret");
+  }
+  properties.setProperty(CONFIG.leadIdentitySecretProperty, secret);
+  properties.setProperty(CONFIG.leadIdentityKeyVersionProperty, "k1");
+  return {
+    ok: true,
+    created: true,
+    keyVersion: "k1",
+    fingerprint: stableLeadHash_(secret),
+  };
+}
+
 function googleAdsTransactionIdSeguro_(value) {
   return GOOGLE_ADS_TRANSACTION_ID_PATTERN.test(String(value || "").trim());
 }
@@ -365,11 +439,13 @@ function provisionarSegredoTransacaoGoogleAds() {
 function leadOpportunityId_(leadValues, phone) {
   const contactDate = String(leadValues && leadValues[0] || "");
   const reference = String(leadValues && leadValues[1] || "");
-  return "opp_" + stableLeadHash_([
+  const pseudonym = pseudonimoIdentidadeLead_([
     normalizePhone_(phone),
     contactDate,
     reference,
   ].join("|"));
+  if (!pseudonym) throw new Error("missing_lead_identity_hmac_secret");
+  return "opp_legacy_" + pseudonym.replace(/^pid_/, "");
 }
 
 function recordLeadStageEvent_(spreadsheet, event) {
@@ -385,7 +461,7 @@ function recordLeadStageEvent_(spreadsheet, event) {
     now,
     eventId,
     String(event.opportunityId || ""),
-    stableLeadHash_(normalizePhone_(event.phone)),
+    pseudonimoIdentidadeLead_(normalizePhone_(event.phone)),
     safeText_(event.source, 80),
     safeText_(event.fromStatus, 80),
     safeText_(event.proposedStatus, 80),

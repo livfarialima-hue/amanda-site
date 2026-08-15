@@ -119,15 +119,25 @@ Consulta:
 
 Primeira pergunta sobre preço cirúrgico, qualquer que seja o procedimento:
 
-> Os valores das cirurgias variam conforme o procedimento e o planejamento definido na avaliação. Trabalhamos com valores competitivos, condição à vista e parcelamento antecipado até a data da cirurgia. O orçamento final discrimina honorários da equipe, hospital, anestesia, materiais e acompanhamento, conforme cada caso. Veja o que compõe os custos de uma cirurgia: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/
+> Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. O total pode variar conforme a técnica, a complexidade, as necessidades de cada pessoa, a equipe, o hospital, a anestesia, os materiais e o acompanhamento. O orçamento final discrimina os itens aplicáveis ao caso; não apresentamos um honorário isolado como se fosse o valor total.
+
+Quando a pergunta for sobre lifting ou minilifting, completar a primeira resposta uma única vez com:
+
+> Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
+
+Não convidar a pessoa a pedir média ou faixa. Se o procedimento não estiver identificado, perguntar qual cirurgia ela pesquisa antes de escolher um guia. Para outros procedimentos faciais, usar o guia facial geral quando pertinente; não enviar material facial para mama, corpo ou cirurgia íntima.
 
 Quando a objeção envolver onde a cirurgia será feita ou como reduzir o custo hospitalar, complementar sem prometer disponibilidade:
 
 > A Dra. Amanda opera em hospitais como Sírio-Libanês, Nove de Julho e Oswaldo Cruz, além de outras opções com custo mais acessível quando forem adequadas ao procedimento e ao caso. Em algumas situações, o convênio pode autorizar parte dos custos de internação, mas isso depende das regras e da análise do plano e não pode ser garantido.
 
-Se a pessoa voltar a pedir média de lifting ou minilifting:
+Se, depois da primeira explicação, a pessoa insistir ou voltar a pedir explicitamente média ou faixa de lifting ou minilifting:
 
-> Para uma referência inicial, o minilifting costuma ficar entre R$ 18 mil e R$ 25 mil, e o lifting facial entre R$ 26 mil e R$ 42 mil. A indicação e o valor final dependem do planejamento individual. Há condição à vista e parcelamento antecipado até a data da cirurgia.
+> Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço: minilifting entre R$ 18 mil e R$ 25 mil e lifting facial entre R$ 26 mil e R$ 42 mil. O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
+
+A mensagem que efetivamente divulga a faixa sempre inclui o URL completo do guia de composição, mesmo que ele já tenha aparecido na primeira resposta. A faixa completa, por sua vez, não deve ser reenviada automaticamente mais de uma vez no mesmo contexto; um novo pedido depois disso vai para revisão humana. A redação não deve afirmar que a faixa inclui um item específico, nem sugerir que ela é uma proposta válida para aquele caso.
+
+Essas ressalvas reduzem o risco de a estimativa ser confundida com preço individual, mas não constituem parecer jurídico nem garantia de conformidade. A política deve ser reavaliada com a Codame ou assessoria jurídica, especialmente porque o comentário oficial do CFM vincula a definição do valor de procedimentos individualizados à avaliação prévia.
 
 Se a pessoa voltar a pedir média de qualquer outra cirurgia, a Bruna aciona revisão humana e não envia uma justificativa evasiva. O alerta e o e-mail trazem uma sugestão pronta baseada na tabela de referência, somando honorários/equipe e a referência hospitalar registrada. Amanda ou a equipe confere antes de copiar; o paciente não recebe esses valores automaticamente.
 
@@ -187,7 +197,7 @@ Regras:
 - responder à dúvida antes de oferecer o link;
 - enviar no máximo um material de forma proativa;
 - permitir um segundo material diferente somente quando a pessoa pedir explicitamente mais conteúdo;
-- não enviar junto de urgência ou pedido de agenda; em preço, somente o guia de composição dos custos na primeira resposta aprovada;
+- não enviar junto de urgência ou pedido de agenda; em preço de lifting, o guia específico pode aparecer na primeira explicação e deve aparecer novamente na única mensagem que efetivamente divulga a faixa;
 - não enviar para quem veio do próprio site;
 - não interromper quem já quer agendar.
 
@@ -285,13 +295,13 @@ Toda retomada comercial deve ocorrer entre 09:00 e 19:00, no horário de São Pa
 
 Essa sequência comercial é diferente de uma conversa ativa. Quando a própria paciente inicia ou mantém a troca à noite ou de madrugada, a Bruna pode continuar respondendo dúvidas seguras até um encerramento natural. Quando Daniel assume uma conversa e a paciente envia uma nova mensagem sem receber resposta humana por 20 minutos, a Bruna também pode continuar em qualquer horário se tiver uma resposta segura e de alta confiança.
 
-A primeira resposta institucional de preço e a segunda resposta com a faixa aprovada de lifting/minilifting podem ser enviadas em uma conversa iniciada ou mantida pela paciente, inclusive à noite. Média de outras cirurgias, condições exatas de pagamento, agenda e confirmação continuam humanos e recebem uma mensagem curta de espera fora do horário. Segurança, sintomas, possível urgência, documentos, pré e pós-operatório, cardiologia e demais temas reservados seguem as regras específicas de revisão humana; uma situação potencialmente urgente nunca recebe promessa de aguardar até a manhã. Na incerteza não sensível com solicitação concreta, a Bruna envia uma única mensagem de espera, alerta Amanda e permanece em silêncio.
+A primeira resposta institucional de preço e a única resposta com a faixa aprovada após insistência explícita sobre lifting/minilifting podem ser enviadas em uma conversa iniciada ou mantida pela paciente, inclusive à noite. Média de outras cirurgias, condições exatas de pagamento, agenda e confirmação continuam humanos e recebem uma mensagem curta de espera fora do horário. Segurança, sintomas, possível urgência, documentos, pré e pós-operatório, cardiologia e demais temas reservados seguem as regras específicas de revisão humana; uma situação potencialmente urgente nunca recebe promessa de aguardar até a manhã. Na incerteza não sensível com solicitação concreta, a Bruna envia uma única mensagem de espera, alerta Amanda e permanece em silêncio.
 
 - se houver procedimento ou dúvida conhecida, oferecer um único material específico do site;
 - se o assunto for naturalidade, segurança, recuperação, cicatriz ou comparação, preferir o artigo correspondente;
 - se o procedimento estiver definido e não houver dúvida mais específica, usar a página completa;
 - se ainda não houver procedimento, usar a página geral da Dra. Amanda;
-- não enviar link se a pessoa veio do próprio site, se um link já foi compartilhado ou se a conversa está em agenda; em preço, permitir apenas o guia de custos na primeira resposta;
+- não enviar link se a pessoa veio do próprio site, se um link já foi compartilhado ou se a conversa está em agenda; a exceção é a única mensagem que efetivamente divulga a faixa de lifting, que sempre inclui o guia específico de composição;
 - excluir completamente da lista quem pediu para não receber contato ou demonstrou sofrimento intenso relacionado à aparência;
 - apresentar o conteúdo como apoio para decidir com calma, nunca como prova de resultado semelhante;
 - usar expressões de autonomia, como “se quiser”, “sem pressa” e “você não precisa decidir agora”;
@@ -316,7 +326,7 @@ Depois de duas retomadas sem resposta, os contatos proativos são encerrados. Um
 
 ## O que ainda precisa ser validado antes de automatizar
 
-A tabela do Dr. João de 2025 continua sendo uma referência histórica, não uma tabela pública nem uma promessa de orçamento atual da Dra. Amanda. Para lifting, as faixas R$ 18–25 mil e R$ 26–42 mil foram aprovadas especificamente para envio automático. Para os demais procedimentos, a tabela é usada somente para preparar a sugestão interna dos alertas de preço, sempre sujeita à conferência humana. Antes de automatizar outra cirurgia, deve existir uma tabela aprovada por procedimento com:
+A tabela do Dr. João de 2025 continua sendo uma referência histórica, não uma tabela pública nem uma promessa de orçamento atual da Dra. Amanda. Para lifting, as faixas R$ 18–25 mil e R$ 26–42 mil foram aprovadas especificamente para envio automático somente após insistência explícita e acompanhadas da ressalva protetiva descrita acima. Para os demais procedimentos, a tabela é usada somente para preparar a sugestão interna dos alertas de preço, sempre sujeita à conferência humana. Antes de automatizar outra cirurgia, deve existir uma tabela aprovada por procedimento com:
 
 - faixa mínima e máxima atual;
 - o que a faixa inclui;
@@ -327,11 +337,12 @@ A tabela do Dr. João de 2025 continua sendo uma referência histórica, não um
 - regra de parcelamento antecipado;
 - cancelamento e reembolso.
 
-Até essa validação, a primeira explicação institucional de preço pode ser enviada para qualquer cirurgia, sem faixa. Somente a consulta e, numa segunda pergunta, as faixas aprovadas de lifting/minilifting podem trazer números automaticamente. A segunda pergunta por média de outra cirurgia, inclusive frontoplastia, segue para revisão humana com uma sugestão pronta quando houver correspondência confiável na tabela.
+Até essa validação, a primeira explicação institucional de preço pode ser enviada para qualquer cirurgia, sem faixa. Somente a consulta e, depois de insistência explícita, as faixas aprovadas de lifting/minilifting podem trazer números automaticamente, sempre como estimativas gerais que não constituem orçamento, proposta ou garantia. A segunda pergunta por média de outra cirurgia, inclusive frontoplastia, segue para revisão humana com uma sugestão pronta quando houver correspondência confiável na tabela.
 
 ## Bases utilizadas
 
 - Conselho Federal de Medicina, Resolução CFM nº 2.336/2023: permite informar valores de consulta e formas de pagamento, proíbe garantia de resultado e oferta por consórcio ou similar: https://publicidademedica.cfm.org.br/resolucao/o-que-muda
+- Conselho Federal de Medicina, Resolução comentada, capítulo IV: diferencia o valor público da consulta do valor de procedimentos individualizados, que depende de avaliação prévia: https://publicidademedica.cfm.org.br/manual/resolucao-comentada/capitulo-4
 - Meta, boas práticas para anúncios de leads com mensagens: continuidade entre anúncio e conversa, perguntas fáceis primeiro e fluxo curto: https://www.facebook.com/business/ads/ad-objectives/lead-generation/lead-ads-with-messaging
 - CDC, princípios de linguagem simples: mensagem principal primeiro, frases curtas e uma ideia por vez: https://www.cdc.gov/health-literacy/php/develop-materials/plain-language.html
 - Estudo sobre preferências na consulta inicial de cirurgia plástica, incluindo transparência de preço, avaliações e acompanhamento: https://pubmed.ncbi.nlm.nih.gov/37620567/

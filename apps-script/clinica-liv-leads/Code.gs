@@ -14,6 +14,9 @@ const CONFIG = Object.freeze({
   googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
   googleAdsCustomerId: "9953344486",
   googleAdsTransactionSecretProperty: "GOOGLE_ADS_TRANSACTION_HMAC_SECRET",
+  leadIdentitySecretProperty: "LEAD_IDENTITY_HMAC_SECRET",
+  leadIdentityKeyVersionProperty: "LEAD_IDENTITY_HMAC_KEY_VERSION",
+  attributionSchemaVersionProperty: "ATTRIBUTION_SCHEMA_VERSION",
   nonLeadArchiveSheetName: "_CONTATOS_NAO_LEADS",
   qualifiedConversionName: "Lead qualificado GCLID",
   reviewAlertEmail: "daniel.added@gmail.com",
@@ -54,6 +57,123 @@ const EXPECTED_HEADERS = Object.freeze([
   "Destino",
   "Referência completa",
 ]);
+
+const WHATSAPP_EVENT_HEADERS = Object.freeze([
+  "Message ID",
+  "Event ID",
+  "Telefone",
+  "Data do evento",
+  "Linha do lead",
+  "Resultado",
+  "Opportunity ID",
+  "Profissional",
+  "Status de roteamento",
+  "Categoria da referência",
+  "Motivo do fallback",
+  "Referência de origem",
+  "Plataforma de aquisição",
+  "Origem inicial canônica",
+  "Canal inicial",
+  "Caminho de conversão",
+  "Campanha inicial da jornada",
+  "Grupo/conjunto inicial da jornada",
+  "Criativo inicial da jornada",
+  "Meta Campaign ID",
+  "Meta Adset ID",
+  "Meta Ad ID",
+  "Landing page inicial",
+  "Página do CTA",
+  "Local do CTA",
+  "Primeiro toque em",
+  "Origem da conversa atual",
+  "Canal da conversa atual",
+  "Caminho da conversa atual",
+  "Campanha da conversa atual",
+  "Grupo/conjunto da conversa atual",
+  "Criativo da conversa atual",
+  "Meta Campaign ID atual",
+  "Meta Adset ID atual",
+  "Meta Ad ID atual",
+  "Último toque em",
+  "Confiança da atribuição",
+  "Motivo do fallback da jornada",
+  "Status da jornada",
+  "Origem informada pelo paciente",
+  "Confiança da origem informada",
+]);
+
+const WHATSAPP_EVENT_BASE_HEADER_COUNT = 13;
+
+function attributionSchemaEnabled_() {
+  try {
+    return String(
+      PropertiesService.getScriptProperties().getProperty(
+        CONFIG.attributionSchemaVersionProperty,
+      ) || "",
+    ).trim().toLowerCase() === "v1";
+  } catch (_error) {
+    // Fail closed in tests and during transient configuration failures. Merely
+    // deploying code must never mutate the live workbook schema.
+    return false;
+  }
+}
+
+function cabecalhosEventosWhatsAppAtivos_() {
+  return attributionSchemaEnabled_()
+    ? WHATSAPP_EVENT_HEADERS
+    : WHATSAPP_EVENT_HEADERS.slice(0, WHATSAPP_EVENT_BASE_HEADER_COUNT);
+}
+
+function habilitarSchemaAtribuicaoV1(input) {
+  input = input && typeof input === "object" ? input : {};
+  const migration = typeof migrarSchemaAtribuicaoV1 === "function"
+    ? migrarSchemaAtribuicaoV1({ apply: false })
+    : { ok: false, reason: "attribution_schema_migration_unavailable" };
+  if (input.apply !== true) {
+    return Object.assign({
+      enabled: attributionSchemaEnabled_(),
+      mode: "dry_run",
+    }, migration);
+  }
+  if (input.confirmation !== "HABILITAR_SCHEMA_ATRIBUICAO_V1") {
+    throw new Error("attribution_schema_confirmation_required");
+  }
+  if (!migration || migration.ok !== true || migration.blocked === true) {
+    throw new Error("attribution_schema_preflight_failed");
+  }
+
+  const applied = migrarSchemaAtribuicaoV1({
+    apply: true,
+    confirmation: "APLICAR_SCHEMA_ATRIBUICAO_V1",
+  });
+  if (!applied || applied.ok !== true || applied.blocked === true) {
+    throw new Error("attribution_schema_migration_failed");
+  }
+  PropertiesService.getScriptProperties().setProperty(
+    CONFIG.attributionSchemaVersionProperty,
+    "v1",
+  );
+  return Object.assign({ enabled: true, mode: "applied" }, applied);
+}
+
+function desabilitarSchemaAtribuicaoV1(input) {
+  input = input && typeof input === "object" ? input : {};
+  if (
+    input.apply !== true ||
+    input.confirmation !== "DESABILITAR_SCHEMA_ATRIBUICAO_V1"
+  ) {
+    throw new Error("attribution_schema_disable_confirmation_required");
+  }
+  PropertiesService.getScriptProperties().deleteProperty(
+    CONFIG.attributionSchemaVersionProperty,
+  );
+  return {
+    ok: true,
+    enabled: false,
+    preservedColumns: true,
+    note: "A coleta foi desligada; nenhuma coluna ou dado foi apagado.",
+  };
+}
 
 function doGet(e) {
   const view = String(
@@ -1462,6 +1582,7 @@ function normalizeLead_(input) {
   const wbraid = gclid || gbraid
     ? ""
     : safeText_(input.wbraid, 500);
+  const attribution = normalizeAttributionContext_(input.attribution || {});
 
   return {
     eventId,
@@ -1482,6 +1603,182 @@ function normalizeLead_(input) {
     opportunityId: safeText_(input.opportunityId, 120),
     name: safeText_(input.name, 120),
     text: safeText_(input.text, 4000),
+    attribution,
+  };
+}
+
+function normalizeAttributionContext_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const allowedOrigins = new Set([
+    "Google Ads",
+    "Meta Ads",
+    "Google orgânico",
+    "Bing orgânico",
+    "ChatGPT",
+    "Copilot",
+    "Perplexity",
+    "Gemini",
+    "Instagram orgânico",
+    "Indicação",
+    "Retorno de paciente",
+    "Acesso direto",
+    "Desconhecida",
+  ]);
+  const allowedChannels = new Set([
+    "google_ads",
+    "meta_ads",
+    "organic_search",
+    "ai_referral",
+    "social_organic",
+    "referral",
+    "returning_patient",
+    "direct",
+    "unknown",
+  ]);
+  const allowedPaths = new Set([
+    "meta_whatsapp_direct",
+    "meta_site_whatsapp",
+    "meta_site_return_whatsapp",
+    "google_site_whatsapp",
+    "organic_site_whatsapp",
+    "ai_site_whatsapp",
+    "direct_whatsapp",
+    "unknown",
+  ]);
+  const allowedConfidence = new Set([
+    "observed",
+    "partial",
+    "inferred",
+    "unknown",
+  ]);
+  const allowedReportedOrigins = Object.freeze({
+    indicacao: "Indicação",
+    instagram: "Instagram",
+    google: "Google",
+    ia: "IA",
+    retorno: "Retorno",
+    outro: "Outro",
+    "nao sabe": "Não sabe",
+  });
+  const allowedJourneyStatus = new Set([
+    "resolved",
+    "not_found",
+    "unavailable",
+    "absent",
+  ]);
+  function enumOrFallback(value, allowed, fallback) {
+    const normalized = String(value || "").trim();
+    return allowed.has(normalized) ? normalized : fallback;
+  }
+  function code(value) {
+    const normalized = String(value || "").trim();
+    return /^[A-Za-z0-9_-]{1,80}$/.test(normalized)
+      ? normalized
+      : "";
+  }
+  function metaId(value) {
+    const normalized = String(value || "").trim();
+    return /^\d{5,30}$/.test(normalized) ? normalized : "";
+  }
+  function pagePath(value) {
+    const normalized = String(value || "").trim();
+    return /^\/[A-Za-z0-9%\/_~.-]{0,180}$/.test(normalized)
+      ? normalized
+      : "";
+  }
+  function isoTimestamp(value) {
+    const normalized = String(value || "").trim();
+    const timestamp = new Date(normalized).getTime();
+    return normalized && !Number.isNaN(timestamp)
+      ? new Date(timestamp).toISOString()
+      : "";
+  }
+  function reportedOrigin(value) {
+    const normalized = String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase();
+    return allowedReportedOrigins[normalized] || "";
+  }
+
+  const normalizedReportedOrigin = reportedOrigin(input.reportedOrigin);
+
+  return {
+    resolved: input.resolved === true,
+    journeyStatus: enumOrFallback(
+      input.journeyStatus,
+      allowedJourneyStatus,
+      "absent",
+    ),
+    initialOrigin: enumOrFallback(
+      input.initialOrigin,
+      allowedOrigins,
+      "Desconhecida",
+    ),
+    initialChannel: enumOrFallback(
+      input.initialChannel,
+      allowedChannels,
+      "unknown",
+    ),
+    currentOrigin: enumOrFallback(
+      input.currentOrigin,
+      allowedOrigins,
+      "Desconhecida",
+    ),
+    currentChannel: enumOrFallback(
+      input.currentChannel,
+      allowedChannels,
+      "unknown",
+    ),
+    conversionPath: enumOrFallback(
+      input.conversionPath,
+      allowedPaths,
+      "unknown",
+    ),
+    campaignCode: code(input.initialCampaignCode || input.campaignCode).toUpperCase(),
+    adgroupCode: code(input.initialAdgroupCode || input.adgroupCode).toUpperCase(),
+    creativeCode: code(input.initialCreativeCode || input.creativeCode).toUpperCase(),
+    metaCampaignId: metaId(input.initialMetaCampaignId || input.metaCampaignId),
+    metaAdsetId: metaId(input.initialMetaAdsetId || input.metaAdsetId),
+    metaAdId: metaId(input.initialMetaAdId || input.metaAdId),
+    initialCampaignCode: code(
+      input.initialCampaignCode || input.campaignCode,
+    ).toUpperCase(),
+    initialAdgroupCode: code(
+      input.initialAdgroupCode || input.adgroupCode,
+    ).toUpperCase(),
+    initialCreativeCode: code(
+      input.initialCreativeCode || input.creativeCode,
+    ).toUpperCase(),
+    initialMetaCampaignId: metaId(
+      input.initialMetaCampaignId || input.metaCampaignId,
+    ),
+    initialMetaAdsetId: metaId(
+      input.initialMetaAdsetId || input.metaAdsetId,
+    ),
+    initialMetaAdId: metaId(input.initialMetaAdId || input.metaAdId),
+    currentCampaignCode: code(input.currentCampaignCode).toUpperCase(),
+    currentAdgroupCode: code(input.currentAdgroupCode).toUpperCase(),
+    currentCreativeCode: code(input.currentCreativeCode).toUpperCase(),
+    currentMetaCampaignId: metaId(input.currentMetaCampaignId),
+    currentMetaAdsetId: metaId(input.currentMetaAdsetId),
+    currentMetaAdId: metaId(input.currentMetaAdId),
+    landingPage: pagePath(input.landingPage),
+    ctaPage: pagePath(input.ctaPage),
+    ctaLocation: code(input.ctaLocation).toLowerCase(),
+    firstTouchAt: isoTimestamp(input.firstTouchAt),
+    lastTouchAt: isoTimestamp(input.lastTouchAt),
+    confidence: enumOrFallback(
+      input.confidence,
+      allowedConfidence,
+      "unknown",
+    ),
+    fallbackReason: code(input.fallbackReason).toLowerCase(),
+    reportedOrigin: normalizedReportedOrigin,
+    reportedOriginConfidence: normalizedReportedOrigin
+      ? "patient_reported"
+      : "",
   };
 }
 
@@ -1526,6 +1823,17 @@ function decomporReferenciaAquisicao_(value) {
   const organicMatch = reference.match(/^SITE-(.+)$/i);
   if (organicMatch) result.cta = organicMatch[1];
   return result;
+}
+
+function plataformaPorReferenciaAquisicao_(value) {
+  const reference = boundedText_(value, 200);
+  if (/^M26[A-Z]\d{2}[A-Z](?:-|$)/i.test(reference)) return "Meta";
+  if (/^G26[A-Z0-9]{2,16}(?:-|$)/i.test(reference)) return "Google";
+  if (/^SITE(?:-|$)/i.test(reference)) return "Orgânico/Conteúdo";
+  // Legacy page codes (for example LF01) do not prove a paid source by
+  // themselves. Leave the platform unknown instead of borrowing it from a
+  // later conversation.
+  return "";
 }
 
 function normalizePhone_(value) {
@@ -1670,34 +1978,26 @@ function assertHeaders_(sheet) {
 }
 
 function getOrCreateEventSheet_(spreadsheet) {
+  const activeHeaders = cabecalhosEventosWhatsAppAtivos_();
   let sheet = spreadsheet.getSheetByName(CONFIG.eventSheetName);
-  const headers = [
-    "Message ID",
-    "Event ID",
-    "Telefone",
-    "Data do evento",
-    "Linha do lead",
-    "Resultado",
-    "Opportunity ID",
-    "Profissional",
-    "Status de roteamento",
-    "Categoria da referência",
-    "Motivo do fallback",
-    "Referência de origem",
-    "Plataforma de aquisição",
-  ];
   if (!sheet) {
     sheet = spreadsheet.insertSheet(CONFIG.eventSheetName);
     sheet.setFrozenRows(1);
     sheet.hideSheet();
   }
-  if (sheet.getMaxColumns() < headers.length) {
+  if (sheet.getMaxColumns() < activeHeaders.length) {
     sheet.insertColumnsAfter(
       sheet.getMaxColumns(),
-      headers.length - sheet.getMaxColumns(),
+      activeHeaders.length - sheet.getMaxColumns(),
     );
   }
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  if (typeof garantirCabecalhosAditivos_ === "function") {
+    garantirCabecalhosAditivos_(sheet, activeHeaders);
+  } else {
+    sheet
+      .getRange(1, 1, 1, activeHeaders.length)
+      .setValues([activeHeaders]);
+  }
 
   return sheet;
 }
@@ -1955,21 +2255,65 @@ function recordProcessedEvent_(
     "dd/MM/yyyy HH:mm:ss",
   );
 
-  sheet.appendRow([
-    lead.messageId,
-    lead.eventId,
-    lead.phone,
-    processedAt,
-    leadRow,
-    result,
-    opportunityId || lead.opportunityId || "",
-    professional || lead.professional || "unknown",
-    routeStatus || lead.routeStatus || "pending",
-    lead.referenceCategory || "unknown",
-    lead.attributionFallbackReason || "",
-    lead.reference || "",
-    lead.platform || "Não identificada",
-  ]);
+  const attribution = lead.attribution || {};
+  const values = {
+    "Message ID": lead.messageId,
+    "Event ID": lead.eventId,
+    "Telefone": lead.phone,
+    "Data do evento": processedAt,
+    "Linha do lead": leadRow,
+    "Resultado": result,
+    "Opportunity ID": opportunityId || lead.opportunityId || "",
+    "Profissional": professional || lead.professional || "unknown",
+    "Status de roteamento": routeStatus || lead.routeStatus || "pending",
+    "Categoria da referência": lead.referenceCategory || "unknown",
+    "Motivo do fallback": lead.attributionFallbackReason || "",
+    "Referência de origem": lead.reference || "",
+    "Plataforma de aquisição": lead.platform || "Não identificada",
+    "Origem inicial canônica": attribution.initialOrigin || "Desconhecida",
+    "Canal inicial": attribution.initialChannel || "unknown",
+    "Caminho de conversão": attribution.conversionPath || "unknown",
+    "Campanha inicial da jornada": attribution.initialCampaignCode ||
+      attribution.campaignCode || "",
+    "Grupo/conjunto inicial da jornada": attribution.initialAdgroupCode ||
+      attribution.adgroupCode || "",
+    "Criativo inicial da jornada": attribution.initialCreativeCode ||
+      attribution.creativeCode || "",
+    "Meta Campaign ID": attribution.metaCampaignId || "",
+    "Meta Adset ID": attribution.metaAdsetId || "",
+    "Meta Ad ID": attribution.metaAdId || "",
+    "Landing page inicial": attribution.landingPage || "",
+    "Página do CTA": attribution.ctaPage || "",
+    "Local do CTA": attribution.ctaLocation || "",
+    "Primeiro toque em": attribution.firstTouchAt || "",
+    "Origem da conversa atual": attribution.currentOrigin || "Desconhecida",
+    "Canal da conversa atual": attribution.currentChannel || "unknown",
+    "Caminho da conversa atual": attribution.conversionPath || "unknown",
+    "Campanha da conversa atual": attribution.currentCampaignCode || "",
+    "Grupo/conjunto da conversa atual": attribution.currentAdgroupCode || "",
+    "Criativo da conversa atual": attribution.currentCreativeCode || "",
+    "Meta Campaign ID atual": attribution.currentMetaCampaignId || "",
+    "Meta Adset ID atual": attribution.currentMetaAdsetId || "",
+    "Meta Ad ID atual": attribution.currentMetaAdId || "",
+    "Último toque em": attribution.lastTouchAt || "",
+    "Confiança da atribuição": attribution.confidence || "unknown",
+    "Motivo do fallback da jornada": attribution.fallbackReason || "",
+    "Status da jornada": attribution.journeyStatus || "absent",
+    "Origem informada pelo paciente": attribution.reportedOrigin || "",
+    "Confiança da origem informada":
+      attribution.reportedOriginConfidence || "",
+  };
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0]
+    .map(function trimHeader(value) { return String(value || "").trim(); });
+  const activeHeaders = new Set(cabecalhosEventosWhatsAppAtivos_());
+  sheet.appendRow(headers.map(function mapEventValue(header) {
+    return activeHeaders.has(header) &&
+      Object.prototype.hasOwnProperty.call(values, header)
+      ? values[header]
+      : "";
+  }));
 }
 
 function resolvePendingProcessedEvent_(
@@ -2053,46 +2397,38 @@ function findRecentLeadRow_(sheet, phone) {
 
 function mergeLeadIntoExistingRow_(sheet, row, lead) {
   const values = sheet.getRange(row, 1, 1, CONFIG.totalColumns).getDisplayValues()[0];
-  const existingPlatform = String(values[19] || "").trim();
-  const platformPriority = {
-    "": 0,
-    "Não identificada": 0,
-    "WhatsApp direto": 1,
-    "Orgânico/Conteúdo": 2,
-    Meta: 3,
-    Google: 4,
-  };
-  const existingPriority = platformPriority[existingPlatform] || 0;
-  const incomingPriority = platformPriority[lead.platform] || 0;
+  const frozenReference = String(values[24] || values[1] || "").trim();
+  const sourceReference = frozenReference || String(lead.reference || "").trim();
+  const attribution = decomporReferenciaAquisicao_(sourceReference);
 
-  if (incomingPriority > existingPriority) {
-    const attribution = decomporReferenciaAquisicao_(lead.reference);
-    sheet.getRange(row, 2).setValue(lead.reference);
-    sheet.getRange(row, 20).setValue(lead.platform);
-    sheet.getRange(row, 21, 1, 5).setValues([[
-      attribution.campaign,
-      attribution.creative,
-      attribution.cta,
-      "WhatsApp",
-      attribution.reference,
-    ]]);
-  } else {
-    const frozenReference = String(values[24] || values[1] || "").trim();
-    const frozenAttribution = decomporReferenciaAquisicao_(frozenReference);
-    const missingAttribution = [20, 21, 22].some(function missing(index) {
-      return !String(values[index] || "").trim();
-    });
-    if (frozenReference && missingAttribution) {
-      if (!String(values[20] || "").trim() && frozenAttribution.campaign) {
-        sheet.getRange(row, 21).setValue(frozenAttribution.campaign);
-      }
-      if (!String(values[21] || "").trim() && frozenAttribution.creative) {
-        sheet.getRange(row, 22).setValue(frozenAttribution.creative);
-      }
-      if (!String(values[22] || "").trim() && frozenAttribution.cta) {
-        sheet.getRange(row, 23).setValue(frozenAttribution.cta);
-      }
-    }
+  // Fill each missing first-touch field independently. A later conversation
+  // never rewrites any non-empty acquisition field in the legacy 25 columns.
+  if (!String(values[1] || "").trim() && sourceReference) {
+    sheet.getRange(row, 2).setValue(sourceReference);
+  }
+  if (!String(values[19] || "").trim()) {
+    const platformFromFrozenReference = frozenReference
+      ? plataformaPorReferenciaAquisicao_(frozenReference)
+      : "";
+    const safePlatform = platformFromFrozenReference || (
+      !frozenReference ? String(lead.platform || "").trim() : ""
+    );
+    if (safePlatform) sheet.getRange(row, 20).setValue(safePlatform);
+  }
+  if (!String(values[20] || "").trim() && attribution.campaign) {
+    sheet.getRange(row, 21).setValue(attribution.campaign);
+  }
+  if (!String(values[21] || "").trim() && attribution.creative) {
+    sheet.getRange(row, 22).setValue(attribution.creative);
+  }
+  if (!String(values[22] || "").trim() && attribution.cta) {
+    sheet.getRange(row, 23).setValue(attribution.cta);
+  }
+  if (!String(values[23] || "").trim()) {
+    sheet.getRange(row, 24).setValue("WhatsApp");
+  }
+  if (!String(values[24] || "").trim() && sourceReference) {
+    sheet.getRange(row, 25).setValue(sourceReference);
   }
 
   if (!values[10] && !values[11] && !values[12]) {

@@ -1,2 +1,6 @@
+[build]
+  command = "node scripts/build-static-site.mjs"
+  publish = "tmp/netlify-deploy"
+
 [[context.production.plugins]]
   package = "./netlify/plugins/indexnow"

@@ -98,7 +98,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /margem de 10% abaixo/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /não diga que ela inclui, engloba ou considera hospital/,
+    /não diga que ela inclui, engloba ou considera um item específico/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -118,12 +118,20 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /valores competitivos, condição à vista e parcelamento antecipado/,
+    /valor é individual e só é definido após avaliação e planejamento/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /hospital, anestesia, materiais e acompanhamento/,
+    /técnica, complexidade, necessidades de cada pessoa, equipe, hospital, anestesia, materiais e acompanhamento/,
   );
+  assert.match(CONVERSATION_GUIDELINES, /não como orçamento, proposta ou garantia de preço/i);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não apresente honorários isolados|faixa não representa honorários isolados/i,
+  );
+  assert.match(CONVERSATION_GUIDELINES, /quanto-custa-lifting-facial-sao-paulo/);
+  assert.match(CONVERSATION_GUIDELINES, /faixa completa já tiver sido enviada/i);
+  assert.match(CONVERSATION_GUIDELINES, /pode ficar fora dessa faixa/i);
   assert.match(CONVERSATION_GUIDELINES, /use human_review/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);
   assert.match(CONVERSATION_GUIDELINES, /Não repita a apresentação ou as credenciais/);
@@ -160,8 +168,8 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /casos reais ou antes e depois/);
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
-  assert.match(CONVERSATION_GUIDELINES, /não repita URL ou página/);
-  assert.match(CONVERSATION_GUIDELINES, /guia de custos faciais pertence à primeira resposta institucional/);
+  assert.match(CONVERSATION_GUIDELINES, /não repita outras URLs ou páginas/);
+  assert.match(CONVERSATION_GUIDELINES, /guia específico de lifting pode aparecer uma vez na primeira resposta institucional/);
   assert.match(CONVERSATION_GUIDELINES, /Não ofereça o guia de custos faciais para cirurgia de mama/);
   assert.match(
     CONVERSATION_GUIDELINES,

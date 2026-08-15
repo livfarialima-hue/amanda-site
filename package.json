@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "node scripts/run-tests.mjs",
+    "site:build": "node scripts/build-static-site.mjs",
+    "site:check": "node scripts/check-site-technical.mjs",
     "apps-script:target": "node scripts/check-apps-script-target.mjs show",
     "apps-script:verify-target": "node scripts/check-apps-script-target.mjs verify",
     "indexnow": "node scripts/submit-indexnow.mjs"
