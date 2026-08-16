@@ -342,3 +342,15 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Data de revisão:** primeira sonda controlada após publicação autorizada; checagens em 24 horas, 7 dias e 14 dias.
 - **Regra para manter:** cobertura consentida Meta Site de pelo menos 80%, duplicidade inferior a 2%, 100% da sonda controlada reconciliada e nenhuma exposição de PII/PHI.
 - **Regra para reverter:** desativar imediatamente a flag e manter o parser legado se houver perda de mensagens, referência incorreta, duplicidade, origem inicial sobrescrita, retenção indevida ou divergência entre evento, LEADS e CRM.
+
+### 16 de agosto de 2026 — controle etário real e métricas nos alertas Meta
+
+- **Status:** `M26F02S` corrigido e publicado; `M26F01W` bloqueado por dependência operacional; relatório Meta publicado no Apps Script v94.
+- **Mudança:** a inspeção ao vivo abriu os controles ocultos do Público Advantage+ e confirmou `age_min=25` nos dois conjuntos faciais, embora ambos se chamassem `40+` e exibissem `40–65+` como sugestão. O conjunto Site foi convertido para público original e publicado com limite rígido 40–65+. A mesma mudança do conjunto WhatsApp não foi publicada porque a Meta passou a exigir Conta do WhatsApp Business (`#2923012`) e orçamento mínimo R$ 600,18 (`#2446149`); o rascunho foi descartado. A rotina de e-mail passou a incluir em toda mensagem métricas essenciais de 7/30 dias por campanha e o funil anônimo; o teste manual passou a forçar a revisão semanal completa.
+- **Motivo e evidência:** o primeiro e-mail provou que o nome do conjunto não correspondia ao controle real. No modo Advantage+, 40–65+ era sugestão expansível e o controle máximo disponível era 25. O e-mail de teste executado no domingo mostrou apenas alertas porque o código escondia métricas fora das janelas semanal/mensal.
+- **Hipótese:** o limite rígido no Site reduzirá entrega etária incompatível; o resumo 7/30 em todo alerta permitirá avaliar gravidade e contexto sem esperar a terça-feira. O efeito de qualidade e volume ainda é N/D.
+- **Métrica principal:** `age_min` da API, distribuição por idade, gasto, CTR, LPV, conversas, contatos válidos, qualificados, agendados, realizados e fechamentos por campanha e janela.
+- **Guardrails:** não migrar o número do WhatsApp nem aumentar orçamento implicitamente; não chamar sugestão de controle; não tratar resultado de plataforma como paciente; manter relatório somente leitura e sem PII.
+- **Data de revisão:** Site em 17/08, 23/08 e 30/08; WhatsApp após o primeiro relatório completo de 18/08 e somente quando o gate de Conta do WhatsApp Business estiver preparado.
+- **Regra para manter:** manter o Site em 40+ se não houver perda material de contatos elegíveis/qualidade e se a API continuar mostrando `age_min=40`; manter o relatório se as métricas chegarem completas e sem PII.
+- **Regra para reverter:** qualquer redução do piso exige nova decisão estratégica documentada. Se o e-mail falhar, voltar à v93 preservando os triggers e diagnosticar sem alterar campanhas.

@@ -1,6 +1,6 @@
 # Rotina automatizada de revisão da Meta Ads
 
-**Status:** `ATIVO` desde 16/08/2026; Apps Script canônico v93, agregado e relatório testados ao vivo
+**Status:** `ATIVO` desde 16/08/2026; Apps Script canônico v94, agregado e acesso somente leitura testados ao vivo
 
 **Conta:** `1643959806249995`
 
@@ -23,12 +23,14 @@ Resultados da plataforma — conversa, visualização da página, clique ou repr
 | Ritmo | Quando | Conteúdo | Envio |
 |---|---|---|---|
 | Agregado do funil | diariamente, aproximadamente 08:25 | coortes 7/30/90 dias por caminho, campanha e criativo conhecido | atualiza somente `Meta_Agregados`; sem e-mail e sem PII |
-| Saúde técnica | diariamente, aproximadamente 10:05 | gasto anômalo no mesmo dia da semana, entrega, política/status, idade facial, destino e frescor do funil | somente alerta novo, piora ou persistência de 48 h |
+| Saúde técnica | diariamente, aproximadamente 10:05 | gasto anômalo no mesmo dia da semana, entrega, política/status, idade facial, destino e frescor do funil; todo e-mail enviado traz resumo 7/30 dias de mídia e funil | somente alerta novo, piora ou persistência de 48 h |
 | Revisão tática | toda terça-feira | últimos 7 dias, sete dias anteriores e 30 dias; campanhas, conjuntos, anúncios, criativos, vídeo, idade/gênero, plataforma/posicionamento, páginas e funil | sempre |
 | Revisão estratégica | segundo dia útil do mês | acrescenta 90 dias e prontidão de testes/realocação | sempre, no relatório do dia |
 | Pós-mudança | 7 e 14 dias completos | hipótese, métrica e guardrail da mudança específica | permanece no Plano Executivo e no Calendar |
 
 O segundo dia útil é calculado como o segundo dia de segunda a sexta; feriados locais não são inferidos pelo código. Se coincidir com feriado operacional, o relatório continua seguro, mas a revisão humana pode ocorrer no dia útil seguinte.
+
+O teste manual `executarTesteRevisaoMetaAds()` sempre gera a versão semanal completa, mesmo quando executado fora da terça-feira. Isso evita validar o layout com um e-mail diário incompleto. A rotina diária, por sua vez, só envia quando existe alerta novo, piora ou persistência após o cooldown; quando envia, nunca omite o resumo essencial de 7 e 30 dias.
 
 ## 3. O que é analisado
 
@@ -61,7 +63,7 @@ Fadiga criativa exige, no mínimo, 1.000 impressões na janela e combinação de
 - manter `M26F01W` como controle;
 - não colocar verba nova em `M26F02S` antes da prova Meta → site → WhatsApp → LEADS/CRM;
 - manter as campanhas faciais em 40+ e alertar se `age_min` observado ficar abaixo de 40;
-- confirmar a entrega real do Advantage+; nome do conjunto não prova controle etário;
+- tratar a idade do Público Advantage+ como sugestão até que `age_min` prove o limite; nome do conjunto não prova controle etário;
 - não decidir por CTR, CPM ou conversa isoladamente;
 - não confundir zero código identificado com zero contato real;
 - não ativar CAPI ou ampliar dados enviados como consequência automática do relatório;
@@ -88,6 +90,13 @@ Ativação concluída em 16/08/2026:
 - `executarTesteRevisaoMetaAds()` concluído às 12:20 BRT; e-mail recebido com duas sinalizações críticas e nenhuma mutação;
 - `publicarAgregadosFunilMetaAds` ativo aproximadamente às 08:25, última execução observada às 08:27 com 0% de erro;
 - `executarRevisaoMetaAds` ativo aproximadamente às 10:05, com uma única instância do trigger criada às 12:23.
+- versão 94 publicada às 15:15 BRT no deployment canônico; `validarAcessoRevisaoMetaAds()` concluiu às 15:16 sem mutação. Desde essa versão, qualquer e-mail inclui métricas essenciais de 7/30 dias e o teste manual força a revisão completa.
+
+Auditoria etária ao vivo de 16/08/2026:
+
+- `M26F02S` tinha controle real 25 e sugestão 40–65+; foi publicado com público original e limite rígido 40–65+;
+- `M26F01W` também tinha controle real 25. A correção não foi publicada porque a Meta exigiu Conta do WhatsApp Business (`#2923012`) e orçamento total mínimo de R$ 600,18 (`#2446149`). O rascunho foi descartado para não deixar edição parcial;
+- a rotina deve manter o alerta P0 para `M26F01W` até o gate operacional ser resolvido. Nenhum aumento de orçamento ou migração do WhatsApp foi feito.
 
 Próximas conferências: revisar os relatórios completos de 18/08, 25/08 e 01/09 antes de calibrar qualquer limiar. Alterações de campanha continuam manuais e exigem autorização específica.
 

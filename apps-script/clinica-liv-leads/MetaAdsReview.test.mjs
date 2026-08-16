@@ -127,3 +127,37 @@ test("credenciais ficam somente em Script Properties", () => {
   assert.equal(/META_MARKETING_API_TOKEN\s*:\s*["'][^"']+["']/.test(source), false);
   assert.equal(/EA[A-Za-z0-9_-]{20,}/.test(source), false);
 });
+
+test("alerta diário inclui métricas essenciais de 7 e 30 dias e funil anônimo", () => {
+  const textEmail = load("emailTextoRevisaoMetaAds_");
+  const htmlEmail = load("emailHtmlRevisaoMetaAds_");
+  const report = {
+    generatedAt: "2026-08-16 10:05:00",
+    criticalAlerts: [],
+    warnings: [],
+    suggestions: [],
+    campaigns: [],
+    adsets: [],
+    ads: [],
+    seven: [{ campaignId: "c1", campaign: "M26F01W | Facial", spend: 70, reach: 500, impressions: 900, linkClicks: 20, linkCtr: 2.22, frequency: 1.8, landingPageViews: 0, conversations: 8, primaryResults: 8 }],
+    thirty: [{ campaignId: "c1", campaign: "M26F01W | Facial", spend: 300, reach: 1600, impressions: 3200, linkClicks: 75, linkCtr: 2.34, frequency: 2, landingPageViews: 0, conversations: 31, primaryResults: 31 }],
+    funnel: [
+      { windowDays: 7, campaignCode: "M26F01W", creativeCode: "__TOTAL__", contacts: 6, qualified: 2, scheduled: 1, completed: 0, procedureClosed: 0 },
+      { windowDays: 30, campaignCode: "M26F01W", creativeCode: "__TOTAL__", contacts: 19, qualified: 5, scheduled: 2, completed: 1, procedureClosed: 0 },
+    ],
+  };
+  const context = { isWeekly: false, isMonthly: false };
+  const text = textEmail(report, context);
+  const html = htmlEmail(report, context);
+  assert.match(text, /MÉTRICAS ESSENCIAIS — 7 E 30 DIAS/);
+  assert.match(text, /7d M26F01W: contatos 6/);
+  assert.match(html, /Métricas essenciais — 7 e 30 dias/);
+  assert.match(html, /30d:/);
+  assert.match(html, /Funil anônimo — 7 e 30 dias/);
+});
+
+test("teste manual força relatório semanal completo em qualquer dia", () => {
+  assert.match(source, /const baseContext = criarContextoRevisaoMetaAds_\(new Date\(\)\)/);
+  assert.match(source, /isWeekly:\s*true/);
+  assert.match(source, /isMonthly:\s*false/);
+});

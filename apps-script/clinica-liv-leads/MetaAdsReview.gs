@@ -93,7 +93,11 @@ function executarRevisaoMetaAds() {
  */
 function executarTesteRevisaoMetaAds() {
   const properties = PropertiesService.getScriptProperties();
-  const context = criarContextoRevisaoMetaAds_(new Date());
+  const baseContext = criarContextoRevisaoMetaAds_(new Date());
+  const context = Object.assign({}, baseContext, {
+    isWeekly: true,
+    isMonthly: false,
+  });
   const report = construirRelatorioRevisaoMetaAds_(context, properties);
   MailApp.sendEmail({
     to: META_ADS_REVIEW_CONFIG.recipientEmail,
@@ -479,7 +483,7 @@ function construirAlertasCriticosMeta_(data) {
       const code = codigoCampanhaMeta_(adset.name);
       const targeting = adset.targeting || {};
       if (META_ADS_REVIEW_CONFIG.facialCampaignCodes.includes(code) && numeroMeta_(targeting.age_min) !== null && numeroMeta_(targeting.age_min) < 40) {
-        alerts.push(alertaMeta_("P0", `Piso etário abaixo de 40 em ${adset.name}`, `age_min observado: ${targeting.age_min}. A decisão vigente para Meta facial é 40+.`, "Conferir se Advantage+ trata idade como controle ou sugestão; não editar automaticamente.", `meta_age_floor|${adset.id}`, 40 - numeroMeta_(targeting.age_min)));
+        alerts.push(alertaMeta_("P0", `Piso etário abaixo de 40 em ${adset.name}`, `age_min observado: ${targeting.age_min}. A decisão vigente para Meta facial é 40+.`, "Usar controle rígido de 40+ após validar os gates de publicação da plataforma; não tratar a sugestão 40–65+ como limite e não editar automaticamente.", `meta_age_floor|${adset.id}`, 40 - numeroMeta_(targeting.age_min)));
       }
     });
   }
@@ -661,14 +665,17 @@ function emailTextoRevisaoMetaAds_(report, context) {
   ];
   if (!report.criticalAlerts.length) lines.push("Nenhum alerta crítico.");
   report.criticalAlerts.forEach((row) => lines.push(`- ${row.priority} | ${row.title} | ${row.evidence} | Ação: ${row.action}`));
+  lines.push("", "MÉTRICAS ESSENCIAIS — 7 E 30 DIAS");
+  const campaignSummaries = linhasResumoCampanhasMeta_(report);
+  if (!campaignSummaries.length) lines.push("N/D — a fonte de desempenho não retornou campanhas.");
+  campaignSummaries.forEach((item) => {
+    lines.push(`- ${item.campaign}: 7d ${resumoJanelaTextoMeta_(item.seven)}; 30d ${resumoJanelaTextoMeta_(item.thirty)}.`);
+  });
+  lines.push("", "FUNIL ANÔNIMO — 7 E 30 DIAS");
+  const dailyFunnel = linhasFunilEmailMeta_(report, [7, 30]);
+  if (!dailyFunnel.length) lines.push("N/D — o agregado anônimo do funil não retornou as coortes esperadas.");
+  dailyFunnel.forEach((item) => lines.push(`- ${item.days}d ${item.code}: contatos ${inteiroMeta_(item.row.contacts)}; qualificados+ ${inteiroMeta_(item.row.qualified)}; agendados+ ${inteiroMeta_(item.row.scheduled)}; realizados+ ${inteiroMeta_(item.row.completed)}; fechamentos ${inteiroMeta_(item.row.procedureClosed)}.`));
   if (context.isWeekly || context.isMonthly) {
-    lines.push("", "DESEMPENHO POR CAMPANHA — 7 E 30 DIAS");
-    const campaign7 = agruparInsightsMeta_(report.seven, "campaignId", true).__rows;
-    const campaign30 = agruparInsightsMeta_(report.thirty, "campaignId", true).__rows;
-    campaign30.forEach((row30) => {
-      const row7 = campaign7.find((item) => item.campaignId === row30.campaignId);
-      lines.push(`- ${row30.campaign}: 7d ${row7 ? `${brlMeta_(row7.spend)}, ${inteiroMeta_(row7.linkClicks)} cliques link, ${inteiroMeta_(row7.primaryResults)} resultados` : "N/D"}; 30d ${brlMeta_(row30.spend)}, alcance ${inteiroMeta_(row30.reach)}, frequência ${decimalMeta_(row30.frequency)}, CTR link ${percentualPontosMeta_(row30.linkCtr)}, LPV ${inteiroMeta_(row30.landingPageViews)}, conversas ${inteiroMeta_(row30.conversations)}, resultado principal ${inteiroMeta_(row30.primaryResults)}.`);
-    });
     lines.push("", "CRIATIVOS — 7 DIAS");
     agruparInsightsMeta_(report.seven, "adId", true).__rows.sort((a, b) => b.spend - a.spend).slice(0, META_ADS_REVIEW_CONFIG.maxRowsPerSection).forEach((row) => {
       lines.push(`- ${row.campaign} / ${row.ad}: ${brlMeta_(row.spend)}; ${inteiroMeta_(row.impressions)} imp.; frequência ${decimalMeta_(row.frequency)}; CTR link ${percentualPontosMeta_(row.linkCtr)}; LPV ${inteiroMeta_(row.landingPageViews)}; conversas ${inteiroMeta_(row.conversations)}; vídeo 50% ${inteiroMeta_(row.video50)}; 100% ${inteiroMeta_(row.video100)}.`);
@@ -676,13 +683,11 @@ function emailTextoRevisaoMetaAds_(report, context) {
     lines.push("", "SUGESTÕES");
     if (!report.suggestions.length) lines.push("Nenhuma sugestão com evidência suficiente.");
     report.suggestions.slice(0, META_ADS_REVIEW_CONFIG.maxRowsPerSection).forEach((row) => lines.push(`- ${row.priority} | ${row.queue} | ${row.campaign} / ${row.entity} | ${row.problem} | ${row.change}`));
-    lines.push("", "FUNIL ANÔNIMO");
-    [7, 30, 90].forEach((days) => {
-      ["M26F01W", "M26F02S"].forEach((code) => {
-        const row = linhaFunilMeta_(report.funnel, days, code, "__TOTAL__");
-        if (row) lines.push(`- ${days}d ${code}: contatos ${row.contacts}; qualificados ${row.qualified}; agendados ${row.scheduled}; realizados ${row.completed}; fechamentos ${row.procedureClosed}.`);
-      });
-    });
+    const ninetyFunnel = linhasFunilEmailMeta_(report, [90]);
+    if (ninetyFunnel.length) {
+      lines.push("", "FUNIL ANÔNIMO — 90 DIAS");
+      ninetyFunnel.forEach((item) => lines.push(`- ${item.code}: contatos ${inteiroMeta_(item.row.contacts)}; qualificados+ ${inteiroMeta_(item.row.qualified)}; agendados+ ${inteiroMeta_(item.row.scheduled)}; realizados+ ${inteiroMeta_(item.row.completed)}; fechamentos ${inteiroMeta_(item.row.procedureClosed)}.`));
+    }
   }
   if (report.warnings.length) lines.push("", "FONTES N/D", ...report.warnings.map((row) => `- ${row}`));
   const recent = entidadesMetaRecentes_(report, 14);
@@ -694,12 +699,54 @@ function emailHtmlRevisaoMetaAds_(report, context) {
   const alertRows = report.criticalAlerts.length ? report.criticalAlerts.map((row) => `<tr><td>${htmlMeta_(row.priority)}</td><td>${htmlMeta_(row.title)}</td><td>${htmlMeta_(row.evidence)}</td><td>${htmlMeta_(row.action)}</td></tr>`).join("") : '<tr><td colspan="4">Nenhum alerta crítico.</td></tr>';
   const suggestions = (context.isWeekly || context.isMonthly) ? report.suggestions.slice(0, META_ADS_REVIEW_CONFIG.maxRowsPerSection) : [];
   const suggestionRows = suggestions.length ? suggestions.map((row) => `<tr><td>${htmlMeta_(row.priority)}</td><td>${htmlMeta_(row.queue)}</td><td>${htmlMeta_(row.campaign)}<br>${htmlMeta_(row.entity)}</td><td>${htmlMeta_(row.problem)}<br><small>${htmlMeta_(row.evidence)}</small></td><td>${htmlMeta_(row.change)}<br><small>Guardrail: ${htmlMeta_(row.guardrail)}</small></td></tr>`).join("") : '<tr><td colspan="5">Nenhuma sugestão com evidência suficiente.</td></tr>';
-  const funnelRows = [7, 30, 90].flatMap((days) => ["M26F01W", "M26F02S"].map((code) => ({ days, code, row: linhaFunilMeta_(report.funnel, days, code, "__TOTAL__") }))).filter((item) => item.row).map((item) => `<tr><td>${item.days}d</td><td>${htmlMeta_(item.code)}</td><td>${inteiroMeta_(item.row.contacts)}</td><td>${inteiroMeta_(item.row.qualified)}</td><td>${inteiroMeta_(item.row.scheduled)}</td><td>${inteiroMeta_(item.row.completed)}</td><td>${inteiroMeta_(item.row.procedureClosed)}</td></tr>`).join("") || '<tr><td colspan="7">N/D</td></tr>';
-  const campaignTable = tabelaCampanhasHtmlMeta_(report);
+  const essentialCampaigns = cartoesCampanhasHtmlMeta_(report);
+  const essentialFunnel = listaFunilHtmlMeta_(report, [7, 30]);
+  const ninetyFunnel = listaFunilHtmlMeta_(report, [90]);
   const creativeTable = tabelaCriativosHtmlMeta_(report);
   const recent = entidadesMetaRecentes_(report, 14);
   const recentHtml = recent.length ? `<h3>Entidades alteradas nos últimos 14 dias</h3><ul>${recent.slice(0, META_ADS_REVIEW_CONFIG.maxRowsPerSection).map((row) => `<li>${htmlMeta_(row.type)}: ${htmlMeta_(row.name)} — ${htmlMeta_(row.updatedTime)}</li>`).join("")}</ul>` : "";
-  return `<div style="font-family:Arial,sans-serif;color:#202124;line-height:1.45"><h2>Revisão Meta Ads — somente leitura</h2><p><strong>Gerado:</strong> ${htmlMeta_(report.generatedAt)} BRT<br><strong>Modo:</strong> ${context.isMonthly ? "mensal" : context.isWeekly ? "semanal" : "saúde diária"}<br><strong>Conta:</strong> ${htmlMeta_(META_ADS_REVIEW_CONFIG.accountId)}<br><strong>Garantia:</strong> nenhuma campanha foi alterada.</p><h3>Alertas críticos</h3><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Alerta</th><th>Evidência</th><th>Ação</th></tr>${alertRows}</table>${context.isWeekly || context.isMonthly ? `<h3>Campanhas — 7 e 30 dias</h3>${campaignTable}<h3>Criativos — 7 dias</h3>${creativeTable}<h3>Sugestões para revisão humana</h3><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Fila</th><th>Escopo</th><th>Problema</th><th>Mudança sugerida</th></tr>${suggestionRows}</table><h3>Funil anônimo</h3><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse"><tr><th>Janela</th><th>Código</th><th>Contatos</th><th>Qualificados+</th><th>Agendados+</th><th>Realizados+</th><th>Fechamentos</th></tr>${funnelRows}</table>${recentHtml}` : ""}${report.warnings.length ? `<h3>Fontes N/D</h3><ul>${report.warnings.map((row) => `<li>${htmlMeta_(row)}</li>`).join("")}</ul>` : ""}<p><small>Resultados da Meta, LPV e conversas são sinais de plataforma; não equivalem automaticamente a contato válido, paciente ou consulta. Qualquer ajuste permanece manual e depende de autorização.</small></p></div>`;
+  return `<div style="font-family:Arial,sans-serif;color:#202124;line-height:1.45"><h2>Revisão Meta Ads — somente leitura</h2><p><strong>Gerado:</strong> ${htmlMeta_(report.generatedAt)} BRT<br><strong>Modo:</strong> ${context.isMonthly ? "mensal" : context.isWeekly ? "semanal" : "saúde diária"}<br><strong>Conta:</strong> ${htmlMeta_(META_ADS_REVIEW_CONFIG.accountId)}<br><strong>Garantia:</strong> nenhuma campanha foi alterada.</p><h3>Alertas críticos</h3><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Alerta</th><th>Evidência</th><th>Ação</th></tr>${alertRows}</table><h3>Métricas essenciais — 7 e 30 dias</h3>${essentialCampaigns}<h3>Funil anônimo — 7 e 30 dias</h3>${essentialFunnel}${context.isWeekly || context.isMonthly ? `<h3>Criativos — 7 dias</h3>${creativeTable}<h3>Sugestões para revisão humana</h3><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Fila</th><th>Escopo</th><th>Problema</th><th>Mudança sugerida</th></tr>${suggestionRows}</table><h3>Funil anônimo — 90 dias</h3>${ninetyFunnel}${recentHtml}` : ""}${report.warnings.length ? `<h3>Fontes N/D</h3><ul>${report.warnings.map((row) => `<li>${htmlMeta_(row)}</li>`).join("")}</ul>` : ""}<p><small>Resultados da Meta, LPV e conversas são sinais de plataforma; não equivalem automaticamente a contato válido, paciente ou consulta. Qualquer ajuste permanece manual e depende de autorização.</small></p></div>`;
+}
+
+function linhasResumoCampanhasMeta_(report) {
+  const seven = agruparInsightsMeta_(report.seven, "campaignId", true).__rows;
+  const thirty = agruparInsightsMeta_(report.thirty, "campaignId", true).__rows;
+  const ids = Array.from(new Set([...seven, ...thirty].map((row) => row.campaignId).filter(Boolean)));
+  return ids.map((campaignId) => {
+    const row7 = seven.find((row) => row.campaignId === campaignId) || null;
+    const row30 = thirty.find((row) => row.campaignId === campaignId) || null;
+    return {
+      campaignId,
+      campaign: (row30 && row30.campaign) || (row7 && row7.campaign) || campaignId,
+      seven: row7,
+      thirty: row30,
+    };
+  }).sort((a, b) => ((b.thirty && b.thirty.spend) || (b.seven && b.seven.spend) || 0) - ((a.thirty && a.thirty.spend) || (a.seven && a.seven.spend) || 0));
+}
+
+function resumoJanelaTextoMeta_(row) {
+  if (!row) return "N/D";
+  return `${brlMeta_(row.spend)}; alcance ${inteiroMeta_(row.reach)}; frequência ${decimalMeta_(row.frequency)}; cliques link ${inteiroMeta_(row.linkClicks)}; CTR link ${percentualPontosMeta_(row.linkCtr)}; LPV ${inteiroMeta_(row.landingPageViews)}; conversas ${inteiroMeta_(row.conversations)}; resultado principal ${inteiroMeta_(row.primaryResults)}`;
+}
+
+function cartoesCampanhasHtmlMeta_(report) {
+  const rows = linhasResumoCampanhasMeta_(report);
+  if (!rows.length) return '<p>N/D — a fonte de desempenho não retornou campanhas.</p>';
+  return rows.map((item) => `<div style="border:1px solid #dadce0;border-radius:8px;padding:10px;margin:0 0 10px"><strong>${htmlMeta_(item.campaign)}</strong><br><strong>7d:</strong> ${htmlMeta_(resumoJanelaTextoMeta_(item.seven))}<br><strong>30d:</strong> ${htmlMeta_(resumoJanelaTextoMeta_(item.thirty))}</div>`).join("");
+}
+
+function linhasFunilEmailMeta_(report, windows) {
+  return (windows || []).flatMap((days) => ["M26F01W", "M26F02S"].map((code) => ({
+    days,
+    code,
+    row: linhaFunilMeta_(report.funnel, days, code, "__TOTAL__"),
+  }))).filter((item) => item.row);
+}
+
+function listaFunilHtmlMeta_(report, windows) {
+  const rows = linhasFunilEmailMeta_(report, windows);
+  if (!rows.length) return '<p>N/D — o agregado anônimo do funil não retornou as coortes esperadas.</p>';
+  return `<ul>${rows.map((item) => `<li><strong>${item.days}d ${htmlMeta_(item.code)}</strong>: contatos ${inteiroMeta_(item.row.contacts)}; qualificados+ ${inteiroMeta_(item.row.qualified)}; agendados+ ${inteiroMeta_(item.row.scheduled)}; realizados+ ${inteiroMeta_(item.row.completed)}; fechamentos ${inteiroMeta_(item.row.procedureClosed)}.</li>`).join("")}</ul>`;
 }
 
 function tabelaCampanhasHtmlMeta_(report) {

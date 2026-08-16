@@ -38,7 +38,7 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 ## Agregado anônimo para a rotina do Google Ads
 
 - Código: `GoogleAdsFunnelReview.gs`.
-- Produção atual: Apps Script versão `93`, publicada no deployment canônico em 16/08/2026. O agregado Google foi introduzido na v92 e preservado na v93.
+- Produção atual: Apps Script versão `94`, publicada no deployment canônico em 16/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
 - Destino: planilha separada `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Agregados`.
 - Trigger: `publicarAgregadosFunilGoogleAds`, diariamente aproximadamente às 08:15 BRT, configurado por `configurarRotinaAgregadosFunilGoogleAds()`.
 - Fontes internas: `_FUNIL_CANONICO` e `_OPORTUNIDADE_MARCOS`.
@@ -57,6 +57,7 @@ Projetos divergentes não devem ser editados, renomeados, arquivados ou excluíd
 - Flag: `META_ADS_REVIEW_ENABLED=true` somente depois de `validarAcessoRevisaoMetaAds()`.
 - Triggers: `publicarAgregadosFunilMetaAds` aproximadamente às 08:25 e `executarRevisaoMetaAds` aproximadamente às 10:05 BRT.
 - Ativação validada em 16/08/2026: agregado com 0% de erro, token permanente limitado a `ads_read`, Graph API `v26.0`, teste recebido por e-mail e uma única instância de cada trigger.
+- Versão `94`: todo e-mail enviado pela rotina inclui métricas essenciais de 7 e 30 dias por campanha e o funil anônimo; o teste manual força a versão semanal completa em qualquer dia. A validação somente leitura `validarAcessoRevisaoMetaAds()` concluiu em produção às 15:16 BRT.
 - Privacidade: nenhum nome, telefone, e-mail, mensagem, click ID, `Opportunity ID`, `Event ID` ou informação clínica no agregado/e-mail.
 - Taxonomia: somente `M26F01W` resolve `meta_whatsapp_direct` e somente `M26F02S` resolve `meta_site_whatsapp` no contrato v1. `M26O01W`, `M26O02W` e aliases desconhecidos permanecem N/D.
 - Manual completo: `campanhas/ROTINA-AUTOMATIZADA-REVISAO-META-ADS.md`.
