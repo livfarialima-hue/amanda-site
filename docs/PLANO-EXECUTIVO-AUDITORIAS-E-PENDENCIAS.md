@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 15 de agosto de 2026, America/Sao_Paulo
+**Atualizado em:** 16 de agosto de 2026, 12:23, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -66,7 +66,7 @@ Ainda falta:
 
 ### Rotina recorrente — Meta Ads
 
-**Estado geral:** implementação autorizada em 15/08; código somente leitura e agregado anônimo preparados localmente. A rotina não substitui o gate de atribuição de `M26F02S` nem autoriza qualquer mudança automática na Meta.
+**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está na produção canônica v93, o agregado anônimo e o relatório foram testados ao vivo e existe um único trigger diário para cada função. A rotina não substitui o gate de atribuição de `M26F02S` nem autoriza qualquer mudança automática na Meta.
 
 Escopo aprovado:
 
@@ -78,7 +78,14 @@ Escopo aprovado:
 - filas `Corrigir agora`, `Pode testar`, `Aguardar dados` e `Não alterar`;
 - zero mutação automática e zero PII.
 
-Gate de ativação: publicar o código no Apps Script canônico, gerar e validar o agregado, guardar um token `ads_read` somente nas propriedades do projeto, validar a conta `1643959806249995`, executar um relatório real e então criar o trigger.
+Gate de ativação concluído em 16/08:
+
+- Apps Script canônico na versão 93;
+- `publicarAgregadosFunilMetaAds` executado às 08:27 BRT, com 0% de erro no painel de triggers;
+- token permanente de usuário do sistema, limitado a `ads_read`, guardado somente nas propriedades do projeto;
+- Graph API fixada em `v26.0` e conta `1643959806249995` validada às 12:06;
+- teste real concluído às 12:20 e entregue por e-mail com duas sinalizações críticas e garantia de zero mutação;
+- um único trigger `executarRevisaoMetaAds` criado às 12:23, além do único trigger do agregado.
 
 ### Auditoria 2 — SEO, IA e atribuição
 
@@ -87,7 +94,7 @@ Gate de ativação: publicar o código no Apps Script canônico, gerar e validar
 Já foi feito:
 
 - commit técnico `50d7ea1` publicado no Netlify;
-- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 92, que acrescenta somente o agregado anônimo da rotina Google Ads;
+- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 93, que acrescenta as rotinas anônimas e somente leitura de Google Ads e Meta Ads sem ativar a atribuição rica;
 - smoke tests públicos aprovados;
 - auditorias excluídas do artefato do site;
 - logs e IDs endurecidos;
@@ -129,10 +136,10 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO` desde 15/08; execução real concluída às 21:35 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` concluiu sem mudanças; nenhum e-mail no sábado porque não havia alerta crítico |
 | toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
 | primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
-| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `EM PUBLICAÇÃO` em 15/08 | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
-| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `EM PUBLICAÇÃO` em 15/08 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada e execução real sem escrita |
-| toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `AGENDADO` após ativação | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
-| segundo dia útil do mês, aproximadamente 10:05 | Meta Ads: revisão estratégica automatizada | `AGENDADO` após ativação | acrescentar 90 dias, eficiência até consulta e prontidão de testes | e-mail automático; nenhuma recomendação aplicada | fontes íntegras; o cálculo considera segunda a sexta e não infere feriados |
+| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v93; última execução 08:27 com 0% de erro | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
+| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; primeiro teste concluído 12:20 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
+| toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
+| segundo dia útil do mês, aproximadamente 10:05 | Meta Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 02/09 | acrescentar 90 dias, eficiência até consulta e prontidão de testes | e-mail automático; nenhuma recomendação aplicada | fontes íntegras; o cálculo considera segunda a sexta e não infere feriados |
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
 | 20/08 09:00–11:00 | Google Ads: prova segura e decisão etária | `AGENDADO` | testar conversão offline e E2E; confirmar negativas exatas; manter Meta facial em 40+; decidir se exclui `18–24` e `25–34` somente em LIFT, BLEF, CERV e FACE; iniciar somente RSA adulto de otoplastia se tudo passar | possível escrita em Ads/importação, somente após autorização no momento | zero PII, zero duplicidade, receipt por evento, origem preservada e idade `Desconhecida` mantida |
 | 20/08 11:15–12:00 | CWV, vídeos e recursos | `AGENDADO` | medir laboratório/campo e 4G; abrir causas reais de recursos/logotipos | nenhuma otimização automática | baseline reproduzível; uma classe de ativo por futuro teste |
@@ -197,7 +204,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
 | Experimentos Google Ads | P1 | sequência agendada | OTO → CERV → BLEF → FACE → LIFT preço |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
-| Rotina automatizada Meta Ads | P1 | `EM PUBLICAÇÃO` em 15/08; somente leitura | validar agregado, token `ads_read`, primeiro relatório e trigger diário; depois conferir três relatórios completos |
+| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v93; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGENDADO` para decisão em 20/08 | considerar excluir apenas `18–24` e `25–34` em LIFT/BLEF/CERV/FACE; manter `Desconhecida` e não alterar OTO/marca/rino |
 | SEO técnico/CWV | P1/P2 | baseline parcial | medir 20/08; otimizar só com gargalo comprovado |
 | GSC, Wix antigo, Bing e IA | P1/P2 | dependência externa | validar acesso/estado; não prometer ranking ou citação |
@@ -226,6 +233,8 @@ O Calendar é lembrete, não fonte de decisão. Este plano prevalece.
 Os compromissos sobrepostos de 27/08 e 17/09 foram escalonados. O evento de 20/08 foi corrigido para não repetir a publicação default-off, e foram criadas as checagens condicionais de 24 horas e 14 dias. Os lembretes de lifting também foram alinhados à decisão de explicar composição e orçamento individual sem reintroduzir faixa cirúrgica pública. A decisão etária ficou no mesmo gate: Meta facial permanece em 40+; Google será decidido em 20/08 e, se alterado, observado em 27/08 e após 14 dias completos.
 
 A rotina do Google Ads não cria três automações concorrentes. Um único script roda diariamente: fica silencioso quando a saúde está normal, envia a revisão completa às segundas-feiras e acrescenta 90 dias no primeiro dia útil do mês. Os checkpoints de 7 e 14 dias continuam no Calendar porque dependem da data real de cada mudança.
+
+A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão ativos na v93 e continuam incapazes de alterar campanhas.
 
 Se a ativação não ocorrer em 20/08, todas as janelas de 24 horas, 7, 14, 28 e 90 dias devem ser recalculadas a partir da data real.
 

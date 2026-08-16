@@ -1,6 +1,6 @@
 # Rotina automatizada de revisão da Meta Ads
 
-**Status:** código local validado; ativação ao vivo depende de credencial `ads_read` e teste de acesso
+**Status:** `ATIVO` desde 16/08/2026; Apps Script canônico v93, agregado e relatório testados ao vivo
 
 **Conta:** `1643959806249995`
 
@@ -78,6 +78,18 @@ O token não pode entrar no repositório, Drive, e-mail ou planilha. Ele deve ex
 O agregado não contém nome, telefone, e-mail, mensagem, click ID, `Opportunity ID`, `Event ID` ou informação clínica. Campanha e criativo aparecem apenas associados a contagens agregadas.
 
 ## 7. Ativação e rollback
+
+Ativação concluída em 16/08/2026:
+
+- usuário do sistema com acesso mínimo de desempenho à conta;
+- token permanente limitado a `ads_read`, armazenado somente nas propriedades do projeto;
+- `META_GRAPH_VERSION=v26.0` e `META_ADS_REVIEW_ENABLED=true`;
+- `validarAcessoRevisaoMetaAds()` concluído às 12:06 BRT;
+- `executarTesteRevisaoMetaAds()` concluído às 12:20 BRT; e-mail recebido com duas sinalizações críticas e nenhuma mutação;
+- `publicarAgregadosFunilMetaAds` ativo aproximadamente às 08:25, última execução observada às 08:27 com 0% de erro;
+- `executarRevisaoMetaAds` ativo aproximadamente às 10:05, com uma única instância do trigger criada às 12:23.
+
+Próximas conferências: revisar os relatórios completos de 18/08, 25/08 e 01/09 antes de calibrar qualquer limiar. Alterações de campanha continuam manuais e exigem autorização específica.
 
 Ordem obrigatória:
 
