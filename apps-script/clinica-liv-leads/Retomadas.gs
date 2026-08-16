@@ -24,7 +24,8 @@ const RETOMADAS_CONFIG = Object.freeze({
   propriedadeSegredo: "LEADS_INGEST_SECRET",
   propriedadeAtiva: "RETOMADAS_AUTOMATICAS_ATIVAS",
   funcaoGatilhoAutomatico: "processarRetomadasAutomaticas",
-  propriedadeUrlAplicativo: "RETOMADAS_WEB_APP_URL",
+  urlAplicativoCanonico:
+    "https://script.google.com/macros/s/AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A/exec",
   horariosPrioritarios: [
     "10:30",
     "10:45",
@@ -99,21 +100,9 @@ function normalizarUrlAplicativoRetomadas_(value) {
 }
 
 function urlAplicativoRetomadas_() {
-  const propriedades = PropertiesService.getScriptProperties();
-  const servico =
-    typeof ScriptApp !== "undefined" && ScriptApp.getService
-      ? ScriptApp.getService()
-      : null;
-  const urlImplantacaoAtiva = normalizarUrlAplicativoRetomadas_(
-    servico && servico.getUrl ? servico.getUrl() : "",
+  return normalizarUrlAplicativoRetomadas_(
+    RETOMADAS_CONFIG.urlAplicativoCanonico,
   );
-  const urlConfigurada = normalizarUrlAplicativoRetomadas_(
-    propriedades.getProperty(
-      RETOMADAS_CONFIG.propriedadeUrlAplicativo,
-    ),
-  );
-
-  return urlImplantacaoAtiva || urlConfigurada;
 }
 
 function tokenCancelamentoRetomadasValido_(telefone, token) {

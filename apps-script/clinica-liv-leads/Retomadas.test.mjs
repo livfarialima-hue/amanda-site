@@ -7,6 +7,12 @@ const source = await readFile(
   new URL("./Retomadas.gs", import.meta.url),
   "utf8",
 );
+const productionTarget = JSON.parse(
+  await readFile(
+    new URL("./production-target.json", import.meta.url),
+    "utf8",
+  ),
+);
 const agendaSource = await readFile(
   new URL("./AgendaCuidados.gs", import.meta.url),
   "utf8",
@@ -486,7 +492,7 @@ test("approval moves only the selected manual plan to the bot queue and is idemp
   assert.equal(writes.length, 1);
 });
 
-test("cancel link prefers the active web app deployment over a stale configured URL", () => {
+test("cancel link always uses the canonical deployment when runtime URLs diverge", () => {
   context.PropertiesService = {
     getScriptProperties: () => ({
       getProperty: (key) =>
@@ -511,7 +517,8 @@ test("cancel link prefers the active web app deployment over a stale configured 
     false,
   );
 
-  assert.match(link, /macros\/s\/current-deployment\/exec\?/);
+  assert.equal(link.split("?")[0], productionTarget.webAppUrl);
+  assert.doesNotMatch(link, /current-deployment/);
   assert.doesNotMatch(link, /old-deployment/);
 });
 

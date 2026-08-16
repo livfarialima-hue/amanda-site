@@ -23,6 +23,15 @@ test("canonical production URLs resolve to the registered IDs", () => {
   );
 });
 
+test("follow-up email actions are pinned to the canonical web app", () => {
+  const retomadas = readFileSync(
+    new URL("./Retomadas.gs", import.meta.url),
+    "utf8",
+  );
+
+  assert.ok(retomadas.includes(target.webAppUrl));
+});
+
 test("production preflight accepts the three canonical targets", () => {
   const result = verifyProductionTarget({
     project: target.projectUrl,
