@@ -457,9 +457,10 @@ Critérios para a próxima decisão:
 
 A conta deve ter uma única rotina automatizada e versionada em `google-ads-scripts/google-ads-search-review-email.js`, descrita por `campanhas/ROTINA-AUTOMATIZADA-REVISAO-GOOGLE-ADS.md`. Ela consulta dados e envia sugestões; não pode alterar campanhas, palavras, negativas, anúncios, conversões, lances ou orçamentos.
 
-- **Diariamente, entre 09:00 e 10:00:** verificar apenas saúde crítica — gasto anormal, campanha que deixou de entregar, reprovação/política, erro da rotina e ausência de sinal qualificado com gasto relevante. Fora de segunda-feira e do primeiro dia útil do mês, enviar e-mail apenas se existir alerta crítico.
-- **Toda segunda-feira, entre 09:00 e 10:00:** revisar a semana anterior completa e o contexto de 30 dias; enviar termos, positivas, negativas diretas, ações de conversão, políticas, mudanças recentes, orçamento, ranking e sugestões priorizadas.
-- **No primeiro dia útil do mês:** acrescentar ao mesmo relatório uma leitura de 90 dias para decisões estruturais.
+- **Diariamente, aproximadamente às 08:15:** o Apps Script da LEADS atualiza um arquivo separado contendo apenas agregados anônimos de 7, 30 e 90 dias. A planilha com pacientes não é compartilhada com a conta de anúncios.
+- **Diariamente, entre 09:00 e 10:00:** verificar apenas saúde crítica — gasto comparado ao mesmo dia da semana, campanha que deixou de entregar, reprovação/política, destino final, configuração do sinal qualificado, erro de fonte e frescor do agregado. Fora de segunda-feira e do primeiro dia útil do mês, enviar e-mail apenas se o alerta for novo, piorar ou persistir por 48 horas.
+- **Toda segunda-feira, entre 09:00 e 10:00:** revisar a semana anterior completa e o contexto de 30 dias; enviar termos, positivas, negativas diretas e compartilhadas, Quality Score, conversões/metas, RSAs/recursos, segmentações, destinos, mudanças, orçamento, ranking, funil e sugestões priorizadas.
+- **No primeiro dia útil do mês:** acrescentar ao mesmo relatório uma leitura de 90 dias, eficiência do funil, cenários dentro do orçamento total e prontidão de novos testes.
 - **Depois de mudança material:** preservar os checkpoints próprios de 7 e 14 dias no Plano Executivo; o e-mail recorrente não substitui a janela do experimento.
 
 Decisões diárias sobre termos ou palavras são proibidas como rotina: o volume atual é insuficiente e a latência de conversão pode criar falsos sinais. A análise diária serve somente para saúde.
@@ -471,9 +472,9 @@ Decisões diárias sobre termos ou palavras são proibidas como rotina: o volume
 - `Preço`, `valor`, `custo` e `quanto custa` são intenções de roteamento, não negativas genéricas.
 - Positiva exata pode ser sugerida quando um termo compatível tem pelo menos três cliques ou uma conversão exibida e não existe palavra exata igual no grupo; inclusão exige conferência humana de canibalização e continuidade termo → anúncio → página.
 - Gasto sem conversão exige reconciliação; não autoriza pausa. Ausência de medição não vira zero.
-- Listas compartilhadas, contatos válidos, qualificados, consultas e procedimentos devem ser conferidos na interface e nas fontes operacionais antes da decisão.
+- Listas compartilhadas entram no inventário automatizado. Contatos válidos, qualificados, consultas e procedimentos entram somente pelo agregado anônimo, com origem, definição e frescor explícitos; fonte indisponível continua `N/D`.
 
-O relatório classifica cada recomendação como corrigir, testar, observar ou não alterar, com prioridade, evidência, confiança e guardrail. A rotina não aceita recomendações automáticas do Google.
+O relatório classifica cada recomendação como `Corrigir agora`, `Pode testar`, `Aguardar dados` ou `Não alterar`, com prioridade, evidência, risco, confiança, amostra mínima, métrica, guardrail e rollback. A rotina não aceita recomendações automáticas do Google.
 
 ### A cada ciclo de decisão
 

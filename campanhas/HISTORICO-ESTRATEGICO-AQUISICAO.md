@@ -6,6 +6,18 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — ampliação da rotina de revisão do Google Ads
+
+- **Responsável:** Codex, sob autorização explícita de Daniel para implementar, publicar e programar a ampliação.
+- **Área/conta:** Google Ads `995-334-4486`, Apps Script/LEADS e arquivo agregado anônimo.
+- **Mudança:** a rotina passa a validar saúde das fontes, metas de conversão, inventário completo de negativas, Quality Score, RSAs/recursos, segmentações, destinos, mudanças e funil. Alertas de gasto usam o mesmo dia da semana; falha de consulta vira `N/D`; repetição idêntica entra em cooldown de 48 horas. Foi criado o arquivo `LIV — Agregados Google Ads — sem PII`, atualizado pela LEADS aproximadamente às 08:15 e lido pelo script do Ads entre 09:00 e 10:00.
+- **Motivo e evidência:** a rotina inicial protegia termos leigos, mas ainda podia confundir consulta indisponível com zero e não conseguia calcular custo por etapa sem acessar dados de pacientes. Compartilhar a LEADS com a conta de Ads ampliaria exposição desnecessária; o agregado separado preserva somente contagens e campanha canônica.
+- **Hipótese:** uma rotina orientada ao funil e com gates de fonte reduzirá falsos alarmes, evitará decisões por proxy e preparará alterações menores, isoladas e reversíveis.
+- **Métrica principal:** cobertura de campanha canônica, contato válido classificado, lead qualificado, consulta agendada/realizada e marco de fechamento; secundárias: gasto, termos, Quality Score, política e parcela de impressões.
+- **Guardrails:** nenhuma mutação automática; nenhuma PII ou ID técnico no agregado/e-mail; alias legado permanece N/D; faixa etária `UNKNOWN` é preservada; orçamento total de R$ 87/dia continua referência; fonte com erro ou mais de 36 horas não produz zero.
+- **Revisão:** primeiro relatório semanal ampliado em 17/08/2026; gate de 20/08/2026; primeira janela operacional em 27/08/2026; três primeiros relatórios serão conferidos para falsos positivos.
+- **Regra para manter/reverter:** manter se as fontes aparecerem corretamente como `OK`/`N/D`, sem PII e com sugestões acionáveis; pausar a programação ou voltar à versão anterior se houver exposição, falso zero, excesso de e-mail ou consulta instável.
+
 ## 15 de agosto de 2026 — rotina automatizada de revisão e sugestões do Google Ads
 
 - **Status:** ativo na conta, somente leitura, com programação diária verificada.

@@ -116,3 +116,62 @@ test("HTML escapa conteúdo potencialmente interpretável", () => {
   const escapeHtml = loadFunction("html");
   assert.equal(escapeHtml("<script>'x' & \"y\"</script>"), "&lt;script&gt;&#39;x&#39; &amp; &quot;y&quot;&lt;/script&gt;");
 });
+
+test("falha de fonte não vira falso zero de lead qualificado", () => {
+  const buildAlerts = loadFunction("buildCriticalAlerts");
+  const alerts = buildAlerts({
+    sourceStatus: {
+      yesterdayCampaigns: false,
+      dailyCampaigns: false,
+      policyIssues: false,
+      thirtyDayCampaigns: true,
+      conversionActions: false,
+      conversionSettings: false,
+      landingHealth: false,
+    },
+    thirtyDayCampaigns: [{ impressions: 1000, clicks: 100, cost: 500, conversions: 0, allConversions: 0 }],
+    conversionActions: [],
+  });
+  assert.equal(alerts.some((row) => row.title.includes("Nenhum lead qualificado")), false);
+});
+
+test("zero qualificado só gera alerta quando a consulta foi concluída", () => {
+  const buildAlerts = loadFunction("buildCriticalAlerts");
+  const alerts = buildAlerts({
+    sourceStatus: {
+      yesterdayCampaigns: false,
+      dailyCampaigns: false,
+      policyIssues: false,
+      thirtyDayCampaigns: true,
+      conversionActions: true,
+      conversionSettings: false,
+      landingHealth: false,
+    },
+    thirtyDayCampaigns: [{ impressions: 1000, clicks: 100, cost: 500, conversions: 0, allConversions: 0 }],
+    conversionActions: [],
+  });
+  assert.equal(alerts.some((row) => row.title.includes("Nenhum lead qualificado")), true);
+  assert.equal(alerts[0].evidence.includes("não prova zero leads reais"), true);
+});
+
+test("anomalia usa o mesmo dia da semana e exige diferença absoluta", () => {
+  const anomaly = loadFunction("accountSameWeekdayAnomaly");
+  const rows = [
+    { date: "2026-08-14", cost: 100 },
+    { date: "2026-08-07", cost: 20 },
+    { date: "2026-07-31", cost: 20 },
+    { date: "2026-07-24", cost: 20 },
+    { date: "2026-07-17", cost: 20 },
+  ];
+  const result = anomaly(rows);
+  assert.equal(result.samples, 4);
+  assert.equal(result.isAnomaly, true);
+});
+
+test("decisões do e-mail usam as quatro filas operacionais", () => {
+  const normalize = loadFunction("normalizeDecision");
+  assert.equal(normalize("corrigir"), "Corrigir agora");
+  assert.equal(normalize("testar"), "Pode testar");
+  assert.equal(normalize("observar"), "Aguardar dados");
+  assert.equal(normalize("não alterar"), "Não alterar");
+});

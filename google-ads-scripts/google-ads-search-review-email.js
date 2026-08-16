@@ -24,6 +24,14 @@ const CONFIG = Object.freeze({
   minCostForNoResultObservation: 20,
   minAccountCostForSignalAlert: 100,
   maxRowsPerSection: 40,
+  aggregateSpreadsheetId: "1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0",
+  aggregateSheetName: "Agregados",
+  aggregateMaxAgeHours: 36,
+  alertCooldownHours: 48,
+  anomalyLookbackWeeks: 8,
+  minAbsoluteAnomalyCost: 30,
+  minClicksForSegmentDecision: 30,
+  totalDailyBudgetReference: 87,
 });
 
 const IRRELEVANT_TERM_RULES = Object.freeze([
@@ -73,7 +81,8 @@ function main() {
 
   try {
     const report = buildReviewReport(context, account);
-    const shouldSend = context.isWeekly || context.isMonthly || report.criticalAlerts.length > 0;
+    const criticalNotification = report.criticalAlerts.length > 0 && shouldNotifyCriticalAlerts(report, context);
+    const shouldSend = context.isWeekly || context.isMonthly || criticalNotification;
 
     if (!shouldSend) {
       console.log("Rotina concluída sem alerta crítico; nenhum e-mail enviado.");
@@ -87,6 +96,7 @@ function main() {
       htmlBody: buildHtmlEmail(report, context),
       name: CONFIG.senderName,
     });
+    rememberCriticalAlertDigest(report, context);
 
     console.log(`Relatório enviado para ${CONFIG.recipientEmail}.`);
   } catch (error) {
@@ -164,6 +174,50 @@ function buildReviewReport(context, account) {
         warnings,
       )
     : [];
+  const dailyCampaigns = safeQuery(
+    "campanhas por dia — oito semanas",
+    dailyCampaignPerformanceQuery(context.fiftySixDays.start, context.fiftySixDays.end),
+    warnings,
+  );
+  const conversionSettings = safeQuery(
+    "configuração das ações de conversão",
+    conversionSettingsQuery(),
+    warnings,
+  );
+  const campaignGoals = safeQuery(
+    "metas de conversão por campanha",
+    campaignConversionGoalsQuery(),
+    warnings,
+  );
+  const activeAds = context.isWeekly || context.isMonthly
+    ? safeQuery("RSAs e URLs finais ativos", activeAdsQuery(), warnings)
+    : [];
+  const assetPerformance = context.isWeekly || context.isMonthly
+    ? safeQuery(
+        "recursos dos anúncios — 30 dias",
+        assetPerformanceQuery(context.thirtyDays.start, context.thirtyDays.end),
+        warnings,
+      )
+    : [];
+  const deviceSegments = context.isWeekly || context.isMonthly
+    ? safeQuery("segmentação por dispositivo", devicePerformanceQuery(context.thirtyDays.start, context.thirtyDays.end), warnings)
+    : [];
+  const ageSegments = context.isWeekly || context.isMonthly
+    ? safeQuery("segmentação por idade", agePerformanceQuery(context.thirtyDays.start, context.thirtyDays.end), warnings)
+    : [];
+  const timeSegments = context.isWeekly || context.isMonthly
+    ? safeQuery("segmentação por dia e hora", timePerformanceQuery(context.thirtyDays.start, context.thirtyDays.end), warnings)
+    : [];
+  const networkSegments = context.isWeekly || context.isMonthly
+    ? safeQuery("segmentação por rede", networkPerformanceQuery(context.thirtyDays.start, context.thirtyDays.end), warnings)
+    : [];
+  const funnelAggregates = readFunnelAggregates(warnings, context);
+  const sharedNegatives = context.isWeekly || context.isMonthly
+    ? readSharedNegatives(warnings)
+    : [];
+  const landingHealth = context.isWeekly || context.isMonthly
+    ? readLandingHealth(activeAds, warnings)
+    : [];
 
   const normalized = {
     weeklyCampaigns: weeklyCampaigns.map(normalizeCampaignRow),
@@ -177,6 +231,41 @@ function buildReviewReport(context, account) {
     policyIssues: policyIssues.map(normalizePolicyRow),
     changes: changes.map(normalizeChangeRow),
     ninetyDayCampaigns: ninetyDayCampaigns.map(normalizeCampaignRow),
+    dailyCampaigns: dailyCampaigns.map(normalizeDailyCampaignRow),
+    conversionSettings: conversionSettings.map(normalizeConversionSettingRow),
+    campaignGoals: campaignGoals.map(normalizeCampaignGoalRow),
+    activeAds: activeAds.map(normalizeActiveAdRow),
+    assetPerformance: assetPerformance.map(normalizeAssetRow),
+    deviceSegments: deviceSegments.map(normalizeSegmentRow("device.type")),
+    ageSegments: ageSegments.map(normalizeAgeRow),
+    timeSegments: timeSegments.map(normalizeTimeRow),
+    networkSegments: networkSegments.map(normalizeSegmentRow("segments.adNetworkType")),
+    funnelAggregates,
+    sharedNegatives,
+    landingHealth,
+    sourceStatus: {
+      weeklyCampaigns: sourceOk(weeklyCampaigns),
+      thirtyDayCampaigns: sourceOk(thirtyDayCampaigns),
+      yesterdayCampaigns: sourceOk(yesterdayCampaigns),
+      dailyCampaigns: sourceOk(dailyCampaigns),
+      searchTerms: sourceOk(searchTerms),
+      keywords: sourceOk(keywords),
+      directNegatives: sourceOk(directNegatives),
+      sharedNegatives: sourceOk(sharedNegatives),
+      conversionActions: sourceOk(conversionActions),
+      conversionSettings: sourceOk(conversionSettings),
+      campaignGoals: sourceOk(campaignGoals),
+      policyIssues: sourceOk(policyIssues),
+      changes: sourceOk(changes),
+      activeAds: sourceOk(activeAds),
+      assetPerformance: sourceOk(assetPerformance),
+      deviceSegments: sourceOk(deviceSegments),
+      ageSegments: sourceOk(ageSegments),
+      timeSegments: sourceOk(timeSegments),
+      networkSegments: sourceOk(networkSegments),
+      funnelAggregates: sourceOk(funnelAggregates),
+      landingHealth: sourceOk(landingHealth),
+    },
   };
 
   const criticalAlerts = buildCriticalAlerts(normalized);
@@ -201,15 +290,16 @@ function safeQuery(label, query, warnings) {
     const iterator = AdsApp.search(query);
     const rows = [];
     while (iterator.hasNext()) rows.push(iterator.next());
-    return rows;
+    return markSource(rows, true, label);
   } catch (error) {
     warnings.push(`${label}: N/D — ${compactError(error)}`);
-    return [];
+    return markSource([], false, label, compactError(error));
   }
 }
 
 function readDirectNegatives(warnings) {
   const rows = [];
+  let ok = true;
   const queries = [
     {
       level: "campanha",
@@ -237,7 +327,9 @@ function readDirectNegatives(warnings) {
   ];
 
   queries.forEach((item) => {
-    safeQuery(`negativas em nível de ${item.level}`, item.query, warnings).forEach((row) => {
+    const source = safeQuery(`negativas em nível de ${item.level}`, item.query, warnings);
+    ok = ok && sourceOk(source);
+    source.forEach((row) => {
       const criterion = item.level === "campanha" ? row.campaignCriterion : row.adGroupCriterion;
       rows.push({
         level: item.level,
@@ -249,62 +341,204 @@ function readDirectNegatives(warnings) {
     });
   });
 
-  warnings.push("Listas compartilhadas de negativas: revisar na interface; o script inventaria somente negativas diretas.");
-  return rows;
+  return markSource(rows, ok, "negativas diretas");
+}
+
+function readSharedNegatives(warnings) {
+  const rows = [];
+  try {
+    const lists = AdsApp.negativeKeywordLists().get();
+    while (lists.hasNext()) {
+      const list = lists.next();
+      const campaigns = [];
+      const campaignIterator = list.campaigns().get();
+      while (campaignIterator.hasNext()) campaigns.push(campaignIterator.next().getName());
+      const keywords = list.negativeKeywords().get();
+      while (keywords.hasNext()) {
+        const keyword = keywords.next();
+        campaigns.forEach((campaign) => rows.push({
+          level: "lista compartilhada",
+          list: list.getName(),
+          campaign,
+          adGroup: "—",
+          text: keyword.getText(),
+          matchType: keyword.getMatchType(),
+        }));
+      }
+    }
+    return markSource(rows, true, "listas compartilhadas de negativas");
+  } catch (error) {
+    warnings.push(`listas compartilhadas de negativas: N/D — ${compactError(error)}`);
+    return markSource([], false, "listas compartilhadas de negativas", compactError(error));
+  }
+}
+
+function readFunnelAggregates(warnings, context) {
+  try {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.aggregateSpreadsheetId);
+    const sheet = spreadsheet.getSheetByName(CONFIG.aggregateSheetName);
+    if (!sheet) throw new Error("aba Agregados ausente");
+    const values = sheet.getDataRange().getValues();
+    if (values.length < 2) throw new Error("agregado ainda sem dados");
+    const headers = values[0].map((value) => String(value || "").trim());
+    const required = ["schema_version", "generated_at", "window_days", "campaign", "contacts_identified", "qualified_or_later", "scheduled_or_later", "completed_or_later", "procedure_closed_milestone"];
+    const indexes = required.reduce((map, header) => {
+      const index = headers.indexOf(header);
+      if (index < 0) throw new Error(`coluna ausente: ${header}`);
+      map[header] = index;
+      return map;
+    }, {});
+    const rows = values.slice(1).map((row) => ({
+      schemaVersion: String(row[indexes.schema_version] || ""),
+      generatedAt: row[indexes.generated_at],
+      windowDays: Number(row[indexes.window_days]),
+      campaign: String(row[indexes.campaign] || "N/D"),
+      contacts: nullableNumber(row[indexes.contacts_identified]),
+      classified: nullableNumber(row[headers.indexOf("contacts_classified")]),
+      validContacts: nullableNumber(row[headers.indexOf("valid_contacts_classified")]),
+      qualified: nullableNumber(row[indexes.qualified_or_later]),
+      scheduled: nullableNumber(row[indexes.scheduled_or_later]),
+      completed: nullableNumber(row[indexes.completed_or_later]),
+      converted: nullableNumber(row[headers.indexOf("patient_converted")]),
+      procedureClosed: nullableNumber(row[indexes.procedure_closed_milestone]),
+      canonicalAttribution: nullableNumber(row[headers.indexOf("canonical_campaign_attribution")]),
+      unknownAttribution: nullableNumber(row[headers.indexOf("unknown_campaign_attribution")]),
+    })).filter((row) => [7, 30, 90].includes(row.windowDays));
+    const newest = rows.reduce((max, row) => Math.max(max, parseDateTime(row.generatedAt)), 0);
+    const ageHours = newest ? (new Date().getTime() - newest) / 3600000 : Infinity;
+    if (!Number.isFinite(ageHours) || ageHours > CONFIG.aggregateMaxAgeHours) {
+      throw new Error(`agregado desatualizado (${Number.isFinite(ageHours) ? ageHours.toFixed(1) : "N/D"} h)`);
+    }
+    rows.freshnessHours = ageHours;
+    return markSource(rows, true, "funil anônimo da planilha");
+  } catch (error) {
+    warnings.push(`funil anônimo da planilha: N/D — ${compactError(error)}. Métricas de negócio e custos por etapa não devem ser inferidos.`);
+    return markSource([], false, "funil anônimo da planilha", compactError(error));
+  }
+}
+
+function readLandingHealth(adRows, warnings) {
+  if (!sourceOk(adRows)) return markSource([], false, "saúde das páginas", "URLs finais indisponíveis");
+  const urls = dedupeObjects(
+    adRows.map(normalizeActiveAdRow).flatMap((row) => row.finalUrls).filter(Boolean),
+    (url) => url,
+  ).slice(0, 30);
+  if (!urls.length) return markSource([], true, "saúde das páginas");
+  try {
+    const responses = UrlFetchApp.fetchAll(urls.map((url) => ({ url, muteHttpExceptions: true, followRedirects: true })));
+    const rows = responses.map((response, index) => {
+      const body = String(response.getContentText() || "");
+      return {
+        url: urls[index],
+        status: response.getResponseCode(),
+        hasCanonical: /<link[^>]+rel=["']canonical["']/i.test(body),
+        hasTrackedWhatsapp: /data-track=["']whatsapp["']/i.test(body),
+        bytes: body.length,
+      };
+    });
+    return markSource(rows, true, "saúde das páginas");
+  } catch (error) {
+    warnings.push(`saúde das páginas: N/D — ${compactError(error)}`);
+    return markSource([], false, "saúde das páginas", compactError(error));
+  }
 }
 
 function buildCriticalAlerts(data) {
   const alerts = [];
-  const yesterday = sumCampaignMetrics(data.yesterdayCampaigns);
-  const previous = sumCampaignMetrics(data.previousSevenCampaigns);
-  const dailyAverageCost = previous.cost / 7;
+  const sourceStatus = data.sourceStatus || {};
+  const yesterday = sourceStatus.yesterdayCampaigns === false ? null : sumCampaignMetrics(data.yesterdayCampaigns || []);
+  const anomaly = sourceStatus.dailyCampaigns === false
+    ? null
+    : accountSameWeekdayAnomaly(data.dailyCampaigns || []);
 
-  if (yesterday.cost >= 50 && dailyAverageCost > 0 && yesterday.cost > dailyAverageCost * 2) {
+  if (anomaly && anomaly.isAnomaly) {
     alerts.push({
       priority: "P0",
       title: "Gasto diário muito acima da referência recente",
-      evidence: `Ontem: ${brl(yesterday.cost)}; média dos sete dias anteriores: ${brl(dailyAverageCost)}.`,
+      evidence: `Ontem: ${brl(anomaly.observed)}; média do mesmo dia da semana nas ${anomaly.samples} semanas anteriores: ${brl(anomaly.mean)}; limite: ${brl(anomaly.threshold)}.`,
       action: "Conferir mudanças, termos e distribuição por campanha; não alterar orçamento automaticamente.",
+      signature: "account_cost_same_weekday",
+      severity: anomaly.observed,
     });
   }
 
-  data.yesterdayCampaigns.forEach((campaign) => {
-    const baseline = data.previousSevenCampaigns.find((row) => row.campaign === campaign.campaign);
-    if (campaign.impressions === 0 && baseline && baseline.impressions > 20) {
-      alerts.push({
-        priority: "P0",
-        title: `Campanha sem impressões: ${campaign.campaign}`,
-        evidence: `Ontem: 0 impressões; sete dias anteriores: ${integer(baseline.impressions)}.`,
-        action: "Verificar status, orçamento, reprovação e segmentação na conta.",
-      });
-    }
-  });
+  if (sourceStatus.yesterdayCampaigns !== false && sourceStatus.dailyCampaigns !== false) {
+    (data.yesterdayCampaigns || []).forEach((campaign) => {
+      const baseline = campaignSameWeekdayBaseline(data.dailyCampaigns || [], campaign.campaign);
+      if (campaign.impressions === 0 && baseline.samples >= 2 && baseline.meanImpressions > 20) {
+        alerts.push({
+          priority: "P0",
+          title: `Campanha sem impressões: ${campaign.campaign}`,
+          evidence: `Ontem: 0 impressões; média do mesmo dia da semana em ${baseline.samples} semanas: ${integer(baseline.meanImpressions)}.`,
+          action: "Verificar status, orçamento, reprovação e segmentação na conta.",
+          signature: `no_impressions|${campaign.campaign}`,
+          severity: baseline.meanImpressions,
+        });
+      }
+    });
+  }
 
-  data.policyIssues.forEach((issue) => {
+  if (sourceStatus.policyIssues !== false) (data.policyIssues || []).forEach((issue) => {
     alerts.push({
       priority: "P0",
       title: `Anúncio ativo com política ${issue.approvalStatus}`,
       evidence: `${issue.campaign} / ${issue.adGroup}; anúncio ${issue.adId}.`,
       action: "Abrir o motivo editorial e avaliar correção; não duplicar ou publicar anúncio automaticamente.",
+      signature: `policy|${issue.campaign}|${issue.adGroup}|${issue.adId}|${issue.approvalStatus}`,
+      severity: 100,
     });
   });
 
-  const account30 = sumCampaignMetrics(data.thirtyDayCampaigns);
-  const qualified = sumConversionsByName(data.conversionActions, CONFIG.qualifiedConversionName);
-  if (account30.cost >= CONFIG.minAccountCostForSignalAlert && qualified === 0) {
-    alerts.push({
-      priority: "P0",
-      title: "Nenhum lead qualificado visível na janela de 30 dias",
-      evidence: `${brl(account30.cost)} de gasto; ação '${CONFIG.qualifiedConversionName}' sem ocorrência visível.`,
-      action: "Validar Data Manager, receipt e reconciliação LEADS/CRM antes de mudar lances ou escalar.",
-    });
+  if (sourceStatus.thirtyDayCampaigns !== false && sourceStatus.conversionActions !== false) {
+    const account30 = sumCampaignMetrics(data.thirtyDayCampaigns || []);
+    const qualified = sumConversionsByName(data.conversionActions || [], CONFIG.qualifiedConversionName);
+    if (account30.cost >= CONFIG.minAccountCostForSignalAlert && qualified === 0) {
+      alerts.push({
+        priority: "P0",
+        title: "Nenhum lead qualificado visível na janela de 30 dias",
+        evidence: `${brl(account30.cost)} de gasto; ação '${CONFIG.qualifiedConversionName}' com 0 ocorrências visíveis no Google Ads. Isso não prova zero leads reais.`,
+        action: "Validar Data Manager, receipt e reconciliação LEADS/CRM antes de mudar lances ou escalar.",
+        signature: "qualified_signal_zero",
+        severity: account30.cost,
+      });
+    }
   }
+
+  if (sourceStatus.conversionSettings !== false) {
+    const qualifiedSetting = (data.conversionSettings || []).find((row) => row.name === CONFIG.qualifiedConversionName);
+    if (!qualifiedSetting || qualifiedSetting.status !== "ENABLED" || qualifiedSetting.primaryForGoal !== true) {
+      alerts.push({
+        priority: "P0",
+        title: "Objetivo qualificado indisponível ou fora do papel principal",
+        evidence: qualifiedSetting
+          ? `Status ${qualifiedSetting.status}; primary_for_goal=${qualifiedSetting.primaryForGoal}.`
+          : `Ação '${CONFIG.qualifiedConversionName}' não retornou na consulta concluída.`,
+        action: "Conferir a ação, meta de campanha e diagnóstico antes de confiar em Maximizar conversões.",
+        signature: "qualified_conversion_configuration",
+        severity: 100,
+      });
+    }
+  }
+
+  if (sourceStatus.landingHealth !== false) (data.landingHealth || []).forEach((page) => {
+    if (page.status >= 400 || !page.hasCanonical || !page.hasTrackedWhatsapp) {
+      alerts.push({
+        priority: "P0",
+        title: "Página final com falha técnica verificável",
+        evidence: `${page.url}: HTTP ${page.status}; canonical=${page.hasCanonical}; CTA rastreado=${page.hasTrackedWhatsapp}.`,
+        action: "Confirmar no navegador e corrigir a página antes de aumentar tráfego.",
+        signature: `landing|${page.url}|${page.status}|${page.hasCanonical}|${page.hasTrackedWhatsapp}`,
+        severity: page.status >= 400 ? 100 : 80,
+      });
+    }
+  });
 
   return dedupeObjects(alerts, (row) => `${row.title}|${row.evidence}`);
 }
 
 function buildSuggestions(data) {
   const suggestions = [];
+  const sourceStatus = data.sourceStatus || {};
   const keywordIndex = new Set(
     data.keywords.map((row) => `${row.campaign}|${row.adGroup}|${normalizeText(row.keyword)}|${row.matchType}`),
   );
@@ -388,7 +622,7 @@ function buildSuggestions(data) {
     }
   });
 
-  data.directNegatives.forEach((negative) => {
+  [...(data.directNegatives || []), ...(data.sharedNegatives || [])].forEach((negative) => {
     const normalized = normalizeText(negative.text);
     const riskyPrice = /(^|\s)(preco|valor|custo|quanto custa|valor medio)(\s|$)/.test(normalized) && negative.matchType !== "EXACT";
     const riskyLay = PROTECTED_LAY_TERMS.some((term) => normalized.includes(term));
@@ -449,19 +683,149 @@ function buildSuggestions(data) {
   }
 
   if (data.changes.length > 0) {
+    const readiness = evaluateChangeReadiness(data.changes);
     suggestions.push({
       priority: "P1",
-      decision: "observar",
+      decision: "Aguardar dados",
       area: "Conta",
       problem: "Mudanças recentes podem contaminar comparação",
-      evidence: `${data.changes.length} eventos de mudança visíveis nos últimos 14 dias.`,
-      change: "Separar janelas anteriores e posteriores e não atribuir causalidade a mudanças simultâneas.",
+      evidence: `${data.changes.length} eventos de mudança visíveis nos últimos 14 dias; estado: ${readiness.status}.`,
+      change: `Separar janelas anteriores e posteriores; próxima leitura não contaminada estimada: ${readiness.nextReview}.`,
       guardrail: "Registrar data/hora e aguardar a janela mínima do experimento vigente.",
       confidence: "alta",
+      minimum: "7 dias completos após a última mudança material; 14 dias para decisão de eficiência",
+      metric: "lead qualificado, consulta e custo por etapa",
+      rollback: "não aplicável: observação",
     });
   }
 
+  (data.keywords || []).forEach((keyword) => {
+    if (keyword.qualityScore !== null && keyword.impressions >= 30 && keyword.qualityScore <= 4) {
+      suggestions.push({
+        priority: "P1",
+        decision: "Pode testar",
+        area: `${keyword.campaign} / ${keyword.adGroup}`,
+        problem: `Palavra com qualidade baixa (${keyword.qualityScore}/10)`,
+        evidence: `${integer(keyword.impressions)} impr.; ${integer(keyword.clicks)} cliques; ${brl(keyword.cost)}; CTR esperado ${keyword.expectedCtr}; relevância ${keyword.adRelevance}; página ${keyword.landingPageExperience}.`,
+        change: `Revisar coerência de '${keyword.keyword}' com termo, RSA e página; testar uma correção isolada, sem aumentar lance primeiro.`,
+        guardrail: "Não pausar por Quality Score isolado; exigir dados de lead/consulta e preservar linguagem leiga.",
+        confidence: "média",
+        minimum: "30 impressões e ao menos 14 dias após a última mudança",
+        metric: "lead qualificado e taxa termo → contato",
+        rollback: "repor RSA/página/keyword anterior se piorar qualidade de lead ou volume elegível",
+      });
+    }
+    if (keyword.impressions === 0) {
+      suggestions.push({
+        priority: "P3",
+        decision: "Aguardar dados",
+        area: `${keyword.campaign} / ${keyword.adGroup}`,
+        problem: "Palavra ativa sem impressão em 30 dias",
+        evidence: `'${keyword.keyword}' (${keyword.matchType}) teve 0 impressão na consulta concluída.`,
+        change: "Verificar redundância, volume de busca e bloqueios; não remover automaticamente.",
+        guardrail: "Ausência de impressão pode ser sazonal ou causada por outra correspondência.",
+        confidence: "média",
+        minimum: "30 dias completos",
+        metric: "impressões elegíveis e termos cobertos",
+        rollback: "manter a palavra se sua remoção reduzir cobertura legítima",
+      });
+    }
+  });
+
+  if (sourceStatus.conversionSettings !== false && sourceStatus.campaignGoals !== false) {
+    const setting = (data.conversionSettings || []).find((row) => row.name === CONFIG.qualifiedConversionName);
+    const nonBiddable = (data.campaignGoals || []).filter((row) => row.category === (setting && setting.category) && row.origin === (setting && setting.origin) && row.biddable !== true);
+    if (setting && nonBiddable.length) {
+      suggestions.push({
+        priority: "P0",
+        decision: "Corrigir agora",
+        area: "Conversões e lances",
+        problem: "Meta qualificada não é biddable em todas as campanhas esperadas",
+        evidence: `${nonBiddable.length} configuração(ões) de campanha com biddable=false para categoria/origem da ação qualificada.`,
+        change: "Conferir a meta personalizada das campanhas afetadas antes de confiar no lance por conversão.",
+        guardrail: "Não alterar o papel da conversão proxy e qualificada na mesma janela.",
+        confidence: "alta",
+        minimum: "correção de configuração, sem janela estatística",
+        metric: "cobertura da meta e receipt de conversão qualificada",
+        rollback: "restaurar a meta anterior se a ação qualificada deixar de receber sinais válidos",
+      });
+    }
+  }
+
+  (data.activeAds || []).forEach((ad) => {
+    if (ad.type === "RESPONSIVE_SEARCH_AD" && (ad.headlineCount < 8 || ad.descriptionCount < 3)) {
+      suggestions.push({
+        priority: "P2",
+        decision: "Pode testar",
+        area: `${ad.campaign} / ${ad.adGroup}`,
+        problem: "RSA com pouca variedade útil",
+        evidence: `${ad.headlineCount} títulos e ${ad.descriptionCount} descrições; força ${ad.adStrength}.`,
+        change: "Preparar variante que cubra intenção, segurança, localização, objeção e próximo passo sem repetição nem promessa médica.",
+        guardrail: "Um RSA por vez; respeitar 30/90 caracteres e política médica; não usar força como resultado final.",
+        confidence: "média",
+        minimum: "14 dias e volume comparável por grupo",
+        metric: "lead qualificado e contato válido, com CTR/CPC apenas diagnósticos",
+        rollback: "reativar o RSA anterior se a qualidade ou volume elegível cair",
+      });
+    }
+  });
+
+  const assetProblems = (data.assetPerformance || []).filter((asset) => asset.policy !== "APPROVED" || asset.performanceLabel === "LOW");
+  if (assetProblems.length) {
+    suggestions.push({
+      priority: "P1",
+      decision: "Pode testar",
+      area: "RSAs e recursos",
+      problem: "Recursos com política ou desempenho baixo",
+      evidence: `${assetProblems.length} vínculo(s) com policy!=APPROVED ou performance_label=LOW.`,
+      change: "Revisar o ativo no contexto do grupo e substituir somente quando houver alternativa distinta e aprovada.",
+      guardrail: "Não remover todos os ativos de um tipo; preservar cobertura e conformidade.",
+      confidence: "média",
+      minimum: "30 dias ou rótulo LOW estável com volume",
+      metric: "lead qualificado e cobertura de ativos elegíveis",
+      rollback: "restaurar ativo anterior se a cobertura ou qualidade cair",
+    });
+  }
+
+  addSegmentSuggestions(suggestions, data.deviceSegments || [], "dispositivo");
+  addSegmentSuggestions(suggestions, data.ageSegments || [], "idade");
+  addSegmentSuggestions(suggestions, data.networkSegments || [], "rede");
+  addTimeSuggestions(suggestions, data.timeSegments || []);
+
+  (data.landingHealth || []).forEach((page) => {
+    if (page.status === 200 && page.hasCanonical && page.hasTrackedWhatsapp) return;
+    suggestions.push({
+      priority: "P0",
+      decision: "Corrigir agora",
+      area: page.url,
+      problem: "Destino final não passou no gate técnico",
+      evidence: `HTTP ${page.status}; canonical=${page.hasCanonical}; CTA WhatsApp rastreado=${page.hasTrackedWhatsapp}.`,
+      change: "Confirmar no navegador e corrigir apenas o componente técnico afetado.",
+      guardrail: "Não mudar texto/layout durante uma correção puramente técnica sem autorização específica.",
+      confidence: "alta",
+      minimum: "gate binário",
+      metric: "HTTP 200, canonical e CTA rastreado",
+      rollback: "republicar o commit anterior se o smoke test falhar",
+    });
+  });
+
+  if (sourceStatus.funnelAggregates !== false) addFunnelSuggestions(suggestions, data);
+  else suggestions.push({
+    priority: "P0",
+    decision: "Corrigir agora",
+    area: "Mensuração do funil",
+    problem: "Agregado anônimo da LEADS indisponível ou desatualizado",
+    evidence: "Custo por contato válido, lead, consulta e procedimento = N/D; nenhuma ausência deve ser tratada como zero.",
+    change: "Restaurar a atualização do arquivo agregado sem conceder acesso à planilha com PII.",
+    guardrail: "Nunca compartilhar a planilha LEADS com a conta de anúncios.",
+    confidence: "alta",
+    minimum: "agregado com menos de 36 horas",
+    metric: "freshness e cobertura de atribuição",
+    rollback: "desligar a leitura do agregado se o schema ou a privacidade divergirem",
+  });
+
   return dedupeObjects(suggestions, (row) => `${row.area}|${row.problem}|${row.change}`)
+    .map(finalizeSuggestion)
     .sort(compareSuggestions)
     .slice(0, 100);
 }
@@ -491,7 +855,9 @@ function campaignPerformanceQuery(start, end) {
       metrics.conversions, metrics.all_conversions,
       metrics.search_impression_share,
       metrics.search_budget_lost_impression_share,
-      metrics.search_rank_lost_impression_share
+      metrics.search_rank_lost_impression_share,
+      metrics.search_top_impression_share,
+      metrics.search_absolute_top_impression_share
     FROM campaign
     WHERE segments.date BETWEEN '${start}' AND '${end}'
       AND campaign.status = 'ENABLED'
@@ -522,7 +888,11 @@ function keywordPerformanceQuery(start, end) {
     SELECT campaign.name, ad_group.name, ad_group_criterion.keyword.text,
       ad_group_criterion.keyword.match_type, ad_group_criterion.status,
       metrics.impressions, metrics.clicks, metrics.cost_micros,
-      metrics.ctr, metrics.conversions, metrics.all_conversions
+      metrics.ctr, metrics.conversions, metrics.all_conversions,
+      ad_group_criterion.quality_info.quality_score,
+      ad_group_criterion.quality_info.search_predicted_ctr,
+      ad_group_criterion.quality_info.creative_quality_score,
+      ad_group_criterion.quality_info.post_click_quality_score
     FROM keyword_view
     WHERE segments.date BETWEEN '${start}' AND '${end}'
       AND campaign.status = 'ENABLED'
@@ -573,6 +943,117 @@ function recentChangesQuery(start, end) {
   `;
 }
 
+function dailyCampaignPerformanceQuery(start, end) {
+  return `
+    SELECT segments.date, campaign.name, metrics.impressions, metrics.clicks,
+      metrics.cost_micros, metrics.conversions, metrics.all_conversions
+    FROM campaign
+    WHERE segments.date BETWEEN '${start}' AND '${end}'
+      AND campaign.status = 'ENABLED'
+      AND campaign.advertising_channel_type = 'SEARCH'
+    ORDER BY segments.date DESC
+  `;
+}
+
+function conversionSettingsQuery() {
+  return `
+    SELECT conversion_action.name, conversion_action.status,
+      conversion_action.primary_for_goal, conversion_action.category,
+      conversion_action.origin, conversion_action.type,
+      conversion_action.counting_type,
+      conversion_action.click_through_lookback_window_days,
+      conversion_action.attribution_model_settings.attribution_model
+    FROM conversion_action
+    WHERE conversion_action.name IN ('${CONFIG.qualifiedConversionName}', '${CONFIG.whatsappProxyName}')
+  `;
+}
+
+function campaignConversionGoalsQuery() {
+  return `
+    SELECT campaign.name, campaign_conversion_goal.category,
+      campaign_conversion_goal.origin, campaign_conversion_goal.biddable
+    FROM campaign_conversion_goal
+    WHERE campaign.status = 'ENABLED'
+  `;
+}
+
+function activeAdsQuery() {
+  return `
+    SELECT campaign.name, ad_group.name, ad_group_ad.ad.id,
+      ad_group_ad.ad.type, ad_group_ad.ad.final_urls,
+      ad_group_ad.ad.responsive_search_ad.headlines,
+      ad_group_ad.ad.responsive_search_ad.descriptions,
+      ad_group_ad.ad_strength,
+      ad_group_ad.policy_summary.approval_status
+    FROM ad_group_ad
+    WHERE campaign.status = 'ENABLED'
+      AND ad_group.status = 'ENABLED'
+      AND ad_group_ad.status = 'ENABLED'
+  `;
+}
+
+function assetPerformanceQuery(start, end) {
+  return `
+    SELECT campaign.name, ad_group.name, asset.id, asset.type,
+      ad_group_ad_asset_view.field_type,
+      ad_group_ad_asset_view.performance_label,
+      ad_group_ad_asset_view.policy_summary.approval_status,
+      metrics.impressions, metrics.clicks, metrics.cost_micros,
+      metrics.conversions, metrics.all_conversions
+    FROM ad_group_ad_asset_view
+    WHERE segments.date BETWEEN '${start}' AND '${end}'
+      AND campaign.status = 'ENABLED'
+      AND ad_group.status = 'ENABLED'
+      AND ad_group_ad_asset_view.enabled = TRUE
+  `;
+}
+
+function devicePerformanceQuery(start, end) {
+  return segmentPerformanceQuery(start, end, "segments.device");
+}
+
+function networkPerformanceQuery(start, end) {
+  return segmentPerformanceQuery(start, end, "segments.ad_network_type");
+}
+
+function segmentPerformanceQuery(start, end, dimension) {
+  return `
+    SELECT campaign.name, ${dimension}, metrics.impressions, metrics.clicks,
+      metrics.cost_micros, metrics.conversions, metrics.all_conversions
+    FROM campaign
+    WHERE segments.date BETWEEN '${start}' AND '${end}'
+      AND campaign.status = 'ENABLED'
+      AND campaign.advertising_channel_type = 'SEARCH'
+    ORDER BY metrics.cost_micros DESC
+  `;
+}
+
+function agePerformanceQuery(start, end) {
+  return `
+    SELECT campaign.name, ad_group_criterion.age_range.type,
+      metrics.impressions, metrics.clicks, metrics.cost_micros,
+      metrics.conversions, metrics.all_conversions
+    FROM age_range_view
+    WHERE segments.date BETWEEN '${start}' AND '${end}'
+      AND campaign.status = 'ENABLED'
+      AND ad_group.status = 'ENABLED'
+    ORDER BY metrics.cost_micros DESC
+  `;
+}
+
+function timePerformanceQuery(start, end) {
+  return `
+    SELECT campaign.name, segments.day_of_week, segments.hour,
+      metrics.impressions, metrics.clicks, metrics.cost_micros,
+      metrics.conversions, metrics.all_conversions
+    FROM campaign
+    WHERE segments.date BETWEEN '${start}' AND '${end}'
+      AND campaign.status = 'ENABLED'
+      AND campaign.advertising_channel_type = 'SEARCH'
+    ORDER BY metrics.cost_micros DESC
+  `;
+}
+
 function normalizeCampaignRow(row) {
   return {
     campaign: valueAt(row, "campaign.name", "N/D"),
@@ -588,6 +1069,8 @@ function normalizeCampaignRow(row) {
     searchImpressionShare: numberOrNull(valueAt(row, "metrics.searchImpressionShare", null)),
     searchBudgetLostShare: numberOrNull(valueAt(row, "metrics.searchBudgetLostImpressionShare", null)),
     searchRankLostShare: numberOrNull(valueAt(row, "metrics.searchRankLostImpressionShare", null)),
+    searchTopImpressionShare: numberOrNull(valueAt(row, "metrics.searchTopImpressionShare", null)),
+    searchAbsoluteTopImpressionShare: numberOrNull(valueAt(row, "metrics.searchAbsoluteTopImpressionShare", null)),
   };
 }
 
@@ -618,6 +1101,10 @@ function normalizeKeywordRow(row) {
     clicks: numberAt(row, "metrics.clicks"),
     cost: microsToMoney(valueAt(row, "metrics.costMicros", 0)),
     conversions: numberAt(row, "metrics.conversions"),
+    qualityScore: numberOrNull(valueAt(row, "adGroupCriterion.qualityInfo.qualityScore", null)),
+    expectedCtr: valueAt(row, "adGroupCriterion.qualityInfo.searchPredictedCtr", "N/D"),
+    adRelevance: valueAt(row, "adGroupCriterion.qualityInfo.creativeQualityScore", "N/D"),
+    landingPageExperience: valueAt(row, "adGroupCriterion.qualityInfo.postClickQualityScore", "N/D"),
   };
 }
 
@@ -649,6 +1136,99 @@ function normalizeChangeRow(row) {
   };
 }
 
+function normalizeDailyCampaignRow(row) {
+  return {
+    date: valueAt(row, "segments.date", "N/D"),
+    campaign: valueAt(row, "campaign.name", "N/D"),
+    impressions: numberAt(row, "metrics.impressions"),
+    clicks: numberAt(row, "metrics.clicks"),
+    cost: microsToMoney(valueAt(row, "metrics.costMicros", 0)),
+    conversions: numberAt(row, "metrics.conversions"),
+    allConversions: numberAt(row, "metrics.allConversions"),
+  };
+}
+
+function normalizeConversionSettingRow(row) {
+  return {
+    name: valueAt(row, "conversionAction.name", "N/D"),
+    status: valueAt(row, "conversionAction.status", "N/D"),
+    primaryForGoal: valueAt(row, "conversionAction.primaryForGoal", null),
+    category: valueAt(row, "conversionAction.category", "N/D"),
+    origin: valueAt(row, "conversionAction.origin", "N/D"),
+    type: valueAt(row, "conversionAction.type", "N/D"),
+    countingType: valueAt(row, "conversionAction.countingType", "N/D"),
+    lookbackDays: numberOrNull(valueAt(row, "conversionAction.clickThroughLookbackWindowDays", null)),
+    attributionModel: valueAt(row, "conversionAction.attributionModelSettings.attributionModel", "N/D"),
+  };
+}
+
+function normalizeCampaignGoalRow(row) {
+  return {
+    campaign: valueAt(row, "campaign.name", "N/D"),
+    category: valueAt(row, "campaignConversionGoal.category", "N/D"),
+    origin: valueAt(row, "campaignConversionGoal.origin", "N/D"),
+    biddable: valueAt(row, "campaignConversionGoal.biddable", null),
+  };
+}
+
+function normalizeActiveAdRow(row) {
+  const headlines = valueAt(row, "adGroupAd.ad.responsiveSearchAd.headlines", []);
+  const descriptions = valueAt(row, "adGroupAd.ad.responsiveSearchAd.descriptions", []);
+  const finalUrls = valueAt(row, "adGroupAd.ad.finalUrls", []);
+  return {
+    campaign: valueAt(row, "campaign.name", "N/D"),
+    adGroup: valueAt(row, "adGroup.name", "N/D"),
+    adId: valueAt(row, "adGroupAd.ad.id", "N/D"),
+    type: valueAt(row, "adGroupAd.ad.type", "N/D"),
+    finalUrls: Array.isArray(finalUrls) ? finalUrls.map(String) : [],
+    headlineCount: Array.isArray(headlines) ? headlines.length : 0,
+    descriptionCount: Array.isArray(descriptions) ? descriptions.length : 0,
+    adStrength: valueAt(row, "adGroupAd.adStrength", "N/D"),
+    policy: valueAt(row, "adGroupAd.policySummary.approvalStatus", "N/D"),
+  };
+}
+
+function normalizeAssetRow(row) {
+  return {
+    campaign: valueAt(row, "campaign.name", "N/D"),
+    adGroup: valueAt(row, "adGroup.name", "N/D"),
+    assetId: valueAt(row, "asset.id", "N/D"),
+    assetType: valueAt(row, "asset.type", "N/D"),
+    fieldType: valueAt(row, "adGroupAdAssetView.fieldType", "N/D"),
+    performanceLabel: valueAt(row, "adGroupAdAssetView.performanceLabel", "N/D"),
+    policy: valueAt(row, "adGroupAdAssetView.policySummary.approvalStatus", "N/D"),
+    impressions: numberAt(row, "metrics.impressions"),
+    clicks: numberAt(row, "metrics.clicks"),
+    cost: microsToMoney(valueAt(row, "metrics.costMicros", 0)),
+    conversions: numberAt(row, "metrics.conversions"),
+  };
+}
+
+function normalizeSegmentRow(path) {
+  return function normalize(row) {
+    return {
+      campaign: valueAt(row, "campaign.name", "N/D"),
+      segment: valueAt(row, path, "N/D"),
+      impressions: numberAt(row, "metrics.impressions"),
+      clicks: numberAt(row, "metrics.clicks"),
+      cost: microsToMoney(valueAt(row, "metrics.costMicros", 0)),
+      conversions: numberAt(row, "metrics.conversions"),
+      allConversions: numberAt(row, "metrics.allConversions"),
+    };
+  };
+}
+
+function normalizeAgeRow(row) {
+  return normalizeSegmentRow("adGroupCriterion.ageRange.type")(row);
+}
+
+function normalizeTimeRow(row) {
+  const normalized = normalizeSegmentRow("segments.dayOfWeek")(row);
+  normalized.hour = numberOrNull(valueAt(row, "segments.hour", null));
+  normalized.segment = `${normalized.segment} ${normalized.hour === null ? "N/D" : `${pad2(normalized.hour)}h`}`;
+  return normalized;
+}
+
 function createRunContext(now) {
   const today = formatYmd(now);
   const isoDay = isoDayFromYmd(today);
@@ -661,6 +1241,7 @@ function createRunContext(now) {
     previousSevenDays: dateRangeBefore(today, 7, 2),
     fourteenDays: dateRangeBefore(today, 14, 1),
     thirtyDays: dateRangeBefore(today, 30, 1),
+    fiftySixDays: dateRangeBefore(today, 56, 1),
     ninetyDays: dateRangeBefore(today, 90, 1),
   };
 }
@@ -697,6 +1278,228 @@ function isFirstBusinessDay(ymd) {
   return true;
 }
 
+function addSegmentSuggestions(suggestions, rows, label) {
+  const grouped = groupBy(rows, (row) => row.campaign);
+  Object.keys(grouped).forEach((campaign) => {
+    const eligible = grouped[campaign].filter((row) => row.clicks >= CONFIG.minClicksForSegmentDecision);
+    if (!eligible.length) return;
+    const best = eligible.slice().sort((left, right) => segmentOutcomeScore(right) - segmentOutcomeScore(left))[0];
+    const worst = eligible.slice().sort((left, right) => segmentOutcomeScore(left) - segmentOutcomeScore(right))[0];
+    if (!best || !worst || best.segment === worst.segment) return;
+    suggestions.push({
+      priority: "P2",
+      decision: "Aguardar dados",
+      area: campaign,
+      problem: `Diferença direcional por ${label}`,
+      evidence: `${best.segment}: ${integer(best.clicks)} cliques/${formatNumber(best.conversions)} conversões mistas; ${worst.segment}: ${integer(worst.clicks)}/${formatNumber(worst.conversions)}.`,
+      change: `Reconciliar contato válido e consulta por ${label}; só então testar ajuste de ${label} isoladamente.`,
+      guardrail: label === "idade" ? "Manter sempre a faixa Desconhecida; preservar otoplastia e marca da regra facial." : "Não excluir segmento por CTR/CPC isolado.",
+      confidence: "baixa",
+      minimum: `${CONFIG.minClicksForSegmentDecision} cliques por segmento e ao menos 2 resultados de negócio`,
+      metric: "custo por lead qualificado/consulta por segmento",
+      rollback: "restaurar cobertura anterior se reduzir volume ou qualidade elegível",
+    });
+  });
+}
+
+function addTimeSuggestions(suggestions, rows) {
+  const eligible = rows.filter((row) => row.clicks >= CONFIG.minClicksForSegmentDecision);
+  if (!eligible.length) return;
+  suggestions.push({
+    priority: "P3",
+    decision: "Aguardar dados",
+    area: "Dias e horários",
+    problem: "Distribuição horária requer funil, não apenas clique",
+    evidence: `${eligible.length} combinação(ões) dia/hora atingiram ${CONFIG.minClicksForSegmentDecision}+ cliques em 30 dias.`,
+    change: "Cruzar com contatos válidos e tempo de resposta antes de restringir a programação.",
+    guardrail: "Não cortar horários em que a equipe pode responder depois e converter.",
+    confidence: "baixa",
+    minimum: "30 cliques e 2 consultas por faixa candidata",
+    metric: "consulta realizada e SLA de resposta",
+    rollback: "restaurar programação anterior se cair o volume elegível",
+  });
+}
+
+function addFunnelSuggestions(suggestions, data) {
+  const total30 = (data.funnelAggregates || []).find((row) => row.windowDays === 30 && row.campaign === "__TOTAL__");
+  if (!total30) return;
+  const account30 = sumCampaignMetrics(data.thirtyDayCampaigns || []);
+  const coverage = safeRatio(total30.canonicalAttribution, total30.contacts);
+  if (coverage !== null && coverage < 0.8) {
+    suggestions.push({
+      priority: "P0",
+      decision: "Corrigir agora",
+      area: "Atribuição Google → LEADS",
+      problem: "Campanha canônica conhecida em menos de 80% dos contatos Google",
+      evidence: `${integer(total30.canonicalAttribution)} de ${integer(total30.contacts)} contatos com campanha canônica; cobertura ${percent(coverage)}.`,
+      change: "Corrigir captura/códigos sem reinterpretar aliases legados; manter desconhecido como N/D.",
+      guardrail: "Não usar página, procedimento ou nome do paciente para inventar campanha.",
+      confidence: "alta",
+      minimum: "gate técnico de 80% de cobertura canônica",
+      metric: "cobertura de campanha e divergência LEADS/CRM",
+      rollback: "reverter o resolvedor se surgir falsa atribuição",
+    });
+  }
+  const costPerQualified = safeCost(account30.cost, total30.qualified);
+  const costPerScheduled = safeCost(account30.cost, total30.scheduled);
+  suggestions.push({
+    priority: "P1",
+    decision: total30.scheduled > 0 ? "Aguardar dados" : "Corrigir agora",
+    area: "Funil Google Ads — 30 dias",
+    problem: "Eficiência até o resultado de negócio",
+    evidence: `${integer(total30.contacts)} contatos; ${integer(total30.validContacts)} válidos classificados; ${integer(total30.qualified)} qualificados+; ${integer(total30.scheduled)} agendados+; ${integer(total30.completed)} realizados+; custo/qualificado ${brl(costPerQualified)}; custo/agendado ${brl(costPerScheduled)}.`,
+    change: "Priorizar a etapa com maior perda verificável e manter mídia estável enquanto a mensuração estiver incompleta.",
+    guardrail: "Fases refletem estado atual da coorte; ausência de marco de fechamento não prova ausência real.",
+    confidence: coverage !== null && coverage >= 0.8 ? "média" : "baixa",
+    minimum: "30 dias e agregado com menos de 36 horas",
+    metric: "contato válido → qualificado → consulta realizada → fechamento registrado",
+    rollback: "não aplicar mudança de mídia sem isolar a intervenção",
+  });
+}
+
+function segmentOutcomeScore(row) {
+  return row.clicks ? row.conversions / row.clicks : -1;
+}
+
+function safeCost(cost, outcomes) {
+  return outcomes && Number.isFinite(Number(cost)) ? Number(cost) / Number(outcomes) : null;
+}
+
+function evaluateChangeReadiness(changes) {
+  const timestamps = (changes || []).map((row) => parseDateTime(row.dateTime)).filter((value) => value > 0);
+  if (!timestamps.length) return { status: "Pode decidir agora, sem mudança material datada na consulta", nextReview: "hoje" };
+  const latest = Math.max(...timestamps);
+  const ageDays = (new Date().getTime() - latest) / 86400000;
+  const next = new Date(latest + 7 * 86400000);
+  return {
+    status: ageDays < 7 ? "janela contaminada — aguardar" : "pode decidir com cautela",
+    nextReview: formatYmd(next),
+  };
+}
+
+function accountSameWeekdayAnomaly(rows) {
+  if (!rows.length) return null;
+  const latestDate = rows.map((row) => row.date).filter((value) => value && value !== "N/D").sort().slice(-1)[0];
+  if (!latestDate) return null;
+  const observed = rows.filter((row) => row.date === latestDate).reduce((sum, row) => sum + row.cost, 0);
+  const baselines = [];
+  for (let week = 1; week <= CONFIG.anomalyLookbackWeeks; week += 1) {
+    const date = shiftYmd(latestDate, -7 * week);
+    const matching = rows.filter((row) => row.date === date);
+    if (matching.length) baselines.push(matching.reduce((sum, row) => sum + row.cost, 0));
+  }
+  if (baselines.length < 3) return null;
+  const mean = baselines.reduce((sum, value) => sum + value, 0) / baselines.length;
+  const variance = baselines.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / baselines.length;
+  const threshold = Math.max(mean * 2, mean + 3 * Math.sqrt(variance));
+  return { observed, mean, threshold, samples: baselines.length, isAnomaly: observed - mean >= CONFIG.minAbsoluteAnomalyCost && observed > threshold };
+}
+
+function campaignSameWeekdayBaseline(rows, campaign) {
+  const filtered = rows.filter((row) => row.campaign === campaign);
+  if (!filtered.length) return { samples: 0, meanImpressions: 0 };
+  const latestDate = filtered.map((row) => row.date).sort().slice(-1)[0];
+  const values = [];
+  for (let week = 1; week <= CONFIG.anomalyLookbackWeeks; week += 1) {
+    const date = shiftYmd(latestDate, -7 * week);
+    const matching = filtered.filter((row) => row.date === date);
+    if (matching.length) values.push(matching.reduce((sum, row) => sum + row.impressions, 0));
+  }
+  return { samples: values.length, meanImpressions: values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0 };
+}
+
+function finalizeSuggestion(row) {
+  return {
+    priority: row.priority || "P3",
+    decision: normalizeDecision(row.decision),
+    area: row.area || "Conta",
+    problem: row.problem || "N/D",
+    evidence: row.evidence || "N/D",
+    change: row.change || "Observar sem alteração.",
+    impact: row.impact || "melhor decisão e menor risco de desperdício",
+    risk: row.risk || "mudança prematura ou interpretação de proxy como resultado",
+    confidence: row.confidence || "baixa",
+    metric: row.metric || "lead qualificado e consulta",
+    guardrail: row.guardrail || "uma mudança por vez; não automatizar",
+    minimum: row.minimum || "14 dias e amostra de negócio suficiente",
+    rollback: row.rollback || "restaurar a configuração anterior se o guardrail falhar",
+    nextReview: row.nextReview || "próxima revisão semanal",
+  };
+}
+
+function normalizeDecision(value) {
+  const normalized = normalizeText(value);
+  if (normalized === "corrigir" || normalized === "corrigir agora") return "Corrigir agora";
+  if (normalized === "testar" || normalized === "pode testar") return "Pode testar";
+  if (normalized === "nao alterar") return "Não alterar";
+  return "Aguardar dados";
+}
+
+function groupBy(rows, keyFn) {
+  return (rows || []).reduce((groups, row) => {
+    const key = keyFn(row);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(row);
+    return groups;
+  }, {});
+}
+
+function markSource(rows, ok, label, error) {
+  rows.sourceOk = ok === true;
+  rows.sourceLabel = label || "N/D";
+  rows.sourceError = error || "";
+  return rows;
+}
+
+function sourceOk(rows) {
+  return Boolean(rows && rows.sourceOk === true);
+}
+
+function nullableNumber(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function parseDateTime(value) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value.getTime();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+}
+
+function shouldNotifyCriticalAlerts(report, context) {
+  if (context.isWeekly || context.isMonthly) return true;
+  try {
+    const properties = PropertiesService.getScriptProperties();
+    const previous = JSON.parse(properties.getProperty("LIV_GADS_ALERT_STATE_V2") || "{}");
+    const current = criticalAlertState(report, context);
+    if (!previous.fingerprint || previous.fingerprint !== current.fingerprint) return true;
+    if (current.severity > Number(previous.severity || 0)) return true;
+    return current.generatedAt - Number(previous.generatedAt || 0) >= CONFIG.alertCooldownHours * 3600000;
+  } catch (error) {
+    console.log(`Cooldown N/D: ${compactError(error)}`);
+    return true;
+  }
+}
+
+function rememberCriticalAlertDigest(report, context) {
+  if (!report.criticalAlerts.length) return;
+  try {
+    PropertiesService.getScriptProperties().setProperty(
+      "LIV_GADS_ALERT_STATE_V2",
+      JSON.stringify(criticalAlertState(report, context)),
+    );
+  } catch (error) {
+    console.log(`Persistência do cooldown N/D: ${compactError(error)}`);
+  }
+}
+
+function criticalAlertState(report, context) {
+  const signatures = report.criticalAlerts.map((row) => row.signature || row.title).sort();
+  const severity = report.criticalAlerts.reduce((max, row) => Math.max(max, Number(row.severity || 0)), 0);
+  return { fingerprint: signatures.join("|"), severity, generatedAt: new Date().getTime(), day: context.today };
+}
+
 function buildSubject(report, context) {
   const high = report.suggestions.filter((row) => row.priority === "P0" || row.priority === "P1").length;
   if (!context.isWeekly && !context.isMonthly) {
@@ -718,10 +1521,18 @@ function buildPlainTextEmail(report, context) {
     `Alertas críticos: ${report.criticalAlerts.length}`,
   ];
   report.criticalAlerts.forEach((row) => lines.push(`- ${row.priority} ${row.title}: ${row.evidence} Ação: ${row.action}`));
-  lines.push("", `Sugestões: ${report.suggestions.length}`);
-  report.suggestions.slice(0, CONFIG.maxRowsPerSection).forEach((row) => {
-    lines.push(`- ${row.priority} [${row.decision}] ${row.area}: ${row.problem}. ${row.change} Evidência: ${row.evidence}`);
+  ["Corrigir agora", "Pode testar", "Aguardar dados", "Não alterar"].forEach((decision) => {
+    const rows = report.suggestions.filter((row) => row.decision === decision);
+    lines.push("", `${decision}: ${rows.length}`);
+    rows.slice(0, CONFIG.maxRowsPerSection).forEach((row) => {
+      lines.push(`- ${row.priority} ${row.area}: ${row.problem}. Evidência: ${row.evidence} Ação: ${row.change} Mínimo: ${row.minimum}. Métrica: ${row.metric}. Guardrail: ${row.guardrail}. Rollback: ${row.rollback}.`);
+    });
   });
+  const funnel30 = report.funnelAggregates.find((row) => row.windowDays === 30 && row.campaign === "__TOTAL__");
+  lines.push("", "Funil anônimo — 30 dias:");
+  lines.push(funnel30
+    ? `- contatos ${integer(funnel30.contacts)}; válidos classificados ${integer(funnel30.validContacts)}; qualificados+ ${integer(funnel30.qualified)}; agendados+ ${integer(funnel30.scheduled)}; realizados+ ${integer(funnel30.completed)}; fechamentos por marco ${integer(funnel30.procedureClosed)}.`
+    : "- N/D. Não interpretar como zero.");
   if (report.warnings.length) {
     lines.push("", "Limitações/N/D:");
     report.warnings.forEach((warning) => lines.push(`- ${warning}`));
@@ -735,16 +1546,26 @@ function buildHtmlEmail(report, context) {
   const criticalRows = report.criticalAlerts.length
     ? report.criticalAlerts.map((row) => `<tr><td>${html(row.priority)}</td><td>${html(row.title)}</td><td>${html(row.evidence)}</td><td>${html(row.action)}</td></tr>`).join("")
     : "<tr><td colspan='4'>Nenhum alerta crítico observado nas consultas concluídas.</td></tr>";
-  const suggestionRows = report.suggestions.length
-    ? report.suggestions.slice(0, CONFIG.maxRowsPerSection).map((row) => `<tr><td>${html(row.priority)}</td><td>${html(row.decision)}</td><td>${html(row.area)}</td><td>${html(row.problem)}</td><td>${html(row.evidence)}</td><td>${html(row.change)}</td><td>${html(row.guardrail)}</td><td>${html(row.confidence)}</td></tr>`).join("")
-    : "<tr><td colspan='8'>Sem sugestões nesta execução.</td></tr>";
+  const suggestionBlocks = ["Corrigir agora", "Pode testar", "Aguardar dados", "Não alterar"].map((decision) => {
+    const rows = report.suggestions.filter((row) => row.decision === decision).slice(0, CONFIG.maxRowsPerSection);
+    const body = rows.length
+      ? rows.map((row) => `<tr><td>${html(row.priority)}</td><td>${html(row.area)}</td><td>${html(row.problem)}</td><td>${html(row.evidence)}</td><td>${html(row.change)}</td><td>${html(row.minimum)}</td><td>${html(row.metric)}</td><td>${html(row.guardrail)}</td><td>${html(row.rollback)}</td><td>${html(row.confidence)}</td></tr>`).join("")
+      : "<tr><td colspan='10'>Nenhum item.</td></tr>";
+    return `<h2>${html(decision)}</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Área</th><th>Problema</th><th>Evidência</th><th>Mudança exata</th><th>Amostra/janela</th><th>Métrica</th><th>Guardrail</th><th>Rollback</th><th>Confiança</th></tr>${body}</table>`;
+  }).join("");
   const campaignRows = report.thirtyDayCampaigns.map((row) => `<tr><td>${html(row.campaign)}</td><td>${integer(row.impressions)}</td><td>${integer(row.clicks)}</td><td>${percent(row.ctr)}</td><td>${brl(row.averageCpc)}</td><td>${brl(row.cost)}</td><td>${formatNumber(row.conversions)}</td><td>${percent(row.searchImpressionShare)}</td><td>${percent(row.searchBudgetLostShare)}</td><td>${percent(row.searchRankLostShare)}</td></tr>`).join("");
   const warningRows = report.warnings.length
     ? `<ul>${report.warnings.map((warning) => `<li>${html(warning)}</li>`).join("")}</ul>`
     : "<p>Nenhuma limitação técnica adicional registrada.</p>";
   const monthlyBlock = context.isMonthly
-    ? `<h2>Leitura mensal ampliada</h2><p>Janela de 90 dias: ${html(context.ninetyDays.start)} a ${html(context.ninetyDays.end)}. Total observado: ${brl(sumCampaignMetrics(report.ninetyDayCampaigns).cost)} de gasto. Use esta visão somente para estratégia; mudanças recentes devem ser separadas.</p>`
+    ? `<h2>Leitura mensal ampliada</h2><p>Janela de 90 dias: ${html(context.ninetyDays.start)} a ${html(context.ninetyDays.end)}. Total observado: ${brl(sumCampaignMetrics(report.ninetyDayCampaigns).cost)} de gasto. Reavaliar eficiência do funil, correspondências, cenários de realocação dentro de ${brl(CONFIG.totalDailyBudgetReference)}/dia, sobreposição e prontidão de novos testes; mudanças recentes devem ser separadas.</p>`
     : "";
+  const sourceRows = Object.keys(report.sourceStatus).map((key) => `<tr><td>${html(key)}</td><td>${report.sourceStatus[key] ? "OK" : "N/D"}</td></tr>`).join("");
+  const funnelRows = report.funnelAggregates.filter((row) => row.windowDays === 30).map((row) => {
+    const campaign = row.campaign === "__TOTAL__" ? "Conta" : row.campaign === "__UNKNOWN_CAMPAIGN__" ? "Campanha N/D" : row.campaign;
+    const media = row.campaign === "__TOTAL__" ? thirtyTotals : report.thirtyDayCampaigns.find((item) => item.campaign === row.campaign);
+    return `<tr><td>${html(campaign)}</td><td>${integer(row.contacts)}</td><td>${integer(row.validContacts)}</td><td>${integer(row.qualified)}</td><td>${integer(row.scheduled)}</td><td>${integer(row.completed)}</td><td>${integer(row.procedureClosed)}</td><td>${percent(safeRatio(row.canonicalAttribution,row.contacts))}</td><td>${brl(media ? safeCost(media.cost,row.qualified) : null)}</td><td>${brl(media ? safeCost(media.cost,row.scheduled) : null)}</td></tr>`;
+  }).join("");
 
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#1f2937;line-height:1.45">
     <h1 style="color:#14532d">Revisão automatizada do Google Ads</h1>
@@ -759,10 +1580,13 @@ function buildHtmlEmail(report, context) {
     </table>
     <h2>Alertas críticos</h2>
     <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Alerta</th><th>Evidência</th><th>Ação</th></tr>${criticalRows}</table>
-    <h2>Sugestões para decisão</h2>
-    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Decisão</th><th>Campanha/grupo</th><th>Problema</th><th>Evidência</th><th>Mudança sugerida</th><th>Guardrail</th><th>Confiança</th></tr>${suggestionRows}</table>
+    ${suggestionBlocks}
     <h2>Campanhas ativas — 30 dias</h2>
     <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Campanha</th><th>Impr.</th><th>Cliques</th><th>CTR</th><th>CPC</th><th>Gasto</th><th>Conversões</th><th>IS</th><th>Perda orçamento</th><th>Perda rank</th></tr>${campaignRows || "<tr><td colspan='10'>N/D</td></tr>"}</table>
+    <h2>Funil anônimo da LEADS — coorte de 30 dias</h2>
+    <p>O arquivo agregado não contém nome, telefone, mensagem, click ID ou Opportunity ID. Fases refletem o estado atual da coorte. N/D nunca é convertido em zero.</p>
+    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Campanha</th><th>Contatos</th><th>Válidos classificados</th><th>Qualificados+</th><th>Agendados+</th><th>Realizados+</th><th>Fechamento por marco</th><th>Cobertura campanha</th><th>Custo/qualificado</th><th>Custo/agendado</th></tr>${funnelRows || "<tr><td colspan='10'>N/D — fonte indisponível; não interpretar como zero.</td></tr>"}</table>
+    <h2>Saúde das fontes</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse"><tr><th>Fonte</th><th>Status</th></tr>${sourceRows}</table>
     ${monthlyBlock}
     <h2>Limitações e N/D</h2>${warningRows}
     <p><strong>Regra operacional:</strong> não aceitar recomendação do Google, adicionar negativa, pausar palavra, consolidar grupo, alterar orçamento ou lance a partir deste e-mail isoladamente. A decisão deve considerar contato válido, lead qualificado, consulta e mudanças recentes.</p>
