@@ -196,6 +196,15 @@ function construirAgregadosFunilGoogleAds_(sourceValues, milestoneValues, now) {
 function indexarCabecalhosAgregadoGoogleAds_(headers) {
   return headers.reduce((map, header, index) => {
     if (header && map[header] === undefined) map[header] = index;
+    const normalized = normalizarTextoAgregadoGoogleAds_(header);
+    // Algumas abas históricas preservam mojibake no cabeçalho de aquisição.
+    // O alias canônico evita interromper a publicação sem aceitar um campo diferente.
+    if (
+      normalized.indexOf("plataforma de aquisi") === 0 &&
+      map["Plataforma de aquisição"] === undefined
+    ) {
+      map["Plataforma de aquisição"] = index;
+    }
     return map;
   }, {});
 }
@@ -274,10 +283,29 @@ function formatarDiaGoogleAds_(date) {
 }
 
 function normalizarTextoAgregadoGoogleAds_(value) {
-  return String(value || "")
+  return repararMojibakeAgregadoGoogleAds_(String(value || ""))
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function repararMojibakeAgregadoGoogleAds_(value) {
+  return String(value || "")
+    .replace(/\u00c3\u00a1/g, "\u00e1")
+    .replace(/\u00c3\u00a2/g, "\u00e2")
+    .replace(/\u00c3\u00a3/g, "\u00e3")
+    .replace(/\u00c3\u00a9/g, "\u00e9")
+    .replace(/\u00c3\u00aa/g, "\u00ea")
+    .replace(/\u00c3\u00ad/g, "\u00ed")
+    .replace(/\u00c3\u00b3/g, "\u00f3")
+    .replace(/\u00c3\u00b4/g, "\u00f4")
+    .replace(/\u00c3\u00b5/g, "\u00f5")
+    .replace(/\u00c3\u00ba/g, "\u00fa")
+    .replace(/\u00c3\u00a7/g, "\u00e7")
+    .replace(/\u00c3\u0081/g, "\u00c1")
+    .replace(/\u00c3\u0083/g, "\u00c3")
+    .replace(/\u00c3\u0089/g, "\u00c9")
+    .replace(/\u00c3\u0087/g, "\u00c7");
 }

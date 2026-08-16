@@ -51,12 +51,14 @@ Já foi feito:
 - negativas de preço genéricas perigosas foram evitadas;
 - nenhuma campanha nova, Performance Max, ampla, tCPA ou aumento foi aplicado;
 - testes de anúncios foram colocados em sequência para não misturar efeitos.
-- rotina somente leitura de revisão do Google Ads publicada como script `12117745`, autorizada, testada por visualização sem mudanças, com e-mail enviado e programação diária `09:00–10:00` ativa.
+- rotina somente leitura de revisão do Google Ads publicada como script `12117745`, autorizada, testada sem mudanças e com programação diária `09:00–10:00` ativa;
+- agregado anônimo do funil publicado pelo Apps Script versão `92`, com trigger diário aproximadamente às `08:15` e sem PII.
 
 Ainda falta:
 
 - provar a conversão offline e a jornada anúncio → site → WhatsApp → LEADS/CRM;
 - confirmar ao vivo e, se ainda ausentes, aplicar as três negativas exatas de roteamento do grupo geral de lifting;
+- normalizar novos contatos com códigos G26 canônicos: no primeiro agregado, os 16 contatos Google de 30 dias permaneceram em campanha desconhecida por usarem referências antigas/ambíguas; não reinterpretar o histórico por inferência;
 - manter Meta facial em 40+ e, no gate de 20/08, decidir se o Google deve excluir apenas `18–24` e `25–34` nas campanhas faciais não otoplastia; preservar sempre a idade `Desconhecida`;
 - executar os testes de RSA um por vez;
 - medir desempenho mobile/vídeos antes de otimizar;
@@ -69,7 +71,7 @@ Ainda falta:
 Já foi feito:
 
 - commit técnico `50d7ea1` publicado no Netlify;
-- Apps Script versão 91 publicado no deployment canônico;
+- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 92, que acrescenta somente o agregado anônimo da rotina Google Ads;
 - smoke tests públicos aprovados;
 - auditorias excluídas do artefato do site;
 - logs e IDs endurecidos;
@@ -107,10 +109,10 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 
 | Data e hora | Bloco | Estado | O que será feito | Publicação ou escrita externa | Condição para avançar |
 |---|---|---|---|---|---|
-| diariamente, aproximadamente 08:15 | LEADS → Google Ads: agregado anônimo | `EM PUBLICAÇÃO` em 15/08 | atualizar coortes de 7/30/90 dias no arquivo `LIV — Agregados Google Ads — sem PII` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e conta Ads somente leitora |
-| diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `EM ATUALIZAÇÃO` em 15/08 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` em prévia verde e agregado fresco |
-| toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `EM ATUALIZAÇÃO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
-| primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `EM ATUALIZAÇÃO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
+| diariamente, aproximadamente 08:15 | LEADS → Google Ads: agregado anônimo | `ATIVO` desde 15/08; Apps Script v92 | atualizar coortes de 7/30/90 dias no arquivo `LIV — Agregados Google Ads — sem PII` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e conta Ads somente leitora |
+| diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO` desde 15/08; execução real concluída às 21:35 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` concluiu sem mudanças; nenhum e-mail no sábado porque não havia alerta crítico |
+| toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
+| primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
 | 20/08 09:00–11:00 | Google Ads: prova segura e decisão etária | `AGENDADO` | testar conversão offline e E2E; confirmar negativas exatas; manter Meta facial em 40+; decidir se exclui `18–24` e `25–34` somente em LIFT, BLEF, CERV e FACE; iniciar somente RSA adulto de otoplastia se tudo passar | possível escrita em Ads/importação, somente após autorização no momento | zero PII, zero duplicidade, receipt por evento, origem preservada e idade `Desconhecida` mantida |
 | 20/08 11:15–12:00 | CWV, vídeos e recursos | `AGENDADO` | medir laboratório/campo e 4G; abrir causas reais de recursos/logotipos | nenhuma otimização automática | baseline reproduzível; uma classe de ativo por futuro teste |

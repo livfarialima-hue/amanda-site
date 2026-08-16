@@ -18,6 +18,8 @@
 
 **Ativação:** 15/08/2026; visualização concluída sem mudanças e e-mail de teste enviado para `daniel.added@gmail.com`
 
+**Ampliação validada:** 15/08/2026; Apps Script v92 gerou o agregado às 21:23 BRT, a execução real do script Ads concluiu às 21:35 sem mudanças e, por ser sábado sem alerta crítico, não enviou e-mail.
+
 ## 1. Objetivo
 
 Produzir uma leitura recorrente e somente leitura da conta, transformar sinais em sugestões priorizadas e enviar o relatório por e-mail sem alterar campanhas, palavras, negativas, anúncios, públicos, lances ou orçamentos.
@@ -119,12 +121,15 @@ Gates de ativação concluídos em 15/08/2026:
 - e-mail de teste enviado pelo script;
 - programação diária visível na conta.
 
-Gates da ampliação de 15/08/2026:
+Gates da ampliação de 15/08/2026 concluídos:
 
 - arquivo agregado separado criado dentro de `02 — Campanhas — Google Ads e Meta Ads` e compartilhado somente como leitor para a conta de Ads;
-- publicação diária do agregado às 08:15 deve ocorrer antes da leitura do Ads;
-- Google Ads Script precisa concluir a prévia sem mutação e reconhecer o agregado com menos de 36 horas;
-- o primeiro e-mail ampliado deve mostrar status `OK`/`N/D` por fonte e nunca produzir falso zero.
+- Apps Script v92 publicado no deployment canônico e trigger do agregado criado para aproximadamente 08:15;
+- primeira saída gerada com schema v1 e sem PII; 16 contatos Google em 30 dias ficaram corretamente em `__UNKNOWN_CAMPAIGN__` por falta de código G26 canônico;
+- Google Ads Script concluiu prévia e execução real sem mutação, com o agregado fresco;
+- programação diária `09:00–10:00` permaneceu ativa.
+
+Gate ainda em observação: conferir em 17/08 o primeiro e-mail semanal ampliado e confirmar que cada fonte aparece como `OK` ou `N/D`, nunca como falso zero.
 
 Após ativar:
 

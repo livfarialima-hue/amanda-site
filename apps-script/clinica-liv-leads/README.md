@@ -38,11 +38,13 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 ## Agregado anônimo para a rotina do Google Ads
 
 - Código: `GoogleAdsFunnelReview.gs`.
+- Produção: Apps Script versão `92`, publicada no deployment canônico em 15/08/2026.
 - Destino: planilha separada `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Agregados`.
 - Trigger: `publicarAgregadosFunilGoogleAds`, diariamente aproximadamente às 08:15 BRT, configurado por `configurarRotinaAgregadosFunilGoogleAds()`.
 - Fontes internas: `_FUNIL_CANONICO` e `_OPORTUNIDADE_MARCOS`.
 - Saída: somente contagens por janela e campanha canônica; sem nome, telefone, mensagem, click ID, Opportunity ID, Event ID ou informação clínica.
 - O arquivo agregado pode ser lido pela conta do Google Ads; a planilha LEADS nunca deve ser compartilhada com essa conta.
 - Alias legado/ambíguo permanece em `__UNKNOWN_CAMPAIGN__`; não inferir campanha por procedimento ou página.
+- Primeira publicação validada: schema v1, zero PII, 16 contatos Google na coorte de 30 dias e os 16 em campanha desconhecida por falta de código G26 canônico; isso é uma limitação de atribuição, não zero de resultado.
 
 Projetos divergentes não devem ser editados, renomeados, arquivados ou excluídos sem autorização específica. Em caso de dúvida, parar antes da escrita externa.

@@ -44,6 +44,17 @@ test("o agregado contém somente dimensões e contagens anônimas", () => {
   assert.equal(serialized.includes("evt_sintetico"), false);
 });
 
+test("tolera o cabeçalho histórico com mojibake sem aceitar campo arbitrário", () => {
+  const build = load("construirAgregadosFunilGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisiÃ§Ã£o", "Campanha"],
+    ["opp_sintetica_1", "amanda", "open", "NÃ£o qualificado", new Date("2026-08-14T12:00:00Z"), "Google", "G26BLEF"],
+  ], [], new Date("2026-08-15T15:00:00Z"));
+  const total7 = rows.find((row) => row[2] === 7 && row[5] === "__TOTAL__");
+  assert.equal(total7[6], 1);
+  assert.equal(total7[8], 0);
+});
+
 test("alias legado não é inventado como campanha canônica", () => {
   const resolve = load("resolverCampanhaGoogleAds_");
   assert.equal(resolve("G26BLEF"), "S_BR_SP_BLEFAROPLASTIA");

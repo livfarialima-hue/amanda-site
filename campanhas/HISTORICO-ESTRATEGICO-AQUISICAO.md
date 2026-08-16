@@ -17,6 +17,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 - **Guardrails:** nenhuma mutação automática; nenhuma PII ou ID técnico no agregado/e-mail; alias legado permanece N/D; faixa etária `UNKNOWN` é preservada; orçamento total de R$ 87/dia continua referência; fonte com erro ou mais de 36 horas não produz zero.
 - **Revisão:** primeiro relatório semanal ampliado em 17/08/2026; gate de 20/08/2026; primeira janela operacional em 27/08/2026; três primeiros relatórios serão conferidos para falsos positivos.
 - **Regra para manter/reverter:** manter se as fontes aparecerem corretamente como `OK`/`N/D`, sem PII e com sugestões acionáveis; pausar a programação ou voltar à versão anterior se houver exposição, falso zero, excesso de e-mail ou consulta instável.
+- **Resultado de publicação:** Apps Script versão `92` publicado no deployment canônico; agregado schema v1 gerado às 21:23 BRT; trigger diário criado; Google Ads Script `12117745` salvo, programado diariamente entre 09:00 e 10:00 e executado com sucesso às 21:35, sem alterações. O primeiro agregado mostrou 16 contatos Google em 30 dias e todos permaneceram em campanha desconhecida por referências legadas/ambíguas; não houve inferência retroativa. Como era sábado e não havia alerta crítico, nenhum e-mail foi enviado nessa execução; o primeiro relatório semanal ampliado fica para 17/08.
 
 ## 15 de agosto de 2026 — rotina automatizada de revisão e sugestões do Google Ads
 
