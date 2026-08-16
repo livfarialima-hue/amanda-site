@@ -48,3 +48,14 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 - Primeira publicação validada: schema v1, zero PII, 16 contatos Google na coorte de 30 dias e os 16 em campanha desconhecida por falta de código G26 canônico; isso é uma limitação de atribuição, não zero de resultado.
 
 Projetos divergentes não devem ser editados, renomeados, arquivados ou excluídos sem autorização específica. Em caso de dúvida, parar antes da escrita externa.
+
+## Agregado anônimo e revisão da Meta Ads
+
+- Agregador: `MetaAdsFunnelReview.gs`; destino no mesmo arquivo de mídia, aba `Meta_Agregados`.
+- Revisor: `MetaAdsReview.gs`; somente consultas `GET` da Marketing API e envio de e-mail.
+- Segredos: `META_MARKETING_API_TOKEN` e `META_GRAPH_VERSION` somente nas propriedades do projeto. Nunca versionar ou copiar para Drive/planilha.
+- Flag: `META_ADS_REVIEW_ENABLED=true` somente depois de `validarAcessoRevisaoMetaAds()`.
+- Triggers: `publicarAgregadosFunilMetaAds` aproximadamente às 08:25 e `executarRevisaoMetaAds` aproximadamente às 10:05 BRT.
+- Privacidade: nenhum nome, telefone, e-mail, mensagem, click ID, `Opportunity ID`, `Event ID` ou informação clínica no agregado/e-mail.
+- Taxonomia: somente `M26F01W` resolve `meta_whatsapp_direct` e somente `M26F02S` resolve `meta_site_whatsapp` no contrato v1. `M26O01W`, `M26O02W` e aliases desconhecidos permanecem N/D.
+- Manual completo: `campanhas/ROTINA-AUTOMATIZADA-REVISAO-META-ADS.md`.

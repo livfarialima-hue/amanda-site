@@ -14,7 +14,7 @@
 
 **Programação verificada:** diariamente, entre `09:00` e `10:00`, no fuso da conta
 
-**Fonte anônima do funil:** `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0 — LIV — Agregados Google Ads — sem PII`
+**Fonte anônima do funil:** `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0 — LIV — Agregados de mídia paga — sem PII`, aba `Agregados`
 
 **Ativação:** 15/08/2026; visualização concluída sem mudanças e e-mail de teste enviado para `daniel.added@gmail.com`
 

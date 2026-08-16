@@ -465,6 +465,20 @@ A conta deve ter uma única rotina automatizada e versionada em `google-ads-scri
 
 Decisões diárias sobre termos ou palavras são proibidas como rotina: o volume atual é insuficiente e a latência de conversão pode criar falsos sinais. A análise diária serve somente para saúde.
 
+### Automação somente leitura da Meta Ads
+
+A Meta deve ter uma rotina própria, versionada em `apps-script/clinica-liv-leads/MetaAdsReview.gs` e descrita por `campanhas/ROTINA-AUTOMATIZADA-REVISAO-META-ADS.md`. Ela consulta a Marketing API com permissão `ads_read`, combina os resultados com a aba anônima `Meta_Agregados` e envia sugestões; não pode alterar campanha, conjunto, anúncio, público, criativo, orçamento, lance, programação ou status.
+
+- **Diariamente, aproximadamente às 08:25:** a LEADS publica contagens anônimas de 7, 30 e 90 dias, separando `M26F01W` — WhatsApp direto — de `M26F02S` — site → WhatsApp. Código conflitante ou ausente permanece desconhecido.
+- **Diariamente, aproximadamente às 10:05:** verificar somente saúde crítica — gasto contra o mesmo dia da semana, entrega/status, destino, piso etário facial, fonte e frescor do agregado. Fora da terça-feira e do segundo dia útil do mês, enviar somente alerta novo, piora ou persistência de 48 horas.
+- **Toda terça-feira:** comparar sete dias completos com os sete anteriores e o contexto de 30 dias; revisar campanha, conjunto, anúncio, criativo, retenção de vídeo, idade/gênero, plataforma, posicionamento, dispositivo, página e funil.
+- **No segundo dia útil do mês:** acrescentar 90 dias, prontidão de testes e eficiência até lead qualificado/consulta. O cálculo automatizado considera segunda a sexta e não infere feriados locais.
+- **Depois de mudança material:** preservar checkpoints próprios de 7 e 14 dias; o relatório recorrente não substitui a janela do teste.
+
+A rotina mantém `M26F01W` como controle, `M26F02S` sem verba nova até prova E2E e Meta facial em 40+. Fadiga criativa só pode ser sugerida por sinais combinados e amostra mínima; frequência isolada não autoriza troca. Resultado de plataforma não é paciente. CAPI, coleta adicional ou recomendação da Meta nunca são ativados automaticamente. O token permanece somente nas propriedades protegidas do projeto e o agregado/e-mail não contém PII nem IDs de paciente.
+
+Cada recomendação usa as filas `Corrigir agora`, `Pode testar`, `Aguardar dados` ou `Não alterar`, com evidência, risco, confiança, amostra, métrica, guardrail e rollback. Falha de fonte permanece `N/D`.
+
 ### Regras para termos, positivas e negativas
 
 - Negativa inequívoca pode ser sugerida depois de pelo menos R$ 5 de gasto, inicialmente em correspondência exata e no menor nível seguro; nunca é aplicada automaticamente.

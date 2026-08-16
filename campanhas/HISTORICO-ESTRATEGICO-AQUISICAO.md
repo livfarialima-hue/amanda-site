@@ -6,11 +6,25 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 15 de agosto de 2026 — rotina automatizada de revisão e sugestões da Meta Ads
+
+- **Status:** código e contrato locais validados; publicação, credencial de leitura e execução ao vivo ainda serão registradas neste item.
+- **Responsável:** Codex, sob autorização explícita de Daniel para implementar e publicar a rotina.
+- **Área/conta:** Meta Ads `1643959806249995`, Apps Script/LEADS e arquivo agregado anônimo já existente.
+- **Mudança:** criação de rotina somente leitura com agregado Meta separado no mesmo arquivo de mídia. O agregado será atualizado aproximadamente às 08:25; a revisão rodará aproximadamente às 10:05. Dias comuns enviam somente alertas críticos; terça-feira envia sete dias, comparação anterior e 30 dias; o segundo dia útil acrescenta 90 dias. A rotina cobre mídia, criativo/vídeo, demografia, posicionamento, destino e funil e nunca aplica sugestão.
+- **Motivo e evidência:** as campanhas Meta precisam ser reavaliadas como as do Google, mas LPV, conversa e CTR não demonstram contato válido ou consulta. A auditoria anterior mostrou boa entrega de tráfego em `M26F02S` sem atribuição comprovada e `M26F01W` como rota curta rastreável, porém não conciliada pessoa a pessoa.
+- **Hipótese:** combinar Marketing API com contagens anônimas por caminho reduzirá decisões por proxy, detectará fadiga e falhas técnicas mais cedo e preparará testes menores sem expor a LEADS à Meta.
+- **Métrica principal:** contato identificado, válido, qualificado, consulta e fechamento por `M26F01W`/`M26F02S`; secundárias: gasto, frequência, CTR link, LPV/clique, conversa, vídeo e entrega por segmento.
+- **Guardrails:** `ads_read`; zero mutação automática; zero PII/ID de paciente no agregado ou e-mail; Meta facial 40+; `M26F01W` como controle; `M26F02S` sem verba nova até prova E2E; código conflitante permanece N/D; CAPI e coleta adicional fora do escopo.
+- **Revisão:** conferir os três primeiros relatórios completos; primeira revisão estrutural em 15/09/2026 ou antes se houver alerta P0.
+- **Regra para manter:** manter se fontes distinguirem `OK`/`N/D`, alertas forem acionáveis e nenhuma recomendação ou dado sensível for enviado/aplicado indevidamente.
+- **Regra para reverter:** desabilitar a flag e remover o trigger diante de conta incorreta, falha de privacidade, falso zero recorrente, excesso de e-mail ou qualquer mutação; corrigir localmente antes de reativar.
+
 ## 15 de agosto de 2026 — ampliação da rotina de revisão do Google Ads
 
 - **Responsável:** Codex, sob autorização explícita de Daniel para implementar, publicar e programar a ampliação.
 - **Área/conta:** Google Ads `995-334-4486`, Apps Script/LEADS e arquivo agregado anônimo.
-- **Mudança:** a rotina passa a validar saúde das fontes, metas de conversão, inventário completo de negativas, Quality Score, RSAs/recursos, segmentações, destinos, mudanças e funil. Alertas de gasto usam o mesmo dia da semana; falha de consulta vira `N/D`; repetição idêntica entra em cooldown de 48 horas. Foi criado o arquivo `LIV — Agregados Google Ads — sem PII`, atualizado pela LEADS aproximadamente às 08:15 e lido pelo script do Ads entre 09:00 e 10:00.
+- **Mudança:** a rotina passa a validar saúde das fontes, metas de conversão, inventário completo de negativas, Quality Score, RSAs/recursos, segmentações, destinos, mudanças e funil. Alertas de gasto usam o mesmo dia da semana; falha de consulta vira `N/D`; repetição idêntica entra em cooldown de 48 horas. Foi criado o arquivo hoje renomeado para `LIV — Agregados de mídia paga — sem PII`, cuja aba `Agregados` é atualizada pela LEADS aproximadamente às 08:15 e lida pelo script do Ads entre 09:00 e 10:00.
 - **Motivo e evidência:** a rotina inicial protegia termos leigos, mas ainda podia confundir consulta indisponível com zero e não conseguia calcular custo por etapa sem acessar dados de pacientes. Compartilhar a LEADS com a conta de Ads ampliaria exposição desnecessária; o agregado separado preserva somente contagens e campanha canônica.
 - **Hipótese:** uma rotina orientada ao funil e com gates de fonte reduzirá falsos alarmes, evitará decisões por proxy e preparará alterações menores, isoladas e reversíveis.
 - **Métrica principal:** cobertura de campanha canônica, contato válido classificado, lead qualificado, consulta agendada/realizada e marco de fechamento; secundárias: gasto, termos, Quality Score, política e parcela de impressões.

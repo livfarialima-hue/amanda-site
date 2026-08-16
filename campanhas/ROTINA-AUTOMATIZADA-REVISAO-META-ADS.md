@@ -1,0 +1,106 @@
+# Rotina automatizada de revisão da Meta Ads
+
+**Status:** código local validado; ativação ao vivo depende de credencial `ads_read` e teste de acesso
+
+**Conta:** `1643959806249995`
+
+**Fuso:** `America/Sao_Paulo`
+
+**Destinatário operacional:** Daniel
+
+**Código versionado:** `apps-script/clinica-liv-leads/MetaAdsReview.gs`
+
+**Agregado anônimo:** planilha `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Meta_Agregados`
+
+## 1. Objetivo e limite
+
+A rotina identifica problemas, reúne sinais de mídia e funil e envia sugestões para revisão humana. Ela usa somente consultas `GET` da Marketing API e não pode alterar campanhas, conjuntos, anúncios, públicos, criativos, orçamento, lance, programação ou status.
+
+Resultados da plataforma — conversa, visualização da página, clique ou reprodução — não são chamados de paciente, contato válido, qualificado ou consulta. Essas etapas entram somente pelo agregado anônimo da LEADS.
+
+## 2. Periodicidade
+
+| Ritmo | Quando | Conteúdo | Envio |
+|---|---|---|---|
+| Agregado do funil | diariamente, aproximadamente 08:25 | coortes 7/30/90 dias por caminho, campanha e criativo conhecido | atualiza somente `Meta_Agregados`; sem e-mail e sem PII |
+| Saúde técnica | diariamente, aproximadamente 10:05 | gasto anômalo no mesmo dia da semana, entrega, política/status, idade facial, destino e frescor do funil | somente alerta novo, piora ou persistência de 48 h |
+| Revisão tática | toda terça-feira | últimos 7 dias, sete dias anteriores e 30 dias; campanhas, conjuntos, anúncios, criativos, vídeo, idade/gênero, plataforma/posicionamento, páginas e funil | sempre |
+| Revisão estratégica | segundo dia útil do mês | acrescenta 90 dias e prontidão de testes/realocação | sempre, no relatório do dia |
+| Pós-mudança | 7 e 14 dias completos | hipótese, métrica e guardrail da mudança específica | permanece no Plano Executivo e no Calendar |
+
+O segundo dia útil é calculado como o segundo dia de segunda a sexta; feriados locais não são inferidos pelo código. Se coincidir com feriado operacional, o relatório continua seguro, mas a revisão humana pode ocorrer no dia útil seguinte.
+
+## 3. O que é analisado
+
+- campanhas, conjuntos, anúncios e criativos;
+- status configurado e efetivo, objetivo, otimização, lance, orçamento e datas;
+- gasto, alcance, impressões, frequência, CPM, cliques, CTR e CPC;
+- visualização de página e passagem LPV/clique;
+- conversa iniciada e custo por conversa quando a ação estiver disponível;
+- vídeo: início, ThruPlay e retenções 25%, 50%, 75%, 95% e 100% quando disponíveis;
+- idade, gênero, plataforma, posicionamento e dispositivo quando a API aceitar a combinação;
+- integridade de páginas finais observáveis no criativo;
+- fadiga somente por sinais combinados, nunca por frequência isolada;
+- contato identificado, classificado, válido, qualificado, agendado, realizado, convertido e marco de fechamento pelo agregado anônimo;
+- diferença entre `M26F01W` — Meta → WhatsApp direto — e `M26F02S` — Meta → site → WhatsApp;
+- código/criativo desconhecido ou conflitante como `N/D`, sem inferência.
+
+## 4. Filas de decisão
+
+Toda sugestão entra em uma fila:
+
+- `Corrigir agora`: falha técnica, mensuração, política ou quebra de jornada;
+- `Pode testar`: hipótese isolável, amostra mínima e rollback definidos;
+- `Aguardar dados`: sinal insuficiente ou janela contaminada;
+- `Não alterar`: controle, gate fechado ou proposta que deve ser preservada.
+
+Fadiga criativa exige, no mínimo, 1.000 impressões na janela e combinação de aumento de frequência com queda de CTR link e piora de custo/resultado ou ausência de resultado. Mesmo assim, a rotina sugere uma variação; nunca pausa o controle.
+
+## 5. Regras estratégicas incorporadas
+
+- manter `M26F01W` como controle;
+- não colocar verba nova em `M26F02S` antes da prova Meta → site → WhatsApp → LEADS/CRM;
+- manter as campanhas faciais em 40+ e alertar se `age_min` observado ficar abaixo de 40;
+- confirmar a entrega real do Advantage+; nome do conjunto não prova controle etário;
+- não decidir por CTR, CPM ou conversa isoladamente;
+- não confundir zero código identificado com zero contato real;
+- não ativar CAPI ou ampliar dados enviados como consequência automática do relatório;
+- preservar os checkpoints de 7 e 14 dias de qualquer mudança material.
+
+## 6. Privacidade e credenciais
+
+O token não pode entrar no repositório, Drive, e-mail ou planilha. Ele deve existir apenas nas propriedades do projeto canônico do Apps Script:
+
+- `META_MARKETING_API_TOKEN`: token de leitura com `ads_read` e menor escopo possível;
+- `META_GRAPH_VERSION`: versão vigente explicitamente confirmada, como `vNN.N`;
+- `META_ADS_REVIEW_ENABLED`: `true` somente depois de `validarAcessoRevisaoMetaAds()` concluir sem erro.
+
+O agregado não contém nome, telefone, e-mail, mensagem, click ID, `Opportunity ID`, `Event ID` ou informação clínica. Campanha e criativo aparecem apenas associados a contagens agregadas.
+
+## 7. Ativação e rollback
+
+Ordem obrigatória:
+
+1. publicar o código no projeto e deployment canônicos;
+2. publicar `Meta_Agregados` e verificar cabeçalhos, contagens e ausência de PII;
+3. configurar o token e a versão somente nas propriedades do projeto;
+4. executar `validarAcessoRevisaoMetaAds()`;
+5. executar uma revisão manual e conferir o e-mail;
+6. criar o trigger com `configurarRotinaRevisaoMetaAds()`;
+7. conferir os três primeiros relatórios completos.
+
+Rollback:
+
+- definir `META_ADS_REVIEW_ENABLED=false`;
+- remover somente o trigger `executarRevisaoMetaAds`;
+- preservar código e último relatório para diagnóstico;
+- corrigir localmente, testar e reativar somente após autorização.
+
+## 8. Fontes oficiais
+
+- Meta Marketing API — Insights: https://developers.facebook.com/docs/marketing-api/insights/
+- Meta Marketing API — acesso: https://developers.facebook.com/docs/marketing-api/access/
+- Meta Graph API — versionamento: https://developers.facebook.com/docs/graph-api/overview/versioning/
+- Meta — status de veiculação: https://www.facebook.com/help/messenger-app/650774041651557/
+- Meta — histórico de atividade: https://www.facebook.com/help/messenger-app/289211751238030
+- Meta — análise e revisão de anúncios: https://www.facebook.com/business/ads/review-policy-guidelines
