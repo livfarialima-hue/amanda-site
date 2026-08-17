@@ -156,6 +156,17 @@ function habilitarSchemaAtribuicaoV1(input) {
   return Object.assign({ enabled: true, mode: "applied" }, applied);
 }
 
+/**
+ * Entrada administrativa sem parâmetros para a liberação coordenada do schema.
+ * A migração interna continua protegida, validada e idempotente.
+ */
+function aplicarSchemaAtribuicaoV1Autorizado() {
+  return habilitarSchemaAtribuicaoV1({
+    apply: true,
+    confirmation: "HABILITAR_SCHEMA_ATRIBUICAO_V1",
+  });
+}
+
 function desabilitarSchemaAtribuicaoV1(input) {
   input = input && typeof input === "object" ? input : {};
   if (
