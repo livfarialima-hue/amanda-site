@@ -6,18 +6,19 @@
 
 **Fuso:** `America/Sao_Paulo`
 
-**Estado:** `PROPOSTO — AGUARDA AUTORIZAÇÃO DE VEICULAÇÃO`
+**Estado:** `RASCUNHOS META E PACOTE TÉCNICO PREPARADOS — PUBLICAÇÃO AGUARDA APROVAÇÃO EM 17/08`
 
 **Período observado na mídia:** 17/07/2026 a 15/08/2026, 30 dias completos; o dia 16/08 parcial foi excluído
-**Regra:** este documento orienta a próxima decisão, mas não autoriza publicar, pausar, estender ou criar campanhas.
+**Regra:** Daniel autorizou em 16/08/2026 a preparação do pacote. A publicação ficou deliberadamente para 17/08/2026, depois da conferência dos objetos, publicação coordenada do código e sonda ponta a ponta. Não clicar em `Publicar` no lote inteiro do Gerenciador: selecionar somente os objetos listados neste plano. Qualquer valor acima do cenário aprovado deve ser reapresentado.
 
 ## 1. Decisão recomendada
 
-1. **Não renovar `M26F02S` — Facial → site.** A campanha provou entrega e chegada à página, mas ainda não provou passagem até conversa, contato ou consulta.
-2. **Continuar o controle de WhatsApp direto somente com `C06H01` — Lifting.** O vídeo de avaliação `C01H01` não deve receber verba no novo ciclo de WhatsApp.
-3. **Iniciar um piloto separado de lifting cervical no WhatsApp direto**, com código provisório reservado `M26C01W` e um único criativo inicialmente identificado como `C07H01`, somente depois dos gates técnicos e da autorização de publicação.
-4. **Interromper a campanha infantil de otoplastia antes de consumir o saldo restante** e não abrir nova variante durante o ciclo cervical. O próximo teste de otoplastia precisa de outro criativo e atribuição corrigida.
-5. **Preservar orçamento, público e posicionamentos durante 15 dias completos.** O aprendizado será invalidado se criativo, orçamento, idade, destino e mensagem forem alterados ao mesmo tempo.
+1. **Manter lifting facial somente no WhatsApp direto.** Renovar ou recriar `M26F01W` apenas com `C06H01` — Lifting; não manter `C01H01` — Avaliação e não renovar `M26F02S` — Site. A série de lifting continua porque já produziu contatos, qualificados e agendamentos, mas não será tratada como terceiro braço nem como controle causal do teste cervical.
+2. **Interromper `M26O01W` antes de consumir o saldo restante.** Não abrir nova variante de otoplastia durante o ciclo cervical.
+3. **Restringir o teste de destino ao lifting cervical:** `M26C01W` — WhatsApp direto — versus `M26C02S` — site → WhatsApp. Os dois braços usam o mesmo criativo `C07H01`, público rígido 40–65+, posicionamentos Advantage+, janela de 17/08/2026 às 12h a 01/09/2026 às 12h e orçamento total de R$ 300 por braço. O arquivo 1:1 é usado no Feed e o arquivo 9:16 enviado por Daniel é usado em Reels e Stories, sem recorte automático do quadrado. O lifting facial roda em paralelo, sempre por WhatsApp, e seus resultados serão acompanhados separadamente.
+4. **Não iniciar o braço Site sem prova ponta a ponta.** Se Meta → site → WhatsApp → LEADS → CRM não chegar com campanha, criativo, landing page, página do CTA, caminho e confiança corretos, nenhum dos dois braços será publicado.
+5. **Publicar organicamente sem reutilizar o post no anúncio.** Daniel decidiu publicar o Reels na quinta-feira, 20/08/2026, às 19h30. O orgânico deve ser identificado separadamente e não pode ser contado como resultado de `M26C01W` ou `M26C02S`; os anúncios usam os arquivos enviados diretamente ao Ads Manager para preservar igualdade e editabilidade.
+6. **Preservar orçamento, público, posicionamentos, texto e criativo dos dois braços cervicais por 15 dias completos.** A única diferença deliberada entre eles será a rota. Mudanças na campanha de lifting facial não entram na análise causal do experimento cervical.
 
 ## 2. Evidência observada
 
@@ -71,60 +72,85 @@ Janela de 30 dias:
 
 **Decisão:** não gastar mais no criativo atual. Um futuro teste deve mostrar a médica nos primeiros dois segundos, falar com o responsável sem explorar vergonha, explicar quando vale avaliar, segurança e recuperação, e terminar com um único CTA para WhatsApp.
 
+### Novo vídeo de lifting cervical
+
+**Fato observado:** os arquivos locais de Feed `1080×1080` e Reels/Stories `1080×1920` têm 51,29 segundos, 30 fps, áudio e legendas. São adaptações do mesmo conteúdo, não dois criativos distintos. A abertura mostra a Dra. Amanda e apresenta gordura, flacidez, musculatura e perda do contorno; o vídeo diferencia lipo de papada, cervicoplastia e associação, reforça naturalidade, credenciais e avaliação individual.
+
+**Decisão final do arquivo:** as novas versões 1080×1080 e 1080×1920 corrigem `cervecoplastia` para `cervicoplastia`. O áudio e a legenda embutida continuam com `Clique no link da bio`; Daniel aceitou formalmente essa inconsistência em 16/08/2026. O mesmo vídeo e a mesma mensagem textual do anúncio devem ser usados nos dois braços, de modo que o CTA embutido não varie entre eles.
+
+**Parecer:** os arquivos estão aprovados para o ciclo. Não criar um segundo gancho agora: a pergunta é rota, não vídeo. A publicação orgânica será separada dos anúncios e estes não reutilizarão o post existente.
+
 ## 4. Desenho do próximo ciclo
 
 ### Cenário base recomendado
 
 | Campanha | Destino | Público | Criativo | Orçamento | Janela | Papel |
 |---|---|---|---|---:|---|---|
-| `M26F01W` — ciclo 2 | WhatsApp direto | São Paulo +20 km, 40–65+, todos os gêneros, limite rígido | somente `C06H01` | R$ 20/dia | 15 dias completos | controle |
-| `M26C01W` — lifting cervical | WhatsApp direto | São Paulo +20 km, 40–65+, todos os gêneros, limite rígido | um vídeo novo; código provisório `C07H01` | R$ 20/dia | 15 dias completos | piloto |
+| `M26F01W` — lifting facial | WhatsApp direto | Advantage+ atual; 40–65+ permanece sugestão, não limite rígido confirmado | somente `C06H01` — Lifting | acréscimo preparado de R$ 300 | até 31/08/2026 às 21h | campanha contínua, analisada separadamente; revisar a idade efetiva antes de aprovar |
+| `M26C01W` — lifting cervical | WhatsApp direto; campanha de Tráfego com meta de conversas | São Paulo +20 km, 40–65+ rígido, todos os gêneros | `C07H01`; quadrado no Feed e arquivo 9:16 próprio em Reels/Stories | R$ 300 total | 17/08 12h a 01/09 12h | braço A |
+| `M26C02S` — lifting cervical | `/lifting-cervical/` → WhatsApp; campanha de Tráfego com meta de LPV | idêntico ao braço A | o mesmo `C07H01` e as mesmas adaptações por posicionamento | R$ 300 total | 17/08 12h a 01/09 12h | braço B |
 
-Total planejado: aproximadamente R$ 600 em 15 dias, sem renovar os R$ 600 do site e sem consumir o saldo da otoplastia. O orçamento diário agregado cai de aproximadamente R$ 58 para R$ 40.
+O experimento cervical soma R$ 600 em 15 dias. A continuidade do lifting facial acrescenta R$ 300 no rascunho, levando o cenário base a R$ 900. Os braços cervicais usam orçamento total fixo de R$ 300 em campanhas separadas, sem Advantage Campaign Budget redistribuir verba entre eles. A equivalência planejada é de orçamento, público, duração, texto e criativo; os algoritmos ainda podem selecionar inventário e pessoas diferentes, portanto o resultado é operacional, não um ensaio causal puro.
 
-### Por que não usar o site no piloto cervical
+### Objetos Meta preparados em rascunho
 
-`M26F02S` produziu 2.020 LPVs, mas a cadeia Meta → site → WhatsApp → LEADS/CRM ainda não passou no gate ponta a ponta. Repetir a rota no cervical confundiria desempenho do vídeo com falha de atribuição. O piloto deve começar no WhatsApp direto; o site permanece como apoio enviado durante a conversa.
+| Rota | Campanha | Conjunto | Anúncio principal | Controle de legado |
+|---|---:|---:|---:|---|
+| WhatsApp direto | `120251248762160627` | `120251248762180627` | `120251248762170627` | anúncio herdado `120251248762190627` desligado |
+| Site → WhatsApp | `120251249058750627` | `120251249058780627` | `120251249058760627` | anúncio herdado `120251249058770627` desligado |
+
+Os dois anúncios principais usam o texto cervical aprovado, título `Entenda o lifting cervical` e descrição `Avaliação individual do pescoço e da mandíbula.`. O braço direto usa CTA `Fale conosco` e o modelo salvo com `Ref. M26C01W-C07H01`; o braço Site usa CTA `Saiba mais`, URL `/lifting-cervical/` e os parâmetros canônicos. Em ambos, Feed recebe `Campanha cervical 1x1 arrumado final.mp4` e Reels/Stories recebem `Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4` em 1080×1920.
+
+### O que este experimento responderá
+
+O teste compara as duas rotas operacionais completas, não apenas o clique. O braço WhatsApp usa a otimização natural de conversa; o braço Site usa chegada à página e a pessoa decide se avança ao WhatsApp. Como os objetivos de entrega não são idênticos, a conclusão será `qual rota produz mais contatos válidos, qualificados e consultas com o mesmo orçamento`, e não uma causalidade pura do destino isolado.
+
+`M26F01W/C06H01` permanece como campanha contínua de lifting facial, não como braço C. Seus resultados servem para acompanhar a continuidade de uma frente que já funcionou e a saúde operacional do WhatsApp, mas não para escolher a rota do lifting cervical. Sobreposição de audiência e exposição cruzada serão limitações registradas, não ignoradas.
+
+`M26F02S` provou que a Meta consegue entregar LPVs baratos, mas não provou o vínculo até o contato. Por isso, o teste cervical só começa depois que uma sonda controlada demonstrar esse vínculo; sem a sonda, o experimento é cancelado ou adiado.
 
 ## 5. Gates antes de publicar
 
 Todos são obrigatórios:
 
-1. a Meta deve aceitar destino WhatsApp e público rígido 40–65+; se exigir Conta do WhatsApp Business, não lançar por outra rota para contornar o gate;
-2. mensagem inicial do cervical deve conter `Ref. M26C01W-C07H01` e chegar intacta ao webhook;
-3. `M26C01W` deve entrar no registro de campanhas, no agregado anônimo e na lógica de resultado principal da rotina Meta;
-4. depois de criado o anúncio, seu Meta Ad ID deve receber mapa explícito no webhook como fallback; nunca inferir por semelhança;
-5. um teste sintético sem paciente deve comprovar evento → bot → LEADS/CRM, sem PII no relatório;
-6. verificar `age_min=40` na configuração efetiva, não apenas no nome do conjunto ou na sugestão Advantage+;
-7. revisar o vídeo final, texto principal, título, legenda, CRM/RQE, prévias e CTA;
-8. salvar baseline e horário de ativação; o dia parcial de lançamento não entra na comparação.
+1. os dois braços cervicais devem permanecer com São Paulo +20 km e limite original rígido 40–65+; no braço direto, somente WhatsApp pode estar selecionado como destino de mensagem;
+2. `M26C01W-C07H01` deve identificar o WhatsApp direto; `M26C02S-C07H01` deve sair do CTA do site sem depender de o paciente manter o texto manualmente;
+3. o braço Site deve entrar em `/lifting-cervical/` com `origem=M26C02S`, `utm_source=meta`, `utm_medium=paid_social`, `utm_campaign=M26C02S` e `utm_content=C07H01`; campanha, conjunto e anúncio devem receber parâmetros/IDs estáveis quando fornecidos pela Meta;
+4. o modo rico e o schema continuam desligados até decisão própria. Antes do experimento, ativação controlada, política de privacidade coerente, purge observado, dry-run/migração autorizados e rollback são obrigatórios;
+5. uma sonda sintética sem paciente deve comprovar Meta → landing → navegação → CTA → WhatsApp → webhook → LEADS → CRM, com origem inicial `Meta Ads`, caminho `site → WhatsApp`, campanha `M26C02S`, criativo `C07H01`, landing e página do CTA corretas, confiança explícita, zero PII e zero first touch sobrescrito;
+6. `M26C01W` e `M26C02S` devem entrar no registro de campanhas, no agregado anônimo e na lógica de resultado principal da rotina Meta;
+7. os Meta Ad IDs `120251248762170627` e `120251249058760627` devem estar no mapa explícito do webhook como fallback; nunca inferir por semelhança;
+8. verificar `age_min=40` nos dois braços, não apenas no nome ou na sugestão Advantage+;
+9. salvar baseline e horário de ativação; o dia parcial de lançamento não entra na comparação.
+10. a continuidade de `M26F01W` deve ter somente `C06H01`, destino WhatsApp e orçamento explicitamente aprovado; como o conjunto atual expõe 40–65+ apenas como sugestão Advantage+, a aprovação de 17/08 deve aceitar conscientemente essa limitação ou adiar a renovação para recriar a campanha com piso rígido. `C01H01` e a rota Site permanecem fora desse ciclo.
 
-Se qualquer gate falhar em 16/08, adiar o início. Não substituir o WhatsApp pelo site e não aceitar público 25+ apenas para começar no mesmo dia.
+Se qualquer gate falhar, adiar o início dos dois braços. Não lançar apenas um braço, não aceitar público 25+ nos braços cervicais e não usar uma referência textual simples como prova suficiente da rota Site.
 
 ## 6. Checkpoints e regras
 
-As datas abaixo pressupõem lançamento em 16/08 e usam 17/08 como primeiro dia completo. Se o lançamento mudar, todas as datas se deslocam.
+As datas dos checkpoints pagos serão registradas depois da prova ponta a ponta e da ativação real. `D0` é a ativação; o dia seguinte é o primeiro dia completo. A publicação orgânica ficou agendada separadamente para 20/08/2026 às 19h30.
 
 | Checkpoint | Janela | Avaliar | Regra |
 |---|---|---|---|
-| 20/08 | 3 dias completos | entrega, idade efetiva, código, mensagem, gasto, impressões, CTR link, CPC link e conversas | corrigir somente falha técnica; não trocar criativo por amostra pequena |
-| 24/08 | 7 dias completos | comparação CERV versus controle LIFT; contatos identificados, válidos e qualificados | pausar CERV se gastar ≥R$ 120 sem contato válido ou se a atribuição permanecer quebrada |
-| 01/09 | 15 dias completos | qualificados, agendados, comparecimento quando já observável, custo/qualificado e custo/agendamento | manter no mesmo orçamento se ficar até 1,5× o custo do controle com qualidade compatível; não escalar só por conversa |
-| 08/09 | latência adicional de 7 dias | desfechos tardios de consulta e classificação | consolidar a decisão final sem reabrir a janela de mídia |
+| D+3 | 3 dias completos | equilíbrio de gasto, idade efetiva, código, mensagem, LPV, clique no CTA, conversas e contatos identificados | corrigir somente falha técnica; pausar ambos se a atribuição do Site não for comprovável |
+| D+7 | 7 dias completos | contatos identificados, válidos e qualificados por rota; cobertura conversa/CTA → contato | pausar um braço se gastar ≥R$ 150 sem contato válido com tracking saudável; não trocar criativo |
+| D+15 | 15 dias completos | qualificados, agendados, custo/qualificado e custo/agendamento por rota | declarar vencedor só com diferença de negócio e amostra suficiente; caso contrário, N/D e não escalar |
+| D+22 | sete dias de latência | classificações, comparecimento e consultas tardias | consolidar a decisão sem reabrir a janela de mídia |
 
 Guardrails permanentes:
 
-- cobertura entre conversas Meta e contatos identificados de pelo menos 80%; abaixo disso, resultado de negócio por campanha fica N/D;
+- sonda sintética do braço Site com 100% dos campos obrigatórios; durante a veiculação, cobertura entre conversas/cliques de CTA identificáveis e contatos de pelo menos 80%; abaixo disso, resultado por rota fica N/D;
 - zero resposta perdida, duplicidade, PII em relatório ou first touch sobrescrito;
 - não mudar orçamento, público, posicionamento, destino ou criativo durante a janela;
-- não ampliar orçamento antes de pelo menos cinco qualificados e uma consulta agendada no piloto, além de custo por qualificado igual ou inferior a R$ 75;
+- não ampliar orçamento antes de pelo menos cinco qualificados e uma consulta agendada na rota candidata, além de custo por qualificado igual ou inferior a R$ 75;
 - reverter diante de idade efetiva abaixo de 40, código ausente nos primeiros contatos, rota incorreta ou perda operacional.
 
 ## 7. O que não fazer neste ciclo
 
-- não renovar `M26F02S` apenas porque o custo por LPV foi baixo;
-- não manter `C01H01` no WhatsApp para “dar mais uma chance” junto com o novo teste;
+- não renovar `M26F02S`, não reativar `C01H01` e não acrescentar uma versão Site ao lifting facial durante o teste;
+- não usar `M26F01W/C06H01` como terceiro braço nem comparar diretamente seus resultados com cervical como se procedimento e criativo fossem equivalentes;
 - não rodar novo criativo de otoplastia ao mesmo tempo que o cervical;
+- não reutilizar a publicação orgânica como anúncio e não misturar tráfego orgânico com os resultados dos dois braços pagos;
 - não alterar a campanha Google de lifting cervical por causa deste teste Meta;
 - não tratar conversa iniciada como paciente, consulta ou cirurgia;
 - não publicar o rascunho atual de otoplastia sem revisão: ele contém mudanças de nome, público e posicionamento e não é a campanha cervical.
@@ -136,4 +162,21 @@ Guardrails permanentes:
 - planilha LEADS, consulta somente a campos não identificadores em 16/08/2026;
 - `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md` e `campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md`.
 
-Retenção de vídeo por segundo/quartil do criativo de otoplastia e do novo vídeo cervical ficou N/D nesta coleta. Consultas realizadas e procedimentos fechados permanecem N/D; zero registrado não prova zero real enquanto Calendar, CRM e oportunidade não estiverem integralmente reconciliados.
+Retenção de vídeo por segundo/quartil do criativo de otoplastia e do novo vídeo cervical ficou N/D nesta coleta. O vídeo cervical foi revisado por metadados, legendas embutidas e quadros-chave, não por dados de entrega. Consultas realizadas e procedimentos fechados permanecem N/D; zero registrado não prova zero real enquanto Calendar, CRM e oportunidade não estiverem integralmente reconciliados.
+
+## 9. Checklist único para 17 de agosto
+
+Executar nesta ordem, sem pular o gate:
+
+1. revisar o diff e confirmar o commit local do pacote cervical;
+2. validar os três IDs canônicos do Apps Script com `apps-script:verify-target`;
+3. publicar o Apps Script preservando o deployment canônico e habilitar o schema v1 pelo procedimento documentado;
+4. publicar no Netlify exatamente o mesmo commit, com `attributionJourneyEnabled=true`, os dois Meta Ad IDs mapeados e os novos assets da página;
+5. verificar produção em mobile: vídeo cervical destacado em `/lifting-cervical/` e `/lipo-de-papada/`, sem autoplay, sem overflow e com poster;
+6. rodar a sonda sintética e exigir sucesso até LEADS/CRM, sem paciente real;
+7. no Gerenciador de Anúncios, revisar e publicar **somente** as duas campanhas, conjuntos e anúncios principais listados na seção 4; não publicar os anúncios herdados, o rascunho de otoplastia nem outros itens da fila;
+8. confirmar depois da publicação: campanha/conjunto/anúncio ativos, datas e orçamento corretos, WhatsApp como único destino do braço direto, URL/UTMs do Site, idade rígida 40–65+ e arquivo 9:16 em Reels/Stories;
+9. decidir separadamente a extensão `M26F01W`: aceitar a limitação etária Advantage+ atual ou não publicar a extensão até reconstrução com piso rígido;
+10. registrar a hora real de ativação e então criar os checkpoints D+3, D+7, D+15 e D+22. Se a ativação ocorrer em 17/08 às 12h, as referências são 20/08, 24/08, 01/09 e 08/09.
+
+Qualquer falha nos passos 2–6 bloqueia os dois braços cervicais. Uma falha apenas em `M26F01W` não autoriza mudar o desenho cervical; apenas adia a extensão facial.

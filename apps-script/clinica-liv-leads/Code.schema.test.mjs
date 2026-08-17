@@ -216,6 +216,33 @@ test("Meta site reference fills the canonical campaign and page fields", () => {
   );
 });
 
+test("cervical references keep campaign, creative and page separately", () => {
+  const { decomporReferenciaAquisicao_ } = loadCode();
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(
+      decomporReferenciaAquisicao_("M26C02S-C07H01-lifting-cervical"),
+    )),
+    {
+      campaign: "M26C02S",
+      creative: "C07H01",
+      cta: "lifting-cervical",
+      reference: "M26C02S-C07H01-lifting-cervical",
+    },
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(
+      decomporReferenciaAquisicao_("M26C01W-C07H01"),
+    )),
+    {
+      campaign: "M26C01W",
+      creative: "C07H01",
+      cta: "",
+      reference: "M26C01W-C07H01",
+    },
+  );
+});
+
 test("Meta creative and CTA remain independently auditable", () => {
   const { decomporReferenciaAquisicao_ } = loadCode();
 

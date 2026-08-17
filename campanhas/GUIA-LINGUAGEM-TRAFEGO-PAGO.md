@@ -37,16 +37,18 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Pixel e eventos Meta só carregam após consentimento. O Google Tag Manager permanece desativado para não duplicar GA4, Google Ads ou Meta Pixel.
 - O clique é um sinal técnico, não um contato qualificado. A decisão do teste continua baseada em contatos válidos, agendamentos e comparecimentos.
 
-### Piloto Meta de lifting cervical — proposto em 16/08/2026
+### Experimento Meta de lifting cervical — proposto em 16/08/2026
 
-- Código reservado da campanha: `M26C01W`; caminho pretendido: WhatsApp direto.
-- Código inicial reservado do criativo: `C07H01`. A mensagem de abertura deve terminar com `Ref. M26C01W-C07H01` e a prévia precisa provar que a referência chega intacta.
-- Estrutura: uma campanha, um conjunto e um anúncio no início; São Paulo +20 km, todos os gêneros e limite rígido 40–65+.
-- Destino: WhatsApp direto. Não redirecionar o piloto ao site enquanto `M26F02S` não tiver prova ponta a ponta.
-- Orçamento base: R$ 20/dia durante 15 dias completos, sem alteração simultânea de público, posicionamento, destino ou criativo.
+- Códigos reservados: `M26C01W` para WhatsApp direto e `M26C02S` para site → WhatsApp.
+- Código do criativo: `C07H01`. Feed 1:1 e Reels/Stories 9:16 são adaptações do mesmo vídeo, não hipóteses criativas diferentes.
+- Mensagens/referências: `Ref. M26C01W-C07H01` no direto e `Ref. M26C02S-C07H01` após o CTA de `/lifting-cervical/`.
+- Estrutura: dois braços com divisão equivalente/mutuamente exclusiva, São Paulo +20 km, todos os gêneros, limite rígido 40–65+, mesmo texto, criativo, posicionamentos e R$ 20/dia por braço durante 15 dias completos.
+- O braço Site usa `origem=M26C02S&utm_source=meta&utm_medium=paid_social&utm_campaign=M26C02S&utm_content=C07H01` e só pode começar depois de prova E2E até LEADS/CRM.
 - Enquadramento: explicar que contorno cervical pode envolver pele, gordura, platisma e continuidade com a face; a avaliação define se o caminho é lifting cervical, lipo de papada, associação ou outra conduta. Não afirmar que a pessoa tem “pescoço de peru”, não prometer resultado e não usar vergonha.
-- Antes de publicar, adicionar `M26C01W` ao agregado e à rotina Meta; depois de criar o anúncio, mapear o Meta Ad ID ao código exato no webhook. Se a plataforma exigir Conta do WhatsApp Business ou não aceitar `age_min=40`, interromper o lançamento em vez de contornar o gate.
-- Checkpoints: três, sete e quinze dias completos, com decisão por contato válido, qualificado e consulta. CTR, CPC e conversa são sinais diagnósticos.
+- Os arquivos finais corrigem `cervicoplastia`. Daniel aceitou, para o primeiro ciclo de 16/08, manter `Clique no link da bio` no áudio e na legenda embutida; para novos criativos, preferir `Toque no botão e veja os horários disponíveis.`
+- O Reels orgânico de 20/08/2026 deve ser identificado separadamente. Não reutilizar essa publicação nos anúncios: enviar os arquivos finais diretamente ao Ads Manager para preservar editabilidade e igualdade entre os braços.
+- Antes de publicar, adicionar os dois códigos ao agregado e à rotina Meta; depois de criar os anúncios, mapear os Meta Ad IDs exatos no webhook. Se a plataforma exigir Conta do WhatsApp Business, não aceitar `age_min=40` ou a sonda Site falhar, interromper o lançamento.
+- Checkpoints: D+3, D+7, D+15 e D+22, com decisão por contato válido, qualificado e consulta. CTR, CPC, LPV e conversa são sinais diagnósticos.
 
 ### Campanha Meta de otoplastia
 

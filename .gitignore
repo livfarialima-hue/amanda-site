@@ -12,6 +12,10 @@ tmp/
 # Materiais brutos de análise de mídia não fazem parte da publicação do site
 analysis/meta-video-review/
 
+# Originais recebidos para campanha; somente derivados web entram no repositório
+/Campanha cervical 1x1  arrumado final.mp4
+/Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4
+
 # Local Netlify folder
 .netlify
 

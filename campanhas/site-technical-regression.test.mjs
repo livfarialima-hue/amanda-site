@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -62,6 +62,36 @@ test("public images reserve space and videos expose a poster", () => {
       assert.match(match[0], /\bposter=["'][^"']+["']/i, file);
     }
   }
+});
+
+test("cervical campaign video is prominent, accessible and performance-safe on both relevant pages", () => {
+  const videoRelativePath = "campanhas/assets/lifting-cervical/contorno-cervical-explicado-v1.mp4";
+  const posterRelativePath = "campanhas/assets/lifting-cervical/contorno-cervical-explicado-poster-v1.webp";
+  const videoPath = path.join(root, videoRelativePath);
+  const posterPath = path.join(root, posterRelativePath);
+
+  assert.ok(existsSync(videoPath), "optimized cervical video must exist");
+  assert.ok(existsSync(posterPath), "cervical video poster must exist");
+  assert.ok(statSync(videoPath).size <= 6 * 1024 * 1024, "optimized video must stay at or below 6 MiB");
+  assert.ok(statSync(posterPath).size <= 100 * 1024, "poster must stay at or below 100 KiB");
+
+  for (const relativePage of ["lifting-cervical/index.html", "lipo-de-papada/index.html"]) {
+    const html = readFileSync(path.join(root, relativePage), "utf8");
+    const featuredSection = html.match(/<section class="cv-section cv-section--dark cv-featured-video"[\s\S]*?<\/section>/i)?.[0] || "";
+
+    assert.ok(featuredSection, `${relativePage} must expose the featured cervical video section`);
+    assert.match(featuredSection, /<video\b[^>]*\bcontrols\b[^>]*\bplaysinline\b[^>]*\bpreload="none"/i);
+    assert.match(featuredSection, /\bwidth="720"\s+height="720"/i);
+    assert.match(featuredSection, /\bdata-inline-video\b/i);
+    assert.match(featuredSection, /\bdata-preserve-poster\b/i);
+    assert.match(featuredSection, /\baria-label="[^"]+"/i);
+    assert.match(featuredSection, new RegExp(videoRelativePath.replaceAll("/", "\\/")));
+    assert.match(featuredSection, new RegExp(posterRelativePath.replaceAll("/", "\\/")));
+  }
+
+  const artifactFiles = planStaticArtifact({ root }).files;
+  assert.ok(!artifactFiles.includes("Campanha cervical 1x1  arrumado final.mp4"));
+  assert.ok(!artifactFiles.includes("Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4"));
 });
 
 test("OpenAI search and training crawlers have explicit independent rules", () => {

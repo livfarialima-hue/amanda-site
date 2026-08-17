@@ -413,6 +413,28 @@ test("conflicting M26O01W history never invents a direct WhatsApp path", () => {
   assert.equal(attribution["Motivo fallback inicial"], "legacy_path_conflict");
 });
 
+test("cervical campaign codes preserve distinct site and WhatsApp paths", () => {
+  const {
+    atribuicaoLegadaOportunidade_,
+    OPPORTUNITY_HEADERS,
+  } = load();
+  const columns = Object.fromEntries(
+    OPPORTUNITY_HEADERS.map((header, index) => [header, index + 1]),
+  );
+
+  const siteRow = Array(OPPORTUNITY_HEADERS.length).fill("");
+  siteRow[columns["Referência inicial"] - 1] = "M26C02S-C07H01-lifting-cervical";
+  siteRow[columns["Plataforma inicial"] - 1] = "Meta";
+  const site = atribuicaoLegadaOportunidade_(siteRow, columns);
+  assert.equal(site["Caminho de conversão inicial"], "meta_site_whatsapp");
+
+  const directRow = Array(OPPORTUNITY_HEADERS.length).fill("");
+  directRow[columns["Referência inicial"] - 1] = "M26C01W-C07H01";
+  directRow[columns["Plataforma inicial"] - 1] = "Meta";
+  const direct = atribuicaoLegadaOportunidade_(directRow, columns);
+  assert.equal(direct["Caminho de conversão inicial"], "meta_whatsapp_direct");
+});
+
 test("resolved first and current campaign dimensions remain separate", () => {
   const { normalizarAtribuicaoOportunidade_ } = load();
   const attribution = normalizarAtribuicaoOportunidade_({

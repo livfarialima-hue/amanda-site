@@ -223,6 +223,26 @@ test("recognizes the exact M26F02S site journey used by the active campaign", ()
   assert.deepEqual(attribution.clickIds, {});
 });
 
+test("distinguishes the cervical direct and site references before persistence", () => {
+  const direct = classifyAttribution(
+    {},
+    {},
+    "Olá! Quero saber sobre lifting cervical. Ref. M26C01W-C07H01",
+  );
+  const site = classifyAttribution(
+    {},
+    {},
+    "Olá! Vim pelo site. Ref. M26C02S-C07H01-lifting-cervical",
+  );
+
+  assert.equal(direct.platform, "Meta");
+  assert.equal(direct.referenceCategory, "meta_coded");
+  assert.equal(direct.reference, "M26C01W-C07H01");
+  assert.equal(site.platform, "Meta");
+  assert.equal(site.referenceCategory, "meta_coded");
+  assert.equal(site.reference, "M26C02S-C07H01-lifting-cervical");
+});
+
 test("resolved journey enriches the lead contract without exposing its token", async () => {
   const claimantId = `C1_${"a".repeat(43)}`;
   const journey = {
@@ -557,6 +577,34 @@ test("maps known Meta ad IDs to complete campaign references", () => {
   assert.equal(attribution.platform, "Meta");
   assert.equal(attribution.referenceCategory, "meta_coded");
   assert.equal(attribution.reference, "M26F01W-C01H01");
+});
+
+test("maps the cervical WhatsApp and Site Meta ad IDs to distinct routes", () => {
+  const direct = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120251248762170627",
+      },
+    },
+    "Quero entender o lifting cervical",
+  );
+  const site = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120251249058760627",
+      },
+    },
+    "Quero entender o lifting cervical",
+  );
+
+  assert.equal(direct.referenceCategory, "meta_coded");
+  assert.equal(direct.reference, "M26C01W-C07H01");
+  assert.equal(site.referenceCategory, "meta_coded");
+  assert.equal(site.reference, "M26C02S-C07H01");
 });
 
 test("keeps an auditable Meta ad ID when the ad is not mapped yet", () => {

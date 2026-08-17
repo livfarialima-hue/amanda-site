@@ -608,7 +608,7 @@ function atribuicaoLegadaOportunidade_(row, columns) {
   } else if (platform === "Meta" || /^M26/i.test(reference)) {
     origin = "Meta Ads";
     channel = "meta_ads";
-    if (/^M26F02S(?:-|$)/i.test(reference)) {
+    if (/^(?:M26F02S|M26C02S)(?:-|$)/i.test(reference)) {
       path = "meta_site_whatsapp";
     } else if (
       !legacyPathConflict &&

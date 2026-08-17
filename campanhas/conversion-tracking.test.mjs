@@ -465,6 +465,48 @@ test("M26F02S survives the site journey without consent or duplicate prefixes", 
   assert.equal((message.match(/M26F02S/g) || []).length, 1);
 });
 
+test("M26C02S carries the cervical campaign, creative, landing and CTA to WhatsApp", () => {
+  const link = {
+    addEventListener() {},
+    dataset: { ctaLocation: "video", procedure: "lifting-cervical" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1%2C%20quero%20saber%20mais.",
+    matches() {
+      return true;
+    },
+    textContent: "Falar com a equipe",
+  };
+  const { debug } = loadAttribution({
+    consent: "denied",
+    journeyEnabled: true,
+    links: [link],
+    pathname: "/lifting-cervical/",
+    readyState: "complete",
+    search:
+      "?origem=M26C02S&utm_source=meta&utm_medium=paid_social" +
+      "&utm_campaign=M26C02S&utm_content=C07H01" +
+      "&meta_campaign_id=120000000000000100" +
+      "&meta_adset_id=120000000000000101" +
+      "&meta_ad_id=120000000000000102",
+  });
+
+  const envelope = debug.journeyEnvelopeForLink(link);
+  const message = new URL(link.href).searchParams.get("text");
+  assert.match(message, /Ref\. M26C02S-C07H01-lifting-cervical/);
+  assert.match(message, /JID: J1_[A-Za-z0-9_-]{22}/);
+  assert.equal(envelope.first_touch.origin, "Meta Ads");
+  assert.equal(envelope.first_touch.campaign_code, "M26C02S");
+  assert.equal(envelope.first_touch.creative_code, "C07H01");
+  assert.equal(envelope.first_touch.meta_campaign_id, "120000000000000100");
+  assert.equal(envelope.first_touch.meta_adset_id, "120000000000000101");
+  assert.equal(envelope.first_touch.meta_ad_id, "120000000000000102");
+  assert.equal(envelope.first_touch.page_path, "/lifting-cervical/");
+  assert.equal(envelope.cta.page_path, "/lifting-cervical/");
+  assert.equal(envelope.cta.location, "video");
+  assert.equal(envelope.conversion_path, "meta_site_whatsapp");
+  assert.equal(envelope.confidence, "observed");
+  assert.equal(envelope.fallback_reason, "");
+});
+
 test("creates a PII-free journey envelope for Meta site and registers it on click", () => {
   const listeners = {};
   const link = {

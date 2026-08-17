@@ -60,7 +60,7 @@ Fadiga criativa exige, no mínimo, 1.000 impressões na janela e combinação de
 
 ## 5. Regras estratégicas incorporadas
 
-- manter `M26F01W` como controle;
+- manter `M26F01W/C06H01` como referência operacional contínua de lifting facial no WhatsApp, sem tratá-la como controle causal do teste cervical;
 - não colocar verba nova em `M26F02S` antes da prova Meta → site → WhatsApp → LEADS/CRM;
 - manter as campanhas faciais em 40+ e alertar se `age_min` observado ficar abaixo de 40;
 - tratar a idade do Público Advantage+ como sugestão até que `age_min` prove o limite; nome do conjunto não prova controle etário;
@@ -100,12 +100,14 @@ Auditoria etária ao vivo de 16/08/2026:
 
 Próximas conferências: revisar os relatórios completos de 18/08, 25/08 e 01/09 antes de calibrar qualquer limiar. Alterações de campanha continuam manuais e exigem autorização específica.
 
-Plano condicional registrado em 16/08:
+Plano condicional revisado em 16/08:
 
-- não renovar `M26F02S`, preservar `M26F01W/C06H01` como controle e propor um piloto `M26C01W/C07H01` de lifting cervical por 15 dias;
-- a rotina atual não deve chamar o novo piloto de acompanhado antes de `M26C01W` entrar em `META_ADS_CAMPAIGN_REGISTRY`, na regra de resultado principal e nos testes;
-- o onboarding de toda campanha Meta nova exige código canônico, caminho, criativo, mensagem, Meta Ad ID, destino, idade efetiva, data/hora de ativação e teste de chegada ao agregado;
-- checkpoints condicionais do piloto: 20/08, 24/08, 01/09 e 08/09 se a ativação ocorrer em 16/08; qualquer atraso desloca as janelas;
+- manter `M26F01W` somente com `C06H01` e destino WhatsApp; não renovar `M26F02S`; interromper `M26O01W`; e testar a rota exclusivamente dentro de cervical, em `M26C01W/C07H01` — WhatsApp direto — versus `M26C02S/C07H01` — site → WhatsApp — por 15 dias;
+- a rotina atual não deve chamar o experimento de acompanhado antes de os dois códigos entrarem em `META_ADS_CAMPAIGN_REGISTRY`, na regra de resultado principal, no agregado e nos testes;
+- o onboarding de cada braço exige código canônico, caminho, criativo, mensagem, Meta Ad ID, destino, idade efetiva, data/hora de ativação e teste de chegada ao agregado;
+- o braço Site só pode ser liberado depois de sonda ponta a ponta com campanha, criativo, landing, página do CTA, caminho e confiança corretos em LEADS/CRM;
+- checkpoints condicionais: D+3, D+7, D+15 e D+22 a partir da ativação real; as datas do calendário só serão fixadas depois da publicação;
+- os arquivos cervicais finais corrigem `cervicoplastia`; Daniel aceitou manter `Clique no link da bio`. A rotina deve tratar o Reels orgânico agendado para 20/08 às 19h30 como fonte separada e nunca somá-lo aos braços pagos; o post orgânico não será reutilizado nos anúncios;
 - o plano executável e os critérios de manter/reverter estão em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
 
 Ordem obrigatória:

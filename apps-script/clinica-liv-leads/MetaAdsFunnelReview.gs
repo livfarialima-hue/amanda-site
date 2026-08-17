@@ -12,6 +12,8 @@ const META_ADS_FUNNEL_REVIEW_CONFIG = Object.freeze({
 const META_ADS_CAMPAIGN_REGISTRY = Object.freeze({
   M26F01W: Object.freeze({ path: "meta_whatsapp_direct", campaign: "M26F01W" }),
   M26F02S: Object.freeze({ path: "meta_site_whatsapp", campaign: "M26F02S" }),
+  M26C01W: Object.freeze({ path: "meta_whatsapp_direct", campaign: "M26C01W" }),
+  M26C02S: Object.freeze({ path: "meta_site_whatsapp", campaign: "M26C02S" }),
 });
 
 const META_ADS_FUNNEL_AGGREGATE_HEADERS = Object.freeze([
@@ -142,6 +144,13 @@ function construirAgregadosFunilMetaAds_(sourceValues, milestoneValues, now) {
     const endExclusive = new Date(yesterday.getTime() + 86400000);
     const buckets = new Map();
     buckets.set("__TOTAL__|__TOTAL__|__TOTAL__", novoBucketFunilMetaAds_());
+    Object.keys(META_ADS_CAMPAIGN_REGISTRY).forEach((campaignCode) => {
+      const registered = META_ADS_CAMPAIGN_REGISTRY[campaignCode];
+      buckets.set(
+        `${registered.path}|${registered.campaign}|__TOTAL__`,
+        novoBucketFunilMetaAds_(),
+      );
+    });
 
     sourceValues.slice(1).forEach((row) => {
       if (!linhaAmandaMetaAds_(row[indexes["Profissional"]])) return;
@@ -202,7 +211,7 @@ function construirAgregadosFunilMetaAds_(sourceValues, milestoneValues, now) {
           bucket.canonical,
           bucket.unknown,
           sourceRows,
-          "Coorte por data do contato; fases refletem o estado atual. M26F01W = WhatsApp direto; M26F02S = site → WhatsApp. Código conflitante ou ausente permanece desconhecido. Contato válido = classificado e não marcado como não qualificado. Fechamento exige marco canônico; ausência de marco não prova ausência real.",
+          "Coorte por data do contato; fases refletem o estado atual. M26F01W/M26C01W = WhatsApp direto; M26F02S/M26C02S = site → WhatsApp. Código conflitante ou ausente permanece desconhecido. Contato válido = classificado e não marcado como não qualificado. Fechamento exige marco canônico; ausência de marco não prova ausência real.",
         ]);
       });
   });

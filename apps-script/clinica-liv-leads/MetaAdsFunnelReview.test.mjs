@@ -30,16 +30,22 @@ test("agrega Meta direto e Meta via site sem expor IDs de oportunidade", () => {
     headers,
     ["opp_sintetica_1", "amanda", "open", "Qualificado", new Date("2026-08-14T12:00:00Z"), "Meta Ads", "M26F01W", "C06H01"],
     ["opp_sintetica_2", "amanda", "open", "Consulta agendada", new Date("2026-08-13T12:00:00Z"), "Meta Ads", "M26F02S", "C01H01"],
+    ["opp_sintetica_4", "amanda", "open", "Qualificado", new Date("2026-08-14T15:00:00Z"), "Meta Ads", "M26C01W", "C07H01"],
+    ["opp_sintetica_5", "amanda", "open", "Consulta agendada", new Date("2026-08-13T15:00:00Z"), "Meta Ads", "M26C02S", "C07H01"],
     ["opp_sintetica_3", "amanda", "open", "Novo", new Date("2026-08-12T12:00:00Z"), "Meta Ads", "M26O01W", "C99H99"],
   ], [["Event ID", "Opportunity ID", "Marco"], ["evt_sintetico", "opp_sintetica_2", "accepted"]], new Date("2026-08-15T15:00:00Z"));
 
   const direct = rows.find((row) => row[2] === 7 && row[5] === "meta_whatsapp_direct" && row[6] === "M26F01W" && row[7] === "__TOTAL__");
   const site = rows.find((row) => row[2] === 7 && row[5] === "meta_site_whatsapp" && row[6] === "M26F02S" && row[7] === "__TOTAL__");
+  const cervicalDirect = rows.find((row) => row[2] === 7 && row[5] === "meta_whatsapp_direct" && row[6] === "M26C01W" && row[7] === "__TOTAL__");
+  const cervicalSite = rows.find((row) => row[2] === 7 && row[5] === "meta_site_whatsapp" && row[6] === "M26C02S" && row[7] === "__TOTAL__");
   const unknown = rows.find((row) => row[2] === 7 && row[5] === "__UNKNOWN_PATH__" && row[7] === "__TOTAL__");
   assert.equal(direct[8], 1);
   assert.equal(direct[11], 1);
   assert.equal(site[12], 1);
   assert.equal(site[15], 1);
+  assert.equal(cervicalDirect[11], 1);
+  assert.equal(cervicalSite[12], 1);
   assert.equal(unknown[8], 1);
   assert.equal(unknown[17], 1);
   assert.equal(JSON.stringify(rows).includes("opp_sintetica"), false);
@@ -50,8 +56,21 @@ test("M26O01W permanece conflitante e não vira WhatsApp direto por sufixo", () 
   const resolve = load("resolverCampanhaMetaAds_");
   assert.equal(resolve("M26F01W").path, "meta_whatsapp_direct");
   assert.equal(resolve("M26F02S").path, "meta_site_whatsapp");
+  assert.equal(resolve("M26C01W").path, "meta_whatsapp_direct");
+  assert.equal(resolve("M26C02S").path, "meta_site_whatsapp");
   assert.equal(resolve("M26O01W"), null);
   assert.equal(resolve("M26O02W"), null);
+});
+
+test("campanhas cadastradas recebem uma linha zero sem fabricar contato", () => {
+  const build = load("construirAgregadosFunilMetaAds_");
+  const headers = ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha", "Criativo"];
+  const rows = build([headers], [], new Date("2026-08-15T15:00:00Z"));
+  const cervicalSite = rows.find((row) => row[2] === 7 && row[6] === "M26C02S" && row[7] === "__TOTAL__");
+  assert.ok(cervicalSite);
+  assert.equal(cervicalSite[8], 0);
+  assert.equal(cervicalSite[11], 0);
+  assert.equal(cervicalSite[17], 0);
 });
 
 test("criativo exige código CxxHxx explícito", () => {

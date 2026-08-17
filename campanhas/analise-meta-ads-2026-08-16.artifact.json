@@ -4,7 +4,7 @@
     "version": 1,
     "surface": "report",
     "title": "Meta Ads — decisão do próximo ciclo",
-    "description": "Fechamento das campanhas faciais e de otoplastia e proposta controlada LIFT/CERV para 15 dias.",
+    "description": "Continuidade do lifting facial no WhatsApp, encerramento da rota facial Site e da otoplastia e teste cervical Site versus WhatsApp por 15 dias.",
     "generatedAt": "2026-08-16T21:35:00-03:00",
     "sources": [
       {
@@ -247,7 +247,7 @@
         "id": "executive_summary",
         "type": "markdown",
         "layout": "full",
-        "body": "## Resumo executivo\n\n**Recomendação:** não renovar a campanha de site; continuar somente o vídeo de lifting no WhatsApp como controle; interromper o criativo atual de otoplastia; e iniciar lifting cervical em um piloto separado de 15 dias, WhatsApp direto, 40–65+ e R$ 20/dia, depois dos gates técnicos. O orçamento base soma aproximadamente R$ 600 no ciclo. Nenhuma mudança de campanha foi executada nesta análise."
+        "body": "## Resumo executivo\n\n**Recomendação revisada:** manter lifting facial somente em M26F01W/C06H01 com destino WhatsApp; não renovar M26F02S; interromper o criativo atual de otoplastia; e testar a rota exclusivamente dentro de lifting cervical em dois braços de 15 dias — WhatsApp direto versus site → WhatsApp — com o mesmo vídeo corrigido, público rígido 40–65+ e R$ 20/dia por braço. O teste cervical soma aproximadamente R$ 600; lifting facial acrescenta cerca de R$ 300 se a Meta aceitar R$ 20/dia, e qualquer mínimo superior exige autorização própria. O braço cervical Site só pode começar depois de prova até LEADS/CRM. Nenhuma campanha foi alterada nesta análise."
       },
       {
         "id": "key_findings",
@@ -277,13 +277,13 @@
         "id": "plan_section",
         "type": "markdown",
         "layout": "full",
-        "body": "## Plano de 15 dias\n\n**Controle LIFT:** M26F01W/C06H01, WhatsApp, R$ 20/dia. **Piloto CERV:** M26C01W/C07H01, WhatsApp, R$ 20/dia. Mesmo público rígido 40–65+, mesma geografia e política de posicionamento; nenhuma mudança durante a janela. Checkpoints após 3, 7 e 15 dias completos. Pausar CERV após pelo menos R$ 120 sem contato válido ou diante de falha de idade, código ou atendimento."
+        "body": "## Plano de 15 dias\n\n**Lifting facial contínuo:** M26F01W/C06H01, somente WhatsApp, acompanhado separadamente e sem integrar o teste. **Braço cervical A:** M26C01W/C07H01, WhatsApp direto, R$ 20/dia. **Braço cervical B:** M26C02S/C07H01, /lifting-cervical/ → WhatsApp, R$ 20/dia. Os braços cervicais usam o mesmo público rígido 40–65+, texto, criativo e posicionamentos; divisão equivalente e mutuamente exclusiva. Checkpoints D+3, D+7, D+15 e D+22. A decisão de rota usa contato válido, qualificado e consulta cervical, não LPV ou conversa isolados."
       },
       {
         "id": "limits_section",
         "type": "markdown",
         "layout": "full",
-        "body": "## Limitações e gates\n\nOs criativos receberam verbas muito diferentes e não formam um teste aleatorizado. Conversa e LPV são resultados de plataforma, não pacientes. M26F02S sem código no CRM não significa zero contatos reais. O novo vídeo cervical não estava disponível no Ads Manager ou na biblioteca acessível para revisão nesta coleta. Antes de publicar, são obrigatórios WhatsApp Business aceito, age_min=40, referência ponta a ponta, rotina reconhecendo M26C01W, fallback por Meta Ad ID, sonda sintética e baseline."
+        "body": "## Limitações e gates\n\nOs criativos faciais antigos receberam verbas diferentes e não formam um teste aleatorizado. Conversa e LPV são resultados de plataforma, não pacientes. M26F02S sem código no CRM não significa zero contatos reais. Os arquivos cervicais finais corrigem cervicoplastia; Daniel aceitou manter Clique no link da bio no áudio e na legenda. Antes de ativar gasto, são obrigatórios WhatsApp Business aceito, age_min=40, M26C01W/M26C02S reconhecidos pela rotina, Meta Ad IDs mapeados, sonda Site até LEADS/CRM, baseline e rollback. O Reels orgânico de 20/08 às 19h30 é uma fonte separada e não será reutilizado nos anúncios."
       }
     ]
   },

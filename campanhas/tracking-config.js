@@ -17,7 +17,7 @@ window.AMANDA_TRACKING_CONFIG = {
   googleAdsId: "AW-17157418677",               // Ex.: "AW-123456789"
   googleAdsConversionLabel: "Hc43CM7-qvsaELXdpfU_",  // Conversão de clique no WhatsApp.
   googleAdsFallbackOriginCode: "G26ADS",       // Referência genérica quando há clique do Google, mas não há código origem.
-  attributionJourneyEnabled: false,             // Ativar somente junto com o resolvedor ponta a ponta no webhook, LEADS e CRM.
+  attributionJourneyEnabled: true,              // Publicar somente em liberação coordenada com schema v1, sonda E2E e rollback prontos.
   advancedConsentMode: false,                  // Modo básico: tags permanecem bloqueadas até o aceite.
   trackMetaPageViews: true,
   sanitizePreConsentMeasurement: true,

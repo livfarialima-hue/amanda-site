@@ -15,7 +15,7 @@ export async function runSyntheticIntegrationHealth({
         secret,
         action: "run_synthetic_health_check",
         attributionProbe: {
-          reference: "M26F02S-C01H01-avaliacao-facial",
+          reference: "M26C02S-C07H01-lifting-cervical",
           platform: "Meta",
           referenceCategory: "meta_coded",
           fallbackReason: "",

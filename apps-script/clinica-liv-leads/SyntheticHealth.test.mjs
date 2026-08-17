@@ -67,3 +67,20 @@ test("synthetic attribution check fails when a coded Meta visit falls back", () 
     fallbackReason: "meta_referral_without_mapped_code",
   }), false);
 });
+
+test("synthetic attribution check accepts the cervical site contract only when exact", () => {
+  const { avaliarContratoAtribuicaoMetaSite_ } = load();
+
+  assert.equal(avaliarContratoAtribuicaoMetaSite_({
+    reference: "M26C02S-C07H01-lifting-cervical",
+    platform: "Meta",
+    referenceCategory: "meta_coded",
+    fallbackReason: "",
+  }), true);
+  assert.equal(avaliarContratoAtribuicaoMetaSite_({
+    reference: "M26C02S-C06H01-lifting-cervical",
+    platform: "Meta",
+    referenceCategory: "meta_coded",
+    fallbackReason: "",
+  }), false);
+});

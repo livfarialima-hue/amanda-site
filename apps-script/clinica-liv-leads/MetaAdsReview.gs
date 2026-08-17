@@ -31,7 +31,20 @@ const META_ADS_REVIEW_CONFIG = Object.freeze({
   minImpressionsForFatigue: 1000,
   minLinkClicksForLandingSignal: 50,
   minResultsForCostComparison: 5,
-  facialCampaignCodes: Object.freeze(["M26F01W", "M26F02S"]),
+  age40CampaignCodes: Object.freeze([
+    "M26F01W",
+    "M26F02S",
+    "M26C01W",
+    "M26C02S",
+  ]),
+  directCampaignCodes: Object.freeze(["M26F01W", "M26C01W"]),
+  siteCampaignCodes: Object.freeze(["M26F02S", "M26C02S"]),
+  funnelCampaignCodes: Object.freeze([
+    "M26F01W",
+    "M26F02S",
+    "M26C01W",
+    "M26C02S",
+  ]),
 });
 
 const META_ADS_ACTION_KEYS = Object.freeze({
@@ -304,12 +317,12 @@ function normalizarInsightMeta_(row) {
   const linkClicksFromActions = somaChavesMeta_(actions, META_ADS_ACTION_KEYS.linkClicks);
   const linkClicks = numeroMeta_(row.inline_link_clicks) ?? linkClicksFromActions;
   const campaignCode = codigoCampanhaMeta_(row.campaign_name);
-  const primaryResults = campaignCode === "M26F01W" ? conversations
-    : campaignCode === "M26F02S" ? landingPageViews
+  const primaryResults = META_ADS_REVIEW_CONFIG.directCampaignCodes.includes(campaignCode) ? conversations
+    : META_ADS_REVIEW_CONFIG.siteCampaignCodes.includes(campaignCode) ? landingPageViews
       : null;
-  const primaryCost = campaignCode === "M26F01W"
+  const primaryCost = META_ADS_REVIEW_CONFIG.directCampaignCodes.includes(campaignCode)
     ? somaChavesMeta_(costs, META_ADS_ACTION_KEYS.conversations)
-    : campaignCode === "M26F02S"
+    : META_ADS_REVIEW_CONFIG.siteCampaignCodes.includes(campaignCode)
       ? somaChavesMeta_(costs, META_ADS_ACTION_KEYS.landingPageViews)
       : null;
   return {
@@ -482,18 +495,20 @@ function construirAlertasCriticosMeta_(data) {
     data.adsets.forEach((adset) => {
       const code = codigoCampanhaMeta_(adset.name);
       const targeting = adset.targeting || {};
-      if (META_ADS_REVIEW_CONFIG.facialCampaignCodes.includes(code) && numeroMeta_(targeting.age_min) !== null && numeroMeta_(targeting.age_min) < 40) {
-        alerts.push(alertaMeta_("P0", `Piso etário abaixo de 40 em ${adset.name}`, `age_min observado: ${targeting.age_min}. A decisão vigente para Meta facial é 40+.`, "Usar controle rígido de 40+ após validar os gates de publicação da plataforma; não tratar a sugestão 40–65+ como limite e não editar automaticamente.", `meta_age_floor|${adset.id}`, 40 - numeroMeta_(targeting.age_min)));
+      if (META_ADS_REVIEW_CONFIG.age40CampaignCodes.includes(code) && numeroMeta_(targeting.age_min) !== null && numeroMeta_(targeting.age_min) < 40) {
+        alerts.push(alertaMeta_("P0", `Piso etário abaixo de 40 em ${adset.name}`, `age_min observado: ${targeting.age_min}. A decisão vigente para essas campanhas faciais e cervicais é 40+.`, "Usar controle rígido de 40+ após validar os gates de publicação da plataforma; não tratar a sugestão 40–65+ como limite e não editar automaticamente.", `meta_age_floor|${adset.id}`, 40 - numeroMeta_(targeting.age_min)));
       }
     });
   }
 
   if (data.sourceStatus.thirty && data.sourceStatus.funnel) {
-    const siteSpend = somarInsightsMeta_(data.thirty.filter((row) => row.campaignCode === "M26F02S")).spend;
-    const siteFunnel = linhaFunilMeta_(data.funnel, 30, "M26F02S", "__TOTAL__");
-    if (siteSpend > 0 && siteFunnel && siteFunnel.contacts === 0) {
-      alerts.push(alertaMeta_("P0", "Meta Site gastou, mas não apareceu no funil identificado", `Gasto em 30 dias: ${brlMeta_(siteSpend)}; contatos com M26F02S: 0 no agregado. Isso não prova zero contatos reais.`, "Manter sem nova verba e auditar Meta → site → WhatsApp → LEADS/CRM.", "meta_site_zero_attributed_contacts", siteSpend));
-    }
+    META_ADS_REVIEW_CONFIG.siteCampaignCodes.forEach((campaignCode) => {
+      const siteSpend = somarInsightsMeta_(data.thirty.filter((row) => row.campaignCode === campaignCode)).spend;
+      const siteFunnel = linhaFunilMeta_(data.funnel, 30, campaignCode, "__TOTAL__");
+      if (siteSpend > 0 && (!siteFunnel || siteFunnel.contacts === 0)) {
+        alerts.push(alertaMeta_("P0", `Meta Site ${campaignCode} gastou, mas não apareceu no funil identificado`, `Gasto em 30 dias: ${brlMeta_(siteSpend)}; contatos com ${campaignCode}: 0 no agregado. Isso não prova zero contatos reais.`, "Interromper nova verba e auditar Meta → site → WhatsApp → LEADS/CRM.", `meta_site_zero_attributed_contacts|${campaignCode}`, siteSpend));
+      }
+    });
   }
 
   if (!data.sourceStatus.funnel) {
@@ -527,7 +542,7 @@ function construirSugestoesMeta_(data) {
   });
 
   agruparInsightsMeta_(data.thirty, "campaignId", true).__rows.forEach((row) => {
-    if (row.linkClicks >= META_ADS_REVIEW_CONFIG.minLinkClicksForLandingSignal && row.campaignCode === "M26F02S") {
+    if (row.linkClicks >= META_ADS_REVIEW_CONFIG.minLinkClicksForLandingSignal && META_ADS_REVIEW_CONFIG.siteCampaignCodes.includes(row.campaignCode)) {
       const ratio = row.linkClicks ? row.landingPageViews / row.linkClicks : null;
       if (ratio !== null && ratio < 0.7) {
         suggestions.push(sugestaoMeta_("P1", "Corrigir agora", row.campaign, "Todos", "Perda relevante entre clique e visualização da página", `${inteiroMeta_(row.linkClicks)} cliques no link; ${inteiroMeta_(row.landingPageViews)} LPVs; passagem ${percentualMeta_(ratio)}.`, "Auditar velocidade, redirecionamento, consentimento e URL em mobile antes de testar criativo.", "Recuperar visitas reais sem aumentar gasto.", "alta para a perda; baixa para a causa", "Não culpar a página ou o anúncio sem teste técnico.", "LPV/clique e contato Meta Site identificado", "7 dias após correção isolada", "Manter correção se LPV/clique subir sem queda de contato válido; reverter se houver regressão técnica."));
@@ -535,13 +550,15 @@ function construirSugestoesMeta_(data) {
     }
   });
 
-  const direct30 = linhaFunilMeta_(data.funnel, 30, "M26F01W", "__TOTAL__");
-  const site30 = linhaFunilMeta_(data.funnel, 30, "M26F02S", "__TOTAL__");
   const perf30 = agruparInsightsMeta_(data.thirty, "campaignId", true).__rows;
   perf30.forEach((row) => {
-    const funnel = row.campaignCode === "M26F01W" ? direct30 : row.campaignCode === "M26F02S" ? site30 : null;
-    const queue = row.campaignCode === "M26F02S" && (!funnel || funnel.contacts === 0) ? "Não alterar" : "Aguardar dados";
-    suggestions.push(sugestaoMeta_("P1", queue, row.campaign, "Todos", "Decisão deve usar funil, não somente resultado da plataforma", `30 dias: ${brlMeta_(row.spend)}; ${inteiroMeta_(row.primaryResults)} resultados da plataforma; ${funnel ? inteiroMeta_(funnel.contacts) : "N/D"} contatos identificados; ${funnel ? inteiroMeta_(funnel.qualified) : "N/D"} qualificados.`, row.campaignCode === "M26F02S" ? "Manter sem nova verba até prova E2E e comparar com o controle WhatsApp direto." : "Manter como controle e reconciliar conversa → contato válido → consulta.", "Evitar otimização por proxy.", "média", "Resultados Meta não equivalem a pessoas únicas ou pacientes.", "Custo/lead qualificado e custo/consulta realizada", "30 dias ou ≥10 leads qualificados", "Manter/realocar somente com atribuição confiável e diferença de negócio; não decidir por CTR isolado."));
+    const trackedCampaign = META_ADS_REVIEW_CONFIG.funnelCampaignCodes.includes(row.campaignCode);
+    const siteCampaign = META_ADS_REVIEW_CONFIG.siteCampaignCodes.includes(row.campaignCode);
+    const funnel = trackedCampaign
+      ? linhaFunilMeta_(data.funnel, 30, row.campaignCode, "__TOTAL__")
+      : null;
+    const queue = siteCampaign && (!funnel || funnel.contacts === 0) ? "Não alterar" : "Aguardar dados";
+    suggestions.push(sugestaoMeta_("P1", queue, row.campaign, "Todos", "Decisão deve usar funil, não somente resultado da plataforma", `30 dias: ${brlMeta_(row.spend)}; ${inteiroMeta_(row.primaryResults)} resultados da plataforma; ${funnel ? inteiroMeta_(funnel.contacts) : "N/D"} contatos identificados; ${funnel ? inteiroMeta_(funnel.qualified) : "N/D"} qualificados.`, siteCampaign ? "Interromper nova verba sem prova E2E e comparar com a rota WhatsApp direto do mesmo procedimento." : "Manter como controle e reconciliar conversa → contato válido → consulta.", "Evitar otimização por proxy.", "média", "Resultados Meta não equivalem a pessoas únicas ou pacientes.", "Custo/lead qualificado e custo/consulta realizada", "30 dias ou ≥10 leads qualificados", "Manter/realocar somente com atribuição confiável e diferença de negócio; não decidir por CTR isolado."));
   });
 
   if (data.sourceStatus.ageGender) {
@@ -736,7 +753,7 @@ function cartoesCampanhasHtmlMeta_(report) {
 }
 
 function linhasFunilEmailMeta_(report, windows) {
-  return (windows || []).flatMap((days) => ["M26F01W", "M26F02S"].map((code) => ({
+  return (windows || []).flatMap((days) => META_ADS_REVIEW_CONFIG.funnelCampaignCodes.map((code) => ({
     days,
     code,
     row: linhaFunilMeta_(report.funnel, days, code, "__TOTAL__"),

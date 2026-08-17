@@ -297,6 +297,21 @@ main [id] { scroll-margin-top: 86px; }
   background: #171312;
   box-shadow: 0 20px 46px rgba(14, 8, 7, .28);
 }
+.cv-featured-video { padding-block: clamp(42px, 6vw, 76px); }
+.cv-featured-video .cv-story--featured-video {
+  grid-template-columns: minmax(260px, .75fr) minmax(360px, 1.25fr);
+  margin-top: 0;
+}
+.cv-featured-video .cv-story-media { width: min(100%, 520px); }
+.cv-featured-video .cv-story-media video {
+  aspect-ratio: 1;
+  max-height: none;
+  object-fit: contain;
+}
+.cv-featured-video .cv-disclaimer {
+  margin: 12px 0 0;
+  color: #eadbd3;
+}
 .cv-video-fallback {
   display: inline-block;
   margin-top: 12px;
@@ -682,6 +697,9 @@ body.curated-video-open { overflow: hidden; }
   .cv-sticky .cv-btn { min-height: 46px; padding-block: 10px; }
   .cv-story { margin-top: 38px; padding: 24px 20px; }
   .cv-story-media { width: min(100%, 330px); }
+  .cv-featured-video { padding-block: 36px; }
+  .cv-featured-video .cv-story--featured-video { margin-top: 0; }
+  .cv-featured-video .cv-story-media { width: 100%; }
   .cv-consult-material { margin-top: 20px; padding: 24px 16px; }
   .cv-clinic-gallery { grid-template-columns: 1fr 1fr; }
   .cv-clinic-gallery figure:first-child { grid-column: 1 / -1; grid-row: auto; }

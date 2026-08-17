@@ -6,6 +6,35 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 16 de agosto de 2026 — piloto Aqui Ads agendado para setembro
+
+- **Status:** `Planejada`; decisão e pré-voo em 16/09/2026; nenhuma compra ou veiculação autorizada.
+- **Responsável:** Codex pelo pré-voo e Daniel pela decisão de investimento/ativação.
+- **Área/canal:** OOH hiperlocal pela plataforma Aqui Ads, complementar a Google, Meta, orgânico e Perfil da Empresa.
+- **Mudança:** preparar teste de quatro semanas com dois edifícios residenciais premium e um salão/spa premium, priorizando Jardim Europa, Itaim Bibi, Vila Nova Conceição, Alto de Pinheiros e Pinheiros. Edifícios comerciais da Faria Lima ficam para uma segunda etapa.
+- **Motivo e evidência:** o público pretendido para Amanda combina poder aquisitivo e idade 40+. Simulações consultadas em 16/08 indicaram possibilidade de compra hiperlocal; o envelope inicial estimado foi de R$ 1.206,20 antes da produção. Os números de exposição da plataforma ainda precisam de metodologia documentada e não serão tratados como pacientes ou retorno.
+- **Hipótese:** repetição em ambientes premium próximos à clínica aumenta familiaridade e confiança e contribui para contatos qualificados e consultas, inclusive por busca de marca, acesso direto ou indicação tardia.
+- **Métrica principal:** contatos válidos, qualificados e consultas agendadas atribuídos ao piloto; como apoio, QR/landing/WhatsApp exclusivos, `Como conheceu?`, busca de marca, direto e Perfil da Empresa.
+- **Guardrails:** verba incremental sem retirada de Google/Meta; inventário, preço e audiência revalidados; criativo institucional aprovado, sem preço/promoção/garantia/vergonha/antes-depois; tracking canônico; cobertura esperada ≥80%; capacidade confirmada; nenhuma mudança material concorrente.
+- **Data de revisão:** 16/09/2026 para decisão; se ativado, D+7, D+14, D+28 e D+35 contados da veiculação real.
+- **Regra para manter/escala:** somente com cobertura ≥80%, sinal de negócio, custo aceitável e nova autorização. Menos de 80% é inconclusivo. Não renovar com zero qualificado atribuído, tracking saudável e ausência de sinal coerente de marca.
+- **Plano executivo:** `docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md`.
+
+## 16 de agosto de 2026 — revisão: experimento cervical Site versus WhatsApp
+
+- **Status:** substitui a proposta LIFT/CERV registrada abaixo; execução preparada em 16/08/2026, sem publicação, para aprovação final em 17/08 depois da publicação técnica coordenada e da sonda ponta a ponta.
+- **Decisão de escopo:** manter `M26F01W` somente com `C06H01` e destino WhatsApp, não renovar `M26F02S`, interromper `M26O01W` e restringir ao lifting cervical a comparação Site versus WhatsApp.
+- **Experimento:** `M26C01W/C07H01` — WhatsApp direto — versus `M26C02S/C07H01` — `/lifting-cervical/` → WhatsApp — em campanhas de Tráfego separadas, com o mesmo texto, público rígido 40–65+, São Paulo +20 km, posicionamentos Advantage+, R$ 300 total por braço e janela de 17/08/2026 às 12h a 01/09/2026 às 12h. O Feed usa o arquivo 1:1 e Reels/Stories usam o arquivo 9:16 enviado por Daniel, sem recorte automático.
+- **Objetivo:** decidir qual rota operacional gera mais contatos válidos, qualificados e consultas de lifting cervical com orçamento equivalente. `M26F01W/C06H01` corre em paralelo como campanha contínua de lifting facial e não integra a comparação. LPV e conversa continuam proxies; como a otimização de entrega difere entre as rotas, não atribuir causalidade pura ao destino.
+- **Gate P0:** não publicar nenhum braço sem sonda sintética que prove Meta → site → navegação → CTA → WhatsApp → webhook → LEADS → CRM para `M26C02S`, com campanha, criativo, landing, página do CTA, caminho, confiança e first touch corretos, zero PII e zero duplicidade.
+- **Criativo:** as versões finais 1080×1080 e 1080×1920 corrigem `cervecoplastia` para `cervicoplastia`. Daniel decidiu manter e aceitou o CTA falado/embutido `Clique no link da bio`. O mesmo material será usado nos dois braços, com a proporção própria de cada posicionamento. O Reels orgânico ficou agendado para 20/08/2026 às 19h30, com leitura separada; o post não será reutilizado nos anúncios.
+- **Objetos preparados:** braço direto — campanha `120251248762160627`, conjunto `120251248762180627`, anúncio `120251248762170627`; braço Site — campanha `120251249058750627`, conjunto `120251249058780627`, anúncio `120251249058760627`. Os anúncios herdados `120251248762190627` e `120251249058770627` ficaram desligados. Nenhum objeto foi publicado nesta preparação.
+- **Atribuição:** os dois IDs de anúncio foram adicionados localmente ao mapa canônico do webhook como `M26C01W-C07H01` e `M26C02S-C07H01`; isso continua não publicado até o release coordenado.
+- **Limitação do lifting facial:** a extensão de `M26F01W/C06H01` foi preparada até 31/08/2026 às 21h com acréscimo de R$ 300, mas o conjunto Advantage+ atual mantém mínimo observado de 25 e 40–65+ apenas como sugestão. Aprovar essa exceção conscientemente ou adiar a renovação para reconstrução com piso rígido; não chamar o conjunto atual de 40+ comprovado.
+- **Métrica/regra:** sonda com 100% dos campos; cobertura ao vivo ≥80%; pausar um braço após ≥R$ 150 sem contato válido se o tracking estiver saudável; não escalar antes de cinco qualificados, uma consulta agendada e CPQL ≤R$ 75 na rota candidata. Sem amostra suficiente em D+15, registrar `N/D`.
+- **Revisão:** D+3, D+7, D+15 e D+22 contados da ativação real. Datas absolutas só serão criadas no Calendar depois da publicação.
+- **Plano:** `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
+
 ## 16 de agosto de 2026 — fechamento do ciclo Meta e proposta LIFT/CERV por 15 dias
 
 - **Status:** análise concluída; plano local registrado; nenhuma campanha foi pausada, criada, renovada ou publicada por esta entrada.

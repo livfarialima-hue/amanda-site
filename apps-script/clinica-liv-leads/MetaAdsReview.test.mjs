@@ -81,6 +81,21 @@ test("normaliza as ações relevantes sem misturar conversa com LPV", () => {
     actions: [{ action_type: "landing_page_view", value: "35" }],
   });
   assert.equal(site.primaryResults, 35);
+
+  const cervicalDirect = normalize({
+    campaign_name: "M26C01W | Cervical SP | WhatsApp",
+    spend: "45",
+    impressions: "700",
+    actions: [{ action_type: "messaging_conversation_started_7d", value: "9" }],
+  });
+  const cervicalSite = normalize({
+    campaign_name: "M26C02S | Cervical SP | Site",
+    spend: "20",
+    impressions: "500",
+    actions: [{ action_type: "landing_page_view", value: "40" }],
+  });
+  assert.equal(cervicalDirect.primaryResults, 9);
+  assert.equal(cervicalSite.primaryResults, 40);
 });
 
 test("a Meta Site com gasto e zero atribuição gera alerta sem afirmar zero contato real", () => {
@@ -92,8 +107,23 @@ test("a Meta Site com gasto e zero atribuição gera alerta sem afirmar zero con
     thirty: [{ campaignCode: "M26F02S", spend: 120, impressions: 1000, reach: 800, linkClicks: 100, landingPageViews: 80, conversations: 0, primaryResults: 80 }],
     funnel: Object.assign(rows, [{ windowDays: 30, campaignCode: "M26F02S", creativeCode: "__TOTAL__", contacts: 0 }]),
   });
-  const item = result.find((row) => row.signature === "meta_site_zero_attributed_contacts");
+  const item = result.find((row) => row.signature === "meta_site_zero_attributed_contacts|M26F02S");
   assert.ok(item);
+  assert.match(item.evidence, /não prova zero contatos reais/i);
+});
+
+test("a nova Meta cervical Site também alerta quando gasto não chega ao funil", () => {
+  const alerts = load("construirAlertasCriticosMeta_");
+  const rows = [];
+  Object.defineProperty(rows, "__sourceOk", { value: true });
+  const result = alerts({
+    sourceStatus: { daily: false, campaigns: false, adsets: false, thirty: true, funnel: true, landingHealth: false },
+    thirty: [{ campaignCode: "M26C02S", spend: 80, impressions: 900, reach: 600, linkClicks: 75, landingPageViews: 60, conversations: 0, primaryResults: 60 }],
+    funnel: Object.assign(rows, [{ windowDays: 30, campaignCode: "M26C02S", creativeCode: "__TOTAL__", contacts: 0 }]),
+  });
+  const item = result.find((row) => row.signature === "meta_site_zero_attributed_contacts|M26C02S");
+  assert.ok(item);
+  assert.match(item.title, /M26C02S/);
   assert.match(item.evidence, /não prova zero contatos reais/i);
 });
 
@@ -106,6 +136,16 @@ test("idade menor que 40 em campanha facial é alerta e nunca ajuste automático
   });
   assert.equal(result.some((row) => row.signature === "meta_age_floor|synthetic"), true);
   assert.match(result[0].action, /não editar automaticamente/i);
+});
+
+test("idade menor que 40 em campanha cervical também é alerta", () => {
+  const alerts = load("construirAlertasCriticosMeta_");
+  const result = alerts({
+    sourceStatus: { daily: false, campaigns: false, adsets: true, thirty: false, funnel: true, landingHealth: false },
+    adsets: [{ id: "cervical-synthetic", name: "M26C02S | SP | 40+", targeting: { age_min: 35 } }],
+    funnel: [],
+  });
+  assert.equal(result.some((row) => row.signature === "meta_age_floor|cervical-synthetic"), true);
 });
 
 test("fadiga exige sinais combinados e amostra mínima", () => {
@@ -144,6 +184,8 @@ test("alerta diário inclui métricas essenciais de 7 e 30 dias e funil anônimo
     funnel: [
       { windowDays: 7, campaignCode: "M26F01W", creativeCode: "__TOTAL__", contacts: 6, qualified: 2, scheduled: 1, completed: 0, procedureClosed: 0 },
       { windowDays: 30, campaignCode: "M26F01W", creativeCode: "__TOTAL__", contacts: 19, qualified: 5, scheduled: 2, completed: 1, procedureClosed: 0 },
+      { windowDays: 7, campaignCode: "M26C01W", creativeCode: "__TOTAL__", contacts: 4, qualified: 1, scheduled: 0, completed: 0, procedureClosed: 0 },
+      { windowDays: 7, campaignCode: "M26C02S", creativeCode: "__TOTAL__", contacts: 3, qualified: 1, scheduled: 1, completed: 0, procedureClosed: 0 },
     ],
   };
   const context = { isWeekly: false, isMonthly: false };
@@ -151,6 +193,8 @@ test("alerta diário inclui métricas essenciais de 7 e 30 dias e funil anônimo
   const html = htmlEmail(report, context);
   assert.match(text, /MÉTRICAS ESSENCIAIS — 7 E 30 DIAS/);
   assert.match(text, /7d M26F01W: contatos 6/);
+  assert.match(text, /7d M26C01W: contatos 4/);
+  assert.match(text, /7d M26C02S: contatos 3/);
   assert.match(html, /Métricas essenciais — 7 e 30 dias/);
   assert.match(html, /30d:/);
   assert.match(html, /Funil anônimo — 7 e 30 dias/);

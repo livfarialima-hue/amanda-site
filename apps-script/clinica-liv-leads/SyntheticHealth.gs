@@ -10,6 +10,11 @@ const SYNTHETIC_HEALTH_HEADERS = Object.freeze([
   "Detalhe técnico",
 ]);
 
+const SYNTHETIC_META_SITE_CONTRACTS = Object.freeze({
+  M26F02S: Object.freeze({ creative: "C01H01", cta: "avaliacao-facial" }),
+  M26C02S: Object.freeze({ creative: "C07H01", cta: "lifting-cervical" }),
+});
+
 function avaliarContratoAtribuicaoMetaSite_(probe) {
   const input = probe && typeof probe === "object" ? probe : {};
   const reference = String(input.reference || "").trim().slice(0, 200);
@@ -17,13 +22,14 @@ function avaliarContratoAtribuicaoMetaSite_(probe) {
   const referenceCategory = String(input.referenceCategory || "").trim();
   const fallbackReason = String(input.fallbackReason || "").trim();
   const decomposition = decomporReferenciaAquisicao_(reference);
+  const expected = SYNTHETIC_META_SITE_CONTRACTS[decomposition.campaign];
 
   return platform === "Meta" &&
     referenceCategory === "meta_coded" &&
     fallbackReason === "" &&
-    decomposition.campaign === "M26F02S" &&
-    decomposition.creative === "C01H01" &&
-    decomposition.cta === "avaliacao-facial";
+    Boolean(expected) &&
+    decomposition.creative === expected.creative &&
+    decomposition.cta === expected.cta;
 }
 
 function avaliarContratosTesteSintetico_(now, attributionProbe) {
@@ -61,7 +67,7 @@ function executarTesteSinteticoIntegracoes_(attributionProbe) {
     SYNTHETIC_HEALTH_HEADERS,
   );
   const now = new Date();
-  const runId = "synthetic_attribution_v1_" + Utilities.formatDate(
+  const runId = "synthetic_attribution_v2_" + Utilities.formatDate(
     now,
     CONFIG.timezone,
     "yyyyMMdd",
