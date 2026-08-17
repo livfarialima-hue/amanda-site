@@ -563,7 +563,7 @@ test("uncoded acquisition sources carry an explicit bounded fallback reason", ()
 });
 
 test("maps known Meta ad IDs to complete campaign references", () => {
-  const attribution = classifyAttribution(
+  const historical = classifyAttribution(
     {},
     {
       referral: {
@@ -573,10 +573,23 @@ test("maps known Meta ad IDs to complete campaign references", () => {
     },
     "Olá! Gostaria de saber mais. Ref. M26F01W-C01",
   );
+  const currentLifting = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120251254720680627",
+      },
+    },
+    "Quero saber sobre lifting facial",
+  );
 
-  assert.equal(attribution.platform, "Meta");
-  assert.equal(attribution.referenceCategory, "meta_coded");
-  assert.equal(attribution.reference, "M26F01W-C01H01");
+  assert.equal(historical.platform, "Meta");
+  assert.equal(historical.referenceCategory, "meta_coded");
+  assert.equal(historical.reference, "M26F01W-C01H01");
+  assert.equal(currentLifting.platform, "Meta");
+  assert.equal(currentLifting.referenceCategory, "meta_coded");
+  assert.equal(currentLifting.reference, "M26F01W-C06H01");
 });
 
 test("maps the cervical WhatsApp and Site Meta ad IDs to distinct routes", () => {

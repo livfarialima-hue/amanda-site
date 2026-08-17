@@ -350,6 +350,8 @@ const META_AD_REFERENCES = Object.freeze({
   "120250469052940627": "M26F01W-C01H01",
   // M26F01W | C06H01 | Lifting
   "120250446134900627": "M26F01W-C06H01",
+  // M26F01W | C06H01 | Lifting facial | novo ciclo 40+ | WA direto
+  "120251254720680627": "M26F01W-C06H01",
   // M26C01W | C07H01 | Lifting cervical | WA direto
   "120251248762170627": "M26C01W-C07H01",
   // M26C02S | C07H01 | Lifting cervical | Site -> WhatsApp

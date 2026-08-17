@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 16 de agosto de 2026, 23:54, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 06:22, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -82,8 +82,8 @@ Correção etária de 16/08:
 
 - o alerta estava correto: `M26F01W` e `M26F02S` tinham `age_min=25`; o `40–65+` era sugestão expansível;
 - `M26F02S` foi publicado com limite rígido `40–65+`;
-- `M26F01W` continua bloqueado em 25 porque a republicação passou a exigir Conta do WhatsApp Business e orçamento mínimo R$ 600,18. Nenhuma migração nem aumento foi feito; o rascunho foi descartado;
-- resolver esse gate antes de qualquer extensão, reativação ou nova edição do conjunto WhatsApp.
+- a tentativa de republicar o objeto histórico `M26F01W` ficou bloqueada pela Conta do WhatsApp Business e pelo mínimo de R$ 600,18; esse rascunho foi descartado e a campanha histórica não será reativada;
+- em 17/08 foi preparada uma nova campanha de Tráfego → WhatsApp com piso rígido 40–65+, São Paulo +20 km, R$ 300 total e somente `C06H01`; ela permanece em rascunho até o gate técnico e a sonda.
 
 Gate de ativação concluído em 16/08:
 
@@ -104,7 +104,7 @@ Decisão de encerramento e próximo ciclo — 16/08:
 - os vídeos finais cervicais 1:1 e 9:16 corrigem `cervicoplastia`; o quadrado fica no Feed e o arquivo 9:16 já enviado ocupa Reels/Stories, sem recorte automático. Daniel aceitou manter o CTA falado/embutido `Clique no link da bio`. O orgânico foi agendado para 20/08/2026 às 19h30 e será separado dos anúncios, sem reutilização do post;
 - os dois braços cervicais estão em rascunho no Ads Manager, com anúncios principais `120251248762170627` e `120251249058760627`, anúncios herdados desligados e nenhum objeto publicado. O mapeamento local desses IDs foi preparado no webhook;
 - a aprovação/publicação ficou para 17/08 e continua dependente de código/rotina publicados, schema v1, sonda que prove `M26C02S` até LEADS/CRM e revisão seletiva do lote Meta. Sem rastreamento comprovado, não ativar gasto. O plano detalhado está em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`;
-- a extensão facial foi preparada com `C06H01` e R$ 300 adicionais, mas seu conjunto atual mantém idade mínima observada em 25 e 40–65+ apenas como sugestão Advantage+. Antes de aprovar, aceitar essa exceção temporária ou adiar a extensão para reconstrução com piso rígido.
+- o lifting facial foi reconstruído em nova campanha de Tráfego → WhatsApp: campanha `120251254720690627`, conjunto `120251254720700627`, anúncio C06 `120251254720680627`, R$ 300 total, 17/08 12h–01/09 12h, São Paulo +20 km e controle rígido 40–65+; o anúncio C01 herdado `120251254720710627` está desligado. Nenhum desses objetos foi publicado.
 
 ### Piloto futuro — Aqui Ads (OOH hiperlocal)
 
@@ -169,9 +169,9 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v94; última execução 08:27 com 0% de erro | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
 | diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v94 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
 | toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
-| 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `RASCUNHOS PRONTOS; NÃO PUBLICADOS` | revisar extensão `M26F01W/C06H01`; publicar somente `M26C01W` direto e `M26C02S` via `/lifting-cervical/`, R$ 300 total por braço, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | publicação técnica, sonda E2E e só então publicação seletiva Meta; não usar `Publicar tudo` | 40–65+ rígido nos braços cervicais, IDs reais mapeados, sonda Site até LEADS/CRM, códigos/rotina e baseline salvos; decisão explícita sobre exceção etária de F01 |
+| 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `RASCUNHOS PRONTOS; NÃO PUBLICADOS` | publicar seletivamente o novo `M26F01W/C06H01` e os braços `M26C01W` direto e `M26C02S` via `/lifting-cervical/`; R$ 300 total por campanha, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | publicação técnica, sonda E2E e só então publicação seletiva Meta; não usar `Publicar tudo` | 40–65+ rígido nos três conjuntos, São Paulo +20 km, anúncios herdados desligados, IDs reais mapeados, sonda Site até LEADS/CRM, códigos/rotina e baseline salvos |
 | 20/08 19:30–19:50 | Instagram orgânico: Reels de lifting cervical | `AGENDADO` | publicar o vídeo 9:16 aprovado; manter `Clique no link da bio`; conferir link da bio e separar origem orgânica | publicação manual no Instagram | não reutilizar o post como anúncio nem atribuir o tráfego orgânico aos braços pagos |
-| 18/08, após o relatório Meta | Meta WhatsApp: tornar 40+ efetivo | `BLOQUEADO` | decidir e preparar a conexão/migração do número para Conta do WhatsApp Business; confirmar backup/preservação; só então corrigir o piso para 40–65+ e o mínimo orçamentário exigido se o conjunto continuar | exige autorização específica no momento; pode afetar WhatsApp e gasto | acesso ao aparelho/número, plano de preservação, erro `#2923012` resolvido e orçamento `R$ 600,18` aceito somente se houver nova veiculação |
+| 18/08, após o relatório Meta | Meta WhatsApp: confirmar entrega etária | `CONDICIONAL À PUBLICAÇÃO` | conferir `age_min=40` e distribuição real por idade nos três novos conjuntos; não reabrir a migração do objeto histórico se o novo desenho funcionar | leitura e eventual correção só com autorização | novo `M26F01W` publicado seletivamente e sem expansão abaixo de 40 |
 | segundo dia útil do mês, aproximadamente 10:05 | Meta Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 02/09 | acrescentar 90 dias, eficiência até consulta e prontidão de testes | e-mail automático; nenhuma recomendação aplicada | fontes íntegras; o cálculo considera segunda a sexta e não infere feriados |
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
 | D+3 do experimento Meta | Cervical Site × WhatsApp: saúde técnica | `CONDICIONAL À ATIVAÇÃO` | conferir equilíbrio de gasto, idade efetiva, códigos, LPV, CTA, conversas e contatos identificados | corrigir somente falha técnica; pausar ambos se o Site não for rastreável | três dias completos depois da ativação real |

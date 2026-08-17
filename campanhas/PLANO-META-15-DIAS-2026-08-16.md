@@ -86,7 +86,7 @@ Janela de 30 dias:
 
 | Campanha | Destino | Público | Criativo | Orçamento | Janela | Papel |
 |---|---|---|---|---:|---|---|
-| `M26F01W` — lifting facial | WhatsApp direto | Advantage+ atual; 40–65+ permanece sugestão, não limite rígido confirmado | somente `C06H01` — Lifting | acréscimo preparado de R$ 300 | até 31/08/2026 às 21h | campanha contínua, analisada separadamente; revisar a idade efetiva antes de aprovar |
+| `M26F01W` — lifting facial | WhatsApp direto; nova campanha de Tráfego com meta de conversas | São Paulo +20 km, 40–65+ rígido, todos os gêneros | somente `C06H01` — Lifting; 1:1 no Feed e 9:16 em Reels/Stories | R$ 300 total | 17/08 12h a 01/09 12h | campanha contínua, analisada separadamente; o objeto histórico não será reativado |
 | `M26C01W` — lifting cervical | WhatsApp direto; campanha de Tráfego com meta de conversas | São Paulo +20 km, 40–65+ rígido, todos os gêneros | `C07H01`; quadrado no Feed e arquivo 9:16 próprio em Reels/Stories | R$ 300 total | 17/08 12h a 01/09 12h | braço A |
 | `M26C02S` — lifting cervical | `/lifting-cervical/` → WhatsApp; campanha de Tráfego com meta de LPV | idêntico ao braço A | o mesmo `C07H01` e as mesmas adaptações por posicionamento | R$ 300 total | 17/08 12h a 01/09 12h | braço B |
 
@@ -96,10 +96,11 @@ O experimento cervical soma R$ 600 em 15 dias. A continuidade do lifting facial 
 
 | Rota | Campanha | Conjunto | Anúncio principal | Controle de legado |
 |---|---:|---:|---:|---|
+| Lifting facial → WhatsApp | `120251254720690627` | `120251254720700627` | `120251254720680627` | anúncio herdado `120251254720710627` desligado; extensão do objeto histórico descartada |
 | WhatsApp direto | `120251248762160627` | `120251248762180627` | `120251248762170627` | anúncio herdado `120251248762190627` desligado |
 | Site → WhatsApp | `120251249058750627` | `120251249058780627` | `120251249058760627` | anúncio herdado `120251249058770627` desligado |
 
-Os dois anúncios principais usam o texto cervical aprovado, título `Entenda o lifting cervical` e descrição `Avaliação individual do pescoço e da mandíbula.`. O braço direto usa CTA `Fale conosco` e o modelo salvo com `Ref. M26C01W-C07H01`; o braço Site usa CTA `Saiba mais`, URL `/lifting-cervical/` e os parâmetros canônicos. Em ambos, Feed recebe `Campanha cervical 1x1 arrumado final.mp4` e Reels/Stories recebem `Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4` em 1080×1920.
+Os dois anúncios cervicais principais usam o texto aprovado, título `Entenda o lifting cervical` e descrição `Avaliação individual do pescoço e da mandíbula.`. O braço direto usa CTA `Fale conosco` e o modelo salvo com `Ref. M26C01W-C07H01`; o braço Site usa CTA `Saiba mais`, URL `/lifting-cervical/` e os parâmetros canônicos. Em ambos, Feed recebe `Campanha cervical 1x1 arrumado final.mp4` e Reels/Stories recebem `Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4` em 1080×1920. O anúncio facial usa o vídeo vencedor de 46,9 segundos em suas versões 1:1 e 9:16, o texto histórico de `C06H01`, título `Cirurgia ou outro tratamento?`, descrição `A indicação começa pela avaliação.` e o modelo salvo com `Ref. M26F01W-C06H01`.
 
 ### O que este experimento responderá
 
@@ -119,10 +120,10 @@ Todos são obrigatórios:
 4. o modo rico e o schema continuam desligados até decisão própria. Antes do experimento, ativação controlada, política de privacidade coerente, purge observado, dry-run/migração autorizados e rollback são obrigatórios;
 5. uma sonda sintética sem paciente deve comprovar Meta → landing → navegação → CTA → WhatsApp → webhook → LEADS → CRM, com origem inicial `Meta Ads`, caminho `site → WhatsApp`, campanha `M26C02S`, criativo `C07H01`, landing e página do CTA corretas, confiança explícita, zero PII e zero first touch sobrescrito;
 6. `M26C01W` e `M26C02S` devem entrar no registro de campanhas, no agregado anônimo e na lógica de resultado principal da rotina Meta;
-7. os Meta Ad IDs `120251248762170627` e `120251249058760627` devem estar no mapa explícito do webhook como fallback; nunca inferir por semelhança;
+7. os Meta Ad IDs `120251248762170627`, `120251249058760627` e `120251254720680627` devem estar no mapa explícito do webhook como fallback; nunca inferir por semelhança;
 8. verificar `age_min=40` nos dois braços, não apenas no nome ou na sugestão Advantage+;
 9. salvar baseline e horário de ativação; o dia parcial de lançamento não entra na comparação.
-10. a continuidade de `M26F01W` deve ter somente `C06H01`, destino WhatsApp e orçamento explicitamente aprovado; como o conjunto atual expõe 40–65+ apenas como sugestão Advantage+, a aprovação de 17/08 deve aceitar conscientemente essa limitação ou adiar a renovação para recriar a campanha com piso rígido. `C01H01` e a rota Site permanecem fora desse ciclo.
+10. a continuidade de `M26F01W` deve usar o novo objeto de Tráfego, somente `C06H01`, destino WhatsApp, R$ 300 total, São Paulo +20 km e controle rígido 40–65+; `C01H01`, a rota Site e o objeto histórico permanecem fora desse ciclo.
 
 Se qualquer gate falhar, adiar o início dos dois braços. Não lançar apenas um braço, não aceitar público 25+ nos braços cervicais e não usar uma referência textual simples como prova suficiente da rota Site.
 
@@ -174,9 +175,9 @@ Executar nesta ordem, sem pular o gate:
 4. publicar no Netlify exatamente o mesmo commit, com `attributionJourneyEnabled=true`, os dois Meta Ad IDs mapeados e os novos assets da página;
 5. verificar produção em mobile: vídeo cervical destacado em `/lifting-cervical/` e `/lipo-de-papada/`, sem autoplay, sem overflow e com poster;
 6. rodar a sonda sintética e exigir sucesso até LEADS/CRM, sem paciente real;
-7. no Gerenciador de Anúncios, revisar e publicar **somente** as duas campanhas, conjuntos e anúncios principais listados na seção 4; não publicar os anúncios herdados, o rascunho de otoplastia nem outros itens da fila;
+7. no Gerenciador de Anúncios, revisar e publicar **somente** as três campanhas, conjuntos e anúncios principais listados na seção 4; não publicar os anúncios herdados, o rascunho de otoplastia nem outros itens da fila;
 8. confirmar depois da publicação: campanha/conjunto/anúncio ativos, datas e orçamento corretos, WhatsApp como único destino do braço direto, URL/UTMs do Site, idade rígida 40–65+ e arquivo 9:16 em Reels/Stories;
-9. decidir separadamente a extensão `M26F01W`: aceitar a limitação etária Advantage+ atual ou não publicar a extensão até reconstrução com piso rígido;
+9. revisar e publicar separadamente o novo `M26F01W` somente se campanha, conjunto e anúncio principal coincidirem com os IDs da seção 4, `C01H01` continuar desligado e o controle efetivo permanecer 40–65+;
 10. registrar a hora real de ativação e então criar os checkpoints D+3, D+7, D+15 e D+22. Se a ativação ocorrer em 17/08 às 12h, as referências são 20/08, 24/08, 01/09 e 08/09.
 
 Qualquer falha nos passos 2–6 bloqueia os dois braços cervicais. Uma falha apenas em `M26F01W` não autoriza mudar o desenho cervical; apenas adia a extensão facial.
