@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 07:13, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 15:20, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -38,6 +38,18 @@ O responsável técnico deve:
 | `NÃO ALTERAR` | decisão consciente de manter como está |
 
 ## 3. Situação atual em linguagem direta
+
+### Operação do WhatsApp — Bruna
+
+**Estado geral:** correção do ambiente hospitalar publicada e verificada em 17/08; manter em monitoramento normal.
+
+- incidente das 14:37–14:38: o Apps Script devolveu `busy_retry` e depois `timeout`; o webhook permaneceu fail-closed e não liberou resposta antes de a Bruna assumir o atendimento;
+- lifting cervical e lifting facial agora respondem diretamente que são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica;
+- “este procedimento” herda o lifting das mensagens anteriores mesmo sem uma resposta prévia da clínica; outros procedimentos continuam em revisão humana;
+- commit `d87fbc1`, deploy Netlify `6a834fc3a223280007cb423b`, **721/721 testes aprovados**;
+- sonda sintética acionada pelo Netlify e linha diária `synthetic_attribution_v2_20260817` confirmada com persistência, classificação, handoff e atribuição em `ok`; nenhum telefone, mensagem ou envio de WhatsApp foi usado;
+- rollback: deploy `6a834a6a8064630008d91721`, commit `072dffb`.
+
 
 ### Auditoria 1 — Google Ads
 

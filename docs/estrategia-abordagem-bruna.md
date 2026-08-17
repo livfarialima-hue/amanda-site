@@ -121,6 +121,12 @@ Evitar “formada pela Unicamp”, porque no Brasil isso pode ser entendido como
 
 Não usar “investimento” para evitar a palavra preço. Não responder somente “depende”. Não trocar a resposta por um discurso sobre segurança.
 
+Pergunta objetiva sobre onde é feito o lifting cervical ou facial:
+
+> Sim. Com a equipe da Dra. Amanda, o lifting cervical e o lifting facial são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica. Antes, a Dra. Amanda faz uma avaliação individual para confirmar a indicação e definir o planejamento adequado ao caso.
+
+Quando o procedimento estiver identificado, mencionar somente aquele lifting. Não generalizar a resposta para outras cirurgias sem confirmação.
+
 Consulta:
 
 > A consulta presencial com a Dra. Amanda custa R$ 500. Esse valor é abatido se a cirurgia for realizada com a equipe.
