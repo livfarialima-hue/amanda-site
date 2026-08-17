@@ -37,15 +37,16 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 
 ### Registro da produção atual
 
-- Versão canônica: `95`, publicada no deployment existente em 17/08/2026.
-- Escopo da v95: somente `Retomadas.gs`, para exibir o resultado do botão **Não retomar**, reconhecer a primeira retomada feita manualmente e programar apenas a segunda quando ainda cabível.
-- Pós-voo: link sintético com token inválido exibiu **Link inválido** e confirmou que nenhuma preferência foi alterada; nenhum envio real foi acionado.
-- Os demais arquivos e comportamentos da v94 foram preservados sem alteração funcional na v95.
+- Versão canônica: `97`, publicada no deployment existente em 17/08/2026.
+- Escopo da v96: `MetaAdsFunnelReview.gs`, `MetaAdsReview.gs`, `OpportunityStore.gs` e `SyntheticHealth.gs`, com os códigos cervicais `M26C01W/M26C02S`, monitoramento Meta e sonda sintética de atribuição; deployment canônico preservado.
+- Escopo da v97: `Code.gs` acrescentou o habilitador administrativo idempotente do schema v1. `aplicarSchemaAtribuicaoV1Autorizado` foi executada com sucesso e não cria um segundo deployment.
+- Pós-voo: a função agendada `synthetic-integration-health` concluiu com HTTP 200 e `runId=synthetic_attribution_v2_20260817`; a sonda é sintética, não envia WhatsApp e não usa dado de paciente.
+- Rollback: deployment v96 se for necessário desligar somente o habilitador administrativo; v95 para retornar ao código anterior ao pacote cervical, junto com `attributionJourneyEnabled=false` e schema desabilitado conforme o runbook.
 
 ## Agregado anônimo para a rotina do Google Ads
 
 - Código: `GoogleAdsFunnelReview.gs`.
-- Produção atual: Apps Script versão `95`, publicada no deployment canônico em 17/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
+- Produção atual: Apps Script versão `97`, publicada no deployment canônico em 17/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
 - Destino: planilha separada `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Agregados`.
 - Trigger: `publicarAgregadosFunilGoogleAds`, diariamente aproximadamente às 08:15 BRT, configurado por `configurarRotinaAgregadosFunilGoogleAds()`.
 - Fontes internas: `_FUNIL_CANONICO` e `_OPORTUNIDADE_MARCOS`.
@@ -64,7 +65,7 @@ Projetos divergentes não devem ser editados, renomeados, arquivados ou excluíd
 - Flag: `META_ADS_REVIEW_ENABLED=true` somente depois de `validarAcessoRevisaoMetaAds()`.
 - Triggers: `publicarAgregadosFunilMetaAds` aproximadamente às 08:25 e `executarRevisaoMetaAds` aproximadamente às 10:05 BRT.
 - Ativação validada em 16/08/2026: agregado com 0% de erro, token permanente limitado a `ads_read`, Graph API `v26.0`, teste recebido por e-mail e uma única instância de cada trigger.
-- Versão `94`: todo e-mail enviado pela rotina inclui métricas essenciais de 7 e 30 dias por campanha e o funil anônimo; o teste manual força a versão semanal completa em qualquer dia. A validação somente leitura `validarAcessoRevisaoMetaAds()` concluiu em produção às 15:16 BRT. A v95 preserva esse comportamento sem alterar os arquivos da Meta.
+- Versão `97`: todo e-mail enviado pela rotina inclui métricas essenciais de 7 e 30 dias por campanha e o funil anônimo; `M26C01W` e `M26C02S` entram no agregado e nos alertas do ciclo cervical. A validação somente leitura permanece limitada a `ads_read` e sem mutação da conta.
 - Privacidade: nenhum nome, telefone, e-mail, mensagem, click ID, `Opportunity ID`, `Event ID` ou informação clínica no agregado/e-mail.
-- Taxonomia: somente `M26F01W` resolve `meta_whatsapp_direct` e somente `M26F02S` resolve `meta_site_whatsapp` no contrato v1. `M26O01W`, `M26O02W` e aliases desconhecidos permanecem N/D.
+- Taxonomia: `M26F01W` e `M26C01W` resolvem `meta_whatsapp_direct`; `M26F02S` e `M26C02S` resolvem `meta_site_whatsapp`. `M26O01W`, `M26O02W` e aliases desconhecidos permanecem N/D até evidência canônica.
 - Manual completo: `campanhas/ROTINA-AUTOMATIZADA-REVISAO-META-ADS.md`.

@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 06:22, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 07:13, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -66,7 +66,7 @@ Ainda falta:
 
 ### Rotina recorrente — Meta Ads
 
-**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está na produção canônica v94, o agregado anônimo e o acesso à API foram testados ao vivo e existe um único trigger diário para cada função. Todo e-mail enviado agora inclui métricas essenciais de 7 e 30 dias; a análise detalhada permanece semanal. A rotina não substitui o gate de atribuição de `M26F02S` nem autoriza qualquer mudança automática na Meta.
+**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está na produção canônica v97, o agregado anônimo e o acesso à API foram testados ao vivo e existe um único trigger diário para cada função. Todo e-mail enviado inclui métricas essenciais de 7 e 30 dias; a análise detalhada permanece semanal. A rotina não autoriza mudança automática na Meta.
 
 Escopo aprovado:
 
@@ -83,7 +83,7 @@ Correção etária de 16/08:
 - o alerta estava correto: `M26F01W` e `M26F02S` tinham `age_min=25`; o `40–65+` era sugestão expansível;
 - `M26F02S` foi publicado com limite rígido `40–65+`;
 - a tentativa de republicar o objeto histórico `M26F01W` ficou bloqueada pela Conta do WhatsApp Business e pelo mínimo de R$ 600,18; esse rascunho foi descartado e a campanha histórica não será reativada;
-- em 17/08 foi preparada uma nova campanha de Tráfego → WhatsApp com piso rígido 40–65+, São Paulo +20 km, R$ 300 total e somente `C06H01`; ela permanece em rascunho até o gate técnico e a sonda.
+- em 17/08 a nova campanha de Tráfego → WhatsApp foi publicada com piso rígido 40–65+, São Paulo +20 km, R$ 300 total e somente `C06H01`; início programado às 12h e término em 01/09 às 12h.
 
 Gate de ativação concluído em 16/08:
 
@@ -102,9 +102,10 @@ Decisão de encerramento e próximo ciclo — 16/08:
 - `M26O01W` termina em 19/08, não em 16/08. Com R$ 214,05 gastos, 0,30% de CTR link, 1 conversa e nenhuma consulta registrada, a proposta é interromper o saldo e não reutilizar o criativo atual;
 - decisão revisada: manter `M26F01W` somente com `C06H01` e destino WhatsApp, não renovar `M26F02S`, interromper `M26O01W` e restringir a comparação de rota ao lifting cervical em `M26C01W` — WhatsApp direto — versus `M26C02S` — site → WhatsApp —, com 40–65+ rígido, R$ 300 total por braço e janela preparada de 17/08 às 12h a 01/09 às 12h;
 - os vídeos finais cervicais 1:1 e 9:16 corrigem `cervicoplastia`; o quadrado fica no Feed e o arquivo 9:16 já enviado ocupa Reels/Stories, sem recorte automático. Daniel aceitou manter o CTA falado/embutido `Clique no link da bio`. O orgânico foi agendado para 20/08/2026 às 19h30 e será separado dos anúncios, sem reutilização do post;
-- os dois braços cervicais estão em rascunho no Ads Manager, com anúncios principais `120251248762170627` e `120251249058760627`, anúncios herdados desligados e nenhum objeto publicado. O mapeamento local desses IDs foi preparado no webhook;
-- a aprovação/publicação ficou para 17/08 e continua dependente de código/rotina publicados, schema v1, sonda que prove `M26C02S` até LEADS/CRM e revisão seletiva do lote Meta. Sem rastreamento comprovado, não ativar gasto. O plano detalhado está em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`;
-- o lifting facial foi reconstruído em nova campanha de Tráfego → WhatsApp: campanha `120251254720690627`, conjunto `120251254720700627`, anúncio C06 `120251254720680627`, R$ 300 total, 17/08 12h–01/09 12h, São Paulo +20 km e controle rígido 40–65+; o anúncio C01 herdado `120251254720710627` está desligado. Nenhum desses objetos foi publicado.
+- o pacote técnico foi publicado nos commits `2b5af19` e `436aff0`; o Apps Script canônico foi atualizado no mesmo deployment para v97, o schema v1 foi habilitado e a sonda sintética `synthetic_attribution_v2_20260817` concluiu com HTTP 200 antes do gasto;
+- os dois braços cervicais foram publicados no Ads Manager: `M26C01W` — campanha `120251248762160627`, conjunto `120251248762180627`, anúncio `120251248762170627`; `M26C02S` — campanha `120251249058750627`, conjunto `120251249058780627`, anúncio `120251249058760627`. A Meta confirmou um conjunto e um anúncio por campanha; herdados desligados;
+- o lifting facial foi reconstruído e publicado: campanha `120251254720690627`, conjunto `120251254720700627`, anúncio C06 `120251254720680627`, R$ 300 total, 17/08 12h–01/09 12h, São Paulo +20 km e controle rígido 40–65+; o anúncio C01 herdado `120251254720710627` permaneceu desligado;
+- o ciclo entra em monitoramento com D+3 em 20/08, D+7 em 24/08, D+15 em 01/09 e D+22 em 08/09. O dia parcial de 17/08 não será usado para escolher rota.
 
 ### Piloto futuro — Aqui Ads (OOH hiperlocal)
 
@@ -119,31 +120,30 @@ Decisão de encerramento e próximo ciclo — 16/08:
 
 ### Auditoria 2 — SEO, IA e atribuição
 
-**Estado geral:** pacote técnico publicado com os recursos novos desligados; próxima etapa é validar e só então decidir ativação/migração.
+**Estado geral:** atribuição rica e schema v1 publicados e ativados sob autorização integral; sonda sintética aprovada; fase atual é monitoramento e reconciliação ao vivo.
 
 Já foi feito:
 
 - commit técnico `50d7ea1` publicado no Netlify;
-- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 94, que mantém as rotinas anônimas e somente leitura de Google Ads e Meta Ads, acrescenta os resumos essenciais de 7/30 dias nos e-mails da Meta e não ativa a atribuição rica;
+- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 97, que mantém as rotinas anônimas e somente leitura, acrescenta os códigos cervicais e habilita o schema v1 pelo procedimento autorizado;
 - smoke tests públicos aprovados;
 - auditorias excluídas do artefato do site;
 - logs e IDs endurecidos;
 - estrutura de atribuição rica preparada;
 - página de custo do lifting sem faixas públicas;
-- feature `attributionJourneyEnabled=false` e schema de atribuição desligado;
+- feature `attributionJourneyEnabled=true` publicada no commit `436aff0` e schema v1 habilitado no Apps Script v97;
 - risco residual do `JID` visível/editável aceito por Daniel em 15/08/2026.
 
-Ainda falta antes de ativar a atribuição rica:
+Ainda falta para manter a atribuição rica após a ativação:
 
-- observar o purge e definir retenção/acesso dos sistemas externos;
-- aprovar a política de privacidade coerente com o fluxo real;
-- executar dry-runs realmente não mutantes e migrações autorizadas;
-- provar a jornada Meta → site → WhatsApp → LEADS → CRM;
+- observar o purge e validar retenção/acesso dos sistemas externos em produção;
+- confirmar a política de privacidade publicada e o comportamento real do consentimento;
+- reconciliar a sonda aprovada com os primeiros eventos reais, sem usar paciente como teste;
 - reconciliar LEADS/CRM, Calendar, rotas e SLA;
 - validar GSC, domínio Wix antigo, CWV e fontes externas;
-- autorizar separadamente a ativação da feature e do schema.
+- manter rollback pronto: desligar a feature e o schema diante de PII, duplicidade, first touch sobrescrito ou regressão de atendimento.
 
-**Importante:** a publicação default-off já ocorreu. Não deve ser repetida em 20/08. O bloco de 20/08 serve para pré-voos, decisões, migrações autorizadas e possível ativação isolada.
+**Importante:** a ativação ocorreu em 17/08 após autorização integral. O bloco de 20/08 passa a ser a saúde D+3: não repetir a migração nem reativar o que já está ativo; verificar eventos, cobertura e rollback.
 
 ## 4. O que vocês precisam fazer agora
 
@@ -151,7 +151,7 @@ Ainda falta antes de ativar a atribuição rica:
 |---|---|---|---|
 | 17/08, antes das 17:30 | Daniel | participar da reunião de suporte de tags do Google; não aceitar mudanças amplas ou automáticas sem registro e revisão | coletar a recomendação e não aplicar na hora |
 | 20/08, antes das 14:00 | Amanda/equipe | localizar autorizações/consentimentos das imagens e separar dúvidas para Codame/jurídico, sem subir documentos pessoais no repositório | manter congelado novo uso/reuso das galerias |
-| 20/08, durante 15:00–17:00 | Daniel | fornecer uma autorização específica somente se todos os gates técnicos estiverem verdes | manter feature/schema desligados e reagendar |
+| 20/08, durante 15:00–16:00 | Daniel/equipe | acompanhar a saúde D+3 da atribuição; nenhuma nova autorização é necessária para o que já foi publicado | se houver PII, atribuição incorreta, first touch sobrescrito ou regressão, autorizar somente o rollback já planejado |
 | quando houver parecer | Amanda/jurídico/Codame | registrar decisão sobre galerias, imagens sensíveis/menores, consentimentos, retenção e comunicação de preços | não alterar/publicar esses itens por inferência |
 
 Fora dessas ações, não há tarefa técnica que Daniel precise executar manualmente. O restante deve ser conduzido e documentado pelo responsável técnico.
@@ -166,35 +166,35 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO` desde 15/08; execução real concluída às 21:35 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` concluiu sem mudanças; nenhum e-mail no sábado porque não havia alerta crítico |
 | toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
 | primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
-| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v94; última execução 08:27 com 0% de erro | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
-| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v94 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
+| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v97 | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
+| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v97 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
 | toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
-| 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `RASCUNHOS PRONTOS; NÃO PUBLICADOS` | publicar seletivamente o novo `M26F01W/C06H01` e os braços `M26C01W` direto e `M26C02S` via `/lifting-cervical/`; R$ 300 total por campanha, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | publicação técnica, sonda E2E e só então publicação seletiva Meta; não usar `Publicar tudo` | 40–65+ rígido nos três conjuntos, São Paulo +20 km, anúncios herdados desligados, IDs reais mapeados, sonda Site até LEADS/CRM, códigos/rotina e baseline salvos |
+| 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `PUBLICADO; INÍCIO 12H` | `M26F01W/C06H01`, `M26C01W` direto e `M26C02S` via `/lifting-cervical/`; R$ 300 total por campanha, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | código/Apps v97/schema/sonda publicados primeiro; depois três publicações seletivas, cada uma com 1 campanha + 1 conjunto + 1 anúncio | conferir a entrega real, idade efetiva e primeiros eventos; não mudar público, orçamento, destino ou criativo durante a janela |
 | 20/08 19:30–19:50 | Instagram orgânico: Reels de lifting cervical | `AGENDADO` | publicar o vídeo 9:16 aprovado; manter `Clique no link da bio`; conferir link da bio e separar origem orgânica | publicação manual no Instagram | não reutilizar o post como anúncio nem atribuir o tráfego orgânico aos braços pagos |
 | 18/08, após o relatório Meta | Meta WhatsApp: confirmar entrega etária | `CONDICIONAL À PUBLICAÇÃO` | conferir `age_min=40` e distribuição real por idade nos três novos conjuntos; não reabrir a migração do objeto histórico se o novo desenho funcionar | leitura e eventual correção só com autorização | novo `M26F01W` publicado seletivamente e sem expansão abaixo de 40 |
 | segundo dia útil do mês, aproximadamente 10:05 | Meta Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 02/09 | acrescentar 90 dias, eficiência até consulta e prontidão de testes | e-mail automático; nenhuma recomendação aplicada | fontes íntegras; o cálculo considera segunda a sexta e não infere feriados |
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
-| D+3 do experimento Meta | Cervical Site × WhatsApp: saúde técnica | `CONDICIONAL À ATIVAÇÃO` | conferir equilíbrio de gasto, idade efetiva, códigos, LPV, CTA, conversas e contatos identificados | corrigir somente falha técnica; pausar ambos se o Site não for rastreável | três dias completos depois da ativação real |
+| 20/08 12:30–13:15 | Cervical Site × WhatsApp: saúde D+3 | `AGENDADO` | conferir equilíbrio de gasto, idade efetiva, códigos, LPV, CTA, conversas e contatos identificados | corrigir somente falha técnica; pausar ambos se o Site não for rastreável | três dias desde o início programado; dia parcial de lançamento excluído da leitura de desempenho |
 | 20/08 09:00–11:00 | Google Ads: prova segura e decisão etária | `AGENDADO` | testar conversão offline e E2E; confirmar negativas exatas; manter Meta facial em 40+; decidir se exclui `18–24` e `25–34` somente em LIFT, BLEF, CERV e FACE; iniciar somente RSA adulto de otoplastia se tudo passar | possível escrita em Ads/importação, somente após autorização no momento | zero PII, zero duplicidade, receipt por evento, origem preservada e idade `Desconhecida` mantida |
 | 20/08 11:15–12:00 | CWV, vídeos e recursos | `AGENDADO` | medir laboratório/campo e 4G; abrir causas reais de recursos/logotipos | nenhuma otimização automática | baseline reproduzível; uma classe de ativo por futuro teste |
 | 20/08 14:00–14:45 | Compliance e imagens | `DEPENDE DE VOCÊS` | revisar inventário, consentimentos, galerias, imagens sensíveis/menores e Codame | nenhuma remoção/publicação sem parecer | documento/parecer humano e escopo registrado |
-| 20/08 15:00–17:00 | SEO/IA/atribuição: pré-voos e decisão | `AGENDADO` | verificar default-off, purge, privacidade, GSC/Wix, dry-runs e migrações; decidir ativação isolada | somente após autorização específica no momento | todos os gates verdes; rollback pronto; nenhuma PII |
-| 21/08 15:30–16:00 | Checagem de 24 horas | `AGUARDAR DADOS` | somente se algo for ativado em 20/08: erros, logs, perda de origem e rollback | nenhuma nova mudança junto | data real da ativação conhecida |
-| D+7 do experimento Meta | Cervical Site × WhatsApp: primeira decisão | `CONDICIONAL À ATIVAÇÃO` | comparar contatos identificados, válidos, qualificados e agendados por rota | manter ou pausar segundo o plano; não trocar criativo | cobertura ≥80%; pausar um braço se gastar ≥R$ 150 sem contato válido com tracking saudável |
+| 18/08 15:30–16:00 | Atribuição rica: checagem de 24 horas | `AGENDADO` | erros, logs sem PII, purge, JID fora do resolvedor, perda de origem, LEADS/CRM e sinais de rollback | nenhuma nova expansão | ativação em 17/08; reverter diante de PII, atribuição incorreta, first touch sobrescrito ou regressão de atendimento |
+| 20/08 15:00–16:00 | Atribuição rica: saúde D+3 e retenção | `AGENDADO` | purge, consentimento, resolução/fallback, origem, LEADS/CRM, Calendar, rota e SLA | não repetir deploy ou migração | correlacionar com a saúde Meta sem misturar métricas |
+| 24/08 12:30–13:15 | Cervical Site × WhatsApp: primeira decisão D+7 | `AGENDADO` | comparar contatos identificados, válidos, qualificados e agendados por rota | manter ou pausar segundo o plano; não trocar criativo | cobertura ≥80%; pausar um braço se gastar ≥R$ 150 sem contato válido com tracking saudável |
 | 27/08 09:00–10:00 | Google Ads: saúde de 7 dias | `AGENDADO` | receipts, duplicidade, códigos, funil e qualidade; se a decisão etária tiver sido aplicada, comparar volume/gasto/qualidade por idade sem confundir com outras mudanças | não decidir RSA nem idade por amostra insuficiente | sete dias reais desde a prova; mudança etária isolada e data efetiva registrada |
-| 27/08 10:15–10:45 | SEO/IA/atribuição: 7 dias | `AGENDADO` | erros, origem, LEADS/CRM, Calendar/SLA e logs | manter ou reverter; nenhuma expansão | feature ativada em 20/08; senão registrar N/D e reagendar |
+| 24/08 14:00–14:30 | Atribuição rica: 7 dias | `AGENDADO` | erros, resolução/fallback, origem, LEADS/CRM, Calendar/SLA e logs | manter ou reverter; nenhuma expansão | janela iniciada em 17/08 |
 | 27/08 11:00–11:30 | Atualização executiva | `AGENDADO` | atualizar este plano, Drive, datas e decisões | nenhuma | checkpoints anteriores encerrados |
-| D+15 do experimento Meta | Cervical Site × WhatsApp: decisão | `CONDICIONAL À ATIVAÇÃO` | fechar contatos, qualificados, agendados e custos por rota; declarar N/D se a amostra não separar | eventual continuidade exige nova autorização | 15 dias completos, cobertura ≥80% e nenhuma quebra operacional |
+| 01/09 12:30–13:30 | Cervical Site × WhatsApp: decisão D+15 | `AGENDADO` | fechar contatos, qualificados, agendados e custos por rota; declarar N/D se a amostra não separar | eventual continuidade exige nova autorização | orçamento encerrado às 12h, cobertura ≥80% e nenhuma quebra operacional |
 | 03/09 09:00–10:00 | Google Ads: decisão OTO; possível início CERV; idade em 14 dias | `AGUARDAR DADOS` | encerrar OTO e iniciar CERV somente se elegível; se a idade Google mudou em 20/08, avaliar 14 dias de gasto, contatos válidos e qualidade por faixa | mudança de um RSA por vez; não ampliar a exclusão etária | 14 dias e, preferencialmente, ≥50 cliques; data efetiva da mudança etária registrada |
-| 03/09 10:15–10:45 | Atribuição: 14 dias | `AGUARDAR DADOS` | avaliar estabilidade e reconciliação | manter ou reverter | ativação real em 20/08; senão reagendar |
-| D+22 do experimento Meta | Cervical Site × WhatsApp: latência | `CONDICIONAL À ATIVAÇÃO` | incorporar classificações, comparecimentos e agendamentos tardios | nenhuma nova mudança simultânea | sete dias após o fechamento do ciclo |
+| 31/08 14:00–14:30 | Atribuição rica: 14 dias | `AGUARDAR DADOS` | avaliar estabilidade, reconciliação, purge, consentimento e incidentes | manter ou reverter | janela iniciada em 17/08 |
+| 08/09 12:30–13:15 | Cervical Site × WhatsApp: latência D+22 | `AGENDADO` | incorporar classificações, comparecimentos e agendamentos tardios | nenhuma nova mudança simultânea | sete dias após o fechamento do ciclo |
 | 16/09 10:00–11:00 | Aqui Ads: decisão e pré-voo do piloto OOH | `AGENDADO; COMPRA NÃO AUTORIZADA` | revalidar shortlist de dois residenciais premium e um salão/spa, preço, audiência, peça, compliance, rastreamento e capacidade | nenhuma compra sem autorização específica no momento | Meta/atribuição encerradas ou estáveis, sem outra mudança material; verba incremental de aproximadamente R$ 1.206,20 confirmada |
 | D+7 do piloto Aqui Ads | OOH: saúde técnica | `CONDICIONAL À ATIVAÇÃO` | validar QR, landing/WhatsApp, classificação de origem e disponibilidade dos pontos | corrigir apenas falha técnica; nenhuma troca de local/peça por amostra precoce | sete dias completos desde a veiculação real e cobertura de atribuição mensurável |
 | D+14 do piloto Aqui Ads | OOH: leitura intermediária | `CONDICIONAL À ATIVAÇÃO` | ler busca de marca, direto, Perfil da Empresa, contatos válidos, qualificados e consultas | nenhuma renovação ou escala | tracking saudável e nenhuma mudança concorrente |
 | D+28 do piloto Aqui Ads | OOH: decisão de continuidade | `CONDICIONAL À ATIVAÇÃO` | encerrar quatro semanas e classificar manter, não renovar ou inconclusivo | renovação somente com nova autorização | cobertura ≥80% e sinal de negócio; métricas da plataforma são apenas diagnóstico |
 | D+35 do piloto Aqui Ads | OOH: latência | `CONDICIONAL À ATIVAÇÃO` | incorporar qualificações e agendamentos tardios e fechar o registro | nenhuma nova mudança simultânea | sete dias após o término da veiculação |
 | 17/09 09:00–10:00 | Google Ads: decisão CERV; possível início BLEF | `AGUARDAR DADOS` | decidir CERV e, se elegível, iniciar BLEF | um teste por vez | CERV encerrado e tracking saudável |
-| 17/09 10:15–10:45 | SEO/IA/atribuição: 28 dias | `AGUARDAR DADOS` | GSC, GA4, CWV, crawlers, origem e funil | nenhuma nova hipótese no mesmo momento | janela pós-ativação completa |
+| 14/09 14:00–14:30 | SEO/IA/atribuição: 28 dias | `AGUARDAR DADOS` | GSC, GA4, CWV, crawlers, origem e funil | nenhuma nova hipótese no mesmo momento | janela pós-ativação completa desde 17/08 |
 | 01/10 09:00–10:00 | Decisão BLEF; possível início FACE | `AGUARDAR DADOS` | decidir BLEF e iniciar FACE somente se elegível | um teste por vez | BLEF encerrado; manter linguagem leiga legítima |
 | 15/10 09:00–10:00 | Decisão FACE; possível teste LIFT preço | `AGUARDAR DADOS` | decidir FACE e testar composição/orçamento individual no grupo de preço | sem voltar a publicar faixa cirúrgica | FACE encerrado; tracking estável |
 | 12/11 09:00–10:00 | Decisão LIFT preço | `AGUARDAR DADOS` | avaliar contato válido, qualificado e consulta; decidir manter ou consolidar | nenhuma decisão por CTR isolado | 28 dias e, preferencialmente, ≥100 cliques |
@@ -240,14 +240,14 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Pacote | Prioridade | Estado | Próxima decisão |
 |---|---|---|---|
 | Conversão offline Google e receipts | P0 | `AGENDADO` para 20/08 | religar somente com receipt e reconciliação por evento |
-| Meta → site → WhatsApp → LEADS/CRM | P0 | `BLOQUEADO` para escala | provar tecnicamente antes de colocar verba nova em M26F02S |
-| Atribuição rica J0/J1/J2 | P0 | código publicado, feature off | pré-voos e possível ativação em 20/08 |
-| Schema/identidade da LEADS | P0 | código publicado, schema off | dry-run, backup e migração separados |
+| Meta → site → WhatsApp → LEADS/CRM | P0 | sonda sintética aprovada; ciclo real `EM MONITORAMENTO` | conferir cobertura e consistência em D+3/D+7 antes de declarar o caminho funcional ao vivo |
+| Atribuição rica J0/J1/J2 | P0 | `ATIVA` desde 17/08; risco JID aceito | monitorar resolução, fallback, encaminhamento, duplicidade e rollback |
+| Schema/identidade da LEADS | P0 | schema v1 habilitado no Apps Script v97 | reconciliar LEADS/CRM e não repetir migração sem novo preflight |
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
 | Experimentos Google Ads | P1 | sequência agendada | OTO → CERV → BLEF → FACE → LIFT preço |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
-| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v94; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
-| Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `RASCUNHOS PRONTOS; NÃO PUBLICADOS`; aprovação final em 17/08 | manter somente `M26F01W/C06H01` no WhatsApp e analisá-la separadamente; pausar avaliação/Site facial e OTO; usar o mesmo `C07H01` com Feed 1:1 e Reels/Stories 9:16 em `M26C01W` e `M26C02S`; não iniciar sem release técnico e sonda Site até LEADS/CRM |
+| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v97; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
+| Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `PUBLICADO; EM MONITORAMENTO` desde 17/08 | manter somente `M26F01W/C06H01` no WhatsApp e analisar separadamente; comparar apenas `M26C01W` × `M26C02S`; nenhuma troca de criativo, rota, público ou orçamento durante a janela |
 | Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGENDADO` para decisão em 20/08 | considerar excluir apenas `18–24` e `25–34` em LIFT/BLEF/CERV/FACE; manter `Desconhecida` e não alterar OTO/marca/rino |
 | SEO técnico/CWV | P1/P2 | baseline parcial | medir 20/08; otimizar só com gargalo comprovado |
 | GSC, Wix antigo, Bing e IA | P1/P2 | dependência externa | validar acesso/estado; não prometer ranking ou citação |
@@ -261,8 +261,8 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 - não ativar Performance Max, ampla, Display ou parceiros automaticamente;
 - não reduzir o piso de 40+ do Meta facial; confirmar a entrega efetiva do Advantage+ antes de concluir que o piso foi obedecido;
 - não excluir idade `Desconhecida` no Google nem aplicar a regra etária a otoplastia, marca ou futura rinoplastia;
-- não colocar verba nova em `M26F02S` antes da prova E2E;
-- não lançar `M26C01W` ou `M26C02S` com 25+, sem divisão equivalente ou sem a sonda `M26C02S` chegar corretamente a LEADS/CRM;
+- não colocar verba nova na rota facial histórica `M26F02S`; o único teste Site ativo é o cervical `M26C02S` já sondado;
+- não reduzir o piso 40+ nem alterar a equivalência de `M26C01W` e `M26C02S` durante a janela;
 - não renovar `M26F02S`, não reativar `C01H01`, não criar versão Site para lifting facial e não publicar o vídeo cervical organicamente antes da janela;
 - não publicar o rascunho pendente de `M26O01W` como se fosse cervical e não gastar o saldo da otoplastia sem decisão específica;
 - não executar vários RSAs simultaneamente;
@@ -282,7 +282,7 @@ Os compromissos sobrepostos de 27/08 e 17/09 foram escalonados. O evento de 20/0
 
 A rotina do Google Ads não cria três automações concorrentes. Um único script roda diariamente: fica silencioso quando a saúde está normal, envia a revisão completa às segundas-feiras e acrescenta 90 dias no primeiro dia útil do mês. Os checkpoints de 7 e 14 dias continuam no Calendar porque dependem da data real de cada mudança.
 
-A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão ativos na v94 e continuam incapazes de alterar campanhas.
+A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão ativos na v97 e continuam incapazes de alterar campanhas.
 
 O experimento Meta proposto em 16/08 tem checkpoints relativos em D+3, D+7, D+15 e D+22. Eles só devem virar lembretes ativos depois de registrar a hora real da veiculação; se qualquer gate impedir o início, nenhum lembrete absoluto será criado e o plano continua em espera.
 

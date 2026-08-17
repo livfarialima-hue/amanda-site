@@ -6,10 +6,10 @@
 
 **Fuso:** `America/Sao_Paulo`
 
-**Estado:** `RASCUNHOS META E PACOTE TÉCNICO PREPARADOS — PUBLICAÇÃO AGUARDA APROVAÇÃO EM 17/08`
+**Estado:** `PUBLICADO E EM MONITORAMENTO — INÍCIO PROGRAMADO EM 17/08 ÀS 12H`
 
 **Período observado na mídia:** 17/07/2026 a 15/08/2026, 30 dias completos; o dia 16/08 parcial foi excluído
-**Regra:** Daniel autorizou em 16/08/2026 a preparação do pacote. A publicação ficou deliberadamente para 17/08/2026, depois da conferência dos objetos, publicação coordenada do código e sonda ponta a ponta. Não clicar em `Publicar` no lote inteiro do Gerenciador: selecionar somente os objetos listados neste plano. Qualquer valor acima do cenário aprovado deve ser reapresentado.
+**Regra:** Daniel autorizou integralmente a publicação em 17/08/2026. O pacote técnico foi publicado nos commits `2b5af19` e `436aff0`, o Apps Script canônico chegou à v97, o schema v1 foi habilitado, a sonda sintética concluiu com HTTP 200 e somente os três objetos listados neste plano foram publicados. Qualquer valor acima de R$ 900 no ciclo exige nova autorização.
 
 ## 1. Decisão recomendada
 
@@ -92,7 +92,7 @@ Janela de 30 dias:
 
 O experimento cervical soma R$ 600 em 15 dias. A continuidade do lifting facial acrescenta R$ 300 no rascunho, levando o cenário base a R$ 900. Os braços cervicais usam orçamento total fixo de R$ 300 em campanhas separadas, sem Advantage Campaign Budget redistribuir verba entre eles. A equivalência planejada é de orçamento, público, duração, texto e criativo; os algoritmos ainda podem selecionar inventário e pessoas diferentes, portanto o resultado é operacional, não um ensaio causal puro.
 
-### Objetos Meta preparados em rascunho
+### Objetos Meta publicados seletivamente em 17/08/2026
 
 | Rota | Campanha | Conjunto | Anúncio principal | Controle de legado |
 |---|---:|---:|---:|---|
@@ -100,7 +100,7 @@ O experimento cervical soma R$ 600 em 15 dias. A continuidade do lifting facial 
 | WhatsApp direto | `120251248762160627` | `120251248762180627` | `120251248762170627` | anúncio herdado `120251248762190627` desligado |
 | Site → WhatsApp | `120251249058750627` | `120251249058780627` | `120251249058760627` | anúncio herdado `120251249058770627` desligado |
 
-Os dois anúncios cervicais principais usam o texto aprovado, título `Entenda o lifting cervical` e descrição `Avaliação individual do pescoço e da mandíbula.`. O braço direto usa CTA `Fale conosco` e o modelo salvo com `Ref. M26C01W-C07H01`; o braço Site usa CTA `Saiba mais`, URL `/lifting-cervical/` e os parâmetros canônicos. Em ambos, Feed recebe `Campanha cervical 1x1 arrumado final.mp4` e Reels/Stories recebem `Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4` em 1080×1920. O anúncio facial usa o vídeo vencedor de 46,9 segundos em suas versões 1:1 e 9:16, o texto histórico de `C06H01`, título `Cirurgia ou outro tratamento?`, descrição `A indicação começa pela avaliação.` e o modelo salvo com `Ref. M26F01W-C06H01`.
+Os dois anúncios cervicais principais usam o texto aprovado, título `Entenda o lifting cervical` e descrição `Avaliação individual do pescoço e da mandíbula.`. O braço direto usa CTA `Fale conosco` e o modelo salvo com `Ref. M26C01W-C07H01`; o braço Site usa CTA `Saiba mais`, URL `/lifting-cervical/` e os parâmetros canônicos. Em ambos, Feed recebe `Campanha cervical 1x1 arrumado final.mp4` e Reels/Stories recebem `Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4` em 1080×1920. O anúncio facial usa o vídeo vencedor de 46,9 segundos em suas versões 1:1 e 9:16, o texto histórico de `C06H01`, título `Cirurgia ou outro tratamento?`, descrição `A indicação começa pela avaliação.` e o modelo salvo com `Ref. M26F01W-C06H01`. A Meta confirmou em cada publicação exatamente uma campanha, um conjunto e um anúncio; os anúncios herdados permaneceram desligados.
 
 ### O que este experimento responderá
 
@@ -117,7 +117,7 @@ Todos são obrigatórios:
 1. os dois braços cervicais devem permanecer com São Paulo +20 km e limite original rígido 40–65+; no braço direto, somente WhatsApp pode estar selecionado como destino de mensagem;
 2. `M26C01W-C07H01` deve identificar o WhatsApp direto; `M26C02S-C07H01` deve sair do CTA do site sem depender de o paciente manter o texto manualmente;
 3. o braço Site deve entrar em `/lifting-cervical/` com `origem=M26C02S`, `utm_source=meta`, `utm_medium=paid_social`, `utm_campaign=M26C02S` e `utm_content=C07H01`; campanha, conjunto e anúncio devem receber parâmetros/IDs estáveis quando fornecidos pela Meta;
-4. o modo rico e o schema continuam desligados até decisão própria. Antes do experimento, ativação controlada, política de privacidade coerente, purge observado, dry-run/migração autorizados e rollback são obrigatórios;
+4. o modo rico e o schema v1 foram ativados de forma coordenada após autorização integral, com rollback documentado e sem usar dado de paciente;
 5. uma sonda sintética sem paciente deve comprovar Meta → landing → navegação → CTA → WhatsApp → webhook → LEADS → CRM, com origem inicial `Meta Ads`, caminho `site → WhatsApp`, campanha `M26C02S`, criativo `C07H01`, landing e página do CTA corretas, confiança explícita, zero PII e zero first touch sobrescrito;
 6. `M26C01W` e `M26C02S` devem entrar no registro de campanhas, no agregado anônimo e na lógica de resultado principal da rotina Meta;
 7. os Meta Ad IDs `120251248762170627`, `120251249058760627` e `120251254720680627` devem estar no mapa explícito do webhook como fallback; nunca inferir por semelhança;
@@ -129,7 +129,7 @@ Se qualquer gate falhar, adiar o início dos dois braços. Não lançar apenas u
 
 ## 6. Checkpoints e regras
 
-As datas dos checkpoints pagos serão registradas depois da prova ponta a ponta e da ativação real. `D0` é a ativação; o dia seguinte é o primeiro dia completo. A publicação orgânica ficou agendada separadamente para 20/08/2026 às 19h30.
+`D0` é 17/08/2026 às 12h, início programado na Meta; o dia seguinte é o primeiro dia completo. Os checkpoints absolutos são 20/08, 24/08, 01/09 e 08/09. A publicação orgânica ficou agendada separadamente para 20/08/2026 às 19h30.
 
 | Checkpoint | Janela | Avaliar | Regra |
 |---|---|---|---|
