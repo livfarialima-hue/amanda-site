@@ -81,6 +81,109 @@ test("assigns fixed rooms and keeps Marina and Laerte flexible", () => {
   );
 });
 
+test("uses a generic procedure title without exposing clinical details", () => {
+  assert.equal(
+    context.rotuloAgendaTipoConsulta_("Procedimento"),
+    "Procedimento",
+  );
+  assert.equal(
+    context.rotuloAgendaTipoConsulta_("Retorno presencial"),
+    "Retorno",
+  );
+  assert.equal(
+    context.rotuloAgendaTipoConsulta_("Consulta presencial"),
+    "Consulta",
+  );
+});
+
+test("a new booking does not overwrite a completed appointment from the same opportunity", () => {
+  const headers = [
+    "ID da consulta",
+    "Opportunity ID",
+    "Telefone (E.164)",
+    "Profissional",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+  ];
+  const rows = [
+    [
+      "appointment-completed",
+      "opp-amanda-returning",
+      "+5511900009999",
+      "Dra. Amanda",
+      "12/08/2026",
+      "15:00",
+      "Realizada",
+    ],
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getLastColumn: () => headers.length,
+    getRange: () => ({ getValues: () => rows }),
+  };
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const result = context.localizarConsultaExistente_(
+    sheet,
+    columns,
+    {
+      id: "appointment-procedure",
+      opportunityId: "opp-amanda-returning",
+      phone: "+5511900009999",
+      professional: "Dra. Amanda",
+      scheduledDate: "2026-08-20",
+      scheduledTime: "10:00",
+      incomingStatus: "Consulta agendada",
+    },
+  );
+
+  assert.equal(result, null);
+});
+
+test("the same receipt id remains idempotent after the appointment closes", () => {
+  const headers = [
+    "ID da consulta",
+    "Opportunity ID",
+    "Telefone (E.164)",
+    "Profissional",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+  ];
+  const rows = [
+    [
+      "manual-same-receipt",
+      "opp-amanda-returning",
+      "+5511900009999",
+      "Dra. Amanda",
+      "20/08/2026",
+      "10:00",
+      "Realizada",
+    ],
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getLastColumn: () => headers.length,
+    getRange: () => ({ getValues: () => rows }),
+  };
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const result = context.localizarConsultaExistente_(
+    sheet,
+    columns,
+    {
+      id: "manual-same-receipt",
+      opportunityId: "opp-amanda-returning",
+      phone: "+5511900009999",
+      professional: "Dra. Amanda",
+      scheduledDate: "2026-08-20",
+      scheduledTime: "10:00",
+      incomingStatus: "Consulta agendada",
+    },
+  );
+
+  assert.equal(result, 2);
+});
+
 test("WhatsApp appointment automation is limited to Amanda and Daniel", () => {
   assert.equal(
     context.profissionalPermitidoAutomacaoConsulta_("Dra. Amanda"),

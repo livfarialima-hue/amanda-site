@@ -54,6 +54,9 @@ const CONSULTATION_PRICE_PATTERN =
 const AVAILABILITY_REQUEST_PATTERN =
   /\b(?:consultar|conferir|ver|saber)\s+(?:a\s+)?disponibilidade\b|\b(?:quais?|ver|consultar|conferir|saber)\b.{0,35}\b(?:hor[aá]rios?|datas?)\b|\b(?:agendar|marcar)\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o)\b/i;
 
+const STANDARD_PRICE_AVAILABILITY_TEMPLATE_PATTERN =
+  /^ola,?\s+li sobre (?:os\s+)?(?:valor(?:es)?|precos?) (?:de|do|da) .{2,120}? e gostaria de (?:consultar|ver) (?:os\s+)?horarios para uma avaliacao com a dra\.? amanda\.?(?:\s+ref(?:erencia)?\.?\s*:?\s*[a-z0-9-]+)?(?:\s+jid\s*:\s*[a-z0-9_-]+)?$/i;
+
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
@@ -659,6 +662,11 @@ export function planAutomation({
       platform,
       referralContext,
     });
+  const priceMentionIsTemplateContext =
+    marketingPrefilledMessage &&
+    STANDARD_PRICE_AVAILABILITY_TEMPLATE_PATTERN.test(
+      foldMarketingText(normalizedText),
+    );
   const asksConsultationInformation =
     !marketingPrefilledMessage &&
     isConsultationInformationRequest(normalizedText);
@@ -733,7 +741,11 @@ export function planAutomation({
     };
   }
 
-  if (asksPrice) {
+  // Marketing templates can mention "valores" as source context without the
+  // patient having written a new price question. Keep the template on its
+  // procedure-opening route so the webhook can collect the scheduling
+  // preference promised by the standard message.
+  if (asksPrice && !priceMentionIsTemplateContext) {
     return {
       route: "standard_reply",
       reason: "price_initial_information",

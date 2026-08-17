@@ -58,7 +58,7 @@ function writableSheet(row, writes) {
   };
 }
 
-test("creates an Amanda event only in Sala 1 without patient data", () => {
+test("creates an Amanda procedure only in Sala 1 without patient data", () => {
   const { context, HEADERS, mapearCabecalhosConsultas_, sincronizarConsultaComAgendaNaLinha_ } =
     loadCalendarSync();
   const headers = [
@@ -85,7 +85,7 @@ test("creates an Amanda event only in Sala 1 without patient data", () => {
     [HEADERS.phone]: "+5511999999999",
     [HEADERS.name]: "Paciente Privada",
     [HEADERS.professional]: "Dra. Amanda",
-    [HEADERS.consultationType]: "Consulta presencial",
+    [HEADERS.consultationType]: "Procedimento",
     [HEADERS.location]: "Clínica LIV Faria Lima",
     [HEADERS.scheduledDate]: "2026-08-04",
     [HEADERS.scheduledTime]: "10:00",
@@ -115,7 +115,7 @@ test("creates an Amanda event only in Sala 1 without patient data", () => {
   assert.equal(result.ok, true);
   assert.equal(result.room, "Sala 1");
   assert.equal(created.length, 1);
-  assert.equal(created[0].title, "Consulta — Dra. Amanda");
+  assert.equal(created[0].title, "Procedimento — Dra. Amanda");
   assert.equal(created[0].options.location.endsWith("Sala 1"), true);
   assert.equal(
     JSON.stringify(created[0]).includes("Paciente Privada"),

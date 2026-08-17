@@ -368,9 +368,29 @@ function structuredAppointmentReceipt(text, baseDate) {
     return null;
   }
 
-  const consultationType = detectConsultationType(
+  const defaultConsultationType = detectConsultationType(
     `${fields.endereco || ""} ${text}`,
   );
+  const noReturnApplies = /^nao se aplica\b/.test(
+    normalize(fields.retorno),
+  );
+  const consultationValue = normalize(
+    fields["valor da consulta"],
+  );
+  const zeroConsultationValue =
+    Boolean(consultationValue) &&
+    !/[1-9]/.test(consultationValue) &&
+    /\b0(?:\s+00)?\b/.test(consultationValue);
+  const noPaymentApplies = /^nao se aplica\b/.test(
+    normalize(fields["formas de pagamento"]),
+  );
+  const consultationType =
+    defaultConsultationType !== "Teleconsulta" &&
+    noReturnApplies &&
+    zeroConsultationValue &&
+    noPaymentApplies
+      ? "Procedimento"
+      : defaultConsultationType;
   return {
     patientName,
     scheduledDate,

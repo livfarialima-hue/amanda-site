@@ -385,6 +385,30 @@ M\u00e9dico: Dra. Amanda Schroeder`,
   assert.equal(result?.confidence, "confirmed");
 });
 
+test("classifies the zero-value Amanda receipt pattern as a procedure", () => {
+  const result = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Paciente Procedimento
+Data: 20/08/2026 - 5ª Feira
+Horário: 10h00
+Médico: Dra. Amanda Schroeder
+Endereço: Rua Pais Leme, 215, Conjunto 710, Pinheiros, São Paulo - SP
+Retorno: não se aplica
+
+Valor da consulta: R$ 0,00
+Formas de pagamento: não se aplica
+
+Atenciosamente, Bruna`,
+    at: "2026-08-17T12:42:00-03:00",
+  });
+
+  assert.equal(result?.professional, "Dra. Amanda");
+  assert.equal(result?.consultationType, "Procedimento");
+  assert.equal(result?.scheduledDate, "2026-08-20");
+  assert.equal(result?.scheduledTime, "10:00");
+  assert.equal(result?.confidence, "confirmed");
+});
+
 test("does not schedule an incomplete or internally inconsistent structured receipt", () => {
   const missingDoctor = detectManualAppointment({
     currentText: `Comprovante de Agendamento:

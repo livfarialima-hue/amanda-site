@@ -152,6 +152,135 @@ test("manual SMB echo marks takeover and suppresses later AI for the day", async
   }
 });
 
+test("a structured Amanda receipt is booked before a failing takeover write", async () => {
+  const patientPhone = "+5511900004567";
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const sheetActions = [];
+
+  process.env.YCLOUD_WEBHOOK_SECRET = WEBHOOK_SECRET;
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = SHEETS_URL;
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+
+  globalThis.fetch = async (url, options) => {
+    if (url !== SHEETS_URL) {
+      throw new Error(`unexpected destination: ${url}`);
+    }
+
+    const body = JSON.parse(options.body);
+    sheetActions.push(body);
+
+    if (body.action === "reserve_appointment_slot") {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          reserved: true,
+          appointmentId: body.appointment.appointmentId,
+          room: "Sala 1",
+          calendarSynced: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (body.action === "send_review_alert_email") {
+      return new Response(
+        JSON.stringify({ ok: true, sent: true }),
+        { status: 200 },
+      );
+    }
+
+    if (body.action === "mark_human_takeover") {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: "internal_error_unknown",
+        }),
+        { status: 504 },
+      );
+    }
+
+    throw new Error(`unexpected sheet action: ${body.action}`);
+  };
+
+  try {
+    const response = await webhook(
+      signedRequest({
+        id: "procedure-receipt-event",
+        type: "whatsapp.smb.message.echoes",
+        createTime: "2026-08-17T15:42:00.000Z",
+        whatsappMessage: {
+          id: "procedure-receipt-message",
+          wamid: "wamid.procedure-receipt-message",
+          status: "sent",
+          from: "+5511961957144",
+          to: patientPhone,
+          type: "text",
+          text: {
+            body: `Comprovante de Agendamento:
+Nome: Paciente Procedimento
+Data: 20/08/2026 - 5ª Feira
+Horário: 10h00
+Médico: Dra. Amanda Schroeder
+Endereço: Rua Pais Leme, 215, Conjunto 710, Pinheiros, São Paulo - SP
+Retorno: não se aplica
+
+Valor da consulta: R$ 0,00
+Formas de pagamento: não se aplica
+
+Atenciosamente, Bruna`,
+          },
+          sendTime: "2026-08-17T15:42:00.000Z",
+        },
+      }),
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 502);
+    assert.equal(body.error, "takeover_delivery_failed");
+    assert.equal(body.appointmentSyncStatus, "completed");
+    assert.equal(
+      body.appointmentId,
+      "manual-wamid.procedure-receipt-message",
+    );
+    assert.deepEqual(
+      sheetActions.map(({ action }) => action),
+      [
+        "reserve_appointment_slot",
+        "send_review_alert_email",
+        "mark_human_takeover",
+      ],
+    );
+    assert.equal(
+      sheetActions[0].appointment.consultationType,
+      "Procedimento",
+    );
+    assert.equal(
+      sheetActions[0].appointment.professional,
+      "Dra. Amanda",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test("attendance confirmation after a human reminder updates the appointment and stays silent", async () => {
   const patientPhone = "+5511900004321";
   const environmentKeys = [

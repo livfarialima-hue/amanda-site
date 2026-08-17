@@ -793,6 +793,48 @@ test("prefilled site availability text is context rather than scheduling intent"
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("standard Google lifting message treats values as template context", () => {
+  const text = [
+    "Olá, li sobre valores de lifting facial e gostaria de consultar os horários para uma avaliação com a Dra. Amanda.",
+    "Ref. g26f01-820414650683-lifting-facial-preco",
+  ].join("\n\n");
+  const plan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "G26F01-820414650683-lifting-facial-preco",
+    platform: "Google",
+  });
+
+  assert.equal(isAvailabilityRequest(text), true);
+  assert.equal(
+    isLikelyMarketingPrefilledMessage({
+      text,
+      reference: "G26F01-820414650683-lifting-facial-preco",
+      platform: "Google",
+    }),
+    true,
+  );
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "known_procedure");
+  assert.equal(plan.procedure, "lifting_facial");
+  assert.equal(plan.automaticAllowed, true);
+});
+
+test("an explicit price question added to the standard availability template is preserved", () => {
+  const plan = planAutomation({
+    text:
+      "Olá, li sobre valores de lifting facial e gostaria de consultar os horários para uma avaliação com a Dra. Amanda. " +
+      "Ref. g26f01-820414650683-lifting-facial-preco. Qual é o valor da cirurgia?",
+    messageType: "text",
+    reference: "G26F01-820414650683-lifting-facial-preco",
+    platform: "Google",
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.procedure, "lifting_facial");
+});
+
 test("exact professional experience remains partially answerable and human-reviewed", () => {
   const plan = planAutomation({
     text: "Há quanto tempo a Dra. Amanda atua na cirurgia plástica?",
