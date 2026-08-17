@@ -6,6 +6,7 @@ const ROOM_BOOKING_CONFIG = Object.freeze({
     "henrique",
     "marina",
     "laerte",
+    "matheus",
     "daniel",
   ]),
   allowedDurations: Object.freeze([30, 60, 90, 120]),
@@ -80,6 +81,7 @@ function profissionalFormularioReservaSalas_(value) {
     henrique: "Dr. Henrique",
     marina: "Dra. Marina",
     laerte: "Dr. Laerte",
+    matheus: "Matheus (ortop)",
     daniel: "Dr. Daniel",
   };
 
