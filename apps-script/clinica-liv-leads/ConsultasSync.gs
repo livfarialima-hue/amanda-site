@@ -112,6 +112,7 @@ function chaveProfissionalConsulta_(value) {
   if (normalized.includes("henrique")) return "henrique";
   if (normalized.includes("marina")) return "marina";
   if (normalized.includes("laerte")) return "laerte";
+  if (normalized.includes("matheus")) return "matheus";
   if (normalized.includes("daniel")) return "daniel";
 
   return "";
@@ -121,7 +122,11 @@ function salasPermitidasProfissional_(professional) {
   const key = chaveProfissionalConsulta_(professional);
 
   if (key === "amanda") return ["Sala 1"];
-  if (key === "henrique" || key === "daniel") {
+  if (
+    key === "henrique" ||
+    key === "matheus" ||
+    key === "daniel"
+  ) {
     return ["Sala 2"];
   }
   if (key === "marina" || key === "laerte") {
@@ -350,6 +355,7 @@ function diagnosticarAgendaSalas() {
       Henrique: salasPermitidasProfissional_("Dr. Henrique"),
       Marina: salasPermitidasProfissional_("Dra. Marina"),
       Laerte: salasPermitidasProfissional_("Dr. Laerte"),
+      Matheus: salasPermitidasProfissional_("Matheus (ortop)"),
       Daniel: salasPermitidasProfissional_("Dr. Daniel"),
     },
   };
