@@ -215,6 +215,71 @@ test("pending hospital quote remains human-only even with conversation context",
   assert.equal(enrichedPlan.automaticAllowed, false);
 });
 
+test("answers the hospital setting directly for cervical and facial lifting", () => {
+  for (const [text, procedure] of [
+    ["O lifting cervical é feito no hospital?", "lifting_cervical"],
+    ["O lifting facial é realizado em ambiente hospitalar?", "lifting_facial"],
+  ]) {
+    const plan = planAutomation({
+      text,
+      messageType: "text",
+      reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+      platform: "WhatsApp direto",
+    });
+
+    assert.equal(plan.route, "standard_reply", text);
+    assert.equal(plan.reason, "hospital_setting_request", text);
+    assert.equal(plan.replyCode, "AMANDA-HOSPITAL-01", text);
+    assert.equal(plan.procedure, procedure, text);
+    assert.equal(plan.automaticAllowed, true, text);
+  }
+});
+
+test("inherits lifting context for a pronoun-only hospital question before any bot reply", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Este procedimento é feito no hospital?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Olá! Quero saber sobre lifting cervical com a Dra. Amanda. Ref. M26C01W-C07H01",
+      },
+      { role: "user", source: "patient", text: "Olá" },
+    ],
+  );
+
+  assert.equal(
+    preliminaryPlan.reason,
+    "hospital_setting_context_required",
+  );
+  assert.equal(preliminaryPlan.automaticAllowed, false);
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "hospital_setting_request");
+  assert.equal(enrichedPlan.replyCode, "AMANDA-HOSPITAL-01");
+  assert.equal(enrichedPlan.procedure, "lifting_cervical");
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("does not generalize the approved hospital fact to another procedure", () => {
+  const plan = planAutomation({
+    text: "A blefaroplastia é feita no hospital?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "hospital_setting_context_required");
+  assert.equal(plan.procedure, "blefaroplastia");
+  assert.equal(plan.automaticAllowed, false);
+});
+
 test("asking how the consultation works stays in automatic conversation", () => {
   for (const text of [
     "Estou fazendo uma pesquisa. Seria interessante saber como funciona a consulta.",

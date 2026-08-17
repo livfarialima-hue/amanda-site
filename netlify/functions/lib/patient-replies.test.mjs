@@ -183,6 +183,27 @@ test("builds a natural routing greeting without internal codes", () => {
   assert.doesNotMatch(reply, /ORG-DIR-01/);
 });
 
+test("answers the approved lifting hospital fact and asks for an unclear name", () => {
+  const cervicalReply = buildPatientReply({
+    replyCode: "AMANDA-HOSPITAL-01",
+    patientName: "",
+    procedure: "lifting_cervical",
+  });
+  const facialReply = buildPatientReply({
+    replyCode: "AMANDA-HOSPITAL-01",
+    patientName: "Marina Silva",
+    procedure: "lifting_facial",
+  });
+
+  assert.match(cervicalReply, /^Olá! Eu sou a Bruna/);
+  assert.match(cervicalReply, /o lifting cervical é uma cirurgia realizada em hospital/i);
+  assert.match(cervicalReply, /anestesista e equipe cirúrgica/i);
+  assert.match(cervicalReply, /Como posso te chamar\?/i);
+  assert.match(facialReply, /^Olá, Marina! Eu sou a Bruna/);
+  assert.match(facialReply, /o lifting facial é uma cirurgia realizada em hospital/i);
+  assert.doesNotMatch(facialReply, /Como posso te chamar/i);
+});
+
 test("price fallback is transparent about the consultation and clarifies the requested price", () => {
   const reply = buildPatientReply({
     replyCode: "P-PRECO-01",

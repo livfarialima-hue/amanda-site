@@ -88,6 +88,14 @@ const PENDING_HOSPITAL_QUOTE_PATTERNS = [
   /\b(?:quando|assim\s+que).{0,40}\b(?:tiver|souber|confirmar).{0,40}\b(?:valor|or[c\u00e7]amento).{0,40}\bhospital\b/i,
 ];
 
+const HOSPITAL_SETTING_QUESTION_PATTERN =
+  /\b(?:feito|feita|realizad[oa]|operad[oa]|acontece|ocorre)\b.{0,35}\b(?:em|no|num)\s+(?:um\s+)?(?:hospital|ambiente\s+hospitalar)\b|\b(?:[eé]|acontece|ocorre)\s+(?:em|no|num)\s+(?:um\s+)?(?:hospital|ambiente\s+hospitalar)\b/i;
+
+const APPROVED_HOSPITAL_LIFTING_PROCEDURES = new Set([
+  "lifting_facial",
+  "lifting_cervical",
+]);
+
 const APPEARANCE_DISTRESS_PATTERNS = [
   /\b(?:minha\s+)?apar[eê]ncia.{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
   /\b(?:meu\s+rosto|minha\s+face|meu\s+corpo).{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
@@ -423,6 +431,32 @@ export function enrichAutomationPlanFromConversation(
       ["bruna", "equipe_humana"].includes(turn?.source),
   );
 
+  const contextText = recentConversation
+    .map((turn) => String(turn?.text || "").trim())
+    .filter(Boolean)
+    .join(" ");
+  const context = planAutomation({
+    text: contextText,
+    messageType: "text",
+    reference: "",
+    platform: "WhatsApp direto",
+  });
+
+  if (
+    plan.reason === "hospital_setting_context_required" &&
+    APPROVED_HOSPITAL_LIFTING_PROCEDURES.has(context.procedure)
+  ) {
+    return {
+      ...plan,
+      route: "standard_reply",
+      reason: "hospital_setting_request",
+      replyCode: "AMANDA-HOSPITAL-01",
+      professional: "amanda",
+      procedure: context.procedure,
+      automaticAllowed: true,
+    };
+  }
+
   if (!hasClinicTurn) return plan;
 
   if (plan.reason === "simple_greeting") {
@@ -449,16 +483,6 @@ export function enrichAutomationPlanFromConversation(
     }
   }
 
-  const contextText = recentConversation
-    .map((turn) => String(turn?.text || "").trim())
-    .filter(Boolean)
-    .join(" ");
-  const context = planAutomation({
-    text: contextText,
-    messageType: "text",
-    reference: "",
-    platform: "WhatsApp direto",
-  });
   const priceRequest =
     plan.reason === "price_initial_information";
 
@@ -714,6 +738,21 @@ export function planAutomation({
       professional: null,
       procedure: procedure?.key || null,
       automaticAllowed: false,
+    };
+  }
+
+  if (HOSPITAL_SETTING_QUESTION_PATTERN.test(normalizedText)) {
+    const approvedProcedure =
+      APPROVED_HOSPITAL_LIFTING_PROCEDURES.has(procedure?.key);
+    return {
+      route: approvedProcedure ? "standard_reply" : "human_review",
+      reason: approvedProcedure
+        ? "hospital_setting_request"
+        : "hospital_setting_context_required",
+      replyCode: approvedProcedure ? "AMANDA-HOSPITAL-01" : null,
+      professional: "amanda",
+      procedure: procedure?.key || null,
+      automaticAllowed: approvedProcedure,
     };
   }
 

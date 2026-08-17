@@ -363,6 +363,28 @@ export function buildPatientReply({
     ].join(" ");
   }
 
+  if (replyCode === "AMANDA-HOSPITAL-01") {
+    const procedureLabel =
+      procedure === "lifting_facial"
+        ? "o lifting facial"
+        : procedure === "lifting_cervical"
+          ? "o lifting cervical"
+          : "o lifting cervical e o lifting facial";
+    const nameQuestion = firstName(patientName)
+      ? ""
+      : "Como posso te chamar?";
+
+    return [
+      hello,
+      "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      `Sim. Com a equipe da Dra. Amanda, ${procedureLabel} ${
+        procedure ? "é uma cirurgia realizada" : "são cirurgias realizadas"
+      } em hospital, com anestesista e equipe cirúrgica.`,
+      "Antes, a Dra. Amanda faz uma avaliação individual para confirmar a indicação e definir o planejamento adequado ao caso.",
+      nameQuestion,
+    ].filter(Boolean).join(" ");
+  }
+
   if (replyCode === "P-PRECO-01") {
     const procedureLabel =
       PROCEDURE_LABELS[procedure] || "uma cirurgia específica";
