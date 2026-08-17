@@ -8,6 +8,10 @@ const source = fs.readFileSync(
   new URL("./RoomBooking.gs", import.meta.url),
   "utf8",
 );
+const formSource = fs.readFileSync(
+  new URL("./RoomBookingForm.html", import.meta.url),
+  "utf8",
+);
 
 const TEST_ACCESS_TOKEN = "room-booking-test-token";
 const FUTURE_APPOINTMENT_DATE = (() => {
@@ -101,7 +105,7 @@ function loadRoomBooking({ available = true } = {}) {
     chaveProfissionalConsulta_(value) {
       const match = String(value || "")
         .toLowerCase()
-        .match(/amanda|henrique|marina|laerte|daniel/);
+        .match(/amanda|henrique|marina|laerte|matheus|daniel/);
       return match ? match[0] : "";
     },
     extrairDataConsultasSync_: (value) => /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "",
@@ -175,8 +179,23 @@ test("allows every professional configured for the room form", () => {
     "Dr. Daniel",
   );
   assert.equal(
+    context.profissionalFormularioReservaSalas_("Matheus (ortop)"),
+    "Matheus (ortop)",
+  );
+  assert.equal(
     context.profissionalFormularioReservaSalas_("Outra pessoa"),
     "",
+  );
+});
+
+test("shows Matheus in the room form with the fixed Sala 2 rule", () => {
+  assert.match(
+    formSource,
+    /<option value="Matheus \(ortop\)">Matheus \(ortop\)<\/option>/,
+  );
+  assert.match(
+    formSource,
+    /"Matheus \(ortop\)": "Reserva sempre na Sala 2\."/,
   );
 });
 
