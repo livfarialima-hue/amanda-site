@@ -109,4 +109,282 @@ O diagnÃ³stico pÃºblico do endpoint deve indicar:
 - Perguntas informativas como â€œcomo funciona a consulta?â€ ou â€œcomo funciona a avaliaÃ§Ã£o?â€, sem confundi-las com pedido de agenda.
 - Mensagem padrÃ£o de anÃºncio ou site que diga â€œli sobre valoresâ€ e peÃ§a para consultar horÃ¡rios: â€œvaloresâ€ permanece contexto da origem, sem disparar resposta de preÃ§o; a Bruna pede automaticamente quais dias e se manhÃ£ ou tarde funcionam melhor. HorÃ¡rios reais continuam dependendo de preferÃªncia concreta e revisÃ£o humana.
 - Valor da consulta da Dra. Amanda: R$ 500, abatido se a cirurgia for realizada com a equipe.
-- A primeira pergunta sobre preÃ§o cirÃºrgico recebe uma resposta institucional curta, sem faixa: o valor Ã© individual e sÃ³ Ã© definido apÃ³s avaliaÃ§Ã£o e planejamento; tÃ©cnica, complexidade, necessidades da pessoa, equipe, hospital, anestesia, materiais e acompanhamento podem compor e alterar o total. O orÃ§amento final discrimina os itens aplicÃ¡veis, sem apresentar honorÃ¡rio isolado como preÃ§o total. Para lifting/minilifting, a resposta inclui uma vez o guia especÃ­fico de composiÃ§Ã£o. Somente se a pessoa insistir ou repetir explicitamente o pedido por mÃ©dia/faixa, a Bruna pode enviar as faixas aprovadas com a ressalva de que sÃ£o estimativas gerais informativas, nÃ£o orÃ§amento, proposta ou garantia; a mensagem deve dizer que o valor final pode ficar fora da faixa, explicar os fatores de variaÃ§Ã£o e incluir o URL completo do guia especÃ­fico, ainda que ele jÃ¡ tenha aparecido. A faixa completa nÃ£o Ã© enviada automatënô¶‰ËkºwµçEÌ½±Õ¹…ÌÕÍ…´…¥á…Ì‘”Í•±—Ÿ¼¸´…Í¼‘”“éÙ¥‘„°µ…É…È9Õ¹„É•ÍÁ½¹‘•È½´É½‹Ñ€°Á½¥Ìƒ¤„½ÃŸ¼µ…¥ÌÉ•ÍÑÉ¥Ñ¥Ù„¸ÁÉ•™•Ë©¹¥„ƒ¤±¥‘„¹½Ù…µ•¹Ñ”¥µ•‘¥…Ñ…µ•¹Ñ”…¹Ñ•Ì‘”ÅÕ…±ÅÕ•È•¹Ù¥¼…ÕÑ½·…Ñ¥¼ì…ÍÍ¥´°Õµ„µ…É‡Ÿ¼™•¥Ñ„•¹ÅÕ…¹Ñ¼„É•ÍÁ½ÍÑ„•ÍÓ„Í•¹‘¼•±…‰½É…‘„Ñ…µ‹¥´…¹•±„¼‘¥ÍÁ…É¼¸(4)¼…±Ñ•É…ÈM¥ÑÕ‡Ÿ¼‘¼±•…‘€Á…É„½¹ÍÕ±Ñ„…•¹‘…‘…€°„…ÕÑ½µ‡Ÿ¼É¥„½Ô…ÑÕ…±¥é„„±¥¹¡„½ÉÉ•ÍÁ½¹‘•¹Ñ”•´½¹ÍÕ±Ñ…Í€°ÕÍ…¹‘¼%”Ñ•±•™½¹”Á…É„•Ù¥Ñ…È‘ÕÁ±¥¥‘…‘”¸M”‘…Ñ„”¡½Ë…É¥¼…¥¹‘„»¼•ÍÑ¥Ù•É•´‘¥ÍÁ½»µÙ•¥Ì°„±¥¹¡„ƒ¤É¥…‘„Í•´¥¹Ù•¹Ó„µ±½Ì”™¥„ÁÉ½¹Ñ„Á…É„½µÁ±•µ•¹Ñ¼¸Uµ„½¹™¥Éµ‡Ÿ¼•áÁ³µ¥Ñ„¹¼]¡…ÑÍÁÀÑ…µ‹¥´Á½‘”ÁÉ••¹¡•È„…‰„ÅÕ…¹‘¼„½¹Ù•ÉÍ„½¹Ñ¥Ù•È‘…Ñ„”¡½Ë…É¥¼¥¹•Å×µÙ½½ÌìÍ•´½Ì‘½¥Ì•±•µ•¹Ñ½Ì°¼Í¥ÍÑ•µ„»¼ÁÉ•ÍÕµ”Õ´…•¹‘…µ•¹Ñ¼¸4(4)¼…±Ñ•É…È¼ÍÑ…ÑÕÌÁ…É„½¹ÍÕ±Ñ„É•…±¥é…‘…€°„½¹ÍÕ±Ñ„ƒ¤…ÑÕ…±¥é…‘„”¼ÃÍÌµ½¹ÍÕ±Ñ„•¹ÑÉ„•´Õµ„™¥±„ƒé¹¥„¸<½¹Ñ…Ñ¼ƒ¤™•¥Ñ¼Í½µ•¹Ñ”Õµ„Ù•è°…ÁÉ½á¥µ…‘…µ•¹Ñ”ÑË©Ì¡½É…Ì‘•Á½¥Ì‘„µ…É‡Ÿ¼”•¹ÑÉ”€ÀäèÀÀ”€ÄäèÀÀìÍ”•ÍÍ”¡½Ë…É¥¼…¥Èƒ€¹½¥Ñ”°™¥„Á…É„„ÁËÍá¥µ„µ…¹£Œ¸I•ÕÍ„‘”½¹Ñ…Ñ¼°…¹•±…µ•¹Ñ¼°…ÕÏ©¹¥„‘”Ñ•±•™½¹”Û…±¥‘¼½Ô•¹Ù¥¼«„É•¥ÍÑÉ…‘¼¥µÁ•‘•´¹½Ù¼‘¥ÍÁ…É¼¸M”¡½ÕÙ•È¥¹Ñ•É‡Ÿ¼¡Õµ…¹„Á½ÍÑ•É¥½Èƒ€½¹ÍÕ±Ñ„°¼ÃÍÌµ½¹ÍÕ±Ñ„ƒ¤ÍÕÁÉ¥µ¥‘¼”„É…ë¼™¥„É•¥ÍÑÉ…‘„¹„ÁËÍÁÉ¥„±¥¹¡„¸(4)<ÃÍÌµ½¹ÍÕ±Ñ„ÕÍ„¼µ½‘•±¼ÕÑ¥±¥Ó…É¥¼Á½Í}½¹ÍÕ±Ñ…}Õ¥‘…‘½}±¥Ù}ØÅ€è4(4(ø=³„„ÅÕ¤ƒ¤„	ÉÕ¹„°½¹¥•É”‘„³µ¹¥„1%X…É¥„1¥µ„¸A…ÍÍ…¹‘¼Á…É„Í…‰•ÈÍ”™¥½Ô…±Õµ„“éÙ¥‘„‘•Á½¥Ì‘„ÍÕ„½¹ÍÕ±Ñ„½´íìÅõô¸M”ÅÕ¥Í•È½¹Ù•ÉÍ…ÈÍ½‰É”…±Õµ„½É¥•¹Ñ‡Ÿ¼½ÔÁËÍá¥µ¼Á…ÍÍ¼°Á½‘”É•ÍÁ½¹‘•ÈÁ½È…ÅÕ¤¸ÍÑ…µ½Ìƒ€‘¥ÍÁ½Í§Ÿ¼¸(4)<µ½‘•±¼‘•Ù”•ÍÑ…È…ÁÉ½Ù…‘¼…¹Ñ•Ì‘”½¹™¥ÕÉ…È]!QMAA}A=MQ}=9MU1Q}9	1õÑÉÕ•€¸Ó¤³„°„™¥±„Á•Éµ…¹•”É•¥ÍÑÉ…‘„”¹•¹¡Õµ„µ•¹Í…•´ƒ¤•¹Ù¥…‘„¸4(4(ŒŒEÕ…¹‘¼„Á…¥•¹Ñ”»¼½µÁ…É•”()9„…‰„½¹ÍÕ±Ñ…Í€°…±Ñ•É…È¼MÑ…ÑÕÍ€‘„½¹ÍÕ±Ñ„Á…É„;¼½µÁ…É••Õ€¸ÍÍ”ƒ¤Õ´‘•Í™•¡¼ÁËÍÁÉ¥¼è»¼•ÅÕ¥Ù…±”„½¹ÍÕ±Ñ„É•…±¥é…‘„°…¹•±…µ•¹Ñ¼½Ô±•…Á•É‘¥‘¼¸±¥¹¡„Á•Éµ…¹•”¹¼¡¥ÍÓÍÉ¥¼”¼•Ù•¹Ñ¼½ÉÉ•ÍÁ½¹‘•¹Ñ”¹„½½±”•¹‘„ƒ¤ÁÉ•Í•ÉÙ…‘¼½´¼É•ÍÕ±Ñ…‘¼½Á•É…¥½¹…°;¼½µÁ…É••Õ€°Í•´•áÁ½È‘…‘½Ì‘„Á…¥•¹Ñ”¹¼…±•¹“…É¥¼¸()¼É•¥ÍÑÉ…È„…ÕÏ©¹¥„°¼Í¥ÍÑ•µ„è((Ä¸¥¹Ñ•ÉÉ½µÁ”±•µ‰É•Ñ•Ì”¥µÁ•‘”¼™±Õá¼‘”ÃÍÌµ½¹ÍÕ±Ñ„‘…ÅÕ•±„µ…É‡Ÿ¼ì(È¸É•¥ÍÑÉ„„‘…Ñ„‘„…ÕÏ©¹¥„”¼Ñ½Ñ…°‘”»¼½µÁ…É•¥µ•¹Ñ½Ì‘„µ•Íµ„Á•ÍÍ½„½´¼µ•Íµ¼ÁÉ½™¥ÍÍ¥½¹…°ì(Ì¸…ÑÕ…±¥é„¹„…‰„‘”±•…‘ÌI•ÍÕ±Ñ…‘¼‘¼ƒé±Ñ¥µ¼…•¹‘…µ•¹Ñ½€°ƒi±Ñ¥µ¼»¼½µÁ…É•¥µ•¹Ñ½€”Q½Ñ…°‘”»¼½µÁ…É•¥µ•¹Ñ½Í€°Í•´ÍÕ‰ÍÑ¥ÑÕ¥È„Í¥ÑÕ‡Ÿ¼½µ•É¥…°‘¼±•…ì(Ğ¸µ…¹Ó¥´¼…•¹‘…µ•¹Ñ¼•¹•ÉÉ…‘¼°‘”µ½‘¼ÅÕ”Õ´É•…•¹‘…µ•¹Ñ¼™ÕÑÕÉ¼Í•©„É¥…‘¼•´Õµ„¹½Ù„±¥¹¡„”»¼…Á…Õ”¼¡¥ÍÓÍÉ¥¼‘„™…±Ñ„ì(Ô¸ÁÉ½É…µ„Õ´…½±¡¥µ•¹Ñ¼…ÁÉ½á¥µ…‘…µ•¹Ñ”ÑË©Ì¡½É…Ì‘•Á½¥Ì°Í•µÁÉ”•¹ÑÉ”€ÀäèÀÀ”€ÄäèÀÀ¸()<ÁÉ¥µ•¥É¼…½±¡¥µ•¹Ñ¼Á½‘”Í•È•¹Ù¥…‘¼…ÕÑ½µ…Ñ¥…µ•¹Ñ”Í½µ•¹Ñ”ÅÕ…¹‘¼¡½ÕÙ•È½¹Í•¹Ñ¥µ•¹Ñ¼Á…É„½¹Ñ…Ñ¼°„©…¹•±„‘”€ÈĞ¡½É…Ì‘¼]¡…ÑÍÁÀ…¥¹‘„•ÍÑ¥Ù•È…‰•ÉÑ„°»¼•á¥ÍÑ¥È¥¹Ñ•É‡Ÿ¼Á½ÍÑ•É¥½È”¹•¹¡Õµ„ÁÉ•™•Ë©¹¥„‘”‰±½ÅÕ•¥¼•ÍÑ¥Ù•È…Ñ¥Ù„¸µ•¹Í…•´»¼µ•¹¥½¹„µÕ±Ñ„°½‰É…»„¹•´Õ±Á„ì…Á•¹…Ì‘•µ½¹ÍÑÉ„Õ¥‘…‘¼”½™•É•”…©Õ‘„Á…É„•¹½¹ÑÉ…È½ÕÑÉ¼¡½Ë…É¥¼¸()M”„©…¹•±„‘¼]¡…ÑÍÁÀ•ÍÑ¥Ù•È™•¡…‘„°¼½¹Ñ…Ñ¼•ÍÑ¥Ù•Èµ…É…‘¼Á…É„…Ñ•¹‘¥µ•¹Ñ¼¡Õµ…¹¼½Ô«„¡½ÕÙ•ÈÕµ„™…±Ñ„…¹Ñ•É¥½È°¹…‘„ƒ¤™½Ë…‘¼…ÕÑ½µ…Ñ¥…µ•¹Ñ”¸<”µµ…¥°‘§…É¥¼…ÁÉ•Í•¹Ñ„„‡Ÿ¼½µ¼µ…¹Õ…°°½´„µ•¹Í…•´ÍÕ•É¥‘„¸•Á½¥Ì‘”Õ´ÁÉ¥µ•¥É¼…½±¡¥µ•¹Ñ¼…ÕÑ½·…Ñ¥¼Í•´É•ÍÁ½ÍÑ„°Õµ„•Ù•¹ÑÕ…°Í•Õ¹‘„Ñ•¹Ñ…Ñ¥Ù„…Á…É•”Í½µ•¹Ñ”½µ¼ÍÕ•ÍÓ¼¡Õµ…¹„°¥¹¼‘¥…Ì‘•Á½¥Ì¸EÕ…±ÅÕ•ÈÉ•ÍÁ½ÍÑ„‘„Á…¥•¹Ñ”°…ÑÕ‡Ÿ¼‘„•ÅÕ¥Á”½ÔÁÉ•™•Ë©¹¥„9Õ¹„É•Ñ½µ…É€½9Õ¹„É•ÍÁ½¹‘•È½´É½‹Ñ€•¹•ÉÉ„„…ÕÑ½µ‡Ÿ¼‘•ÍÍ„…ÕÏ©¹¥„¸((ŒŒ1•µ‰É•Ñ•Ì‘”½¹ÍÕ±Ñ„(4)Uµ„½¹ÍÕ±Ñ„½´ÍÑ…ÑÕÌ•¹‘…‘…€°½¹™¥Éµ…‘…€°½¹ÍÕ±Ñ„…•¹‘…‘…€½Ô½¹ÍÕ±Ñ„½¹™¥Éµ…‘…€Á½‘”É••‰•Èè4(4(Ä¸„½¹™¥Éµ‡Ÿ¼¹½Éµ…°¹¼µ½µ•¹Ñ¼‘¼…•¹‘…µ•¹Ñ¼°‘•¹ÑÉ¼‘„ÁËÍÁÉ¥„½¹Ù•ÉÍ„ì4(È¸Õ´ƒé¹¥¼±•µ‰É•Ñ”…ÕÑ½·…Ñ¥¼ƒÌ€ÄÁ ‘¼‘¥„…¹Ñ•É¥½È¸4(4)9•¹¡Õ´±•µ‰É•Ñ”ƒ¤•¹Ù¥…‘¼…¹Ñ•Ì‘…Ì€å ½Ô„Á…ÉÑ¥È‘…Ì€Äå °¹¼™ÕÍ¼‘”O¼A…Õ±¼¸M”ÅÕ…±ÅÕ•ÈÕµ„‘…Ì½±Õ¹…Ì¡¥ÍÓÍÉ¥…Ì‘”±•µ‰É•Ñ”½Ôƒi±Ñ¥µ„Ñ•¹Ñ…Ñ¥Ù„‘”±•µ‰É•Ñ•€«„•ÍÑ¥Ù•ÈÁÉ••¹¡¥‘„°„½¹ÍÕ±Ñ„»¼É••‰”½ÕÑÉ„µ•¹Í…•´¸Ñ•¹Ñ…Ñ¥Ù„ƒ¤É•¥ÍÑÉ…‘„…¹Ñ•Ì‘„¡…µ…‘„…¼]¡…ÑÍÁÀèµ•Íµ¼ÅÕ”„É•ÍÁ½ÍÑ„‘¼ÁÉ½Ù•‘½ÈÍ”Á•É„°¼Í¥ÍÑ•µ„»¼É•Á•Ñ”…ÕÑ½µ…Ñ¥…µ•¹Ñ”¸…±¡…Ì™¥…´•´ÉÉ¼‘¼±•µ‰É•Ñ•€Á…É„É•Ù¥Ï¼¡Õµ…¹„¸ÍÍ¥´°Á…¥•¹Ñ•ÌÅÕ”É••‰•É…´½ÔÁ½‘•´Ñ•ÈÉ••‰¥‘¼Õ´±•µ‰É•Ñ”Á•±¼™±Õá¼…¹Ñ•É¥½È»¼É••‰•´Õ´Í•Õ¹‘¼±•µ‰É•Ñ”‘ÕÉ…¹Ñ”„µ¥É‡Ÿ¼¸(4)½¹ÍÕ±Ñ…Ì…¹•±…‘…Ì°É•…±¥é…‘…Ì°Ù•¹¥‘…Ì°½´Á•‘¥‘¼‘”É•…•¹‘…µ•¹Ñ¼½Ô½´É•ÕÍ„•áÁ³µ¥Ñ„‘”½¹Ñ…Ñ¼»¼É••‰•´µ•¹Í…•¹Ì¸Uµ„…±Ñ•É‡Ÿ¼‘”‘…Ñ„½Ô¡½Ë…É¥¼É•¥¹¥¥„…Á•¹…Ì½Ì½¹ÑÉ½±•Ì‘…ÅÕ•±”…•¹‘…µ•¹Ñ¼¸Ì½±Õ¹…Ì½¹™¥Éµ‡Ÿ¼‘„Á…¥•¹Ñ•€°ƒi±Ñ¥µ„¥¹Ñ•É‡Ÿ¼¡Õµ…¹…€°AËÍá¥µ„‡Ÿ½€”5½Ñ¥Ù¼‘”ÍÕÁÉ•ÍÏ½€‘•¥á…´¼½¹Ñ•áÑ¼•áÁ³µ¥Ñ¼ì½Ì½¹ÑÉ½±•Ì‘”±•µ‰É•Ñ”¥µÁ•‘•´‘ÕÁ±¥¥‘…‘””Á•Éµ¥Ñ•´…Õ‘¥Ñ½É¥„¸4(4)=Ì±•µ‰É•Ñ•ÌÕÍ…´¼µ½‘•±¼ÕÑ¥±¥Ó…É¥¼±•µ‰É•Ñ•}½¹ÍÕ±Ñ…}±¥Ù}ØÅ€è4(4(ø=³„°íìÅõô„ÍÑ”ƒ¤Õ´±•µ‰É•Ñ”‘„ÍÕ„½¹ÍÕ±Ñ„½´íìÉõô°µ…É…‘„Á…É„íìÍõôƒÌíìÑõô°íìÕõô¸M”ÁÉ•¥Í…È…©ÕÍÑ…È¼¡½Ë…É¥¼°É•ÍÁ½¹‘„Á½È…ÅÕ¤¸()9¼…µÁ¼íìÕõõ€°„³µ¹¥„•¹Ù¥„¼±½…°Á½È•áÑ•¹Í¼”¼…•ÍÍ¼‘¥É•Ñ¼…¼µ…Á„è³µ¹¥„1%X…É¥„1¥µ„°IÕ„A…¥Ì1•µ”°€ÈÄÔ°A¥¹¡•¥É½Ì°O¼A…Õ±½€”¡ÑÑÁÌè¼½µ…ÁÌ¹½½±”¹½´¼ıÄõIÕ„­A…¥Ì­1•µ”°¬ÈÄÔ°­A¥¹¡•¥É½Ì°­M…¼­A…Õ±½€¸I•¥ÍÑÉ½Ì…¹Ñ¥½ÌÅÕ”ÑÉ…é•´…Á•¹…Ì¼¹½µ”‘„³µ¹¥„Ï¼•¹É¥ÅÕ•¥‘½Ì…ÕÑ½µ…Ñ¥…µ•¹Ñ”…¹Ñ•Ì‘¼•¹Ù¥¼¸1½…±¥é‡ŸÕ•ÌÁ•ÉÍ½¹…±¥é…‘…Ì°½µ¼Ñ•±•½¹ÍÕ±Ñ„°Ï¼ÁÉ•Í•ÉÙ…‘…Ì”»¼É••‰•´¼•¹‘•É—¼‘„³µ¹¥„¸(4)<‘¥ÍÁ…É¼…ÕÑ½·…Ñ¥¼Á•Éµ…¹•”‘•Í±¥…‘¼…Ó¤¼µ½‘•±¼•ÍÑ…È…ÁÉ½Ù…‘¼¹¼]¡…ÑÍÁÀ½e±½Õ¸•Á½¥Ì‘„…ÁÉ½Ù‡Ÿ¼°½¹™¥ÕÉ…È]!QMAA}AA=%9Q59Q}I5%9IM}9	1õÑÉÕ•€¹¼9•Ñ±¥™ä”•á•ÕÑ…È…Ñ¥Ù…É1•µ‰É•Ñ•Í½¹ÍÕ±Ñ…Ì ¥€Õµ„Ù•è¹¼ÁÁÌMÉ¥ÁĞ¸<É•µ•Ñ•¹Ñ”ƒ¤…ÁÉ•¹‘¥‘¼Á•±½Ì•Ù•¹Ñ½ÌÉ••‰¥‘½Ì‘¼»éµ•É¼½µ•É¥…°ì]!QMAA}M9I}9U5	I€™Õ¹¥½¹„½µ¼ÍÕ‰ÍÑ¥ÑÕ§Ÿ¼•áÁ³µ¥Ñ„°Í”¹••ÍÏ…É¥„¸4(4(ŒŒI½Ñ¥¹…Ì4(4(ŒŒŒQ½‘„Í•µ…¹„4(4(Ä¸ÑÕ…±¥é…ÈÍ½µ•¹Ñ”½Ì¡½Ë…É¥½ÌÛ…±¥‘½Ì¹„…‰„…Ñ…Ì½¹ÍÕ±Ñ…€¸4(È¸5…É…È‘¥…Ì¥¹‘¥ÍÁ½»µÙ•¥Ì½µ¼‰±½ÅÕ•…‘½Ì¸4(Ì¸½¹™•É¥ÈÍ”„ÁÉ½™¥ÍÍ¥½¹…°”…Ì‘…Ñ…Ì•ÍÓ¼½ÉÉ•Ñ…Ì¸4(4(ŒŒŒQ½‘½Ì½Ì‘¥…Ì4(4(Ä¸½¹™•É¥È¼”µµ…¥°‘§…É¥¼‘¼Á±…¹¼‘”É•Ñ½µ…‘…Ì•¹Ù¥…‘¼Á½ÈÙ½±Ñ„‘…Ì€á Á…É„µ…¹‘„”…¹¥•°ì•±”Ñ…µ‹¥´µ½ÍÑÉ„“éÙ¥‘…Ì…¥¹‘„Í•´É•ÍÁ½ÍÑ„”É•É…Ì¹½Ù…Ì…Õ…É‘…¹‘¼…ÁÉ½Ù‡Ÿ¼¸(È¸I•Ù¥Í…È¼¡¥ÍÓÍÉ¥¼…¹Ñ•Ì‘”ÕÍ…È…‘„µ•¹Í…•´ÍÕ•É¥‘„”‘•¥‘¥È…Ì±¥¹¡…Ì…‰•ÉÑ…Ì•´I•Ù¥ÏÕ•Ì‘¼	½Ñ€¸(Ì¸;¼É•Ñ½µ…ÈÅÕ•´É•ÍÁ½¹‘•ÔÁ½È½ÕÑÉ¼…¹…°°Á•‘¥Ô¥¹Ñ•ÉÉÕÃŸ¼½Ô»¼™…èµ…¥ÌÍ•¹Ñ¥‘¼½µ•É¥…°¸4(Ğ¸½µÁ…¹¡…È…±•ÉÑ…Ì‘”ÁÉ—¼°…•¹‘„°…É‘¥½±½¥„”Í¥ÑÕ‡ŸÕ•Ì™½É„‘¼Á…‘Ë¼¸4(4)<”µµ…¥°½É…¹¥é„„…•¹‘„‘§…É¥„”Í•Á…É„½´±…É•é„è((Ä¸½Ì•¹Ù¥½Ì…ÕÑ½·…Ñ¥½ÌÉ•…±µ•¹Ñ”ÁÉ½É…µ…‘½Ì°½´¡½Ë…É¥¼ì(È¸…Ì‡ŸÕ•Ì¡Õµ…¹…ÌÍÕ•É¥‘…Ì°½´¡½Ë…É¥¼”µ•¹Í…•´ÁÉ½¹Ñ„ì(Ì¸½Ìµ…É½Ì‘½ÌÁËÍá¥µ½ÌÍ•Ñ”‘¥…Ì°¥‘•¹Ñ¥™¥…‘½Ì½µ¼…ÕÑ½·…Ñ¥½Ì½Ôµ…¹Õ…¥Ì¸()9…ÌÉ•Ñ½µ…‘…Ì½µ•É¥…¥ÌÅÕ”…Á…É••´½µ¼‡Ÿ¼¡Õµ…¹„°¼”µµ…¥°Ñ…µ‹¥´Á½‘”µ½ÍÑÉ…È¼‰½Ó¼A…ÍÍ…ÈÁ…É„„	ÉÕ¹…€¸±”»¼•¹Ù¥„„µ•¹Í…•´¹¼ÁÉ¥µ•¥É¼±¥ÅÕ”è…‰É”Õµ„Ã…¥¹„ÅÕ”É•Á•Ñ”¼Ñ•áÑ¼ÍÕ•É¥‘¼”•á¥”½¹™¥Éµ‡Ÿ¼•áÁ³µ¥Ñ„¸•Á½¥Ì‘„½¹™¥Éµ‡Ÿ¼°Í½µ•¹Ñ”…ÅÕ•±”Á±…¹¼•¹ÑÉ„¹„™¥±„…ÕÑ½·…Ñ¥„°½´É•¥ÍÑÉ¼‘„‘…Ñ„”‘„½É¥•´‘„…ÁÉ½Ù‡Ÿ¼¸()A…É„…ÁÉ½Ù…ÈÛ…É¥…Ì‘”Õµ„Ù•è°ÕÍ…È„…‰„•¹ÑÉ…°‘”Ñ•¹‘¥µ•¹Ñ½€è((Ä¸É•Ù¥Í…È¼¡¥ÍÓÍÉ¥¼”„½±Õ¹„I•ÍÁ½ÍÑ„ÍÕ•É¥‘…€‘”…‘„É•Ñ½µ…‘„ì(È¸µ…É…ÈÁÉ½Ù…È½´„	ÉÕ¹…€¹…Ì±¥¹¡…Ì‘•Í•©…‘…Ìì(Ì¸…‰É¥È•¹ÑÉ…°1%X€øÁÉ½Ù…ÈÉ•Ñ½µ…‘…Ìµ…É…‘…Í€ì(Ğ¸½¹™•É¥È„ÅÕ…¹Ñ¥‘…‘”•á¥‰¥‘„”½¹™¥Éµ…ÈÕµ„ƒé¹¥„Ù•è¸()µ…É‡Ÿ¼‘„…¥á„°¥Í½±…‘…µ•¹Ñ”°¹Õ¹„•¹Ù¥„µ•¹Í…•´¸<½µ…¹‘¼‘¼µ•¹ÔÁÉ½•ÍÍ„Í½µ•¹Ñ”±¥¹¡…Ì‘”I•Ñ½µ…‘„‘”µ…É­•Ñ¥¹€ÅÕ”½¹Ñ¥¹Õ…´•´µ½‘¼5…¹Õ…±€°½´ÍÑ…ÑÕÌAÉ½É…µ…‘½€”Ñ•áÑ¼ÍÕ•É¥‘¼ÁÉ••¹¡¥‘¼¸1¥¹¡…Ìµ…É…‘…ÌÁ½È•¹…¹¼Á•Éµ…¹••´¡Õµ…¹…Ì”É••‰•´Õµ„½‰Í•ÉÙ‡Ÿ¼½´¼µ½Ñ¥Ù¼¸Ì…ÁÉ½Ù…‘…ÌÁ…ÍÍ…´„	ÉÕ¹„½‰½Ñ€”ÕÑ½·…Ñ¥½€°ÁÉ•Í•ÉÙ…´¼¡½Ë…É¥¼Á±…¹•©…‘¼”½¹Ñ¥¹Õ…´ÍÕ©•¥Ñ…Ìƒ€Ù…±¥‘‡Ÿ¼™¥¹…°¥¹‘¥Ù¥‘Õ…°¸()EÕ…¹‘¼Õ´½µÁÉ½µ¥ÍÍ¼…¹Ñ¥¼ÁÕ‘•ÈÍ•ÈÉ•½¹¥±¥…‘¼½´Õµ„½™•ÉÑ„½µ•É¥…°°•±”…Á…É•”½µ¼I•Ù¥Í…È•á±ÕÏ¼½µ•É¥…±€°ÁÉ¥½É¥‘…‘”¹½Éµ…°°µ½‘¼M¥³©¹¥½€”Í•´É•ÍÁ½ÍÑ„ÍÕ•É¥‘„¸•Á½¥Ì‘”½¹™•É¥È¼¡¥ÍÓÍÉ¥¼°Í•±•¥½¹…È¹•ÉÉ…ÈƒŠP½µ•É¥…°½»¼Á…¥•¹Ñ•€•´MÑ…ÑÕÌ½Á•É…¥½¹…±€¸ÍÍ„ƒé¹¥„‡Ÿ¼É•Í½±Ù”¼½µÁÉ½µ¥ÍÍ¼°…¹•±„É•Ñ½µ…‘…ÌÁ•¹‘•¹Ñ•Ì°…ÉÅÕ¥Ù„•Ù•¹ÑÕ…°±¥¹¡„‘”±•…½µ¼»¼Á…¥•¹Ñ””É•¥ÍÑÉ„„½‰Í•ÉÙ‡Ÿ¼½¹Ñ…Ñ¼½µ•É¥…°½µ…É­•Ñ¥¹œƒŠP»¼Á…¥•¹Ñ”¸¹•ÉÉ…‘¼Í•´É•ÍÁ½ÍÑ„¹€;¼É•ÍÁ½¹‘•È…¼½¹Ñ…Ñ¼”»¼µ…É…ÈÁÉ½Ù…È½´„	ÉÕ¹…€¸()AÕ‰±¥‡Ÿ¼‘”€ÄĞ¼Àà¼ÈÀÈØèÁÁÌMÉ¥ÁĞÙ•ÉÏ¼€àä¹¼‘•Á±½åµ•¹ĞÁÉ•Í•ÉÙ…‘¼¸<•¹‘Á½¥¹ĞÉ•ÍÁ½¹‘•Ô!QQ@€ÈÀÀ½´½¬èÑÉÕ•€ì„…ÑÕ…±¥é‡Ÿ¼…¼Ù¥Ù¼‘„•¹ÑÉ…°‘”Ñ•¹‘¥µ•¹Ñ½€½¹±Õ¥Ô½´€ÈÄ½±Õ¹…Ì°ÁÉ½Ù…È½´„	ÉÕ¹…€¹„½±Õ¹„€Ää°Õµ„É•Ñ½µ…‘„•±•ŸµÙ•°½´…¥á„¹…Ñ¥Ù„”¹•¹¡Õµ„…¥á„ÁÉ•Ù¥…µ•¹Ñ”µ…É…‘„¸Y…±¥‘‡Ÿ¼±½…°è€¨¨ÔĞä¼ÔĞäÑ•ÍÑ•Ì…ÁÉ½Ù…‘½Ì¨¨¸()¹Ñ•Ì‘”ÕÍ…È¼‰½Ó¼è((Ä¸…‰É¥È¼]¡…ÑÍÁÀ”±•È¼¡¥ÍÓÍÉ¥¼É••¹Ñ”‘„Á…¥•¹Ñ””‘„³µ¹¥„ì(È¸½¹™¥Éµ…ÈÅÕ”„µ•¹Í…•´ÍÕ•É¥‘„½¹Ñ¥¹Õ„…‘•ÅÕ…‘„”ÅÕ”„•ÅÕ¥Á”»¼É•ÍÁ½¹‘•ÔÁ½È½ÕÑÉ¼…¹…°ì(Ì¸±¥…È•´A…ÍÍ…ÈÁ…É„„	ÉÕ¹…€”½¹™•É¥È¹½Ù…µ•¹Ñ”¼Ñ•áÑ¼¹„Ñ•±„‘”½¹™¥Éµ‡Ÿ¼ì(Ğ¸½¹™¥Éµ…ÈÍ½µ•¹Ñ”Í”„µ•¹Í…•´ÁÕ‘•ÈÍ•È•¹Ù¥…‘„•á…Ñ…µ•¹Ñ”½µ¼•ÍÓ„¸()…ÁÉ½Ù‡Ÿ¼¡Õµ…¹„»¼•±¥µ¥¹„…ÌÁÉ½Ñ—ŸÕ•ÌÓ¥¹¥…Ì¸%µ•‘¥…Ñ…µ•¹Ñ”…¹Ñ•Ì‘¼‘¥ÍÁ…É¼°¼Í¥ÍÑ•µ„Ù•É¥™¥„¹½Ù…µ•¹Ñ”Í”„½¹Ù•ÉÍ„»¼µÕ‘½Ô°Í”„Á…¥•¹Ñ”»¼É•ÍÁ½¹‘•Ô°Í”¹•¹¡Õµ„Á•ÍÍ½„‘„•ÅÕ¥Á”¥¹Ñ•ÉÙ•¥¼°Í”„©…¹•±„‘¼]¡…ÑÍÁÀ½¹Ñ¥¹Õ„…‰•ÉÑ„°Í”¼±•……¥¹‘„•ÍÓ„•±•ŸµÙ•°”Í”»¼•á¥ÍÑ”9Õ¹„É•Ñ½µ…É€°9Õ¹„É•ÍÁ½¹‘•È½´É½‹Ñ€°ÍÕÍÁ•¹Ï¼…ÕÑ½·…Ñ¥„½Ô½¹Ñ•áÑ¼Í•¹ÏµÙ•°¸M”ÅÕ…±ÅÕ•È½¹‘§Ÿ¼µÕ‘…È°¼Á±…¹¼ƒ¤…¹•±…‘¼¸<‰½Ó¼»¼…Á…É•”Á…É„…¹¥Ù•ÉÏ…É¥½Ì°É•…Ñ¥Ù‡ŸÕ•Ì‘”±¥•¹Ñ•Ì…¹Ñ¥½Ì°©½É¹…‘„¥ËéÉ¥„½ÔÕ¥‘…‘½Ì³µ¹¥½Ìì•ÍÍ•Ì¥Ñ•¹Ì½¹Ñ¥¹Õ…´¡Õµ…¹½Ì¸()AÉ¥µ•¥É…ÌÉ•Ñ½µ…‘…ÌÍ•ÕÉ…Ì°Í•´…•¹‘„½Ô‘•¥Ï¼¡Õµ…¹„°…Á…É••´½µ¼…¹‘¥‘…Ñ…Ìƒ€	ÉÕ¹„°µ…Ì½¹Ñ¥¹Õ…´Í•¹‘¼…Á•¹…ÌÁ±…¹•©…µ•¹Ñ¼•¹ÅÕ…¹Ñ¼»¼•á¥ÍÑ¥ÈÕµ„É½Ñ¥¹„•ÍÁ•µ™¥„”Õµ„©…¹•±„Û…±¥‘„‘¼]¡…ÑÍÁÀ¸É•ÍÁ½ÍÑ„¥¹¥¥…°‘”ÁÉ—¼”„ƒé¹¥„™…¥á„‘”±¥™Ñ¥¹œ…ÃÍÌ¥¹Í¥ÍÓ©¹¥„•áÁ³µ¥Ñ„Í•Õ•´¼™±Õá¼…ÕÑ½·…Ñ¥¼…ÁÉ½Ù…‘¼¸•¹‘„°É•Á•Ñ§Ÿ¼‘„™…¥á„¹¼µ•Íµ¼½¹Ñ•áÑ¼°‘•µ…¥ÌÁÉ—½Ì”™½±±½ÜµÕÁÌÑ…É‘¥½Ì½¹Ñ¥¹Õ…´‘•Á•¹‘•¹‘¼‘”‘•¥Ï¼¡Õµ…¹„ìÅÕ…¹‘¼¼‰½Ó¼•ÍÑ¥Ù•È‘¥ÍÁ½»µÙ•°°„•ÅÕ¥Á”Á½‘”…ÕÑ½É¥é…È¼‰½Ğ…Á•¹…Ì„•¹ÑÉ•…È¼Ñ•áÑ¼•á…Ñ¼«„É•Ù¥Í…‘¼¸¹¥Ù•ÉÏ…É¥½Ì°‘…Ñ…Ì•ÍÁ•¥…¥Ì”É•…Ñ¥Ù‡ŸÕ•Ì‘”±¥•¹Ñ•Ì…¹Ñ¥½ÌÁ•Éµ…¹••´¥¹Ñ•É…±µ•¹Ñ”µ…¹Õ…¥Ì¸(4(ŒŒŒ…“©¹¥„‘”É•±…¥½¹…µ•¹Ñ¼4(4(Ä¸AÉ½ÕÉ„¥¹¥¥…°èÁÉ¥µ•¥É„É•Ñ½µ…‘„…ÃÍÌ•É„‘”€ÈĞ¡½É…Ì°É•Ñ½µ…¹‘¼„½‰©—Ÿ¼•ÍÁ•µ™¥„ìÍ•Õ¹‘„”ƒé±Ñ¥µ„…ÃÍÌ•É„‘”€ÜÈ¡½É…Ì°½´Õµ„ÁÉ½Ù„Á•ÉÑ¥¹•¹Ñ”¸•Á½¥Ì‘”‘Õ…ÌÑ•¹Ñ…Ñ¥Ù…ÌÍ•´É•ÍÁ½ÍÑ„°»¼£„¹½Ù¼½¹Ñ…Ñ¼ÁÉ½…Ñ¥Ù¼¸…‘„µ•¹Í…•´‘•Ù”…É•Í•¹Ñ…ÈÕÑ¥±¥‘…‘”½ÔÉ•‘Õé¥ÈÕµ„“éÙ¥‘„°¹Õ¹„…Á•¹…ÌÁ•ÉÕ¹Ñ…ÈÍ”„Á•ÍÍ½„Ù¥Ô„µ•¹Í…•´¸(È¸CÍÌµ½¹ÍÕ±Ñ„è…½±¡¥µ•¹Ñ¼¥¹¥¥…°•É„‘”ÑË©Ì¡½É…Ì…ÃÍÌ„½¹ÍÕ±Ñ„ÅÕ…¹‘¼„…ÕÑ½µ‡Ÿ¼•ÍÑ¥Ù•È¡…‰¥±¥Ñ…‘„ì¡•…•´¡Õµ…¹„¹¼Ñ•É•¥É¼‘¥„ì½¹Ñ…Ñ¼¡Õµ…¹¼¹¼“¥¥µ¼ÅÕ…ÉÑ¼‘¥„…Á•¹…ÌÍ”…¥¹‘„™¥é•ÈÍ•¹Ñ¥‘¼”»¼¡½ÕÙ•È¥¹Ñ•É‡Ÿ¼É••¹Ñ”¸4(Ì¸¹¥Ù•ÉÏ…É¥¼èµ•¹Í…•´¡Õµ…¹„ƒÌ€ÄÁ ÌÀ°Í•´½™•ÉÑ„½µ•É¥…°”Í•´µ•¹¥½¹…ÈÁÉ½•‘¥µ•¹Ñ¼¸4(Ğ¸…Ñ…Ì•ÍÁ•¥…¥Ì”©½É¹…‘„¥ËéÉ¥„èÍ½µ•¹Ñ”ÅÕ…¹‘¼É•¥ÍÑÉ…‘…Ì¹„…‰„½¹ÍÕ±Ñ…Í€°Í•µÁÉ”½´É•Ù¥Ï¼¡Õµ…¹„¸4(Ô¸±¥•¹Ñ”…¹Ñ¥¼èÉ•…Ñ¥Ù‡Ÿ¼µ…¹Õ…°ƒÌ€ÄÙ ÌÀ°½¹™½Éµ”„Á•É¥½‘¥¥‘…‘”É•¥ÍÑÉ…‘„½Ô¼ÁÉ¥µ•¥É¼µ…É¼‘”Í•¥Ìµ•Í•Ì¸•Á½¥Ì‘¥ÍÍ¼°¼ÁËÍá¥µ¼½¹Ñ…Ñ¼‘•Ù”Í•ÈÉ•¥ÍÑÉ…‘¼•áÁ±¥¥Ñ…µ•¹Ñ”ì»¼•á¥ÍÑ”Í•Å×©¹¥„…ÕÑ½·…Ñ¥„½¹Óµ¹Õ„¸4(4)M”„Á…¥•¹Ñ”‘¥ÍÍ•ÈÅÕ”•¹ÑÉ…Ë„•´½¹Ñ…Ñ¼°ÅÕ”¡…µ…Ë„„³µ¹¥„°ÅÕ”™…±…Ë„µ…¥ÌÑ…É‘”½ÔÕÍ…È™½ÉµÕ±‡Ÿ¼•ÅÕ¥Ù…±•¹Ñ”°¹•¹¡Õµ„É•Ñ½µ…‘„‘•Ù”Í•ÈÁ±…¹•©…‘„¹…Ì€ÈĞ¡½É…ÌÍ•Õ¥¹Ñ•Ìƒ€µ•¹Í…•´¸É•É„ÕÍ„¡½É…Ì½ÉÉ¥‘…Ì°»¼…Á•¹…Ì„µÕ‘…»„‘„‘…Ñ„¹¼…±•¹“…É¥¼¸4(4)I•Ñ½µ…‘…Ì½µ•É¥…¥ÌÏÌÁ½‘•´Í•ÈÁ±…¹•©…‘…Ì•¹ÑÉ”€ÀäèÀÀ”€ÄäèÀÀ°¹¼™ÕÍ¼‘”O¼A…Õ±¼¸M”¼Ù½±Õµ”‘¼‘¥„Õ±ÑÉ…Á…ÍÍ…È½Ì¡½Ë…É¥½Ì‘¥ÍÁ½»µÙ•¥Ì°½Ì½¹Ñ…Ñ½Ì•á•‘•¹Ñ•Ì™¥…´Á…É„¼ÁËÍá¥µ¼Á±…¹•©…µ•¹Ñ¼ì¹Õ¹„Ï¼‘•Í±½…‘½ÌÁ…É„„¹½¥Ñ”½Ôµ…‘ÉÕ…‘„¸4(4)ÍÍ„É•ÍÑÉ§Ÿ¼Ù…±”Á…É„É•Ñ½µ…‘…Ì¥¹¥¥…‘…ÌÁ•±„³µ¹¥„‘•Á½¥Ì‘”Í¥³©¹¥¼¸EÕ…¹‘¼„ÁËÍÁÉ¥„Á…¥•¹Ñ”¥¹¥¥„½Ôµ…¹Ó¥´Õµ„½¹Ù•ÉÍ„ƒ€¹½¥Ñ”°„	ÉÕ¹„Á½‘”½¹Ñ¥¹Õ…ÈÉ•ÍÁ½¹‘•¹‘¼…Ó¤¼•¹•ÉÉ…µ•¹Ñ¼¹…ÑÕÉ…°°É•ÍÁ•¥Ñ…¹‘¼½Ì±¥µ¥Ñ•Ì‘”ÁÉ—¼°…•¹‘„°½¹™¥Éµ‡Ÿ¼”Í•ÕÉ…»„‘•ÍÉ¥Ñ½Ì…¥µ„¸4(4)Ìµ•¹Í…•¹ÌÍÕ•É¥‘…Ì‘•Ù•´Á…É••È½¹Ñ¥¹Õ‡Ÿ¼‘”Õµ„½¹Ù•ÉÍ„èÉ•½¹¡••È„“éÙ¥‘„°É•Ñ¥É…ÈÁÉ•ÍÏ¼Á½È‘•¥Ï¼”Á•Éµ¥Ñ¥ÈÅÕ”„Á•ÍÍ½„É•ÍÁ½¹‘„¹¼ÁËÍÁÉ¥¼É¥Ñµ¼¸ÁÉ¥µ•¥É„É•Ñ½µ…‘„½¹Ñ¥¹Õ„„½‰©—Ÿ¼•ÍÁ•µ™¥„É•¥ÍÑÉ…‘„¸Í•Õ¹‘„”ƒé±Ñ¥µ„…É•Í•¹Ñ„Õµ„ƒé¹¥„ÁÉ½Ù„Á•ÉÑ¥¹•¹Ñ”°½µ¼µ…Ñ•É¥…°•ÍÁ•µ™¥¼°•áÁ±¥‡Ÿ¼‘„½¹ÍÕ±Ñ„°É•‘•¹¥…°Ù•É¥™¥…Ù•°½Ô½µÁ½Í§Ÿ¼‘”ÕÍÑ½Ì°Í•´É•Á•Ñ¥È±¥¹¬«„ÕÍ…‘¼¸•Á½¥Ì‘¥ÍÍ¼°½Ì½¹Ñ…Ñ½ÌÁÉ½…Ñ¥Ù½ÌÏ¼•¹•ÉÉ…‘½Ì¸M½™É¥µ•¹Ñ¼¥¹Ñ•¹Í¼É•±…¥½¹…‘¼ƒ€…Á…Ë©¹¥„”Á•‘¥‘½Ì•áÁ³µ¥Ñ½Ì‘”¥¹Ñ•ÉÉÕÃŸ¼•á±Õ•´…ÕÑ½µ…Ñ¥…µ•¹Ñ”¼½¹Ñ…Ñ¼‘„±¥ÍÑ„¸(4(ŒŒŒEÕ…¹‘¼…ÍÍÕµ¥ÈÕµ„½¹Ù•ÉÍ„4(4)I•ÍÁ½¹‘•ÈÁ•±¼]¡…ÑÍÁÀ	ÕÍ¥¹•ÍÌ‘„³µ¹¥„¸<•¼É•¥ÍÑÉ„…ÕÑ½µ…Ñ¥…µ•¹Ñ”Õµ„¹½Ù„Ñ½µ…‘„¡Õµ…¹„°…¹•±„ÅÕ…±ÅÕ•ÈÉ•ÍÁ½ÍÑ„Á•¹‘•¹Ñ”‘„	ÉÕ¹„”¥¹¥¥„„©…¹•±„ÁÉ½Ñ•¥‘„¸4(4(ŒŒA…ÕÍ„‘”•µ•ÉŸ©¹¥„4(4)M”¡½ÕÙ•È½µÁ½ÉÑ…µ•¹Ñ¼¥¹•ÍÁ•É…‘¼°…±Ñ•É…È¹¼9•Ñ±¥™äè4(4)]!QMAA}UQ=5Q%=9}5=õÍ¡…‘½İ€4(4)9•ÍÍ”µ½‘¼°„%½¹Ñ¥¹Õ„Í•¹‘¼…Ù…±¥…‘„¹½ÌÉ•¥ÍÑÉ½Ì°µ…Ì»¼•¹Ù¥„É•ÍÁ½ÍÑ…Ì…½ÌÁ…¥•¹Ñ•Ì¸A…É„‘•Í±¥…ÈÑ…µ‹¥´„…Ù…±¥‡Ÿ¼°ÕÍ…Èè()]!QMAA}UQ=5Q%=9}5=õ½™™€((ŒŒAÕ‰±¥‡Ÿ¼Ó¥¹¥„‘•™…Õ±Ğµ½™˜‘”€ÄÔ¼Àà¼ÈÀÈØ((´±Ù¼…»Ñ¹¥¼½¹™¥Éµ…‘¼Á½ÈÁÉ½©•Ñ¼°‘•Á±½åµ•¹Ğ”Á±…¹¥±¡„…¹Ñ•Ì‘„ÁÉ¥µ•¥É„•ÍÉ¥Ñ„¸(´ÁÁÌMÉ¥ÁĞÁÕ‰±¥…‘¼½µ¼Ù•ÉÏ¼€äÄ°ÁÉ•Í•ÉÙ…¹‘¼¼‘•Á±½åµ•¹Ğ•á¥ÍÑ•¹Ñ”¸(´9•Ñ±¥™äÁÕ‰±¥…‘¼„Á…ÉÑ¥È‘¼½µµ¥Ğ…¹‘¥‘…Ñ¼€ÔÁİ•„Å€°‘•Á±½ä€Ù„àÁ‰•˜ÌÅˆİØäÀÀÀàÔÍ‘ˆäİ€¸(´1}%9Q%Qe}!5}MIQ€™½¤ÁÉ½Ù¥Í¥½¹…‘¼Í•´É•¥ÍÑÉ…ÈÍ•ÔÙ…±½Èì„­•äÙ•ÉÍ¥½¸™¥½Ô•´¬Å€¸(´QQI%	UQ%=9}1%5}MIQ€™½¤ÁÉ½Ù¥Í¥½¹…‘¼…Á•¹…Ì¹¼½¹Ñ•áÑ¼‘”ÁÉ½‘×Ÿ¼‘¼9•Ñ±¥™ä°Í•´É•¥ÍÑÉ…ÈÍ•ÔÙ…±½È¸(´…ÑÑÉ¥‰ÕÑ¥½¹)½ÕÉ¹•å¹…‰±•õ™…±Í•€Á•Éµ…¹••Ô¹¼)…Ù…MÉ¥ÁĞÃé‰±¥¼”QQI%	UQ%=9}M!5}YIM%=9€Á•Éµ…¹••Ô…ÕÍ•¹Ñ”¸9•¹¡Õµ„µ¥É‡Ÿ¼°‰…­™¥±°°¹½Ù„½±Õ¹„½Ô±•…Í¥¹Ó¥Ñ¥¼™½¤•á•ÕÑ…‘¼¸(´Y…±¥‘‡Ÿ¼±½…°è€ØÔÜ¼ØÔÜÑ•ÍÑ•Ì°€ĞĞ¼ĞĞUI1Ì¹¼…Ñ”Ó¥¹¥¼”…ÉÑ•™…Ñ¼‘”€ÄÜÌ…ÉÅÕ¥Ù½ÌÍ•´…Õ‘¥Ñ½É¥…Ì¼¨©€¸(´Mµ½­”±¥Ù”èÃ…¥¹…Ì°ÑÉ…­¥¹œ°É½‰½ÑÌ¹ÑáÑ€°Í¥Ñ•µ…À¹áµ±€”İ•ˆ…ÁÀ!QQ@€ÈÀÀìÍ•¹Ñ¥¹•±„‘”…Õ‘¥Ñ½É¥„!QQ@€ĞÀĞì•¹‘Á½¥¹Ğ‘”©½É¹…‘„!QQ@€ĞÀÔ•´Pì¹•¹¡Õµ„™…¥á„…¹Ñ¥„½Ô)%€¹¼!Q50Ãé‰±¥¼¸(´I½±±‰…¬è9•Ñ±¥™äÁ…É„¼‘•Á±½ä…¹Ñ•É¥½È€Ù„àÀá™ŒÌÅ‘ØÔÀÀÀàĞàäààÙ€ìÁÁÌMÉ¥ÁĞÁ…É„„Ù•ÉÏ¼€äÀ¹¼µ•Íµ¼‘•Á±½åµ•¹Ğ¸
+- A primeira pergunta sobre preÃ§o cirÃºrgico recebe uma resposta institucional curta, sem faixa: o valor Ã© individual e sÃ³ Ã© definido apÃ³s avaliaÃ§Ã£o e planejamento; tÃ©cnica, complexidade, necessidades da pessoa, equipe, hospital, anestesia, materiais e acompanhamento podem compor e alterar o total. O orÃ§amento final discrimina os itens aplicÃ¡veis, sem apresentar honorÃ¡rio isolado como preÃ§o total. Para lifting/minilifting, a resposta inclui uma vez o guia especÃ­fico de composiÃ§Ã£o. Somente se a pessoa insistir ou repetir explicitamente o pedido por mÃ©dia/faixa, a Bruna pode enviar as faixas aprovadas com a ressalva de que sÃ£o estimativas gerais informativas, nÃ£o orÃ§amento, proposta ou garantia; a mensagem deve dizer que o valor final pode ficar fora da faixa, explicar os fatores de variaÃ§Ã£o e incluir o URL completo do guia especÃ­fico, ainda que ele jÃ¡ tenha aparecido. A faixa completa nÃ£o Ã© enviada automaticamente duas vezes no mesmo contexto. Os demais procedimentos seguem para revisÃ£o humana.
+- ApresentaÃ§Ã£o correta da Dra. Amanda: residÃªncia mÃ©dica em Cirurgia PlÃ¡stica pela Unicamp, pÃ³s-graduaÃ§Ã£o em Cosmiatria e Procedimentos pelo Einstein, CRM-SP 191605, RQE 110472 e atuaÃ§Ã£o com foco em cirurgias da face.
+- Esclarecimento sutil de barreiras como seguranÃ§a, experiÃªncia, resultado artificial, preÃ§o, localizaÃ§Ã£o e pressÃ£o para decidir.
+- Oferta cuidadosa da pÃ¡gina do procedimento, seÃ§Ã£o de resultados ou artigo especÃ­fico sobre recuperaÃ§Ã£o, seguranÃ§a, cicatriz e comparaÃ§Ãµes â€” ou da pÃ¡gina geral quando o procedimento ainda nÃ£o estiver definido â€” para quem nÃ£o veio do site.
+
+A abordagem deve ser acolhedora, breve e progressiva: apresentaÃ§Ã£o, estÃ¡gio da pesquisa, dÃºvida ou objetivo principal e convite para avaliaÃ§Ã£o. A Bruna nÃ£o abre perguntando â€œo que incomodaâ€; depois de criar contexto, pode perguntar â€œo que vocÃª gostaria de entender ou melhorar?â€.
+
+Google, Meta e WhatsApp direto seguem a mesma estratÃ©gia. A mensagem e o histÃ³rico prevalecem sobre a origem. No Meta, a abertura pode reconhecer o anÃºncio; no Google, o procedimento ou a pÃ¡gina pesquisada. O bot nunca presume que alguÃ©m estÃ¡ pronto para agendar apenas porque veio do Google.
+
+Uma mensagem padrÃ£o que jÃ¡ traga o pedido de consultar horÃ¡rios Ã© uma exceÃ§Ã£o controlada: ela autoriza somente a coleta automÃ¡tica de preferÃªncia de dia e perÃ­odo. NÃ£o autoriza oferecer horÃ¡rio, reservar consulta nem interpretar a menÃ§Ã£o a â€œvaloresâ€ como pedido explÃ­cito de preÃ§o cirÃºrgico.
+
+O site nÃ£o deve ser enviado na primeira resposta por rotina. A exceÃ§Ã£o Ã© a primeira resposta institucional sobre preÃ§o cirÃºrgico, que pode trazer o guia especÃ­fico de composiÃ§Ã£o dos custos. A Ãºnica mensagem que efetivamente divulga a faixa de lifting tambÃ©m deve repetir o URL completo desse guia. Nos demais temas, o site entra depois da primeira resposta significativa ou quando a pessoa pedir material, fotos, casos ou antes e depois. O endereÃ§o deve aparecer por extenso no WhatsApp. O sistema envia apenas um material proativamente; um segundo link diferente exige pedido explÃ­cito. NÃ£o enviar junto de urgÃªncia ou pedido de agenda.
+
+Mensagens consecutivas da mesma pessoa usam uma janela de silÃªncio de oito segundos. Depois de elaborar a resposta, o sistema confere novamente qual foi a mensagem mais recente. Se outra mensagem tiver chegado durante a elaboraÃ§Ã£o, a resposta anterior Ã© cancelada e somente a intenÃ§Ã£o mais nova pode responder usando as Ãºltimas 16 interaÃ§Ãµes, com identificaÃ§Ã£o de paciente, Bruna e equipe humana. Uma pergunta explÃ­cita, como preÃ§o, localizaÃ§Ã£o ou consulta, sempre prevalece sobre o roteiro do anÃºncio.
+
+Imediatamente antes do envio, a resposta planejada Ã© confrontada com a mensagem atual e com a Ãºltima fala da clÃ­nica. Se a paciente estiver apenas respondendo ou confirmando uma pergunta da equipe humana, a Bruna nÃ£o entra. Se estiver respondendo de forma curta a uma pergunta da prÃ³pria Bruna, a resposta deve continuar daquele ponto e nÃ£o pode reiniciar com perguntas genÃ©ricas como `Como posso ajudar?`. Uma nova pergunta autÃ´noma da paciente continua seguindo a rota normal.
+
+## Quando nÃ£o responder automaticamente
+
+- Segunda pergunta por mÃ©dia de cirurgia que nÃ£o seja lifting/minilifting, ou pedido de quantidade de parcelas, desconto, juros e composiÃ§Ã£o exata do orÃ§amento.
+- PreferÃªncia de data, dia, perÃ­odo ou horÃ¡rio para agendamento.
+- SituaÃ§Ã£o potencialmente urgente.
+- Cardiologia ou procura pelo Dr. Daniel.
+- DÃºvida fora do padrÃ£o ou que exija decisÃ£o humana.
+- Atendimento humano assumido e ainda dentro da janela protegida de 20 minutos.
+
+Nesses casos, o sistema envia um alerta ao WhatsApp pessoal da Amanda quando aplicÃ¡vel. Em agendamento, a Bruna primeiro pergunta quais dias e se manhÃ£ ou tarde funcionam melhor. O alerta sÃ³ Ã© criado depois que a preferÃªncia existe e contÃ©m atÃ© trÃªs opÃ§Ãµes da aba `Datas Consulta`. A primeira pergunta sobre preÃ§o Ã© respondida diretamente sem faixa. Se houver insistÃªncia explÃ­cita por mÃ©dia/faixa de lifting/minilifting, a paciente pode receber uma Ãºnica vez R$ 18 mil a R$ 25 mil e R$ 26 mil a R$ 42 mil como estimativas gerais informativas, nÃ£o orÃ§amento, proposta ou garantia. A mesma mensagem diz explicitamente que o valor final Ã© definido apÃ³s avaliaÃ§Ã£o e planejamento e pode ficar fora dessa faixa; explica que tÃ©cnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento alteram o total; nÃ£o apresenta honorÃ¡rios isolados; e inclui https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/. Nova repetiÃ§Ã£o da faixa no mesmo contexto vai para revisÃ£o humana. Para outro procedimento, a paciente recebe apenas uma confirmaÃ§Ã£o curta e a equipe recebe uma sugestÃ£o em faixa baseada na tabela de referÃªncia quando houver correspondÃªncia confiÃ¡vel. A faixa interna usa 10% abaixo da referÃªncia Ã  vista e 10% acima da referÃªncia parcelada, arredondada em milhares. Amanda revisa e envia manualmente se estiver de acordo.
+
+## InformaÃ§Ãµes comerciais e localizaÃ§Ã£o
+
+- Consulta presencial com a Dra. Amanda: R$ 500.
+- O valor da consulta Ã© abatido se a cirurgia for realizada com a equipe.
+- Existem opÃ§Ãµes de parcelamento, mas quantidade de parcelas, juros, meios, desconto Ã  vista, parcelamento antecipado, cancelamento e reembolso nÃ£o devem ser informados atÃ© serem aprovados e incluÃ­dos nas regras.
+- A planilha de preÃ§os do Dr. JoÃ£o de 2025 Ã© referÃªncia histÃ³rica autorizada somente para preparar sugestÃµes internas de preÃ§o. Ela nÃ£o Ã© apresentada como tabela atual da Dra. Amanda e nÃ£o autoriza envio automÃ¡tico.
+- Nome correto: ClÃ­nica LIV Faria Lima.
+- LocalizaÃ§Ã£o correta: Rua Pais Leme, 215, Pinheiros, prÃ³xima Ã  Av. Faria Lima, SÃ£o Paulo. NÃ£o dizer que a clÃ­nica fica na prÃ³pria Avenida Faria Lima.
+
+## Quando ignorar
+
+- Venda de produtos ou serviÃ§os.
+- Proposta comercial ou parceria sem interesse assistencial.
+- Oferta de gestÃ£o ou otimizaÃ§Ã£o do Perfil da Empresa no Google, Google Meu NegÃ³cio, Google Business Profile, Google Maps, SEO, trÃ¡fego ou captaÃ§Ã£o de clientes.
+- Convite pessoal, conversa imprÃ³pria ou assunto alheio Ã  clÃ­nica.
+- Mensagem claramente impertinente depois de esclarecido o contexto.
+
+Esses contatos devem consumir o mÃ­nimo possÃ­vel e nÃ£o receber resposta automÃ¡tica.
+
+O detector comercial Ã© aplicado antes da IA e novamente, de forma independente, antes da criaÃ§Ã£o de qualquer compromisso humano. Assim, uma falha de roteamento isolada nÃ£o pode transformar uma oferta comercial reconhecida em â€œPendÃªncia vencidaâ€. Perguntas reais de pacientes sobre endereÃ§o ou localizaÃ§Ã£o no Google Maps continuam permitidas porque localizaÃ§Ã£o, sozinha, nÃ£o caracteriza venda.
+
+## Atendimento humano
+
+Quando uma mensagem Ã© enviada pelo WhatsApp Business da clÃ­nica para a pessoa, o sistema registra atendimento humano e cancela qualquer retomada automÃ¡tica pendente.
+
+Se a paciente responder depois de uma mensagem humana, uma rotina executada a cada cinco minutos reavalia a conversa. Assuntos administrativos e seguros podem voltar para a Bruna apÃ³s cerca de 5 minutos; temas sensÃ­veis preservam a janela de 20 minutos:
+
+- dÃºvidas simples e respostas de alta confianÃ§a podem ser retomadas pela Bruna em qualquer horÃ¡rio, pois sÃ£o continuaÃ§Ã£o de uma conversa ativa;
+- uma nova mensagem humana cancela a retomada, inclusive durante a elaboraÃ§Ã£o da resposta;
+- agradecimentos e encerramentos simples nÃ£o provocam nova mensagem;
+- a resposta inicial de preÃ§o e a Ãºnica resposta com faixa apÃ³s insistÃªncia explÃ­cita sobre lifting/minilifting podem ser enviadas em conversa ativa a qualquer horÃ¡rio; mÃ©dia de outras cirurgias, condiÃ§Ãµes exatas de pagamento, agenda e confirmaÃ§Ã£o continuam dependendo da equipe e, Ã  noite ou de madrugada, recebem uma Ãºnica mensagem curta informando que haverÃ¡ retorno pela manhÃ£;
+- sintomas, possÃ­vel urgÃªncia, seguranÃ§a, documentos, prÃ© ou pÃ³s-operatÃ³rio, cardiologia, sofrimento intenso e demais temas reservados seguem para revisÃ£o humana; situaÃ§Ãµes potencialmente urgentes nunca recebem promessa de aguardar atÃ© a manhÃ£;
+- se o tema nÃ£o for reservado, mas a Bruna nÃ£o tiver confianÃ§a para responder, a mensagem de espera sÃ³ Ã© enviada quando hÃ¡ uma pergunta, pedido ou resposta a uma pergunta da clÃ­nica realmente pendente;
+- se nÃ£o houver solicitaÃ§Ã£o concreta pendente, a paciente nÃ£o recebe uma mensagem artificial de espera: Amanda recebe o alerta para revisar a conversa;
+- depois de uma resposta segura da Bruna, a automaÃ§Ã£o volta a conduzir normalmente a conversa;
+- depois da mensagem de espera ou de um bloqueio sensÃ­vel, somente uma nova mensagem humana libera a conversa;
+- o horÃ¡rio nÃ£o interrompe uma conversa que a prÃ³pria paciente iniciou ou manteve.
+
+Cada tomada humana admite no mÃ¡ximo uma retomada automÃ¡tica. Uma nova mensagem enviada pelo WhatsApp Business inicia uma nova tomada e reinicia as proteÃ§Ãµes.
+
+## Aprendizado supervisionado
+
+Quando a Bruna recebe uma pergunta segura que ainda nÃ£o sabe responder, ela segue esta ordem:
+
+1. procura uma resposta com status `Aprovada` na aba `Respostas Aprovadas` e usa o texto exatamente como foi aprovado;
+2. se faltar uma Ãºnica informaÃ§Ã£o essencial, faz uma pergunta curta de esclarecimento â€” no mÃ¡ximo uma vez;
+3. se a dÃºvida continuar sem resposta, avisa que confirmarÃ¡ a informaÃ§Ã£o e registra o caso para o resumo diÃ¡rio, sem gerar alerta imediato a cada dÃºvida segura;
+4. quando Amanda ou a equipe responde pelo WhatsApp Business, a resposta humana Ã© capturada como regra candidata com status `Revisar`;
+5. somente depois de revisÃ£o da equipe e mudanÃ§a para `Aprovada` uma regra de baixo risco pode responder automaticamente.
+
+Regras de risco mÃ©dio nascem como `SugestÃ£o interna`. Regras de risco alto nascem como `Nunca automÃ¡tica`. UrgÃªncia, complicaÃ§Ã£o, pÃ³s-operatÃ³rio, diagnÃ³stico, foto ou exame, prescriÃ§Ã£o, preÃ§o exato ou negociado, confirmaÃ§Ã£o final de agenda e cardiologia nunca sÃ£o liberados por esse aprendizado.
+
+A aba `RevisÃµes do Bot` reÃºne classificaÃ§Ãµes de baixa confianÃ§a, regras novas e possÃ­veis correÃ§Ãµes. Quando a equipe marca uma revisÃ£o de classificaÃ§Ã£o como `ConcluÃ­da` e registra a decisÃ£o correta, essa orientaÃ§Ã£o passa a ser usada como exemplo nas classificaÃ§Ãµes futuras. O e-mail diÃ¡rio inclui as dÃºvidas sem resposta e as regras aguardando aprovaÃ§Ã£o.
+
+### Marcos administrativos aprendidos da conversa
+
+O classificador sempre lÃª as Ãºltimas mensagens da clÃ­nica e da paciente em conjunto. Ele pode atualizar o funil e a aba `Consultas` quando identificar:
+
+- confirmaÃ§Ã£o explÃ­cita de data e horÃ¡rio: `Consulta agendada` e consulta `Confirmada`;
+- falta ou nÃ£o comparecimento explÃ­cito: consulta `NÃ£o compareceu`, sem rebaixar o funil;
+- comparecimento explÃ­cito: `Consulta realizada` e consulta `Realizada`;
+- aceite, realizaÃ§Ã£o ou pagamento confirmado do procedimento: `Paciente convertido`;
+- envio de orÃ§amento pelo WhatsApp ou aviso de envio por e-mail: relacionamento em planejamento, sem considerar fechamento isoladamente.
+
+Respostas curtas como â€œsimâ€, â€œdeu tudo certoâ€ e â€œpode seguirâ€ sÃ³ valem quando a pergunta ou afirmaÃ§Ã£o imediatamente anterior deixa claro o que estÃ¡ sendo confirmado. Com baixa confianÃ§a, a planilha ainda Ã© atualizada, a revisÃ£o fica aberta em `RevisÃµes do Bot` e a equipe recebe um e-mail deduplicado. Essa atualizaÃ§Ã£o nunca dispara, por si sÃ³, mensagem automÃ¡tica ao paciente.
+
+## Retomada apÃ³s sete dias
+
+Na primeira mensagem apÃ³s mais de sete dias, a Bruna informa que estÃ¡ direcionando o atendimento para a equipe. Depois disso, permanece em silÃªncio atÃ© uma resposta humana.
+
+## Planilha Ãºnica e oportunidades
+
+HÃ¡ um Ãºnico arquivo Google Sheets chamado `LEADS`, e somente ele Ã© conectado ao Google Ads. As abas nÃ£o sÃ£o planilhas diferentes: sÃ£o Ã¡reas internas do mesmo arquivo.
+
+- Leads da Dra. Amanda: aba `Google Ads - ConversÃµes`, com uma oportunidade identificada por `Opportunity ID`; Ã© a Ãºnica fonte elegÃ­vel para o Google Ads.
+- Leads do Dr. Daniel: aba `Leads Dr. Daniel`, no mesmo arquivo, sem click IDs elegÃ­veis e sem contaminar as mÃ©tricas da Dra. Amanda.
+- Henrique, Marina e qualquer outro profissional: nÃ£o sÃ£o incluÃ­dos em nenhuma aba de leads; o contato vai para o registro interno de roteamento e para atendimento humano.
+- Emprego, currÃ­culo, marketing, fornecedor e parceria comercial: sÃ£o ignorados e nÃ£o viram lead.
+- Agenda semanal: aba `Datas Consulta`.
+- Consultas agendadas e realizadas: aba `Consultas`, que tambÃ©m controla os lembretes operacionais.
+- Respostas reutilizÃ¡veis: aba `Respostas Aprovadas`; somente linhas aprovadas e de baixo risco podem ser automÃ¡ticas.
+- ExceÃ§Ãµes e correÃ§Ãµes: aba `RevisÃµes do Bot`; os campos amarelos sÃ£o destinados Ã  decisÃ£o da equipe.
+- HistÃ³rico e controles tÃ©cnicos: abas internas iniciadas por `_WHATSAPP_`.
+
+A aba interna `_CRM_OPORTUNIDADES` Ã© o vÃ­nculo canÃ´nico entre conversa, profissional, linha visÃ­vel, classificaÃ§Ã£o, consulta e eventual conversÃ£o offline. Ela nÃ£o Ã© um segundo arquivo de leads. A mesma pessoa pode ter uma oportunidade de Amanda e outra de Daniel, cada uma com profissional e histÃ³rico prÃ³prios. A atribuiÃ§Ã£o da Amanda Ã© fixada na criaÃ§Ã£o e nunca Ã© herdada por Daniel.
+
+As colunas operacionais adicionadas Ã s abas visÃ­veis sÃ£o auditÃ¡veis, mas nÃ£o alteram a estrutura exigida pelo Google Ads: `Opportunity ID`, profissional responsÃ¡vel, versÃ£o, Ãºltimo evento, status operacional, resumo, prÃ³xima aÃ§Ã£o, objeÃ§Ã£o, relacionamento, responsÃ¡vel, parte aguardada, roteamento e data de fixaÃ§Ã£o da atribuiÃ§Ã£o.
+
+### ConversÃ£o qualificada do Google Ads
+
+A conversÃ£o offline canÃ´nica Ã© `Lead qualificado GCLID`. O reparo protegido sÃ³ altera uma transaÃ§Ã£o quando `IMPORT_GOOGLE_ADS`, `_GOOGLE_ADS_EVENTOS`, a oportunidade da Dra. Amanda e a linha visÃ­vel concordam exatamente sobre identidade, tipo, valor e o Ãºnico identificador de clique. Qualquer duplicidade, ambiguidade, profissional diferente, mais de um click ID ou diferenÃ§a de valor bloqueia o lote inteiro antes da primeira escrita.
+
+Em 14/08/2026, uma cÃ³pia nativa da planilha foi criada antes da execuÃ§Ã£o. A reconciliaÃ§Ã£o normalizou 3 nomes na primeira aba, 5 nomes nas linhas visÃ­veis elegÃ­veis e reconstruiu 3 registros ausentes do ledger. O pÃ³s-voo e uma nova simulaÃ§Ã£o ficaram com 5 linhas de importaÃ§Ã£o, 5 registros de ledger e zero item invÃ¡lido, duplicado, ausente, divergente ou em revisÃ£o. Nenhuma linha sem transaÃ§Ã£o elegÃ­vel foi modificada. A conexÃ£o `LEADS` do Google Ads permaneceu vinculada Ã  primeira aba, com cinco campos mapeados e execuÃ§Ã£o diÃ¡ria; tanto a importaÃ§Ã£o automÃ¡tica anterior quanto a execuÃ§Ã£o manual posterior concluÃ­ram 5 linhas com 0 erros.
+
+Essa consistÃªncia nÃ£o libera escala por si sÃ³. Enquanto a aÃ§Ã£o continuar em `Requer atenÃ§Ã£o`, deve-se acompanhar aceite/rejeiÃ§Ã£o e correspondÃªncia por sete dias. NÃ£o ativar tCPA, Performance Max, correspondÃªncia ampla ou aumento de orÃ§amento com base apenas nessa correÃ§Ã£o.
+
+Quando a paciente escolhe uma das duas datas sugeridas, a seleÃ§Ã£o entra na aba interna `_AGENDAMENTOS_PENDENTES`. Isso nÃ£o confirma a consulta e nÃ£o cria evento. A equipe recebe a resposta sugerida e somente a confirmaÃ§Ã£o humana finaliza o registro em `Consultas` e na Google Agenda.
+
+### Comprovante estruturado de agendamento
+
+Uma mensagem humana com o cabeÃ§alho `Comprovante de Agendamento` passa a valer como confirmaÃ§Ã£o explÃ­cita somente quando trouxer, na prÃ³pria mensagem, os quatro campos obrigatÃ³rios: `Nome`, `Data`, `HorÃ¡rio` e `MÃ©dico`. O mÃ©dico deve ser identificado inequivocamente como Dra. Amanda Schroeder ou Dr. Daniel Added; a data precisa ser vÃ¡lida, nÃ£o pode estar no passado e, quando o dia da semana for informado, ele deve coincidir com a data.
+
+Quando esses critÃ©rios forem atendidos, o sistema usa o nome escrito no comprovante, registra ou atualiza o agendamento pelo fluxo canÃ´nico, bloqueia o horÃ¡rio em `Datas Consulta`, projeta o registro em `Consultas` e sincroniza a Google Agenda. Esse processamento tem prioridade sobre a persistÃªncia secundÃ¡ria da tomada humana: se esta Ãºltima sofrer timeout, o comprovante ainda Ã© processado e a resposta de erro forÃ§a uma nova tentativa idempotente do evento. O identificador da mensagem, a oportunidade, o telefone, a data, o horÃ¡rio e o profissional preservam a deduplicaÃ§Ã£o: o mesmo comprovante processado novamente nÃ£o deve criar um segundo registro nem um segundo evento.
+
+Para a Dra. Amanda, todo atendimento presencial confirmado por esse fluxo ocupa exclusivamente a `Sala 1`. Se houver um atendimento anterior jÃ¡ encerrado â€” realizado, cancelado ou com nÃ£o comparecimento â€” o novo comprovante cria uma nova linha e um novo evento, sem apagar o histÃ³rico anterior. O tipo operacional pode ser `Consulta`, `Retorno` ou `Procedimento`; a agenda exibe somente esse rÃ³tulo genÃ©rico e o profissional, sem dados clÃ­nicos da paciente.
+
+`EndereÃ§o`, `Retorno`, `Valor da consulta` e `Formas de pagamento` nÃ£o participam da decisÃ£o de confirmar ou nÃ£o o agendamento. A combinaÃ§Ã£o exata `Retorno: nÃ£o se aplica`, consulta com valor zero e pagamento nÃ£o aplicÃ¡vel classifica o registro genericamente como `Procedimento`, conforme o modelo usado pela equipe. Esses dados financeiros nÃ£o sÃ£o copiados para a Google Agenda. Comprovante incompleto, data impossÃ­vel, divergÃªncia de dia da semana ou profissional nÃ£o suportado nÃ£o altera planilha nem agenda e deve seguir para conferÃªncia humana.
+
+### PreferÃªncias permanentes de contato
+
+Na aba `Google Ads - ConversÃµes`, as trÃªs colunas administrativas apÃ³s o cadastro normal do lead sÃ£o:
+
+- `Nunca retomar`: impede retomadas comerciais, aniversÃ¡rios, pÃ³s-consulta, reativaÃ§Ãµes e demais contatos proativos. A equipe e a Bruna ainda podem responder quando a prÃ³pria pessoa iniciar uma conversa. Lembretes operacionais de consulta confirmada continuam permitidos.
+- `Nunca responder com robÃ´`: impede toda mensagem automÃ¡tica ao paciente, inclusive respostas a mensagens recebidas, lembretes e pÃ³s-consulta. A conversa Ã© encaminhada para atendimento humano e os alertas internos continuam funcionando.
+- `Motivo / observaÃ§Ã£o do bloqueio`: campo administrativo para registrar o contexto. O conteÃºdo nÃ£o Ã© enviado ao paciente nem incluÃ­do nas instruÃ§Ãµes da IA.
+
+As duas primeiras colunas usam caixas de seleÃ§Ã£o. Em caso de dÃºvida, marcar `Nunca responder com robÃ´`, pois Ã© a opÃ§Ã£o mais restritiva. A preferÃªncia Ã© lida novamente imediatamente antes de qualquer envio automÃ¡tico; assim, uma marcaÃ§Ã£o feita enquanto a resposta estÃ¡ sendo elaborada tambÃ©m cancela o disparo.
+
+Ao alterar `SituaÃ§Ã£o do lead` para `Consulta agendada`, a automaÃ§Ã£o cria ou atualiza a linha correspondente em `Consultas`, usando ID e telefone para evitar duplicidade. Se data e horÃ¡rio ainda nÃ£o estiverem disponÃ­veis, a linha Ã© criada sem inventÃ¡-los e fica pronta para complemento. Uma confirmaÃ§Ã£o explÃ­cita no WhatsApp tambÃ©m pode preencher a aba quando a conversa contiver data e horÃ¡rio inequÃ­vocos; sem os dois elementos, o sistema nÃ£o presume um agendamento.
+
+Ao alterar o status para `Consulta realizada`, a consulta Ã© atualizada e o pÃ³s-consulta entra em uma fila Ãºnica. O contato Ã© feito somente uma vez, aproximadamente trÃªs horas depois da marcaÃ§Ã£o e entre 09:00 e 19:00; se esse horÃ¡rio cair Ã  noite, fica para a prÃ³xima manhÃ£. Recusa de contato, cancelamento, ausÃªncia de telefone vÃ¡lido ou envio jÃ¡ registrado impedem novo disparo. Se houver interaÃ§Ã£o humana posterior Ã  consulta, o pÃ³s-consulta Ã© suprimido e a razÃ£o fica registrada na prÃ³pria linha.
+
+O pÃ³s-consulta usa o modelo utilitÃ¡rio `pos_consulta_cuidado_liv_v1`:
+
+> OlÃ¡! Aqui Ã© a Bruna, concierge da ClÃ­nica LIV Faria Lima. Passando para saber se ficou alguma dÃºvida depois da sua consulta com {{1}}. Se quiser conversar sobre alguma orientaÃ§Ã£o ou prÃ³ximo passo, pode responder por aqui. Estamos Ã  disposiÃ§Ã£o.
+
+O modelo deve estar aprovado antes de configurar `WHATSAPP_POST_CONSULT_ENABLED=true`. AtÃ© lÃ¡, a fila permanece registrada e nenhuma mensagem Ã© enviada.
+
+## Quando a paciente nÃ£o comparece
+
+Na aba `Consultas`, alterar o `Status` da consulta para `NÃ£o compareceu`. Esse Ã© um desfecho prÃ³prio: nÃ£o equivale a consulta realizada, cancelamento ou lead perdido. A linha permanece no histÃ³rico e o evento correspondente na Google Agenda Ã© preservado com o resultado operacional `NÃ£o compareceu`, sem expor dados da paciente no calendÃ¡rio.
+
+Ao registrar a ausÃªncia, o sistema:
+
+1. interrompe lembretes e impede o fluxo de pÃ³s-consulta daquela marcaÃ§Ã£o;
+2. registra a data da ausÃªncia e o total de nÃ£o comparecimentos da mesma pessoa com o mesmo profissional;
+3. atualiza na aba de leads `Resultado do Ãºltimo agendamento`, `Ãšltimo nÃ£o comparecimento` e `Total de nÃ£o comparecimentos`, sem substituir a situaÃ§Ã£o comercial do lead;
+4. mantÃ©m o agendamento encerrado, de modo que um reagendamento futuro seja criado em uma nova linha e nÃ£o apague o histÃ³rico da falta;
+5. programa um acolhimento aproximadamente trÃªs horas depois, sempre entre 09:00 e 19:00.
+
+O primeiro acolhimento pode ser enviado automaticamente somente quando houver consentimento para contato, a janela de 24 horas do WhatsApp ainda estiver aberta, nÃ£o existir interaÃ§Ã£o posterior e nenhuma preferÃªncia de bloqueio estiver ativa. A mensagem nÃ£o menciona multa, cobranÃ§a nem culpa; apenas demonstra cuidado e oferece ajuda para encontrar outro horÃ¡rio.
+
+Se a janela do WhatsApp estiver fechada, o contato estiver marcado para atendimento humano ou jÃ¡ houver uma falta anterior, nada Ã© forÃ§ado automaticamente. O e-mail diÃ¡rio apresenta a aÃ§Ã£o como manual, com a mensagem sugerida. Depois de um primeiro acolhimento automÃ¡tico sem resposta, uma eventual segunda tentativa aparece somente como sugestÃ£o humana, cinco dias depois. Qualquer resposta da paciente, atuaÃ§Ã£o da equipe ou preferÃªncia `Nunca retomar`/`Nunca responder com robÃ´` encerra a automaÃ§Ã£o dessa ausÃªncia.
+
+## Lembretes de consulta
+
+Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consulta confirmada` pode receber:
+
+1. a confirmaÃ§Ã£o normal no momento do agendamento, dentro da prÃ³pria conversa;
+2. um Ãºnico lembrete automÃ¡tico Ã s 10h do dia anterior.
+
+Nenhum lembrete Ã© enviado antes das 9h ou a partir das 19h, no fuso de SÃ£o Paulo. Se qualquer uma das colunas histÃ³ricas de lembrete ou `Ãšltima tentativa de lembrete` jÃ¡ estiver preenchida, a consulta nÃ£o recebe outra mensagem. A tentativa Ã© registrada antes da chamada ao WhatsApp: mesmo que a resposta do provedor se perca, o sistema nÃ£o repete automaticamente. Falhas ficam em `Erro do lembrete` para revisÃ£o humana. Assim, pacientes que receberam ou podem ter recebido um lembrete pelo fluxo anterior nÃ£o recebem um segundo lembrete durante a migraÃ§Ã£o.
+
+Consultas canceladas, realizadas, vencidas, com pedido de reagendamento ou com recusa explÃ­cita de contato nÃ£o recebem mensagens. Uma alteraÃ§Ã£o de data ou horÃ¡rio reinicia apenas os controles daquele agendamento. As colunas `ConfirmaÃ§Ã£o da paciente`, `Ãšltima interaÃ§Ã£o humana`, `PrÃ³xima aÃ§Ã£o` e `Motivo de supressÃ£o` deixam o contexto explÃ­cito; os controles de lembrete impedem duplicidade e permitem auditoria.
+
+Os lembretes usam o modelo utilitÃ¡rio `lembrete_consulta_liv_v1`:
+
+> OlÃ¡, {{1}}! Este Ã© um lembrete da sua consulta com {{2}}, marcada para {{3}} Ã s {{4}}, {{5}}. Se precisar ajustar o horÃ¡rio, responda por aqui.
+
+No campo `{{5}}`, a clÃ­nica envia o local por extenso e o acesso direto ao mapa: `ClÃ­nica LIV Faria Lima, Rua Pais Leme, 215, Pinheiros, SÃ£o Paulo` e `https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo`. Registros antigos que trazem apenas o nome da clÃ­nica sÃ£o enriquecidos automaticamente antes do envio. LocalizaÃ§Ãµes personalizadas, como teleconsulta, sÃ£o preservadas e nÃ£o recebem o endereÃ§o da clÃ­nica.
+
+O disparo automÃ¡tico permanece desligado atÃ© o modelo estar aprovado no WhatsApp/YCloud. Depois da aprovaÃ§Ã£o, configurar `WHATSAPP_APPOINTMENT_REMINDERS_ENABLED=true` no Netlify e executar `ativarLembretesConsultas()` uma vez no Apps Script. O remetente Ã© aprendido pelos eventos recebidos do nÃºmero comercial; `WHATSAPP_SENDER_NUMBER` funciona como substituiÃ§Ã£o explÃ­cita, se necessÃ¡ria.
+
+## Rotinas
+
+### Toda semana
+
+1. Atualizar somente os horÃ¡rios vÃ¡lidos na aba `Datas Consulta`.
+2. Marcar dias indisponÃ­veis como bloqueados.
+3. Conferir se a profissional e as datas estÃ£o corretas.
+
+### Todos os dias
+
+1. Conferir o e-mail diÃ¡rio do plano de retomadas enviado por volta das 8h para Amanda e Daniel; ele tambÃ©m mostra dÃºvidas ainda sem resposta e regras novas aguardando aprovaÃ§Ã£o.
+2. Revisar o histÃ³rico antes de usar cada mensagem sugerida e decidir as linhas abertas em `RevisÃµes do Bot`.
+3. NÃ£o retomar quem respondeu por outro canal, pediu interrupÃ§Ã£o ou nÃ£o faz mais sentido comercial.
+4. Acompanhar alertas de preÃ§o, agenda, cardiologia e situaÃ§Ãµes fora do padrÃ£o.
+
+O e-mail organiza a agenda diÃ¡ria e separa com clareza:
+
+1. os envios automÃ¡ticos realmente programados, com horÃ¡rio;
+2. as aÃ§Ãµes humanas sugeridas, com horÃ¡rio e mensagem pronta;
+3. os marcos dos prÃ³ximos sete dias, identificados como automÃ¡ticos ou manuais.
+
+Nas retomadas comerciais que aparecem como aÃ§Ã£o humana, o e-mail tambÃ©m pode mostrar o botÃ£o `Passar para a Bruna`. Ele nÃ£o envia a mensagem no primeiro clique: abre uma pÃ¡gina que repete o texto sugerido e exige confirmaÃ§Ã£o explÃ­cita. Depois da confirmaÃ§Ã£o, somente aquele plano entra na fila automÃ¡tica, com registro da data e da origem da aprovaÃ§Ã£o.
+
+Para aprovar vÃ¡rias de uma vez, usar a aba `Central de Atendimento`:
+
+1. revisar o histÃ³rico e a coluna `Resposta sugerida` de cada retomada;
+2. marcar `Aprovar com a Bruna` nas linhas desejadas;
+3. abrir `Central LIV > Aprovar retomadas marcadas`;
+4. conferir a quantidade exibida e confirmar uma Ãºnica vez.
+
+A marcaÃ§Ã£o da caixa, isoladamente, nunca envia mensagem. O comando do menu processa somente linhas de `Retomada de marketing` que continuam em modo `Manual`, com status `Programado` e texto sugerido preenchido. Linhas marcadas por engano permanecem humanas e recebem uma observaÃ§Ã£o com o motivo. As aprovadas passam a `Bruna/bot` e `AutomÃ¡tico`, preservam o horÃ¡rio planejado e continuam sujeitas Ã  validaÃ§Ã£o final individual.
+
+Quando um compromisso antigo puder ser reconciliado com uma oferta comercial, ele aparece como `Revisar exclusÃ£o comercial`, prioridade normal, modo `SilÃªncio` e sem resposta sugerida. Depois de conferir o histÃ³rico, selecionar `Encerrar â€” comercial/nÃ£o paciente` em `Status operacional`. Essa Ãºnica aÃ§Ã£o resolve o compromisso, cancela retomadas pendentes, arquiva eventual linha de lead como nÃ£o paciente e registra a observaÃ§Ã£o `Contato comercial/marketing â€” nÃ£o paciente. Encerrado sem resposta.` NÃ£o responder ao contato e nÃ£o marcar `Aprovar com a Bruna`.
+
+PublicaÃ§Ã£o de 14/08/2026: Apps Script versÃ£o 89 no deployment preservado. O endpoint respondeu HTTP 200 com `ok: true`; a atualizaÃ§Ã£o ao vivo da `Central de Atendimento` concluiu com 21 colunas, `Aprovar com a Bruna` na coluna 19, uma retomada elegÃ­vel com caixa nativa e nenhuma caixa previamente marcada. ValidaÃ§Ã£o local: **549/549 testes aprovados**.
+
+Antes de usar o botÃ£o:
+
+1. abrir o WhatsApp e ler o histÃ³rico recente da paciente e da clÃ­nica;
+2. confirmar que a mensagem sugerida continua adequada e que a equipe nÃ£o respondeu por outro canal;
+3. clicar em `Passar para a Bruna` e conferir novamente o texto na tela de confirmaÃ§Ã£o;
+4. confirmar somente se a mensagem puder ser enviada exatamente como estÃ¡.
+
+A aprovaÃ§Ã£o humana nÃ£o elimina as proteÃ§Ãµes tÃ©cnicas. Imediatamente antes do disparo, o sistema verifica novamente se a conversa nÃ£o mudou, se a paciente nÃ£o respondeu, se nenhuma pessoa da equipe interveio, se a janela do WhatsApp continua aberta, se o lead ainda estÃ¡ elegÃ­vel e se nÃ£o existe `Nunca retomar`, `Nunca responder com robÃ´`, suspensÃ£o automÃ¡tica ou contexto sensÃ­vel. Se qualquer condiÃ§Ã£o mudar, o plano Ã© cancelado. O botÃ£o nÃ£o aparece para aniversÃ¡rios, reativaÃ§Ãµes de clientes antigos, jornada cirÃºrgica ou cuidados clÃ­nicos; esses itens continuam humanos.
+
+Primeiras retomadas seguras, sem agenda ou decisÃ£o humana, aparecem como candidatas Ã  Bruna, mas continuam sendo apenas planejamento enquanto nÃ£o existir uma rotina especÃ­fica e uma janela vÃ¡lida do WhatsApp. A resposta inicial de preÃ§o e a Ãºnica faixa de lifting apÃ³s insistÃªncia explÃ­cita seguem o fluxo automÃ¡tico aprovado. Agenda, repetiÃ§Ã£o da faixa no mesmo contexto, demais preÃ§os e follow-ups tardios continuam dependendo de decisÃ£o humana; quando o botÃ£o estiver disponÃ­vel, a equipe pode autorizar o bot apenas a entregar o texto exato jÃ¡ revisado. AniversÃ¡rios, datas especiais e reativaÃ§Ãµes de clientes antigos permanecem integralmente manuais.
+
+### CadÃªncia de relacionamento
+
+1. Procura inicial: primeira retomada apÃ³s cerca de 24 horas, retomando a objeÃ§Ã£o especÃ­fica; segunda e Ãºltima apÃ³s cerca de 72 horas, com uma prova pertinente. Depois de duas tentativas sem resposta, nÃ£o hÃ¡ novo contato proativo. Cada mensagem deve acrescentar utilidade ou reduzir uma dÃºvida, nunca apenas perguntar se a pessoa viu a mensagem.
+2. PÃ³s-consulta: acolhimento inicial cerca de trÃªs horas apÃ³s a consulta quando a automaÃ§Ã£o estiver habilitada; checagem humana no terceiro dia; contato humano no dÃ©cimo quarto dia apenas se ainda fizer sentido e nÃ£o houver interaÃ§Ã£o recente.
+3. AniversÃ¡rio: mensagem humana Ã s 10h30, sem oferta comercial e sem mencionar procedimento.
+4. Datas especiais e jornada cirÃºrgica: somente quando registradas na aba `Consultas`, sempre com revisÃ£o humana.
+5. Cliente antigo: reativaÃ§Ã£o manual Ã s 16h30, conforme a periodicidade registrada ou o primeiro marco de seis meses. Depois disso, o prÃ³ximo contato deve ser registrado explicitamente; nÃ£o existe sequÃªncia automÃ¡tica contÃ­nua.
+
+Se a paciente disser que entrarÃ¡ em contato, que chamarÃ¡ a clÃ­nica, que falarÃ¡ mais tarde ou usar formulaÃ§Ã£o equivalente, nenhuma retomada deve ser planejada nas 24 horas seguintes Ã  mensagem. A regra usa horas corridas, nÃ£o apenas a mudanÃ§a da data no calendÃ¡rio.
+
+Retomadas comerciais sÃ³ podem ser planejadas entre 09:00 e 19:00, no fuso de SÃ£o Paulo. Se o volume do dia ultrapassar os horÃ¡rios disponÃ­veis, os contatos excedentes ficam para o prÃ³ximo planejamento; nunca sÃ£o deslocados para a noite ou madrugada.
+
+Essa restriÃ§Ã£o vale para retomadas iniciadas pela clÃ­nica depois de silÃªncio. Quando a prÃ³pria paciente inicia ou mantÃ©m uma conversa Ã  noite, a Bruna pode continuar respondendo atÃ© o encerramento natural, respeitando os limites de preÃ§o, agenda, confirmaÃ§Ã£o e seguranÃ§a descritos acima.
+
+As mensagens sugeridas devem parecer continuaÃ§Ã£o de uma conversa: reconhecer a dÃºvida, retirar pressÃ£o por decisÃ£o e permitir que a pessoa responda no prÃ³prio ritmo. A primeira retomada continua a objeÃ§Ã£o especÃ­fica registrada. A segunda e Ãºltima acrescenta uma Ãºnica prova pertinente, como material especÃ­fico, explicaÃ§Ã£o da consulta, credencial verificÃ¡vel ou composiÃ§Ã£o de custos, sem repetir link jÃ¡ usado. Depois disso, os contatos proativos sÃ£o encerrados. Sofrimento intenso relacionado Ã  aparÃªncia e pedidos explÃ­citos de interrupÃ§Ã£o excluem automaticamente o contato da lista.
+
+### Quando assumir uma conversa
+
+Responder pelo WhatsApp Business da clÃ­nica. O eco registra automaticamente uma nova tomada humana, cancela qualquer resposta pendente da Bruna e inicia a janela protegida.
+
+## Pausa de emergÃªncia
+
+Se houver comportamento inesperado, alterar no Netlify:
+
+`WHATSAPP_AUTOMATION_MODE=shadow`
+
+Nesse modo, a IA continua sendo avaliada nos registros, mas nÃ£o envia respostas aos pacientes. Para desligar tambÃ©m a avaliaÃ§Ã£o, usar:
+
+`WHATSAPP_AUTOMATION_MODE=off`
+
+## PublicaÃ§Ã£o tÃ©cnica default-off de 15/08/2026
+
+- Alvo canÃ´nico confirmado por projeto, deployment e planilha antes da primeira escrita.
+- Apps Script publicado como versÃ£o 91, preservando o deployment existente.
+- Netlify publicado a partir do commit candidato `50d7ea1`, deploy `6a80bef31b7d69000853db97`.
+- `LEAD_IDENTITY_HMAC_SECRET` foi provisionado sem registrar seu valor; a key version ficou em `k1`.
+- `ATTRIBUTION_CLAIM_SECRET` foi provisionado apenas no contexto de produÃ§Ã£o do Netlify, sem registrar seu valor.
+- `attributionJourneyEnabled=false` permaneceu no JavaScript pÃºblico e `ATTRIBUTION_SCHEMA_VERSION` permaneceu ausente. Nenhuma migraÃ§Ã£o, backfill, nova coluna ou lead sintÃ©tico foi executado.
+- ValidaÃ§Ã£o local: 657/657 testes, 44/44 URLs no gate tÃ©cnico e artefato de 173 arquivos sem `auditorias/**`.
+- Smoke live: pÃ¡ginas, tracking, `robots.txt`, `sitemap.xml` e web app HTTP 200; sentinela de auditoria HTTP 404; endpoint de jornada HTTP 405 em GET; nenhuma faixa antiga ou `JID` no HTML pÃºblico.
+- Rollback: Netlify para o deploy anterior `6a808fcc31dd650008489886`; Apps Script para a versÃ£o 90 no mesmo deployment.

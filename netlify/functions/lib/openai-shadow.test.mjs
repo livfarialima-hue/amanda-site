@@ -476,4 +476,1425 @@ test("full webhook claims J1, strips it, and delivers resolved attribution to Sh
         headers: { "YCloud-Signature": `t=${timestamp},s=${signature}` },
         body: rawBody,
       }),
-÷÷¶‰ËkºwµçHÔØˆ°(€€€€€ÁÉ½•ÍÌ¹•¹Ø¹e1=U}]	!==-}MIP°(€€€€¤(€€€€€€¹ÕÁ‘…Ñ”¡€‘íÑ¥µ•ÍÑ…µÁô¸‘íÉ…İ	½‘åõ€¤(€€€€€€¹‘¥•ÍĞ ‰¡•àˆ¤ì(€€€½¹ÍĞÉ•ÍÁ½¹Í”€ô…İ…¥Ğİ•‰¡½½¬ (€€€€€¹•ÜI•ÅÕ•ÍĞ ‰¡ÑÑÀè¼½±½…±¡½ÍĞ½…Á¤½å±½Õ½İ•‰¡½½¬ˆ°ì(€€€€€€€µ•Ñ¡½è€‰A=MPˆ°(€€€€€€€¡•…‘•ÉÌèì(€€€€€€€€€€‰e±½ÕµM¥¹…ÑÕÉ”ˆèĞô‘íÑ¥µ•ÍÑ…µÁô±Ìô‘íÍ¥¹…ÑÕÉ•õ€°(€€€€€€€ô°(€€€€€€€‰½‘äèÉ…İ	½‘ä°(€€€€€ô¤°(€€€€€ìİ…¥ÑU¹Ñ¥°è€¡ÁÉ½µ¥Í”¤€ôøÁ•¹‘¥¹œ¹ÁÕÍ ¡ÁÉ½µ¥Í”¤ô°(€€€€¤ì(€€€½¹ÍĞ‰½‘ä€ô…İ…¥ĞÉ•ÍÁ½¹Í”¹©Í½¸ ¤ì(€€€…İ…¥ĞAÉ½µ¥Í”¹…±°¡Á•¹‘¥¹œ¤ì((€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…¥M¡…‘½İEÕ•Õ•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…¥Ñ¥Ù•EÕ•Õ•°ÑÉÕ”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹Á…Ñ¥•¹ÑI•Á±åEÕ•Õ•°™…±Í”¤ì((€€€½¹ÍĞÁ…Ñ¥•¹ÑI•ÅÕ•ÍÑÌ€ôÉ•ÅÕ•ÍÑÌ¹™¥±Ñ•È (€€€€€€¡É•ÅÕ•ÍĞ¤€ôø(€€€€€€€É•ÅÕ•ÍĞ¹ÕÉ°€ôôô(€€€€€€€€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡Á…Ñ¥•¹ÑI•ÅÕ•ÍÑÌ¹±•¹Ñ °€Ä¤ì(€€€½¹ÍĞÁ…Ñ¥•¹Ñ	½‘ä€ô)M=8¹Á…ÉÍ”¡Á…Ñ¥•¹ÑI•ÅÕ•ÍÑÍlÁt¹½ÁÑ¥½¹Ì¹‰½‘ä¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡Á…Ñ¥•¹Ñ	½‘ä¹ÑåÁ”°€‰Ñ•áĞˆ¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…° (€€€€€Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°(€€€€€€‰=³„°5…É¥„„ÔÍ½Ô„	ÉÕ¹„°½¹¥•É”‘„³µ¹¥„1%X…É¥„1¥µ„¸…Ù…±¥‡Ÿ¼ƒ¤¥¹‘¥Ù¥‘Õ…°¸<ÅÕ”Ù½¨‘•Í•©„µ•±¡½É…Èüˆ°(€€€€¤ì(€€€½¹ÍĞ½Á•É…Ñ¥½¹…±I•ÅÕ•ÍĞ€ôÉ•ÅÕ•ÍÑÌ¹™¥¹ ¡É•ÅÕ•ÍĞ¤€ôøì(€€€€€¥˜€¡É•ÅÕ•ÍĞ¹ÕÉ°€„ôôÁÉ½•ÍÌ¹•¹Ø¹==1}M!QM}]	!==-}UI0¤É•ÑÕÉ¸™…±Í”ì(€€€€€É•ÑÕÉ¸)M=8¹Á…ÉÍ”¡É•ÅÕ•ÍĞ¹½ÁÑ¥½¹Ì¹‰½‘ä¤¹…Ñ¥½¸€ôôô(€€€€€€€€‰É•½É‘}½Á•É…Ñ¥½¹…±}•Ù•¹Ğˆì(€€€ô¤ì(€€€…ÍÍ•ÉĞ¹½¬¡½Á•É…Ñ¥½¹…±I•ÅÕ•ÍĞ¤ì(€€€½¹ÍĞ½Á•É…Ñ¥½¹…±Ù•¹Ğ€ô)M=8¹Á…ÉÍ” (€€€€€½Á•É…Ñ¥½¹…±I•ÅÕ•ÍĞ¹½ÁÑ¥½¹Ì¹‰½‘ä°(€€€€¤¹•Ù•¹Ğì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡½Á•É…Ñ¥½¹…±Ù•¹Ğ¹½ÁÁ½ÉÑÕ¹¥Ñå%°€‰½ÁÀµ…Ñ¥Ù”µÍÑ…¹‘…Éˆ¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡½Á•É…Ñ¥½¹…±Ù•¹Ğ¹ÑåÁ”°€‰…ÕÑ½µ…Ñ¥}É•Á±å}Í•¹Ğˆ¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡=‰©•Ğ¹¡…Í=İ¸¡½Á•É…Ñ¥½¹…±Ù•¹Ğ°€‰Ñ•áĞˆ¤°™…±Í”¤ì(€ô™¥¹…±±äì(€€€±½‰…±Q¡¥Ì¹™•Ñ €ô½É¥¥¹…±•Ñ ì(€€€½¹Í½±”¹±½œ€ô½É¥¥¹…±1½œì((€€€™½È€¡½¹ÍĞm­•ä°Ù…±Õ•t½˜=‰©•Ğ¹•¹ÑÉ¥•Ì¡Í…Ù•‘¹Ù¥É½¹µ•¹Ğ¤¤ì(€€€€€¥˜€¡Ù…±Õ”€ôôôÕ¹‘•™¥¹•¤‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ùm­•åtì(€€€€€•±Í”ÁÉ½•ÍÌ¹•¹Ùm­•åt€ôÙ…±Õ”ì(€€€ô(€ô)ô¤ì()Ñ•ÍĞ ‰½‘•…ÅÕ¥Í¥Ñ¥½¸É•µ…¥¹ÌÍ¥±•¹Ğİ¡•¸M¡••ÑÌ…¹¹½Ğ•ÍÑ…‰±¥Í „É½ÕÑ”ˆ°…Íå¹Œ€ ¤€ôøì(€½¹ÍĞ•¹Ù¥É½¹µ•¹Ñ-•åÌ€ôl(€€€€‰e1=U}]	!==-}MIPˆ°(€€€€‰e1=U}A%}-dˆ°(€€€€‰==1}M!QM}]	!==-}UI0ˆ°(€€€€‰==1}M!QM}]	!==-}MIPˆ°(€€€€‰=A9%}A%}-dˆ°(€€€€‰]!QMAA}UQ=5Q%=9}5=ˆ°(€€€€‰]!QMAA}1IQ}9U5	Hˆ°(€tì(€½¹ÍĞÍ…Ù•‘¹Ù¥É½¹µ•¹Ğ€ô=‰©•Ğ¹™É½µ¹ÑÉ¥•Ì (€€€•¹Ù¥É½¹µ•¹Ñ-•åÌ¹µ…À ¡­•ä¤€ôøm­•ä°ÁÉ½•ÍÌ¹•¹Ùm­•åut¤°(€€¤ì(€½¹ÍĞ½É¥¥¹…±•Ñ €ô±½‰…±Q¡¥Ì¹™•Ñ ì(€½¹ÍĞ½É¥¥¹…±1½œ€ô½¹Í½±”¹±½œì(€½¹ÍĞÉ•ÅÕ•ÍÑÌ€ômtì((€=‰©•Ğ¹…ÍÍ¥¸¡ÁÉ½•ÍÌ¹•¹Ø°ì(€€€e1=U}]	!==-}MIPè€‰İ•‰¡½½¬µÑ•ÍĞµÍ•É•Ğˆ°(€€€e1=U}A%}-dè€‰å±½ÕµÑ•ÍĞµ­•äˆ°(€€€==1}M!QM}]	!==-}UI0è(€€€€€€‰¡ÑÑÁÌè¼½Í¡••ÑÌ¹•á…µÁ±”¹Ñ•ÍĞ½İ•‰¡½½¬ˆ°(€€€==1}M!QM}]	!==-}MIPè€‰Í¡••ÑÌµÑ•ÍĞµÍ•É•Ğˆ°(€€€=A9%}A%}-dè€‰½Á•¹…¤µÑ•ÍĞµ­•äˆ°(€€€]!QMAA}UQ=5Q%=9}5=è€‰…Ñ¥Ù”ˆ°(€ô¤ì(€‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ø¹]!QMAA}1IQ}9U5	Hì(€½¹Í½±”¹±½œ€ô€ ¤€ôøíôì(€±½‰…±Q¡¥Ì¹™•Ñ €ô…Íå¹Œ€¡ÕÉ°°½ÁÑ¥½¹Ì¤€ôøì(€€€É•ÅÕ•ÍÑÌ¹ÁÕÍ ¡ìÕÉ°°½ÁÑ¥½¹Ìô¤ì((€€€¥˜€¡ÕÉ°€ôôôÁÉ½•ÍÌ¹•¹Ø¹==1}M!QM}]	!==-}UI0¤ì(€€€€€½¹ÍĞ•ÉÉ½È€ô¹•ÜÉÉ½È ‰M¡••ÑÌÑ¥µ•½ÕĞˆ¤ì(€€€€€•ÉÉ½È¹¹…µ”€ô€‰‰½ÉÑÉÉ½Èˆì(€€€€€Ñ¡É½Ü•ÉÉ½Èì(€€€ô((€€€¥˜€¡ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” ì‰ÍÑ…ÑÕÌˆè‰…•ÁÑ•‰ôœ°ìÍÑ…ÑÕÌè€ÈÀÀô¤ì(€€€ô((€€€Ñ¡É½Ü¹•ÜÉÉ½È¡Õ¹•áÁ•Ñ•‘•ÍÑ¥¹…Ñ¥½¸è€‘íÕÉ±õ€¤ì(€ôì((€ÑÉäì(€€€½¹ÍĞÉ…İ	½‘ä€ô)M=8¹ÍÑÉ¥¹¥™ä¡ì(€€€€€¥è€‰Í¡••ÑÌµ™…±±‰…¬µ•Ù•¹Ğˆ°(€€€€€ÑåÁ”è€‰İ¡…ÑÍ…ÁÀ¹¥¹‰½Õ¹‘}µ•ÍÍ…”¹É••¥Ù•ˆ°(€€€€€İ¡…ÑÍ…ÁÁ%¹‰½Õ¹‘5•ÍÍ…”èì(€€€€€€€¥è€‰Í¡••ÑÌµ™…±±‰…¬µµ•ÍÍ…”ˆ°(€€€€€€€™É½´è€ˆ¬ÔÔÄÄäÜØÌØÀÈÀäˆ°(€€€€€€€Ñ¼èA!=9°(€€€€€€€ÑåÁ”è€‰Ñ•áĞˆ°(€€€€€€€ÕÍÑ½µ•ÉAÉ½™¥±”èì¹…µ”è€‰5…É¥Í„ˆô°(€€€€€€€É•™•ÉÉ…°èìÍ½ÕÉ•}ÑåÁ”è€‰…ˆô°(€€€€€€€Ñ•áĞèì(€€€€€€€€€‰½‘äè(€€€€€€€€€€€€‰=³„„EÕ•É¼Í…‰•ÈÍ½‰É”±¥™Ñ¥¹œ™…¥…°½´„É„¸µ…¹‘„¸I•˜¸4ÈÙÀÅ\µÀÙ ÀÄˆ°(€€€€€€€ô°(€€€€€ô°(€€€ô¤ì(€€€½¹ÍĞÑ¥µ•ÍÑ…µÀ€ô€ˆÄÜÈÄäÀààÀÀˆì(€€€½¹ÍĞÍ¥¹…ÑÕÉ”€ôÉ•…Ñ•!µ…Œ (€€€€€€‰Í¡„ÈÔØˆ°(€€€€€ÁÉ½•ÍÌ¹•¹Ø¹e1=U}]	!==-}MIP°(€€€€¤(€€€€€€¹ÕÁ‘…Ñ”¡€‘íÑ¥µ•ÍÑ…µÁô¸‘íÉ…İ	½‘åõ€¤(€€€€€€¹‘¥•ÍĞ ‰¡•àˆ¤ì(€€€½¹ÍĞÉ•ÍÁ½¹Í”€ô…İ…¥Ğİ•‰¡½½¬ (€€€€€¹•ÜI•ÅÕ•ÍĞ ‰¡ÑÑÀè¼½±½…±¡½ÍĞ½…Á¤½å±½Õ½İ•‰¡½½¬ˆ°ì(€€€€€€€µ•Ñ¡½è€‰A=MPˆ°(€€€€€€€¡•…‘•ÉÌèì(€€€€€€€€€€‰e±½ÕµM¥¹…ÑÕÉ”ˆèĞô‘íÑ¥µ•ÍÑ…µÁô±Ìô‘íÍ¥¹…ÑÕÉ•õ€°(€€€€€€€ô°(€€€€€€€‰½‘äèÉ…İ	½‘ä°(€€€€€ô¤°(€€€€¤ì(€€€½¹ÍĞ‰½‘ä€ô…İ…¥ĞÉ•ÍÁ½¹Í”¹©Í½¸ ¤ì((€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÔÀÈ¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹É••¥Ù•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹•ÉÉ½È°€‰±•…‘}‘•±¥Ù•Éå}™…¥±•ˆ¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÕÑ½µ…Ñ¥]½É­¥¹¥Í¡•°™…±Í”¤ì((€€€½¹ÍĞÁ…Ñ¥•¹ÑI•ÅÕ•ÍÑÌ€ôÉ•ÅÕ•ÍÑÌ¹™¥±Ñ•È (€€€€€€¡É•ÅÕ•ÍĞ¤€ôø(€€€€€€€É•ÅÕ•ÍĞ¹ÕÉ°€ôôô(€€€€€€€€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡Á…Ñ¥•¹ÑI•ÅÕ•ÍÑÌ¹±•¹Ñ °€À¤ì(€ô™¥¹…±±äì(€€€±½‰…±Q¡¥Ì¹™•Ñ €ô½É¥¥¹…±•Ñ ì(€€€½¹Í½±”¹±½œ€ô½É¥¥¹…±1½œì((€€€™½È€¡½¹ÍĞm­•ä°Ù…±Õ•t½˜=‰©•Ğ¹•¹ÑÉ¥•Ì¡Í…Ù•‘¹Ù¥É½¹µ•¹Ğ¤¤ì(€€€€€¥˜€¡Ù…±Õ”€ôôôÕ¹‘•™¥¹•¤‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ùm­•åtì(€€€€€•±Í”ÁÉ½•ÍÌ¹•¹Ùm­•åt€ôÙ…±Õ”ì(€€€ô(€ô)ô¤ì()Ñ•ÍĞ ‰„ÁÉ•™¥±±•…Ù…¥±…‰¥±¥ÑäÑ•µÁ±…Ñ”½±±•ÑÌÍ¡•‘Õ±¥¹œÁÉ•™•É•¹”ˆ°…Íå¹Œ€ ¤€ôøì(€½¹ÍĞ•¹Ù¥É½¹µ•¹Ñ-•åÌ€ôl(€€€€‰e1=U}]	!==-}MIPˆ°(€€€€‰e1=U}A%}-dˆ°(€€€€‰==1}M!QM}]	!==-}UI0ˆ°(€€€€‰==1}M!QM}]	!==-}MIPˆ°(€€€€‰=A9%}A%}-dˆ°(€€€€‰]!QMAA}UQ=5Q%=9}5=ˆ°(€€€€‰]!QMAA}1IQ}9U5	Hˆ°(€tì(€½¹ÍĞÍ…Ù•‘¹Ù¥É½¹µ•¹Ğ€ô=‰©•Ğ¹™É½µ¹ÑÉ¥•Ì (€€€•¹Ù¥É½¹µ•¹Ñ-•åÌ¹µ…À ¡­•ä¤€ôøm­•ä°ÁÉ½•ÍÌ¹•¹Ùm­•åut¤°(€€¤ì(€½¹ÍĞ½É¥¥¹…±•Ñ €ô±½‰…±Q¡¥Ì¹™•Ñ ì(€½¹ÍĞ½É¥¥¹…±1½œ€ô½¹Í½±”¹±½œì(€½¹ÍĞÉ•ÅÕ•ÍÑÌ€ômtì(€½¹ÍĞÁ•¹‘¥¹œ€ômtì((€=‰©•Ğ¹…ÍÍ¥¸¡ÁÉ½•ÍÌ¹•¹Ø°ì(€€€e1=U}]	!==-}MIPè€‰İ•‰¡½½¬µÑ•ÍĞµÍ•É•Ğˆ°(€€€e1=U}A%}-dè€‰å±½ÕµÑ•ÍĞµ­•äˆ°(€€€==1}M!QM}]	!==-}UI0è€‰¡ÑÑÁÌè¼½Í¡••ÑÌ¹•á…µÁ±”¹Ñ•ÍĞ½İ•‰¡½½¬ˆ°(€€€==1}M!QM}]	!==-}MIPè€‰Í¡••ÑÌµÑ•ÍĞµÍ•É•Ğˆ°(€€€=A9%}A%}-dè€‰½Á•¹…¤µÑ•ÍĞµ­•äˆ°(€€€]!QMAA}UQ=5Q%=9}5=è€‰…Ñ¥Ù”ˆ°(€ô¤ì(€‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ø¹]!QMAA}1IQ}9U5	Hì(€½¹Í½±”¹±½œ€ô€ ¤€ôøíôì(€±½‰…±Q¡¥Ì¹™•Ñ €ô…Íå¹Œ€¡ÕÉ°°½ÁÑ¥½¹Ì¤€ôøì(€€€É•ÅÕ•ÍÑÌ¹ÁÕÍ ¡ìÕÉ°°½ÁÑ¥½¹Ìô¤ì((€€€¥˜€¡ÕÉ°€ôôôÁÉ½•ÍÌ¹•¹Ø¹==1}M!QM}]	!==-}UI0¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” (€€€€€€€)M=8¹ÍÑÉ¥¹¥™ä¡ì(€€€€€€€€€½¬èÑÉÕ”°(€€€€€€€€€¥¹Í•ÉÑ•è™…±Í”°(€€€€€€€€€ÕÁ‘…Ñ•èÑÉÕ”°(€€€€€€€€€‘ÕÁ±¥…Ñ”è™…±Í”°(€€€€€€€€€¡Õµ…¹Q…­•½Ù•ÉQ½‘…äè™…±Í”°(€€€€€€€€€½ÁÁ½ÉÑÕ¹¥Ñå%è€‰½ÁÀµ½¹ÍÕ±Ñ…Ñ¥½¸µ¥¹™½Éµ…Ñ¥½¸ˆ°(€€€€€€€€€ÁÉ½™•ÍÍ¥½¹…°è€‰…µ…¹‘„ˆ°(€€€€€€€€€É½ÕÑ•MÑ…ÑÕÌè€‰É•Í½±Ù•ˆ°(€€€€€€€€€É½ÕÑ•èÑÉÕ”°(€€€€€€€ô¤°(€€€€€€€ìÍÑ…ÑÕÌè€ÈÀÀô°(€€€€€€¤ì(€€€ô((€€€¥˜€¡ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹½Á•¹…¤¹½´½ØÄ½É•ÍÁ½¹Í•Ìˆ¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” (€€€€€€€)M=8¹ÍÑÉ¥¹¥™ä (€€€€€€€€€Ù…±¥‘I•ÍÁ½¹Í” (€€€€€€€€€€€Ù…±¥‘•¥Í¥½¸¡ì(€€€€€€€€€€€€€ÁÉ½•‘ÕÉ”è€‰±¥™Ñ¥¹}™…¥…°ˆ°(€€€€€€€€€€€€€ÍÕ•ÍÑ•‘I•Á±äè(€€€€€€€€€€€€€€€€‰=³„°KĞ„ÔÍ½Ô„	ÉÕ¹„°½¹¥•É”‘„³µ¹¥„1%X…É¥„1¥µ„¸€ˆ€¬(€€€€€€€€€€€€€€€€‰Y¤ÅÕ”Í•Ô¥¹Ñ•É•ÍÍ”ƒ¤•´±¥™Ñ¥¹œ™…¥…°¸<ÅÕ”Í•É¥„µ…¥ÌƒéÑ¥°€ˆ€¬(€€€€€€€€€€€€€€€€‰•¹Ñ•¹‘•ÈÁÉ¥µ•¥É¼è¼ÁÉ½•‘¥µ•¹Ñ¼°„É•ÕÁ•É‡Ÿ¼°½ÌÙ…±½É•Ì½Ô„…Ù…±¥‡Ÿ¼üˆ°(€€€€€€€€€€€ô¤°(€€€€€€€€€€¤°(€€€€€€€€¤°(€€€€€€€ìÍÑ…ÑÕÌè€ÈÀÀô°(€€€€€€¤ì(€€€ô((€€€¥˜€¡ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” ì‰ÍÑ…ÑÕÌˆè‰…•ÁÑ•‰ôœ°ìÍÑ…ÑÕÌè€ÈÀÀô¤ì(€€€ô((€€€Ñ¡É½Ü¹•ÜÉÉ½È ‰Õ¹•áÁ•Ñ•‘•ÍÑ¥¹…Ñ¥½¸ˆ¤ì(€ôì((€ÑÉäì(€€€½¹ÍĞÉ…İ	½‘ä€ô)M=8¹ÍÑÉ¥¹¥™ä¡ì(€€€€€¥è€‰½¹ÍÕ±Ñ…Ñ¥½¸µ¥¹™½Éµ…Ñ¥½¸µ•Ù•¹Ğˆ°(€€€€€ÑåÁ”è€‰İ¡…ÑÍ…ÁÀ¹¥¹‰½Õ¹‘}µ•ÍÍ…”¹É••¥Ù•ˆ°(€€€€€İ¡…ÑÍ…ÁÁ%¹‰½Õ¹‘5•ÍÍ…”èì(€€€€€€€¥è€‰½¹ÍÕ±Ñ…Ñ¥½¸µ¥¹™½Éµ…Ñ¥½¸µµ•ÍÍ…”ˆ°(€€€€€€€™É½´è€ˆ¬ÔÔÄÄäÀÀÀÀÀÀÀÀˆ°(€€€€€€€Ñ¼èA!=9°(€€€€€€€ÑåÁ”è€‰Ñ•áĞˆ°(€€€€€€€ÕÍÑ½µ•ÉAÉ½™¥±”èì¹…µ”è€‰…‰Ëµ¥„M¥±Ù„ˆô°(€€€€€€€Ñ•áĞèì(€€€€€€€€€‰½‘äè(€€€€€€€€€€€€‰=³„°½ÍÑ…É¥„‘”½¹ÍÕ±Ñ…È½Ì¡½Ë…É¥½ÌÁ…É„Õµ„…Ù…±¥‡Ÿ¼™…¥…°½´„É„¸µ…¹‘„¹q¹q¹I•™•Ë©¹¥„èÙ…±¥‡Ÿ¼™…¥…°ˆ°(€€€€€€€ô°(€€€€€ô°(€€€ô¤ì(€€€½¹ÍĞÑ¥µ•ÍÑ…µÀ€ô€ˆÄÜÈÄäÀààÀÀˆì(€€€½¹ÍĞÍ¥¹…ÑÕÉ”€ôÉ•…Ñ•!µ…Œ (€€€€€€‰Í¡„ÈÔØˆ°(€€€€€ÁÉ½•ÍÌ¹•¹Ø¹e1=U}]	!==-}MIP°(€€€€¤(€€€€€€¹ÕÁ‘…Ñ”¡€‘íÑ¥µ•ÍÑ…µÁô¸‘íÉ…İ	½‘åõ€¤(€€€€€€¹‘¥•ÍĞ ‰¡•àˆ¤ì(€€€½¹ÍĞÉ•ÍÁ½¹Í”€ô…İ…¥Ğİ•‰¡½½¬ (€€€€€¹•ÜI•ÅÕ•ÍĞ ‰¡ÑÑÀè¼½±½…±¡½ÍĞ½…Á¤½å±½Õ½İ•‰¡½½¬ˆ°ì(€€€€€€€µ•Ñ¡½è€‰A=MPˆ°(€€€€€€€¡•…‘•ÉÌèì(€€€€€€€€€€‰e±½ÕµM¥¹…ÑÕÉ”ˆèĞô‘íÑ¥µ•ÍÑ…µÁô±Ìô‘íÍ¥¹…ÑÕÉ•õ€°(€€€€€€€ô°(€€€€€€€‰½‘äèÉ…İ	½‘ä°(€€€€€ô¤°(€€€€€ìİ…¥ÑU¹Ñ¥°è€¡ÁÉ½µ¥Í”¤€ôøÁ•¹‘¥¹œ¹ÁÕÍ ¡ÁÉ½µ¥Í”¤ô°(€€€€¤ì(€€€½¹ÍĞ‰½‘ä€ô…İ…¥ĞÉ•ÍÁ½¹Í”¹©Í½¸ ¤ì(€€€…İ…¥ĞAÉ½µ¥Í”¹…±°¡Á•¹‘¥¹œ¤ì((€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…¥Ñ¥Ù•EÕ•Õ•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÁÁ½¥¹Ñµ•¹Ñ9••‘ÍAÉ•™•É•¹”°ÑÉÕ”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÁÁ½¥¹Ñµ•¹ÑAÉ•™•É•¹•I•Á±åM•¹Ğ°ÑÉÕ”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÁÁ½¥¹Ñµ•¹ÑI•Ù¥•İEÕ•Õ•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…° (€€€€€É•ÅÕ•ÍÑÌ¹Í½µ” (€€€€€€€€¡É•ÅÕ•ÍĞ¤€ôø(€€€€€€€€€É•ÅÕ•ÍĞ¹ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹½Á•¹…¤¹½´½ØÄ½É•ÍÁ½¹Í•Ìˆ°(€€€€€€¤°(€€€€€™…±Í”°(€€€€¤ì((€€€½¹ÍĞÁ…Ñ¥•¹ÑI•ÅÕ•ÍÑÌ€ôÉ•ÅÕ•ÍÑÌ¹™¥±Ñ•È (€€€€€€¡É•ÅÕ•ÍĞ¤€ôø(€€€€€€€É•ÅÕ•ÍĞ¹ÕÉ°€ôôô(€€€€€€€€€€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ€˜˜(€€€€€€€)M=8¹Á…ÉÍ”¡É•ÅÕ•ÍĞ¹½ÁÑ¥½¹Ì¹‰½‘ä¤¹ÑåÁ”€ôôô€‰Ñ•áĞˆ°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡Á…Ñ¥•¹ÑI•ÅÕ•ÍÑÌ¹±•¹Ñ °€Ä¤ì(€€€½¹ÍĞÁ…Ñ¥•¹ÑI•Á±ä€ô)M=8¹Á…ÉÍ” (€€€€€Á…Ñ¥•¹ÑI•ÅÕ•ÍÑÍlÁt¹½ÁÑ¥½¹Ì¹‰½‘ä°(€€€€¤¹Ñ•áĞ¹‰½‘äì(€€€…ÍÍ•ÉĞ¹•ÅÕ…° (€€€€€Á…Ñ¥•¹ÑI•Á±ä°(€€€€€€‰=³„°…‰Ëµ¥„„ÔÍ½Ô„	ÉÕ¹„°½¹¥•É”‘„³µ¹¥„1%X…É¥„1¥µ„¸€ˆ€¬(€€€€€€€€‰±…É¼°Á½ÍÍ¼Ñ”…©Õ‘…È½´¼…•¹‘…µ•¹Ñ¼¸EÕ…¥Ì‘¥…Ì‘„Í•µ…¹„”ÅÕ…°€ˆ€¬(€€€€€€€€‰Á•Ëµ½‘¼ƒŠPµ…¹£Œ½ÔÑ…É‘”ƒŠP½ÍÑÕµ…´™Õ¹¥½¹…Èµ•±¡½ÈÁ…É„Ù½¨üˆ°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Á…Ñ¥•¹ÑI•Á±ä°€½Ip€ÔÀÀ¼¤ì(€€€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Á…Ñ¥•¹ÑI•Á±ä°€½½‰É¥…‘„Á•±„½¹™¥…»„½¤¤ì(€€€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Á…Ñ¥•¹ÑI•Á±ä°€½Á½ÍÍ¥‰¥±¥‘…‘•Ì°±¥µ¥Ñ•Ì½¤¤ì(€€€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Á…Ñ¥•¹ÑI•Á±ä°€½¡ÑÑÁÌép½p½‘É……µ…¹‘…Í¡É½•‘•È¼¤ì(€ô™¥¹…±±äì(€€€±½‰…±Q¡¥Ì¹™•Ñ €ô½É¥¥¹…±•Ñ ì(€€€½¹Í½±”¹±½œ€ô½É¥¥¹…±1½œì((€€€™½È€¡½¹ÍĞm­•ä°Ù…±Õ•t½˜=‰©•Ğ¹•¹ÑÉ¥•Ì¡Í…Ù•‘¹Ù¥É½¹µ•¹Ğ¤¤ì(€€€€€¥˜€¡Ù…±Õ”€ôôôÕ¹‘•™¥¹•¤‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ùm­•åtì(€€€€€•±Í”ÁÉ½•ÍÌ¹•¹Ùm­•åt€ôÙ…±Õ”ì(€€€ô(€ô)ô¤ì()Ñ•ÍĞ ‰Ñ¡”™¥ÉÍĞÍÕÉ¥…°ÁÉ¥”ÅÕ•ÍÑ¥½¸ÕÍ•ÌÑ¡”…ÁÁÉ½Ù•¥¹ÍÑ¥ÑÕÑ¥½¹…°É•Á±äˆ°…Íå¹Œ€ ¤€ôøì(€½¹ÍĞ•¹Ù¥É½¹µ•¹Ñ-•åÌ€ôl(€€€€‰e1=U}]	!==-}MIPˆ°(€€€€‰e1=U}A%}-dˆ°(€€€€‰==1}M!QM}]	!==-}UI0ˆ°(€€€€‰==1}M!QM}]	!==-}MIPˆ°(€€€€‰=A9%}A%}-dˆ°(€€€€‰]!QMAA}UQ=5Q%=9}5=ˆ°(€€€€‰]!QMAA}1IQ}9U5	Hˆ°(€€€€‰e1=U}1IQ}Q5A1Q}95ˆ°(€€€€‰e1=U}1IQ}Q5A1Q}19Uˆ°(€tì(€½¹ÍĞÍ…Ù•‘¹Ù¥É½¹µ•¹Ğ€ô=‰©•Ğ¹™É½µ¹ÑÉ¥•Ì (€€€•¹Ù¥É½¹µ•¹Ñ-•åÌ¹µ…À ¡­•ä¤€ôøm­•ä°ÁÉ½•ÍÌ¹•¹Ùm­•åut¤°(€€¤ì(€½¹ÍĞ½É¥¥¹…±•Ñ €ô±½‰…±Q¡¥Ì¹™•Ñ ì(€½¹ÍĞ½É¥¥¹…±1½œ€ô½¹Í½±”¹±½œì(€½¹ÍĞÉ•ÅÕ•ÍÑÌ€ômtì(€½¹ÍĞÁ•¹‘¥¹œ€ômtì((€=‰©•Ğ¹…ÍÍ¥¸¡ÁÉ½•ÍÌ¹•¹Ø°ì(€€€e1=U}]	!==-}MIPè€‰İ•‰¡½½¬µÑ•ÍĞµÍ•É•Ğˆ°(€€€e1=U}A%}-dè€‰å±½ÕµÑ•ÍĞµ­•äˆ°(€€€==1}M!QM}]	!==-}UI0è€‰¡ÑÑÁÌè¼½Í¡••ÑÌ¹•á…µÁ±”¹Ñ•ÍĞ½İ•‰¡½½¬ˆ°(€€€==1}M!QM}]	!==-}MIPè€‰Í¡••ÑÌµÑ•ÍĞµÍ•É•Ğˆ°(€€€=A9%}A%}-dè€‰½Á•¹…¤µÑ•ÍĞµ­•äˆ°(€€€]!QMAA}UQ=5Q%=9}5=è€‰…Ñ¥Ù”ˆ°(€€€]!QMAA}1IQ}9U5	Hè€ˆ¬ÔÔÄÄäØÜÜĞÌÌÜĞˆ°(€€€e1=U}1IQ}Q5A1Q}95è€‰…±•ÉÑ…}É•Ù¥Í…½}±¥Ù}ØÄˆ°(€€€e1=U}1IQ}Q5A1Q}19Uè€‰ÁÑ}	Hˆ°(€ô¤ì(€½¹Í½±”¹±½œ€ô€ ¤€ôøíôì(€±½‰…±Q¡¥Ì¹™•Ñ €ô…Íå¹Œ€¡ÕÉ°°½ÁÑ¥½¹Ì¤€ôøì(€€€É•ÅÕ•ÍÑÌ¹ÁÕÍ ¡ìÕÉ°°½ÁÑ¥½¹Ìô¤ì((€€€¥˜€¡ÕÉ°€ôôôÁÉ½•ÍÌ¹•¹Ø¹==1}M!QM}]	!==-}UI0¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” (€€€€€€€)M=8¹ÍÑÉ¥¹¥™ä¡ì(€€€€€€€€€½¬èÑÉÕ”°(€€€€€€€€€¥¹Í•ÉÑ•è™…±Í”°(€€€€€€€€€ÕÁ‘…Ñ•èÑÉÕ”°(€€€€€€€€€‘ÕÁ±¥…Ñ”è™…±Í”°(€€€€€€€€€¡Õµ…¹Q…­•½Ù•ÉQ½‘…äè™…±Í”°(€€€€€€€€€½ÁÁ½ÉÑÕ¹¥Ñå%è€‰½ÁÀµ…Ñ¥Ù”µÁÉ¥”ˆ°(€€€€€€€€€ÁÉ½™•ÍÍ¥½¹…°è€‰…µ…¹‘„ˆ°(€€€€€€€€€É½ÕÑ•MÑ…ÑÕÌè€‰É•Í½±Ù•ˆ°(€€€€€€€€€É½ÕÑ•èÑÉÕ”°(€€€€€€€ô¤°(€€€€€€€ìÍÑ…ÑÕÌè€ÈÀÀô°(€€€€€€¤ì(€€€ô((€€€¥˜€¡ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹½Á•¹…¤¹½´½ØÄ½É•ÍÁ½¹Í•Ìˆ¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” (€€€€€€€)M=8¹ÍÑÉ¥¹¥™ä (€€€€€€€€€Ù…±¥‘I•ÍÁ½¹Í” (€€€€€€€€€€€Ù…±¥‘•¥Í¥½¸¡ì(€€€€€€€€€€€€€É½ÕÑ”è€‰¡Õµ…¹}É•Ù¥•Üˆ°(€€€€€€€€€€€€€…ÕÑ½µ…Ñ¥±±½İ•è™…±Í”°(€€€€€€€€€€€€€ÍÕ•ÍÑ•‘I•Á±äè€ˆˆ°(€€€€€€€€€€€€€É•Ù¥•İI•…Í½¸è€‰ÁÉ¥•}É…¹•}É•ÅÕ•ÍÑ•ˆ°(€€€€€€€€€€€ô¤°(€€€€€€€€€€¤°(€€€€€€€€¤°(€€€€€€€ìÍÑ…ÑÕÌè€ÈÀÀô°(€€€€€€¤ì(€€€ô((€€€¥˜€¡ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ¤ì(€€€€€É•ÑÕÉ¸¹•ÜI•ÍÁ½¹Í” ì‰ÍÑ…ÑÕÌˆè‰…•ÁÑ•‰ôœ°ìÍÑ…ÑÕÌè€ÈÀÀô¤ì(€€€ô((€€€Ñ¡É½Ü¹•ÜÉÉ½È ‰Õ¹•áÁ•Ñ•‘•ÍÑ¥¹…Ñ¥½¸ˆ¤ì(€ôì((€ÑÉäì(€€€½¹ÍĞÉ…İ	½‘ä€ô)M=8¹ÍÑÉ¥¹¥™ä¡ì(€€€€€¥è€‰…Ñ¥Ù”µÁÉ¥”µ•Ù•¹Ğˆ°(€€€€€ÑåÁ”è€‰İ¡…ÑÍ…ÁÀ¹¥¹‰½Õ¹‘}µ•ÍÍ…”¹É••¥Ù•ˆ°(€€€€€É•…Ñ•Q¥µ”è€ˆÈÀÈØ´ÀÜ´ÈåPÄÄèÄÀèÀÀ¸ÀÀÁhˆ°(€€€€€İ¡…ÑÍ…ÁÁ%¹‰½Õ¹‘5•ÍÍ…”èì(€€€€€€€¥è€‰…Ñ¥Ù”µÁÉ¥”µµ•ÍÍ…”ˆ°(€€€€€€€™É½´è€ˆ¬ÔÔÄÄäÀÀÀÀÀÀÀÀˆ°(€€€€€€€Ñ¼èA!=9°(€€€€€€€Í•¹‘Q¥µ”è€ˆÈÀÈØ´ÀÜ´ÈåPÄÄèÄÀèÀÀ¸ÀÀÁhˆ°(€€€€€€€ÑåÁ”è€‰Ñ•áĞˆ°(€€€€€€€ÕÍÑ½µ•ÉAÉ½™¥±”èì¹…µ”è€‰5…É¥„ˆô°(€€€€€€€Ñ•áĞèì(€€€€€€€€€‰½‘äè(€€€€€€€€€€€€‰EÕ…°¼Ù…±½È‘„‰±•™…É½Á±…ÍÑ¥„üA½‘”µ”Á…ÍÍ…ÈÕµ„·¥‘¥„üˆ°(€€€€€€€ô°(€€€€€ô°(€€€ô¤ì(€€€½¹ÍĞÑ¥µ•ÍÑ…µÀ€ô€ˆÄÜÈÄäÀààÀÀˆì(€€€½¹ÍĞÍ¥¹…ÑÕÉ”€ôÉ•…Ñ•!µ…Œ (€€€€€€‰Í¡„ÈÔØˆ°(€€€€€ÁÉ½•ÍÌ¹•¹Ø¹e1=U}]	!==-}MIP°(€€€€¤(€€€€€€¹ÕÁ‘…Ñ”¡€‘íÑ¥µ•ÍÑ…µÁô¸‘íÉ…İ	½‘åõ€¤(€€€€€€¹‘¥•ÍĞ ‰¡•àˆ¤ì(€€€½¹ÍĞÉ•ÍÁ½¹Í”€ô…İ…¥Ğİ•‰¡½½¬ (€€€€€¹•ÜI•ÅÕ•ÍĞ ‰¡ÑÑÀè¼½±½…±¡½ÍĞ½…Á¤½å±½Õ½İ•‰¡½½¬ˆ°ì(€€€€€€€µ•Ñ¡½è€‰A=MPˆ°(€€€€€€€¡•…‘•ÉÌèì(€€€€€€€€€€‰e±½ÕµM¥¹…ÑÕÉ”ˆèĞô‘íÑ¥µ•ÍÑ…µÁô±Ìô‘íÍ¥¹…ÑÕÉ•õ€°(€€€€€€€ô°(€€€€€€€‰½‘äèÉ…İ	½‘ä°(€€€€€ô¤°(€€€€€ìİ…¥ÑU¹Ñ¥°è€¡ÁÉ½µ¥Í”¤€ôøÁ•¹‘¥¹œ¹ÁÕÍ ¡ÁÉ½µ¥Í”¤ô°(€€€€¤ì(€€€½¹ÍĞ‰½‘ä€ô…İ…¥ĞÉ•ÍÁ½¹Í”¹©Í½¸ ¤ì(€€€…İ…¥ĞAÉ½µ¥Í”¹…±°¡Á•¹‘¥¹œ¤ì((€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…¥Ñ¥Ù•EÕ•Õ•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹É•Ù¥•İ±•ÉÑEÕ•Õ•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹ÁÉ¥•!½±‘¥¹EÕ•Õ•°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹ÁÉ¥•!½±‘¥¹M•¹Ğ°™…±Í”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÁÁÉ½Ù•‘AÉ¥•I•Á±å-¥¹°€‰¥¹¥Ñ¥…±}¥¹™½Éµ…Ñ¥½¸ˆ¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÁÁÉ½Ù•‘AÉ¥•I•Á±åEÕ•Õ•°ÑÉÕ”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡‰½‘ä¹…ÁÁÉ½Ù•‘AÉ¥•I•Á±åM•¹Ğ°ÑÉÕ”¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…° (€€€€€É•ÅÕ•ÍÑÌ¹Í½µ” (€€€€€€€€¡É•ÅÕ•ÍĞ¤€ôø(€€€€€€€€€É•ÅÕ•ÍĞ¹ÕÉ°€ôôô€‰¡ÑÑÁÌè¼½…Á¤¹½Á•¹…¤¹½´½ØÄ½É•ÍÁ½¹Í•Ìˆ°(€€€€€€¤°(€€€€€™…±Í”°(€€€€¤ì((€€€½¹ÍĞå±½Õ‘I•ÅÕ•ÍÑÌ€ôÉ•ÅÕ•ÍÑÌ¹™¥±Ñ•È (€€€€€€¡É•ÅÕ•ÍĞ¤€ôø(€€€€€€€É•ÅÕ•ÍĞ¹ÕÉ°€ôôô(€€€€€€€€‰¡ÑÑÁÌè¼½…Á¤¹å±½Õ¹½´½ØÈ½İ¡…ÑÍ…ÁÀ½µ•ÍÍ…•Ìˆ°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡å±½Õ‘I•ÅÕ•ÍÑÌ¹±•¹Ñ °€Ä¤ì(€€€½¹ÍĞå±½Õ‘	½‘¥•Ì€ôå±½Õ‘I•ÅÕ•ÍÑÌ¹µ…À (€€€€€€¡É•ÅÕ•ÍĞ¤€ôø)M=8¹Á…ÉÍ”¡É•ÅÕ•ÍĞ¹½ÁÑ¥½¹Ì¹‰½‘ä¤°(€€€€¤ì(€€€½¹ÍĞÁ…Ñ¥•¹Ñ	½‘ä€ôå±½Õ‘	½‘¥•Ì¹™¥¹ (€€€€€€¡É•ÅÕ•ÍĞ¤€ôøÉ•ÅÕ•ÍĞ¹ÑåÁ”€ôôô€‰Ñ•áĞˆ°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹•ÅÕ…°¡Á…Ñ¥•¹Ñ	½‘ä¹Ñ¼°€ˆ¬ÔÔÄÄäÀÀÀÀÀÀÀÀˆ¤ì(€€€…ÍÍ•ÉĞ¹µ…Ñ ¡Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°€½‘•™¥¹¥‘½Ì¥¹‘¥Ù¥‘Õ…±µ•¹Ñ”½¤¤ì(€€€…ÍÍ•ÉĞ¹µ…Ñ ¡Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°€½Ó¥¹¥„°„½µÁ±•á¥‘…‘”½¤¤ì(€€€…ÍÍ•ÉĞ¹µ…Ñ ¡Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°€½¡½ÍÁ¥Ñ…°°„…¹•ÍÑ•Í¥„½¤¤ì(€€€…ÍÍ•ÉĞ¹µ…Ñ ¡Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°€½»¼…ÁÉ•Í•¹Ñ…µ½ÌÕ´¡½¹½Ë…É¥¼¥Í½±…‘¼½¤¤ì(€€€…ÍÍ•ÉĞ¹µ…Ñ  (€€€€€Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°(€€€€€€½ÅÕ…¹Ñ¼µÕÍÑ„µ¥ÉÕÉ¥„µÁ±…ÍÑ¥„µ™…¥…°µÍ…¼µÁ…Õ±¼¼°(€€€€¤ì(€€€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Á…Ñ¥•¹Ñ	½‘ä¹Ñ•áĞ¹‰½‘ä°€½Ip¼¤ì(€ô™¥¹…±±äì(€€€±½‰…±Q¡¥Ì¹™•Ñ €ô½É¥¥¹…±•Ñ ì(€€€½¹Í½±”¹±½œ€ô½É¥¥¹…±1½œì((€€€™½È€¡½¹ÍĞm­•ä°Ù…±Õ•t½˜=‰©•Ğ¹•¹ÑÉ¥•Ì¡Í…Ù•‘¹Ù¥É½¹µ•¹Ğ¤¤ì(€€€€€¥˜€¡Ù…±Õ”€ôôôÕ¹‘•™¥¹•¤‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ùm­•åtì(€€€€€•±Í”ÁÉ½•ÍÌ¹•¹Ùm­•åt€ôÙ…±Õ”ì(€€€ô(€ô)ô¤ì(
+      undefined,
+      {
+        resolveAttributionImpl: async (receivedToken, options) => {
+          assert.equal(receivedToken, token);
+          assert.match(options.claimantId, /^C1_[A-Za-z0-9_-]{43}$/);
+          assert.equal(options.claimantId.includes(eventId), false);
+          return journey;
+        },
+      },
+    );
+    assert.equal(response.status, 200);
+    const append = sheetsRequests.find((request) => request.action === "append_lead");
+    assert.ok(append);
+    assert.equal(append.lead.text, "OlÃ¡, quero uma avaliaÃ§Ã£o.");
+    assert.equal(append.lead.reference, "M26F02S-C01H01-avaliacao-facial");
+    assert.equal(append.lead.attribution.initialOrigin, "Meta Ads");
+    assert.equal(append.lead.attribution.initialCampaignCode, "M26F02S");
+    assert.equal(append.lead.attribution.currentCampaignCode, "M26F02S");
+    assert.equal(append.lead.attribution.journeyStatus, "resolved");
+    assert.equal(JSON.stringify(append.lead).includes(token), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("a missing journey fails open to the legacy attribution parser", async () => {
+  const resolution = await resolveInboundAttributionJourney(
+    `Mensagem\nJID: J1_${"B".repeat(22)}`,
+    {
+      claimantId: `C1_${"b".repeat(43)}`,
+      resolveImpl: async () => null,
+    },
+  );
+  assert.equal(resolution.status, "not_found");
+  assert.equal(resolution.journey, null);
+  const attribution = classifyAttribution(
+    {},
+    {},
+    "OlÃ¡. Ref. M26F02S-C01H01",
+    resolution.journey,
+  );
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_coded");
+});
+
+test("a transport token without an opaque claimant fails closed", async () => {
+  let called = false;
+  const resolution = await resolveInboundAttributionJourney(
+    `Mensagem\nJID: J1_${"C".repeat(22)}`,
+    { resolveImpl: async () => { called = true; return {}; } },
+  );
+  assert.equal(resolution.status, "unavailable");
+  assert.equal(resolution.journey, null);
+  assert.equal(called, false);
+});
+
+test("the transport token is removed before message, bot or Sheets persistence", () => {
+  const token = `J1_${"D".repeat(22)}`;
+  assert.equal(
+    stripAttributionTransportToken(`Quero saber mais.\nJID: ${token}`),
+    "Quero saber mais.",
+  );
+  assert.equal(
+    stripAttributionTransportToken(`JID: ${token}\nMensagem personalizada`),
+    "Mensagem personalizada",
+  );
+});
+
+test("uncoded acquisition sources carry an explicit bounded fallback reason", () => {
+  assert.equal(
+    attributionFallbackReason("meta_uncoded"),
+    "meta_referral_without_mapped_code",
+  );
+  assert.equal(
+    attributionFallbackReason("site_uncoded"),
+    "site_source_without_campaign_code",
+  );
+  assert.equal(attributionFallbackReason("meta_coded"), "");
+  assert.equal(attributionFallbackReason("unexpected"), "");
+});
+
+test("maps known Meta ad IDs to complete campaign references", () => {
+  const historical = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120250469052940627",
+      },
+    },
+    "OlÃ¡! Gostaria de saber mais. Ref. M26F01W-C01",
+  );
+  const currentLifting = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120251254720680627",
+      },
+    },
+    "Quero saber sobre lifting facial",
+  );
+
+  assert.equal(historical.platform, "Meta");
+  assert.equal(historical.referenceCategory, "meta_coded");
+  assert.equal(historical.reference, "M26F01W-C01H01");
+  assert.equal(currentLifting.platform, "Meta");
+  assert.equal(currentLifting.referenceCategory, "meta_coded");
+  assert.equal(currentLifting.reference, "M26F01W-C06H01");
+});
+
+test("maps the cervical WhatsApp and Site Meta ad IDs to distinct routes", () => {
+  const direct = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120251248762170627",
+      },
+    },
+    "Quero entender o lifting cervical",
+  );
+  const site = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120251249058760627",
+      },
+    },
+    "Quero entender o lifting cervical",
+  );
+
+  assert.equal(direct.referenceCategory, "meta_coded");
+  assert.equal(direct.reference, "M26C01W-C07H01");
+  assert.equal(site.referenceCategory, "meta_coded");
+  assert.equal(site.reference, "M26C02S-C07H01");
+});
+
+test("keeps an auditable Meta ad ID when the ad is not mapped yet", () => {
+  const attribution = classifyAttribution(
+    {},
+    {
+      referral: {
+        source_type: "ad",
+        source_id: "120999999999999999",
+      },
+    },
+    "Quero saber mais",
+  );
+
+  assert.equal(attribution.platform, "Meta");
+  assert.equal(attribution.referenceCategory, "meta_ad_id");
+  assert.equal(
+    attribution.reference,
+    "META-AD-120999999999999999",
+  );
+});
+
+test("safety identifier is stable and does not contain the phone", () => {
+  const first = createSafetyIdentifier(PHONE);
+  const second = createSafetyIdentifier(PHONE);
+
+  assert.equal(first, second);
+  assert.equal(first.includes(PHONE), false);
+  assert.match(first, /^[a-f0-9]{64}$/);
+});
+
+test("valid structured response is parsed", () => {
+  const result = parseOpenAIShadowResponse(validResponse(), "fallback-model");
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.model, "test-model");
+  assert.deepEqual(result.decision, validDecision());
+  assert.deepEqual(result.usage, {
+    input_tokens: 10,
+    output_tokens: 20,
+    total_tokens: 30,
+  });
+});
+
+test("a known WhatsApp profile name prevents asking the name again", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        suggestedReply:
+          "Boa tarde! Eu sou a Bruna, concierge da ClÃ­nica LIV Faria Lima. Como posso te chamar?",
+      }),
+    ),
+    "fallback-model",
+    { patientProfileName: "Rosana Macedo" },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    result.decision.suggestedReply,
+    "Boa tarde! Eu sou a Bruna, concierge da ClÃ­nica LIV Faria Lima. Como posso ajudar?",
+  );
+});
+
+test("a generic WhatsApp profile does not suppress the name question", () => {
+  for (const patientProfileName of [
+    "Paciente",
+    "ClÃ­nica Rosana",
+    "Studio RM",
+    "Rosana 2026",
+    "Loja da RÃ´",
+    "Dra. Amanda",
+    "Rosana ğŸ’™",
+    "soniamariamontoromenezes",
+  ]) {
+    const decision = validDecision({
+      suggestedReply: "Como posso te chamar?",
+    });
+    const result = parseOpenAIShadowResponse(
+      validResponse(decision),
+      "fallback-model",
+      { patientProfileName },
+    );
+
+    assert.equal(result.status, "completed");
+    assert.equal(
+      result.decision.suggestedReply,
+      "Como posso te chamar?",
+    );
+  }
+});
+
+test("existing conversation history prevents asking the name even without a profile name", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        suggestedReply: "Tudo bem! Como posso te chamar?",
+      }),
+    ),
+    "fallback-model",
+    {
+      patientProfileName: "",
+      hasConversationHistory: true,
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    result.decision.suggestedReply,
+    "Tudo bem! Como posso ajudar?",
+  );
+});
+
+test("OpenAI HTTP error returns a controlled failure", async () => {
+  const result = await runOpenAIShadow(
+    { phone: PHONE, text: "Ola", platform: "Google" },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async () => new Response("ignored", { status: 429 }),
+    },
+  );
+
+  assert.deepEqual(result, {
+    status: "failed",
+    httpStatus: 429,
+    errorCode: "http_error",
+  });
+});
+
+test("OpenAI failure does not throw to the webhook caller", async () => {
+  await assert.doesNotReject(() =>
+    runOpenAIShadow(
+      { phone: PHONE, text: "Ola", platform: "Google" },
+      {
+        env: { OPENAI_API_KEY: "test-key" },
+        fetchImpl: async () => {
+          throw new Error("network unavailable");
+        },
+      },
+    ),
+  );
+});
+
+test("urgency forces silent human review without a patient reply", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(validDecision({ urgent: true })),
+    "fallback-model",
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.decision.route, "human_review");
+  assert.equal(result.decision.automaticAllowed, false);
+  assert.equal(result.decision.replyCode, "ALERT-URG-01");
+  assert.equal(result.decision.suggestedReply, "");
+  assert.equal(
+    result.decision.reviewReason,
+    "possible_urgent_symptoms",
+  );
+});
+
+test("only OpenAI is called and the request omits the raw phone", async () => {
+  const calls = [];
+  const longText = "a".repeat(2_100);
+  const result = await runOpenAIShadow(
+    { phone: PHONE, text: longText, platform: "Meta" },
+    {
+      env: {
+        OPENAI_API_KEY: "test-key",
+        OPENAI_MODEL: "test-model",
+        OPENAI_REASONING_EFFORT: "low",
+      },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), { status: 200 });
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, "https://api.openai.com/v1/responses");
+
+  const body = JSON.parse(calls[0].options.body);
+  assert.equal(body.store, false);
+  assert.equal(body.safety_identifier.includes(PHONE), false);
+  assert.equal(calls[0].options.body.includes(PHONE), false);
+  const input = JSON.parse(body.input);
+  assert.equal(input.currentMessage.length, 2_000);
+  assert.equal(input.whatsappProfileName, "");
+  assert.deepEqual(input.recentConversation, []);
+  assert.equal(body.text.verbosity, "low");
+  assert.equal(body.text.format.type, "json_schema");
+  assert.equal(body.text.format.strict, true);
+});
+
+test("appointment review is accepted as a strict structured route", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        route: "appointment_review",
+        automaticAllowed: true,
+        suggestedReply: "Mensagem que nÃ£o pode ser enviada.",
+        reviewReason: "",
+      }),
+    ),
+    "fallback-model",
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.decision.route, "appointment_review");
+  assert.equal(result.decision.automaticAllowed, false);
+  assert.equal(result.decision.suggestedReply, "");
+  assert.equal(
+    result.decision.reviewReason,
+    "appointment_preference_captured",
+  );
+});
+
+test("short conversation history is sent in full without the phone", async () => {
+  const calls = [];
+  const result = await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Superior",
+      platform: "WhatsApp direto",
+      patientProfileName: "Maria S.",
+      recentConversation: [
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Quero saber sobre blefaroplastia",
+        },
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "O que mais incomoda nas pÃ¡lpebras?",
+        },
+      ],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  const requestBody = JSON.parse(calls[0].options.body);
+  const input = JSON.parse(requestBody.input);
+
+  assert.equal(input.currentMessage, "Superior");
+  assert.equal(input.whatsappProfileName, "Maria S.");
+  assert.equal(input.recentConversation.length, 2);
+  assert.equal(
+    input.recentConversation[1].text,
+    "O que mais incomoda nas pÃ¡lpebras?",
+  );
+  assert.equal(calls[0].options.body.includes(PHONE), false);
+});
+
+test("the model receives the latest sixteen turns with speaker sources", async () => {
+  const calls = [];
+  const recentConversation = Array.from(
+    { length: 20 },
+    (_value, index) => ({
+      role: index % 2 === 0 ? "assistant" : "patient",
+      source: index % 4 === 0 ? "equipe_humana" : index % 2 === 0 ? "bruna" : "paciente",
+      text: `Mensagem ${index + 1}`,
+    }),
+  );
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Pode sim",
+      platform: "WhatsApp direto",
+      recentConversation,
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.recentConversation.length, 16);
+  assert.equal(input.recentConversation[0].text, "Mensagem 5");
+  assert.equal(input.recentConversation[0].source, "equipe_humana");
+  assert.equal(input.recentConversation[15].text, "Mensagem 20");
+  assert.equal(input.recentConversation[15].source, "paciente");
+});
+
+test("passes bounded Meta ad context without referral URLs", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "OlÃ¡, posso obter mais informaÃ§Ãµes sobre isso?",
+      platform: "Meta",
+      procedure: "avaliacao_facial",
+      referenceCategory: "meta_uncoded",
+      referralContext: {
+        sourceType: "ad",
+        mediaType: "video",
+        headline: "Como funciona a avaliaÃ§Ã£o facial",
+        body: "ConheÃ§a a consulta da Dra. Amanda.",
+        sourceUrl: "https://facebook.example/private-tracking",
+      },
+      recentConversation: [],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const requestBody = JSON.parse(calls[0].options.body);
+  const input = JSON.parse(requestBody.input);
+
+  assert.deepEqual(input.metaAdContext, {
+    sourceType: "ad",
+    mediaType: "video",
+    headline: "Como funciona a avaliaÃ§Ã£o facial",
+    body: "ConheÃ§a a consulta da Dra. Amanda.",
+  });
+  assert.equal(
+    calls[0].options.body.includes("facebook.example"),
+    false,
+  );
+});
+
+test("passes one approved procedure page only to eligible non-site conversations", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Tenho receio da recuperaÃ§Ã£o",
+      platform: "Meta",
+      procedure: "blefaroplastia",
+      referenceCategory: "meta_uncoded",
+      recentConversation: [
+        {
+          role: "assistant",
+          text: "VocÃª estÃ¡ comeÃ§ando a pesquisar?",
+        },
+        {
+          role: "patient",
+          text: "Sim, e tenho receio da recuperaÃ§Ã£o.",
+        },
+      ],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.cameFromWebsite, false);
+  assert.deepEqual(input.siteResource, {
+    title: "Blefaroplastia",
+    url: "https://draamandaschroeder.com.br/blefaroplastia/",
+    context:
+      "PÃ¡gina completa do procedimento, com explicaÃ§Ãµes, consulta, recuperaÃ§Ã£o, dÃºvidas e casos reais com antes e depois.",
+  });
+});
+
+test("does not pass a site page back to a person who came from the site", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Quero saber mais",
+      platform: "OrgÃ¢nico/ConteÃºdo",
+      procedure: "blefaroplastia",
+      referenceCategory: "site_page",
+      recentConversation: [],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.cameFromWebsite, true);
+  assert.equal(input.siteResource, null);
+});
+
+test("does not pass a site resource while a human task is pending", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Quero entender melhor a recuperaÃ§Ã£o",
+      platform: "Meta",
+      procedure: "lifting_facial",
+      referenceCategory: "meta_coded",
+      patientRelationship: {
+        knownPatient: false,
+        state: "lead",
+        hasPendingHumanTask: true,
+      },
+      recentConversation: [
+        {
+          role: "assistant",
+          text: "O que vocÃª gostaria de entender primeiro?",
+        },
+        {
+          role: "patient",
+          text: "Quero conhecer melhor a recuperaÃ§Ã£o.",
+        },
+      ],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+
+  assert.equal(input.siteResource, null);
+  assert.equal(input.patientRelationship.hasPendingHumanTask, true);
+});
+
+test("OpenAI failure keeps the webhook successful and never sends to YCloud", async () => {
+  const savedEnvironment = {
+    YCLOUD_WEBHOOK_SECRET: process.env.YCLOUD_WEBHOOK_SECRET,
+    GOOGLE_SHEETS_WEBHOOK_URL: process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+    GOOGLE_SHEETS_WEBHOOK_SECRET: process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    WHATSAPP_AUTOMATION_MODE: process.env.WHATSAPP_AUTOMATION_MODE,
+    WHATSAPP_ALERT_NUMBER: process.env.WHATSAPP_ALERT_NUMBER,
+  };
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+
+  process.env.YCLOUD_WEBHOOK_SECRET = "webhook-test-secret";
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = "https://sheets.example.test/webhook";
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
+  process.env.OPENAI_API_KEY = "openai-test-key";
+  process.env.WHATSAPP_AUTOMATION_MODE = "shadow";
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url) => {
+    requests.push(url);
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response('{"ok":true}', { status: 200 });
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      throw new Error("OpenAI unavailable");
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const payload = {
+      id: "event-test",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "message-test",
+        from: PHONE,
+        type: "text",
+        text: { body: "Ola, quero uma avaliacao" },
+      },
+    };
+    const rawBody = JSON.stringify(payload);
+    const timestamp = "1721908800";
+    const signature = createHmac("sha256", process.env.YCLOUD_WEBHOOK_SECRET)
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: { "YCloud-Signature": `t=${timestamp},s=${signature}` },
+        body: rawBody,
+      }),
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).aiShadowQueued, true);
+    assert.deepEqual(requests, [
+      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+      "https://api.openai.com/v1/responses",
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("commercial and clearly irrelevant contacts are ignored before downstream services", async () => {
+  const savedSecret = process.env.YCLOUD_WEBHOOK_SECRET;
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  let fetchCalls = 0;
+
+  process.env.YCLOUD_WEBHOOK_SECRET = "webhook-test-secret";
+  console.log = () => {};
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error("ignored contact must not call downstream services");
+  };
+
+  try {
+    const cases = [
+      {
+        id: "commercial",
+        text:
+          "OlÃ¡, somos uma agÃªncia de marketing digital e gostarÃ­amos de apresentar nossos serviÃ§os",
+        reason: "commercial_solicitation_or_partnership",
+      },
+      {
+        id: "personal",
+        text: "Dra Amanda, vamos almoÃ§ar amanhÃ£?",
+        reason: "irrelevant_or_personal_contact",
+      },
+    ];
+
+    for (const testCase of cases) {
+      const rawBody = JSON.stringify({
+        id: `${testCase.id}-event`,
+        type: "whatsapp.inbound_message.received",
+        whatsappInboundMessage: {
+          id: `${testCase.id}-message`,
+          from: "+5511900000001",
+          to: PHONE,
+          type: "text",
+          text: {
+            body: testCase.text,
+          },
+        },
+      });
+      const timestamp = "1721908800";
+      const signature = createHmac(
+        "sha256",
+        process.env.YCLOUD_WEBHOOK_SECRET,
+      )
+        .update(`${timestamp}.${rawBody}`)
+        .digest("hex");
+      const response = await webhook(
+        new Request("http://localhost/api/ycloud/webhook", {
+          method: "POST",
+          headers: {
+            "YCloud-Signature": `t=${timestamp},s=${signature}`,
+          },
+          body: rawBody,
+        }),
+      );
+      const body = await response.json();
+
+      assert.equal(response.status, 200);
+      assert.equal(body.ignored, true);
+      assert.equal(body.ignoreReason, testCase.reason);
+      assert.equal(body.leadRecorded, false);
+      assert.equal(body.aiActiveQueued, false);
+    }
+
+    assert.equal(fetchCalls, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    if (savedSecret === undefined) {
+      delete process.env.YCLOUD_WEBHOOK_SECRET;
+    } else {
+      process.env.YCLOUD_WEBHOOK_SECRET = savedSecret;
+    }
+  }
+});
+
+test("an exact event duplicate without durable completion remains recoverable", async () => {
+  const savedEnvironment = {
+    YCLOUD_WEBHOOK_SECRET: process.env.YCLOUD_WEBHOOK_SECRET,
+    GOOGLE_SHEETS_WEBHOOK_URL: process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+    GOOGLE_SHEETS_WEBHOOK_SECRET: process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    WHATSAPP_AUTOMATION_MODE: process.env.WHATSAPP_AUTOMATION_MODE,
+    WHATSAPP_ALERT_NUMBER: process.env.WHATSAPP_ALERT_NUMBER,
+  };
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  let sheetsResponse = {
+    ok: true,
+    inserted: false,
+    updated: true,
+    duplicate: false,
+    duplicateReason: null,
+  };
+  let openAiCalls = 0;
+
+  process.env.YCLOUD_WEBHOOK_SECRET = "webhook-test-secret";
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = "https://sheets.example.test/webhook";
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "sheets-test-secret";
+  process.env.OPENAI_API_KEY = "openai-test-key";
+  process.env.WHATSAPP_AUTOMATION_MODE = "shadow";
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url) => {
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify(sheetsResponse),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      openAiCalls += 1;
+      return new Response(JSON.stringify(validResponse()), { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  async function invoke(eventId) {
+    const rawBody = JSON.stringify({
+      id: eventId,
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: `${eventId}-message`,
+        from: PHONE,
+        type: "text",
+        text: { body: "Ola, quero uma avaliacao" },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac("sha256", process.env.YCLOUD_WEBHOOK_SECRET)
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: { "YCloud-Signature": `t=${timestamp},s=${signature}` },
+        body: rawBody,
+      }),
+    );
+
+    return response.json();
+  }
+
+  try {
+    const continuation = await invoke("existing-phone-event");
+    assert.equal(continuation.leadInserted, false);
+    assert.equal(continuation.leadUpdated, true);
+    assert.equal(continuation.duplicate, false);
+    assert.equal(continuation.aiShadowQueued, true);
+    assert.equal(openAiCalls, 1);
+
+    sheetsResponse = {
+      ok: true,
+      inserted: false,
+      updated: false,
+      duplicate: true,
+      duplicateReason: "event_id",
+    };
+    const exactDuplicate = await invoke("event-id-duplicate");
+    assert.equal(exactDuplicate.leadInserted, false);
+    assert.equal(exactDuplicate.leadUpdated, false);
+    assert.equal(exactDuplicate.duplicate, true);
+    assert.equal(exactDuplicate.aiShadowQueued, true);
+    assert.equal(openAiCalls, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("active mode sends only the high-confidence OpenAI reply", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  delete process.env.YCLOUD_ALERT_TEMPLATE_NAME;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: true,
+          updated: false,
+          duplicate: false,
+          humanTakeoverToday: false,
+          opportunityId: "opp-active-standard",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              suggestedReply:
+                "OlÃ¡! A avaliaÃ§Ã£o Ã© individual. O que vocÃª deseja melhorar?",
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "active-standard-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "active-standard-message",
+        from: "+5511900000000",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Maria" },
+        text: { body: "Quero saber sobre blefaroplastia" },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiShadowQueued, false);
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.patientReplyQueued, false);
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url ===
+        "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 1);
+    const patientBody = JSON.parse(patientRequests[0].options.body);
+    assert.equal(patientBody.type, "text");
+    assert.equal(
+      patientBody.text.body,
+      "OlÃ¡, Maria! Eu sou a Bruna, concierge da ClÃ­nica LIV Faria Lima. A avaliaÃ§Ã£o Ã© individual. O que vocÃª deseja melhorar?",
+    );
+    const operationalRequest = requests.find((request) => {
+      if (request.url !== process.env.GOOGLE_SHEETS_WEBHOOK_URL) return false;
+      return JSON.parse(request.options.body).action ===
+        "record_operational_event";
+    });
+    assert.ok(operationalRequest);
+    const operationalEvent = JSON.parse(
+      operationalRequest.options.body,
+    ).event;
+    assert.equal(operationalEvent.opportunityId, "opp-active-standard");
+    assert.equal(operationalEvent.type, "automatic_reply_sent");
+    assert.equal(Object.hasOwn(operationalEvent, "text"), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("coded acquisition remains silent when Sheets cannot establish a route", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL:
+      "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      const error = new Error("Sheets timeout");
+      error.name = "AbortError";
+      throw error;
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "sheets-fallback-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "sheets-fallback-message",
+        from: "+5511976360209",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Marisa" },
+        referral: { source_type: "ad" },
+        text: {
+          body:
+            "OlÃ¡! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 502);
+    assert.equal(body.received, false);
+    assert.equal(body.error, "lead_delivery_failed");
+    assert.equal(body.automaticWorkFinished, false);
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url ===
+        "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("a prefilled availability template collects scheduling preference", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+          opportunityId: "opp-consultation-information",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              procedure: "lifting_facial",
+              suggestedReply:
+                "OlÃ¡, RÃ´! Eu sou a Bruna, concierge da ClÃ­nica LIV Faria Lima. " +
+                "Vi que seu interesse Ã© em lifting facial. O que seria mais Ãºtil " +
+                "entender primeiro: o procedimento, a recuperaÃ§Ã£o, os valores ou a avaliaÃ§Ã£o?",
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "consultation-information-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "consultation-information-message",
+        from: "+5511900000000",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "FabrÃ­cia Silva" },
+        text: {
+          body:
+            "OlÃ¡, gostaria de consultar os horÃ¡rios para uma avaliaÃ§Ã£o facial com a Dra. Amanda.\n\nReferÃªncia: AvaliaÃ§Ã£o facial",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.appointmentNeedsPreference, true);
+    assert.equal(body.appointmentPreferenceReplySent, true);
+    assert.equal(body.appointmentReviewQueued, false);
+    assert.equal(
+      requests.some(
+        (request) =>
+          request.url === "https://api.openai.com/v1/responses",
+      ),
+      false,
+    );
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url ===
+          "https://api.ycloud.com/v2/whatsapp/messages" &&
+        JSON.parse(request.options.body).type === "text",
+    );
+    assert.equal(patientRequests.length, 1);
+    const patientReply = JSON.parse(
+      patientRequests[0].options.body,
+    ).text.body;
+    assert.equal(
+      patientReply,
+      "OlÃ¡, FabrÃ­cia! Eu sou a Bruna, concierge da ClÃ­nica LIV Faria Lima. " +
+        "Claro, posso te ajudar com o agendamento. Quais dias da semana e qual " +
+        "perÃ­odo â€” manhÃ£ ou tarde â€” costumam funcionar melhor para vocÃª?",
+    );
+    assert.doesNotMatch(patientReply, /R\$ 500/);
+    assert.doesNotMatch(patientReply, /obrigada pela confianÃ§a/i);
+    assert.doesNotMatch(patientReply, /possibilidades, limites/i);
+    assert.doesNotMatch(patientReply, /https:\/\/draamandaschroeder/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("the first surgical price question uses the approved institutional reply", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+    "YCLOUD_ALERT_TEMPLATE_LANGUAGE",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    YCLOUD_ALERT_TEMPLATE_NAME: "alerta_revisao_liv_v1",
+    YCLOUD_ALERT_TEMPLATE_LANGUAGE: "pt_BR",
+  });
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+          opportunityId: "opp-active-price",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              route: "human_review",
+              automaticAllowed: false,
+              suggestedReply: "",
+              reviewReason: "price_range_requested",
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error("unexpected destination");
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "active-price-event",
+      type: "whatsapp.inbound_message.received",
+      createTime: "2026-07-29T11:10:00.000Z",
+      whatsappInboundMessage: {
+        id: "active-price-message",
+        from: "+5511900000000",
+        to: PHONE,
+        sendTime: "2026-07-29T11:10:00.000Z",
+        type: "text",
+        customerProfile: { name: "Maria" },
+        text: {
+          body:
+            "Qual o valor da blefaroplastia? Pode me passar uma mÃ©dia?",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(body.priceHoldingQueued, false);
+    assert.equal(body.priceHoldingSent, false);
+    assert.equal(body.approvedPriceReplyKind, "initial_information");
+    assert.equal(body.approvedPriceReplyQueued, true);
+    assert.equal(body.approvedPriceReplySent, true);
+    assert.equal(
+      requests.some(
+        (request) =>
+          request.url === "https://api.openai.com/v1/responses",
+      ),
+      false,
+    );
+
+    const ycloudRequests = requests.filter(
+      (request) =>
+        request.url ===
+        "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(ycloudRequests.length, 1);
+    const ycloudBodies = ycloudRequests.map(
+      (request) => JSON.parse(request.options.body),
+    );
+    const patientBody = ycloudBodies.find(
+      (request) => request.type === "text",
+    );
+    assert.equal(patientBody.to, "+5511900000000");
+    assert.match(patientBody.text.body, /definidos individualmente/i);
+    assert.match(patientBody.text.body, /tÃ©cnica, a complexidade/i);
+    assert.match(patientBody.text.body, /hospital, a anestesia/i);
+    assert.match(patientBody.text.body, /nÃ£o apresentamos um honorÃ¡rio isolado/i);
+    assert.match(
+      patientBody.text.body,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    );
+    assert.doesNotMatch(patientBody.text.body, /R\$/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
