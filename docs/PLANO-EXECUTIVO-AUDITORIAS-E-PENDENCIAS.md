@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 15:45, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 17:10, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,15 +41,16 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** correção do ambiente hospitalar publicada e verificada em 17/08; manter em monitoramento normal.
+**Estado geral:** triagem segura ampliada e política de consulta corrigida em produção em 17/08; manter em monitoramento normal.
 
-- incidente das 14:37–14:38: o Apps Script devolveu `busy_retry` e depois `timeout`; o webhook permaneceu fail-closed e não liberou resposta antes de a Bruna assumir o atendimento;
-- lifting cervical e lifting facial agora respondem diretamente que são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica;
-- “este procedimento” agora é resolvido pelo contexto mais recente da paciente e pelo código do anúncio/campanha, sem ser tratado automaticamente como lifting; somente lifting cervical e facial recebem a confirmação hospitalar automática, e outros procedimentos continuam em revisão humana;
-- resposta hospitalar base no commit `d87fbc1`, deploy `6a834fc3a223280007cb423b`; correção do contexto de campanha no commit `86be3bd`, deploy `6a8355e01229780008678685`, com **723/723 testes aprovados**;
-- sonda sintética acionada pelo Netlify e linha diária `synthetic_attribution_v2_20260817` confirmada com persistência, classificação, handoff e atribuição em `ok`; nenhum telefone, mensagem ou envio de WhatsApp foi usado;
-- rollback da correção de contexto: deploy `6a8351223af85000083ceeea`, commit `9d950ce`.
-
+- mensagens estéticas de baixo risco agora seguem para a IA quando não existe uma resposta determinística melhor; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
+- quando o histórico confirma interação anterior, a Bruna preserva o contexto e não repete apresentação nem pergunta de nome; o caso “Eu tenho o pescoço flácido” ficou coberto como obrigação de resposta;
+- lifting cervical e lifting facial continuam respondendo diretamente que são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica; “este procedimento” é resolvido pelo contexto mais recente e pelo código da campanha;
+- travas clínicas, urgência, segurança, agenda, preço cirúrgico fora da política, falha técnica e intervenção humana continuam fail-closed e podem bloquear a IA;
+- o valor da consulta permanece R$ 500, com Pix, débito ou parcelamento e emissão de nota fiscal; é proibido afirmar que os R$ 500 serão reembolsados, devolvidos, descontados ou abatidos de uma cirurgia;
+- código publicado no commit `ad97121`, deploy Netlify `6a83690d6be96500087261f3`, com **727/727 testes aprovados**;
+- sonda sintética acionada no Netlify e linha `synthetic_attribution_v2_20260817` confirmada na planilha canônica com persistência, classificação, handoff e atribuição em `ok`; nenhum telefone, mensagem ou envio de WhatsApp foi usado;
+- rollback: deploy `6a8356fcdac1ed0008259ff6`, commit `a8440a0`.
 
 ### Auditoria 1 — Google Ads
 
