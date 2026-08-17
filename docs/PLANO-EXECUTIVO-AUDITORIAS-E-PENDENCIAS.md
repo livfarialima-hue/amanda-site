@@ -66,7 +66,7 @@ Ainda falta:
 
 ### Rotina recorrente — Meta Ads
 
-**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está preservado na produção canônica v98, o agregado anônimo e o acesso à API foram testados ao vivo e existe um único trigger diário para cada função. Todo e-mail enviado inclui métricas essenciais de 7 e 30 dias; a análise detalhada permanece semanal. A rotina não autoriza mudança automática na Meta.
+**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está preservado na produção canônica v99, o agregado anônimo e o acesso à API foram testados ao vivo e existe um único trigger diário para cada função. Todo e-mail enviado inclui métricas essenciais de 7 e 30 dias; a análise detalhada permanece semanal. A rotina não autoriza mudança automática na Meta.
 
 Escopo aprovado:
 
@@ -125,7 +125,7 @@ Decisão de encerramento e próximo ciclo — 16/08:
 Já foi feito:
 
 - commit técnico `50d7ea1` publicado no Netlify;
-- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 98, que preserva as rotinas anônimas, somente leitura, os códigos cervicais e o schema v1 habilitado, além da correção operacional dos comprovantes de agendamento;
+- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 99, que preserva as rotinas anônimas, somente leitura, os códigos cervicais e o schema v1 habilitado, além da correção operacional dos comprovantes de agendamento e da regra de salas do formulário;
 - smoke tests públicos aprovados;
 - auditorias excluídas do artefato do site;
 - logs e IDs endurecidos;
@@ -166,8 +166,8 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO` desde 15/08; execução real concluída às 21:35 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` concluiu sem mudanças; nenhum e-mail no sábado porque não havia alerta crítico |
 | toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
 | primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
-| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v98 | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
-| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v98 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
+| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v99 | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
+| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v99 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
 | toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
 | 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `PUBLICADO; INÍCIO 12H` | `M26F01W/C06H01`, `M26C01W` direto e `M26C02S` via `/lifting-cervical/`; R$ 300 total por campanha, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | código/Apps v97/schema/sonda publicados primeiro; depois três publicações seletivas, cada uma com 1 campanha + 1 conjunto + 1 anúncio | conferir a entrega real, idade efetiva e primeiros eventos; não mudar público, orçamento, destino ou criativo durante a janela |
 | 20/08 19:30–19:50 | Instagram orgânico: Reels de lifting cervical | `AGENDADO` | publicar o vídeo 9:16 aprovado; manter `Clique no link da bio`; conferir link da bio e separar origem orgânica | publicação manual no Instagram | não reutilizar o post como anúncio nem atribuir o tráfego orgânico aos braços pagos |
@@ -246,7 +246,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
 | Experimentos Google Ads | P1 | sequência agendada | OTO → CERV → BLEF → FACE → LIFT preço |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
-| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v98; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
+| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v99; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `PUBLICADO; EM MONITORAMENTO` desde 17/08 | manter somente `M26F01W/C06H01` no WhatsApp e analisar separadamente; comparar apenas `M26C01W` × `M26C02S`; nenhuma troca de criativo, rota, público ou orçamento durante a janela |
 | Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGENDADO` para decisão em 20/08 | considerar excluir apenas `18–24` e `25–34` em LIFT/BLEF/CERV/FACE; manter `Desconhecida` e não alterar OTO/marca/rino |
 | SEO técnico/CWV | P1/P2 | baseline parcial | medir 20/08; otimizar só com gargalo comprovado |
@@ -282,7 +282,7 @@ Os compromissos sobrepostos de 27/08 e 17/09 foram escalonados. O evento de 20/0
 
 A rotina do Google Ads não cria três automações concorrentes. Um único script roda diariamente: fica silencioso quando a saúde está normal, envia a revisão completa às segundas-feiras e acrescenta 90 dias no primeiro dia útil do mês. Os checkpoints de 7 e 14 dias continuam no Calendar porque dependem da data real de cada mudança.
 
-A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão preservados e ativos na v98 e continuam incapazes de alterar campanhas.
+A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão preservados e ativos na v99 e continuam incapazes de alterar campanhas.
 
 O experimento Meta proposto em 16/08 tem checkpoints relativos em D+3, D+7, D+15 e D+22. Eles só devem virar lembretes ativos depois de registrar a hora real da veiculação; se qualquer gate impedir o início, nenhum lembrete absoluto será criado e o plano continua em espera.
 
