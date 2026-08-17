@@ -92,6 +92,18 @@ test("cervical campaign video is prominent, accessible and performance-safe on b
   const artifactFiles = planStaticArtifact({ root }).files;
   assert.ok(!artifactFiles.includes("Campanha cervical 1x1  arrumado final.mp4"));
   assert.ok(!artifactFiles.includes("Campanha Lifting Cervical - Reels Stories 9x16 - ritmo e audio.mp4"));
+
+  const visualCss = readFileSync(path.join(root, "campanhas/conversion-pages-classic-visual.css"), "utf8");
+  assert.match(
+    visualCss,
+    /@media \(max-width: 920px\)[\s\S]*?\.cv-featured-video \.cv-story--featured-video\s*{\s*grid-template-columns:\s*minmax\(0, 1fr\);/i,
+    "featured cervical video must collapse to a single column on tablet and mobile"
+  );
+  assert.match(
+    visualCss,
+    /@media \(max-width: 680px\)[\s\S]*?\.cv-featured-video \.cv-story-media\s*{\s*width:\s*min\(100%, 330px\);/i,
+    "featured cervical video must stay within the known-good mobile video width"
+  );
 });
 
 test("OpenAI search and training crawlers have explicit independent rules", () => {

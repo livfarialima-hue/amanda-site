@@ -647,6 +647,10 @@ body.curated-video-open { overflow: hidden; }
   .cv-clinic-grid,
   .cv-clinic-compact,
   .cv-surgical-proof { grid-template-columns: 1fr; }
+  .cv-featured-video .cv-story--featured-video {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cv-featured-video .cv-story--featured-video > * { min-width: 0; }
   .cv-clinic-copy { max-width: 720px; }
   .cv-results--three { grid-template-columns: 1fr; }
   .cv-footer-grid { grid-template-columns: 1fr; }
@@ -699,7 +703,7 @@ body.curated-video-open { overflow: hidden; }
   .cv-story-media { width: min(100%, 330px); }
   .cv-featured-video { padding-block: 36px; }
   .cv-featured-video .cv-story--featured-video { margin-top: 0; }
-  .cv-featured-video .cv-story-media { width: 100%; }
+  .cv-featured-video .cv-story-media { width: min(100%, 330px); }
   .cv-consult-material { margin-top: 20px; padding: 24px 16px; }
   .cv-clinic-gallery { grid-template-columns: 1fr 1fr; }
   .cv-clinic-gallery figure:first-child { grid-column: 1 / -1; grid-row: auto; }
