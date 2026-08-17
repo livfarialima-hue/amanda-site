@@ -235,7 +235,7 @@ test("answers the hospital setting directly for cervical and facial lifting", ()
   }
 });
 
-test("inherits lifting context for a pronoun-only hospital question before any bot reply", () => {
+test("resolves a pronoun-only hospital question from the cervical campaign before any bot reply", () => {
   const preliminaryPlan = planAutomation({
     text: "Este procedimento é feito no hospital?",
     messageType: "text",
@@ -264,6 +264,72 @@ test("inherits lifting context for a pronoun-only hospital question before any b
   assert.equal(enrichedPlan.replyCode, "AMANDA-HOSPITAL-01");
   assert.equal(enrichedPlan.procedure, "lifting_cervical");
   assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("resolves a pronoun-only hospital question from campaign codes instead of assuming lifting", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Este procedimento é feito no hospital?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const cases = [
+    ["M26C01W-C07H01", "lifting_cervical", "standard_reply"],
+    ["M26C02S-C07H01", "lifting_cervical", "standard_reply"],
+    ["M26F01W-C06H01", "lifting_facial", "standard_reply"],
+    ["M26O01W-DbHKuWfGP_N-OT02", "otoplastia", "human_review"],
+  ];
+
+  for (const [reference, procedure, route] of cases) {
+    const enrichedPlan = enrichAutomationPlanFromConversation(
+      preliminaryPlan,
+      [
+        {
+          role: "user",
+          source: "patient",
+          text: `Olá! Quero saber mais. Ref. ${reference}`,
+        },
+        { role: "user", source: "patient", text: "Olá" },
+      ],
+    );
+
+    assert.equal(enrichedPlan.route, route, reference);
+    assert.equal(enrichedPlan.procedure, procedure, reference);
+    assert.equal(
+      enrichedPlan.automaticAllowed,
+      route === "standard_reply",
+      reference,
+    );
+  }
+});
+
+test("the latest explicit patient procedure overrides an older campaign context", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Este procedimento é feito no hospital?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Olá! Quero saber mais. Ref. M26C01W-C07H01",
+      },
+      {
+        role: "user",
+        source: "patient",
+        text: "Na verdade, agora quero saber sobre blefaroplastia.",
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "human_review");
+  assert.equal(enrichedPlan.reason, "hospital_setting_context_required");
+  assert.equal(enrichedPlan.procedure, "blefaroplastia");
+  assert.equal(enrichedPlan.automaticAllowed, false);
 });
 
 test("does not generalize the approved hospital fact to another procedure", () => {

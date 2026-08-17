@@ -96,6 +96,24 @@ const APPROVED_HOSPITAL_LIFTING_PROCEDURES = new Set([
   "lifting_cervical",
 ]);
 
+const CAMPAIGN_PROCEDURE_RULES = [
+  {
+    pattern: /\bM26F(?:01W|02S)\b/i,
+    key: "lifting_facial",
+    code: "M-C06-WA-01",
+  },
+  {
+    pattern: /\bM26C(?:01W|02S)\b/i,
+    key: "lifting_cervical",
+    code: "G-LIFT-CERV-01",
+  },
+  {
+    pattern: /\bM26O01W\b/i,
+    key: "otoplastia",
+    code: "G-OTO-01",
+  },
+];
+
 const APPEARANCE_DISTRESS_PATTERNS = [
   /\b(?:minha\s+)?apar[eê]ncia.{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
   /\b(?:meu\s+rosto|minha\s+face|meu\s+corpo).{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
@@ -232,12 +250,39 @@ function matchesAny(text, patterns) {
   return patterns.some((pattern) => pattern.test(text));
 }
 
+function detectNamedProcedure(text) {
+  const normalizedText = String(text || "");
+  for (const procedure of PROCEDURES) {
+    if (matchesAny(normalizedText, procedure.patterns)) {
+      return { key: procedure.key, code: procedure.code };
+    }
+  }
+
+  return null;
+}
+
+function detectCampaignProcedure(text) {
+  const normalizedText = String(text || "");
+  for (const campaign of CAMPAIGN_PROCEDURE_RULES) {
+    if (campaign.pattern.test(normalizedText)) {
+      return { key: campaign.key, code: campaign.code };
+    }
+  }
+
+  return null;
+}
+
 function detectProcedure(text, reference, referralContext) {
   const referralText =
     referralContext && typeof referralContext === "object"
       ? Object.values(referralContext).join(" ")
       : String(referralContext || "");
   const combined = `${reference || ""} ${referralText} ${text || ""}`;
+
+  // O procedimento dito pela própria pessoa prevalece sobre uma referência
+  // antiga ou divergente que ainda esteja anexada à conversa.
+  const namedInCurrentMessage = detectNamedProcedure(text);
+  if (namedInCurrentMessage) return namedInCurrentMessage;
 
   if (/\bC06(?:H\d{2})?\b/i.test(combined)) {
     return { key: "lifting_facial", code: "M-C06-WA-01" };
@@ -246,6 +291,9 @@ function detectProcedure(text, reference, referralContext) {
   if (/\bC01(?:H\d{2})?\b/i.test(combined)) {
     return { key: "avaliacao_facial", code: "M-C01-WA-01" };
   }
+
+  const campaignProcedure = detectCampaignProcedure(combined);
+  if (campaignProcedure) return campaignProcedure;
 
   if (/\b(?:G26LIFT|LF\d{2})\b/i.test(combined)) {
     return { key: "lifting_facial", code: "G-LIFT-FAC-01" };
@@ -267,17 +315,36 @@ function detectProcedure(text, reference, referralContext) {
     return { key: "avaliacao_facial", code: "M-C01-WA-01" };
   }
 
-  for (const procedure of PROCEDURES) {
-    if (matchesAny(combined, procedure.patterns)) {
-      return { key: procedure.key, code: procedure.code };
-    }
-  }
+  const namedInContext = detectNamedProcedure(combined);
+  if (namedInContext) return namedInContext;
 
   // Em conversas sobre cirurgia da face, pacientes frequentemente usam apenas
   // "lifting" para se referir ao lifting facial. As variações com região
   // (cervical, mamas, braços ou lábios) já foram resolvidas acima.
   if (/\blifting\b/i.test(combined)) {
     return { key: "lifting_facial", code: "M-C06-WA-01" };
+  }
+
+  return null;
+}
+
+function detectRecentPatientProcedure(recentConversation) {
+  const turns = Array.isArray(recentConversation)
+    ? recentConversation.slice(-16)
+    : [];
+  const patientTurns = turns.filter(
+    (turn) =>
+      turn?.role !== "assistant" &&
+      !["bruna", "equipe_humana"].includes(turn?.source),
+  );
+
+  for (const turn of patientTurns.reverse()) {
+    const procedure = detectProcedure(
+      turn?.text,
+      turn?.reference,
+      turn?.referralContext,
+    );
+    if (procedure) return procedure;
   }
 
   return null;
@@ -441,20 +508,29 @@ export function enrichAutomationPlanFromConversation(
     reference: "",
     platform: "WhatsApp direto",
   });
+  const recentPatientProcedure = detectRecentPatientProcedure(recentConversation);
 
-  if (
-    plan.reason === "hospital_setting_context_required" &&
-    APPROVED_HOSPITAL_LIFTING_PROCEDURES.has(context.procedure)
-  ) {
-    return {
-      ...plan,
-      route: "standard_reply",
-      reason: "hospital_setting_request",
-      replyCode: "AMANDA-HOSPITAL-01",
-      professional: "amanda",
-      procedure: context.procedure,
-      automaticAllowed: true,
-    };
+  if (plan.reason === "hospital_setting_context_required") {
+    if (
+      APPROVED_HOSPITAL_LIFTING_PROCEDURES.has(recentPatientProcedure?.key)
+    ) {
+      return {
+        ...plan,
+        route: "standard_reply",
+        reason: "hospital_setting_request",
+        replyCode: "AMANDA-HOSPITAL-01",
+        professional: "amanda",
+        procedure: recentPatientProcedure.key,
+        automaticAllowed: true,
+      };
+    }
+
+    if (recentPatientProcedure) {
+      return {
+        ...plan,
+        procedure: recentPatientProcedure.key,
+      };
+    }
   }
 
   if (!hasClinicTurn) return plan;
