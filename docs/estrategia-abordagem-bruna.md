@@ -133,13 +133,13 @@ Consulta:
 
 Primeira pergunta sobre preço cirúrgico, qualquer que seja o procedimento:
 
-> Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. O total pode variar conforme a técnica, a complexidade, as necessidades de cada pessoa, a equipe, o hospital, a anestesia, os materiais e o acompanhamento. O orçamento final discrimina os itens aplicáveis ao caso; não apresentamos um honorário isolado como se fosse o valor total.
+> Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação. Para eu te orientar melhor, o que você gostaria de melhorar?
 
-Quando a pergunta for sobre lifting ou minilifting, completar a primeira resposta uma única vez com:
+Quando o procedimento já estiver identificado, tornar a pergunta final concreta e fácil. Para lifting facial, por exemplo:
 
-> Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
+> Para eu te orientar melhor, o que mais te incomoda hoje no rosto ou no pescoço?
 
-Não convidar a pessoa a pedir média ou faixa. Se o procedimento não estiver identificado, perguntar qual cirurgia ela pesquisa antes de escolher um guia. Para outros procedimentos faciais, usar o guia facial geral quando pertinente; não enviar material facial para mama, corpo ou cirurgia íntima.
+A primeira resposta não lista técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento e não envia artigo ou guia. Se a própria pergunta também falar de parcelamento ou do que está incluído, basta acrescentar que o orçamento é apresentado de forma completa, com os itens aplicáveis, e que há opções de pagamento. Não convidar a pessoa a pedir média ou faixa. Se o procedimento não estiver identificado, perguntar qual cirurgia ou região ela está pesquisando.
 
 Quando a objeção envolver onde a cirurgia será feita ou como reduzir o custo hospitalar, complementar sem prometer disponibilidade:
 
@@ -149,7 +149,7 @@ Se, depois da primeira explicação, a pessoa insistir ou voltar a pedir explici
 
 > Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço: minilifting entre R$ 18 mil e R$ 25 mil e lifting facial entre R$ 26 mil e R$ 42 mil. O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
 
-A mensagem que efetivamente divulga a faixa sempre inclui o URL completo do guia de composição, mesmo que ele já tenha aparecido na primeira resposta. A faixa completa, por sua vez, não deve ser reenviada automaticamente mais de uma vez no mesmo contexto; um novo pedido depois disso vai para revisão humana. A redação não deve afirmar que a faixa inclui um item específico, nem sugerir que ela é uma proposta válida para aquele caso.
+A mensagem que efetivamente divulga a faixa sempre inclui o URL completo do guia de composição. A faixa completa, por sua vez, não deve ser reenviada automaticamente mais de uma vez no mesmo contexto; um novo pedido depois disso vai para revisão humana. A redação não deve afirmar que a faixa inclui um item específico, nem sugerir que ela é uma proposta válida para aquele caso.
 
 Essas ressalvas reduzem o risco de a estimativa ser confundida com preço individual, mas não constituem parecer jurídico nem garantia de conformidade. A política deve ser reavaliada com a Codame ou assessoria jurídica, especialmente porque o comentário oficial do CFM vincula a definição do valor de procedimentos individualizados à avaliação prévia.
 

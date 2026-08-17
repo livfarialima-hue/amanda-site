@@ -1894,14 +1894,10 @@ test("the first surgical price question uses the approved institutional reply", 
       (request) => request.type === "text",
     );
     assert.equal(patientBody.to, "+5511900000000");
-    assert.match(patientBody.text.body, /definidos individualmente/i);
-    assert.match(patientBody.text.body, /técnica, a complexidade/i);
-    assert.match(patientBody.text.body, /hospital, a anestesia/i);
-    assert.match(patientBody.text.body, /não apresentamos um honorário isolado/i);
-    assert.match(
-      patientBody.text.body,
-      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
-    );
+    assert.match(patientBody.text.body, /é natural querer saber o valor antes de decidir/i);
+    assert.match(patientBody.text.body, /confirma o valor exato após a avaliação/i);
+    assert.match(patientBody.text.body, /o que você gostaria de melhorar com esse procedimento/i);
+    assert.doesNotMatch(patientBody.text.body, /técnica|complexidade|hospital|anestesia|materiais|https?:\/\//i);
     assert.doesNotMatch(patientBody.text.body, /R\$/);
   } finally {
     globalThis.fetch = originalFetch;

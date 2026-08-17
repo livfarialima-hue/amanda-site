@@ -14,6 +14,8 @@ const PRICE_RANGE_LOWER_FACTOR = 0.9;
 const PRICE_RANGE_UPPER_FACTOR = 1.1;
 const LOCATION_REQUEST_PATTERN =
   /\b(?:onde\s+fica|qual\s+(?:e|é)\s+o\s+endere[cç]o|endere[cç]o|localiza[cç][aã]o|como\s+chegar)\b/i;
+const INITIAL_PRICE_TERMS_PATTERN =
+  /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
 
 const FACIAL_PRICE_GUIDE_PROCEDURES = new Set([
   "lifting_facial",
@@ -192,18 +194,28 @@ function shouldIncludePriceGuide(procedure, recentConversation) {
   );
 }
 
-function priceGuideUrlFor(procedure) {
-  return procedure === "lifting_facial"
-    ? LIFTING_PRICE_GUIDE_URL
-    : PRICE_GUIDE_URL;
-}
-
 function priceVariation(procedure) {
   if (procedure === "lifting_facial") {
     return "O valor final pode variar conforme o plano envolva face, pescoço ou ambos.";
   }
 
   return "O valor final pode variar conforme a extensão do procedimento.";
+}
+
+function initialPriceDiscoveryQuestion(procedure) {
+  if (procedure === "lifting_facial") {
+    return "Para eu te orientar melhor, o que mais te incomoda hoje no rosto ou no pescoço?";
+  }
+
+  if (procedure === "lifting_cervical") {
+    return "Para eu te orientar melhor, o que mais te incomoda hoje no pescoço?";
+  }
+
+  if (procedure) {
+    return "Para eu te orientar melhor, o que você gostaria de melhorar com esse procedimento?";
+  }
+
+  return "Você está pesquisando qual cirurgia ou qual região gostaria de melhorar?";
 }
 
 function clarificationFor(procedure, patientName) {
@@ -269,25 +281,18 @@ export function buildSurgicalInitialPriceReply({
   const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
     ? "A Clínica LIV Faria Lima fica na Rua Pais Leme, 215, em Pinheiros, próxima à Av. Faria Lima, em São Paulo."
     : "";
-  const guide =
-    shouldIncludePriceGuide(procedure, recentConversation)
-      ? `Veja o que compõe o valor: ${safeLink(priceGuideUrlFor(procedure))}`
-      : "";
-  const procedureLabel =
-    PRICE_REFERENCES[procedure]?.label ||
-    PROCEDURE_LABELS[procedure] ||
-    "";
-  const nextStep = procedureLabel
-    ? "Se quiser, posso explicar como funciona a avaliação."
-    : "Qual cirurgia você está pesquisando?";
+  const asksAboutTerms = INITIAL_PRICE_TERMS_PATTERN.test(
+    String(currentText || ""),
+  );
+  const paymentContext = asksAboutTerms
+    ? "O orçamento é apresentado de forma completa, com os itens aplicáveis ao caso, e há opções de pagamento."
+    : "";
   return [
     directPriceGreeting(patientName, recentConversation),
     location,
-    "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento.",
-    "O total pode variar conforme a técnica, a complexidade, as necessidades de cada pessoa, a equipe, o hospital, a anestesia, os materiais e o acompanhamento.",
-    "O orçamento final discrimina os itens aplicáveis ao caso; não apresentamos um honorário isolado como se fosse o valor total.",
-    guide,
-    nextStep,
+    "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.",
+    paymentContext,
+    initialPriceDiscoveryQuestion(procedure),
   ].filter(Boolean).join("\n\n");
 }
 

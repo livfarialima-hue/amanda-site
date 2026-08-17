@@ -34,7 +34,7 @@ const PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
 
 const INITIAL_PRICE_REPLY_PATTERN =
-  /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|trabalhamos\s+com\s+valores\s+competitivos/i;
+  /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|valor\s+exato\s+ap[oó]s\s+a\s+avalia[cç][aã]o|trabalhamos\s+com\s+valores\s+competitivos/i;
 
 const LIFTING_PRICE_RANGE_REPLY_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;

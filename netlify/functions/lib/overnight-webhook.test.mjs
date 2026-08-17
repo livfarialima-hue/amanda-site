@@ -131,10 +131,10 @@ test("a first nighttime price request receives the approved institutional reply"
       .map((request) => JSON.parse(request.options.body))
       .find((request) => request.to === "+5511900000000");
     assert.equal(patientRequest.type, "text");
-    assert.match(patientRequest.text.body, /definidos individualmente/i);
-    assert.match(patientRequest.text.body, /técnica, a complexidade/i);
-    assert.match(patientRequest.text.body, /hospital, a anestesia/i);
-    assert.match(patientRequest.text.body, /não apresentamos um honorário isolado/i);
+    assert.match(patientRequest.text.body, /é natural querer saber o valor antes de decidir/i);
+    assert.match(patientRequest.text.body, /confirma o valor exato após a avaliação/i);
+    assert.match(patientRequest.text.body, /o que você gostaria de melhorar com esse procedimento/i);
+    assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais|https?:\/\//i);
     assert.doesNotMatch(patientRequest.text.body, /retorno pela manhã/i);
     assert.doesNotMatch(patientRequest.text.body, /R\$/);
   } finally {

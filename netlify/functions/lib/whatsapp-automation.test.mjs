@@ -13,6 +13,8 @@ import {
 
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
+const CONVERSATIONAL_INITIAL_PRICE_REPLY =
+  "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
 
 test("possible urgency never authorizes a patient response", () => {
   const plan = planAutomation({
@@ -102,6 +104,30 @@ test("a repeated lifting price question receives the approved ranges automatical
   );
 
   assert.equal(preliminaryPlan.reason, "price_initial_information");
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
+  assert.equal(enrichedPlan.procedure, "lifting_facial");
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("the conversational first price reply is recognized on a repeated lifting question", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Mas qual é a média do lifting facial?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: CONVERSATIONAL_INITIAL_PRICE_REPLY,
+      },
+    ],
+  );
+
   assert.equal(enrichedPlan.route, "standard_reply");
   assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.procedure, "lifting_facial");

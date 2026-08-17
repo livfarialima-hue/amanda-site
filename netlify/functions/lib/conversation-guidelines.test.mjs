@@ -114,16 +114,18 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Não envie faixa nessa primeira resposta/i,
+    /resposta determinística inicial sem faixa/i,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /valor é individual e só é definido após avaliação e planejamento/,
+    /é natural querer saber o valor antes de decidir/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /técnica, complexidade, necessidades de cada pessoa, equipe, hospital, anestesia, materiais e acompanhamento/,
+    /termine com uma única pergunta fácil sobre o que a pessoa gostaria de melhorar/,
   );
+  assert.match(CONVERSATION_GUIDELINES, /Não liste técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento nessa primeira resposta/);
+  assert.match(CONVERSATION_GUIDELINES, /Não envie artigo, guia, faixa de preço/);
   assert.match(CONVERSATION_GUIDELINES, /não como orçamento, proposta ou garantia de preço/i);
   assert.match(
     CONVERSATION_GUIDELINES,

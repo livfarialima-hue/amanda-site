@@ -139,26 +139,18 @@ test("a first lifting price question receives the approved initial information w
     assert.doesNotMatch(patientRequest.text.body, /R\$ 18 mil|R\$ 26 mil/);
     assert.equal(
       (patientRequest.text.body.match(/https?:\/\//g) || []).length,
-      1,
+      0,
     );
     assert.doesNotMatch(
       patientRequest.text.body,
       /[\u200B-\u200D\u2060\uFEFF]/,
     );
-    assert.match(patientRequest.text.body, /definidos individualmente/i);
-    assert.match(patientRequest.text.body, /técnica, a complexidade/i);
-    assert.match(
-      patientRequest.text.body,
-      /equipe, o hospital, a anestesia, os materiais e o acompanhamento/i,
-    );
-    assert.match(patientRequest.text.body, /não apresentamos um honorário isolado/i);
-    assert.match(
-      patientRequest.text.body,
-      /quanto-custa-lifting-facial-sao-paulo/,
-    );
-    assert.match(patientRequest.text.body, /explicar como funciona a avaliação/i);
+    assert.match(patientRequest.text.body, /é natural querer saber o valor antes de decidir/i);
+    assert.match(patientRequest.text.body, /confirma o valor exato após a avaliação/i);
+    assert.match(patientRequest.text.body, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+    assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
     assert.doesNotMatch(patientRequest.text.body, /(?:informar|passar).{0,20}(?:média|faixa)/i);
-    assert.ok(Array.from(patientRequest.text.body).length <= 650);
+    assert.ok(Array.from(patientRequest.text.body).length <= 360);
     assert.doesNotMatch(
       patientRequest.text.body,
       /Se quiser, posso te explicar o que costuma aproximar/,

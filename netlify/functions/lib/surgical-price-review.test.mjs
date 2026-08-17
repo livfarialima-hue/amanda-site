@@ -10,7 +10,7 @@ import {
   isSurgicalPriceReview,
 } from "./surgical-price-review.mjs";
 
-test("creates the approved first response for price, installments and cost composition", () => {
+test("creates an empathetic first price response and answers payment terms briefly", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Eliana",
     procedure: "blefaroplastia",
@@ -22,34 +22,44 @@ test("creates the approved first response for price, installments and cost compo
   });
 
   assert.match(reply, /^Olá, Eliana! Eu sou a Bruna/);
-  assert.match(reply, /definidos individualmente após a avaliação e o planejamento/i);
-  assert.match(reply, /técnica, a complexidade, as necessidades de cada pessoa/i);
-  assert.match(reply, /equipe, o hospital, a anestesia, os materiais e o acompanhamento/i);
-  assert.match(reply, /não apresentamos um honorário isolado/i);
-  assert.match(
-    reply,
-    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
-  );
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+  assert.match(reply, /confirma o valor exato após a avaliação/i);
+  assert.match(reply, /orçamento é apresentado de forma completa/i);
+  assert.match(reply, /há opções de pagamento/i);
+  assert.match(reply, /o que você gostaria de melhorar/i);
+  assert.doesNotMatch(reply, /técnica|complexidade|materiais|honorário isolado/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
-  assert.ok(Array.from(reply).length <= 650);
+  assert.doesNotMatch(reply, /https?:\/\//);
+  assert.ok(Array.from(reply).length <= 500);
 });
 
-test("the first price response does not ask for a procedure already identified", () => {
+test("the first known lifting price response invites an easy aesthetic continuation", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Maria",
     procedure: "lifting_facial",
   });
 
-  assert.match(reply, /explicar como funciona a avaliação/i);
-  assert.match(
-    reply,
-    /quanto-custa-lifting-facial-sao-paulo/,
-  );
-  assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+  assert.match(reply, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+  assert.doesNotMatch(reply, /qual cirurgia ou qual região/i);
   assert.doesNotMatch(reply, /(?:informar|passar).{0,20}(?:média|faixa)/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.doesNotMatch(reply, /https?:\/\//);
+});
+
+test("the short question shown in the conversation receives the conversion-focused copy", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Queila",
+    procedure: "lifting_facial",
+    currentText: "Qual o valor Dra",
+  });
+
+  assert.match(reply, /^Olá, Queila! Eu sou a Bruna/);
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+  assert.match(reply, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+  assert.doesNotMatch(reply, /técnica|complexidade|equipe|hospital|anestesia|materiais/i);
+  assert.doesNotMatch(reply, /https?:\/\//);
+  assert.ok(Array.from(reply).length <= 360);
 });
 
 test("consultation price suggestion includes the invoice without promising tax savings", () => {
@@ -273,7 +283,7 @@ test("the range message includes the composition guide even if it appeared earli
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
-test("the first lifting price answer does not repeat a guide already in the history", () => {
+test("the first lifting price answer stays concise when a guide is already in the history", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Maria",
     procedure: "lifting_facial",
@@ -285,18 +295,20 @@ test("the first lifting price answer does not repeat a guide already in the hist
     ],
   });
 
-  assert.match(reply, /definidos individualmente/i);
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+  assert.match(reply, /o que mais te incomoda hoje no rosto ou no pescoço/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /https?:\/\//);
 });
 
-test("the first price answer does not attach a facial guide to another region", () => {
+test("the first price answer stays conversational for another region", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Maria",
     procedure: "abdominoplastia",
   });
 
-  assert.match(reply, /definidos individualmente/i);
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+  assert.match(reply, /o que você gostaria de melhorar com esse procedimento/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 0);

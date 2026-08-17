@@ -235,12 +235,10 @@ test("the initial price information is sent after the human-resume window withou
     deps.patientMessages[0].body,
     /R\$ 18 mil|R\$ 26 mil/,
   );
-  assert.match(deps.patientMessages[0].body, /definidos individualmente/i);
-  assert.match(deps.patientMessages[0].body, /não apresentamos um honorário isolado/i);
-  assert.match(
-    deps.patientMessages[0].body,
-    /quanto-custa-lifting-facial-sao-paulo/,
-  );
+  assert.match(deps.patientMessages[0].body, /é natural querer saber o valor antes de decidir/i);
+  assert.match(deps.patientMessages[0].body, /confirma o valor exato após a avaliação/i);
+  assert.match(deps.patientMessages[0].body, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /técnica|complexidade|materiais|https?:\/\//i);
   assert.equal(deps.alerts.length, 0);
   assert.equal(
     deps.completions[0].options.controlStatus,
