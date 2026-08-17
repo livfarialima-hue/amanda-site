@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 17:10, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 18:46, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,16 +41,17 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** triagem segura ampliada e política de consulta corrigida em produção em 17/08; manter em monitoramento normal.
+**Estado geral:** triagem segura ampliada, política de consulta corrigida e primeira abordagem de preço cirúrgico mais humana em produção em 17/08; manter em monitoramento normal.
 
 - mensagens estéticas de baixo risco agora seguem para a IA quando não existe uma resposta determinística melhor; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
 - quando o histórico confirma interação anterior, a Bruna preserva o contexto e não repete apresentação nem pergunta de nome; o caso “Eu tenho o pescoço flácido” ficou coberto como obrigação de resposta;
 - lifting cervical e lifting facial continuam respondendo diretamente que são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica; “este procedimento” é resolvido pelo contexto mais recente e pelo código da campanha;
 - travas clínicas, urgência, segurança, agenda, preço cirúrgico fora da política, falha técnica e intervenção humana continuam fail-closed e podem bloquear a IA;
 - o valor da consulta permanece R$ 500, com Pix, débito ou parcelamento e emissão de nota fiscal; é proibido afirmar que os R$ 500 serão reembolsados, devolvidos, descontados ou abatidos de uma cirurgia;
-- código publicado no commit `ad97121`, deploy Netlify `6a83690d6be96500087261f3`, com **727/727 testes aprovados**;
+- na primeira pergunta sobre preço cirúrgico, a Bruna agora responde de forma breve e empática, sem lista técnica, artigo ou faixa, e termina com uma pergunta simples sobre o que a pessoa deseja melhorar; a política de faixa após insistência explícita em lifting/minilifting e as travas de revisão humana foram preservadas;
+- código mais recente publicado no commit `09ea3b8`, deploy Netlify `6a8380447e2e7d00080ea234`, com **729/729 testes aprovados**;
 - sonda sintética acionada no Netlify e linha `synthetic_attribution_v2_20260817` confirmada na planilha canônica com persistência, classificação, handoff e atribuição em `ok`; nenhum telefone, mensagem ou envio de WhatsApp foi usado;
-- rollback: deploy `6a8356fcdac1ed0008259ff6`, commit `a8440a0`.
+- rollback imediato: deploy `6a836ad3cd5cad000838bee6`, commit `a3d0279`.
 
 ### Auditoria 1 — Google Ads
 
