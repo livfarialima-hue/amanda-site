@@ -37,16 +37,17 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 
 ### Registro da produção atual
 
-- Versão canônica: `97`, publicada no deployment existente em 17/08/2026.
+- Versão canônica: `98`, publicada no deployment existente em 17/08/2026.
 - Escopo da v96: `MetaAdsFunnelReview.gs`, `MetaAdsReview.gs`, `OpportunityStore.gs` e `SyntheticHealth.gs`, com os códigos cervicais `M26C01W/M26C02S`, monitoramento Meta e sonda sintética de atribuição; deployment canônico preservado.
 - Escopo da v97: `Code.gs` acrescentou o habilitador administrativo idempotente do schema v1. `aplicarSchemaAtribuicaoV1Autorizado` foi executada com sucesso e não cria um segundo deployment.
-- Pós-voo: a função agendada `synthetic-integration-health` concluiu com HTTP 200 e `runId=synthetic_attribution_v2_20260817`; a sonda é sintética, não envia WhatsApp e não usa dado de paciente.
-- Rollback: deployment v96 se for necessário desligar somente o habilitador administrativo; v95 para retornar ao código anterior ao pacote cervical, junto com `attributionJourneyEnabled=false` e schema desabilitado conforme o runbook.
+- Escopo da v98: `ConsultasSync.gs` reconhece o comprovante estruturado de procedimento, retorno ou consulta, mantém a Dra. Amanda sempre na `Sala 1`, cria novo registro quando o atendimento anterior já está encerrado e preserva a idempotência do mesmo comprovante. O título da Google Agenda contém somente o tipo genérico e o profissional. O deployment canônico foi preservado; código e testes estão no commit técnico `7c8f7d0`.
+- Pós-voo: a função agendada `synthetic-integration-health` concluiu com HTTP 200, `status=duplicate` e `runId=synthetic_attribution_v2_20260817` em 17/08/2026 às 13:43 BRT; a sonda é sintética, não envia WhatsApp e não usa dado de paciente. O deploy Netlify `6a8339ee0bd5ba0008b38d6f` publicou as 12 Functions sem erro.
+- Rollback: deployment v97 para desfazer somente a correção dos comprovantes estruturados; v96 se for necessário desligar também o habilitador administrativo; v95 para retornar ao código anterior ao pacote cervical, junto com `attributionJourneyEnabled=false` e schema desabilitado conforme o runbook.
 
 ## Agregado anônimo para a rotina do Google Ads
 
 - Código: `GoogleAdsFunnelReview.gs`.
-- Produção atual: Apps Script versão `97`, publicada no deployment canônico em 17/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
+- Produção atual: Apps Script versão `98`, publicada no deployment canônico em 17/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
 - Destino: planilha separada `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Agregados`.
 - Trigger: `publicarAgregadosFunilGoogleAds`, diariamente aproximadamente às 08:15 BRT, configurado por `configurarRotinaAgregadosFunilGoogleAds()`.
 - Fontes internas: `_FUNIL_CANONICO` e `_OPORTUNIDADE_MARCOS`.
