@@ -102,6 +102,7 @@ O diagnóstico público do endpoint deve indicar:
 - `reviewAlertConfigured: true`
 - `appointmentReviewEnabled: true`
 - `automationMode: active`
+- `internalPhoneExclusionConfigured: true`
 
 ## O que a Bruna pode responder automaticamente
 
@@ -246,6 +247,12 @@ Quando esses critérios forem atendidos, o sistema usa o nome escrito no comprov
 Para a Dra. Amanda, todo atendimento presencial confirmado por esse fluxo ocupa exclusivamente a `Sala 1`. Se houver um atendimento anterior já encerrado — realizado, cancelado ou com não comparecimento — o novo comprovante cria uma nova linha e um novo evento, sem apagar o histórico anterior. O tipo operacional pode ser `Consulta`, `Retorno` ou `Procedimento`; a agenda exibe somente esse rótulo genérico e o profissional, sem dados clínicos da paciente.
 
 `Endereço`, `Retorno`, `Valor da consulta` e `Formas de pagamento` não participam da decisão de confirmar ou não o agendamento. A combinação exata `Retorno: não se aplica`, consulta com valor zero e pagamento não aplicável classifica o registro genericamente como `Procedimento`, conforme o modelo usado pela equipe. Esses dados financeiros não são copiados para a Google Agenda. Comprovante incompleto, data impossível, divergência de dia da semana ou profissional não suportado não altera planilha nem agenda e deve seguir para conferência humana.
+
+### Números internos da equipe
+
+Os telefones pessoais da equipe configurados em `WHATSAPP_INTERNAL_NUMBERS` na Netlify são excluídos antes de qualquer persistência. Uma mensagem recebida de um desses números, ou um eco enviado a um deles, não cria lead, oportunidade, memória de conversa, fila de recuperação, tomada humana ou agendamento e não chama a planilha LEADS. A resposta técnica usa `ignoreReason=internal_team_phone` sem devolver nem registrar o número.
+
+Os valores ficam somente na variável de ambiente, separados por vírgula; não são copiados para o código, para este manual nem para a planilha. A publicação só pode ser considerada concluída quando o diagnóstico público mostrar `internalPhoneExclusionConfigured: true` e um teste sintético confirmar zero chamadas aos serviços downstream.
 
 ### Preferências permanentes de contato
 
