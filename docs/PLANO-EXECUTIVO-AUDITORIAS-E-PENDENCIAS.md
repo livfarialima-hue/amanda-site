@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 18:46, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 20:56, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,7 +41,7 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** triagem segura ampliada, política de consulta corrigida e primeira abordagem de preço cirúrgico mais humana em produção em 17/08; manter em monitoramento normal.
+**Estado geral:** triagem segura ampliada, primeira resposta de anúncios acelerada e descartes de webhook observáveis em produção em 17/08; manter monitoramento reforçado da próxima entrada real.
 
 - mensagens estéticas de baixo risco agora seguem para a IA quando não existe uma resposta determinística melhor; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
 - quando o histórico confirma interação anterior, a Bruna preserva o contexto e não repete apresentação nem pergunta de nome; o caso “Eu tenho o pescoço flácido” ficou coberto como obrigação de resposta;
@@ -49,9 +49,13 @@ O responsável técnico deve:
 - travas clínicas, urgência, segurança, agenda, preço cirúrgico fora da política, falha técnica e intervenção humana continuam fail-closed e podem bloquear a IA;
 - o valor da consulta permanece R$ 500, com Pix, débito ou parcelamento e emissão de nota fiscal; é proibido afirmar que os R$ 500 serão reembolsados, devolvidos, descontados ou abatidos de uma cirurgia;
 - na primeira pergunta sobre preço cirúrgico, a Bruna agora responde de forma breve e empática, sem lista técnica, artigo ou faixa, e termina com uma pergunta simples sobre o que a pessoa deseja melhorar; a política de faixa após insistência explícita em lifting/minilifting e as travas de revisão humana foram preservadas;
-- código mais recente publicado no commit `09ea3b8`, deploy Netlify `6a8380447e2e7d00080ea234`, com **729/729 testes aprovados**;
-- sonda sintética acionada no Netlify e linha `synthetic_attribution_v2_20260817` confirmada na planilha canônica com persistência, classificação, handoff e atribuição em `ok`; nenhum telefone, mensagem ou envio de WhatsApp foi usado;
-- rollback imediato: deploy `6a836ad3cd5cad000838bee6`, commit `a3d0279`.
+- duas aberturas reais de anúncio, às 19:25 e 19:58, não apareceram nas mensagens, eventos, classificação, CRM, tomada humana ou recuperação da planilha canônica; os registros exatos da YCloud continuam indisponíveis sem acesso autenticado ao console do provedor;
+- o consumo mensal observado no Netlify estava em aproximadamente 95 mil de 125 mil requisições, abaixo do limite; a cota não explica essas duas ausências;
+- a abertura determinística de anúncio agora evita a consulta de conhecimento e reutiliza a relação de paciente já devolvida por `append_lead`, removendo até duas chamadas redundantes de planilha sem retirar a janela de oito segundos, a regra de mensagem mais recente nem as travas `neverBotReply` e `fail-closed`;
+- entradas inválidas ou não reconhecidas passam a registrar motivo operacional seguro (`configuration_missing`, `invalid_signature`, `invalid_json`, `unsupported_event_type`, `invalid_inbound_phone` ou `missing_inbound_event_id`) sem expor telefone, mensagem ou ID bruto;
+- código ativo no commit `25bfb5a`, deploy Netlify `6a839ee556112000081461b4`, com **734/734 testes aprovados**, 12 funções publicadas e `ycloud-webhook` ativo no endpoint canônico; o deploy intermediário `41aa4ad` falhou no build por corrupção de transferência e nunca entrou em produção;
+- não foi enviada mensagem real nem sonda de paciente no pós-voo atual; o próximo evento que alcançar o Netlify terá o motivo de entrada registrado, mas a entrega da YCloud não pode ser garantida sem o log bruto do provedor;
+- rollback imediato: deploy `6a83817252a5620008759409`, commit `7348755`.
 
 ### Auditoria 1 — Google Ads
 
