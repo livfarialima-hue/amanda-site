@@ -63,6 +63,7 @@ test("consultation price suggestion includes the invoice without promising tax s
   assert.match(reply, /nota fiscal/);
   assert.match(reply, /comprovante de despesa médica/);
   assert.match(reply, /Imposto de Renda/);
+  assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
   assert.doesNotMatch(reply, /(?:garante|garantida|restituição|economia tributária)/i);
 });
 

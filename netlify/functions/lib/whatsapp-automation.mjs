@@ -955,14 +955,18 @@ export function planAutomation({
       ));
 
   return {
-    route: openClinicQuestion ? "standard_reply" : "human_review",
+    // Hard safety, care, scheduling, commercial and administrative cases were
+    // already handled above. Everything else reaches the AI so it can decide
+    // from meaning and context instead of treating missing punctuation or an
+    // unexpected phrasing as an automatic human handoff.
+    route: "standard_reply",
     reason: openClinicQuestion
       ? "open_question_for_ai"
-      : "outside_conservative_rules",
+      : "ai_safety_triage",
     replyCode: null,
     professional: mentionsAmanda ? "amanda" : null,
     procedure: null,
-    automaticAllowed: openClinicQuestion,
+    automaticAllowed: true,
     platform: platform || null,
   };
 }

@@ -1614,6 +1614,28 @@ async function completeOpenAIActive({
   patientRelationship,
 }) {
   try {
+    const aiSafetyTriage = plan?.reason === "ai_safety_triage";
+    const queueAiSafetyFallback = async () => {
+      if (
+        !aiSafetyTriage ||
+        reviewAlertAlreadyQueued ||
+        !isReviewAlertConfigured()
+      ) {
+        return false;
+      }
+
+      await completeReviewAlert(
+        prepareReviewAlertInput(alertInput, {
+          decision: {
+            route: "human_review",
+            suggestedReply: "",
+          },
+          plan,
+        }),
+      );
+      return true;
+    };
+
     const debounceResult = await waitForLatestInboundReply({
       phone: to,
       eventId: input.eventId,
@@ -1819,6 +1841,7 @@ async function completeOpenAIActive({
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
+      await queueAiSafetyFallback();
       return {
         status: "failed",
         errorCode: activeResult.errorCode || "openai_failed",
@@ -1999,16 +2022,20 @@ async function completeOpenAIActive({
       );
     }
 
-    if (
-      !shouldSendOpenAIPatientReply({
+    const openAIReplyApproved =
+      shouldSendOpenAIPatientReply({
         mode: "active",
         plan,
         decision: activeResult.decision,
         humanTakeoverToday,
         exactDuplicate,
         schedulingRequest,
-      })
-    ) {
+      });
+
+    if (!openAIReplyApproved) {
+      if (activeResult.decision.route === "standard_reply") {
+        await queueAiSafetyFallback();
+      }
       return { status: "completed_no_reply", replySent: false };
     }
 
@@ -4099,6 +4126,7 @@ export async function handleYCloudWebhook(
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
+        priorInteractionKnown: delivery.updated === true,
         referralContext,
         patientRelationship:
           patientRelationshipPromptContext(
@@ -4149,6 +4177,7 @@ export async function handleYCloudWebhook(
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
+        priorInteractionKnown: delivery.updated === true,
         referralContext,
         patientRelationship:
           patientRelationshipPromptContext(

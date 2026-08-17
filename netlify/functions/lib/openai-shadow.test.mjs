@@ -126,6 +126,21 @@ test("greeting guard does not repeat the greeting in an ongoing conversation", (
   assert.deepEqual(guarded, decision);
 });
 
+test("known prior interaction prevents a repeated introduction when conversation memory is unavailable", () => {
+  const decision = validDecision({
+    suggestedReply:
+      "Entendo. Posso te fazer uma pergunta para compreender melhor?",
+  });
+  const guarded = applyFirstReplyGreetingGuard(decision, {
+    patientProfileName: "Isabel",
+    recentConversation: [],
+    patientRelationship: { knownPatient: false, state: "engaged_lead" },
+    priorInteractionKnown: true,
+  });
+
+  assert.deepEqual(guarded, decision);
+});
+
 function validResponse(decision = validDecision()) {
   return {
     model: "test-model",

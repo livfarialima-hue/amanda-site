@@ -165,6 +165,7 @@ export function applyFirstReplyGreetingGuard(
     patientProfileName = "",
     recentConversation = null,
     patientRelationship = null,
+    priorInteractionKnown = false,
   } = {},
 ) {
   if (
@@ -174,6 +175,8 @@ export function applyFirstReplyGreetingGuard(
   ) {
     return decision;
   }
+
+  if (priorInteractionKnown === true) return decision;
 
   const hasPreviousClinicReply = recentConversation.some(
     (turn) =>
@@ -374,6 +377,8 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
           patientProfileName: options.patientProfileName,
           recentConversation: options.recentConversation,
           patientRelationship: options.patientRelationship,
+          priorInteractionKnown:
+            options.priorInteractionKnown === true,
         },
       ),
       options.deterministicUrgent,
@@ -394,6 +399,7 @@ export async function runOpenAIShadow(
     referralContext,
     patientRelationship,
     learningContext,
+    priorInteractionKnown = false,
     deterministicUrgent = false,
   },
   { env = process.env, fetchImpl = fetch } = {},
@@ -470,6 +476,8 @@ export async function runOpenAIShadow(
           metaAdContext: normalizeReferralContext(referralContext),
           patientRelationship:
             normalizedPatientRelationship,
+          priorInteractionKnown:
+            priorInteractionKnown === true,
           approvedKnowledge: normalizedLearningContext.candidates,
           pendingUnknownQuestion:
             normalizedLearningContext.pendingQuestion,
@@ -510,10 +518,14 @@ export async function runOpenAIShadow(
     return parseOpenAIShadowResponse(responseData, model, {
       deterministicUrgent,
       patientProfileName,
-      hasConversationHistory: normalizedConversation.length > 0,
+      hasConversationHistory:
+        normalizedConversation.length > 0 ||
+        priorInteractionKnown === true,
       patientRelationship:
         normalizedPatientRelationship,
       recentConversation: normalizedConversation,
+      priorInteractionKnown:
+        priorInteractionKnown === true,
       learningContext: normalizedLearningContext,
     });
   } catch (error) {

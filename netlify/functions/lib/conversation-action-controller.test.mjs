@@ -120,6 +120,23 @@ test("an answer to the clinic question remains a response obligation", () => {
   );
 });
 
+test("AI safety triage evaluates a relevant statement without relying on conversation memory", () => {
+  const decision = decideConversationAction({
+    text: "Eu tenho o pescoço flácido",
+    plan: {
+      route: "standard_reply",
+      reason: "ai_safety_triage",
+      automaticAllowed: true,
+    },
+    recentConversation: [],
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.allowAutomaticReply, true);
+  assert.equal(decision.unresolvedRequest, true);
+  assert.equal(decision.reason, "ai_safety_triage");
+});
+
 test("a fresh greeting can receive the controlled reactivation notice", () => {
   const decision = decideConversationAction({
     text: "Oi",

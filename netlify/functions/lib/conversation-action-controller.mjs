@@ -214,10 +214,15 @@ export function decideConversationAction({
     );
   }
 
-  const unresolvedRequest = hasUnresolvedPatientRequest(
-    value,
-    recentConversation,
-  );
+  const unresolvedRequest =
+    hasUnresolvedPatientRequest(
+      value,
+      recentConversation,
+    ) ||
+    (
+      plan?.route === "standard_reply" &&
+      plan?.reason === "ai_safety_triage"
+    );
   const needsTeam =
     schedulingRequest ||
     plan?.route === "appointment_review" ||

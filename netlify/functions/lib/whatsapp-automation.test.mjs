@@ -388,6 +388,19 @@ test("consultation access and price are not mistaken for surgical price", () => 
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("a low-risk aesthetic statement reaches AI triage even when conversation memory is unavailable", () => {
+  const plan = planAutomation({
+    text: "Eu tenho o pescoço flácido",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "ai_safety_triage");
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("prefilled Google consultation text is treated as campaign context", () => {
   const text = [
     "Olá, gostaria de saber como funciona a consulta com a Dra. Amanda",
@@ -759,7 +772,7 @@ test("recovery questions containing lunch or leaving remain available for review
   }
 });
 
-test("an unrelated short direct message is no longer treated as a clinic inquiry", () => {
+test("an unrelated short direct message reaches AI triage instead of being assumed to be a clinic inquiry", () => {
   const plan = planAutomation({
     text: "Qual seu time?",
     messageType: "text",
@@ -768,7 +781,8 @@ test("an unrelated short direct message is no longer treated as a clinic inquiry
   });
 
   assert.notEqual(plan.reason, "short_direct_initial_inquiry");
-  assert.equal(plan.automaticAllowed, false);
+  assert.equal(plan.reason, "ai_safety_triage");
+  assert.equal(plan.automaticAllowed, true);
 });
 
 test("recent conversation preserves Amanda and the procedure on a continuation", () => {

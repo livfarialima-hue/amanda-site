@@ -276,7 +276,7 @@ export function buildConsultationInformationReply({
     procedureLabel,
   );
   const consultationPrice = consultationPriceRequested
-    ? "A consulta presencial custa R$ 500, pode ser paga por Pix, débito ou parcelamento, tem emissão de nota fiscal e esse valor é abatido se a cirurgia for realizada com a equipe."
+    ? "A consulta presencial custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal."
     : "";
   const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
     String(siteResource?.url || ""),
@@ -392,7 +392,7 @@ export function buildPatientReply({
     return [
       hello,
       "Faz sentido querer entender o preço antes de decidir.",
-      "A consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento, tem emissão de nota fiscal e esse valor é abatido se a cirurgia for realizada com a equipe. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis.",
+      "A consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis.",
       `Você quer saber da consulta ou da faixa atual de ${procedureLabel}?`,
     ].join(" ");
   }

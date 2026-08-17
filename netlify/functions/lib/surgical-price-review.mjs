@@ -226,7 +226,7 @@ function clarificationFor(procedure, patientName) {
   }
 
   if (procedure === "avaliacao_facial") {
-    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Emitimos nota fiscal, e esse valor é abatido se a cirurgia for realizada com a equipe. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis. Você gostaria de entender como funciona a consulta?`;
+    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Emitimos nota fiscal. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis. Você gostaria de entender como funciona a consulta?`;
   }
 
   const label = PROCEDURE_LABELS[procedure] || "esse procedimento";

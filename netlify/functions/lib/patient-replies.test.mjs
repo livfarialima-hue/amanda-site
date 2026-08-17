@@ -215,7 +215,7 @@ test("price fallback is transparent about the consultation and clarifies the req
   assert.match(reply, /consulta presencial/);
   assert.match(reply, /R\$ 500/);
   assert.match(reply, /Pix, débito ou parcelamento/);
-  assert.match(reply, /abatido/);
+  assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
   assert.match(reply, /nota fiscal/);
   assert.match(reply, /comprovante de despesa médica/);
   assert.match(reply, /Imposto de Renda/);
@@ -259,7 +259,7 @@ test("answers the consultation value when the patient asks for access and price"
   assert.match(reply, /consulta presencial custa R\$ 500/i);
   assert.match(reply, /Pix, débito ou parcelamento/i);
   assert.match(reply, /nota fiscal/i);
-  assert.match(reply, /abatido se a cirurgia/i);
+  assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
   assert.match(reply, /prefere manhã ou tarde/i);
   assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
 });
