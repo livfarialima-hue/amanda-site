@@ -125,7 +125,7 @@ Pergunta objetiva sobre onde é feito o lifting cervical ou facial:
 
 > Sim. Com a equipe da Dra. Amanda, o lifting cervical e o lifting facial são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica. Antes, a Dra. Amanda faz uma avaliação individual para confirmar a indicação e definir o planejamento adequado ao caso.
 
-Quando o procedimento estiver identificado, mencionar somente aquele lifting. Não generalizar a resposta para outras cirurgias sem confirmação.
+Quando a pessoa disser apenas “este procedimento”, resolver primeiro o contexto do anúncio ou da campanha daquela conversa. Mencionar somente o procedimento identificado. A confirmação hospitalar automática permanece restrita a lifting cervical e lifting facial; outras cirurgias seguem para revisão humana, sem assumir que “este procedimento” significa lifting.
 
 Consulta:
 
