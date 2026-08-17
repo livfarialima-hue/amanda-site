@@ -38,6 +38,7 @@ Os nove grupos `{_ag}` permanecem definidos no guia operacional. Grupo vazio nã
 |---|---|---|
 | `M26F01W` | `meta_whatsapp_direct` | canônico; controle atual |
 | `M26F02S` | `meta_site_whatsapp` | canônico; sem verba nova até prova E2E |
+| `M26C01W` | `meta_whatsapp_direct` | reservado para o piloto Meta de lifting cervical; não tratar como ativo antes de confirmar objeto externo, mensagem `M26C01W-C07H01`, mapa do Meta Ad ID e publicação autorizada |
 | `M26O01W` | N/D pelo código isolado | campanha infantil conhecida, mas o guia também o reutiliza em uma URL de passagem pelo site; exigir evidência de landing/CTA para resolver o caminho |
 | `M26O02W` | N/D | reservado/sugerido; não tratar como ativo sem confirmação externa |
 

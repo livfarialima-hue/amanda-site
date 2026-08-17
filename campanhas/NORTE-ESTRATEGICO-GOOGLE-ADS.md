@@ -204,6 +204,21 @@ A auditoria integrada de 13 de agosto de 2026 foi aprovada como base do trabalho
 - **Otoplastia:** não atribuir o problema atual ao vídeo sem teste prospectivo que mantenha destino, público e orçamento iguais entre variantes e compare contato válido, qualificado e consulta.
 - **Lifting facial:** a página `/lifting-facial/` pode ser analisada e modificada quando houver justificativa e autorização específica de Daniel. Mudanças devem ser isoladas, documentadas e avaliadas pela métrica correspondente; não existe proibição absoluta. Em 15/08/2026 foi autorizada somente a troca da imagem de prévia social (`og:image` e `twitter:image`) pela foto da Dra. Amanda palestrando em congresso, sem alterar texto, layout, vídeo, CTA ou conteúdo visível da página.
 
+### 6.5 Proposta Meta para o ciclo seguinte — 16 de agosto de 2026
+
+Esta proposta está documentada, mas **não autoriza veiculação**. A configuração e a publicação dependem de autorização específica depois dos gates.
+
+- **Encerramento observado:** de 17/07 a 15/08, `M26F01W` gastou R$ 598,45 e gerou 86 conversas na Meta; o agregado anônimo ligou 67 contatos, 12 qualificados ou posteriores e 2 agendados ou posteriores ao código. `M26F02S` gastou R$ 595,38 e gerou 2.020 LPVs, mas nenhum contato apareceu sob o código exato; resultado de negócio da rota Site permanece N/D.
+- **Criativo controle:** no WhatsApp, `C06H01` — Lifting gerou 85 conversas a R$ 6,65, CTR link de 1,58% e CPC link de R$ 5,34. `C01H01` — Avaliação gerou 1 conversa a R$ 32,76, CTR link de 0,65% e CPC link de R$ 16,38. A Meta distribuiu os gastos de forma desigual, por isso a conclusão é direcional, não causal.
+- **Interação rota × criativo:** no Site, `C01H01` foi melhor para tráfego — 1.780 LPVs a R$ 0,27 — que `C06H01`, com 240 LPVs a R$ 0,44. Isso não invalida o parecer do WhatsApp: visita barata não equivale a contato ou consulta.
+- **Otoplastia:** `M26O01W` tinha, em 16/08, R$ 214,05 gastos, 5.015 impressões, frequência 1,38, CTR link de 0,30%, uma conversa e nenhuma consulta registrada. O único contato recente chegou como Meta Ad ID sem código canônico. A frequência baixa enfraquece a hipótese de fadiga e sustenta baixa aderência do conjunto criativo–promessa–público, mas um único anúncio não isola o vídeo como causa. A proposta é interromper o saldo, não reutilizar o criativo e só retestar com código e variante prospectiva.
+- **Próximo ciclo base:** não renovar `M26F02S`; manter `M26F01W` apenas com `C06H01` como controle; iniciar piloto separado de lifting cervical no WhatsApp direto, código reservado `M26C01W` e um único criativo inicialmente reservado como `C07H01`; ambos com São Paulo +20 km, limite rígido 40–65+, todos os gêneros, R$ 20/dia e 15 dias completos.
+- **Gate de início:** WhatsApp Business aceito pela Meta; `age_min=40` observado; referência `M26C01W-C07H01` preservada; campanha reconhecida pelo agregado e pela rotina; fallback por Meta Ad ID mapeado depois da criação; sonda sintética sem paciente; baseline e rollback salvos. Se o gate falhar, adiar em vez de usar Site ou 25+ para começar no mesmo dia.
+- **Métrica:** contatos identificados, válidos, qualificados, agendados e realizados; custo por qualificado e por agendamento; cobertura conversa → contato; CTR/CPC/conversa apenas como diagnóstico.
+- **Janelas:** três dias completos para saúde técnica, sete dias para primeira decisão e quinze dias para decisão de continuidade; acrescentar sete dias de latência para classificação e agenda.
+- **Manter:** cobertura de pelo menos 80%, zero quebra operacional e custo por qualificado até 1,5 vez o controle com qualidade compatível. **Não escalar** antes de pelo menos cinco qualificados e uma consulta agendada no piloto, com custo por qualificado igual ou inferior a R$ 75.
+- **Reverter:** idade efetiva abaixo de 40; código ausente nos primeiros contatos; gasto de pelo menos R$ 120 sem contato válido; rota errada, duplicidade ou perda de atendimento. O detalhamento operacional está em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
+
 Gates mínimos para liberar crescimento:
 
 1. conversão Google sem alerta por sete dias, com eventos elegíveis, enviados, aceitos e rejeitados reconciliados, sem duplicidade ou PII;

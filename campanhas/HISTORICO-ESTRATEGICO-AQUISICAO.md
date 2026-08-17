@@ -6,6 +6,22 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 16 de agosto de 2026 — fechamento do ciclo Meta e proposta LIFT/CERV por 15 dias
+
+- **Status:** análise concluída; plano local registrado; nenhuma campanha foi pausada, criada, renovada ou publicada por esta entrada.
+- **Responsável:** Codex, com decisão de veiculação pendente de Daniel.
+- **Área/conta:** Meta Ads `1643959806249995`, campanhas `M26F01W`, `M26F02S`, `M26O01W` e piloto reservado `M26C01W`.
+- **Mudança proposta:** encerrar `M26F02S` sem renovação; continuar `M26F01W` somente com `C06H01`; interromper o saldo de `M26O01W`; iniciar `M26C01W/C07H01` como piloto separado de lifting cervical, WhatsApp direto, público rígido 40–65+, R$ 20/dia e 15 dias completos. O controle LIFT também usaria R$ 20/dia.
+- **Motivo e evidência:** no período completo 17/07–15/08, `M26F01W` gastou R$ 598,45, gerou 86 conversas na Meta e foi ligado a 67 contatos, 12 qualificados ou posteriores e 2 agendados ou posteriores. `C06H01` gerou 85 conversas a R$ 6,65; `C01H01` gerou 1 a R$ 32,76. `M26F02S` gerou 2.020 LPVs a R$ 0,29, mas zero contatos pelo código exato. `M26O01W` tinha R$ 214,05 gastos, CTR link de 0,30%, uma conversa, um contato recente ainda novo e nenhuma consulta registrada; seu anúncio foi criado no Instagram e o contato chegou por Meta Ad ID sem código canônico.
+- **Interpretação:** o vídeo de avaliação é eficiente para tráfego, mas não provou conversão pelo site; o vídeo de lifting é o controle mais promissor para conversa. Na otoplastia, a frequência de 1,38 torna fadiga improvável e sugere baixa aderência do conjunto criativo–promessa–público, sem isolar o vídeo como causa única.
+- **Hipótese:** concentrar o controle no vídeo de lifting e testar cervical em campanha própria, mesma rota e orçamento estável permitirá comparar qualidade do funil sem repetir a falha de atribuição do site.
+- **Métrica principal:** contato identificado, válido, qualificado e consulta agendada/realizada por campanha; custo por qualificado e por agendamento; cobertura conversa → contato. CTR, CPC, LPV e conversa permanecem diagnósticos.
+- **Guardrails:** nenhum início sem WhatsApp Business aceito, `age_min=40`, código canônico, rotina/aggregate preparados e sonda sintética; não usar Site ou 25+ como atalho; não mudar outras variáveis durante a janela; cobertura mínima de 80%; pausar CERV após R$ 120 sem contato válido.
+- **Revisão:** três, sete e quinze dias completos depois da ativação real, mais sete dias de latência para desfechos. Datas condicionais: 20/08, 24/08, 01/09 e 08/09 se o lançamento ocorrer em 16/08.
+- **Regra para manter:** custo por qualificado até 1,5 vez o controle com qualidade compatível; manter sem escalar. Escala só pode ser reconsiderada com pelo menos cinco qualificados e uma consulta agendada no piloto, custo por qualificado até R$ 75 e nenhuma quebra operacional.
+- **Regra para reverter:** idade efetiva abaixo de 40, código ausente, rota incorreta, duplicidade, perda de atendimento, cobertura abaixo de 80% ou gasto mínimo definido sem contato válido.
+- **Plano detalhado:** `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
+
 ## 15 de agosto de 2026 — rotina automatizada de revisão e sugestões da Meta Ads
 
 - **Status:** código e contrato locais validados; publicação, credencial de leitura e execução ao vivo ainda serão registradas neste item.

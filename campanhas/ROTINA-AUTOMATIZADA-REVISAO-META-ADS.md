@@ -100,6 +100,14 @@ Auditoria etária ao vivo de 16/08/2026:
 
 Próximas conferências: revisar os relatórios completos de 18/08, 25/08 e 01/09 antes de calibrar qualquer limiar. Alterações de campanha continuam manuais e exigem autorização específica.
 
+Plano condicional registrado em 16/08:
+
+- não renovar `M26F02S`, preservar `M26F01W/C06H01` como controle e propor um piloto `M26C01W/C07H01` de lifting cervical por 15 dias;
+- a rotina atual não deve chamar o novo piloto de acompanhado antes de `M26C01W` entrar em `META_ADS_CAMPAIGN_REGISTRY`, na regra de resultado principal e nos testes;
+- o onboarding de toda campanha Meta nova exige código canônico, caminho, criativo, mensagem, Meta Ad ID, destino, idade efetiva, data/hora de ativação e teste de chegada ao agregado;
+- checkpoints condicionais do piloto: 20/08, 24/08, 01/09 e 08/09 se a ativação ocorrer em 16/08; qualquer atraso desloca as janelas;
+- o plano executável e os critérios de manter/reverter estão em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
+
 Ordem obrigatória:
 
 1. publicar o código no projeto e deployment canônicos;

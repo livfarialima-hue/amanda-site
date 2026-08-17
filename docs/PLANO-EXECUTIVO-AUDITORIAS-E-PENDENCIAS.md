@@ -94,6 +94,15 @@ Gate de ativação concluído em 16/08:
 - teste real concluído às 12:20 e entregue por e-mail com duas sinalizações críticas e garantia de zero mutação;
 - um único trigger `executarRevisaoMetaAds` criado às 12:23, além do único trigger do agregado.
 
+Decisão de encerramento e próximo ciclo — 16/08:
+
+- o fechamento de 30 dias confirmou que `M26F01W` é a única rota com resultado de negócio rastreável: 67 contatos, 12 qualificados ou posteriores e 2 agendados ou posteriores, com gasto de R$ 598,45;
+- `C06H01` — Lifting concentrou 85 das 86 conversas do WhatsApp, a R$ 6,65 por conversa; `C01H01` — Avaliação teve 1 conversa a R$ 32,76. No site, a ordem se inverteu para tráfego: `C01H01` gerou LPV a R$ 0,27, mas sem resultado de negócio atribuído;
+- `M26F02S` encerra sem renovação proposta: 2.020 LPVs a R$ 0,29 e 0 contatos sob o código exato significam atribuição não comprovada, não zero contato real;
+- `M26O01W` termina em 19/08, não em 16/08. Com R$ 214,05 gastos, 0,30% de CTR link, 1 conversa e nenhuma consulta registrada, a proposta é interromper o saldo e não reutilizar o criativo atual;
+- próximo ciclo proposto: `M26F01W` com somente `C06H01` como controle e piloto `M26C01W` de lifting cervical, ambos WhatsApp direto, 40–65+ rígido, R$ 20/dia e 15 dias completos;
+- a proposta depende de autorização específica, conexão WhatsApp aceita pela Meta, códigos/rotina atualizados e teste sintético. O plano detalhado está em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
+
 ### Auditoria 2 — SEO, IA e atribuição
 
 **Estado geral:** pacote técnico publicado com os recursos novos desligados; próxima etapa é validar e só então decidir ativação/migração.
@@ -146,20 +155,25 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v94; última execução 08:27 com 0% de erro | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
 | diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v94 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
 | toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
+| 16/08, após autorização específica | Meta Ads: encerrar ciclo e preparar piloto cervical | `PROPOSTO` | não renovar `M26F02S`; renovar o controle `M26F01W` somente com `C06H01`; interromper `M26O01W`; criar `M26C01W` com um único vídeo | exige publicação manual na Meta e atualização técnica coordenada | WhatsApp Business aceito, 40–65+ rígido, código ponta a ponta, rotina reconhecendo CERV, teste sintético e baseline salvos |
 | 18/08, após o relatório Meta | Meta WhatsApp: tornar 40+ efetivo | `BLOQUEADO` | decidir e preparar a conexão/migração do número para Conta do WhatsApp Business; confirmar backup/preservação; só então corrigir o piso para 40–65+ e o mínimo orçamentário exigido se o conjunto continuar | exige autorização específica no momento; pode afetar WhatsApp e gasto | acesso ao aparelho/número, plano de preservação, erro `#2923012` resolvido e orçamento `R$ 600,18` aceito somente se houver nova veiculação |
 | segundo dia útil do mês, aproximadamente 10:05 | Meta Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 02/09 | acrescentar 90 dias, eficiência até consulta e prontidão de testes | e-mail automático; nenhuma recomendação aplicada | fontes íntegras; o cálculo considera segunda a sexta e não infere feriados |
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
+| 20/08 | Meta Ads: 3 dias completos do novo ciclo | `CONDICIONAL À ATIVAÇÃO` | conferir entrega, idade efetiva, referência, gasto, CTR link, CPC link, conversas e contatos identificados | corrigir somente falha técnica; nenhuma troca criativa por amostra pequena | início em 16/08 e dias completos de 17–19/08; senão recalcular |
 | 20/08 09:00–11:00 | Google Ads: prova segura e decisão etária | `AGENDADO` | testar conversão offline e E2E; confirmar negativas exatas; manter Meta facial em 40+; decidir se exclui `18–24` e `25–34` somente em LIFT, BLEF, CERV e FACE; iniciar somente RSA adulto de otoplastia se tudo passar | possível escrita em Ads/importação, somente após autorização no momento | zero PII, zero duplicidade, receipt por evento, origem preservada e idade `Desconhecida` mantida |
 | 20/08 11:15–12:00 | CWV, vídeos e recursos | `AGENDADO` | medir laboratório/campo e 4G; abrir causas reais de recursos/logotipos | nenhuma otimização automática | baseline reproduzível; uma classe de ativo por futuro teste |
 | 20/08 14:00–14:45 | Compliance e imagens | `DEPENDE DE VOCÊS` | revisar inventário, consentimentos, galerias, imagens sensíveis/menores e Codame | nenhuma remoção/publicação sem parecer | documento/parecer humano e escopo registrado |
 | 20/08 15:00–17:00 | SEO/IA/atribuição: pré-voos e decisão | `AGENDADO` | verificar default-off, purge, privacidade, GSC/Wix, dry-runs e migrações; decidir ativação isolada | somente após autorização específica no momento | todos os gates verdes; rollback pronto; nenhuma PII |
 | 21/08 15:30–16:00 | Checagem de 24 horas | `AGUARDAR DADOS` | somente se algo for ativado em 20/08: erros, logs, perda de origem e rollback | nenhuma nova mudança junto | data real da ativação conhecida |
+| 24/08 | Meta Ads: 7 dias completos LIFT versus CERV | `CONDICIONAL À ATIVAÇÃO` | comparar mídia, contatos identificados, válidos, qualificados e agendados; não decidir por conversa isolada | manter, pausar ou corrigir somente segundo o plano de 15 dias | cobertura ≥80%; pausar CERV se gastar ≥R$ 120 sem contato válido |
 | 27/08 09:00–10:00 | Google Ads: saúde de 7 dias | `AGENDADO` | receipts, duplicidade, códigos, funil e qualidade; se a decisão etária tiver sido aplicada, comparar volume/gasto/qualidade por idade sem confundir com outras mudanças | não decidir RSA nem idade por amostra insuficiente | sete dias reais desde a prova; mudança etária isolada e data efetiva registrada |
 | 27/08 10:15–10:45 | SEO/IA/atribuição: 7 dias | `AGENDADO` | erros, origem, LEADS/CRM, Calendar/SLA e logs | manter ou reverter; nenhuma expansão | feature ativada em 20/08; senão registrar N/D e reagendar |
 | 27/08 11:00–11:30 | Atualização executiva | `AGENDADO` | atualizar este plano, Drive, datas e decisões | nenhuma | checkpoints anteriores encerrados |
-| 03/09 09:00–10:00 | Decisão OTO; possível início CERV; idade em 14 dias | `AGUARDAR DADOS` | encerrar OTO e iniciar CERV somente se elegível; se a idade Google mudou em 20/08, avaliar 14 dias de gasto, contatos válidos e qualidade por faixa | mudança de um RSA por vez; não ampliar a exclusão etária | 14 dias e, preferencialmente, ≥50 cliques; data efetiva da mudança etária registrada |
+| 01/09 | Meta Ads: decisão de 15 dias LIFT versus CERV | `CONDICIONAL À ATIVAÇÃO` | fechar contatos, qualificados, agendados e custos; manter ou pausar sem escalar por proxy | eventual continuidade exige nova autorização | 15 dias completos, cobertura ≥80% e nenhuma quebra operacional |
+| 03/09 09:00–10:00 | Google Ads: decisão OTO; possível início CERV; idade em 14 dias | `AGUARDAR DADOS` | encerrar OTO e iniciar CERV somente se elegível; se a idade Google mudou em 20/08, avaliar 14 dias de gasto, contatos válidos e qualidade por faixa | mudança de um RSA por vez; não ampliar a exclusão etária | 14 dias e, preferencialmente, ≥50 cliques; data efetiva da mudança etária registrada |
 | 03/09 10:15–10:45 | Atribuição: 14 dias | `AGUARDAR DADOS` | avaliar estabilidade e reconciliação | manter ou reverter | ativação real em 20/08; senão reagendar |
-| 17/09 09:00–10:00 | Decisão CERV; possível início BLEF | `AGUARDAR DADOS` | decidir CERV e, se elegível, iniciar BLEF | um teste por vez | CERV encerrado e tracking saudável |
+| 08/09 | Meta Ads: latência de desfechos | `CONDICIONAL À ATIVAÇÃO` | incorporar classificações e agendamentos tardios sem reabrir a janela de mídia | nenhuma nova mudança simultânea | sete dias após o fechamento do ciclo |
+| 17/09 09:00–10:00 | Google Ads: decisão CERV; possível início BLEF | `AGUARDAR DADOS` | decidir CERV e, se elegível, iniciar BLEF | um teste por vez | CERV encerrado e tracking saudável |
 | 17/09 10:15–10:45 | SEO/IA/atribuição: 28 dias | `AGUARDAR DADOS` | GSC, GA4, CWV, crawlers, origem e funil | nenhuma nova hipótese no mesmo momento | janela pós-ativação completa |
 | 01/10 09:00–10:00 | Decisão BLEF; possível início FACE | `AGUARDAR DADOS` | decidir BLEF e iniciar FACE somente se elegível | um teste por vez | BLEF encerrado; manter linguagem leiga legítima |
 | 15/10 09:00–10:00 | Decisão FACE; possível teste LIFT preço | `AGUARDAR DADOS` | decidir FACE e testar composição/orçamento individual no grupo de preço | sem voltar a publicar faixa cirúrgica | FACE encerrado; tracking estável |
@@ -213,6 +227,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Experimentos Google Ads | P1 | sequência agendada | OTO → CERV → BLEF → FACE → LIFT preço |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
 | Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v94; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
+| Ciclo Meta de 15 dias — LIFT/CERV | P1 | `PROPOSTO` em 16/08; nenhuma veiculação nova autorizada | manter `C06H01` como controle, não renovar Site, interromper OTO atual e iniciar CERV somente após gates de WhatsApp, idade, código e monitoramento |
 | Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGENDADO` para decisão em 20/08 | considerar excluir apenas `18–24` e `25–34` em LIFT/BLEF/CERV/FACE; manter `Desconhecida` e não alterar OTO/marca/rino |
 | SEO técnico/CWV | P1/P2 | baseline parcial | medir 20/08; otimizar só com gargalo comprovado |
 | GSC, Wix antigo, Bing e IA | P1/P2 | dependência externa | validar acesso/estado; não prometer ranking ou citação |
@@ -226,6 +241,8 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 - não reduzir o piso de 40+ do Meta facial; confirmar a entrega efetiva do Advantage+ antes de concluir que o piso foi obedecido;
 - não excluir idade `Desconhecida` no Google nem aplicar a regra etária a otoplastia, marca ou futura rinoplastia;
 - não colocar verba nova em `M26F02S` antes da prova E2E;
+- não lançar `M26C01W` nem estender `M26F01W` com 25+ ou sem o código chegar ao funil; começar no mesmo dia não supera os gates;
+- não publicar o rascunho pendente de `M26O01W` como se fosse cervical e não gastar o saldo da otoplastia sem decisão específica;
 - não executar vários RSAs simultaneamente;
 - não remover termos leigos legítimos, como “plástica das pálpebras”;
 - não consolidar os grupos de lifting geral e preço antes da janela definida;
@@ -243,6 +260,8 @@ Os compromissos sobrepostos de 27/08 e 17/09 foram escalonados. O evento de 20/0
 A rotina do Google Ads não cria três automações concorrentes. Um único script roda diariamente: fica silencioso quando a saúde está normal, envia a revisão completa às segundas-feiras e acrescenta 90 dias no primeiro dia útil do mês. Os checkpoints de 7 e 14 dias continuam no Calendar porque dependem da data real de cada mudança.
 
 A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão ativos na v94 e continuam incapazes de alterar campanhas.
+
+O ciclo Meta proposto em 16/08 tem checkpoints condicionais em 20/08, 24/08, 01/09 e 08/09. Eles só devem virar lembretes ativos depois de registrar a hora real da veiculação; se o gate de WhatsApp/40+ impedir o início, as quatro datas devem ser deslocadas e o plano do ciclo continua prevalecendo.
 
 Se a ativação não ocorrer em 20/08, todas as janelas de 24 horas, 7, 14, 28 e 90 dias devem ser recalculadas a partir da data real.
 

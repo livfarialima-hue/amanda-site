@@ -1,0 +1,408 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Meta Ads — decisão do próximo ciclo",
+    "description": "Fechamento das campanhas faciais e de otoplastia e proposta controlada LIFT/CERV para 15 dias.",
+    "generatedAt": "2026-08-16T21:35:00-03:00",
+    "sources": [
+      {
+        "id": "meta_live",
+        "label": "Meta Ads Manager — Dra Amanda Schroeder",
+        "href": "https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=1643959806249995&business_id=1308068619887667",
+        "query": {
+          "engine": "Meta Ads Manager UI autenticada",
+          "description": "Leitura somente de campanhas e anúncios, com colunas Desempenho e cliques.",
+          "executed_at": "2026-08-16T21:20:00-03:00",
+          "filters": [
+            "Período 17/07/2026 a 15/08/2026",
+            "Conta 1643959806249995",
+            "Campanhas M26F01W, M26F02S e M26O01W"
+          ],
+          "metric_definitions": [
+            "CTR link = cliques no link / impressões.",
+            "Custo/resultado usa o resultado nominal de cada campanha: conversa ou LPV; tipos diferentes não são comparados como conversões de negócio."
+          ],
+          "tables_used": [
+            "Meta Ads Manager: Campanhas",
+            "Meta Ads Manager: Anúncios"
+          ]
+        }
+      },
+      {
+        "id": "meta_funnel",
+        "label": "LIV — Agregados de mídia paga — Meta_Agregados",
+        "href": "https://docs.google.com/spreadsheets/d/1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0/edit",
+        "query": {
+          "engine": "Google Sheets",
+          "description": "Agregado anônimo do funil por janela, caminho, campanha e criativo conhecido.",
+          "executed_at": "2026-08-16T08:27:36-03:00",
+          "filters": [
+            "Janela de 30 dias encerrada em 15/08/2026",
+            "Profissional Amanda",
+            "Sem PII"
+          ],
+          "metric_definitions": [
+            "Custo por qualificado = gasto M26F01W / qualificados ou posteriores atribuídos ao código.",
+            "Agendado ou posterior é estado atual no agregado; consulta realizada depende de reconciliação separada."
+          ],
+          "tables_used": [
+            "Meta_Agregados"
+          ]
+        }
+      },
+      {
+        "id": "leads_safe",
+        "label": "LEADS — campos não identificadores",
+        "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
+        "query": {
+          "engine": "Google Sheets",
+          "description": "Busca limitada a data, referência, situação, plataforma, campanha, criativo, destino e agendamento; nenhuma coluna de nome, telefone, e-mail ou mensagem foi incluída no relatório.",
+          "executed_at": "2026-08-16T21:05:00-03:00",
+          "filters": [
+            "Consulta por M26O01W e otoplastia",
+            "Somente campos não identificadores"
+          ],
+          "tables_used": [
+            "Google Ads - Conversões"
+          ]
+        }
+      },
+      {
+        "id": "strategy",
+        "label": "Norte Estratégico e plano de 15 dias",
+        "path": "campanhas/PLANO-META-15-DIAS-2026-08-16.md",
+        "query": {
+          "engine": "Documento versionado",
+          "description": "Regras de decisão, gates, orçamento e checkpoints do ciclo proposto.",
+          "executed_at": "2026-08-16T21:35:00-03:00",
+          "filters": [
+            "Proposta; nenhuma veiculação autorizada"
+          ],
+          "tables_used": [
+            "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+            "campanhas/PLANO-META-15-DIAS-2026-08-16.md"
+          ]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "creative_ctr",
+        "title": "CTR de link dos criativos faciais",
+        "type": "bar",
+        "dataset": "creative_ctr",
+        "sourceId": "meta_live",
+        "source": {
+          "id": "meta_live_creative_ctr",
+          "label": "Meta Ads Manager — desempenho por anúncio",
+          "query": {
+            "language": "sql",
+            "engine": "snapshot",
+            "sql": "SELECT creative, route, link_ctr, spend_brl, link_clicks, platform_results, result_type FROM creative_ctr ORDER BY creative, route",
+            "description": "Leitura autenticada do desempenho dos quatro anúncios faciais no período completo de 17/07/2026 a 15/08/2026, consolidada no snapshot auditado.",
+            "executed_at": "2026-08-16T12:00:00-03:00",
+            "tables_used": [
+              "creative_ctr"
+            ]
+          }
+        },
+        "layout": "full",
+        "question": "Como C01 e C06 se comportaram em cada rota?",
+        "rationale": "A comparação por rota mostra que o criativo mais eficiente para visita não foi o mais eficiente para conversa.",
+        "encodings": {
+          "x": {
+            "field": "creative",
+            "type": "ordinal",
+            "label": "Criativo"
+          },
+          "y": {
+            "field": "link_ctr",
+            "type": "quantitative",
+            "format": "percent",
+            "label": "CTR de link"
+          },
+          "color": {
+            "field": "route",
+            "type": "nominal",
+            "label": "Rota"
+          },
+          "tooltip": [
+            {
+              "field": "route",
+              "type": "nominal",
+              "label": "Rota"
+            },
+            {
+              "field": "spend_brl",
+              "type": "quantitative",
+              "format": "currency",
+              "label": "Gasto"
+            },
+            {
+              "field": "link_clicks",
+              "type": "quantitative",
+              "format": "number",
+              "label": "Cliques no link"
+            },
+            {
+              "field": "platform_results",
+              "type": "quantitative",
+              "format": "number",
+              "label": "Resultado Meta"
+            },
+            {
+              "field": "result_type",
+              "type": "nominal",
+              "label": "Tipo do resultado"
+            }
+          ]
+        },
+        "valueFormat": "percent",
+        "maxRows": 4,
+        "surface": {
+          "compact": true,
+          "interactiveLegend": false,
+          "showControls": false,
+          "viewMode": "chart"
+        },
+        "emptyState": "Sem dados por criativo."
+      },
+      {
+        "id": "direct_funnel",
+        "title": "Funil atribuído ao WhatsApp direto",
+        "type": "bar",
+        "dataset": "direct_funnel",
+        "sourceId": "meta_funnel",
+        "source": {
+          "id": "meta_funnel_direct",
+          "label": "Meta_Agregados — funil sem PII",
+          "query": {
+            "language": "sql",
+            "engine": "snapshot",
+            "sql": "SELECT stage, count, share_of_contacts, cost_per_stage_brl FROM direct_funnel ORDER BY stage_order",
+            "description": "Agregação anônima do código M26F01W em 30 dias, com contagem por etapa e custo observado.",
+            "executed_at": "2026-08-16T08:27:36-03:00",
+            "tables_used": [
+              "direct_funnel"
+            ]
+          }
+        },
+        "layout": "full",
+        "question": "Quantos contatos de M26F01W avançaram no funil?",
+        "rationale": "Barras mostram a redução entre contato, qualificação e agendamento no mesmo código de campanha.",
+        "encodings": {
+          "x": {
+            "field": "stage",
+            "type": "ordinal",
+            "label": "Etapa"
+          },
+          "y": {
+            "field": "count",
+            "type": "quantitative",
+            "format": "number",
+            "label": "Quantidade"
+          },
+          "tooltip": [
+            {
+              "field": "count",
+              "type": "quantitative",
+              "format": "number",
+              "label": "Quantidade"
+            },
+            {
+              "field": "share_of_contacts",
+              "type": "quantitative",
+              "format": "percent",
+              "label": "% dos contatos"
+            },
+            {
+              "field": "cost_per_stage_brl",
+              "type": "quantitative",
+              "format": "currency",
+              "label": "Custo observado"
+            }
+          ]
+        },
+        "valueFormat": "number",
+        "maxRows": 3,
+        "surface": {
+          "compact": true,
+          "interactiveLegend": false,
+          "showControls": false,
+          "viewMode": "chart"
+        },
+        "emptyState": "Sem dados de funil atribuídos."
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Meta Ads — decisão do próximo ciclo"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Resumo executivo\n\n**Recomendação:** não renovar a campanha de site; continuar somente o vídeo de lifting no WhatsApp como controle; interromper o criativo atual de otoplastia; e iniciar lifting cervical em um piloto separado de 15 dias, WhatsApp direto, 40–65+ e R$ 20/dia, depois dos gates técnicos. O orçamento base soma aproximadamente R$ 600 no ciclo. Nenhuma mudança de campanha foi executada nesta análise."
+      },
+      {
+        "id": "key_findings",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Evidência que decide\n\n- O WhatsApp direto gerou 67 contatos atribuídos, 12 qualificados ou posteriores e 2 agendados ou posteriores; custo observado de R$ 49,87 por qualificado e R$ 299,23 por agendamento registrado.\n- No WhatsApp, C06 — Lifting respondeu por 85 de 86 conversas, a R$ 6,65; C01 — Avaliação teve 1 a R$ 32,76.\n- No Site, C01 foi melhor para tráfego, com 1.780 LPVs a R$ 0,27, mas a rota teve zero contatos sob o código exato; resultado real é N/D.\n- Otoplastia teve CTR link de 0,30%, uma conversa a R$ 214,05 e nenhuma consulta registrada. A frequência de 1,38 não sustenta fadiga."
+      },
+      {
+        "id": "creative_chart_block",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "creative_ctr"
+      },
+      {
+        "id": "funnel_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Funil de negócio\n\nA leitura do CRM confirma vantagem do WhatsApp direto, mas ainda não comprova consulta realizada ou procedimento. Além disso, 16 de 83 contatos Meta de 30 dias ficaram com campanha/caminho desconhecidos. A atribuição deve ser corrigida antes de usar os números para escala."
+      },
+      {
+        "id": "funnel_chart_block",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "direct_funnel"
+      },
+      {
+        "id": "plan_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Plano de 15 dias\n\n**Controle LIFT:** M26F01W/C06H01, WhatsApp, R$ 20/dia. **Piloto CERV:** M26C01W/C07H01, WhatsApp, R$ 20/dia. Mesmo público rígido 40–65+, mesma geografia e política de posicionamento; nenhuma mudança durante a janela. Checkpoints após 3, 7 e 15 dias completos. Pausar CERV após pelo menos R$ 120 sem contato válido ou diante de falha de idade, código ou atendimento."
+      },
+      {
+        "id": "limits_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Limitações e gates\n\nOs criativos receberam verbas muito diferentes e não formam um teste aleatorizado. Conversa e LPV são resultados de plataforma, não pacientes. M26F02S sem código no CRM não significa zero contatos reais. O novo vídeo cervical não estava disponível no Ads Manager ou na biblioteca acessível para revisão nesta coleta. Antes de publicar, são obrigatórios WhatsApp Business aceito, age_min=40, referência ponta a ponta, rotina reconhecendo M26C01W, fallback por Meta Ad ID, sonda sintética e baseline."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-16T21:35:00-03:00",
+    "status": "ready",
+    "datasets": {
+      "creative_ctr": [
+        {
+          "creative": "C01 — Avaliação",
+          "route": "WhatsApp",
+          "link_ctr": 0.0064935,
+          "spend_brl": 32.76,
+          "impressions": 308,
+          "link_clicks": 2,
+          "platform_results": 1,
+          "result_type": "Conversa",
+          "cost_per_result_brl": 32.76,
+          "period_start": "2026-07-17",
+          "period_end": "2026-08-15"
+        },
+        {
+          "creative": "C06 — Lifting",
+          "route": "WhatsApp",
+          "link_ctr": 0.0158091,
+          "spend_brl": 565.69,
+          "impressions": 6705,
+          "link_clicks": 106,
+          "platform_results": 85,
+          "result_type": "Conversa",
+          "cost_per_result_brl": 6.6552,
+          "period_start": "2026-07-17",
+          "period_end": "2026-08-15"
+        },
+        {
+          "creative": "C01 — Avaliação",
+          "route": "Site",
+          "link_ctr": 0.0505536,
+          "spend_brl": 489.12,
+          "impressions": 43716,
+          "link_clicks": 2210,
+          "platform_results": 1780,
+          "result_type": "LPV",
+          "cost_per_result_brl": 0.2748,
+          "period_start": "2026-07-17",
+          "period_end": "2026-08-15"
+        },
+        {
+          "creative": "C06 — Lifting",
+          "route": "Site",
+          "link_ctr": 0.0459076,
+          "spend_brl": 106.26,
+          "impressions": 7123,
+          "link_clicks": 327,
+          "platform_results": 240,
+          "result_type": "LPV",
+          "cost_per_result_brl": 0.4428,
+          "period_start": "2026-07-17",
+          "period_end": "2026-08-15"
+        }
+      ],
+      "direct_funnel": [
+        {
+          "stage": "Contatos",
+          "count": 67,
+          "share_of_contacts": 1.0,
+          "cost_per_stage_brl": 8.9321,
+          "campaign_code": "M26F01W",
+          "spend_brl": 598.45,
+          "window_days": 30,
+          "window_start": "2026-07-17",
+          "window_end": "2026-08-15"
+        },
+        {
+          "stage": "Qualificados+",
+          "count": 12,
+          "share_of_contacts": 0.1791045,
+          "cost_per_stage_brl": 49.8708,
+          "campaign_code": "M26F01W",
+          "spend_brl": 598.45,
+          "window_days": 30,
+          "window_start": "2026-07-17",
+          "window_end": "2026-08-15"
+        },
+        {
+          "stage": "Agendados+",
+          "count": 2,
+          "share_of_contacts": 0.0298507,
+          "cost_per_stage_brl": 299.225,
+          "campaign_code": "M26F01W",
+          "spend_brl": 598.45,
+          "window_days": 30,
+          "window_start": "2026-07-17",
+          "window_end": "2026-08-15"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "meta_live",
+      "label": "Meta Ads Manager — Dra Amanda Schroeder",
+      "href": "https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=1643959806249995&business_id=1308068619887667"
+    },
+    {
+      "id": "meta_funnel",
+      "label": "LIV — Agregados de mídia paga — Meta_Agregados",
+      "href": "https://docs.google.com/spreadsheets/d/1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0/edit"
+    },
+    {
+      "id": "leads_safe",
+      "label": "LEADS — campos não identificadores",
+      "href": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit"
+    },
+    {
+      "id": "strategy",
+      "label": "Norte Estratégico e plano de 15 dias",
+      "path": "campanhas/PLANO-META-15-DIAS-2026-08-16.md"
+    }
+  ]
+}
