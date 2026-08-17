@@ -72,6 +72,12 @@ test("assigns fixed rooms and keeps Marina and Laerte flexible", () => {
     ["Sala 2"],
   );
   assert.deepEqual(
+    Array.from(
+      context.salasPermitidasProfissional_("Matheus (ortop)"),
+    ),
+    ["Sala 2"],
+  );
+  assert.deepEqual(
     Array.from(context.salasPermitidasProfissional_("Dra. Marina")),
     ["Sala 1", "Sala 2"],
   );
@@ -201,6 +207,10 @@ test("WhatsApp appointment automation is limited to Amanda and Daniel", () => {
     context.profissionalPermitidoAutomacaoConsulta_("Dra. Marina"),
     false,
   );
+  assert.equal(
+    context.profissionalPermitidoAutomacaoConsulta_("Matheus (ortop)"),
+    false,
+  );
 });
 
 test("uses the other room for a flexible professional when the first is busy", () => {
@@ -226,6 +236,30 @@ test("uses the other room for a flexible professional when the first is busy", (
 
   assert.equal(result.ok, true);
   assert.equal(result.room, "Sala 2");
+});
+
+test("never moves Matheus to Sala 1 when Sala 2 is busy", () => {
+  const calendarIds = [];
+  context.CalendarApp = {
+    getCalendarById(calendarId) {
+      calendarIds.push(calendarId);
+      return {
+        getEvents() {
+          return [{ getId: () => "busy-event" }];
+        },
+      };
+    },
+  };
+
+  const result = context.escolherSalaDisponivelConsulta_({
+    professional: "Matheus (ortop)",
+    scheduledDate: "2026-08-04",
+    scheduledTime: "10:00",
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.error, "room_not_available");
+  assert.equal(calendarIds.length, 1);
 });
 
 test("writes consultation statuses using the visible dropdown vocabulary", () => {
