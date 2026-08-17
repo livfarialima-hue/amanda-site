@@ -194,7 +194,7 @@ function paginaCancelamentoRetomadas_(titulo, mensagem, confirmUrl) {
   const botao = confirmUrl
     ? '<a href="' +
       escaparHtmlRetomadas_(confirmUrl) +
-      '" style="display:inline-block;margin-top:18px;padding:12px 18px;border-radius:8px;background:#9a3412;color:#fff;text-decoration:none;font-weight:bold;">Confirmar: não retomar mais</a>'
+      '" target="_top" style="display:inline-block;margin-top:18px;padding:12px 18px;border-radius:8px;background:#9a3412;color:#fff;text-decoration:none;font-weight:bold;">Confirmar: não retomar mais</a>'
     : "";
 
   return (
@@ -1471,7 +1471,7 @@ function criarCandidatoRetomada_(
     return null;
   }
 
-  const quantidadeContatos = contarContatosSaidaRetomadas_(conversa);
+  const quantidadeContatos = proximaEtapaRetomada_(conversa);
   const engajamento = classificarEngajamentoRetomada_(conversa);
   const maximoContatos = 2;
 
@@ -1611,6 +1611,66 @@ function contarContatosSaidaRetomadas_(conversa) {
   }
 
   return contatos;
+}
+
+function proximaEtapaRetomada_(conversa) {
+  const quantidadeContatos = contarContatosSaidaRetomadas_(
+    conversa,
+  );
+
+  if (!quantidadeContatos) return 0;
+
+  return (
+    quantidadeContatos +
+    (primeiroContatoSaidaEhRetomada_(conversa) ? 1 : 0)
+  );
+}
+
+function primeiroContatoSaidaEhRetomada_(conversa) {
+  let ultimaEntrada = -1;
+
+  for (let indice = conversa.length - 1; indice >= 0; indice -= 1) {
+    if (conversa[indice].direcao === "IN") {
+      ultimaEntrada = indice;
+      break;
+    }
+  }
+
+  const saidas = conversa
+    .slice(ultimaEntrada + 1)
+    .filter(function (mensagem) {
+      return mensagem.direcao === "OUT";
+    });
+
+  if (!saidas.length) return false;
+
+  const inicioPrimeiroContato = saidas[0].dataHora.getTime();
+  const limiteMesmoContato =
+    RETOMADAS_CONFIG.intervaloMesmoContatoHoras *
+    60 *
+    60 *
+    1000;
+
+  return saidas.some(function (mensagem) {
+    if (
+      mensagem.dataHora.getTime() - inicioPrimeiroContato >
+      limiteMesmoContato
+    ) {
+      return false;
+    }
+
+    const messageId = String(mensagem.messageId || "")
+      .trim()
+      .toLowerCase();
+    const texto = normalizarTextoRetomadas_(mensagem.texto);
+
+    return (
+      messageId.indexOf("scheduled-followup-") === 0 ||
+      /(?:^|\s)(?:so\s+)?pass(?:ando|ei)\s+(?:por\s+aqui\s+)?para\s+(?:saber|ver|perguntar)|(?:^|\s)(?:queria|vim)\s+retomar\s+(?:a\s+|nossa\s+)?(?:conversa|mensagem|avaliacao|contato)|(?:^|\s)retomando\s+(?:a\s+|nossa\s+)?(?:conversa|mensagem|avaliacao|contato)|(?:^|\s)volt(?:ando|ei)\s+(?:a|ao|para)\s+(?:nossa\s+)?(?:conversa|mensagem|avaliacao|contato)|(?:^|\s)lembrei\s+(?:da|de)\s+(?:nossa\s+)?(?:conversa|mensagem)/.test(
+        texto,
+      )
+    );
+  });
 }
 
 function atribuirHorariosRetomadas_(candidatos) {

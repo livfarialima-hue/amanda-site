@@ -346,6 +346,94 @@ test("follow-up items receive a secure cancel link with a confirmation step", ()
     ),
     true,
   );
+
+  const page = context.paginaCancelamentoRetomadas_(
+    "Confirmar",
+    "Mensagem",
+    confirmation,
+  );
+  assert.match(page, /target="_top"/);
+  assert.match(page, /confirmar=1/);
+});
+
+test("recognizes a manual first follow-up and schedules only the second stage", () => {
+  const leadData = {
+    status: "Novo",
+    resumo: "Pesquisa sobre lifting facial",
+    proximaAcao: "",
+    referencia: "M26F01W-C06H01",
+    plataforma: "Meta",
+    campanha: "M26F01W",
+    criativo: "C06H01",
+    destino: "WhatsApp",
+    referenciaCompleta: "M26F01W-C06H01",
+  };
+  const conversationData = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-08-10T10:13:00-03:00"),
+      messageId: "in-1",
+      texto: "Quero saber sobre lifting facial.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-08-15T16:25:00-03:00"),
+      messageId: "human-out-1",
+      texto:
+        "Olá! Passando para saber se você conseguiu ver nossa mensagem sobre a avaliação.",
+    },
+  ];
+
+  assert.equal(
+    context.proximaEtapaRetomada_(conversationData),
+    2,
+  );
+  assert.equal(
+    context.criarCandidatoRetomada_(
+      "+5511999999999",
+      leadData,
+      conversationData,
+      new Date("2026-08-17T08:00:00-03:00"),
+      "2026-08-17",
+    ),
+    null,
+  );
+
+  const secondStage = context.criarCandidatoRetomada_(
+    "+5511999999999",
+    leadData,
+    conversationData,
+    new Date("2026-08-18T08:00:00-03:00"),
+    "2026-08-18",
+  );
+
+  assert.equal(secondStage.etapa.numero, 2);
+  assert.equal(
+    context.responsavelRetomada_(secondStage),
+    "equipe",
+  );
+});
+
+test("keeps a genuine initial reply eligible for the first follow-up", () => {
+  const conversationData = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-08-16T18:00:00-03:00"),
+      messageId: "in-1",
+      texto: "Quero saber como funciona a avaliação.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-08-16T18:05:00-03:00"),
+      messageId: "out-1",
+      texto: "Claro, posso explicar como funciona a consulta.",
+    },
+  ];
+
+  assert.equal(
+    context.proximaEtapaRetomada_(conversationData),
+    1,
+  );
 });
 
 test("manual commercial follow-up receives an opaque approval button for Bruna", () => {
