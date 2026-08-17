@@ -149,6 +149,10 @@ import {
   resolvePatientDisplayName,
   usableProfileFirstName,
 } from "./lib/profile-name.mjs";
+import {
+  hasConfiguredInternalTeamPhones,
+  isInternalTeamPhone,
+} from "./lib/internal-team-phones.mjs";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -2546,6 +2550,8 @@ export async function handleYCloudWebhook(
       automationMode,
       processingMode: "direct_with_background_completion",
       contactPreferencesGuard: "active",
+      internalPhoneExclusionConfigured:
+        hasConfiguredInternalTeamPhones(),
       leadDeliveryFallback: "acquisition_only",
       leadFailureEmailAlert: "required_after_retries",
     });
@@ -2584,7 +2590,6 @@ export async function handleYCloudWebhook(
 
   if (payload.type === "whatsapp.smb.message.echoes") {
     const echo = payload.whatsappMessage || {};
-    await rememberBusinessNumber(echo.from);
     const patientPhone = normalizePhone(echo.to);
     const eventId = payload.id || echo.id || echo.wamid;
     const messageId = echo.wamid || echo.id || eventId;
@@ -2592,6 +2597,20 @@ export async function handleYCloudWebhook(
     if (!patientPhone) {
       return json({ received: false, error: "invalid_phone" }, 400);
     }
+
+    if (isInternalTeamPhone(patientPhone)) {
+      return json({
+        received: true,
+        ignored: true,
+        ignoreReason: "internal_team_phone",
+        leadRecorded: false,
+        appointmentReserved: false,
+        aiShadowQueued: false,
+        aiActiveQueued: false,
+      });
+    }
+
+    await rememberBusinessNumber(echo.from);
 
     if (!eventId || !messageId) {
       return json({ received: false, error: "missing_event_id" }, 400);
@@ -2828,12 +2847,25 @@ export async function handleYCloudWebhook(
   }
 
   const message = payload.whatsappInboundMessage || {};
-  await rememberBusinessNumber(message.to);
   const phone = normalizePhone(message.from);
 
   if (!phone) {
     return json({ received: false, error: "invalid_phone" }, 400);
   }
+
+  if (isInternalTeamPhone(phone)) {
+    return json({
+      received: true,
+      ignored: true,
+      ignoreReason: "internal_team_phone",
+      leadRecorded: false,
+      appointmentReserved: false,
+      aiShadowQueued: false,
+      aiActiveQueued: false,
+    });
+  }
+
+  await rememberBusinessNumber(message.to);
 
   const eventId = payload.id || message.id || message.wamid;
 
