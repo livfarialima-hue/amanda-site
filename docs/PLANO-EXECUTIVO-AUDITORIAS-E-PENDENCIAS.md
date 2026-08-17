@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 15:20, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 15:45, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -45,10 +45,10 @@ O responsável técnico deve:
 
 - incidente das 14:37–14:38: o Apps Script devolveu `busy_retry` e depois `timeout`; o webhook permaneceu fail-closed e não liberou resposta antes de a Bruna assumir o atendimento;
 - lifting cervical e lifting facial agora respondem diretamente que são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica;
-- “este procedimento” herda o lifting das mensagens anteriores mesmo sem uma resposta prévia da clínica; outros procedimentos continuam em revisão humana;
-- commit `d87fbc1`, deploy Netlify `6a834fc3a223280007cb423b`, **721/721 testes aprovados**;
+- “este procedimento” agora é resolvido pelo contexto mais recente da paciente e pelo código do anúncio/campanha, sem ser tratado automaticamente como lifting; somente lifting cervical e facial recebem a confirmação hospitalar automática, e outros procedimentos continuam em revisão humana;
+- resposta hospitalar base no commit `d87fbc1`, deploy `6a834fc3a223280007cb423b`; correção do contexto de campanha no commit `86be3bd`, deploy `6a8355e01229780008678685`, com **723/723 testes aprovados**;
 - sonda sintética acionada pelo Netlify e linha diária `synthetic_attribution_v2_20260817` confirmada com persistência, classificação, handoff e atribuição em `ok`; nenhum telefone, mensagem ou envio de WhatsApp foi usado;
-- rollback: deploy `6a834a6a8064630008d91721`, commit `072dffb`.
+- rollback da correção de contexto: deploy `6a8351223af85000083ceeea`, commit `9d950ce`.
 
 
 ### Auditoria 1 — Google Ads
