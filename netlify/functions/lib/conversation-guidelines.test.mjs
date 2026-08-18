@@ -122,10 +122,10 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /uma única pergunta contextual de baixa fricção somente se ela ajudar/,
+    /Se o procedimento estiver claro, não acrescente pergunta, convite, artigo, guia, faixa/,
   );
   assert.match(CONVERSATION_GUIDELINES, /Não liste técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento nessa primeira resposta/);
-  assert.match(CONVERSATION_GUIDELINES, /Não envie artigo, guia, faixa de preço/);
+  assert.match(CONVERSATION_GUIDELINES, /não acrescente pergunta, convite, artigo, guia, faixa/);
   assert.match(CONVERSATION_GUIDELINES, /não como orçamento, proposta ou garantia de preço/i);
   assert.match(
     CONVERSATION_GUIDELINES,

@@ -143,7 +143,7 @@ test("between midnight and 6am the webhook sends one short receipt and prepares 
     );
     assert.match(
       emailRequest.alert.messageText,
-      /papada e valores/i,
+      /valor de tratamento da papada/i,
     );
     assert.doesNotMatch(
       emailRequest.alert.messageText,

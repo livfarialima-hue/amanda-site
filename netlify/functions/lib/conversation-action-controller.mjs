@@ -21,7 +21,28 @@ const EXPLICIT_DEFERRAL_PATTERN =
 const EXPLICIT_NIGHT_PAUSE_PATTERN =
   /\b(?:(?:j[áa]\s+)?(?:est[áa]|t[áa]|ficou|muito)\s+(?:muito\s+)?tarde|amanh[ãa]\s+(?:a gente\s+)?(?:conversa|conversamos|continuamos|retomamos)|(?:conversa|conversamos|continuamos|retomamos)\s+amanh[ãa])\b/i;
 const EXPLICIT_RETURN_LATER_PATTERN =
-  /\b(?:qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo)|se\s+eu\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo))\b/i;
+  /\b(?:qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s*[,]?\s*(?:eu\s+)?(?:volto|retorno|aviso|chamo)|se\s+eu\s+decidir\s*[,]?\s*(?:eu\s+)?(?:volto|retorno|aviso|chamo)|vou\s+(?:pensar|avaliar|analisar|decidir)(?:\s+com\s+calma)?\s+e\s+(?:depois\s+)?(?:volto|retorno|aviso|chamo))\b/i;
+const PATIENT_DECLINE_PATTERN =
+  /\b(?:n[ãa]o\s+(?:tenho\s+)?interesse|prefiro\s+n[ãa]o|n[ãa]o\s+quero|desisti|vou\s+deixar\s+(?:pra|para)\s+(?:depois|mais\s+pra\s+frente)|fora\s+do\s+meu\s+or[cç]amento|acima\s+do\s+meu\s+or[cç]amento|n[ãa]o\s+cabe\s+no\s+meu\s+or[cç]amento|muito\s+car[oa]\s+(?:pra|para)\s+mim|vou\s+me\s+programar\s+e\s+(?:retorno|volto))\b/i;
+const PRICE_PATTERN =
+  /\b(?:valor|pre[cç]o|quanto\s+custa|investimento|or[cç]amento|faixa)\b/i;
+const CONSULTATION_PATTERN = /\bconsult(?:a|ar|as|inha)\b/i;
+const KNOWN_PROCEDURE_PATTERN =
+  /\b(?:lifting|mini[-\s]?lifting|cervicoplastia|lipo(?:aspira[cç][ãa]o)?(?:\s+de\s+papada)?|papada|blefaroplastia|p[áa]lpebra|otoplastia|orelha|rinoplastia|mamoplastia|mastopexia|pr[óo]tese|abdominoplastia|braquioplastia|cruroplastia|ninfoplastia|ginecomastia)\b/i;
+const PAYMENT_PATTERN =
+  /\b(?:parcel(?:a|ado|amento|ar)|cart[ãa]o|pix|desconto|[àa]\s+vista|forma(?:s)?\s+de\s+pagamento)\b/i;
+const SCHEDULING_PATTERN =
+  /\b(?:agenda|agendar|agendamento|marcar|hor[áa]rios?|disponibilidade|vagas?|data|dia|manh[ãa]|tarde)\b/i;
+const LOCATION_PATTERN =
+  /\b(?:endere[cç]o|onde\s+fica|localiza[cç][ãa]o|como\s+chegar|maps|pinheiros|pais\s+leme)\b/i;
+const RECOVERY_PATTERN =
+  /\b(?:recupera[cç][ãa]o|p[óo]s[-\s]?operat[óo]rio|afastamento|repouso|incha[cç]o|retomar\s+(?:o\s+)?trabalho)\b/i;
+const CREDENTIALS_PATTERN =
+  /\b(?:crm|rqe|forma[cç][ãa]o|especialista|cirurgi[ãa]|curr[íi]culo|experi[eê]ncia)\b/i;
+const INSURANCE_PATTERN =
+  /\b(?:conv[eê]nio|plano\s+de\s+sa[úu]de|reembolso)\b/i;
+const RESOURCE_PATTERN =
+  /\b(?:site|p[áa]gina|link|instagram|material|conte[úu]do)\b/i;
 
 function normalized(value) {
   return String(value || "").trim();
@@ -183,6 +204,153 @@ export function hasUnresolvedPatientRequest(
   return assistantQuestionBeyondSocialGreeting(previousAssistant);
 }
 
+export function isPatientDeclineWithoutRequest(text) {
+  const value = normalized(text);
+  return Boolean(
+    value &&
+      PATIENT_DECLINE_PATTERN.test(value) &&
+      !hasDirectPatientRequest(value),
+  );
+}
+
+function inferUnresolvedIntents({
+  text,
+  messageType,
+  schedulingRequest,
+  plan,
+}) {
+  const value = normalized(text);
+  const intents = [];
+  const add = (intent) => {
+    if (!intents.includes(intent)) intents.push(intent);
+  };
+
+  if (String(messageType || "").toLowerCase() === "image") add("photo");
+  if (
+    PRICE_PATTERN.test(value) &&
+    plan?.priceMentionIsTemplateContext !== true
+  ) {
+    add(CONSULTATION_PATTERN.test(value) ? "price_consultation" : "price_surgery");
+  }
+  if (PAYMENT_PATTERN.test(value)) add("payment_terms");
+  if (schedulingRequest || SCHEDULING_PATTERN.test(value)) add("scheduling");
+  if (LOCATION_PATTERN.test(value)) add("location");
+  if (RECOVERY_PATTERN.test(value)) add("recovery");
+  if (CREDENTIALS_PATTERN.test(value)) add("credentials");
+  if (INSURANCE_PATTERN.test(value)) add("insurance");
+  if (RESOURCE_PATTERN.test(value)) add("resource");
+  if (hasDirectPatientRequest(value) && intents.length === 0) add("clinical_or_general");
+  return intents;
+}
+
+function buildReplyContract({
+  action,
+  reason,
+  details,
+  text,
+  messageType,
+  plan,
+  recentConversation,
+  schedulingRequest,
+}) {
+  const value = normalized(text);
+  const intents = inferUnresolvedIntents({
+    text: value,
+    messageType,
+    schedulingRequest,
+    plan,
+  });
+  const priceIntent = intents.includes("price_surgery") ||
+    intents.includes("price_consultation");
+  const unknownSurgicalProcedure =
+    intents.includes("price_surgery") && !KNOWN_PROCEDURE_PATTERN.test(value);
+  const humanContext = isReplyToHumanContextWithoutStandaloneRequest(
+    value,
+    recentConversation,
+  );
+  const canWrite =
+    action === CONVERSATION_ACTIONS.RESPOND ||
+    (
+      action === CONVERSATION_ACTIONS.WAIT_TEAM &&
+      details.allowHoldingReply === true
+    );
+
+  let stage = "consideration";
+  if (action === CONVERSATION_ACTIONS.CLOSED) stage = "closed";
+  else if (action === CONVERSATION_ACTIONS.WAIT_PATIENT) stage = "pause";
+  else if (humanContext || details.humanTakeoverActive) stage = "active_care";
+  else if (intents.includes("scheduling")) stage = "scheduling";
+  else if (!Array.isArray(recentConversation) || recentConversation.length === 0) {
+    stage = "discovery";
+  }
+
+  let risk = "green";
+  if (
+    action === CONVERSATION_ACTIONS.WAIT_TEAM ||
+    intents.includes("photo") ||
+    intents.includes("clinical_or_general")
+  ) {
+    risk = "red";
+  } else if (priceIntent || intents.includes("scheduling")) {
+    risk = "yellow";
+  }
+
+  let maxQuestions = 1;
+  if (
+    !canWrite ||
+    intents.some((intent) => [
+      "photo",
+      "price_consultation",
+      "location",
+      "insurance",
+      "resource",
+    ].includes(intent)) ||
+    (intents.includes("price_surgery") && !unknownSurgicalProcedure)
+  ) {
+    maxQuestions = 0;
+  }
+
+  const protectedLiftingRange =
+    plan?.reason === "lifting_price_range_direct";
+  const maxLinks =
+    !canWrite || intents.includes("photo") ||
+    (
+      priceIntent &&
+      !protectedLiftingRange &&
+      !intents.includes("location")
+    )
+      ? 0
+      : 1;
+  const silenceReason = canWrite ? "" : reason || "reply_not_authorized";
+
+  return Object.freeze({
+    version: "reply-contract-v1",
+    stage,
+    risk,
+    owner:
+      action === CONVERSATION_ACTIONS.RESPOND
+        ? "bruna"
+        : action === CONVERSATION_ACTIONS.WAIT_TEAM
+          ? "human_team"
+          : action === CONVERSATION_ACTIONS.WAIT_PATIENT
+            ? "patient"
+            : "none",
+    allowedResponseKind: canWrite
+      ? action === CONVERSATION_ACTIONS.WAIT_TEAM
+        ? "specific_acknowledgement"
+        : "direct_answer"
+      : "none",
+    unresolvedIntents: intents,
+    silenceReason,
+    maxQuestions,
+    maxLinks,
+    allowCta: canWrite && intents.includes("scheduling"),
+    allowAppointmentConfirmation: false,
+    requirePhotoDistanceLimit: intents.includes("photo"),
+    sourceReason: plan?.reason || reason || "",
+  });
+}
+
 function result(action, reason, details = {}) {
   const unresolvedRequest =
     details.unresolvedRequest === true;
@@ -218,6 +386,7 @@ function result(action, reason, details = {}) {
     nextAction: "alert_team",
   };
 
+  const replyContract = details.replyContract || null;
   return {
     action,
     reason,
@@ -229,7 +398,8 @@ function result(action, reason, details = {}) {
       action === CONVERSATION_ACTIONS.RESPOND,
     allowHoldingReply:
       action === CONVERSATION_ACTIONS.WAIT_TEAM &&
-      unresolvedRequest,
+      unresolvedRequest &&
+      details.forceNoHoldingReply !== true,
     allowAlert:
       action === CONVERSATION_ACTIONS.WAIT_TEAM ||
       details.allowAlert === true,
@@ -241,6 +411,9 @@ function result(action, reason, details = {}) {
       details.followupPolicy || "none",
     minimumFollowupDelayHours:
       Number(details.minimumFollowupDelayHours || 0),
+    replyContract,
+    silenceReason:
+      replyContract?.silenceReason || "",
   };
 }
 
@@ -255,16 +428,38 @@ export function decideConversationAction({
 }) {
   const value = normalized(text);
   const type = normalized(messageType).toLowerCase() || "text";
+  const decide = (action, reason, details = {}) => {
+    const provisional = {
+      ...details,
+      allowHoldingReply:
+        action === CONVERSATION_ACTIONS.WAIT_TEAM &&
+        details.unresolvedRequest === true &&
+        details.forceNoHoldingReply !== true,
+    };
+    return result(action, reason, {
+      ...details,
+      replyContract: buildReplyContract({
+        action,
+        reason,
+        details: provisional,
+        text: value,
+        messageType: type,
+        plan,
+        recentConversation,
+        schedulingRequest,
+      }),
+    });
+  };
 
   if (exactDuplicate) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.IGNORE_DUPLICATE,
       "exact_message_duplicate",
     );
   }
 
   if (type !== "text" || !value) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.WAIT_TEAM,
       "unsupported_or_empty_message",
       {
@@ -275,7 +470,7 @@ export function decideConversationAction({
   }
 
   if (isSimpleConversationClosing(value)) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.CLOSED,
       "simple_conversation_closing",
       { followupPolicy: "none" },
@@ -283,7 +478,7 @@ export function decideConversationAction({
   }
 
   if (isExplicitReturnLaterClosing(value)) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.CLOSED,
       "patient_will_return",
       {
@@ -294,7 +489,7 @@ export function decideConversationAction({
   }
 
   if (isExplicitDeferralWithoutRequest(value)) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.WAIT_PATIENT,
       "patient_deciding",
       {
@@ -304,8 +499,36 @@ export function decideConversationAction({
     );
   }
 
+  if (isPatientDeclineWithoutRequest(value)) {
+    return decide(
+      CONVERSATION_ACTIONS.WAIT_PATIENT,
+      "patient_declined_or_budget_pause",
+      {
+        followupPolicy: "patient_initiated",
+        minimumFollowupDelayHours: 0,
+      },
+    );
+  }
+
+  if (
+    isReplyToHumanContextWithoutStandaloneRequest(
+      value,
+      recentConversation,
+    )
+  ) {
+    return decide(
+      CONVERSATION_ACTIONS.WAIT_TEAM,
+      "patient_answer_belongs_to_human_context",
+      {
+        unresolvedRequest: true,
+        humanTakeoverActive: true,
+        forceNoHoldingReply: true,
+      },
+    );
+  }
+
   if (plan?.route === "ignore") {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.CLOSED,
       plan.reason || "ignored_by_plan",
     );
@@ -326,7 +549,7 @@ export function decideConversationAction({
     plan?.route === "human_review";
 
   if (needsTeam) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.WAIT_TEAM,
       plan.reason || "team_action_required",
       {
@@ -337,7 +560,7 @@ export function decideConversationAction({
   }
 
   if (humanTakeoverActive) {
-    return result(
+    return decide(
       unresolvedRequest
         ? CONVERSATION_ACTIONS.WAIT_TEAM
         : CONVERSATION_ACTIONS.WAIT_PATIENT,
@@ -366,7 +589,7 @@ export function decideConversationAction({
     plan?.automaticAllowed === true &&
     (unresolvedRequest || routeStartsConversation)
   ) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.RESPOND,
       plan.reason || "safe_response_required",
       {
@@ -378,13 +601,13 @@ export function decideConversationAction({
   }
 
   if (!unresolvedRequest) {
-    return result(
+    return decide(
       CONVERSATION_ACTIONS.WAIT_PATIENT,
       "no_current_response_obligation",
     );
   }
 
-  return result(
+  return decide(
     CONVERSATION_ACTIONS.WAIT_TEAM,
     plan.reason || "response_requires_review",
     { unresolvedRequest: true },

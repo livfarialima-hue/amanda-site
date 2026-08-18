@@ -123,9 +123,20 @@ test("the holding reply is transparent without exposing automation", () => {
   const reply = buildUnknownHoldingReply({
     patientName: "Maria Silva",
     introduceBruna: true,
+    currentText: "Qual é a quantidade de parcelas?",
   });
 
   assert.match(reply, /^Olá, Maria!/);
-  assert.match(reply, /confirmar essa informação com a equipe/i);
+  assert.match(reply, /confirmar as condições de pagamento/i);
   assert.doesNotMatch(reply, /\b(?:bot|inteligência artificial|fila|regra)\b/i);
+});
+
+test("an unmapped unknown stays silent instead of producing a generic holding reply", () => {
+  assert.equal(
+    buildUnknownHoldingReply({
+      patientName: "Maria Silva",
+      currentText: "Tenho uma questão.",
+    }),
+    "",
+  );
 });

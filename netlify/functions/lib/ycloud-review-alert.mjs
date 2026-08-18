@@ -62,10 +62,15 @@ export function ensureReviewAlertSuggestion({
     messageText: original,
     urgent,
   });
-  const suffix = [
-    "Sugestão para copiar após conferir:",
-    reply,
-  ].join("\n");
+  const suffix = reply
+    ? [
+        "Sugestão contextual para copiar após conferir:",
+        reply,
+      ].join("\n")
+    : [
+        "SEM SUGESTÃO PRONTA: o contexto não permitiu identificar com segurança a informação pendente.",
+        "Revise a conversa completa e redija uma resposta específica antes de enviar.",
+      ].join("\n");
   const prefixLimit = Math.max(
     0,
     MAX_ALERT_TEXT_LENGTH - Array.from(suffix).length - 2,

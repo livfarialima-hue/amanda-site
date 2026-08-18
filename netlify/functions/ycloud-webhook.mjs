@@ -1537,6 +1537,14 @@ export async function completeSelectedAppointment(
     conversationAction: {
       action: "respond",
       allowHoldingReply: false,
+      replyContract: {
+        version: "reply-contract-v1",
+        allowedResponseKind: "direct_answer",
+        maxQuestions: 0,
+        maxLinks: 0,
+        allowCta: false,
+        allowAppointmentConfirmation: true,
+      },
     },
   });
   logPatientReplyResult(
@@ -1703,7 +1711,18 @@ async function completeOpenAIActive({
       phone: to,
       eventId: input.eventId,
       markerStatus: replyDebounceMarkerStatus,
-      configuredDelayMs: process.env.WHATSAPP_REPLY_DEBOUNCE_MS,
+      configuredDelayMs:
+        process.env.WHATSAPP_REPLY_DEBOUNCE_AI_MS,
+      replyKind: [
+        "official_instagram_request",
+        "campaign_reference_explanation",
+        "insurance_acceptance_request",
+        "consultation_information_request",
+        "known_procedure",
+      ].includes(plan?.reason)
+        ? "deterministic"
+        : "ai",
+      messageText: input.text,
     });
 
     if (!debounceResult.shouldProcess) {
@@ -1719,6 +1738,11 @@ async function completeOpenAIActive({
       return { status: "superseded", replySent: false };
     }
 
+    const introduceBruna = !input.recentConversation.some(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
     const insuranceCoverageReply = buildInsuranceCoverageReply({
       text: input.text,
       procedure: plan?.procedure || input.procedure || "",
@@ -1727,6 +1751,7 @@ async function completeOpenAIActive({
       text: input.text,
       patientName: input.patientProfileName,
       professional: plan?.professional || "",
+      introduceBruna,
     });
     const standaloneMarketingPrefilledMessage =
       plan?.route === "standard_reply" &&
@@ -1765,11 +1790,6 @@ async function completeOpenAIActive({
           currentMessage: input.text,
         })
       : null;
-    const introduceBruna = !input.recentConversation.some(
-      (turn) =>
-        turn?.role === "assistant" ||
-        ["bruna", "equipe_humana"].includes(turn?.source),
-    );
     const activeResult = officialInstagramRequest
       ? {
           status: "completed",
@@ -1900,7 +1920,10 @@ async function completeOpenAIActive({
           },
           usage: null,
         }
-      : await runOpenAIShadow(input);
+      : await runOpenAIShadow({
+          ...input,
+          replyContract: conversationAction?.replyContract,
+        });
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
@@ -2030,7 +2053,18 @@ async function completeOpenAIActive({
       const holdingReply = buildUnknownHoldingReply({
         patientName: input.patientProfileName,
         introduceBruna,
+        currentText: input.text,
+        reviewReason: activeResult.decision.reviewReason,
+        procedure:
+          activeResult.decision.procedure || plan?.procedure || "",
       });
+      if (!holdingReply) {
+        return {
+          status: "awaiting_human_learning",
+          errorCode: "no_contextual_holding_reply",
+          replySent: false,
+        };
+      }
       const holdingResult = await sendControlledPatientReply({
         from,
         to,
@@ -2132,6 +2166,24 @@ async function completeOpenAIActive({
       professional: input.professional,
     });
     logPatientReplyResult(input.eventId, to, replyResult);
+
+    if (
+      replyResult.status === "blocked" &&
+      !reviewAlertAlreadyQueued &&
+      isReviewAlertConfigured()
+    ) {
+      await completeReviewAlert(
+        prepareReviewAlertInput(alertInput, {
+          decision: {
+            route: "human_review",
+            automaticAllowed: false,
+            suggestedReply: "",
+            reviewReason: `outbound_guard:${replyResult.errorCode || "blocked"}`,
+          },
+          plan,
+        }),
+      );
+    }
 
     if (replyResult.status === "completed") {
       const memoryResult = await appendConversationTurn({
@@ -2582,7 +2634,10 @@ async function sendCurrentInboundReply({
     phone: to,
     eventId: revisionEventId,
     markerStatus: replyDebounceMarkerStatus,
-    configuredDelayMs: process.env.WHATSAPP_REPLY_DEBOUNCE_MS,
+    configuredDelayMs:
+      process.env.WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS,
+    replyKind: "deterministic",
+    messageText: currentText,
   });
 
   if (!debounceResult.shouldProcess) {
@@ -4280,8 +4335,13 @@ export async function handleYCloudWebhook(
 
   if (shouldQueueOvernightHandoff) {
     overnightHandoffQueued = true;
-    const overnightBody =
-      buildOvernightHandoffMessage(overnightReason);
+    const overnightBody = buildOvernightHandoffMessage(
+      overnightReason,
+      {
+        text,
+        procedure: automationPlan.procedure,
+      },
+    );
     const overnightResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
       to: phone,

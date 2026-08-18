@@ -78,26 +78,19 @@ function greeting(name) {
 
 export function buildOfficialChannelsReply({
   patientName,
-  procedure,
   introduceBruna = false,
   explainCampaignReference = false,
 }) {
   const opening = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Claro!`
     : "Claro!";
-  const siteLine =
-    procedure === "lifting_facial"
-      ? `E esta é a página completa sobre lifting facial:\n${LIFTING_FACIAL_URL}`
-      : `E este é o site oficial da Dra. Amanda:\n${AMANDA_SITE_URL}`;
   const referenceLine = explainCampaignReference
     ? 'A referência que apareceu na primeira mensagem é apenas um código interno para identificarmos o anúncio pelo qual você chegou. Não é um termo médico e você pode desconsiderá-la.'
     : "";
 
   return [
     `${opening} Este é o Instagram oficial da Dra. Amanda:\n${AMANDA_INSTAGRAM_URL}`,
-    siteLine,
     referenceLine,
-    "Pode olhar com calma. Se quiser, depois me conte o que mais gostaria de entender.",
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -171,6 +164,7 @@ export function buildInsuranceAcceptanceReply({
   text,
   patientName,
   professional,
+  introduceBruna = true,
 }) {
   const normalizedText = String(text || "");
   const insurerMatch = normalizedText.match(
@@ -196,10 +190,12 @@ export function buildInsuranceAcceptanceReply({
         )
         .join(" ")
     : "seu convênio";
-  const introduction = `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`;
+  const introduction = introduceBruna
+    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    : "Claro.";
 
   if (professional === "amanda") {
-    return `${introduction} A consulta com a Dra. Amanda é particular. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Posso te orientar sobre a avaliação em cirurgia plástica ou estética?`;
+    return `${introduction} A consulta com a Dra. Amanda é particular. Emitimos nota fiscal, que pode ser apresentada ao plano ${insurer} para uma eventual solicitação de reembolso, conforme as regras do contrato e a análise do próprio plano.`;
   }
 
   if (professional === "daniel") {
@@ -232,30 +228,6 @@ function consultationDescription(procedure, procedureLabel) {
     "A Dra. Amanda examina a região e depois explica as possibilidades, os limites e como seria a recuperação.",
     "Nada precisa ser decidido nesse momento.",
   ].join(" ");
-}
-
-function consultationExplorationQuestion(procedure, procedureLabel) {
-  if (procedure === "lifting_facial") {
-    return "O que despertou seu interesse pelo lifting: a flacidez do rosto, o contorno da mandíbula, o pescoço ou outro ponto?";
-  }
-
-  if (procedure === "lifting_cervical") {
-    return "O que seria mais útil entender primeiro: o contorno do pescoço, a papada, a linha da mandíbula ou a recuperação?";
-  }
-
-  if (procedure === "blefaroplastia") {
-    return "O que seria mais útil entender primeiro: as pálpebras superiores, as bolsas abaixo dos olhos, a recuperação ou como funciona a avaliação?";
-  }
-
-  if (procedure === "otoplastia") {
-    return "A avaliação seria para um adulto, uma criança ou um adolescente? Assim consigo orientar a conversa de forma mais adequada.";
-  }
-
-  if (procedureLabel) {
-    return `O que despertou seu interesse por ${procedureLabel}?`;
-  }
-
-  return "Você já tem algum procedimento em mente ou prefere começar entendendo as possibilidades da avaliação?";
 }
 
 export function buildConsultationInformationReply({
@@ -302,7 +274,7 @@ export function buildConsultationInformationReply({
             : "Esta página reúne explicações sobre o procedimento e a consulta:",
           resourceUrl,
         ].join(" ")
-      : consultationExplorationQuestion(procedure, procedureLabel);
+      : "";
 
   return [
     `${introduction} ${consultationContext}`,
@@ -375,10 +347,6 @@ export function buildPatientReply({
         : procedure === "lifting_cervical"
           ? "o lifting cervical"
           : "o lifting cervical e o lifting facial";
-    const nameQuestion = firstName(patientName)
-      ? ""
-      : "Como posso te chamar?";
-
     return [
       hello,
       "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
@@ -386,7 +354,6 @@ export function buildPatientReply({
         procedure ? "é uma cirurgia realizada" : "são cirurgias realizadas"
       } em hospital, com anestesista e equipe cirúrgica.`,
       "Antes, a Dra. Amanda faz uma avaliação individual para confirmar a indicação e definir o planejamento adequado ao caso.",
-      nameQuestion,
     ].filter(Boolean).join(" ");
   }
 
@@ -398,8 +365,10 @@ export function buildPatientReply({
       hello,
       "Faz sentido querer entender o preço antes de decidir.",
       "Como cada cirurgia é planejada individualmente, a Dra. Amanda confirma o valor exato depois da avaliação.",
-      `Além do valor, o que seria mais útil entender sobre ${procedureLabel} neste momento?`,
-    ].join(" ");
+      procedure
+        ? ""
+        : `Qual cirurgia você está pesquisando?`,
+    ].filter(Boolean).join(" ");
   }
 
   if (PROCEDURE_REPLY_CODES.has(replyCode)) {

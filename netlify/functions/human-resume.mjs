@@ -8,7 +8,6 @@ import {
   buildSimpleCoordinationReply,
   classifyHumanResume,
   hasConcreteResponseExpectation,
-  HUMAN_RESUME_HOLDING_MESSAGE,
   isHumanResumeServiceOpen,
   nextHumanResumeServiceTime,
   shouldSendOvernightHandoff,
@@ -207,7 +206,7 @@ async function holdAndAlert(
   job,
   reason,
   dependencies = {},
-  holdingMessage = HUMAN_RESUME_HOLDING_MESSAGE,
+  holdingMessage = "",
   suggestedReply = "",
   conversationAction = null,
 ) {
@@ -219,13 +218,16 @@ async function holdAndAlert(
           action: CONVERSATION_ACTIONS.WAIT_TEAM,
           allowHoldingReply: true,
         };
-  const holdingResult = await sendPatientMessage(
-    job,
-    holdingMessage,
-    "human-resume-holding",
-    holdingAction,
-    dependencies,
-  );
+  const contextualHolding = String(holdingMessage || "").trim();
+  const holdingResult = contextualHolding
+    ? await sendPatientMessage(
+        job,
+        contextualHolding,
+        "human-resume-holding",
+        holdingAction,
+        dependencies,
+      )
+    : { status: "skipped", errorCode: "no_contextual_holding_reply" };
   const holdingSent = holdingResult.status === "completed";
 
   if (holdingResult.status === "superseded") {
@@ -239,7 +241,7 @@ async function holdAndAlert(
   if (holdingSent) {
     await recordBrunaTurn(
       job,
-      holdingMessage,
+      contextualHolding,
       "human-resume-holding-memory",
       dependencies,
     );
@@ -505,7 +507,10 @@ export async function processHumanResumeJob(
         job,
         policy.reason,
         dependencies,
-        buildOvernightHandoffMessage(policy.reason),
+        buildOvernightHandoffMessage(policy.reason, {
+          text: job.text,
+          procedure: enrichedPlan.procedure || job.procedure,
+        }),
         "",
         conversationAction,
       );
@@ -540,8 +545,11 @@ export async function processHumanResumeJob(
       policy.reason,
       dependencies,
       outsideServiceHours
-        ? buildOvernightHandoffMessage(policy.reason)
-        : HUMAN_RESUME_HOLDING_MESSAGE,
+        ? buildOvernightHandoffMessage(policy.reason, {
+            text: job.text,
+            procedure: enrichedPlan.procedure || job.procedure,
+          })
+        : "",
       "",
       conversationAction,
     );
@@ -634,6 +642,7 @@ export async function processHumanResumeJob(
       patientProfileName: job.patientName,
       recentConversation: job.recentConversation,
       referralContext: job.referralContext,
+      replyContract: conversationAction.replyContract,
       deterministicUrgent:
         enrichedPlan.reason === "possible_urgent_symptoms",
     },
@@ -670,7 +679,7 @@ export async function processHumanResumeJob(
         job,
         reason,
         dependencies,
-        HUMAN_RESUME_HOLDING_MESSAGE,
+        "",
         "",
         {
           action: CONVERSATION_ACTIONS.WAIT_TEAM,

@@ -79,9 +79,8 @@ test("the morning opening uses the actual papada and value context", () => {
   });
 
   assert.match(reply, /^Bom dia, Lia!/);
-  assert.match(reply, /consulta com a Dra\. Amanda custa R\$ 500/i);
-  assert.match(reply, /procedimento para papada/i);
-  assert.match(reply, /orçamento individual/i);
+  assert.match(reply, /consulta presencial com a Dra\. Amanda custa R\$ 500/i);
+  assert.doesNotMatch(reply, /procedimento para papada|predomina|\?/i);
 });
 
 test("email fallback is actionable and never repeats the old generic placeholder", () => {
@@ -97,12 +96,12 @@ test("email fallback is actionable and never repeats the old generic placeholder
     acknowledgementSent: true,
   });
 
-  assert.match(suggestion, /papada e valores/i);
-  assert.match(suggestion, /consulta ou da cirurgia/i);
+  assert.match(suggestion, /valor de lifting cervical/i);
+  assert.doesNotMatch(suggestion, /predomina|consulta ou da cirurgia/i);
   assert.doesNotMatch(suggestion, /conferir essa informação/i);
   assert.match(alert, /RETOMAR PELA MANHÃ/);
   assert.match(alert, /Não enviar outra mensagem durante a madrugada/);
-  assert.match(alert, /Sugestão para copiar pela manhã/);
+  assert.match(alert, /Sugestão contextual para copiar após revisar/);
 });
 
 test("an explicit request to continue tomorrow produces a contextual morning draft", () => {
@@ -119,8 +118,8 @@ test("an explicit request to continue tomorrow produces a contextual morning dra
 
   assert.match(alert, /Nenhuma mensagem foi enviada/);
   assert.match(alert, /Bom dia, Lia!/);
-  assert.match(alert, /consulta com a Dra\. Amanda custa R\$ 500/i);
-  assert.match(alert, /procedimento para papada/i);
+  assert.match(alert, /consulta presencial com a Dra\. Amanda custa R\$ 500/i);
+  assert.doesNotMatch(alert, /procedimento para papada|predomina/i);
   assert.doesNotMatch(alert, /conferir essa informação/i);
 });
 

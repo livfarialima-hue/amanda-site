@@ -297,12 +297,11 @@ test("accepted review alert is copied to Daniel by email", async () => {
   );
 });
 
-test("every review alert includes one copyable suggested reply", () => {
+test("an unclear review alert explicitly requires a human-specific draft", () => {
   const enriched = ensureReviewAlertSuggestion(INPUT);
 
-  assert.match(enriched, /Sugestão para copiar após conferir:/);
-  assert.match(enriched, /Olá, Maria!/);
-  assert.match(enriched, /Qual informação você precisa esclarecer agora/);
+  assert.match(enriched, /SEM SUGESTÃO PRONTA/i);
+  assert.match(enriched, /redija uma resposta específica/i);
   assert.doesNotMatch(enriched, /Vou conferir essa informação com a equipe/);
 
   const alreadyPrepared = ensureReviewAlertSuggestion({
@@ -324,8 +323,8 @@ test("a papada and value alert suggests a precise human continuation", () => {
     messageText: "Papada, valor?",
   });
 
-  assert.match(enriched, /papada e valores/i);
-  assert.match(enriched, /consulta ou da cirurgia/i);
+  assert.match(enriched, /valor de tratamento da papada/i);
+  assert.doesNotMatch(enriched, /predomina|consulta ou da cirurgia/i);
   assert.doesNotMatch(enriched, /retorno por aqui assim que possível/i);
 });
 

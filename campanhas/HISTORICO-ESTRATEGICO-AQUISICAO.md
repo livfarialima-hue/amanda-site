@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 18 de agosto de 2026 — contrato contextual e proteção sem atrito no WhatsApp
+
+- **Status:** implementação local da versão `2026-08-18.2` concluída para testes; publicação e recibo final são registrados somente depois da verificação em produção.
+- **Mudança:** cada turno passa a ter contrato de resposta com responsável, silêncio e limites; preço conhecido, consulta, canal oficial, convênio e foto não recebem pergunta ou CTA obrigatório. Mensagens genéricas de espera deixam de ser sugestão copiável, e o validador final bloqueia confirmação indevida de agenda, diagnóstico remoto, promessa, valor ou condição não aprovada e excesso de menus, perguntas ou links.
+- **Evidência:** amostra desidentificada de 20 exportações recentes e 484 turnos da pasta restrita do Drive mostrou perguntas antes da resposta, blocos extensos, interpretação quase clínica, links e CTA acumulados, retomadas após pausa e confirmações fora de contexto. As respostas existentes foram tratadas como material crítico, não como padrão de qualidade.
+- **Hipótese:** respostas diretas e mais rápidas, somadas a silêncio correto e handoff específico, aumentam resolução e conversão qualificada sem elevar inconveniência, risco clínico ou competição com a equipe humana.
+- **Métricas:** tempo até primeira resposta elegível, resolução no primeiro turno, continuidade qualificada, preferência de agenda capturada, consulta confirmada e comparecimento; guardrails de mensagem fora de contexto, repetição, pressão, diagnóstico, promessa, takeover atravessado e confirmação não verificada.
+- **Revisão:** observar as próximas entradas reais e revisar semanalmente os cenários sintéticos; nenhuma conclusão de ganho antes de amostra suficiente e rastreável.
+- **Regra para manter ou reverter:** manter se clareza e avanço qualificado melhorarem sem incidente de segurança; reverter o release diante de mensagem fora de contexto, duplicidade, atraso material novo, bloqueio de resposta legítima recorrente ou qualquer quebra de takeover. O modelo permanece `gpt-5.6-terra` em `medium`; comparação de modelo e jornada tardia ficam para fase posterior.
+
 ## 16 de agosto de 2026 — piloto Aqui Ads agendado para setembro
 
 - **Status:** `Planejada`; decisão e pré-voo em 16/09/2026; nenhuma compra ou veiculação autorizada.

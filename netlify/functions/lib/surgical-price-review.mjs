@@ -207,19 +207,9 @@ function priceVariation(procedure) {
 }
 
 function initialPriceDiscoveryQuestion(procedure) {
-  if (procedure === "lifting_facial") {
-    return "Além do valor, o que seria mais útil entender sobre o lifting neste momento?";
-  }
-
-  if (procedure === "lifting_cervical") {
-    return "Além do valor, o que seria mais útil entender sobre o lifting cervical neste momento?";
-  }
-
-  if (procedure) {
-    return "Além do valor, o que seria mais útil entender sobre esse procedimento neste momento?";
-  }
-
-  return "Você está pesquisando qual cirurgia ou qual região gostaria de melhorar?";
+  return procedure
+    ? ""
+    : "Você está pesquisando qual cirurgia?";
 }
 
 function clarificationFor(procedure, patientName) {
@@ -242,7 +232,7 @@ function clarificationFor(procedure, patientName) {
   }
 
   if (procedure === "avaliacao_facial") {
-    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Emitimos nota fiscal. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis. Você gostaria de entender como funciona a consulta?`;
+    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Emitimos nota fiscal. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis.`;
   }
 
   const label = PROCEDURE_LABELS[procedure] || "esse procedimento";
@@ -289,7 +279,7 @@ export function buildSurgicalInitialPriceReply({
     String(currentText || ""),
   );
   const paymentContext = asksAboutTerms
-    ? "O orçamento reúne os itens aplicáveis. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. A equipe confirma as condições."
+    ? "O orçamento reúne os itens aplicáveis. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. Quantidade de parcelas, percentual do desconto e demais condições dependem de confirmação humana."
     : "";
   return [
     directPriceGreeting(patientName, recentConversation),
@@ -333,9 +323,8 @@ export function buildSurgicalPriceSuggestedReply({
           "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
         ].join("\n"),
         "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-        "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. A equipe confirma as condições.",
+        "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
         guide,
-        "Se fizer sentido, explico a avaliação.",
       ].filter(Boolean).join("\n\n");
     }
 
@@ -348,9 +337,8 @@ export function buildSurgicalPriceSuggestedReply({
         "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
       ].join("\n"),
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. A equipe confirma as condições.",
+      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
       guide,
-      "Se fizer sentido, explico a avaliação.",
     ].filter(Boolean).join("\n\n");
   }
 
@@ -371,15 +359,11 @@ export function buildSurgicalPriceSuggestedReply({
   )
     ? `Entenda como funcionam esses gastos: ${safeLink(PRICE_GUIDE_URL)}`
     : "";
-  const callToAction =
-    "Se a faixa fizer sentido, posso verificar horários para a avaliação. Prefere manhã ou tarde?";
-
   return [
     priceContext,
     budgetContext,
     careAndPayment,
     guide,
-    callToAction,
   ].filter(Boolean).join("\n\n");
 }
 
@@ -395,19 +379,24 @@ export function buildSurgicalPriceHoldingReply({
   const procedureContext = reference
     ? ` para ${reference.label}`
     : "";
-  const returnTiming = overnight
-    ? "pela manhã"
-    : "por aqui";
+  const returnTiming = overnight ? "pela manhã" : "por aqui";
+  const text = String(currentText || "");
+  const pendingTopic = /quantas?\s+vezes|parcel/i.test(text)
+    ? "a quantidade de parcelas disponível"
+    : /desconto|[àa]\s+vista/i.test(text)
+      ? "a condição atual de desconto à vista"
+      : /inclu[ií]|hospital|anestes/i.test(text)
+        ? "quais itens se aplicam ao orçamento"
+        : reference
+          ? `a faixa atual de valor para ${reference.label}`
+          : "a faixa atual de valor desse procedimento";
   const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
     ? CLINIC_LOCATION_REPLY
     : "";
 
   return [
     [opening, location].filter(Boolean).join(" "),
-    [
-      `Consigo te passar uma faixa de referência${procedureContext}. Há desconto à vista e parcelamento antecipado, com quitação antes da cirurgia; vou confirmar com a equipe a quantidade de parcelas, o percentual e as demais condições.`,
-      `Vou confirmar os valores atuais com a equipe e te retorno ${returnTiming}.`,
-    ].join(" "),
+    `Vou confirmar ${pendingTopic}${procedureContext && !reference ? procedureContext : ""} com a equipe e te retorno ${returnTiming}. O pagamento cirúrgico pode ser parcelado antecipadamente, com quitação antes do procedimento, e há desconto à vista; condições exatas dependem dessa confirmação.`,
   ].filter(Boolean).join("\n\n");
 }
 

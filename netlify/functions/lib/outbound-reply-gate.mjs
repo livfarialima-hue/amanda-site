@@ -55,6 +55,138 @@ function isProtectedLiftingRangeReply(value) {
   );
 }
 
+function questionCount(value) {
+  return (String(value || "").match(/\?+/g) || []).length;
+}
+
+function semanticUnsafeReplyReason(value, conversationAction = {}) {
+  const raw = String(value || "");
+  const text = normalizedText(raw);
+  const contract = conversationAction?.replyContract || {};
+  const protectedLiftingRange = isProtectedLiftingRangeReply(raw);
+
+  if (
+    /\b(?:sou|aqui\s+e|este\s+atendimento\s+e)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw) ||
+    /\b(?:como|enquanto)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw)
+  ) {
+    return "automation_identity_disclosure";
+  }
+
+  const genericTeamCheck =
+    /\b(?:vou|vamos)\s+(?:conferir|confirmar|alinhar|verificar)\s+(?:essa|esta|a)\s+(?:informa[cç][aã]o|quest[aã]o|ponto)\s+com\s+(?:a\s+)?equipe\b/i.test(raw);
+  const namesConcreteTeamCheck =
+    /\b(?:sobre\s+(?!(?:isso|essa\s+quest[aã]o)\b).{3,80}|o\s+tempo\s+exato|a\s+(?:faixa|quantidade|data|disponibilidade)|as\s+condi[cç][oõ]es)\b[\s\S]{0,100}\b(?:vou|vamos)\s+(?:conferir|confirmar|alinhar|verificar)\b/i.test(raw);
+  if (
+    (genericTeamCheck && !namesConcreteTeamCheck) ||
+    /\brecebi\s+sua\s+mensagem(?:\s+sobre\s+(?:isso|essa\s+quest[aã]o))?\s*[.!]?$/i.test(raw)
+  ) {
+    return "generic_holding_reply";
+  }
+
+  if (
+    /\b(?:valor|pre[cç]o|investimento)\s+da\s+consulta\b[\s\S]{0,100}\b(?:abatid[oa]|descontad[oa]|creditad[oa]|devolvid[oa]|reembolsad[oa])\b/i.test(raw) ||
+    /\bconsulta\b[\s\S]{0,100}\b(?:vira|entra\s+como|fica\s+como)\s+(?:cr[eé]dito|desconto)\b/i.test(raw)
+  ) {
+    return "consultation_credit_claim";
+  }
+
+  if (/\b(?:abatimento|abater|deduzir|dedu[cç][aã]o)\b[\s\S]{0,60}\b(?:ir|imposto\s+de\s+renda)\b/i.test(raw)) {
+    return "tax_benefit_claim";
+  }
+
+  if (
+    /\b(?:garant(?:e|ido)|certamente|com\s+certeza)\b[\s\S]{0,60}\breembolso\b/i.test(raw) ||
+    /\breembolso\b[\s\S]{0,60}\b(?:garant(?:e|ido)|integral|total)\b/i.test(raw)
+  ) {
+    return "reimbursement_promise";
+  }
+
+  if (
+    /\b(?:em\s+)?\d{1,2}\s*x\b/i.test(raw) ||
+    /\b\d{1,2}\s*%\s+(?:de\s+)?desconto\b/i.test(raw) ||
+    /\b(?:sem\s+juros|sem\s+acr[eé]scimo|juros\s+zero)\b/i.test(raw)
+  ) {
+    return "unapproved_payment_specifics";
+  }
+
+  if (!protectedLiftingRange) {
+    const amounts = raw.match(/R\$\s*\d[\d.\s]*(?:,\d{1,2})?(?:\s*mil)?/gi) || [];
+    for (const amount of amounts) {
+      const compact = amount.replace(/[.\s]/g, "").toLowerCase();
+      const consultation500 =
+        /^r\$500(?:,00)?$/.test(compact) && /\bconsulta\b/i.test(raw);
+      const danielConsultation =
+        /^r\$(?:350|700)(?:,00)?$/.test(compact) &&
+        /\b(?:dr\.?\s+daniel|cardiolog|consulta\s+cardiol[oó]gica)\b/i.test(raw);
+      if (!consultation500 && !danielConsultation) {
+        return "unapproved_monetary_amount";
+      }
+    }
+  }
+
+  if (
+    /\b(?:consulta|agendamento|hor[áa]rio|data|vaga)\b[\s\S]{0,100}\b(?:confirmad[oa]|marcad[oa]|agendad[oa]|reservad[oa])\b/i.test(raw) &&
+    contract.allowAppointmentConfirmation !== true
+  ) {
+    return "unverified_appointment_confirmation";
+  }
+
+  if (
+    /\b(?:no\s+seu\s+caso|pela\s+(?:sua\s+)?foto|olhando\s+(?:sua|a)\s+foto)\b[\s\S]{0,100}\b(?:voc[eê]\s+tem|[ée]\s+|indica|precisa|predomina|melhor\s+op[cç][aã]o)\b/i.test(raw) ||
+    /\bpredomina\s+(?:gordura|flacidez|pele|m[úu]sculo)\b/i.test(raw) ||
+    /\b(?:a|o)\s+melhor\s+(?:cirurgia|procedimento|op[cç][aã]o)\s+para\s+voc[eê]\s+[ée]\b/i.test(raw)
+  ) {
+    return "remote_diagnosis_or_indication";
+  }
+
+  if (
+    /\b(?:resultado\s+garantido|sem\s+risco|n[aã]o\s+vai\s+ficar\s+cicatriz|n[aã]o\s+deixa\s+cicatriz|n[aã]o\s+ter[aá]\s+hematoma|recupera[cç][aã]o\s+sem\s+dor|vai\s+ficar\s+natural\s+com\s+certeza)\b/i.test(raw)
+  ) {
+    return "medical_or_result_promise";
+  }
+
+  if (
+    /\b(?:voc[eê]\s+quer|quer\s+saber|prefere\s+falar)\b[\s\S]{0,100}\b(?:indica[cç][aã]o|recupera[cç][aã]o|valores?|agenda(?:mento)?)\b[\s\S]{0,50}\bou\b/i.test(raw)
+  ) {
+    return "menu_like_continuation";
+  }
+
+  const maxQuestions = Number.isFinite(Number(contract.maxQuestions))
+    ? Number(contract.maxQuestions)
+    : null;
+  if (maxQuestions !== null && questionCount(raw) > maxQuestions) {
+    return "too_many_questions_for_context";
+  }
+
+  const maxLinks = Number.isFinite(Number(contract.maxLinks))
+    ? Number(contract.maxLinks)
+    : null;
+  if (maxLinks !== null && urls(raw).length > maxLinks) {
+    return "too_many_links_for_context";
+  }
+
+  if (
+    contract.allowCta === false &&
+    /\b(?:se\s+(?:fizer\s+sentido|quiser)|quer\s+que\s+eu|posso\s+(?:te|lhe)\s+ajudar|podemos\s+agendar|prefere\s+(?:manh[aã]|tarde))\b/i.test(raw)
+  ) {
+    return "cta_not_allowed_for_context";
+  }
+
+  if (contract.requirePhotoDistanceLimit === true) {
+    const hasEmpathy = /\b(?:obrigad[ao]\s+por\s+(?:enviar|compartilhar|confiar)|entendo|imagino|compreendo)\b/i.test(raw);
+    const hasOptions = /\b(?:h[aá]|existem|temos)\s+(?:boas\s+)?op[cç][oõ]es\b/i.test(raw);
+    const hasDistanceLimit =
+      /\b(?:foto|imagem|[àa]\s+dist[aâ]ncia|presencial)\b[\s\S]{0,100}\b(?:n[aã]o\s+(?:permite(?:m)?|substitui)|limita|precisa\s+ser\s+confirmad[oa])\b/i.test(raw) ||
+      /\bn[aã]o\s+[ée]\s+poss[ií]vel\s+(?:avaliar|definir|indicar)\s+com\s+seguran[cç]a\s+(?:s[oó]\s+)?(?:pela|por)\s+foto\b/i.test(raw);
+    if (!hasEmpathy || !hasOptions || !hasDistanceLimit) {
+      return "incomplete_photo_safety_reply";
+    }
+  }
+
+  if (!text) return "empty_semantic_reply";
+  return "";
+}
+
 function unsafeReplyContentReason(value) {
   const text = String(value || "");
 
@@ -256,6 +388,14 @@ export function validateOutboundReply({
         reason: contextResetReason,
       };
     }
+  }
+
+  const semanticUnsafeReason = semanticUnsafeReplyReason(
+    reply,
+    conversationAction,
+  );
+  if (semanticUnsafeReason) {
+    return { allowed: false, reason: semanticUnsafeReason };
   }
 
   const previousAssistant = lastAssistantTurn(recentConversation);

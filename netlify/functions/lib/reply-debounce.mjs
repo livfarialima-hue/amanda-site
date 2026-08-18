@@ -2,9 +2,11 @@ import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-whatsapp-reply-debounce-v1";
-const DEFAULT_DEBOUNCE_MS = 8_000;
-const MIN_DEBOUNCE_MS = 8_000;
-const MAX_DEBOUNCE_MS = 15_000;
+const DEFAULT_DETERMINISTIC_DEBOUNCE_MS = 3_000;
+const DEFAULT_AI_DEBOUNCE_MS = 5_000;
+const DEFAULT_DEBOUNCE_MS = DEFAULT_DETERMINISTIC_DEBOUNCE_MS;
+const MIN_DEBOUNCE_MS = 2_000;
+const MAX_DEBOUNCE_MS = 8_000;
 const PRIORITY_HOLD_MS = 10 * 60 * 1_000;
 
 function key(phone) {
@@ -13,14 +15,21 @@ function key(phone) {
     .digest("hex");
 }
 
-function debounceMs(value) {
+function debounceMs(value, replyKind = "deterministic", messageText = "") {
   const parsed = Number.parseInt(String(value || ""), 10);
+  const fallback = replyKind === "ai"
+    ? DEFAULT_AI_DEBOUNCE_MS
+    : DEFAULT_DETERMINISTIC_DEBOUNCE_MS;
+  const base = Number.isFinite(parsed)
+    ? Math.min(Math.max(parsed, MIN_DEBOUNCE_MS), MAX_DEBOUNCE_MS)
+    : fallback;
+  const longMultipart =
+    Array.from(String(messageText || "")).length > 500 ||
+    (String(messageText || "").match(/\n/g) || []).length >= 3;
 
-  if (!Number.isFinite(parsed)) return DEFAULT_DEBOUNCE_MS;
-  return Math.min(
-    Math.max(parsed, MIN_DEBOUNCE_MS),
-    MAX_DEBOUNCE_MS,
-  );
+  return longMultipart
+    ? Math.min(Math.max(base, replyKind === "ai" ? 6_000 : 4_000), MAX_DEBOUNCE_MS)
+    : base;
 }
 
 function store(getStoreImpl = getStore) {
@@ -135,6 +144,8 @@ export async function waitForLatestInboundReply(
     eventId,
     markerStatus,
     configuredDelayMs,
+    replyKind = "deterministic",
+    messageText = "",
   },
   {
     getStoreImpl = getStore,
@@ -151,7 +162,11 @@ export async function waitForLatestInboundReply(
     };
   }
 
-  const configuredQuietWindowMs = debounceMs(configuredDelayMs);
+  const configuredQuietWindowMs = debounceMs(
+    configuredDelayMs,
+    replyKind,
+    messageText,
+  );
   let delayMs = configuredQuietWindowMs;
 
   try {
@@ -231,4 +246,8 @@ export async function checkLatestInboundReply(
   }
 }
 
-export { DEFAULT_DEBOUNCE_MS };
+export {
+  DEFAULT_AI_DEBOUNCE_MS,
+  DEFAULT_DEBOUNCE_MS,
+  DEFAULT_DETERMINISTIC_DEBOUNCE_MS,
+};

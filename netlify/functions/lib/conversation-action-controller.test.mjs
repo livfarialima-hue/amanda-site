@@ -237,3 +237,102 @@ test("a fresh greeting can receive the controlled reactivation notice", () => {
   assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
   assert.equal(decision.allowAutomaticReply, true);
 });
+
+test("a budget refusal pauses the conversation without a new invitation", () => {
+  const decision = decideConversationAction({
+    text: "Ficou fora do meu orçamento. Vou me programar e retorno.",
+    plan: standardPlan,
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_PATIENT);
+  assert.equal(decision.minimumFollowupDelayHours, 0);
+  assert.equal(decision.followupPolicy, "patient_initiated");
+  assert.equal(decision.replyContract.allowedResponseKind, "none");
+  assert.equal(decision.replyContract.allowCta, false);
+  assert.equal(decision.silenceReason, "patient_declined_or_budget_pause");
+});
+
+test("an answer to a human question remains human-owned even without a takeover flag", () => {
+  const decision = decideConversationAction({
+    text: "Pode sim",
+    plan: standardPlan,
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Posso emitir a nota fiscal?",
+      },
+    ],
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_TEAM);
+  assert.equal(decision.owner, "human_team");
+  assert.equal(decision.allowHoldingReply, false);
+  assert.equal(decision.replyContract.allowedResponseKind, "none");
+});
+
+test("the reply contract removes forced questions from a known surgical price answer", () => {
+  const decision = decideConversationAction({
+    text: "Quanto custa o lifting facial?",
+    plan: {
+      ...standardPlan,
+      reason: "price_initial_information",
+    },
+  });
+
+  assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
+  assert.equal(decision.replyContract.maxQuestions, 0);
+  assert.equal(decision.replyContract.maxLinks, 0);
+  assert.equal(decision.replyContract.allowCta, false);
+});
+
+test("the reply contract allows one necessary question only when the surgery is unknown", () => {
+  const decision = decideConversationAction({
+    text: "Quanto custa a cirurgia?",
+    plan: {
+      ...standardPlan,
+      reason: "price_initial_information",
+    },
+  });
+
+  assert.equal(decision.replyContract.maxQuestions, 1);
+  assert.equal(decision.replyContract.maxLinks, 0);
+});
+
+test("a price word inherited from the availability template does not block the scheduling question", () => {
+  const decision = decideConversationAction({
+    text:
+      "Olá, li sobre valores de lifting facial e gostaria de consultar os horários para uma avaliação com a Dra. Amanda.",
+    plan: {
+      ...standardPlan,
+      reason: "known_procedure",
+      procedure: "lifting_facial",
+      priceMentionIsTemplateContext: true,
+    },
+  });
+
+  assert.deepEqual(decision.replyContract.unresolvedIntents, ["scheduling"]);
+  assert.equal(decision.replyContract.maxQuestions, 1);
+  assert.equal(decision.replyContract.allowCta, true);
+});
+
+test("photo and scheduling contexts receive different response limits", () => {
+  const photo = decideConversationAction({
+    text: "",
+    messageType: "image",
+    plan: {
+      route: "human_review",
+      reason: "unsupported_or_empty_message",
+      automaticAllowed: false,
+    },
+  });
+  const scheduling = decideConversationAction({
+    text: "Quero agendar uma avaliação",
+    plan: standardPlan,
+  });
+
+  assert.equal(photo.replyContract.requirePhotoDistanceLimit, true);
+  assert.equal(photo.replyContract.maxQuestions, 0);
+  assert.equal(scheduling.replyContract.allowCta, true);
+  assert.equal(scheduling.replyContract.maxQuestions, 1);
+});

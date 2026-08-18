@@ -438,3 +438,121 @@ test("a team holding reply requires a real pending request", () => {
     "conversation_action_blocks_reply",
   );
 });
+
+test("semantic validation blocks unsafe medical, commercial and contextual claims", () => {
+  const cases = [
+    ["Sou uma assistente virtual da clínica.", "automation_identity_disclosure"],
+    ["Vou confirmar essa informação com a equipe.", "generic_holding_reply"],
+    ["O valor da consulta será abatido da cirurgia.", "consultation_credit_claim"],
+    ["A nota permite abatimento no Imposto de Renda.", "tax_benefit_claim"],
+    ["O reembolso integral é garantido pelo plano.", "reimbursement_promise"],
+    ["Parcelamos em 10x sem juros.", "unapproved_payment_specifics"],
+    ["A cirurgia custa R$ 30 mil.", "unapproved_monetary_amount"],
+    ["Sua consulta está confirmada para amanhã.", "unverified_appointment_confirmation"],
+    ["Pela sua foto, predomina flacidez e a melhor opção é o lifting.", "remote_diagnosis_or_indication"],
+    ["O resultado é garantido e não deixa cicatriz.", "medical_or_result_promise"],
+    ["Você quer saber indicação, recuperação ou valores?", "menu_like_continuation"],
+  ];
+
+  for (const [body, reason] of cases) {
+    const result = validateOutboundReply({
+      body,
+      currentText: "Pode me orientar?",
+      conversationAction: respond,
+    });
+    assert.equal(result.allowed, false, body);
+    assert.equal(result.reason, reason, body);
+  }
+});
+
+test("a specific pending fact remains eligible for the human-review acknowledgement", () => {
+  const result = validateOutboundReply({
+    body:
+      "Sobre o tempo exato de atuação da Dra. Amanda, vou confirmar essa informação com a equipe para te responder com precisão.",
+    currentText: "Há quantos anos a Dra. Amanda atua?",
+    conversationAction: {
+      action: CONVERSATION_ACTIONS.WAIT_TEAM,
+      allowHoldingReply: true,
+      unresolvedRequest: true,
+      replyContract: {
+        maxQuestions: 0,
+        maxLinks: 0,
+        allowCta: false,
+        allowAppointmentConfirmation: false,
+      },
+    },
+  });
+
+  assert.equal(result.allowed, true);
+});
+
+test("the reply contract enforces question, link and CTA limits", () => {
+  const contractAction = {
+    ...respond,
+    replyContract: {
+      maxQuestions: 0,
+      maxLinks: 0,
+      allowCta: false,
+      allowAppointmentConfirmation: false,
+    },
+  };
+  const cases = [
+    ["O valor é definido após a avaliação. Qual cirurgia você pesquisa?", "too_many_questions_for_context"],
+    ["Veja https://draamandaschroeder.com.br/lifting-facial/", "too_many_links_for_context"],
+    ["A avaliação é individual. Se quiser, posso te ajudar.", "cta_not_allowed_for_context"],
+  ];
+
+  for (const [body, reason] of cases) {
+    const result = validateOutboundReply({
+      body,
+      currentText: "Quanto custa o lifting?",
+      conversationAction: contractAction,
+    });
+    assert.equal(result.allowed, false, body);
+    assert.equal(result.reason, reason, body);
+  }
+});
+
+test("a photo reply must combine empathy, options and the distance limit", () => {
+  const photoAction = {
+    ...respond,
+    replyContract: {
+      maxQuestions: 0,
+      maxLinks: 0,
+      allowCta: false,
+      allowAppointmentConfirmation: false,
+      requirePhotoDistanceLimit: true,
+    },
+  };
+  const incomplete = validateOutboundReply({
+    body: "Obrigada por enviar a foto. Há boas opções.",
+    currentText: "Enviei uma foto.",
+    conversationAction: photoAction,
+  });
+  const complete = validateOutboundReply({
+    body: "Obrigada por confiar em nós e compartilhar a foto. Há boas opções que podem ajudar, mas uma foto e uma avaliação à distância não permitem definir com segurança o melhor caminho.",
+    currentText: "Enviei uma foto.",
+    conversationAction: photoAction,
+  });
+
+  assert.equal(incomplete.reason, "incomplete_photo_safety_reply");
+  assert.equal(complete.allowed, true);
+});
+
+test("a verified booking path can send the single appointment confirmation", () => {
+  const result = validateOutboundReply({
+    body: "Sua consulta está confirmada para 22 de agosto, às 14h.",
+    currentText: "Escolha do horário 22/08/2026 14:00",
+    conversationAction: {
+      ...respond,
+      replyContract: {
+        maxQuestions: 0,
+        maxLinks: 0,
+        allowCta: false,
+        allowAppointmentConfirmation: true,
+      },
+    },
+  });
+
+  assert.equal(result.allowed, true);
+});

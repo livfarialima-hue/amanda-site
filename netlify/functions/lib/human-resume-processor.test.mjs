@@ -268,7 +268,8 @@ test("a requested next-morning continuation resumes with the actual context", as
   assert.equal(result.reason, "scheduled_morning_resume");
   assert.equal(deps.patientMessages.length, 1);
   assert.match(deps.patientMessages[0].body, /^Bom dia, Lia!/);
-  assert.match(deps.patientMessages[0].body, /papada e valores/i);
+  assert.match(deps.patientMessages[0].body, /valor de lifting cervical/i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /predomina|menu/i);
   assert.equal(deps.alerts.length, 0);
 });
 
@@ -306,7 +307,7 @@ test("the initial price information is sent after the human-resume window withou
   );
   assert.match(deps.patientMessages[0].body, /é natural querer saber o valor antes de decidir/i);
   assert.match(deps.patientMessages[0].body, /confirma o valor exato após a avaliação/i);
-  assert.match(deps.patientMessages[0].body, /o que seria mais útil entender sobre o lifting/i);
+  assert.equal((deps.patientMessages[0].body.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(deps.patientMessages[0].body, /o que mais te incomoda/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /técnica|complexidade|materiais|https?:\/\//i);
   assert.equal(deps.alerts.length, 0);
@@ -354,7 +355,7 @@ test("another surgical price still waits for human review with a complete sugges
   assert.equal(deps.alerts.length, 1);
   assert.match(deps.alerts[0].messageText, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.match(deps.alerts[0].messageText, /segurança, naturalidade/);
-  assert.match(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
+  assert.doesNotMatch(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
 });
 
 test("direct lifting price resume includes the specific composition guide with the range", async () => {
@@ -441,7 +442,7 @@ test("the approved lifting price may continue directly at night", async () => {
   assert.equal(deps.alerts.length, 0);
 });
 
-test("low confidence sends one holding message and one alert", async () => {
+test("low confidence alerts silently when no contextual holding can be written", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
     status: "completed",
@@ -462,12 +463,9 @@ test("low confidence sends one holding message and one alert", async () => {
   });
 
   assert.equal(result.status, "waiting_human");
-  assert.equal(result.holdingSent, true);
-  assert.equal(deps.patientMessages.length, 1);
-  assert.equal(
-    deps.patientMessages[0].body,
-    HUMAN_RESUME_HOLDING_MESSAGE,
-  );
+  assert.equal(result.holdingSent, false);
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(HUMAN_RESUME_HOLDING_MESSAGE, "");
   assert.equal(deps.alerts.length, 1);
   assert.equal(
     deps.completions[0].options.controlStatus,

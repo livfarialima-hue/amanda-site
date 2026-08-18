@@ -173,22 +173,10 @@ export function buildRelationshipAlertMessage({
 
   if (!isKnownPatientRelationship(relationship)) return original;
 
-  const firstName =
-    limitText(patientName || relationship.patientName, 120)
-      .split(/\s+/)[0] || "";
-  const greeting = firstName ? `Oi, ${firstName}!` : "Oi!";
-  const suggestion = relationship.state === "active_postop"
-    ? `${greeting} Recebi sua mensagem e já vou direcioná-la à equipe para acompanharmos você com o cuidado necessário.`
-    : `${greeting} Que bom falar com você novamente. Recebi sua mensagem e vou alinhar esse ponto com a equipe para seguirmos com o seu atendimento por aqui.`;
-
-  return [
-    prependRelationshipAlertContext({
-      messageText: original,
-      relationship,
-    }),
-    "Sugestão para copiar após conferir:",
-    suggestion,
-  ].join("\n\n");
+  return prependRelationshipAlertContext({
+    messageText: original,
+    relationship,
+  });
 }
 
 export function prependRelationshipAlertContext({

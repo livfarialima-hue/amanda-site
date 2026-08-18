@@ -892,6 +892,7 @@ export function planAutomation({
       professional: "amanda",
       procedure: procedure.key,
       automaticAllowed: true,
+      priceMentionIsTemplateContext,
     };
   }
 

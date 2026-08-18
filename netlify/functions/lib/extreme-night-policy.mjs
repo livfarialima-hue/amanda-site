@@ -88,7 +88,7 @@ function topicDescription({ procedure, currentText, messageType }) {
   if (/agenda|agendar|horario|disponibilidade|marcar/.test(text)) {
     return "o agendamento da avaliação";
   }
-  return label || "seu atendimento";
+  return label;
 }
 
 function greeting(patientName, period = "Olá") {
@@ -158,7 +158,9 @@ export function buildExtremeNightAcknowledgement({
     return `${opening} Obrigada por confiar em nós e compartilhar a foto. Há boas opções que podem ajudar, mas uma avaliação à distância não permite definir com segurança o melhor caminho. Como já é madrugada, retomaremos por aqui pela manhã.`;
   }
 
-  return `${opening} Anotei sua mensagem sobre ${topic}. Como já é madrugada, retomaremos por aqui pela manhã.`;
+  return topic
+    ? `${opening} Anotei sua mensagem sobre ${topic}. Como já é madrugada, retomaremos por aqui pela manhã.`
+    : "";
 }
 
 export function buildMorningResumeOpening({
@@ -188,19 +190,19 @@ export function buildMorningResumeOpening({
       text,
     );
 
-  if (asksConsultationPrice && /papada/.test(text)) {
-    return `${opening} Como combinamos, retomando suas dúvidas: a consulta com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Sobre o procedimento para papada, a Dra. precisa avaliar se predomina gordura, flacidez de pele ou ambos; depois disso, a equipe prepara o orçamento individual. Quer que eu te explique como funciona essa avaliação?`;
-  }
   if (asksConsultationPrice) {
-    return `${opening} Como combinamos, retomando pela manhã: a consulta com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Nela, a Dra. examina sua queixa e explica as opções com segurança. Quer que eu também explique como funciona a avaliação?`;
+    return `${opening} Como combinamos, retomando pela manhã: a consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal.`;
   }
-  if (/papada/.test(text) && /valor|preco|orcamento/.test(text)) {
-    return `${opening} Como combinamos, estou retomando sua conversa sobre papada e valores. Para eu começar pelo ponto certo: sua dúvida principal é sobre o valor da consulta ou sobre o orçamento do procedimento?`;
+  if (/valor|preco|orcamento/.test(text) && label) {
+    return `${opening} Como combinamos, retomando sua dúvida sobre o valor de ${label}: cada cirurgia é planejada individualmente, e a Dra. Amanda confirma o valor exato após a avaliação.`;
   }
-  if (label) {
-    return `${opening} Como combinamos, estou retomando nossa conversa sobre ${label}. Você prefere começar por indicação, recuperação ou valores?`;
+  if (/valor|preco|orcamento/.test(text)) {
+    return `${opening} Como combinamos, retomando sua dúvida sobre valores: você está pesquisando qual cirurgia?`;
   }
-  return `${opening} Como combinamos, estou retomando sua mensagem sobre ${topic}. Qual ponto você prefere esclarecer primeiro?`;
+  if (/recuper|pos operator|afast|trabalho|inchaco/.test(text) && label) {
+    return `${opening} Como combinamos, retomando sua dúvida sobre a recuperação de ${label}: o tempo varia conforme o planejamento individual, e a orientação aplicável ao seu caso é definida na avaliação.`;
+  }
+  return "";
 }
 
 export function buildContextualHumanSuggestion({
@@ -217,29 +219,25 @@ export function buildContextualHumanSuggestion({
     return `${opening} Li sua mensagem e quero priorizar sua segurança. Se os sintomas forem intensos, estiverem piorando rapidamente ou você se sentir em risco, procure atendimento médico de urgência. Sua mensagem também será revisada pela equipe.`;
   }
   if (/foto|imagem/.test(text)) {
-    return `${opening} Obrigada por compartilhar a foto. Há boas opções que podem ajudar, mas não é possível definir indicação ou diagnóstico com segurança somente à distância. Me conta qual ponto mais te incomoda e há quanto tempo você percebe isso?`;
+    return `${opening} Obrigada por confiar em nós e compartilhar a foto — sei que este é um momento pessoal. Há boas opções que podem ajudar a melhorar sua queixa, mas uma foto e uma avaliação à distância não permitem examinar tudo o que importa nem definir com segurança o melhor caminho.`;
   }
   if (/valor da consulta|consulta.*(?:valor|preco)|quanto.*consulta/.test(text)) {
-    return `${opening} A consulta com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Nela, a Dra. examina sua queixa e explica as opções com segurança. Você prefere verificar horários pela manhã ou à tarde?`;
-  }
-  if (/papada/.test(text) && /valor|preco|orcamento/.test(text)) {
-    return `${opening} Vi que sua dúvida é sobre papada e valores. A Dra. Amanda precisa avaliar se predomina gordura, flacidez de pele ou ambos para indicar a melhor opção e definir o orçamento. Sua dúvida agora é sobre o valor da consulta ou da cirurgia?`;
+    return `${opening} A consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal.`;
   }
   if (/valor|preco|quanto custa|orcamento|parcel/.test(text)) {
-    const subject = label ? ` de ${label}` : " do procedimento";
-    return `${opening} Vi sua dúvida sobre valores${subject}. O valor exato depende da avaliação e do planejamento individual. Para eu te orientar pelo caminho certo, você quer saber sobre a consulta ou sobre o orçamento cirúrgico?`;
+    if (label) {
+      return `${opening} Vi sua dúvida sobre o valor de ${label}. Como cada cirurgia é planejada individualmente, a Dra. Amanda confirma o valor exato após a avaliação.`;
+    }
+    return `${opening} Vi sua dúvida sobre valores. Você está pesquisando qual cirurgia?`;
   }
   if (/agenda|agendar|horario|disponibilidade|marcar/.test(text)) {
     return `${opening} Vi que você quer organizar uma avaliação com a Dra. Amanda. Quais dias costumam funcionar melhor e você prefere manhã ou tarde?`;
   }
   if (/recuper|afast|trabalho|inchaco/.test(text)) {
     const subject = label ? ` de ${label}` : " do procedimento";
-    return `${opening} Vi sua dúvida sobre a recuperação${subject}. O tempo varia conforme a indicação e o planejamento individual. Existe alguma data, viagem ou compromisso que você precise considerar?`;
+    return `${opening} Vi sua dúvida sobre a recuperação${subject}. O tempo varia conforme o planejamento individual, e a orientação aplicável ao seu caso é definida na avaliação.`;
   }
-  if (label) {
-    return `${opening} Vi sua mensagem sobre ${label}. Para retomar pelo ponto mais útil, você prefere entender indicação, recuperação ou valores?`;
-  }
-  return `${opening} Li sua mensagem e quero retomar pelo ponto certo. Qual informação você precisa esclarecer agora?`;
+  return "";
 }
 
 export function buildExtremeNightEmailAlert({
@@ -271,7 +269,9 @@ export function buildExtremeNightEmailAlert({
       ? "A paciente já recebeu uma confirmação curta de recebimento. Não enviar outra mensagem durante a madrugada."
       : "Nenhuma mensagem foi enviada porque a paciente pediu para continuar pela manhã.",
     "Ação humana: revisar o contexto completo e retomar após o início do atendimento.",
-    "Sugestão para copiar pela manhã:",
-    suggestedReply,
+    suggestedReply
+      ? "Sugestão contextual para copiar após revisar:"
+      : "SEM SUGESTÃO PRONTA: o contexto não permitiu identificar com segurança a informação pendente.",
+    suggestedReply || "Revise a conversa completa e redija uma resposta específica antes de enviar.",
   ].join("\n");
 }

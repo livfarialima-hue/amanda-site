@@ -442,6 +442,6 @@ test("overnight handoff is limited to price and scheduling", () => {
   );
   assert.match(
     buildOvernightHandoffMessage("scheduling_or_confirmation"),
-    /retornamos por aqui amanhã pela manhã/,
+    /retoma por aqui amanhã pela manhã/,
   );
 });

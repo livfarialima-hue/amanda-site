@@ -115,7 +115,13 @@ export function shouldSendOvernightHandoff(reason) {
   return OVERNIGHT_HANDOFF_REASONS.has(String(reason || ""));
 }
 
-export function buildOvernightHandoffMessage(reason) {
+export function buildOvernightHandoffMessage(
+  reason,
+  { text = "", procedure = "" } = {},
+) {
+  const procedureLabel = String(procedure || "")
+    .replaceAll("_", " ")
+    .trim();
   if (
     [
       "surgical_price_review",
@@ -126,14 +132,21 @@ export function buildOvernightHandoffMessage(reason) {
     ]
       .includes(String(reason || ""))
   ) {
-    return "Recebi sua pergunta sobre valores. Para te passar a informação correta, vou confirmar com a equipe e retornamos por aqui amanhã pela manhã.";
+    const pendingTopic = /parcel|quantas?\s+vezes/i.test(text)
+      ? "a quantidade de parcelas disponível"
+      : /desconto|[àa]\s+vista/i.test(text)
+        ? "a condição atual de desconto à vista"
+        : procedureLabel
+          ? `a informação de valor para ${procedureLabel}`
+          : "a informação de valor do procedimento";
+    return `Anotei sua pergunta sobre ${pendingTopic}. A equipe confere esse ponto e retoma por aqui amanhã pela manhã.`;
   }
 
   if (String(reason || "") === "scheduling_or_confirmation") {
-    return "Recebi sua mensagem sobre o agendamento. Vou confirmar essa informação com a equipe e retornamos por aqui amanhã pela manhã.";
+    return "Anotei seu pedido de horário para a avaliação. A equipe confere a disponibilidade e retoma por aqui amanhã pela manhã.";
   }
 
-  return "Recebi sua mensagem. Para te passar essa informação com segurança, vou confirmar com a equipe e retornamos por aqui amanhã pela manhã.";
+  return "";
 }
 
 function hasSchedulingContext(recentConversation) {
@@ -350,4 +363,4 @@ export function classifyHumanResume({
 }
 
 export const HUMAN_RESUME_HOLDING_MESSAGE =
-  "Recebi sua mensagem e vou confirmar essa informação com a equipe para te responder com segurança.";
+  "";

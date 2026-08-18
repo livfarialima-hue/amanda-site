@@ -989,6 +989,7 @@ test("standard Google lifting message treats values as template context", () => 
   assert.equal(plan.reason, "known_procedure");
   assert.equal(plan.procedure, "lifting_facial");
   assert.equal(plan.automaticAllowed, true);
+  assert.equal(plan.priceMentionIsTemplateContext, true);
 });
 
 test("an explicit price question added to the standard availability template is preserved", () => {

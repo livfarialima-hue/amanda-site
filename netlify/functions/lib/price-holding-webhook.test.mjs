@@ -147,7 +147,7 @@ test("a first lifting price question receives the approved initial information w
     );
     assert.match(patientRequest.text.body, /é natural querer saber o valor antes de decidir/i);
     assert.match(patientRequest.text.body, /confirma o valor exato após a avaliação/i);
-    assert.match(patientRequest.text.body, /o que seria mais útil entender sobre o lifting/i);
+    assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
     assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
     assert.doesNotMatch(patientRequest.text.body, /(?:informar|passar).{0,20}(?:média|faixa)/i);

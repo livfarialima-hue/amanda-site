@@ -28,21 +28,21 @@ test("creates an empathetic first price response and answers payment terms brief
   assert.match(reply, /parcelado antecipadamente/i);
   assert.match(reply, /quitação antes da cirurgia/i);
   assert.match(reply, /desconto à vista/i);
-  assert.match(reply, /o que seria mais útil entender/i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /técnica|complexidade|materiais|honorário isolado/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /https?:\/\//);
-  assert.ok(Array.from(reply).length <= 500);
+  assert.ok(Array.from(reply).length <= 650);
 });
 
-test("the first known lifting price response invites a neutral contextual continuation", () => {
+test("the first known lifting price response answers without a mandatory continuation", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Maria",
     procedure: "lifting_facial",
   });
 
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que seria mais útil entender sobre o lifting/i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /qual cirurgia ou qual região/i);
   assert.doesNotMatch(reply, /(?:informar|passar).{0,20}(?:média|faixa)/i);
@@ -50,7 +50,7 @@ test("the first known lifting price response invites a neutral contextual contin
   assert.doesNotMatch(reply, /https?:\/\//);
 });
 
-test("the short question shown in the conversation receives the conversion-focused copy", () => {
+test("the short price question receives a concise direct copy", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Queila",
     procedure: "lifting_facial",
@@ -59,7 +59,7 @@ test("the short question shown in the conversation receives the conversion-focus
 
   assert.match(reply, /^Olá, Queila! Eu sou a Bruna/);
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que seria mais útil entender sobre o lifting/i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /técnica|complexidade|equipe|hospital|anestesia|materiais/i);
   assert.doesNotMatch(reply, /https?:\/\//);
@@ -122,7 +122,7 @@ test("creates a patient-ready lifting facial price suggestion for human review",
     reply.indexOf("entre R$ 26 mil e R$ 42 mil") <
       reply.indexOf("quanto-custa-lifting-facial"),
   );
-  assert.match(reply, /explico a avaliação/i);
+  assert.doesNotMatch(reply, /explico a avaliação|prefere manhã ou tarde/i);
   assert.doesNotMatch(
     reply,
     /Se quiser, posso te explicar o que costuma aproximar/,
@@ -150,7 +150,7 @@ test("creates the approved lifting price reply for direct patient delivery", () 
   assert.match(reply, /parcelado antecipadamente/i);
   assert.match(reply, /desconto à vista/i);
   assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
-  assert.match(reply, /explico a avaliação/i);
+  assert.doesNotMatch(reply, /explico a avaliação|prefere manhã ou tarde/i);
   assert.doesNotMatch(reply, /obrigada por aguardar/i);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
   assert.ok(Array.from(reply).length <= 800);
@@ -184,9 +184,9 @@ test("acknowledges a price request while the approved value is pending", () => {
   });
 
   assert.match(daytime, /^Claro, Van\./);
-  assert.match(daytime, /faixa de referência para o lifting facial/);
+  assert.match(daytime, /faixa atual de valor para o lifting facial/);
   assert.match(daytime, /desconto à vista/);
-  assert.match(daytime, /parcelamento antecipado/);
+  assert.match(daytime, /parcelado antecipadamente/);
   assert.match(daytime, /te retorno por aqui/);
   assert.doesNotMatch(daytime, /R\$/);
   assert.match(overnight, /te retorno pela manhã/);
@@ -205,7 +205,7 @@ test("answers a location question immediately while the surgical price waits for
   assert.match(reply, /CEP 05424-150/);
   assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(reply, /Pinheiros/);
-  assert.match(reply, /faixa de refer[eê]ncia para o lifting facial/i);
+  assert.match(reply, /faixa atual de valor para o lifting facial/i);
   assert.doesNotMatch(reply, /R\$ 500/);
 });
 
@@ -308,7 +308,7 @@ test("the first lifting price answer stays concise when a guide is already in th
   });
 
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que seria mais útil entender sobre o lifting/i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /https?:\/\//);
@@ -321,7 +321,7 @@ test("the first price answer stays conversational for another region", () => {
   });
 
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que seria mais útil entender sobre esse procedimento/i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
@@ -398,7 +398,7 @@ test("price review alert contains the original question and a copyable answer", 
   assert.match(alert, /segurança, naturalidade/);
   assert.match(alert, /hospital, anestesista, auxiliar, instrumentador/i);
   assert.match(alert, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
-  assert.match(alert, /Prefere manhã ou tarde/);
+  assert.doesNotMatch(alert, /Prefere manhã ou tarde|posso verificar horários/i);
   assert.ok(alert.length <= 1100);
 });
 

@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-18.1",
-  "promptVersion": "bruna-concierge-2026-08-18.1",
+  "bundleVersion": "2026-08-18.2",
+  "promptVersion": "bruna-concierge-2026-08-18.2",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-18.1",
+  "knowledgeSnapshot": "kb-2026-08-18.2",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -13,7 +13,7 @@
   "automaticKnowledgeRisk": "low",
   "humanConfirmationRequiredForAppointments": true,
   "release": {
-    "status": "published",
+    "status": "prepared",
     "functionalCommit": "2310b820dedfa608fa130015a535e3884e34f6e5",
     "lastObservedProductionCommit": "59ce6710aa71dc0bcc73d307187eacaffe3e362f",
     "functionalDeployId": "6a841c6173dcba000867c1af",
@@ -30,6 +30,8 @@
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
-    "driveProjectionSha256": "54da41081d2ff49eff9a727863e12e24520f216e3733adc7f9733e270c37e5dc"
+    "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
+    "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+    "driveProjectionSha256": "6946cd619bd62fcb733207f606856ab505933a9b670197112cc4a4651bf3f941"
   }
 }

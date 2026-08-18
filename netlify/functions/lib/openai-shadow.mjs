@@ -103,6 +103,50 @@ function normalizeRecentConversation(value) {
     .filter((turn) => turn.text);
 }
 
+function normalizeReplyContract(value) {
+  if (!value || typeof value !== "object") return null;
+  const allowedKinds = new Set([
+    "none",
+    "direct_answer",
+    "specific_acknowledgement",
+  ]);
+  const allowedStages = new Set([
+    "discovery",
+    "research",
+    "consideration",
+    "scheduling",
+    "pause",
+    "active_care",
+    "closed",
+  ]);
+  const allowedRisks = new Set(["green", "yellow", "red"]);
+  const intents = Array.isArray(value.unresolvedIntents)
+    ? value.unresolvedIntents
+        .map((intent) => limitText(intent, 50))
+        .filter(Boolean)
+        .slice(0, 10)
+    : [];
+
+  return {
+    version: "reply-contract-v1",
+    stage: allowedStages.has(value.stage) ? value.stage : "consideration",
+    risk: allowedRisks.has(value.risk) ? value.risk : "red",
+    owner: limitText(value.owner, 30),
+    allowedResponseKind: allowedKinds.has(value.allowedResponseKind)
+      ? value.allowedResponseKind
+      : "none",
+    unresolvedIntents: intents,
+    silenceReason: limitText(value.silenceReason, 120),
+    maxQuestions: Math.max(0, Math.min(1, Number(value.maxQuestions) || 0)),
+    maxLinks: Math.max(0, Math.min(1, Number(value.maxLinks) || 0)),
+    allowCta: value.allowCta === true,
+    allowAppointmentConfirmation:
+      value.allowAppointmentConfirmation === true,
+    requirePhotoDistanceLimit:
+      value.requirePhotoDistanceLimit === true,
+  };
+}
+
 export function applyKnownProfileNameGuard(
   decision,
   patientProfileName = "",
@@ -423,6 +467,7 @@ export async function runOpenAIShadow(
     referralContext,
     patientRelationship,
     learningContext,
+    replyContract,
     priorInteractionKnown = false,
     deterministicUrgent = false,
   },
@@ -454,6 +499,7 @@ export async function runOpenAIShadow(
   const normalizedLearningContext = normalizeKnowledgeContext(
     learningContext,
   );
+  const normalizedReplyContract = normalizeReplyContract(replyContract);
   const explicitResourceRequest =
     /\b(?:site|link|material|casos?|antes\s+e\s+depois|resultados?)\b/i.test(
       String(text || ""),
@@ -505,6 +551,7 @@ export async function runOpenAIShadow(
           approvedKnowledge: normalizedLearningContext.candidates,
           pendingUnknownQuestion:
             normalizedLearningContext.pendingQuestion,
+          replyContract: normalizedReplyContract,
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),

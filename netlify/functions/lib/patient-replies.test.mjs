@@ -135,7 +135,7 @@ test("asks the name instead of addressing a long concatenated profile identifier
   assert.doesNotMatch(reply, /O que você gostaria de entender primeiro/i);
 });
 
-test("sends the official Instagram and lifting page without asking the team", () => {
+test("sends only the requested official Instagram without adding a site or CTA", () => {
   const reply = buildOfficialChannelsReply({
     patientName: "MARINA",
     procedure: "lifting_facial",
@@ -148,13 +148,11 @@ test("sends the official Instagram and lifting page without asking the team", ()
     reply,
     /https:\/\/www\.instagram\.com\/dra\.amanda_plastica\//,
   );
-  assert.match(
-    reply,
-    /https:\/\/draamandaschroeder\.com\.br\/lifting-facial\//,
-  );
+  assert.doesNotMatch(reply, /https:\/\/draamandaschroeder\.com\.br/);
   assert.match(reply, /apenas um código interno/i);
   assert.match(reply, /Não é um termo médico/i);
   assert.doesNotMatch(reply, /vou confirmar|com a equipe|segurança/i);
+  assert.doesNotMatch(reply, /se quiser|me conte/i);
 });
 
 test("explains the campaign reference directly and uses natural name casing", () => {
@@ -186,7 +184,7 @@ test("builds a natural routing greeting without internal codes", () => {
   assert.doesNotMatch(reply, /ORG-DIR-01/);
 });
 
-test("answers the approved lifting hospital fact and asks for an unclear name", () => {
+test("answers the approved lifting hospital fact without diverting to a name question", () => {
   const cervicalReply = buildPatientReply({
     replyCode: "AMANDA-HOSPITAL-01",
     patientName: "",
@@ -201,7 +199,7 @@ test("answers the approved lifting hospital fact and asks for an unclear name", 
   assert.match(cervicalReply, /^Olá! Eu sou a Bruna/);
   assert.match(cervicalReply, /o lifting cervical é uma cirurgia realizada em hospital/i);
   assert.match(cervicalReply, /anestesista e equipe cirúrgica/i);
-  assert.match(cervicalReply, /Como posso te chamar\?/i);
+  assert.doesNotMatch(cervicalReply, /Como posso te chamar\?/i);
   assert.match(facialReply, /^Olá, Marina! Eu sou a Bruna/);
   assert.match(facialReply, /o lifting facial é uma cirurgia realizada em hospital/i);
   assert.doesNotMatch(facialReply, /Como posso te chamar/i);
@@ -216,7 +214,7 @@ test("price fallback stays concise and does not invite an unapproved range", () 
 
   assert.match(reply, /preço antes de decidir/);
   assert.match(reply, /confirma o valor exato depois da avaliação/);
-  assert.match(reply, /o que seria mais útil entender sobre blefaroplastia/i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /faixa|R\$ 18 mil|R\$ 26 mil|consulta presencial/i);
   assert.doesNotMatch(reply, /investimento/);
 });
@@ -238,7 +236,7 @@ test("explains the consultation gradually without anticipating price or a link",
   assert.match(reply, /conversa sobre o que você percebe no rosto/);
   assert.match(reply, /face e o pescoço em repouso e em movimento/);
   assert.match(reply, /Nada precisa ser decidido nesse momento/);
-  assert.match(reply, /contorno da mandíbula/);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /R\$ 500/);
   assert.doesNotMatch(reply, /abatido se a cirurgia/);
   assert.doesNotMatch(reply, /https:\/\/draamandaschroeder\.com\.br/);
@@ -262,30 +260,19 @@ test("answers the consultation value when the patient asks for access and price"
   assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
 });
 
-test("uses a low-friction exploration question for the main facial procedures", () => {
-  const cases = [
-    [
-      "lifting_cervical",
-      /contorno do pescoço, a papada, a linha da mandíbula ou a recuperação/,
-    ],
-    [
-      "blefaroplastia",
-      /pálpebras superiores, as bolsas abaixo dos olhos, a recuperação ou como funciona a avaliação/,
-    ],
-    [
-      "otoplastia",
-      /para um adulto, uma criança ou um adolescente/,
-    ],
-  ];
+test("explains the consultation without adding a mandatory exploration menu", () => {
+  const cases = ["lifting_cervical", "blefaroplastia", "otoplastia"];
 
-  for (const [procedure, expectedQuestion] of cases) {
+  for (const procedure of cases) {
     const reply = buildConsultationInformationReply({
       patientName: "Maria",
       procedure,
       introduceBruna: false,
     });
 
-    assert.match(reply, expectedQuestion, procedure);
+    assert.match(reply, /A avaliação começa com uma conversa/i, procedure);
+    assert.equal((reply.match(/\?/g) || []).length, 0, procedure);
+    assert.doesNotMatch(reply, /indicação, recuperação ou valores/i, procedure);
     assert.doesNotMatch(reply, /o que mais incomoda/i, procedure);
     assert.doesNotMatch(reply, /R\$ 500/, procedure);
     assert.doesNotMatch(

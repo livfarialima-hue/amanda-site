@@ -191,12 +191,43 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
   return decision;
 }
 
-export function buildUnknownHoldingReply({ patientName, introduceBruna } = {}) {
+export function buildUnknownHoldingReply({
+  patientName,
+  introduceBruna,
+  currentText = "",
+  reviewReason = "",
+  procedure = "",
+} = {}) {
   const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
     ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
     : "";
+  const combined = `${currentText} ${reviewReason}`;
+  const procedureLabel = String(procedure || "")
+    .replaceAll("_", " ")
+    .trim();
+  let pendingTopic = "";
 
-  return `${greeting}${introduction} Vou confirmar essa informação com a equipe para te responder com segurança. Assim que tivermos a orientação, seguimos por aqui.`;
+  if (/parcel|desconto|juros|condi[cç][aã]o\s+de\s+pagamento/i.test(combined)) {
+    pendingTopic = "as condições de pagamento que você perguntou";
+  } else if (/valor|pre[cç]o|or[cç]amento|faixa/i.test(combined)) {
+    pendingTopic = procedureLabel
+      ? `a informação de valor para ${procedureLabel}`
+      : "a informação de valor do procedimento";
+  } else if (/agenda|agendar|hor[aá]rio|disponibilidade|marcar/i.test(combined)) {
+    pendingTopic = "a disponibilidade para a avaliação";
+  } else if (/conv[eê]nio|plano\s+de\s+sa[uú]de|reembolso/i.test(combined)) {
+    pendingTopic = "a regra do plano de saúde que você perguntou";
+  } else if (/document|termo|exame|laudo|nota\s+fiscal/i.test(combined)) {
+    pendingTopic = "o documento que você mencionou";
+  } else if (/recuper|afastamento|cicatriz|anestesia|hospital/i.test(combined)) {
+    pendingTopic = procedureLabel
+      ? `sua dúvida sobre ${procedureLabel}`
+      : "sua dúvida sobre o procedimento";
+  }
+
+  return pendingTopic
+    ? `${greeting}${introduction} Vou confirmar ${pendingTopic} com a equipe antes de te responder por aqui.`
+    : "";
 }

@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   checkLatestInboundReply,
+  DEFAULT_AI_DEBOUNCE_MS,
   DEFAULT_DEBOUNCE_MS,
+  DEFAULT_DETERMINISTIC_DEBOUNCE_MS,
   getLatestInboundReplyMarker,
   markLatestInboundForReply,
   shouldRecoverExactDuplicateRetry,
@@ -62,11 +64,50 @@ test("only the latest inbound event may answer after the quiet window", async ()
 
   assert.equal(firstResult.shouldProcess, false);
   assert.equal(secondResult.shouldProcess, true);
-  assert.equal(secondResult.delayMs, 8_000);
+  assert.equal(secondResult.delayMs, 6_000);
 });
 
-test("default quiet window is eight seconds", () => {
-  assert.equal(DEFAULT_DEBOUNCE_MS, 8_000);
+test("default quiet windows are fast and bounded by reply type", () => {
+  assert.equal(DEFAULT_DEBOUNCE_MS, 3_000);
+  assert.equal(DEFAULT_DETERMINISTIC_DEBOUNCE_MS, 3_000);
+  assert.equal(DEFAULT_AI_DEBOUNCE_MS, 5_000);
+});
+
+test("AI replies wait five seconds while deterministic replies wait three", async () => {
+  const blobs = fakeBlobs();
+  const now = Date.parse("2026-08-14T10:35:00-03:00");
+  await markLatestInboundForReply(
+    { phone: "+5511900000000", eventId: "typed-delay" },
+    { ...blobs, now },
+  );
+  const waits = [];
+  const options = {
+    ...blobs,
+    now,
+    waitImpl: async (milliseconds) => waits.push(milliseconds),
+  };
+  const deterministic = await waitForLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "typed-delay",
+      markerStatus: "completed",
+      replyKind: "deterministic",
+    },
+    options,
+  );
+  const ai = await waitForLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "typed-delay",
+      markerStatus: "completed",
+      replyKind: "ai",
+    },
+    options,
+  );
+
+  assert.equal(deterministic.delayMs, 3_000);
+  assert.equal(ai.delayMs, 5_000);
+  assert.deepEqual(waits, [3_000, 5_000]);
 });
 
 test("slow lead routing consumes the quiet window instead of adding another delay", async () => {

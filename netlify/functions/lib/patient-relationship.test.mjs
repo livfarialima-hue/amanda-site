@@ -135,7 +135,7 @@ test("relationship alert is contextual but does not expose clinical history", ()
   });
 
   assert.match(result, /acompanhamento pós-operatório/i);
-  assert.match(result, /Sugestão para copiar/i);
+  assert.doesNotMatch(result, /Sugestão para copiar|alinhar esse ponto/i);
   assert.doesNotMatch(result, /diagnóstico sensível/i);
 });
 
