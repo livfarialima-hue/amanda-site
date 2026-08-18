@@ -8,7 +8,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 18 de agosto de 2026 — contrato contextual e proteção sem atrito no WhatsApp
 
-- **Status:** implementação local da versão `2026-08-18.2` concluída para testes; publicação e recibo final são registrados somente depois da verificação em produção.
+- **Status:** versão `2026-08-18.2` publicada e verificada em produção no commit funcional `c789914`, deploy Netlify `6a84534923558b0008961936`; **792/792 testes**, build de 178 arquivos, 12 funções, 5 agendamentos e endpoint canônico HTTP 200. A projeção do Drive foi substituída no mesmo ID e conferida byte a byte. Nenhuma mensagem real de paciente foi enviada na validação. Rollback: commit `cdfa79e`, deploy `6a843bde9799d000087778a5`.
 - **Mudança:** cada turno passa a ter contrato de resposta com responsável, silêncio e limites; preço conhecido, consulta, canal oficial, convênio e foto não recebem pergunta ou CTA obrigatório. Mensagens genéricas de espera deixam de ser sugestão copiável, e o validador final bloqueia confirmação indevida de agenda, diagnóstico remoto, promessa, valor ou condição não aprovada e excesso de menus, perguntas ou links.
 - **Evidência:** amostra desidentificada de 20 exportações recentes e 484 turnos da pasta restrita do Drive mostrou perguntas antes da resposta, blocos extensos, interpretação quase clínica, links e CTA acumulados, retomadas após pausa e confirmações fora de contexto. As respostas existentes foram tratadas como material crítico, não como padrão de qualidade.
 - **Hipótese:** respostas diretas e mais rápidas, somadas a silêncio correto e handoff específico, aumentam resolução e conversão qualificada sem elevar inconveniência, risco clínico ou competição com a equipe humana.

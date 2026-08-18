@@ -13,15 +13,15 @@
   "automaticKnowledgeRisk": "low",
   "humanConfirmationRequiredForAppointments": true,
   "release": {
-    "status": "prepared",
-    "functionalCommit": "2310b820dedfa608fa130015a535e3884e34f6e5",
-    "lastObservedProductionCommit": "59ce6710aa71dc0bcc73d307187eacaffe3e362f",
-    "functionalDeployId": "6a841c6173dcba000867c1af",
-    "lastObservedProductionDeployId": "6a841dffcd88a0000883b541",
-    "rollbackCommit": "86aa61e9d43b3d0d961b8ae8538b9c14616d4cbb",
-    "rollbackDeployId": "6a841429bcd1c6000730464c",
-    "publishedAt": "2026-08-18T05:55:00-03:00",
-    "lastVerifiedAt": "2026-08-18T06:29:05-03:00"
+    "status": "published",
+    "functionalCommit": "c789914991f409c81320090872ac50f4ebc86136",
+    "lastObservedProductionCommit": "c789914991f409c81320090872ac50f4ebc86136",
+    "functionalDeployId": "6a84534923558b0008961936",
+    "lastObservedProductionDeployId": "6a84534923558b0008961936",
+    "rollbackCommit": "cdfa79e7578a73eb93f997aa3a8ff210b66f1fa8",
+    "rollbackDeployId": "6a843bde9799d000087778a5",
+    "publishedAt": "2026-08-18T09:43:39-03:00",
+    "lastVerifiedAt": "2026-08-18T09:45:31-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
