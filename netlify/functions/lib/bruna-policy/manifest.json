@@ -11,5 +11,25 @@
   "googleAdsLeadTab": "Google Ads - Conversões",
   "nonAdsLeadTab": "Leads Dr. Daniel",
   "automaticKnowledgeRisk": "low",
-  "humanConfirmationRequiredForAppointments": true
+  "humanConfirmationRequiredForAppointments": true,
+  "release": {
+    "status": "published",
+    "functionalCommit": "2310b820dedfa608fa130015a535e3884e34f6e5",
+    "lastObservedProductionCommit": "59ce6710aa71dc0bcc73d307187eacaffe3e362f",
+    "functionalDeployId": "6a841c6173dcba000867c1af",
+    "lastObservedProductionDeployId": "6a841dffcd88a0000883b541",
+    "rollbackCommit": "86aa61e9d43b3d0d961b8ae8538b9c14616d4cbb",
+    "rollbackDeployId": "6a841429bcd1c6000730464c",
+    "publishedAt": "2026-08-18T05:55:00-03:00",
+    "lastVerifiedAt": "2026-08-18T06:29:05-03:00"
+  },
+  "documentation": {
+    "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
+    "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
+    "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
+    "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
+    "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
+    "driveProjectionSha256": "54da41081d2ff49eff9a727863e12e24520f216e3733adc7f9733e270c37e5dc"
+  }
 }
