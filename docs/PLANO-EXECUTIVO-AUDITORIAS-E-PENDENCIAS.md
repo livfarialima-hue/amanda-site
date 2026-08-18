@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 21:00, America/Sao_Paulo
+**Atualizado em:** 18 de agosto de 2026, 05:53, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -53,16 +53,20 @@ O responsável técnico deve:
 - fotos de rosto ou corpo recebem acolhimento da confiança e da vulnerabilidade, reconhecimento de que há boas opções que podem ajudar e limite carinhoso da avaliação à distância, sem interpretar a imagem, diagnosticar ou prometer resultado;
 - localização foi padronizada para R. Pais Leme, 215, cj. 710, CEP 05424-150, com o link aprovado do Google Maps; cirurgia pode ser parcelada antecipadamente, com quitação antes do procedimento, e tem desconto à vista, enquanto número de parcelas, juros e percentual continuam humanos;
 - na primeira pergunta sobre preço cirúrgico, a Bruna responde de forma breve e empática, sem lista técnica, artigo ou faixa e sem perguntar o que mais incomoda no corpo; a política de faixa após insistência explícita em lifting/minilifting e as travas de revisão humana foram preservadas;
+- depois de orçamento, confirmação, despedida ou outra mensagem conclusiva enviada pela equipe, agradecimentos, concordâncias, reações e encerramentos ficam sem resposta automática; a Bruna não abre um novo assunto, não confirma agendamento sem validação humana e não transforma o cumprimento do atendente em pergunta pendente da paciente;
+- entre 00:00 e 05:59, a primeira mensagem não urgente e acionável recebe no máximo um reconhecimento curto e contextual, com retomada pela manhã; mensagens seguintes apenas atualizam a fila, e sinais explícitos de que está tarde, de que a conversa ficou para amanhã ou de que a pessoa vai dormir encerram imediatamente qualquer envio noturno;
+- no horário noturno extremo são bloqueados textos longos, faixas de preço, links, CTA, oferta de horário e handoff genérico; a retomada começa a partir das 08:00, responde ao pedido concreto e respeita o que a equipe já informou; urgências mantêm o fluxo seguro próprio;
+- o e-mail interno da fila matinal contém uma sugestão específica e pronta para revisão humana, não a frase genérica enviada ao paciente; se a pessoa já perguntou o preço da consulta, o rascunho responde R$ 500 diretamente e separa consulta de orçamento cirúrgico;
 - o site funciona como apoio contextual: responder primeiro, usar no máximo o recurso mais específico quando ele acrescentar utilidade e não devolver a página de origem;
 - duas aberturas reais de anúncio, às 19:25 e 19:58, não apareceram nas mensagens, eventos, classificação, CRM, tomada humana ou recuperação da planilha canônica; os registros exatos da YCloud continuam indisponíveis sem acesso autenticado ao console do provedor;
 - o consumo mensal observado no Netlify estava em aproximadamente 95 mil de 125 mil requisições, abaixo do limite; a cota não explica essas duas ausências;
 - a abertura determinística de anúncio agora evita a consulta de conhecimento e reutiliza a relação de paciente já devolvida por `append_lead`, removendo até duas chamadas redundantes de planilha sem retirar a janela de oito segundos, a regra de mensagem mais recente nem as travas `neverBotReply` e `fail-closed`;
 - entradas inválidas ou não reconhecidas passam a registrar motivo operacional seguro (`configuration_missing`, `invalid_signature`, `invalid_json`, `unsupported_event_type`, `invalid_inbound_phone` ou `missing_inbound_event_id`) sem expor telefone, mensagem ou ID bruto;
-- código ativo no commit `48645e2`, deploy Netlify `6a8412401c7cf900084e20fe`, com **736/736 testes aprovados**, 12 funções publicadas, redirect e headers sem erro; rollback imediato para deploy `6a83a0984b04f30008d1cd5f`, commit `44f6ea7`;
+- código ativo no commit `2310b82`, deploy Netlify `6a841c6173dcba000867c1af`, com **757/757 testes aprovados**, 12 funções publicadas, redirect e headers sem erro; rollback imediato para deploy `6a841429bcd1c6000730464c`, commit `86aa61e`;
 - fonte ativa única no Drive: https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view; auditoria comparativa fechada: https://drive.google.com/file/d/1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB/view; os três planos de origem foram preservados e rotulados em `99 — Histórico operacional`;
 - nenhuma mensagem de teste nem sonda de paciente foi disparada por nós; na observação passiva, a sequência real seguinte chegou às 20:57, sofreu `timeout`/`busy_retry` no roteamento, foi recuperada por retentativas, suprimiu corretamente a abertura Meta mais antiga e concluiu a resposta à mensagem mais recente com entrega HTTP 200 às 20:58:30;
 - essa evidência confirma o funcionamento do webhook, da recuperação e da entrega da Bruna após a publicação; ainda não existe garantia absoluta para eventos que a YCloud deixe de entregar ao Netlify, hipótese que exige o log bruto do provedor;
-- rollback imediato: deploy `6a83817252a5620008759409`, commit `7348755`.
+- rollback imediato do estado atual: deploy `6a841429bcd1c6000730464c`, commit `86aa61e`.
 
 ### Auditoria 1 — Google Ads
 
