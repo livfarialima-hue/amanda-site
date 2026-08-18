@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 17 de agosto de 2026, 20:56, America/Sao_Paulo
+**Atualizado em:** 17 de agosto de 2026, 21:00, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -54,7 +54,8 @@ O responsável técnico deve:
 - a abertura determinística de anúncio agora evita a consulta de conhecimento e reutiliza a relação de paciente já devolvida por `append_lead`, removendo até duas chamadas redundantes de planilha sem retirar a janela de oito segundos, a regra de mensagem mais recente nem as travas `neverBotReply` e `fail-closed`;
 - entradas inválidas ou não reconhecidas passam a registrar motivo operacional seguro (`configuration_missing`, `invalid_signature`, `invalid_json`, `unsupported_event_type`, `invalid_inbound_phone` ou `missing_inbound_event_id`) sem expor telefone, mensagem ou ID bruto;
 - código ativo no commit `25bfb5a`, deploy Netlify `6a839ee556112000081461b4`, com **734/734 testes aprovados**, 12 funções publicadas e `ycloud-webhook` ativo no endpoint canônico; o deploy intermediário `41aa4ad` falhou no build por corrupção de transferência e nunca entrou em produção;
-- não foi enviada mensagem real nem sonda de paciente no pós-voo atual; o próximo evento que alcançar o Netlify terá o motivo de entrada registrado, mas a entrega da YCloud não pode ser garantida sem o log bruto do provedor;
+- nenhuma mensagem de teste nem sonda de paciente foi disparada por nós; na observação passiva, a sequência real seguinte chegou às 20:57, sofreu `timeout`/`busy_retry` no roteamento, foi recuperada por retentativas, suprimiu corretamente a abertura Meta mais antiga e concluiu a resposta à mensagem mais recente com entrega HTTP 200 às 20:58:30;
+- essa evidência confirma o funcionamento do webhook, da recuperação e da entrega da Bruna após a publicação; ainda não existe garantia absoluta para eventos que a YCloud deixe de entregar ao Netlify, hipótese que exige o log bruto do provedor;
 - rollback imediato: deploy `6a83817252a5620008759409`, commit `7348755`.
 
 ### Auditoria 1 — Google Ads
