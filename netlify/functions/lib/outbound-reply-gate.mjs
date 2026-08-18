@@ -3,6 +3,7 @@ import { getStore } from "@netlify/blobs";
 import {
   CONVERSATION_ACTIONS,
   isExplicitDeferralWithoutRequest,
+  isReplyToHumanContextWithoutStandaloneRequest,
   isSimpleConversationClosing,
 } from "./conversation-action-controller.mjs";
 import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
@@ -107,13 +108,6 @@ function lastConversationTurn(recentConversation) {
   return turns.length ? turns[turns.length - 1] : null;
 }
 
-function isHumanClinicTurn(turn) {
-  return (
-    turn?.role === "assistant" &&
-    ["human", "equipe_humana"].includes(String(turn?.source || ""))
-  );
-}
-
 function hasClinicQuestion(turn) {
   const text = normalizedText(turn?.text);
   return (
@@ -214,8 +208,11 @@ export function validateOutboundReply({
   }
 
   if (
-    isSimpleConversationClosing(currentText) ||
-    isExplicitDeferralWithoutRequest(currentText)
+    (
+      isSimpleConversationClosing(currentText) ||
+      isExplicitDeferralWithoutRequest(currentText)
+    ) &&
+    conversationAction?.followupPolicy !== "morning_resume"
   ) {
     return {
       allowed: false,
@@ -223,14 +220,27 @@ export function validateOutboundReply({
     };
   }
 
-  const previousTurn = lastConversationTurn(recentConversation);
+  const previousTurn = (Array.isArray(recentConversation)
+    ? recentConversation
+    : [])
+    .slice()
+    .reverse()
+    .find(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "human", "equipe_humana"].includes(
+          String(turn?.source || ""),
+        ),
+    ) || lastConversationTurn(recentConversation);
   const contextualPatientAnswer =
     previousTurn?.role === "assistant" &&
     isContextualPatientAnswer(currentText, previousTurn);
 
   if (
-    contextualPatientAnswer &&
-    isHumanClinicTurn(previousTurn)
+    isReplyToHumanContextWithoutStandaloneRequest(
+      currentText,
+      recentConversation,
+    )
   ) {
     return {
       allowed: false,

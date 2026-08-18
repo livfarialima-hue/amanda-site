@@ -110,6 +110,7 @@ function normalizedPending(value) {
         ? value.referralContext
         : null,
     recentConversation: normalizedHistory(value.recentConversation),
+    morningResume: value.morningResume === true,
     receivedAt: limitedText(value.receivedAt, 40),
     dueAt,
     claimToken: limitedText(value.claimToken, 120),
@@ -256,6 +257,7 @@ export async function scheduleHumanResume(
       procedure: limitedText(input.procedure, 120),
       referralContext: input.referralContext || null,
       recentConversation: normalizedHistory(input.recentConversation),
+      morningResume: input.morningResume === true,
       receivedAt: new Date(receivedAt).toISOString(),
       dueAt,
       attempts: 0,

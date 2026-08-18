@@ -302,6 +302,8 @@ test("every review alert includes one copyable suggested reply", () => {
 
   assert.match(enriched, /Sugestão para copiar após conferir:/);
   assert.match(enriched, /Olá, Maria!/);
+  assert.match(enriched, /Qual informação você precisa esclarecer agora/);
+  assert.doesNotMatch(enriched, /Vou conferir essa informação com a equipe/);
 
   const alreadyPrepared = ensureReviewAlertSuggestion({
     ...INPUT,
@@ -313,6 +315,18 @@ test("every review alert includes one copyable suggested reply", () => {
     alreadyPrepared.match(/Sugestão para copiar/g)?.length,
     1,
   );
+});
+
+test("a papada and value alert suggests a precise human continuation", () => {
+  const enriched = ensureReviewAlertSuggestion({
+    ...INPUT,
+    patientName: "Lia Teste",
+    messageText: "Papada, valor?",
+  });
+
+  assert.match(enriched, /papada e valores/i);
+  assert.match(enriched, /consulta ou da cirurgia/i);
+  assert.doesNotMatch(enriched, /retorno por aqui assim que possível/i);
 });
 
 test("urgent alerts receive a safety-aware suggested reply", () => {

@@ -4,6 +4,8 @@ import {
   CONVERSATION_ACTIONS,
   decideConversationAction,
   hasUnresolvedPatientRequest,
+  isExplicitNightPause,
+  isReplyToHumanContextWithoutStandaloneRequest,
 } from "./conversation-action-controller.mjs";
 
 const standardPlan = {
@@ -117,6 +119,91 @@ test("an answer to the clinic question remains a response obligation", () => {
       ],
     ),
     true,
+  );
+});
+
+test("a request to continue tomorrow is a stop signal even with a confirmation tag", () => {
+  const text = "Já está muito tarde. Amanhã a gente conversa, melhor né?";
+  assert.equal(isExplicitNightPause(text), true);
+
+  const decision = decideConversationAction({
+    text,
+    plan: standardPlan,
+  });
+  assert.equal(
+    decision.action,
+    CONVERSATION_ACTIONS.WAIT_PATIENT,
+  );
+  assert.equal(decision.allowAutomaticReply, false);
+  assert.equal(decision.allowHoldingReply, false);
+});
+
+test("a separate question after the night pause remains visible", () => {
+  const text =
+    "Já está muito tarde. Amanhã a gente conversa. Qual é o valor da consulta?";
+  assert.equal(isExplicitNightPause(text), false);
+
+  const decision = decideConversationAction({
+    text,
+    plan: standardPlan,
+  });
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+});
+
+test("a polite acknowledgment after a human surgical quote closes the exchange", () => {
+  const text = "Boa noite! Ok, vamos vê lá. Obg, ótimo descanso";
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text:
+        "Boa noite, tudo bem? O orçamento cirúrgico foi enviado por e-mail. Se tiver alguma dúvida, pode nos enviar por aqui. Uma boa noite!",
+    },
+    {
+      role: "patient",
+      source: "paciente",
+      text,
+    },
+  ];
+
+  assert.equal(
+    hasUnresolvedPatientRequest(text, recentConversation),
+    false,
+  );
+  assert.equal(
+    isReplyToHumanContextWithoutStandaloneRequest(
+      text,
+      recentConversation,
+    ),
+    true,
+  );
+
+  const decision = decideConversationAction({
+    text,
+    plan: standardPlan,
+    recentConversation,
+    humanTakeoverActive: true,
+  });
+  assert.equal(decision.action, CONVERSATION_ACTIONS.CLOSED);
+  assert.equal(decision.allowAutomaticReply, false);
+  assert.equal(decision.scheduleHumanResume, false);
+});
+
+test("a real new question after a human update remains actionable", () => {
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "O orçamento foi enviado por e-mail. Uma boa noite!",
+    },
+  ];
+
+  assert.equal(
+    isReplyToHumanContextWithoutStandaloneRequest(
+      "Obrigada. Qual é o prazo para decidir?",
+      recentConversation,
+    ),
+    false,
   );
 });
 

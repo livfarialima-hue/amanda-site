@@ -366,3 +366,29 @@ test("queues a non-text message so it can alert the human later", async () => {
   assert.equal(claim.jobs.length, 1);
   assert.equal(claim.jobs[0].messageType, "image");
 });
+
+test("preserves a scheduled morning-resume marker", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const now = Date.parse("2026-08-18T04:10:00.000Z");
+  const delayMs = 7 * 60 * 60 * 1_000;
+
+  const scheduled = await scheduleHumanResume(
+    sampleInput({
+      eventId: "night-patient-1",
+      text: "Papada, valor?",
+      morningResume: true,
+      receivedAt: new Date(now).toISOString(),
+    }),
+    { getStoreImpl, now, delayMs },
+  );
+  const claim = await claimDueHumanResumes({
+    getStoreImpl,
+    now: now + delayMs,
+  });
+
+  assert.equal(scheduled.status, "scheduled");
+  assert.equal(claim.jobs.length, 1);
+  assert.equal(claim.jobs[0].morningResume, true);
+  assert.equal(claim.jobs[0].text, "Papada, valor?");
+});

@@ -10,6 +10,7 @@ import {
   hasConcreteResponseExpectation,
   HUMAN_RESUME_HOLDING_MESSAGE,
   isHumanResumeServiceOpen,
+  nextHumanResumeServiceTime,
   shouldSendOvernightHandoff,
 } from "./lib/human-resume-policy.mjs";
 import {
@@ -34,7 +35,13 @@ import {
 import {
   CONVERSATION_ACTIONS,
   decideConversationAction,
+  isExplicitNightPause,
 } from "./lib/conversation-action-controller.mjs";
+import {
+  buildMorningResumeOpening,
+  isExtremeNight,
+  isExtremeNightAcknowledgement,
+} from "./lib/extreme-night-policy.mjs";
 import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
@@ -64,6 +71,7 @@ export function hasNewerOutboundReply(job, turns) {
 
   return (Array.isArray(turns) ? turns : []).some((turn) => (
     turn?.role === "assistant" &&
+    !isExtremeNightAcknowledgement(turn?.text) &&
     timeMs(turn.at) > patientAt
   ));
 }
@@ -306,6 +314,18 @@ export async function processHumanResumeJob(
     return { status: "automation_inactive" };
   }
 
+  if (isExtremeNight(now, env)) {
+    const reschedule =
+      dependencies.rescheduleHumanResumeImpl ||
+      rescheduleHumanResume;
+    const dueAt = nextHumanResumeServiceTime(now, env);
+    await reschedule(job, dueAt);
+    return {
+      status: "deferred_to_morning",
+      dueAt: new Date(dueAt).toISOString(),
+    };
+  }
+
   const readCurrentConversation =
     dependencies.readConversationTurnsImpl ||
     readConversationTurns;
@@ -352,6 +372,54 @@ export async function processHumanResumeJob(
     schedulingRequest:
       policy.reason === "scheduling_or_confirmation",
   });
+
+  if (
+    job.morningResume === true &&
+    ["no_action", "alert_only"].includes(policy.action) &&
+    isExplicitNightPause(job.text)
+  ) {
+    const reply = buildMorningResumeOpening({
+      patientName: job.patientName,
+      procedure: enrichedPlan.procedure || job.procedure,
+      currentText: job.text,
+      recentConversation: job.recentConversation,
+    });
+    const morningAction = {
+      action: CONVERSATION_ACTIONS.RESPOND,
+      allowHoldingReply: false,
+      followupPolicy: "morning_resume",
+    };
+    const sendResult = await sendPatientMessage(
+      job,
+      reply,
+      "morning-resume",
+      morningAction,
+      dependencies,
+    );
+
+    if (sendResult.status !== "completed") {
+      if (sendResult.status === "superseded") {
+        return { status: "superseded", reason: "newer_activity" };
+      }
+      await finish(job, "waiting_human", dependencies);
+      return {
+        status: "delivery_failed",
+        reason: sendResult.errorCode,
+      };
+    }
+
+    await recordBrunaTurn(
+      job,
+      reply,
+      "morning-resume-memory",
+      dependencies,
+    );
+    await finish(job, "bruna_resumed", dependencies);
+    return {
+      status: "bruna_resumed",
+      reason: "scheduled_morning_resume",
+    };
+  }
 
   if (policy.action === "no_action") {
     await finish(job, "human_active", dependencies);

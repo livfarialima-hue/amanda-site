@@ -94,6 +94,35 @@ test("does not reopen a conversation for a simple acknowledgment", () => {
   }
 });
 
+test("keeps the reported post-quote acknowledgment in human ownership", () => {
+  const text = "Boa noite! Ok, vamos vê lá. Obg, ótimo descanso";
+  const result = classifyHumanResume({
+    text,
+    messageType: "text",
+    preliminaryPlan: standardPlan("ai_safety_triage"),
+    enrichedPlan: standardPlan("ai_safety_triage"),
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text:
+          "Boa noite, tudo bem? O orçamento cirúrgico foi enviado por e-mail. Se tiver alguma dúvida, pode nos enviar por aqui. Uma boa noite!",
+      },
+      {
+        role: "patient",
+        source: "paciente",
+        text,
+      },
+    ],
+  });
+
+  assert.equal(result.action, "no_action");
+  assert.match(
+    result.reason,
+    /conversation_closing|human_context/,
+  );
+});
+
 test("does not send an overnight holding message after a negotiated appointment is accepted", () => {
   const recentConversation = [
     {

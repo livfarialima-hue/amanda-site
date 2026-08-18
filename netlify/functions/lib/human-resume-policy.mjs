@@ -6,6 +6,7 @@ import {
   decideConversationAction,
   hasUnresolvedPatientRequest,
   isExplicitDeferralWithoutRequest,
+  isReplyToHumanContextWithoutStandaloneRequest,
 } from "./conversation-action-controller.mjs";
 
 const SCHEDULING_CONTEXT_PATTERN =
@@ -97,9 +98,10 @@ export function nextHumanResumeServiceTime(
   env = process.env,
 ) {
   const step = 5 * 60 * 1_000;
+  const firstCandidate = Math.ceil((now + 1) / step) * step;
 
   for (
-    let candidate = now + step;
+    let candidate = firstCandidate;
     candidate <= now + 48 * 60 * 60 * 1_000;
     candidate += step
   ) {
@@ -282,6 +284,18 @@ export function classifyHumanResume({
     return {
       action: "sensitive",
       reason: "scheduling_or_confirmation",
+    };
+  }
+
+  if (
+    isReplyToHumanContextWithoutStandaloneRequest(
+      normalizedText,
+      recentConversation,
+    )
+  ) {
+    return {
+      action: "no_action",
+      reason: "patient_reply_belongs_to_human_context",
     };
   }
 

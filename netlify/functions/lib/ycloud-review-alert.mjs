@@ -5,7 +5,9 @@ import {
   releaseReviewAlertSlot,
 } from "./review-alert-throttle.mjs";
 import { writeOperationalLog } from "./operational-log.mjs";
-import { usableProfileFirstName } from "./profile-name.mjs";
+import {
+  buildContextualHumanSuggestion,
+} from "./extreme-night-policy.mjs";
 
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
@@ -55,11 +57,11 @@ export function ensureReviewAlertSuggestion({
     return limitText(original, MAX_ALERT_TEXT_LENGTH);
   }
 
-  const firstName = usableProfileFirstName(patientName);
-  const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
-  const reply = urgent
-    ? `${greeting} Recebemos sua mensagem e ela será revisada pela equipe. Se você estiver com sintomas intensos, piora rápida ou se sentir em risco, procure atendimento médico de urgência.`
-    : `${greeting} Recebi sua mensagem. Vou conferir essa informação com a equipe e retorno por aqui assim que possível.`;
+  const reply = buildContextualHumanSuggestion({
+    patientName,
+    messageText: original,
+    urgent,
+  });
   const suffix = [
     "Sugestão para copiar após conferir:",
     reply,

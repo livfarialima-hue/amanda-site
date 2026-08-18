@@ -67,6 +67,7 @@ import {
 } from "./lib/reply-debounce.mjs";
 import {
   isReviewAlertConfigured,
+  sendReviewAlertEmailCopy,
   sendYCloudReviewAlert,
 } from "./lib/ycloud-review-alert.mjs";
 import {
@@ -105,11 +106,19 @@ import {
 import {
   buildOvernightHandoffMessage,
   isHumanResumeServiceOpen,
+  nextHumanResumeServiceTime,
   shouldSendOvernightHandoff,
 } from "./lib/human-resume-policy.mjs";
 import {
   decideConversationAction,
+  isExplicitNightPause,
 } from "./lib/conversation-action-controller.mjs";
+import {
+  buildExtremeNightAcknowledgement,
+  buildExtremeNightEmailAlert,
+  hasExtremeNightAcknowledgement,
+  isExtremeNight,
+} from "./lib/extreme-night-policy.mjs";
 import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
@@ -1239,6 +1248,34 @@ async function completeReviewAlert(input) {
       httpStatus: null,
       errorCode: "request_failed",
     });
+  }
+}
+
+async function completeExtremeNightEmail(input) {
+  try {
+    const result = await sendReviewAlertEmailCopy(input);
+    writeOperationalLog({
+      source: "extreme_night_email_copy",
+      category: "review_alert_delivery",
+      reason: result.status || "unknown",
+      sourceId: input.eventId,
+      fields: {
+        status: result.status,
+        httpStatus: result.httpStatus || null,
+        errorCode: result.errorCode || null,
+        duplicate: result.duplicate === true,
+      },
+    });
+    return result;
+  } catch {
+    writeOperationalLog({
+      source: "extreme_night_email_copy",
+      category: "review_alert_delivery",
+      reason: "failed",
+      sourceId: input.eventId,
+      fields: { errorCode: "request_failed" },
+    });
+    return { status: "failed", errorCode: "request_failed" };
   }
 }
 
@@ -3651,8 +3688,43 @@ export async function handleYCloudWebhook(
     exactDuplicate: suppressExactDuplicate,
     schedulingRequest: appointmentReviewCandidate,
   });
+  const extremeNightActive = isExtremeNight(
+    contactAt,
+  );
+  const explicitNightPause = isExplicitNightPause(text);
+  const extremeNightActionable =
+    conversationAction.unresolvedRequest ||
+    conversationAction.allowAutomaticReply ||
+    conversationAction.allowHoldingReply ||
+    explicitNightPause ||
+    ["human_review", "appointment_review"].includes(
+      automationPlan.route,
+    );
+  const priorExtremeNightAcknowledgement =
+    hasExtremeNightAcknowledgement(
+      conversationHistory,
+      contactAt,
+    );
+  const extremeNightDeferral =
+    extremeNightActive &&
+    alertInput.urgent !== true &&
+    delivery.ok &&
+    !suppressExactDuplicate &&
+    automationMode === "active" &&
+    automationPlan.professional !== "daniel" &&
+    !blocksAutomatedPatientMessages(patientRelationship) &&
+    extremeNightActionable;
+  const shouldQueueExtremeNightAcknowledgement =
+    extremeNightDeferral &&
+    !humanTakeoverActive &&
+    !explicitNightPause &&
+    !priorExtremeNightAcknowledgement;
+  const shouldQueueExtremeNightEmail =
+    extremeNightDeferral &&
+    !priorExtremeNightAcknowledgement;
   const shouldQueueAppointmentReview =
     delivery.ok &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     conversationAction.allowAlert &&
@@ -3678,6 +3750,7 @@ export async function handleYCloudWebhook(
     automationPlan.automaticAllowed === true;
   const shouldQueueApprovedPriceReply =
     patientAutomationReady &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     automationMode === "active" &&
@@ -3685,6 +3758,7 @@ export async function handleYCloudWebhook(
     approvedPriceReplyCandidate;
   const shouldQueueReviewAlert =
     (delivery.ok || alertInput.urgent) &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     conversationAction.allowAlert &&
@@ -3693,6 +3767,7 @@ export async function handleYCloudWebhook(
     shouldSendReviewAlertForPlan(automationPlan);
   const shouldQueueImageAcknowledgement =
     delivery.ok &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     automationMode === "active" &&
@@ -3704,6 +3779,7 @@ export async function handleYCloudWebhook(
     isOutsideHumanServiceHours(contactAt);
   const shouldQueuePriceHolding =
     delivery.ok &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     conversationAction.allowHoldingReply &&
@@ -3716,6 +3792,7 @@ export async function handleYCloudWebhook(
   );
   const shouldQueueOvernightHandoff =
     delivery.ok &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     conversationAction.allowHoldingReply &&
@@ -3752,6 +3829,11 @@ export async function handleYCloudWebhook(
   let imageAcknowledgementQueued = false;
   let imageAcknowledgementSent = false;
   let imageAcknowledgementStatus = "not_queued";
+  let extremeNightAcknowledgementQueued = false;
+  let extremeNightAcknowledgementSent = false;
+  let extremeNightAcknowledgementStatus = "not_queued";
+  let extremeNightMorningResumeStatus = "not_scheduled";
+  let extremeNightEmailStatus = "not_queued";
 
   const patientCommitment =
     delivery.ok &&
@@ -3782,8 +3864,124 @@ export async function handleYCloudWebhook(
       : commitmentResult.errorCode;
   }
 
+  if (extremeNightDeferral) {
+    let morningConversation = conversationHistoryWithCurrent;
+    let acknowledgementBody = "";
+
+    if (shouldQueueExtremeNightAcknowledgement) {
+      extremeNightAcknowledgementQueued = true;
+      acknowledgementBody = buildExtremeNightAcknowledgement({
+        patientName: patientDisplayName,
+        procedure: automationPlan.procedure,
+        currentText: text,
+        messageType: normalizedMessageType,
+      });
+      const acknowledgementResult = await sendCurrentInboundReply({
+        from: String(message.to || ""),
+        to: phone,
+        eventId: `${String(eventId)}-extreme-night-acknowledgement`,
+        revisionEventId: String(eventId),
+        body: acknowledgementBody,
+        currentText: text || "A paciente enviou uma foto.",
+        recentConversation: conversationHistory,
+        conversationAction,
+        replyDebounceMarkerStatus,
+        patientRelationship,
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
+      });
+      extremeNightAcknowledgementSent =
+        acknowledgementResult.status === "completed";
+      extremeNightAcknowledgementStatus =
+        acknowledgementResult.status;
+      logPatientReplyResult(
+        `${String(eventId)}-extreme-night-acknowledgement`,
+        phone,
+        acknowledgementResult,
+      );
+
+      if (extremeNightAcknowledgementSent) {
+        const memoryResult = await appendConversationTurn({
+          phone,
+          role: "assistant",
+          text: acknowledgementBody,
+          eventId: `${String(eventId)}:extreme-night-acknowledgement`,
+          source: "bruna",
+        });
+        morningConversation = toOpenAIConversation(
+          memoryResult.historyAfter,
+        );
+      }
+    }
+
+    const receivedAtMs = new Date(contactAt || Date.now()).getTime();
+    const scheduleBase = Number.isFinite(receivedAtMs)
+      ? receivedAtMs
+      : Date.now();
+    const morningAt = nextHumanResumeServiceTime(
+      scheduleBase,
+      process.env,
+    );
+    const morningSchedule = await scheduleHumanResume(
+      {
+        phone,
+        from: String(message.to || ""),
+        eventId: String(eventId),
+        patientName: patientDisplayName,
+        text: text || "A paciente enviou uma foto.",
+        messageType: normalizedMessageType || "text",
+        platform: attribution.platform,
+        reference: attribution.reference,
+        referenceCategory: attribution.referenceCategory,
+        procedure: automationPlan.procedure,
+        referralContext,
+        recentConversation: morningConversation,
+        expectedHumanGeneration:
+          humanResumeControl?.generation || "",
+        receivedAt: new Date(scheduleBase).toISOString(),
+        morningResume: true,
+      },
+      {
+        now: scheduleBase,
+        delayMs: Math.max(1, morningAt - scheduleBase),
+      },
+    );
+    extremeNightMorningResumeStatus = morningSchedule.status;
+
+    if (shouldQueueExtremeNightEmail) {
+      const emailPromise = completeExtremeNightEmail({
+        eventId: `${String(eventId)}-extreme-night-morning`,
+        patientName: patientDisplayName,
+        patientPhone: phone,
+        messageText: buildExtremeNightEmailAlert({
+          patientName: patientDisplayName,
+          messageText:
+            text || "A paciente enviou uma foto.",
+          procedure: automationPlan.procedure,
+          messageType: normalizedMessageType,
+          recentConversation: conversationHistoryWithCurrent,
+          acknowledgementSent:
+            extremeNightAcknowledgementSent,
+        }),
+      });
+      extremeNightEmailStatus = "queued";
+      if (typeof context?.waitUntil === "function") {
+        try {
+          context.waitUntil(emailPromise);
+        } catch {
+          const emailResult = await emailPromise;
+          extremeNightEmailStatus = emailResult.status;
+        }
+      } else {
+        const emailResult = await emailPromise;
+        extremeNightEmailStatus = emailResult.status;
+      }
+    }
+  }
+
   if (
     delivery.ok &&
+    !extremeNightDeferral &&
     humanTakeoverActive &&
     automationMode === "active" &&
     !suppressExactDuplicate &&
@@ -3825,6 +4023,7 @@ export async function handleYCloudWebhook(
     humanResumeScheduleStatus = scheduleResult.status;
   } else if (
     delivery.ok &&
+    !extremeNightDeferral &&
     humanTakeoverActive &&
     automationMode === "active" &&
     !suppressExactDuplicate
@@ -3840,6 +4039,7 @@ export async function handleYCloudWebhook(
   if (
     professionalFactReview &&
     delivery.ok &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     automationMode === "active"
@@ -3881,6 +4081,7 @@ export async function handleYCloudWebhook(
   if (
     appointmentNeedsPreference &&
     patientAutomationReady &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     automationMode === "active" &&
@@ -4128,6 +4329,7 @@ export async function handleYCloudWebhook(
     conversationAction.allowAutomaticReply &&
     Boolean(patientReplyBody) &&
     delivery.ok &&
+    !extremeNightDeferral &&
     shouldSendAutomaticPatientReply({
       mode: automationMode,
       plan: automationPlan,
@@ -4205,6 +4407,7 @@ export async function handleYCloudWebhook(
       : { candidates: [], pendingQuestion: null };
   const shouldQueueOpenAIShadow =
     delivery.ok &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     automationMode === "shadow" &&
     String(message.type || "").toLowerCase() === "text" &&
@@ -4218,6 +4421,7 @@ export async function handleYCloudWebhook(
     !professionalFactReview;
   const shouldQueueOpenAIActive =
     patientAutomationReady &&
+    !extremeNightDeferral &&
     !humanTakeoverActive &&
     automationMode === "active" &&
     String(message.type || "").toLowerCase() === "text" &&
@@ -4434,6 +4638,8 @@ export async function handleYCloudWebhook(
     (!approvedPriceReplyQueued || terminalSendStatuses.has(approvedPriceReplyStatus)) &&
     (!overnightHandoffQueued || terminalSendStatuses.has(overnightHandoffStatus)) &&
     (!imageAcknowledgementQueued || terminalSendStatuses.has(imageAcknowledgementStatus)) &&
+    (!extremeNightAcknowledgementQueued || terminalSendStatuses.has(extremeNightAcknowledgementStatus)) &&
+    (!extremeNightDeferral || ["scheduled", "waiting_human"].includes(extremeNightMorningResumeStatus)) &&
     (!patientReplyQueued || terminalSendStatuses.has(patientReplyStatus));
   let recoveryStatus = recoveryRegistration.status;
   if (
@@ -4501,6 +4707,14 @@ export async function handleYCloudWebhook(
       imageAcknowledgementQueued,
       imageAcknowledgementSent,
       imageAcknowledgementStatus,
+      extremeNightActive,
+      extremeNightDeferral,
+      explicitNightPause,
+      extremeNightAcknowledgementQueued,
+      extremeNightAcknowledgementSent,
+      extremeNightAcknowledgementStatus,
+      extremeNightMorningResumeStatus,
+      extremeNightEmailStatus,
       overnightHandoffQueued,
       overnightHandoffSent,
       priceHoldingQueued,
@@ -4577,6 +4791,14 @@ export async function handleYCloudWebhook(
     imageAcknowledgementQueued,
     imageAcknowledgementSent,
     imageAcknowledgementStatus,
+    extremeNightActive,
+    extremeNightDeferral,
+    explicitNightPause,
+    extremeNightAcknowledgementQueued,
+    extremeNightAcknowledgementSent,
+    extremeNightAcknowledgementStatus,
+    extremeNightMorningResumeStatus,
+    extremeNightEmailStatus,
     patientReplyQueued,
     patientReplySent,
     overnightHandoffQueued,

@@ -1,0 +1,148 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import {
+  buildContextualHumanSuggestion,
+  buildExtremeNightAcknowledgement,
+  buildExtremeNightEmailAlert,
+  buildMorningResumeOpening,
+  hasExtremeNightAcknowledgement,
+  isExtremeNight,
+  isExtremeNightAcknowledgement,
+} from "./extreme-night-policy.mjs";
+
+const ENV = {
+  HUMAN_RESUME_TIME_ZONE: "America/Sao_Paulo",
+};
+
+test("the extreme-night window is exactly midnight through 5:59 in São Paulo", () => {
+  assert.equal(
+    isExtremeNight("2026-08-18T03:00:00.000Z", ENV),
+    true,
+  );
+  assert.equal(
+    isExtremeNight("2026-08-18T08:59:00.000Z", ENV),
+    true,
+  );
+  assert.equal(
+    isExtremeNight("2026-08-18T09:00:00.000Z", ENV),
+    false,
+  );
+  assert.equal(
+    isExtremeNight("2026-08-18T02:59:00.000Z", ENV),
+    false,
+  );
+  assert.equal(isExtremeNight("", ENV), false);
+});
+
+test("a cervical price inquiry receives one short contextual night receipt", () => {
+  const reply = buildExtremeNightAcknowledgement({
+    patientName: "Lia Teste",
+    procedure: "lifting_cervical",
+    currentText: "Papada, valor?",
+  });
+
+  assert.match(reply, /^Olá, Lia!/);
+  assert.match(reply, /valores de lifting cervical/i);
+  assert.match(reply, /já é madrugada/i);
+  assert.match(reply, /pela manhã/i);
+  assert.equal(Array.from(reply).length < 260, true);
+  assert.equal(isExtremeNightAcknowledgement(reply), true);
+  assert.equal(
+    hasExtremeNightAcknowledgement([
+      { role: "assistant", source: "bruna", text: reply },
+    ]),
+    true,
+  );
+});
+
+test("a nighttime photo keeps empathy and the limits of distance evaluation", () => {
+  const reply = buildExtremeNightAcknowledgement({
+    patientName: "Mariana",
+    messageType: "image",
+  });
+
+  assert.match(reply, /Obrigada por confiar em nós/i);
+  assert.match(reply, /Há boas opções/i);
+  assert.match(reply, /avaliação à distância/i);
+  assert.match(reply, /pela manhã/i);
+});
+
+test("the morning opening uses the actual papada and value context", () => {
+  const reply = buildMorningResumeOpening({
+    patientName: "Lia Teste",
+    procedure: "lifting_cervical",
+    currentText: "Amanhã conversamos, melhor né?",
+    recentConversation: [
+      { role: "patient", text: "Papada, valor?" },
+      { role: "patient", text: "Qual valor da consulta?" },
+    ],
+  });
+
+  assert.match(reply, /^Bom dia, Lia!/);
+  assert.match(reply, /consulta com a Dra\. Amanda custa R\$ 500/i);
+  assert.match(reply, /procedimento para papada/i);
+  assert.match(reply, /orçamento individual/i);
+});
+
+test("email fallback is actionable and never repeats the old generic placeholder", () => {
+  const suggestion = buildContextualHumanSuggestion({
+    patientName: "Lia Teste",
+    messageText: "Papada, valor?",
+    procedure: "lifting_cervical",
+  });
+  const alert = buildExtremeNightEmailAlert({
+    patientName: "Lia Teste",
+    messageText: "Papada, valor?",
+    procedure: "lifting_cervical",
+    acknowledgementSent: true,
+  });
+
+  assert.match(suggestion, /papada e valores/i);
+  assert.match(suggestion, /consulta ou da cirurgia/i);
+  assert.doesNotMatch(suggestion, /conferir essa informação/i);
+  assert.match(alert, /RETOMAR PELA MANHÃ/);
+  assert.match(alert, /Não enviar outra mensagem durante a madrugada/);
+  assert.match(alert, /Sugestão para copiar pela manhã/);
+});
+
+test("an explicit request to continue tomorrow produces a contextual morning draft", () => {
+  const alert = buildExtremeNightEmailAlert({
+    patientName: "Lia Teste",
+    messageText: "Já está muito tarde. Amanhã a gente conversa, melhor né?",
+    procedure: "lifting_cervical",
+    recentConversation: [
+      { role: "patient", text: "Papada, valor?" },
+      { role: "patient", text: "Qual valor da consulta?" },
+    ],
+    acknowledgementSent: false,
+  });
+
+  assert.match(alert, /Nenhuma mensagem foi enviada/);
+  assert.match(alert, /Bom dia, Lia!/);
+  assert.match(alert, /consulta com a Dra\. Amanda custa R\$ 500/i);
+  assert.match(alert, /procedimento para papada/i);
+  assert.doesNotMatch(alert, /conferir essa informação/i);
+});
+
+test("a receipt from another night does not suppress the current night", () => {
+  const reply = buildExtremeNightAcknowledgement({
+    patientName: "Lia Teste",
+    procedure: "lifting_cervical",
+    currentText: "Papada, valor?",
+  });
+
+  assert.equal(
+    hasExtremeNightAcknowledgement(
+      [
+        {
+          role: "assistant",
+          text: reply,
+          at: "2026-08-17T04:31:00.000Z",
+        },
+      ],
+      "2026-08-18T04:31:00.000Z",
+      ENV,
+    ),
+    false,
+  );
+});

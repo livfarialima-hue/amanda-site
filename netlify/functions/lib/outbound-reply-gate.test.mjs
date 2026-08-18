@@ -63,6 +63,29 @@ test("final validation blocks replies after closing or deferral", () => {
   }
 });
 
+test("an explicitly scheduled morning resume may continue a night deferral", () => {
+  const result = validateOutboundReply({
+    body:
+      "Bom dia, Lia! Como combinamos, estou retomando nossa conversa sobre lifting cervical.",
+    currentText: "Já está muito tarde. Amanhã a gente conversa, melhor né?",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text:
+          "Como já é madrugada, deixei seu atendimento organizado para retomarmos por aqui pela manhã.",
+      },
+    ],
+    conversationAction: {
+      action: CONVERSATION_ACTIONS.RESPOND,
+      allowHoldingReply: false,
+      followupPolicy: "morning_resume",
+    },
+  });
+
+  assert.equal(result.allowed, true);
+});
+
 test("final validation blocks a substantially repeated answer", () => {
   const result = validateOutboundReply({
     body:
@@ -162,6 +185,59 @@ test("final validation keeps the bot out of an answer to the human team", () => 
         source: "equipe_humana",
         text:
           "Bom dia, tudo bem? Sua consulta está marcada para hoje às 15h. Posso confirmar sua presença?",
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(
+    result.reason,
+    "patient_answer_belongs_to_human_context",
+  );
+});
+
+test("final validation blocks the reported post-quote intrusion even when history includes the patient turn", () => {
+  const currentText =
+    "Boa noite! Ok, vamos vê lá. Obg, ótimo descanso";
+  const result = validateOutboundReply({
+    body:
+      "Recebi sua mensagem sobre o agendamento. Vou confirmar essa informação com a equipe e retornamos por aqui amanhã pela manhã.",
+    currentText,
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text:
+          "Boa noite, tudo bem? O orçamento cirúrgico foi enviado por e-mail. Se tiver alguma dúvida, pode nos enviar por aqui. Uma boa noite!",
+      },
+      {
+        role: "patient",
+        source: "paciente",
+        text: currentText,
+      },
+    ],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "patient_closed_or_deferred");
+});
+
+test("final validation blocks a non-question answer owned by the human context", () => {
+  const result = validateOutboundReply({
+    body: "Obrigada pela confirmação. Vou dar continuidade por aqui.",
+    currentText: "Pescoço",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "A queixa é maior no rosto ou no pescoço?",
+      },
+      {
+        role: "patient",
+        source: "paciente",
+        text: "Pescoço",
       },
     ],
     conversationAction: respond,

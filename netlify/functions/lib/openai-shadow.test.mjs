@@ -1501,6 +1501,144 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
+test("active AI triage continues a low-risk aesthetic statement when conversation memory is unavailable", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  delete process.env.YCLOUD_ALERT_TEMPLATE_NAME;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+          opportunityId: "opp-ai-triage-continuation",
+          professional: "amanda",
+          routeStatus: "resolved_by_open_opportunity",
+          routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              procedure: "lifting_cervical",
+              suggestedReply:
+                "Entendo, Isabel. A flacidez do pescoço é uma das queixas avaliadas pela Dra. Amanda. O que você gostaria de perceber diferente nessa região?",
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "ai-triage-continuation-event",
+      type: "whatsapp.inbound_message.received",
+      whatsappInboundMessage: {
+        id: "ai-triage-continuation-message",
+        from: "+5511900000091",
+        to: PHONE,
+        type: "text",
+        customerProfile: { name: "Isabel Ribeiro" },
+        text: { body: "Eu tenho o pescoço flácido" },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.reviewAlertQueued, false);
+
+    const openAIRequest = requests.find(
+      (request) => request.url === "https://api.openai.com/v1/responses",
+    );
+    assert.ok(openAIRequest);
+    const openAIInput = JSON.parse(
+      JSON.parse(openAIRequest.options.body).input,
+    );
+    assert.equal(openAIInput.priorInteractionKnown, true);
+    assert.deepEqual(openAIInput.recentConversation, []);
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url === "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 1);
+    assert.equal(
+      JSON.parse(patientRequests[0].options.body).text.body,
+      "Entendo, Isabel. A flacidez do pescoço é uma das queixas avaliadas pela Dra. Amanda. O que você gostaria de perceber diferente nessa região?",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test("coded acquisition remains silent when Sheets cannot establish a route", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",

@@ -5,6 +5,7 @@ import { HUMAN_RESUME_HOLDING_MESSAGE } from "./human-resume-policy.mjs";
 
 const NOW = Date.parse("2026-07-28T15:30:00.000Z");
 const NIGHT_NOW = Date.parse("2026-07-29T00:31:00.000Z");
+const EXTREME_NIGHT_NOW = Date.parse("2026-07-29T04:31:00.000Z");
 const ACTIVE_ENV = {
   WHATSAPP_AUTOMATION_MODE: "active",
   HUMAN_RESUME_TIME_ZONE: "America/Sao_Paulo",
@@ -201,6 +202,74 @@ test("a safe active conversation continues at night", async () => {
     deps.patientMessages[0].body,
     /consulta serve para entender/,
   );
+});
+
+test("a due reply between midnight and 6am is deferred to morning", async () => {
+  const deps = dependencies();
+  const reschedules = [];
+  deps.rescheduleHumanResumeImpl = async (input, dueAt) => {
+    reschedules.push({ input, dueAt });
+    return { status: "rescheduled" };
+  };
+  deps.runOpenAIShadowImpl = async () => {
+    throw new Error("AI must not run in the extreme-night window");
+  };
+
+  const result = await processHumanResumeJob(job(), {
+    env: ACTIVE_ENV,
+    now: EXTREME_NIGHT_NOW,
+    ...deps,
+  });
+
+  assert.equal(result.status, "deferred_to_morning");
+  assert.equal(reschedules.length, 1);
+  assert.equal(
+    new Date(reschedules[0].dueAt).toISOString(),
+    "2026-07-29T11:00:00.000Z",
+  );
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+});
+
+test("a requested next-morning continuation resumes with the actual context", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => {
+    throw new Error("the scheduled morning opening is deterministic");
+  };
+  const result = await processHumanResumeJob(
+    job({
+      morningResume: true,
+      patientName: "Lia Teste",
+      procedure: "lifting_cervical",
+      text: "Já está muito tarde. Amanhã a gente conversa, melhor né?",
+      recentConversation: [
+        { role: "patient", source: "paciente", text: "Papada, valor?" },
+        {
+          role: "assistant",
+          source: "bruna",
+          text:
+            "Olá, Lia! Anotei sua mensagem sobre valores de lifting cervical. Como já é madrugada, retomaremos por aqui pela manhã.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Já está muito tarde. Amanhã a gente conversa, melhor né?",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(result.reason, "scheduled_morning_resume");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(deps.patientMessages[0].body, /^Bom dia, Lia!/);
+  assert.match(deps.patientMessages[0].body, /papada e valores/i);
+  assert.equal(deps.alerts.length, 0);
 });
 
 test("the initial price information is sent after the human-resume window without an alert", async () => {
@@ -532,6 +601,45 @@ test("an acknowledgment after a human booking confirmation stays silent", async 
     {
       env: ACTIVE_ENV,
       now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "no_action");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "human_active",
+  );
+});
+
+test("a post-quote farewell never becomes an appointment message", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => {
+    throw new Error("AI must not run for a post-quote farewell");
+  };
+  const text = "Boa noite! Ok, vamos vê lá. Obg, ótimo descanso";
+  const result = await processHumanResumeJob(
+    job({
+      text,
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text:
+            "Boa noite, tudo bem? O orçamento cirúrgico foi enviado por e-mail. Se tiver alguma dúvida, pode nos enviar por aqui. Uma boa noite!",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text,
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NIGHT_NOW,
       ...deps,
     },
   );
