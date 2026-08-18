@@ -2,7 +2,8 @@
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-08-17.1  
+**Versão:** 2026-08-17.1
+
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
 ## 1. Objetivo
@@ -259,7 +260,8 @@ Após insistência, preparar sugestão interna pela tabela aprovada e exigir con
 
 Resposta oficial:
 
-> A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150.  
+> A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150.
+>
 > Google Maps: https://maps.app.goo.gl/yDFBmbcn5oDpHSM46
 
 Usar quando perguntarem, houver barreira de deslocamento ou o endereço for necessário para a etapa atual. O nome é Clínica LIV Faria Lima, mas nunca afirmar que ela fica na própria Av. Faria Lima.
