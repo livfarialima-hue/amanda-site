@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 18 de agosto de 2026, 07:18, America/Sao_Paulo
+**Atualizado em:** 18 de agosto de 2026, 08:01, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -69,7 +69,7 @@ O responsável técnico deve:
 - rollback imediato do estado atual: deploy `6a841429bcd1c6000730464c`, commit `86aa61e`.
 - governança de versões consolidada em 18/08: commit `1c3f556`, deploy Netlify `6a842ffa9399100008f5a827`, PR `#6`, com **760/760 testes aprovados**; o release adicionou gate de consistência, reconciliação segura do checkout, recibo único no manifesto, normalização de fim de linha e bloqueio de duplicatas/pacotes transitórios, sem alterar respostas ou regras da Bruna;
 - o índice único do Drive foi atualizado no mesmo arquivo `1nOzoVrL1TwK-oFLyOC_uO5gy01Cf14If`, sem criar cópia; a projeção ativa da Bruna permaneceu idêntica ao manual local, com três fontes históricas, uma auditoria fechada e a pasta de mudanças em andamento vazia;
-- o checkout principal deste computador permanece em `SYNC_PENDING` porque o ambiente de execução negou escrita em `.git/FETCH_HEAD`; produção, GitHub e Drive estão verificados, e a reconciliação local deve ser concluída fora desta sandbox com `npm.cmd run ops:reconcile` seguido de `npm.cmd run ops:check`.
+- a reconciliação do checkout principal foi concluída em 18/08 após a liberação de escrita em `.git`: HEAD local e remoto ficaram idênticos ao commit de produção `4eb5fb5`, deploy Netlify `6a843b14f04aa60008570fdf`, PR `#8`; o gate final retornou `OPS_CHECK_STATUS=OK` e **760/760 testes aprovados**. O release normalizou exclusivamente CRLF para LF em 13 arquivos legados, com diff funcional vazio e sem alterar respostas, regras ou integrações da Bruna.
 
 ### Auditoria 1 — Google Ads
 
