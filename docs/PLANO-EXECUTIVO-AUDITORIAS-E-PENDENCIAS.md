@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 18 de agosto de 2026, 08:01, America/Sao_Paulo
+**Atualizado em:** 18 de agosto de 2026, 19:42, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,10 +41,10 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** produção contextual `2026-08-18.2` publicada e verificada em 18/08, com uma única fonte ativa no Drive. A versão `2026-08-18.3`, que torna a IA a primeira instância de compreensão, está validada localmente com **814/814 testes** e em fechamento autorizado para commit funcional, publicação, verificação e substituição da mesma projeção no Drive. Até esse fechamento, `sincronização pendente`.
+**Estado geral:** produção contextual `2026-08-18.3` publicada e verificada em 18/08, com uma única fonte ativa no Drive, commit funcional, remoto, Netlify e projeção documental reconciliados. A IA é a primeira instância de compreensão nas mensagens textuais elegíveis, sob as travas clínicas e operacionais existentes; **814/814 testes aprovados** e nenhuma mensagem real de paciente enviada na validação.
 
-- mensagens estéticas de baixo risco agora seguem para a IA quando não existe uma resposta determinística melhor; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
-- na `2026-08-18.3` pendente, toda mensagem textual elegível passa primeiro pela IA, inclusive perguntas coloquiais sem `?`; padrões mecânicos servem como pistas, e cópias determinísticas só são usadas após confirmação semântica de código, procedimento, profissional e cobertura integral do pedido;
+- mensagens textuais elegíveis agora são compreendidas contextualmente pela IA antes da decisão de resposta; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
+- na `2026-08-18.3`, toda mensagem textual elegível passa primeiro pela IA, inclusive perguntas coloquiais sem `?`; padrões mecânicos servem como pistas, e cópias determinísticas só são usadas após confirmação semântica de código, procedimento, profissional e cobertura integral do pedido;
 - se a IA não tiver segurança sobre o significado e a ambiguidade for linguística e segura, a Bruna pede uma única explicação curta e específica; urgência, cuidado ativo, risco clínico, opt-out, duplicidade, agenda não validada e takeover humano continuam bloqueando a resposta automática;
 - depois de uma fala da equipe, autorização semântica genérica não atravessa o takeover: o validador exige reabertura, esclarecimento, coordenação ou cópia institucional explicitamente confirmados;
 - quando o histórico confirma interação anterior, a Bruna preserva o contexto e não repete apresentação nem pergunta de nome; o caso “Eu tenho o pescoço flácido” ficou coberto como obrigação de resposta;
@@ -67,12 +67,12 @@ O responsável técnico deve:
 - o consumo mensal observado no Netlify estava em aproximadamente 95 mil de 125 mil requisições, abaixo do limite; a cota não explica essas duas ausências;
 - a abertura determinística de anúncio evita a consulta de conhecimento e reutiliza a relação de paciente já devolvida por `append_lead`, removendo até duas chamadas redundantes de planilha; a consolidação agora usa base de três segundos para resposta determinística e cinco para IA, limitada entre dois e oito, sem retirar a regra de mensagem mais recente nem as travas `neverBotReply` e `fail-closed`;
 - entradas inválidas ou não reconhecidas passam a registrar motivo operacional seguro (`configuration_missing`, `invalid_signature`, `invalid_json`, `unsupported_event_type`, `invalid_inbound_phone` ou `missing_inbound_event_id`) sem expor telefone, mensagem ou ID bruto;
-- código ativo no commit funcional `c789914`, deploy Netlify `6a84534923558b0008961936`, com **792/792 testes aprovados**, build de 178 arquivos, 12 funções, 5 agendamentos e endpoint canônico HTTP 200; rollback imediato para deploy `6a843bde9799d000087778a5`, commit `cdfa79e`;
-- fonte ativa única no Drive: https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view; projeção substituída no mesmo ID e igual ao manual local pelo SHA-256 `6946cd619bd62fcb733207f606856ab505933a9b670197112cc4a4651bf3f941`; auditoria comparativa fechada: https://drive.google.com/file/d/1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB/view; os três planos de origem foram preservados e rotulados em `99 — Histórico operacional`;
+- código ativo no commit funcional `c392a743b2f00d751bf6dca8da54b991db0439ff`, deploy Netlify `6a84dea1cf780e00086eed7e`, com **814/814 testes aprovados**, build local de 178 arquivos e 12 funções publicadas sem erros; rollback imediato para deploy `6a84534923558b0008961936`, commit `c789914991f409c81320090872ac50f4ebc86136`;
+- fonte ativa única no Drive: https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view; projeção substituída no mesmo ID e igual ao manual local pelo SHA-256 `ca67a341f86e59190f9be8fe31501f1be6b5615e01154a0ae585d13358cc8db0`; auditoria comparativa fechada: https://drive.google.com/file/d/1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB/view; os três planos de origem foram preservados e rotulados em `99 — Histórico operacional`;
 - a pasta restrita `90.1 — Exportações brutas do WhatsApp` (`1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS`) é a entrada contínua de evidências; respostas reais não são padrão, dados identificáveis não saem do Drive e somente padrões desidentificados aprovados viram cenários sintéticos versionados;
 - nenhuma mensagem de teste nem sonda de paciente foi disparada por nós; na observação passiva, a sequência real seguinte chegou às 20:57, sofreu `timeout`/`busy_retry` no roteamento, foi recuperada por retentativas, suprimiu corretamente a abertura Meta mais antiga e concluiu a resposta à mensagem mais recente com entrega HTTP 200 às 20:58:30;
 - essa evidência confirma o funcionamento do webhook, da recuperação e da entrega da Bruna após a publicação; ainda não existe garantia absoluta para eventos que a YCloud deixe de entregar ao Netlify, hipótese que exige o log bruto do provedor;
-- rollback imediato do estado atual: deploy `6a843bde9799d000087778a5`, commit `cdfa79e`.
+- rollback imediato do estado atual: deploy `6a84534923558b0008961936`, commit `c789914991f409c81320090872ac50f4ebc86136`.
 - governança de versões consolidada em 18/08: commit `1c3f556`, deploy Netlify `6a842ffa9399100008f5a827`, PR `#6`, com **760/760 testes aprovados**; o release adicionou gate de consistência, reconciliação segura do checkout, recibo único no manifesto, normalização de fim de linha e bloqueio de duplicatas/pacotes transitórios, sem alterar respostas ou regras da Bruna;
 - o índice único do Drive foi atualizado no mesmo arquivo `1nOzoVrL1TwK-oFLyOC_uO5gy01Cf14If`, sem criar cópia; ele aponta para a projeção ativa, para a pasta restrita contínua `90.1` e explicita que respostas reais são evidência crítica, não padrão. A projeção ativa da Bruna permaneceu idêntica ao manual local, com três fontes históricas, uma auditoria fechada e a pasta de mudanças em andamento vazia;
 - a reconciliação do checkout principal foi concluída em 18/08 após a liberação de escrita em `.git`: HEAD local e remoto ficaram idênticos ao commit de produção `4eb5fb5`, deploy Netlify `6a843b14f04aa60008570fdf`, PR `#8`; o gate final retornou `OPS_CHECK_STATUS=OK` e **760/760 testes aprovados**. O release normalizou exclusivamente CRLF para LF em 13 arquivos legados, com diff funcional vazio e sem alterar respostas, regras ou integrações da Bruna.
