@@ -5,6 +5,7 @@ import {
   claimDueHumanResumes,
   completeHumanResume,
   getHumanResumeControl,
+  markBrunaResumed,
   markHumanTakeover,
   scheduleHumanResume,
 } from "./human-resume-queue.mjs";
@@ -331,6 +332,82 @@ test("successful automatic continuation releases the human block", async () => {
 
   assert.equal(completion.status, "completed");
   assert.equal(control.status, "bruna_resumed");
+});
+
+test("an immediate semantic continuation releases only the matching human generation", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const now = Date.parse("2026-08-18T19:18:00.000Z");
+
+  const takeover = await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-question-1",
+    },
+    { getStoreImpl, now },
+  );
+  await scheduleHumanResume(sampleInput(), {
+    getStoreImpl,
+    now,
+    delayMs: 20 * 60 * 1_000,
+  });
+
+  const resumed = await markBrunaResumed(
+    {
+      phone: "+5511900000000",
+      expectedHumanGeneration: takeover.generation,
+    },
+    { getStoreImpl, now: now + 1 },
+  );
+  const control = await getHumanResumeControl(
+    "+5511900000000",
+    { getStoreImpl },
+  );
+  const claim = await claimDueHumanResumes({
+    getStoreImpl,
+    now: now + 30 * 60 * 1_000,
+  });
+
+  assert.equal(resumed.status, "completed");
+  assert.equal(control.status, "bruna_resumed");
+  assert.equal(claim.jobs.length, 0);
+});
+
+test("an immediate semantic continuation cannot overwrite newer human activity", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const now = Date.parse("2026-08-18T19:18:00.000Z");
+
+  await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-question-1",
+    },
+    { getStoreImpl, now },
+  );
+  await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-reply-2",
+    },
+    { getStoreImpl, now: now + 1 },
+  );
+
+  const resumed = await markBrunaResumed(
+    {
+      phone: "+5511900000000",
+      expectedHumanGeneration: "human-question-1",
+    },
+    { getStoreImpl, now: now + 2 },
+  );
+  const control = await getHumanResumeControl(
+    "+5511900000000",
+    { getStoreImpl },
+  );
+
+  assert.equal(resumed.status, "superseded");
+  assert.equal(control.status, "human_active");
+  assert.equal(control.generation, "human-reply-2");
 });
 
 test("queues a non-text message so it can alert the human later", async () => {

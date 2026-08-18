@@ -1,5 +1,15 @@
 # Histórico do pacote Bruna
 
+## 2026-08-18.4
+
+- Respostas curtas passaram a ser interpretadas contra a última pergunta da clínica mesmo durante a tomada humana. Quando a pessoa aceita uma oferta informativa concreta, a IA entrega imediatamente a explicação prometida em vez de tratar a mensagem como confirmação silenciosa.
+- Criado `CONTEXT-CONTINUE-01`, autorizado somente para a candidata delimitada pelo webhook e validado novamente antes do envio. A resposta não pode acrescentar pergunta, CTA, link ou confirmação de consulta.
+- Quando o referente seguro continuar ambíguo, a IA pode fazer uma única pergunta específica com `CONTEXT-CLARIFY-01`; baixa confiança, código genérico ou resposta incompatível mantêm a conversa com a equipe.
+- Agenda, aceitação de horário, confirmação de consulta, cuidado clínico, preço não aprovado, tarefa administrativa, opt-out, duplicidade e corrida com atendente continuam fail-closed.
+- A retomada imediata preserva um fallback atrasado e só libera a Bruna se a geração da tomada humana ainda for a mesma, impedindo que uma nova mensagem da equipe seja sobrescrita.
+- Adicionado cenário sintético para `"Quer que eu te explique como funciona a consulta?" → "Sim"`, além de regressões de autorização, contrato, fila, corrida humana e fallback.
+- Estado desta versão: código e documentação locais validados com **826/826 testes** e build de 178 arquivos; publicação, verificação em produção e projeções no Drive aguardam autorização explícita deste release.
+
 ## 2026-08-18.3
 
 - A IA passou a ser a primeira instância de interpretação de toda mensagem textual elegível; padrões de pontuação, palavras-chave, códigos e templates ficaram restritos a pistas e guardrails.
@@ -8,7 +18,7 @@
 - Ambiguidade linguística segura passa a receber uma única pergunta curta e específica de esclarecimento, com contrato de uma pergunta, nenhum link e nenhum CTA; urgência, risco clínico, cuidado ativo, opt-out, duplicidade e tomada humana continuam fail-closed.
 - O mesmo princípio foi aplicado à retomada após atendimento humano. Uma autorização genérica da IA não atravessa o bloqueio final: somente reabertura, esclarecimento, coordenação ou cópia institucional explicitamente confirmados permitem resposta.
 - `CONTEXT-CLARIFY-01` identifica ambiguidade de linguagem ou referência conversacional; `UNKNOWN-CLARIFY-01` fica reservado à pergunta já compreendida cuja resposta aprovada depende de uma informação simples adicional.
-- Estado desta versão: código e documentação locais validados com **814/814 testes**; publicação, verificação em produção e projeção no Drive aguardam o fechamento do release autorizado.
+- Estado desta versão: publicada e verificada no commit funcional `c392a743b2f00d751bf6dca8da54b991db0439ff`, deploy `6a84dea1cf780e00086eed7e`, com **814/814 testes**; projeção ativa do Drive reconciliada com o manual do release.
 
 ## 2026-08-18.2
 

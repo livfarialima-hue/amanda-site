@@ -3,6 +3,7 @@ import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
   applyContextClarificationGuard,
+  applyContextContinuationGuard,
   applyContextReopenGuard,
   applyFirstReplyGreetingGuard,
   applyReturningPatientReplyGuard,
@@ -122,6 +123,57 @@ test("context reopen never clears a clinical urgency", () => {
   });
 
   assert.deepEqual(applyContextReopenGuard(decision), decision);
+});
+
+test("context continuation fulfills an accepted information offer without a new question", () => {
+  const guarded = applyContextContinuationGuard(
+    validDecision({
+      confidence: "medium",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-CONTINUE-01",
+      suggestedReply:
+        "Na consulta, a Dra. Amanda entende seus objetivos, avalia o rosto e o pescoço e explica possibilidades, limites e recuperação.",
+      reviewReason: "context_continue:consulta",
+    }),
+    { enabled: true },
+  );
+
+  assert.equal(guarded.route, "standard_reply");
+  assert.equal(guarded.confidence, "high");
+  assert.equal(guarded.automaticAllowed, true);
+  assert.equal(guarded.replyCode, "CONTEXT-CONTINUE-01");
+});
+
+test("context continuation fails closed outside the bounded candidate or with a follow-up question", () => {
+  const decision = validDecision({
+    replyCode: "CONTEXT-CONTINUE-01",
+    suggestedReply:
+      "Na consulta, a Dra. Amanda entende seus objetivos. Quer ver horários?",
+    reviewReason: "context_continue:consulta",
+  });
+
+  assert.equal(
+    applyContextContinuationGuard(decision).route,
+    "human_review",
+  );
+  assert.equal(
+    applyContextContinuationGuard(decision, { enabled: true })
+      .suggestedReply,
+    "",
+  );
+});
+
+test("context continuation never clears a clinical urgency", () => {
+  const decision = validDecision({
+    urgent: true,
+    replyCode: "CONTEXT-CONTINUE-01",
+    reviewReason: "context_continue:postop",
+  });
+
+  assert.deepEqual(
+    applyContextContinuationGuard(decision, { enabled: true }),
+    decision,
+  );
 });
 
 test("returning-patient guard removes a repeated Bruna introduction", () => {

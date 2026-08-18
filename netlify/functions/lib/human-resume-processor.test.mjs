@@ -136,6 +136,64 @@ test("a safe high-confidence answer resumes Bruna without an alert", async () =>
   );
 });
 
+test("a delayed short acceptance fulfills the prior human information offer", async () => {
+  const deps = dependencies();
+  let modelInput = null;
+  deps.runOpenAIShadowImpl = async (input) => {
+    modelInput = input;
+    return {
+      status: "completed",
+      decision: {
+        route: "standard_reply",
+        confidence: "high",
+        automaticAllowed: true,
+        urgent: false,
+        professional: "amanda",
+        procedure: "lifting_cervical",
+        replyCode: "CONTEXT-CONTINUE-01",
+        suggestedReply:
+          "Na consulta, a Dra. Amanda entende seus objetivos, avalia o rosto e o pescoço e explica possibilidades, limites e recuperação.",
+        reviewReason: "context_continue:consulta",
+      },
+    };
+  };
+
+  const result = await processHumanResumeJob(
+    job({
+      text: "Sim",
+      procedure: "lifting_cervical",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text:
+            "Quer que eu te explique como funciona a consulta com ela?",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Sim",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(
+    modelInput.policyHints.humanContextContinuationCandidate,
+    true,
+  );
+  assert.equal(modelInput.replyContract.maxQuestions, 1);
+  assert.match(deps.patientMessages[0].body, /Na consulta/);
+});
+
 test("a known patient coordination receives a short contextual acknowledgment", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({

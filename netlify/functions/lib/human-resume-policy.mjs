@@ -6,6 +6,8 @@ import {
   decideConversationAction,
   hasUnresolvedPatientRequest,
   isExplicitDeferralWithoutRequest,
+  isReplyToHumanContextWithoutStandaloneRequest,
+  isShortAffirmativeReplyToHumanQuestion,
 } from "./conversation-action-controller.mjs";
 
 const SCHEDULING_CONTEXT_PATTERN =
@@ -328,6 +330,28 @@ export function classifyHumanResume({
     return {
       action: "sensitive",
       reason: sensitiveReason || reasons[0] || "reserved_topic",
+    };
+  }
+
+  if (
+    (
+      isReplyToHumanContextWithoutStandaloneRequest(
+        normalizedText,
+        recentConversation,
+      ) ||
+      isShortAffirmativeReplyToHumanQuestion(
+        normalizedText,
+        recentConversation,
+      )
+    ) &&
+    hasUnresolvedPatientRequest(
+      normalizedText,
+      recentConversation,
+    )
+  ) {
+    return {
+      action: "attempt_reply",
+      reason: "semantic_context_continuation_candidate",
     };
   }
 

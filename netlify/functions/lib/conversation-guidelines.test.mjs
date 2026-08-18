@@ -299,6 +299,12 @@ test("playbook ignores commercial and unrelated approaches while preserving cont
 });
 
 test("playbook requires explicit semantic reopening and complete deterministic fit", () => {
+  assert.match(CONVERSATION_GUIDELINES, /CONTEXT-CONTINUE-01/);
+  assert.match(CONVERSATION_GUIDELINES, /context_continue:<tema>/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /cumpra diretamente a explicação prometida/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /CONTEXT-REOPEN-01/);
   assert.match(CONVERSATION_GUIDELINES, /context_reopen:<tema>/);
   assert.match(CONVERSATION_GUIDELINES, /resolver integralmente todos os pedidos seguros/);

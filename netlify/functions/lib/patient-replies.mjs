@@ -1,4 +1,8 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import {
+  CONTEXT_CLARIFICATION_CODE,
+  CONTEXT_CONTINUATION_CODE,
+} from "./semantic-reply-policy.mjs";
 
 const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
@@ -450,10 +454,28 @@ export function shouldSendOpenAIPatientReply({
   humanTakeoverToday,
   exactDuplicate,
   schedulingRequest,
+  allowHumanContextContinuation = false,
 }) {
+  const continuationDecision =
+    decision?.replyCode === CONTEXT_CONTINUATION_CODE &&
+    String(decision?.reviewReason || "").startsWith(
+      "context_continue:",
+    );
+  const clarificationDecision =
+    decision?.replyCode === CONTEXT_CLARIFICATION_CODE &&
+    String(decision?.reviewReason || "").startsWith(
+      "context_clarification:",
+    );
+  const validatedHumanContextContinuation = Boolean(
+    allowHumanContextContinuation === true &&
+      humanTakeoverToday === true &&
+      plan?.humanContextContinuationCandidate === true &&
+      (continuationDecision || clarificationDecision),
+  );
+
   if (
     mode !== "active" ||
-    humanTakeoverToday ||
+    (humanTakeoverToday && !validatedHumanContextContinuation) ||
     exactDuplicate ||
     schedulingRequest ||
     plan?.automaticAllowed !== true ||

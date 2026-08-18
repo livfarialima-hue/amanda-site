@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
-import webhook from "../ycloud-webhook.mjs";
+import webhook, {
+  isSemanticHumanContextContinuationCandidate,
+} from "../ycloud-webhook.mjs";
 
 const WEBHOOK_SECRET = "webhook-test-secret";
 const SHEETS_URL = "https://sheets.example.test/webhook";
@@ -22,6 +24,54 @@ function signedRequest(payload) {
     body: rawBody,
   });
 }
+
+test("a short answer to a human information offer is an immediate AI candidate", () => {
+  const context = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "Quer que eu te explique como funciona a consulta com ela?",
+    },
+  ];
+  const base = {
+    patientAutomationReady: true,
+    humanTakeoverActive: true,
+    professional: "amanda",
+    messageType: "text",
+    text: "Sim",
+    recentConversation: context,
+    exactDuplicate: false,
+    protectedAppointmentContinuation: false,
+    professionalFactReview: null,
+    patientRelationship: {},
+  };
+
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate(base),
+    true,
+  );
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate({
+      ...base,
+      text: "Pode sim",
+    }),
+    true,
+  );
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate({
+      ...base,
+      protectedAppointmentContinuation: true,
+    }),
+    false,
+  );
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate({
+      ...base,
+      text: "Obrigada!",
+    }),
+    false,
+  );
+});
 
 test("manual SMB echo marks takeover and suppresses later AI for the day", async () => {
   const environmentKeys = [

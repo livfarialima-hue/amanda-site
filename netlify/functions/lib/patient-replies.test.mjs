@@ -537,3 +537,83 @@ test("active AI reply remains blocked for schedules and deterministic review", (
     false,
   );
 });
+
+test("human takeover only yields to an explicitly validated semantic continuation", () => {
+  const base = {
+    mode: "active",
+    plan: {
+      route: "standard_reply",
+      automaticAllowed: true,
+      humanContextContinuationCandidate: true,
+    },
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      replyCode: "CONTEXT-CONTINUE-01",
+      suggestedReply:
+        "Na consulta, a Dra. Amanda entende seus objetivos e explica as possibilidades com calma.",
+      reviewReason: "context_continue:consulta",
+    },
+    humanTakeoverToday: true,
+    exactDuplicate: false,
+    schedulingRequest: false,
+    allowHumanContextContinuation: true,
+  };
+
+  assert.equal(shouldSendOpenAIPatientReply(base), true);
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      allowHumanContextContinuation: false,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      decision: {
+        ...base.decision,
+        replyCode: "CONTEXT-REOPEN-01",
+        reviewReason: "context_reopen:consulta",
+      },
+    }),
+    false,
+  );
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      ...base,
+      schedulingRequest: true,
+    }),
+    false,
+  );
+});
+
+test("human takeover may ask one safe semantic clarification", () => {
+  assert.equal(
+    shouldSendOpenAIPatientReply({
+      mode: "active",
+      plan: {
+        route: "standard_reply",
+        automaticAllowed: true,
+        humanContextContinuationCandidate: true,
+      },
+      decision: {
+        route: "standard_reply",
+        confidence: "high",
+        automaticAllowed: true,
+        urgent: false,
+        replyCode: "CONTEXT-CLARIFY-01",
+        suggestedReply:
+          "Você quer que eu explique como funciona a consulta ou a recuperação?",
+        reviewReason: "context_clarification:oferta_anterior",
+      },
+      humanTakeoverToday: true,
+      exactDuplicate: false,
+      schedulingRequest: false,
+      allowHumanContextContinuation: true,
+    }),
+    true,
+  );
+});

@@ -85,6 +85,7 @@ import {
 import {
   cancelPendingHumanResume,
   getHumanResumeControl,
+  markBrunaResumed,
   markHumanTakeover,
   scheduleHumanResume,
 } from "./lib/human-resume-queue.mjs";
@@ -111,7 +112,10 @@ import {
 } from "./lib/human-resume-policy.mjs";
 import {
   decideConversationAction,
+  hasUnresolvedPatientRequest,
   isExplicitNightPause,
+  isReplyToHumanContextWithoutStandaloneRequest,
+  isShortAffirmativeReplyToHumanQuestion,
 } from "./lib/conversation-action-controller.mjs";
 import {
   buildExtremeNightAcknowledgement,
@@ -124,6 +128,9 @@ import {
 } from "./lib/outbound-reply-gate.mjs";
 import {
   buildSemanticReplyConversationAction,
+  CONTEXT_CLARIFICATION_CODE,
+  CONTEXT_CONTINUATION_CODE,
+  prepareSemanticContextContinuationAction,
   semanticDecisionConfirmsDeterministicReply,
 } from "./lib/semantic-reply-policy.mjs";
 export { semanticDecisionConfirmsDeterministicReply };
@@ -1678,6 +1685,42 @@ export function shouldLoadBotKnowledgeContext({
   );
 }
 
+export function isSemanticHumanContextContinuationCandidate({
+  patientAutomationReady,
+  humanTakeoverActive,
+  professional,
+  messageType,
+  text,
+  recentConversation,
+  exactDuplicate,
+  protectedAppointmentContinuation,
+  professionalFactReview,
+  patientRelationship,
+}) {
+  return Boolean(
+    patientAutomationReady &&
+      humanTakeoverActive &&
+      professional === "amanda" &&
+      String(messageType || "").toLowerCase() === "text" &&
+      String(text || "").trim() &&
+      !exactDuplicate &&
+      !protectedAppointmentContinuation &&
+      !professionalFactReview &&
+      !blocksAutomatedPatientMessages(patientRelationship) &&
+      (
+        isReplyToHumanContextWithoutStandaloneRequest(
+          text,
+          recentConversation,
+        ) ||
+        isShortAffirmativeReplyToHumanQuestion(
+          text,
+          recentConversation,
+        )
+      ) &&
+      hasUnresolvedPatientRequest(text, recentConversation),
+  );
+}
+
 async function completeOpenAIActive({
   input,
   alertInput,
@@ -1693,6 +1736,8 @@ async function completeOpenAIActive({
   patientRelationship,
   appointmentNeedsPreference,
   approvedPriceReplyKind,
+  humanContextContinuationCandidate = false,
+  humanResumeGeneration = "",
 }) {
   try {
     const aiSafetyTriage = plan?.reason === "ai_safety_triage";
@@ -2277,6 +2322,25 @@ async function completeOpenAIActive({
       );
     }
 
+    const semanticHumanContextContinuationApproved = Boolean(
+      humanContextContinuationCandidate === true &&
+        (
+          (
+            activeResult.decision.replyCode ===
+              CONTEXT_CONTINUATION_CODE &&
+            String(activeResult.decision.reviewReason || "").startsWith(
+              "context_continue:",
+            )
+          ) ||
+          (
+            activeResult.decision.replyCode ===
+              CONTEXT_CLARIFICATION_CODE &&
+            String(activeResult.decision.reviewReason || "").startsWith(
+              "context_clarification:",
+            )
+          )
+        ),
+    );
     const openAIReplyApproved =
       shouldSendOpenAIPatientReply({
         mode: "active",
@@ -2285,6 +2349,8 @@ async function completeOpenAIActive({
         humanTakeoverToday,
         exactDuplicate,
         schedulingRequest,
+        allowHumanContextContinuation:
+          semanticHumanContextContinuationApproved,
       });
 
     if (!openAIReplyApproved) {
@@ -2367,6 +2433,25 @@ async function completeOpenAIActive({
           status: memoryResult.status,
         },
       });
+
+      if (semanticHumanContextContinuationApproved) {
+        const resumeResult = await markBrunaResumed({
+          phone: to,
+          expectedHumanGeneration: humanResumeGeneration,
+        });
+        writeOperationalLog({
+          source: "semantic_context_continuation_resume",
+          category: "reply_control",
+          reason:
+            resumeResult.status === "completed"
+              ? "bruna_resumed"
+              : resumeResult.reason || resumeResult.status,
+          sourceId: input.eventId,
+          fields: {
+            status: resumeResult.status,
+          },
+        });
+      }
     }
 
     if (replyResult.status === "completed") {
@@ -3916,6 +4001,62 @@ export async function handleYCloudWebhook(
     exactDuplicate: suppressExactDuplicate,
     schedulingRequest: appointmentReviewCandidate,
   });
+  const humanContextPlan = enrichAutomationPlanFromConversation(
+    preliminaryAutomationPlan,
+    conversationHistory,
+  );
+  const latestHumanContextTurn = conversationHistory
+    .slice()
+    .reverse()
+    .find(
+      (turn) =>
+        turn?.role === "assistant" &&
+        ["human", "equipe_humana"].includes(
+          String(turn?.source || ""),
+        ),
+    );
+  const latestHumanContext = latestHumanContextTurn
+    ? [latestHumanContextTurn]
+    : [];
+  const protectedAppointmentContinuation = Boolean(
+    patientAppointmentReply ||
+      isSchedulingRequest(text) ||
+      isAppointmentOfferAcceptance(text, latestHumanContext) ||
+      isAppointmentPreferenceReply(text, latestHumanContext),
+  );
+  const semanticHumanContextContinuationCandidate =
+    isSemanticHumanContextContinuationCandidate({
+      patientAutomationReady,
+      humanTakeoverActive,
+      professional: delivery.professional,
+      messageType: normalizedMessageType,
+      text,
+      recentConversation: conversationHistory,
+      exactDuplicate: suppressExactDuplicate,
+      protectedAppointmentContinuation,
+      professionalFactReview,
+      patientRelationship,
+    });
+  const openAIActivePlan = semanticHumanContextContinuationCandidate
+    ? {
+        ...humanContextPlan,
+        route: "standard_reply",
+        reason: "semantic_context_continuation_candidate",
+        replyCode: "",
+        professional:
+          humanContextPlan.professional || delivery.professional,
+        procedure:
+          humanContextPlan.procedure || automationPlan.procedure,
+        automaticAllowed: true,
+        humanContextContinuationCandidate: true,
+      }
+    : automationPlan;
+  const openAIConversationAction =
+    semanticHumanContextContinuationCandidate
+      ? prepareSemanticContextContinuationAction(
+          conversationAction,
+        )
+      : conversationAction;
   const extremeNightActive = isExtremeNight(
     contactAt,
   );
@@ -4207,16 +4348,12 @@ export async function handleYCloudWebhook(
     !suppressExactDuplicate &&
     conversationAction.scheduleHumanResume
   ) {
-    const resumeContextPlan = enrichAutomationPlanFromConversation(
-      preliminaryAutomationPlan,
-      conversationHistory,
-    );
     const safeResumeDelay =
-      resumeContextPlan.route === "standard_reply" &&
+      humanContextPlan.route === "standard_reply" &&
       classifyLearningRisk({
         text,
-        reviewReason: resumeContextPlan.reason,
-        procedure: resumeContextPlan.procedure,
+        reviewReason: humanContextPlan.reason,
+        procedure: humanContextPlan.procedure,
       }) === "Baixo";
     const scheduleResult = await scheduleHumanResume(
       {
@@ -4229,7 +4366,7 @@ export async function handleYCloudWebhook(
         platform: attribution.platform,
         reference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
-        procedure: resumeContextPlan.procedure,
+        procedure: humanContextPlan.procedure,
         referralContext,
         recentConversation: conversationHistoryWithCurrent,
         expectedHumanGeneration:
@@ -4502,7 +4639,9 @@ export async function handleYCloudWebhook(
       referralContext,
     });
   const learningContext =
-    shouldLoadBotKnowledgeContext({
+    (
+      semanticHumanContextContinuationCandidate ||
+      shouldLoadBotKnowledgeContext({
       patientAutomationReady,
       humanTakeoverActive,
       automationMode,
@@ -4513,11 +4652,12 @@ export async function handleYCloudWebhook(
       professionalFactReview,
       approvedPriceReplyCandidate,
       deterministicMarketingOpeningCandidate,
-    })
+      })
+    )
       ? await getBotKnowledgeContext({
           phone,
           question: text,
-          procedure: automationPlan.procedure || "",
+          procedure: openAIActivePlan.procedure || "",
         })
       : { candidates: [], pendingQuestion: null };
   const shouldQueueOpenAIShadow =
@@ -4534,19 +4674,26 @@ export async function handleYCloudWebhook(
     !appointmentNeedsPreference &&
     !suppressExactDuplicate &&
     !professionalFactReview;
-  const shouldQueueOpenAIActive =
+  const commonOpenAIActiveEligibility =
     patientAutomationReady &&
     !extremeNightDeferral &&
-    !humanTakeoverActive &&
     automationMode === "active" &&
     String(message.type || "").toLowerCase() === "text" &&
     text.trim().length > 0 &&
-    automationPlan.route === "standard_reply" &&
-    conversationAction.allowAutomaticReply &&
-    automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
     !suppressExactDuplicate &&
     !professionalFactReview;
+  const shouldQueueOpenAIActive =
+    commonOpenAIActiveEligibility &&
+    (
+      (
+        !humanTakeoverActive &&
+        automationPlan.route === "standard_reply" &&
+        conversationAction.allowAutomaticReply &&
+        automationPlan.professional !== "daniel"
+      ) ||
+      semanticHumanContextContinuationCandidate
+    );
   let aiShadowQueued = false;
 
   if (shouldQueueOpenAIShadow) {
@@ -4559,7 +4706,7 @@ export async function handleYCloudWebhook(
         phone,
         text,
         platform: attribution.platform,
-        procedure: automationPlan.procedure,
+        procedure: openAIActivePlan.procedure,
         sourceReference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
@@ -4572,7 +4719,7 @@ export async function handleYCloudWebhook(
           ),
         learningContext,
         deterministicUrgent:
-          automationPlan.reason === "possible_urgent_symptoms",
+          openAIActivePlan.reason === "possible_urgent_symptoms",
       },
       alertInput,
       reviewAlertQueued,
@@ -4621,17 +4768,21 @@ export async function handleYCloudWebhook(
       },
       alertInput,
       reviewAlertAlreadyQueued: reviewAlertQueued,
-      plan: automationPlan,
+      plan: openAIActivePlan,
       humanTakeoverToday: humanTakeoverActive,
       exactDuplicate: suppressExactDuplicate,
       schedulingRequest: appointmentReviewCandidate,
       from: String(message.to || ""),
       to: phone,
       replyDebounceMarkerStatus,
-      conversationAction,
+      conversationAction: openAIConversationAction,
       patientRelationship,
       appointmentNeedsPreference,
       approvedPriceReplyKind,
+      humanContextContinuationCandidate:
+        semanticHumanContextContinuationCandidate,
+      humanResumeGeneration:
+        humanResumeControl?.generation || "",
     });
 
     aiActiveQueued = true;
@@ -4676,7 +4827,9 @@ export async function handleYCloudWebhook(
         activePromise,
         {
           eventId: String(eventId),
-          outcome: humanTakeoverActive
+          outcome: semanticHumanContextContinuationCandidate
+            ? "processed"
+            : humanTakeoverActive
             ? "human_takeover"
             : "processed",
         },

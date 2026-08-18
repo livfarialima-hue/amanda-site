@@ -322,6 +322,44 @@ test("an explicit semantic reopen can answer a colloquial question without punct
   assert.equal(result.allowed, true);
 });
 
+test("an explicit semantic continuation can fulfill a human information offer", () => {
+  const decision = {
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: "CONTEXT-CONTINUE-01",
+    suggestedReply:
+      "Na consulta, a Dra. Amanda entende seus objetivos, faz a avaliação presencial e explica possibilidades, limites e recuperação.",
+    reviewReason: "context_continue:consulta",
+  };
+  const action = buildSemanticReplyConversationAction(
+    respond,
+    decision,
+  );
+  const context = [
+    {
+      role: "assistant",
+      source: "equipe_humana",
+      text: "Quer que eu te explique como funciona a consulta com ela?",
+    },
+  ];
+
+  assert.equal(validateOutboundReply({
+    body: decision.suggestedReply,
+    currentText: "Sim",
+    recentConversation: context,
+    conversationAction: action,
+  }).allowed, true);
+  assert.equal(validateOutboundReply({
+    body:
+      `${decision.suggestedReply} Quer que eu veja horários?`,
+    currentText: "Sim",
+    recentConversation: context,
+    conversationAction: action,
+  }).reason, "too_many_questions_for_context");
+});
+
 test("a semantic reopen still cannot override a closing or deferral", () => {
   const decision = {
     route: "standard_reply",

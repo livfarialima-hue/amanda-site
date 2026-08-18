@@ -32,6 +32,27 @@ test("allows only a safe standard continuation", () => {
   assert.equal(result.action, "attempt_reply");
 });
 
+test("short acceptance of a human information offer is evaluated semantically", () => {
+  const result = classifyHumanResume({
+    text: "Sim",
+    messageType: "text",
+    preliminaryPlan: standardPlan("known_conversation_continuation"),
+    enrichedPlan: standardPlan("known_conversation_continuation"),
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Quer que eu te explique como funciona a consulta com ela?",
+      },
+    ],
+  });
+
+  assert.deepEqual(result, {
+    action: "attempt_reply",
+    reason: "semantic_context_continuation_candidate",
+  });
+});
+
 test("keeps surgical price and schedule confirmation human-only", () => {
   const price = classifyHumanResume({
     text: "Quanto custa o lifting?",

@@ -10,6 +10,8 @@ const SIMPLE_CLOSING_PATTERN =
   /^(?:(?:(?:muito\s+)?obrigad[ao](?:\s+pela\s+ajuda)?|agrade[cç]o|grata|valeu|ok(?:ay)?|t[áa]\s+bom|tudo bem|entendi|perfeito|combinado|certo|beleza|j[áa]\s+entendi|sem problemas|at[ée](?:\s+(?:mais|logo|amanh[ãa]|segunda(?:-feira)?|ter[cç]a(?:-feira)?|quarta(?:-feira)?|quinta(?:-feira)?|sexta(?:-feira)?|s[áa]bado|domingo))?)[,!.?\s]*)+$/i;
 const AGREEMENT_CLOSING_PATTERN =
   /^(?:(?:sim|claro)[,!.\s]+)?(?:podemos(?:\s+sim)?|vamos)[,!.\s]+(?:combinado|fechado|perfeito)(?:[,!.\s]+(?:obrigad[ao]|at[ée]\s+(?:l[áa]|logo)))?[,!.\s]*$/i;
+const SHORT_AFFIRMATIVE_REPLY_PATTERN =
+  /^(?:sim|claro|isso|pode\s+sim|pode\s+ser|quero\s+sim|por\s+favor|sim[,!]?\s+por\s+favor)[.!\s]*$/i;
 const POLITE_ACKNOWLEDGEMENT_CLOSING_PATTERN =
   /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite|ok(?:ay)?|t[áa]\s+bom|tudo\s+bem|entendi|certo|perfeito|combinado|vamos\s+v(?:e|ê|er)(?:\s+l[áa])?|vou\s+v(?:e|ê|er)(?:\s+l[áa])?|obg|obrigad[ao]|valeu|[óo]timo\s+descanso|bom\s+descanso|at[ée]\s+(?:mais|logo)|pra\s+voc[eê]s?|para\s+voc[eê]s?)[,!.?\s]*)+$/i;
 const DIRECT_QUESTION_PATTERN =
@@ -116,6 +118,24 @@ export function isReplyToHumanContextWithoutStandaloneRequest(
     humanOwned &&
       normalized(text) &&
       !introducesStandalonePatientRequest(text),
+  );
+}
+
+export function isShortAffirmativeReplyToHumanQuestion(
+  text,
+  recentConversation = [],
+) {
+  const clinicTurn = latestClinicTurn(recentConversation);
+  const humanOwned =
+    clinicTurn?.role === "assistant" &&
+    ["human", "equipe_humana"].includes(
+      String(clinicTurn?.source || ""),
+    );
+
+  return Boolean(
+    humanOwned &&
+      assistantQuestionBeyondSocialGreeting(clinicTurn) &&
+      SHORT_AFFIRMATIVE_REPLY_PATTERN.test(normalized(text)),
   );
 }
 

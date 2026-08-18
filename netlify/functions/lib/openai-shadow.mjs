@@ -11,6 +11,7 @@ import {
 } from "./profile-name.mjs";
 import {
   CONTEXT_CLARIFICATION_CODE,
+  CONTEXT_CONTINUATION_CODE,
   CONTEXT_REOPEN_CODE,
 } from "./semantic-reply-policy.mjs";
 
@@ -365,6 +366,56 @@ export function applyContextReopenGuard(decision) {
   };
 }
 
+export function applyContextContinuationGuard(
+  decision,
+  { enabled = false } = {},
+) {
+  const contextContinuation =
+    decision?.replyCode === CONTEXT_CONTINUATION_CODE ||
+    String(decision?.reviewReason || "").startsWith(
+      "context_continue:",
+    );
+  if (!contextContinuation) return decision;
+
+  // A contextual continuation may only answer a bounded informational offer.
+  // Urgency remains untouched so the final urgency guard can fail closed.
+  if (decision?.urgent === true) return decision;
+
+  const reply = limitText(decision?.suggestedReply, 1_200);
+  if (
+    enabled !== true ||
+    decision?.route !== "standard_reply" ||
+    !reply ||
+    reply.includes("?")
+  ) {
+    return {
+      ...decision,
+      route: "human_review",
+      confidence: "low",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-REVIEW-01",
+      suggestedReply: "",
+      reviewReason: "context_continue:invalid_reply",
+    };
+  }
+
+  return {
+    ...decision,
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: CONTEXT_CONTINUATION_CODE,
+    suggestedReply: reply,
+    reviewReason:
+      String(decision?.reviewReason || "").startsWith(
+        "context_continue:",
+      )
+        ? decision.reviewReason
+        : "context_continue:accepted_information_offer",
+  };
+}
+
 function normalizeReferralContext(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
 
@@ -411,6 +462,10 @@ function normalizePolicyHints(value) {
   }
   if (typeof value.automaticAllowed === "boolean") {
     normalized.automaticAllowed = value.automaticAllowed;
+  }
+  if (typeof value.humanContextContinuationCandidate === "boolean") {
+    normalized.humanContextContinuationCandidate =
+      value.humanContextContinuationCandidate;
   }
 
   return Object.keys(normalized).length ? normalized : null;
@@ -557,13 +612,19 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
         applyFirstReplyGreetingGuard(
           applyReturningPatientReplyGuard(
             applyKnownProfileNameGuard(
-              applyContextReopenGuard(
-                applyContextClarificationGuard(
-                  applyKnowledgeDecisionGuard(
-                    decision,
-                    options.learningContext,
+              applyContextContinuationGuard(
+                applyContextReopenGuard(
+                  applyContextClarificationGuard(
+                    applyKnowledgeDecisionGuard(
+                      decision,
+                      options.learningContext,
+                    ),
                   ),
                 ),
+                {
+                  enabled:
+                    options.humanContextContinuationCandidate === true,
+                },
               ),
               options.patientProfileName,
               options.hasConversationHistory,
@@ -631,6 +692,7 @@ export async function runOpenAIShadow(
     learningContext,
   );
   const normalizedReplyContract = normalizeReplyContract(replyContract);
+  const normalizedPolicyHints = normalizePolicyHints(policyHints);
   const explicitResourceRequest =
     /\b(?:site|link|material|casos?|antes\s+e\s+depois|resultados?)\b/i.test(
       String(text || ""),
@@ -675,7 +737,7 @@ export async function runOpenAIShadow(
           siteResource,
           whatsappProfileName: usableProfileName(patientProfileName),
           metaAdContext: normalizeReferralContext(referralContext),
-          policyHints: normalizePolicyHints(policyHints),
+          policyHints: normalizedPolicyHints,
           patientRelationship:
             normalizedPatientRelationship,
           priorInteractionKnown:
@@ -730,6 +792,8 @@ export async function runOpenAIShadow(
       priorInteractionKnown:
         priorInteractionKnown === true,
       learningContext: normalizedLearningContext,
+      humanContextContinuationCandidate:
+        normalizedPolicyHints?.humanContextContinuationCandidate === true,
     });
   } catch (error) {
     return result("failed", {

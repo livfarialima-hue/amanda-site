@@ -288,6 +288,60 @@ export async function cancelPendingHumanResume(
   }
 }
 
+export async function markBrunaResumed(
+  { phone, expectedHumanGeneration = "", at } = {},
+  { getStoreImpl = getStore, now = Date.now() } = {},
+) {
+  if (!normalizedPhone(phone)) return { status: "skipped" };
+
+  try {
+    const store = resumeStore(getStoreImpl);
+    const entry = await store.getWithMetadata(controlKey(phone), {
+      type: "json",
+      consistency: "strong",
+    });
+    const control = normalizedControl(entry?.data);
+    const expectedGeneration = limitedText(
+      expectedHumanGeneration,
+      120,
+    );
+
+    if (
+      !control ||
+      control.status !== "human_active" ||
+      (expectedGeneration && control.generation !== expectedGeneration)
+    ) {
+      return {
+        status: "superseded",
+        reason: "newer_human_activity",
+      };
+    }
+
+    const write = await store.setJSON(
+      controlKey(phone),
+      {
+        version: VERSION,
+        status: "bruna_resumed",
+        generation: control.generation,
+        updatedAt: new Date(parsedTime(at, now)).toISOString(),
+      },
+      { onlyIfMatch: entry.etag },
+    );
+
+    if (!write.modified) {
+      return {
+        status: "superseded",
+        reason: "newer_human_activity",
+      };
+    }
+
+    await store.delete(pendingKey(phone));
+    return { status: "completed" };
+  } catch {
+    return { status: "failed" };
+  }
+}
+
 export async function claimDueHumanResumes(
   {
     getStoreImpl = getStore,

@@ -2,6 +2,7 @@ import { UNKNOWN_CLARIFICATION_CODE } from "./knowledge-learning.mjs";
 
 export const CONTEXT_CLARIFICATION_CODE = "CONTEXT-CLARIFY-01";
 export const CONTEXT_REOPEN_CODE = "CONTEXT-REOPEN-01";
+export const CONTEXT_CONTINUATION_CODE = "CONTEXT-CONTINUE-01";
 export const COORDINATION_ACKNOWLEDGEMENT_CODE = "COORDINATION-ACK-01";
 
 function normalizedDimension(value) {
@@ -77,6 +78,33 @@ function validatedAutomaticDecision(decision) {
   );
 }
 
+function contextContinuationContract(replyContract) {
+  return {
+    ...(replyContract || {}),
+    owner: "bruna",
+    allowedResponseKind: "direct_answer",
+    silenceReason: "",
+    maxQuestions: 0,
+    maxLinks: 0,
+    allowCta: false,
+    allowAppointmentConfirmation: false,
+  };
+}
+
+export function prepareSemanticContextContinuationAction(
+  conversationAction,
+) {
+  return {
+    ...conversationAction,
+    replyContract: {
+      ...contextContinuationContract(
+        conversationAction?.replyContract,
+      ),
+      maxQuestions: 1,
+    },
+  };
+}
+
 export function semanticDecisionConfirmsDeterministicReply(
   semanticResult,
   deterministicReplyResult,
@@ -122,6 +150,10 @@ export function buildSemanticReplyConversationAction(
     replyCode === CONTEXT_REOPEN_CODE ||
     reviewReason.startsWith("context_reopen:")
   );
+  const contextContinuation = decisionValidated && (
+    replyCode === CONTEXT_CONTINUATION_CODE ||
+    reviewReason.startsWith("context_continue:")
+  );
   const coordinationConfirmed = decisionValidated &&
     coordinationAcknowledgement === true &&
     replyCode === COORDINATION_ACKNOWLEDGEMENT_CODE;
@@ -138,9 +170,12 @@ export function buildSemanticReplyConversationAction(
       contextClarification ||
       unknownClarification ||
       contextReopen ||
+      contextContinuation ||
       coordinationConfirmed ||
       deterministicConfirmed,
-    replyContract: clarification
+    replyContract: contextContinuation
+      ? contextContinuationContract(replyContract)
+      : clarification
       ? {
           ...(replyContract || {}),
           maxQuestions: 1,

@@ -45,6 +45,7 @@ import {
 } from "./lib/outbound-reply-gate.mjs";
 import {
   buildSemanticReplyConversationAction,
+  prepareSemanticContextContinuationAction,
   semanticDecisionConfirmsDeterministicReply,
 } from "./lib/semantic-reply-policy.mjs";
 import {
@@ -370,12 +371,18 @@ export async function processHumanResumeJob(
   });
   const semanticPlan =
     policy.action === "attempt_reply" &&
-    policy.reason === "semantic_coordination_candidate"
+    [
+      "semantic_coordination_candidate",
+      "semantic_context_continuation_candidate",
+    ].includes(policy.reason)
       ? {
           ...enrichedPlan,
           route: "standard_reply",
           reason: policy.reason,
           automaticAllowed: true,
+          humanContextContinuationCandidate:
+            policy.reason ===
+            "semantic_context_continuation_candidate",
         }
       : enrichedPlan;
   const conversationAction = decideConversationAction({
@@ -387,6 +394,12 @@ export async function processHumanResumeJob(
     schedulingRequest:
       policy.reason === "scheduling_or_confirmation",
   });
+  const openAIConversationAction =
+    policy.reason === "semantic_context_continuation_candidate"
+      ? prepareSemanticContextContinuationAction(
+          conversationAction,
+        )
+      : conversationAction;
 
   if (
     job.morningResume === true &&
@@ -603,7 +616,7 @@ export async function processHumanResumeJob(
         deterministicReplyProcedure:
           approvedPriceReplyCandidate?.decision?.procedure || "",
       },
-      replyContract: conversationAction.replyContract,
+      replyContract: openAIConversationAction.replyContract,
       deterministicUrgent:
         enrichedPlan.reason === "possible_urgent_symptoms",
     },
@@ -645,9 +658,14 @@ export async function processHumanResumeJob(
       mode: "active",
       plan: semanticPlan,
       decision: aiResult.decision,
-      humanTakeoverToday: false,
+      humanTakeoverToday:
+        policy.reason ===
+        "semantic_context_continuation_candidate",
       exactDuplicate: false,
       schedulingRequest: false,
+      allowHumanContextContinuation:
+        policy.reason ===
+        "semantic_context_continuation_candidate",
     });
 
   if (
@@ -700,7 +718,7 @@ export async function processHumanResumeJob(
   }
 
   const semanticConversationAction = buildSemanticReplyConversationAction(
-    conversationAction,
+    openAIConversationAction,
     aiResult.decision,
     {
       deterministicReplyConfirmed: approvedPriceReplyConfirmed,
