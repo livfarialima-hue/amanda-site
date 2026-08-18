@@ -289,3 +289,35 @@ Quando houver dúvida sobre onde colocar algo:
 - **é original de mídia, export, anexo ou evidência fechada?** Drive;
 - **contém dado pessoal?** Sistema canônico ou `90 — Dados sensíveis`, com acesso mínimo;
 - **é apenas outra cópia do que já existe?** Não criar.
+
+## 15. Controle automático de consistência
+
+Antes de encerrar qualquer mudança de bot, WhatsApp, Drive ou publicação, executar:
+
+```powershell
+npm.cmd run ops:check
+```
+
+Se o resultado for `SYNC_PENDING` porque a branch local ainda não contém a última produção observada, executar antes de continuar:
+
+```powershell
+npm.cmd run ops:reconcile
+```
+
+A reconciliação valida branch, manifesto e remoto, recusa alterações staged e usa somente atualização `mixed`, preservando todos os arquivos do worktree. Ela não usa `reset --hard`, não apaga mudanças e não publica nada. O remoto pode avançar além do recibo somente quando o novo commit descende desse recibo; qualquer divergência de histórico bloqueia o comando para revisão, sem escolher uma versão por suposição.
+
+O comando é um gate, não uma rotina de correção automática. Ele deve bloquear o encerramento quando encontrar branch local que não contenha a última produção observada, worktree não limpo, versão divergente, metadados de release inconsistentes, mais de um manual ativo da Bruna, projeção do Drive sem hash correspondente ou pacote temporário de release deixado na raiz.
+
+Para a Bruna, `netlify/functions/lib/bruna-policy/manifest.json` é o recibo técnico único da última verificação. Ele diferencia o commit e o deploy funcionais da última produção observada e registra rollback, IDs fixos do Drive e hash da projeção ativa. Os campos `lastObserved*` são um snapshot datado, não uma tentativa impossível de o próprio commit registrar antecipadamente seu futuro SHA ou deploy. O manual de comportamento continua sendo `docs/estrategia-abordagem-bruna.md`; o manifesto não repete suas diretrizes.
+
+Regras de manutenção:
+
+- nunca identificar arquivo, projeto ou deployment apenas pelo título;
+- manter no máximo uma projeção por assunto em `00 — Documentação vigente e links`;
+- mover versões substituídas para `99 — Histórico operacional` somente depois de comparar conteúdo, pais e permissões;
+- não excluir automaticamente duplicatas do Drive;
+- não copiar metadados de release manualmente para criar outra fonte concorrente;
+- pacotes locais transitórios ficam em `tmp/`, nunca na raiz do repositório;
+- após qualquer release criado por worktree limpo ou integração externa, reconciliar o checkout principal antes de iniciar outro trabalho;
+- diferenças de fim de linha são normalizadas por `.gitattributes` e não representam uma nova versão funcional;
+- se qualquer destino não puder ser comparado, registrar `sincronização pendente` em vez de declarar conclusão.
