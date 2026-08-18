@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 18 de agosto de 2026, 05:53, America/Sao_Paulo
+**Atualizado em:** 18 de agosto de 2026, 07:18, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -67,6 +67,9 @@ O responsável técnico deve:
 - nenhuma mensagem de teste nem sonda de paciente foi disparada por nós; na observação passiva, a sequência real seguinte chegou às 20:57, sofreu `timeout`/`busy_retry` no roteamento, foi recuperada por retentativas, suprimiu corretamente a abertura Meta mais antiga e concluiu a resposta à mensagem mais recente com entrega HTTP 200 às 20:58:30;
 - essa evidência confirma o funcionamento do webhook, da recuperação e da entrega da Bruna após a publicação; ainda não existe garantia absoluta para eventos que a YCloud deixe de entregar ao Netlify, hipótese que exige o log bruto do provedor;
 - rollback imediato do estado atual: deploy `6a841429bcd1c6000730464c`, commit `86aa61e`.
+- governança de versões consolidada em 18/08: commit `1c3f556`, deploy Netlify `6a842ffa9399100008f5a827`, PR `#6`, com **760/760 testes aprovados**; o release adicionou gate de consistência, reconciliação segura do checkout, recibo único no manifesto, normalização de fim de linha e bloqueio de duplicatas/pacotes transitórios, sem alterar respostas ou regras da Bruna;
+- o índice único do Drive foi atualizado no mesmo arquivo `1nOzoVrL1TwK-oFLyOC_uO5gy01Cf14If`, sem criar cópia; a projeção ativa da Bruna permaneceu idêntica ao manual local, com três fontes históricas, uma auditoria fechada e a pasta de mudanças em andamento vazia;
+- o checkout principal deste computador permanece em `SYNC_PENDING` porque o ambiente de execução negou escrita em `.git/FETCH_HEAD`; produção, GitHub e Drive estão verificados, e a reconciliação local deve ser concluída fora desta sandbox com `npm.cmd run ops:reconcile` seguido de `npm.cmd run ops:check`.
 
 ### Auditoria 1 — Google Ads
 
