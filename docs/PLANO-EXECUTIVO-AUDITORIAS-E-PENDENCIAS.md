@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 18 de agosto de 2026, 05:53, America/Sao_Paulo
+**Atualizado em:** 18 de agosto de 2026, 07:18, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -67,6 +67,9 @@ O responsável técnico deve:
 - nenhuma mensagem de teste nem sonda de paciente foi disparada por nós; na observação passiva, a sequência real seguinte chegou às 20:57, sofreu `timeout`/`busy_retry` no roteamento, foi recuperada por retentativas, suprimiu corretamente a abertura Meta mais antiga e concluiu a resposta à mensagem mais recente com entrega HTTP 200 às 20:58:30;
 - essa evidência confirma o funcionamento do webhook, da recuperação e da entrega da Bruna após a publicação; ainda não existe garantia absoluta para eventos que a YCloud deixe de entregar ao Netlify, hipótese que exige o log bruto do provedor;
 - rollback imediato do estado atual: deploy `6a841429bcd1c6000730464c`, commit `86aa61e`.
+- governança de versões consolidada em 18/08: commit `1c3f556`, deploy Netlify `6a842ffa9399100008f5a827`, PR `#6`, com **760/760 testes aprovados**; o release adicionou gate de consistência, reconciliação segura do checkout, recibo único no manifesto, normalização de fim de linha e bloqueio de duplicatas/pacotes transitórios, sem alterar respostas ou regras da Bruna;
+- o índice único do Drive foi atualizado no mesmo arquivo `1nOzoVrL1TwK-oFLyOC_uO5gy01Cf14If`, sem criar cópia; a projeção ativa da Bruna permaneceu idêntica ao manual local, com três fontes históricas, uma auditoria fechada e a pasta de mudanças em andamento vazia;
+- o checkout principal deste computador permanece em `SYNC_PENDING` porque o ambiente de execução negou escrita em `.git/FETCH_HEAD`; produção, GitHub e Drive estão verificados, e a reconciliação local deve ser concluída fora desta sandbox com `npm.cmd run ops:reconcile` seguido de `npm.cmd run ops:check`.
 
 ### Auditoria 1 — Google Ads
 
@@ -177,21 +180,7 @@ Ainda falta para manter a atribuição rica após a ativação:
 ## 4. O que vocês precisam fazer agora
 
 | Até quando | Responsável | Ação humana | Se não for possível |
-|---|---|---|---|
-| 17/08, antes das 17:30 | Daniel | participar da reunião de suporte de tags do Google; não aceitar mudanças amplas ou automáticas sem registro e revisão | coletar a recomendação e não aplicar na hora |
-| 20/08, antes das 14:00 | Amanda/equipe | localizar autorizações/consentimentos das imagens e separar dúvidas para Codame/jurídico, sem subir documentos pessoais no repositório | manter congelado novo uso/reuso das galerias |
-| 20/08, durante 15:00–16:00 | Daniel/equipe | acompanhar a saúde D+3 da atribuição; nenhuma nova autorização é necessária para o que já foi publicado | se houver PII, atribuição incorreta, first touch sobrescrito ou regressão, autorizar somente o rollback já planejado |
-| quando houver parecer | Amanda/jurídico/Codame | registrar decisão sobre galerias, imagens sensíveis/menores, consentimentos, retenção e comunicação de preços | não alterar/publicar esses itens por inferência |
-
-Fora dessas ações, não há tarefa técnica que Daniel precise executar manualmente. O restante deve ser conduzido e documentado pelo responsável técnico.
-
-## 5. Cronograma mestre
-
-Todas as datas usam America/Sao_Paulo. Uma data não é autorização automática: primeiro se confirmam os gates.
-
-| Data e hora | Bloco | Estado | O que será feito | Publicação ou escrita externa | Condição para avançar |
-|---|---|---|---|---|---|
-| diariamente, aproximadamente 08:15 | LEADS → Google Ads: agregado anônimo | `ATIVO` desde 15/08; Apps Script v92 | atualizar coortes de 7/30/90 dias na aba `Agregados` do arquivo `LIV — Agregados de mídia paga — sem PII` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e conta Ads somente leitora |
+|---|---|-…443 tokens truncated… somente leitora |
 | diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO` desde 15/08; execução real concluída às 21:35 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` concluiu sem mudanças; nenhum e-mail no sábado porque não havia alerta crítico |
 | toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
 | primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
