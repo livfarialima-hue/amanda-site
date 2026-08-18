@@ -1896,7 +1896,8 @@ test("the first surgical price question uses the approved institutional reply", 
     assert.equal(patientBody.to, "+5511900000000");
     assert.match(patientBody.text.body, /é natural querer saber o valor antes de decidir/i);
     assert.match(patientBody.text.body, /confirma o valor exato após a avaliação/i);
-    assert.match(patientBody.text.body, /o que você gostaria de melhorar com esse procedimento/i);
+    assert.match(patientBody.text.body, /o que seria mais útil entender sobre esse procedimento/i);
+    assert.doesNotMatch(patientBody.text.body, /o que mais te incomoda/i);
     assert.doesNotMatch(patientBody.text.body, /técnica|complexidade|hospital|anestesia|materiais|https?:\/\//i);
     assert.doesNotMatch(patientBody.text.body, /R\$/);
   } finally {

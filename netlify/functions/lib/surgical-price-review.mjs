@@ -12,6 +12,10 @@ const LIFTING_PRICE_GUIDE_URL =
 const INVISIBLE_LINK_CHARACTERS = /[\u200B-\u200D\u2060\uFEFF]/g;
 const PRICE_RANGE_LOWER_FACTOR = 0.9;
 const PRICE_RANGE_UPPER_FACTOR = 1.1;
+const CLINIC_LOCATION_REPLY = [
+  "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150.",
+  "Google Maps: https://maps.app.goo.gl/yDFBmbcn5oDpHSM46",
+].join("\n");
 const LOCATION_REQUEST_PATTERN =
   /\b(?:onde\s+fica|qual\s+(?:e|é)\s+o\s+endere[cç]o|endere[cç]o|localiza[cç][aã]o|como\s+chegar)\b/i;
 const INITIAL_PRICE_TERMS_PATTERN =
@@ -204,15 +208,15 @@ function priceVariation(procedure) {
 
 function initialPriceDiscoveryQuestion(procedure) {
   if (procedure === "lifting_facial") {
-    return "Para eu te orientar melhor, o que mais te incomoda hoje no rosto ou no pescoço?";
+    return "Além do valor, o que seria mais útil entender sobre o lifting neste momento?";
   }
 
   if (procedure === "lifting_cervical") {
-    return "Para eu te orientar melhor, o que mais te incomoda hoje no pescoço?";
+    return "Além do valor, o que seria mais útil entender sobre o lifting cervical neste momento?";
   }
 
   if (procedure) {
-    return "Para eu te orientar melhor, o que você gostaria de melhorar com esse procedimento?";
+    return "Além do valor, o que seria mais útil entender sobre esse procedimento neste momento?";
   }
 
   return "Você está pesquisando qual cirurgia ou qual região gostaria de melhorar?";
@@ -279,13 +283,13 @@ export function buildSurgicalInitialPriceReply({
   currentText = "",
 }) {
   const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
-    ? "A Clínica LIV Faria Lima fica na Rua Pais Leme, 215, em Pinheiros, próxima à Av. Faria Lima, em São Paulo."
+    ? CLINIC_LOCATION_REPLY
     : "";
   const asksAboutTerms = INITIAL_PRICE_TERMS_PATTERN.test(
     String(currentText || ""),
   );
   const paymentContext = asksAboutTerms
-    ? "O orçamento é apresentado de forma completa, com os itens aplicáveis ao caso, e há opções de pagamento."
+    ? "O orçamento reúne os itens aplicáveis. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. A equipe confirma as condições."
     : "";
   return [
     directPriceGreeting(patientName, recentConversation),
@@ -316,7 +320,7 @@ export function buildSurgicalPriceSuggestedReply({
     const location =
       directToPatient &&
       LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
-        ? "A Clínica LIV Faria Lima fica na Rua Pais Leme, 215, em Pinheiros, próxima à Av. Faria Lima, em São Paulo."
+        ? CLINIC_LOCATION_REPLY
         : "";
 
     if (directToPatient) {
@@ -329,6 +333,7 @@ export function buildSurgicalPriceSuggestedReply({
           "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
         ].join("\n"),
         "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+        "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. A equipe confirma as condições.",
         guide,
         "Se fizer sentido, explico a avaliação.",
       ].filter(Boolean).join("\n\n");
@@ -343,6 +348,7 @@ export function buildSurgicalPriceSuggestedReply({
         "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
       ].join("\n"),
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. A equipe confirma as condições.",
       guide,
       "Se fizer sentido, explico a avaliação.",
     ].filter(Boolean).join("\n\n");
@@ -357,7 +363,7 @@ export function buildSurgicalPriceSuggestedReply({
     "A indicação e o valor final variam conforme o planejamento. A Dra. Amanda prioriza segurança, naturalidade e preservação das suas características.";
   const careAndPayment = [
     "Hospital, anestesista, auxiliar, instrumentador, materiais e acompanhamento variam por caso.",
-    "Há condição à vista e parcelamento antecipado até a cirurgia.",
+    "Há desconto à vista e parcelamento antecipado, com quitação antes da cirurgia.",
   ].join(" ");
   const guide = shouldIncludePriceGuide(
     procedure,
@@ -393,13 +399,13 @@ export function buildSurgicalPriceHoldingReply({
     ? "pela manhã"
     : "por aqui";
   const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
-    ? "A Clínica LIV Faria Lima fica em Pinheiros, na Rua Pais Leme, 215, próxima à Av. Faria Lima, em São Paulo."
+    ? CLINIC_LOCATION_REPLY
     : "";
 
   return [
     [opening, location].filter(Boolean).join(" "),
     [
-      `Consigo te passar uma faixa de referência${procedureContext} e também as possibilidades de pagamento.`,
+      `Consigo te passar uma faixa de referência${procedureContext}. Há desconto à vista e parcelamento antecipado, com quitação antes da cirurgia; vou confirmar com a equipe a quantidade de parcelas, o percentual e as demais condições.`,
       `Vou confirmar os valores atuais com a equipe e te retorno ${returnTiming}.`,
     ].join(" "),
   ].filter(Boolean).join("\n\n");

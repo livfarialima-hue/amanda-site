@@ -211,6 +211,28 @@ export function applyFirstReplyGreetingGuard(
   };
 }
 
+const AUTOMATION_IDENTITY_PATTERN =
+  /(?:^|[\s([{"'“])(?:bot|rob[oô]|automa[cç][aã]o|intelig[eê]ncia\s+artificial|IA|assistente\s+virtual|secret[aá]ria\s+virtual)(?=$|[\s)\]}"'”.,;:!?])/iu;
+
+export function applyAutomationIdentityGuard(decision) {
+  if (
+    decision?.route !== "standard_reply" ||
+    !decision?.suggestedReply ||
+    !AUTOMATION_IDENTITY_PATTERN.test(String(decision.suggestedReply))
+  ) {
+    return decision;
+  }
+
+  return {
+    ...decision,
+    route: "human_review",
+    automaticAllowed: false,
+    suggestedReply: "",
+    replyCode: "IDENTITY-REVIEW-01",
+    reviewReason: "automation_identity_disclosure_blocked",
+  };
+}
+
 function normalizeReferralContext(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
 
@@ -361,25 +383,27 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
   return result("completed", {
     model: String(response?.model || fallbackModel),
     decision: applyUrgencyGuard(
-      applyFirstReplyGreetingGuard(
-        applyReturningPatientReplyGuard(
-          applyKnownProfileNameGuard(
-            applyKnowledgeDecisionGuard(
-              decision,
-              options.learningContext,
+      applyAutomationIdentityGuard(
+        applyFirstReplyGreetingGuard(
+          applyReturningPatientReplyGuard(
+            applyKnownProfileNameGuard(
+              applyKnowledgeDecisionGuard(
+                decision,
+                options.learningContext,
+              ),
+              options.patientProfileName,
+              options.hasConversationHistory,
             ),
-            options.patientProfileName,
-            options.hasConversationHistory,
+            options.patientRelationship,
           ),
-          options.patientRelationship,
+          {
+            patientProfileName: options.patientProfileName,
+            recentConversation: options.recentConversation,
+            patientRelationship: options.patientRelationship,
+            priorInteractionKnown:
+              options.priorInteractionKnown === true,
+          },
         ),
-        {
-          patientProfileName: options.patientProfileName,
-          recentConversation: options.recentConversation,
-          patientRelationship: options.patientRelationship,
-          priorInteractionKnown:
-            options.priorInteractionKnown === true,
-        },
       ),
       options.deterministicUrgent,
     ),

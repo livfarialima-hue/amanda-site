@@ -18,8 +18,8 @@ const INPUT = {
 };
 
 const FULL_CLINIC_LOCATION =
-  "na Clínica LIV Faria Lima, Rua Pais Leme, 215, Pinheiros, São Paulo\n" +
-  "Google Maps: https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo";
+  "na Clínica LIV Faria Lima, R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150\n" +
+  "Google Maps: https://maps.app.goo.gl/yDFBmbcn5oDpHSM46";
 
 test("clinic reminders include the full address and Google Maps link", () => {
   assert.equal(

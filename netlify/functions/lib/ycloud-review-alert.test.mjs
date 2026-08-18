@@ -664,7 +664,9 @@ test("image webhook acknowledges the photo as Bruna and keeps human review", asy
       /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
     );
     assert.match(patientReply.text.body, /Obrigada por confiar em nós/i);
-    assert.match(patientReply.text.body, /Não fazemos diagnóstico/i);
+    assert.match(patientReply.text.body, /Há boas opções/i);
+    assert.match(patientReply.text.body, /avaliação à distância/i);
+    assert.match(patientReply.text.body, /sem concluir diagnóstico/i);
     assert.ok(
       ycloudBodies.some(
         (body) =>

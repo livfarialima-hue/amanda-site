@@ -26,8 +26,11 @@ test("acknowledges a patient photo gently without interpreting it", () => {
     /^Olá, Mariana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
   );
   assert.match(firstReply, /Obrigada por confiar em nós/i);
+  assert.match(firstReply, /momento pessoal/i);
+  assert.match(firstReply, /Há boas opções/i);
+  assert.match(firstReply, /avaliação à distância/i);
   assert.match(firstReply, /encaminhá-la à equipe/i);
-  assert.match(firstReply, /Não fazemos diagnóstico/i);
+  assert.match(firstReply, /sem concluir diagnóstico/i);
   assert.match(firstReply, /apenas pela imagem/i);
   assert.doesNotMatch(firstReply, /defeito|corrigir|bonit[ao]|feio/i);
 
@@ -204,7 +207,7 @@ test("answers the approved lifting hospital fact and asks for an unclear name", 
   assert.doesNotMatch(facialReply, /Como posso te chamar/i);
 });
 
-test("price fallback is transparent about the consultation and clarifies the requested price", () => {
+test("price fallback stays concise and does not invite an unapproved range", () => {
   const reply = buildPatientReply({
     replyCode: "P-PRECO-01",
     patientName: "Maria",
@@ -212,14 +215,9 @@ test("price fallback is transparent about the consultation and clarifies the req
   });
 
   assert.match(reply, /preço antes de decidir/);
-  assert.match(reply, /consulta presencial/);
-  assert.match(reply, /R\$ 500/);
-  assert.match(reply, /Pix, débito ou parcelamento/);
-  assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
-  assert.match(reply, /nota fiscal/);
-  assert.match(reply, /comprovante de despesa médica/);
-  assert.match(reply, /Imposto de Renda/);
-  assert.match(reply, /faixa atual de blefaroplastia/);
+  assert.match(reply, /confirma o valor exato depois da avaliação/);
+  assert.match(reply, /o que seria mais útil entender sobre blefaroplastia/i);
+  assert.doesNotMatch(reply, /faixa|R\$ 18 mil|R\$ 26 mil|consulta presencial/i);
   assert.doesNotMatch(reply, /investimento/);
 });
 
@@ -333,7 +331,10 @@ test("an explicit availability request can advance to period preference", () => 
   });
 
   assert.match(reply, /se o lifting faz sentido/);
-  assert.match(reply, /Rua Pais Leme, 215/);
+  assert.match(reply, /R\. Pais Leme, 215/);
+  assert.match(reply, /cj\. 710/);
+  assert.match(reply, /CEP 05424-150/);
+  assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(reply, /Se quiser que eu busque opções/);
   assert.match(reply, /prefere manhã ou tarde/);
   assert.doesNotMatch(reply, /R\$ 500/);

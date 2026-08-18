@@ -4,9 +4,9 @@ const DEFAULT_TEMPLATE_NAME = "lembrete_consulta_liv_v1";
 const DEFAULT_TEMPLATE_LANGUAGE = "pt_BR";
 const REQUEST_TIMEOUT_MS = 8_000;
 const CLINIC_ADDRESS =
-  "Rua Pais Leme, 215, Pinheiros, São Paulo";
+  "R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150";
 const CLINIC_MAPS_URL =
-  "https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo";
+  "https://maps.app.goo.gl/yDFBmbcn5oDpHSM46";
 
 function normalizePhone(value) {
   const compact = String(value || "").replace(/[\s()-]/g, "");
@@ -30,7 +30,7 @@ export function appointmentReminderLocation(value) {
     return location;
   }
 
-  if (/rua\s+pais\s+leme\s*,?\s*215/i.test(location)) {
+  if (/(?:rua|r\.)\s*pais\s+leme\s*,?\s*215/i.test(location)) {
     return `${location}\nGoogle Maps: ${CLINIC_MAPS_URL}`;
   }
 

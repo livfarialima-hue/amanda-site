@@ -24,23 +24,26 @@ test("creates an empathetic first price response and answers payment terms brief
   assert.match(reply, /^Olá, Eliana! Eu sou a Bruna/);
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
   assert.match(reply, /confirma o valor exato após a avaliação/i);
-  assert.match(reply, /orçamento é apresentado de forma completa/i);
-  assert.match(reply, /há opções de pagamento/i);
-  assert.match(reply, /o que você gostaria de melhorar/i);
+  assert.match(reply, /orçamento reúne os itens aplicáveis/i);
+  assert.match(reply, /parcelado antecipadamente/i);
+  assert.match(reply, /quitação antes da cirurgia/i);
+  assert.match(reply, /desconto à vista/i);
+  assert.match(reply, /o que seria mais útil entender/i);
   assert.doesNotMatch(reply, /técnica|complexidade|materiais|honorário isolado/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /https?:\/\//);
   assert.ok(Array.from(reply).length <= 500);
 });
 
-test("the first known lifting price response invites an easy aesthetic continuation", () => {
+test("the first known lifting price response invites a neutral contextual continuation", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Maria",
     procedure: "lifting_facial",
   });
 
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+  assert.match(reply, /o que seria mais útil entender sobre o lifting/i);
+  assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /qual cirurgia ou qual região/i);
   assert.doesNotMatch(reply, /(?:informar|passar).{0,20}(?:média|faixa)/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
@@ -56,7 +59,8 @@ test("the short question shown in the conversation receives the conversion-focus
 
   assert.match(reply, /^Olá, Queila! Eu sou a Bruna/);
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+  assert.match(reply, /o que seria mais útil entender sobre o lifting/i);
+  assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /técnica|complexidade|equipe|hospital|anestesia|materiais/i);
   assert.doesNotMatch(reply, /https?:\/\//);
   assert.ok(Array.from(reply).length <= 360);
@@ -106,6 +110,8 @@ test("creates a patient-ready lifting facial price suggestion for human review",
   assert.match(reply, /técnica, complexidade, necessidades individuais/i);
   assert.match(reply, /equipe, hospital, anestesia, materiais e acompanhamento/i);
   assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /parcelado antecipadamente/i);
+  assert.match(reply, /desconto à vista/i);
   assert.match(
     reply,
     /conteudos\/quanto-custa-lifting-facial-sao-paulo/,
@@ -141,11 +147,13 @@ test("creates the approved lifting price reply for direct patient delivery", () 
   assert.match(reply, /valor final é definido após avaliação e planejamento/i);
   assert.match(reply, /pode ficar fora dessa faixa/i);
   assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /parcelado antecipadamente/i);
+  assert.match(reply, /desconto à vista/i);
   assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.match(reply, /explico a avaliação/i);
   assert.doesNotMatch(reply, /obrigada por aguardar/i);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
-  assert.ok(Array.from(reply).length <= 650);
+  assert.ok(Array.from(reply).length <= 800);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
@@ -157,7 +165,9 @@ test("direct lifting price answers location in the same first reply", () => {
     currentText: "Onde fica e qual o valor do lifting?",
   });
 
-  assert.match(reply, /Rua Pais Leme, 215/);
+  assert.match(reply, /R\. Pais Leme, 215, cj\. 710/);
+  assert.match(reply, /CEP 05424-150/);
+  assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
   assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
 });
@@ -175,7 +185,8 @@ test("acknowledges a price request while the approved value is pending", () => {
 
   assert.match(daytime, /^Claro, Van\./);
   assert.match(daytime, /faixa de referência para o lifting facial/);
-  assert.match(daytime, /possibilidades de pagamento/);
+  assert.match(daytime, /desconto à vista/);
+  assert.match(daytime, /parcelamento antecipado/);
   assert.match(daytime, /te retorno por aqui/);
   assert.doesNotMatch(daytime, /R\$/);
   assert.match(overnight, /te retorno pela manhã/);
@@ -190,9 +201,10 @@ test("answers a location question immediately while the surgical price waits for
   });
 
   assert.match(reply, /^Claro, Nady\./);
-  assert.match(reply, /Rua Pais Leme, 215/);
+  assert.match(reply, /R\. Pais Leme, 215, cj\. 710/);
+  assert.match(reply, /CEP 05424-150/);
+  assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(reply, /Pinheiros/);
-  assert.match(reply, /pr[oó]xima à Av\. Faria Lima/i);
   assert.match(reply, /faixa de refer[eê]ncia para o lifting facial/i);
   assert.doesNotMatch(reply, /R\$ 500/);
 });
@@ -296,7 +308,8 @@ test("the first lifting price answer stays concise when a guide is already in th
   });
 
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que mais te incomoda hoje no rosto ou no pescoço/i);
+  assert.match(reply, /o que seria mais útil entender sobre o lifting/i);
+  assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /https?:\/\//);
 });
@@ -308,7 +321,7 @@ test("the first price answer stays conversational for another region", () => {
   });
 
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /o que você gostaria de melhorar com esse procedimento/i);
+  assert.match(reply, /o que seria mais útil entender sobre esse procedimento/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
@@ -380,8 +393,8 @@ test("price review alert contains the original question and a copyable answer", 
   assert.match(alert, /Revise e copie manualmente/);
   assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
-  assert.match(alert, /parcelamento antecipado até a cirurgia/);
-  assert.match(alert, /condição à vista/);
+  assert.match(alert, /parcelamento antecipado/);
+  assert.match(alert, /desconto à vista/);
   assert.match(alert, /segurança, naturalidade/);
   assert.match(alert, /hospital, anestesista, auxiliar, instrumentador/i);
   assert.match(alert, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);

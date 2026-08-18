@@ -80,9 +80,9 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /Nunca prometa dedução, restituição/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /pagamento antecipadamente até a cirurgia/,
+    /parcelado antecipadamente, com quitação antes do procedimento/,
   );
-  assert.match(CONVERSATION_GUIDELINES, /condição à vista/);
+  assert.match(CONVERSATION_GUIDELINES, /desconto à vista/);
   assert.match(
     CONVERSATION_GUIDELINES,
     /média ou faixa de qualquer outro procedimento/,
@@ -122,7 +122,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /termine com uma única pergunta fácil sobre o que a pessoa gostaria de melhorar/,
+    /uma única pergunta contextual de baixa fricção somente se ela ajudar/,
   );
   assert.match(CONVERSATION_GUIDELINES, /Não liste técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento nessa primeira resposta/);
   assert.match(CONVERSATION_GUIDELINES, /Não envie artigo, guia, faixa de preço/);
@@ -171,7 +171,7 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
   assert.match(CONVERSATION_GUIDELINES, /não repita outras URLs ou páginas/);
-  assert.match(CONVERSATION_GUIDELINES, /guia específico de lifting pode aparecer uma vez na primeira resposta institucional/);
+  assert.match(CONVERSATION_GUIDELINES, /guia específico de lifting não aparece na primeira resposta de preço/);
   assert.match(CONVERSATION_GUIDELINES, /Não ofereça o guia de custos faciais para cirurgia de mama/);
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -200,8 +200,9 @@ test("playbook states credentials and location precisely", () => {
     CONVERSATION_GUIDELINES,
     /membro da Sociedade Brasileira de Cirurgia Plástica \(SBCP\)/,
   );
-  assert.match(CONVERSATION_GUIDELINES, /Rua Pais Leme, 215/);
-  assert.match(CONVERSATION_GUIDELINES, /próxima à Av\. Faria Lima/);
+  assert.match(CONVERSATION_GUIDELINES, /R\. Pais Leme, 215, cj\. 710/);
+  assert.match(CONVERSATION_GUIDELINES, /CEP 05424-150/);
+  assert.match(CONVERSATION_GUIDELINES, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(
     CONVERSATION_GUIDELINES,
     /nunca afirme que ela fica na própria Avenida Faria Lima/,
@@ -263,7 +264,7 @@ test("playbook handles appearance insecurity without exploiting it", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Quando a pessoa enviar uma foto, agradecer a confiança/,
+    /Quando a pessoa enviar uma foto do rosto ou do corpo, reconheça com delicadeza a confiança e a vulnerabilidade/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,

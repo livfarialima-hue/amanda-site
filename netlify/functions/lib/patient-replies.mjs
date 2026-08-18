@@ -47,6 +47,10 @@ export const AMANDA_INSTAGRAM_URL =
   "https://www.instagram.com/dra.amanda_plastica/";
 export const AMANDA_SITE_URL =
   "https://draamandaschroeder.com.br/";
+const CLINIC_ADDRESS =
+  "R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150";
+const CLINIC_MAPS_URL =
+  "https://maps.app.goo.gl/yDFBmbcn5oDpHSM46";
 export const LIFTING_FACIAL_URL =
   "https://draamandaschroeder.com.br/lifting-facial/";
 
@@ -285,7 +289,8 @@ export function buildConsultationInformationReply({
     : "";
   const nextStep = availabilityRequested
     ? [
-        "Atendemos na Rua Pais Leme, 215, em Pinheiros, perto da Av. Faria Lima.",
+        `A Clínica LIV fica na ${CLINIC_ADDRESS}.`,
+        `Google Maps: ${CLINIC_MAPS_URL}`,
         "Se quiser que eu busque opções, você prefere manhã ou tarde?",
       ].join(" ")
     : siteRequested && resourceUrl
@@ -318,9 +323,9 @@ export function buildImageAcknowledgementReply({
       : "",
   ].filter(Boolean).join(" ");
   const acknowledgement = [
-    "Obrigada por confiar em nós e enviar a foto.",
-    "Vou encaminhá-la à equipe para que seja vista com o cuidado necessário.",
-    "Não fazemos diagnóstico nem definimos indicação apenas pela imagem; a equipe continuará com você por aqui.",
+    "Obrigada por confiar em nós e compartilhar a foto — sei que este é um momento pessoal.",
+    "Há boas opções que podem ajudar a melhorar o que você relatou, mas uma foto e uma avaliação à distância não permitem examinar tudo o que importa nem definir com segurança o melhor caminho.",
+    "Vou encaminhá-la à equipe para que seja avaliada com o cuidado necessário, sem concluir diagnóstico ou indicação apenas pela imagem.",
   ].join(" ");
 
   return [opening, acknowledgement].filter(Boolean).join(" ");
@@ -392,8 +397,8 @@ export function buildPatientReply({
     return [
       hello,
       "Faz sentido querer entender o preço antes de decidir.",
-      "A consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis.",
-      `Você quer saber da consulta ou da faixa atual de ${procedureLabel}?`,
+      "Como cada cirurgia é planejada individualmente, a Dra. Amanda confirma o valor exato depois da avaliação.",
+      `Além do valor, o que seria mais útil entender sobre ${procedureLabel} neste momento?`,
     ].join(" ");
   }
 
