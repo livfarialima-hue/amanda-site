@@ -10,6 +10,7 @@ const roots = [
 
 const standaloneTests = [
   "campanhas/site-technical-regression.test.mjs",
+  "scripts/check-operational-consistency.test.mjs",
 ];
 
 function collectTests(directory) {
