@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-18.4
 
-**Estado do release:** candidata local testada; produção e projeção no Drive permanecem na `2026-08-18.3` até autorização explícita de publicação. Sincronização da `2026-08-18.4` pendente.
+**Estado do release:** publicada e verificada em produção no commit funcional `1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5`, deploy Netlify `6a84eb15525edc0e071a0486`, com **826/826 testes** aprovados e projeção ativa do Drive reconciliada no mesmo arquivo.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 

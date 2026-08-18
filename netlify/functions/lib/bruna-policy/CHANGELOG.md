@@ -8,7 +8,7 @@
 - Agenda, aceitação de horário, confirmação de consulta, cuidado clínico, preço não aprovado, tarefa administrativa, opt-out, duplicidade e corrida com atendente continuam fail-closed.
 - A retomada imediata preserva um fallback atrasado e só libera a Bruna se a geração da tomada humana ainda for a mesma, impedindo que uma nova mensagem da equipe seja sobrescrita.
 - Adicionado cenário sintético para `"Quer que eu te explique como funciona a consulta?" → "Sim"`, além de regressões de autorização, contrato, fila, corrida humana e fallback.
-- Estado desta versão: código e documentação locais validados com **826/826 testes** e build de 178 arquivos; publicação, verificação em produção e projeções no Drive aguardam autorização explícita deste release.
+- Estado desta versão: publicada e verificada no commit funcional `1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5`, deploy `6a84eb15525edc0e071a0486`, com **826/826 testes**, build de 178 arquivos e projeção ativa do Drive reconciliada com o manual do release.
 
 ## 2026-08-18.3
 

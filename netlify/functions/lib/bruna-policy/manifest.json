@@ -13,15 +13,15 @@
   "automaticKnowledgeRisk": "low",
   "humanConfirmationRequiredForAppointments": true,
   "release": {
-    "status": "prepared",
-    "functionalCommit": "c392a743b2f00d751bf6dca8da54b991db0439ff",
-    "lastObservedProductionCommit": "c392a743b2f00d751bf6dca8da54b991db0439ff",
-    "functionalDeployId": "6a84dea1cf780e00086eed7e",
-    "lastObservedProductionDeployId": "6a84dea1cf780e00086eed7e",
-    "rollbackCommit": "c789914991f409c81320090872ac50f4ebc86136",
-    "rollbackDeployId": "6a84534923558b0008961936",
-    "publishedAt": "2026-08-18T19:37:21.881-03:00",
-    "lastVerifiedAt": "2026-08-18T19:45:31-03:00"
+    "status": "published",
+    "functionalCommit": "1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5",
+    "lastObservedProductionCommit": "1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5",
+    "functionalDeployId": "6a84eb15525edc0e071a0486",
+    "lastObservedProductionDeployId": "6a84eb15525edc0e071a0486",
+    "rollbackCommit": "c392a743b2f00d751bf6dca8da54b991db0439ff",
+    "rollbackDeployId": "6a84dea1cf780e00086eed7e",
+    "publishedAt": "2026-08-18T20:30:57.120-03:00",
+    "lastVerifiedAt": "2026-08-18T20:32:28-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "ca67a341f86e59190f9be8fe31501f1be6b5615e01154a0ae585d13358cc8db0"
+    "driveProjectionSha256": "7186ecebf6c391135f0d346aa7c07f0857bd4f506d9857774bb781cae3f732af"
   }
 }
