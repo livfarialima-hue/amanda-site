@@ -224,6 +224,48 @@ test("AI safety triage evaluates a relevant statement without relying on convers
   assert.equal(decision.reason, "ai_safety_triage");
 });
 
+test("semantic evaluation handles a colloquial question without punctuation", () => {
+  const text = "Ai fazem cervicoplastia";
+  assert.equal(hasUnresolvedPatientRequest(text, []), false);
+
+  const decision = decideConversationAction({
+    text,
+    plan: {
+      route: "standard_reply",
+      reason: "known_procedure",
+      automaticAllowed: true,
+      procedure: "lifting_cervical",
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "A Clínica LIV fica em Pinheiros, São Paulo.",
+      },
+    ],
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.allowAutomaticReply, true);
+  assert.equal(decision.unresolvedRequest, true);
+  assert.equal(decision.replyContract.allowedResponseKind, "direct_answer");
+});
+
+test("a safe conversational statement reaches semantic evaluation instead of being silenced by patterns", () => {
+  const decision = decideConversationAction({
+    text: "Eu já fiz lipo de papada e ainda percebo flacidez",
+    plan: {
+      route: "standard_reply",
+      reason: "known_procedure",
+      automaticAllowed: true,
+      procedure: "lifting_cervical",
+    },
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.allowAutomaticReply, true);
+});
+
 test("a fresh greeting can receive the controlled reactivation notice", () => {
   const decision = decideConversationAction({
     text: "Oi",
@@ -252,7 +294,7 @@ test("a budget refusal pauses the conversation without a new invitation", () => 
   assert.equal(decision.silenceReason, "patient_declined_or_budget_pause");
 });
 
-test("an answer to a human question remains human-owned even without a takeover flag", () => {
+test("an answer in human context reaches the semantic model when no takeover flag is active", () => {
   const decision = decideConversationAction({
     text: "Pode sim",
     plan: standardPlan,
@@ -265,10 +307,11 @@ test("an answer to a human question remains human-owned even without a takeover 
     ],
   });
 
-  assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_TEAM);
-  assert.equal(decision.owner, "human_team");
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.owner, "bruna");
+  assert.equal(decision.allowAutomaticReply, true);
   assert.equal(decision.allowHoldingReply, false);
-  assert.equal(decision.replyContract.allowedResponseKind, "none");
+  assert.equal(decision.replyContract.allowedResponseKind, "direct_answer");
 });
 
 test("the reply contract removes forced questions from a known surgical price answer", () => {

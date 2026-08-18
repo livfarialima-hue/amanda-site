@@ -288,7 +288,23 @@ test("playbook ignores commercial and unrelated approaches while preserving cont
   assert.match(CONVERSATION_GUIDELINES, /Não gaste uma resposta de cortesia/);
   assert.match(CONVERSATION_GUIDELINES, /convite pessoal, flerte, paquera/);
   assert.match(CONVERSATION_GUIDELINES, /use o histórico/);
-  assert.match(CONVERSATION_GUIDELINES, /prefira human_review a ignore/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /ambígua, potencialmente relevante e segura, peça um único esclarecimento específico/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /risco clínico, cuidado em andamento ou dado operacional protegido, use human_review/,
+  );
+});
+
+test("playbook requires explicit semantic reopening and complete deterministic fit", () => {
+  assert.match(CONVERSATION_GUIDELINES, /CONTEXT-REOPEN-01/);
+  assert.match(CONVERSATION_GUIDELINES, /context_reopen:<tema>/);
+  assert.match(CONVERSATION_GUIDELINES, /resolver integralmente todos os pedidos seguros/);
+  assert.match(CONVERSATION_GUIDELINES, /deterministicReplyPreview/);
+  assert.match(CONVERSATION_GUIDELINES, /CONTEXT-CLARIFY-01/);
+  assert.match(CONVERSATION_GUIDELINES, /UNKNOWN-CLARIFY-01/);
 });
 
 test("playbook adapts to stage and does not manufacture conversational progress", () => {

@@ -6,7 +6,6 @@ import {
   decideConversationAction,
   hasUnresolvedPatientRequest,
   isExplicitDeferralWithoutRequest,
-  isReplyToHumanContextWithoutStandaloneRequest,
 } from "./conversation-action-controller.mjs";
 
 const SCHEDULING_CONTEXT_PATTERN =
@@ -300,18 +299,6 @@ export function classifyHumanResume({
     };
   }
 
-  if (
-    isReplyToHumanContextWithoutStandaloneRequest(
-      normalizedText,
-      recentConversation,
-    )
-  ) {
-    return {
-      action: "no_action",
-      reason: "patient_reply_belongs_to_human_context",
-    };
-  }
-
   const simpleCoordination =
     classifySimpleCoordinationAcknowledgement(
       normalizedText,
@@ -319,8 +306,8 @@ export function classifyHumanResume({
     );
   if (simpleCoordination) {
     return {
-      action: "acknowledge",
-      reason: "simple_coordination_acknowledgement",
+      action: "attempt_reply",
+      reason: "semantic_coordination_candidate",
       replyKind: simpleCoordination,
     };
   }

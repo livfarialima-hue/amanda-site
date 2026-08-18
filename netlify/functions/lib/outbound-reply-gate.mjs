@@ -372,7 +372,8 @@ export function validateOutboundReply({
     isReplyToHumanContextWithoutStandaloneRequest(
       currentText,
       recentConversation,
-    )
+    ) &&
+    conversationAction?.semanticHumanContextReplyAuthorized !== true
   ) {
     return {
       allowed: false,

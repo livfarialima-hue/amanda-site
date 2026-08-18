@@ -8,6 +8,9 @@ import {
 import {
   CONVERSATION_ACTIONS,
 } from "./conversation-action-controller.mjs";
+import {
+  buildSemanticReplyConversationAction,
+} from "./semantic-reply-policy.mjs";
 
 function fakeBlobs() {
   const values = new Map();
@@ -265,6 +268,129 @@ test("a new standalone question can reopen a human exchange", () => {
   });
 
   assert.equal(result.allowed, true);
+});
+
+test("a broad semantic flag cannot bypass a human-owned context", () => {
+  const result = validateOutboundReply({
+    body:
+      "Sim, fazemos cervicoplastia. É uma cirurgia realizada em hospital, com anestesista e equipe cirúrgica.",
+    currentText: "Ai fazem cervicoplastia",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "A Clínica LIV fica em Pinheiros, São Paulo.",
+      },
+    ],
+    conversationAction: {
+      ...respond,
+      semanticReplyAuthorized: true,
+    },
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "patient_answer_belongs_to_human_context");
+});
+
+test("an explicit semantic reopen can answer a colloquial question without punctuation", () => {
+  const decision = {
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: "CONTEXT-REOPEN-01",
+    suggestedReply:
+      "Sim, fazemos cervicoplastia. É uma cirurgia realizada em hospital, com anestesista e equipe cirúrgica.",
+    reviewReason: "context_reopen:cervicoplastia",
+  };
+  const result = validateOutboundReply({
+    body: decision.suggestedReply,
+    currentText: "Ai fazem cervicoplastia",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "A Clínica LIV fica em Pinheiros, São Paulo.",
+      },
+    ],
+    conversationAction: buildSemanticReplyConversationAction(
+      respond,
+      decision,
+    ),
+  });
+
+  assert.equal(result.allowed, true);
+});
+
+test("a semantic reopen still cannot override a closing or deferral", () => {
+  const decision = {
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: "CONTEXT-REOPEN-01",
+    suggestedReply: "Claro, posso continuar te orientando.",
+    reviewReason: "context_reopen:continuation",
+  };
+  const result = validateOutboundReply({
+    body: decision.suggestedReply,
+    currentText: "Obrigada, qualquer coisa volto depois",
+    conversationAction: buildSemanticReplyConversationAction(
+      respond,
+      decision,
+    ),
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "patient_closed_or_deferred");
+});
+
+test("a validated context clarification gets one question but no link or CTA", () => {
+  const decision = {
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: "CONTEXT-CLARIFY-01",
+    suggestedReply:
+      "Quando você diz esse valor, está falando da consulta ou da cirurgia?",
+    reviewReason: "context_clarification:price_scope",
+  };
+  const action = buildSemanticReplyConversationAction(
+    {
+      ...respond,
+      replyContract: {
+        maxQuestions: 0,
+        maxLinks: 1,
+        allowCta: true,
+        allowAppointmentConfirmation: false,
+      },
+    },
+    decision,
+  );
+
+  assert.equal(validateOutboundReply({
+    body: decision.suggestedReply,
+    currentText: "E esse valor",
+    conversationAction: action,
+  }).allowed, true);
+  assert.equal(validateOutboundReply({
+    body:
+      "É sobre a consulta? Você também quer saber o valor da cirurgia?",
+    currentText: "E esse valor",
+    conversationAction: action,
+  }).reason, "too_many_questions_for_context");
+  assert.equal(validateOutboundReply({
+    body:
+      "Você está falando da consulta ou da cirurgia? https://example.com",
+    currentText: "E esse valor",
+    conversationAction: action,
+  }).reason, "too_many_links_for_context");
+  assert.equal(validateOutboundReply({
+    body: "Quer que eu agende para entender esse valor?",
+    currentText: "E esse valor",
+    conversationAction: action,
+  }).reason, "cta_not_allowed_for_context");
 });
 
 test("final validation blocks a planned reply that restarts bot context", () => {

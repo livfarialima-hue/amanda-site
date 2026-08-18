@@ -215,7 +215,8 @@ test("recognizes a safe operational continuation without inventing a team check"
     ),
     "send_exams_later",
   );
-  assert.equal(result.action, "acknowledge");
+  assert.equal(result.action, "attempt_reply");
+  assert.equal(result.reason, "semantic_coordination_candidate");
   assert.equal(
     buildSimpleCoordinationReply({
       kind: result.replyKind,

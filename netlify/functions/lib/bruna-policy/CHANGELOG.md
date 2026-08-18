@@ -1,5 +1,15 @@
 # Histórico do pacote Bruna
 
+## 2026-08-18.3
+
+- A IA passou a ser a primeira instância de interpretação de toda mensagem textual elegível; padrões de pontuação, palavras-chave, códigos e templates ficaram restritos a pistas e guardrails.
+- Perguntas coloquiais sem interrogação, como `Aí fazem cervicoplastia`, deixam de ser silenciadas por uma decisão mecânica e seguem para compreensão contextual.
+- Respostas determinísticas de agenda, preço e fatos institucionais só substituem o texto gerado quando a IA confirma semanticamente o código, o procedimento, o profissional e que a prévia cobre todos os pedidos seguros do turno.
+- Ambiguidade linguística segura passa a receber uma única pergunta curta e específica de esclarecimento, com contrato de uma pergunta, nenhum link e nenhum CTA; urgência, risco clínico, cuidado ativo, opt-out, duplicidade e tomada humana continuam fail-closed.
+- O mesmo princípio foi aplicado à retomada após atendimento humano. Uma autorização genérica da IA não atravessa o bloqueio final: somente reabertura, esclarecimento, coordenação ou cópia institucional explicitamente confirmados permitem resposta.
+- `CONTEXT-CLARIFY-01` identifica ambiguidade de linguagem ou referência conversacional; `UNKNOWN-CLARIFY-01` fica reservado à pergunta já compreendida cuja resposta aprovada depende de uma informação simples adicional.
+- Estado desta versão: código e documentação locais validados com **814/814 testes**; publicação, verificação em produção e projeção no Drive aguardam o fechamento do release autorizado.
+
 ## 2026-08-18.2
 
 - Criado contrato único por turno com estado, responsável, intenções pendentes, motivo de silêncio e limites de perguntas, links, CTA e confirmação de agenda.

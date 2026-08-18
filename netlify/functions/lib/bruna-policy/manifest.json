@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-18.2",
-  "promptVersion": "bruna-concierge-2026-08-18.2",
+  "bundleVersion": "2026-08-18.3",
+  "promptVersion": "bruna-concierge-2026-08-18.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-18.2",
+  "knowledgeSnapshot": "kb-2026-08-18.3",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -13,7 +13,7 @@
   "automaticKnowledgeRisk": "low",
   "humanConfirmationRequiredForAppointments": true,
   "release": {
-    "status": "published",
+    "status": "prepared",
     "functionalCommit": "c789914991f409c81320090872ac50f4ebc86136",
     "lastObservedProductionCommit": "c789914991f409c81320090872ac50f4ebc86136",
     "functionalDeployId": "6a84534923558b0008961936",

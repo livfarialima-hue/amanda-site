@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 18 de agosto de 2026 — IA como primeira instância de compreensão no WhatsApp
+
+- **Status:** versão `2026-08-18.3` implementada e validada localmente com **814/814 testes**; ainda não publicada, sem alteração de produção, sem atualização da projeção ativa do Drive e sem mensagem real de paciente. A produção permanece na versão `2026-08-18.2`, commit funcional `c789914`, deploy `6a84534923558b0008961936`, durante o fechamento autorizado.
+- **Mudança:** toda mensagem textual elegível passa primeiro pela interpretação contextual da IA. Detectores mecânicos fornecem pistas e limites; não decidem sozinhos que uma pergunta não existe. Cópias aprovadas de agenda, preço e fatos institucionais só são usadas quando a IA confirma código, procedimento, profissional e cobertura integral dos pedidos seguros. Dúvida linguística segura recebe uma pergunta curta e específica, com contrato próprio de uma pergunta, nenhum link e nenhum CTA; dúvida clínica ou protegida continua em revisão humana. Depois de fala da equipe, somente reabertura, esclarecimento, coordenação ou cópia institucional explicitamente confirmados atravessam o bloqueio final.
+- **Evidência:** uma pergunta coloquial sobre realização de cervicoplastia foi corretamente roteada como `known_procedure`, porém o controlador mecânico concluiu que não havia solicitação pendente por falta de interrogação e não chamou a IA. O caso foi convertido em regressão sintética sem dados identificáveis.
+- **Hipótese:** usar compreensão semântica antes do padrão reduz silêncios indevidos e melhora continuidade da conversa, enquanto guardrails determinísticos preservam segurança, idempotência, opt-out, agenda e takeover humano.
+- **Métricas:** taxa de resposta entre mensagens elegíveis, resolução no primeiro turno, adequação contextual, taxa e utilidade de esclarecimentos, duplicidade, resposta fora de contexto, competição com humano, confirmação indevida de agenda e incidentes clínicos ou comerciais.
+- **Revisão:** acompanhar as próximas entradas reais após eventual publicação e revisar semanalmente os cenários sintéticos, sem declarar ganho por uma única conversa.
+- **Regra para manter ou reverter:** manter se cair o silêncio incorreto sem aumento dos guardrails; reverter ao commit/deploy hoje ativos diante de resposta insegura, intrusão recorrente em conversa humana, esclarecimentos desnecessários em série ou degradação material de latência. Falha da IA continua fail-closed e não libera resposta mecânica por conta própria.
+
 ## 18 de agosto de 2026 — contrato contextual e proteção sem atrito no WhatsApp
 
 - **Status:** versão `2026-08-18.2` publicada e verificada em produção no commit funcional `c789914`, deploy Netlify `6a84534923558b0008961936`; **792/792 testes**, build de 178 arquivos, 12 funções, 5 agendamentos e endpoint canônico HTTP 200. A projeção do Drive foi substituída no mesmo ID e conferida byte a byte. Nenhuma mensagem real de paciente foi enviada na validação. Rollback: commit `cdfa79e`, deploy `6a843bde9799d000087778a5`.

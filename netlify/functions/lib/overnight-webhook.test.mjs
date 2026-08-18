@@ -30,6 +30,7 @@ test("a first nighttime price request receives the approved institutional reply"
     "YCLOUD_API_KEY",
     "GOOGLE_SHEETS_WEBHOOK_URL",
     "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
     "WHATSAPP_ALERT_NUMBER",
     "YCLOUD_ALERT_TEMPLATE_NAME",
     "YCLOUD_ALERT_TEMPLATE_LANGUAGE",
@@ -51,6 +52,7 @@ test("a first nighttime price request receives the approved institutional reply"
     YCLOUD_API_KEY: "ycloud-test-key",
     GOOGLE_SHEETS_WEBHOOK_URL: SHEETS_URL,
     GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
     WHATSAPP_ALERT_NUMBER: "+5511967743374",
     YCLOUD_ALERT_TEMPLATE_NAME: "alerta_revisao_liv_v1",
     YCLOUD_ALERT_TEMPLATE_LANGUAGE: "pt_BR",
@@ -75,6 +77,36 @@ test("a first nighttime price request receives the approved institutional reply"
           professional: "amanda",
           routeStatus: "resolved",
           routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify({
+          model: "test-model",
+          output: [
+            {
+              type: "message",
+              content: [
+                {
+                  type: "output_text",
+                  text: JSON.stringify({
+                    route: "standard_reply",
+                    confidence: "high",
+                    automaticAllowed: true,
+                    urgent: false,
+                    professional: "amanda",
+                    procedure: "blefaroplastia",
+                    replyCode: "SURGICAL-PRICE-INITIAL-01",
+                    suggestedReply: "A pergunta é sobre o valor da cirurgia.",
+                    reviewReason: "price_initial_information",
+                  }),
+                },
+              ],
+            },
+          ],
         }),
         { status: 200 },
       );
@@ -119,6 +151,7 @@ test("a first nighttime price request receives the approved institutional reply"
     assert.equal(body.approvedPriceReplyKind, "initial_information");
     assert.equal(body.approvedPriceReplyQueued, true);
     assert.equal(body.approvedPriceReplySent, true);
+    assert.equal(body.aiActiveQueued, true);
     assert.equal(body.overnightHandoffQueued, false);
     assert.equal(body.overnightHandoffSent, false);
 

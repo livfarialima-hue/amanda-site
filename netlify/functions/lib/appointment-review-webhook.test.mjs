@@ -163,6 +163,7 @@ test("durable retry of a standard availability template still asks for preferenc
     "YCLOUD_API_KEY",
     "GOOGLE_SHEETS_WEBHOOK_URL",
     "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
     "WHATSAPP_AUTOMATION_MODE",
     "WHATSAPP_ALERT_NUMBER",
   ];
@@ -179,6 +180,7 @@ test("durable retry of a standard availability template still asks for preferenc
     YCLOUD_API_KEY: "ycloud-test-key",
     GOOGLE_SHEETS_WEBHOOK_URL: SHEETS_URL,
     GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
     WHATSAPP_AUTOMATION_MODE: "active",
   });
   delete process.env.WHATSAPP_ALERT_NUMBER;
@@ -210,6 +212,36 @@ test("durable retry of a standard availability template still asks for preferenc
       return new Response(JSON.stringify({ ok: true, duplicate: false }), {
         status: 200,
       });
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify({
+          model: "test-model",
+          output: [
+            {
+              type: "message",
+              content: [
+                {
+                  type: "output_text",
+                  text: JSON.stringify({
+                    route: "standard_reply",
+                    confidence: "high",
+                    automaticAllowed: true,
+                    urgent: false,
+                    professional: "amanda",
+                    procedure: "lifting_facial",
+                    replyCode: "AMANDA-AGENDA-PREFERENCE-01",
+                    suggestedReply: "A paciente quer consultar horários.",
+                    reviewReason: "appointment_preference_requested",
+                  }),
+                },
+              ],
+            },
+          ],
+        }),
+        { status: 200 },
+      );
     }
 
     if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
@@ -248,7 +280,7 @@ test("durable retry of a standard availability template still asks for preferenc
 
     assert.equal(response.status, 200);
     assert.equal(body.duplicate, true);
-    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.aiActiveQueued, true);
     assert.equal(body.appointmentNeedsPreference, true);
     assert.equal(body.appointmentPreferenceReplySent, true);
     assert.equal(body.appointmentReviewQueued, false);

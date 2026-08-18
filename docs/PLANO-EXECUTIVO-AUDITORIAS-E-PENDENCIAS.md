@@ -41,9 +41,12 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** versão contextual `2026-08-18.2` publicada e verificada em 18/08, com uma única fonte ativa no Drive; primeira resposta acelerada, contrato por turno, proteção semântica e descartes de webhook observáveis; manter monitoramento reforçado das próximas entradas reais.
+**Estado geral:** produção contextual `2026-08-18.2` publicada e verificada em 18/08, com uma única fonte ativa no Drive. A versão `2026-08-18.3`, que torna a IA a primeira instância de compreensão, está validada localmente com **814/814 testes** e em fechamento autorizado para commit funcional, publicação, verificação e substituição da mesma projeção no Drive. Até esse fechamento, `sincronização pendente`.
 
 - mensagens estéticas de baixo risco agora seguem para a IA quando não existe uma resposta determinística melhor; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
+- na `2026-08-18.3` pendente, toda mensagem textual elegível passa primeiro pela IA, inclusive perguntas coloquiais sem `?`; padrões mecânicos servem como pistas, e cópias determinísticas só são usadas após confirmação semântica de código, procedimento, profissional e cobertura integral do pedido;
+- se a IA não tiver segurança sobre o significado e a ambiguidade for linguística e segura, a Bruna pede uma única explicação curta e específica; urgência, cuidado ativo, risco clínico, opt-out, duplicidade, agenda não validada e takeover humano continuam bloqueando a resposta automática;
+- depois de uma fala da equipe, autorização semântica genérica não atravessa o takeover: o validador exige reabertura, esclarecimento, coordenação ou cópia institucional explicitamente confirmados;
 - quando o histórico confirma interação anterior, a Bruna preserva o contexto e não repete apresentação nem pergunta de nome; o caso “Eu tenho o pescoço flácido” ficou coberto como obrigação de resposta;
 - lifting cervical e lifting facial continuam respondendo diretamente que são cirurgias realizadas em hospital, com anestesista e equipe cirúrgica; “este procedimento” é resolvido pelo contexto mais recente e pelo código da campanha;
 - travas clínicas, urgência, segurança, agenda, preço cirúrgico fora da política, falha técnica e intervenção humana continuam fail-closed e podem bloquear a IA;

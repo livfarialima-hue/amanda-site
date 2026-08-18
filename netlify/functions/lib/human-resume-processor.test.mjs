@@ -138,6 +138,19 @@ test("a safe high-confidence answer resumes Bruna without an alert", async () =>
 
 test("a known patient coordination receives a short contextual acknowledgment", async () => {
   const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      replyCode: "COORDINATION-ACK-01",
+      suggestedReply:
+        "Perfeito, Geraldo. Pode nos enviar os exames quando conseguir.",
+      reviewReason: "semantic_coordination_candidate",
+    },
+  });
   const result = await processHumanResumeJob(
     job({
       patientName: "Geraldo",
@@ -172,6 +185,103 @@ test("a known patient coordination receives a short contextual acknowledgment", 
     "Perfeito, Geraldo. Pode nos enviar os exames quando conseguir.",
   );
   assert.equal(deps.memory.length, 1);
+});
+
+test("a safe semantic ambiguity asks the patient one specific clarification", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      replyCode: "CONTEXT-CLARIFY-01",
+      suggestedReply:
+        "Quando você diz o outro, está falando do lifting facial ou da cervicoplastia?",
+      reviewReason: "context_clarification:procedimento",
+    },
+  });
+
+  const result = await processHumanResumeJob(
+    job({
+      text: "E o outro",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text:
+            "A Dra. Amanda realiza lifting facial e cervicoplastia.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "E o outro",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.patientMessages.length, 1);
+  assert.equal(
+    deps.patientMessages[0].body,
+    "Quando você diz o outro, está falando do lifting facial ou da cervicoplastia?",
+  );
+});
+
+test("a semantic reopen answers a new colloquial question after a human turn", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      professional: "amanda",
+      procedure: "lifting_cervical",
+      replyCode: "CONTEXT-REOPEN-01",
+      suggestedReply:
+        "Sim, a Dra. Amanda realiza cervicoplastia. É uma cirurgia feita em ambiente hospitalar, com anestesista e equipe cirúrgica.",
+      reviewReason: "context_reopen:cervicoplastia",
+    },
+  });
+
+  const result = await processHumanResumeJob(
+    job({
+      text: "Ai fazem cervicoplastia",
+      procedure: "lifting_cervical",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "A Clínica LIV fica em Pinheiros, São Paulo.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Ai fazem cervicoplastia",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(deps.patientMessages[0].body, /realiza cervicoplastia/i);
 });
 
 test("a safe active conversation continues at night", async () => {
@@ -275,6 +385,18 @@ test("a requested next-morning continuation resumes with the actual context", as
 
 test("the initial price information is sent after the human-resume window without an alert", async () => {
   const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      replyCode: "SURGICAL-PRICE-INITIAL-01",
+      suggestedReply: "Resposta semântica validada.",
+      reviewReason: "price_initial_information",
+    },
+  });
   const result = await processHumanResumeJob(
     job({
       text: "Quanto custa o lifting facial?",
@@ -315,6 +437,41 @@ test("the initial price information is sent after the human-resume window withou
     deps.completions[0].options.controlStatus,
     "bruna_resumed",
   );
+});
+
+test("a deterministic code with a conflicting procedure fails closed", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      professional: "amanda",
+      procedure: "blefaroplastia",
+      replyCode: "SURGICAL-PRICE-INITIAL-01",
+      suggestedReply: "A pergunta é sobre o valor da blefaroplastia.",
+      reviewReason: "price_initial_information",
+    },
+  });
+
+  const result = await processHumanResumeJob(
+    job({
+      text: "Quanto custa o lifting facial?",
+      procedure: "lifting_facial",
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "waiting_human");
+  assert.equal(result.reason, "deterministic_context_mismatch");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 1);
 });
 
 test("another surgical price still waits for human review with a complete suggestion", async () => {
@@ -360,6 +517,18 @@ test("another surgical price still waits for human review with a complete sugges
 
 test("direct lifting price resume includes the specific composition guide with the range", async () => {
   const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      replyCode: "LIFTING-PRICE-RANGE-01",
+      suggestedReply: "Resposta semântica validada.",
+      reviewReason: "lifting_price_range_direct",
+    },
+  });
   const result = await processHumanResumeJob(
     job({
       text: "Quanto custa o lifting facial?",
@@ -404,6 +573,18 @@ test("direct lifting price resume includes the specific composition guide with t
 
 test("the approved lifting price may continue directly at night", async () => {
   const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      replyCode: "LIFTING-PRICE-RANGE-01",
+      suggestedReply: "Resposta semântica validada.",
+      reviewReason: "lifting_price_range_direct",
+    },
+  });
   const result = await processHumanResumeJob(
     job({
       text: "Quanto custa o lifting facial?",

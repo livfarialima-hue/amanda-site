@@ -9,6 +9,10 @@ import {
   usableProfileFirstName,
   usableProfileName,
 } from "./profile-name.mjs";
+import {
+  CONTEXT_CLARIFICATION_CODE,
+  CONTEXT_REOPEN_CODE,
+} from "./semantic-reply-policy.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -277,6 +281,90 @@ export function applyAutomationIdentityGuard(decision) {
   };
 }
 
+export function applyContextClarificationGuard(decision) {
+  const contextualClarification =
+    decision?.replyCode === CONTEXT_CLARIFICATION_CODE ||
+    String(decision?.reviewReason || "").startsWith(
+      "context_clarification:",
+    );
+  if (!contextualClarification) return decision;
+
+  // A clarification is a linguistic fallback, never a way to downgrade a
+  // clinical urgency. The later urgency guard must still receive the original
+  // urgent decision and fail closed for human review.
+  if (decision?.urgent === true) return decision;
+
+  const question = limitText(decision?.suggestedReply, 300);
+  if (
+    decision?.route !== "standard_reply" ||
+    !question ||
+    !question.includes("?")
+  ) {
+    return {
+      ...decision,
+      route: "human_review",
+      confidence: "low",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-REVIEW-01",
+      suggestedReply: "",
+      reviewReason: "context_clarification:invalid_question",
+    };
+  }
+
+  return {
+    ...decision,
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: CONTEXT_CLARIFICATION_CODE,
+    suggestedReply: question,
+    reviewReason:
+      String(decision?.reviewReason || "").startsWith(
+        "context_clarification:",
+      )
+        ? decision.reviewReason
+        : "context_clarification:meaning_unclear",
+  };
+}
+
+export function applyContextReopenGuard(decision) {
+  const contextReopen =
+    decision?.replyCode === CONTEXT_REOPEN_CODE ||
+    String(decision?.reviewReason || "").startsWith("context_reopen:");
+  if (!contextReopen) return decision;
+
+  if (decision?.urgent === true) return decision;
+
+  const reply = limitText(decision?.suggestedReply, 1_200);
+  if (decision?.route !== "standard_reply" || !reply) {
+    return {
+      ...decision,
+      route: "human_review",
+      confidence: "low",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-REVIEW-01",
+      suggestedReply: "",
+      reviewReason: "context_reopen:invalid_reply",
+    };
+  }
+
+  return {
+    ...decision,
+    route: "standard_reply",
+    confidence: "high",
+    automaticAllowed: true,
+    urgent: false,
+    replyCode: String(decision?.replyCode || "").trim() ||
+      CONTEXT_REOPEN_CODE,
+    suggestedReply: reply,
+    reviewReason:
+      String(decision?.reviewReason || "").startsWith("context_reopen:")
+        ? decision.reviewReason
+        : "context_reopen:new_patient_request",
+  };
+}
+
 function normalizeReferralContext(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
 
@@ -285,6 +373,44 @@ function normalizeReferralContext(value) {
   for (const key of ["sourceType", "mediaType", "headline", "body"]) {
     const text = limitText(value[key], MAX_REFERRAL_FIELD_LENGTH);
     if (text) normalized[key] = text;
+  }
+
+  return Object.keys(normalized).length ? normalized : null;
+}
+
+function normalizePolicyHints(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const normalized = {};
+  for (const key of [
+    "route",
+    "reason",
+    "replyCode",
+    "deterministicReplyCode",
+    "professional",
+    "procedure",
+  ]) {
+    const text = limitText(value[key], 120);
+    if (text) normalized[key] = text;
+  }
+  for (const key of [
+    "deterministicReplyProfessional",
+    "deterministicReplyProcedure",
+  ]) {
+    const text = limitText(value[key], 120);
+    if (text) normalized[key] = text;
+  }
+  const deterministicReplyPreview = limitText(
+    value.deterministicReplyPreview,
+    1_200,
+  );
+  if (deterministicReplyPreview) {
+    normalized.deterministicReplyPreview = deterministicReplyPreview;
+  }
+  if (typeof value.automaticAllowed === "boolean") {
+    normalized.automaticAllowed = value.automaticAllowed;
   }
 
   return Object.keys(normalized).length ? normalized : null;
@@ -431,9 +557,13 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
         applyFirstReplyGreetingGuard(
           applyReturningPatientReplyGuard(
             applyKnownProfileNameGuard(
-              applyKnowledgeDecisionGuard(
-                decision,
-                options.learningContext,
+              applyContextReopenGuard(
+                applyContextClarificationGuard(
+                  applyKnowledgeDecisionGuard(
+                    decision,
+                    options.learningContext,
+                  ),
+                ),
               ),
               options.patientProfileName,
               options.hasConversationHistory,
@@ -465,6 +595,7 @@ export async function runOpenAIShadow(
     patientProfileName,
     recentConversation,
     referralContext,
+    policyHints,
     patientRelationship,
     learningContext,
     replyContract,
@@ -544,6 +675,7 @@ export async function runOpenAIShadow(
           siteResource,
           whatsappProfileName: usableProfileName(patientProfileName),
           metaAdContext: normalizeReferralContext(referralContext),
+          policyHints: normalizePolicyHints(policyHints),
           patientRelationship:
             normalizedPatientRelationship,
           priorInteractionKnown:

@@ -5,7 +5,6 @@ import {
 } from "./lib/whatsapp-automation.mjs";
 import {
   buildOvernightHandoffMessage,
-  buildSimpleCoordinationReply,
   classifyHumanResume,
   hasConcreteResponseExpectation,
   isHumanResumeServiceOpen,
@@ -44,6 +43,10 @@ import {
 import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
+import {
+  buildSemanticReplyConversationAction,
+  semanticDecisionConfirmsDeterministicReply,
+} from "./lib/semantic-reply-policy.mjs";
 import {
   logCorrelationId,
   writeOperationalLog,
@@ -365,10 +368,20 @@ export async function processHumanResumeJob(
     enrichedPlan,
     recentConversation: job.recentConversation,
   });
+  const semanticPlan =
+    policy.action === "attempt_reply" &&
+    policy.reason === "semantic_coordination_candidate"
+      ? {
+          ...enrichedPlan,
+          route: "standard_reply",
+          reason: policy.reason,
+          automaticAllowed: true,
+        }
+      : enrichedPlan;
   const conversationAction = decideConversationAction({
     text: job.text,
     messageType: job.messageType,
-    plan: enrichedPlan,
+    plan: semanticPlan,
     recentConversation: job.recentConversation,
     humanTakeoverActive: false,
     schedulingRequest:
@@ -427,47 +440,6 @@ export async function processHumanResumeJob(
     await finish(job, "human_active", dependencies);
     return {
       status: "no_action",
-      reason: policy.reason,
-    };
-  }
-
-  if (policy.action === "acknowledge") {
-    const reply = buildSimpleCoordinationReply({
-      kind: policy.replyKind,
-      patientName: job.patientName,
-    });
-    const sendResult = await sendPatientMessage(
-      job,
-      reply,
-      "human-resume-coordination",
-      conversationAction,
-      dependencies,
-    );
-
-    if (sendResult.status !== "completed") {
-      if (sendResult.status === "superseded") {
-        return {
-          status: "superseded",
-          reason: "newer_activity",
-        };
-      }
-      await finish(job, "waiting_human", dependencies);
-      return {
-        status: "delivery_failed",
-        reason: sendResult.errorCode,
-      };
-    }
-
-    await recordBrunaTurn(
-      job,
-      reply,
-      "human-resume-coordination-memory",
-      dependencies,
-    );
-    await finish(job, "bruna_resumed", dependencies);
-
-    return {
-      status: "bruna_resumed",
       reason: policy.reason,
     };
   }
@@ -566,28 +538,187 @@ export async function processHumanResumeJob(
           enrichedPlan.procedure === "lifting_facial"
         ? "lifting_range"
         : "";
-  if (policy.action === "attempt_reply" && approvedPriceReplyKind) {
-    const reply = approvedPriceReplyKind === "initial_information"
+  const approvedPriceReplyCode =
+    approvedPriceReplyKind === "lifting_range"
+      ? "LIFTING-PRICE-RANGE-01"
+      : approvedPriceReplyKind === "initial_information"
+        ? "SURGICAL-PRICE-INITIAL-01"
+        : "";
+  const approvedPriceReply =
+    approvedPriceReplyKind === "initial_information"
       ? buildSurgicalInitialPriceReply({
           patientName: job.patientName,
           procedure: enrichedPlan.procedure || job.procedure,
           recentConversation: job.recentConversation,
           currentText: job.text,
         })
-      : buildSurgicalPriceSuggestedReply({
-          patientName: job.patientName,
-          procedure: "lifting_facial",
-          recentConversation: job.recentConversation,
-          referenceCategory: job.referenceCategory,
-          sourceReference: job.reference,
-          directToPatient: true,
-          currentText: job.text,
-        });
+      : approvedPriceReplyKind === "lifting_range"
+        ? buildSurgicalPriceSuggestedReply({
+            patientName: job.patientName,
+            procedure: "lifting_facial",
+            recentConversation: job.recentConversation,
+            referenceCategory: job.referenceCategory,
+            sourceReference: job.reference,
+            directToPatient: true,
+            currentText: job.text,
+          })
+        : "";
+  const approvedPriceReplyCandidate = approvedPriceReply
+    ? {
+        status: "completed",
+        decision: {
+          route: "standard_reply",
+          confidence: "high",
+          automaticAllowed: true,
+          urgent: false,
+          professional: "amanda",
+          procedure:
+            approvedPriceReplyKind === "lifting_range"
+              ? "lifting_facial"
+              : enrichedPlan.procedure || job.procedure || "",
+          replyCode: approvedPriceReplyCode,
+          suggestedReply: approvedPriceReply,
+          reviewReason: "",
+        },
+      }
+    : null;
+  const runOpenAI =
+    dependencies.runOpenAIShadowImpl || runOpenAIShadow;
+  const aiResult = await runOpenAI(
+    {
+      phone: job.phone,
+      text: job.text,
+      platform: job.platform,
+      procedure: enrichedPlan.procedure || job.procedure,
+      referenceCategory: job.referenceCategory,
+      patientProfileName: job.patientName,
+      recentConversation: job.recentConversation,
+      referralContext: job.referralContext,
+      policyHints: {
+        ...semanticPlan,
+        deterministicReplyCode: approvedPriceReplyCode,
+        deterministicReplyPreview: approvedPriceReply,
+        deterministicReplyProfessional:
+          approvedPriceReplyCandidate?.decision?.professional || "",
+        deterministicReplyProcedure:
+          approvedPriceReplyCandidate?.decision?.procedure || "",
+      },
+      replyContract: conversationAction.replyContract,
+      deterministicUrgent:
+        enrichedPlan.reason === "possible_urgent_symptoms",
+    },
+    { env },
+  );
+  const approvedPriceReplyConfirmed =
+    semanticDecisionConfirmsDeterministicReply(
+      aiResult,
+      approvedPriceReplyCandidate,
+    );
+  const deterministicReplyContextMismatch = Boolean(
+    approvedPriceReplyCandidate &&
+      aiResult.status === "completed" &&
+      aiResult.decision?.replyCode === approvedPriceReplyCode &&
+      !approvedPriceReplyConfirmed,
+  );
+
+  if (deterministicReplyContextMismatch) {
+    await alertReviewer(
+      job,
+      {
+        kind: "uncertain",
+        reason: "deterministic_context_mismatch",
+        holdingSent: false,
+        suggestedReply: "",
+      },
+      dependencies,
+    );
+    await finish(job, "waiting_human", dependencies);
+    return {
+      status: "waiting_human",
+      reason: "deterministic_context_mismatch",
+    };
+  }
+
+  const maySend =
+    aiResult.status === "completed" &&
+    shouldSendOpenAIPatientReply({
+      mode: "active",
+      plan: semanticPlan,
+      decision: aiResult.decision,
+      humanTakeoverToday: false,
+      exactDuplicate: false,
+      schedulingRequest: false,
+    });
+
+  if (
+    aiResult.status === "completed" &&
+    aiResult.decision?.route === "ignore"
+  ) {
+    await finish(job, "human_active", dependencies);
+    return {
+      status: "no_action",
+      reason:
+        aiResult.decision.reviewReason ||
+        "semantic_no_response_required",
+    };
+  }
+
+  if (!maySend) {
+    const reason =
+      aiResult.decision?.reviewReason ||
+      aiResult.errorCode ||
+      "low_confidence";
+    const suggestedReply = String(
+      aiResult.decision?.suggestedReply || "",
+    ).trim();
+
+    if (
+      hasConcreteResponseExpectation(
+        job.text,
+        job.recentConversation,
+      )
+    ) {
+      return holdAndAlert(
+        job,
+        reason,
+        dependencies,
+        "",
+        "",
+        {
+          action: CONVERSATION_ACTIONS.WAIT_TEAM,
+          allowHoldingReply: true,
+        },
+      );
+    }
+
+    return alertOnly(
+      job,
+      reason,
+      dependencies,
+      suggestedReply,
+    );
+  }
+
+  const semanticConversationAction = buildSemanticReplyConversationAction(
+    conversationAction,
+    aiResult.decision,
+    {
+      deterministicReplyConfirmed: approvedPriceReplyConfirmed,
+      coordinationAcknowledgement:
+        policy.reason === "semantic_coordination_candidate",
+    },
+  );
+
+  if (
+    approvedPriceReplyKind &&
+    approvedPriceReplyConfirmed
+  ) {
+    const reply = approvedPriceReply;
     const sendResult = await sendPatientMessage(
       job,
       reply,
       "human-resume-lifting-price",
-      conversationAction,
+      semanticConversationAction,
       dependencies,
     );
 
@@ -630,78 +761,12 @@ export async function processHumanResumeJob(
     };
   }
 
-  const runOpenAI =
-    dependencies.runOpenAIShadowImpl || runOpenAIShadow;
-  const aiResult = await runOpenAI(
-    {
-      phone: job.phone,
-      text: job.text,
-      platform: job.platform,
-      procedure: enrichedPlan.procedure || job.procedure,
-      referenceCategory: job.referenceCategory,
-      patientProfileName: job.patientName,
-      recentConversation: job.recentConversation,
-      referralContext: job.referralContext,
-      replyContract: conversationAction.replyContract,
-      deterministicUrgent:
-        enrichedPlan.reason === "possible_urgent_symptoms",
-    },
-    { env },
-  );
-
-  const maySend =
-    aiResult.status === "completed" &&
-    shouldSendOpenAIPatientReply({
-      mode: "active",
-      plan: enrichedPlan,
-      decision: aiResult.decision,
-      humanTakeoverToday: false,
-      exactDuplicate: false,
-      schedulingRequest: false,
-    });
-
-  if (!maySend) {
-    const reason =
-      aiResult.decision?.reviewReason ||
-      aiResult.errorCode ||
-      "low_confidence";
-    const suggestedReply = String(
-      aiResult.decision?.suggestedReply || "",
-    ).trim();
-
-    if (
-      hasConcreteResponseExpectation(
-        job.text,
-        job.recentConversation,
-      )
-    ) {
-      return holdAndAlert(
-        job,
-        reason,
-        dependencies,
-        "",
-        "",
-        {
-          action: CONVERSATION_ACTIONS.WAIT_TEAM,
-          allowHoldingReply: true,
-        },
-      );
-    }
-
-    return alertOnly(
-      job,
-      reason,
-      dependencies,
-      suggestedReply,
-    );
-  }
-
   const reply = String(aiResult.decision.suggestedReply || "").trim();
   const sendResult = await sendPatientMessage(
     job,
     reply,
     "human-resume-reply",
-    conversationAction,
+    semanticConversationAction,
     dependencies,
   );
 

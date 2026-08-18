@@ -123,6 +123,11 @@ import {
   sendControlledPatientReply,
 } from "./lib/outbound-reply-gate.mjs";
 import {
+  buildSemanticReplyConversationAction,
+  semanticDecisionConfirmsDeterministicReply,
+} from "./lib/semantic-reply-policy.mjs";
+export { semanticDecisionConfirmsDeterministicReply };
+import {
   attributionClaimantId,
   writeOperationalLog,
 } from "./lib/operational-log.mjs";
@@ -1595,7 +1600,10 @@ async function completeOpenAIShadow(
   plan,
 ) {
   try {
-    const shadowResult = await runOpenAIShadow(input);
+    const shadowResult = await runOpenAIShadow({
+      ...input,
+      policyHints: plan,
+    });
     logOpenAIResult(input.eventId, shadowResult, "shadow");
     return {
       status: shadowResult.status,
@@ -1683,6 +1691,8 @@ async function completeOpenAIActive({
   replyDebounceMarkerStatus,
   conversationAction,
   patientRelationship,
+  appointmentNeedsPreference,
+  approvedPriceReplyKind,
 }) {
   try {
     const aiSafetyTriage = plan?.reason === "ai_safety_triage";
@@ -1790,7 +1800,67 @@ async function completeOpenAIActive({
           currentMessage: input.text,
         })
       : null;
-    const activeResult = officialInstagramRequest
+    const appointmentPreferenceBody = appointmentNeedsPreference
+      ? buildAppointmentPreferenceCollectionReply({
+          patientName: input.patientProfileName,
+          introduceBruna,
+        })
+      : "";
+    const approvedPriceBody =
+      approvedPriceReplyKind === "initial_information"
+        ? buildSurgicalInitialPriceReply({
+            patientName: input.patientProfileName,
+            procedure: plan?.procedure || input.procedure,
+            recentConversation: input.recentConversation,
+            currentText: input.text,
+          })
+        : approvedPriceReplyKind === "lifting_range"
+          ? buildSurgicalPriceSuggestedReply({
+              patientName: input.patientProfileName,
+              procedure: "lifting_facial",
+              recentConversation: input.recentConversation,
+              referenceCategory: input.referenceCategory,
+              sourceReference: input.sourceReference,
+              directToPatient: true,
+              currentText: input.text,
+            })
+          : "";
+    const deterministicReplyResult = appointmentPreferenceBody
+      ? {
+          status: "completed",
+          model: "deterministic-appointment-preference",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode: "AMANDA-AGENDA-PREFERENCE-01",
+            suggestedReply: appointmentPreferenceBody,
+            reviewReason: "",
+          },
+        }
+      : approvedPriceBody
+      ? {
+          status: "completed",
+          model: "deterministic-approved-price",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: plan?.procedure || input.procedure || "",
+            replyCode:
+              approvedPriceReplyKind === "lifting_range"
+                ? "LIFTING-PRICE-RANGE-01"
+                : "SURGICAL-PRICE-INITIAL-01",
+            suggestedReply: approvedPriceBody,
+            reviewReason: "",
+          },
+        }
+      : officialInstagramRequest
       ? {
           status: "completed",
           model: "deterministic-official-channels",
@@ -1920,10 +1990,58 @@ async function completeOpenAIActive({
           },
           usage: null,
         }
-      : await runOpenAIShadow({
-          ...input,
-          replyContract: conversationAction?.replyContract,
-        });
+      : null;
+    const semanticResult = await runOpenAIShadow({
+      ...input,
+      policyHints: {
+        ...plan,
+        deterministicReplyCode:
+          deterministicReplyResult?.decision?.replyCode || "",
+        deterministicReplyPreview:
+          deterministicReplyResult?.decision?.suggestedReply || "",
+        deterministicReplyProfessional:
+          deterministicReplyResult?.decision?.professional || "",
+        deterministicReplyProcedure:
+          deterministicReplyResult?.decision?.procedure || "",
+      },
+      replyContract: conversationAction?.replyContract,
+    });
+    const selectedDeterministicReply =
+      semanticDecisionConfirmsDeterministicReply(
+        semanticResult,
+        deterministicReplyResult,
+      );
+    const deterministicReplyContextMismatch = Boolean(
+      deterministicReplyResult &&
+        semanticResult?.status === "completed" &&
+        semanticResult.decision?.replyCode ===
+          deterministicReplyResult.decision?.replyCode &&
+        !selectedDeterministicReply,
+    );
+    const replyKind = selectedDeterministicReply
+      ? appointmentPreferenceBody
+        ? "appointment_preference"
+        : approvedPriceBody
+          ? approvedPriceReplyKind
+          : "deterministic"
+      : "ai";
+    const activeResult =
+      selectedDeterministicReply
+        ? {
+            ...semanticResult,
+            decision: {
+              ...semanticResult.decision,
+              professional:
+                deterministicReplyResult.decision.professional,
+              procedure:
+                deterministicReplyResult.decision.procedure,
+              replyCode:
+                deterministicReplyResult.decision.replyCode,
+              suggestedReply:
+                deterministicReplyResult.decision.suggestedReply,
+            },
+          }
+        : semanticResult;
     logOpenAIResult(input.eventId, activeResult, "active");
 
     if (activeResult.status !== "completed") {
@@ -1931,6 +2049,46 @@ async function completeOpenAIActive({
       return {
         status: "failed",
         errorCode: activeResult.errorCode || "openai_failed",
+        replySent: false,
+      };
+    }
+
+    if (deterministicReplyContextMismatch) {
+      writeOperationalLog({
+        source: "openai_active_deterministic_context_mismatch",
+        category: "reply_control",
+        reason: "deterministic_context_mismatch",
+        sourceId: input.eventId,
+        fields: {
+          semanticProfessional:
+            semanticResult.decision?.professional || "",
+          semanticProcedure:
+            semanticResult.decision?.procedure || "",
+          candidateProfessional:
+            deterministicReplyResult.decision?.professional || "",
+          candidateProcedure:
+            deterministicReplyResult.decision?.procedure || "",
+          replyCode:
+            deterministicReplyResult.decision?.replyCode || "",
+        },
+      });
+      if (!reviewAlertAlreadyQueued && isReviewAlertConfigured()) {
+        await completeReviewAlert(
+          prepareReviewAlertInput(alertInput, {
+            decision: {
+              ...semanticResult.decision,
+              route: "human_review",
+              automaticAllowed: false,
+              suggestedReply: "",
+              reviewReason: "deterministic_context_mismatch",
+            },
+            plan,
+          }),
+        );
+      }
+      return {
+        status: "reviewed",
+        errorCode: "deterministic_context_mismatch",
         replySent: false,
       };
     }
@@ -2155,7 +2313,13 @@ async function completeOpenAIActive({
       body: activeResult.decision.suggestedReply,
       currentText: input.text,
       recentConversation: input.recentConversation,
-      conversationAction,
+      conversationAction: buildSemanticReplyConversationAction(
+        conversationAction,
+        activeResult.decision,
+        {
+          deterministicReplyConfirmed: selectedDeterministicReply,
+        },
+      ),
     });
     await recordAutomaticReplyOperationally({
       result: replyResult,
@@ -2206,7 +2370,12 @@ async function completeOpenAIActive({
     }
 
     if (replyResult.status === "completed") {
-      return { status: "completed", replySent: true };
+      return {
+        status: "completed",
+        replySent: true,
+        replyKind,
+        deliveryStatus: replyResult.status,
+      };
     }
 
     if (["duplicate", "blocked", "superseded"].includes(replyResult.status)) {
@@ -2214,6 +2383,8 @@ async function completeOpenAIActive({
         status: "completed_no_reply",
         errorCode: replyResult.errorCode || replyResult.status,
         replySent: false,
+        replyKind,
+        deliveryStatus: replyResult.status,
       };
     }
 
@@ -2221,6 +2392,8 @@ async function completeOpenAIActive({
       status: "failed",
       errorCode: replyResult.errorCode || "patient_reply_failed",
       replySent: false,
+      replyKind,
+      deliveryStatus: replyResult.status,
     };
   } catch {
     writeOperationalLog({
@@ -3803,14 +3976,6 @@ export async function handleYCloudWebhook(
     Boolean(approvedPriceReplyKind) &&
     automationPlan.route === "standard_reply" &&
     automationPlan.automaticAllowed === true;
-  const shouldQueueApprovedPriceReply =
-    patientAutomationReady &&
-    !extremeNightDeferral &&
-    !humanTakeoverActive &&
-    !suppressExactDuplicate &&
-    automationMode === "active" &&
-    conversationAction.allowAutomaticReply &&
-    approvedPriceReplyCandidate;
   const shouldQueueReviewAlert =
     (delivery.ok || alertInput.urgent) &&
     !extremeNightDeferral &&
@@ -4133,116 +4298,6 @@ export async function handleYCloudWebhook(
     }
   }
 
-  if (
-    appointmentNeedsPreference &&
-    patientAutomationReady &&
-    !extremeNightDeferral &&
-    !humanTakeoverActive &&
-    !suppressExactDuplicate &&
-    automationMode === "active" &&
-    conversationAction.allowAutomaticReply
-  ) {
-    const introduceBruna = !conversationHistory.some(
-      (turn) =>
-        turn?.role === "assistant" ||
-        ["bruna", "equipe_humana"].includes(turn?.source),
-    );
-    const preferenceReply =
-      buildAppointmentPreferenceCollectionReply({
-        patientName: patientDisplayName,
-        introduceBruna,
-      });
-    const preferenceResult = await sendCurrentInboundReply({
-      from: String(message.to || ""),
-      to: phone,
-      eventId: `${String(eventId)}-appointment-preference`,
-      revisionEventId: String(eventId),
-      body: preferenceReply,
-      currentText: text,
-      recentConversation: conversationHistory,
-      conversationAction,
-      replyDebounceMarkerStatus,
-      patientRelationship,
-      opportunityId: delivery.opportunityId,
-      professional: delivery.professional,
-    });
-    appointmentPreferenceReplySent =
-      preferenceResult.status === "completed";
-    appointmentPreferenceReplyStatus = preferenceResult.status;
-    logPatientReplyResult(
-      `${String(eventId)}-appointment-preference`,
-      phone,
-      preferenceResult,
-    );
-
-    if (appointmentPreferenceReplySent) {
-      await appendConversationTurn({
-        phone,
-        role: "assistant",
-        text: preferenceReply,
-        eventId: `${String(eventId)}:appointment-preference`,
-        source: "bruna",
-      });
-    }
-  }
-
-  if (shouldQueueApprovedPriceReply) {
-    approvedPriceReplyQueued = true;
-    const directPriceBody =
-      approvedPriceReplyKind === "initial_information"
-        ? buildSurgicalInitialPriceReply({
-            patientName: patientDisplayName,
-            procedure: automationPlan.procedure,
-            recentConversation: conversationHistory,
-            currentText: text,
-          })
-        : buildSurgicalPriceSuggestedReply({
-            patientName: patientDisplayName,
-            procedure: "lifting_facial",
-            recentConversation: conversationHistory,
-            referenceCategory: attribution.referenceCategory,
-            sourceReference: attribution.reference,
-            directToPatient: true,
-            currentText: text,
-          });
-    const priceReplyEventSuffix =
-      approvedPriceReplyKind === "initial_information"
-        ? "price-initial-information"
-        : "lifting-price-range";
-    const directPriceResult = await sendCurrentInboundReply({
-      from: String(message.to || ""),
-      to: phone,
-      eventId: `${String(eventId)}-${priceReplyEventSuffix}`,
-      revisionEventId: String(eventId),
-      body: directPriceBody,
-      currentText: text,
-      recentConversation: conversationHistory,
-      conversationAction,
-      replyDebounceMarkerStatus,
-      patientRelationship,
-      opportunityId: delivery.opportunityId,
-      professional: delivery.professional,
-    });
-    approvedPriceReplySent =
-      directPriceResult.status === "completed";
-    approvedPriceReplyStatus = directPriceResult.status;
-    logPatientReplyResult(
-      `${String(eventId)}-${priceReplyEventSuffix}`,
-      phone,
-      directPriceResult,
-    );
-
-    if (approvedPriceReplySent) {
-      await appendConversationTurn({
-        phone,
-        role: "assistant",
-        text: directPriceBody,
-        eventId: `${String(eventId)}:${priceReplyEventSuffix}`,
-        source: "bruna",
-      });
-    }
-  }
-
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(
       professionalFactReview
@@ -4490,10 +4545,8 @@ export async function handleYCloudWebhook(
     conversationAction.allowAutomaticReply &&
     automationPlan.professional !== "daniel" &&
     !appointmentReviewCandidate &&
-    !appointmentNeedsPreference &&
     !suppressExactDuplicate &&
-    !professionalFactReview &&
-    !approvedPriceReplyCandidate;
+    !professionalFactReview;
   let aiShadowQueued = false;
 
   if (shouldQueueOpenAIShadow) {
@@ -4507,6 +4560,7 @@ export async function handleYCloudWebhook(
         text,
         platform: attribution.platform,
         procedure: automationPlan.procedure,
+        sourceReference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
@@ -4551,6 +4605,7 @@ export async function handleYCloudWebhook(
         text,
         platform: attribution.platform,
         procedure: automationPlan.procedure,
+        sourceReference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
@@ -4575,6 +4630,8 @@ export async function handleYCloudWebhook(
       replyDebounceMarkerStatus,
       conversationAction,
       patientRelationship,
+      appointmentNeedsPreference,
+      approvedPriceReplyKind,
     });
 
     aiActiveQueued = true;
@@ -4582,9 +4639,33 @@ export async function handleYCloudWebhook(
     const mustFinishBeforeAcknowledgement =
       shouldAwaitActiveReplyBeforeAcknowledgement({
         deterministicReply:
-          deterministicMarketingOpeningCandidate,
+          deterministicMarketingOpeningCandidate ||
+          appointmentNeedsPreference ||
+          approvedPriceReplyCandidate,
         recoveryRegistration,
       });
+    const registerActiveOutcome = (outcome) => {
+      aiActiveStatus = outcome?.status || "failed";
+      aiActiveReplySent = outcome?.replySent === true;
+
+      if (outcome?.replyKind === "appointment_preference") {
+        appointmentPreferenceReplySent =
+          outcome.replySent === true;
+        appointmentPreferenceReplyStatus =
+          outcome.deliveryStatus || outcome.status || "failed";
+      }
+
+      if (
+        ["initial_information", "lifting_range"].includes(
+          outcome?.replyKind,
+        )
+      ) {
+        approvedPriceReplyQueued = true;
+        approvedPriceReplySent = outcome.replySent === true;
+        approvedPriceReplyStatus =
+          outcome.deliveryStatus || outcome.status || "failed";
+      }
+    };
 
     if (
       typeof context?.waitUntil === "function" &&
@@ -4604,13 +4685,11 @@ export async function handleYCloudWebhook(
         context.waitUntil(trackedActivePromise);
       } catch {
         const outcome = await trackedActivePromise;
-        aiActiveStatus = outcome?.status || "failed";
-        aiActiveReplySent = outcome?.replySent === true;
+        registerActiveOutcome(outcome);
       }
     } else {
       const outcome = await activePromise;
-      aiActiveStatus = outcome?.status || "failed";
-      aiActiveReplySent = outcome?.replySent === true;
+      registerActiveOutcome(outcome);
     }
   }
 

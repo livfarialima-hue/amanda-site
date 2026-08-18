@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
+  applyContextClarificationGuard,
+  applyContextReopenGuard,
   applyFirstReplyGreetingGuard,
   applyReturningPatientReplyGuard,
   createSafetyIdentifier,
@@ -13,6 +15,7 @@ import webhook, {
   classifyAttribution,
   normalizeResolvedJourneyAttribution,
   resolveInboundAttributionJourney,
+  semanticDecisionConfirmsDeterministicReply,
   stripAttributionTransportToken,
 } from "../ycloud-webhook.mjs";
 
@@ -32,6 +35,94 @@ function validDecision(overrides = {}) {
     ...overrides,
   };
 }
+
+test("context clarification is normalized as a safe high-confidence question", () => {
+  const guarded = applyContextClarificationGuard(
+    validDecision({
+      confidence: "low",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-CLARIFY-01",
+      suggestedReply:
+        "Quando você diz que já fez, foi a lipo de papada ou a cervicoplastia?",
+      reviewReason: "context_clarification:procedimento_anterior",
+    }),
+  );
+
+  assert.equal(guarded.route, "standard_reply");
+  assert.equal(guarded.confidence, "high");
+  assert.equal(guarded.automaticAllowed, true);
+  assert.equal(guarded.replyCode, "CONTEXT-CLARIFY-01");
+});
+
+test("invalid context clarification fails closed", () => {
+  const guarded = applyContextClarificationGuard(
+    validDecision({
+      confidence: "low",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-CLARIFY-01",
+      suggestedReply: "Não entendi.",
+      reviewReason: "context_clarification:sentido",
+    }),
+  );
+
+  assert.equal(guarded.route, "human_review");
+  assert.equal(guarded.automaticAllowed, false);
+  assert.equal(guarded.suggestedReply, "");
+});
+
+test("context clarification never clears a clinical urgency", () => {
+  const decision = validDecision({
+    urgent: true,
+    replyCode: "CONTEXT-CLARIFY-01",
+    suggestedReply: "Você está com falta de ar agora?",
+    reviewReason: "context_clarification:sintoma_atual",
+  });
+
+  assert.deepEqual(applyContextClarificationGuard(decision), decision);
+});
+
+test("context reopen is normalized only for a concrete automatic reply", () => {
+  const guarded = applyContextReopenGuard(
+    validDecision({
+      confidence: "medium",
+      automaticAllowed: false,
+      replyCode: "CONTEXT-REOPEN-01",
+      suggestedReply:
+        "Sim, realizamos cervicoplastia em ambiente hospitalar, com anestesista e equipe cirúrgica.",
+      reviewReason: "context_reopen:cervicoplastia",
+    }),
+  );
+
+  assert.equal(guarded.route, "standard_reply");
+  assert.equal(guarded.confidence, "high");
+  assert.equal(guarded.automaticAllowed, true);
+  assert.equal(guarded.replyCode, "CONTEXT-REOPEN-01");
+});
+
+test("invalid context reopen fails closed", () => {
+  const guarded = applyContextReopenGuard(
+    validDecision({
+      route: "ignore",
+      replyCode: "CONTEXT-REOPEN-01",
+      suggestedReply: "",
+      reviewReason: "context_reopen:missing_reply",
+    }),
+  );
+
+  assert.equal(guarded.route, "human_review");
+  assert.equal(guarded.automaticAllowed, false);
+  assert.equal(guarded.suggestedReply, "");
+});
+
+test("context reopen never clears a clinical urgency", () => {
+  const decision = validDecision({
+    urgent: true,
+    replyCode: "CONTEXT-REOPEN-01",
+    reviewReason: "context_reopen:urgent_symptom",
+  });
+
+  assert.deepEqual(applyContextReopenGuard(decision), decision);
+});
 
 test("returning-patient guard removes a repeated Bruna introduction", () => {
   const guarded = applyReturningPatientReplyGuard(
@@ -162,6 +253,65 @@ function validResponse(decision = validDecision()) {
     },
   };
 }
+
+test("a deterministic copy remains only a guide until the semantic decision confirms its code", () => {
+  const deterministic = {
+    status: "completed",
+    decision: validDecision({
+      replyCode: "SURGICAL-PRICE-INITIAL-01",
+      suggestedReply: "Texto institucional aprovado.",
+    }),
+  };
+  const confirmed = {
+    status: "completed",
+    decision: validDecision({
+      replyCode: "SURGICAL-PRICE-INITIAL-01",
+      suggestedReply: "A pergunta é sobre valor cirúrgico.",
+    }),
+  };
+  const disagreed = {
+    status: "completed",
+    decision: validDecision({
+      replyCode: "CONTEXT-CLARIFY-01",
+      suggestedReply: "Você quer saber o valor da consulta ou da cirurgia?",
+    }),
+  };
+
+  assert.equal(
+    semanticDecisionConfirmsDeterministicReply(confirmed, deterministic),
+    true,
+  );
+  assert.equal(
+    semanticDecisionConfirmsDeterministicReply(disagreed, deterministic),
+    false,
+  );
+  assert.equal(
+    semanticDecisionConfirmsDeterministicReply(
+      {
+        status: "completed",
+        decision: validDecision({
+          professional: "daniel",
+          replyCode: "SURGICAL-PRICE-INITIAL-01",
+        }),
+      },
+      deterministic,
+    ),
+    false,
+  );
+  assert.equal(
+    semanticDecisionConfirmsDeterministicReply(
+      {
+        status: "completed",
+        decision: validDecision({
+          procedure: "lifting_facial",
+          replyCode: "SURGICAL-PRICE-INITIAL-01",
+        }),
+      },
+      deterministic,
+    ),
+    false,
+  );
+});
 
 test("missing configuration is skipped without throwing", async () => {
   const result = await runOpenAIShadow(
@@ -936,6 +1086,65 @@ test("the model receives the latest sixteen turns with speaker sources", async (
   assert.equal(input.recentConversation[15].source, "paciente");
 });
 
+test("the model receives bounded mechanical hints as non-authoritative context", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Ai fazem cervicoplastia",
+      platform: "WhatsApp direto",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "A clínica fica em Pinheiros.",
+        },
+      ],
+      policyHints: {
+        route: "standard_reply",
+        reason: "known_procedure",
+        replyCode: "G-LIFT-CERV-01",
+        deterministicReplyCode: "MARKETING-PREFILL-OPENING-01",
+        deterministicReplyPreview:
+          "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+        deterministicReplyProfessional: "amanda",
+        deterministicReplyProcedure: "lifting_cervical",
+        professional: "amanda",
+        procedure: "lifting_cervical",
+        automaticAllowed: true,
+        ignoredField: "not-forwarded",
+      },
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  const input = JSON.parse(
+    JSON.parse(calls[0].options.body).input,
+  );
+  assert.deepEqual(input.policyHints, {
+    route: "standard_reply",
+    reason: "known_procedure",
+    replyCode: "G-LIFT-CERV-01",
+    deterministicReplyCode: "MARKETING-PREFILL-OPENING-01",
+    deterministicReplyProfessional: "amanda",
+    deterministicReplyProcedure: "lifting_cervical",
+    professional: "amanda",
+    procedure: "lifting_cervical",
+    deterministicReplyPreview:
+      "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+    automaticAllowed: true,
+  });
+});
+
 test("passes bounded Meta ad context without referral URLs", async () => {
   const calls = [];
 
@@ -1501,7 +1710,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   }
 });
 
-test("active AI triage continues a low-risk aesthetic statement when conversation memory is unavailable", async () => {
+test("active AI interprets a colloquial procedure question without punctuation", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -1558,7 +1767,7 @@ test("active AI triage continues a low-risk aesthetic statement when conversatio
             validDecision({
               procedure: "lifting_cervical",
               suggestedReply:
-                "Entendo, Isabel. A flacidez do pescoço é uma das queixas avaliadas pela Dra. Amanda. O que você gostaria de perceber diferente nessa região?",
+                "Sim, fazemos cervicoplastia. É uma cirurgia realizada em hospital, com anestesista e equipe cirúrgica, e o planejamento é definido individualmente na consulta.",
             }),
           ),
         ),
@@ -1583,7 +1792,7 @@ test("active AI triage continues a low-risk aesthetic statement when conversatio
         to: PHONE,
         type: "text",
         customerProfile: { name: "Isabel Ribeiro" },
-        text: { body: "Eu tenho o pescoço flácido" },
+        text: { body: "Ai fazem cervicoplastia" },
       },
     });
     const timestamp = "1721908800";
@@ -1618,6 +1827,8 @@ test("active AI triage continues a low-risk aesthetic statement when conversatio
     );
     assert.equal(openAIInput.priorInteractionKnown, true);
     assert.deepEqual(openAIInput.recentConversation, []);
+    assert.equal(openAIInput.policyHints.reason, "known_procedure");
+    assert.equal(openAIInput.policyHints.procedure, "lifting_cervical");
 
     const patientRequests = requests.filter(
       (request) =>
@@ -1626,7 +1837,7 @@ test("active AI triage continues a low-risk aesthetic statement when conversatio
     assert.equal(patientRequests.length, 1);
     assert.equal(
       JSON.parse(patientRequests[0].options.body).text.body,
-      "Entendo, Isabel. A flacidez do pescoço é uma das queixas avaliadas pela Dra. Amanda. O que você gostaria de perceber diferente nessa região?",
+      "Sim, fazemos cervicoplastia. É uma cirurgia realizada em hospital, com anestesista e equipe cirúrgica, e o planejamento é definido individualmente na consulta.",
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -1792,13 +2003,12 @@ test("a prefilled availability template collects scheduling preference", async (
       return new Response(
         JSON.stringify(
           validResponse(
-            validDecision({
-              procedure: "lifting_facial",
-              suggestedReply:
-                "Olá, Rô! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-                "Vi que seu interesse é em lifting facial. O que seria mais útil " +
-                "entender primeiro: o procedimento, a recuperação, os valores ou a avaliação?",
-            }),
+              validDecision({
+                procedure: "avaliacao_facial",
+                replyCode: "AMANDA-AGENDA-PREFERENCE-01",
+                suggestedReply:
+                  "A pessoa quer informar sua preferência para uma avaliação facial.",
+              }),
           ),
         ),
         { status: 200 },
@@ -1848,7 +2058,7 @@ test("a prefilled availability template collects scheduling preference", async (
     const body = await response.json();
     await Promise.all(pending);
 
-    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.aiActiveQueued, true);
     assert.equal(body.appointmentNeedsPreference, true);
     assert.equal(body.appointmentPreferenceReplySent, true);
     assert.equal(body.appointmentReviewQueued, false);
@@ -1857,7 +2067,7 @@ test("a prefilled availability template collects scheduling preference", async (
         (request) =>
           request.url === "https://api.openai.com/v1/responses",
       ),
-      false,
+      true,
     );
 
     const patientRequests = requests.filter(
@@ -1948,10 +2158,12 @@ test("the first surgical price question uses the approved institutional reply", 
         JSON.stringify(
           validResponse(
             validDecision({
-              route: "human_review",
-              automaticAllowed: false,
-              suggestedReply: "",
-              reviewReason: "price_range_requested",
+              route: "standard_reply",
+              automaticAllowed: true,
+              confidence: "high",
+              replyCode: "SURGICAL-PRICE-INITIAL-01",
+              suggestedReply: "A pergunta é sobre o valor da cirurgia.",
+              reviewReason: "price_initial_information",
             }),
           ),
         ),
@@ -2004,7 +2216,7 @@ test("the first surgical price question uses the approved institutional reply", 
     const body = await response.json();
     await Promise.all(pending);
 
-    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.aiActiveQueued, true);
     assert.equal(body.reviewAlertQueued, false);
     assert.equal(body.priceHoldingQueued, false);
     assert.equal(body.priceHoldingSent, false);
@@ -2016,7 +2228,7 @@ test("the first surgical price question uses the approved institutional reply", 
         (request) =>
           request.url === "https://api.openai.com/v1/responses",
       ),
-      false,
+      true,
     );
 
     const ycloudRequests = requests.filter(

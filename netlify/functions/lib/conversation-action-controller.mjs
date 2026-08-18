@@ -510,23 +510,6 @@ export function decideConversationAction({
     );
   }
 
-  if (
-    isReplyToHumanContextWithoutStandaloneRequest(
-      value,
-      recentConversation,
-    )
-  ) {
-    return decide(
-      CONVERSATION_ACTIONS.WAIT_TEAM,
-      "patient_answer_belongs_to_human_context",
-      {
-        unresolvedRequest: true,
-        humanTakeoverActive: true,
-        forceNoHoldingReply: true,
-      },
-    );
-  }
-
   if (plan?.route === "ignore") {
     return decide(
       CONVERSATION_ACTIONS.CLOSED,
@@ -534,15 +517,16 @@ export function decideConversationAction({
     );
   }
 
-  const unresolvedRequest =
+  const patternSuggestsResponse =
     hasUnresolvedPatientRequest(
       value,
       recentConversation,
-    ) ||
-    (
-      plan?.route === "standard_reply" &&
-      plan?.reason === "ai_safety_triage"
     );
+  const semanticEvaluationRequired =
+    plan?.route === "standard_reply" &&
+    plan?.automaticAllowed === true;
+  const unresolvedRequest =
+    patternSuggestsResponse || semanticEvaluationRequired;
   const needsTeam =
     schedulingRequest ||
     plan?.route === "appointment_review" ||
@@ -596,6 +580,8 @@ export function decideConversationAction({
         unresolvedRequest: true,
         allowAlert:
           plan?.route === "daniel_greeting_and_alert",
+        semanticEvaluationRequired,
+        patternSuggestsResponse,
       },
     );
   }
