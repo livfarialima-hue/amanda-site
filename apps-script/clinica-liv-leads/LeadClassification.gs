@@ -9,6 +9,7 @@ const LEAD_MESSAGE_HEADERS = Object.freeze([
   "Opportunity ID",
   "Profissional",
   "Aba do lead",
+  "Origem",
 ]);
 
 const LEAD_CLASSIFICATION_HEADERS = Object.freeze([
@@ -1328,6 +1329,24 @@ function hasMessageInSheet_(sheet, messageId) {
   return Boolean(findMessageRowInSheet_(sheet, messageId));
 }
 
+function normalizeLeadMessageSource_(direction, source, messageId, eventId) {
+  if (String(direction || "").toUpperCase() !== "OUT") return "paciente";
+  const normalized = String(source || "").trim().toLowerCase();
+  if (["bruna", "bot", "automatic", "automatica", "automático"].indexOf(normalized) >= 0) {
+    return "bruna";
+  }
+  if (["human", "humano", "equipe_humana", "equipe humana"].indexOf(normalized) >= 0) {
+    return "equipe_humana";
+  }
+  const identity = [messageId, eventId].join(" ").toLowerCase();
+  if (
+    /(?:bruna|retomada|lembrete|reminder|post-consult|price-holding|overnight|image-acknowledgement|booking-confirmed|verified-partial|unknown-holding)/.test(identity)
+  ) {
+    return "bruna";
+  }
+  return "equipe_humana";
+}
+
 function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
   const phone = normalizePhone_(lead.phone);
   const messageId = safeText_(lead.messageId || lead.eventId, 500);
@@ -1335,6 +1354,12 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
   const at = lead.contactAt instanceof Date
     ? lead.contactAt
     : new Date(lead.contactAt || Date.now());
+  const source = normalizeLeadMessageSource_(
+    direction,
+    lead.source,
+    messageId,
+    eventId,
+  );
 
   if (!phone || !messageId || Number.isNaN(at.getTime())) return null;
 
@@ -1348,6 +1373,7 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
     messageSheet,
     messageId,
   );
+  const created = !existingMessageRow;
   if (!existingMessageRow) {
     messageSheet.appendRow([
       phone,
@@ -1360,6 +1386,7 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
       safeText_(lead.opportunityId, 120),
       safeText_(lead.professional, 80),
       safeText_(lead.leadSheetName, 120),
+      source,
     ]);
   } else if (
     Number(leadRow) > 0 ||
@@ -1379,11 +1406,19 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
         safeText_(lead.leadSheetName, 120) || currentLink[3],
       ]]);
   }
+  if (
+    existingMessageRow &&
+    source &&
+    !messageSheet.getRange(existingMessageRow, 11).getDisplayValue()
+  ) {
+    messageSheet.getRange(existingMessageRow, 11).setValue(source);
+  }
 
   return {
     phone: phone,
     messageId: messageId,
     at: at,
+    created: created,
   };
 }
 
@@ -1439,7 +1474,7 @@ function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
       safeText_(lead.leadSheetName, 120),
       "",
     ]);
-    return;
+    return recorded;
   }
 
   const current = queueSheet
@@ -1465,6 +1500,7 @@ function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
     safeText_(lead.professional, 80),
     safeText_(lead.leadSheetName, 120),
   ]]);
+  return recorded;
 }
 
 function parseClassificationDate_(value) {
@@ -1645,13 +1681,146 @@ function collectLeadMessagesForOpportunity_(
     );
   });
   return matching.slice(-Math.max(1, Number(limit) || 12)).map(function (row) {
+    const direction = String(row[1] || "IN");
     return {
-      direction: String(row[1] || "IN"),
+      direction: direction,
       at: row[2] instanceof Date ? row[2].toISOString() : String(row[2] || ""),
       messageId: String(row[3] || ""),
+      eventId: String(row[4] || ""),
       text: String(row[5] || ""),
+      source: normalizeLeadMessageSource_(
+        direction,
+        row[10],
+        row[3],
+        row[4],
+      ),
     };
   });
+}
+
+function boundedConversationText_(value, limit) {
+  const characters = Array.from(String(value || "").trim());
+  const maximum = Math.max(1, Number(limit) || 1600);
+  if (characters.length <= maximum) return characters.join("");
+  const marker = " … ";
+  const available = Math.max(0, maximum - marker.length);
+  const headLength = Math.ceil(available * 0.6);
+  return characters.slice(0, headLength).join("") +
+    marker +
+    characters.slice(-(available - headLength)).join("");
+}
+
+function registrarTurnoConversa_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const phone = normalizePhone_(input.phone);
+  const eventId = safeText_(input.eventId, 200);
+  const messageId = safeText_(input.messageId || eventId, 500);
+  const text = safeText_(input.text, 4000);
+  const at = new Date(input.at || Date.now());
+  if (!phone || !eventId || !messageId || !text || Number.isNaN(at.getTime())) {
+    return { ok: false, error: "invalid_conversation_turn" };
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const latest = typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
+    ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone)
+    : null;
+  const requestedOpportunityId = safeText_(input.opportunityId, 120);
+  const opportunityMatches = Boolean(
+    latest &&
+    (!requestedOpportunityId || latest.opportunityId === requestedOpportunityId),
+  );
+  const opportunityId = requestedOpportunityId ||
+    (latest && latest.opportunityId) || "";
+  const professional = safeText_(input.professional, 80) ||
+    (latest && latest.professional) || "";
+  const leadSheetName = opportunityMatches
+    ? latest.sheetName || ""
+    : "";
+  const leadRow = opportunityMatches ? latest.leadRow : null;
+  const lead = {
+    phone: phone,
+    contactAt: at,
+    messageId: messageId,
+    eventId: eventId,
+    text: text,
+    opportunityId: opportunityId,
+    professional: professional,
+    leadSheetName: leadSheetName,
+    source: safeText_(input.source, 40),
+  };
+  // A mensagem de entrada já abriu a janela do classificador. A saída da
+  // Bruna só precisa entrar no ledger; não deve criar uma segunda execução.
+  const recorded = recordLeadMessageOnly_(
+    spreadsheet,
+    leadRow || "",
+    lead,
+    "OUT",
+  );
+
+  return {
+    ok: Boolean(recorded),
+    recorded: Boolean(recorded),
+    duplicate: Boolean(recorded && recorded.created === false),
+    opportunityId: opportunityId,
+    professional: professional,
+  };
+}
+
+function obterContextoConversa_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const phone = normalizePhone_(input.phone);
+  if (!phone) return { ok: false, error: "invalid_conversation_identity" };
+
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const latest = typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
+    ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone)
+    : null;
+  const requestedOpportunityId = safeText_(input.opportunityId, 120);
+  const opportunityId = requestedOpportunityId ||
+    (latest && latest.opportunityId) || "";
+  const professional = safeText_(input.professional, 80) ||
+    (latest && latest.professional) || "";
+  if (!opportunityId) {
+    return {
+      ok: true,
+      opportunityId: "",
+      professional: professional,
+      turns: [],
+    };
+  }
+
+  const messageSheet = spreadsheet.getSheetByName(CONFIG.messageSheetName);
+  const limit = Math.max(1, Math.min(32, Number(input.limit) || 32));
+  const messages = collectLeadMessagesForOpportunity_(
+    messageSheet,
+    opportunityId,
+    phone,
+    professional,
+    limit,
+    true,
+  );
+  const turns = messages.map(function publicConversationTurn(message) {
+    const outbound = message.direction === "OUT";
+    return {
+      role: outbound ? "assistant" : "user",
+      source: outbound
+        ? message.source === "bruna" ? "bruna" : "human"
+        : "patient",
+      at: message.at,
+      eventId: safeText_(message.eventId || message.messageId, 200),
+      text: boundedConversationText_(message.text, 1600),
+    };
+  }).filter(function nonEmptyConversationTurn(turn) {
+    return Boolean(turn.text);
+  });
+
+  return {
+    ok: true,
+    opportunityId: opportunityId,
+    professional: professional,
+    turns: turns,
+  };
 }
 
 function relationshipFromCanonicalLeadStatus_(status) {

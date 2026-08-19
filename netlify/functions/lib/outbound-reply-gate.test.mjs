@@ -535,6 +535,7 @@ test("controlled send delivers once and suppresses a retry", async () => {
 test("controlled send uses the validated trimmed body", async () => {
   const blobs = fakeBlobs();
   let deliveredBody = "";
+  let ledgerBody = "";
   const result = await sendControlledPatientReply(
     {
       from: "+5511000000000",
@@ -551,11 +552,17 @@ test("controlled send uses the validated trimmed body", async () => {
         deliveredBody = body;
         return { status: "completed", errorCode: "none" };
       },
+      recordDurableConversationTurnImpl: async ({ text }) => {
+        ledgerBody = text;
+        return { status: "completed" };
+      },
     },
   );
 
   assert.equal(result.status, "completed");
   assert.equal(deliveredBody, "Claro. Posso ajudar com essa informação.");
+  assert.equal(ledgerBody, deliveredBody);
+  assert.equal(result.conversationLedgerStatus, "completed");
 });
 
 test("storage failure blocks the send instead of risking a duplicate", async () => {
@@ -719,4 +726,36 @@ test("a verified booking path can send the single appointment confirmation", () 
   });
 
   assert.equal(result.allowed, true);
+});
+
+test("a validated semantic continuation overrides only the mechanical closing label", () => {
+  const allowed = validateOutboundReply({
+    body:
+      "Na consulta, a Dra. Amanda entende seus objetivos, faz a avaliação presencial e explica possibilidades, limites e recuperação.",
+    currentText: "Certo",
+    recentConversation: [{
+      role: "assistant",
+      source: "bruna",
+      text: "Posso te explicar como funciona a consulta.",
+    }],
+    conversationAction: {
+      ...respond,
+      semanticReplyAuthorized: true,
+      semanticReplyCode: "CONTEXT-CONTINUE-01",
+      replyContract: {
+        maxQuestions: 0,
+        maxLinks: 0,
+        allowCta: false,
+        allowAppointmentConfirmation: false,
+      },
+    },
+  });
+  const mechanicalOnly = validateOutboundReply({
+    body: "Claro, posso ajudar.",
+    currentText: "Certo",
+    conversationAction: respond,
+  });
+
+  assert.equal(allowed.allowed, true);
+  assert.equal(mechanicalOnly.reason, "patient_closed_or_deferred");
 });

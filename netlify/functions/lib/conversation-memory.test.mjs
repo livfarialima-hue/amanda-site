@@ -3,8 +3,10 @@ import test from "node:test";
 import {
   appendConversationTurn,
   conversationKey,
+  hydrateConversationMemory,
   readConversationTurns,
   toOpenAIConversation,
+  updateConversationSemanticState,
 } from "./conversation-memory.mjs";
 
 function fakeBlobs(initialValue = null) {
@@ -166,17 +168,17 @@ test("OpenAI receives only the bounded conversational fields", () => {
   ]);
 });
 
-test("conversation memory preserves the latest sixteen bilateral turns", async () => {
-  const turns = Array.from({ length: 20 }, (_value, index) => ({
+test("conversation memory preserves the latest thirty-two bilateral turns", async () => {
+  const turns = Array.from({ length: 40 }, (_value, index) => ({
     role: index % 2 === 0 ? "assistant" : "user",
     text: `Mensagem ${index + 1}`,
     eventId: `event-${index + 1}`,
-    at: `2026-08-13T10:${String(index).padStart(2, "0")}:00.000Z`,
+    at: new Date(Date.parse("2026-08-13T10:00:00.000Z") + index * 60_000).toISOString(),
     source: index % 2 === 0 ? "human" : "patient",
   }));
   const blobs = fakeBlobs({
     version: 1,
-    updatedAt: "2026-08-13T10:19:00.000Z",
+    updatedAt: "2026-08-13T10:39:00.000Z",
     turns,
   });
 
@@ -184,13 +186,109 @@ test("conversation memory preserves the latest sixteen bilateral turns", async (
     "+5511900000000",
     {
       getStoreImpl: blobs.getStoreImpl,
-      now: Date.parse("2026-08-13T10:20:00.000Z"),
+      now: Date.parse("2026-08-13T10:40:00.000Z"),
     },
   );
 
-  assert.equal(result.turns.length, 16);
-  assert.equal(result.turns[0].text, "Mensagem 5");
-  assert.equal(result.turns[15].text, "Mensagem 20");
+  assert.equal(result.turns.length, 32);
+  assert.equal(result.turns[0].text, "Mensagem 9");
+  assert.equal(result.turns[31].text, "Mensagem 40");
   assert.equal(result.turns[0].source, "human");
   assert.equal(result.turns[1].source, "patient");
+});
+
+test("OpenAI truncation preserves the beginning and a question at the end", () => {
+  const longText = `CONTEXTO ${"x".repeat(1_500)} A pergunta real está aqui?`;
+  const [turn] = toOpenAIConversation([{
+    role: "user",
+    source: "patient",
+    eventId: "event-long",
+    text: longText,
+  }]);
+
+  assert.equal(Array.from(turn.text).length, 1_200);
+  assert.match(turn.text, /^CONTEXTO/);
+  assert.match(turn.text, /A pergunta real está aqui\?$/);
+  assert.equal(turn.eventId, "event-long");
+});
+
+test("durable hydration merges event ids and keeps the current cache turn", async () => {
+  const blobs = fakeBlobs({
+    version: 2,
+    updatedAt: "2026-08-18T18:02:00.000Z",
+    turns: [{
+      role: "user",
+      source: "patient",
+      text: "Sim",
+      eventId: "patient-current",
+      at: "2026-08-18T18:02:00.000Z",
+    }],
+    semanticState: null,
+  });
+  const result = await hydrateConversationMemory(
+    {
+      phone: "+5511900000000",
+      turns: [
+        {
+          role: "assistant",
+          source: "human",
+          text: "Posso te explicar como funciona a consulta.",
+          eventId: "human-offer",
+          at: "2026-08-18T18:01:00.000Z",
+        },
+        {
+          role: "user",
+          source: "patient",
+          text: "Sim",
+          eventId: "patient-current",
+          at: "2026-08-18T18:02:00.000Z",
+        },
+      ],
+    },
+    {
+      getStoreImpl: blobs.getStoreImpl,
+      now: Date.parse("2026-08-18T18:02:01.000Z"),
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.deepEqual(
+    result.historyAfter.map((turn) => turn.eventId),
+    ["human-offer", "patient-current"],
+  );
+});
+
+test("semantic conversation state survives later turn appends", async () => {
+  const blobs = fakeBlobs();
+  const state = {
+    activeTopic: "consulta",
+    patientAct: "acceptance",
+    refersToEventId: "human-offer",
+    lastClinicQuestion: "",
+    lastClinicOffer: "Posso te explicar como funciona a consulta.",
+    unresolvedQuestions: ["como funciona a consulta"],
+    factsAlreadyProvided: [],
+    owner: "bruna",
+    nextExpectedAction: "explicar a consulta",
+    ambiguity: "",
+    contextConfidence: "high",
+  };
+  const updated = await updateConversationSemanticState(
+    { phone: "+5511900000000", semanticState: state },
+    { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-08-18T18:00:00Z") },
+  );
+  const appended = await appendConversationTurn(
+    {
+      phone: "+5511900000000",
+      role: "assistant",
+      source: "bruna",
+      text: "Na consulta, a Dra. Amanda entende seus objetivos.",
+      eventId: "reply-1",
+    },
+    { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-08-18T18:00:01Z") },
+  );
+
+  assert.equal(updated.status, "completed");
+  assert.equal(appended.semanticState.refersToEventId, "human-offer");
+  assert.equal(blobs.value().version, 2);
 });

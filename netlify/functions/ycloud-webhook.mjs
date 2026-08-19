@@ -37,9 +37,14 @@ import {
 } from "./lib/lead-deduplication.mjs";
 import {
   appendConversationTurn,
+  hydrateConversationMemory,
   readConversationTurns,
   toOpenAIConversation,
+  updateConversationSemanticState,
 } from "./lib/conversation-memory.mjs";
+import {
+  getDurableConversationContext,
+} from "./lib/conversation-ledger.mjs";
 import {
   clearExternalProfessionalContext,
   detectExternalProfessionalAppointment,
@@ -1089,7 +1094,7 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
         promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
         knowledgeSnapshot:
           process.env.BRUNA_KB_SNAPSHOT || "unversioned",
-        schemaVersion: "bruna-decision-v1",
+        schemaVersion: "bruna-decision-v2",
         usage: result.usage,
       },
     });
@@ -1546,6 +1551,8 @@ export async function completeSelectedAppointment(
     currentText:
       `Escolha do horário ${appointmentSelection.scheduledDate} ${appointmentSelection.scheduledTime}`,
     recentConversation: [],
+    opportunityId,
+    professional: selectedProfessional,
     conversationAction: {
       action: "respond",
       allowHoldingReply: false,
@@ -2098,6 +2105,18 @@ async function completeOpenAIActive({
       };
     }
 
+    const semanticStateResult = await updateConversationSemanticState({
+      phone: to,
+      semanticState: activeResult.decision.conversationState,
+    });
+    writeOperationalLog({
+      source: "conversation_semantic_state",
+      category: "conversation_memory",
+      reason: "semantic_state_processed",
+      sourceId: input.eventId,
+      fields: { status: semanticStateResult.status },
+    });
+
     if (deterministicReplyContextMismatch) {
       writeOperationalLog({
         source: "openai_active_deterministic_context_mismatch",
@@ -2275,6 +2294,8 @@ async function completeOpenAIActive({
         body: holdingReply,
         currentText: input.text,
         recentConversation: input.recentConversation,
+        opportunityId: input.opportunityId,
+        professional: input.professional,
         conversationAction,
       });
       await recordAutomaticReplyOperationally({
@@ -2379,6 +2400,8 @@ async function completeOpenAIActive({
       body: activeResult.decision.suggestedReply,
       currentText: input.text,
       recentConversation: input.recentConversation,
+      opportunityId: input.opportunityId,
+      professional: input.professional,
       conversationAction: buildSemanticReplyConversationAction(
         conversationAction,
         activeResult.decision,
@@ -2937,6 +2960,8 @@ async function sendCurrentInboundReply({
     body,
     currentText,
     recentConversation,
+    opportunityId,
+    professional,
     conversationAction,
   });
   await recordAutomaticReplyOperationally({
@@ -3668,6 +3693,8 @@ export async function handleYCloudWebhook(
   let conversationHistory = [];
   let conversationHistoryWithCurrent = [];
   let conversationMemoryStatus = "skipped";
+  let conversationHistorySource = "volatile_cache";
+  let conversationSemanticState = null;
   let conversationExpired = false;
   let patientAppointmentSelection = null;
   let patientAppointmentReply = null;
@@ -3696,7 +3723,7 @@ export async function handleYCloudWebhook(
     normalizedMessageType === "text" &&
     text.trim().length > 0
   ) {
-    const memoryResult = await appendConversationTurn({
+    let memoryResult = await appendConversationTurn({
       phone,
       role: "user",
       text,
@@ -3704,10 +3731,42 @@ export async function handleYCloudWebhook(
       at: contactAt,
       source: "patient",
     });
+    const volatileConversationExpired = memoryResult.expired === true;
+    const shouldHydrateDurableHistory = Boolean(
+      delivery.ok &&
+        (
+          memoryResult.status === "failed" ||
+          memoryResult.expired === true ||
+          (
+            memoryResult.historyBefore.length === 0 &&
+            delivery.updated === true
+          )
+        ),
+    );
+    if (shouldHydrateDurableHistory) {
+      const durableContext = await getDurableConversationContext({
+        phone,
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
+        limit: 32,
+      });
+      if (durableContext.status === "completed" && durableContext.turns.length) {
+        const hydrated = await hydrateConversationMemory({
+          phone,
+          turns: durableContext.turns,
+          semanticState: memoryResult.semanticState,
+        });
+        if (hydrated.status === "completed") {
+          memoryResult = hydrated;
+          conversationHistorySource = "durable_ledger";
+        }
+      }
+    }
     conversationMemoryStatus = memoryResult.status;
-    conversationExpired = memoryResult.expired === true;
+    conversationSemanticState = memoryResult.semanticState || null;
+    conversationExpired = volatileConversationExpired;
     conversationHistory = toOpenAIConversation(
-      memoryResult.historyBefore.filter(
+      memoryResult.historyAfter.filter(
         (turn) => turn.eventId !== String(eventId),
       ),
     );
@@ -3743,6 +3802,7 @@ export async function handleYCloudWebhook(
       source: "patient",
     });
     conversationMemoryStatus = memoryResult.status;
+    conversationSemanticState = memoryResult.semanticState || null;
     conversationExpired = memoryResult.expired === true;
     conversationHistory = toOpenAIConversation(
       memoryResult.historyBefore.filter(
@@ -4711,6 +4771,7 @@ export async function handleYCloudWebhook(
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
+        previousConversationState: conversationSemanticState,
         priorInteractionKnown: delivery.updated === true,
         referralContext,
         patientRelationship:
@@ -4756,6 +4817,7 @@ export async function handleYCloudWebhook(
         referenceCategory: attribution.referenceCategory,
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
+        previousConversationState: conversationSemanticState,
         priorInteractionKnown: delivery.updated === true,
         referralContext,
         patientRelationship:
@@ -4979,6 +5041,7 @@ export async function handleYCloudWebhook(
       humanResumeScheduleStatus,
       commitmentSyncStatus,
       conversationMemoryStatus,
+      conversationHistorySource,
       patientAppointmentReplySyncStatus,
       conversationExpired,
       reactivationHandoffPending,
@@ -5055,6 +5118,7 @@ export async function handleYCloudWebhook(
     duplicateReason: delivery.duplicateReason,
     recoveredExactDuplicate,
     conversationMemory: conversationMemoryStatus,
+    conversationHistorySource,
     patientAppointmentReplySyncStatus,
     conversationExpired,
     reactivationHandoffPending,

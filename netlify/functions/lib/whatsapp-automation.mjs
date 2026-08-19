@@ -350,6 +350,24 @@ function detectRecentPatientProcedure(recentConversation) {
   return null;
 }
 
+function detectRecentClinicProcedure(recentConversation) {
+  const turns = Array.isArray(recentConversation)
+    ? recentConversation.slice(-16)
+    : [];
+  const clinicTurns = turns.filter(
+    (turn) =>
+      turn?.role === "assistant" ||
+      ["bruna", "human", "equipe_humana"].includes(
+        String(turn?.source || ""),
+      ),
+  );
+  for (const turn of clinicTurns.reverse()) {
+    const procedure = detectProcedure(turn?.text, "", null);
+    if (procedure) return procedure;
+  }
+  return null;
+}
+
 export function normalizeAutomationMode(value) {
   const mode = String(value || "shadow").trim().toLowerCase();
   return ["off", "shadow", "active"].includes(mode) ? mode : "shadow";
@@ -499,6 +517,13 @@ export function enrichAutomationPlanFromConversation(
   );
 
   const contextText = recentConversation
+    .filter(
+      (turn) =>
+        turn?.role !== "assistant" &&
+        !["bruna", "human", "equipe_humana"].includes(
+          String(turn?.source || ""),
+        ),
+    )
     .map((turn) => String(turn?.text || "").trim())
     .filter(Boolean)
     .join(" ");
@@ -509,6 +534,7 @@ export function enrichAutomationPlanFromConversation(
     platform: "WhatsApp direto",
   });
   const recentPatientProcedure = detectRecentPatientProcedure(recentConversation);
+  const recentClinicProcedure = detectRecentClinicProcedure(recentConversation);
 
   if (plan.reason === "hospital_setting_context_required") {
     if (
@@ -637,7 +663,11 @@ export function enrichAutomationPlanFromConversation(
       : plan.reason,
     replyCode: plan.replyCode || context.replyCode,
     professional: plan.professional || context.professional,
-    procedure: plan.procedure || context.procedure,
+    procedure:
+      plan.procedure ||
+      context.procedure ||
+      recentPatientProcedure?.key ||
+      recentClinicProcedure?.key,
     automaticAllowed: mayContinueWithAI ? true : plan.automaticAllowed,
   };
 }

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   CONVERSATION_ACTIONS,
+  clinicTurnInvitesResponse,
   decideConversationAction,
   hasUnresolvedPatientRequest,
   isExplicitNightPause,
@@ -119,6 +120,46 @@ test("an answer to the clinic question remains a response obligation", () => {
       ],
     ),
     true,
+  );
+});
+
+test("a short acknowledgement after a concrete offer reaches semantic interpretation", () => {
+  const recentConversation = [{
+    role: "assistant",
+    source: "bruna",
+    text: "Posso te explicar como funciona a consulta com a Dra. Amanda.",
+  }];
+
+  assert.equal(clinicTurnInvitesResponse(recentConversation[0]), true);
+  assert.equal(hasUnresolvedPatientRequest("Certo", recentConversation), true);
+
+  const decision = decideConversationAction({
+    text: "Certo",
+    plan: standardPlan,
+    recentConversation,
+  });
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.unresolvedRequest, true);
+});
+
+test("gratitude remains a closing even when an older offer exists", () => {
+  const recentConversation = [{
+    role: "assistant",
+    source: "bruna",
+    text: "Posso te explicar como funciona a consulta.",
+  }];
+
+  assert.equal(
+    hasUnresolvedPatientRequest("Obrigada, até mais", recentConversation),
+    false,
+  );
+  assert.equal(
+    decideConversationAction({
+      text: "Obrigada, até mais",
+      plan: standardPlan,
+      recentConversation,
+    }).action,
+    CONVERSATION_ACTIONS.CLOSED,
   );
 });
 

@@ -266,9 +266,36 @@ function doPost(e) {
       body.action !== "record_bot_knowledge_usage" &&
       body.action !== "archive_nonlead_contact" &&
       body.action !== "record_operational_event" &&
+      body.action !== "record_conversation_turn" &&
+      body.action !== "get_conversation_context" &&
       body.action !== "run_synthetic_health_check"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "get_conversation_context") {
+      stage = "get_conversation_context";
+      const conversationContext = obterContextoConversa_(
+        body.conversation || {},
+      );
+      return json_({
+        ...conversationContext,
+        ok: conversationContext.ok === true,
+      });
+    }
+
+    if (body.action === "record_conversation_turn") {
+      stage = "record_conversation_turn";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const conversationTurn = registrarTurnoConversa_(
+        body.conversation || {},
+      );
+      return json_({
+        ...conversationTurn,
+        ok: conversationTurn.ok === true,
+      });
     }
 
     if (body.action === "record_operational_event") {
@@ -1055,6 +1082,8 @@ function doPost(e) {
       "record_external_professional_contact",
       "archive_nonlead_contact",
       "record_operational_event",
+      "record_conversation_turn",
+      "get_conversation_context",
       "run_synthetic_health_check",
     ]);
 
@@ -2121,6 +2150,7 @@ function registrarAtendimentoHumano_(input) {
         opportunityId: opportunity && opportunity.opportunityId,
         professional: opportunity && opportunity.professional,
         leadSheetName: opportunity && opportunity.sheetName,
+        source: "human",
       },
       "OUT",
     );

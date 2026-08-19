@@ -3699,6 +3699,7 @@ function registrarMensagemNaoComparecimento_(
         eventId: identifier,
         contactAt: now,
         text,
+        source: "bruna",
       },
       "OUT",
     );
@@ -3719,6 +3720,10 @@ function registrarMensagemNaoComparecimento_(
       identifier,
       text,
       leadRow || "",
+      "",
+      "",
+      "",
+      "bruna",
     ]);
   }
 }

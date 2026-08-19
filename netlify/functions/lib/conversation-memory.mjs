@@ -2,15 +2,26 @@ import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-whatsapp-conversations-v1";
-const MEMORY_VERSION = 1;
+const MEMORY_VERSION = 2;
+const SUPPORTED_MEMORY_VERSIONS = new Set([1, MEMORY_VERSION]);
 const MEMORY_TTL_MS = 7 * 24 * 60 * 60 * 1_000;
-const MAX_TURNS = 16;
-const MAX_TURN_TEXT_LENGTH = 700;
+const MAX_TURNS = 32;
+const MAX_TURN_TEXT_LENGTH = 1_600;
+const MAX_OPENAI_TURN_TEXT_LENGTH = 1_200;
+const TRUNCATION_MARKER = " … ";
 
 function text(value, maximumLength = MAX_TURN_TEXT_LENGTH) {
-  return Array.from(String(value || "").trim())
-    .slice(0, maximumLength)
-    .join("");
+  const characters = Array.from(String(value || "").trim());
+  if (characters.length <= maximumLength) return characters.join("");
+
+  const available = Math.max(0, maximumLength - TRUNCATION_MARKER.length);
+  const headLength = Math.ceil(available * 0.6);
+  const tailLength = Math.max(0, available - headLength);
+  return [
+    ...characters.slice(0, headLength),
+    ...Array.from(TRUNCATION_MARKER),
+    ...characters.slice(-tailLength),
+  ].slice(0, maximumLength).join("");
 }
 
 function timestamp(value, fallback) {
@@ -20,11 +31,78 @@ function timestamp(value, fallback) {
     : parsed.toISOString();
 }
 
+function stringList(value, maximumItems = 8, maximumLength = 160) {
+  return (Array.isArray(value) ? value : [])
+    .map((item) => text(item, maximumLength))
+    .filter(Boolean)
+    .slice(0, maximumItems);
+}
+
+export function normalizeConversationSemanticState(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+
+  const patientActs = new Set([
+    "question",
+    "request",
+    "answer",
+    "acceptance",
+    "acknowledgement",
+    "deferral",
+    "decline",
+    "closing",
+    "statement",
+    "unknown",
+  ]);
+  const owners = new Set(["bruna", "human_team", "patient", "none"]);
+  return {
+    activeTopic: text(value.activeTopic, 160),
+    patientAct: patientActs.has(value.patientAct)
+      ? value.patientAct
+      : "unknown",
+    refersToEventId: text(value.refersToEventId, 200),
+    lastClinicQuestion: text(value.lastClinicQuestion, 300),
+    lastClinicOffer: text(value.lastClinicOffer, 300),
+    unresolvedQuestions: stringList(value.unresolvedQuestions),
+    factsAlreadyProvided: stringList(value.factsAlreadyProvided, 12),
+    owner: owners.has(value.owner) ? value.owner : "none",
+    nextExpectedAction: text(value.nextExpectedAction, 160),
+    ambiguity: text(value.ambiguity, 200),
+    contextConfidence: ["low", "medium", "high"].includes(
+      value.contextConfidence,
+    )
+      ? value.contextConfidence
+      : "low",
+  };
+}
+
+function normalizeTurn(turn, now) {
+  if (
+    !turn ||
+    !["user", "assistant"].includes(turn.role) ||
+    !text(turn.text)
+  ) {
+    return null;
+  }
+
+  return {
+    role: turn.role,
+    text: text(turn.text),
+    eventId: text(turn.eventId, 200),
+    at: timestamp(turn.at, now),
+    source: ["patient", "bruna", "human"].includes(turn.source)
+      ? turn.source
+      : turn.role === "user"
+        ? "patient"
+        : "bruna",
+  };
+}
+
 function emptyConversation(now) {
   return {
     version: MEMORY_VERSION,
     updatedAt: new Date(now).toISOString(),
     turns: [],
+    semanticState: null,
   };
 }
 
@@ -32,7 +110,7 @@ function normalizeConversation(value, now) {
   if (
     !value ||
     typeof value !== "object" ||
-    value.version !== MEMORY_VERSION ||
+    !SUPPORTED_MEMORY_VERSIONS.has(value.version) ||
     !Array.isArray(value.turns)
   ) {
     return {
@@ -51,30 +129,16 @@ function normalizeConversation(value, now) {
   }
 
   const turns = value.turns
-    .filter(
-      (turn) =>
-        turn &&
-        ["user", "assistant"].includes(turn.role) &&
-        text(turn.text).length > 0,
-    )
-    .slice(-MAX_TURNS)
-    .map((turn) => ({
-      role: turn.role,
-      text: text(turn.text),
-      eventId: text(turn.eventId, 200),
-      at: timestamp(turn.at, now),
-      source: ["patient", "bruna", "human"].includes(turn.source)
-        ? turn.source
-        : turn.role === "user"
-          ? "patient"
-          : "bruna",
-    }));
+    .map((turn) => normalizeTurn(turn, now))
+    .filter(Boolean)
+    .slice(-MAX_TURNS);
 
   return {
     conversation: {
       version: MEMORY_VERSION,
       updatedAt: new Date(updatedAt).toISOString(),
       turns,
+      semanticState: normalizeConversationSemanticState(value.semanticState),
     },
     expired: false,
   };
@@ -85,6 +149,32 @@ function store(getStoreImpl = getStore) {
     name: STORE_NAME,
     consistency: "strong",
   });
+}
+
+function turnIdentity(turn) {
+  if (turn.eventId) return `event:${turn.eventId}`;
+  return [turn.role, turn.source, turn.at, turn.text].join("|");
+}
+
+function mergeTurns(...collections) {
+  const indexed = new Map();
+  let sequence = 0;
+
+  for (const collection of collections) {
+    for (const turn of Array.isArray(collection) ? collection : []) {
+      sequence += 1;
+      indexed.set(turnIdentity(turn), { turn, sequence });
+    }
+  }
+
+  return [...indexed.values()]
+    .sort((left, right) => {
+      const timeDifference =
+        new Date(left.turn.at).getTime() - new Date(right.turn.at).getTime();
+      return timeDifference || left.sequence - right.sequence;
+    })
+    .map((entry) => entry.turn)
+    .slice(-MAX_TURNS);
 }
 
 export function conversationKey(phone) {
@@ -117,6 +207,7 @@ export async function appendConversationTurn(
       expired: false,
       historyBefore: [],
       historyAfter: [],
+      semanticState: null,
     };
   }
 
@@ -143,24 +234,22 @@ export async function appendConversationTurn(
         expired: false,
         historyBefore,
         historyAfter: historyBefore,
+        semanticState: existing.semanticState,
       };
     }
 
-    const nextTurn = {
+    const nextTurn = normalizeTurn({
       role,
-      text: text(turnText),
+      text: turnText,
       eventId: normalizedEventId,
-      at: timestamp(at, now),
-      source: ["patient", "bruna", "human"].includes(source)
-        ? source
-        : role === "user"
-          ? "patient"
-          : "bruna",
-    };
+      at,
+      source,
+    }, now);
     const nextConversation = {
       version: MEMORY_VERSION,
       updatedAt: new Date(now).toISOString(),
       turns: [...historyBefore, nextTurn].slice(-MAX_TURNS),
+      semanticState: existing.semanticState,
     };
 
     await conversationStore.setJSON(key, nextConversation);
@@ -170,6 +259,7 @@ export async function appendConversationTurn(
       expired: normalized.expired,
       historyBefore,
       historyAfter: nextConversation.turns,
+      semanticState: nextConversation.semanticState,
     };
   } catch {
     return {
@@ -177,7 +267,97 @@ export async function appendConversationTurn(
       expired: false,
       historyBefore: [],
       historyAfter: [],
+      semanticState: null,
     };
+  }
+}
+
+export async function hydrateConversationMemory(
+  { phone, turns, semanticState },
+  { getStoreImpl = getStore, now = Date.now() } = {},
+) {
+  if (!phone || !Array.isArray(turns) || turns.length === 0) {
+    return {
+      status: "skipped",
+      expired: false,
+      historyBefore: [],
+      historyAfter: [],
+      semanticState: null,
+    };
+  }
+
+  try {
+    const conversationStore = store(getStoreImpl);
+    const key = conversationKey(phone);
+    const normalized = normalizeConversation(
+      await conversationStore.get(key, {
+        type: "json",
+        consistency: "strong",
+      }),
+      now,
+    );
+    const durableTurns = turns
+      .map((turn) => normalizeTurn(turn, now))
+      .filter(Boolean);
+    const merged = mergeTurns(
+      durableTurns,
+      normalized.conversation.turns,
+    );
+    const nextState = normalizeConversationSemanticState(semanticState) ||
+      normalized.conversation.semanticState;
+    const nextConversation = {
+      version: MEMORY_VERSION,
+      updatedAt: new Date(now).toISOString(),
+      turns: merged,
+      semanticState: nextState,
+    };
+    await conversationStore.setJSON(key, nextConversation);
+
+    return {
+      status: "completed",
+      expired: normalized.expired,
+      historyBefore: normalized.conversation.turns,
+      historyAfter: merged,
+      semanticState: nextState,
+    };
+  } catch {
+    return {
+      status: "failed",
+      expired: false,
+      historyBefore: [],
+      historyAfter: [],
+      semanticState: null,
+    };
+  }
+}
+
+export async function updateConversationSemanticState(
+  { phone, semanticState },
+  { getStoreImpl = getStore, now = Date.now() } = {},
+) {
+  const normalizedState = normalizeConversationSemanticState(semanticState);
+  if (!phone || !normalizedState) return { status: "skipped" };
+
+  try {
+    const conversationStore = store(getStoreImpl);
+    const key = conversationKey(phone);
+    const normalized = normalizeConversation(
+      await conversationStore.get(key, {
+        type: "json",
+        consistency: "strong",
+      }),
+      now,
+    );
+    const nextConversation = {
+      ...normalized.conversation,
+      version: MEMORY_VERSION,
+      updatedAt: new Date(now).toISOString(),
+      semanticState: normalizedState,
+    };
+    await conversationStore.setJSON(key, nextConversation);
+    return { status: "completed", semanticState: normalizedState };
+  } catch {
+    return { status: "failed" };
   }
 }
 
@@ -189,7 +369,12 @@ export async function readConversationTurns(
   } = {},
 ) {
   if (!phone) {
-    return { status: "skipped", expired: false, turns: [] };
+    return {
+      status: "skipped",
+      expired: false,
+      turns: [],
+      semanticState: null,
+    };
   }
 
   try {
@@ -206,9 +391,15 @@ export async function readConversationTurns(
       status: "completed",
       expired: normalized.expired,
       turns: normalized.conversation.turns,
+      semanticState: normalized.conversation.semanticState,
     };
   } catch {
-    return { status: "failed", expired: false, turns: [] };
+    return {
+      status: "failed",
+      expired: false,
+      turns: [],
+      semanticState: null,
+    };
   }
 }
 
@@ -219,10 +410,12 @@ export function toOpenAIConversation(turns) {
       const parsedAt = new Date(turn.at || 0);
       const hasValidAt =
         Boolean(turn.at) && Number.isFinite(parsedAt.getTime());
+      const eventId = text(turn.eventId, 200);
 
       return {
         role: turn.role === "assistant" ? "assistant" : "patient",
-        text: text(turn.text, 500),
+        text: text(turn.text, MAX_OPENAI_TURN_TEXT_LENGTH),
+        ...(eventId ? { eventId } : {}),
         ...(hasValidAt ? { at: parsedAt.toISOString() } : {}),
         source:
           turn.source === "human"

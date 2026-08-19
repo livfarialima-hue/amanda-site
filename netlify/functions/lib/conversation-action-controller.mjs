@@ -12,6 +12,8 @@ const AGREEMENT_CLOSING_PATTERN =
   /^(?:(?:sim|claro)[,!.\s]+)?(?:podemos(?:\s+sim)?|vamos)[,!.\s]+(?:combinado|fechado|perfeito)(?:[,!.\s]+(?:obrigad[ao]|at[ée]\s+(?:l[áa]|logo)))?[,!.\s]*$/i;
 const SHORT_AFFIRMATIVE_REPLY_PATTERN =
   /^(?:sim|claro|isso|pode\s+sim|pode\s+ser|quero\s+sim|por\s+favor|sim[,!]?\s+por\s+favor)[.!\s]*$/i;
+const SHORT_CONTEXTUAL_RESPONSE_PATTERN =
+  /^(?:sim|claro|isso|pode(?:\s+sim|\s+ser)?|quero\s+sim|por\s+favor|ok(?:ay)?|t[áa]\s+bom|entendi|perfeito|combinado|certo|beleza)[,!.?\s]*$/i;
 const POLITE_ACKNOWLEDGEMENT_CLOSING_PATTERN =
   /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite|ok(?:ay)?|t[áa]\s+bom|tudo\s+bem|entendi|certo|perfeito|combinado|vamos\s+v(?:e|ê|er)(?:\s+l[áa])?|vou\s+v(?:e|ê|er)(?:\s+l[áa])?|obg|obrigad[ao]|valeu|[óo]timo\s+descanso|bom\s+descanso|at[ée]\s+(?:mais|logo)|pra\s+voc[eê]s?|para\s+voc[eê]s?)[,!.?\s]*)+$/i;
 const DIRECT_QUESTION_PATTERN =
@@ -65,6 +67,23 @@ function assistantQuestionBeyondSocialGreeting(turn) {
     )
     .trim();
   return /\?/.test(value);
+}
+
+export function clinicTurnInvitesResponse(turn) {
+  const value = normalized(turn?.text)
+    .replace(
+      /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite)[,!\s]*)?/i,
+      "",
+    )
+    .trim();
+  return Boolean(
+    value &&
+      (
+        assistantQuestionBeyondSocialGreeting(turn) ||
+        /\b(?:posso|podemos)\s+(?:te|lhe)?\s*(?:explicar|contar|mostrar|enviar|orientar|detalhar|ajudar)\b/i.test(value) ||
+        /\b(?:quer|gostaria)\s+que\s+eu\s+(?:te|lhe)?\s*(?:explique|conte|mostre|envie|oriente|detalhe|ajude)\b/i.test(value)
+      ),
+  );
 }
 
 export function introducesStandalonePatientRequest(text) {
@@ -210,18 +229,20 @@ export function hasUnresolvedPatientRequest(
   recentConversation = [],
 ) {
   const value = normalized(text);
-  if (
-    !value ||
-    isSimpleConversationClosing(value) ||
-    isExplicitDeferralWithoutRequest(value)
-  ) {
+  if (!value || isExplicitDeferralWithoutRequest(value)) {
     return false;
   }
 
   if (hasDirectPatientRequest(value)) return true;
 
   const previousAssistant = lastAssistantTurn(recentConversation);
-  return assistantQuestionBeyondSocialGreeting(previousAssistant);
+  const invitedResponse = clinicTurnInvitesResponse(previousAssistant);
+  if (isSimpleConversationClosing(value)) {
+    return Boolean(
+      invitedResponse && SHORT_CONTEXTUAL_RESPONSE_PATTERN.test(value),
+    );
+  }
+  return invitedResponse;
 }
 
 export function isPatientDeclineWithoutRequest(text) {
@@ -489,7 +510,12 @@ export function decideConversationAction({
     );
   }
 
-  if (isSimpleConversationClosing(value)) {
+  const contextualResponsePending = hasUnresolvedPatientRequest(
+    value,
+    recentConversation,
+  );
+
+  if (isSimpleConversationClosing(value) && !contextualResponsePending) {
     return decide(
       CONVERSATION_ACTIONS.CLOSED,
       "simple_conversation_closing",
@@ -537,11 +563,7 @@ export function decideConversationAction({
     );
   }
 
-  const patternSuggestsResponse =
-    hasUnresolvedPatientRequest(
-      value,
-      recentConversation,
-    );
+  const patternSuggestsResponse = contextualResponsePending;
   const semanticEvaluationRequired =
     plan?.route === "standard_reply" &&
     plan?.automaticAllowed === true;

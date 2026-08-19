@@ -33,6 +33,19 @@ function validDecision(overrides = {}) {
     replyCode: "",
     suggestedReply: "Ola! Posso ajudar com sua avaliacao. Qual periodo prefere?",
     reviewReason: "",
+    conversationState: {
+      activeTopic: "blefaroplastia",
+      patientAct: "question",
+      refersToEventId: "",
+      lastClinicQuestion: "",
+      lastClinicOffer: "",
+      unresolvedQuestions: [],
+      factsAlreadyProvided: [],
+      owner: "bruna",
+      nextExpectedAction: "responder a paciente",
+      ambiguity: "",
+      contextConfidence: "high",
+    },
     ...overrides,
   };
 }
@@ -1098,10 +1111,10 @@ test("short conversation history is sent in full without the phone", async () =>
   assert.equal(calls[0].options.body.includes(PHONE), false);
 });
 
-test("the model receives the latest sixteen turns with speaker sources", async () => {
+test("the model receives the latest thirty-two turns with speaker sources", async () => {
   const calls = [];
   const recentConversation = Array.from(
-    { length: 20 },
+    { length: 40 },
     (_value, index) => ({
       role: index % 2 === 0 ? "assistant" : "patient",
       source: index % 4 === 0 ? "equipe_humana" : index % 2 === 0 ? "bruna" : "paciente",
@@ -1131,11 +1144,61 @@ test("the model receives the latest sixteen turns with speaker sources", async (
     JSON.parse(calls[0].options.body).input,
   );
 
-  assert.equal(input.recentConversation.length, 16);
-  assert.equal(input.recentConversation[0].text, "Mensagem 5");
+  assert.equal(input.recentConversation.length, 32);
+  assert.equal(input.recentConversation[0].text, "Mensagem 9");
   assert.equal(input.recentConversation[0].source, "equipe_humana");
-  assert.equal(input.recentConversation[15].text, "Mensagem 20");
-  assert.equal(input.recentConversation[15].source, "paciente");
+  assert.equal(input.recentConversation[31].text, "Mensagem 40");
+  assert.equal(input.recentConversation[31].source, "paciente");
+});
+
+test("the model receives event-linked semantic state under a strict schema", async () => {
+  const calls = [];
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Certo",
+      platform: "WhatsApp direto",
+      recentConversation: [{
+        role: "assistant",
+        source: "bruna",
+        eventId: "offer-1",
+        text: "Posso te explicar como funciona a consulta.",
+      }],
+      previousConversationState: {
+        activeTopic: "consulta",
+        patientAct: "statement",
+        refersToEventId: "",
+        lastClinicQuestion: "",
+        lastClinicOffer: "Posso te explicar como funciona a consulta.",
+        unresolvedQuestions: ["como funciona a consulta"],
+        factsAlreadyProvided: [],
+        owner: "patient",
+        nextExpectedAction: "responder a oferta",
+        ambiguity: "",
+        contextConfidence: "high",
+      },
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), { status: 200 });
+      },
+    },
+  );
+
+  const request = JSON.parse(calls[0].options.body);
+  const input = JSON.parse(request.input);
+  assert.equal(input.recentConversation[0].eventId, "offer-1");
+  assert.equal(input.previousConversationState.activeTopic, "consulta");
+  assert.equal(
+    request.text.format.schema.required.includes("conversationState"),
+    true,
+  );
+  assert.equal(
+    request.text.format.schema.properties.conversationState.additionalProperties,
+    false,
+  );
 });
 
 test("the model receives bounded mechanical hints as non-authoritative context", async () => {
@@ -1424,6 +1487,7 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
     assert.equal(response.status, 200);
     assert.equal((await response.json()).aiShadowQueued, true);
     assert.deepEqual(requests, [
+      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
       "https://api.openai.com/v1/responses",
     ]);

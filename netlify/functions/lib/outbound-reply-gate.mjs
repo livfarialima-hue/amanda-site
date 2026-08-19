@@ -7,6 +7,7 @@ import {
   isSimpleConversationClosing,
 } from "./conversation-action-controller.mjs";
 import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
+import { recordDurableConversationTurn } from "./conversation-ledger.mjs";
 
 const STORE_NAME = "liv-whatsapp-outbound-replies-v1";
 const CLAIM_TTL_MS = 2 * 60 * 1_000;
@@ -339,12 +340,21 @@ export function validateOutboundReply({
     };
   }
 
+  const semanticContextContinuation = Boolean(
+    conversationAction?.semanticReplyAuthorized === true &&
+      [
+        "CONTEXT-CONTINUE-01",
+        "CONTEXT-CLARIFY-01",
+      ].includes(String(conversationAction?.semanticReplyCode || "")),
+  );
+
   if (
     (
       isSimpleConversationClosing(currentText) ||
       isExplicitDeferralWithoutRequest(currentText)
     ) &&
-    conversationAction?.followupPolicy !== "morning_resume"
+    conversationAction?.followupPolicy !== "morning_resume" &&
+    !semanticContextContinuation
   ) {
     return {
       allowed: false,
@@ -572,9 +582,12 @@ export async function sendControlledPatientReply(
     currentText,
     recentConversation,
     conversationAction,
+    opportunityId = "",
+    professional = "",
   },
   {
     sendYCloudPatientTextImpl = sendYCloudPatientText,
+    recordDurableConversationTurnImpl = recordDurableConversationTurn,
     getStoreImpl = getStore,
     now = Date.now(),
   } = {},
@@ -620,6 +633,23 @@ export async function sendControlledPatientReply(
     delivery.status === "completed" ? "sent" : "released",
     { getStoreImpl, now },
   );
+
+  if (delivery.status === "completed") {
+    const ledger = await recordDurableConversationTurnImpl({
+      phone: to,
+      eventId: `${eventId}:bruna`,
+      messageId: `bruna:${eventId}`,
+      text: validation.body,
+      at: new Date(now).toISOString(),
+      source: "bruna",
+      opportunityId,
+      professional,
+    });
+    return {
+      ...delivery,
+      conversationLedgerStatus: ledger.status,
+    };
+  }
 
   return delivery;
 }

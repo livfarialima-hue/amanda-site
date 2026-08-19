@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
 import { getRecommendedSiteResource } from "./site-content.mjs";
+import { normalizeConversationSemanticState } from "./conversation-memory.mjs";
 import {
   applyKnowledgeDecisionGuard,
   normalizeKnowledgeContext,
@@ -20,8 +21,8 @@ const DEFAULT_MODEL = "gpt-5.6-terra";
 const DEFAULT_REASONING_EFFORT = "medium";
 const OPENAI_TIMEOUT_MS = 8_000;
 const MAX_USER_TEXT_LENGTH = 2_000;
-const MAX_RECENT_TURNS = 16;
-const MAX_RECENT_TURN_LENGTH = 500;
+const MAX_RECENT_TURNS = 32;
+const MAX_RECENT_TURN_LENGTH = 1_200;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
 const PATIENT_RELATIONSHIP_STATES = new Set([
   "new_lead",
@@ -44,6 +45,32 @@ const ROUTES = [
 ];
 const CONFIDENCES = ["low", "medium", "high"];
 const PROFESSIONALS = ["amanda", "daniel", "unknown"];
+const PATIENT_ACTS = [
+  "question",
+  "request",
+  "answer",
+  "acceptance",
+  "acknowledgement",
+  "deferral",
+  "decline",
+  "closing",
+  "statement",
+  "unknown",
+];
+const CONVERSATION_OWNERS = ["bruna", "human_team", "patient", "none"];
+const CONVERSATION_STATE_REQUIRED = [
+  "activeTopic",
+  "patientAct",
+  "refersToEventId",
+  "lastClinicQuestion",
+  "lastClinicOffer",
+  "unresolvedQuestions",
+  "factsAlreadyProvided",
+  "owner",
+  "nextExpectedAction",
+  "ambiguity",
+  "contextConfidence",
+];
 
 const SHADOW_DECISION_SCHEMA = {
   type: "object",
@@ -58,6 +85,7 @@ const SHADOW_DECISION_SCHEMA = {
     "replyCode",
     "suggestedReply",
     "reviewReason",
+    "conversationState",
   ],
   properties: {
     route: { type: "string", enum: ROUTES },
@@ -69,6 +97,32 @@ const SHADOW_DECISION_SCHEMA = {
     replyCode: { type: "string" },
     suggestedReply: { type: "string", maxLength: 1_200 },
     reviewReason: { type: "string", maxLength: 500 },
+    conversationState: {
+      type: "object",
+      additionalProperties: false,
+      required: CONVERSATION_STATE_REQUIRED,
+      properties: {
+        activeTopic: { type: "string", maxLength: 160 },
+        patientAct: { type: "string", enum: PATIENT_ACTS },
+        refersToEventId: { type: "string", maxLength: 200 },
+        lastClinicQuestion: { type: "string", maxLength: 300 },
+        lastClinicOffer: { type: "string", maxLength: 300 },
+        unresolvedQuestions: {
+          type: "array",
+          maxItems: 8,
+          items: { type: "string", maxLength: 160 },
+        },
+        factsAlreadyProvided: {
+          type: "array",
+          maxItems: 12,
+          items: { type: "string", maxLength: 160 },
+        },
+        owner: { type: "string", enum: CONVERSATION_OWNERS },
+        nextExpectedAction: { type: "string", maxLength: 160 },
+        ambiguity: { type: "string", maxLength: 200 },
+        contextConfidence: { type: "string", enum: CONFIDENCES },
+      },
+    },
   },
 };
 
@@ -102,6 +156,9 @@ function normalizeRecentConversation(value) {
             ? "bruna"
             : "paciente",
         text: limitText(turn?.text, MAX_RECENT_TURN_LENGTH),
+        ...(limitText(turn?.eventId, 200)
+          ? { eventId: limitText(turn.eventId, 200) }
+          : {}),
         ...(at ? { at } : {}),
       };
     })
@@ -521,6 +578,28 @@ function isValidDecision(value) {
     return false;
   }
 
+  const state = value.conversationState;
+  const validState = Boolean(
+    state &&
+      typeof state === "object" &&
+      !Array.isArray(state) &&
+      Object.keys(state).length === CONVERSATION_STATE_REQUIRED.length &&
+      CONVERSATION_STATE_REQUIRED.every((key) => key in state) &&
+      typeof state.activeTopic === "string" &&
+      PATIENT_ACTS.includes(state.patientAct) &&
+      typeof state.refersToEventId === "string" &&
+      typeof state.lastClinicQuestion === "string" &&
+      typeof state.lastClinicOffer === "string" &&
+      Array.isArray(state.unresolvedQuestions) &&
+      state.unresolvedQuestions.every((item) => typeof item === "string") &&
+      Array.isArray(state.factsAlreadyProvided) &&
+      state.factsAlreadyProvided.every((item) => typeof item === "string") &&
+      CONVERSATION_OWNERS.includes(state.owner) &&
+      typeof state.nextExpectedAction === "string" &&
+      typeof state.ambiguity === "string" &&
+      CONFIDENCES.includes(state.contextConfidence),
+  );
+
   return (
     ROUTES.includes(value.route) &&
     CONFIDENCES.includes(value.confidence) &&
@@ -530,7 +609,8 @@ function isValidDecision(value) {
     typeof value.procedure === "string" &&
     typeof value.replyCode === "string" &&
     typeof value.suggestedReply === "string" &&
-    typeof value.reviewReason === "string"
+    typeof value.reviewReason === "string" &&
+    validState
   );
 }
 
@@ -655,6 +735,7 @@ export async function runOpenAIShadow(
     referenceCategory,
     patientProfileName,
     recentConversation,
+    previousConversationState,
     referralContext,
     policyHints,
     patientRelationship,
@@ -684,6 +765,8 @@ export async function runOpenAIShadow(
   const normalizedConversation = normalizeRecentConversation(
     recentConversation,
   );
+  const normalizedConversationState =
+    normalizeConversationSemanticState(previousConversationState);
   const normalizedPatientRelationship =
     normalizePatientRelationshipContext(
       patientRelationship,
@@ -721,7 +804,7 @@ export async function runOpenAIShadow(
         model,
         reasoning: { effort: reasoningEffort },
         store: false,
-        max_output_tokens: 700,
+        max_output_tokens: 1_200,
         safety_identifier: createSafetyIdentifier(phone),
         instructions: CONVERSATION_GUIDELINES,
         input: JSON.stringify({
@@ -746,6 +829,7 @@ export async function runOpenAIShadow(
           pendingUnknownQuestion:
             normalizedLearningContext.pendingQuestion,
           replyContract: normalizedReplyContract,
+          previousConversationState: normalizedConversationState,
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),

@@ -2481,6 +2481,7 @@ function registrarMensagemRetomadaAutomatica_(
         eventId: identificador,
         contactAt: agora,
         text: texto,
+        source: "bruna",
       },
       "OUT",
     );
@@ -2498,6 +2499,10 @@ function registrarMensagemRetomadaAutomatica_(
     identificador,
     texto,
     lead.linha,
+    "",
+    "",
+    "",
+    "bruna",
   ]);
 }
 

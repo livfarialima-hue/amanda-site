@@ -75,6 +75,7 @@ function loadFunctions() {
       "shouldApplyLeadStatus_, ensureQualifiedGoogleConversion_, " +
       "compareClassificationCandidates_, classificationLeaseMatches_, " +
       "collectLeadMessagesForOpportunity_, classificationAdministrativeSignal_, " +
+      "normalizeLeadMessageSource_, boundedConversationText_, " +
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
@@ -378,6 +379,41 @@ test("classification recovers later unknown messages only for a verified opportu
     withRecovery.map((message) => message.messageId),
     ["linked", "unknown-after", "explicit-amanda"],
   );
+});
+
+test("conversation ledger keeps explicit authorship and conservatively maps legacy output", () => {
+  const { normalizeLeadMessageSource_ } = loadFunctions();
+
+  assert.equal(
+    normalizeLeadMessageSource_("IN", "", "patient-message", "patient-event"),
+    "paciente",
+  );
+  assert.equal(
+    normalizeLeadMessageSource_("OUT", "bruna", "reply", "event"),
+    "bruna",
+  );
+  assert.equal(
+    normalizeLeadMessageSource_("OUT", "human", "reply", "event"),
+    "equipe_humana",
+  );
+  assert.equal(
+    normalizeLeadMessageSource_("OUT", "", "retomada-1", "event"),
+    "bruna",
+  );
+  assert.equal(
+    normalizeLeadMessageSource_("OUT", "", "legacy-out", "legacy-event"),
+    "equipe_humana",
+  );
+});
+
+test("durable context truncation preserves both the question opening and ending", () => {
+  const { boundedConversationText_ } = loadFunctions();
+  const value = `INICIO ${"x".repeat(2_000)} PERGUNTA FINAL?`;
+  const bounded = boundedConversationText_(value, 200);
+
+  assert.equal(Array.from(bounded).length, 200);
+  assert.match(bounded, /^INICIO/);
+  assert.match(bounded, /PERGUNTA FINAL\?$/);
 });
 
 test("automatic classification advances but never downgrades the funnel", () => {
