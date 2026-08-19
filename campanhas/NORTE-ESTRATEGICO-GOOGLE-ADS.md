@@ -93,7 +93,7 @@ O problema atual não deve ser tratado apenas como falta de volume. No recorte r
 - **Segurança, experiência, naturalidade e recuperação:** são barreiras relevantes e devem ter respostas disponíveis.
 - **Idade da médica:** pode ser uma hipótese de percepção, mas não apareceu de forma relevante e explícita na auditoria das conversas. Não deve ser o centro da comunicação sem evidência nova.
 
-No WhatsApp, o primeiro pedido de valor de cervicoplastia deve receber uma resposta útil sem antecipar números: reconhecer que uma noção de valor ajuda no planejamento, explicar a diferença entre abordagem mais localizada e mais completa e oferecer uma faixa geral como próximo passo. A faixa aprovada só entra depois de aceite claro ou novo pedido explícito, uma única vez, com ressalvas e guia. A hipótese é reduzir silêncio e evasividade sem transformar preço em promessa nem pressionar por agenda. Medir pergunta respondida, continuidade após a primeira resposta, aceite da faixa, lead qualificado e consulta; revisar sete dias depois da publicação ou antes diante de mensagem indevida. Manter se houver continuidade sem aumento de repetição, reclamação ou envio fora de contexto; reverter para a resposta anterior se a oferta induzir faixa prematura, confusão ou quebra das travas.
+No WhatsApp, o primeiro pedido de valor com procedimento confirmado deve receber uma resposta útil sem antecipar números e um único guia sobre a composição do orçamento, escolhido pela região: facial para face e pescoço, mama para cirurgias mamárias e corporal para corpo e cirurgia íntima. Em cervicoplastia, reconhecer que uma noção de valor ajuda no planejamento, explicar a diferença entre abordagem mais localizada e mais completa e oferecer uma faixa geral como próximo passo. A faixa aprovada só entra depois de aceite claro ou novo pedido explícito, uma única vez e com todas as ressalvas; o guia já enviado não deve ser repetido. Se não houver guia facial no histórico por causa de um caminho legado, a resposta da faixa usa o guia específico de lifting como fallback. A hipótese é reduzir silêncio e evasividade sem transformar preço em promessa nem pressionar por agenda. Medir pergunta respondida, continuidade após a primeira resposta, aceite da faixa, lead qualificado e consulta; revisar sete dias depois da publicação ou antes diante de mensagem indevida. Manter se houver continuidade sem aumento de repetição, reclamação ou envio fora de contexto; reverter para a resposta anterior se a oferta induzir faixa prematura, confusão ou quebra das travas.
 
 ### 4.4 Prioridade de procedimentos
 
@@ -417,9 +417,10 @@ Para lead qualificado:
 Explicar que:
 
 - o valor é individual e só é definido após avaliação e planejamento;
-- a primeira resposta é breve e não antecipa faixa, guia, lista de componentes ou CTA;
+- a primeira resposta é breve, não antecipa faixa nem lista de componentes e envia no máximo um guia de composição coerente com a região confirmada;
 - com procedimento identificado, terminar depois da resposta; somente quando a cirurgia não estiver clara perguntar qual procedimento a pessoa pesquisa;
-- o guia específico de lifting ou minilifting aparece somente junto da faixa aprovada, depois de pedido explícito reiterado, nunca na primeira resposta;
+- face e pescoço usam o guia facial; cirurgias mamárias usam o guia de mama; corpo e cirurgia íntima usam o guia corporal; sem procedimento confirmado, nenhum guia é escolhido por suposição;
+- o guia específico de lifting aparece somente como fallback junto da faixa aprovada quando nenhum guia facial tiver sido compartilhado antes;
 - não convidar a pessoa a pedir média ou faixa;
 - condições de pagamento só devem ser respondidas com a informação vigente e aprovada, sem transformar a conversa em oferta fechada de procedimento antes da avaliação.
 
@@ -429,7 +430,7 @@ Não responder apenas “depende” e não usar um discurso genérico de seguran
 
 - Lifting e minilifting podem receber as faixas previamente aprovadas somente em conversa individual de WhatsApp e depois de um pedido explícito reiterado por média ou faixa.
 - A mensagem que contiver a faixa deve dizer, no mesmo envio, que se trata de estimativa geral informativa, sem caráter de orçamento, proposta comercial, garantia de preço ou indicação para aquele caso; que o valor final pode ficar fora da faixa conforme avaliação, técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais; e que o orçamento só é definido depois da consulta e do planejamento.
-- A mensagem que contiver a faixa deve incluir por extenso `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`, explicando que a página detalha os componentes do valor. A faixa automática não deve ser enviada mais de uma vez na mesma conversa sem nova validação humana.
+- A mensagem que contiver a faixa não repete o guia facial já enviado na primeira resposta. Se o histórico não contiver um guia facial, deve incluir por extenso `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`, explicando que a página detalha os componentes do valor. A faixa automática não deve ser enviada mais de uma vez na mesma conversa sem nova validação humana.
 - Outros procedimentos exigem revisão humana até que exista uma faixa atual, aprovada e documentada.
 - Honorários isolados da Dra. Amanda não devem ser divulgados como se fossem o preço da cirurgia.
 - As ressalvas reduzem o risco de a estimativa ser confundida com preço individual, mas não substituem parecer da Codame ou assessoria jurídica e não garantem conformidade. Uma orientação formal contrária suspende imediatamente o envio automático da faixa.

@@ -122,7 +122,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Para os demais procedimentos[\s\S]{0,260}se o procedimento estiver claro, não acrescente pergunta, convite, artigo, guia, faixa nem oferta/,
+    /Para os demais procedimentos[\s\S]{0,300}se o procedimento estiver claro, não acrescente pergunta, convite, faixa nem oferta/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -133,7 +133,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /Uma resposta curta como "Sim" ou "Pode me passar" só conta como aceite/,
   );
   assert.match(CONVERSATION_GUIDELINES, /Não liste técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento nessa primeira resposta/);
-  assert.match(CONVERSATION_GUIDELINES, /não acrescente pergunta, convite, artigo, guia, faixa/);
+  assert.match(CONVERSATION_GUIDELINES, /não acrescente pergunta, convite, faixa/);
   assert.match(CONVERSATION_GUIDELINES, /não como orçamento, proposta ou garantia de preço/i);
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -166,7 +166,7 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /URL deve aparecer por extenso/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Não envie o link automaticamente na primeira resposta/,
+    /primeira pergunta de preço cirúrgico com procedimento confirmado/,
   );
   assert.match(CONVERSATION_GUIDELINES, /página geral/);
   assert.match(CONVERSATION_GUIDELINES, /depois dessa resposta significativa/);
@@ -178,9 +178,11 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /casos reais ou antes e depois/);
   assert.match(CONVERSATION_GUIDELINES, /material educativo/);
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
-  assert.match(CONVERSATION_GUIDELINES, /não repita outras URLs ou páginas/);
-  assert.match(CONVERSATION_GUIDELINES, /guia específico de lifting não aparece na primeira resposta de preço/);
-  assert.match(CONVERSATION_GUIDELINES, /Não ofereça o guia de custos faciais para cirurgia de mama/);
+  assert.match(CONVERSATION_GUIDELINES, /não repita URLs ou páginas já presentes/);
+  assert.match(CONVERSATION_GUIDELINES, /guia específico de lifting fica reservado ao fallback/);
+  assert.match(CONVERSATION_GUIDELINES, /Nunca ofereça o guia de custos faciais para cirurgia de mama/);
+  assert.match(CONVERSATION_GUIDELINES, /cirurgias mamárias recebem o guia de mama/i);
+  assert.match(CONVERSATION_GUIDELINES, /cirurgias corporais e íntimas recebem o guia corporal/);
   assert.match(
     CONVERSATION_GUIDELINES,
     /responda primeiro como o procedimento funciona em linguagem simples/,

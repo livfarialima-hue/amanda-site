@@ -6,6 +6,17 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 19 de agosto de 2026 — guia de composição por região na primeira pergunta de preço
+
+- **Status:** candidato local validado, ainda não publicado nem projetado no Drive; nenhuma mensagem real, campanha ou configuração do Google Ads foi alterada.
+- **Mudança:** manter a primeira resposta sem faixa numérica e acrescentar uma única vez o guia que explica a composição do orçamento conforme o procedimento confirmado: facial para face e pescoço, mama para cirurgias mamárias e corporal para lipoaspiração, abdômen, braços, cirurgia íntima, contorno e combinações corporais. O guia não se repete na conversa; na faixa aprovada de lifting, a página específica de lifting entra somente como fallback quando nenhum guia facial tiver sido compartilhado.
+- **Motivo e evidência:** a primeira pergunta de preço precisa ser útil sem parecer evasiva, mas uma página facial em uma conversa sobre corpo ou mama produziria desalinhamento evidente. O site já possui três guias regionais distintos e aprovados, permitindo responder à intenção sem antecipar orçamento individual.
+- **Hipótese:** uma explicação regional curta reduz incerteza e melhora a continuidade da conversa sem induzir faixa prematura, diagnóstico ou pressão por agenda.
+- **Métricas:** continuidade depois da primeira resposta, nova pergunta de preço, aceite da faixa cervical, lead qualificado e consulta; monitorar link incorreto, repetição, silêncio e avanço prematuro.
+- **Guardrails:** no máximo um link; nenhum guia sem procedimento confiável; nunca usar o guia facial para mama, corpo ou cirurgia íntima; nenhuma faixa no primeiro turno; valores de outros procedimentos permanecem humanos; urgência, agenda, cuidado ativo e tomada humana continuam protegidos.
+- **Revisão:** sete dias após eventual publicação, ou antes diante de link incorreto, repetição ou resposta fora de contexto.
+- **Regra para manter ou reverter:** manter com zero roteamento regional incorreto e continuidade sem aumento de reclamação ou repetição; reverter para a resposta anterior diante de qualquer envio sistemático do guia errado, faixa prematura ou quebra das travas.
+
 ## 19 de agosto de 2026 — cervicoplastia como ponte para lifting cervical
 
 - **Status:** publicada e verificada em 19/08/2026 no site e na Bruna; nenhuma configuração do Google Ads foi alterada.

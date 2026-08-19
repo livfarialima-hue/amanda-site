@@ -366,7 +366,7 @@ test("the reply contract removes forced questions from a known surgical price an
 
   assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
   assert.equal(decision.replyContract.maxQuestions, 0);
-  assert.equal(decision.replyContract.maxLinks, 0);
+  assert.equal(decision.replyContract.maxLinks, 1);
   assert.equal(decision.replyContract.allowCta, false);
 });
 
@@ -382,7 +382,7 @@ test("the cervical first price contract permits only the approved range offer", 
 
   assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
   assert.equal(decision.replyContract.maxQuestions, 0);
-  assert.equal(decision.replyContract.maxLinks, 0);
+  assert.equal(decision.replyContract.maxLinks, 1);
   assert.equal(decision.replyContract.allowCta, true);
 });
 

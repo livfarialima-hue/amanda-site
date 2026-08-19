@@ -104,7 +104,7 @@ test("the approved first cervical price reply passes with its bounded range offe
   });
   const result = validateOutboundReply({
     body:
-      "Claro, Adriana. Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial.",
+      "Claro, Adriana. Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso.\n\nEste conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/\n\nSe você quiser, posso te passar uma faixa geral como referência inicial.",
     currentText,
     conversationAction,
   });
@@ -154,13 +154,12 @@ test("final validation blocks a substantially repeated answer", () => {
   assert.equal(result.reason, "substantially_repeated_reply");
 });
 
-test("the protected lifting range may repeat only its required composition URL", () => {
+test("the protected lifting range omits a guide already shared", () => {
   const body = [
     "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
     "• Minilifting: entre R$ 18 mil e R$ 25 mil",
     "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
     "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-    "Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
   ].join("\n\n");
   const result = validateOutboundReply({
     body,
@@ -169,7 +168,7 @@ test("the protected lifting range may repeat only its required composition URL",
       {
         role: "assistant",
         source: "bruna",
-        text: "Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        text: "Este conteúdo explica o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
       },
       {
         role: "patient",
@@ -181,6 +180,24 @@ test("the protected lifting range may repeat only its required composition URL",
   });
 
   assert.equal(result.allowed, true);
+});
+
+test("the lifting range without a current or prior guide is blocked", () => {
+  const body = [
+    "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
+    "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+    "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+  ].join("\n\n");
+  const result = validateOutboundReply({
+    body,
+    currentText: "Mas qual é a faixa?",
+    recentConversation: [],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "unapproved_monetary_amount");
 });
 
 test("the full lifting range and its URL are blocked when already sent", () => {

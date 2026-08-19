@@ -489,7 +489,11 @@ test("the initial price information is sent after the human-resume window withou
   assert.match(deps.patientMessages[0].body, /confirma o valor exato após a avaliação/i);
   assert.equal((deps.patientMessages[0].body.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(deps.patientMessages[0].body, /o que mais te incomoda/i);
-  assert.doesNotMatch(deps.patientMessages[0].body, /técnica|complexidade|materiais|https?:\/\//i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /técnica|complexidade|materiais/i);
+  assert.match(
+    deps.patientMessages[0].body,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
   assert.equal(deps.alerts.length, 0);
   assert.equal(
     deps.completions[0].options.controlStatus,
@@ -573,7 +577,7 @@ test("another surgical price still waits for human review with a complete sugges
   assert.doesNotMatch(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
 });
 
-test("direct lifting price resume includes the specific composition guide with the range", async () => {
+test("direct lifting price resume does not repeat the composition guide", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
     status: "completed",
@@ -620,10 +624,7 @@ test("direct lifting price resume includes the specific composition guide with t
     deps.patientMessages[0].body,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
-  assert.match(
-    deps.patientMessages[0].body,
-    /quanto-custa-lifting-facial-sao-paulo/,
-  );
+  assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
   assert.match(deps.patientMessages[0].body, /não é orçamento, proposta nem garantia/i);
   assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
   assert.equal(deps.alerts.length, 0);
@@ -672,10 +673,7 @@ test("the approved lifting price may continue directly at night", async () => {
     deps.patientMessages[0].body,
     /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/,
   );
-  assert.match(
-    deps.patientMessages[0].body,
-    /quanto-custa-lifting-facial-sao-paulo/,
-  );
+  assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
   assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /retorno pela manhã/);
   assert.equal(deps.alerts.length, 0);

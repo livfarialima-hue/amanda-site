@@ -14,6 +14,8 @@ const CLAIM_TTL_MS = 2 * 60 * 1_000;
 const MAX_REPLY_LENGTH = 1_500;
 const LIFTING_PRICE_GUIDE_PATTERN =
   /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/?$/i;
+const FACIAL_PRICE_GUIDE_PATTERN =
+  /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo\/?$/i;
 const FULL_LIFTING_RANGE_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
 
@@ -43,8 +45,26 @@ function urls(value) {
   return limited(value).match(/https?:\/\/[^\s)]+/gi) || [];
 }
 
-function isProtectedLiftingRangeReply(value) {
+function conversationContainsFacialPriceGuide(recentConversation) {
+  return (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) =>
+    urls(turn?.text).some(
+      (url) =>
+        FACIAL_PRICE_GUIDE_PATTERN.test(url) ||
+        LIFTING_PRICE_GUIDE_PATTERN.test(url),
+    ),
+  );
+}
+
+function isProtectedLiftingRangeReply(value, recentConversation = []) {
   const text = normalizedText(value);
+  const replyUrls = urls(value);
+  const hasRequiredGuide = replyUrls.length === 1
+    ? LIFTING_PRICE_GUIDE_PATTERN.test(replyUrls[0])
+    : replyUrls.length === 0 &&
+      conversationContainsFacialPriceGuide(recentConversation);
   return (
     FULL_LIFTING_RANGE_PATTERN.test(String(value || "")) &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
@@ -52,7 +72,7 @@ function isProtectedLiftingRangeReply(value) {
       text,
     ) &&
     /nao representa honorarios isolados/.test(text) &&
-    urls(value).some((url) => LIFTING_PRICE_GUIDE_PATTERN.test(url))
+    hasRequiredGuide
   );
 }
 
@@ -60,11 +80,18 @@ function questionCount(value) {
   return (String(value || "").match(/\?+/g) || []).length;
 }
 
-function semanticUnsafeReplyReason(value, conversationAction = {}) {
+function semanticUnsafeReplyReason(
+  value,
+  conversationAction = {},
+  recentConversation = [],
+) {
   const raw = String(value || "");
   const text = normalizedText(raw);
   const contract = conversationAction?.replyContract || {};
-  const protectedLiftingRange = isProtectedLiftingRangeReply(raw);
+  const protectedLiftingRange = isProtectedLiftingRangeReply(
+    raw,
+    recentConversation,
+  );
 
   if (
     /\b(?:sou|aqui\s+e|este\s+atendimento\s+e)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw) ||
@@ -427,6 +454,7 @@ export function validateOutboundReply({
   const semanticUnsafeReason = semanticUnsafeReplyReason(
     reply,
     conversationAction,
+    recentConversation,
   );
   if (semanticUnsafeReason) {
     return { allowed: false, reason: semanticUnsafeReason };
@@ -455,17 +483,7 @@ export function validateOutboundReply({
   const repeatedUrls = urls(reply).filter((url) =>
     previousUrls.has(url.toLowerCase()),
   );
-  const priorFullLiftingRange = (
-    Array.isArray(recentConversation) ? recentConversation : []
-  ).some((turn) =>
-    FULL_LIFTING_RANGE_PATTERN.test(String(turn?.text || "")),
-  );
-  const permittedPriceGuideRepeat =
-    repeatedUrls.length > 0 &&
-    repeatedUrls.every((url) => LIFTING_PRICE_GUIDE_PATTERN.test(url)) &&
-    isProtectedLiftingRangeReply(reply) &&
-    !priorFullLiftingRange;
-  if (repeatedUrls.length > 0 && !permittedPriceGuideRepeat) {
+  if (repeatedUrls.length > 0) {
     return {
       allowed: false,
       reason: "repeated_resource",

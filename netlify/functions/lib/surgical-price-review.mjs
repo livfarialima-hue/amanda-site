@@ -1,10 +1,20 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
 
 const CONSULTATION_PRICE = 500;
-const PRICE_GUIDE_PATH =
-  "/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/";
-const PRICE_GUIDE_URL =
-  `https://draamandaschroeder.com.br${PRICE_GUIDE_PATH}`;
+const PRICE_GUIDES = Object.freeze({
+  facial: Object.freeze({
+    path: "/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+    label: "uma cirurgia facial",
+  }),
+  breast: Object.freeze({
+    path: "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
+    label: "uma cirurgia da mama",
+  }),
+  body: Object.freeze({
+    path: "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/",
+    label: "uma cirurgia corporal",
+  }),
+});
 const LIFTING_PRICE_GUIDE_PATH =
   "/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 const LIFTING_PRICE_GUIDE_URL =
@@ -30,6 +40,19 @@ const FACIAL_PRICE_GUIDE_PROCEDURES = new Set([
   "frontoplastia",
   "lip_lifting",
   "lipo_papada",
+]);
+const BREAST_PRICE_GUIDE_PROCEDURES = new Set([
+  "mastopexia",
+  "protese_mama",
+  "mamoplastia_redutora",
+]);
+const BODY_PRICE_GUIDE_PROCEDURES = new Set([
+  "lipoaspiracao",
+  "abdominoplastia",
+  "braquioplastia",
+  "ninfoplastia",
+  "contorno_corporal",
+  "cirurgias_combinadas",
 ]);
 
 const PRICE_REFERENCES = Object.freeze({
@@ -175,27 +198,59 @@ function formatBRL(value) {
   return `R$ ${roundedThousands(value) / 1_000} mil`;
 }
 
-function conversationContainsPriceGuide(recentConversation) {
+function priceGuideForProcedure(procedure) {
+  if (FACIAL_PRICE_GUIDE_PROCEDURES.has(procedure)) {
+    return PRICE_GUIDES.facial;
+  }
+  if (BREAST_PRICE_GUIDE_PROCEDURES.has(procedure)) {
+    return PRICE_GUIDES.breast;
+  }
+  if (BODY_PRICE_GUIDE_PROCEDURES.has(procedure)) {
+    return PRICE_GUIDES.body;
+  }
+  return null;
+}
+
+function priceGuideUrl(guide) {
+  return guide
+    ? `https://draamandaschroeder.com.br${guide.path}`
+    : "";
+}
+
+function conversationContainsPriceGuide(recentConversation, guide) {
+  if (!guide?.path) return false;
+  const pathWithoutTrailingSlash = guide.path.replace(/\/$/, "");
   return (Array.isArray(recentConversation)
     ? recentConversation
     : []
   ).some((turn) => {
     const text = String(turn?.text || "");
-    return (
-      text.includes(PRICE_GUIDE_PATH.slice(0, -1)) ||
-      text.includes(LIFTING_PRICE_GUIDE_PATH.slice(0, -1)) ||
-      /refer[eê]ncia:\s*custos de cirurgia facial/i.test(text) ||
-      /li o conte[uú]do sobre custos de cirurgia facial/i.test(text) ||
-      /li o conte[uú]do sobre (?:o )?valor do lifting facial/i.test(text)
-    );
+    return text.includes(pathWithoutTrailingSlash);
   });
 }
 
-function shouldIncludePriceGuide(procedure, recentConversation) {
+function conversationContainsFacialPriceGuide(recentConversation) {
   return (
-    FACIAL_PRICE_GUIDE_PROCEDURES.has(procedure) &&
-    !conversationContainsPriceGuide(recentConversation)
+    conversationContainsPriceGuide(
+      recentConversation,
+      PRICE_GUIDES.facial,
+    ) ||
+    conversationContainsPriceGuide(
+      recentConversation,
+      { path: LIFTING_PRICE_GUIDE_PATH },
+    )
   );
+}
+
+function priceGuideParagraph(procedure, recentConversation) {
+  const guide = priceGuideForProcedure(procedure);
+  const alreadyShared = guide === PRICE_GUIDES.facial
+    ? conversationContainsFacialPriceGuide(recentConversation)
+    : conversationContainsPriceGuide(recentConversation, guide);
+  if (!guide || alreadyShared) {
+    return "";
+  }
+  return `Este conteúdo explica de forma simples o que costuma compor o valor de ${guide.label}: ${safeLink(priceGuideUrl(guide))}`;
 }
 
 function priceVariation(procedure) {
@@ -283,12 +338,18 @@ export function buildSurgicalInitialPriceReply({
     : "";
   const initialExplanation =
     procedure === "lifting_cervical"
-      ? "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial."
+      ? "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso."
       : "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
+  const guide = priceGuideParagraph(procedure, recentConversation);
+  const cervicalRangeOffer = procedure === "lifting_cervical"
+    ? "Se você quiser, posso te passar uma faixa geral como referência inicial."
+    : "";
   return [
     directPriceGreeting(patientName, recentConversation),
     location,
     initialExplanation,
+    guide,
+    cervicalRangeOffer,
     paymentContext,
     initialPriceDiscoveryQuestion(procedure),
   ].filter(Boolean).join("\n\n");
@@ -304,8 +365,9 @@ export function buildSurgicalPriceSuggestedReply({
   currentText = "",
 }) {
   if (["lifting_facial", "lifting_cervical"].includes(procedure)) {
-    const guide =
-      `Veja o que compõe o valor: ${safeLink(LIFTING_PRICE_GUIDE_URL)}`;
+    const guide = conversationContainsFacialPriceGuide(recentConversation)
+      ? ""
+      : `Veja o que compõe o valor: ${safeLink(LIFTING_PRICE_GUIDE_URL)}`;
     const location =
       directToPatient &&
       LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
@@ -363,11 +425,12 @@ export function buildSurgicalPriceSuggestedReply({
     "Hospital, anestesista, auxiliar, instrumentador, materiais e acompanhamento variam por caso.",
     "Há desconto à vista e parcelamento antecipado, com quitação antes da cirurgia.",
   ].join(" ");
-  const guide = shouldIncludePriceGuide(
-    procedure,
+  const procedureGuide = priceGuideForProcedure(procedure);
+  const guide = procedureGuide && !conversationContainsPriceGuide(
     recentConversation,
+    procedureGuide,
   )
-    ? `Entenda como funcionam esses gastos: ${safeLink(PRICE_GUIDE_URL)}`
+    ? `Entenda como funcionam esses gastos: ${safeLink(priceGuideUrl(procedureGuide))}`
     : "";
   return [
     priceContext,

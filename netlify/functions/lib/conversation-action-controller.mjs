@@ -366,11 +366,15 @@ function buildReplyContract({
   const approvedInitialCervicalRangeOffer =
     plan?.reason === "price_initial_information" &&
     plan?.procedure === "lifting_cervical";
+  const approvedInitialSurgicalGuide =
+    plan?.reason === "price_initial_information" &&
+    !unknownSurgicalProcedure;
   const maxLinks =
     !canWrite || intents.includes("photo") ||
     (
       priceIntent &&
       !protectedLiftingRange &&
+      !approvedInitialSurgicalGuide &&
       !intents.includes("location")
     )
       ? 0

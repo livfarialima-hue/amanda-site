@@ -181,7 +181,11 @@ test("a first nighttime price request receives the approved institutional reply"
     assert.match(patientRequest.text.body, /confirma o valor exato após a avaliação/i);
     assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
-    assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais|https?:\/\//i);
+    assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
+    assert.match(
+      patientRequest.text.body,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    );
     assert.doesNotMatch(patientRequest.text.body, /retorno pela manhã/i);
     assert.doesNotMatch(patientRequest.text.body, /R\$/);
   } finally {

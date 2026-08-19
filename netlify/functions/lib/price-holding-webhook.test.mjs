@@ -185,7 +185,11 @@ test("a first lifting price question receives the approved initial information w
     assert.doesNotMatch(patientRequest.text.body, /R\$ 18 mil|R\$ 26 mil/);
     assert.equal(
       (patientRequest.text.body.match(/https?:\/\//g) || []).length,
-      0,
+      1,
+    );
+    assert.match(
+      patientRequest.text.body,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
     );
     assert.doesNotMatch(
       patientRequest.text.body,
@@ -197,7 +201,7 @@ test("a first lifting price question receives the approved initial information w
     assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
     assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
     assert.doesNotMatch(patientRequest.text.body, /(?:informar|passar).{0,20}(?:média|faixa)/i);
-    assert.ok(Array.from(patientRequest.text.body).length <= 360);
+    assert.ok(Array.from(patientRequest.text.body).length <= 450);
     assert.doesNotMatch(
       patientRequest.text.body,
       /Se quiser, posso te explicar o que costuma aproximar/,

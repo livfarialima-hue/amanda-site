@@ -2375,7 +2375,11 @@ test("the first surgical price question uses the approved institutional reply", 
     assert.match(patientBody.text.body, /confirma o valor exato após a avaliação/i);
     assert.equal((patientBody.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientBody.text.body, /o que mais te incomoda/i);
-    assert.doesNotMatch(patientBody.text.body, /técnica|complexidade|hospital|anestesia|materiais|https?:\/\//i);
+    assert.doesNotMatch(patientBody.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
+    assert.match(
+      patientBody.text.body,
+      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    );
     assert.doesNotMatch(patientBody.text.body, /R\$/);
   } finally {
     globalThis.fetch = originalFetch;

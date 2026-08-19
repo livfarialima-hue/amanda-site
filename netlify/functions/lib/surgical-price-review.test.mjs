@@ -31,8 +31,12 @@ test("creates an empathetic first price response and answers payment terms brief
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /técnica|complexidade|materiais|honorário isolado/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.doesNotMatch(reply, /https?:\/\//);
-  assert.ok(Array.from(reply).length <= 650);
+  assert.match(
+    reply,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.ok(Array.from(reply).length <= 850);
 });
 
 test("the first known lifting price response answers without a mandatory continuation", () => {
@@ -47,7 +51,10 @@ test("the first known lifting price response answers without a mandatory continu
   assert.doesNotMatch(reply, /qual cirurgia ou qual região/i);
   assert.doesNotMatch(reply, /(?:informar|passar).{0,20}(?:média|faixa)/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.doesNotMatch(reply, /https?:\/\//);
+  assert.match(
+    reply,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
 });
 
 test("the first cervical price response uses the approved soft range offer", () => {
@@ -68,11 +75,13 @@ test("the first cervical price response uses the approved soft range offer", () 
     reply,
     [
       "Claro, Adriana.",
-      "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial.",
+      "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso.",
+      "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+      "Se você quiser, posso te passar uma faixa geral como referência inicial.",
     ].join("\n\n"),
   );
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.doesNotMatch(reply, /https?:\/\//);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
 test("the short price question receives a concise direct copy", () => {
@@ -87,8 +96,11 @@ test("the short price question receives a concise direct copy", () => {
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /técnica|complexidade|equipe|hospital|anestesia|materiais/i);
-  assert.doesNotMatch(reply, /https?:\/\//);
-  assert.ok(Array.from(reply).length <= 360);
+  assert.match(
+    reply,
+    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+  );
+  assert.ok(Array.from(reply).length <= 600);
 });
 
 test("consultation price suggestion includes the invoice without promising tax savings", () => {
@@ -259,12 +271,24 @@ test("an unspecified surgery asks for the procedure but still supports conversio
   assert.doesNotMatch(reply, /R\$ (?:1[89]|2[349]|3[38]|4[2]) mil/);
 });
 
-test("does not offer the facial guide for breast or body procedures", () => {
+test("uses the breast guide for breast procedures and never the facial guide", () => {
+  for (const procedure of ["protese_mama", "mamoplastia_redutora"]) {
+    const reply = buildSurgicalPriceSuggestedReply({
+      patientName: "Maria",
+      procedure,
+    });
+
+    assert.match(reply, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
+    assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+    assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
+  }
+});
+
+test("uses the body guide for body procedures and never the facial guide", () => {
   for (const procedure of [
-    "mastopexia",
-    "protese_mama",
     "abdominoplastia",
     "lipoaspiracao",
+    "braquioplastia",
     "ninfoplastia",
   ]) {
     const reply = buildSurgicalPriceSuggestedReply({
@@ -272,10 +296,9 @@ test("does not offer the facial guide for breast or body procedures", () => {
       procedure,
     });
 
-    assert.doesNotMatch(
-      reply,
-      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
-    );
+    assert.match(reply, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
+    assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+    assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
   }
 });
 
@@ -299,7 +322,7 @@ test("offers the facial guide only once in the conversation", () => {
   );
 });
 
-test("the range message includes the composition guide even if it appeared earlier", () => {
+test("the range message does not repeat a composition guide already shared", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Maria",
     procedure: "lifting_facial",
@@ -313,14 +336,32 @@ test("the range message includes the composition guide even if it appeared earli
   });
 
   assert.match(reply, /entre R\$ 26 mil e R\$ 42 mil/);
-  assert.match(
-    reply,
-    /quanto-custa-lifting-facial-sao-paulo/,
-  );
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.doesNotMatch(reply, /https?:\/\//);
 });
 
 test("delivers the approved range after a cervical patient accepts the offer", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Adriana",
+    procedure: "lifting_cervical",
+    directToPatient: true,
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/\n\nSe você quiser, posso te passar uma faixa geral como referência inicial.",
+      },
+    ],
+  });
+
+  assert.match(reply, /^Claro, Adriana\./);
+  assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
+  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /Na cervicoplastia, a faixa aplicável depende/i);
+  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
+  assert.doesNotMatch(reply, /https?:\/\//);
+});
+
+test("the cervical range keeps the specific lifting guide as a safe fallback", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Adriana",
     procedure: "lifting_cervical",
@@ -334,11 +375,6 @@ test("delivers the approved range after a cervical patient accepts the offer", (
     ],
   });
 
-  assert.match(reply, /^Claro, Adriana\./);
-  assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
-  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
-  assert.match(reply, /Na cervicoplastia, a faixa aplicável depende/i);
-  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
   assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
@@ -362,7 +398,7 @@ test("the first lifting price answer stays concise when a guide is already in th
   assert.doesNotMatch(reply, /https?:\/\//);
 });
 
-test("the first price answer stays conversational for another region", () => {
+test("the first body price answer uses the body composition guide", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Maria",
     procedure: "abdominoplastia",
@@ -371,8 +407,20 @@ test("the first price answer stays conversational for another region", () => {
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+  assert.match(reply, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
   assert.doesNotMatch(reply, /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)/);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+});
+
+test("the first breast price answer uses the breast composition guide", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Maria",
+    procedure: "mastopexia",
+  });
+
+  assert.match(reply, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-(?:facial|corporal)-sao-paulo/);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
 test("does not replace the composition guide with the main lifting page", () => {
