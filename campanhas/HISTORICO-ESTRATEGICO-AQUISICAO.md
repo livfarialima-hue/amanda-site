@@ -8,7 +8,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 19 de agosto de 2026 — cervicoplastia como ponte para lifting cervical
 
-- **Status:** implementação local em validação; publicação autorizada, ainda sem alteração no Google Ads.
+- **Status:** publicada e verificada em 19/08/2026 no site e na Bruna; nenhuma configuração do Google Ads foi alterada.
 - **Mudança:** apresentar `cervicoplastia (lifting cervical)` na entrada da página cervical, nos metadados, no FAQ, no prefill identificado e na primeira resposta da Bruna, preservando a URL canônica `/lifting-cervical/` e o planejamento individual.
 - **Motivo e evidência:** pacientes usam espontaneamente `cervicoplastia` com mais facilidade. A auditoria registrada da conta já encontrou `"cervicoplastia"` e `[cervicoplastia]` no grupo `AG_CERVICOPLASTIA`; adicionar novas palavras-chave agora duplicaria intenção sem evidência incremental.
 - **Hipótese:** a mesma linguagem em busca, página e conversa reduz dúvida terminológica e melhora continuidade sem prometer indicação.
@@ -19,7 +19,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 19 de agosto de 2026 — prefill neutro e intenção pessoal antes de agenda ou qualificação
 
-- **Status:** implementação validada localmente em 19/08/2026 com 849/849 testes, build estático de 178 arquivos e checagem técnica de 44/44 URLs; nenhuma mensagem retroativa foi enviada e nenhuma plataforma foi publicada por esta entrada.
+- **Status:** publicada e verificada em 19/08/2026 no commit funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a` e Apps Script v101, com 851/851 testes, build estático de 178 arquivos e 44/44 URLs aprovadas; nenhuma mensagem retroativa foi enviada e nenhuma configuração do Google Ads foi alterada.
 - **Mudança:** substituir o prefill por uma abertura neutra, identificá-lo somente por `template_id=procedure_evaluation_v1`, responder perguntando o que a pessoa deseja entender primeiro e exigir uma manifestação pessoal posterior para qualificação, conversão offline ou agenda. Perfis de empresa ou marca não recebem nome na saudação. Otoplastia permanece coberta por regressão futura, sem resposta ao contato já atendido manualmente.
 - **Motivo e evidência:** três conversas reais mostraram um silêncio indevido em otoplastia e saltos mecânicos para agenda em lipo de papada e lifting, porque textos automáticos continham expressões de disponibilidade. Outro caso mostrou personalização inadequada com nome de marca.
 - **Hipótese:** separar tecnicamente contexto automático de intenção pessoal melhora naturalidade e reduz falsos sinais de prontidão sem perder respostas elegíveis.

@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-19.1
 
-**Estado do release:** publicação autorizada em 19/08/2026; validação, commit intencional, atualização dos alvos canônicos e reconciliação da mesma projeção do Drive em andamento.
+**Estado do release:** publicada e verificada em 19/08/2026 no commit funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a` e Apps Script v101 no deployment canônico preservado. Validação: **851/851 testes**, build de 178 arquivos, 44 URLs sem erro, site, webhook e web app HTTP 200; nenhuma mensagem real de paciente foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 

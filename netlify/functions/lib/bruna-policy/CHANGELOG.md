@@ -6,7 +6,7 @@
 - Fotos recebem uma resposta mais humana: agradecimento simples, confiança de que existem boas abordagens, informação clara de que a imagem será mostrada à Dra. Amanda e convite a uma avaliação cuidadosa, sem expor travas técnicas na mensagem à paciente.
 - A confirmação manual de retomada aberta pelo e-mail diário passa a navegar no contexto superior, evitando a tela quebrada dentro do frame do Apps Script. A opção `não retomar` continua bloqueando somente aquela tentativa, sem impedir um novo contexto futuro.
 - A jornada cervical usa `cervicoplastia (lifting cervical)` no site, no prefill e na primeira resposta, reconhecendo os dois nomes como o mesmo contexto sem concluir técnica ou indicação. A URL canônica e a estrutura do Google Ads foram preservadas; a conta já contém os termos de cervicoplastia no grupo correspondente.
-- Estado desta versão: publicação autorizada em 19/08/2026; testes, commit, atualização dos alvos canônicos, verificação e reconciliação da projeção do Drive em andamento.
+- Estado desta versão: publicada e verificada no commit funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a` e Apps Script v101 no deployment canônico preservado, com **851/851 testes**, build de 178 arquivos e 44 URLs sem erro. O site, o webhook e o web app responderam HTTP 200; a projeção ativa do Drive usa o mesmo manual local no SHA-256 `363e3b887b9b50c8074e4a3e6ae8d30c4d240e2a41c65c19d88696295456b753`. Nenhuma mensagem real foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 ## 2026-08-18.5
 

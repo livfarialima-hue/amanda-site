@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 18 de agosto de 2026, 21:44, America/Sao_Paulo
+**Atualizado em:** 19 de agosto de 2026, 07:31, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,8 +41,9 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** produção contextual `2026-08-18.5` publicada e verificada em 18/08, com uma única fonte ativa no Drive, commit funcional, remoto, Netlify, Apps Script v100 e projeção documental reconciliados. A IA é a primeira instância de compreensão nas mensagens textuais elegíveis, sob as travas clínicas e operacionais existentes; **843/843 testes aprovados** e nenhuma mensagem real de paciente enviada na validação.
+**Estado geral:** produção contextual `2026-08-19.1` publicada e verificada em 19/08, com uma única fonte ativa no Drive, commit funcional, remoto, Netlify e Apps Script v101 reconciliados. A IA continua sendo a primeira instância de compreensão nas mensagens textuais elegíveis, sob as travas clínicas e operacionais existentes; **851/851 testes aprovados**, site, webhook e web app HTTP 200, nenhuma mensagem real de paciente enviada e nenhuma configuração do Google Ads alterada.
 
+- `2026-08-19.1` está `PUBLICADA E VERIFICADA`: prefill estruturado neutro sem qualificação, conversão ou agenda pelo template isolado; primeira resposta sem salto prematuro; perfil comercial sem nome; resposta humana a foto; equivalência comunicacional `cervicoplastia (lifting cervical)`; e aprovação manual de retomada corrigida. Código funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a`, Apps Script v101 no deployment preservado, **851/851 testes**, build de 178 arquivos e 44 URLs aprovados;
 - `2026-08-18.5` está `PUBLICADA E VERIFICADA`: histórico durável da oportunidade, autoria explícita, 32 turnos recentes, reidratação do cache, estado semântico entre turnos e interpretação contextual de respostas curtas; código funcional `6fd37c3227e6fee1ca4ea1686248cb22733040f1`, deploy Netlify `6a84facdbed81175d2df0107`, Apps Script v100, **843/843 testes**, build de 178 arquivos e 44 URLs aprovados;
 - `2026-08-18.4` ficou preservada como antecessora: respostas curtas que aceitam uma oferta informativa após fala humana passaram a exigir `CONTEXT-CONTINUE-01` ou esclarecimento seguro, mantendo barreira de agenda e proteção contra corrida com a equipe;
 - mensagens textuais elegíveis agora são compreendidas contextualmente pela IA antes da decisão de resposta; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;
@@ -57,7 +58,9 @@ O responsável técnico deve:
 - o valor da consulta permanece R$ 500, com Pix, débito ou parcelamento e emissão de nota fiscal; é proibido afirmar que os R$ 500 serão reembolsados, devolvidos, descontados ou abatidos de uma cirurgia;
 - o ARC adaptativo passou a orientar a resposta pelo contexto completo, estágio, barreira e segurança; exemplos são repertório, não scripts, e acolhimento ou CTA só entram quando forem pertinentes;
 - a identidade autorizada é somente Bruna, concierge da Clínica LIV Faria Lima; qualquer resposta gerada que a rotule como automação, bot, robô, IA, assistente ou secretária virtual é bloqueada em fail-closed antes do envio;
-- fotos de rosto ou corpo recebem acolhimento da confiança e da vulnerabilidade, reconhecimento de que há boas opções que podem ajudar e limite carinhoso da avaliação à distância, sem interpretar a imagem, diagnosticar ou prometer resultado;
+- fotos de rosto ou corpo recebem agradecimento pela confiança, reconhecimento cuidadoso de que há boas abordagens que podem ajudar e informação clara de que a imagem será mostrada à Dra. Amanda; a resposta convida à avaliação sem interpretar a imagem, diagnosticar, concluir indicação ou prometer resultado;
+- `cervicoplastia` e `lifting cervical` são apresentados como nomes do mesmo contexto de atendimento, sem concluir técnica ou indicação individual; o site preserva `/lifting-cervical/` e o Google Ads não recebeu alteração de orçamento, lance, campanha, grupo ou palavra-chave;
+- o prefill `procedure_evaluation_v1` serve somente como contexto: isoladamente não qualifica, não gera conversão offline e não autoriza agenda; pedido de dias ou período exige intenção pessoal posterior, e perfis comerciais não recebem saudação nominal;
 - localização foi padronizada para R. Pais Leme, 215, cj. 710, CEP 05424-150, com o link aprovado do Google Maps; cirurgia pode ser parcelada antecipadamente, com quitação antes do procedimento, e tem desconto à vista, enquanto número de parcelas, juros e percentual continuam humanos;
 - na primeira pergunta sobre preço cirúrgico, a Bruna responde de forma breve e empática, sem lista técnica, artigo ou faixa e sem perguntar o que mais incomoda no corpo; a política de faixa após insistência explícita em lifting/minilifting e as travas de revisão humana foram preservadas;
 - cada turno agora define estágio, responsável, intenções pendentes, motivo de silêncio e limites de pergunta, link, CTA e confirmação; quando a resposta já resolveu o pedido, a Bruna não cria uma continuação artificial;
@@ -71,8 +74,8 @@ O responsável técnico deve:
 - o consumo mensal observado no Netlify estava em aproximadamente 95 mil de 125 mil requisições, abaixo do limite; a cota não explica essas duas ausências;
 - a abertura determinística de anúncio evita a consulta de conhecimento e reutiliza a relação de paciente já devolvida por `append_lead`, removendo até duas chamadas redundantes de planilha; a consolidação agora usa base de três segundos para resposta determinística e cinco para IA, limitada entre dois e oito, sem retirar a regra de mensagem mais recente nem as travas `neverBotReply` e `fail-closed`;
 - entradas inválidas ou não reconhecidas passam a registrar motivo operacional seguro (`configuration_missing`, `invalid_signature`, `invalid_json`, `unsupported_event_type`, `invalid_inbound_phone` ou `missing_inbound_event_id`) sem expor telefone, mensagem ou ID bruto;
-- código ativo no commit funcional `6fd37c3227e6fee1ca4ea1686248cb22733040f1`, deploy Netlify `6a84facdbed81175d2df0107` e Apps Script v100, com **843/843 testes aprovados**, build local de 178 arquivos, 44 URLs sem erro, endpoint canônico e URL do deploy HTTP 200 e metadados de versão `.5` efetivos; rollback imediato para Apps Script v99, deploy `6a84eb15525edc0e071a0486`, commit `1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5`;
-- fonte ativa única no Drive: https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view; projeção substituída no mesmo ID e igual ao manual local pelo SHA-256 `ded041b5f703b2a99167ccb402c2b6915f6ac1d8679cc3bae229a4882ef58258`; auditoria comparativa fechada: https://drive.google.com/file/d/1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB/view; os três planos de origem foram preservados e rotulados em `99 — Histórico operacional`;
+- código ativo no commit funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a` e Apps Script v101, com **851/851 testes aprovados**, build local de 178 arquivos, 44 URLs sem erro, site, webhook e web app HTTP 200 e metadados de versão `.1` efetivos; rollback imediato para Apps Script v100, deploy `6a84facdbed81175d2df0107`, commit `6fd37c3227e6fee1ca4ea1686248cb22733040f1`;
+- fonte ativa única no Drive: https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view; projeção substituída no mesmo ID e igual ao manual local pelo SHA-256 `363e3b887b9b50c8074e4a3e6ae8d30c4d240e2a41c65c19d88696295456b753`; auditoria comparativa fechada: https://drive.google.com/file/d/1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB/view; os três planos de origem foram preservados e rotulados em `99 — Histórico operacional`;
 - a pasta restrita `90.1 — Exportações brutas do WhatsApp` (`1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS`) é a entrada contínua de evidências; respostas reais não são padrão, dados identificáveis não saem do Drive e somente padrões desidentificados aprovados viram cenários sintéticos versionados;
 - nenhuma mensagem de teste nem sonda de paciente foi disparada por nós; na observação passiva, a sequência real seguinte chegou às 20:57, sofreu `timeout`/`busy_retry` no roteamento, foi recuperada por retentativas, suprimiu corretamente a abertura Meta mais antiga e concluiu a resposta à mensagem mais recente com entrega HTTP 200 às 20:58:30;
 - essa evidência confirma o funcionamento do webhook, da recuperação e da entrega da Bruna após a publicação; ainda não existe garantia absoluta para eventos que a YCloud deixe de entregar ao Netlify, hipótese que exige o log bruto do provedor;
@@ -108,7 +111,7 @@ Ainda falta:
 
 ### Rotina recorrente — Meta Ads
 
-**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está preservado na produção canônica v100, o agregado anônimo e o acesso à API foram testados ao vivo e existe um único trigger diário para cada função. Todo e-mail enviado inclui métricas essenciais de 7 e 30 dias; a análise detalhada permanece semanal. A rotina não autoriza mudança automática na Meta.
+**Estado geral:** `ATIVO` desde 16/08. O código somente leitura está preservado na produção canônica v101, o agregado anônimo e o acesso à API foram testados ao vivo e existe um único trigger diário para cada função. Todo e-mail enviado inclui métricas essenciais de 7 e 30 dias; a análise detalhada permanece semanal. A rotina não autoriza mudança automática na Meta.
 
 Escopo aprovado:
 
@@ -167,7 +170,7 @@ Decisão de encerramento e próximo ciclo — 16/08:
 Já foi feito:
 
 - commit técnico `50d7ea1` publicado no Netlify;
-- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 100, que preserva as rotinas anônimas, somente leitura, os códigos cervicais e o schema v1 habilitado, além da correção operacional dos comprovantes de agendamento, da regra de salas do formulário e do ledger contextual do WhatsApp;
+- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 101, que preserva as rotinas anônimas, somente leitura, os códigos cervicais e o schema v1 habilitado, além da correção operacional dos comprovantes de agendamento, da regra de salas do formulário, do ledger contextual do WhatsApp e do prefill estruturado;
 - smoke tests públicos aprovados;
 - auditorias excluídas do artefato do site;
 - logs e IDs endurecidos;
@@ -208,8 +211,8 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO` desde 15/08; execução real concluída às 21:35 | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | script `12117745` concluiu sem mudanças; nenhum e-mail no sábado porque não havia alerta crítico |
 | toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio ampliado em 17/08 | semana + 30 dias; termos, positivas, negativas completas, Quality Score, conversões/metas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | revisar os três primeiros relatórios ampliados e calibrar falsos positivos comprovados |
 | primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
-| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v100 | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
-| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v100 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
+| diariamente, aproximadamente 08:25 | LEADS → Meta Ads: agregado anônimo | `ATIVO` desde 16/08; Apps Script v101 | atualizar 7/30/90 dias por caminho, campanha e criativo conhecido na aba `Meta_Agregados` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e códigos conflitantes como N/D |
+| diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; Apps Script v101 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
 | toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
 | 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `PUBLICADO; INÍCIO 12H` | `M26F01W/C06H01`, `M26C01W` direto e `M26C02S` via `/lifting-cervical/`; R$ 300 total por campanha, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | código/Apps v97/schema/sonda publicados primeiro; depois três publicações seletivas, cada uma com 1 campanha + 1 conjunto + 1 anúncio | conferir a entrega real, idade efetiva e primeiros eventos; não mudar público, orçamento, destino ou criativo durante a janela |
 | 20/08 19:30–19:50 | Instagram orgânico: Reels de lifting cervical | `AGENDADO` | publicar o vídeo 9:16 aprovado; manter `Clique no link da bio`; conferir link da bio e separar origem orgânica | publicação manual no Instagram | não reutilizar o post como anúncio nem atribuir o tráfego orgânico aos braços pagos |
@@ -288,7 +291,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
 | Experimentos Google Ads | P1 | sequência agendada | OTO → CERV → BLEF → FACE → LIFT preço |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
-| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v100; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
+| Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v101; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `PUBLICADO; EM MONITORAMENTO` desde 17/08 | manter somente `M26F01W/C06H01` no WhatsApp e analisar separadamente; comparar apenas `M26C01W` × `M26C02S`; nenhuma troca de criativo, rota, público ou orçamento durante a janela |
 | Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGENDADO` para decisão em 20/08 | considerar excluir apenas `18–24` e `25–34` em LIFT/BLEF/CERV/FACE; manter `Desconhecida` e não alterar OTO/marca/rino |
 | SEO técnico/CWV | P1/P2 | baseline parcial | medir 20/08; otimizar só com gargalo comprovado |
@@ -324,7 +327,7 @@ Os compromissos sobrepostos de 27/08 e 17/09 foram escalonados. O evento de 20/0
 
 A rotina do Google Ads não cria três automações concorrentes. Um único script roda diariamente: fica silencioso quando a saúde está normal, envia a revisão completa às segundas-feiras e acrescenta 90 dias no primeiro dia útil do mês. Os checkpoints de 7 e 14 dias continuam no Calendar porque dependem da data real de cada mudança.
 
-A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão preservados e ativos na v100 e continuam incapazes de alterar campanhas.
+A rotina da Meta Ads também usa um único revisor diário: fica silenciosa sem alerta crítico, envia a revisão completa às terças-feiras e acrescenta 90 dias no segundo dia útil do mês. O agregado anônimo roda separadamente antes do relatório. Ambos estão preservados e ativos na v101 e continuam incapazes de alterar campanhas.
 
 O experimento Meta proposto em 16/08 tem checkpoints relativos em D+3, D+7, D+15 e D+22. Eles só devem virar lembretes ativos depois de registrar a hora real da veiculação; se qualquer gate impedir o início, nenhum lembrete absoluto será criado e o plano continua em espera.
 
