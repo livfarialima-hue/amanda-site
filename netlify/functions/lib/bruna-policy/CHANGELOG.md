@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-19.4
+
+- Perguntas compostas sobre lifting facial passam a ser decompostas semanticamente: duração geral, recuperação e critérios usuais recebem os fatos aprovados no mesmo turno, sem apagar a parte que depende da avaliação individual.
+- A IA recebe os fatos revisados e continua sendo a primeira instância de decisão; a resposta delimitada só é usada quando o modelo confirma semanticamente o código, o procedimento e a cobertura do pedido.
+- A resposta não inventa duração numérica da cirurgia nem conclui indicação pessoal. Ela informa que o tempo depende do planejamento, apresenta referências gerais de recuperação e explica que a avaliação pode inclusive concluir que ainda não é o momento de operar.
+- O histórico durável recuperado passa a ser usado diretamente no turno quando a hidratação da memória auxiliar falhar, em vez de ser descartado. Saudações como `boa tarde` deixam de simular preferência de período, e `cirurgia` não é mais confundida com pergunta sobre credenciais da cirurgiã.
+- Estado desta versão: publicação autorizada em 19/08/2026; **876/876 testes** locais aprovados. O Apps Script permanece na v104 e nenhuma mensagem real de paciente foi enviada.
+
 ## 2026-08-19.3
 
 - Respostas com contrato `maxLinks: 0` agora retiram a frase que contém um link espontâneo antes da validação final, preservando a explicação útil sem transformar uma continuação simples em silêncio.

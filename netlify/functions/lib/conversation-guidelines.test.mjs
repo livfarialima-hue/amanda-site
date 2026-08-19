@@ -162,6 +162,11 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
 
 test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /siteResource/);
+  assert.match(CONVERSATION_GUIDELINES, /approvedClinicalFacts/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Em uma mensagem com várias perguntas, avalie cada parte separadamente/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /única URL autorizada/);
   assert.match(CONVERSATION_GUIDELINES, /URL deve aparecer por extenso/);
   assert.match(

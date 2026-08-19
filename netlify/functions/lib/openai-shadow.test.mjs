@@ -1350,6 +1350,51 @@ test("passes one approved procedure page only to eligible non-site conversations
   });
 });
 
+test("passes approved lifting facts for every safe part of the real multi-question message", async () => {
+  const calls = [];
+
+  await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text:
+        "Boa tarde, Bruna, tudo bem? Quanto tempo leva a cirurgia, se tem um longo período de recuperação, indicações para realização (talvez eu ainda não precise)",
+      platform: "Meta",
+      procedure: "lifting_facial",
+      referenceCategory: "meta_coded",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "O que você gostaria de entender primeiro sobre o lifting facial?",
+        },
+      ],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), { status: 200 });
+      },
+    },
+  );
+
+  const input = JSON.parse(JSON.parse(calls[0].options.body).input);
+  assert.equal(input.approvedClinicalFacts.procedure, "lifting_facial");
+  assert.deepEqual(input.approvedClinicalFacts.topics, [
+    "duration",
+    "recovery",
+    "indication",
+  ]);
+  assert.deepEqual(
+    input.approvedClinicalFacts.facts.map((fact) => fact.topic),
+    input.approvedClinicalFacts.topics,
+  );
+  assert.match(
+    input.approvedClinicalFacts.boundaries.join(" "),
+    /não concluir indicação individual/i,
+  );
+});
+
 test("does not pass a site page back to a person who came from the site", async () => {
   const calls = [];
 
@@ -1815,6 +1860,206 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
     assert.equal(operationalEvent.opportunityId, "opp-active-standard");
     assert.equal(operationalEvent.type, "automatic_reply_sent");
     assert.equal(Object.hasOwn(operationalEvent, "text"), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("the real multi-part lifting question uses the approved complete reply instead of unknown holding", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  delete process.env.YCLOUD_ALERT_TEMPLATE_NAME;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      const sheetsRequest = JSON.parse(options.body);
+      if (sheetsRequest.action === "get_conversation_context") {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            opportunityId: "opp-lifting-information-regression",
+            professional: "amanda",
+            turns: [
+              {
+                role: "user",
+                source: "patient",
+                text: "Olá! Quero saber sobre lifting facial com a Dra. Amanda.",
+                eventId: "lifting-information-prefill",
+                at: "2026-08-19T19:35:04.000Z",
+              },
+              {
+                role: "assistant",
+                source: "bruna",
+                text: "Olá, Dani! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. O que você gostaria de entender primeiro sobre o lifting facial?",
+                eventId: "lifting-information-opening",
+                at: "2026-08-19T19:35:42.000Z",
+              },
+            ],
+          }),
+          { status: 200 },
+        );
+      }
+      if (sheetsRequest.action === "get_bot_knowledge_context") {
+        return new Response(
+          JSON.stringify({ ok: true, candidates: [], pendingQuestion: null }),
+          { status: 200 },
+        );
+      }
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+          patientRelationship: { found: false },
+          opportunityId: "opp-lifting-information-regression",
+          professional: "amanda",
+          routeStatus: "resolved_by_open_opportunity",
+          routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      const input = JSON.parse(JSON.parse(options.body).input);
+      assert.equal(
+        input.policyHints.deterministicReplyCode,
+        "LIFTING-FACIAL-INFORMATION-01",
+      );
+      assert.match(
+        input.policyHints.deterministicReplyPreview,
+        /10 a 14 dias/i,
+      );
+      assert.deepEqual(input.approvedClinicalFacts.topics, [
+        "duration",
+        "recovery",
+        "indication",
+      ]);
+
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              procedure: "lifting_facial",
+              replyCode: "LIFTING-FACIAL-INFORMATION-01",
+              suggestedReply: "A prévia factual aprovada resolve a mensagem.",
+              reviewReason: "approved_lifting_information",
+              conversationState: {
+                activeTopic: "duração, recuperação e indicação do lifting facial",
+                patientAct: "question",
+                refersToEventId: "",
+                lastClinicQuestion: "",
+                lastClinicOffer: "",
+                unresolvedQuestions: [],
+                factsAlreadyProvided: [],
+                owner: "bruna",
+                nextExpectedAction: "aguardar resposta da paciente",
+                ambiguity: "",
+                contextConfidence: "high",
+              },
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: "lifting-information-regression-event",
+      type: "whatsapp.inbound_message.received",
+      createTime: "2026-08-19T19:37:15.000Z",
+      whatsappInboundMessage: {
+        id: "lifting-information-regression-message",
+        from: "+5511900000077",
+        to: PHONE,
+        sendTime: "2026-08-19T19:37:15.000Z",
+        type: "text",
+        customerProfile: { name: "Dani" },
+        text: {
+          body:
+            "Boa tarde, Bruna, tudo bem? Quanto tempo leva a cirurgia, se tem um longo período de recuperação, indicações para realização (talvez eu ainda não precise)",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(body.conversationHistorySource, "durable_ledger_fallback");
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url === "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 1);
+    const reply = JSON.parse(patientRequests[0].options.body).text.body;
+    assert.match(reply, /duração da cirurgia varia conforme o planejamento/i);
+    assert.match(reply, /10 a 14 dias/i);
+    assert.match(reply, /3 e 4 semanas/i);
+    assert.match(reply, /não existe uma idade única/i);
+    assert.match(reply, /sem compromisso de operar/i);
+    assert.doesNotMatch(reply, /vou confirmar|com a equipe/i);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

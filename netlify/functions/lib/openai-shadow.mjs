@@ -15,6 +15,7 @@ import {
   CONTEXT_CONTINUATION_CODE,
   CONTEXT_REOPEN_CODE,
 } from "./semantic-reply-policy.mjs";
+import { approvedLiftingFacialFacts } from "./lifting-information.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -777,6 +778,10 @@ export async function runOpenAIShadow(
   );
   const normalizedReplyContract = normalizeReplyContract(replyContract);
   const normalizedPolicyHints = normalizePolicyHints(policyHints);
+  const approvedClinicalFacts = approvedLiftingFacialFacts({
+    text,
+    procedure,
+  });
   const explicitResourceRequest =
     /\b(?:site|link|material|casos?|antes\s+e\s+depois|resultados?)\b/i.test(
       String(text || ""),
@@ -828,6 +833,7 @@ export async function runOpenAIShadow(
           priorInteractionKnown:
             priorInteractionKnown === true,
           approvedKnowledge: normalizedLearningContext.candidates,
+          approvedClinicalFacts,
           pendingUnknownQuestion:
             normalizedLearningContext.pendingQuestion,
           replyContract: normalizedReplyContract,

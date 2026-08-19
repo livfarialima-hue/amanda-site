@@ -292,6 +292,39 @@ test("semantic evaluation handles a colloquial question without punctuation", ()
   assert.equal(decision.replyContract.allowedResponseKind, "direct_answer");
 });
 
+test("a multi-part lifting question keeps each safe topic available to the AI", () => {
+  const decision = decideConversationAction({
+    text:
+      "Boa tarde, Bruna, tudo bem? Quanto tempo leva a cirurgia, se tem um longo período de recuperação, indicações para realização (talvez eu ainda não precise)",
+    plan: {
+      route: "standard_reply",
+      reason: "known_procedure",
+      automaticAllowed: true,
+      professional: "amanda",
+      procedure: "lifting_facial",
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "O que você gostaria de entender primeiro sobre o lifting facial?",
+      },
+    ],
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.replyContract.allowedResponseKind, "direct_answer");
+  assert.deepEqual(decision.replyContract.unresolvedIntents, [
+    "recovery",
+    "lifting_duration",
+    "lifting_recovery",
+    "lifting_indication",
+  ]);
+  assert.equal(decision.replyContract.risk, "green");
+  assert.equal(decision.replyContract.maxQuestions, 1);
+  assert.equal(decision.replyContract.allowCta, true);
+});
+
 test("a safe conversational statement reaches semantic evaluation instead of being silenced by patterns", () => {
   const decision = decideConversationAction({
     text: "Eu já fiz lipo de papada e ainda percebo flacidez",

@@ -1,3 +1,5 @@
+import { liftingFacialInformationTopics } from "./lifting-information.mjs";
+
 export const CONVERSATION_ACTIONS = Object.freeze({
   RESPOND: "respond",
   WAIT_TEAM: "wait_team",
@@ -42,7 +44,7 @@ const LOCATION_PATTERN =
 const RECOVERY_PATTERN =
   /\b(?:recupera[cç][ãa]o|p[óo]s[-\s]?operat[óo]rio|afastamento|repouso|incha[cç]o|retomar\s+(?:o\s+)?trabalho)\b/i;
 const CREDENTIALS_PATTERN =
-  /\b(?:crm|rqe|forma[cç][ãa]o|especialista|cirurgi[ãa]|curr[íi]culo|experi[eê]ncia)\b/i;
+  /\b(?:crm|rqe|forma[cç][ãa]o|especialista|cirurgi(?:ã|[ãa]o)|curr[íi]culo|experi[eê]ncia)\b/i;
 const INSURANCE_PATTERN =
   /\b(?:conv[eê]nio|plano\s+de\s+sa[úu]de|reembolso)\b/i;
 const RESOURCE_PATTERN =
@@ -261,6 +263,10 @@ function inferUnresolvedIntents({
   plan,
 }) {
   const value = normalized(text);
+  const valueWithoutSocialGreeting = value.replace(
+    /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite)[,!\s]*)+/i,
+    "",
+  );
   const intents = [];
   const add = (intent) => {
     if (!intents.includes(intent)) intents.push(intent);
@@ -282,12 +288,23 @@ function inferUnresolvedIntents({
     add("price_surgery");
   }
   if (PAYMENT_PATTERN.test(value)) add("payment_terms");
-  if (schedulingRequest || SCHEDULING_PATTERN.test(value)) add("scheduling");
+  if (
+    schedulingRequest ||
+    SCHEDULING_PATTERN.test(valueWithoutSocialGreeting)
+  ) {
+    add("scheduling");
+  }
   if (LOCATION_PATTERN.test(value)) add("location");
   if (RECOVERY_PATTERN.test(value)) add("recovery");
   if (CREDENTIALS_PATTERN.test(value)) add("credentials");
   if (INSURANCE_PATTERN.test(value)) add("insurance");
   if (RESOURCE_PATTERN.test(value)) add("resource");
+  for (const topic of liftingFacialInformationTopics({
+    text: value,
+    procedure: plan?.procedure,
+  })) {
+    add(`lifting_${topic}`);
+  }
   if (hasDirectPatientRequest(value) && intents.length === 0) add("clinical_or_general");
   return intents;
 }
@@ -369,6 +386,9 @@ function buildReplyContract({
   const approvedInitialSurgicalGuide =
     plan?.reason === "price_initial_information" &&
     !unknownSurgicalProcedure;
+  const approvedLiftingInformation =
+    plan?.procedure === "lifting_facial" &&
+    intents.some((intent) => intent.startsWith("lifting_"));
   const maxLinks =
     !canWrite || intents.includes("photo") ||
     (
@@ -406,7 +426,8 @@ function buildReplyContract({
       canWrite &&
       (
         intents.includes("scheduling") ||
-        approvedInitialCervicalRangeOffer
+        approvedInitialCervicalRangeOffer ||
+        approvedLiftingInformation
       ),
     allowAppointmentConfirmation: false,
     requirePhotoDistanceLimit: intents.includes("photo"),

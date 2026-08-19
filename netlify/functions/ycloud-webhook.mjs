@@ -34,6 +34,10 @@ import {
   shouldSendOpenAIPatientReply,
 } from "./lib/patient-replies.mjs";
 import {
+  buildLiftingFacialInformationReply,
+  LIFTING_FACIAL_INFORMATION_REPLY_CODE,
+} from "./lib/lifting-information.mjs";
+import {
   normalizeDuplicateReason,
 } from "./lib/lead-deduplication.mjs";
 import {
@@ -1901,6 +1905,13 @@ async function completeOpenAIActive({
               currentText: input.text,
             })
           : "";
+    const liftingFacialInformationBody =
+      buildLiftingFacialInformationReply({
+        text: input.text,
+        procedure: plan?.procedure || input.procedure || "",
+        patientName: input.patientProfileName,
+        introduceBruna,
+      });
     const deterministicReplyResult = appointmentPreferenceBody
       ? {
           status: "completed",
@@ -2009,6 +2020,23 @@ async function completeOpenAIActive({
             procedure: plan?.procedure || input.procedure || "",
             replyCode: "BLEF-CONVENIO-01",
             suggestedReply: insuranceCoverageReply,
+            reviewReason: "",
+          },
+          usage: null,
+        }
+      : liftingFacialInformationBody
+      ? {
+          status: "completed",
+          model: "deterministic-lifting-facial-information",
+          decision: {
+            route: "standard_reply",
+            confidence: "high",
+            automaticAllowed: true,
+            urgent: false,
+            professional: "amanda",
+            procedure: "lifting_facial",
+            replyCode: LIFTING_FACIAL_INFORMATION_REPLY_CODE,
+            suggestedReply: liftingFacialInformationBody,
             reviewReason: "",
           },
           usage: null,
@@ -3799,6 +3827,26 @@ export async function handleYCloudWebhook(
         if (hydrated.status === "completed") {
           memoryResult = hydrated;
           conversationHistorySource = "durable_ledger";
+        } else {
+          const durableHistoryBefore = durableContext.turns
+            .filter((turn) => turn.eventId !== String(eventId))
+            .slice(-31);
+          memoryResult = {
+            ...memoryResult,
+            historyBefore: durableHistoryBefore,
+            historyAfter: [
+              ...durableHistoryBefore,
+              {
+                role: "user",
+                text,
+                eventId: String(eventId),
+                at: contactAt,
+                source: "patient",
+                templateId: prefillTemplateId,
+              },
+            ].slice(-32),
+          };
+          conversationHistorySource = "durable_ledger_fallback";
         }
       }
     }
