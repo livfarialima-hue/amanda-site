@@ -18,6 +18,8 @@ const FACIAL_PRICE_GUIDE_PATTERN =
   /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo\/?$/i;
 const FULL_LIFTING_RANGE_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
+const FULL_OTOPLASTY_RANGE_PATTERN =
+  /otoplastia[\s\S]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i;
 
 function normalizedPhone(value) {
   const compact = String(value || "").replace(/[\s()-]/g, "");
@@ -111,6 +113,24 @@ function isProtectedLiftingRangeReply(value, recentConversation = []) {
   );
 }
 
+function isProtectedOtoplastyRangeReply(value, recentConversation = []) {
+  const text = normalizedText(value);
+  const replyUrls = urls(value);
+  const hasRequiredGuide = replyUrls.length === 1
+    ? FACIAL_PRICE_GUIDE_PATTERN.test(replyUrls[0])
+    : replyUrls.length === 0 &&
+      conversationContainsFacialPriceGuide(recentConversation);
+  return (
+    FULL_OTOPLASTY_RANGE_PATTERN.test(String(value || "")) &&
+    /nao e orcamento proposta nem garantia de preco/.test(text) &&
+    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
+      text,
+    ) &&
+    /nao representa honorarios isolados/.test(text) &&
+    hasRequiredGuide
+  );
+}
+
 function questionCount(value) {
   return (String(value || "").match(/\?+/g) || []).length;
 }
@@ -127,6 +147,12 @@ function semanticUnsafeReplyReason(
     raw,
     recentConversation,
   );
+  const protectedOtoplastyRange = isProtectedOtoplastyRangeReply(
+    raw,
+    recentConversation,
+  );
+  const protectedApprovedRange =
+    protectedLiftingRange || protectedOtoplastyRange;
 
   if (
     /\b(?:sou|aqui\s+e|este\s+atendimento\s+e)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw) ||
@@ -172,7 +198,7 @@ function semanticUnsafeReplyReason(
     return "unapproved_payment_specifics";
   }
 
-  if (!protectedLiftingRange) {
+  if (!protectedApprovedRange) {
     const amounts = raw.match(/R\$\s*\d[\d.\s]*(?:,\d{1,2})?(?:\s*mil)?/gi) || [];
     for (const amount of amounts) {
       const compact = amount.replace(/[.\s]/g, "").toLowerCase();

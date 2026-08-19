@@ -84,6 +84,61 @@ test("the first cervical price response uses the approved soft range offer", () 
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 
+test("the real adult otoplasty question answers the safe comparison before price", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Posso te orientar sobre otoplastia. O que você gostaria de entender primeiro?",
+      },
+      {
+        role: "user",
+        text: "Tudo, inclusive a diferença entre a otomodelação e a otoplastia",
+      },
+    ],
+    currentText: "Valores tbm",
+  });
+
+  assert.match(reply, /^Claro, Maria\./);
+  assert.match(reply, /otomodelação.+abordagens diferentes/i);
+  assert.match(reply, /correções mais limitadas/i);
+  assert.match(reply, /projeção, dobras e assimetrias/i);
+  assert.match(reply, /examina as duas orelhas/i);
+  assert.match(reply, /cicatrizes, anestesia e recuperação/i);
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+  assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.match(
+    reply,
+    /Se você quiser, posso te passar uma faixa geral como referência inicial/,
+  );
+  assert.doesNotMatch(reply, /R\$\s*(?:8|14)\s*mil/i);
+  assert.doesNotMatch(reply, /é um procedimento não cirúrgico/i);
+  assert.doesNotMatch(reply, /com injetáveis ou poucos pontos/i);
+  assert.doesNotMatch(reply, /costuma ser temporário/i);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+});
+
+test("does not repeat the otoplasty overview after the clinic answered it", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "O termo otomodelação é usado para técnicas diferentes. A Dra. Amanda examina cada orelha separadamente.",
+      },
+    ],
+    currentText: "E os valores?",
+  });
+
+  assert.equal((reply.match(/otomodelação/gi) || []).length, 0);
+  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
+});
+
 test("the short price question receives a concise direct copy", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Queila",
@@ -127,6 +182,14 @@ test("combines professional and hospital references for lifting facial", () => {
   assert.equal(reference.rangeMaximum, 42000);
   assert.match(reference.source, /CIRURGIAS 2025/);
   assert.match(reference.source, /Página7/);
+});
+
+test("uses the explicitly approved otoplasty range", () => {
+  const reference = getSurgicalPriceReference("otoplastia");
+
+  assert.equal(reference.rangeMinimum, 8000);
+  assert.equal(reference.rangeMaximum, 14000);
+  assert.match(reference.source, /autorizada em 19\/08\/2026/i);
 });
 
 test("creates a patient-ready lifting facial price suggestion for human review", () => {
@@ -192,6 +255,47 @@ test("creates the approved lifting price reply for direct patient delivery", () 
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
   assert.ok(Array.from(reply).length <= 800);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+});
+
+test("creates the approved otoplasty range once for direct delivery", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    directToPatient: true,
+  });
+
+  assert.match(
+    reply,
+    /^Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+  );
+  assert.match(reply, /otoplastia costuma ficar entre R\$ 8 mil e R\$ 14 mil/i);
+  assert.match(reply, /apenas informativa/i);
+  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
+  assert.match(reply, /pode ficar fora dessa faixa/i);
+  assert.match(reply, /uma ou nas duas orelhas/i);
+  assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
+});
+
+test("the otoplasty range does not repeat a previously shared guide", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    directToPatient: true,
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Veja https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+      },
+    ],
+  });
+
+  assert.match(reply, /R\$ 8 mil e R\$ 14 mil/);
+  assert.doesNotMatch(reply, /https?:\/\//);
 });
 
 test("direct lifting price answers location in the same first reply", () => {

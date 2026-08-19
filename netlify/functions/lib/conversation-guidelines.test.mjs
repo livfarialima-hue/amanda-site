@@ -95,6 +95,18 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     CONVERSATION_GUIDELINES,
     /lifting facial entre R\$ 26 mil e R\$ 42 mil/,
   );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /otoplastia[\s\S]{0,220}R\$ 8 mil a R\$ 14 mil/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /“otomodelação” como um nome ambíguo usado para técnicas diferentes/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não presuma injetáveis, ausência de cirurgia, duração temporária/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /margem de 10% abaixo/);
   assert.match(
     CONVERSATION_GUIDELINES,

@@ -30,6 +30,10 @@ const LOCATION_REQUEST_PATTERN =
   /\b(?:onde\s+fica|qual\s+(?:e|é)\s+o\s+endere[cç]o|endere[cç]o|localiza[cç][aã]o|como\s+chegar)\b/i;
 const INITIAL_PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
+const OTOPLASTY_OVERVIEW_REQUEST_PATTERN =
+  /\botomodela[cç][aã]o\b|\bdiferen[cç]a\b.{0,80}\botoplastia\b|\botoplastia\b.{0,80}\bdiferen[cç]a\b|^\s*tudo\b/i;
+const OTOPLASTY_OVERVIEW_REPLY_PATTERN =
+  /(?:o termo )?[“\"]?otomodela[cç][aã]o[”\"]? (?:[eé] usado|[eé] um nome usado) para (?:t[eé]cnicas|abordagens) diferentes|a dra\. amanda examina (?:cada|as duas) orelhas?/i;
 
 const FACIAL_PRICE_GUIDE_PROCEDURES = new Set([
   "lifting_facial",
@@ -72,11 +76,13 @@ const PRICE_REFERENCES = Object.freeze({
     source: "CIRURGIAS 2025!A4:C4 + Página7!A2:D2",
   }),
   otoplastia: Object.freeze({
-    label: "a otoplastia com anestesia geral",
+    label: "a otoplastia",
     cashProfessional: 14401.8,
     installmentProfessional: 15499.08,
     hospitalReference: 6000,
-    source: "CIRURGIAS 2025!A22:C22 + Página7!A17:D17",
+    rangeMinimumOverride: 8000,
+    rangeMaximumOverride: 14000,
+    source: "Faixa operacional autorizada em 19/08/2026",
   }),
   rinoplastia: Object.freeze({
     label: "a rinoplastia com a equipe completa",
@@ -261,6 +267,47 @@ function priceVariation(procedure) {
   return "O valor final pode variar conforme a extensão do procedimento.";
 }
 
+function otoplastyOverviewParagraphs({
+  procedure,
+  currentText,
+  recentConversation,
+}) {
+  if (procedure !== "otoplastia") return [];
+
+  const turns = Array.isArray(recentConversation)
+    ? recentConversation.slice(-8)
+    : [];
+  const alreadyAnswered = turns.some(
+    (turn) =>
+      (
+        turn?.role === "assistant" ||
+        ["bruna", "human", "equipe_humana"].includes(
+          String(turn?.source || ""),
+        )
+      ) &&
+      OTOPLASTY_OVERVIEW_REPLY_PATTERN.test(String(turn?.text || "")),
+  );
+  if (alreadyAnswered) return [];
+
+  const patientContext = turns
+    .filter(
+      (turn) =>
+        turn?.role !== "assistant" &&
+        !["bruna", "human", "equipe_humana"].includes(
+          String(turn?.source || ""),
+        ),
+    )
+    .map((turn) => String(turn?.text || ""))
+    .concat(String(currentText || ""))
+    .join(" ");
+  if (!OTOPLASTY_OVERVIEW_REQUEST_PATTERN.test(patientContext)) return [];
+
+  return [
+    "Sobre a diferença: “otomodelação” é um nome usado para abordagens diferentes, então a comparação depende da técnica a que a pessoa se refere. Em geral, esse nome aparece associado a correções mais limitadas. Já a otoplastia permite um planejamento mais completo de projeção, dobras e assimetrias, de acordo com cada orelha.",
+    "Na avaliação, a Dra. Amanda examina as duas orelhas, entende o resultado que você busca e explica qual possibilidade faz sentido, além de conversar sobre cicatrizes, anestesia e recuperação antes de qualquer decisão.",
+  ];
+}
+
 function initialPriceDiscoveryQuestion(procedure) {
   return procedure
     ? ""
@@ -313,10 +360,11 @@ export function getSurgicalPriceReference(procedure) {
         ) * PRICE_RANGE_LOWER_FACTOR,
     ),
     rangeMaximum: roundedThousands(
-      (
-        reference.installmentProfessional +
-        reference.hospitalReference
-      ) * PRICE_RANGE_UPPER_FACTOR,
+      reference.rangeMaximumOverride ||
+        (
+          reference.installmentProfessional +
+          reference.hospitalReference
+        ) * PRICE_RANGE_UPPER_FACTOR,
     ),
   };
 }
@@ -341,15 +389,23 @@ export function buildSurgicalInitialPriceReply({
       ? "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso."
       : "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
   const guide = priceGuideParagraph(procedure, recentConversation);
-  const cervicalRangeOffer = procedure === "lifting_cervical"
+  const approvedRangeOffer = ["lifting_cervical", "otoplastia"].includes(
+    procedure,
+  )
     ? "Se você quiser, posso te passar uma faixa geral como referência inicial."
     : "";
+  const otoplastyOverview = otoplastyOverviewParagraphs({
+    procedure,
+    currentText,
+    recentConversation,
+  });
   return [
     directPriceGreeting(patientName, recentConversation),
     location,
+    ...otoplastyOverview,
     initialExplanation,
     guide,
-    cervicalRangeOffer,
+    approvedRangeOffer,
     paymentContext,
     initialPriceDiscoveryQuestion(procedure),
   ].filter(Boolean).join("\n\n");
@@ -364,6 +420,19 @@ export function buildSurgicalPriceSuggestedReply({
   directToPatient = false,
   currentText = "",
 }) {
+  if (procedure === "otoplastia" && directToPatient) {
+    const guide = conversationContainsFacialPriceGuide(recentConversation)
+      ? ""
+      : `Entenda como o orçamento é composto: ${safeLink(priceGuideUrl(PRICE_GUIDES.facial))}`;
+    return [
+      directPriceGreeting(patientName, recentConversation),
+      "Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
+      "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
+      guide,
+    ].filter(Boolean).join("\n\n");
+  }
+
   if (["lifting_facial", "lifting_cervical"].includes(procedure)) {
     const guide = conversationContainsFacialPriceGuide(recentConversation)
       ? ""

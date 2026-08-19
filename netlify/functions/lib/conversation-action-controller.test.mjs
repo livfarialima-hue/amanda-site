@@ -419,6 +419,33 @@ test("the cervical first price contract permits only the approved range offer", 
   assert.equal(decision.replyContract.allowCta, true);
 });
 
+test("the otoplasty price contracts permit the approved offer and range guide", () => {
+  const initial = decideConversationAction({
+    text: "Tudo sobre otoplastia, inclusive valores",
+    plan: {
+      ...standardPlan,
+      reason: "price_initial_information",
+      procedure: "otoplastia",
+    },
+  });
+  const range = decideConversationAction({
+    text: "Pode me passar a faixa da otoplastia?",
+    plan: {
+      ...standardPlan,
+      reason: "otoplasty_price_range_direct",
+      procedure: "otoplastia",
+    },
+  });
+
+  assert.equal(initial.replyContract.maxQuestions, 0);
+  assert.equal(initial.replyContract.maxLinks, 1);
+  assert.equal(initial.replyContract.allowCta, true);
+  assert.deepEqual(range.replyContract.unresolvedIntents, ["price_surgery"]);
+  assert.equal(range.replyContract.maxQuestions, 0);
+  assert.equal(range.replyContract.maxLinks, 1);
+  assert.equal(range.replyContract.allowCta, false);
+});
+
 test("the reply contract allows one necessary question only when the surgery is unknown", () => {
   const decision = decideConversationAction({
     text: "Quanto custa a cirurgia?",

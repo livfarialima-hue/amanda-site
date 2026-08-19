@@ -187,20 +187,23 @@ export function buildInsuranceAcceptanceReply({
             : part[0].toUpperCase() + part.slice(1).toLowerCase(),
         )
         .join(" ")
-    : "seu convênio";
+    : "";
+  const insurerDestination = insurer
+    ? `ao plano ${insurer}`
+    : "ao seu plano de saúde";
   const introduction = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
 
   if (professional === "amanda") {
-    return `${introduction} A consulta com a Dra. Amanda é particular. Emitimos nota fiscal, que pode ser apresentada ao plano ${insurer} para uma eventual solicitação de reembolso, conforme as regras do contrato e a análise do próprio plano.`;
+    return `${introduction} A consulta com a Dra. Amanda é particular. Emitimos nota fiscal, que pode ser apresentada ${insurerDestination} para uma eventual solicitação de reembolso, conforme as regras do contrato e a análise do próprio plano.`;
   }
 
   if (professional === "daniel") {
-    return `${introduction} A consulta com o Dr. Daniel é particular. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Vou direcionar seu atendimento de cardiologia para a equipe.`;
+    return `${introduction} A consulta com o Dr. Daniel é particular. Emitimos nota fiscal para que você possa solicitar reembolso ${insurerDestination}, conforme as regras do seu contrato. Vou direcionar seu atendimento de cardiologia para a equipe.`;
   }
 
-  return `${introduction} Os atendimentos da clínica são particulares. Emitimos nota fiscal para que você possa solicitar reembolso ao plano ${insurer}, conforme as regras do seu contrato. Seu interesse é em cirurgia plástica ou estética com a Dra. Amanda, ou em cardiologia com o Dr. Daniel?`;
+  return `${introduction} Os atendimentos da clínica são particulares. Emitimos nota fiscal para que você possa solicitar reembolso ${insurerDestination}, conforme as regras do seu contrato. Seu interesse é em cirurgia plástica ou estética com a Dra. Amanda, ou em cardiologia com o Dr. Daniel?`;
 }
 
 function consultationDescription(procedure, procedureLabel) {

@@ -1,5 +1,14 @@
 # Histórico do pacote Bruna
 
+## 2026-08-19.5
+
+- A faixa de otoplastia de R$ 8 mil a R$ 14 mil passa a ser permitida uma única vez, somente após a primeira resposta sem números e depois de aceite claro da oferta ou novo pedido explícito por valor, média ou faixa.
+- O envio exige todas as ressalvas aprovadas, não admite CTA, não repete o guia já compartilhado e é bloqueado se a faixa mudar, faltar contexto ou já tiver sido enviada no mesmo episódio.
+- A retomada diferida preserva o procedimento já conhecido e aplica o mesmo fluxo de otoplastia, sem perder o contexto quando a mensagem atual for apenas uma aceitação curta.
+- Perguntas compostas sobre otoplastia são respondidas antes do preço. `Otomodelação` é tratada como termo ambíguo: o sistema não presume injetáveis, ausência de cirurgia, duração temporária ou indicação a partir do nome.
+- A resposta genérica de convênio foi corrigida para `ao seu plano de saúde`, eliminando a construção artificial observada no atendimento.
+- Estado desta versão: candidata local validada, aguardando autorização explícita de publicação; **896/896 testes** aprovados e nenhuma mensagem real enviada.
+
 ## 2026-08-19.4
 
 - Perguntas compostas sobre lifting facial passam a ser decompostas semanticamente: duração geral, recuperação e critérios usuais recebem os fatos aprovados no mesmo turno, sem apagar a parte que depende da avaliação individual.

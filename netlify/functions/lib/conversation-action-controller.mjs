@@ -280,7 +280,11 @@ function inferUnresolvedIntents({
     add(CONSULTATION_PATTERN.test(value) ? "price_consultation" : "price_surgery");
   }
   if (
-    ["price_initial_information", "lifting_price_range_direct"].includes(
+    [
+      "price_initial_information",
+      "lifting_price_range_direct",
+      "otoplasty_price_range_direct",
+    ].includes(
       plan?.reason,
     ) &&
     !intents.includes("price_consultation")
@@ -378,11 +382,13 @@ function buildReplyContract({
     maxQuestions = 0;
   }
 
-  const protectedLiftingRange =
-    plan?.reason === "lifting_price_range_direct";
-  const approvedInitialCervicalRangeOffer =
+  const protectedApprovedRange = [
+    "lifting_price_range_direct",
+    "otoplasty_price_range_direct",
+  ].includes(plan?.reason);
+  const approvedInitialRangeOffer =
     plan?.reason === "price_initial_information" &&
-    plan?.procedure === "lifting_cervical";
+    ["lifting_cervical", "otoplastia"].includes(plan?.procedure);
   const approvedInitialSurgicalGuide =
     plan?.reason === "price_initial_information" &&
     !unknownSurgicalProcedure;
@@ -393,7 +399,7 @@ function buildReplyContract({
     !canWrite || intents.includes("photo") ||
     (
       priceIntent &&
-      !protectedLiftingRange &&
+      !protectedApprovedRange &&
       !approvedInitialSurgicalGuide &&
       !intents.includes("location")
     )
@@ -426,7 +432,7 @@ function buildReplyContract({
       canWrite &&
       (
         intents.includes("scheduling") ||
-        approvedInitialCervicalRangeOffer ||
+        approvedInitialRangeOffer ||
         approvedLiftingInformation
       ),
     allowAppointmentConfirmation: false,

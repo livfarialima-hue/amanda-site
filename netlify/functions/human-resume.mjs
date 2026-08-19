@@ -350,7 +350,7 @@ export async function processHumanResumeJob(
 
   const outsideServiceHours = !isHumanResumeServiceOpen(now, env);
 
-  const preliminaryPlan = planAutomation({
+  const currentMessagePlan = planAutomation({
     text: job.text,
     messageType: job.messageType,
     reference: job.reference,
@@ -358,6 +358,13 @@ export async function processHumanResumeJob(
     referralContext: job.referralContext,
     templateId: job.templateId,
   });
+  const preliminaryPlan =
+    !currentMessagePlan.procedure && job.procedure
+      ? {
+          ...currentMessagePlan,
+          procedure: job.procedure,
+        }
+      : currentMessagePlan;
   const enrichedPlan = enrichAutomationPlanFromConversation(
     preliminaryPlan,
     job.recentConversation,
@@ -553,10 +560,15 @@ export async function processHumanResumeJob(
             enrichedPlan.procedure,
           )
         ? "lifting_range"
+        : enrichedPlan.reason === "otoplasty_price_range_direct" &&
+            enrichedPlan.procedure === "otoplastia"
+          ? "otoplasty_range"
         : "";
   const approvedPriceReplyCode =
     approvedPriceReplyKind === "lifting_range"
       ? "LIFTING-PRICE-RANGE-01"
+      : approvedPriceReplyKind === "otoplasty_range"
+        ? "OTOPLASTY-PRICE-RANGE-01"
       : approvedPriceReplyKind === "initial_information"
         ? "SURGICAL-PRICE-INITIAL-01"
         : "";
@@ -568,7 +580,9 @@ export async function processHumanResumeJob(
           recentConversation: job.recentConversation,
           currentText: job.text,
         })
-      : approvedPriceReplyKind === "lifting_range"
+      : ["lifting_range", "otoplasty_range"].includes(
+          approvedPriceReplyKind,
+        )
         ? buildSurgicalPriceSuggestedReply({
             patientName: job.patientName,
             procedure:
@@ -592,7 +606,9 @@ export async function processHumanResumeJob(
           procedure:
             approvedPriceReplyKind === "lifting_range"
               ? "lifting_facial"
-              : enrichedPlan.procedure || job.procedure || "",
+              : approvedPriceReplyKind === "otoplasty_range"
+                ? "otoplastia"
+                : enrichedPlan.procedure || job.procedure || "",
           replyCode: approvedPriceReplyCode,
           suggestedReply: approvedPriceReply,
           reviewReason: "",

@@ -216,3 +216,203 @@ test("a first lifting price question receives the approved initial information w
     }
   }
 });
+
+test("an accepted otoplasty range offer is delivered once through the full webhook", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+    "YCLOUD_ALERT_TEMPLATE_LANGUAGE",
+    "WHATSAPP_AUTOMATION_MODE",
+    "HUMAN_RESUME_TIME_ZONE",
+    "HUMAN_RESUME_START_HOUR",
+    "HUMAN_RESUME_END_HOUR",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: WEBHOOK_SECRET,
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: SHEETS_URL,
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    YCLOUD_ALERT_TEMPLATE_NAME: "alerta_revisao_liv_v1",
+    YCLOUD_ALERT_TEMPLATE_LANGUAGE: "pt_BR",
+    WHATSAPP_AUTOMATION_MODE: "active",
+    HUMAN_RESUME_TIME_ZONE: "America/Sao_Paulo",
+    HUMAN_RESUME_START_HOUR: "8",
+    HUMAN_RESUME_END_HOUR: "20",
+  });
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === SHEETS_URL) {
+      const input = JSON.parse(options.body);
+      if (input.action === "get_conversation_context") {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            opportunityId: "opp-otoplasty-price",
+            professional: "amanda",
+            turns: [
+              {
+                role: "user",
+                source: "patient",
+                text: "Tenho interesse em otoplastia em adultos.",
+                eventId: "otoplasty-prefill",
+                at: "2026-08-19T19:53:00.000Z",
+              },
+              {
+                role: "assistant",
+                source: "bruna",
+                text: "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação. Este conteúdo explica o orçamento: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ Se você quiser, posso te passar uma faixa geral como referência inicial.",
+                eventId: "otoplasty-initial-price",
+                at: "2026-08-19T19:59:00.000Z",
+              },
+            ],
+          }),
+          { status: 200 },
+        );
+      }
+      if (input.action === "append_lead") {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            inserted: false,
+            updated: true,
+            duplicate: false,
+            humanTakeoverToday: false,
+            patientRelationship: {
+              found: true,
+              state: "engaged_lead",
+              procedureTopic: "otoplastia",
+            },
+            opportunityId: "opp-otoplasty-price",
+            professional: "amanda",
+            routeStatus: "resolved",
+            routed: true,
+          }),
+          { status: 200 },
+        );
+      }
+      return new Response(
+        JSON.stringify({ ok: true, duplicate: false }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      return new Response(
+        JSON.stringify({
+          model: "test-model",
+          output: [
+            {
+              type: "message",
+              content: [
+                {
+                  type: "output_text",
+                  text: JSON.stringify({
+                    route: "standard_reply",
+                    confidence: "high",
+                    automaticAllowed: true,
+                    urgent: false,
+                    professional: "amanda",
+                    procedure: "otoplastia",
+                    replyCode: "OTOPLASTY-PRICE-RANGE-01",
+                    suggestedReply: "A paciente aceitou a faixa oferecida.",
+                    reviewReason: "otoplasty_price_range_direct",
+                    conversationState: {
+                      activeTopic: "preço da otoplastia",
+                      patientAct: "acceptance",
+                      refersToEventId: "otoplasty-initial-price",
+                      lastClinicQuestion: "",
+                      lastClinicOffer: "faixa geral como referência inicial",
+                      unresolvedQuestions: ["faixa da otoplastia"],
+                      factsAlreadyProvided: ["guia de composição do orçamento"],
+                      owner: "bruna",
+                      nextExpectedAction: "informar faixa aprovada",
+                      ambiguity: "",
+                      contextConfidence: "high",
+                    },
+                  }),
+                },
+              ],
+            },
+          ],
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === YCLOUD_URL) {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const response = await webhook(
+      requestFor({
+        id: "otoplasty-range-event",
+        type: "whatsapp.inbound_message.received",
+        createTime: "2026-08-19T20:00:00.000Z",
+        whatsappInboundMessage: {
+          id: "otoplasty-range-message",
+          from: "+5511900000001",
+          to: "+5511961957144",
+          sendTime: "2026-08-19T20:00:00.000Z",
+          type: "text",
+          customerProfile: { name: "Maria" },
+          text: { body: "Pode me passar a faixa, sim" },
+        },
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(response.status, 200);
+    assert.equal(body.approvedPriceReplyKind, "otoplasty_range");
+    assert.equal(body.approvedPriceReplyQueued, true);
+    assert.equal(body.approvedPriceReplySent, true);
+    assert.equal(body.directOtoplastyPriceQueued, true);
+    assert.equal(body.directOtoplastyPriceSent, true);
+    assert.equal(body.directLiftingPriceSent, false);
+    assert.equal(body.reviewAlertQueued, false);
+
+    const patientRequests = requests
+      .filter((request) => request.url === YCLOUD_URL)
+      .map((request) => JSON.parse(request.options.body))
+      .filter((request) => request.to === "+5511900000001");
+    assert.equal(patientRequests.length, 1);
+    assert.match(
+      patientRequests[0].text.body,
+      /otoplastia costuma ficar entre R\$ 8 mil e R\$ 14 mil/i,
+    );
+    assert.match(patientRequests[0].text.body, /pode ficar fora dessa faixa/i);
+    assert.match(patientRequests[0].text.body, /não representa honorários isolados/i);
+    assert.equal((patientRequests[0].text.body.match(/https?:\/\//g) || []).length, 0);
+    assert.equal((patientRequests[0].text.body.match(/\?/g) || []).length, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

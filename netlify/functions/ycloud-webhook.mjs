@@ -1893,7 +1893,9 @@ async function completeOpenAIActive({
             recentConversation: input.recentConversation,
             currentText: input.text,
           })
-        : approvedPriceReplyKind === "lifting_range"
+        : ["lifting_range", "otoplasty_range"].includes(
+            approvedPriceReplyKind,
+          )
           ? buildSurgicalPriceSuggestedReply({
               patientName: input.patientProfileName,
               procedure:
@@ -1942,7 +1944,9 @@ async function completeOpenAIActive({
             replyCode:
               approvedPriceReplyKind === "lifting_range"
                 ? "LIFTING-PRICE-RANGE-01"
-                : "SURGICAL-PRICE-INITIAL-01",
+                : approvedPriceReplyKind === "otoplasty_range"
+                  ? "OTOPLASTY-PRICE-RANGE-01"
+                  : "SURGICAL-PRICE-INITIAL-01",
             suggestedReply: approvedPriceBody,
             reviewReason: "",
           },
@@ -2745,18 +2749,21 @@ function enrichPricePlanFromPatientRelationship(
     ["lifting_facial", "lifting_cervical"].includes(
       contextPlan.procedure,
     );
+  const directOtoplastyRange = contextPlan.procedure === "otoplastia";
 
   return {
     ...plan,
-    route: directLiftingRange
+    route: directLiftingRange || directOtoplastyRange
       ? "standard_reply"
       : "human_review",
     reason: directLiftingRange
       ? "lifting_price_range_direct"
+      : directOtoplastyRange
+        ? "otoplasty_price_range_direct"
       : "surgical_price_range_review",
     professional: plan.professional || "amanda",
     procedure: contextPlan.procedure,
-    automaticAllowed: directLiftingRange,
+    automaticAllowed: directLiftingRange || directOtoplastyRange,
   };
 }
 
@@ -4249,6 +4256,8 @@ export async function handleYCloudWebhook(
       ? "initial_information"
       : relationshipAwarePlan.reason === "lifting_price_range_direct"
         ? "lifting_range"
+        : relationshipAwarePlan.reason === "otoplasty_price_range_direct"
+          ? "otoplasty_range"
         : "";
   const approvedPriceReplyCandidate =
     Boolean(approvedPriceReplyKind) &&
@@ -4945,7 +4954,7 @@ export async function handleYCloudWebhook(
       }
 
       if (
-        ["initial_information", "lifting_range"].includes(
+        ["initial_information", "lifting_range", "otoplasty_range"].includes(
           outcome?.replyKind,
         )
       ) {
@@ -5250,6 +5259,12 @@ export async function handleYCloudWebhook(
       approvedPriceReplyQueued,
     directLiftingPriceSent:
       approvedPriceReplyKind === "lifting_range" &&
+      approvedPriceReplySent,
+    directOtoplastyPriceQueued:
+      approvedPriceReplyKind === "otoplasty_range" &&
+      approvedPriceReplyQueued,
+    directOtoplastyPriceSent:
+      approvedPriceReplyKind === "otoplasty_range" &&
       approvedPriceReplySent,
     aiShadowQueued,
     aiActiveQueued,

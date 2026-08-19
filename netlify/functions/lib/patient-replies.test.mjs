@@ -73,6 +73,21 @@ test("answers a named health plan directly while clarifying the requested specia
   assert.doesNotMatch(reply, /vou conferir|retorno assim que possível/i);
 });
 
+test("answers a generic insurance question without malformed wording", () => {
+  const reply = buildInsuranceAcceptanceReply({
+    text: "Vocês aceitam convênio?",
+    patientName: "Maria",
+    professional: "amanda",
+    introduceBruna: false,
+  });
+
+  assert.match(reply, /^Claro\./);
+  assert.match(reply, /apresentada ao seu plano de saúde/i);
+  assert.match(reply, /eventual solicitação de reembolso/i);
+  assert.doesNotMatch(reply, /ao plano seu convênio/i);
+  assert.doesNotMatch(reply, /reembolso garantido|garantia de reembolso/i);
+});
+
 test("answers blepharoplasty insurance without promising coverage or pushing scheduling", () => {
   const reply = buildInsuranceCoverageReply({
     text: "Pode ser realizado através do convênio?",

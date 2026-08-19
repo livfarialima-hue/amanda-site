@@ -17,6 +17,8 @@ const CONVERSATIONAL_INITIAL_PRICE_REPLY =
   "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
 const CERVICAL_INITIAL_PRICE_REPLY =
   "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial.";
+const OTOPLASTY_INITIAL_PRICE_REPLY =
+  "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação. Se você quiser, posso te passar uma faixa geral como referência inicial.";
 
 test("possible urgency never authorizes a patient response", () => {
   const plan = planAutomation({
@@ -194,6 +196,103 @@ test("a cervical patient who accepts the approved offer receives the range", () 
   assert.equal(enrichedPlan.replyCode, "LIFTING-PRICE-RANGE-01");
   assert.equal(enrichedPlan.procedure, "lifting_cervical");
   assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("the first otoplasty price question keeps the range for the next step", () => {
+  const plan = planAutomation({
+    text: "Tudo sobre otoplastia, inclusive valores",
+    messageType: "text",
+    reference: "G26OTO-816612405034-OT01",
+    platform: "Google",
+  });
+
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.procedure, "otoplastia");
+  assert.equal(plan.priceRequestKind, "amount");
+  assert.equal(plan.automaticAllowed, true);
+});
+
+test("an otoplasty patient who accepts the approved offer receives the range", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Sim, pode me passar",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Quero saber sobre otoplastia em adultos.",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: OTOPLASTY_INITIAL_PRICE_REPLY,
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "otoplasty_price_range_direct");
+  assert.equal(enrichedPlan.replyCode, "OTOPLASTY-PRICE-RANGE-01");
+  assert.equal(enrichedPlan.procedure, "otoplastia");
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("a repeated otoplasty amount request receives the approved range", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Mas qual é a média da otoplastia?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: OTOPLASTY_INITIAL_PRICE_REPLY,
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "otoplasty_price_range_direct");
+  assert.equal(enrichedPlan.procedure, "otoplastia");
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("the otoplasty range is not sent twice in the recent context", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Pode repetir a faixa da otoplastia?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: OTOPLASTY_INITIAL_PRICE_REPLY,
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil.",
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "human_review");
+  assert.equal(enrichedPlan.reason, "otoplasty_price_range_already_sent_review");
+  assert.equal(enrichedPlan.automaticAllowed, false);
 });
 
 test("the cervical range is not sent twice after an explicit repeat request", () => {

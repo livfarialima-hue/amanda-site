@@ -46,9 +46,12 @@ const DIRECT_LIFTING_PRICE_PROCEDURES = new Set([
   "lifting_facial",
   "lifting_cervical",
 ]);
+const DIRECT_OTOPLASTY_PRICE_PROCEDURES = new Set(["otoplastia"]);
 
 const LIFTING_PRICE_RANGE_REPLY_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
+const OTOPLASTY_PRICE_RANGE_REPLY_PATTERN =
+  /otoplastia[\s\S]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i;
 
 const SCHEDULING_PATTERN =
   /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o|datas?)\b/i;
@@ -535,6 +538,16 @@ export function enrichAutomationPlanFromConversation(
           String(turn?.text || ""),
         ),
     );
+    const previousOtoplastyRangeReply = recentConversation.some(
+      (turn) =>
+        (
+          turn?.role === "assistant" ||
+          ["bruna", "equipe_humana"].includes(turn?.source)
+        ) &&
+        OTOPLASTY_PRICE_RANGE_REPLY_PATTERN.test(
+          String(turn?.text || ""),
+        ),
+    );
 
     if (
       DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure) &&
@@ -551,12 +564,29 @@ export function enrichAutomationPlanFromConversation(
       };
     }
 
+    if (
+      DIRECT_OTOPLASTY_PRICE_PROCEDURES.has(procedure) &&
+      !previousOtoplastyRangeReply
+    ) {
+      return {
+        ...plan,
+        route: "standard_reply",
+        reason: "otoplasty_price_range_direct",
+        replyCode: "OTOPLASTY-PRICE-RANGE-01",
+        professional: "amanda",
+        procedure,
+        automaticAllowed: true,
+      };
+    }
+
     return {
       ...plan,
       route: "human_review",
       reason: previousLiftingRangeReply
         ? "lifting_price_range_already_sent_review"
-        : "surgical_price_range_review",
+        : previousOtoplastyRangeReply
+          ? "otoplasty_price_range_already_sent_review"
+          : "surgical_price_range_review",
       professional: plan.professional || context.professional || "amanda",
       procedure: procedure || null,
       automaticAllowed: false,
@@ -635,6 +665,16 @@ export function enrichAutomationPlanFromConversation(
           String(turn?.text || ""),
         ),
     );
+    const previousOtoplastyRangeReply = recentConversation.some(
+      (turn) =>
+        (
+          turn?.role === "assistant" ||
+          ["bruna", "equipe_humana"].includes(turn?.source)
+        ) &&
+        OTOPLASTY_PRICE_RANGE_REPLY_PATTERN.test(
+          String(turn?.text || ""),
+        ),
+    );
 
     if (!previousInitialPriceReply) {
       return {
@@ -647,6 +687,8 @@ export function enrichAutomationPlanFromConversation(
     const asksForAmount = plan.priceRequestKind === "amount";
     const directLiftingRange =
       asksForAmount && DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure);
+    const directOtoplastyRange =
+      asksForAmount && DIRECT_OTOPLASTY_PRICE_PROCEDURES.has(procedure);
     if (directLiftingRange && previousLiftingRangeReply) {
       return {
         ...plan,
@@ -658,13 +700,26 @@ export function enrichAutomationPlanFromConversation(
         automaticAllowed: false,
       };
     }
+    if (directOtoplastyRange && previousOtoplastyRangeReply) {
+      return {
+        ...plan,
+        route: "human_review",
+        reason: "otoplasty_price_range_already_sent_review",
+        professional:
+          plan.professional || context.professional || "amanda",
+        procedure,
+        automaticAllowed: false,
+      };
+    }
     return {
       ...plan,
-      route: directLiftingRange
+      route: directLiftingRange || directOtoplastyRange
         ? "standard_reply"
         : "human_review",
       reason: directLiftingRange
         ? "lifting_price_range_direct"
+        : directOtoplastyRange
+          ? "otoplasty_price_range_direct"
         : asksForAmount
           ? procedure
             ? "surgical_price_range_review"
@@ -674,7 +729,7 @@ export function enrichAutomationPlanFromConversation(
       professional:
         plan.professional || context.professional || "amanda",
       procedure,
-      automaticAllowed: directLiftingRange,
+      automaticAllowed: directLiftingRange || directOtoplastyRange,
     };
   }
 

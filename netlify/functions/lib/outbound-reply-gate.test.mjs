@@ -13,6 +13,9 @@ import {
 import {
   buildSemanticReplyConversationAction,
 } from "./semantic-reply-policy.mjs";
+import {
+  buildSurgicalPriceSuggestedReply,
+} from "./surgical-price-review.mjs";
 
 function fakeBlobs() {
   const values = new Map();
@@ -194,6 +197,83 @@ test("the lifting range without a current or prior guide is blocked", () => {
     body,
     currentText: "Mas qual é a faixa?",
     recentConversation: [],
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "unapproved_monetary_amount");
+});
+
+test("the protected otoplasty range passes with the facial price guide", () => {
+  const body = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    directToPatient: true,
+  });
+  const result = validateOutboundReply({
+    body,
+    currentText: "Pode me passar a faixa?",
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+});
+
+test("the protected otoplasty range omits a facial guide already shared", () => {
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "bruna",
+      text: "Este guia explica o orçamento: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+    },
+    {
+      role: "patient",
+      source: "paciente",
+      text: "Pode me passar a faixa?",
+    },
+  ];
+  const body = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    directToPatient: true,
+    recentConversation,
+  });
+  const result = validateOutboundReply({
+    body,
+    currentText: "Pode me passar a faixa?",
+    recentConversation,
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+  assert.equal((body.match(/https?:\/\//g) || []).length, 0);
+});
+
+test("the otoplasty range without all approved caveats is blocked", () => {
+  const body = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    directToPatient: true,
+  }).replace("Não representa honorários isolados.", "");
+  const result = validateOutboundReply({
+    body,
+    currentText: "Pode me passar a faixa?",
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "unapproved_monetary_amount");
+});
+
+test("a different otoplasty range remains blocked", () => {
+  const body = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "otoplastia",
+    directToPatient: true,
+  }).replace("R$ 14 mil", "R$ 15 mil");
+  const result = validateOutboundReply({
+    body,
+    currentText: "Pode me passar a faixa?",
     conversationAction: respond,
   });
 

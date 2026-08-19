@@ -2,9 +2,9 @@
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-08-19.4
+**Versão:** 2026-08-19.5
 
-**Estado do release:** publicada e verificada em 19/08/2026 no commit funcional `5f9e247b7a38698d5a9d79836f14e7b4a25ec3c0` e deploy Netlify `6a861fab62e3fc00085b847f`; o Apps Script permaneceu na v104 porque esta versão não altera o projeto canônico. Validação: **876/876 testes**, build de 178 arquivos, 44 URLs sem erro, domínio, URL imutável e webhook HTTP 200 com automação ativa; nenhuma mensagem real de paciente foi enviada.
+**Estado do release:** candidata local validada em 19/08/2026. A faixa de R$ 8 mil a R$ 14 mil para otoplastia foi aprovada para o segundo passo da conversa, com ressalvas obrigatórias e bloqueio de repetição; a produção permanece em `2026-08-19.4` até nova autorização explícita de publicação. Validação local: **896/896 testes**; nenhuma mensagem real de paciente foi enviada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
@@ -299,13 +299,15 @@ Para `cervicoplastia (lifting cervical)`, usar a abertura específica aprovada, 
 >
 > Se você quiser, posso te passar uma faixa geral como referência inicial.
 
-Se o procedimento estiver confirmado, terminar aí. A única oferta informativa permitida nessa etapa é a oferta específica de faixa na cervicoplastia acima. Somente se não for possível identificar qual cirurgia está sendo pesquisada, perguntar `Qual cirurgia você está pesquisando?`. Não perguntar o que mais incomoda no corpo ou no rosto. No primeiro pedido:
+Para `otoplastia`, também é permitido terminar a primeira resposta com `Se você quiser, posso te passar uma faixa geral como referência inicial.`, sempre depois do guia facial e sem número nesse turno. Se a mesma mensagem trouxer outras dúvidas seguras, respondê-las antes de falar de preço. `Otomodelação` deve ser tratada como um nome ambíguo, usado para abordagens diferentes: não presumir injetáveis, ausência de cirurgia, duração temporária ou indicação somente pelo termo. Explicar de forma conservadora a diferença de escopo e, se a técnica específica realmente mudar a resposta, pedir uma única clarificação.
+
+Se o procedimento estiver confirmado, terminar aí. As únicas ofertas informativas de faixa permitidas nessa etapa são as de cervicoplastia e otoplastia descritas acima. Somente se não for possível identificar qual cirurgia está sendo pesquisada, perguntar `Qual cirurgia você está pesquisando?`. Não perguntar o que mais incomoda no corpo ou no rosto. No primeiro pedido:
 
 - não enviar faixa;
 - enviar no máximo um guia de composição, escolhido pela região do procedimento confirmado;
 - nunca usar o guia facial para cirurgia de mama, corpo ou cirurgia íntima;
 - não listar automaticamente técnica, equipe, hospital, anestesia e materiais;
-- não convidar a pedir uma faixa, salvo na resposta específica aprovada de cervicoplastia;
+- não convidar a pedir uma faixa, salvo nas respostas específicas aprovadas de cervicoplastia e otoplastia;
 - se não houver procedimento confiável, perguntar qual cirurgia ou região está pesquisando.
 
 Se a mensagem também perguntar sobre pagamento ou itens incluídos:
@@ -327,9 +329,25 @@ Para minilifting, trocar apenas o procedimento e a faixa. Se a paciente comparar
 
 Na cervicoplastia, o aceite explícito de `posso te passar uma faixa geral como referência inicial` — inclusive respostas curtas como `Sim` ou `Pode me passar` interpretadas contra essa oferta — autoriza essa mesma referência uma única vez. A resposta deve explicar que a faixa aplicável depende de a cervicoplastia ser planejada isoladamente ou associada a outras abordagens da face e do pescoço. O primeiro pedido continua sem números; a faixa só entra no turno seguinte, depois do aceite ou de um novo pedido explícito por valor, média ou faixa. Todas as ressalvas permanecem obrigatórias. Se o guia facial já tiver sido enviado no primeiro turno, a mensagem da faixa não repete link; se nenhum guia facial estiver no histórico, inclui o guia específico de lifting como fallback seguro.
 
+### Aceite da oferta ou novo pedido explícito de faixa de otoplastia
+
+Informar uma única vez no mesmo contexto:
+
+- otoplastia: R$ 8 mil a R$ 14 mil.
+
+Resposta-base:
+
+> Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.
+>
+> O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.
+>
+> O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.
+
+O primeiro pedido continua sem números. O aceite claro da oferta — inclusive `Sim` ou `Pode me passar` lidos contra o turno anterior — ou um novo pedido explícito por valor, média ou faixa autoriza essa resposta. Se o guia facial já tiver sido enviado, não repetir link; sem guia anterior, acrescentar uma única vez https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/. Não incluir CTA ou pergunta junto da faixa. Nova tentativa de enviar a faixa no mesmo contexto, outro intervalo ou ausência das ressalvas obrigatórias deve ser bloqueada e seguir para revisão humana.
+
 ### Outras cirurgias
 
-Após insistência, preparar sugestão interna pela tabela aprovada e exigir conferência humana. Nunca improvisar faixa para a paciente.
+Após insistência, preparar sugestão interna pela tabela aprovada e exigir conferência humana. Fora das exceções expressamente aprovadas de lifting/minilifting, cervicoplastia e otoplastia, nunca improvisar faixa para a paciente.
 
 ### Comparação com outro orçamento
 

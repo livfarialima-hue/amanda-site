@@ -630,6 +630,59 @@ test("direct lifting price resume does not repeat the composition guide", async 
   assert.equal(deps.alerts.length, 0);
 });
 
+test("an accepted otoplasty range offer resumes with the approved range once", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      professional: "amanda",
+      procedure: "otoplastia",
+      replyCode: "OTOPLASTY-PRICE-RANGE-01",
+      suggestedReply: "Resposta semântica validada.",
+      reviewReason: "otoplasty_price_range_direct",
+    },
+  });
+  const result = await processHumanResumeJob(
+    job({
+      procedure: "otoplastia",
+      text: "Pode me passar a faixa, sim",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text:
+            "Este guia explica o orçamento: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ Se você quiser, posso te passar uma faixa geral como referência inicial.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Pode me passar a faixa, sim",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(
+    deps.patientMessages[0].body,
+    /otoplastia costuma ficar entre R\$ 8 mil e R\$ 14 mil/i,
+  );
+  assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
+  assert.match(deps.patientMessages[0].body, /não representa honorários isolados/i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
+  assert.equal(deps.alerts.length, 0);
+});
+
 test("the approved lifting price may continue directly at night", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
