@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "97da5c3a289062c9face0313418fe1beb7e3accf",
-    "lastObservedProductionCommit": "97da5c3a289062c9face0313418fe1beb7e3accf",
-    "functionalDeployId": "6a8599b25b653800085f9f95",
-    "lastObservedProductionDeployId": "6a8599b25b653800085f9f95",
-    "rollbackCommit": "35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe",
-    "rollbackDeployId": "6a858294fc30270008e0964a",
-    "publishedAt": "2026-08-19T08:56:01.490-03:00",
-    "lastVerifiedAt": "2026-08-19T09:02:40-03:00"
+    "functionalCommit": "5bb65664798b1d5ca5885fc75b07ec45dbf18833",
+    "lastObservedProductionCommit": "5bb65664798b1d5ca5885fc75b07ec45dbf18833",
+    "functionalDeployId": "6a85e288a72ee70008cc87b2",
+    "lastObservedProductionDeployId": "6a85e288a72ee70008cc87b2",
+    "rollbackCommit": "97da5c3a289062c9face0313418fe1beb7e3accf",
+    "rollbackDeployId": "6a8599b25b653800085f9f95",
+    "publishedAt": "2026-08-19T14:06:48.208-03:00",
+    "lastVerifiedAt": "2026-08-19T14:09:48-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "05d933251d9b7b67ff5240fb9ef174fdcb4aa42c526ca359708e2f02d1c9d71c"
+    "driveProjectionSha256": "34441c512b6bd2c07095349ac8479fd1abacbfbe4cee0281ed0eedb396e48419"
   }
 }

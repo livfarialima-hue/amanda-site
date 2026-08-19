@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-19.3
 
-**Estado do release:** candidata local autorizada para publicação em 19/08/2026. A correção preserva o contrato sem links nas continuações simples e mantém as demais travas. Validação local: **867/867 testes**; nenhuma mensagem real de paciente foi enviada.
+**Estado do release:** publicada e verificada em 19/08/2026 no commit funcional `5bb65664798b1d5ca5885fc75b07ec45dbf18833` e deploy Netlify `6a85e288a72ee70008cc87b2`; o Apps Script permaneceu na v104 porque esta versão não altera o projeto canônico. Validação: **867/867 testes**, build de 178 arquivos, 44 URLs sem erro, domínio, URL imutável e webhook HTTP 200 com automação ativa; nenhuma mensagem real de paciente foi enviada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 

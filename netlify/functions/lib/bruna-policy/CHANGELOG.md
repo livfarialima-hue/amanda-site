@@ -5,7 +5,7 @@
 - Respostas com contrato `maxLinks: 0` agora retiram a frase que contém um link espontâneo antes da validação final, preservando a explicação útil sem transformar uma continuação simples em silêncio.
 - O texto efetivamente conformado é o mesmo enviado à paciente e gravado no ledger durável e na memória recente; a versão original com link não é persistida como se tivesse sido entregue.
 - Se a resposta contiver somente o link, ficar vazia depois da conformação ou violar qualquer outra trava, o envio continua bloqueado e segue para revisão humana.
-- Validação local candidata: **867/867 testes**, incluindo a regressão sintética `Lifting cervical` após a abertura de anúncio. Nenhuma mensagem real foi enviada.
+- Estado desta versão: publicada e verificada no commit funcional `5bb65664798b1d5ca5885fc75b07ec45dbf18833` e deploy Netlify `6a85e288a72ee70008cc87b2`; Apps Script v104 preservado, **867/867 testes**, build de 178 arquivos e 44 URLs sem erro. Domínio, URL imutável e webhook responderam HTTP 200 com automação ativa. Nenhuma mensagem real foi enviada.
 
 ## 2026-08-19.2
 
