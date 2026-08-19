@@ -29,7 +29,7 @@ const EXPLICIT_RETURN_LATER_PATTERN =
 const PATIENT_DECLINE_PATTERN =
   /\b(?:n[ãa]o\s+(?:tenho\s+)?interesse|prefiro\s+n[ãa]o|n[ãa]o\s+quero|desisti|vou\s+deixar\s+(?:pra|para)\s+(?:depois|mais\s+pra\s+frente)|fora\s+do\s+meu\s+or[cç]amento|acima\s+do\s+meu\s+or[cç]amento|n[ãa]o\s+cabe\s+no\s+meu\s+or[cç]amento|muito\s+car[oa]\s+(?:pra|para)\s+mim|vou\s+me\s+programar\s+e\s+(?:retorno|volto))\b/i;
 const PRICE_PATTERN =
-  /\b(?:valor|pre[cç]o|quanto\s+custa|investimento|or[cç]amento|faixa)\b/i;
+  /\b(?:valor(?:es)?|pre[cç]os?|quanto\s+custa|investimento|or[cç]amento|faixa)\b/i;
 const CONSULTATION_PATTERN = /\bconsult(?:a|ar|as|inha)\b/i;
 const KNOWN_PROCEDURE_PATTERN =
   /\b(?:lifting|mini[-\s]?lifting|cervicoplastia|lipo(?:aspira[cç][ãa]o)?(?:\s+de\s+papada)?|papada|blefaroplastia|p[áa]lpebra|otoplastia|orelha|rinoplastia|mamoplastia|mastopexia|pr[óo]tese|abdominoplastia|braquioplastia|cruroplastia|ninfoplastia|ginecomastia)\b/i;
@@ -273,6 +273,14 @@ function inferUnresolvedIntents({
   ) {
     add(CONSULTATION_PATTERN.test(value) ? "price_consultation" : "price_surgery");
   }
+  if (
+    ["price_initial_information", "lifting_price_range_direct"].includes(
+      plan?.reason,
+    ) &&
+    !intents.includes("price_consultation")
+  ) {
+    add("price_surgery");
+  }
   if (PAYMENT_PATTERN.test(value)) add("payment_terms");
   if (schedulingRequest || SCHEDULING_PATTERN.test(value)) add("scheduling");
   if (LOCATION_PATTERN.test(value)) add("location");
@@ -304,7 +312,9 @@ function buildReplyContract({
   const priceIntent = intents.includes("price_surgery") ||
     intents.includes("price_consultation");
   const unknownSurgicalProcedure =
-    intents.includes("price_surgery") && !KNOWN_PROCEDURE_PATTERN.test(value);
+    intents.includes("price_surgery") &&
+    !KNOWN_PROCEDURE_PATTERN.test(value) &&
+    !plan?.procedure;
   const humanContext = isReplyToHumanContextWithoutStandaloneRequest(
     value,
     recentConversation,
@@ -353,6 +363,9 @@ function buildReplyContract({
 
   const protectedLiftingRange =
     plan?.reason === "lifting_price_range_direct";
+  const approvedInitialCervicalRangeOffer =
+    plan?.reason === "price_initial_information" &&
+    plan?.procedure === "lifting_cervical";
   const maxLinks =
     !canWrite || intents.includes("photo") ||
     (
@@ -385,7 +398,12 @@ function buildReplyContract({
     silenceReason,
     maxQuestions,
     maxLinks,
-    allowCta: canWrite && intents.includes("scheduling"),
+    allowCta:
+      canWrite &&
+      (
+        intents.includes("scheduling") ||
+        approvedInitialCervicalRangeOffer
+      ),
     allowAppointmentConfirmation: false,
     requirePhotoDistanceLimit: intents.includes("photo"),
     sourceReason: plan?.reason || reason || "",

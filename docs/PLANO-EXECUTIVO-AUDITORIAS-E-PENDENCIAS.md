@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 19 de agosto de 2026, 07:31, America/Sao_Paulo
+**Atualizado em:** 19 de agosto de 2026, 08:25, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,9 +41,10 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** produção contextual `2026-08-19.1` publicada e verificada em 19/08, com uma única fonte ativa no Drive, commit funcional, remoto, Netlify e Apps Script v101 reconciliados. A IA continua sendo a primeira instância de compreensão nas mensagens textuais elegíveis, sob as travas clínicas e operacionais existentes; **851/851 testes aprovados**, site, webhook e web app HTTP 200, nenhuma mensagem real de paciente enviada e nenhuma configuração do Google Ads alterada.
+**Estado geral:** produção contextual `2026-08-19.1` publicada e verificada em 19/08, com uma única fonte ativa no Drive, commit funcional, remoto, Netlify e Apps Script v101 reconciliados. Existe um candidato local posterior, com **861/861 testes aprovados**, para reconhecer `valores` no plural e aplicar a resposta progressiva aprovada de cervicoplastia; ele ainda não foi publicado, não foi projetado no Drive e depende de autorização explícita. A IA continua sendo a primeira instância de compreensão nas mensagens textuais elegíveis, sob as travas clínicas e operacionais existentes; nenhuma mensagem real de paciente foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 - `2026-08-19.1` está `PUBLICADA E VERIFICADA`: prefill estruturado neutro sem qualificação, conversão ou agenda pelo template isolado; primeira resposta sem salto prematuro; perfil comercial sem nome; resposta humana a foto; equivalência comunicacional `cervicoplastia (lifting cervical)`; e aprovação manual de retomada corrigida. Código funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a`, Apps Script v101 no deployment preservado, **851/851 testes**, build de 178 arquivos e 44 URLs aprovados;
+- `CANDIDATO LOCAL — DEPENDE DE AUTORIZAÇÃO`: a pergunta `E gostaria de saber os valores` passa a acionar a resposta inicial cervical aprovada, sem números; o aceite posterior autoriza uma única faixa com ressalvas e guia, enquanto outras cirurgias, repetição, agenda e contexto humano permanecem protegidos. **861/861 testes**, build de 178 arquivos e 44 URLs aprovados; produção, manifesto publicado, Apps Script e Drive continuam em `2026-08-19.1` até nova autorização;
 - `2026-08-18.5` está `PUBLICADA E VERIFICADA`: histórico durável da oportunidade, autoria explícita, 32 turnos recentes, reidratação do cache, estado semântico entre turnos e interpretação contextual de respostas curtas; código funcional `6fd37c3227e6fee1ca4ea1686248cb22733040f1`, deploy Netlify `6a84facdbed81175d2df0107`, Apps Script v100, **843/843 testes**, build de 178 arquivos e 44 URLs aprovados;
 - `2026-08-18.4` ficou preservada como antecessora: respostas curtas que aceitam uma oferta informativa após fala humana passaram a exigir `CONTEXT-CONTINUE-01` ou esclarecimento seguro, mantendo barreira de agenda e proteção contra corrida com a equipe;
 - mensagens textuais elegíveis agora são compreendidas contextualmente pela IA antes da decisão de resposta; mensagem curta, pontuação informal ou ausência de memória local não bastam para encaminhar ao humano;

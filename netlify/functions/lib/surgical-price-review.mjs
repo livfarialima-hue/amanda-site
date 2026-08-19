@@ -281,10 +281,14 @@ export function buildSurgicalInitialPriceReply({
   const paymentContext = asksAboutTerms
     ? "O orçamento reúne os itens aplicáveis. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. Quantidade de parcelas, percentual do desconto e demais condições dependem de confirmação humana."
     : "";
+  const initialExplanation =
+    procedure === "lifting_cervical"
+      ? "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial."
+      : "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
   return [
     directPriceGreeting(patientName, recentConversation),
     location,
-    "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.",
+    initialExplanation,
     paymentContext,
     initialPriceDiscoveryQuestion(procedure),
   ].filter(Boolean).join("\n\n");
@@ -299,12 +303,7 @@ export function buildSurgicalPriceSuggestedReply({
   directToPatient = false,
   currentText = "",
 }) {
-  const priceReference = getSurgicalPriceReference(procedure);
-  if (!priceReference) {
-    return clarificationFor(procedure, patientName);
-  }
-
-  if (procedure === "lifting_facial") {
+  if (["lifting_facial", "lifting_cervical"].includes(procedure)) {
     const guide =
       `Veja o que compõe o valor: ${safeLink(LIFTING_PRICE_GUIDE_URL)}`;
     const location =
@@ -322,6 +321,9 @@ export function buildSurgicalPriceSuggestedReply({
           "• Minilifting: entre R$ 18 mil e R$ 25 mil",
           "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
         ].join("\n"),
+        procedure === "lifting_cervical"
+          ? "Na cervicoplastia, a faixa aplicável depende de ela ser planejada isoladamente ou associada a outras abordagens da face e do pescoço."
+          : "",
         "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
         "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
         guide,
@@ -336,10 +338,18 @@ export function buildSurgicalPriceSuggestedReply({
         "• Minilifting: entre R$ 18 mil e R$ 25 mil",
         "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
       ].join("\n"),
+      procedure === "lifting_cervical"
+        ? "Na cervicoplastia, a faixa aplicável depende de ela ser planejada isoladamente ou associada a outras abordagens da face e do pescoço."
+        : "",
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
       "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
       guide,
     ].filter(Boolean).join("\n\n");
+  }
+
+  const priceReference = getSurgicalPriceReference(procedure);
+  if (!priceReference) {
+    return clarificationFor(procedure, patientName);
   }
 
   const priceContext = [

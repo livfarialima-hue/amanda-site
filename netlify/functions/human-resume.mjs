@@ -549,7 +549,9 @@ export async function processHumanResumeJob(
     enrichedPlan.reason === "price_initial_information"
       ? "initial_information"
       : enrichedPlan.reason === "lifting_price_range_direct" &&
-          enrichedPlan.procedure === "lifting_facial"
+          ["lifting_facial", "lifting_cervical"].includes(
+            enrichedPlan.procedure,
+          )
         ? "lifting_range"
         : "";
   const approvedPriceReplyCode =
@@ -569,7 +571,8 @@ export async function processHumanResumeJob(
       : approvedPriceReplyKind === "lifting_range"
         ? buildSurgicalPriceSuggestedReply({
             patientName: job.patientName,
-            procedure: "lifting_facial",
+            procedure:
+              enrichedPlan.procedure || job.procedure || "lifting_facial",
             recentConversation: job.recentConversation,
             referenceCategory: job.referenceCategory,
             sourceReference: job.reference,

@@ -122,7 +122,15 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Se o procedimento estiver claro, não acrescente pergunta, convite, artigo, guia, faixa/,
+    /Para os demais procedimentos[\s\S]{0,260}se o procedimento estiver claro, não acrescente pergunta, convite, artigo, guia, faixa nem oferta/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Se você quiser, posso te passar uma faixa geral como referência inicial/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Uma resposta curta como "Sim" ou "Pode me passar" só conta como aceite/,
   );
   assert.match(CONVERSATION_GUIDELINES, /Não liste técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento nessa primeira resposta/);
   assert.match(CONVERSATION_GUIDELINES, /não acrescente pergunta, convite, artigo, guia, faixa/);

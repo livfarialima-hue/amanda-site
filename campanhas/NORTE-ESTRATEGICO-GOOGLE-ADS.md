@@ -93,6 +93,8 @@ O problema atual não deve ser tratado apenas como falta de volume. No recorte r
 - **Segurança, experiência, naturalidade e recuperação:** são barreiras relevantes e devem ter respostas disponíveis.
 - **Idade da médica:** pode ser uma hipótese de percepção, mas não apareceu de forma relevante e explícita na auditoria das conversas. Não deve ser o centro da comunicação sem evidência nova.
 
+No WhatsApp, o primeiro pedido de valor de cervicoplastia deve receber uma resposta útil sem antecipar números: reconhecer que uma noção de valor ajuda no planejamento, explicar a diferença entre abordagem mais localizada e mais completa e oferecer uma faixa geral como próximo passo. A faixa aprovada só entra depois de aceite claro ou novo pedido explícito, uma única vez, com ressalvas e guia. A hipótese é reduzir silêncio e evasividade sem transformar preço em promessa nem pressionar por agenda. Medir pergunta respondida, continuidade após a primeira resposta, aceite da faixa, lead qualificado e consulta; revisar sete dias depois da publicação ou antes diante de mensagem indevida. Manter se houver continuidade sem aumento de repetição, reclamação ou envio fora de contexto; reverter para a resposta anterior se a oferta induzir faixa prematura, confusão ou quebra das travas.
+
 ### 4.4 Prioridade de procedimentos
 
 **Núcleo prioritário — face:**

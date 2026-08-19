@@ -1892,7 +1892,8 @@ async function completeOpenAIActive({
         : approvedPriceReplyKind === "lifting_range"
           ? buildSurgicalPriceSuggestedReply({
               patientName: input.patientProfileName,
-              procedure: "lifting_facial",
+              procedure:
+                plan?.procedure || input.procedure || "lifting_facial",
               recentConversation: input.recentConversation,
               referenceCategory: input.referenceCategory,
               sourceReference: input.sourceReference,
@@ -2710,7 +2711,9 @@ function enrichPricePlanFromPatientRelationship(
   }
 
   const directLiftingRange =
-    contextPlan.procedure === "lifting_facial";
+    ["lifting_facial", "lifting_cervical"].includes(
+      contextPlan.procedure,
+    );
 
   return {
     ...plan,

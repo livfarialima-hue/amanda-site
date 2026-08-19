@@ -370,6 +370,22 @@ test("the reply contract removes forced questions from a known surgical price an
   assert.equal(decision.replyContract.allowCta, false);
 });
 
+test("the cervical first price contract permits only the approved range offer", () => {
+  const decision = decideConversationAction({
+    text: "Gostaria de saber os valores da cervicoplastia",
+    plan: {
+      ...standardPlan,
+      reason: "price_initial_information",
+      procedure: "lifting_cervical",
+    },
+  });
+
+  assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
+  assert.equal(decision.replyContract.maxQuestions, 0);
+  assert.equal(decision.replyContract.maxLinks, 0);
+  assert.equal(decision.replyContract.allowCta, true);
+});
+
 test("the reply contract allows one necessary question only when the surgery is unknown", () => {
   const decision = decideConversationAction({
     text: "Quanto custa a cirurgia?",

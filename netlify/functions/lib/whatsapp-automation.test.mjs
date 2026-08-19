@@ -15,6 +15,8 @@ const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 const CONVERSATIONAL_INITIAL_PRICE_REPLY =
   "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
+const CERVICAL_INITIAL_PRICE_REPLY =
+  "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial.";
 
 test("possible urgency never authorizes a patient response", () => {
   const plan = planAutomation({
@@ -132,6 +134,102 @@ test("the conversational first price reply is recognized on a repeated lifting q
   assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.procedure, "lifting_facial");
   assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("the real cervical sequence receives the softer first price response instead of silence", () => {
+  const preliminaryPlan = planAutomation({
+    text: "E gostaria de saber os valores",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Olá! Quero saber sobre lifting cervical com a Dra. Amanda.",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "O que você gostaria de entender primeiro sobre lifting cervical?",
+      },
+      { role: "user", source: "patient", text: "Sim, gostaria" },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "price_initial_information");
+  assert.equal(enrichedPlan.procedure, "lifting_cervical");
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("a cervical patient who accepts the approved offer receives the range", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Sim, pode me passar",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Quero saber sobre lifting cervical.",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: CERVICAL_INITIAL_PRICE_REPLY,
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "standard_reply");
+  assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
+  assert.equal(enrichedPlan.replyCode, "LIFTING-PRICE-RANGE-01");
+  assert.equal(enrichedPlan.procedure, "lifting_cervical");
+  assert.equal(enrichedPlan.automaticAllowed, true);
+});
+
+test("the cervical range is not sent twice after an explicit repeat request", () => {
+  const preliminaryPlan = planAutomation({
+    text: "Pode repetir a faixa da cervicoplastia?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const enrichedPlan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Quero saber sobre cervicoplastia.",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: CERVICAL_INITIAL_PRICE_REPLY,
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: [
+          "• Minilifting: entre R$ 18 mil e R$ 25 mil",
+          "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+        ].join("\n"),
+      },
+    ],
+  );
+
+  assert.equal(enrichedPlan.route, "human_review");
+  assert.equal(enrichedPlan.reason, "lifting_price_range_already_sent_review");
+  assert.equal(enrichedPlan.automaticAllowed, false);
 });
 
 test("the bot does not send the full lifting range twice in the same recent context", () => {

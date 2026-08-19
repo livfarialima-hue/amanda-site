@@ -441,3 +441,17 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Data de revisão:** Site em 17/08, 23/08 e 30/08; WhatsApp após o primeiro relatório completo de 18/08 e somente quando o gate de Conta do WhatsApp Business estiver preparado.
 - **Regra para manter:** manter o Site em 40+ se não houver perda material de contatos elegíveis/qualidade e se a API continuar mostrando `age_min=40`; manter o relatório se as métricas chegarem completas e sem PII.
 - **Regra para reverter:** qualquer redução do piso exige nova decisão estratégica documentada. Se o e-mail falhar, voltar à v93 preservando os triggers e diagnosticar sem alterar campanhas.
+
+### 19 de agosto de 2026 — resposta progressiva de preço na cervicoplastia
+
+- **Status:** planejada e validada localmente; publicação pendente de autorização explícita.
+- **Responsável:** Daniel e operação da Clínica LIV; implementação técnica pelo projeto Bruna.
+- **Área/campanha:** continuidade entre aquisição de lifting cervical/cervicoplastia e WhatsApp; nenhuma mudança de mídia ou orçamento.
+- **Mudança:** reconhecer `valor` e `valores`; no primeiro pedido cervical, responder sem números com a abertura aprovada e oferecer uma faixa geral como próximo passo. Somente após aceite claro ou novo pedido explícito, enviar uma única vez as faixas aprovadas de minilifting e lifting facial, esclarecendo que a faixa aplicável à cervicoplastia depende de abordagem isolada ou associada.
+- **Motivo e evidência:** no caso observado, a paciente escreveu `Sim, gostaria` e depois `E gostaria de saber os valores`, mas a forma plural não ativou a rota determinística. A resposta anterior também foi considerada forte para um primeiro pedido de valor.
+- **Hipótese:** uma primeira resposta mais leve e uma segunda etapa consentida reduzem silêncio e evasividade sem divulgar faixa prematuramente nem presumir prontidão para agenda.
+- **Métrica principal:** proporção de perguntas de valor respondidas, continuidade após a primeira resposta, aceite da faixa, lead qualificado e consulta agendada.
+- **Guardrail:** nenhum número no primeiro turno; faixa apenas para lifting/minilifting/cervicoplastia após aceite; uma única vez; ressalvas e guia obrigatórios; demais cirurgias e repetições seguem para revisão humana.
+- **Data de revisão:** sete dias depois da publicação, ou imediatamente diante de mensagem indevida, faixa fora de contexto, duplicidade ou reclamação.
+- **Regra para manter:** manter se não houver novo silêncio no padrão singular/plural e a conversa avançar sem aumento de duplicidade ou pressão percebida.
+- **Regra para reverter:** restaurar a resposta anterior e bloquear a oferta se ela causar faixa prematura, confusão entre procedimentos, repetição ou violação das travas de preço.

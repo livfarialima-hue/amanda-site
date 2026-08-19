@@ -166,11 +166,26 @@ function semanticUnsafeReplyReason(value, conversationAction = {}) {
     return "too_many_links_for_context";
   }
 
-  if (
-    contract.allowCta === false &&
-    /\b(?:se\s+(?:fizer\s+sentido|quiser)|quer\s+que\s+eu|posso\s+(?:te|lhe)\s+ajudar|podemos\s+agendar|prefere\s+(?:manh[aã]|tarde))\b/i.test(raw)
-  ) {
+  const ctaPattern =
+    /\b(?:se\s+(?:fizer\s+sentido|quiser)|quer\s+que\s+eu|posso\s+(?:te|lhe)\s+ajudar|podemos\s+agendar|prefere\s+(?:manh[aã]|tarde))\b/i;
+  const containsCta = ctaPattern.test(raw);
+  if (contract.allowCta === false && containsCta) {
     return "cta_not_allowed_for_context";
+  }
+
+  if (
+    containsCta &&
+    contract.sourceReason === "price_initial_information"
+  ) {
+    const approvedCervicalOffer =
+      /Se voc[eê] quiser, posso (?:te|lhe) passar uma faixa geral como refer[eê]ncia inicial\./i;
+    const withoutApprovedOffer = raw.replace(approvedCervicalOffer, "");
+    if (
+      !approvedCervicalOffer.test(raw) ||
+      ctaPattern.test(withoutApprovedOffer)
+    ) {
+      return "cta_not_allowed_for_context";
+    }
   }
 
   if (contract.requirePhotoDistanceLimit === true) {

@@ -7,6 +7,7 @@ import {
 } from "./outbound-reply-gate.mjs";
 import {
   CONVERSATION_ACTIONS,
+  decideConversationAction,
 } from "./conversation-action-controller.mjs";
 import {
   buildSemanticReplyConversationAction,
@@ -87,6 +88,51 @@ test("an explicitly scheduled morning resume may continue a night deferral", () 
   });
 
   assert.equal(result.allowed, true);
+});
+
+test("the approved first cervical price reply passes with its bounded range offer", () => {
+  const currentText = "E gostaria de saber os valores";
+  const conversationAction = decideConversationAction({
+    text: currentText,
+    plan: {
+      route: "standard_reply",
+      reason: "price_initial_information",
+      professional: "amanda",
+      procedure: "lifting_cervical",
+      automaticAllowed: true,
+    },
+  });
+  const result = validateOutboundReply({
+    body:
+      "Claro, Adriana. Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial.",
+    currentText,
+    conversationAction,
+  });
+
+  assert.equal(result.allowed, true);
+});
+
+test("the cervical price exception does not permit a scheduling CTA", () => {
+  const currentText = "Gostaria de saber os valores da cervicoplastia";
+  const conversationAction = decideConversationAction({
+    text: currentText,
+    plan: {
+      route: "standard_reply",
+      reason: "price_initial_information",
+      professional: "amanda",
+      procedure: "lifting_cervical",
+      automaticAllowed: true,
+    },
+  });
+  const result = validateOutboundReply({
+    body:
+      "Entendo. Se você quiser, posso te passar uma faixa geral como referência inicial. Podemos agendar uma avaliação.",
+    currentText,
+    conversationAction,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "cta_not_allowed_for_context");
 });
 
 test("final validation blocks a substantially repeated answer", () => {

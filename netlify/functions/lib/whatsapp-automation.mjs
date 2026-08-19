@@ -28,13 +28,24 @@ const AMANDA_PATTERNS = [
 ];
 
 const PRICE_AMOUNT_PATTERN =
-  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento|faixa(?:\s+de\s+pre[cç]o)?)\b/i;
+  /\b(?:pre[cç]os?|valor(?:es)?|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento|faixa(?:\s+de\s+pre[cç]os?)?)\b/i;
 
 const PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
 
 const INITIAL_PRICE_REPLY_PATTERN =
-  /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|valor\s+exato\s+ap[oó]s\s+a\s+avalia[cç][aã]o|trabalhamos\s+com\s+valores\s+competitivos/i;
+  /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|valor\s+exato\s+ap[oó]s\s+a\s+avalia[cç][aã]o|trabalhamos\s+com\s+valores\s+competitivos|posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral\s+como\s+refer[eê]ncia\s+inicial/i;
+
+const PRICE_RANGE_OFFER_PATTERN =
+  /posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral\s+como\s+refer[eê]ncia\s+inicial/i;
+
+const PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN =
+  /^\s*(?:(?:sim|claro|pode(?:\s+sim)?|sim[,\s]+pode|gostaria|quero)(?:[,!\s]+(?:por\s+favor|pode\s+me\s+passar|me\s+passa|a\s+faixa|essa\s+faixa|os\s+valores|essa\s+refer[eê]ncia))*|(?:pode\s+)?me\s+passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores))?)[.!\s]*$/i;
+
+const DIRECT_LIFTING_PRICE_PROCEDURES = new Set([
+  "lifting_facial",
+  "lifting_cervical",
+]);
 
 const LIFTING_PRICE_RANGE_REPLY_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
@@ -494,6 +505,63 @@ export function enrichAutomationPlanFromConversation(
   });
   const recentPatientProcedure = detectRecentPatientProcedure(recentConversation);
   const recentClinicProcedure = detectRecentClinicProcedure(recentConversation);
+  const lastClinicTurn = [...recentConversation]
+    .reverse()
+    .find(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
+  const acceptedPriceRangeOffer = Boolean(
+    PRICE_RANGE_OFFER_PATTERN.test(String(lastClinicTurn?.text || "")) &&
+      PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN.test(
+        String(plan.currentText || ""),
+      ),
+  );
+
+  if (acceptedPriceRangeOffer) {
+    const procedure =
+      plan.procedure ||
+      recentPatientProcedure?.key ||
+      recentClinicProcedure?.key ||
+      context.procedure;
+    const previousLiftingRangeReply = recentConversation.some(
+      (turn) =>
+        (
+          turn?.role === "assistant" ||
+          ["bruna", "equipe_humana"].includes(turn?.source)
+        ) &&
+        LIFTING_PRICE_RANGE_REPLY_PATTERN.test(
+          String(turn?.text || ""),
+        ),
+    );
+
+    if (
+      DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure) &&
+      !previousLiftingRangeReply
+    ) {
+      return {
+        ...plan,
+        route: "standard_reply",
+        reason: "lifting_price_range_direct",
+        replyCode: "LIFTING-PRICE-RANGE-01",
+        professional: "amanda",
+        procedure,
+        automaticAllowed: true,
+      };
+    }
+
+    return {
+      ...plan,
+      route: "human_review",
+      reason: previousLiftingRangeReply
+        ? "lifting_price_range_already_sent_review"
+        : "surgical_price_range_review",
+      professional: plan.professional || context.professional || "amanda",
+      procedure: procedure || null,
+      automaticAllowed: false,
+    };
+  }
 
   if (plan.reason === "hospital_setting_context_required") {
     if (
@@ -578,7 +646,7 @@ export function enrichAutomationPlanFromConversation(
 
     const asksForAmount = plan.priceRequestKind === "amount";
     const directLiftingRange =
-      asksForAmount && procedure === "lifting_facial";
+      asksForAmount && DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure);
     if (directLiftingRange && previousLiftingRangeReply) {
       return {
         ...plan,
@@ -959,6 +1027,7 @@ export function planAutomation({
     procedure: null,
     automaticAllowed: true,
     platform: platform || null,
+    currentText: normalizedText,
   };
 }
 

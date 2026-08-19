@@ -50,6 +50,31 @@ test("the first known lifting price response answers without a mandatory continu
   assert.doesNotMatch(reply, /https?:\/\//);
 });
 
+test("the first cervical price response uses the approved soft range offer", () => {
+  const reply = buildSurgicalInitialPriceReply({
+    patientName: "Adriana",
+    procedure: "lifting_cervical",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "O que você gostaria de entender primeiro sobre lifting cervical?",
+      },
+    ],
+    currentText: "E gostaria de saber os valores",
+  });
+
+  assert.equal(
+    reply,
+    [
+      "Claro, Adriana.",
+      "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso. Se você quiser, posso te passar uma faixa geral como referência inicial.",
+    ].join("\n\n"),
+  );
+  assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
+  assert.doesNotMatch(reply, /https?:\/\//);
+});
+
 test("the short price question receives a concise direct copy", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Queila",
@@ -292,6 +317,29 @@ test("the range message includes the composition guide even if it appeared earli
     reply,
     /quanto-custa-lifting-facial-sao-paulo/,
   );
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+});
+
+test("delivers the approved range after a cervical patient accepts the offer", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Adriana",
+    procedure: "lifting_cervical",
+    directToPatient: true,
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Se você quiser, posso te passar uma faixa geral como referência inicial.",
+      },
+    ],
+  });
+
+  assert.match(reply, /^Claro, Adriana\./);
+  assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
+  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /Na cervicoplastia, a faixa aplicável depende/i);
+  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
+  assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
 });
 

@@ -1,5 +1,11 @@
 # Histórico do pacote Bruna
 
+## Não publicado
+
+- A primeira pergunta sobre valores de cervicoplastia passou a usar a abertura aprovada, mais leve e contextual, sem números ou guia, oferecendo a faixa geral apenas como próximo passo.
+- `valor` e `valores` passam a ser reconhecidos igualmente; o caso real `Sim, gostaria` seguido de `E gostaria de saber os valores` permanece acionável e recebe a primeira resposta, em vez de depender da forma singular da palavra.
+- O aceite claro da oferta cervical, inclusive `Sim` ou `Pode me passar`, autoriza uma única resposta com as faixas aprovadas e suas ressalvas. A faixa não é repetida no mesmo contexto e outras cirurgias continuam sob revisão humana.
+
 ## 2026-08-19.1
 
 - Prefills de site e anúncio passaram a usar uma abertura neutra identificada por `template_id=procedure_evaluation_v1`; isoladamente, o template não qualifica, não gera conversão offline e não encaminha agenda. A primeira resposta pergunta o que a pessoa deseja entender, sem presumir prontidão nem usar nome de empresa como nome pessoal.
