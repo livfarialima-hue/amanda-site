@@ -684,7 +684,7 @@ test("the reply contract enforces question, link and CTA limits", () => {
   }
 });
 
-test("a photo reply must combine empathy, options and the distance limit", () => {
+test("a photo reply acknowledges the patient and offers a human path without a mechanical disclaimer", () => {
   const photoAction = {
     ...respond,
     replyContract: {
@@ -701,13 +701,25 @@ test("a photo reply must combine empathy, options and the distance limit", () =>
     conversationAction: photoAction,
   });
   const complete = validateOutboundReply({
-    body: "Obrigada por confiar em nós e compartilhar a foto. Há boas opções que podem ajudar, mas uma foto e uma avaliação à distância não permitem definir com segurança o melhor caminho.",
+    body: "Obrigada por compartilhar sua foto e confiar na equipe. A Dra. Amanda poderá avaliar pessoalmente os detalhes importantes e conversar com você sobre as possibilidades que façam sentido.",
+    currentText: "Enviei uma foto.",
+    conversationAction: photoAction,
+  });
+  const approved = validateOutboundReply({
+    body: "Obrigada por compartilhar sua foto e confiar na gente. Entendo que você queira saber o que pode ser feito, e acredito que temos boas abordagens que podem ajudar a tratar esse tipo de queixa. Vou mostrar a foto à Dra. Amanda para que ela veja o que você gostaria de melhorar. Em uma avaliação, ela poderá observar todos os detalhes com cuidado e conversar com você sobre o caminho que faça mais sentido, sempre respeitando suas características.",
+    currentText: "Enviei uma foto.",
+    conversationAction: photoAction,
+  });
+  const mechanical = validateOutboundReply({
+    body: "Obrigada por compartilhar sua foto. Vou encaminhá-la à equipe, sem concluir diagnóstico ou indicação apenas pela imagem.",
     currentText: "Enviei uma foto.",
     conversationAction: photoAction,
   });
 
   assert.equal(incomplete.reason, "incomplete_photo_safety_reply");
   assert.equal(complete.allowed, true);
+  assert.equal(approved.allowed, true);
+  assert.equal(mechanical.reason, "mechanical_photo_disclaimer");
 });
 
 test("a verified booking path can send the single appointment confirmation", () => {

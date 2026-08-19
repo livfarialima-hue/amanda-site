@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { normalizeMarketingPrefillTemplateId } from "./whatsapp-automation.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -234,33 +235,12 @@ function isValidClassification(value) {
   );
 }
 
-function foldMessageText(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
 export function isLikelyClassifierMarketingPrefill(value) {
-  const text = foldMessageText(value);
-
-  return (
-    (
-      /gostaria de saber como funciona a consulta com a dra\.? amanda/.test(text) &&
-      /consultar a disponibilidade/.test(text)
-    ) ||
-    /(?:quero|gostaria de) saber sobre .{2,100} com a dra\.? amanda/.test(text) ||
-    (
-      /gostaria de (?:consultar os horarios|ver horarios)/.test(text) &&
-      /(?:consulta|avaliacao|dra\.? amanda)/.test(text)
-    ) ||
-    (
-      /origem do contato\s*:\s*site liv faria lima/.test(text) &&
-      /gostaria de (?:agendar|marcar) uma consulta/.test(text)
-    )
-  );
+  const templateId =
+    value && typeof value === "object"
+      ? value.templateId || value.template_id
+      : value;
+  return Boolean(normalizeMarketingPrefillTemplateId(templateId));
 }
 
 function sanitizeMessages(messages) {
@@ -280,18 +260,56 @@ function sanitizeMessages(messages) {
 
     if (!text.trim()) continue;
 
+    const templateId = normalizeMarketingPrefillTemplateId(
+      message?.templateId || message?.template_id,
+    );
+
     normalized.push({
       direction,
       at: String(message?.at || ""),
       text,
+      templateId,
       marketingPrefill:
         direction === "IN" &&
-        isLikelyClassifierMarketingPrefill(text),
+        isLikelyClassifierMarketingPrefill({ templateId }),
     });
     remaining -= text.length;
   }
 
   return normalized;
+}
+
+export function enforcePrefillOnlyClassificationGuard({
+  currentStatus,
+  messages,
+  classification,
+}) {
+  const inbound = (Array.isArray(messages) ? messages : []).filter(
+    (message) => message?.direction === "IN",
+  );
+  const isolatedPrefill =
+    inbound.length > 0 &&
+    inbound.every((message) => message.marketingPrefill === true);
+
+  if (
+    String(currentStatus || "Novo") !== "Novo" ||
+    !isolatedPrefill ||
+    !classification
+  ) {
+    return classification;
+  }
+
+  return {
+    ...classification,
+    recommendedStatus: "Novo",
+    confidence: "high",
+    summary: "Contato inicial por mensagem automática de interesse.",
+    nextAction: "Aguardar uma mensagem pessoal sobre dúvidas ou próximos passos.",
+    commercialReason: "Em andamento",
+    evidence: "Somente mensagem automática de origem, sem intenção pessoal posterior.",
+    appointmentOutcome: "none",
+    procedureMilestone: "none",
+  };
 }
 
 function sanitizePatientRelationship(value) {
@@ -392,6 +410,7 @@ export async function runLeadClassifier(
   const model = String(
     env.OPENAI_CLASSIFIER_MODEL || DEFAULT_MODEL,
   );
+  const sanitizedMessages = sanitizeMessages(messages);
   const reasoningEffort = String(
     env.OPENAI_CLASSIFIER_REASONING_EFFORT ||
       DEFAULT_REASONING_EFFORT,
@@ -430,7 +449,7 @@ export async function runLeadClassifier(
             sanitizePatientRelationship(patientRelationship),
           classificationGuidance:
             sanitizeClassificationGuidance(classificationGuidance),
-          messages: sanitizeMessages(messages),
+          messages: sanitizedMessages,
         }),
         text: {
           format: {
@@ -462,10 +481,20 @@ export async function runLeadClassifier(
       });
     }
 
-    return parseLeadClassificationResponse(
+    const parsed = parseLeadClassificationResponse(
       responseData,
       model,
     );
+    if (parsed.status !== "completed") return parsed;
+
+    return {
+      ...parsed,
+      classification: enforcePrefillOnlyClassificationGuard({
+        currentStatus,
+        messages: sanitizedMessages,
+        classification: parsed.classification,
+      }),
+    };
   } catch (error) {
     return result("failed", {
       httpStatus: null,

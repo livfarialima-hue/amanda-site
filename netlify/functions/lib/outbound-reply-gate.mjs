@@ -174,12 +174,20 @@ function semanticUnsafeReplyReason(value, conversationAction = {}) {
   }
 
   if (contract.requirePhotoDistanceLimit === true) {
-    const hasEmpathy = /\b(?:obrigad[ao]\s+por\s+(?:enviar|compartilhar|confiar)|entendo|imagino|compreendo)\b/i.test(raw);
-    const hasOptions = /\b(?:h[aá]|existem|temos)\s+(?:boas\s+)?op[cç][oõ]es\b/i.test(raw);
-    const hasDistanceLimit =
-      /\b(?:foto|imagem|[àa]\s+dist[aâ]ncia|presencial)\b[\s\S]{0,100}\b(?:n[aã]o\s+(?:permite(?:m)?|substitui)|limita|precisa\s+ser\s+confirmad[oa])\b/i.test(raw) ||
-      /\bn[aã]o\s+[ée]\s+poss[ií]vel\s+(?:avaliar|definir|indicar)\s+com\s+seguran[cç]a\s+(?:s[oó]\s+)?(?:pela|por)\s+foto\b/i.test(raw);
-    if (!hasEmpathy || !hasOptions || !hasDistanceLimit) {
+    const hasAcknowledgement =
+      /\b(?:obrigad[ao]\s+por\s+(?:enviar|compartilhar|confiar)|agrade[cç]o\s+por\s+(?:enviar|compartilhar|confiar))\b/i.test(raw);
+    const hasHumanPath =
+      /\bDra\.?\s+Amanda\b[\s\S]{0,120}\bavaliar\s+pessoalmente\b/i.test(raw) ||
+      /\b(?:mostrar|encaminhar)\b[\s\S]{0,60}\bfoto\b[\s\S]{0,60}\bDra\.?\s+Amanda\b[\s\S]{0,240}\b(?:avalia[cç][aã]o|observar|conversar)\b/i.test(raw) ||
+      /\bmensagem\b[\s\S]{0,80}\b(?:sinalizad[ao]|encaminhad[ao])\b[\s\S]{0,100}\b(?:equipe|acompanh)/i.test(raw) ||
+      /\b(?:equipe|Dra\.?\s+Amanda)\b[\s\S]{0,100}\b(?:acompanhar|avaliar|revisar)\b/i.test(raw);
+    const exposesMechanicalDisclaimer =
+      /\bsem\s+concluir\s+(?:diagn[oó]stico|indica[cç][aã]o)\b/i.test(raw) ||
+      /\b(?:diagn[oó]stico|indica[cç][aã]o)\b[\s\S]{0,60}\bapenas\s+pela\s+imagem\b/i.test(raw);
+    if (exposesMechanicalDisclaimer) {
+      return "mechanical_photo_disclaimer";
+    }
+    if (!hasAcknowledgement || !hasHumanPath) {
       return "incomplete_photo_safety_reply";
     }
   }

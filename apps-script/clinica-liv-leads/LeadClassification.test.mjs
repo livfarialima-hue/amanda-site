@@ -329,7 +329,12 @@ test("one phone always resolves to the first canonical lead row", () => {
 
 test("classification recovers later unknown messages only for a verified opportunity", () => {
   const { collectLeadMessagesForOpportunity_ } = loadFunctions();
-  const row = ({ id, opportunity = "", professional = "unknown" }) => [
+  const row = ({
+    id,
+    opportunity = "",
+    professional = "unknown",
+    templateId = "",
+  }) => [
     "+5511900005416",
     "IN",
     "2026-08-12T15:00:00.000Z",
@@ -340,10 +345,17 @@ test("classification recovers later unknown messages only for a verified opportu
     opportunity,
     professional,
     "",
+    "paciente",
+    templateId,
   ];
   const values = [
     row({ id: "unknown-before" }),
-    row({ id: "linked", opportunity: "opp-amanda", professional: "amanda" }),
+    row({
+      id: "linked",
+      opportunity: "opp-amanda",
+      professional: "amanda",
+      templateId: "procedure_evaluation_v1",
+    }),
     row({ id: "unknown-after" }),
     row({ id: "explicit-amanda", professional: "amanda" }),
     row({ id: "explicit-daniel", professional: "daniel" }),
@@ -379,6 +391,7 @@ test("classification recovers later unknown messages only for a verified opportu
     withRecovery.map((message) => message.messageId),
     ["linked", "unknown-after", "explicit-amanda"],
   );
+  assert.equal(withRecovery[0].templateId, "procedure_evaluation_v1");
 });
 
 test("conversation ledger keeps explicit authorship and conservatively maps legacy output", () => {

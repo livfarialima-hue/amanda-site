@@ -50,6 +50,7 @@ test("does not treat the ad template as a meaningful patient reply", () => {
           text:
             "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. " +
             "Ref. M26F01W-C06H01",
+          templateId: "procedure_evaluation_v1",
         },
         {
           role: "assistant",
@@ -74,6 +75,7 @@ test("offers the procedure page after the first real research reply", () => {
           text:
             "Ol\u00e1! Quero saber sobre lifting facial com a Dra. Amanda. " +
             "Ref. M26F01W-C06H01",
+          templateId: "procedure_evaluation_v1",
         },
         {
           role: "assistant",

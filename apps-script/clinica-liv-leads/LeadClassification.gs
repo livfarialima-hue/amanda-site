@@ -10,6 +10,7 @@ const LEAD_MESSAGE_HEADERS = Object.freeze([
   "Profissional",
   "Aba do lead",
   "Origem",
+  "Template ID",
 ]);
 
 const LEAD_CLASSIFICATION_HEADERS = Object.freeze([
@@ -1387,6 +1388,7 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
       safeText_(lead.professional, 80),
       safeText_(lead.leadSheetName, 120),
       source,
+      safeText_(lead.templateId, 80).toLowerCase(),
     ]);
   } else if (
     Number(leadRow) > 0 ||
@@ -1412,6 +1414,15 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
     !messageSheet.getRange(existingMessageRow, 11).getDisplayValue()
   ) {
     messageSheet.getRange(existingMessageRow, 11).setValue(source);
+  }
+  if (
+    existingMessageRow &&
+    lead.templateId &&
+    !messageSheet.getRange(existingMessageRow, 12).getDisplayValue()
+  ) {
+    messageSheet
+      .getRange(existingMessageRow, 12)
+      .setValue(safeText_(lead.templateId, 80).toLowerCase());
   }
 
   return {
@@ -1694,6 +1705,7 @@ function collectLeadMessagesForOpportunity_(
         row[3],
         row[4],
       ),
+      templateId: String(row[11] || "").toLowerCase(),
     };
   });
 }
@@ -1748,6 +1760,7 @@ function registrarTurnoConversa_(input) {
     professional: professional,
     leadSheetName: leadSheetName,
     source: safeText_(input.source, 40),
+    templateId: safeText_(input.templateId, 80).toLowerCase(),
   };
   // A mensagem de entrada já abriu a janela do classificador. A saída da
   // Bruna só precisa entrar no ledger; não deve criar uma segunda execução.

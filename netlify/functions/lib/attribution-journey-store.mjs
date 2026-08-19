@@ -61,6 +61,7 @@ const CONFIDENCE_LEVELS = new Set([
   "patient_reported",
   "unknown",
 ]);
+const PREFILL_TEMPLATE_IDS = new Set(["procedure_evaluation_v1"]);
 
 function journeyStore(getStoreImpl = getStore) {
   return getStoreImpl({ name: STORE_NAME, consistency: "strong" });
@@ -151,6 +152,10 @@ function normalizeJourneyPayload(input, now) {
     cta: {
       page_path: pagePath(cta.page_path),
       location: codeValue(cta.location).toLowerCase(),
+      template_id: enumValue(
+        String(cta.template_id || "").toLowerCase(),
+        PREFILL_TEMPLATE_IDS,
+      ),
     },
     click_ids: normalizeClickIds(input.click_ids),
     confidence: enumValue(input.confidence, CONFIDENCE_LEVELS, "unknown"),

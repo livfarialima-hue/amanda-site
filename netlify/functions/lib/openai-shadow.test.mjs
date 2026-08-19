@@ -2067,7 +2067,7 @@ test("coded acquisition remains silent when Sheets cannot establish a route", as
   }
 });
 
-test("a prefilled availability template collects scheduling preference", async () => {
+test("a structured lipo prefill opens a conversation without jumping to schedule", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -2120,7 +2120,7 @@ test("a prefilled availability template collects scheduling preference", async (
         JSON.stringify(
           validResponse(
               validDecision({
-                procedure: "avaliacao_facial",
+                procedure: "lipo_papada",
                 replyCode: "AMANDA-AGENDA-PREFERENCE-01",
                 suggestedReply:
                   "A pessoa quer informar sua preferência para uma avaliação facial.",
@@ -2147,10 +2147,11 @@ test("a prefilled availability template collects scheduling preference", async (
         from: "+5511900000000",
         to: PHONE,
         type: "text",
+        template_id: "procedure_evaluation_v1",
         customerProfile: { name: "Fabrícia Silva" },
         text: {
           body:
-            "Olá, gostaria de consultar os horários para uma avaliação facial com a Dra. Amanda.\n\nReferência: Avaliação facial",
+            "Olá! Tenho interesse em lipo de papada com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.\n\nRef. G26LIPO-OT01",
         },
       },
     });
@@ -2175,15 +2176,25 @@ test("a prefilled availability template collects scheduling preference", async (
     await Promise.all(pending);
 
     assert.equal(body.aiActiveQueued, true);
-    assert.equal(body.appointmentNeedsPreference, true);
-    assert.equal(body.appointmentPreferenceReplySent, true);
+    assert.equal(body.appointmentNeedsPreference, false);
+    assert.equal(body.appointmentPreferenceReplySent, false);
     assert.equal(body.appointmentReviewQueued, false);
+    assert.equal(body.automation.marketingPrefill, true);
+    const appendLeadRequest = requests
+      .filter((request) =>
+        request.url === process.env.GOOGLE_SHEETS_WEBHOOK_URL)
+      .map((request) => JSON.parse(request.options.body))
+      .find((requestBody) => requestBody.action === "append_lead");
+    assert.equal(
+      appendLeadRequest?.lead?.templateId,
+      "procedure_evaluation_v1",
+    );
     assert.equal(
       requests.some(
         (request) =>
           request.url === "https://api.openai.com/v1/responses",
       ),
-      true,
+      false,
     );
 
     const patientRequests = requests.filter(
@@ -2199,8 +2210,8 @@ test("a prefilled availability template collects scheduling preference", async (
     assert.equal(
       patientReply,
       "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-        "Claro, posso te ajudar com o agendamento. Quais dias da semana e qual " +
-        "período — manhã ou tarde — costumam funcionar melhor para você?",
+        "Posso te orientar sobre lipo de papada. " +
+        "O que você gostaria de entender primeiro?",
     );
     assert.doesNotMatch(patientReply, /R\$ 500/);
     assert.doesNotMatch(patientReply, /obrigada pela confiança/i);

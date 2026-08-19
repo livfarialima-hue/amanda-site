@@ -106,6 +106,30 @@ test("cervical campaign video is prominent, accessible and performance-safe on b
   );
 });
 
+test("the cervical page connects cervicoplastia and lifting cervical without changing the canonical URL", () => {
+  const html = readFileSync(
+    path.join(root, "lifting-cervical/index.html"),
+    "utf8",
+  );
+  const structuredData = JSON.parse(
+    html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] || "{}",
+  );
+  const medicalPage = structuredData["@graph"]?.find(
+    (item) => item["@type"] === "MedicalWebPage",
+  );
+
+  assert.match(html, /<title>Cervicoplastia \(lifting cervical\) em São Paulo/i);
+  assert.match(html, /<h1>Cervicoplastia:/i);
+  assert.match(html, /também chamada de lifting cervical/i);
+  assert.match(html, /Cervicoplastia e lifting cervical são a mesma cirurgia\?/i);
+  assert.match(html, /rel="canonical" href="https:\/\/draamandaschroeder\.com\.br\/lifting-cervical\/"/i);
+  assert.equal(medicalPage?.about?.name, "Cervicoplastia");
+  assert.deepEqual(
+    medicalPage?.about?.alternateName,
+    ["Lifting cervical", "Lifting de pescoço"],
+  );
+});
+
 test("OpenAI search and training crawlers have explicit independent rules", () => {
   const robots = readFileSync(path.join(root, "robots.txt"), "utf8");
 

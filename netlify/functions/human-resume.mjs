@@ -356,6 +356,7 @@ export async function processHumanResumeJob(
     reference: job.reference,
     platform: job.platform,
     referralContext: job.referralContext,
+    templateId: job.templateId,
   });
   const enrichedPlan = enrichAutomationPlanFromConversation(
     preliminaryPlan,

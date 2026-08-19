@@ -22,6 +22,40 @@
     'non_personalized_ads',
     'transport_type'
   ];
+  var marketingPrefillTemplateId = 'procedure_evaluation_v1';
+  var procedureLabels = {
+    'abdominoplastia': 'abdominoplastia',
+    'avaliacao-facial': 'avaliação facial',
+    'blefaroplastia': 'blefaroplastia',
+    'braquioplastia': 'braquioplastia',
+    'cirurgia-facial-preco': 'cirurgia plástica facial',
+    'contorno-corporal': 'contorno corporal',
+    'custos-cirurgia-corporal': 'cirurgia plástica corporal',
+    'custos-cirurgia-mama': 'cirurgia plástica das mamas',
+    'injetaveis': 'procedimentos injetáveis',
+    'lifting-cervical': 'cervicoplastia (lifting cervical)',
+    'lifting-facial': 'lifting facial',
+    'lifting-facial-preco': 'lifting facial',
+    'lip-lifting': 'lip lifting',
+    'lipo-de-papada': 'lipo de papada',
+    'lipoaspiracao': 'lipoaspiração',
+    'mama': 'cirurgia plástica das mamas',
+    'mamoplastia-redutora': 'mamoplastia redutora',
+    'mastopexia': 'mastopexia',
+    'mastopexia-com-protese': 'mastopexia com prótese',
+    'ninfoplastia': 'ninfoplastia',
+    'otoplastia': 'otoplastia',
+    'otoplastia-adulto': 'otoplastia em adultos',
+    'otoplastia-infantil': 'otoplastia para criança ou adolescente',
+    'pos-bariatrica': 'cirurgia pós-bariátrica',
+    'protese-de-mama': 'prótese de mama'
+  };
+
+  function neutralPrefillMessage(link) {
+    var procedure = String(link.dataset.procedure || '').trim().toLowerCase();
+    var label = procedureLabels[procedure] || 'cirurgia plástica';
+    return 'Olá! Tenho interesse em ' + label + ' com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.';
+  }
 
   function googleMeasurementAvailable() {
     return typeof window.gtag === 'function';
@@ -479,7 +513,8 @@
       conversion_path: conversionPathForJourney(state),
       cta: {
         page_path: normalizePagePath(window.location.pathname),
-        location: sanitizeTrackingValue(link.dataset.ctaLocation || 'unknown').toLowerCase()
+        location: sanitizeTrackingValue(link.dataset.ctaLocation || 'unknown').toLowerCase(),
+        template_id: sanitizeTrackingValue(link.dataset.templateId || marketingPrefillTemplateId).toLowerCase()
       },
       click_ids: clickIds,
       confidence: journeyConfidence(state),
@@ -672,22 +707,8 @@
       if (!originalReference) return;
 
       var reference = buildReference(attribution, originalReference);
-      var updatedMessage = message
-        .replace(/(?:\r?\n)+(?:GCLID|GBRAID|WBRAID):[^\r\n]*/gi, '');
-
-      if (/\bRef\.\s*[A-Za-z0-9_-]{1,80}(?=\s|$)/i.test(updatedMessage)) {
-        updatedMessage = updatedMessage.replace(
-          /(\bRef\.\s*)[A-Za-z0-9_-]{1,80}(?=\s|$)/i,
-          '$1' + reference
-        );
-      } else if (/\bRefer[eê]ncia\s*:[^\r\n]*/i.test(updatedMessage)) {
-        updatedMessage = updatedMessage.replace(
-          /\bRefer[eê]ncia\s*:[^\r\n]*/i,
-          'Ref. ' + reference
-        );
-      } else {
-        updatedMessage = updatedMessage.replace(/\s+$/, '') + '\n\nRef. ' + reference;
-      }
+      link.dataset.templateId = marketingPrefillTemplateId;
+      var updatedMessage = neutralPrefillMessage(link) + '\n\nRef. ' + reference;
 
       // Legacy/default-off path keeps the current operational contract. Once
       // the first-party journey is explicitly enabled, click IDs travel only

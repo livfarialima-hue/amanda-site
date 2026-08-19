@@ -253,8 +253,13 @@ test("adds the exact click ID to WhatsApp without consent", () => {
     { gclid, origem: "G26ADS" },
   );
   const message = new URL(link.href).searchParams.get("text");
+  assert.match(
+    message,
+    /^Olá! Tenho interesse em lifting facial com a Dra\. Amanda e gostaria de entender melhor como funciona a avaliação\./,
+  );
   assert.match(message, /Ref\. G26ADS-lifting-facial/);
   assert.match(message, new RegExp(`GCLID: ${gclid}$`));
+  assert.equal(link.dataset.templateId, "procedure_evaluation_v1");
 });
 
 test("keeps the Google click ID across pages in the same unconsented session", () => {
@@ -412,7 +417,12 @@ test("every organic site CTA gets a stable SITE reference", () => {
   });
 
   const message = new URL(link.href).searchParams.get("text");
+  assert.match(
+    message,
+    /^Olá! Tenho interesse em avaliação facial com a Dra\. Amanda e gostaria de entender melhor como funciona a avaliação\./,
+  );
   assert.match(message, /Ref\. SITE-avaliacao-facial$/);
+  assert.equal(link.dataset.templateId, "procedure_evaluation_v1");
 });
 
 test("does not infer direct traffic from an absent referrer", () => {
@@ -491,6 +501,10 @@ test("M26C02S carries the cervical campaign, creative, landing and CTA to WhatsA
 
   const envelope = debug.journeyEnvelopeForLink(link);
   const message = new URL(link.href).searchParams.get("text");
+  assert.match(
+    message,
+    /^Olá! Tenho interesse em cervicoplastia \(lifting cervical\) com a Dra\. Amanda e gostaria de entender melhor como funciona a avaliação\./,
+  );
   assert.match(message, /Ref\. M26C02S-C07H01-lifting-cervical/);
   assert.match(message, /JID: J1_[A-Za-z0-9_-]{22}/);
   assert.equal(envelope.first_touch.origin, "Meta Ads");
@@ -502,6 +516,7 @@ test("M26C02S carries the cervical campaign, creative, landing and CTA to WhatsA
   assert.equal(envelope.first_touch.page_path, "/lifting-cervical/");
   assert.equal(envelope.cta.page_path, "/lifting-cervical/");
   assert.equal(envelope.cta.location, "video");
+  assert.equal(envelope.cta.template_id, "procedure_evaluation_v1");
   assert.equal(envelope.conversion_path, "meta_site_whatsapp");
   assert.equal(envelope.confidence, "observed");
   assert.equal(envelope.fallback_reason, "");

@@ -33,3 +33,10 @@ test("assistant introductions never replace the patient profile name", () => {
 
   assert.equal(name, "Marina Souza");
 });
+
+test("business and brand profiles are not treated as patient names", () => {
+  assert.equal(
+    resolvePatientDisplayName({ profileName: "Monah Semijoias" }),
+    "",
+  );
+});

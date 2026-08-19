@@ -103,6 +103,7 @@ function normalizedPending(value) {
     reference: limitedText(value.reference, 200),
     referenceCategory: limitedText(value.referenceCategory, 80),
     procedure: limitedText(value.procedure, 120),
+    templateId: limitedText(value.templateId, 80).toLowerCase(),
     referralContext:
       value.referralContext &&
       typeof value.referralContext === "object" &&
@@ -255,6 +256,7 @@ export async function scheduleHumanResume(
       reference: limitedText(input.reference, 200),
       referenceCategory: limitedText(input.referenceCategory, 80),
       procedure: limitedText(input.procedure, 120),
+      templateId: limitedText(input.templateId, 80).toLowerCase(),
       referralContext: input.referralContext || null,
       recentConversation: normalizedHistory(input.recentConversation),
       morningResume: input.morningResume === true,

@@ -9,7 +9,7 @@ export function usableProfileName(value) {
     .trim();
   const normalizedProfileName = profileName.toLocaleLowerCase("pt-BR");
   const suspiciousProfilePattern =
-    /\b(?:cl[ií]nica|consult[oó]rio|hospital|empresa|loja|store|shop|studio|est[uú]dio|est[eé]tica|sal[aã]o|oficial|atendimento|recep[cç][aã]o|comercial|vendas|marketing|equipe|grupo|cirurgia|pl[aá]stica|odontologia|ltda|fam[ií]lia|mam[aã]e?|papai|amor|vida|trabalho|n[uú]mero\s+novo|sem\s+nome)\b/i;
+    /\b(?:cl[ií]nica|consult[oó]rio|hospital|empresa|loja|store|shop|studio|est[uú]dio|est[eé]tica|sal[aã]o|oficial|atendimento|recep[cç][aã]o|comercial|vendas|marketing|equipe|grupo|cirurgia|pl[aá]stica|odontologia|ltda|semijoias?|joias?|joalheria|acess[oó]rios|boutique|moda|beauty|imobili[aá]ria|advocacia|arquitetura|fotografia|doces|restaurante|fam[ií]lia|mam[aã]e?|papai|amor|vida|trabalho|n[uú]mero\s+novo|sem\s+nome)\b/i;
 
   if (
     !profileName ||

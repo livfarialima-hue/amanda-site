@@ -94,6 +94,7 @@ function normalizeTurn(turn, now) {
       : turn.role === "user"
         ? "patient"
         : "bruna",
+    templateId: text(turn.templateId, 80).toLowerCase(),
   };
 }
 
@@ -191,6 +192,7 @@ export async function appendConversationTurn(
     eventId,
     at,
     source,
+    templateId,
   },
   {
     getStoreImpl = getStore,
@@ -244,6 +246,7 @@ export async function appendConversationTurn(
       eventId: normalizedEventId,
       at,
       source,
+      templateId,
     }, now);
     const nextConversation = {
       version: MEMORY_VERSION,
@@ -411,11 +414,13 @@ export function toOpenAIConversation(turns) {
       const hasValidAt =
         Boolean(turn.at) && Number.isFinite(parsedAt.getTime());
       const eventId = text(turn.eventId, 200);
+      const templateId = text(turn.templateId, 80).toLowerCase();
 
       return {
         role: turn.role === "assistant" ? "assistant" : "patient",
         text: text(turn.text, MAX_OPENAI_TURN_TEXT_LENGTH),
         ...(eventId ? { eventId } : {}),
+        ...(templateId ? { templateId } : {}),
         ...(hasValidAt ? { at: parsedAt.toISOString() } : {}),
         source:
           turn.source === "human"

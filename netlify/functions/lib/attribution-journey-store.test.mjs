@@ -108,7 +108,11 @@ function metaJourney(token = TOKEN) {
       page_path: "/avaliacao-facial/",
     },
     conversion_path: "meta_site_whatsapp",
-    cta: { page_path: "/blefaroplastia/", location: "hero" },
+    cta: {
+      page_path: "/blefaroplastia/",
+      location: "hero",
+      template_id: "procedure_evaluation_v1",
+    },
     click_ids: { gclid: "CjwKCAjwsrbTBhAvEiwA0Bpp4example" },
     confidence: "observed",
   };

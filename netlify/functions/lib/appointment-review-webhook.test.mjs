@@ -158,7 +158,7 @@ test("explicit availability request immediately prepares two real slots for revi
   }
 });
 
-test("durable retry of a standard availability template still asks for preference", async () => {
+test("a structured lifting prefill never asks for schedule preference", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -276,6 +276,7 @@ test("durable retry of a standard availability template still asks for preferenc
             from: "+5511980891082",
             to: "+5511961957144",
             type: "text",
+            template_id: "procedure_evaluation_v1",
             customerProfile: { name: "Arlete Aparecida" },
             text: {
               body:
@@ -295,9 +296,18 @@ test("durable retry of a standard availability template still asks for preferenc
     assert.equal(response.status, 200);
     assert.equal(body.duplicate, true);
     assert.equal(body.aiActiveQueued, true);
-    assert.equal(body.appointmentNeedsPreference, true);
-    assert.equal(body.appointmentPreferenceReplySent, true);
+    assert.equal(body.appointmentNeedsPreference, false);
+    assert.equal(body.appointmentPreferenceReplySent, false);
     assert.equal(body.appointmentReviewQueued, false);
+    assert.equal(body.automation.marketingPrefill, true);
+    const appendLeadRequest = requests
+      .filter((request) => request.url === SHEETS_URL)
+      .map((request) => JSON.parse(request.options.body))
+      .find((requestBody) => requestBody.action === "append_lead");
+    assert.equal(
+      appendLeadRequest?.lead?.templateId,
+      "procedure_evaluation_v1",
+    );
 
     const patientRequests = requests.filter(
       (request) =>
@@ -308,8 +318,13 @@ test("durable retry of a standard availability template still asks for preferenc
     assert.equal(
       JSON.parse(patientRequests[0].options.body).text.body,
       "Olá, Arlete! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-        "Claro, posso te ajudar com o agendamento. Quais dias da semana e qual " +
-        "período — manhã ou tarde — costumam funcionar melhor para você?",
+        "Posso te orientar sobre lifting facial. " +
+        "O que você gostaria de entender primeiro?",
+    );
+    assert.equal(
+      requests.some((request) =>
+        request.url === "https://api.openai.com/v1/responses"),
+      false,
     );
   } finally {
     globalThis.fetch = originalFetch;

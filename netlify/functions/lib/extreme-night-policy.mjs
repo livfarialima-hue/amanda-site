@@ -155,7 +155,7 @@ export function buildExtremeNightAcknowledgement({
   const topic = topicDescription({ procedure, currentText, messageType });
 
   if (String(messageType || "").toLowerCase() === "image") {
-    return `${opening} Obrigada por confiar em nós e compartilhar a foto. Há boas opções que podem ajudar, mas uma avaliação à distância não permite definir com segurança o melhor caminho. Como já é madrugada, retomaremos por aqui pela manhã.`;
+    return `${opening} Obrigada por compartilhar sua foto e confiar na equipe. Deixei sua mensagem sinalizada para acompanharmos com atenção. Como já é madrugada, seguimos por aqui pela manhã.`;
   }
 
   return topic
@@ -219,7 +219,7 @@ export function buildContextualHumanSuggestion({
     return `${opening} Li sua mensagem e quero priorizar sua segurança. Se os sintomas forem intensos, estiverem piorando rapidamente ou você se sentir em risco, procure atendimento médico de urgência. Sua mensagem também será revisada pela equipe.`;
   }
   if (/foto|imagem/.test(text)) {
-    return `${opening} Obrigada por confiar em nós e compartilhar a foto — sei que este é um momento pessoal. Há boas opções que podem ajudar a melhorar sua queixa, mas uma foto e uma avaliação à distância não permitem examinar tudo o que importa nem definir com segurança o melhor caminho.`;
+    return `${opening} Obrigada por compartilhar sua foto e confiar na equipe. Entendo que você queira uma orientação cuidadosa. A Dra. Amanda poderá avaliar pessoalmente os detalhes importantes e conversar com você sobre as possibilidades que façam sentido.`;
   }
   if (/valor da consulta|consulta.*(?:valor|preco)|quanto.*consulta/.test(text)) {
     return `${opening} A consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal.`;

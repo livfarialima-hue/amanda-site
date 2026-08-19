@@ -496,6 +496,7 @@ test("manual commercial follow-up receives an opaque approval button for Bruna",
     "BAUG",
   );
   assert.match(confirmationPage, /<form method="get"/);
+  assert.match(confirmationPage, /target="_top"/);
   assert.match(confirmationPage, /name="confirmar" value="1"/);
   assert.match(confirmationPage, /Mensagem revisável pela equipe/);
 });

@@ -25,13 +25,15 @@ test("acknowledges a patient photo gently without interpreting it", () => {
     firstReply,
     /^Olá, Mariana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
   );
-  assert.match(firstReply, /Obrigada por confiar em nós/i);
-  assert.match(firstReply, /momento pessoal/i);
-  assert.match(firstReply, /Há boas opções/i);
-  assert.match(firstReply, /avaliação à distância/i);
-  assert.match(firstReply, /encaminhá-la à equipe/i);
-  assert.match(firstReply, /sem concluir diagnóstico/i);
-  assert.match(firstReply, /apenas pela imagem/i);
+  assert.match(firstReply, /Obrigada por compartilhar sua foto e confiar na gente/i);
+  assert.match(firstReply, /boas abordagens que podem ajudar a tratar/i);
+  assert.match(firstReply, /Vou mostrar a foto à Dra\. Amanda/i);
+  assert.match(firstReply, /respeitando suas características/i);
+  assert.doesNotMatch(firstReply, /momento pessoal|algo tão sensível/i);
+  assert.doesNotMatch(
+    firstReply,
+    /sem concluir diagnóstico|sem concluir indicação|apenas pela imagem/i,
+  );
   assert.doesNotMatch(firstReply, /defeito|corrigir|bonit[ao]|feio/i);
 
   const continuation = buildImageAcknowledgementReply({
@@ -40,7 +42,7 @@ test("acknowledges a patient photo gently without interpreting it", () => {
     introduceBruna: false,
   });
   assert.doesNotMatch(continuation, /Olá|Eu sou a Bruna/);
-  assert.match(continuation, /^Obrigada por confiar em nós/i);
+  assert.match(continuation, /^Obrigada por compartilhar sua foto/i);
 });
 
 test("suggests an empathetic human response for intense body distress", () => {
@@ -111,15 +113,44 @@ test("opens a prefilled site inquiry without assuming scheduling intent", () => 
 
   assert.equal(
     reply,
-    "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre avaliação facial. " +
-      "O que você gostaria de entender primeiro sobre avaliação facial?",
+      "O que você gostaria de entender primeiro?",
   );
   assert.doesNotMatch(reply, /manhã|tarde|noite|horário/i);
   assert.doesNotMatch(reply, /obrigada pela confiança/i);
 });
 
-test("asks the name instead of addressing a long concatenated profile identifier", () => {
+test("future otoplasty prefills receive a conversational response without agenda", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Carla",
+    procedure: "otoplastia",
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Carla! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre otoplastia. O que você gostaria de entender primeiro?",
+  );
+  assert.doesNotMatch(reply, /agenda|agendar|horário|manhã|tarde/i);
+});
+
+test("uses the patient-recognized cervical name without treating the prefill as scheduling intent", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Maria",
+    procedure: "lifting_cervical",
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre cervicoplastia (lifting cervical). " +
+      "O que você gostaria de entender primeiro?",
+  );
+  assert.doesNotMatch(reply, /agenda|agendar|horário|manhã|tarde/i);
+});
+
+test("does not address or interrogate a profile identifier that is not a usable name", () => {
   const reply = buildMarketingPrefilledOpeningReply({
     patientName: "soniamariamontoromenezes",
     procedure: "lifting_facial",
@@ -128,11 +159,25 @@ test("asks the name instead of addressing a long concatenated profile identifier
 
   assert.equal(
     reply,
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-      "Posso te orientar sobre lifting facial. Como posso te chamar?",
+      "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre lifting facial. O que você gostaria de entender primeiro?",
   );
   assert.doesNotMatch(reply, /Soniamariamontoromenezes/i);
-  assert.doesNotMatch(reply, /O que você gostaria de entender primeiro/i);
+  assert.match(reply, /O que você gostaria de entender primeiro/i);
+});
+
+test("does not use the name of a business profile in the opening", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Monah Semijoias",
+    procedure: "lifting_facial",
+  });
+
+  assert.equal(
+    reply,
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre lifting facial. O que você gostaria de entender primeiro?",
+  );
+  assert.doesNotMatch(reply, /Monah|Semijoias/i);
 });
 
 test("sends only the requested official Instagram without adding a site or CTA", () => {
@@ -197,7 +242,10 @@ test("answers the approved lifting hospital fact without diverting to a name que
   });
 
   assert.match(cervicalReply, /^Olá! Eu sou a Bruna/);
-  assert.match(cervicalReply, /o lifting cervical é uma cirurgia realizada em hospital/i);
+  assert.match(
+    cervicalReply,
+    /a cervicoplastia \(lifting cervical\) é uma cirurgia realizada em hospital/i,
+  );
   assert.match(cervicalReply, /anestesista e equipe cirúrgica/i);
   assert.doesNotMatch(cervicalReply, /Como posso te chamar\?/i);
   assert.match(facialReply, /^Olá, Marina! Eu sou a Bruna/);

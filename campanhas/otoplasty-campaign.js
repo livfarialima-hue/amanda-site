@@ -5,12 +5,12 @@
     'otoplastia-infantil': {
       actionLabel: 'Entender a avaliação',
       reference: 'OT02',
-      message: 'Olá! Gostaria de entender como funciona a avaliação de otoplastia para uma criança ou adolescente e consultar a disponibilidade.\n\nRef. OT02'
+      message: 'Olá! Tenho interesse em otoplastia para criança ou adolescente com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.\n\nRef. OT02'
     },
     'otoplastia-adulto': {
       actionLabel: 'Entender a avaliação',
       reference: 'OT01',
-      message: 'Olá! Gostaria de entender como funciona a avaliação de otoplastia em adultos e consultar a disponibilidade.\n\nRef. OT01'
+      message: 'Olá! Tenho interesse em otoplastia em adultos com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.\n\nRef. OT01'
     }
   };
 
@@ -23,7 +23,9 @@
       try {
         var url = new URL(link.href, window.location.href);
         url.searchParams.set('text', journey.message);
+        link.dataset.procedure = procedure;
         link.dataset.originalReference = journey.reference;
+        link.dataset.templateId = 'procedure_evaluation_v1';
         link.href = url.toString();
         if (['hero', 'consulta', 'final'].indexOf(link.dataset.ctaLocation || '') !== -1 && !link.querySelector('svg')) {
           link.textContent = journey.actionLabel;

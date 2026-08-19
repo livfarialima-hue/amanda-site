@@ -491,7 +491,7 @@ function paginaAprovacaoRetomadaBot_(
     : "";
   const actionUrl = urlAplicativoRetomadas_();
   const botao = confirmToken && actionUrl
-    ? '<form method="get" action="' +
+    ? '<form method="get" target="_top" action="' +
       escaparHtmlRetomadas_(actionUrl) +
       '" style="margin:18px 0 0;"><input type="hidden" name="view" value="aprovar_retomada_bot"><input type="hidden" name="approval" value="' +
       escaparHtmlRetomadas_(confirmToken) +

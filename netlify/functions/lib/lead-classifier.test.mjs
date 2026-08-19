@@ -114,19 +114,51 @@ test("invalid administrative milestones are rejected", () => {
   });
 });
 
-test("marketing templates are treated as prefilled context", () => {
+test("only the structured template id marks marketing prefilled context", () => {
   assert.equal(
     isLikelyClassifierMarketingPrefill(
       "Gostaria de saber como funciona a consulta com a Dra. Amanda e consultar a disponibilidade.",
     ),
-    true,
+    false,
   );
   assert.equal(
     isLikelyClassifierMarketingPrefill(
-      "Quero consultar a disponibilidade para terça à tarde.",
+      { templateId: "procedure_evaluation_v1" },
     ),
-    false,
+    true,
   );
+});
+
+test("an isolated structured prefill can never qualify the lead", async () => {
+  const result = await runLeadClassifier(
+    {
+      phone: PHONE,
+      currentStatus: "Novo",
+      messages: [
+        {
+          direction: "IN",
+          text: "Olá! Tenho interesse em otoplastia com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.",
+          templateId: "procedure_evaluation_v1",
+        },
+      ],
+    },
+    {
+      env: {
+        OPENAI_API_KEY: "test-key",
+        OPENAI_CLASSIFIER_MODEL: "test-model",
+      },
+      fetchImpl: async () => new Response(
+        JSON.stringify(validResponse()),
+        { status: 200, headers: { "content-type": "application/json" } },
+      ),
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.classification.recommendedStatus, "Novo");
+  assert.equal(result.classification.appointmentOutcome, "none");
+  assert.equal(result.classification.procedureMilestone, "none");
+  assert.match(result.classification.evidence, /sem intenção pessoal posterior/i);
 });
 
 test("request is private, structured, bounded and excludes raw phone", async () => {

@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-19.1
+
+- Prefills de site e anúncio passaram a usar uma abertura neutra identificada por `template_id=procedure_evaluation_v1`; isoladamente, o template não qualifica, não gera conversão offline e não encaminha agenda. A primeira resposta pergunta o que a pessoa deseja entender, sem presumir prontidão nem usar nome de empresa como nome pessoal.
+- Fotos recebem uma resposta mais humana: agradecimento simples, confiança de que existem boas abordagens, informação clara de que a imagem será mostrada à Dra. Amanda e convite a uma avaliação cuidadosa, sem expor travas técnicas na mensagem à paciente.
+- A confirmação manual de retomada aberta pelo e-mail diário passa a navegar no contexto superior, evitando a tela quebrada dentro do frame do Apps Script. A opção `não retomar` continua bloqueando somente aquela tentativa, sem impedir um novo contexto futuro.
+- A jornada cervical usa `cervicoplastia (lifting cervical)` no site, no prefill e na primeira resposta, reconhecendo os dois nomes como o mesmo contexto sem concluir técnica ou indicação. A URL canônica e a estrutura do Google Ads foram preservadas; a conta já contém os termos de cervicoplastia no grupo correspondente.
+- Estado desta versão: publicação autorizada em 19/08/2026; testes, commit, atualização dos alvos canônicos, verificação e reconciliação da projeção do Drive em andamento.
+
 ## 2026-08-18.5
 
 - A conversa recente passou de 16 para 32 turnos e deixou de depender somente do cache temporário da Netlify: quando a memória estiver vazia ou expirada, o bot reidrata o contexto a partir do ledger canônico `_WHATSAPP_MENSAGENS` da oportunidade.

@@ -438,15 +438,14 @@ test("prefilled Google consultation text is treated as campaign context", () => 
     messageType: "text",
     reference: "G26F01",
     platform: "Google",
+    templateId: "procedure_evaluation_v1",
   });
 
   assert.equal(isConsultationInformationRequest(text), true);
   assert.equal(isAvailabilityRequest(text), true);
   assert.equal(
     isLikelyMarketingPrefilledMessage({
-      text,
-      reference: "G26F01",
-      platform: "Google",
+      templateId: "procedure_evaluation_v1",
     }),
     true,
   );
@@ -464,6 +463,7 @@ test("prefilled Meta procedure text is context while a real consultation questio
     messageType: "text",
     reference: "M26F01W-C06H01",
     platform: "Meta",
+    templateId: "procedure_evaluation_v1",
   });
   const realQuestionPlan = planAutomation({
     text: "Como funciona a avalia\u00e7\u00e3o?",
@@ -474,9 +474,7 @@ test("prefilled Meta procedure text is context while a real consultation questio
 
   assert.equal(
     isLikelyMarketingPrefilledMessage({
-      text: prefilled,
-      reference: "M26F01W-C06H01",
-      platform: "Meta",
+      templateId: "procedure_evaluation_v1",
     }),
     true,
   );
@@ -537,6 +535,7 @@ test("procedure-page CTA codes preserve cervical, blepharoplasty and otoplasty c
       messageType: "text",
       reference,
       platform: "Orgânico/Conteúdo",
+      templateId: "procedure_evaluation_v1",
     });
 
     assert.equal(plan.route, "standard_reply", reference);
@@ -911,6 +910,7 @@ test("the generic LIV site service picker is not misclassified as cardiology", (
     messageType: "text",
     reference: "WHATSAPP-DIRETO-SEM-CODIGO",
     platform: "WhatsApp direto",
+    templateId: "procedure_evaluation_v1",
   });
 
   assert.equal(plan.route, "standard_reply");
@@ -951,11 +951,14 @@ test("prefilled site availability text is context rather than scheduling intent"
     messageType: "text",
     reference: "Avaliação facial",
     platform: "Orgânico/Conteúdo",
+    templateId: "procedure_evaluation_v1",
   });
 
   assert.equal(isAvailabilityRequest(text), true);
   assert.equal(
-    isLikelyMarketingPrefilledMessage({ text }),
+    isLikelyMarketingPrefilledMessage({
+      templateId: "procedure_evaluation_v1",
+    }),
     true,
   );
   assert.equal(plan.route, "standard_reply");
@@ -974,14 +977,13 @@ test("standard Google lifting message treats values as template context", () => 
     messageType: "text",
     reference: "G26F01-820414650683-lifting-facial-preco",
     platform: "Google",
+    templateId: "procedure_evaluation_v1",
   });
 
   assert.equal(isAvailabilityRequest(text), true);
   assert.equal(
     isLikelyMarketingPrefilledMessage({
-      text,
-      reference: "G26F01-820414650683-lifting-facial-preco",
-      platform: "Google",
+      templateId: "procedure_evaluation_v1",
     }),
     true,
   );
@@ -990,6 +992,17 @@ test("standard Google lifting message treats values as template context", () => 
   assert.equal(plan.procedure, "lifting_facial");
   assert.equal(plan.automaticAllowed, true);
   assert.equal(plan.priceMentionIsTemplateContext, true);
+});
+
+test("phrases and attribution codes alone never mark an automatic prefill", () => {
+  assert.equal(
+    isLikelyMarketingPrefilledMessage({
+      text: "Quero consultar a disponibilidade. Ref. M26F01W-C06H01",
+      reference: "M26F01W-C06H01",
+      platform: "Meta",
+    }),
+    false,
+  );
 });
 
 test("an explicit price question added to the standard availability template is preserved", () => {

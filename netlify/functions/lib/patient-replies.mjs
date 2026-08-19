@@ -6,13 +6,13 @@ import {
 
 const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
-  lifting_cervical: "lifting cervical",
+  lifting_cervical: "cervicoplastia (lifting cervical)",
   blefaroplastia: "blefaroplastia",
   frontoplastia: "frontoplastia",
   otoplastia: "otoplastia",
   avaliacao_facial: "avaliação facial",
   lip_lifting: "lifting labial",
-  lipo_papada: "lipoaspiração de papada",
+  lipo_papada: "lipo de papada",
   rinoplastia: "rinoplastia",
   lipoaspiracao: "lipoaspiração",
   abdominoplastia: "abdominoplastia",
@@ -122,19 +122,13 @@ export function buildMarketingPrefilledOpeningReply({
   introduceBruna = true,
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
-  const hasUsableName = Boolean(firstName(patientName));
   const introduction = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
   const context = procedureLabel
     ? `Posso te orientar sobre ${procedureLabel}.`
     : "Posso te orientar.";
-  const question =
-    introduceBruna && !hasUsableName
-      ? "Como posso te chamar?"
-      : procedureLabel
-        ? `O que você gostaria de entender primeiro sobre ${procedureLabel}?`
-        : "O que você gostaria de entender primeiro?";
+  const question = "O que você gostaria de entender primeiro?";
 
   return `${introduction} ${context} ${question}`;
 }
@@ -299,9 +293,10 @@ export function buildImageAcknowledgementReply({
       : "",
   ].filter(Boolean).join(" ");
   const acknowledgement = [
-    "Obrigada por confiar em nós e compartilhar a foto — sei que este é um momento pessoal.",
-    "Há boas opções que podem ajudar a melhorar o que você relatou, mas uma foto e uma avaliação à distância não permitem examinar tudo o que importa nem definir com segurança o melhor caminho.",
-    "Vou encaminhá-la à equipe para que seja avaliada com o cuidado necessário, sem concluir diagnóstico ou indicação apenas pela imagem.",
+    "Obrigada por compartilhar sua foto e confiar na gente.",
+    "Entendo que você queira saber o que pode ser feito, e acredito que temos boas abordagens que podem ajudar a tratar esse tipo de queixa.",
+    "Vou mostrar a foto à Dra. Amanda para que ela veja o que você gostaria de melhorar.",
+    "Em uma avaliação, ela poderá observar todos os detalhes com cuidado e conversar com você sobre o caminho que faça mais sentido, sempre respeitando suas características.",
   ].join(" ");
 
   return [opening, acknowledgement].filter(Boolean).join(" ");
@@ -349,7 +344,7 @@ export function buildPatientReply({
       procedure === "lifting_facial"
         ? "o lifting facial"
         : procedure === "lifting_cervical"
-          ? "o lifting cervical"
+          ? "a cervicoplastia (lifting cervical)"
           : "o lifting cervical e o lifting facial";
     return [
       hello,

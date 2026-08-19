@@ -70,6 +70,7 @@ test("a patient turn returns the previous history and persists safely", async ()
       eventId: "event-1",
       at: "2026-07-26T20:00:00.000Z",
       source: "patient",
+      templateId: "procedure_evaluation_v1",
     },
     {
       getStoreImpl: blobs.getStoreImpl,
@@ -83,6 +84,10 @@ test("a patient turn returns the previous history and persists safely", async ()
   assert.equal(
     blobs.value().turns[0].text,
     "Quero saber sobre blefaroplastia",
+  );
+  assert.equal(
+    blobs.value().turns[0].templateId,
+    "procedure_evaluation_v1",
   );
 });
 

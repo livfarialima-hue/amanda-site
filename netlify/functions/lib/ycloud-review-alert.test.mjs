@@ -678,16 +678,33 @@ test("image webhook acknowledges the photo as Bruna and keeps human review", asy
     assert.equal(responseBody.automation.route, "human_review");
     assert.equal(responseBody.reviewAlertQueued, true);
     assert.equal(responseBody.imageAcknowledgementQueued, true);
-    assert.equal(responseBody.imageAcknowledgementSent, true);
+    assert.equal(
+      responseBody.imageAcknowledgementSent,
+      true,
+      JSON.stringify(responseBody),
+    );
     assert.ok(patientReply);
     assert.match(
       patientReply.text.body,
       /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
     );
-    assert.match(patientReply.text.body, /Obrigada por confiar em nós/i);
-    assert.match(patientReply.text.body, /Há boas opções/i);
-    assert.match(patientReply.text.body, /avaliação à distância/i);
-    assert.match(patientReply.text.body, /sem concluir diagnóstico/i);
+    assert.match(
+      patientReply.text.body,
+      /Obrigada por compartilhar sua foto e confiar na gente/i,
+    );
+    assert.match(
+      patientReply.text.body,
+      /boas abordagens que podem ajudar a tratar/i,
+    );
+    assert.match(
+      patientReply.text.body,
+      /Vou mostrar a foto à Dra\. Amanda/i,
+    );
+    assert.match(patientReply.text.body, /respeitando suas características/i);
+    assert.doesNotMatch(
+      patientReply.text.body,
+      /momento pessoal|sem concluir diagnóstico|apenas pela imagem/i,
+    );
     assert.ok(
       ycloudBodies.some(
         (body) =>

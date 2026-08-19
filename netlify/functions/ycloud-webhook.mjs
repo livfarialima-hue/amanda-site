@@ -5,8 +5,9 @@ import {
   isAvailabilityRequest,
   isConsultationInformationRequest,
   isConsultationPriceRequest,
-  isLikelyMarketingPrefilledMessage,
   isSchedulingRequest,
+  MARKETING_PREFILL_TEMPLATE_ID,
+  normalizeMarketingPrefillTemplateId,
   normalizeAutomationMode,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
@@ -386,6 +387,38 @@ const META_AD_REFERENCES = Object.freeze({
   // M26C02S | C07H01 | Lifting cervical | Site -> WhatsApp
   "120251249058760627": "M26C02S-C07H01",
 });
+
+const META_AD_PREFILL_TEMPLATES = Object.freeze(
+  Object.fromEntries(
+    Object.keys(META_AD_REFERENCES).map((sourceId) => [
+      sourceId,
+      MARKETING_PREFILL_TEMPLATE_ID,
+    ]),
+  ),
+);
+
+function extractPrefillTemplateId(message, journey) {
+  const referral = message?.referral;
+  const explicitTemplateId =
+    message?.template_id ||
+    message?.templateId ||
+    message?.context?.template_id ||
+    referral?.template_id ||
+    referral?.templateId ||
+    journey?.cta?.template_id ||
+    "";
+  const normalizedExplicit = normalizeMarketingPrefillTemplateId(
+    explicitTemplateId,
+  );
+  if (normalizedExplicit) return normalizedExplicit;
+
+  const sourceId = String(
+    referral?.source_id || referral?.sourceId || "",
+  ).trim();
+  return normalizeMarketingPrefillTemplateId(
+    META_AD_PREFILL_TEMPLATES[sourceId],
+  );
+}
 
 function matchMetaAdReference(message) {
   const sourceId = String(
@@ -1301,15 +1334,9 @@ function isAppointmentReviewCandidate(
   text,
   recentConversation = [],
 ) {
-  const standaloneMarketingPrefilledMessage =
-    plan?.reason === "known_procedure" &&
-    isLikelyMarketingPrefilledMessage({ text });
-  const prefilledAvailabilityRequest =
-    standaloneMarketingPrefilledMessage &&
-    isAvailabilityRequest(text);
+  if (plan?.marketingPrefill === true) return false;
 
   return Boolean(
-    (!standaloneMarketingPrefilledMessage || prefilledAvailabilityRequest) &&
     plan?.professional === "amanda" &&
       (
         isSchedulingRequest(text) ||
@@ -1817,12 +1844,7 @@ async function completeOpenAIActive({
     });
     const standaloneMarketingPrefilledMessage =
       plan?.route === "standard_reply" &&
-      plan?.reason === "known_procedure" &&
-      isLikelyMarketingPrefilledMessage({
-        text: input.text,
-        platform: input.platform,
-        referralContext: input.referralContext,
-      });
+      plan?.marketingPrefill === true;
     const officialInstagramRequest =
       plan?.reason === "official_instagram_request";
     const campaignReferenceQuestion =
@@ -1850,6 +1872,7 @@ async function completeOpenAIActive({
           referenceCategory: input.referenceCategory,
           recentConversation: input.recentConversation,
           currentMessage: input.text,
+          currentTemplateId: input.templateId,
         })
       : null;
     const appointmentPreferenceBody = appointmentNeedsPreference
@@ -2043,26 +2066,29 @@ async function completeOpenAIActive({
           usage: null,
         }
       : null;
-    const semanticResult = await runOpenAIShadow({
-      ...input,
-      policyHints: {
-        ...plan,
-        deterministicReplyCode:
-          deterministicReplyResult?.decision?.replyCode || "",
-        deterministicReplyPreview:
-          deterministicReplyResult?.decision?.suggestedReply || "",
-        deterministicReplyProfessional:
-          deterministicReplyResult?.decision?.professional || "",
-        deterministicReplyProcedure:
-          deterministicReplyResult?.decision?.procedure || "",
-      },
-      replyContract: conversationAction?.replyContract,
-    });
+    const semanticResult = standaloneMarketingPrefilledMessage
+      ? deterministicReplyResult
+      : await runOpenAIShadow({
+          ...input,
+          policyHints: {
+            ...plan,
+            deterministicReplyCode:
+              deterministicReplyResult?.decision?.replyCode || "",
+            deterministicReplyPreview:
+              deterministicReplyResult?.decision?.suggestedReply || "",
+            deterministicReplyProfessional:
+              deterministicReplyResult?.decision?.professional || "",
+            deterministicReplyProcedure:
+              deterministicReplyResult?.decision?.procedure || "",
+          },
+          replyContract: conversationAction?.replyContract,
+        });
     const selectedDeterministicReply =
+      standaloneMarketingPrefilledMessage ||
       semanticDecisionConfirmsDeterministicReply(
-        semanticResult,
-        deterministicReplyResult,
-      );
+          semanticResult,
+          deterministicReplyResult,
+        );
     const deterministicReplyContextMismatch = Boolean(
       deterministicReplyResult &&
         semanticResult?.status === "completed" &&
@@ -3512,6 +3538,10 @@ export async function handleYCloudWebhook(
     journeyResolution.journey,
   );
   const referralContext = extractReferralContext(message);
+  const prefillTemplateId = extractPrefillTemplateId(
+    message,
+    journeyResolution.journey,
+  );
   const messageId = message.wamid || message.id || eventId;
   const lead = {
     eventId: String(eventId),
@@ -3526,6 +3556,7 @@ export async function handleYCloudWebhook(
     platform: attribution.platform,
     referenceCategory: attribution.referenceCategory,
     attributionFallbackReason: attribution.fallbackReason,
+    templateId: prefillTemplateId,
     ...attribution.clickIds,
   };
   if (attribution.journey) {
@@ -3550,6 +3581,7 @@ export async function handleYCloudWebhook(
     reference: attribution.reference,
     platform: attribution.platform,
     referralContext,
+    templateId: prefillTemplateId,
   });
 
   if (preliminaryAutomationPlan.route === "ignore") {
@@ -3573,6 +3605,7 @@ export async function handleYCloudWebhook(
         eventId: String(eventId),
         at: contactAt,
         source: "patient",
+        templateId: prefillTemplateId,
       });
       const appointmentSelection =
         detectPatientAppointmentSelection({
@@ -3730,6 +3763,7 @@ export async function handleYCloudWebhook(
       eventId: String(eventId),
       at: contactAt,
       source: "patient",
+      templateId: prefillTemplateId,
     });
     const volatileConversationExpired = memoryResult.expired === true;
     const shouldHydrateDurableHistory = Boolean(
@@ -4030,20 +4064,9 @@ export async function handleYCloudWebhook(
     ].includes(
       automationPlan.patientRelationship?.state,
     );
-  const marketingPrefilledAvailabilityRequest =
-    isAvailabilityRequest(text) &&
-    isLikelyMarketingPrefilledMessage({
-      text,
-      reference: attribution.reference,
-      platform: attribution.platform,
-      referralContext,
-    });
   const appointmentNeedsPreference =
     appointmentRequestCandidate &&
-    (
-      !isAvailabilityRequest(text) ||
-      marketingPrefilledAvailabilityRequest
-    ) &&
+    !isAvailabilityRequest(text) &&
     !isAppointmentOfferAcceptance(text, conversationHistory) &&
     !isAppointmentPreferenceReply(text, conversationHistory) &&
     !hasAppointmentPreferenceInConversation(
@@ -4355,6 +4378,7 @@ export async function handleYCloudWebhook(
         reference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
         procedure: automationPlan.procedure,
+        templateId: prefillTemplateId,
         referralContext,
         recentConversation: morningConversation,
         expectedHumanGeneration:
@@ -4427,6 +4451,7 @@ export async function handleYCloudWebhook(
         reference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
         procedure: humanContextPlan.procedure,
+        templateId: prefillTemplateId,
         referralContext,
         recentConversation: conversationHistoryWithCurrent,
         expectedHumanGeneration:
@@ -4692,12 +4717,7 @@ export async function handleYCloudWebhook(
   }
 
   const deterministicMarketingOpeningCandidate =
-    automationPlan.reason === "known_procedure" &&
-    isLikelyMarketingPrefilledMessage({
-      text,
-      platform: attribution.platform,
-      referralContext,
-    });
+    automationPlan.marketingPrefill === true;
   const learningContext =
     (
       semanticHumanContextContinuationCandidate ||
@@ -4774,6 +4794,7 @@ export async function handleYCloudWebhook(
         previousConversationState: conversationSemanticState,
         priorInteractionKnown: delivery.updated === true,
         referralContext,
+        templateId: prefillTemplateId,
         patientRelationship:
           patientRelationshipPromptContext(
             patientRelationship,
@@ -4820,6 +4841,7 @@ export async function handleYCloudWebhook(
         previousConversationState: conversationSemanticState,
         priorInteractionKnown: delivery.updated === true,
         referralContext,
+        templateId: prefillTemplateId,
         patientRelationship:
           patientRelationshipPromptContext(
             patientRelationship,
@@ -5050,6 +5072,7 @@ export async function handleYCloudWebhook(
       downstreamError: delivery.errorCode,
       automationMode,
       automationRoute: automationPlan.route,
+      marketingPrefill: automationPlan.marketingPrefill === true,
       conversationAction: conversationAction.action,
       conversationState: conversationAction.state,
       conversationOwner: conversationAction.owner,
@@ -5125,7 +5148,10 @@ export async function handleYCloudWebhook(
     automation: {
       mode: automationMode,
       route: automationPlan.route,
+      reason: automationPlan.reason,
       replyCode: automationPlan.replyCode,
+      marketingPrefill: automationPlan.marketingPrefill === true,
+      prefillTemplateId: automationPlan.prefillTemplateId || "",
       patientRelationship:
         automationPlan.patientRelationship?.state || "unknown",
     },

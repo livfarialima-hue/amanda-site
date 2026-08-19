@@ -35,6 +35,7 @@ test("durable history preserves role, authorship and bounded identity", async ()
                 source: "patient",
                 text: "Sim",
                 eventId: "patient-1",
+                templateId: "procedure_evaluation_v1",
                 at: "2026-08-18T18:01:00.000Z",
               },
             ],
@@ -49,6 +50,7 @@ test("durable history preserves role, authorship and bounded identity", async ()
   assert.equal(result.status, "completed");
   assert.deepEqual(result.turns.map((turn) => turn.source), ["human", "patient"]);
   assert.deepEqual(result.turns.map((turn) => turn.eventId), ["human-1", "patient-1"]);
+  assert.equal(result.turns[1].templateId, "procedure_evaluation_v1");
 });
 
 test("automatic replies are written to the canonical conversation ledger", async () => {

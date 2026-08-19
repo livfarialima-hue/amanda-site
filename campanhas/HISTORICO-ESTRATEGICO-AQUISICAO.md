@@ -6,6 +6,28 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 19 de agosto de 2026 — cervicoplastia como ponte para lifting cervical
+
+- **Status:** implementação local em validação; publicação autorizada, ainda sem alteração no Google Ads.
+- **Mudança:** apresentar `cervicoplastia (lifting cervical)` na entrada da página cervical, nos metadados, no FAQ, no prefill identificado e na primeira resposta da Bruna, preservando a URL canônica `/lifting-cervical/` e o planejamento individual.
+- **Motivo e evidência:** pacientes usam espontaneamente `cervicoplastia` com mais facilidade. A auditoria registrada da conta já encontrou `"cervicoplastia"` e `[cervicoplastia]` no grupo `AG_CERVICOPLASTIA`; adicionar novas palavras-chave agora duplicaria intenção sem evidência incremental.
+- **Hipótese:** a mesma linguagem em busca, página e conversa reduz dúvida terminológica e melhora continuidade sem prometer indicação.
+- **Métricas:** contatos cervicais válidos, continuidade após a primeira resposta, qualificados, consultas, termos de pesquisa e CTR; monitorar confusão com lipo de papada.
+- **Guardrails:** nenhuma mudança de orçamento, lance, campanha, grupo ou palavra-chave; cervicoplastia e lifting cervical identificam o contexto, não uma técnica ou indicação individual.
+- **Revisão:** 7 e 14 dias após publicação, quando houver volume suficiente; verificar o RSA vivo antes de qualquer teste de texto no Google Ads.
+- **Regra para manter ou reverter:** manter se compreensão e continuidade melhorarem sem perda de qualidade; reverter a ênfase se houver aumento consistente de tráfego não aderente, confusão clínica ou piora material da qualificação.
+
+## 19 de agosto de 2026 — prefill neutro e intenção pessoal antes de agenda ou qualificação
+
+- **Status:** implementação validada localmente em 19/08/2026 com 849/849 testes, build estático de 178 arquivos e checagem técnica de 44/44 URLs; nenhuma mensagem retroativa foi enviada e nenhuma plataforma foi publicada por esta entrada.
+- **Mudança:** substituir o prefill por uma abertura neutra, identificá-lo somente por `template_id=procedure_evaluation_v1`, responder perguntando o que a pessoa deseja entender primeiro e exigir uma manifestação pessoal posterior para qualificação, conversão offline ou agenda. Perfis de empresa ou marca não recebem nome na saudação. Otoplastia permanece coberta por regressão futura, sem resposta ao contato já atendido manualmente.
+- **Motivo e evidência:** três conversas reais mostraram um silêncio indevido em otoplastia e saltos mecânicos para agenda em lipo de papada e lifting, porque textos automáticos continham expressões de disponibilidade. Outro caso mostrou personalização inadequada com nome de marca.
+- **Hipótese:** separar tecnicamente contexto automático de intenção pessoal melhora naturalidade e reduz falsos sinais de prontidão sem perder respostas elegíveis.
+- **Métricas:** resposta ao primeiro contato elegível, continuidade após a abertura, qualificação com evidência pessoal, entrada válida em agenda, conversão offline válida, silêncios, saltos prematuros e uso indevido de nome comercial.
+- **Guardrails:** prefill isolado permanece `Novo`; nenhum horário, preferência, conversão ou qualificação nasce do template; agenda depende de pedido pessoal, aceite ou preferência; nenhum envio real em testes.
+- **Revisão:** conferir regressões antes do release e acompanhar os próximos contatos reais após eventual publicação.
+- **Regra para manter ou reverter:** manter com zero avanço indevido e resposta consistente nos três cenários; reverter diante de bloqueio recorrente de intenção pessoal clara, perda de resposta elegível ou regressão de atribuição.
+
 ## 18 de agosto de 2026 — IA como primeira instância de compreensão no WhatsApp
 
 - **Status:** versão `2026-08-18.3` publicada e verificada em produção no commit funcional `c392a743b2f00d751bf6dca8da54b991db0439ff`, deploy Netlify `6a84dea1cf780e00086eed7e`; **814/814 testes**, build local de 178 arquivos e 12 funções publicadas sem erros. A projeção ativa do Drive foi substituída no mesmo ID e conferida byte a byte pelo SHA-256 `ca67a341f86e59190f9be8fe31501f1be6b5615e01154a0ae585d13358cc8db0`. Nenhuma mensagem real de paciente foi enviada. Rollback: commit `c789914991f409c81320090872ac50f4ebc86136`, deploy `6a84534923558b0008961936`.

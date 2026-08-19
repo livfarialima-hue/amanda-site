@@ -337,10 +337,21 @@ test("lead normalization keeps only bounded attribution diagnostics", () => {
     platform: "Meta",
     referenceCategory: "meta_coded",
     attributionFallbackReason: "arbitrary_reason",
+    templateId: "procedure_evaluation_v1",
   });
 
   assert.equal(lead.referenceCategory, "meta_coded");
   assert.equal(lead.attributionFallbackReason, "");
+  assert.equal(lead.templateId, "procedure_evaluation_v1");
+  assert.equal(
+    normalizeLead_({
+      eventId: "event-invalid-template",
+      messageId: "message-invalid-template",
+      phone: "+5511900000000",
+      templateId: "free_text_template",
+    }).templateId,
+    "",
+  );
 });
 
 test("processed lead event persists campaign coverage and fallback reason", () => {

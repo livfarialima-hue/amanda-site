@@ -55,16 +55,16 @@ test("a cervical price inquiry receives one short contextual night receipt", () 
   );
 });
 
-test("a nighttime photo keeps empathy and the limits of distance evaluation", () => {
+test("a nighttime photo receives a short and human acknowledgement", () => {
   const reply = buildExtremeNightAcknowledgement({
     patientName: "Mariana",
     messageType: "image",
   });
 
-  assert.match(reply, /Obrigada por confiar em nós/i);
-  assert.match(reply, /Há boas opções/i);
-  assert.match(reply, /avaliação à distância/i);
+  assert.match(reply, /Obrigada por compartilhar sua foto e confiar na equipe/i);
+  assert.match(reply, /mensagem sinalizada/i);
   assert.match(reply, /pela manhã/i);
+  assert.doesNotMatch(reply, /momento pessoal|sem concluir diagnóstico/i);
 });
 
 test("the morning opening uses the actual papada and value context", () => {

@@ -1643,6 +1643,11 @@ function normalizeLead_(input) {
     opportunityId: safeText_(input.opportunityId, 120),
     name: safeText_(input.name, 120),
     text: safeText_(input.text, 4000),
+    templateId:
+      String(input.templateId || "").trim().toLowerCase() ===
+      "procedure_evaluation_v1"
+        ? "procedure_evaluation_v1"
+        : "",
     attribution,
   };
 }

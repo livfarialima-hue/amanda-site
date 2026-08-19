@@ -275,11 +275,16 @@ function isClinicTurn(turn) {
   );
 }
 
-function isMeaningfulPatientReply(text) {
+function isMeaningfulPatientReply(value, explicitTemplateId = "") {
+  const text = value && typeof value === "object" ? value.text : value;
+  const templateId =
+    value && typeof value === "object"
+      ? value.templateId
+      : explicitTemplateId;
   const normalized = foldConversationText(text);
 
   if (!normalized || normalized.length < 8) return false;
-  if (isLikelyMarketingPrefilledMessage({ text })) return false;
+  if (isLikelyMarketingPrefilledMessage({ templateId })) return false;
 
   return !/^(?:oi|ola|sim|nao|ok|certo|entendi|obrigad[oa]|perfeito|combinado|tudo bem|ta bom|beleza)[!,. ]*$/i.test(
     normalized,
@@ -391,6 +396,7 @@ export function getRecommendedSiteResource({
   referenceCategory,
   recentConversation,
   currentMessage,
+  currentTemplateId = "",
 }) {
   if (cameFromWebsite(referenceCategory)) return null;
 
@@ -405,11 +411,11 @@ export function getRecommendedSiteResource({
     const hasEarlierMeaningfulPatientReply = conversation.some(
       (turn) =>
         isPatientTurn(turn) &&
-        isMeaningfulPatientReply(turn?.text),
+        isMeaningfulPatientReply(turn),
     );
 
     if (!hasClinicReply) return null;
-    if (!isMeaningfulPatientReply(currentMessage)) return null;
+    if (!isMeaningfulPatientReply(currentMessage, currentTemplateId)) return null;
     if (isBlockedProactiveLinkMoment(currentMessage)) return null;
     if (
       isConsultationInformationQuestion(currentMessage) &&

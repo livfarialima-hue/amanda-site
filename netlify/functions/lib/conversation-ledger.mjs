@@ -26,6 +26,7 @@ function normalizeTurn(turn) {
     source,
     text,
     eventId: boundedText(turn.eventId, 200),
+    templateId: boundedText(turn.templateId, 80).toLowerCase(),
     at: Number.isFinite(parsedAt.getTime())
       ? parsedAt.toISOString()
       : new Date(0).toISOString(),
@@ -76,6 +77,7 @@ export async function recordDurableConversationTurn(
     source = "bruna",
     opportunityId = "",
     professional = "",
+    templateId = "",
   },
   { callSheetsImpl = callClassificationSheets } = {},
 ) {
@@ -96,6 +98,7 @@ export async function recordDurableConversationTurn(
         : "bruna",
       opportunityId: boundedText(opportunityId, 120),
       professional: boundedText(professional, 80),
+      templateId: boundedText(templateId, 80).toLowerCase(),
     },
   }, { timeoutMs: 4_000 });
 

@@ -264,7 +264,15 @@ test("playbook handles appearance insecurity without exploiting it", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Quando a pessoa enviar uma foto do rosto ou do corpo, reconheça com delicadeza a confiança e a vulnerabilidade/,
+    /Quando a pessoa enviar uma foto do rosto ou do corpo, agradeça de forma simples/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não presuma que o momento é íntimo, sensível ou vulnerável/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não exponha frases técnicas como "sem concluir diagnóstico ou indicação apenas pela imagem"/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -295,6 +303,26 @@ test("playbook ignores commercial and unrelated approaches while preserving cont
   assert.match(
     CONVERSATION_GUIDELINES,
     /risco clínico, cuidado em andamento ou dado operacional protegido, use human_review/,
+  );
+});
+
+test("playbook treats structured prefills only as context", () => {
+  assert.match(CONVERSATION_GUIDELINES, /templateId procedure_evaluation_v1/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /nunca basta para qualificar o lead, gerar conversão offline, encaminhar agenda/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /O que você gostaria de entender primeiro\?/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /perfil parecer empresa ou marca, responda normalmente sem personalização nominal/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Só peça dias e período depois que a pessoa escrever por conta própria/,
   );
 });
 

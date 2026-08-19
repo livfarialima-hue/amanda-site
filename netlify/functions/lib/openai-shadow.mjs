@@ -737,6 +737,7 @@ export async function runOpenAIShadow(
     recentConversation,
     previousConversationState,
     referralContext,
+    templateId,
     policyHints,
     patientRelationship,
     learningContext,
@@ -791,6 +792,7 @@ export async function runOpenAIShadow(
             referenceCategory,
             recentConversation: normalizedConversation,
             currentMessage: text,
+            currentTemplateId: templateId,
           });
 
   try {

@@ -57,6 +57,13 @@ const AVAILABILITY_REQUEST_PATTERN =
 const STANDARD_PRICE_AVAILABILITY_TEMPLATE_PATTERN =
   /^ola,?\s+li sobre (?:os\s+)?(?:valor(?:es)?|precos?) (?:de|do|da) .{2,120}? e gostaria de (?:consultar|ver) (?:os\s+)?horarios para uma avaliacao com a dra\.? amanda\.?(?:\s+ref(?:erencia)?\.?\s*:?\s*[a-z0-9-]+)?(?:\s+jid\s*:\s*[a-z0-9_-]+)?$/i;
 
+export const MARKETING_PREFILL_TEMPLATE_ID = "procedure_evaluation_v1";
+
+export function normalizeMarketingPrefillTemplateId(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  return normalized === MARKETING_PREFILL_TEMPLATE_ID ? normalized : "";
+}
+
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
@@ -448,57 +455,9 @@ export function isInsuranceAcceptanceRequest(text) {
 }
 
 export function isLikelyMarketingPrefilledMessage({
-  text,
-  reference,
-  platform,
-  referralContext,
+  templateId,
 } = {}) {
-  const normalizedText = foldMarketingText(text);
-  const sourceContext = foldMarketingText(
-    [
-      platform,
-      reference,
-      referralContext && typeof referralContext === "object"
-        ? JSON.stringify(referralContext)
-        : referralContext,
-    ].join(" "),
-  );
-  const hasEmbeddedAttribution =
-    /\bgbraid\s*:|\bref\.?(?:\s*:)?\s*[a-z0-9-]{5,}|\breferencia\s*:|\borigem do contato\s*:\s*site liv faria lima/i.test(
-      normalizedText,
-    );
-  const hasMarketingSource =
-    hasEmbeddedAttribution ||
-    /\b(?:google|meta|facebook|instagram)\b/i.test(sourceContext) ||
-    /\b(?:g26|m26|(?:lf|lc|bf|ot)\d{2}|c0[16])\b/i.test(
-      sourceContext,
-    );
-
-  if (!hasMarketingSource) return false;
-
-  const googleConsultationTemplate =
-    /\bgostaria de saber como funciona a consulta com a dra\.? amanda\b/i.test(
-      normalizedText,
-    ) &&
-    /\bconsultar a disponibilidade\b/i.test(normalizedText);
-  const metaProcedureTemplate =
-    /\b(?:quero|gostaria de) saber sobre .{2,100}\bcom a dra\.? amanda\b/i.test(
-      normalizedText,
-    );
-  const siteConsultationTemplate =
-    /\bgostaria de (?:consultar os horarios|ver horarios)\b/i.test(
-      normalizedText,
-    ) &&
-    /\b(?:consulta|avaliacao|dra\.? amanda)\b/i.test(normalizedText);
-  const siteServicePickerTemplate =
-    isSiteServicePickerPrefill(normalizedText);
-
-  return (
-    googleConsultationTemplate ||
-    metaProcedureTemplate ||
-    siteConsultationTemplate ||
-    siteServicePickerTemplate
-  );
+  return Boolean(normalizeMarketingPrefillTemplateId(templateId));
 }
 
 export function enrichAutomationPlanFromConversation(
@@ -678,6 +637,7 @@ export function planAutomation({
   reference,
   platform,
   referralContext,
+  templateId,
 }) {
   const normalizedText = String(text || "").trim();
   const normalizedType = String(messageType || "text").toLowerCase();
@@ -787,11 +747,9 @@ export function planAutomation({
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
   const marketingPrefilledMessage =
     isLikelyMarketingPrefilledMessage({
-      text: normalizedText,
-      reference,
-      platform,
-      referralContext,
+      templateId,
     });
+  const prefillTemplateId = normalizeMarketingPrefillTemplateId(templateId);
   const priceMentionIsTemplateContext =
     marketingPrefilledMessage &&
     STANDARD_PRICE_AVAILABILITY_TEMPLATE_PATTERN.test(
@@ -886,10 +844,8 @@ export function planAutomation({
     };
   }
 
-  // Marketing templates can mention "valores" as source context without the
-  // patient having written a new price question. Keep the template on its
-  // procedure-opening route so the webhook can collect the scheduling
-  // preference promised by the standard message.
+  // A mensagem automática é somente contexto de origem. Nenhuma palavra do
+  // template conta como pergunta pessoal de preço ou intenção de agenda.
   if (asksPrice && !priceMentionIsTemplateContext) {
     return {
       route: "standard_reply",
@@ -911,6 +867,8 @@ export function planAutomation({
       professional: null,
       procedure: null,
       automaticAllowed: true,
+      marketingPrefill: true,
+      prefillTemplateId,
     };
   }
 
@@ -923,6 +881,8 @@ export function planAutomation({
       procedure: procedure.key,
       automaticAllowed: true,
       priceMentionIsTemplateContext,
+      marketingPrefill: marketingPrefilledMessage,
+      prefillTemplateId,
     };
   }
 
