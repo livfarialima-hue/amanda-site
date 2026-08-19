@@ -45,6 +45,41 @@ function urls(value) {
   return limited(value).match(/https?:\/\/[^\s)]+/gi) || [];
 }
 
+function withoutLinkBearingSentences(value) {
+  const linkMarker = "\uE000LIV_LINK\uE001";
+  const marked = String(value || "").replace(
+    /https?:\/\/[^\s)]+/gi,
+    (match) => `${linkMarker}${/[.!?]$/.test(match) ? match.slice(-1) : ""}`,
+  );
+  const kept = marked
+    .split(/(?:\r?\n)+|(?<=[.!?])\s+/u)
+    .filter((sentence) => !sentence.includes(linkMarker))
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  return kept
+    .join(" ")
+    .replace(/\s+([,.;!?])/g, "$1")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+export function conformOutboundReplyToContract({
+  body,
+  conversationAction,
+}) {
+  const reply = String(body || "").trim();
+  const maxLinks = conversationAction?.replyContract?.maxLinks;
+  if (
+    ![0, "0"].includes(maxLinks) ||
+    urls(reply).length === 0
+  ) {
+    return reply;
+  }
+
+  return withoutLinkBearingSentences(reply);
+}
+
 function conversationContainsFacialPriceGuide(recentConversation) {
   return (Array.isArray(recentConversation)
     ? recentConversation
@@ -633,8 +668,12 @@ export async function sendControlledPatientReply(
     now = Date.now(),
   } = {},
 ) {
-  const validation = validateOutboundReply({
+  const conformedBody = conformOutboundReplyToContract({
     body,
+    conversationAction,
+  });
+  const validation = validateOutboundReply({
+    body: conformedBody,
     currentText,
     recentConversation,
     conversationAction,
@@ -688,6 +727,7 @@ export async function sendControlledPatientReply(
     });
     return {
       ...delivery,
+      body: validation.body,
       conversationLedgerStatus: ledger.status,
     };
   }

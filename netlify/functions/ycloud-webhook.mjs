@@ -2466,10 +2466,13 @@ async function completeOpenAIActive({
     }
 
     if (replyResult.status === "completed") {
+      const deliveredReplyBody =
+        String(replyResult.body || "").trim() ||
+        activeResult.decision.suggestedReply;
       const memoryResult = await appendConversationTurn({
         phone: to,
         role: "assistant",
-        text: activeResult.decision.suggestedReply,
+        text: deliveredReplyBody,
         eventId: `${input.eventId}:bruna`,
         source: "bruna",
       });

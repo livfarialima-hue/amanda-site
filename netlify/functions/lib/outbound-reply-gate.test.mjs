@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   claimOutboundReply,
+  conformOutboundReplyToContract,
   sendControlledPatientReply,
   validateOutboundReply,
 } from "./outbound-reply-gate.mjs";
@@ -626,6 +627,101 @@ test("controlled send uses the validated trimmed body", async () => {
   assert.equal(deliveredBody, "Claro. Posso ajudar com essa informação.");
   assert.equal(ledgerBody, deliveredBody);
   assert.equal(result.conversationLedgerStatus, "completed");
+});
+
+test("a zero-link continuation removes the link sentence and sends the useful answer", async () => {
+  const blobs = fakeBlobs();
+  let deliveredBody = "";
+  let ledgerBody = "";
+  const conversationAction = {
+    ...respond,
+    semanticReplyAuthorized: true,
+    semanticReplyCode: "CONTEXT-CONTINUE-01",
+    replyContract: {
+      maxQuestions: 0,
+      maxLinks: 0,
+      allowCta: false,
+      allowAppointmentConfirmation: false,
+    },
+  };
+  const generatedBody =
+    "O lifting cervical trata a flacidez do pescoço e melhora seu contorno. " +
+    "A indicação e o planejamento são individuais. " +
+    "Você pode conhecer mais no site: https://draamandaschroeder.com.br/lifting-cervical";
+
+  assert.equal(
+    conformOutboundReplyToContract({
+      body: generatedBody,
+      conversationAction,
+    }),
+    "O lifting cervical trata a flacidez do pescoço e melhora seu contorno. A indicação e o planejamento são individuais.",
+  );
+
+  const result = await sendControlledPatientReply(
+    {
+      from: "+5511000000000",
+      to: "+5511900000000",
+      eventId: "event-zero-link-continuation",
+      body: generatedBody,
+      currentText: "Lifting cervical",
+      recentConversation: [{
+        role: "assistant",
+        source: "bruna",
+        text:
+          "Posso te orientar sobre cervicoplastia (lifting cervical). O que você gostaria de entender primeiro?",
+      }],
+      conversationAction,
+    },
+    {
+      ...blobs,
+      sendYCloudPatientTextImpl: async ({ body }) => {
+        deliveredBody = body;
+        return { status: "completed", errorCode: "none" };
+      },
+      recordDurableConversationTurnImpl: async ({ text }) => {
+        ledgerBody = text;
+        return { status: "completed" };
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.body, deliveredBody);
+  assert.equal(ledgerBody, deliveredBody);
+  assert.doesNotMatch(deliveredBody, /https?:\/\//i);
+});
+
+test("a zero-link contract still fails closed when the reply contains only a link", async () => {
+  let sends = 0;
+  const result = await sendControlledPatientReply(
+    {
+      from: "+5511000000000",
+      to: "+5511900000000",
+      eventId: "event-link-only",
+      body: "Veja https://draamandaschroeder.com.br/lifting-cervical",
+      currentText: "Lifting cervical",
+      conversationAction: {
+        ...respond,
+        replyContract: {
+          maxQuestions: 0,
+          maxLinks: 0,
+          allowCta: false,
+          allowAppointmentConfirmation: false,
+        },
+      },
+    },
+    {
+      ...fakeBlobs(),
+      sendYCloudPatientTextImpl: async () => {
+        sends += 1;
+        return { status: "completed", errorCode: "none" };
+      },
+    },
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.errorCode, "empty_reply");
+  assert.equal(sends, 0);
 });
 
 test("storage failure blocks the send instead of risking a duplicate", async () => {

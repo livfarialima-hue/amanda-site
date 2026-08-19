@@ -1,5 +1,12 @@
 # Histórico do pacote Bruna
 
+## 2026-08-19.3
+
+- Respostas com contrato `maxLinks: 0` agora retiram a frase que contém um link espontâneo antes da validação final, preservando a explicação útil sem transformar uma continuação simples em silêncio.
+- O texto efetivamente conformado é o mesmo enviado à paciente e gravado no ledger durável e na memória recente; a versão original com link não é persistida como se tivesse sido entregue.
+- Se a resposta contiver somente o link, ficar vazia depois da conformação ou violar qualquer outra trava, o envio continua bloqueado e segue para revisão humana.
+- Validação local candidata: **867/867 testes**, incluindo a regressão sintética `Lifting cervical` após a abertura de anúncio. Nenhuma mensagem real foi enviada.
+
 ## 2026-08-19.2
 
 - A primeira pergunta sobre preço cirúrgico passou a enviar, sem números, um único guia sobre a composição do orçamento conforme a região confirmada: facial para face e pescoço, mama para cirurgias mamárias e corporal para corpo e cirurgia íntima. Sem procedimento confiável, nenhum material é escolhido por suposição.
