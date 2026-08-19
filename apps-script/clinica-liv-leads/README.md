@@ -37,18 +37,19 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 
 ### Registro da produção atual
 
-- Versão canônica: `99`, publicada no deployment existente em 17/08/2026.
+- Versão canônica: `100`, publicada no deployment existente em 18/08/2026.
 - Escopo da v96: `MetaAdsFunnelReview.gs`, `MetaAdsReview.gs`, `OpportunityStore.gs` e `SyntheticHealth.gs`, com os códigos cervicais `M26C01W/M26C02S`, monitoramento Meta e sonda sintética de atribuição; deployment canônico preservado.
 - Escopo da v97: `Code.gs` acrescentou o habilitador administrativo idempotente do schema v1. `aplicarSchemaAtribuicaoV1Autorizado` foi executada com sucesso e não cria um segundo deployment.
 - Escopo da v98: `ConsultasSync.gs` reconhece o comprovante estruturado de procedimento, retorno ou consulta, mantém a Dra. Amanda sempre na `Sala 1`, cria novo registro quando o atendimento anterior já está encerrado e preserva a idempotência do mesmo comprovante. O título da Google Agenda contém somente o tipo genérico e o profissional. O deployment canônico foi preservado; código e testes estão no commit técnico `7c8f7d0`.
 - Escopo da v99: `ConsultasSync.gs`, `RoomBooking.gs` e `RoomBookingForm.html` incluem `Matheus (ortop)` no formulário privado e limitam suas reservas à `Sala 2`. Se a sala estiver ocupada, a operação falha de forma fechada e nunca usa a `Sala 1`. A automação de WhatsApp continua limitada a Amanda e Daniel. O deployment canônico foi preservado; o estado técnico está no commit `2d51398`.
-- Pós-voo: o formulário canônico carregou `Matheus (ortop)` e exibiu `Reserva sempre na Sala 2.` sem submeter reserva. O Netlify publicou as 12 Functions no deploy `6a8347fcc5597904763a82ee`, com `WHATSAPP_INTERNAL_NUMBERS` salvo como segredo de produção. A suíte local concluiu com `717/717` testes aprovados.
-- Rollback: deployment v98 para desfazer somente a inclusão de Matheus no formulário; commit anterior ao `2d51398` para desfazer o bloqueio dos telefones internos; v97 para desfazer também a correção dos comprovantes estruturados.
+- Escopo da v100: `Code.gs`, `LeadClassification.gs`, `ConsultasSync.gs` e `Retomadas.gs` expõem o contexto durável da oportunidade a partir de `_WHATSAPP_MENSAGENS`, registram a autoria `paciente`, `bruna` ou `equipe_humana` e gravam as saídas da Bruna sem abrir uma segunda classificação. O deployment canônico foi preservado; o estado técnico está no commit funcional `6fd37c3227e6fee1ca4ea1686248cb22733040f1`.
+- Pós-voo da v100: o mesmo deployment respondeu HTTP 200 com `ok: true`; o webhook canônico e a URL imutável do deploy Netlify `6a84facdbed81175d2df0107` responderam HTTP 200 em modo `active`, com planilha, assinatura e OpenAI configurados. A suíte concluiu com `843/843` testes; nenhuma mensagem real foi enviada.
+- Rollback: deployment v99 para desfazer somente o ledger contextual durável; deploy Netlify `6a84eb15525edc0e071a0486` e commit `1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5` para retornar ao pacote Bruna `.4`.
 
 ## Agregado anônimo para a rotina do Google Ads
 
 - Código: `GoogleAdsFunnelReview.gs`.
-- Produção atual: Apps Script versão `99`, publicada no deployment canônico em 17/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
+- Produção atual: Apps Script versão `100`, publicada no deployment canônico em 18/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
 - Destino: planilha separada `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Agregados`.
 - Trigger: `publicarAgregadosFunilGoogleAds`, diariamente aproximadamente às 08:15 BRT, configurado por `configurarRotinaAgregadosFunilGoogleAds()`.
 - Fontes internas: `_FUNIL_CANONICO` e `_OPORTUNIDADE_MARCOS`.

@@ -2,9 +2,9 @@
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-08-18.4
+**Versão:** 2026-08-18.5
 
-**Estado do release:** publicada e verificada em produção no commit funcional `1b54e7e8937ee03a5679c894efd8d8dd53f0a2e5`, deploy Netlify `6a84eb15525edc0e071a0486`, com **826/826 testes** aprovados e projeção ativa do Drive reconciliada no mesmo arquivo.
+**Estado do release:** publicada e verificada em produção no commit funcional `6fd37c3227e6fee1ca4ea1686248cb22733040f1`, deploy Netlify `6a84facdbed81175d2df0107` e Apps Script versão `100` no deployment canônico preservado, com **843/843 testes** aprovados e projeção ativa do Drive reconciliada no mesmo arquivo.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
@@ -79,6 +79,10 @@ Antes de responder, a Bruna verifica:
 8. A resposta planejada parece uma continuação natural se toda a conversa for lida?
 
 A inteligência semântica é a primeira instância para compreender o significado da mensagem e decidir a ação em todo texto elegível. Ela lê a mensagem atual junto do histórico; pontuação, palavras-chave, códigos de campanha, templates, classificações e outros padrões mecânicos são apenas pistas. Nenhum deles pode, isoladamente, transformar uma pergunta contextual clara em silêncio. Ausência de `?`, abreviação, erro de digitação ou construção coloquial como `aí`, `e` ou `então` não elimina uma pergunta compreensível.
+
+O contexto não depende apenas da memória temporária da Function. A planilha operacional canônica mantém o ledger durável em `_WHATSAPP_MENSAGENS`, vinculado à oportunidade e com autoria explícita `paciente`, `bruna` ou `equipe_humana`. O cache recente preserva até 32 turnos por sete dias; quando estiver vazio ou expirado, ele é reidratado pelo ledger antes da interpretação. Mensagens longas preservam início e final para não perder a pergunta colocada no fim. Não se cria uma pasta ou banco paralelo de conversas no Drive: a planilha `LEADS` continua sendo a fonte do estado operacional, e a pasta restrita de exportações continua servindo somente como evidência bruta.
+
+Além dos turnos, a IA devolve um estado semântico estruturado com assunto ativo, ato da paciente, mensagem a que ela se refere, última pergunta e última oferta da clínica, questões ainda abertas, fatos já informados, responsável atual, próxima ação esperada, ambiguidade e confiança contextual. Esse estado acompanha o turno seguinte, mas não substitui o texto da conversa nem atravessa as travas. Se a referência continuar realmente ambígua, a ação segura é uma única pergunta específica de esclarecimento; se houver tema clínico, agenda não validada, preço não aprovado, urgência, opt-out, duplicidade ou intervenção humana incompatível, prevalece a revisão humana ou o silêncio previsto.
 
 A mensagem atual e o histórico prevalecem sobre campanha, anúncio, intenção classificada ou exemplo de resposta. A origem é somente uma pista. Respostas determinísticas aprovadas continuam sendo limites factuais seguros, mas só substituem a redação da IA quando a própria leitura semântica confirmar o código, o procedimento, o profissional e que a prévia resolve todos os pedidos seguros do turno. Se a mensagem tiver mais de uma intenção e a cópia pronta for parcial, a IA responde ao conjunto dentro do contrato ou encaminha o que depender da equipe.
 

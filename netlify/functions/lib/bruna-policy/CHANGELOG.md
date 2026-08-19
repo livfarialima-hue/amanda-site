@@ -1,5 +1,15 @@
 # Histórico do pacote Bruna
 
+## 2026-08-18.5
+
+- A conversa recente passou de 16 para 32 turnos e deixou de depender somente do cache temporário da Netlify: quando a memória estiver vazia ou expirada, o bot reidrata o contexto a partir do ledger canônico `_WHATSAPP_MENSAGENS` da oportunidade.
+- O ledger ganhou autoria explícita `paciente`, `bruna` ou `equipe_humana`; toda resposta efetivamente entregue pela Bruna é registrada de forma idempotente, sem criar uma segunda execução de classificação.
+- A IA agora recebe e devolve estado semântico estruturado: assunto ativo, ato da paciente, referência por Event ID, última pergunta e oferta da clínica, questões abertas, fatos já informados, responsável, próxima ação, ambiguidade e confiança contextual.
+- Mensagens longas preservam o início e o final, evitando que uma pergunta colocada no fim desapareça por truncamento. O histórico usado por regras mecânicas passou a respeitar o papel do autor, sem transformar palavras da clínica em intenção da paciente.
+- Respostas curtas como `Sim`, `Certo`, `Ok` e `Entendi` só atravessam o fechamento mecânico quando a última fala da clínica contém pergunta ou oferta concreta. `CONTEXT-CONTINUE-01` e `CONTEXT-CLARIFY-01` continuam sendo as únicas exceções semânticas compatíveis; agradecimento ou encerramento real permanece silencioso.
+- Não foi criada uma pasta paralela de conversas no Drive. A planilha operacional continua sendo a fonte ao vivo; o Drive preserva a mesma projeção de leitura do manual, conferida byte a byte.
+- Estado desta versão: publicada e verificada no commit funcional `6fd37c3227e6fee1ca4ea1686248cb22733040f1`, deploy Netlify `6a84facdbed81175d2df0107` e Apps Script v100 no deployment canônico, com **843/843 testes**, build de 178 arquivos, 44 URLs sem erro e projeção ativa do Drive no SHA-256 `ded041b5f703b2a99167ccb402c2b6915f6ac1d8679cc3bae229a4882ef58258`.
+
 ## 2026-08-18.4
 
 - Respostas curtas passaram a ser interpretadas contra a última pergunta da clínica mesmo durante a tomada humana. Quando a pessoa aceita uma oferta informativa concreta, a IA entrega imediatamente a explicação prometida em vez de tratar a mensagem como confirmação silenciosa.
