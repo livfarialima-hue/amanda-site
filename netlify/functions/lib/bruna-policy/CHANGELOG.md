@@ -1,11 +1,12 @@
 # Histórico do pacote Bruna
 
-## Não publicado
+## 2026-08-19.2
 
 - A primeira pergunta sobre preço cirúrgico passou a enviar, sem números, um único guia sobre a composição do orçamento conforme a região confirmada: facial para face e pescoço, mama para cirurgias mamárias e corporal para corpo e cirurgia íntima. Sem procedimento confiável, nenhum material é escolhido por suposição.
 - A pergunta sobre valores de cervicoplastia usa a abertura aprovada, mais leve e contextual, oferece a faixa geral apenas como próximo passo e coloca o guia facial antes dessa oferta.
 - `valor` e `valores` passam a ser reconhecidos igualmente; o caso real `Sim, gostaria` seguido de `E gostaria de saber os valores` permanece acionável e recebe a primeira resposta, em vez de depender da forma singular da palavra.
 - O aceite claro da oferta cervical, inclusive `Sim` ou `Pode me passar`, autoriza uma única resposta com as faixas aprovadas e suas ressalvas. O link já enviado na primeira resposta não se repete; o guia específico de lifting permanece como fallback quando o histórico não contém um guia facial. A faixa não é repetida no mesmo contexto e outras cirurgias continuam sob revisão humana.
+- Estado desta versão: publicação autorizada em 19/08/2026; validação final, envio do commit funcional, publicação do Netlify e reconciliação das mesmas projeções do Drive em andamento. O Apps Script permanece na v101.
 
 ## 2026-08-19.1
 

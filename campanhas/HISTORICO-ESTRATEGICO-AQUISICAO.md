@@ -8,7 +8,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 19 de agosto de 2026 — guia de composição por região na primeira pergunta de preço
 
-- **Status:** candidato local validado, ainda não publicado nem projetado no Drive; nenhuma mensagem real, campanha ou configuração do Google Ads foi alterada.
+- **Status:** versão `2026-08-19.2` autorizada e em publicação; nenhuma mensagem real, campanha ou configuração do Google Ads foi alterada.
 - **Mudança:** manter a primeira resposta sem faixa numérica e acrescentar uma única vez o guia que explica a composição do orçamento conforme o procedimento confirmado: facial para face e pescoço, mama para cirurgias mamárias e corporal para lipoaspiração, abdômen, braços, cirurgia íntima, contorno e combinações corporais. O guia não se repete na conversa; na faixa aprovada de lifting, a página específica de lifting entra somente como fallback quando nenhum guia facial tiver sido compartilhado.
 - **Motivo e evidência:** a primeira pergunta de preço precisa ser útil sem parecer evasiva, mas uma página facial em uma conversa sobre corpo ou mama produziria desalinhamento evidente. O site já possui três guias regionais distintos e aprovados, permitindo responder à intenção sem antecipar orçamento individual.
 - **Hipótese:** uma explicação regional curta reduz incerteza e melhora a continuidade da conversa sem induzir faixa prematura, diagnóstico ou pressão por agenda.

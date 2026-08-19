@@ -2,9 +2,9 @@
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-08-19.1
+**Versão:** 2026-08-19.2
 
-**Estado do release:** publicada e verificada em 19/08/2026 no commit funcional `35b4b5a3d7f5e33cdebfe9d904a75843264ac5fe`, deploy Netlify `6a858294fc30270008e0964a` e Apps Script v101 no deployment canônico preservado. Validação: **851/851 testes**, build de 178 arquivos, 44 URLs sem erro, site, webhook e web app HTTP 200; nenhuma mensagem real de paciente foi enviada e nenhuma configuração do Google Ads foi alterada.
+**Estado do release:** publicação autorizada em 19/08/2026; validação final, envio do commit funcional, atualização do Netlify e reconciliação das mesmas projeções do Drive em andamento. O Apps Script permanece na v101 porque esta versão não altera o projeto canônico.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
