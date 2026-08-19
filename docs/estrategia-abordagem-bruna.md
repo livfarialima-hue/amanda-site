@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-19.4
 
-**Estado do release:** candidata local autorizada para publicação em 19/08/2026. A correção permite que a Bruna responda perguntas compostas sobre lifting facial com os fatos gerais aprovados, mantendo duração exata e indicação individual para a avaliação. Validação local: **876/876 testes**; nenhuma mensagem real de paciente foi enviada.
+**Estado do release:** publicada e verificada em 19/08/2026 no commit funcional `5f9e247b7a38698d5a9d79836f14e7b4a25ec3c0` e deploy Netlify `6a861fab62e3fc00085b847f`; o Apps Script permaneceu na v104 porque esta versão não altera o projeto canônico. Validação: **876/876 testes**, build de 178 arquivos, 44 URLs sem erro, domínio, URL imutável e webhook HTTP 200 com automação ativa; nenhuma mensagem real de paciente foi enviada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
