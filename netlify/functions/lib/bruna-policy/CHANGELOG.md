@@ -6,7 +6,7 @@
 - A pergunta sobre valores de cervicoplastia usa a abertura aprovada, mais leve e contextual, oferece a faixa geral apenas como próximo passo e coloca o guia facial antes dessa oferta.
 - `valor` e `valores` passam a ser reconhecidos igualmente; o caso real `Sim, gostaria` seguido de `E gostaria de saber os valores` permanece acionável e recebe a primeira resposta, em vez de depender da forma singular da palavra.
 - O aceite claro da oferta cervical, inclusive `Sim` ou `Pode me passar`, autoriza uma única resposta com as faixas aprovadas e suas ressalvas. O link já enviado na primeira resposta não se repete; o guia específico de lifting permanece como fallback quando o histórico não contém um guia facial. A faixa não é repetida no mesmo contexto e outras cirurgias continuam sob revisão humana.
-- Estado desta versão: publicação autorizada em 19/08/2026; validação final, envio do commit funcional, publicação do Netlify e reconciliação das mesmas projeções do Drive em andamento. O Apps Script permanece na v101.
+- Estado desta versão: publicada e verificada no commit funcional `97da5c3a289062c9face0313418fe1beb7e3accf` e deploy Netlify `6a8599b25b653800085f9f95`; Apps Script v101 preservado, **865/865 testes**, build de 178 arquivos e 44 URLs sem erro. Domínio, URL imutável, webhook e os três guias regionais responderam HTTP 200. A projeção ativa do Drive usa o mesmo manual local no SHA-256 `05d933251d9b7b67ff5240fb9ef174fdcb4aa42c526ca359708e2f02d1c9d71c`. Nenhuma mensagem real foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 ## 2026-08-19.1
 

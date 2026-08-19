@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-19.2
 
-**Estado do release:** publicação autorizada em 19/08/2026; validação final, envio do commit funcional, atualização do Netlify e reconciliação das mesmas projeções do Drive em andamento. O Apps Script permanece na v101 porque esta versão não altera o projeto canônico.
+**Estado do release:** publicada e verificada em 19/08/2026 no commit funcional `97da5c3a289062c9face0313418fe1beb7e3accf` e deploy Netlify `6a8599b25b653800085f9f95`; o Apps Script permaneceu na v101 porque esta versão não altera o projeto canônico. Validação: **865/865 testes**, build de 178 arquivos, 44 URLs sem erro, domínio, URL imutável, webhook e três guias regionais HTTP 200; nenhuma mensagem real de paciente foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
