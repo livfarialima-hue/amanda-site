@@ -1,6 +1,6 @@
 # Histórico do pacote Bruna
 
-## 2026-08-20.2 — candidata local, ainda não publicada
+## 2026-08-20.2
 
 - A comparação geral entre minilifting e lifting facial recebe uma resposta contextual sobre a extensão do tratamento, sem prometer cicatriz menor, recuperação mais rápida nem definir a técnica individual.
 - Dúvidas seguras que ainda precisem de revisão humana preservam um rascunho interno quando ele puder ser escrito apenas com fatos confirmados. A ocorrência abre uma ação idempotente em `Revisões do Bot`, pode aparecer na Central e alimenta o e-mail diário; risco alto, urgência, cuidado ativo, diagnóstico, indicação, agenda final e preço sem base aprovada permanecem sem texto copiável.
@@ -8,7 +8,7 @@
 - As formas históricas da oferta continuam reconhecidas para que conversas já iniciadas não percam o segundo passo. Procedimentos sem faixa automática autorizada não recebem essa promessa.
 - Regressões cobrem o caso exato da Brenda, a equivalência entre resposta automática e sugestão da Central, o rascunho humano seguro, o bloqueio de rascunhos de alto risco, a nova oferta, a aceitação posterior e a ausência de oferta fora dos procedimentos autorizados.
 - Validação local: **923/923 testes**, build de 178 arquivos, 44 URLs verificadas e `git diff --check` sem erro. Nenhuma mensagem real foi enviada.
-- Estado: candidata local autorizada, ainda sem commit, Netlify, Apps Script ou projeção no Drive. O recibo de produção continua apontando para `2026-08-20.1` até o fechamento completo; `sincronização pendente`.
+- Estado desta versão: publicada e verificada no commit funcional `46f7c91ea5cc00c2181fd3f7d564f61a880cdb11`, deploy Netlify `6a8762898c14302d7062b1f9` e Apps Script v107 no deployment canônico preservado. O Netlify confirmou `ready`, 12 funções e publicação às 17:25 BRT; domínio, URL imutável e webhook `active` responderam HTTP 200. `KnowledgeBase.gs` e `CentralAtendimento.gs` foram relidos no editor e ficaram idênticos aos locais por SHA-256 normalizado; o web app respondeu HTTP 200 e o segredo inválido foi recusado antes de qualquer ação. As mesmas projeções do manual e do Plano Executivo foram substituídas no Drive. Nenhuma mensagem real foi enviada. Rollback: deploy `6a8701bb1ae7b60008c3a8ac`, commit `afa230263288bba88fb0cb61f4fb55e5903d4dca` e Apps Script v106.
 
 ## 2026-08-20.1
 
