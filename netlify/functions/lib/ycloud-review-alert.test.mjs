@@ -526,7 +526,7 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     assert.equal(responseBody.automation.route, "human_review");
     assert.equal(responseBody.automation.replyCode, "ALERT-URG-01");
     assert.equal(responseBody.reviewAlertQueued, true);
-    assert.equal(requests.length, 6);
+    assert.equal(requests.length, 7);
     assert.equal(
       requests[0].url,
       process.env.GOOGLE_SHEETS_WEBHOOK_URL,
@@ -553,23 +553,31 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     );
     assert.equal(
       JSON.parse(requests[3].options.body).action,
-      "send_review_alert_email",
+      "get_bot_knowledge_context",
     );
     assert.equal(
       requests[4].url,
+      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+    );
+    assert.equal(
+      JSON.parse(requests[4].options.body).action,
+      "send_review_alert_email",
+    );
+    assert.equal(
+      requests[5].url,
       "https://api.ycloud.com/v2/whatsapp/messages",
     );
 
-    const alertBody = JSON.parse(requests[4].options.body);
+    const alertBody = JSON.parse(requests[5].options.body);
     assert.equal(alertBody.from, "+5511961957144");
     assert.equal(alertBody.to, process.env.WHATSAPP_ALERT_NUMBER);
     assert.notEqual(alertBody.to, payload.whatsappInboundMessage.from);
     assert.equal(
-      JSON.parse(requests[5].options.body).action,
+      JSON.parse(requests[6].options.body).action,
       "record_operational_event",
     );
     assert.equal(
-      JSON.parse(requests[5].options.body).event.type,
+      JSON.parse(requests[6].options.body).event.type,
       "human_handoff_queued",
     );
   } finally {

@@ -93,7 +93,7 @@ test("records a human takeover once and detects it on the same local day", () =>
     messageId: "echo-message",
     phone: "+55 11 90000-0000",
     takenAt: "2026-07-29T20:00:00-03:00",
-    text: "Temos estes horários:",
+    text: "Resposta humana contextual ".repeat(40),
   };
   const created = registrarAtendimentoHumano_(input);
   const duplicate = registrarAtendimentoHumano_(input);
@@ -111,6 +111,8 @@ test("records a human takeover once and detects it on the same local day", () =>
     duplicate: true,
   });
   assert.equal(rows.length, 1);
+  assert.equal(rows[0][5], input.text.trim());
+  assert.equal(rows[0][5].length > 500, true);
   assert.equal(
     houveAtendimentoHumanoNoDia_(
       spreadsheet,

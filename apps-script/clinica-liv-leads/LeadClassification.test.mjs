@@ -74,7 +74,8 @@ function loadFunctions() {
       "globalThis.__test = { findLeadRowByPhone_, " +
       "shouldApplyLeadStatus_, ensureQualifiedGoogleConversion_, " +
       "compareClassificationCandidates_, classificationLeaseMatches_, " +
-      "collectLeadMessagesForOpportunity_, classificationAdministrativeSignal_, " +
+      "collectLeadMessagesForOpportunity_, collectHumanTakeoverMessagesForPhone_, " +
+      "mergeConversationMessages_, classificationAdministrativeSignal_, " +
       "normalizeLeadMessageSource_, boundedConversationText_, " +
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
       "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
@@ -392,6 +393,86 @@ test("classification recovers later unknown messages only for a verified opportu
     ["linked", "unknown-after", "explicit-amanda"],
   );
   assert.equal(withRecovery[0].templateId, "procedure_evaluation_v1");
+});
+
+test("conversation context recovers unassigned patient and human turns before an opportunity exists", () => {
+  const {
+    collectLeadMessagesForOpportunity_,
+    collectHumanTakeoverMessagesForPhone_,
+    mergeConversationMessages_,
+  } = loadFunctions();
+  const phone = "+5511900005417";
+  const messageValues = [
+    [
+      phone,
+      "IN",
+      new Date("2026-08-19T23:50:31.000Z"),
+      "patient-opening",
+      "evt-opening",
+      "Quero saber sobre lifting facial",
+      "",
+      "",
+      "unknown",
+      "",
+      "paciente",
+      "",
+    ],
+    [
+      phone,
+      "IN",
+      new Date("2026-08-20T09:21:37.000Z"),
+      "patient-context",
+      "evt-context",
+      "Cicatrizes de acne, flacidez no rosto e pescoço, Mounjaro face",
+      "",
+      "",
+      "unknown",
+      "",
+      "paciente",
+      "",
+    ],
+  ];
+  const takeoverValues = [[
+    "evt-human",
+    "human-reply",
+    phone,
+    new Date("2026-08-19T23:56:51.000Z"),
+    "2026-08-19",
+    "Se quiser, pode me contar o que mais te incomoda hoje no rosto ou pescoço.",
+  ]];
+  const messageSheet = {
+    getLastRow: () => messageValues.length + 1,
+    getRange: () => ({ getValues: () => messageValues }),
+  };
+  const takeoverSheet = {
+    getLastRow: () => takeoverValues.length + 1,
+    getRange: () => ({ getValues: () => takeoverValues }),
+  };
+
+  const patientTurns = collectLeadMessagesForOpportunity_(
+    messageSheet,
+    "",
+    phone,
+    "",
+    32,
+    true,
+  );
+  const humanTurns = collectHumanTakeoverMessagesForPhone_(
+    takeoverSheet,
+    phone,
+    32,
+  );
+  const history = mergeConversationMessages_(
+    [patientTurns, humanTurns],
+    32,
+  );
+
+  assert.deepEqual(
+    Array.from(history, (turn) => turn.messageId),
+    ["patient-opening", "human-reply", "patient-context"],
+  );
+  assert.equal(history[1].source, "equipe_humana");
+  assert.match(history[1].text, /rosto ou pescoço/i);
 });
 
 test("conversation ledger keeps explicit authorship and conservatively maps legacy output", () => {

@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
 import { appendConversationTurn } from "./lib/conversation-memory.mjs";
+import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
@@ -80,6 +81,21 @@ export async function handleScheduledFollowup(
   if (env.WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED !== "true") {
     return json(
       { ok: false, sent: false, error: "scheduled_followups_disabled" },
+      503,
+    );
+  }
+
+  const automationMode = normalizeAutomationMode(
+    env.WHATSAPP_AUTOMATION_MODE,
+  );
+  if (automationMode !== "active") {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "automation_inactive",
+        automationMode,
+      },
       503,
     );
   }

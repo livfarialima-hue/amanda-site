@@ -46,6 +46,8 @@
 
 ## Estado de produção
 
+> **Candidata local autorizada — cobertura semântica antes da rota e pausa global — 20/08/2026:** a análise do caso em que a paciente respondeu `Cicatrizes de acne, flacidez no rosto e pescoço, Mounjaro face` confirmou texto e evento legíveis, mas `route_pending`, sem oportunidade e sem chamada à IA. A candidata move a avaliação semântica para depois da persistência e antes da exigência de rota: recupera até 32 turnos por telefone, mescla `_WHATSAPP_MENSAGENS` e os ecos de `_WHATSAPP_ATENDIMENTO_HUMANO`, pede à IA contexto, profissional, procedimento, ação e sugestão e só então tenta recuperar Amanda ou Daniel com alta confiança no modo ativo. Dúvida segura recebe uma pergunta; decisão semântica sem autorização permanece com a equipe; revisão humana pode receber rascunho interno; `shadow` não envia nem altera agenda. Prefill também deixa de pular a IA e só usa a abertura aprovada quando a decisão semântica a confirma. O modo `off` passa a preservar a entrada para a equipe e bloquear IA, mensagens ao paciente, agenda, retomadas, lembretes e pós-consulta. Duplicidade, opt-out, urgência, cuidado ativo, mensagem mais recente e takeover continuam autoritativos. Validação local: **912/912 testes**, build de 178 arquivos, 44 URLs verificadas, sintaxe e diff aprovados. A publicação foi autorizada, mas ainda não foi concluída no Netlify, Apps Script ou Drive; nenhuma mensagem real foi enviada e a sincronização permanece pendente.
+
 > **Recuperação de texto ausente publicada — 19/08/2026, 21:44:** a versão `2026-08-19.6` trata o incidente real em que o evento foi persistido às 20:50:31, mas chegou sem `Texto`, `template_id` ou referência utilizável e terminou em `route_pending`, sem classificação, oportunidade ou resposta automática. A extração agora reconhece variações seguras do envelope textual; se o corpo continuar ausente, a Bruna envia uma única pergunta neutra para recuperar o procedimento ou a dúvida, sem inferir anúncio, qualificar ou encaminhar agenda. O fallback conserva as travas de mensagem mais recente, duplicidade, preferência de contato, horário extremo e corrida com atendimento humano, e não cria uma fala inexistente da paciente no histórico. Código funcional `204aff23d27ed262f21ed66b448609ad838998b6`, deploy Netlify `6a864d9a75c1bc0008b26c3b`; Apps Script v104 preservado; **899/899 testes**, build de 178 arquivos e 44 URLs sem erro. O Netlify confirmou o deploy publicado e as 12 funções. A projeção ativa do manual e o Plano Executivo foram substituídos nos mesmos IDs do Drive e conferidos byte a byte; o manual usa SHA-256 `590a4ffc08fb28e32b79f6cdddee49f58bf3b98f1fa616234950acf8ac45dc46`. A sonda HTTP direta do webhook não foi repetida porque o cliente bloqueou o acesso técnico direto. Nenhuma mensagem real foi enviada. Rollback: deploy `6a8641c07b71ac00088337f8`, commit `9a4a4082e5e4ad3e0bcf1e32dbbfe01af58eab22`.
 
 > **Faixa de otoplastia publicada — 19/08/2026, 21:00:** a versão `2026-08-19.5` preserva o primeiro pedido de preço sem números, com um único guia facial e uma oferta leve de faixa. Somente o aceite claro dessa oferta ou um novo pedido explícito por valor, média ou faixa libera uma única resposta de R$ 8 mil a R$ 14 mil, sem CTA, com aviso de que não é orçamento, proposta nem garantia, que o valor final pode ficar fora do intervalo e que o total depende do planejamento. A faixa diferente, sem ressalvas ou repetida é barrada antes do envio. Perguntas compostas de otoplastia são respondidas antes do preço, e `otomodelação` não autoriza presumir injetáveis, ausência de cirurgia, duração temporária ou indicação. A construção genérica de convênio também foi corrigida para `ao seu plano de saúde`. Código funcional `9a4a4082e5e4ad3e0bcf1e32dbbfe01af58eab22`, deploy Netlify `6a8641c07b71ac00088337f8`; Apps Script v104 preservado; **896/896 testes**, build de 178 arquivos e 44 URLs sem erro. O Netlify confirmou o deploy publicado e as 12 funções; o domínio público respondeu normalmente. A sonda HTTP direta do webhook não foi repetida porque o cliente bloqueou o acesso técnico direto. Nenhuma mensagem real foi enviada e nenhuma configuração do Google Ads foi alterada. Rollback: deploy `6a861fab62e3fc00085b847f`, commit `5f9e247b7a38698d5a9d79836f14e7b4a25ec3c0`.
@@ -424,13 +426,58 @@ Responder pelo WhatsApp Business da clínica. O eco registra automaticamente uma
 
 ## Pausa de emergência
 
-Se houver comportamento inesperado, alterar no Netlify:
+O controle único de emergência é a variável de produção
+`WHATSAPP_AUTOMATION_MODE` no site canônico do Netlify, identificado pelo
+`siteId=c33facb6-eafc-4635-99d6-068bf8707227`. Título, posição na lista ou
+data de modificação não identificam o alvo.
+
+Estados permitidos:
+
+- `active`: atendimento automático normal;
+- `shadow`: a IA pode avaliar os turnos para auditoria, mas nenhuma mensagem
+  automática é enviada e nenhuma escolha ou resposta da paciente altera a
+  agenda automaticamente;
+- `off`: a entrada continua sendo registrada para a equipe, mas ficam
+  bloqueados a avaliação pela IA, a resposta ao paciente, a reserva ou mudança
+  automática de agenda, a retomada programada, os lembretes de consulta, o
+  pós-consulta e a retomada depois de atendimento humano.
+
+Ao receber do responsável um pedido explícito para desligar o bot:
+
+1. confirmar o `siteId` canônico antes da escrita;
+2. alterar somente o contexto de produção para:
 
 `WHATSAPP_AUTOMATION_MODE=shadow`
 
-Nesse modo, a IA continua sendo avaliada nos registros, mas não envia respostas aos pacientes. Para desligar também a avaliação, usar:
+   quando o pedido for apenas interromper envios, ou para:
 
 `WHATSAPP_AUTOMATION_MODE=off`
+
+   quando o pedido for desligamento completo;
+3. se a plataforma exigir nova publicação para aplicar a variável, republicar
+   exatamente o último commit de produção verificado, nunca o estado mais novo
+   da branch por suposição;
+4. verificar o estado observado no endpoint público com:
+
+```powershell
+npm.cmd run bot:status -- --expect off
+```
+
+   ou `--expect shadow`, conforme o pedido;
+5. registrar horário, modo observado e deploy. Não enviar mensagem real como
+   teste e não reativar automaticamente.
+
+A reativação exige novo pedido explícito, troca para
+`WHATSAPP_AUTOMATION_MODE=active`, publicação do mesmo commit aprovado quando
+necessária e verificação com:
+
+```powershell
+npm.cmd run bot:status -- --expect active
+```
+
+Os endpoints de retomada, lembrete e pós-consulta validam o mesmo controle no
+momento do disparo e devolvem `automation_inactive` quando o modo não é
+`active`. Assim, uma fila já existente não contorna a pausa.
 
 ## Publicação técnica default-off de 15/08/2026
 

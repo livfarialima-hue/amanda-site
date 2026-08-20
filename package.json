@@ -8,6 +8,7 @@
     "site:check": "node scripts/check-site-technical.mjs",
     "ops:check": "node scripts/check-operational-consistency.mjs",
     "ops:reconcile": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/reconcile-local-release.ps1",
+    "bot:status": "node scripts/check-whatsapp-bot-mode.mjs",
     "apps-script:target": "node scripts/check-apps-script-target.mjs show",
     "apps-script:verify-target": "node scripts/check-apps-script-target.mjs verify",
     "indexnow": "node scripts/submit-indexnow.mjs"

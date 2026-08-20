@@ -6,6 +6,17 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 20 de agosto de 2026 — cobertura semântica antes da criação da oportunidade
+
+- **Status:** candidata local implementada, validada em **912/912 testes** e autorizada para publicação, com build de 178 arquivos e 44 URLs sem erro; ainda não commitada, publicada ou projetada no Drive. Nenhuma mensagem real, campanha ou configuração de anúncios foi alterada.
+- **Mudança:** todo texto elegível já persistido recebe avaliação semântica de mensagem e histórico mesmo quando a rota está pendente, a ação final é revisão humana ou existe takeover. O contexto durável passa a incorporar falas humanas disponíveis mesmo antes de existir oportunidade. Em modo ativo, somente alta confiança recupera Amanda ou Daniel de forma idempotente; ambiguidade segura recebe uma pergunta; revisão humana recebe rascunho somente quando seguro. Em `shadow`, a rota não é alterada.
+- **Motivo e evidência:** uma paciente respondeu à pergunta anterior da clínica com queixas faciais legíveis e contextuais, mas o evento terminou em `route_pending`; como a elegibilidade antiga exigia oportunidade roteada, a IA nunca foi chamada, não houve resposta e a Central criou apenas uma ação manual genérica.
+- **Hipótese:** deslocar a interpretação semântica para logo depois da persistência reduz silêncios incorretos e produz respostas ou sugestões mais coerentes sem ampliar autorização automática.
+- **Métricas:** percentual de textos elegíveis avaliados, `route_pending` recuperados, esclarecimentos respondidos, tempo até primeira resposta, utilidade das sugestões internas, duplicidade, roteamento profissional incorreto, competição com humano e incidentes clínicos ou comerciais.
+- **Guardrails:** exclusões objetivas continuam antes do modelo; avaliação não implica envio; alta confiança e contexto não baixo são exigidos para recuperar rota; mensagens mais novas e intervenção humana cancelam a resposta; agenda, urgência, cuidado ativo, preço não aprovado e opt-out permanecem fechados; `shadow` não envia nem altera agenda; `off` preserva a entrada e bloqueia IA, respostas, agenda e disparos programados.
+- **Revisão:** regressões completas antes de qualquer publicação, primeiras entradas reais depois do release e leitura operacional em sete dias.
+- **Regra para manter ou reverter:** manter se cair o silêncio incorreto sem roteamento errado ou quebra das travas; reverter diante de recuperação profissional incorreta recorrente, resposta insegura, intrusão em conversa humana ou aumento material de latência/custo sem benefício observável.
+
 ## 19 de agosto de 2026 — guia de composição por região na primeira pergunta de preço
 
 - **Status:** versão `2026-08-19.2` publicada e verificada no commit funcional `97da5c3a289062c9face0313418fe1beb7e3accf` e deploy Netlify `6a8599b25b653800085f9f95`; Apps Script v101 preservado, **865/865 testes**, build de 178 arquivos e 44 URLs aprovados. Nenhuma mensagem real, campanha ou configuração do Google Ads foi alterada.

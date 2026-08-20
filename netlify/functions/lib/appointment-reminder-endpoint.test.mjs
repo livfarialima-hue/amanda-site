@@ -8,6 +8,7 @@ import {
 const ENV = {
   GOOGLE_SHEETS_WEBHOOK_SECRET: "shared-secret",
   WHATSAPP_APPOINTMENT_REMINDERS_ENABLED: "true",
+  WHATSAPP_AUTOMATION_MODE: "active",
   YCLOUD_API_KEY: "ycloud-key",
   WHATSAPP_SENDER_NUMBER: "+5511961957144",
 };
@@ -105,4 +106,28 @@ test("endpoint remains closed until explicitly enabled", async () => {
     (await response.json()).error,
     "reminders_disabled",
   );
+});
+
+test("the global automation switch blocks appointment reminders", async () => {
+  let calls = 0;
+  const response = await handleAppointmentReminder(request(), {
+    env: {
+      ...ENV,
+      WHATSAPP_AUTOMATION_MODE: "off",
+    },
+    now: new Date("2026-07-28T13:00:00.000Z"),
+    fetchImpl: async () => {
+      calls += 1;
+      return new Response("{}", { status: 200 });
+    },
+  });
+
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    ok: false,
+    sent: false,
+    error: "automation_inactive",
+    automationMode: "off",
+  });
+  assert.equal(calls, 0);
 });

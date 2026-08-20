@@ -1,5 +1,16 @@
 # Histórico do pacote Bruna
 
+## 2026-08-20.1 — candidata local, ainda não publicada
+
+- Todo texto elegível já persistido recebe avaliação semântica mesmo quando ainda não existe oportunidade, a rota está `pending`, a ação final é revisão humana ou existe takeover; avaliação não significa autorização de envio.
+- O contexto durável pré-oportunidade passa a reunir até 32 turnos de `_WHATSAPP_MENSAGENS` com os ecos de `_WHATSAPP_ATENDIMENTO_HUMANO`, mantendo autoria e ordem cronológica. Respostas humanas deixam de ser truncadas em 500 caracteres e passam a preservar até 4.000.
+- Em modo ativo, uma decisão com alta confiança e contexto não baixo pode recuperar Amanda ou Daniel reprocessando idempotentemente o mesmo evento. Em `shadow`, o candidato é apenas observado e nunca altera a rota.
+- Se a rota continuar incerta e o conteúdo for seguro, a Bruna faz uma única pergunta de esclarecimento. Quando o caso exigir a equipe, a avaliação semântica alimenta o alerta com uma sugestão contextual somente se houver rascunho seguro; urgência, cuidado ativo, diagnóstico, agenda final e informação não aprovada continuam sem texto inventado.
+- Prefills estruturados deixam de contornar a IA: a abertura neutra aprovada só é usada quando o modelo confirma semanticamente o código, o profissional e o procedimento, sem transformar o template em intenção de agenda.
+- O controle `WHATSAPP_AUTOMATION_MODE=off` passa a ser um desligamento global: preserva a entrada para a equipe, mas interrompe IA, mensagens ao paciente, mutações automáticas de agenda, retomadas, lembretes, pós-consulta e retomada após takeover. `shadow` também não altera agenda. O estado ao vivo pode ser conferido por `npm.cmd run bot:status` e a reativação depende de pedido explícito.
+- Regressões cobrem o caso sintético de queixas faciais após pergunta humana, rota ambígua com uma pergunta, decisão completa porém não autorizada mantida em revisão humana, `shadow` sem mutação, takeover com avaliação sem resposta, prefill sem salto para agenda e bloqueio global dos disparos. Validação local: **912/912 testes**, build de 178 arquivos, 44 URLs verificadas e zero erro de sintaxe ou de `git diff --check`. Nenhuma mensagem real foi enviada.
+- Estado: candidata local autorizada, ainda sem commit, Netlify, Apps Script ou projeção no Drive. O recibo de produção continua apontando para `2026-08-19.6` até o fechamento completo; `sincronização pendente`.
+
 ## 2026-08-19.6
 
 - Mensagens de texto recebidas sem corpo legível deixam de terminar silenciosamente em `route_pending`: a Bruna envia uma única pergunta neutra para recuperar o procedimento ou a dúvida, sem presumir contexto clínico, qualificação ou intenção de agenda.

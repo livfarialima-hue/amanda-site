@@ -73,7 +73,7 @@ test("a short answer to a human information offer is an immediate AI candidate",
   );
 });
 
-test("manual SMB echo marks takeover and suppresses later AI for the day", async () => {
+test("manual SMB echo keeps semantic assessment but suppresses patient replies for the day", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "GOOGLE_SHEETS_WEBHOOK_URL",
@@ -131,7 +131,41 @@ test("manual SMB echo marks takeover and suppresses later AI for the day", async
 
     if (url === "https://api.openai.com/v1/responses") {
       openAiCalls += 1;
-      throw new Error("OpenAI must not be called after human takeover");
+      return new Response(
+        JSON.stringify({
+          model: "test-model",
+          output_text: JSON.stringify({
+            route: "ignore",
+            confidence: "high",
+            automaticAllowed: false,
+            urgent: false,
+            professional: "amanda",
+            procedure: "",
+            replyCode: "",
+            suggestedReply: "",
+            reviewReason: "conversation_closed:thanks",
+            conversationState: {
+              activeTopic: "agradecimento",
+              patientAct: "thanks",
+              refersToEventId: "",
+              lastClinicQuestion: "",
+              lastClinicOffer: "",
+              unresolvedQuestions: [],
+              factsAlreadyProvided: [],
+              owner: "equipe_humana",
+              nextExpectedAction: "aguardar nova mensagem",
+              ambiguity: "",
+              contextConfidence: "high",
+            },
+          }),
+          usage: {
+            input_tokens: 10,
+            output_tokens: 10,
+            total_tokens: 20,
+          },
+        }),
+        { status: 200 },
+      );
     }
 
     throw new Error(`unexpected destination: ${url}`);
@@ -189,8 +223,8 @@ test("manual SMB echo marks takeover and suppresses later AI for the day", async
     assert.equal(inboundBody.humanTakeoverToday, true);
     assert.equal(inboundBody.automation.route, "human_takeover_active");
     assert.equal(inboundBody.automation.replyCode, "HUMAN-DAY-01");
-    assert.equal(inboundBody.aiShadowQueued, false);
-    assert.equal(openAiCalls, 0);
+    assert.equal(inboundBody.aiShadowQueued, true);
+    assert.equal(openAiCalls, 1);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

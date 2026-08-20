@@ -49,6 +49,7 @@ test("post-consult endpoint sends only in the daytime window", async () => {
       GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
       YCLOUD_API_KEY: "key",
       WHATSAPP_POST_CONSULT_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
     },
     now: new Date("2026-07-28T14:00:00-03:00"),
     getBusinessNumberImpl: async () => "+5511961957144",
@@ -76,4 +77,30 @@ test("post-consult window excludes night and early morning", () => {
     ),
     false,
   );
+});
+
+test("the global automation switch blocks post-consult messages", async () => {
+  let calls = 0;
+  const response = await handlePostConsultFollowup(request(), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      WHATSAPP_POST_CONSULT_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "off",
+    },
+    now: new Date("2026-07-28T14:00:00-03:00"),
+    fetchImpl: async () => {
+      calls += 1;
+      return new Response("{}", { status: 200 });
+    },
+  });
+
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    ok: false,
+    sent: false,
+    error: "automation_inactive",
+    automationMode: "off",
+  });
+  assert.equal(calls, 0);
 });

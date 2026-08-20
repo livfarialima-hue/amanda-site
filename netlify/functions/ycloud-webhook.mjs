@@ -23,6 +23,7 @@ import {
   buildAppearanceDistressReviewReply,
   buildCampaignReferenceExplanationReply,
   buildConsultationInformationReply,
+  buildContextRoutingClarificationReply,
   buildImageAcknowledgementReply,
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
@@ -1133,6 +1134,52 @@ function isExactMessageDuplicate(delivery) {
   );
 }
 
+export function isSemanticTextAssessmentEligible({
+  delivery,
+  automationMode,
+  messageType,
+  text,
+  exactDuplicate = false,
+}) {
+  return Boolean(
+    delivery?.ok === true &&
+      ["active", "shadow"].includes(String(automationMode || "")) &&
+      String(messageType || "").toLowerCase() === "text" &&
+      String(text || "").trim() &&
+      exactDuplicate !== true,
+  );
+}
+
+export function isAutomatedAppointmentMutationEnabled(automationMode) {
+  return String(automationMode || "").trim().toLowerCase() === "active";
+}
+
+export function semanticDecisionCanRecoverPendingRoute(result) {
+  const decision = result?.decision;
+  return Boolean(
+    result?.status === "completed" &&
+      decision?.confidence === "high" &&
+      decision?.conversationState?.contextConfidence !== "low" &&
+      ["amanda", "daniel"].includes(decision?.professional) &&
+      decision?.route !== "ignore",
+  );
+}
+
+export function isSafeUnroutedSemanticClarification(result) {
+  const decision = result?.decision;
+  return Boolean(
+    result?.status === "completed" &&
+      decision?.route === "standard_reply" &&
+      decision?.automaticAllowed === true &&
+      decision?.urgent !== true &&
+      decision?.replyCode === CONTEXT_CLARIFICATION_CODE &&
+      String(decision?.reviewReason || "").startsWith(
+        "context_clarification:",
+      ) &&
+      String(decision?.suggestedReply || "").trim(),
+  );
+}
+
 function logOpenAIResult(eventId, result, executionMode = "shadow") {
   if (result.status === "completed") {
     writeOperationalLog({
@@ -1664,15 +1711,16 @@ async function completeOpenAIShadow(
   alertInput,
   reviewAlertAlreadyQueued,
   plan,
+  executionMode = "shadow",
 ) {
   try {
     const shadowResult = await runOpenAIShadow({
       ...input,
       policyHints: plan,
     });
-    logOpenAIResult(input.eventId, shadowResult, "shadow");
+    logOpenAIResult(input.eventId, shadowResult, executionMode);
     return {
-      status: shadowResult.status,
+      ...shadowResult,
       replySent: false,
       sideEffects: false,
     };
@@ -1689,6 +1737,31 @@ async function completeOpenAIShadow(
     });
     return { status: "failed", replySent: false, sideEffects: false };
   }
+}
+
+async function persistSemanticAssessmentState({
+  phone,
+  eventId,
+  result,
+}) {
+  if (
+    result?.status !== "completed" ||
+    !result?.decision?.conversationState
+  ) {
+    return { status: "skipped" };
+  }
+  const stateResult = await updateConversationSemanticState({
+    phone,
+    semanticState: result.decision.conversationState,
+  });
+  writeOperationalLog({
+    source: "conversation_semantic_assessment_state",
+    category: "conversation_memory",
+    reason: "semantic_state_processed",
+    sourceId: eventId,
+    fields: { status: stateResult.status },
+  });
+  return stateResult;
 }
 
 export async function supersedePendingReplyForIgnoredInbound(
@@ -1797,6 +1870,7 @@ async function completeOpenAIActive({
   approvedPriceReplyKind,
   humanContextContinuationCandidate = false,
   humanResumeGeneration = "",
+  precomputedSemanticResult = null,
 }) {
   try {
     const aiSafetyTriage = plan?.reason === "ai_safety_triage";
@@ -2120,8 +2194,12 @@ async function completeOpenAIActive({
           usage: null,
         }
       : null;
-    const semanticResult = standaloneMarketingPrefilledMessage
-      ? deterministicReplyResult
+    const mayReusePrecomputedSemanticResult = Boolean(
+      precomputedSemanticResult?.status === "completed" &&
+        !deterministicReplyResult,
+    );
+    const semanticResult = mayReusePrecomputedSemanticResult
+      ? precomputedSemanticResult
       : await runOpenAIShadow({
           ...input,
           policyHints: {
@@ -2138,7 +2216,6 @@ async function completeOpenAIActive({
           replyContract: conversationAction?.replyContract,
         });
     const selectedDeterministicReply =
-      standaloneMarketingPrefilledMessage ||
       semanticDecisionConfirmsDeterministicReply(
           semanticResult,
           deterministicReplyResult,
@@ -3677,7 +3754,10 @@ export async function handleYCloudWebhook(
           at: contactAt,
         });
 
-      if (appointmentSelection) {
+      if (
+        appointmentSelection &&
+        isAutomatedAppointmentMutationEnabled(automationMode)
+      ) {
         const bookingResult =
           await completeSelectedAppointment({
             from: String(message.to || ""),
@@ -3718,7 +3798,10 @@ export async function handleYCloudWebhook(
         at: contactAt,
       });
 
-      if (appointmentReply) {
+      if (
+        appointmentReply &&
+        isAutomatedAppointmentMutationEnabled(automationMode)
+      ) {
         const statusSync = await deliverSheetsAction(
           "update_appointment_status",
           {
@@ -3776,8 +3859,8 @@ export async function handleYCloudWebhook(
   // behavior.
   lead.professional = preliminaryAutomationPlan.professional;
 
-  const delivery = await deliverLead(lead);
-  const patientRelationship = {
+  let delivery = await deliverLead(lead);
+  let patientRelationship = {
     ...(delivery.patientRelationship || {}),
     lookupStatus: delivery.patientRelationship
       ? "completed"
@@ -3835,7 +3918,11 @@ export async function handleYCloudWebhook(
           memoryResult.expired === true ||
           (
             memoryResult.historyBefore.length === 0 &&
-            delivery.updated === true
+            (
+              delivery.updated === true ||
+              delivery.routed === false ||
+              delivery.routeStatus === "pending"
+            )
           )
         ),
     );
@@ -3933,7 +4020,182 @@ export async function handleYCloudWebhook(
     conversationHistoryWithCurrent = conversationHistory;
   }
 
+  if (automationMode === "off") {
+    const recoveryStatus = delivery.ok
+      ? await finishEarlyRecovery("automation_off")
+      : recoveryRegistration.status;
+
+    writeOperationalLog({
+      source: "ycloud",
+      category: "automation_control",
+      reason: "automation_off",
+      sourceId: eventId,
+      fields: {
+        messageType: normalizedMessageType || null,
+        leadRecorded: delivery.ok,
+        conversationMemoryStatus,
+        patientMessageSuppressed: true,
+        aiAssessmentSuppressed: true,
+        appointmentMutationSuppressed: true,
+      },
+    });
+
+    return json(
+      {
+        received: true,
+        leadRecorded: delivery.ok,
+        leadDuplicate: delivery.duplicate === true,
+        leadUpdated: delivery.updated === true,
+        leadRouteStatus: delivery.routeStatus || "unknown",
+        automaticWorkFinished: delivery.ok,
+        emergencyStop: true,
+        automationMode,
+        patientMessageSuppressed: true,
+        appointmentReserved: false,
+        appointmentMutationSuppressed: true,
+        aiShadowQueued: false,
+        aiActiveQueued: false,
+        recoveryStatus,
+      },
+      delivery.ok ? 200 : 502,
+    );
+  }
+
+  const patientDisplayName = resolvePatientDisplayName({
+    profileName: String(message.customerProfile?.name || ""),
+    currentText: text,
+    recentConversation: conversationHistoryWithCurrent,
+  });
+  let semanticAssessmentAttempted = false;
+  let semanticRouteAssessment = null;
+  let semanticRouteRecoveryStatus = "not_needed";
+  let semanticRouteRecovered = false;
+  let semanticRouteClarificationQueued = false;
+  let semanticRouteClarificationSent = false;
+  let semanticRouteClarificationStatus = "not_queued";
+  const pendingSemanticRoute = Boolean(
+    delivery.ok &&
+      delivery.routed === false &&
+      ["pending", "unknown", ""].includes(
+        String(delivery.routeStatus || ""),
+      ),
+  );
+  const semanticRouteAssessmentEligible =
+    pendingSemanticRoute &&
+    isSemanticTextAssessmentEligible({
+      delivery,
+      automationMode,
+      messageType: normalizedMessageType,
+      text,
+      exactDuplicate: suppressExactDuplicate,
+    });
+
+  if (semanticRouteAssessmentEligible) {
+    const semanticRoutePlan = enrichAutomationPlanFromConversation(
+      preliminaryAutomationPlan,
+      conversationHistory,
+    );
+    const semanticRouteConversationAction = decideConversationAction({
+      text,
+      messageType: message.type,
+      plan: semanticRoutePlan,
+      recentConversation: conversationHistory,
+      humanTakeoverActive: false,
+      exactDuplicate: suppressExactDuplicate,
+      schedulingRequest: false,
+    });
+    const semanticRouteLearningContext = await getBotKnowledgeContext({
+      phone,
+      question: text,
+      procedure: semanticRoutePlan.procedure || "",
+    });
+    semanticAssessmentAttempted = true;
+    semanticRouteRecoveryStatus = "assessing";
+    semanticRouteAssessment = await completeOpenAIShadow(
+      {
+        eventId: String(eventId),
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
+        phone,
+        text,
+        platform: attribution.platform,
+        procedure: semanticRoutePlan.procedure,
+        sourceReference: attribution.reference,
+        referenceCategory: attribution.referenceCategory,
+        patientProfileName: patientDisplayName,
+        recentConversation: conversationHistory,
+        previousConversationState: conversationSemanticState,
+        priorInteractionKnown:
+          delivery.updated === true || conversationHistory.length > 0,
+        referralContext,
+        templateId: prefillTemplateId,
+        patientRelationship:
+          patientRelationshipPromptContext(patientRelationship),
+        learningContext: semanticRouteLearningContext,
+        replyContract: semanticRouteConversationAction.replyContract,
+        deterministicUrgent:
+          semanticRoutePlan.reason === "possible_urgent_symptoms",
+      },
+      null,
+      false,
+      {
+        ...semanticRoutePlan,
+        semanticRoutePending: true,
+      },
+      "route_recovery",
+    );
+    if (automationMode === "active") {
+      await persistSemanticAssessmentState({
+        phone,
+        eventId: String(eventId),
+        result: semanticRouteAssessment,
+      });
+    }
+
+    const semanticRouteRecoveryCandidate =
+      semanticDecisionCanRecoverPendingRoute(semanticRouteAssessment);
+    if (
+      semanticRouteRecoveryCandidate &&
+      automationMode === "active"
+    ) {
+      const semanticProfessional =
+        semanticRouteAssessment.decision.professional;
+      const recoveredDelivery = await deliverLead({
+        ...lead,
+        professional: semanticProfessional,
+      });
+      if (
+        recoveredDelivery.ok &&
+        recoveredDelivery.routed !== false &&
+        ["amanda", "daniel"].includes(recoveredDelivery.professional)
+      ) {
+        delivery = recoveredDelivery;
+        lead.professional = recoveredDelivery.professional;
+        patientRelationship = {
+          ...(recoveredDelivery.patientRelationship || {}),
+          lookupStatus: recoveredDelivery.patientRelationship
+            ? "completed"
+            : "not_returned",
+        };
+        semanticRouteRecovered = true;
+        semanticRouteRecoveryStatus = "completed";
+      } else {
+        semanticRouteRecoveryStatus =
+          recoveredDelivery.errorCode || "route_still_pending";
+      }
+    } else if (semanticRouteRecoveryCandidate) {
+      semanticRouteRecoveryStatus = "shadow_candidate";
+    } else {
+      semanticRouteRecoveryStatus =
+        semanticRouteAssessment?.status === "completed"
+          ? "context_uncertain"
+          : semanticRouteAssessment?.errorCode || "assessment_failed";
+    }
+  }
+
   if (
+    isAutomatedAppointmentMutationEnabled(automationMode) &&
     patientAppointmentSelection &&
     !blocksAutomatedPatientMessages(patientRelationship)
   ) {
@@ -3988,7 +4250,10 @@ export async function handleYCloudWebhook(
     });
   }
 
-  if (patientAppointmentReply) {
+  if (
+    isAutomatedAppointmentMutationEnabled(automationMode) &&
+    patientAppointmentReply
+  ) {
     const statusSync = await deliverSheetsAction(
       "update_appointment_status",
       {
@@ -4043,7 +4308,7 @@ export async function handleYCloudWebhook(
     delivery.humanTakeoverToday &&
     humanResumeControl?.status !== "bruna_resumed";
 
-  const baseAutomationPlan = humanTakeoverActive
+  let baseAutomationPlan = humanTakeoverActive
     ? {
         route: "human_takeover_active",
         reason: "manual_reply_today",
@@ -4089,6 +4354,34 @@ export async function handleYCloudWebhook(
         preliminaryAutomationPlan,
         conversationHistory,
       );
+  if (semanticRouteRecovered) {
+    const semanticProfessional =
+      delivery.professional ||
+      semanticRouteAssessment?.decision?.professional ||
+      baseAutomationPlan.professional;
+    baseAutomationPlan = {
+      ...baseAutomationPlan,
+      route:
+        semanticProfessional === "daniel" &&
+        baseAutomationPlan.route === "standard_reply"
+          ? "daniel_greeting_and_alert"
+          : baseAutomationPlan.route,
+      reason:
+        semanticProfessional === "daniel" &&
+        baseAutomationPlan.route === "standard_reply"
+          ? "cardiology_or_dr_daniel"
+          : baseAutomationPlan.reason,
+      replyCode:
+        semanticProfessional === "daniel" &&
+        baseAutomationPlan.route === "standard_reply"
+          ? "DANIEL-ENC-01"
+          : baseAutomationPlan.replyCode,
+      professional: semanticProfessional,
+      procedure:
+        semanticRouteAssessment?.decision?.procedure ||
+        baseAutomationPlan.procedure,
+    };
+  }
   const relationshipAwarePlan =
     enrichPricePlanFromPatientRelationship(
       baseAutomationPlan,
@@ -4098,11 +4391,6 @@ export async function handleYCloudWebhook(
     relationshipAwarePlan,
     patientRelationship,
   );
-  const patientDisplayName = resolvePatientDisplayName({
-    profileName: String(message.customerProfile?.name || ""),
-    currentText: text,
-    recentConversation: conversationHistoryWithCurrent,
-  });
   const leadDeliveryFallbackActive = false;
   const patientAutomationReady =
     delivery.ok &&
@@ -4284,15 +4572,40 @@ export async function handleYCloudWebhook(
     Boolean(approvedPriceReplyKind) &&
     automationPlan.route === "standard_reply" &&
     automationPlan.automaticAllowed === true;
+  const unresolvedSemanticRoute = Boolean(
+    semanticRouteAssessmentEligible && !semanticRouteRecovered,
+  );
+  const semanticRouteMayAskForContext = Boolean(
+    isSafeUnroutedSemanticClarification(semanticRouteAssessment) ||
+      semanticRouteAssessment?.status !== "completed",
+  );
+  const shouldQueueSemanticRouteClarification = Boolean(
+    unresolvedSemanticRoute &&
+      semanticRouteMayAskForContext &&
+      automationMode === "active" &&
+      !extremeNightDeferral &&
+      !humanTakeoverActive &&
+      !suppressExactDuplicate &&
+      automationPlan.route === "standard_reply" &&
+      conversationAction.allowAutomaticReply &&
+      !blocksAutomatedPatientMessages(patientRelationship),
+  );
+  const unresolvedSemanticRouteNeedsReview = Boolean(
+    unresolvedSemanticRoute &&
+      !shouldQueueSemanticRouteClarification,
+  );
   const shouldQueueReviewAlert =
     (delivery.ok || alertInput.urgent) &&
     !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
-    conversationAction.allowAlert &&
+    (conversationAction.allowAlert || unresolvedSemanticRouteNeedsReview) &&
     !shouldQueueAppointmentReview &&
     isReviewAlertConfigured() &&
-    shouldSendReviewAlertForPlan(automationPlan);
+    (
+      shouldSendReviewAlertForPlan(automationPlan) ||
+      unresolvedSemanticRouteNeedsReview
+    );
   const shouldQueueImageAcknowledgement =
     delivery.ok &&
     !extremeNightDeferral &&
@@ -4374,6 +4687,67 @@ export async function handleYCloudWebhook(
   let extremeNightAcknowledgementStatus = "not_queued";
   let extremeNightMorningResumeStatus = "not_scheduled";
   let extremeNightEmailStatus = "not_queued";
+
+  if (shouldQueueSemanticRouteClarification) {
+    semanticRouteClarificationQueued = true;
+    const semanticClarificationApproved =
+      isSafeUnroutedSemanticClarification(semanticRouteAssessment);
+    const clarificationDecision = semanticClarificationApproved
+      ? semanticRouteAssessment.decision
+      : {
+          route: "standard_reply",
+          confidence: "high",
+          automaticAllowed: true,
+          urgent: false,
+          professional: "unknown",
+          procedure: "",
+          replyCode: CONTEXT_CLARIFICATION_CODE,
+          suggestedReply: buildContextRoutingClarificationReply({
+            patientName: patientDisplayName,
+            introduceBruna: !conversationHistory.some(
+              (turn) =>
+                turn?.role === "assistant" ||
+                ["bruna", "equipe_humana"].includes(turn?.source),
+            ),
+          }),
+          reviewReason: "context_clarification:atendimento",
+        };
+    const clarificationResult = await sendCurrentInboundReply({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-semantic-route-clarification`,
+      revisionEventId: String(eventId),
+      body: clarificationDecision.suggestedReply,
+      currentText: text,
+      recentConversation: conversationHistory,
+      conversationAction: buildSemanticReplyConversationAction(
+        conversationAction,
+        clarificationDecision,
+      ),
+      replyDebounceMarkerStatus,
+      patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
+    });
+    semanticRouteClarificationSent =
+      clarificationResult.status === "completed";
+    semanticRouteClarificationStatus = clarificationResult.status;
+    logPatientReplyResult(
+      `${String(eventId)}-semantic-route-clarification`,
+      phone,
+      clarificationResult,
+    );
+
+    if (semanticRouteClarificationSent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: clarificationDecision.suggestedReply,
+        eventId: `${String(eventId)}:semantic-route-clarification`,
+        source: "bruna",
+      });
+    }
+  }
 
   const patientCommitment =
     delivery.ok &&
@@ -4616,6 +4990,64 @@ export async function handleYCloudWebhook(
     }
   }
 
+  let semanticReviewAssessment = semanticRouteAssessment;
+  if (
+    shouldQueueReviewAlert &&
+    !semanticAssessmentAttempted &&
+    isSemanticTextAssessmentEligible({
+      delivery,
+      automationMode,
+      messageType: normalizedMessageType,
+      text,
+      exactDuplicate: suppressExactDuplicate,
+    })
+  ) {
+    const reviewLearningContext = await getBotKnowledgeContext({
+      phone,
+      question: text,
+      procedure: automationPlan.procedure || "",
+    });
+    semanticAssessmentAttempted = true;
+    semanticReviewAssessment = await completeOpenAIShadow(
+      {
+        eventId: String(eventId),
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
+        phone,
+        text,
+        platform: attribution.platform,
+        procedure: automationPlan.procedure,
+        sourceReference: attribution.reference,
+        referenceCategory: attribution.referenceCategory,
+        patientProfileName: patientDisplayName,
+        recentConversation: conversationHistory,
+        previousConversationState: conversationSemanticState,
+        priorInteractionKnown:
+          delivery.updated === true || conversationHistory.length > 0,
+        referralContext,
+        templateId: prefillTemplateId,
+        patientRelationship:
+          patientRelationshipPromptContext(patientRelationship),
+        learningContext: reviewLearningContext,
+        replyContract: conversationAction.replyContract,
+        deterministicUrgent:
+          automationPlan.reason === "possible_urgent_symptoms",
+      },
+      alertInput,
+      false,
+      automationPlan,
+      "review_assessment",
+    );
+    if (automationMode === "active") {
+      await persistSemanticAssessmentState({
+        phone,
+        eventId: String(eventId),
+        result: semanticReviewAssessment,
+      });
+    }
+  }
+
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(
       professionalFactReview
@@ -4628,6 +5060,7 @@ export async function handleYCloudWebhook(
             }),
           }
         : prepareReviewAlertInput(alertInput, {
+            decision: semanticReviewAssessment?.decision,
             plan: automationPlan,
           }),
     );
@@ -4814,9 +5247,18 @@ export async function handleYCloudWebhook(
 
   const deterministicMarketingOpeningCandidate =
     automationPlan.marketingPrefill === true;
+  const semanticTextAssessmentEligible =
+    isSemanticTextAssessmentEligible({
+      delivery,
+      automationMode,
+      messageType: normalizedMessageType,
+      text,
+      exactDuplicate: suppressExactDuplicate,
+    });
   const learningContext =
     (
       semanticHumanContextContinuationCandidate ||
+      (semanticTextAssessmentEligible && !semanticAssessmentAttempted) ||
       shouldLoadBotKnowledgeContext({
       patientAutomationReady,
       humanTakeoverActive,
@@ -4837,19 +5279,9 @@ export async function handleYCloudWebhook(
         })
       : { candidates: [], pendingQuestion: null };
   const shouldQueueOpenAIShadow =
-    delivery.ok &&
-    !extremeNightDeferral &&
-    !humanTakeoverActive &&
+    semanticTextAssessmentEligible &&
     automationMode === "shadow" &&
-    String(message.type || "").toLowerCase() === "text" &&
-    text.trim().length > 0 &&
-    automationPlan.route === "standard_reply" &&
-    conversationAction.allowAutomaticReply &&
-    automationPlan.professional !== "daniel" &&
-    !appointmentReviewCandidate &&
-    !appointmentNeedsPreference &&
-    !suppressExactDuplicate &&
-    !professionalFactReview;
+    !semanticAssessmentAttempted;
   const commonOpenAIActiveEligibility =
     patientAutomationReady &&
     !extremeNightDeferral &&
@@ -4870,9 +5302,17 @@ export async function handleYCloudWebhook(
       ) ||
       semanticHumanContextContinuationCandidate
     );
+  const shouldQueueOpenAIAssessmentOnly = Boolean(
+    semanticTextAssessmentEligible &&
+      automationMode === "active" &&
+      !semanticAssessmentAttempted &&
+      !shouldQueueOpenAIActive
+  );
   let aiShadowQueued = false;
+  let aiAssessmentOnlyQueued = false;
 
   if (shouldQueueOpenAIShadow) {
+    semanticAssessmentAttempted = true;
     const shadowPromise = completeOpenAIShadow(
       {
         eventId: String(eventId),
@@ -4888,7 +5328,8 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown: delivery.updated === true,
+        priorInteractionKnown:
+          delivery.updated === true || conversationHistory.length > 0,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:
@@ -4896,6 +5337,7 @@ export async function handleYCloudWebhook(
             patientRelationship,
           ),
         learningContext,
+        replyContract: conversationAction.replyContract,
         deterministicUrgent:
           openAIActivePlan.reason === "possible_urgent_symptoms",
       },
@@ -4917,7 +5359,74 @@ export async function handleYCloudWebhook(
     }
   }
 
+  if (shouldQueueOpenAIAssessmentOnly) {
+    semanticAssessmentAttempted = true;
+    const assessmentPromise = completeOpenAIShadow(
+      {
+        eventId: String(eventId),
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
+        phone,
+        text,
+        platform: attribution.platform,
+        procedure: openAIActivePlan.procedure,
+        sourceReference: attribution.reference,
+        referenceCategory: attribution.referenceCategory,
+        patientProfileName: patientDisplayName,
+        recentConversation: conversationHistory,
+        previousConversationState: conversationSemanticState,
+        priorInteractionKnown:
+          delivery.updated === true || conversationHistory.length > 0,
+        referralContext,
+        templateId: prefillTemplateId,
+        patientRelationship:
+          patientRelationshipPromptContext(patientRelationship),
+        learningContext,
+        replyContract: conversationAction.replyContract,
+        deterministicUrgent:
+          openAIActivePlan.reason === "possible_urgent_symptoms",
+      },
+      alertInput,
+      reviewAlertQueued,
+      openAIActivePlan,
+      "assessment",
+    ).then(async (assessmentResult) => {
+      await persistSemanticAssessmentState({
+        phone,
+        eventId: String(eventId),
+        result: assessmentResult,
+      });
+      return assessmentResult;
+    });
+    aiAssessmentOnlyQueued = true;
+
+    if (typeof context?.waitUntil === "function") {
+      try {
+        context.waitUntil(assessmentPromise);
+      } catch {
+        await assessmentPromise;
+      }
+    } else {
+      await assessmentPromise;
+    }
+  }
+
   if (shouldQueueOpenAIActive) {
+    semanticAssessmentAttempted = true;
+    const recoveredRelationshipState =
+      normalizePatientRelationship(patientRelationship).state;
+    const routeAssessmentCanBeReusedForReply = Boolean(
+      semanticRouteRecovered &&
+        ![
+          "appointment_scheduled",
+          "consultation_completed",
+          "surgical_planning",
+          "active_postop",
+          "former_patient",
+          "known_patient",
+        ].includes(recoveredRelationshipState)
+    );
     const activePromise = completeOpenAIActive({
       input: {
         eventId: String(eventId),
@@ -4935,7 +5444,8 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown: delivery.updated === true,
+        priorInteractionKnown:
+          delivery.updated === true || conversationHistory.length > 0,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:
@@ -4943,6 +5453,7 @@ export async function handleYCloudWebhook(
             patientRelationship,
           ),
         learningContext,
+        replyContract: openAIConversationAction.replyContract,
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },
@@ -4963,6 +5474,9 @@ export async function handleYCloudWebhook(
         semanticHumanContextContinuationCandidate,
       humanResumeGeneration:
         humanResumeControl?.generation || "",
+      precomputedSemanticResult: routeAssessmentCanBeReusedForReply
+        ? semanticRouteAssessment
+        : null,
     });
 
     aiActiveQueued = true;
@@ -5139,7 +5653,8 @@ export async function handleYCloudWebhook(
     delivery.ok &&
     (
       delivery.routed !== false ||
-      delivery.routeStatus === "nonlead"
+      delivery.routeStatus === "nonlead" ||
+      semanticRouteClarificationSent
     );
   const automaticWorkFinished =
     leadRoutingFinished &&
@@ -5149,6 +5664,7 @@ export async function handleYCloudWebhook(
     (!overnightHandoffQueued || terminalSendStatuses.has(overnightHandoffStatus)) &&
     (!imageAcknowledgementQueued || terminalSendStatuses.has(imageAcknowledgementStatus)) &&
     (!missingTextClarificationQueued || terminalSendStatuses.has(missingTextClarificationStatus)) &&
+    (!semanticRouteClarificationQueued || terminalSendStatuses.has(semanticRouteClarificationStatus)) &&
     (!extremeNightAcknowledgementQueued || terminalSendStatuses.has(extremeNightAcknowledgementStatus)) &&
     (!extremeNightDeferral || ["scheduled", "waiting_human"].includes(extremeNightMorningResumeStatus)) &&
     (!patientReplyQueued || terminalSendStatuses.has(patientReplyStatus));
@@ -5224,6 +5740,13 @@ export async function handleYCloudWebhook(
       missingTextClarificationQueued,
       missingTextClarificationSent,
       missingTextClarificationStatus,
+      semanticAssessmentAttempted,
+      semanticRouteAssessmentEligible,
+      semanticRouteRecovered,
+      semanticRouteRecoveryStatus,
+      semanticRouteClarificationQueued,
+      semanticRouteClarificationSent,
+      semanticRouteClarificationStatus,
       extremeNightActive,
       extremeNightDeferral,
       explicitNightPause,
@@ -5240,6 +5763,7 @@ export async function handleYCloudWebhook(
       approvedPriceReplySent,
       approvedPriceReplyStatus,
       aiShadowQueued,
+      aiAssessmentOnlyQueued,
       aiActiveQueued,
       aiActiveStatus,
       aiActiveReplySent,
@@ -5316,6 +5840,13 @@ export async function handleYCloudWebhook(
     missingTextClarificationQueued,
     missingTextClarificationSent,
     missingTextClarificationStatus,
+    semanticAssessmentAttempted,
+    semanticRouteAssessmentEligible,
+    semanticRouteRecovered,
+    semanticRouteRecoveryStatus,
+    semanticRouteClarificationQueued,
+    semanticRouteClarificationSent,
+    semanticRouteClarificationStatus,
     extremeNightActive,
     extremeNightDeferral,
     explicitNightPause,
@@ -5347,6 +5878,7 @@ export async function handleYCloudWebhook(
       approvedPriceReplyKind === "otoplasty_range" &&
       approvedPriceReplySent,
     aiShadowQueued,
+    aiAssessmentOnlyQueued,
     aiActiveQueued,
     aiActiveStatus,
     aiActiveReplySent,

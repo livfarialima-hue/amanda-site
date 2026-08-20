@@ -1681,13 +1681,19 @@ function collectLeadMessagesForOpportunity_(
       index >= firstLinkedIndex &&
       (!rowProfessional || rowProfessional === "unknown"),
     );
+    const canRecoverPhoneOnlyUnknown = Boolean(
+      includeUnassignedUnknown &&
+      !opportunityId &&
+      (!rowProfessional || rowProfessional === "unknown"),
+    );
     return (
       !row[7] &&
       normalizePhone_(row[0]) === normalizedPhone &&
       (
         !rowProfessional ||
         rowProfessional === normalizedProfessional ||
-        canRecoverUnassigned
+        canRecoverUnassigned ||
+        canRecoverPhoneOnlyUnknown
       )
     );
   });
@@ -1708,6 +1714,74 @@ function collectLeadMessagesForOpportunity_(
       templateId: String(row[11] || "").toLowerCase(),
     };
   });
+}
+
+function collectHumanTakeoverMessagesForPhone_(
+  takeoverSheet,
+  phone,
+  limit,
+) {
+  if (!takeoverSheet || takeoverSheet.getLastRow() < 2) return [];
+  const normalizedPhone = normalizePhone_(phone);
+  if (!normalizedPhone) return [];
+  const values = takeoverSheet
+    .getRange(2, 1, takeoverSheet.getLastRow() - 1, 6)
+    .getValues();
+  return values
+    .filter(function samePhone(row) {
+      return normalizePhone_(row[2]) === normalizedPhone;
+    })
+    .slice(-Math.max(1, Number(limit) || 12))
+    .map(function publicHumanTurn(row) {
+      return {
+        direction: "OUT",
+        at: row[3] instanceof Date
+          ? row[3].toISOString()
+          : String(row[3] || ""),
+        messageId: String(row[1] || ""),
+        eventId: String(row[0] || ""),
+        text: String(row[5] || ""),
+        source: "equipe_humana",
+        templateId: "",
+      };
+    });
+}
+
+function mergeConversationMessages_(messageGroups, limit) {
+  const merged = [];
+  const seen = {};
+  (Array.isArray(messageGroups) ? messageGroups : []).forEach(
+    function mergeGroup(group) {
+      (Array.isArray(group) ? group : []).forEach(function mergeMessage(message) {
+        const key = String(
+          message.eventId ||
+          message.messageId ||
+          [message.direction, message.at, message.text].join("|"),
+        );
+        if (seen[key]) return;
+        seen[key] = true;
+        merged.push({
+          ...message,
+          __order: merged.length,
+        });
+      });
+    },
+  );
+  merged.sort(function chronologicalConversation(left, right) {
+    const leftAt = new Date(left.at || 0).getTime();
+    const rightAt = new Date(right.at || 0).getTime();
+    if (Number.isFinite(leftAt) && Number.isFinite(rightAt) && leftAt !== rightAt) {
+      return leftAt - rightAt;
+    }
+    return left.__order - right.__order;
+  });
+  return merged
+    .slice(-Math.max(1, Number(limit) || 12))
+    .map(function withoutOrder(message) {
+      const result = { ...message };
+      delete result.__order;
+      return result;
+    });
 }
 
 function boundedConversationText_(value, limit) {
@@ -1794,24 +1868,28 @@ function obterContextoConversa_(input) {
     (latest && latest.opportunityId) || "";
   const professional = safeText_(input.professional, 80) ||
     (latest && latest.professional) || "";
-  if (!opportunityId) {
-    return {
-      ok: true,
-      opportunityId: "",
-      professional: professional,
-      turns: [],
-    };
-  }
-
   const messageSheet = spreadsheet.getSheetByName(CONFIG.messageSheetName);
+  const takeoverSheet = spreadsheet.getSheetByName(
+    CONFIG.humanTakeoverSheetName,
+  );
   const limit = Math.max(1, Math.min(32, Number(input.limit) || 32));
-  const messages = collectLeadMessagesForOpportunity_(
-    messageSheet,
-    opportunityId,
-    phone,
-    professional,
+  const messages = mergeConversationMessages_(
+    [
+      collectLeadMessagesForOpportunity_(
+        messageSheet,
+        opportunityId,
+        phone,
+        professional,
+        limit,
+        true,
+      ),
+      collectHumanTakeoverMessagesForPhone_(
+        takeoverSheet,
+        phone,
+        limit,
+      ),
+    ],
     limit,
-    true,
   );
   const turns = messages.map(function publicConversationTurn(message) {
     const outbound = message.direction === "OUT";

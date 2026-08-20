@@ -525,6 +525,9 @@ function normalizePolicyHints(value) {
     normalized.humanContextContinuationCandidate =
       value.humanContextContinuationCandidate;
   }
+  if (typeof value.semanticRoutePending === "boolean") {
+    normalized.semanticRoutePending = value.semanticRoutePending;
+  }
 
   return Object.keys(normalized).length ? normalized : null;
 }

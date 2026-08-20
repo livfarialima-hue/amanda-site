@@ -4,6 +4,7 @@ import {
   sendYCloudAppointmentReminder,
 } from "./lib/ycloud-appointment-reminder.mjs";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
+import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
 const ALLOWED_KINDS = new Set(["48h", "same_day"]);
@@ -91,6 +92,21 @@ export async function handleAppointmentReminder(
   if (env.WHATSAPP_APPOINTMENT_REMINDERS_ENABLED !== "true") {
     return json(
       { ok: false, sent: false, error: "reminders_disabled" },
+      503,
+    );
+  }
+
+  const automationMode = normalizeAutomationMode(
+    env.WHATSAPP_AUTOMATION_MODE,
+  );
+  if (automationMode !== "active") {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "automation_inactive",
+        automationMode,
+      },
       503,
     );
   }

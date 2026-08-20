@@ -14,6 +14,7 @@ import {
 import webhook, {
   attributionFallbackReason,
   classifyAttribution,
+  isAutomatedAppointmentMutationEnabled,
   normalizeResolvedJourneyAttribution,
   resolveInboundAttributionJourney,
   semanticDecisionConfirmsDeterministicReply,
@@ -21,6 +22,13 @@ import webhook, {
 } from "../ycloud-webhook.mjs";
 
 const PHONE = "+5511961957144";
+
+test("only active mode may mutate an appointment from an inbound reply", () => {
+  assert.equal(isAutomatedAppointmentMutationEnabled("active"), true);
+  assert.equal(isAutomatedAppointmentMutationEnabled("shadow"), false);
+  assert.equal(isAutomatedAppointmentMutationEnabled("off"), false);
+  assert.equal(isAutomatedAppointmentMutationEnabled("unexpected"), false);
+});
 
 function validDecision(overrides = {}) {
   return {
@@ -717,6 +725,13 @@ test("full webhook claims J1, strips it, and delivers resolved attribution to Sh
       },
     );
     assert.equal(response.status, 200);
+    const responseBody = await response.json();
+    assert.equal(responseBody.emergencyStop, true);
+    assert.equal(responseBody.automationMode, "off");
+    assert.equal(responseBody.patientMessageSuppressed, true);
+    assert.equal(responseBody.appointmentMutationSuppressed, true);
+    assert.equal(responseBody.aiShadowQueued, false);
+    assert.equal(responseBody.aiActiveQueued, false);
     const append = sheetsRequests.find((request) => request.action === "append_lead");
     assert.ok(append);
     assert.equal(append.lead.text, "Olá, quero uma avaliação.");
@@ -1228,6 +1243,7 @@ test("the model receives bounded mechanical hints as non-authoritative context",
         professional: "amanda",
         procedure: "lifting_cervical",
         automaticAllowed: true,
+        semanticRoutePending: true,
         ignoredField: "not-forwarded",
       },
     },
@@ -1257,6 +1273,7 @@ test("the model receives bounded mechanical hints as non-authoritative context",
     deterministicReplyPreview:
       "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
     automaticAllowed: true,
+    semanticRoutePending: true,
   });
 });
 
@@ -1530,12 +1547,30 @@ test("OpenAI failure keeps the webhook successful and never sends to YCloud", as
     );
 
     assert.equal(response.status, 200);
-    assert.equal((await response.json()).aiShadowQueued, true);
-    assert.deepEqual(requests, [
-      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
-      process.env.GOOGLE_SHEETS_WEBHOOK_URL,
-      "https://api.openai.com/v1/responses",
-    ]);
+    const body = await response.json();
+    assert.equal(body.aiShadowQueued, true);
+    assert.equal(body.semanticAssessmentAttempted, true);
+    assert.equal(
+      requests.filter(
+        (url) => url === "https://api.openai.com/v1/responses",
+      ).length,
+      1,
+    );
+    assert.equal(
+      requests.some(
+        (url) => url === "https://api.ycloud.com/v2/whatsapp/messages",
+      ),
+      false,
+    );
+    assert.equal(
+      requests.every((url) =>
+        [
+          process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+          "https://api.openai.com/v1/responses",
+        ].includes(url),
+      ),
+      true,
+    );
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;
@@ -2366,9 +2401,9 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
           validResponse(
               validDecision({
                 procedure: "lipo_papada",
-                replyCode: "AMANDA-AGENDA-PREFERENCE-01",
+                replyCode: "MARKETING-PREFILL-OPENING-01",
                 suggestedReply:
-                  "A pessoa quer informar sua preferência para uma avaliação facial.",
+                  "A mensagem abre uma conversa sobre lipo de papada sem solicitar agenda.",
               }),
           ),
         ),
@@ -2439,7 +2474,7 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
         (request) =>
           request.url === "https://api.openai.com/v1/responses",
       ),
-      false,
+      true,
     );
 
     const patientRequests = requests.filter(

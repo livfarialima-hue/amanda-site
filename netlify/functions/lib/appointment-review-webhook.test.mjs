@@ -133,6 +133,7 @@ test("explicit availability request immediately prepares two real slots for revi
         "get_conversation_context",
         "record_patient_commitment",
         "get_available_slots",
+        "get_bot_knowledge_context",
         "record_operational_event",
         "send_review_alert_email",
       ],
@@ -232,19 +233,20 @@ test("a structured lifting prefill never asks for schedule preference", async ()
                     urgent: false,
                     professional: "amanda",
                     procedure: "lifting_facial",
-                    replyCode: "AMANDA-AGENDA-PREFERENCE-01",
-                    suggestedReply: "A paciente quer consultar horários.",
-                    reviewReason: "appointment_preference_requested",
+                    replyCode: "MARKETING-PREFILL-OPENING-01",
+                    suggestedReply:
+                      "A mensagem automática abre uma conversa sobre lifting facial, sem comprovar intenção de agendamento.",
+                    reviewReason: "",
                     conversationState: {
-                      activeTopic: "agendamento",
-                      patientAct: "request",
+                      activeTopic: "lifting facial",
+                      patientAct: "statement",
                       refersToEventId: "",
                       lastClinicQuestion: "",
                       lastClinicOffer: "",
-                      unresolvedQuestions: ["preferência de dias e período"],
+                      unresolvedQuestions: [],
                       factsAlreadyProvided: [],
                       owner: "bruna",
-                      nextExpectedAction: "pedir preferência de agenda",
+                      nextExpectedAction: "entender a primeira dúvida real",
                       ambiguity: "",
                       contextConfidence: "high",
                     },
@@ -324,7 +326,7 @@ test("a structured lifting prefill never asks for schedule preference", async ()
     assert.equal(
       requests.some((request) =>
         request.url === "https://api.openai.com/v1/responses"),
-      false,
+      true,
     );
   } finally {
     globalThis.fetch = originalFetch;

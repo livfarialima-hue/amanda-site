@@ -4,6 +4,7 @@ import {
   sendYCloudPostConsult,
 } from "./lib/ycloud-post-consult.mjs";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
+import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
 
@@ -87,6 +88,21 @@ export async function handlePostConsultFollowup(
         ok: false,
         sent: false,
         error: "post_consult_disabled",
+      },
+      503,
+    );
+  }
+
+  const automationMode = normalizeAutomationMode(
+    env.WHATSAPP_AUTOMATION_MODE,
+  );
+  if (automationMode !== "active") {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "automation_inactive",
+        automationMode,
       },
       503,
     );

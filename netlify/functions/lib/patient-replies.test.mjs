@@ -4,6 +4,7 @@ import {
   buildAppearanceDistressReviewReply,
   buildCampaignReferenceExplanationReply,
   buildConsultationInformationReply,
+  buildContextRoutingClarificationReply,
   buildImageAcknowledgementReply,
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
@@ -27,6 +28,19 @@ test("asks for context naturally when the provider omits the inbound text", () =
   assert.match(reply, /mensagem não apareceu completa para mim/i);
   assert.match(reply, /qual procedimento ou dúvida/i);
   assert.doesNotMatch(reply, /diagnóstico|indicação|erro|falha técnica/i);
+});
+
+test("asks for routing context without sounding like an administrative menu", () => {
+  const continuation = buildContextRoutingClarificationReply();
+  assert.match(continuation, /^Quero entender direitinho/i);
+  assert.match(continuation, /explicar um pouco melhor/i);
+  assert.doesNotMatch(continuation, /selecione|opção|departamento|roteamento/i);
+
+  const firstReply = buildContextRoutingClarificationReply({
+    patientName: "Marina",
+    introduceBruna: true,
+  });
+  assert.match(firstReply, /^Olá, Marina! Eu sou a Bruna, concierge/i);
 });
 
 test("acknowledges a patient photo gently without interpreting it", () => {

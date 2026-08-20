@@ -2122,7 +2122,7 @@ function registrarAtendimentoHumano_(input) {
       CONFIG.timezone,
       "yyyy-MM-dd",
     ),
-    safeText_(input.text, 500),
+    safeText_(input.text, 4000),
   ]);
 
   const opportunity =

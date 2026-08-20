@@ -50,6 +50,7 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
       GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
       YCLOUD_API_KEY: "key",
       WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
     },
     now: new Date("2026-08-03T10:30:00-03:00"),
     getBusinessNumberImpl: async () => "+5511961957144",
@@ -84,6 +85,7 @@ test("scheduled follow-up rejects night sends and invalid secrets", async () => 
         GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
         YCLOUD_API_KEY: "key",
         WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+        WHATSAPP_AUTOMATION_MODE: "active",
       },
       now: new Date("2026-08-03T10:30:00-03:00"),
     },
@@ -93,6 +95,7 @@ test("scheduled follow-up rejects night sends and invalid secrets", async () => 
       GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
       YCLOUD_API_KEY: "key",
       WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
     },
     now: new Date("2026-08-03T22:00:00-03:00"),
   });
@@ -111,4 +114,30 @@ test("scheduled follow-up rejects night sends and invalid secrets", async () => 
     ),
     false,
   );
+});
+
+test("the global automation switch blocks a scheduled follow-up", async () => {
+  let sends = 0;
+  const response = await handleScheduledFollowup(request(), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "off",
+    },
+    now: new Date("2026-08-03T10:30:00-03:00"),
+    sendYCloudPatientTextImpl: async () => {
+      sends += 1;
+      return { status: "completed" };
+    },
+  });
+
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    ok: false,
+    sent: false,
+    error: "automation_inactive",
+    automationMode: "off",
+  });
+  assert.equal(sends, 0);
 });

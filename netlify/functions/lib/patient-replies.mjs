@@ -313,6 +313,20 @@ export function buildMissingInboundTextClarificationReply() {
   ].join(" ");
 }
 
+export function buildContextRoutingClarificationReply({
+  patientName,
+  introduceBruna = false,
+} = {}) {
+  const opening = introduceBruna
+    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    : "";
+  return [
+    opening,
+    "Quero entender direitinho para te orientar.",
+    "Você pode me explicar um pouco melhor qual atendimento ou dúvida gostaria de tratar conosco?",
+  ].filter(Boolean).join(" ");
+}
+
 export function buildAppearanceDistressReviewReply({ patientName }) {
   return [
     greeting(patientName),
