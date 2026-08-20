@@ -4,6 +4,7 @@ import {
   UNKNOWN_CLARIFICATION_CODE,
   UNKNOWN_REVIEW_CODE,
   applyKnowledgeDecisionGuard,
+  buildSafeInternalReviewSuggestion,
   buildUnknownHoldingReply,
   classifyLearningRisk,
   shouldDigestLearningDecision,
@@ -60,7 +61,7 @@ test("an invalid or non-automatic knowledge rule is held for review", () => {
 
   assert.equal(guarded.replyCode, UNKNOWN_REVIEW_CODE);
   assert.equal(guarded.automaticAllowed, false);
-  assert.equal(guarded.suggestedReply, "");
+  assert.equal(guarded.suggestedReply, "Apenas para a equipe.");
   assert.equal(shouldDigestLearningDecision(guarded), true);
 });
 
@@ -88,6 +89,7 @@ test("medium-risk knowledge can never be sent automatically", () => {
   });
   assert.equal(guarded.route, "human_review");
   assert.equal(guarded.automaticAllowed, false);
+  assert.equal(guarded.suggestedReply, "Resposta aprovada");
 });
 
 test("the bot can ask only one clarification for the same pending question", () => {
@@ -136,6 +138,60 @@ test("an unmapped unknown stays silent instead of producing a generic holding re
     buildUnknownHoldingReply({
       patientName: "Maria Silva",
       currentText: "Tenho uma questão.",
+    }),
+    "",
+  );
+});
+
+test("a safe unknown review keeps a draft for the team without authorizing patient delivery", () => {
+  const guarded = applyKnowledgeDecisionGuard(
+    decision({
+      route: "human_review",
+      automaticAllowed: false,
+      confidence: "low",
+      replyCode: UNKNOWN_REVIEW_CODE,
+      suggestedReply:
+        "A diferença geral está na extensão do tratamento. A escolha depende da avaliação.",
+      reviewReason: "unknown_digest:comparacao_de_tecnicas",
+    }),
+    {},
+  );
+
+  assert.equal(guarded.route, "human_review");
+  assert.equal(guarded.automaticAllowed, false);
+  assert.match(guarded.suggestedReply, /extensão do tratamento/i);
+  assert.equal(
+    buildSafeInternalReviewSuggestion({
+      decision: guarded,
+      risk: "Médio",
+    }),
+    guarded.suggestedReply,
+  );
+});
+
+test("high-risk or urgent reviews never expose an internal draft as copy-ready", () => {
+  const guarded = applyKnowledgeDecisionGuard(
+    decision({
+      route: "human_review",
+      automaticAllowed: false,
+      replyCode: UNKNOWN_REVIEW_CODE,
+      suggestedReply: "Pela foto, a melhor técnica é esta.",
+      reviewReason: "unknown_digest:foto_clinica",
+    }),
+    {},
+  );
+
+  assert.equal(
+    buildSafeInternalReviewSuggestion({
+      decision: guarded,
+      risk: "Alto",
+    }),
+    "",
+  );
+  assert.equal(
+    buildSafeInternalReviewSuggestion({
+      decision: { ...guarded, urgent: true },
+      risk: "Médio",
     }),
     "",
   );

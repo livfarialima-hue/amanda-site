@@ -37,7 +37,7 @@ import {
 } from "./lib/patient-replies.mjs";
 import {
   buildLiftingFacialInformationReply,
-  LIFTING_FACIAL_INFORMATION_REPLY_CODE,
+  liftingFacialInformationReplyCode,
 } from "./lib/lifting-information.mjs";
 import {
   normalizeDuplicateReason,
@@ -62,6 +62,7 @@ import {
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
   buildUnknownHoldingReply,
+  buildSafeInternalReviewSuggestion,
   classifyLearningRisk,
   isKnowledgeDecision,
   isUnknownClarificationDecision,
@@ -2133,8 +2134,12 @@ async function completeOpenAIActive({
             automaticAllowed: true,
             urgent: false,
             professional: "amanda",
-            procedure: "lifting_facial",
-            replyCode: LIFTING_FACIAL_INFORMATION_REPLY_CODE,
+            procedure:
+              plan?.procedure || input.procedure || "lifting_facial",
+            replyCode: liftingFacialInformationReplyCode({
+              text: input.text,
+              procedure: plan?.procedure || input.procedure || "",
+            }),
             suggestedReply: liftingFacialInformationBody,
             reviewReason: "",
           },
@@ -2378,9 +2383,15 @@ async function completeOpenAIActive({
       reviewReason: activeResult.decision.reviewReason,
       procedure: activeResult.decision.procedure || plan?.procedure,
     });
+    const internalReviewSuggestion =
+      buildSafeInternalReviewSuggestion({
+        decision: activeResult.decision,
+        risk: learningRisk,
+      });
+    let learningRecord = null;
 
     if (unknownClarification || unknownReview) {
-      await recordBotUnknownQuestion({
+      learningRecord = await recordBotUnknownQuestion({
         eventId: String(input.eventId),
         phone: to,
         patientName: input.patientProfileName,
@@ -2400,18 +2411,23 @@ async function completeOpenAIActive({
           learningRisk === "Alto" ? "Imediata" : "Resumo diário",
         procedure:
           activeResult.decision.procedure || plan?.procedure || "",
+        suggestedReply: internalReviewSuggestion,
+        confidence: activeResult.decision.confidence || "low",
       });
     }
 
     if (unknownReview) {
       if (
-        learningRisk === "Alto" &&
+        (learningRisk === "Alto" || learningRecord?.ok !== true) &&
         !reviewAlertAlreadyQueued &&
         isReviewAlertConfigured()
       ) {
         await completeReviewAlert(
           prepareReviewAlertInput(alertInput, {
-            decision: activeResult.decision,
+            decision: {
+              ...activeResult.decision,
+              suggestedReply: internalReviewSuggestion,
+            },
             plan,
           }),
         );

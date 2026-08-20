@@ -7,6 +7,7 @@ const CENTRAL_ATENDIMENTO_CONFIG = Object.freeze({
   leadsSheetName: "Google Ads - Conversões",
   commitmentsSheetName: "_WHATSAPP_COMPROMISSOS",
   followUpsSheetName: "_WHATSAPP_RETOMADAS",
+  reviewSheetName: "Revisões do Bot",
   triggerFunction: "atualizarCentralAtendimento",
   timezone: "America/Sao_Paulo",
   activeConversationDays: 14,
@@ -148,6 +149,8 @@ function atualizarCentralAtendimentoInterno_(
     : {};
   const humanTakeovers =
     carregarAtendimentosHumanosCentral_(spreadsheet);
+  const reviewSuggestions =
+    carregarSugestoesRevisaoCentral_(spreadsheet);
   const conversations =
     messagesSheet &&
     typeof carregarConversasRetomadas_ === "function"
@@ -182,6 +185,7 @@ function atualizarCentralAtendimentoInterno_(
     profiles,
     humanTakeovers,
     now,
+    reviewSuggestions,
   ).forEach(function (item) {
     adicionarItemCentral_(itemsByPatient, item);
   });
@@ -403,7 +407,9 @@ function carregarRespostasPendentesCentral_(
   profiles,
   humanTakeovers,
   now,
+  reviewSuggestions,
 ) {
+  reviewSuggestions = reviewSuggestions || {};
   const minimumDate = new Date(
     now.getTime() -
       CENTRAL_ATENDIMENTO_CONFIG.activeConversationDays *
@@ -466,11 +472,18 @@ function carregarRespostasPendentesCentral_(
         ? "Amanda/equipe"
         : "Equipe",
       mode: "Manual",
-      suggestion: sugerirRespostaCentral_(
-        last.texto,
-        profile.name,
-        relationship,
-      ),
+      suggestion:
+        selecionarSugestaoRevisaoCentral_(
+          reviewSuggestions,
+          phone,
+          last.texto,
+          last.dataHora,
+        ) ||
+        sugerirRespostaCentral_(
+          last.texto,
+          profile.name,
+          relationship,
+        ),
       context: textoCentral_(last.texto, 420),
       status: "Aberto",
       source: "WhatsApp — mensagem recebida",
@@ -481,6 +494,73 @@ function carregarRespostasPendentesCentral_(
 
     return items;
   }, []);
+}
+
+function carregarSugestoesRevisaoCentral_(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(
+    CENTRAL_ATENDIMENTO_CONFIG.reviewSheetName,
+  );
+  if (!sheet || sheet.getLastRow() < 2) return {};
+
+  const rows = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, 13)
+    .getValues();
+  const suggestions = {};
+
+  rows.forEach(function (row) {
+    const type = normalizarTextoCentral_(row[0]);
+    const status = normalizarTextoCentral_(row[8]);
+    const phone = normalizarTelefoneCentral_(row[4]);
+    const suggestion = textoCentral_(row[6], 1200);
+    const at = dataCentralValida_(row[2]) ||
+      dataCentralValida_(row[12]);
+    if (
+      type !== "resposta" ||
+      !["aberta", "aguardando aprovacao"].includes(status) ||
+      !phone ||
+      !suggestion ||
+      !at
+    ) {
+      return;
+    }
+
+    if (!suggestions[phone]) suggestions[phone] = [];
+    suggestions[phone].push({
+      at: at,
+      context: textoCentral_(row[5], 1600),
+      suggestion: suggestion,
+    });
+  });
+
+  Object.keys(suggestions).forEach(function (phone) {
+    suggestions[phone].sort(function (left, right) {
+      return right.at.getTime() - left.at.getTime();
+    });
+  });
+  return suggestions;
+}
+
+function selecionarSugestaoRevisaoCentral_(
+  reviewSuggestions,
+  phone,
+  message,
+  messageAt,
+) {
+  const candidates = reviewSuggestions[
+    normalizarTelefoneCentral_(phone)
+  ] || [];
+  const normalizedMessage = normalizarTextoCentral_(message);
+  const receivedAt = dataCentralValida_(messageAt);
+  if (!normalizedMessage || !receivedAt) return "";
+
+  const minimumDraftAt = receivedAt.getTime() - 5 * 60 * 1000;
+  const match = candidates.find(function (candidate) {
+    return candidate.at.getTime() >= minimumDraftAt &&
+      normalizarTextoCentral_(candidate.context).includes(
+        normalizedMessage,
+      );
+  });
+  return match ? match.suggestion : "";
 }
 
 function carregarCuidadosCentral_(
@@ -1983,6 +2063,25 @@ function sugerirRespostaCentral_(
     textoCentral_(name, 120).split(/\s+/)[0] || "";
   const greeting = firstName ? "Oi, " + firstName + "! " : "Olá! ";
 
+  const withoutMiniLifting = normalized.replace(
+    /\bmini\s*lifting\b/g,
+    " ",
+  );
+  if (
+    /\bmini\s*lifting\b/.test(normalized) &&
+    /\blifting\b/.test(withoutMiniLifting) &&
+    /\b(?:diferenca|diferenciam|qual|comparar|comparacao|ambos|cada um|versus|vs)\b/.test(
+      normalized,
+    )
+  ) {
+    const opening = firstName
+      ? "Claro, " + firstName + "."
+      : "Claro.";
+    return opening +
+      " A principal diferença está na extensão do tratamento. O minilifting costuma ser considerado quando as alterações são mais localizadas e a anatomia permite uma abordagem de menor extensão. O lifting facial possibilita um planejamento mais amplo, podendo envolver bochechas, contorno da mandíbula, terço inferior do rosto e, conforme o caso, o pescoço.\n\n" +
+      "A melhor opção não é definida apenas pelo nome da cirurgia, mas pelo que a Dra. Amanda identifica durante a avaliação. Quer que eu te explique como essa escolha é feita na consulta?";
+  }
+
   if (
     /valor|preco|quanto custa|orcamento|pagamento/.test(
       normalized,
@@ -2006,8 +2105,7 @@ function sugerirRespostaCentral_(
       "Obrigada por nos avisar. Vou conferir seu histórico e essa informação com a equipe para dar continuidade com segurança.";
   }
 
-  return greeting +
-    "Obrigada pela mensagem. Responda primeiro ao ponto que a paciente trouxe e, depois, faça no máximo uma pergunta útil para avançar.";
+  return "SEM SUGESTÃO PRONTA — leia o histórico completo antes de responder e trate exatamente a dúvida atual. Se ainda houver ambiguidade, peça uma única explicação específica à paciente.";
 }
 
 function mensagemExigeRespostaCentral_(message) {

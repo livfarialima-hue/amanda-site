@@ -200,8 +200,11 @@ test("a first lifting price question receives the approved initial information w
     assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
     assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
-    assert.doesNotMatch(patientRequest.text.body, /(?:informar|passar).{0,20}(?:média|faixa)/i);
-    assert.ok(Array.from(patientRequest.text.body).length <= 450);
+    assert.match(
+      patientRequest.text.body,
+      /referência mais concreta.+faixa geral de valores como ponto de partida/is,
+    );
+    assert.ok(Array.from(patientRequest.text.body).length <= 650);
     assert.doesNotMatch(
       patientRequest.text.body,
       /Se quiser, posso te explicar o que costuma aproximar/,

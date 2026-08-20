@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
+import {
+  buildLiftingFacialInformationReply,
+} from "../../netlify/functions/lib/lifting-information.mjs";
 
 const source = fs.readFileSync(
   new URL("./CentralAtendimento.gs", import.meta.url),
@@ -108,6 +111,79 @@ test("price questions create a direct operational suggestion", () => {
     ),
     "Confirmar faixa de valor e responder",
   );
+});
+
+test("the Brenda minilifting question has the same approved answer in the bot and the Central", () => {
+  const context = loadContext();
+  const message =
+    "Sei que tem o lifting e o mini lifting, qual a diferença de ambos";
+  const centralSuggestion = context.sugerirRespostaCentral_(
+    message,
+    "Brenda Rebecca",
+    "new_lead",
+  );
+  const botReply = buildLiftingFacialInformationReply({
+    text: message,
+    procedure: "lifting_facial",
+    patientName: "Brenda Rebecca",
+  });
+
+  assert.equal(centralSuggestion, botReply);
+  assert.match(centralSuggestion, /principal diferença está na extensão/i);
+  assert.match(centralSuggestion, /como essa escolha é feita na consulta\?/i);
+});
+
+test("the Central uses a matching open internal review draft", () => {
+  const context = loadContext();
+  const phone = "+5511999999999";
+  const message = "Quero entender a diferença entre as duas técnicas";
+  const receivedAt = new Date("2026-08-20T12:19:00-03:00");
+  const suggestion =
+    "As técnicas têm extensões diferentes; a escolha é individualizada na avaliação.";
+  const row = [
+    "Resposta",
+    "Alta",
+    new Date("2026-08-20T12:19:10-03:00"),
+    "Paciente Teste",
+    phone,
+    "Assunto: comparação\nPergunta da paciente: " + message,
+    suggestion,
+    "low",
+    "Aberta",
+    "",
+    "",
+    "unknown-response:evt-synthetic",
+    new Date("2026-08-20T12:19:10-03:00"),
+  ];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [row] }),
+  };
+  const drafts = context.carregarSugestoesRevisaoCentral_({
+    getSheetByName: () => sheet,
+  });
+
+  assert.equal(
+    context.selecionarSugestaoRevisaoCentral_(
+      drafts,
+      phone,
+      message,
+      receivedAt,
+    ),
+    suggestion,
+  );
+});
+
+test("the generic Central fallback is explicitly not copy-ready", () => {
+  const context = loadContext();
+  const suggestion = context.sugerirRespostaCentral_(
+    "Tenho uma dúvida diferente.",
+    "Marina",
+    "new_lead",
+  );
+
+  assert.match(suggestion, /^SEM SUGESTÃO PRONTA/);
+  assert.doesNotMatch(suggestion, /^Oi, Marina!/);
 });
 
 test("scheduled and active-care relationships require human continuity", () => {

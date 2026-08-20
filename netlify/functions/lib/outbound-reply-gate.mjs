@@ -266,7 +266,7 @@ function semanticUnsafeReplyReason(
     contract.sourceReason === "price_initial_information"
   ) {
     const approvedCervicalOffer =
-      /Se voc[eê] quiser, posso (?:te|lhe) passar uma faixa geral como refer[eê]ncia inicial\./i;
+      /(?:Se voc[eê] quiser, posso (?:te|lhe) passar uma faixa geral como refer[eê]ncia inicial|Se, depois desse contexto, voc[eê] quiser uma refer[eê]ncia mais concreta, tamb[eé]m posso (?:te|lhe) passar uma faixa geral de valores como ponto de partida)\./i;
     const withoutApprovedOffer = raw.replace(approvedCervicalOffer, "");
     if (
       !approvedCervicalOffer.test(raw) ||

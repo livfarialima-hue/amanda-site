@@ -5,6 +5,8 @@ import {
   approvedLiftingFacialFacts,
   buildLiftingFacialInformationReply,
   liftingFacialInformationTopics,
+  liftingFacialInformationReplyCode,
+  LIFTING_SCOPE_COMPARISON_REPLY_CODE,
 } from "./lifting-information.mjs";
 
 const REAL_REGRESSION_MESSAGE =
@@ -85,4 +87,42 @@ test("approved recovery and indication facts remain aligned with the canonical s
   assert.match(page, /queda das bochechas/);
   assert.match(page, /perda da linha da mandíbula/);
   assert.match(page, /pode haver outro caminho/i);
+});
+
+test("the real minilifting comparison receives a direct contextual answer", () => {
+  const text =
+    "Sei que tem o lifting e o mini lifting, qual a diferença de ambos";
+  const reply = buildLiftingFacialInformationReply({
+    text,
+    procedure: "lifting_facial",
+    patientName: "Brenda",
+  });
+
+  assert.equal(
+    liftingFacialInformationReplyCode({
+      text,
+      procedure: "lifting_facial",
+    }),
+    LIFTING_SCOPE_COMPARISON_REPLY_CODE,
+  );
+  assert.match(reply, /^Claro, Brenda\./);
+  assert.match(reply, /principal diferença está na extensão do tratamento/i);
+  assert.match(reply, /alterações são mais localizadas/i);
+  assert.match(reply, /planejamento mais amplo/i);
+  assert.match(reply, /bochechas, contorno da mandíbula/i);
+  assert.match(reply, /como essa escolha é feita na consulta\?/i);
+  assert.doesNotMatch(reply, /vou confirmar|com a equipe|aguarde/i);
+  assert.doesNotMatch(reply, /cicatriz menor|recuperação mais rápida/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+});
+
+test("mentioning minilifting without a comparison does not invent an answer", () => {
+  assert.equal(
+    buildLiftingFacialInformationReply({
+      text: "Tenho interesse em minilifting.",
+      procedure: "lifting_facial",
+      patientName: "Marina",
+    }),
+    "",
+  );
 });

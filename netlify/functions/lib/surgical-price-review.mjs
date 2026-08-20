@@ -389,10 +389,12 @@ export function buildSurgicalInitialPriceReply({
       ? "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso."
       : "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
   const guide = priceGuideParagraph(procedure, recentConversation);
-  const approvedRangeOffer = ["lifting_cervical", "otoplastia"].includes(
-    procedure,
-  )
-    ? "Se você quiser, posso te passar uma faixa geral como referência inicial."
+  const approvedRangeOffer = [
+    "lifting_facial",
+    "lifting_cervical",
+    "otoplastia",
+  ].includes(procedure)
+    ? "Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida."
     : "";
   const otoplastyOverview = otoplastyOverviewParagraphs({
     procedure,

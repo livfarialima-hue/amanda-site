@@ -108,7 +108,7 @@ test("the approved first cervical price reply passes with its bounded range offe
   });
   const result = validateOutboundReply({
     body:
-      "Claro, Adriana. Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso.\n\nEste conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/\n\nSe você quiser, posso te passar uma faixa geral como referência inicial.",
+      "Claro, Adriana. Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso.\n\nEste conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/\n\nSe, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.",
     currentText,
     conversationAction,
   });
@@ -130,7 +130,7 @@ test("the cervical price exception does not permit a scheduling CTA", () => {
   });
   const result = validateOutboundReply({
     body:
-      "Entendo. Se você quiser, posso te passar uma faixa geral como referência inicial. Podemos agendar uma avaliação.",
+      "Entendo. Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida. Podemos agendar uma avaliação.",
     currentText,
     conversationAction,
   });

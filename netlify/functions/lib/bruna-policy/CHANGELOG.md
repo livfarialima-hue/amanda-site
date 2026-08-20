@@ -1,5 +1,15 @@
 # Histórico do pacote Bruna
 
+## 2026-08-20.2 — candidata local, ainda não publicada
+
+- A comparação geral entre minilifting e lifting facial recebe uma resposta contextual sobre a extensão do tratamento, sem prometer cicatriz menor, recuperação mais rápida nem definir a técnica individual.
+- Dúvidas seguras que ainda precisem de revisão humana preservam um rascunho interno quando ele puder ser escrito apenas com fatos confirmados. A ocorrência abre uma ação idempotente em `Revisões do Bot`, pode aparecer na Central e alimenta o e-mail diário; risco alto, urgência, cuidado ativo, diagnóstico, indicação, agenda final e preço sem base aprovada permanecem sem texto copiável.
+- A primeira resposta sobre preço de lifting facial, cervicoplastia e otoplastia termina com a oferta aprovada `Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.`, depois do guia facial e sem números. A faixa continua restrita ao aceite claro ou ao novo pedido explícito, uma única vez.
+- As formas históricas da oferta continuam reconhecidas para que conversas já iniciadas não percam o segundo passo. Procedimentos sem faixa automática autorizada não recebem essa promessa.
+- Regressões cobrem o caso exato da Brenda, a equivalência entre resposta automática e sugestão da Central, o rascunho humano seguro, o bloqueio de rascunhos de alto risco, a nova oferta, a aceitação posterior e a ausência de oferta fora dos procedimentos autorizados.
+- Validação local: **923/923 testes**, build de 178 arquivos, 44 URLs verificadas e `git diff --check` sem erro. Nenhuma mensagem real foi enviada.
+- Estado: candidata local autorizada, ainda sem commit, Netlify, Apps Script ou projeção no Drive. O recibo de produção continua apontando para `2026-08-20.1` até o fechamento completo; `sincronização pendente`.
+
 ## 2026-08-20.1
 
 - Todo texto elegível já persistido recebe avaliação semântica mesmo quando ainda não existe oportunidade, a rota está `pending`, a ação final é revisão humana ou existe takeover; avaliação não significa autorização de envio.

@@ -138,7 +138,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Se você quiser, posso te passar uma faixa geral como referência inicial/,
+    /Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -366,6 +366,18 @@ test("playbook requires explicit semantic reopening and complete deterministic f
   assert.match(CONVERSATION_GUIDELINES, /deterministicReplyPreview/);
   assert.match(CONVERSATION_GUIDELINES, /CONTEXT-CLARIFY-01/);
   assert.match(CONVERSATION_GUIDELINES, /UNKNOWN-CLARIFY-01/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /comparação entre minilifting e lifting facial/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /rascunho natural e pronto para conferência humana/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /abrir uma ação operacional com contexto para a equipe/i,
+  );
 });
 
 test("playbook adapts to stage and does not manufacture conversational progress", () => {

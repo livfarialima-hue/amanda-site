@@ -34,10 +34,10 @@ const PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
 
 const INITIAL_PRICE_REPLY_PATTERN =
-  /quanto-custa-(?:cirurgia-plastica-(?:facial|mama|corporal)|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|valor\s+exato\s+ap[oó]s\s+a\s+avalia[cç][aã]o|trabalhamos\s+com\s+valores\s+competitivos|posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral\s+como\s+refer[eê]ncia\s+inicial/i;
+  /quanto-custa-(?:cirurgia-plastica-(?:facial|mama|corporal)|lifting-facial)-sao-paulo|valores\s+cir[uú]rgicos\s+s[aã]o\s+definidos\s+individualmente|valor\s+exato\s+ap[oó]s\s+a\s+avalia[cç][aã]o|trabalhamos\s+com\s+valores\s+competitivos|posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral(?:\s+de\s+valores)?\s+(?:como\s+refer[eê]ncia\s+inicial|como\s+ponto\s+de\s+partida)/i;
 
 const PRICE_RANGE_OFFER_PATTERN =
-  /posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral\s+como\s+refer[eê]ncia\s+inicial/i;
+  /posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral(?:\s+de\s+valores)?\s+(?:como\s+refer[eê]ncia\s+inicial|como\s+ponto\s+de\s+partida)/i;
 
 const PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN =
   /^\s*(?:(?:sim|claro|pode(?:\s+sim)?|sim[,\s]+pode|gostaria|quero)(?:[,!\s]+(?:por\s+favor|pode\s+me\s+passar|me\s+passa|a\s+faixa|essa\s+faixa|os\s+valores|essa\s+refer[eê]ncia))*|(?:pode\s+)?me\s+passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores))?)[.!\s]*$/i;

@@ -322,6 +322,64 @@ function encontrarDuvidaPorEvento_(sheet, eventId) {
   return match ? match.getRow() : null;
 }
 
+function rascunhoInternoAprendizadoSeguro_(input, risk) {
+  if (normalizarTextoConhecimento_(risk) === "alto") return "";
+  return textoSeguroConhecimento_(
+    input && input.suggestedReply,
+    1200,
+  );
+}
+
+function registrarRevisaoDuvidaBot_(
+  spreadsheet,
+  input,
+  risk,
+  question,
+  context,
+  now,
+) {
+  if (
+    normalizarTextoConhecimento_(input && input.status) !==
+      "aguardando resposta humana"
+  ) {
+    return { ok: true, skipped: true };
+  }
+
+  const suggestion = rascunhoInternoAprendizadoSeguro_(input, risk);
+  const subject = textoSeguroConhecimento_(
+    input && input.subject || "Dúvida ainda não mapeada",
+    160,
+  );
+  const reviewContext = [
+    "Assunto: " + subject,
+    "Pergunta da paciente: " +
+      textoSeguroConhecimento_(question, 2000),
+    context
+      ? "Histórico recente:\n" +
+        textoSeguroConhecimento_(context, 1000)
+      : "",
+  ].filter(Boolean).join("\n");
+
+  return registrarRevisaoBot_(spreadsheet, {
+    type: "Resposta",
+    priority:
+      normalizarTextoConhecimento_(risk) === "baixo"
+        ? "Normal"
+        : "Alta",
+    at: dataConhecimentoValida_(input && input.receivedAt) || now,
+    patientName: input && input.patientName,
+    phone: input && input.phone,
+    context: reviewContext,
+    suggestion: suggestion,
+    confidence: suggestion
+      ? textoSeguroConhecimento_(input && input.confidence || "low", 40)
+      : "Sem rascunho seguro",
+    status: "Aberta",
+    key: "unknown-response:" +
+      textoSeguroConhecimento_(input && input.eventId, 200),
+  });
+}
+
 function registrarDuvidaBot_(input) {
   const eventId = textoSeguroConhecimento_(input && input.eventId, 200);
   const phone = normalizarTelefoneConhecimento_(input && input.phone);
@@ -332,13 +390,29 @@ function registrarDuvidaBot_(input) {
 
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const sheet = obterPlanilhaDuvidasBot_(spreadsheet);
+  const now = new Date();
+  const risk = textoSeguroConhecimento_(input.risk || "Médio", 40);
+  const context = textoSeguroConhecimento_(input.context, 1000);
+  function finalizarRegistro_(result, recordedQuestion) {
+    const review = registrarRevisaoDuvidaBot_(
+      spreadsheet,
+      input,
+      risk,
+      recordedQuestion,
+      context,
+      now,
+    );
+    return { ...result, review: review };
+  }
   const duplicateRow = encontrarDuvidaPorEvento_(sheet, eventId);
   if (duplicateRow) {
-    return { ok: true, duplicate: true, row: duplicateRow };
+    return finalizarRegistro_(
+      { ok: true, duplicate: true, row: duplicateRow },
+      question,
+    );
   }
 
   const pending = obterDuvidaPendentePorTelefone_(sheet, phone);
-  const now = new Date();
   const clarificationCount = Math.min(
     Math.max(Number(input.clarificationCount || 0), 0),
     1,
@@ -351,14 +425,15 @@ function registrarDuvidaBot_(input) {
   if (pending && normalizarTextoConhecimento_(pending.values[9]) ===
       "aguardando esclarecimento") {
     const originalQuestion = String(pending.values[4] || "").trim();
+    const recordedQuestion = textoSeguroConhecimento_(
+      originalQuestion + "\nEsclarecimento: " + question,
+      3000,
+    );
     sheet.getRange(pending.row, 5, 1, 11).setValues([[
-      textoSeguroConhecimento_(
-        originalQuestion + "\nEsclarecimento: " + question,
-        3000,
-      ),
+      recordedQuestion,
       textoSeguroConhecimento_(input.subject || pending.values[5], 160),
-      textoSeguroConhecimento_(input.context || pending.values[6], 1000),
-      textoSeguroConhecimento_(input.risk || pending.values[7] || "Médio", 40),
+      context || textoSeguroConhecimento_(pending.values[6], 1000),
+      risk || textoSeguroConhecimento_(pending.values[7] || "Médio", 40),
       1,
       status,
       "",
@@ -367,7 +442,10 @@ function registrarDuvidaBot_(input) {
       textoSeguroConhecimento_(input.priority || "Resumo diário", 40),
       textoSeguroConhecimento_(input.procedure || pending.values[14], 120),
     ]]);
-    return { ok: true, updated: true, row: pending.row };
+    return finalizarRegistro_(
+      { ok: true, updated: true, row: pending.row },
+      recordedQuestion,
+    );
   }
 
   sheet.appendRow([
@@ -377,8 +455,8 @@ function registrarDuvidaBot_(input) {
     dataConhecimentoValida_(input.receivedAt) || now,
     question,
     textoSeguroConhecimento_(input.subject || "Dúvida ainda não mapeada", 160),
-    textoSeguroConhecimento_(input.context, 1000),
-    textoSeguroConhecimento_(input.risk || "Médio", 40),
+    context,
+    risk,
     clarificationCount,
     status,
     "",
@@ -387,7 +465,10 @@ function registrarDuvidaBot_(input) {
     textoSeguroConhecimento_(input.priority || "Resumo diário", 40),
     textoSeguroConhecimento_(input.procedure, 120),
   ]);
-  return { ok: true, created: true, row: sheet.getLastRow() };
+  return finalizarRegistro_(
+    { ok: true, created: true, row: sheet.getLastRow() },
+    question,
+  );
 }
 
 function idRegraConhecimento_(eventId, now) {
@@ -637,8 +718,58 @@ function carregarOrientacoesClassificacaoBot_(spreadsheet) {
     });
 }
 
+function carregarRascunhosRespostaAprendizado_(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(
+    BOT_KNOWLEDGE_CONFIG.reviewSheetName,
+  );
+  if (!sheet || sheet.getLastRow() < 2) return {};
+
+  const values = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, BOT_REVIEW_HEADERS.length)
+    .getValues();
+  return values.reduce(function (drafts, row) {
+    if (
+      normalizarTextoConhecimento_(row[0]) !== "resposta" ||
+      !["aberta", "aguardando aprovacao"].includes(
+        normalizarTextoConhecimento_(row[8]),
+      ) ||
+      !String(row[6] || "").trim()
+    ) {
+      return drafts;
+    }
+    const phone = normalizarTelefoneConhecimento_(row[4]);
+    if (!phone) return drafts;
+    drafts[phone] = drafts[phone] || [];
+    drafts[phone].push({
+      at: dataConhecimentoValida_(row[2]) ||
+        dataConhecimentoValida_(row[12]) || new Date(0),
+      context: String(row[5] || ""),
+      suggestion: String(row[6] || "").trim(),
+    });
+    return drafts;
+  }, {});
+}
+
+function rascunhoRespostaParaDuvida_(drafts, phone, question) {
+  const normalizedQuestion = normalizarTextoConhecimento_(question);
+  const candidates = drafts[normalizarTelefoneConhecimento_(phone)] || [];
+  const match = candidates
+    .filter(function (candidate) {
+      return normalizedQuestion &&
+        normalizarTextoConhecimento_(candidate.context).includes(
+          normalizedQuestion,
+        );
+    })
+    .sort(function (left, right) {
+      return right.at.getTime() - left.at.getTime();
+    })[0];
+  return match ? match.suggestion : "";
+}
+
 function carregarAgendaAprendizadoBot_(spreadsheet, now) {
   const items = [];
+  const responseDrafts =
+    carregarRascunhosRespostaAprendizado_(spreadsheet);
   const questionsSheet = spreadsheet.getSheetByName(
     BOT_KNOWLEDGE_CONFIG.questionsSheetName,
   );
@@ -649,6 +780,11 @@ function carregarAgendaAprendizadoBot_(spreadsheet, now) {
     questions.forEach(function (row) {
       if (items.length >= BOT_KNOWLEDGE_CONFIG.maximumOpenQuestionsInDigest) return;
       if (normalizarTextoConhecimento_(row[9]) !== "aguardando resposta humana") return;
+      const responseDraft = rascunhoRespostaParaDuvida_(
+        responseDrafts,
+        row[1],
+        row[4],
+      );
       items.push({
         categoria: "Dúvida aguardando resposta",
         telefone: normalizarTelefoneConhecimento_(row[1]),
@@ -664,7 +800,8 @@ function carregarAgendaAprendizadoBot_(spreadsheet, now) {
         automatico: false,
         futuro: false,
         prioridade: normalizarTextoConhecimento_(row[7]) === "alto" ? 0 : 2,
-        sugestao: "Responder à dúvida no WhatsApp; a resposta será preparada como regra candidata para aprovação.",
+        sugestao: responseDraft ||
+          "SEM SUGESTÃO PRONTA — leia o histórico completo antes de responder; a resposta humana poderá virar regra candidata depois de revisão.",
       });
     });
   }

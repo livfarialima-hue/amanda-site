@@ -74,3 +74,54 @@ test("captured human answers default to safer modes by risk", () => {
     "Nunca automática",
   );
 });
+
+test("unknown reviews keep a draft only for low or medium internal use", () => {
+  const context = runtime();
+  const input = {
+    suggestedReply:
+      "Resposta contextual para a equipe conferir antes de copiar.",
+  };
+
+  assert.equal(
+    context.rascunhoInternoAprendizadoSeguro_(input, "Médio"),
+    input.suggestedReply,
+  );
+  assert.equal(
+    context.rascunhoInternoAprendizadoSeguro_(input, "Alto"),
+    "",
+  );
+});
+
+test("an unanswered unknown creates an operational response review with context", () => {
+  const context = runtime();
+  let recorded = null;
+  context.registrarRevisaoBot_ = (_spreadsheet, input) => {
+    recorded = input;
+    return { ok: true, created: true, row: 2 };
+  };
+  const result = context.registrarRevisaoDuvidaBot_(
+    {},
+    {
+      eventId: "evt-synthetic",
+      phone: "+5511999999999",
+      patientName: "Paciente Teste",
+      receivedAt: new Date("2026-08-20T12:19:00-03:00"),
+      subject: "comparação de técnicas",
+      status: "Aguardando resposta humana",
+      suggestedReply: "Rascunho seguro para conferência.",
+      confidence: "low",
+    },
+    "Médio",
+    "Qual é a diferença entre as técnicas?",
+    "bruna: Posso te orientar.",
+    new Date("2026-08-20T12:19:10-03:00"),
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(recorded.type, "Resposta");
+  assert.equal(recorded.priority, "Alta");
+  assert.equal(recorded.status, "Aberta");
+  assert.equal(recorded.key, "unknown-response:evt-synthetic");
+  assert.match(recorded.context, /Pergunta da paciente:/);
+  assert.equal(recorded.suggestion, "Rascunho seguro para conferência.");
+});

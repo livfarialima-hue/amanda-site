@@ -6,6 +6,17 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 20 de agosto de 2026 — comparação de lifting, ação humana útil e oferta elegante de faixa
+
+- **Status:** candidata `2026-08-20.2` aprovada pelo usuário, validada em **923/923 testes**, build de 178 arquivos e 44 URLs sem erro; o recibo de commit, deploy, Apps Script e Drive será fechado depois do pós-voo.
+- **Mudança:** responder diretamente à comparação geral entre minilifting e lifting facial com a diferença de extensão já aprovada; preservar rascunho seguro quando a IA encaminhar uma dúvida não mapeada à equipe e projetá-lo em `Revisões do Bot`, Central e e-mail; substituir a oferta mecânica de faixa no primeiro pedido de preço de lifting facial, cervicoplastia e otoplastia por `Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.`
+- **Motivo e evidência:** uma pergunta contextual simples sobre minilifting e lifting facial foi classificada e registrada, mas terminou em revisão sem resposta nem sugestão útil. A primeira mensagem de preço também podia encerrar sem mostrar, com naturalidade, que existe uma referência geral autorizada no passo seguinte.
+- **Hipótese:** responder comparações gerais cobertas por fatos aprovados e oferecer uma faixa de modo progressivo reduz silêncio e abandono sem antecipar indicação, orçamento ou pressão por agenda; quando a resposta automática não for segura, um rascunho interno associado à mensagem reduz o tempo humano de resposta.
+- **Métricas:** resolução da pergunta, continuidade depois da primeira resposta de preço, aceite da faixa, tempo até resposta humana, uso do rascunho, lead qualificado, consulta, repetição indevida, sugestão sem base e quebra de guardrail.
+- **Guardrails:** a IA continua confirmando contexto e a cópia determinística; nenhuma técnica é indicada individualmente; a faixa numérica só aparece no segundo passo e uma única vez para os procedimentos aprovados; risco alto e conteúdo clínico individual ficam sem rascunho; agenda, urgência, opt-out, takeover, mensagem mais nova e deduplicação permanecem autoritativos.
+- **Revisão:** primeiras ocorrências reais e leitura em sete dias.
+- **Regra para manter ou reverter:** manter se houver menos silêncio e menor tempo humano sem resposta clínica/comercial indevida; reverter a oferta ou a automação específica diante de faixa prematura, sugestão insegura, competição com humano ou repetição sistemática.
+
 ## 20 de agosto de 2026 — cobertura semântica antes da criação da oportunidade
 
 - **Status:** versão `2026-08-20.1` publicada e verificada no commit funcional `afa230263288bba88fb0cb61f4fb55e5903d4dca`, deploy Netlify `6a8701bb1ae7b60008c3a8ac` e Apps Script v106; **912/912 testes**, build de 178 arquivos e 44 URLs sem erro. As mesmas projeções do manual e do Plano Executivo foram substituídas no Drive. Nenhuma mensagem real, campanha ou configuração de anúncios foi alterada. Rollback: deploy `6a864d9a75c1bc0008b26c3b`, commit `204aff23d27ed262f21ed66b448609ad838998b6` e Apps Script v104.

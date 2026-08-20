@@ -119,14 +119,18 @@ export function classifyLearningRisk({ text, reviewReason, procedure } = {}) {
   return "Baixo";
 }
 
-function invalidKnowledgeDecision(decision, reason) {
+function invalidKnowledgeDecision(
+  decision,
+  reason,
+  internalSuggestion = "",
+) {
   return {
     ...decision,
     route: "human_review",
     confidence: "low",
     automaticAllowed: false,
     replyCode: UNKNOWN_REVIEW_CODE,
-    suggestedReply: "",
+    suggestedReply: limitText(internalSuggestion, 1_200),
     reviewReason: `unknown_digest:${reason}`,
   };
 }
@@ -143,7 +147,19 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
     const lowRisk = normalizeMode(candidate?.risk) === "baixo";
 
     if (!candidate || !automaticMode || !lowRisk) {
-      return invalidKnowledgeDecision(decision, "resposta_aprovada_invalida");
+      const candidateRisk = normalizeMode(candidate?.risk);
+      const candidateMode = normalizeMode(candidate?.mode);
+      const internalSuggestion =
+        candidate &&
+        candidateRisk !== "alto" &&
+        candidateMode !== "nunca automatica"
+          ? candidate.answer
+          : "";
+      return invalidKnowledgeDecision(
+        decision,
+        "resposta_aprovada_invalida",
+        internalSuggestion,
+      );
     }
 
     return {
@@ -185,10 +201,28 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
     return invalidKnowledgeDecision(
       decision,
       learningSubject(decision, "duvida_nao_mapeada").replaceAll(" ", "_"),
+      decision?.suggestedReply,
     );
   }
 
   return decision;
+}
+
+export function buildSafeInternalReviewSuggestion({
+  decision,
+  risk,
+} = {}) {
+  if (
+    !isUnknownReviewDecision(decision) ||
+    decision?.route !== "human_review" ||
+    decision?.automaticAllowed !== false ||
+    decision?.urgent === true ||
+    normalizeMode(risk) === "alto"
+  ) {
+    return "";
+  }
+
+  return limitText(decision?.suggestedReply, 1_200);
 }
 
 export function buildUnknownHoldingReply({
