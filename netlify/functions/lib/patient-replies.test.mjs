@@ -8,6 +8,7 @@ import {
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
+  buildMissingInboundTextClarificationReply,
   buildOfficialChannelsReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
@@ -15,6 +16,18 @@ import {
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("asks for context naturally when the provider omits the inbound text", () => {
+  const reply = buildMissingInboundTextClarificationReply();
+
+  assert.match(
+    reply,
+    /^Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+  );
+  assert.match(reply, /mensagem não apareceu completa para mim/i);
+  assert.match(reply, /qual procedimento ou dúvida/i);
+  assert.doesNotMatch(reply, /diagnóstico|indicação|erro|falha técnica/i);
+});
 
 test("acknowledges a patient photo gently without interpreting it", () => {
   const firstReply = buildImageAcknowledgementReply({

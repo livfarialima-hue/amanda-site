@@ -1,5 +1,12 @@
 # Histórico do pacote Bruna
 
+## 2026-08-19.6
+
+- Mensagens de texto recebidas sem corpo legível deixam de terminar silenciosamente em `route_pending`: a Bruna envia uma única pergunta neutra para recuperar o procedimento ou a dúvida, sem presumir contexto clínico, qualificação ou intenção de agenda.
+- A extração aceita variações seguras conhecidas do envelope textual antes de declarar o conteúdo ausente; se o provedor tiver omitido o corpo de fato, a resposta degradada permanece protegida por mensagem mais recente, deduplicação, preferência de contato e corrida com atendimento humano.
+- O texto vazio não é fabricado nem gravado como fala da paciente. Somente a resposta efetivamente entregue pela Bruna entra no histórico, e falha ou intervenção humana continuam bloqueando o envio.
+- Estado desta versão: candidata local validada com **899/899 testes**; nenhuma mensagem real foi enviada. A produção permanece em `2026-08-19.5` até a publicação autorizada.
+
 ## 2026-08-19.5
 
 - A faixa de otoplastia de R$ 8 mil a R$ 14 mil passa a ser permitida uma única vez, somente após a primeira resposta sem números e depois de aceite claro da oferta ou novo pedido explícito por valor, média ou faixa.

@@ -27,6 +27,7 @@ import {
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
+  buildMissingInboundTextClarificationReply,
   buildOfficialChannelsReply,
   buildPatientReply,
   hasPendingReactivationHandoff,
@@ -652,6 +653,26 @@ export function stripAttributionTransportToken(text) {
       "",
     )
     .trim();
+}
+
+export function extractInboundText(message) {
+  const candidates = [
+    message?.text?.body,
+    typeof message?.text === "string" ? message.text : "",
+    message?.body,
+    message?.content?.text?.body,
+    typeof message?.content?.text === "string"
+      ? message.content.text
+      : "",
+    message?.message?.text?.body,
+  ];
+
+  const text = candidates.find(
+    (candidate) =>
+      typeof candidate === "string" && candidate.trim().length > 0,
+  );
+
+  return String(text || "");
 }
 
 export function classifyAttribution(payload, message, text, resolvedJourney) {
@@ -3453,11 +3474,14 @@ export async function handleYCloudWebhook(
   }
 
   const contactAt = message.sendTime || payload.createTime;
-  const rawInboundText = String(message.text?.body || "");
-  const text = stripAttributionTransportToken(rawInboundText);
   const normalizedMessageType = String(message.type || "")
     .trim()
     .toLowerCase();
+  const rawInboundText = extractInboundText(message);
+  const text = stripAttributionTransportToken(rawInboundText);
+  const missingInboundText = Boolean(
+    normalizedMessageType === "text" && !text.trim(),
+  );
   const recoveryRegistration =
     normalizedMessageType === "text" && text.trim()
       ? await registerInboundRecovery({
@@ -3471,15 +3495,12 @@ export async function handleYCloudWebhook(
         })
       : { status: "skipped" };
   let replyDebounceMarkerStatus = "skipped";
-  if (
-    normalizedMessageType === "text" &&
-    text.trim()
-  ) {
+  if (normalizedMessageType === "text") {
     const markerResult = await markLatestInboundForReply({
       phone,
       eventId: String(eventId),
       eventAt: contactAt,
-      priority: inboundReplyPriority(text),
+      priority: missingInboundText ? 0 : inboundReplyPriority(text),
     });
     replyDebounceMarkerStatus = markerResult.status;
   }
@@ -4282,6 +4303,15 @@ export async function handleYCloudWebhook(
     automationPlan.reason === "unsupported_or_empty_message" &&
     conversationAction.allowHoldingReply &&
     shouldQueueReviewAlert;
+  const shouldQueueMissingTextClarification =
+    delivery.ok &&
+    !extremeNightDeferral &&
+    !humanTakeoverActive &&
+    !suppressExactDuplicate &&
+    automationMode === "active" &&
+    missingInboundText &&
+    automationPlan.reason === "unsupported_or_empty_message" &&
+    conversationAction.allowHoldingReply;
   const outsideHumanServiceHours =
     isOutsideHumanServiceHours(contactAt);
   const shouldQueuePriceHolding =
@@ -4336,6 +4366,9 @@ export async function handleYCloudWebhook(
   let imageAcknowledgementQueued = false;
   let imageAcknowledgementSent = false;
   let imageAcknowledgementStatus = "not_queued";
+  let missingTextClarificationQueued = false;
+  let missingTextClarificationSent = false;
+  let missingTextClarificationStatus = "not_queued";
   let extremeNightAcknowledgementQueued = false;
   let extremeNightAcknowledgementSent = false;
   let extremeNightAcknowledgementStatus = "not_queued";
@@ -5044,6 +5077,44 @@ export async function handleYCloudWebhook(
     }
   }
 
+  if (shouldQueueMissingTextClarification) {
+    missingTextClarificationQueued = true;
+    const clarificationBody =
+      buildMissingInboundTextClarificationReply();
+    const clarificationResult = await sendCurrentInboundReply({
+      from: String(message.to || ""),
+      to: phone,
+      eventId: `${String(eventId)}-missing-text-clarification`,
+      revisionEventId: String(eventId),
+      body: clarificationBody,
+      currentText: "Mensagem recebida sem conteúdo textual disponível.",
+      recentConversation: conversationHistory,
+      conversationAction,
+      replyDebounceMarkerStatus,
+      patientRelationship,
+      opportunityId: delivery.opportunityId,
+      professional: delivery.professional,
+    });
+    missingTextClarificationSent =
+      clarificationResult.status === "completed";
+    missingTextClarificationStatus = clarificationResult.status;
+    logPatientReplyResult(
+      `${String(eventId)}-missing-text-clarification`,
+      phone,
+      clarificationResult,
+    );
+
+    if (missingTextClarificationSent) {
+      await appendConversationTurn({
+        phone,
+        role: "assistant",
+        text: clarificationBody,
+        eventId: `${String(eventId)}:missing-text-clarification`,
+        source: "bruna",
+      });
+    }
+  }
+
   if ((reviewAlertQueued || appointmentReviewQueued) && delivery.ok) {
     await recordOperationalEvent({
       eventId: `${String(eventId)}-human-handoff`,
@@ -5077,6 +5148,7 @@ export async function handleYCloudWebhook(
     (!approvedPriceReplyQueued || terminalSendStatuses.has(approvedPriceReplyStatus)) &&
     (!overnightHandoffQueued || terminalSendStatuses.has(overnightHandoffStatus)) &&
     (!imageAcknowledgementQueued || terminalSendStatuses.has(imageAcknowledgementStatus)) &&
+    (!missingTextClarificationQueued || terminalSendStatuses.has(missingTextClarificationStatus)) &&
     (!extremeNightAcknowledgementQueued || terminalSendStatuses.has(extremeNightAcknowledgementStatus)) &&
     (!extremeNightDeferral || ["scheduled", "waiting_human"].includes(extremeNightMorningResumeStatus)) &&
     (!patientReplyQueued || terminalSendStatuses.has(patientReplyStatus));
@@ -5148,6 +5220,10 @@ export async function handleYCloudWebhook(
       imageAcknowledgementQueued,
       imageAcknowledgementSent,
       imageAcknowledgementStatus,
+      missingInboundText,
+      missingTextClarificationQueued,
+      missingTextClarificationSent,
+      missingTextClarificationStatus,
       extremeNightActive,
       extremeNightDeferral,
       explicitNightPause,
@@ -5236,6 +5312,10 @@ export async function handleYCloudWebhook(
     imageAcknowledgementQueued,
     imageAcknowledgementSent,
     imageAcknowledgementStatus,
+    missingInboundText,
+    missingTextClarificationQueued,
+    missingTextClarificationSent,
+    missingTextClarificationStatus,
     extremeNightActive,
     extremeNightDeferral,
     explicitNightPause,

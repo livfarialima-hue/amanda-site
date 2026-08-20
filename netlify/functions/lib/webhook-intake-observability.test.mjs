@@ -2,7 +2,26 @@ import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
 
-import { handleYCloudWebhook } from "../ycloud-webhook.mjs";
+import {
+  extractInboundText,
+  handleYCloudWebhook,
+} from "../ycloud-webhook.mjs";
+
+test("reads known safe text envelopes before declaring the inbound empty", () => {
+  assert.equal(
+    extractInboundText({ text: { body: "Mensagem padrão" } }),
+    "Mensagem padrão",
+  );
+  assert.equal(
+    extractInboundText({ text: "Mensagem em envelope alternativo" }),
+    "Mensagem em envelope alternativo",
+  );
+  assert.equal(
+    extractInboundText({ content: { text: { body: "Mensagem aninhada" } } }),
+    "Mensagem aninhada",
+  );
+  assert.equal(extractInboundText({ text: {} }), "");
+});
 
 test("an unsupported YCloud event is ignored with an observable safe log", async () => {
   const previousSecret = process.env.YCLOUD_WEBHOOK_SECRET;

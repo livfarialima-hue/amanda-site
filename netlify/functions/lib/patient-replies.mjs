@@ -305,6 +305,14 @@ export function buildImageAcknowledgementReply({
   return [opening, acknowledgement].filter(Boolean).join(" ");
 }
 
+export function buildMissingInboundTextClarificationReply() {
+  return [
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+    "Recebi seu contato, mas a mensagem não apareceu completa para mim.",
+    "Pode me contar qual procedimento ou dúvida você gostaria de entender primeiro?",
+  ].join(" ");
+}
+
 export function buildAppearanceDistressReviewReply({ patientName }) {
   return [
     greeting(patientName),
