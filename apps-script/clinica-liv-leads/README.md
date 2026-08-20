@@ -37,7 +37,7 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 
 ### Registro da produção atual
 
-- Versão canônica: `104`, publicada no deployment existente em 19/08/2026.
+- Versão canônica: `106`, publicada no deployment existente em 20/08/2026.
 - Escopo da v96: `MetaAdsFunnelReview.gs`, `MetaAdsReview.gs`, `OpportunityStore.gs` e `SyntheticHealth.gs`, com os códigos cervicais `M26C01W/M26C02S`, monitoramento Meta e sonda sintética de atribuição; deployment canônico preservado.
 - Escopo da v97: `Code.gs` acrescentou o habilitador administrativo idempotente do schema v1. `aplicarSchemaAtribuicaoV1Autorizado` foi executada com sucesso e não cria um segundo deployment.
 - Escopo da v98: `ConsultasSync.gs` reconhece o comprovante estruturado de procedimento, retorno ou consulta, mantém a Dra. Amanda sempre na `Sala 1`, cria novo registro quando o atendimento anterior já está encerrado e preserva a idempotência do mesmo comprovante. O título da Google Agenda contém somente o tipo genérico e o profissional. O deployment canônico foi preservado; código e testes estão no commit técnico `7c8f7d0`.
@@ -49,12 +49,13 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 - Incidente e escopo da v102/v103: a v102 restaurou `Retomadas.gs`, mas a compilação expôs uma segunda substituição indevida em `LeadClassification.gs`. A v103 restaurou integralmente `LeadClassification.gs`, preservou `Retomadas.gs` canônico e repôs em `Code.gs` somente o bloco `templateId` aprovado na v101. O deployment público e todos os três IDs canônicos foram preservados.
 - Auditoria integral da v103: os 22 arquivos do projeto foram comparados com o repositório. Não restou arquivo duplicado ou truncado; quatro diferenças eram somente ausência de quebra de linha final. `CentralAtendimento.gs` mantém uma divergência histórica anterior, sem indício de corrupção, e não foi publicado por exigir autorização separada. A suíte concluiu com `865/865` testes, o endpoint respondeu HTTP 200 com JSON válido e o teste de token inválido confirmou que nenhuma preferência foi alterada. Nenhuma mensagem real foi enviada.
 - Escopo e pós-voo da v104: após autorização específica, `CentralAtendimento.gs` foi sincronizado integralmente com o estado canônico do commit `7e37eb3`. Ofertas comerciais antigas passam a aparecer como revisão de exclusão em modo `Silêncio`, sem sugestão de resposta, e o encerramento humano resolve o compromisso, cancela retomadas pendentes e arquiva eventual linha como não paciente. O arquivo publicado foi conferido por SHA-256; `21/21` testes focados e `865/865` testes integrais passaram. O endpoint respondeu HTTP 200 com JSON válido e o teste de token inválido confirmou que nenhuma preferência foi alterada. Nenhuma atualização da Central, mensagem real ou contato sintético foi executado.
+- Escopo e pós-voo da v105/v106: `Code.gs` ampliou para 4.000 caracteres o eco humano usado na recuperação contextual e `LeadClassification.gs` passou a reunir, antes da criação da oportunidade, mensagens do paciente e falas da equipe em ordem cronológica. A v105 foi intermediária: a releitura detectou `LeadClassification.gs` ainda no conteúdo anterior. O arquivo foi substituído novamente e relido após recarregar o editor, ficando idêntico ao local; a v106 corrigiu a divergência no mesmo deployment canônico. `Code.gs` foi conferido no editor com `safeText_(input.text, 4000)`. O web app respondeu HTTP 200 com JSON `ok: true`; a suíte concluiu com **912/912 testes**, build de 178 arquivos e 44 URLs sem erro. Nenhuma mensagem real foi enviada.
 - Rollback técnico deste hotfix: Apps Script v101 no mesmo deployment; o rollback funcional do pacote Bruna `.5` continua sendo Apps Script v100, deploy Netlify `6a84facdbed81175d2df0107` e commit `6fd37c3227e6fee1ca4ea1686248cb22733040f1`.
 
 ## Agregado anônimo para a rotina do Google Ads
 
 - Código: `GoogleAdsFunnelReview.gs`.
-- Produção atual: Apps Script versão `104`, publicada no deployment canônico em 19/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
+- Produção atual: Apps Script versão `106`, publicada no deployment canônico em 20/08/2026. O agregado Google foi introduzido na v92 e preservado nas versões seguintes.
 - Destino: planilha separada `1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0`, aba `Agregados`.
 - Trigger: `publicarAgregadosFunilGoogleAds`, diariamente aproximadamente às 08:15 BRT, configurado por `configurarRotinaAgregadosFunilGoogleAds()`.
 - Fontes internas: `_FUNIL_CANONICO` e `_OPORTUNIDADE_MARCOS`.

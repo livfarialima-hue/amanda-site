@@ -1,5 +1,5 @@
 const DEFAULT_ENDPOINT =
-  "https://draamandaschroeder.com.br/.netlify/functions/ycloud-webhook";
+  "https://draamandaschroeder.com.br/api/ycloud/webhook";
 const VALID_MODES = new Set(["off", "shadow", "active"]);
 
 function argumentValue(name) {
@@ -39,7 +39,8 @@ console.log(JSON.stringify({
   endpoint,
   observedMode,
   processingMode: payload.processingMode || null,
-  sheetsConfigured: payload.sheetsConfigured === true,
+  sheetsConfigured:
+    payload.sheetsConfigured === true || payload.sheetsWebhookConfigured === true,
   openAIConfigured: payload.openAIConfigured === true,
 }));
 

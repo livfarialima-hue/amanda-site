@@ -1,6 +1,6 @@
 # Histórico do pacote Bruna
 
-## 2026-08-20.1 — candidata local, ainda não publicada
+## 2026-08-20.1
 
 - Todo texto elegível já persistido recebe avaliação semântica mesmo quando ainda não existe oportunidade, a rota está `pending`, a ação final é revisão humana ou existe takeover; avaliação não significa autorização de envio.
 - O contexto durável pré-oportunidade passa a reunir até 32 turnos de `_WHATSAPP_MENSAGENS` com os ecos de `_WHATSAPP_ATENDIMENTO_HUMANO`, mantendo autoria e ordem cronológica. Respostas humanas deixam de ser truncadas em 500 caracteres e passam a preservar até 4.000.
@@ -9,7 +9,7 @@
 - Prefills estruturados deixam de contornar a IA: a abertura neutra aprovada só é usada quando o modelo confirma semanticamente o código, o profissional e o procedimento, sem transformar o template em intenção de agenda.
 - O controle `WHATSAPP_AUTOMATION_MODE=off` passa a ser um desligamento global: preserva a entrada para a equipe, mas interrompe IA, mensagens ao paciente, mutações automáticas de agenda, retomadas, lembretes, pós-consulta e retomada após takeover. `shadow` também não altera agenda. O estado ao vivo pode ser conferido por `npm.cmd run bot:status` e a reativação depende de pedido explícito.
 - Regressões cobrem o caso sintético de queixas faciais após pergunta humana, rota ambígua com uma pergunta, decisão completa porém não autorizada mantida em revisão humana, `shadow` sem mutação, takeover com avaliação sem resposta, prefill sem salto para agenda e bloqueio global dos disparos. Validação local: **912/912 testes**, build de 178 arquivos, 44 URLs verificadas e zero erro de sintaxe ou de `git diff --check`. Nenhuma mensagem real foi enviada.
-- Estado: candidata local autorizada, ainda sem commit, Netlify, Apps Script ou projeção no Drive. O recibo de produção continua apontando para `2026-08-19.6` até o fechamento completo; `sincronização pendente`.
+- Estado desta versão: publicada e verificada no commit funcional `afa230263288bba88fb0cb61f4fb55e5903d4dca`, deploy Netlify `6a8701bb1ae7b60008c3a8ac` e Apps Script v106 no deployment canônico preservado; **912/912 testes**, build de 178 arquivos e 44 URLs sem erro. Domínio, URL imutável, webhook em modo `active` e web app responderam HTTP 200. A v105 do Apps Script foi intermediária e a releitura impediu o fechamento com `LeadClassification.gs` antigo; a v106 reconciliou o arquivo. As mesmas projeções do manual e do Plano Executivo foram substituídas no Drive. Nenhuma mensagem real foi enviada. Rollback: deploy `6a864d9a75c1bc0008b26c3b`, commit `204aff23d27ed262f21ed66b448609ad838998b6` e Apps Script v104.
 
 ## 2026-08-19.6
 
