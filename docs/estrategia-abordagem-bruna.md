@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-19.5
 
-**Estado do release:** candidata local validada em 19/08/2026. A faixa de R$ 8 mil a R$ 14 mil para otoplastia foi aprovada para o segundo passo da conversa, com ressalvas obrigatórias e bloqueio de repetição; a produção permanece em `2026-08-19.4` até nova autorização explícita de publicação. Validação local: **896/896 testes**; nenhuma mensagem real de paciente foi enviada.
+**Estado do release:** publicada e verificada em 19/08/2026. A faixa de R$ 8 mil a R$ 14 mil para otoplastia está autorizada somente no segundo passo da conversa, com ressalvas obrigatórias e bloqueio de repetição. Código funcional `9a4a4082e5e4ad3e0bcf1e32dbbfe01af58eab22`, deploy Netlify `6a8641c07b71ac00088337f8`; Apps Script v104 preservado; **896/896 testes**, build de 178 arquivos e 44 URLs sem erro. O Netlify confirmou o deploy publicado e as 12 funções; o domínio público respondeu normalmente. A sonda HTTP direta do webhook não foi repetida porque o cliente de navegação bloqueou o acesso técnico direto. Nenhuma mensagem real de paciente foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 

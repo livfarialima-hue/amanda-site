@@ -7,7 +7,7 @@
 - A retomada diferida preserva o procedimento já conhecido e aplica o mesmo fluxo de otoplastia, sem perder o contexto quando a mensagem atual for apenas uma aceitação curta.
 - Perguntas compostas sobre otoplastia são respondidas antes do preço. `Otomodelação` é tratada como termo ambíguo: o sistema não presume injetáveis, ausência de cirurgia, duração temporária ou indicação a partir do nome.
 - A resposta genérica de convênio foi corrigida para `ao seu plano de saúde`, eliminando a construção artificial observada no atendimento.
-- Estado desta versão: candidata local validada, aguardando autorização explícita de publicação; **896/896 testes** aprovados e nenhuma mensagem real enviada.
+- Estado desta versão: publicada e verificada no commit funcional `9a4a4082e5e4ad3e0bcf1e32dbbfe01af58eab22` e deploy Netlify `6a8641c07b71ac00088337f8`; Apps Script v104 preservado, **896/896 testes**, build de 178 arquivos e 44 URLs sem erro. O Netlify confirmou o deploy publicado e as 12 funções; o domínio público respondeu normalmente. A sonda HTTP direta do webhook não foi repetida porque o cliente bloqueou o acesso técnico direto. Nenhuma mensagem real foi enviada e nenhuma configuração do Google Ads foi alterada. Rollback: deploy `6a861fab62e3fc00085b847f`, commit `5f9e247b7a38698d5a9d79836f14e7b4a25ec3c0`.
 
 ## 2026-08-19.4
 
