@@ -1,5 +1,14 @@
 # Histórico do pacote Bruna
 
+## 2026-08-20.3
+
+- A confirmação final feita pela equipe pode registrar um horário negociado fora de `Datas Consulta`; a grade continua delimitando apenas a oferta e a confirmação automáticas.
+- A Dra. Amanda permanece obrigatoriamente na `Sala 1`. Uma sobreposição real não apaga nem muda a reserva confirmada: dispara somente um alerta por e-mail para resolução humana.
+- A linha de `Consultas` é gravada de forma atômica, incluindo os campos que deixam o lembrete elegível. Comprovante incompleto não cria linha parcial nem evento e exige uma ação humana clara.
+- O webhook usa um único caminho de reserva, aguarda até 20 segundos e, em timeout, relê pelo ID antes de alertar; não existe segundo `upsert` de fallback.
+- A seleção humana `Quinta 24 às 14` é resolvida contra a opção previamente oferecida e preserva a data completa, sem reinterpretar a expressão como a próxima quinta-feira relativa.
+- Estado desta versão: publicada e verificada no commit funcional `27f07856e43cf90f898132ddf11913210818f2c4`, deploy Netlify `6a879160d29a140008a20503` e Apps Script v108 no deployment canônico. O caso operacional autorizado foi reconciliado em Consultas, LEADS, CRM e Sala 1, sem mensagem à paciente; a rotina de lembretes permaneceu instalada e o registro ficou elegível. **932/932 testes**, build de 178 arquivos e 44 URLs sem erro. Rollback: deploy `6a8762898c14302d7062b1f9`, commit `46f7c91ea5cc00c2181fd3f7d564f61a880cdb11` e Apps Script v107.
+
 ## 2026-08-20.2
 
 - A comparação geral entre minilifting e lifting facial recebe uma resposta contextual sobre a extensão do tratamento, sem prometer cicatriz menor, recuperação mais rápida nem definir a técnica individual.
