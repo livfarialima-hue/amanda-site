@@ -25,8 +25,10 @@ function loadReservation({
   status = "Disponível",
   professional = "Dra. Amanda",
   room = "Sala 1",
+  roomConflict = false,
 } = {}) {
   const writes = [];
+  const upserts = [];
   const scheduleRows = [
     [
       "Data",
@@ -124,16 +126,23 @@ function loadReservation({
     ok: true,
     room,
     durationMinutes: 60,
+    roomConflict,
+    conflictCount: roomConflict ? 1 : 0,
   });
   sandbox.sincronizarConsultaComAgendaNaLinha_ = () => ({
     ok: true,
     room,
+    roomConflict,
+    conflictCount: roomConflict ? 1 : 0,
   });
-  sandbox.upsertConsulta_ = (_sheet, input) => ({
-    ok: true,
-    row: 2,
-    appointmentId: input.appointmentId,
-  });
+  sandbox.upsertConsulta_ = (_sheet, input) => {
+    upserts.push(input);
+    return {
+      ok: true,
+      row: 2,
+      appointmentId: input.appointmentId,
+    };
+  };
   sandbox.atualizarStatusLeadDaConsulta_ = (
     _spreadsheet,
     _phone,
@@ -146,6 +155,7 @@ function loadReservation({
   return {
     reserve: sandbox.reservarHorarioEAgendarConsulta_,
     writes,
+    upserts,
   };
 }
 
@@ -196,6 +206,60 @@ test("refuses a slot that is no longer available", () => {
     error: "slot_not_available",
   });
   assert.equal(writes.length, 0);
+});
+
+test("a human-confirmed appointment outside the grid is recorded without changing Datas Consulta", () => {
+  const { reserve, writes, upserts } = loadReservation({
+    status: "Bloqueado",
+  });
+  const result = reserve({
+    appointmentId: "manual-outside-grid",
+    opportunityId: "opp-amanda-outside-grid",
+    phone: "+5511900000000",
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-08-04",
+    scheduledTime: "10:00",
+    humanConfirmed: true,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.reserved, true);
+  assert.equal(result.offGrid, true);
+  assert.equal(result.scheduleRow, null);
+  assert.equal(
+    writes.some((write) => write.column === 4),
+    false,
+  );
+  assert.equal(
+    writes.some((write) => write.leadStatus === "Consulta agendada"),
+    true,
+  );
+  assert.equal(upserts[0].preferredChannel, "WhatsApp");
+  assert.equal(upserts[0].consent, "Sim");
+  assert.equal(upserts[0].patientConfirmedAt instanceof Date, true);
+  assert.equal(upserts[0].lastHumanInteractionAt instanceof Date, true);
+  assert.equal(upserts[0].nextAction, "Aguardar a consulta agendada.");
+});
+
+test("a human-confirmed Amanda appointment keeps Sala 1 and reports an existing conflict", () => {
+  const { reserve } = loadReservation({
+    status: "Bloqueado",
+    roomConflict: true,
+  });
+  const result = reserve({
+    appointmentId: "manual-room-conflict",
+    opportunityId: "opp-amanda-room-conflict",
+    phone: "+5511900000000",
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-08-04",
+    scheduledTime: "10:00",
+    humanConfirmed: true,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.room, "Sala 1");
+  assert.equal(result.roomConflict, true);
+  assert.equal(result.conflictCount, 1);
 });
 
 test("blocks a Daniel slot and assigns Sala 2", () => {

@@ -48,6 +48,7 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
   scheduledTime: "Horário agendado",
   status: "Status",
   completedDate: "Data realizada",
+  preferredChannel: "Canal preferido",
   consent: "Consentimento para contato",
   source: "Origem do registro",
   notes: "Observações administrativas",
@@ -85,6 +86,21 @@ const CONSULTAS_SYNC_CALENDAR_TRIGGER_HEADERS = Object.freeze([
   CONSULTAS_SYNC_HEADERS.durationMinutes,
   CONSULTAS_SYNC_HEADERS.status,
 ]);
+
+const CONSULTAS_SYNC_ALLOWED_VALUES = Object.freeze({
+  consultationTypes: Object.freeze([
+    "Primeira consulta",
+    "Retorno",
+    "Pré-operatório",
+    "Pós-operatório",
+    "Outro",
+  ]),
+  locations: Object.freeze([
+    "Clínica LIV",
+    "Teleconsulta",
+    "Outro",
+  ]),
+});
 
 const CONSULTAS_SYNC_LEAD_HEADERS = Object.freeze({
   opportunityId: "Opportunity ID",
@@ -232,12 +248,13 @@ function salaEstaLivreConsulta_(
 
   const events = calendar.getEvents(start, end);
   const ignored = textoConsultasSync_(ignoredEventId, 240);
-  const conflict = events.some(function (event) {
+  const conflictingEvents = events.filter(function (event) {
     return !ignored || event.getId() !== ignored;
   });
 
   return {
-    free: !conflict,
+    free: conflictingEvents.length === 0,
+    conflictCount: conflictingEvents.length,
     calendar,
     calendarId,
   };
@@ -270,6 +287,7 @@ function escolherSalaDisponivelConsulta_(input) {
     ordered.splice(ordered.indexOf(preferred), 1);
     ordered.unshift(preferred);
   }
+  let conflictSelection = null;
 
   for (let index = 0; index < ordered.length; index += 1) {
     const room = ordered[index];
@@ -284,7 +302,22 @@ function escolherSalaDisponivelConsulta_(input) {
       ignoredEventId,
     );
 
-    if (!availability.free) continue;
+    if (!availability.free) {
+      if (input && input.allowRoomConflict === true && !conflictSelection) {
+        conflictSelection = {
+          ok: true,
+          room,
+          calendar: availability.calendar,
+          calendarId: availability.calendarId,
+          start: interval.start,
+          end: interval.end,
+          durationMinutes: interval.durationMinutes,
+          roomConflict: true,
+          conflictCount: availability.conflictCount,
+        };
+      }
+      continue;
+    }
 
     return {
       ok: true,
@@ -294,9 +327,12 @@ function escolherSalaDisponivelConsulta_(input) {
       start: interval.start,
       end: interval.end,
       durationMinutes: interval.durationMinutes,
+      roomConflict: false,
+      conflictCount: 0,
     };
   }
 
+  if (conflictSelection) return conflictSelection;
   return { ok: false, error: "room_not_available" };
 }
 
@@ -854,6 +890,18 @@ function processarEdicaoNaAbaConsultas_(e) {
           CONSULTAS_SYNC_HEADERS.status,
         ),
         opportunityId,
+        {
+          scheduledDate: valorDaLinhaConsultas_(
+            row,
+            refreshedColumns,
+            CONSULTAS_SYNC_HEADERS.scheduledDate,
+          ),
+          scheduledTime: valorDaLinhaConsultas_(
+            row,
+            refreshedColumns,
+            CONSULTAS_SYNC_HEADERS.scheduledTime,
+          ),
+        },
       );
     }
     atualizarAgendaVisivelNoLead_(sheet.getParent(), phone, professional, {
@@ -974,6 +1022,9 @@ function upsertConsultaRecebida_(input) {
       result.row,
       columns,
       row,
+      {
+        allowRoomConflict: input.humanConfirmed === true,
+      },
     );
   }
 
@@ -983,6 +1034,10 @@ function upsertConsultaRecebida_(input) {
     professional,
     status,
     opportunityId,
+    {
+      scheduledDate: input.scheduledDate,
+      scheduledTime: input.scheduledTime,
+    },
   );
 
   atualizarAgendaVisivelNoLead_(spreadsheet, input.phone, professional, {
@@ -994,9 +1049,117 @@ function upsertConsultaRecebida_(input) {
   return Object.assign({}, result, {
     calendarSynced: calendarResult.ok === true,
     room: calendarResult.room || input.room || "",
+    roomConflict: calendarResult.roomConflict === true,
+    conflictCount: Number(calendarResult.conflictCount || 0),
     calendarError:
       calendarResult.ok === true ? "" : calendarResult.error,
   });
+}
+
+function obterConsultaPorId_(input) {
+  const appointmentId = textoConsultasSync_(
+    input && (input.appointmentId || input.eventId),
+    180,
+  );
+  if (!appointmentId) {
+    return { ok: false, error: "appointment_id_required" };
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(
+    CONSULTAS_SYNC_CONFIG.spreadsheetId,
+  );
+  const sheet = spreadsheet.getSheetByName(
+    CONSULTAS_SYNC_CONFIG.consultationsSheetName,
+  );
+  if (!sheet) {
+    return { ok: false, error: "consultations_sheet_missing" };
+  }
+
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosConsultas_(headers);
+  const idColumn = columns[CONSULTAS_SYNC_HEADERS.id];
+  if (idColumn === undefined || sheet.getLastRow() < 2) {
+    return { ok: true, found: false };
+  }
+
+  const rows = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+    .getDisplayValues();
+  const rowIndex = rows.findIndex(function (row) {
+    return textoConsultasSync_(row[idColumn], 180) === appointmentId;
+  });
+  if (rowIndex < 0) return { ok: true, found: false };
+
+  const row = rows[rowIndex];
+  const professional = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.professional,
+  );
+  const scheduledDate = extrairDataConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.scheduledDate,
+    ),
+  );
+  const scheduledTime = extrairHorarioConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.scheduledTime,
+    ),
+  );
+  const status = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.status,
+  );
+  const calendarId = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.calendarId,
+  );
+  const calendarEventId = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.calendarEventId,
+  );
+  const calendarSyncStatus = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
+  );
+
+  return {
+    ok: true,
+    found: true,
+    complete: Boolean(
+      chaveProfissionalConsulta_(professional) &&
+      scheduledDate &&
+      scheduledTime &&
+      statusAgendaConsulta_(status),
+    ),
+    appointmentId,
+    professional,
+    scheduledDate,
+    scheduledTime,
+    status,
+    room: valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.room,
+    ),
+    calendarSynced: Boolean(calendarId && calendarEventId),
+    roomConflict: /conflito/i.test(String(calendarSyncStatus || "")),
+    calendarError: valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.calendarSyncError,
+    ),
+  };
 }
 
 function obterRelacionamentoPaciente_(input, spreadsheetOverride) {
@@ -1410,10 +1573,14 @@ function reservarHorarioEAgendarConsulta_(input) {
           existingAppointmentRow,
           consultationColumns,
           existingAppointment,
+          {
+            allowRoomConflict: input.humanConfirmed === true,
+          },
         );
       return {
         ok: true,
-        reserved: true,
+        reserved: duplicateCalendarResult.ok === true,
+        recorded: true,
         duplicate: true,
         appointmentRow: existingAppointmentRow,
         appointmentId:
@@ -1429,21 +1596,38 @@ function reservarHorarioEAgendarConsulta_(input) {
             CONSULTAS_SYNC_HEADERS.room,
           ),
         calendarSynced: duplicateCalendarResult.ok === true,
+        roomConflict: duplicateCalendarResult.roomConflict === true,
+        conflictCount: Number(
+          duplicateCalendarResult.conflictCount || 0,
+        ),
       };
     }
   }
 
   const lastRow = scheduleSheet.getLastRow();
-  if (lastRow <= CONFIG.appointmentSlotsHeaderRow) {
+  if (
+    lastRow <= CONFIG.appointmentSlotsHeaderRow &&
+    input.humanConfirmed !== true
+  ) {
     return { ok: false, error: "slot_not_available" };
   }
 
-  const values = scheduleSheet.getRange(
-    CONFIG.appointmentSlotsHeaderRow,
-    1,
-    lastRow - CONFIG.appointmentSlotsHeaderRow + 1,
-    CONFIG.appointmentSlotsColumns,
-  ).getDisplayValues();
+  const values = lastRow > CONFIG.appointmentSlotsHeaderRow
+    ? scheduleSheet.getRange(
+        CONFIG.appointmentSlotsHeaderRow,
+        1,
+        lastRow - CONFIG.appointmentSlotsHeaderRow + 1,
+        CONFIG.appointmentSlotsColumns,
+      ).getDisplayValues()
+    : [[
+        "Data",
+        "Dia",
+        "Horário",
+        "Status",
+        "Profissional",
+        "Observação",
+        "Semana",
+      ]];
   const headers = values[0] || [];
   const columns = {
     date: findScheduleColumn_(headers, "Data"),
@@ -1497,11 +1681,12 @@ function reservarHorarioEAgendarConsulta_(input) {
       continue;
     }
 
-    if (
+    const available =
       normalizarTextoConsultasSync_(
         row[columns.status],
-      ) !== "disponivel"
-    ) {
+      ) === "disponivel";
+    if (!available) {
+      if (input.humanConfirmed === true) break;
       return { ok: false, error: "slot_not_available" };
     }
 
@@ -1517,7 +1702,7 @@ function reservarHorarioEAgendarConsulta_(input) {
     break;
   }
 
-  if (!selectedRow) {
+  if (!selectedRow && input.humanConfirmed !== true) {
     return { ok: false, error: "slot_not_available" };
   }
 
@@ -1530,6 +1715,7 @@ function reservarHorarioEAgendarConsulta_(input) {
     scheduledDate: requestedDate,
     scheduledTime: requestedTime,
     durationMinutes: input.durationMinutes,
+    allowRoomConflict: input.humanConfirmed === true,
   });
 
   if (!roomSelection.ok) {
@@ -1539,19 +1725,21 @@ function reservarHorarioEAgendarConsulta_(input) {
     };
   }
 
-  const statusRange = scheduleSheet.getRange(
-    selectedRow.rowNumber,
-    columns.status + 1,
-  );
+  const statusRange = selectedRow
+    ? scheduleSheet.getRange(
+        selectedRow.rowNumber,
+        columns.status + 1,
+      )
+    : null;
   const observationRange =
-    columns.observation >= 0
+    selectedRow && columns.observation >= 0
       ? scheduleSheet.getRange(
           selectedRow.rowNumber,
           columns.observation + 1,
         )
       : null;
 
-  statusRange.setValue("Bloqueado");
+  if (statusRange) statusRange.setValue("Bloqueado");
   if (observationRange) {
     observationRange.setValue(
       "Agendamento confirmado via WhatsApp em " +
@@ -1588,6 +1776,11 @@ function reservarHorarioEAgendarConsulta_(input) {
         source:
           input.source ||
           "WhatsApp — opção de horário escolhida pela paciente",
+        preferredChannel: input.preferredChannel || "WhatsApp",
+        consent: input.consent || "Sim",
+        patientConfirmedAt: input.confirmedAt || new Date(),
+        lastHumanInteractionAt: input.confirmedAt || new Date(),
+        nextAction: "Aguardar a consulta agendada.",
         notes: input.notes,
         now: new Date(),
       },
@@ -1617,6 +1810,9 @@ function reservarHorarioEAgendarConsulta_(input) {
       consultationResult.row,
       refreshedColumns,
       consultationRow,
+      {
+        allowRoomConflict: input.humanConfirmed === true,
+      },
     );
 
     atualizarStatusLeadDaConsulta_(
@@ -1625,6 +1821,10 @@ function reservarHorarioEAgendarConsulta_(input) {
       professionalName,
       "Consulta agendada",
       opportunityId,
+      {
+        scheduledDate: requestedDate,
+        scheduledTime: requestedTime,
+      },
     );
     atualizarAgendaVisivelNoLead_(spreadsheet, input.phone, professionalName, {
       scheduledDate: requestedDate,
@@ -1635,19 +1835,30 @@ function reservarHorarioEAgendarConsulta_(input) {
 
     return {
       ok: true,
-      reserved: true,
-      scheduleRow: selectedRow.rowNumber,
+      reserved: calendarResult.ok === true,
+      recorded: true,
+      offGrid: !selectedRow,
+      scheduleRow: selectedRow ? selectedRow.rowNumber : null,
       appointmentRow: consultationResult.row,
       appointmentId: consultationResult.appointmentId,
       scheduledDate: requestedDate,
       scheduledTime: requestedTime,
       room: calendarResult.room || roomSelection.room,
       calendarSynced: calendarResult.ok === true,
+      roomConflict:
+        calendarResult.roomConflict === true ||
+        roomSelection.roomConflict === true,
+      conflictCount: Math.max(
+        Number(calendarResult.conflictCount || 0),
+        Number(roomSelection.conflictCount || 0),
+      ),
       calendarError:
         calendarResult.ok === true ? "" : calendarResult.error,
     };
   } catch (error) {
-    statusRange.setValue(selectedRow.status || "Disponível");
+    if (statusRange) {
+      statusRange.setValue(selectedRow.status || "Disponível");
+    }
     if (observationRange) {
       observationRange.setValue(
         selectedRow.observation || "",
@@ -2062,9 +2273,19 @@ function upsertConsulta_(sheet, input) {
   );
   const rowNumber =
     existingRow || primeiraLinhaLivreConsultas_(sheet, columns);
-  const current = sheet
-    .getRange(rowNumber, 1, 1, sheet.getLastColumn())
-    .getValues()[0];
+  const rowRange = sheet.getRange(
+    rowNumber,
+    1,
+    1,
+    sheet.getLastColumn(),
+  );
+  const current = rowRange.getValues()[0];
+  const formulas = typeof rowRange.getFormulas === "function"
+    ? rowRange.getFormulas()[0]
+    : [];
+  const next = current.map(function (value, index) {
+    return formulas[index] || value;
+  });
   const appointmentId =
     textoConsultasSync_(input.appointmentId, 180) ||
     textoConsultasSync_(
@@ -2073,29 +2294,21 @@ function upsertConsulta_(sheet, input) {
     ) ||
     construirIdConsulta_(phone, input, rowNumber, now);
 
-  definirValorConsulta_(
-    sheet,
-    rowNumber,
-    columns,
-    CONSULTAS_SYNC_HEADERS.id,
-    appointmentId,
-  );
+  const defineNext = function (header, value, allowEmpty) {
+    const column = columns[header];
+    if (column === undefined) return;
+    if (!allowEmpty && (value === undefined || value === "")) return;
+    next[column] = valorCanonicoCampoConsulta_(header, value);
+  };
+
+  defineNext(CONSULTAS_SYNC_HEADERS.id, appointmentId);
   if (input.opportunityId) {
-    definirValorConsulta_(
-      sheet,
-      rowNumber,
-      columns,
+    defineNext(
       CONSULTAS_SYNC_HEADERS.opportunityId,
       textoConsultasSync_(input.opportunityId, 180),
     );
   }
-  definirValorConsulta_(
-    sheet,
-    rowNumber,
-    columns,
-    CONSULTAS_SYNC_HEADERS.phone,
-    phone,
-  );
+  defineNext(CONSULTAS_SYNC_HEADERS.phone, phone);
 
   [
     [CONSULTAS_SYNC_HEADERS.name, input.name],
@@ -2127,13 +2340,7 @@ function upsertConsulta_(sheet, input) {
     [CONSULTAS_SYNC_HEADERS.notes, input.notes],
   ].forEach(function (entry) {
     if (entry[1] !== undefined && entry[1] !== "") {
-      definirValorConsulta_(
-        sheet,
-        rowNumber,
-        columns,
-        entry[0],
-        entry[1],
-      );
+      defineNext(entry[0], entry[1]);
     }
   });
 
@@ -2155,19 +2362,36 @@ function upsertConsulta_(sheet, input) {
       CONSULTAS_SYNC_HEADERS.nextAction,
       CONSULTAS_SYNC_HEADERS.suppressionReason,
     ].forEach(function (header) {
-      definirValorConsulta_(sheet, rowNumber, columns, header, "");
+      defineNext(header, "", true);
     });
   }
 
+  [
+    [CONSULTAS_SYNC_HEADERS.preferredChannel, input.preferredChannel],
+    [CONSULTAS_SYNC_HEADERS.consent, input.consent],
+    [
+      CONSULTAS_SYNC_HEADERS.patientConfirmedAt,
+      input.patientConfirmedAt,
+    ],
+    [
+      CONSULTAS_SYNC_HEADERS.lastHumanInteractionAt,
+      input.lastHumanInteractionAt,
+    ],
+    [CONSULTAS_SYNC_HEADERS.nextAction, input.nextAction],
+  ].forEach(function (entry) {
+    if (entry[1] !== undefined && entry[1] !== "") {
+      defineNext(entry[0], entry[1]);
+    }
+  });
+
   if (input.completedAt) {
-    definirValorConsulta_(
-      sheet,
-      rowNumber,
-      columns,
+    defineNext(
       CONSULTAS_SYNC_HEADERS.completedDate,
       input.completedAt,
     );
   }
+
+  rowRange.setValues([next]);
 
   if (input.queuePostConsult) {
     const refreshed = sheet
@@ -2239,6 +2463,7 @@ function sincronizarConsultaComAgendaNaLinha_(
   rowNumber,
   columns,
   row,
+  options,
 ) {
   const opportunityId = valorDaLinhaConsultas_(
     row,
@@ -2441,6 +2666,8 @@ function sincronizarConsultaComAgendaNaLinha_(
       scheduledTime,
       durationMinutes,
       calendarEventId: currentEventId,
+      allowRoomConflict:
+        options && options.allowRoomConflict === true,
     });
 
     if (!selection.ok) {
@@ -2639,7 +2866,9 @@ function sincronizarConsultaComAgendaNaLinha_(
       rowNumber,
       columns,
       CONSULTAS_SYNC_HEADERS.calendarSyncStatus,
-      "Sincronizado em " +
+      (selection.roomConflict
+        ? "Sincronizado com conflito em "
+        : "Sincronizado em ") +
         Utilities.formatDate(
           new Date(),
           CONSULTAS_SYNC_CONFIG.timezone,
@@ -2659,6 +2888,8 @@ function sincronizarConsultaComAgendaNaLinha_(
       room: selection.room,
       calendarId: selection.calendarId,
       calendarEventId: event.getId(),
+      roomConflict: selection.roomConflict === true,
+      conflictCount: Number(selection.conflictCount || 0),
     };
   } catch (error) {
     const message = textoConsultasSync_(
@@ -4161,6 +4392,7 @@ function atualizarStatusLeadDaConsulta_(
   professional,
   status,
   opportunityId,
+  appointment,
 ) {
   const canonicalStatus = statusCanonicoLeadDaConsulta_(status);
   if (!canonicalStatus) {
@@ -4174,14 +4406,36 @@ function atualizarStatusLeadDaConsulta_(
       : "invalid_phone" };
   }
 
-  const result = sincronizarFaseOportunidadeELead_(spreadsheet, {
+  const syncInput = {
     opportunityId,
     phone,
     professional,
     stage: canonicalStatus,
     source: "consultas_sync",
     at: new Date(),
-  });
+  };
+  if (canonicalStatus === "Consulta agendada") {
+    const scheduledDate = appointment &&
+      formatarDataVisivelConsulta_(appointment.scheduledDate);
+    const scheduledTime = appointment &&
+      extrairHorarioConsultasSync_(appointment.scheduledTime);
+    const scheduleLabel = scheduledDate && scheduledTime
+      ? " para " + scheduledDate + " às " + scheduledTime
+      : "";
+    Object.assign(syncInput, {
+      relationship: "appointment_scheduled",
+      owner: "human",
+      expectedParty: "patient",
+      objection: "",
+      summary:
+        "Consulta com " + professional + " agendada" + scheduleLabel + ".",
+      nextAction: "Aguardar a consulta agendada.",
+    });
+  }
+  const result = sincronizarFaseOportunidadeELead_(
+    spreadsheet,
+    syncInput,
+  );
   if (
     result.ok &&
     result.changed &&
@@ -4608,11 +4862,51 @@ function definirValorConsulta_(
 ) {
   const column = columns[header];
   if (column === undefined) return;
-  const safeValue =
-    header === CONSULTAS_SYNC_HEADERS.status
-      ? statusCanonicoConsultas_(value)
-      : value;
+  const safeValue = valorCanonicoCampoConsulta_(header, value);
   sheet.getRange(row, column + 1).setValue(safeValue);
+}
+
+function valorCanonicoCampoConsulta_(header, value) {
+  if (header === CONSULTAS_SYNC_HEADERS.status) {
+    return statusCanonicoConsultas_(value);
+  }
+  if (header === CONSULTAS_SYNC_HEADERS.consultationType) {
+    return tipoCanonicoConsultas_(value);
+  }
+  if (header === CONSULTAS_SYNC_HEADERS.location) {
+    return localCanonicoConsultas_(value);
+  }
+  return value;
+}
+
+function tipoCanonicoConsultas_(value) {
+  const text = textoConsultasSync_(value, 80);
+  if (CONSULTAS_SYNC_ALLOWED_VALUES.consultationTypes.includes(text)) {
+    return text;
+  }
+
+  const normalized = normalizarTextoConsultasSync_(text);
+  if (/\bretorno\b/.test(normalized)) return "Retorno";
+  if (/\bpre operatorio\b/.test(normalized)) return "Pré-operatório";
+  if (/\bpos operatorio\b/.test(normalized)) return "Pós-operatório";
+  if (/\b(?:consulta|avaliacao|teleconsulta)\b/.test(normalized)) {
+    return "Primeira consulta";
+  }
+  return "Outro";
+}
+
+function localCanonicoConsultas_(value) {
+  const text = textoConsultasSync_(value, 120);
+  if (CONSULTAS_SYNC_ALLOWED_VALUES.locations.includes(text)) return text;
+
+  const normalized = normalizarTextoConsultasSync_(text);
+  if (/\b(?:teleconsulta|online|video)\b/.test(normalized)) {
+    return "Teleconsulta";
+  }
+  if (/\b(?:clinica liv|pais leme|pinheiros)\b/.test(normalized)) {
+    return "Clínica LIV";
+  }
+  return "Outro";
 }
 
 function statusCanonicoConsultas_(value) {

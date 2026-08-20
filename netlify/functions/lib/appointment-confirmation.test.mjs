@@ -219,6 +219,28 @@ test("recognizes a unique weekday and time from the proposed slots", () => {
   assert.equal(result?.scheduledTime, "10:00");
 });
 
+test("resolves weekday plus day-of-month against the offered slot instead of the next weekday", () => {
+  const result = detectPatientAppointmentSelection({
+    currentText: "Quinta 24 às 14",
+    at: "2026-08-20T09:21:00-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        at: "2026-08-20T08:26:00-03:00",
+        text: [
+          "Na última semana de setembro temos horários:",
+          "Segunda 21/09 às 10:00",
+          "Terça 22/09 às 15:00",
+          "Quinta 24/09 às 14:00",
+        ].join("\n"),
+      },
+    ],
+  });
+
+  assert.equal(result?.scheduledDate, "2026-09-24");
+  assert.equal(result?.scheduledTime, "14:00");
+});
+
 test("does not choose an ambiguous or unoffered slot", () => {
   const context = [
     {
@@ -361,7 +383,7 @@ Atenciosamente, Bruna`,
     scheduledTime: "14:00",
     professional: "Dr. Daniel",
     consultationType: "Consulta presencial",
-    location: "ClÃ­nica LIV Faria Lima",
+    location: "Clínica LIV Faria Lima",
     status: "Consulta agendada",
     source: "WhatsApp - comprovante estruturado de agendamento",
     confidence: "confirmed",

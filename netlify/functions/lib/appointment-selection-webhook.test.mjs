@@ -224,7 +224,7 @@ test("patient selection never sends an automatic confirmation", async () => {
   assert.equal(patientMessages.length, 0);
 });
 
-test("a clear manual confirmation reserves the slot and emails Daniel", async () => {
+test("a clear manual confirmation reserves the slot without a routine email", async () => {
   const actions = [];
   const result = await completeManualAppointmentDetection(
     {
@@ -260,11 +260,8 @@ test("a clear manual confirmation reserves the slot and emails Daniel", async ()
   assert.equal(result.status, "completed");
   assert.equal(result.reserved, true);
   assert.equal(actions[0].action, "reserve_appointment_slot");
-  assert.equal(actions[1].action, "send_review_alert_email");
-  assert.match(
-    actions[1].payload.alert.messageText,
-    /AGENDAMENTO MANUAL CONFIRMADO E REGISTRADO/,
-  );
+  assert.equal(actions[0].payload.appointment.humanConfirmed, true);
+  assert.equal(actions.length, 1);
 });
 
 test("a structured receipt uses its patient name in the canonical reservation payload", async () => {
@@ -310,10 +307,7 @@ test("a structured receipt uses its patient name in the canonical reservation pa
     actions[0].payload.appointment.professional,
     "Dr. Daniel",
   );
-  assert.equal(
-    actions[1].payload.alert.patientName,
-    "Paciente Exemplo",
-  );
+  assert.equal(actions.length, 1);
 });
 
 test("a confirmed human slot is still recorded when it is outside the automatic grid", async () => {
@@ -338,16 +332,11 @@ test("a confirmed human slot is still recorded when it is outside the automatic 
         actions.push({ action, payload });
         if (action === "reserve_appointment_slot") {
           return {
-            ok: false,
-            errorCode: "slot_not_available",
-            responseData: { ok: false },
-          };
-        }
-        if (action === "upsert_appointment") {
-          return {
             ok: true,
             responseData: {
               ok: true,
+              reserved: true,
+              offGrid: true,
               appointmentId: "manual-outside-grid-message",
             },
           };
@@ -357,28 +346,114 @@ test("a confirmed human slot is still recorded when it is outside the automatic 
     },
   );
 
-  assert.equal(result.status, "completed_with_schedule_review");
-  assert.equal(result.reserved, false);
+  assert.equal(result.status, "completed");
+  assert.equal(result.reserved, true);
   assert.equal(result.recorded, true);
   assert.deepEqual(
     actions.map(({ action }) => action),
-    [
-      "reserve_appointment_slot",
-      "upsert_appointment",
-      "send_review_alert_email",
-    ],
+    ["reserve_appointment_slot"],
   );
-  assert.equal(
-    actions[1].payload.appointment.status,
-    "Agendada",
+  assert.equal(actions[0].payload.appointment.humanConfirmed, true);
+});
+
+test("a human appointment is kept and emails only when Sala 1 already has a conflict", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "room-conflict-event",
+      messageId: "room-conflict-message",
+      patientName: "Paciente Exemplo",
+      patientPhone: "+5511900000000",
+      detection: {
+        scheduledDate: "2026-09-24",
+        scheduledTime: "14:00",
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        confidence: "confirmed",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        if (action === "reserve_appointment_slot") {
+          return {
+            ok: true,
+            responseData: {
+              ok: true,
+              reserved: true,
+              room: "Sala 1",
+              roomConflict: true,
+            },
+          };
+        }
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed_with_room_conflict");
+  assert.equal(result.reserved, true);
+  assert.equal(result.roomConflict, true);
+  assert.deepEqual(
+    actions.map(({ action }) => action),
+    ["reserve_appointment_slot", "send_review_alert_email"],
   );
   assert.match(
-    actions[2].payload.alert.messageText,
-    /REGISTRADO — CONFERIR GRADE/,
+    actions[1].payload.alert.messageText,
+    /CONFLITO NA SALA 1/,
   );
 });
 
-test("a confirmed appointment with missing time creates an incomplete consultation row", async () => {
+test("a timed-out human booking is reconciled by appointment id before alerting", async () => {
+  const actions = [];
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "timeout-event",
+      messageId: "timeout-message",
+      patientName: "Paciente Exemplo",
+      patientPhone: "+5511900000000",
+      detection: {
+        scheduledDate: "2026-09-24",
+        scheduledTime: "14:00",
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        confidence: "confirmed",
+      },
+    },
+    {
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        if (action === "reserve_appointment_slot") {
+          return { ok: false, errorCode: "timeout" };
+        }
+        if (action === "get_appointment") {
+          return {
+            ok: true,
+            responseData: {
+              ok: true,
+              found: true,
+              complete: true,
+              calendarSynced: true,
+              room: "Sala 1",
+            },
+          };
+        }
+        throw new Error(`unexpected action: ${action}`);
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.recoveredAfterTimeout, true);
+  assert.deepEqual(
+    actions.map(({ action }) => action),
+    ["reserve_appointment_slot", "get_appointment"],
+  );
+});
+
+test("a confirmed appointment with missing time requires action without a partial consultation row", async () => {
   const actions = [];
   const result = await completeManualAppointmentDetection(
     {
@@ -399,33 +474,20 @@ test("a confirmed appointment with missing time creates an incomplete consultati
     {
       deliverSheetsActionImpl: async (action, payload) => {
         actions.push({ action, payload });
-        if (action === "upsert_appointment") {
-          return {
-            ok: true,
-            responseData: {
-              ok: true,
-              appointmentId: "manual-partial-message",
-            },
-          };
-        }
         return { ok: true, responseData: { ok: true, sent: true } };
       },
     },
   );
 
-  assert.equal(result.status, "recorded_incomplete");
-  assert.equal(result.recorded, true);
+  assert.equal(result.status, "review_required");
+  assert.equal(result.recorded, false);
   assert.deepEqual(
     actions.map(({ action }) => action),
-    ["upsert_appointment", "send_review_alert_email"],
-  );
-  assert.equal(
-    actions[0].payload.appointment.status,
-    "Aguardando confirmação",
+    ["send_review_alert_email"],
   );
   assert.match(
-    actions[1].payload.alert.messageText,
-    /COMPLETAR DADOS/,
+    actions[0].payload.alert.messageText,
+    /Nenhuma linha foi criada em Consultas/,
   );
 });
 

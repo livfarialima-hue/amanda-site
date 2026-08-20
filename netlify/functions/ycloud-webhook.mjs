@@ -877,7 +877,13 @@ function safeDownstreamErrorCode(data) {
 }
 
 export function sheetsActionTimeoutMs(action, configuredValue) {
-  if (String(action || "") !== "append_lead") return 8_000;
+  const normalizedAction = String(action || "");
+  const longRunningAction = [
+    "append_lead",
+    "reserve_appointment_slot",
+    "upsert_appointment",
+  ].includes(normalizedAction);
+  if (!longRunningAction) return 8_000;
   const configured = Number.parseInt(String(configuredValue || ""), 10);
   if (!Number.isFinite(configured)) return 20_000;
   return Math.min(Math.max(configured, 8_000), 25_000);
@@ -896,7 +902,11 @@ async function deliverSheetsAction(action, payload) {
     () => controller.abort(),
     sheetsActionTimeoutMs(
       action,
-      process.env.GOOGLE_SHEETS_APPEND_TIMEOUT_MS,
+      ["reserve_appointment_slot", "upsert_appointment"].includes(
+        String(action || ""),
+      )
+        ? process.env.GOOGLE_SHEETS_APPOINTMENT_TIMEOUT_MS
+        : process.env.GOOGLE_SHEETS_APPEND_TIMEOUT_MS,
     ),
   );
 
@@ -2924,100 +2934,107 @@ export async function completeManualAppointmentDetection(
     const missingLabel = missingFields.includes("scheduledTime")
       ? "horário"
       : "data";
-    const incompletePayload = {
-      ...appointmentPayload,
-      status: "Aguardando confirmação",
-      source:
-        "WhatsApp — confirmação manual com agenda incompleta",
-      notes:
-        `Confirmação humana detectada, mas o ${missingLabel} não apareceu ` +
-        "de forma inequívoca na conversa. Completar na aba Consultas.",
-    };
-    const registration = await deliverSheetsActionImpl(
-      "upsert_appointment",
-      { appointment: incompletePayload },
-    );
-    const recorded =
-      registration.ok && registration.responseData?.ok !== false;
-
     await sendAppointmentEmailImpl(
       {
         eventId: `${eventId}-manual-booking-incomplete-email`,
         patientName: resolvedPatientName,
         patientPhone,
         messageText: appointmentEmailBody({
-          heading: recorded
-            ? "AGENDAMENTO MANUAL REGISTRADO — COMPLETAR DADOS"
-            : "AGENDAMENTO MANUAL INCOMPLETO — REVISÃO NECESSÁRIA",
-          appointment: incompletePayload,
-          detail: recorded
-            ? `A linha foi criada em Consultas sem inventar o ${missingLabel}. Complete esse dado para ativar os lembretes.`
-            : `Não foi possível criar a linha. Motivo: ${registration.errorCode || "registration_failed"}.`,
+          heading:
+            "AGENDAMENTO MANUAL INCOMPLETO — AÇÃO HUMANA NECESSÁRIA",
+          appointment: appointmentPayload,
+          detail:
+            `O ${missingLabel} não apareceu de forma inequívoca. ` +
+            "Nenhuma linha foi criada em Consultas e nenhum evento foi adicionado à agenda. Confirme os dados completos com a paciente e envie a confirmação final.",
         }),
       },
       { deliverSheetsActionImpl },
     );
 
     return {
-      status: recorded ? "recorded_incomplete" : "review_required",
+      status: "review_required",
       reserved: false,
-      recorded,
-      appointmentId:
-        registration.responseData?.appointmentId || appointmentId,
-      errorCode: recorded
-        ? "missing_schedule_data"
-        : registration.errorCode || "registration_failed",
+      recorded: false,
+      appointmentId,
+      errorCode: "appointment_data_incomplete",
     };
   }
 
   if (confidence === "confirmed") {
-    const reservation = await deliverSheetsActionImpl(
+    let reservation = await deliverSheetsActionImpl(
       "reserve_appointment_slot",
-      { appointment: appointmentPayload },
+      {
+        appointment: {
+          ...appointmentPayload,
+          humanConfirmed: true,
+        },
+      },
     );
+    if (!reservation.ok && reservation.errorCode === "timeout") {
+      const readback = await deliverSheetsActionImpl(
+        "get_appointment",
+        { appointment: { appointmentId } },
+      );
+      if (
+        readback.ok &&
+        readback.responseData?.found === true &&
+        readback.responseData?.complete === true &&
+        readback.responseData?.calendarSynced === true
+      ) {
+        reservation = {
+          ok: true,
+          errorCode: "none",
+          responseData: {
+            ok: true,
+            reserved: true,
+            duplicate: true,
+            recoveredAfterTimeout: true,
+            appointmentId,
+            room: readback.responseData.room || "",
+            roomConflict:
+              readback.responseData.roomConflict === true,
+          },
+        };
+      }
+    }
+
     const reserved =
       reservation.ok &&
       reservation.responseData?.reserved === true;
     const duplicate = reservation.responseData?.duplicate === true;
-    let registration = null;
-    let recorded = reserved;
+    const roomConflict =
+      reservation.responseData?.roomConflict === true;
 
-    if (!reserved) {
-      registration = await deliverSheetsActionImpl(
-        "upsert_appointment",
-        {
-          appointment: {
-            ...appointmentPayload,
-            status: "Agendada",
-            source:
-              "WhatsApp — confirmação manual fora da grade automática",
-            notes:
-              "A equipe confirmou este horário no WhatsApp. A linha foi preservada em Consultas mesmo sem reserva automática; conferir a grade de horários.",
-          },
-        },
-      );
-      recorded =
-        registration.ok && registration.responseData?.ok !== false;
-    }
-
-    if (!duplicate || !reserved) {
+    if (roomConflict && !duplicate) {
       await sendAppointmentEmailImpl(
         {
           eventId: `${eventId}-manual-booking-email`,
           patientName: resolvedPatientName,
           patientPhone,
           messageText: appointmentEmailBody({
-            heading: reserved
-              ? "AGENDAMENTO MANUAL CONFIRMADO E REGISTRADO"
-              : recorded
-                ? "AGENDAMENTO MANUAL REGISTRADO — CONFERIR GRADE"
-                : "CONFIRMAÇÃO MANUAL DETECTADA — REVISÃO NECESSÁRIA",
+            heading:
+              "CONFLITO NA SALA 1 — AGENDAMENTO HUMANO REGISTRADO",
             appointment: appointmentPayload,
-            detail: reserved
-              ? "A consulta foi registrada e o horário foi retirado dos disponíveis."
-              : recorded
-                ? `A consulta foi registrada em Consultas, mas o horário não foi bloqueado na grade automática. Motivo: ${reservation.errorCode || "slot_not_available"}.`
-                : `O sistema não conseguiu registrar nem reservar automaticamente. Motivo: ${registration?.errorCode || reservation.errorCode || "registration_failed"}.`,
+            detail:
+              "A consulta humana foi registrada e adicionada à Sala 1, mas já havia outro compromisso no mesmo intervalo. Conferir a agenda para evitar atendimento simultâneo.",
+          }),
+        },
+        { deliverSheetsActionImpl },
+      );
+    }
+
+    if (!reserved) {
+      await sendAppointmentEmailImpl(
+        {
+          eventId: `${eventId}-manual-booking-email`,
+          patientName: resolvedPatientName,
+          patientPhone,
+          messageText: appointmentEmailBody({
+            heading:
+              "CONFIRMAÇÃO MANUAL DETECTADA — REVISÃO NECESSÁRIA",
+            appointment: appointmentPayload,
+            detail:
+              `O sistema não conseguiu concluir o registro operacional. Motivo: ${reservation.responseData?.calendarError || reservation.errorCode || "registration_failed"}.`,
           }),
         },
         { deliverSheetsActionImpl },
@@ -3026,20 +3043,23 @@ export async function completeManualAppointmentDetection(
 
     return {
       status: reserved
-        ? "completed"
-        : recorded
-          ? "completed_with_schedule_review"
-          : "review_required",
+        ? roomConflict
+          ? "completed_with_room_conflict"
+          : "completed"
+        : "review_required",
       reserved,
-      recorded,
+      recorded:
+        reserved || reservation.responseData?.recorded === true,
       duplicate,
+      roomConflict,
+      recoveredAfterTimeout:
+        reservation.responseData?.recoveredAfterTimeout === true,
       appointmentId:
         reservation.responseData?.appointmentId ||
-        registration?.responseData?.appointmentId ||
         appointmentId,
-      errorCode: reserved || recorded
+      errorCode: reserved
         ? "none"
-        : registration?.errorCode ||
+        : reservation.responseData?.calendarError ||
           reservation.errorCode ||
           "registration_failed",
     };

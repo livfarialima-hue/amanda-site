@@ -400,7 +400,7 @@ function structuredAppointmentReceipt(text, baseDate) {
     location:
       consultationType === "Teleconsulta"
         ? "Teleconsulta"
-        : "ClÃ­nica LIV Faria Lima",
+        : "Clínica LIV Faria Lima",
     status: "Consulta agendada",
     source: "WhatsApp - comprovante estruturado de agendamento",
     confidence: "confirmed",
@@ -585,6 +585,35 @@ function explicitOfferedDate(text, offeredSlots) {
   })?.scheduledDate || null;
 }
 
+function explicitOfferedDayOfMonth(text, offeredSlots) {
+  const comparable = normalize(text);
+  const weekday = selectedWeekday(text);
+  const dayMatch = comparable.match(/\bdia\s+(\d{1,2})\b/) ||
+    comparable.match(
+      /\b(?:domingo|segunda(?: feira)?|terca(?: feira)?|quarta(?: feira)?|quinta(?: feira)?|sexta(?: feira)?|sabado)\s+(\d{1,2})\b/,
+    );
+  if (!dayMatch) return null;
+
+  const requestedDay = Number(dayMatch[1]);
+  if (requestedDay < 1 || requestedDay > 31) return null;
+  const matchingDates = [
+    ...new Set(
+      offeredSlots
+        .filter((slot) => {
+          const day = Number(slot.scheduledDate.split("-")[2]);
+          return (
+            day === requestedDay &&
+            (weekday === null ||
+              weekdayForIsoDate(slot.scheduledDate) === weekday)
+          );
+        })
+        .map((slot) => slot.scheduledDate),
+    ),
+  ];
+
+  return matchingDates.length === 1 ? matchingDates[0] : null;
+}
+
 function hasSelectionIntent(text) {
   const comparable = normalize(text);
 
@@ -698,6 +727,7 @@ export function detectPatientAppointmentSelection({
   const requestedDate = patientSelectionTexts
     .map((text) =>
       explicitOfferedDate(text, slots) ||
+      explicitOfferedDayOfMonth(text, slots) ||
       (!Number.isNaN(baseDate.getTime())
         ? extractRelativeDate(text, baseDate)
         : null),

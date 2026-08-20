@@ -262,6 +262,30 @@ test("never moves Matheus to Sala 1 when Sala 2 is busy", () => {
   assert.equal(calendarIds.length, 1);
 });
 
+test("a human-confirmed Amanda appointment keeps Sala 1 and surfaces the conflict", () => {
+  context.CalendarApp = {
+    getCalendarById() {
+      return {
+        getEvents() {
+          return [{ getId: () => "existing-event" }];
+        },
+      };
+    },
+  };
+
+  const result = context.escolherSalaDisponivelConsulta_({
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-09-24",
+    scheduledTime: "14:00",
+    allowRoomConflict: true,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.room, "Sala 1");
+  assert.equal(result.roomConflict, true);
+  assert.equal(result.conflictCount, 1);
+});
+
 test("writes consultation statuses using the visible dropdown vocabulary", () => {
   assert.equal(
     context.statusCanonicoConsultas_("Consulta agendada"),
@@ -279,6 +303,94 @@ test("writes consultation statuses using the visible dropdown vocabulary", () =>
     context.statusCanonicoConsultas_("Não compareceu"),
     "Não compareceu",
   );
+});
+
+test("maps integration values to the visible consultation dropdown vocabulary", () => {
+  assert.equal(
+    context.tipoCanonicoConsultas_("Consulta presencial"),
+    "Primeira consulta",
+  );
+  assert.equal(
+    context.tipoCanonicoConsultas_("Procedimento"),
+    "Outro",
+  );
+  assert.equal(
+    context.localCanonicoConsultas_("Clínica LIV Faria Lima"),
+    "Clínica LIV",
+  );
+  assert.equal(
+    context.localCanonicoConsultas_("Teleconsulta"),
+    "Teleconsulta",
+  );
+});
+
+test("writes the core consultation row in one atomic setValues call", () => {
+  const headers = [
+    "ID da consulta",
+    "Opportunity ID",
+    "Telefone (E.164)",
+    "Profissional",
+    "Tipo de consulta",
+    "Local / modalidade",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+  ];
+  const current = [
+    "manual-atomic",
+    "opp-atomic",
+    "+5511900000000",
+    "Dra. Amanda",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ];
+  const writes = [];
+  const rowRange = {
+    getValues: () => [current.slice()],
+    getFormulas: () => [headers.map(() => "")],
+    setValues(values) {
+      writes.push(values[0].slice());
+    },
+  };
+  const sheet = {
+    getLastColumn: () => headers.length,
+    getRange(row) {
+      if (row === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      return rowRange;
+    },
+  };
+  const originalLocator = context.localizarConsultaExistente_;
+  const originalSpreadsheetApp = context.SpreadsheetApp;
+  context.localizarConsultaExistente_ = () => 2;
+  context.SpreadsheetApp = { flush() {} };
+
+  try {
+    const result = context.upsertConsulta_(sheet, {
+      appointmentId: "manual-atomic",
+      opportunityId: "opp-atomic",
+      phone: "+5511900000000",
+      professional: "Dra. Amanda",
+      consultationType: "Consulta presencial",
+      location: "Clínica LIV Faria Lima",
+      scheduledDate: "2026-09-24",
+      scheduledTime: "14:00",
+      status: "Consulta agendada",
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(writes.length, 1);
+    assert.equal(writes[0][4], "Primeira consulta");
+    assert.equal(writes[0][5], "Clínica LIV");
+    assert.equal(writes[0][8], "Agendada");
+  } finally {
+    context.localizarConsultaExistente_ = originalLocator;
+    context.SpreadsheetApp = originalSpreadsheetApp;
+  }
 });
 
 test("maps classified administrative outcomes to consultation rows", () => {
@@ -837,6 +949,40 @@ test("classifies the patient journey without exposing clinical detail", () => {
     }),
     "former_patient",
   );
+});
+
+test("a scheduled consultation updates the canonical CRM relationship", () => {
+  let received = null;
+  context.sincronizarFaseOportunidadeELead_ = (_spreadsheet, input) => {
+    received = input;
+    return {
+      ok: true,
+      changed: false,
+      opportunityId: input.opportunityId,
+      stage: input.stage,
+    };
+  };
+
+  const result = context.atualizarStatusLeadDaConsulta_(
+    {},
+    "+5511900000000",
+    "Dra. Amanda",
+    "Agendada",
+    "opp-scheduled",
+    {
+      scheduledDate: "2026-09-24",
+      scheduledTime: "14:00",
+    },
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(received.stage, "Consulta agendada");
+  assert.equal(received.relationship, "appointment_scheduled");
+  assert.equal(received.owner, "human");
+  assert.equal(received.expectedParty, "patient");
+  assert.equal(received.objection, "");
+  assert.match(received.summary, /24\/09\/2026 às 14:00/);
+  assert.equal(received.nextAction, "Aguardar a consulta agendada.");
 });
 
 test("classifies only the operational type of a pending task", () => {

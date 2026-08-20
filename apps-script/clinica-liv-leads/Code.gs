@@ -248,6 +248,7 @@ function doPost(e) {
       body.action !== "touch_appointment" &&
       body.action !== "update_appointment_status" &&
       body.action !== "get_available_slots" &&
+      body.action !== "get_appointment" &&
       body.action !== "reserve_appointment_slot" &&
       body.action !== "record_pending_appointment_selection" &&
       body.action !== "send_review_alert_email" &&
@@ -533,6 +534,18 @@ function doPost(e) {
       return json_({
         ok: resolutionResult.ok === true,
         ...resolutionResult,
+      });
+    }
+
+    if (body.action === "get_appointment") {
+      stage = "get_appointment";
+      const appointmentResult = obterConsultaPorId_(
+        body.appointment || {},
+      );
+
+      return json_({
+        ...appointmentResult,
+        ok: appointmentResult.ok === true,
       });
     }
 
@@ -1072,6 +1085,7 @@ function doPost(e) {
       "touch_appointment",
       "update_appointment_status",
       "get_available_slots",
+      "get_appointment",
       "reserve_appointment_slot",
       "record_pending_appointment_selection",
       "send_review_alert_email",

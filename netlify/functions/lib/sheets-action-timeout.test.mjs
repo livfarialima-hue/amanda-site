@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { sheetsActionTimeoutMs } from "../ycloud-webhook.mjs";
 
-test("lead delivery gets enough time for the Apps Script cold path", () => {
+test("lead and appointment writes get enough time for the Apps Script cold path", () => {
   assert.equal(sheetsActionTimeoutMs("append_lead"), 20_000);
   assert.equal(sheetsActionTimeoutMs("append_lead", "22000"), 22_000);
   assert.equal(sheetsActionTimeoutMs("append_lead", "99999"), 25_000);
+  assert.equal(sheetsActionTimeoutMs("reserve_appointment_slot"), 20_000);
+  assert.equal(sheetsActionTimeoutMs("upsert_appointment", "24000"), 24_000);
 });
 
 test("other Sheets actions keep the short timeout", () => {

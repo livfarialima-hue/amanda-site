@@ -342,7 +342,6 @@ Atenciosamente, Bruna`,
       sheetActions.map(({ action }) => action),
       [
         "reserve_appointment_slot",
-        "send_review_alert_email",
         "mark_human_takeover",
       ],
     );
