@@ -5,7 +5,7 @@
 - Mensagens de texto recebidas sem corpo legível deixam de terminar silenciosamente em `route_pending`: a Bruna envia uma única pergunta neutra para recuperar o procedimento ou a dúvida, sem presumir contexto clínico, qualificação ou intenção de agenda.
 - A extração aceita variações seguras conhecidas do envelope textual antes de declarar o conteúdo ausente; se o provedor tiver omitido o corpo de fato, a resposta degradada permanece protegida por mensagem mais recente, deduplicação, preferência de contato e corrida com atendimento humano.
 - O texto vazio não é fabricado nem gravado como fala da paciente. Somente a resposta efetivamente entregue pela Bruna entra no histórico, e falha ou intervenção humana continuam bloqueando o envio.
-- Estado desta versão: candidata local validada com **899/899 testes**; nenhuma mensagem real foi enviada. A produção permanece em `2026-08-19.5` até a publicação autorizada.
+- Estado desta versão: publicada e verificada no commit funcional `204aff23d27ed262f21ed66b448609ad838998b6` e deploy Netlify `6a864d9a75c1bc0008b26c3b`; Apps Script v104 preservado, **899/899 testes**, build de 178 arquivos e 44 URLs sem erro. O Netlify confirmou o deploy publicado e as 12 funções. A projeção ativa do manual e o Plano Executivo foram substituídos nos mesmos IDs do Drive e conferidos byte a byte; o manual usa SHA-256 `590a4ffc08fb28e32b79f6cdddee49f58bf3b98f1fa616234950acf8ac45dc46`. A sonda HTTP direta do webhook não foi repetida porque o cliente bloqueou o acesso técnico direto. Nenhuma mensagem real foi enviada. Rollback: deploy `6a8641c07b71ac00088337f8`, commit `9a4a4082e5e4ad3e0bcf1e32dbbfe01af58eab22`.
 
 ## 2026-08-19.5
 

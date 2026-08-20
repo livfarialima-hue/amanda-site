@@ -4,7 +4,7 @@
 
 **Versão:** 2026-08-19.6
 
-**Estado do release:** candidata local validada em 19/08/2026. Eventos declarados como texto e recebidos sem corpo legível passam a receber uma única pergunta neutra da Bruna para recuperar o procedimento ou a dúvida, sem presumir contexto, qualificação ou agenda e com todas as proteções de mensagem mais recente, duplicidade, preferência de contato e atendimento humano. Validação local: **899/899 testes**; nenhuma mensagem real foi enviada. A produção permanece em `2026-08-19.5` até a publicação autorizada.
+**Estado do release:** publicada e verificada em 19/08/2026. Eventos declarados como texto e recebidos sem corpo legível passam a receber uma única pergunta neutra da Bruna para recuperar o procedimento ou a dúvida, sem presumir contexto, qualificação ou agenda e com todas as proteções de mensagem mais recente, duplicidade, preferência de contato e atendimento humano. Código funcional `204aff23d27ed262f21ed66b448609ad838998b6`, deploy Netlify `6a864d9a75c1bc0008b26c3b`; Apps Script v104 preservado; **899/899 testes**, build de 178 arquivos e 44 URLs sem erro. O Netlify confirmou o deploy publicado e as 12 funções. A sonda HTTP direta do webhook não foi repetida porque o cliente bloqueou o acesso técnico direto. Nenhuma mensagem real de paciente foi enviada e nenhuma configuração do Google Ads foi alterada.
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
