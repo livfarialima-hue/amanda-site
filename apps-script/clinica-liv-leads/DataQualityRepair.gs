@@ -1841,6 +1841,558 @@ function simularCorrecao08ReaperClassificacao() {
   });
 }
 
+function validarCorrecaoClassificacaoAuditada_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const opportunityId = String(input.opportunityId || "").trim();
+  const expectedStage = String(input.expectedStage || "").trim();
+  const stage = String(input.stage || "").trim();
+  const validStages = typeof OPPORTUNITY_STAGE_VALUES !== "undefined"
+    ? OPPORTUNITY_STAGE_VALUES
+    : [
+        "Novo",
+        "Qualificado",
+        "Não qualificado",
+        "Consulta agendada",
+        "Consulta realizada",
+        "Paciente convertido",
+      ];
+  if (!/^opp_[A-Za-z0-9_-]{8,160}$/.test(opportunityId)) {
+    return { ok: false, reason: "invalid_opportunity_id" };
+  }
+  if (validStages.indexOf(expectedStage) < 0) {
+    return { ok: false, reason: "invalid_expected_stage" };
+  }
+  if (validStages.indexOf(stage) < 0) {
+    return { ok: false, reason: "invalid_target_stage" };
+  }
+  if (
+    input.invalidateQualifiedConversion === true &&
+    stage !== "Novo" &&
+    stage !== "Não qualificado"
+  ) {
+    return { ok: false, reason: "invalid_conversion_invalidation_target" };
+  }
+  return {
+    ok: true,
+    opportunityId,
+    expectedStage,
+    stage,
+    summary: safeText_(input.summary, 600),
+    nextAction: safeText_(input.nextAction, 300),
+    objection: safeText_(input.objection, 80),
+    relationship: safeText_(input.relationship, 80) || "unknown",
+    owner: safeText_(input.owner, 80) || "bruna",
+    expectedParty: safeText_(input.expectedParty, 80) || "patient",
+    reason: safeText_(input.reason, 300) || "Auditoria humana da conversa",
+    invalidateQualifiedConversion:
+      input.invalidateQualifiedConversion === true,
+  };
+}
+
+function planejarCorrecoesClassificacaoAuditadas_(spreadsheet, input) {
+  const corrections = Array.isArray(input && input.corrections)
+    ? input.corrections
+    : [];
+  const result = {
+    ok: true,
+    planned: 0,
+    reviewRequired: 0,
+    corrections: [],
+    issues: [],
+  };
+  if (!corrections.length || corrections.length > 20) {
+    return Object.assign(result, {
+      ok: false,
+      reviewRequired: 1,
+      issues: [{ reason: "invalid_correction_count" }],
+    });
+  }
+  const opportunitySheet = spreadsheet.getSheetByName(
+    OPPORTUNITY_STORE_CONFIG.sheetName,
+  );
+  if (!opportunitySheet) {
+    return Object.assign(result, {
+      ok: false,
+      reviewRequired: 1,
+      issues: [{ reason: "opportunity_sheet_missing" }],
+    });
+  }
+  const seen = {};
+  corrections.forEach(function inspect(raw) {
+    const correction = validarCorrecaoClassificacaoAuditada_(raw);
+    if (!correction.ok) {
+      result.reviewRequired += 1;
+      result.issues.push({ reason: correction.reason });
+      return;
+    }
+    if (seen[correction.opportunityId]) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        opportunityId: correction.opportunityId,
+        reason: "duplicate_correction",
+      });
+      return;
+    }
+    seen[correction.opportunityId] = true;
+    const found = localizarOportunidadePorId_(
+      opportunitySheet,
+      correction.opportunityId,
+    );
+    if (!found) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        opportunityId: correction.opportunityId,
+        reason: "opportunity_not_found",
+      });
+      return;
+    }
+    const professional = normalizarProfissionalOportunidade_(found.values[3]);
+    const leadSheetName = String(found.values[4] || "");
+    const leadSheet = spreadsheet.getSheetByName(leadSheetName);
+    const lead = leadSheet
+      ? resolverLinhaLeadCanonica_(
+          leadSheet,
+          correction.opportunityId,
+          found.values[1],
+        )
+      : { ok: false, reason: "visible_sheet_not_found" };
+    if (professional !== "amanda" || !lead.ok) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        opportunityId: correction.opportunityId,
+        reason: professional !== "amanda"
+          ? "professional_not_amanda"
+          : lead.reason,
+      });
+      return;
+    }
+    const columns = mapaCabecalhosOportunidade_(leadSheet);
+    const visibleStage = String(
+      leadSheet
+        .getRange(lead.row, columns["Situação do lead"] || 5)
+        .getDisplayValue() || "",
+    );
+    const crmStage = String(found.values[7] || "");
+    if (
+      visibleStage !== correction.expectedStage ||
+      crmStage !== correction.expectedStage
+    ) {
+      result.reviewRequired += 1;
+      result.issues.push({
+        opportunityId: correction.opportunityId,
+        reason: "stage_preflight_mismatch",
+        visibleStage,
+        crmStage,
+      });
+      return;
+    }
+    result.planned += 1;
+    result.corrections.push(Object.assign({}, correction, {
+      phone: String(found.values[1] || ""),
+      professional,
+      leadSheetName,
+      visibleRow: lead.row,
+    }));
+  });
+  result.ok = result.reviewRequired === 0 &&
+    result.planned === corrections.length;
+  return result;
+}
+
+function limparConversaoQualificadaVisivel_(spreadsheet, correction) {
+  const sheet = spreadsheet.getSheetByName(correction.leadSheetName);
+  if (!sheet) throw new Error("visible_sheet_not_found");
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const required = [
+    "Enviar ao Google Ads?",
+    "Nome da conversão",
+    "Valor (R$)",
+    "Data e hora da conversão",
+    "ID da transação",
+    "Moeda",
+  ];
+  required.forEach(function requireColumn(header) {
+    if (!columns[header]) throw new Error("missing_visible_header:" + header);
+  });
+  sheet
+    .getRange(correction.visibleRow, columns["Enviar ao Google Ads?"])
+    .setValue("Não");
+  [
+    "Nome da conversão",
+    "Valor (R$)",
+    "Data e hora da conversão",
+    "ID da transação",
+    "Moeda",
+  ].forEach(function clearConversionField(header) {
+    sheet.getRange(correction.visibleRow, columns[header]).clearContent();
+  });
+}
+
+function verificarInvalidacaoConversaoAuditada_(spreadsheet, correction) {
+  const sheet = spreadsheet.getSheetByName(correction.leadSheetName);
+  if (!sheet) return { ok: false, reason: "visible_sheet_not_found" };
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const values = sheet
+    .getRange(correction.visibleRow, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0];
+  if (String(values[columns["Enviar ao Google Ads?"] - 1] || "") !== "Não") {
+    return { ok: false, reason: "visible_send_flag_not_cleared" };
+  }
+  if (
+    [
+      "Nome da conversão",
+      "Valor (R$)",
+      "Data e hora da conversão",
+      "ID da transação",
+      "Moeda",
+    ].some(function hasConversionPayload(header) {
+      return Boolean(String(values[columns[header] - 1] || "").trim());
+    })
+  ) {
+    return { ok: false, reason: "visible_conversion_payload_not_cleared" };
+  }
+  const eventSheet = spreadsheet.getSheetByName(CONFIG.googleAdsEventSheetName);
+  const transactions = {};
+  if (eventSheet && eventSheet.getLastRow() >= 2) {
+    const rows = eventSheet
+      .getRange(2, 1, eventSheet.getLastRow() - 1, GOOGLE_ADS_EVENT_HEADERS.length)
+      .getDisplayValues();
+    for (let index = 0; index < rows.length; index += 1) {
+      const row = rows[index];
+      if (String(row[1] || "") !== correction.opportunityId) continue;
+      if (String(row[10] || "") === "ready") {
+        return { ok: false, reason: "google_ads_event_still_ready" };
+      }
+      if (row[9]) transactions[String(row[9])] = true;
+    }
+  }
+  const importSheet = spreadsheet.getSheetByName(CONFIG.googleAdsImportSheetName);
+  if (importSheet && importSheet.getLastRow() >= 2) {
+    const rows = importSheet
+      .getRange(2, 1, importSheet.getLastRow() - 1, 1)
+      .getDisplayValues();
+    if (rows.some(function stillImported(row) {
+      return transactions[String(row[0] || "")];
+    })) {
+      return { ok: false, reason: "google_ads_import_still_present" };
+    }
+  }
+  return { ok: true };
+}
+
+function atualizarFilaAposCorrecaoClassificacao_(spreadsheet, correction) {
+  const queue = spreadsheet.getSheetByName(CONFIG.classificationSheetName);
+  if (!queue) return false;
+  const row = findClassificationQueueRow_(
+    queue,
+    correction.opportunityId,
+    correction.phone,
+    correction.professional,
+  );
+  if (!row) return false;
+  queue.getRange(row, 5, 1, 2).setValues([["done", ""]]);
+  queue.getRange(row, 11, 1, 4).setValues([[
+    correction.stage,
+    correction.summary,
+    correction.nextAction,
+    "",
+  ]]);
+  return true;
+}
+
+function aplicarCorrecoesClassificacaoAuditadas_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const apply = input.apply === true;
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const plan = planejarCorrecoesClassificacaoAuditadas_(spreadsheet, input);
+  if (!apply) return Object.assign({ applied: false }, plan);
+  if (
+    input.confirmation !== "APLICAR_CORRECOES_CLASSIFICACAO_AUDITADAS_V1"
+  ) {
+    throw new Error("classification_audit_confirmation_required");
+  }
+  if (!plan.ok) {
+    throw new Error(
+      "classification_audit_preflight_failed:" + JSON.stringify(plan.issues),
+    );
+  }
+  let changed = 0;
+  let invalidatedGoogleAdsEvents = 0;
+  let queuesUpdated = 0;
+  plan.corrections.forEach(function applyCorrection(correction) {
+    const sync = sincronizarFaseOportunidadeELead_(spreadsheet, {
+      opportunityId: correction.opportunityId,
+      phone: correction.phone,
+      professional: correction.professional,
+      stage: correction.stage,
+      relationship: correction.relationship,
+      owner: correction.owner,
+      expectedParty: correction.expectedParty,
+      objection: correction.objection,
+      summary: correction.summary,
+      nextAction: correction.nextAction,
+      source: "human_conversation_audit",
+      humanOverride: true,
+      at: new Date(),
+    });
+    if (!sync || sync.ok !== true || sync.stage !== correction.stage) {
+      throw new Error(
+        "classification_audit_sync_failed:" + correction.opportunityId,
+      );
+    }
+    if (correction.invalidateQualifiedConversion) {
+      limparConversaoQualificadaVisivel_(spreadsheet, correction);
+      invalidatedGoogleAdsEvents += invalidarConversoesGoogleAdsOportunidade_(
+        spreadsheet,
+        correction.opportunityId,
+        {
+          state: "invalidated_not_qualified",
+          reason: correction.reason,
+        },
+      );
+    }
+    if (atualizarFilaAposCorrecaoClassificacao_(spreadsheet, correction)) {
+      queuesUpdated += 1;
+    }
+    if (typeof recordLeadStageEvent_ === "function") {
+      recordLeadStageEvent_(spreadsheet, {
+        opportunityId: correction.opportunityId,
+        phone: correction.phone,
+        source: "human_conversation_audit",
+        fromStatus: correction.expectedStage,
+        proposedStatus: correction.stage,
+        appliedStatus: correction.stage,
+        confidence: "high",
+        throughMessageId: "",
+        decision: "human_override_applied",
+        evidence: correction.reason,
+        professional: correction.professional,
+        at: new Date(),
+      });
+    }
+    changed += sync.changed === false ? 0 : 1;
+  });
+  SpreadsheetApp.flush();
+  const after = planejarCorrecoesClassificacaoAuditadas_(spreadsheet, {
+    corrections: plan.corrections.map(function postflight(correction) {
+      return Object.assign({}, correction, {
+        expectedStage: correction.stage,
+      });
+    }),
+  });
+  if (!after.ok) {
+    throw new Error(
+      "classification_audit_postflight_failed:" + JSON.stringify(after.issues),
+    );
+  }
+  const invalidationIssues = plan.corrections
+    .filter(function invalidated(correction) {
+      return correction.invalidateQualifiedConversion;
+    })
+    .map(function verify(correction) {
+      return Object.assign(
+        { opportunityId: correction.opportunityId },
+        verificarInvalidacaoConversaoAuditada_(spreadsheet, correction),
+      );
+    })
+    .filter(function failed(result) {
+      return result.ok !== true;
+    });
+  if (invalidationIssues.length) {
+    throw new Error(
+      "classification_audit_conversion_postflight_failed:" +
+        JSON.stringify(invalidationIssues),
+    );
+  }
+  return {
+    ok: true,
+    applied: true,
+    changed,
+    invalidatedGoogleAdsEvents,
+    queuesUpdated,
+    corrected: plan.corrections.length,
+  };
+}
+
+const CLASSIFICATION_AUDIT_INPUT_SHEET = "_AUDITORIA_CLASSIFICACAO";
+const CLASSIFICATION_AUDIT_INPUT_HEADERS = Object.freeze([
+  "Ação",
+  "Opportunity ID",
+  "Fase esperada",
+  "Fase corrigida",
+  "Invalidar conversão Google Ads",
+  "Motivo",
+  "Resumo",
+  "Próxima ação",
+  "Objeção",
+  "Relacionamento",
+  "Responsável",
+  "Aguardando ação de",
+]);
+
+function carregarAuditoriaClassificacaoDaAba_(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(CLASSIFICATION_AUDIT_INPUT_SHEET);
+  if (!sheet || sheet.getLastRow() < 2) {
+    throw new Error("classification_audit_input_missing");
+  }
+  const headers = sheet
+    .getRange(1, 1, 1, CLASSIFICATION_AUDIT_INPUT_HEADERS.length)
+    .getDisplayValues()[0];
+  if (
+    headers.some(function mismatched(header, index) {
+      return header !== CLASSIFICATION_AUDIT_INPUT_HEADERS[index];
+    })
+  ) {
+    throw new Error("classification_audit_input_headers_invalid");
+  }
+  const rows = sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      CLASSIFICATION_AUDIT_INPUT_HEADERS.length,
+    )
+    .getDisplayValues()
+    .filter(function populated(row) {
+      return row.some(function hasValue(value) {
+        return Boolean(String(value || "").trim());
+      });
+    });
+  if (!rows.length || rows.length > 20) {
+    throw new Error("classification_audit_input_count_invalid");
+  }
+  const corrections = [];
+  const archives = [];
+  rows.forEach(function parseAuditRow(row) {
+    const action = String(row[0] || "").trim();
+    const opportunityId = String(row[1] || "").trim();
+    const expectedStage = String(row[2] || "").trim();
+    const reason = safeText_(row[5], 300) || "Auditoria humana da conversa";
+    if (action === "classify") {
+      corrections.push({
+        opportunityId,
+        expectedStage,
+        stage: String(row[3] || "").trim(),
+        invalidateQualifiedConversion:
+          /^(?:sim|true|1)$/i.test(String(row[4] || "").trim()),
+        reason,
+        summary: safeText_(row[6], 600),
+        nextAction: safeText_(row[7], 300),
+        objection: safeText_(row[8], 80),
+        relationship: safeText_(row[9], 80) || "unknown",
+        owner: safeText_(row[10], 80) || "bruna",
+        expectedParty: safeText_(row[11], 80) || "patient",
+      });
+      return;
+    }
+    if (action === "archive_nonlead") {
+      if (!/^opp_[A-Za-z0-9_-]{8,160}$/.test(opportunityId)) {
+        throw new Error("classification_audit_archive_id_invalid");
+      }
+      archives.push({ opportunityId, expectedStage, reason });
+      return;
+    }
+    throw new Error("classification_audit_action_invalid");
+  });
+  return { sheet, corrections, archives };
+}
+
+function planejarArquivosNaoLeadAuditados_(spreadsheet, archives) {
+  const opportunitySheet = spreadsheet.getSheetByName(
+    OPPORTUNITY_STORE_CONFIG.sheetName,
+  );
+  if (!opportunitySheet) throw new Error("opportunity_sheet_missing");
+  return archives.map(function planArchive(input) {
+    const found = localizarOportunidadePorId_(
+      opportunitySheet,
+      input.opportunityId,
+    );
+    if (!found) throw new Error("classification_audit_archive_not_found");
+    const professional = normalizarProfissionalOportunidade_(found.values[3]);
+    const stage = String(found.values[7] || "");
+    const state = String(found.values[6] || "");
+    if (
+      professional !== "amanda" ||
+      state !== "active" ||
+      stage !== input.expectedStage
+    ) {
+      throw new Error("classification_audit_archive_preflight_mismatch");
+    }
+    const leadSheet = spreadsheet.getSheetByName(String(found.values[4] || ""));
+    const lead = leadSheet
+      ? resolverLinhaLeadCanonica_(
+          leadSheet,
+          input.opportunityId,
+          found.values[1],
+        )
+      : { ok: false };
+    if (!lead.ok) throw new Error("classification_audit_archive_lead_missing");
+    return {
+      opportunityId: input.opportunityId,
+      phone: String(found.values[1] || ""),
+      professional,
+      reason: input.reason,
+    };
+  });
+}
+
+function aplicarAuditoriaClassificacaoDaAba() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) throw new Error("classification_audit_busy");
+  try {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const input = carregarAuditoriaClassificacaoDaAba_(spreadsheet);
+    const correctionPlan = input.corrections.length
+      ? planejarCorrecoesClassificacaoAuditadas_(spreadsheet, {
+          corrections: input.corrections,
+        })
+      : { ok: true, corrections: [] };
+    if (!correctionPlan.ok) {
+      throw new Error(
+        "classification_audit_preflight_failed:" +
+          JSON.stringify(correctionPlan.issues),
+      );
+    }
+    const archivePlan = planejarArquivosNaoLeadAuditados_(
+      spreadsheet,
+      input.archives,
+    );
+    const correctionResult = input.corrections.length
+      ? aplicarCorrecoesClassificacaoAuditadas_({
+          apply: true,
+          confirmation: "APLICAR_CORRECOES_CLASSIFICACAO_AUDITADAS_V1",
+          corrections: input.corrections,
+        })
+      : { ok: true, corrected: 0, invalidatedGoogleAdsEvents: 0 };
+    let archivedLeadRows = 0;
+    archivePlan.forEach(function applyArchive(item) {
+      const result = arquivarContatoNaoLead_(spreadsheet, {
+        phone: item.phone,
+        opportunityId: item.opportunityId,
+        professional: item.professional,
+        reason: item.reason,
+        at: new Date(),
+      });
+      if (!result || result.archivedLeadRows !== 1) {
+        throw new Error("classification_audit_archive_failed");
+      }
+      archivedLeadRows += result.archivedLeadRows;
+    });
+    spreadsheet.deleteSheet(input.sheet);
+    SpreadsheetApp.flush();
+    return {
+      ok: true,
+      corrected: correctionResult.corrected || 0,
+      invalidatedGoogleAdsEvents:
+        correctionResult.invalidatedGoogleAdsEvents || 0,
+      archivedLeadRows,
+      inputSheetRemoved: true,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function simularCorrecao09SlaOperacional() {
   return executarSimulacaoCorrecaoIntegrada_("sla_operacional", function run() {
     return auditarSlaOperacional();

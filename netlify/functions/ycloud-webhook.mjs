@@ -404,7 +404,11 @@ const META_AD_PREFILL_TEMPLATES = Object.freeze(
   ),
 );
 
-function extractPrefillTemplateId(message, journey) {
+const META_AD_PREFILL_REFERENCES = new Set(
+  Object.values(META_AD_REFERENCES),
+);
+
+export function extractPrefillTemplateId(message, journey, attribution) {
   const referral = message?.referral;
   const explicitTemplateId =
     message?.template_id ||
@@ -422,9 +426,26 @@ function extractPrefillTemplateId(message, journey) {
   const sourceId = String(
     referral?.source_id || referral?.sourceId || "",
   ).trim();
-  return normalizeMarketingPrefillTemplateId(
+  const mappedSourceTemplateId = normalizeMarketingPrefillTemplateId(
     META_AD_PREFILL_TEMPLATES[sourceId],
   );
+  if (mappedSourceTemplateId) return mappedSourceTemplateId;
+
+  // Alguns eventos click-to-WhatsApp chegam sem source_id, embora o código
+  // canônico do CTA tenha sido resolvido. O código aprovado é um identificador
+  // estruturado do template; palavras da mensagem nunca participam desta
+  // decisão. Isso impede que um prefill isolado vire intenção pessoal apenas
+  // porque o provedor omitiu o identificador do anúncio.
+  const canonicalReference = String(attribution?.reference || "").trim();
+  if (
+    String(attribution?.platform || "") === "Meta" &&
+    String(attribution?.referenceCategory || "") === "meta_coded" &&
+    META_AD_PREFILL_REFERENCES.has(canonicalReference)
+  ) {
+    return MARKETING_PREFILL_TEMPLATE_ID;
+  }
+
+  return "";
 }
 
 function matchMetaAdReference(message) {
@@ -3716,6 +3737,7 @@ export async function handleYCloudWebhook(
   const prefillTemplateId = extractPrefillTemplateId(
     message,
     journeyResolution.journey,
+    attribution,
   );
   const messageId = message.wamid || message.id || eventId;
   const lead = {

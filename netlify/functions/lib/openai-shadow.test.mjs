@@ -14,6 +14,7 @@ import {
 import webhook, {
   attributionFallbackReason,
   classifyAttribution,
+  extractPrefillTemplateId,
   isAutomatedAppointmentMutationEnabled,
   normalizeResolvedJourneyAttribution,
   resolveInboundAttributionJourney,
@@ -863,6 +864,48 @@ test("maps the cervical WhatsApp and Site Meta ad IDs to distinct routes", () =>
   assert.equal(direct.reference, "M26C01W-C07H01");
   assert.equal(site.referenceCategory, "meta_coded");
   assert.equal(site.reference, "M26C02S-C07H01");
+});
+
+test("recovers the structured prefill id from a canonical Meta CTA reference", () => {
+  assert.equal(
+    extractPrefillTemplateId(
+      {},
+      null,
+      {
+        platform: "Meta",
+        referenceCategory: "meta_coded",
+        reference: "M26C01W-C07H01",
+      },
+    ),
+    "procedure_evaluation_v1",
+  );
+});
+
+test("does not infer a prefill id from an unknown or non-Meta reference", () => {
+  assert.equal(
+    extractPrefillTemplateId(
+      {},
+      null,
+      {
+        platform: "Meta",
+        referenceCategory: "meta_coded",
+        reference: "M26UNKNOWN-C99H99",
+      },
+    ),
+    "",
+  );
+  assert.equal(
+    extractPrefillTemplateId(
+      {},
+      null,
+      {
+        platform: "Google",
+        referenceCategory: "google_coded",
+        reference: "M26C01W-C07H01",
+      },
+    ),
+    "",
+  );
 });
 
 test("keeps an auditable Meta ad ID when the ad is not mapped yet", () => {

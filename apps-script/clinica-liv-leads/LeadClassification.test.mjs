@@ -85,6 +85,8 @@ function loadFunctions() {
       "leadOpportunityId_, " +
       "linhaExigeNomeConversaoQualificadoGoogleAds_, " +
       "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
+      "invalidarConversoesGoogleAdsOportunidade_, " +
+      "reativarGoogleAdsMilestoneExistente_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
   );
@@ -95,6 +97,133 @@ test("Google Ads import preserves the mapped conversion value header", () => {
   const { GOOGLE_ADS_IMPORT_HEADERS } = loadFunctions();
 
   assert.equal(GOOGLE_ADS_IMPORT_HEADERS[6], "Valor (R$)");
+});
+
+test("audited false positives invalidate the ledger and leave the import queue", () => {
+  const { invalidarConversoesGoogleAdsOportunidade_ } = loadFunctions();
+  const ledgerRow = [
+    "ga-1",
+    "opp-1",
+    "qualified_lead",
+    "GCLID",
+    "click-1",
+    "Lead qualificado GCLID",
+    "2026-08-20 12:00:00-03:00",
+    1,
+    "BRL",
+    `LIV-QL-v1-${"A".repeat(43)}`,
+    "ready",
+    "",
+    "created",
+    "updated",
+    "amanda",
+  ];
+  const importRows = [[ledgerRow[9]]];
+  const eventSheet = {
+    getLastRow: () => 2,
+    getRange(row, column) {
+      return {
+        getDisplayValues() {
+          if (row === 2 && column === 1) return [ledgerRow.slice()];
+          throw new Error("unexpected event read");
+        },
+        setValues(values) {
+          assert.equal(row, 2);
+          assert.equal(column, 11);
+          ledgerRow.splice(10, 4, ...values[0]);
+        },
+      };
+    },
+  };
+  const importSheet = {
+    getLastRow: () => importRows.length + 1,
+    getRange(row, column) {
+      return {
+        getDisplayValues() {
+          assert.equal(row, 2);
+          assert.equal(column, 1);
+          return importRows.map((entry) => entry.slice());
+        },
+      };
+    },
+    deleteRow(row) {
+      importRows.splice(row - 2, 1);
+    },
+  };
+  const spreadsheet = {
+    getSheetByName(name) {
+      if (name === "_GOOGLE_ADS_EVENTOS") return eventSheet;
+      if (name === "IMPORT_GOOGLE_ADS") return importSheet;
+      return null;
+    },
+  };
+
+  const count = invalidarConversoesGoogleAdsOportunidade_(
+    spreadsheet,
+    "opp-1",
+    {
+      state: "invalidated_not_qualified",
+      reason: "Somente prefill estruturado.",
+    },
+  );
+
+  assert.equal(count, 1);
+  assert.equal(ledgerRow[10], "invalidated_not_qualified");
+  assert.equal(ledgerRow[11], "Somente prefill estruturado.");
+  assert.equal(importRows.length, 0);
+});
+
+test("a corrected opportunity can create a fresh ready ledger state later", () => {
+  const { reativarGoogleAdsMilestoneExistente_ } = loadFunctions();
+  const ledgerRow = [
+    "ga-1",
+    "opp-1",
+    "qualified_lead",
+    "GCLID",
+    "click-1",
+    "Lead qualificado GCLID",
+    "2026-08-20 12:00:00-03:00",
+    1,
+    "BRL",
+    `LIV-QL-v1-${"A".repeat(43)}`,
+    "invalidated_not_qualified",
+    "Auditoria anterior",
+    "created",
+    "updated",
+    "amanda",
+  ];
+  const sheet = {
+    getRange(row, column) {
+      return {
+        getValue() {
+          assert.equal(row, 2);
+          assert.equal(column, 13);
+          return ledgerRow[12];
+        },
+        setValues(values) {
+          assert.equal(row, 2);
+          assert.equal(column, 2);
+          ledgerRow.splice(1, 14, ...values[0]);
+        },
+      };
+    },
+  };
+  const result = reativarGoogleAdsMilestoneExistente_(sheet, 2, {
+    opportunityId: "opp-1",
+    milestone: "qualified_lead",
+    identifierType: "GCLID",
+    clickId: "click-1",
+    conversionName: "Lead qualificado GCLID",
+    conversionTimestamp: "2026-08-21 09:00:00-03:00",
+    value: 1,
+    currency: "BRL",
+    transactionId: `LIV-QL-v1-${"A".repeat(43)}`,
+    professional: "amanda",
+  });
+
+  assert.equal(result.reactivated, true);
+  assert.equal(ledgerRow[10], "ready");
+  assert.equal(ledgerRow[11], "");
 });
 
 test("Google Ads import accepts exactly one click id and all required fields", () => {

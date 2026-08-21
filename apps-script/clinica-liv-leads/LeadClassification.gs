@@ -517,6 +517,27 @@ function ensureGoogleAdsImportRow_(spreadsheet, details) {
   return true;
 }
 
+function reativarGoogleAdsMilestoneExistente_(sheet, row, details) {
+  const existingCreatedAt = sheet.getRange(row, 13).getValue();
+  sheet.getRange(row, 2, 1, 14).setValues([[
+    details.opportunityId,
+    details.milestone,
+    details.identifierType,
+    details.clickId,
+    details.conversionName,
+    details.conversionTimestamp,
+    details.value,
+    details.currency,
+    details.transactionId,
+    "ready",
+    "",
+    existingCreatedAt || new Date(),
+    new Date(),
+    details.professional || "amanda",
+  ]]);
+  return { created: false, reactivated: true, row };
+}
+
 function enqueueGoogleAdsMilestone_(spreadsheet, details) {
   const sheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
@@ -529,7 +550,16 @@ function enqueueGoogleAdsMilestone_(spreadsheet, details) {
   if (state === "ready") {
     ensureGoogleAdsImportRow_(spreadsheet, details);
   }
-  if (existingRow) return { created: false, row: existingRow };
+  if (existingRow) {
+    if (state === "ready") {
+      return reativarGoogleAdsMilestoneExistente_(
+        sheet,
+        existingRow,
+        details,
+      );
+    }
+    return { created: false, reactivated: false, row: existingRow };
+  }
 
   const now = new Date();
   sheet.appendRow([
@@ -1205,8 +1235,16 @@ function aplicarHigieneIdsTransacaoVisiveisLegados() {
   return result;
 }
 
-function invalidarConversoesGoogleAdsOportunidade_(spreadsheet, opportunityId) {
+function invalidarConversoesGoogleAdsOportunidade_(
+  spreadsheet,
+  opportunityId,
+  options,
+) {
   if (!opportunityId) return 0;
+  options = options && typeof options === "object" ? options : {};
+  const state = safeText_(options.state, 80) || "invalidated_nonlead";
+  const reason = safeText_(options.reason, 300) ||
+    "Contato excluído das bases de leads";
   const eventSheet = spreadsheet.getSheetByName(
     CONFIG.googleAdsEventSheetName,
   );
@@ -1223,8 +1261,8 @@ function invalidarConversoesGoogleAdsOportunidade_(spreadsheet, opportunityId) {
     if (String(row[1] || "") !== String(opportunityId)) return;
     if (row[9]) transactions[String(row[9])] = true;
     eventSheet.getRange(index + 2, 11, 1, 4).setValues([[
-      "invalidated_nonlead",
-      "Contato excluído das bases de leads",
+      state,
+      reason,
       row[12] || new Date(),
       new Date(),
     ]]);

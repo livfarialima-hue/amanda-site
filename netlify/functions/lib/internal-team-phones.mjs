@@ -9,7 +9,12 @@ function normalizePhone(value) {
 
 export function configuredInternalTeamPhones(env = process.env) {
   return new Set(
-    String(env.WHATSAPP_INTERNAL_NUMBERS || "")
+    [
+      String(env.WHATSAPP_INTERNAL_NUMBERS || ""),
+      String(env.WHATSAPP_INTERNAL_NUMBERS_EXTRA || ""),
+    ]
+      .filter(Boolean)
+      .join(",")
       .split(/[,;\n]+/)
       .map((value) => normalizePhone(value.trim()))
       .filter(Boolean),

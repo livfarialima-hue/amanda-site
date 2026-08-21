@@ -31,8 +31,8 @@ function signedRequest(payload) {
 
 test("normalizes the configured internal team list without exposing it", () => {
   const env = {
-    WHATSAPP_INTERNAL_NUMBERS:
-      "+55 (11) 90000-0101; 5511900000102",
+    WHATSAPP_INTERNAL_NUMBERS: "+55 (11) 90000-0101",
+    WHATSAPP_INTERNAL_NUMBERS_EXTRA: "5511900000102",
   };
 
   assert.deepEqual(
@@ -44,10 +44,18 @@ test("normalizes the configured internal team list without exposing it", () => {
   assert.equal(hasConfiguredInternalTeamPhones(env), true);
 });
 
+test("accepts an additive secret without replacing the canonical list", () => {
+  const env = { WHATSAPP_INTERNAL_NUMBERS_EXTRA: INTERNAL_PHONE_B };
+
+  assert.equal(isInternalTeamPhone(INTERNAL_PHONE_B, env), true);
+  assert.equal(hasConfiguredInternalTeamPhones(env), true);
+});
+
 test("ignores an inbound internal number before every downstream write", async () => {
   const keys = [
     "YCLOUD_WEBHOOK_SECRET",
     "WHATSAPP_INTERNAL_NUMBERS",
+    "WHATSAPP_INTERNAL_NUMBERS_EXTRA",
   ];
   const saved = Object.fromEntries(
     keys.map((key) => [key, process.env[key]]),
@@ -102,6 +110,7 @@ test("ignores an echo sent to an internal number before takeover or scheduling",
   const keys = [
     "YCLOUD_WEBHOOK_SECRET",
     "WHATSAPP_INTERNAL_NUMBERS",
+    "WHATSAPP_INTERNAL_NUMBERS_EXTRA",
   ];
   const saved = Object.fromEntries(
     keys.map((key) => [key, process.env[key]]),

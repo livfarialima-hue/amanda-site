@@ -40,6 +40,9 @@ function load() {
     profissionalPermitidoOportunidade_(value) {
       return value === "amanda" || value === "daniel";
     },
+    safeText_(value, maximumLength) {
+      return Array.from(String(value || "")).slice(0, maximumLength).join("");
+    },
     resolverFaseSincronizada_(crmStage, visibleStage, input) {
       const ranks = {
         Novo: 1,
@@ -55,11 +58,39 @@ function load() {
     },
   };
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { escolherLinhaCanonicaDuplicidade_, agruparLinhasPorOportunidade_, resolverLinhaLeadIndexada_, resolverOportunidadeConsultaIndexada_, auditarFaseConsultaIndexada_, eventoAgendaConsultaConsistente_ };`,
+    `${source}\nglobalThis.__test = { escolherLinhaCanonicaDuplicidade_, agruparLinhasPorOportunidade_, resolverLinhaLeadIndexada_, resolverOportunidadeConsultaIndexada_, auditarFaseConsultaIndexada_, eventoAgendaConsultaConsistente_, validarCorrecaoClassificacaoAuditada_ };`,
     sandbox,
   );
   return sandbox.__test;
 }
+
+test("audited classification corrections accept explicit human downgrades", () => {
+  const { validarCorrecaoClassificacaoAuditada_ } = load();
+  const correction = validarCorrecaoClassificacaoAuditada_({
+    opportunityId: "opp_v2_amanda_12345678",
+    expectedStage: "Qualificado",
+    stage: "Novo",
+    invalidateQualifiedConversion: true,
+    reason: "Somente prefill estruturado, sem intenção pessoal posterior.",
+  });
+
+  assert.equal(correction.ok, true);
+  assert.equal(correction.stage, "Novo");
+  assert.equal(correction.invalidateQualifiedConversion, true);
+});
+
+test("conversion invalidation fails closed for a still-qualified stage", () => {
+  const { validarCorrecaoClassificacaoAuditada_ } = load();
+  const correction = validarCorrecaoClassificacaoAuditada_({
+    opportunityId: "opp_v2_amanda_12345678",
+    expectedStage: "Qualificado",
+    stage: "Qualificado",
+    invalidateQualifiedConversion: true,
+  });
+
+  assert.equal(correction.ok, false);
+  assert.equal(correction.reason, "invalid_conversion_invalidation_target");
+});
 
 test("duplicate planning keeps the highest stage and returns every excess row", () => {
   const { escolherLinhaCanonicaDuplicidade_ } = load();

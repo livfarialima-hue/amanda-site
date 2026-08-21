@@ -269,6 +269,7 @@ function doPost(e) {
       body.action !== "record_operational_event" &&
       body.action !== "record_conversation_turn" &&
       body.action !== "get_conversation_context" &&
+      body.action !== "apply_audited_lead_classifications" &&
       body.action !== "run_synthetic_health_check"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
@@ -308,6 +309,17 @@ function doPost(e) {
         body.event || {},
       );
       return json_({ ok: operationalResult.ok === true, ...operationalResult });
+    }
+
+    if (body.action === "apply_audited_lead_classifications") {
+      stage = "apply_audited_lead_classifications";
+      if (!lock.tryLock(30000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const auditResult = aplicarCorrecoesClassificacaoAuditadas_(
+        body.audit || {},
+      );
+      return json_({ ok: auditResult.ok === true, ...auditResult });
     }
 
     if (body.action === "run_synthetic_health_check") {
