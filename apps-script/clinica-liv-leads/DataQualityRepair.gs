@@ -2297,6 +2297,18 @@ function carregarAuditoriaClassificacaoDaAba_(spreadsheet) {
   return { sheet, corrections, archives };
 }
 
+function oportunidadeAuditavelParaArquivo_(found, input) {
+  if (!found || !found.values) return false;
+  const professional = normalizarProfissionalOportunidade_(found.values[3]);
+  const stage = String(found.values[7] || "");
+  const state = String(found.values[6] || "");
+  return (
+    professional === "amanda" &&
+    state === "open" &&
+    stage === input.expectedStage
+  );
+}
+
 function planejarArquivosNaoLeadAuditados_(spreadsheet, archives) {
   const opportunitySheet = spreadsheet.getSheetByName(
     OPPORTUNITY_STORE_CONFIG.sheetName,
@@ -2309,13 +2321,7 @@ function planejarArquivosNaoLeadAuditados_(spreadsheet, archives) {
     );
     if (!found) throw new Error("classification_audit_archive_not_found");
     const professional = normalizarProfissionalOportunidade_(found.values[3]);
-    const stage = String(found.values[7] || "");
-    const state = String(found.values[6] || "");
-    if (
-      professional !== "amanda" ||
-      state !== "active" ||
-      stage !== input.expectedStage
-    ) {
+    if (!oportunidadeAuditavelParaArquivo_(found, input)) {
       throw new Error("classification_audit_archive_preflight_mismatch");
     }
     const leadSheet = spreadsheet.getSheetByName(String(found.values[4] || ""));

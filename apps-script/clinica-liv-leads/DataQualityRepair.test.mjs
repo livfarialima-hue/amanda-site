@@ -58,7 +58,7 @@ function load() {
     },
   };
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { escolherLinhaCanonicaDuplicidade_, agruparLinhasPorOportunidade_, resolverLinhaLeadIndexada_, resolverOportunidadeConsultaIndexada_, auditarFaseConsultaIndexada_, eventoAgendaConsultaConsistente_, validarCorrecaoClassificacaoAuditada_ };`,
+    `${source}\nglobalThis.__test = { escolherLinhaCanonicaDuplicidade_, agruparLinhasPorOportunidade_, resolverLinhaLeadIndexada_, resolverOportunidadeConsultaIndexada_, auditarFaseConsultaIndexada_, eventoAgendaConsultaConsistente_, validarCorrecaoClassificacaoAuditada_, oportunidadeAuditavelParaArquivo_ };`,
     sandbox,
   );
   return sandbox.__test;
@@ -90,6 +90,36 @@ test("conversion invalidation fails closed for a still-qualified stage", () => {
 
   assert.equal(correction.ok, false);
   assert.equal(correction.reason, "invalid_conversion_invalidation_target");
+});
+
+test("non-lead archive preflight accepts the canonical open opportunity state", () => {
+  const { oportunidadeAuditavelParaArquivo_ } = load();
+  const found = {
+    values: [
+      "opp_v2_amanda_12345678",
+      "5511999999999",
+      "",
+      "amanda",
+      "Google Ads - Conversões",
+      "",
+      "open",
+      "Paciente convertido",
+    ],
+  };
+
+  assert.equal(
+    oportunidadeAuditavelParaArquivo_(found, {
+      expectedStage: "Paciente convertido",
+    }),
+    true,
+  );
+  found.values[6] = "voided";
+  assert.equal(
+    oportunidadeAuditavelParaArquivo_(found, {
+      expectedStage: "Paciente convertido",
+    }),
+    false,
+  );
 });
 
 test("duplicate planning keeps the highest stage and returns every excess row", () => {
