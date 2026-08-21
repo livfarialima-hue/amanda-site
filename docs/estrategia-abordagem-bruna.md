@@ -469,6 +469,14 @@ Retomar somente quando houver permissão operacional, nenhuma tomada humana, nen
 
 - no máximo duas retomadas comerciais sem nova resposta;
 - cada retomada deve citar a dúvida anterior e trazer utilidade real;
+- a mensagem de origem ou prefill ajuda a identificar o assunto, mas nunca prova intenção de agendar, dúvida de preço ou qualificação;
+- agenda só entra na retomada quando a própria paciente pediu para marcar, consultar horários ou aceitou explicitamente uma consulta à agenda;
+- não usar menu genérico de caminhos; quando houver apenas um procedimento seguro no histórico, retomar esse assunto e oferecer uma única continuação simples;
+- sem dúvida, barreira ou procedimento identificável com segurança, não fabricar fallback copiável: o e-mail deve mostrar `SEM SUGESTÃO PRONTA` e exigir leitura humana;
+- no e-mail diário, `Cancelar esta retomada` cancela somente o plano selecionado na fila; não marca `Nunca retomar`, não altera a preferência permanente na LEADS e não impede uma retomada futura depois de novo contato da paciente;
+- `Nunca retomar` é uma preferência separada e persistente, usada somente diante de pedido explícito de não contato ou outra decisão operacional igualmente explícita;
+- toda retomada comercial humana com texto seguro, contexto suficiente e automação permitida deve oferecer `Passar para a Bruna`; o botão exige confirmação e a conversa, a janela do WhatsApp e as preferências do contato são revalidadas antes do envio;
+- a sugestão humana deve nomear a dúvida, barreira, procedimento ou próximo passo concreto; uma pendência ainda sem resposta confirmada fica como `SEM SUGESTÃO PRONTA`, sem fingir que a informação já foi conferida;
 - não presumir que silêncio é objeção;
 - se a equipe fez a primeira retomada manual, cancelar a equivalente automática;
 - pedido de não contato é persistido e respeitado imediatamente;

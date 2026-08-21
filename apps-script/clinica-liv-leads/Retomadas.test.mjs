@@ -222,6 +222,7 @@ test("classifies only a safe first follow-up as planned for Bruna", () => {
       etapa: { numero: 1 },
       contextoAgenda: false,
       contextoPreco: false,
+      sugestao: "Retomada contextual segura.",
     }),
     "bruna",
   );
@@ -230,6 +231,7 @@ test("classifies only a safe first follow-up as planned for Bruna", () => {
       etapa: { numero: 1 },
       contextoAgenda: false,
       contextoPreco: true,
+      sugestao: "Retomada de preço para revisão humana.",
     }),
     "equipe",
   );
@@ -238,8 +240,182 @@ test("classifies only a safe first follow-up as planned for Bruna", () => {
       etapa: { numero: 2 },
       contextoAgenda: false,
       contextoPreco: false,
+      sugestao: "Encerramento contextual.",
     }),
     "equipe",
+  );
+  assert.equal(
+    context.responsavelRetomada_({
+      etapa: { numero: 1 },
+      contextoAgenda: false,
+      contextoPreco: false,
+      sugestao: "",
+    }),
+    "equipe",
+  );
+});
+
+test("prefill identifies the procedure but never proves scheduling intent", () => {
+  const messages = [
+    {
+      direcao: "IN",
+      texto:
+        "Olá! Tenho interesse em lifting facial e gostaria de entender melhor como funciona a avaliação. Ref. G26F01-123-lifting-facial JID: J1_abc123",
+    },
+    {
+      direcao: "OUT",
+      texto: "Posso te orientar sobre lifting facial.",
+    },
+  ];
+  const authorialContext = context.contextoAutoralRetomada_(messages);
+
+  assert.equal(authorialContext, "");
+  assert.equal(
+    context.intencaoAgendaRetomada_(messages, authorialContext),
+    false,
+  );
+  assert.equal(
+    context.identificarAssuntoRetomada_(messages[0].texto),
+    "lifting facial",
+  );
+});
+
+test("prefill-only candidate receives a contextual continuation without agenda", () => {
+  const candidate = context.criarCandidatoRetomada_(
+    "+5511999999999",
+    {
+      status: "Novo",
+      resumo: "",
+      proximaAcao: "",
+      referencia: "G26F01-123-lifting-facial",
+      plataforma: "Meta",
+      campanha: "",
+      criativo: "",
+      destino: "WhatsApp",
+      referenciaCompleta: "G26F01-123-lifting-facial",
+    },
+    [
+      {
+        direcao: "IN",
+        dataHora: new Date("2026-08-20T10:00:00-03:00"),
+        messageId: "in-prefill",
+        texto:
+          "Olá! Tenho interesse em lifting facial com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação. Ref. G26F01-123-lifting-facial JID: J1_abc123",
+      },
+      {
+        direcao: "OUT",
+        dataHora: new Date("2026-08-20T10:01:00-03:00"),
+        messageId: "out-opening",
+        texto:
+          "Posso te orientar sobre lifting facial. O que você gostaria de entender primeiro?",
+      },
+    ],
+    new Date("2026-08-21T10:30:00-03:00"),
+    "2026-08-21",
+  );
+
+  assert.ok(candidate);
+  assert.equal(candidate.contextoAgenda, false);
+  assert.equal(candidate.contextoPreco, false);
+  assert.equal(candidate.assuntoRetomada, "lifting facial");
+  assert.match(candidate.sugestao, /conversa sobre lifting facial/);
+  assert.doesNotMatch(candidate.sugestao, /agenda|horário/);
+  assert.equal(context.responsavelRetomada_(candidate), "bruna");
+});
+
+test("scheduling requires a direct request or explicit acceptance", () => {
+  assert.equal(
+    context.intencaoAgendaRetomada_(
+      [{ direcao: "IN", texto: "Quero marcar uma avaliação." }],
+      "quero marcar uma avaliacao",
+    ),
+    true,
+  );
+  assert.equal(
+    context.intencaoAgendaRetomada_(
+      [
+        {
+          direcao: "OUT",
+          texto: "Posso consultar a agenda e separar horários?",
+        },
+        { direcao: "IN", texto: "Sim, por favor." },
+      ],
+      "sim por favor",
+    ),
+    true,
+  );
+  assert.equal(
+    context.intencaoAgendaRetomada_(
+      [{ direcao: "IN", texto: "Como funciona a avaliação?" }],
+      "como funciona a avaliacao",
+    ),
+    false,
+  );
+});
+
+test("email fails closed when no contextual suggestion is safe", () => {
+  const item = {
+    telefone: "+5511999999999",
+    categoria: "1ª retomada",
+    automatico: false,
+    sugestao: "",
+  };
+
+  assert.equal(
+    context.mensagemSugeridaItemRetomada_(item),
+    "SEM SUGESTÃO PRONTA",
+  );
+  assert.equal(
+    context.converterRetomadaParaCuidadoEmail_({
+      ...item,
+      horario: "16:30",
+      modo: "Manual",
+      etapa: { rotulo: "1ª retomada" },
+      lead: {
+        referencia: "Paciente",
+        resumo: "",
+        status: "Novo",
+      },
+      chaveDiaria: "plano-sem-sugestao",
+    }).aprovacaoBotDisponivel,
+    false,
+  );
+});
+
+test("contextual first follow-up names the procedure without offering agenda", () => {
+  const message = context.sugerirMensagemRetomada_(
+    1,
+    false,
+    null,
+    false,
+    false,
+    "",
+    false,
+    "lifting facial",
+  );
+
+  assert.match(message, /nossa conversa sobre lifting facial/);
+  assert.match(message, /Ficou alguma dúvida/);
+  assert.match(
+    message,
+    /como funciona a avaliação com a Dra\. Amanda/,
+  );
+  assert.doesNotMatch(message, /agenda|horário|menu|caminhos/);
+});
+
+test("no procedure or prior question produces no copy-ready fallback", () => {
+  assert.equal(
+    context.sugerirMensagemRetomada_(
+      1,
+      false,
+      null,
+      false,
+      false,
+      "",
+      false,
+      "",
+    ),
+    "",
   );
 });
 
@@ -325,35 +501,104 @@ test("follow-up items receive a secure cancel link with a confirmation step", ()
   context.Utilities.computeHmacSha256Signature = () => [1, 2, 3];
   context.Utilities.base64EncodeWebSafe = () => "AQID=";
 
-  const link = context.linkCancelamentoRetomadas_(
-    "+55 11 99999-0000",
-    false,
-  );
-  const confirmation = context.linkCancelamentoRetomadas_(
-    "+55 11 99999-0000",
-    true,
-  );
+  const planKey =
+    "2026-08-21|+5511999990000|out-1|1";
+  const link = context.linkCancelamentoRetomadas_(planKey);
 
   assert.match(link, /view=cancelar_retomadas/);
-  assert.match(link, /phone=%2B5511999990000/);
-  assert.match(link, /token=AQID/);
+  assert.match(link, /cancel=AQID/);
+  assert.doesNotMatch(link, /phone|5511999990000|out-1/);
   assert.doesNotMatch(link, /confirmar=1/);
-  assert.match(confirmation, /confirmar=1/);
-  assert.equal(
-    context.tokenCancelamentoRetomadasValido_(
-      "+5511999990000",
-      "AQID",
-    ),
-    true,
-  );
 
   const page = context.paginaCancelamentoRetomadas_(
     "Confirmar",
     "Mensagem",
-    confirmation,
+    "AQID",
   );
-  assert.match(page, /target="_top"/);
-  assert.match(page, /confirmar=1/);
+  assert.match(page, /Confirmar cancelamento/);
+  assert.match(page, /Cancelando\.\.\./);
+  assert.match(page, /google\.script\.run/);
+  assert.match(page, /confirmarCancelamentoRetomada/);
+  assert.doesNotMatch(page, /target="_top"|confirmar=1/);
+});
+
+test("cancel action updates only the selected plan and is idempotent", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET" ? "test-secret" : "",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = (value) =>
+    String(value).endsWith("plan-a") ? [1] : [2];
+  context.Utilities.base64EncodeWebSafe = (bytes) =>
+    bytes[0] === 1 ? "TOKEN_A=" : "TOKEN_B=";
+
+  const rows = [Array(17).fill(""), Array(17).fill("")];
+  rows[0][0] = "plan-a";
+  rows[0][2] = "+5511999990000";
+  rows[0][10] = "Programada";
+  rows[0][11] = new Date("2026-08-21T16:30:00-03:00");
+  rows[1][0] = "plan-b";
+  rows[1][2] = "+5511999990000";
+  rows[1][10] = "Programada";
+  const writes = [];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getRange(row, column, rowCount, columnCount) {
+      if (row === 2 && column === 1) {
+        return { getValues: () => rows };
+      }
+      return {
+        setValues(values) {
+          writes.push({ row, column, rowCount, columnCount, values });
+          if (column === 11) {
+            for (let index = 0; index < columnCount; index += 1) {
+              rows[row - 2][10 + index] = values[0][index];
+            }
+          }
+        },
+      };
+    },
+  };
+  const file = {
+    getSheetByName(name) {
+      assert.equal(name, "_WHATSAPP_RETOMADAS");
+      return sheet;
+    },
+  };
+  const now = new Date("2026-08-21T12:00:00-03:00");
+
+  const cancelled = context.cancelarPlanoRetomadaPorToken_(
+    file,
+    "TOKEN_A",
+    now,
+  );
+
+  assert.equal(cancelled.ok, true);
+  assert.equal(cancelled.alreadyCancelled, false);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].row, 2);
+  assert.equal(writes[0].column, 11);
+  assert.equal(writes[0].columnCount, 5);
+  assert.equal(
+    writes[0].values[0][0],
+    "Cancelada — solicitação da equipe",
+  );
+  assert.equal(
+    writes[0].values[0][4],
+    "cancelled_by_team_request",
+  );
+  assert.equal(rows[1][10], "Programada");
+
+  const repeated = context.cancelarPlanoRetomadaPorToken_(
+    file,
+    "TOKEN_A",
+    now,
+  );
+  assert.equal(repeated.ok, true);
+  assert.equal(repeated.alreadyCancelled, true);
+  assert.equal(writes.length, 1);
 });
 
 test("recognizes a manual first follow-up and schedules only the second stage", () => {
@@ -482,6 +727,9 @@ test("manual commercial follow-up receives an opaque approval button for Bruna",
 
   assert.match(text, /Passar para a Bruna:/);
   assert.match(html, />Passar para a Bruna</);
+  assert.match(text, /Cancelar esta retomada:/);
+  assert.match(html, />Cancelar esta retomada</);
+  assert.doesNotMatch(text + html, /Não retomar mais/);
   assert.match(html, /approval=BAUG/);
   const approvalHref = html.match(
     /href="([^"]*view=aprovar_retomada_bot[^"]*)"/,
@@ -499,6 +747,50 @@ test("manual commercial follow-up receives an opaque approval button for Bruna",
   assert.match(confirmationPage, /target="_top"/);
   assert.match(confirmationPage, /name="confirmar" value="1"/);
   assert.match(confirmationPage, /Mensagem revisável pela equipe/);
+});
+
+test("every eligible human follow-up can be passed to Bruna", () => {
+  const base = {
+    telefone: "+5511999990000",
+    horario: "16:30",
+    etapa: { numero: 2, rotulo: "2ª retomada" },
+    chaveDiaria: "plan-human",
+    automatico: false,
+    responsavel: "equipe",
+    sugestao: "Mensagem contextual revisável.",
+    lead: {
+      referencia: "Paciente",
+      status: "Qualificado",
+      resumo: "Retomada sobre recuperação",
+      neverBotReply: false,
+    },
+  };
+
+  for (const mode of ["Manual", "Ação humana"]) {
+    assert.equal(
+      context.converterRetomadaParaCuidadoEmail_({
+        ...base,
+        modo: mode,
+      }).aprovacaoBotDisponivel,
+      true,
+    );
+  }
+
+  assert.equal(
+    context.converterRetomadaParaCuidadoEmail_({
+      ...base,
+      modo: "Suspensa na planilha",
+    }).aprovacaoBotDisponivel,
+    false,
+  );
+  assert.equal(
+    context.converterRetomadaParaCuidadoEmail_({
+      ...base,
+      modo: "Manual",
+      lead: { ...base.lead, neverBotReply: true },
+    }).aprovacaoBotDisponivel,
+    false,
+  );
 });
 
 test("approval moves only the selected manual plan to the bot queue and is idempotent", () => {
@@ -942,11 +1234,13 @@ test("first follow-up addresses the objection and second sends one proof", () =>
     "https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/",
   );
   assert.match(first, /principal preocupação/);
-  assert.match(first, /duas opções reais de horário/);
+  assert.match(first, /avaliação com a Dra\. Amanda/);
+  assert.doesNotMatch(first, /agenda|horário/);
   assert.doesNotMatch(first, /https:/);
-  assert.match(second, /referência concreta/);
-  assert.match(second, /pensar com calma/);
-  assert.match(second, /Quando fizer sentido/);
+  assert.match(second, /conteúdo da Dra\. Amanda/);
+  assert.match(second, /conversa com a sua dúvida/);
+  assert.match(second, /pode ler com calma/);
+  assert.match(second, /continuo exatamente desse ponto/);
   assert.doesNotMatch(second, /última retomada|inconveniente/);
   assert.match(second, /https:/);
 });
@@ -1060,6 +1354,9 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     null,
     false,
     true,
+    "",
+    false,
+    "lifting facial",
   );
   const schedule = context.sugerirMensagemRetomada_(
     1,
@@ -1067,6 +1364,9 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     null,
     true,
     false,
+    "",
+    false,
+    "lifting facial",
   );
   const general = context.sugerirMensagemRetomada_(
     1,
@@ -1074,6 +1374,9 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     null,
     false,
     false,
+    "",
+    false,
+    "lifting facial",
   );
   const second = context.sugerirMensagemRetomada_(
     2,
@@ -1081,22 +1384,19 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     null,
     false,
     false,
+    "",
+    false,
+    "lifting facial",
   );
   assert.match(price, /o valor e o que está incluído/);
   assert.match(schedule, /duas opções reais/);
-  assert.match(general, /esclarecer uma dúvida sobre o procedimento/);
-  assert.match(general, /entender como funciona a avaliação/);
-  assert.match(general, /consultar possibilidades de horário/);
-  assert.match(general, /continuo por ele, sem pressa/);
-  assert.doesNotMatch(
-    general,
-    /ficou alguma dúvida da nossa conversa|estou por aqui/,
-  );
-  assert.match(second, /Entendo que uma decisão assim pode precisar de tempo/);
-  assert.match(second, /Fique à vontade para pensar com calma/);
-  assert.match(second, /quando fizer sentido para você/);
-  assert.match(second, /mesmo que seja só para esclarecer uma dúvida/);
-  assert.match(second, /continuar de onde paramos/);
+  assert.match(general, /nossa conversa sobre lifting facial/);
+  assert.match(general, /Ficou alguma dúvida/);
+  assert.match(general, /como funciona a avaliação/);
+  assert.doesNotMatch(general, /agenda|horário|caminhos/);
+  assert.match(second, /nossa conversa sobre lifting facial/);
+  assert.match(second, /aberta, sem pressa/);
+  assert.match(second, /continuar do ponto em que paramos/);
   assert.doesNotMatch(
     second,
     /encerrar minhas retomadas|última retomada|inconveniente/,
@@ -1119,11 +1419,11 @@ test("second follow-up gives one concrete proof and closes proactive contact", (
     false,
   );
 
-  assert.match(price, /orçamento cirúrgico completo/);
+  assert.match(price, /orçamento cirúrgico reúne/);
   assert.match(price, /honorários, hospital, anestesia, materiais e acompanhamento/);
-  assert.match(price, /dúvida sobre valores/);
-  assert.match(schedule, /indicação, alternativas, limites, recuperação e orçamento/);
-  assert.match(schedule, /Entendo que essa decisão pode precisar de tempo/);
+  assert.match(price, /continuar exatamente desse ponto/);
+  assert.match(schedule, /possibilidades, limites, recuperação e orçamento/);
+  assert.match(schedule, /nada precisa ser decidido naquele momento/);
   assert.match(schedule, /duas opções reais de horário/);
   assert.doesNotMatch(
     price + schedule,
@@ -1399,9 +1699,11 @@ test("later post-consult and old-client contacts stay manual with a ready messag
 
   assert.equal(postConsult.automatico, false);
   assert.equal(postConsult.horario, "11:00");
-  assert.match(postConsult.sugestao, /bem orientada/);
+  assert.match(postConsult.sugestao, /avaliação sobre lifting facial/);
+  assert.match(postConsult.sugestao, /continuar por ele/);
   assert.equal(oldClient.automatico, false);
   assert.equal(oldClient.horario, "16:30");
-  assert.match(oldClient.sugestao, /quis saber como está/);
+  assert.match(oldClient.sugestao, /desde seu atendimento na Clínica LIV/);
+  assert.match(oldClient.sugestao, /retomar seu acompanhamento/);
   assert.doesNotMatch(oldClient.contexto, /lifting facial/i);
 });

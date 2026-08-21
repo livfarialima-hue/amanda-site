@@ -689,7 +689,9 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
       sugestao:
         "Oi, " +
         entrada.primeiroNome +
-        "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida. Queremos que você se sinta tranquila e bem orientada em cada etapa.",
+        "! Depois da sua avaliação" +
+        (entrada.tema ? " sobre " + entrada.tema : "") +
+        ", queria saber se surgiu alguma dúvida ao pensar com mais calma. Se houver algum ponto que você queira retomar, posso continuar por ele.",
     });
   }
 
@@ -828,7 +830,9 @@ function adicionarFollowUpConsultaAgendaCuidados_(entrada) {
       sugestao:
         "Oi, " +
         entrada.primeiroNome +
-        "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida ao pensar com mais calma. Queremos que você se sinta bem orientada; se eu puder esclarecer algo, estou por aqui.",
+        "! Depois da sua avaliação" +
+        (entrada.tema ? " sobre " + entrada.tema : "") +
+        ", queria saber se surgiu alguma dúvida ao pensar com mais calma. Se houver algum ponto que você queira retomar, posso continuar por ele.",
     });
     return;
   }
@@ -868,7 +872,9 @@ function adicionarFollowUpConsultaAgendaCuidados_(entrada) {
       sugestao:
         "Oi, " +
         entrada.primeiroNome +
-        "! Depois de alguns dias da sua consulta, quis deixar o canal aberto caso tenha surgido alguma dúvida ou se você quiser retomar algum ponto do que foi conversado. Fique à vontade, sem pressa.",
+        "! Queria retomar nossa conversa" +
+        (entrada.tema ? " sobre " + entrada.tema : "") +
+        ". Ficou alguma dúvida ou algum ponto da avaliação que seria útil esclarecer? Se ainda estiver pensando, fique à vontade para responder quando fizer sentido.",
     });
   }
 }
@@ -936,14 +942,7 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       sugestao:
         "Oi, " +
         entrada.primeiroNome +
-        "! Passando para acompanhar com calma o próximo passo que combinamos. " +
-        (entrada.proximaAcao
-          ? "Sobre " +
-            entrada.proximaAcao.charAt(0).toLowerCase() +
-            entrada.proximaAcao.slice(1) +
-            ", "
-          : "") +
-        "se precisar esclarecer algo antes, estamos por aqui.",
+        "! Passando para acompanhar o próximo passo que combinamos na consulta. Se quiser, posso retomar os detalhes com você e organizar o que ainda falta, com calma.",
     });
   }
 
@@ -974,14 +973,7 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       sugestao:
         "Oi, " +
         entrada.primeiroNome +
-        "! Passando para acompanhar com calma o que combinamos. " +
-        (entrada.proximaAcao
-          ? "Sobre " +
-            entrada.proximaAcao.charAt(0).toLowerCase() +
-            entrada.proximaAcao.slice(1) +
-            ", "
-          : "") +
-        "ficou alguma dúvida ou há algo em que possamos ajudar?",
+        "! Queria retomar o próximo passo que combinamos na consulta. Ficou alguma dúvida ou há algum detalhe que você gostaria de organizar por aqui?",
     });
   }
 
@@ -1009,7 +1001,7 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       sugestao:
         "Oi, " +
         entrada.primeiroNome +
-        "! Quero organizar com você o próximo passo que conversamos. Quando for um bom momento, posso confirmar os detalhes e deixar tudo alinhado por aqui.",
+        "! Queria retomar o próximo passo que conversamos na consulta. Antes de avançarmos, ficou alguma dúvida ou há algum detalhe que seria útil esclarecer?",
     });
   }
 }
@@ -1101,7 +1093,7 @@ function adicionarClienteAntigoAgendaCuidados_(entrada) {
     sugestao:
       "Oi, " +
       entrada.primeiroNome +
-      "! Tudo bem? Lembrei de você e quis saber como está. Se fizer sentido, podemos ajudar a retomar seu acompanhamento ou esclarecer alguma dúvida, com calma e sem compromisso.",
+      "! Tudo bem? Faz um tempo desde seu atendimento na Clínica LIV e quis deixar o canal aberto caso tenha surgido alguma dúvida ou você queira retomar seu acompanhamento. Se fizer sentido, posso continuar por aqui com calma.",
   });
 }
 
