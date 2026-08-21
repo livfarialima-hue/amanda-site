@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 20–21 de agosto de 2026 — auditoria das conversas e qualificação com evidência pessoal
+
+- **Status:** versão `2026-08-20.4` publicada e verificada no commit funcional `dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74`, deploy Netlify `6a879f71c5efe0ad12609a3d`, saneamento `88cdbd0` e Apps Script v110; **940/940 testes**, build de 178 arquivos e 44 URLs sem erro.
+- **Mudança:** prefill, referência de campanha e primeira pergunta de preço isolada permanecem contexto; qualificação e conversão offline exigem evidência pessoal posterior. A origem Meta usa referência canônica exata somente quando o provedor omite `source_id`, sem inferência por frase. Uma rotina humana, limitada por `Opportunity ID` e com pré-voo integral, permite corrigir fases e invalidar eventos derivados sem edição manual fragmentada.
+- **Motivo e evidência:** 54 exportações/53 conversas únicas foram reconciliadas. Não havia conversa identificável de aquisição ausente da LEADS, mas quatro oportunidades estavam prematuramente `Qualificado`, uma consulta confirmada ainda não estava em `Consulta agendada`, uma conversa interna aparecia como paciente e duas qualificações falsas estavam na fila local do Google.
+- **Resultado:** quatro fases passaram a `Novo`, uma a `Consulta agendada`, a conversa interna foi arquivada e as duas conversões foram marcadas `invalidated_not_qualified` e retiradas de `IMPORT_GOOGLE_ADS`. Como a conexão do Google tinha última atualização em 15/08, os eventos de 18–19/08 não foram importados.
+- **Hipótese e métricas:** um sinal mais restrito melhora otimização e leitura do funil; acompanhar avanço real de `Novo`, decisões humanas, qualificados aceitos, consultas e divergências entre LEADS, CRM e Google.
+- **Guardrails:** nenhuma frase automática qualifica; nenhuma correção sem estado e fase esperados; nenhuma campanha, orçamento, lance ou configuração da ação foi alterada; dados clínicos e PII não entram no relatório.
+- **Revisão e regra:** revisar em 28/08/2026 ou após dez novas decisões humanas. Manter com zero falsa qualificação automática; reverter somente o complemento de origem diante de atribuição incorreta, sem voltar a qualificar por template.
+
 ## 20 de agosto de 2026 — comparação de lifting, ação humana útil e oferta elegante de faixa
 
 - **Status:** versão `2026-08-20.2` publicada e verificada no commit funcional `46f7c91ea5cc00c2181fd3f7d564f61a880cdb11`, deploy Netlify `6a8762898c14302d7062b1f9` e Apps Script v107; **923/923 testes**, build de 178 arquivos e 44 URLs sem erro. As mesmas projeções do manual e do Plano Executivo foram substituídas no Drive. Nenhuma mensagem real, campanha ou configuração de anúncios foi alterada. Rollback: deploy `6a8701bb1ae7b60008c3a8ac`, commit `afa230263288bba88fb0cb61f4fb55e5903d4dca` e Apps Script v106.

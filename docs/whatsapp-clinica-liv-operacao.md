@@ -2,6 +2,8 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
+> **Auditoria de classificação publicada e executada — 20–21/08/2026:** 54 exportações do Drive, representando 53 conversas únicas, foram reconciliadas com LEADS, CRM e eventos de conversão. Não houve conversa identificável de aquisição ausente da planilha. A regra passou a exigir manifestação pessoal posterior ao prefill para qualificar; referência ou frase automática é somente contexto, e a primeira pergunta de preço isolada pode permanecer `Novo`. O saneamento auditado corrigiu quatro oportunidades para `Novo`, uma para `Consulta agendada`, arquivou uma conversa interna e invalidou duas conversões qualificadas falsas, retirando as respectivas transações de `IMPORT_GOOGLE_ADS`. A execução é fail-closed e usa `Opportunity ID` opaco; a v110 corrigiu o pré-voo para o estado canônico `open` e continua recusando oportunidades encerradas. Produção funcional `dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74`, deploy Netlify `6a879f71c5efe0ad12609a3d`, saneamento `88cdbd0`, Apps Script v110 e **940/940 testes**. Nenhuma mensagem foi enviada e nenhuma campanha foi alterada.
+
 ## Correção de 14/08/2026 — nome da conversão do Google Ads
 
 - A ação canônica permanece `Lead qualificado GCLID`; esse é o nome exato enviado por `IMPORT_GOOGLE_ADS` e reconhecido pela ação principal no Google Ads.

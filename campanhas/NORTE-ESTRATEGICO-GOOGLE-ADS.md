@@ -6,7 +6,7 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 15 de agosto de 2026
+**Última revisão estratégica:** 21 de agosto de 2026
 **Próxima revisão prevista:** 20 de agosto de 2026 para os gates técnicos e 27 de agosto de 2026 para a primeira janela operacional, ou antes se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
 
 ## 1. Regra de governança
@@ -44,6 +44,12 @@ A aquisição digital deve captar pessoas com intenção real de avaliar um proc
 O eixo prioritário é face: lifting facial, lifting cervical, lipo de papada, blefaroplastia, otoplastia, lip lifting e injetáveis. Cirurgias da mama, lipoaspiração e abdominoplastia formam uma frente secundária de captação incremental. Essa expansão não deve diluir o posicionamento facial nem receber campanha ou orçamento por presunção; a auditoria deve indicar, por intenção e procedimento, quando convém usar campanha própria, teste controlado, página orgânica, conteúdo de apoio ou nenhuma ação ainda.
 
 O problema atual não deve ser tratado apenas como falta de volume. No recorte reconciliado de 12 de julho a 10 de agosto de 2026, o Google Ads registrou 1.495 cliques e 40 cliques no WhatsApp, mas a planilha registrou 18 conversas reais atribuídas ao Google, 5 leads classificados como qualificados e nenhuma consulta agendada. A ação de conversão qualificada tinha apenas 1 ocorrência aceita no Google Ads. A amostra ainda é pequena, mas mostra que o gargalo imediato está na passagem de clique para conversa real e, principalmente, de lead qualificado para consulta. O clique no WhatsApp não pode ser usado como substituto do resultado clínico.
+
+### Revisão de qualidade de 20–21/08/2026
+
+A reconciliação de 54 exportações do Drive, correspondentes a 53 conversas únicas, não encontrou conversa identificável de aquisição ausente da LEADS. Encontrou, porém, quatro classificações prematuras como `Qualificado`, uma consulta humana ainda não promovida, uma conversa interna indevida e duas conversões qualificadas falsas na fila local. A regra vigente passa a exigir evidência pessoal posterior ao prefill: mensagem automática, referência de campanha ou pergunta inicial de preço isolada são contexto, não qualificação, conversão offline ou prontidão para agenda. A origem Meta pode usar somente a referência canônica exata quando o provedor omitir `source_id`; expressões soltas não valem como identidade do anúncio. As cinco fases foram corrigidas, a conversa interna foi arquivada e os dois eventos foram invalidados e removidos de `IMPORT_GOOGLE_ADS`. A conexão do Google registrava última atualização em 15/08, portanto esses eventos de 18–19/08 não chegaram à conta. Nenhuma campanha, orçamento, lance ou ação de conversão foi alterada.
+
+**Hipótese:** exigir manifestação pessoal melhora a qualidade do sinal enviado ao Google sem reduzir a captura de conversas reais. **Métricas:** proporção de `Novo` que avança com evidência, qualificados aceitos, consultas agendadas/realizadas, reversões humanas e divergências LEADS–CRM–Google. **Revisão:** 28/08/2026 ou antes após dez novas decisões humanas de qualificação. **Manter:** zero prefill isolado e zero preço inicial isolado como qualificado, com continuidade do funil. **Reverter:** apenas o complemento de origem se ele atribuir anúncio incorreto; nunca reabrir a qualificação por frase automática.
 
 ## 3. Posicionamento da Dra. Amanda
 

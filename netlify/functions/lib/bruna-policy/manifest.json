@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-20.3",
-  "promptVersion": "bruna-concierge-2026-08-20.3",
+  "bundleVersion": "2026-08-20.4",
+  "promptVersion": "bruna-concierge-2026-08-20.4",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-20.3",
+  "knowledgeSnapshot": "kb-2026-08-20.4",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "27f07856e43cf90f898132ddf11913210818f2c4",
-    "lastObservedProductionCommit": "27f07856e43cf90f898132ddf11913210818f2c4",
-    "functionalDeployId": "6a879160d29a140008a20503",
-    "lastObservedProductionDeployId": "6a879160d29a140008a20503",
-    "rollbackCommit": "46f7c91ea5cc00c2181fd3f7d564f61a880cdb11",
-    "rollbackDeployId": "6a8762898c14302d7062b1f9",
-    "publishedAt": "2026-08-20T20:45:09-03:00",
-    "lastVerifiedAt": "2026-08-20T20:52:40-03:00"
+    "functionalCommit": "dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74",
+    "lastObservedProductionCommit": "dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74",
+    "functionalDeployId": "6a879f71c5efe0ad12609a3d",
+    "lastObservedProductionDeployId": "6a879f71c5efe0ad12609a3d",
+    "rollbackCommit": "27f07856e43cf90f898132ddf11913210818f2c4",
+    "rollbackDeployId": "6a879160d29a140008a20503",
+    "publishedAt": "2026-08-20T21:53:00-03:00",
+    "lastVerifiedAt": "2026-08-21T06:32:09-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "d70e9a24dfc7a0d39b3364f1dc03646e127ae15a222037b8fe3dfbfb07e2e8de"
+    "driveProjectionSha256": "9e20bdf1cb77df8fde2e9fa4c91ca9df0e762564457c6add1d6050c76e7f42da"
   }
 }
