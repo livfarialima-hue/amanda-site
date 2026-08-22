@@ -1277,7 +1277,7 @@ function higienizarIdsTransacaoVisiveisLegados(input) {
     result.clearedRows += 1;
   });
   SpreadsheetApp.flush();
-  result.applied = apply;
+  result.applied = true;
   return result;
 }
 
@@ -2715,7 +2715,7 @@ function reconciliarConversoesGoogleAdsFasesAtuais(input) {
     }
   });
   SpreadsheetApp.flush();
-  result.applied = true;
+  result.applied = apply;
   return result;
 }
 
