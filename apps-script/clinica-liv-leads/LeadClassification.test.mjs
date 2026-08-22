@@ -68,6 +68,12 @@ function loadFunctions() {
     },
     SpreadsheetApp: { flush() {} },
   };
+  sandbox.SpreadsheetApp.openById = () => {
+    if (!sandbox.__googleAdsAdjustmentProjectionSpreadsheet) {
+      throw new Error("missing adjustment projection fixture");
+    }
+    return sandbox.__googleAdsAdjustmentProjectionSpreadsheet;
+  };
 
   vm.runInNewContext(
     `${codeSource}\n${classificationSource}\n` +
@@ -91,6 +97,9 @@ function loadFunctions() {
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
   );
+  sandbox.__test.setGoogleAdsAdjustmentProjectionSpreadsheet = (spreadsheet) => {
+    sandbox.__googleAdsAdjustmentProjectionSpreadsheet = spreadsheet;
+  };
   return sandbox.__test;
 }
 
@@ -101,7 +110,10 @@ test("Google Ads import preserves the mapped conversion value header", () => {
 });
 
 test("audited false positives invalidate the ledger and leave the import queue", () => {
-  const { invalidarConversoesGoogleAdsOportunidade_ } = loadFunctions();
+  const {
+    invalidarConversoesGoogleAdsOportunidade_,
+    setGoogleAdsAdjustmentProjectionSpreadsheet,
+  } = loadFunctions();
   const ledgerRow = [
     "ga-1",
     "opp-1",
@@ -121,6 +133,7 @@ test("audited false positives invalidate the ledger and leave the import queue",
   ];
   const importRows = [[ledgerRow[9]]];
   const adjustmentRows = [];
+  const projectionRows = [];
   const eventSheet = {
     getLastRow: () => 2,
     getRange(row, column) {
@@ -194,6 +207,49 @@ test("audited false positives invalidate the ledger and leave the import queue",
     appendRow(row) { adjustmentRows.push(row.slice()); },
     showSheet() {},
   };
+  const projectionSheet = {
+    getLastRow: () => projectionRows.length + 1,
+    getRange(row, column, rowCount = 1, columnCount = 1) {
+      return {
+        getDisplayValues() {
+          if (row === 1) {
+            return [[
+              "Order ID",
+              "Conversion Name",
+              "Adjustment Time",
+              "Adjustment Type",
+              "Adjusted Value",
+              "Adjusted Value Currency",
+            ]];
+          }
+          return Array.from({ length: rowCount }, (_, rowOffset) =>
+            Array.from({ length: columnCount }, (_, columnOffset) =>
+              String(
+                projectionRows[row - 2 + rowOffset]?.[
+                  column - 1 + columnOffset
+                ] ?? "",
+              ),
+            ),
+          );
+        },
+        createTextFinder(search) {
+          return {
+            matchEntireCell() { return this; },
+            findNext() {
+              const index = projectionRows.findIndex(
+                (entry) => String(entry[column - 1] || "") === String(search),
+              );
+              return index < 0 ? null : { getRow: () => index + 2 };
+            },
+          };
+        },
+      };
+    },
+    appendRow(row) { projectionRows.push(row.slice()); },
+  };
+  setGoogleAdsAdjustmentProjectionSpreadsheet({
+    getSheets: () => [projectionSheet],
+  });
   const spreadsheet = {
     getSheetByName(name) {
       if (name === "_GOOGLE_ADS_EVENTOS") return eventSheet;
@@ -219,6 +275,8 @@ test("audited false positives invalidate the ledger and leave the import queue",
   assert.equal(adjustmentRows.length, 1);
   assert.equal(adjustmentRows[0][0], ledgerRow[9]);
   assert.equal(adjustmentRows[0][3], "RETRACT");
+  assert.equal(projectionRows.length, 1);
+  assert.deepEqual(projectionRows[0], adjustmentRows[0]);
 });
 
 test("a requalification after retraction uses a fresh transaction cycle", () => {

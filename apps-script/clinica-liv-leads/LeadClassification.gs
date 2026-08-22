@@ -540,9 +540,7 @@ function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
   if (conversionName !== CONFIG.qualifiedConversionName) {
     throw new Error("invalid_google_ads_adjustment_conversion_name");
   }
-  if (findGoogleAdsEventRow_(sheet, transactionId)) return false;
-
-  sheet.appendRow([
+  const row = [
     transactionId,
     conversionName,
     googleConversionTimestamp_(
@@ -551,8 +549,41 @@ function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
     "RETRACT",
     "",
     "",
-  ]);
+  ];
+  let added = false;
+  if (!findGoogleAdsEventRow_(sheet, transactionId)) {
+    sheet.appendRow(row);
+    added = true;
+  }
   sheet.showSheet();
+  const projectionAdded = ensureGoogleAdsRetractionProjectionRow_(row);
+  return added || projectionAdded;
+}
+
+function ensureGoogleAdsRetractionProjectionRow_(row) {
+  const spreadsheetId = String(
+    CONFIG.googleAdsAdjustmentSpreadsheetId || "",
+  ).trim();
+  if (!spreadsheetId) {
+    throw new Error("missing_google_ads_adjustment_projection_id");
+  }
+  const projectionSpreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  const sheets = projectionSpreadsheet.getSheets();
+  const sheet = sheets && sheets[0];
+  if (!sheet) {
+    throw new Error("missing_google_ads_adjustment_projection_sheet");
+  }
+  const headers = sheet
+    .getRange(1, 1, 1, GOOGLE_ADS_ADJUSTMENT_HEADERS.length)
+    .getDisplayValues()[0];
+  const exactHeaders = headers.every(function matchesHeader(value, index) {
+    return String(value || "") === GOOGLE_ADS_ADJUSTMENT_HEADERS[index];
+  });
+  if (!exactHeaders) {
+    throw new Error("invalid_google_ads_adjustment_projection_headers");
+  }
+  if (findGoogleAdsEventRow_(sheet, String(row[0] || ""))) return false;
+  sheet.appendRow(row);
   return true;
 }
 
