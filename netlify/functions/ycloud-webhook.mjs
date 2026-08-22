@@ -3616,6 +3616,29 @@ export async function handleYCloudWebhook(
   const missingInboundText = Boolean(
     normalizedMessageType === "text" && !text.trim(),
   );
+  const unsupportedInboundContent = Boolean(
+    normalizedMessageType === "unsupported" && !text.trim(),
+  );
+  const unavailableInboundContent = Boolean(
+    missingInboundText || unsupportedInboundContent,
+  );
+  const unsupportedSubtype = unsupportedInboundContent
+    ? String(message?.unsupported?.type || "unknown")
+        .trim()
+        .replace(/[^a-zA-Z0-9_.:-]+/g, "_")
+        .slice(0, 120) || "unknown"
+    : null;
+  const unsupportedErrorCodes = unsupportedInboundContent
+    ? (Array.isArray(message?.errors) ? message.errors : [])
+        .map((error) =>
+          String(error?.code || "")
+            .trim()
+            .replace(/[^a-zA-Z0-9_.:-]+/g, "_")
+            .slice(0, 120),
+        )
+        .filter(Boolean)
+        .slice(0, 5)
+    : [];
   const recoveryRegistration =
     normalizedMessageType === "text" && text.trim()
       ? await registerInboundRecovery({
@@ -3629,12 +3652,17 @@ export async function handleYCloudWebhook(
         })
       : { status: "skipped" };
   let replyDebounceMarkerStatus = "skipped";
-  if (normalizedMessageType === "text") {
+  if (
+    normalizedMessageType === "text" ||
+    unsupportedInboundContent
+  ) {
     const markerResult = await markLatestInboundForReply({
       phone,
       eventId: String(eventId),
       eventAt: contactAt,
-      priority: missingInboundText ? 0 : inboundReplyPriority(text),
+      priority: unavailableInboundContent
+        ? 0
+        : inboundReplyPriority(text),
     });
     replyDebounceMarkerStatus = markerResult.status;
   }
@@ -4680,7 +4708,7 @@ export async function handleYCloudWebhook(
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
     automationMode === "active" &&
-    missingInboundText &&
+    unavailableInboundContent &&
     automationPlan.reason === "unsupported_or_empty_message" &&
     conversationAction.allowHoldingReply;
   const outsideHumanServiceHours =
@@ -5795,6 +5823,13 @@ export async function handleYCloudWebhook(
       imageAcknowledgementSent,
       imageAcknowledgementStatus,
       missingInboundText,
+      inboundAvailability: unavailableInboundContent
+        ? unsupportedInboundContent
+          ? "upstream_unsupported"
+          : "text_body_missing"
+        : "available_or_nontext",
+      unsupportedSubtype,
+      unsupportedErrorCodes,
       missingTextClarificationQueued,
       missingTextClarificationSent,
       missingTextClarificationStatus,
@@ -5895,6 +5930,8 @@ export async function handleYCloudWebhook(
     imageAcknowledgementSent,
     imageAcknowledgementStatus,
     missingInboundText,
+    unsupportedInboundContent,
+    unavailableInboundContent,
     missingTextClarificationQueued,
     missingTextClarificationSent,
     missingTextClarificationStatus,

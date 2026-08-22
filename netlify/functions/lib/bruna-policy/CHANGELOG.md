@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-22.1
+
+- Eventos que chegam da YCloud como `unsupported`, sem corpo textual utilizável, deixam de terminar sem uma resposta ao paciente: recebem a mesma pergunta neutra de recuperação já aprovada para texto sem corpo.
+- A rota permanece humana e pendente; o sistema não reconstrói a fala, não presume anúncio, profissional, procedimento, qualificação ou agenda e não registra uma mensagem que o provedor não entregou.
+- A deduplicação por mensagem mais recente passa a cobrir também esse formato. O replay do payload `unsupported` não entra na fila durável de recuperação, porque repetir o mesmo envelope não recupera o corpo omitido.
+- A observabilidade registra somente disponibilidade, subtipo e códigos técnicos saneados. O teste sintético confirma que título, detalhe, nome, telefone e conteúdo não entram no log.
+- Estado desta versão: candidata local com **635/635 testes do Netlify**; nenhuma mensagem real foi enviada. A produção permanece em `2026-08-20.4` até a publicação do commit candidato.
+
 ## 2026-08-20.3
 
 - A confirmação final feita pela equipe pode registrar um horário negociado fora de `Datas Consulta`; a grade continua delimitando apenas a oferta e a confirmação automáticas.
