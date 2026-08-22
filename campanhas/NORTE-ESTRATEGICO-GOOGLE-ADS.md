@@ -640,3 +640,21 @@ Toda nova mudança estratégica deve atualizar a seção vigente correspondente 
 - `docs/whatsapp-clinica-liv-operacao.md`: operação técnica, automações, planilhas e limites do bot.
 
 Esses arquivos explicam como executar. Este documento define por que, para quem, com qual objetivo e segundo quais critérios a estratégia existe.
+
+## 18. Decisão vigente do Lote 1 — recuperação controlada do lifting facial
+
+Em 22/08/2026, `S_BR_SP_LIFTING_FACIAL` passou temporariamente de Maximizar conversões para Maximizar cliques, sem limite de CPC e sem aumento do orçamento de R$ 24/dia. A meta específica `Lead qualificado GCLID` foi preservada. Nenhuma outra campanha, lance ou verba foi alterada.
+
+A decisão responde a um sinal de aprendizado ainda escasso e recentemente reconciliado: 5 conversões qualificadas com click ID ficaram prontas para importação, 2 falsos eventos foram invalidados, a importação diária foi reativada e os dois anúncios ativos deixaram de sobrescrever a campanha canônica com `_camp=g26f01`, passando a `_camp=G26LIFT`.
+
+**Hipótese:** recuperar volume de pesquisa e dados de termos com Maximizar cliques, mantendo orçamento fixo e mensuração qualificada limpa, produzirá uma base mais confiável para decidir quando a campanha está pronta para voltar a lances por conversão.
+
+**Métrica principal:** contatos Google válidos, leads qualificados, consultas agendadas e realizadas, custo por lead qualificado e custo por consulta. Cliques, CTR, CPC e termos servem como diagnóstico, não como desfecho.
+
+**Revisão:** primeira leitura em 7 dias e nova decisão após 1–2 ciclos completos com conversões qualificadas aceitas e reconciliadas.
+
+**Regra para manter:** preservar Maximizar cliques enquanto o volume útil recuperar sem deterioração material de termos, contatos válidos ou custo qualificado, respeitando a capacidade de atendimento.
+
+**Regra para escalar:** considerar aumento de orçamento somente depois de termos, anúncios, páginas, atribuição e passagem para consulta estarem estáveis, com procura qualificada adicional e capacidade disponível.
+
+**Regra para reverter:** voltar ao estado anterior se houver tráfego irrelevante, piora material de qualidade ou custo, perda de atribuição, duplicidade ou saturação operacional. Voltar a Maximizar conversões somente com histórico limpo e aceito de conversões qualificadas suficiente para sustentar o aprendizado, nunca apenas por recomendação automática da plataforma.

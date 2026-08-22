@@ -83,3 +83,12 @@ Para incluir ou mudar um código:
 4. adicionar fixture positiva, negativa e ambígua;
 5. publicar uma nova versão sem reescrever a evidência bruta;
 6. medir conflitos e reverter a resolução nova se surgir qualquer falsa correspondência.
+
+## Registro operacional — 22/08/2026
+
+- Campanha: `S_BR_SP_LIFTING_FACIAL`.
+- Código canônico preservado: `G26LIFT`.
+- Evidência ao vivo: o sufixo da campanha e o parâmetro de campanha já estavam corretos, mas os dois anúncios ativos sobrescreviam `_camp=g26f01`.
+- Correção: ambos os anúncios ativos passaram a usar `_camp=G26LIFT`.
+- Limite histórico: `g26f01` permanece como evidência bruta dos cliques anteriores; não houve backfill nem reinterpretação por procedimento, página ou data.
+- Verificação: exatamente dois anúncios ativos foram relidos com `G26LIFT`; nenhuma outra campanha ou referência foi alterada.

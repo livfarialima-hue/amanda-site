@@ -498,3 +498,16 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Data de revisão:** sete dias depois da publicação, ou imediatamente diante de mensagem indevida, faixa fora de contexto, duplicidade ou reclamação.
 - **Regra para manter:** manter se não houver novo silêncio no padrão singular/plural e a conversa avançar sem aumento de duplicidade ou pressão percebida.
 - **Regra para reverter:** restaurar a resposta anterior e bloquear a oferta se ela causar faixa prematura, confusão entre procedimentos, repetição ou violação das travas de preço.
+
+### 22 de agosto de 2026 — Lote 1 do Google Ads e recuperação controlada do lifting
+
+- **Status:** publicado e em monitoramento.
+- **Mudança:** os dois anúncios ativos de lifting passaram de `_camp=g26f01` para `_camp=G26LIFT`; `S_BR_SP_LIFTING_FACIAL` passou de Maximizar conversões para Maximizar cliques, sem limite de CPC, preservando R$ 24/dia e a meta `Lead qualificado GCLID`. A mensuração por fase foi reconciliada, a conexão `LEADS` voltou a executar diariamente entre 05:00 e 06:00 e os ajustes foram separados em projeção sem PII. Nenhuma outra campanha, lance ou verba foi alterada.
+- **Motivo e evidência:** a auditoria encontrou anúncios sobrescrevendo o código canônico e aprendizado por conversão com sinal escasso e não totalmente confiável. A reconciliação de 176 oportunidades preparou 5 conversões qualificadas, invalidou 2 falsos eventos e gerou 2 retrações. O upload separado reconheceu o schema, mas devolveu `conversão não existe` nas duas linhas e recibo `Sem alterações`, confirmando que os falsos eventos não haviam chegado à conta.
+- **Publicação:** Apps Script v117 no deployment canônico, com planejamento pós-voo `ok=true`, `applied=false`, zero issues; GET saudável e POST sintético barrado em `unauthorized`. Nenhuma mensagem real foi enviada.
+- **Hipótese:** Maximizar cliques com verba fixa recuperará volume e termos suficientes para reavaliar lances por conversão sobre uma base qualificada limpa, sem comprar crescimento antes de corrigir o funil.
+- **Métrica principal:** contatos Google válidos, leads qualificados, consultas agendadas/realizadas, custo por lead qualificado e custo por consulta; CTR, CPC e cliques são métricas diagnósticas.
+- **Data de revisão:** 29 de agosto de 2026 e novamente após 1–2 ciclos completos de conversões qualificadas aceitas.
+- **Regra para manter:** manter se o volume útil recuperar sem deterioração material da qualidade ou do custo qualificado e sem exceder a capacidade de atendimento.
+- **Regra para escalar:** aumentar orçamento somente após estabilidade de termos, páginas, atribuição, recibos e passagem para consulta, com capacidade operacional comprovada.
+- **Regra para reverter:** restaurar a estratégia anterior diante de tráfego irrelevante, piora material de qualidade/custo, falha de atribuição, duplicidade ou saturação; retornar a Maximizar conversões apenas quando houver histórico limpo e aceito suficiente.

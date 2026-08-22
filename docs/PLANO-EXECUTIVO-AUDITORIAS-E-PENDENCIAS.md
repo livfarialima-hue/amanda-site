@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 21 de agosto de 2026, 20:13, America/Sao_Paulo
+**Atualizado em:** 22 de agosto de 2026, 11:45, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -116,7 +116,7 @@ O responsável técnico deve:
 
 ### Auditoria 1 — Google Ads
 
-**Estado geral:** correções imediatas concluídas; experimentos e provas futuras estão programados.
+**Estado geral:** Lote 1 concluído em 22/08; mensuração qualificada reconciliada, importação diária reativada e lifting em uma janela controlada de recuperação de tráfego.
 
 Já foi feito:
 
@@ -128,10 +128,16 @@ Já foi feito:
 - testes de anúncios foram colocados em sequência para não misturar efeitos.
 - rotina somente leitura de revisão do Google Ads publicada como script `12117745`, autorizada, testada sem mudanças e com programação diária `09:00–10:00` ativa;
 - agregado anônimo do funil publicado pelo Apps Script versão `92`, com trigger diário aproximadamente às `08:15` e sem PII.
+- auditoria de fases aplicada em 176 oportunidades: 5 conversões qualificadas com click ID foram preparadas, 2 falsos eventos foram invalidados e 2 `RETRACT` idempotentes foram projetados em arquivo separado sem PII;
+- conexão `LEADS` do Data Manager reativada diariamente entre `05:00–06:00` BRT, com próxima execução marcada para `23/08 05:05`; execução manual iniciada em `22/08 11:25`;
+- upload separado dos 2 ajustes validou o schema e o fuso `-0300`; ambos retornaram `conversão não existe` e o recibo final ficou `Sem alterações`, coerente com a evidência de que os falsos eventos não chegaram à conta;
+- os dois anúncios ativos de lifting passaram a usar `_camp=G26LIFT`, eliminando a sobrescrita de anúncio `_camp=g26f01`; nenhuma evidência histórica foi reinterpretada;
+- `S_BR_SP_LIFTING_FACIAL` passou de Maximizar conversões para Maximizar cliques, sem limite de CPC, preservando R$ 24/dia e a meta específica `Lead qualificado GCLID`; nenhuma outra campanha ou orçamento foi alterado.
 
 Ainda falta:
 
-- provar a conversão offline e a jornada anúncio → site → WhatsApp → LEADS/CRM;
+- acompanhar o recibo da execução manual iniciada em 22/08 e os primeiros ciclos diários; somente eventos aceitos e reconciliados podem voltar a alimentar decisões de lance;
+- revisar volume, termos, contatos válidos, qualificados e consultas após 7 dias, sem retornar a Maximizar conversões enquanto o histórico aceito continuar escasso;
 - confirmar ao vivo e, se ainda ausentes, aplicar as três negativas exatas de roteamento do grupo geral de lifting;
 - normalizar novos contatos com códigos G26 canônicos: no primeiro agregado, os 16 contatos Google de 30 dias permaneceram em campanha desconhecida por usarem referências antigas/ambíguas; não reinterpretar o histórico por inferência;
 - manter Meta facial em 40+ e, no gate de 20/08, decidir se o Google deve excluir apenas `18–24` e `25–34` nas campanhas faciais não otoplastia; preservar sempre a idade `Desconhecida`;
@@ -250,7 +256,7 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | segundo dia útil do mês, aproximadamente 10:05 | Meta Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 02/09 | acrescentar 90 dias, eficiência até consulta e prontidão de testes | e-mail automático; nenhuma recomendação aplicada | fontes íntegras; o cálculo considera segunda a sexta e não infere feriados |
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
 | 20/08 12:30–13:15 | Cervical Site × WhatsApp: saúde D+3 | `AGENDADO` | conferir equilíbrio de gasto, idade efetiva, códigos, LPV, CTA, conversas e contatos identificados | corrigir somente falha técnica; pausar ambos se o Site não for rastreável | três dias desde o início programado; dia parcial de lançamento excluído da leitura de desempenho |
-| 20/08 09:00–11:00 | Google Ads: prova segura e decisão etária | `AGENDADO` | testar conversão offline e E2E; confirmar negativas exatas; manter Meta facial em 40+; decidir se exclui `18–24` e `25–34` somente em LIFT, BLEF, CERV e FACE; iniciar somente RSA adulto de otoplastia se tudo passar | possível escrita em Ads/importação, somente após autorização no momento | zero PII, zero duplicidade, receipt por evento, origem preservada e idade `Desconhecida` mantida |
+| 22/08 09:00–12:00 | Google Ads: Lote 1 — mensuração, atribuição e LIFT | `CONCLUÍDO` | reconciliar conversões por fase; reativar importação diária; tentar retrações separadas; corrigir `_camp`; abrir janela de Maximizar cliques no LIFT | Apps Script v117; 5 conversões preparadas; 2 retrações sem alteração porque as conversões não existiam; orçamento R$ 24/dia preservado | zero PII, zero mensagem real, deployment canônico preservado, outras campanhas intactas |
 | 20/08 11:15–12:00 | CWV, vídeos e recursos | `AGENDADO` | medir laboratório/campo e 4G; abrir causas reais de recursos/logotipos | nenhuma otimização automática | baseline reproduzível; uma classe de ativo por futuro teste |
 | 20/08 14:00–14:45 | Compliance e imagens | `DEPENDE DE VOCÊS` | revisar inventário, consentimentos, galerias, imagens sensíveis/menores e Codame | nenhuma remoção/publicação sem parecer | documento/parecer humano e escopo registrado |
 | 18/08 15:30–16:00 | Atribuição rica: checagem de 24 horas | `AGENDADO` | erros, logs sem PII, purge, JID fora do resolvedor, perda de origem, LEADS/CRM e sinais de rollback | nenhuma nova expansão | ativação em 17/08; reverter diante de PII, atribuição incorreta, first touch sobrescrito ou regressão de atendimento |
@@ -314,12 +320,12 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 
 | Pacote | Prioridade | Estado | Próxima decisão |
 |---|---|---|---|
-| Conversão offline Google e receipts | P0 | `AGENDADO` para 20/08 | religar somente com receipt e reconciliação por evento |
+| Conversão offline Google e receipts | P0 | `CONCLUÍDO` no Lote 1 de 22/08; conexão diária ativa e recibo de ajustes `Sem alterações` | acompanhar o recibo da execução manual e os ciclos de 05:00–06:00; não otimizar por evento rejeitado |
 | Meta → site → WhatsApp → LEADS/CRM | P0 | sonda sintética aprovada; ciclo real `EM MONITORAMENTO` | conferir cobertura e consistência em D+3/D+7 antes de declarar o caminho funcional ao vivo |
 | Atribuição rica J0/J1/J2 | P0 | `ATIVA` desde 17/08; risco JID aceito | monitorar resolução, fallback, encaminhamento, duplicidade e rollback |
 | Schema/identidade da LEADS | P0 | schema v1 habilitado no Apps Script v97 | reconciliar LEADS/CRM e não repetir migração sem novo preflight |
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
-| Experimentos Google Ads | P1 | sequência agendada | OTO → CERV → BLEF → FACE → LIFT preço |
+| Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; demais campanhas preservadas | revisar em 7 dias e depois de 1–2 ciclos limpos de conversão qualificada; só então decidir manter, escalar ou voltar a Maximizar conversões |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
 | Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v104; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `PUBLICADO; EM MONITORAMENTO` desde 17/08 | manter somente `M26F01W/C06H01` no WhatsApp e analisar separadamente; comparar apenas `M26C01W` × `M26C02S`; nenhuma troca de criativo, rota, público ou orçamento durante a janela |
