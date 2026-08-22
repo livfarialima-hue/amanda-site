@@ -74,8 +74,8 @@
         "dataset": "headline",
         "sourceId": "ads_live",
         "metrics": [
-          {"label":"Gasto atual","field":"spend_current","format":"currency","currency":"BRL"},
-          {"label":"7 dias anteriores","field":"spend_prior","format":"currency","currency":"BRL"}
+          {"label":"Gasto atual (R$)","field":"spend_current","format":"number"},
+          {"label":"7 dias anteriores (R$)","field":"spend_prior","format":"number"}
         ]
       },
       {
@@ -113,8 +113,8 @@
         "dataset": "headline",
         "sourceId": "ads_live",
         "metrics": [
-          {"label":"Depois","field":"budget_after","format":"currency","currency":"BRL","unit":"/dia"},
-          {"label":"Antes","field":"budget_before","format":"currency","currency":"BRL","unit":"/dia"}
+          {"label":"Depois (R$/dia)","field":"budget_after","format":"number"},
+          {"label":"Antes (R$/dia)","field":"budget_before","format":"number"}
         ]
       }
     ],
@@ -131,14 +131,14 @@
         "rationale": "Barras agrupadas mantêm campanha e período visíveis na mesma escala.",
         "encodings": {
           "x": {"field":"campaign","type":"ordinal","label":"Campanha"},
-          "y": {"field":"cost","type":"quantitative","format":"currency","label":"Gasto (R$)"},
+          "y": {"field":"cost","type":"quantitative","format":"number","label":"Gasto (R$)"},
           "color": {"field":"period","type":"nominal","label":"Janela"},
           "tooltip": [
             {"field":"clicks","type":"quantitative","format":"number","label":"Cliques"},
             {"field":"ctr","type":"quantitative","format":"percent","label":"CTR"}
           ]
         },
-        "valueFormat": "currency",
+        "valueFormat": "number",
         "maxRows": 10,
         "emptyState": "Sem dados de campanha."
       }
@@ -156,7 +156,7 @@
         "columns": [
           {"field":"campaign","label":"Campanha","type":"text"},
           {"field":"clicks","label":"Cliques","format":"number"},
-          {"field":"cost","label":"Gasto","format":"currency"},
+          {"field":"cost","label":"Gasto (R$)","format":"number"},
           {"field":"search_is_label","label":"IS pesquisa","type":"text"},
           {"field":"downstream","label":"Downstream","type":"text"}
         ]
@@ -218,8 +218,8 @@
         "defaultSort": {"field":"budget_after","direction":"desc"},
         "columns": [
           {"field":"campaign","label":"Campanha","type":"text"},
-          {"field":"budget_before","label":"Antes (R$/dia)","format":"currency"},
-          {"field":"budget_after","label":"Depois (R$/dia)","format":"currency"},
+          {"field":"budget_before","label":"Antes (R$/dia)","format":"number"},
+          {"field":"budget_after","label":"Depois (R$/dia)","format":"number"},
           {"field":"changed","label":"Alterado","type":"text"}
         ]
       }
