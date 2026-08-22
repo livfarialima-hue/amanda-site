@@ -2,9 +2,9 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 22 de agosto de 2026, 11:45, America/Sao_Paulo
+**Atualizado em:** 22 de agosto de 2026, 18:39, America/Sao_Paulo
 
-**Escopo:** auditoria Google Ads de 14/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
+**Escopo:** auditoria Google Ads de 14/08/2026, execução ao vivo de BLEF, CERV, OTO, FACE e MARCA em 22/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
 **Projeção de leitura no Drive:** [00 — PLANO EXECUTIVO — pendências, prazos e publicações.md](https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view)
 
@@ -120,7 +120,7 @@ O responsável técnico deve:
 
 ### Auditoria 1 — Google Ads
 
-**Estado geral:** Lote 1 concluído em 22/08; mensuração qualificada reconciliada, importação diária reativada e lifting em uma janela controlada de recuperação de tráfego.
+**Estado geral:** Lote 1 concluído em 22/08; auditoria ao vivo de BLEF, CERV, OTO, FACE e MARCA encerrada no mesmo dia sem nova alteração, porque mensuração e downstream ainda não passaram os gates. Lifting permanece em sua janela controlada de recuperação de tráfego.
 
 Já foi feito:
 
@@ -133,10 +133,11 @@ Já foi feito:
 - rotina somente leitura de revisão do Google Ads publicada como script `12117745`, autorizada, testada sem mudanças e com programação diária `09:00–10:00` ativa;
 - agregado anônimo do funil publicado pelo Apps Script versão `92`, com trigger diário aproximadamente às `08:15` e sem PII.
 - auditoria de fases aplicada em 176 oportunidades: 5 conversões qualificadas com click ID foram preparadas, 2 falsos eventos foram invalidados e 2 `RETRACT` idempotentes foram projetados em arquivo separado sem PII;
-- conexão `LEADS` do Data Manager reativada diariamente entre `05:00–06:00` BRT, com próxima execução marcada para `23/08 05:05`; a execução manual de `22/08 11:25` concluiu com 5 linhas importadas e 0 erros;
+- conexão `LEADS` do Data Manager reativada diariamente entre `05:00–06:00` BRT, com próxima execução marcada para `23/08 05:05`; a execução manual de `22/08 11:25` processou um arquivo de 5 linhas sem erro de arquivo, com correspondência individual ainda `N/D`;
 - upload separado dos 2 ajustes validou o schema e o fuso `-0300`; ambos retornaram `conversão não existe` e o recibo final ficou `Sem alterações`, coerente com a evidência de que os falsos eventos não chegaram à conta; o arquivo dedicado ficou com horário ativo diariamente às `06:00` BRT, depois da importação principal;
 - os dois anúncios ativos de lifting passaram a usar `_camp=G26LIFT`, eliminando a sobrescrita de anúncio `_camp=g26f01`; nenhuma evidência histórica foi reinterpretada;
 - `S_BR_SP_LIFTING_FACIAL` passou de Maximizar conversões para Maximizar cliques, sem limite de CPC, preservando R$ 24/dia e a meta específica `Lead qualificado GCLID`; nenhuma outra campanha ou orçamento foi alterado.
+- auditoria ao vivo de `G26BLEF`, `G26CERV`, `G26OTO`, `G26FACE` e `G26MARCA` concluída em 22/08: URLs e códigos íntegros, nenhuma mudança publicada, orçamentos antes/depois idênticos e total operacional preservado em R$ 87/dia. O agregado de 15–21/08 tinha 7 contatos Google, somente 2 com campanha canônica — ambos OTO — e nenhum classificado. A duplicidade do RSA OTO ficou condicionada ao tracking; nenhuma negativa BLEF foi criada porque `"preço popular"` já está bloqueado na lista compartilhada. A mesma lista bloqueia `"projeto orelhinha"` e alcança `G26LIFT`, exigindo revisão isolada de governança antes de qualquer alteração.
 
 Ainda falta:
 
@@ -144,8 +145,8 @@ Ainda falta:
 - revisar volume, termos, contatos válidos, qualificados e consultas após 7 dias, sem retornar a Maximizar conversões enquanto o histórico aceito continuar escasso;
 - confirmar ao vivo e, se ainda ausentes, aplicar as três negativas exatas de roteamento do grupo geral de lifting;
 - normalizar novos contatos com códigos G26 canônicos: no primeiro agregado, os 16 contatos Google de 30 dias permaneceram em campanha desconhecida por usarem referências antigas/ambíguas; não reinterpretar o histórico por inferência;
-- manter Meta facial em 40+ e, no gate de 20/08, decidir se o Google deve excluir apenas `18–24` e `25–34` nas campanhas faciais não otoplastia; preservar sempre a idade `Desconhecida`;
-- executar os testes de RSA um por vez;
+- manter Meta facial em 40+; a decisão etária do Google foi adiada porque não há downstream atribuível por idade. Preservar sempre `Desconhecida` e não alterar OTO ou MARCA;
+- executar os testes de RSA um por vez, começando por OTO somente depois de registrar a data real de início e confirmar tracking saudável; as datas antigas não contam como janela de um teste que não começou;
 - medir desempenho mobile/vídeos antes de otimizar;
 - obter decisão Codame/jurídica sobre galerias, imagens e consentimentos.
 
@@ -261,16 +262,17 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | 17/08 17:30–18:00 | Suporte de tags do Google | `AGENDADO` | diagnóstico da implementação; registrar recomendações e evitar mudanças não planejadas | não aplicar mudança ampla durante a chamada | backup, acesso correto e escopo registrado |
 | 20/08 12:30–13:15 | Cervical Site × WhatsApp: saúde D+3 | `AGENDADO` | conferir equilíbrio de gasto, idade efetiva, códigos, LPV, CTA, conversas e contatos identificados | corrigir somente falha técnica; pausar ambos se o Site não for rastreável | três dias desde o início programado; dia parcial de lançamento excluído da leitura de desempenho |
 | 22/08 09:00–12:00 | Google Ads: Lote 1 — mensuração, atribuição e LIFT | `CONCLUÍDO` | reconciliar conversões por fase; reativar importação diária; tentar retrações separadas; corrigir `_camp`; abrir janela de Maximizar cliques no LIFT | Apps Script v117; 5 conversões preparadas; 2 retrações sem alteração porque as conversões não existiam; orçamento R$ 24/dia preservado | zero PII, zero mensagem real, deployment canônico preservado, outras campanhas intactas |
+| 22/08 10:00–18:39 | Google Ads: auditoria ao vivo BLEF, CERV, OTO, FACE e MARCA | `CONCLUÍDO; NENHUMA MUDANÇA MADURA` | comparar mídia em 7 dias, sete anteriores e 30 dias; usar 90 dias como contexto de funil; revisar termos, RSAs, recursos, páginas e pós-voo | nenhuma escrita de entrega ou de site nesta execução; mudanças preexistentes do worktree preservadas; R$ 87/dia preservados | 5/7 contatos recentes sem campanha canônica, 0/7 classificados, ação principal sem frescor e negativas compartilhadas com LIFT impediram RSA ou edição isolada segura |
 | 20/08 11:15–12:00 | CWV, vídeos e recursos | `AGENDADO` | medir laboratório/campo e 4G; abrir causas reais de recursos/logotipos | nenhuma otimização automática | baseline reproduzível; uma classe de ativo por futuro teste |
 | 20/08 14:00–14:45 | Compliance e imagens | `DEPENDE DE VOCÊS` | revisar inventário, consentimentos, galerias, imagens sensíveis/menores e Codame | nenhuma remoção/publicação sem parecer | documento/parecer humano e escopo registrado |
 | 18/08 15:30–16:00 | Atribuição rica: checagem de 24 horas | `AGENDADO` | erros, logs sem PII, purge, JID fora do resolvedor, perda de origem, LEADS/CRM e sinais de rollback | nenhuma nova expansão | ativação em 17/08; reverter diante de PII, atribuição incorreta, first touch sobrescrito ou regressão de atendimento |
 | 20/08 15:00–16:00 | Atribuição rica: saúde D+3 e retenção | `AGENDADO` | purge, consentimento, resolução/fallback, origem, LEADS/CRM, Calendar, rota e SLA | não repetir deploy ou migração | correlacionar com a saúde Meta sem misturar métricas |
 | 24/08 12:30–13:15 | Cervical Site × WhatsApp: primeira decisão D+7 | `AGENDADO` | comparar contatos identificados, válidos, qualificados e agendados por rota | manter ou pausar segundo o plano; não trocar criativo | cobertura ≥80%; pausar um braço se gastar ≥R$ 150 sem contato válido com tracking saudável |
-| 27/08 09:00–10:00 | Google Ads: saúde de 7 dias | `AGENDADO` | receipts, duplicidade, códigos, funil e qualidade; se a decisão etária tiver sido aplicada, comparar volume/gasto/qualidade por idade sem confundir com outras mudanças | não decidir RSA nem idade por amostra insuficiente | sete dias reais desde a prova; mudança etária isolada e data efetiva registrada |
+| 27/08 09:00–10:00 | Google Ads: saúde técnica | `AGENDADO` | receipts, frescor da ação principal, duplicidade, códigos, cobertura de campanha e classificação do funil | não iniciar RSA ou idade por calendário | pelo menos 1–2 ciclos limpos; divergências de importação explicadas; zero PII e duplicidade |
 | 24/08 14:00–14:30 | Atribuição rica: 7 dias | `AGENDADO` | erros, resolução/fallback, origem, LEADS/CRM, Calendar/SLA e logs | manter ou reverter; nenhuma expansão | janela iniciada em 17/08 |
 | 27/08 11:00–11:30 | Atualização executiva | `AGENDADO` | atualizar este plano, Drive, datas e decisões | nenhuma | checkpoints anteriores encerrados |
 | 01/09 12:30–13:30 | Cervical Site × WhatsApp: decisão D+15 | `AGENDADO` | fechar contatos, qualificados, agendados e custos por rota; declarar N/D se a amostra não separar | eventual continuidade exige nova autorização | orçamento encerrado às 12h, cobertura ≥80% e nenhuma quebra operacional |
-| 03/09 09:00–10:00 | Google Ads: decisão OTO; possível início CERV; idade em 14 dias | `AGUARDAR DADOS` | encerrar OTO e iniciar CERV somente se elegível; se a idade Google mudou em 20/08, avaliar 14 dias de gasto, contatos válidos e qualidade por faixa | mudança de um RSA por vez; não ampliar a exclusão etária | 14 dias e, preferencialmente, ≥50 cliques; data efetiva da mudança etária registrada |
+| 03/09 09:00–10:00 | Google Ads: reavaliar elegibilidade do primeiro teste OTO | `AGUARDAR DADOS` | iniciar o RSA adulto OTO somente se mensuração, atribuição e classificação estiverem legíveis; idade Google continua adiada | mudança de um RSA por vez; nenhuma mudança concorrente | 1–2 ciclos limpos, baseline registrado e downstream atribuível; a janela começa na publicação real |
 | 31/08 14:00–14:30 | Atribuição rica: 14 dias | `AGUARDAR DADOS` | avaliar estabilidade, reconciliação, purge, consentimento e incidentes | manter ou reverter | janela iniciada em 17/08 |
 | 08/09 12:30–13:15 | Cervical Site × WhatsApp: latência D+22 | `AGENDADO` | incorporar classificações, comparecimentos e agendamentos tardios | nenhuma nova mudança simultânea | sete dias após o fechamento do ciclo |
 | 16/09 10:00–11:00 | Aqui Ads: decisão e pré-voo do piloto OOH | `AGENDADO; COMPRA NÃO AUTORIZADA` | revalidar shortlist de dois residenciais premium e um salão/spa, preço, audiência, peça, compliance, rastreamento e capacidade | nenhuma compra sem autorização específica no momento | Meta/atribuição encerradas ou estáveis, sem outra mudança material; verba incremental de aproximadamente R$ 1.206,20 confirmada |
@@ -278,9 +280,10 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | D+14 do piloto Aqui Ads | OOH: leitura intermediária | `CONDICIONAL À ATIVAÇÃO` | ler busca de marca, direto, Perfil da Empresa, contatos válidos, qualificados e consultas | nenhuma renovação ou escala | tracking saudável e nenhuma mudança concorrente |
 | D+28 do piloto Aqui Ads | OOH: decisão de continuidade | `CONDICIONAL À ATIVAÇÃO` | encerrar quatro semanas e classificar manter, não renovar ou inconclusivo | renovação somente com nova autorização | cobertura ≥80% e sinal de negócio; métricas da plataforma são apenas diagnóstico |
 | D+35 do piloto Aqui Ads | OOH: latência | `CONDICIONAL À ATIVAÇÃO` | incorporar qualificações e agendamentos tardios e fechar o registro | nenhuma nova mudança simultânea | sete dias após o término da veiculação |
-| 17/09 09:00–10:00 | Google Ads: decisão CERV; possível início BLEF | `AGUARDAR DADOS` | decidir CERV e, se elegível, iniciar BLEF | um teste por vez | CERV encerrado e tracking saudável |
+| D+14 do início real de OTO | Google Ads: decisão OTO; possível início CERV | `AGUARDAR DADOS` | decidir OTO e iniciar CERV somente se elegível | um teste por vez | OTO com 14 dias, preferencialmente ≥50 cliques, downstream legível e tracking saudável |
 | 14/09 14:00–14:30 | SEO/IA/atribuição: 28 dias | `AGUARDAR DADOS` | GSC, GA4, CWV, crawlers, origem e funil | nenhuma nova hipótese no mesmo momento | janela pós-ativação completa desde 17/08 |
-| 01/10 09:00–10:00 | Decisão BLEF; possível início FACE | `AGUARDAR DADOS` | decidir BLEF e iniciar FACE somente se elegível | um teste por vez | BLEF encerrado; manter linguagem leiga legítima |
+| D+14 do início real de CERV | Google Ads: decisão CERV; possível início BLEF | `AGUARDAR DADOS` | decidir CERV e, se elegível, iniciar BLEF | um teste por vez | CERV encerrado e tracking saudável |
+| D+14 do início real de BLEF | Google Ads: decisão BLEF; possível início FACE | `AGUARDAR DADOS` | decidir BLEF e iniciar FACE somente se elegível | um teste por vez | BLEF encerrado; manter linguagem leiga legítima |
 | 15/10 09:00–10:00 | Decisão FACE; possível teste LIFT preço | `AGUARDAR DADOS` | decidir FACE e testar composição/orçamento individual no grupo de preço | sem voltar a publicar faixa cirúrgica | FACE encerrado; tracking estável |
 | 12/11 09:00–10:00 | Decisão LIFT preço | `AGUARDAR DADOS` | avaliar contato válido, qualificado e consulta; decidir manter ou consolidar | nenhuma decisão por CTR isolado | 28 dias e, preferencialmente, ≥100 cliques |
 | 18/11 09:00–09:30 | SEO/IA/atribuição: 90 dias | `AGUARDAR DADOS` | leitura longa de SEO, IA, atribuição e funil | planejar próximo ciclo | fontes reconciliadas e data-base válida |
@@ -324,16 +327,16 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 
 | Pacote | Prioridade | Estado | Próxima decisão |
 |---|---|---|---|
-| Conversão offline Google e receipts | P0 | `CONCLUÍDO` no Lote 1 de 22/08; execução manual com 5 importadas/0 erros, conexão principal diária e ajustes separados ativos às 06:00, com recibo `Sem alterações` | acompanhar os ciclos diários; não otimizar por evento rejeitado |
+| Conversão offline Google e receipts | P0 | `CONCLUÍDO` somente quanto à configuração do Lote 1 de 22/08; arquivo de 5 linhas processado sem erro de arquivo, correspondência individual `N/D`, conexão principal diária e ajustes separados ativos às 06:00, com recibo `Sem alterações` | acompanhar os ciclos diários; não otimizar por evento rejeitado ou não correspondido |
 | Meta → site → WhatsApp → LEADS/CRM | P0 | sonda sintética aprovada; ciclo real `EM MONITORAMENTO` | conferir cobertura e consistência em D+3/D+7 antes de declarar o caminho funcional ao vivo |
 | Atribuição rica J0/J1/J2 | P0 | `ATIVA` desde 17/08; risco JID aceito | monitorar resolução, fallback, encaminhamento, duplicidade e rollback |
 | Schema/identidade da LEADS | P0 | schema v1 habilitado no Apps Script v97 | reconciliar LEADS/CRM e não repetir migração sem novo preflight |
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
-| Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; demais campanhas preservadas | revisar em 7 dias e depois de 1–2 ciclos limpos de conversão qualificada; só então decidir manter, escalar ou voltar a Maximizar conversões |
+| Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; RSA OTO não iniciado; demais campanhas preservadas | revisar mensuração em 27/08 e reavaliar OTO em 03/09; toda janela editorial começa somente na publicação real |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00 | revisar os três primeiros relatórios e calibrar somente falsos positivos comprovados |
 | Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v104; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `PUBLICADO; EM MONITORAMENTO` desde 17/08 | manter somente `M26F01W/C06H01` no WhatsApp e analisar separadamente; comparar apenas `M26C01W` × `M26C02S`; nenhuma troca de criativo, rota, público ou orçamento durante a janela |
-| Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGENDADO` para decisão em 20/08 | considerar excluir apenas `18–24` e `25–34` em LIFT/BLEF/CERV/FACE; manter `Desconhecida` e não alterar OTO/marca/rino |
+| Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGUARDAR DADOS`, sem exclusão aplicada | reconsiderar somente com downstream atribuível por idade; manter `Desconhecida` e não alterar OTO/marca/rino |
 | SEO técnico/CWV | P1/P2 | baseline parcial | medir 20/08; otimizar só com gargalo comprovado |
 | GSC, Wix antigo, Bing e IA | P1/P2 | dependência externa | validar acesso/estado; não prometer ranking ou citação |
 | Aqui Ads — piloto OOH hiperlocal | P2 | `AGENDADO PARA DECISÃO EM 16/09`; nenhuma compra autorizada | revalidar dois residenciais premium + um salão/spa, orçamento incremental, metodologia de audiência, peça e tracking; ativar apenas na primeira janela limpa |
@@ -363,7 +366,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 
 O Calendar é lembrete, não fonte de decisão. Este plano prevalece.
 
-Os compromissos sobrepostos de 27/08 e 17/09 foram escalonados. O evento de 20/08 foi corrigido para não repetir a publicação default-off, e foram criadas as checagens condicionais de 24 horas e 14 dias. Os lembretes de lifting também foram alinhados à decisão de explicar composição e orçamento individual sem reintroduzir faixa cirúrgica pública. A decisão etária ficou no mesmo gate: Meta facial permanece em 40+; Google será decidido em 20/08 e, se alterado, observado em 27/08 e após 14 dias completos.
+O checkpoint técnico de 27/08 foi preservado. As decisões editoriais posteriores passaram a depender da data real de início: o RSA OTO não começou em 20/08, portanto 03/09 apenas reavalia sua elegibilidade e não encerra um teste inexistente. Meta facial permanece em 40+; idade Google continua sem exclusão e só volta ao gate quando houver downstream atribuível por faixa.
 
 A rotina do Google Ads não cria três automações concorrentes. Um único script roda diariamente: fica silencioso quando a saúde está normal, envia a revisão completa às segundas-feiras e acrescenta 90 dias no primeiro dia útil do mês. Os checkpoints de 7 e 14 dias continuam no Calendar porque dependem da data real de cada mudança.
 

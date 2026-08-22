@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "generatedAt": "2026-08-22T18:39:33-03:00",
+    "initialCollectedAt": "2026-08-22T12:24:39-03:00",
+    "lastUpdatedAt": "2026-08-22T18:39:33-03:00",
+    "timezone": "America/Sao_Paulo",
+    "account": "Dra Amanda Schroeder",
+    "customerId": "995-334-4486",
+    "containsPII": false,
+    "scope": ["G26BLEF", "G26CERV", "G26OTO", "G26FACE", "G26MARCA"],
+    "protected": ["G26LIFT", "Meta Ads", "site", "WhatsApp", "demais campanhas"]
+  },
+  "datasets": {
+    "headline": [
+      {
+        "spend_current": 422.56,
+        "spend_prior": 439.85,
+        "clicks_current": 264,
+        "clicks_prior": 278,
+        "google_contacts_7d": 7,
+        "canonical_contacts_7d": 2,
+        "classified_contacts_7d": 0,
+        "budget_before": 87,
+        "budget_after": 87,
+        "ads_changes": 0
+      }
+    ],
+    "campaign_periods": [
+      {"campaign":"BLEF","code":"G26BLEF","period":"08–14/08","impressions":1568,"clicks":102,"ctr":0.0651,"cpc":1.50,"cost":152.80,"displayed_conversions":0,"search_is":0.1480,"lost_rank":0.6958,"lost_budget":0.1563},
+      {"campaign":"BLEF","code":"G26BLEF","period":"15–21/08","impressions":1707,"clicks":116,"ctr":0.0680,"cpc":1.46,"cost":169.00,"displayed_conversions":0,"search_is":0.1452,"lost_rank":0.7008,"lost_budget":0.1540},
+      {"campaign":"CERV","code":"G26CERV","period":"08–14/08","impressions":1718,"clicks":98,"ctr":0.0570,"cpc":1.27,"cost":124.36,"displayed_conversions":1,"search_is":0.2275,"lost_rank":0.6850,"lost_budget":0.0875},
+      {"campaign":"CERV","code":"G26CERV","period":"15–21/08","impressions":1616,"clicks":76,"ctr":0.0470,"cpc":1.12,"cost":85.05,"displayed_conversions":0,"search_is":0.2144,"lost_rank":0.6980,"lost_budget":0.0876},
+      {"campaign":"OTO","code":"G26OTO","period":"08–14/08","impressions":816,"clicks":50,"ctr":0.0613,"cpc":2.18,"cost":108.84,"displayed_conversions":1,"search_is":0.2305,"lost_rank":0.6961,"lost_budget":0.0734},
+      {"campaign":"OTO","code":"G26OTO","period":"15–21/08","impressions":918,"clicks":43,"ctr":0.0468,"cpc":2.55,"cost":109.47,"displayed_conversions":0,"search_is":0.2545,"lost_rank":0.6191,"lost_budget":0.1264},
+      {"campaign":"FACE","code":"G26FACE","period":"08–14/08","impressions":597,"clicks":28,"ctr":0.0469,"cpc":1.92,"cost":53.85,"displayed_conversions":1,"search_is":null,"search_is_label":"<10%","lost_rank":0.7699,"lost_budget":0.1563},
+      {"campaign":"FACE","code":"G26FACE","period":"15–21/08","impressions":492,"clicks":29,"ctr":0.0589,"cpc":2.04,"cost":59.04,"displayed_conversions":0,"search_is":null,"search_is_label":"<10%","lost_rank":0.5910,"lost_budget":0.3387},
+      {"campaign":"MARCA","code":"G26MARCA","period":"08–14/08","impressions":6,"clicks":0,"ctr":0,"cpc":null,"cost":0,"displayed_conversions":0,"search_is":1,"lost_rank":0,"lost_budget":0},
+      {"campaign":"MARCA","code":"G26MARCA","period":"15–21/08","impressions":2,"clicks":0,"ctr":0,"cpc":null,"cost":0,"displayed_conversions":0,"search_is":0.40,"lost_rank":0.60,"lost_budget":0}
+    ],
+    "campaign_30d": [
+      {"campaign":"BLEF","code":"G26BLEF","budget":23,"impressions":6581,"clicks":487,"ctr":0.0740,"cpc":1.39,"cost":679.06,"displayed_conversions":5,"search_is_label":"14,09%","lost_rank":0.7421,"lost_budget":0.1171,"final_url":"/blefaroplastia/","rsa":"Excelente","quality_score":"5/10 em blefaroplastia frase/exata","downstream":"N/D"},
+      {"campaign":"CERV","code":"G26CERV","budget":12,"impressions":6073,"clicks":335,"ctr":0.0552,"cpc":1.14,"cost":380.45,"displayed_conversions":3,"search_is_label":"19,24%","lost_rank":0.7229,"lost_budget":0.0847,"final_url":"/lifting-cervical/; /lipo-de-papada/?origem=LPP01","rsa":"Médio no grupo cervical; Excelente em lipo","quality_score":"3/10 em lipo papada","downstream":"N/D"},
+      {"campaign":"OTO","code":"G26OTO","budget":15,"impressions":3161,"clicks":166,"ctr":0.0525,"cpc":2.20,"cost":365.54,"displayed_conversions":4,"search_is_label":"20,25%","lost_rank":0.6887,"lost_budget":0.1088,"final_url":"/otoplastia-adulto/; /otoplastia-infantil/","rsa":"Bom adulto; Excelente infantil","quality_score":"N/D na principal adulta","downstream":"2 contatos; 0 classificados"},
+      {"campaign":"FACE","code":"G26FACE","budget":8,"impressions":2520,"clicks":126,"ctr":0.0500,"cpc":1.84,"cost":231.62,"displayed_conversions":3,"search_is_label":"<10%","lost_rank":0.7530,"lost_budget":0.1706,"final_url":"/avaliacao-facial/","rsa":"Excelente","quality_score":"N/D na principal","downstream":"N/D"},
+      {"campaign":"MARCA","code":"G26MARCA","budget":5,"impressions":17,"clicks":2,"ctr":0.1176,"cpc":0.98,"cost":1.96,"displayed_conversions":0,"search_is_label":"60,87%","lost_rank":0.3478,"lost_budget":0.0435,"final_url":"/","rsa":"Excelente com DKI","quality_score":"N/D","downstream":"N/D"}
+    ],
+    "funnel": [
+      {"order":1,"window":"15–21/08","identified":7,"canonical":2,"unknown":5,"classified":0,"valid":0,"qualified_plus":0,"scheduled_plus":0,"completed_plus":0,"note":"2 canônicos G26OTO; demais campanhas N/D"},
+      {"order":2,"window":"23/07–21/08","identified":17,"canonical":2,"unknown":15,"classified":5,"valid":4,"qualified_plus":4,"scheduled_plus":0,"completed_plus":0,"note":"campanha de 15 contatos não atribuível"},
+      {"order":3,"window":"24/05–21/08","identified":24,"canonical":2,"unknown":22,"classified":8,"valid":7,"qualified_plus":7,"scheduled_plus":0,"completed_plus":0,"note":"campanha de 22 contatos não atribuível"}
+    ],
+    "data_quality": [
+      {"domain":"Mídia e orçamento","confidence":"Alta","evidence":"Conta autenticada e pós-voo por entidade","safe_use":"diagnóstico de entrega e integridade"},
+      {"domain":"URLs e tracking","confidence":"Alta","evidence":"href vivo, HTTP e testes locais","safe_use":"correção factual se houvesse erro; nenhum encontrado"},
+      {"domain":"Funil total Google","confidence":"Média","evidence":"agregado sem PII atualizado no dia","safe_use":"estado total; não atribuir os desconhecidos"},
+      {"domain":"Funil por campanha","confidence":"Baixa","evidence":"2/17 contatos canônicos em 30 dias","safe_use":"somente OTO identificado; demais N/D"},
+      {"domain":"Correspondência click ID","confidence":"Insuficiente","evidence":"sem contagem por GCLID/GBRAID/WBRAID no agregado","safe_use":"N/D; não inferir"},
+      {"domain":"Histórico de alterações","confidence":"Parcial","evidence":"30 dias renderizados; última mudança visível em 15/08; recorte de 22/08 indisponível","safe_use":"delimitar parcialmente mudanças; estado efetivo verificado por entidade"},
+      {"domain":"Negativas compartilhadas","confidence":"Alta","evidence":"listas, IDs, associações e termos reabertos ao vivo","safe_use":"diagnóstico; nenhuma edição porque ambas alcançam G26LIFT"},
+      {"domain":"Site e tracking","confidence":"Alta","evidence":"44/44 rotas locais; 8/8 páginas públicas; 22/22 testes de CTA/tracking","safe_use":"integridade técnica; mobile visual e CWV permanecem N/D"}
+    ],
+    "proposals": [
+      {"priority":1,"campaign":"Conta","proposal":"Restaurar frescor e reconciliação da ação principal","metric":"eventos aceitos/correspondidos e qualificados reais","guardrail":"zero PII, zero duplicidade","status":"Não aplicada — gate de mensuração"},
+      {"priority":2,"campaign":"OTO","proposal":"Substituir um título duplicado no RSA adulto pelo teste planejado","metric":"contato válido, qualificado e consulta","guardrail":"um RSA por vez; 14 dias; preferencialmente 50 cliques","status":"Não aplicada — tracking sem saúde"},
+      {"priority":3,"campaign":"OTO / governança","proposal":"Revisar projeto orelhinha fora da lista compartilhada e decidir manter, remover ou realocar","metric":"oferta confirmada e qualidade downstream do termo","guardrail":"não editar lista que alcança G26LIFT; mudança isolada","status":"Não aplicada — intenção, oferta e isolamento N/D"},
+      {"priority":4,"campaign":"MARCA","proposal":"Revisar logo e imagens após abrir causas completas","metric":"aprovação e cobertura dos recursos","guardrail":"não tocar logo de conta compartilhado","status":"Não aplicada — causa/substituto incompletos"},
+      {"priority":5,"campaign":"MARCA","proposal":"Comparar DKI com Site Oficial da Dra. Amanda","metric":"cobertura, CTR e contato válido","guardrail":"amostra mínima; sem ampliar verba ou match","status":"Não aplicada — volume insuficiente"},
+      {"priority":6,"campaign":"BLEF, CERV e FACE","proposal":"Avaliar idade, horário e localização por downstream","metric":"válido, qualificado e consulta por segmento","guardrail":"preservar desconhecida; excluir G26LIFT, OTO e MARCA","status":"Somente proposta — fora do escopo de execução"}
+    ],
+    "postflight": [
+      {"campaign":"BLEF","budget_before":23,"budget_after":23,"changed":false},
+      {"campaign":"CERV","budget_before":12,"budget_after":12,"changed":false},
+      {"campaign":"OTO","budget_before":15,"budget_after":15,"changed":false},
+      {"campaign":"FACE","budget_before":8,"budget_after":8,"changed":false},
+      {"campaign":"MARCA","budget_before":5,"budget_after":5,"changed":false},
+      {"campaign":"LIFT protegido","budget_before":24,"budget_after":24,"changed":false},
+      {"campaign":"Total operacional","budget_before":87,"budget_after":87,"changed":false}
+    ]
+  }
+}

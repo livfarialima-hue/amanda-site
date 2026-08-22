@@ -6,6 +6,19 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 22 de agosto de 2026 — auditoria ao vivo das cinco campanhas sem mudança madura
+
+- **Status:** auditoria concluída; nenhuma alteração de campanha, anúncio, palavra, negativa, recurso, lance, meta, orçamento, site ou WhatsApp foi publicada.
+- **Área/campanhas:** `G26BLEF`, `G26CERV`, `G26OTO`, `G26FACE` e `G26MARCA`; `G26LIFT` permaneceu protegida e foi consultada apenas no pós-voo.
+- **Evidência:** em 15–21/08, as cinco campanhas somaram 264 cliques e R$ 422,56, ante 278 cliques e R$ 439,85 nos sete dias anteriores. O agregado Google recente tinha 7 contatos identificados, somente 2 com campanha canônica — ambos OTO —, 5 com campanha desconhecida e nenhum classificado. Em 30 dias, somente 2 de 17 contatos tinham campanha canônica. A ação principal `Lead qualificado GCLID` estava em `Requer atenção`, sem conversão posterior a 12/08.
+- **Achados retidos como proposta:** duplicidade por capitalização no RSA adulto OTO; revisão futura de logos/imagens e da copy de marca; revisão governada de `"projeto orelhinha"`, atualmente bloqueado em frase por lista compartilhada que também alcança `G26LIFT`. A leitura final de `blefaroplastia preço popular` mostrou 12 cliques e R$ 16,00 em 30 dias. O histórico prova que a lista foi associada a BLEF em 09/08 e o inventário atual contém `"preço popular"`, mas a data de entrada da negativa e a cronologia dos cliques são `N/D`; criar outra negativa exata seria redundante. Nenhum achado passou o gate downstream e de isolamento nesta data.
+- **Motivo e hipótese:** preservar a conta evita atribuir efeito a cliques, conversões agregadas ou termos sem qualidade reconciliada. Com 1–2 ciclos limpos, campanha canônica e classificação suficiente, o primeiro teste OTO poderá ser iniciado e medido isoladamente.
+- **Métrica:** cobertura de campanha canônica, contatos classificados, válidos e qualificados, consultas, frescor/aceite da conversão principal e divergência entre Google Ads, agregado, LEADS e CRM.
+- **Guardrails:** orçamento total R$ 87/dia; nenhuma exclusão etária em OTO/MARCA; preservar `Desconhecida`; uma mudança RSA por vez; negativas no menor nível seguro após downstream, sem editar lista compartilhada que afete LIFT; zero PII; nenhuma alteração de site nesta execução e mudanças preexistentes do worktree preservadas.
+- **Rollback:** não aplicável, pois nenhuma mudança foi executada. Propostas futuras devem preservar o inventário anterior e registrar rollback próprio no momento da publicação.
+- **Revisão:** saúde técnica em 27/08; primeira leitura completa em 30/08; elegibilidade OTO em 03/09; leitura de 14 dias em 06/09. Janelas editoriais contam somente da publicação real.
+- **Regra para avançar:** tracking saudável, divergências explicadas, baseline registrado, downstream atribuível e nenhuma mudança material concorrente. Sem isso, manter a conta intacta.
+
 ## 20–21 de agosto de 2026 — auditoria das conversas e qualificação com evidência pessoal
 
 - **Status:** versão `2026-08-20.4` publicada e verificada no commit funcional `dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74`, deploy Netlify `6a879f71c5efe0ad12609a3d`, saneamento `88cdbd0` e Apps Script v110; **940/940 testes**, build de 178 arquivos e 44 URLs sem erro.

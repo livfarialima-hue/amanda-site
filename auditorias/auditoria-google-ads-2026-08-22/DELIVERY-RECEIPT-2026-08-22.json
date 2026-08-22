@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-08-22T18:56:18-03:00",
+  "artifact": "artifact.json",
+  "output": "report.html",
+  "generation": {
+    "buildPortableArtifact": "passed",
+    "deliveryPipeline": "partial",
+    "deliveryBlockingCode": "horizontal_overflow"
+  },
+  "validation": {
+    "canonicalArtifact": "passed",
+    "package": "passed",
+    "selfContainedHtml": true,
+    "embeddedArtifactEquality": "passed before browser layout gate",
+    "snapshotDatasetsEquality": "passed",
+    "structuralVerification": "passed before browser layout gate",
+    "counts": {
+      "blocks": 13,
+      "charts": 1,
+      "metricStrips": 1,
+      "metrics": 5,
+      "tables": 5
+    }
+  },
+  "browserVerification": {
+    "status": "partial",
+    "desktop": "failed",
+    "mobile": "not reached after desktop gate",
+    "code": "horizontal_overflow",
+    "desktopViewport": 1440,
+    "screenshot": "report-verification-failure.png",
+    "consoleErrors": "N/D — o terminal encerrou no gate de layout",
+    "externalRequests": "N/D — o terminal encerrou no gate de layout",
+    "pageErrors": "N/D — o terminal encerrou no gate de layout",
+    "note": "O leitor portátil compartilhado usa um cabeçalho de 100vw junto à scrollbar vertical e ultrapassa a largura útil. O HTML foi gerado pelo builder canônico, é autônomo e contém o artefato integral; o gerador compartilhado não foi alterado. O Markdown e o CSV permanecem os registros primários da auditoria."
+  }
+}
