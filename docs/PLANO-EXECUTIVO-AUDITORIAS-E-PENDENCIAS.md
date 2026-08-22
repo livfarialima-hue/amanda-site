@@ -130,7 +130,7 @@ Já foi feito:
 - agregado anônimo do funil publicado pelo Apps Script versão `92`, com trigger diário aproximadamente às `08:15` e sem PII.
 - auditoria de fases aplicada em 176 oportunidades: 5 conversões qualificadas com click ID foram preparadas, 2 falsos eventos foram invalidados e 2 `RETRACT` idempotentes foram projetados em arquivo separado sem PII;
 - conexão `LEADS` do Data Manager reativada diariamente entre `05:00–06:00` BRT, com próxima execução marcada para `23/08 05:05`; a execução manual de `22/08 11:25` concluiu com 5 linhas importadas e 0 erros;
-- upload separado dos 2 ajustes validou o schema e o fuso `-0300`; ambos retornaram `conversão não existe` e o recibo final ficou `Sem alterações`, coerente com a evidência de que os falsos eventos não chegaram à conta;
+- upload separado dos 2 ajustes validou o schema e o fuso `-0300`; ambos retornaram `conversão não existe` e o recibo final ficou `Sem alterações`, coerente com a evidência de que os falsos eventos não chegaram à conta; o arquivo dedicado ficou com horário ativo diariamente às `06:00` BRT, depois da importação principal;
 - os dois anúncios ativos de lifting passaram a usar `_camp=G26LIFT`, eliminando a sobrescrita de anúncio `_camp=g26f01`; nenhuma evidência histórica foi reinterpretada;
 - `S_BR_SP_LIFTING_FACIAL` passou de Maximizar conversões para Maximizar cliques, sem limite de CPC, preservando R$ 24/dia e a meta específica `Lead qualificado GCLID`; nenhuma outra campanha ou orçamento foi alterado.
 
@@ -320,7 +320,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 
 | Pacote | Prioridade | Estado | Próxima decisão |
 |---|---|---|---|
-| Conversão offline Google e receipts | P0 | `CONCLUÍDO` no Lote 1 de 22/08; execução manual com 5 importadas/0 erros, conexão diária ativa e recibo de ajustes `Sem alterações` | acompanhar os ciclos de 05:00–06:00; não otimizar por evento rejeitado |
+| Conversão offline Google e receipts | P0 | `CONCLUÍDO` no Lote 1 de 22/08; execução manual com 5 importadas/0 erros, conexão principal diária e ajustes separados ativos às 06:00, com recibo `Sem alterações` | acompanhar os ciclos diários; não otimizar por evento rejeitado |
 | Meta → site → WhatsApp → LEADS/CRM | P0 | sonda sintética aprovada; ciclo real `EM MONITORAMENTO` | conferir cobertura e consistência em D+3/D+7 antes de declarar o caminho funcional ao vivo |
 | Atribuição rica J0/J1/J2 | P0 | `ATIVA` desde 17/08; risco JID aceito | monitorar resolução, fallback, encaminhamento, duplicidade e rollback |
 | Schema/identidade da LEADS | P0 | schema v1 habilitado no Apps Script v97 | reconciliar LEADS/CRM e não repetir migração sem novo preflight |
