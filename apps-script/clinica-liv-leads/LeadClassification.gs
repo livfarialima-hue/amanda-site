@@ -2719,6 +2719,21 @@ function reconciliarConversoesGoogleAdsFasesAtuais(input) {
   return result;
 }
 
+function planejarReconciliacaoConversoesGoogleAdsFasesAtuais() {
+  const result = reconciliarConversoesGoogleAdsFasesAtuais({ apply: false });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function aplicarReconciliacaoConversoesGoogleAdsFasesAtuais() {
+  const result = reconciliarConversoesGoogleAdsFasesAtuais({
+    apply: true,
+    confirmation: "RECONCILIAR_CONVERSOES_GOOGLE_ADS_FASES_V1",
+  });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
 function completeLeadClassification_(job, classification) {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const queueSheet = getOrCreateLeadAuxiliarySheet_(
