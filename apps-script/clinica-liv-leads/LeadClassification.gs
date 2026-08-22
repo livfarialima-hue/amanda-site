@@ -543,7 +543,7 @@ function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
   const row = [
     transactionId,
     conversionName,
-    googleConversionTimestamp_(
+    googleAdsAdjustmentTimestamp_(
       details.adjustmentAt instanceof Date ? details.adjustmentAt : new Date(),
     ),
     "RETRACT",
@@ -2435,6 +2435,14 @@ function googleConversionTimestamp_(date) {
     date,
     CONFIG.timezone,
     "yyyy-MM-dd HH:mm:ssXXX",
+  );
+}
+
+function googleAdsAdjustmentTimestamp_(date) {
+  return Utilities.formatDate(
+    date,
+    CONFIG.timezone,
+    "yyyy-MM-dd HH:mm:ssZ",
   );
 }
 

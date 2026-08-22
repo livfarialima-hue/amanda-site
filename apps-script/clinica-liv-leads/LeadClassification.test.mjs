@@ -55,6 +55,7 @@ function loadFunctions() {
       formatDate(_date, _timezone, pattern) {
         if (pattern === "yyyyMMdd") return "20260802";
         if (pattern.includes("XXX")) return "2026-08-02 12:00:00-03:00";
+        if (pattern.endsWith("Z")) return "2026-08-02 12:00:00-0300";
         return "02/08/2026";
       },
     },
@@ -274,6 +275,7 @@ test("audited false positives invalidate the ledger and leave the import queue",
   assert.equal(importRows.length, 0);
   assert.equal(adjustmentRows.length, 1);
   assert.equal(adjustmentRows[0][0], ledgerRow[9]);
+  assert.equal(adjustmentRows[0][2], "2026-08-02 12:00:00-0300");
   assert.equal(adjustmentRows[0][3], "RETRACT");
   assert.equal(projectionRows.length, 1);
   assert.deepEqual(projectionRows[0], adjustmentRows[0]);
