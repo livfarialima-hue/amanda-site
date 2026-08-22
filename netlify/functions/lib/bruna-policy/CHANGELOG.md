@@ -6,7 +6,7 @@
 - A rota permanece humana e pendente; o sistema não reconstrói a fala, não presume anúncio, profissional, procedimento, qualificação ou agenda e não registra uma mensagem que o provedor não entregou.
 - A deduplicação por mensagem mais recente passa a cobrir também esse formato. O replay do payload `unsupported` não entra na fila durável de recuperação, porque repetir o mesmo envelope não recupera o corpo omitido.
 - A observabilidade registra somente disponibilidade, subtipo e códigos técnicos saneados. O teste sintético confirma que título, detalhe, nome, telefone e conteúdo não entram no log.
-- Estado desta versão: candidata local com **635/635 testes do Netlify**; nenhuma mensagem real foi enviada. A produção permanece em `2026-08-20.4` até a publicação do commit candidato.
+- Estado desta versão: publicada e verificada no commit funcional `5c08be94a7382c9f2c2bbd56c510277541b19169` e deploy Netlify `6a89f0e9f4f19fa8ec16b8e6`; função `ycloud-webhook` no checksum `97f6ea16f2443c575d093786903f821101e602934a23b818f96557f533aedc3b`, **635/635 testes do Netlify**, build de 178 arquivos, 44 URLs e endpoint público `active`. Nenhuma mensagem real foi enviada. Rollback: deploy `6a89b867a85c5f00085ae691` e código funcional `dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74`.
 
 ## 2026-08-20.3
 
