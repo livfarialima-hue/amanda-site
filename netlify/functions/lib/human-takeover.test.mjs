@@ -60,6 +60,27 @@ test("a short answer to a human information offer is an immediate AI candidate",
   assert.equal(
     isSemanticHumanContextContinuationCandidate({
       ...base,
+      text: "Como funciona?",
+    }),
+    true,
+  );
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate({
+      ...base,
+      text: "Como funciona?",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "Recebi sua mensagem e a equipe continuará por aqui.",
+        },
+      ],
+    }),
+    false,
+  );
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate({
+      ...base,
       protectedAppointmentContinuation: true,
     }),
     false,

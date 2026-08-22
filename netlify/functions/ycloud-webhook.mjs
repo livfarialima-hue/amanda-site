@@ -53,6 +53,9 @@ import {
   getDurableConversationContext,
 } from "./lib/conversation-ledger.mjs";
 import {
+  coalesceLatestPatientBurst,
+} from "./lib/inbound-burst-context.mjs";
+import {
   clearExternalProfessionalContext,
   detectExternalProfessionalAppointment,
   getExternalProfessionalContext,
@@ -129,6 +132,7 @@ import {
   isExplicitNightPause,
   isReplyToHumanContextWithoutStandaloneRequest,
   isShortAffirmativeReplyToHumanQuestion,
+  isStandaloneRequestInvitedByHuman,
 } from "./lib/conversation-action-controller.mjs";
 import {
   buildExtremeNightAcknowledgement,
@@ -1879,10 +1883,78 @@ export function isSemanticHumanContextContinuationCandidate({
         isShortAffirmativeReplyToHumanQuestion(
           text,
           recentConversation,
+        ) ||
+        isStandaloneRequestInvitedByHuman(
+          text,
+          recentConversation,
         )
       ) &&
       hasUnresolvedPatientRequest(text, recentConversation),
   );
+}
+
+function approvedPriceReplyKindForPlan(plan) {
+  if (plan?.reason === "price_initial_information") {
+    return "initial_information";
+  }
+  if (plan?.reason === "lifting_price_range_direct") return "lifting_range";
+  if (plan?.reason === "otoplasty_price_range_direct") return "otoplasty_range";
+  return "";
+}
+
+export function isRefreshedHumanContextProtected(plan, text) {
+  return Boolean(
+    plan?.route !== "standard_reply" ||
+      plan?.automaticAllowed !== true ||
+      plan?.professional === "daniel" ||
+      isSchedulingRequest(text),
+  );
+}
+
+export async function refreshLatestHumanContextInput(
+  input,
+  {
+    getDurableConversationContextImpl = getDurableConversationContext,
+  } = {},
+) {
+  let recentConversation = Array.isArray(input?.recentConversation)
+    ? input.recentConversation
+    : [];
+  let source = "volatile_cache";
+
+  try {
+    const durableContext = await getDurableConversationContextImpl({
+      phone: input?.phone,
+      opportunityId: input?.opportunityId,
+      professional: input?.professional,
+      limit: 32,
+    });
+    if (durableContext?.status === "completed" && durableContext.turns?.length) {
+      recentConversation = toOpenAIConversation(durableContext.turns);
+      source = "durable_ledger";
+    } else if (durableContext?.status !== "completed") {
+      source = "volatile_cache_fallback";
+    }
+  } catch {
+    source = "volatile_cache_fallback";
+  }
+
+  const burst = coalesceLatestPatientBurst({
+    recentConversation,
+    currentText: input?.text,
+    currentEventId: input?.eventId,
+    currentAt: input?.receivedAt,
+  });
+  return {
+    input: {
+      ...input,
+      text: burst.text || input?.text || "",
+      recentConversation: burst.recentConversation,
+    },
+    source,
+    coalesced: burst.coalesced,
+    burstTurnCount: burst.burstTurnCount,
+  };
 }
 
 async function completeOpenAIActive({
@@ -1956,6 +2028,89 @@ async function completeOpenAIActive({
         },
       });
       return { status: "superseded", replySent: false };
+    }
+
+    if (humanContextContinuationCandidate) {
+      const refreshed = await refreshLatestHumanContextInput(input);
+      input = refreshed.input;
+      const refreshedBasePlan = planAutomation({
+        text: input.text,
+        messageType: "text",
+        reference: input.sourceReference,
+        platform: input.platform,
+        referralContext: input.referralContext,
+        templateId: input.templateId,
+      });
+      const refreshedPlan = enrichPricePlanFromPatientRelationship(
+        enrichAutomationPlanFromConversation(
+          refreshedBasePlan,
+          input.recentConversation,
+        ),
+        patientRelationship,
+      );
+      const refreshedContextProtected = isRefreshedHumanContextProtected(
+        refreshedPlan,
+        input.text,
+      );
+      if (refreshedContextProtected) {
+        writeOperationalLog({
+          source: "human_context_burst_refresh",
+          category: "reply_control",
+          reason: "refreshed_context_protected",
+          sourceId: input.eventId,
+          fields: {
+            source: refreshed.source,
+            burstTurnCount: refreshed.burstTurnCount,
+            planReason: refreshedPlan.reason,
+            planRoute: refreshedPlan.route,
+          },
+        });
+        return {
+          status: "waiting_human_context_refresh",
+          replySent: false,
+        };
+      }
+      plan = {
+        ...refreshedPlan,
+        route: "standard_reply",
+        replyCode: "",
+        professional:
+          refreshedPlan.professional || plan?.professional || input.professional,
+        procedure:
+          refreshedPlan.procedure || plan?.procedure || input.procedure,
+        automaticAllowed: true,
+        humanContextContinuationCandidate: true,
+      };
+      conversationAction = prepareSemanticContextContinuationAction(
+        decideConversationAction({
+          text: input.text,
+          messageType: "text",
+          plan,
+          recentConversation: input.recentConversation,
+          humanTakeoverActive: true,
+          exactDuplicate,
+          schedulingRequest,
+        }),
+      );
+      approvedPriceReplyKind = approvedPriceReplyKindForPlan(plan);
+      if (refreshed.coalesced) {
+        input.learningContext = await getBotKnowledgeContext({
+          phone: to,
+          question: input.text,
+          procedure: plan.procedure || "",
+        });
+      }
+      writeOperationalLog({
+        source: "human_context_burst_refresh",
+        category: "conversation_memory",
+        reason: refreshed.coalesced ? "burst_coalesced" : "context_refreshed",
+        sourceId: input.eventId,
+        fields: {
+          source: refreshed.source,
+          burstTurnCount: refreshed.burstTurnCount,
+          planReason: plan.reason,
+        },
+      });
     }
 
     const introduceBruna = !input.recentConversation.some(
@@ -4646,14 +4801,9 @@ export async function handleYCloudWebhook(
     },
     automationPlan,
   );
-  const approvedPriceReplyKind =
-    relationshipAwarePlan.reason === "price_initial_information"
-      ? "initial_information"
-      : relationshipAwarePlan.reason === "lifting_price_range_direct"
-        ? "lifting_range"
-        : relationshipAwarePlan.reason === "otoplasty_price_range_direct"
-          ? "otoplasty_range"
-        : "";
+  const approvedPriceReplyKind = approvedPriceReplyKindForPlan(
+    relationshipAwarePlan,
+  );
   const approvedPriceReplyCandidate =
     Boolean(approvedPriceReplyKind) &&
     automationPlan.route === "standard_reply" &&

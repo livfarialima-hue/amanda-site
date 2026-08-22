@@ -94,13 +94,21 @@ function contextContinuationContract(replyContract) {
 export function prepareSemanticContextContinuationAction(
   conversationAction,
 ) {
+  const currentContract = conversationAction?.replyContract || {};
+  const approvedInitialPricePath = Boolean(
+    currentContract.sourceReason === "price_initial_information" &&
+      currentContract.allowCta === true &&
+      Number(currentContract.maxLinks) >= 1,
+  );
   return {
     ...conversationAction,
     replyContract: {
       ...contextContinuationContract(
-        conversationAction?.replyContract,
+        currentContract,
       ),
-      maxQuestions: 1,
+      maxQuestions: approvedInitialPricePath ? 0 : 1,
+      maxLinks: approvedInitialPricePath ? 1 : 0,
+      allowCta: approvedInitialPricePath,
     },
   };
 }

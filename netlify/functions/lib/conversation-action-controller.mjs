@@ -160,6 +160,24 @@ export function isShortAffirmativeReplyToHumanQuestion(
   );
 }
 
+export function isStandaloneRequestInvitedByHuman(
+  text,
+  recentConversation = [],
+) {
+  const clinicTurn = latestClinicTurn(recentConversation);
+  const humanOwned =
+    clinicTurn?.role === "assistant" &&
+    ["human", "equipe_humana"].includes(
+      String(clinicTurn?.source || ""),
+    );
+
+  return Boolean(
+    humanOwned &&
+      clinicTurnInvitesResponse(clinicTurn) &&
+      introducesStandalonePatientRequest(text),
+  );
+}
+
 export function hasDirectPatientRequest(text) {
   const value = normalized(text);
   return (
