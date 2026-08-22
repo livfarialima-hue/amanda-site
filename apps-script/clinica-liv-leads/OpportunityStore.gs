@@ -1606,6 +1606,21 @@ function resolverFaseSincronizada_(crmStage, visibleStage, input) {
   };
 }
 
+function reconciliarConversaoAposSincronizacaoFase_(spreadsheet, details) {
+  if (typeof reconciliarConversaoGoogleAdsComFase_ !== "function") {
+    return { ok: true, ignored: true, reason: "reconciler_unavailable" };
+  }
+  try {
+    return reconciliarConversaoGoogleAdsComFase_(spreadsheet, details);
+  } catch (error) {
+    return {
+      ok: false,
+      reason: "google_ads_reconciliation_failed",
+      error: String(error && error.message || error),
+    };
+  }
+}
+
 function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
   const lock = typeof LockService !== "undefined" &&
     typeof LockService.getDocumentLock === "function"
@@ -1690,6 +1705,30 @@ function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
     const pointerChanged = String(found.values[4] || "") !== leadSheetName ||
       Number(found.values[5] || 0) !== leadResult.row;
     if (!stageChanged && !metadataChanged && !pointerChanged) {
+      const googleAdsReconciliation =
+        reconciliarConversaoAposSincronizacaoFase_(spreadsheet, {
+          sheet: leadSheet,
+          row: leadResult.row,
+          phone: input.phone || found.values[1],
+          opportunityId,
+          professional,
+          stage: phaseResult.stage,
+          source: input.source || "canonical_stage_sync",
+          reason: input.reason || "",
+          at: input.at,
+        });
+      if (!googleAdsReconciliation.ok) {
+        return {
+          ok: false,
+          changed: false,
+          reason: googleAdsReconciliation.reason,
+          error: googleAdsReconciliation.error || "",
+          opportunityId,
+          row: leadResult.row,
+          stage: phaseResult.stage,
+          googleAdsReconciliation,
+        };
+      }
       if (typeof atualizarLinhaFunilCanonicoPorOportunidade_ === "function") {
         try {
           atualizarLinhaFunilCanonicoPorOportunidade_(spreadsheet, opportunityId);
@@ -1708,6 +1747,7 @@ function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
         stage: phaseResult.stage,
         previousStage: visibleStage || String(found.values[7] || ""),
         matchedBy: opportunityResult.matchedBy,
+        googleAdsReconciliation,
       };
     }
 
@@ -1792,6 +1832,34 @@ function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
       }
     }
 
+    const googleAdsReconciliation =
+      reconciliarConversaoAposSincronizacaoFase_(spreadsheet, {
+        sheet: leadSheet,
+        row: leadResult.row,
+        phone: input.phone || found.values[1],
+        opportunityId,
+        professional,
+        stage: phaseResult.stage,
+        source: input.source || "canonical_stage_sync",
+        reason: input.reason || "",
+        at: now,
+      });
+    if (!googleAdsReconciliation.ok) {
+      return {
+        ok: false,
+        changed: true,
+        reason: googleAdsReconciliation.reason,
+        error: googleAdsReconciliation.error || "",
+        opportunityId,
+        row: leadResult.row,
+        stage: phaseResult.stage,
+        previousStage: visibleStage || String(found.values[7] || ""),
+        version: nextVersion,
+        matchedBy: opportunityResult.matchedBy,
+        googleAdsReconciliation,
+      };
+    }
+
     return {
       ok: true,
       changed: true,
@@ -1801,6 +1869,7 @@ function sincronizarFaseOportunidadeELead_(spreadsheet, input) {
       previousStage: visibleStage || String(found.values[7] || ""),
       version: nextVersion,
       matchedBy: opportunityResult.matchedBy,
+      googleAdsReconciliation,
     };
   } catch (error) {
     for (let index = rollback.length - 1; index >= 0; index -= 1) {

@@ -8,7 +8,11 @@ const source = readFileSync(
   "utf8",
 );
 
-function load({ schemaEnabled = true, spreadsheet = null } = {}) {
+function load({
+  schemaEnabled = true,
+  spreadsheet = null,
+  reconcileGoogleAds = null,
+} = {}) {
   const sandbox = {
     Object,
     String,
@@ -61,6 +65,9 @@ function load({ schemaEnabled = true, spreadsheet = null } = {}) {
     versaoChaveIdentidadeLead_: () => "k1",
     pseudonimoIdentidadeLead_: (value) => `pid_k1_${String(value || "").replace(/\D/g, "")}`,
   };
+  if (typeof reconcileGoogleAds === "function") {
+    sandbox.reconciliarConversaoGoogleAdsComFase_ = reconcileGoogleAds;
+  }
   vm.runInNewContext(
     `${source}\nglobalThis.__test = { resolverRotaLead_, resolverRotaLeadComContexto_, criarOpportunityId_, resolverLinhaLeadCanonica_, resolverFaseSincronizada_, sincronizarFaseOportunidadeELead_, aplicarAtribuicaoOportunidade_, lerAtribuicaoOportunidade_, atribuicaoLegadaOportunidade_, normalizarAtribuicaoOportunidade_, vincularOportunidadeAoLead_, migrarPseudonimosIdentidadeLead, migrarSchemaAtribuicaoV1, OPPORTUNITY_STORE_CONFIG, OPPORTUNITY_HEADERS, OPPORTUNITY_ALL_HEADERS, OPPORTUNITY_ATTRIBUTION_HEADERS, OPPORTUNITY_STAGE_VALUES, LEAD_INTEGRATION_HEADERS, LEAD_ALL_INTEGRATION_HEADERS };`,
     sandbox,
@@ -845,13 +852,19 @@ test("an explicit opportunity id wins and a phone-only duplicate fails closed", 
 });
 
 test("canonical phase sync updates CRM and visible row once and permits human correction", () => {
+  const reconciliationCalls = [];
   const {
     sincronizarFaseOportunidadeELead_,
     OPPORTUNITY_HEADERS,
     OPPORTUNITY_STAGE_VALUES,
     LEAD_INTEGRATION_HEADERS,
     OPPORTUNITY_STORE_CONFIG,
-  } = load();
+  } = load({
+    reconcileGoogleAds(_spreadsheet, details) {
+      reconciliationCalls.push({ ...details });
+      return { ok: true, ready: details.stage !== "Novo" };
+    },
+  });
   const opportunity = Array(OPPORTUNITY_HEADERS.length).fill("");
   opportunity[0] = "opp-1";
   opportunity[1] = "+5511999999999";
@@ -927,6 +940,10 @@ test("canonical phase sync updates CRM and visible row once and permits human co
   assert.equal(opportunitySheet.data[1][7], "Qualificado");
   assert.equal(leadSheet.data[1][4], "Qualificado");
   assert.equal(opportunitySheet.data[1][22], 3);
+  assert.deepEqual(
+    reconciliationCalls.map((entry) => entry.stage),
+    ["Consulta agendada", "Consulta agendada", "Qualificado"],
+  );
 });
 
 test("automatic sync refuses an equal-rank qualified/non-qualified conflict", () => {

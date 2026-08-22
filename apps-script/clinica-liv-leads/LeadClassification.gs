@@ -97,6 +97,15 @@ const GOOGLE_ADS_IMPORT_HEADERS = Object.freeze([
   "Moeda",
 ]);
 
+const GOOGLE_ADS_ADJUSTMENT_HEADERS = Object.freeze([
+  "Order ID",
+  "Conversion Name",
+  "Adjustment Time",
+  "Adjustment Type",
+  "Adjusted Value",
+  "Adjusted Value Currency",
+]);
+
 const GOOGLE_ADS_TRANSACTION_ID_PATTERN =
   /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/;
 const GOOGLE_ADS_QUARANTINE_STATE = "quarantined_legacy";
@@ -515,6 +524,58 @@ function ensureGoogleAdsImportRow_(spreadsheet, details) {
 
   sheet.appendRow(row);
   return true;
+}
+
+function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
+  const sheet = getOrCreateLeadAuxiliarySheet_(
+    spreadsheet,
+    CONFIG.googleAdsAdjustmentSheetName,
+    GOOGLE_ADS_ADJUSTMENT_HEADERS,
+  );
+  const transactionId = String(details.transactionId || "").trim();
+  const conversionName = String(details.conversionName || "").trim();
+  if (!googleAdsTransactionIdSeguro_(transactionId)) {
+    throw new Error("invalid_google_ads_adjustment_transaction_id");
+  }
+  if (conversionName !== CONFIG.qualifiedConversionName) {
+    throw new Error("invalid_google_ads_adjustment_conversion_name");
+  }
+  if (findGoogleAdsEventRow_(sheet, transactionId)) return false;
+
+  sheet.appendRow([
+    transactionId,
+    conversionName,
+    googleConversionTimestamp_(
+      details.adjustmentAt instanceof Date ? details.adjustmentAt : new Date(),
+    ),
+    "RETRACT",
+    "",
+    "",
+  ]);
+  sheet.showSheet();
+  return true;
+}
+
+function googleAdsQualificationMilestone_(spreadsheet, opportunityId) {
+  const eventSheet = spreadsheet && spreadsheet.getSheetByName
+    ? spreadsheet.getSheetByName(CONFIG.googleAdsEventSheetName)
+    : null;
+  if (!eventSheet || eventSheet.getLastRow() < 2) return "qualified_lead";
+  const rows = eventSheet
+    .getRange(2, 1, eventSheet.getLastRow() - 1, GOOGLE_ADS_EVENT_HEADERS.length)
+    .getDisplayValues();
+  const milestones = {};
+  let latestReady = "";
+  rows.forEach(function inspectQualificationCycle(row) {
+    if (String(row[1] || "") !== String(opportunityId || "")) return;
+    const milestone = String(row[2] || "");
+    if (!/^qualified_lead(?:_v\d+)?$/.test(milestone)) return;
+    milestones[milestone] = true;
+    if (String(row[10] || "") === "ready") latestReady = milestone;
+  });
+  if (latestReady) return latestReady;
+  const cycleCount = Object.keys(milestones).length;
+  return cycleCount ? "qualified_lead_v" + (cycleCount + 1) : "qualified_lead";
 }
 
 function reativarGoogleAdsMilestoneExistente_(sheet, row, details) {
@@ -1256,10 +1317,23 @@ function invalidarConversoesGoogleAdsOportunidade_(
     .getRange(2, 1, eventSheet.getLastRow() - 1, GOOGLE_ADS_EVENT_HEADERS.length)
     .getDisplayValues();
   const transactions = {};
+  const retractions = {};
   let invalidated = 0;
   values.forEach(function invalidateEvent(row, index) {
     if (String(row[1] || "") !== String(opportunityId)) return;
-    if (row[9]) transactions[String(row[9])] = true;
+    const transactionId = String(row[9] || "").trim();
+    if (transactionId) transactions[transactionId] = true;
+    if (
+      googleAdsTransactionIdSeguro_(transactionId) &&
+      String(row[5] || "") === CONFIG.qualifiedConversionName &&
+      String(row[10] || "") !== GOOGLE_ADS_QUARANTINE_STATE &&
+      String(row[14] || "amanda") === "amanda"
+    ) {
+      retractions[transactionId] = {
+        transactionId,
+        conversionName: String(row[5] || ""),
+      };
+    }
     eventSheet.getRange(index + 2, 11, 1, 4).setValues([[
       state,
       reason,
@@ -1268,6 +1342,18 @@ function invalidarConversoesGoogleAdsOportunidade_(
     ]]);
     invalidated += 1;
   });
+  let retractionsQueued = 0;
+  Object.keys(retractions).forEach(function enqueueRetraction(transactionId) {
+    if (ensureGoogleAdsRetractionRow_(spreadsheet, Object.assign(
+      { adjustmentAt: new Date() },
+      retractions[transactionId],
+    ))) {
+      retractionsQueued += 1;
+    }
+  });
+  if (options.metrics && typeof options.metrics === "object") {
+    options.metrics.retractionsQueued = retractionsQueued;
+  }
   if (importSheet && importSheet.getLastRow() >= 2) {
     const transactionRows = importSheet
       .getRange(2, 1, importSheet.getLastRow() - 1, 1)
@@ -2377,7 +2463,13 @@ function ensureQualifiedGoogleConversion_(
     : new Date();
   const opportunityId = String(details && details.opportunityId || "") ||
     leadOpportunityId_(values, phone);
-  const milestone = "qualified_lead";
+  const parentSpreadsheet = typeof sheet.getParent === "function"
+    ? sheet.getParent()
+    : null;
+  const milestone = googleAdsQualificationMilestone_(
+    parentSpreadsheet,
+    opportunityId,
+  );
   const existingTransactionId = String(values[14] || "").trim();
   const existingTransactionIsSafe = googleAdsTransactionIdSeguro_(
     existingTransactionId,
@@ -2402,8 +2494,8 @@ function ensureQualifiedGoogleConversion_(
     "BRL",
   ]]);
 
-  if (typeof sheet.getParent === "function") {
-    enqueueGoogleAdsMilestone_(sheet.getParent(), {
+  if (parentSpreadsheet) {
+    enqueueGoogleAdsMilestone_(parentSpreadsheet, {
       eventId: "ga_" + stableLeadHash_(opportunityId + "|" + milestone),
       opportunityId,
       milestone,
@@ -2420,6 +2512,211 @@ function ensureQualifiedGoogleConversion_(
     });
   }
   return !quarantinedLegacy;
+}
+
+function faseRequerConversaoQualificadaGoogleAds_(stage) {
+  const normalized = String(stage || "");
+  return normalized !== "Não qualificado" &&
+    leadStatusRank_(normalized) >= leadStatusRank_("Qualificado");
+}
+
+function limparConversaoQualificadaVisivelPorLinha_(sheet, row) {
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const sendColumn = Number(columns["Enviar ao Google Ads?"] || 0);
+  const payloadHeaders = [
+    "Nome da conversão",
+    "Valor (R$)",
+    "Data e hora da conversão",
+    "ID da transação",
+    "Moeda",
+  ];
+  if (!sendColumn || payloadHeaders.some(function missing(header) {
+    return !columns[header];
+  })) {
+    throw new Error("missing_google_ads_visible_header");
+  }
+  const values = sheet
+    .getRange(row, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0];
+  let cleared = 0;
+  if (String(values[sendColumn - 1] || "") !== "Não") {
+    sheet.getRange(row, sendColumn).setValue("Não");
+    cleared += 1;
+  }
+  payloadHeaders.forEach(function clearPayload(header) {
+    const column = columns[header];
+    if (!String(values[column - 1] || "").trim()) return;
+    sheet.getRange(row, column).clearContent();
+    cleared += 1;
+  });
+  return cleared;
+}
+
+function reconciliarConversaoGoogleAdsComFase_(spreadsheet, input) {
+  input = input && typeof input === "object" ? input : {};
+  const professional = typeof normalizarProfissionalOportunidade_ === "function"
+    ? normalizarProfissionalOportunidade_(input.professional)
+    : String(input.professional || "");
+  if (professional !== "amanda") {
+    return { ok: true, ignored: true, reason: "professional_not_amanda" };
+  }
+  const sheet = input.sheet || spreadsheet.getSheetByName(CONFIG.sheetName);
+  if (!sheet || sheet.getName() !== CONFIG.sheetName) {
+    return { ok: false, reason: "visible_sheet_not_found" };
+  }
+  const row = Number(input.row || 0);
+  const opportunityId = String(input.opportunityId || "").trim();
+  const stage = String(input.stage || "").trim();
+  if (!row || !opportunityId || !stage) {
+    return { ok: false, reason: "incomplete_google_ads_reconciliation" };
+  }
+  if (faseRequerConversaoQualificadaGoogleAds_(stage)) {
+    const ready = ensureQualifiedGoogleConversion_(
+      sheet,
+      row,
+      input.phone,
+      input.at,
+      { opportunityId, professional },
+    );
+    return {
+      ok: true,
+      ignored: false,
+      stage,
+      ready,
+      invalidatedEvents: 0,
+      retractionsQueued: 0,
+    };
+  }
+  if (stage !== "Novo" && stage !== "Não qualificado") {
+    return { ok: true, ignored: true, reason: "stage_not_actionable" };
+  }
+
+  const metrics = {};
+  const invalidatedEvents = invalidarConversoesGoogleAdsOportunidade_(
+    spreadsheet,
+    opportunityId,
+    {
+      state: stage === "Não qualificado"
+        ? "invalidated_not_qualified"
+        : "invalidated_downgraded_to_new",
+      reason: safeText_(
+        input.reason || input.source || "Fase canônica rebaixada",
+        300,
+      ),
+      metrics,
+    },
+  );
+  const clearedVisibleFields = limparConversaoQualificadaVisivelPorLinha_(
+    sheet,
+    row,
+  );
+  return {
+    ok: true,
+    ignored: false,
+    stage,
+    ready: false,
+    invalidatedEvents,
+    retractionsQueued: Number(metrics.retractionsQueued || 0),
+    clearedVisibleFields,
+  };
+}
+
+function reconciliarConversoesGoogleAdsFasesAtuais(input) {
+  input = input && typeof input === "object" ? input : {};
+  const apply = input.apply === true;
+  if (
+    apply &&
+    input.confirmation !== "RECONCILIAR_CONVERSOES_GOOGLE_ADS_FASES_V1"
+  ) {
+    throw new Error("google_ads_stage_reconciliation_confirmation_required");
+  }
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const sheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+  if (!sheet) throw new Error("visible_sheet_not_found");
+  const columns = mapaCabecalhosOportunidade_(sheet);
+  const required = [
+    "Telefone (E.164)",
+    "Situação do lead",
+    "GCLID",
+    "GBRAID",
+    "WBRAID",
+    "Opportunity ID",
+    "Profissional responsável",
+  ];
+  required.forEach(function requireHeader(header) {
+    if (!columns[header]) throw new Error("missing_visible_header:" + header);
+  });
+  const result = {
+    ok: true,
+    applied: false,
+    inspected: 0,
+    qualifiedWithClickId: 0,
+    qualifiedWithoutSingleClickId: 0,
+    lowStageRows: 0,
+    ready: 0,
+    invalidatedEvents: 0,
+    retractionsQueued: 0,
+    clearedVisibleFields: 0,
+    issues: [],
+  };
+  if (sheet.getLastRow() < 2) return result;
+  const rows = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+    .getDisplayValues();
+  rows.forEach(function reconcileRow(values, index) {
+    const professional = normalizarProfissionalOportunidade_(
+      values[columns["Profissional responsável"] - 1],
+    );
+    const opportunityId = String(
+      values[columns["Opportunity ID"] - 1] || "",
+    ).trim();
+    if (professional !== "amanda" || !opportunityId) return;
+    const stage = String(values[columns["Situação do lead"] - 1] || "").trim();
+    const clickIdCount = ["GCLID", "GBRAID", "WBRAID"].filter(
+      function hasClickId(header) {
+        return Boolean(String(values[columns[header] - 1] || "").trim());
+      },
+    ).length;
+    result.inspected += 1;
+    if (faseRequerConversaoQualificadaGoogleAds_(stage)) {
+      if (clickIdCount === 1) result.qualifiedWithClickId += 1;
+      else result.qualifiedWithoutSingleClickId += 1;
+    } else if (stage === "Novo" || stage === "Não qualificado") {
+      result.lowStageRows += 1;
+    } else {
+      return;
+    }
+    if (!apply) return;
+    try {
+      const reconciled = reconciliarConversaoGoogleAdsComFase_(spreadsheet, {
+        sheet,
+        row: index + 2,
+        phone: values[columns["Telefone (E.164)"] - 1],
+        opportunityId,
+        professional,
+        stage,
+        source: "stage_reconciliation_postflight",
+        at: new Date(),
+      });
+      if (!reconciled.ok) throw new Error(reconciled.reason || "unknown");
+      if (reconciled.ready) result.ready += 1;
+      result.invalidatedEvents += Number(reconciled.invalidatedEvents || 0);
+      result.retractionsQueued += Number(reconciled.retractionsQueued || 0);
+      result.clearedVisibleFields += Number(
+        reconciled.clearedVisibleFields || 0,
+      );
+    } catch (error) {
+      result.ok = false;
+      result.issues.push({
+        row: index + 2,
+        opportunityId,
+        reason: String(error && error.message || error),
+      });
+    }
+  });
+  SpreadsheetApp.flush();
+  result.applied = true;
+  return result;
 }
 
 function completeLeadClassification_(job, classification) {
@@ -2635,17 +2932,6 @@ function completeLeadClassification_(job, classification) {
           confidence,
         })
       : { ok: true, created: false, reason: "no_procedure_milestone" };
-
-  if (
-    professional === "amanda" &&
-    phaseSync.ok &&
-    leadStatusRank_(appliedStatus) >= leadStatusRank_("Qualificado")
-  ) {
-    ensureQualifiedGoogleConversion_(leadsSheet, leadRow, phone, now, {
-      opportunityId: canonicalOpportunityId,
-      professional,
-    });
-  }
 
   recordLeadStageEvent_(spreadsheet, {
     opportunityId: canonicalOpportunityId,

@@ -86,6 +86,7 @@ function loadFunctions() {
       "linhaExigeNomeConversaoQualificadoGoogleAds_, " +
       "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
       "invalidarConversoesGoogleAdsOportunidade_, " +
+      "googleAdsQualificationMilestone_, GOOGLE_ADS_ADJUSTMENT_HEADERS, " +
       "reativarGoogleAdsMilestoneExistente_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
@@ -119,6 +120,7 @@ test("audited false positives invalidate the ledger and leave the import queue",
     "amanda",
   ];
   const importRows = [[ledgerRow[9]]];
+  const adjustmentRows = [];
   const eventSheet = {
     getLastRow: () => 2,
     getRange(row, column) {
@@ -150,10 +152,53 @@ test("audited false positives invalidate the ledger and leave the import queue",
       importRows.splice(row - 2, 1);
     },
   };
+  const adjustmentSheet = {
+    getLastRow: () => adjustmentRows.length + 1,
+    getLastColumn: () => 6,
+    getRange(row, column, rowCount = 1, columnCount = 1) {
+      return {
+        getDisplayValues() {
+          if (row === 1) {
+            return [[
+              "Order ID",
+              "Conversion Name",
+              "Adjustment Time",
+              "Adjustment Type",
+              "Adjusted Value",
+              "Adjusted Value Currency",
+            ]];
+          }
+          return Array.from({ length: rowCount }, (_, rowOffset) =>
+            Array.from({ length: columnCount }, (_, columnOffset) =>
+              String(
+                adjustmentRows[row - 2 + rowOffset]?.[
+                  column - 1 + columnOffset
+                ] ?? "",
+              ),
+            ),
+          );
+        },
+        createTextFinder(search) {
+          return {
+            matchEntireCell() { return this; },
+            findNext() {
+              const index = adjustmentRows.findIndex(
+                (entry) => String(entry[column - 1] || "") === String(search),
+              );
+              return index < 0 ? null : { getRow: () => index + 2 };
+            },
+          };
+        },
+      };
+    },
+    appendRow(row) { adjustmentRows.push(row.slice()); },
+    showSheet() {},
+  };
   const spreadsheet = {
     getSheetByName(name) {
       if (name === "_GOOGLE_ADS_EVENTOS") return eventSheet;
       if (name === "IMPORT_GOOGLE_ADS") return importSheet;
+      if (name === "AJUSTES_GOOGLE_ADS") return adjustmentSheet;
       return null;
     },
   };
@@ -171,6 +216,46 @@ test("audited false positives invalidate the ledger and leave the import queue",
   assert.equal(ledgerRow[10], "invalidated_not_qualified");
   assert.equal(ledgerRow[11], "Somente prefill estruturado.");
   assert.equal(importRows.length, 0);
+  assert.equal(adjustmentRows.length, 1);
+  assert.equal(adjustmentRows[0][0], ledgerRow[9]);
+  assert.equal(adjustmentRows[0][3], "RETRACT");
+});
+
+test("a requalification after retraction uses a fresh transaction cycle", () => {
+  const { googleAdsQualificationMilestone_ } = loadFunctions();
+  const rows = [
+    [
+      "ga-1",
+      "opp-1",
+      "qualified_lead",
+      "GCLID",
+      "click-1",
+      "Lead qualificado GCLID",
+      "2026-08-20 12:00:00-03:00",
+      1,
+      "BRL",
+      `LIV-QL-v1-${"A".repeat(43)}`,
+      "invalidated_downgraded_to_new",
+      "",
+      "created",
+      "updated",
+      "amanda",
+    ],
+  ];
+  const eventSheet = {
+    getLastRow: () => rows.length + 1,
+    getRange: () => ({ getDisplayValues: () => rows.map((row) => row.slice()) }),
+  };
+  const spreadsheet = {
+    getSheetByName: (name) => name === "_GOOGLE_ADS_EVENTOS"
+      ? eventSheet
+      : null,
+  };
+
+  assert.equal(
+    googleAdsQualificationMilestone_(spreadsheet, "opp-1"),
+    "qualified_lead_v2",
+  );
 });
 
 test("a corrected opportunity can create a fresh ready ledger state later", () => {

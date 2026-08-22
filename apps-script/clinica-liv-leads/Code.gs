@@ -12,6 +12,7 @@ const CONFIG = Object.freeze({
   leadStageEventSheetName: "_LEAD_FASE_EVENTOS",
   googleAdsEventSheetName: "_GOOGLE_ADS_EVENTOS",
   googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
+  googleAdsAdjustmentSheetName: "AJUSTES_GOOGLE_ADS",
   googleAdsCustomerId: "9953344486",
   googleAdsTransactionSecretProperty: "GOOGLE_ADS_TRANSACTION_HMAC_SECRET",
   leadIdentitySecretProperty: "LEAD_IDENTITY_HMAC_SECRET",

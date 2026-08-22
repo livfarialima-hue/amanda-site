@@ -1872,6 +1872,10 @@ function validarCorrecaoClassificacaoAuditada_(input) {
   ) {
     return { ok: false, reason: "invalid_conversion_invalidation_target" };
   }
+  const downgradeRequiresInvalidation =
+    rankFaseOportunidade_(expectedStage) >=
+      rankFaseOportunidade_("Qualificado") &&
+    (stage === "Novo" || stage === "Não qualificado");
   return {
     ok: true,
     opportunityId,
@@ -1885,7 +1889,8 @@ function validarCorrecaoClassificacaoAuditada_(input) {
     expectedParty: safeText_(input.expectedParty, 80) || "patient",
     reason: safeText_(input.reason, 300) || "Auditoria humana da conversa",
     invalidateQualifiedConversion:
-      input.invalidateQualifiedConversion === true,
+      input.invalidateQualifiedConversion === true ||
+      downgradeRequiresInvalidation,
   };
 }
 
@@ -2141,14 +2146,15 @@ function aplicarCorrecoesClassificacaoAuditadas_(input) {
       );
     }
     if (correction.invalidateQualifiedConversion) {
-      limparConversaoQualificadaVisivel_(spreadsheet, correction);
-      invalidatedGoogleAdsEvents += invalidarConversoesGoogleAdsOportunidade_(
-        spreadsheet,
-        correction.opportunityId,
-        {
-          state: "invalidated_not_qualified",
-          reason: correction.reason,
-        },
+      const googleAdsReconciliation = sync.googleAdsReconciliation || {};
+      if (googleAdsReconciliation.ok !== true) {
+        throw new Error(
+          "classification_audit_conversion_reconciliation_failed:" +
+            correction.opportunityId,
+        );
+      }
+      invalidatedGoogleAdsEvents += Number(
+        googleAdsReconciliation.invalidatedEvents || 0,
       );
     }
     if (atualizarFilaAposCorrecaoClassificacao_(spreadsheet, correction)) {

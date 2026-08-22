@@ -79,6 +79,19 @@ test("audited classification corrections accept explicit human downgrades", () =
   assert.equal(correction.invalidateQualifiedConversion, true);
 });
 
+test("a qualified lead downgraded to new always invalidates the conversion", () => {
+  const { validarCorrecaoClassificacaoAuditada_ } = load();
+  const correction = validarCorrecaoClassificacaoAuditada_({
+    opportunityId: "opp_v2_amanda_12345678",
+    expectedStage: "Qualificado",
+    stage: "Novo",
+    reason: "Auditoria humana corrigiu a fase.",
+  });
+
+  assert.equal(correction.ok, true);
+  assert.equal(correction.invalidateQualifiedConversion, true);
+});
+
 test("conversion invalidation fails closed for a still-qualified stage", () => {
   const { validarCorrecaoClassificacaoAuditada_ } = load();
   const correction = validarCorrecaoClassificacaoAuditada_({
