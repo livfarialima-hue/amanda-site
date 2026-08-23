@@ -1173,6 +1173,7 @@ function textoCompromissoPaciente_(valor, limite) {
 
 function enviarEmailDiarioRetomadasInterno_(agora) {
   const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const centralUrl = linkCentralAtendimentoRetomadas_(arquivo);
   if (
     typeof atualizarCentralAtendimentoInterno_ === "function"
   ) {
@@ -1325,12 +1326,14 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     sugeridosParaEquipe,
     dataApresentacao,
     agendaCuidados,
+    centralUrl,
   );
   const corpoHtml = montarHtmlEmailRetomadas_(
     selecionados,
     sugeridosParaEquipe,
     dataApresentacao,
     agendaCuidados,
+    centralUrl,
   );
 
   MailApp.sendEmail({
@@ -1346,6 +1349,18 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     selecionados,
     agora,
   );
+  if (
+    typeof atualizarCentralAtendimentoInterno_ === "function"
+  ) {
+    try {
+      atualizarCentralAtendimentoInterno_(arquivo, agora);
+    } catch (error) {
+      console.error(
+        "Não foi possível atualizar a Central de Atendimento depois de registrar a fila diária.",
+        error,
+      );
+    }
+  }
   limparControleRetomadasAntigo_(planilhaControle, agora);
 
   return {
@@ -2783,11 +2798,30 @@ function limparControleRetomadasAntigo_(planilha, agora) {
   }
 }
 
+function linkCentralAtendimentoRetomadas_(spreadsheet) {
+  if (!spreadsheet) return "";
+
+  const baseUrl = typeof spreadsheet.getUrl === "function"
+    ? String(spreadsheet.getUrl() || "").replace(/#.*$/, "")
+    : "";
+  if (!baseUrl) return "";
+
+  const central = typeof spreadsheet.getSheetByName === "function"
+    ? spreadsheet.getSheetByName("Central de Atendimento")
+    : null;
+  const sheetId = central && typeof central.getSheetId === "function"
+    ? central.getSheetId()
+    : "";
+
+  return sheetId === "" ? baseUrl : baseUrl + "#gid=" + sheetId;
+}
+
 function montarTextoEmailRetomadas_(
   candidatos,
   sugeridosParaEquipe,
   dataApresentacao,
   agendaCuidados,
+  centralUrl,
 ) {
   const cuidados = (agendaCuidados || []).concat(
     (candidatos || []).map(converterRetomadaParaCuidadoEmail_),
@@ -2806,10 +2840,19 @@ function montarTextoEmailRetomadas_(
     "",
     "Agenda única do dia: cada retomada aparece uma vez, com contexto, responsável e mensagem sugerida.",
     "",
+  ];
+  if (centralUrl) {
+    linhas.push(
+      "Abrir a fila de decisões na Central de Atendimento: " +
+        centralUrl,
+      "",
+    );
+  }
+  linhas.push(
     "ENVIOS AUTOMÁTICOS PREVISTOS HOJE (" +
       automaticosHoje.length +
       ")",
-  ];
+  );
 
   if (!automaticosHoje.length) {
     linhas.push("Nenhum envio automático previsto.");
@@ -3017,6 +3060,7 @@ function montarHtmlEmailRetomadas_(
   sugeridosParaEquipe,
   dataApresentacao,
   agendaCuidados,
+  centralUrl,
 ) {
   const agendaHtml = montarHtmlAgendaCuidados_(
     (agendaCuidados || []).concat(
@@ -3024,12 +3068,19 @@ function montarHtmlEmailRetomadas_(
     ),
   );
 
+  const centralButton = centralUrl
+    ? '<p style="margin:18px 0 24px;"><a href="' +
+      escaparHtmlRetomadas_(centralUrl) +
+      '" style="display:inline-block;padding:11px 16px;border-radius:8px;background:#356854;color:#fff;text-decoration:none;font-weight:bold;">Abrir fila de decisões</a></p>'
+    : "";
+
   return (
     '<div style="max-width:980px;margin:auto;font-family:Arial,sans-serif;color:#111827;">' +
     '<h2 style="color:#075e54;">Clínica LIV — agenda de cuidado</h2>' +
     '<p style="color:#4b5563;">Resumo operacional de ' +
     escaparHtmlRetomadas_(dataApresentacao) +
     ". Cada contato aparece uma única vez, com a mensagem sugerida e as ações disponíveis.</p>" +
+    centralButton +
     agendaHtml +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
     "Somente os itens em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. Toda retomada humana elegível e com mensagem segura oferece <strong>Passar para a Bruna</strong>; a confirmação preserva a validação final da conversa. <strong>Cancelar esta retomada</strong> retira somente aquele plano da fila e não altera a preferência futura do contato." +

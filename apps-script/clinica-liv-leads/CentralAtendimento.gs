@@ -37,6 +37,8 @@ const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
   "Última ação da equipe",
   "Atualizado em",
   "Aprovar com a Bruna",
+  "Cancelar retomada",
+  "Elegibilidade da Bruna",
   "Fonte",
   "Chave operacional",
 ]);
@@ -54,8 +56,8 @@ function onOpen() {
     )
     .addSeparator()
     .addItem(
-      "Aprovar retomadas marcadas",
-      "aprovarRetomadasMarcadasCentral",
+      "Processar decisões marcadas",
+      "processarDecisoesMarcadasCentral",
     )
     .addToUi();
 }
@@ -722,6 +724,9 @@ function carregarRetomadasCentral_(
           candidate.lead.proximaAcao,
         status: "Programado",
         approvalBrunaEligible: false,
+        cancelFollowUpEligible: false,
+        brunaEligibilityReason:
+          "Plano ainda não registrado na fila diária",
         source: "Retomada de marketing",
         sourceKey:
           "followup:" + candidate.chaveDiaria,
@@ -779,9 +784,18 @@ function carregarRetomadasRegistradasCentral_(
       const normalizedStatus = normalizarTextoCentral_(sendStatus);
       const automatic = normalizedMode.indexOf("automatico") === 0;
       const sent = normalizedStatus === "enviada";
+      const cancelled = normalizedStatus.indexOf("cancelada") === 0;
+      const rawSuggestion = textoCentral_(row[8], 700);
+      const suggestion = rawSuggestion || "SEM SUGESTÃO PRONTA";
       const approvalEligible =
         normalizedMode === "manual" &&
-        normalizedStatus === "acao manual";
+        normalizedStatus === "acao manual" &&
+        Boolean(rawSuggestion);
+      const cancellationEligible = [
+        "programada",
+        "acao manual",
+        "suspensa na planilha",
+      ].includes(normalizedStatus);
 
       items.push(criarItemCentral_({
         queue: automatic ? "Automático hoje" : "Ação manual hoje",
@@ -797,16 +811,52 @@ function carregarRetomadasRegistradasCentral_(
           textoCentral_(row[4], 60) + "ª retomada",
         owner: automatic ? "Bruna/bot" : "Equipe",
         mode: automatic ? "Automático" : "Manual",
-        suggestion: textoCentral_(row[8], 700),
+        suggestion: suggestion,
         context: textoCentral_(row[7], 420),
-        status: sent ? "Concluído" : "Programado",
+        status: sent
+          ? "Concluído"
+          : cancelled
+            ? "Cancelado"
+            : "Programado",
         approvalBrunaEligible: approvalEligible,
+        cancelFollowUpEligible: cancellationEligible,
+        brunaEligibilityReason: motivoElegibilidadeBrunaCentral_({
+          automatic: automatic,
+          suggestion: rawSuggestion,
+          normalizedStatus: normalizedStatus,
+          approvalEligible: approvalEligible,
+        }),
         source: "Retomada de marketing",
         sourceKey:
           "followup:" + textoCentral_(row[0], 260),
       }));
       return items;
     }, []);
+}
+
+function motivoElegibilidadeBrunaCentral_(input) {
+  const data = input || {};
+  if (data.approvalEligible === true) {
+    return "Elegível para aprovação";
+  }
+  if (data.automatic === true) {
+    return "Já programada com a Bruna";
+  }
+  if (!String(data.suggestion || "").trim()) {
+    return "Sem mensagem segura preenchida";
+  }
+
+  const status = String(data.normalizedStatus || "").trim();
+  if (status.indexOf("cancelada") === 0) {
+    return "Retomada cancelada";
+  }
+  if (status === "enviada") {
+    return "Mensagem já enviada";
+  }
+  if (status === "suspensa na planilha") {
+    return "Automação suspensa na planilha";
+  }
+  return "Estado atual exige atendimento humano";
 }
 
 function carregarConsultasAgendadasCentral_(profiles, now) {
@@ -1096,6 +1146,16 @@ function criarItemCentral_(input) {
     approvalBrunaEligible:
       input.approvalBrunaEligible === true,
     approveBruna: false,
+    cancelFollowUpEligible:
+      input.cancelFollowUpEligible === true,
+    cancelFollowUp: false,
+    brunaEligibilityReason: textoCentral_(
+      input.brunaEligibilityReason ||
+        (input.approvalBrunaEligible === true
+          ? "Elegível para aprovação"
+          : "Não se aplica"),
+      180,
+    ),
     source: textoCentral_(input.source, 100),
     sourceKey:
       textoCentral_(input.sourceKey, 300) ||
@@ -1157,8 +1217,16 @@ function aplicarControleCentral_(item, controls, now) {
   item.deferUntil = control.deferUntil;
   item.approveBruna =
     item.approvalBrunaEligible && control.approveBruna === true;
+  item.cancelFollowUp =
+    item.cancelFollowUpEligible && control.cancelFollowUp === true;
 
-  if (control.status) {
+  const sourceStatusIsFinal =
+    normalizarTextoCentral_(item.source) ===
+      "retomada de marketing" &&
+    ["concluido", "cancelado"].includes(
+      normalizarTextoCentral_(item.status),
+    );
+  if (control.status && !sourceStatusIsFinal) {
     item.status = control.status;
   }
 
@@ -1250,6 +1318,13 @@ function carregarControlesCentral_(sheet) {
           row,
           columns,
           "aprovar com a bruna",
+        ),
+      ),
+      cancelFollowUp: valorCheckboxCentral_(
+        valorLinhaCentral_(
+          row,
+          columns,
+          "cancelar retomada",
         ),
       ),
     };
@@ -1360,6 +1435,126 @@ function processarEdicaoCentralAtendimento_(event) {
     updated: true,
     sourceKey: sourceKey,
   };
+}
+
+function processarDecisoesMarcadasCentral() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = spreadsheet.getSheetByName(
+    CENTRAL_ATENDIMENTO_CONFIG.sheetName,
+  );
+  const ui = SpreadsheetApp.getUi();
+
+  if (!sheet) {
+    ui.alert("A aba Central de Atendimento não foi encontrada.");
+    return { ok: false, error: "central_not_found" };
+  }
+
+  const approvals = coletarRetomadasMarcadasCentral_(sheet);
+  const cancellations = coletarCancelamentosMarcadosCentral_(sheet);
+  const approvalRows = new Set(
+    approvals.map(function (item) {
+      return item.rowNumber;
+    }),
+  );
+  const conflicts = cancellations.filter(function (item) {
+    return approvalRows.has(item.rowNumber);
+  });
+
+  if (conflicts.length) {
+    ui.alert(
+      "Há " +
+        conflicts.length +
+        " linha(s) marcadas ao mesmo tempo para a Bruna e para cancelamento. Desmarque uma das decisões antes de continuar.",
+    );
+    return {
+      ok: false,
+      error: "conflicting_decisions",
+      conflicts: conflicts.map(function (item) {
+        return item.rowNumber;
+      }),
+    };
+  }
+
+  if (!approvals.length && !cancellations.length) {
+    ui.alert(
+      "Marque pelo menos uma caixa em “Aprovar com a Bruna” ou “Cancelar retomada”.",
+    );
+    return { ok: true, approved: 0, cancelled: 0, skipped: 0 };
+  }
+
+  const confirmation = ui.alert(
+    "Processar decisões marcadas?",
+    approvals.length +
+      " retomada(s) serão avaliadas para a Bruna e " +
+      cancellations.length +
+      " serão avaliadas para cancelamento. Cada conversa será revalidada antes da alteração.",
+    ui.ButtonSet.YES_NO,
+  );
+
+  if (confirmation !== ui.Button.YES) {
+    return {
+      ok: true,
+      cancelledByUser: true,
+      approved: 0,
+      cancelled: 0,
+      skipped: 0,
+    };
+  }
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) {
+    ui.alert(
+      "A Central está sendo atualizada. Tente novamente em alguns segundos.",
+    );
+    return { ok: false, error: "busy_retry" };
+  }
+
+  try {
+    const now = new Date();
+    const approvalResult = approvals.length
+      ? aprovarRetomadasMarcadasCentralInterno_(
+          spreadsheet,
+          sheet,
+          now,
+          approvals,
+        )
+      : { ok: true, approved: 0, skipped: 0, results: [] };
+    const cancellationResult = cancellations.length
+      ? cancelarRetomadasMarcadasCentralInterno_(
+          spreadsheet,
+          sheet,
+          now,
+          cancellations,
+        )
+      : { ok: true, cancelled: 0, skipped: 0, results: [] };
+
+    atualizarCentralAtendimentoInterno_(spreadsheet, new Date());
+
+    const skipped =
+      Number(approvalResult.skipped || 0) +
+      Number(cancellationResult.skipped || 0);
+    ui.alert(
+      "Decisões processadas",
+      Number(approvalResult.approved || 0) +
+        " retomada(s) programada(s) com a Bruna, " +
+        Number(cancellationResult.cancelled || 0) +
+        " cancelada(s) e " +
+        skipped +
+        " mantida(s) sem alteração.",
+      ui.ButtonSet.OK,
+    );
+
+    return {
+      ok: approvalResult.ok && cancellationResult.ok,
+      approved: Number(approvalResult.approved || 0),
+      cancelled: Number(cancellationResult.cancelled || 0),
+      skipped: skipped,
+      approvalResults: approvalResult.results || [],
+      cancellationResults: cancellationResult.results || [],
+    };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function aprovarRetomadasMarcadasCentral() {
@@ -1490,12 +1685,17 @@ function coletarRetomadasMarcadasCentral_(sheet) {
       ),
       900,
     );
+    const safeSuggestion =
+      Boolean(suggestion) &&
+      normalizarTextoCentral_(suggestion).indexOf(
+        "sem sugestao pronta",
+      ) !== 0;
     const eligible =
       source === "retomada de marketing" &&
       sourceKey.indexOf("followup:") === 0 &&
       mode === "manual" &&
       status === "programado" &&
-      Boolean(suggestion);
+      safeSuggestion;
 
     selected.push({
       rowNumber: index + 2,
@@ -1506,6 +1706,71 @@ function coletarRetomadasMarcadasCentral_(sheet) {
           : "",
       suggestion: suggestion,
       eligible: eligible,
+    });
+    return selected;
+  }, []);
+}
+
+function coletarCancelamentosMarcadosCentral_(sheet) {
+  if (!sheet || sheet.getLastRow() < 2) return [];
+
+  const headers = sheet
+    .getRange(
+      1,
+      1,
+      1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosCentral_(headers);
+  const cancellationColumn = columns["cancelar retomada"];
+
+  if (cancellationColumn === undefined) return [];
+
+  const rows = sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getValues();
+
+  return rows.reduce(function (selected, row, index) {
+    if (!valorCheckboxCentral_(row[cancellationColumn])) {
+      return selected;
+    }
+
+    const sourceKey = textoCentral_(
+      valorLinhaCentral_(
+        row,
+        columns,
+        "chave operacional",
+      ),
+      300,
+    );
+    const source = normalizarTextoCentral_(
+      valorLinhaCentral_(row, columns, "fonte"),
+    );
+    const status = normalizarTextoCentral_(
+      valorLinhaCentral_(
+        row,
+        columns,
+        "status operacional",
+      ),
+    );
+    const planKey = sourceKey.indexOf("followup:") === 0
+      ? sourceKey.slice("followup:".length)
+      : "";
+
+    selected.push({
+      rowNumber: index + 2,
+      sourceKey: sourceKey,
+      planKey: planKey,
+      eligible:
+        source === "retomada de marketing" &&
+        Boolean(planKey) &&
+        status === "programado",
     });
     return selected;
   }, []);
@@ -1603,6 +1868,108 @@ function aprovarRetomadasMarcadasCentralInterno_(
     skipped: skipped,
     results: results,
   };
+}
+
+function cancelarRetomadasMarcadasCentralInterno_(
+  spreadsheet,
+  sheet,
+  now,
+  selected,
+) {
+  const rows = selected || coletarCancelamentosMarcadosCentral_(sheet);
+  const headers = sheet
+    .getRange(
+      1,
+      1,
+      1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosCentral_(headers);
+  let cancelled = 0;
+  let skipped = 0;
+  const results = [];
+
+  rows.forEach(function (item) {
+    let result = { ok: false, reason: "plan_not_eligible" };
+
+    if (
+      item.eligible &&
+      item.planKey &&
+      typeof assinaturaCancelamentoRetomadas_ === "function" &&
+      typeof cancelarPlanoRetomadaPorToken_ === "function"
+    ) {
+      const token = assinaturaCancelamentoRetomadas_(item.planKey);
+      result = token
+        ? cancelarPlanoRetomadaPorToken_(spreadsheet, token, now)
+        : { ok: false, reason: "cancellation_token_missing" };
+    }
+
+    const note = result.ok
+      ? "Retomada cancelada em lote pela equipe em " +
+        formatarDataCentral_(now, "yyyy-MM-dd") +
+        "."
+      : "Retomada não cancelada: " +
+        rotuloFalhaCancelamentoCentral_(result.reason) +
+        ".";
+
+    sheet
+      .getRange(
+        item.rowNumber,
+        columns["cancelar retomada"] + 1,
+      )
+      .setValue(false);
+    sheet
+      .getRange(
+        item.rowNumber,
+        columns["observacao da equipe"] + 1,
+      )
+      .setValue(note);
+    sheet
+      .getRange(
+        item.rowNumber,
+        columns["ultima acao da equipe"] + 1,
+      )
+      .setValue(now);
+
+    if (result.ok) {
+      sheet
+        .getRange(
+          item.rowNumber,
+          columns["status operacional"] + 1,
+        )
+        .setValue("Cancelado");
+      sheet
+        .getRange(item.rowNumber, columns.modo + 1)
+        .setValue("Silêncio");
+      cancelled += 1;
+    } else {
+      skipped += 1;
+    }
+
+    results.push({
+      rowNumber: item.rowNumber,
+      ok: result.ok === true,
+      reason: result.reason || "",
+    });
+  });
+
+  return {
+    ok: skipped === 0,
+    selected: rows.length,
+    cancelled: cancelled,
+    skipped: skipped,
+    results: results,
+  };
+}
+
+function rotuloFalhaCancelamentoCentral_(reason) {
+  const labels = {
+    plan_not_found: "plano não encontrado",
+    plan_not_eligible: "item não elegível",
+    cancellation_token_missing: "cancelamento indisponível",
+  };
+  return labels[reason] || "estado da conversa alterado";
 }
 
 function rotuloFalhaAprovacaoCentral_(reason) {
@@ -1746,6 +2113,10 @@ function escreverCentralAtendimento_(sheet, items, now) {
         item.approvalBrunaEligible
           ? item.approveBruna === true
           : "",
+        item.cancelFollowUpEligible
+          ? item.cancelFollowUp === true
+          : "",
+        item.brunaEligibilityReason,
         item.source,
         item.sourceKey,
       ];
@@ -1775,39 +2146,57 @@ function escreverCentralAtendimento_(sheet, items, now) {
     formatarCentralAtendimento_(sheet, items.length);
   }
 
-  configurarAprovacoesBrunaCentral_(sheet, items);
+  configurarDecisoesRetomadasCentral_(sheet, items);
 }
 
-function configurarAprovacoesBrunaCentral_(sheet, items) {
+function configurarDecisoesRetomadasCentral_(sheet, items) {
   const headers = mapearCabecalhosCentral_(
     Array.from(CENTRAL_ATENDIMENTO_HEADERS),
   );
   const approvalColumn = headers["aprovar com a bruna"];
-  if (approvalColumn === undefined) return;
+  const cancellationColumn = headers["cancelar retomada"];
+  if (
+    approvalColumn === undefined ||
+    cancellationColumn === undefined
+  ) {
+    return;
+  }
 
-  const column = approvalColumn + 1;
+  const approvalSheetColumn = approvalColumn + 1;
+  const cancellationSheetColumn = cancellationColumn + 1;
   const validationRows = Math.max(
     CENTRAL_ATENDIMENTO_CONFIG.maximumRows,
     (items || []).length + 1,
   );
-  sheet.showColumns(column, 1);
+  sheet.showColumns(approvalSheetColumn, 2);
   sheet
-    .getRange(2, column, validationRows - 1, 1)
+    .getRange(2, approvalSheetColumn, validationRows - 1, 2)
     .clearDataValidations();
 
-  const eligibleRanges = (items || []).reduce(function (
-    ranges,
-    item,
-    index,
-  ) {
+  const approvalRanges = [];
+  const cancellationRanges = [];
+  (items || []).forEach(function (item, index) {
     if (item.approvalBrunaEligible) {
-      ranges.push(sheet.getRange(index + 2, column).getA1Notation());
+      approvalRanges.push(
+        sheet
+          .getRange(index + 2, approvalSheetColumn)
+          .getA1Notation(),
+      );
     }
-    return ranges;
-  }, []);
+    if (item.cancelFollowUpEligible) {
+      cancellationRanges.push(
+        sheet
+          .getRange(index + 2, cancellationSheetColumn)
+          .getA1Notation(),
+      );
+    }
+  });
 
-  if (eligibleRanges.length) {
-    sheet.getRangeList(eligibleRanges).insertCheckboxes();
+  if (approvalRanges.length) {
+    sheet.getRangeList(approvalRanges).insertCheckboxes();
+  }
+  if (cancellationRanges.length) {
+    sheet.getRangeList(cancellationRanges).insertCheckboxes();
   }
 }
 
@@ -1913,6 +2302,7 @@ function formatarCentralAtendimento_(sheet, itemCount) {
             "Em andamento",
             "Aguardando paciente",
             "Concluído",
+            "Cancelado",
             "Encerrar — comercial/não paciente",
             "Suspenso",
           ],
@@ -1924,13 +2314,19 @@ function formatarCentralAtendimento_(sheet, itemCount) {
 
   const widths = [
     170, 90, 145, 190, 135, 165, 135, 145, 220, 115,
-    95, 340, 320, 145, 145, 240, 145, 145, 125, 150, 220,
+    95, 340, 320, 145, 145, 240, 145, 145, 125, 130,
+    220, 150, 220,
   ];
   widths.forEach(function (width, index) {
     sheet.setColumnWidth(index + 1, width);
   });
-  sheet.showColumns(19, 1);
-  sheet.hideColumns(20, 2);
+  sheet.showColumns(19, 3);
+  sheet.hideColumns(22, 2);
+  sheet
+    .getRange(1, 9)
+    .setNote(
+      "Amarelo: ação geral prevista para as próximas 24 horas. Roxo: retomada humana sugerida para as próximas 24 horas.",
+    );
 
   const filterRows = Math.max(itemCount + 1, 2);
   sheet
@@ -1938,6 +2334,22 @@ function formatarCentralAtendimento_(sheet, itemCount) {
     .createFilter();
 
   const rules = [
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied(
+        '=AND($C2<>"",$C2>=NOW(),$C2<=NOW()+1,$V2="Retomada de marketing",$K2="Manual",$N2="Programado")',
+      )
+      .setBackground("#d9d2e9")
+      .setFontColor("#351c75")
+      .setRanges([sheet.getRange(2, 9, validationRows - 1, 1)])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied(
+        '=AND($C2<>"",$C2>=NOW(),$C2<=NOW()+1,OR($A2="Pendência vencida",$A2="Resposta agora",$A2="Ação manual hoje",$A2="Consultas e cuidados"),OR($N2="Aberto",$N2="Programado",$N2="Em andamento"),NOT(AND($V2="Retomada de marketing",$K2="Manual",$N2="Programado")))',
+      )
+      .setBackground("#fff2cc")
+      .setFontColor("#7f6000")
+      .setRanges([sheet.getRange(2, 9, validationRows - 1, 1)])
+      .build(),
     SpreadsheetApp.newConditionalFormatRule()
       .whenTextEqualTo("Pendência vencida")
       .setBackground("#f4cccc")

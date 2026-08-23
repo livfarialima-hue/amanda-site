@@ -447,11 +447,15 @@ test("daily email shows the exact automatic message and drafts human actions", (
     [planned, human],
     [human],
     "28/07/2026",
+    [],
+    "https://docs.google.com/spreadsheets/d/test/edit#gid=123",
   );
   const html = context.montarHtmlEmailRetomadas_(
     [planned, human],
     [human],
     "28/07/2026",
+    [],
+    "https://docs.google.com/spreadsheets/d/test/edit#gid=123",
   );
 
   assert.match(text, /Agenda única do dia/);
@@ -465,6 +469,7 @@ test("daily email shows the exact automatic message and drafts human actions", (
   );
   assert.match(text, /Mensagem sugerida para a equipe/);
   assert.match(text, /Mensagem exata da retomada automática/);
+  assert.match(text, /Abrir a fila de decisões na Central de Atendimento/);
   assert.doesNotMatch(text, /PLANO DO DIA|AÇÃO SUGERIDA PARA/);
   assert.match(
     html,
@@ -476,6 +481,7 @@ test("daily email shows the exact automatic message and drafts human actions", (
   );
   assert.match(html, /Mensagem sugerida para a equipe/);
   assert.match(html, /Mensagem exata da retomada automática/);
+  assert.match(html, />Abrir fila de decisões</);
   assert.doesNotMatch(html, /Plano do dia|Ação sugerida para Amanda/);
   assert.equal(
     (text.match(/Mensagem sugerida para a equipe/g) || []).length,
@@ -484,6 +490,22 @@ test("daily email shows the exact automatic message and drafts human actions", (
   assert.equal(
     (html.match(/Mensagem sugerida para a equipe/g) || []).length,
     1,
+  );
+});
+
+test("daily email deep link opens the Central de Atendimento tab", () => {
+  const spreadsheet = {
+    getUrl: () =>
+      "https://docs.google.com/spreadsheets/d/test/edit#gid=999",
+    getSheetByName: (name) =>
+      name === "Central de Atendimento"
+        ? { getSheetId: () => 123 }
+        : null,
+  };
+
+  assert.equal(
+    context.linkCentralAtendimentoRetomadas_(spreadsheet),
+    "https://docs.google.com/spreadsheets/d/test/edit#gid=123",
   );
 });
 

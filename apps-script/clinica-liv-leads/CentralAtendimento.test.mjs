@@ -596,14 +596,26 @@ test("status validation exposes one-step commercial closure", () => {
   assert.match(source, /"Encerrar — comercial\/não paciente"/);
 });
 
-test("central exposes a batch approval checkbox and menu without making it an on-edit send", () => {
+test("central exposes batch decisions without making an on-edit send", () => {
   assert.match(source, /"Aprovar com a Bruna"/);
-  assert.match(source, /"Aprovar retomadas marcadas"/);
+  assert.match(source, /"Cancelar retomada"/);
+  assert.match(source, /"Processar decisões marcadas"/);
   assert.match(source, /insertCheckboxes\(\)/);
   assert.match(source, /ui\.ButtonSet\.YES_NO/);
   assert.doesNotMatch(
     source,
     /processarEdicaoCentralAtendimento_[\s\S]{0,1800}aprovarPlanoRetomadaParaBot_/,
+  );
+});
+
+test("next-24-hour actions use distinct accessible colors", () => {
+  assert.match(source, /Roxo: retomada humana sugerida/);
+  assert.match(source, /Amarelo: ação geral prevista/);
+  assert.match(source, /setBackground\("#d9d2e9"\)/);
+  assert.match(source, /setBackground\("#fff2cc"\)/);
+  assert.match(
+    source,
+    /\$C2<=NOW\(\)\+1[\s\S]{0,180}\$V2="Retomada de marketing"/,
   );
 });
 
@@ -648,9 +660,16 @@ test("registered manual follow-ups are eligible while approved plans are shown a
   assert.equal(items.length, 2);
   assert.equal(items[0].mode, "Manual");
   assert.equal(items[0].approvalBrunaEligible, true);
+  assert.equal(items[0].cancelFollowUpEligible, true);
+  assert.equal(items[0].brunaEligibilityReason, "Elegível para aprovação");
   assert.equal(items[1].mode, "Automático");
   assert.equal(items[1].owner, "Bruna/bot");
   assert.equal(items[1].approvalBrunaEligible, false);
+  assert.equal(items[1].cancelFollowUpEligible, true);
+  assert.equal(
+    items[1].brunaEligibilityReason,
+    "Já programada com a Bruna",
+  );
 });
 
 test("refresh preserves a checked approval only while the follow-up remains eligible", () => {
@@ -683,6 +702,33 @@ test("refresh preserves a checked approval only while the follow-up remains elig
 
   assert.equal(eligible.approveBruna, true);
   assert.equal(ineligible.approveBruna, false);
+});
+
+test("a final queue status wins over a stale visible follow-up control", () => {
+  const context = loadContext();
+  const now = new Date("2026-08-23T10:00:00-03:00");
+  const item = context.criarItemCentral_({
+    queue: "Ação manual hoje",
+    phone: "+5511999990001",
+    status: "Cancelado",
+    source: "Retomada de marketing",
+    sourceKey: "followup:plan-cancelled",
+  });
+
+  context.aplicarControleCentral_(
+    item,
+    {
+      "followup:plan-cancelled": {
+        status: "Programado",
+        teamNote: "",
+        lastTeamActionAt: null,
+        deferUntil: null,
+      },
+    },
+    now,
+  );
+
+  assert.equal(item.status, "Cancelado");
 });
 
 test("checked eligible rows are approved in one batch and ineligible rows remain human", () => {
@@ -775,6 +821,102 @@ test("checked eligible rows are approved in one batch and ineligible rows remain
         write.row === 3 &&
         write.column === columns["Observação da equipe"] + 1 &&
         /não programada/i.test(write.value),
+    ),
+  );
+});
+
+test("missing safe copy explains why Bruna approval is unavailable", () => {
+  const context = loadContext();
+
+  assert.equal(
+    context.motivoElegibilidadeBrunaCentral_({
+      automatic: false,
+      suggestion: "",
+      normalizedStatus: "acao manual",
+      approvalEligible: false,
+    }),
+    "Sem mensagem segura preenchida",
+  );
+});
+
+test("checked cancellations remove only eligible follow-up plans in one batch", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const eligible = Array(headers.length).fill("");
+  eligible[columns.Modo] = "Automático";
+  eligible[columns["Status operacional"]] = "Programado";
+  eligible[columns["Cancelar retomada"]] = true;
+  eligible[columns.Fonte] = "Retomada de marketing";
+  eligible[columns["Chave operacional"]] = "followup:plan-cancel";
+
+  const ineligible = Array(headers.length).fill("");
+  ineligible[columns.Modo] = "Manual";
+  ineligible[columns["Status operacional"]] = "Programado";
+  ineligible[columns["Cancelar retomada"]] = true;
+  ineligible[columns.Fonte] = "Consultas";
+  ineligible[columns["Chave operacional"]] = "appointment:1";
+
+  const rows = [eligible, ineligible];
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 3,
+    getRange(row, column, rowCount) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      if (row === 2 && column === 1 && rowCount === 2) {
+        return { getValues: () => rows };
+      }
+      return {
+        setValue(value) {
+          writes.push({ row, column, value });
+        },
+      };
+    },
+  };
+  context.assinaturaCancelamentoRetomadas_ = (key) =>
+    "cancel-token:" + key;
+  context.cancelarPlanoRetomadaPorToken_ = (
+    _spreadsheet,
+    token,
+  ) =>
+    token === "cancel-token:plan-cancel"
+      ? { ok: true }
+      : { ok: false, reason: "plan_not_found" };
+
+  const selected = context.coletarCancelamentosMarcadosCentral_(sheet);
+  const result = context.cancelarRetomadasMarcadasCentralInterno_(
+    {},
+    sheet,
+    new Date("2026-08-23T10:00:00-03:00"),
+    selected,
+  );
+
+  assert.equal(selected.length, 2);
+  assert.equal(selected[0].eligible, true);
+  assert.equal(selected[1].eligible, false);
+  assert.equal(result.cancelled, 1);
+  assert.equal(result.skipped, 1);
+  assert.equal(
+    writes.filter(
+      (write) =>
+        write.column === columns["Cancelar retomada"] + 1 &&
+        write.value === false,
+    ).length,
+    2,
+  );
+  assert.ok(
+    writes.some(
+      (write) =>
+        write.row === 2 &&
+        write.column === columns["Status operacional"] + 1 &&
+        write.value === "Cancelado",
     ),
   );
 });
