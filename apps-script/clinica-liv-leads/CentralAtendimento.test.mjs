@@ -687,6 +687,10 @@ test("the action area and urgent rows use distinct accessible colors", () => {
   assert.match(source, /"Programar para"/);
   assert.match(source, /setBackground\("#d9d2e9"\)/);
   assert.match(source, /setBackground\("#fff2cc"\)/);
+  assert.match(source, /Concluído recentemente/);
+  assert.match(source, /Cancelado recentemente/);
+  assert.match(source, /setBackground\("#e2f0d9"\)/);
+  assert.match(source, /setBackground\("#f3f3f3"\)/);
   assert.match(
     source,
     /\$C2<=NOW\(\)\+1[\s\S]{0,180}\$X2="Retomada de marketing"/,
@@ -713,7 +717,7 @@ test("layout migration clears legacy validation and requires the current layout 
 
   assert.equal(context.estruturaCentralPronta_(sheetFor("")), false);
   assert.equal(
-    context.estruturaCentralPronta_(sheetFor("central-liv-v3")),
+    context.estruturaCentralPronta_(sheetFor("central-liv-v4")),
     true,
   );
   assert.match(
@@ -855,6 +859,98 @@ test("registered manual follow-ups are eligible while approved plans are shown a
   assert.equal(
     items[1].brunaEligibilityReason,
     "Já programada com a Bruna",
+  );
+});
+
+test("sent and cancelled follow-ups move to a recent history below active queues", () => {
+  const context = loadContext();
+  const sentAt = new Date("2026-08-23T12:46:00-03:00");
+  const cancelledAt = new Date("2026-08-23T12:50:00-03:00");
+  const sent = Array(17).fill("");
+  sent[0] = "2026-08-22|sent";
+  sent[1] = new Date("2026-08-22T08:00:00-03:00");
+  sent[2] = "+5511999990001";
+  sent[4] = 1;
+  sent[8] = "Mensagem enviada.";
+  sent[9] = "Automático";
+  sent[10] = "Enviada";
+  sent[11] = new Date("2026-08-23T12:45:00-03:00");
+  sent[12] = sentAt;
+  sent[13] = sentAt;
+
+  const cancelled = Array(17).fill("");
+  cancelled[0] = "2026-08-22|cancelled";
+  cancelled[1] = new Date("2026-08-22T08:00:00-03:00");
+  cancelled[2] = "+5511999990002";
+  cancelled[4] = 1;
+  cancelled[8] = "Mensagem cancelada.";
+  cancelled[9] = "Automático";
+  cancelled[10] = "Cancelada — conversation_changed";
+  cancelled[12] = cancelledAt;
+
+  const sheet = {
+    getLastRow: () => 3,
+    getRange: () => ({ getValues: () => [sent, cancelled] }),
+  };
+  const items = context.carregarRetomadasRegistradasCentral_(
+    { getSheetByName: () => sheet },
+    {
+      "+5511999990001": { relationship: "engaged_lead" },
+      "+5511999990002": { relationship: "engaged_lead" },
+    },
+    new Date("2026-08-23T13:00:00-03:00"),
+  );
+
+  assert.equal(items.length, 2);
+  assert.equal(items[0].queue, "Concluído recentemente");
+  assert.equal(items[0].status, "Concluído");
+  assert.equal(items[0].priority.rank, 7);
+  assert.equal(items[0].dueAt, null);
+  assert.equal(items[0].lastInteractionAt.getTime(), sentAt.getTime());
+  assert.equal(items[0].lastTeamActionAt.getTime(), sentAt.getTime());
+  assert.match(items[0].nextAction, /aguardar resposta/i);
+  assert.equal(items[1].queue, "Cancelado recentemente");
+  assert.equal(items[1].status, "Cancelado");
+  assert.equal(items[1].priority.rank, 8);
+  assert.equal(
+    items[1].lastTeamActionAt.getTime(),
+    cancelledAt.getTime(),
+  );
+});
+
+test("recent history is sorted newest first and expires after 24 hours", () => {
+  const context = loadContext();
+  const recent = context.criarItemCentral_({
+    queue: "Concluído recentemente",
+    phone: "+5511999990001",
+    status: "Concluído",
+    lastTeamActionAt: new Date("2026-08-23T12:55:00-03:00"),
+  });
+  const older = context.criarItemCentral_({
+    queue: "Concluído recentemente",
+    phone: "+5511999990002",
+    status: "Concluído",
+    lastTeamActionAt: new Date("2026-08-23T12:45:00-03:00"),
+  });
+
+  assert.deepEqual(
+    [older, recent].sort(context.compararItensCentral_).map((item) => item.phone),
+    [recent.phone, older.phone],
+  );
+  assert.equal(
+    context.aplicarControleCentral_(
+      older,
+      {
+        [older.sourceKey]: {
+          owner: "",
+          teamNote: "",
+          lastTeamActionAt: older.lastTeamActionAt,
+          deferUntil: null,
+        },
+      },
+      new Date("2026-08-24T13:00:00-03:00"),
+    ),
+    null,
   );
 });
 

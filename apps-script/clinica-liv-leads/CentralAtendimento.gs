@@ -16,7 +16,7 @@ const CENTRAL_ATENDIMENTO_CONFIG = Object.freeze({
   whatsappWindowMinutes: 1430,
   maximumRows: 300,
   followUpColumns: 17,
-  layoutVersion: "central-liv-v3",
+  layoutVersion: "central-liv-v4",
 });
 
 const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
@@ -82,6 +82,7 @@ function comoUsarCentralAtendimento() {
       "5. Confira a elegibilidade, marque Aprovar com a Bruna e use Central LIV > Processar decisões marcadas. Programar para é a data e hora exatas do envio.",
       "6. Para impedir somente uma retomada já registrada, marque Cancelar retomada e processe as decisões.",
       "7. A Bruna revalida conversa, procedimento, janela do WhatsApp, opt-out, takeover humano e segurança antes de qualquer envio.",
+      "8. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
     ].join("\n\n"),
     SpreadsheetApp.getUi().ButtonSet.OK,
   );
@@ -822,6 +823,13 @@ function carregarRetomadasRegistradasCentral_(
         "suspensa na planilha",
       ].includes(normalizedStatus);
       const scheduledAt = dataCentralValida_(row[11]);
+      const lastAttemptAt = dataCentralValida_(row[12]);
+      const sentAt = dataCentralValida_(row[13]);
+      const terminalAt = sent
+        ? sentAt || lastAttemptAt || scheduledAt || recordDate
+        : cancelled
+          ? lastAttemptAt || recordDate
+          : null;
       const recordDay = formatarDataCentral_(
         recordDate,
         "yyyy-MM-dd",
@@ -836,8 +844,19 @@ function carregarRetomadasRegistradasCentral_(
             scheduledAt.getTime() >= scheduledSince.getTime()
           )
         );
+      const terminalRecently =
+        Boolean(terminalAt) &&
+        now.getTime() - terminalAt.getTime() <=
+          CENTRAL_ATENDIMENTO_CONFIG.completedVisibilityHours *
+            60 *
+            60 *
+            1000;
 
-      if (recordDay !== today && !stillOperationallyRelevant) {
+      if (
+        recordDay !== today &&
+        !stillOperationallyRelevant &&
+        !terminalRecently
+      ) {
         return items;
       }
 
@@ -852,12 +871,20 @@ function carregarRetomadasRegistradasCentral_(
         "acao manual",
         "suspensa na planilha",
       ].includes(normalizedStatus);
+      const terminalQueue = sent
+        ? "Concluído recentemente"
+        : cancelled
+          ? "Cancelado recentemente"
+          : "";
 
       items.push(criarItemCentral_({
-        queue: automatic ? "Automático hoje" : "Ação manual hoje",
-        dueAt:
-          scheduledAt ||
-          combinarDataHorarioCentral_(recordDay, row[5]),
+        queue:
+          terminalQueue ||
+          (automatic ? "Automático hoje" : "Ação manual hoje"),
+        dueAt: terminalQueue
+          ? null
+          : scheduledAt ||
+            combinarDataHorarioCentral_(recordDay, row[5]),
         programFor:
           scheduledAt ||
           combinarDataHorarioCentral_(recordDay, row[5]),
@@ -865,9 +892,13 @@ function carregarRetomadasRegistradasCentral_(
         phone: phone,
         relationship: relationship,
         origin: profile.origin,
-        lastInteractionAt: null,
-        nextAction:
-          textoCentral_(row[4], 60) + "ª retomada",
+        lastInteractionAt: sent ? terminalAt : null,
+        lastTeamActionAt: terminalAt,
+        nextAction: sent
+          ? "Retomada enviada; aguardar resposta"
+          : cancelled
+            ? "Retomada cancelada; nenhuma mensagem será enviada"
+            : textoCentral_(row[4], 60) + "ª retomada",
         owner: automatic ? "Bruna/bot" : "Equipe",
         mode: automatic ? "Automático" : "Manual",
         suggestion: suggestion,
@@ -1224,7 +1255,9 @@ function criarItemCentral_(input) {
     status: input.status || "Aberto",
     deferUntil: null,
     teamNote: "",
-    lastTeamActionAt: null,
+    lastTeamActionAt: dataCentralValida_(
+      input.lastTeamActionAt,
+    ),
     updatedAt: new Date(),
     approvalBrunaEligible: approvalBrunaEligible,
     approveBruna: false,
@@ -1297,7 +1330,8 @@ function aplicarControleCentral_(item, controls, now) {
 
   item.owner = control.owner || item.owner;
   item.teamNote = control.teamNote || "";
-  item.lastTeamActionAt = control.lastTeamActionAt;
+  item.lastTeamActionAt =
+    control.lastTeamActionAt || item.lastTeamActionAt;
   item.deferUntil = control.deferUntil;
   if (control.finalMessageDefined) {
     item.finalMessage = control.finalMessage;
@@ -1354,7 +1388,9 @@ function aplicarControleCentral_(item, controls, now) {
   }
 
   if (
-    item.status === "Concluído" &&
+    ["concluido", "cancelado"].includes(
+      normalizarTextoCentral_(item.status),
+    ) &&
     item.lastTeamActionAt &&
     now.getTime() - item.lastTeamActionAt.getTime() >
       CENTRAL_ATENDIMENTO_CONFIG.completedVisibilityHours *
@@ -2820,6 +2856,11 @@ function formatarCentralAtendimento_(sheet, itemCount) {
     .setBackground("#fff8e1");
   sheet.hideColumns(columns.fonte + 1, 3);
   sheet
+    .getRange(1, columns.fila + 1)
+    .setNote(
+      "As filas ativas ficam no topo. Retomadas enviadas ou canceladas descem para o histórico recente e desaparecem após 24 horas.",
+    );
+  sheet
     .getRange(1, columns["agir ate"] + 1)
     .setNote(
       "Limite para a equipe agir ou revisar a linha. Não programa envio. Para a Bruna enviar, use Programar para.",
@@ -2937,6 +2978,32 @@ function formatarCentralAtendimento_(sheet, itemCount) {
       ])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$A2="Concluído recentemente"')
+      .setBackground("#e2f0d9")
+      .setFontColor("#38761d")
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$A2="Cancelado recentemente"')
+      .setBackground("#f3f3f3")
+      .setFontColor("#777777")
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
       .whenTextEqualTo("Concluído")
       .setBackground("#d9ead3")
       .setFontColor("#274e13")
@@ -3011,6 +3078,8 @@ function prioridadeCentralPorFila_(queue) {
     "Automático hoje": { rank: 3, label: "Normal" },
     "Consultas e cuidados": { rank: 4, label: "Normal" },
     "Aguardando paciente": { rank: 6, label: "Baixa" },
+    "Concluído recentemente": { rank: 7, label: "Resolvida" },
+    "Cancelado recentemente": { rank: 8, label: "Arquivada" },
   };
   return priorities[queue] || { rank: 5, label: "Normal" };
 }
@@ -3019,6 +3088,18 @@ function compararItensCentral_(left, right) {
   const rankDifference =
     left.priority.rank - right.priority.rank;
   if (rankDifference) return rankDifference;
+
+  if (left.priority.rank >= 7) {
+    const leftAction = left.lastTeamActionAt
+      ? left.lastTeamActionAt.getTime()
+      : 0;
+    const rightAction = right.lastTeamActionAt
+      ? right.lastTeamActionAt.getTime()
+      : 0;
+    if (leftAction !== rightAction) {
+      return rightAction - leftAction;
+    }
+  }
 
   const leftDue = left.dueAt
     ? left.dueAt.getTime()

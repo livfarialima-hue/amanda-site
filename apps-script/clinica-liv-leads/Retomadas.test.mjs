@@ -2138,3 +2138,106 @@ test("later post-consult and old-client contacts stay manual with a ready messag
   assert.match(oldClient.sugestao, /retomar seu acompanhamento/);
   assert.doesNotMatch(oldClient.contexto, /lifting facial/i);
 });
+
+test("automatic follow-up refreshes the Central once after all durable writes", () => {
+  const now = new Date("2026-08-23T12:46:00-03:00");
+  const row = Array(17).fill("");
+  row[0] = "2026-08-23|plan-1";
+  row[1] = new Date("2026-08-23T08:00:00-03:00");
+  row[2] = "+5511999990001";
+  row[3] = "out-1";
+  row[4] = 1;
+  row[8] = "Mensagem segura de retomada.";
+  row[9] = "Automático";
+  row[10] = "Programada";
+  row[11] = new Date("2026-08-23T12:45:00-03:00");
+
+  const events = [];
+  const controlSheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column) {
+      if (rowNumber === 2 && column === 1) {
+        return { getValues: () => [row] };
+      }
+      if (rowNumber === 2 && column === 11) {
+        return {
+          setValues(values) {
+            row.splice(10, 5, ...values[0]);
+            events.push("status:" + values[0][0]);
+          },
+        };
+      }
+      throw new Error(`unexpected range ${rowNumber}:${column}`);
+    },
+  };
+  const leadSheet = {};
+  const messagesSheet = {};
+  const file = {
+    getSheetByName(name) {
+      if (name === "Google Ads - Conversões") return leadSheet;
+      if (name === "_WHATSAPP_MENSAGENS") return messagesSheet;
+      return null;
+    },
+  };
+
+  context.CONFIG = { spreadsheetId: "canonical-sheet" };
+  context.SpreadsheetApp = {
+    openById: () => file,
+    flush: () => events.push("flush"),
+  };
+  context.garantirEstruturaPreferenciasContato_ = () => {};
+  context.obterPlanilhaControleRetomadas_ = () => controlSheet;
+  context.carregarLeadsRetomadas_ = () => ({
+    "+5511999990001": { name: "Paciente" },
+  });
+  context.carregarConversasRetomadas_ = () => ({
+    "+5511999990001": [{ messageId: "out-1" }],
+  });
+  context.validarRetomadaAutomatica_ = () => ({
+    ok: true,
+    sugestao: "Mensagem segura de retomada.",
+  });
+  context.enviarRetomadaAutomatica_ = () => {
+    events.push("send");
+    return { ok: true, sent: true };
+  };
+  context.registrarMensagemRetomadaAutomatica_ = () => {
+    events.push("message-history");
+  };
+  context.atualizarCentralAtendimentoInterno_ = (
+    spreadsheet,
+    refreshAt,
+  ) => {
+    assert.equal(spreadsheet, file);
+    assert.equal(refreshAt, now);
+    events.push("central-refresh");
+    return { ok: true };
+  };
+
+  const result = context.processarRetomadasAutomaticasInterno_(
+    now,
+    "test-secret",
+    {},
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.sent, 1);
+  assert.equal(
+    events.filter((event) => event === "central-refresh").length,
+    1,
+  );
+  assert.ok(
+    events.indexOf("central-refresh") >
+      events.indexOf("message-history"),
+  );
+
+  context.processarRetomadasAutomaticasInterno_(
+    now,
+    "test-secret",
+    {},
+  );
+  assert.equal(
+    events.filter((event) => event === "central-refresh").length,
+    1,
+  );
+});

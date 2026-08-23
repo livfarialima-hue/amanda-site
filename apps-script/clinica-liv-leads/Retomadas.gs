@@ -2985,6 +2985,23 @@ function processarRetomadasAutomaticasInterno_(
     enviados += 1;
   }
 
+  const houveAlteracaoNaFila =
+    enviados + cancelados + falhas > 0;
+  if (
+    houveAlteracaoNaFila &&
+    typeof atualizarCentralAtendimentoInterno_ === "function"
+  ) {
+    try {
+      SpreadsheetApp.flush();
+      atualizarCentralAtendimentoInterno_(arquivo, agora);
+    } catch (error) {
+      console.error(
+        "A retomada foi processada, mas a Central de Atendimento não pôde ser atualizada imediatamente.",
+        error,
+      );
+    }
+  }
+
   return {
     ok: falhas === 0,
     active: true,
