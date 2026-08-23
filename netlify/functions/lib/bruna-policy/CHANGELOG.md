@@ -1,13 +1,13 @@
 # Histórico do pacote Bruna
 
-## 2026-08-23.4 — candidata integrada
+## 2026-08-23.4 — publicada e verificada
 
 - A segunda e última retomada aprovada pela equipe reutiliza a revisão semântica da primeira somente quando a última interação durável continua sendo exatamente a primeira retomada automática e não houve fala posterior da paciente ou da equipe; qualquer incerteza exige nova revisão da IA e falha fechada.
 - Cervicoplastia passa a ter faixa automática exclusiva de R$ 18 mil a R$ 26 mil depois de aceite claro da oferta ou novo pedido explícito; sua resposta nunca inclui os valores de minilifting ou lifting facial.
 - Lifting facial preserva sua faixa própria e otoplastia permanece automática em R$ 8 mil a R$ 14 mil, cada uma com detecção de repetição independente.
 - Toda pergunta de preço de outra cirurgia entra em revisão humana desde a primeira ocorrência, com alerta interno e resposta sugerida para conferência manual.
 - As respostas à paciente deixam de expor linguagem de confirmação operacional interna; o gate de saída bloqueia essa formulação e continua bloqueando valores fora das três exceções.
-- Estado desta versão: reconciliada sobre a produção v124 e autorizada para publicação, sem mensagem real. Os testes focados passaram em 313/313, a suíte ampla em 1015/1015 e o build em 178 arquivos e 44 URLs. Publicação e pós-voo ainda pendentes neste ponto do registro.
+- Estado desta versão: publicada no código funcional `dc3d6054e895968e98f369e39a3905fca5559227`, deploy Netlify `6a8b399c98d6cf000824079f` e Apps Script v125, com os deployments canônicos preservados. Os testes focados passaram em 313/313, a suíte ampla em 1015/1015 e o build em 178 arquivos e 44 URLs. Domínio, URL imutável, webhook e web app responderam HTTP 200; segredo/token inválidos falharam com segurança. Nenhuma função, trigger ou mensagem real foi executada. Rollback: código funcional `f3966f76d281056fc1abf5198a9a97ea519ed6ff`, deploy Netlify `6a8b322b31e9e0000873b91c` e Apps Script v124.
 
 ## 2026-08-22.1
 

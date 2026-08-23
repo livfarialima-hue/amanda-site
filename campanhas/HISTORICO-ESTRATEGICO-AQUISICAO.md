@@ -8,7 +8,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 22 de agosto de 2026 — separação estrita das faixas automáticas por procedimento
 
-- **Status:** autorizado por Daniel, reconciliado sobre a produção v124 e testado; publicação em andamento.
+- **Status:** publicado e verificado em 23/08/2026 no código funcional `dc3d6054e895968e98f369e39a3905fca5559227`, deploy Netlify `6a8b399c98d6cf000824079f` e Apps Script v125; nenhuma mensagem real foi enviada.
 - **Área/campanha:** atendimento de preço da Bruna no WhatsApp; nenhuma alteração de campanha, orçamento, lance, palavra-chave, anúncio ou página.
 - **Mudança:** cervicoplastia passa a usar exclusivamente R$ 18 mil a R$ 26 mil depois de aceite claro da oferta ou novo pedido explícito; lifting facial/minilifting e otoplastia mantêm suas faixas próprias. Uma resposta cervical nunca mostra valores de lifting facial ou minilifting. Qualquer pergunta de preço de outro procedimento gera alerta interno com resposta sugerida desde o primeiro pedido. A frase `As condições exatas dependem da confirmação humana` e suas variantes deixam de aparecer nas mensagens à paciente, embora detalhes não aprovados permaneçam bloqueados internamente.
 - **Motivo e evidência:** uma resposta real de contexto cervical misturou as faixas de minilifting e lifting facial, criando risco de informação comercial errada e perda de confiança.
@@ -21,7 +21,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 22 de agosto de 2026 — sinalização pública de faixa privada no guia de lifting
 
-- **Status:** autorizado por Daniel, reconciliado e testado; publicação em andamento e monitoramento posterior obrigatório.
+- **Status:** publicado e verificado em 23/08/2026 no código funcional `dc3d6054e895968e98f369e39a3905fca5559227` e deploy Netlify `6a8b399c98d6cf000824079f`; monitoramento posterior obrigatório.
 - **Área/campanha:** página `conteudos/quanto-custa-lifting-facial-sao-paulo/` e continuidade privada pelo WhatsApp; nenhuma alteração em campanha, orçamento, lance, palavra-chave ou anúncio.
 - **Mudança:** o guia continua sem faixa ou valor numérico da cirurgia, mas passa a explicar, no primeiro bloco e no FAQ, que a pessoa pode conversar pelo WhatsApp sobre uma faixa geral de valores como ponto de partida. O CTA usa a promessa precisa `Conversar sobre uma faixa geral`; a página esclarece que a referência é informativa, não é orçamento, proposta nem garantia, e que o valor final pode ficar fora da faixa conforme avaliação e planejamento individual.
 - **Motivo e evidência:** retirar os números reduziu exposição regulatória, mas também pode frustrar quem chega pela intenção explícita de preço. De 23/07 a 21/08, `AG_LIFTING_FACIAL_PRECO` apresentou 93 cliques, 750 impressões, CTR de 12,40%, R$ 147,55 de gasto e zero conversão exibida no Google Ads. No GA4 de 25/07 a 21/08, o grupo teve 39 sessões, 22 segundos de engajamento médio e taxa de eventos principais de 5,13%, contra 107 sessões, 38 segundos e 7,48% no grupo geral. A atribuição do funil permanece insuficiente, portanto esses dados justificam reduzir frustração, não provam causalidade nem autorizam consolidação.
