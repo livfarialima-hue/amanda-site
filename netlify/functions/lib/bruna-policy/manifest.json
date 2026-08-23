@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "316863a728e104e10616ac32b2dc66b7928c92f6de81916c27ae6287e5e29623"
+    "driveProjectionSha256": "5637283dcd4718bcd126a64cb4e6e183c859ee4de643afb58e8601683ec04eb7"
   }
 }
