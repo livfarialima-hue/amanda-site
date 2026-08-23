@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-22T19:05:09-03:00",
+  "generatedAt": "2026-08-22T22:06:40-03:00",
   "artifact": "artifact.json",
   "output": "report.html",
   "generation": {
@@ -32,6 +32,6 @@
     "consoleErrors": "N/D — o terminal encerrou no gate de layout",
     "externalRequests": "N/D — o terminal encerrou no gate de layout",
     "pageErrors": "N/D — o terminal encerrou no gate de layout",
-    "note": "O leitor portátil compartilhado usa um cabeçalho de 100vw junto à scrollbar vertical e ultrapassa a largura útil. O HTML foi gerado pelo builder canônico, é autônomo e contém o artefato integral; o gerador compartilhado não foi alterado. O Markdown e o CSV permanecem os registros primários da auditoria."
+    "note": "O leitor portátil compartilhado usa um cabeçalho de 100vw junto à scrollbar vertical e ultrapassa a largura útil. O HTML foi gerado pelo builder canônico, é autônomo e preserva o snapshot analítico anterior à reabertura. Em 22/08 às 22:06 BRT foi acrescentado um aviso visível de que o Markdown e o CSV são os registros vigentes das cinco correções de mensuração; o gerador compartilhado e o dataset embutido não foram alterados."
   }
 }
