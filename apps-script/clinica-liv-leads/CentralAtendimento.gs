@@ -15,6 +15,7 @@ const CENTRAL_ATENDIMENTO_CONFIG = Object.freeze({
   completedVisibilityHours: 24,
   maximumRows: 300,
   followUpColumns: 17,
+  layoutVersion: "central-liv-v2",
 });
 
 const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
@@ -2203,6 +2204,20 @@ function escreverCentralAtendimento_(sheet, items, now) {
   const existingFilter = sheet.getFilter();
   if (existingFilter) existingFilter.remove();
 
+  if (!structureReady) {
+    sheet
+      .getRange(
+        1,
+        1,
+        sheet.getMaxRows(),
+        CENTRAL_ATENDIMENTO_HEADERS.length,
+      )
+      .clearDataValidations();
+    sheet
+      .getRange(1, 1, 1, CENTRAL_ATENDIMENTO_HEADERS.length)
+      .clearNote();
+  }
+
   sheet.clearContents();
   sheet
     .getRange(
@@ -2387,12 +2402,18 @@ function estruturaCentralPronta_(sheet) {
     )
     .getDisplayValues()[0];
 
-  return CENTRAL_ATENDIMENTO_HEADERS.every(function (
+  const headersReady = CENTRAL_ATENDIMENTO_HEADERS.every(function (
     header,
     index,
   ) {
     return headers[index] === header;
   });
+
+  if (!headersReady) return false;
+
+  return sheet
+    .getRange(1, 1)
+    .getNote() === CENTRAL_ATENDIMENTO_CONFIG.layoutVersion;
 }
 
 function formatarCentralAtendimento_(sheet, itemCount) {
@@ -2560,6 +2581,9 @@ function formatarCentralAtendimento_(sheet, itemCount) {
     .setNote(
       "Edite aqui o texto exato que a Bruna deverá enviar. A edição é preservada nas atualizações da Central.",
     );
+  sheet
+    .getRange(1, 1)
+    .setNote(CENTRAL_ATENDIMENTO_CONFIG.layoutVersion);
   sheet
     .getRange(1, columns["programar para"] + 1)
     .setNote(

@@ -692,6 +692,33 @@ test("the action area and urgent rows use distinct accessible colors", () => {
   assert.match(source, /https:\/\/wa\.me\//);
 });
 
+test("layout migration clears legacy validation and requires the current layout marker", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const sheetFor = (note) => ({
+    getMaxColumns: () => headers.length,
+    getRange(_row, _column, _rowCount, columnCount) {
+      if (columnCount === headers.length) {
+        return { getDisplayValues: () => [headers] };
+      }
+      return { getNote: () => note };
+    },
+  });
+
+  assert.equal(context.estruturaCentralPronta_(sheetFor("")), false);
+  assert.equal(
+    context.estruturaCentralPronta_(sheetFor("central-liv-v2")),
+    true,
+  );
+  assert.match(
+    source,
+    /if \(!structureReady\)[\s\S]{0,360}clearDataValidations\(\)/,
+  );
+});
+
 test("registered manual follow-ups are eligible while approved plans are shown as automatic", () => {
   const context = loadContext();
   const manual = Array(17).fill("");
