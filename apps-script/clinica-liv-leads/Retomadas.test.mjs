@@ -2188,16 +2188,28 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
   context.garantirEstruturaPreferenciasContato_ = () => {};
   context.obterPlanilhaControleRetomadas_ = () => controlSheet;
   context.carregarLeadsRetomadas_ = () => ({
-    "+5511999990001": { name: "Paciente" },
+    "+5511999990001": {
+      name: "Paciente",
+      status: "Qualificado",
+      resumo: "Pesquisa sobre avaliação",
+      proximaAcao: "Aguardar resposta",
+    },
   });
   context.carregarConversasRetomadas_ = () => ({
-    "+5511999990001": [{ messageId: "out-1" }],
+    "+5511999990001": [{
+      messageId: "out-1",
+      direcao: "OUT",
+      dataHora: new Date("2026-08-22T12:02:00-03:00"),
+      texto: "Posso explicar como funciona a avaliação.",
+    }],
   });
   context.validarRetomadaAutomatica_ = () => ({
     ok: true,
     sugestao: "Mensagem segura de retomada.",
   });
-  context.enviarRetomadaAutomatica_ = () => {
+  let outboundPayload;
+  context.enviarRetomadaAutomatica_ = (payload) => {
+    outboundPayload = payload;
     events.push("send");
     return { ok: true, sent: true };
   };
@@ -2222,6 +2234,13 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
 
   assert.equal(result.ok, true);
   assert.equal(result.sent, 1);
+  assert.equal(outboundPayload.humanApproved, false);
+  assert.equal(outboundPayload.recentConversation.length, 1);
+  assert.equal(
+    outboundPayload.recentConversation[0].direction,
+    "OUT",
+  );
+  assert.equal(outboundPayload.leadContext.status, "Qualificado");
   assert.equal(
     events.filter((event) => event === "central-refresh").length,
     1,
@@ -2240,4 +2259,25 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
     events.filter((event) => event === "central-refresh").length,
     1,
   );
+});
+
+test("semantic follow-up payload keeps only the latest 20 bounded turns in order", () => {
+  const turns = Array.from({ length: 25 }, (_, index) => ({
+    direcao: index % 2 === 0 ? "IN" : "OUT",
+    dataHora: new Date(
+      `2026-08-22T${String(index % 20).padStart(2, "0")}:00:00-03:00`,
+    ),
+    texto: `turno-${index}-` + "x".repeat(1_300),
+  }));
+
+  const prepared =
+    context.prepararConversaRevisaoSemanticaRetomada_(turns);
+
+  assert.equal(prepared.length, 20);
+  assert.match(prepared[0].text, /^turno-5-/);
+  assert.match(prepared[19].text, /^turno-24-/);
+  assert.equal(Array.from(prepared[0].text).length, 1_200);
+  assert.equal(prepared[0].direction, "OUT");
+  assert.equal(prepared[1].direction, "IN");
+  assert.match(prepared[0].at, /^2026-08-22T/);
 });

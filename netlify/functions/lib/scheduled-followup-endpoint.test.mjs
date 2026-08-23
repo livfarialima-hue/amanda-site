@@ -10,6 +10,19 @@ const PAYLOAD = {
   planId: "2026-08-03|+5511999999999|out-1|1",
   patientPhone: "+5511999999999",
   body: "Olá! Fiquei à disposição para continuar sua pesquisa.",
+  humanApproved: true,
+  recentConversation: [
+    {
+      direction: "IN",
+      at: "2026-08-02T10:00:00-03:00",
+      text: "Gostaria de entender melhor a avaliação.",
+    },
+    {
+      direction: "OUT",
+      at: "2026-08-02T10:02:00-03:00",
+      text: "Claro. Posso explicar como funciona.",
+    },
+  ],
 };
 
 function request(body = PAYLOAD, secret = SECRET) {
@@ -54,6 +67,15 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
     },
     now: new Date("2026-08-03T10:30:00-03:00"),
     getBusinessNumberImpl: async () => "+5511961957144",
+    reviewScheduledFollowupContextImpl: async (payload) => {
+      assert.equal(payload.body, PAYLOAD.body);
+      assert.equal(payload.recentConversation.length, 2);
+      return {
+        status: "completed",
+        allowed: true,
+        reasonCode: "context_aligned",
+      };
+    },
     sendYCloudPatientTextImpl: async (payload) => {
       sent.push(payload);
       return {
@@ -75,6 +97,75 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
   assert.equal(turns.length, 1);
   assert.equal(turns[0].role, "assistant");
   assert.equal(turns[0].source, "bruna");
+});
+
+test("scheduled follow-up is blocked when semantic review finds changed context", async () => {
+  let sends = 0;
+  let businessNumberReads = 0;
+  const response = await handleScheduledFollowup(request(), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      OPENAI_API_KEY: "openai-key",
+      WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
+    },
+    now: new Date("2026-08-03T10:30:00-03:00"),
+    reviewScheduledFollowupContextImpl: async () => ({
+      status: "completed",
+      allowed: false,
+      reasonCode: "patient_paused",
+    }),
+    getBusinessNumberImpl: async () => {
+      businessNumberReads += 1;
+      return "+5511961957144";
+    },
+    sendYCloudPatientTextImpl: async () => {
+      sends += 1;
+      return { status: "completed" };
+    },
+  });
+
+  assert.equal(response.status, 409);
+  assert.deepEqual(await response.json(), {
+    ok: false,
+    sent: false,
+    error: "semantic_context_review_required",
+    semanticReason: "patient_paused",
+  });
+  assert.equal(businessNumberReads, 0);
+  assert.equal(sends, 0);
+});
+
+test("scheduled follow-up fails closed when semantic review is unavailable", async () => {
+  let sends = 0;
+  const response = await handleScheduledFollowup(request(), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
+    },
+    now: new Date("2026-08-03T10:30:00-03:00"),
+    reviewScheduledFollowupContextImpl: async () => ({
+      status: "failed",
+      allowed: false,
+      errorCode: "timeout",
+    }),
+    sendYCloudPatientTextImpl: async () => {
+      sends += 1;
+      return { status: "completed" };
+    },
+  });
+
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    ok: false,
+    sent: false,
+    error: "semantic_context_review_unavailable",
+    semanticReason: "timeout",
+  });
+  assert.equal(sends, 0);
 });
 
 test("scheduled follow-up rejects night sends and invalid secrets", async () => {

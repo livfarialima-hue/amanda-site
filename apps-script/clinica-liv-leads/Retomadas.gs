@@ -2946,6 +2946,18 @@ function processarRetomadasAutomaticasInterno_(
         planId: String(linha[0] || "").trim(),
         patientPhone: telefone,
         body: validacao.sugestao,
+        humanApproved: aprovadoPelaEquipe,
+        recentConversation:
+          prepararConversaRevisaoSemanticaRetomada_(conversa),
+        leadContext: {
+          status: String(lead.status || "").trim().slice(0, 120),
+          summary: Array.from(
+            String(lead.resumo || "").trim(),
+          ).slice(0, 600).join(""),
+          nextAction: Array.from(
+            String(lead.proximaAcao || "").trim(),
+          ).slice(0, 300).join(""),
+        },
       },
       segredo,
       propriedades,
@@ -3152,10 +3164,33 @@ function enviarRetomadaAutomatica_(payload, segredo, propriedades) {
       resposta.getResponseCode() < 300 &&
       corpo.ok === true,
     sent: corpo.sent === true,
-    error:
+    error: [
       corpo.error ||
-      "http_" + String(resposta.getResponseCode()),
+        "http_" + String(resposta.getResponseCode()),
+      corpo.semanticReason || "",
+    ].filter(Boolean).join(":"),
   };
+}
+
+function prepararConversaRevisaoSemanticaRetomada_(conversa) {
+  return (conversa || [])
+    .slice(-20)
+    .map(function (mensagem) {
+      const dataHora = dataRetomadaValida_(mensagem.dataHora);
+      return {
+        direction:
+          String(mensagem.direcao || "").toUpperCase() === "OUT"
+            ? "OUT"
+            : "IN",
+        at: dataHora ? dataHora.toISOString() : "",
+        text: Array.from(String(mensagem.texto || "").trim())
+          .slice(0, 1200)
+          .join(""),
+      };
+    })
+    .filter(function (mensagem) {
+      return Boolean(mensagem.text);
+    });
 }
 
 function registrarMensagemRetomadaAutomatica_(
