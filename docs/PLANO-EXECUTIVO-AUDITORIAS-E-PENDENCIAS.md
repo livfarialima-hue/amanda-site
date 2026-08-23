@@ -402,3 +402,18 @@ Após qualquer execução:
 - `campanhas/ROTINA-AUTOMATIZADA-REVISAO-META-ADS.md`.
 
 Se uma fonte técnica divergir deste painel sobre o que já foi publicado ou sobre a próxima data, interromper a execução, confirmar o estado ao vivo e atualizar ambos. Não escolher silenciosamente uma das versões.
+
+## 12. Atualização operacional — mensuração das cinco campanhas em 22/08/2026
+
+**Estado:** `PUBLICADO; EM MONITORAMENTO`. Cinco sobrescritas legadas foram removidas dos anúncios de BLEF, CERV, FACE e MARCA. O pós-voo atualizado contra o servidor confirmou herança dos códigos canônicos e orçamento total idêntico de R$ 87/dia. OTO e LIFTING FACIAL não receberam edição; site, WhatsApp, lances, metas e ações de conversão permaneceram intactos.
+
+**Saúde do caminho:** a fila de classificação estava sem itens pendentes, em execução ou falhos; o trigger `sincronizarConsultasAoEditar` estava ativo com 0% de erro; o agregado Google do dia foi gerado sem PII; testes focais 143/143 e `site:check` 44/44. A ausência de lead novo qualificável e de agendamento não deve ser convertida em evento artificial nem tratada como falha técnica.
+
+**Próximos gates:**
+
+1. no primeiro contato Google posterior à correção, verificar campanha, grupo, click ID, Opportunity ID e ausência de fallback, sem copiar PII;
+2. em `27/08`, conferir o ciclo de importação e a materialização do Histórico de alterações;
+3. em `30/08`, ler os sete dias completos `23–29/08` e calcular cobertura canônica, contato válido, qualificado e consulta;
+4. em `06/09`, repetir para 14 dias completos; não iniciar outro experimento material se o tracking ainda não estiver estável.
+
+**Rollback:** restaurar os cinco pares de parâmetros legados registrados em `auditorias/auditoria-google-ads-2026-08-22/EXECUCAO-2026-08-22.md` apenas se houver perda de atribuição ou efeito colateral comprovado. Não reinterpretar `G26F00/F01/F02/F03` ou `G26B01` históricos como campanhas canônicas sem evidência determinística.

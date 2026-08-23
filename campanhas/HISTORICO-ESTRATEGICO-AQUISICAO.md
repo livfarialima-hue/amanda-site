@@ -524,3 +524,16 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Regra para manter:** manter se o volume útil recuperar sem deterioração material da qualidade ou do custo qualificado e sem exceder a capacidade de atendimento.
 - **Regra para escalar:** aumentar orçamento somente após estabilidade de termos, páginas, atribuição, recibos e passagem para consulta, com capacidade operacional comprovada.
 - **Regra para reverter:** restaurar a estratégia anterior diante de tráfego irrelevante, piora material de qualidade/custo, falha de atribuição, duplicidade ou saturação; retornar a Maximizar conversões apenas quando houver histórico limpo e aceito suficiente.
+
+### 22 de agosto de 2026 — complemento: aliases de anúncio corrigidos nas demais campanhas
+
+- **Status:** publicado no Google Ads e verificado por entidade; monitoramento iniciado.
+- **Escopo:** `S_BR_SP_BLEFAROPLASTIA`, `S_BR_SP_LIFTING_CERVICAL`, `S_BR_SP_CIRURGIA_FACIAL` e `S_BR_SP_MARCA`; `S_BR_SP_OTOPLASTIA` e `S_BR_SP_LIFTING_FACIAL` permaneceram sem edição.
+- **Mudança:** cinco anúncios deixaram de sobrescrever os códigos canônicos com aliases legados. BLEF deixou `g26f03`; os dois anúncios CERV deixaram `g26f02`, e `AG_LIPO_PAPADA` deixou também o `_ag` cervical incorreto; FACE deixou `g26f00` e `ag_cirurgia_facial_sp`; MARCA deixou `g26b01`. Depois do salvamento, o Google Ads normalizou os pares redundantes e os anúncios passaram a herdar `G26BLEF`, `G26CERV`, `G26FACE`, `G26MARCA` e os grupos canônicos já existentes.
+- **Motivo e evidência:** entre 17 e 20/08, cinco de sete contatos Google chegaram ao agregado com `G26F01` ou `G26F02`, embora o ledger operacional mostrasse os eventos como `resolved`, `google_coded` e sem fallback. A inspeção ao vivo provou a precedência dos parâmetros do anúncio sobre os níveis canônicos.
+- **Hipótese:** retirar as sobrescritas fará os novos contatos resolverem campanha e grupo corretos sem mudar entrega.
+- **Métrica principal:** proporção de novos contatos Google com código `G26...` canônico e `_ag` correto; downstream por contato válido, qualificado e consulta somente depois de volume e janela mínimos.
+- **Guardrails:** orçamento total preservado em R$ 87/dia; zero mudança de lance, meta, ação de conversão, rede, texto, URL, site ou WhatsApp; zero backfill dos aliases históricos; zero PII.
+- **Revisão:** primeiro contato Google elegível após a correção; leitura de sete dias completos em 30/08 e de 14 dias completos em 06/09.
+- **Regra para manter:** manter se os novos contatos chegarem com códigos canônicos, sem perda de click ID, duplicidade ou efeito lateral.
+- **Regra para reverter:** restaurar exatamente os overrides anteriores dos cinco anúncios somente diante de perda de atribuição ou efeito colateral comprovado; não reverter por oscilação de CTR, clique ou volume isolado.
