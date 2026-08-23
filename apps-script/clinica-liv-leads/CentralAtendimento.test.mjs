@@ -233,6 +233,31 @@ test("a future defer moves the item to silent waiting", () => {
   assert.match(result.teamNote, /próxima semana/);
 });
 
+test("an expired defer returns the item to its generated operational status", () => {
+  const context = loadContext();
+  const now = new Date("2026-08-04T10:00:00-03:00");
+  const item = context.criarItemCentral_({
+    queue: "Resposta agora",
+    phone: "+5511999999999",
+    status: "Aberto",
+    sourceKey: "conversation:abc",
+  });
+  const result = context.aplicarControleCentral_(
+    item,
+    {
+      "conversation:abc": {
+        status: "Suspenso",
+        deferUntil: new Date("2026-08-03T10:00:00-03:00"),
+        lastTeamActionAt: new Date("2026-07-30T12:00:00-03:00"),
+      },
+    },
+    now,
+  );
+
+  assert.equal(result.queue, "Resposta agora");
+  assert.equal(result.status, "Aberto");
+});
+
 test("completed items disappear after the configured visibility window", () => {
   const context = loadContext();
   const now = new Date("2026-07-30T15:00:00-03:00");
@@ -358,6 +383,52 @@ test("acknowledgements, automated openers and solicitations do not create false 
     ),
     true,
   );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
+      "Ok. Obrigado. Vou falar com minha esposa.",
+    ),
+    false,
+  );
+  assert.equal(
+    context.mensagemExigeRespostaCentral_(
+      "Preciso falar com a doutora sobre o exame.",
+    ),
+    true,
+  );
+});
+
+test("a patient who says she will decide later stays visible without creating an answer task", () => {
+  const context = loadContext();
+  const phone = "+5511999999999";
+  const now = new Date("2026-08-23T12:00:00-03:00");
+  const conversation = [{
+    direcao: "IN",
+    dataHora: new Date("2026-08-23T11:50:00-03:00"),
+    messageId: "patient-pause",
+    texto: "Ok. Obrigada. Vou falar com meu marido.",
+  }];
+
+  const replies = context.carregarRespostasPendentesCentral_(
+    { [phone]: conversation },
+    {},
+    {},
+    {},
+    now,
+  );
+  const waiting = context.carregarAguardandoPacienteCentral_(
+    { [phone]: conversation },
+    {},
+    {},
+    {},
+    now,
+  );
+
+  assert.equal(replies.length, 0);
+  assert.equal(waiting.length, 1);
+  assert.equal(waiting[0].queue, "Aguardando paciente");
+  assert.equal(waiting[0].status, "Suspenso");
+  assert.equal(waiting[0].mode, "Silêncio");
+  assert.equal(waiting[0].nextAction, "Aguardar iniciativa da paciente");
 });
 
 test("answer-now only includes a recent message that still needs a reply", () => {
@@ -608,15 +679,17 @@ test("central exposes batch decisions without making an on-edit send", () => {
   );
 });
 
-test("next-24-hour actions use distinct accessible colors", () => {
-  assert.match(source, /Roxo: retomada humana sugerida/);
-  assert.match(source, /Amarelo: ação geral prevista/);
+test("the action area and urgent rows use distinct accessible colors", () => {
+  assert.match(source, /"Mensagem final"/);
+  assert.match(source, /"Programar para"/);
   assert.match(source, /setBackground\("#d9d2e9"\)/);
   assert.match(source, /setBackground\("#fff2cc"\)/);
   assert.match(
     source,
-    /\$C2<=NOW\(\)\+1[\s\S]{0,180}\$V2="Retomada de marketing"/,
+    /\$C2<=NOW\(\)\+1[\s\S]{0,180}\$X2="Retomada de marketing"/,
   );
+  assert.match(source, /setFrozenColumns\(5\)/);
+  assert.match(source, /https:\/\/wa\.me\//);
 });
 
 test("registered manual follow-ups are eligible while approved plans are shown as automatic", () => {
@@ -704,6 +777,106 @@ test("refresh preserves a checked approval only while the follow-up remains elig
   assert.equal(ineligible.approveBruna, false);
 });
 
+test("refresh preserves the edited final message and Bruna schedule", () => {
+  const context = loadContext();
+  const scheduledAt = new Date("2026-08-25T10:30:00-03:00");
+  const item = context.criarItemCentral_({
+    queue: "Ação manual hoje",
+    phone: "+5511999990001",
+    suggestion: "Sugestão original.",
+    approvalBrunaEligible: true,
+    sourceKey: "followup:plan-1",
+  });
+
+  context.aplicarControleCentral_(
+    item,
+    {
+      "followup:plan-1": {
+        finalMessageDefined: true,
+        finalMessage: "Mensagem revisada pela equipe.",
+        programForDefined: true,
+        programFor: scheduledAt,
+        teamNote: "",
+        lastTeamActionAt: null,
+        deferUntil: null,
+      },
+    },
+    new Date("2026-08-23T10:00:00-03:00"),
+  );
+
+  assert.equal(item.finalMessage, "Mensagem revisada pela equipe.");
+  assert.equal(item.programFor.toISOString(), scheduledAt.toISOString());
+});
+
+test("WhatsApp links reuse wa.me without pre-filling or sending a message", () => {
+  const context = loadContext();
+  let richTexts;
+  context.SpreadsheetApp = {
+    newRichTextValue() {
+      const value = { text: "", url: "" };
+      return {
+        setText(text) {
+          value.text = text;
+          return this;
+        },
+        setLinkUrl(url) {
+          value.url = url;
+          return this;
+        },
+        build() {
+          return value;
+        },
+      };
+    },
+  };
+  const sheet = {
+    getRange: () => ({
+      setRichTextValues(values) {
+        richTexts = values;
+      },
+    }),
+  };
+
+  context.aplicarLinksWhatsappCentral_(sheet, [{
+    phone: "+55 (11) 91234-5678",
+  }]);
+
+  assert.equal(richTexts[0][0].text, "Abrir conversa");
+  assert.equal(richTexts[0][0].url, "https://wa.me/5511912345678");
+  assert.doesNotMatch(richTexts[0][0].url, /text=/);
+});
+
+test("unresolved registered follow-ups remain visible after the email day", () => {
+  const context = loadContext();
+  const row = Array(17).fill("");
+  row[0] = "2026-08-14|manual";
+  row[1] = new Date("2026-08-14T08:00:00-03:00");
+  row[2] = "+5511999990001";
+  row[4] = 2;
+  row[5] = "16:30";
+  row[6] = "Qualificado";
+  row[8] = "Mensagem humana sugerida.";
+  row[9] = "Manual";
+  row[10] = "Ação manual";
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [row] }),
+  };
+
+  const items = context.carregarRetomadasRegistradasCentral_(
+    { getSheetByName: () => sheet },
+    { "+5511999990001": { relationship: "engaged_lead" } },
+    new Date("2026-08-16T09:00:00-03:00"),
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].approvalBrunaEligible, true);
+  assert.equal(
+    context.formatarDataCentral_(items[0].dueAt, "yyyy-MM-dd"),
+    "2026-08-14",
+  );
+});
+
 test("a final queue status wins over a stale visible follow-up control", () => {
   const context = loadContext();
   const now = new Date("2026-08-23T10:00:00-03:00");
@@ -744,6 +917,10 @@ test("checked eligible rows are approved in one batch and ineligible rows remain
   eligible[columns["Responsável"]] = "Equipe";
   eligible[columns["Modo"]] = "Manual";
   eligible[columns["Resposta sugerida"]] = "Mensagem aprovada.";
+  eligible[columns["Mensagem final"]] = "Mensagem final revisada.";
+  eligible[columns["Programar para"]] = new Date(
+    "2026-08-14T16:40:00-03:00",
+  );
   eligible[columns["Status operacional"]] = "Programado";
   eligible[columns["Aprovar com a Bruna"]] = true;
   eligible[columns.Fonte] = "Retomada de marketing";
@@ -753,6 +930,10 @@ test("checked eligible rows are approved in one batch and ineligible rows remain
   ineligible[columns["Responsável"]] = "Equipe";
   ineligible[columns["Modo"]] = "Manual";
   ineligible[columns["Resposta sugerida"]] = "Cuidado humano.";
+  ineligible[columns["Mensagem final"]] = "Cuidado humano.";
+  ineligible[columns["Programar para"]] = new Date(
+    "2026-08-14T16:50:00-03:00",
+  );
   ineligible[columns["Status operacional"]] = "Programado";
   ineligible[columns["Aprovar com a Bruna"]] = true;
   ineligible[columns.Fonte] = "Consultas";
@@ -778,13 +959,18 @@ test("checked eligible rows are approved in one batch and ineligible rows remain
   };
   context.assinaturaAprovacaoRetomadaBot_ = (key) =>
     "token:" + key;
+  let approvalOptions;
   context.aprovarPlanoRetomadaParaBot_ = (
     _spreadsheet,
     token,
-  ) =>
-    token === "token:plan-1"
+    _now,
+    options,
+  ) => {
+    approvalOptions = options;
+    return token === "token:plan-1"
       ? { ok: true }
       : { ok: false, reason: "plan_not_found" };
+  };
 
   const selected = context.coletarRetomadasMarcadasCentral_(sheet);
   const result = context.aprovarRetomadasMarcadasCentralInterno_(
@@ -799,6 +985,15 @@ test("checked eligible rows are approved in one batch and ineligible rows remain
   assert.equal(selected[1].eligible, false);
   assert.equal(result.approved, 1);
   assert.equal(result.skipped, 1);
+  assert.equal(
+    approvalOptions.suggestion,
+    "Mensagem final revisada.",
+  );
+  assert.equal(
+    approvalOptions.scheduledAt.toISOString(),
+    new Date("2026-08-14T16:40:00-03:00").toISOString(),
+  );
+  assert.equal(approvalOptions.origin, "Central de Atendimento");
   assert.ok(
     writes.some(
       (write) =>

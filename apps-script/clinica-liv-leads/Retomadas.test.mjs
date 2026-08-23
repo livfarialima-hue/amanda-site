@@ -869,14 +869,18 @@ test("approval moves only the selected manual plan to the bot queue and is idemp
   assert.equal(approved.ok, true);
   assert.equal(approved.alreadyApproved, false);
   assert.equal(writes.length, 1);
-  assert.equal(writes[0].column, 10);
-  assert.equal(writes[0].columnCount, 8);
-  assert.equal(writes[0].values[0][0], "Automático aprovado");
-  assert.equal(writes[0].values[0][1], "Programada");
-  assert.equal(writes[0].values[0][7], "E-mail diário");
+  assert.equal(writes[0].column, 9);
+  assert.equal(writes[0].columnCount, 9);
+  assert.equal(
+    writes[0].values[0][0],
+    "Mensagem aprovada pela equipe.",
+  );
+  assert.equal(writes[0].values[0][1], "Automático aprovado");
+  assert.equal(writes[0].values[0][2], "Programada");
+  assert.equal(writes[0].values[0][8], "E-mail diário");
   assert.equal(
     context.formatarDataRetomadas_(
-      writes[0].values[0][2],
+      writes[0].values[0][3],
       "HH:mm",
     ),
     "16:30",
@@ -884,7 +888,7 @@ test("approval moves only the selected manual plan to the bot queue and is idemp
 
   row[9] = "Automático aprovado";
   row[10] = "Programada";
-  row[11] = writes[0].values[0][2];
+  row[11] = writes[0].values[0][3];
   const repeated = context.aprovarPlanoRetomadaParaBot_(
     file,
     "BwgJ",
@@ -893,6 +897,109 @@ test("approval moves only the selected manual plan to the bot queue and is idemp
   assert.equal(repeated.ok, true);
   assert.equal(repeated.alreadyApproved, true);
   assert.equal(writes.length, 1);
+});
+
+test("Central approval persists the exact edited message and future schedule", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_AUTOMATICAS_ATIVAS"
+            ? "true"
+            : "",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = () => [7, 8, 9];
+  context.Utilities.base64EncodeWebSafe = () => "BwgJ=";
+
+  const row = Array(17).fill("");
+  row[0] = "2026-08-14|central-plan";
+  row[2] = "+5511999990000";
+  row[3] = "out-1";
+  row[5] = "16:30";
+  row[8] = "Sugestão original.";
+  row[9] = "Manual";
+  row[10] = "Ação manual";
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column, rowCount, columnCount) {
+      if (rowNumber === 2 && column === 1) {
+        return { getValues: () => [row] };
+      }
+      return {
+        setValues(values) {
+          writes.push({ column, columnCount, values });
+        },
+      };
+    },
+  };
+  const scheduledAt = new Date("2026-08-16T10:15:00-03:00");
+  const result = context.aprovarPlanoRetomadaParaBot_(
+    { getSheetByName: () => sheet },
+    "BwgJ",
+    new Date("2026-08-14T10:00:00-03:00"),
+    {
+      suggestion: "Mensagem final revisada pela equipe.",
+      scheduledAt,
+      origin: "Central de Atendimento",
+    },
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].values[0][0], "Mensagem final revisada pela equipe.");
+  assert.equal(writes[0].values[0][3].toISOString(), scheduledAt.toISOString());
+  assert.equal(writes[0].values[0][8], "Central de Atendimento");
+});
+
+test("Central approval rejects unsafe copy and invalid send times", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_AUTOMATICAS_ATIVAS"
+            ? "true"
+            : "",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = () => [7, 8, 9];
+  context.Utilities.base64EncodeWebSafe = () => "BwgJ=";
+  const row = Array(17).fill("");
+  row[0] = "2026-08-14|central-plan";
+  row[2] = "+5511999990000";
+  row[3] = "out-1";
+  row[8] = "Sugestão original.";
+  row[9] = "Manual";
+  row[10] = "Ação manual";
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({
+      getValues: () => [row],
+      setValues: () => assert.fail("invalid approval must not write"),
+    }),
+  };
+  const file = { getSheetByName: () => sheet };
+  const now = new Date("2026-08-14T10:00:00-03:00");
+
+  assert.equal(
+    context.aprovarPlanoRetomadaParaBot_(file, "BwgJ", now, {
+      suggestion: "SEM SUGESTÃO PRONTA — revisar",
+      scheduledAt: new Date("2026-08-14T11:00:00-03:00"),
+      origin: "Central de Atendimento",
+    }).reason,
+    "unsafe_message",
+  );
+  assert.equal(
+    context.aprovarPlanoRetomadaParaBot_(file, "BwgJ", now, {
+      suggestion: "Mensagem revisada.",
+      scheduledAt: new Date("2026-08-15T08:30:00-03:00"),
+      origin: "Central de Atendimento",
+    }).reason,
+    "outside_send_window",
+  );
 });
 
 test("cancel link always uses the canonical deployment when runtime URLs diverge", () => {

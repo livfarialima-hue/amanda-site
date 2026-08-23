@@ -22,25 +22,28 @@ const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
   "Prioridade",
   "Prazo",
   "Paciente",
-  "Telefone",
-  "Relacionamento",
-  "Origem",
-  "Última interação",
+  "Abrir WhatsApp",
   "Próxima ação",
-  "Responsável",
-  "Modo",
-  "Resposta sugerida",
-  "Contexto",
-  "Status operacional",
-  "Adiar até",
-  "Observação da equipe",
-  "Última ação da equipe",
-  "Atualizado em",
+  "Mensagem final",
+  "Programar para",
   "Aprovar com a Bruna",
   "Cancelar retomada",
   "Elegibilidade da Bruna",
+  "Resposta sugerida",
+  "Contexto",
+  "Responsável",
+  "Status operacional",
+  "Adiar até",
+  "Observação da equipe",
+  "Última interação",
+  "Relacionamento",
+  "Origem",
+  "Modo",
+  "Última ação da equipe",
+  "Atualizado em",
   "Fonte",
   "Chave operacional",
+  "Telefone",
 ]);
 
 function onOpen() {
@@ -54,12 +57,30 @@ function onOpen() {
       "Diagnosticar Central",
       "diagnosticarCentralAtendimento",
     )
+    .addItem(
+      "Como usar a Central",
+      "comoUsarCentralAtendimento",
+    )
     .addSeparator()
     .addItem(
       "Processar decisões marcadas",
       "processarDecisoesMarcadasCentral",
     )
     .addToUi();
+}
+
+function comoUsarCentralAtendimento() {
+  SpreadsheetApp.getUi().alert(
+    "Como usar a Central",
+    [
+      "1. Comece pelas linhas críticas ou de alta prioridade e abra a conversa pelo link do WhatsApp.",
+      "2. Se a paciente disse que vai pensar, conversar ou retornar, mantenha como Aguardando paciente. Use Adiar até apenas para a equipe rever o caso depois; isso não envia mensagem.",
+      "3. Nas retomadas elegíveis, revise Mensagem final e Programar para, marque Aprovar com a Bruna e use Central LIV > Processar decisões marcadas.",
+      "4. Para impedir somente aquela retomada, marque Cancelar retomada e processe as decisões.",
+      "5. A Bruna revalida conversa, janela do WhatsApp, opt-out, takeover humano e segurança antes de qualquer envio.",
+    ].join("\n\n"),
+    SpreadsheetApp.getUi().ButtonSet.OK,
+  );
 }
 
 function prepararCentralAtendimento() {
@@ -756,13 +777,7 @@ function carregarRetomadasRegistradasCentral_(
     .getValues()
     .reduce(function (items, row) {
       const recordDate = dataCentralValida_(row[1]);
-
-      if (
-        !recordDate ||
-        formatarDataCentral_(recordDate, "yyyy-MM-dd") !== today
-      ) {
-        return items;
-      }
+      if (!recordDate) return items;
 
       const phone = normalizarTelefoneCentral_(row[2]);
       const profile = profiles[phone] || {};
@@ -785,7 +800,22 @@ function carregarRetomadasRegistradasCentral_(
       const automatic = normalizedMode.indexOf("automatico") === 0;
       const sent = normalizedStatus === "enviada";
       const cancelled = normalizedStatus.indexOf("cancelada") === 0;
-      const rawSuggestion = textoCentral_(row[8], 700);
+      const active = [
+        "programada",
+        "acao manual",
+        "suspensa na planilha",
+      ].includes(normalizedStatus);
+      const scheduledAt = dataCentralValida_(row[11]);
+      const recordDay = formatarDataCentral_(
+        recordDate,
+        "yyyy-MM-dd",
+      );
+
+      if (recordDay !== today && !active) {
+        return items;
+      }
+
+      const rawSuggestion = textoCentral_(row[8], 900);
       const suggestion = rawSuggestion || "SEM SUGESTÃO PRONTA";
       const approvalEligible =
         normalizedMode === "manual" &&
@@ -800,8 +830,11 @@ function carregarRetomadasRegistradasCentral_(
       items.push(criarItemCentral_({
         queue: automatic ? "Automático hoje" : "Ação manual hoje",
         dueAt:
-          (automatic && dataCentralValida_(row[11])) ||
-          combinarDataHorarioCentral_(today, row[5]),
+          scheduledAt ||
+          combinarDataHorarioCentral_(recordDay, row[5]),
+        programFor:
+          scheduledAt ||
+          combinarDataHorarioCentral_(recordDay, row[5]),
         name: profile.name,
         phone: phone,
         relationship: relationship,
@@ -943,9 +976,22 @@ function carregarAguardandoPacienteCentral_(
       };
     }
 
+    const waitForPatient =
+      Boolean(last) &&
+      (
+        mensagemIndicaPausaPacienteCentral_(last.texto) ||
+        (
+          typeof retornoFuturoRecente_ === "function" &&
+          retornoFuturoRecente_(conversation, now)
+        )
+      );
+
     if (
       !last ||
-      last.direcao !== "OUT" ||
+      (
+        last.direcao !== "OUT" &&
+        !(last.direcao === "IN" && waitForPatient)
+      ) ||
       last.dataHora.getTime() < minimumDate.getTime()
     ) {
       return items;
@@ -953,9 +999,6 @@ function carregarAguardandoPacienteCentral_(
 
     const profile = profiles[phone] || {};
     const lead = leads[phone] || {};
-    const waitForPatient =
-      typeof retornoFuturoRecente_ === "function" &&
-      retornoFuturoRecente_(conversation, now);
 
     items.push(criarItemCentral_({
       queue: "Aguardando paciente",
@@ -1122,6 +1165,9 @@ function carregarPerfisConsultasCentral_(sheet, now) {
 
 function criarItemCentral_(input) {
   const queue = input.queue || "Aguardando paciente";
+  const suggestion = textoCentral_(input.suggestion, 900);
+  const approvalBrunaEligible =
+    input.approvalBrunaEligible === true;
   return {
     queue: queue,
     priority: prioridadeCentralPorFila_(queue),
@@ -1136,15 +1182,25 @@ function criarItemCentral_(input) {
     nextAction: textoCentral_(input.nextAction, 260),
     owner: normalizarResponsavelCentral_(input.owner),
     mode: input.mode || "Manual",
-    suggestion: textoCentral_(input.suggestion, 900),
+    suggestion: suggestion,
+    finalMessage: textoCentral_(
+      input.finalMessage === undefined
+        ? suggestion
+        : input.finalMessage,
+      900,
+    ),
+    programFor:
+      dataCentralValida_(input.programFor) ||
+      (approvalBrunaEligible
+        ? dataCentralValida_(input.dueAt)
+        : null),
     context: textoCentral_(input.context, 700),
     status: input.status || "Aberto",
     deferUntil: null,
     teamNote: "",
     lastTeamActionAt: null,
     updatedAt: new Date(),
-    approvalBrunaEligible:
-      input.approvalBrunaEligible === true,
+    approvalBrunaEligible: approvalBrunaEligible,
     approveBruna: false,
     cancelFollowUpEligible:
       input.cancelFollowUpEligible === true,
@@ -1211,10 +1267,18 @@ function aplicarControleCentral_(item, controls, now) {
 
   if (!control) return item;
 
+  const generatedStatus = item.status;
+
   item.owner = control.owner || item.owner;
   item.teamNote = control.teamNote || "";
   item.lastTeamActionAt = control.lastTeamActionAt;
   item.deferUntil = control.deferUntil;
+  if (control.finalMessageDefined) {
+    item.finalMessage = control.finalMessage;
+  }
+  if (control.programForDefined) {
+    item.programFor = control.programFor;
+  }
   item.approveBruna =
     item.approvalBrunaEligible && control.approveBruna === true;
   item.cancelFollowUp =
@@ -1228,6 +1292,14 @@ function aplicarControleCentral_(item, controls, now) {
     );
   if (control.status && !sourceStatusIsFinal) {
     item.status = control.status;
+  }
+
+  if (item.status === "Aguardando paciente") {
+    item.queue = "Aguardando paciente";
+    item.priority = prioridadeCentralPorFila_(item.queue);
+    item.dueAt = null;
+    item.mode = "Silêncio";
+    item.approveBruna = false;
   }
 
   if (
@@ -1251,6 +1323,12 @@ function aplicarControleCentral_(item, controls, now) {
     item.dueAt = item.deferUntil;
     item.status = "Suspenso";
     item.mode = "Silêncio";
+  } else if (
+    item.deferUntil &&
+    normalizarTextoCentral_(control.status) === "suspenso" &&
+    !sourceStatusIsFinal
+  ) {
+    item.status = generatedStatus;
   }
 
   return item;
@@ -1269,6 +1347,8 @@ function carregarControlesCentral_(sheet) {
     )
     .getValues();
   const columns = mapearCabecalhosCentral_(values[0]);
+  const finalMessageColumn = columns["mensagem final"];
+  const programForColumn = columns["programar para"];
 
   values.slice(1).forEach(function (row) {
     const sourceKey = textoCentral_(
@@ -1327,6 +1407,19 @@ function carregarControlesCentral_(sheet) {
           "cancelar retomada",
         ),
       ),
+      finalMessageDefined: finalMessageColumn !== undefined,
+      finalMessage: textoCentral_(
+        finalMessageColumn === undefined
+          ? ""
+          : row[finalMessageColumn],
+        900,
+      ),
+      programForDefined: programForColumn !== undefined,
+      programFor: dataCentralValida_(
+        programForColumn === undefined
+          ? null
+          : row[programForColumn],
+      ),
     };
   });
 
@@ -1362,6 +1455,8 @@ function processarEdicaoCentralAtendimento_(event) {
   const ownerColumn = columns.responsavel;
   const deferColumn = columns["adiar ate"];
   const noteColumn = columns["observacao da equipe"];
+  const finalMessageColumn = columns["mensagem final"];
+  const programForColumn = columns["programar para"];
   const actionColumn = columns["ultima acao da equipe"];
   const keyColumn = columns["chave operacional"];
   const phoneColumn = columns.telefone;
@@ -1373,6 +1468,8 @@ function processarEdicaoCentralAtendimento_(event) {
       ownerColumn,
       deferColumn,
       noteColumn,
+      finalMessageColumn,
+      programForColumn,
     ].includes(editedColumn)
   ) {
     return { ok: true, ignored: true };
@@ -1395,6 +1492,17 @@ function processarEdicaoCentralAtendimento_(event) {
   const phone = normalizarTelefoneCentral_(
     sheet.getRange(row, phoneColumn + 1).getValue(),
   );
+
+  if (status === "aguardando paciente") {
+    const modeColumn = columns.modo;
+    const approvalColumn = columns["aprovar com a bruna"];
+    if (modeColumn !== undefined) {
+      sheet.getRange(row, modeColumn + 1).setValue("Silêncio");
+    }
+    if (approvalColumn !== undefined) {
+      sheet.getRange(row, approvalColumn + 1).setValue(false);
+    }
+  }
 
   if (
     (
@@ -1581,7 +1689,7 @@ function aprovarRetomadasMarcadasCentral() {
     "Aprovar retomadas com a Bruna?",
     "Você selecionou " +
       selected.length +
-      " mensagem(ns). Elas serão enviadas exatamente como aparecem em “Resposta sugerida”, no horário planejado, e serão revalidadas antes do disparo.",
+      " mensagem(ns). Elas serão programadas exatamente como aparecem em “Mensagem final”, para “Programar para”, e serão revalidadas antes do disparo.",
     ui.ButtonSet.YES_NO,
   );
 
@@ -1677,17 +1785,24 @@ function coletarRetomadasMarcadasCentral_(sheet) {
         "status operacional",
       ),
     );
-    const suggestion = textoCentral_(
+    const finalMessage = textoCentral_(
       valorLinhaCentral_(
         row,
         columns,
-        "resposta sugerida",
+        "mensagem final",
       ),
       900,
     );
+    const programFor = dataCentralValida_(
+      valorLinhaCentral_(
+        row,
+        columns,
+        "programar para",
+      ),
+    );
     const safeSuggestion =
-      Boolean(suggestion) &&
-      normalizarTextoCentral_(suggestion).indexOf(
+      Boolean(finalMessage) &&
+      normalizarTextoCentral_(finalMessage).indexOf(
         "sem sugestao pronta",
       ) !== 0;
     const eligible =
@@ -1704,7 +1819,8 @@ function coletarRetomadasMarcadasCentral_(sheet) {
         sourceKey.indexOf("followup:") === 0
           ? sourceKey.slice("followup:".length)
           : "",
-      suggestion: suggestion,
+      finalMessage: finalMessage,
+      programFor: programFor,
       eligible: eligible,
     });
     return selected;
@@ -1811,6 +1927,11 @@ function aprovarRetomadasMarcadasCentralInterno_(
             spreadsheet,
             token,
             now,
+            {
+              suggestion: item.finalMessage,
+              scheduledAt: item.programFor,
+              origin: "Central de Atendimento",
+            },
           )
         : { ok: false, reason: "approval_token_missing" };
     }
@@ -1976,6 +2097,9 @@ function rotuloFalhaAprovacaoCentral_(reason) {
   const labels = {
     automation_disabled: "automação desligada",
     outside_send_window: "fora do horário permitido",
+    invalid_schedule: "data ou horário inválido",
+    schedule_must_be_future: "o horário precisa estar no futuro",
+    unsafe_message: "mensagem final vazia ou insegura",
     plan_not_found: "plano não encontrado",
     plan_not_eligible: "item não elegível",
     missing_context: "contexto incompleto",
@@ -2096,20 +2220,10 @@ function escreverCentralAtendimento_(sheet, items, now) {
         item.priority.label,
         item.dueAt || "",
         item.name || "Não informado",
-        item.phone,
-        rotuloRelacionamentoCentral_(item.relationship),
-        item.origin,
-        item.lastInteractionAt || "",
+        item.phone ? "Abrir conversa" : "",
         item.nextAction,
-        normalizarResponsavelCentral_(item.owner),
-        item.mode,
-        item.suggestion,
-        item.context,
-        item.status,
-        item.deferUntil || "",
-        item.teamNote,
-        item.lastTeamActionAt || "",
-        now,
+        item.finalMessage,
+        item.programFor || "",
         item.approvalBrunaEligible
           ? item.approveBruna === true
           : "",
@@ -2117,8 +2231,21 @@ function escreverCentralAtendimento_(sheet, items, now) {
           ? item.cancelFollowUp === true
           : "",
         item.brunaEligibilityReason,
+        item.suggestion,
+        item.context,
+        normalizarResponsavelCentral_(item.owner),
+        item.status,
+        item.deferUntil || "",
+        item.teamNote,
+        item.lastInteractionAt || "",
+        rotuloRelacionamentoCentral_(item.relationship),
+        item.origin,
+        item.mode,
+        item.lastTeamActionAt || "",
+        now,
         item.source,
         item.sourceKey,
+        item.phone,
       ];
     });
 
@@ -2130,6 +2257,8 @@ function escreverCentralAtendimento_(sheet, items, now) {
         CENTRAL_ATENDIMENTO_HEADERS.length,
       )
       .setValues(rows);
+
+    aplicarLinksWhatsappCentral_(sheet, items);
   }
 
   if (structureReady) {
@@ -2147,6 +2276,46 @@ function escreverCentralAtendimento_(sheet, items, now) {
   }
 
   configurarDecisoesRetomadasCentral_(sheet, items);
+}
+
+function aplicarLinksWhatsappCentral_(sheet, items) {
+  if (
+    !sheet ||
+    !items ||
+    !items.length ||
+    typeof SpreadsheetApp === "undefined" ||
+    typeof SpreadsheetApp.newRichTextValue !== "function"
+  ) {
+    return;
+  }
+
+  const columns = mapearCabecalhosCentral_(
+    Array.from(CENTRAL_ATENDIMENTO_HEADERS),
+  );
+  const linkColumn = columns["abrir whatsapp"];
+  if (linkColumn === undefined) return;
+
+  const richTexts = items.map(function (item) {
+    const digits = String(item.phone || "").replace(/\D/g, "");
+    const builder = SpreadsheetApp.newRichTextValue();
+    if (!digits) return [builder.setText("").build()];
+    return [
+      builder
+        .setText("Abrir conversa")
+        .setLinkUrl("https://wa.me/" + digits)
+        .build(),
+    ];
+  });
+
+  const range = sheet.getRange(
+    2,
+    linkColumn + 1,
+    richTexts.length,
+    1,
+  );
+  if (typeof range.setRichTextValues === "function") {
+    range.setRichTextValues(richTexts);
+  }
 }
 
 function configurarDecisoesRetomadasCentral_(sheet, items) {
@@ -2228,13 +2397,21 @@ function estruturaCentralPronta_(sheet) {
 
 function formatarCentralAtendimento_(sheet, itemCount) {
   const columnCount = CENTRAL_ATENDIMENTO_HEADERS.length;
+  const columns = mapearCabecalhosCentral_(
+    Array.from(CENTRAL_ATENDIMENTO_HEADERS),
+  );
   const validationRows = Math.max(
     CENTRAL_ATENDIMENTO_CONFIG.maximumRows,
     itemCount + 1,
   );
   const dataRows = Math.max(itemCount, 1);
+  const visibleColumnCount = columns.fonte;
 
   sheet.setFrozenRows(1);
+  if (typeof sheet.setFrozenColumns === "function") {
+    sheet.setFrozenColumns(5);
+  }
+  sheet.showColumns(1, columnCount);
   sheet
     .getRange(1, 1, 1, columnCount)
     .setBackground("#356854")
@@ -2246,31 +2423,44 @@ function formatarCentralAtendimento_(sheet, itemCount) {
 
   sheet
     .getRange(2, 1, dataRows, columnCount)
+    .setBackground("#ffffff")
     .setVerticalAlignment("top");
-  sheet
-    .getRange(2, 3, dataRows, 1)
-    .setNumberFormat("dd/mm/yyyy hh:mm");
-  sheet
-    .getRange(2, 8, dataRows, 1)
-    .setNumberFormat("dd/mm/yyyy hh:mm");
-  sheet
-    .getRange(2, 15, dataRows, 1)
-    .setNumberFormat("dd/mm/yyyy hh:mm");
-  sheet
-    .getRange(2, 17, dataRows, 2)
-    .setNumberFormat("dd/mm/yyyy hh:mm");
-  sheet
-    .getRange(2, 9, dataRows, 1)
-    .setWrap(true);
-  sheet
-    .getRange(2, 12, dataRows, 2)
-    .setWrap(true);
-  sheet
-    .getRange(2, 16, dataRows, 1)
-    .setWrap(true);
+  if (typeof sheet.setRowHeights === "function") {
+    sheet.setRowHeights(2, dataRows, 72);
+  }
+
+  [
+    "prazo",
+    "programar para",
+    "adiar ate",
+    "ultima interacao",
+    "ultima acao da equipe",
+    "atualizado em",
+  ].forEach(function (header) {
+    sheet
+      .getRange(2, columns[header] + 1, dataRows, 1)
+      .setNumberFormat("dd/mm/yyyy hh:mm");
+  });
+  [
+    "proxima acao",
+    "mensagem final",
+    "elegibilidade da bruna",
+    "resposta sugerida",
+    "contexto",
+    "observacao da equipe",
+  ].forEach(function (header) {
+    sheet
+      .getRange(2, columns[header] + 1, dataRows, 1)
+      .setWrap(true);
+  });
 
   sheet
-    .getRange(2, 10, validationRows - 1, 1)
+    .getRange(
+      2,
+      columns.responsavel + 1,
+      validationRows - 1,
+      1,
+    )
     .setDataValidation(
       SpreadsheetApp.newDataValidation()
         .requireValueInList(
@@ -2281,7 +2471,12 @@ function formatarCentralAtendimento_(sheet, itemCount) {
         .build(),
     );
   sheet
-    .getRange(2, 11, validationRows - 1, 1)
+    .getRange(
+      2,
+      columns.modo + 1,
+      validationRows - 1,
+      1,
+    )
     .setDataValidation(
       SpreadsheetApp.newDataValidation()
         .requireValueInList(
@@ -2292,7 +2487,12 @@ function formatarCentralAtendimento_(sheet, itemCount) {
         .build(),
     );
   sheet
-    .getRange(2, 14, validationRows - 1, 1)
+    .getRange(
+      2,
+      columns["status operacional"] + 1,
+      validationRows - 1,
+      1,
+    )
     .setDataValidation(
       SpreadsheetApp.newDataValidation()
         .requireValueInList(
@@ -2313,19 +2513,67 @@ function formatarCentralAtendimento_(sheet, itemCount) {
     );
 
   const widths = [
-    170, 90, 145, 190, 135, 165, 135, 145, 220, 115,
-    95, 340, 320, 145, 145, 240, 145, 145, 125, 130,
-    220, 150, 220,
+    160, 85, 140, 175, 115, 220, 360, 145, 125, 130,
+    215, 300, 300, 115, 145, 145, 235, 145, 155, 130,
+    95, 145, 145, 150, 220, 135,
   ];
   widths.forEach(function (width, index) {
     sheet.setColumnWidth(index + 1, width);
   });
-  sheet.showColumns(19, 3);
-  sheet.hideColumns(22, 2);
   sheet
-    .getRange(1, 9)
+    .getRange(
+      2,
+      columns["mensagem final"] + 1,
+      validationRows - 1,
+      2,
+    )
+    .setBackground("#fff2cc");
+  sheet
+    .getRange(
+      2,
+      columns["aprovar com a bruna"] + 1,
+      validationRows - 1,
+      1,
+    )
+    .setBackground("#d9ead3")
+    .setHorizontalAlignment("center");
+  sheet
+    .getRange(
+      2,
+      columns["cancelar retomada"] + 1,
+      validationRows - 1,
+      1,
+    )
+    .setBackground("#f4cccc")
+    .setHorizontalAlignment("center");
+  sheet
+    .getRange(
+      2,
+      columns.responsavel + 1,
+      validationRows - 1,
+      4,
+    )
+    .setBackground("#fff8e1");
+  sheet.hideColumns(columns.fonte + 1, 3);
+  sheet
+    .getRange(1, columns["mensagem final"] + 1)
     .setNote(
-      "Amarelo: ação geral prevista para as próximas 24 horas. Roxo: retomada humana sugerida para as próximas 24 horas.",
+      "Edite aqui o texto exato que a Bruna deverá enviar. A edição é preservada nas atualizações da Central.",
+    );
+  sheet
+    .getRange(1, columns["programar para"] + 1)
+    .setNote(
+      "Data e hora do envio pela Bruna. Use um horário futuro entre 09:00 e 18:59. O envio ainda será revalidado.",
+    );
+  sheet
+    .getRange(1, columns["aprovar com a bruna"] + 1)
+    .setNote(
+      "Depois de revisar Mensagem final e Programar para, marque esta caixa e use Central LIV > Processar decisões marcadas.",
+    );
+  sheet
+    .getRange(1, columns["adiar ate"] + 1)
+    .setNote(
+      "Adia a revisão pela equipe e não envia mensagem. Para envio pela Bruna, use Programar para.",
     );
 
   const filterRows = Math.max(itemCount + 1, 2);
@@ -2336,49 +2584,98 @@ function formatarCentralAtendimento_(sheet, itemCount) {
   const rules = [
     SpreadsheetApp.newConditionalFormatRule()
       .whenFormulaSatisfied(
-        '=AND($C2<>"",$C2>=NOW(),$C2<=NOW()+1,$V2="Retomada de marketing",$K2="Manual",$N2="Programado")',
+        '=OR($A2="Pendência vencida",AND($C2<>"",$C2<NOW(),OR($O2="Aberto",$O2="Programado",$O2="Em andamento")))',
       )
-      .setBackground("#d9d2e9")
-      .setFontColor("#351c75")
-      .setRanges([sheet.getRange(2, 9, validationRows - 1, 1)])
+      .setBackground("#f4cccc")
+      .setFontColor("#990000")
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
       .whenFormulaSatisfied(
-        '=AND($C2<>"",$C2>=NOW(),$C2<=NOW()+1,OR($A2="Pendência vencida",$A2="Resposta agora",$A2="Ação manual hoje",$A2="Consultas e cuidados"),OR($N2="Aberto",$N2="Programado",$N2="Em andamento"),NOT(AND($V2="Retomada de marketing",$K2="Manual",$N2="Programado")))',
+        '=AND($C2<>"",$C2>=NOW(),$C2<=NOW()+1,$X2="Retomada de marketing",$U2="Manual",$O2="Programado")',
       )
-      .setBackground("#fff2cc")
-      .setFontColor("#7f6000")
-      .setRanges([sheet.getRange(2, 9, validationRows - 1, 1)])
+      .setBackground("#d9d2e9")
+      .setFontColor("#351c75")
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo("Pendência vencida")
-      .setBackground("#f4cccc")
-      .setFontColor("#990000")
-      .setRanges([sheet.getRange(2, 1, validationRows - 1, 1)])
-      .build(),
-    SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo("Resposta agora")
+      .whenFormulaSatisfied('=$A2="Resposta agora"')
       .setBackground("#fce5cd")
       .setFontColor("#783f04")
-      .setRanges([sheet.getRange(2, 1, validationRows - 1, 1)])
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo("Automático hoje")
+      .whenFormulaSatisfied('=$A2="Ação manual hoje"')
+      .setBackground("#fff2cc")
+      .setFontColor("#7f6000")
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$A2="Automático hoje"')
       .setBackground("#d9ead3")
       .setFontColor("#274e13")
-      .setRanges([sheet.getRange(2, 1, validationRows - 1, 1)])
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo("Aguardando paciente")
+      .whenFormulaSatisfied('=$A2="Aguardando paciente"')
       .setBackground("#eeeeee")
       .setFontColor("#666666")
-      .setRanges([sheet.getRange(2, 1, validationRows - 1, 1)])
+      .setRanges([
+        sheet.getRange(
+          2,
+          1,
+          validationRows - 1,
+          visibleColumnCount,
+        ),
+      ])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
       .whenTextEqualTo("Concluído")
       .setBackground("#d9ead3")
       .setFontColor("#274e13")
-      .setRanges([sheet.getRange(2, 14, validationRows - 1, 1)])
+      .setRanges([
+        sheet.getRange(
+          2,
+          columns["status operacional"] + 1,
+          validationRows - 1,
+          1,
+        ),
+      ])
       .build(),
   ];
   sheet.setConditionalFormatRules(rules);
@@ -2533,11 +2830,24 @@ function mensagemExigeRespostaCentral_(message) {
     return false;
   }
 
+  if (mensagemIndicaPausaPacienteCentral_(normalized)) {
+    return false;
+  }
+
   if (mensagemComercialNaoPacienteCentral_(normalized)) {
     return false;
   }
 
   return true;
+}
+
+function mensagemIndicaPausaPacienteCentral_(message) {
+  const normalized = normalizarTextoCentral_(message);
+  if (!normalized) return false;
+
+  return /(?:vou|irei|preciso) (?:falar|conversar) com (?:(?:meu|minha) (?:espos[oa]|marido|mulher|familia|filh[oa]|mae|pai|companheir[oa])|(?:a|o) (?:familia|espos[oa]|marido|mulher))|(?:vou|preciso) (?:pensar|avaliar|ver com calma)|(?:entro|entrarei|retorno|retornarei|chamo|falarei|procuro|procurarei) (?:em contato|depois|mais tarde|voces|quando)|(?:te|lhes?) (?:chamo|aviso|procuro)|mais pra frente|quando (?:eu )?(?:decidir|puder|conseguir)/.test(
+    normalized,
+  );
 }
 
 function mensagemInicialAutomatizadaCentral_(normalized) {

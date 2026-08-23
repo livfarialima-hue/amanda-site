@@ -375,7 +375,7 @@ function dataHoraAprovacaoRetomadaBot_(agora, horarioPlanejado) {
   return agora;
 }
 
-function aprovarPlanoRetomadaParaBot_(arquivo, token, agora) {
+function aprovarPlanoRetomadaParaBot_(arquivo, token, agora, options) {
   const propriedades = PropertiesService.getScriptProperties();
 
   if (
@@ -399,6 +399,7 @@ function aprovarPlanoRetomadaParaBot_(arquivo, token, agora) {
   const linha = plano.valores;
   const modo = String(linha[9] || "").trim();
   const statusEnvio = String(linha[10] || "").trim();
+  const approvalOptions = options || {};
 
   if (
     modo === "Automático aprovado" &&
@@ -417,23 +418,79 @@ function aprovarPlanoRetomadaParaBot_(arquivo, token, agora) {
 
   if (
     !String(linha[2] || "").trim() ||
-    !String(linha[3] || "").trim() ||
-    !String(linha[8] || "").trim()
+    !String(linha[3] || "").trim()
   ) {
     return { ok: false, reason: "missing_context" };
   }
 
-  const programadaPara = dataHoraAprovacaoRetomadaBot_(
-    agora,
-    linha[5],
+  const hasSuggestionOverride = Object.prototype.hasOwnProperty.call(
+    approvalOptions,
+    "suggestion",
   );
+  const finalSuggestion = String(
+    hasSuggestionOverride
+      ? approvalOptions.suggestion || ""
+      : linha[8] || "",
+  ).trim();
+  if (
+    !finalSuggestion ||
+    Array.from(finalSuggestion).length > 900 ||
+    normalizarTextoRetomadas_(finalSuggestion).indexOf(
+      "sem sugestao pronta",
+    ) === 0
+  ) {
+    return { ok: false, reason: "unsafe_message" };
+  }
+
+  const hasScheduleOverride = Object.prototype.hasOwnProperty.call(
+    approvalOptions,
+    "scheduledAt",
+  );
+  let programadaPara;
+
+  if (hasScheduleOverride) {
+    programadaPara = dataRetomadaValida_(
+      approvalOptions.scheduledAt,
+    );
+    if (!programadaPara) {
+      return { ok: false, reason: "invalid_schedule" };
+    }
+    if (programadaPara.getTime() <= agora.getTime()) {
+      return { ok: false, reason: "schedule_must_be_future" };
+    }
+
+    const scheduleParts = formatarDataRetomadas_(
+      programadaPara,
+      "HH:mm",
+    ).split(":").map(Number);
+    const scheduleMinutes = scheduleParts[0] * 60 + scheduleParts[1];
+    if (
+      !Number.isFinite(scheduleMinutes) ||
+      scheduleMinutes < RETOMADAS_CONFIG.horaInicioRetomadas * 60 ||
+      scheduleMinutes >= RETOMADAS_CONFIG.horaFimRetomadas * 60
+    ) {
+      return { ok: false, reason: "outside_send_window" };
+    }
+  } else {
+    programadaPara = dataHoraAprovacaoRetomadaBot_(
+      agora,
+      linha[5],
+    );
+  }
   if (!programadaPara) {
     return { ok: false, reason: "outside_send_window" };
   }
 
+  const approvalOrigin =
+    String(approvalOptions.origin || "").trim() ===
+    "Central de Atendimento"
+      ? "Central de Atendimento"
+      : "E-mail diário";
+
   planilha
-    .getRange(plano.numeroLinha, 10, 1, 8)
+    .getRange(plano.numeroLinha, 9, 1, 9)
     .setValues([[
+      finalSuggestion,
       "Automático aprovado",
       "Programada",
       programadaPara,
@@ -441,7 +498,7 @@ function aprovarPlanoRetomadaParaBot_(arquivo, token, agora) {
       "",
       "",
       agora,
-      "E-mail diário",
+      approvalOrigin,
     ]]);
 
   return {
