@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  canReuseFirstFollowupSemanticReview,
   handleScheduledFollowup,
   isScheduledFollowupWindow,
 } from "../scheduled-followup.mjs";
@@ -11,15 +12,19 @@ const PAYLOAD = {
   patientPhone: "+5511999999999",
   body: "Olá! Fiquei à disposição para continuar sua pesquisa.",
   humanApproved: true,
+  followupStage: 1,
+  contextAnchorMessageId: "out-1",
   recentConversation: [
     {
       direction: "IN",
       at: "2026-08-02T10:00:00-03:00",
+      messageId: "in-1",
       text: "Gostaria de entender melhor a avaliação.",
     },
     {
       direction: "OUT",
       at: "2026-08-02T10:02:00-03:00",
+      messageId: "out-1",
       text: "Claro. Posso explicar como funciona.",
     },
   ],
@@ -97,6 +102,152 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
   assert.equal(turns.length, 1);
   assert.equal(turns[0].role, "assistant");
   assert.equal(turns[0].source, "bruna");
+});
+
+test("approved second follow-up reuses the first review when nobody spoke later", async () => {
+  const firstFollowupId = "scheduled-followup-first-plan";
+  let semanticReviews = 0;
+  let sends = 0;
+  const payload = {
+    ...PAYLOAD,
+    planId: "second-plan",
+    followupStage: 2,
+    contextAnchorMessageId: firstFollowupId,
+    recentConversation: [
+      PAYLOAD.recentConversation[0],
+      {
+        direction: "OUT",
+        at: "2026-08-24T10:00:00-03:00",
+        messageId: firstFollowupId,
+        text: "Oi! Queria retomar nossa conversa sobre a avaliação.",
+      },
+    ],
+  };
+
+  assert.equal(
+    canReuseFirstFollowupSemanticReview(payload),
+    true,
+  );
+  assert.equal(
+    canReuseFirstFollowupSemanticReview({
+      ...payload,
+      recentConversation: payload.recentConversation.map(
+        (turn, index) => index === 1
+          ? { ...turn, at: "2026-08-23T14:00:00-03:00" }
+          : turn,
+      ),
+    }),
+    false,
+  );
+
+  const response = await handleScheduledFollowup(request(payload), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
+    },
+    now: new Date("2026-08-27T10:30:00-03:00"),
+    reviewScheduledFollowupContextImpl: async () => {
+      semanticReviews += 1;
+      return {
+        status: "completed",
+        allowed: false,
+        reasonCode: "conversation_changed",
+      };
+    },
+    getBusinessNumberImpl: async () => "+5511961957144",
+    sendYCloudPatientTextImpl: async () => {
+      sends += 1;
+      return {
+        status: "completed",
+        httpStatus: 200,
+        errorCode: "none",
+      };
+    },
+    appendConversationTurnImpl: async () => ({
+      status: "completed",
+    }),
+  });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    sent: true,
+    semanticReview: "reused_after_no_intervening_turn",
+  });
+  assert.equal(semanticReviews, 0);
+  assert.equal(sends, 1);
+});
+
+test("patient or human activity after the first follow-up requires a fresh review", async () => {
+  const firstFollowupId = "scheduled-followup-first-plan";
+  const laterTurns = [
+    {
+      direction: "IN",
+      at: "2026-08-03T11:00:00-03:00",
+      messageId: "patient-reply",
+      text: "Vou pensar e depois retorno.",
+    },
+    {
+      direction: "OUT",
+      at: "2026-08-03T11:00:00-03:00",
+      messageId: "human-reply",
+      text: "Vou confirmar uma informação com a equipe.",
+    },
+  ];
+
+  for (const laterTurn of laterTurns) {
+    let semanticReviews = 0;
+    let sends = 0;
+    const payload = {
+      ...PAYLOAD,
+      planId: `second-plan-${laterTurn.direction}`,
+      followupStage: 2,
+      contextAnchorMessageId: firstFollowupId,
+      recentConversation: [
+        PAYLOAD.recentConversation[0],
+        {
+          direction: "OUT",
+          at: "2026-08-24T10:00:00-03:00",
+          messageId: firstFollowupId,
+          text: "Oi! Queria retomar nossa conversa sobre a avaliação.",
+        },
+        laterTurn,
+      ],
+    };
+
+    assert.equal(
+      canReuseFirstFollowupSemanticReview(payload),
+      false,
+    );
+
+    const response = await handleScheduledFollowup(request(payload), {
+      env: {
+        GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+        YCLOUD_API_KEY: "key",
+        WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+        WHATSAPP_AUTOMATION_MODE: "active",
+      },
+      now: new Date("2026-08-27T10:30:00-03:00"),
+      reviewScheduledFollowupContextImpl: async () => {
+        semanticReviews += 1;
+        return {
+          status: "completed",
+          allowed: false,
+          reasonCode: "conversation_changed",
+        };
+      },
+      sendYCloudPatientTextImpl: async () => {
+        sends += 1;
+        return { status: "completed" };
+      },
+    });
+
+    assert.equal(response.status, 409);
+    assert.equal(semanticReviews, 1);
+    assert.equal(sends, 0);
+  }
 });
 
 test("scheduled follow-up is blocked when semantic review finds changed context", async () => {

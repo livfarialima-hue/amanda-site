@@ -2235,10 +2235,16 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
   assert.equal(result.ok, true);
   assert.equal(result.sent, 1);
   assert.equal(outboundPayload.humanApproved, false);
+  assert.equal(outboundPayload.followupStage, 1);
+  assert.equal(outboundPayload.contextAnchorMessageId, "out-1");
   assert.equal(outboundPayload.recentConversation.length, 1);
   assert.equal(
     outboundPayload.recentConversation[0].direction,
     "OUT",
+  );
+  assert.equal(
+    outboundPayload.recentConversation[0].messageId,
+    "out-1",
   );
   assert.equal(outboundPayload.leadContext.status, "Qualificado");
   assert.equal(
@@ -2267,6 +2273,7 @@ test("semantic follow-up payload keeps only the latest 20 bounded turns in order
     dataHora: new Date(
       `2026-08-22T${String(index % 20).padStart(2, "0")}:00:00-03:00`,
     ),
+    messageId: `message-${index}`,
     texto: `turno-${index}-` + "x".repeat(1_300),
   }));
 
@@ -2279,5 +2286,7 @@ test("semantic follow-up payload keeps only the latest 20 bounded turns in order
   assert.equal(Array.from(prepared[0].text).length, 1_200);
   assert.equal(prepared[0].direction, "OUT");
   assert.equal(prepared[1].direction, "IN");
+  assert.equal(prepared[0].messageId, "message-5");
+  assert.equal(prepared[19].messageId, "message-24");
   assert.match(prepared[0].at, /^2026-08-22T/);
 });

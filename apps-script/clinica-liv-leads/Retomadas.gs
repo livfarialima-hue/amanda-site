@@ -2884,6 +2884,8 @@ function processarRetomadasAutomaticasInterno_(
     const modo = String(linha[9] || "").trim();
     const statusEnvio = String(linha[10] || "").trim();
     const programadaPara = dataRetomadaValida_(linha[11]);
+    const etapaRetomada = Number(linha[4] || 0);
+    const messageIdBase = String(linha[3] || "").trim();
 
     const aprovadoPelaEquipe = modo === "Automático aprovado";
 
@@ -2905,8 +2907,8 @@ function processarRetomadasAutomaticasInterno_(
     const validacao = validarRetomadaAutomatica_(
       {
         telefone: telefone,
-        messageIdBase: String(linha[3] || "").trim(),
-        etapa: Number(linha[4] || 0),
+        messageIdBase: messageIdBase,
+        etapa: etapaRetomada,
         sugestao: String(linha[8] || "").trim(),
         atrasoMinutos: atrasoMinutos,
         aprovadoPelaEquipe: aprovadoPelaEquipe,
@@ -2947,6 +2949,8 @@ function processarRetomadasAutomaticasInterno_(
         patientPhone: telefone,
         body: validacao.sugestao,
         humanApproved: aprovadoPelaEquipe,
+        followupStage: etapaRetomada,
+        contextAnchorMessageId: messageIdBase,
         recentConversation:
           prepararConversaRevisaoSemanticaRetomada_(conversa),
         leadContext: {
@@ -3183,6 +3187,9 @@ function prepararConversaRevisaoSemanticaRetomada_(conversa) {
             ? "OUT"
             : "IN",
         at: dataHora ? dataHora.toISOString() : "",
+        messageId: Array.from(
+          String(mensagem.messageId || "").trim(),
+        ).slice(0, 300).join(""),
         text: Array.from(String(mensagem.texto || "").trim())
           .slice(0, 1200)
           .join(""),

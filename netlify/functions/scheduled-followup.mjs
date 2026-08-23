@@ -8,6 +8,9 @@ import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
+const FIRST_FOLLOWUP_SEMANTIC_REVIEW_BASELINE = Date.parse(
+  "2026-08-23T14:40:44-03:00",
+);
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -57,6 +60,12 @@ function normalizePayload(value) {
       .slice(0, 1500)
       .join(""),
     humanApproved: body.humanApproved === true,
+    followupStage: [1, 2].includes(Number(body.followupStage))
+      ? Number(body.followupStage)
+      : 0,
+    contextAnchorMessageId: String(
+      body.contextAnchorMessageId || "",
+    ).trim().slice(0, 300),
     recentConversation: Array.isArray(body.recentConversation)
       ? body.recentConversation.slice(-20).map((turn) => ({
           direction:
@@ -64,6 +73,9 @@ function normalizePayload(value) {
               ? "OUT"
               : "IN",
           at: String(turn?.at || "").trim().slice(0, 40),
+          messageId: String(turn?.messageId || "")
+            .trim()
+            .slice(0, 300),
           text: Array.from(String(turn?.text || "").trim())
             .slice(0, 1200)
             .join(""),
@@ -81,6 +93,38 @@ function normalizePayload(value) {
       ).slice(0, 300).join(""),
     },
   };
+}
+
+export function canReuseFirstFollowupSemanticReview(payload) {
+  if (
+    payload?.followupStage !== 2 ||
+    payload?.humanApproved !== true
+  ) {
+    return false;
+  }
+
+  const anchor = String(
+    payload.contextAnchorMessageId || "",
+  ).trim();
+  const conversation = Array.isArray(payload.recentConversation)
+    ? payload.recentConversation
+    : [];
+  const lastTurn = conversation[conversation.length - 1];
+  const anchorAt = Date.parse(String(lastTurn?.at || ""));
+  const hasPriorInbound = conversation
+    .slice(0, -1)
+    .some((turn) => turn?.direction === "IN");
+
+  return Boolean(
+    anchor &&
+      anchor.startsWith("scheduled-followup-") &&
+      conversation.length >= 2 &&
+      hasPriorInbound &&
+      lastTurn?.direction === "OUT" &&
+      String(lastTurn.messageId || "").trim() === anchor &&
+      Number.isFinite(anchorAt) &&
+      anchorAt >= FIRST_FOLLOWUP_SEMANTIC_REVIEW_BASELINE,
+  );
 }
 
 export async function handleScheduledFollowup(
@@ -148,10 +192,18 @@ export async function handleScheduledFollowup(
     return json({ ok: false, error: "invalid_payload" }, 400);
   }
 
-  const contextReview = await reviewScheduledFollowupContextImpl(
-    payload,
-    { env, fetchImpl },
-  );
+  const reusedFirstFollowupReview =
+    canReuseFirstFollowupSemanticReview(payload);
+  const contextReview = reusedFirstFollowupReview
+    ? {
+        status: "completed",
+        allowed: true,
+        reasonCode: "unchanged_since_first_followup",
+      }
+    : await reviewScheduledFollowupContextImpl(
+        payload,
+        { env, fetchImpl },
+      );
 
   if (contextReview?.status !== "completed") {
     return json(
@@ -220,7 +272,13 @@ export async function handleScheduledFollowup(
     at: now.toISOString(),
   });
 
-  return json({ ok: true, sent: true });
+  return json({
+    ok: true,
+    sent: true,
+    semanticReview: reusedFirstFollowupReview
+      ? "reused_after_no_intervening_turn"
+      : "completed",
+  });
 }
 
 export default (request) => handleScheduledFollowup(request);
