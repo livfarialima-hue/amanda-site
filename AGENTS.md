@@ -16,6 +16,12 @@ Esse documento define onde cada informação deve ser consultada e alterada. Em 
 
 Se houver divergência entre uma cópia no Drive e um documento versionado no repositório, o documento local commitado prevalece, salvo para dados operacionais que existam somente na plataforma ao vivo. A divergência deve ser registrada e corrigida, não reconciliada por suposição.
 
+Antes de alterar bot, WhatsApp, funil, retomadas, agenda, atribuição ou integração de marketing, leia também:
+
+`docs/ARQUITETURA-JORNADA-PACIENTE.md`
+
+Esse documento define o proprietário de cada decisão, as fronteiras entre política pura e efeitos externos e os invariantes da jornada. Novos consumidores devem importar cada regra de seu módulo proprietário; reexportações de compatibilidade existem apenas para transição. Toda mudança nesse escopo deve passar por `npm.cmd run architecture:check` além dos testes pertinentes.
+
 Antes de retomar recomendações de auditorias, executar uma tarefa agendada ou decidir se chegou o momento de publicar, leia também:
 
 `docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md`

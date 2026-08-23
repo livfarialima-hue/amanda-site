@@ -1,5 +1,34 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
 import { isCommercialSolicitation } from "./commercial-contact.mjs";
+import {
+  foldMarketingText,
+  isLikelyMarketingPrefilledMessage,
+  isSiteServicePickerPrefill,
+  MARKETING_PREFILL_TEMPLATE_ID,
+  normalizeMarketingPrefillTemplateId,
+} from "./marketing-prefill.mjs";
+import {
+  detectProcedure,
+  detectRecentClinicProcedure,
+  detectRecentPatientProcedure,
+} from "./procedure-context.mjs";
+
+export { normalizeAutomationMode } from "./automation-mode.mjs";
+export {
+  hasCampaignReferenceCode,
+  inboundReplyPriority,
+  isLikelyMarketingPrefilledMessage,
+  isSiteServicePickerPrefill,
+  MARKETING_PREFILL_TEMPLATE_ID,
+  normalizeMarketingPrefillTemplateId,
+} from "./marketing-prefill.mjs";
+export {
+  detectCampaignProcedure,
+  detectNamedProcedure,
+  detectProcedure,
+  detectRecentClinicProcedure,
+  detectRecentPatientProcedure,
+} from "./procedure-context.mjs";
 
 const URGENT_PATTERNS = [
   /\b(?:dor|aperto|press[aã]o|peso)\s+(?:forte\s+)?no\s+peito\b/i,
@@ -97,13 +126,6 @@ const AVAILABILITY_REQUEST_PATTERN =
 const STANDARD_PRICE_AVAILABILITY_TEMPLATE_PATTERN =
   /^ola,?\s+li sobre (?:os\s+)?(?:valor(?:es)?|precos?) (?:de|do|da) .{2,120}? e gostaria de (?:consultar|ver) (?:os\s+)?horarios para uma avaliacao com a dra\.? amanda\.?(?:\s+ref(?:erencia)?\.?\s*:?\s*[a-z0-9-]+)?(?:\s+jid\s*:\s*[a-z0-9_-]+)?$/i;
 
-export const MARKETING_PREFILL_TEMPLATE_ID = "procedure_evaluation_v1";
-
-export function normalizeMarketingPrefillTemplateId(value) {
-  const normalized = String(value || "").trim().toLowerCase();
-  return normalized === MARKETING_PREFILL_TEMPLATE_ID ? normalized : "";
-}
-
 const SIMPLE_GREETING_PATTERN =
   /^\s*(?:oi+|ol[aá]|bom\s+dia|boa\s+tarde|boa\s+noite|tudo\s+bem)[!,.?\s]*$/i;
 
@@ -115,9 +137,6 @@ const OFFICIAL_INSTAGRAM_REQUEST_PATTERN =
 
 const CAMPAIGN_REFERENCE_QUESTION_PATTERN =
   /\b(?:n[aã]o\s+entendi|o\s+que\s+(?:[eé]|significa)|que\s+c[oó]digo\s+[eé]\s+esse|para\s+que\s+serve|pra\s+que\s+serve)\b.{0,55}\b(?:ref\.?|refer[eê]ncias?|c[oó]digo)\b|\b(?:ref\.?|refer[eê]ncias?|c[oó]digo)\b.{0,55}\b(?:n[aã]o\s+entendi|o\s+que\s+(?:[eé]|significa)|para\s+que\s+serve|pra\s+que\s+serve)\b/i;
-
-const CAMPAIGN_REFERENCE_CODE_PATTERN =
-  /\b(?:M26|G26)[A-Z0-9_-]+\b/i;
 
 const LEGACY_ADMINISTRATIVE_REQUEST_PATTERN =
   /\b(?:nota\s+fiscal|recibo|documento|cadastro)\b.{0,50}\b(?:antig[oa]|anterior|corrigir|alterar|segunda\s+via)\b|\b(?:antig[oa]|anterior)\b.{0,50}\b(?:nota\s+fiscal|recibo|documento|cadastro)\b/i;
@@ -142,24 +161,6 @@ const APPROVED_HOSPITAL_LIFTING_PROCEDURES = new Set([
   "lifting_facial",
   "lifting_cervical",
 ]);
-
-const CAMPAIGN_PROCEDURE_RULES = [
-  {
-    pattern: /\bM26F(?:01W|02S)\b/i,
-    key: "lifting_facial",
-    code: "M-C06-WA-01",
-  },
-  {
-    pattern: /\bM26C(?:01W|02S)\b/i,
-    key: "lifting_cervical",
-    code: "G-LIFT-CERV-01",
-  },
-  {
-    pattern: /\bM26O01W\b/i,
-    key: "otoplastia",
-    code: "G-OTO-01",
-  },
-];
 
 const APPEARANCE_DISTRESS_PATTERNS = [
   /\b(?:minha\s+)?apar[eê]ncia.{0,45}\b(?:arruinou|acabou\s+com)\s+(?:a\s+)?minha\s+vida\b/i,
@@ -188,236 +189,8 @@ const IRRELEVANT_PERSONAL_PATTERNS = [
 const GENERIC_CLINIC_INTENT_PATTERN =
   /\b(?:cl[ií]nica|consulta|atendimento|procedimento|cirurgia|tratamento|avalia[cç][aã]o|m[eé]dic[ao]|doutor[ae]?|dra?\.?|paciente|conv[eê]nio|particular|p[oó]s[- ]operat[oó]rio|recupera[cç][aã]o|cicatriz|endere[cç]o|localiza[cç][aã]o|informa[cç][oõ]es?|saber\s+mais)\b/i;
 
-const PROCEDURES = [
-  {
-    key: "lifting_facial",
-    code: "M-C06-WA-01",
-    patterns: [
-      /\blifting\s+facial\b/i,
-      /\bmini[\s-]*lifting\b/i,
-      /\brejuvenescimento\s+facial\b/i,
-      /\britidoplastia\b/i,
-    ],
-  },
-  {
-    key: "lifting_cervical",
-    code: "G-LIFT-CERV-01",
-    patterns: [
-      /\blifting\s+(?:de\s+)?(?:pesco[cç]o|cervical)\b/i,
-      /\bcervicoplastia\b/i,
-    ],
-  },
-  {
-    key: "blefaroplastia",
-    code: "G-BLEF-01",
-    patterns: [/\bblefaroplastia\b/i, /\bcirurgia\s+d[ao]s?\s+p[aá]lpebras?\b/i],
-  },
-  {
-    key: "frontoplastia",
-    code: "X-FRONTO-01",
-    patterns: [
-      /\bfrontoplastia\b/i,
-      /\bredu[cç][aã]o\s+(?:da\s+)?testa\b/i,
-      /\bavan[cç]o\s+(?:da\s+)?linha\s+capilar\b/i,
-    ],
-  },
-  {
-    key: "otoplastia",
-    code: "G-OTO-01",
-    patterns: [/\botoplastia\b/i, /\borelha\s+(?:de\s+)?abano\b/i],
-  },
-  {
-    key: "avaliacao_facial",
-    code: "M-C01-WA-01",
-    patterns: [/\bavalia[cç][aã]o\s+facial\b/i, /\bharmoniza[cç][aã]o\s+facial\b/i],
-  },
-  {
-    key: "lip_lifting",
-    code: "X-LIPLIFT-01",
-    patterns: [/\blip\s*lift(?:ing)?\b/i, /\blifting\s+labial\b/i],
-  },
-  {
-    key: "lipo_papada",
-    code: "X-LIPOPAP-01",
-    patterns: [/\blipo(?:aspira[cç][aã]o)?\s+(?:de\s+)?papada\b/i],
-  },
-  {
-    key: "rinoplastia",
-    code: "X-RINO-01",
-    patterns: [/\brinoplastia\b/i, /\bcirurgia\s+(?:do|no)\s+nariz\b/i],
-  },
-  {
-    key: "lipoaspiracao",
-    code: "X-LIPO-01",
-    patterns: [/\blipoaspira[cç][aã]o\b/i, /\blipo\s+(?:de\s+)?(?:abd[oô]men|barriga|costas|flancos)\b/i],
-  },
-  {
-    key: "abdominoplastia",
-    code: "X-ABD-01",
-    patterns: [/\babdominoplastia\b/i, /\bcirurgia\s+(?:do|no)\s+abd[oô]men\b/i],
-  },
-  {
-    key: "mastopexia",
-    code: "X-MASTO-01",
-    patterns: [/\bmastopexia\b/i, /\blifting\s+(?:de\s+)?mamas?\b/i],
-  },
-  {
-    key: "protese_mama",
-    code: "X-PROTESE-01",
-    patterns: [/\bpr[oó]tese\s+(?:de\s+)?mama\b/i, /\bsilicone\s+(?:nos?\s+)?seios?\b/i],
-  },
-  {
-    key: "mamoplastia_redutora",
-    code: "X-REDUTORA-01",
-    patterns: [/\bmamoplastia\s+redutora\b/i, /\bredu[cç][aã]o\s+(?:de\s+)?mamas?\b/i],
-  },
-  {
-    key: "braquioplastia",
-    code: "X-BRAQ-01",
-    patterns: [/\bbraquioplastia\b/i, /\blifting\s+(?:de\s+)?bra[cç]os?\b/i],
-  },
-  {
-    key: "ninfoplastia",
-    code: "X-NINFO-01",
-    patterns: [/\bninfoplastia\b/i, /\blabioplastia\b/i],
-  },
-  {
-    key: "contorno_corporal",
-    code: "X-CONTORNO-01",
-    patterns: [/\bcontorno\s+corporal\b/i, /\bp[oó]s[- ]bari[aá]trica\b/i],
-  },
-  {
-    key: "cirurgias_combinadas",
-    code: "X-COMB-01",
-    patterns: [/\bmommy\s+makeover\b/i, /\bcirurgias?\s+combinadas?\b/i],
-  },
-];
-
 function matchesAny(text, patterns) {
   return patterns.some((pattern) => pattern.test(text));
-}
-
-function detectNamedProcedure(text) {
-  const normalizedText = String(text || "");
-  for (const procedure of PROCEDURES) {
-    if (matchesAny(normalizedText, procedure.patterns)) {
-      return { key: procedure.key, code: procedure.code };
-    }
-  }
-
-  return null;
-}
-
-function detectCampaignProcedure(text) {
-  const normalizedText = String(text || "");
-  for (const campaign of CAMPAIGN_PROCEDURE_RULES) {
-    if (campaign.pattern.test(normalizedText)) {
-      return { key: campaign.key, code: campaign.code };
-    }
-  }
-
-  return null;
-}
-
-function detectProcedure(text, reference, referralContext) {
-  const referralText =
-    referralContext && typeof referralContext === "object"
-      ? Object.values(referralContext).join(" ")
-      : String(referralContext || "");
-  const combined = `${reference || ""} ${referralText} ${text || ""}`;
-
-  // O procedimento dito pela própria pessoa prevalece sobre uma referência
-  // antiga ou divergente que ainda esteja anexada à conversa.
-  const namedInCurrentMessage = detectNamedProcedure(text);
-  if (namedInCurrentMessage) return namedInCurrentMessage;
-
-  if (/\bC06(?:H\d{2})?\b/i.test(combined)) {
-    return { key: "lifting_facial", code: "M-C06-WA-01" };
-  }
-
-  if (/\bC01(?:H\d{2})?\b/i.test(combined)) {
-    return { key: "avaliacao_facial", code: "M-C01-WA-01" };
-  }
-
-  const campaignProcedure = detectCampaignProcedure(combined);
-  if (campaignProcedure) return campaignProcedure;
-
-  if (/\b(?:G26LIFT|LF\d{2})\b/i.test(combined)) {
-    return { key: "lifting_facial", code: "G-LIFT-FAC-01" };
-  }
-
-  if (/\b(?:G26CERV|LC\d{2})\b/i.test(combined)) {
-    return { key: "lifting_cervical", code: "G-LIFT-CERV-01" };
-  }
-
-  if (/\b(?:G26BLEF|BF\d{2})\b/i.test(combined)) {
-    return { key: "blefaroplastia", code: "G-BLEF-01" };
-  }
-
-  if (/\b(?:G26OTO|OT\d{2})\b/i.test(combined)) {
-    return { key: "otoplastia", code: "G-OTO-01" };
-  }
-
-  if (/\bG26FACE\b/i.test(combined)) {
-    return { key: "avaliacao_facial", code: "M-C01-WA-01" };
-  }
-
-  const namedInContext = detectNamedProcedure(combined);
-  if (namedInContext) return namedInContext;
-
-  // Em conversas sobre cirurgia da face, pacientes frequentemente usam apenas
-  // "lifting" para se referir ao lifting facial. As variações com região
-  // (cervical, mamas, braços ou lábios) já foram resolvidas acima.
-  if (/\blifting\b/i.test(combined)) {
-    return { key: "lifting_facial", code: "M-C06-WA-01" };
-  }
-
-  return null;
-}
-
-function detectRecentPatientProcedure(recentConversation) {
-  const turns = Array.isArray(recentConversation)
-    ? recentConversation.slice(-16)
-    : [];
-  const patientTurns = turns.filter(
-    (turn) =>
-      turn?.role !== "assistant" &&
-      !["bruna", "equipe_humana"].includes(turn?.source),
-  );
-
-  for (const turn of patientTurns.reverse()) {
-    const procedure = detectProcedure(
-      turn?.text,
-      turn?.reference,
-      turn?.referralContext,
-    );
-    if (procedure) return procedure;
-  }
-
-  return null;
-}
-
-function detectRecentClinicProcedure(recentConversation) {
-  const turns = Array.isArray(recentConversation)
-    ? recentConversation.slice(-16)
-    : [];
-  const clinicTurns = turns.filter(
-    (turn) =>
-      turn?.role === "assistant" ||
-      ["bruna", "human", "equipe_humana"].includes(
-        String(turn?.source || ""),
-      ),
-  );
-  for (const turn of clinicTurns.reverse()) {
-    const procedure = detectProcedure(turn?.text, "", null);
-    if (procedure) return procedure;
-  }
-  return null;
-}
-
-export function normalizeAutomationMode(value) {
-  const mode = String(value || "shadow").trim().toLowerCase();
-  return ["off", "shadow", "active"].includes(mode) ? mode : "shadow";
 }
 
 export function isSchedulingRequest(text) {
@@ -450,38 +223,6 @@ export function isAvailabilityRequest(text) {
   );
 }
 
-function foldMarketingText(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-export function isSiteServicePickerPrefill(text) {
-  const normalizedText = foldMarketingText(text);
-  return (
-    /\borigem do contato\s*:\s*site liv faria lima\b/i.test(
-      normalizedText,
-    ) &&
-    /\bgostaria de (?:agendar|marcar) uma consulta\b/i.test(
-      normalizedText,
-    ) &&
-    /\bcirurgia plastica\/estetica\b/i.test(normalizedText) &&
-    /\bcardiologia\b/i.test(normalizedText)
-  );
-}
-
-export function inboundReplyPriority(text) {
-  const normalizedText = foldMarketingText(text);
-  if (isSiteServicePickerPrefill(normalizedText)) return 10;
-  if (/^(?:oi|ola|bom dia|boa tarde|boa noite)[!.\s]*$/i.test(normalizedText)) {
-    return 30;
-  }
-  return 100;
-}
-
 export function isInsuranceAcceptanceRequest(text) {
   const normalizedText = foldMarketingText(text);
   const mentionsInsurance =
@@ -493,12 +234,6 @@ export function isInsuranceAcceptanceRequest(text) {
       normalizedText,
     );
   return mentionsInsurance && asksAcceptance;
-}
-
-export function isLikelyMarketingPrefilledMessage({
-  templateId,
-} = {}) {
-  return Boolean(normalizeMarketingPrefillTemplateId(templateId));
 }
 
 export function enrichAutomationPlanFromConversation(
@@ -1141,8 +876,4 @@ export function planAutomation({
     platform: platform || null,
     currentText: normalizedText,
   };
-}
-
-export function hasCampaignReferenceCode(value) {
-  return CAMPAIGN_REFERENCE_CODE_PATTERN.test(String(value || ""));
 }

@@ -6,6 +6,7 @@
     "test": "node scripts/run-tests.mjs",
     "site:build": "node scripts/build-static-site.mjs",
     "site:check": "node scripts/check-site-technical.mjs",
+    "architecture:check": "node scripts/check-journey-module-boundaries.mjs",
     "ops:check": "node scripts/check-operational-consistency.mjs",
     "ops:reconcile": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/reconcile-local-release.ps1",
     "bot:status": "node scripts/check-whatsapp-bot-mode.mjs",

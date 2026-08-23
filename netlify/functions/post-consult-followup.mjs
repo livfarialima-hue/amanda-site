@@ -4,7 +4,10 @@ import {
   sendYCloudPostConsult,
 } from "./lib/ycloud-post-consult.mjs";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
-import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
+import {
+  allowsPatientSideEffects,
+  normalizeAutomationMode,
+} from "./lib/automation-mode.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
 
@@ -96,7 +99,7 @@ export async function handlePostConsultFollowup(
   const automationMode = normalizeAutomationMode(
     env.WHATSAPP_AUTOMATION_MODE,
   );
-  if (automationMode !== "active") {
+  if (!allowsPatientSideEffects(automationMode)) {
     return json(
       {
         ok: false,

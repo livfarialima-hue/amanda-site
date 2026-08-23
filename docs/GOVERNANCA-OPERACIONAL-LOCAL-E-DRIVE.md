@@ -153,10 +153,10 @@ Não começar por um arquivo do Drive apenas porque ele parece recente. Data, t�
 
 ### 7.2 Alterar o bot ou a comunicação do WhatsApp
 
-1. Ler o manual operacional e localizar a regra no código.
+1. Ler o manual operacional, `docs/ARQUITETURA-JORNADA-PACIENTE.md` e localizar o proprietário da regra no código.
 2. Avaliar o contexto completo necessário e usar apenas exemplos anonimizados.
 3. Alterar localmente e adicionar teste de regressão.
-4. Executar a suíte pertinente e revisar privacidade, handoff e idempotência.
+4. Executar a suíte pertinente, `npm.cmd run architecture:check` e revisar privacidade, handoff e idempotência.
 5. Commitar, solicitar autorização, publicar no Netlify e fazer smoke test.
 6. Registrar o release no manual e, quando necessário, guardar evidência fechada no Drive.
 
@@ -295,6 +295,7 @@ Quando houver dúvida sobre onde colocar algo:
 Antes de encerrar qualquer mudança de bot, WhatsApp, Drive ou publicação, executar:
 
 ```powershell
+npm.cmd run architecture:check
 npm.cmd run ops:check
 ```
 

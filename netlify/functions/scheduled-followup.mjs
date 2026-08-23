@@ -4,7 +4,10 @@ import { appendConversationTurn } from "./lib/conversation-memory.mjs";
 import {
   reviewScheduledFollowupContext,
 } from "./lib/scheduled-followup-context-review.mjs";
-import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
+import {
+  allowsPatientSideEffects,
+  normalizeAutomationMode,
+} from "./lib/automation-mode.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
@@ -161,7 +164,7 @@ export async function handleScheduledFollowup(
   const automationMode = normalizeAutomationMode(
     env.WHATSAPP_AUTOMATION_MODE,
   );
-  if (automationMode !== "active") {
+  if (!allowsPatientSideEffects(automationMode)) {
     return json(
       {
         ok: false,

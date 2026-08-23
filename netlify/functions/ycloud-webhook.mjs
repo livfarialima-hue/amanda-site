@@ -1,16 +1,18 @@
 import {
   enrichAutomationPlanFromConversation,
-  hasCampaignReferenceCode,
-  inboundReplyPriority,
   isAvailabilityRequest,
   isConsultationInformationRequest,
   isConsultationPriceRequest,
   isSchedulingRequest,
-  MARKETING_PREFILL_TEMPLATE_ID,
-  normalizeMarketingPrefillTemplateId,
-  normalizeAutomationMode,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
+import { normalizeAutomationMode } from "./lib/automation-mode.mjs";
+import {
+  hasCampaignReferenceCode,
+  inboundReplyPriority,
+  MARKETING_PREFILL_TEMPLATE_ID,
+  normalizeMarketingPrefillTemplateId,
+} from "./lib/marketing-prefill.mjs";
 import {
   buildAppointmentPreferenceCollectionReply,
   buildAppointmentSuggestion,

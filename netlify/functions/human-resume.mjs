@@ -1,8 +1,8 @@
 import {
   enrichAutomationPlanFromConversation,
-  normalizeAutomationMode,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
+import { allowsPatientSideEffects } from "./lib/automation-mode.mjs";
 import {
   buildOvernightHandoffMessage,
   classifyHumanResume,
@@ -309,7 +309,7 @@ export async function processHumanResumeJob(
     ...dependencies
   } = {},
 ) {
-  if (normalizeAutomationMode(env.WHATSAPP_AUTOMATION_MODE) !== "active") {
+  if (!allowsPatientSideEffects(env.WHATSAPP_AUTOMATION_MODE)) {
     const reschedule =
       dependencies.rescheduleHumanResumeImpl ||
       rescheduleHumanResume;

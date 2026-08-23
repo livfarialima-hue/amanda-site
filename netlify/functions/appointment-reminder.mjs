@@ -4,7 +4,10 @@ import {
   sendYCloudAppointmentReminder,
 } from "./lib/ycloud-appointment-reminder.mjs";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
-import { normalizeAutomationMode } from "./lib/whatsapp-automation.mjs";
+import {
+  allowsPatientSideEffects,
+  normalizeAutomationMode,
+} from "./lib/automation-mode.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
 const ALLOWED_KINDS = new Set(["48h", "same_day"]);
@@ -99,7 +102,7 @@ export async function handleAppointmentReminder(
   const automationMode = normalizeAutomationMode(
     env.WHATSAPP_AUTOMATION_MODE,
   );
-  if (automationMode !== "active") {
+  if (!allowsPatientSideEffects(automationMode)) {
     return json(
       {
         ok: false,

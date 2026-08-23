@@ -1,0 +1,128 @@
+# Arquitetura da jornada da paciente
+
+**Status:** contrato canônico de modularidade e responsabilidade
+
+**Objetivo:** permitir ajuste fino do bot, funil, retomadas, agenda e atribuição sem ampliar silenciosamente o efeito de uma mudança local.
+
+Este documento complementa a governança operacional. Ele não substitui o norte estratégico, os contratos clínicos, o manual da Bruna nem os registros canônicos do Apps Script.
+
+## 1. Princípio central
+
+Cada decisão deve ter um único dono. Módulos de política interpretam dados e devolvem decisões puras; módulos de efeito executam rede, persistência, agenda ou envio somente depois dos gates aplicáveis.
+
+Uma alteração pequena não pode mudar ao mesmo tempo:
+
+- o que a paciente quis dizer;
+- qual oportunidade representa essa conversa;
+- se o bot pode responder;
+- o texto final enviado;
+- a fase comercial;
+- a agenda;
+- e a conversão atribuída ao marketing.
+
+Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alterado e testado explicitamente.
+
+## 2. Fluxo e proprietários
+
+| Camada | Responsabilidade | Proprietário principal | Não deve decidir |
+|---|---|---|---|
+| Entrada | validar, normalizar e deduplicar o evento recebido | `ycloud-webhook.mjs` | conteúdo clínico, envio final ou fase comercial por suposição |
+| Contexto de automação | normalizar `off`, `shadow` e `active` | `automation-mode.mjs` | enviar mensagens ou acessar ambiente/rede |
+| Contexto de marketing | reconhecer template, prioridade de prefill e códigos Google/Meta | `marketing-prefill.mjs` | qualificar lead ou agendar consulta |
+| Contexto de procedimento | resolver procedimento falado, campanha e histórico recente | `procedure-context.mjs` | prometer indicação, preço ou resultado |
+| Planejamento de conversa | definir rota, motivo, profissional, procedimento e elegibilidade | `whatsapp-automation.mjs` | contornar takeover, opt-out ou gate de saída |
+| Política semântica | revisar significado e contexto de respostas elegíveis | `semantic-reply-policy.mjs` e módulos especialistas | executar efeito diretamente |
+| Ação conversacional | coordenar a ação permitida para o turno atual | `conversation-action-controller.mjs` | reaproveitar decisão de outro turno sem revalidação |
+| Saída | impor o contrato final de segurança e conteúdo | `outbound-reply-gate.mjs` | inventar fatos para completar uma resposta |
+| Memória | guardar turnos e estado durável da conversa | módulos `conversation-*` | substituir a origem comercial canônica |
+| Jornada comercial | manter oportunidade canônica e projetar o funil | `OpportunityStore.gs` | inferir qualificação apenas por campanha ou prefill |
+| Reconciliação | conferir e reparar projeções por `Opportunity ID` e fase | `FunnelReconciliation.gs` | reescrever colunas manuais protegidas |
+| Retomadas | planejar cadência, elegibilidade, silêncio e limites | `Retomadas.gs` | enviar sem rechecagem do estado mais recente |
+| Execução de retomadas | revalidar e executar somente a ação ainda válida | `scheduled-followup.mjs` | criar um novo plano ou ignorar takeover/opt-out |
+| Agenda | sugerir, reservar e sincronizar consultas com idempotência | módulos `appointment-*` e `ConsultasSync.gs` | confirmar horário sem prova da reserva |
+| Atribuição | preservar origem, campanha e eventos da jornada | `attribution-journey-store.mjs` e agregações canônicas | usar clique ou prefill como consulta qualificada |
+
+## 3. Regras de dependência
+
+Os módulos `automation-mode.mjs`, `marketing-prefill.mjs` e `procedure-context.mjs` são política pura. Eles não podem usar `process.env`, rede, Netlify Blobs, memória de conversa, YCloud, OpenAI ou qualquer outro adaptador de efeito.
+
+Os endpoints de webhook, retomada, lembrete e pós-consulta importam o modo de automação diretamente de `automation-mode.mjs`. Isso impede que uma mudança no planejador principal seja carregada por rotinas que só precisam saber se efeitos estão autorizados.
+
+`whatsapp-automation.mjs` mantém reexportações de compatibilidade durante a transição. Assim, consumidores antigos continuam funcionando, enquanto novos consumidores devem importar do módulo proprietário.
+
+O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele faz parte da suíte integral e deve passar antes de qualquer publicação.
+
+## 4. Invariantes de comportamento
+
+### Bot e segurança
+
+- `off` não autoriza avaliação semântica, envio, agenda nem disparos programados.
+- `shadow` pode avaliar, mas não pode produzir efeito para a paciente.
+- somente `active`, junto dos demais gates, pode autorizar efeito para a paciente.
+- urgência, risco clínico, takeover, opt-out, mensagem humana mais recente, evento desatualizado ou contexto insuficiente continuam falhando fechados.
+- toda resposta final continua passando pelo contrato de saída; a extração de contexto não libera uma rota por conta própria.
+
+### Funil e rastreio
+
+- `_CRM_OPORTUNIDADES` permanece a origem canônica da oportunidade.
+- as abas visíveis permanecem projeções reparáveis, nunca uma segunda origem concorrente.
+- `Opportunity ID` e fase governam a projeção; nome, telefone parcial ou posição da linha não substituem identidade.
+- código de campanha ou template de marketing fornece contexto, mas não prova qualificação, agendamento, comparecimento ou receita.
+- colunas manuais protegidas não podem ser modificadas pela reconciliação periódica.
+
+### Retomadas
+
+- o planejamento e o envio são etapas distintas.
+- cada envio revalida opt-out, takeover, janela, atividade mais recente, identidade do plano, número máximo de tentativas e contrato semântico.
+- uma nova fala da paciente ou da equipe invalida qualquer decisão reaproveitada que não continue comprovadamente atual.
+- cancelamento de um plano não cria automaticamente proibição permanente de contato.
+
+### Agenda
+
+- sugestão não equivale a reserva; reserva não equivale a confirmação enviada.
+- repetição do mesmo evento deve ser idempotente.
+- timeout ou resposta ambígua exige releitura antes de declarar falha ou criar outra reserva.
+- conflito real deve virar alerta ou revisão, não sobrescrita silenciosa.
+
+### Google e Meta
+
+- parâmetros e códigos de campanha são preservados como evidência de origem.
+- otimização deve usar eventos qualificados da jornada, não clique, LPV ou abertura do WhatsApp isoladamente.
+- mudanças no mapeamento de campanha exigem casos de regressão para Google, Meta e precedência da fala explícita da paciente.
+
+## 5. Como fazer uma alteração futura pequena
+
+1. Identificar o proprietário único da decisão nesta matriz.
+2. Alterar primeiro o teste de contrato do comportamento desejado.
+3. Modificar somente o módulo proprietário e, se necessário, seu adaptador direto.
+4. Confirmar que nenhuma nova dependência de efeito entrou em módulo puro.
+5. Executar testes focados, `npm run architecture:check`, suíte integral, build e `npm run ops:check`.
+6. Comparar o diff com o escopo aprovado e registrar qualquer alteração de contrato.
+7. Commitar o candidato antes de escrever em plataforma externa.
+8. Publicar somente com autorização explícita e verificar o estado vivo.
+
+Mudança de cópia, regra clínica, preço, cadência, fase, agenda ou atribuição nunca deve ser tratada como simples reorganização de código.
+
+## 6. Estratégia de evolução
+
+As próximas separações devem ocorrer em pacotes independentes e testáveis:
+
+1. reduzir o webhook a orquestração de entrada, delegando políticas puras já estabilizadas;
+2. separar classificação de oportunidade, projeção do funil e efeitos externos no Apps Script sem alterar a origem canônica;
+3. consolidar contratos de agenda entre sugestão, reserva, confirmação e lembrete;
+4. criar testes ponta a ponta sintéticos para a mesma jornada atravessando anúncio, WhatsApp, oportunidade, funil, consulta e retomada;
+5. retirar reexportações de compatibilidade somente depois que nenhum consumidor depender delas.
+
+Não mover grandes blocos do Apps Script apenas para reduzir tamanho de arquivo. Como o runtime é global e a ordem/publicação de arquivos pode ampliar o risco, cada extração deve provar equivalência em um pacote próprio antes de chegar ao deployment canônico.
+
+## 7. Rollback
+
+O baseline anterior a esta modularização é o commit `2862a6ddb61302430b40bb3b8e5702d310ef2dae`. O candidato foi desenvolvido na branch `codex/modularizacao-segura-jornada-20260823`.
+
+- antes de publicação: abandonar a branch candidata restaura integralmente o baseline sem tocar produção;
+- depois de publicação do Netlify: restaurar o deploy anterior e reverter o commit da modularização, preservando os registros operacionais gerados depois dela;
+- Apps Script: esta primeira modularização não altera arquivos `.gs`, versão, deployment nem triggers; nenhuma reversão do Apps Script deve ser feita por causa dela;
+- contenção imediata do bot: o modo `off` continua sendo a trava operacional fail-closed, mas sua alteração é uma ação externa separada e deve ser registrada;
+- dados de pacientes, oportunidades, agenda e histórico não devem ser revertidos automaticamente junto com código.
+
+O rollback precisa ser seguido de smoke tests, conferência do modo de automação, webhook, filas programadas, funil e agenda. A causa deve ser registrada antes de uma nova tentativa.
