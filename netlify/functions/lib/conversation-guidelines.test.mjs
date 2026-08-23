@@ -167,6 +167,14 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(CONVERSATION_GUIDELINES, /não tiver sido executada/);
   assert.match(CONVERSATION_GUIDELINES, /duas opções reais de horário/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /responder a uma retomada automática.*novo turno ativo da paciente/s,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não permaneça em silêncio apenas porque a mensagem anterior foi programada/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /cerca de 24 horas/);
   assert.match(CONVERSATION_GUIDELINES, /cerca de 72 horas/);
   assert.match(CONVERSATION_GUIDELINES, /Depois de duas retomadas/);

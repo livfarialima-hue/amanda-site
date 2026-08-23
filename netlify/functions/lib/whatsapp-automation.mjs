@@ -59,6 +59,9 @@ const SCHEDULING_PATTERN =
 const CONSULTATION_INFORMATION_PATTERN =
   /\b(?:(?:como|de\s+que\s+forma)\s+(?:funciona|[eé])|o\s+que\s+(?:acontece|[eé]\s+feito)|quer(?:o|ia)\s+entender\s+como\s+funciona).{0,50}\b(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,50}\b(?:como\s+funciona|passo\s+a\s+passo)\b/i;
 
+const CONSULTATION_EXPLANATION_REQUEST_PATTERN =
+  /\b(?:(?:me\s+)?(?:explica|explique|explicar|explicasse)|explique-me)\s+(?:como\s+(?:funciona|[eé])\s+)?(?:a\s+)?(?:consulta|avalia[cç][aã]o)\b/i;
+
 const CONSULTATION_ACCESS_PATTERN =
   /\bcomo\s+(?:eu\s+)?fa[cç]o\s+para\s+(?:passar|marcar|agendar)\s+(?:em|uma)?\s*(?:consulta|avalia[cç][aã]o)\b/i;
 
@@ -406,6 +409,7 @@ export function isConsultationInformationRequest(text) {
   const value = String(text || "");
   return (
     CONSULTATION_INFORMATION_PATTERN.test(value) ||
+    CONSULTATION_EXPLANATION_REQUEST_PATTERN.test(value) ||
     CONSULTATION_ACCESS_PATTERN.test(value) ||
     CONSULTATION_PRICE_PATTERN.test(value)
   );

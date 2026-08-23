@@ -71,6 +71,36 @@ test("a real question reopens a deferred conversation", () => {
   assert.equal(decision.nextAction, "send_patient_message");
 });
 
+test("a patient reply to a Bruna follow-up becomes an active response turn", () => {
+  const decision = decideConversationAction({
+    text: "Por favor, me explique a avaliação.",
+    plan: {
+      route: "standard_reply",
+      reason: "consultation_information_request",
+      replyCode: "AMANDA-CONSULTA-INFO-01",
+      professional: "amanda",
+      procedure: "lifting_facial",
+      automaticAllowed: true,
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        eventId: "scheduled-followup-case-1",
+        text:
+          "Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda.",
+      },
+    ],
+    humanTakeoverActive: false,
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.owner, "bruna");
+  assert.equal(decision.allowAutomaticReply, true);
+  assert.equal(decision.followupPolicy, "none");
+  assert.equal(decision.replyContract.allowedResponseKind, "direct_answer");
+});
+
 test("human takeover schedules a resume only for a concrete pending request", () => {
   const pending = decideConversationAction({
     text: "Você consegue confirmar o endereço?",

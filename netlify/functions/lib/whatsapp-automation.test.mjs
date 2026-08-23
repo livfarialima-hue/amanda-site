@@ -574,6 +574,9 @@ test("asking how the consultation works stays in automatic conversation", () => 
     "Estou fazendo uma pesquisa. Seria interessante saber como funciona a consulta.",
     "Como funciona a avaliação?",
     "Queria entender o que acontece na consulta",
+    "Por favor, me explique a avaliação.",
+    "Pode me explicar como funciona a consulta?",
+    "Gostaria que me explicasse a avaliação.",
   ]) {
     const plan = planAutomation({
       text,
@@ -588,6 +591,52 @@ test("asking how the consultation works stays in automatic conversation", () => 
     assert.equal(plan.reason, "consultation_information_request", text);
     assert.equal(plan.replyCode, "AMANDA-CONSULTA-INFO-01", text);
     assert.equal(plan.automaticAllowed, true, text);
+  }
+});
+
+test("a reply to an automatic follow-up resumes the safe consultation explanation", () => {
+  const text = "Por favor, me explique a avaliação.";
+  const preliminaryPlan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "M26F01W-C06H01",
+    platform: "Meta",
+  });
+  const plan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Olá! Quero saber sobre lifting facial com a Dra. Amanda.",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        eventId: "scheduled-followup-case-1",
+        text:
+          "Olá! Queria retomar nossa conversa sobre lifting facial. Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda.",
+      },
+    ],
+  );
+
+  assert.equal(isConsultationInformationRequest(text), true);
+  assert.equal(isSchedulingRequest(text), false);
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "consultation_information_request");
+  assert.equal(plan.replyCode, "AMANDA-CONSULTA-INFO-01");
+  assert.equal(plan.procedure, "lifting_facial");
+  assert.equal(plan.automaticAllowed, true);
+});
+
+test("real appointment requests remain scheduling requests", () => {
+  for (const text of [
+    "Quero marcar uma avaliação.",
+    "Tem horário para avaliação?",
+    "Quais datas vocês têm para a consulta?",
+  ]) {
+    assert.equal(isConsultationInformationRequest(text), false, text);
+    assert.equal(isSchedulingRequest(text), true, text);
   }
 });
 
