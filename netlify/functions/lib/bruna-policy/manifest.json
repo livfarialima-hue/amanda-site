@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-22.1",
-  "promptVersion": "bruna-concierge-2026-08-22.1",
+  "bundleVersion": "2026-08-23.3",
+  "promptVersion": "bruna-concierge-2026-08-23.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-22.1",
+  "knowledgeSnapshot": "kb-2026-08-23.3",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "5c08be94a7382c9f2c2bbd56c510277541b19169",
-    "lastObservedProductionCommit": "5c08be94a7382c9f2c2bbd56c510277541b19169",
-    "functionalDeployId": "6a89f0e9f4f19fa8ec16b8e6",
-    "lastObservedProductionDeployId": "6a89f0e9f4f19fa8ec16b8e6",
-    "rollbackCommit": "dd93f1cebf5c218672d1bf84d6d3b39ca3c9ff74",
-    "rollbackDeployId": "6a89b867a85c5f00085ae691",
-    "publishedAt": "2026-08-22T15:58:47-03:00",
-    "lastVerifiedAt": "2026-08-22T16:00:57-03:00"
+    "functionalCommit": "f3966f76d281056fc1abf5198a9a97ea519ed6ff",
+    "lastObservedProductionCommit": "f3966f76d281056fc1abf5198a9a97ea519ed6ff",
+    "functionalDeployId": "6a8b2f26fc9c880f38e8e745",
+    "lastObservedProductionDeployId": "6a8b2f26fc9c880f38e8e745",
+    "rollbackCommit": "6a27731a5bef23427b749a726ddab468aea56d16",
+    "rollbackDeployId": "6a89fab3f44a1578bd9c9f41",
+    "publishedAt": "2026-08-23T14:38:00-03:00",
+    "lastVerifiedAt": "2026-08-23T14:40:44-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "f44c9f453fe62a09b6554036a558fa431bab230b356a687c1e8d56a3a0ea8161"
+    "driveProjectionSha256": "1a2b639c99a9128f4bc2c08aaf63111a336bdd934ca7125603d9518d812aa0d0"
   }
 }
