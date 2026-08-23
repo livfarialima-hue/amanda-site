@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 23 de agosto de 2026, 11:07, America/Sao_Paulo
+**Atualizado em:** 23 de agosto de 2026, 12:11, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026, execução ao vivo de BLEF, CERV, OTO, FACE e MARCA em 22/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -41,7 +41,9 @@ O responsável técnico deve:
 
 ### Operação do WhatsApp — Bruna
 
-**Estado geral:** a fila de decisões múltiplas foi publicada e verificada no Apps Script v118, mantendo o deployment canônico. A Central permite passar retomadas elegíveis à Bruna ou cancelar somente o plano selecionado em um único lote, bloqueia decisões conflitantes na mesma linha, explica inelegibilidades e diferencia por cor as ações humanas gerais e as retomadas humanas das próximas 24 horas. O e-mail diário abre diretamente essa fila. Código funcional `ec6d5e9c16a0fd34da9e21e0ba99d470fcf97df6`; testes focados **70/70**, validação isolada **969/969**, arquivos relidos por SHA-256 normalizado e web app HTTP 200. Nenhuma função, trigger ou mensagem real foi executada.
+**Estado geral:** a Central prática foi publicada e verificada no Apps Script v122, mantendo o deployment canônico. A aba abre diretamente o WhatsApp, preserva texto e horário editados, passa apenas retomadas elegíveis à Bruna, permite cancelamento pontual, diferencia `Aguardando paciente` de um adiamento interno e mantém somente planos dentro da janela operacional ou com agendamento futuro. Cabeçalho e cinco primeiras colunas ficam congelados, colunas técnicas ficam ocultas e linhas críticas recebem destaque. Código funcional nos commits `394f441`, `63daac4`, `9f172f5` e `034a002`; **302/302 testes focados**, **978/978 no commit isolado**, arquivo relido por SHA-256 normalizado e web app seguro com token inválido. A Central foi atualizada ao vivo; nenhuma mensagem real foi enviada.
+
+**Release `2026-08-23.2` — PUBLICADO, EXECUTADO E VERIFICADO:** publica somente `CentralAtendimento.gs` e `Retomadas.gs`, depois de confirmar os três IDs canônicos e comparar os arquivos vivos com a base v118. O mesmo deployment foi atualizado progressivamente até a v122. A primeira migração expôs uma validação posicional antiga em `J2` e falhou antes de qualquer envio; a v120 limpou validações e notas somente quando o layout ainda não era o atual. A v121 limitou planos antigos à janela de 10 dias sem ocultar agendamentos futuros, e a v122 moveu a marca técnica para uma coluna oculta. A atualização final terminou às 12:11:02. O caso fornecido ficou `Aguardando paciente`, `Suspenso`, sem aprovação ou horário de envio, e com o link direto correto. O endpoint com token inválido afirmou que nenhuma mensagem foi programada. Rollback: Apps Script v118 no mesmo deployment.
 
 **Release `2026-08-23.1` — PUBLICADO E VERIFICADO:** publica somente `CentralAtendimento.gs` e `Retomadas.gs` do commit `ec6d5e9`, após testar a conexão autenticada e confirmar projeto, deployment e planilha pelos três IDs canônicos. Os arquivos vivos coincidiam com o pai do commit antes da escrita e com o commit aprovado depois do salvamento. O deployment existente foi atualizado da v117 para a v118; o endpoint retornou `ok:true`, e o token inválido confirmou `Link inválido ou expirado`, que nenhuma mensagem foi cancelada e que nenhuma preferência foi alterada. Não houve execução da Central, gatilho ou envio real. Rollback: Apps Script v117 no mesmo deployment.
 
@@ -59,7 +61,7 @@ O responsável técnico deve:
 
 **Release de 20/08/2026 — PUBLICADO E VERIFICADO:** todo texto elegível já persistido passa pela avaliação semântica mesmo sem oportunidade ou rota resolvida. O caso real de queixas faciais mostrou a lacuna: o texto estava legível e contextual, mas `route_pending` impediu a chamada à IA. A versão recupera histórico pré-oportunidade e falas humanas, permite recuperação idempotente de Amanda/Daniel somente com alta confiança em modo ativo, pergunta uma vez quando a dúvida for segura e produz sugestão interna apenas quando houver rascunho seguro. `Shadow` não envia nem altera rota ou agenda; `off` preserva a entrada e bloqueia IA, mensagens, agenda e disparos programados. Código, produção e projeções do Drive foram reconciliados no fechamento descrito acima.
 
-**Projeção deste Plano Executivo no Drive:** o mesmo arquivo canônico remoto `18iUqY6HttJwPusSAA1VGmrMqqRluyjTO` foi substituído no fechamento da versão `2026-08-23.1`; nenhuma cópia concorrente foi criada.
+**Projeção deste Plano Executivo no Drive:** o mesmo arquivo canônico remoto `18iUqY6HttJwPusSAA1VGmrMqqRluyjTO` foi substituído no fechamento da versão `2026-08-23.2`; nenhuma cópia concorrente foi criada.
 
 - `HOTFIX-APPSSCRIPT-2026-08-19` está `CONCLUÍDO E VERIFICADO`: a v102 restaurou `Retomadas.gs`; a v103 restaurou `LeadClassification.gs` e repôs apenas o bloco `templateId` aprovado em `Code.gs`, sempre no mesmo deployment. Os 22 arquivos foram comparados; quatro diferenças eram somente fim de linha, e nenhuma outra corrupção foi encontrada. O teste de token inválido confirmou `Nenhuma preferência foi alterada`;
 - `SYNC-CENTRAL-ATENDIMENTO` está `CONCLUÍDO E VERIFICADO`: após autorização específica, `CentralAtendimento.gs` foi publicado integralmente na v104 conforme o commit `7e37eb3`. Ofertas comerciais antigas ficam em revisão silenciosa e só são encerradas por ação humana; `21/21` testes focados e `865/865` integrais passaram. Não houve atualização ao vivo da Central nem mensagem real;
