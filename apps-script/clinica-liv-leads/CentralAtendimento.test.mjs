@@ -715,6 +715,10 @@ test("layout migration clears legacy validation and requires the current layout 
   );
   assert.match(
     source,
+    /getRange\(1, columns\.fonte \+ 1\)[\s\S]{0,80}setNote\(CENTRAL_ATENDIMENTO_CONFIG\.layoutVersion\)/,
+  );
+  assert.match(
+    source,
     /if \(!structureReady\)[\s\S]{0,360}clearDataValidations\(\)/,
   );
 });

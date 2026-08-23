@@ -2431,8 +2431,10 @@ function estruturaCentralPronta_(sheet) {
 
   if (!headersReady) return false;
 
+  const layoutMarkerColumn =
+    CENTRAL_ATENDIMENTO_HEADERS.indexOf("Fonte") + 1;
   return sheet
-    .getRange(1, 1)
+    .getRange(1, layoutMarkerColumn)
     .getNote() === CENTRAL_ATENDIMENTO_CONFIG.layoutVersion;
 }
 
@@ -2602,7 +2604,7 @@ function formatarCentralAtendimento_(sheet, itemCount) {
       "Edite aqui o texto exato que a Bruna deverá enviar. A edição é preservada nas atualizações da Central.",
     );
   sheet
-    .getRange(1, 1)
+    .getRange(1, columns.fonte + 1)
     .setNote(CENTRAL_ATENDIMENTO_CONFIG.layoutVersion);
   sheet
     .getRange(1, columns["programar para"] + 1)
