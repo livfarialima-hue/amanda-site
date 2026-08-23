@@ -436,7 +436,7 @@ Se uma fonte técnica divergir deste painel sobre o que já foi publicado ou sob
 
 **Estado:** `DIAGNÓSTICO CONCLUÍDO; CÓDIGO LOCAL VALIDADO; PUBLICAÇÃO PENDENTE DA PROPRIETÁRIA`.
 
-O e-mail de 17/08 trazia 100 sugestões, mas exibia somente 50 por causa do limite de 40 linhas por seção sem aviso; 39 das 40 linhas visíveis em `Aguardar dados` eram variações da mesma intenção de preço em BLEF. Seis negativas P0 foram confirmadas ao vivo como roteamento intencional entre campanhas/grupos. A negativa de frase `lipoaspiração de papada` em nível de `S_BR_SP_LIFTING_CERVICAL` permaneceu como única candidata técnica real, pois alcança o próprio `AG_LIPO_PAPADA`; a remoção exige execução isolada e pós-voo.
+O e-mail de 17/08 trazia 100 sugestões, mas exibia somente 50 por causa do limite de 40 linhas por seção sem aviso; 39 das 40 linhas visíveis em `Aguardar dados` eram variações da mesma intenção de preço em BLEF. Seis negativas P0 foram confirmadas ao vivo como roteamento intencional entre campanhas/grupos. Em 23/08, a releitura proprietária das 79 negativas de `S_BR_SP_LIFTING_CERVICAL` confirmou que a frase `lipoaspiração de papada` já não estava presente; por isso nenhuma exclusão, recriação ou reversão foi executada. A campanha cervical permaneceu ativa com R$ 12/dia e `S_BR_SP_LIFTING_FACIAL` permaneceu ativa com R$ 24/dia.
 
 O alerta de seis campanhas com `biddable=false` era falso positivo: a rotina lia apenas categoria/origem e ignorava a meta personalizada. O commit `ee5df71` passou a consultar `conversion_goal_campaign_config` e `custom_conversion_goal`, removeu duas consultas inválidas observadas, consolidou preço por campanha/grupo, preservou os roteamentos verificados e declara truncamento. Testes locais: `18/18`.
 
