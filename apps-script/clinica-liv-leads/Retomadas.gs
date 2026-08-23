@@ -1682,8 +1682,9 @@ function criarCandidatoRetomada_(
       contextoAutoral,
     );
   const objecao = classificarObjecaoRetomada_(contextoAutoral);
-  const assuntoRetomada = identificarAssuntoRetomada_(
-    contextoPaciente,
+  const assuntoRetomada = identificarAssuntoSeguroRetomada_(
+    lead,
+    conversa,
   );
 
   if (!retomadaComercialPermitida_(contextoPaciente)) {
@@ -1697,6 +1698,7 @@ function criarCandidatoRetomada_(
     contextoPaciente,
     etapa.numero,
     prioritario,
+    assuntoRetomada,
   );
 
   return {
@@ -1999,7 +2001,7 @@ function sugerirMensagemRetomada_(
     );
   }
 
-  if (etapa === 2 && assunto) {
+  if (etapa === 2) {
     const primeiroNome = primeiroNomeSeguroRetomada_(
       nomePaciente,
     );
@@ -2008,8 +2010,8 @@ function sugerirMensagemRetomada_(
       : "Olá!";
     return (
       saudacao +
-      " Vou deixar você à vontade por aqui, sem novas mensagens. Se mais adiante quiser retomar nossa conversa sobre " +
-      assunto +
+      " Vou deixar você à vontade por aqui, sem novas mensagens. Se mais adiante quiser retomar nossa conversa" +
+      (assunto ? " sobre " + assunto : "") +
       " ou surgir alguma dúvida, pode me chamar quando for um bom momento para você. Vou ficar feliz em ajudar."
     );
   }
@@ -2110,45 +2112,148 @@ function intencaoAgendaRetomada_(conversa, contextoAutoral) {
   return false;
 }
 
-function identificarAssuntoRetomada_(contexto) {
+function listarAssuntosRetomada_(contexto) {
   const texto = normalizarTextoRetomadas_(contexto);
   const assuntos = [
-    [/lipo de papada/, "lipo de papada"],
+    [/lipo(?:aspiracao)? (?:de )?papada/, "lipo de papada"],
     [
-      /cervicoplastia|lifting cervical|lifting de pescoco|contorno cervical/,
+      /cervicoplastia|lifting cervical|lifting (?:de )?pescoco|contorno cervical/,
       "cervicoplastia (lifting cervical)",
     ],
     [
-      /lifting facial|facelift|ritidoplastia|mini lifting/,
+      /lifting facial|facelift|ritidoplastia|mini lifting|rejuvenescimento facial/,
       "lifting facial",
     ],
-    [/otoplastia|otomodelacao/, "otoplastia"],
-    [/blefaroplastia/, "blefaroplastia"],
-    [/lip lifting|lifting labial/, "lip lifting"],
-    [/abdominoplastia/, "abdominoplastia"],
-    [/mastopexia/, "mastopexia"],
-    [/protese de mama|implante mamario|silicone/, "prótese de mama"],
     [
-      /mamoplastia redutora|reducao de mama/,
+      /frontoplastia|reducao da testa|avanco da linha capilar/,
+      "frontoplastia",
+    ],
+    [/otoplastia|otomodelacao|orelha (?:de )?abano/, "otoplastia"],
+    [
+      /blefaroplastia|cirurgia (?:da|das) palpebras?/,
+      "blefaroplastia",
+    ],
+    [
+      /avaliacao facial|harmonizacao facial/,
+      "avaliação facial",
+    ],
+    [/rinoplastia|cirurgia (?:do|no) nariz/, "rinoplastia"],
+    [/lip lifting|lifting labial/, "lip lifting"],
+    [
+      /abdominoplastia|cirurgia (?:do|no) abdomen/,
+      "abdominoplastia",
+    ],
+    [/mastopexia|lifting (?:de )?mamas?/, "mastopexia"],
+    [
+      /protese (?:de )?mama|implante mamario|silicone (?:nos? )?seios?/,
+      "prótese de mama",
+    ],
+    [
+      /mamoplastia redutora|reducao (?:de )?mamas?/,
       "mamoplastia redutora",
     ],
-    [/braquioplastia/, "braquioplastia"],
-    [/ninfoplastia/, "ninfoplastia"],
-    [/lipoaspiracao|\blipo\b/, "lipoaspiração"],
+    [/braquioplastia|lifting (?:de )?bracos?/, "braquioplastia"],
+    [/ninfoplastia|labioplastia/, "ninfoplastia"],
+    [
+      /lipoaspiracao(?!\s+(?:de\s+)?papada)|\blipo\b(?!\s+(?:de\s+)?papada)/,
+      "lipoaspiração",
+    ],
     [
       /contorno corporal|pos bariatrica|cirurgia apos emagrecimento/,
       "cirurgia plástica após emagrecimento",
     ],
-    [/papada|pescoco/, "contorno da papada e do pescoço"],
+    [
+      /mommy makeover|cirurgias? combinadas?/,
+      "cirurgias combinadas",
+    ],
   ];
+  const encontrados = [];
 
   for (let indice = 0; indice < assuntos.length; indice += 1) {
     if (assuntos[indice][0].test(texto)) {
-      return assuntos[indice][1];
+      encontrados.push(assuntos[indice][1]);
     }
   }
 
-  return "";
+  if (
+    /papada|pescoco/.test(texto) &&
+    encontrados.indexOf("lipo de papada") < 0 &&
+    encontrados.indexOf("cervicoplastia (lifting cervical)") < 0
+  ) {
+    encontrados.push("contorno da papada e do pescoço");
+  }
+  if (/\blifting\b/.test(texto) && !encontrados.length) {
+    encontrados.push("lifting facial");
+  }
+
+  return encontrados.filter(function (assunto, indice) {
+    return encontrados.indexOf(assunto) === indice;
+  });
+}
+
+function identificarAssuntoRetomada_(contexto) {
+  const assuntos = listarAssuntosRetomada_(contexto);
+  return assuntos.length === 1 ? assuntos[0] : "";
+}
+
+function identificarAssuntoSeguroRetomada_(lead, conversa) {
+  const mensagensAutorais = (conversa || []).filter(function (mensagem) {
+    return (
+      mensagem.direcao === "IN" &&
+      !mensagemContextualAutomaticaRetomada_(mensagem.texto)
+    );
+  });
+
+  for (
+    let indice = mensagensAutorais.length - 1;
+    indice >= 0;
+    indice -= 1
+  ) {
+    const assuntos = listarAssuntosRetomada_(
+      mensagensAutorais[indice].texto,
+    );
+    if (assuntos.length > 1) return "";
+    if (assuntos.length === 1) return assuntos[0];
+    if (
+      mencionaProcedimentoNaoMapeadoRetomada_(
+        mensagensAutorais[indice].texto,
+      )
+    ) {
+      return "";
+    }
+  }
+
+  const contextoOrigem = [
+    lead && lead.status,
+    lead && lead.resumo,
+    lead && lead.proximaAcao,
+    lead && lead.referencia,
+    lead && lead.plataforma,
+    lead && lead.campanha,
+    lead && lead.criativo,
+    lead && lead.destino,
+    lead && lead.referenciaCompleta,
+    (conversa || [])
+      .filter(function (mensagem) {
+        return (
+          mensagem.direcao === "IN" &&
+          mensagemContextualAutomaticaRetomada_(mensagem.texto)
+        );
+      })
+      .map(function (mensagem) {
+        return mensagem.texto;
+      })
+      .join(" "),
+  ].filter(Boolean).join(" ");
+
+  return identificarAssuntoRetomada_(contextoOrigem);
+}
+
+function mencionaProcedimentoNaoMapeadoRetomada_(contexto) {
+  const texto = normalizarTextoRetomadas_(contexto);
+  return /\b(?:cruroplastia|lifting de coxas|ginecomastia|bichectomia|gluteoplastia|botox|toxina botulinica|preenchimento|bioestimulador|implante capilar|transplante capilar)\b/.test(
+    texto,
+  );
 }
 
 function classificarObjecaoRetomada_(contexto) {
@@ -2191,6 +2296,7 @@ function selecionarMaterialRetomada_(
   contexto,
   etapa,
   prioritario,
+  assuntoSeguro,
 ) {
   if (
     etapa !== 2 ||
@@ -2202,17 +2308,85 @@ function selecionarMaterialRetomada_(
     return null;
   }
 
+  if (arguments.length >= 6 && !String(assuntoSeguro || "").trim()) {
+    return null;
+  }
+
   for (
     let indice = 0;
     indice < RETOMADAS_MATERIAIS.length;
     indice += 1
   ) {
-    if (RETOMADAS_MATERIAIS[indice].padrao.test(contexto)) {
+    if (
+      RETOMADAS_MATERIAIS[indice].padrao.test(contexto) &&
+      (
+        arguments.length < 6 ||
+        materialCompativelComAssuntoRetomada_(
+          RETOMADAS_MATERIAIS[indice],
+          assuntoSeguro,
+        )
+      )
+    ) {
       return RETOMADAS_MATERIAIS[indice];
     }
   }
 
   return RETOMADAS_MATERIAL_GERAL;
+}
+
+function materialCompativelComAssuntoRetomada_(material, assunto) {
+  const procedimento = normalizarTextoRetomadas_(assunto);
+  const url = String(material && material.url || "").toLowerCase();
+
+  if (!procedimento || !url) return false;
+  if (
+    /consulta-cirurgia-plastica|seguranca-cirurgia-plastica|cuidados-cicatrizacao-cirurgia/.test(
+      url,
+    )
+  ) {
+    return true;
+  }
+
+  const grupos = [
+    {
+      url: /naturalidade-envelhecimento|lifting-facial-ou-injetaveis|avaliacao-facial/,
+      assunto: /lifting facial|cervicoplastia|contorno da papada|lipo de papada|blefaroplastia|otoplastia|lip lifting/,
+    },
+    {
+      url: /recuperacao-lifting-facial/,
+      assunto: /lifting facial|cervicoplastia|contorno da papada|lipo de papada/,
+    },
+    {
+      url: /cicatrizes-cirurgia-de-mama/,
+      assunto: /mastopexia|protese de mama|mamoplastia redutora/,
+    },
+    {
+      url: /papada-contorno-cervical/,
+      assunto: /cervicoplastia|contorno da papada|lipo de papada/,
+    },
+    { url: /\/lifting-facial\//, assunto: /lifting facial/ },
+    { url: /\/blefaroplastia\//, assunto: /blefaroplastia/ },
+    { url: /\/otoplastia\//, assunto: /otoplastia/ },
+    { url: /\/lip-lifting\//, assunto: /lip lifting/ },
+    { url: /\/abdominoplastia\//, assunto: /abdominoplastia/ },
+    { url: /\/lipoaspiracao\//, assunto: /lipoaspiracao/ },
+    { url: /\/mastopexia\//, assunto: /mastopexia/ },
+    { url: /\/protese-de-mama\//, assunto: /protese de mama/ },
+    {
+      url: /\/mamoplastia-redutora\//,
+      assunto: /mamoplastia redutora/,
+    },
+    { url: /\/braquioplastia\//, assunto: /braquioplastia/ },
+    { url: /\/ninfoplastia\//, assunto: /ninfoplastia/ },
+    {
+      url: /cirurgia-plastica-apos-emagrecimento/,
+      assunto: /cirurgia plastica apos emagrecimento|contorno corporal/,
+    },
+  ];
+
+  return grupos.some(function (grupo) {
+    return grupo.url.test(url) && grupo.assunto.test(procedimento);
+  });
 }
 
 function origemSiteRetomada_(lead) {
@@ -2387,6 +2561,143 @@ function obterPlanilhaControleRetomadas_(arquivo) {
     .setValues([RETOMADAS_CONTROLE_HEADERS]);
 
   return planilha;
+}
+
+function registrarPlanoManualRetomadaCentral_(arquivo, input, agora) {
+  const dados = input || {};
+  const telefone = normalizarTelefoneRetomadas_(dados.phone);
+  const messageId = String(dados.messageId || "").trim().slice(0, 300);
+  const sugestao = String(dados.suggestion || "").trim();
+  const programadaPara = dataRetomadaValida_(dados.scheduledAt);
+  const instante = dataRetomadaValida_(agora) || new Date();
+
+  if (!telefone || !messageId) {
+    return { ok: false, reason: "missing_context" };
+  }
+  if (
+    !sugestao ||
+    Array.from(sugestao).length > 900 ||
+    normalizarTextoRetomadas_(sugestao).indexOf(
+      "sem sugestao pronta",
+    ) === 0
+  ) {
+    return { ok: false, reason: "unsafe_message" };
+  }
+  if (!programadaPara) {
+    return { ok: false, reason: "invalid_schedule" };
+  }
+  if (programadaPara.getTime() <= instante.getTime()) {
+    return { ok: false, reason: "schedule_must_be_future" };
+  }
+
+  const horario = formatarDataRetomadas_(programadaPara, "HH:mm");
+  const partesHorario = horario.split(":").map(Number);
+  const minutosHorario = partesHorario[0] * 60 + partesHorario[1];
+  if (
+    !Number.isFinite(minutosHorario) ||
+    minutosHorario < RETOMADAS_CONFIG.horaInicioRetomadas * 60 ||
+    minutosHorario >= RETOMADAS_CONFIG.horaFimRetomadas * 60
+  ) {
+    return { ok: false, reason: "outside_send_window" };
+  }
+
+  const planilhaLeads = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaLeads,
+  );
+  const planilhaMensagens = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaMensagens,
+  );
+  if (!planilhaLeads || !planilhaMensagens) {
+    return { ok: false, reason: "missing_context" };
+  }
+
+  const lead = carregarLeadsRetomadas_(planilhaLeads)[telefone];
+  const conversa =
+    carregarConversasRetomadas_(planilhaMensagens)[telefone] || [];
+  const validacao = validarRetomadaAutomatica_(
+    {
+      etapa: 2,
+      atrasoMinutos: 0,
+      messageIdBase: messageId,
+      sugestao: sugestao,
+      aprovadoPelaEquipe: true,
+    },
+    lead,
+    conversa,
+    programadaPara,
+  );
+  if (!validacao.ok) return validacao;
+
+  const chavePlano = [
+    "central",
+    telefone,
+    messageId,
+    formatarDataRetomadas_(programadaPara, "yyyyMMddHHmm"),
+  ].join("|").slice(0, 500);
+  const planilhaControle = obterPlanilhaControleRetomadas_(arquivo);
+  const ultimaLinha = planilhaControle.getLastRow();
+
+  if (ultimaLinha >= 2) {
+    const linhas = planilhaControle
+      .getRange(
+        2,
+        1,
+        ultimaLinha - 1,
+        RETOMADAS_CONTROLE_HEADERS.length,
+      )
+      .getValues();
+    for (let indice = linhas.length - 1; indice >= 0; indice -= 1) {
+      if (String(linhas[indice][0] || "").trim() !== chavePlano) {
+        continue;
+      }
+      const modo = String(linhas[indice][9] || "").trim();
+      const status = String(linhas[indice][10] || "").trim();
+      if (
+        (modo === "Manual" && status === "Ação manual") ||
+        (modo === "Automático aprovado" && status === "Programada")
+      ) {
+        return {
+          ok: true,
+          planKey: chavePlano,
+          alreadyRegistered: true,
+        };
+      }
+      return { ok: false, reason: "plan_not_eligible" };
+    }
+  }
+
+  planilhaControle
+    .getRange(
+      planilhaControle.getLastRow() + 1,
+      1,
+      1,
+      RETOMADAS_CONTROLE_HEADERS.length,
+    )
+    .setValues([[
+      chavePlano,
+      instante,
+      telefone,
+      messageId,
+      2,
+      horario,
+      lead.status,
+      lead.resumo || "Retomada manual criada na Central de Atendimento",
+      sugestao,
+      "Manual",
+      "Ação manual",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]]);
+
+  return {
+    ok: true,
+    planKey: chavePlano,
+    alreadyRegistered: false,
+  };
 }
 
 function obterChavesRetomadasEnviadas_(planilha, dataLocal) {
@@ -2711,15 +3022,19 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
 
   const ultima = conversa[conversa.length - 1];
 
+  const ultimaDirecaoPermitida =
+    ultima.direcao === "OUT" ||
+    (plano.aprovadoPelaEquipe && ultima.direcao === "IN");
   if (
-    ultima.direcao !== "OUT" ||
+    !ultimaDirecaoPermitida ||
     ultima.messageId !== plano.messageIdBase
   ) {
     return { ok: false, reason: "conversation_changed" };
   }
   if (
     mensagemSemRetomada_(ultima.texto) ||
-    retornoFuturoRecente_(conversa, agora) ||
+    (!plano.aprovadoPelaEquipe &&
+      retornoFuturoRecente_(conversa, agora)) ||
     conversaTemPromessaHumanaPendente_(conversa)
   ) {
     return { ok: false, reason: "followup_not_appropriate" };
@@ -2758,6 +3073,24 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
 
   if (!retomadaComercialPermitida_(contexto)) {
     return { ok: false, reason: "sensitive_context" };
+  }
+
+  const procedimentosMensagem = listarAssuntosRetomada_(
+    plano.sugestao,
+  );
+  if (procedimentosMensagem.length) {
+    const procedimentoSeguro = identificarAssuntoSeguroRetomada_(
+      lead,
+      conversa,
+    );
+    if (
+      !procedimentoSeguro ||
+      procedimentosMensagem.some(function (procedimento) {
+        return procedimento !== procedimentoSeguro;
+      })
+    ) {
+      return { ok: false, reason: "procedure_mismatch" };
+    }
   }
   if (
     !plano.aprovadoPelaEquipe &&

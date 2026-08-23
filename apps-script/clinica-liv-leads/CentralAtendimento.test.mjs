@@ -667,6 +667,7 @@ test("commercial close status resolves, archives and records the decision", () =
 
 test("status validation exposes one-step commercial closure", () => {
   assert.match(source, /"Encerrar — comercial\/não paciente"/);
+  assert.match(source, /"Programar retomada com a Bruna"/);
 });
 
 test("central exposes batch decisions without making an on-edit send", () => {
@@ -712,7 +713,7 @@ test("layout migration clears legacy validation and requires the current layout 
 
   assert.equal(context.estruturaCentralPronta_(sheetFor("")), false);
   assert.equal(
-    context.estruturaCentralPronta_(sheetFor("central-liv-v2")),
+    context.estruturaCentralPronta_(sheetFor("central-liv-v3")),
     true,
   );
   assert.match(
@@ -722,6 +723,85 @@ test("layout migration clears legacy validation and requires the current layout 
   assert.match(
     source,
     /if \(!structureReady\)[\s\S]{0,360}clearDataValidations\(\)/,
+  );
+});
+
+test("Agir até explains the team deadline without pretending to schedule a send", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+
+  assert.equal(headers[2], "Agir até");
+  assert.doesNotMatch(headers.join("|"), /Prazo/);
+  assert.match(
+    source,
+    /Agir até é o limite para a equipe revisar ou resolver a linha/,
+  );
+  assert.match(
+    source,
+    /Para a Bruna enviar, use Programar para/,
+  );
+});
+
+test("a waiting patient can be reclassified into a manual Bruna schedule", () => {
+  const context = loadContext();
+  const now = new Date("2026-08-23T10:00:00-03:00");
+  const scheduledAt = new Date("2026-08-23T12:00:00-03:00");
+  const item = context.criarItemCentral_({
+    queue: "Aguardando paciente",
+    phone: "+5511999999999",
+    lastInteractionAt: new Date("2026-08-23T09:30:00-03:00"),
+    source: "WhatsApp — aguardando retorno",
+    sourceKey: "conversation:patient-pause",
+    status: "Suspenso",
+  });
+
+  context.aplicarControleCentral_(
+    item,
+    {
+      "conversation:patient-pause": {
+        status: "Programar retomada com a Bruna",
+        finalMessageDefined: true,
+        finalMessage: "Oi! Posso continuar de onde paramos, se fizer sentido.",
+        programForDefined: true,
+        programFor: scheduledAt,
+        approveBruna: true,
+        teamNote: "",
+        lastTeamActionAt: now,
+        deferUntil: null,
+      },
+    },
+    now,
+  );
+
+  assert.equal(item.queue, "Ação manual hoje");
+  assert.equal(item.status, "Programado");
+  assert.equal(item.mode, "Manual");
+  assert.equal(item.owner, "Equipe");
+  assert.equal(item.approvalBrunaEligible, true);
+  assert.equal(item.approveBruna, true);
+  assert.equal(
+    item.brunaEligibilityReason,
+    "Elegível após conferência da mensagem e do procedimento",
+  );
+  assert.equal(item.programFor.toISOString(), scheduledAt.toISOString());
+});
+
+test("a waiting-patient schedule visibly blocks dates beyond the WhatsApp window", () => {
+  const context = loadContext();
+
+  assert.equal(
+    context.avaliarProgramacaoEsperaCentral_(
+      {
+        finalMessage: "Oi! Posso continuar de onde paramos?",
+        lastInteractionAt: new Date("2026-08-23T09:00:00-03:00"),
+        programFor: new Date("2026-08-24T10:00:00-03:00"),
+      },
+      new Date("2026-08-23T10:00:00-03:00"),
+    ),
+    "Horário fora da janela atual do WhatsApp",
   );
 });
 
@@ -1075,6 +1155,98 @@ test("checked eligible rows are approved in one batch and ineligible rows remain
         write.row === 3 &&
         write.column === columns["Observação da equipe"] + 1 &&
         /não programada/i.test(write.value),
+    ),
+  );
+});
+
+test("a checked waiting-patient conversion creates a plan before Bruna approval", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const row = Array(headers.length).fill("");
+  row[columns.Modo] = "Manual";
+  row[columns["Status operacional"]] = "Programado";
+  row[columns["Mensagem final"]] =
+    "Oi! Se fizer sentido, posso continuar de onde paramos.";
+  row[columns["Programar para"]] = new Date(
+    "2099-08-23T12:00:00-03:00",
+  );
+  row[columns["Última interação"]] = new Date(
+    "2099-08-23T10:00:00-03:00",
+  );
+  row[columns["Aprovar com a Bruna"]] = true;
+  row[columns.Fonte] = "WhatsApp — aguardando retorno";
+  row[columns["Chave operacional"]] = "conversation:patient-pause";
+  row[columns.Telefone] = "+5511999999999";
+
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column, rowCount) {
+      if (rowNumber === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      if (rowNumber === 2 && column === 1 && rowCount === 1) {
+        return { getValues: () => [row] };
+      }
+      return {
+        setValue(value) {
+          writes.push({ row: rowNumber, column, value });
+        },
+      };
+    },
+  };
+  let registeredInput;
+  let approvalOptions;
+  context.registrarPlanoManualRetomadaCentral_ = (
+    _spreadsheet,
+    input,
+  ) => {
+    registeredInput = input;
+    return { ok: true, planKey: "central-plan" };
+  };
+  context.assinaturaAprovacaoRetomadaBot_ = (key) =>
+    "token:" + key;
+  context.aprovarPlanoRetomadaParaBot_ = (
+    _spreadsheet,
+    token,
+    _now,
+    options,
+  ) => {
+    approvalOptions = options;
+    return token === "token:central-plan"
+      ? { ok: true }
+      : { ok: false, reason: "plan_not_found" };
+  };
+
+  const selected = context.coletarRetomadasMarcadasCentral_(sheet);
+  const result = context.aprovarRetomadasMarcadasCentralInterno_(
+    {},
+    sheet,
+    new Date("2099-08-23T10:15:00-03:00"),
+    selected,
+  );
+
+  assert.equal(selected.length, 1);
+  assert.equal(selected[0].waitingConversion, true);
+  assert.equal(selected[0].eligible, true);
+  assert.equal(result.approved, 1);
+  assert.equal(registeredInput.messageId, "patient-pause");
+  assert.equal(registeredInput.phone, "+5511999999999");
+  assert.equal(
+    approvalOptions.suggestion,
+    row[columns["Mensagem final"]],
+  );
+  assert.ok(
+    writes.some(
+      (write) =>
+        write.column === columns.Modo + 1 &&
+        write.value === "Automático",
     ),
   );
 });

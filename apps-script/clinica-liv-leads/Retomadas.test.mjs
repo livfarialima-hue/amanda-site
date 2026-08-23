@@ -323,6 +323,97 @@ test("prefill-only candidate receives a contextual continuation without agenda",
   assert.equal(context.responsavelRetomada_(candidate), "bruna");
 });
 
+test("the latest explicit patient procedure overrides older campaign context", () => {
+  const patientLead = {
+    status: "Novo",
+    resumo: "Interesse inicial em lifting facial",
+    referencia: "G26F01-lifting-facial",
+    plataforma: "Meta",
+  };
+  const messages = [
+    {
+      direcao: "IN",
+      texto: "Queria entender o lifting facial.",
+    },
+    {
+      direcao: "OUT",
+      texto: "Claro, posso explicar.",
+    },
+    {
+      direcao: "IN",
+      texto: "Na verdade, minha dúvida agora é sobre otoplastia.",
+    },
+  ];
+
+  assert.equal(
+    context.identificarAssuntoSeguroRetomada_(patientLead, messages),
+    "otoplastia",
+  );
+  assert.equal(
+    context.materialCompativelComAssuntoRetomada_(
+      {
+        url: "https://draamandaschroeder.com.br/lifting-facial/",
+      },
+      "otoplastia",
+    ),
+    false,
+  );
+  assert.equal(
+    context.identificarAssuntoSeguroRetomada_(patientLead, [{
+      direcao: "IN",
+      texto: "Agora quero saber sobre rinoplastia.",
+    }]),
+    "rinoplastia",
+  );
+  assert.equal(
+    context.identificarAssuntoSeguroRetomada_(patientLead, [{
+      direcao: "IN",
+      texto: "Na verdade, estou pesquisando ginecomastia.",
+    }]),
+    "",
+  );
+});
+
+test("an ambiguous procedure produces a gentle generic close without naming one", () => {
+  const ambiguous = [
+    {
+      direcao: "IN",
+      texto: "Estou em dúvida entre otoplastia e lifting facial.",
+    },
+  ];
+  const subject = context.identificarAssuntoSeguroRetomada_(
+    { status: "Novo" },
+    ambiguous,
+  );
+  const message = context.sugerirMensagemRetomada_(
+    2,
+    false,
+    null,
+    false,
+    false,
+    "",
+    false,
+    subject,
+    "Marina Souza",
+  );
+
+  assert.equal(subject, "");
+  assert.match(message, /^Oi, Marina!/);
+  assert.match(message, /retomar nossa conversa ou surgir alguma dúvida/);
+  assert.doesNotMatch(message, /otoplastia|lifting facial/i);
+  assert.equal(
+    context.selecionarMaterialRetomada_(
+      lead(),
+      ambiguous,
+      "otoplastia lifting facial",
+      2,
+      false,
+      subject,
+    ),
+    null,
+  );
+});
+
 test("scheduling requires a direct request or explicit acceptance", () => {
   assert.equal(
     context.intencaoAgendaRetomada_(
@@ -1272,6 +1363,92 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
   );
 });
 
+test("waiting-patient conversion registers one idempotent manual plan", () => {
+  const phone = "+5511999999999";
+  const leadHeaders = Array(25).fill("");
+  leadHeaders[2] = "Telefone (E.164)";
+  const leadRow = Array(25).fill("");
+  leadRow[2] = phone;
+  leadRow[4] = "Novo";
+  leadRow[16] = "Paciente avaliando otoplastia";
+  const leadsSheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => 25,
+    getRange(startRow) {
+      return {
+        getDisplayValues: () => [
+          startRow === 1 ? leadHeaders : leadRow,
+        ],
+      };
+    },
+  };
+  const messageRow = [
+    phone,
+    "IN",
+    new Date("2026-08-23T10:00:00-03:00"),
+    "patient-pause",
+    "event-pause",
+    "Vou pensar com calma sobre a otoplastia.",
+    2,
+  ];
+  const messagesSheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [messageRow] }),
+  };
+  let planRows = [];
+  const controlSheet = {
+    getLastRow: () => planRows.length + 1,
+    getRange(row, _column, rowCount) {
+      if (row === 2 && rowCount === planRows.length) {
+        return { getValues: () => planRows };
+      }
+      return {
+        setValues(values) {
+          if (row >= 2) planRows.push(...values);
+        },
+      };
+    },
+  };
+  const spreadsheet = {
+    getSheetByName(name) {
+      if (name === "Google Ads - Conversões") return leadsSheet;
+      if (name === "_WHATSAPP_MENSAGENS") return messagesSheet;
+      if (name === "_WHATSAPP_RETOMADAS") return controlSheet;
+      return null;
+    },
+  };
+  const input = {
+    phone,
+    messageId: "patient-pause",
+    suggestion:
+      "Oi! Se quiser retomar nossa conversa sobre otoplastia, fico à disposição.",
+    scheduledAt: new Date("2026-08-23T11:00:00-03:00"),
+  };
+  const now = new Date("2026-08-23T10:05:00-03:00");
+
+  const first = context.registrarPlanoManualRetomadaCentral_(
+    spreadsheet,
+    input,
+    now,
+  );
+  const second = context.registrarPlanoManualRetomadaCentral_(
+    spreadsheet,
+    input,
+    now,
+  );
+
+  assert.equal(first.ok, true);
+  assert.equal(first.alreadyRegistered, false);
+  assert.equal(second.ok, true);
+  assert.equal(second.alreadyRegistered, true);
+  assert.equal(first.planKey, second.planKey);
+  assert.equal(planRows.length, 1);
+  assert.equal(planRows[0][3], "patient-pause");
+  assert.equal(planRows[0][8], input.suggestion);
+  assert.equal(planRows[0][9], "Manual");
+  assert.equal(planRows[0][10], "Ação manual");
+});
+
 test("human approval permits the exact second or price follow-up but never bypasses safety", () => {
   const now = new Date("2026-08-14T10:35:00-03:00");
   const leadData = {
@@ -1350,6 +1527,70 @@ test("human approval permits the exact second or price follow-up but never bypas
         messageId: "in-2",
         texto: "Não precisa mais, obrigada.",
       }),
+      now,
+    ).reason,
+    "conversation_changed",
+  );
+});
+
+test("manual approval can schedule a waiting patient but cannot cite the wrong procedure", () => {
+  const now = new Date("2026-08-23T12:00:00-03:00");
+  const leadData = {
+    status: "Novo",
+    resumo: "Campanha antiga de lifting facial",
+    referencia: "G26F01-lifting-facial",
+    neverFollowUp: false,
+    neverBotReply: false,
+    suspendAutomaticFollowUp: false,
+  };
+  const conversationData = [{
+    direcao: "IN",
+    dataHora: new Date("2026-08-23T11:00:00-03:00"),
+    messageId: "patient-pause",
+    texto: "Vou pensar com calma sobre a otoplastia.",
+  }];
+  const basePlan = {
+    etapa: 2,
+    atrasoMinutos: 0,
+    messageIdBase: "patient-pause",
+    aprovadoPelaEquipe: true,
+  };
+
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      {
+        ...basePlan,
+        sugestao:
+          "Oi! Se quiser retomar nossa conversa sobre otoplastia, fico à disposição.",
+      },
+      leadData,
+      conversationData,
+      now,
+    ).ok,
+    true,
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      {
+        ...basePlan,
+        sugestao:
+          "Oi! Se quiser retomar nossa conversa sobre lifting facial, fico à disposição.",
+      },
+      leadData,
+      conversationData,
+      now,
+    ).reason,
+    "procedure_mismatch",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      {
+        ...basePlan,
+        messageIdBase: "older-message",
+        sugestao: "Oi! Se quiser retomar, fico à disposição.",
+      },
+      leadData,
+      conversationData,
       now,
     ).reason,
     "conversation_changed",
