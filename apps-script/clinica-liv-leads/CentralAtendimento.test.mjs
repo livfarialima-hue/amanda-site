@@ -904,6 +904,32 @@ test("unresolved registered follow-ups remain visible after the email day", () =
   );
 });
 
+test("stale unresolved follow-ups outside the operational window stay out of the Central", () => {
+  const context = loadContext();
+  const row = Array(17).fill("");
+  row[0] = "2026-08-04|manual";
+  row[1] = new Date("2026-08-04T08:00:00-03:00");
+  row[2] = "+5511999990001";
+  row[4] = 2;
+  row[5] = "16:30";
+  row[6] = "Qualificado";
+  row[8] = "Mensagem humana antiga.";
+  row[9] = "Manual";
+  row[10] = "Ação manual";
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [row] }),
+  };
+
+  const items = context.carregarRetomadasRegistradasCentral_(
+    { getSheetByName: () => sheet },
+    { "+5511999990001": { relationship: "engaged_lead" } },
+    new Date("2026-08-23T09:00:00-03:00"),
+  );
+
+  assert.equal(items.length, 0);
+});
+
 test("a final queue status wins over a stale visible follow-up control", () => {
   const context = loadContext();
   const now = new Date("2026-08-23T10:00:00-03:00");

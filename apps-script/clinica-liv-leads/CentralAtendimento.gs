@@ -768,6 +768,16 @@ function carregarRetomadasRegistradasCentral_(
   if (!sheet || sheet.getLastRow() < 2) return [];
 
   const today = formatarDataCentral_(now, "yyyy-MM-dd");
+  const maximumActiveDays =
+    typeof RETOMADAS_CONFIG !== "undefined"
+      ? Number(RETOMADAS_CONFIG.maximoDiasSemResposta || 10)
+      : 10;
+  const activeSince = new Date(
+    now.getTime() - maximumActiveDays * 24 * 60 * 60 * 1000,
+  );
+  const scheduledSince = new Date(
+    now.getTime() - 4 * 60 * 60 * 1000,
+  );
   return sheet
     .getRange(
       2,
@@ -812,7 +822,17 @@ function carregarRetomadasRegistradasCentral_(
         "yyyy-MM-dd",
       );
 
-      if (recordDay !== today && !active) {
+      const stillOperationallyRelevant =
+        active &&
+        (
+          recordDate.getTime() >= activeSince.getTime() ||
+          (
+            scheduledAt &&
+            scheduledAt.getTime() >= scheduledSince.getTime()
+          )
+        );
+
+      if (recordDay !== today && !stillOperationallyRelevant) {
         return items;
       }
 
