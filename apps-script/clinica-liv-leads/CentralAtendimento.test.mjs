@@ -682,6 +682,117 @@ test("central exposes batch decisions without making an on-edit send", () => {
   );
 });
 
+test("approval click suggests the best observed response window without sending", () => {
+  const context = loadContext();
+  const NativeDate = Date;
+  context.Date = class FixedDate extends NativeDate {
+    constructor(...args) {
+      super(
+        ...(args.length
+          ? args
+          : ["2026-08-23T13:00:00-03:00"]),
+      );
+    }
+  };
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const values = Array(headers.length).fill("");
+  values[columns.Fila] = "Ação manual hoje";
+  values[columns["Mensagem final"]] =
+    "Oi! Posso continuar de onde paramos?";
+  values[columns["Aprovar com a Bruna"]] = true;
+  values[columns["Elegibilidade da Bruna"]] =
+    "Elegível para aprovação";
+  values[columns["Última interação"]] = new Date(
+    "2026-08-23T12:00:00-03:00",
+  );
+  values[columns.Modo] = "Manual";
+  values[columns["Status operacional"]] = "Programado";
+  values[columns.Fonte] = "Retomada de marketing";
+  values[columns["Chave operacional"]] = "followup:plan-1";
+  values[columns.Telefone] = "+5511999990001";
+  const sheet = {
+    getName: () => "Central de Atendimento",
+    getRange(row, column) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      return {
+        getValue: () => values[column - 1],
+        setValue(value) {
+          values[column - 1] = value;
+          return this;
+        },
+      };
+    },
+  };
+  context.aprovarPlanoRetomadaParaBot_ = () => {
+    assert.fail("checking approval must never send or approve the plan");
+  };
+
+  const result = context.processarEdicaoCentralAtendimento_({
+    range: {
+      getSheet: () => sheet,
+      getRow: () => 2,
+      getColumn: () => columns["Aprovar com a Bruna"] + 1,
+    },
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(values[columns["Aprovar com a Bruna"]], true);
+  assert.equal(
+    values[columns["Programar para"]].toISOString(),
+    "2026-08-23T20:30:00.000Z",
+  );
+  assert.equal(
+    values[columns["Elegibilidade da Bruna"]],
+    "Elegível — horário sugerido automaticamente",
+  );
+});
+
+test("response-window suggestion respects the WhatsApp deadline and late-day fallback", () => {
+  const context = loadContext();
+  const preferred = context.sugerirProximaJanelaRespostaCentral_(
+    new Date("2026-08-23T13:00:00-03:00"),
+    new Date("2026-08-23T12:00:00-03:00"),
+  );
+  const deadlineFallback =
+    context.sugerirProximaJanelaRespostaCentral_(
+      new Date("2026-08-23T13:00:00-03:00"),
+      new Date("2026-08-22T13:30:00-03:00"),
+    );
+  const lateDay = context.sugerirProximaJanelaRespostaCentral_(
+    new Date("2026-08-23T18:20:00-03:00"),
+    new Date("2026-08-23T18:00:00-03:00"),
+  );
+  const finalSafeMinutes =
+    context.sugerirProximaJanelaRespostaCentral_(
+      new Date("2026-08-23T18:40:00-03:00"),
+      new Date("2026-08-23T18:00:00-03:00"),
+    );
+  const closed = context.sugerirProximaJanelaRespostaCentral_(
+    new Date("2026-08-23T18:50:00-03:00"),
+    new Date("2026-08-22T19:00:00-03:00"),
+  );
+
+  assert.equal(preferred.toISOString(), "2026-08-23T20:30:00.000Z");
+  assert.equal(
+    deadlineFallback.toISOString(),
+    "2026-08-23T16:15:00.000Z",
+  );
+  assert.equal(lateDay.toISOString(), "2026-08-23T21:45:00.000Z");
+  assert.equal(
+    finalSafeMinutes.toISOString(),
+    "2026-08-23T21:55:00.000Z",
+  );
+  assert.equal(closed, null);
+});
+
 test("the action area and urgent rows use distinct accessible colors", () => {
   assert.match(source, /"Mensagem final"/);
   assert.match(source, /"Programar para"/);
@@ -845,10 +956,22 @@ test("registered manual follow-ups are eligible while approved plans are shown a
       "+5511999990002": { relationship: "engaged_lead" },
     },
     new Date("2026-08-14T09:00:00-03:00"),
+    {
+      "+5511999990001": [{
+        dataHora: new Date("2026-08-14T08:40:00-03:00"),
+      }],
+      "+5511999990002": [{
+        dataHora: new Date("2026-08-14T08:45:00-03:00"),
+      }],
+    },
   );
 
   assert.equal(items.length, 2);
   assert.equal(items[0].mode, "Manual");
+  assert.equal(
+    items[0].lastInteractionAt.toISOString(),
+    "2026-08-14T11:40:00.000Z",
+  );
   assert.equal(items[0].approvalBrunaEligible, true);
   assert.equal(items[0].cancelFollowUpEligible, true);
   assert.equal(items[0].brunaEligibilityReason, "Elegível para aprovação");

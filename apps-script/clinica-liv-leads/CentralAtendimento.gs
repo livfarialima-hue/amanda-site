@@ -79,7 +79,7 @@ function comoUsarCentralAtendimento() {
       "2. Agir até é o limite para a equipe revisar ou resolver a linha. Essa coluna não programa mensagem.",
       "3. Se a paciente disse que vai pensar, conversar ou retornar, mantenha como Aguardando paciente. Adiar até apenas faz a linha voltar para revisão humana depois; também não envia mensagem.",
       "4. Para transformar um Aguardando paciente em retomada automática, escolha Programar retomada com a Bruna em Status operacional, escreva Mensagem final e preencha Programar para.",
-      "5. Confira a elegibilidade, marque Aprovar com a Bruna e use Central LIV > Processar decisões marcadas. Programar para é a data e hora exatas do envio.",
+      "5. Confira a elegibilidade e marque Aprovar com a Bruna. A Central sugere automaticamente a próxima faixa de maior resposta em Programar para; você pode ajustar o horário antes de usar Central LIV > Processar decisões marcadas.",
       "6. Para impedir somente uma retomada já registrada, marque Cancelar retomada e processe as decisões.",
       "7. A Bruna revalida conversa, procedimento, janela do WhatsApp, opt-out, takeover humano e segurança antes de qualquer envio.",
       "8. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
@@ -657,6 +657,7 @@ function carregarRetomadasCentral_(
     spreadsheet,
     profiles,
     now,
+    conversations,
   );
 
   if (logged.length) return logged;
@@ -766,6 +767,7 @@ function carregarRetomadasRegistradasCentral_(
   spreadsheet,
   profiles,
   now,
+  conversations,
 ) {
   const sheet = spreadsheet.getSheetByName(
     CENTRAL_ATENDIMENTO_CONFIG.followUpsSheetName,
@@ -798,6 +800,13 @@ function carregarRetomadasRegistradasCentral_(
 
       const phone = normalizarTelefoneCentral_(row[2]);
       const profile = profiles[phone] || {};
+      const conversation =
+        (conversations && conversations[phone]) || [];
+      const lastConversationMessage =
+        conversation[conversation.length - 1] || null;
+      const lastConversationAt = dataCentralValida_(
+        lastConversationMessage && lastConversationMessage.dataHora,
+      );
       const relationship =
         profile.relationship ||
         relacionamentoLeadCentral_(row[6]);
@@ -892,7 +901,9 @@ function carregarRetomadasRegistradasCentral_(
         phone: phone,
         relationship: relationship,
         origin: profile.origin,
-        lastInteractionAt: sent ? terminalAt : null,
+        lastInteractionAt: sent
+          ? terminalAt
+          : lastConversationAt,
         lastTeamActionAt: terminalAt,
         nextAction: sent
           ? "Retomada enviada; aguardar resposta"
@@ -1459,6 +1470,93 @@ function avaliarProgramacaoEsperaCentral_(item, now) {
   return "Elegível após conferência da mensagem e do procedimento";
 }
 
+function sugerirProximaJanelaRespostaCentral_(
+  now,
+  lastInteractionAt,
+) {
+  const instant = dataCentralValida_(now) || new Date();
+  const lastInteraction = dataCentralValida_(lastInteractionAt);
+  const earliest = new Date(
+    instant.getTime() + 15 * 60 * 1000,
+  );
+  const deadline = lastInteraction
+    ? new Date(
+        lastInteraction.getTime() +
+          CENTRAL_ATENDIMENTO_CONFIG.whatsappWindowMinutes *
+            60 *
+            1000,
+      )
+    : new Date(instant.getTime() + 24 * 60 * 60 * 1000);
+  const currentDay = formatarDataCentral_(
+    instant,
+    "yyyy-MM-dd",
+  );
+  const sameDayPreferences = [
+    "17:30",
+    "18:15",
+    "15:30",
+    "10:30",
+  ];
+
+  for (let index = 0; index < sameDayPreferences.length; index += 1) {
+    const candidate = combinarDataHorarioCentral_(
+      currentDay,
+      sameDayPreferences[index],
+    );
+    if (
+      candidate &&
+      candidate.getTime() >= earliest.getTime() &&
+      candidate.getTime() <= deadline.getTime()
+    ) {
+      return candidate;
+    }
+  }
+
+  const quarterHour = 15 * 60 * 1000;
+  let nearby = new Date(
+    Math.ceil(earliest.getTime() / quarterHour) * quarterHour,
+  );
+  let nearbyHour = Number(
+    formatarDataCentral_(nearby, "H"),
+  );
+  if (nearbyHour >= 19) {
+    const fiveMinutes = 5 * 60 * 1000;
+    nearby = new Date(
+      Math.ceil(earliest.getTime() / fiveMinutes) * fiveMinutes,
+    );
+    nearbyHour = Number(formatarDataCentral_(nearby, "H"));
+  }
+  if (
+    formatarDataCentral_(nearby, "yyyy-MM-dd") === currentDay &&
+    nearbyHour >= 9 &&
+    nearbyHour < 19 &&
+    nearby.getTime() <= deadline.getTime()
+  ) {
+    return nearby;
+  }
+
+  const nextDayBase = new Date(
+    instant.getTime() + 24 * 60 * 60 * 1000,
+  );
+  const nextDay = formatarDataCentral_(
+    nextDayBase,
+    "yyyy-MM-dd",
+  );
+  const nextMorning = combinarDataHorarioCentral_(
+    nextDay,
+    "10:30",
+  );
+  if (
+    nextMorning &&
+    nextMorning.getTime() >= earliest.getTime() &&
+    nextMorning.getTime() <= deadline.getTime()
+  ) {
+    return nextMorning;
+  }
+
+  return null;
+}
+
 function fonteAguardandoPacienteCentral_(value) {
   return normalizarTextoCentral_(value)
     .replace(/[—–/\-]+/g, " ")
@@ -1589,6 +1687,7 @@ function processarEdicaoCentralAtendimento_(event) {
   const noteColumn = columns["observacao da equipe"];
   const finalMessageColumn = columns["mensagem final"];
   const programForColumn = columns["programar para"];
+  const approvalColumn = columns["aprovar com a bruna"];
   const actionColumn = columns["ultima acao da equipe"];
   const keyColumn = columns["chave operacional"];
   const phoneColumn = columns.telefone;
@@ -1602,6 +1701,7 @@ function processarEdicaoCentralAtendimento_(event) {
       noteColumn,
       finalMessageColumn,
       programForColumn,
+      approvalColumn,
     ].includes(editedColumn)
   ) {
     return { ok: true, ignored: true };
@@ -1705,6 +1805,106 @@ function processarEdicaoCentralAtendimento_(event) {
         approvalCell.insertCheckboxes();
       }
       approvalCell.setValue(false);
+    }
+  }
+
+  if (
+    approvalColumn !== undefined &&
+    editedColumn === approvalColumn
+  ) {
+    const approvalCell = sheet.getRange(
+      row,
+      approvalColumn + 1,
+    );
+    const approvalChecked = valorCheckboxCentral_(
+      approvalCell.getValue(),
+    );
+
+    if (approvalChecked) {
+      const mode = normalizarTextoCentral_(
+        sheet.getRange(row, columns.modo + 1).getValue(),
+      );
+      const currentStatus = normalizarTextoCentral_(
+        sheet.getRange(row, statusColumn + 1).getValue(),
+      );
+      const finalMessage = textoCentral_(
+        sheet.getRange(row, finalMessageColumn + 1).getValue(),
+        900,
+      );
+      const safeMessage =
+        Boolean(finalMessage) &&
+        normalizarTextoCentral_(finalMessage).indexOf(
+          "sem sugestao pronta",
+        ) !== 0;
+      const registeredFollowUp =
+        normalizarTextoCentral_(source) ===
+          "retomada de marketing" &&
+        sourceKey.indexOf("followup:") === 0;
+      const waitingConversion =
+        fonteAguardandoPacienteCentral_(source) &&
+        sourceKey.indexOf("conversation:") === 0;
+      const lastInteractionColumn = columns["ultima interacao"];
+      const lastInteractionAt = lastInteractionColumn === undefined
+        ? null
+        : dataCentralValida_(
+            sheet
+              .getRange(row, lastInteractionColumn + 1)
+              .getValue(),
+          );
+      const suggestedAt =
+        mode === "manual" &&
+        currentStatus === "programado" &&
+        safeMessage &&
+        (registeredFollowUp || waitingConversion)
+          ? sugerirProximaJanelaRespostaCentral_(
+              now,
+              lastInteractionAt,
+            )
+          : null;
+      let eligibilityReason =
+        "Linha não elegível para programação automática";
+
+      if (suggestedAt) {
+        sheet
+          .getRange(row, programForColumn + 1)
+          .setValue(suggestedAt);
+        eligibilityReason = waitingConversion
+          ? avaliarProgramacaoEsperaCentral_(
+              {
+                finalMessage: finalMessage,
+                programFor: suggestedAt,
+                lastInteractionAt: lastInteractionAt,
+              },
+              now,
+            )
+          : "Elegível — horário sugerido automaticamente";
+      }
+
+      const eligible =
+        Boolean(suggestedAt) &&
+        (
+          registeredFollowUp ||
+          eligibilityReason ===
+            "Elegível após conferência da mensagem e do procedimento"
+        );
+      if (!eligible) {
+        approvalCell.setValue(false);
+        if (
+          safeMessage &&
+          (registeredFollowUp || waitingConversion) &&
+          !suggestedAt
+        ) {
+          eligibilityReason =
+            "Sem horário seguro dentro da janela atual do WhatsApp";
+        }
+      }
+
+      sheet
+        .getRange(
+          row,
+          columns["elegibilidade da bruna"] + 1,
+        )
+        .setValue(eligibilityReason);
     }
   }
 
@@ -2881,7 +3081,7 @@ function formatarCentralAtendimento_(sheet, itemCount) {
   sheet
     .getRange(1, columns["aprovar com a bruna"] + 1)
     .setNote(
-      "Em Aguardando paciente, primeiro escolha Programar retomada com a Bruna em Status operacional. Depois revise Mensagem final e Programar para, marque esta caixa e use Central LIV > Processar decisões marcadas.",
+      "Ao marcar, a Central sugere em Programar para a próxima faixa com maior chance observada de resposta, respeitando a janela do WhatsApp. Revise ou ajuste o horário e depois use Central LIV > Processar decisões marcadas. Marcar a caixa sozinho não envia mensagem.",
     );
   sheet
     .getRange(1, columns["adiar ate"] + 1)
