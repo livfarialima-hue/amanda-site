@@ -25,6 +25,10 @@ const PROCEDURE_LABELS = Object.freeze({
   cirurgias_combinadas: "cirurgias combinadas",
 });
 
+const SENSITIVE_PROCEDURES = new Set([
+  "ninfoplastia",
+]);
+
 const PROCEDURE_REPLY_CODES = new Set([
   "M-C06-WA-01",
   "G-LIFT-CERV-01",
@@ -126,7 +130,9 @@ export function buildMarketingPrefilledOpeningReply({
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
   const context = procedureLabel
-    ? `Posso te orientar sobre ${procedureLabel}.`
+    ? SENSITIVE_PROCEDURES.has(procedure)
+      ? `Posso te orientar sobre ${procedureLabel}. Essa conversa é tratada com privacidade e cuidado.`
+      : `Posso te orientar sobre ${procedureLabel}.`
     : "Posso te orientar.";
   const question = "O que você gostaria de entender primeiro?";
 
@@ -209,25 +215,33 @@ export function buildInsuranceAcceptanceReply({
 function consultationDescription(procedure, procedureLabel) {
   if (procedure === "lifting_facial") {
     return [
-      "A avaliação começa com uma conversa sobre o que você percebe no rosto e o que gostaria de melhorar ou preservar.",
+      "A avaliação de lifting facial começa com uma conversa sobre o que você percebe no rosto e o que gostaria de melhorar ou preservar.",
       "A Dra. Amanda examina a face e o pescoço em repouso e em movimento para entender se a questão está mais relacionada à flacidez, aos volumes, à pele ou ao contorno.",
-      "Depois, explica se o lifting faz sentido, quais são as possibilidades e como seria a recuperação.",
-      "Nada precisa ser decidido nesse momento.",
+      "Depois, explica se o lifting facial faz sentido, quais são as possibilidades, os limites e como seria a recuperação.",
+      "Você não precisa decidir nada nesse momento.",
+    ].join(" ");
+  }
+
+  if (SENSITIVE_PROCEDURES.has(procedure)) {
+    return [
+      `A avaliação de ${procedureLabel} é feita de forma individual e reservada.`,
+      "A Dra. Amanda começa entendendo o que você busca, avalia a região com cuidado e explica as possibilidades, os limites e como seria a recuperação.",
+      "Você não precisa decidir nada nesse momento.",
     ].join(" ");
   }
 
   if (procedureLabel) {
     return [
-      "A avaliação começa com uma conversa sobre o que você percebe e o que gostaria de melhorar ou preservar.",
-      `A Dra. Amanda examina a região e, a partir disso, explica se ${procedureLabel} faz sentido, quais são as possibilidades e como seria a recuperação.`,
-      "Nada precisa ser decidido nesse momento.",
+      `A avaliação de ${procedureLabel} começa com uma conversa sobre o que você percebe e o que gostaria de melhorar ou preservar.`,
+      `A Dra. Amanda avalia a região com cuidado e, a partir disso, explica se ${procedureLabel} faz sentido, quais são as possibilidades, os limites e como seria a recuperação.`,
+      "Você não precisa decidir nada nesse momento.",
     ].join(" ");
   }
 
   return [
     "A avaliação começa com uma conversa sobre o que você percebe e o que gostaria de melhorar ou preservar.",
-    "A Dra. Amanda examina a região e depois explica as possibilidades, os limites e como seria a recuperação.",
-    "Nada precisa ser decidido nesse momento.",
+    "A Dra. Amanda avalia a região com cuidado e depois explica as possibilidades, os limites e como seria a recuperação.",
+    "Você não precisa decidir nada nesse momento.",
   ].join(" ");
 }
 
@@ -245,7 +259,6 @@ export function buildConsultationInformationReply({
     ? [
         greeting(patientName),
         "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
-        "Claro.",
       ].join(" ")
     : "Claro.";
   const consultationContext = consultationDescription(
@@ -276,11 +289,20 @@ export function buildConsultationInformationReply({
           resourceUrl,
         ].join(" ")
       : "";
+  const explorationQuestion =
+    !availabilityRequested &&
+    !consultationPriceRequested &&
+    !siteRequested
+      ? procedureLabel
+        ? `O que seria mais útil entender agora sobre ${procedureLabel}?`
+        : "O que seria mais útil entender agora sobre essa avaliação?"
+      : "";
 
   return [
     `${introduction} ${consultationContext}`,
     consultationPrice,
     nextStep,
+    explorationQuestion,
   ].filter(Boolean).join("\n\n");
 }
 

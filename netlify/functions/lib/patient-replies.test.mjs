@@ -177,6 +177,22 @@ test("future otoplasty prefills receive a conversational response without agenda
   assert.doesNotMatch(reply, /agenda|agendar|horário|manhã|tarde/i);
 });
 
+test("a ninfoplastia prefill names the procedure and adds privacy without requesting sensitive details", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Gessica",
+    procedure: "ninfoplastia",
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Gessica! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre ninfoplastia. Essa conversa é tratada com privacidade e cuidado. " +
+      "O que você gostaria de entender primeiro?",
+  );
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+  assert.doesNotMatch(reply, /o que incomoda|foto|imagem|agenda|horário/i);
+});
+
 test("uses the patient-recognized cervical name without treating the prefill as scheduling intent", () => {
   const reply = buildMarketingPrefilledOpeningReply({
     patientName: "Maria",
@@ -321,12 +337,13 @@ test("explains the consultation gradually without anticipating price or a link",
 
   assert.match(
     reply,
-    /^Olá, Rô! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\. Claro\./,
+    /^Olá, Rô! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
   );
-  assert.match(reply, /conversa sobre o que você percebe no rosto/);
+  assert.match(reply, /avaliação de lifting facial começa com uma conversa/);
   assert.match(reply, /face e o pescoço em repouso e em movimento/);
-  assert.match(reply, /Nada precisa ser decidido nesse momento/);
-  assert.equal((reply.match(/\?/g) || []).length, 0);
+  assert.match(reply, /Você não precisa decidir nada nesse momento/);
+  assert.match(reply, /O que seria mais útil entender agora sobre lifting facial\?/);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
   assert.doesNotMatch(reply, /R\$ 500/);
   assert.doesNotMatch(reply, /abatido se a cirurgia/);
   assert.doesNotMatch(reply, /https:\/\/draamandaschroeder\.com\.br/);
@@ -350,18 +367,38 @@ test("answers the consultation value when the patient asks for access and price"
   assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
 });
 
-test("explains the consultation without adding a mandatory exploration menu", () => {
-  const cases = ["lifting_cervical", "blefaroplastia", "otoplastia"];
+test("every known procedure evaluation ends with one low-friction question instead of a menu", () => {
+  const cases = [
+    ["lifting_facial", "lifting facial"],
+    ["lifting_cervical", "cervicoplastia (lifting cervical)"],
+    ["blefaroplastia", "blefaroplastia"],
+    ["frontoplastia", "frontoplastia"],
+    ["otoplastia", "otoplastia"],
+    ["avaliacao_facial", "avaliação facial"],
+    ["lip_lifting", "lifting labial"],
+    ["lipo_papada", "lipo de papada"],
+    ["rinoplastia", "rinoplastia"],
+    ["lipoaspiracao", "lipoaspiração"],
+    ["abdominoplastia", "abdominoplastia"],
+    ["mastopexia", "mastopexia"],
+    ["protese_mama", "prótese de mama"],
+    ["mamoplastia_redutora", "mamoplastia redutora"],
+    ["braquioplastia", "braquioplastia"],
+    ["ninfoplastia", "ninfoplastia"],
+    ["contorno_corporal", "cirurgia de contorno corporal"],
+    ["cirurgias_combinadas", "cirurgias combinadas"],
+  ];
 
-  for (const procedure of cases) {
+  for (const [procedure, label] of cases) {
     const reply = buildConsultationInformationReply({
       patientName: "Maria",
       procedure,
       introduceBruna: false,
     });
 
-    assert.match(reply, /A avaliação começa com uma conversa/i, procedure);
-    assert.equal((reply.match(/\?/g) || []).length, 0, procedure);
+    assert.match(reply, new RegExp(`avaliação de ${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "i"), procedure);
+    assert.match(reply, new RegExp(`O que seria mais útil entender agora sobre ${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\?`, "i"), procedure);
+    assert.equal((reply.match(/\?/g) || []).length, 1, procedure);
     assert.doesNotMatch(reply, /indicação, recuperação ou valores/i, procedure);
     assert.doesNotMatch(reply, /o que mais incomoda/i, procedure);
     assert.doesNotMatch(reply, /R\$ 500/, procedure);
@@ -371,6 +408,25 @@ test("explains the consultation without adding a mandatory exploration menu", ()
       procedure,
     );
   }
+});
+
+test("the ninfoplastia evaluation is reserved, procedural and conversational", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Gessica",
+    procedure: "ninfoplastia",
+    introduceBruna: true,
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Gessica! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "A avaliação de ninfoplastia é feita de forma individual e reservada. " +
+      "A Dra. Amanda começa entendendo o que você busca, avalia a região com cuidado e explica as possibilidades, os limites e como seria a recuperação. " +
+      "Você não precisa decidir nada nesse momento.\n\n" +
+      "O que seria mais útil entender agora sobre ninfoplastia?",
+  );
+  assert.doesNotMatch(reply, /o que incomoda|envie|foto|imagem|orçamento|R\$/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
 });
 
 test("uses the complete procedure page only when the patient requests it", () => {
@@ -407,7 +463,7 @@ test("an explicit availability request can advance to period preference", () => 
     },
   });
 
-  assert.match(reply, /se o lifting faz sentido/);
+  assert.match(reply, /se o lifting facial faz sentido/);
   assert.match(reply, /R\. Pais Leme, 215/);
   assert.match(reply, /cj\. 710/);
   assert.match(reply, /CEP 05424-150/);

@@ -370,6 +370,18 @@ test("playbook treats structured prefills only as context", () => {
     CONVERSATION_GUIDELINES,
     /Só peça dias e período depois que a pessoa escrever por conta própria/,
   );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Aplique a mesma qualidade a toda origem — site, Google, Meta ou WhatsApp direto/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /procedimentos de qualquer volume de procura/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /ninfoplastia e outros contextos íntimos, destaque privacidade e avaliação individual/,
+  );
 });
 
 test("playbook requires explicit semantic reopening and complete deterministic fit", () => {

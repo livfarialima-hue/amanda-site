@@ -165,7 +165,7 @@ Evitar:
 
 ## 7. Primeira resposta e rapidez
 
-A primeira resposta elegível deve entrar rapidamente. Ela é curta, reconhece o tema confiável e resolve a pergunta real. Uma pergunta fácil é usada somente quando necessária.
+A primeira resposta elegível deve entrar rapidamente. Ela é curta, reconhece o tema confiável e resolve a pergunta real. A qualidade não muda conforme a origem ou o volume do procedimento: site, Google, Meta e WhatsApp direto usam o mesmo padrão. Quando o procedimento estiver confirmado, ele é nomeado naturalmente. Em procedimentos íntimos, como ninfoplastia, a resposta destaca privacidade e avaliação individual sem pedir detalhes sensíveis, foto ou descrição corporal. Uma pergunta fácil é usada somente quando necessária.
 
 A janela de consolidação é adaptativa: respostas determinísticas usam como base três segundos e respostas que dependem do modelo usam cinco segundos; o intervalo é limitado entre dois e oito segundos e pode chegar a quatro ou seis segundos quando a mensagem é longa ou veio em partes. O objetivo é captar correções consecutivas sem deixar a primeira resposta parecer lenta. Roteamento, indisponibilidade externa ou intervenção humana podem ampliar o tempo total e devem ficar observáveis nos registros.
 
@@ -218,7 +218,7 @@ Entre 00:00 e 05:59, no fuso de São Paulo, a prioridade é reconhecer a chegada
 
 ### Pesquisando
 
-Responder a dúvida, oferecer uma informação relevante e perguntar apenas o que melhora a próxima resposta.
+Responder a dúvida, oferecer uma informação relevante e perguntar apenas o que melhora a próxima resposta. Uma procura por procedimento menos frequente recebe a mesma personalização e o mesmo cuidado das rotas de maior volume.
 
 ### Comparando ou com objeção
 
@@ -226,7 +226,7 @@ Reconhecer o critério legítimo, esclarecer sem defensividade e oferecer evidê
 
 ### Considerando consulta
 
-Explicar concretamente o que a avaliação entrega e perguntar se deseja organizar o agendamento.
+Explicar concretamente o que a avaliação entrega. Se a pessoa já demonstrou intenção real de consultar, perguntar se deseja organizar o agendamento; se veio apenas por uma mensagem predefinida ou ainda está pesquisando, terminar com uma única pergunta fácil sobre o procedimento, sem presumir agenda.
 
 ### Pronta para agendar
 
