@@ -878,10 +878,19 @@ function carregarRetomadasRegistradasCentral_(
 
       const rawSuggestion = textoCentral_(row[8], 900);
       const suggestion = rawSuggestion || "SEM SUGESTÃO PRONTA";
-      const approvalEligible =
+      const baseApprovalEligible =
         normalizedMode === "manual" &&
         normalizedStatus === "acao manual" &&
         Boolean(rawSuggestion);
+      const nextSafeApprovalWindow =
+        baseApprovalEligible && lastConversationAt
+          ? sugerirProximaJanelaRespostaCentral_(
+              now,
+              lastConversationAt,
+            )
+          : null;
+      const approvalEligible =
+        baseApprovalEligible && Boolean(nextSafeApprovalWindow);
       const cancellationEligible = [
         "programada",
         "acao manual",
@@ -932,6 +941,9 @@ function carregarRetomadasRegistradasCentral_(
           automatic: automatic,
           suggestion: rawSuggestion,
           normalizedStatus: normalizedStatus,
+          baseApprovalEligible: baseApprovalEligible,
+          lastInteractionAt: lastConversationAt,
+          nextSafeApprovalWindow: nextSafeApprovalWindow,
           approvalEligible: approvalEligible,
         }),
         source: "Retomada de marketing",
@@ -952,6 +964,15 @@ function motivoElegibilidadeBrunaCentral_(input) {
   }
   if (!String(data.suggestion || "").trim()) {
     return "Sem mensagem segura preenchida";
+  }
+
+  if (data.baseApprovalEligible === true) {
+    if (!dataCentralValida_(data.lastInteractionAt)) {
+      return "Sem interação recente segura para programação";
+    }
+    if (!dataCentralValida_(data.nextSafeApprovalWindow)) {
+      return "Fora da janela atual do WhatsApp — ação humana necessária";
+    }
   }
 
   const status = String(data.normalizedStatus || "").trim();

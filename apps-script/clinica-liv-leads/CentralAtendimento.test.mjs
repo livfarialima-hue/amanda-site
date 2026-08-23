@@ -1002,6 +1002,42 @@ test("registered manual follow-ups are eligible while approved plans are shown a
   );
 });
 
+test("registered manual follow-ups outside the WhatsApp window stay human-only", () => {
+  const context = loadContext();
+  const manual = Array(17).fill("");
+  manual[0] = "2026-08-14|manual";
+  manual[1] = new Date("2026-08-14T08:00:00-03:00");
+  manual[2] = "+5511999990001";
+  manual[4] = 2;
+  manual[5] = "16:30";
+  manual[6] = "Qualificado";
+  manual[8] = "Mensagem humana sugerida.";
+  manual[9] = "Manual";
+  manual[10] = "Ação manual";
+
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [manual] }),
+  };
+  const items = context.carregarRetomadasRegistradasCentral_(
+    { getSheetByName: () => sheet },
+    { "+5511999990001": { relationship: "engaged_lead" } },
+    new Date("2026-08-16T09:00:00-03:00"),
+    {
+      "+5511999990001": [{
+        dataHora: new Date("2026-08-14T08:40:00-03:00"),
+      }],
+    },
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].approvalBrunaEligible, false);
+  assert.equal(
+    items[0].brunaEligibilityReason,
+    "Fora da janela atual do WhatsApp — ação humana necessária",
+  );
+});
+
 test("sent and cancelled follow-ups move to a recent history below active queues", () => {
   const context = loadContext();
   const sentAt = new Date("2026-08-23T12:46:00-03:00");
@@ -1219,7 +1255,11 @@ test("unresolved registered follow-ups remain visible after the email day", () =
   );
 
   assert.equal(items.length, 1);
-  assert.equal(items[0].approvalBrunaEligible, true);
+  assert.equal(items[0].approvalBrunaEligible, false);
+  assert.equal(
+    items[0].brunaEligibilityReason,
+    "Sem interação recente segura para programação",
+  );
   assert.equal(
     context.formatarDataCentral_(items[0].dueAt, "yyyy-MM-dd"),
     "2026-08-14",
