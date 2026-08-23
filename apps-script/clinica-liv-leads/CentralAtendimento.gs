@@ -16,7 +16,7 @@ const CENTRAL_ATENDIMENTO_CONFIG = Object.freeze({
   whatsappWindowMinutes: 1430,
   maximumRows: 300,
   followUpColumns: 17,
-  layoutVersion: "central-liv-v4",
+  layoutVersion: "central-liv-v5",
 });
 
 const CENTRAL_ATENDIMENTO_HEADERS = Object.freeze([
@@ -80,7 +80,7 @@ function comoUsarCentralAtendimento() {
       "3. Se a paciente disse que vai pensar, conversar ou retornar, mantenha como Aguardando paciente. Adiar até apenas faz a linha voltar para revisão humana depois; também não envia mensagem.",
       "4. Para transformar um Aguardando paciente em retomada automática, escolha Programar retomada com a Bruna em Status operacional, escreva Mensagem final e preencha Programar para.",
       "5. Confira a elegibilidade e marque Aprovar com a Bruna. A Central sugere automaticamente a próxima faixa de maior resposta em Programar para; você pode ajustar o horário antes de usar Central LIV > Processar decisões marcadas.",
-      "6. Para impedir somente uma retomada já registrada, marque Cancelar retomada e processe as decisões.",
+      "6. Para impedir somente uma retomada já registrada, marque Cancelar retomada. A próxima atualização automática processará a decisão; para aplicar na hora, use Central LIV > Processar decisões marcadas.",
       "7. A Bruna revalida conversa, procedimento, janela do WhatsApp, opt-out, takeover humano e segurança antes de qualquer envio.",
       "8. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
     ].join("\n\n"),
@@ -162,6 +162,12 @@ function atualizarCentralAtendimentoInterno_(
         })
       : null;
   const sheet = obterOuCriarPlanilhaCentral_(spreadsheet);
+  const automaticCancellations =
+    processarCancelamentosPendentesNaAtualizacaoCentral_(
+      spreadsheet,
+      sheet,
+      now,
+    );
   const controls = carregarControlesCentral_(sheet);
   const consultationSheet = spreadsheet.getSheetByName(
     CENTRAL_ATENDIMENTO_CONFIG.consultationsSheetName,
@@ -287,6 +293,7 @@ function atualizarCentralAtendimentoInterno_(
     sheetName: CENTRAL_ATENDIMENTO_CONFIG.sheetName,
     sla,
     scheduleMaintenance,
+    automaticCancellations,
   };
 }
 
@@ -2069,6 +2076,64 @@ function processarDecisoesMarcadasCentral() {
   }
 }
 
+function processarCancelamentosPendentesNaAtualizacaoCentral_(
+  spreadsheet,
+  sheet,
+  now,
+) {
+  const selected = coletarCancelamentosMarcadosCentral_(sheet);
+  if (!selected.length) {
+    return {
+      ok: true,
+      selected: 0,
+      cancelled: 0,
+      skipped: 0,
+      conflicts: [],
+    };
+  }
+
+  const approvalRows = new Set(
+    coletarRetomadasMarcadasCentral_(sheet).map(function (item) {
+      return item.rowNumber;
+    }),
+  );
+  const conflicts = selected.filter(function (item) {
+    return approvalRows.has(item.rowNumber);
+  });
+  const conflictRows = new Set(
+    conflicts.map(function (item) {
+      return item.rowNumber;
+    }),
+  );
+  const cancellable = selected.filter(function (item) {
+    return !conflictRows.has(item.rowNumber);
+  });
+  const result = cancellable.length
+    ? cancelarRetomadasMarcadasCentralInterno_(
+        spreadsheet,
+        sheet,
+        now,
+        cancellable,
+      )
+    : {
+        ok: true,
+        selected: 0,
+        cancelled: 0,
+        skipped: 0,
+        results: [],
+      };
+
+  return {
+    ...result,
+    ok: result.ok === true && conflicts.length === 0,
+    selected: selected.length,
+    skipped: Number(result.skipped || 0) + conflicts.length,
+    conflicts: conflicts.map(function (item) {
+      return item.rowNumber;
+    }),
+  };
+}
+
 function aprovarRetomadasMarcadasCentral() {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = spreadsheet.getSheetByName(
@@ -2498,7 +2563,7 @@ function cancelarRetomadasMarcadasCentralInterno_(
     }
 
     const note = result.ok
-      ? "Retomada cancelada em lote pela equipe em " +
+      ? "Retomada cancelada pela equipe em " +
         formatarDataCentral_(now, "yyyy-MM-dd") +
         "."
       : "Retomada não cancelada: " +
@@ -3082,6 +3147,11 @@ function formatarCentralAtendimento_(sheet, itemCount) {
     .getRange(1, columns["aprovar com a bruna"] + 1)
     .setNote(
       "Ao marcar, a Central sugere em Programar para a próxima faixa com maior chance observada de resposta, respeitando a janela do WhatsApp. Revise ou ajuste o horário e depois use Central LIV > Processar decisões marcadas. Marcar a caixa sozinho não envia mensagem.",
+    );
+  sheet
+    .getRange(1, columns["cancelar retomada"] + 1)
+    .setNote(
+      "Cancela somente esta retomada, sem marcar Nunca retomar. A próxima atualização automática processa a decisão e move a linha para Cancelado recentemente, com destaque reduzido; para aplicar na hora, use Central LIV > Processar decisões marcadas.",
     );
   sheet
     .getRange(1, columns["adiar ate"] + 1)

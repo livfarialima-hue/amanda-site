@@ -504,8 +504,23 @@ test("the central refresh passes the current Date to the follow-up loader", () =
   const context = loadContext();
   const now = new Date("2026-07-30T14:00:00-03:00");
   let receivedNow = null;
+  let cancellationRefreshAt = null;
 
   context.obterOuCriarPlanilhaCentral_ = () => ({});
+  context.processarCancelamentosPendentesNaAtualizacaoCentral_ = (
+    _spreadsheet,
+    _sheet,
+    currentDate,
+  ) => {
+    cancellationRefreshAt = currentDate;
+    return {
+      ok: true,
+      selected: 0,
+      cancelled: 0,
+      skipped: 0,
+      conflicts: [],
+    };
+  };
   context.carregarControlesCentral_ = () => ({});
   context.escreverCentralAtendimento_ = () => {};
   context.carregarRetomadasCentral_ = (
@@ -529,6 +544,8 @@ test("the central refresh passes the current Date to the follow-up loader", () =
   );
 
   assert.equal(receivedNow, now);
+  assert.equal(cancellationRefreshAt, now);
+  assert.equal(result.automaticCancellations.cancelled, 0);
   assert.equal(result.ok, true);
 });
 
@@ -828,7 +845,7 @@ test("layout migration clears legacy validation and requires the current layout 
 
   assert.equal(context.estruturaCentralPronta_(sheetFor("")), false);
   assert.equal(
-    context.estruturaCentralPronta_(sheetFor("central-liv-v4")),
+    context.estruturaCentralPronta_(sheetFor("central-liv-v5")),
     true,
   );
   assert.match(
@@ -1484,7 +1501,7 @@ test("missing safe copy explains why Bruna approval is unavailable", () => {
   );
 });
 
-test("checked cancellations remove only eligible follow-up plans in one batch", () => {
+test("the next refresh cancels checked eligible plans and leaves unrelated rows untouched", () => {
   const context = loadContext();
   const headers = vm.runInContext(
     "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
@@ -1536,18 +1553,19 @@ test("checked cancellations remove only eligible follow-up plans in one batch", 
       : { ok: false, reason: "plan_not_found" };
 
   const selected = context.coletarCancelamentosMarcadosCentral_(sheet);
-  const result = context.cancelarRetomadasMarcadasCentralInterno_(
-    {},
-    sheet,
-    new Date("2026-08-23T10:00:00-03:00"),
-    selected,
-  );
+  const result =
+    context.processarCancelamentosPendentesNaAtualizacaoCentral_(
+      {},
+      sheet,
+      new Date("2026-08-23T10:00:00-03:00"),
+    );
 
   assert.equal(selected.length, 2);
   assert.equal(selected[0].eligible, true);
   assert.equal(selected[1].eligible, false);
   assert.equal(result.cancelled, 1);
   assert.equal(result.skipped, 1);
+  assert.deepEqual(Array.from(result.conflicts), []);
   assert.equal(
     writes.filter(
       (write) =>
@@ -1564,4 +1582,62 @@ test("checked cancellations remove only eligible follow-up plans in one batch", 
         write.value === "Cancelado",
     ),
   );
+});
+
+test("the automatic refresh never chooses between approval and cancellation on the same row", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const row = Array(headers.length).fill("");
+  row[columns.Modo] = "Manual";
+  row[columns["Status operacional"]] = "Programado";
+  row[columns["Aprovar com a Bruna"]] = true;
+  row[columns["Cancelar retomada"]] = true;
+  row[columns["Mensagem final"]] = "Mensagem final segura.";
+  row[columns["Programar para"]] = new Date(
+    "2026-08-23T17:30:00-03:00",
+  );
+  row[columns.Fonte] = "Retomada de marketing";
+  row[columns["Chave operacional"]] = "followup:plan-conflict";
+
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column, rowCount) {
+      if (rowNumber === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      if (rowNumber === 2 && column === 1 && rowCount === 1) {
+        return { getValues: () => [row] };
+      }
+      return {
+        setValue(value) {
+          writes.push({ rowNumber, column, value });
+        },
+      };
+    },
+  };
+  context.assinaturaCancelamentoRetomadas_ = () =>
+    "cancel-token:plan-conflict";
+  context.cancelarPlanoRetomadaPorToken_ = () => {
+    throw new Error("a conflicting row must not be cancelled");
+  };
+
+  const result =
+    context.processarCancelamentosPendentesNaAtualizacaoCentral_(
+      {},
+      sheet,
+      new Date("2026-08-23T10:00:00-03:00"),
+    );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.cancelled, 0);
+  assert.equal(result.skipped, 1);
+  assert.deepEqual(Array.from(result.conflicts), [2]);
+  assert.equal(writes.length, 0);
 });
