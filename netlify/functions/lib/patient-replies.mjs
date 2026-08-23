@@ -66,6 +66,11 @@ const CLINIC_LOCATION_PATTERNS = Object.freeze([
   /\bthera\s+office\b/i,
   /\b(?:atend(?:emos|imento)|cl[ií]nica)\b.{0,80}\bpinheiros\b|\bpinheiros\b.{0,80}\b(?:atend(?:emos|imento)|cl[ií]nica)\b/i,
 ]);
+const CONSULTATION_EXPLANATION_PATTERNS = Object.freeze([
+  /\b(?:na|durante\s+a)\s+(?:consulta|avalia[cç][aã]o)\b.{0,220}\b(?:entende|conversa|examina|avalia|explica)\b/i,
+  /\b(?:consulta|avalia[cç][aã]o)\b.{0,220}\b(?:possibilidades|limites|recupera[cç][aã]o|planejamento|pr[oó]ximos\s+passos)\b/i,
+  /\bn[aã]o\s+(?:é\s+preciso|precisa)\s+decidir\s+nada\b/i,
+]);
 export const LIFTING_FACIAL_URL =
   "https://draamandaschroeder.com.br/lifting-facial/";
 
@@ -102,6 +107,22 @@ export function hasClinicLocationInConversation(
       ? turn
       : String(turn?.text || turn?.content || "");
     return CLINIC_LOCATION_PATTERNS.some((pattern) =>
+      pattern.test(text),
+    );
+  });
+}
+
+export function hasConsultationExplanationInConversation(
+  recentConversation = [],
+) {
+  return (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) => {
+    const text = typeof turn === "string"
+      ? turn
+      : String(turn?.text || turn?.content || "");
+    return CONSULTATION_EXPLANATION_PATTERNS.some((pattern) =>
       pattern.test(text),
     );
   });
@@ -273,6 +294,7 @@ export function buildConsultationInformationReply({
   siteResource,
   procedure,
   availabilityRequested = false,
+  consultationContextPreviouslyShared = false,
   consultationPriceRequested = false,
   introduceBruna = false,
   locationPreviouslyShared = false,
@@ -286,10 +308,9 @@ export function buildConsultationInformationReply({
       ].join(" ")
     : "Claro.";
   const consultationContext = consultationPriceRequested
-    ? [
-        "A avaliação é individualizada: a Dra. Amanda entende o que você busca, examina com cuidado e explica as possibilidades, os limites e os próximos passos.",
-        "Você não precisa decidir nada nesse momento.",
-      ].join(" ")
+    ? consultationContextPreviouslyShared
+      ? ""
+      : "Na avaliação, a Dra. Amanda entende o que você busca, examina com cuidado e explica as possibilidades e os próximos passos, sem obrigação de decidir nada nesse momento."
     : consultationDescription(
         procedure,
         procedureLabel,

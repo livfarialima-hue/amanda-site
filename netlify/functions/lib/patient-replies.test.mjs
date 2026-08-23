@@ -13,6 +13,7 @@ import {
   buildOfficialChannelsReply,
   buildPatientReply,
   hasClinicLocationInConversation,
+  hasConsultationExplanationInConversation,
   hasPendingReactivationHandoff,
   REACTIVATION_REPLY,
   shouldSendAutomaticPatientReply,
@@ -360,8 +361,8 @@ test("answers the consultation value directly and invites the next step without 
 
   assert.match(reply, /^Olá, Renata!/);
   assert.match(reply, /consulta presencial com a Dra\. Amanda custa R\$ 500/i);
-  assert.match(reply, /avaliação é individualizada/i);
-  assert.match(reply, /Você não precisa decidir nada nesse momento/i);
+  assert.match(reply, /Na avaliação, a Dra\. Amanda entende o que você busca/i);
+  assert.match(reply, /sem obrigação de decidir nada nesse momento/i);
   assert.match(reply, /Pix, débito ou parcelamento/i);
   assert.match(reply, /nota fiscal/i);
   assert.match(reply, /R\. Pais Leme, 215/);
@@ -389,6 +390,26 @@ test("does not repeat the consultation location when it is already in the conver
   assert.match(reply, /posso verificar opções de horário/i);
 });
 
+test("keeps a consultation price reply especially short when the evaluation was already explained", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Renata",
+    consultationContextPreviouslyShared: true,
+    consultationPriceRequested: true,
+    introduceBruna: false,
+    locationPreviouslyShared: true,
+  });
+
+  assert.equal(
+    reply,
+    [
+      "Claro. A consulta presencial com a Dra. Amanda custa R$ 500.",
+      "O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.",
+      "Se fizer sentido para você, posso verificar opções de horário.",
+    ].join("\n\n"),
+  );
+  assert.doesNotMatch(reply, /avaliação|examina|possibilidades|decidir/i);
+});
+
 test("recognizes a previously shared clinic location in recent conversation turns", () => {
   assert.equal(
     hasClinicLocationInConversation([
@@ -412,6 +433,29 @@ test("recognizes a previously shared clinic location in recent conversation turn
         role: "assistant",
         source: "bruna",
         text: "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      },
+    ]),
+    false,
+  );
+});
+
+test("recognizes when the consultation was already explained without treating a generic inquiry as an explanation", () => {
+  assert.equal(
+    hasConsultationExplanationInConversation([
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Na consulta, a Dra. Amanda conversa sobre o que você busca, avalia a região e explica possibilidades, limites e recuperação.",
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    hasConsultationExplanationInConversation([
+      {
+        role: "user",
+        source: "paciente",
+        text: "Gostaria de entender melhor como funciona a avaliação.",
       },
     ]),
     false,

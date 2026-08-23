@@ -202,8 +202,8 @@ test("consultation price suggestion explains the value and next step without uns
   assert.match(reply, /R\$ 500/);
   assert.match(reply, /Pix, débito ou parcelamento/);
   assert.match(reply, /nota fiscal/);
-  assert.match(reply, /avaliação é individualizada/);
-  assert.match(reply, /não precisa decidir nada nesse momento/);
+  assert.match(reply, /Na avaliação, a Dra\. Amanda entende o que você busca/);
+  assert.match(reply, /sem obrigação de decidir nada nesse momento/);
   assert.match(reply, /Pais Leme, 215/);
   assert.match(reply, /posso verificar opções de horário/i);
   assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
@@ -228,6 +228,23 @@ test("consultation price suggestion omits a location already shared", () => {
 
   assert.doesNotMatch(reply, /Pais Leme|05424-150|Google Maps/i);
   assert.match(reply, /R\$ 500/);
+});
+
+test("consultation price suggestion omits an evaluation explanation already shared", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "avaliacao_facial",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Na consulta, a Dra. Amanda entende o que você busca, avalia com cuidado e explica possibilidades e limites.",
+      },
+    ],
+  });
+
+  assert.match(reply, /R\$ 500/);
+  assert.doesNotMatch(reply, /Na avaliação|examina com cuidado/i);
 });
 
 test("combines professional and hospital references for lifting facial", () => {

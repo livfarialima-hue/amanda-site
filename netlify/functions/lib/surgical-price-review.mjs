@@ -2,6 +2,7 @@ import { usableProfileFirstName } from "./profile-name.mjs";
 import {
   buildConsultationInformationReply,
   hasClinicLocationInConversation,
+  hasConsultationExplanationInConversation,
 } from "./patient-replies.mjs";
 
 const CONSULTATION_PRICE = 500;
@@ -344,6 +345,10 @@ function clarificationFor(
   if (procedure === "avaliacao_facial") {
     return buildConsultationInformationReply({
       patientName,
+      consultationContextPreviouslyShared:
+        hasConsultationExplanationInConversation(
+          recentConversation,
+        ),
       consultationPriceRequested: true,
       introduceBruna: false,
       locationPreviouslyShared:

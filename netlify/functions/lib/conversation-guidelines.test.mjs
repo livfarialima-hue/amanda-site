@@ -77,7 +77,14 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     CONVERSATION_GUIDELINES,
     /Não mencione Imposto de Renda espontaneamente/,
   );
-  assert.match(CONVERSATION_GUIDELINES, /avaliação é individualizada/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Se a consulta ainda não tiver sido explicada, acrescente somente uma frase curta/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /omita a explicação inteira para não soar repetitivo/,
+  );
   assert.match(
     CONVERSATION_GUIDELINES,
     /oferta opcional e sem interrogação para verificar opções de horário/,

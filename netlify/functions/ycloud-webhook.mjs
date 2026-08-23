@@ -34,6 +34,7 @@ import {
   buildOfficialChannelsReply,
   buildPatientReply,
   hasClinicLocationInConversation,
+  hasConsultationExplanationInConversation,
   hasPendingReactivationHandoff,
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
@@ -2164,6 +2165,11 @@ async function completeOpenAIActive({
     const locationPreviouslyShared =
       consultationInformationRequest &&
       hasClinicLocationInConversation(input.recentConversation);
+    const consultationContextPreviouslyShared =
+      consultationInformationRequest &&
+      hasConsultationExplanationInConversation(
+        input.recentConversation,
+      );
     const availabilityRequested =
       consultationInformationRequest &&
       isAvailabilityRequest(input.text);
@@ -2396,6 +2402,7 @@ async function completeOpenAIActive({
                 input.procedure ||
                 "",
               availabilityRequested,
+              consultationContextPreviouslyShared,
               consultationPriceRequested:
                 isConsultationPriceRequest(input.text),
               locationPreviouslyShared,
