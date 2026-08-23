@@ -17,13 +17,13 @@ const PAYLOAD = {
   recentConversation: [
     {
       direction: "IN",
-      at: "2026-08-02T10:00:00-03:00",
+      at: "2026-08-02T11:00:00-03:00",
       messageId: "in-1",
       text: "Gostaria de entender melhor a avaliação.",
     },
     {
       direction: "OUT",
-      at: "2026-08-02T10:02:00-03:00",
+      at: "2026-08-02T11:02:00-03:00",
       messageId: "out-1",
       text: "Claro. Posso explicar como funciona.",
     },
@@ -104,6 +104,96 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
   assert.equal(turns[0].source, "bruna");
 });
 
+test("an old conversation approved by the team uses the configured WhatsApp template", async () => {
+  const templateSends = [];
+  const turns = [];
+  const payload = {
+    ...PAYLOAD,
+    planId: "old-approved-plan",
+    deliveryMode: "template",
+    recentConversation: PAYLOAD.recentConversation.map((turn) => ({
+      ...turn,
+      at: turn.direction === "IN"
+        ? "2026-07-30T11:00:00-03:00"
+        : "2026-07-30T11:02:00-03:00",
+    })),
+  };
+  const response = await handleScheduledFollowup(request(payload), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      YCLOUD_FOLLOWUP_TEMPLATE_NAME: "retomada_manual_bruna_v1",
+      YCLOUD_FOLLOWUP_TEMPLATE_LANGUAGE: "pt_BR",
+      WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
+    },
+    now: new Date("2026-08-03T10:30:00-03:00"),
+    getBusinessNumberImpl: async () => "+5511961957144",
+    reviewScheduledFollowupContextImpl: async () => ({
+      status: "completed",
+      allowed: true,
+      reasonCode: "context_aligned",
+    }),
+    sendYCloudPatientTextImpl: async () => {
+      assert.fail("old conversations must not use free-form text");
+    },
+    sendYCloudPatientFollowupTemplateImpl: async (message) => {
+      templateSends.push(message);
+      return {
+        status: "completed",
+        httpStatus: 200,
+        errorCode: "none",
+      };
+    },
+    appendConversationTurnImpl: async (turn) => {
+      turns.push(turn);
+      return { status: "completed" };
+    },
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(templateSends.length, 1);
+  assert.equal(templateSends[0].body, PAYLOAD.body);
+  assert.match(
+    turns[0].text,
+    /^Retomando nosso contato pela Clínica LIV:/,
+  );
+  assert.match(turns[0].text, /não receber novas mensagens/);
+});
+
+test("an old approval fails closed until the follow-up template is configured", async () => {
+  const payload = {
+    ...PAYLOAD,
+    planId: "old-plan-without-template",
+    deliveryMode: "template",
+    recentConversation: PAYLOAD.recentConversation.map((turn) => ({
+      ...turn,
+      at: "2026-07-30T11:00:00-03:00",
+    })),
+  };
+  const response = await handleScheduledFollowup(request(payload), {
+    env: {
+      GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+      YCLOUD_API_KEY: "key",
+      WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+      WHATSAPP_AUTOMATION_MODE: "active",
+    },
+    now: new Date("2026-08-03T10:30:00-03:00"),
+    getBusinessNumberImpl: async () => "+5511961957144",
+    reviewScheduledFollowupContextImpl: async () => ({
+      status: "completed",
+      allowed: true,
+      reasonCode: "context_aligned",
+    }),
+  });
+
+  assert.equal(response.status, 503);
+  assert.equal(
+    (await response.json()).error,
+    "followup_template_missing",
+  );
+});
+
 test("approved second follow-up reuses the first review when nobody spoke later", async () => {
   const firstFollowupId = "scheduled-followup-first-plan";
   let semanticReviews = 0;
@@ -111,6 +201,7 @@ test("approved second follow-up reuses the first review when nobody spoke later"
   const payload = {
     ...PAYLOAD,
     planId: "second-plan",
+    deliveryMode: "template",
     followupStage: 2,
     contextAnchorMessageId: firstFollowupId,
     recentConversation: [
@@ -144,6 +235,7 @@ test("approved second follow-up reuses the first review when nobody spoke later"
     env: {
       GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
       YCLOUD_API_KEY: "key",
+      YCLOUD_FOLLOWUP_TEMPLATE_NAME: "retomada_manual_bruna_v1",
       WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
       WHATSAPP_AUTOMATION_MODE: "active",
     },
@@ -157,7 +249,7 @@ test("approved second follow-up reuses the first review when nobody spoke later"
       };
     },
     getBusinessNumberImpl: async () => "+5511961957144",
-    sendYCloudPatientTextImpl: async () => {
+    sendYCloudPatientFollowupTemplateImpl: async () => {
       sends += 1;
       return {
         status: "completed",
@@ -203,6 +295,7 @@ test("patient or human activity after the first follow-up requires a fresh revie
     const payload = {
       ...PAYLOAD,
       planId: `second-plan-${laterTurn.direction}`,
+      deliveryMode: "template",
       followupStage: 2,
       contextAnchorMessageId: firstFollowupId,
       recentConversation: [
@@ -226,6 +319,7 @@ test("patient or human activity after the first follow-up requires a fresh revie
       env: {
         GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
         YCLOUD_API_KEY: "key",
+        YCLOUD_FOLLOWUP_TEMPLATE_NAME: "retomada_manual_bruna_v1",
         WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
         WHATSAPP_AUTOMATION_MODE: "active",
       },

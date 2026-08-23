@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
+import {
+  renderYCloudFollowupTemplateText,
+  sendYCloudPatientFollowupTemplate,
+  sendYCloudPatientText,
+} from "./ycloud-patient-message.mjs";
 
 test("sends a free-form text through YCloud with the expected envelope", async () => {
   let request;
@@ -56,4 +60,52 @@ test("skips sending when configuration is incomplete", async () => {
 
   assert.equal(result.status, "skipped");
   assert.equal(result.errorCode, "configuration_missing");
+});
+
+test("sends an approved follow-up template with the edited message as its body variable", async () => {
+  let request;
+  const result = await sendYCloudPatientFollowupTemplate(
+    {
+      from: "+5511961957144",
+      to: "+5511999999999",
+      eventId: "followup_old_01",
+      body: "Oi! Posso continuar de onde paramos?",
+    },
+    {
+      env: {
+        YCLOUD_API_KEY: "test-key",
+        YCLOUD_FOLLOWUP_TEMPLATE_NAME: "retomada_manual_bruna_v1",
+        YCLOUD_FOLLOWUP_TEMPLATE_LANGUAGE: "pt_BR",
+      },
+      fetchImpl: async (url, options) => {
+        request = { url, options };
+        return new Response("{}", { status: 200 });
+      },
+    },
+  );
+  const payload = JSON.parse(request.options.body);
+
+  assert.equal(result.status, "completed");
+  assert.equal(payload.type, "template");
+  assert.equal(payload.template.name, "retomada_manual_bruna_v1");
+  assert.equal(payload.template.language.code, "pt_BR");
+  assert.deepEqual(payload.template.components, [
+    {
+      type: "body",
+      parameters: [
+        {
+          type: "text",
+          text: "Oi! Posso continuar de onde paramos?",
+        },
+      ],
+    },
+  ]);
+  assert.equal(
+    renderYCloudFollowupTemplateText(
+      "Oi! Posso continuar de onde paramos?",
+    ),
+    "Retomando nosso contato pela Clínica LIV:\n\n" +
+      "Oi! Posso continuar de onde paramos?\n\n" +
+      "Se preferir não receber novas mensagens, é só me avisar.",
+  );
 });

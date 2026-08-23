@@ -772,6 +772,72 @@ test("approval click suggests the best observed response window without sending"
   );
 });
 
+test("approval of an old suggested conversation stays checked and uses the next commercial window", () => {
+  const context = loadContext();
+  const NativeDate = Date;
+  context.Date = class FixedDate extends NativeDate {
+    constructor(...args) {
+      super(
+        ...(args.length
+          ? args
+          : ["2026-08-23T13:00:00-03:00"]),
+      );
+    }
+  };
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const values = Array(headers.length).fill("");
+  values[columns["Mensagem final"]] =
+    "Oi! Posso continuar de onde paramos?";
+  values[columns["Aprovar com a Bruna"]] = true;
+  values[columns["Última interação"]] = new Date(
+    "2026-08-17T12:00:00-03:00",
+  );
+  values[columns.Modo] = "Manual";
+  values[columns["Status operacional"]] = "Programado";
+  values[columns.Fonte] = "Retomada de marketing";
+  values[columns["Chave operacional"]] = "followup:old-plan";
+  const sheet = {
+    getName: () => "Central de Atendimento",
+    getRange(row, column) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      return {
+        getValue: () => values[column - 1],
+        setValue(value) {
+          values[column - 1] = value;
+          return this;
+        },
+      };
+    },
+  };
+
+  const result = context.processarEdicaoCentralAtendimento_({
+    range: {
+      getSheet: () => sheet,
+      getRow: () => 2,
+      getColumn: () => columns["Aprovar com a Bruna"] + 1,
+    },
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(values[columns["Aprovar com a Bruna"]], true);
+  assert.equal(
+    values[columns["Programar para"]].toISOString(),
+    "2026-08-23T20:30:00.000Z",
+  );
+  assert.equal(
+    values[columns["Elegibilidade da Bruna"]],
+    "Elegível — horário sugerido; envio por modelo do WhatsApp",
+  );
+});
+
 test("response-window suggestion respects the WhatsApp deadline and late-day fallback", () => {
   const context = loadContext();
   const preferred = context.sugerirProximaJanelaRespostaCentral_(
@@ -796,6 +862,11 @@ test("response-window suggestion respects the WhatsApp deadline and late-day fal
     new Date("2026-08-23T18:50:00-03:00"),
     new Date("2026-08-22T19:00:00-03:00"),
   );
+  const oldApproved = context.sugerirProximaJanelaRespostaCentral_(
+    new Date("2026-08-23T18:50:00-03:00"),
+    new Date("2026-08-17T19:00:00-03:00"),
+    { allowOutsideWhatsappWindow: true },
+  );
 
   assert.equal(preferred.toISOString(), "2026-08-23T20:30:00.000Z");
   assert.equal(
@@ -808,6 +879,10 @@ test("response-window suggestion respects the WhatsApp deadline and late-day fal
     "2026-08-23T21:55:00.000Z",
   );
   assert.equal(closed, null);
+  assert.equal(
+    oldApproved.toISOString(),
+    "2026-08-24T13:30:00.000Z",
+  );
 });
 
 test("the action area and urgent rows use distinct accessible colors", () => {
@@ -1002,7 +1077,7 @@ test("registered manual follow-ups are eligible while approved plans are shown a
   );
 });
 
-test("registered manual follow-ups outside the WhatsApp window stay human-only", () => {
+test("registered manual follow-ups outside the WhatsApp window remain approvable by template", () => {
   const context = loadContext();
   const manual = Array(17).fill("");
   manual[0] = "2026-08-14|manual";
@@ -1031,10 +1106,10 @@ test("registered manual follow-ups outside the WhatsApp window stay human-only",
   );
 
   assert.equal(items.length, 1);
-  assert.equal(items[0].approvalBrunaEligible, false);
+  assert.equal(items[0].approvalBrunaEligible, true);
   assert.equal(
     items[0].brunaEligibilityReason,
-    "Fora da janela atual do WhatsApp — ação humana necessária",
+    "Elegível para aprovação manual — envio por modelo do WhatsApp",
   );
 });
 
