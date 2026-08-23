@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-23.4",
-  "promptVersion": "bruna-concierge-2026-08-23.4",
+  "bundleVersion": "2026-08-23.6",
+  "promptVersion": "bruna-concierge-2026-08-23.6",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-23.4",
+  "knowledgeSnapshot": "kb-2026-08-23.6",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "dc3d6054e895968e98f369e39a3905fca5559227",
-    "lastObservedProductionCommit": "dc3d6054e895968e98f369e39a3905fca5559227",
-    "functionalDeployId": "6a8b399c98d6cf000824079f",
-    "lastObservedProductionDeployId": "6a8b399c98d6cf000824079f",
-    "rollbackCommit": "f3966f76d281056fc1abf5198a9a97ea519ed6ff",
-    "rollbackDeployId": "6a8b322b31e9e0000873b91c",
-    "publishedAt": "2026-08-23T15:19:41-03:00",
-    "lastVerifiedAt": "2026-08-23T15:33:08-03:00"
+    "functionalCommit": "b4ff895b2cfe29fbe1780fc78348f37593421861",
+    "lastObservedProductionCommit": "b4ff895b2cfe29fbe1780fc78348f37593421861",
+    "functionalDeployId": "6a8b7b253e598c00083ee441",
+    "lastObservedProductionDeployId": "6a8b7b253e598c00083ee441",
+    "rollbackCommit": "f10b70b48c3e9ec47855c303e83f7fb76f783c4a",
+    "rollbackDeployId": "6a8b64f751610e0008507fc5",
+    "publishedAt": "2026-08-23T19:59:20-03:00",
+    "lastVerifiedAt": "2026-08-23T20:05:56-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "5637283dcd4718bcd126a64cb4e6e183c859ee4de643afb58e8601683ec04eb7"
+    "driveProjectionSha256": "e68cefbd7ddc9d9303b33b9f872e7ef22f9a6d930f85b3be7cc98b70a50cb152"
   }
 }

@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-23.6 — publicada e verificada
+
+- Primeiras respostas de site, Google, Meta e WhatsApp direto passam a seguir o mesmo padrão, independentemente do volume de procura do procedimento.
+- Todo procedimento reconhecido é nomeado naturalmente e, quando não há outro pedido objetivo, recebe uma única pergunta de baixa fricção sem presumir agendamento.
+- Ninfoplastia recebe uma abertura e uma explicação de avaliação reservadas e individuais, sem pedido de foto, descrição corporal ou detalhes íntimos.
+- Classificação, takeover, agenda, preços, retomadas, opt-out e autorização de envio permanecem inalterados.
+- Estado desta versão: código funcional `b4ff895b2cfe29fbe1780fc78348f37593421861`, deploy Netlify `6a8b7b253e598c00083ee441` e função `ycloud-webhook` no checksum `2f65ec5c010964e17a25da7e1766c90d8bc87511d5f36248b98193fed4de0eaf`. Validação com 235/235 testes focados, 1045/1045 integrais, arquitetura e build de 178 arquivos; domínio, URL imutável e webhook HTTP 200 em modo `active`, sem segredo detectado e sem mensagem real. Rollback: `f10b70b48c3e9ec47855c303e83f7fb76f783c4a` e `6a8b64f751610e0008507fc5`.
+
 ## 2026-08-23.4 — publicada e verificada
 
 - A segunda e última retomada aprovada pela equipe reutiliza a revisão semântica da primeira somente quando a última interação durável continua sendo exatamente a primeira retomada automática e não houve fala posterior da paciente ou da equipe; qualquer incerteza exige nova revisão da IA e falha fechada.
