@@ -4,8 +4,8 @@
     "version": 1,
     "surface": "report",
     "title": "Auditoria ao vivo Google Ads — cinco campanhas",
-    "description": "Diagnóstico comparativo da mídia, do funil anônimo e da integridade técnica, com decisão explícita de não alterar a conta sem gates maduros.",
-    "generatedAt": "2026-08-22T18:39:33-03:00",
+    "description": "Diagnóstico comparativo da mídia, do funil anônimo e das recomendações semanais, incluindo as correções factuais de mensuração e a triagem ao vivo dos alertas.",
+    "generatedAt": "2026-08-22T22:53:01-03:00",
     "sources": [
       {
         "id": "ads_live",
@@ -122,21 +122,17 @@
       {
         "id": "cost_comparison",
         "title": "Gasto por campanha — duas janelas completas",
-        "subtitle": "O custo das cinco campanhas caiu 3,9%; isso não mede qualidade do funil.",
+        "subtitle": "Métrica diagnóstica; não mede qualidade do funil.",
         "type": "bar",
         "dataset": "campaign_periods",
         "sourceId": "ads_live",
-        "layout": "full",
-        "question": "Como o gasto mudou entre os sete dias atuais e anteriores?",
-        "rationale": "Barras agrupadas mantêm campanha e período visíveis na mesma escala.",
+        "layout": "half",
+        "question": "Como o gasto mudou entre as duas janelas?",
+        "rationale": "Barras agrupadas permitem comparação direta.",
         "encodings": {
           "x": {"field":"campaign","type":"ordinal","label":"Campanha"},
           "y": {"field":"cost","type":"quantitative","format":"number","label":"Gasto (R$)"},
-          "color": {"field":"period","type":"nominal","label":"Janela"},
-          "tooltip": [
-            {"field":"clicks","type":"quantitative","format":"number","label":"Cliques"},
-            {"field":"ctr","type":"quantitative","format":"percent","label":"CTR"}
-          ]
+          "color": {"field":"period","type":"nominal","label":"Janela"}
         },
         "valueFormat": "number",
         "maxRows": 10,
@@ -195,7 +191,7 @@
       },
       {
         "id": "proposal_table",
-        "title": "Propostas condicionais — nenhuma aplicada",
+        "title": "Propostas condicionais e ação preparada",
         "subtitle": "A prioridade não substitui o gate de entrada.",
         "dataset": "proposals",
         "sourceId": "governance",
@@ -206,6 +202,21 @@
           {"field":"campaign","label":"Campanha","type":"text"},
           {"field":"proposal","label":"Proposta","type":"text"},
           {"field":"status","label":"Estado","type":"text"}
+        ]
+      },
+      {
+        "id": "recommendation_table",
+        "title": "Recomendações do e-mail — verificação ao vivo",
+        "subtitle": "Alertas repetidos ou genéricos foram separados de uma correção técnica real.",
+        "dataset": "recommendation_review",
+        "sourceId": "ads_live",
+        "layout": "full",
+        "density": "dense",
+        "defaultSort": {"field":"item","direction":"asc"},
+        "columns": [
+          {"field":"item","label":"Item","type":"text"},
+          {"field":"live_result","label":"Resultado ao vivo","type":"text"},
+          {"field":"decision","label":"Decisão","type":"text"}
         ]
       },
       {
@@ -235,33 +246,35 @@
         "id": "executive",
         "type": "markdown",
         "layout": "full",
-        "body": "## Conclusão\n\n**Nenhuma alteração foi publicada.** Só 2 de 7 contatos recentes tinham campanha canônica e nenhum estava classificado. O RSA adulto OTO permanece condicionado ao tracking. A lista compartilhada já bloqueia preço popular e Projeto Orelhinha e também alcança G26LIFT; por isso nenhuma negativa foi criada ou editada."
+        "body": "## Conclusão\n\nCinco sobrescritas factuais de mensuração foram corrigidas em BLEF, CERV, FACE e MARCA, sem alterar entrega. Na revisão do e-mail, seis negativas P0 eram roteamentos intencionais e o alerta biddable=false ignorava a meta personalizada. A única correção de mídia preparada é remover o autobloqueio cervical por lipoaspiração de papada; a execução aguarda confirmação específica de exclusão."
       },
       {"id":"headline_metrics","type":"metric-strip","layout":"full","cardIds":["spend_card","clicks_card","contacts_card","classified_card","budget_card"]},
-      {"id":"cost_block","type":"chart","layout":"full","chartId":"cost_comparison"},
+      {"id":"cost_block","type":"chart","layout":"half","chartId":"cost_comparison"},
       {"id":"campaign_heading","type":"markdown","layout":"full","body":"## Campanhas\n\nAs conversões da interface são agregadas e não substituem contatos válidos, qualificados ou consultas reconciliadas."},
       {"id":"campaign_detail","type":"table","layout":"full","tableId":"campaign_table"},
       {"id":"funnel_heading","type":"markdown","layout":"full","body":"## Funil e qualidade dos dados\n\nA campanha de contatos desconhecidos não foi inferida. Ausência de atribuição foi mantida como N/D."},
       {"id":"funnel_detail","type":"table","layout":"full","tableId":"funnel_table"},
       {"id":"quality_detail","type":"table","layout":"full","tableId":"quality_table"},
-      {"id":"proposal_heading","type":"markdown","layout":"full","body":"## Propostas condicionais\n\nNenhuma proposta passou simultaneamente pelos gates de mensuração, isolamento e reversibilidade."},
+      {"id":"recommendation_heading","type":"markdown","layout":"full","body":"## Recomendações recebidas por e-mail\n\nO assunto contava 100 sugestões, mas o corpo mostrava 50; 39 das 40 linhas visíveis em Aguardar dados eram variações do mesmo problema de preço em BLEF. A rotina corrigida localmente passou em 18/18 testes, mas a publicação depende da proprietária do script."},
+      {"id":"recommendation_detail","type":"table","layout":"full","tableId":"recommendation_table"},
+      {"id":"proposal_heading","type":"markdown","layout":"full","body":"## Propostas condicionais\n\nSomente a negativa cervical passou pelos gates técnicos; a remoção continua pendente de confirmação de exclusão. As demais propostas permanecem condicionais."},
       {"id":"proposal_detail","type":"table","layout":"full","tableId":"proposal_table"},
       {"id":"postflight_detail","type":"table","layout":"full","tableId":"postflight_table"},
       {
         "id": "postflight",
         "type": "markdown",
         "layout": "full",
-        "body": "## Pós-voo\n\nOrçamentos idênticos; total **R$ 87/dia**. G26LIFT, Meta Ads, WhatsApp e demais campanhas permaneceram inalterados. Nenhuma alteração de site foi realizada nesta execução; mudanças preexistentes do worktree foram preservadas. Checkpoints: 27/08, 30/08, 03/09 e 06/09."
+        "body": "## Pós-voo\n\nOrçamentos idênticos; total **R$ 87/dia**. As seis campanhas exibem a meta personalizada Lead qualificado GCLID — campanhas. G26LIFT, Meta Ads, WhatsApp e site permaneceram inalterados. Checkpoints: publicação da rotina em 24/08, saúde em 27/08, sete dias em 30/08, gate OTO em 03/09 e 14 dias em 06/09."
       }
     ]
   },
   "snapshot": {
     "version": 1,
     "status": "ready",
-    "generatedAt": "2026-08-22T18:39:33-03:00",
+    "generatedAt": "2026-08-22T22:53:01-03:00",
     "datasets": {
       "headline": [
-        {"spend_current":422.56,"spend_prior":439.85,"clicks_current":264,"clicks_prior":278,"google_contacts_7d":7,"canonical_contacts_7d":2,"classified_contacts_7d":0,"budget_before":87,"budget_after":87,"ads_changes":0}
+        {"spend_current":422.56,"spend_prior":439.85,"clicks_current":264,"clicks_prior":278,"google_contacts_7d":7,"canonical_contacts_7d":2,"classified_contacts_7d":0,"budget_before":87,"budget_after":87,"ads_changes":5}
       ],
       "campaign_periods": [
         {"campaign":"BLEF","code":"G26BLEF","period":"08–14/08","impressions":1568,"clicks":102,"ctr":0.0651,"cpc":1.50,"cost":152.80,"displayed_conversions":0,"search_is":0.1480,"lost_rank":0.6958,"lost_budget":0.1563},
@@ -295,7 +308,9 @@
         {"domain":"Correspondência click ID","confidence":"Insuficiente","evidence":"sem contagem por GCLID/GBRAID/WBRAID no agregado","safe_use":"N/D; não inferir"},
         {"domain":"Histórico de alterações","confidence":"Parcial","evidence":"30 dias renderizados; última mudança visível em 15/08; recorte de 22/08 indisponível","safe_use":"delimitar parcialmente mudanças; estado efetivo verificado por entidade"},
         {"domain":"Negativas compartilhadas","confidence":"Alta","evidence":"listas, IDs, associações e termos reabertos ao vivo","safe_use":"diagnóstico; nenhuma edição porque ambas alcançam G26LIFT"},
-        {"domain":"Site e tracking","confidence":"Alta","evidence":"44/44 rotas locais; 8/8 páginas públicas; 22/22 testes de CTA/tracking","safe_use":"integridade técnica; mobile visual e CWV permanecem N/D"}
+        {"domain":"Site e tracking","confidence":"Alta","evidence":"44/44 rotas locais; 8/8 páginas públicas; 22/22 testes de CTA/tracking","safe_use":"integridade técnica; mobile visual e CWV permanecem N/D"},
+        {"domain":"Metas personalizadas","confidence":"Alta","evidence":"seis campanhas exibem Lead qualificado GCLID — campanhas","safe_use":"biddable por categoria/origem isolado não prova falha"},
+        {"domain":"Rotina de recomendações","confidence":"Parcial","evidence":"18/18 testes locais; publicação bloqueada pelo proprietário do script","safe_use":"código aprovado localmente; produção ainda usa a versão anterior"}
       ],
       "proposals": [
         {"priority":1,"campaign":"Conta","proposal":"Restaurar frescor e reconciliação da ação principal","metric":"eventos aceitos/correspondidos e qualificados reais","guardrail":"zero PII, zero duplicidade","status":"Não aplicada — gate de mensuração"},
@@ -303,7 +318,17 @@
         {"priority":3,"campaign":"OTO / governança","proposal":"Revisar projeto orelhinha fora da lista compartilhada e decidir manter, remover ou realocar","metric":"oferta confirmada e qualidade downstream do termo","guardrail":"não editar lista que alcança G26LIFT; mudança isolada","status":"Não aplicada — intenção, oferta e isolamento N/D"},
         {"priority":4,"campaign":"MARCA","proposal":"Revisar logo e imagens após abrir causas completas","metric":"aprovação e cobertura dos recursos","guardrail":"não tocar logo de conta compartilhado","status":"Não aplicada — causa/substituto incompletos"},
         {"priority":5,"campaign":"MARCA","proposal":"Comparar DKI com Site Oficial da Dra. Amanda","metric":"cobertura, CTR e contato válido","guardrail":"amostra mínima; sem ampliar verba ou match","status":"Não aplicada — volume insuficiente"},
-        {"priority":6,"campaign":"BLEF, CERV e FACE","proposal":"Avaliar idade, horário e localização por downstream","metric":"válido, qualificado e consulta por segmento","guardrail":"preservar desconhecida; excluir G26LIFT, OTO e MARCA","status":"Somente proposta — fora do escopo de execução"}
+        {"priority":6,"campaign":"BLEF, CERV e FACE","proposal":"Avaliar idade, horário e localização por downstream","metric":"válido, qualificado e consulta por segmento","guardrail":"preservar desconhecida; excluir G26LIFT, OTO e MARCA","status":"Somente proposta — fora do escopo de execução"},
+        {"priority":1,"campaign":"CERV","proposal":"Remover a negativa de frase lipoaspiração de papada em nível de campanha","metric":"cobertura do AG_LIPO_PAPADA e termos elegíveis","guardrail":"uma entidade; orçamento, lance, anúncio e site inalterados","status":"Preparada — aguarda confirmação de exclusão no Google Ads"}
+      ],
+      "recommendation_review": [
+        {"item":"Atribuição 0/14","live_result":"Aliases de anúncio corrigidos; histórico não determinístico permanece N/D","decision":"Monitorar 7 e 14 dias"},
+        {"item":"6 campanhas biddable=false","live_result":"As seis usam meta personalizada Lead qualificado GCLID","decision":"Falso positivo; não alterar meta/lance"},
+        {"item":"6 negativas P0","live_result":"Roteamentos intencionais confirmados ao vivo","decision":"Manter"},
+        {"item":"CERV — lipoaspiração de papada","live_result":"Negativa de campanha bloqueia a própria oferta AG_LIPO_PAPADA","decision":"Remoção isolada preparada"},
+        {"item":"39 variações de preço BLEF","live_result":"Mesmo problema repetido na fila Aguardar dados","decision":"Agrupar por campanha/grupo"},
+        {"item":"Consultas de conversão/recursos","live_result":"Dois campos/combinações retornavam N/D","decision":"Código corrigido; publicação pendente"},
+        {"item":"0 agendamentos","live_result":"Perda downstream real, causa por campanha N/D","decision":"Manter mídia estável e medir passagem para consulta"}
       ],
       "postflight": [
         {"campaign":"BLEF","budget_before":23,"budget_after":23,"changed":false},
