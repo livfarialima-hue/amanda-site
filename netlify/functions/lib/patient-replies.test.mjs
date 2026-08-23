@@ -12,6 +12,7 @@ import {
   buildMissingInboundTextClarificationReply,
   buildOfficialChannelsReply,
   buildPatientReply,
+  hasClinicLocationInConversation,
   hasPendingReactivationHandoff,
   REACTIVATION_REPLY,
   shouldSendAutomaticPatientReply,
@@ -350,21 +351,71 @@ test("explains the consultation gradually without anticipating price or a link",
   assert.doesNotMatch(reply, /Posso ver os horários/);
 });
 
-test("answers the consultation value when the patient asks for access and price", () => {
+test("answers the consultation value directly and invites the next step without pressure", () => {
   const reply = buildConsultationInformationReply({
     patientName: "Renata",
     consultationPriceRequested: true,
-    availabilityRequested: true,
     introduceBruna: true,
   });
 
   assert.match(reply, /^Olá, Renata!/);
-  assert.match(reply, /consulta presencial custa R\$ 500/i);
+  assert.match(reply, /consulta presencial com a Dra\. Amanda custa R\$ 500/i);
+  assert.match(reply, /avaliação é individualizada/i);
+  assert.match(reply, /Você não precisa decidir nada nesse momento/i);
   assert.match(reply, /Pix, débito ou parcelamento/i);
   assert.match(reply, /nota fiscal/i);
-  assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
-  assert.match(reply, /prefere manhã ou tarde/i);
+  assert.match(reply, /R\. Pais Leme, 215/);
+  assert.match(reply, /CEP 05424-150/);
+  assert.match(reply, /Se fizer sentido para você, posso verificar opções de horário\./i);
+  assert.equal((reply.match(/\?/g) || []).length, 0);
+  assert.doesNotMatch(
+    reply,
+    /reembols|devolvid|descontad|abatid|Imposto de Renda|teleconsulta|consulta online|estacionamento|retornos/i,
+  );
+  assert.doesNotMatch(reply, /maps\.app\.goo\.gl/);
   assert.doesNotMatch(reply, /qual cirurgia você está pesquisando/i);
+});
+
+test("does not repeat the consultation location when it is already in the conversation", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Renata",
+    consultationPriceRequested: true,
+    introduceBruna: false,
+    locationPreviouslyShared: true,
+  });
+
+  assert.match(reply, /^Claro\. A consulta presencial com a Dra\. Amanda custa R\$ 500\./);
+  assert.doesNotMatch(reply, /Pais Leme|05424-150|Google Maps/i);
+  assert.match(reply, /posso verificar opções de horário/i);
+});
+
+test("recognizes a previously shared clinic location in recent conversation turns", () => {
+  assert.equal(
+    hasClinicLocationInConversation([
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Nosso endereço é R. Pais Leme, 215, em Pinheiros.",
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    hasClinicLocationInConversation([
+      "Google Maps: https://maps.app.goo.gl/yDFBmbcn5oDpHSM46",
+    ]),
+    true,
+  );
+  assert.equal(
+    hasClinicLocationInConversation([
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      },
+    ]),
+    false,
+  );
 });
 
 test("every known procedure evaluation ends with one low-friction question instead of a menu", () => {
@@ -468,11 +519,26 @@ test("an explicit availability request can advance to period preference", () => 
   assert.match(reply, /cj\. 710/);
   assert.match(reply, /CEP 05424-150/);
   assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
-  assert.match(reply, /Se quiser que eu busque opções/);
-  assert.match(reply, /prefere manhã ou tarde/);
+  assert.match(reply, /Quais dias da semana e qual período/);
+  assert.match(reply, /manhã ou tarde/);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
   assert.doesNotMatch(reply, /R\$ 500/);
   assert.doesNotMatch(reply, /Posso ver os horários/);
   assert.doesNotMatch(reply, /https:\/\/draamandaschroeder/);
+});
+
+test("an availability request does not repeat a location already shared", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Van",
+    procedure: "lifting_facial",
+    availabilityRequested: true,
+    introduceBruna: false,
+    locationPreviouslyShared: true,
+  });
+
+  assert.doesNotMatch(reply, /Pais Leme|05424-150|Google Maps/i);
+  assert.match(reply, /Quais dias da semana e qual período/);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
 });
 
 test("builds the single fixed notice for a conversation resumed after seven days", () => {

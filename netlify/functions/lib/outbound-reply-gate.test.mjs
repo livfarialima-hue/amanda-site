@@ -16,6 +16,9 @@ import {
 import {
   buildSurgicalPriceSuggestedReply,
 } from "./surgical-price-review.mjs";
+import {
+  buildConsultationInformationReply,
+} from "./patient-replies.mjs";
 
 function fakeBlobs() {
   const values = new Map();
@@ -966,6 +969,35 @@ test("the reply contract enforces question, link and CTA limits", () => {
     assert.equal(result.allowed, false, body);
     assert.equal(result.reason, reason, body);
   }
+});
+
+test("the improved consultation price reply passes its bounded conversion contract", () => {
+  const conversationAction = decideConversationAction({
+    text: "Qual é o valor da consulta com a Dra. Amanda?",
+    plan: {
+      route: "standard_reply",
+      reason: "consultation_information_request",
+      replyCode: "AMANDA-CONSULTA-INFO-01",
+      professional: "amanda",
+      procedure: "avaliacao_facial",
+      automaticAllowed: true,
+    },
+  });
+  const body = buildConsultationInformationReply({
+    patientName: "Renata",
+    consultationPriceRequested: true,
+    introduceBruna: true,
+  });
+  const result = validateOutboundReply({
+    body,
+    currentText: "Qual é o valor da consulta com a Dra. Amanda?",
+    conversationAction,
+  });
+
+  assert.equal(conversationAction.replyContract.maxQuestions, 0);
+  assert.equal(conversationAction.replyContract.maxLinks, 0);
+  assert.equal(conversationAction.replyContract.allowCta, true);
+  assert.equal(result.allowed, true);
 });
 
 test("a photo reply acknowledges the patient and offers a human path without a mechanical disclaimer", () => {

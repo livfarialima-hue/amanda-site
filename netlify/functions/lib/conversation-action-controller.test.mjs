@@ -433,6 +433,25 @@ test("the reply contract removes forced questions from a known surgical price an
   assert.equal(decision.replyContract.allowCta, false);
 });
 
+test("the consultation price contract permits a low-pressure next-step offer without a question or link", () => {
+  const decision = decideConversationAction({
+    text: "Qual é o valor da consulta com a Dra. Amanda?",
+    plan: {
+      ...standardPlan,
+      reason: "consultation_information_request",
+      procedure: "avaliacao_facial",
+    },
+  });
+
+  assert.deepEqual(
+    decision.replyContract.unresolvedIntents,
+    ["price_consultation"],
+  );
+  assert.equal(decision.replyContract.maxQuestions, 0);
+  assert.equal(decision.replyContract.maxLinks, 0);
+  assert.equal(decision.replyContract.allowCta, true);
+});
+
 test("the cervical first price contract permits only the approved range offer", () => {
   const decision = decideConversationAction({
     text: "Gostaria de saber os valores da cervicoplastia",

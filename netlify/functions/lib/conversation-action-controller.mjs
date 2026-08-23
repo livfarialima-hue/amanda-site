@@ -450,6 +450,7 @@ function buildReplyContract({
       canWrite &&
       (
         intents.includes("scheduling") ||
+        intents.includes("price_consultation") ||
         approvedInitialRangeOffer ||
         approvedLiftingInformation
       ),

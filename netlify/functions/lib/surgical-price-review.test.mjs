@@ -193,7 +193,7 @@ test("the approved Brenda lifting reply offers a range elegantly on the next ste
   assert.equal((reply.match(/\?/g) || []).length, 0);
 });
 
-test("consultation price suggestion includes the invoice without promising tax savings", () => {
+test("consultation price suggestion explains the value and next step without unsafe promises", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Maria",
     procedure: "avaliacao_facial",
@@ -202,10 +202,32 @@ test("consultation price suggestion includes the invoice without promising tax s
   assert.match(reply, /R\$ 500/);
   assert.match(reply, /Pix, débito ou parcelamento/);
   assert.match(reply, /nota fiscal/);
-  assert.match(reply, /comprovante de despesa médica/);
-  assert.match(reply, /Imposto de Renda/);
+  assert.match(reply, /avaliação é individualizada/);
+  assert.match(reply, /não precisa decidir nada nesse momento/);
+  assert.match(reply, /Pais Leme, 215/);
+  assert.match(reply, /posso verificar opções de horário/i);
   assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
-  assert.doesNotMatch(reply, /(?:garante|garantida|restituição|economia tributária)/i);
+  assert.doesNotMatch(
+    reply,
+    /(?:garante|garantida|restituição|economia tributária|Imposto de Renda|teleconsulta|estacionamento|retornos)/i,
+  );
+});
+
+test("consultation price suggestion omits a location already shared", () => {
+  const reply = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "avaliacao_facial",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Atendemos na R. Pais Leme, 215, em Pinheiros.",
+      },
+    ],
+  });
+
+  assert.doesNotMatch(reply, /Pais Leme|05424-150|Google Maps/i);
+  assert.match(reply, /R\$ 500/);
 });
 
 test("combines professional and hospital references for lifting facial", () => {

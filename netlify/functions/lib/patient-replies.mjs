@@ -59,6 +59,13 @@ const CLINIC_ADDRESS =
   "R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150";
 const CLINIC_MAPS_URL =
   "https://maps.app.goo.gl/yDFBmbcn5oDpHSM46";
+const CLINIC_LOCATION_PATTERNS = Object.freeze([
+  /\bpais\s+leme\b/i,
+  /\b05424[\s-]?150\b/i,
+  /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/i,
+  /\bthera\s+office\b/i,
+  /\b(?:atend(?:emos|imento)|cl[ií]nica)\b.{0,80}\bpinheiros\b|\bpinheiros\b.{0,80}\b(?:atend(?:emos|imento)|cl[ií]nica)\b/i,
+]);
 export const LIFTING_FACIAL_URL =
   "https://draamandaschroeder.com.br/lifting-facial/";
 
@@ -82,6 +89,22 @@ function greeting(name) {
         rawName.slice(1).toLowerCase()
       : rawName;
   return normalizedName ? `Olá, ${normalizedName}!` : "Olá!";
+}
+
+export function hasClinicLocationInConversation(
+  recentConversation = [],
+) {
+  return (Array.isArray(recentConversation)
+    ? recentConversation
+    : []
+  ).some((turn) => {
+    const text = typeof turn === "string"
+      ? turn
+      : String(turn?.text || turn?.content || "");
+    return CLINIC_LOCATION_PATTERNS.some((pattern) =>
+      pattern.test(text),
+    );
+  });
 }
 
 export function buildOfficialChannelsReply({
@@ -252,6 +275,7 @@ export function buildConsultationInformationReply({
   availabilityRequested = false,
   consultationPriceRequested = false,
   introduceBruna = false,
+  locationPreviouslyShared = false,
   siteRequested = false,
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
@@ -261,23 +285,41 @@ export function buildConsultationInformationReply({
         "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
       ].join(" ")
     : "Claro.";
-  const consultationContext = consultationDescription(
-    procedure,
-    procedureLabel,
-  );
-  const consultationPrice = consultationPriceRequested
-    ? "A consulta presencial custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal."
+  const consultationContext = consultationPriceRequested
+    ? [
+        "A avaliação é individualizada: a Dra. Amanda entende o que você busca, examina com cuidado e explica as possibilidades, os limites e os próximos passos.",
+        "Você não precisa decidir nada nesse momento.",
+      ].join(" ")
+    : consultationDescription(
+        procedure,
+        procedureLabel,
+      );
+  const opening = consultationPriceRequested
+    ? `${introduction} A consulta presencial com a Dra. Amanda custa R$ 500.`
+    : `${introduction} ${consultationContext}`;
+  const paymentInformation = consultationPriceRequested
+    ? "O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal."
     : "";
   const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
     String(siteResource?.url || ""),
   )
     ? siteResource.url
     : "";
+  const shouldIncludeLocation =
+    !locationPreviouslyShared &&
+    !siteRequested &&
+    (consultationPriceRequested || availabilityRequested);
+  const location = shouldIncludeLocation
+    ? [
+        `A consulta presencial acontece na Clínica LIV, ${CLINIC_ADDRESS}.`,
+        availabilityRequested && !consultationPriceRequested
+          ? `Google Maps: ${CLINIC_MAPS_URL}`
+          : "",
+      ].filter(Boolean).join("\n")
+    : "";
   const nextStep = availabilityRequested
     ? [
-        `A Clínica LIV fica na ${CLINIC_ADDRESS}.`,
-        `Google Maps: ${CLINIC_MAPS_URL}`,
-        "Se quiser que eu busque opções, você prefere manhã ou tarde?",
+        "Quais dias da semana e qual período — manhã ou tarde — costumam funcionar melhor para você?",
       ].join(" ")
     : siteRequested && resourceUrl
       ? [
@@ -288,7 +330,9 @@ export function buildConsultationInformationReply({
             : "Esta página reúne explicações sobre o procedimento e a consulta:",
           resourceUrl,
         ].join(" ")
-      : "";
+      : consultationPriceRequested
+        ? "Se fizer sentido para você, posso verificar opções de horário."
+        : "";
   const explorationQuestion =
     !availabilityRequested &&
     !consultationPriceRequested &&
@@ -299,8 +343,10 @@ export function buildConsultationInformationReply({
       : "";
 
   return [
-    `${introduction} ${consultationContext}`,
-    consultationPrice,
+    opening,
+    consultationPriceRequested ? consultationContext : "",
+    paymentInformation,
+    location,
     nextStep,
     explorationQuestion,
   ].filter(Boolean).join("\n\n");

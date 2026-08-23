@@ -1,4 +1,8 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import {
+  buildConsultationInformationReply,
+  hasClinicLocationInConversation,
+} from "./patient-replies.mjs";
 
 const CONSULTATION_PRICE = 500;
 const PRICE_GUIDES = Object.freeze({
@@ -314,7 +318,11 @@ function initialPriceDiscoveryQuestion(procedure) {
     : "Você está pesquisando qual cirurgia?";
 }
 
-function clarificationFor(procedure, patientName) {
+function clarificationFor(
+  procedure,
+  patientName,
+  recentConversation = [],
+) {
   const hello = greeting(patientName);
 
   if (!procedure) {
@@ -334,7 +342,13 @@ function clarificationFor(procedure, patientName) {
   }
 
   if (procedure === "avaliacao_facial") {
-    return `${hello} A consulta presencial com a Dra. Amanda custa R$ 500 e pode ser paga por Pix, débito ou parcelamento. Emitimos nota fiscal. A nota pode ser usada como comprovante de despesa médica na declaração do Imposto de Renda, conforme as regras aplicáveis.`;
+    return buildConsultationInformationReply({
+      patientName,
+      consultationPriceRequested: true,
+      introduceBruna: false,
+      locationPreviouslyShared:
+        hasClinicLocationInConversation(recentConversation),
+    });
   }
 
   const label = PROCEDURE_LABELS[procedure] || "esse procedimento";
@@ -497,7 +511,11 @@ export function buildSurgicalPriceSuggestedReply({
 
   const priceReference = getSurgicalPriceReference(procedure);
   if (!priceReference) {
-    return clarificationFor(procedure, patientName);
+    return clarificationFor(
+      procedure,
+      patientName,
+      recentConversation,
+    );
   }
 
   const priceContext = [

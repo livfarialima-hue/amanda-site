@@ -75,7 +75,20 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /emissão de nota fiscal/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /comprovante de despesa médica na declaração do Imposto de Renda/,
+    /Não mencione Imposto de Renda espontaneamente/,
+  );
+  assert.match(CONVERSATION_GUIDELINES, /avaliação é individualizada/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /oferta opcional e sem interrogação para verificar opções de horário/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não peça dias ou período nessa etapa/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /endereço em texto simples somente se ele ainda não tiver sido informado no histórico/,
   );
   assert.match(CONVERSATION_GUIDELINES, /Nunca prometa dedução, restituição/);
   assert.match(
