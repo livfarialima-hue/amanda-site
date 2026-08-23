@@ -18,6 +18,8 @@ const FACIAL_PRICE_GUIDE_PATTERN =
   /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo\/?$/i;
 const FULL_LIFTING_RANGE_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
+const FULL_CERVICAL_RANGE_PATTERN =
+  /cervicoplastia(?:\s*\(lifting\s+cervical\))?[\s\S]{0,180}R\$\s*18\s*mil\s+e\s+R\$\s*26\s*mil/i;
 const FULL_OTOPLASTY_RANGE_PATTERN =
   /otoplastia[\s\S]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i;
 
@@ -131,6 +133,24 @@ function isProtectedOtoplastyRangeReply(value, recentConversation = []) {
   );
 }
 
+function isProtectedCervicalRangeReply(value, recentConversation = []) {
+  const text = normalizedText(value);
+  const replyUrls = urls(value);
+  const hasRequiredGuide = replyUrls.length === 1
+    ? FACIAL_PRICE_GUIDE_PATTERN.test(replyUrls[0])
+    : replyUrls.length === 0 &&
+      conversationContainsFacialPriceGuide(recentConversation);
+  return (
+    FULL_CERVICAL_RANGE_PATTERN.test(String(value || "")) &&
+    /nao e orcamento proposta nem garantia de preco/.test(text) &&
+    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
+      text,
+    ) &&
+    /nao representa honorarios isolados/.test(text) &&
+    hasRequiredGuide
+  );
+}
+
 function questionCount(value) {
   return (String(value || "").match(/\?+/g) || []).length;
 }
@@ -151,8 +171,12 @@ function semanticUnsafeReplyReason(
     raw,
     recentConversation,
   );
+  const protectedCervicalRange = isProtectedCervicalRangeReply(
+    raw,
+    recentConversation,
+  );
   const protectedApprovedRange =
-    protectedLiftingRange || protectedOtoplastyRange;
+    protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange;
 
   if (
     /\b(?:sou|aqui\s+e|este\s+atendimento\s+e)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw) ||
@@ -196,6 +220,14 @@ function semanticUnsafeReplyReason(
     /\b(?:sem\s+juros|sem\s+acr[eé]scimo|juros\s+zero)\b/i.test(raw)
   ) {
     return "unapproved_payment_specifics";
+  }
+
+  if (
+    /\bcondi[cç][oõ]es\s+(?:exatas|comerciais|de\s+pagamento)?\s*dependem\s+d[ae]\s+confirma[cç][aã]o\s+humana\b/i.test(
+      raw,
+    )
+  ) {
+    return "internal_confirmation_language";
   }
 
   if (!protectedApprovedRange) {

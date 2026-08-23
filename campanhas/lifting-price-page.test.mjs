@@ -38,6 +38,17 @@ test("lifting price page answers the cost-composition intent above the first art
   assert.doesNotMatch(liftingPrice, /18\s*(?:mil|[–-]\s*25)/i);
   assert.doesNotMatch(liftingPrice, /26\s*(?:mil|[–-]\s*42)/i);
   assert.doesNotMatch(liftingPrice, /faixas? de (?:preço|referência)/i);
+  assert.match(
+    liftingPrice.slice(0, firstBlock),
+    /Pelo WhatsApp,[\s\S]*faixa geral de valores como ponto de partida/i,
+  );
+  assert.match(
+    liftingPrice.slice(0, firstBlock),
+    /não é orçamento, proposta ou garantia de preço/i,
+  );
+  assert.match(liftingPrice.slice(0, firstBlock), /pode ficar fora da faixa/i);
+  assert.match(liftingPrice, /data-cta-location="price_range_reference"/);
+  assert.match(liftingPrice, />Conversar sobre uma faixa geral<\/a>/);
 
   for (const component of [
     /equipe médica/i,
@@ -58,6 +69,10 @@ test("lifting price page preserves procedure depth and direct conversion routes"
   assert.match(liftingPrice, /data-track-id="procedure_overview"/);
   assert.match(liftingPrice, /data-procedure="lifting-facial-preco"/);
   assert.match(liftingPrice, /data-track="whatsapp"/);
+  assert.match(
+    liftingPrice,
+    /gostaria%20de%20conversar%20sobre%20uma%20faixa%20geral%20de%20valores/,
+  );
   assert.match(liftingPrice, /Refer%C3%AAncia%3A%20pre%C3%A7o%20de%20lifting%20facial/);
   assert.match(
     liftingPrice,

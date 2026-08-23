@@ -28,6 +28,7 @@ test("creates an empathetic first price response and answers payment terms brief
   assert.match(reply, /parcelado antecipadamente/i);
   assert.match(reply, /quitação antes da cirurgia/i);
   assert.match(reply, /desconto à vista/i);
+  assert.doesNotMatch(reply, /condições?.+confirmação humana/i);
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /técnica|complexidade|materiais|honorário isolado/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
@@ -492,14 +493,19 @@ test("delivers the approved range after a cervical patient accepts the offer", (
   });
 
   assert.match(reply, /^Claro, Adriana\./);
-  assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
-  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
-  assert.match(reply, /Na cervicoplastia, a faixa aplicável depende/i);
+  assert.match(
+    reply,
+    /cervicoplastia \(lifting cervical\) costuma ficar entre R\$ 18 mil e R\$ 26 mil/i,
+  );
+  assert.doesNotMatch(reply, /Minilifting|R\$ 25 mil/i);
+  assert.doesNotMatch(reply, /Lifting facial.+R\$ 26 mil e R\$ 42 mil/is);
   assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
+  assert.match(reply, /eventual associação a outras abordagens da face e do pescoço/i);
+  assert.doesNotMatch(reply, /condições?.+confirmação humana/i);
   assert.doesNotMatch(reply, /https?:\/\//);
 });
 
-test("the cervical range keeps the specific lifting guide as a safe fallback", () => {
+test("the cervical range keeps the general facial guide as a safe fallback", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Adriana",
     procedure: "lifting_cervical",
@@ -513,8 +519,46 @@ test("the cervical range keeps the specific lifting guide as a safe fallback", (
     ],
   });
 
-  assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
+  assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+});
+
+test("patient-facing price replies never expose internal confirmation language", () => {
+  const replies = [
+    buildSurgicalInitialPriceReply({
+      patientName: "Maria",
+      procedure: "lifting_facial",
+      currentText: "Qual o valor e como funciona o pagamento?",
+    }),
+    buildSurgicalPriceSuggestedReply({
+      patientName: "Maria",
+      procedure: "lifting_facial",
+      directToPatient: true,
+    }),
+    buildSurgicalPriceSuggestedReply({
+      patientName: "Maria",
+      procedure: "lifting_cervical",
+      directToPatient: true,
+    }),
+    buildSurgicalPriceSuggestedReply({
+      patientName: "Maria",
+      procedure: "otoplastia",
+      directToPatient: true,
+    }),
+    buildSurgicalPriceHoldingReply({
+      patientName: "Maria",
+      procedure: "blefaroplastia",
+    }),
+  ];
+
+  for (const reply of replies) {
+    assert.doesNotMatch(
+      reply,
+      /condições?.{0,60}(?:dependem|dependem dessa).{0,60}confirmação humana/i,
+    );
+    assert.doesNotMatch(reply, /condições exatas dependem dessa confirmação/i);
+  }
 });
 
 test("the first lifting price answer stays concise when a guide is already in the history", () => {

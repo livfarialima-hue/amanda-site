@@ -1894,11 +1894,26 @@ export function isSemanticHumanContextContinuationCandidate({
 }
 
 function approvedPriceReplyKindForPlan(plan) {
-  if (plan?.reason === "price_initial_information") {
+  if (
+    plan?.reason === "price_initial_information" &&
+    ["lifting_facial", "lifting_cervical", "otoplastia"].includes(
+      plan?.procedure,
+    )
+  ) {
     return "initial_information";
   }
-  if (plan?.reason === "lifting_price_range_direct") return "lifting_range";
-  if (plan?.reason === "otoplasty_price_range_direct") return "otoplasty_range";
+  if (
+    plan?.reason === "lifting_price_range_direct" &&
+    ["lifting_facial", "lifting_cervical"].includes(plan?.procedure)
+  ) {
+    return "lifting_range";
+  }
+  if (
+    plan?.reason === "otoplasty_price_range_direct" &&
+    plan?.procedure === "otoplastia"
+  ) {
+    return "otoplasty_range";
+  }
   return "";
 }
 
@@ -3018,6 +3033,8 @@ function enrichPricePlanFromPatientRelationship(
     plan.procedure ||
     ![
       "price_initial_information",
+      "surgical_price_review",
+      "price_without_confirmed_procedure",
       "price_range_without_confirmed_procedure",
     ].includes(plan.reason)
   ) {
@@ -3037,11 +3054,27 @@ function enrichPricePlanFromPatientRelationship(
   });
   if (!contextPlan.procedure) return plan;
 
-  if (plan.reason === "price_initial_information") {
+  if (
+    [
+      "price_initial_information",
+      "surgical_price_review",
+      "price_without_confirmed_procedure",
+    ].includes(plan.reason)
+  ) {
+    const automaticPrice = [
+      "lifting_facial",
+      "lifting_cervical",
+      "otoplastia",
+    ].includes(contextPlan.procedure);
     return {
       ...plan,
+      route: automaticPrice ? "standard_reply" : "human_review",
+      reason: automaticPrice
+        ? "price_initial_information"
+        : "surgical_price_review",
       professional: plan.professional || "amanda",
       procedure: contextPlan.procedure,
+      automaticAllowed: automaticPrice,
     };
   }
 

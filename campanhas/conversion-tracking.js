@@ -57,6 +57,15 @@
     return 'Olá! Tenho interesse em ' + label + ' com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.';
   }
 
+  function marketingPrefillMessage(link) {
+    var procedure = String(link.dataset.procedure || '').trim().toLowerCase();
+    var intent = String(link.dataset.prefillIntent || '').trim().toLowerCase();
+    if (procedure === 'lifting-facial-preco' && intent === 'price_range_reference') {
+      return 'Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
+    }
+    return neutralPrefillMessage(link);
+  }
+
   function googleMeasurementAvailable() {
     return typeof window.gtag === 'function';
   }
@@ -708,7 +717,7 @@
 
       var reference = buildReference(attribution, originalReference);
       link.dataset.templateId = marketingPrefillTemplateId;
-      var updatedMessage = neutralPrefillMessage(link) + '\n\nRef. ' + reference;
+      var updatedMessage = marketingPrefillMessage(link) + '\n\nRef. ' + reference;
 
       // Legacy/default-off path keeps the current operational contract. Once
       // the first-party journey is explicitly enabled, click IDs travel only

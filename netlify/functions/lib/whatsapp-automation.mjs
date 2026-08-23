@@ -40,7 +40,7 @@ const PRICE_RANGE_OFFER_PATTERN =
   /posso\s+(?:te|lhe)\s+passar\s+uma\s+faixa\s+geral(?:\s+de\s+valores)?\s+(?:como\s+refer[eê]ncia\s+inicial|como\s+ponto\s+de\s+partida)/i;
 
 const PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN =
-  /^\s*(?:(?:sim|claro|pode(?:\s+sim)?|sim[,\s]+pode|gostaria|quero)(?:[,!\s]+(?:por\s+favor|pode\s+me\s+passar|me\s+passa|a\s+faixa|essa\s+faixa|os\s+valores|essa\s+refer[eê]ncia))*|(?:pode\s+)?me\s+passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores))?)[.!\s]*$/i;
+  /^\s*(?:(?:sim|claro|pode(?:\s+sim)?|sim[,\s]+pode|gostaria|quero)(?:[,!\s]+(?:por\s+favor|pode\s+me\s+passar|me\s+passa|a\s+faixa|essa\s+faixa|os\s+valores|essa\s+refer[eê]ncia))*|(?:pode\s+)?me\s+passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores))?(?:[,\s]+sim)?)[.!\s]*$/i;
 
 const DIRECT_LIFTING_PRICE_PROCEDURES = new Set([
   "lifting_facial",
@@ -48,10 +48,33 @@ const DIRECT_LIFTING_PRICE_PROCEDURES = new Set([
 ]);
 const DIRECT_OTOPLASTY_PRICE_PROCEDURES = new Set(["otoplastia"]);
 
-const LIFTING_PRICE_RANGE_REPLY_PATTERN =
+const LIFTING_FACIAL_PRICE_RANGE_REPLY_PATTERN =
   /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
+const LIFTING_CERVICAL_PRICE_RANGE_REPLY_PATTERN =
+  /cervicoplastia(?:\s*\(lifting\s+cervical\))?[\s\S]{0,180}R\$\s*18\s*mil\s+e\s+R\$\s*26\s*mil/i;
 const OTOPLASTY_PRICE_RANGE_REPLY_PATTERN =
   /otoplastia[\s\S]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i;
+
+function isAutomaticSurgicalPriceProcedure(procedure) {
+  return (
+    DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure) ||
+    DIRECT_OTOPLASTY_PRICE_PROCEDURES.has(procedure)
+  );
+}
+
+function hasPreviousLiftingRangeReply(recentConversation, procedure) {
+  if (!DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure)) return false;
+  const pattern = procedure === "lifting_cervical"
+    ? LIFTING_CERVICAL_PRICE_RANGE_REPLY_PATTERN
+    : LIFTING_FACIAL_PRICE_RANGE_REPLY_PATTERN;
+  return (Array.isArray(recentConversation) ? recentConversation : []).some(
+    (turn) =>
+      (
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source)
+      ) && pattern.test(String(turn?.text || "")),
+  );
+}
 
 const SCHEDULING_PATTERN =
   /\b(?:agend(?:a|ar|amento)|marcar\s+(?:uma\s+)?consulta|hor[aá]rios?|disponibilidade|avalia[cç][aã]o|datas?)\b/i;
@@ -519,10 +542,17 @@ export function enrichAutomationPlanFromConversation(
         turn?.role === "assistant" ||
         ["bruna", "equipe_humana"].includes(turn?.source),
     );
+  const latestPatientTurn = [...recentConversation]
+    .reverse()
+    .find(
+      (turn) =>
+        turn?.role === "user" ||
+        ["patient", "paciente"].includes(String(turn?.source || "")),
+    );
   const acceptedPriceRangeOffer = Boolean(
     PRICE_RANGE_OFFER_PATTERN.test(String(lastClinicTurn?.text || "")) &&
       PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN.test(
-        String(plan.currentText || ""),
+        String(plan.currentText || latestPatientTurn?.text || ""),
       ),
   );
 
@@ -532,15 +562,9 @@ export function enrichAutomationPlanFromConversation(
       recentPatientProcedure?.key ||
       recentClinicProcedure?.key ||
       context.procedure;
-    const previousLiftingRangeReply = recentConversation.some(
-      (turn) =>
-        (
-          turn?.role === "assistant" ||
-          ["bruna", "equipe_humana"].includes(turn?.source)
-        ) &&
-        LIFTING_PRICE_RANGE_REPLY_PATTERN.test(
-          String(turn?.text || ""),
-        ),
+    const previousLiftingRangeReply = hasPreviousLiftingRangeReply(
+      recentConversation,
+      procedure,
     );
     const previousOtoplastyRangeReply = recentConversation.some(
       (turn) =>
@@ -594,6 +618,34 @@ export function enrichAutomationPlanFromConversation(
       professional: plan.professional || context.professional || "amanda",
       procedure: procedure || null,
       automaticAllowed: false,
+    };
+  }
+
+  if (
+    [
+      "surgical_price_review",
+      "price_without_confirmed_procedure",
+    ].includes(plan.reason)
+  ) {
+    const procedure =
+      plan.procedure ||
+      recentPatientProcedure?.key ||
+      recentClinicProcedure?.key ||
+      context.procedure;
+    if (isAutomaticSurgicalPriceProcedure(procedure)) {
+      return {
+        ...plan,
+        route: "standard_reply",
+        reason: "price_initial_information",
+        professional: "amanda",
+        procedure,
+        automaticAllowed: true,
+      };
+    }
+    return {
+      ...plan,
+      professional: plan.professional || context.professional || "amanda",
+      procedure: procedure || null,
     };
   }
 
@@ -659,15 +711,9 @@ export function enrichAutomationPlanFromConversation(
         ) &&
         INITIAL_PRICE_REPLY_PATTERN.test(String(turn?.text || "")),
     );
-    const previousLiftingRangeReply = recentConversation.some(
-      (turn) =>
-        (
-          turn?.role === "assistant" ||
-          ["bruna", "equipe_humana"].includes(turn?.source)
-        ) &&
-        LIFTING_PRICE_RANGE_REPLY_PATTERN.test(
-          String(turn?.text || ""),
-        ),
+    const previousLiftingRangeReply = hasPreviousLiftingRangeReply(
+      recentConversation,
+      procedure,
     );
     const previousOtoplastyRangeReply = recentConversation.some(
       (turn) =>
@@ -974,15 +1020,22 @@ export function planAutomation({
   // A mensagem automática é somente contexto de origem. Nenhuma palavra do
   // template conta como pergunta pessoal de preço ou intenção de agenda.
   if (asksPrice && !priceMentionIsTemplateContext) {
+    const procedureKey = procedure?.key || null;
+    const automaticPrice = isAutomaticSurgicalPriceProcedure(procedureKey);
     return {
-      route: "standard_reply",
-      reason: "price_initial_information",
+      route: automaticPrice ? "standard_reply" : "human_review",
+      reason: automaticPrice
+        ? "price_initial_information"
+        : procedureKey
+          ? "surgical_price_review"
+          : "price_without_confirmed_procedure",
       replyCode: null,
       professional: "amanda",
-      procedure: procedure?.key || null,
-      automaticAllowed: true,
+      procedure: procedureKey,
+      automaticAllowed: automaticPrice,
       priceRequestKind: asksPriceTerms ? "terms" : "amount",
       platform: platform || null,
+      currentText: normalizedText,
     };
   }
 

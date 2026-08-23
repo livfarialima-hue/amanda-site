@@ -24,7 +24,7 @@ function requestFor(payload) {
   });
 }
 
-test("a first nighttime price request receives the approved institutional reply", async () => {
+test("a nighttime price request for another surgery alerts and acknowledges receipt", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -158,36 +158,50 @@ test("a first nighttime price request receives the approved institutional reply"
     await Promise.all(pending);
 
     assert.equal(response.status, 200);
-    assert.equal(body.reviewAlertQueued, false);
-    assert.equal(body.priceHoldingQueued, false);
-    assert.equal(body.priceHoldingSent, false);
-    assert.equal(body.approvedPriceReplyKind, "initial_information");
-    assert.equal(body.approvedPriceReplyQueued, true);
-    assert.equal(body.approvedPriceReplySent, true);
-    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.automation.route, "human_review");
+    assert.equal(body.automation.reason, "surgical_price_review");
+    assert.equal(body.reviewAlertQueued, true);
+    assert.equal(body.priceHoldingQueued, true);
+    assert.equal(body.priceHoldingSent, true);
+    assert.equal(body.approvedPriceReplyKind, "");
+    assert.equal(body.approvedPriceReplyQueued, false);
+    assert.equal(body.approvedPriceReplySent, false);
+    assert.equal(body.aiActiveQueued, false);
     assert.equal(body.overnightHandoffQueued, false);
     assert.equal(body.overnightHandoffSent, false);
 
     const ycloudRequests = requests.filter(
       (request) => request.url === YCLOUD_URL,
     );
-    assert.equal(ycloudRequests.length, 1);
+    assert.equal(ycloudRequests.length, 2);
 
-    const patientRequest = ycloudRequests
-      .map((request) => JSON.parse(request.options.body))
-      .find((request) => request.to === "+5511900000000");
-    assert.equal(patientRequest.type, "text");
-    assert.match(patientRequest.text.body, /é natural querer saber o valor antes de decidir/i);
-    assert.match(patientRequest.text.body, /confirma o valor exato após a avaliação/i);
-    assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
-    assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
-    assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
-    assert.match(
-      patientRequest.text.body,
-      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
+    const ycloudBodies = ycloudRequests.map(
+      (request) => JSON.parse(request.options.body),
     );
-    assert.doesNotMatch(patientRequest.text.body, /retorno pela manhã/i);
+    const patientRequest = ycloudBodies.find(
+      (request) =>
+        request.type === "text" &&
+        request.to === "+5511900000000",
+    );
+    const alertRequest = ycloudBodies.find(
+      (request) =>
+        request.type === "template" &&
+        request.to === process.env.WHATSAPP_ALERT_NUMBER,
+    );
+    assert.ok(patientRequest);
+    assert.ok(alertRequest);
+    assert.equal(patientRequest.type, "text");
+    assert.match(patientRequest.text.body, /equipe/i);
+    assert.match(patientRequest.text.body, /retorno pela manhã/i);
+    assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientRequest.text.body, /R\$/);
+    assert.doesNotMatch(patientRequest.text.body, /confirmação humana/i);
+    const alertText = alertRequest.template.components[0].parameters
+      .map((parameter) => parameter.text)
+      .join("\n");
+    assert.match(alertText, /PREÇO CIRÚRGICO — REVISAR/);
+    assert.match(alertText, /blefaroplastia/i);
+    assert.match(alertText, /R\$ 18 mil e R\$ 23 mil/i);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

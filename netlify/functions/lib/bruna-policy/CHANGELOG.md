@@ -1,5 +1,14 @@
 # Histórico do pacote Bruna
 
+## 2026-08-23.4 — candidata integrada
+
+- A segunda e última retomada aprovada pela equipe reutiliza a revisão semântica da primeira somente quando a última interação durável continua sendo exatamente a primeira retomada automática e não houve fala posterior da paciente ou da equipe; qualquer incerteza exige nova revisão da IA e falha fechada.
+- Cervicoplastia passa a ter faixa automática exclusiva de R$ 18 mil a R$ 26 mil depois de aceite claro da oferta ou novo pedido explícito; sua resposta nunca inclui os valores de minilifting ou lifting facial.
+- Lifting facial preserva sua faixa própria e otoplastia permanece automática em R$ 8 mil a R$ 14 mil, cada uma com detecção de repetição independente.
+- Toda pergunta de preço de outra cirurgia entra em revisão humana desde a primeira ocorrência, com alerta interno e resposta sugerida para conferência manual.
+- As respostas à paciente deixam de expor linguagem de confirmação operacional interna; o gate de saída bloqueia essa formulação e continua bloqueando valores fora das três exceções.
+- Estado desta versão: reconciliada sobre a produção v124 e autorizada para publicação, sem mensagem real. Os testes focados passaram em 313/313, a suíte ampla em 1015/1015 e o build em 178 arquivos e 44 URLs. Publicação e pós-voo ainda pendentes neste ponto do registro.
+
 ## 2026-08-22.1
 
 - Eventos que chegam da YCloud como `unsupported`, sem corpo textual utilizável, deixam de terminar sem uma resposta ao paciente: recebem a mesma pergunta neutra de recuperação já aprovada para texto sem corpo.

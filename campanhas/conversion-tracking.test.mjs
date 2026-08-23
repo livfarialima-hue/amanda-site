@@ -262,6 +262,51 @@ test("adds the exact click ID to WhatsApp without consent", () => {
   assert.equal(link.dataset.templateId, "procedure_evaluation_v1");
 });
 
+test("keeps the lifting price-range intent while generic CTAs stay neutral", () => {
+  const rangeLink = {
+    addEventListener() {},
+    dataset: {
+      ctaLocation: "price_range_reference",
+      prefillIntent: "price_range_reference",
+      procedure: "lifting-facial-preco",
+    },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.%0A%0ARefer%C3%AAncia%3A%20pre%C3%A7o%20de%20lifting%20facial",
+    matches() {
+      return true;
+    },
+    textContent: "Conversar sobre uma faixa geral",
+  };
+  const genericLink = {
+    addEventListener() {},
+    dataset: { ctaLocation: "footer", procedure: "lifting-facial-preco" },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.%0A%0ARefer%C3%AAncia%3A%20pre%C3%A7o%20de%20lifting%20facial",
+    matches() {
+      return true;
+    },
+    textContent: "Conversar com a equipe",
+  };
+
+  loadAttribution({
+    consent: "denied",
+    links: [rangeLink, genericLink],
+    readyState: "complete",
+  });
+
+  const rangeMessage = new URL(rangeLink.href).searchParams.get("text");
+  const genericMessage = new URL(genericLink.href).searchParams.get("text");
+  assert.match(
+    rangeMessage,
+    /^Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida\./,
+  );
+  assert.match(rangeMessage, /Ref\. SITE-lifting-facial-preco$/);
+  assert.equal(rangeLink.dataset.templateId, "procedure_evaluation_v1");
+  assert.match(
+    genericMessage,
+    /^Olá! Tenho interesse em lifting facial com a Dra\. Amanda e gostaria de entender melhor como funciona a avaliação\./,
+  );
+  assert.equal(genericLink.dataset.templateId, "procedure_evaluation_v1");
+});
+
 test("keeps the Google click ID across pages in the same unconsented session", () => {
   const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4session";
   const firstPage = loadAttribution({

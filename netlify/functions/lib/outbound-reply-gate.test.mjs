@@ -219,6 +219,51 @@ test("the protected otoplasty range passes with the facial price guide", () => {
   assert.equal(result.allowed, true);
 });
 
+test("the protected cervical range passes without any facial lifting amount", () => {
+  const body = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "lifting_cervical",
+    directToPatient: true,
+  });
+  const result = validateOutboundReply({
+    body,
+    currentText: "Pode me passar a faixa da cervicoplastia?",
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+  assert.match(body, /R\$ 18 mil e R\$ 26 mil/);
+  assert.doesNotMatch(body, /Minilifting|R\$ 25 mil|R\$ 42 mil/i);
+  assert.doesNotMatch(body, /quanto-custa-lifting-facial-sao-paulo/);
+});
+
+test("a different cervical range remains blocked", () => {
+  const body = buildSurgicalPriceSuggestedReply({
+    patientName: "Maria",
+    procedure: "lifting_cervical",
+    directToPatient: true,
+  }).replace("R$ 26 mil", "R$ 27 mil");
+  const result = validateOutboundReply({
+    body,
+    currentText: "Pode me passar a faixa da cervicoplastia?",
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "unapproved_monetary_amount");
+});
+
+test("internal human-confirmation language is blocked from patient replies", () => {
+  const result = validateOutboundReply({
+    body: "O pagamento pode ser parcelado. As condições exatas dependem da confirmação humana.",
+    currentText: "Como funciona o pagamento?",
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "internal_confirmation_language");
+});
+
 test("the protected otoplasty range omits a facial guide already shared", () => {
   const recentConversation = [
     {

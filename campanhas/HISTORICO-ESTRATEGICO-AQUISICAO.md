@@ -6,6 +6,32 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 22 de agosto de 2026 — separação estrita das faixas automáticas por procedimento
+
+- **Status:** autorizado por Daniel, reconciliado sobre a produção v124 e testado; publicação em andamento.
+- **Área/campanha:** atendimento de preço da Bruna no WhatsApp; nenhuma alteração de campanha, orçamento, lance, palavra-chave, anúncio ou página.
+- **Mudança:** cervicoplastia passa a usar exclusivamente R$ 18 mil a R$ 26 mil depois de aceite claro da oferta ou novo pedido explícito; lifting facial/minilifting e otoplastia mantêm suas faixas próprias. Uma resposta cervical nunca mostra valores de lifting facial ou minilifting. Qualquer pergunta de preço de outro procedimento gera alerta interno com resposta sugerida desde o primeiro pedido. A frase `As condições exatas dependem da confirmação humana` e suas variantes deixam de aparecer nas mensagens à paciente, embora detalhes não aprovados permaneçam bloqueados internamente.
+- **Motivo e evidência:** uma resposta real de contexto cervical misturou as faixas de minilifting e lifting facial, criando risco de informação comercial errada e perda de confiança.
+- **Hipótese:** separar faixa por procedimento e antecipar o alerta dos demais preços reduz erro de contexto sem aumentar silêncio operacional.
+- **Métricas:** zero faixa cruzada; alertas de preço emitidos para 100% dos procedimentos fora das três exceções; sugestão copiável presente; continuidade depois da resposta; reclamações e revisões humanas.
+- **Guardrails:** uma faixa automática por contexto; sem orçamento, proposta ou garantia; valor final individual; nenhuma repetição; nenhuma condição comercial exata inventada; nenhuma mensagem real de teste.
+- **Revisão:** sete dias após eventual publicação ou imediatamente diante de faixa cruzada, alerta ausente ou resposta automática fora das exceções.
+- **Regra para manter:** manter se não houver mistura de procedimentos, os alertas forem completos e a continuidade permanecer segura.
+- **Regra para reverter:** desativar todas as faixas automáticas e encaminhar preço integralmente para revisão humana se qualquer resposta cruzar procedimento ou romper as ressalvas.
+
+## 22 de agosto de 2026 — sinalização pública de faixa privada no guia de lifting
+
+- **Status:** autorizado por Daniel, reconciliado e testado; publicação em andamento e monitoramento posterior obrigatório.
+- **Área/campanha:** página `conteudos/quanto-custa-lifting-facial-sao-paulo/` e continuidade privada pelo WhatsApp; nenhuma alteração em campanha, orçamento, lance, palavra-chave ou anúncio.
+- **Mudança:** o guia continua sem faixa ou valor numérico da cirurgia, mas passa a explicar, no primeiro bloco e no FAQ, que a pessoa pode conversar pelo WhatsApp sobre uma faixa geral de valores como ponto de partida. O CTA usa a promessa precisa `Conversar sobre uma faixa geral`; a página esclarece que a referência é informativa, não é orçamento, proposta nem garantia, e que o valor final pode ficar fora da faixa conforme avaliação e planejamento individual.
+- **Motivo e evidência:** retirar os números reduziu exposição regulatória, mas também pode frustrar quem chega pela intenção explícita de preço. De 23/07 a 21/08, `AG_LIFTING_FACIAL_PRECO` apresentou 93 cliques, 750 impressões, CTR de 12,40%, R$ 147,55 de gasto e zero conversão exibida no Google Ads. No GA4 de 25/07 a 21/08, o grupo teve 39 sessões, 22 segundos de engajamento médio e taxa de eventos principais de 5,13%, contra 107 sessões, 38 segundos e 7,48% no grupo geral. A atribuição do funil permanece insuficiente, portanto esses dados justificam reduzir frustração, não provam causalidade nem autorizam consolidação.
+- **Hipótese:** explicitar a disponibilidade de uma referência privada, sem números públicos, reduz a sensação de resposta evasiva e aumenta conversas úteis sem transformar a página em anúncio de preço cirúrgico.
+- **Métricas:** cliques nos CTAs `price_range_reference`, `final_price_range_reference` e `sticky_price_range_reference`; contatos identificados e válidos; pedidos pessoais de faixa; aceite da referência; lead qualificado; consulta agendada/realizada; reclamações, confusão entre referência e orçamento e envio fora dos guardrails.
+- **Guardrails:** zero número cirúrgico na página e no schema; não prometer faixa individual, orçamento ou preço antes da avaliação; faixa privada somente para procedimentos e contextos aprovados, depois de aceite claro ou novo pedido explícito, uma única vez e com ressalvas; orientação Codame/jurídica contrária suspende a oferta; nenhuma mudança de mídia neste teste.
+- **Revisão:** 7, 14 e 28 dias depois de eventual publicação, condicionada a volume suficiente e atribuição validada.
+- **Regra para manter:** manter se o contato sobre preço aumentar ou avançar com qualidade, sem faixa pública, expectativa de preço garantido, reclamação ou quebra de contexto.
+- **Regra para reverter:** restaurar o CTA anterior de avaliação e retirar a sinalização de faixa se houver interpretação recorrente de preço prometido, aumento de contatos exclusivamente por menor preço, resposta privada indevida ou orientação regulatória contrária.
+
 ## 22 de agosto de 2026 — auditoria ao vivo das cinco campanhas sem mudança madura
 
 - **Status:** auditoria concluída; nenhuma alteração de campanha, anúncio, palavra, negativa, recurso, lance, meta, orçamento, site ou WhatsApp foi publicada.
@@ -537,3 +563,17 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Revisão:** primeiro contato Google elegível após a correção; leitura de sete dias completos em 30/08 e de 14 dias completos em 06/09.
 - **Regra para manter:** manter se os novos contatos chegarem com códigos canônicos, sem perda de click ID, duplicidade ou efeito lateral.
 - **Regra para reverter:** restaurar exatamente os overrides anteriores dos cinco anúncios somente diante de perda de atribuição ou efeito colateral comprovado; não reverter por oscilação de CTR, clique ou volume isolado.
+
+### 22 de agosto de 2026 — calibração das recomendações semanais do Google Ads
+
+- **Status:** diagnóstico e código local concluídos; publicação do script pendente da proprietária.
+- **Área:** rotina somente leitura `12117745` e triagem do e-mail semanal de 17/08; nenhuma mudança de orçamento, lance, meta, site ou WhatsApp.
+- **Mudança local:** o commit `ee5df71` consolidou variações de preço por campanha/grupo, preservou seis negativas de roteamento confirmadas ao vivo, manteve acionável o autobloqueio cervical por `"lipoaspiração de papada"`, passou a validar metas personalizadas e corrigiu duas consultas que retornavam `N/D`. O e-mail agora declara truncamento.
+- **Motivo e evidência:** o assunto contava 100 sugestões, mas o corpo mostrava 50; 39 das 40 linhas visíveis em `Aguardar dados` eram o mesmo problema de preço em BLEF. O alerta de seis campanhas com `biddable=false` ignorava que todas exibem `Lead qualificado GCLID — campanhas (personalizada)`. Seis das sete negativas P0 eram roteamentos intencionais; somente a negativa cervical conflita com o próprio `AG_LIPO_PAPADA`.
+- **Validação:** `18/18` testes locais; zero chamada de mutação no script. A sessão `daniel.added@gmail.com` não pôde salvar porque a programação pertence a `aschroeder.br@gmail.com`; a programação ativa foi preservada e a publicação foi agendada para 24/08 08:30.
+- **Hipótese:** reduzir falsos P0 e duplicação fará o relatório concentrar a revisão humana em problemas técnicos distintos, sem esconder linguagem legítima nem confundir meta personalizada com configuração inativa.
+- **Métrica principal:** proporção de alertas acionáveis e fontes `OK`/`N/D`; secundariamente, cobertura canônica e passagem de qualificado para consulta.
+- **Guardrails:** rotina somente leitura; nenhuma recomendação aplicada automaticamente; orçamento total R$ 87/dia; site e `S_BR_SP_LIFTING_FACIAL` inalterados; remoção da negativa cervical somente de forma isolada e reversível.
+- **Revisão:** publicação/prévia em 24/08; saúde em 27/08; janelas completas em 30/08 e 06/09; gate OTO em 03/09 não encerra teste inexistente.
+- **Regra para manter:** manter a calibração se a prévia e os relatórios distinguirem corretamente meta personalizada, roteamento, intenção de preço e `N/D`, sem perder alertas reais.
+- **Regra para reverter:** restaurar a versão anterior do script se a execução falhar ou omitir uma fonte real; não remover a programação existente como atalho de publicação.

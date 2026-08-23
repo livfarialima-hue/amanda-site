@@ -605,7 +605,7 @@ export async function processHumanResumeJob(
           professional: "amanda",
           procedure:
             approvedPriceReplyKind === "lifting_range"
-              ? "lifting_facial"
+              ? enrichedPlan.procedure || job.procedure || "lifting_facial"
               : approvedPriceReplyKind === "otoplasty_range"
                 ? "otoplastia"
                 : enrichedPlan.procedure || job.procedure || "",

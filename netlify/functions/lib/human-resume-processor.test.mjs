@@ -630,6 +630,60 @@ test("direct lifting price resume does not repeat the composition guide", async 
   assert.equal(deps.alerts.length, 0);
 });
 
+test("a cervical price resume keeps the cervical procedure and its own range", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({
+    status: "completed",
+    decision: {
+      route: "standard_reply",
+      confidence: "high",
+      automaticAllowed: true,
+      urgent: false,
+      professional: "amanda",
+      procedure: "lifting_cervical",
+      replyCode: "LIFTING-PRICE-RANGE-01",
+      suggestedReply: "Resposta semântica validada.",
+      reviewReason: "lifting_price_range_direct",
+    },
+  });
+  const result = await processHumanResumeJob(
+    job({
+      procedure: "lifting_cervical",
+      text: "Sim, pode me passar",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "Este guia explica o orçamento: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ Se você quiser, posso te passar uma faixa geral como referência inicial.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: "Sim, pode me passar",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(
+    deps.patientMessages[0].body,
+    /cervicoplastia \(lifting cervical\) costuma ficar entre R\$ 18 mil e R\$ 26 mil/i,
+  );
+  assert.doesNotMatch(
+    deps.patientMessages[0].body,
+    /Minilifting|R\$ 25 mil|R\$ 42 mil/i,
+  );
+  assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
+  assert.equal(deps.alerts.length, 0);
+});
+
 test("an accepted otoplasty range offer resumes with the approved range once", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({

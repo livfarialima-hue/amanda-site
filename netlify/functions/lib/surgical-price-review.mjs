@@ -382,7 +382,7 @@ export function buildSurgicalInitialPriceReply({
     String(currentText || ""),
   );
   const paymentContext = asksAboutTerms
-    ? "O orçamento reúne os itens aplicáveis. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. Quantidade de parcelas, percentual do desconto e demais condições dependem de confirmação humana."
+    ? "O orçamento reúne os itens aplicáveis. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista."
     : "";
   const initialExplanation =
     procedure === "lifting_cervical"
@@ -430,12 +430,33 @@ export function buildSurgicalPriceSuggestedReply({
       directPriceGreeting(patientName, recentConversation),
       "Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
+      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
       guide,
     ].filter(Boolean).join("\n\n");
   }
 
-  if (["lifting_facial", "lifting_cervical"].includes(procedure)) {
+  if (procedure === "lifting_cervical") {
+    const guide = conversationContainsFacialPriceGuide(recentConversation)
+      ? ""
+      : `Veja o que compõe o valor: ${safeLink(priceGuideUrl(PRICE_GUIDES.facial))}`;
+    const location =
+      directToPatient &&
+      LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
+        ? CLINIC_LOCATION_REPLY
+        : "";
+    return [
+      directToPatient
+        ? directPriceGreeting(patientName, recentConversation)
+        : waitingGreeting(patientName),
+      location,
+      "Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
+      "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a extensão do procedimento, eventual associação a outras abordagens da face e do pescoço, equipe, hospital, anestesia, materiais e necessidades individuais. Não representa honorários isolados.",
+      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
+      guide,
+    ].filter(Boolean).join("\n\n");
+  }
+
+  if (procedure === "lifting_facial") {
     const guide = conversationContainsFacialPriceGuide(recentConversation)
       ? ""
       : `Veja o que compõe o valor: ${safeLink(LIFTING_PRICE_GUIDE_URL)}`;
@@ -454,11 +475,8 @@ export function buildSurgicalPriceSuggestedReply({
           "• Minilifting: entre R$ 18 mil e R$ 25 mil",
           "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
         ].join("\n"),
-        procedure === "lifting_cervical"
-          ? "Na cervicoplastia, a faixa aplicável depende de ela ser planejada isoladamente ou associada a outras abordagens da face e do pescoço."
-          : "",
         "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-        "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
+        "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
         guide,
       ].filter(Boolean).join("\n\n");
     }
@@ -471,11 +489,8 @@ export function buildSurgicalPriceSuggestedReply({
         "• Minilifting: entre R$ 18 mil e R$ 25 mil",
         "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
       ].join("\n"),
-      procedure === "lifting_cervical"
-        ? "Na cervicoplastia, a faixa aplicável depende de ela ser planejada isoladamente ou associada a outras abordagens da face e do pescoço."
-        : "",
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.",
+      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
       guide,
     ].filter(Boolean).join("\n\n");
   }
@@ -540,7 +555,7 @@ export function buildSurgicalPriceHoldingReply({
 
   return [
     [opening, location].filter(Boolean).join(" "),
-    `Vou confirmar ${pendingTopic}${procedureContext && !reference ? procedureContext : ""} com a equipe e te retorno ${returnTiming}. O pagamento cirúrgico pode ser parcelado antecipadamente, com quitação antes do procedimento, e há desconto à vista; condições exatas dependem dessa confirmação.`,
+    `Vou confirmar ${pendingTopic}${procedureContext && !reference ? procedureContext : ""} com a equipe e te retorno ${returnTiming}. O pagamento cirúrgico pode ser parcelado antecipadamente, com quitação antes do procedimento, e há desconto à vista.`,
   ].filter(Boolean).join("\n\n");
 }
 

@@ -10,7 +10,7 @@ import {
 } from "../scripts/static-site-artifact.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
-const trackingAssetVersion = "20260815-attribution4";
+const trackingAssetVersion = "20260823-price-range-1";
 const trackingAssets = [
   "conversion-tracking.js",
   "tracking-config.js",

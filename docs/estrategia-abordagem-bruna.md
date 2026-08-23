@@ -2,11 +2,11 @@
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-08-23.3
+**Versão:** 2026-08-23.4
 
-**Estado do release:** publicado e verificado em 23/08/2026. Toda retomada programada passa por uma nova leitura semântica dos 20 turnos recentes imediatamente antes do provedor. A IA apenas confirma `send_exact` com `context_aligned` e confiança alta ou veta para revisão; nunca reescreve silenciosamente a mensagem aprovada, nunca substitui as travas determinísticas e falha fechada quando o contexto ou a própria análise estiverem indisponíveis. A Central se reorganiza depois do processamento, mantém o histórico terminal recente por 24 horas e, ao marcar `Aprovar com a Bruna`, sugere uma próxima janela com melhor resposta observada sem enviar. Quando a paciente responde a uma retomada com uma pergunta segura, a fala passa a ser um novo turno ativo e a Bruna pode continuar o assunto sem reapresentação; agenda, preço fora da regra, cuidado clínico, takeover e procedimento incerto continuam humanos. Código funcional `f3966f76d281056fc1abf5198a9a97ea519ed6ff`, deploy Netlify `6a8b2f26fc9c880f38e8e745` e Apps Script v124 no deployment canônico preservado; **1006/1006 testes**, build de 178 arquivos e 44 URLs sem erro. Os endpoints canônico e imutável responderam HTTP 200 em modo `active`; o web app respondeu HTTP 200 e os testes com segredo/token inválidos não enviaram mensagem, não cancelaram retomada e não mudaram preferência. Nenhuma mensagem real foi enviada. Rollback: código `6a27731a5bef23427b749a726ddab468aea56d16`, deploy Netlify `6a89fab3f44a1578bd9c9f41` e Apps Script v123.
+**Mudança local candidata — ainda não publicada:** este pacote acumula, sem substituir as proteções da produção v124, duas melhorias independentes. A segunda e última retomada aprovada pela equipe pode reutilizar a revisão semântica da primeira, sem nova chamada de IA, somente quando a primeira ocorreu depois da entrada comprovada do veto semântico em produção, a última interação registrada continua sendo exatamente aquela retomada automática e não existe fala posterior da paciente ou da equipe. A primeira retomada continua revisada pela IA. Qualquer nova interação, mensagem manual, âncora diferente, falta de aprovação ou contexto não comprovado exige nova revisão semântica; as travas determinísticas de preferência, janela, procedimento, sensibilidade, agenda, preço, promessa humana e mensagem mais recente continuam obrigatórias em todos os envios. Além disso, a faixa automática de cervicoplastia fica estritamente separada do lifting facial e passa a ser exclusivamente de **R$ 18 mil a R$ 26 mil**; uma conversa cervical nunca recebe a faixa de minilifting ou lifting facial. Lifting facial, cervicoplastia e otoplastia preservam seus fluxos automáticos próprios. Toda pergunta de preço de outro procedimento entra em revisão humana desde o primeiro pedido e gera alerta interno com resposta sugerida. As respostas à paciente não expõem linguagem de confirmação operacional interna; detalhes comerciais não aprovados continuam bloqueados internamente.
 
-**Mudança local candidata — ainda não publicada:** a segunda e última retomada aprovada pela equipe pode reutilizar a revisão semântica da primeira, sem nova chamada de IA, somente quando a primeira ocorreu depois da entrada comprovada do veto semântico em produção, a última interação registrada continua sendo exatamente aquela retomada automática e não existe fala posterior da paciente ou da equipe. A primeira retomada continua revisada pela IA. Qualquer nova interação, mensagem manual, âncora diferente, falta de aprovação ou contexto não comprovado exige nova revisão semântica; as travas determinísticas de preferência, janela, procedimento, sensibilidade, agenda, preço, promessa humana e mensagem mais recente continuam obrigatórias em todos os envios.
+**Último release publicado:** verificado em 23/08/2026. Toda retomada programada passa por uma nova leitura semântica dos 20 turnos recentes imediatamente antes do provedor. A IA apenas confirma `send_exact` com `context_aligned` e confiança alta ou veta para revisão; nunca reescreve silenciosamente a mensagem aprovada, nunca substitui as travas determinísticas e falha fechada quando o contexto ou a própria análise estiverem indisponíveis. A Central se reorganiza depois do processamento, mantém o histórico terminal recente por 24 horas e, ao marcar `Aprovar com a Bruna`, sugere uma próxima janela com melhor resposta observada sem enviar. Quando a paciente responde a uma retomada com uma pergunta segura, a fala passa a ser um novo turno ativo e a Bruna pode continuar o assunto sem reapresentação; agenda, preço fora da regra, cuidado clínico, takeover e procedimento incerto continuam humanos. Código funcional `f3966f76d281056fc1abf5198a9a97ea519ed6ff`, deploy Netlify `6a8b2f26fc9c880f38e8e745` e Apps Script v124 no deployment canônico preservado; **1006/1006 testes**, build de 178 arquivos e 44 URLs sem erro. Os endpoints canônico e imutável responderam HTTP 200 em modo `active`; o web app respondeu HTTP 200 e os testes com segredo/token inválidos não enviaram mensagem, não cancelaram retomada e não mudaram preferência. Nenhuma mensagem real foi enviada. Rollback: código `6a27731a5bef23427b749a726ddab468aea56d16`, deploy Netlify `6a89fab3f44a1578bd9c9f41` e Apps Script v123.
 
 **Estado do release:** publicado e verificado em 22/08/2026. O baseline ao vivo confirmou três entradas textuais consecutivas, todas ligadas à mesma oportunidade Amanda, mas sem resposta automática entre a pergunta aberta da clínica e a saída humana posterior. A causa foi a combinação de takeover ativo, exceção semântica limitada a respostas curtas e contexto congelado antes do fim do debounce; quando o conjunto também continha preço, o envelope de takeover retirava o único link e a oferta informativa já aprovados para a primeira resposta cervical. A versão `2026-08-22.2` trata mensagens consecutivas dentro da janela de 45 segundos como um único turno, relê o ledger durável somente depois de confirmar qual é a mensagem mais recente e permite resposta informativa quando a última fala humana tiver convidado explicitamente a pergunta. Código funcional `6a27731a5bef23427b749a726ddab468aea56d16`, deploy `6a89fab3f44a1578bd9c9f41` e função `ycloud-webhook` no checksum `4ebc57f12ed40b34b158381af84ddb2ff913734c10345f439a1b62d4fe79041d`; **642/642 testes do Netlify**, build de 178 arquivos e 44 URLs sem erro. A suíte ampla passou em 957 de 958 testes; a única falha é a divergência preexistente de versão de tracking em uma página fora deste commit. Os endpoints canônico e imutável responderam HTTP 200 em modo `active`. Métrica principal: uma única resposta para o conjunto completo. Guardrails: nenhuma resposta depois de nova saída humana, nenhuma agenda ou confirmação automática, nenhuma ampliação de preço, nenhuma orientação clínica individual e nenhuma repetição de link ou faixa. A conversa real já havia recebido resposta humana e permaneceu sem reenvio. Rollback: código `5c08be94a7382c9f2c2bbd56c510277541b19169` e deploy `6a89f0e9f4f19fa8ec16b8e6`. Revisões: saúde técnica em 23/08 e comportamento em 29/08, sem atribuir resultado antes da janela mínima.
 
@@ -303,7 +303,7 @@ A pergunta de preço é legítima. Responder sem parecer evasiva, sem transforma
 >
 > Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.
 
-O guia acima é o exemplo facial. A primeira resposta usa o material correspondente ao procedimento confirmado:
+O guia acima é o exemplo facial do fluxo automático de lifting facial. A primeira resposta automática usa um único material correspondente ao procedimento confirmado:
 
 - face e pescoço: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/
 - mama: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/
@@ -317,20 +317,20 @@ Para `cervicoplastia (lifting cervical)`, usar a abertura específica aprovada, 
 >
 > Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.
 
-Para `lifting facial`, `cervicoplastia (lifting cervical)` e `otoplastia`, terminar a primeira resposta com `Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.`, sempre depois do guia facial e sem número nesse turno. Se a mesma mensagem de otoplastia trouxer outras dúvidas seguras, respondê-las antes de falar de preço. `Otomodelação` deve ser tratada como um nome ambíguo, usado para abordagens diferentes: não presumir injetáveis, ausência de cirurgia, duração temporária ou indicação somente pelo termo. Explicar de forma conservadora a diferença de escopo e, se a técnica específica realmente mudar a resposta, pedir uma única clarificação.
+Para `lifting facial`, `cervicoplastia (lifting cervical)` e `otoplastia`, terminar a primeira resposta com `Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.`, sempre depois do guia facial e sem número nesse turno. Se a mesma mensagem de otoplastia trouxer outras dúvidas seguras, respondê-las antes de falar de preço. `Otomodelação` deve ser tratada como um nome ambíguo, usado para abordagens diferentes: não presumir injetáveis, ausência de cirurgia, duração temporária ou indicação somente pelo termo. Explicar de forma conservadora a diferença de escopo e, se a técnica específica realmente mudar a resposta, pedir uma única clarificação. Para qualquer outro procedimento, a primeira pergunta de preço não recebe resposta automática: o sistema gera alerta interno com uma sugestão pronta para a equipe revisar e enviar.
 
-Se o procedimento estiver confirmado, terminar aí. As únicas ofertas informativas de faixa permitidas nessa etapa são as de lifting facial, cervicoplastia e otoplastia descritas acima. Somente se não for possível identificar qual cirurgia está sendo pesquisada, perguntar `Qual cirurgia você está pesquisando?`. Não perguntar o que mais incomoda no corpo ou no rosto. No primeiro pedido:
+Nos três procedimentos automáticos, terminar aí. As únicas ofertas informativas de faixa permitidas nessa etapa são as de lifting facial, cervicoplastia e otoplastia descritas acima. Nos demais procedimentos ou quando a cirurgia não estiver identificada, gerar revisão humana com resposta sugerida. Não perguntar automaticamente o que mais incomoda no corpo ou no rosto. No primeiro pedido automático:
 
 - não enviar faixa;
 - enviar no máximo um guia de composição, escolhido pela região do procedimento confirmado;
 - nunca usar o guia facial para cirurgia de mama, corpo ou cirurgia íntima;
 - não listar automaticamente técnica, equipe, hospital, anestesia e materiais;
 - não convidar a pedir uma faixa, salvo nas respostas específicas aprovadas de lifting facial, cervicoplastia e otoplastia;
-- se não houver procedimento confiável, perguntar qual cirurgia ou região está pesquisando.
+- se não houver procedimento confiável, encaminhar para revisão humana com uma pergunta de esclarecimento sugerida.
 
 Se a mensagem também perguntar sobre pagamento ou itens incluídos:
 
-> O orçamento é apresentado de forma completa, com os itens aplicáveis ao caso. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. Quantidade de parcelas, juros, percentual do desconto e demais condições dependem de confirmação humana.
+> O orçamento é apresentado de forma completa, com os itens aplicáveis ao caso. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.
 
 ### Insistência explícita em lifting/minilifting ou aceite da oferta de faixa
 
@@ -341,11 +341,27 @@ Informar uma única vez no mesmo contexto:
 
 Resposta-base adaptável:
 
-> Para ajudar no planejamento, como estimativa geral, o lifting facial costuma ficar entre R$ 26 mil e R$ 42 mil. Essa faixa é informativa: não é orçamento, proposta nem garantia de preço. O valor final é definido após avaliação e planejamento, pode ficar fora da faixa e varia conforme técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista; quantidade de parcelas, percentual e demais condições dependem de confirmação humana. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
+> Para ajudar no planejamento, como estimativa geral, o lifting facial costuma ficar entre R$ 26 mil e R$ 42 mil. Essa faixa é informativa: não é orçamento, proposta nem garantia de preço. O valor final é definido após avaliação e planejamento, pode ficar fora da faixa e varia conforme técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
 
 Para minilifting, trocar apenas o procedimento e a faixa. Se a paciente comparar as duas opções, informar ambas. Nova repetição ou contexto ambíguo vai para revisão humana.
 
-No lifting facial e na cervicoplastia, o aceite explícito de `posso te passar uma faixa geral de valores como ponto de partida` — inclusive respostas curtas como `Sim` ou `Pode me passar` interpretadas contra essa oferta — autoriza essa referência uma única vez. Na cervicoplastia, a resposta também deve explicar que a faixa aplicável depende de o procedimento ser planejado isoladamente ou associado a outras abordagens da face e do pescoço. O primeiro pedido continua sem números; a faixa só entra no turno seguinte, depois do aceite ou de um novo pedido explícito por valor, média ou faixa. Todas as ressalvas permanecem obrigatórias. Se o guia facial já tiver sido enviado no primeiro turno, a mensagem da faixa não repete link; se nenhum guia facial estiver no histórico, inclui o guia específico de lifting como fallback seguro.
+No lifting facial, o aceite explícito de `posso te passar uma faixa geral de valores como ponto de partida` — inclusive respostas curtas como `Sim` ou `Pode me passar` interpretadas contra essa oferta — autoriza essa referência uma única vez. O primeiro pedido continua sem números; a faixa só entra no turno seguinte, depois do aceite ou de um novo pedido explícito por valor, média ou faixa. Todas as ressalvas permanecem obrigatórias. Se o guia facial já tiver sido enviado no primeiro turno, a mensagem da faixa não repete link; se nenhum guia facial estiver no histórico, inclui o guia específico de lifting como fallback seguro.
+
+### Aceite da oferta ou novo pedido explícito de faixa de cervicoplastia
+
+Informar uma única vez no mesmo contexto:
+
+- cervicoplastia (lifting cervical): R$ 18 mil a R$ 26 mil.
+
+Resposta-base:
+
+> Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.
+>
+> O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a extensão do procedimento, eventual associação a outras abordagens da face e do pescoço, equipe, hospital, anestesia, materiais e necessidades individuais. Não representa honorários isolados.
+>
+> O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.
+
+O aceite explícito da oferta — inclusive `Sim` ou `Pode me passar` interpretados contra a última fala da clínica — ou um novo pedido explícito por valor, média ou faixa autoriza essa referência uma única vez. Uma conversa cervical nunca recebe as faixas de minilifting ou lifting facial. Se o guia facial geral já tiver sido enviado, não repetir link; sem guia anterior, usar uma única vez https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/. Nova repetição ou contexto ambíguo segue para revisão humana.
 
 ### Aceite da oferta ou novo pedido explícito de faixa de otoplastia
 
@@ -359,13 +375,13 @@ Resposta-base:
 >
 > O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.
 >
-> O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. As condições exatas dependem de confirmação humana.
+> O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.
 
 O primeiro pedido continua sem números. O aceite claro da oferta — inclusive `Sim` ou `Pode me passar` lidos contra o turno anterior — ou um novo pedido explícito por valor, média ou faixa autoriza essa resposta. Se o guia facial já tiver sido enviado, não repetir link; sem guia anterior, acrescentar uma única vez https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/. Não incluir CTA ou pergunta junto da faixa. Nova tentativa de enviar a faixa no mesmo contexto, outro intervalo ou ausência das ressalvas obrigatórias deve ser bloqueada e seguir para revisão humana.
 
 ### Outras cirurgias
 
-Após insistência, preparar sugestão interna pela tabela aprovada e exigir conferência humana. Fora das exceções expressamente aprovadas de lifting/minilifting, cervicoplastia e otoplastia, nunca improvisar faixa para a paciente.
+Desde a primeira pergunta de preço, preparar sugestão interna pela tabela aprovada e emitir alerta para a equipe. Fora das exceções expressamente aprovadas de lifting/minilifting, cervicoplastia e otoplastia, nunca enviar faixa automaticamente para a paciente.
 
 ### Comparação com outro orçamento
 

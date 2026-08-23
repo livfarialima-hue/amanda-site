@@ -318,10 +318,7 @@ test("the cervical range is not sent twice after an explicit repeat request", ()
       {
         role: "assistant",
         source: "bruna",
-        text: [
-          "• Minilifting: entre R$ 18 mil e R$ 25 mil",
-          "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
-        ].join("\n"),
+        text: "Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil.",
       },
     ],
   );
@@ -367,7 +364,7 @@ test("the bot does not send the full lifting range twice in the same recent cont
   assert.equal(enrichedPlan.automaticAllowed, false);
 });
 
-test("a repeated price question for another surgery goes to human review with its procedure", () => {
+test("a first price question for another surgery goes directly to human review", () => {
   const preliminaryPlan = planAutomation({
     text: "Qual o valor da blefaroplastia?",
     messageType: "text",
@@ -375,18 +372,13 @@ test("a repeated price question for another surgery goes to human review with it
     platform: "WhatsApp direto",
   });
 
-  const plan = enrichAutomationPlanFromConversation(
-    preliminaryPlan,
-    [{ role: "assistant", source: "bruna", text: INITIAL_PRICE_REPLY }],
-  );
-
-  assert.equal(plan.route, "human_review");
-  assert.equal(plan.reason, "surgical_price_range_review");
-  assert.equal(plan.procedure, "blefaroplastia");
-  assert.equal(plan.automaticAllowed, false);
+  assert.equal(preliminaryPlan.route, "human_review");
+  assert.equal(preliminaryPlan.reason, "surgical_price_review");
+  assert.equal(preliminaryPlan.procedure, "blefaroplastia");
+  assert.equal(preliminaryPlan.automaticAllowed, false);
 });
 
-test("installment and hospital composition questions can receive the first price response", () => {
+test("price terms without an approved automatic procedure go to human review", () => {
   for (const text of [
     "Vcs parcelam em quantas vezes?",
     "O valor que vocês passam já inclui hospital e anestesia?",
@@ -398,11 +390,42 @@ test("installment and hospital composition questions can receive the first price
       platform: "WhatsApp direto",
     });
 
-    assert.equal(plan.route, "standard_reply", text);
-    assert.equal(plan.reason, "price_initial_information", text);
+    assert.equal(plan.route, "human_review", text);
+    assert.equal(plan.reason, "price_without_confirmed_procedure", text);
     assert.equal(plan.priceRequestKind, "terms", text);
-    assert.equal(plan.automaticAllowed, true, text);
+    assert.equal(plan.automaticAllowed, false, text);
   }
+});
+
+test("conversation context restores the automatic cervical price path", () => {
+  const preliminaryPlan = planAutomation({
+    text: "E os valores?",
+    messageType: "text",
+    reference: "WHATSAPP-DIRETO-SEM-CODIGO",
+    platform: "WhatsApp direto",
+  });
+  const plan = enrichAutomationPlanFromConversation(
+    preliminaryPlan,
+    [
+      {
+        role: "user",
+        source: "patient",
+        text: "Quero saber sobre cervicoplastia.",
+      },
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "O que você gostaria de entender primeiro?",
+      },
+    ],
+  );
+
+  assert.equal(preliminaryPlan.route, "human_review");
+  assert.equal(preliminaryPlan.reason, "price_without_confirmed_procedure");
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.procedure, "lifting_cervical");
+  assert.equal(plan.automaticAllowed, true);
 });
 
 test("pending hospital quote remains human-only even with conversation context", () => {
@@ -881,7 +904,7 @@ test("incomplete C06 campaign reference still identifies lifting facial", () => 
   assert.equal(plan.automaticAllowed, true);
 });
 
-test("the first frontoplasty price question receives the same initial information", () => {
+test("the first frontoplasty price question creates a human review", () => {
   const plan = planAutomation({
     text: "Gostaria de saber o valor da frontoplastia",
     messageType: "text",
@@ -889,11 +912,11 @@ test("the first frontoplasty price question receives the same initial informatio
     platform: "WhatsApp direto",
   });
 
-  assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "surgical_price_review");
   assert.equal(plan.replyCode, null);
   assert.equal(plan.procedure, "frontoplastia");
-  assert.equal(plan.automaticAllowed, true);
+  assert.equal(plan.automaticAllowed, false);
 });
 
 test("generic first message from a Meta ad remains eligible for Bruna", () => {

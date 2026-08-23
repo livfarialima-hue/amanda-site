@@ -314,6 +314,35 @@ export function classifyHumanResume({
     };
   }
 
+  const approvedAutomaticPricePlan = Boolean(
+    enrichedPlan?.route === "standard_reply" &&
+      enrichedPlan?.automaticAllowed === true &&
+      (
+        (
+          enrichedPlan?.reason === "price_initial_information" &&
+          ["lifting_facial", "lifting_cervical", "otoplastia"].includes(
+            enrichedPlan?.procedure,
+          )
+        ) ||
+        (
+          enrichedPlan?.reason === "lifting_price_range_direct" &&
+          ["lifting_facial", "lifting_cervical"].includes(
+            enrichedPlan?.procedure,
+          )
+        ) ||
+        (
+          enrichedPlan?.reason === "otoplasty_price_range_direct" &&
+          enrichedPlan?.procedure === "otoplastia"
+        )
+      ),
+  );
+  if (approvedAutomaticPricePlan) {
+    return {
+      action: "attempt_reply",
+      reason: enrichedPlan.reason,
+    };
+  }
+
   const reasons = [
     preliminaryPlan?.reason,
     enrichedPlan?.reason,

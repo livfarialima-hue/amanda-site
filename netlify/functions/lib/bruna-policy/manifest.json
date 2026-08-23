@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-23.3",
-  "promptVersion": "bruna-concierge-2026-08-23.3",
+  "bundleVersion": "2026-08-23.4",
+  "promptVersion": "bruna-concierge-2026-08-23.4",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-23.3",
+  "knowledgeSnapshot": "kb-2026-08-23.4",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",

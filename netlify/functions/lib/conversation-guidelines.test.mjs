@@ -80,12 +80,12 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /Nunca prometa dedução, restituição/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /parcelado antecipadamente, com quitação antes do procedimento/,
+    /parcelado antecipadamente com quitação antes do procedimento/,
   );
   assert.match(CONVERSATION_GUIDELINES, /desconto à vista/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /média ou faixa de qualquer outro procedimento/,
+    /Qualquer pergunta de preço de outro procedimento, inclusive a primeira, usa human_review/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -94,6 +94,14 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(
     CONVERSATION_GUIDELINES,
     /lifting facial entre R\$ 26 mil e R\$ 42 mil/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /exclusivamente cervicoplastia entre R\$ 18 mil e R\$ 26 mil/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /nunca inclua minilifting ou lifting facial na resposta cervical/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -122,19 +130,19 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /resposta padrão em faixa baseada na tabela interna/,
+    /resposta padrão baseada na tabela interna/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /resposta determinística inicial sem faixa/i,
+    /resposta determinística automática somente para lifting facial, cervicoplastia e otoplastia, sem faixa numérica/i,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /é natural querer saber o valor antes de decidir/,
+    /alerta interno com resposta sugerida/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Para os demais procedimentos[\s\S]{0,300}se o procedimento estiver claro, não acrescente pergunta, convite, faixa nem oferta/,
+    /Para qualquer outro procedimento, toda pergunta de preço, inclusive a primeira, usa human_review/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -144,16 +152,20 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     CONVERSATION_GUIDELINES,
     /Uma resposta curta como "Sim" ou "Pode me passar" só conta como aceite/,
   );
-  assert.match(CONVERSATION_GUIDELINES, /Não liste técnica, complexidade, equipe, hospital, anestesia, materiais ou acompanhamento nessa primeira resposta/);
-  assert.match(CONVERSATION_GUIDELINES, /não acrescente pergunta, convite, faixa/);
-  assert.match(CONVERSATION_GUIDELINES, /não como orçamento, proposta ou garantia de preço/i);
+  assert.match(CONVERSATION_GUIDELINES, /Não envie números nesse primeiro turno/);
+  assert.match(CONVERSATION_GUIDELINES, /não envie guia nem resposta comercial diretamente/);
+  assert.match(CONVERSATION_GUIDELINES, /não orçamento, proposta ou garantia/i);
   assert.match(
     CONVERSATION_GUIDELINES,
     /não apresente honorários isolados|faixa não representa honorários isolados/i,
   );
   assert.match(CONVERSATION_GUIDELINES, /quanto-custa-lifting-facial-sao-paulo/);
-  assert.match(CONVERSATION_GUIDELINES, /faixa completa já tiver sido enviada/i);
-  assert.match(CONVERSATION_GUIDELINES, /pode ficar fora dessa faixa/i);
+  assert.match(CONVERSATION_GUIDELINES, /Se a faixa já tiver sido enviada no contexto recente, use human_review/i);
+  assert.match(CONVERSATION_GUIDELINES, /pode ficar fora da faixa/i);
+  assert.doesNotMatch(
+    CONVERSATION_GUIDELINES,
+    /As condições exatas dependem da confirmação humana/i,
+  );
   assert.match(CONVERSATION_GUIDELINES, /use human_review/);
   assert.match(CONVERSATION_GUIDELINES, /mais de sete dias/);
   assert.match(CONVERSATION_GUIDELINES, /Não repita a apresentação ou as credenciais/);
@@ -205,9 +217,8 @@ test("playbook uses approved site content at a strategic moment", () => {
   assert.match(CONVERSATION_GUIDELINES, /limita o envio proativo a um material/);
   assert.match(CONVERSATION_GUIDELINES, /não repita URLs ou páginas já presentes/);
   assert.match(CONVERSATION_GUIDELINES, /guia específico de lifting fica reservado ao fallback/);
-  assert.match(CONVERSATION_GUIDELINES, /Nunca ofereça o guia de custos faciais para cirurgia de mama/);
-  assert.match(CONVERSATION_GUIDELINES, /cirurgias mamárias recebem o guia de mama/i);
-  assert.match(CONVERSATION_GUIDELINES, /cirurgias corporais e íntimas recebem o guia corporal/);
+  assert.match(CONVERSATION_GUIDELINES, /nunca use o guia de custos faciais para mama, corpo ou cirurgia íntima/i);
+  assert.match(CONVERSATION_GUIDELINES, /resposta sugerida usa o guia de mama ou corporal correspondente/i);
   assert.match(
     CONVERSATION_GUIDELINES,
     /responda primeiro como o procedimento funciona em linguagem simples/,
