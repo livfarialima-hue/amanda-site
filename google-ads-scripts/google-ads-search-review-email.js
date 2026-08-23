@@ -68,6 +68,18 @@ const PROCEDURE_TOKENS = Object.freeze([
   "cirurgiao plastico facial",
 ]);
 
+// Negativas verificadas ao vivo em 2026-08-22 e mantidas como roteamento
+// intencional entre campanhas ou grupos. A lista e deliberadamente especifica:
+// um termo novo ou em outro nivel continua sendo sinalizado para revisao.
+const INTENTIONAL_ROUTING_NEGATIVES = Object.freeze([
+  { campaign: "S_BR_SP_BLEFAROPLASTIA", adGroup: "—", text: "lipo de papada", matchType: "PHRASE" },
+  { campaign: "S_BR_SP_OTOPLASTIA", adGroup: "—", text: "lipo de papada", matchType: "PHRASE" },
+  { campaign: "S_BR_SP_CIRURGIA_FACIAL", adGroup: "—", text: "cirurgia de palpebras", matchType: "PHRASE" },
+  { campaign: "S_BR_SP_LIFTING_FACIAL", adGroup: "—", text: "cirurgia de palpebras", matchType: "PHRASE" },
+  { campaign: "S_BR_SP_OTOPLASTIA", adGroup: "Adulto", text: "orelha de abano crianca", matchType: "PHRASE" },
+  { campaign: "S_BR_SP_LIFTING_FACIAL", adGroup: "AG_LIFTING_FACIAL", text: "valor", matchType: "PHRASE" },
+]);
+
 function main() {
   const now = new Date();
   const context = createRunContext(now);
@@ -189,6 +201,16 @@ function buildReviewReport(context, account) {
     campaignConversionGoalsQuery(),
     warnings,
   );
+  const campaignGoalConfigs = safeQuery(
+    "configuração efetiva de metas por campanha",
+    conversionGoalCampaignConfigQuery(),
+    warnings,
+  );
+  const customConversionGoals = safeQuery(
+    "metas personalizadas de conversão",
+    customConversionGoalsQuery(),
+    warnings,
+  );
   const activeAds = context.isWeekly || context.isMonthly
     ? safeQuery("RSAs e URLs finais ativos", activeAdsQuery(), warnings)
     : [];
@@ -234,6 +256,8 @@ function buildReviewReport(context, account) {
     dailyCampaigns: dailyCampaigns.map(normalizeDailyCampaignRow),
     conversionSettings: conversionSettings.map(normalizeConversionSettingRow),
     campaignGoals: campaignGoals.map(normalizeCampaignGoalRow),
+    campaignGoalConfigs: campaignGoalConfigs.map(normalizeCampaignGoalConfigRow),
+    customConversionGoals: customConversionGoals.map(normalizeCustomConversionGoalRow),
     activeAds: activeAds.map(normalizeActiveAdRow),
     assetPerformance: assetPerformance.map(normalizeAssetRow),
     deviceSegments: deviceSegments.map(normalizeSegmentRow("device.type")),
@@ -255,6 +279,8 @@ function buildReviewReport(context, account) {
       conversionActions: sourceOk(conversionActions),
       conversionSettings: sourceOk(conversionSettings),
       campaignGoals: sourceOk(campaignGoals),
+      campaignGoalConfigs: sourceOk(campaignGoalConfigs),
+      customConversionGoals: sourceOk(customConversionGoals),
       policyIssues: sourceOk(policyIssues),
       changes: sourceOk(changes),
       activeAds: sourceOk(activeAds),
@@ -539,6 +565,7 @@ function buildCriticalAlerts(data) {
 function buildSuggestions(data) {
   const suggestions = [];
   const sourceStatus = data.sourceStatus || {};
+  const priceIntentGroups = new Map();
   const keywordIndex = new Set(
     data.keywords.map((row) => `${row.campaign}|${row.adGroup}|${normalizeText(row.keyword)}|${row.matchType}`),
   );
@@ -579,16 +606,7 @@ function buildSuggestions(data) {
     }
 
     if (classification.kind === "price_intent") {
-      suggestions.push({
-        priority: "P1",
-        decision: "observar",
-        area: `${term.campaign} / ${term.adGroup}`,
-        problem: "Intenção explícita de preço exige roteamento, não exclusão genérica",
-        evidence,
-        change: `Conferir se '${term.searchTerm}' chegou ao grupo e à página específicos de preço; preservar a intenção.`,
-        guardrail: "Não negativar preço, valor, custo ou quanto custa em nível de campanha/conta.",
-        confidence: "alta",
-      });
+      addPriceIntentTerm(priceIntentGroups, term);
       return;
     }
 
@@ -622,7 +640,27 @@ function buildSuggestions(data) {
     }
   });
 
+  priceIntentGroups.forEach((group) => {
+    const examples = group.terms
+      .slice()
+      .sort((left, right) => right.cost - left.cost)
+      .slice(0, 3)
+      .map((term) => `'${term.searchTerm}'`)
+      .join(", ");
+    suggestions.push({
+      priority: "P1",
+      decision: "observar",
+      area: group.area,
+      problem: "Intenção explícita de preço exige roteamento, não exclusão genérica",
+      evidence: `${group.terms.length} consulta(s); ${integer(group.clicks)} cliques; ${brl(group.cost)}; ${formatNumber(group.conversions)} conversões exibidas. Exemplos: ${examples}.`,
+      change: "Conferir o roteamento do conjunto para o grupo e a página específicos de preço; preservar a intenção.",
+      guardrail: "Não negativar preço, valor, custo ou quanto custa em nível de campanha/conta.",
+      confidence: "alta",
+    });
+  });
+
   [...(data.directNegatives || []), ...(data.sharedNegatives || [])].forEach((negative) => {
+    if (isIntentionalRoutingNegative(negative)) return;
     const normalized = normalizeText(negative.text);
     const riskyPrice = /(^|\s)(preco|valor|custo|quanto custa|valor medio)(\s|$)/.test(normalized) && negative.matchType !== "EXACT";
     const riskyLay = PROTECTED_LAY_TERMS.some((term) => normalized.includes(term));
@@ -732,17 +770,22 @@ function buildSuggestions(data) {
     }
   });
 
-  if (sourceStatus.conversionSettings !== false && sourceStatus.campaignGoals !== false) {
+  if (
+    sourceStatus.conversionSettings !== false &&
+    sourceStatus.campaignGoals !== false &&
+    sourceStatus.campaignGoalConfigs !== false &&
+    sourceStatus.customConversionGoals !== false
+  ) {
     const setting = (data.conversionSettings || []).find((row) => row.name === CONFIG.qualifiedConversionName);
-    const nonBiddable = (data.campaignGoals || []).filter((row) => row.category === (setting && setting.category) && row.origin === (setting && setting.origin) && row.biddable !== true);
+    const nonBiddable = setting ? findCampaignsMissingQualifiedGoal(data, setting) : [];
     if (setting && nonBiddable.length) {
       suggestions.push({
         priority: "P0",
         decision: "Corrigir agora",
         area: "Conversões e lances",
-        problem: "Meta qualificada não é biddable em todas as campanhas esperadas",
-        evidence: `${nonBiddable.length} configuração(ões) de campanha com biddable=false para categoria/origem da ação qualificada.`,
-        change: "Conferir a meta personalizada das campanhas afetadas antes de confiar no lance por conversão.",
+        problem: "Meta qualificada ausente da configuração efetiva de campanha",
+        evidence: `${nonBiddable.length} campanha(s) sem cobertura efetiva confirmada: ${nonBiddable.join(", ")}.`,
+        change: "Conferir a meta personalizada ou a meta padrão das campanhas afetadas antes de confiar no lance por conversão.",
         guardrail: "Não alterar o papel da conversão proxy e qualificada na mesma janela.",
         confidence: "alta",
         minimum: "correção de configuração, sem janela estatística",
@@ -770,14 +813,14 @@ function buildSuggestions(data) {
     }
   });
 
-  const assetProblems = (data.assetPerformance || []).filter((asset) => asset.policy !== "APPROVED" || asset.performanceLabel === "LOW");
+  const assetProblems = (data.assetPerformance || []).filter((asset) => asset.performanceLabel === "LOW");
   if (assetProblems.length) {
     suggestions.push({
       priority: "P1",
       decision: "Pode testar",
       area: "RSAs e recursos",
-      problem: "Recursos com política ou desempenho baixo",
-      evidence: `${assetProblems.length} vínculo(s) com policy!=APPROVED ou performance_label=LOW.`,
+      problem: "Recursos com desempenho baixo",
+      evidence: `${assetProblems.length} vínculo(s) com performance_label=LOW; políticas são verificadas separadamente no anúncio ativo.`,
       change: "Revisar o ativo no contexto do grupo e substituir somente quando houver alternativa distinta e aprovada.",
       guardrail: "Não remover todos os ativos de um tipo; preservar cobertura e conformidade.",
       confidence: "média",
@@ -828,6 +871,56 @@ function buildSuggestions(data) {
     .map(finalizeSuggestion)
     .sort(compareSuggestions)
     .slice(0, 100);
+}
+
+function addPriceIntentTerm(groups, term) {
+  const area = `${term.campaign} / ${term.adGroup}`;
+  if (!groups.has(area)) groups.set(area, { area, terms: [], clicks: 0, cost: 0, conversions: 0 });
+  const group = groups.get(area);
+  group.terms.push(term);
+  group.clicks += Number(term.clicks || 0);
+  group.cost += Number(term.cost || 0);
+  group.conversions += Number(term.conversions || 0);
+}
+
+function isIntentionalRoutingNegative(negative) {
+  return INTENTIONAL_ROUTING_NEGATIVES.some((route) =>
+    route.campaign === negative.campaign &&
+    route.adGroup === negative.adGroup &&
+    normalizeText(route.text) === normalizeText(negative.text) &&
+    route.matchType === negative.matchType
+  );
+}
+
+function findCampaignsMissingQualifiedGoal(data, setting) {
+  const qualifiedResource = setting.resourceName;
+  const customGoals = new Map((data.customConversionGoals || []).map((goal) => [goal.resourceName, goal]));
+  const configs = data.campaignGoalConfigs || [];
+  const categoryGoals = data.campaignGoals || [];
+  const campaigns = new Set([
+    ...configs.map((row) => row.campaign),
+    ...categoryGoals.map((row) => row.campaign),
+  ]);
+  const missing = [];
+
+  campaigns.forEach((campaign) => {
+    const config = configs.find((row) => row.campaign === campaign);
+    const customGoal = config && config.customConversionGoal
+      ? customGoals.get(config.customConversionGoal)
+      : null;
+    if (config && config.goalConfigLevel === "CAMPAIGN" && config.customConversionGoal) {
+      if (!customGoal || customGoal.status !== "ENABLED" || !customGoal.conversionActions.includes(qualifiedResource)) {
+        missing.push(campaign);
+      }
+      return;
+    }
+    const categoryGoal = categoryGoals.find((row) =>
+      row.campaign === campaign && row.category === setting.category && row.origin === setting.origin
+    );
+    if (!categoryGoal || categoryGoal.biddable !== true) missing.push(campaign);
+  });
+
+  return [...new Set(missing)].sort();
 }
 
 function classifySearchTerm(term) {
@@ -907,7 +1000,7 @@ function conversionActionQuery(start, end) {
   return `
     SELECT campaign.name, segments.conversion_action_name,
       metrics.conversions, metrics.all_conversions,
-      metrics.conversions_value, metrics.cost_micros
+      metrics.conversions_value
     FROM campaign
     WHERE segments.date BETWEEN '${start}' AND '${end}'
       AND campaign.status = 'ENABLED'
@@ -957,7 +1050,7 @@ function dailyCampaignPerformanceQuery(start, end) {
 
 function conversionSettingsQuery() {
   return `
-    SELECT conversion_action.name, conversion_action.status,
+    SELECT conversion_action.resource_name, conversion_action.name, conversion_action.status,
       conversion_action.primary_for_goal, conversion_action.category,
       conversion_action.origin, conversion_action.type,
       conversion_action.counting_type,
@@ -974,6 +1067,23 @@ function campaignConversionGoalsQuery() {
       campaign_conversion_goal.origin, campaign_conversion_goal.biddable
     FROM campaign_conversion_goal
     WHERE campaign.status = 'ENABLED'
+  `;
+}
+
+function conversionGoalCampaignConfigQuery() {
+  return `
+    SELECT campaign.name, conversion_goal_campaign_config.goal_config_level,
+      conversion_goal_campaign_config.custom_conversion_goal
+    FROM conversion_goal_campaign_config
+    WHERE campaign.status = 'ENABLED'
+  `;
+}
+
+function customConversionGoalsQuery() {
+  return `
+    SELECT custom_conversion_goal.resource_name, custom_conversion_goal.name,
+      custom_conversion_goal.status, custom_conversion_goal.conversion_actions
+    FROM custom_conversion_goal
   `;
 }
 
@@ -997,7 +1107,6 @@ function assetPerformanceQuery(start, end) {
     SELECT campaign.name, ad_group.name, asset.id, asset.type,
       ad_group_ad_asset_view.field_type,
       ad_group_ad_asset_view.performance_label,
-      ad_group_ad_asset_view.policy_summary.approval_status,
       metrics.impressions, metrics.clicks, metrics.cost_micros,
       metrics.conversions, metrics.all_conversions
     FROM ad_group_ad_asset_view
@@ -1150,6 +1259,7 @@ function normalizeDailyCampaignRow(row) {
 
 function normalizeConversionSettingRow(row) {
   return {
+    resourceName: valueAt(row, "conversionAction.resourceName", "N/D"),
     name: valueAt(row, "conversionAction.name", "N/D"),
     status: valueAt(row, "conversionAction.status", "N/D"),
     primaryForGoal: valueAt(row, "conversionAction.primaryForGoal", null),
@@ -1168,6 +1278,24 @@ function normalizeCampaignGoalRow(row) {
     category: valueAt(row, "campaignConversionGoal.category", "N/D"),
     origin: valueAt(row, "campaignConversionGoal.origin", "N/D"),
     biddable: valueAt(row, "campaignConversionGoal.biddable", null),
+  };
+}
+
+function normalizeCampaignGoalConfigRow(row) {
+  return {
+    campaign: valueAt(row, "campaign.name", "N/D"),
+    goalConfigLevel: valueAt(row, "conversionGoalCampaignConfig.goalConfigLevel", "N/D"),
+    customConversionGoal: valueAt(row, "conversionGoalCampaignConfig.customConversionGoal", ""),
+  };
+}
+
+function normalizeCustomConversionGoalRow(row) {
+  const conversionActions = valueAt(row, "customConversionGoal.conversionActions", []);
+  return {
+    resourceName: valueAt(row, "customConversionGoal.resourceName", "N/D"),
+    name: valueAt(row, "customConversionGoal.name", "N/D"),
+    status: valueAt(row, "customConversionGoal.status", "N/D"),
+    conversionActions: Array.isArray(conversionActions) ? conversionActions.map(String) : [],
   };
 }
 
@@ -1196,7 +1324,6 @@ function normalizeAssetRow(row) {
     assetType: valueAt(row, "asset.type", "N/D"),
     fieldType: valueAt(row, "adGroupAdAssetView.fieldType", "N/D"),
     performanceLabel: valueAt(row, "adGroupAdAssetView.performanceLabel", "N/D"),
-    policy: valueAt(row, "adGroupAdAssetView.policySummary.approvalStatus", "N/D"),
     impressions: numberAt(row, "metrics.impressions"),
     clicks: numberAt(row, "metrics.clicks"),
     cost: microsToMoney(valueAt(row, "metrics.costMicros", 0)),
@@ -1523,7 +1650,8 @@ function buildPlainTextEmail(report, context) {
   report.criticalAlerts.forEach((row) => lines.push(`- ${row.priority} ${row.title}: ${row.evidence} Ação: ${row.action}`));
   ["Corrigir agora", "Pode testar", "Aguardar dados", "Não alterar"].forEach((decision) => {
     const rows = report.suggestions.filter((row) => row.decision === decision);
-    lines.push("", `${decision}: ${rows.length}`);
+    const omitted = Math.max(0, rows.length - CONFIG.maxRowsPerSection);
+    lines.push("", `${decision}: ${rows.length}${omitted ? ` (exibindo ${CONFIG.maxRowsPerSection}; ${omitted} omitida(s))` : ""}`);
     rows.slice(0, CONFIG.maxRowsPerSection).forEach((row) => {
       lines.push(`- ${row.priority} ${row.area}: ${row.problem}. Evidência: ${row.evidence} Ação: ${row.change} Mínimo: ${row.minimum}. Métrica: ${row.metric}. Guardrail: ${row.guardrail}. Rollback: ${row.rollback}.`);
     });
@@ -1547,11 +1675,14 @@ function buildHtmlEmail(report, context) {
     ? report.criticalAlerts.map((row) => `<tr><td>${html(row.priority)}</td><td>${html(row.title)}</td><td>${html(row.evidence)}</td><td>${html(row.action)}</td></tr>`).join("")
     : "<tr><td colspan='4'>Nenhum alerta crítico observado nas consultas concluídas.</td></tr>";
   const suggestionBlocks = ["Corrigir agora", "Pode testar", "Aguardar dados", "Não alterar"].map((decision) => {
-    const rows = report.suggestions.filter((row) => row.decision === decision).slice(0, CONFIG.maxRowsPerSection);
+    const allRows = report.suggestions.filter((row) => row.decision === decision);
+    const rows = allRows.slice(0, CONFIG.maxRowsPerSection);
+    const omitted = Math.max(0, allRows.length - rows.length);
     const body = rows.length
       ? rows.map((row) => `<tr><td>${html(row.priority)}</td><td>${html(row.area)}</td><td>${html(row.problem)}</td><td>${html(row.evidence)}</td><td>${html(row.change)}</td><td>${html(row.minimum)}</td><td>${html(row.metric)}</td><td>${html(row.guardrail)}</td><td>${html(row.rollback)}</td><td>${html(row.confidence)}</td></tr>`).join("")
       : "<tr><td colspan='10'>Nenhum item.</td></tr>";
-    return `<h2>${html(decision)}</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Área</th><th>Problema</th><th>Evidência</th><th>Mudança exata</th><th>Amostra/janela</th><th>Métrica</th><th>Guardrail</th><th>Rollback</th><th>Confiança</th></tr>${body}</table>`;
+    const disclosure = omitted ? `<p><strong>${omitted} item(ns) omitido(s) desta seção por limite de exibição.</strong></p>` : "";
+    return `<h2>${html(decision)} (${allRows.length})</h2>${disclosure}<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Prioridade</th><th>Área</th><th>Problema</th><th>Evidência</th><th>Mudança exata</th><th>Amostra/janela</th><th>Métrica</th><th>Guardrail</th><th>Rollback</th><th>Confiança</th></tr>${body}</table>`;
   }).join("");
   const campaignRows = report.thirtyDayCampaigns.map((row) => `<tr><td>${html(row.campaign)}</td><td>${integer(row.impressions)}</td><td>${integer(row.clicks)}</td><td>${percent(row.ctr)}</td><td>${brl(row.averageCpc)}</td><td>${brl(row.cost)}</td><td>${formatNumber(row.conversions)}</td><td>${percent(row.searchImpressionShare)}</td><td>${percent(row.searchBudgetLostShare)}</td><td>${percent(row.searchRankLostShare)}</td></tr>`).join("");
   const warningRows = report.warnings.length

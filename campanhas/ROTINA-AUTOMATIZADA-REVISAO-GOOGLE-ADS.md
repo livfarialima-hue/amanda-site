@@ -46,7 +46,7 @@ Não se deve decidir diariamente sobre termos e palavras. Com o orçamento e o v
 - termos de pesquisa dos últimos 30 dias que o Google disponibilizar;
 - palavras positivas, correspondência, volume, gasto e componentes de Quality Score;
 - negativas diretas e listas compartilhadas, associações e risco de conflito com buscas legítimas;
-- ações de conversão por nome, papel principal, status, janela, contagem, atribuição e cobertura biddable das metas de campanha;
+- ações de conversão por nome, papel principal, status, janela, contagem e atribuição; cobertura efetiva pela meta personalizada da campanha ou, quando ela não existir, pela meta padrão categoria/origem;
 - RSAs, quantidade de títulos/descrições, força diagnóstica, políticas e rótulos de recursos;
 - dispositivo, idade — mantendo `UNKNOWN` visível —, rede, dia e horário;
 - URLs finais, HTTP, canonical e CTA WhatsApp rastreado;
@@ -75,6 +75,8 @@ Cada sugestão contém prioridade, uma das quatro filas (`Corrigir agora`, `Pode
 - Nunca aplica a negativa.
 - Protege linguagem leiga legítima, inclusive `plástica das pálpebras`, `cirurgia de pálpebras`, `orelha de abano` e `papada`.
 - Trata `preço`, `valor`, `custo` e `quanto custa` como intenção de roteamento; não como irrelevância.
+- Consolida variações de preço por campanha/grupo em uma única recomendação, com total e exemplos, para não transformar sinônimos no mesmo problema em dezenas de linhas.
+- Mantém uma lista específica de negativas de roteamento confirmadas ao vivo; qualquer termo, campanha, grupo ou correspondência diferente continua sujeito à revisão.
 
 ### Positivas
 
@@ -87,6 +89,7 @@ Cada sugestão contém prioridade, uma das quatro filas (`Corrigir agora`, `Pode
 - Perda por classificação gera revisão de termo, RSA e página antes de lance.
 - Gasto sem conversão gera pedido de reconciliação; não pausa automática.
 - Clique no WhatsApp e lead qualificado são mostrados separadamente quando o proxy domina o agregado.
+- Uma meta personalizada ativa que contém `Lead qualificado GCLID` prevalece sobre `campaign_conversion_goal.biddable` por categoria/origem; `biddable=false` isolado não é tratado como falha.
 - Mudanças recentes bloqueiam conclusões causais sobre janelas contaminadas.
 - Orçamento e lance só entram em cenário de realocação quando a ação qualificada e o funil estão saudáveis; a referência total permanece R$ 87/dia.
 - A anomalia diária compara ontem ao mesmo dia da semana nas oito semanas anteriores e exige também diferença absoluta; não usa a média simples dos sete dias anteriores.
@@ -99,7 +102,7 @@ Cada sugestão contém prioridade, uma das quatro filas (`Corrigir agora`, `Pode
 - Primeiro dia útil do mês: e-mail completo com bloco de 90 dias.
 - Demais dias: nenhum e-mail se a saúde estiver normal.
 - Erro da rotina: e-mail explícito informando que nenhuma campanha foi alterada.
-- Limite visual: até 40 sugestões por seção no e-mail; a coleta e a priorização podem examinar mais linhas.
+- Limite visual: até 40 sugestões por seção no e-mail; quando houver mais itens, o relatório declara explicitamente quantos foram omitidos. A coleta e a priorização podem examinar mais linhas.
 
 ## 6. O que fazer ao receber o e-mail
 
@@ -129,7 +132,7 @@ Gates da ampliação de 15/08/2026 concluídos:
 - Google Ads Script concluiu prévia e execução real sem mutação, com o agregado fresco;
 - programação diária `09:00–10:00` permaneceu ativa.
 
-Gate ainda em observação: conferir em 17/08 o primeiro e-mail semanal ampliado e confirmar que cada fonte aparece como `OK` ou `N/D`, nunca como falso zero.
+O primeiro e-mail semanal ampliado de 17/08 foi auditado em 22/08. Foram corrigidos localmente: repetição de 39 variações de preço de BLEF, falsos alertas de negativas de roteamento já confirmadas, leitura incompleta de metas personalizadas, combinação inválida de campos na consulta de conversões, campo não suportado na consulta de recursos e ausência de aviso sobre truncamento. A publicação na conta e a primeira execução pós-correção devem ser verificadas antes de declarar o gate encerrado.
 
 Após ativar:
 

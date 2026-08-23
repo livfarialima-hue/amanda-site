@@ -175,3 +175,74 @@ test("decisões do e-mail usam as quatro filas operacionais", () => {
   assert.equal(normalize("observar"), "Aguardar dados");
   assert.equal(normalize("não alterar"), "Não alterar");
 });
+
+test("consolida variações de preço por campanha e grupo", () => {
+  const buildSuggestions = loadFunction("buildSuggestions");
+  const suggestions = buildSuggestions({
+    searchTerms: [
+      { campaign: "S_BR_SP_BLEFAROPLASTIA", adGroup: "AG_BLEFAROPLASTIA", searchTerm: "blefaroplastia preço", clicks: 2, cost: 8, conversions: 0 },
+      { campaign: "S_BR_SP_BLEFAROPLASTIA", adGroup: "AG_BLEFAROPLASTIA", searchTerm: "valor blefaroplastia", clicks: 3, cost: 12, conversions: 1 },
+    ],
+    keywords: [], directNegatives: [], sharedNegatives: [], thirtyDayCampaigns: [],
+    conversionActions: [], changes: [], funnelAggregates: [],
+  });
+  const price = suggestions.filter((row) => row.problem.includes("Intenção explícita de preço"));
+  assert.equal(price.length, 1);
+  assert.equal(price[0].evidence.includes("2 consulta(s); 5 cliques; R$ 20,00"), true);
+});
+
+test("preserva roteamentos verificados e sinaliza autobloqueio cervical", () => {
+  const buildSuggestions = loadFunction("buildSuggestions");
+  const suggestions = buildSuggestions({
+    searchTerms: [], keywords: [], sharedNegatives: [], thirtyDayCampaigns: [],
+    conversionActions: [], changes: [], funnelAggregates: [],
+    directNegatives: [
+      { level: "campanha", campaign: "S_BR_SP_BLEFAROPLASTIA", adGroup: "—", text: "lipo de papada", matchType: "PHRASE" },
+      { level: "campanha", campaign: "S_BR_SP_LIFTING_CERVICAL", adGroup: "—", text: "lipoaspiração de papada", matchType: "PHRASE" },
+    ],
+  });
+  const risks = suggestions.filter((row) => row.problem === "Negativa com risco de bloquear busca legítima");
+  assert.equal(risks.length, 1);
+  assert.equal(risks[0].area.includes("LIFTING_CERVICAL"), true);
+});
+
+test("meta personalizada válida prevalece sobre categoria/origem não biddable", () => {
+  const findMissing = loadFunction("findCampaignsMissingQualifiedGoal");
+  const setting = { resourceName: "customers/1/conversionActions/10", category: "QUALIFIED_LEAD", origin: "UPLOAD" };
+  const missing = findMissing({
+    campaignGoalConfigs: [{ campaign: "S_BR_SP_BLEFAROPLASTIA", goalConfigLevel: "CAMPAIGN", customConversionGoal: "customers/1/customConversionGoals/20" }],
+    customConversionGoals: [{ resourceName: "customers/1/customConversionGoals/20", status: "ENABLED", conversionActions: [setting.resourceName] }],
+    campaignGoals: [{ campaign: "S_BR_SP_BLEFAROPLASTIA", category: setting.category, origin: setting.origin, biddable: false }],
+  }, setting);
+  assert.equal(missing.length, 0);
+});
+
+test("meta personalizada sem a ação qualificada é sinalizada", () => {
+  const findMissing = loadFunction("findCampaignsMissingQualifiedGoal");
+  const setting = { resourceName: "customers/1/conversionActions/10", category: "QUALIFIED_LEAD", origin: "UPLOAD" };
+  const missing = findMissing({
+    campaignGoalConfigs: [{ campaign: "S_BR_SP_OTOPLASTIA", goalConfigLevel: "CAMPAIGN", customConversionGoal: "customers/1/customConversionGoals/20" }],
+    customConversionGoals: [{ resourceName: "customers/1/customConversionGoals/20", status: "ENABLED", conversionActions: [] }],
+    campaignGoals: [],
+  }, setting);
+  assert.equal(missing.length, 1);
+  assert.equal(missing[0], "S_BR_SP_OTOPLASTIA");
+});
+
+test("consultas evitam combinações e campos não suportados observados ao vivo", () => {
+  const conversionQuery = loadFunction("conversionActionQuery")("2026-07-01", "2026-07-31");
+  const assetQuery = loadFunction("assetPerformanceQuery")("2026-07-01", "2026-07-31");
+  assert.equal(conversionQuery.includes("metrics.cost_micros"), false);
+  assert.equal(assetQuery.includes("policy_summary"), false);
+});
+
+test("e-mail declara quando uma seção foi truncada", () => {
+  const buildEmail = loadFunction("buildPlainTextEmail");
+  const rows = Array.from({ length: 41 }, (_, index) => ({
+    priority: "P3", decision: "Aguardar dados", area: `Área ${index}`, problem: "P", evidence: "E",
+    change: "C", minimum: "M", metric: "M", guardrail: "G", rollback: "R",
+  }));
+  const report = { accountName: "Conta", accountId: "1", generatedAt: "2026-08-22", accountTimeZone: "America/Sao_Paulo", criticalAlerts: [], suggestions: rows, funnelAggregates: [], warnings: [] };
+  const context = { week: { start: "2026-08-10", end: "2026-08-16" } };
+  assert.equal(buildEmail(report, context).includes("exibindo 40; 1 omitida(s)"), true);
+});
