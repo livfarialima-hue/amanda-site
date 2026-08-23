@@ -1481,6 +1481,15 @@ function carregarLeadsRetomadas_(planilha) {
           "Suspender retomada automática",
         )
       : -1;
+  const nameColumn = ["Nome", "Nome do paciente"].reduce(
+    function (found, header) {
+      if (found >= 0) return found;
+      return typeof indiceCabecalhoPreferenciaContato_ === "function"
+        ? indiceCabecalhoPreferenciaContato_(headers, header)
+        : -1;
+    },
+    -1,
+  );
 
   valores.forEach(function (linha, indice) {
     const telefone = normalizarTelefoneRetomadas_(linha[2]);
@@ -1491,6 +1500,10 @@ function carregarLeadsRetomadas_(planilha) {
 
     resultado[telefone] = {
       linha: indice + 2,
+      nome:
+        nameColumn >= 0
+          ? String(linha[nameColumn] || "").trim()
+          : "",
       referencia: String(linha[1] || "").trim(),
       status: String(linha[4] || "Novo").trim(),
       resumo: String(linha[16] || "").trim(),
@@ -1710,6 +1723,7 @@ function criarCandidatoRetomada_(
       objecao,
       contextoQualificado,
       assuntoRetomada,
+      lead.nome,
     ),
     chaveDiaria: [
       dataLocal,
@@ -1901,6 +1915,7 @@ function sugerirMensagemRetomada_(
   objecao,
   contextoQualificado,
   assuntoRetomada,
+  nomePaciente,
 ) {
   const assunto = String(assuntoRetomada || "").trim();
   const complementoAssunto = assunto ? " sobre " + assunto : "";
@@ -1985,14 +2000,53 @@ function sugerirMensagemRetomada_(
   }
 
   if (etapa === 2 && assunto) {
+    const primeiroNome = primeiroNomeSeguroRetomada_(
+      nomePaciente,
+    );
+    const saudacao = primeiroNome
+      ? "Oi, " + primeiroNome + "!"
+      : "Olá!";
     return (
-      "Olá! Vou deixar nossa conversa sobre " +
+      saudacao +
+      " Vou deixar você à vontade por aqui, sem novas mensagens. Se mais adiante quiser retomar nossa conversa sobre " +
       assunto +
-      " aberta, sem pressa. Quando quiser retomar, posso continuar do ponto em que paramos ou esclarecer alguma dúvida que tenha surgido."
+      " ou surgir alguma dúvida, pode me chamar quando for um bom momento para você. Vou ficar feliz em ajudar."
     );
   }
 
   return "";
+}
+
+function primeiroNomeSeguroRetomada_(valor) {
+  const nome = String(valor || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const normalizado = normalizarTextoRetomadas_(nome);
+
+  if (
+    !nome ||
+    nome.length > 80 ||
+    !/^[A-Za-zÀ-ÖØ-öø-ÿ'’.\-\s]+$/.test(nome) ||
+    /\b(?:nao informado|sem nome|cliente|paciente|contato|desconhecido|clinica|consultorio|hospital|empresa|loja|studio|estudio|oficial|atendimento|recepcao|comercial|vendas|marketing|equipe|grupo|familia|mamae|papai|trabalho)\b/.test(
+      normalizado,
+    )
+  ) {
+    return "";
+  }
+
+  const palavras = nome.split(" ").filter(Boolean);
+  if (palavras.length > 4) return "";
+
+  const primeiro = palavras[0].replace(
+    /[^A-Za-zÀ-ÖØ-öø-ÿ'’-]/g,
+    "",
+  );
+  if (primeiro.length < 2 || primeiro.length > 18) return "";
+
+  return (
+    primeiro.charAt(0).toUpperCase() +
+    primeiro.slice(1).toLowerCase()
+  );
 }
 
 function mensagemContextualAutomaticaRetomada_(texto) {

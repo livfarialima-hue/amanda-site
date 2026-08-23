@@ -482,7 +482,7 @@ function carregarRespostasPendentesCentral_(
     items.push(criarItemCentral_({
       queue: "Resposta agora",
       dueAt: prazoRespostaCentral_(last.dataHora),
-      name: profile.name,
+      name: profile.name || lead.nome,
       phone: phone,
       relationship: relationship,
       origin:
@@ -725,7 +725,9 @@ function carregarRetomadasCentral_(
           localDate,
           candidate.horario,
         ),
-        name: profile.name,
+        name:
+          profile.name ||
+          (candidate.lead && candidate.lead.nome),
         phone: candidate.telefone,
         relationship:
           profile.relationship ||
@@ -1024,7 +1026,7 @@ function carregarAguardandoPacienteCentral_(
     items.push(criarItemCentral_({
       queue: "Aguardando paciente",
       dueAt: null,
-      name: profile.name,
+      name: profile.name || lead.nome,
       phone: phone,
       relationship:
         profile.relationship ||

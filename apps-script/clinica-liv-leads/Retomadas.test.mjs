@@ -625,6 +625,7 @@ test("cancel action updates only the selected plan and is idempotent", () => {
 
 test("recognizes a manual first follow-up and schedules only the second stage", () => {
   const leadData = {
+    nome: "Marina Souza",
     status: "Novo",
     resumo: "Pesquisa sobre lifting facial",
     proximaAcao: "",
@@ -647,7 +648,7 @@ test("recognizes a manual first follow-up and schedules only the second stage", 
       dataHora: new Date("2026-08-15T16:25:00-03:00"),
       messageId: "human-out-1",
       texto:
-        "Olá! Passando para saber se você conseguiu ver nossa mensagem sobre a avaliação.",
+        "Olá! Passando para saber se você conseguiu ver nossa mensagem sobre a avaliação. https://draamandaschroeder.com.br/lifting-facial/",
     },
   ];
 
@@ -675,6 +676,7 @@ test("recognizes a manual first follow-up and schedules only the second stage", 
   );
 
   assert.equal(secondStage.etapa.numero, 2);
+  assert.match(secondStage.sugestao, /^Oi, Marina!/);
   assert.equal(
     context.responsavelRetomada_(secondStage),
     "equipe",
@@ -1146,6 +1148,32 @@ test("reads acquisition context from the current 25-column lead layout", () => {
   assert.equal(loaded.criativo, "C06H01");
   assert.equal(loaded.destino, "WhatsApp");
   assert.equal(loaded.referenciaCompleta, "M26F02S-C06H01");
+  assert.equal(loaded.nome, "");
+});
+
+test("reads the patient name from an additive LEADS column", () => {
+  const headers = Array(30).fill("");
+  headers[2] = "Telefone (E.164)";
+  headers[29] = "Nome";
+  const row = Array(30).fill("");
+  row[2] = "+5511999999999";
+  row[29] = "Marina Souza";
+  const sheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => 30,
+    getRange: (startRow) => ({
+      getDisplayValues: () => [
+        startRow === 1 ? headers : row,
+      ],
+    }),
+  };
+
+  const loaded = context.carregarLeadsRetomadas_(sheet)[
+    "+5511999999999"
+  ];
+
+  assert.equal(loaded.nome, "Marina Souza");
+  assert.equal(loaded.referencia, "");
 });
 
 test("reads permanent blocks and the automatic follow-up suspension", () => {
@@ -1516,6 +1544,7 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     "",
     false,
     "lifting facial",
+    "Marina Souza",
   );
   assert.match(price, /o valor e o que está incluído/);
   assert.match(schedule, /duas opções reais/);
@@ -1524,12 +1553,44 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
   assert.match(general, /como funciona a avaliação/);
   assert.doesNotMatch(general, /agenda|horário|caminhos/);
   assert.match(second, /nossa conversa sobre lifting facial/);
-  assert.match(second, /aberta, sem pressa/);
-  assert.match(second, /continuar do ponto em que paramos/);
+  assert.match(second, /^Oi, Marina!/);
+  assert.match(second, /deixar você à vontade por aqui/);
+  assert.match(second, /sem novas mensagens/);
+  assert.match(second, /quando for um bom momento para você/);
+  assert.match(second, /Vou ficar feliz em ajudar/);
   assert.doesNotMatch(
     second,
     /encerrar minhas retomadas|última retomada|inconveniente/,
   );
+});
+
+test("last follow-up uses a neutral greeting when the LEADS name is unsafe", () => {
+  const unsafeNames = [
+    "",
+    "Não informado",
+    "+55 11 99999-9999",
+    "Clínica Exemplo",
+    "Paciente",
+  ];
+
+  for (const name of unsafeNames) {
+    const message = context.sugerirMensagemRetomada_(
+      2,
+      false,
+      null,
+      false,
+      false,
+      "",
+      false,
+      "lifting facial",
+      name,
+    );
+    assert.match(message, /^Olá!/);
+    assert.doesNotMatch(
+      message,
+      /Oi, Não|Oi, Clínica|Oi, Paciente|\+55/,
+    );
+  }
 });
 
 test("second follow-up gives one concrete proof and closes proactive contact", () => {

@@ -417,7 +417,7 @@ test("a patient who says she will decide later stays visible without creating an
   );
   const waiting = context.carregarAguardandoPacienteCentral_(
     { [phone]: conversation },
-    {},
+    { [phone]: { nome: "Marina Souza" } },
     {},
     {},
     now,
@@ -426,6 +426,7 @@ test("a patient who says she will decide later stays visible without creating an
   assert.equal(replies.length, 0);
   assert.equal(waiting.length, 1);
   assert.equal(waiting[0].queue, "Aguardando paciente");
+  assert.equal(waiting[0].name, "Marina Souza");
   assert.equal(waiting[0].status, "Suspenso");
   assert.equal(waiting[0].mode, "Silêncio");
   assert.equal(waiting[0].nextAction, "Aguardar iniciativa da paciente");
@@ -451,7 +452,7 @@ test("answer-now only includes a recent message that still needs a reply", () =>
         texto: "Qual é o valor?",
       }],
     },
-    {},
+    { [currentPhone]: { nome: "Marina Souza" } },
     {},
     {},
     now,
@@ -459,6 +460,7 @@ test("answer-now only includes a recent message that still needs a reply", () =>
 
   assert.equal(items.length, 1);
   assert.equal(items[0].phone, currentPhone);
+  assert.equal(items[0].name, "Marina Souza");
 });
 
 test("marketing follow-up is not reused for an established patient", () => {

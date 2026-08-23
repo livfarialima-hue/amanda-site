@@ -69,7 +69,7 @@ function load({
     sandbox.reconciliarConversaoGoogleAdsComFase_ = reconcileGoogleAds;
   }
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { resolverRotaLead_, resolverRotaLeadComContexto_, criarOpportunityId_, resolverLinhaLeadCanonica_, resolverFaseSincronizada_, sincronizarFaseOportunidadeELead_, aplicarAtribuicaoOportunidade_, lerAtribuicaoOportunidade_, atribuicaoLegadaOportunidade_, normalizarAtribuicaoOportunidade_, vincularOportunidadeAoLead_, migrarPseudonimosIdentidadeLead, migrarSchemaAtribuicaoV1, OPPORTUNITY_STORE_CONFIG, OPPORTUNITY_HEADERS, OPPORTUNITY_ALL_HEADERS, OPPORTUNITY_ATTRIBUTION_HEADERS, OPPORTUNITY_STAGE_VALUES, LEAD_INTEGRATION_HEADERS, LEAD_ALL_INTEGRATION_HEADERS };`,
+    `${source}\nglobalThis.__test = { resolverRotaLead_, resolverRotaLeadComContexto_, criarOpportunityId_, resolverLinhaLeadCanonica_, resolverFaseSincronizada_, sincronizarFaseOportunidadeELead_, aplicarAtribuicaoOportunidade_, lerAtribuicaoOportunidade_, atribuicaoLegadaOportunidade_, normalizarAtribuicaoOportunidade_, vincularOportunidadeAoLead_, migrarPseudonimosIdentidadeLead, migrarSchemaAtribuicaoV1, garantirEstruturaIntegradaLead_, OPPORTUNITY_STORE_CONFIG, OPPORTUNITY_HEADERS, OPPORTUNITY_ALL_HEADERS, OPPORTUNITY_ATTRIBUTION_HEADERS, OPPORTUNITY_STAGE_VALUES, LEAD_INTEGRATION_HEADERS, LEAD_ALL_INTEGRATION_HEADERS, LEAD_PROFILE_HEADERS };`,
     sandbox,
   );
   return sandbox.__test;
@@ -735,6 +735,30 @@ test("schema flag off makes attribution writes and reads inert", () => {
   assert.equal(
     leadSheet.data[0].includes("Origem informada pelo paciente"),
     false,
+  );
+});
+
+test("integrated LEADS schema appends the patient name without shifting existing columns", () => {
+  const {
+    garantirEstruturaIntegradaLead_,
+    LEAD_PROFILE_HEADERS,
+  } = load({ schemaEnabled: false });
+  const originalHeaders = [
+    "Data do contato",
+    "Referência da campanha",
+    "Telefone (E.164)",
+    "E-mail",
+  ];
+  const sheet = makeSheet("Google Ads - Conversões", originalHeaders, []);
+
+  garantirEstruturaIntegradaLead_(sheet);
+
+  assert.deepEqual(sheet.data[0].slice(0, 4), originalHeaders);
+  assert.equal(
+    sheet.data[0].filter(
+      (header) => header === LEAD_PROFILE_HEADERS[0],
+    ).length,
+    1,
   );
 });
 

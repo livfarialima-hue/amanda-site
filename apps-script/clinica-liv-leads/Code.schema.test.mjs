@@ -50,6 +50,8 @@ globalThis.__test = {
   normalizeLead_,
   writeLead_,
   mergeLeadIntoExistingRow_,
+  colunaNomeLead_,
+  gravarNomeLeadSeDisponivel_,
   decomporReferenciaAquisicao_,
   isKnownPatientRelationship_,
   findProcessedEvent_,
@@ -140,9 +142,19 @@ test("ambiguous lead identity blocks insertion while a genuinely new phone does 
 test("lead writes origin and destination into the live column positions", () => {
   const { writeLead_ } = loadCode();
   const writes = [];
+  const headers = [
+    ...Array(25).fill(""),
+    "Opportunity ID",
+    "Nome",
+  ];
   const sheet = {
+    getLastColumn: () => headers.length,
     getRange(row, column, rows, columns) {
       return {
+        getDisplayValues() {
+          assert.equal(row, 1);
+          return [headers.slice(column - 1, column - 1 + columns)];
+        },
         setValue(value) {
           writes.push({ row, column, rows: 1, columns: 1, value });
         },
@@ -158,6 +170,7 @@ test("lead writes origin and destination into the live column positions", () => 
     2,
     {
       messageId: "message-1",
+      name: "Marina Souza",
       contactAt: new Date("2026-07-29T00:31:00.000Z"),
       reference: "M26F01W-C06H01",
       phone: "+5511987985578",
@@ -182,11 +195,21 @@ test("lead writes origin and destination into the live column positions", () => 
     [["M26F01W", "C06H01", "", "WhatsApp", "M26F01W-C06H01"]],
   );
   assert.equal(
-    writes.some(
+    writes.filter(
       (write) =>
         write.column + (write.columns || 1) - 1 > 25,
-    ),
-    false,
+    ).length,
+    1,
+  );
+  assert.deepEqual(
+    writes.find((write) => write.column === 27),
+    {
+      row: 2,
+      column: 27,
+      rows: 1,
+      columns: 1,
+      value: "Marina Souza",
+    },
   );
   assert.equal(
     writes.some((write) => write.column === 15),
@@ -198,6 +221,48 @@ test("lead writes origin and destination into the live column positions", () => 
     )),
     [["BRL", "Contato inicial recebido automaticamente pelo WhatsApp."]],
   );
+});
+
+test("patient name is stored only in the additive LEADS name column", () => {
+  const { gravarNomeLeadSeDisponivel_ } = loadCode();
+  const headers = [
+    ...Array.from({ length: 25 }, (_, index) =>
+      index === 2 ? "Telefone (E.164)" : "",
+    ),
+    "Opportunity ID",
+    "Nome",
+  ];
+  let storedName = "";
+  const sheet = {
+    getLastColumn: () => headers.length,
+    getRange(row, column, rows = 1, columns = 1) {
+      return {
+        getDisplayValues() {
+          if (row === 1) {
+            return [headers.slice(column - 1, column - 1 + columns)];
+          }
+          return [[storedName]];
+        },
+        getDisplayValue: () => storedName,
+        setValue(value) {
+          assert.equal(row, 2);
+          assert.equal(column, 27);
+          storedName = value;
+        },
+      };
+    },
+  };
+
+  assert.equal(
+    gravarNomeLeadSeDisponivel_(sheet, 2, "Marina Souza", true),
+    true,
+  );
+  assert.equal(storedName, "Marina Souza");
+  assert.equal(
+    gravarNomeLeadSeDisponivel_(sheet, 2, "Outro nome", true),
+    false,
+  );
+  assert.equal(storedName, "Marina Souza");
 });
 
 test("Meta site reference fills the canonical campaign and page fields", () => {

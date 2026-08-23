@@ -143,6 +143,8 @@ const LEAD_INTEGRATION_HEADERS = Object.freeze([
   "Atribuição fixada em",
 ]);
 
+const LEAD_PROFILE_HEADERS = Object.freeze(["Nome"]);
+
 const LEAD_ATTRIBUTION_HEADERS = Object.freeze([
   "Origem inicial canônica",
   "Canal inicial",
@@ -526,7 +528,9 @@ function garantirCabecalhosAditivos_(sheet, expectedHeaders) {
 function garantirEstruturaIntegradaLead_(sheet) {
   return garantirCabecalhosAditivos_(
     sheet,
-    cabecalhosIntegracaoLeadAtivos_(),
+    cabecalhosIntegracaoLeadAtivos_().concat(
+      LEAD_PROFILE_HEADERS,
+    ),
   );
 }
 

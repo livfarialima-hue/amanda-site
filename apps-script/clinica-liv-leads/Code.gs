@@ -2511,6 +2511,8 @@ function mergeLeadIntoExistingRow_(sheet, row, lead) {
     else if (lead.wbraid) sheet.getRange(row, 13).setValue(lead.wbraid);
   }
 
+  gravarNomeLeadSeDisponivel_(sheet, row, lead.name, true);
+
   SpreadsheetApp.flush();
 }
 
@@ -2573,6 +2575,57 @@ function findFirstAvailableRow_(sheet) {
 
   sheet.insertRowsAfter(maximumRows, 100);
   return maximumRows + 1;
+}
+
+function colunaNomeLead_(sheet) {
+  if (
+    !sheet ||
+    typeof sheet.getLastColumn !== "function" ||
+    typeof sheet.getRange !== "function"
+  ) {
+    return 0;
+  }
+
+  const width = Math.max(sheet.getLastColumn(), 1);
+  const headers = sheet
+    .getRange(1, 1, 1, width)
+    .getDisplayValues()[0];
+  const aliases = ["nome", "nome do paciente"];
+
+  for (let index = 0; index < headers.length; index += 1) {
+    const normalized = String(headers[index] || "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ");
+    if (aliases.indexOf(normalized) >= 0) return index + 1;
+  }
+
+  return 0;
+}
+
+function gravarNomeLeadSeDisponivel_(
+  sheet,
+  row,
+  name,
+  preserveExisting,
+) {
+  const safeName = safeText_(name, 120);
+  const column = colunaNomeLead_(sheet);
+
+  if (!safeName || !column) return false;
+  if (
+    preserveExisting &&
+    String(
+      sheet.getRange(row, column).getDisplayValue() || "",
+    ).trim()
+  ) {
+    return false;
+  }
+
+  sheet.getRange(row, column).setValue(safeName);
+  return true;
 }
 
 function writeLead_(sheet, row, lead, setStage) {
@@ -2639,6 +2692,9 @@ function writeLead_(sheet, row, lead, setStage) {
     "WhatsApp",
     attribution.reference,
   ]]);
+
+  setStage("write_name");
+  gravarNomeLeadSeDisponivel_(sheet, row, lead.name, false);
 
   setStage("flush");
   SpreadsheetApp.flush();
