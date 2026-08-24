@@ -384,7 +384,15 @@ test("playbook treats structured prefills only as context", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /perfil parecer empresa ou marca, responda normalmente sem personalização nominal/,
+    /apelido ambíguo, sigla, nome de empresa, marca, cargo, frase/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /termine com a única pergunta "Como posso te chamar\?"/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /essa pergunta substitui a pergunta genérica de continuidade; nunca faça as duas/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,

@@ -245,7 +245,7 @@ test("first acquisition reply inserts the introduction when the model omits it",
       suggestedReply: "Oi! Posso te orientar sobre o lifting facial.",
     }),
     {
-      patientProfileName: "",
+      patientProfileName: "SVS",
       recentConversation: [],
       patientRelationship: { knownPatient: false, state: "new_lead" },
     },
@@ -253,8 +253,9 @@ test("first acquisition reply inserts the introduction when the model omits it",
 
   assert.equal(
     guarded.suggestedReply,
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial.",
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial. Como posso te chamar?",
   );
+  assert.doesNotMatch(guarded.suggestedReply, /Olá, SVS/i);
 });
 
 test("known patient receives a greeting without a new-lead introduction", () => {
@@ -979,6 +980,8 @@ test("a generic WhatsApp profile does not suppress the name question", () => {
     "Dra. Amanda",
     "Rosana 💙",
     "soniamariamontoromenezes",
+    "SVS",
+    "SVS :-",
   ]) {
     const decision = validDecision({
       suggestedReply: "Como posso te chamar?",

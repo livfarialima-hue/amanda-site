@@ -25,10 +25,20 @@ export function usableProfileName(value) {
 
   const firstName = words[0].replace(/[^\p{L}\p{M}'’-]/gu, "");
   const normalized = firstName.toLocaleLowerCase("pt-BR");
+  const foldedFirstName = firstName
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[^a-z]/gi, "");
+  const looksLikeConsonantInitialism =
+    words.length === 1 &&
+    foldedFirstName.length >= 2 &&
+    foldedFirstName.length <= 5 &&
+    !/[aeiouy]/i.test(foldedFirstName);
 
   if (
     firstName.length < 2 ||
     firstName.length > MAX_FIRST_NAME_LENGTH ||
+    looksLikeConsonantInitialism ||
     [
       "unknown",
       "desconhecido",

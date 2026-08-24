@@ -210,7 +210,7 @@ test("uses the patient-recognized cervical name without treating the prefill as 
   assert.doesNotMatch(reply, /agenda|agendar|horário|manhã|tarde/i);
 });
 
-test("does not address or interrogate a profile identifier that is not a usable name", () => {
+test("answers the procedure and asks the name when the profile identifier is not usable", () => {
   const reply = buildMarketingPrefilledOpeningReply({
     patientName: "soniamariamontoromenezes",
     procedure: "lifting_facial",
@@ -220,13 +220,13 @@ test("does not address or interrogate a profile identifier that is not a usable 
   assert.equal(
     reply,
       "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-      "Posso te orientar sobre lifting facial. O que você gostaria de entender primeiro?",
+      "Posso te orientar sobre lifting facial. Como posso te chamar?",
   );
   assert.doesNotMatch(reply, /Soniamariamontoromenezes/i);
-  assert.match(reply, /O que você gostaria de entender primeiro/i);
+  assert.match(reply, /Como posso te chamar\?/i);
 });
 
-test("does not use the name of a business profile in the opening", () => {
+test("does not use a business profile as a name and asks the contact name", () => {
   const reply = buildMarketingPrefilledOpeningReply({
     patientName: "Monah Semijoias",
     procedure: "lifting_facial",
@@ -235,9 +235,26 @@ test("does not use the name of a business profile in the opening", () => {
   assert.equal(
     reply,
     "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-      "Posso te orientar sobre lifting facial. O que você gostaria de entender primeiro?",
+      "Posso te orientar sobre lifting facial. Como posso te chamar?",
   );
   assert.doesNotMatch(reply, /Monah|Semijoias/i);
+  assert.match(reply, /Como posso te chamar\?/i);
+});
+
+test("a decorated acronym is never used as a name in a lifting prefill", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "SVS :-",
+    procedure: "lifting_facial",
+    introduceBruna: true,
+  });
+
+  assert.equal(
+    reply,
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre lifting facial. Como posso te chamar?",
+  );
+  assert.doesNotMatch(reply, /SVS/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
 });
 
 test("sends only the requested official Instagram without adding a site or CTA", () => {

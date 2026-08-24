@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolvePatientDisplayName } from "./profile-name.mjs";
+import {
+  resolvePatientDisplayName,
+  usableProfileFirstName,
+  usableProfileName,
+} from "./profile-name.mjs";
 
 test("self-identified patient name overrides an unrelated WhatsApp profile", () => {
   const name = resolvePatientDisplayName({
@@ -39,4 +43,18 @@ test("business and brand profiles are not treated as patient names", () => {
     resolvePatientDisplayName({ profileName: "Monah Semijoias" }),
     "",
   );
+});
+
+test("consonant initialisms and decorated profile identifiers are not patient names", () => {
+  for (const profileName of ["SVS", "SVS :-", "S.V.S."]) {
+    assert.equal(usableProfileName(profileName), "");
+    assert.equal(usableProfileFirstName(profileName), "");
+    assert.equal(resolvePatientDisplayName({ profileName }), "");
+  }
+});
+
+test("short real names and valid full names remain usable", () => {
+  for (const profileName of ["Cris", "ANA", "Maria S."]) {
+    assert.equal(usableProfileName(profileName), profileName);
+  }
 });

@@ -170,6 +170,7 @@ export function buildMarketingPrefilledOpeningReply({
   introduceBruna = true,
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
+  const hasUsableName = Boolean(firstName(patientName));
   const introduction = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
@@ -178,7 +179,9 @@ export function buildMarketingPrefilledOpeningReply({
       ? `Posso te orientar sobre ${procedureLabel}. Essa conversa é tratada com privacidade e cuidado.`
       : `Posso te orientar sobre ${procedureLabel}.`
     : "Posso te orientar.";
-  const question = "O que você gostaria de entender primeiro?";
+  const question = introduceBruna && !hasUsableName
+    ? "Como posso te chamar?"
+    : "O que você gostaria de entender primeiro?";
 
   return `${introduction} ${context} ${question}`;
 }

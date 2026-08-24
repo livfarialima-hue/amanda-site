@@ -312,6 +312,24 @@ export function applyFirstReplyGreetingGuard(
     body = `${introduction} ${body}`.trim();
   }
 
+  if (!knownPatient && !firstName) {
+    const patientNameQuestion = "Como posso te chamar?";
+    const alreadyAsksPatientName =
+      /\bComo\s+posso\s+(?:te|lhe)\s+chamar\s*\?/iu.test(body) ||
+      /\b(?:Qual|Como)\s+(?:é|e)\s+(?:o\s+)?seu\s+nome\s*\?/iu.test(body);
+    if (!alreadyAsksPatientName) {
+      body = body
+        .replace(
+          /\s+(?:O\s+que\s+voc[eê]\s+gostaria\s+de\s+entender\s+primeiro(?:\s+sobre\s+[^?]+)?|Como\s+posso\s+(?:te|lhe)?\s*ajudar|Em\s+que\s+posso\s+(?:te|lhe)\s+ajudar)\s*\?\s*$/iu,
+          "",
+        )
+        .trim();
+      if (!body.includes("?")) {
+        body = `${body} ${patientNameQuestion}`.trim();
+      }
+    }
+  }
+
   return {
     ...decision,
     suggestedReply: `${greeting}${body ? ` ${body}` : ""}`,
