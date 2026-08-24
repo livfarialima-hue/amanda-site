@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-24.1",
-  "promptVersion": "bruna-concierge-2026-08-24.1",
+  "bundleVersion": "2026-08-24.2",
+  "promptVersion": "bruna-concierge-2026-08-24.2",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-24.1",
+  "knowledgeSnapshot": "kb-2026-08-24.2",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "2a5086ececd7b9aee618fb5a76f43493d69e4d19",
-    "lastObservedProductionCommit": "2a5086ececd7b9aee618fb5a76f43493d69e4d19",
-    "functionalDeployId": "6a8c70614abd522baf51b3ba",
-    "lastObservedProductionDeployId": "6a8c70614abd522baf51b3ba",
-    "rollbackCommit": "eebb15c16a8a8d46691716700912ab047b8a213c",
-    "rollbackDeployId": "6a8b8bdf350050000854b869",
-    "publishedAt": "2026-08-24T13:25:43-03:00",
-    "lastVerifiedAt": "2026-08-24T13:27:16-03:00"
+    "functionalCommit": "6ada6da31c99f565aca12ec79106e0d7a861ac7a",
+    "lastObservedProductionCommit": "6ada6da31c99f565aca12ec79106e0d7a861ac7a",
+    "functionalDeployId": "6a8ca7dffa99ff87e5d5c828",
+    "lastObservedProductionDeployId": "6a8ca7dffa99ff87e5d5c828",
+    "rollbackCommit": "e05568959cda331d08a3a21a9e48666c395dabb8",
+    "rollbackDeployId": "6a8c71d99ed4e60008eb7847",
+    "publishedAt": "2026-08-24T17:23:39-03:00",
+    "lastVerifiedAt": "2026-08-24T17:25:15-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "6d942c2fecbb7dd4c6bb485f68dc24b0a75844ebf90a413a071af5a47faef4f2"
+    "driveProjectionSha256": "2f7b327399b01d4ae6b179fecb54eaf661da3889e6190970429b9e8d9e4f9e15"
   }
 }
