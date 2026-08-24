@@ -5,8 +5,10 @@ import {
   DEFAULT_AI_DEBOUNCE_MS,
   DEFAULT_DEBOUNCE_MS,
   DEFAULT_DETERMINISTIC_DEBOUNCE_MS,
+  DEFAULT_MEDIA_DEBOUNCE_MS,
   getLatestInboundReplyMarker,
   markLatestInboundForReply,
+  replyDebounceKindForInbound,
   shouldRecoverExactDuplicateRetry,
   waitForLatestInboundReply,
 } from "./reply-debounce.mjs";
@@ -71,9 +73,10 @@ test("default quiet windows are fast and bounded by reply type", () => {
   assert.equal(DEFAULT_DEBOUNCE_MS, 3_000);
   assert.equal(DEFAULT_DETERMINISTIC_DEBOUNCE_MS, 3_000);
   assert.equal(DEFAULT_AI_DEBOUNCE_MS, 5_000);
+  assert.equal(DEFAULT_MEDIA_DEBOUNCE_MS, 5_000);
 });
 
-test("AI replies wait five seconds while deterministic replies wait three", async () => {
+test("AI and media replies wait five seconds while deterministic replies wait three", async () => {
   const blobs = fakeBlobs();
   const now = Date.parse("2026-08-14T10:35:00-03:00");
   await markLatestInboundForReply(
@@ -104,10 +107,72 @@ test("AI replies wait five seconds while deterministic replies wait three", asyn
     },
     options,
   );
+  const media = await waitForLatestInboundReply(
+    {
+      phone: "+5511900000000",
+      eventId: "typed-delay",
+      markerStatus: "completed",
+      replyKind: "media",
+    },
+    options,
+  );
 
   assert.equal(deterministic.delayMs, 3_000);
   assert.equal(ai.delayMs, 5_000);
-  assert.deepEqual(waits, [3_000, 5_000]);
+  assert.equal(media.delayMs, 5_000);
+  assert.deepEqual(waits, [3_000, 5_000, 5_000]);
+});
+
+test("image messages join the inbound reply debounce as media", () => {
+  assert.equal(
+    replyDebounceKindForInbound({ messageType: "image" }),
+    "media",
+  );
+  assert.equal(
+    replyDebounceKindForInbound({ messageType: "text" }),
+    "deterministic",
+  );
+  assert.equal(
+    replyDebounceKindForInbound({
+      messageType: "unsupported",
+      unsupportedInboundContent: true,
+    }),
+    "deterministic",
+  );
+  assert.equal(
+    replyDebounceKindForInbound({ messageType: "video" }),
+    "",
+  );
+});
+
+test("a newer image burst supersedes the prior text turn", async () => {
+  const blobs = fakeBlobs();
+  const textAt = Date.parse("2026-08-24T08:46:01-03:00");
+  await markLatestInboundForReply(
+    {
+      phone: "+5511900000000",
+      eventId: "synthetic-text-before-images",
+      eventAt: "2026-08-24T08:46:01-03:00",
+      priority: 100,
+    },
+    { ...blobs, now: textAt },
+  );
+  const imageMarker = await markLatestInboundForReply(
+    {
+      phone: "+5511900000000",
+      eventId: "synthetic-image-latest",
+      eventAt: "2026-08-24T08:47:06-03:00",
+      priority: 100,
+    },
+    { ...blobs, now: textAt + 65_000 },
+  );
+  const marker = await getLatestInboundReplyMarker(
+    { phone: "+5511900000000" },
+    blobs,
+  );
+
+  assert.equal(imageMarker.preserved, undefined);
+  assert.equal(marker.eventId, "synthetic-image-latest");
 });
 
 test("slow lead routing consumes the quiet window instead of adding another delay", async () => {

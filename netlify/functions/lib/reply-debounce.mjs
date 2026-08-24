@@ -4,6 +4,7 @@ import { getStore } from "@netlify/blobs";
 const STORE_NAME = "liv-whatsapp-reply-debounce-v1";
 const DEFAULT_DETERMINISTIC_DEBOUNCE_MS = 3_000;
 const DEFAULT_AI_DEBOUNCE_MS = 5_000;
+const DEFAULT_MEDIA_DEBOUNCE_MS = 5_000;
 const DEFAULT_DEBOUNCE_MS = DEFAULT_DETERMINISTIC_DEBOUNCE_MS;
 const MIN_DEBOUNCE_MS = 2_000;
 const MAX_DEBOUNCE_MS = 8_000;
@@ -19,7 +20,9 @@ function debounceMs(value, replyKind = "deterministic", messageText = "") {
   const parsed = Number.parseInt(String(value || ""), 10);
   const fallback = replyKind === "ai"
     ? DEFAULT_AI_DEBOUNCE_MS
-    : DEFAULT_DETERMINISTIC_DEBOUNCE_MS;
+    : replyKind === "media"
+      ? DEFAULT_MEDIA_DEBOUNCE_MS
+      : DEFAULT_DETERMINISTIC_DEBOUNCE_MS;
   const base = Number.isFinite(parsed)
     ? Math.min(Math.max(parsed, MIN_DEBOUNCE_MS), MAX_DEBOUNCE_MS)
     : fallback;
@@ -30,6 +33,21 @@ function debounceMs(value, replyKind = "deterministic", messageText = "") {
   return longMultipart
     ? Math.min(Math.max(base, replyKind === "ai" ? 6_000 : 4_000), MAX_DEBOUNCE_MS)
     : base;
+}
+
+export function replyDebounceKindForInbound({
+  messageType,
+  unsupportedInboundContent = false,
+}) {
+  const normalizedType = String(messageType || "")
+    .trim()
+    .toLowerCase();
+
+  if (normalizedType === "image") return "media";
+  if (normalizedType === "text" || unsupportedInboundContent) {
+    return "deterministic";
+  }
+  return "";
 }
 
 function store(getStoreImpl = getStore) {
@@ -250,4 +268,5 @@ export {
   DEFAULT_AI_DEBOUNCE_MS,
   DEFAULT_DEBOUNCE_MS,
   DEFAULT_DETERMINISTIC_DEBOUNCE_MS,
+  DEFAULT_MEDIA_DEBOUNCE_MS,
 };

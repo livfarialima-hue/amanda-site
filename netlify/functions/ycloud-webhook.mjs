@@ -82,9 +82,15 @@ import {
   checkLatestInboundReply,
   getLatestInboundReplyMarker,
   markLatestInboundForReply,
+  replyDebounceKindForInbound,
   shouldRecoverExactDuplicateRetry,
   waitForLatestInboundReply,
 } from "./lib/reply-debounce.mjs";
+import {
+  claimPatientReplySlot,
+  completePatientReplySlot,
+  releasePatientReplySlot,
+} from "./lib/patient-reply-throttle.mjs";
 import {
   isReviewAlertConfigured,
   sendReviewAlertEmailCopy,
@@ -3334,14 +3340,18 @@ async function sendCurrentInboundReply({
   patientRelationship,
   opportunityId = "",
   professional = "",
+  replyKind = "deterministic",
+  replyFamily = "",
 }) {
   const debounceResult = await waitForLatestInboundReply({
     phone: to,
     eventId: revisionEventId,
     markerStatus: replyDebounceMarkerStatus,
     configuredDelayMs:
-      process.env.WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS,
-    replyKind: "deterministic",
+      replyKind === "media"
+        ? process.env.WHATSAPP_REPLY_DEBOUNCE_MEDIA_MS
+        : process.env.WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS,
+    replyKind,
     messageText: currentText,
   });
 
@@ -3377,17 +3387,53 @@ async function sendCurrentInboundReply({
     };
   }
 
-  const result = await sendControlledPatientReply({
-    from,
-    to,
-    eventId,
-    body,
-    currentText,
-    recentConversation,
-    opportunityId,
-    professional,
-    conversationAction,
-  });
+  let replyFamilyClaim = null;
+  if (replyFamily) {
+    replyFamilyClaim = await claimPatientReplySlot({
+      phone: to,
+      family: replyFamily,
+      eventId,
+    });
+    if (replyFamilyClaim.status === "suppressed") {
+      return {
+        status: "duplicate",
+        errorCode: replyFamilyClaim.reason,
+      };
+    }
+    if (replyFamilyClaim.status !== "claimed") {
+      return {
+        status: "blocked",
+        errorCode: "reply_family_claim_unavailable",
+      };
+    }
+  }
+
+  let result;
+  try {
+    result = await sendControlledPatientReply({
+      from,
+      to,
+      eventId,
+      body,
+      currentText,
+      recentConversation,
+      opportunityId,
+      professional,
+      conversationAction,
+    });
+  } catch (error) {
+    if (replyFamilyClaim) {
+      await releasePatientReplySlot(replyFamilyClaim);
+    }
+    throw error;
+  }
+  if (replyFamilyClaim) {
+    if (["completed", "duplicate"].includes(result.status)) {
+      await completePatientReplySlot(replyFamilyClaim);
+    } else {
+      await releasePatientReplySlot(replyFamilyClaim);
+    }
+  }
   await recordAutomaticReplyOperationally({
     result,
     eventId,
@@ -3854,17 +3900,21 @@ export async function handleYCloudWebhook(
         })
       : { status: "skipped" };
   let replyDebounceMarkerStatus = "skipped";
-  if (
-    normalizedMessageType === "text" ||
-    unsupportedInboundContent
-  ) {
+  const inboundReplyKind = replyDebounceKindForInbound({
+    messageType: normalizedMessageType,
+    unsupportedInboundContent,
+  });
+  if (inboundReplyKind) {
     const markerResult = await markLatestInboundForReply({
       phone,
       eventId: String(eventId),
       eventAt: contactAt,
-      priority: unavailableInboundContent
-        ? 0
-        : inboundReplyPriority(text),
+      priority:
+        normalizedMessageType === "image"
+          ? inboundReplyPriority("A paciente enviou uma foto.")
+          : unavailableInboundContent
+            ? 0
+            : inboundReplyPriority(text),
     });
     replyDebounceMarkerStatus = markerResult.status;
   }
@@ -5852,6 +5902,8 @@ export async function handleYCloudWebhook(
         patientRelationship,
         opportunityId: delivery.opportunityId,
         professional: delivery.professional,
+        replyKind: "media",
+        replyFamily: "image_acknowledgement",
       });
     imageAcknowledgementSent =
       imageAcknowledgementResult.status === "completed";
