@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-24.1 — publicada e verificada
+
+- Imagens recebidas em sequência passam pela mesma janela silenciosa de cinco segundos e são tratadas como uma única rajada antes da confirmação automática.
+- Uma reserva atômica por paciente e família de resposta permite somente uma confirmação concorrente e mantém as demais suprimidas por cinco minutos.
+- Falha ou bloqueio no envio libera a reserva para nova tentativa; sucesso ou duplicidade comprovada preserva o intervalo de segurança.
+- Mensagens de texto, interpretação da foto, classificação, takeover, agenda, retomadas, preços, opt-out e Apps Script v128 permaneceram inalterados.
+- Estado desta versão: código funcional `2a5086ececd7b9aee618fb5a76f43493d69e4d19`, deploy Netlify `6a8c70614abd522baf51b3ba` e função `ycloud-webhook` no checksum `fddc33261ada215ec968cd063b26330ef4c815a1b232214d18f70c03d15c1c38`. Validação com 32/32 testes focados, 1059/1059 integrais, arquitetura, build de 178 arquivos e 44 URLs; 12 funções e 5 agendamentos publicados, endpoints canônico e imutável HTTP 200 em modo `active`. Nenhuma mensagem real foi enviada. Rollback: `eebb15c16a8a8d46691716700912ab047b8a213c` e `6a8b8bdf350050000854b869`.
+
 ## 2026-08-23.7 — publicada e verificada
 
 - A resposta ao valor da consulta presencial informa primeiro R$ 500, depois Pix, débito ou parcelamento e emissão de nota fiscal, com oferta opcional e sem interrogação para verificar horários.

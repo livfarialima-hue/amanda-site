@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-23.7",
-  "promptVersion": "bruna-concierge-2026-08-23.7",
+  "bundleVersion": "2026-08-24.1",
+  "promptVersion": "bruna-concierge-2026-08-24.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-23.7",
+  "knowledgeSnapshot": "kb-2026-08-24.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "d6c896a23edffa942b9dc34ba16c1f3a847dbb76",
-    "lastObservedProductionCommit": "d6c896a23edffa942b9dc34ba16c1f3a847dbb76",
-    "functionalDeployId": "6a8b89d97d701d000895f77f",
-    "lastObservedProductionDeployId": "6a8b89d97d701d000895f77f",
-    "rollbackCommit": "28d1238520e9fd98c215848f13c868a2a2112adb",
-    "rollbackDeployId": "6a8b7d212bc77a000868548e",
-    "publishedAt": "2026-08-23T21:02:23-03:00",
-    "lastVerifiedAt": "2026-08-23T21:07:06-03:00"
+    "functionalCommit": "2a5086ececd7b9aee618fb5a76f43493d69e4d19",
+    "lastObservedProductionCommit": "2a5086ececd7b9aee618fb5a76f43493d69e4d19",
+    "functionalDeployId": "6a8c70614abd522baf51b3ba",
+    "lastObservedProductionDeployId": "6a8c70614abd522baf51b3ba",
+    "rollbackCommit": "eebb15c16a8a8d46691716700912ab047b8a213c",
+    "rollbackDeployId": "6a8b8bdf350050000854b869",
+    "publishedAt": "2026-08-24T13:25:43-03:00",
+    "lastVerifiedAt": "2026-08-24T13:27:16-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "dde58a11ee59bd5e084ebba7408177ee7fb525ae3280a7fa2b7c86af517e9cfc"
+    "driveProjectionSha256": "6d942c2fecbb7dd4c6bb485f68dc24b0a75844ebf90a413a071af5a47faef4f2"
   }
 }
