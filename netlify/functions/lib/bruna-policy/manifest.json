@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-23.6",
-  "promptVersion": "bruna-concierge-2026-08-23.6",
+  "bundleVersion": "2026-08-23.7",
+  "promptVersion": "bruna-concierge-2026-08-23.7",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-23.6",
+  "knowledgeSnapshot": "kb-2026-08-23.7",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "b4ff895b2cfe29fbe1780fc78348f37593421861",
-    "lastObservedProductionCommit": "b4ff895b2cfe29fbe1780fc78348f37593421861",
-    "functionalDeployId": "6a8b7b253e598c00083ee441",
-    "lastObservedProductionDeployId": "6a8b7b253e598c00083ee441",
-    "rollbackCommit": "f10b70b48c3e9ec47855c303e83f7fb76f783c4a",
-    "rollbackDeployId": "6a8b64f751610e0008507fc5",
-    "publishedAt": "2026-08-23T19:59:20-03:00",
-    "lastVerifiedAt": "2026-08-23T20:05:56-03:00"
+    "functionalCommit": "d6c896a23edffa942b9dc34ba16c1f3a847dbb76",
+    "lastObservedProductionCommit": "d6c896a23edffa942b9dc34ba16c1f3a847dbb76",
+    "functionalDeployId": "6a8b89d97d701d000895f77f",
+    "lastObservedProductionDeployId": "6a8b89d97d701d000895f77f",
+    "rollbackCommit": "28d1238520e9fd98c215848f13c868a2a2112adb",
+    "rollbackDeployId": "6a8b7d212bc77a000868548e",
+    "publishedAt": "2026-08-23T21:02:23-03:00",
+    "lastVerifiedAt": "2026-08-23T21:07:06-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "e68cefbd7ddc9d9303b33b9f872e7ef22f9a6d930f85b3be7cc98b70a50cb152"
+    "driveProjectionSha256": "dde58a11ee59bd5e084ebba7408177ee7fb525ae3280a7fa2b7c86af517e9cfc"
   }
 }

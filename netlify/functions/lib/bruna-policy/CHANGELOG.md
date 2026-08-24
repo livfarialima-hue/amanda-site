@@ -1,5 +1,14 @@
 # Histórico do pacote Bruna
 
+## 2026-08-23.7 — publicada e verificada
+
+- A resposta ao valor da consulta presencial informa primeiro R$ 500, depois Pix, débito ou parcelamento e emissão de nota fiscal, com oferta opcional e sem interrogação para verificar horários.
+- A explicação breve sobre a avaliação só aparece se ainda não tiver sido informada; quando a conversa já contém esse contexto, a resposta fica restrita a preço, pagamento, localização ainda necessária e próximo passo.
+- Endereço, CEP, Thera Office e Maps são reconhecidos também em falas humanas, evitando repetir a localização; pergunta apenas de preço continua sem link e sem coleta prematura de dias ou período.
+- A sugestão da Central usa a mesma cópia contextual. Não foram adicionadas promessas sobre Imposto de Renda, reembolso, teleconsulta, estacionamento ou retornos.
+- Preços cirúrgicos, agenda, takeover, retomadas, opt-out, outras funções Netlify e Apps Script v128 permaneceram inalterados.
+- Estado desta versão: código funcional `d6c896a23edffa942b9dc34ba16c1f3a847dbb76`, deploy Netlify `6a8b89d97d701d000895f77f` e função `ycloud-webhook` no checksum `4c1cb9ec95fde9760f73560e1adc3acd61a0d97e82c3559d98f05b6de2aeaac8`. Validação com 159/159 testes focados, 1054/1054 integrais, arquitetura e build de 178 arquivos; 12 funções e 5 agendamentos publicados, endpoints canônico e imutável HTTP 200 em modo `active` e 463 arquivos verificados sem segredo detectado. Nenhuma mensagem real foi enviada. Rollback: `28d1238520e9fd98c215848f13c868a2a2112adb` e `6a8b7d212bc77a000868548e`.
+
 ## 2026-08-23.6 — publicada e verificada
 
 - Primeiras respostas de site, Google, Meta e WhatsApp direto passam a seguir o mesmo padrão, independentemente do volume de procura do procedimento.
