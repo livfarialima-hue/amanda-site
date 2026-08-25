@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-24.2",
-  "promptVersion": "bruna-concierge-2026-08-24.2",
+  "bundleVersion": "2026-08-25.1",
+  "promptVersion": "bruna-concierge-2026-08-25.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-24.2",
+  "knowledgeSnapshot": "kb-2026-08-25.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "6ada6da31c99f565aca12ec79106e0d7a861ac7a",
-    "lastObservedProductionCommit": "6ada6da31c99f565aca12ec79106e0d7a861ac7a",
-    "functionalDeployId": "6a8ca7dffa99ff87e5d5c828",
-    "lastObservedProductionDeployId": "6a8ca7dffa99ff87e5d5c828",
-    "rollbackCommit": "e05568959cda331d08a3a21a9e48666c395dabb8",
-    "rollbackDeployId": "6a8c71d99ed4e60008eb7847",
-    "publishedAt": "2026-08-24T17:23:39-03:00",
-    "lastVerifiedAt": "2026-08-24T17:25:15-03:00"
+    "functionalCommit": "6a90eb2131da050362aa2a9bb5fccf3fac5c0c07",
+    "lastObservedProductionCommit": "6a90eb2131da050362aa2a9bb5fccf3fac5c0c07",
+    "functionalDeployId": "6a8da9472f5f4b41e5fce6d7",
+    "lastObservedProductionDeployId": "6a8da9472f5f4b41e5fce6d7",
+    "rollbackCommit": "16b01166667458fa0ffd285610adcba4bf7acbe6",
+    "rollbackDeployId": "6a8ca9ff1503800008d4ddaf",
+    "publishedAt": "2026-08-25T11:40:39-03:00",
+    "lastVerifiedAt": "2026-08-25T11:42:37-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "2f7b327399b01d4ae6b179fecb54eaf661da3889e6190970429b9e8d9e4f9e15"
+    "driveProjectionSha256": "66c71646923bdd4fdbeb9bc647b1605218f66c576cc875765c3e99fae620c107"
   }
 }
