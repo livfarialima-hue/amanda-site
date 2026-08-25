@@ -15,13 +15,13 @@
   "release": {
     "status": "published",
     "functionalCommit": "7d301d51577ada1d40ea254232da69cfa9b5ba08",
-    "lastObservedProductionCommit": "7d301d51577ada1d40ea254232da69cfa9b5ba08",
-    "functionalDeployId": "6a8ddfe7b4a14ce75e1ffbd0",
-    "lastObservedProductionDeployId": "6a8ddfe7b4a14ce75e1ffbd0",
+    "lastObservedProductionCommit": "9900bb702c204999ca08a979f12c167484e4b289",
+    "functionalDeployId": "6a8de353ad05bc00083e7d88",
+    "lastObservedProductionDeployId": "6a8de353ad05bc00083e7d88",
     "rollbackCommit": "bd40742b2670c57231a9367d99d53174da2937a4",
     "rollbackDeployId": "6a8da9472f5f4b41e5fce6d7",
-    "publishedAt": "2026-08-25T15:34:48-03:00",
-    "lastVerifiedAt": "2026-08-25T15:41:03-03:00"
+    "publishedAt": "2026-08-25T15:48:23-03:00",
+    "lastVerifiedAt": "2026-08-25T15:48:47-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "11c3dbd9fbc0d510f0a0c68df2d2eeaea75abca055b6195000f7005de007f896"
+    "driveProjectionSha256": "7ca2fdae9cf234c6fc67310378bac18ad57226f453e0d0edb0a46320139a9a18"
   }
 }
