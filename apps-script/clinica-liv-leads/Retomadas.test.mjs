@@ -1329,14 +1329,23 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
     sugestao: "Olá! Fiquei à disposição para continuar.",
   };
 
-  assert.equal(
+  const automaticInsideWindow =
     context.validarRetomadaAutomatica_(
       plan,
       leadData,
       conversationData,
       now,
-    ).ok,
-    true,
+    );
+  assert.equal(automaticInsideWindow.ok, true);
+  assert.equal(automaticInsideWindow.deliveryMode, "text");
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData,
+      new Date("2026-08-16T10:35:00-03:00"),
+    ).reason,
+    "whatsapp_window_closed",
   );
   assert.equal(
     context.validarRetomadaAutomatica_(
@@ -1481,15 +1490,24 @@ test("human approval permits the exact second or price follow-up but never bypas
     aprovadoPelaEquipe: true,
   };
 
-  assert.equal(
+  const approvedInsideWindow =
     context.validarRetomadaAutomatica_(
       plan,
       leadData,
       conversationData,
       now,
-    ).ok,
-    true,
-  );
+    );
+  assert.equal(approvedInsideWindow.ok, true);
+  assert.equal(approvedInsideWindow.deliveryMode, "text");
+  const approvedOldConversation =
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData,
+      new Date("2026-08-16T10:35:00-03:00"),
+    );
+  assert.equal(approvedOldConversation.ok, true);
+  assert.equal(approvedOldConversation.deliveryMode, "template");
   assert.equal(
     context.validarRetomadaAutomatica_(
       { ...plan, aprovadoPelaEquipe: false },
@@ -2206,6 +2224,7 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
   context.validarRetomadaAutomatica_ = () => ({
     ok: true,
     sugestao: "Mensagem segura de retomada.",
+    deliveryMode: "text",
   });
   let outboundPayload;
   context.enviarRetomadaAutomatica_ = (payload) => {
@@ -2235,6 +2254,7 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
   assert.equal(result.ok, true);
   assert.equal(result.sent, 1);
   assert.equal(outboundPayload.humanApproved, false);
+  assert.equal(outboundPayload.deliveryMode, "text");
   assert.equal(outboundPayload.followupStage, 1);
   assert.equal(outboundPayload.contextAnchorMessageId, "out-1");
   assert.equal(outboundPayload.recentConversation.length, 1);

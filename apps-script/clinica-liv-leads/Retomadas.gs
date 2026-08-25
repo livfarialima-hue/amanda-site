@@ -2949,6 +2949,7 @@ function processarRetomadasAutomaticasInterno_(
         patientPhone: telefone,
         body: validacao.sugestao,
         humanApproved: aprovadoPelaEquipe,
+        deliveryMode: validacao.deliveryMode,
         followupStage: etapaRetomada,
         contextAnchorMessageId: messageIdBase,
         recentConversation:
@@ -3088,10 +3089,12 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
     (agora.getTime() - ultimaEntrada.dataHora.getTime()) / 60000,
   );
 
-  if (
-    minutosDesdeEntrada < 0 ||
-    minutosDesdeEntrada > RETOMADAS_CONFIG.janelaWhatsAppMinutos
-  ) {
+  if (minutosDesdeEntrada < 0) {
+    return { ok: false, reason: "whatsapp_window_closed" };
+  }
+  const janelaWhatsappAberta =
+    minutosDesdeEntrada <= RETOMADAS_CONFIG.janelaWhatsAppMinutos;
+  if (!janelaWhatsappAberta && !plano.aprovadoPelaEquipe) {
     return { ok: false, reason: "whatsapp_window_closed" };
   }
 
@@ -3132,7 +3135,11 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
     return { ok: false, reason: "human_review_required" };
   }
 
-  return { ok: true, sugestao: plano.sugestao };
+  return {
+    ok: true,
+    sugestao: plano.sugestao,
+    deliveryMode: janelaWhatsappAberta ? "text" : "template",
+  };
 }
 
 function enviarRetomadaAutomatica_(payload, segredo, propriedades) {

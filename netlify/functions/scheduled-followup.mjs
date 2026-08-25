@@ -8,12 +8,17 @@ import {
   allowsPatientSideEffects,
   normalizeAutomationMode,
 } from "./lib/automation-mode.mjs";
-import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
+import {
+  renderYCloudFollowupTemplateText,
+  sendYCloudPatientFollowupTemplate,
+  sendYCloudPatientText,
+} from "./lib/ycloud-patient-message.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
 const FIRST_FOLLOWUP_SEMANTIC_REVIEW_BASELINE = Date.parse(
   "2026-08-23T14:40:44-03:00",
 );
+const CUSTOMER_SERVICE_WINDOW_MINUTES = 1430;
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -63,6 +68,11 @@ function normalizePayload(value) {
       .slice(0, 1500)
       .join(""),
     humanApproved: body.humanApproved === true,
+    deliveryMode:
+      String(body.deliveryMode || "").trim().toLowerCase() ===
+      "template"
+        ? "template"
+        : "text",
     followupStage: [1, 2].includes(Number(body.followupStage))
       ? Number(body.followupStage)
       : 0,
@@ -96,6 +106,24 @@ function normalizePayload(value) {
       ).slice(0, 300).join(""),
     },
   };
+}
+
+function hasOpenCustomerServiceWindow(payload, now) {
+  const lastInbound = payload.recentConversation
+    .slice()
+    .reverse()
+    .find((turn) => turn.direction === "IN");
+  const inboundAt = Date.parse(String(lastInbound?.at || ""));
+
+  if (!Number.isFinite(inboundAt)) return false;
+
+  const elapsedMinutes = Math.floor(
+    (now.getTime() - inboundAt) / 60_000,
+  );
+  return (
+    elapsedMinutes >= 0 &&
+    elapsedMinutes <= CUSTOMER_SERVICE_WINDOW_MINUTES
+  );
 }
 
 export function canReuseFirstFollowupSemanticReview(payload) {
@@ -141,6 +169,8 @@ export async function handleScheduledFollowup(
     reviewScheduledFollowupContextImpl =
       reviewScheduledFollowupContext,
     sendYCloudPatientTextImpl = sendYCloudPatientText,
+    sendYCloudPatientFollowupTemplateImpl =
+      sendYCloudPatientFollowupTemplate,
   } = {},
 ) {
   if (request.method !== "POST") {
@@ -195,6 +225,41 @@ export async function handleScheduledFollowup(
     return json({ ok: false, error: "invalid_payload" }, 400);
   }
 
+  const customerServiceWindowOpen = hasOpenCustomerServiceWindow(
+    payload,
+    now,
+  );
+  if (
+    !customerServiceWindowOpen &&
+    (
+      payload.humanApproved !== true ||
+      payload.deliveryMode !== "template"
+    )
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "outside_customer_service_window",
+      },
+      409,
+    );
+  }
+
+  if (
+    payload.deliveryMode === "template" &&
+    payload.humanApproved !== true
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "template_requires_human_approval",
+      },
+      409,
+    );
+  }
+
   const reusedFirstFollowupReview =
     canReuseFirstFollowupSemanticReview(payload);
   const contextReview = reusedFirstFollowupReview
@@ -243,8 +308,26 @@ export async function handleScheduledFollowup(
     );
   }
 
+  if (
+    payload.deliveryMode === "template" &&
+    !String(env.YCLOUD_FOLLOWUP_TEMPLATE_NAME || "").trim()
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "followup_template_missing",
+      },
+      503,
+    );
+  }
+
   const eventId = `scheduled-followup-${payload.planId}`;
-  const result = await sendYCloudPatientTextImpl(
+  const sendImpl =
+    payload.deliveryMode === "template"
+      ? sendYCloudPatientFollowupTemplateImpl
+      : sendYCloudPatientTextImpl;
+  const result = await sendImpl(
     {
       from,
       to: payload.patientPhone,
@@ -269,7 +352,10 @@ export async function handleScheduledFollowup(
   await appendConversationTurnImpl({
     phone: payload.patientPhone,
     role: "assistant",
-    text: payload.body,
+    text:
+      payload.deliveryMode === "template"
+        ? renderYCloudFollowupTemplateText(payload.body)
+        : payload.body,
     eventId,
     source: "bruna",
     at: now.toISOString(),

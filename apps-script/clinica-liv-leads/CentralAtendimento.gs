@@ -887,6 +887,7 @@ function carregarRetomadasRegistradasCentral_(
           ? sugerirProximaJanelaRespostaCentral_(
               now,
               lastConversationAt,
+              { allowOutsideWhatsappWindow: true },
             )
           : null;
       const approvalEligible =
@@ -957,6 +958,22 @@ function carregarRetomadasRegistradasCentral_(
 function motivoElegibilidadeBrunaCentral_(input) {
   const data = input || {};
   if (data.approvalEligible === true) {
+    const ultimaInteracao = dataCentralValida_(
+      data.lastInteractionAt,
+    );
+    const proximaJanela = dataCentralValida_(
+      data.nextSafeApprovalWindow,
+    );
+    if (
+      ultimaInteracao &&
+      proximaJanela &&
+      proximaJanela.getTime() - ultimaInteracao.getTime() >
+        CENTRAL_ATENDIMENTO_CONFIG.whatsappWindowMinutes *
+          60 *
+          1000
+    ) {
+      return "Elegível para aprovação manual — envio por modelo do WhatsApp";
+    }
     return "Elegível para aprovação";
   }
   if (data.automatic === true) {
@@ -1415,7 +1432,9 @@ function aplicarControleCentral_(item, controls, now) {
     item.cancelFollowUpEligible = false;
     item.cancelFollowUp = false;
     item.brunaEligibilityReason =
-      avaliarProgramacaoEsperaCentral_(item, now);
+      avaliarProgramacaoEsperaCentral_(item, now, {
+        allowOutsideWhatsappWindow: true,
+      });
   }
 
   if (item.status === "Aguardando paciente") {
@@ -1462,13 +1481,15 @@ function aplicarControleCentral_(item, controls, now) {
   return item;
 }
 
-function avaliarProgramacaoEsperaCentral_(item, now) {
+function avaliarProgramacaoEsperaCentral_(item, now, options) {
   const mensagem = textoCentral_(item && item.finalMessage, 900);
   const programadaPara = dataCentralValida_(item && item.programFor);
   const ultimaInteracao = dataCentralValida_(
     item && item.lastInteractionAt,
   );
   const instante = dataCentralValida_(now) || new Date();
+  const allowOutsideWhatsappWindow =
+    options && options.allowOutsideWhatsappWindow === true;
 
   if (!mensagem) return "Preencha Mensagem final";
   if (
@@ -1488,6 +1509,7 @@ function avaliarProgramacaoEsperaCentral_(item, now) {
     return "Use um horário entre 09:00 e 18:59";
   }
   if (
+    !allowOutsideWhatsappWindow &&
     ultimaInteracao &&
     programadaPara.getTime() - ultimaInteracao.getTime() >
       CENTRAL_ATENDIMENTO_CONFIG.whatsappWindowMinutes * 60 * 1000
@@ -1501,20 +1523,25 @@ function avaliarProgramacaoEsperaCentral_(item, now) {
 function sugerirProximaJanelaRespostaCentral_(
   now,
   lastInteractionAt,
+  options,
 ) {
   const instant = dataCentralValida_(now) || new Date();
   const lastInteraction = dataCentralValida_(lastInteractionAt);
+  const allowOutsideWhatsappWindow =
+    options && options.allowOutsideWhatsappWindow === true;
   const earliest = new Date(
     instant.getTime() + 15 * 60 * 1000,
   );
-  const deadline = lastInteraction
-    ? new Date(
-        lastInteraction.getTime() +
-          CENTRAL_ATENDIMENTO_CONFIG.whatsappWindowMinutes *
-            60 *
-            1000,
-      )
-    : new Date(instant.getTime() + 24 * 60 * 60 * 1000);
+  const deadline = allowOutsideWhatsappWindow
+    ? new Date(instant.getTime() + 7 * 24 * 60 * 60 * 1000)
+    : lastInteraction
+      ? new Date(
+          lastInteraction.getTime() +
+            CENTRAL_ATENDIMENTO_CONFIG.whatsappWindowMinutes *
+              60 *
+              1000,
+        )
+      : new Date(instant.getTime() + 24 * 60 * 60 * 1000);
   const currentDay = formatarDataCentral_(
     instant,
     "yyyy-MM-dd",
@@ -1887,6 +1914,7 @@ function processarEdicaoCentralAtendimento_(event) {
           ? sugerirProximaJanelaRespostaCentral_(
               now,
               lastInteractionAt,
+              { allowOutsideWhatsappWindow: true },
             )
           : null;
       let eligibilityReason =
@@ -1904,8 +1932,15 @@ function processarEdicaoCentralAtendimento_(event) {
                 lastInteractionAt: lastInteractionAt,
               },
               now,
+              { allowOutsideWhatsappWindow: true },
             )
-          : "Elegível — horário sugerido automaticamente";
+          : lastInteractionAt &&
+              suggestedAt.getTime() - lastInteractionAt.getTime() >
+                CENTRAL_ATENDIMENTO_CONFIG.whatsappWindowMinutes *
+                  60 *
+                  1000
+            ? "Elegível — horário sugerido; envio por modelo do WhatsApp"
+            : "Elegível — horário sugerido automaticamente";
       }
 
       const eligible =
@@ -2325,6 +2360,7 @@ function coletarRetomadasMarcadasCentral_(sheet) {
             lastInteractionAt: lastInteractionAt,
           },
           new Date(),
+          { allowOutsideWhatsappWindow: true },
         )
       : "";
     const eligible =
