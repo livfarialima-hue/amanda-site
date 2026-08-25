@@ -257,6 +257,23 @@ test("a decorated acronym is never used as a name in a lifting prefill", () => {
   assert.equal((reply.match(/\?/g) || []).length, 1);
 });
 
+test("a clear personal name with a trailing emoji personalizes the lifting prefill", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Mariza Alves 🥰",
+    procedure: "lifting_cervical",
+    introduceBruna: true,
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Mariza! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre cervicoplastia (lifting cervical). " +
+      "O que você gostaria de entender primeiro?",
+  );
+  assert.doesNotMatch(reply, /Como posso te chamar\?/i);
+  assert.doesNotMatch(reply, /🥰/u);
+});
+
 test("sends only the requested official Instagram without adding a site or CTA", () => {
   const reply = buildOfficialChannelsReply({
     patientName: "MARINA",

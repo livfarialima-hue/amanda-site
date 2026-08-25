@@ -45,8 +45,8 @@ test("business and brand profiles are not treated as patient names", () => {
   );
 });
 
-test("consonant initialisms and decorated profile identifiers are not patient names", () => {
-  for (const profileName of ["SVS", "SVS :-", "S.V.S."]) {
+test("consonant initialisms remain invalid after boundary decorations are removed", () => {
+  for (const profileName of ["SVS", "SVS :-", "S.V.S.", "SVS 🥰"]) {
     assert.equal(usableProfileName(profileName), "");
     assert.equal(usableProfileFirstName(profileName), "");
     assert.equal(resolvePatientDisplayName({ profileName }), "");
@@ -56,5 +56,28 @@ test("consonant initialisms and decorated profile identifiers are not patient na
 test("short real names and valid full names remain usable", () => {
   for (const profileName of ["Cris", "ANA", "Maria S."]) {
     assert.equal(usableProfileName(profileName), profileName);
+  }
+});
+
+test("a clearly personal name keeps working when the profile has boundary emojis", () => {
+  for (const [profileName, expectedName, expectedFirstName] of [
+    ["Mariza Alves 🥰", "Mariza Alves", "Mariza"],
+    ["💙 Rosana Macedo", "Rosana Macedo", "Rosana"],
+    ["Cris🌷", "Cris", "Cris"],
+  ]) {
+    assert.equal(usableProfileName(profileName), expectedName);
+    assert.equal(usableProfileFirstName(profileName), expectedFirstName);
+    assert.equal(resolvePatientDisplayName({ profileName }), expectedName);
+  }
+});
+
+test("boundary decoration removal does not rescue business or malformed profiles", () => {
+  for (const profileName of [
+    "Monah Semijoias 💎",
+    "Clínica Rosana 🥰",
+    "Rosana 2026 💙",
+    "Ro💙sana",
+  ]) {
+    assert.equal(usableProfileName(profileName), "");
   }
 });

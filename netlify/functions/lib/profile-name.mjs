@@ -1,20 +1,34 @@
 const MAX_PROFILE_NAME_LENGTH = 80;
 const MAX_FIRST_NAME_LENGTH = 18;
+const PERSONAL_NAME_CHARACTER_PATTERN = /^[\p{L}\p{M}'’.\-\s]+$/u;
+
+function stripBoundaryDecorations(value) {
+  const tokens = String(value || "").split(/\s+/).filter(Boolean);
+  while (tokens.length && !/[\p{L}\p{M}\p{N}]/u.test(tokens[0])) tokens.shift();
+  while (tokens.length && !/[\p{L}\p{M}\p{N}]/u.test(tokens.at(-1))) tokens.pop();
+
+  return tokens
+    .join(" ")
+    .replace(/^[\p{Extended_Pictographic}\p{Emoji_Modifier}\uFE0F\u200D]+/gu, "")
+    .replace(/[\p{Extended_Pictographic}\p{Emoji_Modifier}\uFE0F\u200D]+$/gu, "")
+    .trim();
+}
 
 export function usableProfileName(value) {
-  const profileName = Array.from(String(value || "").trim())
+  const boundedProfileName = Array.from(String(value || "").trim())
     .slice(0, MAX_PROFILE_NAME_LENGTH + 1)
     .join("")
     .replace(/\s+/g, " ")
     .trim();
+  const profileName = stripBoundaryDecorations(boundedProfileName);
   const normalizedProfileName = profileName.toLocaleLowerCase("pt-BR");
   const suspiciousProfilePattern =
     /\b(?:cl[ií]nica|consult[oó]rio|hospital|empresa|loja|store|shop|studio|est[uú]dio|est[eé]tica|sal[aã]o|oficial|atendimento|recep[cç][aã]o|comercial|vendas|marketing|equipe|grupo|cirurgia|pl[aá]stica|odontologia|ltda|semijoias?|joias?|joalheria|acess[oó]rios|boutique|moda|beauty|imobili[aá]ria|advocacia|arquitetura|fotografia|doces|restaurante|fam[ií]lia|mam[aã]e?|papai|amor|vida|trabalho|n[uú]mero\s+novo|sem\s+nome)\b/i;
 
   if (
     !profileName ||
-    profileName.length > MAX_PROFILE_NAME_LENGTH ||
-    !/^[\p{L}\p{M}'’.\-\s]+$/u.test(profileName) ||
+    boundedProfileName.length > MAX_PROFILE_NAME_LENGTH ||
+    !PERSONAL_NAME_CHARACTER_PATTERN.test(profileName) ||
     suspiciousProfilePattern.test(profileName)
   ) {
     return "";

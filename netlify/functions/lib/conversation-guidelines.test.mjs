@@ -388,6 +388,14 @@ test("playbook treats structured prefills only as context", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
+    /emoji ou enfeite isolado no início ou no fim pode ser ignorado somente quando o texto restante já for um nome pessoal claro/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /nunca remova números, símbolos internos ou termos comerciais para forçar um nome/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
     /termine com a única pergunta "Como posso te chamar\?"/,
   );
   assert.match(

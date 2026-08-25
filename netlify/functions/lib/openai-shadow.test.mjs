@@ -970,6 +970,25 @@ test("a known WhatsApp profile name prevents asking the name again", () => {
   );
 });
 
+test("a personal WhatsApp profile with a trailing emoji still supplies the name", () => {
+  const result = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        suggestedReply:
+          "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso te chamar?",
+      }),
+    ),
+    "fallback-model",
+    { patientProfileName: "Mariza Alves 🥰" },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    result.decision.suggestedReply,
+    "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso ajudar?",
+  );
+});
+
 test("a generic WhatsApp profile does not suppress the name question", () => {
   for (const patientProfileName of [
     "Paciente",
@@ -978,7 +997,6 @@ test("a generic WhatsApp profile does not suppress the name question", () => {
     "Rosana 2026",
     "Loja da Rô",
     "Dra. Amanda",
-    "Rosana 💙",
     "soniamariamontoromenezes",
     "SVS",
     "SVS :-",
