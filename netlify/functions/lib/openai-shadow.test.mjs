@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import {
+  applyAnsweredDiscoveryQuestionGuard,
   applyContextClarificationGuard,
   applyContextContinuationGuard,
   applyContextReopenGuard,
@@ -218,6 +219,117 @@ test("returning-patient guard removes a repeated Bruna introduction", () => {
     guarded.suggestedReply,
     /Eu sou a Bruna/i,
   );
+});
+
+test("continuity guard removes a repeated Bruna introduction from an engaged lead", () => {
+  const guarded = applyReturningPatientReplyGuard(
+    validDecision({
+      suggestedReply:
+        "Boa noite, Vera! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Entendi que a flacidez aparece no pescoço e nos braços.",
+    }),
+    { knownPatient: false, state: "engaged_lead" },
+    {
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "O que você gostaria de entender primeiro?",
+        },
+      ],
+    },
+  );
+
+  assert.equal(
+    guarded.suggestedReply,
+    "Boa noite, Vera! Entendi que a flacidez aparece no pescoço e nos braços.",
+  );
+  assert.doesNotMatch(guarded.suggestedReply, /Eu sou a Bruna/i);
+  assert.doesNotMatch(guarded.suggestedReply, /novamente/i);
+});
+
+test("known prior interaction removes a repeated introduction without conversation memory", () => {
+  const guarded = applyReturningPatientReplyGuard(
+    validDecision({
+      suggestedReply:
+        "Olá, Isabel! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Claro, posso explicar melhor.",
+    }),
+    { knownPatient: false, state: "engaged_lead" },
+    { priorInteractionKnown: true },
+  );
+
+  assert.equal(
+    guarded.suggestedReply,
+    "Olá, Isabel! Claro, posso explicar melhor.",
+  );
+});
+
+test("answered discovery guard removes a generic question already answered by the patient", () => {
+  const guarded = applyAnsweredDiscoveryQuestionGuard(
+    validDecision({
+      suggestedReply:
+        "Entendo que essas mudanças no pescoço e nos braços possam incomodar. Posso te orientar sobre a cervicoplastia e também conversar sobre a região dos braços. A Dra. Amanda pode avaliar as duas regiões com cuidado. O que você gostaria de entender primeiro?",
+    }),
+    {
+      currentMessage: "Boa noite! Tenho flacidez no pescoço e nos braços.",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "O que você gostaria de entender primeiro sobre lifting cervical?",
+        },
+      ],
+    },
+  );
+
+  assert.equal(
+    guarded.suggestedReply,
+    "Entendo que essas mudanças no pescoço e nos braços possam incomodar. A Dra. Amanda pode avaliar as duas regiões com cuidado.",
+  );
+});
+
+test("response parser applies continuity protections together", () => {
+  const parsed = parseOpenAIShadowResponse(
+    validResponse(
+      validDecision({
+        suggestedReply:
+          "Olá, Vera! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Entendo que essas mudanças no pescoço e nos braços possam incomodar. Posso te orientar sobre a cervicoplastia e também conversar sobre a região dos braços. A Dra. Amanda pode avaliar as duas regiões com cuidado. O que você gostaria de entender primeiro?",
+      }),
+    ),
+    "fallback-model",
+    {
+      currentMessage: "Tenho flacidez no pescoço e nos braços.",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text: "O que você gostaria de entender primeiro sobre lifting cervical?",
+        },
+      ],
+      patientRelationship: {
+        knownPatient: false,
+        state: "engaged_lead",
+      },
+    },
+  );
+
+  assert.equal(parsed.status, "completed");
+  assert.equal(
+    parsed.decision.suggestedReply,
+    "Olá, Vera! Entendo que essas mudanças no pescoço e nos braços possam incomodar. A Dra. Amanda pode avaliar as duas regiões com cuidado.",
+  );
+});
+
+test("answered discovery guard preserves a specific advancing question", () => {
+  const decision = validDecision({
+    suggestedReply:
+      "A Dra. Amanda pode avaliar as duas regiões no mesmo atendimento. Quer que eu explique como funciona essa avaliação?",
+  });
+  const guarded = applyAnsweredDiscoveryQuestionGuard(decision, {
+    currentMessage: "Tenho flacidez no pescoço e nos braços.",
+    priorInteractionKnown: true,
+  });
+
+  assert.deepEqual(guarded, decision);
 });
 
 test("first acquisition reply always starts with a human greeting and Bruna introduction", () => {

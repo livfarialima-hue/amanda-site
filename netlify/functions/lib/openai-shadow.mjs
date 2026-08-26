@@ -243,9 +243,21 @@ export function applyKnownProfileNameGuard(
 export function applyReturningPatientReplyGuard(
   decision,
   patientRelationship,
+  { recentConversation = null, priorInteractionKnown = false } = {},
 ) {
+  const hasPreviousClinicReply =
+    Array.isArray(recentConversation) &&
+    recentConversation.some(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
+  const knownPatient = patientRelationship?.knownPatient === true;
+  const isOngoingConversation =
+    knownPatient || priorInteractionKnown === true || hasPreviousClinicReply;
+
   if (
-    patientRelationship?.knownPatient !== true ||
+    !isOngoingConversation ||
     decision?.route !== "standard_reply" ||
     !decision?.suggestedReply
   ) {
@@ -254,11 +266,75 @@ export function applyReturningPatientReplyGuard(
 
   const suggestedReply = String(decision.suggestedReply)
     .replace(
-      /^(Ol[aá](?:,\s*[^!?.]+)?[!,.]?\s*)?(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:(?:concierge\s+)?da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
+      /^((?:(?:ol[aá]|oi|bom\s+dia|boa\s+tarde|boa\s+noite)(?:,\s*[^!?.\n]+)?[!?.]?\s*)?)(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:(?:concierge\s+)?da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
       (_match, greeting) =>
-        `${greeting || ""}Que bom falar com você novamente. `,
+        knownPatient
+          ? `${greeting || ""}Que bom falar com você novamente. `
+          : `${greeting || ""}`,
     )
     .trim();
+
+  return {
+    ...decision,
+    suggestedReply,
+  };
+}
+
+function hasConcreteCurrentMessage(currentMessage) {
+  const normalized = String(currentMessage || "")
+    .replace(/^(?:ol[aá]|oi|bom\s+dia|boa\s+tarde|boa\s+noite)[!,.]?\s*/iu, "")
+    .trim();
+
+  if (normalized.length < 10) return false;
+  if (
+    /^(?:sim|n[aã]o|ok|certo|entendi|combinado|perfeito|obrigad[oa])(?:\s+obrigad[oa])?[!.\s]*$/iu.test(
+      normalized,
+    )
+  ) {
+    return false;
+  }
+
+  return (normalized.match(/[\p{L}\p{N}]+/gu) || []).length >= 3;
+}
+
+export function applyAnsweredDiscoveryQuestionGuard(
+  decision,
+  {
+    currentMessage = "",
+    recentConversation = null,
+    priorInteractionKnown = false,
+  } = {},
+) {
+  const hasPreviousClinicReply =
+    Array.isArray(recentConversation) &&
+    recentConversation.some(
+      (turn) =>
+        turn?.role === "assistant" ||
+        ["bruna", "equipe_humana"].includes(turn?.source),
+    );
+
+  if (
+    decision?.route !== "standard_reply" ||
+    !decision?.suggestedReply ||
+    (!hasPreviousClinicReply && priorInteractionKnown !== true) ||
+    !hasConcreteCurrentMessage(currentMessage)
+  ) {
+    return decision;
+  }
+
+  const suggestedReply = String(decision.suggestedReply)
+    .replace(
+      /(?:\s+|^)(?:Posso|Consigo)\s+(?:te|lhe)\s+orientar\s+sobre\s+[^.?!]{1,160}\s+e\s+tamb[eé]m\s+(?:te\s+)?(?:orientar|conversar)\s+sobre\s+[^.?!]{1,160}[.?!]\s*/giu,
+      " ",
+    )
+    .replace(
+      /(?:\s+|^)(?:O\s+que\s+(?:voc[eê]\s+)?(?:gostaria|quer)\s+de\s+(?:entender|saber|melhorar)(?:\s+primeiro)?(?:\s+sobre\s+[^?]+)?|O\s+que\s+mais\s+(?:te|lhe)\s+incomoda|Como\s+posso\s+(?:te|lhe)?\s*ajudar|Em\s+que\s+posso\s+(?:te|lhe)\s+ajudar)\s*\?\s*$/iu,
+      "",
+    )
+    .replace(/\s{2,}/gu, " ")
+    .trim();
+
+  if (!suggestedReply) return decision;
 
   return {
     ...decision,
@@ -712,26 +788,39 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
     decision: applyUrgencyGuard(
       applyAutomationIdentityGuard(
         applyFirstReplyGreetingGuard(
-          applyReturningPatientReplyGuard(
-            applyKnownProfileNameGuard(
-              applyContextContinuationGuard(
-                applyContextReopenGuard(
-                  applyContextClarificationGuard(
-                    applyKnowledgeDecisionGuard(
-                      decision,
-                      options.learningContext,
+          applyAnsweredDiscoveryQuestionGuard(
+            applyReturningPatientReplyGuard(
+              applyKnownProfileNameGuard(
+                applyContextContinuationGuard(
+                  applyContextReopenGuard(
+                    applyContextClarificationGuard(
+                      applyKnowledgeDecisionGuard(
+                        decision,
+                        options.learningContext,
+                      ),
                     ),
                   ),
+                  {
+                    enabled:
+                      options.humanContextContinuationCandidate === true,
+                  },
                 ),
-                {
-                  enabled:
-                    options.humanContextContinuationCandidate === true,
-                },
+                options.patientProfileName,
+                options.hasConversationHistory,
               ),
-              options.patientProfileName,
-              options.hasConversationHistory,
+              options.patientRelationship,
+              {
+                recentConversation: options.recentConversation,
+                priorInteractionKnown:
+                  options.priorInteractionKnown === true,
+              },
             ),
-            options.patientRelationship,
+            {
+              currentMessage: options.currentMessage,
+              recentConversation: options.recentConversation,
+              priorInteractionKnown:
+                options.priorInteractionKnown === true,
+            },
           ),
           {
             patientProfileName: options.patientProfileName,
@@ -895,6 +984,7 @@ export async function runOpenAIShadow(
 
     return parseOpenAIShadowResponse(responseData, model, {
       deterministicUrgent,
+      currentMessage: text,
       patientProfileName,
       hasConversationHistory:
         normalizedConversation.length > 0 ||

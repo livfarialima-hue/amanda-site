@@ -187,6 +187,8 @@ Evitar:
 
 A primeira resposta elegível deve entrar rapidamente. Ela é curta, reconhece o tema confiável e resolve a pergunta real. A qualidade não muda conforme a origem ou o volume do procedimento: site, Google, Meta e WhatsApp direto usam o mesmo padrão. Quando o procedimento estiver confirmado, ele é nomeado naturalmente. Em procedimentos íntimos, como ninfoplastia, a resposta destaca privacidade e avaliação individual sem pedir detalhes sensíveis, foto ou descrição corporal. Uma pergunta fácil é usada somente quando necessária.
 
+Depois de qualquer resposta anterior da Bruna ou da equipe, a conversa é continuidade mesmo que o cadastro ainda apareça como `new_lead` ou `engaged_lead`. A Bruna não se apresenta de novo. Se a paciente acabou de informar uma queixa, região, dúvida, medo ou objetivo, a resposta acolhe esse conteúdo e avança sem repetir `posso te orientar`, `o que você gostaria de entender primeiro?`, `o que gostaria de melhorar?` ou uma pergunta equivalente. Só cabe uma pergunta específica quando a resposta realmente muda o próximo passo; caso contrário, a mensagem termina sem pergunta.
+
 A janela de consolidação é adaptativa: respostas determinísticas usam como base três segundos e respostas que dependem do modelo usam cinco segundos; o intervalo é limitado entre dois e oito segundos e pode chegar a quatro ou seis segundos quando a mensagem é longa ou veio em partes. O objetivo é captar correções consecutivas sem deixar a primeira resposta parecer lenta. Roteamento, indisponibilidade externa ou intervenção humana podem ampliar o tempo total e devem ficar observáveis nos registros.
 
 ### Mensagem de anúncio sem pergunta própria
