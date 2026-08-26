@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-26.1",
-  "promptVersion": "bruna-concierge-2026-08-26.1",
+  "bundleVersion": "2026-08-26.2",
+  "promptVersion": "bruna-concierge-2026-08-26.2",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-26.1",
+  "knowledgeSnapshot": "kb-2026-08-26.2",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "500e53c2520142ae98e2f99e955a8735010a6eb3",
-    "lastObservedProductionCommit": "500e53c2520142ae98e2f99e955a8735010a6eb3",
-    "functionalDeployId": "6a8f400807447f000867d85e",
-    "lastObservedProductionDeployId": "6a8f400807447f000867d85e",
-    "rollbackCommit": "198718c043e70673a77e12b47d8f71d86ccd9b8f",
-    "rollbackDeployId": "6a8ef65963789d0008c27501",
-    "publishedAt": "2026-08-26T16:36:12-03:00",
-    "lastVerifiedAt": "2026-08-26T16:36:46-03:00"
+    "functionalCommit": "931b6882d85f8ccafe0d8aa901fefaa829376278",
+    "lastObservedProductionCommit": "931b6882d85f8ccafe0d8aa901fefaa829376278",
+    "functionalDeployId": "6a8f5604ffa49d0008c9edd2",
+    "lastObservedProductionDeployId": "6a8f5604ffa49d0008c9edd2",
+    "rollbackCommit": "500e53c2520142ae98e2f99e955a8735010a6eb3",
+    "rollbackDeployId": "6a8f400807447f000867d85e",
+    "publishedAt": "2026-08-26T18:09:55-03:00",
+    "lastVerifiedAt": "2026-08-26T18:12:15-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "7e751f7094f370eb435180594537ac998211a53ef0f2c34d00319a3fbdead173"
+    "driveProjectionSha256": "ea295d82111304fdddd4de837499ae14bbe728f8f5d487ff502090463e89e8b5"
   }
 }

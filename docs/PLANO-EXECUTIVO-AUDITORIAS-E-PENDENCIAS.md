@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 26 de agosto de 2026, 16:39, America/Sao_Paulo
+**Atualizado em:** 26 de agosto de 2026, 18:11, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026, execução ao vivo de BLEF, CERV, OTO, FACE e MARCA em 22/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -40,6 +40,8 @@ O responsável técnico deve:
 ## 3. Situação atual em linguagem direta
 
 ### Operação do WhatsApp — Bruna
+
+**Release da Bruna `2026-08-26.2` — PUBLICADO E VERIFICADO:** quando uma primeira mensagem aparece no aplicativo, mas chega do provedor sem corpo utilizável, a Bruna usa o primeiro nome apenas se o perfil for pessoal e confiável e pede uma única ação de baixo atrito: reenviar a dúvida em uma frase. Sem nome confiável, usa somente `Olá!`; sem texto, não inventa procedimento, anúncio nem referência. O fluxo normal com texto disponível continua chamando a pessoa pelo nome e tratando o procedimento confirmado. Código funcional `931b6882d85f8ccafe0d8aa901fefaa829376278`, deploy Netlify `6a8f5604ffa49d0008c9edd2`, webhook `59499c7955f73811902be418b28745bb36116c0540ab4f4818558bf348c580ab`; **1092/1092 testes integrais**, arquitetura, build de 178 arquivos e 44 URLs aprovados. Domínio, URL imutável e webhook responderam HTTP 200 em modo `active`; 12 funções, 5 agendas, 467 arquivos sem segredo detectado e nenhuma mensagem real. Apps Script v129, atribuição, LEADS, CRM, procedimento, preços, agenda, takeover, opt-out e retomadas foram preservados. Rollback: código `500e53c2520142ae98e2f99e955a8735010a6eb3` e deploy `6a8f400807447f000867d85e`.
 
 **Release da Bruna `2026-08-26.1` — PUBLICADO E VERIFICADO:** o pacote reúne três correções delimitadas. Pedidos de Instagram recebem somente o perfil oficial, sem explicação espontânea da referência do anúncio. Códigos de campanha, JID e IDs operacionais permanecem disponíveis internamente, mas são bloqueados tanto na validação da resposta quanto no transporte final de texto e retomada por template; diante de pergunta explícita sobre uma referência, a resposta apenas informa que ela pode ser desconsiderada e que não muda o atendimento. Mensagens sobre criança, bebê, adolescente ou menor continuam em revisão humana obrigatória e podem receber somente uma ciência curta e não clínica depois do encaminhamento interno, com `Como posso te chamar?` apenas no primeiro contato sem nome confiável. Código funcional `500e53c2520142ae98e2f99e955a8735010a6eb3`, deploy Netlify `6a8f400807447f000867d85e`, webhook `611564b28be0081d5ccd132e10ceacd080c11b108b070406eeb7bba16e203cc6`; **1091/1091 testes integrais**, arquitetura, build de 178 arquivos e 44 URLs aprovados. Domínio, URL imutável e webhook responderam HTTP 200 em modo `active`; 12 funções, 5 agendas, 467 arquivos sem segredo detectado e nenhuma mensagem real. Apps Script v129, atribuição, LEADS, CRM, procedimento, preços, agenda, takeover, opt-out e retomadas foram preservados. Rollback: código `198718c043e70673a77e12b47d8f71d86ccd9b8f` e deploy `6a8ef65963789d0008c27501`.
 
