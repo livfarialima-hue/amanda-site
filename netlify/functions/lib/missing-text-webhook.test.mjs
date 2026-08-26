@@ -123,11 +123,11 @@ test("a text event with an omitted body receives one safe clarification", async 
     );
     assert.match(
       patientMessages[0].text.body,
-      /mensagem não apareceu completa para mim/i,
+      /primeira mensagem não carregou para mim/i,
     );
     assert.match(
       patientMessages[0].text.body,
-      /qual procedimento ou dúvida/i,
+      /reenviar sua dúvida em uma frase/i,
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -216,15 +216,15 @@ test("an unsupported inbound event receives one safe clarification without infer
         to: "+5511961957144",
         sendTime: "2026-08-22T18:08:56.000Z",
         type: "unsupported",
-        unsupported: { type: "UNSUPPORTED_TYPE" },
+        unsupported: {},
         errors: [
           {
-            code: 131051,
+            code: 131060,
             title: "Synthetic provider error",
             message: "Synthetic content that must not appear in logs",
           },
         ],
-        customerProfile: { name: "Paciente Sintetico" },
+        customerProfile: { name: "Rosana" },
       },
     };
     const rawBody = JSON.stringify(payload);
@@ -272,16 +272,27 @@ test("an unsupported inbound event receives one safe clarification without infer
     assert.equal(responseBody.missingTextClarificationQueued, true);
     assert.equal(responseBody.missingTextClarificationSent, true);
     assert.equal(patientMessages.length, 1);
-    assert.match(
+    assert.equal(
       patientMessages[0].text.body,
-      /mensagem não apareceu completa para mim/i,
+      "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+        "Sua primeira mensagem não carregou para mim. " +
+        "Pode me reenviar sua dúvida em uma frase? " +
+        "Assim já consigo te orientar por aqui.",
+    );
+    assert.equal(
+      (patientMessages[0].text.body.match(/\?/g) || []).length,
+      1,
+    );
+    assert.doesNotMatch(
+      patientMessages[0].text.body,
+      /lifting|procedimento|M26|131060/i,
     );
     assert.equal(processingLog?.inboundAvailability, "upstream_unsupported");
-    assert.equal(processingLog?.unsupportedSubtype, "UNSUPPORTED_TYPE");
-    assert.deepEqual(processingLog?.unsupportedErrorCodes, ["131051"]);
+    assert.equal(processingLog?.unsupportedSubtype, "unknown");
+    assert.deepEqual(processingLog?.unsupportedErrorCodes, ["131060"]);
     assert.doesNotMatch(
       JSON.stringify(processingLog),
-      /Synthetic provider error|Synthetic content|Paciente Sintetico/i,
+      /Synthetic provider error|Synthetic content|Rosana/i,
     );
   } finally {
     globalThis.fetch = originalFetch;

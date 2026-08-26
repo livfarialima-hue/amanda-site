@@ -6027,7 +6027,9 @@ export async function handleYCloudWebhook(
   if (shouldQueueMissingTextClarification) {
     missingTextClarificationQueued = true;
     const clarificationBody =
-      buildMissingInboundTextClarificationReply();
+      buildMissingInboundTextClarificationReply({
+        patientName: patientDisplayName,
+      });
     const clarificationResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
       to: phone,

@@ -21,15 +21,29 @@ import {
 } from "./patient-replies.mjs";
 
 test("asks for context naturally when the provider omits the inbound text", () => {
-  const reply = buildMissingInboundTextClarificationReply();
+  const reply = buildMissingInboundTextClarificationReply({
+    patientName: "Rosana",
+  });
 
-  assert.match(
+  assert.equal(
     reply,
-    /^Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Sua primeira mensagem não carregou para mim. " +
+      "Pode me reenviar sua dúvida em uma frase? " +
+      "Assim já consigo te orientar por aqui.",
   );
-  assert.match(reply, /mensagem não apareceu completa para mim/i);
-  assert.match(reply, /qual procedimento ou dúvida/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
   assert.doesNotMatch(reply, /diagnóstico|indicação|erro|falha técnica/i);
+});
+
+test("keeps the missing-text recovery neutral when the profile name is not personal", () => {
+  const reply = buildMissingInboundTextClarificationReply({
+    patientName: "Clínica Rosana",
+  });
+
+  assert.match(reply, /^Olá! Eu sou a Bruna/i);
+  assert.doesNotMatch(reply, /Clínica Rosana/i);
+  assert.doesNotMatch(reply, /lifting|blefaroplastia|procedimento/i);
 });
 
 test("asks for routing context without sounding like an administrative menu", () => {

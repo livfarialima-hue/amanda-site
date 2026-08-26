@@ -388,11 +388,14 @@ export function buildImageAcknowledgementReply({
   return [opening, acknowledgement].filter(Boolean).join(" ");
 }
 
-export function buildMissingInboundTextClarificationReply() {
+export function buildMissingInboundTextClarificationReply({
+  patientName,
+} = {}) {
   return [
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
-    "Recebi seu contato, mas a mensagem não apareceu completa para mim.",
-    "Pode me contar qual procedimento ou dúvida você gostaria de entender primeiro?",
+    `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`,
+    "Sua primeira mensagem não carregou para mim.",
+    "Pode me reenviar sua dúvida em uma frase?",
+    "Assim já consigo te orientar por aqui.",
   ].join(" ");
 }
 
