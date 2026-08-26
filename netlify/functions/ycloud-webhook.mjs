@@ -924,7 +924,37 @@ export function sheetsActionTimeoutMs(action, configuredValue) {
   return Math.min(Math.max(configured, 8_000), 25_000);
 }
 
-async function deliverSheetsAction(action, payload) {
+const RETRYABLE_LEAD_DELIVERY_ERRORS = new Set([
+  "busy_retry",
+  "empty_response",
+  "html_response",
+  "invalid_json_response",
+  "request_failed",
+  "timeout",
+]);
+
+export function shouldRetryLeadDelivery(result) {
+  return Boolean(
+    result?.ok !== true &&
+      RETRYABLE_LEAD_DELIVERY_ERRORS.has(
+        String(result?.errorCode || ""),
+      ),
+  );
+}
+
+export function leadDeliveryRetryDelayMs(value) {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(parsed)) return 1_000;
+  return Math.min(Math.max(parsed, 0), 5_000);
+}
+
+export function leadDeliveryRetryTimeoutMs(value) {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(parsed)) return 8_000;
+  return Math.min(Math.max(parsed, 4_000), 10_000);
+}
+
+async function deliverSheetsAction(action, payload, options = {}) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   const secret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET;
 
@@ -932,17 +962,22 @@ async function deliverSheetsAction(action, payload) {
     return deliveryResult(false, null, "configuration_missing");
   }
 
+  const configuredTimeoutMs = Number(options.timeoutMs);
+  const timeoutMs =
+    Number.isFinite(configuredTimeoutMs) && configuredTimeoutMs > 0
+      ? configuredTimeoutMs
+      : sheetsActionTimeoutMs(
+          action,
+          ["reserve_appointment_slot", "upsert_appointment"].includes(
+            String(action || ""),
+          )
+            ? process.env.GOOGLE_SHEETS_APPOINTMENT_TIMEOUT_MS
+            : process.env.GOOGLE_SHEETS_APPEND_TIMEOUT_MS,
+        );
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
-    sheetsActionTimeoutMs(
-      action,
-      ["reserve_appointment_slot", "upsert_appointment"].includes(
-        String(action || ""),
-      )
-        ? process.env.GOOGLE_SHEETS_APPOINTMENT_TIMEOUT_MS
-        : process.env.GOOGLE_SHEETS_APPEND_TIMEOUT_MS,
-    ),
+    timeoutMs,
   );
 
   try {
@@ -1015,11 +1050,8 @@ async function deliverSheetsAction(action, payload) {
   }
 }
 
-async function deliverLead(lead) {
-  const result = await deliverSheetsAction("append_lead", { lead });
-
-  if (!result.ok) return result;
-
+function leadDeliveryResult(result, details = {}) {
+  if (!result.ok) return { ...result, ...details };
   const responseData = result.responseData;
 
   return deliveryResult(true, result.httpStatus, "none", {
@@ -1036,6 +1068,52 @@ async function deliverLead(lead) {
     humanTakeoverToday: responseData?.humanTakeoverToday === true,
     patientRelationship:
       responseData?.patientRelationship || null,
+    ...details,
+  });
+}
+
+export async function deliverLead(
+  lead,
+  {
+    deliverSheetsActionImpl = deliverSheetsAction,
+    waitImpl = (milliseconds) =>
+      new Promise((resolve) => setTimeout(resolve, milliseconds)),
+  } = {},
+) {
+  const firstResult = await deliverSheetsActionImpl(
+    "append_lead",
+    { lead },
+  );
+  if (!shouldRetryLeadDelivery(firstResult)) {
+    return leadDeliveryResult(firstResult, {
+      deliveryAttempts: 1,
+      recoveredAfterTransientFailure: false,
+      initialDeliveryError: firstResult.ok
+        ? "none"
+        : firstResult.errorCode,
+    });
+  }
+
+  const retryDelayMs = leadDeliveryRetryDelayMs(
+    process.env.GOOGLE_SHEETS_APPEND_RETRY_DELAY_MS,
+  );
+  if (retryDelayMs > 0) await waitImpl(retryDelayMs);
+
+  // The exact event and message IDs are replayed so Apps Script can return the
+  // canonical route of a write that completed after the first request timed out.
+  const retryResult = await deliverSheetsActionImpl(
+    "append_lead",
+    { lead },
+    {
+      timeoutMs: leadDeliveryRetryTimeoutMs(
+        process.env.GOOGLE_SHEETS_APPEND_RETRY_TIMEOUT_MS,
+      ),
+    },
+  );
+  return leadDeliveryResult(retryResult, {
+    deliveryAttempts: 2,
+    recoveredAfterTransientFailure: retryResult.ok === true,
+    initialDeliveryError: firstResult.errorCode,
   });
 }
 
@@ -3477,6 +3555,7 @@ export async function handleYCloudWebhook(
       contactPreferencesGuard: "active",
       internalPhoneExclusionConfigured:
         hasConfiguredInternalTeamPhones(),
+      leadDeliveryRetry: "single_idempotent_transient",
       leadDeliveryFallback: "acquisition_only",
       leadFailureEmailAlert: "required_after_retries",
     });
@@ -6036,6 +6115,11 @@ export async function handleYCloudWebhook(
       referenceCategory: attribution.referenceCategory,
       leadDelivery: delivery.ok ? "success" : "failure",
       leadDeliveryFallbackActive,
+      leadDeliveryAttempts: delivery.deliveryAttempts || 1,
+      leadDeliveryRecoveredAfterRetry:
+        delivery.recoveredAfterTransientFailure === true,
+      leadDeliveryInitialError:
+        delivery.initialDeliveryError || "none",
       leadDuplicate: delivery.duplicate === true,
       leadDuplicateReason: delivery.duplicateReason,
       recoveredExactDuplicate,
@@ -6121,6 +6205,9 @@ export async function handleYCloudWebhook(
         error: "lead_delivery_failed",
         downstreamStatus: delivery.httpStatus,
         downstreamError: delivery.errorCode,
+        leadDeliveryAttempts: delivery.deliveryAttempts || 1,
+        leadDeliveryInitialError:
+          delivery.initialDeliveryError || "none",
         automaticWorkFinished: false,
       },
       502,
@@ -6130,6 +6217,9 @@ export async function handleYCloudWebhook(
   return json({
     received: true,
     leadRecorded: true,
+    leadDeliveryAttempts: delivery.deliveryAttempts || 1,
+    leadDeliveryRecoveredAfterRetry:
+      delivery.recoveredAfterTransientFailure === true,
     leadRouted: delivery.routed !== false,
     leadRouteStatus: delivery.routeStatus || "resolved",
     automaticWorkFinished,

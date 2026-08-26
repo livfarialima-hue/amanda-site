@@ -429,6 +429,10 @@ test("health endpoint reports the final automation switches", async () => {
     assert.equal(body.appointmentReviewEnabled, true);
     assert.equal(body.automationMode, "active");
     assert.equal(body.contactPreferencesGuard, "active");
+    assert.equal(
+      body.leadDeliveryRetry,
+      "single_idempotent_transient",
+    );
     assert.equal(body.leadDeliveryFallback, "acquisition_only");
     assert.equal(
       body.leadFailureEmailAlert,

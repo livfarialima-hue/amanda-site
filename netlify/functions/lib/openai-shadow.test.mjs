@@ -2319,6 +2319,7 @@ test("coded acquisition remains silent when Sheets cannot establish a route", as
     "OPENAI_API_KEY",
     "WHATSAPP_AUTOMATION_MODE",
     "WHATSAPP_ALERT_NUMBER",
+    "GOOGLE_SHEETS_APPEND_RETRY_DELAY_MS",
   ];
   const savedEnvironment = Object.fromEntries(
     environmentKeys.map((key) => [key, process.env[key]]),
@@ -2335,6 +2336,7 @@ test("coded acquisition remains silent when Sheets cannot establish a route", as
     GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
     OPENAI_API_KEY: "openai-test-key",
     WHATSAPP_AUTOMATION_MODE: "active",
+    GOOGLE_SHEETS_APPEND_RETRY_DELAY_MS: "0",
   });
   delete process.env.WHATSAPP_ALERT_NUMBER;
   console.log = () => {};
@@ -2411,7 +2413,7 @@ test("coded acquisition remains silent when Sheets cannot establish a route", as
   }
 });
 
-test("a structured lipo prefill opens a conversation without jumping to schedule", async () => {
+test("a structured lipo prefill recovers one transient Sheets failure without jumping to schedule", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -2420,6 +2422,7 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
     "OPENAI_API_KEY",
     "WHATSAPP_AUTOMATION_MODE",
     "WHATSAPP_ALERT_NUMBER",
+    "GOOGLE_SHEETS_APPEND_RETRY_DELAY_MS",
   ];
   const savedEnvironment = Object.fromEntries(
     environmentKeys.map((key) => [key, process.env[key]]),
@@ -2428,6 +2431,7 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
   const originalLog = console.log;
   const requests = [];
   const pending = [];
+  let appendLeadAttempts = 0;
 
   Object.assign(process.env, {
     YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
@@ -2436,6 +2440,7 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
     GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
     OPENAI_API_KEY: "openai-test-key",
     WHATSAPP_AUTOMATION_MODE: "active",
+    GOOGLE_SHEETS_APPEND_RETRY_DELAY_MS: "0",
   });
   delete process.env.WHATSAPP_ALERT_NUMBER;
   console.log = () => {};
@@ -2443,6 +2448,15 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
     requests.push({ url, options });
 
     if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      const requestBody = JSON.parse(options.body);
+      if (requestBody.action === "append_lead") {
+        appendLeadAttempts += 1;
+        if (appendLeadAttempts === 1) {
+          const error = new Error("transient Sheets timeout");
+          error.name = "AbortError";
+          throw error;
+        }
+      }
       return new Response(
         JSON.stringify({
           ok: true,
@@ -2519,6 +2533,9 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
     const body = await response.json();
     await Promise.all(pending);
 
+    assert.equal(response.status, 200);
+    assert.equal(body.leadDeliveryAttempts, 2);
+    assert.equal(body.leadDeliveryRecoveredAfterRetry, true);
     assert.equal(body.aiActiveQueued, true);
     assert.equal(body.appointmentNeedsPreference, false);
     assert.equal(body.appointmentPreferenceReplySent, false);
@@ -2533,6 +2550,7 @@ test("a structured lipo prefill opens a conversation without jumping to schedule
       appendLeadRequest?.lead?.templateId,
       "procedure_evaluation_v1",
     );
+    assert.equal(appendLeadAttempts, 2);
     assert.equal(
       requests.some(
         (request) =>
