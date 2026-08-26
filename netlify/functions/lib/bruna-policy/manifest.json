@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-25.1",
-  "promptVersion": "bruna-concierge-2026-08-25.1",
+  "bundleVersion": "2026-08-26.1",
+  "promptVersion": "bruna-concierge-2026-08-26.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-25.1",
+  "knowledgeSnapshot": "kb-2026-08-26.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "198718c043e70673a77e12b47d8f71d86ccd9b8f",
-    "lastObservedProductionCommit": "198718c043e70673a77e12b47d8f71d86ccd9b8f",
-    "functionalDeployId": "6a8ef65963789d0008c27501",
-    "lastObservedProductionDeployId": "6a8ef65963789d0008c27501",
-    "rollbackCommit": "7d301d51577ada1d40ea254232da69cfa9b5ba08",
-    "rollbackDeployId": "6a8de353ad05bc00083e7d88",
-    "publishedAt": "2026-08-26T11:21:50-03:00",
-    "lastVerifiedAt": "2026-08-26T11:27:18-03:00"
+    "functionalCommit": "500e53c2520142ae98e2f99e955a8735010a6eb3",
+    "lastObservedProductionCommit": "500e53c2520142ae98e2f99e955a8735010a6eb3",
+    "functionalDeployId": "6a8f400807447f000867d85e",
+    "lastObservedProductionDeployId": "6a8f400807447f000867d85e",
+    "rollbackCommit": "198718c043e70673a77e12b47d8f71d86ccd9b8f",
+    "rollbackDeployId": "6a8ef65963789d0008c27501",
+    "publishedAt": "2026-08-26T16:36:12-03:00",
+    "lastVerifiedAt": "2026-08-26T16:36:46-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "75e1f8507505a35a388e77db3c898ce0f5f592ca23a95871a822ac0b8652fbec"
+    "driveProjectionSha256": "7e751f7094f370eb435180594537ac998211a53ef0f2c34d00319a3fbdead173"
   }
 }
