@@ -13,6 +13,12 @@ const HIGH_RISK_PATTERNS = [
   /\b(?:valor\s+exato|or[cç]amento\s+final|negociar|desconto|condi[cç][aã]o\s+especial)\b/i,
 ];
 
+const MINOR_CONTEXT_PATTERNS = [
+  /\b(?:crian[cç]a|beb[eê]|rec[eé]m[- ]nascid[oa]|menor(?:\s+de\s+idade)?|pedi[aá]tric[oa])\b/i,
+  /\b(?:menino|menina|adolescente|paciente)\b[\s\S]{0,40}\b(?:[0-9]|1[0-7])\s*anos?\b/i,
+  /\b(?:meu|minha|nosso|nossa)\s+(?:filh[oa]|net[oa]|sobrinh[oa])\b[\s\S]{0,40}\b(?:[0-9]|1[0-7])\s*(?:anos?|meses?)\b/i,
+];
+
 const MEDIUM_RISK_PATTERNS = [
   /\b(?:cirurgia|procedimento|t[eé]cnica|anestesia|hospital|interna[cç][aã]o)\b/i,
   /\b(?:recupera[cç][aã]o|cicatriz|resultado|risco|retorno|afastamento)\b/i,
@@ -110,13 +116,21 @@ export function learningSubject(decision, fallback = "Dúvida não mapeada") {
 
 export function classifyLearningRisk({ text, reviewReason, procedure } = {}) {
   const combined = [text, reviewReason, procedure].filter(Boolean).join(" ");
-  if (HIGH_RISK_PATTERNS.some((pattern) => pattern.test(combined))) {
+  if (
+    isMinorContext(combined) ||
+    HIGH_RISK_PATTERNS.some((pattern) => pattern.test(combined))
+  ) {
     return "Alto";
   }
   if (MEDIUM_RISK_PATTERNS.some((pattern) => pattern.test(combined))) {
     return "Médio";
   }
   return "Baixo";
+}
+
+export function isMinorContext(value) {
+  const text = String(value || "");
+  return MINOR_CONTEXT_PATTERNS.some((pattern) => pattern.test(text));
 }
 
 function invalidKnowledgeDecision(
@@ -231,7 +245,17 @@ export function buildUnknownHoldingReply({
   currentText = "",
   reviewReason = "",
   procedure = "",
+  allowNameQuestion = true,
 } = {}) {
+  const pediatricAcknowledgement =
+    buildPediatricReviewAcknowledgement({
+      patientName,
+      introduceBruna,
+      currentText,
+      allowNameQuestion,
+    });
+  if (pediatricAcknowledgement) return pediatricAcknowledgement;
+
   const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
@@ -264,4 +288,25 @@ export function buildUnknownHoldingReply({
   return pendingTopic
     ? `${greeting}${introduction} Vou confirmar ${pendingTopic} com a equipe antes de te responder por aqui.`
     : "";
+}
+
+export function buildPediatricReviewAcknowledgement({
+  patientName,
+  introduceBruna,
+  currentText = "",
+  allowNameQuestion = true,
+} = {}) {
+  if (!isMinorContext(currentText)) return "";
+
+  const firstName = usableProfileFirstName(patientName);
+  const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
+  const introduction = introduceBruna
+    ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+    : "";
+  const nameQuestion =
+    !firstName && introduceBruna && allowNameQuestion
+      ? " Como posso te chamar?"
+      : "";
+
+  return `${greeting}${introduction} Obrigada por explicar. Como se trata de uma criança, vou encaminhar sua mensagem para a equipe responsável confirmar a orientação mais adequada para esse caso.${nameQuestion}`;
 }

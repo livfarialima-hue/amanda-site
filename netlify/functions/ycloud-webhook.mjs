@@ -68,6 +68,7 @@ import {
 } from "./lib/external-professional-context.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import {
+  buildPediatricReviewAcknowledgement,
   buildUnknownHoldingReply,
   buildSafeInternalReviewSuggestion,
   classifyLearningRisk,
@@ -2715,9 +2716,26 @@ async function completeOpenAIActive({
       });
     }
 
-    if (unknownReview) {
+    const pediatricReviewAcknowledgement =
+      activeResult.decision.route === "human_review" &&
+      activeResult.decision.urgent !== true &&
+      plan?.reason !== "possible_urgent_symptoms"
+        ? buildPediatricReviewAcknowledgement({
+            patientName: input.patientProfileName,
+            introduceBruna,
+            currentText: input.text,
+            allowNameQuestion:
+              Number(conversationAction?.replyContract?.maxQuestions) >= 1,
+          })
+        : "";
+
+    if (unknownReview || pediatricReviewAcknowledgement) {
       if (
-        (learningRisk === "Alto" || learningRecord?.ok !== true) &&
+        (
+          pediatricReviewAcknowledgement ||
+          learningRisk === "Alto" ||
+          learningRecord?.ok !== true
+        ) &&
         !reviewAlertAlreadyQueued &&
         isReviewAlertConfigured()
       ) {
@@ -2744,14 +2762,18 @@ async function completeOpenAIActive({
         };
       }
 
-      const holdingReply = buildUnknownHoldingReply({
-        patientName: input.patientProfileName,
-        introduceBruna,
-        currentText: input.text,
-        reviewReason: activeResult.decision.reviewReason,
-        procedure:
-          activeResult.decision.procedure || plan?.procedure || "",
-      });
+      const holdingReply =
+        pediatricReviewAcknowledgement ||
+        buildUnknownHoldingReply({
+          patientName: input.patientProfileName,
+          introduceBruna,
+          currentText: input.text,
+          reviewReason: activeResult.decision.reviewReason,
+          procedure:
+            activeResult.decision.procedure || plan?.procedure || "",
+          allowNameQuestion:
+            Number(conversationAction?.replyContract?.maxQuestions) >= 1,
+        });
       if (!holdingReply) {
         return {
           status: "awaiting_human_learning",
@@ -2792,7 +2814,12 @@ async function completeOpenAIActive({
           eventId: `${input.eventId}:unknown-holding`,
           source: "bruna",
         });
-        return { status: "awaiting_human_learning", replySent: true };
+        return {
+          status: unknownReview
+            ? "awaiting_human_learning"
+            : "awaiting_human_review",
+          replySent: true,
+        };
       }
 
       return {

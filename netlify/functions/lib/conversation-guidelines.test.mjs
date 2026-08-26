@@ -372,6 +372,25 @@ test("playbook ignores commercial and unrelated approaches while preserving cont
   );
 });
 
+test("playbook keeps minors in human review with one bounded acknowledgement", () => {
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /criança, bebê, adolescente ou menor de idade/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /use human_review, automaticAllowed false, replyCode "UNKNOWN-REVIEW-01"/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não forneça orientação clínica, indicação, técnica, preço, agenda nem CTA comercial/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Se houver qualquer sinal de urgência, preserve urgent true e não envie essa ciência de espera/,
+  );
+});
+
 test("playbook treats structured prefills only as context", () => {
   assert.match(CONVERSATION_GUIDELINES, /templateId procedure_evaluation_v1/);
   assert.match(

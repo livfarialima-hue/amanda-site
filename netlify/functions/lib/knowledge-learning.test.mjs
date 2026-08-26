@@ -4,9 +4,11 @@ import {
   UNKNOWN_CLARIFICATION_CODE,
   UNKNOWN_REVIEW_CODE,
   applyKnowledgeDecisionGuard,
+  buildPediatricReviewAcknowledgement,
   buildSafeInternalReviewSuggestion,
   buildUnknownHoldingReply,
   classifyLearningRisk,
+  isMinorContext,
   shouldDigestLearningDecision,
 } from "./knowledge-learning.mjs";
 
@@ -118,6 +120,84 @@ test("clinical and negotiated unknowns receive high risk", () => {
   assert.equal(
     classifyLearningRisk({ text: "Tem estacionamento perto da clínica?" }),
     "Baixo",
+  );
+});
+
+test("an explicit minor context is always classified as high risk", () => {
+  const examples = [
+    "Tenho interesse em lobuloplastia para uma criança de 2 anos.",
+    "Minha filha tem 12 anos e gostaria de uma avaliação.",
+    "A paciente adolescente tem 16 anos.",
+  ];
+
+  for (const text of examples) {
+    assert.equal(isMinorContext(text), true, text);
+    assert.equal(classifyLearningRisk({ text }), "Alto", text);
+  }
+  assert.equal(isMinorContext("Minha filha tem 22 anos."), false);
+});
+
+test("a pediatric handoff acknowledges the child without giving clinical guidance", () => {
+  const reply = buildPediatricReviewAcknowledgement({
+    patientName: "Onde Há Fé, Há Milagres",
+    introduceBruna: true,
+    currentText:
+      "Tenho interesse em lobuloplastia para uma criança de 2 anos.",
+  });
+
+  assert.equal(
+    reply,
+    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada por explicar. Como se trata de uma criança, vou encaminhar sua mensagem para a equipe responsável confirmar a orientação mais adequada para esse caso. Como posso te chamar?",
+  );
+  assert.doesNotMatch(
+    reply,
+    /\b(?:indica[cç][aã]o|t[eé]cnica|pre[cç]o|valor|agenda|cirurgia indicada)\b/i,
+  );
+});
+
+test("a pediatric handoff does not repeat a trusted name question", () => {
+  const reply = buildPediatricReviewAcknowledgement({
+    patientName: "Marina Souza",
+    introduceBruna: false,
+    currentText: "Quero informações para meu filho de 8 anos.",
+  });
+
+  assert.match(reply, /^Olá, Marina!/);
+  assert.doesNotMatch(reply, /Como posso te chamar\?/);
+});
+
+test("the pediatric name question can be removed when the turn allows none", () => {
+  const reply = buildPediatricReviewAcknowledgement({
+    patientName: "Perfil comercial 24h",
+    introduceBruna: true,
+    currentText: "Quero informações para uma criança.",
+    allowNameQuestion: false,
+  });
+
+  assert.match(reply, /Como se trata de uma criança/);
+  assert.doesNotMatch(reply, /Como posso te chamar\?/);
+});
+
+test("a pediatric handoff does not ask the name again after prior interaction", () => {
+  const reply = buildPediatricReviewAcknowledgement({
+    patientName: "Perfil comercial 24h",
+    introduceBruna: false,
+    currentText: "Quero informações para uma criança.",
+    allowNameQuestion: true,
+  });
+
+  assert.match(reply, /Como se trata de uma criança/);
+  assert.doesNotMatch(reply, /Como posso te chamar\?/);
+});
+
+test("an adult review does not receive the pediatric acknowledgement", () => {
+  assert.equal(
+    buildPediatricReviewAcknowledgement({
+      patientName: "Marina Souza",
+      introduceBruna: false,
+      currentText: "Tenho 35 anos e quero avaliar uma lobuloplastia para mim.",
+    }),
+    "",
   );
 });
 
