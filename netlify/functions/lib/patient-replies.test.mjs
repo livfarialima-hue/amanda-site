@@ -299,10 +299,16 @@ test("explains the campaign reference directly and uses natural name casing", ()
   });
 
   assert.match(reply, /^Olá, Marina!/);
-  assert.match(reply, /código interno/i);
-  assert.match(reply, /não muda seu atendimento/i);
+  assert.equal(
+    reply,
+    "Olá, Marina! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Pode desconsiderar essa referência. Ela não muda seu atendimento.",
+  );
   assert.doesNotMatch(reply, /Olá, MARINA/);
-  assert.doesNotMatch(reply, /vou confirmar|equipe/i);
+  assert.doesNotMatch(
+    reply,
+    /código|anúncio|campanha|rastreamento|atribuição|vou confirmar|equipe/i,
+  );
 });
 
 test("builds a natural routing greeting without internal codes", () => {

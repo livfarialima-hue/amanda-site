@@ -267,6 +267,41 @@ test("internal human-confirmation language is blocked from patient replies", () 
   assert.equal(result.reason, "internal_confirmation_language");
 });
 
+test("internal campaign references and operational identifiers are blocked globally", () => {
+  const blockedBodies = [
+    "A referência M26F01W-C06H01 mostra a campanha de origem.",
+    "Essa referência é apenas um código interno para identificarmos o anúncio.",
+    "O JID desta conversa é J1_QeJsH3mEZ0ml57cvVUP1bA.",
+    "O Message ID é wamid.HBgNNTUxMTkxMjQ0DY4MRUCABIY.",
+    "O Opportunity ID do seu atendimento já foi registrado.",
+    "Essa atribuição serve para o rastreamento do anúncio.",
+  ];
+
+  for (const body of blockedBodies) {
+    const result = validateOutboundReply({
+      body,
+      currentText: "O que significa essa referência?",
+      conversationAction: respond,
+    });
+
+    assert.equal(result.allowed, false, body);
+    assert.equal(result.reason, "internal_reference_exposure", body);
+  }
+});
+
+test("a direct question about a reference receives only a neutral reassurance", () => {
+  const body = "Pode desconsiderar essa referência. Ela não muda seu atendimento.";
+  const result = validateOutboundReply({
+    body,
+    currentText: "O que significa essa referência?",
+    conversationAction: respond,
+  });
+
+  assert.equal(result.allowed, true);
+  assert.equal(result.reason, "allowed");
+  assert.equal(result.body, body);
+});
+
 test("the protected otoplasty range omits a facial guide already shared", () => {
   const recentConversation = [
     {

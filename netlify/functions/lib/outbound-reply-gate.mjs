@@ -8,6 +8,7 @@ import {
 } from "./conversation-action-controller.mjs";
 import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 import { recordDurableConversationTurn } from "./conversation-ledger.mjs";
+import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
 
 const STORE_NAME = "liv-whatsapp-outbound-replies-v1";
 const CLAIM_TTL_MS = 2 * 60 * 1_000;
@@ -333,6 +334,10 @@ function semanticUnsafeReplyReason(
 
 function unsafeReplyContentReason(value) {
   const text = String(value || "");
+
+  if (hasInternalReferenceExposure(text)) {
+    return "internal_reference_exposure";
+  }
 
   if (/BEGIN:VCARD|END:VCARD|VERSION:3\.0|(?:item\d+\.)?TEL(?:;|:)/i.test(text)) {
     return "contact_card_content";

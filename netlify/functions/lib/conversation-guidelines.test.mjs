@@ -355,6 +355,22 @@ test("playbook prohibits unfinished or contaminated outbound content", () => {
   assert.match(CONVERSATION_GUIDELINES, /cartões vCard/);
   assert.match(CONVERSATION_GUIDELINES, /links incompletos/);
   assert.match(CONVERSATION_GUIDELINES, /horário duplicados/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Códigos de campanha, JID, Opportunity ID, Event ID, Message ID, Template ID, replyCode/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Nunca os repita, explique ou mencione em uma resposta ao paciente/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /pode desconsiderá-la e que isso não muda o atendimento/,
+  );
+  assert.doesNotMatch(
+    CONVERSATION_GUIDELINES,
+    /explique apenas que é um código interno para identificar o anúncio/,
+  );
 });
 
 test("playbook ignores commercial and unrelated approaches while preserving context", () => {
@@ -383,7 +399,7 @@ test("playbook keeps a direct Instagram request separate from ad references", ()
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /só cabe quando a mensagem atual perguntar explicitamente/,
+    /Se a mensagem atual perguntar explicitamente.*use somente a tranquilização neutra/s,
   );
 });
 

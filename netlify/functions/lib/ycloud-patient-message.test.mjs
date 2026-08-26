@@ -62,6 +62,26 @@ test("skips sending when configuration is incomplete", async () => {
   assert.equal(result.errorCode, "configuration_missing");
 });
 
+test("blocks internal references at the final free-text transport boundary", async () => {
+  const result = await sendYCloudPatientText(
+    {
+      from: "+5511961957144",
+      to: "+5511999999999",
+      eventId: "evt_internal_reference",
+      body: "A referência M26F01W-C06H01 é um código interno do anúncio.",
+    },
+    {
+      env: { YCLOUD_API_KEY: "test-key" },
+      fetchImpl: async () => {
+        throw new Error("fetch should not run");
+      },
+    },
+  );
+
+  assert.equal(result.status, "failed");
+  assert.equal(result.errorCode, "internal_reference_exposure");
+});
+
 test("sends an approved follow-up template with the edited message as its body variable", async () => {
   let request;
   const result = await sendYCloudPatientFollowupTemplate(
@@ -108,4 +128,27 @@ test("sends an approved follow-up template with the edited message as its body v
       "Oi! Posso continuar de onde paramos?\n\n" +
       "Se preferir não receber novas mensagens, é só me avisar.",
   );
+});
+
+test("blocks internal references in scheduled template parameters", async () => {
+  const result = await sendYCloudPatientFollowupTemplate(
+    {
+      from: "+5511961957144",
+      to: "+5511999999999",
+      eventId: "followup_internal_reference",
+      body: "Seu Opportunity ID já foi registrado.",
+    },
+    {
+      env: {
+        YCLOUD_API_KEY: "test-key",
+        YCLOUD_FOLLOWUP_TEMPLATE_NAME: "retomada_manual_bruna_v1",
+      },
+      fetchImpl: async () => {
+        throw new Error("fetch should not run");
+      },
+    },
+  );
+
+  assert.equal(result.status, "failed");
+  assert.equal(result.errorCode, "internal_reference_exposure");
 });

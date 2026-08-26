@@ -149,7 +149,7 @@ export function buildCampaignReferenceExplanationReply({
 
   return [
     opening,
-    'Essa referência é apenas um código interno para identificarmos o anúncio pelo qual você chegou. Não é um termo médico, não muda seu atendimento e você pode desconsiderá-la.',
+    "Pode desconsiderar essa referência. Ela não muda seu atendimento.",
   ]
     .filter(Boolean)
     .join(" ");

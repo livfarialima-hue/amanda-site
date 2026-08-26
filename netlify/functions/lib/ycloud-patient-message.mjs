@@ -1,3 +1,5 @@
+import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
+
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 const MESSAGE_TIMEOUT_MS = 8_000;
@@ -91,6 +93,14 @@ export async function sendYCloudPatientText(
     .slice(0, MAX_BODY_LENGTH)
     .join("");
 
+  if (hasInternalReferenceExposure(text)) {
+    return {
+      status: "failed",
+      httpStatus: null,
+      errorCode: "internal_reference_exposure",
+    };
+  }
+
   if (!apiKey || !sender || !recipient || !text) {
     return {
       status: "skipped",
@@ -130,6 +140,14 @@ export async function sendYCloudPatientFollowupTemplate(
     env.YCLOUD_FOLLOWUP_TEMPLATE_LANGUAGE ||
       DEFAULT_FOLLOWUP_TEMPLATE_LANGUAGE,
   ).trim();
+
+  if (hasInternalReferenceExposure(text)) {
+    return {
+      status: "failed",
+      httpStatus: null,
+      errorCode: "internal_reference_exposure",
+    };
+  }
 
   if (
     !env.YCLOUD_API_KEY ||
