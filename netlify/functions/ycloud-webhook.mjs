@@ -8,7 +8,6 @@ import {
 } from "./lib/whatsapp-automation.mjs";
 import { normalizeAutomationMode } from "./lib/automation-mode.mjs";
 import {
-  hasCampaignReferenceCode,
   inboundReplyPriority,
   MARKETING_PREFILL_TEMPLATE_ID,
   normalizeMarketingPrefillTemplateId,
@@ -2239,11 +2238,6 @@ async function completeOpenAIActive({
       plan?.reason === "official_instagram_request";
     const campaignReferenceQuestion =
       plan?.reason === "campaign_reference_explanation";
-    const campaignReferencePreviouslyShown =
-      hasCampaignReferenceCode(input.text) ||
-      (input.recentConversation || []).some((turn) =>
-        hasCampaignReferenceCode(turn?.text),
-      );
     const consultationInformationRequest =
       plan?.reason === "consultation_information_request" &&
       isConsultationInformationRequest(input.text);
@@ -2361,8 +2355,6 @@ async function completeOpenAIActive({
               patientName: input.patientProfileName,
               procedure: plan?.procedure || input.procedure || "",
               introduceBruna,
-              explainCampaignReference:
-                campaignReferencePreviouslyShown,
             }),
             reviewReason: "",
           },

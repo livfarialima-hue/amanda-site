@@ -279,17 +279,15 @@ test("sends only the requested official Instagram without adding a site or CTA",
     patientName: "MARINA",
     procedure: "lifting_facial",
     introduceBruna: false,
-    explainCampaignReference: true,
   });
 
-  assert.match(reply, /^Claro!/);
-  assert.match(
+  assert.equal(
     reply,
-    /https:\/\/www\.instagram\.com\/dra\.amanda_plastica\//,
+    "Claro! Este é o Instagram oficial da Dra. Amanda:\n" +
+      "https://www.instagram.com/dra.amanda_plastica/",
   );
   assert.doesNotMatch(reply, /https:\/\/draamandaschroeder\.com\.br/);
-  assert.match(reply, /apenas um código interno/i);
-  assert.match(reply, /Não é um termo médico/i);
+  assert.doesNotMatch(reply, /código interno|referência|termo médico/i);
   assert.doesNotMatch(reply, /vou confirmar|com a equipe|segurança/i);
   assert.doesNotMatch(reply, /se quiser|me conte/i);
 });

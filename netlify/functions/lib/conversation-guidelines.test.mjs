@@ -372,6 +372,21 @@ test("playbook ignores commercial and unrelated approaches while preserving cont
   );
 });
 
+test("playbook keeps a direct Instagram request separate from ad references", () => {
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Envie somente https:\/\/www\.instagram\.com\/dra\.amanda_plastica\//,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Não explique referência, código ou anúncio apenas porque eles apareceram no histórico/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /só cabe quando a mensagem atual perguntar explicitamente/,
+  );
+});
+
 test("playbook keeps minors in human review with one bounded acknowledgement", () => {
   assert.match(
     CONVERSATION_GUIDELINES,

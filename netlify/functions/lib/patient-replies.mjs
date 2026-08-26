@@ -131,21 +131,12 @@ export function hasConsultationExplanationInConversation(
 export function buildOfficialChannelsReply({
   patientName,
   introduceBruna = false,
-  explainCampaignReference = false,
 }) {
   const opening = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Claro!`
     : "Claro!";
-  const referenceLine = explainCampaignReference
-    ? 'A referência que apareceu na primeira mensagem é apenas um código interno para identificarmos o anúncio pelo qual você chegou. Não é um termo médico e você pode desconsiderá-la.'
-    : "";
 
-  return [
-    `${opening} Este é o Instagram oficial da Dra. Amanda:\n${AMANDA_INSTAGRAM_URL}`,
-    referenceLine,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+  return `${opening} Este é o Instagram oficial da Dra. Amanda:\n${AMANDA_INSTAGRAM_URL}`;
 }
 
 export function buildCampaignReferenceExplanationReply({
