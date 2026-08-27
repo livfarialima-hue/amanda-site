@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-26.4 — publicada e verificada
+
+- Depois de qualquer saída humana, a Bruna aguarda no mínimo dez minutos desde a entrada mais recente da paciente; não há mais exceção de resposta imediata durante takeover.
+- Uma nova entrada da paciente substitui a pendência e reinicia o prazo; qualquer nova saída humana cancela a retomada, inclusive durante a elaboração e antes do envio.
+- Ao vencer, `human-resume` relê os 20 turnos atuais e pode responder uma nova dúvida segura e autônoma sem depender da redação exata anterior da equipe.
+- Agenda e confirmação final, urgência e cuidado clínico, preço sem contrato aprovado, promessa humana, opt-out, encerramento, adiamento, mensagem mais recente e duplicidade continuam fechados.
+- Estado desta versão: código funcional `7507365726e354a4c3a447c06c552990e6667228`, deploy Netlify `6a8f8650e288813cf709de85`; 172/172 testes focados, 1099/1099 integrais, arquitetura, build de 178 arquivos e 44 URLs aprovados. Domínio, URL imutável e webhook HTTP 200 em modo `active`; requisição sem assinatura HTTP 401, 12 funções, 5 agendas e nenhuma mensagem real. Rollback: `6e16f20a966a979b082ed20f249f382bb8fbbd4e` e `6a8f6edc9cf872000807c45c`.
+
 ## 2026-08-24.1 — publicada e verificada
 
 - Imagens recebidas em sequência passam pela mesma janela silenciosa de cinco segundos e são tratadas como uma única rajada antes da confirmação automática.

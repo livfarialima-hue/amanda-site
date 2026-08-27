@@ -577,3 +577,16 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Revisão:** publicação/prévia em 24/08; saúde em 27/08; janelas completas em 30/08 e 06/09; gate OTO em 03/09 não encerra teste inexistente.
 - **Regra para manter:** manter a calibração se a prévia e os relatórios distinguirem corretamente meta personalizada, roteamento, intenção de preço e `N/D`, sem perder alertas reais.
 - **Regra para reverter:** restaurar a versão anterior do script se a execução falhar ou omitir uma fonte real; não remover a programação existente como atalho de publicação.
+
+### 26 de agosto de 2026 — preferência humana de dez minutos com retomada contextual
+
+- **Status:** publicada e verificada no Netlify; nenhuma campanha, verba, lance, página, planilha ou Apps Script foi alterado.
+- **Mudança:** depois de uma saída humana, a Bruna aguarda no mínimo dez minutos desde a entrada mais recente da paciente. Nova entrada reinicia o prazo e nova saída humana cancela a pendência. Ao vencer, a rotina relê os 20 turnos atuais e pode responder uma nova dúvida segura e autônoma sem depender da redação exata anterior da equipe.
+- **Motivo e evidência:** uma pergunta objetiva sobre valor ficou sem continuidade porque o takeover exigia um convite humano literal, embora o contexto completo permitisse uma resposta segura. A resposta imediata também não seria desejável, pois tiraria da equipe a preferência de condução.
+- **Hipótese:** a janela prática de dez a quinze minutos preserva a prioridade humana e reduz silêncios incorretos sem ampliar preço, agenda ou risco clínico.
+- **Métrica principal:** taxa de perguntas seguras respondidas após takeover, tempo até resposta e cancelamentos corretos por nova atividade humana.
+- **Guardrails:** zero resposta antes de dez minutos; cada nova entrada reinicia o prazo; qualquer nova saída humana cancela; no máximo uma retomada automática por geração; agenda final, cuidado clínico, opt-out, encerramento, preço sem contrato e duplicidade continuam fechados.
+- **Publicação:** código funcional `7507365726e354a4c3a447c06c552990e6667228`, deploy Netlify `6a8f8650e288813cf709de85`, 1099/1099 testes integrais, arquitetura, build de 178 arquivos e 44 URLs aprovados; domínio e URL imutável HTTP 200, webhook `active` e assinatura inválida recusada com HTTP 401. Nenhuma mensagem real foi enviada.
+- **Data de revisão:** primeiras ocorrências elegíveis e consolidação em 2 de setembro de 2026.
+- **Regra para manter:** manter com zero competição ou duplicidade e queda de perguntas seguras sem resposta.
+- **Regra para reverter:** restaurar o código `6e16f20a966a979b082ed20f249f382bb8fbbd4e` e o deploy `6a8f6edc9cf872000807c45c` diante de resposta precoce, competição humana, procedimento ou preço incorreto, ou quebra de proteção clínica/operacional.
