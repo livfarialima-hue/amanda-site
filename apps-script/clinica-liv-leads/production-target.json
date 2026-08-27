@@ -10,8 +10,8 @@
   "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
   "sourceRoot": "apps-script/clinica-liv-leads",
   "productionBranch": "reestruturacao-site",
-  "lastVerifiedVersion": 130,
-  "lastVerifiedAt": "2026-08-27T06:07:45-03:00",
+  "lastVerifiedVersion": 132,
+  "lastVerifiedAt": "2026-08-27T20:51:13-03:00",
   "knownNonProductionProjects": [
     {
       "scriptId": "1PfTPOQvQzqjKbnn1hRce5JuY50Rf0zA1f7k12nrw0l9y5F-qkkdP1m_r",
