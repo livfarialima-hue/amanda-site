@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 27 de agosto de 2026, 13:27, America/Sao_Paulo
+**Atualizado em:** 27 de agosto de 2026, 20:31, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026, execução ao vivo de BLEF, CERV, OTO, FACE e MARCA em 22/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -40,6 +40,8 @@ O responsável técnico deve:
 ## 3. Situação atual em linguagem direta
 
 ### Operação do WhatsApp — Bruna
+
+**Reconciliação de agendamento e revisão comercial D+15 — CANDIDATA LOCAL VALIDADA; PUBLICAÇÃO PENDENTE:** o comprovante estruturado de um agendamento ativo passa a reparar de forma idempotente `Consultas`, a linha correspondente de `Datas Consulta`, a projeção visível na LEADS, o CRM e a Agenda, sem reabrir consultas já encerradas. Ao registrar `Consulta realizada`, o sistema prepara uma tarefa interna às 11h30 do D+15, exibida no e-mail diário e na Central; ela persiste até a equipe informar o resultado. Fechamentos exigem procedimento, data e valor positivos, projetam os campos manuais já existentes no `Funil Comercial` e só então promovem a fase para `Paciente convertido`. Conflitos falham fechados, `Ainda decidindo` exige nova data, e nenhuma mensagem automática é enviada à paciente. A migração inicial fica limitada aos últimos 45 dias. Validação: **109/109 testes focados**, **1129/1129 integrais**, arquitetura, `git diff --check` e alvo canônico aprovados. A leitura viva encontrou 28 consultas realizadas e nenhuma sem `Data realizada`; não houve escrita. Restam o commit candidato e autorização explícita para publicar, migrar a estrutura e substituir esta mesma projeção no Drive. Produção, Drive, planilha e Calendar permanecem inalterados.
 
 **Release da Bruna `2026-08-27.1` — PUBLICADO E VERIFICADO:** a memória recente agora é ordenada pelo horário real do provedor antes da classificação, impedindo que ecos humanos concluídos fora de ordem invertam a conversa. Uma resposta curta a uma pergunta explícita mais nova pode seguir para a retomada protegida de dez minutos; uma pergunta antiga atrasada não reabre uma fala humana posterior; registros legados permanecem estáveis e caches já invertidos se autocorrigem. O mesmo pacote garante uma pendência real para as 8h sempre que a confirmação da madrugada prometer continuidade: procura genérica por procedimento conhecido usa resposta contextual determinística, e bloqueio ou falha vira revisão humana visível. Código funcional `39227ac203a4a22b358734e8c37fad9f19274a12`, deploy Netlify `6a90650200aa2400081284ce`, checksums `ycloud-webhook=a532d1af94147e087492fe5bf2a61c9efdc61b210eedd51075f720c50ba1f132` e `human-resume=e8a0a82ad9f44bde527c0ae7436a6545622e8274d7ba737ff9815e7ed3b7b395`; **131/131 testes focados**, **1118/1118 integrais**, arquitetura, build de 178 arquivos e 44 URLs aprovados. Domínio, URL imutável e webhook HTTP 200 em modo `active`; requisição sem assinatura HTTP 401, 12 funções, 5 agendas, zero segredo em 467 arquivos e nenhuma mensagem real. Apps Script v130, Central, LEADS, CRM, preços, agenda, opt-out e retomadas comerciais foram preservados. Rollback: código `527e8890945c083cae82ecb2738aff8223617c31` e deploy `6a8fff55f898e40008a97339`.
 

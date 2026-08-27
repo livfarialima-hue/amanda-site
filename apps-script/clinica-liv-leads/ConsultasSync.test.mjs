@@ -58,6 +58,25 @@ test("recognizes only scheduling and completed statuses", () => {
   assert.equal(context.statusAgendaConsulta_("novo"), false);
 });
 
+test("projects the latest appointment outcome without downgrading completion", () => {
+  assert.equal(
+    context.resultadoVisivelAgendamentoConsulta_("Consulta agendada"),
+    "Consulta agendada",
+  );
+  assert.equal(
+    context.resultadoVisivelAgendamentoConsulta_("Realizada"),
+    "Consulta realizada",
+  );
+  assert.equal(
+    context.resultadoVisivelAgendamentoConsulta_("Não compareceu"),
+    "Não compareceu",
+  );
+  assert.equal(
+    context.resultadoVisivelAgendamentoConsulta_("Cancelada"),
+    "Cancelada",
+  );
+});
+
 test("assigns fixed rooms and keeps Marina and Laerte flexible", () => {
   assert.deepEqual(
     Array.from(context.salasPermitidasProfissional_("Dra. Amanda")),

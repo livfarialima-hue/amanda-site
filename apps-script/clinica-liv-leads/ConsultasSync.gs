@@ -13,6 +13,10 @@ const CONSULTAS_SYNC_CONFIG = Object.freeze({
   postConsultMaxAgeDays: 7,
   postConsultRetryMinutes: 30,
   postConsultDisabledRetryMinutes: 360,
+  commercialReviewDelayDays: 15,
+  commercialReviewBackfillDays: 45,
+  commercialReviewHour: 11,
+  commercialReviewMinute: 30,
   noShowDelayMinutes: 120,
   noShowManualDelayDays: 5,
   noShowWhatsappWindowMinutes: 1430,
@@ -73,6 +77,15 @@ const CONSULTAS_SYNC_HEADERS = Object.freeze({
   noShowLastError: "Erro na retomada de ausência",
   noShowSuppressedAt: "Retomada de ausência suprimida em",
   noShowManualAt: "Retomada manual de ausência sugerida em",
+  commercialReviewDueAt: "Revisão comercial prevista em",
+  commercialOutcome: "Resultado comercial",
+  closedProcedure: "Procedimento fechado",
+  closedAt: "Data do fechamento",
+  closedValue: "Valor fechado (R$)",
+  nextCommercialReviewAt: "Próxima revisão comercial",
+  commercialReviewCompletedAt: "Revisão comercial concluída em",
+  commercialNotes: "Observação comercial",
+  commercialReviewError: "Erro da revisão comercial",
 });
 
 const CONSULTAS_SYNC_CALENDAR_TRIGGER_HEADERS = Object.freeze([
@@ -87,6 +100,17 @@ const CONSULTAS_SYNC_CALENDAR_TRIGGER_HEADERS = Object.freeze([
   CONSULTAS_SYNC_HEADERS.status,
 ]);
 
+const CONSULTAS_SYNC_COMMERCIAL_TRIGGER_HEADERS = Object.freeze([
+  CONSULTAS_SYNC_HEADERS.status,
+  CONSULTAS_SYNC_HEADERS.completedDate,
+  CONSULTAS_SYNC_HEADERS.commercialOutcome,
+  CONSULTAS_SYNC_HEADERS.closedProcedure,
+  CONSULTAS_SYNC_HEADERS.closedAt,
+  CONSULTAS_SYNC_HEADERS.closedValue,
+  CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+  CONSULTAS_SYNC_HEADERS.commercialNotes,
+]);
+
 const CONSULTAS_SYNC_ALLOWED_VALUES = Object.freeze({
   consultationTypes: Object.freeze([
     "Primeira consulta",
@@ -99,6 +123,13 @@ const CONSULTAS_SYNC_ALLOWED_VALUES = Object.freeze({
     "Clínica LIV",
     "Teleconsulta",
     "Outro",
+  ]),
+  commercialOutcomes: Object.freeze([
+    "Pendente",
+    "Procedimento fechado",
+    "Não fechou",
+    "Ainda decidindo",
+    "Não foi possível confirmar",
   ]),
 });
 
@@ -348,7 +379,10 @@ function prepararAutomacaoConsultas() {
     throw new Error("A aba Consultas não foi encontrada.");
   }
 
-  garantirEstruturaSincronizacaoConsultas_(sheet);
+  const columns = garantirEstruturaSincronizacaoConsultas_(sheet);
+  formatarEstruturaRevisaoComercialConsultas_(sheet, columns);
+  const commercialReviews =
+    prepararRevisoesComerciaisPendentes_(sheet, new Date());
   CONSULTAS_SYNC_CONFIG.leadSheetNames.forEach(function (sheetName) {
     const leadSheet = spreadsheet.getSheetByName(sheetName);
     if (leadSheet) garantirEstruturaAgendaVisivelLeads_(leadSheet);
@@ -362,6 +396,8 @@ function prepararAutomacaoConsultas() {
     postConsultTriggerInstalled: existeGatilhoConsultas_(
       CONSULTAS_SYNC_CONFIG.postConsultTriggerFunction,
     ),
+    commercialReviewsPrepared: commercialReviews.prepared,
+    commercialReviewsPending: commercialReviews.pending,
   };
 }
 
@@ -763,6 +799,9 @@ function processarEdicaoNaAbaLeads_(e) {
               CONSULTAS_SYNC_LEAD_HEADERS.appointmentTime,
             ),
             room: calendarResult.room,
+            outcome: completed
+              ? "Consulta realizada"
+              : "Consulta agendada",
           },
           canonicalOpportunityId,
         );
@@ -791,10 +830,21 @@ function processarEdicaoNaAbaConsultas_(e) {
       );
     },
   );
+  const affectsCommercial =
+    CONSULTAS_SYNC_COMMERCIAL_TRIGGER_HEADERS.some(
+      function (header) {
+        const column = columns[header];
+        return (
+          column !== undefined &&
+          column + 1 >= editedFirstColumn &&
+          column + 1 <= editedLastColumn
+        );
+      },
+    );
 
   if (
     e.range.getRow() < 2 ||
-    !affectsSchedule
+    (!affectsSchedule && !affectsCommercial)
   ) {
     return { ok: true, ignored: true };
   }
@@ -809,13 +859,16 @@ function processarEdicaoNaAbaConsultas_(e) {
   let noShowQueued = 0;
   let calendarSynced = 0;
   let calendarErrors = 0;
+  let commercialPrepared = 0;
+  let commercialSynced = 0;
+  let commercialErrors = 0;
 
   for (
     let rowNumber = Math.max(2, e.range.getRow());
     rowNumber <= e.range.getLastRow();
     rowNumber += 1
   ) {
-    const row = sheet
+    let row = sheet
       .getRange(
         rowNumber,
         1,
@@ -828,107 +881,136 @@ function processarEdicaoNaAbaConsultas_(e) {
     );
     const now = new Date();
 
-    if (statusNaoCompareceuConsulta_(status)) {
-      const noShowPreparation = prepararNaoComparecimentoNaLinha_(
+    if (affectsSchedule) {
+      if (statusNaoCompareceuConsulta_(status)) {
+        const noShowPreparation = prepararNaoComparecimentoNaLinha_(
+          sheet,
+          rowNumber,
+          refreshedColumns,
+          row,
+          now,
+        );
+        if (noShowPreparation.queued) noShowQueued += 1;
+      }
+
+      const calendarResult = sincronizarConsultaComAgendaNaLinha_(
+        sheet,
+        rowNumber,
+        refreshedColumns,
+        row,
+      );
+      if (calendarResult.ok && !calendarResult.skipped) {
+        calendarSynced += 1;
+      } else if (!calendarResult.ok) {
+        calendarErrors += 1;
+      }
+
+      const phone = valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.phone,
+      );
+      const opportunityId = valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.opportunityId,
+      );
+      const professional = valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.professional,
+      );
+      const room = calendarResult.room || valorDaLinhaConsultas_(
+        row,
+        refreshedColumns,
+        CONSULTAS_SYNC_HEADERS.room,
+      );
+      if (statusNaoCompareceuConsulta_(status)) {
+        atualizarResumoNaoComparecimentoNoLead_(
+          sheet.getParent(),
+          sheet,
+          phone,
+          professional,
+          opportunityId,
+        );
+      } else {
+        atualizarStatusLeadDaConsulta_(
+          sheet.getParent(),
+          phone,
+          professional,
+          valorDaLinhaConsultas_(
+            row,
+            refreshedColumns,
+            CONSULTAS_SYNC_HEADERS.status,
+          ),
+          opportunityId,
+          {
+            scheduledDate: valorDaLinhaConsultas_(
+              row,
+              refreshedColumns,
+              CONSULTAS_SYNC_HEADERS.scheduledDate,
+            ),
+            scheduledTime: valorDaLinhaConsultas_(
+              row,
+              refreshedColumns,
+              CONSULTAS_SYNC_HEADERS.scheduledTime,
+            ),
+          },
+        );
+      }
+      atualizarAgendaVisivelNoLead_(sheet.getParent(), phone, professional, {
+        scheduledDate: valorDaLinhaConsultas_(
+          row,
+          refreshedColumns,
+          CONSULTAS_SYNC_HEADERS.scheduledDate,
+        ),
+        scheduledTime: valorDaLinhaConsultas_(
+          row,
+          refreshedColumns,
+          CONSULTAS_SYNC_HEADERS.scheduledTime,
+        ),
+        room,
+        outcome: resultadoVisivelAgendamentoConsulta_(status),
+      }, opportunityId);
+
+      if (
+        !statusNaoCompareceuConsulta_(status) &&
+        statusConsultaRealizada_(status)
+      ) {
+        const preparation = prepararPosConsultaNaLinha_(
+          sheet,
+          rowNumber,
+          refreshedColumns,
+          row,
+          now,
+        );
+        if (preparation && preparation.queued) queued += 1;
+      }
+    }
+
+    if (affectsCommercial && statusConsultaRealizada_(status)) {
+      row = sheet
+        .getRange(
+          rowNumber,
+          1,
+          1,
+          sheet.getLastColumn(),
+        )
+        .getValues()[0];
+      const commercialResult = processarRevisaoComercialNaLinha_(
+        sheet.getParent(),
         sheet,
         rowNumber,
         refreshedColumns,
         row,
         now,
       );
-      if (noShowPreparation.queued) noShowQueued += 1;
+      if (commercialResult.prepared) commercialPrepared += 1;
+      if (commercialResult.synced || commercialResult.completed) {
+        commercialSynced += 1;
+      }
+      if (!commercialResult.ok) commercialErrors += 1;
     }
-
-    const calendarResult = sincronizarConsultaComAgendaNaLinha_(
-      sheet,
-      rowNumber,
-      refreshedColumns,
-      row,
-    );
-    if (calendarResult.ok && !calendarResult.skipped) {
-      calendarSynced += 1;
-    } else if (!calendarResult.ok) {
-      calendarErrors += 1;
-    }
-
-    const phone = valorDaLinhaConsultas_(
-      row,
-      refreshedColumns,
-      CONSULTAS_SYNC_HEADERS.phone,
-    );
-    const opportunityId = valorDaLinhaConsultas_(
-      row,
-      refreshedColumns,
-      CONSULTAS_SYNC_HEADERS.opportunityId,
-    );
-    const professional = valorDaLinhaConsultas_(
-      row,
-      refreshedColumns,
-      CONSULTAS_SYNC_HEADERS.professional,
-    );
-    const room = calendarResult.room || valorDaLinhaConsultas_(
-      row,
-      refreshedColumns,
-      CONSULTAS_SYNC_HEADERS.room,
-    );
-    if (statusNaoCompareceuConsulta_(status)) {
-      atualizarResumoNaoComparecimentoNoLead_(
-        sheet.getParent(),
-        sheet,
-        phone,
-        professional,
-        opportunityId,
-      );
-    } else {
-      atualizarStatusLeadDaConsulta_(
-        sheet.getParent(),
-        phone,
-        professional,
-        valorDaLinhaConsultas_(
-          row,
-          refreshedColumns,
-          CONSULTAS_SYNC_HEADERS.status,
-        ),
-        opportunityId,
-        {
-          scheduledDate: valorDaLinhaConsultas_(
-            row,
-            refreshedColumns,
-            CONSULTAS_SYNC_HEADERS.scheduledDate,
-          ),
-          scheduledTime: valorDaLinhaConsultas_(
-            row,
-            refreshedColumns,
-            CONSULTAS_SYNC_HEADERS.scheduledTime,
-          ),
-        },
-      );
-    }
-    atualizarAgendaVisivelNoLead_(sheet.getParent(), phone, professional, {
-      scheduledDate: valorDaLinhaConsultas_(
-        row,
-        refreshedColumns,
-        CONSULTAS_SYNC_HEADERS.scheduledDate,
-      ),
-      scheduledTime: valorDaLinhaConsultas_(
-        row,
-        refreshedColumns,
-        CONSULTAS_SYNC_HEADERS.scheduledTime,
-      ),
-      room,
-    }, opportunityId);
-
-    if (statusNaoCompareceuConsulta_(status)) continue;
-    if (!statusConsultaRealizada_(status)) continue;
-
-    const preparation = prepararPosConsultaNaLinha_(
-      sheet,
-      rowNumber,
-      refreshedColumns,
-      row,
-      now,
-    );
-    if (preparation && preparation.queued) queued += 1;
   }
 
   return {
@@ -937,6 +1019,9 @@ function processarEdicaoNaAbaConsultas_(e) {
     noShowQueued,
     calendarSynced,
     calendarErrors,
+    commercialPrepared,
+    commercialSynced,
+    commercialErrors,
   };
 }
 
@@ -1044,6 +1129,7 @@ function upsertConsultaRecebida_(input) {
     scheduledDate: input.scheduledDate,
     scheduledTime: input.scheduledTime,
     room: calendarResult.room || input.room,
+    outcome: resultadoVisivelAgendamentoConsulta_(status),
   }, opportunityId);
 
   return Object.assign({}, result, {
@@ -1460,6 +1546,84 @@ function classificarPendenciaRelacionamentoPaciente_(context) {
   return normalized ? "other" : "";
 }
 
+function reconciliarGradeAgendamentoExistente_(
+  scheduleSheet,
+  requestedDate,
+  requestedTime,
+  professional,
+  now,
+) {
+  const lastRow = scheduleSheet ? scheduleSheet.getLastRow() : 0;
+  if (lastRow <= CONFIG.appointmentSlotsHeaderRow) {
+    return { matched: false, reconciled: false };
+  }
+
+  const values = scheduleSheet
+    .getRange(
+      CONFIG.appointmentSlotsHeaderRow,
+      1,
+      lastRow - CONFIG.appointmentSlotsHeaderRow + 1,
+      CONFIG.appointmentSlotsColumns,
+    )
+    .getDisplayValues();
+  const headers = values[0] || [];
+  const columns = {
+    date: findScheduleColumn_(headers, "Data"),
+    time: findScheduleColumn_(headers, "Horário"),
+    status: findScheduleColumn_(headers, "Status"),
+    professional: findScheduleColumn_(headers, "Profissional"),
+    observation: findScheduleColumn_(headers, "Observação"),
+  };
+  if (
+    columns.date < 0 ||
+    columns.time < 0 ||
+    columns.status < 0 ||
+    columns.professional < 0
+  ) {
+    return {
+      matched: false,
+      reconciled: false,
+      error: "unexpected_schedule_structure",
+    };
+  }
+
+  const professionalKey = chaveProfissionalConsulta_(professional);
+  for (let index = 1; index < values.length; index += 1) {
+    const row = values[index];
+    if (
+      extrairDataConsultasSync_(row[columns.date]) !== requestedDate ||
+      extrairHorarioConsultasSync_(row[columns.time]) !== requestedTime ||
+      chaveProfissionalConsulta_(row[columns.professional]) !== professionalKey
+    ) {
+      continue;
+    }
+
+    const rowNumber = CONFIG.appointmentSlotsHeaderRow + index;
+    scheduleSheet
+      .getRange(rowNumber, columns.status + 1)
+      .setValue("Bloqueado");
+    if (columns.observation >= 0) {
+      scheduleSheet
+        .getRange(rowNumber, columns.observation + 1)
+        .setValue(
+          "Agendamento confirmado via WhatsApp em " +
+            Utilities.formatDate(
+              now instanceof Date ? now : new Date(),
+              CONSULTAS_SYNC_CONFIG.timezone,
+              "dd/MM/yyyy HH:mm",
+            ),
+        );
+    }
+    return {
+      matched: true,
+      reconciled: true,
+      rowNumber,
+    };
+  }
+
+  return { matched: false, reconciled: false };
+}
+
 function reservarHorarioEAgendarConsulta_(input) {
   const spreadsheet = SpreadsheetApp.openById(
     CONSULTAS_SYNC_CONFIG.spreadsheetId,
@@ -1567,34 +1731,159 @@ function reservarHorarioEAgendarConsulta_(input) {
       );
 
     if (sameSchedule) {
+      const existingStatus = valorDaLinhaConsultas_(
+        existingAppointment,
+        consultationColumns,
+        CONSULTAS_SYNC_HEADERS.status,
+      );
+      if (statusConsultaEncerrada_(existingStatus)) {
+        return {
+          ok: true,
+          reserved: true,
+          recorded: true,
+          duplicate: true,
+          preservedClosed: true,
+          appointmentRow: existingAppointmentRow,
+          appointmentId: valorDaLinhaConsultas_(
+            existingAppointment,
+            consultationColumns,
+            CONSULTAS_SYNC_HEADERS.id,
+          ),
+          opportunityId,
+          scheduledDate: requestedDate,
+          scheduledTime: requestedTime,
+          room: valorDaLinhaConsultas_(
+            existingAppointment,
+            consultationColumns,
+            CONSULTAS_SYNC_HEADERS.room,
+          ),
+          calendarSynced: true,
+        };
+      }
+
+      const duplicateUpsert = upsertConsulta_(
+        consultationSheet,
+        {
+          appointmentId:
+            input.appointmentId || input.eventId,
+          opportunityId,
+          phone: input.phone,
+          name: input.name,
+          professional: professionalName,
+          room: valorDaLinhaConsultas_(
+            existingAppointment,
+            consultationColumns,
+            CONSULTAS_SYNC_HEADERS.room,
+          ),
+          consultationType:
+            input.consultationType || "Consulta presencial",
+          topic: input.topic,
+          location:
+            input.location || "Clínica LIV Faria Lima",
+          scheduledDate: requestedDate,
+          scheduledTime: requestedTime,
+          durationMinutes: input.durationMinutes,
+          status: "Consulta agendada",
+          source:
+            input.source ||
+            "WhatsApp — comprovante de agendamento confirmado",
+          preferredChannel: input.preferredChannel || "WhatsApp",
+          consent: input.consent || "Sim",
+          patientConfirmedAt: input.confirmedAt || new Date(),
+          lastHumanInteractionAt: input.confirmedAt || new Date(),
+          nextAction: "Aguardar a consulta agendada.",
+          notes: input.notes,
+          now: new Date(),
+        },
+      );
+      if (!duplicateUpsert.ok) {
+        return {
+          ok: false,
+          error:
+            duplicateUpsert.error ||
+            "duplicate_consultation_upsert_failed",
+        };
+      }
+
+      const duplicateHeaders = consultationSheet
+        .getRange(
+          1,
+          1,
+          1,
+          consultationSheet.getLastColumn(),
+        )
+        .getDisplayValues()[0];
+      const duplicateColumns =
+        mapearCabecalhosConsultas_(duplicateHeaders);
+      const duplicateAppointment = consultationSheet
+        .getRange(
+          duplicateUpsert.row,
+          1,
+          1,
+          consultationSheet.getLastColumn(),
+        )
+        .getValues()[0];
+      const gridResult = reconciliarGradeAgendamentoExistente_(
+        scheduleSheet,
+        requestedDate,
+        requestedTime,
+        professionalName,
+        new Date(),
+      );
       const duplicateCalendarResult =
         sincronizarConsultaComAgendaNaLinha_(
           consultationSheet,
-          existingAppointmentRow,
-          consultationColumns,
-          existingAppointment,
+          duplicateUpsert.row,
+          duplicateColumns,
+          duplicateAppointment,
           {
             allowRoomConflict: input.humanConfirmed === true,
           },
         );
+      const duplicateRoom =
+        duplicateCalendarResult.room ||
+        valorDaLinhaConsultas_(
+          duplicateAppointment,
+          duplicateColumns,
+          CONSULTAS_SYNC_HEADERS.room,
+        );
+      atualizarStatusLeadDaConsulta_(
+        spreadsheet,
+        input.phone,
+        professionalName,
+        "Consulta agendada",
+        opportunityId,
+        {
+          scheduledDate: requestedDate,
+          scheduledTime: requestedTime,
+        },
+      );
+      atualizarAgendaVisivelNoLead_(
+        spreadsheet,
+        input.phone,
+        professionalName,
+        {
+          scheduledDate: requestedDate,
+          scheduledTime: requestedTime,
+          room: duplicateRoom,
+        },
+        opportunityId,
+      );
+      SpreadsheetApp.flush();
       return {
         ok: true,
         reserved: duplicateCalendarResult.ok === true,
         recorded: true,
         duplicate: true,
-        appointmentRow: existingAppointmentRow,
-        appointmentId:
-          input.appointmentId || input.eventId,
+        appointmentRow: duplicateUpsert.row,
+        appointmentId: duplicateUpsert.appointmentId,
         opportunityId,
         scheduledDate: requestedDate,
         scheduledTime: requestedTime,
-        room:
-          duplicateCalendarResult.room ||
-          valorDaLinhaConsultas_(
-            existingAppointment,
-            consultationColumns,
-            CONSULTAS_SYNC_HEADERS.room,
-          ),
+        room: duplicateRoom,
+        offGrid: !gridResult.matched,
+        scheduleRow: gridResult.rowNumber || null,
+        gridReconciled: gridResult.reconciled === true,
         calendarSynced: duplicateCalendarResult.ok === true,
         roomConflict: duplicateCalendarResult.roomConflict === true,
         conflictCount: Number(
@@ -2393,15 +2682,33 @@ function upsertConsulta_(sheet, input) {
 
   rowRange.setValues([next]);
 
-  if (input.queuePostConsult) {
-    const refreshed = sheet
+  let refreshedCompletionRow = null;
+  if (
+    input.queuePostConsult ||
+    statusConsultaRealizada_(
+      normalizarTextoConsultasSync_(input.status),
+    )
+  ) {
+    refreshedCompletionRow = sheet
       .getRange(rowNumber, 1, 1, sheet.getLastColumn())
       .getValues()[0];
+  }
+
+  if (input.queuePostConsult) {
     prepararPosConsultaNaLinha_(
       sheet,
       rowNumber,
       columns,
-      refreshed,
+      refreshedCompletionRow,
+      now,
+    );
+  }
+  if (refreshedCompletionRow) {
+    prepararRevisaoComercialNaLinha_(
+      sheet,
+      rowNumber,
+      columns,
+      refreshedCompletionRow,
       now,
     );
   }
@@ -3363,6 +3670,695 @@ function proximoHorarioDeCuidadoConsultas_(date) {
       CONSULTAS_SYNC_CONFIG.startHour,
     ).padStart(2, "0")}:00:00-03:00`,
   );
+}
+
+function resultadoComercialCanonicoConsulta_(value) {
+  const normalized = normalizarTextoConsultasSync_(value);
+  const aliases = {
+    "": "Pendente",
+    pendente: "Pendente",
+    "procedimento fechado": "Procedimento fechado",
+    fechou: "Procedimento fechado",
+    convertido: "Procedimento fechado",
+    "nao fechou": "Não fechou",
+    "nao convertido": "Não fechou",
+    "ainda decidindo": "Ainda decidindo",
+    pensando: "Ainda decidindo",
+    "nao foi possivel confirmar": "Não foi possível confirmar",
+    "sem confirmacao": "Não foi possível confirmar",
+  };
+  return aliases[normalized] || "";
+}
+
+function calcularRevisaoComercialEm_(completedAt) {
+  const completed = dataConsultasSync_(completedAt);
+  if (!completed) return null;
+  const localDate = Utilities.formatDate(
+    completed,
+    CONSULTAS_SYNC_CONFIG.timezone,
+    "yyyy-MM-dd",
+  );
+  const localNoon = new Date(`${localDate}T12:00:00-03:00`);
+  const target = new Date(
+    localNoon.getTime() +
+      CONSULTAS_SYNC_CONFIG.commercialReviewDelayDays *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
+  const targetDate = Utilities.formatDate(
+    target,
+    CONSULTAS_SYNC_CONFIG.timezone,
+    "yyyy-MM-dd",
+  );
+  return new Date(
+    `${targetDate}T${String(
+      CONSULTAS_SYNC_CONFIG.commercialReviewHour,
+    ).padStart(2, "0")}:${String(
+      CONSULTAS_SYNC_CONFIG.commercialReviewMinute,
+    ).padStart(2, "0")}:00-03:00`,
+  );
+}
+
+function numeroMonetarioConsulta_(value) {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+  let text = String(value || "")
+    .replace(/R\$/gi, "")
+    .replace(/\s+/g, "")
+    .trim();
+  if (!text) return null;
+  if (text.includes(",")) {
+    text = text.replace(/\./g, "").replace(",", ".");
+  }
+  const parsed = Number(text);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function prepararRevisaoComercialNaLinha_(
+  sheet,
+  rowNumber,
+  columns,
+  row,
+  now,
+) {
+  const required = [
+    CONSULTAS_SYNC_HEADERS.status,
+    CONSULTAS_SYNC_HEADERS.completedDate,
+    CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+    CONSULTAS_SYNC_HEADERS.commercialOutcome,
+  ];
+  if (required.some(function (header) {
+    return columns[header] === undefined;
+  })) {
+    return { ok: false, prepared: false, reason: "missing_columns" };
+  }
+  if (!statusConsultaRealizada_(
+    normalizarTextoConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.status,
+      ),
+    ),
+  )) {
+    return { ok: true, prepared: false, reason: "not_completed" };
+  }
+
+  const referenceNow = now instanceof Date ? now : new Date();
+  const completedAt = dataConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.completedDate,
+    ),
+  ) || referenceNow;
+  const dueAt = dataConsultasSync_(
+    valorDaLinhaConsultas_(
+      row,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+    ),
+  );
+  const rawOutcome = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.commercialOutcome,
+  );
+  const outcome = resultadoComercialCanonicoConsulta_(rawOutcome);
+  let prepared = false;
+
+  if (!valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.completedDate,
+  )) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.completedDate,
+      completedAt,
+    );
+    prepared = true;
+  }
+  if (!dueAt) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+      calcularRevisaoComercialEm_(completedAt),
+    );
+    prepared = true;
+  }
+  if (!String(rawOutcome || "").trim()) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialOutcome,
+      "Pendente",
+    );
+    prepared = true;
+  }
+
+  return {
+    ok: true,
+    prepared,
+    pending: !outcome || outcome === "Pendente",
+    completedAt,
+    dueAt: dueAt || calcularRevisaoComercialEm_(completedAt),
+  };
+}
+
+function prepararRevisoesComerciaisPendentes_(sheet, now) {
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { ok: true, prepared: 0, pending: 0 };
+  }
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosConsultas_(headers);
+  const rows = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn())
+    .getValues();
+  const referenceNow = now instanceof Date ? now : new Date();
+  let prepared = 0;
+  let pending = 0;
+
+  rows.forEach(function (row, index) {
+    if (!statusConsultaRealizada_(
+      normalizarTextoConsultasSync_(
+        valorDaLinhaConsultas_(
+          row,
+          columns,
+          CONSULTAS_SYNC_HEADERS.status,
+        ),
+      ),
+    )) return;
+    const completedAt = dataConsultasSync_(
+      valorDaLinhaConsultas_(
+        row,
+        columns,
+        CONSULTAS_SYNC_HEADERS.completedDate,
+      ),
+    );
+    if (!completedAt) return;
+    const ageDays = Math.floor(
+      (referenceNow.getTime() - completedAt.getTime()) /
+        (24 * 60 * 60 * 1000),
+    );
+    if (
+      ageDays < 0 ||
+      ageDays > CONSULTAS_SYNC_CONFIG.commercialReviewBackfillDays
+    ) return;
+
+    const result = prepararRevisaoComercialNaLinha_(
+      sheet,
+      index + 2,
+      columns,
+      row,
+      referenceNow,
+    );
+    if (result.prepared) prepared += 1;
+    if (result.pending) pending += 1;
+  });
+  if (prepared) SpreadsheetApp.flush();
+  return { ok: true, prepared, pending };
+}
+
+function localizarLinhaFunilComercialConsulta_(sheet, opportunityId) {
+  if (!sheet || sheet.getLastRow() < 2) return 0;
+  const found = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, 1)
+    .createTextFinder(String(opportunityId || ""))
+    .matchEntireCell(true)
+    .findNext();
+  return found ? found.getRow() : 0;
+}
+
+function mesclarObservacaoComercialConsulta_(current, addition) {
+  const existing = textoConsultasSync_(current, 1500);
+  const next = textoConsultasSync_(addition, 700);
+  if (!next) return existing;
+  if (normalizarTextoConsultasSync_(existing).includes(
+    normalizarTextoConsultasSync_(next),
+  )) return existing;
+  return [existing, next].filter(Boolean).join(" | ");
+}
+
+function sincronizarRevisaoComercialNoFunil_(spreadsheet, input) {
+  const opportunityId = textoConsultasSync_(input.opportunityId, 180);
+  if (!opportunityIdValidoConsulta_(opportunityId)) {
+    return { ok: false, reason: "invalid_opportunity_id" };
+  }
+  const funnelSheet = spreadsheet.getSheetByName("Funil Comercial");
+  if (!funnelSheet) {
+    return { ok: false, reason: "commercial_funnel_missing" };
+  }
+  let rowNumber = localizarLinhaFunilComercialConsulta_(
+    funnelSheet,
+    opportunityId,
+  );
+  if (
+    !rowNumber &&
+    typeof atualizarLinhaFunilCanonicoPorOportunidade_ === "function"
+  ) {
+    const projection = atualizarLinhaFunilCanonicoPorOportunidade_(
+      spreadsheet,
+      opportunityId,
+    );
+    if (!projection.ok) {
+      return {
+        ok: false,
+        reason: projection.reason || "commercial_projection_failed",
+      };
+    }
+    rowNumber = localizarLinhaFunilComercialConsulta_(
+      funnelSheet,
+      opportunityId,
+    );
+  }
+  if (!rowNumber) {
+    return { ok: false, reason: "commercial_opportunity_not_found" };
+  }
+
+  const headers = funnelSheet
+    .getRange(1, 1, 1, funnelSheet.getLastColumn())
+    .getDisplayValues()[0];
+  const indexes = {};
+  headers.forEach(function (header, index) {
+    indexes[String(header || "").trim()] = index;
+  });
+  const requiredHeaders = [
+    "Data fechamento",
+    "Valor contratado (R$)",
+    "Motivo de não avanço",
+    "Observação comercial",
+  ];
+  if (requiredHeaders.some(function (header) {
+    return indexes[header] === undefined;
+  })) {
+    return { ok: false, reason: "commercial_funnel_schema_mismatch" };
+  }
+  const row = funnelSheet
+    .getRange(rowNumber, 1, 1, funnelSheet.getLastColumn())
+    .getValues()[0];
+  const outcome = resultadoComercialCanonicoConsulta_(input.outcome);
+  const existingClosedAt = row[indexes["Data fechamento"]];
+  const existingClosedValue = numeroMonetarioConsulta_(
+    row[indexes["Valor contratado (R$)"]],
+  );
+  const reasonColumn = indexes["Motivo de não avanço"];
+  const existingNonAdvanceReason = textoConsultasSync_(
+    row[reasonColumn],
+    500,
+  );
+
+  if (outcome === "Procedimento fechado") {
+    if (
+      existingClosedAt &&
+      !mesmaDataConsulta_(existingClosedAt, input.closedAt)
+    ) {
+      return { ok: false, reason: "conflicting_closed_date" };
+    }
+    if (
+      existingClosedValue !== null &&
+      Math.abs(existingClosedValue - input.closedValue) > 0.01
+    ) {
+      return { ok: false, reason: "conflicting_closed_value" };
+    }
+    funnelSheet
+      .getRange(rowNumber, indexes["Data fechamento"] + 1)
+      .setValue(input.closedAt);
+    funnelSheet
+      .getRange(rowNumber, indexes["Valor contratado (R$)"] + 1)
+      .setValue(input.closedValue)
+      .setNumberFormat('R$ #,##0.00');
+    if ([
+      "nao fechou",
+      "nao foi possivel confirmar",
+    ].includes(normalizarTextoConsultasSync_(existingNonAdvanceReason))) {
+      funnelSheet
+        .getRange(rowNumber, reasonColumn + 1)
+        .setValue("");
+    }
+  } else if (existingClosedAt || existingClosedValue !== null) {
+    return {
+      ok: false,
+      reason: "outcome_conflicts_with_existing_closure",
+    };
+  }
+
+  if (
+    outcome === "Não fechou" ||
+    outcome === "Não foi possível confirmar"
+  ) {
+    if (!existingNonAdvanceReason) {
+      funnelSheet
+        .getRange(rowNumber, reasonColumn + 1)
+        .setValue(outcome);
+    }
+  }
+
+  const observation = [
+    outcome === "Procedimento fechado" && input.closedProcedure
+      ? "Procedimento fechado: " + input.closedProcedure + "."
+      : "Revisão comercial D+15: " + outcome + ".",
+    input.notes,
+  ].filter(Boolean).join(" ");
+  const observationColumn = indexes["Observação comercial"];
+  const mergedObservation = mesclarObservacaoComercialConsulta_(
+    row[observationColumn],
+    observation,
+  );
+  if (mergedObservation !== row[observationColumn]) {
+    funnelSheet
+      .getRange(rowNumber, observationColumn + 1)
+      .setValue(mergedObservation);
+  }
+  return { ok: true, row: rowNumber, outcome };
+}
+
+function registrarErroRevisaoComercialConsulta_(
+  sheet,
+  rowNumber,
+  columns,
+  message,
+) {
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.commercialReviewError,
+    textoConsultasSync_(message, 240),
+  );
+  return { ok: false, reason: message };
+}
+
+function processarRevisaoComercialNaLinha_(
+  spreadsheet,
+  sheet,
+  rowNumber,
+  columns,
+  row,
+  now,
+) {
+  const referenceNow = now instanceof Date ? now : new Date();
+  const preparation = prepararRevisaoComercialNaLinha_(
+    sheet,
+    rowNumber,
+    columns,
+    row,
+    referenceNow,
+  );
+  if (!preparation.ok) return preparation;
+  const refreshed = sheet
+    .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+    .getValues()[0];
+  const rawOutcome = valorDaLinhaConsultas_(
+    refreshed,
+    columns,
+    CONSULTAS_SYNC_HEADERS.commercialOutcome,
+  );
+  const outcome = resultadoComercialCanonicoConsulta_(rawOutcome);
+  const completedAt = valorDaLinhaConsultas_(
+    refreshed,
+    columns,
+    CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+  );
+
+  if (String(rawOutcome || "").trim() && !outcome) {
+    return Object.assign(
+      registrarErroRevisaoComercialConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        "Resultado comercial inválido.",
+      ),
+      { prepared: preparation.prepared },
+    );
+  }
+
+  if (!outcome || outcome === "Pendente") {
+    if (completedAt) {
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+        "",
+      );
+    }
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewError,
+      "",
+    );
+    return {
+      ok: true,
+      prepared: preparation.prepared,
+      pending: true,
+    };
+  }
+
+  if (outcome === "Ainda decidindo") {
+    const nextReviewAt = dataConsultasSync_(
+      valorDaLinhaConsultas_(
+        refreshed,
+        columns,
+        CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+      ),
+    );
+    if (!nextReviewAt || nextReviewAt.getTime() <= referenceNow.getTime()) {
+      return Object.assign(
+        registrarErroRevisaoComercialConsulta_(
+          sheet,
+          rowNumber,
+          columns,
+          "Informe uma Próxima revisão comercial futura.",
+        ),
+        { prepared: preparation.prepared },
+      );
+    }
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+      nextReviewAt,
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+      "",
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewError,
+      "",
+    );
+    return {
+      ok: true,
+      prepared: preparation.prepared,
+      postponed: true,
+      dueAt: nextReviewAt,
+    };
+  }
+
+  const opportunityId = valorDaLinhaConsultas_(
+    refreshed,
+    columns,
+    CONSULTAS_SYNC_HEADERS.opportunityId,
+  );
+  const closedProcedure = textoConsultasSync_(
+    valorDaLinhaConsultas_(
+      refreshed,
+      columns,
+      CONSULTAS_SYNC_HEADERS.closedProcedure,
+    ),
+    180,
+  );
+  const closedAt = dataConsultasSync_(
+    valorDaLinhaConsultas_(
+      refreshed,
+      columns,
+      CONSULTAS_SYNC_HEADERS.closedAt,
+    ),
+  );
+  const closedValue = numeroMonetarioConsulta_(
+    valorDaLinhaConsultas_(
+      refreshed,
+      columns,
+      CONSULTAS_SYNC_HEADERS.closedValue,
+    ),
+  );
+
+  if (outcome === "Procedimento fechado") {
+    const missing = [];
+    if (!closedProcedure) missing.push("Procedimento fechado");
+    if (!closedAt) missing.push("Data do fechamento");
+    if (!(closedValue > 0)) missing.push("Valor fechado (R$)");
+    if (missing.length) {
+      return Object.assign(
+        registrarErroRevisaoComercialConsulta_(
+          sheet,
+          rowNumber,
+          columns,
+          "Preencha: " + missing.join(", ") + ".",
+        ),
+        { prepared: preparation.prepared },
+      );
+    }
+  }
+
+  const funnelResult = sincronizarRevisaoComercialNoFunil_(
+    spreadsheet,
+    {
+      opportunityId,
+      outcome,
+      closedProcedure,
+      closedAt,
+      closedValue,
+      notes: valorDaLinhaConsultas_(
+        refreshed,
+        columns,
+        CONSULTAS_SYNC_HEADERS.commercialNotes,
+      ),
+    },
+  );
+  if (!funnelResult.ok) {
+    return Object.assign(
+      registrarErroRevisaoComercialConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        funnelResult.reason,
+      ),
+      { prepared: preparation.prepared },
+    );
+  }
+
+  if (outcome === "Procedimento fechado") {
+    if (typeof sincronizarFaseOportunidadeELead_ !== "function") {
+      return Object.assign(
+        registrarErroRevisaoComercialConsulta_(
+          sheet,
+          rowNumber,
+          columns,
+          "canonical_stage_sync_unavailable",
+        ),
+        { prepared: preparation.prepared },
+      );
+    }
+    const phaseResult = sincronizarFaseOportunidadeELead_(
+      spreadsheet,
+      {
+        opportunityId,
+        phone: valorDaLinhaConsultas_(
+          refreshed,
+          columns,
+          CONSULTAS_SYNC_HEADERS.phone,
+        ),
+        professional: valorDaLinhaConsultas_(
+          refreshed,
+          columns,
+          CONSULTAS_SYNC_HEADERS.professional,
+        ),
+        stage: "Paciente convertido",
+        humanOverride: true,
+        source: "commercial_review",
+        at: referenceNow,
+        relationship: "surgical_planning",
+        owner: "human",
+        expectedParty: "clinic",
+        summary:
+          "Fechamento de procedimento confirmado pela equipe.",
+        nextAction:
+          "Organizar o planejamento e os próximos passos do procedimento.",
+      },
+    );
+    if (!phaseResult.ok) {
+      return Object.assign(
+        registrarErroRevisaoComercialConsulta_(
+          sheet,
+          rowNumber,
+          columns,
+          phaseResult.reason || "commercial_stage_sync_failed",
+        ),
+        { prepared: preparation.prepared },
+      );
+    }
+    if (
+      phaseResult.changed &&
+      typeof recordLeadStageEvent_ === "function"
+    ) {
+      recordLeadStageEvent_(spreadsheet, {
+        opportunityId: phaseResult.opportunityId || opportunityId,
+        phone: valorDaLinhaConsultas_(
+          refreshed,
+          columns,
+          CONSULTAS_SYNC_HEADERS.phone,
+        ),
+        professional: valorDaLinhaConsultas_(
+          refreshed,
+          columns,
+          CONSULTAS_SYNC_HEADERS.professional,
+        ),
+        source: "commercial_review",
+        fromStatus: phaseResult.previousStage || "Consulta realizada",
+        proposedStatus: "Paciente convertido",
+        appliedStatus: phaseResult.stage || "Paciente convertido",
+        confidence: "human",
+        decision: "human_override",
+        evidence:
+          "Fechamento e valor confirmados pela equipe na aba Consultas",
+        at: referenceNow,
+      });
+    }
+  }
+
+  if (!completedAt) {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+      referenceNow,
+    );
+  }
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+    "",
+  );
+  definirValorConsulta_(
+    sheet,
+    rowNumber,
+    columns,
+    CONSULTAS_SYNC_HEADERS.commercialReviewError,
+    "",
+  );
+  SpreadsheetApp.flush();
+  return {
+    ok: true,
+    prepared: preparation.prepared,
+    completed: true,
+    synced: true,
+    outcome,
+    funnelRow: funnelResult.row,
+  };
 }
 
 function processarPosConsulta() {
@@ -4386,6 +5382,15 @@ function statusCanonicoLeadDaConsulta_(status) {
   return "";
 }
 
+function resultadoVisivelAgendamentoConsulta_(status) {
+  const normalized = normalizarTextoConsultasSync_(status);
+  if (statusNaoCompareceuConsulta_(normalized)) return "Não compareceu";
+  if (statusCancelaAgendaConsulta_(normalized)) return "Cancelada";
+  if (statusConsultaRealizada_(normalized)) return "Consulta realizada";
+  if (statusAgendaConsulta_(normalized)) return "Consulta agendada";
+  return "";
+}
+
 function atualizarStatusLeadDaConsulta_(
   spreadsheet,
   phoneValue,
@@ -4559,6 +5564,10 @@ function atualizarAgendaVisivelNoLead_(
         CONSULTAS_SYNC_LEAD_HEADERS.appointmentRoom,
         normalizarSalaConsulta_(appointment.room),
       ],
+      [
+        CONSULTAS_SYNC_LEAD_HEADERS.appointmentOutcome,
+        appointment.outcome || "Consulta agendada",
+      ],
   ];
 
   values.forEach(function (entry) {
@@ -4716,6 +5725,15 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
     CONSULTAS_SYNC_HEADERS.lastHumanInteractionAt,
     CONSULTAS_SYNC_HEADERS.nextAction,
     CONSULTAS_SYNC_HEADERS.suppressionReason,
+    CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+    CONSULTAS_SYNC_HEADERS.commercialOutcome,
+    CONSULTAS_SYNC_HEADERS.closedProcedure,
+    CONSULTAS_SYNC_HEADERS.closedAt,
+    CONSULTAS_SYNC_HEADERS.closedValue,
+    CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+    CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+    CONSULTAS_SYNC_HEADERS.commercialNotes,
+    CONSULTAS_SYNC_HEADERS.commercialReviewError,
   ].forEach(function (header) {
     if (columns[header] === undefined) {
       if (
@@ -4755,6 +5773,15 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
     [CONSULTAS_SYNC_HEADERS.lastHumanInteractionAt]: 180,
     [CONSULTAS_SYNC_HEADERS.nextAction]: 220,
     [CONSULTAS_SYNC_HEADERS.suppressionReason]: 260,
+    [CONSULTAS_SYNC_HEADERS.commercialReviewDueAt]: 190,
+    [CONSULTAS_SYNC_HEADERS.commercialOutcome]: 190,
+    [CONSULTAS_SYNC_HEADERS.closedProcedure]: 210,
+    [CONSULTAS_SYNC_HEADERS.closedAt]: 165,
+    [CONSULTAS_SYNC_HEADERS.closedValue]: 155,
+    [CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt]: 190,
+    [CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt]: 210,
+    [CONSULTAS_SYNC_HEADERS.commercialNotes]: 260,
+    [CONSULTAS_SYNC_HEADERS.commercialReviewError]: 230,
   };
 
   Object.keys(controlWidths).forEach(function (header) {
@@ -4766,6 +5793,140 @@ function garantirEstruturaSincronizacaoConsultas_(sheet) {
       );
     }
   });
+  return columns;
+}
+
+function formatarEstruturaRevisaoComercialConsultas_(sheet, columns) {
+  if (!sheet || !columns) return { ok: false, reason: "missing_sheet" };
+  const headers = [
+    CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+    CONSULTAS_SYNC_HEADERS.commercialOutcome,
+    CONSULTAS_SYNC_HEADERS.closedProcedure,
+    CONSULTAS_SYNC_HEADERS.closedAt,
+    CONSULTAS_SYNC_HEADERS.closedValue,
+    CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+    CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+    CONSULTAS_SYNC_HEADERS.commercialNotes,
+    CONSULTAS_SYNC_HEADERS.commercialReviewError,
+  ];
+  if (headers.some(function (header) {
+    return columns[header] === undefined;
+  })) {
+    return { ok: false, reason: "commercial_columns_missing" };
+  }
+
+  const firstColumn = columns[headers[0]] + 1;
+  const lastColumn = columns[headers[headers.length - 1]] + 1;
+  sheet
+    .getRange(1, firstColumn, 1, lastColumn - firstColumn + 1)
+    .setBackground("#2F6554")
+    .setFontColor("#FFFFFF")
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center");
+  const maximumRows = Math.max(sheet.getMaxRows() - 1, 1);
+  const manualHeaders = [
+    CONSULTAS_SYNC_HEADERS.commercialOutcome,
+    CONSULTAS_SYNC_HEADERS.closedProcedure,
+    CONSULTAS_SYNC_HEADERS.closedAt,
+    CONSULTAS_SYNC_HEADERS.closedValue,
+    CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+    CONSULTAS_SYNC_HEADERS.commercialNotes,
+  ];
+  manualHeaders.forEach(function (header) {
+    sheet
+      .getRange(2, columns[header] + 1, maximumRows, 1)
+      .setBackground("#FFF2CC");
+  });
+  sheet
+    .getRange(
+      2,
+      columns[CONSULTAS_SYNC_HEADERS.commercialReviewDueAt] + 1,
+      maximumRows,
+      1,
+    )
+    .setBackground("#D9EAF7");
+  sheet
+    .getRange(
+      2,
+      columns[CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt] + 1,
+      maximumRows,
+      1,
+    )
+    .setBackground("#E2F0D9");
+  sheet
+    .getRange(
+      2,
+      columns[CONSULTAS_SYNC_HEADERS.commercialReviewError] + 1,
+      maximumRows,
+      1,
+    )
+    .setBackground("#F4CCCC");
+
+  const validation = SpreadsheetApp.newDataValidation()
+    .requireValueInList(
+      [...CONSULTAS_SYNC_ALLOWED_VALUES.commercialOutcomes],
+      true,
+    )
+    .setAllowInvalid(false)
+    .setHelpText(
+      "Informe o desfecho comercial confirmado pela equipe.",
+    )
+    .build();
+  sheet
+    .getRange(
+      2,
+      columns[CONSULTAS_SYNC_HEADERS.commercialOutcome] + 1,
+      maximumRows,
+      1,
+    )
+    .setDataValidation(validation);
+  [
+    CONSULTAS_SYNC_HEADERS.commercialReviewDueAt,
+    CONSULTAS_SYNC_HEADERS.nextCommercialReviewAt,
+    CONSULTAS_SYNC_HEADERS.commercialReviewCompletedAt,
+  ].forEach(function (header) {
+    sheet
+      .getRange(2, columns[header] + 1, maximumRows, 1)
+      .setNumberFormat("dd/mm/yyyy hh:mm");
+  });
+  sheet
+    .getRange(
+      2,
+      columns[CONSULTAS_SYNC_HEADERS.closedAt] + 1,
+      maximumRows,
+      1,
+    )
+    .setNumberFormat("dd/mm/yyyy");
+  sheet
+    .getRange(
+      2,
+      columns[CONSULTAS_SYNC_HEADERS.closedValue] + 1,
+      maximumRows,
+      1,
+    )
+    .setNumberFormat('R$ #,##0.00');
+  sheet
+    .getRange(1, firstColumn)
+    .setNote(
+      "Gerado automaticamente 15 dias após Data realizada.",
+    );
+  sheet
+    .getRange(
+      1,
+      columns[CONSULTAS_SYNC_HEADERS.commercialOutcome] + 1,
+    )
+    .setNote(
+      "Escolha o resultado. Se ainda estiver decidindo, informe Próxima revisão comercial.",
+    );
+  sheet
+    .getRange(
+      1,
+      columns[CONSULTAS_SYNC_HEADERS.closedValue] + 1,
+    )
+    .setNote(
+      "Obrigatório quando Resultado comercial for Procedimento fechado.",
+    );
+  return { ok: true, firstColumn, lastColumn };
 }
 
 function mapearCabecalhosConsultas_(headers) {

@@ -3,6 +3,10 @@ const AGENDA_CUIDADOS_CONFIG = Object.freeze({
   diasAntecedenciaAgenda: 7,
   horarioAniversario: "10:30",
   horarioChecagemPosConsulta: "11:00",
+  horarioRevisaoComercial: "11:30",
+  diasRevisaoComercial: 15,
+  diasAntecedenciaRevisaoComercial: 7,
+  diasMaximosBackfillRevisaoComercial: 45,
   horarioFollowUpDecisao: "16:30",
   horarioRetomadaCirurgica: "10:30",
   horarioRetomadaRegular: "16:30",
@@ -119,14 +123,6 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       "nao compareceu",
       "consulta nao compareceu",
     ].includes(status);
-
-    if (
-      !contatoPermitidoAgendaCuidados_(consentimento) ||
-      (motivoSupressao && !naoCompareceu)
-    ) {
-      return;
-    }
-
     const primeiroNome =
       nomeCompleto.split(/\s+/)[0] || "paciente";
     const profissional =
@@ -158,6 +154,25 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       "encerrado",
     ].includes(retomadasEncerradas);
     const identidade = nomeCompleto || telefone;
+
+    adicionarRevisaoComercialAgendaCuidados_({
+      linha: linha,
+      colunas: colunas,
+      agora: agora,
+      hoje: hoje,
+      telefone: telefone,
+      nome: identidade,
+      tema: tema,
+      status: status,
+      adicionar: adicionar,
+    });
+
+    if (
+      !contatoPermitidoAgendaCuidados_(consentimento) ||
+      (motivoSupressao && !naoCompareceu)
+    ) {
+      return;
+    }
 
     if (contactPreferences.neverFollowUp !== true) {
       adicionarAniversarioAgendaCuidados_({
@@ -739,6 +754,173 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
         "! Passando para saber como você ficou depois da consulta e se surgiu alguma dúvida. Queremos que você se sinta tranquila e bem orientada em cada etapa.",
     });
   }
+}
+
+function resultadoComercialAgendaCuidados_(value) {
+  if (typeof resultadoComercialCanonicoConsulta_ === "function") {
+    return resultadoComercialCanonicoConsulta_(value);
+  }
+  const normalized = normalizarTextoRetomadas_(value);
+  const aliases = {
+    "": "Pendente",
+    pendente: "Pendente",
+    "procedimento fechado": "Procedimento fechado",
+    fechou: "Procedimento fechado",
+    "nao fechou": "Não fechou",
+    "ainda decidindo": "Ainda decidindo",
+    "nao foi possivel confirmar": "Não foi possível confirmar",
+  };
+  return aliases[normalized] || "";
+}
+
+function calcularRevisaoComercialAgendaCuidados_(completedAt) {
+  if (typeof calcularRevisaoComercialEm_ === "function") {
+    return calcularRevisaoComercialEm_(completedAt);
+  }
+  const localDate = formatarDataRetomadas_(
+    completedAt,
+    "yyyy-MM-dd",
+  );
+  const localNoon = new Date(`${localDate}T12:00:00-03:00`);
+  const target = new Date(
+    localNoon.getTime() +
+      AGENDA_CUIDADOS_CONFIG.diasRevisaoComercial *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
+  return new Date(
+    formatarDataRetomadas_(target, "yyyy-MM-dd") +
+      "T" +
+      AGENDA_CUIDADOS_CONFIG.horarioRevisaoComercial +
+      ":00-03:00",
+  );
+}
+
+function adicionarRevisaoComercialAgendaCuidados_(entrada) {
+  if (!statusConsultaRealizadaAgenda_(entrada.status)) return;
+
+  const dataRealizada = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["data realizada", "data da consulta realizada"],
+    ),
+  );
+  if (!dataRealizada) return;
+
+  const revisaoConcluida = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["revisao comercial concluida em"],
+    ),
+  );
+  if (revisaoConcluida) return;
+
+  const resultado = resultadoComercialAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["resultado comercial"],
+    ),
+  );
+  const proximaRevisao = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["proxima revisao comercial"],
+    ),
+  );
+  const revisaoPersistida = dataAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["revisao comercial prevista em"],
+    ),
+  );
+  const diasDesdeConsulta = diferencaDiasLocaisRetomadas_(
+    dataRealizada,
+    entrada.agora,
+  );
+  if (
+    !revisaoPersistida &&
+    diasDesdeConsulta >
+      AGENDA_CUIDADOS_CONFIG.diasMaximosBackfillRevisaoComercial
+  ) {
+    return;
+  }
+
+  const target =
+    resultado === "Ainda decidindo" && proximaRevisao
+      ? proximaRevisao
+      : revisaoPersistida ||
+        calcularRevisaoComercialAgendaCuidados_(dataRealizada);
+  if (!target) return;
+  const targetDate = formatarDataRetomadas_(target, "yyyy-MM-dd");
+  const daysUntilTarget = diferencaDiasLocaisRetomadas_(
+    new Date(`${entrada.hoje}T12:00:00-03:00`),
+    target,
+  );
+  if (
+    daysUntilTarget >
+      AGENDA_CUIDADOS_CONFIG.diasAntecedenciaRevisaoComercial
+  ) {
+    return;
+  }
+
+  const error = textoAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["erro da revisao comercial"],
+    ),
+  );
+  const closedProcedure = textoAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["procedimento fechado"],
+    ),
+  );
+  const contextParts = [
+    "Checagem interna: confirmar se houve fechamento e registrar Resultado comercial, Procedimento fechado, Data do fechamento e Valor fechado (R$) na aba Consultas.",
+    "Não enviar mensagem automática à paciente.",
+  ];
+  if (entrada.tema) {
+    contextParts.push("Tema da consulta: " + entrada.tema + ".");
+  }
+  if (closedProcedure) {
+    contextParts.push(
+      "Procedimento informado no fechamento: " +
+        closedProcedure +
+        ".",
+    );
+  }
+  if (resultado === "Ainda decidindo" && !proximaRevisao) {
+    contextParts.push(
+      "Como o resultado está em Ainda decidindo, informe uma Próxima revisão comercial.",
+    );
+  }
+  if (error) contextParts.push("Pendência: " + error);
+
+  entrada.adicionar({
+    categoria: "Conferir fechamento pós-consulta — D+15",
+    telefone: entrada.telefone,
+    nome: entrada.nome,
+    horario: formatarDataRetomadas_(target, "HH:mm") ||
+      AGENDA_CUIDADOS_CONFIG.horarioRevisaoComercial,
+    dataReferencia: targetDate,
+    contexto: contextParts.join(" "),
+    responsavel: "Amanda/equipe",
+    automatico: false,
+    // `futuro` separa dias futuros das ações do dia. Uma revisão marcada
+    // para 11:30 precisa aparecer em "hoje" já no e-mail das 8h.
+    futuro: targetDate > entrada.hoje,
+    prioridade: 1,
+    sugestao: "",
+  });
 }
 
 function adicionarFollowUpConsultaAgendaCuidados_(entrada) {

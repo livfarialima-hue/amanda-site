@@ -2232,6 +2232,89 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
   assert.match(appointmentReminder.sugestao, /maps\.google\.com/);
 });
 
+test("D+15 commercial review is an internal reminder even when patient outreach is blocked", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Tema / procedimento",
+    "Status",
+    "Consentimento para contato",
+    "Data realizada",
+    "Revisão comercial prevista em",
+    "Resultado comercial",
+    "Revisão comercial concluída em",
+    "Erro da revisão comercial",
+  ];
+  const values = {
+    "Telefone (E.164)": "+5511900000100",
+    "Nome do paciente": "Paciente Teste",
+    "Tema / procedimento": "procedimento informado na consulta",
+    Status: "Consulta realizada",
+    "Consentimento para contato": "Não",
+    "Data realizada": "2026-08-05 14:00",
+    "Revisão comercial prevista em": "2026-08-20 11:30",
+    "Resultado comercial": "Pendente",
+  };
+  const row = headers.map((header) => values[header] ?? "");
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({ getValues: () => [headers, row] }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-08-20T08:00:00-03:00"),
+  );
+  const item = agenda.find(
+    (entry) =>
+      entry.categoria === "Conferir fechamento pós-consulta — D+15",
+  );
+
+  assert.ok(item);
+  assert.equal(item.automatico, false);
+  assert.equal(item.responsavel, "Amanda/equipe");
+  assert.equal(item.futuro, false);
+  assert.equal(item.sugestao, "");
+  assert.match(item.contexto, /Não enviar mensagem automática/);
+  assert.match(item.contexto, /Valor fechado \(R\$\)/);
+});
+
+test("completed commercial review disappears from the care queue", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Status",
+    "Data realizada",
+    "Revisão comercial prevista em",
+    "Resultado comercial",
+    "Revisão comercial concluída em",
+  ];
+  const values = {
+    "Telefone (E.164)": "+5511900000101",
+    "Nome do paciente": "Paciente Teste",
+    Status: "Consulta realizada",
+    "Data realizada": "2026-08-05 14:00",
+    "Revisão comercial prevista em": "2026-08-20 11:30",
+    "Resultado comercial": "Não fechou",
+    "Revisão comercial concluída em": "2026-08-20 10:00",
+  };
+  const row = headers.map((header) => values[header] ?? "");
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({ getValues: () => [headers, row] }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-08-20T12:00:00-03:00"),
+  );
+
+  assert.equal(
+    agenda.some((entry) =>
+      entry.categoria === "Conferir fechamento pós-consulta — D+15"
+    ),
+    false,
+  );
+});
+
 test("no-show appears as a gentle manual rebooking action", () => {
   const headers = [
     "Telefone (E.164)",

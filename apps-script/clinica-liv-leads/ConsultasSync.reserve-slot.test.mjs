@@ -19,6 +19,9 @@ const CONSULTATION_HEADERS = [
   "Data agendada",
   "Horário agendado",
   "Status",
+  "Sala",
+  "Duração (min)",
+  "Opportunity ID",
 ];
 
 function loadReservation({
@@ -26,6 +29,8 @@ function loadReservation({
   professional = "Dra. Amanda",
   room = "Sala 1",
   roomConflict = false,
+  existingAppointment = false,
+  existingStatus = "Consulta agendada",
 } = {}) {
   const writes = [];
   const upserts = [];
@@ -49,6 +54,21 @@ function loadReservation({
       "03/08–08/08",
     ],
   ];
+  const consultationRow = [
+    "whatsapp-existing-1",
+    "+5511900000000",
+    "Maria Silva",
+    professional,
+    "Primeira consulta",
+    "",
+    "Clínica LIV Faria Lima",
+    "04/08/2026",
+    "10:00",
+    existingStatus,
+    room,
+    60,
+    "opp-amanda-existing",
+  ];
   const scheduleSheet = {
     getLastRow: () => 7,
     getRange(row, column, rowCount, columnCount) {
@@ -66,12 +86,16 @@ function loadReservation({
     },
   };
   const consultationSheet = {
-    getLastRow: () => 1,
+    getLastRow: () => existingAppointment ? 2 : 1,
     getLastColumn: () => CONSULTATION_HEADERS.length,
-    getRange() {
+    getRange(row) {
       return {
-        getDisplayValues: () => [CONSULTATION_HEADERS],
-        getValues: () => [CONSULTATION_HEADERS],
+        getDisplayValues: () => [
+          row === 1 ? CONSULTATION_HEADERS : consultationRow,
+        ],
+        getValues: () => [
+          row === 1 ? CONSULTATION_HEADERS : consultationRow,
+        ],
       };
     },
     setColumnWidth() {},
@@ -121,7 +145,8 @@ function loadReservation({
     matchedBy: "opportunity_id",
   });
   sandbox.garantirEstruturaSincronizacaoConsultas_ = () => {};
-  sandbox.localizarConsultaExistente_ = () => null;
+  sandbox.localizarConsultaExistente_ = () =>
+    existingAppointment ? 2 : null;
   sandbox.escolherSalaDisponivelConsulta_ = () => ({
     ok: true,
     room,
@@ -260,6 +285,63 @@ test("a human-confirmed Amanda appointment keeps Sala 1 and reports an existing 
   assert.equal(result.room, "Sala 1");
   assert.equal(result.roomConflict, true);
   assert.equal(result.conflictCount, 1);
+});
+
+test("a repeated structured receipt reconciles the grid, CRM projection and calendar", () => {
+  const { reserve, writes, upserts } = loadReservation({
+    existingAppointment: true,
+    status: "Disponível",
+  });
+  const result = reserve({
+    appointmentId: "whatsapp-existing-1",
+    opportunityId: "opp-amanda-existing",
+    phone: "+5511900000000",
+    name: "Maria Silva",
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-08-04",
+    scheduledTime: "10:00",
+    humanConfirmed: true,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.duplicate, true);
+  assert.equal(result.gridReconciled, true);
+  assert.equal(result.scheduleRow, 7);
+  assert.equal(upserts.length, 1);
+  assert.equal(
+    writes.some((write) =>
+      write.row === 7 &&
+      write.column === 4 &&
+      write.value === "Bloqueado"
+    ),
+    true,
+  );
+  assert.equal(
+    writes.some((write) => write.leadStatus === "Consulta agendada"),
+    true,
+  );
+});
+
+test("a repeated receipt never reopens a closed consultation", () => {
+  const { reserve, writes, upserts } = loadReservation({
+    existingAppointment: true,
+    existingStatus: "Realizada",
+  });
+  const result = reserve({
+    appointmentId: "whatsapp-existing-1",
+    opportunityId: "opp-amanda-existing",
+    phone: "+5511900000000",
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-08-04",
+    scheduledTime: "10:00",
+    humanConfirmed: true,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.duplicate, true);
+  assert.equal(result.preservedClosed, true);
+  assert.equal(upserts.length, 0);
+  assert.equal(writes.length, 0);
 });
 
 test("blocks a Daniel slot and assigns Sala 2", () => {
