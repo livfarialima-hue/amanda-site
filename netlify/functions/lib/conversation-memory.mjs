@@ -129,10 +129,11 @@ function normalizeConversation(value, now) {
     };
   }
 
-  const turns = value.turns
-    .map((turn) => normalizeTurn(turn, now))
-    .filter(Boolean)
-    .slice(-MAX_TURNS);
+  const turns = mergeTurns(
+    value.turns
+      .map((turn) => normalizeTurn(turn, now))
+      .filter(Boolean),
+  );
 
   return {
     conversation: {
@@ -251,7 +252,7 @@ export async function appendConversationTurn(
     const nextConversation = {
       version: MEMORY_VERSION,
       updatedAt: new Date(now).toISOString(),
-      turns: [...historyBefore, nextTurn].slice(-MAX_TURNS),
+      turns: mergeTurns(historyBefore, [nextTurn]),
       semanticState: existing.semanticState,
     };
 

@@ -123,6 +123,64 @@ test("human takeover schedules a resume only for a concrete pending request", ()
   assert.equal(waiting.scheduleHumanResume, false);
 });
 
+test("human takeover uses provider time when rapid clinic messages arrive out of order", () => {
+  const decision = decideConversationAction({
+    text: "Sim",
+    plan: {
+      route: "human_takeover_active",
+      automaticAllowed: false,
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Você gostaria de saber mais sobre a consulta?",
+        at: "2026-08-27T15:10:08.000Z",
+      },
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Na consulta, a Dra. Amanda avalia qual tratamento faz sentido.",
+        at: "2026-08-27T15:09:50.000Z",
+      },
+    ],
+    humanTakeoverActive: true,
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_TEAM);
+  assert.equal(decision.unresolvedRequest, true);
+  assert.equal(decision.scheduleHumanResume, true);
+});
+
+test("an older delayed question cannot reopen a newer human statement", () => {
+  const decision = decideConversationAction({
+    text: "Sim",
+    plan: {
+      route: "human_takeover_active",
+      automaticAllowed: false,
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "A equipe já recebeu seus dados e seguirá por aqui.",
+        at: "2026-08-27T15:10:08.000Z",
+      },
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Você gostaria de saber mais sobre a consulta?",
+        at: "2026-08-27T15:09:50.000Z",
+      },
+    ],
+    humanTakeoverActive: true,
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_PATIENT);
+  assert.equal(decision.unresolvedRequest, false);
+  assert.equal(decision.scheduleHumanResume, false);
+});
+
 test("a duplicate revision can never produce a second action", () => {
   const decision = decideConversationAction({
     text: "Qual é o valor?",

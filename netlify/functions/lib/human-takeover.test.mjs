@@ -105,6 +105,43 @@ test("a semantic continuation waits for the human preference window before AI ca
   );
 });
 
+test("a short acceptance remains a delayed continuation when human echoes finish out of order", () => {
+  const candidate = {
+    patientAutomationReady: true,
+    humanTakeoverActive: true,
+    professional: "amanda",
+    messageType: "text",
+    text: "Sim",
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Você gostaria de saber mais sobre a consulta?",
+        at: "2026-08-27T15:10:08.000Z",
+      },
+      {
+        role: "assistant",
+        source: "equipe_humana",
+        text: "Na consulta, a Dra. Amanda avalia qual tratamento faz sentido.",
+        at: "2026-08-27T15:09:50.000Z",
+      },
+    ],
+    exactDuplicate: false,
+    protectedAppointmentContinuation: false,
+    professionalFactReview: null,
+    patientRelationship: {},
+  };
+
+  assert.equal(
+    isSemanticHumanContextContinuationCandidate(candidate),
+    true,
+  );
+  assert.equal(
+    isImmediateHumanContextContinuationCandidate(candidate),
+    false,
+  );
+});
+
 test("manual SMB echo keeps semantic assessment but suppresses patient replies for the day", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",

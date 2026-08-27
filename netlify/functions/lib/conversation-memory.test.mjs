@@ -8,6 +8,9 @@ import {
   toOpenAIConversation,
   updateConversationSemanticState,
 } from "./conversation-memory.mjs";
+import {
+  hasUnresolvedPatientRequest,
+} from "./conversation-action-controller.mjs";
 
 function fakeBlobs(initialValue = null) {
   let value = initialValue;
@@ -111,6 +114,103 @@ test("the same event is not added twice", async () => {
 
   assert.equal(duplicate.status, "duplicate");
   assert.equal(blobs.value().turns.length, 1);
+});
+
+test("out-of-order human echoes are stored by provider time before a short patient answer", async () => {
+  const blobs = fakeBlobs();
+  const phone = "+5511900000000";
+
+  await appendConversationTurn(
+    {
+      phone,
+      role: "assistant",
+      source: "human",
+      text: "Você gostaria de saber mais sobre a consulta?",
+      eventId: "human-question",
+      at: "2026-08-27T15:10:08.000Z",
+    },
+    {
+      getStoreImpl: blobs.getStoreImpl,
+      now: Date.parse("2026-08-27T15:10:34.000Z"),
+    },
+  );
+  await appendConversationTurn(
+    {
+      phone,
+      role: "assistant",
+      source: "human",
+      text: "Na consulta, a Dra. Amanda avalia qual tratamento faz sentido.",
+      eventId: "human-explanation",
+      at: "2026-08-27T15:09:50.000Z",
+    },
+    {
+      getStoreImpl: blobs.getStoreImpl,
+      now: Date.parse("2026-08-27T15:10:52.000Z"),
+    },
+  );
+  const patientTurn = await appendConversationTurn(
+    {
+      phone,
+      role: "user",
+      source: "patient",
+      text: "Sim",
+      eventId: "patient-yes",
+      at: "2026-08-27T15:12:52.000Z",
+    },
+    {
+      getStoreImpl: blobs.getStoreImpl,
+      now: Date.parse("2026-08-27T15:13:40.000Z"),
+    },
+  );
+
+  assert.deepEqual(
+    patientTurn.historyAfter.map((turn) => turn.eventId),
+    ["human-explanation", "human-question", "patient-yes"],
+  );
+  assert.equal(
+    hasUnresolvedPatientRequest(
+      "Sim",
+      toOpenAIConversation(patientTurn.historyBefore),
+    ),
+    true,
+  );
+});
+
+test("reading an already inverted cache restores chronological order", async () => {
+  const blobs = fakeBlobs({
+    version: 2,
+    updatedAt: "2026-08-27T15:13:40.000Z",
+    turns: [
+      {
+        role: "assistant",
+        source: "human",
+        text: "Você gostaria de saber mais sobre a consulta?",
+        eventId: "human-question",
+        at: "2026-08-27T15:10:08.000Z",
+      },
+      {
+        role: "assistant",
+        source: "human",
+        text: "Na consulta, a Dra. Amanda avalia qual tratamento faz sentido.",
+        eventId: "human-explanation",
+        at: "2026-08-27T15:09:50.000Z",
+      },
+    ],
+    semanticState: null,
+  });
+
+  const result = await readConversationTurns(
+    "+5511900000000",
+    {
+      getStoreImpl: blobs.getStoreImpl,
+      now: Date.parse("2026-08-27T15:14:00.000Z"),
+    },
+  );
+
+  assert.deepEqual(
+    result.turns.map((turn) => turn.eventId),
+    ["human-explanation", "human-question"],
+  );
 });
 
 test("expired history is discarded", async () => {

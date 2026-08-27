@@ -54,11 +54,47 @@ function normalized(value) {
   return String(value || "").trim();
 }
 
+function latestMatchingTurn(recentConversation, predicate) {
+  let latest = null;
+  let latestAt = null;
+
+  for (const turn of Array.isArray(recentConversation)
+    ? recentConversation
+    : []) {
+    if (!predicate(turn)) continue;
+
+    const parsedAt = new Date(turn?.at || "").getTime();
+    const candidateAt = Number.isFinite(parsedAt) ? parsedAt : null;
+
+    if (!latest) {
+      latest = turn;
+      latestAt = candidateAt;
+      continue;
+    }
+
+    if (candidateAt !== null && latestAt !== null) {
+      if (candidateAt >= latestAt) {
+        latest = turn;
+        latestAt = candidateAt;
+      }
+      continue;
+    }
+
+    // Históricos legados sem horário preservam a regra anterior: o último
+    // item recebido vence. Quando ambos têm horário, prevalece o instante real
+    // informado pelo provedor, mesmo que os webhooks terminem fora de ordem.
+    latest = turn;
+    latestAt = candidateAt;
+  }
+
+  return latest;
+}
+
 function lastAssistantTurn(recentConversation) {
-  return (Array.isArray(recentConversation) ? recentConversation : [])
-    .slice()
-    .reverse()
-    .find((turn) => turn?.role === "assistant");
+  return latestMatchingTurn(
+    recentConversation,
+    (turn) => turn?.role === "assistant",
+  );
 }
 
 function assistantQuestionBeyondSocialGreeting(turn) {
@@ -112,16 +148,14 @@ export function introducesStandalonePatientRequest(text) {
 }
 
 function latestClinicTurn(recentConversation) {
-  return (Array.isArray(recentConversation) ? recentConversation : [])
-    .slice()
-    .reverse()
-    .find(
-      (turn) =>
-        turn?.role === "assistant" ||
-        ["bruna", "human", "equipe_humana"].includes(
-          String(turn?.source || ""),
-        ),
-    );
+  return latestMatchingTurn(
+    recentConversation,
+    (turn) =>
+      turn?.role === "assistant" ||
+      ["bruna", "human", "equipe_humana"].includes(
+        String(turn?.source || ""),
+      ),
+  );
 }
 
 export function isReplyToHumanContextWithoutStandaloneRequest(
