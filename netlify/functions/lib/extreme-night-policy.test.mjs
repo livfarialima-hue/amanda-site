@@ -5,6 +5,7 @@ import {
   buildExtremeNightAcknowledgement,
   buildExtremeNightEmailAlert,
   buildMorningResumeOpening,
+  buildMorningProcedureInterestOpening,
   hasExtremeNightAcknowledgement,
   isExtremeNight,
   isExtremeNightAcknowledgement,
@@ -83,6 +84,45 @@ test("the morning opening uses the actual papada and value context", () => {
   assert.doesNotMatch(reply, /procedimento para papada|predomina|\?/i);
 });
 
+test("a generic procedure lead receives a useful contextual morning continuation", () => {
+  const reply = buildMorningProcedureInterestOpening({
+    patientName: "Marisa Barbosa MOTORISTA",
+    procedure: "lifting_facial",
+    currentText:
+      "Olá! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01",
+  });
+
+  assert.match(reply, /^Bom dia, Marisa!/);
+  assert.match(reply, /retomando sua mensagem sobre lifting facial/i);
+  assert.match(reply, /avaliação com a Dra\. Amanda/i);
+  assert.match(reply, /Quer que eu te explique como ela funciona\?/i);
+  assert.doesNotMatch(reply, /Ref\.|M26F01W|o que você gostaria de entender/i);
+});
+
+test("an evaluation request about ninfoplastia stays reserved and answers the request", () => {
+  const reply = buildMorningProcedureInterestOpening({
+    patientName: "Gessica",
+    procedure: "ninfoplastia",
+    currentText:
+      "Tenho interesse em ninfoplastia e gostaria de entender melhor como funciona a avaliação.",
+  });
+
+  assert.match(reply, /^Bom dia, Gessica!/);
+  assert.match(reply, /individual e reservada/i);
+  assert.match(reply, /possibilidades, os limites e a recuperação/i);
+  assert.doesNotMatch(reply, /foto|detalhes íntimos|como ela funciona\?/i);
+});
+
+test("a specific procedure question is not replaced by the generic morning opening", () => {
+  const reply = buildMorningProcedureInterestOpening({
+    patientName: "Marisa",
+    procedure: "lifting_facial",
+    currentText: "Quero saber qual é o valor do lifting facial.",
+  });
+
+  assert.equal(reply, "");
+});
+
 test("email fallback is actionable and never repeats the old generic placeholder", () => {
   const suggestion = buildContextualHumanSuggestion({
     patientName: "Lia Teste",
@@ -121,6 +161,24 @@ test("an explicit request to continue tomorrow produces a contextual morning dra
   assert.match(alert, /consulta presencial com a Dra\. Amanda custa R\$ 500/i);
   assert.doesNotMatch(alert, /procedimento para papada|predomina/i);
   assert.doesNotMatch(alert, /conferir essa informação/i);
+});
+
+test("an explicit night pause preserves a prior generic procedure interest for morning", () => {
+  const reply = buildMorningResumeOpening({
+    patientName: "Marisa",
+    procedure: "lifting_facial",
+    currentText: "Amanhã a gente conversa, melhor né?",
+    recentConversation: [
+      {
+        role: "patient",
+        text: "Quero saber sobre lifting facial com a Dra. Amanda.",
+      },
+    ],
+  });
+
+  assert.match(reply, /^Bom dia, Marisa!/);
+  assert.match(reply, /retomando sua mensagem sobre lifting facial/i);
+  assert.match(reply, /Quer que eu te explique como ela funciona\?/i);
 });
 
 test("a receipt from another night does not suppress the current night", () => {

@@ -158,6 +158,45 @@ test("review alert stays silent after a human takes over", async () => {
   assert.equal(calls.length, 0);
 });
 
+test("a current human-resume claim may raise its fail-closed review alert", async () => {
+  const calls = [];
+  const result = await sendYCloudReviewAlert(
+    {
+      ...INPUT,
+      expectedHumanResumeGeneration: "human-1",
+    },
+    {
+      env: {
+        YCLOUD_API_KEY: "test-key",
+        WHATSAPP_ALERT_NUMBER: "+5511967743374",
+      },
+      getHumanResumeControlImpl: async () => ({
+        status: "human_active",
+        generation: "human-1",
+      }),
+      claimReviewAlertSlotImpl: async () => ({
+        status: "claimed",
+      }),
+      completeReviewAlertSlotImpl: async () => ({
+        status: "completed",
+      }),
+      releaseReviewAlertSlotImpl: async () => ({
+        status: "released",
+      }),
+      sendEmailCopy: false,
+      fetchImpl: async (...args) => {
+        calls.push(args);
+        return new Response('{"status":"accepted"}', {
+          status: 200,
+        });
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(calls.length, 1);
+});
+
 test("review alert suppresses repeated alerts in the same patient window", async () => {
   const calls = [];
   const result = await sendYCloudReviewAlert(INPUT, {

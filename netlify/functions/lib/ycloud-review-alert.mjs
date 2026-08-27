@@ -179,6 +179,7 @@ export async function sendYCloudReviewAlert(
     patientPhone,
     messageText,
     urgent = false,
+    expectedHumanResumeGeneration = "",
   },
   {
     env = process.env,
@@ -205,7 +206,19 @@ export async function sendYCloudReviewAlert(
     patientPhone,
   ).catch(() => null);
 
-  if (takeoverControl?.status === "human_active") {
+  const resumeGeneration = limitText(
+    expectedHumanResumeGeneration,
+    120,
+  );
+  const currentHumanResumeGeneration = Boolean(
+    resumeGeneration &&
+    takeoverControl?.generation === resumeGeneration
+  );
+
+  if (
+    takeoverControl?.status === "human_active" &&
+    !currentHumanResumeGeneration
+  ) {
     return result("skipped", {
       errorCode: "human_takeover_active",
     });

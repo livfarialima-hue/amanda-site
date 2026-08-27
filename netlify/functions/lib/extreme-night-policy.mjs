@@ -10,12 +10,30 @@ const PROCEDURE_LABELS = Object.freeze({
   lifting_cervical: "lifting cervical",
   lifting_facial: "lifting facial",
   blefaroplastia: "blefaroplastia",
+  frontoplastia: "frontoplastia",
   otoplastia: "otoplastia",
+  avaliacao_facial: "avaliação facial",
+  lip_lifting: "lifting labial",
   lipo_papada: "tratamento da papada",
+  rinoplastia: "rinoplastia",
   abdominoplastia: "abdominoplastia",
   lipoaspiracao: "lipoaspiração",
+  mastopexia: "mastopexia",
+  protese_mama: "prótese de mama",
+  mamoplastia_redutora: "mamoplastia redutora",
   mamoplastia: "cirurgia das mamas",
+  braquioplastia: "braquioplastia",
+  ninfoplastia: "ninfoplastia",
+  contorno_corporal: "cirurgia de contorno corporal",
+  cirurgias_combinadas: "cirurgias combinadas",
 });
+
+const GENERIC_PROCEDURE_INTEREST_PATTERN =
+  /\b(?:quero|gostaria|tenho\s+interesse|queria|preciso)\b[\s\S]{0,80}\b(?:saber|entender|conhecer|informa[cç][oõ]es?|orienta[cç][aã]o|fazer)\b|\b(?:saber|entender|conhecer)\s+mais\b/i;
+const EVALUATION_INFORMATION_PATTERN =
+  /\b(?:como\s+funciona|entender|saber|explicar|informa[cç][oõ]es?\s+sobre)\b[\s\S]{0,80}\bavalia[cç][aã]o\b|\bavalia[cç][aã]o\b[\s\S]{0,50}\b(?:como\s+funciona|entender|saber|explicar)\b/i;
+const SPECIFIC_PROCEDURE_QUESTION_PATTERN =
+  /\b(?:valor|pre[cç]o|quanto|or[cç]amento|parcel|recuper|p[oó]s[-\s]?oper|afast|trabalho|incha[cç]o|endere[cç]o|onde\s+fica|localiza[cç][aã]o|instagram|site|conv[eê]nio|anestesia|risco|hospital|agenda|agendar|hor[aá]rio|disponibilidade)\b/i;
 
 function boundedHour(value, fallback) {
   const parsed = Number(value);
@@ -66,6 +84,31 @@ function procedureLabel(procedure, text = "") {
   if (/blefaroplastia|palpebra/.test(value)) return "blefaroplastia";
   if (/otoplastia|orelha/.test(value)) return "otoplastia";
   if (/papada/.test(value)) return "tratamento da papada";
+  if (/frontoplastia|reducao da testa/.test(value)) return "frontoplastia";
+  if (/avaliacao facial|harmonizacao facial/.test(value)) {
+    return "avaliação facial";
+  }
+  if (/lip lifting|lifting labial/.test(value)) return "lifting labial";
+  if (/rinoplastia|cirurgia do nariz/.test(value)) return "rinoplastia";
+  if (/lipoaspiracao/.test(value)) return "lipoaspiração";
+  if (/abdominoplastia/.test(value)) return "abdominoplastia";
+  if (/mastopexia|lifting de mamas/.test(value)) return "mastopexia";
+  if (/protese de mama|silicone nos seios/.test(value)) {
+    return "prótese de mama";
+  }
+  if (/mamoplastia redutora|reducao de mamas/.test(value)) {
+    return "mamoplastia redutora";
+  }
+  if (/braquioplastia|lifting de bracos/.test(value)) {
+    return "braquioplastia";
+  }
+  if (/ninfoplastia|labioplastia/.test(value)) return "ninfoplastia";
+  if (/contorno corporal|pos bariatrica/.test(value)) {
+    return "cirurgia de contorno corporal";
+  }
+  if (/mommy makeover|cirurgias combinadas/.test(value)) {
+    return "cirurgias combinadas";
+  }
   return "";
 }
 
@@ -163,6 +206,43 @@ export function buildExtremeNightAcknowledgement({
     : "";
 }
 
+export function buildMorningProcedureInterestOpening({
+  patientName,
+  procedure,
+  currentText,
+} = {}) {
+  const text = String(currentText || "").trim();
+  const label = procedureLabel(procedure, text);
+  const opening = greeting(patientName, "Bom dia");
+
+  if (!label) return "";
+
+  const asksEvaluation =
+    EVALUATION_INFORMATION_PATTERN.test(text) &&
+    !/\b(?:valor|pre[cç]o|quanto|or[cç]amento)\b/i.test(text);
+
+  if (asksEvaluation) {
+    if (procedure === "ninfoplastia" || /ninfoplastia|labioplastia/i.test(text)) {
+      return `${opening} Como combinamos, retomando sua mensagem sobre ${label}: a avaliação é feita de forma individual e reservada. A Dra. Amanda conversa sobre o que você busca, avalia a região com cuidado e explica as possibilidades, os limites e a recuperação, sem exigir uma decisão nesse momento.`;
+    }
+
+    return `${opening} Como combinamos, retomando sua mensagem sobre ${label}: na avaliação, a Dra. Amanda conversa sobre o que você busca, examina a região com cuidado e explica as possibilidades, os limites e a recuperação. Você não precisa decidir nada nesse momento.`;
+  }
+
+  if (
+    !GENERIC_PROCEDURE_INTEREST_PATTERN.test(text) ||
+    SPECIFIC_PROCEDURE_QUESTION_PATTERN.test(text)
+  ) {
+    return "";
+  }
+
+  if (procedure === "ninfoplastia" || /ninfoplastia|labioplastia/i.test(text)) {
+    return `${opening} Como combinamos, retomando sua mensagem sobre ${label}: essa conversa e a avaliação são tratadas de forma individual e reservada. Quer que eu te explique como funciona a avaliação com a Dra. Amanda?`;
+  }
+
+  return `${opening} Como combinamos, retomando sua mensagem sobre ${label}: a avaliação com a Dra. Amanda é o primeiro passo para entender o que você busca e quais possibilidades fazem sentido para o seu caso. Quer que eu te explique como ela funciona?`;
+}
+
 export function buildMorningResumeOpening({
   patientName,
   procedure,
@@ -202,7 +282,11 @@ export function buildMorningResumeOpening({
   if (/recuper|pos operator|afast|trabalho|inchaco/.test(text) && label) {
     return `${opening} Como combinamos, retomando sua dúvida sobre a recuperação de ${label}: o tempo varia conforme o planejamento individual, e a orientação aplicável ao seu caso é definida na avaliação.`;
   }
-  return "";
+  return buildMorningProcedureInterestOpening({
+    patientName,
+    procedure,
+    currentText: combined,
+  });
 }
 
 export function buildContextualHumanSuggestion({

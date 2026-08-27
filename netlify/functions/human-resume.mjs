@@ -36,6 +36,7 @@ import {
   isExplicitNightPause,
 } from "./lib/conversation-action-controller.mjs";
 import {
+  buildMorningProcedureInterestOpening,
   buildMorningResumeOpening,
   isExtremeNight,
   isExtremeNightAcknowledgement,
@@ -145,6 +146,7 @@ async function alertReviewer(job, details, dependencies = {}) {
     messageText: alertText(job, details),
     urgent:
       details.reason === "possible_urgent_symptoms",
+    expectedHumanResumeGeneration: job.generation,
   });
 }
 
@@ -204,6 +206,81 @@ async function finish(job, controlStatus, dependencies = {}) {
     dependencies.completeHumanResumeImpl ||
     completeHumanResume;
   return complete(job, { controlStatus });
+}
+
+async function deliverScheduledMorningResume(
+  job,
+  reply,
+  dependencies = {},
+) {
+  const body = String(reply || "").trim();
+
+  if (!body) {
+    const reason = "morning_resume_context_required";
+    await alertReviewer(
+      job,
+      {
+        kind: "uncertain",
+        reason,
+        holdingSent: false,
+        suggestedReply: "",
+      },
+      dependencies,
+    );
+    await finish(job, "waiting_human", dependencies);
+    return {
+      status: "waiting_human",
+      reason,
+    };
+  }
+
+  const morningAction = {
+    action: CONVERSATION_ACTIONS.RESPOND,
+    allowHoldingReply: false,
+    followupPolicy: "morning_resume",
+  };
+  const sendResult = await sendPatientMessage(
+    job,
+    body,
+    "morning-resume",
+    morningAction,
+    dependencies,
+  );
+
+  if (sendResult.status !== "completed") {
+    if (sendResult.status === "superseded") {
+      return { status: "superseded", reason: "newer_activity" };
+    }
+    const reason =
+      sendResult.errorCode || "morning_resume_delivery_failed";
+    await alertReviewer(
+      job,
+      {
+        kind: "uncertain",
+        reason,
+        holdingSent: false,
+        suggestedReply: body,
+      },
+      dependencies,
+    );
+    await finish(job, "waiting_human", dependencies);
+    return {
+      status: "delivery_failed",
+      reason,
+    };
+  }
+
+  await recordBrunaTurn(
+    job,
+    body,
+    "morning-resume-memory",
+    dependencies,
+  );
+  await finish(job, "bruna_resumed", dependencies);
+  return {
+    status: "bruna_resumed",
+    reason: "scheduled_morning_resume",
+  };
 }
 
 async function holdAndAlert(
@@ -418,6 +495,23 @@ export async function processHumanResumeJob(
         )
       : conversationAction;
 
+  if (job.morningResume === true && policy.action === "attempt_reply") {
+    const procedureInterestReply =
+      buildMorningProcedureInterestOpening({
+        patientName: job.patientName,
+        procedure: enrichedPlan.procedure || job.procedure,
+        currentText: job.text,
+      });
+
+    if (procedureInterestReply) {
+      return deliverScheduledMorningResume(
+        job,
+        procedureInterestReply,
+        dependencies,
+      );
+    }
+  }
+
   if (
     job.morningResume === true &&
     ["no_action", "alert_only"].includes(policy.action) &&
@@ -429,41 +523,11 @@ export async function processHumanResumeJob(
       currentText: job.text,
       recentConversation: job.recentConversation,
     });
-    const morningAction = {
-      action: CONVERSATION_ACTIONS.RESPOND,
-      allowHoldingReply: false,
-      followupPolicy: "morning_resume",
-    };
-    const sendResult = await sendPatientMessage(
+    return deliverScheduledMorningResume(
       job,
       reply,
-      "morning-resume",
-      morningAction,
       dependencies,
     );
-
-    if (sendResult.status !== "completed") {
-      if (sendResult.status === "superseded") {
-        return { status: "superseded", reason: "newer_activity" };
-      }
-      await finish(job, "waiting_human", dependencies);
-      return {
-        status: "delivery_failed",
-        reason: sendResult.errorCode,
-      };
-    }
-
-    await recordBrunaTurn(
-      job,
-      reply,
-      "morning-resume-memory",
-      dependencies,
-    );
-    await finish(job, "bruna_resumed", dependencies);
-    return {
-      status: "bruna_resumed",
-      reason: "scheduled_morning_resume",
-    };
   }
 
   if (policy.action === "no_action") {

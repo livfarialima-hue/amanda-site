@@ -441,6 +441,112 @@ test("a requested next-morning continuation resumes with the actual context", as
   assert.equal(deps.alerts.length, 0);
 });
 
+test("a generic procedure lead promised a morning return receives the contextual continuation without AI", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => {
+    throw new Error("the generic morning continuation must be deterministic");
+  };
+  const result = await processHumanResumeJob(
+    job({
+      morningResume: true,
+      patientName: "Marisa Barbosa MOTORISTA",
+      procedure: "lifting_facial",
+      text:
+        "Olá! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01",
+      receivedAt: "2026-08-27T08:49:00.000Z",
+      recentConversation: [
+        {
+          role: "patient",
+          source: "paciente",
+          text:
+            "Olá! Quero saber sobre lifting facial com a Dra. Amanda. Ref. M26F01W-C06H01",
+        },
+        {
+          role: "assistant",
+          source: "bruna",
+          text:
+            "Olá, Marisa! Anotei sua mensagem sobre lifting facial. Como já é madrugada, retomaremos por aqui pela manhã.",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(result.reason, "scheduled_morning_resume");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.match(deps.patientMessages[0].body, /^Bom dia, Marisa!/);
+  assert.match(
+    deps.patientMessages[0].body,
+    /retomando sua mensagem sobre lifting facial/i,
+  );
+  assert.match(deps.patientMessages[0].body, /avaliação com a Dra\. Amanda/i);
+  assert.doesNotMatch(
+    deps.patientMessages[0].body,
+    /M26F01W|Ref\.|o que você gostaria de entender/i,
+  );
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.memory.length, 1);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "bruna_resumed",
+  );
+});
+
+test("a blocked morning continuation becomes a visible human fallback with the ready reply", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => {
+    throw new Error("the generic morning continuation must be deterministic");
+  };
+  deps.sendControlledPatientReplyImpl = async () => ({
+    status: "blocked",
+    errorCode: "planned_reply_restarts_context",
+  });
+
+  const result = await processHumanResumeJob(
+    job({
+      morningResume: true,
+      patientName: "Marisa",
+      procedure: "lifting_facial",
+      text: "Quero saber sobre lifting facial com a Dra. Amanda.",
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "bruna",
+          text:
+            "Olá, Marisa! Anotei sua mensagem sobre lifting facial. Como já é madrugada, retomaremos por aqui pela manhã.",
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "delivery_failed");
+  assert.equal(result.reason, "planned_reply_restarts_context");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 1);
+  assert.equal(
+    deps.alerts[0].expectedHumanResumeGeneration,
+    "human-1",
+  );
+  assert.match(
+    deps.alerts[0].messageText,
+    /Sugestão para copiar após conferir: Bom dia, Marisa!/i,
+  );
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "waiting_human",
+  );
+});
+
 test("the initial price information is sent after the human-resume window without an alert", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
