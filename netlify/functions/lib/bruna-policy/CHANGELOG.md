@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-27.1 — publicada e verificada
+
+- Turnos da paciente, da Bruna e da equipe são normalizados e ordenados pelo horário real do provedor antes de qualquer decisão; o desempate de registros legados permanece estável.
+- Ecos humanos concluídos fora de ordem não invertem mais a conversa: uma resposta curta a uma pergunta explícita mais nova pode entrar na retomada protegida, e uma pergunta antiga atrasada não reabre uma fala posterior.
+- Caches históricos já invertidos se autocorrigem na leitura sem perder turnos.
+- Toda confirmação de madrugada que prometa retorno mantém uma pendência real para as 8h; procura genérica por procedimento conhecido usa continuação contextual determinística, e falha ou bloqueio vira revisão humana visível.
+- Estado desta versão: código funcional `39227ac203a4a22b358734e8c37fad9f19274a12`, deploy Netlify `6a90650200aa2400081284ce`, `ycloud-webhook` `a532d1af94147e087492fe5bf2a61c9efdc61b210eedd51075f720c50ba1f132` e `human-resume` `e8a0a82ad9f44bde527c0ae7436a6545622e8274d7ba737ff9815e7ed3b7b395`; 131/131 testes focados, 1118/1118 integrais, arquitetura, build de 178 arquivos e 44 URLs aprovados. Domínio, URL imutável e webhook HTTP 200 em modo `active`; requisição sem assinatura HTTP 401, 12 funções, 5 agendas, zero segredo em 467 arquivos e nenhuma mensagem real. Rollback: `527e8890945c083cae82ecb2738aff8223617c31` e `6a8fff55f898e40008a97339`.
+
 ## 2026-08-26.4 — publicada e verificada
 
 - Depois de qualquer saída humana, a Bruna aguarda no mínimo dez minutos desde a entrada mais recente da paciente; não há mais exceção de resposta imediata durante takeover.

@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-26.4",
-  "promptVersion": "bruna-concierge-2026-08-26.4",
+  "bundleVersion": "2026-08-27.1",
+  "promptVersion": "bruna-concierge-2026-08-27.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-26.4",
+  "knowledgeSnapshot": "kb-2026-08-27.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "7507365726e354a4c3a447c06c552990e6667228",
-    "lastObservedProductionCommit": "7507365726e354a4c3a447c06c552990e6667228",
-    "functionalDeployId": "6a8f8650e288813cf709de85",
-    "lastObservedProductionDeployId": "6a8f8650e288813cf709de85",
-    "rollbackCommit": "6e16f20a966a979b082ed20f249f382bb8fbbd4e",
-    "rollbackDeployId": "6a8f6edc9cf872000807c45c",
-    "publishedAt": "2026-08-26T21:36:04-03:00",
-    "lastVerifiedAt": "2026-08-26T21:49:06-03:00"
+    "functionalCommit": "39227ac203a4a22b358734e8c37fad9f19274a12",
+    "lastObservedProductionCommit": "39227ac203a4a22b358734e8c37fad9f19274a12",
+    "functionalDeployId": "6a90650200aa2400081284ce",
+    "lastObservedProductionDeployId": "6a90650200aa2400081284ce",
+    "rollbackCommit": "527e8890945c083cae82ecb2738aff8223617c31",
+    "rollbackDeployId": "6a8fff55f898e40008a97339",
+    "publishedAt": "2026-08-27T13:26:17-03:00",
+    "lastVerifiedAt": "2026-08-27T13:27:23-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "d515dd9b090d28c28c6962ce732fc61e21e27cc44b69f68a33870c2e1cb21ca5"
+    "driveProjectionSha256": "169f198f1840e031baa89c3d04696c2cb87fe2790cce64a0cbfc667131467554"
   }
 }
