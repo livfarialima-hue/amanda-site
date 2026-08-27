@@ -314,6 +314,47 @@ test("one patient remains one row even with several actions", () => {
   );
 });
 
+test("an active follow-up hides cancelled duplicates and stale waiting instructions", () => {
+  const context = loadContext();
+  const items = {};
+  const phone = "+5511999999999";
+
+  context.adicionarItemCentral_(
+    items,
+    context.criarItemCentral_({
+      queue: "Aguardando paciente",
+      phone,
+      nextAction: "Aguardar resposta",
+      source: "WhatsApp — aguardando retorno",
+    }),
+  );
+  context.adicionarItemCentral_(
+    items,
+    context.criarItemCentral_({
+      queue: "Cancelado recentemente",
+      phone,
+      nextAction: "Retomada cancelada",
+      source: "Retomada de marketing",
+    }),
+  );
+  context.adicionarItemCentral_(
+    items,
+    context.criarItemCentral_({
+      queue: "Ação manual hoje",
+      phone,
+      nextAction: "Revisar e aprovar a retomada",
+      source: "Retomada de marketing",
+      context: "Contexto atual.",
+    }),
+  );
+
+  assert.equal(
+    items[phone].nextAction,
+    "Revisar e aprovar a retomada",
+  );
+  assert.equal(items[phone].context, "Contexto atual.");
+});
+
 test("a later human response removes the patient from the answer-now queue", () => {
   const context = loadContext();
   const phone = "+5511999999999";

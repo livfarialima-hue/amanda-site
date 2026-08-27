@@ -1479,9 +1479,21 @@ function adicionarItemCentral_(itemsByPatient, item) {
     secondary.nextAction,
     180,
   );
+  const secondaryIsTerminal =
+    secondary.priority && secondary.priority.rank >= 7;
+  const activeFollowUpSupersedesWaiting =
+    normalizarTextoCentral_(main.source) ===
+      "retomada de marketing" &&
+    ["acao manual hoje", "automatico hoje"].includes(
+      normalizarTextoCentral_(main.queue),
+    ) &&
+    normalizarTextoCentral_(secondary.queue) ===
+      "aguardando paciente";
 
   if (
     complementary &&
+    !secondaryIsTerminal &&
+    !activeFollowUpSupersedesWaiting &&
     normalizarTextoCentral_(main.nextAction) !==
       normalizarTextoCentral_(complementary)
   ) {
