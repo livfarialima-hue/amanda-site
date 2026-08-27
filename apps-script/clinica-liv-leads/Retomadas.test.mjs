@@ -255,6 +255,35 @@ test("classifies only a safe first follow-up as planned for Bruna", () => {
   );
 });
 
+test("automatic planning uses only future slots inside each WhatsApp window", () => {
+  const now = new Date("2026-08-26T08:00:00-03:00");
+  const candidate = (windowEnd) => ({
+    etapa: { numero: 1 },
+    contextoAgenda: false,
+    contextoPreco: false,
+    sugestao: "Retomada contextual segura.",
+    janelaWhatsappAte: new Date(windowEnd),
+    janelaAutomaticaPlanejavel: null,
+    horario: "",
+  });
+  const impossible = candidate("2026-08-26T08:45:00-03:00");
+  const closingSoon = candidate("2026-08-26T10:39:00-03:00");
+  const flexible = candidate("2026-08-26T18:00:00-03:00");
+
+  context.atribuirHorariosRetomadas_(
+    [impossible, closingSoon, flexible],
+    now,
+  );
+
+  assert.equal(impossible.responsavel, "equipe");
+  assert.equal(impossible.janelaAutomaticaPlanejavel, false);
+  assert.equal(impossible.horario, "16:30");
+  assert.equal(closingSoon.responsavel, "bruna");
+  assert.equal(closingSoon.horario, "10:30");
+  assert.equal(flexible.responsavel, "bruna");
+  assert.equal(flexible.horario, "10:45");
+});
+
 test("prefill identifies the procedure but never proves scheduling intent", () => {
   const messages = [
     {
@@ -492,6 +521,70 @@ test("contextual first follow-up names the procedure without offering agenda", (
     /como funciona a avaliação com a Dra\. Amanda/,
   );
   assert.doesNotMatch(message, /agenda|horário|menu|caminhos/);
+});
+
+test("consultation price and address follow-up never becomes a surgery budget message", () => {
+  const candidate = context.criarCandidatoRetomada_(
+    "+5511999999999",
+    {
+      nome: "Marina Souza",
+      status: "Novo",
+      resumo: "Interesse inicial em cervicoplastia",
+      proximaAcao: "",
+      referencia: "M26C01W-C07H01",
+      plataforma: "Meta",
+      campanha: "M26C01W",
+      criativo: "C07H01",
+      destino: "WhatsApp",
+      referenciaCompleta: "M26C01W-C07H01",
+    },
+    [
+      {
+        direcao: "IN",
+        dataHora: new Date("2026-08-24T14:00:00-03:00"),
+        messageId: "prefill",
+        texto:
+          "Olá! Quero saber sobre lifting cervical. Ref. M26C01W-C07H01 JID: J1_example",
+      },
+      {
+        direcao: "OUT",
+        dataHora: new Date("2026-08-24T14:01:00-03:00"),
+        messageId: "opening",
+        texto: "Posso te orientar sobre cervicoplastia.",
+      },
+      {
+        direcao: "IN",
+        dataHora: new Date("2026-08-24T14:02:00-03:00"),
+        messageId: "price",
+        texto: "Qual o valor?",
+      },
+      {
+        direcao: "IN",
+        dataHora: new Date("2026-08-24T14:03:00-03:00"),
+        messageId: "address",
+        texto: "Qual o endereço?",
+      },
+      {
+        direcao: "OUT",
+        dataHora: new Date("2026-08-24T14:05:00-03:00"),
+        messageId: "consultation-reply",
+        texto:
+          "A consulta com a Dra. Amanda custa R$ 500. A Clínica LIV fica na Rua Pais Leme, 215.",
+      },
+    ],
+    new Date("2026-08-25T08:00:00-03:00"),
+    "2026-08-25",
+  );
+
+  assert.ok(candidate);
+  assert.equal(candidate.contextoValorConsulta, true);
+  assert.equal(candidate.contextoLocalAtendimento, true);
+  assert.match(candidate.sugestao, /valor da consulta/);
+  assert.match(candidate.sugestao, /endereço da Clínica LIV/);
+  assert.doesNotMatch(
+    candidate.sugestao,
+    /orçamento|cervicoplastia|lifting|cirúrgico/i,
+  );
 });
 
 test("no procedure or prior question produces no copy-ready fallback", () => {
@@ -774,6 +867,37 @@ test("recognizes a manual first follow-up and schedules only the second stage", 
   );
 });
 
+test("recognizes delayed human continuity wording as a first follow-up", () => {
+  const lastInbound = new Date("2026-08-24T14:00:00-03:00");
+  const delayedAt = new Date("2026-08-25T14:15:00-03:00");
+  const phrases = [
+    "Gostaria de dar continuidade ao atendimento.",
+    "Você gostaria de mais informações sobre a consulta?",
+  ];
+
+  for (const text of phrases) {
+    const conversationData = [
+      {
+        direcao: "IN",
+        dataHora: lastInbound,
+        messageId: "in-1",
+        texto: "Obrigada.",
+      },
+      {
+        direcao: "OUT",
+        dataHora: delayedAt,
+        messageId: "human-follow-up",
+        texto: text,
+      },
+    ];
+    assert.equal(
+      context.proximaEtapaRetomada_(conversationData),
+      2,
+      text,
+    );
+  }
+});
+
 test("keeps a genuine initial reply eligible for the first follow-up", () => {
   const conversationData = [
     {
@@ -1045,6 +1169,75 @@ test("Central approval persists the exact edited message and future schedule", (
   assert.equal(writes[0].values[0][0], "Mensagem final revisada pela equipe.");
   assert.equal(writes[0].values[0][3].toISOString(), scheduledAt.toISOString());
   assert.equal(writes[0].values[0][8], "Central de Atendimento");
+});
+
+test("a correctable semantic failure requires a new explicit approval", () => {
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (key) =>
+        key === "LEADS_INGEST_SECRET"
+          ? "test-secret"
+          : key === "RETOMADAS_AUTOMATICAS_ATIVAS"
+            ? "true"
+            : "",
+    }),
+  };
+  context.Utilities.computeHmacSha256Signature = () => [7, 8, 9];
+  context.Utilities.base64EncodeWebSafe = () => "BwgJ=";
+
+  const row = Array(17).fill("");
+  row[0] = "2026-08-26|failed-plan";
+  row[2] = "+5511999990000";
+  row[3] = "out-1";
+  row[8] = "Mensagem anterior incompatível.";
+  row[9] = "Automático aprovado";
+  row[10] = "Falha — revisar";
+  row[14] =
+    "semantic_context_review_required:procedure_mismatch";
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column) {
+      if (rowNumber === 2 && column === 1) {
+        return { getValues: () => [row] };
+      }
+      return {
+        setValues(values) {
+          writes.push(values);
+        },
+      };
+    },
+  };
+  const scheduledAt = new Date("2026-08-27T10:30:00-03:00");
+  const result = context.aprovarPlanoRetomadaParaBot_(
+    { getSheetByName: () => sheet },
+    "BwgJ",
+    new Date("2026-08-26T21:00:00-03:00"),
+    {
+      suggestion:
+        "Olá! Queria saber se ficou alguma dúvida sobre o valor da consulta.",
+      scheduledAt,
+      origin: "Central de Atendimento",
+    },
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0][0][1], "Automático aprovado");
+  assert.equal(writes[0][0][2], "Programada");
+  assert.equal(writes[0][0][8], "Central de Atendimento");
+  assert.equal(
+    context.falhaRetomadaTerminal_(
+      "semantic_context_review_required:patient_closed",
+    ),
+    true,
+  );
+  assert.equal(
+    context.falhaRetomadaReaprovavel_(
+      "semantic_context_review_required:patient_closed",
+    ),
+    false,
+  );
 });
 
 test("Central approval rejects unsafe copy and invalid send times", () => {

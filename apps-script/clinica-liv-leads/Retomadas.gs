@@ -17,6 +17,7 @@ const RETOMADAS_CONFIG = Object.freeze({
   maximoPacientesPorEmail: 50,
   maximoAtrasoAutomaticoMinutos: 240,
   janelaWhatsAppMinutos: 1430,
+  margemExecucaoPlanejadaMinutos: 5,
   endpointRetomadaAutomatica:
     "https://draamandaschroeder.com.br/.netlify/functions/scheduled-followup",
   propriedadeEndpointRetomadaAutomatica:
@@ -33,6 +34,14 @@ const RETOMADAS_CONFIG = Object.freeze({
     "11:15",
     "11:30",
     "11:45",
+  ],
+  horariosResgateAutomaticos: [
+    "10:15",
+    "10:00",
+    "09:45",
+    "09:30",
+    "09:15",
+    "09:00",
   ],
   horariosRegulares: [
     "16:30",
@@ -187,6 +196,7 @@ function cancelarPlanoRetomadaPorToken_(arquivo, token, agora) {
       "Programada",
       "Ação manual",
       "Suspensa na planilha",
+      "Falha — revisar",
     ].includes(statusEnvio)
   ) {
     return { ok: false, reason: "plan_not_eligible" };
@@ -412,7 +422,14 @@ function aprovarPlanoRetomadaParaBot_(arquivo, token, agora, options) {
     };
   }
 
-  if (modo !== "Manual" || statusEnvio !== "Ação manual") {
+  const reaprovacaoAposFalha =
+    statusEnvio === "Falha — revisar" &&
+    falhaRetomadaReaprovavel_(linha[14]);
+
+  if (
+    !reaprovacaoAposFalha &&
+    (modo !== "Manual" || statusEnvio !== "Ação manual")
+  ) {
     return { ok: false, reason: "plan_not_eligible" };
   }
 
@@ -1342,7 +1359,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     RETOMADAS_CONFIG.maximoPacientesPorEmail,
   );
 
-  atribuirHorariosRetomadas_(selecionados);
+  atribuirHorariosRetomadas_(selecionados, agora);
   selecionados = selecionados.filter(function (candidato) {
     return Boolean(candidato.horario);
   });
@@ -1676,6 +1693,16 @@ function criarCandidatoRetomada_(
     /valor|preco|orcamento|pagamento|parcel/.test(
       contextoAutoral,
     );
+  const contextoValorConsulta =
+    contextoPreco &&
+    contextoValorConsultaRetomada_(
+      conversa,
+      contextoAutoral,
+    );
+  const contextoLocalAtendimento =
+    /endereco|onde fica|localizacao|qual (?:e )?o local|como chegar/.test(
+      contextoAutoral,
+    );
   const contextoQualificado =
     normalizarTextoRetomadas_(lead.status) === "qualificado" ||
     /interesse real|quer (?:fazer|marcar|agendar)|gostaria de (?:fazer|marcar|agendar)/.test(
@@ -1686,6 +1713,18 @@ function criarCandidatoRetomada_(
     lead,
     conversa,
   );
+  const ultimaEntrada = conversa
+    .slice()
+    .reverse()
+    .find(function (mensagem) {
+      return mensagem.direcao === "IN";
+    });
+  const janelaWhatsappAte = ultimaEntrada
+    ? new Date(
+        ultimaEntrada.dataHora.getTime() +
+          RETOMADAS_CONFIG.janelaWhatsAppMinutos * 60 * 1000,
+      )
+    : null;
 
   if (!retomadaComercialPermitida_(contextoPaciente)) {
     return null;
@@ -1711,10 +1750,15 @@ function criarCandidatoRetomada_(
     prioritario: prioritario,
     contextoAgenda: contextoAgenda,
     contextoPreco: contextoPreco,
+    contextoValorConsulta: contextoValorConsulta,
+    contextoLocalAtendimento: contextoLocalAtendimento,
     contextoQualificado: contextoQualificado,
     objecao: objecao,
     assuntoRetomada: assuntoRetomada,
     engajamento: engajamento,
+    ultimaEntrada: ultimaEntrada || null,
+    janelaWhatsappAte: janelaWhatsappAte,
+    janelaAutomaticaPlanejavel: null,
     horario: "",
     sugestao: sugerirMensagemRetomada_(
       etapa.numero,
@@ -1726,6 +1770,8 @@ function criarCandidatoRetomada_(
       contextoQualificado,
       assuntoRetomada,
       lead.nome,
+      contextoValorConsulta,
+      contextoLocalAtendimento,
     ),
     chaveDiaria: [
       dataLocal,
@@ -1813,6 +1859,8 @@ function primeiroContatoSaidaEhRetomada_(conversa) {
     60 *
     60 *
     1000;
+  const ultimaMensagemEntrada =
+    ultimaEntrada >= 0 ? conversa[ultimaEntrada] : null;
 
   return saidas.some(function (mensagem) {
     if (
@@ -1826,9 +1874,23 @@ function primeiroContatoSaidaEhRetomada_(conversa) {
       .trim()
       .toLowerCase();
     const texto = normalizarTextoRetomadas_(mensagem.texto);
+    const dataEntrada = dataRetomadaValida_(
+      ultimaMensagemEntrada && ultimaMensagemEntrada.dataHora,
+    );
+    const dataSaida = dataRetomadaValida_(mensagem.dataHora);
+    const intervaloDesdeEntrada =
+      dataEntrada && dataSaida
+        ? dataSaida.getTime() - dataEntrada.getTime()
+        : 0;
+    const retomadaHumanaTardia =
+      intervaloDesdeEntrada > limiteMesmoContato &&
+      /(?:^|\s)(?:(?:gostaria|queria)\s+de\s+dar\s+continuidade\s+(?:ao|a)\s+(?:atendimento|conversa)|voce\s+gostaria\s+de\s+mais\s+informacoes?\s+sobre\s+(?:a\s+)?(?:consulta|avaliacao))/.test(
+        texto,
+      );
 
     return (
       messageId.indexOf("scheduled-followup-") === 0 ||
+      retomadaHumanaTardia ||
       /(?:^|\s)(?:so\s+)?pass(?:ando|ei)\s+(?:por\s+aqui\s+)?para\s+(?:saber|ver|perguntar)|(?:^|\s)(?:queria|vim)\s+retomar\s+(?:a\s+|nossa\s+)?(?:conversa|mensagem|avaliacao|contato)|(?:^|\s)retomando\s+(?:a\s+|nossa\s+)?(?:conversa|mensagem|avaliacao|contato)|(?:^|\s)volt(?:ando|ei)\s+(?:a|ao|para)\s+(?:nossa\s+)?(?:conversa|mensagem|avaliacao|contato)|(?:^|\s)lembrei\s+(?:da|de)\s+(?:nossa\s+)?(?:conversa|mensagem)/.test(
         texto,
       )
@@ -1836,19 +1898,40 @@ function primeiroContatoSaidaEhRetomada_(conversa) {
   });
 }
 
-function atribuirHorariosRetomadas_(candidatos) {
-  let indiceAutomatico = 0;
+function atribuirHorariosRetomadas_(candidatos, agora) {
+  const instante = dataRetomadaValida_(agora) || new Date();
+  const horariosAutomaticosOcupados = {};
   let indiceManual = 0;
+
+  candidatos
+    .filter(function (candidato) {
+      return responsavelRetomada_(candidato) === "bruna";
+    })
+    .sort(function (a, b) {
+      const limiteA = dataRetomadaValida_(a.janelaWhatsappAte);
+      const limiteB = dataRetomadaValida_(b.janelaWhatsappAte);
+      return (
+        (limiteA ? limiteA.getTime() : Number.MAX_SAFE_INTEGER) -
+        (limiteB ? limiteB.getTime() : Number.MAX_SAFE_INTEGER)
+      );
+    })
+    .forEach(function (candidato) {
+      const horario = horarioAutomaticoCompativelRetomada_(
+        candidato,
+        instante,
+        horariosAutomaticosOcupados,
+      );
+
+      candidato.janelaAutomaticaPlanejavel = Boolean(horario);
+      candidato.responsavel = horario ? "bruna" : "equipe";
+      candidato.horario = horario;
+      if (horario) horariosAutomaticosOcupados[horario] = true;
+    });
 
   candidatos.forEach(function (candidato) {
     candidato.responsavel = responsavelRetomada_(candidato);
 
-    if (candidato.responsavel === "bruna") {
-      candidato.horario = horarioRetomadaPorIndice_(
-        RETOMADAS_CONFIG.horariosPrioritarios,
-        indiceAutomatico,
-      );
-      indiceAutomatico += 1;
+    if (candidato.responsavel === "bruna" && candidato.horario) {
       return;
     }
 
@@ -1860,6 +1943,46 @@ function atribuirHorariosRetomadas_(candidatos) {
   });
 }
 
+function horarioAutomaticoCompativelRetomada_(
+  candidato,
+  agora,
+  horariosOcupados,
+) {
+  const limite = dataRetomadaValida_(
+    candidato && candidato.janelaWhatsappAte,
+  );
+  const instante = dataRetomadaValida_(agora);
+  if (!limite || !instante || limite.getTime() <= instante.getTime()) {
+    return "";
+  }
+
+  const preferencias = RETOMADAS_CONFIG.horariosPrioritarios.concat(
+    RETOMADAS_CONFIG.horariosResgateAutomaticos || [],
+  );
+  const ocupados = horariosOcupados || {};
+  const margemExecucao =
+    RETOMADAS_CONFIG.margemExecucaoPlanejadaMinutos * 60 * 1000;
+
+  for (let indice = 0; indice < preferencias.length; indice += 1) {
+    const horario = preferencias[indice];
+    if (ocupados[horario]) continue;
+
+    const programadaPara = dataHoraProgramadaRetomada_(
+      instante,
+      horario,
+    );
+    if (
+      programadaPara &&
+      programadaPara.getTime() > instante.getTime() &&
+      programadaPara.getTime() + margemExecucao <= limite.getTime()
+    ) {
+      return horario;
+    }
+  }
+
+  return "";
+}
+
 function responsavelRetomada_(candidato) {
   if (!String(candidato && candidato.sugestao || "").trim()) {
     return "equipe";
@@ -1868,7 +1991,8 @@ function responsavelRetomada_(candidato) {
   if (
     candidato.etapa.numero === 1 &&
     !candidato.contextoAgenda &&
-    !candidato.contextoPreco
+    !candidato.contextoPreco &&
+    candidato.janelaAutomaticaPlanejavel !== false
   ) {
     return "bruna";
   }
@@ -1918,6 +2042,8 @@ function sugerirMensagemRetomada_(
   contextoQualificado,
   assuntoRetomada,
   nomePaciente,
+  contextoValorConsulta,
+  contextoLocalAtendimento,
 ) {
   const assunto = String(assuntoRetomada || "").trim();
   const complementoAssunto = assunto ? " sobre " + assunto : "";
@@ -1925,6 +2051,16 @@ function sugerirMensagemRetomada_(
   const complementoOrcamento = assunto
     ? " no orçamento de " + assunto
     : "";
+
+  if (etapa === 1 && contextoPreco && contextoValorConsulta) {
+    return (
+      "Olá! Queria saber se ficou alguma dúvida sobre o valor da consulta" +
+      (contextoLocalAtendimento
+        ? " ou o endereço da Clínica LIV"
+        : "") +
+      ". Se quiser continuar, posso ajudar com o próximo passo por aqui."
+    );
+  }
 
   if (etapa === 1 && contextoPreco) {
     return (
@@ -2073,6 +2209,42 @@ function contextoAutoralRetomada_(conversa) {
       })
       .join(" "),
   );
+}
+
+function contextoValorConsultaRetomada_(
+  conversa,
+  contextoAutoral,
+) {
+  const textoPaciente = normalizarTextoRetomadas_(contextoAutoral);
+  const pediuValor =
+    /\b(?:valor|preco|quanto\s+(?:custa|fica)|custa\s+quanto)\b/.test(
+      textoPaciente,
+    );
+  if (!pediuValor) return false;
+
+  const mencaoConsulta =
+    /(?:valor|preco|quanto\s+(?:custa|fica)).{0,80}(?:consulta|avaliacao)|(?:consulta|avaliacao).{0,80}(?:valor|preco|quanto\s+(?:custa|fica))/.test(
+      textoPaciente,
+    );
+  if (mencaoConsulta) return true;
+
+  const mencaoCirurgia =
+    /(?:valor|preco|quanto\s+(?:custa|fica)).{0,100}(?:cirurgia|procedimento|operacao|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia)|(?:cirurgia|procedimento|operacao|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia).{0,100}(?:valor|preco|quanto\s+(?:custa|fica))/.test(
+      textoPaciente,
+    );
+  if (mencaoCirurgia) return false;
+
+  return (conversa || [])
+    .slice(-8)
+    .filter(function (mensagem) {
+      return mensagem.direcao === "OUT";
+    })
+    .some(function (mensagem) {
+      const texto = normalizarTextoRetomadas_(mensagem.texto);
+      return /(?:consulta|avaliacao).{0,160}(?:r\$\s*500|valor|custa)|(?:r\$\s*500|valor|custa).{0,160}(?:consulta|avaliacao)/.test(
+        texto,
+      );
+    });
 }
 
 function intencaoAgendaRetomada_(conversa, contextoAutoral) {
@@ -2969,16 +3141,24 @@ function processarRetomadasAutomaticasInterno_(
     );
 
     if (!resultado.ok || !resultado.sent) {
+      const erroEnvio = resultado.error || "send_failed";
+      const falhaTerminal = falhaRetomadaTerminal_(erroEnvio);
       planilhaControle
         .getRange(numeroLinha, 11, 1, 5)
         .setValues([[
-          "Falha — revisar",
+          falhaTerminal
+            ? "Cancelada — " + motivoFalhaSemanticaRetomada_(erroEnvio)
+            : "Falha — revisar",
           programadaPara,
           agora,
           "",
-          resultado.error || "send_failed",
+          erroEnvio,
         ]]);
-      falhas += 1;
+      if (falhaTerminal) {
+        cancelados += 1;
+      } else {
+        falhas += 1;
+      }
       continue;
     }
 
@@ -3026,6 +3206,46 @@ function processarRetomadasAutomaticasInterno_(
     cancelled: cancelados,
     failed: falhas,
   };
+}
+
+function motivoFalhaSemanticaRetomada_(erro) {
+  const valor = String(erro || "").trim();
+  const partes = valor.split(":");
+  return partes.length > 1 ? partes[partes.length - 1] : valor;
+}
+
+function falhaRetomadaTerminal_(erro) {
+  if (
+    String(erro || "").indexOf(
+      "semantic_context_review_required:",
+    ) !== 0
+  ) {
+    return false;
+  }
+
+  return [
+    "conversation_changed",
+    "patient_paused",
+    "patient_closed",
+    "human_commitment_pending",
+    "sensitive_or_clinical_context",
+  ].includes(motivoFalhaSemanticaRetomada_(erro));
+}
+
+function falhaRetomadaReaprovavel_(erro) {
+  if (
+    String(erro || "").indexOf(
+      "semantic_context_review_required:",
+    ) !== 0
+  ) {
+    return false;
+  }
+
+  return [
+    "procedure_mismatch",
+    "message_redundant",
+    "insufficient_context",
+  ].includes(motivoFalhaSemanticaRetomada_(erro));
 }
 
 function validarRetomadaAutomatica_(plano, lead, conversa, agora) {

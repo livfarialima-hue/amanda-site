@@ -1113,6 +1113,74 @@ test("registered manual follow-ups outside the WhatsApp window remain approvable
   );
 });
 
+test("semantic failures are separated into correctable manual work and terminal history", () => {
+  const context = loadContext();
+  const correctable = Array(17).fill("");
+  correctable[0] = "2026-08-26|correctable";
+  correctable[1] = new Date("2026-08-26T08:00:00-03:00");
+  correctable[2] = "+5511999990001";
+  correctable[4] = 1;
+  correctable[5] = "09:00";
+  correctable[6] = "Qualificado";
+  correctable[7] = "Dúvida sobre o valor da consulta.";
+  correctable[8] = "Mensagem que a equipe deve revisar.";
+  correctable[9] = "Automático aprovado";
+  correctable[10] = "Falha — revisar";
+  correctable[12] = new Date("2026-08-26T09:01:00-03:00");
+  correctable[14] =
+    "semantic_context_review_required:procedure_mismatch";
+
+  const terminal = Array(17).fill("");
+  terminal[0] = "2026-08-26|terminal";
+  terminal[1] = new Date("2026-08-26T08:00:00-03:00");
+  terminal[2] = "+5511999990002";
+  terminal[4] = 1;
+  terminal[5] = "11:45";
+  terminal[6] = "Novo";
+  terminal[8] = "Mensagem que não deve ser reenviada.";
+  terminal[9] = "Automático";
+  terminal[10] = "Falha — revisar";
+  terminal[12] = new Date("2026-08-26T11:46:00-03:00");
+  terminal[14] =
+    "semantic_context_review_required:patient_closed";
+
+  const sheet = {
+    getLastRow: () => 3,
+    getRange: () => ({ getValues: () => [correctable, terminal] }),
+  };
+  const items = context.carregarRetomadasRegistradasCentral_(
+    { getSheetByName: () => sheet },
+    {
+      "+5511999990001": { relationship: "engaged_lead" },
+      "+5511999990002": { relationship: "engaged_lead" },
+    },
+    new Date("2026-08-26T13:00:00-03:00"),
+    {
+      "+5511999990001": [{
+        dataHora: new Date("2026-08-24T14:29:00-03:00"),
+      }],
+      "+5511999990002": [{
+        dataHora: new Date("2026-08-25T14:16:00-03:00"),
+      }],
+    },
+  );
+
+  assert.equal(items.length, 2);
+  assert.equal(items[0].queue, "Ação manual hoje");
+  assert.equal(items[0].priority.label, "Alta");
+  assert.equal(items[0].mode, "Manual");
+  assert.equal(items[0].owner, "Equipe");
+  assert.equal(items[0].status, "Falha — revisar");
+  assert.equal(items[0].approvalBrunaEligible, true);
+  assert.equal(items[0].cancelFollowUpEligible, true);
+  assert.match(items[0].context, /texto não confere/i);
+  assert.equal(items[1].queue, "Cancelado recentemente");
+  assert.equal(items[1].status, "Cancelado");
+  assert.equal(items[1].approvalBrunaEligible, false);
+  assert.equal(items[1].cancelFollowUpEligible, false);
+  assert.match(items[1].nextAction, /revisão do contexto/i);
+});
+
 test("sent and cancelled follow-ups move to a recent history below active queues", () => {
   const context = loadContext();
   const sentAt = new Date("2026-08-23T12:46:00-03:00");

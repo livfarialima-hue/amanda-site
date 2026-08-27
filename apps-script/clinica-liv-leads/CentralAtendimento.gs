@@ -710,7 +710,7 @@ function carregarRetomadasCentral_(
     return left.ultimoContato.getTime() -
       right.ultimoContato.getTime();
   });
-  atribuirHorariosRetomadas_(candidates);
+  atribuirHorariosRetomadas_(candidates, now);
 
   return candidates
     .filter(function (candidate) {
@@ -828,23 +828,33 @@ function carregarRetomadasRegistradasCentral_(
 
       const planMode = textoCentral_(row[9], 80);
       const sendStatus = textoCentral_(row[10], 120);
+      const failureError = textoCentral_(row[14], 260);
       const normalizedMode = normalizarTextoCentral_(planMode);
       const normalizedStatus = normalizarTextoCentral_(sendStatus);
-      const automatic = normalizedMode.indexOf("automatico") === 0;
+      const automaticPlan = normalizedMode.indexOf("automatico") === 0;
+      const failureReview = statusFalhaRevisarCentral_(normalizedStatus);
+      const terminalSemanticFailure =
+        failureReview && falhaSemanticaTerminalCentral_(failureError);
+      const retryableSemanticFailure =
+        failureReview && falhaSemanticaReaprovavelCentral_(failureError);
+      const automatic = automaticPlan && !failureReview;
       const sent = normalizedStatus === "enviada";
-      const cancelled = normalizedStatus.indexOf("cancelada") === 0;
+      const cancelled =
+        normalizedStatus.indexOf("cancelada") === 0 ||
+        terminalSemanticFailure;
       const active = [
         "programada",
         "acao manual",
         "suspensa na planilha",
-      ].includes(normalizedStatus);
+      ].includes(normalizedStatus) ||
+        (failureReview && !terminalSemanticFailure);
       const scheduledAt = dataCentralValida_(row[11]);
       const lastAttemptAt = dataCentralValida_(row[12]);
       const sentAt = dataCentralValida_(row[13]);
       const terminalAt = sent
         ? sentAt || lastAttemptAt || scheduledAt || recordDate
         : cancelled
-          ? lastAttemptAt || recordDate
+          ? lastAttemptAt || scheduledAt || recordDate
           : null;
       const recordDay = formatarDataCentral_(
         recordDate,
@@ -879,8 +889,13 @@ function carregarRetomadasRegistradasCentral_(
       const rawSuggestion = textoCentral_(row[8], 900);
       const suggestion = rawSuggestion || "SEM SUGESTÃO PRONTA";
       const baseApprovalEligible =
-        normalizedMode === "manual" &&
-        normalizedStatus === "acao manual" &&
+        (
+          (
+            normalizedMode === "manual" &&
+            normalizedStatus === "acao manual"
+          ) ||
+          retryableSemanticFailure
+        ) &&
         Boolean(rawSuggestion);
       const nextSafeApprovalWindow =
         baseApprovalEligible && lastConversationAt
@@ -896,7 +911,8 @@ function carregarRetomadasRegistradasCentral_(
         "programada",
         "acao manual",
         "suspensa na planilha",
-      ].includes(normalizedStatus);
+      ].includes(normalizedStatus) ||
+        (failureReview && !terminalSemanticFailure);
       const terminalQueue = sent
         ? "Concluído recentemente"
         : cancelled
@@ -906,14 +922,24 @@ function carregarRetomadasRegistradasCentral_(
       items.push(criarItemCentral_({
         queue:
           terminalQueue ||
-          (automatic ? "Automático hoje" : "Ação manual hoje"),
+          (
+            failureReview
+              ? "Ação manual hoje"
+              : automatic
+                ? "Automático hoje"
+                : "Ação manual hoje"
+          ),
         dueAt: terminalQueue
           ? null
-          : scheduledAt ||
+          : approvalEligible
+            ? nextSafeApprovalWindow
+            : scheduledAt ||
             combinarDataHorarioCentral_(recordDay, row[5]),
         programFor:
-          scheduledAt ||
-          combinarDataHorarioCentral_(recordDay, row[5]),
+          approvalEligible
+            ? nextSafeApprovalWindow
+            : scheduledAt ||
+              combinarDataHorarioCentral_(recordDay, row[5]),
         name: profile.name,
         phone: phone,
         relationship: relationship,
@@ -925,17 +951,28 @@ function carregarRetomadasRegistradasCentral_(
         nextAction: sent
           ? "Retomada enviada; aguardar resposta"
           : cancelled
-            ? "Retomada cancelada; nenhuma mensagem será enviada"
-            : textoCentral_(row[4], 60) + "ª retomada",
+            ? terminalSemanticFailure
+              ? "Retomada cancelada após a revisão do contexto"
+              : "Retomada cancelada; nenhuma mensagem será enviada"
+            : failureReview
+              ? "Revisar a mensagem e decidir se a retomada ainda faz sentido"
+              : textoCentral_(row[4], 60) + "ª retomada",
         owner: automatic ? "Bruna/bot" : "Equipe",
         mode: automatic ? "Automático" : "Manual",
         suggestion: suggestion,
-        context: textoCentral_(row[7], 420),
+        context: [
+          textoCentral_(row[7], 420),
+          failureReview
+            ? "Falha anterior: " + rotuloFalhaRetomadaCentral_(failureError)
+            : "",
+        ].filter(Boolean).join(" "),
         status: sent
           ? "Concluído"
           : cancelled
             ? "Cancelado"
-            : "Programado",
+            : failureReview
+              ? "Falha — revisar"
+              : "Programado",
         approvalBrunaEligible: approvalEligible,
         cancelFollowUpEligible: cancellationEligible,
         brunaEligibilityReason: motivoElegibilidadeBrunaCentral_({
@@ -946,6 +983,9 @@ function carregarRetomadasRegistradasCentral_(
           lastInteractionAt: lastConversationAt,
           nextSafeApprovalWindow: nextSafeApprovalWindow,
           approvalEligible: approvalEligible,
+          failureReview: failureReview,
+          failureError: failureError,
+          retryableSemanticFailure: retryableSemanticFailure,
         }),
         source: "Retomada de marketing",
         sourceKey:
@@ -979,6 +1019,15 @@ function motivoElegibilidadeBrunaCentral_(input) {
   if (data.automatic === true) {
     return "Já programada com a Bruna";
   }
+  if (
+    data.failureReview === true &&
+    data.retryableSemanticFailure !== true
+  ) {
+    return (
+      "Falha exige revisão humana — " +
+      rotuloFalhaRetomadaCentral_(data.failureError)
+    );
+  }
   if (!String(data.suggestion || "").trim()) {
     return "Sem mensagem segura preenchida";
   }
@@ -1003,6 +1052,77 @@ function motivoElegibilidadeBrunaCentral_(input) {
     return "Automação suspensa na planilha";
   }
   return "Estado atual exige atendimento humano";
+}
+
+function statusFalhaRevisarCentral_(value) {
+  return normalizarTextoCentral_(value)
+    .replace(/[—–/\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim() === "falha revisar";
+}
+
+function codigoFalhaRetomadaCentral_(error) {
+  const parts = String(error || "").trim().split(":");
+  return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+}
+
+function falhaSemanticaTerminalCentral_(error) {
+  if (
+    String(error || "").indexOf(
+      "semantic_context_review_required:",
+    ) !== 0
+  ) {
+    return false;
+  }
+
+  return [
+    "conversation_changed",
+    "patient_paused",
+    "patient_closed",
+    "human_commitment_pending",
+    "sensitive_or_clinical_context",
+  ].includes(codigoFalhaRetomadaCentral_(error));
+}
+
+function falhaSemanticaReaprovavelCentral_(error) {
+  if (
+    String(error || "").indexOf(
+      "semantic_context_review_required:",
+    ) !== 0
+  ) {
+    return false;
+  }
+
+  return [
+    "procedure_mismatch",
+    "message_redundant",
+    "insufficient_context",
+  ].includes(codigoFalhaRetomadaCentral_(error));
+}
+
+function rotuloFalhaRetomadaCentral_(error) {
+  const labels = {
+    conversation_changed: "a conversa mudou",
+    patient_paused: "a paciente pediu para aguardar",
+    patient_closed: "a paciente encerrou a conversa",
+    procedure_mismatch: "o texto não confere com o procedimento ou assunto",
+    human_commitment_pending: "há uma promessa pendente da equipe",
+    sensitive_or_clinical_context: "o contexto exige revisão humana",
+    message_redundant: "a mensagem ficou redundante",
+    insufficient_context: "faltou contexto seguro",
+    timeout: "a revisão semântica não respondeu a tempo",
+    configuration_missing: "a revisão semântica está indisponível",
+  };
+  const code = codigoFalhaRetomadaCentral_(error);
+  return labels[code] || textoCentral_(error, 180) || "envio não concluído";
+}
+
+function statusProgramavelRetomadaCentral_(value) {
+  const status = normalizarTextoCentral_(value)
+    .replace(/[—–/\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return ["programado", "falha revisar"].includes(status);
 }
 
 function carregarConsultasAgendadasCentral_(profiles, now) {
@@ -1908,7 +2028,7 @@ function processarEdicaoCentralAtendimento_(event) {
           );
       const suggestedAt =
         mode === "manual" &&
-        currentStatus === "programado" &&
+        statusProgramavelRetomadaCentral_(currentStatus) &&
         safeMessage &&
         (registeredFollowUp || waitingConversion)
           ? sugerirProximaJanelaRespostaCentral_(
@@ -2334,7 +2454,7 @@ function coletarRetomadasMarcadasCentral_(sheet) {
       source === "retomada de marketing" &&
       sourceKey.indexOf("followup:") === 0 &&
       mode === "manual" &&
-      status === "programado";
+      statusProgramavelRetomadaCentral_(status);
     const waitingConversion =
       fonteAguardandoPacienteCentral_(
         valorLinhaCentral_(row, columns, "fonte"),
@@ -2454,7 +2574,7 @@ function coletarCancelamentosMarcadosCentral_(sheet) {
       eligible:
         source === "retomada de marketing" &&
         Boolean(planKey) &&
-        status === "programado",
+        statusProgramavelRetomadaCentral_(status),
     });
     return selected;
   }, []);
@@ -3125,6 +3245,7 @@ function formatarCentralAtendimento_(sheet, itemCount) {
             "Programar retomada com a Bruna",
             "Concluído",
             "Cancelado",
+            "Falha — revisar",
             "Encerrar — comercial/não paciente",
             "Suspenso",
           ],
@@ -3224,7 +3345,7 @@ function formatarCentralAtendimento_(sheet, itemCount) {
   const rules = [
     SpreadsheetApp.newConditionalFormatRule()
       .whenFormulaSatisfied(
-        '=OR($A2="Pendência vencida",AND($C2<>"",$C2<NOW(),OR($O2="Aberto",$O2="Programado",$O2="Em andamento")))',
+        '=OR($A2="Pendência vencida",$O2="Falha — revisar",AND($C2<>"",$C2<NOW(),OR($O2="Aberto",$O2="Programado",$O2="Em andamento")))',
       )
       .setBackground("#f4cccc")
       .setFontColor("#990000")
