@@ -116,6 +116,55 @@ test("completed consultation prepares a pending commercial review without patien
   );
 });
 
+test("legacy Brazilian text dates also prepare the D+15 commercial review", () => {
+  const context = loadContext();
+  const headers = [
+    "Status",
+    "Data realizada",
+    "Revisão comercial prevista em",
+    "Resultado comercial",
+  ];
+  const columns = context.mapearCabecalhosConsultas_(headers);
+  const row = ["Realizada", "14/07/2026", "", ""];
+  const writes = [];
+  const sheet = {
+    getRange(rowNumber, column) {
+      return {
+        setValue(value) {
+          writes.push({ rowNumber, column, value });
+        },
+      };
+    },
+  };
+
+  const result = context.prepararRevisaoComercialNaLinha_(
+    sheet,
+    7,
+    columns,
+    row,
+    new Date("2026-08-27T20:45:00-03:00"),
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.prepared, true);
+  assert.equal(result.pending, true);
+  const dueWrite = writes.find((write) => write.column === 3);
+  assert.equal(
+    formatDate(
+      dueWrite.value,
+      "America/Sao_Paulo",
+      "yyyy-MM-dd HH:mm",
+    ),
+    "2026-07-29 11:30",
+  );
+  assert.equal(
+    writes.some((write) =>
+      write.column === 4 && write.value === "Pendente"
+    ),
+    true,
+  );
+});
+
 function createFunnel(existing = {}) {
   const headers = [
     "Opportunity ID",

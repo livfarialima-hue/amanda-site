@@ -6218,7 +6218,44 @@ function dataConsultasSync_(value) {
     return value;
   }
 
-  const date = new Date(value);
+  const text = String(value || "").trim();
+  let parts = text.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/,
+  );
+  if (parts) {
+    return new Date(
+      parts[3] +
+        "-" +
+        String(parts[2]).padStart(2, "0") +
+        "-" +
+        String(parts[1]).padStart(2, "0") +
+        "T" +
+        String(parts[4] || "12").padStart(2, "0") +
+        ":" +
+        String(parts[5] || "00").padStart(2, "0") +
+        ":00-03:00",
+    );
+  }
+
+  parts = text.match(
+    /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{1,2}):(\d{2}))?/,
+  );
+  if (parts) {
+    return new Date(
+      parts[1] +
+        "-" +
+        parts[2] +
+        "-" +
+        parts[3] +
+        "T" +
+        String(parts[4] || "12").padStart(2, "0") +
+        ":" +
+        String(parts[5] || "00").padStart(2, "0") +
+        ":00-03:00",
+    );
+  }
+
+  const date = new Date(text);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
