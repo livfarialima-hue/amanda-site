@@ -1308,6 +1308,8 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     planilhaControle,
     dataLocal,
   );
+  const identidadesRetomadasRegistradas =
+    obterIdentidadesRetomadasRegistradas_(planilhaControle);
   const leadsPorTelefone = carregarLeadsRetomadas_(planilhaLeads);
   const conversasPorTelefone = carregarConversasRetomadas_(
     planilhaMensagens,
@@ -1335,7 +1337,19 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
       dataLocal,
     );
 
-    if (!candidato || chavesEnviadasHoje.has(candidato.chaveDiaria)) {
+    const identidadeRetomada = candidato
+      ? chaveIdentidadeRetomada_(
+          candidato.telefone,
+          candidato.ultimaMensagem.messageId,
+          candidato.etapa.numero,
+        )
+      : "";
+
+    if (
+      !candidato ||
+      chavesEnviadasHoje.has(candidato.chaveDiaria) ||
+      identidadesRetomadasRegistradas.has(identidadeRetomada)
+    ) {
       return;
     }
 
@@ -2896,6 +2910,53 @@ function obterChavesRetomadasEnviadas_(planilha, dataLocal) {
       resultado.add(chave);
     }
   });
+
+  return resultado;
+}
+
+function chaveIdentidadeRetomada_(telefone, messageId, etapa) {
+  const telefoneNormalizado = normalizarTelefoneRetomadas_(telefone);
+  const identificadorMensagem = String(messageId || "").trim();
+  const numeroEtapa = Number(etapa || 0);
+
+  if (
+    !telefoneNormalizado ||
+    !identificadorMensagem ||
+    !Number.isInteger(numeroEtapa) ||
+    numeroEtapa < 1
+  ) {
+    return "";
+  }
+
+  return [
+    telefoneNormalizado,
+    identificadorMensagem,
+    numeroEtapa,
+  ].join("|");
+}
+
+function obterIdentidadesRetomadasRegistradas_(planilha) {
+  const resultado = new Set();
+  const ultimaLinha = planilha.getLastRow();
+
+  if (ultimaLinha < 2) {
+    return resultado;
+  }
+
+  planilha
+    .getRange(2, 3, ultimaLinha - 1, 3)
+    .getValues()
+    .forEach(function (linha) {
+      const identidade = chaveIdentidadeRetomada_(
+        linha[0],
+        linha[1],
+        linha[2],
+      );
+
+      if (identidade) {
+        resultado.add(identidade);
+      }
+    });
 
   return resultado;
 }

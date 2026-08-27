@@ -920,6 +920,49 @@ test("keeps a genuine initial reply eligible for the first follow-up", () => {
   );
 });
 
+test("the same conversation stage is never planned again on another day", () => {
+  const rows = [
+    ["+55 11 99999-0000", "out-1", 1],
+    ["+5511999990000", "scheduled-followup-1", 2],
+    ["", "invalid", 1],
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getRange(row, column, rowCount, columnCount) {
+      assert.deepEqual(
+        { row, column, rowCount, columnCount },
+        { row: 2, column: 3, rowCount: rows.length, columnCount: 3 },
+      );
+      return { getValues: () => rows };
+    },
+  };
+
+  const identities =
+    context.obterIdentidadesRetomadasRegistradas_(sheet);
+
+  assert.equal(
+    identities.has(
+      context.chaveIdentidadeRetomada_(
+        "+5511999990000",
+        "out-1",
+        1,
+      ),
+    ),
+    true,
+  );
+  assert.equal(
+    identities.has(
+      context.chaveIdentidadeRetomada_(
+        "+5511999990000",
+        "out-1",
+        2,
+      ),
+    ),
+    false,
+  );
+  assert.equal(identities.size, 2);
+});
+
 test("manual commercial follow-up receives an opaque approval button for Bruna", () => {
   context.PropertiesService = {
     getScriptProperties: () => ({
