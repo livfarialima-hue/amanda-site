@@ -501,6 +501,78 @@ test("the initial price information is sent after the human-resume window withou
   );
 });
 
+test("a standalone safe question resumes from refreshed context without depending on the human wording", async () => {
+  const deps = dependencies();
+  const recentConversation = [
+    {
+      role: "assistant",
+      source: "human",
+      text:
+        "Caso queira saber mais sobre o trabalho da Dra.: https://draamandaschroeder.com.br/lifting-cervical",
+      at: "2026-08-26T21:58:31.000Z",
+    },
+    {
+      role: "patient",
+      source: "paciente",
+      text:
+        "Você poderia passar o valor aproximado dessa cirurgia? Obrigada",
+      at: "2026-08-26T22:41:02.000Z",
+    },
+  ];
+  deps.readConversationTurnsImpl = async () => ({
+    status: "completed",
+    turns: recentConversation,
+  });
+  let semanticInput = null;
+  deps.runOpenAIShadowImpl = async (input) => {
+    semanticInput = input;
+    return {
+      status: "completed",
+      decision: {
+        route: "standard_reply",
+        confidence: "high",
+        automaticAllowed: true,
+        urgent: false,
+        professional: "amanda",
+        procedure: "lifting_cervical",
+        replyCode: "SURGICAL-PRICE-INITIAL-01",
+        suggestedReply: "Resposta semântica validada.",
+        reviewReason: "price_initial_information",
+      },
+    };
+  };
+
+  const result = await processHumanResumeJob(
+    job({
+      patientName: "Leila",
+      procedure: "lifting_cervical",
+      text:
+        "Você poderia passar o valor aproximado dessa cirurgia? Obrigada",
+      receivedAt: "2026-08-26T22:41:02.000Z",
+      recentConversation: [recentConversation[1]],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: Date.parse("2026-08-26T22:51:02.000Z"),
+      ...deps,
+    },
+  );
+
+  assert.equal(result.status, "bruna_resumed");
+  assert.equal(result.reason, "price_initial_information");
+  assert.equal(deps.patientMessages.length, 1);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(semanticInput.recentConversation.length, 2);
+  assert.match(
+    semanticInput.recentConversation[0].text,
+    /Caso queira saber mais/,
+  );
+  assert.doesNotMatch(
+    deps.patientMessages[0].body,
+    /R\$ 18 mil|R\$ 26 mil/,
+  );
+});
+
 test("a deterministic code with a conflicting procedure fails closed", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({

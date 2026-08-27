@@ -111,6 +111,7 @@ import {
 import {
   cancelPendingHumanResume,
   getHumanResumeControl,
+  HUMAN_RESUME_DELAY_MS,
   markBrunaResumed,
   markHumanTakeover,
   scheduleHumanResume,
@@ -1978,6 +1979,16 @@ export function isSemanticHumanContextContinuationCandidate({
         )
       ) &&
       hasUnresolvedPatientRequest(text, recentConversation),
+  );
+}
+
+export function isImmediateHumanContextContinuationCandidate(
+  input,
+  { minimumDelayMs = HUMAN_RESUME_DELAY_MS } = {},
+) {
+  return Boolean(
+    Number(minimumDelayMs) <= 0 &&
+      isSemanticHumanContextContinuationCandidate(input),
   );
 }
 
@@ -4913,8 +4924,8 @@ export async function handleYCloudWebhook(
       isAppointmentOfferAcceptance(text, latestHumanContext) ||
       isAppointmentPreferenceReply(text, latestHumanContext),
   );
-  const semanticHumanContextContinuationCandidate =
-    isSemanticHumanContextContinuationCandidate({
+  const immediateHumanContextContinuationCandidate =
+    isImmediateHumanContextContinuationCandidate({
       patientAutomationReady,
       humanTakeoverActive,
       professional: delivery.professional,
@@ -4926,7 +4937,7 @@ export async function handleYCloudWebhook(
       professionalFactReview,
       patientRelationship,
     });
-  const openAIActivePlan = semanticHumanContextContinuationCandidate
+  const openAIActivePlan = immediateHumanContextContinuationCandidate
     ? {
         ...humanContextPlan,
         route: "standard_reply",
@@ -4941,7 +4952,7 @@ export async function handleYCloudWebhook(
       }
     : automationPlan;
   const openAIConversationAction =
-    semanticHumanContextContinuationCandidate
+    immediateHumanContextContinuationCandidate
       ? prepareSemanticContextContinuationAction(
           conversationAction,
         )
@@ -5333,13 +5344,6 @@ export async function handleYCloudWebhook(
     !suppressExactDuplicate &&
     conversationAction.scheduleHumanResume
   ) {
-    const safeResumeDelay =
-      humanContextPlan.route === "standard_reply" &&
-      classifyLearningRisk({
-        text,
-        reviewReason: humanContextPlan.reason,
-        procedure: humanContextPlan.procedure,
-      }) === "Baixo";
     const scheduleResult = await scheduleHumanResume(
       {
         phone,
@@ -5361,7 +5365,7 @@ export async function handleYCloudWebhook(
           message.sendTime || payload.createTime || "",
         ),
       },
-      { delayMs: safeResumeDelay ? 5 * 60 * 1000 : 20 * 60 * 1000 },
+      { delayMs: HUMAN_RESUME_DELAY_MS },
     );
     humanResumeScheduleStatus = scheduleResult.status;
   } else if (
@@ -5688,7 +5692,7 @@ export async function handleYCloudWebhook(
     });
   const learningContext =
     (
-      semanticHumanContextContinuationCandidate ||
+      immediateHumanContextContinuationCandidate ||
       (semanticTextAssessmentEligible && !semanticAssessmentAttempted) ||
       shouldLoadBotKnowledgeContext({
       patientAutomationReady,
@@ -5731,7 +5735,7 @@ export async function handleYCloudWebhook(
         conversationAction.allowAutomaticReply &&
         automationPlan.professional !== "daniel"
       ) ||
-      semanticHumanContextContinuationCandidate
+      immediateHumanContextContinuationCandidate
     );
   const shouldQueueOpenAIAssessmentOnly = Boolean(
     semanticTextAssessmentEligible &&
@@ -5902,7 +5906,7 @@ export async function handleYCloudWebhook(
       appointmentNeedsPreference,
       approvedPriceReplyKind,
       humanContextContinuationCandidate:
-        semanticHumanContextContinuationCandidate,
+        immediateHumanContextContinuationCandidate,
       humanResumeGeneration:
         humanResumeControl?.generation || "",
       precomputedSemanticResult: routeAssessmentCanBeReusedForReply
@@ -5952,7 +5956,7 @@ export async function handleYCloudWebhook(
         activePromise,
         {
           eventId: String(eventId),
-          outcome: semanticHumanContextContinuationCandidate
+          outcome: immediateHumanContextContinuationCandidate
             ? "processed"
             : humanTakeoverActive
             ? "human_takeover"

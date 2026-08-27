@@ -112,7 +112,7 @@ function alertText(
 
   return [
     heading,
-    "A paciente aguardou mais de 20 minutos após a tomada humana.",
+    "A paciente aguardou pelo menos 10 minutos após a tomada humana.",
     `Mensagem: ${limitedText(job.text) || "Sem texto."}`,
     `Motivo interno: ${limitedText(reason, 120) || "confirmação humana"}.`,
     holdingSent
@@ -345,6 +345,15 @@ export async function processHumanResumeJob(
     return {
       status: "superseded",
       reason: "newer_outbound_reply",
+    };
+  }
+  if (
+    currentConversation?.status === "completed" &&
+    currentConversation.turns?.length
+  ) {
+    job = {
+      ...job,
+      recentConversation: currentConversation.turns.slice(-20),
     };
   }
 

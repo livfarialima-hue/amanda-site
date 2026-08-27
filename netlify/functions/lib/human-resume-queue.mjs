@@ -3,10 +3,10 @@ import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-human-resume-v1";
 const VERSION = 1;
-const DEFAULT_DELAY_MS = 20 * 60 * 1_000;
+const DEFAULT_DELAY_MS = 10 * 60 * 1_000;
 const CLAIM_TTL_MS = 4 * 60 * 1_000;
 const MAX_TEXT_LENGTH = 2_000;
-const MAX_HISTORY_TURNS = 16;
+const MAX_HISTORY_TURNS = 20;
 
 function limitedText(value, maximumLength = MAX_TEXT_LENGTH) {
   return Array.from(String(value || "").trim())
@@ -241,7 +241,10 @@ export async function scheduleHumanResume(
       await store.setJSON(controlKey(phone), control);
     }
 
-    const dueAt = Math.max(now, receivedAt) + Math.max(1, delayMs);
+    const dueAt = Math.max(
+      now,
+      receivedAt + Math.max(1, delayMs),
+    );
     await store.setJSON(pendingKey(phone), {
       version: VERSION,
       status: "pending",

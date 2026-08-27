@@ -91,7 +91,7 @@ function sampleInput(overrides = {}) {
   };
 }
 
-test("queues the latest patient message for twenty minutes", async () => {
+test("queues the latest patient message for at least ten minutes", async () => {
   const store = memoryStore();
   const getStoreImpl = () => store;
   const now = Date.parse("2026-07-28T15:00:00.000Z");
@@ -112,13 +112,13 @@ test("queues the latest patient message for twenty minutes", async () => {
   assert.equal(scheduled.status, "scheduled");
   assert.equal(
     scheduled.dueAt,
-    "2026-07-28T15:20:00.000Z",
+    "2026-07-28T15:10:00.000Z",
   );
   assert.equal(
     (
       await claimDueHumanResumes({
         getStoreImpl,
-        now: now + 19 * 60 * 1_000,
+        now: now + 9 * 60 * 1_000,
       })
     ).jobs.length,
     0,
@@ -126,13 +126,13 @@ test("queues the latest patient message for twenty minutes", async () => {
 
   const claim = await claimDueHumanResumes({
     getStoreImpl,
-    now: now + 20 * 60 * 1_000,
+    now: now + 10 * 60 * 1_000,
   });
   assert.equal(claim.jobs.length, 1);
   assert.equal(claim.jobs[0].eventId, "patient-event-1");
 });
 
-test("a delayed human resume keeps the latest sixteen bilateral turns", async () => {
+test("a delayed human resume keeps the latest twenty bilateral turns", async () => {
   const store = memoryStore();
   const getStoreImpl = () => store;
   const now = Date.parse("2026-08-13T15:00:00.000Z");
@@ -165,15 +165,67 @@ test("a delayed human resume keeps the latest sixteen bilateral turns", async ()
     now: now + 2,
   });
 
-  assert.equal(claim.jobs[0].recentConversation.length, 16);
+  assert.equal(claim.jobs[0].recentConversation.length, 20);
   assert.equal(
     claim.jobs[0].recentConversation[0].text,
-    "Mensagem 5",
+    "Mensagem 1",
   );
   assert.equal(
-    claim.jobs[0].recentConversation[15].text,
+    claim.jobs[0].recentConversation[19].text,
     "Mensagem 20",
   );
+});
+
+test("a newer patient message restarts the ten-minute preference window", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const now = Date.parse("2026-08-26T22:00:00.000Z");
+
+  await markHumanTakeover(
+    {
+      phone: "+5511900000000",
+      eventId: "human-event-window",
+      at: new Date(now - 5 * 60 * 1_000).toISOString(),
+    },
+    { getStoreImpl, now },
+  );
+  await scheduleHumanResume(
+    sampleInput({
+      eventId: "patient-event-first",
+      text: "Qual é o valor?",
+      receivedAt: new Date(now).toISOString(),
+    }),
+    { getStoreImpl, now },
+  );
+  const secondPatientAt = now + 8 * 60 * 1_000;
+  const scheduled = await scheduleHumanResume(
+    sampleInput({
+      eventId: "patient-event-second",
+      text: "Seria o valor aproximado da cervicoplastia.",
+      receivedAt: new Date(secondPatientAt).toISOString(),
+    }),
+    { getStoreImpl, now: secondPatientAt },
+  );
+
+  assert.equal(
+    scheduled.dueAt,
+    "2026-08-26T22:18:00.000Z",
+  );
+  assert.equal(
+    (
+      await claimDueHumanResumes({
+        getStoreImpl,
+        now: secondPatientAt + 9 * 60 * 1_000,
+      })
+    ).jobs.length,
+    0,
+  );
+  const claim = await claimDueHumanResumes({
+    getStoreImpl,
+    now: secondPatientAt + 10 * 60 * 1_000,
+  });
+  assert.equal(claim.jobs.length, 1);
+  assert.equal(claim.jobs[0].eventId, "patient-event-second");
 });
 
 test("a new human message cancels a queued resume", async () => {

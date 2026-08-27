@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
 import webhook, {
+  isImmediateHumanContextContinuationCandidate,
   isSemanticHumanContextContinuationCandidate,
 } from "../ycloud-webhook.mjs";
 
@@ -25,7 +26,7 @@ function signedRequest(payload) {
   });
 }
 
-test("a short answer to a human information offer is an immediate AI candidate", () => {
+test("a semantic continuation waits for the human preference window before AI can answer", () => {
   const context = [
     {
       role: "assistant",
@@ -48,6 +49,16 @@ test("a short answer to a human information offer is an immediate AI candidate",
 
   assert.equal(
     isSemanticHumanContextContinuationCandidate(base),
+    true,
+  );
+  assert.equal(
+    isImmediateHumanContextContinuationCandidate(base),
+    false,
+  );
+  assert.equal(
+    isImmediateHumanContextContinuationCandidate(base, {
+      minimumDelayMs: 0,
+    }),
     true,
   );
   assert.equal(
