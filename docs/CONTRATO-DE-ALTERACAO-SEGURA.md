@@ -49,7 +49,7 @@ Antes de implementar, responder:
 - como reler o estado depois de timeout ou resposta ambígua;
 - como retornar ao baseline.
 
-Dados ausentes que afetam identidade, consentimento, destinatário, agenda, valor, procedimento ou origem bloqueiam o efeito automático e viram revisão humana. Não se inventa fallback apenas para manter a automação funcionando.
+Dados ausentes que afetam identidade, consentimento, destinatário, agenda, valor, procedimento ou origem bloqueiam o efeito automático e viram revisão humana. Não se inventa fallback apenas para manter a automação funcionando. Quando o efeito depende de um compromisso, a data digitada na planilha não substitui a releitura do registro operacional vivo: o vínculo, o objeto e o horário precisam coincidir antes da primeira escrita do efeito.
 
 ### Fase C — validação em camadas
 

@@ -484,6 +484,64 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     return;
   }
 
+  const scheduleVerification =
+    validarVinculoAgendaLembreteConsulta_(
+      {
+        appointment: consulta,
+        consultationType: valorAgendaCuidados_(
+          entrada.linha,
+          entrada.colunas,
+          ["tipo de consulta"],
+        ),
+        location: valorAgendaCuidados_(
+          entrada.linha,
+          entrada.colunas,
+          ["local modalidade"],
+        ),
+        calendarId: valorAgendaCuidados_(
+          entrada.linha,
+          entrada.colunas,
+          ["id da agenda google"],
+        ),
+        calendarEventId: valorAgendaCuidados_(
+          entrada.linha,
+          entrada.colunas,
+          ["id do evento google"],
+        ),
+        calendarSyncStatus: valorAgendaCuidados_(
+          entrada.linha,
+          entrada.colunas,
+          ["sincronizacao google agenda"],
+        ),
+      },
+      typeof CalendarApp !== "undefined" ? CalendarApp : null,
+    );
+
+  if (!scheduleVerification.ok) {
+    entrada.adicionar({
+      categoria: "Lembrete de consulta — reconciliar agenda",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario: "",
+      dataReferencia:
+        alvo.getTime() > entrada.fimHoje.getTime()
+          ? formatarDataRetomadas_(alvo, "yyyy-MM-dd")
+          : entrada.hoje,
+      contexto:
+        "Automação bloqueada: a data e o horário de Consultas não têm vínculo vivo e coincidente comprovado no Google Agenda (" +
+        descreverBloqueioAgendaLembreteConsulta_(
+          scheduleVerification.reason,
+        ) +
+        "). Reconciliar os dois sistemas antes de qualquer envio.",
+      responsavel: "Amanda/equipe",
+      automatico: false,
+      futuro: alvo.getTime() > entrada.fimHoje.getTime(),
+      prioridade: 1,
+      sugestao: "",
+    });
+    return;
+  }
+
   const manualOnly = entrada.neverBotReply === true;
   const reminderSuggestion =
     "Oi, " +

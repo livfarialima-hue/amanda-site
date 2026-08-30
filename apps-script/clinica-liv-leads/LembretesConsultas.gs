@@ -28,6 +28,7 @@ const LEMBRETES_CONSULTAS_HEADERS = Object.freeze({
   phone: "Telefone (E.164)",
   name: "Nome do paciente",
   professional: "Profissional",
+  consultationType: "Tipo de consulta",
   location: "Local / modalidade",
   date: "Data agendada",
   time: "Horário agendado",
@@ -40,6 +41,9 @@ const LEMBRETES_CONSULTAS_HEADERS = Object.freeze({
   lastAttempt: "Última tentativa de lembrete",
   lastError: "Erro do lembrete",
   monitoredAppointment: "Agendamento monitorado",
+  calendarId: "ID da agenda Google",
+  calendarEventId: "ID do evento Google",
+  calendarSyncStatus: "Sincronização Google Agenda",
 });
 
 function prepararLembretesConsultas() {
@@ -223,6 +227,7 @@ function processarLembretesConsultasInterno_(
   let failed = 0;
   let blockedByPreference = 0;
   let blockedByInvalidPatientData = 0;
+  let blockedByUnverifiedSchedule = 0;
 
   for (let rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
     const row = values[rowIndex];
@@ -269,8 +274,63 @@ function processarLembretesConsultasInterno_(
       normalizarChaveAgendamentoMonitorado_(
         row[columns.monitoredAppointment],
       );
+    const appointmentChanged =
+      storedAppointmentKey !== appointmentKey;
 
-    if (storedAppointmentKey !== appointmentKey) {
+    if (
+      !statusPermiteLembreteConsulta_(row[columns.status]) ||
+      !consentimentoPermiteLembreteConsulta_(
+        row[columns.consent],
+      ) ||
+      Boolean(row[columns.suppressionReason])
+    ) {
+      continue;
+    }
+
+    const reminderKind = definirTipoLembreteConsulta_({
+      now,
+      appointment,
+      reminder48hSent: appointmentChanged
+        ? ""
+        : row[columns.reminder48h],
+      sameDaySent: appointmentChanged
+        ? ""
+        : row[columns.reminderSameDay],
+      lastAttempt: appointmentChanged
+        ? ""
+        : row[columns.lastAttempt],
+    });
+
+    if (!reminderKind) continue;
+
+    const scheduleVerification =
+      validarVinculoAgendaLembreteConsulta_(
+        {
+          appointment,
+          appointmentKey,
+          consultationType: row[columns.consultationType],
+          location: row[columns.location],
+          calendarId: row[columns.calendarId],
+          calendarEventId: row[columns.calendarEventId],
+          calendarSyncStatus:
+            row[columns.calendarSyncStatus],
+        },
+        typeof CalendarApp !== "undefined"
+          ? CalendarApp
+          : null,
+      );
+
+    // A data da planilha não basta para autorizar uma mensagem. Para
+    // atendimento presencial, o evento vivo precisa existir no Calendar
+    // vinculado e começar exatamente no mesmo horário. Qualquer ausência,
+    // erro de leitura ou divergência falha fechada antes de escrever na
+    // planilha ou chamar o provedor.
+    if (!scheduleVerification.ok) {
+      blockedByUnverifiedSchedule += 1;
+      continue;
+    }
+
+    if (appointmentChanged) {
       sheet
         .getRange(rowIndex + 1, columns.reminder48h + 1)
         .clearContent();
@@ -299,26 +359,6 @@ function processarLembretesConsultasInterno_(
       row[columns.lastAttempt] = "";
       row[columns.monitoredAppointment] = appointmentKey;
     }
-
-    if (
-      !statusPermiteLembreteConsulta_(row[columns.status]) ||
-      !consentimentoPermiteLembreteConsulta_(
-        row[columns.consent],
-      ) ||
-      Boolean(row[columns.suppressionReason])
-    ) {
-      continue;
-    }
-
-    const reminderKind = definirTipoLembreteConsulta_({
-      now,
-      appointment,
-      reminder48hSent: row[columns.reminder48h],
-      sameDaySent: row[columns.reminderSameDay],
-      lastAttempt: row[columns.lastAttempt],
-    });
-
-    if (!reminderKind) continue;
 
     const appointmentId =
       String(row[columns.id] || "").trim() ||
@@ -390,7 +430,155 @@ function processarLembretesConsultasInterno_(
     failed,
     blockedByPreference,
     blockedByInvalidPatientData,
+    blockedByUnverifiedSchedule,
   };
+}
+
+function validarVinculoAgendaLembreteConsulta_(
+  input,
+  calendarApp,
+) {
+  const appointment = input && input.appointment;
+  const appointmentKey =
+    String((input && input.appointmentKey) || "").trim() ||
+    (appointment instanceof Date &&
+    !Number.isNaN(appointment.getTime())
+      ? formatarDataLembretesConsultas_(
+          appointment,
+          "yyyy-MM-dd HH:mm",
+        )
+      : "");
+  const locationAndType = normalizarTextoLembretesConsultas_(
+    [
+      input && input.location,
+      input && input.consultationType,
+    ].join(" "),
+  );
+  const syncStatus = normalizarTextoLembretesConsultas_(
+    input && input.calendarSyncStatus,
+  );
+  const calendarId = String(
+    (input && input.calendarId) || "",
+  ).trim();
+  const eventId = String(
+    (input && input.calendarEventId) || "",
+  ).trim();
+  const remoteByModality =
+    /teleconsulta|atendimento remoto|online|videochamada/.test(
+      locationAndType,
+    );
+  const remoteBySyncStatus =
+    /nao se aplica/.test(syncStatus) &&
+    /atendimento remoto/.test(syncStatus);
+
+  if (!appointmentKey) {
+    return { ok: false, reason: "invalid_appointment_schedule" };
+  }
+
+  if (remoteByModality || remoteBySyncStatus) {
+    if (
+      !remoteByModality ||
+      !remoteBySyncStatus ||
+      calendarId ||
+      eventId
+    ) {
+      return {
+        ok: false,
+        reason: "remote_schedule_not_verified",
+      };
+    }
+
+    return { ok: true, mode: "remote" };
+  }
+
+  if (!calendarId || !eventId) {
+    return { ok: false, reason: "calendar_link_missing" };
+  }
+
+  if (!/^sincronizado\b/.test(syncStatus)) {
+    return {
+      ok: false,
+      reason: "calendar_sync_not_confirmed",
+    };
+  }
+
+  if (
+    !calendarApp ||
+    typeof calendarApp.getCalendarById !== "function"
+  ) {
+    return { ok: false, reason: "calendar_unavailable" };
+  }
+
+  try {
+    const calendar = calendarApp.getCalendarById(calendarId);
+    if (!calendar || typeof calendar.getEventById !== "function") {
+      return { ok: false, reason: "calendar_unavailable" };
+    }
+
+    let event = calendar.getEventById(eventId);
+    if (!event && !/@/.test(eventId)) {
+      event = calendar.getEventById(eventId + "@google.com");
+    }
+    if (!event || typeof event.getStartTime !== "function") {
+      return { ok: false, reason: "calendar_event_missing" };
+    }
+
+    const eventStart = event.getStartTime();
+    if (
+      !(eventStart instanceof Date) ||
+      Number.isNaN(eventStart.getTime())
+    ) {
+      return {
+        ok: false,
+        reason: "calendar_event_start_invalid",
+      };
+    }
+
+    const eventKey = formatarDataLembretesConsultas_(
+      eventStart,
+      "yyyy-MM-dd HH:mm",
+    );
+    if (eventKey !== appointmentKey) {
+      return {
+        ok: false,
+        reason: "calendar_start_mismatch",
+        expected: appointmentKey,
+        observed: eventKey,
+      };
+    }
+
+    return { ok: true, mode: "in_person" };
+  } catch (error) {
+    return { ok: false, reason: "calendar_read_failed" };
+  }
+}
+
+function descreverBloqueioAgendaLembreteConsulta_(reason) {
+  const descriptions = {
+    invalid_appointment_schedule:
+      "data ou horário inválido em Consultas",
+    remote_schedule_not_verified:
+      "modalidade remota sem marcação canônica consistente",
+    calendar_link_missing:
+      "vínculo com o Google Agenda ausente ou incompleto",
+    calendar_sync_not_confirmed:
+      "sincronização com o Google Agenda não confirmada",
+    calendar_unavailable:
+      "agenda vinculada indisponível para conferência",
+    calendar_event_missing:
+      "evento vinculado não encontrado no Google Agenda",
+    calendar_event_start_invalid:
+      "horário do evento vinculado inválido",
+    calendar_start_mismatch:
+      "data ou horário divergente entre Consultas e Google Agenda",
+    calendar_read_failed:
+      "falha ao conferir o evento no Google Agenda",
+  };
+
+  return (
+    descriptions[String(reason || "")] ||
+    "agendamento sem comprovação suficiente"
+  );
 }
 
 function formatarLocalLembreteConsulta_(value) {

@@ -57,6 +57,7 @@
       "nenhuma mensagem real durante desenvolvimento e testes",
       "uma tentativa ambígua nunca é repetida automaticamente",
       "opt-out, neverBotReply e janela de envio permanecem bloqueios",
+      "um lembrete presencial só avança com evento vivo e horário idêntico em Consultas e Calendar",
       "produção permanece em Apps Script v134 e Netlify no commit 609364c até nova autorização",
       "site, campanhas, preços, classificação, funil e agenda de consultas não são alterados"
     ],
@@ -64,8 +65,10 @@
       {
         "contract": "appointment-reminders",
         "system": "Apps Script, Consultas, Calendar, Netlify e YCloud",
-        "status": "pending_publication_authorization",
-        "check": "validar IDs canônicos, trigger e flags; reconciliar contagens de consultas futuras, nomes, telefones, tentativas e eventos sem escrever"
+        "status": "completed_read_only_with_reconciliation_pending",
+        "checkedAt": "2026-08-30T15:00:00-03:00",
+        "reference": "Consultas e Calendar canônicos conferidos sem escrita; dois registros futuros anonimizados exigem autorização específica para reconciliação",
+        "check": "IDs canônicos confirmados; consultas futuras, nomes, telefones, tentativas e eventos reconciliados em leitura; nenhum estado externo alterado"
       }
     ]
   },
@@ -84,7 +87,10 @@
       "mesmo alvo de lembrete no disparador e no e-mail diário",
       "nome ausente bloqueado antes de reservar tentativa e antes do provedor",
       "telefone ausente não transforma reserva de sala em falha de envio",
-      "tentativa anterior aparece somente para revisão humana"
+      "tentativa anterior aparece somente para revisão humana",
+      "vínculo de Calendar ausente, apagado ou divergente bloqueia antes de qualquer escrita",
+      "e-mail diário transforma agendamento não comprovado em reconciliação humana sem mensagem sugerida",
+      "atendimento remoto só dispensa Calendar com modalidade e estado canônico coerentes"
     ]
   },
   "rollback": {
@@ -98,6 +104,7 @@
       "lembretes enviados",
       "bloqueios por nome ou telefone",
       "tentativas com erro",
+      "bloqueios por agendamento não comprovado",
       "divergências Consultas/Calendar",
       "duplicidades"
     ],

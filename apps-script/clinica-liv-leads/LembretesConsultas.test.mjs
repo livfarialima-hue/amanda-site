@@ -272,6 +272,156 @@ test("automatic reminders fail closed instead of inventing a patient name", () =
   assert.equal(context.primeiroNomeLembretesConsultas_(""), "");
 });
 
+test("in-person reminders require a live Calendar link", () => {
+  const result = context.validarVinculoAgendaLembreteConsulta_(
+    {
+      appointment: new Date("2026-09-02T14:00:00-03:00"),
+      consultationType: "Primeira consulta",
+      location: "Clínica LIV",
+      calendarId: "",
+      calendarEventId: "",
+      calendarSyncStatus: "",
+    },
+    null,
+  );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "calendar_link_missing");
+});
+
+test("an exact live Calendar event authorizes the reminder contract", () => {
+  const calendarApp = {
+    getCalendarById(calendarId) {
+      assert.equal(calendarId, "calendar-1");
+      return {
+        getEventById(eventId) {
+          assert.equal(eventId, "event-1");
+          return {
+            getStartTime: () =>
+              new Date("2026-09-02T14:00:00-03:00"),
+          };
+        },
+      };
+    },
+  };
+  const result = context.validarVinculoAgendaLembreteConsulta_(
+    {
+      appointment: new Date("2026-09-02T14:00:00-03:00"),
+      consultationType: "Primeira consulta",
+      location: "Clínica LIV",
+      calendarId: "calendar-1",
+      calendarEventId: "event-1",
+      calendarSyncStatus: "Sincronizado em 30/08/2026 12:00",
+    },
+    calendarApp,
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.mode, "in_person");
+});
+
+test("a Calendar event moved to another time blocks the reminder", () => {
+  const calendarApp = {
+    getCalendarById: () => ({
+      getEventById: () => ({
+        getStartTime: () =>
+          new Date("2026-09-02T15:00:00-03:00"),
+      }),
+    }),
+  };
+  const result = context.validarVinculoAgendaLembreteConsulta_(
+    {
+      appointment: new Date("2026-09-02T14:00:00-03:00"),
+      location: "Clínica LIV",
+      calendarId: "calendar-1",
+      calendarEventId: "event-1",
+      calendarSyncStatus: "Sincronizado em 30/08/2026 12:00",
+    },
+    calendarApp,
+  );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "calendar_start_mismatch");
+});
+
+test("Calendar read errors and deleted events fail closed", () => {
+  const base = {
+    appointment: new Date("2026-09-02T14:00:00-03:00"),
+    location: "Clínica LIV",
+    calendarId: "calendar-1",
+    calendarEventId: "event-1",
+    calendarSyncStatus: "Sincronizado em 30/08/2026 12:00",
+  };
+  const missing = context.validarVinculoAgendaLembreteConsulta_(
+    base,
+    {
+      getCalendarById: () => ({ getEventById: () => null }),
+    },
+  );
+  const failed = context.validarVinculoAgendaLembreteConsulta_(
+    base,
+    {
+      getCalendarById: () => {
+        throw new Error("calendar unavailable");
+      },
+    },
+  );
+
+  assert.equal(missing.ok, false);
+  assert.equal(missing.reason, "calendar_event_missing");
+  assert.equal(failed.ok, false);
+  assert.equal(failed.reason, "calendar_read_failed");
+});
+
+test("only an explicitly synchronized remote appointment can omit Calendar", () => {
+  const accepted = context.validarVinculoAgendaLembreteConsulta_(
+    {
+      appointment: new Date("2026-09-02T14:00:00-03:00"),
+      consultationType: "Teleconsulta",
+      location: "Teleconsulta",
+      calendarSyncStatus: "Não se aplica — atendimento remoto",
+    },
+    null,
+  );
+  const incomplete = context.validarVinculoAgendaLembreteConsulta_(
+    {
+      appointment: new Date("2026-09-02T14:00:00-03:00"),
+      consultationType: "Teleconsulta",
+      location: "Teleconsulta",
+      calendarSyncStatus: "",
+    },
+    null,
+  );
+
+  assert.equal(accepted.ok, true);
+  assert.equal(accepted.mode, "remote");
+  assert.equal(incomplete.ok, false);
+  assert.equal(incomplete.reason, "remote_schedule_not_verified");
+});
+
+test("schedule verification happens before any reminder state write", () => {
+  const start = source.indexOf(
+    "function processarLembretesConsultasInterno_",
+  );
+  const end = source.indexOf(
+    "function validarVinculoAgendaLembreteConsulta_",
+  );
+  const processor = source.slice(start, end);
+  const verification = processor.indexOf(
+    "validarVinculoAgendaLembreteConsulta_",
+  );
+  const monitoredWrite = processor.indexOf(
+    "monitoredAppointmentRange.setValue",
+  );
+  const attemptReservation = processor.indexOf(
+    "columns.lastAttempt + 1)\n      .setValue(now)",
+  );
+
+  assert.ok(verification >= 0);
+  assert.ok(monitoredWrite > verification);
+  assert.ok(attemptReservation > verification);
+});
+
 test("the safer reminder contract is default-off until coordinated activation", () => {
   assert.match(
     source,

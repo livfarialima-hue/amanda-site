@@ -26,6 +26,21 @@ const contactPreferencesSource = await readFile(
   "utf8",
 );
 const context = vm.createContext({
+  Date,
+  CalendarApp: {
+    getCalendarById: () => ({
+      getEventById: (eventId) => {
+        const encoded = String(eventId || "").replace(
+          /^event:/,
+          "",
+        );
+        const start = new Date(encoded);
+
+        if (Number.isNaN(start.getTime())) return null;
+        return { getStartTime: () => start };
+      },
+    }),
+  },
   Utilities: {
     formatDate: (date, _timezone, format) => {
       const parts = new Intl.DateTimeFormat("en-US", {
@@ -2152,6 +2167,11 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     "Lembrete no dia enviado",
     "Confirmação da paciente",
     "Motivo de supressão",
+    "Tipo de consulta",
+    "Local / modalidade",
+    "ID da agenda Google",
+    "ID do evento Google",
+    "Sincronização Google Agenda",
   ];
   const makeRow = (values) =>
     headers.map((header) => values[header] ?? "");
@@ -2183,6 +2203,13 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
       "Horário agendado": "10:00",
       Status: "Consulta agendada",
       "Consentimento para contato": "Sim",
+      "Tipo de consulta": "Primeira consulta",
+      "Local / modalidade": "Clínica LIV",
+      "ID da agenda Google": "calendar-1",
+      "ID do evento Google":
+        "event:2026-07-30T10:00:00-03:00",
+      "Sincronização Google Agenda":
+        "Sincronizado em 29/07/2026 08:00",
     }),
     makeRow({
       "Telefone (E.164)": "+5511900000004",
@@ -2307,6 +2334,68 @@ test("care agenda turns missing reminder identity into human data review", () =>
   assert.equal(review.responsavel, "Amanda/equipe");
   assert.equal(review.sugestao, "");
   assert.match(review.contexto, /nome confiável/i);
+  assert.equal(
+    agenda.some(
+      (item) =>
+        item.categoria === "Lembrete de consulta" &&
+        item.automatico,
+    ),
+    false,
+  );
+});
+
+test("care agenda turns an unverified Calendar link into human reconciliation", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Tipo de consulta",
+    "Local / modalidade",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+    "Consentimento para contato",
+    "Lembrete 48h enviado",
+    "Lembrete no dia enviado",
+    "Última tentativa de lembrete",
+    "Erro do lembrete",
+    "ID da agenda Google",
+    "ID do evento Google",
+    "Sincronização Google Agenda",
+  ];
+  const values = {
+    "Telefone (E.164)": "+5511999999999",
+    "Nome do paciente": "Maria Teste",
+    Profissional: "Dra. Amanda",
+    "Tipo de consulta": "Primeira consulta",
+    "Local / modalidade": "Clínica LIV",
+    "Data agendada": "2026-09-02",
+    "Horário agendado": "14:00",
+    Status: "Consulta agendada",
+    "Consentimento para contato": "Sim",
+  };
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({
+      getValues: () => [
+        headers,
+        headers.map((header) => values[header] ?? ""),
+      ],
+    }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-09-01T08:00:00-03:00"),
+  );
+  const review = agenda.find((item) =>
+    item.categoria.includes("reconciliar agenda"),
+  );
+
+  assert.ok(review);
+  assert.equal(review.automatico, false);
+  assert.equal(review.responsavel, "Amanda/equipe");
+  assert.equal(review.sugestao, "");
+  assert.match(review.contexto, /vínculo com o Google Agenda ausente/i);
   assert.equal(
     agenda.some(
       (item) =>

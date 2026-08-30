@@ -88,6 +88,7 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - alertas e telas de revisão reutilizam, nesta ordem, o nome explícito do comprovante, o nome canônico já conhecido por telefone em Consultas/LEADS e um nome de perfil utilizável; revisões antigas sem nome repetem essa consulta antes de exibir ou confirmar, e `Não informado` só é permitido quando nenhuma dessas fontes é válida.
 - `LembretesConsultas.gs` é o proprietário da cadência de lembrete. `AgendaCuidados.gs` apenas projeta esse mesmo alvo; não pode calcular D-2, confirmação adicional ou horário concorrente.
 - nome confiável e telefone brasileiro E.164 são pré-condições do envio automático. Ausência de qualquer um bloqueia antes de reservar a tentativa e vira revisão humana; o endpoint e o adaptador do provedor repetem o mesmo bloqueio.
+- para atendimento presencial, a linha de `Consultas` só autoriza lembrete quando o evento vivo vinculado no Google Agenda existe e começa exatamente na mesma data e hora. Vínculo ausente, sincronização não confirmada, evento apagado, erro de leitura ou horário divergente bloqueiam antes de qualquer escrita e viram reconciliação humana. Atendimento remoto só dispensa Calendar quando modalidade e estado canônico `Não se aplica — atendimento remoto` são simultaneamente explícitos e não há vínculo residual.
 - `Última tentativa de lembrete` impede novo envio automático mesmo quando o provedor falhou ou a resposta foi ambígua. O e-mail diário deve exibir revisão humana, não um novo envio previsto.
 
 ### Google e Meta
