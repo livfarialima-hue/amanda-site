@@ -412,6 +412,10 @@ Uma consulta com status `Agendada`, `Confirmada`, `Consulta agendada` ou `Consul
 
 Nenhum lembrete é enviado antes das 9h ou a partir das 19h, no fuso de São Paulo. Se qualquer uma das colunas históricas de lembrete ou `Última tentativa de lembrete` já estiver preenchida, a consulta não recebe outra mensagem. A tentativa é registrada antes da chamada ao WhatsApp: mesmo que a resposta do provedor se perca, o sistema não repete automaticamente. Falhas ficam em `Erro do lembrete` para revisão humana. Assim, pacientes que receberam ou podem ter recebido um lembrete pelo fluxo anterior não recebem um segundo lembrete durante a migração.
 
+O envio automático exige, antes de reservar a tentativa, telefone brasileiro válido em E.164 e primeiro nome confiável. Linha usada apenas para reserva de sala, telefone ausente, `Não informado`, `Paciente` ou outro nome genérico não chega ao endpoint. O e-mail diário mostra `completar cadastro` para esses casos. O endpoint Netlify e o adaptador YCloud repetem a validação: não existe fallback que transforme o modelo em `Olá, Olá!`. Depois de corrigir os dados, é obrigatório reconciliar `Consultas` e Calendar antes de liberar o envio.
+
+`AgendaCuidados.gs` não possui cadência própria: ele usa o alvo definido por `LembretesConsultas.gs`. Por isso, o e-mail diário pode mostrar somente o lembrete único das 10h da véspera. Se já houver `Última tentativa de lembrete`, o item aparece como revisão humana, ainda que a entrega não tenha sido confirmada; ele nunca é reapresentado como novo envio automático.
+
 Consultas canceladas, realizadas, vencidas, com pedido de reagendamento ou com recusa explícita de contato não recebem mensagens. Uma alteração de data ou horário reinicia apenas os controles daquele agendamento. As colunas `Confirmação da paciente`, `Última interação humana`, `Próxima ação` e `Motivo de supressão` deixam o contexto explícito; os controles de lembrete impedem duplicidade e permitem auditoria.
 
 Os lembretes usam o modelo utilitário `lembrete_consulta_liv_v1`:
@@ -421,6 +425,8 @@ Os lembretes usam o modelo utilitário `lembrete_consulta_liv_v1`:
 No campo `{{5}}`, a clínica envia o local por extenso e o acesso direto ao mapa: `Clínica LIV Faria Lima, Rua Pais Leme, 215, Pinheiros, São Paulo` e `https://maps.google.com/?q=Rua+Pais+Leme,+215,+Pinheiros,+Sao+Paulo`. Registros antigos que trazem apenas o nome da clínica são enriquecidos automaticamente antes do envio. Localizações personalizadas, como teleconsulta, são preservadas e não recebem o endereço da clínica.
 
 O disparo automático permanece desligado até o modelo estar aprovado no WhatsApp/YCloud. Depois da aprovação, configurar `WHATSAPP_APPOINTMENT_REMINDERS_ENABLED=true` no Netlify e executar `ativarLembretesConsultas()` uma vez no Apps Script. O remetente é aprendido pelos eventos recebidos do número comercial; `WHATSAPP_SENDER_NUMBER` funciona como substituição explícita, se necessária.
+
+Desde o contrato seguro, o Apps Script exige também `LEMBRETES_CONSULTA_CONTRATO_SEGURO_ATIVO=true`. A propriedade nasce ausente e, portanto, o código novo fica sem efeito enquanto o endpoint Netlify, os IDs canônicos e os dados vivos são conferidos. `ativarLembretesConsultas()` liga as duas propriedades e instala um único trigger somente depois do preflight coordenado; `desativarLembretesConsultas()` desliga ambas. Salvar o arquivo no editor não equivale a ativar o envio.
 
 ## Rotinas
 

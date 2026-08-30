@@ -40,6 +40,7 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Retomadas | planejar cadência, elegibilidade, silêncio e limites | `Retomadas.gs` | enviar sem rechecagem do estado mais recente |
 | Execução de retomadas | revalidar e executar somente a ação ainda válida | `scheduled-followup.mjs` | criar um novo plano ou ignorar takeover/opt-out |
 | Agenda | sugerir, reservar e sincronizar consultas com idempotência | módulos `appointment-*` e `ConsultasSync.gs` | confirmar horário sem prova da reserva |
+| Lembretes de consulta | definir cadência, elegibilidade, identidade e reserva de tentativa | `LembretesConsultas.gs` | inventar nome/telefone ou criar uma cadência paralela no e-mail diário |
 | Atribuição | preservar origem, campanha e eventos da jornada | `attribution-journey-store.mjs` e agregações canônicas | usar clique ou prefill como consulta qualificada |
 
 ## 3. Regras de dependência
@@ -85,6 +86,9 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - conflito real deve virar alerta ou revisão, não sobrescrita silenciosa.
 - confirmação humana pode registrar horário fora de `Datas Consulta`, mas não pode contornar a ocupação real da sala; para a Dra. Amanda, qualquer outro evento na `Sala 1` durante o mesmo intervalo bloqueia o novo agendamento e mantém o caso em revisão.
 - alertas e telas de revisão reutilizam, nesta ordem, o nome explícito do comprovante, o nome canônico já conhecido por telefone em Consultas/LEADS e um nome de perfil utilizável; revisões antigas sem nome repetem essa consulta antes de exibir ou confirmar, e `Não informado` só é permitido quando nenhuma dessas fontes é válida.
+- `LembretesConsultas.gs` é o proprietário da cadência de lembrete. `AgendaCuidados.gs` apenas projeta esse mesmo alvo; não pode calcular D-2, confirmação adicional ou horário concorrente.
+- nome confiável e telefone brasileiro E.164 são pré-condições do envio automático. Ausência de qualquer um bloqueia antes de reservar a tentativa e vira revisão humana; o endpoint e o adaptador do provedor repetem o mesmo bloqueio.
+- `Última tentativa de lembrete` impede novo envio automático mesmo quando o provedor falhou ou a resposta foi ambígua. O e-mail diário deve exibir revisão humana, não um novo envio previsto.
 
 ### Google e Meta
 
@@ -98,7 +102,7 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 2. Alterar primeiro o teste de contrato do comportamento desejado.
 3. Modificar somente o módulo proprietário e, se necessário, seu adaptador direto.
 4. Confirmar que nenhuma nova dependência de efeito entrou em módulo puro.
-5. Executar testes focados, `npm run architecture:check`, suíte integral, build e `npm run ops:check`.
+5. Executar testes focados, `npm run change:check`, `npm run architecture:check`, suíte integral, build e `npm run ops:check`.
 6. Comparar o diff com o escopo aprovado e registrar qualquer alteração de contrato.
 7. Commitar o candidato antes de escrever em plataforma externa.
 8. Publicar somente com autorização explícita e verificar o estado vivo.
@@ -111,7 +115,7 @@ As próximas separações devem ocorrer em pacotes independentes e testáveis:
 
 1. reduzir o webhook a orquestração de entrada, delegando políticas puras já estabilizadas;
 2. separar classificação de oportunidade, projeção do funil e efeitos externos no Apps Script sem alterar a origem canônica;
-3. consolidar contratos de agenda entre sugestão, reserva, confirmação e lembrete;
+3. ampliar os testes sintéticos do contrato já consolidado entre sugestão, reserva, confirmação e lembrete;
 4. criar testes ponta a ponta sintéticos para a mesma jornada atravessando anúncio, WhatsApp, oportunidade, funil, consulta e retomada;
 5. retirar reexportações de compatibilidade somente depois que nenhum consumidor depender delas.
 

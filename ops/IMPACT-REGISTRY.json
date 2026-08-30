@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "contracts": [
+    {
+      "id": "change-governance",
+      "ownerFiles": [
+        "docs/CONTRATO-DE-ALTERACAO-SEGURA.md",
+        "scripts/check-change-safety.mjs"
+      ],
+      "consumerFiles": [
+        "AGENTS.md",
+        "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md"
+      ],
+      "coveredPaths": [
+        "AGENTS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/CONTRATO-DE-ALTERACAO-SEGURA.md",
+        "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "ops/CHANGE-CANDIDATE.json",
+        "ops/IMPACT-REGISTRY.json",
+        "package.json",
+        "scripts/check-change-safety.mjs",
+        "scripts/check-change-safety.test.mjs",
+        "scripts/check-journey-module-boundaries.mjs",
+        "scripts/run-tests.mjs"
+      ],
+      "requiredTestFiles": [
+        "scripts/check-change-safety.test.mjs"
+      ],
+      "requiredCommands": [
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "git diff --check"
+      ],
+      "liveSystems": [],
+      "requiresReadOnlyPreflight": false
+    },
+    {
+      "id": "appointment-reminders",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+        "netlify/functions/lib/ycloud-appointment-reminder.mjs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "netlify/functions/appointment-reminder.mjs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/appointment-reminder.mjs",
+        "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.test.mjs"
+      ],
+      "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run site:build",
+        "npm.cmd run site:check"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Netlify",
+        "Consultas",
+        "Google Calendar",
+        "YCloud"
+      ],
+      "requiresReadOnlyPreflight": true
+    }
+  ]
+}

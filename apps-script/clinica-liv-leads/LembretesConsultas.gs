@@ -11,6 +11,8 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
     "https://draamandaschroeder.com.br/.netlify/functions/appointment-reminder",
   secretProperty: "LEADS_INGEST_SECRET",
   enabledProperty: "LEMBRETES_CONSULTA_ATIVOS",
+  safeContractProperty:
+    "LEMBRETES_CONSULTA_CONTRATO_SEGURO_ATIVO",
   endpointProperty: "LEMBRETES_CONSULTA_ENDPOINT",
   triggerFunction: "processarLembretesConsultas",
 });
@@ -59,6 +61,9 @@ function prepararLembretesConsultas() {
     active:
       PropertiesService.getScriptProperties().getProperty(
         LEMBRETES_CONSULTAS_CONFIG.enabledProperty,
+      ) === "true" &&
+      PropertiesService.getScriptProperties().getProperty(
+        LEMBRETES_CONSULTAS_CONFIG.safeContractProperty,
       ) === "true",
   };
 }
@@ -71,14 +76,23 @@ function ativarLembretesConsultas() {
     LEMBRETES_CONSULTAS_CONFIG.enabledProperty,
     "true",
   );
+  properties.setProperty(
+    LEMBRETES_CONSULTAS_CONFIG.safeContractProperty,
+    "true",
+  );
   instalarGatilhoLembretesConsultas_();
 
   return { ok: true, active: true };
 }
 
 function desativarLembretesConsultas() {
-  PropertiesService.getScriptProperties().setProperty(
+  const properties = PropertiesService.getScriptProperties();
+  properties.setProperty(
     LEMBRETES_CONSULTAS_CONFIG.enabledProperty,
+    "false",
+  );
+  properties.setProperty(
+    LEMBRETES_CONSULTAS_CONFIG.safeContractProperty,
     "false",
   );
   removerGatilhosLembretesConsultas_();
@@ -116,6 +130,22 @@ function processarLembretesConsultas() {
     ) !== "true"
   ) {
     return { ok: true, active: false, sent: 0 };
+  }
+
+  // O código novo chega ao editor antes de a versão ser ativada. A segunda
+  // chave mantém o efeito desligado durante esse intervalo e só é ligada
+  // explicitamente depois do preflight coordenado com o Netlify.
+  if (
+    properties.getProperty(
+      LEMBRETES_CONSULTAS_CONFIG.safeContractProperty,
+    ) !== "true"
+  ) {
+    return {
+      ok: true,
+      active: false,
+      sent: 0,
+      reason: "safe_contract_not_activated",
+    };
   }
 
   if (!estaNoHorarioLembretesConsultas_(new Date())) {
@@ -192,6 +222,7 @@ function processarLembretesConsultasInterno_(
   let sent = 0;
   let failed = 0;
   let blockedByPreference = 0;
+  let blockedByInvalidPatientData = 0;
 
   for (let rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
     const row = values[rowIndex];
@@ -207,6 +238,19 @@ function processarLembretesConsultasInterno_(
 
     if (contactPreferences.neverBotReply === true) {
       blockedByPreference += 1;
+      continue;
+    }
+
+    const patientData = validarDadosPacienteLembreteConsulta_({
+      phone: row[columns.phone],
+      name: row[columns.name],
+    });
+
+    // Falha fechada antes de qualquer escrita ou chamada externa. Linhas
+    // usadas apenas para reservar sala podem não ter telefone, e um nome
+    // ausente geraria uma saudação defeituosa no template aprovado.
+    if (!patientData.ok) {
+      blockedByInvalidPatientData += 1;
       continue;
     }
 
@@ -293,10 +337,8 @@ function processarLembretesConsultasInterno_(
       {
         appointmentId,
         reminderKind,
-        patientPhone: row[columns.phone],
-        patientName: primeiroNomeLembretesConsultas_(
-          row[columns.name],
-        ),
+        patientPhone: patientData.phone,
+        patientName: patientData.firstName,
         professional:
           String(row[columns.professional] || "").trim() ||
           "Dra. Amanda",
@@ -347,6 +389,7 @@ function processarLembretesConsultasInterno_(
     sent,
     failed,
     blockedByPreference,
+    blockedByInvalidPatientData,
   };
 }
 
@@ -709,7 +752,51 @@ function mapearColunasLembretesConsultas_(headers) {
 }
 
 function primeiroNomeLembretesConsultas_(value) {
-  return String(value || "").trim().split(/\s+/)[0] || "Olá";
+  const firstName = String(value || "")
+    .trim()
+    .split(/\s+/)[0]
+    .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ'’-]/g, "");
+  const normalized = normalizarTextoLembretesConsultas_(firstName);
+
+  if (
+    firstName.length < 2 ||
+    [
+      "nao",
+      "informado",
+      "paciente",
+      "cliente",
+      "desconhecido",
+    ].includes(normalized)
+  ) {
+    return "";
+  }
+
+  return firstName;
+}
+
+function normalizarTelefoneLembretesConsultas_(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+
+  return /^55\d{10,11}$/.test(digits) ? `+${digits}` : "";
+}
+
+function validarDadosPacienteLembreteConsulta_(input) {
+  const phone = normalizarTelefoneLembretesConsultas_(
+    input && input.phone,
+  );
+  const firstName = primeiroNomeLembretesConsultas_(
+    input && input.name,
+  );
+
+  if (!phone) {
+    return { ok: false, reason: "missing_valid_phone" };
+  }
+
+  if (!firstName) {
+    return { ok: false, reason: "missing_valid_name" };
+  }
+
+  return { ok: true, phone, firstName };
 }
 
 function normalizarTextoLembretesConsultas_(value) {

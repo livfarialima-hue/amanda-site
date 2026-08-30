@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  appointmentReminderPatientName,
   appointmentReminderLocation,
   isAppointmentReminderConfigured,
   sendYCloudAppointmentReminder,
@@ -121,4 +122,30 @@ test("appointment reminder does not throw on provider failure", async () => {
     httpStatus: 400,
     errorCode: "http_error",
   });
+});
+
+test("appointment reminder never sends a template with an invented name", async () => {
+  let calls = 0;
+  const result = await sendYCloudAppointmentReminder(
+    { ...INPUT, patientName: "Não informado" },
+    {
+      env: {
+        YCLOUD_API_KEY: "test-key",
+        WHATSAPP_SENDER_NUMBER: "+5511961957144",
+      },
+      fetchImpl: async () => {
+        calls += 1;
+        return new Response("{}", { status: 200 });
+      },
+    },
+  );
+
+  assert.deepEqual(result, {
+    status: "skipped",
+    httpStatus: null,
+    errorCode: "invalid_patient_name",
+  });
+  assert.equal(calls, 0);
+  assert.equal(appointmentReminderPatientName("Maria Silva"), "Maria");
+  assert.equal(appointmentReminderPatientName("Paciente"), "");
 });

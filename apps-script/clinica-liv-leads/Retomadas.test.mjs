@@ -17,6 +17,10 @@ const agendaSource = await readFile(
   new URL("./AgendaCuidados.gs", import.meta.url),
   "utf8",
 );
+const appointmentRemindersSource = await readFile(
+  new URL("./LembretesConsultas.gs", import.meta.url),
+  "utf8",
+);
 const contactPreferencesSource = await readFile(
   new URL("./ContactPreferences.gs", import.meta.url),
   "utf8",
@@ -58,6 +62,9 @@ vm.runInContext(contactPreferencesSource, context, {
 });
 vm.runInContext(source, context, {
   filename: "Retomadas.gs",
+});
+vm.runInContext(appointmentRemindersSource, context, {
+  filename: "LembretesConsultas.gs",
 });
 vm.runInContext(agendaSource, context, {
   filename: "AgendaCuidados.gs",
@@ -2230,6 +2237,139 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
   );
   assert.match(appointmentReminder.sugestao, /Rua Pais Leme, 215/);
   assert.match(appointmentReminder.sugestao, /maps\.google\.com/);
+});
+
+test("care agenda consumes the same single reminder target as the sender", () => {
+  const appointment = new Date("2026-09-02T14:00:00-03:00");
+  const targets = context.alvosLembretesConsultaAgenda_(appointment);
+
+  assert.deepEqual(Object.keys(targets), ["principal"]);
+  assert.equal(
+    targets.principal.toISOString(),
+    "2026-09-01T13:00:00.000Z",
+  );
+
+  const future = context.planejarLembretesConsultaFuturos_({
+    consulta: appointment,
+    fimHoje: new Date("2026-08-30T19:00:00-03:00"),
+    lembretePrincipalEnviado: "",
+    lembreteNoDiaEnviado: "",
+    ultimaTentativa: "",
+  });
+
+  assert.equal(future.length, 1);
+  assert.equal(future[0].horario, "10:00");
+  assert.equal(future[0].dataReferencia, "2026-09-01");
+});
+
+test("care agenda turns missing reminder identity into human data review", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+    "Consentimento para contato",
+    "Lembrete 48h enviado",
+    "Lembrete no dia enviado",
+    "Última tentativa de lembrete",
+    "Erro do lembrete",
+  ];
+  const values = {
+    "Telefone (E.164)": "+5511999999999",
+    "Nome do paciente": "",
+    Profissional: "Dra. Amanda",
+    "Data agendada": "2026-09-02",
+    "Horário agendado": "14:00",
+    Status: "Consulta agendada",
+    "Consentimento para contato": "Sim",
+  };
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({
+      getValues: () => [
+        headers,
+        headers.map((header) => values[header] ?? ""),
+      ],
+    }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-09-01T08:00:00-03:00"),
+  );
+  const review = agenda.find((item) =>
+    item.categoria.includes("completar cadastro"),
+  );
+
+  assert.ok(review);
+  assert.equal(review.automatico, false);
+  assert.equal(review.responsavel, "Amanda/equipe");
+  assert.equal(review.sugestao, "");
+  assert.match(review.contexto, /nome confiável/i);
+  assert.equal(
+    agenda.some(
+      (item) =>
+        item.categoria === "Lembrete de consulta" &&
+        item.automatico,
+    ),
+    false,
+  );
+});
+
+test("care agenda never labels a previous reminder attempt as a new automatic send", () => {
+  const headers = [
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+    "Consentimento para contato",
+    "Lembrete 48h enviado",
+    "Lembrete no dia enviado",
+    "Última tentativa de lembrete",
+    "Erro do lembrete",
+  ];
+  const values = {
+    "Telefone (E.164)": "+5511999999999",
+    "Nome do paciente": "Maria Teste",
+    Profissional: "Dra. Amanda",
+    "Data agendada": "2026-09-02",
+    "Horário agendado": "14:00",
+    Status: "Consulta agendada",
+    "Consentimento para contato": "Sim",
+    "Última tentativa de lembrete": "2026-09-01 10:00",
+    "Erro do lembrete": "request_failed",
+  };
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({
+      getValues: () => [
+        headers,
+        headers.map((header) => values[header] ?? ""),
+      ],
+    }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-09-01T11:00:00-03:00"),
+  );
+  const review = agenda.find((item) =>
+    item.categoria.includes("revisão humana"),
+  );
+
+  assert.ok(review);
+  assert.equal(review.automatico, false);
+  assert.match(review.contexto, /Não reenviar automaticamente/);
+  assert.equal(
+    agenda.some(
+      (item) =>
+        item.categoria === "Lembrete de consulta" &&
+        item.automatico,
+    ),
+    false,
+  );
 });
 
 test("D+15 commercial review is an internal reminder even when patient outreach is blocked", () => {

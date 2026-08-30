@@ -136,6 +136,7 @@ Todo fato extraído de plataforma deve registrar data, hora, fuso, conta/proprie
 5. Usar o Drive para buscar evidências, originais ou exports necessários.
 6. Registrar divergências antes de propor ou executar mudanças.
 7. Definir escopo, dependências, teste, guardrail e rollback.
+8. Registrar o candidato em `ops/CHANGE-CANDIDATE.json` e executar `npm.cmd run change:check` antes de considerá-lo testável ou pronto para commit.
 
 Não começar por um arquivo do Drive apenas porque ele parece recente. Data, título ou posição na pasta não provam que seja a fonte vigente.
 
@@ -156,7 +157,7 @@ Não começar por um arquivo do Drive apenas porque ele parece recente. Data, t�
 1. Ler o manual operacional, `docs/ARQUITETURA-JORNADA-PACIENTE.md` e localizar o proprietário da regra no código.
 2. Avaliar o contexto completo necessário e usar apenas exemplos anonimizados.
 3. Alterar localmente e adicionar teste de regressão.
-4. Executar a suíte pertinente, `npm.cmd run architecture:check` e revisar privacidade, handoff e idempotência.
+4. Executar a suíte pertinente, `npm.cmd run change:check`, `npm.cmd run architecture:check` e revisar privacidade, handoff e idempotência.
 5. Commitar, solicitar autorização, publicar no Netlify e fazer smoke test.
 6. Registrar o release no manual e, quando necessário, guardar evidência fechada no Drive.
 
@@ -213,6 +214,7 @@ Antes da publicação:
 - versão local = commit aprovado;
 - worktree sem alterações fora do escopo;
 - testes e gates aprovados;
+- `CHANGE-CANDIDATE.json` coincide exatamente com o diff, cobre todos os consumidores e registra os preflights vivos;
 - autorização explícita registrada.
 
 Depois da publicação:
@@ -295,9 +297,12 @@ Quando houver dúvida sobre onde colocar algo:
 Antes de encerrar qualquer mudança de bot, WhatsApp, Drive ou publicação, executar:
 
 ```powershell
+npm.cmd run change:check
 npm.cmd run architecture:check
 npm.cmd run ops:check
 ```
+
+Antes de qualquer escrita de publicação, executar também `npm.cmd run release:preflight` em worktree limpo com o SHA autorizado e os recibos da autorização e do preflight vivo, conforme `docs/CONTRATO-DE-ALTERACAO-SEGURA.md`. Esse gate não publica e não altera o commit: ele apenas confirma escopo exato, autorização para o `HEAD` e preflights vivos concluídos.
 
 Se o resultado for `SYNC_PENDING` porque a branch local ainda não contém a última produção observada, executar antes de continuar:
 
@@ -307,7 +312,7 @@ npm.cmd run ops:reconcile
 
 A reconciliação valida branch, manifesto e remoto, recusa alterações staged e usa somente atualização `mixed`, preservando todos os arquivos do worktree. Ela não usa `reset --hard`, não apaga mudanças e não publica nada. O remoto pode avançar além do recibo somente quando o novo commit descende desse recibo; qualquer divergência de histórico bloqueia o comando para revisão, sem escolher uma versão por suposição.
 
-O comando é um gate, não uma rotina de correção automática. Ele deve bloquear o encerramento quando encontrar branch local que não contenha a última produção observada, worktree não limpo, versão divergente, metadados de release inconsistentes, mais de um manual ativo da Bruna, projeção do Drive sem hash correspondente ou pacote temporário de release deixado na raiz.
+Os comandos são gates, não rotinas de correção automática. `change:check` bloqueia arquivo não declarado, contrato ou consumidor sem cobertura e divergência entre planejadores operacionais. `ops:check` bloqueia o encerramento quando encontrar branch local que não contenha a última produção observada, worktree não limpo, versão divergente, metadados de release inconsistentes, mais de um manual ativo da Bruna, projeção do Drive sem hash correspondente ou pacote temporário de release deixado na raiz.
 
 Para a Bruna, `netlify/functions/lib/bruna-policy/manifest.json` é o recibo técnico único da última verificação. Ele diferencia o commit e o deploy funcionais da última produção observada e registra rollback, IDs fixos do Drive e hash da projeção ativa. Os campos `lastObserved*` são um snapshot datado, não uma tentativa impossível de o próprio commit registrar antecipadamente seu futuro SHA ou deploy. O manual de comportamento continua sendo `docs/estrategia-abordagem-bruna.md`; o manifesto não repete suas diretrizes.
 

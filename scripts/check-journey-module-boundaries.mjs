@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { validateAppointmentReminderContract } from "./check-change-safety.mjs";
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -100,6 +101,13 @@ export function collectJourneyBoundaryViolations(root = PROJECT_ROOT) {
 
 export function assertJourneyModuleBoundaries(root = PROJECT_ROOT) {
   const violations = collectJourneyBoundaryViolations(root);
+  const operationalContractErrors =
+    validateAppointmentReminderContract(root);
+  violations.push(
+    ...operationalContractErrors.map(
+      (item) => `${item.code}: ${item.message}`,
+    ),
+  );
   if (violations.length) {
     throw new Error(`Journey module boundary violations:\n- ${violations.join("\n- ")}`);
   }

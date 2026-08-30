@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "changeId": "CHANGE-SAFETY-2026-08-30",
+  "title": "Gate de alteração segura e alinhamento dos lembretes de consulta",
+  "status": "tested_local",
+  "baseCommit": "609364c3b8d38ae6fb5fe1b11d47793fb1b1abb6",
+  "authorization": {
+    "required": true,
+    "recording": "external_release_preflight",
+    "publicationAuthorizedInCommit": false,
+    "note": "A autorização deve apontar para o HEAD exato no release:preflight; não alterar este commit depois da aprovação"
+  },
+  "risk": {
+    "level": "high",
+    "patientEffects": true,
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
+  },
+  "scope": {
+    "contracts": [
+      "appointment-reminders",
+      "change-governance"
+    ],
+    "files": [
+      "AGENTS.md",
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/CONTRATO-DE-ALTERACAO-SEGURA.md",
+      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/appointment-reminder.mjs",
+      "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+      "netlify/functions/lib/ycloud-appointment-reminder.test.mjs",
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json",
+      "package.json",
+      "scripts/check-change-safety.mjs",
+      "scripts/check-change-safety.test.mjs",
+      "scripts/check-journey-module-boundaries.mjs",
+      "scripts/run-tests.mjs"
+    ]
+  },
+  "impact": {
+    "consumers": [
+      "disparador de lembretes no Apps Script",
+      "agenda e e-mail diário de cuidados",
+      "endpoint de lembrete no Netlify",
+      "adaptador do template na YCloud",
+      "processo de implementação e publicação"
+    ],
+    "preservedInvariants": [
+      "nenhuma mensagem real durante desenvolvimento e testes",
+      "uma tentativa ambígua nunca é repetida automaticamente",
+      "opt-out, neverBotReply e janela de envio permanecem bloqueios",
+      "produção permanece em Apps Script v134 e Netlify no commit 609364c até nova autorização",
+      "site, campanhas, preços, classificação, funil e agenda de consultas não são alterados"
+    ],
+    "liveReadOnlyPreflight": [
+      {
+        "contract": "appointment-reminders",
+        "system": "Apps Script, Consultas, Calendar, Netlify e YCloud",
+        "status": "pending_publication_authorization",
+        "check": "validar IDs canônicos, trigger e flags; reconciliar contagens de consultas futuras, nomes, telefones, tentativas e eventos sem escrever"
+      }
+    ]
+  },
+  "verification": {
+    "status": "passed_local",
+    "commands": [
+      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "npm.cmd run change:check",
+      "npm.cmd run architecture:check",
+      "npm.cmd test",
+      "npm.cmd run site:build",
+      "npm.cmd run site:check",
+      "git diff --check"
+    ],
+    "crossConsumerCases": [
+      "mesmo alvo de lembrete no disparador e no e-mail diário",
+      "nome ausente bloqueado antes de reservar tentativa e antes do provedor",
+      "telefone ausente não transforma reserva de sala em falha de envio",
+      "tentativa anterior aparece somente para revisão humana"
+    ]
+  },
+  "rollback": {
+    "local": "abandonar a branch candidata e preservar o baseline 609364c",
+    "production": "nenhuma reversão necessária antes da publicação; depois dela, restaurar Apps Script v134 e o deploy Netlify associado ao commit 609364c"
+  },
+  "monitoring": {
+    "owner": "Daniel e equipe da Clínica LIV",
+    "window": "primeiras 48 horas e sete dias após eventual publicação",
+    "metrics": [
+      "lembretes enviados",
+      "bloqueios por nome ou telefone",
+      "tentativas com erro",
+      "divergências Consultas/Calendar",
+      "duplicidades"
+    ],
+    "rollbackRule": "reverter se houver duplicidade, saudação incorreta, envio para linha sem paciente ou divergência entre o planejado e o disparado"
+  }
+}

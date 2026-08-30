@@ -131,3 +131,24 @@ test("the global automation switch blocks appointment reminders", async () => {
   });
   assert.equal(calls, 0);
 });
+
+test("endpoint rejects a reminder without a trustworthy patient name", async () => {
+  let calls = 0;
+  const response = await handleAppointmentReminder(
+    request({ ...BODY, patientName: "Não informado" }),
+    {
+      env: ENV,
+      now: new Date("2026-07-28T13:00:00.000Z"),
+      fetchImpl: async () => {
+        calls += 1;
+        return new Response("{}", { status: 200 });
+      },
+      getBusinessNumberImpl: async () =>
+        "+5511961957144",
+    },
+  );
+
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error, "invalid_payload");
+  assert.equal(calls, 0);
+});

@@ -228,3 +228,58 @@ test("custom reminder locations are not replaced", () => {
     "Teleconsulta",
   );
 });
+
+test("automatic reminders fail closed without a valid Brazilian E.164 phone", () => {
+  assert.deepEqual(
+    JSON.parse(
+      JSON.stringify(
+        context.validarDadosPacienteLembreteConsulta_({
+          phone: "",
+          name: "Maria Silva",
+        }),
+      ),
+    ),
+    { ok: false, reason: "missing_valid_phone" },
+  );
+  assert.deepEqual(
+    JSON.parse(
+      JSON.stringify(
+        context.validarDadosPacienteLembreteConsulta_({
+          phone: "+5511999999999",
+          name: "Maria Silva",
+        }),
+      ),
+    ),
+    {
+      ok: true,
+      phone: "+5511999999999",
+      firstName: "Maria",
+    },
+  );
+});
+
+test("automatic reminders fail closed instead of inventing a patient name", () => {
+  for (const name of ["", "Não informado", "Paciente"]) {
+    const result =
+      context.validarDadosPacienteLembreteConsulta_({
+        phone: "+5511999999999",
+        name,
+      });
+
+    assert.equal(result.ok, false);
+    assert.equal(result.reason, "missing_valid_name");
+  }
+  assert.equal(context.primeiroNomeLembretesConsultas_(""), "");
+});
+
+test("the safer reminder contract is default-off until coordinated activation", () => {
+  assert.match(
+    source,
+    /safeContractProperty:\s*\n?\s*"LEMBRETES_CONSULTA_CONTRATO_SEGURO_ATIVO"/,
+  );
+  assert.match(source, /safe_contract_not_activated/);
+  assert.match(
+    source,
+    /safeContractProperty[\s\S]*?"true"[\s\S]*?instalarGatilhoLembretesConsultas_/,
+  );
+});

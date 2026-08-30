@@ -196,6 +196,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       fimHoje: fimHoje,
       telefone: telefone,
       nome: identidade,
+      nomePaciente: nomeCompleto,
       profissional: profissional,
       status: status,
       neverBotReply:
@@ -394,9 +395,100 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     return;
   }
 
+  const lembretePrincipalEnviado = valorAgendaCuidados_(
+    entrada.linha,
+    entrada.colunas,
+    ["lembrete 48h enviado"],
+  );
+  const lembreteNoDiaEnviado = valorAgendaCuidados_(
+    entrada.linha,
+    entrada.colunas,
+    ["lembrete no dia enviado"],
+  );
+  const ultimaTentativa = valorAgendaCuidados_(
+    entrada.linha,
+    entrada.colunas,
+    ["ultima tentativa de lembrete"],
+  );
+  const erroLembrete = textoAgendaCuidados_(
+    valorAgendaCuidados_(
+      entrada.linha,
+      entrada.colunas,
+      ["erro do lembrete"],
+    ),
+  );
+
+  if (lembretePrincipalEnviado || lembreteNoDiaEnviado) {
+    return;
+  }
+
+  const alvo = horarioAlvoLembretePrincipalConsulta_(consulta);
+  const limiteAgenda = new Date(
+    entrada.fimHoje.getTime() +
+      AGENDA_CUIDADOS_CONFIG.diasAntecedenciaAgenda *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
+
+  if (alvo.getTime() > limiteAgenda.getTime()) return;
+
+  const patientData = validarDadosPacienteLembreteConsulta_({
+    phone: entrada.telefone,
+    name: entrada.nomePaciente,
+  });
+
+  if (ultimaTentativa) {
+    entrada.adicionar({
+      categoria: "Lembrete de consulta — revisão humana",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario: "",
+      dataReferencia: entrada.hoje,
+      contexto:
+        "Já existe uma tentativa registrada" +
+        (erroLembrete ? ` (${erroLembrete})` : "") +
+        ". Não reenviar automaticamente; conferir o provedor e o histórico antes de decidir.",
+      responsavel: "Amanda/equipe",
+      automatico: false,
+      futuro: false,
+      prioridade: 1,
+      sugestao: "",
+    });
+    return;
+  }
+
+  if (!patientData.ok) {
+    entrada.adicionar({
+      categoria: "Lembrete de consulta — completar cadastro",
+      telefone: entrada.telefone,
+      nome: entrada.nome,
+      horario: "",
+      dataReferencia:
+        alvo.getTime() > entrada.fimHoje.getTime()
+          ? formatarDataRetomadas_(alvo, "yyyy-MM-dd")
+          : entrada.hoje,
+      contexto:
+        "Automação bloqueada: " +
+        (patientData.reason === "missing_valid_phone"
+          ? "telefone E.164 ausente ou inválido."
+          : "nome confiável da paciente ausente.") +
+        " Corrigir o cadastro e reconciliar Consultas/Calendar antes de qualquer envio.",
+      responsavel: "Amanda/equipe",
+      automatico: false,
+      futuro: alvo.getTime() > entrada.fimHoje.getTime(),
+      prioridade: 1,
+      sugestao: "",
+    });
+    return;
+  }
+
   const manualOnly = entrada.neverBotReply === true;
   const reminderSuggestion =
-    "Oi! Passando para lembrar da sua consulta com " +
+    "Oi, " +
+    patientData.firstName +
+    "! Passando para lembrar da sua consulta com " +
     entrada.profissional +
     " em " +
     formatarDataRetomadas_(consulta, "dd/MM/yyyy") +
@@ -411,21 +503,9 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     consulta: consulta,
     inicioHoje: entrada.inicioHoje,
     fimHoje: entrada.fimHoje,
-    lembretePrincipalEnviado: valorAgendaCuidados_(
-      entrada.linha,
-      entrada.colunas,
-      ["lembrete 48h enviado"],
-    ),
-    lembreteNoDiaEnviado: valorAgendaCuidados_(
-      entrada.linha,
-      entrada.colunas,
-      ["lembrete no dia enviado"],
-    ),
-    confirmado: valorAgendaCuidados_(
-      entrada.linha,
-      entrada.colunas,
-      ["confirmacao da paciente"],
-    ),
+    lembretePrincipalEnviado: lembretePrincipalEnviado,
+    lembreteNoDiaEnviado: lembreteNoDiaEnviado,
+    ultimaTentativa: ultimaTentativa,
   });
 
   if (lembretes.length) {
@@ -462,21 +542,9 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     agora: entrada.agora,
     consulta: consulta,
     fimHoje: entrada.fimHoje,
-    lembretePrincipalEnviado: valorAgendaCuidados_(
-      entrada.linha,
-      entrada.colunas,
-      ["lembrete 48h enviado"],
-    ),
-    lembreteNoDiaEnviado: valorAgendaCuidados_(
-      entrada.linha,
-      entrada.colunas,
-      ["lembrete no dia enviado"],
-    ),
-    confirmado: valorAgendaCuidados_(
-      entrada.linha,
-      entrada.colunas,
-      ["confirmacao da paciente"],
-    ),
+    lembretePrincipalEnviado: lembretePrincipalEnviado,
+    lembreteNoDiaEnviado: lembreteNoDiaEnviado,
+    ultimaTentativa: ultimaTentativa,
   }).forEach(function (lembrete) {
     entrada.adicionar({
       categoria: "Lembrete de consulta programado",
@@ -1476,60 +1544,29 @@ function planejarLembretesConsultaHoje_(entrada) {
   const consulta = entrada.consulta;
   const alvos = alvosLembretesConsultaAgenda_(consulta);
   const alvoPrincipal = alvos.principal;
-  const alvoConfirmacao = alvos.confirmacao;
 
   if (
     !entrada.lembretePrincipalEnviado &&
-    alvoPrincipal.getTime() <= entrada.fimHoje.getTime()
+    !entrada.lembreteNoDiaEnviado &&
+    !entrada.ultimaTentativa &&
+    alvoPrincipal.getTime() <= entrada.fimHoje.getTime() &&
+    consulta.getTime() > entrada.agora.getTime()
   ) {
     const horarioPrincipal = new Date(
       Math.max(
         alvoPrincipal.getTime(),
         entrada.inicioHoje.getTime(),
+        entrada.agora.getTime(),
       ),
     );
-    const horasAteConsulta =
-      (consulta.getTime() - horarioPrincipal.getTime()) /
-      (60 * 60 * 1000);
 
     if (
-      horarioPrincipal.getTime() < entrada.fimHoje.getTime() &&
-      horasAteConsulta >= 24 &&
-      horarioPrincipal.getTime() <
-        alvoConfirmacao.getTime()
+      horarioPrincipal.getTime() < entrada.fimHoje.getTime()
     ) {
       resultados.push({
-        rotulo: "lembrete principal",
+        rotulo: "lembrete automático único",
         horario: formatarDataRetomadas_(
           horarioPrincipal,
-          "HH:mm",
-        ),
-      });
-    }
-  }
-
-  if (
-    !entrada.confirmado &&
-    !entrada.lembreteNoDiaEnviado &&
-    alvoConfirmacao.getTime() <=
-      entrada.fimHoje.getTime() &&
-    consulta.getTime() > entrada.agora.getTime()
-  ) {
-    const horarioConfirmacao = new Date(
-      Math.max(
-        alvoConfirmacao.getTime(),
-        entrada.inicioHoje.getTime(),
-      ),
-    );
-
-    if (
-      horarioConfirmacao.getTime() <
-      entrada.fimHoje.getTime()
-    ) {
-      resultados.push({
-        rotulo: "confirmação da véspera",
-        horario: formatarDataRetomadas_(
-          horarioConfirmacao,
           "HH:mm",
         ),
       });
@@ -1555,6 +1592,8 @@ function planejarLembretesConsultaFuturos_(entrada) {
 
   if (
     !entrada.lembretePrincipalEnviado &&
+    !entrada.lembreteNoDiaEnviado &&
+    !entrada.ultimaTentativa &&
     alvos.principal.getTime() >
       entrada.fimHoje.getTime() &&
     alvos.principal.getTime() <= limite.getTime()
@@ -1573,50 +1612,12 @@ function planejarLembretesConsultaFuturos_(entrada) {
     });
   }
 
-  if (
-    !entrada.confirmado &&
-    !entrada.lembreteNoDiaEnviado &&
-    alvos.confirmacao.getTime() >
-      entrada.fimHoje.getTime() &&
-    alvos.confirmacao.getTime() <= limite.getTime()
-  ) {
-    resultados.push({
-      rotulo:
-        "Confirmação automática se ainda não houver resposta",
-      dataHora: alvos.confirmacao,
-      dataReferencia: formatarDataRetomadas_(
-        alvos.confirmacao,
-        "yyyy-MM-dd",
-      ),
-      horario: formatarDataRetomadas_(
-        alvos.confirmacao,
-        "HH:mm",
-      ),
-    });
-  }
-
   return resultados;
 }
 
 function alvosLembretesConsultaAgenda_(consulta) {
-  const doisDiasAntes = new Date(
-    consulta.getTime() - 2 * 24 * 60 * 60 * 1000,
-  );
-  const vespera = new Date(
-    consulta.getTime() - 24 * 60 * 60 * 1000,
-  );
-
   return {
-    principal: new Date(
-      formatarDataRetomadas_(
-        doisDiasAntes,
-        "yyyy-MM-dd",
-      ) + "T10:00:00-03:00",
-    ),
-    confirmacao: new Date(
-      formatarDataRetomadas_(vespera, "yyyy-MM-dd") +
-        "T16:30:00-03:00",
-    ),
+    principal: horarioAlvoLembretePrincipalConsulta_(consulta),
   };
 }
 

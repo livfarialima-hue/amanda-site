@@ -23,6 +23,31 @@ function limitedText(value, maximumLength) {
     .join("");
 }
 
+export function appointmentReminderPatientName(value) {
+  const firstName = limitedText(value, 120)
+    .split(/\s+/)[0]
+    .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ'’-]/g, "");
+  const normalized = firstName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  if (
+    firstName.length < 2 ||
+    new Set([
+      "nao",
+      "informado",
+      "paciente",
+      "cliente",
+      "desconhecido",
+    ]).has(normalized)
+  ) {
+    return "";
+  }
+
+  return firstName;
+}
+
 export function appointmentReminderLocation(value) {
   const location = String(value || "").trim();
 
@@ -88,6 +113,9 @@ export async function sendYCloudAppointmentReminder(
     inputFrom || env.WHATSAPP_SENDER_NUMBER,
   );
   const to = normalizePhone(patientPhone);
+  const safePatientName = appointmentReminderPatientName(
+    patientName,
+  );
 
   if (!apiKey || !from || !to) {
     return {
@@ -97,8 +125,16 @@ export async function sendYCloudAppointmentReminder(
     };
   }
 
+  if (!safePatientName) {
+    return {
+      status: "skipped",
+      httpStatus: null,
+      errorCode: "invalid_patient_name",
+    };
+  }
+
   const parameters = [
-    limitedText(patientName, 120) || "Olá",
+    safePatientName,
     limitedText(professional, 120) || "nossa equipe",
     limitedText(appointmentDate, 40),
     limitedText(appointmentTime, 20),

@@ -1,5 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import {
+  appointmentReminderPatientName,
   isAppointmentReminderConfigured,
   sendYCloudAppointmentReminder,
 } from "./lib/ycloud-appointment-reminder.mjs";
@@ -142,6 +143,7 @@ export async function handleAppointmentReminder(
     !payload.appointmentId ||
     !ALLOWED_KINDS.has(payload.reminderKind) ||
     !payload.patientPhone ||
+    !appointmentReminderPatientName(payload.patientName) ||
     !payload.appointmentDate ||
     !payload.appointmentTime
   ) {
