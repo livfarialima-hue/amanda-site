@@ -83,12 +83,14 @@ test("GET only displays the review and POST performs the reservation", async () 
     signature: "signature",
   };
   let fetchCalls = 0;
+  const fetchBodies = [];
   const updates = [];
   const dependencies = {
     env,
     fetchImpl: async (_url, options) => {
       fetchCalls += 1;
       const body = JSON.parse(options.body);
+      fetchBodies.push(body);
       if (body.action === "reserve_appointment_slot") {
         return new Response(
           JSON.stringify({ ok: true, reserved: true }),
@@ -140,8 +142,57 @@ test("GET only displays the review and POST performs the reservation", async () 
 
   assert.equal(postResponse.status, 200);
   assert.equal(fetchCalls, 2);
+  assert.equal(
+    fetchBodies[0].appointment.humanConfirmed,
+    true,
+  );
   assert.equal(updates[0].status, "approved");
-  assert.match(await postResponse.text(), /horário foi retirado/);
+  assert.match(await postResponse.text(), /agenda foi atualizada/);
+});
+
+test("POST keeps the review pending when Sala 1 already has another appointment", async () => {
+  const env = {
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "review-secret",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://script.example.com/webhook",
+  };
+  const review = {
+    id: "room-conflict-review",
+    status: "pending",
+    appointment: APPOINTMENT,
+  };
+  const updates = [];
+  const form = new URLSearchParams({
+    id: review.id,
+    exp: String(Date.now() + 60_000),
+    sig: "signature",
+    action: "confirm",
+  });
+  const response = await handleAppointmentReview(
+    new Request("https://example.com/review", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      body: form,
+    }),
+    {
+      env,
+      verifyTokenImpl: () => ({ ok: true, id: review.id }),
+      getAppointmentReviewImpl: async () => review,
+      updateAppointmentReviewImpl: async (_id, patch) => {
+        updates.push(patch);
+      },
+      fetchImpl: async () =>
+        new Response(
+          JSON.stringify({ ok: false, error: "room_not_available" }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
+    },
+  );
+
+  assert.equal(response.status, 409);
+  assert.equal(updates.length, 0);
+  assert.match(await response.text(), /outro compromisso na Sala 1/);
 });
 
 test("a legacy review without a name recovers it from LEADS before display", async () => {

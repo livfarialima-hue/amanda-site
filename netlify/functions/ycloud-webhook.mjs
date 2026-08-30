@@ -3367,14 +3367,18 @@ export async function completeManualAppointmentDetection(
       }
     }
 
-    const reserved =
-      reservation.ok &&
-      reservation.responseData?.reserved === true;
     const duplicate = reservation.responseData?.duplicate === true;
     const roomConflict =
       reservation.responseData?.roomConflict === true;
+    const blockingAmandaRoomConflict =
+      roomConflict &&
+      /\bamanda\b/i.test(String(appointmentPayload.professional || ""));
+    const reserved =
+      reservation.ok &&
+      reservation.responseData?.reserved === true &&
+      !blockingAmandaRoomConflict;
 
-    if (roomConflict && !duplicate) {
+    if (roomConflict && !duplicate && !blockingAmandaRoomConflict) {
       await sendAppointmentEmailImpl(
         {
           eventId: `${eventId}-manual-booking-email`,
@@ -3403,7 +3407,9 @@ export async function completeManualAppointmentDetection(
               "CONFIRMAÇÃO MANUAL DETECTADA — REVISÃO NECESSÁRIA",
             appointment: appointmentPayload,
             detail:
-              `O sistema não conseguiu concluir o registro operacional. Motivo: ${reservation.responseData?.calendarError || reservation.errorCode || "registration_failed"}.`,
+              blockingAmandaRoomConflict
+                ? "Já existe outro compromisso na Sala 1 no mesmo intervalo. O novo agendamento não foi confirmado; ajuste o horário antes de concluir."
+                : `O sistema não conseguiu concluir o registro operacional. Motivo: ${reservation.responseData?.calendarError || reservation.errorCode || "registration_failed"}.`,
           }),
         },
         { deliverSheetsActionImpl },
@@ -3428,7 +3434,9 @@ export async function completeManualAppointmentDetection(
         appointmentId,
       errorCode: reserved
         ? "none"
-        : reservation.responseData?.calendarError ||
+        : blockingAmandaRoomConflict
+          ? "room_not_available"
+          : reservation.responseData?.calendarError ||
           reservation.errorCode ||
           "registration_failed",
     };

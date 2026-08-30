@@ -105,6 +105,22 @@ function appointmentDetails(appointment) {
   ].join("<br>");
 }
 
+function reservationFailureMessage(reservation) {
+  const errorCode =
+    reservation.responseData?.calendarError ||
+    reservation.errorCode ||
+    "registration_failed";
+
+  if (errorCode === "room_not_available") {
+    return "Já existe outro compromisso na Sala 1 no mesmo intervalo. Nenhum novo agendamento foi confirmado por este link; ajuste o horário e tente novamente.";
+  }
+  if (errorCode === "slot_not_available") {
+    return "O horário não está disponível na grade automática. Se este foi um agendamento confirmado pela equipe, tente novamente; se o problema continuar, confira a Sala 1 e a agenda.";
+  }
+
+  return `Motivo: ${errorCode}. Confira se o horário ainda está disponível.`;
+}
+
 function appointmentProfessionalKey(value) {
   const professional = String(value || "");
   if (/\bdaniel\b/i.test(professional)) return "daniel";
@@ -247,13 +263,18 @@ export async function handleAppointmentReview(
 
   const reservation = await deliverSheetsAction(
     "reserve_appointment_slot",
-    { appointment },
+    {
+      appointment: {
+        ...appointment,
+        humanConfirmed: true,
+      },
+    },
     { env, fetchImpl },
   );
   if (!reservation.ok || reservation.responseData?.reserved !== true) {
     return htmlPage(
       "Não foi possível confirmar",
-      `<h1>Não foi possível atualizar a agenda.</h1><div class="details">${appointmentDetails(appointment)}</div><p>Motivo: ${escapeHtml(reservation.errorCode)}. Confira se o horário ainda está disponível.</p>`,
+      `<h1>Não foi possível atualizar a agenda.</h1><div class="details">${appointmentDetails(appointment)}</div><p>${escapeHtml(reservationFailureMessage(reservation))}</p>`,
       409,
     );
   }
@@ -273,7 +294,7 @@ export async function handleAppointmentReview(
           "AGENDAMENTO CONFIRMADO PELO LINK DO E-MAIL",
           `Data: ${appointment.scheduledDate}`,
           `Horário: ${appointment.scheduledTime}`,
-          "A consulta foi registrada e o horário foi retirado dos disponíveis.",
+          "A consulta foi registrada e a agenda foi atualizada.",
         ].join("\n"),
       },
     },
@@ -282,7 +303,7 @@ export async function handleAppointmentReview(
 
   return htmlPage(
     "Agendamento confirmado",
-    `<h1>Agendamento confirmado</h1><div class="details">${appointmentDetails(appointment)}</div><p>A consulta foi registrada e o horário foi retirado dos disponíveis.</p>`,
+    `<h1>Agendamento confirmado</h1><div class="details">${appointmentDetails(appointment)}</div><p>A consulta foi registrada e a agenda foi atualizada.</p>`,
   );
 }
 

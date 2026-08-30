@@ -356,7 +356,7 @@ test("a confirmed human slot is still recorded when it is outside the automatic 
   assert.equal(actions[0].payload.appointment.humanConfirmed, true);
 });
 
-test("a human appointment is kept and emails only when Sala 1 already has a conflict", async () => {
+test("a human Amanda appointment fails closed when Sala 1 already has a conflict", async () => {
   const actions = [];
   const result = await completeManualAppointmentDetection(
     {
@@ -392,16 +392,17 @@ test("a human appointment is kept and emails only when Sala 1 already has a conf
     },
   );
 
-  assert.equal(result.status, "completed_with_room_conflict");
-  assert.equal(result.reserved, true);
+  assert.equal(result.status, "review_required");
+  assert.equal(result.reserved, false);
   assert.equal(result.roomConflict, true);
+  assert.equal(result.errorCode, "room_not_available");
   assert.deepEqual(
     actions.map(({ action }) => action),
     ["reserve_appointment_slot", "send_review_alert_email"],
   );
   assert.match(
     actions[1].payload.alert.messageText,
-    /CONFLITO NA SALA 1/,
+    /não foi confirmado/,
   );
 });
 

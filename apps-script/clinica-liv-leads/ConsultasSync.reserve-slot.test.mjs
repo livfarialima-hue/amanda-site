@@ -147,13 +147,16 @@ function loadReservation({
   sandbox.garantirEstruturaSincronizacaoConsultas_ = () => {};
   sandbox.localizarConsultaExistente_ = () =>
     existingAppointment ? 2 : null;
-  sandbox.escolherSalaDisponivelConsulta_ = () => ({
-    ok: true,
-    room,
-    durationMinutes: 60,
-    roomConflict,
-    conflictCount: roomConflict ? 1 : 0,
-  });
+  sandbox.escolherSalaDisponivelConsulta_ = () =>
+    roomConflict
+      ? { ok: false, error: "room_not_available" }
+      : {
+          ok: true,
+          room,
+          durationMinutes: 60,
+          roomConflict: false,
+          conflictCount: 0,
+        };
   sandbox.sincronizarConsultaComAgendaNaLinha_ = () => ({
     ok: true,
     room,
@@ -266,8 +269,8 @@ test("a human-confirmed appointment outside the grid is recorded without changin
   assert.equal(upserts[0].nextAction, "Aguardar a consulta agendada.");
 });
 
-test("a human-confirmed Amanda appointment keeps Sala 1 and reports an existing conflict", () => {
-  const { reserve } = loadReservation({
+test("a human-confirmed Amanda appointment fails closed when Sala 1 is occupied", () => {
+  const { reserve, writes, upserts } = loadReservation({
     status: "Bloqueado",
     roomConflict: true,
   });
@@ -281,10 +284,12 @@ test("a human-confirmed Amanda appointment keeps Sala 1 and reports an existing 
     humanConfirmed: true,
   });
 
-  assert.equal(result.ok, true);
-  assert.equal(result.room, "Sala 1");
-  assert.equal(result.roomConflict, true);
-  assert.equal(result.conflictCount, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), {
+    ok: false,
+    error: "room_not_available",
+  });
+  assert.equal(writes.length, 0);
+  assert.equal(upserts.length, 0);
 });
 
 test("a repeated structured receipt reconciles the grid, CRM projection and calendar", () => {

@@ -319,6 +319,10 @@ function escolherSalaDisponivelConsulta_(input) {
     ordered.unshift(preferred);
   }
   let conflictSelection = null;
+  const canAcceptRoomConflict =
+    input &&
+    input.allowRoomConflict === true &&
+    chaveProfissionalConsulta_(input.professional) !== "amanda";
 
   for (let index = 0; index < ordered.length; index += 1) {
     const room = ordered[index];
@@ -334,7 +338,7 @@ function escolherSalaDisponivelConsulta_(input) {
     );
 
     if (!availability.free) {
-      if (input && input.allowRoomConflict === true && !conflictSelection) {
+      if (canAcceptRoomConflict && !conflictSelection) {
         conflictSelection = {
           ok: true,
           room,

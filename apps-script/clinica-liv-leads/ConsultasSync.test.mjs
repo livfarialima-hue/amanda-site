@@ -281,7 +281,7 @@ test("never moves Matheus to Sala 1 when Sala 2 is busy", () => {
   assert.equal(calendarIds.length, 1);
 });
 
-test("a human-confirmed Amanda appointment keeps Sala 1 and surfaces the conflict", () => {
+test("a human-confirmed Amanda appointment never overlaps another Sala 1 event", () => {
   context.CalendarApp = {
     getCalendarById() {
       return {
@@ -299,10 +299,35 @@ test("a human-confirmed Amanda appointment keeps Sala 1 and surfaces the conflic
     allowRoomConflict: true,
   });
 
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), {
+    ok: false,
+    error: "room_not_available",
+  });
+});
+
+test("rechecking the same Amanda calendar event remains idempotent", () => {
+  context.CalendarApp = {
+    getCalendarById() {
+      return {
+        getEvents() {
+          return [{ getId: () => "same-appointment-event" }];
+        },
+      };
+    },
+  };
+
+  const result = context.escolherSalaDisponivelConsulta_({
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-09-24",
+    scheduledTime: "14:00",
+    currentRoom: "Sala 1",
+    calendarEventId: "same-appointment-event",
+    allowRoomConflict: true,
+  });
+
   assert.equal(result.ok, true);
   assert.equal(result.room, "Sala 1");
-  assert.equal(result.roomConflict, true);
-  assert.equal(result.conflictCount, 1);
+  assert.equal(result.roomConflict, false);
 });
 
 test("writes consultation statuses using the visible dropdown vocabulary", () => {

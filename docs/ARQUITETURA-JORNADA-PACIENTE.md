@@ -83,6 +83,7 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - repetição do mesmo evento deve ser idempotente.
 - timeout ou resposta ambígua exige releitura antes de declarar falha ou criar outra reserva.
 - conflito real deve virar alerta ou revisão, não sobrescrita silenciosa.
+- confirmação humana pode registrar horário fora de `Datas Consulta`, mas não pode contornar a ocupação real da sala; para a Dra. Amanda, qualquer outro evento na `Sala 1` durante o mesmo intervalo bloqueia o novo agendamento e mantém o caso em revisão.
 - alertas e telas de revisão reutilizam, nesta ordem, o nome explícito do comprovante, o nome canônico já conhecido por telefone em Consultas/LEADS e um nome de perfil utilizável; revisões antigas sem nome repetem essa consulta antes de exibir ou confirmar, e `Não informado` só é permitido quando nenhuma dessas fontes é válida.
 
 ### Google e Meta
