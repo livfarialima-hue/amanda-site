@@ -284,6 +284,62 @@
         "Google Drive"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "bruna-conversion-experience",
+      "ownerFiles": [
+        "netlify/functions/lib/bruna-conversion-experience.mjs",
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/conversation-guidelines.mjs"
+      ],
+      "consumerFiles": [
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/ycloud-webhook.mjs"
+      ],
+      "coveredPaths": [
+        "docs/estrategia-abordagem-bruna.md",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/bruna-conversion-experience.mjs",
+        "netlify/functions/lib/bruna-conversion-experience.test.mjs",
+        "netlify/functions/lib/bruna-conversation-evals.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+        "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/conversation-action-controller.test.mjs",
+        "netlify/functions/lib/conversation-guidelines.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/openai-shadow.test.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/patient-replies.test.mjs"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/bruna-conversion-experience.test.mjs",
+        "netlify/functions/lib/bruna-conversation-evals.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/conversation-action-controller.test.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/openai-shadow.test.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/patient-replies.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Netlify",
+        "YCloud",
+        "OpenAI"
+      ],
+      "requiresReadOnlyPreflight": false
     }
   ]
 }

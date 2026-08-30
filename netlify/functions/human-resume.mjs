@@ -35,6 +35,7 @@ import {
   decideConversationAction,
   isExplicitNightPause,
 } from "./lib/conversation-action-controller.mjs";
+import { isBrunaConversionExperienceEnabled } from "./lib/bruna-conversion-experience.mjs";
 import {
   buildMorningProcedureInterestOpening,
   buildMorningResumeOpening,
@@ -487,6 +488,8 @@ export async function processHumanResumeJob(
     humanTakeoverActive: false,
     schedulingRequest:
       policy.reason === "scheduling_or_confirmation",
+    conversionExperienceEnabled:
+      isBrunaConversionExperienceEnabled(env),
   });
   const openAIConversationAction =
     policy.reason === "semantic_context_continuation_candidate"

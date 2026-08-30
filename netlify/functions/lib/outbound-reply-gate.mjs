@@ -9,6 +9,11 @@ import {
 import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 import { recordDurableConversationTurn } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
+import {
+  BRUNA_CONVERSION_EXPERIENCE_VERSION,
+  classifyBrunaCta,
+  patientFacingPolicyLanguageReason,
+} from "./bruna-conversion-experience.mjs";
 
 const STORE_NAME = "liv-whatsapp-outbound-replies-v1";
 const CLAIM_TTL_MS = 2 * 60 * 1_000;
@@ -69,20 +74,49 @@ function withoutLinkBearingSentences(value) {
     .trim();
 }
 
+function withoutDisallowedTrailingCta(value, allowedCtaTypes = []) {
+  const segments = String(value || "")
+    .split(/(?:\r?\n)+|(?<=[.!?])\s+/u)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+  if (!segments.length) return "";
+
+  const trailingCtaType = classifyBrunaCta(segments.at(-1));
+  if (!trailingCtaType || allowedCtaTypes.includes(trailingCtaType)) {
+    return String(value || "").trim();
+  }
+
+  const original = String(value || "").trim();
+  const trailingSegment = segments.at(-1);
+  const trailingIndex = original.lastIndexOf(trailingSegment);
+  return trailingIndex >= 0
+    ? original.slice(0, trailingIndex).trim()
+    : segments.slice(0, -1).join(" ").trim();
+}
+
 export function conformOutboundReplyToContract({
   body,
   conversationAction,
 }) {
-  const reply = String(body || "").trim();
+  let reply = String(body || "").trim();
   const maxLinks = conversationAction?.replyContract?.maxLinks;
-  if (
-    ![0, "0"].includes(maxLinks) ||
-    urls(reply).length === 0
-  ) {
-    return reply;
+  if ([0, "0"].includes(maxLinks) && urls(reply).length > 0) {
+    reply = withoutLinkBearingSentences(reply);
   }
 
-  return withoutLinkBearingSentences(reply);
+  const contract = conversationAction?.replyContract || {};
+  if (
+    contract.experienceVersion === BRUNA_CONVERSION_EXPERIENCE_VERSION
+  ) {
+    reply = withoutDisallowedTrailingCta(
+      reply,
+      Array.isArray(contract.allowedCtaTypes)
+        ? contract.allowedCtaTypes
+        : [],
+    );
+  }
+
+  return reply;
 }
 
 function conversationContainsFacialPriceGuide(recentConversation) {
@@ -178,6 +212,13 @@ function semanticUnsafeReplyReason(
   );
   const protectedApprovedRange =
     protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange;
+
+  if (
+    contract.experienceVersion === BRUNA_CONVERSION_EXPERIENCE_VERSION
+  ) {
+    const policyLanguageReason = patientFacingPolicyLanguageReason(raw);
+    if (policyLanguageReason) return policyLanguageReason;
+  }
 
   if (
     /\b(?:sou|aqui\s+e|este\s+atendimento\s+e)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw) ||
@@ -292,6 +333,17 @@ function semanticUnsafeReplyReason(
   const containsCta = ctaPattern.test(raw);
   if (contract.allowCta === false && containsCta) {
     return "cta_not_allowed_for_context";
+  }
+  const classifiedCta = classifyBrunaCta(raw);
+  if (
+    contract.experienceVersion === BRUNA_CONVERSION_EXPERIENCE_VERSION &&
+    classifiedCta &&
+    !(
+      Array.isArray(contract.allowedCtaTypes) &&
+      contract.allowedCtaTypes.includes(classifiedCta)
+    )
+  ) {
+    return "cta_type_not_allowed_for_context";
   }
 
   if (

@@ -1,3 +1,5 @@
+import { brunaConversionGuidelinesAppendix } from "./bruna-conversion-experience.mjs";
+
 export const CONVERSATION_GUIDELINES = `
 Interpretação da entrada do marketing:
 - Quando a primeira mensagem contiver "Ref.", GBRAID ou outro código e reproduzir uma frase pronta do anúncio, trate o texto como contexto de origem, não como confirmação de que a pessoa realmente pediu tudo o que a frase menciona.
@@ -227,3 +229,14 @@ Rotas possíveis:
 
 Na dúvida entre responder e revisar, revise. automaticAllowed só pode ser true se a resposta estiver coerente com todo o histórico e cumprir integralmente estas regras.
 `.trim();
+
+export function buildConversationGuidelines({
+  conversionExperienceEnabled = false,
+} = {}) {
+  if (!conversionExperienceEnabled) return CONVERSATION_GUIDELINES;
+
+  return [
+    CONVERSATION_GUIDELINES,
+    brunaConversionGuidelinesAppendix(),
+  ].join("\n\n");
+}

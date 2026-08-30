@@ -14,6 +14,7 @@ import {
   buildSemanticReplyConversationAction,
 } from "./semantic-reply-policy.mjs";
 import {
+  buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
 } from "./surgical-price-review.mjs";
@@ -1197,4 +1198,132 @@ test("a validated semantic continuation overrides only the mechanical closing la
 
   assert.equal(allowed.allowed, true);
   assert.equal(mechanicalOnly.reason, "patient_closed_or_deferred");
+});
+
+test("conversion conformance removes only a disallowed trailing CTA and preserves the useful answer", () => {
+  const body =
+    "A avaliação permite entender suas prioridades e explicar as possibilidades com calma. Quer que eu te explique como funciona a consulta?";
+  const conformed = conformOutboundReplyToContract({
+    body,
+    conversationAction: {
+      replyContract: {
+        maxLinks: 0,
+        experienceVersion: "bruna-conversion-v1",
+        allowedCtaTypes: [],
+      },
+    },
+  });
+
+  assert.equal(
+    conformed,
+    "A avaliação permite entender suas prioridades e explicar as possibilidades com calma.",
+  );
+});
+
+test("conversion conformance preserves an allowed availability CTA", () => {
+  const body =
+    "A consulta presencial custa R$ 500. Se quiser, posso verificar opções de horário.";
+  const conformed = conformOutboundReplyToContract({
+    body,
+    conversationAction: {
+      replyContract: {
+        maxLinks: 0,
+        experienceVersion: "bruna-conversion-v1",
+        allowedCtaTypes: ["availability_exploration"],
+      },
+    },
+  });
+
+  assert.equal(conformed, body);
+});
+
+test("conversion contract preserves the approved first lifting-facial range offer end to end", () => {
+  const conversationAction = decideConversationAction({
+    text: "Quanto custa o lifting facial?",
+    plan: {
+      route: "standard_reply",
+      reason: "price_initial_information",
+      professional: "amanda",
+      procedure: "lifting_facial",
+      automaticAllowed: true,
+    },
+    conversionExperienceEnabled: true,
+  });
+  const body = buildSurgicalInitialPriceReply({
+    patientName: "Ana",
+    procedure: "lifting_facial",
+  });
+  const conformed = conformOutboundReplyToContract({
+    body,
+    conversationAction,
+  });
+
+  assert.equal(conformed, body);
+  assert.deepEqual(
+    validateOutboundReply({
+      body: conformed,
+      currentText: "Quanto custa o lifting facial?",
+      conversationAction,
+    }),
+    { allowed: true, reason: "allowed", body },
+  );
+});
+
+test("conversion gate blocks mechanical policy wording without blocking a natural limitation", () => {
+  const conversationAction = {
+    action: "respond",
+    replyContract: {
+      maxQuestions: 0,
+      maxLinks: 0,
+      allowCta: false,
+      allowAppointmentConfirmation: false,
+      experienceVersion: "bruna-conversion-v1",
+      allowedCtaTypes: [],
+    },
+  };
+
+  assert.deepEqual(
+    validateOutboundReply({
+      body: "A avaliação é cuidadosa, sem prometer um resultado específico.",
+      currentText: "Como funciona?",
+      conversationAction,
+    }),
+    { allowed: false, reason: "mechanical_result_disclaimer" },
+  );
+  assert.deepEqual(
+    validateOutboundReply({
+      body: "O resultado varia conforme a anatomia e o planejamento definido na avaliação.",
+      currentText: "O resultado é igual para todo mundo?",
+      conversationAction,
+    }),
+    {
+      allowed: true,
+      reason: "allowed",
+      body: "O resultado varia conforme a anatomia e o planejamento definido na avaliação.",
+    },
+  );
+});
+
+test("conversion gate rejects a CTA from a later stage when validation is called without conformance", () => {
+  const result = validateOutboundReply({
+    body:
+      "A avaliação começa entendendo o que você busca. Se quiser, posso verificar opções de horário.",
+    currentText: "Como funciona a avaliação?",
+    conversationAction: {
+      action: "respond",
+      replyContract: {
+        maxQuestions: 0,
+        maxLinks: 0,
+        allowCta: true,
+        allowAppointmentConfirmation: false,
+        experienceVersion: "bruna-conversion-v1",
+        allowedCtaTypes: ["informational_continuation"],
+      },
+    },
+  });
+
+  assert.deepEqual(result, {
+    allowed: false,
+    reason: "cta_type_not_allowed_for_context",
+  });
 });

@@ -1,5 +1,9 @@
 import { createHash } from "node:crypto";
-import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
+import { buildConversationGuidelines } from "./conversation-guidelines.mjs";
+import {
+  BRUNA_CONVERSION_EXPERIENCE_VERSION,
+  isBrunaConversionExperienceEnabled,
+} from "./bruna-conversion-experience.mjs";
 import { getRecommendedSiteResource } from "./site-content.mjs";
 import { normalizeConversationSemanticState } from "./conversation-memory.mjs";
 import {
@@ -190,8 +194,20 @@ function normalizeReplyContract(value) {
         .slice(0, 10)
     : [];
 
+  const conversionExperienceEnabled =
+    value.experienceVersion === BRUNA_CONVERSION_EXPERIENCE_VERSION;
+  const allowedCtaTypes = conversionExperienceEnabled &&
+    Array.isArray(value.allowedCtaTypes)
+    ? value.allowedCtaTypes
+        .map((ctaType) => limitText(ctaType, 50))
+        .filter(Boolean)
+        .slice(0, 4)
+    : [];
+
   return {
-    version: "reply-contract-v1",
+    version: conversionExperienceEnabled
+      ? "reply-contract-v2"
+      : "reply-contract-v1",
     stage: allowedStages.has(value.stage) ? value.stage : "consideration",
     risk: allowedRisks.has(value.risk) ? value.risk : "red",
     owner: limitText(value.owner, 30),
@@ -207,6 +223,16 @@ function normalizeReplyContract(value) {
       value.allowAppointmentConfirmation === true,
     requirePhotoDistanceLimit:
       value.requirePhotoDistanceLimit === true,
+    ...(conversionExperienceEnabled
+      ? {
+          experienceVersion: BRUNA_CONVERSION_EXPERIENCE_VERSION,
+          allowedCtaTypes,
+          preferredMaxCharacters: Math.max(
+            160,
+            Math.min(700, Number(value.preferredMaxCharacters) || 420),
+          ),
+        }
+      : {}),
   };
 }
 
@@ -278,6 +304,59 @@ export function applyReturningPatientReplyGuard(
     ...decision,
     suggestedReply,
   };
+}
+
+export function applyRepeatedNameGuard(
+  decision,
+  {
+    patientProfileName = "",
+    recentConversation = null,
+    conversionExperienceEnabled = false,
+    now = Date.now(),
+  } = {},
+) {
+  const firstName = usableProfileFirstName(patientProfileName);
+  const latestClinicTurn = Array.isArray(recentConversation)
+    ? recentConversation
+        .slice()
+        .reverse()
+        .find(
+          (turn) =>
+            turn?.role === "assistant" ||
+            ["bruna", "equipe_humana"].includes(turn?.source),
+        )
+    : null;
+  if (
+    !conversionExperienceEnabled ||
+    !firstName ||
+    !latestClinicTurn ||
+    decision?.route !== "standard_reply" ||
+    !decision?.suggestedReply
+  ) {
+    return decision;
+  }
+
+  const latestAt = new Date(latestClinicTurn?.at || "").getTime();
+  const afterRelevantPause =
+    Number.isFinite(latestAt) &&
+    Number.isFinite(Number(now)) &&
+    Number(now) - latestAt >= 12 * 60 * 60 * 1_000;
+  if (afterRelevantPause) return decision;
+
+  const escapedName = firstName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const suggestedReply = String(decision.suggestedReply)
+    .replace(
+      new RegExp(
+        `^(?:(?:Olá|Oi),?\\s+${escapedName}[!.]?|(?:Claro|Entendo),\\s+${escapedName}[.!]?|${escapedName},)\\s*`,
+        "iu",
+      ),
+      "",
+    )
+    .trim();
+
+  return suggestedReply
+    ? { ...decision, suggestedReply }
+    : decision;
 }
 
 function hasConcreteCurrentMessage(currentMessage) {
@@ -787,7 +866,8 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
     model: String(response?.model || fallbackModel),
     decision: applyUrgencyGuard(
       applyAutomationIdentityGuard(
-        applyFirstReplyGreetingGuard(
+        applyRepeatedNameGuard(
+          applyFirstReplyGreetingGuard(
           applyAnsweredDiscoveryQuestionGuard(
             applyReturningPatientReplyGuard(
               applyKnownProfileNameGuard(
@@ -828,6 +908,13 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
             patientRelationship: options.patientRelationship,
             priorInteractionKnown:
               options.priorInteractionKnown === true,
+          },
+          ),
+          {
+            patientProfileName: options.patientProfileName,
+            recentConversation: options.recentConversation,
+            conversionExperienceEnabled:
+              options.conversionExperienceEnabled === true,
           },
         ),
       ),
@@ -887,6 +974,8 @@ export async function runOpenAIShadow(
     learningContext,
   );
   const normalizedReplyContract = normalizeReplyContract(replyContract);
+  const conversionExperienceEnabled =
+    isBrunaConversionExperienceEnabled(env);
   const normalizedPolicyHints = normalizePolicyHints(policyHints);
   const approvedClinicalFacts = approvedLiftingFacialFacts({
     text,
@@ -923,7 +1012,9 @@ export async function runOpenAIShadow(
         store: false,
         max_output_tokens: 1_200,
         safety_identifier: createSafetyIdentifier(phone),
-        instructions: CONVERSATION_GUIDELINES,
+        instructions: buildConversationGuidelines({
+          conversionExperienceEnabled,
+        }),
         input: JSON.stringify({
           source: String(platform || "WhatsApp direto"),
           procedureContext: limitText(procedure, 100),
@@ -947,6 +1038,12 @@ export async function runOpenAIShadow(
           pendingUnknownQuestion:
             normalizedLearningContext.pendingQuestion,
           replyContract: normalizedReplyContract,
+          ...(conversionExperienceEnabled
+            ? {
+                conversionExperienceVersion:
+                  BRUNA_CONVERSION_EXPERIENCE_VERSION,
+              }
+            : {}),
           previousConversationState: normalizedConversationState,
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
@@ -997,6 +1094,7 @@ export async function runOpenAIShadow(
       learningContext: normalizedLearningContext,
       humanContextContinuationCandidate:
         normalizedPolicyHints?.humanContextContinuationCandidate === true,
+      conversionExperienceEnabled,
     });
   } catch (error) {
     return result("failed", {

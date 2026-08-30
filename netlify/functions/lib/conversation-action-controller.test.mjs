@@ -686,3 +686,99 @@ test("photo and scheduling contexts receive different response limits", () => {
   assert.equal(scheduling.replyContract.allowCta, true);
   assert.equal(scheduling.replyContract.maxQuestions, 1);
 });
+
+test("conversion contract is default-off and exposes only a stage-compatible CTA when enabled", () => {
+  const input = {
+    text: "Qual é o valor da consulta?",
+    plan: {
+      route: "standard_reply",
+      reason: "consultation_information_request",
+      professional: "amanda",
+      procedure: "avaliacao_facial",
+      automaticAllowed: true,
+    },
+  };
+  const current = decideConversationAction(input);
+  const conversion = decideConversationAction({
+    ...input,
+    conversionExperienceEnabled: true,
+  });
+
+  assert.equal(current.replyContract.version, "reply-contract-v1");
+  assert.equal("experienceVersion" in current.replyContract, false);
+  assert.equal(conversion.replyContract.version, "reply-contract-v2");
+  assert.equal(
+    conversion.replyContract.experienceVersion,
+    "bruna-conversion-v1",
+  );
+  assert.deepEqual(
+    conversion.replyContract.allowedCtaTypes,
+    ["availability_exploration"],
+  );
+  assert.equal(conversion.replyContract.preferredMaxCharacters, 650);
+});
+
+test("conversion contract separates informational, price-reference and scheduling CTAs", () => {
+  const liftingInformation = decideConversationAction({
+    text: "Quanto tempo leva o lifting facial?",
+    plan: {
+      route: "standard_reply",
+      reason: "known_procedure",
+      professional: "amanda",
+      procedure: "lifting_facial",
+      automaticAllowed: true,
+    },
+    conversionExperienceEnabled: true,
+  });
+  const cervicalPrice = decideConversationAction({
+    text: "Quanto custa a cervicoplastia?",
+    plan: {
+      route: "standard_reply",
+      reason: "price_initial_information",
+      professional: "amanda",
+      procedure: "lifting_cervical",
+      automaticAllowed: true,
+    },
+    conversionExperienceEnabled: true,
+  });
+  const facialPrice = decideConversationAction({
+    text: "Quanto custa o lifting facial?",
+    plan: {
+      route: "standard_reply",
+      reason: "price_initial_information",
+      professional: "amanda",
+      procedure: "lifting_facial",
+      automaticAllowed: true,
+    },
+    conversionExperienceEnabled: true,
+  });
+  const scheduling = decideConversationAction({
+    text: "Quero agendar uma consulta",
+    plan: {
+      route: "standard_reply",
+      reason: "appointment_preference_collection",
+      professional: "amanda",
+      procedure: "lifting_facial",
+      automaticAllowed: true,
+    },
+    conversionExperienceEnabled: true,
+  });
+
+  assert.deepEqual(
+    liftingInformation.replyContract.allowedCtaTypes,
+    ["informational_continuation"],
+  );
+  assert.deepEqual(
+    cervicalPrice.replyContract.allowedCtaTypes,
+    ["price_reference_offer"],
+  );
+  assert.equal(facialPrice.replyContract.allowCta, true);
+  assert.deepEqual(
+    facialPrice.replyContract.allowedCtaTypes,
+    ["price_reference_offer"],
+  );
+  assert.deepEqual(
+    scheduling.replyContract.allowedCtaTypes,
+    ["preference_capture"],
+  );
+});

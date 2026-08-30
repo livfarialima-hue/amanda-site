@@ -3,6 +3,7 @@ import {
   CONTEXT_CLARIFICATION_CODE,
   CONTEXT_CONTINUATION_CODE,
 } from "./semantic-reply-policy.mjs";
+import { procedureOpeningMicrovalue } from "./bruna-conversion-experience.mjs";
 
 const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
@@ -159,22 +160,32 @@ export function buildMarketingPrefilledOpeningReply({
   patientName,
   procedure,
   introduceBruna = true,
+  conversionExperienceEnabled = false,
 }) {
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
   const hasUsableName = Boolean(firstName(patientName));
   const introduction = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
+  const microvalue = conversionExperienceEnabled
+    ? procedureOpeningMicrovalue(procedure)
+    : "";
   const context = procedureLabel
-    ? SENSITIVE_PROCEDURES.has(procedure)
-      ? `Posso te orientar sobre ${procedureLabel}. Essa conversa é tratada com privacidade e cuidado.`
-      : `Posso te orientar sobre ${procedureLabel}.`
+    ? microvalue
+      ? `Posso te orientar sobre ${procedureLabel}. ${microvalue}`
+      : SENSITIVE_PROCEDURES.has(procedure)
+        ? `Posso te orientar sobre ${procedureLabel}. Essa conversa é tratada com privacidade e cuidado.`
+        : `Posso te orientar sobre ${procedureLabel}.`
     : "Posso te orientar.";
   const question = introduceBruna && !hasUsableName
     ? "Como posso te chamar?"
-    : procedure === "lifting_cervical"
-      ? "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?"
-      : "O que você gostaria de entender primeiro?";
+    : conversionExperienceEnabled && procedureLabel
+      ? SENSITIVE_PROCEDURES.has(procedure)
+        ? "Qual é a sua principal dúvida sobre a avaliação?"
+        : `O que você gostaria de entender primeiro sobre ${procedureLabel}?`
+      : procedure === "lifting_cervical"
+        ? "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?"
+        : "O que você gostaria de entender primeiro?";
 
   return `${introduction} ${context} ${question}`;
 }
@@ -292,7 +303,9 @@ export function buildConsultationInformationReply({
   availabilityRequested = false,
   consultationContextPreviouslyShared = false,
   consultationPriceRequested = false,
+  conversionExperienceEnabled = false,
   introduceBruna = false,
+  locationRequested = false,
   locationPreviouslyShared = false,
   siteRequested = false,
 }) {
@@ -304,7 +317,7 @@ export function buildConsultationInformationReply({
       ].join(" ")
     : "Claro.";
   const consultationContext = consultationPriceRequested
-    ? consultationContextPreviouslyShared
+    ? conversionExperienceEnabled || consultationContextPreviouslyShared
       ? ""
       : "Na avaliação, a Dra. Amanda entende o que você busca, examina com cuidado e explica as possibilidades e os próximos passos, sem obrigação de decidir nada nesse momento."
     : consultationDescription(
@@ -325,7 +338,13 @@ export function buildConsultationInformationReply({
   const shouldIncludeLocation =
     !locationPreviouslyShared &&
     !siteRequested &&
-    (consultationPriceRequested || availabilityRequested);
+    (
+      availabilityRequested ||
+      (
+        consultationPriceRequested &&
+        (!conversionExperienceEnabled || locationRequested)
+      )
+    );
   const location = shouldIncludeLocation
     ? [
         `A consulta presencial acontece na Clínica LIV, ${CLINIC_ADDRESS}.`,
@@ -348,7 +367,9 @@ export function buildConsultationInformationReply({
           resourceUrl,
         ].join(" ")
       : consultationPriceRequested
-        ? "Se fizer sentido para você, posso verificar opções de horário."
+        ? conversionExperienceEnabled
+          ? "Se quiser, posso verificar opções de horário."
+          : "Se fizer sentido para você, posso verificar opções de horário."
         : "";
   const explorationQuestion =
     !availabilityRequested &&

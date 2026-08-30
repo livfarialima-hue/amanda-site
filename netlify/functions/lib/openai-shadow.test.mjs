@@ -247,6 +247,48 @@ test("continuity guard removes a repeated Bruna introduction from an engaged lea
   assert.doesNotMatch(guarded.suggestedReply, /novamente/i);
 });
 
+test("conversion guard avoids repeating the patient name in an ongoing exchange but permits it after a long pause", () => {
+  const recentConversation = [{
+    role: "assistant",
+    source: "bruna",
+    text: "Olá, Vera! Posso te orientar sobre lifting cervical.",
+  }];
+  const response = validResponse(
+    validDecision({
+      suggestedReply:
+        "Olá, Vera! Entendo que a flacidez no pescoço seja sua principal dúvida.",
+    }),
+  );
+  const current = parseOpenAIShadowResponse(response, "fallback-model", {
+    patientProfileName: "Vera",
+    hasConversationHistory: true,
+    recentConversation,
+    conversionExperienceEnabled: true,
+  });
+  const disabled = parseOpenAIShadowResponse(response, "fallback-model", {
+    patientProfileName: "Vera",
+    hasConversationHistory: true,
+    recentConversation,
+    conversionExperienceEnabled: false,
+  });
+  const afterPause = parseOpenAIShadowResponse(response, "fallback-model", {
+    patientProfileName: "Vera",
+    hasConversationHistory: true,
+    recentConversation: [{
+      ...recentConversation[0],
+      at: "2026-08-29T01:00:00-03:00",
+    }],
+    conversionExperienceEnabled: true,
+  });
+
+  assert.equal(
+    current.decision.suggestedReply,
+    "Entendo que a flacidez no pescoço seja sua principal dúvida.",
+  );
+  assert.match(disabled.decision.suggestedReply, /^Olá, Vera!/);
+  assert.match(afterPause.decision.suggestedReply, /^Olá, Vera!/);
+});
+
 test("known prior interaction removes a repeated introduction without conversation memory", () => {
   const guarded = applyReturningPatientReplyGuard(
     validDecision({
@@ -1165,6 +1207,103 @@ test("OpenAI HTTP error returns a controlled failure", async () => {
     httpStatus: 429,
     errorCode: "http_error",
   });
+});
+
+test("conversion instructions and version are sent only when the feature is explicitly enabled", async () => {
+  const captureRequest = async (env) => {
+    const calls = [];
+    const result = await runOpenAIShadow(
+      {
+        phone: PHONE,
+        text: "Quero entender a avaliação",
+        platform: "Meta",
+        procedure: "lifting_facial",
+      },
+      {
+        env: { OPENAI_API_KEY: "test-key", ...env },
+        fetchImpl: async (url, options) => {
+          calls.push({ url, options });
+          return new Response(JSON.stringify(validResponse()), {
+            status: 200,
+          });
+        },
+      },
+    );
+    assert.equal(result.status, "completed");
+    return JSON.parse(calls[0].options.body);
+  };
+
+  const disabled = await captureRequest({});
+  assert.doesNotMatch(
+    disabled.instructions,
+    /Experiência conversacional de conversão v1/,
+  );
+  assert.equal(
+    "conversionExperienceVersion" in JSON.parse(disabled.input),
+    false,
+  );
+
+  const enabled = await captureRequest({
+    BRUNA_CONVERSION_EXPERIENCE_V1: "enabled",
+  });
+  assert.match(
+    enabled.instructions,
+    /Experiência conversacional de conversão v1/,
+  );
+  assert.equal(
+    JSON.parse(enabled.input).conversionExperienceVersion,
+    "bruna-conversion-v1",
+  );
+  assert.equal(
+    JSON.parse(enabled.input).replyContract,
+    null,
+    "enabling the experience does not invent a reply contract",
+  );
+});
+
+test("an enhanced reply contract remains v2 in the model input", async () => {
+  const calls = [];
+  const result = await runOpenAIShadow(
+    {
+      phone: PHONE,
+      text: "Qual é o valor da consulta?",
+      platform: "Meta",
+      procedure: "avaliacao_facial",
+      replyContract: {
+        version: "reply-contract-v2",
+        stage: "consideration",
+        risk: "yellow",
+        owner: "bruna",
+        allowedResponseKind: "direct_answer",
+        unresolvedIntents: ["price_consultation"],
+        maxQuestions: 0,
+        maxLinks: 0,
+        allowCta: true,
+        allowAppointmentConfirmation: false,
+        experienceVersion: "bruna-conversion-v1",
+        allowedCtaTypes: ["availability_exploration"],
+        preferredMaxCharacters: 650,
+      },
+    },
+    {
+      env: {
+        OPENAI_API_KEY: "test-key",
+        BRUNA_CONVERSION_EXPERIENCE_V1: "enabled",
+      },
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return new Response(JSON.stringify(validResponse()), { status: 200 });
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  const input = JSON.parse(JSON.parse(calls[0].options.body).input);
+  assert.equal(input.replyContract.version, "reply-contract-v2");
+  assert.deepEqual(
+    input.replyContract.allowedCtaTypes,
+    ["availability_exploration"],
+  );
 });
 
 test("OpenAI failure does not throw to the webhook caller", async () => {

@@ -289,6 +289,52 @@ test("a clear personal name with a trailing emoji personalizes the lifting prefi
   assert.doesNotMatch(reply, /🥰/u);
 });
 
+test("conversion opening adds one procedure-specific microvalue and one easy question", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Rosana",
+    procedure: "lifting_facial",
+    introduceBruna: true,
+    conversionExperienceEnabled: true,
+  });
+
+  assert.equal(
+    reply,
+    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Posso te orientar sobre lifting facial. " +
+      "Na avaliação, a Dra. Amanda considera o rosto e o pescoço em conjunto para entender quais possibilidades fazem sentido para você. " +
+      "O que você gostaria de entender primeiro sobre lifting facial?",
+  );
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+  assert.doesNotMatch(reply, /agendar|horário|valor/i);
+});
+
+test("conversion opening preserves privacy for ninfoplastia without asking intimate details", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Gessica",
+    procedure: "ninfoplastia",
+    conversionExperienceEnabled: true,
+  });
+
+  assert.match(reply, /Posso te orientar sobre ninfoplastia/);
+  assert.match(reply, /A conversa é reservada/);
+  assert.match(reply, /Qual é a sua principal dúvida sobre a avaliação\?/);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+  assert.doesNotMatch(reply, /o que incomoda|foto|imagem|agendar/i);
+});
+
+test("conversion opening still uses the only question to request an unknown name", () => {
+  const reply = buildMarketingPrefilledOpeningReply({
+    patientName: "Monah Semijoias",
+    procedure: "blefaroplastia",
+    conversionExperienceEnabled: true,
+  });
+
+  assert.match(reply, /pálpebras superiores e inferiores/i);
+  assert.match(reply, /Como posso te chamar\?$/);
+  assert.doesNotMatch(reply, /Monah|Semijoias/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+});
+
 test("sends only the requested official Instagram without adding a site or CTA", () => {
   const reply = buildOfficialChannelsReply({
     patientName: "MARINA",
@@ -461,6 +507,44 @@ test("keeps a consultation price reply especially short when the evaluation was 
     ].join("\n\n"),
   );
   assert.doesNotMatch(reply, /avaliação|examina|possibilidades|decidir/i);
+});
+
+test("conversion consultation-price reply is concise and does not repeat unasked context or location", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Paula",
+    consultationPriceRequested: true,
+    conversionExperienceEnabled: true,
+    introduceBruna: false,
+    locationPreviouslyShared: false,
+  });
+
+  assert.equal(
+    reply,
+    [
+      "Claro. A consulta presencial com a Dra. Amanda custa R$ 500.",
+      "O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.",
+      "Se quiser, posso verificar opções de horário.",
+    ].join("\n\n"),
+  );
+  assert.doesNotMatch(reply, /avaliação|examina|possibilidades|decidir/i);
+  assert.doesNotMatch(reply, /Pais Leme|05424-150|Google Maps/i);
+});
+
+test("conversion consultation-price reply includes the address only when it was requested and is new", () => {
+  const reply = buildConsultationInformationReply({
+    patientName: "Paula",
+    consultationPriceRequested: true,
+    conversionExperienceEnabled: true,
+    introduceBruna: false,
+    locationRequested: true,
+    locationPreviouslyShared: false,
+  });
+
+  assert.match(reply, /A consulta presencial com a Dra\. Amanda custa R\$ 500/);
+  assert.match(reply, /R\. Pais Leme, 215/);
+  assert.match(reply, /CEP 05424-150/);
+  assert.doesNotMatch(reply, /Google Maps/i);
+  assert.match(reply, /Se quiser, posso verificar opções de horário/);
 });
 
 test("recognizes a previously shared clinic location in recent conversation turns", () => {

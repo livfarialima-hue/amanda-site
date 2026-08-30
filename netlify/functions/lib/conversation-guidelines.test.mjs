@@ -1,6 +1,25 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CONVERSATION_GUIDELINES } from "./conversation-guidelines.mjs";
+import {
+  buildConversationGuidelines,
+  CONVERSATION_GUIDELINES,
+} from "./conversation-guidelines.mjs";
+
+test("conversion appendix is default-off and is appended only when explicitly enabled", () => {
+  assert.equal(buildConversationGuidelines(), CONVERSATION_GUIDELINES);
+  assert.equal(
+    buildConversationGuidelines({ conversionExperienceEnabled: false }),
+    CONVERSATION_GUIDELINES,
+  );
+
+  const enabled = buildConversationGuidelines({
+    conversionExperienceEnabled: true,
+  });
+  assert.ok(enabled.startsWith(CONVERSATION_GUIDELINES));
+  assert.match(enabled, /Experiência conversacional de conversão v1/);
+  assert.match(enabled, /todas as mensagens recentes/i);
+  assert.match(enabled, /Salvaguardas clínicas e comerciais são internas/i);
+});
 
 test("conversion playbook defines identity, progression and low-friction qualification", () => {
   assert.match(

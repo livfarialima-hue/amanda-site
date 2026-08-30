@@ -109,6 +109,10 @@ import {
   isSurgicalPriceReview,
 } from "./lib/surgical-price-review.mjs";
 import {
+  BRUNA_CONVERSION_EXPERIENCE_VERSION,
+  isBrunaConversionExperienceEnabled,
+} from "./lib/bruna-conversion-experience.mjs";
+import {
   cancelPendingHumanResume,
   getHumanResumeControl,
   HUMAN_RESUME_DELAY_MS,
@@ -1330,6 +1334,10 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
         promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
         knowledgeSnapshot:
           process.env.BRUNA_KB_SNAPSHOT || "unversioned",
+        conversionExperience:
+          isBrunaConversionExperienceEnabled(process.env)
+            ? BRUNA_CONVERSION_EXPERIENCE_VERSION
+            : "off",
         schemaVersion: "bruna-decision-v2",
         usage: result.usage,
       },
@@ -2210,6 +2218,8 @@ async function completeOpenAIActive({
           humanTakeoverActive: true,
           exactDuplicate,
           schedulingRequest,
+          conversionExperienceEnabled:
+            isBrunaConversionExperienceEnabled(process.env),
         }),
       );
       approvedPriceReplyKind = approvedPriceReplyKindForPlan(plan);
@@ -2468,6 +2478,8 @@ async function completeOpenAIActive({
               patientName: input.patientProfileName,
               procedure: plan?.procedure || input.procedure || "",
               introduceBruna,
+              conversionExperienceEnabled:
+                isBrunaConversionExperienceEnabled(process.env),
             }),
             reviewReason: "",
           },
@@ -2499,6 +2511,12 @@ async function completeOpenAIActive({
               consultationContextPreviouslyShared,
               consultationPriceRequested:
                 isConsultationPriceRequest(input.text),
+              conversionExperienceEnabled:
+                isBrunaConversionExperienceEnabled(process.env),
+              locationRequested:
+                conversationAction?.replyContract?.unresolvedIntents?.includes(
+                  "location",
+                ) === true,
               locationPreviouslyShared,
               siteRequested,
               introduceBruna,
@@ -3625,6 +3643,10 @@ export async function handleYCloudWebhook(
       reviewAlertConfigured: isReviewAlertConfigured(),
       appointmentReviewEnabled: isAppointmentAlertEnabled(),
       automationMode,
+      conversionExperience:
+        isBrunaConversionExperienceEnabled(process.env)
+          ? BRUNA_CONVERSION_EXPERIENCE_VERSION
+          : "off",
       processingMode: "direct_with_background_completion",
       contactPreferencesGuard: "active",
       internalPhoneExclusionConfigured:
@@ -4600,6 +4622,8 @@ export async function handleYCloudWebhook(
       humanTakeoverActive: false,
       exactDuplicate: suppressExactDuplicate,
       schedulingRequest: false,
+      conversionExperienceEnabled:
+        isBrunaConversionExperienceEnabled(process.env),
     });
     const semanticRouteLearningContext = await getBotKnowledgeContext({
       phone,
@@ -4951,6 +4975,8 @@ export async function handleYCloudWebhook(
     exactDuplicate: suppressExactDuplicate,
     schedulingRequest: appointmentReviewCandidate,
     pendingCommitments: delivery.pendingCommitments,
+    conversionExperienceEnabled:
+      isBrunaConversionExperienceEnabled(process.env),
   });
   const humanContextPlan = enrichAutomationPlanFromConversation(
     preliminaryAutomationPlan,

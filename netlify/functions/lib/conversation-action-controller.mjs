@@ -1,4 +1,8 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
+import {
+  BRUNA_CONVERSION_EXPERIENCE_VERSION,
+  BRUNA_CTA_TYPES,
+} from "./bruna-conversion-experience.mjs";
 
 export const CONVERSATION_ACTIONS = Object.freeze({
   RESPOND: "respond",
@@ -401,6 +405,7 @@ function buildReplyContract({
   plan,
   recentConversation,
   schedulingRequest,
+  conversionExperienceEnabled,
 }) {
   const value = normalized(text);
   const intents = inferUnresolvedIntents({
@@ -467,7 +472,11 @@ function buildReplyContract({
   ].includes(plan?.reason);
   const approvedInitialRangeOffer =
     plan?.reason === "price_initial_information" &&
-    ["lifting_cervical", "otoplastia"].includes(plan?.procedure);
+    [
+      ...(conversionExperienceEnabled ? ["lifting_facial"] : []),
+      "lifting_cervical",
+      "otoplastia",
+    ].includes(plan?.procedure);
   const approvedInitialSurgicalGuide =
     plan?.reason === "price_initial_information" &&
     !unknownSurgicalProcedure;
@@ -485,9 +494,34 @@ function buildReplyContract({
       ? 0
       : 1;
   const silenceReason = canWrite ? "" : reason || "reply_not_authorized";
+  const allowedCtaTypes = [];
+  if (canWrite && conversionExperienceEnabled) {
+    if (intents.includes("scheduling")) {
+      allowedCtaTypes.push(BRUNA_CTA_TYPES.PREFERENCE);
+    }
+    if (intents.includes("price_consultation")) {
+      allowedCtaTypes.push(BRUNA_CTA_TYPES.AVAILABILITY);
+    }
+    if (approvedInitialRangeOffer) {
+      allowedCtaTypes.push(BRUNA_CTA_TYPES.PRICE_REFERENCE);
+    }
+    if (approvedLiftingInformation) {
+      allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION);
+    }
+  }
+  const allowCta =
+    canWrite &&
+    (
+      intents.includes("scheduling") ||
+      intents.includes("price_consultation") ||
+      approvedInitialRangeOffer ||
+      approvedLiftingInformation
+    );
 
   return Object.freeze({
-    version: "reply-contract-v1",
+    version: conversionExperienceEnabled
+      ? "reply-contract-v2"
+      : "reply-contract-v1",
     stage,
     risk,
     owner:
@@ -507,17 +541,17 @@ function buildReplyContract({
     silenceReason,
     maxQuestions,
     maxLinks,
-    allowCta:
-      canWrite &&
-      (
-        intents.includes("scheduling") ||
-        intents.includes("price_consultation") ||
-        approvedInitialRangeOffer ||
-        approvedLiftingInformation
-      ),
+    allowCta,
     allowAppointmentConfirmation: false,
     requirePhotoDistanceLimit: intents.includes("photo"),
     sourceReason: plan?.reason || reason || "",
+    ...(conversionExperienceEnabled
+      ? {
+          experienceVersion: BRUNA_CONVERSION_EXPERIENCE_VERSION,
+          allowedCtaTypes,
+          preferredMaxCharacters: priceIntent ? 650 : 420,
+        }
+      : {}),
   });
 }
 
@@ -601,6 +635,7 @@ export function decideConversationAction({
   exactDuplicate = false,
   schedulingRequest = false,
   pendingCommitments = [],
+  conversionExperienceEnabled = false,
 }) {
   const value = normalized(text);
   const type = normalized(messageType).toLowerCase() || "text";
@@ -623,6 +658,7 @@ export function decideConversationAction({
         plan,
         recentConversation,
         schedulingRequest,
+        conversionExperienceEnabled,
       }),
     });
   };

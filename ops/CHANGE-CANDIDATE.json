@@ -1,44 +1,42 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-CONVERSION-SYSTEM-2026-08-30",
-  "title": "Correção integrada de mensuração, funil, busca cervical e continuidade da conversa",
-  "status": "published_verified",
-  "baseCommit": "afd14beb1551761a3e1b80a9e7460276634113b3",
+  "changeId": "BRUNA-CONVERSION-EXPERIENCE-2026-08-30",
+  "title": "Aberturas contextualizadas, respostas mais concisas e progressão conversacional da Bruna",
+  "status": "tested_local",
+  "baseCommit": "e17fad2506e4ec19508a3472580c183bac3182ef",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuário autorizou nesta conversa os ajustes e a publicação; o preflight externo deve vincular essa autorização ao commit candidato exato."
+    "note": "O usuário autorizou publicação e ativação do candidato anterior. A produção avançou em paralelo; a integração preserva esse trabalho, mas exige nova autorização vinculada ao novo HEAD exato antes da primeira escrita externa."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "google-ads-acquisition-conversion"
+      "bruna-conversion-experience"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
-      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "auditorias/auditoria-google-ads-2026-08-30/EXECUCAO-2026-08-30.md",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
-      "campanhas/conversion-tracking.js",
-      "campanhas/conversion-tracking.test.mjs",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "google-ads-scripts/google-ads-search-review-email.js",
-      "google-ads-scripts/google-ads-search-review-email.test.mjs",
+      "docs/estrategia-abordagem-bruna.md",
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.test.mjs",
+      "netlify/functions/lib/bruna-conversation-evals.test.mjs",
+      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-action-controller.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-guidelines.test.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/outbound-reply-gate.test.mjs",
       "netlify/functions/lib/patient-replies.mjs",
       "netlify/functions/lib/patient-replies.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
@@ -47,37 +45,36 @@
   },
   "impact": {
     "consumers": [
-      "fila canônica e projeção sem PII de ajustes do Google Ads",
-      "agregado anônimo usado na decisão das campanhas",
-      "rotina diária somente leitura do Google Ads",
-      "primeira resposta da Bruna para cervicoplastia",
-      "CTAs de WhatsApp da página de lifting cervical",
-      "campanhas de pesquisa CERV e FACE"
+      "abertura determinística de contatos vindos de marketing",
+      "resposta determinística ao valor da consulta",
+      "respostas contextuais geradas pelo modelo",
+      "contrato e gate final de mensagens ao paciente",
+      "avaliações offline de qualidade conversacional"
     ],
     "preservedInvariants": [
-      "nenhuma mensagem real é enviada durante testes, publicação ou pós-voo",
-      "nenhuma referência bruta é reescrita e códigos ambíguos continuam N/D",
-      "recibos de ajustes não contêm nome, telefone, mensagem, click ID ou Opportunity ID",
-      "orçamento total, lances, metas, LIFT, BLEF, OTO e MARCA permanecem preservados",
-      "linguagem leiga legítima, preço, papada e flacidez não viram negativas genéricas",
-      "deployment canônico do Apps Script e domínio/fluxo canônico do Netlify permanecem os mesmos",
-      "mudanças paralelas fora dos arquivos declarados não são revertidas"
+      "o comportamento atual permanece idêntico enquanto BRUNA_CONVERSION_EXPERIENCE_V1 não estiver explicitamente ativada",
+      "procedimento, faixas de preço, regras clínicas, convênio e fatos aprovados permanecem inalterados",
+      "agenda, confirmação humana, takeover, opt-out, deduplicação, debounce e proteção contra corrida humana permanecem inalterados",
+      "nenhum novo link, confirmação de consulta ou envio automático de faixa não aprovada é autorizado",
+      "nome só é usado quando o identificador pessoal já passa pelo guard existente",
+      "linguagem de segurança continua obrigatória como política interna, sem ser exposta mecanicamente à paciente"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads, Apps Script e planilhas canônicas",
+        "contract": "bruna-conversion-experience",
+        "system": "Git, Netlify e Apps Script canônicos",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-08-30T23:17:00-03:00",
-        "reference": "Conta 995-334-4486 exportada em 30 dias; Apps Script v137 e IDs canônicos conhecidos; AJUSTES_GOOGLE_ADS e projeção com exatamente duas linhas iguais; agregado v1 relido sem PII.",
-        "check": "Leitura ao vivo concluída antes da primeira escrita; nenhuma campanha, planilha, código ou mensagem alterada nessa fronteira."
+        "checkedAt": "2026-08-30T17:57:21-03:00",
+        "reference": "origin/reestruturacao-site af7e34eec733d9b6210540f74f2723d05a05acd2; Netlify 6a9492a25e4367d2c11076ec; Apps Script v136",
+        "check": "estado publicado do trabalho paralelo reconciliado antes da implementação; nenhuma escrita externa realizada"
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
+    "status": "passed_local",
+    "completedAt": "2026-08-31T06:43:44-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -86,41 +83,49 @@
       "npm.cmd run ops:check",
       "git diff --check"
     ],
+    "results": {
+      "focusedTests": "303/303 aprovados",
+      "fullSuite": "1210/1210 aprovados",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 19 arquivos exatos",
+      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "siteBuild": "180 arquivos; 44 URLs no sitemap; 0 erros",
+      "siteCheck": "44/44 HTTP 200, canonical própria, indexáveis e com um H1; 0 erros",
+      "diffCheck": "sem erros",
+      "productionBaseline": "origin/reestruturacao-site e17fad2506e4ec19508a3472580c183bac3182ef integrado sem reverter os seis commits paralelos"
+    },
     "crossConsumerCases": [
-      "retração confirmada como inexistente recebe recibo, sai das duas filas e não é recriada",
-      "código canônico, alias histórico documentado e código ambíguo ficam em contagens separadas",
-      "a cobertura histórica soma somente canônico e alias exato, sem inventar campanha",
-      "o CTA cervical ativo e a primeira resposta convidam contexto sem presumir agenda ou indicação",
-      "negativas cervicais atingem somente intenção não cirúrgica observada",
-      "a pausa FACE depende de mais de 30 cliques e zero contato válido no agregado v2"
+      "a chave desligada preserva byte a byte as respostas determinísticas atuais",
+      "a chave ligada acrescenta microvalor específico sem mudar procedimento, preço ou propriedade da agenda",
+      "valor da consulta responde primeiro ao valor, evita repetição e só inclui endereço quando solicitado",
+      "CTA permitido progride um único passo compatível com o estágio e não confirma agenda",
+      "o gate bloqueia linguagem mecânica de política sem bloquear salvaguardas médicas naturais",
+      "histórico recente evita apresentação, nome, explicação, endereço e link repetidos"
     ]
   },
   "release": {
-    "approvedCommit": "c78c00b2a68e85d0ae7119d70e599f9a811ef8f1",
-    "netlifyDeployId": "6a94eb46636ebf0008ae8016",
+    "approvedCommit": "",
+    "netlifyDeployId": "",
     "appsScriptVersion": 139,
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "809e06b4f5865e752059ac669080d6983effcde54fff6486fb4886f8e3c2d203",
-    "verifiedAt": "2026-08-31T00:32:42-03:00",
-    "activationState": "active_verified",
-    "notes": "Apps Script v139, agregado v2, duas filas de ajustes sem linhas ativas, dois recibos duráveis sem PII, Netlify e página cervical verificados. Foram publicadas exatamente 12 negativas CERV de frase; FACE foi preservada porque houve 1 contato válido/qualificado. A fila de classificação terminou com 213 done e zero pending, running ou dead_letter. A proprietária publicou a versão atual da rotina somente leitura no script 12117745; o código vivo coincidiu com o repositório no SHA-256 normalizado 31c79e957f58664317da92960ced718957ff4813fa37d785479495fc5fd346d7. A prévia concluiu em 22 segundos, mostrou Sem alterações, enviou o relatório semanal, registrou 23/23 fontes OK, zero alertas críticos e nenhuma limitação adicional. A programação diária 09:00–10:00 foi preservada. Nenhuma mensagem real para paciente foi enviada e nenhuma entidade de campanha foi alterada."
+    "verifiedAt": "",
+    "activationState": "off",
+    "notes": "Candidato integrado e testado localmente sobre a produção atual; publicação e ativação aguardam autorização vinculada ao novo HEAD exato."
   },
   "rollback": {
-    "local": "reverter somente o commit candidato e o recibo de fechamento desta mudança, preservando trabalho paralelo fora do escopo declarado",
-    "production": "restaurar Apps Script v138 no mesmo deployment, remover individualmente somente a negativa nova que comprovadamente bloquear intenção cirúrgica e restaurar o deploy Netlify 6a94e8c6636ebf0008aca730; FACE não foi pausada; recibos de retrações comprovadamente inexistentes permanecem como evidência e não devem voltar à fila ativa"
+    "local": "reverter exclusivamente o commit deste candidato",
+    "production": "manter BRUNA_CONVERSION_EXPERIENCE_V1 desligada; se futuramente ativada, desligar a variável antes de qualquer rollback de código"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
-    "window": "verificação imediata, revisão em 24 horas, primeira leitura em 06/09/2026 e decisão em 13/09/2026",
+    "window": "piloto controlado, com revisão em 24 horas, 72 horas e 7 dias após eventual ativação",
     "metrics": [
-      "reprojeção ou erro das filas de conversão e ajustes",
-      "cobertura canônica, por alias e desconhecida",
-      "contatos válidos, qualificados, consultas e custo por etapa por campanha",
-      "termos não cirúrgicos em CERV e tráfego de concorrentes em FACE",
-      "continuidade, avanço e opt-out depois da primeira resposta cervical",
-      "erros do Apps Script, Netlify e integrações externas"
+      "taxa de resposta à primeira mensagem",
+      "progressão para pedido de horário ou avaliação",
+      "mensagens bloqueadas pelo gate por linguagem mecânica ou CTA incompatível",
+      "procedimento ou nome incorreto",
+      "resposta duplicada ou competição com humano",
+      "encaminhamento indevido de agenda, preço ou cuidado clínico"
     ],
-    "rollbackRule": "reverter o componente isolado diante de falsa atribuição, evento válido removido, reprojeção, bloqueio de intenção cirúrgica, perda material de contato útil, aumento de custo qualificado ou regressão no atendimento"
+    "rollbackRule": "desligar imediatamente a chave diante de procedimento ou nome incorreto, promessa clínica, preço indevido, duplicidade, competição humana ou regressão de agenda"
   }
 }
