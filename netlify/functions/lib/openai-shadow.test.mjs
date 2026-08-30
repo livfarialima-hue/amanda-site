@@ -2856,10 +2856,12 @@ test("the first price question for another surgery alerts with a suggested reply
     assert.ok(patientBody);
     assert.ok(alertBody);
     assert.equal(patientBody.to, "+5511900000000");
+    assert.match(patientBody.text.body, /^Olá, Maria! Eu sou a Bruna/);
     assert.match(patientBody.text.body, /equipe/i);
     assert.match(patientBody.text.body, /valor/i);
     assert.equal((patientBody.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientBody.text.body, /R\$/);
+    assert.doesNotMatch(patientBody.text.body, /parcel|desconto/i);
     assert.doesNotMatch(patientBody.text.body, /confirmação humana/i);
     const alertText = alertBody.template.components[0].parameters
       .map((parameter) => parameter.text)

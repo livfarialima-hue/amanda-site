@@ -92,6 +92,77 @@ test("sends the daily follow-up email to Amanda and Daniel", () => {
   );
 });
 
+test("returns only the pending human commitments for the current patient", () => {
+  const rows = [
+    [
+      "evt-later",
+      "+55 11 90000-0000",
+      "procedure_price",
+      "Conferir a faixa atual.",
+      "Amanda/equipe",
+      new Date("2026-08-29T14:00:00.000Z"),
+      new Date("2026-08-29T18:00:00.000Z"),
+      "Pendente",
+      "",
+      "WhatsApp — revisão humana",
+    ],
+    [
+      "evt-resolved",
+      "+5511900000000",
+      "procedure_price",
+      "Já resolvido.",
+      "Amanda/equipe",
+      new Date("2026-08-29T10:00:00.000Z"),
+      new Date("2026-08-29T11:00:00.000Z"),
+      "Resolvido",
+      new Date("2026-08-29T10:30:00.000Z"),
+      "WhatsApp — revisão humana",
+    ],
+    [
+      "evt-first",
+      "+5511900000000",
+      "procedure_price",
+      "Conferir a faixa atual e responder manualmente.",
+      "Amanda/equipe",
+      new Date("2026-08-29T11:00:00.000Z"),
+      new Date("2026-08-29T15:00:00.000Z"),
+      "Pendente",
+      "",
+      "WhatsApp — revisão humana",
+    ],
+  ];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getRange(row, column, rowCount, columnCount) {
+      assert.deepEqual(
+        { row, column, rowCount, columnCount },
+        { row: 2, column: 1, rowCount: rows.length, columnCount: 10 },
+      );
+      return { getValues: () => rows };
+    },
+  };
+  const spreadsheet = {
+    getSheetByName(name) {
+      assert.equal(name, "_WHATSAPP_COMPROMISSOS");
+      return sheet;
+    },
+  };
+
+  const pending = context.listarCompromissosPendentesPaciente_(
+    spreadsheet,
+    "+55 (11) 90000-0000",
+    5,
+  );
+
+  assert.deepEqual(
+    Array.from(pending, (commitment) => commitment.eventId),
+    ["evt-first", "evt-later"],
+  );
+  assert.equal(pending[0].kind, "procedure_price");
+  assert.equal(pending[0].status, "pending");
+  assert.equal(pending[0].dueAt, "2026-08-29T15:00:00.000Z");
+});
+
 test("keeps follow-up suppressed when the patient says she will return", () => {
   const patientMessageAt = new Date("2026-07-28T12:00:00.000Z");
   const conversationWithPromise = [

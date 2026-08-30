@@ -553,6 +553,7 @@ export async function processHumanResumeJob(
           procedure: priceProcedure,
           overnight: outsideServiceHours,
           currentText: job.text,
+          recentConversation: job.recentConversation,
         }),
         buildSurgicalPriceSuggestedReply({
           patientName: job.patientName,

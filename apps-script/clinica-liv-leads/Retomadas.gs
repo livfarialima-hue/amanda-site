@@ -1176,6 +1176,57 @@ function resolverCompromissosPaciente_(input) {
   return { ok: true, resolved: resolvidos };
 }
 
+function listarCompromissosPendentesPaciente_(
+  arquivo,
+  telefoneInput,
+  limiteInput,
+) {
+  const telefone = normalizarTelefoneRetomadas_(telefoneInput);
+  const limite = Math.max(1, Math.min(10, Number(limiteInput) || 5));
+
+  if (!arquivo || !telefone) return [];
+
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaCompromissos,
+  );
+  if (!planilha || planilha.getLastRow() < 2) return [];
+
+  return planilha
+    .getRange(2, 1, planilha.getLastRow() - 1, 10)
+    .getValues()
+    .reduce(function (pendentes, linha) {
+      if (
+        normalizarTelefoneRetomadas_(linha[1]) !== telefone ||
+        normalizarTextoRetomadas_(linha[7]) !== "pendente"
+      ) {
+        return pendentes;
+      }
+
+      const criadoEm = dataRetomadaValida_(linha[5]);
+      const prazo = dataRetomadaValida_(linha[6]);
+      pendentes.push({
+        eventId: textoCompromissoPaciente_(linha[0], 200),
+        kind: textoCompromissoPaciente_(linha[2], 80),
+        summary: textoCompromissoPaciente_(linha[3], 180),
+        owner: textoCompromissoPaciente_(linha[4], 80),
+        createdAt: criadoEm ? criadoEm.toISOString() : "",
+        dueAt: prazo ? prazo.toISOString() : "",
+        status: "pending",
+        source: textoCompromissoPaciente_(linha[9], 80),
+      });
+      return pendentes;
+    }, [])
+    .sort(function (a, b) {
+      const prazoA = dataRetomadaValida_(a.dueAt);
+      const prazoB = dataRetomadaValida_(b.dueAt);
+      return (
+        (prazoA ? prazoA.getTime() : Number.MAX_SAFE_INTEGER) -
+        (prazoB ? prazoB.getTime() : Number.MAX_SAFE_INTEGER)
+      );
+    })
+    .slice(0, limite);
+}
+
 function carregarAgendaCompromissosPendentes_(arquivo, agora) {
   const planilha = arquivo.getSheetByName(
     RETOMADAS_CONFIG.planilhaCompromissos,

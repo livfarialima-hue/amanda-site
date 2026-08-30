@@ -18,6 +18,8 @@ const SHORT_CONTEXTUAL_RESPONSE_PATTERN =
   /^(?:sim|claro|isso|pode(?:\s+sim|\s+ser)?|quero\s+sim|por\s+favor|ok(?:ay)?|t[áa]\s+bom|entendi|perfeito|combinado|certo|beleza)[,!.?\s]*$/i;
 const POLITE_ACKNOWLEDGEMENT_CLOSING_PATTERN =
   /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite|ok(?:ay)?|t[áa]\s+bom|tudo\s+bem|entendi|certo|perfeito|combinado|vamos\s+v(?:e|ê|er)(?:\s+l[áa])?|vou\s+v(?:e|ê|er)(?:\s+l[áa])?|obg|obrigad[ao]|valeu|[óo]timo\s+descanso|bom\s+descanso|at[ée]\s+(?:mais|logo)|pra\s+voc[eê]s?|para\s+voc[eê]s?)[,!.?\s]*)+$/i;
+const PENDING_HUMAN_COMMITMENT_ACKNOWLEDGEMENT_PATTERN =
+  /^(?:(?:tudo\s+bem|ok(?:ay)?|certo|combinado|perfeito|entendi|obg|obrigad[ao]|grata|valeu)[,!.;\s]*)*(?:(?:fico|estou|vou\s+ficar)\s+(?:no\s+)?aguardo|aguardo|vou\s+aguardar|aguardarei)(?:\s+(?:(?:o|seu|um)\s+)?retorno|\s+por\s+not[ií]cias)?(?:[,!.;\s]*(?:tudo\s+bem|ok(?:ay)?|certo|combinado|perfeito|obg|obrigad[ao]|grata|valeu))*[,!.;\s]*$/i;
 const DIRECT_QUESTION_PATTERN =
   /(?:\?|^(?:como|qual|quais|quanto|quantos|quando|onde|por\s+que|porque|quem|voc[êe]s|tem|h[áa]|pode|posso|ser[áa]|custa|atende|faz)\b)/i;
 const DIRECT_REQUEST_PATTERN =
@@ -144,6 +146,31 @@ export function introducesStandalonePatientRequest(text) {
     /\b(?:quero|gostaria|preciso)\s+(?:de\s+)?(?:agendar|marcar|saber|entender|confirmar|verificar|receber|falar)\b/i.test(
       value,
     )
+  );
+}
+
+function hasPendingHumanCommitment(commitments) {
+  return (Array.isArray(commitments) ? commitments : []).some(
+    (commitment) => {
+      if (!commitment || typeof commitment !== "object") return false;
+      const status = String(commitment.status || "pending")
+        .trim()
+        .toLowerCase();
+      return !["resolved", "cancelled", "canceled"].includes(status);
+    },
+  );
+}
+
+export function isPendingHumanCommitmentAcknowledgement(
+  text,
+  pendingCommitments = [],
+) {
+  const value = normalized(text);
+  return Boolean(
+    value &&
+      hasPendingHumanCommitment(pendingCommitments) &&
+      !introducesStandalonePatientRequest(value) &&
+      PENDING_HUMAN_COMMITMENT_ACKNOWLEDGEMENT_PATTERN.test(value),
   );
 }
 
@@ -387,7 +414,7 @@ function buildReplyContract({
   const unknownSurgicalProcedure =
     intents.includes("price_surgery") &&
     !KNOWN_PROCEDURE_PATTERN.test(value) &&
-    !plan?.procedure;
+    (!plan?.procedure || plan.procedure === "avaliacao_facial");
   const humanContext = isReplyToHumanContextWithoutStandaloneRequest(
     value,
     recentConversation,
@@ -425,10 +452,10 @@ function buildReplyContract({
     intents.some((intent) => [
       "photo",
       "price_consultation",
-      "location",
       "insurance",
       "resource",
     ].includes(intent)) ||
+    (intents.includes("location") && !unknownSurgicalProcedure) ||
     (intents.includes("price_surgery") && !unknownSurgicalProcedure)
   ) {
     maxQuestions = 0;
@@ -535,7 +562,7 @@ function result(action, reason, details = {}) {
     reason,
     state: canonical.state,
     owner: canonical.owner,
-    nextAction: canonical.nextAction,
+    nextAction: details.nextAction || canonical.nextAction,
     unresolvedRequest,
     allowAutomaticReply:
       action === CONVERSATION_ACTIONS.RESPOND,
@@ -544,8 +571,11 @@ function result(action, reason, details = {}) {
       unresolvedRequest &&
       details.forceNoHoldingReply !== true,
     allowAlert:
-      action === CONVERSATION_ACTIONS.WAIT_TEAM ||
-      details.allowAlert === true,
+      details.forceNoAlert !== true &&
+      (
+        action === CONVERSATION_ACTIONS.WAIT_TEAM ||
+        details.allowAlert === true
+      ),
     scheduleHumanResume:
       action === CONVERSATION_ACTIONS.WAIT_TEAM &&
       unresolvedRequest &&
@@ -557,6 +587,8 @@ function result(action, reason, details = {}) {
     replyContract,
     silenceReason:
       replyContract?.silenceReason || "",
+    pendingHumanCommitmentAcknowledged:
+      details.pendingHumanCommitmentAcknowledged === true,
   };
 }
 
@@ -568,6 +600,7 @@ export function decideConversationAction({
   humanTakeoverActive = false,
   exactDuplicate = false,
   schedulingRequest = false,
+  pendingCommitments = [],
 }) {
   const value = normalized(text);
   const type = normalized(messageType).toLowerCase() || "text";
@@ -608,6 +641,26 @@ export function decideConversationAction({
       {
         unresolvedRequest: true,
         humanTakeoverActive,
+      },
+    );
+  }
+
+  if (
+    isPendingHumanCommitmentAcknowledgement(
+      value,
+      pendingCommitments,
+    )
+  ) {
+    return decide(
+      CONVERSATION_ACTIONS.WAIT_TEAM,
+      "pending_human_commitment_acknowledged",
+      {
+        unresolvedRequest: false,
+        forceNoHoldingReply: true,
+        forceNoAlert: true,
+        nextAction: "await_human_commitment_resolution",
+        pendingHumanCommitmentAcknowledged: true,
+        followupPolicy: "none",
       },
     );
   }

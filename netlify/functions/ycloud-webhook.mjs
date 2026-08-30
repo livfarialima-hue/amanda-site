@@ -141,6 +141,7 @@ import {
   decideConversationAction,
   hasUnresolvedPatientRequest,
   isExplicitNightPause,
+  isPendingHumanCommitmentAcknowledgement,
   isReplyToHumanContextWithoutStandaloneRequest,
   isShortAffirmativeReplyToHumanQuestion,
   isStandaloneRequestInvitedByHuman,
@@ -1069,6 +1070,9 @@ function leadDeliveryResult(result, details = {}) {
     professional: String(responseData?.professional || ""),
     routeStatus: String(responseData?.routeStatus || ""),
     humanTakeoverToday: responseData?.humanTakeoverToday === true,
+    pendingCommitments: Array.isArray(responseData?.pendingCommitments)
+      ? responseData.pendingCommitments.slice(0, 10)
+      : [],
     patientRelationship:
       responseData?.patientRelationship || null,
     ...details,
@@ -4553,6 +4557,11 @@ export async function handleYCloudWebhook(
     currentText: text,
     recentConversation: conversationHistoryWithCurrent,
   });
+  const pendingHumanCommitmentAcknowledgement =
+    isPendingHumanCommitmentAcknowledgement(
+      text,
+      delivery.pendingCommitments,
+    );
   let semanticAssessmentAttempted = false;
   let semanticRouteAssessment = null;
   let semanticRouteRecoveryStatus = "not_needed";
@@ -4569,6 +4578,7 @@ export async function handleYCloudWebhook(
   );
   const semanticRouteAssessmentEligible =
     pendingSemanticRoute &&
+    !pendingHumanCommitmentAcknowledgement &&
     isSemanticTextAssessmentEligible({
       delivery,
       automationMode,
@@ -4940,6 +4950,7 @@ export async function handleYCloudWebhook(
     humanTakeoverActive,
     exactDuplicate: suppressExactDuplicate,
     schedulingRequest: appointmentReviewCandidate,
+    pendingCommitments: delivery.pendingCommitments,
   });
   const humanContextPlan = enrichAutomationPlanFromConversation(
     preliminaryAutomationPlan,
@@ -5002,12 +5013,15 @@ export async function handleYCloudWebhook(
   );
   const explicitNightPause = isExplicitNightPause(text);
   const extremeNightActionable =
-    conversationAction.unresolvedRequest ||
-    conversationAction.allowAutomaticReply ||
-    conversationAction.allowHoldingReply ||
-    explicitNightPause ||
-    ["human_review", "appointment_review"].includes(
-      automationPlan.route,
+    !pendingHumanCommitmentAcknowledgement &&
+    (
+      conversationAction.unresolvedRequest ||
+      conversationAction.allowAutomaticReply ||
+      conversationAction.allowHoldingReply ||
+      explicitNightPause ||
+      ["human_review", "appointment_review"].includes(
+        automationPlan.route,
+      )
     );
   const priorExtremeNightAcknowledgement =
     hasExtremeNightAcknowledgement(
@@ -5033,6 +5047,7 @@ export async function handleYCloudWebhook(
     !priorExtremeNightAcknowledgement;
   const shouldQueueAppointmentReview =
     delivery.ok &&
+    !pendingHumanCommitmentAcknowledgement &&
     !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
@@ -5063,6 +5078,7 @@ export async function handleYCloudWebhook(
   );
   const shouldQueueSemanticRouteClarification = Boolean(
     unresolvedSemanticRoute &&
+      !pendingHumanCommitmentAcknowledgement &&
       semanticRouteMayAskForContext &&
       automationMode === "active" &&
       !extremeNightDeferral &&
@@ -5078,6 +5094,7 @@ export async function handleYCloudWebhook(
   );
   const shouldQueueReviewAlert =
     (delivery.ok || alertInput.urgent) &&
+    !pendingHumanCommitmentAcknowledgement &&
     !extremeNightDeferral &&
     !humanTakeoverActive &&
     !suppressExactDuplicate &&
@@ -5579,6 +5596,7 @@ export async function handleYCloudWebhook(
       procedure: automationPlan.procedure,
       overnight: outsideHumanServiceHours,
       currentText: text,
+      recentConversation: conversationHistory,
     });
     const priceHoldingResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
@@ -5732,9 +5750,11 @@ export async function handleYCloudWebhook(
     });
   const learningContext =
     (
-      immediateHumanContextContinuationCandidate ||
-      (semanticTextAssessmentEligible && !semanticAssessmentAttempted) ||
-      shouldLoadBotKnowledgeContext({
+      !pendingHumanCommitmentAcknowledgement &&
+      (
+        immediateHumanContextContinuationCandidate ||
+        (semanticTextAssessmentEligible && !semanticAssessmentAttempted) ||
+        shouldLoadBotKnowledgeContext({
       patientAutomationReady,
       humanTakeoverActive,
       automationMode,
@@ -5745,7 +5765,8 @@ export async function handleYCloudWebhook(
       professionalFactReview,
       approvedPriceReplyCandidate,
       deterministicMarketingOpeningCandidate,
-      })
+        })
+      )
     )
       ? await getBotKnowledgeContext({
           phone,
@@ -5754,10 +5775,12 @@ export async function handleYCloudWebhook(
         })
       : { candidates: [], pendingQuestion: null };
   const shouldQueueOpenAIShadow =
+    !pendingHumanCommitmentAcknowledgement &&
     semanticTextAssessmentEligible &&
     automationMode === "shadow" &&
     !semanticAssessmentAttempted;
   const commonOpenAIActiveEligibility =
+    !pendingHumanCommitmentAcknowledgement &&
     patientAutomationReady &&
     !extremeNightDeferral &&
     automationMode === "active" &&
@@ -5778,7 +5801,8 @@ export async function handleYCloudWebhook(
       immediateHumanContextContinuationCandidate
     );
   const shouldQueueOpenAIAssessmentOnly = Boolean(
-    semanticTextAssessmentEligible &&
+    !pendingHumanCommitmentAcknowledgement &&
+      semanticTextAssessmentEligible &&
       automationMode === "active" &&
       !semanticAssessmentAttempted &&
       !shouldQueueOpenAIActive

@@ -390,22 +390,59 @@ test("direct lifting price answers location in the same first reply", () => {
 test("acknowledges a price request while the approved value is pending", () => {
   const daytime = buildSurgicalPriceHoldingReply({
     patientName: "Van",
-    procedure: "lifting_facial",
+    procedure: "blefaroplastia",
   });
   const overnight = buildSurgicalPriceHoldingReply({
     patientName: "Van",
-    procedure: "lifting_facial",
+    procedure: "blefaroplastia",
     overnight: true,
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "Olá, Van! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      },
+    ],
   });
 
-  assert.match(daytime, /^Claro, Van\./);
-  assert.match(daytime, /faixa atual de valor para o lifting facial/);
-  assert.match(daytime, /desconto à vista/);
-  assert.match(daytime, /parcelado antecipadamente/);
+  assert.match(daytime, /^Olá, Van! Eu sou a Bruna/);
+  assert.match(daytime, /faixa atual de valor para a blefaroplastia completa/);
+  assert.doesNotMatch(daytime, /desconto à vista/);
+  assert.doesNotMatch(daytime, /parcelado antecipadamente/);
   assert.match(daytime, /te retorno por aqui/);
   assert.doesNotMatch(daytime, /R\$/);
+  assert.match(overnight, /^Claro, Van\./);
   assert.match(overnight, /te retorno pela manhã/);
   assert.doesNotMatch(overnight, /R\$/);
+});
+
+test("mentions payment terms only when the patient asks about them", () => {
+  const reply = buildSurgicalPriceHoldingReply({
+    patientName: "Van",
+    procedure: "blefaroplastia",
+    currentText: "Qual o valor e dá para parcelar?",
+  });
+
+  assert.match(reply, /quantidade de parcelas disponível/i);
+  assert.match(reply, /parcelado antecipadamente/i);
+  assert.match(reply, /desconto à vista/i);
+});
+
+test("generic facial price asks one neutral clarification without promising a return", () => {
+  const reply = buildSurgicalPriceHoldingReply({
+    patientName: "Karina",
+    procedure: "avaliacao_facial",
+    currentText: "Gostaria de saber o preço de cirurgia facial",
+  });
+
+  assert.match(
+    reply,
+    /^Olá, Karina! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+  );
+  assert.match(reply, /pálpebras, rosto ou pescoço\/papada/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+  assert.doesNotMatch(reply, /te retorno|equipe|aguard/i);
+  assert.doesNotMatch(reply, /parcel|desconto|R\$/i);
 });
 
 test("answers a location question immediately while the surgical price waits for review", () => {
@@ -415,7 +452,7 @@ test("answers a location question immediately while the surgical price waits for
     currentText: "ONDE FICA E QUAL O VALOR?",
   });
 
-  assert.match(reply, /^Claro, Nady\./);
+  assert.match(reply, /^Olá, Nady! Eu sou a Bruna/);
   assert.match(reply, /R\. Pais Leme, 215, cj\. 710/);
   assert.match(reply, /CEP 05424-150/);
   assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);

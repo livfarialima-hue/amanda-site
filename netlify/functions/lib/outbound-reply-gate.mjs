@@ -473,6 +473,15 @@ export function validateOutboundReply({
     return { allowed: false, reason: unsafeReason };
   }
 
+  if (
+    conversationAction?.pendingHumanCommitmentAcknowledged === true
+  ) {
+    return {
+      allowed: false,
+      reason: "pending_human_commitment_acknowledged",
+    };
+  }
+
   const action = conversationAction?.action;
   const permitted =
     action === CONVERSATION_ACTIONS.RESPOND ||

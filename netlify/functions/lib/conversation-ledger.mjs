@@ -33,11 +33,31 @@ function normalizeTurn(turn) {
   };
 }
 
+function normalizePendingCommitment(commitment) {
+  if (!commitment || typeof commitment !== "object") return null;
+  const eventId = boundedText(commitment.eventId, 200);
+  const kind = boundedText(commitment.kind, 80);
+  if (!eventId || !kind) return null;
+
+  return {
+    eventId,
+    kind,
+    summary: boundedText(commitment.summary, 180),
+    owner: boundedText(commitment.owner, 80),
+    createdAt: boundedText(commitment.createdAt, 40),
+    dueAt: boundedText(commitment.dueAt, 40),
+    status: "pending",
+    source: boundedText(commitment.source, 80),
+  };
+}
+
 export async function getDurableConversationContext(
   { phone, opportunityId = "", professional = "", limit = MAX_TURNS },
   { callSheetsImpl = callClassificationSheets } = {},
 ) {
-  if (!phone) return { status: "skipped", turns: [] };
+  if (!phone) {
+    return { status: "skipped", turns: [], pendingCommitments: [] };
+  }
 
   const result = await callSheetsImpl("get_conversation_context", {
     conversation: {
@@ -52,6 +72,7 @@ export async function getDurableConversationContext(
       status: "failed",
       errorCode: result.errorCode || "request_failed",
       turns: [],
+      pendingCommitments: [],
     };
   }
 
@@ -59,9 +80,18 @@ export async function getDurableConversationContext(
     .map(normalizeTurn)
     .filter(Boolean)
     .slice(-MAX_TURNS);
+  const pendingCommitments = (
+    Array.isArray(result.data?.pendingCommitments)
+      ? result.data.pendingCommitments
+      : []
+  )
+    .map(normalizePendingCommitment)
+    .filter(Boolean)
+    .slice(0, 10);
   return {
     status: "completed",
     turns,
+    pendingCommitments,
     opportunityId: boundedText(result.data?.opportunityId, 120),
     professional: boundedText(result.data?.professional, 80),
   };

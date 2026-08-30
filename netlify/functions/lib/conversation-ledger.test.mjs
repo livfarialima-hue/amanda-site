@@ -39,6 +39,18 @@ test("durable history preserves role, authorship and bounded identity", async ()
                 at: "2026-08-18T18:01:00.000Z",
               },
             ],
+            pendingCommitments: [
+              {
+                eventId: "price-review-1",
+                kind: "procedure_price",
+                summary: "Conferir a faixa atual e responder manualmente.",
+                owner: "Amanda/equipe",
+                createdAt: "2026-08-18T18:01:30.000Z",
+                dueAt: "2026-08-18T22:01:30.000Z",
+                status: "pending",
+                source: "WhatsApp — revisão humana",
+              },
+            ],
           },
         };
       },
@@ -51,6 +63,18 @@ test("durable history preserves role, authorship and bounded identity", async ()
   assert.deepEqual(result.turns.map((turn) => turn.source), ["human", "patient"]);
   assert.deepEqual(result.turns.map((turn) => turn.eventId), ["human-1", "patient-1"]);
   assert.equal(result.turns[1].templateId, "procedure_evaluation_v1");
+  assert.deepEqual(result.pendingCommitments, [
+    {
+      eventId: "price-review-1",
+      kind: "procedure_price",
+      summary: "Conferir a faixa atual e responder manualmente.",
+      owner: "Amanda/equipe",
+      createdAt: "2026-08-18T18:01:30.000Z",
+      dueAt: "2026-08-18T22:01:30.000Z",
+      status: "pending",
+      source: "WhatsApp — revisão humana",
+    },
+  ]);
 });
 
 test("automatic replies are written to the canonical conversation ledger", async () => {
@@ -93,5 +117,6 @@ test("ledger outages fail closed for hydration without exposing text", async () 
     status: "failed",
     errorCode: "timeout",
     turns: [],
+    pendingCommitments: [],
   });
 });

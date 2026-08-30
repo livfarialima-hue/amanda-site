@@ -105,7 +105,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /desconto à vista/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Qualquer pergunta de preço de outro procedimento, inclusive a primeira, usa human_review/,
+    /Qualquer pergunta de preço de outro procedimento identificado, inclusive a primeira, usa human_review/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -162,7 +162,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Para qualquer outro procedimento, toda pergunta de preço, inclusive a primeira, usa human_review/,
+    /Para qualquer outro procedimento já identificado, toda pergunta de preço, inclusive a primeira, usa human_review/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -532,5 +532,24 @@ test("playbook separates returning patients from acquisition leads", () => {
   assert.match(
     CONVERSATION_GUIDELINES,
     /não envie site espontaneamente/i,
+  );
+});
+
+test("playbook keeps acknowledged human commitments silent and clarifies generic facial price safely", () => {
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /equipe já assumiu um compromisso concreto.*human_team/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não responda, não faça nova pergunta/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /pálpebras, rosto ou pescoço\/papada/i,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /sem faixa, guia, pagamento, desconto, promessa de retorno/i,
   );
 });

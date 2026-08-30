@@ -6,6 +6,7 @@ import {
   decideConversationAction,
   hasUnresolvedPatientRequest,
   isExplicitNightPause,
+  isPendingHumanCommitmentAcknowledgement,
   isReplyToHumanContextWithoutStandaloneRequest,
 } from "./conversation-action-controller.mjs";
 
@@ -14,6 +15,69 @@ const standardPlan = {
   reason: "known_conversation_continuation",
   automaticAllowed: true,
 };
+
+const pendingPriceCommitment = [{
+  eventId: "evt-price-review",
+  kind: "procedure_price",
+  summary: "Conferir a faixa atual e responder manualmente.",
+  status: "pending",
+}];
+
+test("a pure acknowledgement keeps a pending human commitment with the team", () => {
+  for (const text of [
+    "Tudo bem, aguardo o retorno",
+    "Obrigada, fico no aguardo.",
+    "Ok, vou aguardar seu retorno",
+    "Aguardarei o retorno, obrigada",
+  ]) {
+    assert.equal(
+      isPendingHumanCommitmentAcknowledgement(
+        text,
+        pendingPriceCommitment,
+      ),
+      true,
+    );
+
+    const decision = decideConversationAction({
+      text,
+      plan: standardPlan,
+      pendingCommitments: pendingPriceCommitment,
+    });
+
+    assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_TEAM);
+    assert.equal(decision.state, "waiting_team");
+    assert.equal(decision.owner, "human_team");
+    assert.equal(decision.nextAction, "await_human_commitment_resolution");
+    assert.equal(decision.unresolvedRequest, false);
+    assert.equal(decision.allowAutomaticReply, false);
+    assert.equal(decision.allowHoldingReply, false);
+    assert.equal(decision.allowAlert, false);
+    assert.equal(decision.scheduleHumanResume, false);
+    assert.equal(decision.pendingHumanCommitmentAcknowledged, true);
+  }
+});
+
+test("a new standalone question stays actionable while a human commitment remains pending", () => {
+  const text = "Tudo bem. Enquanto isso, qual é o endereço da clínica?";
+
+  assert.equal(
+    isPendingHumanCommitmentAcknowledgement(
+      text,
+      pendingPriceCommitment,
+    ),
+    false,
+  );
+
+  const decision = decideConversationAction({
+    text,
+    plan: standardPlan,
+    pendingCommitments: pendingPriceCommitment,
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.equal(decision.allowAutomaticReply, true);
+  assert.equal(decision.pendingHumanCommitmentAcknowledged, false);
+});
 
 test("latest patient closing overrides an older clinic question", () => {
   const decision = decideConversationAction({
@@ -564,6 +628,25 @@ test("the reply contract allows one necessary question only when the surgery is 
 
   assert.equal(decision.replyContract.maxQuestions, 1);
   assert.equal(decision.replyContract.maxLinks, 0);
+});
+
+test("generic facial price keeps one clarification question even with the acquisition category", () => {
+  const decision = decideConversationAction({
+    text: "Gostaria de saber o preço de cirurgia facial",
+    plan: {
+      route: "human_review",
+      reason: "surgical_price_review",
+      procedure: "avaliacao_facial",
+      automaticAllowed: false,
+    },
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.WAIT_TEAM);
+  assert.equal(decision.allowHoldingReply, true);
+  assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
+  assert.equal(decision.replyContract.maxQuestions, 1);
+  assert.equal(decision.replyContract.maxLinks, 0);
+  assert.equal(decision.replyContract.allowCta, false);
 });
 
 test("a price word inherited from the availability template does not block the scheduling question", () => {

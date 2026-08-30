@@ -2060,12 +2060,21 @@ function obterContextoConversa_(input) {
   }).filter(function nonEmptyConversationTurn(turn) {
     return Boolean(turn.text);
   });
+  const pendingCommitments =
+    typeof listarCompromissosPendentesPaciente_ === "function"
+      ? listarCompromissosPendentesPaciente_(
+          spreadsheet,
+          phone,
+          5,
+        )
+      : [];
 
   return {
     ok: true,
     opportunityId: opportunityId,
     professional: professional,
     turns: turns,
+    pendingCommitments: pendingCommitments,
   };
 }
 

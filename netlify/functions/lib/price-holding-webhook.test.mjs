@@ -419,3 +419,154 @@ test("an accepted otoplasty range offer is delivered once through the full webho
     }
   }
 });
+
+test("an acknowledgement of a pending human price return stays silent without AI or a duplicate alert", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+    "YCLOUD_ALERT_TEMPLATE_LANGUAGE",
+    "WHATSAPP_AUTOMATION_MODE",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: WEBHOOK_SECRET,
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: SHEETS_URL,
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_ALERT_NUMBER: "+5511967743374",
+    YCLOUD_ALERT_TEMPLATE_NAME: "alerta_revisao_liv_v1",
+    YCLOUD_ALERT_TEMPLATE_LANGUAGE: "pt_BR",
+    WHATSAPP_AUTOMATION_MODE: "active",
+  });
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === SHEETS_URL) {
+      const input = JSON.parse(options.body);
+      if (input.action === "append_lead") {
+        return new Response(JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+          pendingCommitments: [{
+            eventId: "original-price-review",
+            kind: "procedure_price",
+            summary: "Conferir a faixa atual e responder manualmente.",
+            owner: "Amanda/equipe",
+            dueAt: "2026-08-29T18:00:00.000Z",
+            status: "pending",
+          }],
+          patientRelationship: {
+            found: false,
+            state: "engaged_lead",
+          },
+          opportunityId: "opp-pending-price",
+          professional: "amanda",
+          routeStatus: "resolved",
+          routed: true,
+        }), { status: 200 });
+      }
+      if (input.action === "get_conversation_context") {
+        return new Response(JSON.stringify({
+          ok: true,
+          opportunityId: "opp-pending-price",
+          professional: "amanda",
+          turns: [{
+            role: "assistant",
+            source: "bruna",
+            text: "Vou confirmar a faixa atual com a equipe e te retorno por aqui.",
+            eventId: "original-price-holding",
+            at: "2026-08-29T13:58:00.000Z",
+          }],
+          pendingCommitments: [{
+            eventId: "original-price-review",
+            kind: "procedure_price",
+            summary: "Conferir a faixa atual e responder manualmente.",
+            status: "pending",
+          }],
+        }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    }
+
+    if (
+      url === "https://api.openai.com/v1/responses" ||
+      url === YCLOUD_URL
+    ) {
+      throw new Error(`unexpected patient-side request: ${url}`);
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const response = await webhook(
+      requestFor({
+        id: "pending-price-ack-event",
+        type: "whatsapp.inbound_message.received",
+        createTime: "2026-08-29T14:00:00.000Z",
+        whatsappInboundMessage: {
+          id: "pending-price-ack-message",
+          from: "+5511900000099",
+          to: "+5511961957144",
+          sendTime: "2026-08-29T14:00:00.000Z",
+          type: "text",
+          customerProfile: { name: "Karina" },
+          text: { body: "Tudo bem, aguardo o retorno" },
+        },
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(response.status, 200);
+    assert.equal(body.conversationAction.action, "wait_team");
+    assert.equal(
+      body.conversationAction.reason,
+      "pending_human_commitment_acknowledged",
+    );
+    assert.equal(body.conversationAction.unresolvedRequest, false);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(body.priceHoldingQueued, false);
+    assert.equal(body.patientReplyQueued, false);
+    assert.equal(body.aiActiveQueued, false);
+    assert.equal(body.aiAssessmentOnlyQueued, false);
+    assert.equal(body.semanticAssessmentAttempted, false);
+    assert.equal(body.commitmentSyncStatus, "skipped");
+    assert.equal(
+      requests.some((request) => request.url === YCLOUD_URL),
+      false,
+    );
+    assert.equal(
+      requests.some(
+        (request) => request.url === "https://api.openai.com/v1/responses",
+      ),
+      false,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

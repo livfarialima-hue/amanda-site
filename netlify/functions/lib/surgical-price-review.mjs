@@ -554,15 +554,31 @@ export function buildSurgicalPriceHoldingReply({
   procedure,
   overnight = false,
   currentText = "",
+  recentConversation = [],
 }) {
-  const name = firstName(patientName);
-  const opening = name ? `Claro, ${name}.` : "Claro.";
+  const opening = directPriceGreeting(
+    patientName,
+    recentConversation,
+  );
   const reference = PRICE_REFERENCES[procedure];
-  const procedureContext = reference
-    ? ` para ${reference.label}`
-    : "";
   const returnTiming = overnight ? "pela manhã" : "por aqui";
   const text = String(currentText || "");
+  const unresolvedFacialProcedure =
+    !procedure || procedure === "avaliacao_facial";
+  const location =
+    LOCATION_REQUEST_PATTERN.test(text) &&
+    !hasClinicLocationInConversation(recentConversation)
+      ? CLINIC_LOCATION_REPLY
+      : "";
+
+  if (unresolvedFacialProcedure) {
+    return [
+      opening,
+      location,
+      "Consigo te orientar sobre valores. Como “cirurgia facial” pode envolver procedimentos diferentes, qual região ou procedimento você está pesquisando — pálpebras, rosto ou pescoço/papada? Assim consigo verificar a referência correta para você.",
+    ].filter(Boolean).join("\n\n");
+  }
+
   const pendingTopic = /quantas?\s+vezes|parcel/i.test(text)
     ? "a quantidade de parcelas disponível"
     : /desconto|[àa]\s+vista/i.test(text)
@@ -572,13 +588,16 @@ export function buildSurgicalPriceHoldingReply({
         : reference
           ? `a faixa atual de valor para ${reference.label}`
           : "a faixa atual de valor desse procedimento";
-  const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
-    ? CLINIC_LOCATION_REPLY
-    : "";
+  const paymentContext =
+    /parcel|quantas?\s+vezes|desconto|[àa]\s+vista/i.test(text)
+      ? "De forma geral, o pagamento cirúrgico pode ser parcelado antecipadamente, com quitação antes do procedimento, e há desconto à vista."
+      : "";
 
   return [
-    [opening, location].filter(Boolean).join(" "),
-    `Vou confirmar ${pendingTopic}${procedureContext && !reference ? procedureContext : ""} com a equipe e te retorno ${returnTiming}. O pagamento cirúrgico pode ser parcelado antecipadamente, com quitação antes do procedimento, e há desconto à vista.`,
+    opening,
+    location,
+    `Vou confirmar ${pendingTopic} com a equipe e te retorno ${returnTiming}.`,
+    paymentContext,
   ].filter(Boolean).join("\n\n");
 }
 

@@ -14,6 +14,7 @@ import {
   buildSemanticReplyConversationAction,
 } from "./semantic-reply-policy.mjs";
 import {
+  buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
 } from "./surgical-price-review.mjs";
 import {
@@ -72,6 +73,23 @@ test("final validation blocks replies after closing or deferral", () => {
     });
     assert.equal(result.allowed, false, currentText);
   }
+});
+
+test("final validation cannot reopen an acknowledged human commitment", () => {
+  const result = validateOutboundReply({
+    body:
+      "Antes de te passar a informação, o que está te incomodando hoje?",
+    currentText: "Tudo bem, aguardo o retorno",
+    conversationAction: {
+      ...respond,
+      pendingHumanCommitmentAcknowledged: true,
+    },
+  });
+
+  assert.deepEqual(result, {
+    allowed: false,
+    reason: "pending_human_commitment_acknowledged",
+  });
 });
 
 test("an explicitly scheduled morning resume may continue a night deferral", () => {
@@ -1032,6 +1050,64 @@ test("the improved consultation price reply passes its bounded conversion contra
   assert.equal(conversationAction.replyContract.maxQuestions, 0);
   assert.equal(conversationAction.replyContract.maxLinks, 0);
   assert.equal(conversationAction.replyContract.allowCta, true);
+  assert.equal(result.allowed, true);
+});
+
+test("the generic facial price clarification passes the final outbound contract", () => {
+  const conversationAction = decideConversationAction({
+    text: "Gostaria de saber o preço de cirurgia facial",
+    plan: {
+      route: "human_review",
+      reason: "surgical_price_review",
+      procedure: "avaliacao_facial",
+      automaticAllowed: false,
+    },
+  });
+  const body = buildSurgicalPriceHoldingReply({
+    patientName: "Karina",
+    procedure: "avaliacao_facial",
+    currentText: "Gostaria de saber o preço de cirurgia facial",
+    recentConversation: [],
+  });
+  const result = validateOutboundReply({
+    body,
+    currentText: "Gostaria de saber o preço de cirurgia facial",
+    conversationAction,
+  });
+
+  assert.equal(conversationAction.replyContract.maxQuestions, 1);
+  assert.equal(conversationAction.replyContract.maxLinks, 0);
+  assert.equal(result.allowed, true);
+});
+
+test("generic facial price can answer a simultaneous address question before clarifying the procedure", () => {
+  const currentText =
+    "Qual é o endereço e o preço de uma cirurgia facial?";
+  const conversationAction = decideConversationAction({
+    text: currentText,
+    plan: {
+      route: "human_review",
+      reason: "surgical_price_review",
+      procedure: "avaliacao_facial",
+      automaticAllowed: false,
+    },
+  });
+  const body = buildSurgicalPriceHoldingReply({
+    patientName: "Karina",
+    procedure: "avaliacao_facial",
+    currentText,
+    recentConversation: [],
+  });
+  const result = validateOutboundReply({
+    body,
+    currentText,
+    conversationAction,
+  });
+
+  assert.equal(conversationAction.replyContract.maxQuestions, 1);
+  assert.equal(conversationAction.replyContract.maxLinks, 1);
+  assert.match(body, /R\. Pais Leme, 215/i);
+  assert.equal((body.match(/\?/g) || []).length, 1);
   assert.equal(result.allowed, true);
 });
 

@@ -721,6 +721,14 @@ function doPost(e) {
         lead.phone,
         lead.contactAt,
       );
+    const pendingCommitments =
+      typeof listarCompromissosPendentesPaciente_ === "function"
+        ? listarCompromissosPendentesPaciente_(
+            spreadsheet,
+            lead.phone,
+            5,
+          )
+        : [];
 
     stage = "duplicate_check";
     const processedEvent = findProcessedEvent_(
@@ -813,6 +821,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        pendingCommitments,
         patientRelationship,
         opportunityId: lead.opportunityId,
         professional: route.professional,
@@ -834,6 +843,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        pendingCommitments,
         patientRelationship,
         opportunityId: processedEvent.opportunityId,
         professional:
@@ -868,6 +878,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        pendingCommitments,
         patientRelationship,
         professional: route.professional,
         routeStatus: route.routeStatus,
@@ -922,6 +933,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        pendingCommitments,
         patientRelationship,
         opportunityId: lead.opportunityId,
         professional: route.professional,
@@ -998,6 +1010,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        pendingCommitments,
         patientRelationship,
         knownPatient: isKnownPatientRelationship_(patientRelationship),
         opportunityId: lead.opportunityId,
@@ -1029,6 +1042,7 @@ function doPost(e) {
         eventId: lead.eventId,
         messageId: lead.messageId,
         humanTakeoverToday,
+        pendingCommitments,
         patientRelationship,
         knownPatient: true,
         professional: route.professional,
@@ -1075,6 +1089,7 @@ function doPost(e) {
       eventId: lead.eventId,
       messageId: lead.messageId,
       humanTakeoverToday,
+      pendingCommitments,
       patientRelationship,
       opportunityId: lead.opportunityId,
       professional: route.professional,
