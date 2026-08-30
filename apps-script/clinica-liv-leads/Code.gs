@@ -504,14 +504,33 @@ function doPost(e) {
 
     if (body.action === "get_patient_relationship") {
       stage = "get_patient_relationship";
+      const spreadsheet = SpreadsheetApp.openById(
+        CONFIG.spreadsheetId,
+      );
       const relationshipResult =
         obterRelacionamentoPaciente_(
           body.patient || {},
+          spreadsheet,
         );
+      const includeIdentity =
+        body.patient && body.patient.includeIdentity === true;
+      const knownPatientName =
+        normalizarNomePacienteConhecido_(
+          relationshipResult.patientName,
+        ) ||
+        (includeIdentity
+          ? obterNomePacienteConhecido_(
+              body.patient || {},
+              spreadsheet,
+            )
+          : "");
 
       return json_({
         ok: true,
-        relationship: relationshipResult,
+        relationship: {
+          ...relationshipResult,
+          patientName: knownPatientName,
+        },
       });
     }
 
@@ -2467,6 +2486,66 @@ function findLeadRowByPhone_(sheet, phone) {
 
 function findRecentLeadRow_(sheet, phone) {
   return findLeadRowByPhone_(sheet, phone);
+}
+
+function normalizarNomePacienteConhecido_(value) {
+  const name = boundedText_(value, 120).replace(/^'+/, "").trim();
+  const normalized = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+
+  if (
+    !name ||
+    [
+      "nao informado",
+      "nao informada",
+      "desconhecido",
+      "desconhecida",
+      "paciente",
+      "cliente",
+      "contato",
+      "sem nome",
+    ].indexOf(normalized) >= 0
+  ) {
+    return "";
+  }
+
+  return name;
+}
+
+function obterNomePacienteConhecido_(input, spreadsheetOverride) {
+  const phone = normalizePhone_(input && input.phone);
+  if (!phone) return "";
+
+  const spreadsheet = spreadsheetOverride || SpreadsheetApp.openById(
+    CONFIG.spreadsheetId,
+  );
+  const requestedProfessional = String(
+    input && input.professional || "",
+  ).trim().toLowerCase();
+  const sheetNames = requestedProfessional === "daniel"
+    ? [CONFIG.danielSheetName, CONFIG.sheetName]
+    : requestedProfessional === "amanda"
+      ? [CONFIG.sheetName, CONFIG.danielSheetName]
+      : [CONFIG.sheetName, CONFIG.danielSheetName];
+
+  for (let index = 0; index < sheetNames.length; index += 1) {
+    const sheet = spreadsheet.getSheetByName(sheetNames[index]);
+    if (!sheet) continue;
+
+    const row = findLeadRowByPhone_(sheet, phone);
+    const nameColumn = colunaNomeLead_(sheet);
+    if (!row || !nameColumn) continue;
+
+    const name = normalizarNomePacienteConhecido_(
+      sheet.getRange(row, nameColumn).getDisplayValue(),
+    );
+    if (name) return name;
+  }
+
+  return "";
 }
 
 function mergeLeadIntoExistingRow_(sheet, row, lead) {

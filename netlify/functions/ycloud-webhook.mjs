@@ -196,7 +196,9 @@ import {
 } from "./lib/professional-fact-review.mjs";
 import {
   resolvePatientDisplayName,
+  usableKnownPatientName,
   usableProfileFirstName,
+  usableProfileName,
 } from "./lib/profile-name.mjs";
 import {
   hasConfiguredInternalTeamPhones,
@@ -3027,14 +3029,18 @@ async function completeOpenAIActive({
   }
 }
 
-async function lookupPatientRelationship(phone) {
+async function lookupPatientRelationship(
+  phone,
+  professional = "",
+  includeIdentity = false,
+) {
   if (!phone) {
     return deliveryResult(false, null, "missing_phone");
   }
 
   const result = await deliverSheetsAction(
     "get_patient_relationship",
-    { patient: { phone } },
+    { patient: { phone, professional, includeIdentity } },
   );
 
   if (!result.ok) return result;
@@ -3241,6 +3247,7 @@ export async function completeManualAppointmentDetection(
     sendAppointmentEmailImpl = sendAppointmentEmailNotification,
     createAppointmentReviewImpl = createAppointmentReview,
     buildAppointmentReviewUrlImpl = buildAppointmentReviewUrl,
+    lookupPatientRelationshipImpl = lookupPatientRelationship,
   } = {},
 ) {
   if (!detection) {
@@ -3252,8 +3259,33 @@ export async function completeManualAppointmentDetection(
     patientName: detectedPatientName,
     ...appointment
   } = detection;
+  const explicitPatientName = usableKnownPatientName(
+    detectedPatientName,
+  );
+  let knownPatientName = "";
+  if (!explicitPatientName && patientPhone) {
+    try {
+      const lookup = await lookupPatientRelationshipImpl(
+        patientPhone,
+        /\bdaniel\b/i.test(String(appointment.professional || ""))
+          ? "daniel"
+          : /\bamanda\b/i.test(String(appointment.professional || ""))
+            ? "amanda"
+            : "",
+        true,
+      );
+      knownPatientName = usableKnownPatientName(
+        lookup?.relationship?.patientName,
+      );
+    } catch {
+      knownPatientName = "";
+    }
+  }
   const resolvedPatientName = String(
-    detectedPatientName || patientName || "",
+    explicitPatientName ||
+      knownPatientName ||
+      usableKnownPatientName(usableProfileName(patientName)) ||
+      "",
   ).trim();
   const appointmentId = `manual-${String(messageId || eventId)}`;
   const appointmentPayload = {

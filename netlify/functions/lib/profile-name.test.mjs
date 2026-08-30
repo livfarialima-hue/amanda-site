@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   resolvePatientDisplayName,
+  usableKnownPatientName,
   usableProfileFirstName,
   usableProfileName,
 } from "./profile-name.mjs";
@@ -80,4 +81,13 @@ test("boundary decoration removal does not rescue business or malformed profiles
   ]) {
     assert.equal(usableProfileName(profileName), "");
   }
+});
+
+test("a canonical patient name keeps the complete validated value", () => {
+  assert.equal(
+    usableKnownPatientName("Mariana Alves de Souza Lima"),
+    "Mariana Alves de Souza Lima",
+  );
+  assert.equal(usableKnownPatientName("Não informado"), "");
+  assert.equal(usableKnownPatientName("=IMPORTXML(...)"), "");
 });

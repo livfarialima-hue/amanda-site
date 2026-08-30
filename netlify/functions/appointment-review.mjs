@@ -3,6 +3,7 @@ import {
   updateAppointmentReview,
   verifyAppointmentReviewToken,
 } from "./lib/appointment-review-store.mjs";
+import { usableKnownPatientName } from "./lib/profile-name.mjs";
 
 function escapeHtml(value) {
   return String(value || "")
@@ -93,13 +94,66 @@ async function deliverSheetsAction(
 }
 
 function appointmentDetails(appointment) {
+  const patientName =
+    usableKnownPatientName(appointment.name) || "Não informado";
   return [
-    `<strong>Paciente:</strong> ${escapeHtml(appointment.name || "Não informado")}`,
+    `<strong>Paciente:</strong> ${escapeHtml(patientName)}`,
     `<strong>Telefone:</strong> ${escapeHtml(appointment.phone)}`,
     `<strong>Data:</strong> ${escapeHtml(appointment.scheduledDate)}`,
     `<strong>Horário:</strong> ${escapeHtml(appointment.scheduledTime)}`,
     `<strong>Profissional:</strong> ${escapeHtml(appointment.professional)}`,
   ].join("<br>");
+}
+
+function appointmentProfessionalKey(value) {
+  const professional = String(value || "");
+  if (/\bdaniel\b/i.test(professional)) return "daniel";
+  if (/\bamanda\b/i.test(professional)) return "amanda";
+  return "";
+}
+
+async function hydrateKnownAppointmentName({
+  review,
+  appointment,
+  env,
+  fetchImpl,
+  updateAppointmentReviewImpl,
+}) {
+  const currentName = usableKnownPatientName(appointment.name);
+  if (currentName || !appointment.phone) {
+    return currentName
+      ? { ...appointment, name: currentName }
+      : appointment;
+  }
+
+  const lookup = await deliverSheetsAction(
+    "get_patient_relationship",
+    {
+      patient: {
+        phone: appointment.phone,
+        professional: appointmentProfessionalKey(
+          appointment.professional,
+        ),
+        includeIdentity: true,
+      },
+    },
+    { env, fetchImpl },
+  );
+  const knownName = usableKnownPatientName(
+    lookup.responseData?.relationship?.patientName,
+  );
+  if (!knownName) return appointment;
+
+  const hydratedAppointment = { ...appointment, name: knownName };
+  try {
+    await updateAppointmentReviewImpl(review.id, {
+      appointment: hydratedAppointment,
+    });
+  } catch {
+    // The secure review can still display and submit the resolved name even
+    // when the optional cache update is unavailable.
+  }
+  return hydratedAppointment;
 }
 
 export async function handleAppointmentReview(
@@ -136,7 +190,13 @@ export async function handleAppointmentReview(
   if (!review) {
     return htmlPage("Revisão não encontrada", "<h1>Revisão não encontrada.</h1>", 404);
   }
-  const appointment = review.appointment || {};
+  const appointment = await hydrateKnownAppointmentName({
+    review,
+    appointment: review.appointment || {},
+    env,
+    fetchImpl,
+    updateAppointmentReviewImpl,
+  });
 
   if (request.method === "GET") {
     if (review.status === "approved") {

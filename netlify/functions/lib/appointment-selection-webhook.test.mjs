@@ -540,6 +540,120 @@ test("a doubtful manual closing emails a secure approval link without changing t
   );
 });
 
+test("a manual appointment review reuses the known patient name when the echo has no profile", async () => {
+  const actions = [];
+  const lookups = [];
+  let storedAppointment = null;
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "known-name-event",
+      messageId: "known-name-message",
+      patientName: "",
+      patientPhone: "+5511994880724",
+      detection: {
+        scheduledDate: "2026-09-17",
+        scheduledTime: "09:00",
+        professional: "Dra. Amanda",
+        consultationType: "Consulta presencial",
+        location: "Clínica LIV Faria Lima",
+        status: "Consulta agendada",
+        source: "WhatsApp — possível confirmação manual",
+        confidence: "possible",
+      },
+    },
+    {
+      lookupPatientRelationshipImpl: async (
+        phone,
+        professional,
+        includeIdentity,
+      ) => {
+        lookups.push({ phone, professional, includeIdentity });
+        return {
+          ok: true,
+          relationship: {
+            found: false,
+            patientName: "Mariana Alves de Souza Lima",
+          },
+        };
+      },
+      deliverSheetsActionImpl: async (action, payload) => {
+        actions.push({ action, payload });
+        return { ok: true, responseData: { ok: true, sent: true } };
+      },
+      createAppointmentReviewImpl: async (appointment) => {
+        storedAppointment = appointment;
+        return {
+          ok: true,
+          id: "known-name-review",
+          expiresAt: 123,
+          signature: "signature",
+        };
+      },
+      buildAppointmentReviewUrlImpl: () =>
+        "https://example.com/review?id=known-name-review",
+    },
+  );
+
+  assert.equal(result.status, "approval_requested");
+  assert.deepEqual(lookups, [
+    {
+      phone: "+5511994880724",
+      professional: "amanda",
+      includeIdentity: true,
+    },
+  ]);
+  assert.equal(storedAppointment.name, "Mariana Alves de Souza Lima");
+  assert.equal(
+    actions[0].payload.alert.patientName,
+    "Mariana Alves de Souza Lima",
+  );
+});
+
+test("a placeholder detected as a name does not suppress the canonical LEADS lookup", async () => {
+  let storedAppointment = null;
+  const result = await completeManualAppointmentDetection(
+    {
+      eventId: "placeholder-name-event",
+      messageId: "placeholder-name-message",
+      patientName: "",
+      patientPhone: "+5511994880724",
+      detection: {
+        patientName: "Não informado",
+        scheduledDate: "2026-09-17",
+        scheduledTime: "09:00",
+        professional: "Dra. Amanda",
+        confidence: "possible",
+      },
+    },
+    {
+      lookupPatientRelationshipImpl: async () => ({
+        ok: true,
+        relationship: {
+          patientName: "Mariana Alves de Souza Lima",
+        },
+      }),
+      sendAppointmentEmailImpl: async () => ({ ok: true }),
+      createAppointmentReviewImpl: async (appointment) => {
+        storedAppointment = appointment;
+        return {
+          ok: true,
+          id: "placeholder-name-review",
+          expiresAt: 123,
+          signature: "signature",
+        };
+      },
+      buildAppointmentReviewUrlImpl: () =>
+        "https://example.com/review?id=placeholder-name-review",
+    },
+  );
+
+  assert.equal(result.status, "approval_requested");
+  assert.equal(
+    storedAppointment.name,
+    "Mariana Alves de Souza Lima",
+  );
+});
+
 test("a manual confirmation does not send a second email when the same slot is already registered", async () => {
   const actions = [];
   const result = await completeManualAppointmentDetection(
