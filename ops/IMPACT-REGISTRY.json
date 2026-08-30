@@ -44,6 +44,31 @@
       "requiresReadOnlyPreflight": false
     },
     {
+      "id": "site-publication",
+      "ownerFiles": [
+        "scripts/build-static-site.mjs",
+        "scripts/check-site-technical.mjs"
+      ],
+      "consumerFiles": [
+        "blefaroplastia/index.html"
+      ],
+      "coveredPaths": [
+        "blefaroplastia/index.html"
+      ],
+      "requiredTestFiles": [
+        "scripts/check-site-technical.mjs"
+      ],
+      "requiredCommands": [
+        "npm.cmd run site:build",
+        "npm.cmd run site:check",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Netlify"
+      ],
+      "requiresReadOnlyPreflight": false
+    },
+    {
       "id": "bruna-conversation-safety",
       "ownerFiles": [
         "netlify/functions/lib/conversation-action-controller.mjs",

@@ -1,108 +1,61 @@
 {
   "schemaVersion": 1,
-  "changeId": "CHANGE-SAFETY-2026-08-30",
-  "title": "Gate de alteração segura, lembretes de consulta e continuidade da Bruna",
-  "status": "published_verified",
-  "baseCommit": "609364c3b8d38ae6fb5fe1b11d47793fb1b1abb6",
+  "changeId": "BLEFAROPLASTIA-POSICIONAMENTO-2026-08-30",
+  "title": "Posicionamento facial integrado na página de blefaroplastia",
+  "status": "tested_local",
+  "baseCommit": "010579bbf5bb92531b0842afa9d98efb42db4e43",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "A autorização foi registrada externamente para o HEAD exato no release:preflight; o candidato aprovado não foi modificado para fabricar autorização"
+    "note": "A autorização externa desta conversa cobre a página de blefaroplastia; o preflight deve amarrá-la ao HEAD exato sem fabricar autorização no commit"
   },
   "risk": {
-    "level": "high",
+    "level": "medium",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
-      "appointment-reminders",
-      "bruna-conversation-safety",
-      "change-governance"
+      "change-governance",
+      "site-publication"
     ],
     "files": [
-      "AGENTS.md",
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
-      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "docs/CONTRATO-DE-ALTERACAO-SEGURA.md",
-      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "blefaroplastia/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/appointment-reminder.mjs",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-action-controller.test.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/conversation-guidelines.test.mjs",
-      "netlify/functions/lib/conversation-ledger.mjs",
-      "netlify/functions/lib/conversation-ledger.test.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/surgical-price-review.test.mjs",
-      "netlify/functions/lib/ycloud-appointment-reminder.mjs",
-      "netlify/functions/lib/ycloud-appointment-reminder.test.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "package.json",
-      "scripts/check-change-safety.mjs",
-      "scripts/check-change-safety.test.mjs",
-      "scripts/check-operational-consistency.mjs",
-      "scripts/check-operational-consistency.test.mjs",
-      "scripts/check-journey-module-boundaries.mjs",
-      "scripts/run-tests.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "disparador de lembretes no Apps Script",
-      "agenda e e-mail diário de cuidados",
-      "endpoint de lembrete no Netlify",
-      "adaptador do template na YCloud",
-      "continuidade de compromissos humanos e roteamento de preço cirúrgico",
-      "controlador, ledger e gate de saída da Bruna",
-      "processo de implementação e publicação",
-      "gate de encerramento operacional"
+      "página pública de blefaroplastia",
+      "metadados de busca e compartilhamento da página",
+      "dados estruturados e FAQ da página",
+      "processo de publicação no Netlify"
     ],
     "preservedInvariants": [
-      "nenhuma mensagem real durante desenvolvimento e testes",
-      "uma tentativa ambígua nunca é repetida automaticamente",
-      "opt-out, neverBotReply e janela de envio permanecem bloqueios",
-      "um lembrete presencial só avança com evento vivo e horário idêntico em Consultas e Calendar",
-      "Apps Script v136 e Netlify no commit funcional 0eaea1b15f0fc112bee0b0667de8c8e5f2ff47de são o baseline externo verificado; nenhuma publicação posterior pode regressar esses estados",
-      "somente os três agendamentos autorizados são reconciliados; site e campanhas não são alterados neste pacote",
-      "um compromisso humano ainda pendente preserva a conversa para a equipe; faixas cirúrgicas continuam limitadas aos procedimentos e textos aprovados",
-      "ops:check permanece em SYNC_PENDING enquanto o candidato não tiver recibos de publicação e verificação"
+      "CTA, número do WhatsApp, mensagem pré-preenchida e data attributes de rastreamento permanecem idênticos",
+      "nenhuma faixa de preço cirúrgico, promessa de resultado ou alegação de superioridade é acrescentada",
+      "consulta, forma de pagamento, imagens, vídeos, layout e demais páginas permanecem inalterados",
+      "Google Ads, Meta Ads, bot, Apps Script, planilhas, CRM e Calendar permanecem inalterados",
+      "a publicação deve corresponder ao commit aprovado e ser verificada no domínio e na URL imutável"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "appointment-reminders",
-        "system": "Apps Script, Consultas, Calendar, Netlify e YCloud",
-        "status": "completed_read_only_then_reconciled_under_authorization",
-        "checkedAt": "2026-08-30T16:40:00-03:00",
-        "reference": "Consultas, LEADS, CRM e Calendar canônicos conferidos; três registros futuros anonimizados reconciliados sob autorização explícita, sem mensagem à paciente",
-        "check": "IDs canônicos confirmados; data, horário, vínculo, Sala 1 e projeções visíveis relidos depois da correção; nenhuma duplicidade encontrada"
+        "contract": "site-publication",
+        "system": "Netlify e página pública de blefaroplastia",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-08-30T17:23:00-03:00",
+        "reference": "Produção anterior no commit 010579bbf5bb92531b0842afa9d98efb42db4e43 e deploy 6a9490869afd19ba6be5e598",
+        "check": "domínio, URL imutável e webhook responderam HTTP 200 antes da mudança; nenhuma plataforma de anúncios foi alterada"
       }
     ]
   },
   "verification": {
-    "status": "published_verified",
+    "status": "passed_local",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -111,43 +64,25 @@
       "git diff --check"
     ],
     "crossConsumerCases": [
-      "mesmo alvo de lembrete no disparador e no e-mail diário",
-      "nome ausente bloqueado antes de reservar tentativa e antes do provedor",
-      "telefone ausente não transforma reserva de sala em falha de envio",
-      "tentativa anterior aparece somente para revisão humana",
-      "vínculo de Calendar ausente, apagado ou divergente bloqueia antes de qualquer escrita",
-      "e-mail diário transforma agendamento não comprovado em reconciliação humana sem mensagem sugerida",
-      "atendimento remoto só dispensa Calendar com modalidade e estado canônico coerentes"
+      "title, descrição, Open Graph, Twitter e schema permanecem coerentes entre si",
+      "FAQ visível e FAQPage estruturado recebem a mesma explicação",
+      "todos os links e CTAs preservam destino e rastreamento",
+      "build continua com 44 URLs e sem arquivo ausente"
     ]
   },
-  "release": {
-    "approvedCommit": "0eaea1b15f0fc112bee0b0667de8c8e5f2ff47de",
-    "netlifyDeployId": "6a9489a8d2c95b00084dea8e",
-    "appsScriptVersion": 136,
-    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "6da79fff79d99683bb1a22dbf5ac3cfa459f8d3f30e9a666e72c57dbe9cd0dd4",
-    "verifiedAt": "2026-08-30T17:15:00-03:00",
-    "activationState": "default_off",
-    "notes": "Domínio, URL imutável, webhook e web app responderam HTTP 200; arquivos Apps Script foram relidos; nenhuma mensagem real, função operacional ou trigger foi executado."
-  },
   "rollback": {
-    "local": "abandonar a branch candidata e preservar os commits 8c489a3 e 73f3dcc como baselines coordenados",
-    "production": "restaurar Apps Script v135 e o deploy Netlify associado ao commit 8c489a3, preservando a correção de continuidade já publicada na v135"
+    "local": "reverter exclusivamente o commit da página e este candidato, retornando a 010579bbf5bb92531b0842afa9d98efb42db4e43",
+    "production": "restaurar o deploy Netlify 6a9490869afd19ba6be5e598 e preservar Apps Script v136"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
-    "window": "primeiras 48 horas e sete dias após eventual publicação",
+    "window": "verificação imediata e leitura de Search Console após 14 e 28 dias",
     "metrics": [
-      "lembretes enviados",
-      "bloqueios por nome ou telefone",
-      "tentativas com erro",
-      "bloqueios por agendamento não comprovado",
-      "divergências Consultas/Calendar",
-      "duplicidades",
-      "conversas com compromisso humano indevidamente respondidas pelo bot",
-      "respostas de preço fora do procedimento aprovado"
+      "HTTP 200 e canonical da página",
+      "integridade dos CTAs e rastreamento",
+      "impressões e cliques non-branded da página",
+      "contatos válidos, qualificados e consultas atribuídas à blefaroplastia"
     ],
-    "rollbackRule": "reverter se houver duplicidade, saudação incorreta, envio para linha sem paciente ou divergência entre o planejado e o disparado"
+    "rollbackRule": "reverter diante de CTA quebrado, regressão visual, rastreamento perdido, informação médica incompatível ou promessa indevida"
   }
 }
