@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BLEFAROPLASTIA-POSICIONAMENTO-2026-08-30",
   "title": "Posicionamento facial integrado na página de blefaroplastia",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "010579bbf5bb92531b0842afa9d98efb42db4e43",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -54,7 +54,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "published_verified",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -69,6 +69,17 @@
       "todos os links e CTAs preservam destino e rastreamento",
       "build continua com 44 URLs e sem arquivo ausente"
     ]
+  },
+  "release": {
+    "approvedCommit": "ccc70c435147e30614e4d4c41bbfff24ba0e0d40",
+    "netlifyDeployId": "6a9491e9a8d5e21aae7fbfb8",
+    "appsScriptVersion": 136,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "f9ff87f5a7bf64eb5f613312787da5dc83065f15b2258a46e666666855470574",
+    "verifiedAt": "2026-08-30T17:28:00-03:00",
+    "activationState": "not_applicable",
+    "notes": "Página no domínio e na URL imutável respondeu HTTP 200 com o mesmo SHA-256, canonical correto e seis CTAs; Apps Script e plataformas operacionais permaneceram inalterados."
   },
   "rollback": {
     "local": "reverter exclusivamente o commit da página e este candidato, retornando a 010579bbf5bb92531b0842afa9d98efb42db4e43",
