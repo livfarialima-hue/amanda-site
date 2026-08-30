@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "changeId": "CHANGE-SAFETY-2026-08-30",
   "title": "Gate de alteração segura, lembretes de consulta e continuidade da Bruna",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "609364c3b8d38ae6fb5fe1b11d47793fb1b1abb6",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "A autorização deve apontar para o HEAD exato no release:preflight; não alterar este commit depois da aprovação"
+    "note": "A autorização foi registrada externamente para o HEAD exato no release:preflight; o candidato aprovado não foi modificado para fabricar autorização"
   },
   "risk": {
     "level": "high",
@@ -29,8 +29,10 @@
       "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "apps-script/clinica-liv-leads/production-target.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/CONTRATO-DE-ALTERACAO-SEGURA.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
@@ -81,7 +83,7 @@
       "uma tentativa ambígua nunca é repetida automaticamente",
       "opt-out, neverBotReply e janela de envio permanecem bloqueios",
       "um lembrete presencial só avança com evento vivo e horário idêntico em Consultas e Calendar",
-      "Apps Script v135 e Netlify no commit 8c489a3 são o baseline externo após a coordenação entre tarefas; nenhuma publicação posterior pode regressar esses estados",
+      "Apps Script v136 e Netlify no commit funcional 0eaea1b15f0fc112bee0b0667de8c8e5f2ff47de são o baseline externo verificado; nenhuma publicação posterior pode regressar esses estados",
       "somente os três agendamentos autorizados são reconciliados; site e campanhas não são alterados neste pacote",
       "um compromisso humano ainda pendente preserva a conversa para a equipe; faixas cirúrgicas continuam limitadas aos procedimentos e textos aprovados",
       "ops:check permanece em SYNC_PENDING enquanto o candidato não tiver recibos de publicação e verificação"
@@ -98,7 +100,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "published_verified",
     "commands": [
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run change:check",
@@ -117,6 +119,17 @@
       "e-mail diário transforma agendamento não comprovado em reconciliação humana sem mensagem sugerida",
       "atendimento remoto só dispensa Calendar com modalidade e estado canônico coerentes"
     ]
+  },
+  "release": {
+    "approvedCommit": "0eaea1b15f0fc112bee0b0667de8c8e5f2ff47de",
+    "netlifyDeployId": "6a9489a8d2c95b00084dea8e",
+    "appsScriptVersion": 136,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "6da79fff79d99683bb1a22dbf5ac3cfa459f8d3f30e9a666e72c57dbe9cd0dd4",
+    "verifiedAt": "2026-08-30T17:15:00-03:00",
+    "activationState": "default_off",
+    "notes": "Domínio, URL imutável, webhook e web app responderam HTTP 200; arquivos Apps Script foram relidos; nenhuma mensagem real, função operacional ou trigger foi executado."
   },
   "rollback": {
     "local": "abandonar a branch candidata e preservar os commits 8c489a3 e 73f3dcc como baselines coordenados",
