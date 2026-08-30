@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "CHANGE-SAFETY-2026-08-30",
-  "title": "Gate de alteração segura e alinhamento dos lembretes de consulta",
+  "title": "Gate de alteração segura, lembretes de consulta e continuidade da Bruna",
   "status": "tested_local",
   "baseCommit": "609364c3b8d38ae6fb5fe1b11d47793fb1b1abb6",
   "authorization": {
@@ -19,13 +19,17 @@
   "scope": {
     "contracts": [
       "appointment-reminders",
+      "bruna-conversation-safety",
       "change-governance"
     ],
     "files": [
       "AGENTS.md",
       "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/CONTRATO-DE-ALTERACAO-SEGURA.md",
@@ -33,9 +37,23 @@
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/appointment-reminder.mjs",
+      "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-action-controller.test.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-guidelines.test.mjs",
+      "netlify/functions/lib/conversation-ledger.mjs",
+      "netlify/functions/lib/conversation-ledger.test.mjs",
+      "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/outbound-reply-gate.test.mjs",
+      "netlify/functions/lib/price-holding-webhook.test.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/surgical-price-review.test.mjs",
       "netlify/functions/lib/ycloud-appointment-reminder.mjs",
       "netlify/functions/lib/ycloud-appointment-reminder.test.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
       "package.json",
@@ -53,6 +71,8 @@
       "agenda e e-mail diário de cuidados",
       "endpoint de lembrete no Netlify",
       "adaptador do template na YCloud",
+      "continuidade de compromissos humanos e roteamento de preço cirúrgico",
+      "controlador, ledger e gate de saída da Bruna",
       "processo de implementação e publicação",
       "gate de encerramento operacional"
     ],
@@ -61,8 +81,9 @@
       "uma tentativa ambígua nunca é repetida automaticamente",
       "opt-out, neverBotReply e janela de envio permanecem bloqueios",
       "um lembrete presencial só avança com evento vivo e horário idêntico em Consultas e Calendar",
-      "produção permanece em Apps Script v134 e Netlify no commit 609364c até a publicação coordenada autorizada",
-      "somente os três agendamentos autorizados são reconciliados; site, campanhas, preços e classificação não são alterados",
+      "Apps Script v135 e Netlify no commit 8c489a3 são o baseline externo após a coordenação entre tarefas; nenhuma publicação posterior pode regressar esses estados",
+      "somente os três agendamentos autorizados são reconciliados; site e campanhas não são alterados neste pacote",
+      "um compromisso humano ainda pendente preserva a conversa para a equipe; faixas cirúrgicas continuam limitadas aos procedimentos e textos aprovados",
       "ops:check permanece em SYNC_PENDING enquanto o candidato não tiver recibos de publicação e verificação"
     ],
     "liveReadOnlyPreflight": [
@@ -98,8 +119,8 @@
     ]
   },
   "rollback": {
-    "local": "abandonar a branch candidata e preservar o baseline 609364c",
-    "production": "nenhuma reversão necessária antes da publicação; depois dela, restaurar Apps Script v134 e o deploy Netlify associado ao commit 609364c"
+    "local": "abandonar a branch candidata e preservar os commits 8c489a3 e 73f3dcc como baselines coordenados",
+    "production": "restaurar Apps Script v135 e o deploy Netlify associado ao commit 8c489a3, preservando a correção de continuidade já publicada na v135"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
@@ -110,7 +131,9 @@
       "tentativas com erro",
       "bloqueios por agendamento não comprovado",
       "divergências Consultas/Calendar",
-      "duplicidades"
+      "duplicidades",
+      "conversas com compromisso humano indevidamente respondidas pelo bot",
+      "respostas de preço fora do procedimento aprovado"
     ],
     "rollbackRule": "reverter se houver duplicidade, saudação incorreta, envio para linha sem paciente ou divergência entre o planejado e o disparado"
   }
