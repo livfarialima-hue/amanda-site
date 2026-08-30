@@ -26,6 +26,8 @@ Antes de implementar qualquer mudança no repositório, leia também:
 
 Toda mudança deve atualizar `ops/CHANGE-CANDIDATE.json` com baseline, escopo exato, contratos, consumidores, invariantes, preflight vivo, rollback e monitoramento. O arquivo não autoriza publicação. Execute `npm.cmd run change:check` durante o desenvolvimento e novamente antes do commit. Arquivo não declarado, consumidor não coberto ou preflight pendente bloqueiam o avanço; não reduza o escopo no recibo para fazer o gate passar.
 
+Antes de declarar conclusão, execute também `npm.cmd run ops:check`. Um candidato em estado local, testado ou commitado deve manter o resultado `SYNC_PENDING`; somente `published_verified`, acompanhado dos recibos de cada destino externo do pacote, permite afirmar que local, commit, publicação e documentação foram reconciliados.
+
 Esse documento define o proprietário de cada decisão, as fronteiras entre política pura e efeitos externos e os invariantes da jornada. Novos consumidores devem importar cada regra de seu módulo proprietário; reexportações de compatibilidade existem apenas para transição. Toda mudança nesse escopo deve passar por `npm.cmd run change:check` e `npm.cmd run architecture:check` além dos testes pertinentes.
 
 Antes de retomar recomendações de auditorias, executar uma tarefa agendada ou decidir se chegou o momento de publicar, leia também:

@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": true
   },
   "scope": {
@@ -41,6 +41,8 @@
       "package.json",
       "scripts/check-change-safety.mjs",
       "scripts/check-change-safety.test.mjs",
+      "scripts/check-operational-consistency.mjs",
+      "scripts/check-operational-consistency.test.mjs",
       "scripts/check-journey-module-boundaries.mjs",
       "scripts/run-tests.mjs"
     ]
@@ -51,24 +53,26 @@
       "agenda e e-mail diário de cuidados",
       "endpoint de lembrete no Netlify",
       "adaptador do template na YCloud",
-      "processo de implementação e publicação"
+      "processo de implementação e publicação",
+      "gate de encerramento operacional"
     ],
     "preservedInvariants": [
       "nenhuma mensagem real durante desenvolvimento e testes",
       "uma tentativa ambígua nunca é repetida automaticamente",
       "opt-out, neverBotReply e janela de envio permanecem bloqueios",
       "um lembrete presencial só avança com evento vivo e horário idêntico em Consultas e Calendar",
-      "produção permanece em Apps Script v134 e Netlify no commit 609364c até nova autorização",
-      "site, campanhas, preços, classificação, funil e agenda de consultas não são alterados"
+      "produção permanece em Apps Script v134 e Netlify no commit 609364c até a publicação coordenada autorizada",
+      "somente os três agendamentos autorizados são reconciliados; site, campanhas, preços e classificação não são alterados",
+      "ops:check permanece em SYNC_PENDING enquanto o candidato não tiver recibos de publicação e verificação"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "appointment-reminders",
         "system": "Apps Script, Consultas, Calendar, Netlify e YCloud",
-        "status": "completed_read_only_with_reconciliation_pending",
-        "checkedAt": "2026-08-30T15:00:00-03:00",
-        "reference": "Consultas e Calendar canônicos conferidos sem escrita; dois registros futuros anonimizados exigem autorização específica para reconciliação",
-        "check": "IDs canônicos confirmados; consultas futuras, nomes, telefones, tentativas e eventos reconciliados em leitura; nenhum estado externo alterado"
+        "status": "completed_read_only_then_reconciled_under_authorization",
+        "checkedAt": "2026-08-30T16:40:00-03:00",
+        "reference": "Consultas, LEADS, CRM e Calendar canônicos conferidos; três registros futuros anonimizados reconciliados sob autorização explícita, sem mensagem à paciente",
+        "check": "IDs canônicos confirmados; data, horário, vínculo, Sala 1 e projeções visíveis relidos depois da correção; nenhuma duplicidade encontrada"
       }
     ]
   },

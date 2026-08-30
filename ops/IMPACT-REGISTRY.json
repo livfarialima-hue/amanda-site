@@ -23,11 +23,14 @@
         "package.json",
         "scripts/check-change-safety.mjs",
         "scripts/check-change-safety.test.mjs",
+        "scripts/check-operational-consistency.mjs",
+        "scripts/check-operational-consistency.test.mjs",
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/run-tests.mjs"
       ],
       "requiredTestFiles": [
-        "scripts/check-change-safety.test.mjs"
+        "scripts/check-change-safety.test.mjs",
+        "scripts/check-operational-consistency.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run change:check",

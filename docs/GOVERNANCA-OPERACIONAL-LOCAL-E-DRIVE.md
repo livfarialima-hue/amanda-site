@@ -314,6 +314,8 @@ A reconciliação valida branch, manifesto e remoto, recusa alterações staged 
 
 Os comandos são gates, não rotinas de correção automática. `change:check` bloqueia arquivo não declarado, contrato ou consumidor sem cobertura e divergência entre planejadores operacionais. `ops:check` bloqueia o encerramento quando encontrar branch local que não contenha a última produção observada, worktree não limpo, versão divergente, metadados de release inconsistentes, mais de um manual ativo da Bruna, projeção do Drive sem hash correspondente ou pacote temporário de release deixado na raiz.
 
+O mesmo `ops:check` deve retornar `SYNC_PENDING` enquanto o candidato ativo estiver apenas planejado, local, testado ou commitado. Depois da publicação, o recibo muda para `published_verified` e registra commit aprovado, deploy Netlify, versão Apps Script, hash da mesma projeção do Plano no Drive e horário de verificação. Sem esses recibos, o trabalho não pode ser encerrado como atualizado e publicado.
+
 Para a Bruna, `netlify/functions/lib/bruna-policy/manifest.json` é o recibo técnico único da última verificação. Ele diferencia o commit e o deploy funcionais da última produção observada e registra rollback, IDs fixos do Drive e hash da projeção ativa. Os campos `lastObserved*` são um snapshot datado, não uma tentativa impossível de o próprio commit registrar antecipadamente seu futuro SHA ou deploy. O manual de comportamento continua sendo `docs/estrategia-abordagem-bruna.md`; o manifesto não repete suas diretrizes.
 
 Regras de manutenção:

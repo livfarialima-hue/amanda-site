@@ -9,6 +9,7 @@ const GOVERNANCE_PATH = "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md";
 const OPERATIONS_PATH = "docs/whatsapp-clinica-liv-operacao.md";
 const EXECUTIVE_PLAN_PATH = "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md";
 const ATTRIBUTES_PATH = ".gitattributes";
+const ACTIVE_CHANGE_PATH = "ops/CHANGE-CANDIDATE.json";
 
 function readUtf8(root, path) {
   return readFileSync(join(root, path), "utf8").replace(/\r\n/g, "\n");
@@ -69,6 +70,7 @@ export function validateOperationalConsistency({
     OPERATIONS_PATH,
     EXECUTIVE_PLAN_PATH,
     ATTRIBUTES_PATH,
+    ACTIVE_CHANGE_PATH,
     "scripts/reconcile-local-release.ps1",
     "package.json",
   ];
@@ -80,11 +82,50 @@ export function validateOperationalConsistency({
   if (errors.length) return { ok: false, status: "BLOCKED", errors, warnings, checks };
 
   let manifest;
+  let activeChange;
   try {
     manifest = JSON.parse(readUtf8(absoluteRoot, MANIFEST_PATH));
+    activeChange = JSON.parse(readUtf8(absoluteRoot, ACTIVE_CHANGE_PATH));
   } catch (error) {
-    fail("INVALID_MANIFEST", `Manifesto inválido: ${error.message}`);
+    fail("INVALID_OPERATIONAL_JSON", `Recibo operacional inválido: ${error.message}`);
     return { ok: false, status: "BLOCKED", errors, warnings, checks };
+  }
+
+  const changeStatus = String(activeChange.status || "").trim();
+  if (
+    ["planned", "implementing_local", "tested_local", "committed"].includes(
+      changeStatus,
+    )
+  ) {
+    fail(
+      "CHANGE_PUBLICATION_PENDING",
+      `A mudança ${activeChange.changeId || "sem ID"} está em ${changeStatus}; publicar, verificar e registrar os recibos antes de encerrar.`,
+    );
+  } else if (changeStatus === "published_verified") {
+    const changeRelease = activeChange.release || {};
+    if (
+      !isFullSha(changeRelease.approvedCommit) ||
+      !isDeployId(changeRelease.netlifyDeployId) ||
+      !Number.isInteger(Number(changeRelease.appsScriptVersion)) ||
+      Number(changeRelease.appsScriptVersion) <= 0 ||
+      !String(changeRelease.verifiedAt || "").trim() ||
+      !/^[0-9a-f]{64}$/.test(String(changeRelease.drivePlanSha256 || ""))
+    ) {
+      fail(
+        "CHANGE_RELEASE_RECEIPT_INVALID",
+        "Mudança publicada sem commit aprovado, deploy Netlify, versão Apps Script, hash do Plano no Drive ou horário de verificação válidos.",
+      );
+    } else {
+      pass(
+        "CHANGE_RELEASE_RECEIPT",
+        `Mudança ${activeChange.changeId} publicada e verificada com recibos externos.`,
+      );
+    }
+  } else {
+    fail(
+      "CHANGE_STATUS_INVALID",
+      `Estado desconhecido em ${ACTIVE_CHANGE_PATH}: ${changeStatus || "vazio"}.`,
+    );
   }
 
   const version = manifest.bundleVersion;
@@ -240,6 +281,7 @@ export function validateOperationalConsistency({
       "LOCAL_HEAD_DIVERGENCE",
       "DIRTY_WORKTREE",
       "WRONG_BRANCH",
+      "CHANGE_PUBLICATION_PENDING",
     ].includes(item.code),
   );
   return {

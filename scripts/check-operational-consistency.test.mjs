@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -49,6 +54,7 @@ function createFixture() {
   mkdirSync(join(root, "docs"), { recursive: true });
   mkdirSync(join(root, "netlify/functions/lib/bruna-policy"), { recursive: true });
   mkdirSync(join(root, "scripts"), { recursive: true });
+  mkdirSync(join(root, "ops"), { recursive: true });
   writeFileSync(join(root, MANIFEST_FIXTURE_PATH), `${JSON.stringify(manifest, null, 2)}\n`);
   writeFileSync(join(root, "docs/estrategia-abordagem-bruna.md"), manual);
   const releaseRecord = [
@@ -66,6 +72,21 @@ function createFixture() {
   writeFileSync(join(root, ".gitattributes"), "* text=auto eol=lf\n*.zip binary\n");
   writeFileSync(join(root, "scripts/reconcile-local-release.ps1"), "param()\n");
   writeFileSync(join(root, "package.json"), "{}\n");
+  writeFileSync(
+    join(root, "ops/CHANGE-CANDIDATE.json"),
+    `${JSON.stringify({
+      schemaVersion: 1,
+      changeId: "TEST-RELEASE",
+      status: "published_verified",
+      release: {
+        approvedCommit: "4".repeat(40),
+        netlifyDeployId: "d".repeat(24),
+        appsScriptVersion: 135,
+        verifiedAt: "2026-08-30T17:00:00-03:00",
+        drivePlanSha256: "e".repeat(64),
+      },
+    }, null, 2)}\n`,
+  );
   return root;
 }
 
@@ -93,4 +114,23 @@ test("blocks temporary release packages in the repository root", () => {
   const result = validateOperationalConsistency({ root, checkGit: false });
   assert.equal(result.ok, false);
   assert.ok(result.errors.some((item) => item.code === "ROOT_RELEASE_ARTIFACT"));
+});
+
+test("keeps closeout pending while the active change is not published", () => {
+  const root = createFixture();
+  const path = join(root, "ops/CHANGE-CANDIDATE.json");
+  const change = JSON.parse(readFileSync(path, "utf8"));
+  change.status = "tested_local";
+  delete change.release;
+  writeFileSync(path, `${JSON.stringify(change, null, 2)}\n`);
+
+  const result = validateOperationalConsistency({ root, checkGit: false });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.status, "SYNC_PENDING");
+  assert.ok(
+    result.errors.some(
+      (item) => item.code === "CHANGE_PUBLICATION_PENDING",
+    ),
+  );
 });

@@ -95,6 +95,8 @@ Publicar código, habilitar uma flag, executar migração e disparar uma rotina 
 4. Reverter quando qualquer guardrail do recibo for atingido.
 5. Atualizar plano executivo e documentação canônica.
 
+Enquanto `ops/CHANGE-CANDIDATE.json` estiver em `planned`, `implementing_local`, `tested_local` ou `committed`, `npm.cmd run ops:check` deve retornar `SYNC_PENDING`. O fechamento só fica verde depois de registrar `published_verified` com o commit aprovado, o deploy Netlify, a versão Apps Script, a igualdade da projeção do Plano no Drive e o horário da verificação. Assim, uma mudança local ou commitada não pode ser confundida com produção atualizada.
+
 ## 4. Classes de risco
 
 | Risco | Exemplos | Exigência mínima |
@@ -132,5 +134,6 @@ Não declarar “resolvido” enquanto faltar qualquer um destes estados:
 - publicação do commit aprovado;
 - verificação de equivalência;
 - monitoramento e rollback registrados.
+- recibos de Netlify, Apps Script e Plano no Drive registrados em `ops/CHANGE-CANDIDATE.json` quando esses destinos fizerem parte do pacote.
 
 Quando uma etapa não puder ser executada, o estado correto é `pendente` ou `bloqueado`, nunca “pronto”.
