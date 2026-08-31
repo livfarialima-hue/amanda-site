@@ -1,49 +1,34 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-COMPLETE-PATIENT-CONTEXT-2026-08-31",
-  "title": "Ignorar mídia promocional e responder todos os pedidos pendentes da paciente",
-  "status": "published_verified",
-  "baseCommit": "b26062166cd176fbac910afbf00cc8c2bb6f2b8d",
+  "changeId": "BRUNA-IGNORE-SALES-PITCH-FOLLOWUPS-2026-08-31",
+  "title": "Ignorar prospeccao comercial antes de resposta, lead ou retomada",
+  "status": "tested_local",
+  "baseCommit": "8cca58388dcb46bc6721aa0c06634135a521854f",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuário autorizou explicitamente publicar ao finalizar todas as mudanças. O preflight externo vinculou essa autorização ao commit exato 269f9042a87a3a68c14b560be21afd9fe672c840 antes da primeira escrita externa."
+    "note": "O usuario pediu que propagandas como a prospeccao comercial observada sejam ignoradas. Esta autorizacao cobre a correcao local, mas nao uma nova publicacao; qualquer release deve ser autorizado para o HEAD exato em preflight separado."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
       "bruna-conversation-safety",
-      "bruna-conversion-experience",
       "patient-journey-funnel-followups"
     ],
     "files": [
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/ycloud-webhook.mjs",
-      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/scheduled-followup.mjs",
       "netlify/functions/lib/commercial-contact.mjs",
       "netlify/functions/lib/commercial-contact.test.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-action-controller.test.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/conversation-guidelines.test.mjs",
-      "netlify/functions/lib/inbound-burst-context.mjs",
-      "netlify/functions/lib/inbound-burst-context.test.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/human-resume-processor.test.mjs",
+      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "netlify/functions/lib/webhook-intake-observability.test.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
       "netlify/functions/lib/whatsapp-automation.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -51,116 +36,88 @@
   },
   "impact": {
     "consumers": [
-      "detector determinístico de contatos comerciais",
+      "detector deterministico de contatos comerciais",
       "planejamento de respostas do WhatsApp",
       "webhook de entrada da YCloud",
-      "reconstrução do bloco recente ainda sem resposta",
-      "contrato de intenções e seleção entre prévia determinística e redação contextual",
-      "acolhimento automático de fotos",
-      "classificação e retomadas da jornada de pacientes"
+      "retomada protegida apos intervencao humana",
+      "execucao final de retomadas programadas"
     ],
     "preservedInvariants": [
-      "fotos de pacientes com contexto assistencial continuam em revisão humana e preservam o acolhimento seguro já existente",
-      "nenhuma imagem é interpretada clinicamente e nenhum conteúdo de mídia é enviado à IA para visão ou diagnóstico",
-      "agenda, valores e condições aprovados, urgência, takeover, opt-out, deduplicação e limites de retomada mantêm as mesmas travas",
-      "a Bruna responde todos os pedidos seguros do bloco, mas encaminha o conjunto quando uma parte exigir revisão humana",
-      "o bloco não atravessa fala da clínica, dez minutos totais, horário ausente, prefill, propaganda, pausa, recusa ou retorno adiado",
-      "uma resposta institucional parcial fornece fatos aprovados, mas não apaga outro pedido real nem uma resposta significativa da paciente ainda sem acolhimento",
-      "uma nova mensagem pessoal e assistencial posterior encerra a herança do contexto comercial",
-      "contatos comerciais reconhecidos não geram resposta, alerta assistencial, lead nem retomada"
+      "prospeccao comercial reconhecida nao recebe resposta, pergunta, alerta assistencial, lead ou retomada",
+      "uma mensagem assistencial pessoal e explicita continua no fluxo de paciente mesmo quando menciona empresa, vendas, promocao ou WhatsApp",
+      "uma mensagem pessoal mais recente substitui o contexto comercial anterior",
+      "fotos assistenciais continuam em revisao humana e midia promocional continua silenciosa",
+      "agenda, precos, urgencia, takeover, opt-out, deduplicacao, janela de dez minutos e limite de duas retomadas permanecem inalterados",
+      "uma retomada ja preparada e posteriormente invalidada por propaganda falha fechada antes de IA e envio"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Git canônico e endpoint público do bot",
+        "system": "Git canonico e endpoint publico do bot",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-08-31T12:29:42-03:00",
-        "reference": "origin/reestruturacao-site b26062166cd176fbac910afbf00cc8c2bb6f2b8d; endpoint canônico em automationMode=active, Sheets e OpenAI configurados",
-        "check": "leitura somente; nenhuma configuração, planilha, mensagem ou deploy foi alterado"
-      },
-      {
-        "contract": "bruna-conversation-safety",
-        "system": "Git, Netlify e projeções canônicas do Drive",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-08-31T13:21:52-03:00",
-        "reference": "origin/reestruturacao-site b26062166cd176fbac910afbf00cc8c2bb6f2b8d; Netlify site c33facb6-eafc-4635-99d6-068bf8707227 no deploy 6a9552ad8c3abc00083c1237; domínio e URL imutável HTTP 200 em active/bruna-conversion-v1; projeções do Drive nos hashes anteriores esperados",
-        "check": "preflight vivo somente leitura concluído e release:preflight aprovado para o HEAD exato antes do push"
+        "checkedAt": "2026-08-31T16:00:25-03:00",
+        "reference": "origin/reestruturacao-site 8cca58388dcb46bc6721aa0c06634135a521854f; endpoint publico HTTP 200 em automationMode=active e conversionExperience=bruna-conversion-v1",
+        "check": "leitura somente; nenhuma mensagem, planilha, configuracao, Apps Script ou deploy foi alterado"
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
-    "completedAt": "2026-08-31T13:23:20-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-08-31T16:07:47-03:00",
     "commands": [
+      "node --test netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
-      "node --test netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/bruna-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
-      "node --test netlify/functions/lib/ycloud-review-alert.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
-      "node --test netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "npm.cmd run release:preflight -- --approved-commit 269f9042a87a3a68c14b560be21afd9fe672c840 --approved-at 2026-08-31T13:21:52-03:00 --approved-by Daniel --approval-reference user_turn --live-preflight-at 2026-08-31T13:21:52-03:00 --live-preflight-reference canonical_live_baseline",
-      "curl.exe GET e POST sem assinatura no domínio e na URL imutável do deploy",
       "git diff --check"
     ],
     "results": {
-      "focusedTests": "228/228 testes focados do candidato integrado e 306/306 testes do contrato exato de conversão aprovados; o webhook completo preservou a resposta contextual para dois pedidos",
-      "journeyTests": "166/166 testes de Central, funil, classificação, retomadas e detector comercial aprovados",
-      "fullSuite": "1223/1223 testes aprovados",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 23 arquivos exatos no fechamento, incluindo recibos e projeções canônicas",
+      "focusedTests": "108/108 testes dos caminhos de entrada, espera de dez minutos e retomada programada aprovados",
+      "journeyTests": "168/168 testes de Central, funil, classificacao, retomadas e detector comercial aprovados",
+      "fullSuite": "1228/1228 testes aprovados",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 9 arquivos exatos no escopo",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 arquivos, 44 URLs no sitemap e nenhum arquivo de auditoria no artefato",
-      "siteCheck": "44/44 páginas HTTP 200, canônicas, indexáveis e com um H1; zero erros",
-      "opsCheck": "OPS_CHECK_STATUS=OK após commit funcional, deploy verificado, projeções canônicas do Drive e recibos reconciliados",
+      "siteCheck": "44/44 paginas HTTP 200, canonicas, indexaveis e com um H1; zero erros",
+      "opsCheck": "SYNC_PENDING esperado para candidato local ainda nao autorizado nem publicado; producao observada, versao e projecao ativa permanecem alinhadas",
       "diffCheck": "sem erros",
-      "liveBaseline": "commit funcional 269f9042a87a3a68c14b560be21afd9fe672c840 no deploy 6a95aa3f6a986300080f0e5a; domínio e URL imutável HTTP 200 active/bruna-conversion-v1; POST sem assinatura HTTP 401"
+      "liveBaseline": "origin/reestruturacao-site 8cca583 e endpoint publico HTTP 200 em active/bruna-conversion-v1; nenhuma escrita externa"
     },
     "crossConsumerCases": [
-      "a abordagem comercial da clínica hiperbárica é ignorada antes de IA e antes de criação de lead",
-      "a imagem enviada imediatamente depois herda o contexto comercial e permanece sem resposta",
-      "uma imagem com legenda promocional é ignorada pelo webhook completo sem lead, IA, alerta ou resposta",
-      "uma foto precedida por queixa assistencial continua em revisão humana com o acolhimento já aprovado",
-      "uma pessoa que menciona empresa ou promoção, mas pede consulta para si, permanece no fluxo de paciente",
-      "uma mensagem pessoal de paciente mais recente encerra a classificação comercial anterior",
-      "uma promoção antiga fora da janela contextual não contamina uma imagem posterior",
-      "flacidez de papada seguida de pergunta sobre cobrança da avaliação gera uma única resposta que trata os dois assuntos",
-      "cobram a consulta é reconhecido como preço da avaliação e não como pedido de agenda",
-      "a prévia aprovada de R$ 500 não substitui a redação contextual quando há dois pedidos reais",
-      "saudação e ponto de interrogação isolado acompanham o contexto, mas não inflam a contagem de pedidos",
-      "prefill estruturado, propaganda, pausa, fala da clínica, horário ausente e bloco antigo encerram a consolidação"
+      "o texto sintetico equivalente a Sou Daniela da empresa, ajudamos clinicas a vender mais e convite para reuniao e ignorado",
+      "o webhook completo nao chama Sheets, OpenAI, alerta nem YCloud para essa prospeccao",
+      "o resgate atrasado de dez minutos encerra sem IA, alerta ou resposta quando a mensagem pendente e comercial",
+      "o caminho de retomada programada cancela antes da revisao semantica quando a entrada mais recente e comercial",
+      "uma paciente que trabalha em empresa ou clinica e pede avaliacao para si nao e ignorada",
+      "perguntas de paciente sobre WhatsApp, anuncios, valores ou consulta nao sao confundidas com oferta comercial"
     ]
   },
   "release": {
-    "approvedCommit": "269f9042a87a3a68c14b560be21afd9fe672c840",
-    "netlifyDeployId": "6a95aa3f6a986300080f0e5a",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 139,
-    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "dcca94659c9d95d0b61a6253939ef4a2c6e213cf3f145a3953a5d4ccf5a47987",
-    "verifiedAt": "2026-08-31T13:30:45-03:00",
-    "activationState": "active_verified",
-    "notes": "O commit funcional foi publicado por fast-forward no deploy 6a95aa3f6a986300080f0e5a. Domínio e URL imutável reportaram automationMode=active e conversionExperience=bruna-conversion-v1; POST sem assinatura retornou HTTP 401 antes de qualquer efeito. As projeções canônicas do manual e do Plano foram substituídas nos mesmos IDs e relidas por hash. Nenhuma mensagem real foi enviada. Apps Script v139, LEADS, CRM, Calendar, preços e retomadas foram preservados."
+    "verifiedAt": null,
+    "activationState": "not_published",
+    "notes": "Candidato local isolado sobre a producao observada. Apps Script, LEADS, CRM, Calendar, configuracoes e mensagens reais permanecem intocados."
   },
   "rollback": {
-    "local": "reverter exclusivamente os commits funcionais 345d9dd0ea81f66be4966f1118992c8260c276e6 e 269f9042a87a3a68c14b560be21afd9fe672c840",
-    "production": "diante de guardrail violado, restaurar o commit b26062166cd176fbac910afbf00cc8c2bb6f2b8d no deploy 6a9552ad8c3abc00083c1237 sem alterar Apps Script, LEADS ou histórico operacional"
+    "local": "abandonar ou reverter exclusivamente o commit deste candidato",
+    "production": "se futuramente publicado e houver falso positivo em paciente real, restaurar o deploy Netlify anterior vinculado a 8cca583 sem alterar Apps Script, LEADS ou historico operacional"
   },
   "monitoring": {
-    "owner": "Daniel e equipe da Clínica LIV",
-    "window": "24 horas, 72 horas e 7 dias após a publicação",
+    "owner": "Daniel e equipe da Clinica LIV",
+    "window": "24 horas, 72 horas e 7 dias apos eventual publicacao",
     "metrics": [
       "propagandas corretamente ignoradas",
-      "fotos assistenciais preservadas",
       "falso positivo em paciente real",
       "resposta, alerta, lead ou retomada indevida para contato comercial",
-      "pergunta recente da paciente omitida pela resposta automática",
-      "fusão indevida de mensagens antigas, prefills ou propaganda",
-      "regressões em agenda, preço, takeover ou deduplicação"
+      "cancelamento deterministico de retomada invalidada por nova propaganda",
+      "regressoes em agenda, preco, takeover, opt-out ou deduplicacao"
     ],
-    "rollbackRule": "reverter diante de paciente real ignorado por contexto não comercial, propaganda respondida, perda de foto assistencial, pergunta segura omitida, fusão de blocos separados, duplicidade ou qualquer regressão de agenda, preço, takeover ou opt-out"
+    "rollbackRule": "reverter diante de paciente real ignorado, propaganda respondida, retomada comercial enviada ou qualquer regressao de agenda, preco, takeover ou opt-out"
   }
 }

@@ -104,6 +104,68 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
   assert.equal(turns[0].source, "bruna");
 });
 
+test("scheduled follow-up cancels before semantic review when the latest inbound is a sales pitch", async () => {
+  let semanticReviews = 0;
+  let businessNumberReads = 0;
+  let sends = 0;
+  const response = await handleScheduledFollowup(
+    request({
+      ...PAYLOAD,
+      planId: "commercial-context-plan",
+      recentConversation: [
+        ...PAYLOAD.recentConversation,
+        {
+          direction: "IN",
+          at: "2026-08-03T10:00:00-03:00",
+          messageId: "commercial-inbound",
+          text: [
+            "Sou a Daniela, da The Baysse.",
+            "Ajudamos clínicas a venderem mais usando os contatos do WhatsApp.",
+            "Você teria 10 minutos para uma reunião com nosso analista?",
+          ].join(" "),
+        },
+      ],
+    }),
+    {
+      env: {
+        GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+        YCLOUD_API_KEY: "key",
+        WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+        WHATSAPP_AUTOMATION_MODE: "active",
+      },
+      now: new Date("2026-08-03T10:30:00-03:00"),
+      reviewScheduledFollowupContextImpl: async () => {
+        semanticReviews += 1;
+        return {
+          status: "completed",
+          allowed: true,
+          reasonCode: "context_aligned",
+        };
+      },
+      getBusinessNumberImpl: async () => {
+        businessNumberReads += 1;
+        return "+5511961957144";
+      },
+      sendYCloudPatientTextImpl: async () => {
+        sends += 1;
+        return { status: "completed" };
+      },
+    },
+  );
+
+  assert.equal(response.status, 409);
+  assert.deepEqual(await response.json(), {
+    ok: false,
+    sent: false,
+    error: "semantic_context_review_required",
+    semanticReason: "conversation_changed",
+    ignoreReason: "commercial_solicitation_or_partnership",
+  });
+  assert.equal(semanticReviews, 0);
+  assert.equal(businessNumberReads, 0);
+  assert.equal(sends, 0);
+});
+
 test("an old conversation approved by the team uses the configured WhatsApp template", async () => {
   const templateSends = [];
   const turns = [];

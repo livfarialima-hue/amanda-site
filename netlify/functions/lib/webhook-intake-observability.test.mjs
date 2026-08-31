@@ -85,6 +85,83 @@ test("an unsupported YCloud event is ignored with an observable safe log", async
   }
 });
 
+test("a clinic sales pitch is ignored before lead, AI, alert, or patient reply", async () => {
+  const previousSecret = process.env.YCLOUD_WEBHOOK_SECRET;
+  const previousContext = process.env.CONTEXT;
+  const previousConsoleLog = console.log;
+  const previousFetch = globalThis.fetch;
+  const secret = "test-commercial-pitch-secret";
+  const timestamp = "1788213600";
+  const salesPitch = [
+    "Bom dia, Bruna, tudo bem? Sou a Daniela, da The Baysse.",
+    "Ajudamos clínicas a venderem mais usando apenas os contatos que já têm no WhatsApp, sem investir em anúncios.",
+    "Em 2025, geramos R$ 200 mil em vendas para uma cliente com essa estratégia.",
+    "Você teria 10 minutos para uma reunião, hoje, para que nosso analista explique como essa ação funciona?",
+  ].join(" ");
+  const body = JSON.stringify({
+    id: "evt-commercial-sales-pitch",
+    type: "whatsapp.inbound_message.received",
+    whatsappInboundMessage: {
+      id: "wamid-commercial-sales-pitch",
+      from: "+5511900000002",
+      to: "+5511961957144",
+      type: "text",
+      text: { body: salesPitch },
+    },
+  });
+  const signature = createHmac("sha256", secret)
+    .update(`${timestamp}.${body}`)
+    .digest("hex");
+  let fetchCalls = 0;
+
+  process.env.YCLOUD_WEBHOOK_SECRET = secret;
+  process.env.CONTEXT = "production";
+  console.log = () => {};
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error("commercial pitch must not call downstream services");
+  };
+
+  try {
+    const response = await handleYCloudWebhook(
+      new Request("https://example.test/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body,
+      }),
+      {},
+    );
+    const responseBody = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(responseBody.ignored, true);
+    assert.equal(
+      responseBody.ignoreReason,
+      "commercial_solicitation_or_partnership",
+    );
+    assert.equal(responseBody.leadRecorded, false);
+    assert.equal(responseBody.aiShadowQueued, false);
+    assert.equal(responseBody.aiActiveQueued, false);
+    assert.equal(fetchCalls, 0);
+  } finally {
+    globalThis.fetch = previousFetch;
+    console.log = previousConsoleLog;
+    if (previousSecret === undefined) {
+      delete process.env.YCLOUD_WEBHOOK_SECRET;
+    } else {
+      process.env.YCLOUD_WEBHOOK_SECRET = previousSecret;
+    }
+    if (previousContext === undefined) {
+      delete process.env.CONTEXT;
+    } else {
+      process.env.CONTEXT = previousContext;
+    }
+  }
+});
+
 test("a promotional image caption is ignored before lead, AI, alert, or patient reply", async () => {
   const previousSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const previousContext = process.env.CONTEXT;

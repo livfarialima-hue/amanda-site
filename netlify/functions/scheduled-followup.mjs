@@ -9,6 +9,9 @@ import {
   normalizeAutomationMode,
 } from "./lib/automation-mode.mjs";
 import {
+  latestInboundIsCommercialSolicitation,
+} from "./lib/commercial-contact.mjs";
+import {
   renderYCloudFollowupTemplateText,
   sendYCloudPatientFollowupTemplate,
   sendYCloudPatientText,
@@ -223,6 +226,23 @@ export async function handleScheduledFollowup(
 
   if (!payload.planId || !payload.patientPhone || !payload.body) {
     return json({ ok: false, error: "invalid_payload" }, 400);
+  }
+
+  if (
+    latestInboundIsCommercialSolicitation(
+      payload.recentConversation,
+    )
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "semantic_context_review_required",
+        semanticReason: "conversation_changed",
+        ignoreReason: "commercial_solicitation_or_partnership",
+      },
+      409,
+    );
   }
 
   const customerServiceWindowOpen = hasOpenCustomerServiceWindow(

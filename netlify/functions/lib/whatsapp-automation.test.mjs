@@ -989,6 +989,7 @@ test("commercial solicitations are ignored before spending on AI", () => {
     "Aceitam parceria de divulgação por permuta?",
     "Trabalho com gestão e otimização do Perfil da Empresa no Google para ampliar a visibilidade no Google Maps e conquistar clientes de forma orgânica.",
     "Sou a Magda, da Clínica OXY Maia. Agora temos uma Câmara Hiperbárica e uma condição especial de inauguração. Quer que eu envie os valores?",
+    "Sou a Daniela, da The Baysse. Ajudamos clínicas a venderem mais usando os contatos que já têm no WhatsApp. Geramos R$ 200 mil em vendas e você teria 10 minutos para uma reunião com nosso analista?",
   ]) {
     const plan = planAutomation({
       text,

@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   hasRecentCommercialSolicitationContext,
   isCommercialSolicitation,
+  latestInboundIsCommercialSolicitation,
 } from "./commercial-contact.mjs";
 
 test("detects Google Business Profile sales offers without blocking location questions", () => {
@@ -45,6 +46,59 @@ test("detects a healthcare provider promotion without treating patient questions
   ]) {
     assert.equal(isCommercialSolicitation(patientText), false, patientText);
   }
+});
+
+test("detects a clinic sales pitch introduced only by a person and brand name", () => {
+  const salesPitch = [
+    "Bom dia, Bruna, tudo bem? Sou a Daniela, da The Baysse.",
+    "Ajudamos clínicas a venderem mais usando apenas os contatos que já têm no WhatsApp, sem investir em anúncios.",
+    "Em 2025, geramos R$ 200 mil em vendas para uma cliente com essa estratégia.",
+    "Você teria 10 minutos para uma reunião, hoje, para que nosso analista explique como essa ação funciona?",
+  ].join(" ");
+
+  assert.equal(isCommercialSolicitation(salesPitch), true);
+
+  for (const patientText of [
+    "Sou a Daniela, da empresa The Baysse, e quero marcar uma avaliação para mim.",
+    "Trabalho ajudando clínicas a vender mais, mas agora quero consultar com a Dra. Amanda.",
+    "Vi um anúncio no WhatsApp e queria saber o valor da consulta.",
+  ]) {
+    assert.equal(isCommercialSolicitation(patientText), false, patientText);
+  }
+});
+
+test("only the latest substantive inbound turn governs a pending follow-up", () => {
+  const salesPitch =
+    "Sou a Daniela, da The Baysse. Ajudamos clínicas a vender mais e gostaria de marcar uma reunião com nosso analista.";
+  const conversation = [
+    {
+      direction: "IN",
+      text: "Quero saber como funciona a avaliação.",
+    },
+    {
+      direction: "OUT",
+      text: "Posso explicar e depois verificar horários.",
+    },
+    {
+      direction: "IN",
+      text: salesPitch,
+    },
+  ];
+
+  assert.equal(
+    latestInboundIsCommercialSolicitation(conversation),
+    true,
+  );
+  assert.equal(
+    latestInboundIsCommercialSolicitation([
+      ...conversation,
+      {
+        role: "patient",
+        text: "Agora falando como paciente: quero marcar uma avaliação para mim.",
+      },
+    ]),
+    false,
+  );
 });
 
 test("a recent promotional message classifies the following media without contaminating later patient context", () => {

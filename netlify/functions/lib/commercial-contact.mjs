@@ -33,7 +33,15 @@ const SELLER_CALL_TO_ACTION_PATTERN =
 const BUSINESS_OFFER_PATTERN =
   /\b(?:agora\s+)?temos\b.{0,160}\b(?:servico|tratamento|equipamento|solucao|produto|camara|pacote|sessoes?)\b/i;
 const EXPLICIT_PERSONAL_CARE_INTENT_PATTERN =
-  /\b(?:quero|queria|gostaria|preciso|tenho\s+interesse)\b.{0,120}\b(?:marcar|agendar|fazer|realizar|passar\s+por|uma\s+consulta|uma\s+avaliacao|ser\s+avaliad[oa]|me\s+consultar|operar)\b/i;
+  /\b(?:quero|queria|gostaria|preciso|tenho\s+interesse)\b.{0,120}\b(?:marcar|agendar|fazer|realizar|passar\s+por|uma\s+consulta|uma\s+avaliacao|ser\s+avaliad[oa]|me\s+consultar|consultar\s+com|operar)\b/i;
+const SELLER_ORGANIZATION_INTRO_PATTERN =
+  /\b(?:sou|meu\s+nome\s+e)\s+(?:a\s+|o\s+)?[\p{L}\p{M}'’-]{2,40}(?:\s+[\p{L}\p{M}'’-]{2,40}){0,2}\s*,?\s+d[ao]\s+[\p{L}\p{M}\p{N}][^.!?\n]{1,80}/iu;
+const COMMERCIAL_VALUE_PROPOSITION_PATTERN =
+  /\b(?:ajudamos?|apoiamos?)\s+(?:clinicas?|consultorios?|medicos?|profissionais?\s+da\s+saude|empresas?|negocios?)\s+(?:a\s+)?(?:vender(?:em)?|captar|atrair|converter|faturar|aumentar)\b/i;
+const COMMERCIAL_RESULT_PROOF_PATTERN =
+  /\b(?:geramos?|aumentamos?|conseguimos?|entregamos?)\b.{0,100}\b(?:r\$\s*\d|mil\s+reais|vendas?|faturamento|receita|clientes?)\b/i;
+const COMMERCIAL_MEETING_CTA_PATTERN =
+  /\b(?:voce\s+teria|teria|podemos?|posso|gostaria\s+de)\b.{0,90}\b(?:\d{1,2}\s*minutos?|uma\s+reuniao|reuniao|uma\s+conversa|conversa\s+rapida)\b.{0,160}\b(?:analista|estrategia|acao|proposta|servico|solucao|vendas?|explic)/i;
 
 export const COMMERCIAL_MEDIA_CONTEXT_MAX_AGE_MS = 30 * 60 * 1_000;
 
@@ -59,20 +67,69 @@ export function isCommercialSolicitation(value) {
   }
 
   const businessIdentified = BUSINESS_SELF_INTRO_PATTERN.test(normalized);
+  const sellerIdentified =
+    businessIdentified ||
+    SELLER_ORGANIZATION_INTRO_PATTERN.test(normalized);
+  const commercialValueProposition =
+    COMMERCIAL_VALUE_PROPOSITION_PATTERN.test(normalized);
+  const commercialResultProof =
+    COMMERCIAL_RESULT_PROOF_PATTERN.test(normalized);
+  const commercialMeetingCta =
+    COMMERCIAL_MEETING_CTA_PATTERN.test(normalized);
   const promotionalIntent =
     PROMOTIONAL_SIGNAL_PATTERN.test(normalized) ||
     SELLER_CALL_TO_ACTION_PATTERN.test(normalized) ||
-    BUSINESS_OFFER_PATTERN.test(normalized);
+    BUSINESS_OFFER_PATTERN.test(normalized) ||
+    commercialValueProposition ||
+    commercialResultProof ||
+    commercialMeetingCta;
   const explicitBusinessOffer =
     BUSINESS_OFFER_PATTERN.test(normalized) &&
     (PROMOTIONAL_SIGNAL_PATTERN.test(normalized) ||
       SELLER_CALL_TO_ACTION_PATTERN.test(normalized));
   const explicitPersonalCareIntent =
     EXPLICIT_PERSONAL_CARE_INTENT_PATTERN.test(normalized);
+  const unambiguousSalesMeeting = Boolean(
+    commercialMeetingCta &&
+      (
+        commercialValueProposition ||
+        /\bnosso\s+analista\b/i.test(normalized)
+      ),
+  );
 
   return Boolean(
-    !explicitPersonalCareIntent &&
-      ((businessIdentified && promotionalIntent) || explicitBusinessOffer),
+    (!explicitPersonalCareIntent || unambiguousSalesMeeting) &&
+      (
+        (sellerIdentified && promotionalIntent) ||
+        explicitBusinessOffer ||
+        commercialValueProposition ||
+        (commercialResultProof && commercialMeetingCta)
+      ),
+  );
+}
+
+function latestInboundTextTurn(turns) {
+  return (Array.isArray(turns) ? turns : [])
+    .slice()
+    .reverse()
+    .find((turn) => {
+      const direction = String(turn?.direction || "").toUpperCase();
+      const role = String(turn?.role || "").toLowerCase();
+      return Boolean(
+        String(turn?.text || "").trim() &&
+          (
+            direction === "IN" ||
+            ["user", "patient", "paciente"].includes(role)
+          ),
+      );
+    });
+}
+
+export function latestInboundIsCommercialSolicitation(turns) {
+  const latestInbound = latestInboundTextTurn(turns);
+  return Boolean(
+    latestInbound &&
+      isCommercialSolicitation(latestInbound.text),
   );
 }
 
@@ -86,14 +143,7 @@ export function hasRecentCommercialSolicitationContext(
   const referenceAt = new Date(at || Date.now()).getTime();
   if (!Number.isFinite(referenceAt)) return false;
 
-  const latestPatientTurn = (Array.isArray(turns) ? turns : [])
-    .slice()
-    .reverse()
-    .find(
-      (turn) =>
-        turn?.role === "user" &&
-        String(turn?.text || "").trim(),
-    );
+  const latestPatientTurn = latestInboundTextTurn(turns);
   if (!latestPatientTurn) return false;
 
   const turnAt = new Date(latestPatientTurn.at || "").getTime();

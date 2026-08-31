@@ -89,6 +89,7 @@
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/human-resume.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
         "netlify/functions/lib/conversation-action-controller.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
@@ -110,6 +111,7 @@
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/inbound-burst-context.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
         "netlify/functions/lib/conversation-ledger.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/price-holding-webhook.test.mjs",
@@ -184,6 +186,7 @@
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
         "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
+        "netlify/functions/scheduled-followup.mjs",
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "coveredPaths": [
@@ -206,9 +209,11 @@
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
         "netlify/functions/lib/whatsapp-automation.mjs",
-        "netlify/functions/lib/whatsapp-automation.test.mjs"
+        "netlify/functions/lib/whatsapp-automation.test.mjs",
+        "netlify/functions/scheduled-followup.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
@@ -218,6 +223,7 @@
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
         "netlify/functions/lib/whatsapp-automation.test.mjs"
       ],

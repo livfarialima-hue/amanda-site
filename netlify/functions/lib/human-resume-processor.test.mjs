@@ -106,6 +106,57 @@ test("inactive automation reschedules the job without attempting a reply", async
   assert.equal(deps.patientMessages.length, 0);
 });
 
+test("a delayed clinic sales pitch is ignored without AI, alert, or patient reply", async () => {
+  const deps = dependencies();
+  let aiCalls = 0;
+  deps.runOpenAIShadowImpl = async () => {
+    aiCalls += 1;
+    throw new Error("commercial outreach must stop before AI");
+  };
+  const salesPitch = [
+    "Sou a Daniela, da The Baysse.",
+    "Ajudamos clínicas a venderem mais usando os contatos que já têm no WhatsApp.",
+    "Geramos R$ 200 mil em vendas e você teria 10 minutos para uma reunião com nosso analista?",
+  ].join(" ");
+
+  const result = await processHumanResumeJob(
+    job({
+      eventId: "commercial-sales-pitch",
+      text: salesPitch,
+      recentConversation: [
+        {
+          role: "assistant",
+          source: "equipe_humana",
+          text: "Mensagem humana anterior.",
+        },
+        {
+          role: "patient",
+          source: "paciente",
+          text: salesPitch,
+        },
+      ],
+    }),
+    {
+      env: ACTIVE_ENV,
+      now: NOW,
+      ...deps,
+    },
+  );
+
+  assert.deepEqual(result, {
+    status: "no_action",
+    reason: "conversation_closing_or_ignored",
+  });
+  assert.equal(aiCalls, 0);
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.completions.length, 1);
+  assert.equal(
+    deps.completions[0].options.controlStatus,
+    "human_active",
+  );
+});
+
 test("a safe high-confidence answer resumes Bruna without an alert", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
