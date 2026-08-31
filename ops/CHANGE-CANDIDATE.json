@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-COMPLETE-PATIENT-CONTEXT-2026-08-31",
   "title": "Ignorar mídia promocional e responder todos os pedidos pendentes da paciente",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "b26062166cd176fbac910afbf00cc8c2bb6f2b8d",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuário autorizou as correções locais de mídia promocional e cobertura integral dos pedidos recentes, mas não autorizou a publicação deste candidato ampliado no turno atual. Qualquer release continuará vinculado ao HEAD exato em preflight externo separado."
+    "note": "O usuário autorizou explicitamente publicar ao finalizar todas as mudanças. O preflight externo vinculou essa autorização ao commit exato 269f9042a87a3a68c14b560be21afd9fe672c840 antes da primeira escrita externa."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -24,10 +24,13 @@
       "patient-journey-funnel-followups"
     ],
     "files": [
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/ycloud-webhook.mjs",
       "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/commercial-contact.mjs",
       "netlify/functions/lib/commercial-contact.test.mjs",
@@ -74,12 +77,20 @@
         "checkedAt": "2026-08-31T12:29:42-03:00",
         "reference": "origin/reestruturacao-site b26062166cd176fbac910afbf00cc8c2bb6f2b8d; endpoint canônico em automationMode=active, Sheets e OpenAI configurados",
         "check": "leitura somente; nenhuma configuração, planilha, mensagem ou deploy foi alterado"
+      },
+      {
+        "contract": "bruna-conversation-safety",
+        "system": "Git, Netlify e projeções canônicas do Drive",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-08-31T13:21:52-03:00",
+        "reference": "origin/reestruturacao-site b26062166cd176fbac910afbf00cc8c2bb6f2b8d; Netlify site c33facb6-eafc-4635-99d6-068bf8707227 no deploy 6a9552ad8c3abc00083c1237; domínio e URL imutável HTTP 200 em active/bruna-conversion-v1; projeções do Drive nos hashes anteriores esperados",
+        "check": "preflight vivo somente leitura concluído e release:preflight aprovado para o HEAD exato antes do push"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-08-31T13:15:53-03:00",
+    "status": "passed_local_and_live",
+    "completedAt": "2026-08-31T13:23:20-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "node --test netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/bruna-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
@@ -92,19 +103,21 @@
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
+      "npm.cmd run release:preflight -- --approved-commit 269f9042a87a3a68c14b560be21afd9fe672c840 --approved-at 2026-08-31T13:21:52-03:00 --approved-by Daniel --approval-reference user_turn --live-preflight-at 2026-08-31T13:21:52-03:00 --live-preflight-reference canonical_live_baseline",
+      "curl.exe GET e POST sem assinatura no domínio e na URL imutável do deploy",
       "git diff --check"
     ],
     "results": {
       "focusedTests": "228/228 testes focados do candidato integrado e 306/306 testes do contrato exato de conversão aprovados; o webhook completo preservou a resposta contextual para dois pedidos",
       "journeyTests": "166/166 testes de Central, funil, classificação, retomadas e detector comercial aprovados",
       "fullSuite": "1223/1223 testes aprovados",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 20 arquivos exatos no escopo",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 23 arquivos exatos no fechamento, incluindo recibos e projeções canônicas",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 arquivos, 44 URLs no sitemap e nenhum arquivo de auditoria no artefato",
       "siteCheck": "44/44 páginas HTTP 200, canônicas, indexáveis e com um H1; zero erros",
-      "opsCheck": "SYNC_PENDING esperado para candidato local: publicação ainda pendente, manual ainda não projetado no Drive e branch isolada; nenhuma escrita externa foi executada",
+      "opsCheck": "OPS_CHECK_STATUS=OK após commit funcional, deploy verificado, projeções canônicas do Drive e recibos reconciliados",
       "diffCheck": "sem erros",
-      "liveBaseline": "branch canônica b260621 e bot público active; nenhuma escrita externa"
+      "liveBaseline": "commit funcional 269f9042a87a3a68c14b560be21afd9fe672c840 no deploy 6a95aa3f6a986300080f0e5a; domínio e URL imutável HTTP 200 active/bruna-conversion-v1; POST sem assinatura HTTP 401"
     },
     "crossConsumerCases": [
       "a abordagem comercial da clínica hiperbárica é ignorada antes de IA e antes de criação de lead",
@@ -122,20 +135,23 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
-    "appsScriptVersion": null,
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Candidato local isolado em worktree próprio. Nenhuma mensagem real, planilha, configuração, Apps Script ou publicação foi executada."
+    "approvedCommit": "269f9042a87a3a68c14b560be21afd9fe672c840",
+    "netlifyDeployId": "6a95aa3f6a986300080f0e5a",
+    "appsScriptVersion": 139,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "dcca94659c9d95d0b61a6253939ef4a2c6e213cf3f145a3953a5d4ccf5a47987",
+    "verifiedAt": "2026-08-31T13:30:45-03:00",
+    "activationState": "active_verified",
+    "notes": "O commit funcional foi publicado por fast-forward no deploy 6a95aa3f6a986300080f0e5a. Domínio e URL imutável reportaram automationMode=active e conversionExperience=bruna-conversion-v1; POST sem assinatura retornou HTTP 401 antes de qualquer efeito. As projeções canônicas do manual e do Plano foram substituídas nos mesmos IDs e relidas por hash. Nenhuma mensagem real foi enviada. Apps Script v139, LEADS, CRM, Calendar, preços e retomadas foram preservados."
   },
   "rollback": {
-    "local": "abandonar ou reverter exclusivamente o commit deste candidato",
-    "production": "se futuramente publicado e houver falso positivo relevante, restaurar o deploy Netlify anterior vinculado a b260621/67f00a2 sem alterar Apps Script, LEADS ou histórico operacional"
+    "local": "reverter exclusivamente os commits funcionais 345d9dd0ea81f66be4966f1118992c8260c276e6 e 269f9042a87a3a68c14b560be21afd9fe672c840",
+    "production": "diante de guardrail violado, restaurar o commit b26062166cd176fbac910afbf00cc8c2bb6f2b8d no deploy 6a9552ad8c3abc00083c1237 sem alterar Apps Script, LEADS ou histórico operacional"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
-    "window": "24 horas, 72 horas e 7 dias após eventual publicação",
+    "window": "24 horas, 72 horas e 7 dias após a publicação",
     "metrics": [
       "propagandas corretamente ignoradas",
       "fotos assistenciais preservadas",

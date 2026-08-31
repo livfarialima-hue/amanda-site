@@ -1,5 +1,14 @@
 # Histórico do pacote Bruna
 
+## 2026-08-31.2 — publicada e verificada
+
+- Até oito falas consecutivas da paciente ainda sem resposta são recompostas em um único bloco, limitado a dez minutos totais, antes de replanejar e redigir.
+- Cada pedido seguro do bloco precisa ser atendido; uma prévia determinística parcial fornece os fatos aprovados, mas não pode apagar outra dúvida nem uma resposta significativa da paciente.
+- `Cobram a consulta` é reconhecido como preço da avaliação, e cada linha continua sendo verificada separadamente para que qualquer pedido real de agenda mantenha a rota protegida.
+- Saudações e `?` isolado não inflam a contagem. Fala da clínica, horário ausente, prefill, propaganda, pausa, recusa e retorno adiado encerram a recomposição.
+- Abordagens comerciais e mídia promocional associada são ignoradas antes de IA, alerta, lead e retomada; fotos assistenciais continuam na revisão humana existente.
+- Estado desta versão: código funcional `269f9042a87a3a68c14b560be21afd9fe672c840`, deploy Netlify `6a95aa3f6a986300080f0e5a`, 228/228 testes focados, 306/306 do contrato de conversão, 166/166 da jornada e 1223/1223 integrais. Domínio e URL imutável responderam HTTP 200 em `active`/`bruna-conversion-v1`; POST sem assinatura retornou HTTP 401 e nenhuma mensagem real foi enviada. Apps Script v139 foi preservado. Rollback: `b26062166cd176fbac910afbf00cc8c2bb6f2b8d` e `6a9552ad8c3abc00083c1237`.
+
 ## 2026-08-31.1 — publicada, ativada e verificada
 
 - A experiência `bruna-conversion-v1` torna as aberturas mais contextualizadas, concisas e específicas, inclusive para procedimentos de menor procura, sem mudar fatos clínicos, preços ou propriedade da agenda.
