@@ -101,10 +101,10 @@
     "appsScriptVersion": 139,
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "246323251f087b9480326df09edebb1b47c569aeced8a14cad6cdaebaac9c93d",
-    "verifiedAt": "2026-08-30T23:55:21-03:00",
+    "drivePlanSha256": "809e06b4f5865e752059ac669080d6983effcde54fff6486fb4886f8e3c2d203",
+    "verifiedAt": "2026-08-31T00:32:42-03:00",
     "activationState": "active_verified",
-    "notes": "Apps Script v139, agregado v2, duas filas de ajustes sem linhas ativas, dois recibos duráveis sem PII, Netlify e página cervical verificados. Foram publicadas exatamente 12 negativas CERV de frase; FACE foi preservada porque houve 1 contato válido/qualificado. A fila de classificação terminou com 213 done e zero pending, running ou dead_letter. Nenhuma mensagem real foi enviada. A calibração somente leitura do script 12117745 continua dependente da conta proprietária, sem remover ou recriar sua programação."
+    "notes": "Apps Script v139, agregado v2, duas filas de ajustes sem linhas ativas, dois recibos duráveis sem PII, Netlify e página cervical verificados. Foram publicadas exatamente 12 negativas CERV de frase; FACE foi preservada porque houve 1 contato válido/qualificado. A fila de classificação terminou com 213 done e zero pending, running ou dead_letter. A proprietária publicou a versão atual da rotina somente leitura no script 12117745; o código vivo coincidiu com o repositório no SHA-256 normalizado 31c79e957f58664317da92960ced718957ff4813fa37d785479495fc5fd346d7. A prévia concluiu em 22 segundos, mostrou Sem alterações, enviou o relatório semanal, registrou 23/23 fontes OK, zero alertas críticos e nenhuma limitação adicional. A programação diária 09:00–10:00 foi preservada. Nenhuma mensagem real para paciente foi enviada e nenhuma entidade de campanha foi alterada."
   },
   "rollback": {
     "local": "reverter somente o commit candidato e o recibo de fechamento desta mudança, preservando trabalho paralelo fora do escopo declarado",

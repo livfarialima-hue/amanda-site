@@ -579,15 +579,15 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 
 ### 22 de agosto de 2026 — calibração das recomendações semanais do Google Ads
 
-- **Status:** diagnóstico e código local concluídos; publicação do script pendente da proprietária.
+- **Status:** publicada e verificada em 31/08/2026.
 - **Área:** rotina somente leitura `12117745` e triagem do e-mail semanal de 17/08; nenhuma mudança de orçamento, lance, meta, site ou WhatsApp.
-- **Mudança local:** o commit `ee5df71` consolidou variações de preço por campanha/grupo, preservou seis negativas de roteamento confirmadas ao vivo, manteve acionável o autobloqueio cervical por `"lipoaspiração de papada"`, passou a validar metas personalizadas e corrigiu duas consultas que retornavam `N/D`. O e-mail agora declara truncamento.
+- **Mudança:** o commit `ee5df71` consolidou variações de preço por campanha/grupo, preservou seis negativas de roteamento confirmadas ao vivo, manteve acionável o autobloqueio cervical por `"lipoaspiração de papada"`, passou a validar metas personalizadas e corrigiu duas consultas que retornavam `N/D`. A versão viva atual também inclui o suporte ao agregado v2 incorporado depois dessa calibração. O e-mail agora declara truncamento.
 - **Motivo e evidência:** o assunto contava 100 sugestões, mas o corpo mostrava 50; 39 das 40 linhas visíveis em `Aguardar dados` eram o mesmo problema de preço em BLEF. O alerta de seis campanhas com `biddable=false` ignorava que todas exibem `Lead qualificado GCLID — campanhas (personalizada)`. Seis das sete negativas P0 eram roteamentos intencionais; somente a negativa cervical conflita com o próprio `AG_LIPO_PAPADA`.
-- **Validação:** `18/18` testes locais; zero chamada de mutação no script. A sessão `daniel.added@gmail.com` não pôde salvar porque a programação pertence a `aschroeder.br@gmail.com`; a programação ativa foi preservada e a publicação foi agendada para 24/08 08:30.
+- **Validação:** a versão final passou em `19/19` testes locais. A proprietária `aschroeder.br@gmail.com` salvou o script `12117745` às 00:25 de 31/08; a releitura coincidiu com o repositório no SHA-256 normalizado `31c79e957f58664317da92960ced718957ff4813fa37d785479495fc5fd346d7`. A prévia das 00:27 concluiu em 22 segundos, mostrou `Sem alterações`, enviou o relatório a `daniel.added@gmail.com`, registrou zero alertas críticos, 23/23 fontes `OK` e nenhuma limitação técnica adicional. Nome, proprietário e programação diária `09:00–10:00` foram preservados; nenhuma entidade de campanha foi modificada.
 - **Hipótese:** reduzir falsos P0 e duplicação fará o relatório concentrar a revisão humana em problemas técnicos distintos, sem esconder linguagem legítima nem confundir meta personalizada com configuração inativa.
 - **Métrica principal:** proporção de alertas acionáveis e fontes `OK`/`N/D`; secundariamente, cobertura canônica e passagem de qualificado para consulta.
 - **Guardrails:** rotina somente leitura; nenhuma recomendação aplicada automaticamente; orçamento total R$ 87/dia; site e `S_BR_SP_LIFTING_FACIAL` inalterados; remoção da negativa cervical somente de forma isolada e reversível.
-- **Revisão:** publicação/prévia em 24/08; saúde em 27/08; janelas completas em 30/08 e 06/09; gate OTO em 03/09 não encerra teste inexistente.
+- **Revisão:** acompanhar a primeira execução programada posterior à publicação e repetir a leitura de 14 dias completos em 06/09; o gate OTO em 03/09 não encerra teste inexistente.
 - **Regra para manter:** manter a calibração se a prévia e os relatórios distinguirem corretamente meta personalizada, roteamento, intenção de preço e `N/D`, sem perder alertas reais.
 - **Regra para reverter:** restaurar a versão anterior do script se a execução falhar ou omitir uma fonte real; não remover a programação existente como atalho de publicação.
 
