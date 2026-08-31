@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-08-31.3 — publicada e verificada
+
+- Prospecções B2B passam a ser reconhecidas por sinais combinados de alta precisão: apresentação em nome de marca, oferta para aumentar vendas ou captar pacientes, prova de resultado comercial e convite para reunião, demonstração ou analista.
+- O webhook encerra esses contatos antes de Sheets, IA, alerta assistencial, lead e YCloud; a retomada protegida após fala humana aplica a mesma trava antes de IA, alerta ou resposta.
+- Uma retomada programada é invalidada antes da revisão semântica e do envio quando a entrada mais recente se torna comercial; o contrato terminal já existente cancela o plano sem ampliar o Apps Script.
+- Pedido pessoal e assistencial explícito continua no fluxo mesmo com vocabulário comercial, e uma mensagem pessoal posterior reabre normalmente a conversa.
+- Estado desta versão: código funcional `1db16a54dcb4f306044aa6c07f447279a5e757f1`, deploy Netlify `6a95d4fa98cabc00088849a9`, 108/108 testes focados, 168/168 da jornada e 1228/1228 integrais. Domínio e URL imutável responderam HTTP 200 em `active`/`bruna-conversion-v1`; POST sem assinatura retornou HTTP 401 e nenhuma mensagem real foi enviada. Apps Script v139 foi preservado. Rollback: `8cca58388dcb46bc6721aa0c06634135a521854f` e `6a95ac8f4cd10f0009d9280e`.
+
 ## 2026-08-31.2 — publicada e verificada
 
 - Até oito falas consecutivas da paciente ainda sem resposta são recompostas em um único bloco, limitado a dez minutos totais, antes de replanejar e redigir.

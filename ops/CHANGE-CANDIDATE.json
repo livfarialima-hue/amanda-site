@@ -2,30 +2,36 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-IGNORE-SALES-PITCH-FOLLOWUPS-2026-08-31",
   "title": "Ignorar prospeccao comercial antes de resposta, lead ou retomada",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "8cca58388dcb46bc6721aa0c06634135a521854f",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario pediu que propagandas como a prospeccao comercial observada sejam ignoradas. Esta autorizacao cobre a correcao local, mas nao uma nova publicacao; qualquer release deve ser autorizado para o HEAD exato em preflight separado."
+    "note": "O usuario autorizou explicitamente publicar. O preflight externo vinculou essa autorizacao ao commit exato 1db16a54dcb4f306044aa6c07f447279a5e757f1 antes da primeira escrita externa."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
       "change-governance",
       "bruna-conversation-safety",
+      "bruna-conversion-experience",
       "patient-journey-funnel-followups"
     ],
     "files": [
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/scheduled-followup.mjs",
       "netlify/functions/lib/commercial-contact.mjs",
       "netlify/functions/lib/commercial-contact.test.mjs",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/human-resume-processor.test.mjs",
       "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "netlify/functions/lib/webhook-intake-observability.test.mjs",
@@ -58,34 +64,48 @@
         "checkedAt": "2026-08-31T16:00:25-03:00",
         "reference": "origin/reestruturacao-site 8cca58388dcb46bc6721aa0c06634135a521854f; endpoint publico HTTP 200 em automationMode=active e conversionExperience=bruna-conversion-v1",
         "check": "leitura somente; nenhuma mensagem, planilha, configuracao, Apps Script ou deploy foi alterado"
+      },
+      {
+        "contract": "bruna-conversation-safety",
+        "system": "Git, Netlify e projecoes canonicas do Drive",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-08-31T16:24:16-03:00",
+        "reference": "origin/reestruturacao-site 8cca58388dcb46bc6721aa0c06634135a521854f; endpoint publico HTTP 200 em active/bruna-conversion-v1; projecoes do Drive nos hashes anteriores esperados",
+        "check": "preflight vivo somente leitura concluido e release:preflight aprovado para o HEAD exato antes do push"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-08-31T16:07:47-03:00",
+    "status": "passed_local_and_live",
+    "completedAt": "2026-08-31T16:32:56-03:00",
     "commands": [
       "node --test netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
+      "npm.cmd run release:preflight -- --approved-commit 1db16a54dcb4f306044aa6c07f447279a5e757f1 --approved-at 2026-08-31T16:24:07-03:00 --approved-by Daniel --approval-reference user_turn_pode_publicar --live-preflight-at 2026-08-31T16:24:16-03:00 --live-preflight-reference canonical_webhook_http_200_active",
+      "GET e POST sem assinatura no dominio e na URL imutavel do deploy",
+      "releitura por hash das mesmas projecoes canonicas do manual e do Plano no Drive",
       "git diff --check"
     ],
     "results": {
       "focusedTests": "108/108 testes dos caminhos de entrada, espera de dez minutos e retomada programada aprovados",
+      "conversionTests": "307/307 testes do contrato de experiencia de conversao aprovados",
       "journeyTests": "168/168 testes de Central, funil, classificacao, retomadas e detector comercial aprovados",
       "fullSuite": "1228/1228 testes aprovados",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 9 arquivos exatos no escopo",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 14 arquivos exatos no fechamento funcional e documental",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 arquivos, 44 URLs no sitemap e nenhum arquivo de auditoria no artefato",
       "siteCheck": "44/44 paginas HTTP 200, canonicas, indexaveis e com um H1; zero erros",
-      "opsCheck": "SYNC_PENDING esperado para candidato local ainda nao autorizado nem publicado; producao observada, versao e projecao ativa permanecem alinhadas",
+      "opsCheck": "OPS_CHECK_STATUS=OK apos commit funcional, deploy verificado, projecoes canonicas do Drive e recibos reconciliados",
       "diffCheck": "sem erros",
-      "liveBaseline": "origin/reestruturacao-site 8cca583 e endpoint publico HTTP 200 em active/bruna-conversion-v1; nenhuma escrita externa"
+      "liveBaseline": "commit funcional 1db16a54dcb4f306044aa6c07f447279a5e757f1 no deploy 6a95d4fa98cabc00088849a9; dominio e URL imutavel HTTP 200 em active/bruna-conversion-v1; POST sem assinatura HTTP 401",
+      "driveProjection": "manual 797de5f7df28740ff7262e260b09dc9f649fd7a2a30d2c1727eb1d34a8af3914 e Plano 7f437bb6b760ab242a3f0fbc335029734daaf5cd5c4bea92d8bc0831ab47272b relidos byte a byte nos mesmos IDs"
     },
     "crossConsumerCases": [
       "o texto sintetico equivalente a Sou Daniela da empresa, ajudamos clinicas a vender mais e convite para reuniao e ignorado",
@@ -97,20 +117,23 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "1db16a54dcb4f306044aa6c07f447279a5e757f1",
+    "netlifyDeployId": "6a95d4fa98cabc00088849a9",
     "appsScriptVersion": 139,
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Candidato local isolado sobre a producao observada. Apps Script, LEADS, CRM, Calendar, configuracoes e mensagens reais permanecem intocados."
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "7f437bb6b760ab242a3f0fbc335029734daaf5cd5c4bea92d8bc0831ab47272b",
+    "verifiedAt": "2026-08-31T16:32:56-03:00",
+    "activationState": "active_verified",
+    "notes": "O commit funcional foi publicado por fast-forward no deploy 6a95d4fa98cabc00088849a9. Dominio e URL imutavel reportaram automationMode=active e conversionExperience=bruna-conversion-v1; POST sem assinatura retornou HTTP 401 antes de qualquer efeito. As projecoes canonicas do manual e do Plano foram substituidas nos mesmos IDs e relidas por hash. Nenhuma mensagem real foi enviada. Apps Script v139, LEADS, CRM, Calendar, agenda, precos, takeover, opt-out e limite de retomadas foram preservados."
   },
   "rollback": {
-    "local": "abandonar ou reverter exclusivamente o commit deste candidato",
-    "production": "se futuramente publicado e houver falso positivo em paciente real, restaurar o deploy Netlify anterior vinculado a 8cca583 sem alterar Apps Script, LEADS ou historico operacional"
+    "local": "reverter exclusivamente o commit funcional 1db16a54dcb4f306044aa6c07f447279a5e757f1",
+    "production": "diante de paciente real ignorado ou propaganda respondida, restaurar o commit 8cca58388dcb46bc6721aa0c06634135a521854f no deploy 6a95ac8f4cd10f0009d9280e sem alterar Apps Script, LEADS ou historico operacional"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "24 horas, 72 horas e 7 dias apos eventual publicacao",
+    "window": "24 horas, 72 horas e 7 dias apos a publicacao",
     "metrics": [
       "propagandas corretamente ignoradas",
       "falso positivo em paciente real",
