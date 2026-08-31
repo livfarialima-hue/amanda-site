@@ -1,7 +1,7 @@
 # Registro versionado de códigos de atribuição
 
-Versão do contrato: `v1`
-Data de vigência documental: 15/08/2026
+Versão do contrato: `v2`
+Data de vigência documental: 30/08/2026
 Fonte estratégica: `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 Fonte operacional Google: `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`
 
@@ -31,6 +31,20 @@ Este registro impede que códigos históricos sejam reinterpretados como uma ori
 | `G26ADS` | fallback técnico quando há click ID Google e `_camp` ausente | `google_ads` | fallback parcial; não identifica campanha |
 
 Os nove grupos `{_ag}` permanecem definidos no guia operacional. Grupo vazio não deve ser reconstruído a partir da página.
+
+## Aliases históricos Google Ads com resolução determinística
+
+Os valores abaixo foram lidos ao vivo como sobrescritas de `_camp` nos anúncios e removidos em 22/08/2026. A correspondência é exata, está apoiada pelo inventário externo registrado naquela execução e serve somente para recuperar a dimensão histórica da campanha. Ela não transforma o alias em código canônico nem autoriza reescrever a referência bruta.
+
+| Alias histórico | Campanha resolvida | Status de resolução | Evidência externa |
+|---|---|---|---|
+| `G26F00` | `S_BR_SP_CIRURGIA_FACIAL` | `legacy_alias_resolved` | anúncio FACE deixou de sobrescrever o código canônico em 22/08/2026 |
+| `G26F01` | `S_BR_SP_LIFTING_FACIAL` | `legacy_alias_resolved` | dois anúncios LIFT deixaram de sobrescrever o código canônico em 22/08/2026 |
+| `G26F02` | `S_BR_SP_LIFTING_CERVICAL` | `legacy_alias_resolved` | dois anúncios CERV deixaram de sobrescrever o código canônico em 22/08/2026 |
+| `G26F03` | `S_BR_SP_BLEFAROPLASTIA` | `legacy_alias_resolved` | anúncio BLEF deixou de sobrescrever o código canônico em 22/08/2026 |
+| `G26B01` | `S_BR_SP_MARCA` | `legacy_alias_resolved` | anúncio MARCA deixou de sobrescrever o código canônico em 22/08/2026 |
+
+O agregado deve contabilizar `canonical` e `legacy_alias_resolved` em colunas distintas. A cobertura resolvida pode somar as duas para medir quanto do histórico tem campanha conhecida, mas a saúde da captura recente continua exigindo código canônico. `BF01`, `LC01`, `LPP01`, `OT01`, `OT02`, `G26ADS` e qualquer outro valor não listado não recebem campanha por aproximação.
 
 ## Campanhas canônicas Meta
 
@@ -64,7 +78,7 @@ Cada resolução deve manter:
 - `raw_reference` imutável;
 - `normalized_reference`;
 - `resolved_campaign_code`, quando houver correspondência determinística;
-- `resolution_status`: `canonical`, `fallback_partial`, `context_only`, `unknown` ou `conflict`;
+- `resolution_status`: `canonical`, `legacy_alias_resolved`, `fallback_partial`, `context_only`, `unknown` ou `conflict`;
 - `registry_version`;
 - `confidence`;
 - `resolution_reason`;
@@ -84,11 +98,11 @@ Para incluir ou mudar um código:
 5. publicar uma nova versão sem reescrever a evidência bruta;
 6. medir conflitos e reverter a resolução nova se surgir qualquer falsa correspondência.
 
-## Registro operacional — 22/08/2026
+## Registro operacional — 22/08/2026 e resolução histórica em 30/08/2026
 
 - Campanha: `S_BR_SP_LIFTING_FACIAL`.
 - Código canônico preservado: `G26LIFT`.
 - Evidência ao vivo: o sufixo da campanha e o parâmetro de campanha já estavam corretos, mas os dois anúncios ativos sobrescreviam `_camp=g26f01`.
 - Correção: ambos os anúncios ativos passaram a usar `_camp=G26LIFT`.
-- Limite histórico: `g26f01` permanece como evidência bruta dos cliques anteriores; não houve backfill nem reinterpretação por procedimento, página ou data.
+- Limite histórico: `g26f01` permanece como evidência bruta dos cliques anteriores. Em 30/08/2026, a correspondência exata passou a resolver somente a dimensão histórica `legacy_alias_resolved`, sem backfill da célula bruta, sem promovê-la a captura canônica e sem usar procedimento, página, pessoa ou data para decidir.
 - Verificação: exatamente dois anúncios ativos foram relidos com `G26LIFT`; nenhuma outra campanha ou referência foi alterada.

@@ -23,6 +23,15 @@
     'transport_type'
   ];
   var marketingPrefillTemplateId = 'procedure_evaluation_v1';
+  var cervicalCtaLabels = {
+    header: 'Conversar sobre avaliação',
+    hero: 'Conversar sobre a avaliação',
+    consultation: 'Conversar sobre a avaliação',
+    final: 'Conversar com a equipe',
+    footer: 'Conversar com a equipe',
+    sticky: 'Conversar sobre a avaliação',
+    video: 'Conversar sobre a avaliação'
+  };
   var procedureLabels = {
     'abdominoplastia': 'abdominoplastia',
     'avaliacao-facial': 'avaliação facial',
@@ -64,6 +73,13 @@
       return 'Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
     }
     return neutralPrefillMessage(link);
+  }
+
+  function alignCervicalCtaLabel(link) {
+    var procedure = String(link.dataset.procedure || '').trim().toLowerCase();
+    if (procedure !== 'lifting-cervical') return;
+    var location = String(link.dataset.ctaLocation || '').trim().toLowerCase();
+    link.textContent = cervicalCtaLabels[location] || 'Conversar sobre a avaliação';
   }
 
   function googleMeasurementAvailable() {
@@ -707,6 +723,7 @@
 
   function updateWhatsAppLink(link, attribution) {
     if (!link.matches('a[data-track="whatsapp"]')) return;
+    alignCervicalCtaLabel(link);
     try {
       var url = new URL(link.href, window.location.href);
       var message = url.searchParams.get('text');

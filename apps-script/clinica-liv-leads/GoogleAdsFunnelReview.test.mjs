@@ -38,7 +38,8 @@ test("o agregado contém somente dimensões e contagens anônimas", () => {
   assert.equal(total7[9], 1);
   assert.equal(total7[13], 1);
   assert.equal(total7[14], 1);
-  assert.equal(total7[15], 1);
+  assert.equal(total7[15], 0);
+  assert.equal(total7[16], 1);
   const serialized = JSON.stringify(rows);
   assert.equal(serialized.includes("opp_sintetica"), false);
   assert.equal(serialized.includes("evt_sintetico"), false);
@@ -68,11 +69,47 @@ test("ignora marco de fechamento explicitamente invalidado", () => {
   assert.equal(total7[13], 0);
 });
 
-test("alias legado não é inventado como campanha canônica", () => {
-  const resolve = load("resolverCampanhaGoogleAds_");
-  assert.equal(resolve("G26BLEF"), "S_BR_SP_BLEFAROPLASTIA");
-  assert.equal(resolve("G26F03"), null);
-  assert.equal(resolve("BF01"), null);
+test("alias legado documentado é resolvido sem ser contado como código canônico", () => {
+  const resolve = load("resolverAtribuicaoCampanhaGoogleAds_");
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(resolve("G26BLEF"))),
+    {
+      campaign: "S_BR_SP_BLEFAROPLASTIA",
+      kind: "canonical",
+      code: "G26BLEF",
+    },
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(resolve("G26F03"))),
+    {
+      campaign: "S_BR_SP_BLEFAROPLASTIA",
+      kind: "legacy_alias_resolved",
+      code: "G26F03",
+    },
+  );
+  assert.equal(resolve("BF01").campaign, null);
+  assert.equal(resolve("BF01").kind, "unknown");
+});
+
+test("o agregado separa alias histórico, código canônico e código ambíguo", () => {
+  const build = load("construirAgregadosFunilGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_1", "amanda", "open", "Novo", new Date("2026-08-14T12:00:00Z"), "Google", "G26BLEF"],
+    ["opp_2", "amanda", "open", "Novo", new Date("2026-08-14T12:00:00Z"), "Google", "G26F03"],
+    ["opp_3", "amanda", "open", "Novo", new Date("2026-08-14T12:00:00Z"), "Google", "BF01"],
+  ], [], new Date("2026-08-15T15:00:00Z"));
+  const total7 = rows.find((row) => row[2] === 7 && row[5] === "__TOTAL__");
+  const blef7 = rows.find((row) => row[2] === 7 && row[5] === "S_BR_SP_BLEFAROPLASTIA");
+
+  assert.equal(total7[0], "google_ads_funnel_aggregate_v2");
+  assert.equal(total7[14], 1);
+  assert.equal(total7[15], 1);
+  assert.equal(total7[16], 1);
+  assert.equal(blef7[6], 2);
+  assert.equal(blef7[14], 1);
+  assert.equal(blef7[15], 1);
+  assert.equal(blef7[16], 0);
 });
 
 test("arquivo não envia e-mail nem contém campos de PII", () => {

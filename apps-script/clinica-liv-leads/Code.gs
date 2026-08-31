@@ -13,6 +13,7 @@ const CONFIG = Object.freeze({
   googleAdsEventSheetName: "_GOOGLE_ADS_EVENTOS",
   googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
   googleAdsAdjustmentSheetName: "AJUSTES_GOOGLE_ADS",
+  googleAdsAdjustmentReceiptSheetName: "_GOOGLE_ADS_AJUSTE_RECIBOS",
   googleAdsAdjustmentSpreadsheetId: "1hTZJKQOh1QEkKwQMBbdVRSiFwWsqjfOfUK-bDmkuqbU",
   googleAdsCustomerId: "9953344486",
   googleAdsTransactionSecretProperty: "GOOGLE_ADS_TRANSACTION_HMAC_SECRET",

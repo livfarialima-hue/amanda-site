@@ -18,6 +18,17 @@ const GOOGLE_ADS_CAMPAIGN_REGISTRY = Object.freeze({
   G26OTO: "S_BR_SP_OTOPLASTIA",
 });
 
+// Aliases removidos dos anúncios em 22/08/2026 após inspeção ao vivo da
+// sobrescrita de parâmetros. Eles são resolvidos apenas para atribuição
+// histórica e continuam separados dos códigos canônicos na métrica de saúde.
+const GOOGLE_ADS_LEGACY_CAMPAIGN_ALIAS_REGISTRY = Object.freeze({
+  G26F00: "S_BR_SP_CIRURGIA_FACIAL",
+  G26F01: "S_BR_SP_LIFTING_FACIAL",
+  G26F02: "S_BR_SP_LIFTING_CERVICAL",
+  G26F03: "S_BR_SP_BLEFAROPLASTIA",
+  G26B01: "S_BR_SP_MARCA",
+});
+
 const GOOGLE_ADS_FUNNEL_AGGREGATE_HEADERS = Object.freeze([
   "schema_version",
   "generated_at",
@@ -34,6 +45,7 @@ const GOOGLE_ADS_FUNNEL_AGGREGATE_HEADERS = Object.freeze([
   "patient_converted",
   "procedure_closed_milestone",
   "canonical_campaign_attribution",
+  "legacy_alias_resolved_attribution",
   "unknown_campaign_attribution",
   "source_rows",
   "definition_note",
@@ -154,14 +166,24 @@ function construirAgregadosFunilGoogleAds_(sourceValues, milestoneValues, now) {
       const contactDate = dataGoogleAds_(row[indexes["Data do contato"]]);
       if (!contactDate || contactDate < start || contactDate >= endExclusive) return;
 
-      const campaign = resolverCampanhaGoogleAds_(row[indexes.Campanha]);
+      const attribution = resolverAtribuicaoCampanhaGoogleAds_(
+        row[indexes.Campanha],
+      );
+      const campaign = attribution.campaign;
       const bucketName = campaign || "__UNKNOWN_CAMPAIGN__";
       if (!buckets.has(bucketName)) buckets.set(bucketName, novoBucketFunilGoogleAds_());
       const opportunityId = String(row[indexes["Opportunity ID"]] || "").trim();
       const phase = normalizarTextoAgregadoGoogleAds_(row[indexes.Fase]);
       const state = normalizarTextoAgregadoGoogleAds_(row[indexes.Estado]);
       [buckets.get("__TOTAL__"), buckets.get(bucketName)].forEach((bucket) => {
-        acumularLinhaFunilGoogleAds_(bucket, phase, state, campaign, opportunityId, closedOpportunityIds);
+        acumularLinhaFunilGoogleAds_(
+          bucket,
+          phase,
+          state,
+          attribution,
+          opportunityId,
+          closedOpportunityIds,
+        );
       });
     });
 
@@ -169,7 +191,7 @@ function construirAgregadosFunilGoogleAds_(sourceValues, milestoneValues, now) {
       .sort((left, right) => left[0].localeCompare(right[0]))
       .forEach(([campaign, bucket]) => {
         results.push([
-          "google_ads_funnel_aggregate_v1",
+          "google_ads_funnel_aggregate_v2",
           generatedAt,
           windowDays,
           formatarDiaGoogleAds_(start),
@@ -184,9 +206,10 @@ function construirAgregadosFunilGoogleAds_(sourceValues, milestoneValues, now) {
           bucket.converted,
           bucket.closed,
           bucket.canonical,
+          bucket.legacyAlias,
           bucket.unknown,
           sourceRows,
-          "Coorte por data do contato; fases refletem o estado atual. Contato válido = classificado e não marcado como não qualificado. Procedimento fechado = somente marco canônico registrado; ausência de marco não prova ausência real.",
+          "Coorte por data do contato; fases refletem o estado atual. Contato válido = classificado e não marcado como não qualificado. Aliases históricos resolvidos permanecem separados da captura canônica. Procedimento fechado = somente marco canônico registrado; ausência de marco não prova ausência real.",
         ]);
       });
   });
@@ -220,15 +243,33 @@ function linhaGoogleAds_(row, indexes) {
 }
 
 function resolverCampanhaGoogleAds_(value) {
+  return resolverAtribuicaoCampanhaGoogleAds_(value).campaign;
+}
+
+function resolverAtribuicaoCampanhaGoogleAds_(value) {
   const code = String(value || "").trim().toUpperCase();
-  return GOOGLE_ADS_CAMPAIGN_REGISTRY[code] || null;
+  if (GOOGLE_ADS_CAMPAIGN_REGISTRY[code]) {
+    return {
+      campaign: GOOGLE_ADS_CAMPAIGN_REGISTRY[code],
+      kind: "canonical",
+      code,
+    };
+  }
+  if (GOOGLE_ADS_LEGACY_CAMPAIGN_ALIAS_REGISTRY[code]) {
+    return {
+      campaign: GOOGLE_ADS_LEGACY_CAMPAIGN_ALIAS_REGISTRY[code],
+      kind: "legacy_alias_resolved",
+      code,
+    };
+  }
+  return { campaign: null, kind: "unknown", code };
 }
 
 function novoBucketFunilGoogleAds_() {
-  return { contacts: 0, classified: 0, valid: 0, qualified: 0, scheduled: 0, completed: 0, converted: 0, closed: 0, canonical: 0, unknown: 0 };
+  return { contacts: 0, classified: 0, valid: 0, qualified: 0, scheduled: 0, completed: 0, converted: 0, closed: 0, canonical: 0, legacyAlias: 0, unknown: 0 };
 }
 
-function acumularLinhaFunilGoogleAds_(bucket, phase, state, campaign, opportunityId, closedIds) {
+function acumularLinhaFunilGoogleAds_(bucket, phase, state, attribution, opportunityId, closedIds) {
   bucket.contacts += 1;
   if (phase && phase !== "novo") bucket.classified += 1;
   if (phase && phase !== "novo" && phase !== "nao qualificado") bucket.valid += 1;
@@ -238,7 +279,8 @@ function acumularLinhaFunilGoogleAds_(bucket, phase, state, campaign, opportunit
   if (rank >= 3) bucket.completed += 1;
   if (rank >= 4) bucket.converted += 1;
   if (opportunityId && closedIds.has(opportunityId)) bucket.closed += 1;
-  if (campaign) bucket.canonical += 1;
+  if (attribution.kind === "canonical") bucket.canonical += 1;
+  else if (attribution.kind === "legacy_alias_resolved") bucket.legacyAlias += 1;
   else bucket.unknown += 1;
   if (["closed", "voided", "encerrada"].includes(state) && rank < 1) {
     // O registro continua contado como contato; não é promovido no funil.

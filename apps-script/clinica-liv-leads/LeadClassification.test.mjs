@@ -94,6 +94,9 @@ function loadFunctions() {
       "motivoVinculoVisivelGoogleAds_, motivoVinculoLedgerGoogleAds_, " +
       "invalidarConversoesGoogleAdsOportunidade_, " +
       "googleAdsQualificationMilestone_, GOOGLE_ADS_ADJUSTMENT_HEADERS, " +
+      "GOOGLE_ADS_ADJUSTMENT_RECEIPT_HEADERS, " +
+      "ensureGoogleAdsRetractionRow_, googleAdsAdjustmentReceiptRecorded_, " +
+      "googleAdsAdjustmentRowsThroughCutoff_, " +
       "reativarGoogleAdsMilestoneExistente_, " +
       "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
     sandbox,
@@ -108,6 +111,73 @@ test("Google Ads import preserves the mapped conversion value header", () => {
   const { GOOGLE_ADS_IMPORT_HEADERS } = loadFunctions();
 
   assert.equal(GOOGLE_ADS_IMPORT_HEADERS[6], "Valor (R$)");
+});
+
+test("confirmed adjustment receipts permanently suppress re-projection", () => {
+  const {
+    ensureGoogleAdsRetractionRow_,
+    googleAdsAdjustmentReceiptRecorded_,
+    GOOGLE_ADS_ADJUSTMENT_RECEIPT_HEADERS,
+  } = loadFunctions();
+  const transactionId = `LIV-QL-v1-${"R".repeat(43)}`;
+  const receiptSheet = {
+    getLastRow: () => 2,
+    getRange(row, column) {
+      assert.equal(row, 2);
+      assert.equal(column, 1);
+      return {
+        createTextFinder(search) {
+          assert.equal(search, transactionId);
+          return {
+            matchEntireCell() { return this; },
+            findNext() { return { getRow: () => 2 }; },
+          };
+        },
+      };
+    },
+  };
+  const spreadsheet = {
+    getSheetByName(name) {
+      if (name === "_GOOGLE_ADS_AJUSTE_RECIBOS") return receiptSheet;
+      throw new Error(`active queue should not be touched after receipt: ${name}`);
+    },
+  };
+
+  assert.equal(GOOGLE_ADS_ADJUSTMENT_RECEIPT_HEADERS.length, 10);
+  assert.equal(
+    googleAdsAdjustmentReceiptRecorded_(spreadsheet, transactionId),
+    true,
+  );
+  assert.equal(
+    ensureGoogleAdsRetractionRow_(spreadsheet, {
+      transactionId,
+      conversionName: "Lead qualificado GCLID",
+      adjustmentAt: new Date("2026-08-23T12:00:00-03:00"),
+    }),
+    false,
+  );
+});
+
+test("receipt reconciliation selects only safe confirmed historical retractions", () => {
+  const { googleAdsAdjustmentRowsThroughCutoff_, GOOGLE_ADS_ADJUSTMENT_HEADERS } =
+    loadFunctions();
+  const oldId = `LIV-QL-v1-${"A".repeat(43)}`;
+  const futureId = `LIV-QL-v1-${"B".repeat(43)}`;
+  const rows = [
+    Array.from(GOOGLE_ADS_ADJUSTMENT_HEADERS),
+    [oldId, "Lead qualificado GCLID", "2026-08-22 06:00:00-0300", "RETRACT", "", ""],
+    [futureId, "Lead qualificado GCLID", "2026-08-23 06:00:00-0300", "RETRACT", "", ""],
+    ["unsafe-id", "Lead qualificado GCLID", "2026-08-20 06:00:00-0300", "RETRACT", "", ""],
+    [`LIV-QL-v1-${"C".repeat(43)}`, "Lead qualificado GCLID", "2026-08-20 06:00:00-0300", "RESTATEMENT", "", ""],
+  ];
+  const selected = googleAdsAdjustmentRowsThroughCutoff_(
+    rows,
+    "2026-08-22 23:59:59-0300",
+  );
+
+  assert.equal(selected.length, 1);
+  assert.equal(selected[0].transactionId, oldId);
+  assert.equal(selected[0].rowNumber, 2);
 });
 
 test("audited false positives invalidate the ledger and leave the import queue", () => {

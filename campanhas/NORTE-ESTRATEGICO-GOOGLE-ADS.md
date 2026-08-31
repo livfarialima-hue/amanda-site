@@ -663,3 +663,25 @@ A decisão responde a um sinal de aprendizado ainda escasso e recentemente recon
 **Regra para escalar:** considerar aumento de orçamento somente depois de termos, anúncios, páginas, atribuição e passagem para consulta estarem estáveis, com procura qualificada adicional e capacidade disponível.
 
 **Regra para reverter:** voltar ao estado anterior se houver tráfego irrelevante, piora material de qualidade ou custo, perda de atribuição, duplicidade ou saturação operacional. Voltar a Maximizar conversões somente com histórico limpo e aceito de conversões qualificadas suficiente para sustentar o aprendizado, nunca apenas por recomendação automática da plataforma.
+
+## 19. Decisão vigente de 30/08/2026 — qualidade e mensuração antes de escala
+
+A leitura integral dos relatórios de 31/07 a 29/08 confirmou que o problema cervical não é ausência de procura. Existem buscas explícitas por cervicoplastia, lifting de pescoço, cirurgia do pescoço e lipo de papada; o gargalo combina experiência/continuidade, captura histórica fragmentada e uma parcela de tráfego inequivocamente não cirúrgico. A conta somou 1.650 cliques, 27.231 impressões e R$ 2.450,35 no período, mas os desfechos de negócio ainda não estão reconciliados o bastante para aumentar orçamento ou trocar lances.
+
+Decisão vigente:
+
+- preservar os seis orçamentos, o total de R$ 87/dia, Maximizar cliques e as metas atuais;
+- encerrar a repetição das duas retrações cujo upload foi confirmado pelo Google como `Essa conversão não existe`, mantendo recibo técnico durável e sem PII;
+- resolver os aliases históricos exatos documentados em 22/08 numa dimensão separada, sem reescrever a captura bruta e sem tratar alias como código canônico recente;
+- excluir em CERV somente intenções explicitamente não cirúrgicas, como enzimas e buscas sem corte/sem cirurgia, preservando linguagem leiga sobre flacidez, papada, preço e avaliação;
+- pausar somente a frase genérica de FACE `cirurgiã plástica em são paulo` quando o agregado v2 confirmar zero contato válido após a amostra superior a 30 cliques; manter as exatas e frases faciais específicas;
+- alinhar página e primeira resposta cervical a uma conversa de avaliação: uma pergunta aberta, sem diagnóstico, lista de opções ou salto para agenda;
+- não alterar BLEF, OTO, LIFT ou MARCA apenas porque a interface mostra conversões de plataforma ou pontuação de otimização.
+
+**Métrica principal:** contato Google válido, lead qualificado, consulta agendada/realizada e custo por essas etapas. Cobertura canônica e por alias, termos, CTR, CPC e posição servem como diagnóstico.
+
+**Revisão:** saúde em 24 horas; primeira leitura em 06/09/2026; decisão em 13/09/2026. Não combinar aumento de orçamento, mudança de lance ou novo RSA dentro dessa janela.
+
+**Manter:** recibos idempotentes, zero reprojeção das linhas arquivadas, cobertura resolvida sem falsa atribuição, queda de buscas incompatíveis e manutenção ou melhora do fluxo válido.
+
+**Reverter:** restaurar Apps Script anterior, retirar a negativa específica ou reativar a palavra pausada se surgir falsa atribuição, perda de evento válido, queda material de contato útil ou bloqueio de intenção cirúrgica aderente.

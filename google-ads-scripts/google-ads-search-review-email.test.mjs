@@ -246,3 +246,41 @@ test("e-mail declara quando uma seção foi truncada", () => {
   const context = { week: { start: "2026-08-10", end: "2026-08-16" } };
   assert.equal(buildEmail(report, context).includes("exibindo 40; 1 omitida(s)"), true);
 });
+
+test("funil soma aliases documentados na cobertura e alerta captura recente", () => {
+  const addFunnelSuggestions = loadFunction("addFunnelSuggestions");
+  const suggestions = [];
+  addFunnelSuggestions(suggestions, {
+    thirtyDayCampaigns: [{ cost: 500, clicks: 100, impressions: 1000 }],
+    funnelAggregates: [
+      {
+        windowDays: 7,
+        campaign: "__TOTAL__",
+        contacts: 7,
+        canonicalAttribution: 2,
+        legacyAliasAttribution: 4,
+      },
+      {
+        windowDays: 30,
+        campaign: "__TOTAL__",
+        contacts: 10,
+        validContacts: 4,
+        qualified: 2,
+        scheduled: 0,
+        completed: 0,
+        canonicalAttribution: 4,
+        legacyAliasAttribution: 4,
+      },
+    ],
+  });
+
+  assert.equal(
+    suggestions.some((row) => row.problem.includes("menos de 80%")),
+    false,
+  );
+  const aliasAlert = suggestions.find((row) =>
+    row.problem === "Alias legado ainda aparece em contatos recentes");
+  assert.ok(aliasAlert);
+  assert.match(aliasAlert.evidence, /4 contato\(s\)/);
+  assert.match(aliasAlert.evidence, /2 canônicos/);
+});

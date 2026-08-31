@@ -172,7 +172,9 @@ export function buildMarketingPrefilledOpeningReply({
     : "Posso te orientar.";
   const question = introduceBruna && !hasUsableName
     ? "Como posso te chamar?"
-    : "O que você gostaria de entender primeiro?";
+    : procedure === "lifting_cervical"
+      ? "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?"
+      : "O que você gostaria de entender primeiro?";
 
   return `${introduction} ${context} ${question}`;
 }

@@ -552,6 +552,7 @@ test("M26C02S carries the cervical campaign, creative, landing and CTA to WhatsA
   );
   assert.match(message, /Ref\. M26C02S-C07H01-lifting-cervical/);
   assert.match(message, /JID: J1_[A-Za-z0-9_-]{22}/);
+  assert.equal(link.textContent, "Conversar sobre a avaliação");
   assert.equal(envelope.first_touch.origin, "Meta Ads");
   assert.equal(envelope.first_touch.campaign_code, "M26C02S");
   assert.equal(envelope.first_touch.creative_code, "C07H01");

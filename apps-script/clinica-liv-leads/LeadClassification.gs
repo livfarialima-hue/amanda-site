@@ -106,6 +106,22 @@ const GOOGLE_ADS_ADJUSTMENT_HEADERS = Object.freeze([
   "Adjusted Value Currency",
 ]);
 
+const GOOGLE_ADS_ADJUSTMENT_RECEIPT_HEADERS = Object.freeze([
+  ...GOOGLE_ADS_ADJUSTMENT_HEADERS,
+  "Receipt Status",
+  "Receipt Detail",
+  "Confirmed At",
+  "Confirmed By",
+]);
+
+const GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT = Object.freeze({
+  status: "confirmed_not_found",
+  detail: "Essa conversão não existe",
+  confirmedBy: "google_ads_upload_history_2026-08-22",
+  cutoff: "2026-08-22 23:59:59-0300",
+  confirmation: "ARCHIVE_CONFIRMED_NOT_FOUND_GOOGLE_ADS_ADJUSTMENTS_V1",
+});
+
 const GOOGLE_ADS_TRANSACTION_ID_PATTERN =
   /^LIV-QL-v1-[A-Za-z0-9_-]{43}$/;
 const GOOGLE_ADS_QUARANTINE_STATE = "quarantined_legacy";
@@ -527,11 +543,6 @@ function ensureGoogleAdsImportRow_(spreadsheet, details) {
 }
 
 function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
-  const sheet = getOrCreateLeadAuxiliarySheet_(
-    spreadsheet,
-    CONFIG.googleAdsAdjustmentSheetName,
-    GOOGLE_ADS_ADJUSTMENT_HEADERS,
-  );
   const transactionId = String(details.transactionId || "").trim();
   const conversionName = String(details.conversionName || "").trim();
   if (!googleAdsTransactionIdSeguro_(transactionId)) {
@@ -540,6 +551,14 @@ function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
   if (conversionName !== CONFIG.qualifiedConversionName) {
     throw new Error("invalid_google_ads_adjustment_conversion_name");
   }
+  if (googleAdsAdjustmentReceiptRecorded_(spreadsheet, transactionId)) {
+    return false;
+  }
+  const sheet = getOrCreateLeadAuxiliarySheet_(
+    spreadsheet,
+    CONFIG.googleAdsAdjustmentSheetName,
+    GOOGLE_ADS_ADJUSTMENT_HEADERS,
+  );
   const row = [
     transactionId,
     conversionName,
@@ -558,6 +577,188 @@ function ensureGoogleAdsRetractionRow_(spreadsheet, details) {
   sheet.showSheet();
   const projectionAdded = ensureGoogleAdsRetractionProjectionRow_(row);
   return added || projectionAdded;
+}
+
+function googleAdsAdjustmentReceiptRecorded_(spreadsheet, transactionId) {
+  const sheet = spreadsheet && spreadsheet.getSheetByName
+    ? spreadsheet.getSheetByName(CONFIG.googleAdsAdjustmentReceiptSheetName)
+    : null;
+  return Boolean(findGoogleAdsEventRow_(sheet, String(transactionId || "").trim()));
+}
+
+function googleAdsAdjustmentRowsThroughCutoff_(values, cutoff) {
+  const rows = Array.isArray(values) ? values : [];
+  const cutoffValue = String(cutoff || "").trim();
+  if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}[+-]\d{4}$/.test(cutoffValue)) {
+    throw new Error("invalid_google_ads_adjustment_receipt_cutoff");
+  }
+  return rows.slice(1).reduce(function selectEligible(selected, row, index) {
+    const transactionId = String(row[0] || "").trim();
+    const conversionName = String(row[1] || "").trim();
+    const adjustmentTime = String(row[2] || "").trim();
+    const adjustmentType = String(row[3] || "").trim().toUpperCase();
+    if (
+      googleAdsTransactionIdSeguro_(transactionId) &&
+      conversionName === CONFIG.qualifiedConversionName &&
+      adjustmentType === "RETRACT" &&
+      /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}[+-]\d{4}$/.test(adjustmentTime) &&
+      adjustmentTime <= cutoffValue
+    ) {
+      selected.push({
+        rowNumber: index + 2,
+        transactionId,
+        values: row.slice(0, GOOGLE_ADS_ADJUSTMENT_HEADERS.length),
+      });
+    }
+    return selected;
+  }, []);
+}
+
+function googleAdsAdjustmentSheetValues_(sheet) {
+  if (!sheet) throw new Error("missing_google_ads_adjustment_sheet");
+  const lastRow = Math.max(Number(sheet.getLastRow() || 0), 1);
+  return sheet
+    .getRange(1, 1, lastRow, GOOGLE_ADS_ADJUSTMENT_HEADERS.length)
+    .getDisplayValues();
+}
+
+function validateGoogleAdsAdjustmentHeaders_(values, label) {
+  const headers = Array.isArray(values) && values.length ? values[0] : [];
+  const exact = GOOGLE_ADS_ADJUSTMENT_HEADERS.every(function exactHeader(value, index) {
+    return String(headers[index] || "").trim() === value;
+  });
+  if (!exact) {
+    throw new Error("invalid_google_ads_adjustment_headers:" + String(label || "unknown"));
+  }
+}
+
+function googleAdsAdjustmentProjectionSheet_() {
+  const spreadsheetId = String(CONFIG.googleAdsAdjustmentSpreadsheetId || "").trim();
+  if (!spreadsheetId) throw new Error("missing_google_ads_adjustment_projection_id");
+  const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  const sheets = spreadsheet.getSheets();
+  const sheet = sheets && sheets[0];
+  if (!sheet) throw new Error("missing_google_ads_adjustment_projection_sheet");
+  return sheet;
+}
+
+function deleteGoogleAdsAdjustmentRows_(sheet, transactionIds) {
+  const ids = transactionIds && typeof transactionIds.has === "function"
+    ? transactionIds
+    : new Set();
+  if (!sheet || sheet.getLastRow() < 2 || ids.size === 0) return 0;
+  const values = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, 1)
+    .getDisplayValues();
+  let deleted = 0;
+  for (let index = values.length - 1; index >= 0; index -= 1) {
+    if (!ids.has(String(values[index][0] || "").trim())) continue;
+    sheet.deleteRow(index + 2);
+    deleted += 1;
+  }
+  return deleted;
+}
+
+function reconcileGoogleAdsAdjustmentNotFoundReceipts_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const apply = input.apply === true;
+  if (
+    apply &&
+    input.confirmation !== GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.confirmation
+  ) {
+    throw new Error("google_ads_adjustment_receipt_confirmation_required");
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const activeSheet = obterPlanilhaGoogleAdsExistente_(
+    spreadsheet,
+    CONFIG.googleAdsAdjustmentSheetName,
+    GOOGLE_ADS_ADJUSTMENT_HEADERS,
+  );
+  const projectionSheet = googleAdsAdjustmentProjectionSheet_();
+  const activeValues = googleAdsAdjustmentSheetValues_(activeSheet);
+  const projectionValues = googleAdsAdjustmentSheetValues_(projectionSheet);
+  validateGoogleAdsAdjustmentHeaders_(activeValues, "canonical");
+  validateGoogleAdsAdjustmentHeaders_(projectionValues, "projection");
+
+  const candidates = googleAdsAdjustmentRowsThroughCutoff_(
+    activeValues,
+    GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.cutoff,
+  );
+  const projectionIds = new Set(
+    projectionValues.slice(1).map(function projectionTransaction(row) {
+      return String(row[0] || "").trim();
+    }).filter(Boolean),
+  );
+  const missingProjection = candidates
+    .map(function candidateId(candidate) { return candidate.transactionId; })
+    .filter(function absentFromProjection(transactionId) {
+      return !projectionIds.has(transactionId);
+    });
+  const result = {
+    ok: missingProjection.length === 0,
+    applied: false,
+    cutoff: GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.cutoff,
+    candidates: candidates.length,
+    missingProjection,
+    receiptsAdded: 0,
+    canonicalRowsRemoved: 0,
+    projectionRowsRemoved: 0,
+    containsPii: false,
+  };
+  if (!result.ok || !apply || candidates.length === 0) return result;
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    throw new Error("google_ads_adjustment_receipt_lock_timeout");
+  }
+  try {
+    const receiptSheet = getOrCreateLeadAuxiliarySheet_(
+      spreadsheet,
+      CONFIG.googleAdsAdjustmentReceiptSheetName,
+      GOOGLE_ADS_ADJUSTMENT_RECEIPT_HEADERS,
+    );
+    const transactionIds = new Set();
+    candidates.forEach(function archiveConfirmedNotFound(candidate) {
+      transactionIds.add(candidate.transactionId);
+      if (googleAdsAdjustmentReceiptRecorded_(spreadsheet, candidate.transactionId)) return;
+      receiptSheet.appendRow(candidate.values.concat([
+        GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.status,
+        GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.detail,
+        googleConversionTimestamp_(new Date()),
+        GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.confirmedBy,
+      ]));
+      result.receiptsAdded += 1;
+    });
+    result.canonicalRowsRemoved = deleteGoogleAdsAdjustmentRows_(
+      activeSheet,
+      transactionIds,
+    );
+    result.projectionRowsRemoved = deleteGoogleAdsAdjustmentRows_(
+      projectionSheet,
+      transactionIds,
+    );
+    SpreadsheetApp.flush();
+    result.applied = true;
+    return result;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function diagnosticarRecibosAjustesGoogleAdsNaoEncontrados() {
+  const result = reconcileGoogleAdsAdjustmentNotFoundReceipts_({ apply: false });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function aplicarRecibosAjustesGoogleAdsNaoEncontradosConfirmados() {
+  const result = reconcileGoogleAdsAdjustmentNotFoundReceipts_({
+    apply: true,
+    confirmation: GOOGLE_ADS_ADJUSTMENT_NOT_FOUND_RECEIPT.confirmation,
+  });
+  console.log(JSON.stringify(result));
+  return result;
 }
 
 function ensureGoogleAdsRetractionProjectionRow_(row) {

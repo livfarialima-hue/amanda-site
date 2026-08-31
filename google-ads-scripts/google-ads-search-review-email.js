@@ -428,6 +428,7 @@ function readFunnelAggregates(warnings, context) {
       converted: nullableNumber(row[headers.indexOf("patient_converted")]),
       procedureClosed: nullableNumber(row[indexes.procedure_closed_milestone]),
       canonicalAttribution: nullableNumber(row[headers.indexOf("canonical_campaign_attribution")]),
+      legacyAliasAttribution: nullableNumber(row[headers.indexOf("legacy_alias_resolved_attribution")]),
       unknownAttribution: nullableNumber(row[headers.indexOf("unknown_campaign_attribution")]),
     })).filter((row) => [7, 30, 90].includes(row.windowDays));
     const newest = rows.reduce((max, row) => Math.max(max, parseDateTime(row.generatedAt)), 0);
@@ -1450,21 +1451,38 @@ function addTimeSuggestions(suggestions, rows) {
 function addFunnelSuggestions(suggestions, data) {
   const total30 = (data.funnelAggregates || []).find((row) => row.windowDays === 30 && row.campaign === "__TOTAL__");
   if (!total30) return;
+  const total7 = (data.funnelAggregates || []).find((row) => row.windowDays === 7 && row.campaign === "__TOTAL__");
   const account30 = sumCampaignMetrics(data.thirtyDayCampaigns || []);
-  const coverage = safeRatio(total30.canonicalAttribution, total30.contacts);
+  const resolvedAttribution = Number(total30.canonicalAttribution || 0) + Number(total30.legacyAliasAttribution || 0);
+  const coverage = safeRatio(resolvedAttribution, total30.contacts);
   if (coverage !== null && coverage < 0.8) {
     suggestions.push({
       priority: "P0",
       decision: "Corrigir agora",
       area: "Atribuição Google → LEADS",
-      problem: "Campanha canônica conhecida em menos de 80% dos contatos Google",
-      evidence: `${integer(total30.canonicalAttribution)} de ${integer(total30.contacts)} contatos com campanha canônica; cobertura ${percent(coverage)}.`,
-      change: "Corrigir captura/códigos sem reinterpretar aliases legados; manter desconhecido como N/D.",
+      problem: "Campanha conhecida em menos de 80% dos contatos Google",
+      evidence: `${integer(resolvedAttribution)} de ${integer(total30.contacts)} contatos com campanha resolvida: ${integer(total30.canonicalAttribution)} canônicos e ${integer(total30.legacyAliasAttribution)} aliases históricos documentados; cobertura ${percent(coverage)}.`,
+      change: "Corrigir captura/códigos; resolver somente aliases do registro versionado e manter qualquer outro código como N/D.",
       guardrail: "Não usar página, procedimento ou nome do paciente para inventar campanha.",
       confidence: "alta",
-      minimum: "gate técnico de 80% de cobertura canônica",
+      minimum: "gate técnico de 80% de cobertura resolvida",
       metric: "cobertura de campanha e divergência LEADS/CRM",
       rollback: "reverter o resolvedor se surgir falsa atribuição",
+    });
+  }
+  if (total7 && Number(total7.legacyAliasAttribution || 0) > 0) {
+    suggestions.push({
+      priority: "P1",
+      decision: "Corrigir agora",
+      area: "Captura recente Google → LEADS",
+      problem: "Alias legado ainda aparece em contatos recentes",
+      evidence: `${integer(total7.legacyAliasAttribution)} contato(s) dos últimos 7 dias foram resolvidos por alias legado, separados dos ${integer(total7.canonicalAttribution)} canônicos.`,
+      change: "Inspecionar parâmetros remanescentes em anúncio, asset, sitelink e first touch; preservar a resolução histórica, mas exigir código canônico nas novas entradas.",
+      guardrail: "Não apagar first touch válido nem reatribuir código fora do registro versionado.",
+      confidence: "alta",
+      minimum: "zero alias novo após a janela de persistência e correção dos parâmetros",
+      metric: "aliases legados por data do contato",
+      rollback: "restaurar apenas o parâmetro comprovadamente necessário se a cobertura cair",
     });
   }
   const costPerQualified = safeCost(account30.cost, total30.qualified);
@@ -1695,7 +1713,8 @@ function buildHtmlEmail(report, context) {
   const funnelRows = report.funnelAggregates.filter((row) => row.windowDays === 30).map((row) => {
     const campaign = row.campaign === "__TOTAL__" ? "Conta" : row.campaign === "__UNKNOWN_CAMPAIGN__" ? "Campanha N/D" : row.campaign;
     const media = row.campaign === "__TOTAL__" ? thirtyTotals : report.thirtyDayCampaigns.find((item) => item.campaign === row.campaign);
-    return `<tr><td>${html(campaign)}</td><td>${integer(row.contacts)}</td><td>${integer(row.validContacts)}</td><td>${integer(row.qualified)}</td><td>${integer(row.scheduled)}</td><td>${integer(row.completed)}</td><td>${integer(row.procedureClosed)}</td><td>${percent(safeRatio(row.canonicalAttribution,row.contacts))}</td><td>${brl(media ? safeCost(media.cost,row.qualified) : null)}</td><td>${brl(media ? safeCost(media.cost,row.scheduled) : null)}</td></tr>`;
+    const resolvedAttribution = Number(row.canonicalAttribution || 0) + Number(row.legacyAliasAttribution || 0);
+    return `<tr><td>${html(campaign)}</td><td>${integer(row.contacts)}</td><td>${integer(row.validContacts)}</td><td>${integer(row.qualified)}</td><td>${integer(row.scheduled)}</td><td>${integer(row.completed)}</td><td>${integer(row.procedureClosed)}</td><td>${integer(row.canonicalAttribution)}</td><td>${integer(row.legacyAliasAttribution)}</td><td>${percent(safeRatio(resolvedAttribution,row.contacts))}</td><td>${brl(media ? safeCost(media.cost,row.qualified) : null)}</td><td>${brl(media ? safeCost(media.cost,row.scheduled) : null)}</td></tr>`;
   }).join("");
 
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#1f2937;line-height:1.45">
@@ -1716,7 +1735,7 @@ function buildHtmlEmail(report, context) {
     <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Campanha</th><th>Impr.</th><th>Cliques</th><th>CTR</th><th>CPC</th><th>Gasto</th><th>Conversões</th><th>IS</th><th>Perda orçamento</th><th>Perda rank</th></tr>${campaignRows || "<tr><td colspan='10'>N/D</td></tr>"}</table>
     <h2>Funil anônimo da LEADS — coorte de 30 dias</h2>
     <p>O arquivo agregado não contém nome, telefone, mensagem, click ID ou Opportunity ID. Fases refletem o estado atual da coorte. N/D nunca é convertido em zero.</p>
-    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Campanha</th><th>Contatos</th><th>Válidos classificados</th><th>Qualificados+</th><th>Agendados+</th><th>Realizados+</th><th>Fechamento por marco</th><th>Cobertura campanha</th><th>Custo/qualificado</th><th>Custo/agendado</th></tr>${funnelRows || "<tr><td colspan='10'>N/D — fonte indisponível; não interpretar como zero.</td></tr>"}</table>
+    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Campanha</th><th>Contatos</th><th>Válidos classificados</th><th>Qualificados+</th><th>Agendados+</th><th>Realizados+</th><th>Fechamento por marco</th><th>Código canônico</th><th>Alias legado</th><th>Cobertura resolvida</th><th>Custo/qualificado</th><th>Custo/agendado</th></tr>${funnelRows || "<tr><td colspan='12'>N/D — fonte indisponível; não interpretar como zero.</td></tr>"}</table>
     <h2>Saúde das fontes</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse"><tr><th>Fonte</th><th>Status</th></tr>${sourceRows}</table>
     ${monthlyBlock}
     <h2>Limitações e N/D</h2>${warningRows}

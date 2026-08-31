@@ -219,9 +219,10 @@ test("uses the patient-recognized cervical name without treating the prefill as 
     reply,
     "Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre cervicoplastia (lifting cervical). " +
-      "O que você gostaria de entender primeiro?",
+      "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?",
   );
   assert.doesNotMatch(reply, /agenda|agendar|horário|manhã|tarde/i);
+  assert.doesNotMatch(reply, /gordura|pele|músculo|indica[cç][aã]o/i);
 });
 
 test("answers the procedure and asks the name when the profile identifier is not usable", () => {
@@ -282,7 +283,7 @@ test("a clear personal name with a trailing emoji personalizes the lifting prefi
     reply,
     "Olá, Mariza! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre cervicoplastia (lifting cervical). " +
-      "O que você gostaria de entender primeiro?",
+      "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?",
   );
   assert.doesNotMatch(reply, /Como posso te chamar\?/i);
   assert.doesNotMatch(reply, /🥰/u);
