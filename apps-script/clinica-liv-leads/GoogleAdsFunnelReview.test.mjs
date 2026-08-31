@@ -55,6 +55,19 @@ test("tolera o cabeçalho histórico com mojibake sem aceitar campo arbitrário"
   assert.equal(total7[8], 0);
 });
 
+test("ignora marco de fechamento explicitamente invalidado", () => {
+  const build = load("construirAgregadosFunilGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_sintetica_1", "amanda", "open", "Consulta realizada", new Date("2026-08-14T12:00:00Z"), "Google", "G26BLEF"],
+  ], [
+    ["Event ID", "Opportunity ID", "Marco", "Estado"],
+    ["evt_sintetico", "opp_sintetica_1", "payment_confirmed", "voided"],
+  ], new Date("2026-08-15T15:00:00Z"));
+  const total7 = rows.find((row) => row[2] === 7 && row[5] === "__TOTAL__");
+  assert.equal(total7[13], 0);
+});
+
 test("alias legado não é inventado como campanha canônica", () => {
   const resolve = load("resolverCampanhaGoogleAds_");
   assert.equal(resolve("G26BLEF"), "S_BR_SP_BLEFAROPLASTIA");

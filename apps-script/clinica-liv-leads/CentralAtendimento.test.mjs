@@ -651,6 +651,109 @@ test("old commercial commitments are downgraded to silent exclusion review", () 
   assert.doesNotMatch(items[0].context, /seguir por aqui/i);
 });
 
+test("sales portals and digital-presence pitches are treated as non-patient contacts", () => {
+  const context = loadContext();
+
+  assert.equal(
+    context.mensagemComercialNaoPacienteCentral_(
+      "Sou fundador do Cliagenda. Temos paciente buscando esse procedimento e gostaria de enviar a página de agendamento.",
+    ),
+    true,
+  );
+  assert.equal(
+    context.mensagemComercialNaoPacienteCentral_(
+      "Analisei a presença digital da clínica e percebi pontos que dificultam a chegada de novos pacientes pelo Google.",
+    ),
+    true,
+  );
+  assert.equal(
+    context.mensagemComercialNaoPacienteCentral_(
+      "Encontrei a Dra. Amanda no Google e quero marcar uma consulta.",
+    ),
+    false,
+  );
+});
+
+test("an unresolved human commitment never fabricates a ready-to-send answer", () => {
+  const context = loadContext();
+  const phone = "+5511999990001";
+  const createdAt = new Date("2026-08-29T14:20:00-03:00");
+  const row = [
+    "evt-review",
+    phone,
+    "human_review",
+    "Revisar a solicitação e responder pelo WhatsApp.",
+    "Amanda/equipe",
+    createdAt,
+    new Date("2026-08-29T18:20:00-03:00"),
+    "Pendente",
+    "",
+    "WhatsApp — revisão humana",
+  ];
+  const sheet = {
+    getLastRow: () => 2,
+    getRange: () => ({ getValues: () => [row] }),
+  };
+
+  const items = context.carregarCompromissosCentral_(
+    { getSheetByName: () => sheet },
+    new Date("2026-08-30T12:00:00-03:00"),
+    {},
+    {},
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].suggestion, "");
+  assert.doesNotMatch(items[0].context, /já conferimos/i);
+});
+
+test("registered history does not hide a newly eligible follow-up", () => {
+  const context = loadContext();
+  const oldPhone = "+5511999990001";
+  const newPhone = "+5511999990002";
+  const registered = context.criarItemCentral_({
+    queue: "Cancelado recentemente",
+    phone: oldPhone,
+    status: "Cancelado",
+    source: "Retomada de marketing",
+  });
+
+  context.carregarRetomadasRegistradasCentral_ = () => [registered];
+  context.criarCandidatoRetomada_ = (phone) =>
+    phone === newPhone
+      ? {
+          telefone: newPhone,
+          lead: { status: "Qualificado", resumo: "Interesse em avaliação." },
+          ultimoContato: new Date("2026-08-29T10:00:00-03:00"),
+          etapa: { numero: 1, rotulo: "1ª retomada" },
+          prioritario: true,
+          horario: "",
+          sugestao: "Posso verificar os próximos horários para você?",
+          chaveDiaria: "2026-08-30|novo|1",
+        }
+      : null;
+  context.atribuirHorariosRetomadas_ = (candidates) => {
+    candidates.forEach((candidate) => {
+      candidate.horario = "10:30";
+    });
+  };
+  context.statusRetomadaEncerrado_ = () => false;
+
+  const commitmentsSheet = {
+    getLastRow: () => 1,
+  };
+  const items = context.carregarRetomadasCentral_(
+    { getSheetByName: () => commitmentsSheet },
+    { [newPhone]: [{ direcao: "OUT" }] },
+    { [newPhone]: { status: "Qualificado" } },
+    { [newPhone]: { relationship: "engaged_lead" } },
+    new Date("2026-08-30T09:00:00-03:00"),
+  );
+
+  assert.equal(items.length, 2);
+  assert.ok(items.some((item) => item.phone === newPhone));
+});
+
 test("commercial close status resolves, archives and records the decision", () => {
   const context = loadContext();
   const headers = vm.runInContext(

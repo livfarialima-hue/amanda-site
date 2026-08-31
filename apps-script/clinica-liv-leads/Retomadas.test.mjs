@@ -228,7 +228,7 @@ test("a later patient message reopens a previously deferred conversation", () =>
   );
 });
 
-test("reflection receives a four-day pause without permanent suppression", () => {
+test("reflection keeps follow-up paused until the patient reopens the conversation", () => {
   const conversationThinking = [{
     direcao: "IN",
     dataHora: new Date("2026-07-28T12:00:00.000Z"),
@@ -247,6 +247,115 @@ test("reflection receives a four-day pause without permanent suppression", () =>
       conversationThinking,
       new Date("2026-08-02T12:00:01.000Z"),
     ),
+    true,
+  );
+
+  conversationThinking.push({
+    direcao: "IN",
+    dataHora: new Date("2026-08-03T12:00:00.000Z"),
+    texto: "Agora gostaria de verificar horários.",
+  });
+  assert.equal(
+    context.retornoFuturoRecente_(
+      conversationThinking,
+      new Date("2026-08-03T13:00:00.000Z"),
+    ),
+    false,
+  );
+});
+
+test("an answered question without a pending invitation does not create follow-up", () => {
+  const lead = {
+    status: "Qualificado",
+    resumo: "Recebeu informações sobre a consulta.",
+    proximaAcao: "Aguardar retorno",
+    referencia: "M26C01W-C07H01",
+    plataforma: "Meta",
+  };
+  const conversation = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-08-20T10:00:00-03:00"),
+      messageId: "in-price",
+      texto: "Qual o valor e o endereço?",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-08-20T10:05:00-03:00"),
+      messageId: "out-answer",
+      texto: "A consulta custa R$ 500 e a clínica fica em Pinheiros.",
+    },
+  ];
+
+  assert.equal(
+    context.criarCandidatoRetomada_(
+      "+5511999999999",
+      lead,
+      conversation,
+      new Date("2026-08-21T10:30:00-03:00"),
+      "2026-08-21",
+    ),
+    null,
+  );
+});
+
+test("an unanswered explicit invitation remains eligible for one contextual follow-up", () => {
+  const lead = {
+    status: "Qualificado",
+    resumo: "Interesse em avaliação.",
+    proximaAcao: "Oferecer horários",
+    referencia: "M26C01W-C07H01",
+    plataforma: "Meta",
+  };
+  const conversation = [
+    {
+      direcao: "IN",
+      dataHora: new Date("2026-08-20T10:00:00-03:00"),
+      messageId: "in-context",
+      texto: "O que mais me incomoda é a papada.",
+    },
+    {
+      direcao: "OUT",
+      dataHora: new Date("2026-08-20T10:05:00-03:00"),
+      messageId: "out-invitation",
+      texto: "Se quiser, posso verificar os próximos horários disponíveis para você.",
+    },
+  ];
+
+  assert.ok(
+    context.criarCandidatoRetomada_(
+      "+5511999999999",
+      lead,
+      conversation,
+      new Date("2026-08-21T10:30:00-03:00"),
+      "2026-08-21",
+    ),
+  );
+});
+
+test("a contextual offer to send times is an invitation, while a generic closing is not", () => {
+  assert.equal(
+    context.conversaTemConvitePendenteRetomada_([
+      {
+        direcao: "IN",
+        texto: "Quero comparar resultado e cicatriz com segurança.",
+      },
+      {
+        direcao: "OUT",
+        texto:
+          "Caso faça sentido para você, posso enviar os próximos horários disponíveis.",
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    context.conversaTemConvitePendenteRetomada_([
+      { direcao: "IN", texto: "Obrigada." },
+      {
+        direcao: "OUT",
+        texto: "Me chamo Bruna e estou à disposição.",
+      },
+    ]),
     false,
   );
 });
@@ -662,7 +771,7 @@ test("consultation price and address follow-up never becomes a surgery budget me
         dataHora: new Date("2026-08-24T14:05:00-03:00"),
         messageId: "consultation-reply",
         texto:
-          "A consulta com a Dra. Amanda custa R$ 500. A Clínica LIV fica na Rua Pais Leme, 215.",
+          "A consulta com a Dra. Amanda custa R$ 500. A Clínica LIV fica na Rua Pais Leme, 215. Se quiser, posso verificar os próximos horários disponíveis.",
       },
     ],
     new Date("2026-08-25T08:00:00-03:00"),
@@ -1648,7 +1757,7 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
       direcao: "OUT",
       dataHora: new Date("2026-08-02T18:01:00-03:00"),
       messageId: "out-1",
-      texto: "Claro, posso te orientar.",
+      texto: "Claro. Se quiser, posso explicar o próximo passo.",
     },
   ];
   const plan = {
@@ -1672,7 +1781,7 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
       plan,
       leadData,
       conversationData,
-      new Date("2026-08-16T10:35:00-03:00"),
+      new Date("2026-08-04T10:35:00-03:00"),
     ).reason,
     "whatsapp_window_closed",
   );
@@ -1698,6 +1807,32 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
       now,
     ).reason,
     "conversation_changed",
+  );
+
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      [
+        conversationData[0],
+        {
+          ...conversationData[1],
+          texto: "Claro, a consulta acontece por vídeo.",
+        },
+      ],
+      now,
+    ).reason,
+    "no_pending_invitation",
+  );
+
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      leadData,
+      conversationData,
+      new Date("2026-08-14T10:35:00-03:00"),
+    ).reason,
+    "stale_context",
   );
 });
 
@@ -1804,17 +1939,11 @@ test("human approval permits the exact second or price follow-up but never bypas
       messageId: "in-1",
       texto: "Queria entender o valor.",
     },
-    {
-      direcao: "OUT",
-      dataHora: new Date("2026-08-13T18:01:00-03:00"),
-      messageId: "out-1",
-      texto: "Vou deixar essa informação para a equipe revisar.",
-    },
   ];
   const plan = {
     etapa: 2,
     atrasoMinutos: 5,
-    messageIdBase: "out-1",
+    messageIdBase: "in-1",
     sugestao: "Mensagem exata revisada pela equipe.",
     aprovadoPelaEquipe: true,
   };

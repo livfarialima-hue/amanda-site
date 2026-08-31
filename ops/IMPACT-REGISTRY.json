@@ -166,6 +166,62 @@
         "YCloud"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "patient-journey-funnel-followups",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
+        "netlify/functions/lib/commercial-contact.mjs",
+        "netlify/functions/lib/lead-classifier.mjs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+        "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+        "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+        "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
+        "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "netlify/functions/lib/commercial-contact.mjs",
+        "netlify/functions/lib/commercial-contact.test.mjs",
+        "netlify/functions/lib/lead-classifier.mjs"
+      ],
+      "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+        "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "netlify/functions/lib/commercial-contact.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run site:build",
+        "npm.cmd run site:check",
+        "npm.cmd run ops:check",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Netlify",
+        "Google Sheets LEADS",
+        "Google Ads",
+        "Meta Ads",
+        "YCloud"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

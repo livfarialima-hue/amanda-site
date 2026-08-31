@@ -1695,6 +1695,10 @@ function criarCandidatoRetomada_(
     return null;
   }
 
+  if (!conversaTemConvitePendenteRetomada_(conversa)) {
+    return null;
+  }
+
   const diasSemResposta = diferencaDiasLocaisRetomadas_(
     ultimaMensagem.dataHora,
     agora,
@@ -2662,7 +2666,7 @@ function retomadaComercialPermitida_(contexto) {
   if (
     (typeof mensagemComercialNaoPacienteCentral_ === "function" &&
       mensagemComercialNaoPacienteCentral_(contexto)) ||
-    /(?:agencia|assessoria|consultoria|empresa) (?:de )?(?:marketing|publicidade|trafego|comunicacao)|(?:servico|gestao) de (?:marketing|trafego pago|redes sociais|instagram|seo)|captar (?:mais )?(?:pacientes|clientes)|proposta (?:comercial|de parceria)|parceria comercial|melhorar (?:seu )?posicionamento digital/.test(
+    /(?:agencia|assessoria|consultoria|empresa) (?:de )?(?:marketing|publicidade|trafego|comunicacao)|(?:servico|gestao) de (?:marketing|trafego pago|redes sociais|instagram|seo)|captar (?:mais )?(?:pacientes|clientes)|proposta (?:comercial|de parceria)|parceria comercial|melhorar (?:seu )?posicionamento digital|(?:sou|somos) fundador(?:a|es)? d[oa]|temos paciente buscando|enviar (?:a )?pagina de agendamento|presenca digital.{0,100}(?:novos )?pacientes pelo google|conversa rapida de 15 minutos/.test(
       contexto,
     )
   ) {
@@ -2702,16 +2706,7 @@ function retornoFuturoRecente_(conversa, agora) {
     return false;
   }
 
-  const instante = dataRetomadaValida_(
-    ultimaEntrada.dataHora,
-  );
-  if (!instante) return false;
-
-  const limite = 96 * 60 * 60 * 1000;
-  const tempoDecorrido =
-    agora.getTime() - instante.getTime();
-
-  return tempoDecorrido >= 0 && tempoDecorrido < limite;
+  return true;
 }
 
 function mensagemIndicaRetornoFuturo_(texto) {
@@ -2740,6 +2735,41 @@ function conversaTemPromessaHumanaPendente_(conversa) {
 
   return /vou (?:confirmar|verificar|checar|alinhar)|estou (?:confirmando|verificando|checando)|retorn(?:o|aremos?) (?:assim que|com|pela manha)|vou falar com a equipe/.test(
     texto,
+  );
+}
+
+function conversaTemConvitePendenteRetomada_(conversa) {
+  if (!Array.isArray(conversa) || !conversa.length) return false;
+
+  let ultimaEntrada = -1;
+  for (let indice = conversa.length - 1; indice >= 0; indice -= 1) {
+    if (conversa[indice].direcao === "IN") {
+      ultimaEntrada = indice;
+      break;
+    }
+  }
+
+  const saidasPendentes = conversa
+    .slice(ultimaEntrada + 1)
+    .filter(function (mensagem) {
+      return mensagem.direcao === "OUT" && mensagem.texto;
+    })
+    .map(function (mensagem) {
+      return normalizarTextoRetomadas_(mensagem.texto);
+    })
+    .join(" ");
+
+  if (!saidasPendentes) return false;
+  if (
+    /(?:qualquer duvida|ficamos|estamos|estou) (?:a sua )?disposicao|pode contar conosco|agradecemos (?:o )?contato/.test(
+      saidasPendentes,
+    )
+  ) {
+    return false;
+  }
+
+  return /(?:\?|se (?:quiser|preferir|fizer sentido)|caso (?:queira|prefira|faca sentido|fizer sentido)|posso (?:verificar|consultar|separar|explicar|ajudar|enviar)|gostaria de (?:verificar|agendar|saber|continuar)|voce (?:gostaria|prefere|quer)|prefere (?:que|verificar)|qual (?:dia|periodo|horario)|quais (?:dias|horarios)|algum desses|quer que eu|passando para saber se|ficou alguma duvida|me (?:conte|diga)|podemos (?:agendar|verificar|continuar))/.test(
+    saidasPendentes,
   );
 }
 
@@ -3396,6 +3426,23 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
     ultima.messageId !== plano.messageIdBase
   ) {
     return { ok: false, reason: "conversation_changed" };
+  }
+  if (
+    ultima.direcao === "OUT" &&
+    !conversaTemConvitePendenteRetomada_(conversa)
+  ) {
+    return { ok: false, reason: "no_pending_invitation" };
+  }
+
+  const diasDesdeContexto = diferencaDiasLocaisRetomadas_(
+    ultima.dataHora,
+    agora,
+  );
+  if (
+    diasDesdeContexto < 0 ||
+    diasDesdeContexto > RETOMADAS_CONFIG.maximoDiasSemResposta
+  ) {
+    return { ok: false, reason: "stale_context" };
   }
   if (
     mensagemSemRetomada_(ultima.texto) ||

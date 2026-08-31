@@ -8,6 +8,8 @@ test("detects Google Business Profile sales offers without blocking location que
     "Trabalho com gestão e otimização do Perfil da Empresa no Google para conquistar clientes de forma orgânica.",
     "Posso apresentar nosso trabalho de otimização do Google Meu Negócio?",
     "Ajudamos empresas a ter mais visibilidade no Google Maps e atrair novos clientes.",
+    "Sou fundador do Cliagenda. Temos paciente buscando esse procedimento e gostaria de enviar a página de agendamento.",
+    "Analisei a presença digital da clínica e vi pontos que dificultam a chegada de novos pacientes pelo Google.",
   ]) {
     assert.equal(isCommercialSolicitation(text), true, text);
   }

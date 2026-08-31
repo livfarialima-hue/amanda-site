@@ -73,6 +73,19 @@ test("campanhas cadastradas recebem uma linha zero sem fabricar contato", () => 
   assert.equal(cervicalSite[17], 0);
 });
 
+test("ignora marco Meta de fechamento explicitamente invalidado", () => {
+  const build = load("construirAgregadosFunilMetaAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha", "Criativo"],
+    ["opp_sintetica_1", "amanda", "open", "Consulta realizada", new Date("2026-08-14T12:00:00Z"), "Meta Ads", "M26F01W", "C06H01"],
+  ], [
+    ["Event ID", "Opportunity ID", "Marco", "Estado"],
+    ["evt_sintetico", "opp_sintetica_1", "payment_confirmed", "voided"],
+  ], new Date("2026-08-15T15:00:00Z"));
+  const direct = rows.find((row) => row[2] === 7 && row[5] === "meta_whatsapp_direct" && row[6] === "M26F01W" && row[7] === "__TOTAL__");
+  assert.equal(direct[15], 0);
+});
+
 test("criativo exige código CxxHxx explícito", () => {
   const resolve = load("resolverCriativoMetaAds_");
   assert.equal(resolve("Ref. M26F01W-C06H01"), "C06H01");

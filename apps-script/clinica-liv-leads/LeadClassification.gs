@@ -2094,7 +2094,7 @@ function classificationAdministrativeSignal_(classification) {
   const appointmentOutcome = String(
     classification && classification.appointmentOutcome || "none",
   );
-  const procedureMilestone = String(
+  let procedureMilestone = String(
     classification && classification.procedureMilestone || "none",
   );
   const validAppointmentOutcomes = ["confirmed", "missed", "attended"];
@@ -2104,6 +2104,20 @@ function classificationAdministrativeSignal_(classification) {
     "completed",
     "payment_confirmed",
   ];
+  const administrativeText = [
+    classification && classification.summary,
+    classification && classification.evidence,
+    classification && classification.nextAction,
+  ].join(" ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  const consultationPayment =
+    procedureMilestone === "payment_confirmed" &&
+    /(?:pagamento|pix|pago|paga).{0,60}(?:consulta|avaliacao)|(?:consulta|avaliacao).{0,60}(?:pagamento|pix|pago|paga)/.test(
+      administrativeText,
+    );
+  if (consultationPayment) procedureMilestone = "none";
 
   return {
     appointmentOutcome: validAppointmentOutcomes.includes(appointmentOutcome)
@@ -2952,6 +2966,7 @@ function completeLeadClassification_(job, classification) {
         phone,
         professional,
         stage: statusToKeep,
+        allowNonQualified: statusToKeep === "Não qualificado",
         relationship: automaticValues["Relacionamento"],
         owner: automaticValues["Responsável atual"],
         expectedParty: automaticValues["Aguardando ação de"],

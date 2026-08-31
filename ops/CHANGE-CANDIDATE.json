@@ -1,99 +1,115 @@
 {
   "schemaVersion": 1,
-  "changeId": "BLEFAROPLASTIA-POSICIONAMENTO-2026-08-30",
-  "title": "Posicionamento facial integrado na página de blefaroplastia",
-  "status": "published_verified",
-  "baseCommit": "010579bbf5bb92531b0842afa9d98efb42db4e43",
+  "changeId": "FUNIL-RETOMADAS-JORNADA-2026-08-30",
+  "title": "Reconciliação do funil, qualificação e retomadas da jornada do paciente",
+  "status": "tested_local",
+  "baseCommit": "af7e34eec733d9b6210540f74f2723d05a05acd2",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "A autorização externa desta conversa cobre a página de blefaroplastia; o preflight deve amarrá-la ao HEAD exato sem fabricar autorização no commit"
+    "note": "A autorização externa desta conversa cobre a publicação do pacote já auditado; o preflight deve amarrá-la ao commit candidato exato."
   },
   "risk": {
-    "level": "medium",
+    "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication"
+      "patient-journey-funnel-followups"
     ],
     "files": [
-      "blefaroplastia/index.html",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "netlify/functions/lib/commercial-contact.mjs",
+      "netlify/functions/lib/commercial-contact.test.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "página pública de blefaroplastia",
-      "metadados de busca e compartilhamento da página",
-      "dados estruturados e FAQ da página",
-      "processo de publicação no Netlify"
+      "classificação e etapa do lead na planilha LEADS",
+      "fila diária e envio controlado de retomadas",
+      "revisões de funil do Google Ads e Meta Ads",
+      "classificação comercial do webhook no Netlify",
+      "integrações de conversão baseadas em marcos válidos da jornada"
     ],
     "preservedInvariants": [
-      "CTA, número do WhatsApp, mensagem pré-preenchida e data attributes de rastreamento permanecem idênticos",
-      "nenhuma faixa de preço cirúrgico, promessa de resultado ou alegação de superioridade é acrescentada",
-      "consulta, forma de pagamento, imagens, vídeos, layout e demais páginas permanecem inalterados",
-      "Google Ads, Meta Ads, bot, Apps Script, planilhas, CRM e Calendar permanecem inalterados",
-      "a publicação deve corresponder ao commit aprovado e ser verificada no domínio e na URL imutável"
+      "nenhuma mensagem real é enviada durante a publicação ou os testes",
+      "conversas sob responsabilidade humana, pausadas, encerradas ou sem convite pendente não entram em retomada automática",
+      "valor de consulta nunca é reinterpretado como orçamento ou conversão de procedimento",
+      "gclid e demais identificadores de origem são preservados; somente marcos válidos entram nos agregados de anúncios",
+      "deployment canônico do Apps Script e URL pública do Netlify permanecem os mesmos",
+      "mudanças paralelas fora dos treze arquivos funcionais e dos recibos de governança permanecem intactas"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "site-publication",
-        "system": "Netlify e página pública de blefaroplastia",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-08-30T17:23:00-03:00",
-        "reference": "Produção anterior no commit 010579bbf5bb92531b0842afa9d98efb42db4e43 e deploy 6a9490869afd19ba6be5e598",
-        "check": "domínio, URL imutável e webhook responderam HTTP 200 antes da mudança; nenhuma plataforma de anúncios foi alterada"
+        "contract": "patient-journey-funnel-followups",
+        "system": "Apps Script, Netlify e planilha LEADS canônicos",
+        "status": "pending_before_write",
+        "checkedAt": "2026-08-30T00:00:00-03:00",
+        "reference": "IDs canônicos registrados no repositório; comparação viva ainda pendente antes da primeira escrita externa",
+        "check": "comparar os cinco arquivos Apps Script aprovados com a base publicada, confirmar o deployment e verificar o estado do Netlify sem alterar dados"
       }
     ]
   },
   "verification": {
-    "status": "published_verified",
+    "status": "passed_local",
     "commands": [
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "npm.cmd run ops:check",
       "git diff --check"
     ],
     "crossConsumerCases": [
-      "title, descrição, Open Graph, Twitter e schema permanecem coerentes entre si",
-      "FAQ visível e FAQPage estruturado recebem a mesma explicação",
-      "todos os links e CTAs preservam destino e rastreamento",
-      "build continua com 44 URLs e sem arquivo ausente"
+      "convite legítimo após valor e endereço da consulta continua elegível sem virar orçamento cirúrgico",
+      "pausa explícita e conversa encerrada permanecem fora da fila até nova entrada do paciente",
+      "plano registrado e candidato dinâmico não geram duplicidade",
+      "marco anulado não alimenta os relatórios de Google ou Meta",
+      "contato comercial ou não paciente não avança como lead qualificado"
     ]
   },
   "release": {
-    "approvedCommit": "ccc70c435147e30614e4d4c41bbfff24ba0e0d40",
-    "netlifyDeployId": "6a9491e9a8d5e21aae7fbfb8",
+    "approvedCommit": "",
+    "netlifyDeployId": "",
     "appsScriptVersion": 136,
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "f9ff87f5a7bf64eb5f613312787da5dc83065f15b2258a46e666666855470574",
-    "verifiedAt": "2026-08-30T17:28:00-03:00",
-    "activationState": "not_applicable",
-    "notes": "Página no domínio e na URL imutável respondeu HTTP 200 com o mesmo SHA-256, canonical correto e seis CTAs; Apps Script e plataformas operacionais permaneceram inalterados."
+    "drivePlanSha256": "",
+    "verifiedAt": "",
+    "activationState": "pending_publication",
+    "notes": "A publicação somente pode começar após todos os gates locais e o preflight vivo somente leitura."
   },
   "rollback": {
-    "local": "reverter exclusivamente o commit da página e este candidato, retornando a 010579bbf5bb92531b0842afa9d98efb42db4e43",
-    "production": "restaurar o deploy Netlify 6a9490869afd19ba6be5e598 e preservar Apps Script v136"
+    "local": "reverter exclusivamente o commit candidato e preservar todo trabalho paralelo fora do escopo declarado",
+    "production": "restaurar Apps Script v136 e o deploy Netlify imediatamente anterior, mantendo a mesma planilha e os mesmos IDs canônicos"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
-    "window": "verificação imediata e leitura de Search Console após 14 e 28 dias",
+    "window": "verificação imediata, revisão em 24 horas e acompanhamento por 14 dias",
     "metrics": [
-      "HTTP 200 e canonical da página",
-      "integridade dos CTAs e rastreamento",
-      "impressões e cliques non-branded da página",
-      "contatos válidos, qualificados e consultas atribuídas à blefaroplastia"
+      "candidatos de retomada elegíveis, bloqueados e cancelados por motivo",
+      "respostas, avanço de etapa, consultas agendadas e opt-outs após retomada",
+      "leads qualificados com gclid e marcos válidos enviados aos agregados",
+      "erros do Apps Script, Netlify e integrações externas"
     ],
-    "rollbackRule": "reverter diante de CTA quebrado, regressão visual, rastreamento perdido, informação médica incompatível ou promessa indevida"
+    "rollbackRule": "reverter se houver envio sem convite pendente, duplicidade, retomada após pausa/encerramento, avanço indevido de funil, perda de gclid ou regressão operacional relevante"
   }
 }

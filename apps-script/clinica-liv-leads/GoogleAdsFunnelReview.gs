@@ -260,6 +260,10 @@ function marcosFechamentoGoogleAds_(values) {
   const indexes = indexarCabecalhosAgregadoGoogleAds_(headers);
   if (indexes["Opportunity ID"] === undefined || indexes.Marco === undefined) return ids;
   values.slice(1).forEach((row) => {
+    const state = indexes.Estado === undefined
+      ? ""
+      : normalizarTextoAgregadoGoogleAds_(row[indexes.Estado]);
+    if (["voided", "invalid", "rejected"].includes(state)) return;
     const milestone = normalizarTextoAgregadoGoogleAds_(row[indexes.Marco]);
     if (!["accepted", "procedure_closed", "payment_confirmed", "completed"].includes(milestone)) return;
     const opportunityId = String(row[indexes["Opportunity ID"]] || "").trim();

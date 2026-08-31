@@ -818,8 +818,24 @@ test("administrative milestones protect funnel updates", () => {
     "Consulta realizada",
   );
   assert.equal(
+    administrativeLeadStatus_({
+      appointmentOutcome: "attended",
+      procedureMilestone: "payment_confirmed",
+      summary: "A paciente confirmou o pagamento da consulta via Pix.",
+      evidence: "A videochamada aconteceu e a consulta foi paga.",
+    }),
+    "Consulta realizada",
+  );
+  assert.equal(
     shouldApplyLeadStatus_("Novo", "Consulta agendada", "low", true),
     true,
+  );
+});
+
+test("high-confidence non-qualified classification is explicitly allowed in canonical sync", () => {
+  assert.match(
+    classificationSource,
+    /allowNonQualified:\s*statusToKeep === "Não qualificado"/,
   );
 });
 

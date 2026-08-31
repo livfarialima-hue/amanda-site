@@ -387,7 +387,7 @@ function carregarCompromissosCentral_(
         mode: commercialContact ? "Silêncio" : "Manual",
         suggestion: commercialContact
           ? ""
-          : "Oi! Retomando o ponto que ficou pendente: já conferimos a informação e podemos seguir por aqui. Obrigada por aguardar.",
+          : "",
         context: commercialContact
           ? "Oferta comercial detectada. Não responder. Confirme o encerramento para arquivar o contato e cancelar qualquer retomada pendente."
           : summary,
@@ -667,23 +667,36 @@ function carregarRetomadasCentral_(
     conversations,
   );
 
-  if (logged.length) return logged;
-
   if (
     typeof criarCandidatoRetomada_ !== "function" ||
     typeof atribuirHorariosRetomadas_ !== "function"
   ) {
-    return [];
+    return logged;
   }
 
   const localDate = formatarDataCentral_(now, "yyyy-MM-dd");
   const candidates = [];
+  const activeLoggedPhones = new Set(
+    logged
+      .filter(function (item) {
+        return normalizarTextoCentral_(item.status) === "programado";
+      })
+      .map(function (item) {
+        return normalizarTelefoneCentral_(item.phone);
+      })
+      .filter(Boolean),
+  );
+  const pendingCommitmentPhones =
+    telefonesComCompromissoPendenteCentral_(spreadsheet);
 
   Object.keys(conversations).forEach(function (phone) {
     const lead = leads[phone];
 
     if (
       !lead ||
+      lead.neverFollowUp ||
+      activeLoggedPhones.has(phone) ||
+      pendingCommitmentPhones.has(phone) ||
       (
         typeof statusRetomadaEncerrado_ === "function" &&
         statusRetomadaEncerrado_(lead.status)
@@ -712,7 +725,7 @@ function carregarRetomadasCentral_(
   });
   atribuirHorariosRetomadas_(candidates, now);
 
-  return candidates
+  const generated = candidates
     .filter(function (candidate) {
       return Boolean(candidate.horario);
     })
@@ -768,6 +781,26 @@ function carregarRetomadasCentral_(
           "followup:" + candidate.chaveDiaria,
       });
     });
+
+  return logged.concat(generated);
+}
+
+function telefonesComCompromissoPendenteCentral_(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(
+    CENTRAL_ATENDIMENTO_CONFIG.commitmentsSheetName,
+  );
+  const phones = new Set();
+  if (!sheet || sheet.getLastRow() < 2) return phones;
+
+  sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, 8)
+    .getValues()
+    .forEach(function (row) {
+      if (normalizarTextoCentral_(row[7]) !== "pendente") return;
+      const phone = normalizarTelefoneCentral_(row[1]);
+      if (phone) phones.add(phone);
+    });
+  return phones;
 }
 
 function carregarRetomadasRegistradasCentral_(
@@ -3708,6 +3741,10 @@ function mensagemComercialNaoPacienteCentral_(normalized) {
     /(?:perfil da empresa no google|google meu negocio|google business profile)/,
     /(?:google|google maps).{0,90}(?:visibilidade|posicionamento|captacao|atrair|conquistar).{0,55}(?:clientes|pacientes|agendamentos)/,
     /(?:visibilidade|posicionamento|captacao|atrair|conquistar).{0,55}(?:clientes|pacientes|agendamentos).{0,90}(?:google|google maps|buscas)/,
+    /(?:sou|somos) fundador(?:a|es)? d[oa].{0,120}(?:temos paciente buscando|pagina de agendamento|portal)/,
+    /temos paciente buscando.{0,120}(?:enviar|mandar|compartilhar) (?:a )?pagina de agendamento/,
+    /presenca digital.{0,160}(?:novos? pacientes?|pacientes? pelo google)/,
+    /(?:novos? pacientes?|pacientes? pelo google).{0,160}(?:presenca digital|google)/,
     /(?:publipost|permuta|patrocinio|parceria (?:paga|comercial|de divulgacao))/,
     /(?:maquininha|maquina) de cartao/,
     /(?:trabalho|represento|atuo) com (?:seguros?|planos? de saude)/,

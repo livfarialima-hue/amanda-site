@@ -152,10 +152,10 @@ Identifique também marcos administrativos, sempre com base nas últimas mensage
 - procedureMilestone quote_sent: a clínica enviou o orçamento pelo WhatsApp ou informou que o enviou por e-mail. Isso prova apenas que houve proposta, não que o procedimento foi fechado.
 - procedureMilestone accepted: a pessoa aceitou o procedimento, pediu para seguir, combinou sua realização ou confirmou que vai fazê-lo.
 - procedureMilestone completed: há evidência explícita de que o procedimento foi realizado.
-- procedureMilestone payment_confirmed: há evidência explícita de pagamento confirmado.
+- procedureMilestone payment_confirmed: há evidência explícita de pagamento confirmado do procedimento. Pagamento da consulta ou avaliação nunca é marco do procedimento.
 - Use none quando o respectivo marco não estiver presente.
 
-Mensagens OUT da clínica são evidência administrativa válida de uma ação praticada pela própria clínica, como "enviei o orçamento por e-mail". Elas não comprovam, sozinhas, interesse, aceite, comparecimento ou fechamento pela pessoa. Para Paciente convertido, exija procedureMilestone accepted, completed ou payment_confirmed; quote_sent isolado nunca é conversão.
+Mensagens OUT da clínica são evidência administrativa válida de uma ação praticada pela própria clínica, como "enviei o orçamento por e-mail". Elas não comprovam, sozinhas, interesse, aceite, comparecimento ou fechamento pela pessoa. Para Paciente convertido, exija procedureMilestone accepted, completed ou payment_confirmed ligado explicitamente ao procedimento; pagamento de consulta preserva Consulta realizada. quote_sent isolado nunca é conversão.
 
 Considere respostas curtas da pessoa no contexto imediato das mensagens anteriores. "Sim", "confirmo", "deu tudo certo", "pode seguir" e equivalentes podem confirmar agenda, comparecimento ou aceite quando o objeto da resposta estiver claro no turno anterior. Se houver mais de uma interpretação plausível, use confidence low.
 
