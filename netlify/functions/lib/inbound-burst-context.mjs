@@ -1,5 +1,16 @@
+import { isCommercialSolicitation } from "./commercial-contact.mjs";
+import {
+  introducesStandalonePatientRequest,
+  isExplicitDeferralWithoutRequest,
+  isExplicitReturnLaterClosing,
+  isPatientDeclineWithoutRequest,
+} from "./conversation-action-controller.mjs";
+
 const DEFAULT_BURST_WINDOW_MS = 45_000;
 const MAX_TURNS = 32;
+const DEFAULT_UNANSWERED_BLOCK_WINDOW_MS = 10 * 60 * 1_000;
+const MAX_UNANSWERED_BLOCK_TURNS = 8;
+const MAX_UNANSWERED_BLOCK_TEXT_LENGTH = 1_900;
 
 function limitedText(value, maximum = 1_600) {
   return Array.from(String(value || "").trim()).slice(0, maximum).join("");
@@ -76,6 +87,58 @@ function timeGapMs(earlier, later) {
   return laterAt - earlierAt;
 }
 
+function measuredTimeGapMs(earlier, later) {
+  const earlierAt = new Date(earlier?.at || "").getTime();
+  const laterAt = new Date(later?.at || "").getTime();
+  if (!Number.isFinite(earlierAt) || !Number.isFinite(laterAt)) return null;
+  return laterAt - earlierAt;
+}
+
+function isPatientBlockBoundary(turn) {
+  return Boolean(
+    turn?.templateId ||
+      isCommercialSolicitation(turn?.text) ||
+      isExplicitDeferralWithoutRequest(turn?.text) ||
+      isExplicitReturnLaterClosing(turn?.text) ||
+      isPatientDeclineWithoutRequest(turn?.text),
+  );
+}
+
+function substantivePatientContent(turn) {
+  return String(turn?.text || "")
+    .replace(
+      /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite)[,!\s]*)+/i,
+      "",
+    )
+    .trim();
+}
+
+function isSubstantivePatientContent(turn) {
+  return /[\p{L}\p{N}]/u.test(substantivePatientContent(turn));
+}
+
+function isSubstantivePatientRequest(turn) {
+  const value = substantivePatientContent(turn);
+  return Boolean(
+    isSubstantivePatientContent(turn) &&
+      introducesStandalonePatientRequest(value),
+  );
+}
+
+function boundedPatientBlock(turns, start, end) {
+  let blockStart = Math.max(start, end - MAX_UNANSWERED_BLOCK_TURNS + 1);
+  let block = turns.slice(blockStart, end + 1);
+  while (
+    block.length > 1 &&
+    block.map((turn) => turn.text).join("\n").length >
+      MAX_UNANSWERED_BLOCK_TEXT_LENGTH
+  ) {
+    blockStart += 1;
+    block = turns.slice(blockStart, end + 1);
+  }
+  return { block, blockStart };
+}
+
 function publicTurn(turn) {
   return {
     role: turn.role,
@@ -138,5 +201,99 @@ export function coalesceLatestPatientBurst({
     recentConversation: turns.slice(0, burstStart).map(publicTurn),
     coalesced: burst.length > 1,
     burstTurnCount: burst.length,
+  };
+}
+
+export function coalesceUnansweredPatientBlock({
+  recentConversation = [],
+  currentText,
+  currentEventId,
+  currentAt,
+  currentTemplateId = "",
+  maximumGapMs = DEFAULT_UNANSWERED_BLOCK_WINDOW_MS,
+}) {
+  const currentTurn = {
+    role: "patient",
+    source: "paciente",
+    text: currentText,
+    eventId: currentEventId,
+    at: currentAt,
+    templateId: currentTemplateId,
+  };
+  const turns = chronologicalTurns(recentConversation, currentTurn);
+  const currentIndex = turns.findIndex(
+    (turn) =>
+      (currentEventId && turn.eventId === String(currentEventId)) ||
+      (!currentEventId && turn.sequence === turns.at(-1)?.sequence),
+  );
+
+  const unchanged = () => ({
+    text: limitedText(currentText),
+    recentConversation: turns
+      .filter((_turn, index) => index !== currentIndex)
+      .map(publicTurn),
+    coalesced: false,
+    blockTurnCount: 1,
+    substantiveRequestCount:
+      currentIndex >= 0 && isSubstantivePatientRequest(turns[currentIndex])
+        ? 1
+        : 0,
+    substantiveTurnCount:
+      currentIndex >= 0 && isSubstantivePatientContent(turns[currentIndex])
+        ? 1
+        : 0,
+    multipleRequests: false,
+    requiresContextualReply: false,
+  });
+
+  if (
+    currentIndex < 0 ||
+    !patientTurn(turns[currentIndex]) ||
+    isPatientBlockBoundary(turns[currentIndex])
+  ) {
+    return unchanged();
+  }
+
+  let blockStart = currentIndex;
+  const allowedGapMs = Math.max(
+    0,
+    Number(maximumGapMs) || DEFAULT_UNANSWERED_BLOCK_WINDOW_MS,
+  );
+  for (let index = currentIndex - 1; index >= 0; index -= 1) {
+    const earlier = turns[index];
+    const later = turns[index + 1];
+    const gap = measuredTimeGapMs(earlier, later);
+    const totalGap = measuredTimeGapMs(earlier, turns[currentIndex]);
+    if (
+      !patientTurn(earlier) ||
+      isPatientBlockBoundary(earlier) ||
+      gap === null ||
+      totalGap === null ||
+      gap < 0 ||
+      gap > allowedGapMs ||
+      totalGap > allowedGapMs
+    ) {
+      break;
+    }
+    blockStart = index;
+  }
+
+  const bounded = boundedPatientBlock(turns, blockStart, currentIndex);
+  const requestCount = bounded.block.filter(isSubstantivePatientRequest).length;
+  const substantiveTurnCount = bounded.block.filter(
+    isSubstantivePatientContent,
+  ).length;
+  return {
+    text: bounded.block.map((turn) => turn.text).join("\n"),
+    recentConversation: turns.slice(0, bounded.blockStart).map(publicTurn),
+    coalesced: bounded.block.length > 1,
+    blockTurnCount: bounded.block.length,
+    substantiveRequestCount: requestCount,
+    substantiveTurnCount,
+    multipleRequests: requestCount > 1,
+    requiresContextualReply: Boolean(
+      requestCount > 1 ||
+        (requestCount > 0 && substantiveTurnCount > 1),
+    ),
   };
 }

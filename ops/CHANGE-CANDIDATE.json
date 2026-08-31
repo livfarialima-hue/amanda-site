@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-IGNORE-PROMOTIONAL-MEDIA-2026-08-31",
-  "title": "Ignorar propaganda e mídia comercial antes do acolhimento de fotos",
+  "changeId": "BRUNA-COMPLETE-PATIENT-CONTEXT-2026-08-31",
+  "title": "Ignorar mídia promocional e responder todos os pedidos pendentes da paciente",
   "status": "tested_local",
   "baseCommit": "b26062166cd176fbac910afbf00cc8c2bb6f2b8d",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuário autorizou a correção para ignorar propaganda, mas não autorizou a publicação deste novo candidato. Qualquer release continuará vinculado ao HEAD exato em preflight externo separado."
+    "note": "O usuário autorizou as correções locais de mídia promocional e cobertura integral dos pedidos recentes, mas não autorizou a publicação deste candidato ampliado no turno atual. Qualquer release continuará vinculado ao HEAD exato em preflight externo separado."
   },
   "risk": {
     "level": "high",
@@ -20,17 +20,25 @@
     "contracts": [
       "change-governance",
       "bruna-conversation-safety",
+      "bruna-conversion-experience",
       "patient-journey-funnel-followups"
     ],
     "files": [
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/ycloud-webhook.mjs",
+      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/commercial-contact.mjs",
       "netlify/functions/lib/commercial-contact.test.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-action-controller.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
       "netlify/functions/lib/conversation-guidelines.test.mjs",
+      "netlify/functions/lib/inbound-burst-context.mjs",
+      "netlify/functions/lib/inbound-burst-context.test.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/openai-shadow.test.mjs",
       "netlify/functions/lib/webhook-intake-observability.test.mjs",
       "netlify/functions/lib/whatsapp-automation.mjs",
       "netlify/functions/lib/whatsapp-automation.test.mjs",
@@ -43,13 +51,18 @@
       "detector determinístico de contatos comerciais",
       "planejamento de respostas do WhatsApp",
       "webhook de entrada da YCloud",
+      "reconstrução do bloco recente ainda sem resposta",
+      "contrato de intenções e seleção entre prévia determinística e redação contextual",
       "acolhimento automático de fotos",
       "classificação e retomadas da jornada de pacientes"
     ],
     "preservedInvariants": [
       "fotos de pacientes com contexto assistencial continuam em revisão humana e preservam o acolhimento seguro já existente",
       "nenhuma imagem é interpretada clinicamente e nenhum conteúdo de mídia é enviado à IA para visão ou diagnóstico",
-      "agenda, preços, urgência, takeover, opt-out, deduplicação e limites de retomada permanecem inalterados",
+      "agenda, valores e condições aprovados, urgência, takeover, opt-out, deduplicação e limites de retomada mantêm as mesmas travas",
+      "a Bruna responde todos os pedidos seguros do bloco, mas encaminha o conjunto quando uma parte exigir revisão humana",
+      "o bloco não atravessa fala da clínica, dez minutos totais, horário ausente, prefill, propaganda, pausa, recusa ou retorno adiado",
+      "uma resposta institucional parcial fornece fatos aprovados, mas não apaga outro pedido real nem uma resposta significativa da paciente ainda sem acolhimento",
       "uma nova mensagem pessoal e assistencial posterior encerra a herança do contexto comercial",
       "contatos comerciais reconhecidos não geram resposta, alerta assistencial, lead nem retomada"
     ],
@@ -66,11 +79,13 @@
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-08-31T12:37:39-03:00",
+    "completedAt": "2026-08-31T13:15:53-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "node --test netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/bruna-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
       "node --test netlify/functions/lib/ycloud-review-alert.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
+      "node --test netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -80,14 +95,14 @@
       "git diff --check"
     ],
     "results": {
-      "focusedTests": "302/302 testes focados aprovados nas camadas de detector, planejamento, webhook, foto e gate conversacional",
+      "focusedTests": "228/228 testes focados do candidato integrado e 306/306 testes do contrato exato de conversão aprovados; o webhook completo preservou a resposta contextual para dois pedidos",
       "journeyTests": "166/166 testes de Central, funil, classificação, retomadas e detector comercial aprovados",
-      "fullSuite": "1214/1214 testes aprovados",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 13 arquivos exatos no escopo",
+      "fullSuite": "1223/1223 testes aprovados",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 20 arquivos exatos no escopo",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 arquivos, 44 URLs no sitemap e nenhum arquivo de auditoria no artefato",
       "siteCheck": "44/44 páginas HTTP 200, canônicas, indexáveis e com um H1; zero erros",
-      "opsCheck": "SYNC_PENDING esperado para candidato local: manual ainda não projetado no Drive, branch isolada e worktree não commitado",
+      "opsCheck": "SYNC_PENDING esperado para candidato local: publicação ainda pendente, manual ainda não projetado no Drive e branch isolada; nenhuma escrita externa foi executada",
       "diffCheck": "sem erros",
       "liveBaseline": "branch canônica b260621 e bot público active; nenhuma escrita externa"
     },
@@ -98,7 +113,12 @@
       "uma foto precedida por queixa assistencial continua em revisão humana com o acolhimento já aprovado",
       "uma pessoa que menciona empresa ou promoção, mas pede consulta para si, permanece no fluxo de paciente",
       "uma mensagem pessoal de paciente mais recente encerra a classificação comercial anterior",
-      "uma promoção antiga fora da janela contextual não contamina uma imagem posterior"
+      "uma promoção antiga fora da janela contextual não contamina uma imagem posterior",
+      "flacidez de papada seguida de pergunta sobre cobrança da avaliação gera uma única resposta que trata os dois assuntos",
+      "cobram a consulta é reconhecido como preço da avaliação e não como pedido de agenda",
+      "a prévia aprovada de R$ 500 não substitui a redação contextual quando há dois pedidos reais",
+      "saudação e ponto de interrogação isolado acompanham o contexto, mas não inflam a contagem de pedidos",
+      "prefill estruturado, propaganda, pausa, fala da clínica, horário ausente e bloco antigo encerram a consolidação"
     ]
   },
   "release": {
@@ -121,8 +141,10 @@
       "fotos assistenciais preservadas",
       "falso positivo em paciente real",
       "resposta, alerta, lead ou retomada indevida para contato comercial",
+      "pergunta recente da paciente omitida pela resposta automática",
+      "fusão indevida de mensagens antigas, prefills ou propaganda",
       "regressões em agenda, preço, takeover ou deduplicação"
     ],
-    "rollbackRule": "reverter diante de paciente real ignorado por contexto não comercial, propaganda respondida, perda de foto assistencial, duplicidade ou qualquer regressão de agenda, preço, takeover ou opt-out"
+    "rollbackRule": "reverter diante de paciente real ignorado por contexto não comercial, propaganda respondida, perda de foto assistencial, pergunta segura omitida, fusão de blocos separados, duplicidade ou qualquer regressão de agenda, preço, takeover ou opt-out"
   }
 }

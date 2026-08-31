@@ -56,7 +56,7 @@ import {
   getDurableConversationContext,
 } from "./lib/conversation-ledger.mjs";
 import {
-  coalesceLatestPatientBurst,
+  coalesceUnansweredPatientBlock,
 } from "./lib/inbound-burst-context.mjs";
 import {
   clearExternalProfessionalContext,
@@ -2036,12 +2036,18 @@ function approvedPriceReplyKindForPlan(plan) {
   return "";
 }
 
+export function isSchedulingRequestInPatientBlock(text) {
+  return String(text || "")
+    .split(/\n+/)
+    .some((turnText) => isSchedulingRequest(turnText));
+}
+
 export function isRefreshedHumanContextProtected(plan, text) {
   return Boolean(
     plan?.route !== "standard_reply" ||
       plan?.automaticAllowed !== true ||
       plan?.professional === "daniel" ||
-      isSchedulingRequest(text),
+      isSchedulingRequestInPatientBlock(text),
   );
 }
 
@@ -2073,11 +2079,12 @@ export async function refreshLatestHumanContextInput(
     source = "volatile_cache_fallback";
   }
 
-  const burst = coalesceLatestPatientBurst({
+  const burst = coalesceUnansweredPatientBlock({
     recentConversation,
     currentText: input?.text,
     currentEventId: input?.eventId,
     currentAt: input?.receivedAt,
+    currentTemplateId: input?.templateId,
   });
   return {
     input: {
@@ -2087,7 +2094,11 @@ export async function refreshLatestHumanContextInput(
     },
     source,
     coalesced: burst.coalesced,
-    burstTurnCount: burst.burstTurnCount,
+    burstTurnCount: burst.blockTurnCount,
+    substantiveRequestCount: burst.substantiveRequestCount,
+    substantiveTurnCount: burst.substantiveTurnCount,
+    multipleRequests: burst.multipleRequests,
+    requiresContextualReply: burst.requiresContextualReply,
   };
 }
 
@@ -2111,7 +2122,7 @@ async function completeOpenAIActive({
   precomputedSemanticResult = null,
 }) {
   try {
-    const aiSafetyTriage = plan?.reason === "ai_safety_triage";
+    let aiSafetyTriage = plan?.reason === "ai_safety_triage";
     const queueAiSafetyFallback = async () => {
       if (
         !aiSafetyTriage ||
@@ -2164,9 +2175,49 @@ async function completeOpenAIActive({
       return { status: "superseded", replySent: false };
     }
 
+    let unansweredPatientBlock = {
+      coalesced: false,
+      blockTurnCount: 1,
+      substantiveRequestCount: 0,
+      substantiveTurnCount: 0,
+      multipleRequests: false,
+      requiresContextualReply: false,
+    };
+    let refreshedContextSource = "volatile_cache";
     if (humanContextContinuationCandidate) {
       const refreshed = await refreshLatestHumanContextInput(input);
       input = refreshed.input;
+      refreshedContextSource = refreshed.source;
+      unansweredPatientBlock = {
+        coalesced: refreshed.coalesced,
+        blockTurnCount: refreshed.burstTurnCount,
+        substantiveRequestCount: refreshed.substantiveRequestCount,
+        substantiveTurnCount: refreshed.substantiveTurnCount,
+        multipleRequests: refreshed.multipleRequests,
+        requiresContextualReply: refreshed.requiresContextualReply,
+      };
+    } else {
+      const pendingBlock = coalesceUnansweredPatientBlock({
+        recentConversation: input.recentConversation,
+        currentText: input.text,
+        currentEventId: input.eventId,
+        currentAt: input.receivedAt,
+        currentTemplateId: input.templateId,
+      });
+      unansweredPatientBlock = pendingBlock;
+      if (pendingBlock.coalesced) {
+        input = {
+          ...input,
+          text: pendingBlock.text,
+          recentConversation: pendingBlock.recentConversation,
+        };
+      }
+    }
+
+    if (
+      humanContextContinuationCandidate ||
+      unansweredPatientBlock.coalesced
+    ) {
       const refreshedBasePlan = planAutomation({
         text: input.text,
         messageType: "text",
@@ -2182,19 +2233,18 @@ async function completeOpenAIActive({
         ),
         patientRelationship,
       );
-      const refreshedContextProtected = isRefreshedHumanContextProtected(
-        refreshedPlan,
-        input.text,
-      );
-      if (refreshedContextProtected) {
+      if (
+        humanContextContinuationCandidate &&
+        isRefreshedHumanContextProtected(refreshedPlan, input.text)
+      ) {
         writeOperationalLog({
           source: "human_context_burst_refresh",
           category: "reply_control",
           reason: "refreshed_context_protected",
           sourceId: input.eventId,
           fields: {
-            source: refreshed.source,
-            burstTurnCount: refreshed.burstTurnCount,
+            source: refreshedContextSource,
+            burstTurnCount: unansweredPatientBlock.blockTurnCount,
             planReason: refreshedPlan.reason,
             planRoute: refreshedPlan.route,
           },
@@ -2204,32 +2254,42 @@ async function completeOpenAIActive({
           replySent: false,
         };
       }
-      plan = {
-        ...refreshedPlan,
-        route: "standard_reply",
-        replyCode: "",
-        professional:
-          refreshedPlan.professional || plan?.professional || input.professional,
-        procedure:
-          refreshedPlan.procedure || plan?.procedure || input.procedure,
-        automaticAllowed: true,
-        humanContextContinuationCandidate: true,
-      };
-      conversationAction = prepareSemanticContextContinuationAction(
-        decideConversationAction({
-          text: input.text,
-          messageType: "text",
-          plan,
-          recentConversation: input.recentConversation,
-          humanTakeoverActive: true,
-          exactDuplicate,
-          schedulingRequest,
-          conversionExperienceEnabled:
-            isBrunaConversionExperienceEnabled(process.env),
-        }),
-      );
+      plan = humanContextContinuationCandidate
+        ? {
+            ...refreshedPlan,
+            route: "standard_reply",
+            replyCode: "",
+            professional:
+              refreshedPlan.professional ||
+              plan?.professional ||
+              input.professional,
+            procedure:
+              refreshedPlan.procedure || plan?.procedure || input.procedure,
+            automaticAllowed: true,
+            humanContextContinuationCandidate: true,
+          }
+        : refreshedPlan;
+      schedulingRequest = isSchedulingRequestInPatientBlock(input.text);
+      const refreshedConversationAction = decideConversationAction({
+        text: input.text,
+        messageType: "text",
+        plan,
+        recentConversation: input.recentConversation,
+        humanTakeoverActive: humanContextContinuationCandidate,
+        exactDuplicate,
+        schedulingRequest,
+        conversionExperienceEnabled:
+          isBrunaConversionExperienceEnabled(process.env),
+      });
+      conversationAction = humanContextContinuationCandidate
+        ? prepareSemanticContextContinuationAction(
+            refreshedConversationAction,
+          )
+        : refreshedConversationAction;
       approvedPriceReplyKind = approvedPriceReplyKindForPlan(plan);
-      if (refreshed.coalesced) {
+      aiSafetyTriage = plan?.reason === "ai_safety_triage";
+      if (unansweredPatientBlock.coalesced) {
+        precomputedSemanticResult = null;
         input.learningContext = await getBotKnowledgeContext({
           phone: to,
           question: input.text,
@@ -2237,13 +2297,24 @@ async function completeOpenAIActive({
         });
       }
       writeOperationalLog({
-        source: "human_context_burst_refresh",
+        source: humanContextContinuationCandidate
+          ? "human_context_burst_refresh"
+          : "unanswered_patient_block_refresh",
         category: "conversation_memory",
-        reason: refreshed.coalesced ? "burst_coalesced" : "context_refreshed",
+        reason: unansweredPatientBlock.coalesced
+          ? "unanswered_block_coalesced"
+          : "context_refreshed",
         sourceId: input.eventId,
         fields: {
-          source: refreshed.source,
-          burstTurnCount: refreshed.burstTurnCount,
+          source: refreshedContextSource,
+          burstTurnCount: unansweredPatientBlock.blockTurnCount,
+          substantiveRequestCount:
+            unansweredPatientBlock.substantiveRequestCount,
+          substantiveTurnCount:
+            unansweredPatientBlock.substantiveTurnCount,
+          multipleRequests: unansweredPatientBlock.multipleRequests,
+          requiresContextualReply:
+            unansweredPatientBlock.requiresContextualReply,
           planReason: plan.reason,
         },
       });
@@ -2542,6 +2613,10 @@ async function completeOpenAIActive({
           ...input,
           policyHints: {
             ...plan,
+            unansweredPatientBlock:
+              unansweredPatientBlock.coalesced,
+            unansweredPatientRequestCount:
+              unansweredPatientBlock.substantiveRequestCount,
             deterministicReplyCode:
               deterministicReplyResult?.decision?.replyCode || "",
             deterministicReplyPreview:
@@ -2553,17 +2628,21 @@ async function completeOpenAIActive({
           },
           replyContract: conversationAction?.replyContract,
         });
-    const selectedDeterministicReply =
+    const semanticConfirmedDeterministicReply =
       semanticDecisionConfirmsDeterministicReply(
-          semanticResult,
-          deterministicReplyResult,
-        );
+        semanticResult,
+        deterministicReplyResult,
+      );
+    const selectedDeterministicReply = Boolean(
+      semanticConfirmedDeterministicReply &&
+        !unansweredPatientBlock.requiresContextualReply,
+    );
     const deterministicReplyContextMismatch = Boolean(
       deterministicReplyResult &&
         semanticResult?.status === "completed" &&
         semanticResult.decision?.replyCode ===
           deterministicReplyResult.decision?.replyCode &&
-        !selectedDeterministicReply,
+        !semanticConfirmedDeterministicReply,
     );
     const replyKind = selectedDeterministicReply
       ? appointmentPreferenceBody

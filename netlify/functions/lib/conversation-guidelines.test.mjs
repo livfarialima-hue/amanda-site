@@ -504,6 +504,15 @@ test("playbook requires explicit semantic reopening and complete deterministic f
   assert.match(CONVERSATION_GUIDELINES, /context_reopen:<tema>/);
   assert.match(CONVERSATION_GUIDELINES, /resolver integralmente todos os pedidos seguros/);
   assert.match(CONVERSATION_GUIDELINES, /deterministicReplyPreview/);
+  assert.match(CONVERSATION_GUIDELINES, /unansweredPatientBlock/);
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /não trate a última linha como se apagasse as anteriores/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /redija uma única resposta contextual que cubra todos eles/,
+  );
   assert.match(CONVERSATION_GUIDELINES, /CONTEXT-CLARIFY-01/);
   assert.match(CONVERSATION_GUIDELINES, /UNKNOWN-CLARIFY-01/);
   assert.match(

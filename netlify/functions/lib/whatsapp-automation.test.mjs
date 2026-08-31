@@ -683,6 +683,28 @@ test("consultation access and price are not mistaken for surgical price", () => 
   assert.equal(plan.automaticAllowed, true);
 });
 
+test("asking whether the evaluation is charged is consultation information, not scheduling", () => {
+  const text = [
+    "Boa tarde",
+    "Queria entender mais sobre flacidez de papada",
+    "Quero saber também se vocês cobram a consulta de avaliação",
+  ].join("\n");
+  const plan = planAutomation({
+    text,
+    messageType: "text",
+    reference: "M26C01W-C07H01",
+    platform: "Meta",
+  });
+
+  assert.equal(isConsultationInformationRequest(text), true);
+  assert.equal(isConsultationPriceRequest(text), true);
+  assert.equal(isSchedulingRequest(text), false);
+  assert.equal(plan.route, "standard_reply");
+  assert.equal(plan.reason, "consultation_information_request");
+  assert.equal(plan.procedure, "lifting_cervical");
+  assert.equal(plan.automaticAllowed, true);
+});
+
 test("a low-risk aesthetic statement reaches AI triage even when conversation memory is unavailable", () => {
   const plan = planAutomation({
     text: "Eu tenho o pescoço flácido",

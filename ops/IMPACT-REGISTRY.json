@@ -72,6 +72,7 @@
       "id": "bruna-conversation-safety",
       "ownerFiles": [
         "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/inbound-burst-context.mjs",
         "netlify/functions/lib/outbound-reply-gate.mjs",
         "netlify/functions/lib/surgical-price-review.mjs"
       ],
@@ -92,6 +93,8 @@
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs",
         "netlify/functions/lib/conversation-ledger.mjs",
         "netlify/functions/lib/conversation-ledger.test.mjs",
         "netlify/functions/lib/openai-shadow.test.mjs",
@@ -106,6 +109,7 @@
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs",
         "netlify/functions/lib/conversation-ledger.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/price-holding-webhook.test.mjs",

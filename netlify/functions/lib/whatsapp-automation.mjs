@@ -121,7 +121,7 @@ const CONSULTATION_ACCESS_PATTERN =
   /\bcomo\s+(?:eu\s+)?fa[cç]o\s+para\s+(?:passar|marcar|agendar)\s+(?:em|uma)?\s*(?:consulta|avalia[cç][aã]o)\b/i;
 
 const CONSULTATION_PRICE_PATTERN =
-  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica)\b.{0,45}\b(?:da\s+)?(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,45}\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica)\b/i;
+  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|tem\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\b.{0,45}\b(?:a\s+|da\s+)?(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,45}\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|tem\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\b/i;
 
 const AVAILABILITY_REQUEST_PATTERN =
   /\b(?:consultar|conferir|ver|saber)\s+(?:a\s+)?disponibilidade\b|\b(?:quais?|ver|consultar|conferir|saber)\b.{0,35}\b(?:hor[aá]rios?|datas?)\b|\b(?:agendar|marcar)\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o)\b/i;

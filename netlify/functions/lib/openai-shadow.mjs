@@ -701,6 +701,15 @@ function normalizePolicyHints(value) {
   if (typeof value.semanticRoutePending === "boolean") {
     normalized.semanticRoutePending = value.semanticRoutePending;
   }
+  if (typeof value.unansweredPatientBlock === "boolean") {
+    normalized.unansweredPatientBlock = value.unansweredPatientBlock;
+  }
+  if (Number.isFinite(Number(value.unansweredPatientRequestCount))) {
+    normalized.unansweredPatientRequestCount = Math.max(
+      0,
+      Math.min(8, Number(value.unansweredPatientRequestCount)),
+    );
+  }
 
   return Object.keys(normalized).length ? normalized : null;
 }

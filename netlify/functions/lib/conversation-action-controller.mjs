@@ -27,7 +27,7 @@ const PENDING_HUMAN_COMMITMENT_ACKNOWLEDGEMENT_PATTERN =
 const DIRECT_QUESTION_PATTERN =
   /(?:\?|^(?:como|qual|quais|quanto|quantos|quando|onde|por\s+que|porque|quem|voc[êe]s|tem|h[áa]|pode|posso|ser[áa]|custa|atende|faz)\b)/i;
 const DIRECT_REQUEST_PATTERN =
-  /\b(?:quero|gostaria|preciso|poderia|consegue|conseguem|pode|podem|tenho\s+(?:uma\s+)?d[úu]vida|me\s+(?:explica|explique|diz|diga|informa|informe|manda|mande|envia|envie|avisa|avise|confirma|confirme|ajuda|ajude|passa|passe)|verifica|verifique|confirma|confirme|agenda|agende|marca|marque|reserva|reserve)\b/i;
+  /\b(?:quero|queria|gostaria|preciso|poderia|consegue|conseguem|pode|podem|tenho\s+(?:uma\s+)?d[úu]vida|me\s+(?:explica|explique|diz|diga|informa|informe|manda|mande|envia|envie|avisa|avise|confirma|confirme|ajuda|ajude|passa|passe)|verifica|verifique|confirma|confirme|agenda|agende|marca|marque|reserva|reserve)\b/i;
 const EXPLICIT_DEFERRAL_PATTERN =
   /\b(?:ainda\s+estou\s+(?:pensando|avaliando|decidindo)|vou\s+(?:pensar|avaliar|analisar|decidir)(?:\s+com\s+calma)?|por\s+enquanto\s+(?:vou\s+)?(?:pensar|avaliar|analisar)|qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo)|se\s+eu\s+decidir\s+(?:eu\s+)?(?:volto|aviso|chamo))\b/i;
 const EXPLICIT_NIGHT_PAUSE_PATTERN =
@@ -39,6 +39,7 @@ const PATIENT_DECLINE_PATTERN =
 const PRICE_PATTERN =
   /\b(?:valor(?:es)?|pre[cç]os?|quanto\s+custa|investimento|or[cç]amento|faixa)\b/i;
 const CONSULTATION_PATTERN = /\bconsult(?:a|ar|as|inha)\b/i;
+const CHARGE_PATTERN = /\bcobr(?:a|am|ado|ada|ados|adas|ar|am-se)\b/i;
 const KNOWN_PROCEDURE_PATTERN =
   /\b(?:lifting|mini[-\s]?lifting|cervicoplastia|lipo(?:aspira[cç][ãa]o)?(?:\s+de\s+papada)?|papada|blefaroplastia|p[áa]lpebra|otoplastia|orelha|rinoplastia|mamoplastia|mastopexia|pr[óo]tese|abdominoplastia|braquioplastia|cruroplastia|ninfoplastia|ginecomastia)\b/i;
 const PAYMENT_PATTERN =
@@ -55,6 +56,10 @@ const INSURANCE_PATTERN =
   /\b(?:conv[eê]nio|plano\s+de\s+sa[úu]de|reembolso)\b/i;
 const RESOURCE_PATTERN =
   /\b(?:site|p[áa]gina|link|instagram|material|conte[úu]do)\b/i;
+const PROCEDURE_INFORMATION_PATTERN =
+  /(?:\b(?:saber|entender|explicar|explique|informa[cç][oõ]es?|como\s+funciona)\b[\s\S]{0,180}\b(?:flacidez|papada|pesco[cç]o|p[áa]lpebras?|blefaroplastia|lifting|cervicoplastia|otoplastia|rinoplastia|ninfoplastia|lipo(?:aspira[cç][ãa]o)?)\b|\b(?:flacidez|papada|pesco[cç]o|p[áa]lpebras?|blefaroplastia|lifting|cervicoplastia|otoplastia|rinoplastia|ninfoplastia|lipo(?:aspira[cç][ãa]o)?)\b[\s\S]{0,180}\b(?:como\s+funciona|saber|entender|explicar|informa[cç][oõ]es?)\b)/i;
+const APPEARANCE_CONCERN_PATTERN =
+  /\b(?:flacidez|papada|pesco[cç]o|p[áa]lpebras?)\b/i;
 
 function normalized(value) {
   return String(value || "").trim();
@@ -147,10 +152,23 @@ export function introducesStandalonePatientRequest(text) {
     /\b(?:pode|poderia|consegue|conseguem)\s+(?:me\s+)?(?:explicar|explique|informar|informe|dizer|diga|enviar|envie|confirmar|confirme|verificar|verifique|ajudar|ajude)\b/i.test(
       value,
     ) ||
-    /\b(?:quero|gostaria|preciso)\s+(?:de\s+)?(?:agendar|marcar|saber|entender|confirmar|verificar|receber|falar)\b/i.test(
+    /\b(?:quero|queria|gostaria|preciso)\s+(?:de\s+)?(?:agendar|marcar|saber|entender|confirmar|verificar|receber|falar)\b/i.test(
       value,
     )
   );
+}
+
+function hasProcedureInformationRequest(value) {
+  return String(value || "")
+    .split(/\n+/)
+    .some(
+      (part) =>
+        PROCEDURE_INFORMATION_PATTERN.test(part) &&
+        (
+          APPEARANCE_CONCERN_PATTERN.test(part) ||
+          (!PRICE_PATTERN.test(part) && !PAYMENT_PATTERN.test(part))
+        ),
+    );
 }
 
 function hasPendingHumanCommitment(commitments) {
@@ -356,11 +374,15 @@ function inferUnresolvedIntents({
   };
 
   if (String(messageType || "").toLowerCase() === "image") add("photo");
+  const consultationPriceRequest = Boolean(
+    CONSULTATION_PATTERN.test(value) &&
+      (PRICE_PATTERN.test(value) || CHARGE_PATTERN.test(value)),
+  );
   if (
-    PRICE_PATTERN.test(value) &&
+    (PRICE_PATTERN.test(value) || consultationPriceRequest) &&
     plan?.priceMentionIsTemplateContext !== true
   ) {
-    add(CONSULTATION_PATTERN.test(value) ? "price_consultation" : "price_surgery");
+    add(consultationPriceRequest ? "price_consultation" : "price_surgery");
   }
   if (
     [
@@ -386,6 +408,12 @@ function inferUnresolvedIntents({
   if (CREDENTIALS_PATTERN.test(value)) add("credentials");
   if (INSURANCE_PATTERN.test(value)) add("insurance");
   if (RESOURCE_PATTERN.test(value)) add("resource");
+  if (
+    plan?.marketingPrefill !== true &&
+    hasProcedureInformationRequest(value)
+  ) {
+    add("procedure_information");
+  }
   for (const topic of liftingFacialInformationTopics({
     text: value,
     procedure: plan?.procedure,

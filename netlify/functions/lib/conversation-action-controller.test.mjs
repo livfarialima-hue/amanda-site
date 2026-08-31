@@ -574,6 +574,36 @@ test("the consultation price contract permits a low-pressure next-step offer wit
   assert.equal(decision.replyContract.allowCta, true);
 });
 
+test("a flacidez question followed by consultation price keeps both requests in the contract", () => {
+  const decision = decideConversationAction({
+    text: [
+      "Queria entender mais sobre flacidez de papada",
+      "Quero saber também se vocês cobram a consulta de avaliação",
+    ].join("\n"),
+    plan: {
+      ...standardPlan,
+      reason: "consultation_information_request",
+      procedure: "lifting_cervical",
+    },
+    recentConversation: [
+      {
+        role: "assistant",
+        source: "bruna",
+        text: "O que você gostaria de entender primeiro sobre cervicoplastia?",
+      },
+    ],
+  });
+
+  assert.equal(decision.action, CONVERSATION_ACTIONS.RESPOND);
+  assert.deepEqual(decision.replyContract.unresolvedIntents, [
+    "price_consultation",
+    "procedure_information",
+  ]);
+  assert.equal(decision.replyContract.risk, "yellow");
+  assert.equal(decision.replyContract.maxQuestions, 0);
+  assert.equal(decision.replyContract.allowCta, true);
+});
+
 test("the cervical first price contract permits only the approved range offer", () => {
   const decision = decideConversationAction({
     text: "Gostaria de saber os valores da cervicoplastia",

@@ -1269,6 +1269,12 @@ test("an enhanced reply contract remains v2 in the model input", async () => {
       text: "Qual é o valor da consulta?",
       platform: "Meta",
       procedure: "avaliacao_facial",
+      policyHints: {
+        route: "standard_reply",
+        reason: "consultation_information_request",
+        unansweredPatientBlock: true,
+        unansweredPatientRequestCount: 2,
+      },
       replyContract: {
         version: "reply-contract-v2",
         stage: "consideration",
@@ -1304,6 +1310,8 @@ test("an enhanced reply contract remains v2 in the model input", async () => {
     input.replyContract.allowedCtaTypes,
     ["availability_exploration"],
   );
+  assert.equal(input.policyHints.unansweredPatientBlock, true);
+  assert.equal(input.policyHints.unansweredPatientRequestCount, 2);
 });
 
 test("OpenAI failure does not throw to the webhook caller", async () => {
@@ -2210,6 +2218,234 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
     assert.equal(operationalEvent.opportunityId, "opp-active-standard");
     assert.equal(operationalEvent.type, "automatic_reply_sent");
     assert.equal(Object.hasOwn(operationalEvent, "text"), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    console.log = originalLog;
+
+    for (const [key, value] of Object.entries(savedEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("active mode answers every request in the recent unanswered patient block", async () => {
+  const environmentKeys = [
+    "YCLOUD_WEBHOOK_SECRET",
+    "YCLOUD_API_KEY",
+    "GOOGLE_SHEETS_WEBHOOK_URL",
+    "GOOGLE_SHEETS_WEBHOOK_SECRET",
+    "OPENAI_API_KEY",
+    "WHATSAPP_AUTOMATION_MODE",
+    "BRUNA_CONVERSION_EXPERIENCE_V1",
+    "WHATSAPP_ALERT_NUMBER",
+    "YCLOUD_ALERT_TEMPLATE_NAME",
+  ];
+  const savedEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  const originalFetch = globalThis.fetch;
+  const originalLog = console.log;
+  const requests = [];
+  const pending = [];
+  const from = "+5511900000088";
+  const eventId = "unanswered-block-price-event";
+  const semanticReply =
+    "Sobre a flacidez da papada, a avaliação considera a pele, os volumes e o contorno do pescoço para a Dra. Amanda explicar quais possibilidades fazem sentido. A consulta presencial custa R$ 500, com pagamento por Pix, débito ou parcelamento e emissão de nota fiscal. Se quiser, posso verificar opções de horário.";
+
+  Object.assign(process.env, {
+    YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
+    YCLOUD_API_KEY: "ycloud-test-key",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://sheets.example.test/webhook",
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "sheets-test-secret",
+    OPENAI_API_KEY: "openai-test-key",
+    WHATSAPP_AUTOMATION_MODE: "active",
+    BRUNA_CONVERSION_EXPERIENCE_V1: "enabled",
+  });
+  delete process.env.WHATSAPP_ALERT_NUMBER;
+  delete process.env.YCLOUD_ALERT_TEMPLATE_NAME;
+  console.log = () => {};
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+
+    if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      const sheetsRequest = JSON.parse(options.body);
+      if (sheetsRequest.action === "get_conversation_context") {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            opportunityId: "opp-unanswered-block",
+            professional: "amanda",
+            turns: [
+              {
+                role: "assistant",
+                source: "bruna",
+                text:
+                  "Posso te orientar sobre cervicoplastia. O que você gostaria de entender primeiro?",
+                eventId: "unanswered-block-opening",
+                at: "2026-08-31T15:35:00.000Z",
+              },
+              {
+                role: "user",
+                source: "patient",
+                text: "Boa tarde",
+                eventId: "unanswered-block-greeting",
+                at: "2026-08-31T15:40:00.000Z",
+              },
+              {
+                role: "user",
+                source: "patient",
+                text: "Queria entender mais sobre flacidez de papada",
+                eventId: "unanswered-block-flacidez",
+                at: "2026-08-31T15:41:00.000Z",
+              },
+              {
+                role: "user",
+                source: "patient",
+                text:
+                  "Quero saber também se vocês cobram a consulta de avaliação",
+                eventId,
+                at: "2026-08-31T15:43:00.000Z",
+              },
+            ],
+          }),
+          { status: 200 },
+        );
+      }
+      if (sheetsRequest.action === "get_bot_knowledge_context") {
+        return new Response(
+          JSON.stringify({ ok: true, candidates: [], pendingQuestion: null }),
+          { status: 200 },
+        );
+      }
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          inserted: false,
+          updated: true,
+          duplicate: false,
+          humanTakeoverToday: false,
+          patientRelationship: { found: false },
+          opportunityId: "opp-unanswered-block",
+          professional: "amanda",
+          routeStatus: "resolved_by_open_opportunity",
+          routed: true,
+        }),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.openai.com/v1/responses") {
+      const modelInput = JSON.parse(JSON.parse(options.body).input);
+      assert.equal(modelInput.policyHints.unansweredPatientBlock, true);
+      assert.equal(modelInput.policyHints.unansweredPatientRequestCount, 2);
+      assert.equal(
+        modelInput.policyHints.deterministicReplyCode,
+        "AMANDA-CONSULTA-INFO-01",
+      );
+      assert.deepEqual(modelInput.replyContract.unresolvedIntents, [
+        "price_consultation",
+        "procedure_information",
+      ]);
+      assert.equal(
+        modelInput.currentMessage,
+        [
+          "Boa tarde",
+          "Queria entender mais sobre flacidez de papada",
+          "Quero saber também se vocês cobram a consulta de avaliação",
+        ].join("\n"),
+      );
+
+      return new Response(
+        JSON.stringify(
+          validResponse(
+            validDecision({
+              procedure: "lifting_cervical",
+              replyCode: "AMANDA-CONSULTA-INFO-01",
+              suggestedReply: semanticReply,
+              reviewReason: "complete_unanswered_patient_block",
+              conversationState: {
+                activeTopic: "flacidez de papada e consulta",
+                patientAct: "question",
+                refersToEventId: eventId,
+                lastClinicQuestion:
+                  "O que você gostaria de entender primeiro?",
+                lastClinicOffer: "",
+                unresolvedQuestions: [],
+                factsAlreadyProvided: ["consulta presencial: R$ 500"],
+                owner: "bruna",
+                nextExpectedAction: "aguardar resposta da paciente",
+                ambiguity: "",
+                contextConfidence: "high",
+              },
+            }),
+          ),
+        ),
+        { status: 200 },
+      );
+    }
+
+    if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+      return new Response('{"status":"accepted"}', { status: 200 });
+    }
+
+    throw new Error(`unexpected destination: ${url}`);
+  };
+
+  try {
+    const rawBody = JSON.stringify({
+      id: eventId,
+      type: "whatsapp.inbound_message.received",
+      createTime: "2026-08-31T15:43:00.000Z",
+      whatsappInboundMessage: {
+        id: "unanswered-block-price-message",
+        from,
+        to: PHONE,
+        sendTime: "2026-08-31T15:43:00.000Z",
+        type: "text",
+        customerProfile: { name: "Eliane" },
+        text: {
+          body:
+            "Quero saber também se vocês cobram a consulta de avaliação",
+        },
+      },
+    });
+    const timestamp = "1721908800";
+    const signature = createHmac(
+      "sha256",
+      process.env.YCLOUD_WEBHOOK_SECRET,
+    )
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
+    const response = await webhook(
+      new Request("http://localhost/api/ycloud/webhook", {
+        method: "POST",
+        headers: {
+          "YCloud-Signature": `t=${timestamp},s=${signature}`,
+        },
+        body: rawBody,
+      }),
+      { waitUntil: (promise) => pending.push(promise) },
+    );
+    const body = await response.json();
+    await Promise.all(pending);
+
+    assert.equal(body.aiActiveQueued, true);
+    assert.equal(body.reviewAlertQueued, false);
+    assert.equal(
+      body.conversationHistorySource,
+      "durable_ledger_fallback",
+    );
+
+    const patientRequests = requests.filter(
+      (request) =>
+        request.url === "https://api.ycloud.com/v2/whatsapp/messages",
+    );
+    assert.equal(patientRequests.length, 1);
+    assert.equal(
+      JSON.parse(patientRequests[0].options.body).text.body,
+      semanticReply,
+    );
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;
