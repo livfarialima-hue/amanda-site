@@ -154,6 +154,21 @@ p:last-child { margin-bottom: 0; }
   font-weight: 650;
 }
 
+.cv-quick-answer {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: clamp(46px, 6vw, 74px) 0;
+  background: #fff;
+}
+.cv-quick-answer-intro { max-width: 760px; margin-bottom: 28px; }
+.cv-quick-answer-intro h2 { margin-bottom: 12px; font-size: clamp(1.8rem, 3vw, 2.75rem); }
+.cv-quick-answer-intro p { color: var(--muted); }
+.cv-quick-answer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0; }
+.cv-quick-answer-grid div { min-width: 0; border-left: 3px solid var(--green); border-radius: 0 18px 18px 0; padding: 22px 24px; background: var(--paper-2); }
+.cv-quick-answer-grid dt { margin-bottom: 8px; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 1.18rem; }
+.cv-quick-answer-grid dd { margin: 0; color: var(--muted); }
+.cv-editorial-review { margin: 24px 0 0; color: var(--muted); font-size: .78rem; }
+
 .cv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .cv-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cv-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -292,6 +307,7 @@ body.has-cookie-consent .cv-sticky { opacity: 0; pointer-events: none; }
   .cv-hero-grid, .cv-split, .cv-consult { grid-template-columns: 1fr; }
   .cv-hero-media { width: min(560px, 100%); margin-inline: auto; }
   .cv-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cv-quick-answer-grid { grid-template-columns: 1fr; }
   .cv-reviews { grid-template-columns: 1fr; }
   .cv-consult { gap: 24px; }
 }
@@ -313,6 +329,7 @@ body.has-cookie-consent .cv-sticky { opacity: 0; pointer-events: none; }
   .cv-actions .cv-text-link { text-align: center; }
   .cv-facts { gap: 7px; }
   .cv-fact { font-size: .72rem; }
+  .cv-quick-answer-grid div { padding: 20px; }
   .cv-grid, .cv-grid--2, .cv-grid--4, .cv-results { grid-template-columns: 1fr; }
   .cv-card { padding: 24px 21px; }
   .cv-wide-card { grid-template-columns: 1fr; }

@@ -117,16 +117,97 @@ test("the cervical page connects cervicoplastia and lifting cervical without cha
   const medicalPage = structuredData["@graph"]?.find(
     (item) => item["@type"] === "MedicalWebPage",
   );
+  const medicalProcedure = structuredData["@graph"]?.find(
+    (item) => item["@type"] === "MedicalProcedure",
+  );
 
   assert.match(html, /<title>Cervicoplastia \(lifting cervical\) em São Paulo/i);
   assert.match(html, /<h1>Cervicoplastia:/i);
   assert.match(html, /também chamada de lifting cervical/i);
   assert.match(html, /Cervicoplastia e lifting cervical são a mesma cirurgia\?/i);
   assert.match(html, /rel="canonical" href="https:\/\/draamandaschroeder\.com\.br\/lifting-cervical\/"/i);
-  assert.equal(medicalPage?.about?.name, "Cervicoplastia");
+  assert.equal(
+    medicalPage?.about?.["@id"],
+    "https://draamandaschroeder.com.br/lifting-cervical/#procedure",
+  );
+  assert.equal(medicalProcedure?.name, "Cervicoplastia");
   assert.deepEqual(
-    medicalPage?.about?.alternateName,
-    ["Lifting cervical", "Lifting de pescoço"],
+    medicalProcedure?.alternateName,
+    ["Lifting cervical", "Lifting de pescoço", "Cirurgia do pescoço"],
+  );
+});
+
+test("cervical pages expose visible answer-first medical content and matching review metadata", () => {
+  const cases = [
+    {
+      relativePage: "lifting-cervical/index.html",
+      canonical: "https://draamandaschroeder.com.br/lifting-cervical/",
+      procedureName: "Cervicoplastia",
+      visibleTerm: /Cervicoplastia, lifting cervical e lifting de pescoço/i,
+    },
+    {
+      relativePage: "lipo-de-papada/index.html",
+      canonical: "https://draamandaschroeder.com.br/lipo-de-papada/",
+      procedureName: "Lipoaspiração submentoniana",
+      visibleTerm: /Lipo de papada e lipoaspiração submentoniana/i,
+    },
+  ];
+
+  for (const item of cases) {
+    const html = readFileSync(path.join(root, item.relativePage), "utf8");
+    const structuredData = JSON.parse(
+      html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] || "{}",
+    );
+    const graph = structuredData["@graph"] || [];
+    const physician = graph.find((entry) => entry["@type"] === "Physician");
+    const procedure = graph.find((entry) => entry["@type"] === "MedicalProcedure");
+    const medicalPage = graph.find((entry) => entry["@type"] === "MedicalWebPage");
+    const whatsappLinks = [...html.matchAll(
+      /<a\b[^>]*data-track="whatsapp"[^>]*>/gi,
+    )].map((match) => match[0]);
+
+    assert.match(html, /class="cv-quick-answer"/i, item.relativePage);
+    assert.match(html, item.visibleTerm, item.relativePage);
+    assert.match(
+      html,
+      /Conteúdo médico revisado em <time datetime="2026-08-31">31 de agosto de 2026<\/time> por Dra\. Amanda Schroeder/i,
+      item.relativePage,
+    );
+    assert.equal(procedure?.name, item.procedureName, item.relativePage);
+    assert.equal(medicalPage?.url, item.canonical, item.relativePage);
+    assert.equal(medicalPage?.dateModified, "2026-08-31", item.relativePage);
+    assert.equal(medicalPage?.lastReviewed, "2026-08-31", item.relativePage);
+    assert.equal(
+      medicalPage?.reviewedBy?.["@id"],
+      "https://draamandaschroeder.com.br/#physician",
+      item.relativePage,
+    );
+    assert.equal(
+      medicalPage?.medicalAudience?.audienceType,
+      "Patient",
+      item.relativePage,
+    );
+    assert.equal(physician?.telephone, "+55 11 96195-7144", item.relativePage);
+    assert.equal(whatsappLinks.length, 6, item.relativePage);
+    assert.ok(
+      whatsappLinks.every((link) => /href="https:\/\/wa\.me\/5511961957144\?/i.test(link)),
+      `${item.relativePage} must preserve the WhatsApp destination`,
+    );
+    assert.deepEqual(
+      whatsappLinks.map((link) => link.match(/data-cta-location="([^"]+)"/i)?.[1]),
+      ["header", "hero", "consultation", "final", "footer", "sticky"],
+      item.relativePage,
+    );
+  }
+
+  const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/lifting-cervical\/<\/loc><lastmod>2026-08-31<\/lastmod>/i,
+  );
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/lipo-de-papada\/<\/loc><lastmod>2026-08-31<\/lastmod>/i,
   );
 });
 

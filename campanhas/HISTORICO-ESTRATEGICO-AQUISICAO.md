@@ -603,3 +603,17 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Data de revisão:** primeiras ocorrências elegíveis e consolidação em 2 de setembro de 2026.
 - **Regra para manter:** manter com zero competição ou duplicidade e queda de perguntas seguras sem resposta.
 - **Regra para reverter:** restaurar o código `6e16f20a966a979b082ed20f249f382bb8fbbd4e` e o deploy `6a8f6edc9cf872000807c45c` diante de resposta precoce, competição humana, procedimento ou preço incorreto, ou quebra de proteção clínica/operacional.
+
+### 31 de agosto de 2026 — correção de demanda cervical e conteúdo preparado para busca com IA
+
+- **Status:** execução autorizada; candidato local aprovado nos testes focais e publicação pendente do preflight do commit exato.
+- **Área/campanha:** `S_BR_SP_LIFTING_CERVICAL`, grupos `AG_CERVICOPLASTIA` e `AG_LIPO_PAPADA`, páginas `/lifting-cervical/` e `/lipo-de-papada/`.
+- **Evidência:** em 01–30/08 a campanha teve 339 cliques, R$ 393,02 de gasto e 2 leads qualificados importados. Cervicoplastia respondeu pelas duas conversões; lipo de papada teve 159 cliques e R$ 181,89 sem conversão qualificada. A lista viva continha duas negativas de frase que bloqueavam `lipoaspiração de papada`, e o sitelink compartilhado de consulta levava a um fragmento de resultados.
+- **Mudança autorizada:** remover somente as duas negativas conflitantes; corrigir somente o destino do sitelink `Agende Sua Consulta`; publicar nas duas páginas uma resposta curta e textual, sinônimos cirúrgicos visíveis, autoria/revisão médica datada e dados estruturados coerentes. Preservar os seis CTAs e a atribuição de WhatsApp de cada página.
+- **Motivo:** recuperar procura cirúrgica bloqueada, manter a promessa do sitelink e facilitar a compreensão do conteúdo por pessoas, Google e sistemas de busca com IA sem recorrer a arquivos ou marcações sem suporte.
+- **Hipótese:** mais cobertura de consultas cirúrgicas aderentes e melhor continuidade sem ampliar tráfego não cirúrgico nem promessa clínica.
+- **Métrica principal:** contatos válidos, leads qualificados, consultas agendadas/realizadas e custo por etapa em CERV e LIPO; termos, impressões, cliques e sitelinks apenas como diagnóstico.
+- **Guardrails:** R$ 12/dia, Maximizar cliques, meta qualificada, redes, cidade, agenda, dispositivos, RSAs e as 12 negativas não cirúrgicas permanecem inalterados; nenhuma mensagem real; nenhum Apps Script, LEADS ou CRM.
+- **Data de revisão:** integridade em 24 horas; leitura de negócio em 7 e 14 dias após a publicação real.
+- **Regra para manter:** manter se a cobertura cirúrgica aumentar sem piora consistente da qualidade downstream e se páginas, CTAs, canonical e rastreamento permanecerem íntegros.
+- **Regra para reverter:** restaurar apenas o componente defeituoso diante de destino incorreto, perda de tracking, tráfego incompatível consistente ou regressão editorial/médica; não reverter por CTR ou oscilação de clique isolada.

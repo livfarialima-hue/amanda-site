@@ -50,12 +50,20 @@
         "scripts/check-site-technical.mjs"
       ],
       "consumerFiles": [
-        "blefaroplastia/index.html"
+        "blefaroplastia/index.html",
+        "lifting-cervical/index.html",
+        "lipo-de-papada/index.html"
       ],
       "coveredPaths": [
-        "blefaroplastia/index.html"
+        "blefaroplastia/index.html",
+        "campanhas/conversion-pages.css",
+        "campanhas/site-technical-regression.test.mjs",
+        "lifting-cervical/index.html",
+        "lipo-de-papada/index.html",
+        "sitemap.xml"
       ],
       "requiredTestFiles": [
+        "campanhas/site-technical-regression.test.mjs",
         "scripts/check-site-technical.mjs"
       ],
       "requiredCommands": [
@@ -259,7 +267,8 @@
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
         "google-ads-scripts/google-ads-search-review-email.js",
         "netlify/functions/lib/patient-replies.mjs",
-        "lifting-cervical/index.html"
+        "lifting-cervical/index.html",
+        "lipo-de-papada/index.html"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -273,15 +282,19 @@
         "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
         "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
         "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
+        "campanhas/conversion-pages.css",
         "campanhas/conversion-tracking.js",
         "campanhas/conversion-tracking.test.mjs",
+        "campanhas/site-technical-regression.test.mjs",
         "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
         "google-ads-scripts/google-ads-search-review-email.js",
         "google-ads-scripts/google-ads-search-review-email.test.mjs",
         "lifting-cervical/index.html",
+        "lipo-de-papada/index.html",
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/patient-replies.mjs",
-        "netlify/functions/lib/patient-replies.test.mjs"
+        "netlify/functions/lib/patient-replies.test.mjs",
+        "sitemap.xml"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
