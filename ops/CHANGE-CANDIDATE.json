@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "FUNIL-RETOMADAS-JORNADA-2026-08-30",
   "title": "Reconciliação do funil, qualificação e retomadas da jornada do paciente",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "af7e34eec733d9b6210540f74f2723d05a05acd2",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -30,8 +30,11 @@
       "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
       "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "apps-script/clinica-liv-leads/production-target.json",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "netlify/functions/lib/commercial-contact.mjs",
       "netlify/functions/lib/commercial-contact.test.mjs",
       "netlify/functions/lib/lead-classifier.mjs",
@@ -59,15 +62,15 @@
       {
         "contract": "patient-journey-funnel-followups",
         "system": "Apps Script, Netlify e planilha LEADS canônicos",
-        "status": "pending_before_write",
-        "checkedAt": "2026-08-30T00:00:00-03:00",
-        "reference": "IDs canônicos registrados no repositório; comparação viva ainda pendente antes da primeira escrita externa",
-        "check": "comparar os cinco arquivos Apps Script aprovados com a base publicada, confirmar o deployment e verificar o estado do Netlify sem alterar dados"
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-08-30T21:35:26-03:00",
+        "reference": "Apps Script v136 e os cinco arquivos aprovados coincidiram por SHA-256 com af7e34e; deployment canônico preservado; Netlify estava no deploy 6a9492a25e4367d2c11076ec",
+        "check": "IDs canônicos confirmados; comparação viva sem divergência antes da primeira escrita externa"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_live",
     "commands": [
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "npm.cmd run change:check",
@@ -87,19 +90,19 @@
     ]
   },
   "release": {
-    "approvedCommit": "",
-    "netlifyDeployId": "",
-    "appsScriptVersion": 136,
+    "approvedCommit": "472158739e30d27fbcea03133f3ef5fcf04fe16a",
+    "netlifyDeployId": "6a94cdc6ee6f572a5da20474",
+    "appsScriptVersion": 137,
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "",
-    "verifiedAt": "",
-    "activationState": "pending_publication",
-    "notes": "A publicação somente pode começar após todos os gates locais e o preflight vivo somente leitura."
+    "drivePlanSha256": "37733527963d229a8801deafb9d14b561fd63c35999feab0988e1e4f27b860ef",
+    "verifiedAt": "2026-08-30T21:46:00-03:00",
+    "activationState": "active_verified",
+    "notes": "Apps Script v137 persistido nos cinco arquivos com hashes iguais ao commit aprovado; deployment e URL preservados. Netlify pronto no deploy registrado, bot active, domínio e URL imutável HTTP 200, webhook inválido HTTP 401 e token sintético inválido sem mutação. Nenhuma mensagem real foi enviada."
   },
   "rollback": {
-    "local": "reverter exclusivamente o commit candidato e preservar todo trabalho paralelo fora do escopo declarado",
-    "production": "restaurar Apps Script v136 e o deploy Netlify imediatamente anterior, mantendo a mesma planilha e os mesmos IDs canônicos"
+    "local": "reverter exclusivamente 472158739e30d27fbcea03133f3ef5fcf04fe16a e o recibo de fechamento, preservando todo trabalho paralelo fora do escopo declarado",
+    "production": "restaurar Apps Script v136 no mesmo deployment e Netlify 6a9492a25e4367d2c11076ec, mantendo a mesma planilha e os mesmos IDs canônicos"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
