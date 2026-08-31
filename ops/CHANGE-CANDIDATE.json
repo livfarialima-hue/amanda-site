@@ -27,6 +27,8 @@
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
       "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "auditorias/auditoria-google-ads-2026-08-30/EXECUCAO-2026-08-30.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",

@@ -98,7 +98,8 @@ function loadFunctions() {
       "ensureGoogleAdsRetractionRow_, googleAdsAdjustmentReceiptRecorded_, " +
       "googleAdsAdjustmentRowsThroughCutoff_, " +
       "reativarGoogleAdsMilestoneExistente_, " +
-      "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_ };",
+      "classificarAcaoReaperClassificacao_, categoriaExcecaoClassificacao_, " +
+      "resetClassificationAttemptCycle_, staleAttemptCycleRepairCandidates_ };",
     sandbox,
   );
   sandbox.__test.setGoogleAdsAdjustmentProjectionSpreadsheet = (spreadsheet) => {
@@ -639,6 +640,62 @@ test("classification reaper separates retries, dead letters and orphan review", 
   assert.equal(
     classificarAcaoReaperClassificacao_(orphan, now).action,
     "exception_review",
+  );
+});
+
+test("a new inbound activity starts a fresh classification attempt cycle", () => {
+  const { resetClassificationAttemptCycle_ } = loadFunctions();
+  const writes = [];
+  const sheet = {
+    getRange(row, column, rows, columns) {
+      return {
+        setValues(values) {
+          writes.push({ row, column, rows, columns, values });
+        },
+        setValue(value) {
+          writes.push({ row, column, rows: 1, columns: 1, value });
+        },
+      };
+    },
+  };
+
+  resetClassificationAttemptCycle_(sheet, 12);
+
+  assert.deepEqual(JSON.parse(JSON.stringify(writes)), [
+    { row: 12, column: 14, rows: 1, columns: 2, values: [["", 0]] },
+    { row: 12, column: 16, rows: 1, columns: 1, value: "" },
+  ]);
+});
+
+test("one-time repair selects only dead letters poisoned by stale attempts", () => {
+  const { staleAttemptCycleRepairCandidates_ } = loadFunctions();
+  const row = () => Array(20).fill("");
+  const eligible = row();
+  eligible[2] = "2026-08-25T17:30:16.000Z";
+  eligible[4] = "dead_letter";
+  eligible[6] = "2026-07-28T03:12:28.812Z";
+  eligible[13] = "max_attempts_exceeded:unknown";
+  eligible[14] = 170;
+  eligible[16] = "opp-opaque";
+  eligible[17] = "amanda";
+  eligible[18] = "Google Ads - Conversões";
+
+  const alreadyCurrent = Array.from(eligible);
+  alreadyCurrent[6] = "2026-08-26T03:12:28.812Z";
+  const differentFailure = Array.from(eligible);
+  differentFailure[13] = "request_failed";
+  const missingCanonicalLink = Array.from(eligible);
+  missingCanonicalLink[16] = "";
+
+  assert.deepEqual(
+    Array.from(
+      staleAttemptCycleRepairCandidates_(
+        [Array(20).fill("header"), eligible, alreadyCurrent, differentFailure, missingCanonicalLink],
+        "2026-08-30T23:59:59-03:00",
+      ),
+      (candidate) => candidate.rowNumber,
+    ),
+    [2],
   );
 });
 

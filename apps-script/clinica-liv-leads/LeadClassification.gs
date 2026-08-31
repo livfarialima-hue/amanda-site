@@ -52,6 +52,12 @@ const CLASSIFICATION_EXCEPTION_HEADERS = Object.freeze([
 
 const CLASSIFICATION_EXCEPTION_SHEET = "_WHATSAPP_CLASSIFICACAO_EXCECOES";
 
+const CLASSIFICATION_STALE_ATTEMPT_REPAIR = Object.freeze({
+  cutoff: "2026-08-30T23:59:59-03:00",
+  confirmation: "REQUEUE_STALE_ATTEMPTS_AFTER_NEW_ACTIVITY_V1",
+  legacyError: "max_attempts_exceeded:unknown",
+});
+
 const LEAD_STAGE_EVENT_HEADERS = Object.freeze([
   "Data e hora",
   "Event ID",
@@ -1860,14 +1866,18 @@ function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
     messageId,
     messageCount,
   ]]);
-  queueSheet.getRange(queueRow, 14).setValue("");
-  queueSheet.getRange(queueRow, 16).setValue("");
+  resetClassificationAttemptCycle_(queueSheet, queueRow);
   queueSheet.getRange(queueRow, 17, 1, 3).setValues([[
     safeText_(lead.opportunityId, 120),
     safeText_(lead.professional, 80),
     safeText_(lead.leadSheetName, 120),
   ]]);
   return recorded;
+}
+
+function resetClassificationAttemptCycle_(queueSheet, queueRow) {
+  queueSheet.getRange(queueRow, 14, 1, 2).setValues([["", 0]]);
+  queueSheet.getRange(queueRow, 16).setValue("");
 }
 
 function parseClassificationDate_(value) {
@@ -3524,4 +3534,110 @@ function executarReaperFilaClassificacao(input) {
 
 function repararFilaClassificacaoTravada() {
   return executarReaperFilaClassificacao({ apply: true });
+}
+
+function staleAttemptCycleRepairCandidates_(values, cutoff) {
+  const rows = Array.isArray(values) ? values : [];
+  const cutoffDate = parseClassificationDate_(cutoff);
+  if (!cutoffDate) throw new Error("invalid_classification_repair_cutoff");
+  const maximumAttempts = Number(CONFIG.classificationMaxAttempts || 8);
+  return rows.slice(1).reduce(function selectRepairCandidate(selected, row, index) {
+    const lastActivity = parseClassificationDate_(row[2]);
+    const lastClassification = parseClassificationDate_(row[6]);
+    const state = String(row[4] || "").trim();
+    const error = String(row[13] || "").trim();
+    const attempts = Number(row[14] || 0);
+    const opportunityId = String(row[16] || "").trim();
+    const professional = String(row[17] || "").trim();
+    const leadSheetName = String(row[18] || "").trim();
+    if (
+      state !== "dead_letter" ||
+      error !== CLASSIFICATION_STALE_ATTEMPT_REPAIR.legacyError ||
+      attempts < maximumAttempts ||
+      !lastActivity ||
+      !lastClassification ||
+      lastActivity <= lastClassification ||
+      lastActivity > cutoffDate ||
+      !opportunityId ||
+      !professional ||
+      !leadSheetName
+    ) {
+      return selected;
+    }
+    selected.push({ rowNumber: index + 2 });
+    return selected;
+  }, []);
+}
+
+function reconcileStaleClassificationAttemptCycles_(input) {
+  input = input && typeof input === "object" ? input : {};
+  const apply = input.apply === true;
+  if (
+    apply &&
+    input.confirmation !== CLASSIFICATION_STALE_ATTEMPT_REPAIR.confirmation
+  ) {
+    throw new Error("classification_attempt_cycle_repair_confirmation_required");
+  }
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const queueSheet = getOrCreateLeadAuxiliarySheet_(
+    spreadsheet,
+    CONFIG.classificationSheetName,
+    LEAD_CLASSIFICATION_HEADERS,
+  );
+  const values = queueSheet.getDataRange().getValues();
+  const candidates = staleAttemptCycleRepairCandidates_(
+    values,
+    CLASSIFICATION_STALE_ATTEMPT_REPAIR.cutoff,
+  );
+  const result = {
+    ok: true,
+    applied: false,
+    cutoff: CLASSIFICATION_STALE_ATTEMPT_REPAIR.cutoff,
+    candidates: candidates.length,
+    requeued: 0,
+    containsPii: false,
+  };
+  if (!apply || candidates.length === 0) return result;
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    throw new Error("classification_attempt_cycle_repair_lock_timeout");
+  }
+  try {
+    const currentValues = queueSheet.getDataRange().getValues();
+    const currentCandidates = staleAttemptCycleRepairCandidates_(
+      currentValues,
+      CLASSIFICATION_STALE_ATTEMPT_REPAIR.cutoff,
+    );
+    currentCandidates.forEach(function requeueClassificationCycle(candidate) {
+      queueSheet.getRange(candidate.rowNumber, 4, 1, 3).setValues([[
+        new Date(),
+        "pending",
+        "",
+      ]]);
+      resetClassificationAttemptCycle_(queueSheet, candidate.rowNumber);
+      result.requeued += 1;
+    });
+    SpreadsheetApp.flush();
+    result.applied = true;
+    result.candidates = currentCandidates.length;
+    return result;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function diagnosticarReaberturaCicloClassificacaoComNovaAtividade() {
+  const result = reconcileStaleClassificationAttemptCycles_({ apply: false });
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function aplicarReaberturaCicloClassificacaoComNovaAtividadeConfirmada() {
+  const result = reconcileStaleClassificationAttemptCycles_({
+    apply: true,
+    confirmation: CLASSIFICATION_STALE_ATTEMPT_REPAIR.confirmation,
+  });
+  console.log(JSON.stringify(result));
+  return result;
 }
