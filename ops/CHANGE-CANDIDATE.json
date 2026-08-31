@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-CONVERSION-SYSTEM-2026-08-30",
   "title": "Correção integrada de mensuração, funil, busca cervical e continuidade da conversa",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "afd14beb1551761a3e1b80a9e7460276634113b3",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -75,7 +75,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_live",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "npm.cmd run change:check",
@@ -96,19 +96,19 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
-    "appsScriptVersion": null,
+    "approvedCommit": "c78c00b2a68e85d0ae7119d70e599f9a811ef8f1",
+    "netlifyDeployId": "6a94eb46636ebf0008ae8016",
+    "appsScriptVersion": 139,
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Preencher somente depois de Apps Script, filas, agregado, Netlify, Google Ads e Drive serem relidos."
+    "drivePlanSha256": "246323251f087b9480326df09edebb1b47c569aeced8a14cad6cdaebaac9c93d",
+    "verifiedAt": "2026-08-30T23:55:21-03:00",
+    "activationState": "active_verified",
+    "notes": "Apps Script v139, agregado v2, duas filas de ajustes sem linhas ativas, dois recibos duráveis sem PII, Netlify e página cervical verificados. Foram publicadas exatamente 12 negativas CERV de frase; FACE foi preservada porque houve 1 contato válido/qualificado. A fila de classificação terminou com 213 done e zero pending, running ou dead_letter. Nenhuma mensagem real foi enviada. A calibração somente leitura do script 12117745 continua dependente da conta proprietária, sem remover ou recriar sua programação."
   },
   "rollback": {
     "local": "reverter somente o commit candidato e o recibo de fechamento desta mudança, preservando trabalho paralelo fora do escopo declarado",
-    "production": "restaurar Apps Script v137 no mesmo deployment, reativar somente a palavra FACE pausada, remover individualmente as negativas novas que bloquearem intenção aderente e restaurar o deploy Netlify anterior; recibos de retrações comprovadamente inexistentes permanecem como evidência e não devem ser convertidos novamente em fila ativa"
+    "production": "restaurar Apps Script v138 no mesmo deployment, remover individualmente somente a negativa nova que comprovadamente bloquear intenção cirúrgica e restaurar o deploy Netlify 6a94e8c6636ebf0008aca730; FACE não foi pausada; recibos de retrações comprovadamente inexistentes permanecem como evidência e não devem voltar à fila ativa"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",

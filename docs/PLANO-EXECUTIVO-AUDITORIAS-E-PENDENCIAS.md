@@ -2,7 +2,7 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 30 de agosto de 2026, 21:46, America/Sao_Paulo
+**Atualizado em:** 30 de agosto de 2026, 23:55, America/Sao_Paulo
 
 **Escopo:** auditoria Google Ads de 14/08/2026, execução ao vivo de BLEF, CERV, OTO, FACE e MARCA em 22/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
 
@@ -38,6 +38,8 @@ O responsável técnico deve:
 | `NÃO ALTERAR` | decisão consciente de manter como está |
 
 ## 3. Situação atual em linguagem direta
+
+**Correção integrada de conversão — PUBLICADA E VERIFICADA:** o commit funcional `c78c00b2a68e85d0ae7119d70e599f9a811ef8f1` está em produção. O Apps Script preservou o deployment canônico e avançou para v139; o Netlify publicou o deploy funcional `6a94eb46636ebf0008ae8016`; domínio, URL imutável, webhook e bot foram verificados. Duas retrações que o Google já havia confirmado como inexistentes receberam recibos duráveis sem PII e saíram das filas canônica e projetada; a repetição encontrou zero candidato. O agregado v2 de 30 dias separou 4 códigos canônicos, 12 aliases históricos exatos e 5 desconhecidos entre 21 contatos, com 3 válidos e 3 qualificados. Em CERV foram publicadas 12 negativas de frase estritamente não cirúrgicas; orçamento, lance e demais campanhas foram preservados. FACE não foi pausada porque o funil encontrou 1 contato válido/qualificado. Um defeito adicional que herdava tentativas esgotadas após nova atividade foi corrigido; a migração estrita encontrou 1 registro, reenfileirou 1, repetiu com zero e o agendador real concluiu o processamento. Estado final: 213 `done`, 13 `excluded`, 1 `waiting_messages`, 7 `orphaned` e zero `pending`, `running` ou `dead_letter`. Nenhuma mensagem real foi enviada. Permanece apenas a publicação da calibração somente leitura no script `12117745`, que exige login da proprietária `aschroeder.br@gmail.com`; a programação existente foi mantida.
 
 ### Operação do WhatsApp — Bruna
 
@@ -172,11 +174,11 @@ O responsável técnico deve:
 
 ### Auditoria 1 — Google Ads
 
-**Estado geral:** Lote 1 concluído em 22/08; auditoria ao vivo de BLEF, CERV, OTO, FACE e MARCA encerrada sem nova alteração, porque mensuração e downstream ainda não passaram os gates. A releitura de 30/08 manteve essa decisão: nenhuma recomendação automática foi aplicada e lifting permanece em sua janela controlada de recuperação de tráfego.
+**Estado geral:** correção sistêmica de 30/08 publicada e verificada. A mensuração foi reconciliada, o funil anônimo passou ao schema v2, o ciclo de classificação foi reparado e as 12 negativas CERV estritamente não cirúrgicas estão ativas. Orçamento total, lances, metas, LIFT, BLEF, OTO, FACE e MARCA foram preservados; nenhuma recomendação automática foi aplicada.
 
 **Leitura ao vivo de 30/08, janela 16–29/08:** 766 cliques, 12,5 mil impressões e R$ 1,18 mil de gasto na conta. A interface exibiu zero conversão do Google Ads; isso é `N/D` para resultado de negócio, não prova de zero contato. Por campanha, a leitura mostrou aproximadamente LIFT R$ 381,20/251 cliques, BLEF R$ 314,37/217, OTO R$ 202,17/87, CERV R$ 174,44/152 e FACE R$ 106,68/58. LIFT estava em aprendizado e BLEF/FACE limitadas por orçamento, mas sem conversões aceitas e downstream reconciliado não existe base segura para aumentar orçamento, trocar lance, aceitar PMax, ampla, parceiros ou recomendações de otimização. O script somente leitura `12117745` continua ativo diariamente, com última execução concluída em 30/08 às 09:47 e sem mudanças na conta; sua calibração versionada ainda depende de login da proprietária `aschroeder.br@gmail.com`, sem remover nem recriar a programação.
 
-**Correção sistêmica autorizada em 30/08 — EM PUBLICAÇÃO:** o relatório exportado de 30 dias confirmou demanda cirúrgica em CERV e vazamento para buscas explicitamente não cirúrgicas; em FACE, uma única frase genérica concentrou 654 termos visíveis, 51 cliques e R$ 91,52, majoritariamente nomes de outros profissionais/localidades. O pacote corrige a repetição das duas retrações já confirmadas pelo Google como inexistentes, separa aliases históricos documentados da captura canônica, melhora a abertura cervical no site/WhatsApp e prepara negativas CERV e pausa condicional da frase FACE. Orçamento, lance, meta e as demais campanhas permanecem preservados. O fechamento deste item exige Apps Script e Netlify publicados no commit aprovado, agregado v2 relido, filas canônica/projetada sem as duas linhas arquivadas, histórico de alterações do Google Ads e recibos no Drive; até lá, não declarar conclusão.
+**Correção sistêmica de 30/08 — PUBLICADA E VERIFICADA:** o relatório de 30 dias confirmou demanda cirúrgica em CERV e vazamento para buscas explicitamente não cirúrgicas. Foram criadas 12 negativas de frase no nível da campanha CERV, mantendo termos leigos aderentes. Em FACE, a frase genérica concentrou 51 cliques e R$ 91,52 no recorte de termos, mas o agregado v2 encontrou 1 contato válido/qualificado; como o gate exigia zero, ela foi preservada. As duas retrações já confirmadas como inexistentes foram arquivadas em recibos sem PII e removidas das duas filas; a repetição foi idempotente. O schema v2 separa canônico, alias histórico exato e desconhecido. A página e a primeira resposta cervical passaram a manter continuidade de avaliação. O defeito que reaproveitava tentativas esgotadas após nova atividade foi corrigido na v139 e o único registro estritamente elegível voltou à fila e foi processado pelo agendador. Código funcional `c78c00b2a68e85d0ae7119d70e599f9a811ef8f1`; Netlify `6a94eb46636ebf0008ae8016`; evidências no Drive `16BY-I1Vjg3NLNcHUfU8YbYyyYyCpSKw_`.
 
 Já foi feito:
 
@@ -187,20 +189,23 @@ Já foi feito:
 - nenhuma campanha nova, Performance Max, ampla, tCPA ou aumento foi aplicado;
 - testes de anúncios foram colocados em sequência para não misturar efeitos.
 - rotina somente leitura de revisão do Google Ads publicada como script `12117745`, autorizada, testada sem mudanças e com programação diária `09:00–10:00` ativa;
-- agregado anônimo do funil publicado pelo Apps Script versão `92`, com trigger diário aproximadamente às `08:15` e sem PII.
+- agregado anônimo do funil publicado no schema v2 pelo Apps Script v139, com trigger diário aproximadamente às `08:15`, separação entre canônico, alias histórico exato e desconhecido e zero PII;
 - auditoria de fases aplicada em 176 oportunidades: 5 conversões qualificadas com click ID foram preparadas, 2 falsos eventos foram invalidados e 2 `RETRACT` idempotentes foram projetados em arquivo separado sem PII;
 - conexão `LEADS` do Data Manager reativada diariamente entre `05:00–06:00` BRT, com próxima execução marcada para `23/08 05:05`; a execução manual de `22/08 11:25` processou um arquivo de 5 linhas sem erro de arquivo, com correspondência individual ainda `N/D`;
 - upload separado dos 2 ajustes validou o schema e o fuso `-0300`; ambos retornaram `conversão não existe` e o recibo final ficou `Sem alterações`, coerente com a evidência de que os falsos eventos não chegaram à conta; o arquivo dedicado ficou com horário ativo diariamente às `06:00` BRT, depois da importação principal;
 - os dois anúncios ativos de lifting passaram a usar `_camp=G26LIFT`, eliminando a sobrescrita de anúncio `_camp=g26f01`; nenhuma evidência histórica foi reinterpretada;
 - `S_BR_SP_LIFTING_FACIAL` passou de Maximizar conversões para Maximizar cliques, sem limite de CPC, preservando R$ 24/dia e a meta específica `Lead qualificado GCLID`; nenhuma outra campanha ou orçamento foi alterado.
 - auditoria ao vivo de `G26BLEF`, `G26CERV`, `G26OTO`, `G26FACE` e `G26MARCA` concluída em 22/08: URLs e códigos íntegros, nenhuma mudança publicada, orçamentos antes/depois idênticos e total operacional preservado em R$ 87/dia. O agregado de 15–21/08 tinha 7 contatos Google, somente 2 com campanha canônica — ambos OTO — e nenhum classificado. A duplicidade do RSA OTO ficou condicionada ao tracking; nenhuma negativa BLEF foi criada porque `"preço popular"` já está bloqueado na lista compartilhada. A mesma lista bloqueia `"projeto orelhinha"` e alcança `G26LIFT`, exigindo revisão isolada de governança antes de qualquer alteração.
+- duas retrações confirmadas como inexistentes arquivadas em recibos duráveis sem PII; filas canônica e projetada ficaram sem linhas ativas e a repetição encontrou zero candidato;
+- 12 negativas CERV de frase, estritamente não cirúrgicas, publicadas e verificadas; FACE preservada pelo gate de 1 contato válido/qualificado;
+- ciclo de tentativas corrigido na v139; migração estrita 1/1/0 e fila final com 213 concluídos, sem pendente, execução ou `dead_letter`.
 
 Ainda falta:
 
 - acompanhar os primeiros ciclos diários; somente eventos aceitos e reconciliados podem voltar a alimentar decisões de lance;
 - revisar volume, termos, contatos válidos, qualificados e consultas após 7 dias, sem retornar a Maximizar conversões enquanto o histórico aceito continuar escasso;
 - confirmar ao vivo e, se ainda ausentes, aplicar as três negativas exatas de roteamento do grupo geral de lifting;
-- normalizar novos contatos com códigos G26 canônicos: no primeiro agregado, os 16 contatos Google de 30 dias permaneceram em campanha desconhecida por usarem referências antigas/ambíguas; não reinterpretar o histórico por inferência;
+- exigir códigos G26 canônicos nos contatos novos e alertar alias recente; usar os cinco aliases exatos somente para cobertura histórica e manter qualquer código ambíguo como `N/D`;
 - manter Meta facial em 40+; a decisão etária do Google foi adiada porque não há downstream atribuível por idade. Preservar sempre `Desconhecida` e não alterar OTO ou MARCA;
 - executar os testes de RSA um por vez, começando por OTO somente depois de registrar a data real de início e confirmar tracking saudável; as datas antigas não contam como janela de um teste que não começou;
 - medir desempenho mobile/vídeos antes de otimizar;
@@ -308,7 +313,7 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | Data e hora | Bloco | Estado | O que será feito | Publicação ou escrita externa | Condição para avançar |
 |---|---|---|---|---|---|
 | dias úteis, 18:30 | Conferência de publicação LIV | `ATIVO` desde 30/08; heartbeat somente leitura | conferir `CHANGE-CANDIDATE`, `ops:check`, branch de produção e recibos de Netlify, Apps Script e Plano no Drive | apenas alerta nesta tarefa; nunca publica nem altera sistemas | avisar somente quando existir mudança deixada em estado planejado/testado/commitado ou divergência entre destinos |
-| diariamente, aproximadamente 08:15 | LEADS → Google Ads: agregado anônimo | `ATIVO` desde 15/08; Apps Script v92 | atualizar coortes de 7/30/90 dias na aba `Agregados` do arquivo `LIV — Agregados de mídia paga — sem PII` | grava somente contagens no arquivo agregado; nenhum dado de paciente | schema v1, zero PII, atualização <36 h e conta Ads somente leitora |
+| diariamente, aproximadamente 08:15 | LEADS → Google Ads: agregado anônimo | `ATIVO`; Apps Script v139, schema v2 verificado em 30/08 | atualizar coortes de 7/30/90 dias na aba `Agregados` do arquivo `LIV — Agregados de mídia paga — sem PII` | grava somente contagens no arquivo agregado; nenhum dado de paciente | canônico, alias histórico exato e desconhecido separados; zero PII; atualização <36 h |
 | diariamente, 09:00–10:00 | Google Ads: saúde automatizada | `ATIVO`; última execução concluída em 30/08 às 09:47; calibração `ee5df71` ainda depende da proprietária | gasto por mesmo dia da semana, entrega, políticas, páginas, meta qualificada efetiva, fontes e funil; cooldown de 48 h | e-mail automático; zero mutação na conta | em 01/09 salvar e visualizar como `aschroeder.br@gmail.com`; preservar a programação existente e declarar cada fonte `OK` ou `N/D` |
 | toda segunda, 09:00–10:00 | Google Ads: revisão tática automatizada | `ATIVO`; primeiro envio de 17/08 auditado e calibrado localmente | semana + 30 dias; termos, positivas, negativas completas, Quality Score, metas personalizadas, RSAs/recursos, segmentos, páginas, mudanças e funil | e-mail automático; alterações continuam manuais e autorizadas | 39 variações de preço consolidadas; seis roteamentos verificados deixam de ser falsos P0; autobloqueio cervical continua acionável |
 | primeiro dia útil do mês, 09:00–10:00 | Google Ads: revisão estratégica automatizada | `ATIVO`; primeira leitura em 01/09 | acrescentar 90 dias, eficiência do funil, cenários dentro de R$ 87/dia e prontidão de testes | e-mail automático; nenhuma execução de recomendação | fontes íntegras, mudanças datadas e funil reconciliado antes de decidir |
@@ -333,7 +338,7 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | 24/08 14:00–14:30 | Atribuição rica: 7 dias | `AGENDADO` | erros, resolução/fallback, origem, LEADS/CRM, Calendar/SLA e logs | manter ou reverter; nenhuma expansão | janela iniciada em 17/08 |
 | 27/08 11:00–11:30 | Atualização executiva | `AGENDADO` | atualizar este plano, Drive, datas e decisões | nenhuma | checkpoints anteriores encerrados |
 | 01/09 12:30–13:30 | Cervical Site × WhatsApp: decisão D+15 | `AGENDADO` | fechar contatos, qualificados, agendados e custos por rota; declarar N/D se a amostra não separar | eventual continuidade exige nova autorização | orçamento encerrado às 12h, cobertura ≥80% e nenhuma quebra operacional |
-| 30/08 09:00–10:00 | Google Ads: leitura de 7 dias da mensuração | `CONCLUÍDO; INCONCLUSIVO PARA OTIMIZAÇÃO` | leitura ao vivo de mídia concluída; zero conversão exibida foi tratado como `N/D` para negócio e nenhuma recomendação foi aplicada | nenhuma campanha, orçamento, lance, palavra ou anúncio alterado | repetir em 06/09 com downstream reconciliado; não otimizar por cliques isolados |
+| 30/08 09:00–23:55 | Google Ads: leitura e correção sistêmica de conversão | `CONCLUÍDO; PUBLICADO E VERIFICADO` | mídia e funil reconciliados; 2 ajustes arquivados; agregado v2; ciclo de classificação corrigido; 12 negativas CERV; FACE preservada pelo gate | Apps Script v139, Netlify `6a94eb46636ebf0008ae8016` e 12 negativas de frase; nenhum orçamento, lance, RSA, idade ou rede alterado | monitorar em 24 h e repetir leitura de negócio em 06/09; não otimizar por cliques isolados |
 | 03/09 09:00–10:00 | Google Ads: gate de elegibilidade do primeiro teste OTO | `AGUARDAR DADOS; CALENDAR CORRIGIDO` | decidir apenas se o RSA adulto OTO pode começar; não encerrar um teste inexistente | um RSA por vez; janela começa somente na publicação real | 1–2 ciclos limpos, baseline registrado, downstream atribuível e nenhuma mudança concorrente |
 | 06/09 09:00–10:00 | Google Ads: leitura de 14 dias e decisão de estabilidade | `AGENDADO; CALENDAR CRIADO` | ler `23/08–05/09`, comparar janelas completas e decidir manter, rollback factual ou inconclusivo | nenhuma mudança de orçamento, lance, idade, rede ou site | funil atribuível, receipts saudáveis e nenhuma intervenção concorrente |
 | 31/08 14:00–14:30 | Atribuição rica: 14 dias | `AGUARDAR DADOS` | avaliar estabilidade, reconciliação, purge, consentimento e incidentes | manter ou reverter | janela iniciada em 17/08 |
@@ -390,12 +395,12 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 
 | Pacote | Prioridade | Estado | Próxima decisão |
 |---|---|---|---|
-| Conversão offline Google e receipts | P0 | `CONCLUÍDO` somente quanto à configuração do Lote 1 de 22/08; arquivo de 5 linhas processado sem erro de arquivo, correspondência individual `N/D`, conexão principal diária e ajustes separados ativos às 06:00, com recibo `Sem alterações` | acompanhar os ciclos diários; não otimizar por evento rejeitado ou não correspondido |
+| Conversão offline Google e receipts | P0 | `PUBLICADO E VERIFICADO` na v139: 2 ajustes inexistentes arquivados sem PII, duas filas zeradas, agregado v2 relido e ciclo de classificação reparado com processamento automático concluído | acompanhar os ciclos diários; não otimizar por evento rejeitado, métrica de plataforma isolada ou contato ainda em `Novo` |
 | Meta → site → WhatsApp → LEADS/CRM | P0 | sonda sintética aprovada; ciclo real `EM MONITORAMENTO` | conferir cobertura e consistência em D+3/D+7 antes de declarar o caminho funcional ao vivo |
 | Atribuição rica J0/J1/J2 | P0 | `ATIVA` desde 17/08; risco JID aceito | monitorar resolução, fallback, encaminhamento, duplicidade e rollback |
 | Schema/identidade da LEADS | P0 | schema v1 habilitado no Apps Script v97 | reconciliar LEADS/CRM e não repetir migração sem novo preflight |
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
-| Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; RSA OTO não iniciado; demais campanhas preservadas | revisar mensuração em 27/08 e reavaliar OTO em 03/09; toda janela editorial começa somente na publicação real |
+| Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; 12 negativas CERV publicadas em 30/08; RSA OTO não iniciado; demais campanhas preservadas | monitorar em 06/09 e reavaliar OTO somente com downstream legível; toda janela editorial começa na publicação real |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00; calibração proprietária pendente | publicar `ee5df71` em 01/09 com `aschroeder.br@gmail.com`; não recriar a programação |
 | Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v104; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Meta — LIFT contínuo + CERV Site × WhatsApp | P1 | `PUBLICADO; EM MONITORAMENTO` desde 17/08; leitura ao vivo de 30/08 preservada | fechar em 01/09 por contatos válidos, qualificados e agendados; sete rascunhos incompletos não serão publicados e só podem ser descartados com confirmação específica |
