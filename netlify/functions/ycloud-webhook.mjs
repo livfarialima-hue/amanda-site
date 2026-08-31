@@ -710,6 +710,12 @@ export function extractInboundText(message) {
       ? message.content.text
       : "",
     message?.message?.text?.body,
+    message?.image?.caption,
+    message?.video?.caption,
+    message?.document?.caption,
+    message?.content?.image?.caption,
+    message?.content?.video?.caption,
+    message?.content?.document?.caption,
   ];
 
   const text = candidates.find(
@@ -4103,12 +4109,13 @@ export async function handleYCloudWebhook(
     );
     return completion.status;
   };
+  let rememberedConversation = null;
   let externalProfessionalContext =
     await getExternalProfessionalContext(phone);
   const directExternalProfessionalRequest =
     detectExternalProfessionalAppointment(text);
   if (!externalProfessionalContext) {
-    const rememberedConversation = await readConversationTurns(phone);
+    rememberedConversation = await readConversationTurns(phone);
     const rememberedExternalAppointment = rememberedConversation.turns
       .map((turn) => detectExternalProfessionalAppointment(turn.text))
       .find(Boolean);
@@ -4234,6 +4241,12 @@ export async function handleYCloudWebhook(
     platform: attribution.platform,
     referralContext,
     templateId: prefillTemplateId,
+    recentConversation:
+      rememberedConversation?.turns ||
+      (["image", "video", "document"].includes(normalizedMessageType)
+        ? (await readConversationTurns(phone)).turns
+        : []),
+    contactAt,
   });
 
   if (preliminaryAutomationPlan.route === "ignore") {

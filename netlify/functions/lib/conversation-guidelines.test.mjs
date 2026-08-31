@@ -349,7 +349,11 @@ test("playbook handles appearance insecurity without exploiting it", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Quando a pessoa enviar uma foto do rosto ou do corpo, agradeça de forma simples/,
+    /Quando uma foto de rosto ou corpo fizer parte de contexto assistencial, agradeça de forma simples/,
+  );
+  assert.match(
+    CONVERSATION_GUIDELINES,
+    /Cartaz, tabela de preços, catálogo, oferta de fornecedor ou outra propaganda identificável usa ignore/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,

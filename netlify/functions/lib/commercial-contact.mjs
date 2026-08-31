@@ -24,6 +24,19 @@ const COMMERCIAL_SOLICITATION_PATTERNS = [
   /\bcurriculo\b.{0,60}\b(?:vaga|emprego|trabalho|contratacao)\b/i,
 ];
 
+const BUSINESS_SELF_INTRO_PATTERN =
+  /\b(?:sou|aqui\s+e|meu\s+nome\s+e|falo\s+(?:da|em\s+nome\s+da)|somos)\b.{0,100}\b(?:clinica|empresa|agencia|laboratorio|hospital|consultorio|centro|marca|fornecedor|representante)\b/i;
+const PROMOTIONAL_SIGNAL_PATTERN =
+  /\b(?:novidade|inauguracao|condicao\s+especial|promocao|oferta\s+especial|desconto\s+especial|pacote\s+promocional)\b/i;
+const SELLER_CALL_TO_ACTION_PATTERN =
+  /\b(?:quer\s+que\s+eu|posso\s+(?:te|lhe)|gostaria\s+de)\b.{0,140}\b(?:enviar|envie|mandar|mande|apresentar|explique|explicar|mostrar|mostre)\b.{0,100}\b(?:valores?|precos?|condicoes?|servicos?|produtos?|solucoes?|tratamentos?|pacotes?)\b/i;
+const BUSINESS_OFFER_PATTERN =
+  /\b(?:agora\s+)?temos\b.{0,160}\b(?:servico|tratamento|equipamento|solucao|produto|camara|pacote|sessoes?)\b/i;
+const EXPLICIT_PERSONAL_CARE_INTENT_PATTERN =
+  /\b(?:quero|queria|gostaria|preciso|tenho\s+interesse)\b.{0,120}\b(?:marcar|agendar|fazer|realizar|passar\s+por|uma\s+consulta|uma\s+avaliacao|ser\s+avaliad[oa]|me\s+consultar|operar)\b/i;
+
+export const COMMERCIAL_MEDIA_CONTEXT_MAX_AGE_MS = 30 * 60 * 1_000;
+
 function normalizeCommercialText(value) {
   return String(value || "")
     .normalize("NFD")
@@ -35,10 +48,59 @@ function normalizeCommercialText(value) {
 
 export function isCommercialSolicitation(value) {
   const normalized = normalizeCommercialText(value);
+  if (!normalized) return false;
+
+  if (
+    COMMERCIAL_SOLICITATION_PATTERNS.some((pattern) =>
+      pattern.test(normalized),
+    )
+  ) {
+    return true;
+  }
+
+  const businessIdentified = BUSINESS_SELF_INTRO_PATTERN.test(normalized);
+  const promotionalIntent =
+    PROMOTIONAL_SIGNAL_PATTERN.test(normalized) ||
+    SELLER_CALL_TO_ACTION_PATTERN.test(normalized) ||
+    BUSINESS_OFFER_PATTERN.test(normalized);
+  const explicitBusinessOffer =
+    BUSINESS_OFFER_PATTERN.test(normalized) &&
+    (PROMOTIONAL_SIGNAL_PATTERN.test(normalized) ||
+      SELLER_CALL_TO_ACTION_PATTERN.test(normalized));
+  const explicitPersonalCareIntent =
+    EXPLICIT_PERSONAL_CARE_INTENT_PATTERN.test(normalized);
+
   return Boolean(
-    normalized &&
-      COMMERCIAL_SOLICITATION_PATTERNS.some((pattern) =>
-        pattern.test(normalized),
-      ),
+    !explicitPersonalCareIntent &&
+      ((businessIdentified && promotionalIntent) || explicitBusinessOffer),
   );
+}
+
+export function hasRecentCommercialSolicitationContext(
+  turns,
+  {
+    at,
+    maxAgeMs = COMMERCIAL_MEDIA_CONTEXT_MAX_AGE_MS,
+  } = {},
+) {
+  const referenceAt = new Date(at || Date.now()).getTime();
+  if (!Number.isFinite(referenceAt)) return false;
+
+  const latestPatientTurn = (Array.isArray(turns) ? turns : [])
+    .slice()
+    .reverse()
+    .find(
+      (turn) =>
+        turn?.role === "user" &&
+        String(turn?.text || "").trim(),
+    );
+  if (!latestPatientTurn) return false;
+
+  const turnAt = new Date(latestPatientTurn.at || "").getTime();
+  if (!Number.isFinite(turnAt)) return false;
+
+  const ageMs = referenceAt - turnAt;
+  if (ageMs < -2 * 60 * 1_000 || ageMs > maxAgeMs) return false;
+
+  return isCommercialSolicitation(latestPatientTurn.text);
 }

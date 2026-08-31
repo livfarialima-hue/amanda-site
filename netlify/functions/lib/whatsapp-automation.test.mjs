@@ -966,6 +966,7 @@ test("commercial solicitations are ignored before spending on AI", () => {
     "Gostaria de oferecer nossos serviços de gestão de tráfego",
     "Aceitam parceria de divulgação por permuta?",
     "Trabalho com gestão e otimização do Perfil da Empresa no Google para ampliar a visibilidade no Google Maps e conquistar clientes de forma orgânica.",
+    "Sou a Magda, da Clínica OXY Maia. Agora temos uma Câmara Hiperbárica e uma condição especial de inauguração. Quer que eu envie os valores?",
   ]) {
     const plan = planAutomation({
       text,
@@ -981,6 +982,46 @@ test("commercial solicitations are ignored before spending on AI", () => {
     );
     assert.equal(plan.automaticAllowed, false);
   }
+});
+
+test("promotional media inherits the recent commercial context while patient photos keep their review route", () => {
+  const commercialTurn = {
+    role: "user",
+    source: "patient",
+    at: "2026-08-31T12:14:00-03:00",
+    text:
+      "Sou da Clínica OXY Maia. Temos uma novidade e uma condição especial de inauguração. Quer que eu envie os valores?",
+  };
+  const promotionalImage = planAutomation({
+    text: "",
+    messageType: "image",
+    recentConversation: [commercialTurn],
+    contactAt: "2026-08-31T12:14:10-03:00",
+  });
+
+  assert.equal(promotionalImage.route, "ignore");
+  assert.equal(
+    promotionalImage.reason,
+    "commercial_solicitation_or_partnership",
+  );
+  assert.equal(promotionalImage.automaticAllowed, false);
+
+  const patientImage = planAutomation({
+    text: "",
+    messageType: "image",
+    recentConversation: [
+      {
+        role: "user",
+        source: "patient",
+        at: "2026-08-31T12:14:00-03:00",
+        text: "Quero mostrar o que está me incomodando no pescoço.",
+      },
+    ],
+    contactAt: "2026-08-31T12:14:10-03:00",
+  });
+
+  assert.equal(patientImage.route, "human_review");
+  assert.equal(patientImage.reason, "unsupported_or_empty_message");
 });
 
 test("patient questions about payment or insurance are not mistaken for sales", () => {

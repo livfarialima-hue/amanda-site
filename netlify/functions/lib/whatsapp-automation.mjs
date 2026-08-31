@@ -1,5 +1,8 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
-import { isCommercialSolicitation } from "./commercial-contact.mjs";
+import {
+  hasRecentCommercialSolicitationContext,
+  isCommercialSolicitation,
+} from "./commercial-contact.mjs";
 import {
   foldMarketingText,
   isLikelyMarketingPrefilledMessage,
@@ -546,6 +549,8 @@ export function planAutomation({
   platform,
   referralContext,
   templateId,
+  recentConversation,
+  contactAt,
 }) {
   const normalizedText = String(text || "").trim();
   const normalizedType = String(messageType || "text").toLowerCase();
@@ -557,6 +562,26 @@ export function planAutomation({
   const siteServicePickerPrefill =
     isSiteServicePickerPrefill(normalizedText);
 
+  const mediaContinuesCommercialOutreach =
+    ["image", "video", "document"].includes(normalizedType) &&
+    hasRecentCommercialSolicitationContext(recentConversation, {
+      at: contactAt,
+    });
+
+  if (
+    isCommercialSolicitation(normalizedText) ||
+    mediaContinuesCommercialOutreach
+  ) {
+    return {
+      route: "ignore",
+      reason: "commercial_solicitation_or_partnership",
+      replyCode: null,
+      professional: null,
+      procedure: null,
+      automaticAllowed: false,
+    };
+  }
+
   if (normalizedType !== "text" || !normalizedText) {
     return {
       route: "human_review",
@@ -564,17 +589,6 @@ export function planAutomation({
       replyCode: null,
       professional: null,
       procedure: procedure?.key || null,
-      automaticAllowed: false,
-    };
-  }
-
-  if (isCommercialSolicitation(normalizedText)) {
-    return {
-      route: "ignore",
-      reason: "commercial_solicitation_or_partnership",
-      replyCode: null,
-      professional: null,
-      procedure: null,
       automaticAllowed: false,
     };
   }
