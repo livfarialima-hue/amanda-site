@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-27.1",
-  "promptVersion": "bruna-concierge-2026-08-27.1",
+  "bundleVersion": "2026-08-31.1",
+  "promptVersion": "bruna-concierge-2026-08-31.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-27.1",
+  "knowledgeSnapshot": "kb-2026-08-31.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "39227ac203a4a22b358734e8c37fad9f19274a12",
-    "lastObservedProductionCommit": "39227ac203a4a22b358734e8c37fad9f19274a12",
-    "functionalDeployId": "6a90650200aa2400081284ce",
-    "lastObservedProductionDeployId": "6a90650200aa2400081284ce",
-    "rollbackCommit": "527e8890945c083cae82ecb2738aff8223617c31",
-    "rollbackDeployId": "6a8fff55f898e40008a97339",
-    "publishedAt": "2026-08-27T13:26:17-03:00",
-    "lastVerifiedAt": "2026-08-27T13:27:23-03:00"
+    "functionalCommit": "67f00a2a0c614f57a2fc1a70fdcc3c59c265d815",
+    "lastObservedProductionCommit": "67f00a2a0c614f57a2fc1a70fdcc3c59c265d815",
+    "functionalDeployId": "6a95502db8459ddb8876d56e",
+    "lastObservedProductionDeployId": "6a95502db8459ddb8876d56e",
+    "rollbackCommit": "e17fad2506e4ec19508a3472580c183bac3182ef",
+    "rollbackDeployId": "6a94f6381f6a590008674bc4",
+    "publishedAt": "2026-08-31T06:59:00-03:00",
+    "lastVerifiedAt": "2026-08-31T07:00:30-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "169f198f1840e031baa89c3d04696c2cb87fe2790cce64a0cbfc667131467554"
+    "driveProjectionSha256": "1a3dd0d082bef6586e76a4c0f112f1be308efd37cd80bb3deae87d6bf1145795"
   }
 }

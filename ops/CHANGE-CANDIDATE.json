@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSION-EXPERIENCE-2026-08-30",
   "title": "Aberturas contextualizadas, respostas mais concisas e progressão conversacional da Bruna",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "e17fad2506e4ec19508a3472580c183bac3182ef",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuário autorizou publicação e ativação do candidato anterior. A produção avançou em paralelo; a integração preserva esse trabalho, mas exige nova autorização vinculada ao novo HEAD exato antes da primeira escrita externa."
+    "note": "O usuário autorizou a publicação e a ativação, recebeu o novo HEAD exato após a integração e determinou que alterações locais pendentes de publicação fossem verificadas e resolvidas. O preflight externo vinculou essa autorização ao commit 67f00a2a0c614f57a2fc1a70fdcc3c59c265d815 antes da primeira escrita externa."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -22,13 +22,17 @@
       "bruna-conversion-experience"
     ],
     "files": [
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-conversion-experience.test.mjs",
       "netlify/functions/lib/bruna-conversation-evals.test.mjs",
       "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/conversation-action-controller.mjs",
       "netlify/functions/lib/conversation-action-controller.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
@@ -67,11 +71,19 @@
         "checkedAt": "2026-08-30T17:57:21-03:00",
         "reference": "origin/reestruturacao-site af7e34eec733d9b6210540f74f2723d05a05acd2; Netlify 6a9492a25e4367d2c11076ec; Apps Script v136",
         "check": "estado publicado do trabalho paralelo reconciliado antes da implementação; nenhuma escrita externa realizada"
+      },
+      {
+        "contract": "bruna-conversion-experience",
+        "system": "Git, Netlify e Apps Script canônicos",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-08-31T06:51:52-03:00",
+        "reference": "origin/reestruturacao-site e17fad2506e4ec19508a3472580c183bac3182ef; Netlify production e17fad2 com publicação automática ativa e BRUNA_CONVERSION_EXPERIENCE_V1 ausente; bot active; Apps Script v139 e três IDs canônicos confirmados",
+        "check": "preflight vivo concluído antes da primeira escrita externa; o candidato integrado era descendente direto e o worktree estava limpo"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_live",
     "completedAt": "2026-08-31T06:43:44-03:00",
     "commands": [
       "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
@@ -86,7 +98,7 @@
     "results": {
       "focusedTests": "303/303 aprovados",
       "fullSuite": "1210/1210 aprovados",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 19 arquivos exatos",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 23 arquivos exatos no fechamento, incluindo recibos e projeções canônicas",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 arquivos; 44 URLs no sitemap; 0 erros",
       "siteCheck": "44/44 HTTP 200, canonical própria, indexáveis e com um H1; 0 erros",
@@ -103,17 +115,19 @@
     ]
   },
   "release": {
-    "approvedCommit": "",
-    "netlifyDeployId": "",
+    "approvedCommit": "67f00a2a0c614f57a2fc1a70fdcc3c59c265d815",
+    "netlifyDeployId": "6a95502db8459ddb8876d56e",
     "appsScriptVersion": 139,
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-    "verifiedAt": "",
-    "activationState": "off",
-    "notes": "Candidato integrado e testado localmente sobre a produção atual; publicação e ativação aguardam autorização vinculada ao novo HEAD exato."
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "d0400bd5478f4aa6d29a106e4853349a23dced760caa34e5c2217de574325d00",
+    "verifiedAt": "2026-08-31T07:00:30-03:00",
+    "activationState": "active_verified",
+    "notes": "O commit funcional foi publicado primeiro no deploy 6a954ed0e6d4950008ba7051 com conversionExperience=off. Depois dessa verificação, BRUNA_CONVERSION_EXPERIENCE_V1=enabled foi criada em um único contexto de produção e o redeploy 6a95502db8459ddb8876d56e passou a reportar automationMode=active e conversionExperience=bruna-conversion-v1 no domínio e na URL imutável. Ambas as sondas sem assinatura retornaram HTTP 401. Nenhuma mensagem real foi enviada. Apps Script v139 e os três IDs canônicos foram preservados."
   },
   "rollback": {
     "local": "reverter exclusivamente o commit deste candidato",
-    "production": "manter BRUNA_CONVERSION_EXPERIENCE_V1 desligada; se futuramente ativada, desligar a variável antes de qualquer rollback de código"
+    "production": "desligar ou remover BRUNA_CONVERSION_EXPERIENCE_V1 e confirmar conversionExperience=off antes de qualquer rollback de código; se ainda necessário, reverter exclusivamente o commit funcional 67f00a2a0c614f57a2fc1a70fdcc3c59c265d815 e restaurar e17fad2506e4ec19508a3472580c183bac3182ef no deploy 6a94f6381f6a590008674bc4"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",

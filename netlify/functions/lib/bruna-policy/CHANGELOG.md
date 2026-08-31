@@ -1,5 +1,12 @@
 # Histórico do pacote Bruna
 
+## 2026-08-31.1 — publicada, ativada e verificada
+
+- A experiência `bruna-conversion-v1` torna as aberturas mais contextualizadas, concisas e específicas, inclusive para procedimentos de menor procura, sem mudar fatos clínicos, preços ou propriedade da agenda.
+- A resposta ao valor da consulta prioriza a informação solicitada e evita repetir explicação ou localização; a progressão usa somente uma CTA compatível com o estágio e o gate retira apenas a CTA final incompatível quando o restante continua seguro.
+- O histórico recente evita reapresentação, repetição de nome, link, endereço e explicação. Linguagem mecânica de política permanece bloqueada sem expor frases operacionais à paciente.
+- O código foi publicado primeiro com a chave desligada e somente depois ativado no contexto de produção. Estado desta versão: commit funcional `67f00a2a0c614f57a2fc1a70fdcc3c59c265d815`, deploy ativo `6a95502db8459ddb8876d56e`, 303/303 testes focados, 1210/1210 integrais, arquitetura, contrato, build de 180 arquivos e 44 URLs. Domínio e URL imutável reportaram `automationMode=active` e `conversionExperience=bruna-conversion-v1`; sondas sem assinatura retornaram HTTP 401 e nenhuma mensagem real foi enviada. Apps Script v139 foi preservado. Rollback: desligar a chave; se ainda necessário, código `e17fad2506e4ec19508a3472580c183bac3182ef` e deploy `6a94f6381f6a590008674bc4`.
+
 ## 2026-08-27.1 — publicada e verificada
 
 - Turnos da paciente, da Bruna e da equipe são normalizados e ordenados pelo horário real do provedor antes de qualquer decisão; o desempate de registros legados permanece estável.

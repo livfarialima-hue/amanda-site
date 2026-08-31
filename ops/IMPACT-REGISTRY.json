@@ -300,13 +300,16 @@
       ],
       "coveredPaths": [
         "docs/estrategia-abordagem-bruna.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
         "netlify/functions/human-resume.mjs",
         "netlify/functions/ycloud-webhook.mjs",
         "netlify/functions/lib/bruna-conversion-experience.mjs",
         "netlify/functions/lib/bruna-conversion-experience.test.mjs",
         "netlify/functions/lib/bruna-conversation-evals.test.mjs",
         "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/bruna-policy/CHANGELOG.md",
         "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+        "netlify/functions/lib/bruna-policy/manifest.json",
         "netlify/functions/lib/conversation-action-controller.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
@@ -335,6 +338,7 @@
         "git diff --check"
       ],
       "liveSystems": [
+        "Google Drive",
         "Netlify",
         "YCloud",
         "OpenAI"
