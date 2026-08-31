@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "CERVICAL-ADS-AI-DISCOVERY-2026-08-31",
   "title": "Corrigir bloqueios de demanda cervical e melhorar descoberta das paginas",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "a97e673e6b33572641736a86217ea459387c88e2",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario autorizou ajustar tudo que valesse a pena neste escopo. O release externo ainda sera vinculado ao HEAD exato depois dos testes locais e do commit candidato."
+    "note": "O usuario autorizou ajustar tudo que valesse a pena neste escopo. O preflight externo vinculou a autorizacao ao commit funcional exato 8e3778c214f6a5a55a1f4e66ac40743831bdd132 antes da publicacao."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -64,8 +64,8 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-08-31T19:36:39-03:00",
+    "status": "passed_local_and_live",
+    "completedAt": "2026-08-31T19:52:20-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "node --test campanhas/site-technical-regression.test.mjs",
@@ -75,7 +75,12 @@
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "npm.cmd run release:preflight -- --approved-commit 8e3778c214f6a5a55a1f4e66ac40743831bdd132 --approved-at 2026-08-31T19:37:38-03:00 --approved-by Daniel --approval-reference user_turn_ajuste_tudo_que_vale_ia_pages_2026-08-31 --live-preflight-at 2026-08-31T19:30:50-03:00 --live-preflight-reference google_ads_9953344486_campaign_24023843174_and_public_consultation_target",
+      "git push origin reestruturacao-site",
+      "Netlify getSite: releitura do deploy publicado e do commit_ref",
+      "HTTP GET do dominio e da URL imutavel para as duas paginas, sitemap, robots e destino do sitelink",
+      "Google Ads: releitura filtrada das negativas e do aria-label do sitelink salvo"
     ],
     "results": {
       "focusedSiteTests": "9/9 aprovados",
@@ -83,7 +88,11 @@
       "fullSuite": "1229/1229 aprovados",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteCheck": "44/44 paginas tecnicamente validas",
-      "remaining": "commit candidato, preflight do HEAD exato, escritas externas e pos-voo"
+      "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit funcional exato",
+      "googleAds": "2 negativas conflitantes removidas; filtro lipoaspira sem correspondencias; sitelink relido com a nova URL e em analise de politica",
+      "netlify": "deploy 6a9603e1f16be1000897d2d2 em contexto production, state ready e commit_ref 8e3778c214f6a5a55a1f4e66ac40743831bdd132",
+      "liveSite": "dominio e URL imutavel HTTP 200; resposta curta e lastReviewed presentes; 6 CTAs, 1 destino e 6 atributos de tracking por pagina; canonical, sitemap e robots coerentes",
+      "remaining": "monitoramento de integridade em 24 horas e de negocio em 7 e 14 dias"
     },
     "crossConsumerCases": [
       "cervicoplastia, lifting cervical, lifting de pescoco e cirurgia do pescoco apontam para o mesmo contexto sem duplicar URL",
@@ -94,12 +103,14 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
-    "googleAdsChangeReference": null,
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Candidato local em validacao; nenhuma escrita externa realizada."
+    "approvedCommit": "8e3778c214f6a5a55a1f4e66ac40743831bdd132",
+    "netlifyDeployId": "6a9603e1f16be1000897d2d2",
+    "appsScriptVersion": 139,
+    "drivePlanSha256": "db542cf742bdc5157968523ee0c1b61fce7fa79301fee15fdb10c4b258e8a02e",
+    "googleAdsChangeReference": "31/08/2026, conta 995-334-4486, campanha 24023843174: filtro lipoaspira sem negativas apos remocao; sitelink Agende Sua Consulta relido com https://draamandaschroeder.com.br/avaliacao-facial/#consulta, aplicado a conta e 6 campanhas, estado em analise",
+    "verifiedAt": "2026-08-31T19:52:20-03:00",
+    "activationState": "active_verified",
+    "notes": "Publicacao automatica da branch de producao confirmada no Netlify. O deploy por CLI tentado depois falhou localmente por disco cheio e nao alterou producao; a releitura do site provou que o deploy Git 6a9603e1f16be1000897d2d2 ja estava publicado. O mesmo Plano Executivo remoto 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi substituido e relido com conteudo normalizado identico ao local. Foram removidos apenas caches npm recuperaveis para liberar espaco; nenhum arquivo do projeto ou dado operacional foi apagado."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",
