@@ -20,5 +20,14 @@
     "pii": false,
     "patientRows": 0,
     "aggregateOnly": true
+  },
+  "publication": {
+    "status": "published_verified",
+    "approvedCommit": "fe9b3348a25b4a78b5dc4853a78563e774322999",
+    "netlifyDeployId": "6a96a5f48f881800083c1744",
+    "googleAdsReference": "conta 995-334-4486; campanha 24028216444; sitelink Preço do Lifting Facial ativado, em análise e com destino final exato em 01/09/2026 às 07:14 BRT",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "c0fec4d868b30a8a2f29decb25970ee6a035965428b24cb5ede8af1fb3c35772",
+    "verifiedAt": "2026-09-01T07:24:00-03:00"
   }
 }

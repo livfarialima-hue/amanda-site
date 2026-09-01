@@ -701,6 +701,8 @@ Decisão vigente:
 - manter `sem cirurgia`, `endolift` e `endolifting` na fila de revisão, não como negativas aplicadas agora: cada raiz inequívoca ficou abaixo do gate canônico de R$ 5 em 30 dias;
 - não aceitar a pontuação de otimização nem recomendação automática como justificativa para escala ou Smart Bidding.
 
+**Execução e recibos:** publicada em 01/09/2026 no commit funcional `fe9b3348a25b4a78b5dc4853a78563e774322999` e no deploy Netlify `6a96a5f48f881800083c1744`, em `production`, `ready` e com o mesmo `commit_ref`. O sitelink `Preço do Lifting Facial` foi relido na campanha como ativado, em análise de política e com a URL final exata. Produção e URL imutável responderam HTTP 200 com o mesmo conteúdo; cada página preservou seis CTAs de WhatsApp e os mesmos atributos de tracking. Nenhuma outra entidade da campanha foi modificada.
+
 **Hipótese:** uma continuidade mais clara entre busca, anúncio, sitelink, página e WhatsApp aumentará a passagem de clique para contato válido e qualificado sem comprar mais tráfego nem ocultar intenção legítima de preço.
 
 **Métrica principal:** contatos válidos, leads qualificados, consultas agendadas/realizadas, custo por qualificado e custo por consulta de `G26LIFT`. Cliques, CTR, CPC, conversões exibidas, termos e uso do sitelink são diagnósticos.
