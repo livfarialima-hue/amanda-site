@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-09-01T06:59:13-03:00",
+  "account": {
+    "customerId": "995-334-4486",
+    "name": "Dra Amanda Schroeder",
+    "timeZone": "America/Sao_Paulo"
+  },
+  "campaign": {
+    "id": "24028216444",
+    "name": "S_BR_SP_LIFTING_FACIAL",
+    "period": "2026-08-02/2026-08-31",
+    "budgetDailyBrl": 24,
+    "bidStrategy": "Maximizar cliques",
+    "goal": "Lead qualificado GCLID — campanhas (personalizada)",
+    "impressions": 7406,
+    "clicks": 498,
+    "ctr": 0.0672,
+    "costBrl": 703.03,
+    "averageCpcBrl": 1.41,
+    "primaryConversions": 4,
+    "primaryConversionRate": 0.008,
+    "costPerPrimaryConversionBrl": 175.76,
+    "allConversions": 13,
+    "invalidClicks": 17
+  },
+  "adGroups": [
+    {"name":"AG_LIFTING_FACIAL","impressions":5513,"clicks":257,"ctr":0.0466,"costBrl":379.43,"primaryConversions":4,"primaryConversionRate":0.0156,"costPerPrimaryConversionBrl":94.86},
+    {"name":"AG_LIFTING_FACIAL_PRECO","impressions":1893,"clicks":241,"ctr":0.1273,"costBrl":323.60,"primaryConversions":0,"primaryConversionRate":0,"costPerPrimaryConversionBrl":null}
+  ],
+  "funnel30d": {
+    "window": "2026-08-01/2026-08-30",
+    "contactsIdentified": 7,
+    "classified": 1,
+    "valid": 1,
+    "qualifiedOrLater": 1,
+    "scheduledOrLater": 0,
+    "completedOrLater": 0,
+    "converted": 0,
+    "canonicalAttribution": 2,
+    "legacyExactAliases": 5,
+    "unknownAttribution": 0
+  },
+  "searchTerms": [
+    {"term":"lifting facial preço","clicks":31,"costBrl":34.82,"primaryConversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+    {"term":"mini lifting facial preço","clicks":21,"costBrl":32.88,"primaryConversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+    {"term":"lifting facial","clicks":5,"costBrl":14.22,"primaryConversions":0,"intent":"procedimento cirúrgico","decision":"preservar"},
+    {"term":"lifting facial antes e depois","clicks":11,"costBrl":13.58,"primaryConversions":0,"intent":"pesquisa cirúrgica","decision":"preservar"},
+    {"term":"o que é lifting facial","clicks":11,"costBrl":12.80,"primaryConversions":0,"intent":"pesquisa cirúrgica","decision":"preservar"},
+    {"term":"mini lifting rosto quanto custa","clicks":9,"costBrl":9.76,"primaryConversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+    {"term":"quanto custa um lifting facial","clicks":7,"costBrl":7.75,"primaryConversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+    {"term":"quanto custa um mini lifting facial","clicks":3,"costBrl":3.56,"primaryConversions":2,"intent":"preço cirúrgico","decision":"preservar; evidência contra bloqueio genérico"},
+    {"term":"lifting facial sem cirurgia","clicks":2,"costBrl":2.18,"primaryConversions":0,"intent":"não cirúrgico","decision":"observar; abaixo do gate de R$ 5"},
+    {"term":"endolift valor","clicks":1,"costBrl":1.62,"primaryConversions":0,"intent":"não cirúrgico","decision":"observar; abaixo do gate de R$ 5"},
+    {"term":"endolifting valor","clicks":1,"costBrl":1.37,"primaryConversions":0,"intent":"não cirúrgico","decision":"observar; abaixo do gate de R$ 5"}
+  ],
+  "searchTermCoverage": {
+    "visibleRowsClicks": 323,
+    "visibleRowsCostBrl": 427.40,
+    "visibleRowsPrimaryConversions": 2,
+    "otherTermsClicks": 175,
+    "otherTermsCostBrl": 275.63,
+    "otherTermsPrimaryConversions": 2
+  },
+  "assetAudit": [
+    {"area":"RSA geral","state":"Ativo; qualidade Boa","finding":"4 conversões principais e continuidade adequada para a página principal","decision":"preservar"},
+    {"area":"RSA preço","state":"Ativo; qualidade Excelente","finding":"241 cliques e zero conversão principal; texto e destino já coerentes","decision":"preservar durante o teste de continuidade"},
+    {"area":"Sitelinks de campanha","state":"5 ativos","finding":"nenhum link direto para o guia dedicado de preço","decision":"adicionar um sitelink de preço"},
+    {"area":"Frases de destaque","state":"12 específicas e elegíveis","finding":"naturalidade, identidade, face/pescoço, cicatrizes e decisão sem pressão já cobertos","decision":"preservar"},
+    {"area":"Imagens","state":"10 elegíveis; 1 associação reprovada por texto sobreposto","finding":"há cobertura elegível; a reprovação não exige mudança sem substituto aprovado","decision":"não alterar agora"},
+    {"area":"Logo","state":"1 associação reprovada por irrelevância","finding":"recurso compartilhado e sem entrega no recorte","decision":"não alterar sem substituto canônico"}
+  ],
+  "decisions": [
+    {"priority":1,"action":"Adicionar sitelink Preço do Lifting Facial no nível da campanha","status":"preparado","reason":"fecha a continuidade para intenção de custo sem alterar RSA, lance ou verba"},
+    {"priority":2,"action":"Publicar resposta direta e semântica médica nas duas páginas","status":"preparado","reason":"distingue ritidoplastia de abordagens não cirúrgicas e preserva os CTAs"},
+    {"priority":3,"action":"Preservar preço, valor, quanto custa e minilifting","status":"não alterar","reason":"intenção legítima e uma busca de preço gerou duas conversões no grupo geral"},
+    {"priority":4,"action":"Manter sem cirurgia, endolift e endolifting em observação","status":"aguardar dados","reason":"raízes inequívocas ainda abaixo do gate canônico de R$ 5"},
+    {"priority":5,"action":"Preservar AG_LIFTING_FACIAL_PRECO","status":"aguardar reconciliação","reason":"alto gasto e zero conversão principal, mas sem downstream por grupo"},
+    {"priority":6,"action":"Preservar R$ 24/dia e Maximizar cliques","status":"não alterar","reason":"apenas 1 qualificado e nenhuma consulta no agregado; escala não é sustentada"}
+  ]
+}

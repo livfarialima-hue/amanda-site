@@ -685,3 +685,30 @@ Decisão vigente:
 **Manter:** recibos idempotentes, zero reprojeção das linhas arquivadas, cobertura resolvida sem falsa atribuição, queda de buscas incompatíveis e manutenção ou melhora do fluxo válido.
 
 **Reverter:** restaurar Apps Script anterior, retirar a negativa específica ou reativar a palavra pausada se surgir falsa atribuição, perda de evento válido, queda material de contato útil ou bloqueio de intenção cirúrgica aderente.
+
+## 20. Decisão vigente de 01/09/2026 — continuidade controlada do lifting facial
+
+A releitura autenticada de `S_BR_SP_LIFTING_FACIAL` em 02–31/08 mostrou demanda suficiente para diagnosticar o gargalo: 7.406 impressões, 498 cliques, R$ 703,03 de gasto e quatro conversões principais exibidas. O agregado anônimo v2 encontrou, na janela de 30 dias por data do contato, 7 contatos atribuídos a `G26LIFT`, 1 contato válido e qualificado e nenhuma consulta agendada ou posterior. As duas fontes foram reconciliadas, não somadas.
+
+O grupo `AG_LIFTING_FACIAL_PRECO` concentrou 241 cliques e R$ 323,60 — 48% dos cliques e 46% do gasto — sem conversão principal exibida. Isso não transforma preço em intenção ruim: o termo visível `quanto custa um mini lifting facial` gerou duas conversões no grupo geral, e o agregado sem PII ainda não separa o desfecho por grupo. Portanto, preço, valor, custo, minilifting e quanto custa continuam protegidos contra negativa ou pausa genérica.
+
+Decisão vigente:
+
+- preservar orçamento de R$ 24/dia, Maximizar cliques, meta `Lead qualificado GCLID`, redes, local, agenda, dispositivos e os dois grupos;
+- acrescentar somente um sitelink de campanha para o guia de preço, com promessa e destino coerentes: `Preço do Lifting Facial` → `/conteudos/quanto-custa-lifting-facial-sao-paulo/`;
+- tornar as páginas principal e de preço mais fáceis de interpretar por pessoas, busca e sistemas de IA, com resposta textual direta, distinção explícita entre ritidoplastia e abordagens sem cirurgia, revisão médica datada e dados estruturados coerentes com o conteúdo visível;
+- não editar os dois RSAs, callouts, imagens, logo, lance ou orçamento nesta intervenção, para que a continuidade seja a única alavanca material em observação;
+- manter `sem cirurgia`, `endolift` e `endolifting` na fila de revisão, não como negativas aplicadas agora: cada raiz inequívoca ficou abaixo do gate canônico de R$ 5 em 30 dias;
+- não aceitar a pontuação de otimização nem recomendação automática como justificativa para escala ou Smart Bidding.
+
+**Hipótese:** uma continuidade mais clara entre busca, anúncio, sitelink, página e WhatsApp aumentará a passagem de clique para contato válido e qualificado sem comprar mais tráfego nem ocultar intenção legítima de preço.
+
+**Métrica principal:** contatos válidos, leads qualificados, consultas agendadas/realizadas, custo por qualificado e custo por consulta de `G26LIFT`. Cliques, CTR, CPC, conversões exibidas, termos e uso do sitelink são diagnósticos.
+
+**Revisão:** integridade em 24 horas; termos e funil em 7 dias completos; consultas e custos em 14 dias. Antes de pausar o grupo de preço, reconciliar o downstream por grupo ou demonstrar que a ausência de resultado não é apenas uma lacuna de atribuição.
+
+**Regra para manter:** páginas, CTAs, canonical, tracking e sitelink íntegros; manutenção ou melhora de contatos válidos/qualificados; ausência de crescimento consistente de intenção incompatível.
+
+**Regra para ampliar:** editar RSA, excluir termos ou realocar verba somente em um teste posterior, com um componente por vez e regra própria. Aumentar orçamento ou voltar a Maximizar conversões apenas com volume qualificado limpo e aceito suficiente.
+
+**Regra para reverter:** remover somente o novo sitelink ou restaurar as páginas anteriores se houver destino incorreto, perda de tracking, reprovação persistente, regressão médica/editorial ou piora downstream consistente. Não reverter por oscilação isolada de CTR, clique ou pontuação.

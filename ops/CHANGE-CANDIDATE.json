@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "changeId": "CERVICAL-ADS-AI-DISCOVERY-2026-08-31",
-  "title": "Corrigir bloqueios de demanda cervical e melhorar descoberta das paginas",
-  "status": "published_verified",
-  "baseCommit": "a97e673e6b33572641736a86217ea459387c88e2",
+  "changeId": "LIFTING-FACIAL-ADS-CONTINUITY-2026-09-01",
+  "title": "Melhorar continuidade de lifting facial entre busca, preco, pagina e avaliacao",
+  "status": "tested_local",
+  "baseCommit": "67c715500f938b74fa802959f6c56c338694cd8f",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario autorizou ajustar tudo que valesse a pena neste escopo. O preflight externo vinculou a autorizacao ao commit funcional exato 8e3778c214f6a5a55a1f4e66ac40743831bdd132 antes da publicacao."
+    "note": "O usuario pediu explicitamente uma execucao semelhante para as campanhas de lifting facial, apos ja autorizar ajustar e publicar tudo que valesse a pena neste escopo. O preflight externo ainda deve vincular essa autorizacao ao commit funcional exato antes de qualquer escrita no Google Ads ou publicacao do site."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -23,13 +23,18 @@
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/auditoria-google-ads-2026-08-30/EXECUCAO-2026-08-30.md",
+      "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/DELIVERY-RECEIPT-2026-09-01.json",
+      "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/DESIGN.md",
+      "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/EXECUCAO-2026-09-01.md",
+      "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/artifact-data.json",
+      "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/artifact.json",
+      "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/report-verification-failure.png",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/conversion-pages.css",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "campanhas/site-technical-regression.test.mjs",
+      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "lifting-cervical/index.html",
-      "lipo-de-papada/index.html",
+      "lifting-facial/index.html",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
       "sitemap.xml"
@@ -37,35 +42,35 @@
   },
   "impact": {
     "consumers": [
-      "pacientes que pesquisam cervicoplastia, cirurgia do pescoco ou lipo de papada",
+      "pacientes que pesquisam lifting facial, ritidoplastia, facelift, minilifting ou preco",
+      "campanha S_BR_SP_LIFTING_FACIAL e seus dois grupos de anuncios",
       "Google Search e recursos de IA que indexam conteudo publico",
       "ChatGPT Search por meio do OAI-SearchBot ja permitido",
-      "campanha S_BR_SP_LIFTING_CERVICAL e seus dois grupos de anuncios",
-      "seis campanhas que compartilham o sitelink de consulta no nivel da conta"
+      "equipe que acompanha contatos validos, qualificados e consultas"
     ],
     "preservedInvariants": [
-      "orcamento de R$ 12 por dia, Maximizar cliques, meta qualificada, redes, cidade, agenda e dispositivos permanecem inalterados",
-      "somente as duas negativas de frase que bloqueiam o sinonimo cirurgico lipoaspiracao de papada podem ser removidas",
-      "as 12 negativas nao cirurgicas de 30 de agosto e as demais negativas permanecem inalteradas",
-      "o sitelink compartilhado Agende Sua Consulta passa a apontar para uma secao real de consulta no mesmo dominio sem alterar os outros sitelinks",
-      "cada pagina preserva exatamente seis CTAs de WhatsApp, o numero 5511961957144, os locais de CTA, tracking e mensagens de origem",
+      "orcamento de R$ 24 por dia, Maximizar cliques, meta qualificada, redes, local, agenda e dispositivos permanecem inalterados",
+      "os dois grupos, os dois RSAs, palavras-chave, negativas, frases de destaque, imagens e logo permanecem inalterados nesta intervencao",
+      "preco, valor, quanto custa e minilifting nao sao negativados nem pausados genericamente",
+      "sem cirurgia, endolift e endolifting ficam somente em observacao enquanto cada raiz estiver abaixo do gate de R$ 5",
+      "cada pagina preserva exatamente seis CTAs de WhatsApp, o numero 5511961957144, os locais de CTA, tracking e mensagens",
       "conteudo medico permanece educativo, individualizado e sem promessa de resultado",
-      "nenhum Apps Script, planilha LEADS, CRM, Calendar, YCloud ou mensagem real entra neste escopo"
+      "nenhum Apps Script, planilha LEADS, CRM, Calendar, YCloud, Bruna ou mensagem real entra neste escopo"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads, site publico e Git canonico",
+        "system": "Google Ads, agregado sem PII, site publico e Git canonico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-08-31T19:30:50-03:00",
-        "reference": "conta 995-334-4486; campanha 24023843174; janela 01-30/08; HEAD e origin em a97e673; destino /avaliacao-facial/#consulta navegavel e com secao de consulta",
-        "check": "leitura somente; nenhuma campanha, recurso, negativa, pagina, planilha ou deploy foi alterado"
+        "checkedAt": "2026-09-01T06:59:13-03:00",
+        "reference": "conta 995-334-4486; campanha 24028216444; janela 02-31/08; agregado v2 gerado em 31/08; HEAD e origin em 67c7155; paginas lifting-facial e guia de preco",
+        "check": "leitura somente; nenhuma campanha, ativo, negativa, pagina, planilha ou deploy foi alterado"
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
-    "completedAt": "2026-08-31T19:52:20-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-09-01T07:08:24-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "node --test campanhas/site-technical-regression.test.mjs",
@@ -76,57 +81,52 @@
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
       "git diff --check",
-      "npm.cmd run release:preflight -- --approved-commit 8e3778c214f6a5a55a1f4e66ac40743831bdd132 --approved-at 2026-08-31T19:37:38-03:00 --approved-by Daniel --approval-reference user_turn_ajuste_tudo_que_vale_ia_pages_2026-08-31 --live-preflight-at 2026-08-31T19:30:50-03:00 --live-preflight-reference google_ads_9953344486_campaign_24023843174_and_public_consultation_target",
-      "git push origin reestruturacao-site",
-      "Netlify getSite: releitura do deploy publicado e do commit_ref",
-      "HTTP GET do dominio e da URL imutavel para as duas paginas, sitemap, robots e destino do sitelink",
-      "Google Ads: releitura filtrada das negativas e do aria-label do sitelink salvo"
+      "node deliver_portable_artifact.mjs --input artifact.json --output report.html --ready-timeout-ms 15000 --action-timeout-ms 10000 --timeout-ms 30000 --screenshot report-verification-failure.png"
     ],
     "results": {
-      "focusedSiteTests": "9/9 aprovados",
+      "focusedSiteTests": "10/10 aprovados",
       "focusedAcquisitionTests": "126/126 aprovados",
-      "fullSuite": "1229/1229 aprovados",
+      "fullSuite": "1230/1230 aprovados",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK",
+      "siteBuild": "180 arquivos; zero auditoria no artefato publico",
       "siteCheck": "44/44 paginas tecnicamente validas",
-      "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit funcional exato",
-      "googleAds": "2 negativas conflitantes removidas; filtro lipoaspira sem correspondencias; sitelink relido com a nova URL e em analise de politica",
-      "netlify": "deploy 6a9603e1f16be1000897d2d2 em contexto production, state ready e commit_ref 8e3778c214f6a5a55a1f4e66ac40743831bdd132",
-      "liveSite": "dominio e URL imutavel HTTP 200; resposta curta e lastReviewed presentes; 6 CTAs, 1 destino e 6 atributos de tracking por pagina; canonical, sitemap e robots coerentes",
-      "remaining": "monitoramento de integridade em 24 horas e de negocio em 7 e 14 dias"
+      "gitDiffCheck": "aprovado",
+      "opsCheck": "SYNC_PENDING esperado antes de commit, publicacao e recibos",
+      "reportArtifact": "artefato canonico e pacote validados; report.html bloqueado pelo overflow horizontal do leitor portatil compartilhado, com recibo e captura preservados"
     },
     "crossConsumerCases": [
-      "cervicoplastia, lifting cervical, lifting de pescoco e cirurgia do pescoco apontam para o mesmo contexto sem duplicar URL",
-      "lipo de papada e lipoaspiracao submentoniana ficam explicitas no texto visivel e nos dados estruturados",
-      "dados estruturados de autoria, revisao e procedimento correspondem ao conteudo visivel",
+      "lifting facial, ritidoplastia e facelift apontam para o mesmo procedimento cirurgico sem confundir minilifting ou abordagens nao cirurgicas",
+      "busca de preco encontra um caminho especifico sem mudar a politica de orcamento individual",
       "seis CTAs por pagina continuam apontando para o mesmo WhatsApp e mantendo os mesmos locais de tracking",
-      "orcamento, lance, redes, meta, publico e anuncios responsivos permanecem intocados"
+      "orcamento, lance, redes, meta, grupos e RSAs permanecem intocados"
     ]
   },
   "release": {
-    "approvedCommit": "8e3778c214f6a5a55a1f4e66ac40743831bdd132",
-    "netlifyDeployId": "6a9603e1f16be1000897d2d2",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 139,
-    "drivePlanSha256": "db542cf742bdc5157968523ee0c1b61fce7fa79301fee15fdb10c4b258e8a02e",
-    "googleAdsChangeReference": "31/08/2026, conta 995-334-4486, campanha 24023843174: filtro lipoaspira sem negativas apos remocao; sitelink Agende Sua Consulta relido com https://draamandaschroeder.com.br/avaliacao-facial/#consulta, aplicado a conta e 6 campanhas, estado em analise",
-    "verifiedAt": "2026-08-31T19:52:20-03:00",
-    "activationState": "active_verified",
-    "notes": "Publicacao automatica da branch de producao confirmada no Netlify. O deploy por CLI tentado depois falhou localmente por disco cheio e nao alterou producao; a releitura do site provou que o deploy Git 6a9603e1f16be1000897d2d2 ja estava publicado. O mesmo Plano Executivo remoto 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi substituido e relido com conteudo normalizado identico ao local. Foram removidos apenas caches npm recuperaveis para liberar espaco; nenhum arquivo do projeto ou dado operacional foi apagado."
+    "drivePlanSha256": null,
+    "googleAdsChangeReference": null,
+    "verifiedAt": null,
+    "activationState": "not_published",
+    "notes": "Nenhuma escrita externa foi realizada neste candidato."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",
-    "production": "restaurar o deploy Netlify anterior; no Google Ads, recriar apenas as duas negativas removidas e restaurar somente a URL anterior do sitelink se o pos-voo ou a qualidade downstream piorarem"
+    "production": "restaurar somente as duas paginas e remover somente o novo sitelink se houver erro comprovado; preservar orcamento, lance, grupos e demais ativos"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
     "window": "24 horas para integridade; 7 e 14 dias para trafego e funil",
     "metrics": [
-      "impressoes e termos cirurgicos no grupo AG_LIPO_PAPADA",
-      "contatos validos e leads qualificados por grupo e pagina",
+      "status de politica, destino e cliques do novo sitelink",
+      "termos nao cirurgicos por raiz e gasto acumulado",
+      "contatos validos e leads qualificados G26LIFT",
       "consultas agendadas e realizadas atribuiveis",
       "custo por lead qualificado e por consulta",
-      "cliques e continuidade do sitelink de consulta",
-      "indexacao, canonica, rastreabilidade e CTAs das duas paginas"
+      "canonical, dados estruturados, sitemap e seis CTAs das duas paginas"
     ],
-    "rollbackRule": "reverter somente o componente que causar destino incorreto, bloqueio de intencao aderente, perda de tracking, regressao medica/editorial ou piora downstream consistente; nao decidir por CTR ou clique isolado"
+    "rollbackRule": "reverter somente o componente que causar destino incorreto, perda de tracking, regressao medica/editorial ou piora downstream consistente; nao decidir por CTR, clique ou pontuacao isolados"
   }
 }

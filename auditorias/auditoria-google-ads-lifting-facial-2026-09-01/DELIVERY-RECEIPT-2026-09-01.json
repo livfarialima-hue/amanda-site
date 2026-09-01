@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-09-01T07:04:45-03:00",
+  "artifact": "artifact.json",
+  "requestedOutput": "report.html",
+  "deliveredReport": "EXECUCAO-2026-09-01.md",
+  "generation": {
+    "canonicalArtifact": "passed",
+    "portablePackage": "passed before browser layout gate",
+    "delivery": "blocked",
+    "deliveryBlockingCode": "horizontal_overflow"
+  },
+  "browserVerification": {
+    "status": "failed",
+    "desktopViewport": 1440,
+    "screenshot": "report-verification-failure.png",
+    "cause": "O leitor portátil compartilhado excede a largura útil quando a página tem scrollbar vertical; o mesmo defeito de 100vw já estava registrado na auditoria de 22/08.",
+    "decision": "Não editar o HTML gerado, não criar runtime paralelo e não declarar report.html como entregue. O relatório executivo permanece em Markdown e o artefato canônico validado preserva o snapshot e as fontes para regeneração quando o leitor compartilhado for corrigido."
+  },
+  "privacy": {
+    "pii": false,
+    "patientRows": 0,
+    "aggregateOnly": true
+  }
+}

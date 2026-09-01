@@ -2,9 +2,9 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 31 de agosto de 2026, 19:52, America/Sao_Paulo
+**Atualizado em:** 1º de setembro de 2026, America/Sao_Paulo
 
-**Escopo:** auditoria Google Ads de 14/08/2026, execução ao vivo de BLEF, CERV, OTO, FACE e MARCA em 22/08/2026 e auditoria SEO, IA e atribuição de 15/08/2026
+**Escopo:** auditorias e execuções de Google Ads, funil, páginas, busca/IA e jornada comercial, incluindo lifting facial em 01/09/2026
 
 **Projeção de leitura no Drive:** [00 — PLANO EXECUTIVO — pendências, prazos e publicações.md](https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view)
 
@@ -38,6 +38,8 @@ O responsável técnico deve:
 | `NÃO ALTERAR` | decisão consciente de manter como está |
 
 ## 3. Situação atual em linguagem direta
+
+**Lifting facial — CANDIDATO VALIDADO LOCALMENTE; PUBLICAÇÃO E PÓS-VOO PENDENTES:** a campanha teve 498 cliques e R$ 703,03 em 30 dias; o grupo de preço concentrou 241 cliques e R$ 323,60 sem conversão principal exibida. O funil anônimo encontrou 7 contatos, 1 válido/qualificado e 0 consultas. Preço não será bloqueado nem o grupo pausado sem reconciliação por grupo, porque uma busca de preço converteu no grupo geral. O candidato preserva R$ 24/dia, Maximizar cliques, meta, RSAs e grupos; prepara um único sitelink de campanha para o guia de preço e melhora a clareza cirúrgica, autoria e dados estruturados das duas páginas sem alterar os seis CTAs de cada uma. `sem cirurgia`, `endolift` e `endolifting` ficam em observação: cada raiz ainda está abaixo do gate de R$ 5. Após publicar, medir integridade em 24 horas e negócio em 7/14 dias.
 
 **Correção cervical e descoberta em busca/IA — PUBLICADA E VERIFICADA:** foram removidas somente as duas negativas de frase que bloqueavam `lipoaspiração de papada`; a releitura filtrada ficou sem correspondências e preservou as 12 exclusões não cirúrgicas. O sitelink compartilhado `Agende Sua Consulta` passou a apontar para a seção pública `https://draamandaschroeder.com.br/avaliacao-facial/#consulta` em todas as suas associações e está em análise de política após a edição. As páginas de lifting cervical e lipo de papada receberam resposta curta visível, sinônimos cirúrgicos, autoria e revisão médica datada, `MedicalWebPage`/`MedicalProcedure` coerentes, sitemap atualizado e base rastreável para mecanismos de busca e IA. Código funcional `8e3778c214f6a5a55a1f4e66ac40743831bdd132`; Netlify `6a9603e1f16be1000897d2d2`, em `production`, `ready` e no mesmo commit. Domínio e URL imutável responderam HTTP 200; cada página preservou seis CTAs, um destino WhatsApp `5511961957144` e seis atributos de tracking. Orçamento de R$ 12/dia, lance, meta, redes, cidade, agenda, dispositivos, RSAs, Apps Script, LEADS e CRM não mudaram. Medir integridade em 24 horas e negócio em 7/14 dias antes de outro teste CERV.
 

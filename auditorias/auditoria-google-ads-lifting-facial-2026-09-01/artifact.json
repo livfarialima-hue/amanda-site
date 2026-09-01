@@ -1,0 +1,232 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Google Ads — lifting facial: conversão antes de escala",
+    "description": "Diagnóstico auditável da campanha de lifting facial, do funil anônimo, dos termos, anúncios, ativos e páginas, com um candidato de mudança controlado.",
+    "generatedAt": "2026-09-01T06:59:13-03:00",
+    "sources": [
+      {
+        "id": "ads_live",
+        "label": "Google Ads — conta 995-334-4486",
+        "href": "https://ads.google.com/",
+        "path": "artifact-data.json",
+        "query": {
+          "engine": "Snapshot JSON auditado",
+          "description": "Inspeção autenticada da campanha, grupos, palavras, termos, anúncios, sitelinks, frases de destaque, imagens e logo.",
+          "executed_at": "2026-09-01T06:59:13-03:00",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('artifact-data.json');",
+          "tables_used": ["Campaigns", "Ad groups", "Keywords", "Search terms", "Ads", "Assets"],
+          "filters": ["Customer ID 995-334-4486", "Campaign ID 24028216444", "02/08/2026–31/08/2026", "timezone America/Sao_Paulo"]
+        }
+      },
+      {
+        "id": "funnel",
+        "label": "LIV — Agregados de mídia paga — sem PII",
+        "href": "https://docs.google.com/spreadsheets/d/1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0/edit",
+        "path": "artifact-data.json",
+        "query": {
+          "engine": "Snapshot JSON auditado",
+          "description": "Contagens anônimas por campanha canônica e fase atual; nenhuma linha pessoal foi persistida.",
+          "executed_at": "2026-08-31T08:08:40-03:00",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('artifact-data.json');",
+          "tables_used": ["Agregados"],
+          "filters": ["schema v2", "campaign=G26LIFT", "coorte 01/08/2026–30/08/2026", "zero PII"]
+        }
+      },
+      {
+        "id": "site",
+        "label": "Páginas públicas de lifting facial",
+        "href": "https://draamandaschroeder.com.br/lifting-facial/",
+        "query": {
+          "engine": "Arquivos versionados e HTTP",
+          "description": "Página principal e guia de preço, seus CTAs, dados estruturados, canonical e sitemap.",
+          "executed_at": "2026-09-01T06:59:13-03:00",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('artifact-data.json');",
+          "tables_used": ["lifting-facial/index.html", "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html", "sitemap.xml"],
+          "filters": ["conteúdo público", "sem PII", "seis CTAs por página preservados"]
+        }
+      },
+      {
+        "id": "governance",
+        "label": "Estratégia e governança canônicas",
+        "query": {
+          "engine": "Arquivos versionados",
+          "description": "Critérios de decisão, gates de negativas, hierarquia de resultados e regras de publicação.",
+          "executed_at": "2026-09-01T06:59:13-03:00",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('artifact-data.json');",
+          "tables_used": ["campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md", "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md", "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md"],
+          "filters": ["downstream antes de escala", "um teste material por vez", "preço não é negativa genérica"]
+        }
+      },
+      {
+        "id": "google_ai",
+        "label": "Google Search Central — AI features and your website",
+        "href": "https://developers.google.com/search/docs/appearance/ai-features",
+        "query": {
+          "engine": "Documentação oficial",
+          "description": "Requisitos e boas práticas oficiais para elegibilidade e descoberta em recursos de IA do Google Search.",
+          "executed_at": "2026-09-01T06:59:13-03:00",
+          "language": "sql",
+          "sql": "SELECT 'https://developers.google.com/search/docs/appearance/ai-features' AS source_url;",
+          "tables_used": ["Google Search Central documentation"],
+          "filters": ["fonte oficial", "sem inferência de garantia de ranking"]
+        }
+      },
+      {
+        "id": "openai_search",
+        "label": "OpenAI — Publishers and Developers FAQ",
+        "href": "https://help.openai.com/en/articles/12627856-publishers-and-developers-faq",
+        "query": {
+          "engine": "Documentação oficial",
+          "description": "Orientação oficial sobre OAI-SearchBot e descoberta de páginas públicas no ChatGPT Search.",
+          "executed_at": "2026-09-01T06:59:13-03:00",
+          "language": "sql",
+          "sql": "SELECT 'https://help.openai.com/en/articles/12627856-publishers-and-developers-faq' AS source_url;",
+          "tables_used": ["OpenAI Help Center"],
+          "filters": ["fonte oficial", "sem inferência de garantia de citação"]
+        }
+      }
+    ],
+    "cards": [
+      {"id":"clicks_card","description":"Campanha; 02–31/08.","dataset":"headline","sourceId":"ads_live","metrics":[{"label":"Cliques","field":"clicks","format":"number"}]},
+      {"id":"spend_card","description":"Campanha; 02–31/08.","dataset":"headline","sourceId":"ads_live","metrics":[{"label":"Gasto (R$)","field":"spend","format":"number"}]},
+      {"id":"contacts_card","description":"G26LIFT; coorte 01–30/08.","dataset":"headline","sourceId":"funnel","metrics":[{"label":"Contatos identificados","field":"contacts","format":"number"}]},
+      {"id":"qualified_card","description":"Válido e qualificado ou posterior.","dataset":"headline","sourceId":"funnel","metrics":[{"label":"Qualificados+","field":"qualified","format":"number"}]},
+      {"id":"scheduled_card","description":"Agendado ou posterior.","dataset":"headline","sourceId":"funnel","metrics":[{"label":"Consultas+","field":"scheduled","format":"number"}]}
+    ],
+    "charts": [
+      {
+        "id": "search_term_spend",
+        "title": "Gasto dos termos de pesquisa visíveis",
+        "subtitle": "02–31/08; exclui R$ 275,63 agrupados pelo Google em outros termos.",
+        "type": "bar",
+        "dataset": "search_terms",
+        "sourceId": "ads_live",
+        "layout": "full",
+        "question": "Quais termos visíveis concentraram gasto?",
+        "rationale": "Barras ordenadas permitem comparar a magnitude do gasto visível.",
+        "encodings": {
+          "x": {"field":"term","type":"ordinal","label":"Termo"},
+          "y": {"field":"cost","type":"quantitative","format":"number","label":"Gasto (R$)"}
+        },
+        "valueFormat": "number",
+        "maxRows": 11,
+        "emptyState": "Sem termos visíveis no recorte."
+      }
+    ],
+    "tables": [
+      {
+        "id":"ad_group_table","title":"Grupos de anúncios — 30 dias","subtitle":"Conversões principais da interface não substituem o funil reconciliado.","dataset":"ad_groups","sourceId":"ads_live","layout":"full","density":"dense","defaultSort":{"field":"cost","direction":"desc"},
+        "columns":[{"field":"group","label":"Grupo","type":"text"},{"field":"impressions","label":"Impressões","format":"number"},{"field":"clicks","label":"Cliques","format":"number"},{"field":"ctr","label":"CTR","format":"percent"},{"field":"cost","label":"Gasto (R$)","format":"number"},{"field":"conversions","label":"Conversões principais","format":"number"}]
+      },
+      {
+        "id":"funnel_table","title":"Progressão observada até consulta","subtitle":"Clique é mídia; as demais etapas vêm do agregado sem PII e usam coorte distinta.","dataset":"funnel_stages","sourceId":"funnel","layout":"full","density":"dense","defaultSort":{"field":"count","direction":"desc"},
+        "columns":[{"field":"stage","label":"Etapa","type":"text"},{"field":"count","label":"Quantidade","format":"number"},{"field":"rate_from_click","label":"Proporção sobre cliques","format":"percent"},{"field":"definition","label":"Definição","type":"text"}]
+      },
+      {
+        "id":"search_term_table","title":"Termos visíveis — intenção e decisão","subtitle":"Outros termos: 175 cliques, R$ 275,63 e duas conversões principais, sem detalhamento.","dataset":"search_terms","sourceId":"ads_live","layout":"full","density":"dense","defaultSort":{"field":"cost","direction":"desc"},
+        "columns":[{"field":"term","label":"Termo","type":"text"},{"field":"clicks","label":"Cliques","format":"number"},{"field":"cost","label":"Gasto (R$)","format":"number"},{"field":"conversions","label":"Conversões principais","format":"number"},{"field":"intent","label":"Intenção","type":"text"},{"field":"decision","label":"Decisão","type":"text"}]
+      },
+      {
+        "id":"asset_table","title":"Anúncios e ativos","dataset":"assets","sourceId":"ads_live","layout":"full","density":"dense","defaultSort":{"field":"area","direction":"asc"},
+        "columns":[{"field":"area","label":"Área","type":"text"},{"field":"state","label":"Estado","type":"text"},{"field":"finding","label":"Achado","type":"text"},{"field":"decision","label":"Decisão","type":"text"}]
+      },
+      {
+        "id":"decision_table","title":"Plano de mudança controlado","subtitle":"Cada item explicita o que fazer e o que preservar.","dataset":"decisions","sourceId":"governance","layout":"full","density":"dense","defaultSort":{"field":"priority","direction":"asc"},
+        "columns":[{"field":"priority","label":"Prioridade","format":"number"},{"field":"action","label":"Ação","type":"text"},{"field":"status","label":"Estado","type":"text"},{"field":"reason","label":"Por quê","type":"text"}]
+      },
+      {
+        "id":"quality_table","title":"Qualidade e limites da evidência","dataset":"data_quality","sourceId":"governance","layout":"full","density":"dense","defaultSort":{"field":"domain","direction":"asc"},
+        "columns":[{"field":"domain","label":"Domínio","type":"text"},{"field":"confidence","label":"Confiança","type":"text"},{"field":"safe_use","label":"Uso seguro","type":"text"}]
+      }
+    ],
+    "blocks": [
+      {"id":"title","type":"markdown","layout":"full","body":"# Google Ads — lifting facial: conversão antes de escala"},
+      {"id":"executive","type":"markdown","layout":"full","body":"## Executive Summary\n\n- **Não falta procura; falta progressão.** Foram 498 cliques e R$ 703,03 em 30 dias, mas o agregado encontrou 7 contatos, 1 qualificado e nenhuma consulta.\n- **Preço concentra risco, não prova irrelevância.** O grupo de preço consumiu 46% do gasto sem conversão principal, mas uma busca de preço converteu duas vezes no grupo geral. Pausar ou negativar preço sem downstream por grupo seria prematuro.\n- **A mudança indicada é de continuidade, não de escala.** Preservar R$ 24/dia, Maximizar cliques, RSAs e grupos; adicionar um sitelink para o guia de preço e tornar as duas páginas mais claras sobre cirurgia, custo e alternativas não cirúrgicas.\n- **Tráfego não cirúrgico permanece em observação.** `sem cirurgia`, `endolift` e `endolifting` são incompatíveis, mas cada raiz ainda está abaixo do gate canônico de R$ 5 para uma negativa."},
+      {"id":"headline_metrics","type":"metric-strip","layout":"full","cardIds":["clicks_card","spend_card","contacts_card","qualified_card","scheduled_card"]},
+      {"id":"demand_heading","type":"markdown","layout":"full","body":"## A campanha compra demanda, mas quase não a transforma em consulta\n\nO CPC é baixo e o volume é suficiente para observar o vazamento. O grupo geral concentra as quatro conversões principais; o grupo de preço recebe quase o mesmo número de cliques sem registrar nenhuma. O ponto de decisão, porém, continua sendo o funil real."},
+      {"id":"ad_group_detail","type":"table","layout":"full","tableId":"ad_group_table"},
+      {"id":"funnel_heading","type":"markdown","layout":"full","body":"## O maior vazamento está antes e depois da qualificação\n\nA passagem aproximada é de 1,4% de clique para contato identificado e 0,2% de clique para qualificado; nenhuma consulta aparece na coorte. Essas taxas usam janelas com populações diferentes e servem para mostrar ordem de grandeza, não atribuição individual."},
+      {"id":"funnel_detail","type":"table","layout":"full","tableId":"funnel_table"},
+      {"id":"terms_heading","type":"markdown","layout":"full","body":"## Termos de preço dominam a parte visível — e uma exceção impede o bloqueio genérico\n\nO custo visível se concentra em consultas de preço, minilifting e pesquisa do procedimento. A única linha visível com conversões foi `quanto custa um mini lifting facial`, no grupo geral. Isso sustenta uma rota melhor para custo, não uma negativa de preço."},
+      {"id":"terms_chart","type":"chart","layout":"full","chartId":"search_term_spend"},
+      {"id":"terms_detail","type":"table","layout":"full","tableId":"search_term_table"},
+      {"id":"assets_heading","type":"markdown","layout":"full","body":"## A estrutura está funcional; falta um caminho explícito para custo\n\nOs RSAs e callouts já cobrem naturalidade, formação, identidade, avaliação e segurança. O defeito mais objetivo é a ausência de um sitelink de campanha para o guia que já recebe o tráfego de preço."},
+      {"id":"asset_detail","type":"table","layout":"full","tableId":"asset_table"},
+      {"id":"decision_heading","type":"markdown","layout":"full","body":"## Próximos passos recomendados\n\nExecutar a continuidade como um único pacote observável. Não alterar anúncio, palavra, orçamento e lance simultaneamente; isso impediria saber qual componente mudou o funil."},
+      {"id":"decision_detail","type":"table","layout":"full","tableId":"decision_table"},
+      {"id":"ai_heading","type":"markdown","layout":"full","body":"## Busca e instrumentos de IA\n\nA orientação oficial do Google não cria uma técnica paralela de “SEO para IA”: conteúdo útil, público, rastreável, textual, bem estruturado e com dados estruturados fiéis ao que a pessoa vê continua sendo a base ([Google Search Central](https://developers.google.com/search/docs/appearance/ai-features)). Para o ChatGPT Search, o requisito operacional relevante é não bloquear o OAI-SearchBot ([OpenAI](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)); essa regra já existe no `robots.txt`. O candidato melhora a resposta visível e a entidade médica, sem `llms.txt`, páginas em massa ou promessa de ranking."},
+      {"id":"questions","type":"markdown","layout":"full","body":"## Further Questions\n\n1. O novo sitelink recebe cliques e gera contatos válidos ou apenas desloca cliques do anúncio?\n2. O grupo de preço permanece sem conversão principal após sete dias completos?\n3. É possível reconciliar grupo e termo ao resultado qualificado sem expor PII nem criar uma segunda fonte do funil?\n4. Alguma raiz não cirúrgica atravessa R$ 5 e justifica negativa exata no menor nível seguro?"},
+      {"id":"quality_detail","type":"table","layout":"full","tableId":"quality_table"},
+      {"id":"caveats","type":"markdown","layout":"full","body":"## Caveats and Assumptions\n\nA janela do Google Ads é 02–31/08; a coorte do funil é 01–30/08 por data do contato e fase atual. Conversões da interface e etapas do CRM não foram somadas. O Google ocultou 175 cliques e R$ 275,63 em “outros termos”. O agregado identifica campanha, mas não separa o downstream por grupo. Elegibilidade técnica em busca ou IA não garante indexação, ranking, citação ou conversão."}
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "status": "ready",
+    "generatedAt": "2026-09-01T06:59:13-03:00",
+    "datasets": {
+      "headline": [{"clicks":498,"spend":703.03,"contacts":7,"qualified":1,"scheduled":0}],
+      "ad_groups": [
+        {"group":"AG_LIFTING_FACIAL","impressions":5513,"clicks":257,"ctr":0.0466,"cost":379.43,"conversions":4},
+        {"group":"AG_LIFTING_FACIAL_PRECO","impressions":1893,"clicks":241,"ctr":0.1273,"cost":323.60,"conversions":0}
+      ],
+      "funnel_stages": [
+        {"order":1,"stage":"Cliques de mídia","count":498,"rate_from_click":1,"definition":"Cliques no Google Ads em 02–31/08"},
+        {"order":2,"stage":"Contatos identificados","count":7,"rate_from_click":0.014056,"definition":"Contatos G26LIFT na coorte 01–30/08"},
+        {"order":3,"stage":"Qualificados ou posteriores","count":1,"rate_from_click":0.002008,"definition":"Fase qualificada ou posterior no agregado"},
+        {"order":4,"stage":"Agendados ou posteriores","count":0,"rate_from_click":0,"definition":"Consulta agendada ou fase posterior"}
+      ],
+      "search_terms": [
+        {"term":"lifting facial preço","clicks":31,"cost":34.82,"conversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+        {"term":"mini lifting facial preço","clicks":21,"cost":32.88,"conversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+        {"term":"lifting facial","clicks":5,"cost":14.22,"conversions":0,"intent":"procedimento cirúrgico","decision":"preservar"},
+        {"term":"lifting facial antes e depois","clicks":11,"cost":13.58,"conversions":0,"intent":"pesquisa cirúrgica","decision":"preservar"},
+        {"term":"o que é lifting facial","clicks":11,"cost":12.80,"conversions":0,"intent":"pesquisa cirúrgica","decision":"preservar"},
+        {"term":"mini lifting rosto quanto custa","clicks":9,"cost":9.76,"conversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+        {"term":"quanto custa um lifting facial","clicks":7,"cost":7.75,"conversions":0,"intent":"preço cirúrgico","decision":"preservar"},
+        {"term":"quanto custa um mini lifting facial","clicks":3,"cost":3.56,"conversions":2,"intent":"preço cirúrgico","decision":"preservar; exceção com conversão"},
+        {"term":"lifting facial sem cirurgia","clicks":2,"cost":2.18,"conversions":0,"intent":"não cirúrgico","decision":"observar; abaixo de R$ 5"},
+        {"term":"endolift valor","clicks":1,"cost":1.62,"conversions":0,"intent":"não cirúrgico","decision":"observar; abaixo de R$ 5"},
+        {"term":"endolifting valor","clicks":1,"cost":1.37,"conversions":0,"intent":"não cirúrgico","decision":"observar; abaixo de R$ 5"}
+      ],
+      "assets": [
+        {"order":1,"area":"RSA geral","state":"Ativo; qualidade Boa","finding":"257 cliques e 4 conversões principais","decision":"preservar"},
+        {"order":2,"area":"RSA preço","state":"Ativo; qualidade Excelente","finding":"241 cliques e 0 conversões principais","decision":"preservar durante o teste"},
+        {"order":3,"area":"Sitelinks de campanha","state":"5 ativos","finding":"sem link direto para o guia de preço","decision":"adicionar um sitelink"},
+        {"order":4,"area":"Frases de destaque","state":"12 elegíveis","finding":"cobertura coerente de confiança e decisão","decision":"preservar"},
+        {"order":5,"area":"Imagens","state":"10 elegíveis; 1 reprovada","finding":"reprovação por texto sobreposto","decision":"não alterar sem substituto"},
+        {"order":6,"area":"Logo","state":"1 associação reprovada","finding":"recurso compartilhado e sem entrega no recorte","decision":"não alterar sem substituto canônico"}
+      ],
+      "decisions": [
+        {"priority":1,"action":"Sitelink Preço do Lifting Facial","status":"preparado","reason":"continuidade para custo sem trocar RSA, lance ou verba"},
+        {"priority":2,"action":"Resposta direta e semântica médica nas duas páginas","status":"preparado","reason":"distinguir cirurgia de abordagens não cirúrgicas e preservar CTAs"},
+        {"priority":3,"action":"Preço, valor, quanto custa e minilifting","status":"não alterar","reason":"intenção legítima; uma busca de preço converteu no grupo geral"},
+        {"priority":4,"action":"sem cirurgia, endolift e endolifting","status":"aguardar dados","reason":"cada raiz ainda abaixo do gate de R$ 5"},
+        {"priority":5,"action":"AG_LIFTING_FACIAL_PRECO","status":"aguardar reconciliação","reason":"alto gasto e zero conversão principal, mas sem downstream por grupo"},
+        {"priority":6,"action":"R$ 24/dia e Maximizar cliques","status":"não alterar","reason":"1 qualificado e 0 consultas não sustentam escala"}
+      ],
+      "data_quality": [
+        {"order":1,"domain":"Mídia, grupos e ativos","confidence":"Alta","safe_use":"diagnosticar entrega, gasto e estado das entidades"},
+        {"order":2,"domain":"Termos visíveis","confidence":"Parcial","safe_use":"avaliar as linhas mostradas; não atribuir os outros termos"},
+        {"order":3,"domain":"Funil por campanha","confidence":"Média-alta","safe_use":"contar G26LIFT sem PII e sem somar à interface"},
+        {"order":4,"domain":"Funil por grupo","confidence":"Insuficiente","safe_use":"não pausar o grupo de preço por desfecho ainda"},
+        {"order":5,"domain":"Busca e IA","confidence":"Alta para requisitos; N/D para resultado","safe_use":"melhorar elegibilidade e clareza sem prometer ranking ou citação"}
+      ]
+    }
+  },
+  "sources": [
+    {"id":"ads_live","label":"Google Ads — conta 995-334-4486","href":"https://ads.google.com/","path":"artifact-data.json","query":{"engine":"Snapshot JSON auditado","description":"Inspeção autenticada da campanha e entidades.","executed_at":"2026-09-01T06:59:13-03:00","language":"sql","sql":"SELECT * FROM read_json_auto('artifact-data.json');","tables_used":["Campaigns","Ad groups","Keywords","Search terms","Ads","Assets"],"filters":["Customer ID 995-334-4486","Campaign ID 24028216444","02/08/2026–31/08/2026"]}},
+    {"id":"funnel","label":"LIV — Agregados de mídia paga — sem PII","href":"https://docs.google.com/spreadsheets/d/1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0/edit","path":"artifact-data.json","query":{"engine":"Snapshot JSON auditado","description":"Contagens anônimas G26LIFT.","executed_at":"2026-08-31T08:08:40-03:00","language":"sql","sql":"SELECT * FROM read_json_auto('artifact-data.json');","tables_used":["Agregados"],"filters":["schema v2","campaign=G26LIFT","01/08/2026–30/08/2026","zero PII"]}},
+    {"id":"site","label":"Páginas públicas de lifting facial","href":"https://draamandaschroeder.com.br/lifting-facial/","query":{"engine":"Arquivos versionados e HTTP","description":"Páginas, CTAs, schema, canonical e sitemap.","executed_at":"2026-09-01T06:59:13-03:00","language":"sql","sql":"SELECT * FROM read_json_auto('artifact-data.json');","tables_used":["lifting-facial/index.html","conteudos/quanto-custa-lifting-facial-sao-paulo/index.html","sitemap.xml"],"filters":["conteúdo público","zero PII"]}},
+    {"id":"governance","label":"Estratégia e governança canônicas","query":{"engine":"Arquivos versionados","description":"Critérios de decisão e publicação.","executed_at":"2026-09-01T06:59:13-03:00","language":"sql","sql":"SELECT * FROM read_json_auto('artifact-data.json');","tables_used":["campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md","campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md","docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md"],"filters":["downstream antes de escala","um teste material por vez"]}},
+    {"id":"google_ai","label":"Google Search Central — AI features and your website","href":"https://developers.google.com/search/docs/appearance/ai-features","query":{"engine":"Documentação oficial","description":"Requisitos de recursos de IA do Google Search.","executed_at":"2026-09-01T06:59:13-03:00","language":"sql","sql":"SELECT 'https://developers.google.com/search/docs/appearance/ai-features' AS source_url;","tables_used":["Google Search Central documentation"],"filters":["fonte oficial"]}},
+    {"id":"openai_search","label":"OpenAI — Publishers and Developers FAQ","href":"https://help.openai.com/en/articles/12627856-publishers-and-developers-faq","query":{"engine":"Documentação oficial","description":"Orientação sobre OAI-SearchBot.","executed_at":"2026-09-01T06:59:13-03:00","language":"sql","sql":"SELECT 'https://help.openai.com/en/articles/12627856-publishers-and-developers-faq' AS source_url;","tables_used":["OpenAI Help Center"],"filters":["fonte oficial"]}}
+  ]
+}

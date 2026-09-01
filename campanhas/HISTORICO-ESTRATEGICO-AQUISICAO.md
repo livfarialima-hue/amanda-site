@@ -618,3 +618,18 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Data de revisão:** integridade em 24 horas; leitura de negócio em 7 e 14 dias após a publicação real.
 - **Regra para manter:** manter se a cobertura cirúrgica aumentar sem piora consistente da qualidade downstream e se páginas, CTAs, canonical e rastreamento permanecerem íntegros.
 - **Regra para reverter:** restaurar apenas o componente defeituoso diante de destino incorreto, perda de tracking, tráfego incompatível consistente ou regressão editorial/médica; não reverter por CTR ou oscilação de clique isolada.
+
+### 1º de setembro de 2026 — continuidade de lifting facial entre busca, preço e avaliação
+
+- **Status:** candidato local validado; publicação e pós-voo ao vivo pendentes.
+- **Responsável:** Daniel, com execução técnica assistida.
+- **Área/campanha:** `S_BR_SP_LIFTING_FACIAL`, `AG_LIFTING_FACIAL`, `AG_LIFTING_FACIAL_PRECO`, páginas `/lifting-facial/` e `/conteudos/quanto-custa-lifting-facial-sao-paulo/`.
+- **Evidência:** em 02–31/08 a campanha teve 7.406 impressões, 498 cliques, R$ 703,03 e quatro conversões principais exibidas. O grupo de preço consumiu 241 cliques e R$ 323,60 sem conversão principal; ainda assim, uma busca de preço no grupo geral gerou duas conversões visíveis. O agregado v2 encontrou 7 contatos `G26LIFT`, 1 válido/qualificado e 0 consultas. Os termos explicitamente não cirúrgicos somaram pouco gasto por raiz e não atravessaram o gate de negativa.
+- **Mudança preparada:** um sitelink de campanha para o guia de preço; resposta curta e distinção cirúrgica visível na página principal; distinção entre lifting e abordagens sem cirurgia também no guia de preço; autoria, revisão, `MedicalWebPage`/`MedicalProcedure` e sitemap atualizados sem alterar CTAs.
+- **Motivo:** há procura, mas a passagem até qualificado e consulta é baixa. O objetivo é corrigir continuidade e interpretação antes de comprar mais cliques, trocar lance ou pausar preço sem atribuição por grupo.
+- **Hipótese:** alinhar intenção, ativo e página aumenta contatos válidos/qualificados e reduz confusão entre cirurgia e procedimentos não cirúrgicos.
+- **Métrica principal:** válido, qualificado, consulta e custo por etapa em `G26LIFT`; termos e conversões da interface apenas como diagnóstico.
+- **Guardrails:** R$ 24/dia, Maximizar cliques, meta qualificada, redes, agenda, dispositivos, dois RSAs e os dois grupos preservados; nenhuma negativa nova abaixo do gate; seis CTAs e o mesmo WhatsApp por página; zero mensagem real; zero Apps Script, LEADS ou CRM.
+- **Data de revisão:** integridade em 24 horas; negócio em 7 e 14 dias após a publicação real.
+- **Regra para manter:** manter se destino, tracking e conteúdo permanecerem íntegros e o funil útil não piorar de forma consistente.
+- **Regra para reverter:** remover somente o ativo novo ou restaurar a página específica diante de erro comprovado; não decidir por pontuação, CTR ou clique isolado.

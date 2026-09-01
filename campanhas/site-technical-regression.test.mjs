@@ -211,6 +211,73 @@ test("cervical pages expose visible answer-first medical content and matching re
   );
 });
 
+test("lifting facial pages distinguish the surgical procedure and preserve conversion tracking", () => {
+  const cases = [
+    {
+      relativePage: "lifting-facial/index.html",
+      canonical: "https://draamandaschroeder.com.br/lifting-facial/",
+      reviewPattern: /Conteúdo médico revisado em <time datetime="2026-09-01">1º de setembro de 2026<\/time>/i,
+      ctaLocations: ["header", "hero", "consultation", "final", "footer", "sticky"],
+    },
+    {
+      relativePage: "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+      reviewPattern: /O conteúdo foi atualizado em 1º de setembro de 2026/i,
+      ctaLocations: ["header", "price_range_reference", "consultation", "final_price_range_reference", "footer", "sticky_price_range_reference"],
+    },
+  ];
+
+  for (const item of cases) {
+    const html = readFileSync(path.join(root, item.relativePage), "utf8");
+    const structuredData = JSON.parse(
+      html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] || "{}",
+    );
+    const graph = structuredData["@graph"] || [];
+    const procedure = graph.find((entry) => entry["@type"] === "MedicalProcedure");
+    const medicalPage = graph.find((entry) => {
+      const types = Array.isArray(entry["@type"]) ? entry["@type"] : [entry["@type"]];
+      return types.includes("MedicalWebPage");
+    });
+    const whatsappLinks = [...html.matchAll(
+      /<a\b[^>]*data-track="whatsapp"[^>]*>/gi,
+    )].map((match) => match[0]);
+
+    assert.match(html, /lifting sem cirurgia/i, item.relativePage);
+    assert.match(html, /Endolift/i, item.relativePage);
+    assert.match(html, item.reviewPattern, item.relativePage);
+    assert.equal(procedure?.name, "Lifting facial", item.relativePage);
+    assert.deepEqual(procedure?.alternateName, ["Ritidoplastia", "Facelift"], item.relativePage);
+    assert.equal(procedure?.procedureType, "SurgicalProcedure", item.relativePage);
+    assert.equal(medicalPage?.url, item.canonical, item.relativePage);
+    assert.equal(medicalPage?.dateModified, "2026-09-01", item.relativePage);
+    assert.equal(medicalPage?.lastReviewed, "2026-09-01", item.relativePage);
+    assert.equal(medicalPage?.about?.["@id"], procedure?.["@id"], item.relativePage);
+    assert.equal(medicalPage?.mainEntity?.["@id"], procedure?.["@id"], item.relativePage);
+    assert.equal(medicalPage?.reviewedBy?.["@id"], "https://draamandaschroeder.com.br/#physician", item.relativePage);
+    assert.equal(medicalPage?.medicalAudience?.audienceType, "Patient", item.relativePage);
+    assert.equal(whatsappLinks.length, 6, item.relativePage);
+    assert.ok(
+      whatsappLinks.every((link) => /href="https:\/\/wa\.me\/5511961957144\?/i.test(link)),
+      `${item.relativePage} must preserve the WhatsApp destination`,
+    );
+    assert.deepEqual(
+      whatsappLinks.map((link) => link.match(/data-cta-location="([^"]+)"/i)?.[1]),
+      item.ctaLocations,
+      item.relativePage,
+    );
+  }
+
+  const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/lifting-facial\/<\/loc><lastmod>2026-09-01<\/lastmod>/i,
+  );
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/<\/loc><lastmod>2026-09-01<\/lastmod>/i,
+  );
+});
+
 test("OpenAI search and training crawlers have explicit independent rules", () => {
   const robots = readFileSync(path.join(root, "robots.txt"), "utf8");
 
