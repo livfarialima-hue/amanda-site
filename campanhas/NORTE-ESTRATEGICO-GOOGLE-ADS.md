@@ -207,7 +207,7 @@ Desde 15 de agosto de 2026, a distribuição operacional autorizada soma **R$ 87
 A auditoria integrada de 13 de agosto de 2026 foi aprovada como base do trabalho corretivo em 14 de agosto. Até que os gates abaixo sejam cumpridos, vale o **cenário 1: correção e realocação sem aumento líquido**. A execução local das correções não autoriza publicação, renovação, aumento de orçamento nem mudança nas plataformas; cada ação externa continua sujeita a autorização específica.
 
 - **Google Ads:** manter o orçamento total atual como limite operacional e não adotar tCPA, Performance Max, correspondência ampla nem aumento enquanto `Lead qualificado GCLID` estiver em alerta ou sem reconciliação ponta a ponta.
-- **Meta:** manter `M26F01W/C06H01` como frente contínua de lifting facial somente no WhatsApp e como referência operacional, não como controle causal de outro procedimento. A rota facial Site `M26F02S` recebe R$ 0 de verba nova. O teste de destino será feito apenas no lifting cervical, depois da prova ponta a ponta e sob autorização específica.
+- **Meta:** manter somente `M26F01W/C06H01` — lifting facial → WhatsApp — e `M26C01W/C07H01` — lifting cervical → WhatsApp — como frentes elegíveis para continuidade. `M26C02S/C07H01`, a rota facial Site `M26F02S`, `C01H01`, otoplastia e demais objetos recebem R$ 0 de verba nova. O valor total e a janela de um novo ciclo dependem de autorização específica; a decisão de 01/09/2026 não cria gasto adicional por si só.
 - **Qualidade do funil:** nenhum painel, CPL qualificado, consulta ou ROAS deve orientar escala enquanto oportunidade, fase, consulta, Calendar e evento de mídia não estiverem reconciliados no mesmo grão.
 - **Otoplastia:** não atribuir o problema atual ao vídeo sem teste prospectivo que mantenha destino, público e orçamento iguais entre variantes e compare contato válido, qualificado e consulta.
 - **Lifting facial:** a página `/lifting-facial/` pode ser analisada e modificada quando houver justificativa e autorização específica de Daniel. Mudanças devem ser isoladas, documentadas e avaliadas pela métrica correspondente; não existe proibição absoluta. Em 15/08/2026 foi autorizada somente a troca da imagem de prévia social (`og:image` e `twitter:image`) pela foto da Dra. Amanda palestrando em congresso, sem alterar texto, layout, vídeo, CTA ou conteúdo visível da página.
@@ -229,6 +229,19 @@ Daniel autorizou a preparação do ciclo em 16/08/2026 e a publicação integral
 - **Janelas:** D+3 para saúde técnica, D+7 para primeira leitura, D+15 para decisão e D+22 para latência; contar dias completos a partir do dia posterior à ativação real.
 - **Manter:** sonda Site com 100% dos campos obrigatórios, cobertura operacional de pelo menos 80%, zero quebra e evidência de qualificado/consulta. **Não escalar** antes de pelo menos cinco qualificados e uma consulta agendada na rota candidata, com custo por qualificado igual ou inferior a R$ 75.
 - **Reverter:** idade efetiva abaixo de 40; rota/código/landing/CTA ausentes; gasto de pelo menos R$ 150 sem contato válido com tracking saudável; cobertura abaixo de 80%, first touch sobrescrito, duplicidade ou perda de atendimento. Se a amostra não separar as rotas em 15 dias, registrar `N/D`, não escolher por CTR/LPV/conversa e não escalar. O detalhamento operacional está em `campanhas/PLANO-META-15-DIAS-2026-08-16.md`.
+
+### Decisão de 1 de setembro de 2026 — duas campanhas Meta no WhatsApp
+
+Daniel autorizou retirar a rota cervical Site do portfólio e deixar somente `M26F01W/C06H01` e `M26C01W/C07H01`, ambos com destino WhatsApp. `C01H01`, `M26F02S`, `M26C02S`, `M26O01W` e demais objetos permanecem desligados ou sem verba nova.
+
+Em 01/09/2026 às 07:10 BRT, `M26C02S` (`120251249058750627`) foi pausada e a Meta concluiu a publicação dessa única alteração. `M26F01W/C06H01` (`120251254720690627`) e `M26C01W/C07H01` (`120251248762160627`) permaneceram ativos sem edição até o encerramento já programado do ciclo. As sete edições/rascunhos preexistentes ficaram intocadas. Não houve extensão de data nem aumento de orçamento.
+
+- **Leitura do ciclo:** C07/WhatsApp apresentou a melhor combinação operacional de volume e custo por conversa; C06/WhatsApp preservou custo recente por qualificado praticamente equivalente. Como os procedimentos são diferentes e a amostra de agendamentos ainda é pequena, a decisão mantém as duas frentes e não declara superioridade causal do criativo C07 sobre C06.
+- **Interação com a rota:** o mesmo C07 gerou muito mais avanço de negócio no WhatsApp do que no Site com gasto semelhante. LPV barato não compensou a perda entre página e contato identificado; por isso `M26C02S` não será escalada para conversão.
+- **Orçamento:** uma continuidade futura deverá começar com divisão 50/50 entre C06 e C07, mas somente depois de autorização explícita do valor total e da nova janela. Pausar a rota Site é autorizado; aumentar orçamento, alterar duração ou renovar campanha não é inferido desta decisão.
+- **Preservar:** São Paulo +20 km, controle rígido 40+, somente WhatsApp, criativos e textos atuais, códigos canônicos e anúncios principais `120251254720680627` e `120251248762170627`. Nenhum rascunho herdado deve ser publicado.
+- **Métrica e revisão:** qualificados, agendados, realizados e custos por etapa; D+15 em 01/09 e D+22 em 08/09 continuam necessários para latência e não autorizam automaticamente novo gasto.
+- **Rollback:** a rota Site não é reativada automaticamente. Nova ativação exigirá tracking íntegro, evidência de resultado de negócio e autorização específica.
 
 Gates mínimos para liberar crescimento:
 

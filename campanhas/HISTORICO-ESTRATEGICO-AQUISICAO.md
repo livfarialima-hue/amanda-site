@@ -6,6 +6,19 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 1 de setembro de 2026 — portfólio Meta reduzido a C06 e C07 no WhatsApp
+
+- **Status:** executado e verificado no Meta em 01/09/2026 às 07:10 BRT. A campanha `M26C02S/C07H01` foi pausada; nenhuma renovação, prorrogação ou verba adicional foi autorizada nesta entrada.
+- **Área/conta:** Meta Ads `1643959806249995`; manter somente `M26F01W/C06H01` — lifting facial → WhatsApp — e `M26C01W/C07H01` — lifting cervical → WhatsApp. `M26C02S/C07H01`, `M26F02S`, `C01H01`, `M26O01W` e demais objetos permanecem desligados ou sem verba nova.
+- **Mudança executada:** a campanha Site `120251249058750627` foi desligada e o Ads Manager concluiu a publicação da única alteração. Permaneceram ativos, sem edição, `M26F01W/C06H01` (`120251254720690627`) e `M26C01W/C07H01` (`120251248762160627`). C01, otoplastia e as demais campanhas publicadas continuaram desligadas. As sete edições/rascunhos preexistentes não foram publicadas nem descartadas. Uma continuidade futura deverá dividir o orçamento aprovado em partes iguais entre C06 e C07; o valor total e a nova janela dependem de autorização específica antes de criar gasto adicional.
+- **Motivo e evidência:** no ciclo de 17/08 a 31/08, C07/WhatsApp registrou 71 conversas a R$ 4,19 com R$ 297,79 gastos; C06/WhatsApp registrou 31 conversas a R$ 9,63 com R$ 298,49. Na janela comum de 24/08 a 30/08, ambos tiveram quatro qualificados; C07/WhatsApp teve um agendamento. Com o mesmo C07 e gasto semelhante, a rota Site registrou 1.083 LPVs, mas apenas um contato/qualificado e nenhum agendamento, enquanto o WhatsApp acumulou 61 contatos, 10 qualificados e um agendamento no agregado de 30 dias.
+- **Hipótese:** concentrar a veiculação nos dois anúncios que preservam a continuidade direta até o WhatsApp aumenta a proporção de contatos identificados e qualificados, sem confundir tráfego barato com resultado comercial.
+- **Métrica principal:** contatos identificados e válidos, qualificados ou posteriores, consultas agendadas/realizadas, comparecimentos, custo por qualificado e custo por consulta; conversa, CTR e LPV permanecem diagnósticos.
+- **Guardrails:** manter São Paulo +20 km, `age_min=40` efetivo, somente WhatsApp como destino, códigos `M26F01W-C06H01` e `M26C01W-C07H01`, criativos e textos atuais; zero publicação de rascunhos e zero alteração de outra campanha. Confirmar os IDs exatos antes da escrita e verificar o estado final na interface.
+- **Revisão:** fechamento D+15 em 01/09/2026 e latência D+22 em 08/09/2026; qualquer novo ciclo começa somente depois de orçamento e janela explicitamente autorizados.
+- **Regra para manter:** manter as duas frentes se a atribuição continuar íntegra e houver qualificados/agendamentos com custo compatível, sem redução do piso etário ou perda operacional.
+- **Regra para reverter:** não reativar automaticamente a rota Site. Qualquer retomada exige nova evidência de negócio, tracking saudável e autorização específica; diante de destino, idade, código ou atribuição incorretos, pausar o objeto afetado sem alterar o outro.
+
 ## 30 de agosto de 2026 — correção da mensuração e contenção de tráfego sem intenção cirúrgica
 
 - **Status:** implementação local validada; publicação autorizada em curso. Recibos externos, versão do Apps Script, deploy do site e alterações do Google Ads devem ser preenchidos somente depois da verificação ao vivo.
