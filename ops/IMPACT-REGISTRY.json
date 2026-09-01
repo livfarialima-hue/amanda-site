@@ -150,12 +150,16 @@
       ],
       "consumerFiles": [
         "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
         "netlify/functions/appointment-reminder.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/Code.gs",
         "apps-script/clinica-liv-leads/LembretesConsultas.gs",
         "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "docs/whatsapp-clinica-liv-operacao.md",
         "netlify/functions/appointment-reminder.mjs",
@@ -192,6 +196,7 @@
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "netlify/functions/lib/commercial-contact.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
         "netlify/functions/lib/whatsapp-automation.mjs"
       ],
       "consumerFiles": [
@@ -221,6 +226,8 @@
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
         "netlify/functions/lib/whatsapp-automation.mjs",
@@ -235,12 +242,14 @@
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
         "netlify/functions/lib/whatsapp-automation.test.mjs"
       ],
       "requiredCommands": [
         "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+        "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "npm.cmd run change:check",
         "npm.cmd run architecture:check",
         "npm.cmd test",

@@ -23,6 +23,43 @@ const FIRST_FOLLOWUP_SEMANTIC_REVIEW_BASELINE = Date.parse(
 );
 const CUSTOMER_SERVICE_WINDOW_MINUTES = 1430;
 
+const SIMPLE_FOLLOWUP_PROCEDURES = Object.freeze([
+  ["cervical", /\b(cervicoplastia|lifting cervical|lipo de papada)\b/],
+  ["facial", /\b(lifting facial|minilifting|minilift)\b/],
+  ["blefaroplastia", /\b(blefaroplastia|cirurgia das palpebras)\b/],
+  ["otoplastia", /\b(otoplastia|cirurgia das orelhas)\b/],
+  ["rinoplastia", /\b(rinoplastia|cirurgia do nariz)\b/],
+]);
+
+const SIMPLE_FOLLOWUP_PROCEDURE_PHRASES = Object.freeze({
+  cervical: Object.freeze([
+    "cervicoplastia lifting cervical",
+    "cervicoplastia",
+    "lifting cervical",
+    "lipo de papada",
+  ]),
+  facial: Object.freeze([
+    "lifting facial",
+    "minilifting",
+    "minilift",
+  ]),
+  blefaroplastia: Object.freeze([
+    "blefaroplastia",
+    "cirurgia das palpebras",
+  ]),
+  otoplastia: Object.freeze([
+    "otoplastia",
+    "cirurgia das orelhas",
+  ]),
+  rinoplastia: Object.freeze([
+    "rinoplastia",
+    "cirurgia do nariz",
+  ]),
+});
+
+const SIMPLE_FOLLOWUP_SENSITIVE_PATTERN =
+  /\b(dor|sangr|ferid|infecc|febre|medic|remedio|diagnostic|cancer|gravidez|urgent|emergenc|complic|risco|anestesia|laudo|exame|foto|imagem|pos operator|pre operator|contraindic|doenca|alerg|pressao|diabet|cardiac|hospital|internad|valor|preco|orcamento)\b/;
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -126,6 +163,129 @@ function hasOpenCustomerServiceWindow(payload, now) {
   return (
     elapsedMinutes >= 0 &&
     elapsedMinutes <= CUSTOMER_SERVICE_WINDOW_MINUTES
+  );
+}
+
+function normalizeSimpleFollowupText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function identifySimpleFollowupProcedure(text) {
+  const normalized = normalizeSimpleFollowupText(text);
+  return (
+    SIMPLE_FOLLOWUP_PROCEDURES.find(([, pattern]) =>
+      pattern.test(normalized),
+    )?.[0] || ""
+  );
+}
+
+function stripSimpleFollowupOperationalSuffix(value) {
+  return String(value || "").replace(
+    /\b(?:ref(?:er[eê]ncia)?\.?|jid)\s*:?.*$/iu,
+    "",
+  );
+}
+
+function isExactGenericProcedureInterest(text, procedure) {
+  const normalized = normalizeSimpleFollowupText(
+    stripSimpleFollowupOperationalSuffix(text),
+  );
+  const withoutGreeting = normalized.replace(/^ola\s+/, "");
+  const phrases = SIMPLE_FOLLOWUP_PROCEDURE_PHRASES[procedure] || [];
+
+  return phrases.some((phrase) =>
+    [
+      `quero saber sobre ${phrase}`,
+      `quero saber sobre ${phrase} com a dra amanda`,
+      `tenho interesse em ${phrase}`,
+      `tenho interesse em ${phrase} com a dra amanda`,
+      `tenho interesse em ${phrase} e gostaria de entender melhor como funciona a avaliacao`,
+      `tenho interesse em ${phrase} com a dra amanda e gostaria de entender melhor como funciona a avaliacao`,
+    ].includes(withoutGreeting),
+  );
+}
+
+function isExactSimpleProcedureFollowup(text, procedure) {
+  const normalized = normalizeSimpleFollowupText(text);
+  const phrases = SIMPLE_FOLLOWUP_PROCEDURE_PHRASES[procedure] || [];
+
+  return phrases.some((phrase) =>
+    normalized ===
+      `ola queria retomar nossa conversa sobre ${phrase} ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma`,
+  );
+}
+
+export function isSimpleUnansweredProcedureInterestFollowup(payload) {
+  if (
+    payload?.followupStage !== 1 ||
+    payload?.humanApproved === true ||
+    payload?.deliveryMode !== "text"
+  ) {
+    return false;
+  }
+
+  const conversation = Array.isArray(payload.recentConversation)
+    ? payload.recentConversation
+    : [];
+  if (conversation.length !== 2) return false;
+
+  const [inbound, outbound] = conversation;
+  if (
+    inbound?.direction !== "IN" ||
+    outbound?.direction !== "OUT" ||
+    !payload.contextAnchorMessageId ||
+    String(outbound.messageId || "").trim() !==
+      String(payload.contextAnchorMessageId || "").trim()
+  ) {
+    return false;
+  }
+
+  const inboundAt = Date.parse(String(inbound.at || ""));
+  const outboundAt = Date.parse(String(outbound.at || ""));
+  if (
+    !Number.isFinite(inboundAt) ||
+    !Number.isFinite(outboundAt) ||
+    outboundAt < inboundAt
+  ) {
+    return false;
+  }
+
+  const inboundText = normalizeSimpleFollowupText(inbound.text);
+  const outboundText = normalizeSimpleFollowupText(outbound.text);
+  const proposedText = normalizeSimpleFollowupText(payload.body);
+  const allText = [inboundText, outboundText, proposedText].join(" ");
+  const procedure = identifySimpleFollowupProcedure(inboundText);
+
+  if (
+    !procedure ||
+    identifySimpleFollowupProcedure(outboundText) !== procedure ||
+    identifySimpleFollowupProcedure(proposedText) !== procedure ||
+    SIMPLE_FOLLOWUP_SENSITIVE_PATTERN.test(allText)
+  ) {
+    return false;
+  }
+
+  const isGenericInterest = isExactGenericProcedureInterest(
+    inbound.text,
+    procedure,
+  );
+  const isBrunaQuestion =
+    /\b(bruna|concierge)\b/.test(outboundText) &&
+    String(outbound.text || "").includes("?");
+  const isExactLowRiskFollowup =
+    isExactSimpleProcedureFollowup(payload.body, procedure) &&
+    !/https?:\/\//i.test(String(payload.body || ""));
+
+  return (
+    isGenericInterest &&
+    isBrunaQuestion &&
+    isExactLowRiskFollowup
   );
 }
 
@@ -280,9 +440,17 @@ export async function handleScheduledFollowup(
     );
   }
 
+  const simpleUnansweredInterest =
+    isSimpleUnansweredProcedureInterestFollowup(payload);
   const reusedFirstFollowupReview =
     canReuseFirstFollowupSemanticReview(payload);
-  const contextReview = reusedFirstFollowupReview
+  const contextReview = simpleUnansweredInterest
+    ? {
+        status: "completed",
+        allowed: true,
+        reasonCode: "simple_unanswered_procedure_interest",
+      }
+    : reusedFirstFollowupReview
     ? {
         status: "completed",
         allowed: true,
@@ -384,9 +552,11 @@ export async function handleScheduledFollowup(
   return json({
     ok: true,
     sent: true,
-    semanticReview: reusedFirstFollowupReview
-      ? "reused_after_no_intervening_turn"
-      : "completed",
+    semanticReview: simpleUnansweredInterest
+      ? "deterministic_simple_unanswered_interest"
+      : reusedFirstFollowupReview
+        ? "reused_after_no_intervening_turn"
+        : "completed",
   });
 }
 

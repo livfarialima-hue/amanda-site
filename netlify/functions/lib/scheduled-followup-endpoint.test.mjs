@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   canReuseFirstFollowupSemanticReview,
   handleScheduledFollowup,
+  isSimpleUnansweredProcedureInterestFollowup,
   isScheduledFollowupWindow,
 } from "../scheduled-followup.mjs";
 
@@ -26,6 +27,33 @@ const PAYLOAD = {
       at: "2026-08-02T11:02:00-03:00",
       messageId: "out-1",
       text: "Claro. Posso explicar como funciona.",
+    },
+  ],
+};
+
+const SIMPLE_INTEREST_PAYLOAD = {
+  planId: "simple-interest-plan",
+  patientPhone: "+5511999990002",
+  body:
+    "Olá! Queria retomar nossa conversa sobre cervicoplastia (lifting cervical). Ficou alguma dúvida que eu possa esclarecer para você? Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda, para você entender esse próximo passo com calma.",
+  humanApproved: false,
+  deliveryMode: "text",
+  followupStage: 1,
+  contextAnchorMessageId: "out-simple-1",
+  recentConversation: [
+    {
+      direction: "IN",
+      at: "2026-09-01T09:00:00-03:00",
+      messageId: "in-simple-1",
+      text:
+        "Olá! Quero saber sobre lifting cervical com a Dra. Amanda. Ref. TESTE-CERVICAL",
+    },
+    {
+      direction: "OUT",
+      at: "2026-09-01T09:02:00-03:00",
+      messageId: "out-simple-1",
+      text:
+        "Olá! Eu sou a Bruna, concierge da Clínica LIV. Posso te orientar sobre cervicoplastia (lifting cervical). O que você gostaria de entender primeiro?",
     },
   ],
 };
@@ -102,6 +130,94 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
   assert.equal(turns.length, 1);
   assert.equal(turns[0].role, "assistant");
   assert.equal(turns[0].source, "bruna");
+});
+
+test("simple unanswered procedure interest has a deterministic low-risk path", async () => {
+  assert.equal(
+    isSimpleUnansweredProcedureInterestFollowup(
+      SIMPLE_INTEREST_PAYLOAD,
+    ),
+    true,
+  );
+  assert.equal(
+    isSimpleUnansweredProcedureInterestFollowup({
+      ...SIMPLE_INTEREST_PAYLOAD,
+      recentConversation: [
+        ...SIMPLE_INTEREST_PAYLOAD.recentConversation,
+        {
+          direction: "IN",
+          at: "2026-09-01T09:10:00-03:00",
+          messageId: "in-clinical-2",
+          text: "Estou com dor e queria saber se é urgente.",
+        },
+      ],
+    }),
+    false,
+  );
+  assert.equal(
+    isSimpleUnansweredProcedureInterestFollowup({
+      ...SIMPLE_INTEREST_PAYLOAD,
+      recentConversation: [
+        {
+          ...SIMPLE_INTEREST_PAYLOAD.recentConversation[0],
+          text:
+            "Olá! Quero saber sobre lifting cervical com a Dra. Amanda porque notei um nódulo.",
+        },
+        SIMPLE_INTEREST_PAYLOAD.recentConversation[1],
+      ],
+    }),
+    false,
+  );
+  assert.equal(
+    isSimpleUnansweredProcedureInterestFollowup({
+      ...SIMPLE_INTEREST_PAYLOAD,
+      body:
+        SIMPLE_INTEREST_PAYLOAD.body +
+        " Pelo que você contou, parece simples.",
+    }),
+    false,
+  );
+
+  let semanticReviews = 0;
+  let sends = 0;
+  const response = await handleScheduledFollowup(
+    request(SIMPLE_INTEREST_PAYLOAD),
+    {
+      env: {
+        GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+        YCLOUD_API_KEY: "key",
+        WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+        WHATSAPP_AUTOMATION_MODE: "active",
+      },
+      now: new Date("2026-09-01T10:30:00-03:00"),
+      reviewScheduledFollowupContextImpl: async () => {
+        semanticReviews += 1;
+        return {
+          status: "completed",
+          allowed: false,
+          reasonCode: "sensitive_or_clinical_context",
+        };
+      },
+      getBusinessNumberImpl: async () => "+5511961957144",
+      sendYCloudPatientTextImpl: async () => {
+        sends += 1;
+        return { status: "completed" };
+      },
+      appendConversationTurnImpl: async () => ({
+        status: "completed",
+      }),
+    },
+  );
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(result.sent, true);
+  assert.equal(
+    result.semanticReview,
+    "deterministic_simple_unanswered_interest",
+  );
+  assert.equal(semanticReviews, 0);
+  assert.equal(sends, 1);
 });
 
 test("scheduled follow-up cancels before semantic review when the latest inbound is a sales pitch", async () => {

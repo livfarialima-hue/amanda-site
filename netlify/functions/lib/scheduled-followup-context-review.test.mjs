@@ -69,6 +69,10 @@ test("semantic follow-up review reads every recent turn and preserves the exact 
   assert.equal(modelInput.humanApproved, true);
   assert.equal(modelInput.patientPhone, undefined);
   assert.equal(requestBody.store, false);
+  assert.match(
+    requestBody.instructions,
+    /simples menção ao nome de um procedimento estético/,
+  );
 });
 
 test("semantic follow-up review keeps only the 20 latest chronological turns", async () => {

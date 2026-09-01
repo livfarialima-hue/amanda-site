@@ -206,6 +206,15 @@ function doGet(e) {
   }
 
   if (
+    view === "cancelar_lembrete_consulta" &&
+    typeof renderCancelamentoLembreteConsulta_ === "function"
+  ) {
+    return renderCancelamentoLembreteConsulta_(
+      e && e.parameter ? e.parameter : {},
+    );
+  }
+
+  if (
     view === "aprovar_retomada_bot" &&
     typeof renderAprovacaoRetomadaBot_ === "function"
   ) {

@@ -3854,12 +3854,21 @@ function itemPermiteCancelamentoRetomada_(item) {
 }
 
 function adicionarLinksItemRetomadaTexto_(linhas, item) {
-  if (!item || !item.telefone) return;
+  if (!item) return;
 
-  linhas.push(
-    "Abrir WhatsApp: https://wa.me/" +
-      item.telefone.replace(/\D/g, ""),
-  );
+  if (item.telefone) {
+    linhas.push(
+      "Abrir WhatsApp: https://wa.me/" +
+        item.telefone.replace(/\D/g, ""),
+    );
+  }
+
+  if (item.cancelamentoLembreteUrl) {
+    linhas.push(
+      "Cancelar apenas este lembrete: " +
+        item.cancelamentoLembreteUrl,
+    );
+  }
 
   if (itemPermiteCancelamentoRetomada_(item)) {
     const cancelUrl = linkCancelamentoRetomadas_(
@@ -3882,16 +3891,27 @@ function adicionarLinksItemRetomadaTexto_(linhas, item) {
 }
 
 function montarAcoesItemRetomadaHtml_(item) {
-  if (!item || !item.telefone) return "";
+  if (!item) return "";
 
-  const whatsapp =
-    "https://wa.me/" + item.telefone.replace(/\D/g, "");
-  let html =
-    '<a href="' +
-    whatsapp +
-    '" style="display:inline-block;margin-top:10px;padding:8px 11px;border-radius:7px;background:#075e54;color:#fff;text-decoration:none;font-size:13px;font-weight:bold;">Abrir WhatsApp</a>';
+  let html = "";
 
-  if (itemPermiteCancelamentoRetomada_(item)) {
+  if (item.telefone) {
+    const whatsapp =
+      "https://wa.me/" + item.telefone.replace(/\D/g, "");
+    html +=
+      '<a href="' +
+      whatsapp +
+      '" style="display:inline-block;margin-top:10px;padding:8px 11px;border-radius:7px;background:#075e54;color:#fff;text-decoration:none;font-size:13px;font-weight:bold;">Abrir WhatsApp</a>';
+  }
+
+  if (item.cancelamentoLembreteUrl) {
+    html +=
+      ' <a href="' +
+      escaparHtmlRetomadas_(item.cancelamentoLembreteUrl) +
+      '" style="display:inline-block;margin-top:10px;padding:8px 11px;border:1px solid #c2410c;border-radius:7px;color:#9a3412;text-decoration:none;font-size:13px;font-weight:bold;">Cancelar apenas este lembrete</a>';
+  }
+
+  if (item.telefone && itemPermiteCancelamentoRetomada_(item)) {
     const cancelUrl = linkCancelamentoRetomadas_(
       item.chavePlanoRetomada,
     );
@@ -3903,7 +3923,11 @@ function montarAcoesItemRetomadaHtml_(item) {
     }
   }
 
-  if (item.aprovacaoBotDisponivel && item.chavePlanoRetomada) {
+  if (
+    item.telefone &&
+    item.aprovacaoBotDisponivel &&
+    item.chavePlanoRetomada
+  ) {
     const approvalUrl = linkAprovacaoRetomadaBot_(
       item.chavePlanoRetomada,
       false,

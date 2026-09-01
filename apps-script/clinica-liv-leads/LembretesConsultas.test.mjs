@@ -433,3 +433,119 @@ test("the safer reminder contract is default-off until coordinated activation", 
     /safeContractProperty[\s\S]*?"true"[\s\S]*?instalarGatilhoLembretesConsultas_/,
   );
 });
+
+test("reminder cancellation is bound to the current appointment and never cancels the consultation", () => {
+  context.Utilities.computeHmacSha256Signature = (value, secret) =>
+    Array.from(Buffer.from(`${secret}|${value}`, "utf8"));
+  context.Utilities.base64EncodeWebSafe = (bytes) =>
+    Buffer.from(bytes).toString("base64url");
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: () => "test-secret",
+    }),
+  };
+  context.SpreadsheetApp = { flush() {} };
+
+  const headers = Object.values(
+    vm.runInContext(
+      "LEMBRETES_CONSULTAS_HEADERS",
+      context,
+    ),
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const row = Array(headers.length).fill("");
+  row[columns["ID da consulta"]] = "appointment-test-1";
+  row[columns["Telefone (E.164)"]] = "+5511999990003";
+  row[columns["Nome do paciente"]] = "Paciente Teste";
+  row[columns.Profissional] = "Dra. Amanda";
+  row[columns["Data agendada"]] = "03/09/2026";
+  row[columns["Horário agendado"]] = "10:00";
+  row[columns.Status] = "Consulta agendada";
+  row[columns["ID da agenda Google"]] = "calendar-test";
+  row[columns["ID do evento Google"]] = "event-test";
+  const values = [headers, row];
+  const sheet = {
+    getLastRow: () => values.length,
+    getLastColumn: () => headers.length,
+    getDataRange: () => ({ getValues: () => values }),
+    getRange(rowNumber, columnNumber, rowCount, columnCount) {
+      return {
+        getValues: () =>
+          values
+            .slice(rowNumber - 1, rowNumber - 1 + rowCount)
+            .map((sourceRow) =>
+              sourceRow.slice(
+                columnNumber - 1,
+                columnNumber - 1 + columnCount,
+              ),
+            ),
+        setValue(value) {
+          values[rowNumber - 1][columnNumber - 1] = value;
+          return this;
+        },
+        setNumberFormat() {
+          return this;
+        },
+      };
+    },
+  };
+  const appointmentKey = "2026-09-03 10:00";
+  const token = context.assinaturaCancelamentoLembreteConsulta_({
+    appointmentId: "appointment-test-1",
+    appointmentKey,
+    calendarId: "calendar-test",
+    calendarEventId: "event-test",
+  });
+  const result = context.cancelarLembreteConsultaPorToken_(
+    sheet,
+    token,
+    new Date("2026-09-01T12:00:00-03:00"),
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.alreadyCancelled, false);
+  assert.equal(row[columns.Status], "Consulta agendada");
+  assert.equal(
+    row[columns["Agendamento do lembrete cancelado"]],
+    appointmentKey,
+  );
+  assert.equal(
+    row[columns["Motivo do cancelamento do lembrete"]],
+    "Cancelado pela equipe no e-mail diário",
+  );
+  assert.equal(
+    context.cancelarLembreteConsultaPorToken_(
+      sheet,
+      token,
+      new Date("2026-09-01T12:05:00-03:00"),
+    ).alreadyCancelled,
+    true,
+  );
+  assert.notEqual(
+    token,
+    context.assinaturaCancelamentoLembreteConsulta_({
+      appointmentId: "appointment-test-1",
+      appointmentKey: "2026-09-03 11:00",
+      calendarId: "calendar-test",
+      calendarEventId: "event-test",
+    }),
+  );
+});
+
+test("the web app exposes only the dedicated reminder cancellation route", async () => {
+  const codeSource = await readFile(
+    new URL("./Code.gs", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(
+    codeSource,
+    /view === "cancelar_lembrete_consulta"[\s\S]*?renderCancelamentoLembreteConsulta_/,
+  );
+  assert.match(
+    source,
+    /Agendamento do lembrete cancelado/,
+  );
+});

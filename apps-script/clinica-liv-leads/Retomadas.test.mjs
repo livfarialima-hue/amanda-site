@@ -2466,6 +2466,63 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
   assert.match(appointmentReminder.sugestao, /maps\.google\.com/);
 });
 
+test("a cancelled reminder disappears from the daily email without cancelling the appointment", () => {
+  const headers = [
+    "ID da consulta",
+    "Telefone (E.164)",
+    "Nome do paciente",
+    "Profissional",
+    "Data agendada",
+    "Horário agendado",
+    "Status",
+    "Consentimento para contato",
+    "Agendamento do lembrete cancelado",
+    "Tipo de consulta",
+    "Local / modalidade",
+    "ID da agenda Google",
+    "ID do evento Google",
+    "Sincronização Google Agenda",
+  ];
+  const values = {
+    "ID da consulta": "appointment-cancelled-reminder",
+    "Telefone (E.164)": "+5511999990004",
+    "Nome do paciente": "Paciente Teste",
+    Profissional: "Dra. Amanda",
+    "Data agendada": "2026-09-02",
+    "Horário agendado": "10:00",
+    Status: "Consulta agendada",
+    "Consentimento para contato": "Sim",
+    "Agendamento do lembrete cancelado": "2026-09-02 10:00",
+    "Tipo de consulta": "Primeira consulta",
+    "Local / modalidade": "Clínica LIV",
+    "ID da agenda Google": "calendar-1",
+    "ID do evento Google":
+      "event:2026-09-02T10:00:00-03:00",
+    "Sincronização Google Agenda": "Sincronizado",
+  };
+  const sheet = {
+    getLastRow: () => 2,
+    getDataRange: () => ({
+      getValues: () => [
+        headers,
+        headers.map((header) => values[header] ?? ""),
+      ],
+    }),
+  };
+  const agenda = context.criarAgendaCuidadosConsultas_(
+    sheet,
+    new Date("2026-09-01T08:00:00-03:00"),
+  );
+
+  assert.equal(
+    agenda.some((item) =>
+      item.categoria.includes("Lembrete de consulta"),
+    ),
+    false,
+  );
+  assert.equal(values.Status, "Consulta agendada");
+});
+
 test("care agenda consumes the same single reminder target as the sender", () => {
   const appointment = new Date("2026-09-02T14:00:00-03:00");
   const targets = context.alvosLembretesConsultaAgenda_(appointment);
@@ -2797,6 +2854,8 @@ test("care agenda appears before commercial follow-ups and drafts only manual ca
     automatico: true,
     futuro: false,
     sugestao: "",
+    cancelamentoLembreteUrl:
+      "https://script.google.com/macros/s/test/exec?view=cancelar_lembrete_consulta&cancel=opaque-token",
   };
   const manual = {
     categoria: "Checagem humana pós-consulta",
@@ -2841,6 +2900,8 @@ test("care agenda appears before commercial follow-ups and drafts only manual ca
     /Ações humanas sugeridas hoje \(1\)/,
   );
   assert.match(html, /Nada desta seção é enviado automaticamente/);
+  assert.match(text, /Cancelar apenas este lembrete:/);
+  assert.match(html, />Cancelar apenas este lembrete</);
 });
 
 test("later post-consult and old-client contacts stay manual with a ready message", () => {

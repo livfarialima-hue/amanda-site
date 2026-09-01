@@ -43,7 +43,7 @@ Sua única decisão é:
 - send_exact: a mensagem proposta pode ser enviada exatamente como foi aprovada;
 - cancel_for_review: o contexto exige nova revisão humana.
 
-Nunca reescreva a mensagem e nunca use a aprovação humana para ignorar mudança de contexto. Escolha cancel_for_review quando houver resposta posterior, pausa ou encerramento da paciente, opt-out, procedimento divergente ou ambíguo, promessa pendente da equipe, assunto clínico ou sensível, informação já respondida, repetição inadequada ou contexto insuficiente. Escolha send_exact somente com confiança alta e quando o texto for uma continuação natural, gentil e coerente com toda a conversa.
+Nunca reescreva a mensagem e nunca use a aprovação humana para ignorar mudança de contexto. Escolha cancel_for_review quando houver resposta posterior, pausa ou encerramento da paciente, opt-out, procedimento divergente ou ambíguo, promessa pendente da equipe, pedido de diagnóstico ou orientação clínica, sintoma, complicação, risco, medicamento, exame, imagem clínica, urgência, informação já respondida, repetição inadequada ou contexto insuficiente. A simples menção ao nome de um procedimento estético, o interesse genérico nele e a explicação de que existe uma avaliação individual não são, isoladamente, contexto clínico sensível. Escolha send_exact somente com confiança alta e quando o texto for uma continuação natural, gentil, não clínica e coerente com toda a conversa.
 
 Esta análise apenas acrescenta um veto semântico. Ela não substitui as travas determinísticas, não autoriza agenda, preço, orientação clínica ou qualquer conteúdo novo.`;
 

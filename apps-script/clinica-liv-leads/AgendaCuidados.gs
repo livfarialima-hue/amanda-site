@@ -417,8 +417,22 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
       ["erro do lembrete"],
     ),
   );
+  const appointmentKey = formatarDataRetomadas_(
+    consulta,
+    "yyyy-MM-dd HH:mm",
+  );
+  const cancelledAppointment =
+    normalizarChaveAgendamentoMonitorado_(
+      valorAgendaCuidados_(entrada.linha, entrada.colunas, [
+        "agendamento do lembrete cancelado",
+      ]),
+    );
 
-  if (lembretePrincipalEnviado || lembreteNoDiaEnviado) {
+  if (
+    lembretePrincipalEnviado ||
+    lembreteNoDiaEnviado ||
+    cancelledAppointment === appointmentKey
+  ) {
     return;
   }
 
@@ -484,6 +498,16 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     return;
   }
 
+  const calendarId = valorAgendaCuidados_(
+    entrada.linha,
+    entrada.colunas,
+    ["id da agenda google"],
+  );
+  const calendarEventId = valorAgendaCuidados_(
+    entrada.linha,
+    entrada.colunas,
+    ["id do evento google"],
+  );
   const scheduleVerification =
     validarVinculoAgendaLembreteConsulta_(
       {
@@ -498,16 +522,8 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
           entrada.colunas,
           ["local modalidade"],
         ),
-        calendarId: valorAgendaCuidados_(
-          entrada.linha,
-          entrada.colunas,
-          ["id da agenda google"],
-        ),
-        calendarEventId: valorAgendaCuidados_(
-          entrada.linha,
-          entrada.colunas,
-          ["id do evento google"],
-        ),
+        calendarId: calendarId,
+        calendarEventId: calendarEventId,
         calendarSyncStatus: valorAgendaCuidados_(
           entrada.linha,
           entrada.colunas,
@@ -543,6 +559,17 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
   }
 
   const manualOnly = entrada.neverBotReply === true;
+  const reminderCancellationUrl =
+    linkCancelamentoLembreteConsulta_({
+      appointmentId: valorAgendaCuidados_(
+        entrada.linha,
+        entrada.colunas,
+        ["id da consulta"],
+      ),
+      appointmentKey: appointmentKey,
+      calendarId: calendarId,
+      calendarEventId: calendarEventId,
+    });
   const reminderSuggestion =
     "Oi, " +
     patientData.firstName +
@@ -593,6 +620,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
       futuro: false,
       prioridade: 2,
       sugestao: reminderSuggestion,
+      cancelamentoLembreteUrl: reminderCancellationUrl,
     });
   }
 
@@ -634,6 +662,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
       futuro: true,
       prioridade: 8,
       sugestao: reminderSuggestion,
+      cancelamentoLembreteUrl: reminderCancellationUrl,
     });
   });
 }

@@ -77,6 +77,7 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - cada envio revalida opt-out, takeover, janela, atividade mais recente, identidade do plano, número máximo de tentativas e contrato semântico.
 - uma nova fala da paciente ou da equipe invalida qualquer decisão reaproveitada que não continue comprovadamente atual.
 - cancelamento de um plano não cria automaticamente proibição permanente de contato.
+- a primeira retomada de um interesse genérico em procedimento pode usar o corredor determinístico de baixo risco somente quando a conversa contém exatamente o prefill inicial e uma pergunta da Bruna ainda sem resposta, o procedimento coincide nos três textos, a janela de atendimento está aberta e não há preço, sintoma, exame, imagem, risco, urgência ou orientação clínica. Qualquer turno adicional ou sinal protegido devolve o caso à revisão semântica fail-closed.
 
 ### Agenda
 
@@ -90,6 +91,7 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - nome confiável e telefone brasileiro E.164 são pré-condições do envio automático. Ausência de qualquer um bloqueia antes de reservar a tentativa e vira revisão humana; o endpoint e o adaptador do provedor repetem o mesmo bloqueio.
 - para atendimento presencial, a linha de `Consultas` só autoriza lembrete quando o evento vivo vinculado no Google Agenda existe e começa exatamente na mesma data e hora. Vínculo ausente, sincronização não confirmada, evento apagado, erro de leitura ou horário divergente bloqueiam antes de qualquer escrita e viram reconciliação humana. Atendimento remoto só dispensa Calendar quando modalidade e estado canônico `Não se aplica — atendimento remoto` são simultaneamente explícitos e não há vínculo residual.
 - `Última tentativa de lembrete` impede novo envio automático mesmo quando o provedor falhou ou a resposta foi ambígua. O e-mail diário deve exibir revisão humana, não um novo envio previsto.
+- o e-mail diário projeta, na seção de envios automáticos do próprio dia, o mesmo lembrete único autorizado por `LembretesConsultas.gs`. Cada lembrete elegível oferece cancelamento HMAC com confirmação; a ação grava o horário exato cancelado e nunca cancela a consulta, bloqueia outro cuidado ou mantém a supressão depois de um reagendamento.
 
 ### Google e Meta
 
