@@ -330,6 +330,25 @@ body.has-cookie-consent .cv-sticky { opacity: 0; pointer-events: none; }
   .cv-facts { gap: 7px; }
   .cv-fact { font-size: .72rem; }
   .cv-quick-answer-grid div { padding: 20px; }
+  html[data-procedure="lifting-facial"] .cv-quick-answer { padding: 42px 0 50px; }
+  html[data-procedure="lifting-facial"] .cv-quick-answer-intro { margin-bottom: 20px; }
+  html[data-procedure="lifting-facial"] .cv-quick-answer-grid { gap: 12px; }
+  html[data-procedure="lifting-facial"] .cv-quick-answer-grid div {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--green);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 28px rgba(73, 45, 35, .05);
+  }
+  html[data-procedure="lifting-facial"] .cv-quick-answer-grid dt {
+    margin-bottom: 6px;
+    font-size: 1.08rem;
+    line-height: 1.3;
+  }
+  html[data-procedure="lifting-facial"] .cv-quick-answer-grid dd {
+    margin: 0;
+    line-height: 1.62;
+  }
   .cv-grid, .cv-grid--2, .cv-grid--4, .cv-results { grid-template-columns: 1fr; }
   .cv-card { padding: 24px 21px; }
   .cv-wide-card { grid-template-columns: 1fr; }

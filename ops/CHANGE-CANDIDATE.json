@@ -1,97 +1,81 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-NO-REPEATED-INTRODUCTION-2026-09-01",
-  "title": "Impedir reapresentacao da Bruna em respostas consecutivas de preco",
+  "changeId": "LIFTING-FACIAL-QUICK-ANSWER-MOBILE-2026-09-02",
+  "title": "Corrigir cache e acabamento mobile do resumo do lifting facial",
   "status": "tested_local",
-  "baseCommit": "b88065979e27b9ed1e69c39b0fba7b2eebc436c8",
+  "baseCommit": "96c6b22f0194f6c6100fda0b47b6d563b2164bd1",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario autorizou publicar tudo que estava pendente na mensagem de 02/09/2026; a autorizacao sera vinculada ao novo commit exato pelo preflight externo."
+    "note": "O usuario pediu para corrigir esta secao e publicar, alem de publicar tudo pendente, na mensagem de 02/09/2026."
   },
   "risk": {
-    "level": "high",
-    "patientEffects": true,
+    "level": "medium",
+    "patientEffects": false,
     "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "bruna-conversion-experience"
+      "site-publication"
     ],
     "files": [
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/surgical-price-review.test.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
+      "campanhas/conversion-pages.css",
+      "campanhas/site-technical-regression.test.mjs",
+      "lifting-facial/index.html",
       "ops/CHANGE-CANDIDATE.json"
     ]
   },
   "impact": {
     "consumers": [
-      "resposta deterministica de preco no webhook YCloud",
-      "respostas aprovadas de preco no processamento ativo",
-      "retomada protegida depois de contexto humano",
-      "gate final de saida e ledger recente da conversa"
+      "pagina publica de lifting facial em telas de ate 680px",
+      "cache de CSS do navegador",
+      "teste tecnico do site"
     ],
     "preservedInvariants": [
-      "a primeira resposta real continua apresentando Bruna como concierge da Clinica LIV Faria Lima",
-      "nenhuma faixa, regra de preco, procedimento, agenda, CTA, link ou handoff e alterado",
-      "takeover humano, opt-out, duplicidade, mensagem mais recente e gate final continuam fail-closed",
-      "nenhum Apps Script, planilha LEADS, CRM, Calendar, Google Ads ou Meta Ads entra no escopo",
-      "nenhuma mensagem real de paciente sera usada como teste"
+      "nenhum texto, preco, titulo, descricao, imagem ou video e alterado",
+      "os seis CTAs de WhatsApp permanecem presentes e com os mesmos destinos",
+      "atributos de rastreamento, mensagens pre-preenchidas e codigos de atribuicao permanecem intactos",
+      "nenhuma outra pagina, bot, planilha, CRM, Calendar, Google Ads, Meta Ads ou Apps Script entra no escopo"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "bruna-conversation-safety",
-        "system": "Netlify publico",
+        "contract": "site-mobile-visual",
+        "system": "pagina publica de lifting facial",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-02T20:17:08-03:00",
-        "reference": "O deploy b880659 anterior respondeu HTTP 200 no dominio e na URL imutavel, com automationMode=active; nenhuma mensagem ou escrita operacional foi executada",
-        "check": "somente leitura"
+        "checkedAt": "2026-09-02T20:27:03-03:00",
+        "reference": "A pagina publica ja continha o componente em cartoes no CSS atual, mas reutilizava a URL de 02/08/2026; a captura do usuario mostrou o fallback nativo com dd indentado, compativel com CSS antigo em cache.",
+        "check": "somente leitura em viewport 390x844"
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-02T20:20:08-03:00",
+    "completedAt": "2026-09-02T20:30:55-03:00",
     "commands": [
-      "node --test netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test campanhas/site-technical-regression.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "QA visual local e publico em 390x844"
     ],
     "results": {
-      "focusedRegression": "144/144 passed",
-      "conversionContract": "307/307 passed",
-      "crossConsumerSafety": "256/256 passed",
-      "fullSuite": "1235/1235 passed after integration over b880659",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 10/10 declared files",
+      "focusedRegression": "11/11 passed",
+      "fullSuite": "1236/1236 passed",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 4/4 declared files",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 files; 44 sitemap URLs; 0 errors",
       "siteCheck": "44/44 expected HTTP 200; 44 self-canonical; 44 indexable; 0 orphan pages; 0 errors",
-      "diffCheck": "passed",
+      "mobileVisual": "passed locally at 390x844; three single-column compact cards, 16px radius, 18px padding, no native dd indentation and no horizontal overflow",
+      "conversionLinks": "6 before and 6 after; exact anchor digest unchanged: 2997f47ce9262c93af03674569abaf9ced98191a485eb45a01f9cc64e813839e",
       "liveWrites": "none"
-    },
-    "crossConsumerCases": [
-      "primeiro contato sem historico nem sinal anterior mantem saudacao e apresentacao",
-      "contato atualizado com ledger temporariamente vazio responde ao preco sem nova apresentacao",
-      "historico com fala anterior da Bruna continua sem reapresentacao",
-      "retomada protegida nunca reinicia a identidade da Bruna"
-    ]
+    }
   },
   "release": {
     "approvedCommit": null,
@@ -100,21 +84,21 @@
     "drivePlanSha256": null,
     "verifiedAt": null,
     "activationState": "not_published",
-    "notes": "Publicacao autorizada na mensagem de 02/09/2026 e pendente do novo commit exato depois da integracao."
+    "notes": "Publicacao autorizada e pendente do commit exato, gates e QA mobile."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",
-    "production": "restaurar o deploy Netlify b880659 se houver reapresentacao indevida, perda da primeira apresentacao ou bloqueio de resposta"
+    "production": "restaurar o deploy Netlify 6a98af91799bcb0008bec6c4"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro ciclo, 24 horas, 72 horas e 7 dias apos a publicacao",
+    "window": "imediata, 24 horas e 72 horas apos a publicacao",
     "metrics": [
-      "reapresentacao da Bruna em conversa com interacao anterior conhecida",
-      "ausencia indevida de apresentacao no primeiro contato",
-      "respostas de preco bloqueadas ou duplicadas",
-      "competicao com resposta humana e falhas de ledger"
+      "carregamento do CSS versionado em mobile",
+      "ausencia de recuo nativo nos textos de resposta",
+      "visibilidade e integridade dos seis CTAs de WhatsApp",
+      "erros visuais nas demais secoes da pagina"
     ],
-    "rollbackRule": "reverter diante de perda da apresentacao no primeiro contato, repeticao persistente, resposta duplicada ou regressao de takeover/opt-out"
+    "rollbackRule": "reverter se houver regressao de layout, texto, CTA ou rastreamento."
   }
 }

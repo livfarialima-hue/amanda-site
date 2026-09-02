@@ -106,6 +106,41 @@ test("cervical campaign video is prominent, accessible and performance-safe on b
   );
 });
 
+test("lifting facial loads the current compact mobile treatment for its quick answer", () => {
+  const html = readFileSync(
+    path.join(root, "lifting-facial/index.html"),
+    "utf8",
+  );
+  const css = readFileSync(
+    path.join(root, "campanhas/conversion-pages.css"),
+    "utf8",
+  );
+  const quickAnswer = html.match(
+    /<section class="cv-quick-answer"[\s\S]*?<\/section>/i,
+  )?.[0] || "";
+  const whatsappLinks = [...html.matchAll(
+    /<a\b[^>]*data-track="whatsapp"[^>]*>/gi,
+  )];
+
+  assert.ok(quickAnswer, "lifting facial must keep its quick-answer section");
+  assert.match(
+    html,
+    /conversion-pages\.css\?v=20260902-lifting-facial-resumo-mobile-1/i,
+    "the page must force mobile browsers to fetch the corrected stylesheet",
+  );
+  assert.equal(whatsappLinks.length, 6, "all six WhatsApp conversion links must remain present");
+  assert.match(
+    css,
+    /html\[data-procedure="lifting-facial"\] \.cv-quick-answer-grid div\s*\{[^}]*border:\s*1px solid var\(--line\);[^}]*border-left:\s*3px solid var\(--green\);[^}]*border-radius:\s*16px;/i,
+    "the mobile answer blocks must render as compact cards",
+  );
+  assert.match(
+    css,
+    /html\[data-procedure="lifting-facial"\] \.cv-quick-answer-grid dd\s*\{[^}]*margin:\s*0;/i,
+    "definition text must never fall back to the browser's indented default",
+  );
+});
+
 test("the cervical page connects cervicoplastia and lifting cervical without changing the canonical URL", () => {
   const html = readFileSync(
     path.join(root, "lifting-cervical/index.html"),
