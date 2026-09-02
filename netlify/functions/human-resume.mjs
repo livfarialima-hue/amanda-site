@@ -557,6 +557,7 @@ export async function processHumanResumeJob(
           overnight: outsideServiceHours,
           currentText: job.text,
           recentConversation: job.recentConversation,
+          introduceBruna: false,
         }),
         buildSurgicalPriceSuggestedReply({
           patientName: job.patientName,
@@ -564,6 +565,7 @@ export async function processHumanResumeJob(
           recentConversation: job.recentConversation,
           referenceCategory: job.referenceCategory,
           sourceReference: job.reference,
+          introduceBruna: false,
         }),
         conversationAction,
       );
@@ -656,6 +658,7 @@ export async function processHumanResumeJob(
           procedure: enrichedPlan.procedure || job.procedure,
           recentConversation: job.recentConversation,
           currentText: job.text,
+          introduceBruna: false,
         })
       : ["lifting_range", "otoplasty_range"].includes(
           approvedPriceReplyKind,
@@ -669,6 +672,7 @@ export async function processHumanResumeJob(
             sourceReference: job.reference,
             directToPatient: true,
             currentText: job.text,
+            introduceBruna: false,
           })
         : "";
   const approvedPriceReplyCandidate = approvedPriceReply

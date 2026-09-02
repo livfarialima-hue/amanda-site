@@ -3077,7 +3077,7 @@ test("a structured lipo prefill recovers one transient Sheets failure without ju
   }
 });
 
-test("the first price question for another surgery alerts with a suggested reply", async () => {
+test("a later price question with an updated lead does not reintroduce Bruna when the ledger is temporarily empty", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -3231,7 +3231,8 @@ test("the first price question for another surgery alerts with a suggested reply
     assert.ok(patientBody);
     assert.ok(alertBody);
     assert.equal(patientBody.to, "+5511900000000");
-    assert.match(patientBody.text.body, /^Olá, Maria! Eu sou a Bruna/);
+    assert.match(patientBody.text.body, /^Claro, Maria\./);
+    assert.doesNotMatch(patientBody.text.body, /Eu sou a Bruna|^Ol[áa]/i);
     assert.match(patientBody.text.body, /equipe/i);
     assert.match(patientBody.text.body, /valor/i);
     assert.equal((patientBody.text.body.match(/\?/g) || []).length, 0);

@@ -416,6 +416,19 @@ test("acknowledges a price request while the approved value is pending", () => {
   assert.doesNotMatch(overnight, /R\$/);
 });
 
+test("known prior interaction suppresses the Bruna introduction even when recent turns are unavailable", () => {
+  const reply = buildSurgicalPriceHoldingReply({
+    patientName: "Gabis",
+    procedure: "lipo_papada",
+    overnight: true,
+    introduceBruna: false,
+  });
+
+  assert.match(reply, /^Claro, Gabis\./);
+  assert.doesNotMatch(reply, /Eu sou a Bruna|^Ol[áa]/i);
+  assert.match(reply, /te retorno pela manhã/i);
+});
+
 test("mentions payment terms only when the patient asks about them", () => {
   const reply = buildSurgicalPriceHoldingReply({
     patientName: "Van",

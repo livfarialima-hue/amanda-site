@@ -186,14 +186,24 @@ function waitingGreeting(value) {
     : "Obrigada por aguardar.";
 }
 
-function directPriceGreeting(value, recentConversation) {
+function directPriceGreeting(
+  value,
+  recentConversation,
+  introduceBruna = true,
+) {
   const name = firstName(value);
   const hasPriorClinicTurn = (Array.isArray(recentConversation)
     ? recentConversation
     : []
-  ).some((turn) => turn?.role === "assistant");
+  ).some(
+    (turn) =>
+      turn?.role === "assistant" ||
+      ["bruna", "human", "equipe_humana"].includes(
+        String(turn?.source || ""),
+      ),
+  );
 
-  if (hasPriorClinicTurn) {
+  if (hasPriorClinicTurn || introduceBruna === false) {
     return name ? `Claro, ${name}.` : "Claro.";
   }
 
@@ -393,6 +403,7 @@ export function buildSurgicalInitialPriceReply({
   procedure,
   recentConversation = [],
   currentText = "",
+  introduceBruna = true,
 }) {
   const location = LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
     ? CLINIC_LOCATION_REPLY
@@ -421,7 +432,11 @@ export function buildSurgicalInitialPriceReply({
     recentConversation,
   });
   return [
-    directPriceGreeting(patientName, recentConversation),
+    directPriceGreeting(
+      patientName,
+      recentConversation,
+      introduceBruna,
+    ),
     location,
     ...otoplastyOverview,
     initialExplanation,
@@ -440,13 +455,18 @@ export function buildSurgicalPriceSuggestedReply({
   sourceReference = "",
   directToPatient = false,
   currentText = "",
+  introduceBruna = true,
 }) {
   if (procedure === "otoplastia" && directToPatient) {
     const guide = conversationContainsFacialPriceGuide(recentConversation)
       ? ""
       : `Entenda como o orçamento é composto: ${safeLink(priceGuideUrl(PRICE_GUIDES.facial))}`;
     return [
-      directPriceGreeting(patientName, recentConversation),
+      directPriceGreeting(
+        patientName,
+        recentConversation,
+        introduceBruna,
+      ),
       "Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
       "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
@@ -465,7 +485,11 @@ export function buildSurgicalPriceSuggestedReply({
         : "";
     return [
       directToPatient
-        ? directPriceGreeting(patientName, recentConversation)
+        ? directPriceGreeting(
+            patientName,
+            recentConversation,
+            introduceBruna,
+          )
         : waitingGreeting(patientName),
       location,
       "Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
@@ -487,7 +511,11 @@ export function buildSurgicalPriceSuggestedReply({
 
     if (directToPatient) {
       return [
-        directPriceGreeting(patientName, recentConversation),
+        directPriceGreeting(
+          patientName,
+          recentConversation,
+          introduceBruna,
+        ),
         location,
         [
           "Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço:",
@@ -555,10 +583,12 @@ export function buildSurgicalPriceHoldingReply({
   overnight = false,
   currentText = "",
   recentConversation = [],
+  introduceBruna = true,
 }) {
   const opening = directPriceGreeting(
     patientName,
     recentConversation,
+    introduceBruna,
   );
   const reference = PRICE_REFERENCES[procedure];
   const returnTiming = overnight ? "pela manhã" : "por aqui";

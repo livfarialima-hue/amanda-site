@@ -2320,10 +2320,15 @@ async function completeOpenAIActive({
       });
     }
 
-    const introduceBruna = !input.recentConversation.some(
-      (turn) =>
-        turn?.role === "assistant" ||
-        ["bruna", "equipe_humana"].includes(turn?.source),
+    const introduceBruna = Boolean(
+      input.priorInteractionKnown !== true &&
+        !input.recentConversation.some(
+          (turn) =>
+            turn?.role === "assistant" ||
+            ["bruna", "human", "equipe_humana"].includes(
+              String(turn?.source || ""),
+            ),
+        ),
     );
     const insuranceCoverageReply = buildInsuranceCoverageReply({
       text: input.text,
@@ -2384,6 +2389,7 @@ async function completeOpenAIActive({
             procedure: plan?.procedure || input.procedure,
             recentConversation: input.recentConversation,
             currentText: input.text,
+            introduceBruna,
           })
         : ["lifting_range", "otoplasty_range"].includes(
             approvedPriceReplyKind,
@@ -2397,6 +2403,7 @@ async function completeOpenAIActive({
               sourceReference: input.sourceReference,
               directToPatient: true,
               currentText: input.text,
+              introduceBruna,
             })
           : "";
     const liftingFacialInformationBody =
@@ -4624,6 +4631,13 @@ export async function handleYCloudWebhook(
   if (!conversationHistoryWithCurrent.length) {
     conversationHistoryWithCurrent = conversationHistory;
   }
+  const priorInteractionKnown = Boolean(
+    conversationHistory.length > 0 ||
+      (
+        delivery.updated === true &&
+        delivery.recoveredAfterTransientFailure !== true
+      ),
+  );
 
   if (automationMode === "off") {
     const recoveryStatus = delivery.ok
@@ -4739,8 +4753,7 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown:
-          delivery.updated === true || conversationHistory.length > 0,
+        priorInteractionKnown,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:
@@ -5633,8 +5646,7 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown:
-          delivery.updated === true || conversationHistory.length > 0,
+        priorInteractionKnown,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:
@@ -5715,6 +5727,7 @@ export async function handleYCloudWebhook(
       overnight: outsideHumanServiceHours,
       currentText: text,
       recentConversation: conversationHistory,
+      introduceBruna: !priorInteractionKnown,
     });
     const priceHoldingResult = await sendCurrentInboundReply({
       from: String(message.to || ""),
@@ -5945,8 +5958,7 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown:
-          delivery.updated === true || conversationHistory.length > 0,
+        priorInteractionKnown,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:
@@ -5993,8 +6005,7 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown:
-          delivery.updated === true || conversationHistory.length > 0,
+        priorInteractionKnown,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:
@@ -6061,8 +6072,7 @@ export async function handleYCloudWebhook(
         patientProfileName: patientDisplayName,
         recentConversation: conversationHistory,
         previousConversationState: conversationSemanticState,
-        priorInteractionKnown:
-          delivery.updated === true || conversationHistory.length > 0,
+        priorInteractionKnown,
         referralContext,
         templateId: prefillTemplateId,
         patientRelationship:

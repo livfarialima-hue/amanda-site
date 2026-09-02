@@ -644,6 +644,7 @@ test("the initial price information is sent after the human-resume window withou
   );
   assert.match(deps.patientMessages[0].body, /é natural querer saber o valor antes de decidir/i);
   assert.match(deps.patientMessages[0].body, /confirma o valor exato após a avaliação/i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal((deps.patientMessages[0].body.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(deps.patientMessages[0].body, /o que mais te incomoda/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /técnica|complexidade|materiais/i);
@@ -800,6 +801,7 @@ test("another surgical price still waits for human review with a complete sugges
   assert.equal(result.holdingSent, true);
   assert.equal(deps.patientMessages.length, 1);
   assert.doesNotMatch(deps.patientMessages[0].body, /R\$/);
+  assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal(deps.alerts.length, 1);
   assert.match(deps.alerts[0].messageText, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.match(deps.alerts[0].messageText, /segurança, naturalidade/);

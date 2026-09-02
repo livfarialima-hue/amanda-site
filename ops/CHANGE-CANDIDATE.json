@@ -1,87 +1,71 @@
 {
   "schemaVersion": 1,
-  "changeId": "REMINDERS-FOLLOWUPS-2026-09-01",
-  "title": "Incluir lembretes no e-mail diario, permitir cancelamento isolado e recuperar retomadas automaticas seguras",
+  "changeId": "BRUNA-NO-REPEATED-INTRODUCTION-2026-09-01",
+  "title": "Impedir reapresentacao da Bruna em respostas consecutivas de preco",
   "status": "tested_local",
-  "baseCommit": "cadebf6271efa499083f09e5d616f997dd0520ce",
+  "baseCommit": "b88065979e27b9ed1e69c39b0fba7b2eebc436c8",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario pediu a correcao e a publicacao, mas o contrato permanente exige nova confirmacao externa depois que o commit funcional exato estiver fechado."
+    "note": "O usuario autorizou publicar tudo que estava pendente na mensagem de 02/09/2026; a autorizacao sera vinculada ao novo commit exato pelo preflight externo."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "appointment-reminders",
-      "patient-journey-funnel-followups"
+      "bruna-conversation-safety",
+      "bruna-conversion-experience"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
-      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/scheduled-followup-context-review.mjs",
-      "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
-      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "netlify/functions/scheduled-followup.mjs",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/human-resume-processor.test.mjs",
+      "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/surgical-price-review.test.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
+      "ops/CHANGE-CANDIDATE.json"
     ]
   },
   "impact": {
     "consumers": [
-      "equipe que recebe o e-mail diario de retomadas e lembretes",
-      "processador automatico de lembretes de consulta",
-      "Central de Atendimento e fila de retomadas",
-      "retomadas automaticas de primeiro interesse generico sem resposta",
-      "pacientes com consulta futura ou contato comercial elegivel"
+      "resposta deterministica de preco no webhook YCloud",
+      "respostas aprovadas de preco no processamento ativo",
+      "retomada protegida depois de contexto humano",
+      "gate final de saida e ledger recente da conversa"
     ],
     "preservedInvariants": [
-      "cancelar o lembrete nunca cancela nem altera o status da consulta",
-      "o cancelamento fica vinculado ao agendamento exato e nao sobrevive silenciosamente a uma remarcacao",
-      "nenhum nome, telefone ou dado clinico aparece no link de cancelamento",
-      "o lembrete continua exigindo Calendar coincidente, telefone valido, consentimento, preferencias, janela e idempotencia",
-      "sintoma, diagnostico, exame, imagem, preco, urgencia, risco, terceira fala ou resposta da paciente continuam fora do corredor deterministico",
-      "takeover humano, opt-out, limite de retomadas, janela do WhatsApp e deduplicacao permanecem obrigatorios",
-      "nenhuma mensagem real e enviada durante validacao ou pos-voo tecnico"
+      "a primeira resposta real continua apresentando Bruna como concierge da Clinica LIV Faria Lima",
+      "nenhuma faixa, regra de preco, procedimento, agenda, CTA, link ou handoff e alterado",
+      "takeover humano, opt-out, duplicidade, mensagem mais recente e gate final continuam fail-closed",
+      "nenhum Apps Script, planilha LEADS, CRM, Calendar, Google Ads ou Meta Ads entra no escopo",
+      "nenhuma mensagem real de paciente sera usada como teste"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "appointment-reminders",
-        "system": "Apps Script canonico, LEADS, Consultas, Datas Consulta e Google Calendar",
-        "status": "baseline_confirmed_and_reconciled_by_user_request",
-        "checkedAt": "2026-09-01T19:20:00-03:00",
-        "reference": "IDs canonicos confirmados; Apps Script v139; consulta reconciliada para 10h e lembrete especifico cancelado sem envio",
-        "check": "leitura inicial somente; depois, escrita operacional restrita ao horario, projecao, grade e cancelamento do lembrete autorizados pelo usuario"
-      },
-      {
-        "contract": "patient-journey-funnel-followups",
-        "system": "fila canonica de retomadas, gatilhos Apps Script e endpoint Netlify",
-        "status": "root_cause_confirmed_and_safe_cases_requeued",
-        "checkedAt": "2026-09-01T19:20:00-03:00",
-        "reference": "gatilho processou as retomadas, mas o revisor semantico cancelou interesse generico por falso positivo; duas recuperacoes ficaram em acao manual no proximo horario comercial",
-        "check": "nenhuma mensagem foi enviada; casos originais foram preservados como auditoria"
+        "contract": "bruna-conversation-safety",
+        "system": "Netlify publico",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-02T20:17:08-03:00",
+        "reference": "O deploy b880659 anterior respondeu HTTP 200 no dominio e na URL imutavel, com automationMode=active; nenhuma mensagem ou escrita operacional foi executada",
+        "check": "somente leitura"
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-01T19:37:00-03:00",
+    "completedAt": "2026-09-02T20:20:08-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -91,21 +75,22 @@
       "git diff --check"
     ],
     "results": {
-      "focusedTests": "104/104 do contrato de lembretes, 169/169 da jornada e 17/17 do gate semantico aprovados",
-      "fullSuite": "1234/1234 aprovados",
-      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 14 arquivos coincidem com o escopo e o contrato de lembretes esta alinhado",
-      "siteBuild": "180 arquivos e zero auditoria no artefato publico",
-      "siteCheck": "44/44 paginas tecnicamente validas",
-      "opsCheck": "SYNC_PENDING esperado antes do commit e da publicacao; branch candidata e worktree ainda sujo",
-      "gitDiffCheck": "aprovado",
-      "remaining": "criar o commit funcional exato e obter autorizacao externa antes de publicar"
+      "focusedRegression": "144/144 passed",
+      "conversionContract": "307/307 passed",
+      "crossConsumerSafety": "256/256 passed",
+      "fullSuite": "1235/1235 passed after integration over b880659",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 10/10 declared files",
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "siteBuild": "180 files; 44 sitemap URLs; 0 errors",
+      "siteCheck": "44/44 expected HTTP 200; 44 self-canonical; 44 indexable; 0 orphan pages; 0 errors",
+      "diffCheck": "passed",
+      "liveWrites": "none"
     },
     "crossConsumerCases": [
-      "o e-mail mostra o lembrete do dia e o cancelamento autenticado remove apenas aquele disparo",
-      "uma remarcacao invalida o cancelamento antigo e exige nova decisao para o novo agendamento",
-      "interesse generico sem resposta pode seguir automaticamente somente no corredor estreito validado",
-      "qualquer contexto clinico, comercial sensivel ou conversa adicional continua falhando de forma segura"
+      "primeiro contato sem historico nem sinal anterior mantem saudacao e apresentacao",
+      "contato atualizado com ledger temporariamente vazio responde ao preco sem nova apresentacao",
+      "historico com fala anterior da Bruna continua sem reapresentacao",
+      "retomada protegida nunca reinicia a identidade da Bruna"
     ]
   },
   "release": {
@@ -114,22 +99,22 @@
     "appsScriptVersion": 139,
     "drivePlanSha256": null,
     "verifiedAt": null,
-    "activationState": "pending_exact_head_authorization",
-    "notes": "A producao continua inalterada; o Apps Script permanece na v139 e o contrato seguro de lembretes ainda nao foi ativado."
+    "activationState": "not_published",
+    "notes": "Publicacao autorizada na mensagem de 02/09/2026 e pendente do novo commit exato depois da integracao."
   },
   "rollback": {
-    "local": "reverter somente o futuro commit funcional REMINDERS-FOLLOWUPS-2026-09-01",
-    "production": "restaurar o deployment Apps Script v139, o deploy Netlify anterior e desligar o contrato seguro de lembretes; preservar as reconciliacoes operacionais corretas"
+    "local": "reverter somente o commit funcional deste changeId",
+    "production": "restaurar o deploy Netlify b880659 se houver reapresentacao indevida, perda da primeira apresentacao ou bloqueio de resposta"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro e-mail diario e primeira execucao automatica; depois 24 horas e 7 dias",
+    "window": "primeiro ciclo, 24 horas, 72 horas e 7 dias apos a publicacao",
     "metrics": [
-      "lembretes previstos, cancelados, tentados e enviados sem duplicidade",
-      "consultas que permanecem ativas apos cancelamento do lembrete",
-      "retomadas automaticas enviadas, bloqueadas e encaminhadas para revisao",
-      "respostas, opt-outs, contatos validos, leads qualificados e consultas decorrentes"
+      "reapresentacao da Bruna em conversa com interacao anterior conhecida",
+      "ausencia indevida de apresentacao no primeiro contato",
+      "respostas de preco bloqueadas ou duplicadas",
+      "competicao com resposta humana e falhas de ledger"
     ],
-    "rollbackRule": "desativar o componente que gerar disparo indevido, duplicidade, cancelamento inconsistente ou falso positivo relevante; preservar consultas e filas de auditoria"
+    "rollbackRule": "reverter diante de perda da apresentacao no primeiro contato, repeticao persistente, resposta duplicada ou regressao de takeover/opt-out"
   }
 }
