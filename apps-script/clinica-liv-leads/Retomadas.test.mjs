@@ -3119,3 +3119,120 @@ test("semantic follow-up payload keeps only the latest 20 bounded turns in order
   assert.equal(prepared[19].messageId, "message-24");
   assert.match(prepared[0].at, /^2026-08-22T/);
 });
+
+test("the daily email represents every candidate without a silent legacy cap", () => {
+  const candidates = Array.from({ length: 75 }, (_, index) => ({
+    automatico: false,
+    horario: "10:30",
+    etapa: { rotulo: "1ª retomada" },
+    lead: {
+      referencia: `Paciente ${index + 1}`,
+      resumo: `Contexto ${index + 1}`,
+      neverBotReply: false,
+      suspendAutomaticFollowUp: false,
+    },
+    telefone: `+55119${String(index).padStart(8, "0")}`,
+    responsavel: "equipe",
+    modo: "Manual",
+    sugestao: `Mensagem ${index + 1}`,
+    chaveDiaria: `2026-09-03|plan-${index + 1}`,
+  }));
+  const items = candidates.map(
+    context.converterRetomadaParaCuidadoEmail_,
+  );
+  const integrity = context.criarIntegridadeEmailRetomadas_(items, []);
+  const text = context.montarTextoEmailRetomadas_(
+    candidates,
+    candidates,
+    "03/09/2026",
+    [],
+    "https://docs.google.com/spreadsheets/d/test/edit#gid=123",
+    "https://script.google.com/macros/s/test/exec?view=decisoes_diarias",
+    integrity,
+  );
+  const html = context.montarHtmlEmailRetomadas_(
+    candidates,
+    candidates,
+    "03/09/2026",
+    [],
+    "https://docs.google.com/spreadsheets/d/test/edit#gid=123",
+    "https://script.google.com/macros/s/test/exec?view=decisoes_diarias",
+    integrity,
+  );
+
+  assert.equal((text.match(/\[MANUAL\]/g) || []).length, 75);
+  assert.equal((html.match(/1ª retomada/g) || []).length, 75);
+  assert.match(text, /encontrados 75 .* representados 75 .* omitidos 0/);
+  assert.match(html, /encontrados 75 .* representados 75 .* omitidos 0/);
+  assert.match(html, /Resolver pendências no painel móvel/);
+  assert.doesNotMatch(source, /maximoPacientesPorEmail/);
+  assert.doesNotMatch(
+    source,
+    /candidatos\.slice\(0,\s*RETOMADAS_CONFIG/,
+  );
+});
+
+test("the email groups one contact once while preserving all actions", () => {
+  const care = [
+    {
+      futuro: false,
+      automatico: false,
+      horario: "09:00",
+      categoria: "Lembrete humano",
+      nome: "Paciente Agrupada",
+      telefone: "+5511999999999",
+      responsavel: "Equipe",
+      contexto: "Primeiro contexto",
+      sugestao: "Primeira mensagem",
+    },
+    {
+      futuro: false,
+      automatico: false,
+      horario: "11:00",
+      categoria: "Checagem pós-consulta",
+      nome: "Paciente Agrupada",
+      telefone: "+55 (11) 99999-9999",
+      responsavel: "Amanda",
+      contexto: "Segundo contexto",
+      sugestao: "Segunda mensagem",
+    },
+  ];
+  const html = context.montarHtmlEmailRetomadas_(
+    [],
+    [],
+    "03/09/2026",
+    care,
+    "",
+    "",
+    context.criarIntegridadeEmailRetomadas_(care, []),
+  );
+
+  assert.equal((html.match(/Paciente Agrupada/g) || []).length, 1);
+  assert.equal((html.match(/Abrir WhatsApp/g) || []).length, 1);
+  assert.match(html, /Primeira mensagem/);
+  assert.match(html, /Segunda mensagem/);
+  assert.match(html, /encontrados 2 .* representados 2 .* contatos únicos 1/);
+});
+
+test("integrity warnings are prominent and cannot look like a complete routine email", () => {
+  const html = context.montarHtmlEmailRetomadas_(
+    [],
+    [],
+    "03/09/2026",
+    [],
+    "",
+    "",
+    {
+      encontrados: 8,
+      representados: 7,
+      omitidos: 1,
+      contatos: 7,
+      avisos: ["A origem completa não pôde ser atualizada."],
+    },
+  );
+
+  assert.match(html, /<strong>ATENÇÃO<\/strong>/);
+  assert.match(html, /A origem completa não pôde ser atualizada/);
+  assert.match(html, /omitidos 1/);
+  assert.match(source, /integridade\.avisos\.length \? "ATENÇÃO — "/);
+});

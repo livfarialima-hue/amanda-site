@@ -455,6 +455,22 @@ Desde o contrato seguro, o Apps Script exige também `LEMBRETES_CONSULTA_CONTRAT
 3. Não retomar quem respondeu por outro canal, pediu interrupção ou não faz mais sentido comercial.
 4. Acompanhar alertas de preço, agenda, cardiologia e situações fora do padrão.
 
+### Caixa diária de decisões — candidato local, ainda não publicado
+
+O pacote `EMAIL-DIARIO-DECISOES-2026-09-03` está sendo preparado para reduzir o trabalho diário sem esconder informação. Enquanto ele não constar como `PUBLICADO E VERIFICADO` neste manual e no Plano Executivo, a rotina de produção continua sendo a da Apps Script v140 e a equipe deve usar a Central conforme as instruções atuais.
+
+Depois de publicação específica, o assunto do e-mail passará a informar quantas decisões humanas, envios automáticos e ações futuras existem. O corpo agrupará todas as ações do mesmo contato em um cartão, preservando contexto, responsável, horário e mensagem prevista ou sugerida. O rodapé mostrará obrigatoriamente quantos itens foram encontrados, representados e omitidos; qualquer falha de atualização será destacada como `ATENÇÃO`, com acesso à Central completa.
+
+O botão principal abrirá um painel móvel somente leitura. Abrir o e-mail ou o painel não altera planilha, agenda, fila nem mensagem, e nenhuma opção virá marcada. Para resolver vários itens:
+
+1. abrir o WhatsApp do contato e conferir o histórico quando necessário;
+2. escolher individualmente `Passar para a Bruna`, `Cancelar só esta retomada` ou `Adiar revisão` nos cartões aplicáveis;
+3. deixar sem escolha qualquer item duvidoso;
+4. tocar uma vez em `Confirmar decisões selecionadas` e conferir a contagem exibida;
+5. ler o resultado por item: se o contexto mudou, a ação será recusada e permanecerá sem alteração.
+
+`Passar para a Bruna` apenas programa uma retomada ainda elegível e não envia naquele clique. `Cancelar só esta retomada` não cancela consulta nem cria bloqueio permanente. `Adiar revisão` apenas agenda nova análise humana e não pode ser usado sobre envio automático. `Nunca retomar` e `Nunca responder com robô` continuam fora do painel rápido para evitar bloqueio permanente acidental.
+
 O e-mail organiza a agenda diária e separa com clareza:
 
 1. os envios automáticos realmente programados, com horário;

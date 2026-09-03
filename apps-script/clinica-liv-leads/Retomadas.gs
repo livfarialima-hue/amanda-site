@@ -14,7 +14,6 @@ const RETOMADAS_CONFIG = Object.freeze({
   intervaloMesmoContatoHoras: 6,
   minimoHorasAposPromessaRetorno: 24,
   maximoDiasSemResposta: 10,
-  maximoPacientesPorEmail: 50,
   maximoAtrasoAutomaticoMinutos: 240,
   janelaWhatsAppMinutos: 1430,
   margemExecucaoPlanejadaMinutos: 5,
@@ -1299,12 +1298,16 @@ function textoCompromissoPaciente_(valor, limite) {
 function enviarEmailDiarioRetomadasInterno_(agora) {
   const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const centralUrl = linkCentralAtendimentoRetomadas_(arquivo);
+  const avisosIntegridade = [];
   if (
     typeof atualizarCentralAtendimentoInterno_ === "function"
   ) {
     try {
       atualizarCentralAtendimentoInterno_(arquivo, agora);
     } catch (error) {
+      avisosIntegridade.push(
+        "A Central não pôde ser atualizada antes do e-mail; confira os dados na planilha antes de decidir.",
+      );
       console.error(
         "Não foi possível atualizar a Central de Atendimento antes do e-mail diário.",
         error,
@@ -1419,20 +1422,14 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     return a.ultimoContato.getTime() - b.ultimoContato.getTime();
   });
 
-  let selecionados = candidatos.slice(
-    0,
-    RETOMADAS_CONFIG.maximoPacientesPorEmail,
-  );
-
+  const selecionados = candidatos.slice();
   atribuirHorariosRetomadas_(selecionados, agora);
-  selecionados = selecionados.filter(function (candidato) {
-    return Boolean(candidato.horario);
-  });
 
   selecionados.forEach(function (candidato) {
     candidato.responsavel = responsavelRetomada_(candidato);
     candidato.automatico =
       candidato.responsavel === "bruna" &&
+      Boolean(candidato.horario) &&
       !candidato.lead.suspendAutomaticFollowUp;
     candidato.modo = candidato.lead.suspendAutomaticFollowUp
       ? "Suspensa na planilha"
@@ -1448,24 +1445,52 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     agora,
     "dd/MM/yyyy",
   );
+  const painelUrl =
+    typeof linkPainelDecisoesDiarias_ === "function"
+      ? linkPainelDecisoesDiarias_(agora)
+      : "";
+  if (!painelUrl) {
+    avisosIntegridade.push(
+      "O painel móvel está indisponível; use os links individuais e a Central.",
+    );
+  }
+  const cuidadosEmail = agendaCuidados.concat(
+    selecionados.map(converterRetomadaParaCuidadoEmail_),
+  );
+  const manuaisHoje = cuidadosEmail.filter(function (item) {
+    return !item.futuro && !item.automatico;
+  }).length;
+  const automaticosHoje = cuidadosEmail.filter(function (item) {
+    return !item.futuro && item.automatico;
+  }).length;
+  const futuros = cuidadosEmail.filter(function (item) {
+    return item.futuro;
+  }).length;
+  const integridade = criarIntegridadeEmailRetomadas_(
+    cuidadosEmail,
+    avisosIntegridade,
+  );
   const assunto =
-    "Clínica LIV — agenda de cuidado de " +
+    (integridade.avisos.length ? "ATENÇÃO — " : "") +
+    "Clínica LIV — " +
+    manuaisHoje +
+    " decisões • " +
+    automaticosHoje +
+    " automáticos • " +
+    futuros +
+    " próximos — " +
     dataApresentacao +
-    " (" +
-    selecionados.length +
-    " retomadas • " +
-    agendaCuidados.filter(function (item) {
-      return !item.futuro;
-    }).length +
-    " cuidados hoje • " +
-    agendaAprendizado.length +
-    " revisões do bot)";
+    (agendaAprendizado.length
+      ? " • " + agendaAprendizado.length + " revisões do bot"
+      : "");
   const corpoTexto = montarTextoEmailRetomadas_(
     selecionados,
     sugeridosParaEquipe,
     dataApresentacao,
     agendaCuidados,
     centralUrl,
+    painelUrl,
+    integridade,
   );
   const corpoHtml = montarHtmlEmailRetomadas_(
     selecionados,
@@ -1473,6 +1498,8 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     dataApresentacao,
     agendaCuidados,
     centralUrl,
+    painelUrl,
+    integridade,
   );
 
   MailApp.sendEmail({
@@ -1494,6 +1521,9 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     try {
       atualizarCentralAtendimentoInterno_(arquivo, agora);
     } catch (error) {
+      avisosIntegridade.push(
+        "A Central não pôde ser atualizada depois do registro da fila diária; o e-mail contém os itens, mas o painel pode exigir a próxima atualização.",
+      );
       console.error(
         "Não foi possível atualizar a Central de Atendimento depois de registrar a fila diária.",
         error,
@@ -1505,10 +1535,10 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
   return {
     ok: true,
     enviados: selecionados.length,
-    ignoradosPorLimite: Math.max(
-      0,
-      candidatos.length - selecionados.length,
-    ),
+    ignoradosPorLimite: 0,
+    semHorarioSeguro: selecionados.filter(function (candidato) {
+      return !candidato.horario;
+    }).length,
     sugeridosParaEquipe: sugeridosParaEquipe.length,
     cuidadosHoje: agendaCuidados.filter(function (item) {
       return !item.futuro;
@@ -1519,6 +1549,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     revisoesBot: agendaAprendizado.length,
     destinatario: RETOMADAS_CONFIG.destinatario,
     assunto: assunto,
+    integridade: integridade,
   };
 }
 
@@ -3711,25 +3742,33 @@ function montarTextoEmailRetomadas_(
   dataApresentacao,
   agendaCuidados,
   centralUrl,
+  painelUrl,
+  integridade,
 ) {
   const cuidados = (agendaCuidados || []).concat(
     (candidatos || []).map(converterRetomadaParaCuidadoEmail_),
   );
-  const automaticosHoje = cuidados.filter(function (item) {
-    return !item.futuro && item.automatico;
-  });
-  const manuaisHoje = cuidados.filter(function (item) {
-    return !item.futuro && !item.automatico;
-  });
-  const cuidadosFuturos = cuidados.filter(function (item) {
-    return item.futuro;
-  });
+  const grupos = agruparCuidadosAgendaPorContato_(cuidados);
+  const secoes = classificarGruposAgendaCuidados_(grupos);
+  const automaticosHoje = secoes.automaticosHoje;
+  const manuaisHoje = secoes.manuaisHoje;
+  const cuidadosFuturos = secoes.futuros;
+  const resumoIntegridade = normalizarIntegridadeEmailRetomadas_(
+    integridade,
+    cuidados,
+  );
   const linhas = [
     "Clínica LIV — agenda de cuidado de " + dataApresentacao,
     "",
-    "Agenda única do dia: cada retomada aparece uma vez, com contexto, responsável e mensagem sugerida.",
+    "Agenda única do dia: cada ação aparece uma vez; ações do mesmo contato são agrupadas dentro de cada seção.",
     "",
   ];
+  if (painelUrl) {
+    linhas.push(
+      "Resolver as pendências no painel móvel: " + painelUrl,
+      "",
+    );
+  }
   if (centralUrl) {
     linhas.push(
       "Abrir a fila de decisões na Central de Atendimento: " +
@@ -3747,24 +3786,8 @@ function montarTextoEmailRetomadas_(
     linhas.push("Nenhum envio automático previsto.");
   }
 
-  automaticosHoje.forEach(function (item, indice) {
-    linhas.push("");
-    linhas.push(
-      String(indice + 1) +
-        ". " +
-        (item.horario || "A definir") +
-        " — " +
-        item.categoria +
-        " — " +
-        (item.nome || item.telefone),
-    );
-    linhas.push("Responsável: " + item.responsavel);
-    linhas.push("Contexto: " + item.contexto);
-    linhas.push(
-      "Mensagem que será enviada: " +
-        mensagemSugeridaItemRetomada_(item),
-    );
-    adicionarLinksItemRetomadaTexto_(linhas, item);
+  automaticosHoje.forEach(function (grupo, indice) {
+    adicionarGrupoCuidadosTexto_(linhas, grupo, indice);
   });
 
   linhas.push("");
@@ -3781,24 +3804,8 @@ function montarTextoEmailRetomadas_(
     linhas.push("Nenhuma ação manual sugerida.");
   }
 
-  manuaisHoje.forEach(function (item, indice) {
-    linhas.push("");
-    linhas.push(
-      String(indice + 1) +
-        ". " +
-        (item.horario || "A definir") +
-        " — " +
-        item.categoria +
-        " — " +
-        (item.nome || item.telefone),
-    );
-    linhas.push("Responsável: " + item.responsavel);
-    linhas.push("Contexto: " + item.contexto);
-    linhas.push(
-      "Mensagem sugerida: " +
-        mensagemSugeridaItemRetomada_(item),
-    );
-    adicionarLinksItemRetomadaTexto_(linhas, item);
+  manuaisHoje.forEach(function (grupo, indice) {
+    adicionarGrupoCuidadosTexto_(linhas, grupo, indice);
   });
 
   linhas.push("");
@@ -3812,30 +3819,116 @@ function montarTextoEmailRetomadas_(
     linhas.push("Nenhum marco futuro identificado.");
   }
 
-  cuidadosFuturos.forEach(function (item, indice) {
-    linhas.push("");
-    linhas.push(
-      String(indice + 1) +
-        ". [" +
-        (item.automatico ? "AUTOMÁTICO" : "MANUAL") +
-        "] " +
-        (item.nome || item.telefone) +
-        " — " +
-        item.contexto,
-    );
-    linhas.push(
-      "Mensagem sugerida: " +
-        mensagemSugeridaItemRetomada_(item),
-    );
-    adicionarLinksItemRetomadaTexto_(linhas, item);
+  cuidadosFuturos.forEach(function (grupo, indice) {
+    adicionarGrupoCuidadosTexto_(linhas, grupo, indice);
   });
 
   linhas.push("");
   linhas.push(
     "Somente os itens listados em ENVIOS AUTOMÁTICOS PREVISTOS são disparados sem ação humana. Toda retomada humana elegível e com mensagem segura oferece “Passar para a Bruna”; a confirmação preserva a validação final da conversa. “Cancelar esta retomada” retira somente aquele plano da fila e não altera a preferência futura do contato.",
   );
+  linhas.push("");
+  linhas.push(
+    "INTEGRIDADE: encontrados " +
+      resumoIntegridade.encontrados +
+      " • representados " +
+      resumoIntegridade.representados +
+      " • omitidos " +
+      resumoIntegridade.omitidos +
+      " • contatos únicos " +
+      resumoIntegridade.contatos,
+  );
+  resumoIntegridade.avisos.forEach(function (aviso) {
+    linhas.push("ATENÇÃO: " + aviso);
+  });
 
   return linhas.join("\n");
+}
+
+function criarIntegridadeEmailRetomadas_(items, warnings) {
+  const cuidados = Array.isArray(items) ? items : [];
+  const grupos = typeof agruparCuidadosAgendaPorContato_ === "function"
+    ? agruparCuidadosAgendaPorContato_(cuidados)
+    : cuidados.map(function (item) {
+        return { itens: [item] };
+      });
+
+  return {
+    encontrados: cuidados.length,
+    representados: cuidados.length,
+    omitidos: 0,
+    contatos: grupos.length,
+    avisos: (warnings || []).filter(Boolean),
+  };
+}
+
+function normalizarIntegridadeEmailRetomadas_(integrity, items) {
+  const fallback = criarIntegridadeEmailRetomadas_(items, []);
+  const data = integrity && typeof integrity === "object"
+    ? integrity
+    : fallback;
+  const found = Math.max(0, Number(data.encontrados || 0));
+  const represented = Math.max(
+    0,
+    Number(data.representados === undefined
+      ? found
+      : data.representados),
+  );
+  const omitted = Math.max(
+    0,
+    Number(data.omitidos === undefined
+      ? found - represented
+      : data.omitidos),
+  );
+
+  return {
+    encontrados: found,
+    representados: represented,
+    omitidos: omitted,
+    contatos: Math.max(0, Number(data.contatos || fallback.contatos)),
+    avisos: Array.isArray(data.avisos)
+      ? data.avisos.filter(Boolean)
+      : [],
+  };
+}
+
+function adicionarGrupoCuidadosTexto_(lines, group, index) {
+  const items = group && Array.isArray(group.itens)
+    ? group.itens
+    : [];
+  lines.push("");
+  lines.push(
+    String(index + 1) +
+      ". " +
+      String(group && (group.nome || group.telefone) || "Contato"),
+  );
+
+  items.forEach(function (item, itemIndex) {
+    lines.push(
+      "  " +
+        String(itemIndex + 1) +
+        ") [" +
+        (item.futuro
+          ? "FUTURO"
+          : item.automatico
+            ? "AUTOMÁTICO"
+            : "MANUAL") +
+        "] " +
+        (item.dataReferencia
+          ? item.dataReferencia + " "
+          : "") +
+        (item.horario || "A definir") +
+        " — " +
+        item.categoria,
+    );
+    lines.push("     Responsável: " + item.responsavel);
+    lines.push("     Contexto: " + item.contexto);
+    lines.push(
+      "     Mensagem prevista ou sugerida: " +
+        mensagemSugeridaItemRetomada_(item),
+    );
+    adicionarLinksItemRetomadaTexto_(lines, item);
+  });
 }
 
 function mensagemSugeridaItemRetomada_(item) {
@@ -3890,12 +3983,14 @@ function adicionarLinksItemRetomadaTexto_(linhas, item) {
   }
 }
 
-function montarAcoesItemRetomadaHtml_(item) {
+function montarAcoesItemRetomadaHtml_(item, options) {
   if (!item) return "";
 
+  const includeWhatsapp =
+    !options || options.includeWhatsapp !== false;
   let html = "";
 
-  if (item.telefone) {
+  if (includeWhatsapp && item.telefone) {
     const whatsapp =
       "https://wa.me/" + item.telefone.replace(/\D/g, "");
     html +=
@@ -3974,30 +4069,58 @@ function montarHtmlEmailRetomadas_(
   dataApresentacao,
   agendaCuidados,
   centralUrl,
+  painelUrl,
+  integridade,
 ) {
-  const agendaHtml = montarHtmlAgendaCuidados_(
-    (agendaCuidados || []).concat(
-      (candidatos || []).map(converterRetomadaParaCuidadoEmail_),
-    ),
+  const cuidados = (agendaCuidados || []).concat(
+    (candidatos || []).map(converterRetomadaParaCuidadoEmail_),
+  );
+  const agendaHtml = montarHtmlAgendaCuidados_(cuidados);
+  const resumoIntegridade = normalizarIntegridadeEmailRetomadas_(
+    integridade,
+    cuidados,
   );
 
+  const painelButton = painelUrl
+    ? '<p style="margin:18px 0 10px;"><a href="' +
+      escaparHtmlRetomadas_(painelUrl) +
+      '" style="display:block;text-align:center;padding:14px 16px;border-radius:12px;background:#1d7a4c;color:#fff;text-decoration:none;font-weight:bold;font-size:16px;">Resolver pendências no painel móvel</a></p>'
+    : "";
+
   const centralButton = centralUrl
-    ? '<p style="margin:18px 0 24px;"><a href="' +
+    ? '<p style="margin:8px 0 24px;"><a href="' +
       escaparHtmlRetomadas_(centralUrl) +
-      '" style="display:inline-block;padding:11px 16px;border-radius:8px;background:#356854;color:#fff;text-decoration:none;font-weight:bold;">Abrir fila de decisões</a></p>'
+      '" style="display:block;text-align:center;padding:11px 16px;border:1px solid #356854;border-radius:12px;background:#fff;color:#356854;text-decoration:none;font-weight:bold;">Abrir fila de decisões</a></p>'
+    : "";
+  const warningsHtml = resumoIntegridade.avisos.length
+    ? '<div style="margin:14px 0;padding:12px;background:#fff1e8;color:#9a3412;border-radius:10px;"><strong>ATENÇÃO</strong><ul style="margin:7px 0 0;padding-left:20px;">' +
+      resumoIntegridade.avisos.map(function (warning) {
+        return "<li>" + escaparHtmlRetomadas_(warning) + "</li>";
+      }).join("") +
+      "</ul></div>"
     : "";
 
   return (
-    '<div style="max-width:980px;margin:auto;font-family:Arial,sans-serif;color:#111827;">' +
-    '<h2 style="color:#075e54;">Clínica LIV — agenda de cuidado</h2>' +
-    '<p style="color:#4b5563;">Resumo operacional de ' +
+    '<div style="max-width:680px;margin:auto;padding:8px;font-family:Arial,sans-serif;color:#111827;">' +
+    '<div style="padding:18px;background:#356854;color:#fff;border-radius:16px;"><div style="font-size:12px;font-weight:bold;letter-spacing:.12em;">CLÍNICA LIV</div><h2 style="margin:7px 0 6px;">Pendências e cuidados do dia</h2>' +
+    '<p style="margin:0;color:#eaf5ef;">Resumo operacional de ' +
     escaparHtmlRetomadas_(dataApresentacao) +
-    ". Cada contato aparece uma única vez, com a mensagem sugerida e as ações disponíveis.</p>" +
+    ". Cada ação aparece uma única vez, agrupada por contato dentro de sua seção.</p></div>" +
+    warningsHtml +
+    painelButton +
     centralButton +
     agendaHtml +
     '<p style="margin-top:20px;padding:12px;background:#fff7ed;color:#9a3412;border-radius:8px;">' +
     "Somente os itens em <strong>Envios automáticos previstos</strong> são disparados sem ação humana. Toda retomada humana elegível e com mensagem segura oferece <strong>Passar para a Bruna</strong>; a confirmação preserva a validação final da conversa. <strong>Cancelar esta retomada</strong> retira somente aquele plano da fila e não altera a preferência futura do contato." +
-    "</p></div>"
+    '</p><p style="margin-top:14px;padding:11px;background:#f3f4f6;color:#4b5563;border-radius:8px;font-size:13px;"><strong>Conferência de integridade:</strong> encontrados ' +
+    resumoIntegridade.encontrados +
+    " • representados " +
+    resumoIntegridade.representados +
+    " • omitidos " +
+    resumoIntegridade.omitidos +
+    " • contatos únicos " +
+    resumoIntegridade.contatos +
+    ".</p></div>"
   );
 }
 

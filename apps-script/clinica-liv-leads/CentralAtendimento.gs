@@ -268,8 +268,7 @@ function atualizarCentralAtendimentoInterno_(
       );
     })
     .filter(Boolean)
-    .sort(compararItensCentral_)
-    .slice(0, CENTRAL_ATENDIMENTO_CONFIG.maximumRows);
+    .sort(compararItensCentral_);
 
   escreverCentralAtendimento_(sheet, items, now);
 
@@ -741,7 +740,6 @@ function carregarRetomadasCentral_(
         relationship,
       );
     })
-    .slice(0, 50)
     .map(function (candidate) {
       const profile = profiles[candidate.telefone] || {};
       return criarItemCentral_({
@@ -2424,7 +2422,92 @@ function aprovarRetomadasMarcadasCentral() {
   }
 }
 
-function coletarRetomadasMarcadasCentral_(sheet) {
+function prepararAprovacaoRetomadaCentral_(row, rowNumber, columns, now) {
+  const sourceKey = textoCentral_(
+    valorLinhaCentral_(row, columns, "chave operacional"),
+    300,
+  );
+  const source = normalizarTextoCentral_(
+    valorLinhaCentral_(row, columns, "fonte"),
+  );
+  const mode = normalizarTextoCentral_(
+    valorLinhaCentral_(row, columns, "modo"),
+  );
+  const status = normalizarTextoCentral_(
+    valorLinhaCentral_(row, columns, "status operacional"),
+  );
+  const finalMessage = textoCentral_(
+    valorLinhaCentral_(row, columns, "mensagem final"),
+    900,
+  );
+  const programFor = dataCentralValida_(
+    valorLinhaCentral_(row, columns, "programar para"),
+  );
+  const safeSuggestion =
+    Boolean(finalMessage) &&
+    normalizarTextoCentral_(finalMessage).indexOf(
+      "sem sugestao pronta",
+    ) !== 0;
+  const registeredFollowUp =
+    source === "retomada de marketing" &&
+    sourceKey.indexOf("followup:") === 0 &&
+    mode === "manual" &&
+    statusProgramavelRetomadaCentral_(status);
+  const waitingConversion =
+    fonteAguardandoPacienteCentral_(
+      valorLinhaCentral_(row, columns, "fonte"),
+    ) &&
+    sourceKey.indexOf("conversation:") === 0 &&
+    mode === "manual" &&
+    status === "programado";
+  const phone = normalizarTelefoneCentral_(
+    valorLinhaCentral_(row, columns, "telefone"),
+  );
+  const lastInteractionAt = dataCentralValida_(
+    valorLinhaCentral_(row, columns, "ultima interacao"),
+  );
+  const waitingReason = waitingConversion
+    ? avaliarProgramacaoEsperaCentral_(
+        {
+          finalMessage: finalMessage,
+          programFor: programFor,
+          lastInteractionAt: lastInteractionAt,
+        },
+        dataCentralValida_(now) || new Date(),
+        { allowOutsideWhatsappWindow: true },
+      )
+    : "";
+  const eligible =
+    safeSuggestion &&
+    Boolean(programFor) &&
+    (
+      registeredFollowUp ||
+      (
+        waitingConversion &&
+        waitingReason ===
+          "Elegível após conferência da mensagem e do procedimento"
+      )
+    );
+
+  return {
+    rowNumber: rowNumber,
+    sourceKey: sourceKey,
+    planKey:
+      sourceKey.indexOf("followup:") === 0
+        ? sourceKey.slice("followup:".length)
+        : "",
+    finalMessage: finalMessage,
+    programFor: programFor,
+    phone: phone,
+    messageId: waitingConversion
+      ? sourceKey.slice("conversation:".length)
+      : "",
+    waitingConversion: waitingConversion,
+    eligible: eligible,
+  };
+}
+
+function coletarRetomadasMarcadasCentral_(sheet, now) {
   if (!sheet || sheet.getLastRow() < 2) return [];
 
   const headers = sheet
@@ -2453,111 +2536,42 @@ function coletarRetomadasMarcadasCentral_(sheet) {
     if (!valorCheckboxCentral_(row[approvalColumn])) {
       return selected;
     }
-
-    const sourceKey = textoCentral_(
-      valorLinhaCentral_(
+    selected.push(
+      prepararAprovacaoRetomadaCentral_(
         row,
+        index + 2,
         columns,
-        "chave operacional",
-      ),
-      300,
-    );
-    const source = normalizarTextoCentral_(
-      valorLinhaCentral_(row, columns, "fonte"),
-    );
-    const mode = normalizarTextoCentral_(
-      valorLinhaCentral_(row, columns, "modo"),
-    );
-    const status = normalizarTextoCentral_(
-      valorLinhaCentral_(
-        row,
-        columns,
-        "status operacional",
+        now,
       ),
     );
-    const finalMessage = textoCentral_(
-      valorLinhaCentral_(
-        row,
-        columns,
-        "mensagem final",
-      ),
-      900,
-    );
-    const programFor = dataCentralValida_(
-      valorLinhaCentral_(
-        row,
-        columns,
-        "programar para",
-      ),
-    );
-    const safeSuggestion =
-      Boolean(finalMessage) &&
-      normalizarTextoCentral_(finalMessage).indexOf(
-        "sem sugestao pronta",
-      ) !== 0;
-    const registeredFollowUp =
-      source === "retomada de marketing" &&
-      sourceKey.indexOf("followup:") === 0 &&
-      mode === "manual" &&
-      statusProgramavelRetomadaCentral_(status);
-    const waitingConversion =
-      fonteAguardandoPacienteCentral_(
-        valorLinhaCentral_(row, columns, "fonte"),
-      ) &&
-      sourceKey.indexOf("conversation:") === 0 &&
-      mode === "manual" &&
-      status === "programado";
-    const phone = normalizarTelefoneCentral_(
-      valorLinhaCentral_(row, columns, "telefone"),
-    );
-    const lastInteractionAt = dataCentralValida_(
-      valorLinhaCentral_(
-        row,
-        columns,
-        "ultima interacao",
-      ),
-    );
-    const waitingReason = waitingConversion
-      ? avaliarProgramacaoEsperaCentral_(
-          {
-            finalMessage: finalMessage,
-            programFor: programFor,
-            lastInteractionAt: lastInteractionAt,
-          },
-          new Date(),
-          { allowOutsideWhatsappWindow: true },
-        )
-      : "";
-    const eligible =
-      safeSuggestion &&
-      Boolean(programFor) &&
-      (
-        registeredFollowUp ||
-        (
-          waitingConversion &&
-          waitingReason ===
-            "Elegível após conferência da mensagem e do procedimento"
-        )
-      );
-
-    selected.push({
-      rowNumber: index + 2,
-      sourceKey: sourceKey,
-      planKey:
-        sourceKey.indexOf("followup:") === 0
-          ? sourceKey.slice("followup:".length)
-          : "",
-      finalMessage: finalMessage,
-      programFor: programFor,
-      phone: phone,
-      messageId: waitingConversion
-        ? sourceKey.slice("conversation:".length)
-        : "",
-      waitingConversion: waitingConversion,
-      eligible: eligible,
-    });
     return selected;
   }, []);
+}
+
+function prepararCancelamentoRetomadaCentral_(row, rowNumber, columns) {
+  const sourceKey = textoCentral_(
+    valorLinhaCentral_(row, columns, "chave operacional"),
+    300,
+  );
+  const source = normalizarTextoCentral_(
+    valorLinhaCentral_(row, columns, "fonte"),
+  );
+  const status = normalizarTextoCentral_(
+    valorLinhaCentral_(row, columns, "status operacional"),
+  );
+  const planKey = sourceKey.indexOf("followup:") === 0
+    ? sourceKey.slice("followup:".length)
+    : "";
+
+  return {
+    rowNumber: rowNumber,
+    sourceKey: sourceKey,
+    planKey: planKey,
+    eligible:
+      source === "retomada de marketing" &&
+      Boolean(planKey) &&
+      statusProgramavelRetomadaCentral_(status),
+  };
 }
 
 function coletarCancelamentosMarcadosCentral_(sheet) {
@@ -2590,39 +2604,314 @@ function coletarCancelamentosMarcadosCentral_(sheet) {
       return selected;
     }
 
-    const sourceKey = textoCentral_(
-      valorLinhaCentral_(
+    selected.push(
+      prepararCancelamentoRetomadaCentral_(
         row,
+        index + 2,
         columns,
-        "chave operacional",
-      ),
-      300,
-    );
-    const source = normalizarTextoCentral_(
-      valorLinhaCentral_(row, columns, "fonte"),
-    );
-    const status = normalizarTextoCentral_(
-      valorLinhaCentral_(
-        row,
-        columns,
-        "status operacional",
       ),
     );
-    const planKey = sourceKey.indexOf("followup:") === 0
-      ? sourceKey.slice("followup:".length)
-      : "";
-
-    selected.push({
-      rowNumber: index + 2,
-      sourceKey: sourceKey,
-      planKey: planKey,
-      eligible:
-        source === "retomada de marketing" &&
-        Boolean(planKey) &&
-        statusProgramavelRetomadaCentral_(status),
-    });
     return selected;
   }, []);
+}
+
+function listarItensPainelDecisoesCentral_(sheet, now) {
+  if (!sheet || sheet.getLastRow() < 2) return [];
+
+  const instant = dataCentralValida_(now) || new Date();
+  const localDay = formatarDataCentral_(instant, "yyyy-MM-dd");
+  const startToday = combinarDataHorarioCentral_(localDay, "00:00");
+  const endToday = new Date(
+    startToday.getTime() + 24 * 60 * 60 * 1000,
+  );
+  const futureLimit = new Date(
+    endToday.getTime() + 7 * 24 * 60 * 60 * 1000,
+  );
+  const headers = sheet
+    .getRange(
+      1,
+      1,
+      1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosCentral_(headers);
+  const rows = sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getValues();
+
+  return rows.reduce(function (items, row, index) {
+    const rowNumber = index + 2;
+    const sourceKey = textoCentral_(
+      valorLinhaCentral_(row, columns, "chave operacional"),
+      300,
+    );
+    const queue = textoCentral_(
+      valorLinhaCentral_(row, columns, "fila"),
+      120,
+    );
+    const normalizedQueue = normalizarTextoCentral_(queue);
+    const status = textoCentral_(
+      valorLinhaCentral_(row, columns, "status operacional"),
+      100,
+    );
+    const normalizedStatus = normalizarTextoCentral_(status);
+    const mode = textoCentral_(
+      valorLinhaCentral_(row, columns, "modo"),
+      80,
+    );
+    const normalizedMode = normalizarTextoCentral_(mode);
+    const dueAt = dataCentralValida_(
+      valorLinhaCentral_(row, columns, "agir ate"),
+    );
+    const automatic = normalizedMode === "automatico";
+    const terminal =
+      ["concluido", "cancelado"].includes(normalizedStatus) ||
+      ["concluido recentemente", "cancelado recentemente"].includes(
+        normalizedQueue,
+      );
+    const silentWithoutReview =
+      normalizedQueue === "aguardando paciente" && !dueAt;
+    const outsideFutureWindow =
+      Boolean(dueAt) && dueAt.getTime() > futureLimit.getTime();
+
+    if (
+      !sourceKey ||
+      terminal ||
+      silentWithoutReview ||
+      outsideFutureWindow
+    ) {
+      return items;
+    }
+
+    const approval = prepararAprovacaoRetomadaCentral_(
+      row,
+      rowNumber,
+      columns,
+      instant,
+    );
+    const cancellation = prepararCancelamentoRetomadaCentral_(
+      row,
+      rowNumber,
+      columns,
+    );
+    const future = Boolean(dueAt) && dueAt.getTime() >= endToday.getTime();
+    const manualToday = !automatic && !future;
+
+    items.push({
+      rowNumber: rowNumber,
+      sourceKey: sourceKey,
+      queue: queue,
+      priority: textoCentral_(
+        valorLinhaCentral_(row, columns, "prioridade"),
+        80,
+      ),
+      dueAt: dueAt,
+      name: textoCentral_(
+        valorLinhaCentral_(row, columns, "paciente"),
+        140,
+      ),
+      phone: normalizarTelefoneCentral_(
+        valorLinhaCentral_(row, columns, "telefone"),
+      ),
+      nextAction: textoCentral_(
+        valorLinhaCentral_(row, columns, "proxima acao"),
+        260,
+      ),
+      finalMessage: textoCentral_(
+        valorLinhaCentral_(row, columns, "mensagem final"),
+        900,
+      ),
+      programFor: dataCentralValida_(
+        valorLinhaCentral_(row, columns, "programar para"),
+      ),
+      context: textoCentral_(
+        valorLinhaCentral_(row, columns, "contexto"),
+        700,
+      ),
+      owner: textoCentral_(
+        valorLinhaCentral_(row, columns, "responsavel"),
+        100,
+      ),
+      status: status,
+      source: textoCentral_(
+        valorLinhaCentral_(row, columns, "fonte"),
+        120,
+      ),
+      mode: mode,
+      automatic: automatic,
+      future: future,
+      manualToday: manualToday,
+      approvalAvailable: approval.eligible === true,
+      cancellationAvailable: cancellation.eligible === true,
+      deferAvailable:
+        !automatic &&
+        !["concluido", "cancelado"].includes(normalizedStatus),
+      approvalDecision: approval,
+      cancellationDecision: cancellation,
+    });
+    return items;
+  }, []);
+}
+
+function adiarItensCentralInterno_(sheet, now, selected) {
+  const rowsToDefer = Array.isArray(selected) ? selected : [];
+  if (!sheet || !rowsToDefer.length) {
+    return {
+      ok: true,
+      selected: rowsToDefer.length,
+      deferred: 0,
+      skipped: 0,
+      results: [],
+    };
+  }
+
+  const instant = dataCentralValida_(now) || new Date();
+  const maximumDay = formatarDataCentral_(new Date(
+    instant.getTime() + 30 * 24 * 60 * 60 * 1000,
+  ), "yyyy-MM-dd");
+  const headers = sheet
+    .getRange(
+      1,
+      1,
+      1,
+      CENTRAL_ATENDIMENTO_HEADERS.length,
+    )
+    .getDisplayValues()[0];
+  const columns = mapearCabecalhosCentral_(headers);
+  let deferred = 0;
+  let skipped = 0;
+  const results = [];
+
+  rowsToDefer.forEach(function (item) {
+    const rowNumber = Number(item && item.rowNumber || 0);
+    const sourceKey = textoCentral_(item && item.sourceKey, 300);
+    const deferUntil = dataCentralValida_(item && item.deferUntil);
+    let reason = "";
+
+    if (
+      !Number.isInteger(rowNumber) ||
+      rowNumber < 2 ||
+      rowNumber > sheet.getLastRow()
+    ) {
+      reason = "item_not_found";
+    }
+
+    const row = reason
+      ? null
+      : sheet
+          .getRange(
+            rowNumber,
+            1,
+            1,
+            CENTRAL_ATENDIMENTO_HEADERS.length,
+          )
+          .getValues()[0];
+    const liveSourceKey = row
+      ? textoCentral_(
+          valorLinhaCentral_(row, columns, "chave operacional"),
+          300,
+        )
+      : "";
+    const liveMode = row
+      ? normalizarTextoCentral_(
+          valorLinhaCentral_(row, columns, "modo"),
+        )
+      : "";
+    const liveStatus = row
+      ? normalizarTextoCentral_(
+          valorLinhaCentral_(row, columns, "status operacional"),
+        )
+      : "";
+
+    if (!reason && (!sourceKey || sourceKey !== liveSourceKey)) {
+      reason = "item_changed";
+    }
+    if (
+      !reason &&
+      (
+        !deferUntil ||
+        deferUntil.getTime() <= instant.getTime() ||
+        formatarDataCentral_(deferUntil, "yyyy-MM-dd") > maximumDay
+      )
+    ) {
+      reason = "invalid_defer_date";
+    }
+    if (!reason && liveMode === "automatico") {
+      reason = "automatic_item_not_deferable";
+    }
+    if (
+      !reason &&
+      ["concluido", "cancelado"].includes(liveStatus)
+    ) {
+      reason = "item_not_eligible";
+    }
+
+    if (reason) {
+      skipped += 1;
+      results.push({
+        rowNumber: rowNumber,
+        ok: false,
+        reason: reason,
+      });
+      return;
+    }
+
+    sheet
+      .getRange(rowNumber, columns["adiar ate"] + 1)
+      .setValue(deferUntil);
+    sheet
+      .getRange(rowNumber, columns["agir ate"] + 1)
+      .setValue(deferUntil);
+    sheet
+      .getRange(rowNumber, columns["status operacional"] + 1)
+      .setValue("Suspenso");
+    sheet
+      .getRange(rowNumber, columns.fila + 1)
+      .setValue("Aguardando paciente");
+    sheet
+      .getRange(rowNumber, columns.modo + 1)
+      .setValue("Silêncio");
+    sheet
+      .getRange(rowNumber, columns.responsavel + 1)
+      .setValue("Equipe");
+    sheet
+      .getRange(rowNumber, columns["aprovar com a bruna"] + 1)
+      .setValue(false);
+    sheet
+      .getRange(rowNumber, columns["cancelar retomada"] + 1)
+      .setValue(false);
+    sheet
+      .getRange(rowNumber, columns["ultima acao da equipe"] + 1)
+      .setValue(instant);
+    sheet
+      .getRange(rowNumber, columns["observacao da equipe"] + 1)
+      .setValue(
+        "Revisão adiada pela equipe até " +
+          formatarDataCentral_(deferUntil, "dd/MM/yyyy HH:mm") +
+          ". Nenhuma mensagem foi enviada.",
+      );
+
+    deferred += 1;
+    results.push({
+      rowNumber: rowNumber,
+      ok: true,
+      reason: "",
+    });
+  });
+
+  return {
+    ok: skipped === 0,
+    selected: rowsToDefer.length,
+    deferred: deferred,
+    skipped: skipped,
+    results: results,
+  };
 }
 
 function aprovarRetomadasMarcadasCentralInterno_(
@@ -2962,7 +3251,7 @@ function encerrarContatoComercialCentral_(spreadsheetOverride, input) {
 }
 
 function escreverCentralAtendimento_(sheet, items, now) {
-  garantirDimensoesCentral_(sheet);
+  garantirDimensoesCentral_(sheet, items.length + 1);
   const structureReady = estruturaCentralPronta_(sheet);
   const existingFilter = sheet.getFilter();
   if (existingFilter) existingFilter.remove();
@@ -3529,7 +3818,7 @@ function obterOuCriarPlanilhaCentral_(spreadsheet) {
   return sheet;
 }
 
-function garantirDimensoesCentral_(sheet) {
+function garantirDimensoesCentral_(sheet, requiredRows) {
   const missingColumns =
     CENTRAL_ATENDIMENTO_HEADERS.length -
     sheet.getMaxColumns();
@@ -3540,10 +3829,11 @@ function garantirDimensoesCentral_(sheet) {
     );
   }
 
-  const missingRows =
-    CENTRAL_ATENDIMENTO_CONFIG.maximumRows +
-    1 -
-    sheet.getMaxRows();
+  const targetRows = Math.max(
+    CENTRAL_ATENDIMENTO_CONFIG.maximumRows + 1,
+    Number(requiredRows || 0),
+  );
+  const missingRows = targetRows - sheet.getMaxRows();
   if (missingRows > 0) {
     sheet.insertRowsAfter(sheet.getMaxRows(), missingRows);
   }

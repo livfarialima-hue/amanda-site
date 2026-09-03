@@ -91,6 +91,7 @@
       "consumerFiles": [
         "apps-script/clinica-liv-leads/Code.gs",
         "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "netlify/functions/human-resume.mjs",
         "netlify/functions/ycloud-webhook.mjs"
@@ -98,8 +99,11 @@
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",
         "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "netlify/functions/human-resume.mjs",
         "netlify/functions/lib/human-resume-processor.test.mjs",
         "netlify/functions/lib/conversation-action-controller.mjs",
@@ -151,6 +155,7 @@
       "consumerFiles": [
         "apps-script/clinica-liv-leads/AgendaCuidados.gs",
         "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "netlify/functions/appointment-reminder.mjs"
       ],
@@ -159,6 +164,8 @@
         "apps-script/clinica-liv-leads/Code.gs",
         "apps-script/clinica-liv-leads/LembretesConsultas.gs",
         "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "docs/whatsapp-clinica-liv-operacao.md",
@@ -169,6 +176,7 @@
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
         "netlify/functions/lib/ycloud-appointment-reminder.test.mjs"
@@ -203,6 +211,7 @@
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
         "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
         "netlify/functions/scheduled-followup.mjs",
         "netlify/functions/ycloud-webhook.mjs"
       ],
@@ -215,6 +224,8 @@
         "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
         "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
         "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "docs/estrategia-abordagem-bruna.md",
@@ -239,6 +250,7 @@
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
         "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
         "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",

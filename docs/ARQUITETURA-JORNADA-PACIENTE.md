@@ -38,6 +38,7 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Jornada comercial | manter oportunidade canônica e projetar o funil | `OpportunityStore.gs` | inferir qualificação apenas por campanha ou prefill |
 | Reconciliação | conferir e reparar projeções por `Opportunity ID` e fase | `FunnelReconciliation.gs` | reescrever colunas manuais protegidas |
 | Retomadas | planejar cadência, elegibilidade, silêncio e limites | `Retomadas.gs` | enviar sem rechecagem do estado mais recente |
+| Caixa diária de decisões | projetar a Central sem escrita, coletar escolhas explícitas e delegar cada efeito ao proprietário | `PainelDecisoesDiarias.gs` | preselecionar ação, redefinir elegibilidade ou criar um caminho próprio de envio/cancelamento |
 | Execução de retomadas | revalidar e executar somente a ação ainda válida | `scheduled-followup.mjs` | criar um novo plano ou ignorar takeover/opt-out |
 | Agenda | sugerir, reservar e sincronizar consultas com idempotência | módulos `appointment-*` e `ConsultasSync.gs` | confirmar horário sem prova da reserva |
 | Lembretes de consulta | definir cadência, elegibilidade, identidade e reserva de tentativa | `LembretesConsultas.gs` | inventar nome/telefone ou criar uma cadência paralela no e-mail diário |
@@ -74,6 +75,11 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 ### Retomadas
 
 - o planejamento e o envio são etapas distintas.
+- abrir o e-mail diário, a Central ou o painel móvel é somente leitura e não equivale a aprovar, cancelar, adiar ou enviar.
+- nenhuma decisão do painel móvel pode vir preselecionada; uma confirmação em lote só alcança os itens escolhidos e cada item deve ser relido pelo `sourceKey` opaco imediatamente antes do efeito.
+- o painel móvel não possui regras concorrentes: aprovação e cancelamento reutilizam as funções proprietárias de `Retomadas.gs`/`CentralAtendimento.gs`; adiamento altera apenas os controles humanos persistentes da Central e nunca envia mensagem.
+- `Nunca retomar` e `Nunca responder com robô` permanecem decisões permanentes separadas e não aparecem entre as escolhas rápidas do painel.
+- o e-mail deve declarar itens encontrados, representados e omitidos. Não pode limitar silenciosamente a lista; falha de projeção deve aparecer como `ATENÇÃO` e manter acesso à Central completa.
 - cada envio revalida opt-out, takeover, janela, atividade mais recente, identidade do plano, número máximo de tentativas e contrato semântico.
 - uma nova fala da paciente ou da equipe invalida qualquer decisão reaproveitada que não continue comprovadamente atual.
 - cancelamento de um plano não cria automaticamente proibição permanente de contato.

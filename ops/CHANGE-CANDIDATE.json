@@ -1,136 +1,132 @@
 {
   "schemaVersion": 1,
-  "changeId": "LIFTING-FACIAL-QUICK-ANSWER-MOBILE-2026-09-02",
-  "title": "Corrigir cache e acabamento mobile do resumo do lifting facial",
-  "status": "published_verified",
-  "baseCommit": "96c6b22f0194f6c6100fda0b47b6d563b2164bd1",
+  "changeId": "EMAIL-DIARIO-DECISOES-2026-09-03",
+  "title": "Transformar o e-mail diario em uma caixa de decisoes completa e segura",
+  "status": "tested_local",
+  "baseCommit": "5f91105a9b3d54e8fbbf74b619769385210d6554",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "A autorizacao foi registrada externamente para o HEAD funcional exato: o usuario autorizou publicar tudo pendente em 02/09/2026 e confirmou a publicacao do Apps Script em 03/09/2026."
+    "note": "O usuario autorizou a implementacao de todas as melhorias do e-mail e do painel. Publicacao do Apps Script permanece separada e exige autorizacao especifica para o commit final."
   },
   "risk": {
-    "level": "medium",
-    "patientEffects": false,
+    "level": "high",
+    "patientEffects": true,
     "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication",
+      "bruna-conversation-safety",
       "appointment-reminders",
-      "patient-journey-funnel-followups",
-      "bruna-conversion-experience"
+      "patient-journey-funnel-followups"
     ],
     "files": [
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "campanhas/conversion-pages.css",
-      "campanhas/site-technical-regression.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "lifting-facial/index.html",
-      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "ops/CHANGE-CANDIDATE.json"
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "pagina publica de lifting facial em telas de ate 680px",
-      "cache de CSS do navegador",
-      "teste tecnico do site"
+      "e-mail diario da Clinica LIV",
+      "painel movel de decisoes",
+      "Central de Atendimento",
+      "fila de retomadas",
+      "agenda de cuidados e lembretes de consulta"
     ],
     "preservedInvariants": [
-      "nenhum texto, preco, titulo, descricao, imagem ou video e alterado",
-      "os seis CTAs de WhatsApp permanecem presentes e com os mesmos destinos",
-      "atributos de rastreamento, mensagens pre-preenchidas e codigos de atribuicao permanecem intactos",
-      "nenhuma outra pagina, bot, planilha, CRM, Calendar, Google Ads, Meta Ads ou Apps Script entra no escopo"
+      "abrir o e-mail ou o painel nunca altera planilha, agenda, fila ou mensagem",
+      "nenhuma opcao vem preselecionada",
+      "cada decisao exige confirmacao unica e releitura do estado atual",
+      "aprovar reaproveita o contrato existente da Bruna e nao envia imediatamente",
+      "cancelar remove somente a acao selecionada e nunca grava Nunca retomar",
+      "adiar apenas devolve o item para revisao humana futura e nunca envia mensagem",
+      "lembretes automaticos mantem cancelamento individual ligado ao agendamento exato",
+      "todos os itens encontrados ficam representados e qualquer falha ou omissao e declarada"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "site-mobile-visual",
-        "system": "pagina publica de lifting facial",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-02T20:27:03-03:00",
-        "reference": "A pagina publica ja continha o componente em cartoes no CSS atual, mas reutilizava a URL de 02/08/2026; a captura do usuario mostrou o fallback nativo com dd indentado, compativel com CSS antigo em cache.",
-        "check": "somente leitura em viewport 390x844"
-      },
-      {
         "contract": "appointment-reminders",
-        "system": "Apps Script e web app canonicos",
-        "status": "target_and_baseline_confirmed",
-        "checkedAt": "2026-09-03T06:13:00-03:00",
-        "reference": "Projeto, deployment e planilha conferidos pelos tres IDs canonicos; v139 e hashes dos quatro arquivos ativos lidos antes da escrita; v140 e os hashes aprovados relidos depois da publicacao.",
-        "check": "somente leitura antes e depois; nenhuma funcao, trigger, planilha, agenda ou mensagem executada"
+        "system": "Apps Script v140, Consultas e Google Calendar",
+        "status": "required_before_release",
+        "evidence": "Confirmar IDs canônicos, equivalência dos arquivos vivos com a v140 e próximos lembretes sem executar função operacional."
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Netlify, webhook e jornada publica",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-03T06:20:00-03:00",
-        "reference": "Deploys autorizados relidos por HTTP; endpoint base respondeu 200, chamada sem assinatura permaneceu 401 e a sonda de cancelamento com token invalido nao alterou lembrete ou consulta.",
-        "check": "somente leitura e sondas sintéticas fail-closed; nenhuma mensagem ou dado real"
+        "system": "Apps Script v140, Central de Atendimento e fila de retomadas",
+        "status": "required_before_release",
+        "evidence": "Reler estado vivo, modo de automação e filas somente leitura; não aprovar, cancelar, adiar nem disparar mensagens."
       }
     ]
   },
   "verification": {
-    "status": "passed",
-    "completedAt": "2026-09-03T06:25:52-03:00",
+    "status": "passed_local",
     "commands": [
-      "node --test campanhas/site-technical-regression.test.mjs",
+      "node --test apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check",
-      "QA visual local e publico em 390x844"
+      "git diff --check"
     ],
     "results": {
-      "focusedRegression": "11/11 passed",
-      "fullSuite": "1236/1236 passed",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 4/4 declared files",
+      "dailyDecisionAndReminderContracts": "156/156 passed",
+      "appointmentReminderContracts": "107/107 passed",
+      "funnelAndFollowUpContracts": "174/174 passed",
+      "semanticFollowUpGate": "17/17 passed",
+      "fullSuite": "1249/1249 passed",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 14 declared files",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 files; 44 sitemap URLs; 0 errors",
-      "siteCheck": "44/44 expected HTTP 200; 44 self-canonical; 44 indexable; 0 orphan pages; 0 errors",
-      "mobileVisual": "passed locally at 390x844; three single-column compact cards, 16px radius, 18px padding, no native dd indentation and no horizontal overflow",
-      "conversionLinks": "6 before and 6 after; exact anchor digest unchanged: 2997f47ce9262c93af03674569abaf9ced98191a485eb45a01f9cc64e813839e",
-      "appsScript": "canonical deployment preserved and updated from v139 to v140; all four edited files reloaded and matched the approved normalized SHA-256 values; no function or trigger executed",
-      "netlify": "three authorized releases verified: reminders/follow-ups 6a98ae4db280b5000881e3b3, Bruna continuity 6a98af91799bcb0008bec6c4 and current visual deploy 6a98b20e0f45c20008912e8b",
-      "liveWrites": "authorized Netlify and Apps Script publication only; no patient, spreadsheet, CRM, Calendar, Ads or message mutation"
+      "siteCheck": "44/44 HTTP 200, self-canonical, indexable and one H1; 0 errors",
+      "diffCheck": "passed",
+      "opsConsistency": "SYNC_PENDING as expected until exact commit authorization, canonical release and receipts",
+      "drivePlanProjection": "same file ID replaced and read back equal to the local canonical plan"
     }
   },
   "release": {
-    "approvedCommit": "183f18b8ec8165cc39beab9ad7de0c8607dd9548",
-    "netlifyDeployId": "6a98b20e0f45c20008912e8b",
-    "appsScriptVersion": 140,
-    "drivePlanSha256": "8c487a5fe17cf9552c0ea0cecaa19f90c474cf379cc73303fd6bd05da4385a25",
-    "verifiedAt": "2026-09-03T06:25:52-03:00",
-    "activationState": "published_verified_apps_script_default_off",
-    "notes": "Netlify e Apps Script publicados e verificados. O contrato adicional de lembretes e retomadas permanece desligado por padrao; nenhuma funcao, trigger ou mensagem real foi executada."
+    "approvedCommit": "",
+    "netlifyDeployId": "",
+    "appsScriptVersion": null,
+    "drivePlanSha256": "74f7a41c537795009b7c397021e1c29b572f36fb86db11fb96d99a10e5349ee5",
+    "verifiedAt": "",
+    "activationState": "not_published",
+    "notes": "Implementacao e validacao local concluidas. A mesma projecao do Plano Executivo no Drive foi substituida e relida sem criar copia concorrente. Apps Script vivo, planilha, Calendar, triggers e mensagens permanecem inalterados na v140."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",
-    "production": "restaurar o deploy Netlify 6a98af91799bcb0008bec6c4"
+    "production": "manter Apps Script v140 ate existir autorizacao e publicacao verificada do commit candidato"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "imediata, 24 horas e 72 horas apos a publicacao",
+    "window": "primeiro e-mail, 24 horas, 72 horas e 7 dias apos eventual publicacao",
     "metrics": [
-      "carregamento do CSS versionado em mobile",
-      "ausencia de recuo nativo nos textos de resposta",
-      "visibilidade e integridade dos seis CTAs de WhatsApp",
-      "erros visuais nas demais secoes da pagina"
+      "itens encontrados, representados, omitidos e com falha",
+      "tempo para concluir as decisoes do dia",
+      "aprovacoes, cancelamentos, adiamentos e itens mantidos sem alteracao",
+      "decisoes recusadas por mudanca de contexto",
+      "duplicidade de paciente e de acao",
+      "mensagem programada ou cancelada sem confirmacao"
     ],
-    "rollbackRule": "reverter se houver regressao de layout, texto, CTA ou rastreamento."
+    "rollbackRule": "reverter diante de omissao silenciosa, mutacao ao abrir, opcao preselecionada, decisao sem confirmacao, cancelamento amplo, duplicidade ou programacao sem revalidacao."
   }
 }

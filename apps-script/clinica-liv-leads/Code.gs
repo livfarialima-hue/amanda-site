@@ -224,6 +224,15 @@ function doGet(e) {
   }
 
   if (
+    view === "decisoes_diarias" &&
+    typeof renderPainelDecisoesDiarias_ === "function"
+  ) {
+    return renderPainelDecisoesDiarias_(
+      e && e.parameter ? e.parameter : {},
+    );
+  }
+
+  if (
     view === "salas" &&
     typeof renderFormularioReservaSalas_ === "function"
   ) {

@@ -1968,3 +1968,129 @@ test("the automatic refresh never chooses between approval and cancellation on t
   assert.deepEqual(Array.from(result.conflicts), [2]);
   assert.equal(writes.length, 0);
 });
+
+test("the daily panel projection is read-only and does not silently cap the Central", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const rows = Array.from({ length: 320 }, (_, index) => {
+    const row = Array(headers.length).fill("");
+    row[columns.Fila] = "Resposta agora";
+    row[columns.Prioridade] = "Alta";
+    row[columns["Agir até"]] = new Date(
+      `2026-09-03T${String(8 + (index % 10)).padStart(2, "0")}:00:00-03:00`,
+    );
+    row[columns.Paciente] = `Paciente ${index + 1}`;
+    row[columns.Telefone] = `+55119${String(index).padStart(8, "0")}`;
+    row[columns.Contexto] = "Contexto sintético";
+    row[columns["Próxima ação"]] = "Responder";
+    row[columns["Mensagem final"]] = "Mensagem sintética";
+    row[columns.Fonte] = "WhatsApp — revisão humana";
+    row[columns["Chave operacional"]] = `conversation:${index + 1}`;
+    row[columns.Responsável] = "Equipe";
+    row[columns.Modo] = "Manual";
+    row[columns["Status operacional"]] = "Aberto";
+    return row;
+  });
+  let writes = 0;
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getRange(row, column, rowCount) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      if (row === 2 && column === 1 && rowCount === rows.length) {
+        return { getValues: () => rows };
+      }
+      return {
+        setValue() {
+          writes += 1;
+        },
+      };
+    },
+  };
+
+  const items = context.listarItensPainelDecisoesCentral_(
+    sheet,
+    new Date("2026-09-03T08:00:00-03:00"),
+  );
+
+  assert.equal(items.length, 320);
+  assert.equal(writes, 0);
+  assert.equal(items[0].sourceKey, "conversation:1");
+  assert.equal(items[319].sourceKey, "conversation:320");
+});
+
+test("deferring from the panel revalidates the exact row and rejects automatic or changed items", () => {
+  const context = loadContext();
+  const headers = vm.runInContext(
+    "Array.from(CENTRAL_ATENDIMENTO_HEADERS)",
+    context,
+  );
+  const columns = Object.fromEntries(
+    headers.map((header, index) => [header, index]),
+  );
+  const manual = Array(headers.length).fill("");
+  manual[columns["Chave operacional"]] = "conversation:manual";
+  manual[columns.Modo] = "Manual";
+  manual[columns["Status operacional"]] = "Aberto";
+  const automatic = Array(headers.length).fill("");
+  automatic[columns["Chave operacional"]] = "followup:automatic";
+  automatic[columns.Modo] = "Automático";
+  automatic[columns["Status operacional"]] = "Programado";
+  const rows = [manual, automatic];
+  const writes = [];
+  const sheet = {
+    getLastRow: () => rows.length + 1,
+    getRange(row, column, rowCount) {
+      if (row === 1 && column === 1) {
+        return { getDisplayValues: () => [headers] };
+      }
+      if (column === 1 && rowCount === 1 && row >= 2) {
+        return { getValues: () => [rows[row - 2]] };
+      }
+      return {
+        setValue(value) {
+          writes.push({ row, column, value });
+        },
+      };
+    },
+  };
+  const now = new Date("2026-09-03T10:00:00-03:00");
+  const result = context.adiarItensCentralInterno_(sheet, now, [
+    {
+      rowNumber: 2,
+      sourceKey: "conversation:manual",
+      deferUntil: new Date("2026-09-05T09:00:00-03:00"),
+    },
+    {
+      rowNumber: 3,
+      sourceKey: "followup:automatic",
+      deferUntil: new Date("2026-09-05T09:00:00-03:00"),
+    },
+    {
+      rowNumber: 2,
+      sourceKey: "conversation:stale",
+      deferUntil: new Date("2026-09-05T09:00:00-03:00"),
+    },
+  ]);
+
+  assert.equal(result.deferred, 1);
+  assert.equal(result.skipped, 2);
+  assert.equal(result.results[1].reason, "automatic_item_not_deferable");
+  assert.equal(result.results[2].reason, "item_changed");
+  assert.ok(
+    writes.some(
+      (write) =>
+        write.row === 2 &&
+        write.column === columns["Status operacional"] + 1 &&
+        write.value === "Suspenso",
+    ),
+  );
+  assert.equal(writes.some((write) => write.row === 3), false);
+});

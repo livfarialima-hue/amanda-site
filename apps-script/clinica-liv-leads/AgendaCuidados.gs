@@ -1721,150 +1721,237 @@ function horarioSeguroAgendaCuidados_(
   return formatarDataRetomadas_(segura, "HH:mm");
 }
 
+function chaveContatoAgendaCuidados_(item, index) {
+  const phone = String(item && item.telefone || "").replace(/\D/g, "");
+  if (phone) return "phone:" + phone;
+
+  const name = normalizarTextoRetomadas_(item && item.nome || "");
+  return name
+    ? "name:" + name + ":" + String(index)
+    : "unknown:" + String(index);
+}
+
+function agruparCuidadosAgendaPorContato_(agendaCuidados) {
+  const groupsByKey = {};
+  const groups = [];
+
+  (agendaCuidados || []).forEach(function (item, index) {
+    const key = chaveContatoAgendaCuidados_(item, index);
+    let group = groupsByKey[key];
+    if (!group) {
+      group = {
+        key: key,
+        nome: String(item && item.nome || "").trim(),
+        telefone: String(item && item.telefone || "").trim(),
+        itens: [],
+      };
+      groupsByKey[key] = group;
+      groups.push(group);
+    }
+    group.itens.push(item);
+  });
+
+  groups.forEach(function (group) {
+    group.itens.sort(function (left, right) {
+      if (Boolean(left.futuro) !== Boolean(right.futuro)) {
+        return left.futuro ? 1 : -1;
+      }
+      if (Boolean(left.automatico) !== Boolean(right.automatico)) {
+        return left.automatico ? 1 : -1;
+      }
+      return String(left.horario || "99:99").localeCompare(
+        String(right.horario || "99:99"),
+      );
+    });
+  });
+
+  return groups;
+}
+
+function classificarGruposAgendaCuidados_(groups) {
+  return (groups || []).reduce(function (sections, group) {
+    const manualItems = group.itens.filter(function (item) {
+      return !item.futuro && !item.automatico;
+    });
+    const automaticItems = group.itens.filter(function (item) {
+      return !item.futuro && item.automatico;
+    });
+    const futureItems = group.itens.filter(function (item) {
+      return item.futuro;
+    });
+    if (manualItems.length) {
+      sections.manuaisHoje.push(
+        Object.assign({}, group, { itens: manualItems }),
+      );
+    }
+    if (automaticItems.length) {
+      sections.automaticosHoje.push(
+        Object.assign({}, group, { itens: automaticItems }),
+      );
+    }
+    if (futureItems.length) {
+      sections.futuros.push(
+        Object.assign({}, group, { itens: futureItems }),
+      );
+    }
+    return sections;
+  }, {
+    manuaisHoje: [],
+    automaticosHoje: [],
+    futuros: [],
+  });
+}
+
+function contarItensGruposAgendaCuidados_(groups) {
+  return (groups || []).reduce(function (total, group) {
+    return total + group.itens.length;
+  }, 0);
+}
+
+function contarItensAgendaCuidadosPorTipo_(groups, type) {
+  return (groups || []).reduce(function (total, group) {
+    return total + group.itens.filter(function (item) {
+      if (type === "manual") return !item.futuro && !item.automatico;
+      if (type === "automatic") return !item.futuro && item.automatico;
+      return item.futuro;
+    }).length;
+  }, 0);
+}
+
 function montarHtmlAgendaCuidados_(agendaCuidados) {
-  const cuidados = agendaCuidados || [];
-  const automaticosHoje = cuidados.filter(function (item) {
-    return !item.futuro && item.automatico;
-  });
-  const manuaisHoje = cuidados.filter(function (item) {
-    return !item.futuro && !item.automatico;
-  });
-  const futuros = cuidados.filter(function (item) {
-    return item.futuro;
-  });
-  const htmlAutomaticos = montarTabelaCuidadosAgenda_(
-    automaticosHoje,
-    true,
+  const groups = agruparCuidadosAgendaPorContato_(agendaCuidados || []);
+  const sections = classificarGruposAgendaCuidados_(groups);
+  const manualActions = contarItensAgendaCuidadosPorTipo_(
+    groups,
+    "manual",
   );
-  const htmlManuais = montarTabelaCuidadosAgenda_(
-    manuaisHoje,
-    false,
+  const automaticActions = contarItensAgendaCuidadosPorTipo_(
+    groups,
+    "automatic",
   );
-  const htmlFuturos = montarTabelaFuturosAgenda_(futuros);
+  const futureActions = contarItensAgendaCuidadosPorTipo_(
+    groups,
+    "future",
+  );
 
   return (
-    '<h3 style="margin-top:24px;color:#075e54;">Envios automáticos previstos hoje (' +
-    automaticosHoje.length +
-    ")</h3>" +
-    '<p style="color:#4b5563;">Estes são os únicos itens programados para disparo sem ação da equipe.</p>' +
-    htmlAutomaticos +
-    '<h3 style="margin-top:28px;color:#92400e;">Ações humanas sugeridas hoje (' +
-    manuaisHoje.length +
-    ")</h3>" +
-    '<p style="color:#4b5563;">Nada desta seção é enviado automaticamente sem aprovação. Revise o histórico; nas retomadas elegíveis, use <strong>Passar para a Bruna</strong> somente se a mensagem sugerida estiver apropriada.</p>' +
-    htmlManuais +
-    '<h3 style="margin-top:28px;">Próximos marcos de cuidado — 7 dias (' +
-    futuros.length +
-    ")</h3>" +
-    htmlFuturos
+    '<h3 style="margin:26px 0 5px;color:#92400e;font-size:19px;">Ações humanas sugeridas hoje (' +
+    manualActions +
+    ") <span style=\"font-size:13px;font-weight:normal;color:#6b7280;\">" +
+    sections.manuaisHoje.length +
+    (sections.manuaisHoje.length === 1 ? " contato" : " contatos") +
+    "</span></h3>" +
+    '<p style="margin:0 0 12px;color:#4b5563;">Nada desta seção é enviado automaticamente sem aprovação. Revise o histórico; nas retomadas elegíveis, use <strong>Passar para a Bruna</strong> somente se a mensagem estiver apropriada.</p>' +
+    montarCardsCuidadosAgenda_(sections.manuaisHoje, "manual") +
+    '<h3 style="margin:28px 0 5px;color:#075e54;font-size:19px;">Envios automáticos previstos hoje (' +
+    automaticActions +
+    ") <span style=\"font-size:13px;font-weight:normal;color:#6b7280;\">" +
+    sections.automaticosHoje.length +
+    (sections.automaticosHoje.length === 1 ? " contato" : " contatos") +
+    "</span></h3>" +
+    '<p style="margin:0 0 12px;color:#4b5563;">Estes são os únicos itens programados para disparo sem ação da equipe.</p>' +
+    montarCardsCuidadosAgenda_(sections.automaticosHoje, "automatic") +
+    '<h3 style="margin:28px 0 5px;font-size:19px;">Próximos marcos de cuidado — 7 dias (' +
+    futureActions +
+    ") <span style=\"font-size:13px;font-weight:normal;color:#6b7280;\">" +
+    sections.futuros.length +
+    (sections.futuros.length === 1 ? " contato" : " contatos") +
+    "</span></h3>" +
+    montarCardsCuidadosAgenda_(sections.futuros, "future")
   );
 }
 
-function montarTabelaCuidadosAgenda_(itens, automatico) {
-  if (!itens.length) {
-    return (
-      '<p style="font-size:15px;color:#6b7280;">' +
-      (automatico
+function montarCardsCuidadosAgenda_(groups, tone) {
+  if (!groups.length) {
+    const empty = tone === "manual"
+      ? "Nenhuma ação manual sugerida."
+      : tone === "automatic"
         ? "Nenhum envio automático previsto."
-        : "Nenhuma ação manual sugerida.") +
-      "</p>"
-    );
+        : "Nenhum marco futuro identificado.";
+    return '<p style="font-size:15px;color:#6b7280;background:#f3f4f6;border-radius:12px;padding:12px;">' +
+      empty +
+      "</p>";
   }
 
-  let html =
-    '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
-    '<thead><tr style="background:' +
-    (automatico ? "#eef8f4" : "#fff7ed") +
-    ';text-align:left;">' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Horário</th>' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Cuidado</th>' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Paciente</th>' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Contexto e ação</th>' +
-    "</tr></thead><tbody>";
-
-  itens.forEach(function (item) {
-    const link = item.telefone
-      ? "https://wa.me/" +
-        item.telefone.replace(/\D/g, "")
+  return groups.map(function (group) {
+    const phone = String(group.telefone || "").replace(/\D/g, "");
+    const patient = escaparHtmlRetomadas_(
+      group.nome || group.telefone || "Nome não informado",
+    );
+    const whatsapp = phone
+      ? '<a href="https://wa.me/' +
+        phone +
+        '" style="display:block;text-align:center;margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#e8f6ee;color:#176b43;text-decoration:none;font-size:14px;font-weight:bold;">Abrir WhatsApp</a>'
       : "";
-    const paciente = link
-      ? '<a href="' +
-        link +
-        '" style="color:#075e54;font-weight:bold;">' +
-        escaparHtmlRetomadas_(item.nome || item.telefone) +
-        "</a>"
-      : escaparHtmlRetomadas_(item.nome || "");
-    const acao = [
-      escaparHtmlRetomadas_(item.contexto),
-      "<strong>Responsável:</strong> " +
-        escaparHtmlRetomadas_(item.responsavel),
-      "<strong>Mensagem sugerida:</strong> " +
-        escaparHtmlRetomadas_(
-          mensagemSugeridaItemRetomada_(item),
-        ),
-    ].filter(Boolean).join("<br><br>");
+    const itemsHtml = group.itens.map(function (item, index) {
+      const label = item.futuro
+        ? "FUTURO"
+        : item.automatico
+          ? "AUTOMÁTICO"
+          : "MANUAL";
+      const labelColor = item.futuro
+        ? "#4b5563"
+        : item.automatico
+          ? "#047857"
+          : "#92400e";
+      const when = [
+        item.dataReferencia || "",
+        item.horario || "A definir",
+      ].filter(Boolean).join(" • ");
+      return (
+        '<div style="padding:' +
+        (index ? "14px 0 0" : "4px 0 0") +
+        (index ? ";margin-top:14px;border-top:1px solid #e5e7eb" : "") +
+        ';"><div style="font-size:11px;font-weight:bold;letter-spacing:.05em;color:' +
+        labelColor +
+        ';">' +
+        label +
+        " • " +
+        escaparHtmlRetomadas_(when) +
+        '</div><div style="margin-top:5px;font-weight:bold;">' +
+        escaparHtmlRetomadas_(item.categoria || "Cuidado") +
+        '</div><p style="margin:7px 0;color:#4b5563;line-height:1.5;">' +
+        escaparHtmlRetomadas_(item.contexto || "Sem contexto adicional.") +
+        '</p><p style="margin:7px 0;line-height:1.5;"><strong>Responsável:</strong> ' +
+        escaparHtmlRetomadas_(item.responsavel || "Equipe") +
+        '</p><div style="margin-top:9px;padding:10px;background:#f7f6f2;border-left:3px solid #9bb7aa;border-radius:8px;"><strong style="font-size:12px;color:#59645e;">Mensagem prevista ou sugerida</strong><div style="margin-top:5px;line-height:1.5;">' +
+        escaparHtmlRetomadas_(mensagemSugeridaItemRetomada_(item)) +
+        "</div></div>" +
+        montarAcoesItemRetomadaHtml_(item, {
+          includeWhatsapp: false,
+        }) +
+        "</div>"
+      );
+    }).join("");
 
-    html +=
-      "<tr>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;"><strong>' +
-      escaparHtmlRetomadas_(item.horario || "A definir") +
-      "</strong></td>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-      escaparHtmlRetomadas_(item.categoria) +
-      "</td>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-      paciente +
-      "</td>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-      acao +
-      montarAcoesItemRetomadaHtml_(item) +
-      "</td>" +
-      "</tr>";
-  });
-
-  return html + "</tbody></table>";
+    return (
+      '<div style="margin:12px 0;padding:15px;border:1px solid #e5e7eb;border-radius:14px;background:#fff;box-shadow:0 5px 18px rgba(17,24,39,.05);"><div style="font-size:18px;font-weight:bold;color:#1f2937;">' +
+      patient +
+      "</div>" +
+      whatsapp +
+      itemsHtml +
+      "</div>"
+    );
+  }).join("");
 }
 
-function montarTabelaFuturosAgenda_(itens) {
-  if (!itens.length) {
-    return (
-      '<p style="font-size:15px;color:#6b7280;">' +
-      "Nenhum marco futuro identificado." +
-      "</p>"
-    );
-  }
+function montarTabelaCuidadosAgenda_(items, automatic) {
+  const groups = Array.isArray(items) &&
+    items.length &&
+    Array.isArray(items[0].itens)
+    ? items
+    : agruparCuidadosAgendaPorContato_(items || []);
+  return montarCardsCuidadosAgenda_(
+    groups,
+    automatic ? "automatic" : "manual",
+  );
+}
 
-  let html =
-    '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">' +
-    '<thead><tr style="background:#f3f4f6;text-align:left;">' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Tipo</th>' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Paciente</th>' +
-    '<th style="padding:10px;border:1px solid #e5e7eb;">Data, horário e contexto</th>' +
-    "</tr></thead><tbody>";
-
-  itens.forEach(function (item) {
-    html +=
-      "<tr>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-      (item.automatico
-        ? '<strong style="color:#047857;">Automático</strong>'
-        : '<strong style="color:#92400e;">Manual</strong>') +
-      "<br>" +
-      escaparHtmlRetomadas_(item.categoria) +
-      "</td>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-      escaparHtmlRetomadas_(item.nome || item.telefone) +
-      "</td>" +
-      '<td style="padding:10px;border:1px solid #e5e7eb;vertical-align:top;">' +
-      escaparHtmlRetomadas_(item.contexto) +
-      "<br><br><strong>Mensagem sugerida:</strong> " +
-      escaparHtmlRetomadas_(
-        mensagemSugeridaItemRetomada_(item),
-      ) +
-      montarAcoesItemRetomadaHtml_(item) +
-      "</td>" +
-      "</tr>";
-  });
-
-  return html + "</tbody></table>";
+function montarTabelaFuturosAgenda_(items) {
+  const groups = Array.isArray(items) &&
+    items.length &&
+    Array.isArray(items[0].itens)
+    ? items
+    : agruparCuidadosAgendaPorContato_(items || []);
+  return montarCardsCuidadosAgenda_(groups, "future");
 }
