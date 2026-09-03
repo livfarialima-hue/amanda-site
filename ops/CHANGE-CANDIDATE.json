@@ -2,29 +2,39 @@
   "schemaVersion": 1,
   "changeId": "LIFTING-FACIAL-QUICK-ANSWER-MOBILE-2026-09-02",
   "title": "Corrigir cache e acabamento mobile do resumo do lifting facial",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "96c6b22f0194f6c6100fda0b47b6d563b2164bd1",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario pediu para corrigir esta secao e publicar, alem de publicar tudo pendente, na mensagem de 02/09/2026."
+    "note": "A autorizacao foi registrada externamente para o HEAD funcional exato: o usuario autorizou publicar tudo pendente em 02/09/2026 e confirmou a publicacao do Apps Script em 03/09/2026."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication"
+      "site-publication",
+      "appointment-reminders",
+      "patient-journey-funnel-followups",
+      "bruna-conversion-experience"
     ],
     "files": [
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "campanhas/conversion-pages.css",
       "campanhas/site-technical-regression.test.mjs",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "lifting-facial/index.html",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "ops/CHANGE-CANDIDATE.json"
     ]
   },
@@ -48,14 +58,34 @@
         "checkedAt": "2026-09-02T20:27:03-03:00",
         "reference": "A pagina publica ja continha o componente em cartoes no CSS atual, mas reutilizava a URL de 02/08/2026; a captura do usuario mostrou o fallback nativo com dd indentado, compativel com CSS antigo em cache.",
         "check": "somente leitura em viewport 390x844"
+      },
+      {
+        "contract": "appointment-reminders",
+        "system": "Apps Script e web app canonicos",
+        "status": "target_and_baseline_confirmed",
+        "checkedAt": "2026-09-03T06:13:00-03:00",
+        "reference": "Projeto, deployment e planilha conferidos pelos tres IDs canonicos; v139 e hashes dos quatro arquivos ativos lidos antes da escrita; v140 e os hashes aprovados relidos depois da publicacao.",
+        "check": "somente leitura antes e depois; nenhuma funcao, trigger, planilha, agenda ou mensagem executada"
+      },
+      {
+        "contract": "patient-journey-funnel-followups",
+        "system": "Netlify, webhook e jornada publica",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-03T06:20:00-03:00",
+        "reference": "Deploys autorizados relidos por HTTP; endpoint base respondeu 200, chamada sem assinatura permaneceu 401 e a sonda de cancelamento com token invalido nao alterou lembrete ou consulta.",
+        "check": "somente leitura e sondas sintéticas fail-closed; nenhuma mensagem ou dado real"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-02T20:30:55-03:00",
+    "status": "passed",
+    "completedAt": "2026-09-03T06:25:52-03:00",
     "commands": [
       "node --test campanhas/site-technical-regression.test.mjs",
+      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -74,17 +104,19 @@
       "siteCheck": "44/44 expected HTTP 200; 44 self-canonical; 44 indexable; 0 orphan pages; 0 errors",
       "mobileVisual": "passed locally at 390x844; three single-column compact cards, 16px radius, 18px padding, no native dd indentation and no horizontal overflow",
       "conversionLinks": "6 before and 6 after; exact anchor digest unchanged: 2997f47ce9262c93af03674569abaf9ced98191a485eb45a01f9cc64e813839e",
-      "liveWrites": "none"
+      "appsScript": "canonical deployment preserved and updated from v139 to v140; all four edited files reloaded and matched the approved normalized SHA-256 values; no function or trigger executed",
+      "netlify": "three authorized releases verified: reminders/follow-ups 6a98ae4db280b5000881e3b3, Bruna continuity 6a98af91799bcb0008bec6c4 and current visual deploy 6a98b20e0f45c20008912e8b",
+      "liveWrites": "authorized Netlify and Apps Script publication only; no patient, spreadsheet, CRM, Calendar, Ads or message mutation"
     }
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
-    "appsScriptVersion": 139,
-    "drivePlanSha256": null,
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Publicacao autorizada e pendente do commit exato, gates e QA mobile."
+    "approvedCommit": "183f18b8ec8165cc39beab9ad7de0c8607dd9548",
+    "netlifyDeployId": "6a98b20e0f45c20008912e8b",
+    "appsScriptVersion": 140,
+    "drivePlanSha256": "8c487a5fe17cf9552c0ea0cecaa19f90c474cf379cc73303fd6bd05da4385a25",
+    "verifiedAt": "2026-09-03T06:25:52-03:00",
+    "activationState": "published_verified_apps_script_default_off",
+    "notes": "Netlify e Apps Script publicados e verificados. O contrato adicional de lembretes e retomadas permanece desligado por padrao; nenhuma funcao, trigger ou mensagem real foi executada."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",

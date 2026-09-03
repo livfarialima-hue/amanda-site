@@ -1,5 +1,11 @@
 # Histórico do pacote Bruna
 
+## 2026-09-01.1 — publicada e verificada
+
+- A apresentação permanece obrigatória na primeira resposta real, mas respostas determinísticas de preço e retomadas protegidas reconhecem a interação anterior e não repetem `Olá, <nome>! Eu sou a Bruna` apenas porque o ledger recente está temporariamente vazio.
+- A recuperação idempotente da primeira gravação continua apresentando a concierge; faixas, procedimentos, agenda, takeover, opt-out, atribuição, LEADS, CRM e Apps Script não mudaram.
+- Estado desta versão: código funcional `96c6b22f0194f6c6100fda0b47b6d563b2164bd1`, deploy Netlify `6a98af91799bcb0008bec6c4`, 144/144 testes focados, 307/307 do contrato de conversão, 256/256 de segurança entre consumidores e 1235/1235 integrais. Domínio e URL imutável responderam HTTP 200; webhook sem assinatura retornou HTTP 401 e nenhuma mensagem real foi enviada. Rollback: `b88065979e27b9ed1e69c39b0fba7b2eebc436c8` e `6a98ae4db280b5000881e3b3`.
+
 ## 2026-08-31.3 — publicada e verificada
 
 - Prospecções B2B passam a ser reconhecidas por sinais combinados de alta precisão: apresentação em nome de marca, oferta para aumentar vendas ou captar pacientes, prova de resultado comercial e convite para reunião, demonstração ou analista.

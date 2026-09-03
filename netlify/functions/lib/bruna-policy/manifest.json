@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-08-31.3",
-  "promptVersion": "bruna-concierge-2026-08-31.3",
+  "bundleVersion": "2026-09-01.1",
+  "promptVersion": "bruna-concierge-2026-09-01.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-08-31.3",
+  "knowledgeSnapshot": "kb-2026-09-01.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -14,14 +14,14 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "1db16a54dcb4f306044aa6c07f447279a5e757f1",
-    "lastObservedProductionCommit": "1db16a54dcb4f306044aa6c07f447279a5e757f1",
-    "functionalDeployId": "6a95d4fa98cabc00088849a9",
-    "lastObservedProductionDeployId": "6a95d4fa98cabc00088849a9",
-    "rollbackCommit": "8cca58388dcb46bc6721aa0c06634135a521854f",
-    "rollbackDeployId": "6a95ac8f4cd10f0009d9280e",
-    "publishedAt": "2026-08-31T16:25:24-03:00",
-    "lastVerifiedAt": "2026-08-31T16:32:56-03:00"
+    "functionalCommit": "96c6b22f0194f6c6100fda0b47b6d563b2164bd1",
+    "lastObservedProductionCommit": "183f18b8ec8165cc39beab9ad7de0c8607dd9548",
+    "functionalDeployId": "6a98af91799bcb0008bec6c4",
+    "lastObservedProductionDeployId": "6a98b20e0f45c20008912e8b",
+    "rollbackCommit": "b88065979e27b9ed1e69c39b0fba7b2eebc436c8",
+    "rollbackDeployId": "6a98ae4db280b5000881e3b3",
+    "publishedAt": "2026-09-02T20:20:08-03:00",
+    "lastVerifiedAt": "2026-09-03T06:25:52-03:00"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -32,6 +32,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "797de5f7df28740ff7262e260b09dc9f649fd7a2a30d2c1727eb1d34a8af3914"
+    "driveProjectionSha256": "7bc81613ba5eb2b0b72ce3419d62d2cdf08443f9e602a0a33dafd08964d214d7"
   }
 }
