@@ -6,7 +6,7 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 21 de agosto de 2026
+**Última revisão estratégica:** 3 de setembro de 2026
 **Próxima revisão prevista:** 20 de agosto de 2026 para os gates técnicos e 27 de agosto de 2026 para a primeira janela operacional, ou antes se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
 
 ## 1. Regra de governança
@@ -714,3 +714,32 @@ Decisão vigente:
 **Regra para ampliar:** editar RSA, excluir termos ou realocar verba somente em um teste posterior, com um componente por vez e regra própria. Aumentar orçamento ou voltar a Maximizar conversões apenas com volume qualificado limpo e aceito suficiente.
 
 **Regra para reverter:** remover somente o novo sitelink ou restaurar as páginas anteriores se houver destino incorreto, perda de tracking, reprovação persistente, regressão médica/editorial ou piora downstream consistente. Não reverter por oscilação isolada de CTR, clique ou pontuação.
+
+## 21. Decisão vigente de 03/09/2026 — continuidade por público na otoplastia
+
+A releitura autenticada de `S_BR_SP_OTOPLASTIA` em 04/08–02/09 mostrou 3.594 impressões, 198 cliques, R$ 450,25 de gasto e uma conversão exibida. O agregado anônimo encontrou 2 contatos canônicos `G26OTO`, ambos com GCLID preservado, nenhum válido/qualificado e nenhuma consulta. A conversão da interface é o clique-proxy temporário e não pode sustentar escala, mudança de lance ou conclusão clínica.
+
+Adulto e infantil continuam na mesma campanha, mas precisam de continuidade própria. O grupo `Adulto` concentrou 180 cliques e R$ 411,21; `AG_OTOPLASTIA_INFANTIL`, 18 cliques e R$ 39,04, com CTR de 8,18%. O relatório de destinos revelou a falha objetiva: sitelinks compartilhados enviaram 12 cliques e R$ 28,10 a lifting cervical e 2 cliques e R$ 4,27 a blefaroplastia. Termos visíveis de preço somaram 35 cliques e R$ 82,83 sem conversão, enquanto `lobuloplastia`, um procedimento distinto, somou 3 cliques e R$ 7,14.
+
+Decisão vigente:
+
+- preservar orçamento de R$ 15/dia, Maximizar cliques, meta `Lead qualificado GCLID`, redes, São Paulo, agenda, dispositivos, demografia, grupos e os dois RSAs;
+- não aplicar os cortes etários das campanhas faciais adultas à otoplastia e preservar sempre a faixa `Desconhecida`;
+- retirar de OTO somente a associação do sitelink cervical `Como Funciona a Consulta` e retirar `Blefaroplastia` somente do nível da conta, preservando ambos nos contextos próprios;
+- separar recursos de adulto e criança no nível de seus grupos, usando destinos e âncoras das páginas correspondentes; manter apenas `Sobre Dra Amanda` e `Segurança Cirúrgica` como universais de campanha;
+- adicionar a negativa de frase `"lobuloplastia"` no nível da campanha, pois a raiz é inequivocamente outro procedimento e cruzou o gate de R$ 5 em 30 dias;
+- preservar preço, valor, custo, quanto custa, `orelha de abano` e `otomodelação`; a última é ambígua e deve ser esclarecida na página, não bloqueada por presunção;
+- responder nas páginas adulta e infantil o que compõe o valor, sem faixa cirúrgica pública, e esclarecer que R$ 500 é a consulta; na página adulta, explicar que a comparação com `otomodelação` exige conhecer a técnica exata;
+- não editar RSA adulto agora, apesar da headline duplicada por capitalização. Reavaliar um único teste de texto depois de ao menos um ciclo limpo dos destinos e do funil.
+
+**Hipótese:** impedir a saída para outros procedimentos e continuar a intenção específica de adulto, criança e valor aumentará a passagem de clique para conversa pessoal e contato válido sem comprar mais tráfego.
+
+**Métrica principal:** contatos canônicos e válidos, leads qualificados, consultas agendadas/realizadas, custo por qualificado e custo por consulta de `G26OTO`, separados por adulto/infantil quando a atribuição permitir. CTR, CPC, conversão exibida, termo e clique em sitelink servem como diagnóstico.
+
+**Revisão:** integridade em 24 horas; termos, ativos e funil em 7 dias; consultas e custos em 14 dias. O RSA adulto só entra em teste após essa primeira leitura, sem outra mudança material concorrente.
+
+**Regra para manter:** zero clique para lifting cervical/blefaroplastia, nenhum bloqueio de intenção aderente, páginas e tracking íntegros e manutenção ou melhora de contato pessoal, válido e qualificado.
+
+**Regra para ampliar:** testar uma nova combinação de headlines adultas ou novas palavras infantis apenas com baseline limpo e downstream suficiente; aumentar orçamento ou mudar lance somente depois de qualificados e consultas justificarem a escala.
+
+**Regra para reverter:** restaurar somente a associação, o destino ou a seção responsável se houver erro de política, navegação, público, tracking ou clareza. Remover a negativa se ela bloquear consulta aderente comprovada. Orçamento e lance não integram este rollback porque não serão alterados.

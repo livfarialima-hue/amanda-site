@@ -6,6 +6,19 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 3 de setembro de 2026 — continuidade por público na otoplastia
+
+- **Status:** auditoria ao vivo concluída e candidato local preparado; site, Google Ads e Drive ainda sem publicação nesta etapa.
+- **Área/campanha:** `S_BR_SP_OTOPLASTIA` / `G26OTO`, grupos `Adulto` e `AG_OTOPLASTIA_INFANTIL`, páginas `/otoplastia-adulto/` e `/otoplastia-infantil/`.
+- **Evidência:** em 04/08–02/09, a campanha teve 3.594 impressões, 198 cliques, R$ 450,25 de gasto e uma conversão exibida. O adulto concentrou 180 cliques/R$ 411,21; o infantil, 18/R$ 39,04. O funil anônimo encontrou 2 contatos canônicos, ambos com GCLID, nenhum qualificado e nenhuma consulta. Sitelinks compartilhados desviaram 14 cliques/R$ 32,37 para lifting cervical e blefaroplastia. Termos de preço visíveis somaram 35 cliques/R$ 82,83; `lobuloplastia`, procedimento diferente, 3 cliques/R$ 7,14.
+- **Mudança preparada:** retirar apenas as associações erradas de sitelink, separar recursos adulto/infantil por grupo, adicionar negativa de frase `"lobuloplastia"`, responder valor sem faixa cirúrgica nas duas páginas e esclarecer `otomodelação` sem presumir técnica. Preservar cinco CTAs, OT01/OT02 e tracking em cada página.
+- **Hipótese:** continuidade correta entre termo, anúncio, público, sitelink, página e WhatsApp aumenta contato pessoal e válido sem ampliar o gasto.
+- **Métricas:** destinos errados, uso dos novos sitelinks, contatos canônicos/válidos, qualificados, consultas e custos por etapa; CTR, CPC e conversão exibida permanecem diagnósticos.
+- **Guardrails:** orçamento R$ 15/dia e Maximizar cliques intactos; nenhuma exclusão etária em OTO; preservar preço, `orelha de abano` e termos ambíguos; um teste material por janela; nenhuma PII ou mensagem real.
+- **Revisão:** integridade em 24 horas, termos/funil em 7 dias e consultas/custos em 14 dias após publicação.
+- **Regra para manter:** zero clique para outro procedimento, nenhuma regressão de tracking e sinais de melhor progressão sem perda de qualidade.
+- **Regra para reverter:** restaurar somente a associação, URL, negativa ou seção responsável diante de erro comprovado; orçamento e lance não entram no rollback porque não serão alterados.
+
 ## 30 de agosto de 2026 — correção da mensuração e contenção de tráfego sem intenção cirúrgica
 
 - **Status:** implementação local validada; publicação autorizada em curso. Recibos externos, versão do Apps Script, deploy do site e alterações do Google Ads devem ser preenchidos somente depois da verificação ao vivo.

@@ -60,8 +60,41 @@ test("audience pages prepare their WhatsApp message before attribution runs", ()
   assert.match(adult, /data-audience-route="child"/);
 });
 
-test("all revised otoplasty pages expose a current modification date", () => {
-  for (const page of [general, child, adult]) {
-    assert.match(page, /"dateModified"\s*:\s*"2026-08-04"/);
+test("the revised audience pages expose the current modification date", () => {
+  for (const page of [child, adult]) {
+    assert.match(page, /"dateModified"\s*:\s*"2026-09-03"/);
+  }
+});
+
+test("adult and child pages answer value intent without publishing surgery prices", () => {
+  assert.match(adult, /data-search-intent="[^"]*otoplastia-valor[^"]*cirurgia-de-orelha-valor[^"]*otomodelacao/);
+  assert.match(adult, /id="valor-da-otoplastia"/);
+  assert.match(adult, /Quanto custa uma otoplastia em adultos\?/);
+  assert.match(adult, /Otomodelação e otoplastia são a mesma coisa\?/);
+  assert.match(adult, /Nesta página, <strong>otoplastia é uma cirurgia<\/strong>/);
+  assert.match(adult, /\.ota2-value \.ota2-fit-grid\{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:1fr!important;overflow:visible/);
+
+  assert.match(child, /data-search-intent="[^"]*otoplastia-infantil-valor/);
+  assert.match(child, /id="valor-da-otoplastia"/);
+  assert.match(child, /Quanto custa uma otoplastia infantil\?/);
+
+  for (const page of [child, adult]) {
+    assert.match(page, /A consulta presencial custa R\$ 500; esse é o valor da consulta, não da cirurgia\./);
+    assert.doesNotMatch(page, /R\$\s*(?:8(?:\.000)?|14(?:\.000)?)(?:\s*mil)?/i);
+  }
+});
+
+test("conversion mechanics remain unchanged on both audience pages", () => {
+  for (const [page, procedure, reference] of [
+    [adult, "otoplastia-adulto", "OT01"],
+    [child, "otoplastia-infantil", "OT02"],
+  ]) {
+    const trackedAnchors = page.match(/<a\b[^>]*data-track="whatsapp"[^>]*>/g) || [];
+    assert.equal(trackedAnchors.length, 5);
+    for (const anchor of trackedAnchors) {
+      assert.match(anchor, /wa\.me\/5511961957144/);
+      assert.match(anchor, new RegExp(`data-procedure="${procedure}"`));
+      assert.match(anchor, new RegExp(`Ref\.%20${reference}`));
+    }
   }
 });

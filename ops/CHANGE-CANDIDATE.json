@@ -1,141 +1,137 @@
 {
   "schemaVersion": 1,
-  "changeId": "EMAIL-DIARIO-DECISOES-2026-09-03",
-  "title": "Transformar o e-mail diario em uma caixa de decisoes completa e segura",
-  "status": "published_verified",
-  "baseCommit": "5f91105a9b3d54e8fbbf74b619769385210d6554",
+  "changeId": "GOOGLE-ADS-OTOPLASTIA-CONTINUIDADE-2026-09-03",
+  "title": "Corrigir continuidade da otoplastia adulta e infantil entre busca, ativos, páginas e funil",
+  "status": "tested_local",
+  "baseCommit": "8187758e21484d63f764da897a484d21e52890cd",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "A autorizacao foi registrada externamente para o HEAD funcional exato 9209117643a7052cb7d2a8ffce5547543172b1da na mensagem 'Autorizo publicar no apps script' de 03/09/2026."
+    "note": "O conteúdo funcional foi aprovado no commit 4384a8f8d1825eb65d751797fbb0f5aaf2465a2c. A integração que preserva a publicação paralela v141 exige validação e nova confirmação do HEAD exato antes das escritas externas."
   },
   "risk": {
-    "level": "high",
-    "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "level": "medium",
+    "patientEffects": false,
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "appointment-reminders",
-      "patient-journey-funnel-followups"
+      "site-publication",
+      "google-ads-acquisition-conversion"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/EXECUCAO-2026-09-03.md",
+      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/artifact-data.json",
+      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "campanhas/otoplasty-pages.test.mjs",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html",
+      "sitemap.xml"
     ]
   },
   "impact": {
     "consumers": [
-      "e-mail diario da Clinica LIV",
-      "painel movel de decisoes",
-      "Central de Atendimento",
-      "fila de retomadas",
-      "agenda de cuidados e lembretes de consulta"
+      "campanha S_BR_SP_OTOPLASTIA no Google Ads",
+      "grupo Adulto",
+      "grupo AG_OTOPLASTIA_INFANTIL",
+      "páginas públicas de otoplastia adulta e infantil",
+      "descoberta orgânica e em recursos de IA",
+      "relatório executivo e estratégia canônica"
     ],
     "preservedInvariants": [
-      "abrir o e-mail ou o painel nunca altera planilha, agenda, fila ou mensagem",
-      "nenhuma opcao vem preselecionada",
-      "cada decisao exige confirmacao unica e releitura do estado atual",
-      "aprovar reaproveita o contrato existente da Bruna e nao envia imediatamente",
-      "cancelar remove somente a acao selecionada e nunca grava Nunca retomar",
-      "adiar apenas devolve o item para revisao humana futura e nunca envia mensagem",
-      "lembretes automaticos mantem cancelamento individual ligado ao agendamento exato",
-      "todos os itens encontrados ficam representados e qualquer falha ou omissao e declarada"
+      "orçamento diário permanece R$ 15 e a estratégia permanece Maximizar cliques",
+      "meta, redes, geografia, agenda, dispositivos, demografia, grupos e RSAs permanecem intactos",
+      "preço, valor, custo, quanto custa, orelha de abano e otomodelação não recebem negativa",
+      "cada página mantém exatamente cinco CTAs de WhatsApp, o número 5511961957144, OT01 ou OT02, mensagens e atributos de tracking",
+      "nenhuma faixa de preço cirúrgico é publicada; R$ 500 continua identificado somente como valor da consulta",
+      "Apps Script v141, LEADS, CRM, Calendar, Bruna, YCloud e mensagens reais ficam fora do escopo"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "appointment-reminders",
-        "system": "Apps Script v140, Consultas e Google Calendar",
-        "status": "target_and_baseline_confirmed",
-        "checkedAt": "2026-09-03T10:36:00-03:00",
-        "reference": "Projeto, deployment e planilha conferidos pelos tres IDs canonicos; os quatro arquivos existentes coincidiram com a v140 e PainelDecisoesDiarias.gs estava ausente antes da escrita.",
-        "evidence": "Preflight somente leitura; nenhuma funcao operacional, trigger, planilha, agenda ou mensagem executada."
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Google Ads 995-334-4486 / campanha 24029985112",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-03T07:22:06-03:00",
+        "reference": "Campanha, grupos, palavras, termos, RSAs, frases de destaque, sitelinks, imagens, logos, destinos, orçamento, lance e meta lidos em sessão autenticada.",
+        "check": "somente leitura; 198 cliques, R$ 450,25, 14 cliques e R$ 32,37 em destinos de outros procedimentos"
       },
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script v140, Central de Atendimento e fila de retomadas",
+        "contract": "google-ads-acquisition-conversion",
+        "system": "agregado sem PII e LEADS canônica",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-03T10:36:00-03:00",
-        "reference": "Central, retomadas e web app canonicos relidos; cinco arquivos salvos foram recarregados e coincidiram com o commit aprovado.",
-        "evidence": "Somente leitura e sonda fail-closed; nenhuma aprovacao, cancelamento, adiamento ou mensagem real."
+        "checkedAt": "2026-09-03T07:22:06-03:00",
+        "reference": "Dois contatos G26OTO, dois GCLIDs preservados, zero qualificado, zero consulta e zero evento enviado ao Google; classificação individual conferida sem persistir PII.",
+        "check": "somente leitura"
+      },
+      {
+        "contract": "site-publication",
+        "system": "otoplastia-adulto e otoplastia-infantil",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-03T07:22:06-03:00",
+        "reference": "Páginas já separavam público, tinham schema e cinco CTAs; faltava resposta direta à intenção de valor e à ambiguidade de otomodelação.",
+        "check": "arquivos versionados e páginas públicas, somente leitura"
       }
     ]
   },
   "verification": {
-    "status": "passed",
-    "completedAt": "2026-09-03T10:42:40-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-09-03T10:50:48-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test campanhas/otoplasty-pages.test.mjs campanhas/site-technical-regression.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "npm.cmd run change:check",
-      "npm.cmd run release:preflight -- --approved-commit 9209117643a7052cb7d2a8ffce5547543172b1da --approved-at 2026-09-03T10:34:00-03:00 --approved-by usuario --approval-reference mensagem --live-preflight-at 2026-09-03T10:36:00-03:00 --live-preflight-reference IDs-canonicos-e-arquivos-vivos",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "QA visual local de otoplastia-adulto e otoplastia-infantil em desktop e mobile"
     ],
     "results": {
-      "dailyDecisionAndReminderContracts": "156/156 passed",
-      "appointmentReminderContracts": "107/107 passed",
-      "funnelAndFollowUpContracts": "174/174 passed",
-      "semanticFollowUpGate": "17/17 passed",
-      "fullSuite": "1249/1249 passed",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK no preflight do commit funcional; 14 arquivos funcionais declarados e 15/15 no recibo final",
+      "focusedRegression": "19/19 testes aprovados sobre a base integrada",
+      "acquisitionRegression": "126/126 testes aprovados sobre a base integrada",
+      "fullSuite": "1249/1249 testes aprovados",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; escopo exato de 11 arquivos",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "siteBuild": "180 files; 44 sitemap URLs; 0 errors",
-      "siteCheck": "44/44 HTTP 200, self-canonical, indexable and one H1; 0 errors",
-      "diffCheck": "passed",
-      "opsConsistency": "recibos de Apps Script v141, Netlify preservado e Plano no Drive registrados; gate final executado no branch canonico",
-      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido igual ao plano canonico local; SHA-256 374923a8f02d7b1179cd5dfa13f62a430ca848d92a35bdfba70445a7e87c286d",
-      "appsScript": "deployment canonico preservado e atualizado de v140 para v141; cinco arquivos recarregados e iguais ao commit aprovado; sonda de token invalido respondeu HTTP 200 sem aplicar decisao",
-      "liveWrites": "somente a publicacao autorizada no Apps Script e a substituicao da projecao canonica no Drive; nenhum paciente, planilha, CRM, Calendar, Ads, trigger, funcao operacional ou mensagem foi alterado"
+      "siteBuild": "180 arquivos e 44 URLs gerados, sem erro e sem auditorias no artefato",
+      "siteCheck": "44/44 URLs com HTTP esperado, canonical próprio, indexação e um H1",
+      "responsiveVisual": "QA anterior em desktop e 390 x 844 permanece aplicável; os blobs das duas páginas são idênticos aos do commit visualmente aprovado 4384a8f8d1825eb65d751797fbb0f5aaf2465a2c",
+      "conversionLinks": "cinco CTAs rastreados em cada página, sem alteração de número, mensagem, código ou atributos",
+      "parallelPublication": "Apps Script v141, commit final 8187758e21484d63f764da897a484d21e52890cd e recibos do painel diário preservados integralmente",
+      "opsCheck": "SYNC_PENDING esperado até publicação, recibos externos e integração canônica final"
     }
   },
   "release": {
-    "approvedCommit": "9209117643a7052cb7d2a8ffce5547543172b1da",
-    "netlifyDeployId": "6a98b20e0f45c20008912e8b",
-    "appsScriptVersion": 141,
-    "drivePlanSha256": "374923a8f02d7b1179cd5dfa13f62a430ca848d92a35bdfba70445a7e87c286d",
-    "verifiedAt": "2026-09-03T10:42:40-03:00",
-    "activationState": "published_verified_apps_script",
-    "notes": "Apps Script publicado e verificado na v141 no deployment canonico. Netlify ficou fora do escopo e permaneceu no deploy observado 6a98b20e0f45c20008912e8b. A mesma projecao do Plano Executivo no Drive foi substituida e relida sem criar copia. Nenhuma funcao operacional, trigger, planilha, Calendar, CRM, Ads ou mensagem real foi executado."
+    "approvedCommit": null,
+    "netlifyDeployId": null,
+    "googleAdsMutations": [],
+    "drivePlanSha256": null,
+    "verifiedAt": null,
+    "activationState": "not_published",
+    "notes": "Nenhuma escrita externa da otoplastia foi feita. Apps Script v141 e seus recibos foram preservados na base."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",
-    "production": "retornar o mesmo deployment Apps Script a v140; Netlify permanece inalterado"
+    "production": "restaurar o deploy Netlify anterior e apenas as associações, URLs e negativa registradas no recibo do Google Ads"
   },
   "monitoring": {
-    "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro e-mail, 24 horas, 72 horas e 7 dias apos eventual publicacao",
+    "owner": "Daniel e equipe da Clínica LIV",
+    "window": "24 horas, 7 dias e 14 dias após a publicação",
     "metrics": [
-      "itens encontrados, representados, omitidos e com falha",
-      "tempo para concluir as decisoes do dia",
-      "aprovacoes, cancelamentos, adiamentos e itens mantidos sem alteracao",
-      "decisoes recusadas por mudanca de contexto",
-      "duplicidade de paciente e de acao",
-      "mensagem programada ou cancelada sem confirmacao"
+      "cliques para destinos de outro procedimento",
+      "política e uso dos sitelinks por grupo",
+      "contatos canônicos, válidos e qualificados",
+      "consultas e custos por etapa",
+      "integridade de página, schema e tracking"
     ],
-    "rollbackRule": "reverter diante de omissao silenciosa, mutacao ao abrir, opcao preselecionada, decisao sem confirmacao, cancelamento amplo, duplicidade ou programacao sem revalidacao."
+    "rollbackRule": "reverter apenas o componente responsável diante de destino errado, reprovação persistente, bloqueio de termo aderente, regressão de tracking ou confusão recorrente entre valor de consulta e cirurgia."
   }
 }

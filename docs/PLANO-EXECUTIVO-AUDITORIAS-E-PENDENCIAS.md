@@ -2,9 +2,9 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 3 de setembro de 2026, 10:39, America/Sao_Paulo
+**Atualizado em:** 3 de setembro de 2026, 10:48, America/Sao_Paulo
 
-**Escopo:** auditorias e execuções de Google Ads, funil, páginas, busca/IA, jornada comercial e operação diária de atendimento
+**Escopo:** auditorias e execuções de Google Ads, funil, páginas, busca/IA, jornada comercial e operação diária de atendimento, incluindo otoplastia adulta/infantil
 
 **Projeção de leitura no Drive:** [00 — PLANO EXECUTIVO — pendências, prazos e publicações.md](https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view)
 
@@ -38,6 +38,8 @@ O responsável técnico deve:
 | `NÃO ALTERAR` | decisão consciente de manter como está |
 
 ## 3. Situação atual em linguagem direta
+
+**Otoplastia adulta e infantil — CANDIDATO LOCAL; DEPENDE DA CONFIRMAÇÃO DO HEAD EXATO:** em 04/08–02/09, `S_BR_SP_OTOPLASTIA` teve 198 cliques e R$ 450,25 de gasto, mas o funil anônimo encontrou só 2 contatos canônicos com GCLID, nenhum qualificado e nenhuma consulta. A conversão única do Google é clique-proxy. O defeito prioritário é de continuidade: sitelinks compartilhados enviaram 14 cliques/R$ 32,37 para lifting cervical e blefaroplastia. O candidato remove somente essas associações, separa sitelinks adulto/infantil por grupo, acrescenta a negativa de frase `"lobuloplastia"` após R$ 7,14 de gasto aderente ao gate e torna as duas páginas mais úteis para intenção de valor; a página adulta esclarece `otomodelação` sem presumir técnica. R$ 15/dia, Maximizar cliques, meta, grupos, RSAs, idade, palavras de preço e todos os sistemas de funil ficam intactos. Depois dos gates locais e da confirmação do commit, publicar site e Google Ads, substituir esta mesma projeção no Drive e verificar em 24h/7d/14d.
 
 **Lifting facial — PUBLICADO E VERIFICADO; MONITORAMENTO EM 24H/7D/14D:** a campanha teve 498 cliques e R$ 703,03 em 30 dias; o grupo de preço concentrou 241 cliques e R$ 323,60 sem conversão principal exibida. O funil anônimo encontrou 7 contatos, 1 válido/qualificado e 0 consultas. Preço não foi bloqueado nem o grupo pausado sem reconciliação por grupo, porque uma busca de preço converteu no grupo geral. Foi criado somente o sitelink de campanha `Preço do Lifting Facial`, apontando para o guia dedicado; a releitura mostrou o recurso ativado, em análise de política e com a URL exata. As duas páginas passaram a explicar cirurgia, ritidoplastia/facelift e a diferença para `endolift` e “lifting sem cirurgia”, com autoria, revisão e dados estruturados coerentes. Código funcional `fe9b3348a25b4a78b5dc4853a78563e774322999`; Netlify `6a96a5f48f881800083c1744`, em `production`, `ready` e no mesmo commit. Domínio e URL imutável responderam HTTP 200 com conteúdo idêntico; cada página preservou seis CTAs, o WhatsApp `5511961957144`, os mesmos locais de tracking e mensagens. R$ 24/dia, Maximizar cliques, meta, RSAs, grupos e negativas não mudaram. `sem cirurgia`, `endolift` e `endolifting` seguem em observação abaixo do gate de R$ 5 por raiz. Medir integridade em 02/09, termos/funil em 08/09 e consultas/custos em 15/09.
 

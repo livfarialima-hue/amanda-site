@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-09-03T07:22:06-03:00",
+  "account": {
+    "customerId": "995-334-4486",
+    "name": "Dra Amanda Schroeder",
+    "timeZone": "America/Sao_Paulo"
+  },
+  "campaign": {
+    "id": "24029985112",
+    "name": "S_BR_SP_OTOPLASTIA",
+    "code": "G26OTO",
+    "period": "2026-08-04/2026-09-02",
+    "budgetDailyBrl": 15,
+    "bidStrategy": "Maximizar cliques",
+    "goal": "Lead qualificado GCLID — campanhas (personalizada)",
+    "impressions": 3594,
+    "clicks": 198,
+    "ctr": 0.0551,
+    "costBrl": 450.25,
+    "averageCpcBrl": 2.27,
+    "platformConversions": 1,
+    "platformConversionRate": 0.0051,
+    "costPerPlatformConversionBrl": 450.25
+  },
+  "comparisonToPreviousPeriod": {
+    "impressionsChange": 1.224,
+    "clicksChange": 1.3571,
+    "costChange": 1.5367,
+    "averageCpcChange": 0.0762,
+    "platformConversionsCurrent": 1,
+    "platformConversionsPrevious": 5
+  },
+  "adGroups": [
+    {"name":"Adulto","audience":"adulto","impressions":3374,"clicks":180,"ctr":0.0533,"costBrl":411.21,"averageCpcBrl":2.28,"platformConversions":1},
+    {"name":"AG_OTOPLASTIA_INFANTIL","audience":"infantil","impressions":220,"clicks":18,"ctr":0.0818,"costBrl":39.04,"averageCpcBrl":2.17,"platformConversions":0}
+  ],
+  "funnel30d": {
+    "window": "2026-08-03/2026-09-01",
+    "contactsIdentified": 2,
+    "classified": 0,
+    "valid": 0,
+    "qualifiedOrLater": 0,
+    "scheduledOrLater": 0,
+    "completedOrLater": 0,
+    "converted": 0,
+    "canonicalAttribution": 2,
+    "legacyExactAliases": 0,
+    "unknownAttribution": 0,
+    "gclidPreserved": 2,
+    "sentToGoogleAds": 0
+  },
+  "searchTermCoverage": {
+    "totalRowsReported": 510,
+    "visibleClickedRows": 65,
+    "visibleRowsClicks": 86,
+    "visibleRowsImpressions": 1867,
+    "visibleRowsCostBrl": 198.81,
+    "campaignClicks": 198,
+    "campaignCostBrl": 450.25,
+    "visibleClickShare": 0.4343,
+    "visibleCostShare": 0.4416
+  },
+  "visibleSearchTermSegments": [
+    {"segment":"Preço","terms":24,"clicks":35,"impressions":225,"costBrl":82.83,"platformConversions":0,"decision":"preservar intenção; melhorar continuidade na página"},
+    {"segment":"Núcleo adulto","terms":16,"clicks":22,"impressions":322,"costBrl":52.19,"platformConversions":1,"decision":"preservar"},
+    {"segment":"Informacional","terms":10,"clicks":14,"impressions":116,"costBrl":30.17,"platformConversions":0,"decision":"preservar e responder na página"},
+    {"segment":"Adjacente ou ambíguo","terms":13,"clicks":13,"impressions":147,"costBrl":28.77,"platformConversions":0,"decision":"separar lobuloplastia; observar demais raízes"},
+    {"segment":"Infantil","terms":2,"clicks":2,"impressions":5,"costBrl":4.85,"platformConversions":0,"decision":"preservar; amostra insuficiente"}
+  ],
+  "negativeKeywordDecision": {
+    "term": "lobuloplastia",
+    "matchType": "frase",
+    "level": "campanha",
+    "observedVariantsClicks": 3,
+    "observedVariantsCostBrl": 7.14,
+    "reason": "procedimento distinto e raiz acima do gate canônico de R$ 5 em 30 dias",
+    "status": "candidato à publicação"
+  },
+  "keywordQuality": [
+    {"keyword":"cirurgia plástica da orelha","matchType":"frase","impressions":1181,"clicks":73,"costBrl":171.97,"qualityScore":null,"decision":"preservar"},
+    {"keyword":"cirurgia de orelha valor","matchType":"exata","impressions":467,"clicks":26,"costBrl":60.55,"qualityScore":4,"landingPageExperience":"abaixo da média","decision":"preservar; melhorar resposta de valor na página"},
+    {"keyword":"otoplastia","matchType":"frase","impressions":415,"clicks":22,"costBrl":46.98,"qualityScore":3,"landingPageExperience":"abaixo da média","decision":"preservar; melhorar continuidade"},
+    {"keyword":"otoplastia infantil","matchType":"frase","impressions":103,"clicks":10,"costBrl":22.57,"qualityScore":3,"landingPageExperience":"abaixo da média","decision":"preservar; melhorar resposta de valor e família"},
+    {"keyword":"correção de orelha de abano","matchType":"frase","impressions":224,"clicks":10,"costBrl":23.74,"qualityScore":4,"landingPageExperience":"média","decision":"preservar linguagem leiga legítima"}
+  ],
+  "landingPages": {
+    "correctAudienceMain": {"clicks":166,"costBrl":377.33},
+    "sameProcedureSupportingAnchors": {"clicks":14,"costBrl":31.63},
+    "genericOrClinicDestinations": {"clicks":4,"costBrl":8.92},
+    "wrongProcedureDestinations": {"clicks":14,"costBrl":32.37},
+    "wrongProcedureDetails": [
+      {"url":"https://draamandaschroeder.com.br/lifting-cervical/","clicks":12,"costBrl":28.10,"source":"sitelink compartilhado Como Funciona a Consulta"},
+      {"url":"https://draamandaschroeder.com.br/blefaroplastia/","clicks":2,"costBrl":4.27,"source":"sitelink Blefaroplastia associado no nível da conta"}
+    ]
+  },
+  "assets": [
+    {"area":"RSA adulto","state":"ativo; força Boa","finding":"180 cliques; headline duplicada apenas por capitalização; página e ativos serão corrigidos primeiro","decision":"preservar nesta janela; reavaliar após dados limpos"},
+    {"area":"RSA infantil","state":"ativo; força Excelente","finding":"18 cliques e CTR de 8,18%; amostra pequena","decision":"preservar"},
+    {"area":"Frases de destaque","state":"cinco coerentes","finding":"consulta particular, Pinheiros, nota fiscal, avaliação individual e naturalidade","decision":"preservar"},
+    {"area":"Sitelinks","state":"níveis de conta, campanha e grupo misturados","finding":"ativos de cervical, blefaroplastia e infância podem servir fora do contexto","decision":"remover associações erradas e separar adulto/infantil por grupo"},
+    {"area":"Imagens e logos","state":"há recursos elegíveis e algumas reprovações","finding":"nenhum substituto canônico melhor foi validado","decision":"preservar"}
+  ],
+  "decisions": [
+    {"priority":1,"action":"Retirar da campanha OTO o sitelink cervical Como Funciona a Consulta","status":"candidato","reason":"12 cliques e R$ 28,10 foram para procedimento errado"},
+    {"priority":2,"action":"Retirar Blefaroplastia do nível da conta, preservando suas associações próprias","status":"candidato","reason":"ativo de outro procedimento apareceu em OTO e consumiu R$ 4,27"},
+    {"priority":3,"action":"Separar sitelinks adulto e infantil no nível de cada grupo","status":"candidato","reason":"continuidade de intenção e público sem alterar anúncios"},
+    {"priority":4,"action":"Adicionar negativa de frase lobuloplastia em G26OTO","status":"candidato","reason":"procedimento distinto, 3 cliques e R$ 7,14"},
+    {"priority":5,"action":"Publicar resposta de valor nas páginas e esclarecer otomodelação","status":"preparado localmente","reason":"35 cliques visíveis de preço sem conversão e experiência de página abaixo da média"},
+    {"priority":6,"action":"Preservar RSAs, palavras aderentes, orçamento e lances","status":"não alterar","reason":"zero qualificados e zero consultas não sustentam escala nem múltiplos testes simultâneos"}
+  ],
+  "dataQuality": [
+    {"domain":"Mídia, grupos, palavras e ativos","confidence":"alta","safeUse":"diagnosticar entrega, custo e estado vivo das entidades"},
+    {"domain":"Termos de pesquisa","confidence":"parcial","safeUse":"usar somente linhas visíveis; 56% do custo não foi detalhado"},
+    {"domain":"Funil por campanha","confidence":"média-alta","safeUse":"contar contatos G26OTO sem PII e conferir GCLID"},
+    {"domain":"Conversão da interface do Google","confidence":"baixa como resultado clínico","safeUse":"tratar como clique-proxy, não paciente qualificado"},
+    {"domain":"Busca e IA","confidence":"alta para requisitos; desconhecida para resultado","safeUse":"melhorar clareza e elegibilidade sem prometer ranking ou citação"}
+  ]
+}

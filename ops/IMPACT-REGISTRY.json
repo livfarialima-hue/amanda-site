@@ -51,19 +51,25 @@
       ],
       "consumerFiles": [
         "blefaroplastia/index.html",
+        "campanhas/otoplasty-pages.test.mjs",
         "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
         "lifting-facial/index.html",
         "lifting-cervical/index.html",
-        "lipo-de-papada/index.html"
+        "lipo-de-papada/index.html",
+        "otoplastia-adulto/index.html",
+        "otoplastia-infantil/index.html"
       ],
       "coveredPaths": [
         "blefaroplastia/index.html",
         "campanhas/conversion-pages.css",
+        "campanhas/otoplasty-pages.test.mjs",
         "campanhas/site-technical-regression.test.mjs",
         "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
         "lifting-facial/index.html",
         "lifting-cervical/index.html",
         "lipo-de-papada/index.html",
+        "otoplastia-adulto/index.html",
+        "otoplastia-infantil/index.html",
         "sitemap.xml"
       ],
       "requiredTestFiles": [
@@ -295,7 +301,9 @@
         "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
         "lifting-facial/index.html",
         "lifting-cervical/index.html",
-        "lipo-de-papada/index.html"
+        "lipo-de-papada/index.html",
+        "otoplastia-adulto/index.html",
+        "otoplastia-infantil/index.html"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -312,12 +320,15 @@
         "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/artifact-data.json",
         "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/artifact.json",
         "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/report-verification-failure.png",
+        "auditorias/auditoria-google-ads-otoplastia-2026-09-03/EXECUCAO-2026-09-03.md",
+        "auditorias/auditoria-google-ads-otoplastia-2026-09-03/artifact-data.json",
         "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
         "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
         "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
         "campanhas/conversion-pages.css",
         "campanhas/conversion-tracking.js",
         "campanhas/conversion-tracking.test.mjs",
+        "campanhas/otoplasty-pages.test.mjs",
         "campanhas/site-technical-regression.test.mjs",
         "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
         "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
@@ -326,6 +337,8 @@
         "lifting-facial/index.html",
         "lifting-cervical/index.html",
         "lipo-de-papada/index.html",
+        "otoplastia-adulto/index.html",
+        "otoplastia-infantil/index.html",
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/patient-replies.mjs",
         "netlify/functions/lib/patient-replies.test.mjs",
