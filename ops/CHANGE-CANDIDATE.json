@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "changeId": "EMAIL-DIARIO-DECISOES-2026-09-03",
   "title": "Transformar o e-mail diario em uma caixa de decisoes completa e segura",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "5f91105a9b3d54e8fbbf74b619769385210d6554",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario autorizou a implementacao de todas as melhorias do e-mail e do painel. Publicacao do Apps Script permanece separada e exige autorizacao especifica para o commit final."
+    "note": "A autorizacao foi registrada externamente para o HEAD funcional exato 9209117643a7052cb7d2a8ffce5547543172b1da na mensagem 'Autorizo publicar no apps script' de 03/09/2026."
   },
   "risk": {
     "level": "high",
@@ -31,6 +31,7 @@
       "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
       "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -62,25 +63,31 @@
       {
         "contract": "appointment-reminders",
         "system": "Apps Script v140, Consultas e Google Calendar",
-        "status": "required_before_release",
-        "evidence": "Confirmar IDs canônicos, equivalência dos arquivos vivos com a v140 e próximos lembretes sem executar função operacional."
+        "status": "target_and_baseline_confirmed",
+        "checkedAt": "2026-09-03T10:36:00-03:00",
+        "reference": "Projeto, deployment e planilha conferidos pelos tres IDs canonicos; os quatro arquivos existentes coincidiram com a v140 e PainelDecisoesDiarias.gs estava ausente antes da escrita.",
+        "evidence": "Preflight somente leitura; nenhuma funcao operacional, trigger, planilha, agenda ou mensagem executada."
       },
       {
         "contract": "patient-journey-funnel-followups",
         "system": "Apps Script v140, Central de Atendimento e fila de retomadas",
-        "status": "required_before_release",
-        "evidence": "Reler estado vivo, modo de automação e filas somente leitura; não aprovar, cancelar, adiar nem disparar mensagens."
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-03T10:36:00-03:00",
+        "reference": "Central, retomadas e web app canonicos relidos; cinco arquivos salvos foram recarregados e coincidiram com o commit aprovado.",
+        "evidence": "Somente leitura e sonda fail-closed; nenhuma aprovacao, cancelamento, adiamento ou mensagem real."
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed",
+    "completedAt": "2026-09-03T10:42:40-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run change:check",
+      "npm.cmd run release:preflight -- --approved-commit 9209117643a7052cb7d2a8ffce5547543172b1da --approved-at 2026-09-03T10:34:00-03:00 --approved-by usuario --approval-reference mensagem --live-preflight-at 2026-09-03T10:36:00-03:00 --live-preflight-reference IDs-canonicos-e-arquivos-vivos",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
@@ -94,27 +101,29 @@
       "funnelAndFollowUpContracts": "174/174 passed",
       "semanticFollowUpGate": "17/17 passed",
       "fullSuite": "1249/1249 passed",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 14 declared files",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK no preflight do commit funcional; 14 arquivos funcionais declarados e 15/15 no recibo final",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "siteBuild": "180 files; 44 sitemap URLs; 0 errors",
       "siteCheck": "44/44 HTTP 200, self-canonical, indexable and one H1; 0 errors",
       "diffCheck": "passed",
-      "opsConsistency": "SYNC_PENDING as expected until exact commit authorization, canonical release and receipts",
-      "drivePlanProjection": "same file ID replaced and read back equal to the local canonical plan"
+      "opsConsistency": "recibos de Apps Script v141, Netlify preservado e Plano no Drive registrados; gate final executado no branch canonico",
+      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido igual ao plano canonico local; SHA-256 374923a8f02d7b1179cd5dfa13f62a430ca848d92a35bdfba70445a7e87c286d",
+      "appsScript": "deployment canonico preservado e atualizado de v140 para v141; cinco arquivos recarregados e iguais ao commit aprovado; sonda de token invalido respondeu HTTP 200 sem aplicar decisao",
+      "liveWrites": "somente a publicacao autorizada no Apps Script e a substituicao da projecao canonica no Drive; nenhum paciente, planilha, CRM, Calendar, Ads, trigger, funcao operacional ou mensagem foi alterado"
     }
   },
   "release": {
-    "approvedCommit": "",
-    "netlifyDeployId": "",
-    "appsScriptVersion": null,
-    "drivePlanSha256": "74f7a41c537795009b7c397021e1c29b572f36fb86db11fb96d99a10e5349ee5",
-    "verifiedAt": "",
-    "activationState": "not_published",
-    "notes": "Implementacao e validacao local concluidas. A mesma projecao do Plano Executivo no Drive foi substituida e relida sem criar copia concorrente. Apps Script vivo, planilha, Calendar, triggers e mensagens permanecem inalterados na v140."
+    "approvedCommit": "9209117643a7052cb7d2a8ffce5547543172b1da",
+    "netlifyDeployId": "6a98b20e0f45c20008912e8b",
+    "appsScriptVersion": 141,
+    "drivePlanSha256": "374923a8f02d7b1179cd5dfa13f62a430ca848d92a35bdfba70445a7e87c286d",
+    "verifiedAt": "2026-09-03T10:42:40-03:00",
+    "activationState": "published_verified_apps_script",
+    "notes": "Apps Script publicado e verificado na v141 no deployment canonico. Netlify ficou fora do escopo e permaneceu no deploy observado 6a98b20e0f45c20008912e8b. A mesma projecao do Plano Executivo no Drive foi substituida e relida sem criar copia. Nenhuma funcao operacional, trigger, planilha, Calendar, CRM, Ads ou mensagem real foi executado."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId",
-    "production": "manter Apps Script v140 ate existir autorizacao e publicacao verificada do commit candidato"
+    "production": "retornar o mesmo deployment Apps Script a v140; Netlify permanece inalterado"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
