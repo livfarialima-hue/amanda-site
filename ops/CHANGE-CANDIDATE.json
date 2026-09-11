@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "WHATSAPP-LEADS-RECONCILIACAO-2026-09-11",
   "title": "Reconciliar conversas, consultas e funil com evidencias temporais verificadas",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "8187758e21484d63f764da897a484d21e52890cd",
   "authorization": {
     "required": true,
@@ -83,6 +83,7 @@
   "verification": {
     "status": "passed_local",
     "completedAt": "2026-09-11T20:08:00-03:00",
+    "implementationCommit": "fd0786023175924f4b6cf823ad2bf81d11fc701a",
     "commands": [
       "node --test apps-script/clinica-liv-leads/ConsultasSync.test.mjs apps-script/clinica-liv-leads/FunnelDashboards.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/OpportunityStore.test.mjs netlify/functions/lib/lead-classifier.test.mjs",
       "node --test netlify/functions/lib/appointment-confirmation.test.mjs",
