@@ -19,7 +19,13 @@ const STATUSES = [
   "Não qualificado",
 ];
 const CONFIDENCES = ["low", "medium", "high"];
-const APPOINTMENT_OUTCOMES = ["none", "confirmed", "missed", "attended"];
+const APPOINTMENT_OUTCOMES = [
+  "none",
+  "confirmed",
+  "reschedule_requested",
+  "missed",
+  "attended",
+];
 const PROCEDURE_MILESTONES = [
   "none",
   "quote_sent",
@@ -67,7 +73,9 @@ const CLASSIFICATION_SCHEMA = {
     "commercialReason",
     "evidence",
     "appointmentOutcome",
+    "appointmentEvidenceTurnId",
     "procedureMilestone",
+    "procedureEvidenceTurnId",
   ],
   properties: {
     recommendedStatus: {
@@ -106,9 +114,17 @@ const CLASSIFICATION_SCHEMA = {
       type: "string",
       enum: APPOINTMENT_OUTCOMES,
     },
+    appointmentEvidenceTurnId: {
+      type: "string",
+      maxLength: 8,
+    },
     procedureMilestone: {
       type: "string",
       enum: PROCEDURE_MILESTONES,
+    },
+    procedureEvidenceTurnId: {
+      type: "string",
+      maxLength: 8,
     },
   },
 };
@@ -147,6 +163,7 @@ patientRelationship informa o contexto operacional da pessoa, mas não congela a
 
 Identifique também marcos administrativos, sempre com base nas últimas mensagens de ambas as partes e no encadeamento da conversa:
 - appointmentOutcome confirmed: a pessoa confirmou explicitamente a data e o horário da consulta.
+- appointmentOutcome reschedule_requested: a pessoa pediu explicitamente para cancelar o horário atual e remarcar, mesmo que ainda não tenha escolhido a nova data. Não trate isso como falta.
 - appointmentOutcome missed: há afirmação explícita de que a pessoa faltou ou não compareceu. Pedido de remarcação não é falta.
 - appointmentOutcome attended: há evidência explícita de que a consulta aconteceu ou de que a pessoa compareceu.
 - procedureMilestone quote_sent: a clínica enviou o orçamento pelo WhatsApp ou informou que o enviou por e-mail. Isso prova apenas que houve proposta, não que o procedimento foi fechado.
@@ -154,6 +171,8 @@ Identifique também marcos administrativos, sempre com base nas últimas mensage
 - procedureMilestone completed: há evidência explícita de que o procedimento foi realizado.
 - procedureMilestone payment_confirmed: há evidência explícita de pagamento confirmado do procedimento. Pagamento da consulta ou avaliação nunca é marco do procedimento.
 - Use none quando o respectivo marco não estiver presente.
+
+Cada mensagem possui um turnId opaco. Para todo appointmentOutcome diferente de none, preencha appointmentEvidenceTurnId com o turnId exato da mensagem que prova esse resultado. Para todo procedureMilestone diferente de none, preencha procedureEvidenceTurnId com o turnId exato da mensagem que prova esse marco. Quando o resultado ou marco for none, o respectivo EvidenceTurnId deve ser string vazia. Nunca use a última mensagem apenas por ser a mais recente e nunca invente um turnId.
 
 Mensagens OUT da clínica são evidência administrativa válida de uma ação praticada pela própria clínica, como "enviei o orçamento por e-mail". Elas não comprovam, sozinhas, interesse, aceite, comparecimento ou fechamento pela pessoa. Para Paciente convertido, exija procedureMilestone accepted, completed ou payment_confirmed ligado explicitamente ao procedimento; pagamento de consulta preserva Consulta realizada. quote_sent isolado nunca é conversão.
 
@@ -264,7 +283,8 @@ function sanitizeMessages(messages) {
       message?.templateId || message?.template_id,
     );
 
-    normalized.push({
+    const sanitized = {
+      turnId: `t${String(normalized.length + 1).padStart(2, "0")}`,
       direction,
       at: String(message?.at || ""),
       text,
@@ -272,11 +292,80 @@ function sanitizeMessages(messages) {
       marketingPrefill:
         direction === "IN" &&
         isLikelyClassifierMarketingPrefill({ templateId }),
+    };
+    Object.defineProperty(sanitized, "__sourceMessageId", {
+      value: String(
+        message?.eventId ||
+        message?.event_id ||
+        message?.messageId ||
+        message?.message_id ||
+        "",
+      ),
+      enumerable: false,
     });
+    normalized.push(sanitized);
     remaining -= text.length;
   }
 
   return normalized;
+}
+
+function stableEvidenceMessageId(message) {
+  const sourceId = String(message?.__sourceMessageId || "").trim();
+  if (sourceId) return sourceId;
+  return `turn_${createHash("sha256")
+    .update([
+      String(message?.direction || ""),
+      String(message?.at || ""),
+      String(message?.text || ""),
+    ].join("|"))
+    .digest("hex")
+    .slice(0, 32)}`;
+}
+
+function groundAdministrativeEvidence(classification, messages) {
+  const grounded = { ...classification };
+  let invalidAnchor = false;
+
+  for (const descriptor of [
+    {
+      signal: "appointmentOutcome",
+      turn: "appointmentEvidenceTurnId",
+      at: "appointmentEvidenceAt",
+      messageId: "appointmentEvidenceMessageId",
+    },
+    {
+      signal: "procedureMilestone",
+      turn: "procedureEvidenceTurnId",
+      at: "procedureEvidenceAt",
+      messageId: "procedureEvidenceMessageId",
+    },
+  ]) {
+    const signal = String(grounded[descriptor.signal] || "none");
+    const turnId = String(grounded[descriptor.turn] || "");
+    if (signal === "none") {
+      grounded[descriptor.turn] = "";
+      grounded[descriptor.at] = "";
+      grounded[descriptor.messageId] = "";
+      continue;
+    }
+    const message = messages.find((item) => item.turnId === turnId);
+    const evidenceAt = String(message?.at || "");
+    if (!message || !evidenceAt || Number.isNaN(new Date(evidenceAt).getTime())) {
+      grounded[descriptor.signal] = "none";
+      grounded[descriptor.turn] = "";
+      grounded[descriptor.at] = "";
+      grounded[descriptor.messageId] = "";
+      invalidAnchor = true;
+      continue;
+    }
+    grounded[descriptor.at] = evidenceAt;
+    grounded[descriptor.messageId] = stableEvidenceMessageId(message);
+  }
+
+  grounded.administrativeEvidenceGrounded = !invalidAnchor;
+  if (invalidAnchor) grounded.confidence = "low";
+  return grounded;
 }
 
 export function enforcePrefillOnlyClassificationGuard({
@@ -308,7 +397,9 @@ export function enforcePrefillOnlyClassificationGuard({
     commercialReason: "Em andamento",
     evidence: "Somente mensagem automática de origem, sem intenção pessoal posterior.",
     appointmentOutcome: "none",
+    appointmentEvidenceTurnId: "",
     procedureMilestone: "none",
+    procedureEvidenceTurnId: "",
   };
 }
 
@@ -487,13 +578,18 @@ export async function runLeadClassifier(
     );
     if (parsed.status !== "completed") return parsed;
 
+    const guardedClassification = enforcePrefillOnlyClassificationGuard({
+      currentStatus,
+      messages: sanitizedMessages,
+      classification: parsed.classification,
+    });
+
     return {
       ...parsed,
-      classification: enforcePrefillOnlyClassificationGuard({
-        currentStatus,
-        messages: sanitizedMessages,
-        classification: parsed.classification,
-      }),
+      classification: groundAdministrativeEvidence(
+        guardedClassification,
+        sanitizedMessages,
+      ),
     };
   } catch (error) {
     return result("failed", {

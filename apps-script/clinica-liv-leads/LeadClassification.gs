@@ -2308,7 +2308,12 @@ function classificationAdministrativeSignal_(classification) {
   let procedureMilestone = String(
     classification && classification.procedureMilestone || "none",
   );
-  const validAppointmentOutcomes = ["confirmed", "missed", "attended"];
+  const validAppointmentOutcomes = [
+    "confirmed",
+    "reschedule_requested",
+    "missed",
+    "attended",
+  ];
   const validProcedureMilestones = [
     "quote_sent",
     "accepted",
@@ -2330,6 +2335,21 @@ function classificationAdministrativeSignal_(classification) {
     );
   if (consultationPayment) procedureMilestone = "none";
 
+  const appointmentEvidenceAt = parseClassificationDate_(
+    classification && classification.appointmentEvidenceAt,
+  );
+  const appointmentEvidenceMessageId = safeText_(
+    classification && classification.appointmentEvidenceMessageId,
+    500,
+  );
+  const procedureEvidenceAt = parseClassificationDate_(
+    classification && classification.procedureEvidenceAt,
+  );
+  const procedureEvidenceMessageId = safeText_(
+    classification && classification.procedureEvidenceMessageId,
+    500,
+  );
+
   return {
     appointmentOutcome: validAppointmentOutcomes.includes(appointmentOutcome)
       ? appointmentOutcome
@@ -2337,6 +2357,16 @@ function classificationAdministrativeSignal_(classification) {
     procedureMilestone: validProcedureMilestones.includes(procedureMilestone)
       ? procedureMilestone
       : "none",
+    appointmentEvidenceAt,
+    appointmentEvidenceMessageId,
+    appointmentEvidenceGrounded: Boolean(
+      appointmentEvidenceAt && appointmentEvidenceMessageId,
+    ),
+    procedureEvidenceAt,
+    procedureEvidenceMessageId,
+    procedureEvidenceGrounded: Boolean(
+      procedureEvidenceAt && procedureEvidenceMessageId,
+    ),
   };
 }
 
@@ -2385,6 +2415,9 @@ function effectiveLeadStatusFromClassification_(
 
 function relationshipFromClassification_(status, classification, fallback) {
   const signal = classificationAdministrativeSignal_(classification);
+  if (signal.appointmentOutcome === "reschedule_requested") {
+    return "engaged_lead";
+  }
   if (signal.procedureMilestone === "completed") return "active_postop";
   if ([
     "quote_sent",
@@ -3077,12 +3110,18 @@ function completeLeadClassification_(job, classification) {
   const hasAdministrativeEvidence = Boolean(
     String(classification.evidence || "").trim() &&
     (
-      administrativeSignal.appointmentOutcome !== "none" ||
-      administrativeSignal.procedureMilestone !== "none"
+      (
+        administrativeSignal.appointmentOutcome !== "none" &&
+        administrativeSignal.appointmentEvidenceGrounded
+      ) ||
+      (
+        administrativeSignal.procedureMilestone !== "none" &&
+        administrativeSignal.procedureEvidenceGrounded
+      )
     ),
   );
   const now = new Date();
-  const statusToKeep = shouldApplyLeadStatus_(
+  let statusToKeep = shouldApplyLeadStatus_(
     currentStatus,
     proposedStatus,
     confidence,
@@ -3156,20 +3195,136 @@ function completeLeadClassification_(job, classification) {
     };
   }
 
+  const appointmentUpdate =
+    administrativeSignal.appointmentOutcome !== "none" &&
+    administrativeSignal.appointmentEvidenceGrounded &&
+    typeof registrarMarcoAdministrativoClassificado_ === "function"
+      ? registrarMarcoAdministrativoClassificado_(spreadsheet, {
+          phone,
+          professional,
+          opportunityId: canonicalOpportunityId,
+          outcome: administrativeSignal.appointmentOutcome,
+          at: administrativeSignal.appointmentEvidenceAt,
+          evidenceMessageId:
+            administrativeSignal.appointmentEvidenceMessageId,
+          confidence,
+          evidence: classification.evidence,
+        })
+      : {
+          updated: false,
+          reason:
+            administrativeSignal.appointmentOutcome === "none"
+              ? "no_appointment_signal"
+              : "appointment_evidence_not_grounded",
+        };
+
+  const businessMilestone =
+    administrativeSignal.procedureMilestone !== "none" &&
+    administrativeSignal.procedureEvidenceGrounded &&
+    typeof registrarMarcoOportunidade_ === "function"
+      ? registrarMarcoOportunidade_(spreadsheet, {
+          eventId: "milestone_" + stableLeadHash_([
+            canonicalOpportunityId,
+            administrativeSignal.procedureEvidenceMessageId,
+            administrativeSignal.procedureMilestone,
+          ].join("|")),
+          opportunityId: canonicalOpportunityId,
+          milestone: administrativeSignal.procedureMilestone,
+          at: administrativeSignal.procedureEvidenceAt,
+          source: "whatsapp_classifier",
+          confidence,
+        })
+      : {
+          ok: administrativeSignal.procedureMilestone === "none",
+          created: false,
+          reason:
+            administrativeSignal.procedureMilestone === "none"
+              ? "no_procedure_milestone"
+              : "procedure_evidence_not_grounded",
+        };
+
+  if (
+    administrativeSignal.appointmentOutcome !== "none" &&
+    !appointmentUpdate.updated
+  ) {
+    needsClassificationReview = true;
+  }
+  if (appointmentUpdate.calendarReviewRequired) {
+    needsClassificationReview = true;
+  }
+  if (
+    administrativeSignal.procedureMilestone !== "none" &&
+    businessMilestone.ok !== true
+  ) {
+    needsClassificationReview = true;
+  }
+
+  const appointmentPromotionRequiresLedger = Boolean(
+    leadStatusRank_(statusToKeep) > leadStatusRank_(currentStatus) &&
+    (
+      statusToKeep === "Consulta agendada" ||
+      statusToKeep === "Consulta realizada"
+    ),
+  );
+  const appointmentPromotionGrounded = Boolean(
+    appointmentUpdate.updated &&
+    (
+      statusToKeep === "Consulta agendada"
+        ? administrativeSignal.appointmentOutcome === "confirmed"
+        : administrativeSignal.appointmentOutcome === "attended"
+    ),
+  );
+  if (appointmentPromotionRequiresLedger && !appointmentPromotionGrounded) {
+    statusToKeep = currentStatus;
+    needsClassificationReview = true;
+  }
+
+  const conversionPromotionRequiresMilestone = Boolean(
+    statusToKeep === "Paciente convertido" &&
+    leadStatusRank_(statusToKeep) > leadStatusRank_(currentStatus),
+  );
+  const conversionPromotionGrounded = Boolean(
+    businessMilestone.ok === true &&
+    administrativeSignal.procedureEvidenceGrounded &&
+    ["accepted", "completed", "payment_confirmed"].includes(
+      administrativeSignal.procedureMilestone,
+    ),
+  );
+  if (conversionPromotionRequiresMilestone && !conversionPromotionGrounded) {
+    statusToKeep = currentStatus;
+    needsClassificationReview = true;
+  }
+
+  const appointmentRescheduleRollback = Boolean(
+    currentStatus === "Consulta agendada" &&
+    administrativeSignal.appointmentOutcome === "reschedule_requested" &&
+    appointmentUpdate.updated &&
+    !["accepted", "completed", "payment_confirmed"].includes(
+      administrativeSignal.procedureMilestone,
+    ),
+  );
+  if (appointmentRescheduleRollback) statusToKeep = "Qualificado";
+
   const automaticValues = {
     "Resumo automático": safeText_(classification.summary, 600),
-    "Próxima ação automática": safeText_(classification.nextAction, 300),
-    "Objeção principal": safeText_(classification.commercialReason, 80),
+    "Próxima ação automática": appointmentRescheduleRollback
+      ? "Confirmar a liberação do horário anterior e oferecer nova data e horário."
+      : safeText_(classification.nextAction, 300),
+    "Objeção principal": appointmentRescheduleRollback
+      ? "Logística"
+      : safeText_(classification.commercialReason, 80),
     "Relacionamento": relationshipFromClassification_(
       statusToKeep,
       classification,
       job.patientRelationship && job.patientRelationship.relationshipState ||
         "unknown",
     ),
-    "Responsável atual": "bruna",
-    "Aguardando ação de": /aguardar retorno/i.test(
-      String(classification.nextAction || ""),
-    ) ? "patient" : "clinic",
+    "Responsável atual": appointmentRescheduleRollback ? "human" : "bruna",
+    "Aguardando ação de": appointmentRescheduleRollback
+      ? "clinic"
+      : /aguardar retorno/i.test(String(classification.nextAction || ""))
+        ? "patient"
+        : "clinic",
   };
   const phaseSync = typeof sincronizarFaseOportunidadeELead_ === "function"
     ? sincronizarFaseOportunidadeELead_(spreadsheet, {
@@ -3178,6 +3333,7 @@ function completeLeadClassification_(job, classification) {
         professional,
         stage: statusToKeep,
         allowNonQualified: statusToKeep === "Não qualificado",
+        allowAppointmentRescheduleRollback: appointmentRescheduleRollback,
         relationship: automaticValues["Relacionamento"],
         owner: automaticValues["Responsável atual"],
         expectedParty: automaticValues["Aguardando ação de"],
@@ -3190,37 +3346,6 @@ function completeLeadClassification_(job, classification) {
     : { ok: false, reason: "canonical_stage_sync_unavailable" };
   const appliedStatus = phaseSync.ok ? phaseSync.stage : currentStatus;
   if (!phaseSync.ok) needsClassificationReview = true;
-
-  const appointmentUpdate =
-    administrativeSignal.appointmentOutcome !== "none" &&
-    typeof registrarMarcoAdministrativoClassificado_ === "function"
-      ? registrarMarcoAdministrativoClassificado_(spreadsheet, {
-          phone,
-          professional,
-          opportunityId: canonicalOpportunityId,
-          outcome: administrativeSignal.appointmentOutcome,
-          at: now,
-          confidence,
-          evidence: classification.evidence,
-        })
-      : { updated: false, reason: "no_appointment_signal" };
-
-  const businessMilestone =
-    administrativeSignal.procedureMilestone !== "none" &&
-    typeof registrarMarcoOportunidade_ === "function"
-      ? registrarMarcoOportunidade_(spreadsheet, {
-          eventId: "milestone_" + stableLeadHash_([
-            canonicalOpportunityId,
-            String(job.throughMessageId || ""),
-            administrativeSignal.procedureMilestone,
-          ].join("|")),
-          opportunityId: canonicalOpportunityId,
-          milestone: administrativeSignal.procedureMilestone,
-          at: now,
-          source: "whatsapp_classifier",
-          confidence,
-        })
-      : { ok: true, created: false, reason: "no_procedure_milestone" };
 
   recordLeadStageEvent_(spreadsheet, {
     opportunityId: canonicalOpportunityId,

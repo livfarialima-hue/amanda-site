@@ -35,6 +35,33 @@ const FUNNEL_MANUAL_HEADERS = Object.freeze(
   FUNNEL_COMMERCIAL_HEADERS.slice(9),
 );
 
+const FUNNEL_AUTOMATIC_MILESTONE_FIELDS = Object.freeze([
+  "qualificationAt",
+  "scheduledAt",
+  "completedAt",
+  "closedAt",
+  "closedValue",
+]);
+
+function mesclarMarcosAutomaticosFunil_(manualValues, automaticMilestones) {
+  const merged = Array.isArray(manualValues)
+    ? manualValues.slice(0, FUNNEL_MANUAL_HEADERS.length)
+    : [];
+  while (merged.length < FUNNEL_MANUAL_HEADERS.length) merged.push("");
+  const automatic = automaticMilestones || {};
+  FUNNEL_AUTOMATIC_MILESTONE_FIELDS.forEach(function fillBlank(field, index) {
+    if (
+      String(merged[index] || "").trim() === "" &&
+      automatic[field] !== undefined &&
+      automatic[field] !== null &&
+      String(automatic[field]).trim() !== ""
+    ) {
+      merged[index] = automatic[field];
+    }
+  });
+  return merged;
+}
+
 function normalizarPlataformaFunil_(value) {
   const normalized = String(value || "")
     .normalize("NFD")
@@ -54,11 +81,16 @@ function normalizarPlataformaFunil_(value) {
   return "Outros";
 }
 
-function linhaFunilComercialCanonica_(canonicalRow, manualValues, rowNumber) {
-  const manual = Array.isArray(manualValues)
-    ? manualValues.slice(0, FUNNEL_MANUAL_HEADERS.length)
-    : [];
-  while (manual.length < FUNNEL_MANUAL_HEADERS.length) manual.push("");
+function linhaFunilComercialCanonica_(
+  canonicalRow,
+  manualValues,
+  rowNumber,
+  automaticMilestones,
+) {
+  const manual = mesclarMarcosAutomaticosFunil_(
+    manualValues,
+    automaticMilestones,
+  );
   manual[6] = `=IF(AND($B${rowNumber}<>"";$O${rowNumber}<>"");ROUND(($O${rowNumber}-$B${rowNumber})*1440;0);"")`;
   return [
     String(canonicalRow[0] || ""),
@@ -71,6 +103,172 @@ function linhaFunilComercialCanonica_(canonicalRow, manualValues, rowNumber) {
     canonicalRow[3] || "Novo",
     canonicalRow[5] || "",
   ].concat(manual);
+}
+
+function dataValidaMarcoFunil_(value) {
+  const parsed = value instanceof Date ? value : new Date(value || "");
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function primeiraDataMarcoFunil_(current, candidate) {
+  const next = dataValidaMarcoFunil_(candidate);
+  if (!next) return current || "";
+  const existing = dataValidaMarcoFunil_(current);
+  return !existing || next.getTime() < existing.getTime() ? candidate : current;
+}
+
+function entradaMarcosAutomaticosFunil_(index, opportunityId) {
+  const key = String(opportunityId || "");
+  if (!index[key]) {
+    index[key] = {
+      qualificationAt: "",
+      scheduledAt: "",
+      completedAt: "",
+      closedAt: "",
+      closedValue: "",
+      closureVerifiedByCommercialReview: false,
+    };
+  }
+  return index[key];
+}
+
+function construirIndiceMarcosAutomaticosFunil_(spreadsheet) {
+  const index = {};
+  const stageSheet = spreadsheet.getSheetByName(
+    typeof CONFIG !== "undefined" && CONFIG.leadStageEventSheetName
+      ? CONFIG.leadStageEventSheetName
+      : "_LEAD_FASE_EVENTOS",
+  );
+  if (stageSheet && stageSheet.getLastRow() >= 2) {
+    stageSheet
+      .getRange(2, 1, stageSheet.getLastRow() - 1, 13)
+      .getValues()
+      .forEach(function indexQualification(row) {
+        const opportunityId = String(row[2] || "");
+        const appliedStage = String(row[7] || "");
+        const decision = String(row[10] || "");
+        if (
+          !opportunityId ||
+          decision !== "applied" ||
+          ![
+            "Qualificado",
+            "Consulta agendada",
+            "Consulta realizada",
+            "Paciente convertido",
+          ].includes(appliedStage)
+        ) {
+          return;
+        }
+        const entry = entradaMarcosAutomaticosFunil_(index, opportunityId);
+        entry.qualificationAt = primeiraDataMarcoFunil_(
+          entry.qualificationAt,
+          row[0],
+        );
+        if (appliedStage === "Consulta agendada") {
+          entry.scheduledAt = primeiraDataMarcoFunil_(
+            entry.scheduledAt,
+            row[0],
+          );
+        }
+      });
+  }
+
+  const consultations = spreadsheet.getSheetByName("Consultas");
+  if (consultations && consultations.getLastRow() >= 2) {
+    const headers = consultations
+      .getRange(1, 1, 1, consultations.getLastColumn())
+      .getDisplayValues()[0];
+    const columns = {};
+    headers.forEach(function indexHeader(header, column) {
+      columns[String(header || "").trim()] = column;
+    });
+    const required = [
+      "Opportunity ID",
+      "Status",
+      "Data realizada",
+      "Resultado comercial",
+      "Data do fechamento",
+      "Valor fechado (R$)",
+    ];
+    if (required.every(function present(header) {
+      return columns[header] !== undefined;
+    })) {
+      consultations
+        .getRange(
+          2,
+          1,
+          consultations.getLastRow() - 1,
+          consultations.getLastColumn(),
+        )
+        .getValues()
+        .forEach(function indexConsultation(row) {
+          const opportunityId = String(row[columns["Opportunity ID"]] || "");
+          if (!opportunityId) return;
+          const entry = entradaMarcosAutomaticosFunil_(index, opportunityId);
+          const status = String(row[columns.Status] || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+          const confirmedColumn = columns["Confirmação da paciente"];
+          if (
+            /agendada|confirmada|remarcada|realizada/.test(status) &&
+            confirmedColumn !== undefined
+          ) {
+            entry.scheduledAt = primeiraDataMarcoFunil_(
+              entry.scheduledAt,
+              row[confirmedColumn],
+            );
+          }
+          if (/realizada/.test(status)) {
+            entry.completedAt = primeiraDataMarcoFunil_(
+              entry.completedAt,
+              row[columns["Data realizada"]],
+            );
+          }
+          if (
+            String(row[columns["Resultado comercial"]] || "") ===
+              "Procedimento fechado" &&
+            dataValidaMarcoFunil_(row[columns["Data do fechamento"]])
+          ) {
+            const candidateClosedAt = row[columns["Data do fechamento"]];
+            const selectedClosedAt = primeiraDataMarcoFunil_(
+              entry.closedAt,
+              candidateClosedAt,
+            );
+            if (selectedClosedAt === candidateClosedAt) {
+              entry.closedAt = candidateClosedAt;
+              entry.closedValue = row[columns["Valor fechado (R$)"]] || "";
+            }
+            entry.closureVerifiedByCommercialReview = true;
+          }
+        });
+    }
+  }
+
+  const milestoneSheet = spreadsheet.getSheetByName("_OPORTUNIDADE_MARCOS");
+  if (milestoneSheet && milestoneSheet.getLastRow() >= 2) {
+    milestoneSheet
+      .getRange(2, 1, milestoneSheet.getLastRow() - 1, 8)
+      .getValues()
+      .forEach(function indexClosure(row) {
+        const opportunityId = String(row[1] || "");
+        const milestone = String(row[2] || "");
+        const state = String(row[6] || "");
+        if (
+          !opportunityId ||
+          state !== "recorded" ||
+          !["accepted", "completed", "payment_confirmed"].includes(milestone)
+        ) {
+          return;
+        }
+        const entry = entradaMarcosAutomaticosFunil_(index, opportunityId);
+        if (!entry.closureVerifiedByCommercialReview) {
+          entry.closedAt = primeiraDataMarcoFunil_(entry.closedAt, row[3]);
+        }
+      });
+  }
+
+  return index;
 }
 
 function formulasPainelEconomicoCanonico_() {
@@ -212,7 +410,7 @@ function arquivarManuaisOrfaosFunil_(spreadsheet, orphanRows) {
 function atualizarPainelEconomicoCanonico_(economicSheet) {
   const formulas = formulasPainelEconomicoCanonico_();
   economicSheet.getRange("A2").setValue(
-    "Fonte: uma oportunidade ativa por Opportunity ID no Funil Comercial. Entradas amarelas continuam manuais.",
+    "Fonte: uma oportunidade ativa por Opportunity ID. Marcos verificados preenchem apenas células vazias; registros manuais prevalecem.",
   );
   economicSheet.getRange("E5:E9").setFormulas([
     [formulas.total],
@@ -328,6 +526,9 @@ function planejarMigracaoPaineisFunilCanonico_(spreadsheet) {
     };
   }
   const manual = valoresManuaisFunilPorOportunidade_(spreadsheet, funnelSheet);
+  const automaticMilestones = construirIndiceMarcosAutomaticosFunil_(
+    spreadsheet,
+  );
   const rows = canonical.rows.filter(function onlyAmanda(row) {
     return String(row[1] || "") === FUNNEL_DASHBOARD_CONFIG.professional;
   });
@@ -340,6 +541,7 @@ function planejarMigracaoPaineisFunilCanonico_(spreadsheet) {
     issues: canonical.issues,
     rows,
     manual,
+    automaticMilestones,
     funnelSheet,
     economicSheet,
   };
@@ -468,6 +670,7 @@ function atualizarLinhaFunilCanonicoPorOportunidade_(spreadsheet, opportunityId)
     current.row,
     manual,
     targetFunnelRow,
+    construirIndiceMarcosAutomaticosFunil_(spreadsheet)[opportunityId] || {},
   );
   funnelSheet.getRange(targetFunnelRow, 1, 1, 20).setValues([commercialRow]);
   return {
@@ -500,6 +703,7 @@ function migrarPaineisFunilCanonico(input) {
       row,
       plan.manual.byOpportunityId[String(row[0] || "")] || [],
       index + 2,
+      plan.automaticMilestones[String(row[0] || "")] || {},
     );
   });
   plan.funnelSheet.getRange(1, 1, 1, 20).setValues([

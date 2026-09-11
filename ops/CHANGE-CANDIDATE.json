@@ -1,93 +1,95 @@
 {
   "schemaVersion": 1,
-  "changeId": "EMAIL-DIARIO-DECISOES-2026-09-03",
-  "title": "Transformar o e-mail diario em uma caixa de decisoes completa e segura",
-  "status": "published_verified",
-  "baseCommit": "5f91105a9b3d54e8fbbf74b619769385210d6554",
+  "changeId": "WHATSAPP-LEADS-RECONCILIACAO-2026-09-11",
+  "title": "Reconciliar conversas, consultas e funil com evidencias temporais verificadas",
+  "status": "tested_local",
+  "baseCommit": "8187758e21484d63f764da897a484d21e52890cd",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "A autorizacao foi registrada externamente para o HEAD funcional exato 9209117643a7052cb7d2a8ffce5547543172b1da na mensagem 'Autorizo publicar no apps script' de 03/09/2026."
+    "note": "O usuario autorizou a auditoria e a implementacao local em 11/09/2026. Publicacao, correcao da planilha, alteracao do Calendar e envio de mensagens permanecem sem autorizacao e exigem decisao separada para o commit final exato."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
       "appointment-reminders",
       "patient-journey-funnel-followups"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
+      "apps-script/clinica-liv-leads/ConsultasSync.gs",
+      "apps-script/clinica-liv-leads/ConsultasSync.test.mjs",
+      "apps-script/clinica-liv-leads/FunnelDashboards.gs",
+      "apps-script/clinica-liv-leads/FunnelDashboards.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "apps-script/clinica-liv-leads/OpportunityStore.gs",
+      "apps-script/clinica-liv-leads/OpportunityStore.test.mjs",
+      "auditorias/auditoria-whatsapp-leads-2026-09-11/RELATORIO.md",
+      "netlify/functions/lib/appointment-confirmation.mjs",
+      "netlify/functions/lib/appointment-confirmation.test.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/lead-classifier.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "e-mail diario da Clinica LIV",
-      "painel movel de decisoes",
-      "Central de Atendimento",
-      "fila de retomadas",
-      "agenda de cuidados e lembretes de consulta"
+      "classificador de conversas do WhatsApp",
+      "oportunidades canonicas do CRM",
+      "aba Consultas e Google Calendar",
+      "Funil Comercial e paineis",
+      "lembretes e retomadas dependentes do estado da consulta"
     ],
     "preservedInvariants": [
-      "abrir o e-mail ou o painel nunca altera planilha, agenda, fila ou mensagem",
-      "nenhuma opcao vem preselecionada",
-      "cada decisao exige confirmacao unica e releitura do estado atual",
-      "aprovar reaproveita o contrato existente da Bruna e nao envia imediatamente",
-      "cancelar remove somente a acao selecionada e nunca grava Nunca retomar",
-      "adiar apenas devolve o item para revisao humana futura e nunca envia mensagem",
-      "lembretes automaticos mantem cancelamento individual ligado ao agendamento exato",
-      "todos os itens encontrados ficam representados e qualquer falha ou omissao e declarada"
+      "classificacao administrativa so altera o funil quando a evidencia aponta para um turno real da conversa",
+      "IDs e timestamps internos das mensagens nao sao enviados ao modelo",
+      "consulta agendada ou realizada so promove a oportunidade quando a linha canonica de Consultas foi localizada e atualizada",
+      "pedido explicito de reagendamento pode recuar apenas Consulta agendada para Qualificado e nunca rebaixa Consulta realizada ou Convertido",
+      "reagendamento suprime lembretes do horario antigo e tenta remover somente o evento de Calendar ligado aquela consulta",
+      "comparecimento usa a data estruturada da consulta vinculada com evidencia conversacional ancorada; os demais marcos usam a data da evidencia e uma identidade idempotente, nunca a data de processamento nem a ultima mensagem do lote",
+      "campos vazios do Funil Comercial recebem apenas marcos verificaveis e qualquer valor manual existente prevalece",
+      "data de agendamento representa o momento registrado da marcacao ou confirmacao, nunca a data futura da consulta, e marcos pendentes de revisao ficam fora do backfill",
+      "dia da semana por extenso em comprovante estruturado precisa coincidir com a data",
+      "nenhuma regra de abordagem, retomada ou mensagem da Bruna foi modificada neste candidato",
+      "nenhuma planilha, agenda, campanha, propriedade, trigger ou mensagem real foi alterada"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "appointment-reminders",
-        "system": "Apps Script v140, Consultas e Google Calendar",
-        "status": "target_and_baseline_confirmed",
-        "checkedAt": "2026-09-03T10:36:00-03:00",
-        "reference": "Projeto, deployment e planilha conferidos pelos tres IDs canonicos; os quatro arquivos existentes coincidiram com a v140 e PainelDecisoesDiarias.gs estava ausente antes da escrita.",
-        "evidence": "Preflight somente leitura; nenhuma funcao operacional, trigger, planilha, agenda ou mensagem executada."
+        "contract": "patient-journey-funnel-followups",
+        "system": "planilha LEADS canonica e conversas WhatsApp importadas em 11/09/2026",
+        "status": "baseline_confirmed_with_anomalies",
+        "checkedAt": "2026-09-11T19:20:00-03:00",
+        "reference": "As 23 conversas importadas foram reconciliadas de forma anonimizada com as 23 oportunidades canonicas; cinco tinham linha de Consultas e tres agendamentos documentados nao tinham linha correspondente.",
+        "evidence": "Leitura somente; nenhuma celula, fila, propriedade ou mensagem foi alterada."
       },
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script v140, Central de Atendimento e fila de retomadas",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-03T10:36:00-03:00",
-        "reference": "Central, retomadas e web app canonicos relidos; cinco arquivos salvos foram recarregados e coincidiram com o commit aprovado.",
-        "evidence": "Somente leitura e sonda fail-closed; nenhuma aprovacao, cancelamento, adiamento ou mensagem real."
+        "contract": "appointment-reminders",
+        "system": "aba Consultas e Google Calendar Sala 1",
+        "status": "baseline_confirmed_with_anomalies",
+        "checkedAt": "2026-09-11T19:25:00-03:00",
+        "reference": "Quatro horarios criticos foram conferidos no Calendar: um agendamento confirmado sem evento no horario, dois eventos sem linha em Consultas e um evento antigo ainda presente apos pedido de reagendamento.",
+        "evidence": "Leitura somente e sem PII no relatorio; nenhum evento, consulta ou lembrete foi alterado."
       }
     ]
   },
   "verification": {
-    "status": "passed",
-    "completedAt": "2026-09-03T10:42:40-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-09-11T20:08:00-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/ConsultasSync.test.mjs apps-script/clinica-liv-leads/FunnelDashboards.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/OpportunityStore.test.mjs netlify/functions/lib/lead-classifier.test.mjs",
+      "node --test netlify/functions/lib/appointment-confirmation.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run change:check",
-      "npm.cmd run release:preflight -- --approved-commit 9209117643a7052cb7d2a8ffce5547543172b1da --approved-at 2026-09-03T10:34:00-03:00 --approved-by usuario --approval-reference mensagem --live-preflight-at 2026-09-03T10:36:00-03:00 --live-preflight-reference IDs-canonicos-e-arquivos-vivos",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
@@ -96,46 +98,45 @@
       "git diff --check"
     ],
     "results": {
-      "dailyDecisionAndReminderContracts": "156/156 passed",
-      "appointmentReminderContracts": "107/107 passed",
-      "funnelAndFollowUpContracts": "174/174 passed",
+      "focusedReconciliationContracts": "116/116 passed",
+      "appointmentReceiptContracts": "29/29 passed",
+      "patientJourneyContracts": "175/175 passed",
       "semanticFollowUpGate": "17/17 passed",
-      "fullSuite": "1249/1249 passed",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK no preflight do commit funcional; 14 arquivos funcionais declarados e 15/15 no recibo final",
+      "appointmentReminderContracts": "107/107 passed",
+      "fullSuite": "1258/1258 passed",
+      "changeSafety": "15 arquivos coincidem com o escopo e tres contratos cobrem a mudanca",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "siteBuild": "180 files; 44 sitemap URLs; 0 errors",
-      "siteCheck": "44/44 HTTP 200, self-canonical, indexable and one H1; 0 errors",
+      "siteBuild": "180 arquivos, 44 URLs no sitemap e zero erros",
+      "siteCheck": "44/44 HTTP 200, canonical presente e um H1; zero erros",
       "diffCheck": "passed",
-      "opsConsistency": "recibos de Apps Script v141, Netlify preservado e Plano no Drive registrados; gate final executado no branch canonico",
-      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido igual ao plano canonico local; SHA-256 374923a8f02d7b1179cd5dfa13f62a430ca848d92a35bdfba70445a7e87c286d",
-      "appsScript": "deployment canonico preservado e atualizado de v140 para v141; cinco arquivos recarregados e iguais ao commit aprovado; sonda de token invalido respondeu HTTP 200 sem aplicar decisao",
-      "liveWrites": "somente a publicacao autorizada no Apps Script e a substituicao da projecao canonica no Drive; nenhum paciente, planilha, CRM, Calendar, Ads, trigger, funcao operacional ou mensagem foi alterado"
+      "opsCheck": "SYNC_PENDING esperado enquanto o candidato nao publicado estiver fora do branch canonico",
+      "liveWrites": "nenhuma planilha, Calendar, fila, campanha, propriedade, trigger ou mensagem real foi alterada"
     }
   },
   "release": {
-    "approvedCommit": "9209117643a7052cb7d2a8ffce5547543172b1da",
-    "netlifyDeployId": "6a98b20e0f45c20008912e8b",
-    "appsScriptVersion": 141,
-    "drivePlanSha256": "374923a8f02d7b1179cd5dfa13f62a430ca848d92a35bdfba70445a7e87c286d",
-    "verifiedAt": "2026-09-03T10:42:40-03:00",
-    "activationState": "published_verified_apps_script",
-    "notes": "Apps Script publicado e verificado na v141 no deployment canonico. Netlify ficou fora do escopo e permaneceu no deploy observado 6a98b20e0f45c20008912e8b. A mesma projecao do Plano Executivo no Drive foi substituida e relida sem criar copia. Nenhuma funcao operacional, trigger, planilha, Calendar, CRM, Ads ou mensagem real foi executado."
+    "approvedCommit": null,
+    "netlifyDeployId": null,
+    "appsScriptVersion": null,
+    "drivePlanSha256": null,
+    "verifiedAt": null,
+    "activationState": "not_published",
+    "notes": "Producao permanece inalterada. Este candidato deve ser reconciliado com a branch paralela de retomadas antes de qualquer preflight de publicacao."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId",
-    "production": "retornar o mesmo deployment Apps Script a v140; Netlify permanece inalterado"
+    "local": "abandonar ou reverter somente os commits deste changeId sobre o baseCommit 8187758e21484d63f764da897a484d21e52890cd",
+    "production": "antes de eventual publicacao, nao se aplica; depois de publicar, restaurar os artefatos Apps Script e Netlify do release canonico anterior confirmado"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro e-mail, 24 horas, 72 horas e 7 dias apos eventual publicacao",
+    "window": "primeiras 24 horas, 72 horas e 7 dias apos eventual publicacao",
     "metrics": [
-      "itens encontrados, representados, omitidos e com falha",
-      "tempo para concluir as decisoes do dia",
-      "aprovacoes, cancelamentos, adiamentos e itens mantidos sem alteracao",
-      "decisoes recusadas por mudanca de contexto",
-      "duplicidade de paciente e de acao",
-      "mensagem programada ou cancelada sem confirmacao"
+      "classificacoes com evidencia valida e classificacoes recusadas por evidencia inventada ou ausente",
+      "agendamentos, realizacoes e reagendamentos reconciliados entre conversa, Consultas, Calendar e oportunidade",
+      "marcos duplicados e divergencias entre data do fato e data de processamento",
+      "campos do Funil Comercial preenchidos automaticamente sem sobrescrever revisao manual",
+      "lembretes enviados para horario antigo apos pedido de reagendamento",
+      "contatos qualificados, consultas realizadas e fechamentos confirmados"
     ],
-    "rollbackRule": "reverter diante de omissao silenciosa, mutacao ao abrir, opcao preselecionada, decisao sem confirmacao, cancelamento amplo, duplicidade ou programacao sem revalidacao."
+    "rollbackRule": "reverter diante de promocao sem linha de Consultas, rebaixamento indevido, remocao de evento nao vinculado, marco sem evidencia, duplicidade ou sobrescrita de dado manual."
   }
 }

@@ -455,10 +455,19 @@ Hor\u00e1rio: 09:30
 M\u00e9dico: Dra. Amanda`,
     at: "2026-01-15T10:00:00-03:00",
   });
+  const wrongNamedWeekday = detectManualAppointment({
+    currentText: `Comprovante de Agendamento:
+Nome: Ana Maria
+Data: 12/09/2026 - quinta-feira
+Horário: 09:00
+Médico: Dra. Amanda`,
+    at: "2026-09-10T10:00:00-03:00",
+  });
 
   assert.equal(missingDoctor, null);
   assert.equal(wrongWeekday, null);
   assert.equal(invalidDate, null);
+  assert.equal(wrongNamedWeekday, null);
 });
 
 test("does not schedule a structured receipt for an unsupported professional", () => {

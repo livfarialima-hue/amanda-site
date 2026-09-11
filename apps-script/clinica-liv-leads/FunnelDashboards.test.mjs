@@ -11,7 +11,7 @@ const source = readFileSync(
 function load() {
   const sandbox = { Object, String, Array };
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { normalizarPlataformaFunil_, linhaFunilComercialCanonica_, formulasPainelEconomicoCanonico_, FUNNEL_COMMERCIAL_HEADERS };`,
+    `${source}\nglobalThis.__test = { normalizarPlataformaFunil_, linhaFunilComercialCanonica_, mesclarMarcosAutomaticosFunil_, construirIndiceMarcosAutomaticosFunil_, formulasPainelEconomicoCanonico_, FUNNEL_COMMERCIAL_HEADERS };`,
     sandbox,
   );
   return sandbox.__test;
@@ -24,6 +24,89 @@ test("normalizes acquisition platforms without collapsing direct WhatsApp", () =
   assert.equal(normalizarPlataformaFunil_("conteúdo educativo"), "Orgânico/Conteúdo");
   assert.equal(normalizarPlataformaFunil_("WhatsApp direto"), "WhatsApp direto");
   assert.equal(normalizarPlataformaFunil_(""), "Não identificada");
+});
+
+test("fills verified funnel milestones without overwriting manual decisions", () => {
+  const { mesclarMarcosAutomaticosFunil_ } = load();
+  const manual = ["manual qualification", "", "", "", 25000];
+  const merged = mesclarMarcosAutomaticosFunil_(manual, {
+    qualificationAt: "automatic qualification",
+    scheduledAt: "2026-09-17",
+    completedAt: "2026-09-24",
+    closedAt: "2026-09-25",
+    closedValue: 30000,
+  });
+
+  assert.equal(merged[0], "manual qualification");
+  assert.equal(merged[1], "2026-09-17");
+  assert.equal(merged[2], "2026-09-24");
+  assert.equal(merged[3], "2026-09-25");
+  assert.equal(merged[4], 25000);
+});
+
+test("uses event time for scheduling and excludes milestones awaiting review", () => {
+  const { construirIndiceMarcosAutomaticosFunil_ } = load();
+  const qualificationAt = new Date("2026-09-01T12:00:00Z");
+  const scheduledAt = new Date("2026-09-02T13:00:00Z");
+  const appointmentDate = new Date("2026-10-13T12:00:00Z");
+  const completedAt = new Date("2026-10-13T15:00:00Z");
+  const reviewedMilestoneAt = new Date("2026-09-03T12:00:00Z");
+  const recordedMilestoneAt = new Date("2026-09-04T12:00:00Z");
+  const sheets = {
+    _LEAD_FASE_EVENTOS: {
+      getLastRow: () => 3,
+      getRange: () => ({
+        getValues: () => [
+          [qualificationAt, "evt_q", "opp_1", "hash", "test", "Novo", "Qualificado", "Qualificado", "high", "m1", "applied", "", "amanda"],
+          [scheduledAt, "evt_s", "opp_1", "hash", "test", "Qualificado", "Consulta agendada", "Consulta agendada", "high", "m2", "applied", "", "amanda"],
+        ],
+      }),
+    },
+    Consultas: {
+      getLastRow: () => 2,
+      getLastColumn: () => 8,
+      getRange: (row) => ({
+        getDisplayValues: () => [[
+          "Opportunity ID",
+          "Data agendada",
+          "Status",
+          "Data realizada",
+          "Resultado comercial",
+          "Data do fechamento",
+          "Valor fechado (R$)",
+          "Confirmação da paciente",
+        ]],
+        getValues: () => row === 1 ? [] : [[
+          "opp_1",
+          appointmentDate,
+          "Realizada",
+          completedAt,
+          "",
+          "",
+          "",
+          "",
+        ]],
+      }),
+    },
+    _OPORTUNIDADE_MARCOS: {
+      getLastRow: () => 3,
+      getRange: () => ({
+        getValues: () => [
+          ["evt_review", "opp_1", "accepted", reviewedMilestoneAt, "test", "low", "review_required", new Date()],
+          ["evt_recorded", "opp_1", "accepted", recordedMilestoneAt, "test", "high", "recorded", new Date()],
+        ],
+      }),
+    },
+  };
+  const index = construirIndiceMarcosAutomaticosFunil_({
+    getSheetByName: (name) => sheets[name] || null,
+  });
+
+  assert.equal(index.opp_1.qualificationAt.getTime(), qualificationAt.getTime());
+  assert.equal(index.opp_1.scheduledAt.getTime(), scheduledAt.getTime());
+  assert.notEqual(index.opp_1.scheduledAt.getTime(), appointmentDate.getTime());
+  assert.equal(index.opp_1.completedAt.getTime(), completedAt.getTime());
+  assert.equal(index.opp_1.closedAt.getTime(), recordedMilestoneAt.getTime());
 });
 
 test("builds one commercial row per opaque opportunity and preserves manual fields", () => {

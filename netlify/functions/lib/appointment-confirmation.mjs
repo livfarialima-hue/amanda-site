@@ -340,9 +340,12 @@ function strictStructuredDate(value, baseDate) {
   const declaredWeekday = normalize(match[4]).match(
     /\b([2-6])\s*(?:a|ª)?\s*feira\b/,
   );
+  const declaredWeekdayNumber = declaredWeekday
+    ? Number(declaredWeekday[1]) - 1
+    : selectedWeekday(match[4]);
   if (
-    declaredWeekday &&
-    weekdayForIsoDate(scheduledDate) !== Number(declaredWeekday[1]) - 1
+    declaredWeekdayNumber !== null &&
+    weekdayForIsoDate(scheduledDate) !== declaredWeekdayNumber
   ) {
     return null;
   }

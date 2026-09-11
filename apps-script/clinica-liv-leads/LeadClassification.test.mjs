@@ -925,7 +925,9 @@ test("automatic classification advances but never downgrades the funnel", () => 
 test("administrative milestones protect funnel updates", () => {
   const {
     administrativeLeadStatus_,
+    classificationAdministrativeSignal_,
     effectiveLeadStatusFromClassification_,
+    relationshipFromClassification_,
     shouldApplyLeadStatus_,
   } = loadFunctions();
 
@@ -956,6 +958,54 @@ test("administrative milestones protect funnel updates", () => {
   assert.equal(
     shouldApplyLeadStatus_("Novo", "Consulta agendada", "low", true),
     true,
+  );
+  const reschedule = classificationAdministrativeSignal_({
+    appointmentOutcome: "reschedule_requested",
+    appointmentEvidenceAt: "2026-09-02T13:15:00.000Z",
+    appointmentEvidenceMessageId: "patient-reschedule-event",
+  });
+  assert.equal(reschedule.appointmentOutcome, "reschedule_requested");
+  assert.equal(reschedule.appointmentEvidenceGrounded, true);
+  assert.equal(
+    relationshipFromClassification_("Qualificado", {
+      appointmentOutcome: "reschedule_requested",
+    }),
+    "engaged_lead",
+  );
+});
+
+test("completion uses grounded evidence instead of classification time", () => {
+  assert.match(
+    classificationSource,
+    /at:\s*administrativeSignal\.appointmentEvidenceAt/,
+  );
+  assert.match(
+    classificationSource,
+    /administrativeSignal\.procedureEvidenceMessageId[\s\S]{0,180}administrativeSignal\.procedureMilestone/,
+  );
+  assert.match(
+    classificationSource,
+    /appointmentPromotionRequiresLedger[\s\S]{0,900}statusToKeep = currentStatus/,
+  );
+  assert.match(
+    classificationSource,
+    /allowAppointmentRescheduleRollback:\s*appointmentRescheduleRollback/,
+  );
+  assert.match(
+    classificationSource,
+    /appointmentRescheduleRollback = Boolean\([\s\S]{0,420}!\["accepted", "completed", "payment_confirmed"\]\.includes/,
+  );
+  assert.match(
+    classificationSource,
+    /"Responsável atual": appointmentRescheduleRollback \? "human" : "bruna"/,
+  );
+  assert.match(
+    classificationSource,
+    /appointmentRescheduleRollback\s*\? "Confirmar a liberação do horário anterior e oferecer nova data e horário\."/,
+  );
+  assert.match(
+    classificationSource,
+    /appointmentUpdate\.calendarReviewRequired[\s\S]{0,120}needsClassificationReview = true/,
   );
 });
 

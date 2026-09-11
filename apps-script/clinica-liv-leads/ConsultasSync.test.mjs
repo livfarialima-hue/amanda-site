@@ -72,6 +72,12 @@ test("projects the latest appointment outcome without downgrading completion", (
     "Não compareceu",
   );
   assert.equal(
+    context.resultadoVisivelAgendamentoConsulta_(
+      "Reagendamento solicitado",
+    ),
+    "Reagendamento solicitado",
+  );
+  assert.equal(
     context.resultadoVisivelAgendamentoConsulta_("Cancelada"),
     "Cancelada",
   );
@@ -447,10 +453,44 @@ test("maps classified administrative outcomes to consultation rows", () => {
     "Não compareceu",
   );
   assert.equal(
+    context.statusConsultaDoMarcoClassificado_("reschedule_requested"),
+    "Reagendamento solicitado",
+  );
+  assert.equal(
     context.statusConsultaDoMarcoClassificado_("attended"),
     "Realizada",
   );
   assert.equal(context.statusConsultaDoMarcoClassificado_("none"), "");
+});
+
+test("attendance cannot close a future slot and uses the scheduled date", () => {
+  assert.match(
+    source,
+    /\["missed", "attended"\]\.includes\(outcome\)[\s\S]{0,260}appointment_not_due/,
+  );
+  assert.match(
+    source,
+    /CONSULTAS_SYNC_HEADERS\.completedDate,\s*scheduledAt \|\| now/,
+  );
+});
+
+test("a reschedule request closes only the old appointment slot", () => {
+  assert.equal(
+    context.statusReagendamentoSolicitadoConsulta_(
+      "Reagendamento solicitado",
+    ),
+    true,
+  );
+  assert.equal(
+    context.statusConsultaEncerrada_("Reagendamento solicitado"),
+    true,
+  );
+  assert.equal(
+    context.statusCancelaAgendaConsulta_("Reagendamento solicitado"),
+    false,
+  );
+  assert.match(source, /allowAppointmentRescheduleRollback:\s*true/);
+  assert.match(source, /appointment_reschedule_requested/);
 });
 
 test("maps consultation vocabulary to canonical lead phases", () => {

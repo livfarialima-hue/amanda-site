@@ -979,3 +979,28 @@ test("automatic sync refuses an equal-rank qualified/non-qualified conflict", ()
     "ambiguous_stage_conflict",
   );
 });
+
+test("only an explicit appointment reschedule can roll scheduled back to qualified", () => {
+  const { resolverFaseSincronizada_ } = load();
+
+  assert.equal(
+    resolverFaseSincronizada_("Consulta agendada", "Consulta agendada", {
+      stage: "Qualificado",
+    }).stage,
+    "Consulta agendada",
+  );
+  assert.equal(
+    resolverFaseSincronizada_("Consulta agendada", "Consulta agendada", {
+      stage: "Qualificado",
+      allowAppointmentRescheduleRollback: true,
+    }).stage,
+    "Qualificado",
+  );
+  assert.equal(
+    resolverFaseSincronizada_("Consulta realizada", "Consulta realizada", {
+      stage: "Qualificado",
+      allowAppointmentRescheduleRollback: true,
+    }).stage,
+    "Consulta realizada",
+  );
+});

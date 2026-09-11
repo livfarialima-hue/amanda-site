@@ -2285,6 +2285,16 @@ function registrarRespostaPacienteDaConsulta_(input) {
   const refreshedRow = sheet
     .getRange(rowNumber, 1, 1, sheet.getLastColumn())
     .getValues()[0];
+  const calendarSync = state === "reschedule_requested" &&
+    typeof sincronizarConsultaComAgendaNaLinha_ === "function"
+    ? sincronizarConsultaComAgendaNaLinha_(
+        sheet,
+        rowNumber,
+        columns,
+        refreshedRow,
+        {},
+      )
+    : { ok: true, skipped: true };
   const opportunityId = input.opportunityId || valorDaLinhaConsultas_(
     refreshedRow,
     columns,
@@ -2301,12 +2311,23 @@ function registrarRespostaPacienteDaConsulta_(input) {
     opportunityId,
   );
 
-  return { ok: true, updated: true, row: rowNumber, state };
+  return {
+    ok: true,
+    updated: true,
+    row: rowNumber,
+    state,
+    calendarSync,
+    calendarReviewRequired: Boolean(
+      state === "reschedule_requested" &&
+      (!calendarSync || calendarSync.removed !== true),
+    ),
+  };
 }
 
 function statusConsultaDoMarcoClassificado_(outcome) {
   return {
     confirmed: "Confirmada",
+    reschedule_requested: "Reagendamento solicitado",
     missed: "Não compareceu",
     attended: "Realizada",
   }[String(outcome || "")] || "";
@@ -2358,8 +2379,10 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
   const currentStatus = String(
     valorDaLinhaConsultas_(row, columns, CONSULTAS_SYNC_HEADERS.status) || "",
   );
-  if (outcome === "missed") {
-    const scheduledAt = dataHoraAgendadaConsulta_(row, columns);
+  const scheduledAt = ["missed", "attended"].includes(outcome)
+    ? dataHoraAgendadaConsulta_(row, columns)
+    : null;
+  if (["missed", "attended"].includes(outcome)) {
     if (scheduledAt && scheduledAt.getTime() > now.getTime() + 5 * 60 * 1000) {
       return { ok: true, updated: false, reason: "appointment_not_due" };
     }
@@ -2389,6 +2412,23 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
       String(input.confidence) === "low"
         ? "Equipe: revisar confirmação identificada com baixa confiança."
         : "",
+    );
+  } else if (outcome === "reschedule_requested") {
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.nextAction,
+      String(input.confidence) === "low"
+        ? "Equipe: revisar o pedido de reagendamento antes de contatar."
+        : "Equipe: oferecer nova data e horário; não manter o horário anterior.",
+    );
+    definirValorConsulta_(
+      sheet,
+      rowNumber,
+      columns,
+      CONSULTAS_SYNC_HEADERS.suppressionReason,
+      "Lembretes suspensos: paciente pediu reagendamento.",
     );
   } else if (outcome === "missed") {
     definirValorConsulta_(
@@ -2431,7 +2471,7 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
       rowNumber,
       columns,
       CONSULTAS_SYNC_HEADERS.completedDate,
-      now,
+      scheduledAt || now,
     );
     definirValorConsulta_(
       sheet,
@@ -2444,6 +2484,23 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
     );
   }
 
+  let calendarSync = { ok: true, skipped: true };
+  if (
+    outcome === "reschedule_requested" &&
+    typeof sincronizarConsultaComAgendaNaLinha_ === "function"
+  ) {
+    const refreshedForCalendar = sheet
+      .getRange(rowNumber, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+    calendarSync = sincronizarConsultaComAgendaNaLinha_(
+      sheet,
+      rowNumber,
+      columns,
+      refreshedForCalendar,
+      {},
+    );
+  }
+
   return {
     ok: true,
     updated: true,
@@ -2451,6 +2508,10 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
     outcome,
     previousStatus: currentStatus,
     status: targetStatus,
+    calendarSync,
+    calendarReviewRequired: Boolean(
+      outcome === "reschedule_requested" && calendarSync.removed !== true,
+    ),
   };
 }
 
@@ -2734,6 +2795,13 @@ function statusCancelaAgendaConsulta_(value) {
   );
 }
 
+function statusReagendamentoSolicitadoConsulta_(value) {
+  return [
+    "reagendamento solicitado",
+    "consulta com reagendamento solicitado",
+  ].includes(normalizarTextoConsultasSync_(value));
+}
+
 function statusNaoCompareceuConsulta_(value) {
   return ["nao compareceu", "consulta nao compareceu"].includes(
     normalizarTextoConsultasSync_(value),
@@ -2745,6 +2813,7 @@ function statusConsultaEncerrada_(value) {
   return (
     statusConsultaRealizada_(normalized) ||
     statusCancelaAgendaConsulta_(normalized) ||
+    statusReagendamentoSolicitadoConsulta_(normalized) ||
     statusNaoCompareceuConsulta_(normalized)
   );
 }
@@ -2856,6 +2925,7 @@ function sincronizarConsultaComAgendaNaLinha_(
   try {
     if (
       statusCancelaAgendaConsulta_(status) ||
+      statusReagendamentoSolicitadoConsulta_(status) ||
       statusNaoCompareceuConsulta_(status)
     ) {
       if (!chaveProfissionalConsulta_(professional)) {
@@ -2933,9 +3003,11 @@ function sincronizarConsultaComAgendaNaLinha_(
       return {
         ok: true,
         removed: true,
-        reason: statusCancelaAgendaConsulta_(status)
-          ? "consultation_cancelled"
-          : "consultation_no_show",
+        reason: statusReagendamentoSolicitadoConsulta_(status)
+          ? "appointment_reschedule_requested"
+          : statusCancelaAgendaConsulta_(status)
+            ? "consultation_cancelled"
+            : "consultation_no_show",
         room: normalizedRoom,
       };
     }
@@ -5389,6 +5461,9 @@ function statusCanonicoLeadDaConsulta_(status) {
 function resultadoVisivelAgendamentoConsulta_(status) {
   const normalized = normalizarTextoConsultasSync_(status);
   if (statusNaoCompareceuConsulta_(normalized)) return "Não compareceu";
+  if (statusReagendamentoSolicitadoConsulta_(normalized)) {
+    return "Reagendamento solicitado";
+  }
   if (statusCancelaAgendaConsulta_(normalized)) return "Cancelada";
   if (statusConsultaRealizada_(normalized)) return "Consulta realizada";
   if (statusAgendaConsulta_(normalized)) return "Consulta agendada";
@@ -5403,7 +5478,10 @@ function atualizarStatusLeadDaConsulta_(
   opportunityId,
   appointment,
 ) {
-  const canonicalStatus = statusCanonicoLeadDaConsulta_(status);
+  const rescheduleRequested = statusReagendamentoSolicitadoConsulta_(status);
+  const canonicalStatus = rescheduleRequested
+    ? "Qualificado"
+    : statusCanonicoLeadDaConsulta_(status);
   if (!canonicalStatus) {
     return { ok: true, changed: false, reason: "non_stage_status" };
   }
@@ -5423,7 +5501,17 @@ function atualizarStatusLeadDaConsulta_(
     source: "consultas_sync",
     at: new Date(),
   };
-  if (canonicalStatus === "Consulta agendada") {
+  if (rescheduleRequested) {
+    Object.assign(syncInput, {
+      allowAppointmentRescheduleRollback: true,
+      relationship: "engaged_lead",
+      owner: "human",
+      expectedParty: "clinic",
+      objection: "Logística",
+      summary: "Paciente pediu reagendamento da consulta.",
+      nextAction: "Oferecer nova data e horário.",
+    });
+  } else if (canonicalStatus === "Consulta agendada") {
     const scheduledDate = appointment &&
       formatarDataVisivelConsulta_(appointment.scheduledDate);
     const scheduledTime = appointment &&

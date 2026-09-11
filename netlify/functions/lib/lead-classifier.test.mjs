@@ -20,7 +20,9 @@ function validClassification(overrides = {}) {
     commercialReason: "Em andamento",
     evidence: "Pediu datas para agendar uma avaliação.",
     appointmentOutcome: "none",
+    appointmentEvidenceTurnId: "",
     procedureMilestone: "none",
+    procedureEvidenceTurnId: "",
     ...overrides,
   };
 }
@@ -112,6 +114,23 @@ test("invalid administrative milestones are rejected", () => {
     httpStatus: 200,
     errorCode: "invalid_response",
   });
+});
+
+test("a reschedule request is valid only with the structured outcome", () => {
+  const result = parseLeadClassificationResponse(
+    validResponse(validClassification({
+      recommendedStatus: "Qualificado",
+      appointmentOutcome: "reschedule_requested",
+      appointmentEvidenceTurnId: "t02",
+    })),
+    "fallback",
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(
+    result.classification.appointmentOutcome,
+    "reschedule_requested",
+  );
 });
 
 test("only the structured template id marks marketing prefilled context", () => {
@@ -228,10 +247,98 @@ test("request is private, structured, bounded and excludes raw phone", async () 
   assert.match(requestBody.instructions, /marketingPrefill true/);
   assert.match(requestBody.instructions, /não congela a oportunidade atual/);
   assert.match(requestBody.instructions, /marcos administrativos/);
+  assert.match(requestBody.instructions, /turnId exato/);
   assert.match(requestBody.instructions, /quote_sent isolado nunca é conversão/);
   assert.match(requestBody.instructions, /respostas curtas da pessoa no contexto imediato/);
   assert.match(requestBody.instructions, /external/);
   assert.match(requestBody.instructions, /nonpatient/);
+});
+
+test("administrative milestones are grounded in the exact source turn", async () => {
+  const evidenceAt = "2026-09-03T14:25:00.000Z";
+  let modelRequest;
+  const result = await runLeadClassifier(
+    {
+      phone: PHONE,
+      currentStatus: "Consulta realizada",
+      messages: [
+        {
+          direction: "OUT",
+          at: "2026-09-01T12:00:00.000Z",
+          eventId: "quote-source-event",
+          text: "Enviei o orçamento por e-mail.",
+        },
+        {
+          direction: "IN",
+          at: evidenceAt,
+          eventId: "acceptance-source-event",
+          text: "Pode seguir com a cirurgia.",
+        },
+      ],
+    },
+    {
+      env: {
+        OPENAI_API_KEY: "test-key",
+        OPENAI_CLASSIFIER_MODEL: "test-model",
+      },
+      fetchImpl: async (_url, options) => {
+        modelRequest = JSON.parse(options.body);
+        return new Response(
+          JSON.stringify(validResponse(validClassification({
+            recommendedStatus: "Paciente convertido",
+            procedureMilestone: "accepted",
+            procedureEvidenceTurnId: "t02",
+          }))),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      },
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.classification.procedureEvidenceAt, evidenceAt);
+  assert.equal(
+    result.classification.procedureEvidenceMessageId,
+    "acceptance-source-event",
+  );
+  assert.equal(result.classification.administrativeEvidenceGrounded, true);
+  assert.equal(
+    modelRequest.input.includes("acceptance-source-event"),
+    false,
+  );
+  assert.equal(JSON.parse(modelRequest.input).messages[1].turnId, "t02");
+});
+
+test("an invented evidence turn cannot advance an administrative milestone", async () => {
+  const result = await runLeadClassifier(
+    {
+      phone: PHONE,
+      currentStatus: "Qualificado",
+      messages: [{
+        direction: "IN",
+        at: "2026-09-11T12:00:00.000Z",
+        eventId: "real-source-event",
+        text: "Quero remarcar.",
+      }],
+    },
+    {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async () => new Response(
+        JSON.stringify(validResponse(validClassification({
+          recommendedStatus: "Consulta agendada",
+          appointmentOutcome: "confirmed",
+          appointmentEvidenceTurnId: "t99",
+        }))),
+        { status: 200, headers: { "content-type": "application/json" } },
+      ),
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.classification.appointmentOutcome, "none");
+  assert.equal(result.classification.appointmentEvidenceMessageId, "");
+  assert.equal(result.classification.confidence, "low");
+  assert.equal(result.classification.administrativeEvidenceGrounded, false);
 });
 
 test("missing API configuration skips classification", async () => {

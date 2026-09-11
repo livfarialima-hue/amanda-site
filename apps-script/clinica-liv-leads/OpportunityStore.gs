@@ -1592,6 +1592,13 @@ function resolverFaseSincronizada_(crmStage, visibleStage, input) {
   if (!requestedStage || requestedStage === stage) {
     return { ok: true, stage };
   }
+  if (
+    input.allowAppointmentRescheduleRollback === true &&
+    stage === "Consulta agendada" &&
+    requestedStage === "Qualificado"
+  ) {
+    return { ok: true, stage: requestedStage };
+  }
   if (requestedStage === "Não qualificado") {
     if (
       input.allowNonQualified === true &&
