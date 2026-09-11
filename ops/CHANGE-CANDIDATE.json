@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "RETOMADAS-AUTOMATICAS-MODELO-2026-09-11",
   "title": "Corrigir a primeira retomada automatica com modelo seguro entre 24 e 48 horas",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "8187758e21484d63f764da897a484d21e52890cd",
   "authorization": {
     "required": true,
@@ -91,6 +91,7 @@
   "verification": {
     "status": "passed_local",
     "completedAt": "2026-09-11T19:40:10-03:00",
+    "implementationCommit": "e333d55953e36038c1940a93ba6b3116b8585be8",
     "commands": [
       "npm.cmd run change:check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
