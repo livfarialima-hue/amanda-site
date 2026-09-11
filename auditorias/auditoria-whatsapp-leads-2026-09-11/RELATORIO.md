@@ -170,7 +170,7 @@ As mudanças estão somente em branch local isolada. Não houve publicação de 
 
 ## Anexo — Meta Ads e proposta de reativação por 30 dias
 
-Leitura somente em 11/09/2026. A interface do Gerenciador de Anúncios foi consultada para a janela de 12/08 a 10/09/2026 e reconciliada com o agregado anônimo `Meta_Agregados`, gerado em 11/09 às 08:27 sobre 270 oportunidades. Nenhuma campanha, orçamento, rascunho ou configuração foi alterado. Os sete rascunhos pendentes foram preservados.
+Leitura somente em 11/09/2026. A interface do Gerenciador de Anúncios foi consultada para a janela de 12/08 a 10/09/2026 e reconciliada com o agregado anônimo `Meta_Agregados`, gerado em 11/09 às 08:27 sobre 270 oportunidades. Uma releitura direta do `Funil Comercial` após o upload confirmou as contagens por campanha do agregado. Nenhuma campanha, orçamento, rascunho ou configuração foi alterado. Os sete rascunhos pendentes foram preservados.
 
 ### Resultado reconciliado
 
