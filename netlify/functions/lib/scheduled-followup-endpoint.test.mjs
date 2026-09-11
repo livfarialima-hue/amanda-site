@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   canReuseFirstFollowupSemanticReview,
+  getScheduledFollowupHealth,
   handleScheduledFollowup,
+  isAutomaticTemplateFollowupEligible,
   isSimpleUnansweredProcedureInterestFollowup,
   isScheduledFollowupWindow,
 } from "../scheduled-followup.mjs";
@@ -58,6 +60,13 @@ const SIMPLE_INTEREST_PAYLOAD = {
   ],
 };
 
+const AUTOMATIC_TEMPLATE_PAYLOAD = {
+  ...SIMPLE_INTEREST_PAYLOAD,
+  planId: "automatic-template-plan",
+  automaticTemplate: true,
+  deliveryMode: "template",
+};
+
 function request(body = PAYLOAD, secret = SECRET) {
   return new Request(
     "https://example.test/.netlify/functions/scheduled-followup",
@@ -71,6 +80,201 @@ function request(body = PAYLOAD, secret = SECRET) {
     },
   );
 }
+
+function healthRequest(secret = SECRET) {
+  return new Request(
+    "https://example.test/.netlify/functions/scheduled-followup",
+    {
+      method: "GET",
+      headers: { "x-liv-secret": secret },
+    },
+  );
+}
+
+const AUTOMATIC_TEMPLATE_ENV = {
+  GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+  YCLOUD_API_KEY: "key",
+  YCLOUD_FOLLOWUP_TEMPLATE_NAME: "retomada_manual_bruna_v1",
+  YCLOUD_FOLLOWUP_TEMPLATE_LANGUAGE: "pt_BR",
+  WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+  WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED: "true",
+  WHATSAPP_AUTOMATION_MODE: "active",
+};
+
+test("authenticated health check reports only non-sensitive readiness flags", async () => {
+  const direct = getScheduledFollowupHealth(
+    AUTOMATIC_TEMPLATE_ENV,
+  );
+  assert.equal(direct.automaticTemplateEnabled, true);
+  assert.equal(direct.templateConfigured, true);
+  assert.equal(direct.patientSideEffectsAllowed, true);
+
+  const response = await handleScheduledFollowup(healthRequest(), {
+    env: AUTOMATIC_TEMPLATE_ENV,
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(body, direct);
+  assert.equal(body.YCLOUD_API_KEY, undefined);
+  assert.equal(body.GOOGLE_SHEETS_WEBHOOK_SECRET, undefined);
+
+  const unauthorized = await handleScheduledFollowup(
+    healthRequest("wrong-secret"),
+    { env: AUTOMATIC_TEMPLATE_ENV },
+  );
+  assert.equal(unauthorized.status, 401);
+});
+
+test("automatic template follow-up requires both switches and the exact safe corridor", async () => {
+  const now = new Date("2026-09-02T10:30:00-03:00");
+  assert.equal(
+    isAutomaticTemplateFollowupEligible(
+      AUTOMATIC_TEMPLATE_PAYLOAD,
+      AUTOMATIC_TEMPLATE_ENV,
+      now,
+    ),
+    true,
+  );
+  assert.equal(
+    isAutomaticTemplateFollowupEligible(
+      AUTOMATIC_TEMPLATE_PAYLOAD,
+      {
+        ...AUTOMATIC_TEMPLATE_ENV,
+        WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED: "false",
+      },
+      now,
+    ),
+    false,
+  );
+  assert.equal(
+    isAutomaticTemplateFollowupEligible(
+      AUTOMATIC_TEMPLATE_PAYLOAD,
+      AUTOMATIC_TEMPLATE_ENV,
+      new Date("2026-09-02T09:01:59-03:00"),
+    ),
+    false,
+  );
+  assert.equal(
+    isAutomaticTemplateFollowupEligible(
+      AUTOMATIC_TEMPLATE_PAYLOAD,
+      AUTOMATIC_TEMPLATE_ENV,
+      new Date("2026-09-03T09:02:01-03:00"),
+    ),
+    false,
+  );
+
+  const unsafeVariants = [
+    {
+      ...AUTOMATIC_TEMPLATE_PAYLOAD,
+      body: AUTOMATIC_TEMPLATE_PAYLOAD.body + " Posso te ligar?",
+    },
+    {
+      ...AUTOMATIC_TEMPLATE_PAYLOAD,
+      recentConversation: [
+        ...AUTOMATIC_TEMPLATE_PAYLOAD.recentConversation,
+        {
+          direction: "IN",
+          at: "2026-09-01T09:10:00-03:00",
+          messageId: "new-inbound",
+          text: "Tenho uma nova dúvida.",
+        },
+      ],
+    },
+    {
+      ...AUTOMATIC_TEMPLATE_PAYLOAD,
+      recentConversation:
+        AUTOMATIC_TEMPLATE_PAYLOAD.recentConversation.map(
+          (turn, index) => index === 0
+            ? { ...turn, text: "Qual é o preço da cervicoplastia?" }
+            : turn,
+        ),
+    },
+  ];
+  unsafeVariants.forEach((payload) => {
+    assert.equal(
+      isAutomaticTemplateFollowupEligible(
+        payload,
+        AUTOMATIC_TEMPLATE_ENV,
+        now,
+      ),
+      false,
+    );
+  });
+});
+
+test("automatic template follow-up sends without human approval only after 24 hours", async () => {
+  const templateSends = [];
+  const turns = [];
+  let semanticReviews = 0;
+  const response = await handleScheduledFollowup(
+    request(AUTOMATIC_TEMPLATE_PAYLOAD),
+    {
+      env: AUTOMATIC_TEMPLATE_ENV,
+      now: new Date("2026-09-02T10:30:00-03:00"),
+      getBusinessNumberImpl: async () => "+5511961957144",
+      reviewScheduledFollowupContextImpl: async () => {
+        semanticReviews += 1;
+        return { status: "completed", allowed: false };
+      },
+      sendYCloudPatientTextImpl: async () => {
+        assert.fail("automatic template must not use free-form text");
+      },
+      sendYCloudPatientFollowupTemplateImpl: async (message) => {
+        templateSends.push(message);
+        return { status: "completed", httpStatus: 200 };
+      },
+      appendConversationTurnImpl: async (turn) => {
+        turns.push(turn);
+        return { status: "completed" };
+      },
+    },
+  );
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(result.sent, true);
+  assert.equal(
+    result.semanticReview,
+    "deterministic_simple_unanswered_interest",
+  );
+  assert.equal(semanticReviews, 0);
+  assert.equal(templateSends.length, 1);
+  assert.equal(templateSends[0].body, AUTOMATIC_TEMPLATE_PAYLOAD.body);
+  assert.match(turns[0].text, /Retomando nosso contato/);
+});
+
+test("automatic template request fails closed when either authorization flag is absent", async () => {
+  const now = new Date("2026-09-02T10:30:00-03:00");
+  const disabled = await handleScheduledFollowup(
+    request(AUTOMATIC_TEMPLATE_PAYLOAD),
+    {
+      env: {
+        ...AUTOMATIC_TEMPLATE_ENV,
+        WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED: "false",
+      },
+      now,
+    },
+  );
+  assert.equal(disabled.status, 503);
+  assert.equal(
+    (await disabled.json()).error,
+    "automatic_template_followups_disabled",
+  );
+
+  const unmarked = await handleScheduledFollowup(
+    request({
+      ...AUTOMATIC_TEMPLATE_PAYLOAD,
+      automaticTemplate: false,
+    }),
+    { env: AUTOMATIC_TEMPLATE_ENV, now },
+  );
+  assert.equal(unmarked.status, 409);
+  assert.equal(
+    (await unmarked.json()).error,
+    "template_requires_human_approval",
+  );
+});
 
 test("scheduled follow-up stays disabled until explicitly enabled", async () => {
   const response = await handleScheduledFollowup(request(), {
@@ -149,6 +353,22 @@ test("simple unanswered procedure interest has a deterministic low-risk path", a
           at: "2026-09-01T09:10:00-03:00",
           messageId: "in-clinical-2",
           text: "Estou com dor e queria saber se é urgente.",
+        },
+      ],
+    }),
+    false,
+  );
+  assert.equal(
+    isSimpleUnansweredProcedureInterestFollowup({
+      ...SIMPLE_INTEREST_PAYLOAD,
+      recentConversation: [
+        SIMPLE_INTEREST_PAYLOAD.recentConversation[0],
+        {
+          ...SIMPLE_INTEREST_PAYLOAD.recentConversation[1],
+          text:
+            "Olá! Eu sou a Bruna, concierge da Clínica LIV. " +
+            "Posso te orientar sobre cervicoplastia (lifting cervical). " +
+            "Também posso falar de outros assuntos. O que você gostaria de entender primeiro?",
         },
       ],
     }),

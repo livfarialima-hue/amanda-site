@@ -6,6 +6,18 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 11 de setembro de 2026 — retomada automática segura por modelo entre 24 e 48 horas
+
+- **Status:** implementação local validada; não publicada e não ativada. Passaram 1.263/1.263 testes, arquitetura, escopo exato, build de 180 arquivos, inspeção das 44 URLs e `git diff --check`. Nenhuma função, trigger, propriedade, planilha, fila ou mensagem real foi alterada.
+- **Área:** continuidade entre aquisição e WhatsApp; nenhuma mudança em campanha, orçamento, lance, anúncio, página ou preço.
+- **Evidência:** seis retomadas de marketing estavam visíveis como manuais; cinco dependiam de aprovação humana para usar modelo e uma não tinha mensagem segura. O histórico registrava 42 cancelamentos automáticos por janela fechada, último envio em 30/08 e última tentativa em 01/09. A cadência de cerca de 24 horas colidia com a janela de texto livre, enquanto o uso do modelo fora dela continuava exclusivamente manual.
+- **Mudança preparada:** uma primeira retomada automática por modelo, entre 24 e 48 horas, apenas para duas mensagens exatas — interesse genérico em procedimento conhecido e resposta inicial da Bruna com abertura, procedimento e pergunta permitidos, ainda sem resposta. O contrato é repetido no Apps Script e no endpoint; duas flags independentes, preflight autenticado, instante de ativação e marcador no plano impedem ativação por publicação e qualquer backlog. A ativação reinstala o planejador diário e o processador antes de ligar as flags. Segunda retomada, preço, agenda, pós-consulta, contexto clínico ou sensível, nova atividade, takeover, opt-out, pausa, promessa e ambiguidade permanecem humanos.
+- **Hipótese:** reduzir tarefas manuais e silêncios nos contatos mais simples sem aumentar pressão, duplicidade ou erro de contexto.
+- **Métricas:** elegíveis, programadas, enviadas, respostas, contatos válidos, qualificados e consultas; cancelamentos por motivo, opt-outs, competição humana e incidentes.
+- **Revisão:** primeiro caso elegível, 24 horas, 72 horas e 7 dias após eventual ativação.
+- **Regra para manter:** zero envio retroativo, precoce, tardio, duplicado ou protegido, e evidência de continuidade útil no funil.
+- **Regra para reverter:** desligar as duas flags diante de qualquer envio indevido, procedimento incorreto, atividade nova ignorada, competição humana, opt-out, falha de modelo ou perda de rastreabilidade.
+
 ## 3 de setembro de 2026 — continuidade por público na otoplastia
 
 - **Status:** auditoria ao vivo concluída e candidato local preparado; site, Google Ads e Drive ainda sem publicação nesta etapa.

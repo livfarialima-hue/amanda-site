@@ -486,6 +486,212 @@ test("automatic planning uses only future slots inside each WhatsApp window", ()
   assert.equal(flexible.horario, "10:45");
 });
 
+function exactAutomaticTemplateConversation(outboundAt) {
+  const outAt = new Date(outboundAt);
+  return [
+    {
+      direcao: "IN",
+      dataHora: new Date(outAt.getTime() - 2 * 60 * 1000),
+      messageId: "in-simple-1",
+      texto:
+        "Olá! Quero saber sobre lifting cervical com a Dra. Amanda. Ref. TESTE-CERVICAL",
+    },
+    {
+      direcao: "OUT",
+      dataHora: outAt,
+      messageId: "out-simple-1",
+      texto:
+        "Olá! Eu sou a Bruna, concierge da Clínica LIV. Posso te orientar sobre cervicoplastia (lifting cervical). O que você gostaria de entender primeiro?",
+    },
+  ];
+}
+
+function automaticTemplateLead() {
+  return {
+    status: "Novo",
+    resumo: "",
+    proximaAcao: "",
+    referencia: "TESTE-CERVICAL",
+    plataforma: "Meta",
+    campanha: "",
+    criativo: "",
+    destino: "WhatsApp",
+    referenciaCompleta: "TESTE-CERVICAL",
+    neverFollowUp: false,
+    neverBotReply: false,
+    suspendAutomaticFollowUp: false,
+  };
+}
+
+test("automatic template corridor is exact and duplicated before the endpoint", () => {
+  const conversation = exactAutomaticTemplateConversation(
+    "2026-09-01T09:02:00-03:00",
+  );
+  const plan = {
+    etapa: 1,
+    messageIdBase: "out-simple-1",
+    sugestao:
+      "Olá! Queria retomar nossa conversa sobre cervicoplastia (lifting cervical). Ficou alguma dúvida que eu possa esclarecer para você? Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda, para você entender esse próximo passo com calma.",
+  };
+
+  assert.equal(
+    context.retomadaAutomaticaPorModeloEstrita_(plan, conversation),
+    true,
+  );
+  assert.equal(
+    context.retomadaAutomaticaPorModeloEstrita_(
+      {
+        ...plan,
+        sugestao: plan.sugestao + " Posso te ligar?",
+      },
+      conversation,
+    ),
+    false,
+  );
+  assert.equal(
+    context.retomadaAutomaticaPorModeloEstrita_(
+      plan,
+      conversation.concat({
+        direcao: "IN",
+        dataHora: new Date("2026-09-01T09:10:00-03:00"),
+        messageId: "in-new",
+        texto: "Tenho uma nova dúvida.",
+      }),
+    ),
+    false,
+  );
+  assert.equal(
+    context.retomadaAutomaticaPorModeloEstrita_(
+      plan,
+      [
+        conversation[0],
+        {
+          ...conversation[1],
+          texto:
+            "Olá! Eu sou a Bruna, concierge da Clínica LIV. " +
+            "Posso te orientar sobre cervicoplastia (lifting cervical). " +
+            "Também posso falar de outros assuntos. O que você gostaria de entender primeiro?",
+        },
+      ],
+    ),
+    false,
+  );
+  assert.equal(
+    context.retomadaAutomaticaPorModeloEstrita_(
+      plan,
+      [
+        {
+          ...conversation[0],
+          texto: "Quero saber o preço do lifting cervical.",
+        },
+        conversation[1],
+      ],
+    ),
+    false,
+  );
+});
+
+test("automatic template planning starts at 24 hours and never backfills pre-activation conversations", () => {
+  const now = new Date("2026-09-02T08:00:00-03:00");
+  const conversation = exactAutomaticTemplateConversation(
+    "2026-09-01T09:02:00-03:00",
+  );
+  const enabled = {
+    active: true,
+    activatedAt: new Date("2026-09-01T08:00:00-03:00"),
+  };
+  const candidate = context.criarCandidatoRetomada_(
+    "+5511999990002",
+    automaticTemplateLead(),
+    conversation,
+    now,
+    "2026-09-02",
+    enabled,
+  );
+
+  assert.ok(candidate);
+  assert.equal(candidate.templateAutomaticoElegivel, true);
+  context.atribuirHorariosRetomadas_([candidate], now);
+  assert.equal(candidate.responsavel, "bruna");
+  assert.equal(candidate.horario, "09:15");
+  assert.equal(candidate.deliveryModePlanejado, "template");
+  assert.equal(candidate.automaticoPorModelo, true);
+  assert.equal(
+    candidate.programadaPara.getTime() >=
+      conversation[1].dataHora.getTime() + 24 * 60 * 60 * 1000,
+    true,
+  );
+
+  const beforeActivation = context.criarCandidatoRetomada_(
+    "+5511999990002",
+    automaticTemplateLead(),
+    conversation,
+    now,
+    "2026-09-02",
+    {
+      active: true,
+      activatedAt: new Date("2026-09-01T10:00:00-03:00"),
+    },
+  );
+  assert.equal(beforeActivation.templateAutomaticoElegivel, false);
+  context.atribuirHorariosRetomadas_([beforeActivation], now);
+  assert.equal(beforeActivation.responsavel, "equipe");
+  assert.equal(beforeActivation.automaticoPorModelo, false);
+});
+
+test("automatic template moves an after-hours 24h target to the next safe morning", () => {
+  const now = new Date("2026-09-02T08:00:00-03:00");
+  const conversation = exactAutomaticTemplateConversation(
+    "2026-09-01T19:10:00-03:00",
+  );
+  const candidate = context.criarCandidatoRetomada_(
+    "+5511999990002",
+    automaticTemplateLead(),
+    conversation,
+    now,
+    "2026-09-02",
+    {
+      active: true,
+      activatedAt: new Date("2026-09-01T08:00:00-03:00"),
+    },
+  );
+
+  context.atribuirHorariosRetomadas_([candidate], now);
+  assert.equal(candidate.horario, "09:00");
+  assert.equal(candidate.futuro, true);
+  assert.equal(
+    context.formatarDataRetomadas_(
+      candidate.programadaPara,
+      "yyyy-MM-dd HH:mm",
+    ),
+    "2026-09-03 09:00",
+  );
+});
+
+test("automatic template expires safely when no slot remains before 48 hours", () => {
+  const conversation = exactAutomaticTemplateConversation(
+    "2026-09-01T09:02:00-03:00",
+  );
+  const candidate = context.criarCandidatoRetomada_(
+    "+5511999990002",
+    automaticTemplateLead(),
+    conversation,
+    new Date("2026-09-03T08:58:00-03:00"),
+    "2026-09-03",
+    {
+      active: true,
+      activatedAt: new Date("2026-09-01T08:00:00-03:00"),
+    },
+  );
+
+  context.atribuirHorariosRetomadas_(
+    [candidate],
+    new Date("2026-09-03T08:58:00-03:00"),
+  );
+  assert.equal(candidate.automaticoPorModelo, false);
+  assert.equal(candidate.responsavel, "equipe");
+});
+
 test("prefill identifies the procedure but never proves scheduling intent", () => {
   const messages = [
     {
@@ -1836,6 +2042,144 @@ test("automatic follow-up revalidation cancels suspension and new activity", () 
   );
 });
 
+test("automatic template validation requires exact context and the 24h to 48h interval", () => {
+  const conversation = exactAutomaticTemplateConversation(
+    "2026-09-01T09:02:00-03:00",
+  );
+  const plan = {
+    etapa: 1,
+    atrasoMinutos: 1,
+    messageIdBase: "out-simple-1",
+    sugestao:
+      "Olá! Queria retomar nossa conversa sobre cervicoplastia (lifting cervical). Ficou alguma dúvida que eu possa esclarecer para você? Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda, para você entender esse próximo passo com calma.",
+    aprovadoPelaEquipe: false,
+    templateAutomaticoAutorizado: true,
+  };
+
+  const valid = context.validarRetomadaAutomatica_(
+    plan,
+    automaticTemplateLead(),
+    conversation,
+    new Date("2026-09-02T10:30:00-03:00"),
+  );
+  assert.equal(valid.ok, true);
+  assert.equal(valid.deliveryMode, "template");
+  assert.equal(valid.automaticTemplate, true);
+
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      automaticTemplateLead(),
+      conversation,
+      new Date("2026-09-02T09:01:59-03:00"),
+    ).reason,
+    "automatic_template_timing_invalid",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      plan,
+      automaticTemplateLead(),
+      conversation,
+      new Date("2026-09-03T09:02:01-03:00"),
+    ).reason,
+    "automatic_template_timing_invalid",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      {
+        ...plan,
+        sugestao: plan.sugestao + " Posso te ligar?",
+      },
+      automaticTemplateLead(),
+      conversation,
+      new Date("2026-09-02T10:30:00-03:00"),
+    ).reason,
+    "automatic_template_not_eligible",
+  );
+  assert.equal(
+    context.validarRetomadaAutomatica_(
+      {
+        ...plan,
+        ultimoAtendimentoHumano: new Date(
+          "2026-09-01T09:01:00-03:00",
+        ),
+      },
+      automaticTemplateLead(),
+      conversation,
+      new Date("2026-09-02T10:30:00-03:00"),
+    ).reason,
+    "human_takeover_active",
+  );
+});
+
+test("automatic template configuration remains off without all three properties", () => {
+  const makeStore = (values) => ({
+    getProperty: (name) => values[name] || "",
+  });
+  const configNames = vm.runInContext("RETOMADAS_CONFIG", context);
+  const active = context.obterConfiguracaoRetomadasAutomaticasPorModelo_(
+    makeStore({
+      [configNames.propriedadeAtiva]: "true",
+      [configNames.propriedadeModeloAutomaticoAtivo]: "true",
+      [configNames.propriedadeModeloAutomaticoAtivadoEm]:
+        "2026-09-01T11:00:00.000Z",
+    }),
+  );
+  assert.equal(active.active, true);
+  assert.equal(active.activatedAt.toISOString(), "2026-09-01T11:00:00.000Z");
+
+  const missingTimestamp =
+    context.obterConfiguracaoRetomadasAutomaticasPorModelo_(
+      makeStore({
+        [configNames.propriedadeAtiva]: "true",
+        [configNames.propriedadeModeloAutomaticoAtivo]: "true",
+      }),
+    );
+  assert.equal(missingTimestamp.active, false);
+  assert.equal(
+    context.saudePermiteRetomadasAutomaticasPorModelo_({
+      ok: true,
+      scheduledFollowupsEnabled: true,
+      automaticTemplateEnabled: true,
+      templateConfigured: true,
+      patientSideEffectsAllowed: true,
+    }),
+    true,
+  );
+  assert.equal(
+    context.saudePermiteRetomadasAutomaticasPorModelo_({
+      ok: true,
+      scheduledFollowupsEnabled: true,
+      automaticTemplateEnabled: false,
+      templateConfigured: true,
+      patientSideEffectsAllowed: true,
+    }),
+    false,
+  );
+
+  const activationSource = source.slice(
+    source.indexOf("function ativarRetomadasAutomaticasPorModelo()"),
+    source.indexOf("function desativarRetomadasAutomaticasPorModelo()"),
+  );
+  const healthIndex = activationSource.indexOf(
+    "consultarSaudeEndpointRetomadasAutomaticas_",
+  );
+  const dailyTriggerIndex = activationSource.indexOf(
+    "instalarEmailDiarioRetomadas()",
+  );
+  const processorTriggerIndex = activationSource.indexOf(
+    "instalarGatilhoRetomadasAutomaticas_()",
+  );
+  const enableIndex = activationSource.indexOf(
+    "propriedades.setProperties",
+  );
+  assert.equal(healthIndex >= 0, true);
+  assert.equal(dailyTriggerIndex > healthIndex, true);
+  assert.equal(processorTriggerIndex > healthIndex, true);
+  assert.equal(enableIndex > dailyTriggerIndex, true);
+  assert.equal(enableIndex > processorTriggerIndex, true);
+});
+
 test("waiting-patient conversion registers one idempotent manual plan", () => {
   const phone = "+5511999999999";
   const leadHeaders = Array(25).fill("");
@@ -3063,6 +3407,7 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
   assert.equal(result.ok, true);
   assert.equal(result.sent, 1);
   assert.equal(outboundPayload.humanApproved, false);
+  assert.equal(outboundPayload.automaticTemplate, false);
   assert.equal(outboundPayload.deliveryMode, "text");
   assert.equal(outboundPayload.followupStage, 1);
   assert.equal(outboundPayload.contextAnchorMessageId, "out-1");
@@ -3094,6 +3439,177 @@ test("automatic follow-up refreshes the Central once after all durable writes", 
     events.filter((event) => event === "central-refresh").length,
     1,
   );
+});
+
+test("processor sends the automatic-template marker only for a post-activation plan", () => {
+  const now = new Date("2026-09-02T10:30:00-03:00");
+  const row = Array(18).fill("");
+  row[0] = "2026-09-02|automatic-template-plan";
+  row[1] = new Date("2026-09-02T08:00:00-03:00");
+  row[2] = "+5511999990002";
+  row[3] = "out-simple-1";
+  row[4] = 1;
+  row[8] = "Mensagem exata segura.";
+  row[9] = "Automático";
+  row[10] = "Programada";
+  row[11] = new Date("2026-09-02T10:29:00-03:00");
+  row[17] = true;
+
+  const controlSheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column) {
+      if (rowNumber === 2 && column === 1) {
+        return { getValues: () => [row] };
+      }
+      if (rowNumber === 2 && column === 11) {
+        return {
+          setValues(values) {
+            row.splice(10, 5, ...values[0]);
+          },
+        };
+      }
+      throw new Error(`unexpected range ${rowNumber}:${column}`);
+    },
+  };
+  const file = {
+    getSheetByName: (name) =>
+      ["Google Ads - Conversões", "_WHATSAPP_MENSAGENS"].includes(name)
+        ? {}
+        : null,
+  };
+  const properties = {
+    getProperty(name) {
+      const values = {
+        RETOMADAS_AUTOMATICAS_ATIVAS: "true",
+        RETOMADAS_AUTOMATICAS_MODELO_ATIVAS: "true",
+        RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM:
+          "2026-09-01T11:00:00.000Z",
+      };
+      return values[name] || "";
+    },
+  };
+
+  context.CONFIG = { spreadsheetId: "canonical-sheet" };
+  context.SpreadsheetApp = {
+    openById: () => file,
+    flush: () => {},
+  };
+  context.garantirEstruturaPreferenciasContato_ = () => {};
+  context.obterPlanilhaControleRetomadas_ = () => controlSheet;
+  context.carregarLeadsRetomadas_ = () => ({
+    "+5511999990002": {
+      status: "Novo",
+      resumo: "",
+      proximaAcao: "",
+    },
+  });
+  context.carregarConversasRetomadas_ = () => ({
+    "+5511999990002": exactAutomaticTemplateConversation(
+      "2026-09-01T09:02:00-03:00",
+    ),
+  });
+  let validationPlan;
+  context.validarRetomadaAutomatica_ = (plan) => {
+    validationPlan = plan;
+    return {
+      ok: true,
+      sugestao: "Mensagem exata segura.",
+      deliveryMode: "template",
+      automaticTemplate: true,
+    };
+  };
+  let outboundPayload;
+  context.enviarRetomadaAutomatica_ = (payload) => {
+    outboundPayload = payload;
+    return { ok: true, sent: true };
+  };
+  context.registrarMensagemRetomadaAutomatica_ = () => {};
+  context.atualizarCentralAtendimentoInterno_ = () => ({ ok: true });
+
+  const result = context.processarRetomadasAutomaticasInterno_(
+    now,
+    "test-secret",
+    properties,
+  );
+
+  assert.equal(result.sent, 1);
+  assert.equal(validationPlan.templateAutomaticoAutorizado, true);
+  assert.equal(outboundPayload.automaticTemplate, true);
+  assert.equal(outboundPayload.deliveryMode, "template");
+});
+
+test("processor cancels an automatic-template backlog created before the latest activation", () => {
+  const now = new Date("2026-09-11T10:30:00-03:00");
+  const row = Array(18).fill("");
+  row[0] = "old-automatic-template-plan";
+  row[1] = new Date("2026-09-09T08:00:00-03:00");
+  row[2] = "+5511999990002";
+  row[3] = "out-simple-1";
+  row[4] = 1;
+  row[8] = "Mensagem exata segura.";
+  row[9] = "Automático";
+  row[10] = "Programada";
+  row[11] = new Date("2026-09-11T10:29:00-03:00");
+  row[17] = true;
+  const writes = [];
+  const controlSheet = {
+    getLastRow: () => 2,
+    getRange(rowNumber, column) {
+      if (rowNumber === 2 && column === 1) {
+        return { getValues: () => [row] };
+      }
+      if (rowNumber === 2 && column === 11) {
+        return {
+          setValues(values) {
+            writes.push(values[0]);
+            row.splice(10, 5, ...values[0]);
+          },
+        };
+      }
+      throw new Error(`unexpected range ${rowNumber}:${column}`);
+    },
+  };
+  const file = {
+    getSheetByName: (name) =>
+      ["Google Ads - Conversões", "_WHATSAPP_MENSAGENS"].includes(name)
+        ? {}
+        : null,
+  };
+  const properties = {
+    getProperty(name) {
+      const values = {
+        RETOMADAS_AUTOMATICAS_ATIVAS: "true",
+        RETOMADAS_AUTOMATICAS_MODELO_ATIVAS: "true",
+        RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM:
+          "2026-09-10T11:00:00.000Z",
+      };
+      return values[name] || "";
+    },
+  };
+
+  context.CONFIG = { spreadsheetId: "canonical-sheet" };
+  context.SpreadsheetApp = { openById: () => file };
+  context.garantirEstruturaPreferenciasContato_ = () => {};
+  context.obterPlanilhaControleRetomadas_ = () => controlSheet;
+  context.carregarLeadsRetomadas_ = () => ({});
+  context.carregarConversasRetomadas_ = () => ({});
+  context.validarRetomadaAutomatica_ = () => {
+    assert.fail("pre-activation backlog must not reach validation");
+  };
+  context.enviarRetomadaAutomatica_ = () => {
+    assert.fail("pre-activation backlog must not be sent");
+  };
+  context.atualizarCentralAtendimentoInterno_ = () => ({ ok: true });
+
+  const result = context.processarRetomadasAutomaticasInterno_(
+    now,
+    "test-secret",
+    properties,
+  );
+
+  assert.equal(result.sent, 0);
+  assert.equal(result.cancelled, 1);
+  assert.match(writes[0][0], /before_activation/);
 });
 
 test("semantic follow-up payload keeps only the latest 20 bounded turns in order", () => {
@@ -3235,4 +3751,77 @@ test("integrity warnings are prominent and cannot look like a complete routine e
   assert.match(html, /A origem completa não pôde ser atualizada/);
   assert.match(html, /omitidos 1/);
   assert.match(source, /integridade\.avisos\.length \? "ATENÇÃO — "/);
+});
+
+test("automatic follow-up diagnosis is aggregate, authenticated and read-only", () => {
+  const scheduled = Array(18).fill("");
+  scheduled[1] = new Date("2026-09-11T08:00:00-03:00");
+  scheduled[9] = "Automático";
+  scheduled[10] = "Programada";
+  scheduled[11] = new Date("2026-09-11T10:30:00-03:00");
+  scheduled[17] = true;
+  const sent = Array(18).fill("");
+  sent[1] = new Date("2026-09-10T08:00:00-03:00");
+  sent[9] = "Automático aprovado";
+  sent[10] = "Enviada";
+  sent[12] = new Date("2026-09-10T10:30:00-03:00");
+  sent[13] = new Date("2026-09-10T10:31:00-03:00");
+  const controlSheet = {
+    getLastRow: () => 3,
+    getRange: () => ({ getValues: () => [scheduled, sent] }),
+  };
+  const propertyValues = {
+    RETOMADAS_AUTOMATICAS_ATIVAS: "true",
+    RETOMADAS_AUTOMATICAS_MODELO_ATIVAS: "true",
+    RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM:
+      "2026-09-11T11:00:00.000Z",
+    LEADS_INGEST_SECRET: "secret",
+  };
+  context.CONFIG = { spreadsheetId: "canonical-sheet" };
+  context.PropertiesService = {
+    getScriptProperties: () => ({
+      getProperty: (name) => propertyValues[name] || "",
+    }),
+  };
+  context.ScriptApp = {
+    getProjectTriggers: () => [
+      { getHandlerFunction: () => "processarRetomadasAutomaticas" },
+      { getHandlerFunction: () => "enviarEmailDiarioRetomadas" },
+    ],
+  };
+  context.SpreadsheetApp = {
+    openById: () => ({
+      getSheetByName: (name) =>
+        name === "_WHATSAPP_RETOMADAS" ? controlSheet : null,
+    }),
+  };
+  context.UrlFetchApp = {
+    fetch: (_url, options) => {
+      assert.equal(options.method, "get");
+      assert.equal(options.headers["x-liv-secret"], "secret");
+      return {
+        getResponseCode: () => 200,
+        getContentText: () => JSON.stringify({
+          ok: true,
+          scheduledFollowupsEnabled: true,
+          automaticTemplateEnabled: true,
+          templateConfigured: true,
+          patientSideEffectsAllowed: true,
+          automationMode: "active",
+        }),
+      };
+    },
+  };
+  context.console = { log: () => {} };
+
+  const result = context.diagnosticarRetomadasAutomaticas();
+
+  assert.equal(result.automaticTemplateActive, true);
+  assert.equal(result.processorTriggerCount, 1);
+  assert.equal(result.dailyEmailTriggerCount, 1);
+  assert.equal(result.queue.totalRows, 2);
+  assert.equal(result.queue.scheduled, 1);
+  assert.equal(result.queue.scheduledAutomaticTemplate, 1);
+  assert.equal(result.endpoint.automaticTemplateEnabled, true);
+  assert.equal(result.endpoint.templateConfigured, true);
 });

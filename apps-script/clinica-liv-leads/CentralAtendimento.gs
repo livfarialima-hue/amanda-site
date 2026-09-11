@@ -60,6 +60,10 @@ function onOpen() {
       "diagnosticarCentralAtendimento",
     )
     .addItem(
+      "Diagnosticar retomadas automáticas",
+      "mostrarDiagnosticoRetomadasAutomaticas",
+    )
+    .addItem(
       "Como usar a Central",
       "comoUsarCentralAtendimento",
     )
@@ -78,11 +82,13 @@ function comoUsarCentralAtendimento() {
       "1. Comece pelas linhas críticas ou de alta prioridade e abra a conversa pelo link do WhatsApp.",
       "2. Agir até é o limite para a equipe revisar ou resolver a linha. Essa coluna não programa mensagem.",
       "3. Se a paciente disse que vai pensar, conversar ou retornar, mantenha como Aguardando paciente. Adiar até apenas faz a linha voltar para revisão humana depois; também não envia mensagem.",
-      "4. Para transformar um Aguardando paciente em retomada automática, escolha Programar retomada com a Bruna em Status operacional, escreva Mensagem final e preencha Programar para.",
-      "5. Confira a elegibilidade e marque Aprovar com a Bruna. A Central sugere automaticamente a próxima faixa de maior resposta em Programar para; você pode ajustar o horário antes de usar Central LIV > Processar decisões marcadas.",
-      "6. Para impedir somente uma retomada já registrada, marque Cancelar retomada. A próxima atualização automática processará a decisão; para aplicar na hora, use Central LIV > Processar decisões marcadas.",
-      "7. A Bruna revalida conversa, procedimento, janela do WhatsApp, opt-out, takeover humano e segurança antes de qualquer envio.",
-      "8. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
+      "4. Quando a função estiver explicitamente ativada, somente a primeira retomada de um interesse genérico e inequívoco em procedimento conhecido poderá ser programada automaticamente, a partir de 24 horas, por modelo aprovado. Conversas anteriores à ativação nunca entram retroativamente.",
+      "5. Preço, agenda, contexto clínico, nova mensagem, intervenção humana, opt-out ou qualquer ambiguidade continuam exigindo ação humana.",
+      "6. Para transformar outro Aguardando paciente em retomada com a Bruna, escolha Programar retomada com a Bruna em Status operacional, escreva Mensagem final e preencha Programar para.",
+      "7. Confira a elegibilidade e marque Aprovar com a Bruna. A Central sugere automaticamente a próxima faixa de maior resposta em Programar para; você pode ajustar o horário antes de usar Central LIV > Processar decisões marcadas.",
+      "8. Para impedir somente uma retomada já registrada, marque Cancelar retomada. A próxima atualização automática processará a decisão; para aplicar na hora, use Central LIV > Processar decisões marcadas.",
+      "9. A Bruna revalida conversa, procedimento, tempo, opt-out, takeover humano e segurança antes de qualquer envio. Use Central LIV > Diagnosticar retomadas automáticas para conferir as travas sem alterar a fila.",
+      "10. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
     ].join("\n\n"),
     SpreadsheetApp.getUi().ButtonSet.OK,
   );

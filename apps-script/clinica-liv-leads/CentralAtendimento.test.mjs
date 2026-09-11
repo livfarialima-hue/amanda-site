@@ -47,6 +47,17 @@ function loadContext() {
   return context;
 }
 
+test("Central menu exposes the read-only automatic follow-up diagnosis", () => {
+  assert.match(
+    source,
+    /Diagnosticar retomadas automáticas[\s\S]*mostrarDiagnosticoRetomadasAutomaticas/,
+  );
+  assert.match(
+    source,
+    /Conversas anteriores à ativação nunca entram retroativamente/,
+  );
+});
+
 test("prioritizes overdue commitments over other queues", () => {
   const context = loadContext();
   const overdue = context.criarItemCentral_({

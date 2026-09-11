@@ -15,6 +15,9 @@ const RETOMADAS_CONFIG = Object.freeze({
   minimoHorasAposPromessaRetorno: 24,
   maximoDiasSemResposta: 10,
   maximoAtrasoAutomaticoMinutos: 240,
+  minimoHorasRetomadaAutomaticaModelo: 24,
+  maximoHorasRetomadaAutomaticaModelo: 48,
+  intervaloPlanejamentoAutomaticoMinutos: 15,
   janelaWhatsAppMinutos: 1430,
   margemExecucaoPlanejadaMinutos: 5,
   endpointRetomadaAutomatica:
@@ -23,6 +26,10 @@ const RETOMADAS_CONFIG = Object.freeze({
     "RETOMADAS_AUTOMATICAS_ENDPOINT",
   propriedadeSegredo: "LEADS_INGEST_SECRET",
   propriedadeAtiva: "RETOMADAS_AUTOMATICAS_ATIVAS",
+  propriedadeModeloAutomaticoAtivo:
+    "RETOMADAS_AUTOMATICAS_MODELO_ATIVAS",
+  propriedadeModeloAutomaticoAtivadoEm:
+    "RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM",
   funcaoGatilhoAutomatico: "processarRetomadasAutomaticas",
   urlAplicativoCanonico:
     "https://script.google.com/macros/s/AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A/exec",
@@ -714,6 +721,7 @@ const RETOMADAS_CONTROLE_HEADERS = Object.freeze([
   "Erro do envio",
   "Aprovada pela equipe em",
   "Origem da aprovação",
+  "Template automático seguro",
 ]);
 
 const RETOMADAS_ETAPAS = Object.freeze([
@@ -730,6 +738,55 @@ const RETOMADAS_ETAPAS = Object.freeze([
     rotulo: "2ª e última retomada — cerca de 72h",
   }),
 ]);
+
+const RETOMADAS_MODELO_PROCEDIMENTOS = Object.freeze([
+  Object.freeze({
+    id: "cervical",
+    padrao: /\b(cervicoplastia|lifting cervical|lipo de papada)\b/,
+    frases: Object.freeze([
+      "cervicoplastia lifting cervical",
+      "cervicoplastia",
+      "lifting cervical",
+      "lipo de papada",
+    ]),
+  }),
+  Object.freeze({
+    id: "facial",
+    padrao: /\b(lifting facial|minilifting|minilift)\b/,
+    frases: Object.freeze([
+      "lifting facial",
+      "minilifting",
+      "minilift",
+    ]),
+  }),
+  Object.freeze({
+    id: "blefaroplastia",
+    padrao: /\b(blefaroplastia|cirurgia das palpebras)\b/,
+    frases: Object.freeze([
+      "blefaroplastia",
+      "cirurgia das palpebras",
+    ]),
+  }),
+  Object.freeze({
+    id: "otoplastia",
+    padrao: /\b(otoplastia|cirurgia das orelhas)\b/,
+    frases: Object.freeze([
+      "otoplastia",
+      "cirurgia das orelhas",
+    ]),
+  }),
+  Object.freeze({
+    id: "rinoplastia",
+    padrao: /\b(rinoplastia|cirurgia do nariz)\b/,
+    frases: Object.freeze([
+      "rinoplastia",
+      "cirurgia do nariz",
+    ]),
+  }),
+]);
+
+const RETOMADAS_MODELO_CONTEXTO_SENSIVEL =
+  /\b(dor|sangr|ferid|infecc|febre|medic|remedio|diagnostic|cancer|gravidez|urgent|emergenc|complic|risco|anestesia|laudo|exame|foto|imagem|pos operator|pre operator|contraindic|doenca|alerg|pressao|diabet|cardiac|hospital|internad|valor|preco|orcamento)\b/;
 
 const RETOMADAS_STATUS_ENCERRADOS = Object.freeze([
   "consulta agendada",
@@ -980,10 +1037,190 @@ function ativarRetomadasAutomaticas() {
   };
 }
 
+function obterConfiguracaoRetomadasAutomaticasPorModelo_(
+  propriedades,
+) {
+  const store = propriedades ||
+    (typeof PropertiesService !== "undefined"
+      ? PropertiesService.getScriptProperties()
+      : null);
+  if (!store || typeof store.getProperty !== "function") {
+    return {
+      active: false,
+      baseActive: false,
+      modelActive: false,
+      activatedAt: null,
+    };
+  }
+
+  const baseActive =
+    store.getProperty(RETOMADAS_CONFIG.propriedadeAtiva) ===
+    "true";
+  const modelActive =
+    store.getProperty(
+      RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivo,
+    ) === "true";
+  const activatedAt = dataRetomadaValida_(
+    store.getProperty(
+      RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivadoEm,
+    ),
+  );
+
+  return {
+    active: baseActive && modelActive && Boolean(activatedAt),
+    baseActive: baseActive,
+    modelActive: modelActive,
+    activatedAt: activatedAt,
+  };
+}
+
+function consultarSaudeEndpointRetomadasAutomaticas_(
+  propriedades,
+  segredo,
+) {
+  const endpoint =
+    propriedades.getProperty(
+      RETOMADAS_CONFIG.propriedadeEndpointRetomadaAutomatica,
+    ) || RETOMADAS_CONFIG.endpointRetomadaAutomatica;
+  let resposta;
+
+  try {
+    resposta = UrlFetchApp.fetch(endpoint, {
+      method: "get",
+      headers: { "x-liv-secret": segredo },
+      muteHttpExceptions: true,
+    });
+  } catch (error) {
+    return {
+      ok: false,
+      error: "endpoint_health_request_failed",
+    };
+  }
+
+  let corpo = {};
+  try {
+    corpo = JSON.parse(resposta.getContentText() || "{}");
+  } catch (error) {
+    corpo = {};
+  }
+
+  return {
+    ok:
+      resposta.getResponseCode() >= 200 &&
+      resposta.getResponseCode() < 300 &&
+      corpo.ok === true,
+    httpStatus: resposta.getResponseCode(),
+    scheduledFollowupsEnabled:
+      corpo.scheduledFollowupsEnabled === true,
+    automaticTemplateEnabled:
+      corpo.automaticTemplateEnabled === true,
+    templateConfigured: corpo.templateConfigured === true,
+    patientSideEffectsAllowed:
+      corpo.patientSideEffectsAllowed === true,
+    automationMode: String(corpo.automationMode || "unknown"),
+    error: String(corpo.error || ""),
+  };
+}
+
+function saudePermiteRetomadasAutomaticasPorModelo_(saude) {
+  return Boolean(
+    saude &&
+      saude.ok === true &&
+      saude.scheduledFollowupsEnabled === true &&
+      saude.automaticTemplateEnabled === true &&
+      saude.templateConfigured === true &&
+      saude.patientSideEffectsAllowed === true,
+  );
+}
+
+function ativarRetomadasAutomaticasPorModelo() {
+  const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const planilhaLeads = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaLeads,
+  );
+  if (!planilhaLeads) {
+    throw new Error("Aba de leads da Dra. Amanda não encontrada.");
+  }
+
+  const propriedades = PropertiesService.getScriptProperties();
+  const segredo = propriedades.getProperty(
+    RETOMADAS_CONFIG.propriedadeSegredo,
+  );
+  if (!segredo) {
+    throw new Error(
+      "A propriedade LEADS_INGEST_SECRET não está configurada.",
+    );
+  }
+
+  const saude = consultarSaudeEndpointRetomadasAutomaticas_(
+    propriedades,
+    segredo,
+  );
+  if (!saudePermiteRetomadasAutomaticasPorModelo_(saude)) {
+    throw new Error(
+      "O endpoint de retomadas ainda não passou pelo preflight seguro. " +
+        "Nenhuma automação foi ativada.",
+    );
+  }
+
+  if (typeof garantirEstruturaPreferenciasContato_ === "function") {
+    garantirEstruturaPreferenciasContato_(planilhaLeads);
+  }
+  obterPlanilhaControleRetomadas_(arquivo);
+
+  instalarEmailDiarioRetomadas();
+  instalarGatilhoRetomadasAutomaticas_();
+  const ativadaEm = new Date().toISOString();
+  propriedades.setProperties({
+    [RETOMADAS_CONFIG.propriedadeAtiva]: "true",
+    [RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivo]: "true",
+    [RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivadoEm]:
+      ativadaEm,
+  });
+
+  return {
+    ok: true,
+    active: true,
+    automaticTemplateActive: true,
+    activatedAt: ativadaEm,
+    dailyPlannerTime: "08:00",
+    intervalMinutes: 5,
+    endpointHealth: saude,
+  };
+}
+
+function desativarRetomadasAutomaticasPorModelo() {
+  const propriedades = PropertiesService.getScriptProperties();
+  propriedades.setProperty(
+    RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivo,
+    "false",
+  );
+  propriedades.deleteProperty(
+    RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivadoEm,
+  );
+
+  return {
+    ok: true,
+    active: false,
+    baseActive:
+      propriedades.getProperty(
+        RETOMADAS_CONFIG.propriedadeAtiva,
+      ) === "true",
+  };
+}
+
 function desativarRetomadasAutomaticas() {
-  PropertiesService.getScriptProperties().setProperty(
+  const propriedades = PropertiesService.getScriptProperties();
+  propriedades.setProperty(
     RETOMADAS_CONFIG.propriedadeAtiva,
     "false",
+  );
+  propriedades.setProperty(
+    RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivo,
+    "false",
+  );
+  propriedades.deleteProperty(
+    RETOMADAS_CONFIG.propriedadeModeloAutomaticoAtivadoEm,
   );
   removerGatilhosRetomadasAutomaticas_();
   return { ok: true, active: false };
@@ -1008,6 +1245,145 @@ function removerGatilhosRetomadasAutomaticas_() {
       ScriptApp.deleteTrigger(trigger);
     }
   });
+}
+
+function maiorDataRetomadas_(valores) {
+  return (valores || []).reduce(function (maior, valor) {
+    const data = dataRetomadaValida_(valor);
+    if (!data) return maior;
+    return !maior || data.getTime() > maior.getTime()
+      ? data
+      : maior;
+  }, null);
+}
+
+function diagnosticarRetomadasAutomaticas() {
+  const propriedades = PropertiesService.getScriptProperties();
+  const configuracaoModelo =
+    obterConfiguracaoRetomadasAutomaticasPorModelo_(propriedades);
+  const triggers = ScriptApp.getProjectTriggers();
+  const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const planilha = arquivo.getSheetByName(
+    RETOMADAS_CONFIG.planilhaControle,
+  );
+  const linhas =
+    planilha && planilha.getLastRow() >= 2
+      ? planilha
+          .getRange(
+            2,
+            1,
+            planilha.getLastRow() - 1,
+            RETOMADAS_CONTROLE_HEADERS.length,
+          )
+          .getValues()
+      : [];
+  const programadas = linhas.filter(function (linha) {
+    return String(linha[10] || "").trim() === "Programada";
+  });
+  const segredo = propriedades.getProperty(
+    RETOMADAS_CONFIG.propriedadeSegredo,
+  );
+  const endpointHealth = segredo
+    ? consultarSaudeEndpointRetomadasAutomaticas_(
+        propriedades,
+        segredo,
+      )
+    : { ok: false, error: "secret_missing" };
+  const resultado = {
+    ok: true,
+    checkedAt: new Date().toISOString(),
+    baseActive: configuracaoModelo.baseActive,
+    automaticTemplateActive: configuracaoModelo.active,
+    automaticTemplateFlag: configuracaoModelo.modelActive,
+    activatedAt: configuracaoModelo.activatedAt
+      ? configuracaoModelo.activatedAt.toISOString()
+      : "",
+    processorTriggerCount: triggers.filter(function (trigger) {
+      return (
+        trigger.getHandlerFunction() ===
+        RETOMADAS_CONFIG.funcaoGatilhoAutomatico
+      );
+    }).length,
+    dailyEmailTriggerCount: triggers.filter(function (trigger) {
+      return trigger.getHandlerFunction() ===
+        "enviarEmailDiarioRetomadas";
+    }).length,
+    queue: {
+      totalRows: linhas.length,
+      scheduled: programadas.length,
+      scheduledAutomaticTemplate: programadas.filter(function (linha) {
+        return linha[17] === true;
+      }).length,
+      scheduledLegacyAutomatic: programadas.filter(function (linha) {
+        return (
+          linha[17] !== true &&
+          String(linha[9] || "").trim() === "Automático"
+        );
+      }).length,
+      scheduledManualApproved: programadas.filter(function (linha) {
+        return String(linha[9] || "").trim() ===
+          "Automático aprovado";
+      }).length,
+      lastPlanAt: maiorDataRetomadas_(
+        linhas.map(function (linha) {
+          return linha[1];
+        }),
+      ),
+      lastAttemptAt: maiorDataRetomadas_(
+        linhas.map(function (linha) {
+          return linha[12];
+        }),
+      ),
+      lastSentAt: maiorDataRetomadas_(
+        linhas.map(function (linha) {
+          return linha[13];
+        }),
+      ),
+    },
+    endpoint: endpointHealth,
+  };
+
+  ["lastPlanAt", "lastAttemptAt", "lastSentAt"].forEach(
+    function (campo) {
+      resultado.queue[campo] = resultado.queue[campo]
+        ? resultado.queue[campo].toISOString()
+        : "";
+    },
+  );
+  console.log(JSON.stringify(resultado));
+  return resultado;
+}
+
+function mostrarDiagnosticoRetomadasAutomaticas() {
+  const resultado = diagnosticarRetomadasAutomaticas();
+  const endpoint = resultado.endpoint || {};
+  const fila = resultado.queue || {};
+  const linhas = [
+    "Automação-base: " +
+      (resultado.baseActive ? "ativa" : "inativa"),
+    "Template automático seguro: " +
+      (resultado.automaticTemplateActive ? "ativo" : "inativo"),
+    "Gatilho do processador: " +
+      resultado.processorTriggerCount,
+    "Gatilho do e-mail diário: " +
+      resultado.dailyEmailTriggerCount,
+    "Fila programada: " + fila.scheduled,
+    "Fila automática por modelo: " +
+      fila.scheduledAutomaticTemplate,
+    "Última tentativa: " + (fila.lastAttemptAt || "nenhuma"),
+    "Último envio: " + (fila.lastSentAt || "nenhum"),
+    "Endpoint pronto: " +
+      (saudePermiteRetomadasAutomaticasPorModelo_(endpoint)
+        ? "sim"
+        : "não"),
+  ];
+
+  SpreadsheetApp.getUi().alert(
+    "Diagnóstico das retomadas automáticas",
+    linhas.join("\n\n"),
+    SpreadsheetApp.getUi().ButtonSet.OK,
+  );
+  return resultado;
 }
 
 function enviarEmailDiarioRetomadas() {
@@ -1368,6 +1744,8 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
   const conversasPorTelefone = carregarConversasRetomadas_(
     planilhaMensagens,
   );
+  const configuracaoModeloAutomatico =
+    obterConfiguracaoRetomadasAutomaticasPorModelo_();
   const candidatos = [];
 
   Object.keys(conversasPorTelefone).forEach(function (telefone) {
@@ -1389,6 +1767,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
       conversa,
       agora,
       dataLocal,
+      configuracaoModeloAutomatico,
     );
 
     const identidadeRetomada = candidato
@@ -1430,7 +1809,12 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     candidato.automatico =
       candidato.responsavel === "bruna" &&
       Boolean(candidato.horario) &&
+      !candidato.lead.neverBotReply &&
       !candidato.lead.suspendAutomaticFollowUp;
+    if (!candidato.automatico) {
+      candidato.responsavel = "equipe";
+      candidato.automaticoPorModelo = false;
+    }
     candidato.modo = candidato.lead.suspendAutomaticFollowUp
       ? "Suspensa na planilha"
       : candidato.automatico
@@ -1697,12 +2081,40 @@ function carregarConversasRetomadas_(planilha) {
   return resultado;
 }
 
+function carregarAtendimentosHumanosRetomadas_(arquivo) {
+  const nomePlanilha =
+    typeof CONFIG !== "undefined" && CONFIG.humanTakeoverSheetName
+      ? CONFIG.humanTakeoverSheetName
+      : "_WHATSAPP_ATENDIMENTO_HUMANO";
+  const planilha = arquivo.getSheetByName(nomePlanilha);
+  const resultado = {};
+  if (!planilha || planilha.getLastRow() < 2) return resultado;
+
+  planilha
+    .getRange(2, 1, planilha.getLastRow() - 1, 6)
+    .getValues()
+    .forEach(function (linha) {
+      const telefone = normalizarTelefoneRetomadas_(linha[2]);
+      const dataHora = dataRetomadaValida_(linha[3]);
+      if (!telefone || !dataHora) return;
+      if (
+        !resultado[telefone] ||
+        dataHora.getTime() >= resultado[telefone].getTime()
+      ) {
+        resultado[telefone] = dataHora;
+      }
+    });
+
+  return resultado;
+}
+
 function criarCandidatoRetomada_(
   telefone,
   lead,
   conversa,
   agora,
   dataLocal,
+  configuracaoModeloAutomatico,
 ) {
   if (!conversa.length) {
     return null;
@@ -1840,7 +2252,7 @@ function criarCandidatoRetomada_(
     assuntoRetomada,
   );
 
-  return {
+  const candidato = {
     telefone: telefone,
     lead: lead,
     ultimaMensagem: ultimaMensagem,
@@ -1880,6 +2292,219 @@ function criarCandidatoRetomada_(
       etapa.numero,
     ].join("|"),
   };
+
+  const configuracao = configuracaoModeloAutomatico || {
+    active: false,
+    activatedAt: null,
+  };
+  const ativadaEm = dataRetomadaValida_(configuracao.activatedAt);
+  candidato.templateAutomaticoElegivel = Boolean(
+    configuracao.active === true &&
+      ativadaEm &&
+      lead.neverBotReply !== true &&
+      lead.suspendAutomaticFollowUp !== true &&
+      ultimaMensagem.dataHora.getTime() >= ativadaEm.getTime() &&
+      retomadaAutomaticaPorModeloEstrita_(
+        {
+          etapa: etapa.numero,
+          messageIdBase: ultimaMensagem.messageId,
+          sugestao: candidato.sugestao,
+        },
+        conversa,
+      ),
+  );
+  candidato.alvoAutomaticoModelo = candidato.templateAutomaticoElegivel
+    ? new Date(
+        ultimaMensagem.dataHora.getTime() +
+          RETOMADAS_CONFIG.minimoHorasRetomadaAutomaticaModelo *
+            60 *
+            60 *
+            1000,
+      )
+    : null;
+
+  return candidato;
+}
+
+function normalizarTextoRetomadaModelo_(texto) {
+  return normalizarTextoRetomadas_(texto)
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function identificarProcedimentoRetomadaModelo_(texto) {
+  const normalizado = normalizarTextoRetomadaModelo_(texto);
+  const encontrado = RETOMADAS_MODELO_PROCEDIMENTOS.find(
+    function (procedimento) {
+      return procedimento.padrao.test(normalizado);
+    },
+  );
+  return encontrado ? encontrado.id : "";
+}
+
+function frasesProcedimentoRetomadaModelo_(procedimentoId) {
+  const procedimento = RETOMADAS_MODELO_PROCEDIMENTOS.find(
+    function (item) {
+      return item.id === procedimentoId;
+    },
+  );
+  return procedimento ? procedimento.frases : [];
+}
+
+function removerSufixoOperacionalRetomadaModelo_(texto) {
+  return String(texto || "").replace(
+    /\b(?:ref(?:er[eê]ncia)?\.?|jid)\s*:?.*$/i,
+    "",
+  );
+}
+
+function entradaGenericaExataRetomadaModelo_(
+  texto,
+  procedimentoId,
+) {
+  const normalizado = normalizarTextoRetomadaModelo_(
+    removerSufixoOperacionalRetomadaModelo_(texto),
+  ).replace(/^ola\s+/, "");
+  const frases = frasesProcedimentoRetomadaModelo_(procedimentoId);
+
+  return frases.some(function (frase) {
+    return [
+      "quero saber sobre " + frase,
+      "quero saber sobre " + frase + " com a dra amanda",
+      "tenho interesse em " + frase,
+      "tenho interesse em " + frase + " com a dra amanda",
+      "tenho interesse em " +
+        frase +
+        " e gostaria de entender melhor como funciona a avaliacao",
+      "tenho interesse em " +
+        frase +
+        " com a dra amanda e gostaria de entender melhor como funciona a avaliacao",
+    ].includes(normalizado);
+  });
+}
+
+function saidaBrunaExataRetomadaModelo_(texto, procedimentoId) {
+  const normalizado = normalizarTextoRetomadaModelo_(texto);
+  const marcador = " eu sou a bruna concierge da clinica liv";
+  const indiceMarcador = normalizado.indexOf(marcador);
+
+  if (indiceMarcador <= 0) return false;
+
+  const saudacao = normalizado.slice(0, indiceMarcador);
+  if (!/^ola(?: [a-z0-9]{1,40}){0,4}$/.test(saudacao)) {
+    return false;
+  }
+
+  let restante = normalizado
+    .slice(indiceMarcador + marcador.length)
+    .trim();
+  if (restante.indexOf("faria lima ") === 0) {
+    restante = restante.slice("faria lima ".length);
+  }
+
+  const frases = frasesProcedimentoRetomadaModelo_(procedimentoId);
+  return frases.some(function (frase) {
+    const perguntas = [
+      "o que voce gostaria de entender primeiro",
+      "como posso te chamar",
+      "o que voce gostaria de entender primeiro sobre " + frase,
+    ];
+    if (procedimentoId === "cervical") {
+      perguntas.push(
+        "o que mais chamou sua atencao no pescoco quando decidiu procurar uma avaliacao",
+      );
+    }
+
+    return perguntas.some(function (pergunta) {
+      return (
+        restante ===
+        "posso te orientar sobre " + frase + " " + pergunta
+      );
+    });
+  });
+}
+
+function sugestaoExataRetomadaModelo_(texto, procedimentoId) {
+  const normalizado = normalizarTextoRetomadaModelo_(texto);
+  const frases = frasesProcedimentoRetomadaModelo_(procedimentoId);
+
+  return frases.some(function (frase) {
+    return (
+      normalizado ===
+      "ola queria retomar nossa conversa sobre " +
+        frase +
+        " ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma"
+    );
+  });
+}
+
+function retomadaAutomaticaPorModeloEstrita_(
+  plano,
+  conversa,
+) {
+  if (
+    !plano ||
+    Number(plano.etapa || 0) !== 1 ||
+    !Array.isArray(conversa) ||
+    conversa.length !== 2
+  ) {
+    return false;
+  }
+
+  const entrada = conversa[0];
+  const saida = conversa[1];
+  const entradaEm = dataRetomadaValida_(entrada && entrada.dataHora);
+  const saidaEm = dataRetomadaValida_(saida && saida.dataHora);
+  if (
+    !entrada ||
+    !saida ||
+    entrada.direcao !== "IN" ||
+    saida.direcao !== "OUT" ||
+    !entradaEm ||
+    !saidaEm ||
+    saidaEm.getTime() < entradaEm.getTime() ||
+    !plano.messageIdBase ||
+    String(saida.messageId || "").trim() !==
+      String(plano.messageIdBase || "").trim()
+  ) {
+    return false;
+  }
+
+  const textoEntrada = normalizarTextoRetomadaModelo_(entrada.texto);
+  const textoSaida = normalizarTextoRetomadaModelo_(saida.texto);
+  const sugestao = normalizarTextoRetomadaModelo_(plano.sugestao);
+  const procedimento = identificarProcedimentoRetomadaModelo_(
+    textoEntrada,
+  );
+  if (
+    !procedimento ||
+    identificarProcedimentoRetomadaModelo_(textoSaida) !==
+      procedimento ||
+    identificarProcedimentoRetomadaModelo_(sugestao) !==
+      procedimento ||
+    RETOMADAS_MODELO_CONTEXTO_SENSIVEL.test(
+      [textoEntrada, textoSaida, sugestao].join(" "),
+    )
+  ) {
+    return false;
+  }
+
+  return Boolean(
+    entradaGenericaExataRetomadaModelo_(
+      entrada.texto,
+      procedimento,
+    ) &&
+      saidaBrunaExataRetomadaModelo_(
+        saida.texto,
+        procedimento,
+      ) &&
+      sugestaoExataRetomadaModelo_(
+        plano.sugestao,
+        procedimento,
+      ) &&
+      !/https?:\/\//i.test(String(plano.sugestao || "")),
+  );
 }
 
 function contarContatosSaidaRetomadas_(conversa) {
@@ -2016,6 +2641,36 @@ function atribuirHorariosRetomadas_(candidatos, agora) {
       );
     })
     .forEach(function (candidato) {
+      const planejamentoModelo = candidato.templateAutomaticoElegivel
+        ? planejarRetomadaAutomaticaPorModelo_(
+            candidato,
+            instante,
+            horariosAutomaticosOcupados,
+          )
+        : null;
+      if (planejamentoModelo) {
+        candidato.janelaAutomaticaPlanejavel = true;
+        candidato.responsavel = "bruna";
+        candidato.horario = planejamentoModelo.horario;
+        candidato.programadaPara = planejamentoModelo.programadaPara;
+        candidato.deliveryModePlanejado = "template";
+        candidato.automaticoPorModelo = true;
+        candidato.futuro =
+          formatarDataRetomadas_(
+            planejamentoModelo.programadaPara,
+            "yyyy-MM-dd",
+          ) > formatarDataRetomadas_(instante, "yyyy-MM-dd");
+        horariosAutomaticosOcupados[
+          planejamentoModelo.chaveHorario
+        ] = true;
+        if (!candidato.futuro) {
+          horariosAutomaticosOcupados[
+            planejamentoModelo.horario
+          ] = true;
+        }
+        return;
+      }
+
       const horario = horarioAutomaticoCompativelRetomada_(
         candidato,
         instante,
@@ -2025,7 +2680,15 @@ function atribuirHorariosRetomadas_(candidatos, agora) {
       candidato.janelaAutomaticaPlanejavel = Boolean(horario);
       candidato.responsavel = horario ? "bruna" : "equipe";
       candidato.horario = horario;
-      if (horario) horariosAutomaticosOcupados[horario] = true;
+      candidato.programadaPara = horario
+        ? dataHoraProgramadaRetomada_(instante, horario)
+        : "";
+      candidato.deliveryModePlanejado = horario ? "text" : "";
+      candidato.automaticoPorModelo = false;
+      candidato.futuro = false;
+      if (horario) {
+        horariosAutomaticosOcupados[horario] = true;
+      }
     });
 
   candidatos.forEach(function (candidato) {
@@ -2039,8 +2702,103 @@ function atribuirHorariosRetomadas_(candidatos, agora) {
       RETOMADAS_CONFIG.horariosRegulares,
       indiceManual,
     );
+    candidato.programadaPara = "";
+    candidato.deliveryModePlanejado = "";
+    candidato.automaticoPorModelo = false;
+    candidato.futuro = false;
     indiceManual += 1;
   });
+}
+
+function planejarRetomadaAutomaticaPorModelo_(
+  candidato,
+  agora,
+  horariosOcupados,
+) {
+  const ultimoContato = dataRetomadaValida_(
+    candidato && candidato.ultimoContato,
+  );
+  const alvo = dataRetomadaValida_(
+    candidato && candidato.alvoAutomaticoModelo,
+  );
+  const instante = dataRetomadaValida_(agora);
+  if (
+    !candidato ||
+    candidato.templateAutomaticoElegivel !== true ||
+    !ultimoContato ||
+    !alvo ||
+    !instante
+  ) {
+    return null;
+  }
+
+  const limite = new Date(
+    ultimoContato.getTime() +
+      RETOMADAS_CONFIG.maximoHorasRetomadaAutomaticaModelo *
+        60 *
+        60 *
+        1000 -
+      RETOMADAS_CONFIG.margemExecucaoPlanejadaMinutos *
+        60 *
+        1000,
+  );
+  const margem =
+    RETOMADAS_CONFIG.margemExecucaoPlanejadaMinutos * 60 * 1000;
+  const intervalo =
+    RETOMADAS_CONFIG.intervaloPlanejamentoAutomaticoMinutos *
+    60 *
+    1000;
+  let cursor = new Date(
+    Math.ceil(
+      Math.max(alvo.getTime(), instante.getTime() + margem) /
+        intervalo,
+    ) * intervalo,
+  );
+  const ocupados = horariosOcupados || {};
+
+  for (let tentativa = 0; tentativa < 300; tentativa += 1) {
+    if (cursor.getTime() > limite.getTime()) return null;
+
+    const horario = formatarDataRetomadas_(cursor, "HH:mm");
+    const partes = horario.split(":").map(Number);
+    const minutos = partes[0] * 60 + partes[1];
+    const inicio = RETOMADAS_CONFIG.horaInicioRetomadas * 60;
+    const fim = RETOMADAS_CONFIG.horaFimRetomadas * 60;
+
+    if (minutos < inicio) {
+      cursor = dataHoraProgramadaRetomada_(cursor, "09:00");
+      continue;
+    }
+    if (minutos >= fim) {
+      cursor = dataHoraProgramadaRetomada_(
+        new Date(cursor.getTime() + 24 * 60 * 60 * 1000),
+        "09:00",
+      );
+      continue;
+    }
+
+    const chaveHorario =
+      formatarDataRetomadas_(cursor, "yyyy-MM-dd") +
+      "|" +
+      horario;
+    const mesmaData =
+      formatarDataRetomadas_(cursor, "yyyy-MM-dd") ===
+      formatarDataRetomadas_(instante, "yyyy-MM-dd");
+    if (
+      !ocupados[chaveHorario] &&
+      !(mesmaData && ocupados[horario])
+    ) {
+      return {
+        horario: horario,
+        programadaPara: cursor,
+        chaveHorario: chaveHorario,
+      };
+    }
+
+    cursor = new Date(cursor.getTime() + intervalo);
+  }
+
+  return null;
 }
 
 function horarioAutomaticoCompativelRetomada_(
@@ -2989,6 +3747,7 @@ function registrarPlanoManualRetomadaCentral_(arquivo, input, agora) {
       "",
       "",
       "",
+      false,
     ]]);
 
   return {
@@ -3096,13 +3855,15 @@ function registrarRetomadasEnviadas_(planilha, candidatos, agora) {
           ? "Suspensa na planilha"
           : "Ação manual",
       candidato.automatico
-        ? dataHoraProgramadaRetomada_(agora, candidato.horario)
+        ? dataRetomadaValida_(candidato.programadaPara) ||
+          dataHoraProgramadaRetomada_(agora, candidato.horario)
         : "",
       "",
       "",
       "",
       "",
       "",
+      candidato.automaticoPorModelo === true,
     ];
   });
 
@@ -3217,6 +3978,10 @@ function processarRetomadasAutomaticasInterno_(
   const conversasPorTelefone = carregarConversasRetomadas_(
     planilhaMensagens,
   );
+  const atendimentosHumanosPorTelefone =
+    carregarAtendimentosHumanosRetomadas_(arquivo);
+  const configuracaoModeloAutomatico =
+    obterConfiguracaoRetomadasAutomaticasPorModelo_(propriedades);
   let enviados = 0;
   let cancelados = 0;
   let falhas = 0;
@@ -3231,6 +3996,8 @@ function processarRetomadasAutomaticasInterno_(
     const programadaPara = dataRetomadaValida_(linha[11]);
     const etapaRetomada = Number(linha[4] || 0);
     const messageIdBase = String(linha[3] || "").trim();
+    const criadoEm = dataRetomadaValida_(linha[1]);
+    const templateAutomatico = linha[17] === true;
 
     const aprovadoPelaEquipe = modo === "Automático aprovado";
 
@@ -3240,6 +4007,35 @@ function processarRetomadasAutomaticasInterno_(
       !programadaPara ||
       programadaPara.getTime() > agora.getTime()
     ) {
+      continue;
+    }
+
+    if (
+      templateAutomatico &&
+      configuracaoModeloAutomatico.active !== true
+    ) {
+      continue;
+    }
+
+    const templateAutomaticoAutorizado = Boolean(
+      templateAutomatico &&
+        configuracaoModeloAutomatico.active === true &&
+        criadoEm &&
+        configuracaoModeloAutomatico.activatedAt &&
+        criadoEm.getTime() >=
+          configuracaoModeloAutomatico.activatedAt.getTime(),
+    );
+    if (templateAutomatico && !templateAutomaticoAutorizado) {
+      planilhaControle
+        .getRange(numeroLinha, 11, 1, 5)
+        .setValues([[
+          "Cancelada — automatic_template_before_activation",
+          programadaPara,
+          agora,
+          "",
+          "automatic_template_before_activation",
+        ]]);
+      cancelados += 1;
       continue;
     }
 
@@ -3257,6 +4053,10 @@ function processarRetomadasAutomaticasInterno_(
         sugestao: String(linha[8] || "").trim(),
         atrasoMinutos: atrasoMinutos,
         aprovadoPelaEquipe: aprovadoPelaEquipe,
+        templateAutomaticoAutorizado:
+          templateAutomaticoAutorizado,
+        ultimoAtendimentoHumano:
+          atendimentosHumanosPorTelefone[telefone] || null,
       },
       lead,
       conversa,
@@ -3294,6 +4094,8 @@ function processarRetomadasAutomaticasInterno_(
         patientPhone: telefone,
         body: validacao.sugestao,
         humanApproved: aprovadoPelaEquipe,
+        automaticTemplate:
+          validacao.automaticTemplate === true,
         deliveryMode: validacao.deliveryMode,
         followupStage: etapaRetomada,
         contextAnchorMessageId: messageIdBase,
@@ -3423,6 +4225,15 @@ function falhaRetomadaReaprovavel_(erro) {
 
 function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
   if (!lead) return { ok: false, reason: "lead_not_found" };
+  if (
+    plano.templateAutomaticoAutorizado === true &&
+    plano.etapa !== 1
+  ) {
+    return {
+      ok: false,
+      reason: "automatic_template_only_first_followup",
+    };
+  }
   if (plano.etapa !== 1 && !plano.aprovadoPelaEquipe) {
     return { ok: false, reason: "only_first_followup" };
   }
@@ -3495,6 +4306,17 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
     return { ok: false, reason: "no_inbound_message" };
   }
 
+  const ultimoAtendimentoHumano = dataRetomadaValida_(
+    plano.ultimoAtendimentoHumano,
+  );
+  if (
+    ultimoAtendimentoHumano &&
+    ultimoAtendimentoHumano.getTime() >=
+      ultimaEntrada.dataHora.getTime()
+  ) {
+    return { ok: false, reason: "human_takeover_active" };
+  }
+
   const minutosDesdeEntrada = Math.floor(
     (agora.getTime() - ultimaEntrada.dataHora.getTime()) / 60000,
   );
@@ -3504,7 +4326,40 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
   }
   const janelaWhatsappAberta =
     minutosDesdeEntrada <= RETOMADAS_CONFIG.janelaWhatsAppMinutos;
-  if (!janelaWhatsappAberta && !plano.aprovadoPelaEquipe) {
+  const templateAutomaticoEstrito = Boolean(
+    plano.templateAutomaticoAutorizado === true &&
+      retomadaAutomaticaPorModeloEstrita_(plano, conversa),
+  );
+  if (
+    plano.templateAutomaticoAutorizado === true &&
+    !templateAutomaticoEstrito
+  ) {
+    return {
+      ok: false,
+      reason: "automatic_template_not_eligible",
+    };
+  }
+  if (templateAutomaticoEstrito) {
+    const horasDesdeUltimoContato =
+      (agora.getTime() - ultima.dataHora.getTime()) /
+      (60 * 60 * 1000);
+    if (
+      horasDesdeUltimoContato <
+        RETOMADAS_CONFIG.minimoHorasRetomadaAutomaticaModelo ||
+      horasDesdeUltimoContato >
+        RETOMADAS_CONFIG.maximoHorasRetomadaAutomaticaModelo
+    ) {
+      return {
+        ok: false,
+        reason: "automatic_template_timing_invalid",
+      };
+    }
+  }
+  if (
+    !janelaWhatsappAberta &&
+    !plano.aprovadoPelaEquipe &&
+    !templateAutomaticoEstrito
+  ) {
     return { ok: false, reason: "whatsapp_window_closed" };
   }
 
@@ -3548,7 +4403,12 @@ function validarRetomadaAutomatica_(plano, lead, conversa, agora) {
   return {
     ok: true,
     sugestao: plano.sugestao,
-    deliveryMode: janelaWhatsappAberta ? "text" : "template",
+    deliveryMode: templateAutomaticoEstrito
+      ? "template"
+      : janelaWhatsappAberta
+        ? "text"
+        : "template",
+    automaticTemplate: templateAutomaticoEstrito,
   };
 }
 
@@ -4039,10 +4899,16 @@ function montarAcoesItemRetomadaHtml_(item, options) {
 }
 
 function converterRetomadaParaCuidadoEmail_(candidato) {
+  const programadaPara = dataRetomadaValida_(
+    candidato.programadaPara,
+  );
   return {
-    futuro: false,
+    futuro: candidato.futuro === true,
     automatico: candidato.automatico === true,
-    horario: candidato.horario,
+    horario:
+      candidato.futuro === true && programadaPara
+        ? formatarDataRetomadas_(programadaPara, "dd/MM HH:mm")
+        : candidato.horario,
     categoria: candidato.etapa.rotulo,
     nome: candidato.lead.referencia || candidato.telefone,
     telefone: candidato.telefone,

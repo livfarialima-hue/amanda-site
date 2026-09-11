@@ -22,6 +22,8 @@ const FIRST_FOLLOWUP_SEMANTIC_REVIEW_BASELINE = Date.parse(
   "2026-08-23T14:40:44-03:00",
 );
 const CUSTOMER_SERVICE_WINDOW_MINUTES = 1430;
+const AUTOMATIC_TEMPLATE_MINIMUM_HOURS = 24;
+const AUTOMATIC_TEMPLATE_MAXIMUM_HOURS = 48;
 
 const SIMPLE_FOLLOWUP_PROCEDURES = Object.freeze([
   ["cervical", /\b(cervicoplastia|lifting cervical|lipo de papada)\b/],
@@ -70,6 +72,27 @@ function json(data, status = 200) {
   });
 }
 
+export function getScheduledFollowupHealth(env = process.env) {
+  const automationMode = normalizeAutomationMode(
+    env.WHATSAPP_AUTOMATION_MODE,
+  );
+
+  return {
+    ok: true,
+    service: "scheduled-followup",
+    scheduledFollowupsEnabled:
+      env.WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED === "true",
+    automaticTemplateEnabled:
+      env.WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED === "true",
+    templateConfigured: Boolean(
+      String(env.YCLOUD_FOLLOWUP_TEMPLATE_NAME || "").trim(),
+    ),
+    patientSideEffectsAllowed:
+      allowsPatientSideEffects(automationMode),
+    automationMode,
+  };
+}
+
 function secureEqual(left, right) {
   const leftBuffer = Buffer.from(String(left || ""));
   const rightBuffer = Buffer.from(String(right || ""));
@@ -108,6 +131,7 @@ function normalizePayload(value) {
       .slice(0, 1500)
       .join(""),
     humanApproved: body.humanApproved === true,
+    automaticTemplate: body.automaticTemplate === true,
     deliveryMode:
       String(body.deliveryMode || "").trim().toLowerCase() ===
       "template"
@@ -211,6 +235,44 @@ function isExactGenericProcedureInterest(text, procedure) {
   );
 }
 
+function isExactBrunaProcedureQuestion(text, procedure) {
+  const normalized = normalizeSimpleFollowupText(text);
+  const marker = " eu sou a bruna concierge da clinica liv";
+  const markerIndex = normalized.indexOf(marker);
+
+  if (markerIndex <= 0) return false;
+
+  const greeting = normalized.slice(0, markerIndex);
+  if (!/^ola(?: [a-z0-9]{1,40}){0,4}$/.test(greeting)) {
+    return false;
+  }
+
+  let remainder = normalized.slice(markerIndex + marker.length).trim();
+  if (remainder.startsWith("faria lima ")) {
+    remainder = remainder.slice("faria lima ".length);
+  }
+
+  const phrases = SIMPLE_FOLLOWUP_PROCEDURE_PHRASES[procedure] || [];
+  return phrases.some((phrase) => {
+    const questions = [
+      "o que voce gostaria de entender primeiro",
+      "como posso te chamar",
+      `o que voce gostaria de entender primeiro sobre ${phrase}`,
+    ];
+    if (procedure === "cervical") {
+      questions.push(
+        "o que mais chamou sua atencao no pescoco quando decidiu procurar uma avaliacao",
+      );
+    }
+
+    return questions.some(
+      (question) =>
+        remainder ===
+        `posso te orientar sobre ${phrase} ${question}`,
+    );
+  });
+}
+
 function isExactSimpleProcedureFollowup(text, procedure) {
   const normalized = normalizeSimpleFollowupText(text);
   const phrases = SIMPLE_FOLLOWUP_PROCEDURE_PHRASES[procedure] || [];
@@ -222,10 +284,16 @@ function isExactSimpleProcedureFollowup(text, procedure) {
 }
 
 export function isSimpleUnansweredProcedureInterestFollowup(payload) {
+  const deliveryModeAllowed =
+    payload?.deliveryMode === "text" ||
+    (
+      payload?.deliveryMode === "template" &&
+      payload?.automaticTemplate === true
+    );
   if (
     payload?.followupStage !== 1 ||
     payload?.humanApproved === true ||
-    payload?.deliveryMode !== "text"
+    !deliveryModeAllowed
   ) {
     return false;
   }
@@ -275,9 +343,10 @@ export function isSimpleUnansweredProcedureInterestFollowup(payload) {
     inbound.text,
     procedure,
   );
-  const isBrunaQuestion =
-    /\b(bruna|concierge)\b/.test(outboundText) &&
-    String(outbound.text || "").includes("?");
+  const isBrunaQuestion = isExactBrunaProcedureQuestion(
+    outbound.text,
+    procedure,
+  );
   const isExactLowRiskFollowup =
     isExactSimpleProcedureFollowup(payload.body, procedure) &&
     !/https?:\/\//i.test(String(payload.body || ""));
@@ -286,6 +355,34 @@ export function isSimpleUnansweredProcedureInterestFollowup(payload) {
     isGenericInterest &&
     isBrunaQuestion &&
     isExactLowRiskFollowup
+  );
+}
+
+export function isAutomaticTemplateFollowupEligible(
+  payload,
+  env = process.env,
+  now = new Date(),
+) {
+  const conversation = Array.isArray(payload?.recentConversation)
+    ? payload.recentConversation
+    : [];
+  const lastOutboundAt = Date.parse(
+    String(conversation[conversation.length - 1]?.at || ""),
+  );
+  const elapsedHours = Number.isFinite(lastOutboundAt)
+    ? (now.getTime() - lastOutboundAt) / 3_600_000
+    : Number.NaN;
+
+  return Boolean(
+    env.WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED ===
+      "true" &&
+      payload?.automaticTemplate === true &&
+      payload?.humanApproved !== true &&
+      payload?.deliveryMode === "template" &&
+      Number.isFinite(elapsedHours) &&
+      elapsedHours >= AUTOMATIC_TEMPLATE_MINIMUM_HOURS &&
+      elapsedHours <= AUTOMATIC_TEMPLATE_MAXIMUM_HOURS &&
+      isSimpleUnansweredProcedureInterestFollowup(payload),
   );
 }
 
@@ -336,7 +433,7 @@ export async function handleScheduledFollowup(
       sendYCloudPatientFollowupTemplate,
   } = {},
 ) {
-  if (request.method !== "POST") {
+  if (!["GET", "POST"].includes(request.method)) {
     return json({ ok: false, error: "method_not_allowed" }, 405);
   }
 
@@ -345,6 +442,10 @@ export async function handleScheduledFollowup(
 
   if (!expectedSecret || !secureEqual(receivedSecret, expectedSecret)) {
     return json({ ok: false, error: "unauthorized" }, 401);
+  }
+
+  if (request.method === "GET") {
+    return json(getScheduledFollowupHealth(env));
   }
 
   if (env.WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED !== "true") {
@@ -409,10 +510,64 @@ export async function handleScheduledFollowup(
     payload,
     now,
   );
+  const simpleUnansweredInterest =
+    isSimpleUnansweredProcedureInterestFollowup(payload);
+  const automaticTemplateEligible =
+    isAutomaticTemplateFollowupEligible(payload, env, now);
+
+  if (
+    payload.deliveryMode === "template" &&
+    payload.humanApproved !== true &&
+    payload.automaticTemplate !== true
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "template_requires_human_approval",
+      },
+      409,
+    );
+  }
+
+  if (
+    payload.deliveryMode === "template" &&
+    payload.automaticTemplate === true &&
+    env.WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED !==
+      "true"
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "automatic_template_followups_disabled",
+      },
+      503,
+    );
+  }
+
+  if (
+    payload.deliveryMode === "template" &&
+    payload.automaticTemplate === true &&
+    !automaticTemplateEligible
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "automatic_template_not_eligible",
+      },
+      409,
+    );
+  }
+
   if (
     !customerServiceWindowOpen &&
     (
-      payload.humanApproved !== true ||
+      (
+        payload.humanApproved !== true &&
+        !automaticTemplateEligible
+      ) ||
       payload.deliveryMode !== "template"
     )
   ) {
@@ -426,22 +581,6 @@ export async function handleScheduledFollowup(
     );
   }
 
-  if (
-    payload.deliveryMode === "template" &&
-    payload.humanApproved !== true
-  ) {
-    return json(
-      {
-        ok: false,
-        sent: false,
-        error: "template_requires_human_approval",
-      },
-      409,
-    );
-  }
-
-  const simpleUnansweredInterest =
-    isSimpleUnansweredProcedureInterestFollowup(payload);
   const reusedFirstFollowupReview =
     canReuseFirstFollowupSemanticReview(payload);
   const contextReview = simpleUnansweredInterest
