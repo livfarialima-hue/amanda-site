@@ -167,3 +167,41 @@ Estas alterações são apenas propostas e não foram implementadas.
 - Comprovantes estruturados com dia da semana por extenso passam a ser rejeitados quando a data e o dia divergem.
 
 As mudanças estão somente em branch local isolada. Não houve publicação de Apps Script ou Netlify, alteração de planilha, remoção/criação de evento, envio de WhatsApp nem mudança da política da Bruna.
+
+## Anexo — Meta Ads e proposta de reativação por 30 dias
+
+Leitura somente em 11/09/2026. A interface do Gerenciador de Anúncios foi consultada para a janela de 12/08 a 10/09/2026 e reconciliada com o agregado anônimo `Meta_Agregados`, gerado em 11/09 às 08:27 sobre 270 oportunidades. Nenhuma campanha, orçamento, rascunho ou configuração foi alterado. Os sete rascunhos pendentes foram preservados.
+
+### Resultado reconciliado
+
+| Campanha/rota | Resultado da Meta | Funil anônimo de 30 dias | Leitura de negócio |
+|---|---:|---:|---|
+| `M26C01W` — cervical, WhatsApp direto | 71 conversas; R$ 299,61; R$ 4,22/conversa | 65 contatos; 11 classificados válidos/qualificados; 1 agendado | Melhor rota observada; R$ 27,24 por qualificado e R$ 299,61 por agendamento atualmente registrado |
+| `M26F01W` — lifting facial, WhatsApp direto | 38 conversas somando os dois objetos no período; R$ 344,27 | 32 contatos; 11 válidos/qualificados; 0 agendado na coorte de 30 dias | Segunda melhor rota; R$ 31,30 por qualificado, mas o código não separa o objeto histórico da campanha nova de 40+ |
+| `M26C02S` — cervical, site | 1.092 LPVs; R$ 298,30; R$ 0,27/LPV | 1 contato válido/qualificado; 0 agendado | R$ 298,30 por qualificado; a eficiência aparente de LPV não se converteu em negócio |
+| `M26F02S` — facial, site | 318 LPVs; R$ 78,03; R$ 0,25/LPV | 0 contato sob o código exato | Atribuição/resultado de negócio não comprovados; não renovar |
+| `M26O01W` — otoplastia infantil, WhatsApp | 1 conversa; R$ 83,31 no recorte | nenhum agendamento atribuído | Amostra ruim e sem sinal downstream; não reativar o criativo atual |
+| `lead_geral (20)` e `lead_site` | R$ 0,00; sem resultado | sem base reconciliável | Não reativar |
+
+O Gerenciador informa dez campanhas; as oito linhas nomeadas exibidas acima ou consideradas na leitura somam 100% dos R$ 1.103,52 gastos na janela. As outras duas não contribuíram para o gasto observado e não sustentam decisão. LPV, conversa e alcance são diagnósticos; a ordem acima prioriza contato válido, qualificação e consulta.
+
+Há incerteza relevante: somente 25 dos 100 contatos atribuídos no período estão classificados no agregado, e a auditoria das conversas encontrou agendamentos, realização e fechamento ausentes ou datados incorretamente. Por isso os custos downstream são direcionais e não autorizam escala agressiva. A correção local deste candidato foi preparada justamente para melhorar a próxima coorte.
+
+### Proposta conservadora para um mês
+
+| Prioridade | Campanha a usar | Orçamento | Condição |
+|---|---|---:|---|
+| 1 | `M26C01W | Lifting cervical SP | WhatsApp | 15 dias`, em novo período de 30 dias | R$ 20/dia; R$ 600 no mês | Manter `C07H01`, WhatsApp direto, São Paulo +20 km e 40–65+ rígido |
+| 2 | `M26F01W | Lifting facial SP | WhatsApp | 15 dias`, em novo período de 30 dias | R$ 20/dia; R$ 600 no mês | Manter somente `C06H01`, WhatsApp direto, São Paulo +20 km e 40–65+ rígido |
+|  | **Total proposto** | **R$ 40/dia; R$ 1.200 por 30 dias** | Sem verba nova para Site, otoplastia ou campanhas legadas |
+
+Não reativar o objeto histórico `M26F01W | Facial SP | WhatsApp | 30 dias`, apesar do custo aparente de R$ 6,40 por conversa no pequeno saldo da janela: ele mistura configuração legada com o mesmo código e o Norte determina usar a versão facial nova com piso rígido de 40 anos.
+
+Antes de iniciar, reconciliar os oito casos críticos da planilha e publicar o candidato técnico aprovado. Depois, manter orçamento e criativo estáveis e usar os checkpoints abaixo:
+
+1. D+3: entrega, idade efetiva, código, contato e ausência de duplicidade.
+2. D+7: classificação de pelo menos 80% dos novos contatos e conferência de agenda/Calendar.
+3. D+15: custo por qualificado, agendamentos e qualidade das conversas; não decidir por conversa ou LPV isolado.
+4. D+30 mais sete dias de latência: consultas realizadas, fechamentos confirmados e decisão de manter, redistribuir ou encerrar.
+
+Regra de contenção proposta: interromper para revisão a campanha que gastar R$ 150 sem nenhum contato válido, desde que a atribuição esteja saudável. Escala acima de R$ 1.200 no mês só deve ser discutida depois de dados reconciliados e pelo menos uma consulta atribuída na nova coorte. Esta é apenas uma proposta; nenhuma reativação foi executada.
