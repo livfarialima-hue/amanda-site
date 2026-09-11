@@ -743,3 +743,28 @@ Decisão vigente:
 **Regra para ampliar:** testar uma nova combinação de headlines adultas ou novas palavras infantis apenas com baseline limpo e downstream suficiente; aumentar orçamento ou mudar lance somente depois de qualificados e consultas justificarem a escala.
 
 **Regra para reverter:** restaurar somente a associação, o destino ou a seção responsável se houver erro de política, navegação, público, tracking ou clareza. Remover a negativa se ela bloquear consulta aderente comprovada. Orçamento e lance não integram este rollback porque não serão alterados.
+
+## 22. Decisão vigente de 11/09/2026 — reativação das duas melhores campanhas Meta por 30 dias
+
+A leitura autenticada da Meta em 12/08–10/09 e o agregado anônimo atualizado em 11/09 mantêm as duas rotas diretas ao WhatsApp como as melhores candidatas para o próximo mês. `M26C01W` entregou 71 conversas a R$ 4,22, 65 contatos identificados, 11 válidos/qualificados e a única consulta agendada recente. O novo objeto 40+ de `M26F01W` entregou 31 conversas a R$ 9,66, 32 contatos identificados e 11 válidos/qualificados, além de preservar o histórico de agendamentos da rota facial direta.
+
+A evidência downstream ainda é incompleta: somente 25 de 100 contatos Meta identificados nos 30 dias estavam classificados. Isso impede tratar os demais como perdas e proíbe inferir taxas definitivas ou escalar, mas não elimina a diferença operacional frente a `M26C02S`, com 1.092 LPVs e somente um contato válido/qualificado, `M26O01W`, com uma conversa a R$ 83,31, e `M26F02S`, sem contato sob o código exato na leitura anterior.
+
+Decisão vigente:
+
+- reativar exclusivamente `M26C01W` campanha `120251248762160627`, conjunto `120251248762180627`, anúncio `120251248762170627`, e o novo `M26F01W` campanha `120251254720690627`, conjunto `120251254720700627`, anúncio `120251254720680627`;
+- manter o padrão de R$ 20/dia por campanha por 30 dias, liberando até R$ 600 novos em cada uma e R$ 1.200 no total;
+- por serem orçamentos vitalícios com aproximadamente R$ 300 já consumidos, elevar o teto de cada campanha de R$ 300 para R$ 900 e estender o término dos dois conjuntos para 11/10/2026 às 23:59, GMT-3;
+- preservar objetivo Tráfego, lance Volume mais alto, São Paulo +20 km, controle rígido 40–65+, todos os gêneros, posicionamentos, destino manual exclusivo WhatsApp, número, mensagens, códigos e criativos;
+- manter desligados os anúncios herdados `120251248762190627` e `120251254720710627` e não publicar nem descartar os sete rascunhos preexistentes;
+- manter `M26C02S`, `M26F02S`, `M26O01W`, `lead_site`, `lead_geral (20)` e o objeto facial histórico fora da veiculação.
+
+**Hipótese:** repetir somente as rotas diretas rastreáveis, com todas as demais variáveis congeladas, produzirá mais contatos válidos, qualificados e consultas do que renovar as rotas de site ou a otoplastia no mesmo orçamento.
+
+**Métrica principal:** contatos válidos e qualificados, consultas agendadas/realizadas e custo por etapa; cobertura de classificação como guardrail obrigatório. Conversas, alcance, frequência, CTR, CPC e LPV servem apenas como diagnóstico.
+
+**Revisão:** saúde em 24 horas; D+7 e D+14 para mídia, classificação e funil; D+30 para decisão; D+37 para latência. As datas contam da publicação efetiva.
+
+**Regra para manter:** manter sem escala enquanto houver contato útil, custo compatível e nenhum incidente operacional; declarar inconclusivo se a cobertura de classificação continuar insuficiente.
+
+**Regra para reverter:** pausar somente a campanha afetada diante de idade efetiva abaixo de 40, destino ou código incorreto, perda de atendimento ou gasto de R$ 150 sem contato válido com tracking saudável. Qualquer extensão, terceira campanha ou valor além de R$ 1.200 novos exige nova autorização.

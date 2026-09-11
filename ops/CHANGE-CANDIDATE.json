@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-OTOPLASTIA-CONTINUIDADE-2026-09-03",
-  "title": "Corrigir continuidade da otoplastia adulta e infantil entre busca, ativos, páginas e funil",
+  "changeId": "META-REATIVACAO-CERVICAL-FACIAL-2026-09-11",
+  "title": "Reativar por 30 dias as campanhas Meta diretas de lifting cervical e facial",
   "status": "tested_local",
-  "baseCommit": "8187758e21484d63f764da897a484d21e52890cd",
+  "baseCommit": "b845db8fb2cce7889abc6ae3e8334261ba3661da",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O conteúdo funcional foi aprovado no commit 4384a8f8d1825eb65d751797fbb0f5aaf2465a2c. A integração que preserva a publicação paralela v141 exige validação e nova confirmação do HEAD exato antes das escritas externas."
+    "note": "Daniel solicitou em 11/09/2026 a reativação das duas melhores campanhas segundo os gastos padrões. Por envolver até R$ 1.200 de gasto futuro, a confirmação transacional continua obrigatória imediatamente antes da publicação exata."
   },
   "risk": {
     "level": "medium",
@@ -19,72 +19,50 @@
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication",
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/EXECUCAO-2026-09-03.md",
-      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/artifact-data.json",
+      "auditorias/reativacao-meta-2026-09-11/EXECUCAO-2026-09-11.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/otoplasty-pages.test.mjs",
+      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "sitemap.xml"
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "campanha S_BR_SP_OTOPLASTIA no Google Ads",
-      "grupo Adulto",
-      "grupo AG_OTOPLASTIA_INFANTIL",
-      "páginas públicas de otoplastia adulta e infantil",
-      "descoberta orgânica e em recursos de IA",
-      "relatório executivo e estratégia canônica"
+      "conta Meta Ads 1643959806249995",
+      "campanha e conjunto M26C01W",
+      "campanha e conjunto M26F01W 40+",
+      "rotina anônima de revisão Meta",
+      "estratégia, histórico e Plano Executivo canônicos"
     ],
     "preservedInvariants": [
-      "orçamento diário permanece R$ 15 e a estratégia permanece Maximizar cliques",
-      "meta, redes, geografia, agenda, dispositivos, demografia, grupos e RSAs permanecem intactos",
-      "preço, valor, custo, quanto custa, orelha de abano e otomodelação não recebem negativa",
-      "cada página mantém exatamente cinco CTAs de WhatsApp, o número 5511961957144, OT01 ou OT02, mensagens e atributos de tracking",
-      "nenhuma faixa de preço cirúrgico é publicada; R$ 500 continua identificado somente como valor da consulta",
-      "Apps Script v141, LEADS, CRM, Calendar, Bruna, YCloud e mensagens reais ficam fora do escopo"
+      "somente os IDs canônicos 120251248762160627 e 120251254720690627 podem ser reativados",
+      "cada campanha recebe no máximo R$ 600 novos por 30 dias e o total novo não excede R$ 1.200",
+      "São Paulo +20 km, idade rígida 40–65+, todos os gêneros e posicionamentos permanecem intactos",
+      "destino manual exclusivo WhatsApp e número +55 11 96195-7144 permanecem intactos",
+      "somente C07H01 no cervical e C06H01 no facial permanecem ligados; anúncios herdados continuam desligados",
+      "sete rascunhos preexistentes não serão publicados, alterados nem descartados",
+      "M26C02S, M26F02S, M26O01W, campanhas antigas, site, Google Ads, Bruna, retomadas, LEADS, CRM, Calendar e Apps Script ficam fora do escopo"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads 995-334-4486 / campanha 24029985112",
+        "system": "Meta Ads 1643959806249995 e agregado anônimo Meta_Agregados",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-03T07:22:06-03:00",
-        "reference": "Campanha, grupos, palavras, termos, RSAs, frases de destaque, sitelinks, imagens, logos, destinos, orçamento, lance e meta lidos em sessão autenticada.",
-        "check": "somente leitura; 198 cliques, R$ 450,25, 14 cliques e R$ 32,37 em destinos de outros procedimentos"
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "agregado sem PII e LEADS canônica",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-03T07:22:06-03:00",
-        "reference": "Dois contatos G26OTO, dois GCLIDs preservados, zero qualificado, zero consulta e zero evento enviado ao Google; classificação individual conferida sem persistir PII.",
-        "check": "somente leitura"
-      },
-      {
-        "contract": "site-publication",
-        "system": "otoplastia-adulto e otoplastia-infantil",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-03T07:22:06-03:00",
-        "reference": "Páginas já separavam público, tinham schema e cinco CTAs; faltava resposta direta à intenção de valor e à ambiguidade de otomodelação.",
-        "check": "arquivos versionados e páginas públicas, somente leitura"
+        "checkedAt": "2026-09-11T20:33:13-03:00",
+        "reference": "Objetos canônicos, orçamento, gasto, datas, objetivo, lance, destino WhatsApp, público 40–65+, localização, anúncios ativos e sete rascunhos foram relidos na sessão autenticada; o funil agregado foi reconciliado sem PII.",
+        "check": "somente leitura; publicação ainda não executada"
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-03T10:50:48-03:00",
+    "completedAt": "2026-09-11T20:39:30-03:00",
     "commands": [
-      "node --test campanhas/otoplasty-pages.test.mjs campanhas/site-technical-regression.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -92,46 +70,42 @@
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check",
-      "QA visual local de otoplastia-adulto e otoplastia-infantil em desktop e mobile"
+      "git diff --check"
     ],
     "results": {
-      "focusedRegression": "19/19 testes aprovados sobre a base integrada",
-      "acquisitionRegression": "126/126 testes aprovados sobre a base integrada",
-      "fullSuite": "1249/1249 testes aprovados",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK; escopo exato de 11 arquivos",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "siteBuild": "180 arquivos e 44 URLs gerados, sem erro e sem auditorias no artefato",
-      "siteCheck": "44/44 URLs com HTTP esperado, canonical próprio, indexação e um H1",
-      "responsiveVisual": "QA anterior em desktop e 390 x 844 permanece aplicável; os blobs das duas páginas são idênticos aos do commit visualmente aprovado 4384a8f8d1825eb65d751797fbb0f5aaf2465a2c",
-      "conversionLinks": "cinco CTAs rastreados em cada página, sem alteração de número, mensagem, código ou atributos",
-      "parallelPublication": "Apps Script v141, commit final 8187758e21484d63f764da897a484d21e52890cd e recibos do painel diário preservados integralmente",
-      "opsCheck": "SYNC_PENDING esperado até publicação, recibos externos e integração canônica final"
+      "focusedTests": "126/126 aprovados",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK",
+      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "fullTestSuite": "1249/1249 aprovados",
+      "siteBuild": "180 arquivos e 44 URLs; nenhum arquivo de auditoria incluído no artefato",
+      "siteCheck": "44/44 URLs com HTTP 200, canonical, indexabilidade e H1 válidos",
+      "opsCheck": "SYNC_PENDING esperado antes da publicação; também sinaliza branch isolada e worktree sujo durante a preparação",
+      "diffCheck": "sem erros"
     }
   },
   "release": {
     "approvedCommit": null,
-    "netlifyDeployId": null,
-    "googleAdsMutations": [],
+    "metaAdsMutations": [],
     "drivePlanSha256": null,
     "verifiedAt": null,
     "activationState": "not_published",
-    "notes": "Nenhuma escrita externa da otoplastia foi feita. Apps Script v141 e seus recibos foram preservados na base."
+    "notes": "Nenhuma alteração na Meta foi publicada; somente a candidata local e o preflight de leitura foram preparados."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId",
-    "production": "restaurar o deploy Netlify anterior e apenas as associações, URLs e negativa registradas no recibo do Google Ads"
+    "local": "reverter somente o commit funcional deste changeId e restaurar o candidato anterior se a publicação não ocorrer",
+    "production": "restaurar em cada campanha o teto vitalício de R$ 300 e a data final de 01/09/2026 12:00; pausar imediatamente apenas a campanha afetada se a restauração de data não for aceita"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clínica LIV",
-    "window": "24 horas, 7 dias e 14 dias após a publicação",
+    "window": "24 horas, 7 dias, 14 dias, 30 dias e 37 dias após a publicação",
     "metrics": [
-      "cliques para destinos de outro procedimento",
-      "política e uso dos sitelinks por grupo",
-      "contatos canônicos, válidos e qualificados",
-      "consultas e custos por etapa",
-      "integridade de página, schema e tracking"
+      "gasto e status de veiculação",
+      "idade efetiva, destino e anúncio ativo",
+      "contatos identificados e cobertura de classificação",
+      "contatos válidos e qualificados",
+      "consultas agendadas e realizadas",
+      "custo por qualificado e por consulta"
     ],
-    "rollbackRule": "reverter apenas o componente responsável diante de destino errado, reprovação persistente, bloqueio de termo aderente, regressão de tracking ou confusão recorrente entre valor de consulta e cirurgia."
+    "rollbackRule": "pausar somente a campanha afetada diante de idade abaixo de 40, rota ou código incorreto, perda de atendimento ou R$ 150 gastos sem contato válido com tracking saudável."
   }
 }

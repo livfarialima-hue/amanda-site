@@ -6,6 +6,22 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 11 de setembro de 2026 — reativação controlada de Meta cervical e facial por 30 dias
+
+- **Status:** planejada e validada localmente; autorização de ativação dada por Daniel, com confirmação transacional ainda pendente imediatamente antes da publicação na Meta.
+- **Responsável:** Daniel, com preparação e execução assistida pelo Codex.
+- **Área/campanhas:** conta Meta `1643959806249995`; `M26C01W` campanha `120251248762160627`, conjunto `120251248762180627`, anúncio `120251248762170627`; `M26F01W` campanha `120251254720690627`, conjunto `120251254720700627`, anúncio `120251254720680627`.
+- **Mudança planejada:** reabrir exclusivamente os dois objetos canônicos concluídos, elevando cada orçamento vitalício de R$ 300 para R$ 900 e levando a data final dos dois conjuntos de 01/09/2026 12:00 para 11/10/2026 23:59, GMT-3. Como aproximadamente R$ 300 já foram gastos em cada campanha, isso libera cerca de R$ 600 novos por campanha por 30 dias, mantendo o padrão de R$ 20/dia e um teto novo conjunto de R$ 1.200.
+- **Motivo e evidência:** em 12/08–10/09, `M26C01W` teve 71 conversas a R$ 4,22 e R$ 299,61 de gasto; o agregado de 30 dias ligou 65 contatos, 11 válidos/qualificados e 1 consulta agendada. O novo `M26F01W` teve 31 conversas a R$ 9,66 e R$ 299,50; o agregado ligou 32 contatos, 11 válidos/qualificados e nenhuma consulta na janela, além do histórico anterior de agendamentos da rota direta. `M26C02S` produziu 1.092 LPVs e somente 1 contato válido/qualificado; otoplastia teve 1 conversa a R$ 83,31; `M26F02S` permaneceu sem resultado de negócio sob o código exato.
+- **Limite da evidência:** somente 25 dos 100 contatos Meta identificados na janela estavam classificados. Os 75 restantes são desconhecidos, não perdas. A reativação mantém orçamento, em vez de escalar, e exige aumento da cobertura de classificação durante a nova janela.
+- **Hipótese:** repetir as duas rotas diretas já rastreáveis, sem mudar público, criativo ou destino, produzirá mais contatos válidos, qualificados e consultas com leitura mais confiável que renovar rotas de site ou otoplastia.
+- **Métrica principal:** contatos válidos e qualificados, consultas agendadas/realizadas e custo por etapa; como guardrail, cobertura de classificação. Conversa, alcance, frequência, CTR e LPV permanecem diagnósticos.
+- **Guardrails:** São Paulo +20 km, 40–65+ rígido, todos os gêneros, destino manual exclusivo WhatsApp, Volume mais alto, `C07H01` em cervical e `C06H01` em facial; anúncios herdados desligados; sete rascunhos preexistentes preservados; nenhuma alteração em site, Google Ads, Bruna, retomadas, LEADS, CRM, Calendar ou Apps Script.
+- **Revisão:** saúde em 24 horas; negócio em D+7, D+14 e D+30; latência em D+37, contados da publicação real.
+- **Regra para manter:** manter sem escala se houver contato válido/qualificado, custo compatível e nenhum incidente; classificar a campanha como inconclusiva quando a cobertura não permitir leitura segura.
+- **Regra para reverter:** pausar apenas a campanha afetada diante de idade efetiva abaixo de 40, rota/código incorreto, perda de atendimento ou gasto de R$ 150 sem contato válido com tracking saudável. Extensão, terceira campanha ou gasto adicional exigem nova autorização.
+- **Registro detalhado:** `auditorias/reativacao-meta-2026-09-11/EXECUCAO-2026-09-11.md`.
+
 ## 3 de setembro de 2026 — continuidade por público na otoplastia
 
 - **Status:** auditoria ao vivo concluída e candidato local preparado; site, Google Ads e Drive ainda sem publicação nesta etapa.

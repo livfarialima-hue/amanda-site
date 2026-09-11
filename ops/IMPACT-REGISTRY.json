@@ -322,6 +322,7 @@
         "auditorias/auditoria-google-ads-lifting-facial-2026-09-01/report-verification-failure.png",
         "auditorias/auditoria-google-ads-otoplastia-2026-09-03/EXECUCAO-2026-09-03.md",
         "auditorias/auditoria-google-ads-otoplastia-2026-09-03/artifact-data.json",
+        "auditorias/reativacao-meta-2026-09-11/EXECUCAO-2026-09-11.md",
         "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
         "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
         "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
@@ -365,6 +366,7 @@
         "Apps Script",
         "Google Sheets LEADS",
         "Google Ads",
+        "Meta Ads",
         "Netlify",
         "Google Drive"
       ],

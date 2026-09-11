@@ -50,10 +50,10 @@ O agregado deve contabilizar `canonical` e `legacy_alias_resolved` em colunas di
 
 | Valor normalizado | Caminho resolvido | Status |
 |---|---|---|
-| `M26F01W` | `meta_whatsapp_direct` | canônico; novo rascunho 40+: campanha `120251254720690627`, conjunto `120251254720700627`, anúncio `120251254720680627`; anúncio herdado `120251254720710627` desligado; mensagem `M26F01W-C06H01`; não tratar como ativo antes da publicação autorizada |
+| `M26F01W` | `meta_whatsapp_direct` | canônico; objeto 40+ publicado em 17/08/2026 e concluído em 01/09/2026: campanha `120251254720690627`, conjunto `120251254720700627`, anúncio `120251254720680627`; anúncio herdado `120251254720710627` desligado; mensagem `M26F01W-C06H01`; reativação de 30 dias preparada em 11/09/2026, sem tratar como ativa antes da nova publicação |
 | `M26F02S` | `meta_site_whatsapp` | canônico; sem verba nova até prova E2E |
-| `M26C01W` | `meta_whatsapp_direct` | rascunho confirmado: campanha `120251248762160627`, conjunto `120251248762180627`, anúncio `120251248762170627`; mensagem `M26C01W-C07H01` e mapa local preparados; não tratar como ativo antes de publicação autorizada |
-| `M26C02S` | `meta_site_whatsapp` | rascunho confirmado: campanha `120251249058750627`, conjunto `120251249058780627`, anúncio `120251249058760627`; URL/UTMs e mapa local preparados; não tratar como ativo antes de publicação autorizada e sonda E2E |
+| `M26C01W` | `meta_whatsapp_direct` | canônico; publicado em 17/08/2026 e concluído em 01/09/2026: campanha `120251248762160627`, conjunto `120251248762180627`, anúncio `120251248762170627`; mensagem `M26C01W-C07H01`; reativação de 30 dias preparada em 11/09/2026, sem tratar como ativa antes da nova publicação |
+| `M26C02S` | `meta_site_whatsapp` | canônico; publicado em 17/08/2026 e concluído em 01/09/2026: campanha `120251249058750627`, conjunto `120251249058780627`, anúncio `120251249058760627`; URL/UTMs e mapa local preservados; permanece sem reativação na decisão de 11/09/2026 |
 | `M26O01W` | N/D pelo código isolado | campanha infantil conhecida, mas o guia também o reutiliza em uma URL de passagem pelo site; exigir evidência de landing/CTA para resolver o caminho |
 | `M26O02W` | N/D | reservado/sugerido; não tratar como ativo sem confirmação externa |
 
