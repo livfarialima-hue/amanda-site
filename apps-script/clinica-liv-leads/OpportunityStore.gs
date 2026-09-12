@@ -830,17 +830,26 @@ function migrarSchemaAtribuicaoV1(input) {
       OPPORTUNITY_ALL_HEADERS,
     );
     const attributionByOpportunity = {};
-    opportunityRows.forEach(function backfill(row, index) {
+    const opportunityRowCount = Math.max(opportunitySheet.getLastRow() - 1, 0);
+    const opportunityValues = opportunityRowCount > 0
+      ? opportunitySheet.getRange(
+        2,
+        1,
+        opportunityRowCount,
+        opportunitySheet.getLastColumn(),
+      ).getValues()
+      : [];
+    const changedOpportunityColumns = {};
+    opportunityValues.forEach(function backfill(row) {
       const opportunityId = String(
-        row[(currentOpportunityColumns["Opportunity ID"] || 1) - 1] || "",
+        row[(opportunityColumns["Opportunity ID"] || 1) - 1] || "",
       ).trim();
       if (!opportunityId) return;
       const legacy = atribuicaoLegadaOportunidade_(
         row,
         currentOpportunityColumns,
       );
-      const existingInitialOriginColumn =
-        currentOpportunityColumns["Origem inicial canônica"];
+      const existingInitialOriginColumn = opportunityColumns["Origem inicial canônica"];
       const existingInitialOrigin = existingInitialOriginColumn
         ? String(row[existingInitialOriginColumn - 1] || "").trim()
         : "";
@@ -852,13 +861,14 @@ function migrarSchemaAtribuicaoV1(input) {
         function fillOnlyBlank(header) {
           const column = opportunityColumns[header];
           if (!column) return;
-          const current = opportunitySheet.getRange(index + 2, column).getValue();
+          const current = row[column - 1];
           if (
             canBackfillInitial &&
             !String(current || "").trim() &&
             legacy[header]
           ) {
-            opportunitySheet.getRange(index + 2, column).setValue(legacy[header]);
+            row[column - 1] = legacy[header];
+            changedOpportunityColumns[column] = true;
             resolvedAttribution[header] = legacy[header];
             return;
           }
@@ -868,21 +878,29 @@ function migrarSchemaAtribuicaoV1(input) {
       OPPORTUNITY_REPORTED_ATTRIBUTION_HEADERS.forEach(
         function preserveReportedOrigin(header) {
           const column = opportunityColumns[header];
-          resolvedAttribution[header] = column
-            ? opportunitySheet.getRange(index + 2, column).getValue()
-            : "";
+          resolvedAttribution[header] = column ? row[column - 1] : "";
         },
       );
       const statusColumn = opportunityColumns["Status da jornada"];
       if (statusColumn) {
-        const currentStatus = opportunitySheet
-          .getRange(index + 2, statusColumn)
-          .getValue();
+        const currentStatus = row[statusColumn - 1];
         if (!String(currentStatus || "").trim()) {
-          opportunitySheet.getRange(index + 2, statusColumn).setValue("absent");
+          row[statusColumn - 1] = "absent";
+          changedOpportunityColumns[statusColumn] = true;
         }
       }
       attributionByOpportunity[opportunityId] = resolvedAttribution;
+    });
+    Object.keys(changedOpportunityColumns).forEach(function writeColumn(column) {
+      const numericColumn = Number(column);
+      opportunitySheet.getRange(
+        2,
+        numericColumn,
+        opportunityRowCount,
+        1,
+      ).setValues(opportunityValues.map(function valueAt(row) {
+        return [row[numericColumn - 1]];
+      }));
     });
 
     visibleSheets.forEach(function projectVisible(item) {
@@ -893,15 +911,17 @@ function migrarSchemaAtribuicaoV1(input) {
       );
       const opportunityColumn = columns["Opportunity ID"];
       if (!opportunityColumn) return;
-      const ids = item.sheet.getRange(
+      const visibleRowCount = item.sheet.getLastRow() - 1;
+      const visibleValues = item.sheet.getRange(
         2,
-        opportunityColumn,
-        item.sheet.getLastRow() - 1,
         1,
-      ).getDisplayValues();
-      ids.forEach(function project(row, index) {
+        visibleRowCount,
+        item.sheet.getLastColumn(),
+      ).getValues();
+      const changedVisibleColumns = {};
+      visibleValues.forEach(function project(row) {
         const attribution = attributionByOpportunity[
-          String(row[0] || "").trim()
+          String(row[opportunityColumn - 1] || "").trim()
         ];
         if (!attribution) return;
         const values = {
@@ -924,11 +944,23 @@ function migrarSchemaAtribuicaoV1(input) {
         Object.keys(values).forEach(function fillVisible(header) {
           const column = columns[header];
           if (!column || !values[header]) return;
-          const current = item.sheet.getRange(index + 2, column).getValue();
+          const current = row[column - 1];
           if (!String(current || "").trim()) {
-            item.sheet.getRange(index + 2, column).setValue(values[header]);
+            row[column - 1] = values[header];
+            changedVisibleColumns[column] = true;
           }
         });
+      });
+      Object.keys(changedVisibleColumns).forEach(function writeColumn(column) {
+        const numericColumn = Number(column);
+        item.sheet.getRange(
+          2,
+          numericColumn,
+          visibleRowCount,
+          1,
+        ).setValues(visibleValues.map(function valueAt(row) {
+          return [row[numericColumn - 1]];
+        }));
       });
     });
     SpreadsheetApp.flush();

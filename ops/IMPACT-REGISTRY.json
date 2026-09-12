@@ -392,6 +392,8 @@
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
         "apps-script/clinica-liv-leads/LeadClassification.gs",
         "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "apps-script/clinica-liv-leads/OpportunityStore.gs",
+        "apps-script/clinica-liv-leads/OpportunityStore.test.mjs",
         "apps-script/clinica-liv-leads/README.md",
         "apps-script/clinica-liv-leads/production-target.json",
         "auditorias/auditoria-google-ads-2026-08-30/EXECUCAO-2026-08-30.md",
@@ -440,6 +442,7 @@
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
         "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "apps-script/clinica-liv-leads/OpportunityStore.test.mjs",
         "campanhas/lifting-price-page.test.mjs",
         "campanhas/site-technical-regression.test.mjs",
         "campanhas/conversion-tracking.test.mjs",

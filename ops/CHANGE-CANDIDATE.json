@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-MAMA-CORPO-2026-09-12",
   "title": "Lancar pilotos secundarios de mama e contorno corporal com atribuicao no funil",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "448410378aac01c64a264e526acad58eb5f643a7",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel solicitou criar e publicar duas campanhas secundarias para mama e abdomen/contorno corporal e atualizar a mensuracao. A confirmacao no momento da aplicacao ainda vinculara o HEAD exato e a configuracao final de midia.",
+    "note": "Daniel confirmou a publicacao do pacote completo no momento da aplicacao. A correcao posterior limita-se a trocar a migracao celula a celula por lotes depois que a execucao viva atingiu o limite de seis minutos; o preflight externo deve vincular o novo HEAD exato sem gravar autorizacao dentro do candidato.",
     "approvedCommit": "",
     "approvedAt": "",
     "approvedBy": "",
@@ -17,7 +17,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": true
   },
   "scope": {
@@ -30,6 +30,8 @@
     "files": [
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/OpportunityStore.gs",
+      "apps-script/clinica-liv-leads/OpportunityStore.test.mjs",
       "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
@@ -92,6 +94,7 @@
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/OpportunityStore.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -101,25 +104,25 @@
       "git diff --check"
     ],
     "results": {
-      "focused": "41/41 testes diretamente alterados, 199/199 de jornada, 142/142 de aquisicao e 21/21 de retomadas aprovados",
+      "focused": "43/43 testes do schema e Opportunity Store, 41/41 diretamente alterados, 199/199 de jornada, 142/142 de aquisicao e 21/21 de retomadas aprovados",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
       "googleAdsPreview": "2 alteracoes de campanha e 0 erros; nenhuma alteracao aplicada",
-      "fullSuite": "1328/1328 testes aprovados",
+      "fullSuite": "1329/1329 testes aprovados, incluindo regressao que limita chamadas da migracao em uma planilha com 220 oportunidades",
       "siteBuild": "180 arquivos, 46 URLs do sitemap, 0 erro e nenhum arquivo interno no artefato",
       "siteCheck": "46/46 URLs tecnicamente validas, canonical proprio, indexabilidade, H1 e recursos aprovados; 0 pagina orfa",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 15/15 arquivos coincidem com o escopo declarado",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 17/17 arquivos coincidem com o escopo declarado",
       "opsCheck": "SYNC_PENDING esperado antes da publicacao"
     }
   },
   "release": {
-    "approvedCommit": "",
+    "approvedCommit": "5b202044e7338e2bd1cf078ed5ed246d10f123f7",
     "netlifyDeployId": "",
-    "appsScriptVersion": null,
+    "appsScriptVersion": 146,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
     "verifiedAt": "",
-    "activationState": "tested_local_waiting_action_time_confirmation",
-    "notes": "Campanhas permanecem somente em previa. Nenhum novo orcamento, anuncio, palavra-chave, sitelink ou schema foi aplicado ao vivo."
+    "activationState": "publication_in_progress_schema_batch_fix_pending",
+    "notes": "O commit aprovado foi enviado ao branch canonico e o Apps Script v146 preservou o deployment existente. A primeira aplicacao do schema foi interrompida ao sair do editor; a segunda atingiu seis minutos devido a leituras por celula. A correcao em lote foi validada localmente e aguarda publicacao antes da repeticao idempotente. Campanhas permanecem somente em previa."
   },
   "rollback": {
     "local": "reverter somente o commit deste piloto sobre 4484103, preservando os trabalhos paralelos",

@@ -78,10 +78,12 @@ function load({
 function makeSheet(name, headers, rows) {
   const data = [headers.slice(), ...rows.map((row) => row.slice())];
   let writeCount = 0;
+  let rangeCallCount = 0;
   let maxColumns = Math.max(...data.map((row) => row.length));
   return {
     data,
     getWriteCount: () => writeCount,
+    getRangeCallCount: () => rangeCallCount,
     getName: () => name,
     getLastRow: () => data.length,
     getLastColumn: () => Math.max(...data.map((row) => row.length)),
@@ -92,6 +94,7 @@ function makeSheet(name, headers, rows) {
       maxColumns += Number(count) || 0;
     },
     getRange(row, column, rowCount = 1, columnCount = 1) {
+      rangeCallCount += 1;
       const range = {
         getValue: () => data[row - 1]?.[column - 1] ?? "",
         getDisplayValue: () => String(data[row - 1]?.[column - 1] ?? ""),
@@ -694,6 +697,57 @@ test("attribution schema apply preserves existing first-touch dimensions and dup
   );
   assert.equal(finalRow[finalHeaders.indexOf("Campanha inicial")], "G26FACE");
   assert.equal(finalRow[finalHeaders.indexOf("Canal inicial")] || "", "");
+});
+
+test("attribution schema apply uses bounded batch calls for a production-sized workbook", () => {
+  const base = load();
+  const opportunityHeaders = Array.from(base.OPPORTUNITY_HEADERS);
+  const opportunityRows = Array.from({ length: 220 }, (_, index) => {
+    const row = Array(opportunityHeaders.length).fill("");
+    row[opportunityHeaders.indexOf("Opportunity ID")] = `opp-${index + 1}`;
+    row[opportunityHeaders.indexOf("Referência inicial")] = "G26FACE-C01H01";
+    row[opportunityHeaders.indexOf("Plataforma inicial")] = "Google Ads";
+    return row;
+  });
+  const opportunitySheet = makeSheet(
+    "_CRM_OPORTUNIDADES",
+    opportunityHeaders,
+    opportunityRows,
+  );
+  const eventSheet = makeSheet(
+    "_WHATSAPP_EVENTOS",
+    ["Message ID", "Event ID"],
+    [],
+  );
+  const visibleRows = opportunityRows.map((_, index) => [`opp-${index + 1}`]);
+  const amandaSheet = makeSheet(
+    "Google Ads - Conversões",
+    ["Opportunity ID"],
+    visibleRows,
+  );
+  const danielSheet = makeSheet(
+    "Leads Dr. Daniel",
+    ["Opportunity ID"],
+    [],
+  );
+  const spreadsheet = {
+    getSheetByName(name) {
+      if (name === "_CRM_OPORTUNIDADES") return opportunitySheet;
+      if (name === "_WHATSAPP_EVENTOS") return eventSheet;
+      if (name === "Google Ads - Conversões") return amandaSheet;
+      if (name === "Leads Dr. Daniel") return danielSheet;
+      return null;
+    },
+  };
+  const { migrarSchemaAtribuicaoV1 } = load({ spreadsheet });
+  const result = migrarSchemaAtribuicaoV1({
+    apply: true,
+    confirmation: "APLICAR_SCHEMA_ATRIBUICAO_V1",
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.opportunityRowsScanned, 220);
+  assert.ok(opportunitySheet.getRangeCallCount() < 150);
+  assert.ok(amandaSheet.getRangeCallCount() < 100);
 });
 
 test("schema flag off makes attribution writes and reads inert", () => {
