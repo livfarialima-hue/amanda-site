@@ -3,18 +3,18 @@
   "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
   "title": "Reconciliar grupos de preco paralelos e corrigir relevancia dos RSAs secundarios sem elevar gasto",
   "status": "tested_local",
-  "baseCommit": "4edf7aaa317857599ceba08236a81163218c6aee",
+  "baseCommit": "99b36f6c433b2017786731f02d01ea7649dd8eaa",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou aplicar o commit 1b5c4eee1d83132858fa65addeae8f3c3b107dd9. O preflight encontrou producao Git e Google Ads alteradas em paralelo; o candidato foi reconciliado sem sobrescrever essas mudancas e exige nova autorizacao para o hash integrado."
+    "note": "Daniel autorizou aplicar o commit exato 79d456ea11b34e502ca42c215f20f649250f10f3. O preflight passou e as escritas autorizadas no Google Ads e no Apps Script foram executadas. Durante o pos-voo, o branch canonico avancou ate 99b36f6c433b2017786731f02d01ea7649dd8eaa com o lote educativo publicado em paralelo. Este candidato preserva esse trabalho e exige autorizacao do novo hash somente para integrar Git, publicar o consumidor Netlify e atualizar a mesma projecao do Plano no Drive."
   },
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -25,6 +25,8 @@
     "files": [
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
@@ -231,9 +233,12 @@
       "fullSuite": "1338/1338",
       "siteBuild": "185 arquivos, 46 URLs do sitemap e zero erro",
       "siteCheck": "46/46 URLs tecnicamente validas, 35 tags de video e zero erro",
-      "changeCheck": "12/12 arquivos dentro do escopo aprovado",
+      "changeCheck": "pendente de repeticao sobre a base integrada 99b36f6",
       "bulkImportAssets": "3 grupos e 3 RSAs novos, 2 RSAs corrigidos, 8 palavras adicionadas, 2 grupos transitórios pausados e zero escrita de negativas ja existentes",
-      "opsCheck": "pendente do novo commit; SYNC_PENDING e esperado ate publicacao e recibos"
+      "googleAdsPostflight": "cinco uploads concluídos sem erro: grupos 27885666172234525, RSAs novos 8370800241093983490, palavras 776172141302390487, dois RSAs corrigidos 8536118842992338984 e pausa dos grupos transitórios 3397105701539708642; AG_MASTOPEXIA e AG_ABDOMINOPLASTIA passaram de Ruim para Excelente; orcamentos seguem R$ 8/dia por campanha e zero atividade",
+      "appsScriptPostflight": "deployment canonico preservado na v149; GoogleAdsFunnelReview.gs vivo coincide com SHA-256 normalizado d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7; GET HTTP 200 ok:true e POST com segredo sintetico invalido HTTP 200 unauthorized sem escrita",
+      "reviewScriptPostflight": "script 12117745 preservado ativo, sem alteracao de fonte, com agenda diaria entre 09:00 e 10:00 ja restaurada pelo trabalho paralelo",
+      "opsCheck": "SYNC_PENDING esperado ate autorizacao e publicacao do novo commit integrado, deploy Netlify, projecao do Plano no Drive e recibos finais"
     },
     "blockingFailures": [],
     "crossConsumerCases": [
@@ -247,16 +252,16 @@
   },
   "release": {
     "approvedCommit": "",
-    "netlifyDeployId": "preservado; nenhuma publicacao Netlify neste changeId",
-    "appsScriptVersion": null,
+    "netlifyDeployId": "6aa5e03e5650c20008bfd3c0 preservado como baseline; publicacao do consumidor Netlify pendente do novo hash",
+    "appsScriptVersion": 149,
     "verifiedAt": "",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
-    "activationState": "local_candidate",
-    "notes": "O codigo do script de revisao ja coincide com o candidato; resta restaurar seu agendamento diario. A v148 do Apps Script e os dois grupos genericos foram aplicados em paralelo. A v149 preservadora, os tres grupos especificos, tres RSAs novos, dois RSAs corrigidos e a pausa dos dois grupos transitórios dependem do novo commit exato, confirmacao e recibos."
+    "activationState": "google_ads_and_apps_script_live_netlify_git_drive_pending",
+    "notes": "Google Ads e Apps Script foram aplicados sob autorizacao do commit 79d456ea11b34e502ca42c215f20f649250f10f3 e verificados. O branch canonico avancou em paralelo; o novo hash preservador deve ser autorizado antes de publicar o ajuste de procedure-context.mjs no Netlify, integrar o Git e substituir a mesma projecao do Plano no Drive. Nenhum orcamento, campanha facial, pagina, sitemap, mensagem, paciente, agenda ou conversao foi alterado por este refinamento."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre 4edf7aaa317857599ceba08236a81163218c6aee, preservando todo trabalho paralelo",
+    "local": "reverter somente o commit funcional deste changeId sobre 99b36f6c433b2017786731f02d01ea7649dd8eaa, preservando todo trabalho paralelo",
     "production": "pausar os tres grupos especificos, reativar os dois grupos genericos transitórios, restaurar somente os dois RSAs originais e voltar o Apps Script ao conteudo da v148; preservar as seis negativas que ja pertencem ao baseline vivo"
   },
   "monitoring": {

@@ -490,16 +490,96 @@ test("all public pages use one current version for every tracking asset", () => 
   }
 });
 
+test("educational pilot is complete, sourced and discoverable from the library", () => {
+  const articles = [
+    {
+      file: "conteudos/como-escolher-cirurgiao-plastico/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/como-escolher-cirurgiao-plastico/",
+      required: [/CRM e RQE não significam a mesma coisa/i, /portal\.cfm\.org\.br\/busca-medicos/i],
+    },
+    {
+      file: "conteudos/recuperacao-blefaroplastia/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/recuperacao-blefaroplastia/",
+      required: [/alteração súbita da visão/i, /plasticsurgery\.org\/cosmetic-procedures\/eyelid-surgery\/recovery/i],
+    },
+    {
+      file: "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/minilifting-lifting-facial-deep-plane/",
+      required: [/Deep plane é uma abordagem cirúrgica, não um selo de superioridade/i, /pubmed\.ncbi\.nlm\.nih\.gov\/41100833/i],
+    },
+  ];
+
+  for (const article of articles) {
+    const html = readFileSync(path.join(root, article.file), "utf8");
+    assert.match(html, new RegExp(`<link href="${article.canonical.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}" rel="canonical"`), article.file);
+    assert.match(html, /Conteúdo educativo · Atualizado/i, article.file);
+    assert.doesNotMatch(html, /Conteúdo médico revisado|preparado para revisão|Gate editorial/i, article.file);
+    const articleSchema = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+      .flatMap((match) => JSON.parse(match[1])["@graph"] || [])
+      .find((item) => item["@id"] === article.canonical + "#article");
+    assert.ok(articleSchema, article.file);
+    assert.equal(articleSchema.author, undefined, article.file);
+    assert.equal(articleSchema.reviewedBy, undefined, article.file);
+    assert.equal(articleSchema.lastReviewed, undefined, article.file);
+    assert.match(html, /class="article-references"/i, article.file);
+    assert.match(html, /data-track="whatsapp"/i, article.file);
+    assert.match(html, /(?:não|nem) substitui (?:avaliação|exame) médic[oa]/i, article.file);
+    assert.doesNotMatch(html, /R\$\s*\d/i, article.file);
+    article.required.forEach((pattern) => assert.match(html, pattern, article.file));
+
+    const readableText = html
+      .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z0-9#]+;/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    assert.ok(readableText.split(" ").length >= 700, `${article.file} should contain at least 700 readable words`);
+  }
+
+  const library = readFileSync(path.join(root, "conteudos/index.html"), "utf8");
+  const uniqueArticleLinks = new Set(
+    [...library.matchAll(/class="cl-article" href="([^"]+)"/g)].map((match) => match[1]),
+  );
+  assert.equal(uniqueArticleLinks.size, 24);
+  assert.match(library, /data-content-total>24 leituras educativas/);
+  assert.match(library, /class="cl-library-count" data-content-total>24 conteúdos/);
+  articles.forEach((article) => {
+    const relativeHref = article.file.replace(/^conteudos\//, "").replace(/index\.html$/, "");
+    assert.match(library, new RegExp(`class="cl-article" href="${relativeHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+  });
+
+  const libraryScript = readFileSync(path.join(root, "campanhas/content-library.js"), "utf8");
+  assert.match(libraryScript, /querySelectorAll\('\[data-content-total\]'\)/);
+  assert.match(libraryScript, /articles\.length/);
+
+  const enhancementsCss = readFileSync(path.join(root, "campanhas/site-enhancements.css"), "utf8");
+  assert.match(
+    enhancementsCss,
+    /@media \(min-width: 901px\)[\s\S]*?\.article-page > \.article-hero\.consultation-article-hero,[\s\S]*?\.article-page > \.article-hero\.professional-article-hero\s*\{[\s\S]*?padding-inline:\s*max\(19px, calc\(50% - 560px\)\);/i,
+    "article heroes must stay aligned to the site's 1120px desktop content axis",
+  );
+  assert.match(
+    enhancementsCss,
+    /\.consultation-hero-media img\s*\{[^}]*width:\s*100%;[^}]*height:\s*auto;[^}]*aspect-ratio:\s*4\s*\/\s*5;/i,
+    "the consultation hero image must not inherit its fixed HTML height",
+  );
+  assert.match(
+    enhancementsCss,
+    /\.professional-hero-media img\s*\{[^}]*width:\s*100%;[^}]*height:\s*auto;[^}]*aspect-ratio:\s*4\s*\/\s*5;/i,
+    "the professional hero image must preserve its responsive aspect ratio",
+  );
+});
+
 test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orphans and redirects", () => {
   const result = auditSite({ root });
 
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishDirectory, "tmp/netlify-deploy");
-  assert.equal(result.summary.sitemapUrls, 46);
-  assert.equal(result.summary.expectedHttp200, 46);
-  assert.equal(result.summary.selfCanonical, 46);
-  assert.equal(result.summary.indexable, 46);
-  assert.equal(result.summary.oneH1, 46);
+  assert.equal(result.summary.sitemapUrls, 49);
+  assert.equal(result.summary.expectedHttp200, 49);
+  assert.equal(result.summary.selfCanonical, 49);
+  assert.equal(result.summary.indexable, 49);
+  assert.equal(result.summary.oneH1, 49);
   assert.equal(result.summary.orphanPages, 0);
   assert.equal(result.summary.auditFilesInArtifact, 0);
   assert.ok(result.summary.redirects >= 1);

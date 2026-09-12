@@ -82,7 +82,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `S_BR_SP_CIRURGIA_MAMA` → `G26MAMA`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
-- Os nove grupos anteriores e dez códigos secundários permanecem legíveis em `{_ag}`: cinco grupos de procedimento, dois grupos genéricos de preço publicados de forma transitória e três grupos específicos de preço candidatos. Depois da migração, oito grupos secundários ficam ativos e os dois genéricos permanecem apenas como aliases históricos:
+- Dez códigos secundários permanecem legíveis em `{_ag}`: cinco grupos de procedimento, três grupos específicos de preço ativos e dois aliases genéricos históricos. Depois da migração verificada em 12/09/2026, oito grupos secundários ficam ativos e os dois genéricos permanecem pausados, apenas para leitura histórica:
   - `AG_ABDOMINOPLASTIA` → `ag_abdominoplastia`
   - `AG_BLEFAROPLASTIA` → `ag_blefaroplastia`
   - `AG_CIRURGIA_FACIAL` → `ag_cirurgia_facial`
