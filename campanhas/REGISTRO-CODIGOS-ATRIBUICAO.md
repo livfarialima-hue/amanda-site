@@ -39,8 +39,9 @@ Este registro impede que códigos históricos sejam reinterpretados como uma ori
 | `ag_blefaroplastia` | `AG_BLEFAROPLASTIA` | canônico |
 | `ag_abdominoplastia` | `AG_ABDOMINOPLASTIA` | canônico desde 12/09/2026 |
 | `ag_cirurgia_facial` | `AG_CIRURGIA_FACIAL` | canônico |
-| `ag_cirurgia_mama_preco` | `AG_CIRURGIA_MAMA_PRECO` | candidato autorizado em 12/09/2026; ativação condicionada ao recibo vivo |
-| `ag_contorno_corporal_preco` | `AG_CONTORNO_CORPORAL_PRECO` | candidato autorizado em 12/09/2026; ativação condicionada ao recibo vivo |
+| `ag_lipoaspiracao_preco` | `AG_LIPOASPIRACAO_PRECO` | candidato autorizado em 12/09/2026; ativação condicionada ao recibo vivo |
+| `ag_mastopexia_preco` | `AG_MASTOPEXIA_PRECO` | candidato autorizado em 12/09/2026; ativação condicionada ao recibo vivo |
+| `ag_protese_mama_preco` | `AG_PROTESE_MAMA_PRECO` | candidato autorizado em 12/09/2026; ativação condicionada ao recibo vivo |
 | `ag_lifting_cervical` | `AG_CERVICOPLASTIA` | canônico |
 | `ag_lipoaspiracao` | `AG_LIPOASPIRACAO` | canônico desde 12/09/2026 |
 | `ag_lipo_papada` | `AG_LIPO_PAPADA` | canônico |

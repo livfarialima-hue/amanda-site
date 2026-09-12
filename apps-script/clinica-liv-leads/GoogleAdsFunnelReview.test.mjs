@@ -161,7 +161,7 @@ test("o agregado de rotas publica apenas grupo, landing e CTA registrados", () =
   assert.equal(serialized.includes("evt_route_1"), false);
 });
 
-test("o agregado separa as sete rotas secundárias por grupo e landing", () => {
+test("o agregado separa as oito rotas secundárias por grupo e landing", () => {
   const build = load("construirAgregadosRotasGoogleAds_");
   const sourceHeaders = ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"];
   const attributionHeaders = ["Opportunity ID", "Grupo/conjunto inicial", "Landing page inicial", "Local do CTA inicial"];
@@ -169,10 +169,11 @@ test("o agregado separa as sete rotas secundárias por grupo e landing", () => {
     ["opp_masto", "G26MAMA", "ag_mastopexia", "/mastopexia/"],
     ["opp_redutora", "G26MAMA", "ag_mamoplastia_redutora", "/mamoplastia-redutora/"],
     ["opp_protese", "G26MAMA", "ag_protese_mama", "/protese-de-mama/"],
-    ["opp_mama_preco", "G26MAMA", "ag_cirurgia_mama_preco", "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/"],
+    ["opp_masto_preco", "G26MAMA", "ag_mastopexia_preco", "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/"],
+    ["opp_protese_preco", "G26MAMA", "ag_protese_mama_preco", "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/"],
     ["opp_abd", "G26CORP", "ag_abdominoplastia", "/abdominoplastia/"],
     ["opp_lipo", "G26CORP", "ag_lipoaspiracao", "/lipoaspiracao/"],
-    ["opp_corpo_preco", "G26CORP", "ag_contorno_corporal_preco", "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/"],
+    ["opp_lipo_preco", "G26CORP", "ag_lipoaspiracao_preco", "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/"],
   ];
   const rows = build(
     [
@@ -201,18 +202,19 @@ test("o agregado separa as sete rotas secundárias por grupo e landing", () => {
   );
 
   const resolved7 = rows.filter((row) => row[2] === 7);
-  assert.equal(resolved7.length, 7);
+  assert.equal(resolved7.length, 8);
   assert.deepEqual(
     JSON.parse(JSON.stringify(
       resolved7.map((row) => [row[5], row[6], row[7], row[20]]),
     )),
     [
-      ["S_BR_SP_CIRURGIA_MAMA", "AG_CIRURGIA_MAMA_PRECO", "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/", "resolved"],
       ["S_BR_SP_CIRURGIA_MAMA", "AG_MAMOPLASTIA_REDUTORA", "/mamoplastia-redutora/", "resolved"],
+      ["S_BR_SP_CIRURGIA_MAMA", "AG_MASTOPEXIA_PRECO", "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/", "resolved"],
       ["S_BR_SP_CIRURGIA_MAMA", "AG_MASTOPEXIA", "/mastopexia/", "resolved"],
+      ["S_BR_SP_CIRURGIA_MAMA", "AG_PROTESE_MAMA_PRECO", "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/", "resolved"],
       ["S_BR_SP_CIRURGIA_MAMA", "AG_PROTESE_MAMA", "/protese-de-mama/", "resolved"],
       ["S_BR_SP_CONTORNO_CORPORAL", "AG_ABDOMINOPLASTIA", "/abdominoplastia/", "resolved"],
-      ["S_BR_SP_CONTORNO_CORPORAL", "AG_CONTORNO_CORPORAL_PRECO", "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/", "resolved"],
+      ["S_BR_SP_CONTORNO_CORPORAL", "AG_LIPOASPIRACAO_PRECO", "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/", "resolved"],
       ["S_BR_SP_CONTORNO_CORPORAL", "AG_LIPOASPIRACAO", "/lipoaspiracao/", "resolved"],
     ],
   );

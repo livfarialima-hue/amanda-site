@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
-  "title": "Separar intencao de preco nas campanhas secundarias sem elevar gasto",
-  "status": "tested_local",
+  "title": "Separar intencao de preco e corrigir relevancia dos RSAs secundarios sem elevar gasto",
+  "status": "implementing_local",
   "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
   "authorization": {
     "required": true,
@@ -32,6 +32,7 @@
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "google-ads-scripts/google-ads-search-review-email.js",
       "google-ads-scripts/google-ads-search-review-email.test.mjs",
+      "netlify/functions/lib/procedure-context.mjs",
       "netlify/functions/lib/procedure-context.test.mjs",
       "ops/CHANGE-CANDIDATE.json"
     ]
@@ -48,10 +49,11 @@
       "as seis campanhas faciais e seus R$ 87 por dia permanecem sem qualquer edicao",
       "as duas campanhas secundarias permanecem em R$ 8 por dia cada, Maximizar cliques e a mesma meta qualificada",
       "rede, parceiros, Display, cidade por presenca, idioma, idades, dispositivos, agenda e sitelinks permanecem iguais",
-      "somente oito palavras existentes de preco sao recriadas nos dois grupos novos e pausadas na origem depois da previa sem erro",
+      "somente oito palavras existentes de preco sao recriadas nos tres grupos novos e pausadas na origem depois da previa sem erro",
       "seis negativas de roteamento sao exatas e nunca viram raiz de preco em campanha, conta ou lista compartilhada",
-      "os dois novos grupos recebem codigos de atribuicao fechados antes de qualquer trafego",
-      "grupo de preco geral nao inventa mastopexia, protese, lipoaspiracao ou abdominoplastia sem manifestacao da pessoa",
+      "os tres novos grupos de preco recebem codigos de atribuicao fechados antes de qualquer trafego",
+      "mastopexia, protese e lipoaspiracao permanecem em grupos de preco distintos, sem RSA regional generico",
+      "somente os RSAs atuais de AG_MASTOPEXIA e AG_ABDOMINOPLASTIA sao editados; URL, caminhos, status e codigo permanecem iguais",
       "click ID, marcacao automatica, primeira origem, privacidade e criterio de lead qualificado permanecem intactos",
       "as paginas de destino, seus CTAs, mensagens de WhatsApp e textos clinicos permanecem sem alteracao neste teste",
       "nenhuma mensagem, paciente, conversao, agenda ou linha operacional e criada para testar"
@@ -62,7 +64,7 @@
         "system": "Google Ads 995-334-4486",
         "status": "baseline_confirmed",
         "checkedAt": "2026-09-12T18:46:30-03:00",
-        "reference": "Campanhas 24239348529 e 24239348532 ativas, R$ 8/dia cada e zero impressao, clique e gasto; oito palavras de preco ainda estao nos grupos de procedimento e usam as paginas de procedimento."
+        "reference": "Campanhas 24239348529 e 24239348532 ativas, R$ 8/dia cada e zero impressao, clique e gasto; oito palavras de preco ainda estao nos grupos de procedimento. AG_MASTOPEXIA e AG_ABDOMINOPLASTIA aparecem como Ruim, com 15 titulos, apenas tres descricoes salvas e baixa presenca das palavras ativas."
       },
       {
         "contract": "patient-journey-funnel-followups",
@@ -85,11 +87,114 @@
         "checkedAt": "2026-09-12T18:51:29-03:00",
         "reference": "As duas URLs responderam HTTP 200, canonical proprio, CTA de WhatsApp rastreado e texto correto de consulta independente do orcamento cirurgico."
       }
-    ]
+    ],
+    "googleAdsPlan": {
+      "existingRsaEdits": [
+        {
+          "campaign": "S_BR_SP_CIRURGIA_MAMA",
+          "adGroup": "AG_MASTOPEXIA",
+          "adId": "824390505597",
+          "finalUrl": "https://draamandaschroeder.com.br/mastopexia/",
+          "path1": "mastopexia",
+          "path2": "avaliacao",
+          "headlines": [
+            "Mastopexia em São Paulo",
+            "Lifting Mamário em SP",
+            "Avaliação para Mastopexia",
+            "Cirurgia para Elevar as Mamas",
+            "Mastopexia com ou sem Prótese",
+            "Entenda a Mastopexia",
+            "Indicação para Mastopexia",
+            "Cicatrizes da Mastopexia",
+            "Recuperação da Mastopexia",
+            "Consulta em Pinheiros",
+            "Dra. Amanda Schroeder",
+            "Cirurgia Plástica na LIV",
+            "Planejamento Individual",
+            "Naturalidade e Proporção",
+            "Converse com a Equipe"
+          ],
+          "descriptions": [
+            "Entenda quando a mastopexia ou o lifting mamário pode elevar e remodelar as mamas.",
+            "Avaliação individual para planejar mastopexia com ou sem prótese, conforme os tecidos.",
+            "Veja indicação, cicatrizes, limites e recuperação da cirurgia para elevar as mamas.",
+            "Consulta particular em Pinheiros, com explicações claras e decisão sem pressão."
+          ]
+        },
+        {
+          "campaign": "S_BR_SP_CONTORNO_CORPORAL",
+          "adGroup": "AG_ABDOMINOPLASTIA",
+          "adId": "824390505726",
+          "finalUrl": "https://draamandaschroeder.com.br/abdominoplastia/",
+          "path1": "abdomen",
+          "path2": "avaliacao",
+          "headlines": [
+            "Abdominoplastia em São Paulo",
+            "Excesso de Pele no Abdômen",
+            "Cirurgia de Contorno Abdominal",
+            "Avaliação do Abdômen",
+            "Cirurgia do Abdômen em SP",
+            "Pele e Parede Abdominal",
+            "Diástase e Excesso de Pele",
+            "Entenda a Abdominoplastia",
+            "Indicação para Abdominoplastia",
+            "Cicatriz da Abdominoplastia",
+            "Recuperação do Abdômen",
+            "Consulta em Pinheiros",
+            "Dra. Amanda Schroeder",
+            "Planejamento Individual",
+            "Converse com a Equipe"
+          ],
+          "descriptions": [
+            "Entenda quando a cirurgia para excesso de pele no abdômen pode ser indicada.",
+            "Avaliação individual para planejar a cirurgia de contorno abdominal com cuidado.",
+            "Veja indicação, cicatrizes, limites e recuperação da abdominoplastia.",
+            "Consulta particular em Pinheiros, com explicações claras e decisão sem pressão."
+          ]
+        }
+      ],
+      "newPriceGroups": [
+        {
+          "campaign": "S_BR_SP_CIRURGIA_MAMA",
+          "adGroup": "AG_MASTOPEXIA_PRECO",
+          "trackingCode": "ag_mastopexia_preco",
+          "keywords": ["preço mastopexia|PHRASE", "mastopexia preço|EXACT"],
+          "finalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
+          "headlines": ["Preço da Mastopexia", "Mastopexia: Preço e Custos", "Quanto Custa a Mastopexia", "Valor da Mastopexia", "Custos da Cirurgia de Mama", "Orçamento Após Avaliação", "Equipe, Hospital e Materiais", "Avaliação em São Paulo", "Consulta em Pinheiros", "Dra. Amanda Schroeder", "Residência pela UNICAMP", "CRM 191605 | RQE 110472", "Planejamento Individual", "Formas de Pagamento", "Decisão Sem Pressão"],
+          "descriptions": ["Veja o que compõe o preço da mastopexia: equipe, anestesia, hospital e materiais.", "Entenda os custos da mastopexia com ou sem prótese e os fatores do orçamento.", "Consulta particular em Pinheiros para avaliar técnica, cicatrizes e planejamento.", "Conheça as formas de pagamento; o orçamento individual é definido após avaliação."]
+        },
+        {
+          "campaign": "S_BR_SP_CIRURGIA_MAMA",
+          "adGroup": "AG_PROTESE_MAMA_PRECO",
+          "trackingCode": "ag_protese_mama_preco",
+          "keywords": ["silicone nos seios preço|PHRASE", "prótese de silicone valor|EXACT", "prótese de silicone valor|PHRASE"],
+          "finalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
+          "headlines": ["Prótese de Silicone: Valor", "Valor da Prótese de Silicone", "Silicone nos Seios: Preço", "Preço da Prótese de Mama", "Quanto Custa a Prótese?", "Custos da Cirurgia de Mama", "Implante, Hospital e Equipe", "Orçamento Após Avaliação", "Avaliação em São Paulo", "Consulta em Pinheiros", "Dra. Amanda Schroeder", "Residência pela UNICAMP", "CRM 191605 | RQE 110472", "Formas de Pagamento", "Decisão Sem Pressão"],
+          "descriptions": ["Entenda o valor da prótese de silicone, incluindo implante, equipe e hospital.", "Veja como se forma o preço do silicone nos seios e o que altera o orçamento.", "Consulta particular em Pinheiros para avaliar volume, formato e planejamento.", "Conheça as formas de pagamento; o orçamento individual é definido após avaliação."]
+        },
+        {
+          "campaign": "S_BR_SP_CONTORNO_CORPORAL",
+          "adGroup": "AG_LIPOASPIRACAO_PRECO",
+          "trackingCode": "ag_lipoaspiracao_preco",
+          "keywords": ["lipoaspiração preço|EXACT", "lipoaspiração preço|PHRASE", "lipoescultura valor|PHRASE"],
+          "finalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/",
+          "headlines": ["Preço da Lipoaspiração", "Lipoaspiração: Preço e Custos", "Quanto Custa Lipoaspiração", "Valor da Lipoescultura", "Lipoescultura: Valor e Custos", "Custos da Cirurgia Corporal", "Orçamento Após Avaliação", "Equipe, Hospital e Anestesia", "Avaliação em São Paulo", "Consulta em Pinheiros", "Dra. Amanda Schroeder", "Residência pela UNICAMP", "CRM 191605 | RQE 110472", "Formas de Pagamento", "Decisão Sem Pressão"],
+          "descriptions": ["Veja o que compõe o preço da lipoaspiração: equipe, anestesia, hospital e extensão.", "Entenda o valor da lipoescultura e os fatores que individualizam o orçamento.", "Consulta particular em Pinheiros para avaliar áreas, proporções e planejamento.", "Conheça as formas de pagamento; o orçamento individual é definido após avaliação."]
+        }
+      ],
+      "routingNegativesExact": [
+        "AG_MASTOPEXIA|preço mastopexia",
+        "AG_MASTOPEXIA|mastopexia preço",
+        "AG_PROTESE_MAMA|silicone nos seios preço",
+        "AG_PROTESE_MAMA|prótese de silicone valor",
+        "AG_LIPOASPIRACAO|lipoaspiração preço",
+        "AG_LIPOASPIRACAO|lipoescultura valor"
+      ]
+    }
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-12T18:43:28-03:00",
+    "status": "failed_local",
+    "completedAt": "2026-09-12T19:04:42-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -104,17 +209,21 @@
       "git diff --check"
     ],
     "results": {
-      "focused": "39/39 testes diretamente alterados; suites cruzadas obrigatorias em 199/199, 21/21 e 144/144",
+      "focused": "38/40 testes diretamente alterados; 2 falhas bloqueiam a continuacao",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1332/1332 testes aprovados, sem falha, cancelamento ou teste ignorado",
-      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo de auditoria no artefato",
-      "siteCheck": "46/46 URLs tecnicamente validas; os dois guias de custo permanecem com HTTP logico 200, canonical, H1 e tracking",
+      "fullSuite": "1331/1333 testes aprovados; as mesmas 2 falhas impedem commit candidato e publicacao",
+      "siteBuild": "nao repetido depois deste refinamento bloqueado; o commit anterior passou com 180 arquivos",
+      "siteCheck": "nao repetido depois deste refinamento bloqueado; o commit anterior passou em 46/46 URLs",
       "changeCheck": "CHANGE_SAFETY_STATUS=OK; 11/11 arquivos coincidem com o escopo",
-      "opsCheck": "SYNC_PENDING esperado: publicacao, branch canonica e recibos ainda pendentes"
+      "opsCheck": "nao executado depois das falhas; o rascunho permanece local e nao publicavel"
     },
+    "blockingFailures": [
+      "GoogleAdsFunnelReview: a expectativa de ordenacao das oito rotas nao coincide com a ordenacao deterministica real",
+      "procedure-context: os novos grupos de preco ainda nao foram implementados no modulo proprietario e retornam null"
+    ],
     "crossConsumerCases": [
-      "os sete grupos secundarios resolvem somente os codigos e rotas registrados",
-      "os dois grupos gerais de preco continuam sem inventar procedimento especifico",
+      "os oito grupos secundarios resolvem somente os codigos e rotas registrados",
+      "os tres grupos de preco preservam procedimento, intencao e landing por codigo exato",
       "a rotina de revisao reconhece termos de mama e corpo e usa R$ 103/dia como referencia total",
       "as seis negativas exatas sao reconhecidas como roteamento intencional",
       "os guias de custo permanecem publicados e rastreaveis sem mudanca de texto"
@@ -128,7 +237,7 @@
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
     "activationState": "local_candidate",
-    "notes": "A aplicacao no Google Ads e a atualizacao dos dois scripts vivos dependem de confirmacao e recibos."
+    "notes": "A aplicacao dos tres grupos de preco, tres RSAs novos, dois RSAs corrigidos e a atualizacao dos dois scripts vivos dependem de confirmacao e recibos."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre 93d7beafbd700791f2f6e0dc302b96f6da898808",

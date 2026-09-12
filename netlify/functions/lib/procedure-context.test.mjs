@@ -39,8 +39,21 @@ test("Google and Meta campaign references preserve their procedure mapping", () 
 test("a campanha secundária sem grupo não inventa um procedimento", () => {
   assert.equal(detectProcedure("", "G26MAMA", null), null);
   assert.equal(detectProcedure("", "G26CORP", null), null);
-  assert.equal(detectProcedure("", "G26MAMA-ag_cirurgia_mama_preco", null), null);
-  assert.equal(detectProcedure("", "G26CORP-ag_contorno_corporal_preco", null), null);
+});
+
+test("os grupos de preço por procedimento preservam a intenção sem depender da mensagem", () => {
+  assert.deepEqual(detectProcedure("", "G26MAMA-ag_mastopexia_preco", null), {
+    key: "mastopexia",
+    code: "X-MASTO-01",
+  });
+  assert.deepEqual(detectProcedure("", "G26MAMA-ag_protese_mama_preco", null), {
+    key: "protese_mama",
+    code: "X-PROTESE-01",
+  });
+  assert.deepEqual(detectProcedure("", "G26CORP-ag_lipoaspiracao_preco", null), {
+    key: "lipoaspiracao",
+    code: "X-LIPO-01",
+  });
 });
 
 test("generic lifting keeps the established facial fallback", () => {
