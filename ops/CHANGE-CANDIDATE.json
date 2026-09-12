@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
   "title": "Separar intencao de preco nas campanhas secundarias sem elevar gasto",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou preparar as mudancas de estrutura e avaliar a comunicacao. A publicacao externa continua vinculada ao commit funcional exato e a confirmacao no instante de aplicar as alteracoes no Google Ads."
+    "note": "Daniel autorizou publicar o commit funcional exato a9a0d4651a07e5d872d282daf93dd6ee95b7ebe5 e confirmou no instante das escritas externas, inclusive a correcao destrutiva das tres palavras exatas antigas e a recriacao da agenda diaria do script de revisao."
   },
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -25,6 +25,7 @@
     "files": [
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/production-target.json",
       "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
@@ -48,7 +49,7 @@
       "as seis campanhas faciais e seus R$ 87 por dia permanecem sem qualquer edicao",
       "as duas campanhas secundarias permanecem em R$ 8 por dia cada, Maximizar cliques e a mesma meta qualificada",
       "rede, parceiros, Display, cidade por presenca, idioma, idades, dispositivos, agenda e sitelinks permanecem iguais",
-      "somente oito palavras existentes de preco sao recriadas nos dois grupos novos e pausadas na origem depois da previa sem erro",
+      "somente oito palavras existentes de preco sao recriadas nos dois grupos novos; cinco frases ficam pausadas na origem e tres exatas conflitantes sao removidas depois da previa sem erro",
       "seis negativas de roteamento sao exatas e nunca viram raiz de preco em campanha, conta ou lista compartilhada",
       "os dois novos grupos recebem codigos de atribuicao fechados antes de qualquer trafego",
       "grupo de preco geral nao inventa mastopexia, protese, lipoaspiracao ou abdominoplastia sem manifestacao da pessoa",
@@ -88,8 +89,8 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-12T18:43:28-03:00",
+    "status": "passed_live",
+    "completedAt": "2026-09-12T20:19:23-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -109,8 +110,12 @@
       "fullSuite": "1332/1332 testes aprovados, sem falha, cancelamento ou teste ignorado",
       "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo de auditoria no artefato",
       "siteCheck": "46/46 URLs tecnicamente validas; os dois guias de custo permanecem com HTTP logico 200, canonical, H1 e tracking",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 11/11 arquivos coincidem com o escopo",
-      "opsCheck": "SYNC_PENDING esperado: publicacao, branch canonica e recibos ainda pendentes"
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 12/12 arquivos coincidem com o escopo",
+      "opsCheck": "SYNC_PENDING esperado somente por WRONG_BRANCH; publicacao funcional, recibos externos e worktree limpo verificados",
+      "appsScript": "deployment canonico preservado na v148; GET do web app HTTP 200; dois novos codigos de grupo persistidos",
+      "googleAds": "dois grupos de preco, oito palavras de preco e dois RSAs qualificados ativos; tres palavras exatas antigas removidas; seis negativas exatas verificadas; campanhas e R$ 103/dia preservados",
+      "googleAdsReviewScript": "fonte viva coincide com SHA-256 e6221436e176125d22ffdb48f28f1ea06689a8a324225c4c885556a16a59401f; agenda diaria 09:00-10:00 restaurada",
+      "publicPages": "dois guias HTTP 200, canonical proprio e CTA WhatsApp rastreado; sitemap HTTP 200 com 46 URLs e ambas as rotas"
     },
     "crossConsumerCases": [
       "os sete grupos secundarios resolvem somente os codigos e rotas registrados",
@@ -121,14 +126,14 @@
     ]
   },
   "release": {
-    "approvedCommit": "",
-    "netlifyDeployId": "preservado; nenhuma publicacao Netlify neste changeId",
-    "appsScriptVersion": null,
-    "verifiedAt": "",
+    "approvedCommit": "a9a0d4651a07e5d872d282daf93dd6ee95b7ebe5",
+    "netlifyDeployId": "6aa5d27ed28c240009514d6d",
+    "appsScriptVersion": 148,
+    "verifiedAt": "2026-09-12T20:19:23-03:00",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "",
-    "activationState": "local_candidate",
-    "notes": "A aplicacao no Google Ads e a atualizacao dos dois scripts vivos dependem de confirmacao e recibos."
+    "drivePlanSha256": "b8c64fd3fe84b56aae17add98e8132d8959adc96b9289d7ed749954a228194ab",
+    "activationState": "published_live_monitoring",
+    "notes": "Apps Script v148, Google Ads e rotina somente leitura publicados e relidos. Upload de remocao das tres exatas antigas: 6838173976875543099; upload das tres negativas faltantes: 6049664068878736920. As duas novas RSAs estao Qualificadas; forca Ruim e apenas diagnostico. Nenhuma pagina ou sitemap precisou de nova publicacao; o deploy Netlify 6aa5d27ed28c240009514d6d foi somente preservado como estado de producao ja verificado."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre 93d7beafbd700791f2f6e0dc302b96f6da898808",
