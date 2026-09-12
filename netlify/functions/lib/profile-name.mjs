@@ -1,5 +1,41 @@
 const MAX_PROFILE_NAME_LENGTH = 80;
 const MAX_FIRST_NAME_LENGTH = 18;
+const MAX_KNOWN_PATIENT_NAME_LENGTH = 120;
+
+export function usableKnownPatientName(value) {
+  const name = Array.from(String(value || "").trim())
+    .slice(0, MAX_KNOWN_PATIENT_NAME_LENGTH + 1)
+    .join("")
+    .replace(/^'+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const normalized = name
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "");
+
+  if (
+    !name ||
+    name.length > MAX_KNOWN_PATIENT_NAME_LENGTH ||
+    !/^[\p{L}\p{M}][\p{L}\p{M}'’.-]*(?:\s+[\p{L}\p{M}][\p{L}\p{M}'’.-]*)*$/u.test(
+      name,
+    ) ||
+    [
+      "nao informado",
+      "nao informada",
+      "desconhecido",
+      "desconhecida",
+      "paciente",
+      "cliente",
+      "contato",
+      "sem nome",
+    ].includes(normalized)
+  ) {
+    return "";
+  }
+
+  return name;
+}
 
 export function usableProfileName(value) {
   const profileName = Array.from(String(value || "").trim())

@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolvePatientDisplayName } from "./profile-name.mjs";
+import {
+  resolvePatientDisplayName,
+  usableKnownPatientName,
+} from "./profile-name.mjs";
 
 test("self-identified patient name overrides an unrelated WhatsApp profile", () => {
   const name = resolvePatientDisplayName({
@@ -39,4 +42,13 @@ test("business and brand profiles are not treated as patient names", () => {
     resolvePatientDisplayName({ profileName: "Monah Semijoias" }),
     "",
   );
+});
+
+test("a canonical patient name keeps the complete validated value", () => {
+  assert.equal(
+    usableKnownPatientName("Mariana Alves de Souza Lima"),
+    "Mariana Alves de Souza Lima",
+  );
+  assert.equal(usableKnownPatientName("Não informado"), "");
+  assert.equal(usableKnownPatientName("=IMPORTXML(...)"), "");
 });

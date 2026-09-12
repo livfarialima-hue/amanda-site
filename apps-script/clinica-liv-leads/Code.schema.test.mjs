@@ -52,6 +52,8 @@ globalThis.__test = {
   mergeLeadIntoExistingRow_,
   colunaNomeLead_,
   gravarNomeLeadSeDisponivel_,
+  normalizarNomePacienteConhecido_,
+  obterNomePacienteConhecido_,
   decomporReferenciaAquisicao_,
   isKnownPatientRelationship_,
   findProcessedEvent_,
@@ -117,6 +119,55 @@ test("known patients are recognized before acquisition ingestion", () => {
     }),
     false,
   );
+});
+
+test("a known LEADS name can be recovered by phone for an appointment review", () => {
+  const {
+    CONFIG,
+    normalizarNomePacienteConhecido_,
+    obterNomePacienteConhecido_,
+  } = loadCode();
+  const headers = [
+    "Data do contato",
+    "Referência da campanha",
+    "Telefone (E.164)",
+    "Nome",
+  ];
+  const patientPhone = "+5511994880724";
+  const patientName = "Mariana Alves de Souza Lima";
+  const leadSheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => headers.length,
+    getRange(row, column, rows, columns) {
+      return {
+        getDisplayValues() {
+          if (row === 1) {
+            return [headers.slice(column - 1, column - 1 + columns)];
+          }
+          if (row === 2 && column === 3) return [[patientPhone]];
+          throw new Error(`unexpected display range ${row}:${column}`);
+        },
+        getDisplayValue() {
+          if (row === 2 && column === 4) return patientName;
+          throw new Error(`unexpected value range ${row}:${column}`);
+        },
+      };
+    },
+  };
+  const spreadsheet = {
+    getSheetByName(name) {
+      return name === CONFIG.sheetName ? leadSheet : null;
+    },
+  };
+
+  assert.equal(
+    obterNomePacienteConhecido_(
+      { phone: patientPhone, professional: "amanda" },
+      spreadsheet,
+    ),
+    patientName,
+  );
+  assert.equal(normalizarNomePacienteConhecido_("Não informado"), "");
 });
 
 test("ambiguous lead identity blocks insertion while a genuinely new phone does not", () => {

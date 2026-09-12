@@ -143,3 +143,59 @@ test("GET only displays the review and POST performs the reservation", async () 
   assert.equal(updates[0].status, "approved");
   assert.match(await postResponse.text(), /horário foi retirado/);
 });
+
+test("a legacy review without a name recovers it from LEADS before display", async () => {
+  const env = {
+    GOOGLE_SHEETS_WEBHOOK_SECRET: "review-secret",
+    GOOGLE_SHEETS_WEBHOOK_URL: "https://script.example.com/webhook",
+  };
+  const review = {
+    id: "legacy-review-id",
+    status: "pending",
+    appointment: { ...APPOINTMENT, name: "" },
+  };
+  const updates = [];
+  const fetchBodies = [];
+  const response = await handleAppointmentReview(
+    new Request(
+      "https://example.com/review?id=legacy-review-id&exp=123&sig=signed",
+    ),
+    {
+      env,
+      verifyTokenImpl: () => ({ ok: true, id: "legacy-review-id" }),
+      getAppointmentReviewImpl: async () => review,
+      updateAppointmentReviewImpl: async (_id, patch) => {
+        updates.push(patch);
+        return { ...review, ...patch };
+      },
+      fetchImpl: async (_url, options) => {
+        const body = JSON.parse(options.body);
+        fetchBodies.push(body);
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            relationship: {
+              found: false,
+              patientName: "Mariana Alves de Souza Lima",
+            },
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      },
+    },
+  );
+
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /Mariana Alves de Souza Lima/);
+  assert.equal(fetchBodies.length, 1);
+  assert.equal(fetchBodies[0].action, "get_patient_relationship");
+  assert.deepEqual(fetchBodies[0].patient, {
+    phone: APPOINTMENT.phone,
+    professional: "amanda",
+    includeIdentity: true,
+  });
+  assert.equal(
+    updates[0].appointment.name,
+    "Mariana Alves de Souza Lima",
+  );
+});
