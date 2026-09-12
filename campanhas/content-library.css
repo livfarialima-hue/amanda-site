@@ -551,7 +551,7 @@ html.content-library-page {
 }
 
 .cl-consultation-action > span {
-  color: var(--cl-accent);
+  color: #75584f;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.09em;

@@ -110,7 +110,7 @@
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T15:22:27-03:00",
+    "completedAt": "2026-09-12T15:36:54-03:00",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -126,7 +126,7 @@
       "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo interno no artefato",
       "siteCheck": "46/46 URLs com canonical proprio, indexabilidade, uma H1, recursos presentes e zero pagina orfa",
       "mediaTechnical": "35/35 videos estaticos com poster; todas as imagens referenciadas com dimensoes e nenhum recurso ausente",
-      "mobileVisual": "46/46 rotas verificadas em navegador real a 390x844; zero overflow, baixo contraste, alvo pequeno, midia quebrada, erro de video ou erro de script",
+      "mobileVisual": "46/46 rotas verificadas novamente em navegador real a 390x844 apos corrigir os contrastes encontrados no primeiro pos-voo; zero overflow, baixo contraste, alvo pequeno, midia quebrada, erro de video ou erro de script; 18 modais de video abertos com sucesso",
       "linkAndSchemaIntegrity": "46/46 rotas preservam hrefs, atributos de tracking do WhatsApp, fontes de imagem, posters e canonicals; todos os blocos JSON-LD continuam validos"
     },
     "crossConsumerCases": [

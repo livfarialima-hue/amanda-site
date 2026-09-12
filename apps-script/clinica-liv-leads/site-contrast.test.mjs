@@ -7,6 +7,7 @@ const stylesheet = readFileSync(new URL("campanhas/secondary-conversion.css", ro
 const bodyStylesheet = readFileSync(new URL("campanhas/conversion-pages-body.css", root), "utf8");
 const conversionStylesheet = readFileSync(new URL("campanhas/conversion-pages.css", root), "utf8");
 const contentLibraryStylesheet = readFileSync(new URL("campanhas/content-library.css", root), "utf8");
+const siteEnhancementsStylesheet = readFileSync(new URL("campanhas/site-enhancements.css", root), "utf8");
 const secondaryPages = [
   "abdominoplastia",
   "braquioplastia",
@@ -77,6 +78,8 @@ test("secondary procedure colors meet WCAG AA contrast", () => {
   assert.ok(contrast("#584940", "#f0e6e0") >= 4.5);
   assert.ok(contrast("#fffaf7", "#5a4641") >= 4.5);
   assert.ok(contrast("#ffffff", "#241c19") >= 4.5);
+  assert.ok(contrast("#584b46", "#d8cfca") >= 4.5);
+  assert.ok(contrast("#75584f", "#fffaf7") >= 4.5);
 });
 
 test("secondary procedure stylesheet contains scoped contrast overrides", () => {
@@ -95,6 +98,8 @@ test("secondary procedure stylesheet contains scoped contrast overrides", () => 
   assert.match(conversionStylesheet, /\.cv-price-box dt \{ color: #fffaf7;/);
   assert.match(conversionStylesheet, /\.cv-card-number \{[^}]*color: var\(--green-dark\);/);
   assert.match(contentLibraryStylesheet, /\.cl-eyebrow \{[\s\S]*?color: #75584f;/);
+  assert.match(contentLibraryStylesheet, /\.cl-consultation-action > span \{[\s\S]*?color: #75584f;/);
+  assert.match(siteEnhancementsStylesheet, /button\[class\*="carousel-button"\]:disabled \{[\s\S]*?color: #584b46 !important;/);
   assert.match(contentLibraryStylesheet, /\.cl-search-suggestions button \{\s*min-height: 44px;/);
 });
 
@@ -214,5 +219,11 @@ test("public pages avoid formulaic AI wording and preserve strategic consultatio
     assert.match(text, /RQE 110472/i, `${pageFile} RQE`);
     assert.match(text, /consulta|avaliação/i, `${pageFile} consultation cue`);
     assert.match(html, /data-track=["']whatsapp["']/i, `${pageFile} WhatsApp CTA`);
+    if (/site-enhancements\.css\?v=/i.test(html)) {
+      assert.match(html, /site-enhancements\.css\?v=20260912-sitewide-copy-2/i, `${pageFile} CSS cache version`);
+    }
   }
+
+  const libraryHtml = readFileSync(new URL("conteudos/index.html", root), "utf8");
+  assert.match(libraryHtml, /content-library\.css\?v=20260912-sitewide-contrast-2/);
 });
