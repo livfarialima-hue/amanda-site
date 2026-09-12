@@ -36,6 +36,20 @@ Antes de retomar recomendações de auditorias, executar uma tarefa agendada ou 
 
 Esse é o único painel executivo de pendências, prazos e gates. Matrizes e registros individuais continuam sendo evidência técnica, mas não devem ser usados isoladamente para decidir a próxima execução. Ao concluir, adiar, bloquear ou reverter uma etapa, atualize o painel local e substitua a mesma projeção no Drive; nunca crie um segundo arquivo de planejamento concorrente.
 
+## Desenvolvimento paralelo protegido da Bruna
+
+Antes de editar qualquer arquivo mapeado em `ops/BRUNA-MODULE-MAP.json`, leia `docs/BRUNA-DESENVOLVIMENTO-SEGURO.md` e siga estas regras:
+
+- uma conversa de desenvolvimento deve usar uma branch e uma worktree exclusivas; duas conversas nunca editam a mesma worktree;
+- comece da referência canônica atualizada e execute `npm run parallel:check -- --module <id>` antes da primeira edição do módulo;
+- envie a branch ao `origin` cedo para que outro PC e outras conversas possam detectar a sobreposição; trabalho que só existe localmente em outro PC não pode ser descoberto automaticamente;
+- arquivos de política devem continuar puros e cada decisão deve ser alterada em seu proprietário, sem novos consumidores de reexportações de compatibilidade;
+- arquivos com limite de crescimento não podem aumentar. Extraia uma responsabilidade pequena, com testes de contrato, em vez de ampliar o monólito;
+- antes do commit, execute `npm run change:check`, `npm run bruna:guard`, `npm run architecture:check`, os testes focados, `npm test` e os checks de artefato aplicáveis;
+- nunca use `git add -A`, `force-push`, reset destrutivo ou edição direta da branch canônica. Adicione apenas o escopo intencional e integre por revisão;
+- para voltar código já integrado, prefira um novo `git revert` do commit exato. Não reverta automaticamente filas, conversas, oportunidades, agenda ou outros dados operacionais;
+- commit, merge, publicação, ativação de flag, migração e envio real são decisões separadas. Nenhuma delas é autorizada implicitamente pela anterior.
+
 ## Fonte canônica da estratégia
 
 Antes de analisar, propor ou executar qualquer mudança que afete Google Ads, posicionamento de aquisição, público, orçamento, estrutura de campanhas, conversões, lances, páginas de destino, qualificação, preço ou passagem do lead para consulta, leia:

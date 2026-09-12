@@ -1,166 +1,133 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-COPY-HUMANIZATION-CONVERSION-2026-09-12",
-  "title": "Humanizar a comunicacao publica e preservar a repeticao estrategica em cada pagina",
-  "status": "published_verified",
-  "baseCommit": "f6fabb80ec7ba1cc433a64b8dee75c970d0d432c",
+  "changeId": "BRUNA-MAINTAINABILITY-PARALLEL-SAFETY-2026-09-12",
+  "title": "Proteger a manutencao da Bruna entre PCs e conversas sem mudar comportamento",
+  "status": "tested_local",
+  "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou publicar todo o conjunto e ler depois da publicacao. Pediu a revisao das demais paginas, a retirada de termos com aparencia de IA e confirmou que a repeticao estrategica deve permanecer porque cada paciente acessa apenas parte do site. O preflight externo vinculara essa autorizacao ao commit funcional exato."
+    "note": "Daniel pediu organizacao, protecao para edicoes futuras e paralelas e retorno seguro de versao. Esta autorizacao cobre o trabalho local e uma branch de colaboracao; nao autoriza merge na branch canonica, deployment, flag, migracao ou mensagem real."
   },
   "risk": {
-    "level": "medium",
+    "level": "low",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
+      "bruna-maintainability",
       "change-governance",
       "site-publication"
     ],
     "files": [
-      "abdominoplastia/index.html",
-      "apps-script/clinica-liv-leads/site-contrast.test.mjs",
-      "avaliacao-facial/index.html",
-      "blefaroplastia/index.html",
-      "braquioplastia/index.html",
-      "campanhas/content-library.css",
-      "campanhas/conversion-pages.css",
-      "campanhas/secondary-conversion.css",
-      "campanhas/site-enhancements.css",
-      "campanhas/site-enhancements.js",
-      "campanhas/site-technical-regression.test.mjs",
-      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
-      "conteudos/botox-preenchimento-bioestimulador/index.html",
-      "conteudos/cicatrizes-cirurgia-de-mama/index.html",
-      "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
-      "conteudos/como-escolher-protese-de-mama/index.html",
-      "conteudos/consulta-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
-      "conteudos/lifting-facial-ou-injetaveis/index.html",
-      "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
-      "conteudos/lipoenxertia-facial/index.html",
-      "conteudos/mastopexia-com-ou-sem-protese/index.html",
-      "conteudos/naturalidade-envelhecimento/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
-      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "conteudos/recuperacao-lifting-facial/index.html",
-      "conteudos/seguranca-cirurgia-plastica/index.html",
-      "contorno-corporal/index.html",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "index.html",
-      "injetaveis/index.html",
-      "lifting-cervical/index.html",
-      "lifting-facial/index.html",
-      "lip-lifting/index.html",
-      "lipo-de-papada/index.html",
-      "lipoaspiracao/index.html",
-      "mama/index.html",
-      "mamoplastia-redutora/index.html",
-      "mastopexia-com-protese/index.html",
-      "mastopexia/index.html",
-      "ninfoplastia/index.html",
+      ".github/pull_request_template.md",
+      ".github/workflows/bruna-guard.yml",
+      ".netlifyignore",
+      "AGENTS.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/BRUNA-DESENVOLVIMENTO-SEGURO.md",
+      "ops/BRUNA-MODULE-MAP.json",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "otoplastia/index.html",
-      "pos-bariatrica/index.html",
-      "privacidade/index.html",
-      "procedimentos/index.html",
-      "protese-de-mama/index.html",
-      "sitemap.xml"
+      "package.json",
+      "scripts/check-bruna-maintainability.mjs",
+      "scripts/check-bruna-maintainability.test.mjs",
+      "scripts/check-parallel-worktrees.mjs",
+      "scripts/check-parallel-worktrees.test.mjs",
+      "scripts/create-protected-worktree.mjs",
+      "scripts/create-protected-worktree.test.mjs",
+      "scripts/run-tests.mjs"
     ]
   },
   "impact": {
     "consumers": [
-      "pacientes que chegam diretamente a qualquer pagina de procedimento ou conteudo",
-      "CTAs de consulta e referencias por procedimento enviadas ao WhatsApp",
-      "Google Search e ferramentas de IA que leem texto visivel, metadados, dados estruturados e sitemap",
-      "build estatico e publicacao do Netlify"
+      "conversas futuras que desenvolverem a Bruna em paralelo",
+      "desenvolvimento do projeto em mais de um computador",
+      "pull requests e validacao automatica do repositorio",
+      "modulos mais editados de WhatsApp, retomadas, agenda, estado comercial e observabilidade"
     ],
     "preservedInvariants": [
-      "cada pagina mantem a repeticao util de avaliacao medica, limites, seguranca, credenciais, localizacao e convite para conversar",
-      "a revisao remove bordoes e redundancias vazias sem enfraquecer nomes de procedimentos ou respostas procuradas no Google",
-      "URLs, canonicals, numero de WhatsApp, textos pre-preenchidos, atributos de tracking e destinos dos links permanecem iguais",
-      "conteudo medico continua educativo, individualizado e sem promessa de indicacao, resultado, prazo ou valor cirurgico",
-      "imagens preservam origem, dimensoes e texto alternativo; videos preservam poster, controles, playsinline e origem MP4, com correcao apenas dos caminhos dinamicos que falhavam em dois artigos",
-      "identidade visual e estrutura responsiva permanecem; cores auxiliares de baixo contraste e alvos de toque pequenos sao corrigidos sem mudar a paleta principal",
-      "Apps Script, Bruna, YCloud, LEADS, CRM, Calendar, orcamentos e campanhas permanecem sem alteracao",
-      "os pilotos secundarios de Google Ads presentes no baseline continuam apenas preparados, sem qualquer ativacao ou escrita externa nesta publicacao",
-      "o pacote de campanhas, mensuracao, Apps Script v147, plano e recibos encerrado em f6fabb80ec7ba1cc433a64b8dee75c970d0d432c permanece integral e fora do escopo desta publicacao"
+      "nenhum arquivo operacional da Bruna, Apps Script, webhook, politica, resposta, preco, agenda ou fila e alterado neste candidato",
+      "modo da automacao, flags, triggers, deployment Netlify, deployment Apps Script e estado vivo permanecem iguais",
+      "nenhuma mensagem real, contato sintetico, migracao ou escrita em planilha e executada",
+      "cada conversa futura recebe branch e worktree exclusivas e a branch canonica nao e editada diretamente",
+      "o detector falha fechado quando outra worktree ou branch remota recente toca o mesmo arquivo ou modulo protegido",
+      "o retorno de codigo integrado usa commit inverso e preserva dados operacionais posteriores",
+      "segredos, identificadores e conteudo de pacientes permanecem fora de testes, logs e documentos"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "site-publication",
-        "system": "Git canonico, Netlify de producao e dominio publico",
+        "contract": "bruna-maintainability",
+        "system": "Git local e referencia canonica remota",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T15:20:10-03:00",
-        "reference": "origin/reestruturacao-site esta em f6fabb80ec7ba1cc433a64b8dee75c970d0d432c; o artefato publico equivalente esta pronto no deploy Netlify 6aa59666f301b80008ffb340, commit cfee5263ddfc09681c381b08e9498622904b3ced, porque o recibo final usou skip ci."
+        "checkedAt": "2026-09-12T18:25:11-03:00",
+        "reference": "HEAD, merge-base e origin/reestruturacao-site coincidem em 93d7beafbd700791f2f6e0dc302b96f6da898808; o checkout principal com trabalho paralelo permaneceu intocado e este candidato usa worktree exclusiva."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T15:36:54-03:00",
+    "completedAt": "2026-09-12T18:30:38-03:00",
     "commands": [
+      "node --test scripts/check-bruna-maintainability.test.mjs scripts/check-parallel-worktrees.test.mjs scripts/create-protected-worktree.test.mjs",
+      "npm.cmd run parallel:check",
+      "npm.cmd run bruna:guard",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "npm.cmd run ops:check",
       "git diff --check"
     ],
     "results": {
-      "focusedCopyAndContrast": "17/17 testes aprovados; a protecao cobre as 46 rotas publicas, bloqueia bordoes artificiais e exige credenciais, referencia a consulta e CTA de WhatsApp nas paginas indexaveis",
+      "focusedGuards": "16/16 testes aprovados para mapa modular, protecoes canonicas, pureza, limite de crescimento, rollback, importacoes, conflitos paralelos e criacao de worktree",
+      "parallelCheck": "OK no candidato sem modulo operacional alterado, com 15 trabalhos paralelos inspecionados; a reserva sintetica do modulo followups bloqueou corretamente diante da worktree principal e de branches concorrentes",
+      "maintainabilityGuard": "BRUNA_MAINTAINABILITY_STATUS=OK; 7 modulos com proprietarios unicos, politicas puras, limites e compatibilidade validos",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1330/1330 testes aprovados apos a reconciliacao com o baseline mais recente, sem falha, cancelamento ou teste ignorado",
-      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo interno no artefato",
-      "siteCheck": "46/46 URLs com canonical proprio, indexabilidade, uma H1, recursos presentes e zero pagina orfa",
-      "mediaTechnical": "35/35 videos estaticos com poster; todas as imagens referenciadas com dimensoes e nenhum recurso ausente",
-      "mobileVisual": "46/46 rotas verificadas novamente em navegador real a 390x844 apos corrigir os contrastes encontrados no primeiro pos-voo; zero overflow, baixo contraste, alvo pequeno, midia quebrada, erro de video ou erro de script; 18 modais de video abertos com sucesso",
-      "linkAndSchemaIntegrity": "46/46 rotas preservam hrefs, atributos de tracking do WhatsApp, fontes de imagem, posters e canonicals; todos os blocos JSON-LD continuam validos"
+      "fullSuite": "1346/1346 testes aprovados, sem falha, cancelamento ou teste ignorado",
+      "siteBuild": "179 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo interno no artefato",
+      "siteCheck": "46/46 URLs com HTTP esperado, canonical proprio, indexabilidade e uma H1; zero pagina orfa ou arquivo operacional no artefato",
+      "diffCheck": "git diff --check aprovado sem erro",
+      "operationalClosure": "OPS_CHECK_STATUS=SYNC_PENDING, como esperado para um candidato apenas local em branch isolada e ainda nao publicado"
     },
     "crossConsumerCases": [
-      "as 46 rotas do sitemap foram revisadas e 35 paginas receberam alteracao textual",
-      "paginas de entrada mantem a mesma informacao essencial mesmo quando o paciente nao percorre o restante do site",
-      "guias de custo explicam composicao do orcamento sem publicar preco cirurgico ou prometer cobertura",
-      "CTAs continuam usando o mesmo WhatsApp, procedimento, localizacao e referencia de campanha",
-      "dateModified e sitemap registram a mudanca sem alterar lastReviewed quando a revisao medica anterior continua sendo a vigente"
+      "um segundo trabalho no mesmo arquivo protegido deve ser bloqueado",
+      "dois arquivos diferentes do mesmo modulo protegido devem ser tratados como sobreposicao",
+      "modulos independentes podem evoluir em worktrees distintas",
+      "um modulo pode ser reservado antes da primeira edicao",
+      "politica pura com marcador de efeito externo deve falhar",
+      "crescimento de um monolito protegido deve exigir extracao",
+      "novo consumidor de reexportacao legada deve falhar",
+      "worktree nova deve nascer somente sob a pasta tmp e a partir da referencia canonica"
     ]
   },
   "release": {
-    "approvedCommit": "d8063b058ee854a1d65ab5a2b55d2cee453610c4",
-    "netlifyDeployId": "6aa59be5502cb30008e0f6ee",
+    "approvedCommit": "",
+    "netlifyDeployId": "",
     "appsScriptVersion": 147,
-    "verifiedAt": "2026-09-12T15:42:18-03:00",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "7bfb88a6726f0de20e97ab03cdfdcb723d762b93afef5fa94be9f3ff80dce60d",
-    "activationState": "sitewide_copy_live_monitoring",
-    "notes": "Git canonico e Netlify foram publicados com o commit funcional final. O primeiro pos-voo encontrou dois grupos de contraste residual, corrigidos no commit final e em cache novo. O dominio aprovou 46/46 rotas, 51/51 midias e a auditoria Chrome 390x844; a mesma projecao do Plano Executivo foi substituida no Drive e relida com commit, deploy e repeticao estrategica presentes. Apps Script permaneceu na v147 sem escrita neste changeId."
+    "verifiedAt": "",
+    "drivePlanFileId": "",
+    "drivePlanSha256": "",
+    "activationState": "not_applicable_local_governance_only",
+    "notes": "Nenhuma publicacao ou ativacao faz parte deste candidato local."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre o baseline f6fabb80ec7ba1cc433a64b8dee75c970d0d432c, preservando todo trabalho paralelo",
-    "production": "restaurar o deploy Netlify 6aa59666f301b80008ffb340 se houver regressao confirmada de texto, layout, midia, contraste, tracking ou indexabilidade"
+    "local": "antes de integrar, abandonar apenas a branch candidata restaura o baseline 93d7beafbd700791f2f6e0dc302b96f6da898808; depois de integrar, criar git revert do commit exato sem reescrever historico compartilhado",
+    "production": "nenhum rollback de producao e necessario porque este candidato nao altera producao; qualquer publicacao futura exigira autorizacao e recibo proprios antes de restaurar deployment ou versao"
   },
   "monitoring": {
-    "owner": "Daniel e equipe da Clinica LIV",
-    "window": "pos-voo imediato e 24 horas para integridade; 7 e 14 dias para contatos validos e consultas",
+    "owner": "Daniel e mantenedores autorizados da Clinica LIV",
+    "window": "durante cada edicao protegida, revisao do pull request e primeiro ciclo de integracao",
     "metrics": [
-      "HTTP, canonical, indexabilidade, dados estruturados, sitemap e ausencia das expressoes bloqueadas",
-      "quebras de linha, overflow, contraste, imagens, posters e videos em mobile",
-      "cliques qualificados nos CTAs e referencias corretas por procedimento",
-      "contatos validos, leads qualificados e consultas originados das paginas"
+      "sobreposicoes de arquivo ou modulo bloqueadas antes da edicao",
+      "propriedade unica, pureza, importacoes e limites de crescimento aprovados",
+      "escopo exato, testes focados, regressao integral e build aprovados",
+      "zero alteracao de comportamento da Bruna e zero escrita externa operacional"
     ],
-    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, midia indisponivel, contraste impeditivo, frase clinicamente inadequada ou regressao de indexabilidade"
+    "rollbackRule": "interromper a integracao diante de sobreposicao, arquivo fora do escopo, teste ausente, crescimento de monolito ou diferenca funcional; reverter somente o commit deste candidato se a falha aparecer depois do merge"
   }
 }

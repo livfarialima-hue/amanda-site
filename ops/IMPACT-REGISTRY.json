@@ -773,6 +773,56 @@
         "OpenAI"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "bruna-maintainability",
+      "ownerFiles": [
+        "docs/BRUNA-DESENVOLVIMENTO-SEGURO.md",
+        "ops/BRUNA-MODULE-MAP.json",
+        "scripts/check-bruna-maintainability.mjs"
+      ],
+      "consumerFiles": [
+        ".github/workflows/bruna-guard.yml",
+        "AGENTS.md",
+        "scripts/check-parallel-worktrees.mjs",
+        "scripts/create-protected-worktree.mjs"
+      ],
+      "coveredPaths": [
+        ".github/pull_request_template.md",
+        ".github/workflows/bruna-guard.yml",
+        ".netlifyignore",
+        "AGENTS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/BRUNA-DESENVOLVIMENTO-SEGURO.md",
+        "ops/BRUNA-MODULE-MAP.json",
+        "ops/CHANGE-CANDIDATE.json",
+        "ops/IMPACT-REGISTRY.json",
+        "package.json",
+        "scripts/check-bruna-maintainability.mjs",
+        "scripts/check-bruna-maintainability.test.mjs",
+        "scripts/check-parallel-worktrees.mjs",
+        "scripts/check-parallel-worktrees.test.mjs",
+        "scripts/create-protected-worktree.mjs",
+        "scripts/create-protected-worktree.test.mjs",
+        "scripts/run-tests.mjs"
+      ],
+      "requiredTestFiles": [
+        "scripts/check-bruna-maintainability.test.mjs",
+        "scripts/check-parallel-worktrees.test.mjs",
+        "scripts/create-protected-worktree.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test scripts/check-bruna-maintainability.test.mjs scripts/check-parallel-worktrees.test.mjs scripts/create-protected-worktree.test.mjs",
+        "npm.cmd run parallel:check",
+        "npm.cmd run bruna:guard",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run ops:check",
+        "git diff --check"
+      ],
+      "liveSystems": [],
+      "requiresReadOnlyPreflight": false
     }
   ]
 }

@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "canonicalBranch": "reestruturacao-site",
+  "remote": "origin",
+  "remoteBranchLookbackDays": 14,
+  "modules": [
+    {
+      "id": "whatsapp-intake",
+      "label": "Entrada e orquestracao do webhook",
+      "ownerFile": "netlify/functions/ycloud-webhook.mjs",
+      "sourceFiles": [
+        "netlify/functions/ycloud-webhook.mjs"
+      ],
+      "testFiles": [
+        "netlify/functions/lib/automation-identity-guard.test.mjs",
+        "netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
+        "netlify/functions/lib/webhook-intake-observability.test.mjs",
+        "netlify/functions/lib/whatsapp-automation.test.mjs"
+      ],
+      "growthBudgets": [
+        {
+          "path": "netlify/functions/ycloud-webhook.mjs",
+          "maxLines": 6826
+        }
+      ]
+    },
+    {
+      "id": "conversation-policy",
+      "label": "Politica e planejamento da conversa",
+      "ownerFile": "netlify/functions/lib/whatsapp-automation.mjs",
+      "sourceFiles": [
+        "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/conversation-guidelines.mjs",
+        "netlify/functions/lib/human-review-envelope.mjs",
+        "netlify/functions/lib/inbound-burst-context.mjs",
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/procedure-context.mjs",
+        "netlify/functions/lib/professional-registry.mjs",
+        "netlify/functions/lib/semantic-reply-policy.mjs",
+        "netlify/functions/lib/surgical-price-review.mjs",
+        "netlify/functions/lib/whatsapp-automation.mjs"
+      ],
+      "testFiles": [
+        "netlify/functions/lib/conversation-action-controller.test.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/human-review-envelope.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs",
+        "netlify/functions/lib/patient-replies.test.mjs",
+        "netlify/functions/lib/procedure-context.test.mjs",
+        "netlify/functions/lib/professional-registry.test.mjs",
+        "netlify/functions/lib/semantic-reply-policy.test.mjs",
+        "netlify/functions/lib/surgical-price-review.test.mjs",
+        "netlify/functions/lib/whatsapp-automation.test.mjs"
+      ],
+      "growthBudgets": [
+        {
+          "path": "netlify/functions/lib/whatsapp-automation.mjs",
+          "maxLines": 894
+        }
+      ]
+    },
+    {
+      "id": "outbound-safety",
+      "label": "Gate final e adaptadores de saida",
+      "ownerFile": "netlify/functions/lib/outbound-reply-gate.mjs",
+      "sourceFiles": [
+        "netlify/functions/lib/automatic-reply-guard.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/ycloud-patient-message.mjs"
+      ],
+      "testFiles": [
+        "netlify/functions/lib/automatic-reply-guard.test.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/ycloud-patient-message.test.mjs"
+      ],
+      "growthBudgets": [
+        {
+          "path": "netlify/functions/lib/outbound-reply-gate.mjs",
+          "maxLines": 863
+        }
+      ]
+    },
+    {
+      "id": "followups",
+      "label": "Retomadas humanas e automaticas",
+      "ownerFile": "apps-script/clinica-liv-leads/Retomadas.gs",
+      "sourceFiles": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/lib/human-resume-policy.mjs",
+        "netlify/functions/lib/human-resume-queue.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
+        "netlify/functions/scheduled-followup.mjs"
+      ],
+      "testFiles": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "netlify/functions/lib/human-resume-policy.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/human-resume-queue.test.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs"
+      ],
+      "growthBudgets": [
+        {
+          "path": "apps-script/clinica-liv-leads/Retomadas.gs",
+          "maxLines": 5072
+        },
+        {
+          "path": "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+          "maxLines": 4310
+        }
+      ]
+    },
+    {
+      "id": "appointments",
+      "label": "Agenda, confirmacao e lembretes",
+      "ownerFile": "apps-script/clinica-liv-leads/ConsultasSync.gs",
+      "sourceFiles": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/ConsultasSync.gs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+        "netlify/functions/appointment-reminder.mjs",
+        "netlify/functions/appointment-review.mjs",
+        "netlify/functions/lib/appointment-confirmation.mjs",
+        "netlify/functions/lib/appointment-review-store.mjs",
+        "netlify/functions/lib/appointment-suggestions.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.mjs"
+      ],
+      "testFiles": [
+        "apps-script/clinica-liv-leads/ConsultasSync.calendar.test.mjs",
+        "apps-script/clinica-liv-leads/ConsultasSync.reserve-slot.test.mjs",
+        "apps-script/clinica-liv-leads/ConsultasSync.test.mjs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "netlify/functions/lib/appointment-confirmation.test.mjs",
+        "netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+        "netlify/functions/lib/appointment-review.test.mjs",
+        "netlify/functions/lib/appointment-suggestions.test.mjs"
+      ],
+      "growthBudgets": [
+        {
+          "path": "apps-script/clinica-liv-leads/ConsultasSync.gs",
+          "maxLines": 6356
+        }
+      ]
+    },
+    {
+      "id": "commercial-state",
+      "label": "Lead, oportunidade e projecao comercial",
+      "ownerFile": "apps-script/clinica-liv-leads/OpportunityStore.gs",
+      "sourceFiles": [
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/FunnelReconciliation.gs",
+        "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "apps-script/clinica-liv-leads/OpportunityStore.gs"
+      ],
+      "testFiles": [
+        "apps-script/clinica-liv-leads/Code.schema.test.mjs",
+        "apps-script/clinica-liv-leads/FunnelReconciliation.test.mjs",
+        "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "apps-script/clinica-liv-leads/OpportunityStore.test.mjs"
+      ],
+      "growthBudgets": [
+        {
+          "path": "apps-script/clinica-liv-leads/Code.gs",
+          "maxLines": 2889
+        },
+        {
+          "path": "apps-script/clinica-liv-leads/LeadClassification.gs",
+          "maxLines": 3657
+        }
+      ]
+    },
+    {
+      "id": "message-observability",
+      "label": "Ledger tecnico, entrega e custos",
+      "ownerFile": "netlify/functions/lib/ycloud-message-observability.mjs",
+      "sourceFiles": [
+        "apps-script/clinica-liv-leads/OperationalEvents.gs",
+        "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
+        "netlify/functions/lib/ycloud-message-observability.mjs"
+      ],
+      "testFiles": [
+        "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
+        "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
+        "netlify/functions/lib/ycloud-message-observability.test.mjs"
+      ],
+      "growthBudgets": []
+    }
+  ],
+  "purePolicies": [
+    "netlify/functions/lib/automation-mode.mjs",
+    "netlify/functions/lib/human-review-envelope.mjs",
+    "netlify/functions/lib/marketing-prefill.mjs",
+    "netlify/functions/lib/procedure-context.mjs",
+    "netlify/functions/lib/professional-registry.mjs"
+  ],
+  "forbiddenEffectMarkers": [
+    "process.env",
+    "@netlify/blobs",
+    "fetch(",
+    "urlfetchapp",
+    "https://api.openai.com",
+    "ycloud.io",
+    "appendconversationturn",
+    ".setvalue("
+  ],
+  "compatibilityFacade": {
+    "path": "netlify/functions/lib/whatsapp-automation.mjs",
+    "ownedExports": [
+      "detectCampaignProcedure",
+      "detectNamedProcedure",
+      "detectProcedure",
+      "detectRecentClinicProcedure",
+      "detectRecentPatientProcedure",
+      "hasCampaignReferenceCode",
+      "inboundReplyPriority",
+      "isLikelyMarketingPrefilledMessage",
+      "isSiteServicePickerPrefill",
+      "MARKETING_PREFILL_TEMPLATE_ID",
+      "normalizeAutomationMode",
+      "normalizeMarketingPrefillTemplateId"
+    ],
+    "allowedLegacyConsumers": [
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/site-content.mjs"
+    ]
+  }
+}

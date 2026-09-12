@@ -1,6 +1,8 @@
 .git/
 .gitignore
+.gitattributes
 .netlifyignore
+.github/
 .agents/
 .codex/
 .codex-remote-attachments/

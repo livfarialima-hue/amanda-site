@@ -146,6 +146,12 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 
 Mudança de cópia, regra clínica, preço, cadência, fase, agenda ou atribuição nunca deve ser tratada como simples reorganização de código.
 
+### Proteção executável para manutenção paralela
+
+`ops/BRUNA-MODULE-MAP.json` registra os arquivos mais editados da Bruna por módulo proprietário, seus testes focados, políticas que devem permanecer puras e tetos que impedem crescimento silencioso dos monólitos atuais. O mapa complementa esta arquitetura; em caso de divergência, a regra canônica deste documento deve ser corrigida junto com o mapa no mesmo candidato.
+
+Antes da primeira edição de um módulo protegido, cada conversa deve usar worktree exclusiva e executar `npm run parallel:check -- --module <id>`. Antes do commit, `npm run bruna:guard` valida propriedade única, arquivos e testes presentes, pureza, importações de compatibilidade, limite de crescimento, escopo e rollback. O procedimento completo, inclusive trabalho entre PCs e reversão por commit, está em `docs/BRUNA-DESENVOLVIMENTO-SEGURO.md`.
+
 ## 6. Estratégia de evolução
 
 As próximas separações devem ocorrer em pacotes independentes e testáveis:

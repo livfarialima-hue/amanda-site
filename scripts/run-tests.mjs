@@ -13,8 +13,11 @@ const standaloneTests = [
   "campanhas/footer-consistency.test.mjs",
   "campanhas/lifting-price-page.test.mjs",
   "campanhas/site-technical-regression.test.mjs",
+  "scripts/check-bruna-maintainability.test.mjs",
   "scripts/check-change-safety.test.mjs",
   "scripts/check-operational-consistency.test.mjs",
+  "scripts/check-parallel-worktrees.test.mjs",
+  "scripts/create-protected-worktree.test.mjs",
 ];
 
 function collectTests(directory) {
