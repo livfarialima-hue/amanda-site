@@ -630,20 +630,21 @@
     var team = document.createElement('section');
     team.className = 'auxiliary-team-section';
     team.id = 'auxiliary-team';
-    team.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Equipe e ambiente cirúrgico</span><h2>Sua cirurgia envolve uma equipe inteira.</h2><p>A Dra. Amanda trabalha com profissionais de anestesia e apoio cirúrgico. A equipe e o hospital são definidos de acordo com a cirurgia e as necessidades de cada paciente.</p></div><div class="auxiliary-team-carousel" aria-label="Equipe e ambiente cirúrgico"><figure class="auxiliary-team-card auxiliary-team-card--video"><video aria-label="Dra. Amanda em ambiente cirúrgico" controls controlslist="nodownload" muted playsinline poster="../campanhas/assets/amanda-operando.jpg" preload="metadata"><source src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"></video><figcaption>Dra. Amanda em centro cirúrgico.</figcaption></figure><figure class="auxiliary-team-card"><img src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg" alt="Dra. Amanda com parte de sua equipe cirúrgica" loading="lazy" decoding="async"><figcaption>Parte da equipe cirúrgica que participa do cuidado em casos selecionados.</figcaption></figure></div><p class="auxiliary-hospital-note">Quando indicado, o procedimento pode ser realizado no Hospital Sírio-Libanês, Hospital Nove de Julho, Hospital Oswaldo Cruz ou em outra instituição criteriosamente selecionada.</p></div>';
+    team.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Equipe e ambiente cirúrgico</span><h2>Sua cirurgia envolve uma equipe inteira.</h2><p>A Dra. Amanda trabalha com profissionais de anestesia e apoio cirúrgico. A equipe e o hospital são definidos de acordo com a cirurgia e as necessidades de cada paciente.</p></div><div class="auxiliary-team-carousel" aria-label="Equipe e ambiente cirúrgico"><figure class="auxiliary-team-card auxiliary-team-card--video"><video aria-label="Dra. Amanda em ambiente cirúrgico" controls controlslist="nodownload" muted playsinline poster="/campanhas/assets/amanda-operando.jpg" preload="metadata"><source src="/campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"></video><figcaption>Dra. Amanda em centro cirúrgico.</figcaption></figure><figure class="auxiliary-team-card"><img src="/campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg" alt="Dra. Amanda com parte de sua equipe cirúrgica" loading="lazy" decoding="async"><figcaption>Parte da equipe cirúrgica que participa do cuidado em casos selecionados.</figcaption></figure></div><p class="auxiliary-hospital-note">Quando indicado, o procedimento pode ser realizado no Hospital Sírio-Libanês, Hospital Nove de Julho, Hospital Oswaldo Cruz ou em outra instituição criteriosamente selecionada.</p></div>';
 
     var contents = document.createElement('section');
     contents.className = 'auxiliary-content-section';
     contents.id = 'conteudos';
     var cards = config.contents.map(function (item) {
-      return '<a class="auxiliary-content-card" href="' + item[2] + '"><span>' + item[0] + '</span><strong>' + item[1] + '</strong><em>Entender melhor →</em></a>';
+      var href = item[2].replace(/^\.\.\//, '/');
+      return '<a class="auxiliary-content-card" href="' + href + '"><span>' + item[0] + '</span><strong>' + item[1] + '</strong><em>Entender melhor →</em></a>';
     }).join('');
     contents.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Conteúdos selecionados</span><h2>Leia a resposta para a dúvida que você tem agora.</h2><p>Estas páginas explicam as diferenças entre os procedimentos. A indicação para o seu caso depende da consulta e do exame.</p></div><div class="auxiliary-content-grid">' + cards + '</div></div>';
 
     var clinic = document.createElement('section');
     clinic.className = 'auxiliary-clinic-section';
     clinic.id = 'clinica-liv';
-    clinic.innerHTML = '<div class="container auxiliary-clinic-grid"><div><span class="eyebrow">Clínica LIV Faria Lima</span><h2>Um lugar reservado para conversar com calma.</h2><p>A consulta acontece em Pinheiros. Você pode explicar o que incomoda, fazer o exame físico e tirar dúvidas sobre cicatrizes, recuperação e próximos passos.</p><p class="auxiliary-clinic-address">R. Pais Leme, 215 — cj. 710 — Pinheiros, São Paulo · Nota fiscal para reembolso.</p></div><div class="auxiliary-clinic-media"><img src="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" alt="Dra. Amanda Schroeder no consultório da Clínica LIV Faria Lima" loading="lazy" decoding="async"><button type="button" class="auxiliary-clinic-video" data-curated-video data-content-id="clinica-liv-apresentacao" data-video-disclaimer="" data-video-eyebrow="Clínica LIV Faria Lima" data-video-title="Conheça a Clínica LIV Faria Lima" data-video-summary="Um passeio breve pelo prédio e pelos ambientes de atendimento da Clínica LIV Faria Lima, em Pinheiros." data-video-poster="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" data-video-src="../campanhas/assets/video-apresentacao-clinica-liv.mp4"><span aria-hidden="true">▶</span><span><strong>Conheça a Clínica LIV</strong><small>Veja o prédio e os ambientes de atendimento</small></span></button></div></div>';
+    clinic.innerHTML = '<div class="container auxiliary-clinic-grid"><div><span class="eyebrow">Clínica LIV Faria Lima</span><h2>Um lugar reservado para conversar com calma.</h2><p>A consulta acontece em Pinheiros. Você pode explicar o que incomoda, fazer o exame físico e tirar dúvidas sobre cicatrizes, recuperação e próximos passos.</p><p class="auxiliary-clinic-address">R. Pais Leme, 215 — cj. 710 — Pinheiros, São Paulo · Nota fiscal para reembolso.</p></div><div class="auxiliary-clinic-media"><img src="/campanhas/assets/amanda-clinica-consultorio-desktop.webp" alt="Dra. Amanda Schroeder no consultório da Clínica LIV Faria Lima" loading="lazy" decoding="async"><button type="button" class="auxiliary-clinic-video" data-curated-video data-content-id="clinica-liv-apresentacao" data-video-disclaimer="" data-video-eyebrow="Clínica LIV Faria Lima" data-video-title="Conheça a Clínica LIV Faria Lima" data-video-summary="Um passeio breve pelo prédio e pelos ambientes de atendimento da Clínica LIV Faria Lima, em Pinheiros." data-video-poster="/campanhas/assets/amanda-clinica-consultorio-desktop.webp" data-video-src="/campanhas/assets/video-apresentacao-clinica-liv.mp4"><span aria-hidden="true">▶</span><span><strong>Conheça a Clínica LIV</strong><small>Veja o prédio e os ambientes de atendimento</small></span></button></div></div>';
 
     anchor.insertAdjacentElement('beforebegin', team);
     anchor.insertAdjacentElement('beforebegin', contents);
@@ -745,6 +746,7 @@
   }
 
   function installCuratedVideoModal() {
+    if (document.querySelector('.curated-video-modal')) return;
     if (!document.querySelector('[data-curated-video], video:not([data-inline-video])')) return;
 
     var triggers = [];
@@ -899,7 +901,10 @@
     });
   }
 
-document.addEventListener('DOMContentLoaded', installCuratedVideoModal);
+document.addEventListener('DOMContentLoaded', function () {
+  installCuratedVideoModal();
+  new MutationObserver(installCuratedVideoModal).observe(document.body, { childList: true, subtree: true });
+});
 })();
 
 

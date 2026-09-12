@@ -30,6 +30,23 @@ button {
   font: inherit;
 }
 
+@media (max-width: 760px) {
+  .mobile-menu-toggle,
+  a.btn,
+  a.cv-btn,
+  a.ota2-btn,
+  a.oti2-btn {
+    min-height: 44px !important;
+  }
+
+  .privacy-settings {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding-block: 8px;
+  }
+}
+
 .mobile-disclosure-toggle,
 .mobile-scroll-hint,
 .mobile-menu-toggle {

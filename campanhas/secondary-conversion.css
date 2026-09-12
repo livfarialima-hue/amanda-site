@@ -279,6 +279,7 @@ html[data-secondary-premium="true"] .procedure-video-section {
   color: #fffaf7;
 }
 
+html[data-secondary-premium="true"] .procedure-video-section .section-head :is(.eyebrow, h2) { color: #fffaf7; }
 html[data-secondary-premium="true"] .procedure-video-section .section-head > p { color: #eadbd3; }
 html[data-secondary-premium="true"] .procedure-video-grid { gap: 24px; }
 html[data-secondary-premium="true"] .procedure-video-card {

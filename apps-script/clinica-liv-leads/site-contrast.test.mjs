@@ -5,6 +5,8 @@ import { test } from "node:test";
 const root = new URL("../../", import.meta.url);
 const stylesheet = readFileSync(new URL("campanhas/secondary-conversion.css", root), "utf8");
 const bodyStylesheet = readFileSync(new URL("campanhas/conversion-pages-body.css", root), "utf8");
+const conversionStylesheet = readFileSync(new URL("campanhas/conversion-pages.css", root), "utf8");
+const contentLibraryStylesheet = readFileSync(new URL("campanhas/content-library.css", root), "utf8");
 const secondaryPages = [
   "abdominoplastia",
   "braquioplastia",
@@ -39,6 +41,10 @@ const mamaAndBodyPages = [
   "braquioplastia",
   "pos-bariatrica",
 ];
+const sitemap = readFileSync(new URL("sitemap.xml", root), "utf8");
+const publicPagePaths = [...sitemap.matchAll(/<loc>https:\/\/draamandaschroeder\.com\.br\/(.*?)<\/loc>/g)]
+  .map((match) => match[1])
+  .filter((pagePath) => pagePath !== "privacidade/");
 
 function visibleText(html) {
   return html
@@ -83,16 +89,19 @@ test("secondary procedure stylesheet contains scoped contrast overrides", () => 
   assert.match(stylesheet, /\.auxiliary-team-card \{[\s\S]*?background: #5a4641;/);
   assert.match(stylesheet, /\.auxiliary-team-card figcaption \{ color: #fffaf7; \}/);
   assert.match(stylesheet, /\.mobile-curated-video-trigger-media > span:last-child/);
+  assert.match(stylesheet, /\.procedure-video-section \.section-head :is\(\.eyebrow, h2\) \{ color: #fffaf7; \}/);
   assert.match(bodyStylesheet, /\.mobile-curated-video-play \{[\s\S]*?background: #241c19;/);
   assert.match(bodyStylesheet, /\.mobile-curated-video-trigger-media > span:last-child/);
+  assert.match(conversionStylesheet, /\.cv-price-box dt \{ color: #fffaf7;/);
+  assert.match(conversionStylesheet, /\.cv-card-number \{[^}]*color: var\(--green-dark\);/);
+  assert.match(contentLibraryStylesheet, /\.cl-eyebrow \{[\s\S]*?color: #75584f;/);
+  assert.match(contentLibraryStylesheet, /\.cl-search-suggestions button \{\s*min-height: 44px;/);
 });
 
 test("every secondary procedure page requests the contrast-fixed stylesheet", () => {
   for (const page of secondaryPages) {
     const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
-    const expectedVersion = refreshedSecondaryPages.has(page)
-      ? "20260912-human-contrast-3"
-      : "20260814-contrast-1";
+    const expectedVersion = "20260912-sitewide-contrast-1";
     assert.match(
       html,
       new RegExp(`secondary-conversion\\.css\\?v=${expectedVersion}`),
@@ -154,11 +163,11 @@ test("mama and body pages avoid formulaic copy and load the humanized dynamic te
   for (const page of refreshedSecondaryPages) {
     const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
     assert.match(html, /secondary-conversion\.js\?v=20260912-human-copy-2/);
-    assert.match(html, /site-enhancements\.js\?v=20260912-human-copy-2/);
+    assert.match(html, /site-enhancements\.js\?v=20260912-sitewide-copy-1/);
   }
 
   const contourHtml = readFileSync(new URL("contorno-corporal/index.html", root), "utf8");
-  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-human-copy-2/);
+  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-sitewide-copy-1/);
   assert.match(contourHtml, /conversion-pages-body\.css\?v=20260912-human-contrast-3/);
 
   const mamaHtml = readFileSync(new URL("mama/index.html", root), "utf8");
@@ -171,5 +180,39 @@ test("mama and body pages avoid formulaic copy and load the humanized dynamic te
   const enhancementsScript = readFileSync(new URL("campanhas/site-enhancements.js", root), "utf8");
   assert.match(enhancementsScript, /Sua cirurgia envolve uma equipe inteira/);
   assert.match(enhancementsScript, /Um lugar reservado para conversar com calma/);
+  assert.ok(enhancementsScript.includes("poster=\"/campanhas/assets/amanda-operando.jpg\""));
+  assert.ok(enhancementsScript.includes("var href = item[2].replace(/^\\.\\.\\//, '/');"));
   assert.doesNotMatch(enhancementsScript, /a associação entra na conversa|orientar a leitura — não para prometer/i);
+});
+
+test("public pages avoid formulaic AI wording and preserve strategic consultation cues", () => {
+  const bannedPatterns = [
+    /questão central/i,
+    /principal questão/i,
+    /jornada organizada/i,
+    /entra na conversa/i,
+    /informação individual importa/i,
+    /a decisão começa pela avaliação/i,
+    /a técnica só é definida após avaliação/i,
+    /quer organizar sua avaliação/i,
+    /o guia orienta; a avaliação individualiza/i,
+    /plano verificável/i,
+    /custo total da jornada/i,
+    /melhor caminho/i,
+  ];
+
+  for (const pagePath of publicPagePaths) {
+    const pageFile = pagePath ? `${pagePath}index.html` : "index.html";
+    const html = readFileSync(new URL(pageFile, root), "utf8");
+    const text = visibleText(html);
+
+    for (const pattern of bannedPatterns) {
+      assert.doesNotMatch(text, pattern, pageFile);
+    }
+
+    assert.match(text, /CRM-SP 191605/i, `${pageFile} CRM`);
+    assert.match(text, /RQE 110472/i, `${pageFile} RQE`);
+    assert.match(text, /consulta|avaliação/i, `${pageFile} consultation cue`);
+    assert.match(html, /data-track=["']whatsapp["']/i, `${pageFile} WhatsApp CTA`);
+  }
 });

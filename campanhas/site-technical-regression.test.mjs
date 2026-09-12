@@ -126,7 +126,7 @@ test("lifting facial loads the current compact mobile treatment for its quick an
   assert.ok(quickAnswer, "lifting facial must keep its quick-answer section");
   assert.match(
     html,
-    /conversion-pages\.css\?v=20260902-lifting-facial-resumo-mobile-1/i,
+    /conversion-pages\.css\?v=20260912-sitewide-contrast-1/i,
     "the page must force mobile browsers to fetch the corrected stylesheet",
   );
   assert.equal(whatsappLinks.length, 6, "all six WhatsApp conversion links must remain present");
@@ -211,7 +211,7 @@ test("cervical pages expose visible answer-first medical content and matching re
     );
     assert.equal(procedure?.name, item.procedureName, item.relativePage);
     assert.equal(medicalPage?.url, item.canonical, item.relativePage);
-    assert.equal(medicalPage?.dateModified, "2026-08-31", item.relativePage);
+    assert.equal(medicalPage?.dateModified, "2026-09-12", item.relativePage);
     assert.equal(medicalPage?.lastReviewed, "2026-08-31", item.relativePage);
     assert.equal(
       medicalPage?.reviewedBy?.["@id"],
@@ -239,11 +239,11 @@ test("cervical pages expose visible answer-first medical content and matching re
   const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
   assert.match(
     sitemap,
-    /<loc>https:\/\/draamandaschroeder\.com\.br\/lifting-cervical\/<\/loc><lastmod>2026-08-31<\/lastmod>/i,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/lifting-cervical\/<\/loc><lastmod>2026-09-12<\/lastmod>/i,
   );
   assert.match(
     sitemap,
-    /<loc>https:\/\/draamandaschroeder\.com\.br\/lipo-de-papada\/<\/loc><lastmod>2026-08-31<\/lastmod>/i,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/lipo-de-papada\/<\/loc><lastmod>2026-09-12<\/lastmod>/i,
   );
 });
 
@@ -285,7 +285,7 @@ test("lifting facial pages distinguish the surgical procedure and preserve conve
     assert.deepEqual(procedure?.alternateName, ["Ritidoplastia", "Facelift"], item.relativePage);
     assert.equal(procedure?.procedureType, "SurgicalProcedure", item.relativePage);
     assert.equal(medicalPage?.url, item.canonical, item.relativePage);
-    assert.equal(medicalPage?.dateModified, "2026-09-01", item.relativePage);
+    assert.equal(medicalPage?.dateModified, "2026-09-12", item.relativePage);
     assert.equal(medicalPage?.lastReviewed, "2026-09-01", item.relativePage);
     assert.equal(medicalPage?.about?.["@id"], procedure?.["@id"], item.relativePage);
     assert.equal(medicalPage?.mainEntity?.["@id"], procedure?.["@id"], item.relativePage);
@@ -306,11 +306,11 @@ test("lifting facial pages distinguish the surgical procedure and preserve conve
   const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
   assert.match(
     sitemap,
-    /<loc>https:\/\/draamandaschroeder\.com\.br\/lifting-facial\/<\/loc><lastmod>2026-09-01<\/lastmod>/i,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/lifting-facial\/<\/loc><lastmod>2026-09-12<\/lastmod>/i,
   );
   assert.match(
     sitemap,
-    /<loc>https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/<\/loc><lastmod>2026-09-01<\/lastmod>/i,
+    /<loc>https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/<\/loc><lastmod>2026-09-12<\/lastmod>/i,
   );
 });
 
