@@ -399,6 +399,163 @@ test("only an explicitly synchronized remote appointment can omit Calendar", () 
   assert.equal(incomplete.reason, "remote_schedule_not_verified");
 });
 
+test("automatic reminders accept only explicitly supported professionals", () => {
+  assert.deepEqual(
+    JSON.parse(
+      JSON.stringify(
+        context.validarProfissionalLembreteConsulta_(
+          "Dra. Amanda Schroeder",
+        ),
+      ),
+    ),
+    {
+      ok: true,
+      key: "amanda",
+      label: "Dra. Amanda",
+      owner: "Amanda/equipe",
+    },
+  );
+  assert.equal(
+    context.validarProfissionalLembreteConsulta_("Dr. Daniel")
+      .key,
+    "daniel",
+  );
+  assert.equal(
+    context.validarProfissionalLembreteConsulta_("Dr. Matheus")
+      .reason,
+    "professional_not_automated",
+  );
+  assert.equal(
+    context.validarProfissionalLembreteConsulta_("").reason,
+    "professional_unidentified",
+  );
+});
+
+test("read-only reconciliation separates aligned appointments from professional and Calendar blocks", () => {
+  const headers = Object.values(
+    vm.runInContext(
+      "LEMBRETES_CONSULTAS_HEADERS",
+      context,
+    ),
+  );
+  const makeRow = (values) =>
+    headers.map((header) => values[header] ?? "");
+  const rows = [
+    makeRow({
+      "ID da consulta": "appointment-amanda",
+      Profissional: "Dra. Amanda",
+      "Data agendada": "15/09/2026",
+      "Horário agendado": "10:00",
+      Status: "Consulta agendada",
+      "Tipo de consulta": "Primeira consulta",
+      "Local / modalidade": "Clínica LIV",
+      "ID da agenda Google": "calendar-amanda",
+      "ID do evento Google": "event-amanda",
+      "Sincronização Google Agenda":
+        "Sincronizado em 12/09/2026 08:00",
+    }),
+    makeRow({
+      "ID da consulta": "appointment-external",
+      Profissional: "Dr. Matheus",
+      "Data agendada": "16/09/2026",
+      "Horário agendado": "11:00",
+      Status: "Confirmada",
+      "Tipo de consulta": "Primeira consulta",
+      "Local / modalidade": "Clínica LIV",
+      "ID da agenda Google": "calendar-external",
+      "ID do evento Google": "event-external",
+      "Sincronização Google Agenda":
+        "Sincronizado em 12/09/2026 08:00",
+    }),
+    makeRow({
+      "ID da consulta": "appointment-daniel",
+      Profissional: "Dr. Daniel",
+      "Data agendada": "17/09/2026",
+      "Horário agendado": "12:00",
+      Status: "Consulta agendada",
+      "Tipo de consulta": "Primeira consulta",
+      "Local / modalidade": "Clínica LIV",
+      "ID da agenda Google": "calendar-daniel",
+      "ID do evento Google": "event-missing",
+      "Sincronização Google Agenda":
+        "Sincronizado em 12/09/2026 08:00",
+    }),
+    makeRow({
+      "ID da consulta": "appointment-cancelled",
+      Profissional: "Dra. Amanda",
+      "Data agendada": "18/09/2026",
+      "Horário agendado": "13:00",
+      Status: "Cancelada",
+    }),
+  ];
+  const sheet = {
+    getDataRange: () => ({
+      getValues: () => [headers, ...rows],
+    }),
+  };
+  const calendarApp = {
+    getCalendarById(calendarId) {
+      if (calendarId === "calendar-amanda") {
+        return {
+          getEventById: () => ({
+            getStartTime: () =>
+              new Date("2026-09-15T10:00:00-03:00"),
+          }),
+        };
+      }
+      if (calendarId === "calendar-daniel") {
+        return { getEventById: () => null };
+      }
+      throw new Error(`unexpected calendar ${calendarId}`);
+    },
+  };
+
+  const result = context.auditarReconciliacaoConsultasAgenda_(
+    sheet,
+    calendarApp,
+    {
+      now: new Date("2026-09-12T09:00:00-03:00"),
+      daysAhead: 30,
+    },
+  );
+  const plain = JSON.parse(JSON.stringify(result));
+
+  assert.equal(plain.readOnly, true);
+  assert.equal(plain.ok, false);
+  assert.equal(plain.checked, 3);
+  assert.equal(plain.aligned, 1);
+  assert.equal(plain.blocked, 2);
+  assert.deepEqual(plain.reasons, {
+    professional_not_automated: 1,
+    calendar_event_missing: 1,
+  });
+  assert.equal(
+    plain.items.some(
+      (item) => item.row === 5,
+    ),
+    false,
+  );
+});
+
+test("the public Calendar diagnostic is read-only", () => {
+  const start = source.indexOf(
+    "function diagnosticarReconciliacaoConsultasAgenda",
+  );
+  const end = source.indexOf(
+    "function validarVinculoAgendaLembreteConsulta_",
+  );
+  const diagnostic = source.slice(start, end);
+
+  assert.match(
+    diagnostic,
+    /auditarReconciliacaoConsultasAgenda_/,
+  );
+  assert.doesNotMatch(
+    diagnostic,
+    /setValue|setValues|clearContent|appendRow|UrlFetchApp/,
+  );
+});
+
 test("schedule verification happens before any reminder state write", () => {
   const start = source.indexOf(
     "function processarLembretesConsultasInterno_",

@@ -15,6 +15,33 @@ const AGENDA_CUIDADOS_CONFIG = Object.freeze({
   postConsultAutomaticEnabled: false,
 });
 
+function chaveProfissionalAgendaCuidados_(value) {
+  const normalized = normalizarTextoRetomadas_(value);
+  if (normalized.includes("amanda")) return "amanda";
+  if (normalized.includes("daniel")) return "daniel";
+  if (normalized.includes("henrique")) return "henrique";
+  if (normalized.includes("marina")) return "marina";
+  if (normalized.includes("laerte")) return "laerte";
+  if (normalized.includes("matheus")) return "matheus";
+  return "";
+}
+
+function profissionalFundamentalAgendaCuidados_(value) {
+  return ["amanda", "daniel"].includes(
+    chaveProfissionalAgendaCuidados_(value),
+  );
+}
+
+function responsavelAgendaCuidados_(value) {
+  const key = chaveProfissionalAgendaCuidados_(value);
+  if (key === "amanda") return "Amanda/equipe";
+  if (key === "daniel") return "Daniel/equipe";
+  if (key) {
+    return "Equipe administrativa — " + String(value || "").trim();
+  }
+  return "Equipe Clínica LIV — confirmar profissional";
+}
+
 function diagnosticarAgendaCuidados() {
   const arquivo = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const planilha = arquivo.getSheetByName(
@@ -130,7 +157,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         valorAgendaCuidados_(linha, colunas, [
           "profissional",
         ]),
-      ) || "Dra. Amanda";
+      );
     const tema = textoAgendaCuidados_(
       valorAgendaCuidados_(linha, colunas, [
         "tema procedimento",
@@ -154,6 +181,31 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       "encerrado",
     ].includes(retomadasEncerradas);
     const identidade = nomeCompleto || telefone;
+    const profissionalConhecido = Boolean(
+      chaveProfissionalAgendaCuidados_(profissional),
+    );
+    const adicionarDaLinha = function (item) {
+      const automaticoExterno =
+        item.automatico === true &&
+        !profissionalFundamentalAgendaCuidados_(profissional);
+      const semProfissional =
+        !profissionalConhecido && item.categoria !== "Aniversário";
+      adicionar({
+        ...item,
+        automatico: automaticoExterno ? false : item.automatico,
+        responsavel: automaticoExterno || semProfissional
+          ? responsavelAgendaCuidados_(profissional)
+          : item.responsavel,
+        contexto:
+          String(item.contexto || "") +
+          (automaticoExterno
+            ? " Automação bloqueada para profissional externo."
+            : semProfissional
+              ? " Profissional ausente ou não reconhecido; confirmar antes de qualquer contato."
+              : ""),
+        sugestao: semProfissional ? "" : item.sugestao,
+      });
+    };
 
     adicionarRevisaoComercialAgendaCuidados_({
       linha: linha,
@@ -164,7 +216,8 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       nome: identidade,
       tema: tema,
       status: status,
-      adicionar: adicionar,
+      profissional: profissional,
+      adicionar: adicionarDaLinha,
     });
 
     if (
@@ -183,7 +236,8 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         telefone: telefone,
         nome: identidade,
         primeiroNome: primeiroNome,
-        adicionar: adicionar,
+        profissional: profissional,
+        adicionar: adicionarDaLinha,
       });
     }
 
@@ -201,7 +255,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       status: status,
       neverBotReply:
         contactPreferences.neverBotReply === true,
-      adicionar: adicionar,
+      adicionar: adicionarDaLinha,
     });
 
     if (contactPreferences.neverFollowUp !== true) {
@@ -217,7 +271,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         status: status,
         neverBotReply:
           contactPreferences.neverBotReply === true,
-        adicionar: adicionar,
+        adicionar: adicionarDaLinha,
       });
 
       adicionarPosConsultaAgendaCuidados_({
@@ -232,7 +286,8 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         primeiroNome: primeiroNome,
         tema: tema,
         status: status,
-        adicionar: adicionar,
+        profissional: profissional,
+        adicionar: adicionarDaLinha,
       });
 
       adicionarFollowUpConsultaAgendaCuidados_({
@@ -246,8 +301,9 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         tema: tema,
         status: status,
         proximaAcao: proximaAcao,
+        profissional: profissional,
         retomadaEncerrada: retomadaEncerrada,
-        adicionar: adicionar,
+        adicionar: adicionarDaLinha,
       });
 
       adicionarRetomadaPlanejadaAgendaCuidados_({
@@ -259,8 +315,9 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         primeiroNome: primeiroNome,
         status: status,
         proximaAcao: proximaAcao,
+        profissional: profissional,
         retomadaEncerrada: retomadaEncerrada,
-        adicionar: adicionar,
+        adicionar: adicionarDaLinha,
       });
 
       adicionarClienteAntigoAgendaCuidados_({
@@ -273,8 +330,9 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         primeiroNome: primeiroNome,
         tema: tema,
         status: status,
+        profissional: profissional,
         retomadaEncerrada: retomadaEncerrada,
-        adicionar: adicionar,
+        adicionar: adicionarDaLinha,
       });
     }
   });
@@ -362,7 +420,7 @@ function adicionarAniversarioAgendaCuidados_(entrada) {
             "dd/MM",
           ) +
           " — preparar uma mensagem pessoal.",
-    responsavel: "Amanda/equipe",
+    responsavel: responsavelAgendaCuidados_(entrada.profissional),
     automatico: false,
     futuro: diasAte > 0,
     prioridade: diasAte === 0 ? 4 : 9,
@@ -464,7 +522,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
         "Já existe uma tentativa registrada" +
         (erroLembrete ? ` (${erroLembrete})` : "") +
         ". Não reenviar automaticamente; conferir o provedor e o histórico antes de decidir.",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: false,
       prioridade: 1,
@@ -489,7 +547,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
           ? "telefone E.164 ausente ou inválido."
           : "nome confiável da paciente ausente.") +
         " Corrigir o cadastro e reconciliar Consultas/Calendar antes de qualquer envio.",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: alvo.getTime() > entrada.fimHoje.getTime(),
       prioridade: 1,
@@ -549,7 +607,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
           scheduleVerification.reason,
         ) +
         "). Reconciliar os dois sistemas antes de qualquer envio.",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: alvo.getTime() > entrada.fimHoje.getTime(),
       prioridade: 1,
@@ -558,7 +616,9 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
     return;
   }
 
-  const manualOnly = entrada.neverBotReply === true;
+  const manualOnly =
+    entrada.neverBotReply === true ||
+    !profissionalFundamentalAgendaCuidados_(entrada.profissional);
   const reminderCancellationUrl =
     linkCancelamentoLembreteConsulta_({
       appointmentId: valorAgendaCuidados_(
@@ -614,7 +674,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
           })
           .join("; "),
       responsavel: manualOnly
-        ? "Amanda/equipe"
+        ? responsavelAgendaCuidados_(entrada.profissional)
         : "Bruna/automação",
       automatico: !manualOnly,
       futuro: false,
@@ -656,7 +716,7 @@ function adicionarLembretesConsultaAgendaCuidados_(entrada) {
         entrada.profissional +
         ".",
       responsavel: manualOnly
-        ? "Amanda/equipe"
+        ? responsavelAgendaCuidados_(entrada.profissional)
         : "Bruna/automação",
       automatico: !manualOnly,
       futuro: true,
@@ -725,6 +785,7 @@ function adicionarNaoComparecimentoAgendaCuidados_(entrada) {
   const manualRequired = Boolean(
     manualAt ||
       entrada.neverBotReply ||
+      !profissionalFundamentalAgendaCuidados_(entrada.profissional) ||
       /manual|whatsapp window closed/.test(lastError),
   );
   if (sentAt && !manualAt) return;
@@ -763,7 +824,7 @@ function adicionarNaoComparecimentoAgendaCuidados_(entrada) {
         ? "Retomar manualmente, sem cobrança e sem mencionar penalidade."
         : "Primeiro acolhimento após ausência; o sistema revalida a janela do WhatsApp antes do envio.",
     responsavel: manualRequired
-      ? "Amanda/equipe"
+      ? responsavelAgendaCuidados_(entrada.profissional)
       : "Bruna/automação",
     automatico: !manualRequired,
     futuro: future,
@@ -808,6 +869,7 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
   );
   const aguardandoAtivacao =
     !AGENDA_CUIDADOS_CONFIG.postConsultAutomaticEnabled ||
+    !profissionalFundamentalAgendaCuidados_(entrada.profissional) ||
     /disabled|template|configuration|http_400/i.test(
       erroPosConsulta,
     );
@@ -851,7 +913,7 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
           ? " — automação ainda indisponível; revisar para contato manual."
           : "."),
       responsavel: aguardandoAtivacao
-        ? "Amanda/equipe"
+        ? responsavelAgendaCuidados_(entrada.profissional)
         : "Bruna/automação",
       automatico: !aguardandoAtivacao,
       futuro: false,
@@ -899,7 +961,7 @@ function adicionarPosConsultaAgendaCuidados_(entrada) {
       dataReferencia: entrada.hoje,
       contexto:
         "Confirmar se ficaram dúvidas e se a paciente se sentiu bem orientada.",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: false,
       prioridade: 1,
@@ -1068,7 +1130,7 @@ function adicionarRevisaoComercialAgendaCuidados_(entrada) {
       AGENDA_CUIDADOS_CONFIG.horarioRevisaoComercial,
     dataReferencia: targetDate,
     contexto: contextParts.join(" "),
-    responsavel: "Amanda/equipe",
+    responsavel: responsavelAgendaCuidados_(entrada.profissional),
     automatico: false,
     // `futuro` separa dias futuros das ações do dia. Uma revisão marcada
     // para 11:30 precisa aparecer em "hoje" já no e-mail das 8h.
@@ -1160,7 +1222,7 @@ function adicionarFollowUpConsultaAgendaCuidados_(entrada) {
         "Contato humano de acolhimento e esclarecimento" +
         (entrada.tema ? " sobre " + entrada.tema : "") +
         ".",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: false,
       prioridade: 2,
@@ -1202,7 +1264,7 @@ function adicionarFollowUpConsultaAgendaCuidados_(entrada) {
         "Retomada humana tardia, sem pressão, para dúvidas ou organização do próximo passo" +
         (entrada.tema ? " sobre " + entrada.tema : "") +
         ".",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: false,
       prioridade: 5,
@@ -1272,7 +1334,7 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
         (entrada.proximaAcao ||
           "retomada registrada na aba Consultas") +
         ".",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: true,
       prioridade: contextoCirurgico ? 6 : 8,
@@ -1303,7 +1365,7 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       contexto:
         entrada.proximaAcao ||
         "Retomada registrada na aba Consultas.",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: false,
       prioridade: contextoCirurgico ? 1 : 5,
@@ -1331,7 +1393,7 @@ function adicionarRetomadaPlanejadaAgendaCuidados_(entrada) {
       contexto:
         entrada.proximaAcao +
         " — falta registrar a data do próximo contato.",
-      responsavel: "Amanda/equipe",
+      responsavel: responsavelAgendaCuidados_(entrada.profissional),
       automatico: false,
       futuro: false,
       prioridade: 6,
@@ -1423,7 +1485,7 @@ function adicionarClienteAntigoAgendaCuidados_(entrada) {
       "Reativação manual e personalizada após " +
       intervalo +
       " dias, sem oferta automática e sem expor o histórico clínico.",
-    responsavel: "Amanda/equipe",
+    responsavel: responsavelAgendaCuidados_(entrada.profissional),
     automatico: false,
     futuro: false,
     prioridade: 7,

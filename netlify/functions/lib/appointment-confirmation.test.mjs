@@ -13,6 +13,7 @@ test("detects a confirmed appointment from recent Portuguese context", () => {
   const result = detectConfirmedAppointment({
     currentText: "Confirmado!",
     at: "2026-07-27T16:50:00-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       { text: "Terça" },
       { text: "Manhã às 09h ou à tarde 16h?" },
@@ -58,6 +59,7 @@ test("understands explicit dates and teleconsultation", () => {
     currentText:
       "Sua teleconsulta ficou agendada para 30/07 às 14:30.",
     at: "2026-07-27T10:00:00-03:00",
+    professionalHint: "amanda",
   });
 
   assert.equal(result.scheduledDate, "2026-07-30");
@@ -203,6 +205,7 @@ test("recognizes a unique weekday and time from the proposed slots", () => {
   const result = detectPatientAppointmentSelection({
     currentText: "Terça às 10h funciona para mim",
     at: "2026-08-02T10:00:00-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       {
         role: "assistant",
@@ -223,6 +226,7 @@ test("resolves weekday plus day-of-month against the offered slot instead of the
   const result = detectPatientAppointmentSelection({
     currentText: "Quinta 24 às 14",
     at: "2026-08-20T09:21:00-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       {
         role: "assistant",
@@ -298,6 +302,7 @@ test("captures a manually negotiated slot from natural conversation", () => {
     currentText: "pode sim",
     recentConversation,
     at: "2026-08-01T18:08:04-03:00",
+    professionalHint: "amanda",
   });
 
   assert.equal(result?.scheduledDate, "2026-08-03");
@@ -330,6 +335,7 @@ test("assembles a day and time negotiated across messages and confirms silently"
     currentText: "Podemos! Combinado",
     recentConversation,
     at: "2026-08-03T20:56:00-03:00",
+    professionalHint: "amanda",
   });
 
   assert.equal(result?.scheduledDate, "2026-08-12");
@@ -342,6 +348,7 @@ test("recognizes the manual closing used after the patient accepted", () => {
   const result = detectManualAppointment({
     currentText: "Combinado então! Agradecemos e até lá",
     at: "2026-08-01T18:08:22-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       {
         role: "assistant",
@@ -478,6 +485,7 @@ test("preserves a confirmed manual appointment when the closing omits the time",
   const result = detectManualAppointment({
     currentText: "Combinado então! Agradecemos e até lá",
     at: "2026-08-01T18:08:22-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       {
         role: "assistant",
@@ -499,6 +507,7 @@ test("recognizes the natural negotiation used for a Tuesday evening slot", () =>
   const result = detectManualAppointment({
     currentText: "Combinado!",
     at: "2026-08-01T19:39:20-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       {
         role: "assistant",
@@ -619,10 +628,50 @@ test("the manual sync command never schedules other professionals", () => {
   assert.equal(result, null);
 });
 
+test("the manual sync command never turns Matheus into Amanda", () => {
+  const result = detectManualAppointment({
+    currentText: "Confirmado seu agendamento",
+    at: "2026-08-04T10:00:00-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        text: "Consulta com Matheus (ortop) em 13/08/2026 às 14h.",
+      },
+      { role: "user", text: "Perfeito" },
+    ],
+  });
+
+  assert.equal(result, null);
+});
+
+test("an unidentified appointment fails closed unless a trusted route supplies the professional", () => {
+  const input = {
+    currentText: "Confirmado seu agendamento",
+    at: "2026-08-04T10:00:00-03:00",
+    recentConversation: [
+      {
+        role: "assistant",
+        text: "Tenho 13/08/2026 às 14h.",
+      },
+      { role: "user", text: "Perfeito" },
+    ],
+  };
+
+  assert.equal(detectManualAppointment(input), null);
+  assert.equal(
+    detectManualAppointment({
+      ...input,
+      professionalHint: "amanda",
+    })?.professional,
+    "Dra. Amanda",
+  );
+});
+
 test("flags a plausible manual closing for email review when acceptance is unclear", () => {
   const result = detectManualAppointment({
     currentText: "Combinado então",
     at: "2026-08-01T18:08:22-03:00",
+    professionalHint: "amanda",
     recentConversation: [
       {
         role: "assistant",

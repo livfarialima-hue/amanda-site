@@ -51,12 +51,32 @@ test("operational ledger accepts only typed events without message content", () 
     source: "bruna",
     at: "2026-08-14T15:00:00.000Z",
     outcome: "completed",
+    decisionId: "decision-1",
+    relationship: "new_lead",
+    journeyPhase: "initial_contact",
+    route: "standard_reply",
+    decisionReason: "known_procedure",
+    replyCode: "MARKETING-PREFILL-OPENING-01",
+    risk: "low",
+    gateResult: "passed",
+    gateReason: "completed",
+    policyVersion: "2026-09-01.1",
+    promptVersion: "bruna-concierge-2026-09-01.1",
+    knowledgeSnapshot: "kb-2026-09-01.1",
+    model: "gpt-5.6-terra",
+    latencyMs: 1250,
+    reviewOwner: "none",
+    suggestionStatus: "not_applicable",
     text: "must never be persisted",
   });
 
   assert.equal(result.ok, true);
   assert.equal(result.phone, "+5511900000000");
   assert.equal(Object.hasOwn(result, "text"), false);
+  assert.equal(result.decisionId, "decision-1");
+  assert.equal(result.relationship, "new_lead");
+  assert.equal(result.replyCode, "MARKETING-PREFILL-OPENING-01");
+  assert.equal(result.latencyMs, 1250);
   assert.equal(
     normalizarEventoOperacional_({
       eventId: "evt-2",
@@ -65,6 +85,28 @@ test("operational ledger accepts only typed events without message content", () 
     }).ok,
     false,
   );
+});
+
+test("decision telemetry rejects free text and keeps privacy-safe codes only", () => {
+  const { normalizarEventoOperacional_ } = load();
+  const result = normalizarEventoOperacional_({
+    eventId: "evt-safe",
+    opportunityId: "opp-safe",
+    type: "human_handoff_queued",
+    source: "bruna",
+    at: "2026-08-14T15:00:00.000Z",
+    route: "human review with patient details",
+    decisionReason: "paciente Maria descreveu sintomas",
+    gateReason: "possible_urgent_symptoms",
+    reviewOwner: "amanda_team",
+    suggestionStatus: "none_safe",
+  });
+
+  assert.equal(result.route, "");
+  assert.equal(result.decisionReason, "");
+  assert.equal(result.gateReason, "possible_urgent_symptoms");
+  assert.equal(result.reviewOwner, "amanda_team");
+  assert.equal(result.suggestionStatus, "none_safe");
 });
 
 test("SLA counts only minutes inside the published 8am to 8pm window", () => {

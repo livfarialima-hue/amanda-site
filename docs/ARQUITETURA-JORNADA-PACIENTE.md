@@ -30,18 +30,22 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Contexto de automação | normalizar `off`, `shadow` e `active` | `automation-mode.mjs` | enviar mensagens ou acessar ambiente/rede |
 | Contexto de marketing | reconhecer template, prioridade de prefill e códigos Google/Meta | `marketing-prefill.mjs` | qualificar lead ou agendar consulta |
 | Contexto de procedimento | resolver procedimento falado, campanha e histórico recente | `procedure-context.mjs` | prometer indicação, preço ou resultado |
+| Identidade profissional | resolver menções de Amanda, Daniel e profissionais eventuais e declarar elegibilidade de automação | `professional-registry.mjs` | transformar profissional ausente ou eventual em Amanda |
 | Planejamento de conversa | definir rota, motivo, profissional, procedimento e elegibilidade | `whatsapp-automation.mjs` | contornar takeover, opt-out ou gate de saída |
 | Política semântica | revisar significado e contexto de respostas elegíveis | `semantic-reply-policy.mjs` e módulos especialistas | executar efeito diretamente |
 | Ação conversacional | coordenar a ação permitida para o turno atual | `conversation-action-controller.mjs` | reaproveitar decisão de outro turno sem revalidação |
 | Saída | impor o contrato final de segurança e conteúdo | `outbound-reply-gate.mjs` | inventar fatos para completar uma resposta |
+| Revisão humana | padronizar motivo, responsável, relação, risco, contexto e existência de rascunho seguro | `human-review-envelope.mjs` | fabricar uma resposta apenas para preencher o alerta |
 | Memória | guardar turnos e estado durável da conversa | módulos `conversation-*` | substituir a origem comercial canônica |
 | Jornada comercial | manter oportunidade canônica e projetar o funil | `OpportunityStore.gs` | inferir qualificação apenas por campanha ou prefill |
 | Reconciliação | conferir e reparar projeções por `Opportunity ID` e fase | `FunnelReconciliation.gs` | reescrever colunas manuais protegidas |
+| Ledger de decisões | registrar códigos de decisão, rota, motivo, versões, gate e vínculo da oportunidade sem texto livre | `OperationalEvents.gs` | guardar nome, telefone, mensagem ou dado clínico |
 | Retomadas | planejar cadência, elegibilidade, silêncio e limites | `Retomadas.gs` | enviar sem rechecagem do estado mais recente |
 | Caixa diária de decisões | projetar a Central sem escrita, coletar escolhas explícitas e delegar cada efeito ao proprietário | `PainelDecisoesDiarias.gs` | preselecionar ação, redefinir elegibilidade ou criar um caminho próprio de envio/cancelamento |
 | Execução de retomadas | revalidar e executar somente a ação ainda válida | `scheduled-followup.mjs` | criar um novo plano ou ignorar takeover/opt-out |
 | Agenda | sugerir, reservar e sincronizar consultas com idempotência | módulos `appointment-*` e `ConsultasSync.gs` | confirmar horário sem prova da reserva |
 | Lembretes de consulta | definir cadência, elegibilidade, identidade e reserva de tentativa | `LembretesConsultas.gs` | inventar nome/telefone ou criar uma cadência paralela no e-mail diário |
+| Marcos de relacionamento | projetar aniversário, pós-consulta, ausência, jornada cirúrgica e cliente antigo para o responsável correto | `AgendaCuidados.gs` | automatizar um marco não aprovado ou atribuir atendimento eventual à Amanda |
 | Atribuição | preservar origem, campanha e eventos da jornada | `attribution-journey-store.mjs` e agregações canônicas | usar clique ou prefill como consulta qualificada |
 
 ## 3. Regras de dependência
@@ -63,6 +67,8 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - somente `active`, junto dos demais gates, pode autorizar efeito para a paciente.
 - urgência, risco clínico, takeover, opt-out, mensagem humana mais recente, evento desatualizado ou contexto insuficiente continuam falhando fechados.
 - toda resposta final continua passando pelo contrato de saída; a extração de contexto não libera uma rota por conta própria.
+- Bruna se apresenta somente como assistente ou concierge da Clínica LIV. A identidade pública não exige explicação tecnológica e nunca pode afirmar que Bruna é a médica.
+- toda revisão humana informa responsável, motivo e contexto suficiente. Quando não houver texto seguro, o contrato declara `SEM SUGESTÃO PRONTA`; um holding genérico não substitui análise.
 
 ### Funil e rastreio
 
@@ -71,6 +77,7 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - `Opportunity ID` e fase governam a projeção; nome, telefone parcial ou posição da linha não substituem identidade.
 - código de campanha ou template de marketing fornece contexto, mas não prova qualificação, agendamento, comparecimento ou receita.
 - colunas manuais protegidas não podem ser modificadas pela reconciliação periódica.
+- cada decisão operacional recebe identificador próprio e, quando disponível, `Opportunity ID`, profissional, relação, etapa, rota, motivo, versão de política/prompt/conhecimento/modelo, resultado do gate, latência e responsável pela revisão. Os campos aceitam somente códigos delimitados e nunca armazenam conteúdo da conversa ou identificadores pessoais.
 
 ### Retomadas
 
@@ -101,8 +108,17 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - `LembretesConsultas.gs` é o proprietário da cadência de lembrete. `AgendaCuidados.gs` apenas projeta esse mesmo alvo; não pode calcular D-2, confirmação adicional ou horário concorrente.
 - nome confiável e telefone brasileiro E.164 são pré-condições do envio automático. Ausência de qualquer um bloqueia antes de reservar a tentativa e vira revisão humana; o endpoint e o adaptador do provedor repetem o mesmo bloqueio.
 - para atendimento presencial, a linha de `Consultas` só autoriza lembrete quando o evento vivo vinculado no Google Agenda existe e começa exatamente na mesma data e hora. Vínculo ausente, sincronização não confirmada, evento apagado, erro de leitura ou horário divergente bloqueiam antes de qualquer escrita e viram reconciliação humana. Atendimento remoto só dispensa Calendar quando modalidade e estado canônico `Não se aplica — atendimento remoto` são simultaneamente explícitos e não há vínculo residual.
+- confirmação e lembrete automáticos exigem profissional explicitamente reconhecido. Amanda e Daniel mantêm fluxos separados; profissional eventual ou ausente falha fechado e segue para a equipe correspondente, sem herdar Amanda como padrão.
+- `diagnosticarReconciliacaoConsultasAgenda` lê os próximos 30 dias de `Consultas` e confere o vínculo vivo no Calendar sem escrever, corrigir ou enviar. O resultado agrega alinhamentos e motivos de bloqueio sem nome, telefone ou conteúdo clínico.
 - `Última tentativa de lembrete` impede novo envio automático mesmo quando o provedor falhou ou a resposta foi ambígua. O e-mail diário deve exibir revisão humana, não um novo envio previsto.
 - o e-mail diário projeta, na seção de envios automáticos do próprio dia, o mesmo lembrete único autorizado por `LembretesConsultas.gs`. Cada lembrete elegível oferece cancelamento HMAC com confirmação; a ação grava o horário exato cancelado e nunca cancela a consulta, bloqueia outro cuidado ou mantém a supressão depois de um reagendamento.
+
+### Evolução e regressão
+
+- `bruna-policy/regression-baseline.json` é o inventário mínimo dos cenários que não podem desaparecer durante uma mudança de modelo, prompt, regra ou implementação.
+- todo incidente novo vira cenário sintético falhando antes da correção; a solução deve passar pelo teste novo, pela baseline bloqueada e pela suíte integral.
+- uma atualização nunca pode fazer testes passarem removendo uma proteção anterior. Deprecação exige motivo, substituto equivalente ou superior e registro explícito no candidato de mudança.
+- dados identificáveis de conversas reais permanecem fora de código, prompt, teste e telemetria; somente o padrão desidentificado pode alimentar aprendizado supervisionado.
 
 ### Google e Meta
 
@@ -131,11 +147,14 @@ As próximas separações devem ocorrer em pacotes independentes e testáveis:
 2. separar classificação de oportunidade, projeção do funil e efeitos externos no Apps Script sem alterar a origem canônica;
 3. ampliar os testes sintéticos do contrato já consolidado entre sugestão, reserva, confirmação e lembrete;
 4. criar testes ponta a ponta sintéticos para a mesma jornada atravessando anúncio, WhatsApp, oportunidade, funil, consulta e retomada;
-5. retirar reexportações de compatibilidade somente depois que nenhum consumidor depender delas.
+5. aumentar a baseline bloqueada sempre que um erro real desidentificado revelar uma classe ainda não coberta;
+6. retirar reexportações de compatibilidade somente depois que nenhum consumidor depender delas.
 
 Não mover grandes blocos do Apps Script apenas para reduzir tamanho de arquivo. Como o runtime é global e a ordem/publicação de arquivos pode ampliar o risco, cada extração deve provar equivalência em um pacote próprio antes de chegar ao deployment canônico.
 
 ## 7. Rollback
+
+Para a candidata local `EVOLUCAO-BRUNA-JORNADA-2026-09-12`, nenhuma plataforma externa foi alterada. Antes de eventual publicação, o rollback é abandonar ou reverter apenas o commit da branch candidata. Depois de uma publicação futura autorizada, a contenção deve desligar efeitos antes de restaurar código, preservando oportunidades, decisões, consultas e eventos criados legitimamente após o release.
 
 O baseline anterior a esta modularização é o commit `2862a6ddb61302430b40bb3b8e5702d310ef2dae`. O candidato foi desenvolvido na branch `codex/modularizacao-segura-jornada-20260823`.
 

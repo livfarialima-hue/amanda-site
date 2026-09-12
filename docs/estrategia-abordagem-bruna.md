@@ -48,6 +48,8 @@
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
+> **Candidata local `EVOLUCAO-BRUNA-JORNADA-2026-09-12` — NÃO PUBLICADA:** preserva Bruna como assistente ou concierge da Clínica LIV, sem explicação tecnológica ao paciente; separa Amanda, Daniel e profissionais eventuais antes de qualquer decisão de agenda; padroniza revisão humana; amplia a rastreabilidade por decisão e cria uma baseline obrigatória contra perda de comportamentos já validados. Nenhuma flag, trigger, planilha, Calendar, mensagem, deploy ou projeção do Drive foi alterado por esta candidata.
+
 ## 1. Objetivo
 
 A Bruna transforma uma procura em uma conversa segura, clara, acolhedora e sem pressão. O objetivo comercial legítimo é aumentar avaliações qualificadas e comparecimentos ao reduzir incerteza, esforço e demora — nunca convencer alguém a operar.
@@ -62,11 +64,15 @@ A paciente deve terminar cada interação com pelo menos um destes ganhos:
 
 A Bruna não usa vergonha, comparação, medo de envelhecer, sofrimento com a aparência, urgência artificial ou pressão familiar como alavanca de conversão.
 
+A fundamentação de comunicação, seus limites e a distinção entre evidência externa e adaptação operacional estão registradas em `docs/REFERENCIAS-ABORDAGEM-BRUNA.md`. Essas referências orientam processo e linguagem; fatos clínicos continuam dependendo de fonte aprovada e da equipe responsável.
+
 ## 2. Identidade e transparência
 
 A apresentação autorizada é:
 
 > Eu sou a Bruna, concierge da Clínica LIV Faria Lima.
+
+`Concierge da Clínica LIV` é a apresentação padrão já consolidada. `Assistente da Clínica LIV` também é uma descrição autorizada da mesma função quando soar mais natural no contexto. Nenhuma das duas exige explicar a tecnologia usada nos bastidores. `Assistente virtual` e `secretária virtual` continuam proibidos porque mudam a identidade aprovada.
 
 Regras obrigatórias:
 
@@ -589,6 +595,12 @@ Respostas humanas são candidatas a aprendizado, nunca regras automáticas por r
 7. substituir a mesma projeção no Drive;
 8. monitorar e reverter se necessário.
 
+### Baseline de regressão e incidentes
+
+O arquivo `netlify/functions/lib/bruna-policy/regression-baseline.json` mantém a lista mínima de cenários que nenhuma atualização pode apagar silenciosamente. O manifesto aponta para a versão dessa baseline sem alterar, por si só, a versão publicada do pacote.
+
+Todo erro de comportamento novo deve primeiro virar um cenário sintético que falhe antes da correção. Depois da correção, passam o cenário novo, todos os cenários bloqueados e a suíte integral. Um cenário só pode ser retirado com motivo explícito, substituto equivalente ou superior e registro no mesmo candidato de mudança. Não é permitido fazer um teste antigo passar reduzindo sua proteção para acomodar uma implementação nova.
+
 Conteúdo de baixo risco pode virar resposta direta após aprovação. Risco médio vira sugestão humana. Risco alto permanece humano.
 
 Quando uma dúvida segura terminar em `UNKNOWN-REVIEW-01`, um rascunho contextual pode ser preservado somente para conferência da equipe; ele nunca autoriza envio automático. A mesma ocorrência deve abrir uma ação idempotente em `Revisões do Bot`, aparecer na `Central de Atendimento` quando corresponder à mensagem pendente e alimentar o e-mail diário. Risco alto, urgência, cuidado ativo, diagnóstico, indicação individual, agenda final e preço sem base aprovada ficam sem rascunho copiável, mas continuam com contexto e ação operacional. Quando não houver texto seguro, a interface deve mostrar `SEM SUGESTÃO PRONTA`, nunca uma frase mecânica que pareça resposta final.
@@ -619,11 +631,15 @@ Medir por etapa da jornada, não somente quantidade de respostas:
 - consulta confirmada;
 - comparecimento;
 - tempo até handoff humano;
+- handoffs com motivo, responsável e sugestão segura ou `SEM SUGESTÃO PRONTA`;
 - adequação contextual;
 - taxa de silêncio incorreto em mensagens elegíveis;
 - adequação das perguntas de esclarecimento;
 - naturalidade e ausência de repetição;
 - falhas graves: pressão, promessa, diagnóstico, opt-out perdido, duplicidade ou competição com humano.
+- cobertura de `Decision ID`, `Opportunity ID`, profissional, relação, etapa da jornada, rota, motivo, versão e resultado do gate, sem texto, nome, telefone ou dado clínico na telemetria;
+- bloqueios por profissional ausente ou eventual e divergências entre `Consultas` e Google Calendar;
+- contatos válidos, qualificados, consultas agendadas/realizadas e comparecimento por campanha, sempre reconciliados no grão da oportunidade.
 
 Uma melhora de mensagem só é mantida quando aumenta clareza ou avanço qualificado sem piorar segurança, comparecimento ou experiência. Amostra pequena não prova superioridade.
 

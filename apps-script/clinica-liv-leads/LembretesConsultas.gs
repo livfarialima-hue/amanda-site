@@ -7,6 +7,7 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
   endHour: 19,
   singleReminderDaysBefore: 1,
   singleReminderTime: "10:00",
+  reconciliationDaysAhead: 30,
   endpoint:
     "https://draamandaschroeder.com.br/.netlify/functions/appointment-reminder",
   webAppUrl:
@@ -544,6 +545,7 @@ function processarLembretesConsultasInterno_(
   let blockedByPreference = 0;
   let blockedByInvalidPatientData = 0;
   let blockedByUnverifiedSchedule = 0;
+  let blockedByUnsupportedProfessional = 0;
 
   for (let rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
     const row = values[rowIndex];
@@ -559,6 +561,19 @@ function processarLembretesConsultasInterno_(
 
     if (contactPreferences.neverBotReply === true) {
       blockedByPreference += 1;
+      continue;
+    }
+
+    const professionalVerification =
+      validarProfissionalLembreteConsulta_(
+        row[columns.professional],
+      );
+
+    // Profissional ausente ou eventual nunca herda silenciosamente a
+    // identidade da Dra. Amanda. Esses atendimentos seguem para revisão
+    // humana e ficam fora do fluxo automático de lembretes.
+    if (!professionalVerification.ok) {
+      blockedByUnsupportedProfessional += 1;
       continue;
     }
 
@@ -700,9 +715,7 @@ function processarLembretesConsultasInterno_(
         reminderKind,
         patientPhone: patientData.phone,
         patientName: patientData.firstName,
-        professional:
-          String(row[columns.professional] || "").trim() ||
-          "Dra. Amanda",
+        professional: professionalVerification.label,
         appointmentDate: formatarDataLembretesConsultas_(
           appointment,
           "dd/MM/yyyy",
@@ -752,7 +765,196 @@ function processarLembretesConsultasInterno_(
     blockedByPreference,
     blockedByInvalidPatientData,
     blockedByUnverifiedSchedule,
+    blockedByUnsupportedProfessional,
   };
+}
+
+function validarProfissionalLembreteConsulta_(value) {
+  const raw = String(value || "").trim();
+  const normalized = normalizarTextoLembretesConsultas_(raw);
+
+  if (!normalized) {
+    return {
+      ok: false,
+      reason: "professional_unidentified",
+    };
+  }
+
+  if (/\bamanda\b/.test(normalized)) {
+    return {
+      ok: true,
+      key: "amanda",
+      label: "Dra. Amanda",
+      owner: "Amanda/equipe",
+    };
+  }
+
+  if (/\bdaniel\b/.test(normalized)) {
+    return {
+      ok: true,
+      key: "daniel",
+      label: "Dr. Daniel",
+      owner: "Daniel/equipe",
+    };
+  }
+
+  return {
+    ok: false,
+    reason: "professional_not_automated",
+  };
+}
+
+function auditarReconciliacaoConsultasAgenda_(
+  sheet,
+  calendarApp,
+  options,
+) {
+  const settings = options || {};
+  const now =
+    settings.now instanceof Date &&
+    !Number.isNaN(settings.now.getTime())
+      ? settings.now
+      : new Date();
+  const daysAhead = Math.max(
+    1,
+    Math.min(
+      90,
+      Number(settings.daysAhead) ||
+        LEMBRETES_CONSULTAS_CONFIG.reconciliationDaysAhead,
+    ),
+  );
+  const end = new Date(
+    now.getTime() + daysAhead * 24 * 60 * 60 * 1000,
+  );
+  const values = sheet.getDataRange().getValues();
+  const summary = {
+    ok: true,
+    readOnly: true,
+    periodStart: formatarDataLembretesConsultas_(
+      now,
+      "yyyy-MM-dd HH:mm",
+    ),
+    periodEnd: formatarDataLembretesConsultas_(
+      end,
+      "yyyy-MM-dd HH:mm",
+    ),
+    checked: 0,
+    aligned: 0,
+    blocked: 0,
+    reasons: {},
+    items: [],
+  };
+
+  if (values.length < 2) return summary;
+
+  const columns = mapearColunasLembretesConsultas_(values[0]);
+
+  function registrarBloqueio(rowNumber, result) {
+    const reason = String(
+      (result && result.reason) || "schedule_not_verified",
+    );
+    summary.checked += 1;
+    summary.blocked += 1;
+    summary.ok = false;
+    summary.reasons[reason] =
+      Number(summary.reasons[reason] || 0) + 1;
+    summary.items.push({
+      row: rowNumber,
+      ok: false,
+      reason,
+      expected: String((result && result.expected) || ""),
+      observed: String((result && result.observed) || ""),
+    });
+  }
+
+  for (let rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
+    const row = values[rowIndex];
+
+    if (!statusPermiteLembreteConsulta_(row[columns.status])) {
+      continue;
+    }
+
+    const appointment = combinarDataHorarioLembretesConsultas_(
+      row[columns.date],
+      row[columns.time],
+    );
+
+    if (!appointment) {
+      registrarBloqueio(rowIndex + 1, {
+        reason: "invalid_appointment_schedule",
+      });
+      continue;
+    }
+
+    if (appointment < now || appointment > end) continue;
+
+    const professionalVerification =
+      validarProfissionalLembreteConsulta_(
+        row[columns.professional],
+      );
+
+    if (!professionalVerification.ok) {
+      registrarBloqueio(
+        rowIndex + 1,
+        professionalVerification,
+      );
+      continue;
+    }
+
+    const result = validarVinculoAgendaLembreteConsulta_(
+      {
+        appointment,
+        consultationType: row[columns.consultationType],
+        location: row[columns.location],
+        calendarId: row[columns.calendarId],
+        calendarEventId: row[columns.calendarEventId],
+        calendarSyncStatus: row[columns.calendarSyncStatus],
+      },
+      calendarApp,
+    );
+
+    if (!result.ok) {
+      registrarBloqueio(
+        rowIndex + 1,
+        result,
+      );
+      continue;
+    }
+
+    summary.checked += 1;
+    summary.aligned += 1;
+    summary.items.push({
+      row: rowIndex + 1,
+      ok: true,
+      mode: result.mode,
+      professional: professionalVerification.key,
+    });
+  }
+
+  return summary;
+}
+
+function diagnosticarReconciliacaoConsultasAgenda() {
+  const spreadsheet = SpreadsheetApp.openById(
+    LEMBRETES_CONSULTAS_CONFIG.spreadsheetId,
+  );
+  const sheet = spreadsheet.getSheetByName(
+    LEMBRETES_CONSULTAS_CONFIG.sheetName,
+  );
+
+  if (!sheet) {
+    throw new Error("A aba Consultas não foi encontrada.");
+  }
+
+  return auditarReconciliacaoConsultasAgenda_(
+    sheet,
+    typeof CalendarApp !== "undefined" ? CalendarApp : null,
+    {
+      now: new Date(),
+      daysAhead:
+        LEMBRETES_CONSULTAS_CONFIG.reconciliationDaysAhead,
+    },
+  );
 }
 
 function validarVinculoAgendaLembreteConsulta_(

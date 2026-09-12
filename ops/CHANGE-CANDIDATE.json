@@ -1,136 +1,118 @@
 {
   "schemaVersion": 1,
-  "changeId": "RETOMADAS-AUTOMATICAS-MODELO-CONTENCAO-2026-09-12",
-  "title": "Adicionar desligamento de emergencia acessivel antes da ativacao por modelo",
-  "status": "published_verified",
-  "baseCommit": "34813b88997fb9be5f36617788436c51b24d1cd5",
-  "authorization": {
-    "required": true,
-    "recording": "external_release_preflight",
-    "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu que a rota ficasse facilmente desativavel e, depois do candidato exato ser identificado, confirmou publicar o commit 4db9fb3186b61b30de33d374e8a736804b654821 e ativar agora. O controle de emergencia foi publicado e ensaiado antes da ativacao.",
-    "approvedCommit": "4db9fb3186b61b30de33d374e8a736804b654821",
-    "approvedAt": "2026-09-12T09:31:55-03:00",
-    "approvedBy": "Daniel",
-    "reference": "Confirmo publicar o commit 4db9fb3186b61b30de33d374e8a736804b654821 e ativar agora"
-  },
+  "changeId": "EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12",
+  "title": "Fortalecer a jornada segura da Bruna e medir custo efetivo por mensagem",
+  "status": "implemented_local",
+  "baseCommit": "7e6ea23d49b5b0fd149a66395f88f091b94b01a2",
+  "createdAt": "2026-09-12T10:00:00-03:00",
   "risk": {
-    "level": "high",
-    "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true
+    "level": "critical",
+    "reasons": [
+      "altera roteamento profissional antes de agenda e lembretes",
+      "amplia telemetria operacional e adiciona ledger de custo da mensageria",
+      "toca caminhos publicados de Apps Script e Netlify",
+      "a publicacao deve preservar a ativacao segura da v143"
+    ]
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "patient-journey-funnel-followups"
+      "professional-routing",
+      "bot-decision-observability",
+      "patient-lifecycle-governance",
+      "bruna-regression-governance",
+      "ycloud-delivery-cost-observability"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/AgendaCuidados.test.mjs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/OperationalEvents.gs",
+      "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/REFERENCIAS-ABORDAGEM-BRUNA.md",
+      "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "ops/CHANGE-CANDIDATE.json"
+      "netlify/functions/lib/appointment-confirmation.mjs",
+      "netlify/functions/lib/appointment-confirmation.test.mjs",
+      "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/bruna-policy/regression-baseline.json",
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "netlify/functions/lib/external-professional-context.mjs",
+      "netlify/functions/lib/external-professional-context.test.mjs",
+      "netlify/functions/lib/human-review-envelope.mjs",
+      "netlify/functions/lib/human-review-envelope.test.mjs",
+      "netlify/functions/lib/professional-registry.mjs",
+      "netlify/functions/lib/professional-registry.test.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "menu Central LIV",
-      "processador Apps Script de retomadas",
-      "fila _WHATSAPP_RETOMADAS",
-      "endpoint Netlify scheduled-followup"
+      "Bruna no WhatsApp",
+      "revisoes humanas e caixa diaria de decisoes",
+      "planilha LEADS e metricas por Opportunity ID",
+      "Consultas e Google Calendar",
+      "aniversarios, pos-consulta, jornada cirurgica e clientes antigos",
+      "webhook e adaptadores YCloud"
     ],
     "preservedInvariants": [
-      "a nova rota permanece desligada durante a publicacao do controle",
-      "o desligamento exige confirmacao humana explicita no menu",
-      "o desligamento local bloqueia imediatamente planejamento e processamento automatico por modelo",
-      "retomadas humanas, automacao-base, fila e historico permanecem preservados",
-      "a data de ativacao e removida para impedir reaproveitamento de backlog em uma reativacao",
-      "a segunda trava do endpoint continua independente e deve ser desligada para contencao dupla",
-      "nenhuma mensagem, plano ou contato e criado pelo controle de emergencia"
+      "Bruna permanece assistente ou concierge da Clinica LIV e nao se apresenta como IA",
+      "somente profissionais autorizados podem entrar em mutacao automatizada de agenda",
+      "telemetria nao armazena mensagem, nome, telefone ou dado clinico",
+      "custo inicia em observacao e nunca bloqueia atendimento assistencial ou seguranca",
+      "retomadas ativas da v143, fila, historico e controle de emergencia permanecem preservados",
+      "nenhuma mensagem real sera usada como teste"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script canonico v142, Netlify de producao e fila _WHATSAPP_RETOMADAS",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T09:31:55-03:00",
-        "reference": "Navegador autenticado confirmou projeto, deployment e planilha canonicos. Os arquivos vivos da v142 tinham SHA-256 normalizados Retomadas=b132d68050d37e81ea489117394e857e7709c1cd13892b4fb5bb9503de296527 e CentralAtendimento=34cb8803bb6ff213b8d6587aee97c85289880286ade48d88b2e6643677fa54b6; o diagnostico mostrou flags desligadas, endpoint saudavel, gatilhos 1/1 e zero plano programado.",
-        "evidence": "Leitura agregada sem PII; nenhuma mensagem real, plano, processador ou mutacao operacional foi executada no preflight."
+        "contract": "combined-release",
+        "system": "Apps Script, LEADS, Calendar, Netlify e YCloud canonicos",
+        "status": "pending_before_release",
+        "reference": "Confirmar alvos, estado vivo, schemas e eventos do provedor antes de qualquer escrita."
       }
     ]
   },
+  "authorization": {
+    "required": true,
+    "recording": "external_release_preflight",
+    "publicationAuthorizedInCommit": false,
+    "note": "Daniel autorizou as modificacoes necessarias e pediu publicar todo o pacote pendente de Bruna, jornada, WhatsApp, LEADS e agenda. Campanhas, verba e outros trabalhos de site permanecem fora do escopo.",
+    "approvedBy": "Daniel",
+    "reference": "faca entao as modificacoes necessarias e depois publique tudo que esta pendente"
+  },
   "verification": {
-    "status": "passed_local_and_live",
-    "completedAt": "2026-09-12T09:52:36-03:00",
+    "status": "pending",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check",
-      "navegador autenticado: comparar os arquivos vivos com a v142 e com o candidato antes e depois da escrita",
-      "editar somente o deployment Apps Script canonico existente e verificar a versao 143",
-      "publicar o commit exato no Netlify, ativar a variavel somente em producao e reimplantar o mesmo commit",
-      "ensaiar Central LIV > Desativar retomadas automaticas (emergencia) e confirmar o estado desligado sem apagar fila",
-      "executar ativarRetomadasAutomaticasPorModelo uma unica vez e repetir somente o diagnostico",
-      "sondar o endpoint protegido sem autenticacao e exigir HTTP 401",
-      "substituir e reler o mesmo Plano Executivo no Drive sem criar copia"
-    ],
-    "results": {
-      "focusedCentralAndFollowups": "135/135 passed",
-      "crossConsumer": "185/185 passed",
-      "scheduledEndpoint": "21/21 passed",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1264/1264 passed",
-      "siteBuild": "180 files and 44 sitemap URLs with zero errors",
-      "siteCheck": "44/44 pages checked with zero errors",
-      "changeSafety": "9 files matched the declared scope funcional e de fechamento",
-      "diffCheck": "passed",
-      "authenticatedBrowser": "controle comprovado como Daniel Added (daniel.added@gmail.com) no projeto Apps Script canonico antes da escrita",
-      "liveSourceEquality": "depois de salvar e recarregar, CentralAtendimento.gs=81bf9283cd08b95a1d798e69c0402b566dded5438a51a857a545fdd754f5ccc2 e Retomadas.gs=5c46496614197e78e829f3021e1ea007a011ed1c4869b5666b4ff540a5aad848 coincidiram exatamente com o commit autorizado",
-      "appsScriptDeployment": "deployment canonico preservado e atualizado para a versao 143 em 12/09/2026 as 09:40",
-      "netlify": "deploy funcional automatico 6aa5484b23a3df0008cd37f5 e redeploy final 6aa5494950d7dc34628fdf33, ambos do commit exato 4db9fb3186b61b30de33d374e8a736804b654821; a variavel automatica tem true somente no contexto de producao",
-      "emergencyRollbackRehearsal": "o menu visivel desligou a trava Apps Script, preservou fila e historico e o diagnostico confirmou automaticTemplateActive=false antes da reativacao autorizada",
-      "activation": "ativarRetomadasAutomaticasPorModelo executada uma unica vez as 09:46:59; nenhum planejador ou processador foi executado manualmente",
-      "postActivationDiagnostic": "as 09:47:32: automaticTemplateActive=true, automaticTemplateFlag=true, activatedAt=2026-09-12T12:46:59.953Z, gatilhos 1/1, fila programada zero e endpoint HTTP 200 com automacao-base, modelo e efeitos permitidos",
-      "manualPriorFollowupGate": "os testes exatos confirmaram que retomada manual anterior, continuidade humana atrasada, mesma etapa ja planejada ou qualquer turno adicional bloqueiam ou cancelam o automatico; o historico e relido no planejamento e antes do envio",
-      "publicEndpointProbe": "GET sem autenticacao retornou HTTP 401 com unauthorized",
-      "realMessages": "zero mensagens reais ou de teste; zero plano criado durante publicacao e ativacao",
-      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido com 132114 bytes e SHA-256 4d2fdcaef8e2573bc26b102a18b0314c097349472c6c6b6d8aa37e4a6a08423f; nenhuma copia criada e registros paralelos preservados"
-    }
-  },
-  "release": {
-    "approvedCommit": "4db9fb3186b61b30de33d374e8a736804b654821",
-    "netlifyDeployId": "6aa5494950d7dc34628fdf33",
-    "appsScriptVersion": 143,
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "4d2fdcaef8e2573bc26b102a18b0314c097349472c6c6b6d8aa37e4a6a08423f",
-    "verifiedAt": "2026-09-12T09:52:36-03:00",
-    "activationState": "published_v143_active_monitoring",
-    "notes": "Commit exato publicado no deployment Apps Script preservado e no Netlify. O controle de emergencia foi ensaiado antes da ativacao. Pos-voo confirmou flags ativas, data valida, endpoint pronto, gatilhos 1/1 e fila programada zero. Nenhuma mensagem real ou de teste foi enviada."
+      "git diff --check"
+    ]
   },
   "rollback": {
-    "local": "reverter somente os commits deste changeId sobre o baseCommit 34813b88997fb9be5f36617788436c51b24d1cd5, preservando publicacoes paralelas",
-    "production": "conter primeiro por Central LIV > Desativar retomadas automaticas (emergencia), confirmar o diagnostico e depois definir WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED=false somente em producao e reimplantar; preservar fila, historico e retomadas humanas. Se ainda necessario, retornar o mesmo deployment Apps Script a v142 e o Netlify ao deploy anterior."
+    "local": "reverter somente os commits deste changeId sobre 7e6ea23, preservando trabalhos paralelos",
+    "production": "conter efeitos novos, manter as retomadas v143 e retornar os deployments ao ultimo recibo verificado se necessario"
   },
   "monitoring": {
-    "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro plano elegivel, 24 horas, 72 horas e 7 dias apos 12/09/2026 as 09:46:59",
+    "owner": "Daniel, Amanda e equipe da Clinica LIV",
+    "window": "primeiro evento, 24 horas, 72 horas e 7 dias",
     "metrics": [
-      "estado das duas travas e data de ativacao",
-      "planos estritamente elegiveis, programados, enviados e respondidos",
-      "envio retroativo, precoce, tardio, duplicado ou protegido",
-      "procedimento incorreto, nova atividade, takeover, opt-out e reclamacao"
+      "roteamento por profissional e bloqueios",
+      "cobertura de decisoes e handoffs",
+      "divergencias Consultas e Calendar",
+      "mensagens entregues, categoria, custo e duplicidade",
+      "custo por contato valido, qualificado e consulta"
     ],
-    "rollbackRule": "usar imediatamente a contencao dupla diante de qualquer envio retroativo, precoce, tardio, duplicado, protegido, com procedimento incorreto, depois de nova atividade ou sem rastreabilidade."
+    "rollbackRule": "conter diante de atribuicao profissional incorreta, agenda indevida, PII na telemetria, duplicidade de cobranca ou quebra de guardrail"
   }
 }

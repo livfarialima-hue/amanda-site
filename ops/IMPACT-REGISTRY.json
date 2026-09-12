@@ -431,6 +431,179 @@
         "OpenAI"
       ],
       "requiresReadOnlyPreflight": false
+    },
+    {
+      "id": "professional-routing",
+      "ownerFiles": [
+        "netlify/functions/lib/professional-registry.mjs"
+      ],
+    "consumerFiles": [
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+      "netlify/functions/lib/appointment-confirmation.mjs",
+        "netlify/functions/lib/external-professional-context.mjs",
+        "netlify/functions/ycloud-webhook.mjs"
+      ],
+      "coveredPaths": [
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/AgendaCuidados.test.mjs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/appointment-confirmation.mjs",
+        "netlify/functions/lib/appointment-confirmation.test.mjs",
+        "netlify/functions/lib/external-professional-context.mjs",
+        "netlify/functions/lib/external-professional-context.test.mjs",
+        "netlify/functions/lib/professional-registry.mjs",
+        "netlify/functions/lib/professional-registry.test.mjs",
+        "netlify/functions/ycloud-webhook.mjs"
+      ],
+    "requiredTestFiles": [
+      "apps-script/clinica-liv-leads/AgendaCuidados.test.mjs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "netlify/functions/lib/appointment-confirmation.test.mjs",
+        "netlify/functions/lib/external-professional-context.test.mjs",
+        "netlify/functions/lib/professional-registry.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run site:build",
+        "npm.cmd run site:check",
+        "npm.cmd run ops:check",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Google Sheets LEADS",
+        "Google Calendar",
+        "Netlify",
+        "YCloud"
+      ],
+      "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "bot-decision-observability",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/OperationalEvents.gs",
+        "netlify/functions/lib/human-review-envelope.mjs"
+      ],
+      "consumerFiles": [
+        "netlify/functions/ycloud-webhook.mjs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/OperationalEvents.gs",
+        "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/human-review-envelope.mjs",
+        "netlify/functions/lib/human-review-envelope.test.mjs",
+        "netlify/functions/ycloud-webhook.mjs"
+      ],
+      "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
+        "netlify/functions/lib/human-review-envelope.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run ops:check",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Google Sheets LEADS",
+        "Netlify",
+        "YCloud"
+      ],
+      "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "patient-lifecycle-governance",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.gs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/AgendaCuidados.test.mjs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "docs/estrategia-abordagem-bruna.md",
+        "docs/whatsapp-clinica-liv-operacao.md"
+      ],
+    "requiredTestFiles": [
+      "apps-script/clinica-liv-leads/AgendaCuidados.test.mjs",
+      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run site:build",
+        "npm.cmd run site:check",
+        "npm.cmd run ops:check",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Google Sheets LEADS",
+        "Google Calendar",
+        "YCloud"
+      ],
+      "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "bruna-regression-governance",
+      "ownerFiles": [
+        "netlify/functions/lib/bruna-policy/regression-baseline.json",
+        "netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      ],
+      "consumerFiles": [
+        "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+        "netlify/functions/lib/bruna-policy/rules.jsonl"
+      ],
+      "coveredPaths": [
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/REFERENCIAS-ABORDAGEM-BRUNA.md",
+        "docs/estrategia-abordagem-bruna.md",
+        "netlify/functions/lib/bruna-policy/manifest.json",
+        "netlify/functions/lib/bruna-policy/regression-baseline.json",
+        "netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Google Drive",
+        "Netlify",
+        "OpenAI"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

@@ -132,6 +132,13 @@ import {
   detectPatientAppointmentReply,
 } from "./lib/appointment-confirmation.mjs";
 import {
+  isAutomatedAppointmentProfessional,
+} from "./lib/professional-registry.mjs";
+import {
+  buildHumanReviewEnvelope,
+  formatHumanReviewEnvelope,
+} from "./lib/human-review-envelope.mjs";
+import {
   buildAppointmentReviewUrl,
   createAppointmentReview,
 } from "./lib/appointment-review-store.mjs";
@@ -1202,6 +1209,85 @@ async function recordOperationalEvent(event) {
   );
 }
 
+function operationalRelationshipState(relationship) {
+  const state = typeof relationship === "object" && relationship
+    ? relationship.state || relationship.relationshipState
+    : relationship;
+  return String(state || "unknown").trim().toLowerCase();
+}
+
+function operationalJourneyPhase(relationship) {
+  const state = operationalRelationshipState(relationship);
+  if (state === "new_lead") return "initial_contact";
+  if (state === "engaged_lead") return "qualification";
+  if (state === "appointment_scheduled") return "appointment";
+  if (state === "consultation_completed") return "consultation";
+  if (state === "surgical_planning") return "procedure";
+  if (state === "active_postop") return "post_procedure";
+  if (["known_patient", "former_patient"].includes(state)) {
+    return "relationship";
+  }
+  return "unknown";
+}
+
+function operationalReviewOwner(professional) {
+  const value = String(professional || "").toLowerCase();
+  if (value.includes("amanda")) return "amanda_team";
+  if (value.includes("daniel")) return "daniel_team";
+  if (value && value !== "unknown") return "external_admin";
+  return "clinic_team";
+}
+
+function operationalLatencyMs(receivedAt) {
+  const started = new Date(receivedAt || "").getTime();
+  if (!Number.isFinite(started)) return "";
+  return Math.max(0, Date.now() - started);
+}
+
+function operationalDecisionMetadata({
+  decision,
+  plan,
+  relationship,
+  gateResult,
+  gateReason,
+  model,
+  receivedAt,
+} = {}) {
+  const source = decision || plan || {};
+  const route = String(source.route || plan?.route || "");
+  const professional = source.professional || plan?.professional || "";
+  const isReview = route === "human_review" || gateResult === "review";
+  const hasSuggestion = Boolean(String(source.suggestedReply || "").trim());
+  return {
+    relationship: operationalRelationshipState(relationship),
+    journeyPhase: operationalJourneyPhase(relationship),
+    route,
+    decisionReason:
+      source.reviewReason || source.reason || plan?.reason || "",
+    replyCode: source.replyCode || plan?.replyCode || "",
+    risk: source.urgent === true
+      ? "high"
+      : isReview
+        ? "medium"
+        : "low",
+    gateResult: gateResult || (isReview ? "review" : "passed"),
+    gateReason: gateReason || "",
+    policyVersion: process.env.BRUNA_POLICY_VERSION || "unversioned",
+    promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
+    knowledgeSnapshot: process.env.BRUNA_KB_SNAPSHOT || "unversioned",
+    model: model || "unversioned",
+    latencyMs: operationalLatencyMs(receivedAt),
+    reviewOwner: isReview
+      ? operationalReviewOwner(professional)
+      : "none",
+    suggestionStatus: isReview
+      ? hasSuggestion
+        ? "ready_for_human_review"
+        : "none_safe"
+      : "not_applicable",
+  };
+}
+
 async function recordAutomaticReplyOperationally({
   result,
   eventId,
@@ -1209,6 +1295,7 @@ async function recordAutomaticReplyOperationally({
   opportunityId,
   phone,
   professional,
+  decisionTrace = {},
 }) {
   if (!["completed", "duplicate"].includes(result?.status)) return;
   try {
@@ -1222,6 +1309,9 @@ async function recordAutomaticReplyOperationally({
       source: "bruna",
       at: new Date().toISOString(),
       outcome: result.status,
+      gateResult: "passed",
+      gateReason: result.status,
+      ...decisionTrace,
     });
   } catch (error) {
     writeOperationalLog({
@@ -1416,9 +1506,36 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
   const planReason = [plan?.reason, plan?.requestReason]
     .filter(Boolean)
     .join(" ");
+  const reviewReason =
+    decision?.reviewReason ||
+    plan?.reason ||
+    plan?.requestReason ||
+    "human_review_required";
+  const professional =
+    decision?.professional ||
+    plan?.professional ||
+    input.professional ||
+    "";
+  const wrap = ({
+    messageText,
+    suggestedReply = "",
+    suggestionAvailable = false,
+  }) => ({
+    ...input,
+    messageText: formatHumanReviewEnvelope(
+      buildHumanReviewEnvelope({
+        reason: reviewReason,
+        professional,
+        relationship: input.relationship,
+        contextSummary: messageText,
+        suggestedReply,
+        suggestionAvailable,
+        urgent: decision?.urgent === true,
+      }),
+    ),
+  });
   if (/\bintense_appearance_distress\b/.test(planReason)) {
-    return {
-      ...input,
+    return wrap({
       messageText: [
         buildRelationshipAlertMessage({
           messageText: input.messageText,
@@ -1430,12 +1547,12 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
           patientName: input.patientName,
         }),
       ].filter(Boolean).join("\n"),
-    };
+      suggestionAvailable: true,
+    });
   }
 
   if (/\bpending_hospital_quote_followup\b/.test(planReason)) {
-    return {
-      ...input,
+    return wrap({
       messageText: prependRelationshipAlertContext({
         relationship: input.relationship,
         messageText: buildPendingHospitalQuoteAlert({
@@ -1443,7 +1560,8 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
           patientMessage: input.messageText,
         }),
       }),
-    };
+      suggestionAvailable: true,
+    });
   }
 
   const priceReview =
@@ -1454,8 +1572,7 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
     );
 
   if (priceReview) {
-    return {
-      ...input,
+    return wrap({
       messageText: prependRelationshipAlertContext({
         relationship: input.relationship,
         messageText: buildPriceReviewAlert({
@@ -1470,7 +1587,8 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
           sourceReference: input.reference,
         }),
       }),
-    };
+      suggestionAvailable: true,
+    });
   }
 
   const suggestedReply = String(
@@ -1478,27 +1596,22 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
   ).trim();
 
   if (!suggestedReply) {
-    return {
-      ...input,
+    return wrap({
       messageText: buildRelationshipAlertMessage({
         messageText: input.messageText,
         patientName: input.patientName,
         relationship: input.relationship,
       }),
-    };
+    });
   }
 
-  return {
-    ...input,
-    messageText: [
-      prependRelationshipAlertContext({
-        messageText: input.messageText,
-        relationship: input.relationship,
-      }),
-      "Sugestão para copiar após conferir:",
-      suggestedReply,
-    ].filter(Boolean).join("\n"),
-  };
+  return wrap({
+    messageText: prependRelationshipAlertContext({
+      messageText: input.messageText,
+      relationship: input.relationship,
+    }),
+    suggestedReply,
+  });
 }
 
 async function completeReviewAlert(input) {
@@ -1627,6 +1740,15 @@ export async function completeSelectedAppointment(
   } = selection || {};
   const selectedProfessional =
     appointmentSelection.professional || professional || "";
+  if (!isAutomatedAppointmentProfessional(selectedProfessional)) {
+    return {
+      status: "review_required",
+      reserved: false,
+      confirmationSent: false,
+      pendingRecorded: false,
+      errorCode: "unsupported_professional",
+    };
+  }
   const requiresHumanConfirmation =
     String(
       process.env.APPOINTMENT_PATIENT_SELECTION_REQUIRES_HUMAN || "true",
@@ -2918,6 +3040,15 @@ async function completeOpenAIActive({
         opportunityId: input.opportunityId,
         phone: to,
         professional: input.professional,
+        decisionTrace: operationalDecisionMetadata({
+          decision: activeResult.decision,
+          plan,
+          relationship: patientRelationship,
+          gateResult: "passed",
+          gateReason: holdingResult.status,
+          model: activeResult.model,
+          receivedAt: input.receivedAt,
+        }),
       });
       logPatientReplyResult(
         `${input.eventId}-unknown-holding`,
@@ -3035,6 +3166,15 @@ async function completeOpenAIActive({
       opportunityId: input.opportunityId,
       phone: to,
       professional: input.professional,
+      decisionTrace: operationalDecisionMetadata({
+        decision: activeResult.decision,
+        plan,
+        relationship: patientRelationship,
+        gateResult: "passed",
+        gateReason: replyResult.status,
+        model: activeResult.model,
+        receivedAt: input.receivedAt,
+      }),
     });
     logPatientReplyResult(input.eventId, to, replyResult);
 
@@ -4364,6 +4504,7 @@ export async function handleYCloudWebhook(
           recentConversation:
             ignoredMemory.historyAfter,
           at: contactAt,
+          professionalHint: preliminaryAutomationPlan.professional,
         });
 
       if (
@@ -4593,6 +4734,7 @@ export async function handleYCloudWebhook(
         currentText: text,
         recentConversation: memoryResult.historyAfter,
         at: contactAt,
+        professionalHint: delivery.professional,
       });
     patientAppointmentReply = patientAppointmentSelection
       ? null
@@ -6271,6 +6413,17 @@ export async function handleYCloudWebhook(
       source: "bruna",
       at: new Date().toISOString(),
       outcome: "queued",
+      ...operationalDecisionMetadata({
+        decision: semanticReviewAssessment?.decision,
+        plan: automationPlan,
+        relationship: patientRelationship,
+        gateResult: "review",
+        gateReason: reviewAlertQueued
+          ? "human_review_alert_queued"
+          : "appointment_review_queued",
+        model: semanticReviewAssessment?.model,
+        receivedAt: contactAt,
+      }),
     });
   }
 

@@ -2790,6 +2790,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     makeRow({
       "Telefone (E.164)": "+5511900000001",
       "Nome do paciente": "Ana",
+      Profissional: "Dra. Amanda",
       Status: "Consulta realizada",
       "Consentimento para contato": "Sim",
       "Data de nascimento": "1980-07-29",
@@ -2798,6 +2799,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     makeRow({
       "Telefone (E.164)": "+5511900000002",
       "Nome do paciente": "Beatriz",
+      Profissional: "Dra. Amanda",
       Status: "Consulta realizada",
       "Consentimento para contato": "Sim",
       "Checagem pós-consulta": "Sim",
@@ -2825,6 +2827,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     makeRow({
       "Telefone (E.164)": "+5511900000004",
       "Nome do paciente": "Diana",
+      Profissional: "Dra. Amanda",
       Status: "Consulta realizada",
       "Consentimento para contato": "Sim",
       "Retomada pelo bot": "Sim",
@@ -2835,6 +2838,7 @@ test("daily care agenda consolidates appointments, post-consult, birthdays and s
     makeRow({
       "Telefone (E.164)": "+5511900000005",
       "Nome do paciente": "Elisa",
+      Profissional: "Dra. Amanda",
       Status: "Consulta realizada",
       "Consentimento para contato": "Não",
       "Data de nascimento": "1985-07-29",
@@ -3133,6 +3137,7 @@ test("D+15 commercial review is an internal reminder even when patient outreach 
   const headers = [
     "Telefone (E.164)",
     "Nome do paciente",
+    "Profissional",
     "Tema / procedimento",
     "Status",
     "Consentimento para contato",
@@ -3145,6 +3150,7 @@ test("D+15 commercial review is an internal reminder even when patient outreach 
   const values = {
     "Telefone (E.164)": "+5511900000100",
     "Nome do paciente": "Paciente Teste",
+    Profissional: "Dra. Amanda",
     "Tema / procedimento": "procedimento informado na consulta",
     Status: "Consulta realizada",
     "Consentimento para contato": "Não",
@@ -3319,6 +3325,7 @@ test("later post-consult and old-client contacts stay manual with a ready messag
   const headers = [
     "Telefone (E.164)",
     "Nome do paciente",
+    "Profissional",
     "Tema / procedimento",
     "Status",
     "Consentimento para contato",
@@ -3333,6 +3340,7 @@ test("later post-consult and old-client contacts stay manual with a ready messag
     makeRow({
       "Telefone (E.164)": "+5511900000010",
       "Nome do paciente": "Fernanda",
+      Profissional: "Dra. Amanda",
       "Tema / procedimento": "lifting facial",
       Status: "Consulta realizada",
       "Consentimento para contato": "Sim",
@@ -3341,6 +3349,7 @@ test("later post-consult and old-client contacts stay manual with a ready messag
     makeRow({
       "Telefone (E.164)": "+5511900000011",
       "Nome do paciente": "Gabriela",
+      Profissional: "Dra. Amanda",
       Status: "Consulta realizada",
       "Consentimento para contato": "Sim",
       "Data realizada": "2026-01-30",

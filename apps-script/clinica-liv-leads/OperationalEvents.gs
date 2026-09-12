@@ -7,6 +7,24 @@ const OPERATIONAL_EVENT_HEADERS = Object.freeze([
   "Data e hora",
   "Resultado",
   "Criado em",
+  "Decision ID",
+  "Profissional",
+  "Relação",
+  "Etapa da jornada",
+  "Rota",
+  "Motivo da decisão",
+  "Reply code",
+  "Risco",
+  "Resultado do gate",
+  "Motivo do gate",
+  "Versão da política",
+  "Versão do prompt",
+  "Snapshot de conhecimento",
+  "Modelo",
+  "Follow-up ID",
+  "Latência ms",
+  "Responsável da revisão",
+  "Situação da sugestão",
 ]);
 
 const OPERATIONAL_EVENT_TYPES = Object.freeze([
@@ -16,6 +34,52 @@ const OPERATIONAL_EVENT_TYPES = Object.freeze([
   "automation_paused",
   "processing_closed",
 ]);
+
+const OPERATIONAL_RELATIONSHIP_STATES = Object.freeze([
+  "new_lead",
+  "engaged_lead",
+  "known_patient",
+  "appointment_scheduled",
+  "consultation_completed",
+  "surgical_planning",
+  "active_postop",
+  "former_patient",
+  "unknown",
+]);
+
+const OPERATIONAL_JOURNEY_PHASES = Object.freeze([
+  "initial_contact",
+  "qualification",
+  "appointment",
+  "consultation",
+  "decision",
+  "procedure",
+  "post_procedure",
+  "relationship",
+  "unknown",
+]);
+
+function codigoTecnicoEventoOperacional_(value, maxLength) {
+  const text = String(value || "").trim();
+  const limit = Number(maxLength) || 120;
+  return /^[a-zA-Z0-9][a-zA-Z0-9._:-]*$/.test(text)
+    ? text.slice(0, limit)
+    : "";
+}
+
+function enumEventoOperacional_(value, allowed, fallback) {
+  const normalized = String(value || "").trim().toLowerCase();
+  return allowed.indexOf(normalized) >= 0
+    ? normalized
+    : fallback || "";
+}
+
+function latenciaEventoOperacional_(value) {
+  const latency = Number(value);
+  return Number.isFinite(latency) && latency >= 0 && latency <= 86400000
+    ? Math.round(latency)
+    : "";
+}
 
 const BOT_SLA_SUMMARY_SHEET = "_BOT_METRICAS";
 const BOT_SLA_START_HOUR = 8;
@@ -97,6 +161,67 @@ function normalizarEventoOperacional_(input) {
     source,
     at,
     outcome,
+    decisionId:
+      codigoTecnicoEventoOperacional_(input && input.decisionId, 220) ||
+      codigoTecnicoEventoOperacional_(eventId, 220),
+    relationship: enumEventoOperacional_(
+      input && input.relationship,
+      OPERATIONAL_RELATIONSHIP_STATES,
+      "unknown",
+    ),
+    journeyPhase: enumEventoOperacional_(
+      input && input.journeyPhase,
+      OPERATIONAL_JOURNEY_PHASES,
+      "unknown",
+    ),
+    route: codigoTecnicoEventoOperacional_(input && input.route, 80),
+    decisionReason: codigoTecnicoEventoOperacional_(
+      input && input.decisionReason,
+      120,
+    ),
+    replyCode: codigoTecnicoEventoOperacional_(input && input.replyCode, 100),
+    risk: enumEventoOperacional_(
+      input && input.risk,
+      ["low", "medium", "high", "unknown"],
+      "unknown",
+    ),
+    gateResult: enumEventoOperacional_(
+      input && input.gateResult,
+      ["passed", "blocked", "review", "not_applicable", "unknown"],
+      "unknown",
+    ),
+    gateReason: codigoTecnicoEventoOperacional_(
+      input && input.gateReason,
+      120,
+    ),
+    policyVersion: codigoTecnicoEventoOperacional_(
+      input && input.policyVersion,
+      100,
+    ),
+    promptVersion: codigoTecnicoEventoOperacional_(
+      input && input.promptVersion,
+      100,
+    ),
+    knowledgeSnapshot: codigoTecnicoEventoOperacional_(
+      input && input.knowledgeSnapshot,
+      100,
+    ),
+    model: codigoTecnicoEventoOperacional_(input && input.model, 100),
+    followupId: codigoTecnicoEventoOperacional_(
+      input && input.followupId,
+      220,
+    ),
+    latencyMs: latenciaEventoOperacional_(input && input.latencyMs),
+    reviewOwner: enumEventoOperacional_(
+      input && input.reviewOwner,
+      ["amanda_team", "daniel_team", "clinic_team", "external_admin", "none"],
+      "none",
+    ),
+    suggestionStatus: enumEventoOperacional_(
+      input && input.suggestionStatus,
+      ["ready_for_human_review", "ready_in_context", "none_safe", "not_applicable"],
+      "not_applicable",
+    ),
   };
 }
 
@@ -170,6 +295,24 @@ function registrarEventoOperacionalInterno_(spreadsheet, input) {
     event.at,
     event.outcome,
     new Date(),
+    event.decisionId,
+    codigoTecnicoEventoOperacional_(identity.professional, 80),
+    event.relationship,
+    event.journeyPhase,
+    event.route,
+    event.decisionReason,
+    event.replyCode,
+    event.risk,
+    event.gateResult,
+    event.gateReason,
+    event.policyVersion,
+    event.promptVersion,
+    event.knowledgeSnapshot,
+    event.model,
+    event.followupId,
+    event.latencyMs,
+    event.reviewOwner,
+    event.suggestionStatus,
   ]);
   return {
     ok: true,

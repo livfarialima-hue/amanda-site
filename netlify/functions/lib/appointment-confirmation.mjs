@@ -1,4 +1,8 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import {
+  findProfessionalMentions,
+  resolveAutomatedAppointmentProfessional,
+} from "./professional-registry.mjs";
 
 const TIMEZONE = "America/Sao_Paulo";
 
@@ -228,20 +232,11 @@ function isConfirmation(text) {
   ].some((pattern) => pattern.test(comparable));
 }
 
-function detectProfessional(text) {
-  const comparable = normalize(text);
-  const genericSiteServicePicker =
-    /cirurgia plastica\s*\/?\s*estetica/.test(comparable) &&
-    /\bcardiologia\b/.test(comparable) &&
-    /origem do contato:\s*site liv faria lima/.test(comparable);
-  const explicitDaniel =
-    /\bdr\.?\s*daniel\b|\bdaniel\b.*\bcardio/.test(comparable) ||
-    (!genericSiteServicePicker &&
-      /\bcardiologia\b|\bcardiologista\b/.test(comparable));
-
-  return explicitDaniel
-    ? "Dr. Daniel"
-    : "Dra. Amanda";
+function detectProfessional(text, professionalHint = "") {
+  return resolveAutomatedAppointmentProfessional({
+    text,
+    professionalHint,
+  });
 }
 
 function detectConsultationType(text) {
@@ -413,7 +408,12 @@ function publicAppointmentSlot(slot) {
   return publicSlot;
 }
 
-function manualAppointmentSlotsFromText(text, baseDate, turnIndex) {
+function manualAppointmentSlotsFromText(
+  text,
+  baseDate,
+  turnIndex,
+  professionalHint = "",
+) {
   const fragments = String(text || "")
     .split(/\r?\n|\s+[•·]\s+|\s+[-–—]\s+(?=\D{0,24}\d{1,2}(?::\d{2}|h))/u)
     .map((fragment) => fragment.trim())
@@ -426,7 +426,8 @@ function manualAppointmentSlotsFromText(text, baseDate, turnIndex) {
 
     if (!scheduledDate || !scheduledTime) continue;
 
-    const professional = detectProfessional(fragment);
+    const professional = detectProfessional(fragment, professionalHint);
+    if (!professional) continue;
     const consultationType = detectConsultationType(fragment);
     slots.push({
       option: null,
@@ -445,7 +446,11 @@ function manualAppointmentSlotsFromText(text, baseDate, turnIndex) {
   return slots;
 }
 
-function offeredAppointmentSlots(recentConversation, at = new Date()) {
+function offeredAppointmentSlots(
+  recentConversation,
+  at = new Date(),
+  professionalHint = "",
+) {
   const turns = Array.isArray(recentConversation)
     ? recentConversation.slice(-12)
     : [];
@@ -469,7 +474,8 @@ function offeredAppointmentSlots(recentConversation, at = new Date()) {
     ];
 
     if (matches.length) {
-      const professional = detectProfessional(text);
+      const professional = detectProfessional(text, professionalHint);
+      if (!professional) continue;
       const consultationType = detectConsultationType(text);
 
       slots.push(...matches.map((match) => ({
@@ -500,6 +506,7 @@ function offeredAppointmentSlots(recentConversation, at = new Date()) {
           text,
           turn?.at ? new Date(turn.at) : baseDate,
           turnIndex,
+          professionalHint,
         ),
       );
     }
@@ -652,6 +659,7 @@ export function detectPatientAppointmentSelection({
   currentText,
   recentConversation = [],
   at = new Date(),
+  professionalHint = "",
 } = {}) {
   if (!hasSelectionIntent(currentText)) return null;
 
@@ -677,7 +685,11 @@ export function detectPatientAppointmentSelection({
       .slice(-10)
       .map((turn) => String(turn?.text || ""))
       .join(" ");
-    const professional = detectProfessional(contextText);
+    const professional = detectProfessional(
+      contextText,
+      professionalHint,
+    );
+    if (!professional) return null;
     const consultationType = detectConsultationType(contextText);
 
     return {
@@ -695,7 +707,11 @@ export function detectPatientAppointmentSelection({
     };
   }
 
-  const slots = offeredAppointmentSlots(recentConversation, at);
+  const slots = offeredAppointmentSlots(
+    recentConversation,
+    at,
+    professionalHint,
+  );
   if (!slots.length) return null;
 
   const patientSelectionTexts = [
@@ -846,7 +862,11 @@ function recentPatientAccepted(recentConversation) {
   );
 }
 
-function fallbackAppointmentFromConversation(recentConversation, at) {
+function fallbackAppointmentFromConversation(
+  recentConversation,
+  at,
+  professionalHint = "",
+) {
   const turns = (Array.isArray(recentConversation)
     ? recentConversation.slice(-10)
     : []).filter((turn) => turn?.text);
@@ -870,7 +890,8 @@ function fallbackAppointmentFromConversation(recentConversation, at) {
 
   if (!scheduledDate && !scheduledTime) return null;
   const context = turns.map((turn) => turn.text).join(" ");
-  const professional = detectProfessional(context);
+  const professional = detectProfessional(context, professionalHint);
+  if (!professional) return null;
   const consultationType = detectConsultationType(context);
   return {
     scheduledDate,
@@ -888,6 +909,7 @@ export function detectManualAppointment({
   currentText,
   recentConversation = [],
   at = new Date(),
+  professionalHint = "",
 } = {}) {
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
@@ -904,12 +926,9 @@ export function detectManualAppointment({
       : []),
     currentText,
   ].join(" ");
-  const normalizedFullContext = fullContext
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "");
   if (
-    /\b(?:dr\.?\s*henrique(?:\s+lane)?\s+staniak|dra\.?\s*marina|dr\.?\s*laerte)\b/i.test(
-      normalizedFullContext,
+    findProfessionalMentions(fullContext).some(
+      (professional) => professional.external,
     )
   ) {
     return null;
@@ -935,10 +954,15 @@ export function detectManualAppointment({
     fallbackAppointmentFromConversation(
       [...recentConversation, { role: "assistant", text: currentText }],
       baseDate,
+      professionalHint,
     );
 
   if (!appointment) return null;
-  const supportedProfessional = detectProfessional(fullContext);
+  const supportedProfessional = detectProfessional(
+    fullContext,
+    professionalHint,
+  );
+  if (!supportedProfessional) return null;
   const appointmentContext = hasAppointmentConversationContext(
     recentConversation,
   );
@@ -1110,11 +1134,13 @@ export function detectConfirmedAppointment({
   currentText,
   recentConversation = [],
   at = new Date(),
+  professionalHint = "",
 } = {}) {
   const detection = detectManualAppointment({
     currentText,
     recentConversation,
     at,
+    professionalHint,
   });
   if (!detection || detection.confidence !== "confirmed") {
     return null;

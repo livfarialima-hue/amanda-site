@@ -66,7 +66,7 @@ test("recognizes a scheduling request for a Dr. Henrique patient", () => {
   );
 });
 
-test("recognizes Marina, Laerte and another named professional without capturing referrals", () => {
+test("recognizes Marina, Laerte, Matheus and another named professional without capturing referrals", () => {
   assert.equal(
     detectExternalProfessionalAppointment(
       "Quero marcar consulta com a Dra. Marina Silva na quinta às 14h.",
@@ -78,6 +78,12 @@ test("recognizes Marina, Laerte and another named professional without capturing
       "Agendamento com Dr. Laerte amanhã às 10h.",
     )?.key,
     "dr_laerte",
+  );
+  assert.equal(
+    detectExternalProfessionalAppointment(
+      "Consulta com Matheus (ortop) na terça às 15h.",
+    )?.key,
+    "matheus_ortopedia",
   );
   assert.equal(
     detectExternalProfessionalAppointment(

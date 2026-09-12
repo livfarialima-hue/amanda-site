@@ -2,11 +2,13 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 12 de setembro de 2026, 09:47, America/Sao_Paulo
+**Atualizado em:** 12 de setembro de 2026, evolução da jornada e custos de mensageria em implementação autorizada
 
 **Escopo:** auditorias e execuções de Google Ads, funil, páginas, busca/IA, jornada comercial e operação diária de atendimento, incluindo otoplastia adulta/infantil
 
 **Projeção de leitura no Drive:** [00 — PLANO EXECUTIVO — pendências, prazos e publicações.md](https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view)
+
+**Divergência registrada:** esta versão local inclui `EVOLUCAO-BRUNA-JORNADA-2026-09-12`, ainda não publicada nem projetada no Drive. A projeção existente continua refletindo o último fechamento publicado. Substituir o mesmo arquivo no Drive somente junto de uma publicação explicitamente autorizada; não criar cópia concorrente.
 
 ## 1. Como usar este arquivo
 
@@ -36,8 +38,11 @@ O responsável técnico deve:
 | `DEPENDE DE VOCÊS` | precisa de documento, parecer ou autorização humana |
 | `BLOQUEADO` | não executar até resolver a dependência indicada |
 | `NÃO ALTERAR` | decisão consciente de manter como está |
+| `CANDIDATA LOCAL` | código e documentação isolados; não está em produção e não autoriza preflight com escrita, publicação ou ativação |
 
 ## 3. Situação atual em linguagem direta
+
+**Jornada da Bruna — CANDIDATA LOCAL TESTADA; NÃO PUBLICADA:** Bruna permanece assistente ou concierge da Clínica LIV, com `concierge` como apresentação padrão e sem explicação tecnológica ao paciente. O candidato separa Amanda, Daniel e profissionais eventuais antes de agenda e lembretes; padroniza toda revisão humana com motivo, responsável, contexto e rascunho seguro ou `SEM SUGESTÃO PRONTA`; amplia o ledger por `Decision ID`/`Opportunity ID` sem PII; atribui marcos pós-consulta e relacionamento ao profissional correto; adiciona diagnóstico somente leitura de `Consultas` versus Calendar; e trava 47 cenários contra regressão silenciosa. Passaram 163/163 testes focados, 1.282/1.282 integrais, arquitetura, escopo exato de 27 arquivos, build de 180 arquivos, 44/44 URLs e `git diff --check`. `ops:check` permanece corretamente em `SYNC_PENDING` porque publicação, projeção no Drive e branch de produção não foram autorizadas. Produção segue no estado anterior: Apps Script v142 e caminho de retomada por modelo default-off; nenhuma flag, trigger, planilha, Calendar, mensagem, deploy ou campanha foi alterado por esta candidata.
 
 **Meta — CERVICAL E FACIAL REATIVADAS E VERIFICADAS; MONITORAMENTO EM 24H/D+7/D+14/D+30/D+37:** após confirmação final de Daniel em 12/09, foram publicados somente os dois tetos vitalícios de R$ 300 para R$ 900 e os dois términos para 11/10/2026 23:59. O resumo selecionou 2 de 4 campanhas, 2 de 4 conjuntos e 0 de 3 anúncios; o contador caiu de 11 para 7, preservando os sete rascunhos preexistentes. `M26C01W` e o novo objeto 40+ de `M26F01W`, com seus conjuntos canônicos, foram relidos como `Ativo` e com R$ 900 por campanha. Público 40–65+, São Paulo +20 km, WhatsApp, criativos, C07/C06 ligados e anúncios herdados desligados ficaram iguais. A classificação anterior alcançava só 25 de 100 contatos Meta; por isso o ciclo mantém — e não escala — o padrão de R$ 20/dia, até R$ 600 novos por campanha/R$ 1.200 no total.
 
@@ -409,6 +414,8 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 - a alteração depende de parecer jurídico/Codame ainda inexistente;
 - o worktree contém arquivos fora do escopo;
 - o evento de Calendar está desatualizado em relação a este plano.
+- o diagnóstico de `Consultas` versus Calendar encontrar vínculo ausente, evento apagado, horário divergente ou profissional não automatizável ainda sem tratamento humano;
+- um dos cenários bloqueados da baseline da Bruna desaparecer, duplicar ou deixar de passar.
 
 ### Regra especial para a atribuição rica
 
@@ -433,6 +440,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
 | Lembretes e retomadas v140, preservados na v143 | P0/P1 | `PUBLICADO E VERIFICADO`: deployment canônico preservado; a rota adicional por modelo está ativa desde 12/09 às 09:46:59, sem converter backlog | monitorar o primeiro caso e preservar v142/v141 como rollback de código; a contenção operacional não apaga fila nem histórico |
 | Retomada automática por modelo 24–48h | P0/P1 | `PUBLICADA, ATIVADA E VERIFICADA NA v143; EM MONITORAMENTO`: commit exato publicado, controle de emergência ensaiado, endpoint saudável, gatilhos 1/1, fila programada zero, flags ativas e nenhuma mensagem real ou de teste durante a ativação | observar primeiro caso, 24 h, 72 h e 7 dias; conter imediatamente pelo menu e pela variável Netlify diante de envio retroativo, duplicado, protegido ou sem rastreabilidade |
+| Evolução da jornada da Bruna por profissional e custo YCloud | P0/P1 | `EM IMPLEMENTAÇÃO AUTORIZADA`: separação profissional, revisão humana uniforme, ledger de decisão, marcos de relacionamento, diagnóstico Calendar, baseline de regressão e contabilização idempotente de entrega/custo por mensagem | validar localmente e ao vivo sem mensagem real; publicar somente o commit reconciliado sobre a v143; iniciar custos em observação, sem bloquear atendimento assistencial |
 | Caixa diária de decisões v141 | P1 | `PUBLICADO E VERIFICADO`: e-mail completo agrupado por contato, painel móvel sem preseleção, confirmação única e revalidação por item; sonda inválida sem efeito externo | monitorar primeiro e-mail, 24 h, 72 h e 7 dias; reverter para v140 diante de omissão silenciosa, mutação ao abrir, ação preselecionada, duplicidade ou decisão sem revalidação |
 | Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; 12 negativas CERV publicadas em 30/08; correção isolada do autobloqueio LIPO e do sitelink publicada e verificada em 31/08; RSA OTO não iniciado; demais campanhas preservadas | monitorar integridade em 24 h e negócio em 7/14 dias; reavaliar OTO somente com downstream legível; toda janela editorial começa na publicação real |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00; calibração proprietária publicada e prévia verificada em 31/08 | monitorar a primeira execução programada posterior à publicação; investigar somente divergência real de fonte, alerta ou entrega |

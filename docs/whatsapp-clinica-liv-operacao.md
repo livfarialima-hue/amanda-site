@@ -4,6 +4,22 @@
 
 > **Retomada automática por modelo — PUBLICADA, ATIVADA E VERIFICADA NA v143 EM 12/09/2026:** o commit exato autorizado `4db9fb3186b61b30de33d374e8a736804b654821` foi publicado no deployment Apps Script canônico existente e no deploy Netlify final `6aa5494950d7dc34628fdf33`. O controle de emergência foi publicado e ensaiado antes da ativação: `Central LIV > Desativar retomadas automáticas (emergência)` desligou a trava local sem apagar fila, histórico ou trabalho humano, e o diagnóstico confirmou o corte. A ativação única ocorreu às 09:46:59; às 09:47:32, o pós-voo mostrou as duas travas ativas, endpoint HTTP 200 pronto, gatilhos 1/1 e zero plano programado. O endpoint sem autenticação respondeu HTTP 401. Nenhum planejador ou processador foi executado manualmente e nenhuma mensagem real ou de teste foi enviada. O caminho alcança somente a primeira retomada de uma conversa posterior à ativação com exatamente duas mensagens: interesse genérico em procedimento conhecido e primeira resposta exata da Bruna ainda sem resposta, entre 24 e 48 horas. Qualquer retomada manual/anterior registrada, terceiro turno, nova atividade ou takeover muda a etapa ou a âncora e bloqueia ou cancela o automático; Apps Script e Netlify relêem o histórico imediatamente antes do envio. Preço, agenda, sintomas, exames, imagens, risco, urgência, opt-out, pausa, promessa humana, procedimento divergente e falta de texto exato continuam bloqueando. Uma saída externa que não esteja registrada no histórico canônico é o limite observável conhecido.
 
+> **Evolução `EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12` — EM IMPLEMENTAÇÃO AUTORIZADA:** Bruna permanece assistente ou concierge da Clínica LIV, sem explicação tecnológica ao paciente. O pacote separa o profissional antes de agenda ou lembrete; impede que ausência ou atendimento eventual herde Amanda; padroniza a revisão humana; amplia a telemetria somente com códigos não identificáveis; governa aniversários, pós-consulta, ausência e clientes antigos pelo profissional correto; protege o baseline de regressão; e passa a registrar entrega, categoria e custo efetivo da YCloud de forma idempotente. A medição de custo começa em observação e não bloqueia resposta assistencial, segurança, lembrete ou cuidado pós-procedimento.
+
+### Preflight desta evolução
+
+Antes da primeira escrita externa:
+
+1. validar os três IDs de `production-target.json`;
+2. conferir em leitura o cabeçalho atual de `_BOT_EVENTOS_OPERACIONAIS`, a coluna `Profissional` de `Consultas` e a inexistência ou compatibilidade da aba técnica de custos;
+3. executar `diagnosticarReconciliacaoConsultasAgenda` e resolver manualmente qualquer divergência, sem usar o diagnóstico como comando de correção;
+4. confirmar que profissionais eventuais permanecem fora de confirmação e lembrete automáticos;
+5. confirmar no provedor que eventos de atualização de mensagem chegam ao webhook canônico, sem alterar template nem enviar mensagem real;
+6. repetir testes focados, baseline de regressão, suíte integral, arquitetura, build e escopo exato;
+7. publicar o commit aprovado preservando o deployment, a ativação vigente das retomadas e todos os guardrails.
+
+O diagnóstico de Calendar é estritamente somente leitura. Ele retorna totais de agendamentos conferidos, alinhados e bloqueados, com motivos técnicos e apenas o número da linha para conferência; não inclui ID da consulta, nome, telefone ou conteúdo clínico e não escreve em `Consultas` nem no Calendar.
+
 ### Operação ativa, verificação e reativação controlada
 
 Depois de qualquer contenção ou publicação futura, uma reativação só pode ocorrer quando todos os itens abaixo forem comprovados ao vivo e houver nova autorização explícita:

@@ -1,17 +1,16 @@
 import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
+import {
+  findProfessionalMentions,
+  normalizeProfessionalText,
+} from "./professional-registry.mjs";
 
 const STORE_NAME = "liv-external-professional-context-v1";
 const VERSION = 1;
 const CONTEXT_TTL_MS = 45 * 24 * 60 * 60 * 1_000;
 
 function normalize(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
+  return normalizeProfessionalText(value);
 }
 
 function normalizedPhone(value) {
@@ -61,24 +60,6 @@ export function isDrHenriqueOperationalAppointmentRequest(text) {
   return namesDoctor && requestsAppointment && containsSchedulingDetail;
 }
 
-const KNOWN_EXTERNAL_PROFESSIONALS = [
-  {
-    key: "dr_henrique_staniak",
-    displayName: "Dr. Henrique Lane Staniak",
-    pattern: /\bdr\.? henrique(?: lane)?(?: staniak)?\b/,
-  },
-  {
-    key: "dra_marina_silva",
-    displayName: "Dra. Marina Silva",
-    pattern: /\bdra\.? marina(?: silva)?\b/,
-  },
-  {
-    key: "dr_laerte",
-    displayName: "Dr. Laerte",
-    pattern: /\bdr\.? laerte(?: [a-z]{2,})?\b/,
-  },
-];
-
 function hasAppointmentIntent(value) {
   return /\b(?:agendar|agendamento|marcar|consulta|consultar|horario|agenda|paciente|confirmad[oa])\b/.test(
     value,
@@ -115,9 +96,10 @@ export function detectExternalProfessionalAppointment(text) {
 
   if (!schedulingContext) return null;
 
-  for (const professional of KNOWN_EXTERNAL_PROFESSIONALS) {
-    if (professional.pattern.test(value)) return professional;
-  }
+  const knownExternal = findProfessionalMentions(value).find(
+    (professional) => professional.external,
+  );
+  if (knownExternal) return knownExternal;
 
   const generic = value.match(
     /\b(dr|dra)\.?\s+([a-z]{3,}(?:\s+[a-z]{2,}){0,2})\b/,
