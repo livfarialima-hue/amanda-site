@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-MAMA-CONTORNO-LINGUAGEM-HUMANA-2026-09-12",
   "title": "Humanizar a comunicacao, corrigir contraste mobile e isolar o artefato publico de mama e contorno corporal",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "7b7976d77c2e344721d61b29dfe06d832b532676",
   "authorization": {
     "required": true,
@@ -84,8 +84,8 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-12T11:56:30-03:00",
+    "status": "passed_local_and_live",
+    "completedAt": "2026-09-12T11:59:38-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs",
       "node --check campanhas/secondary-conversion.js",
@@ -95,7 +95,12 @@
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "git diff --check"
+      "git diff --check",
+      "npm.cmd run release:preflight -- --approved-commit 556c65790506fed5a0d8726131f8864f008b4305 --approved-at 2026-09-12T11:40:44-03:00 --approved-by Daniel --approval-reference user_turn_pode_publicar_tudo_e_vou_ler_apos_publicado_plus_followup_linguagem_humana_2026-09-12 --live-preflight-at 2026-09-12T11:53:00-03:00 --live-preflight-reference netlify_6aa56708_commit_b91a560_pages_ok_but_ops_artifact_exposed_then_fixed",
+      "git push origin 556c65790506fed5a0d8726131f8864f008b4305:reestruturacao-site",
+      "Netlify API: confirmar deploy production ready e commit_ref exato",
+      "HTTP: comparar dominio e deploy imutavel nas dez rotas, ativos, robots, sitemap e sentinelas internas",
+      "Browser mobile 360x800: layout, contraste, imagens e modais de video em producao"
     ],
     "results": {
       "focusedCopyAndContrast": "4/4 testes aprovados; o teste bloqueia as formulas textuais retiradas, confere os caches atualizados e exige contraste AA nas legendas e nos acionadores de video",
@@ -108,7 +113,15 @@
       "gitDiffCheck": "aprovado",
       "mobileVisual": "10/10 paginas aprovadas em 390x844 e 360x800; sem overflow do documento, texto cortado, CTA menor que 44 px ou expressao bloqueada",
       "mediaMobile": "todas as imagens carregaram com dimensoes naturais; videos de equipe e Clinica LIV abriram em modal com poster, controles, playsinline, MP4 correto e largura contida",
-      "contrastMobile": "A verificacao em producao encontrou e documentou uma legenda branca sobre fundo claro. Depois da correcao, 10/10 paginas ficaram sem texto abaixo do criterio WCAG AA na auditoria local de cores compostas; legenda, botao de play e rotulo de video passaram a usar fundo escuro proprio."
+      "contrastMobile": "A verificacao em producao encontrou e documentou uma legenda branca sobre fundo claro. Depois da correcao, 10/10 paginas ficaram sem texto abaixo do criterio WCAG AA na auditoria local de cores compostas; legenda, botao de play e rotulo de video passaram a usar fundo escuro proprio.",
+      "releasePreflight": "aprovado para o commit funcional exato 556c65790506fed5a0d8726131f8864f008b4305",
+      "netlifyProduction": "deploy 6aa56848bd23060008fb10bc ready em producao, context production, commit_ref 556c65790506fed5a0d8726131f8864f008b4305 e published_at 2026-09-12T14:57:41.908Z",
+      "liveSite": "10/10 rotas responderam HTTP 200 no dominio e no deploy imutavel; H1 igual ao artefato local, canonical correto, JSON-LD valido, nenhum termo bloqueado e cache CSS atualizado",
+      "artifactEquality": "o HTML do dominio foi identico ao deploy imutavel nas dez rotas",
+      "liveMobile": "10/10 paginas aprovadas em 360x800 na versao final: zero overflow, zero texto abaixo do contraste AA, zero CTA principal menor que 44 px, zero imagem quebrada e zero termo bloqueado",
+      "liveVideo": "videos da equipe e da Clinica LIV abriram no dominio com poster, controles, playsinline, MP4 correto, readyState 4 e largura contida em 344,7 px",
+      "publicArtifactSafety": "ops/CHANGE-CANDIDATE.json, ops/IMPACT-REGISTRY.json e auditorias/ responderam HTTP 404; o gate local registrou zero arquivo operacional no artefato",
+      "searchAndAi": "robots.txt respondeu HTTP 200 com regras para OAI-SearchBot e GPTBot; sitemap.xml respondeu HTTP 200 com 44 URLs"
     },
     "crossConsumerCases": [
       "nenhuma das dez paginas exibe questao central ou as demais formulas textuais bloqueadas pelo teste",
@@ -118,7 +131,15 @@
       "o build e o teste de regressao impedem que ops/CHANGE-CANDIDATE.json volte ao artefato publico"
     ]
   },
-  "release": {},
+  "release": {
+    "approvedCommit": "556c65790506fed5a0d8726131f8864f008b4305",
+    "netlifyDeployId": "6aa56848bd23060008fb10bc",
+    "appsScriptVersion": 144,
+    "drivePlanSha256": "8d1fda37264a8d597f3709d9bf93e1376f334d52f80ce7ed58118e35e8e39304",
+    "verifiedAt": "2026-09-12T11:59:38-03:00",
+    "activationState": "active_verified",
+    "notes": "O Netlify publicou exatamente o commit funcional aprovado. As dez paginas, o mobile, os ativos, os videos, o contraste, os contratos de SEO e IA e a exclusao de arquivos internos foram relidos em producao. Apps Script v144, YCloud e a projecao vigente do Plano no Drive foram apenas preservados, sem nova escrita."
+  },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre o baseline 7b7976d77c2e344721d61b29dfe06d832b532676, preservando todo trabalho paralelo",
     "production": "restaurar o deploy Netlify 6aa559fb631d2b00088cefb9 se houver regressao confirmada de texto, layout, midia, contraste, tracking ou indexabilidade"
