@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
   "title": "Separar intencao de preco e corrigir relevancia dos RSAs secundarios sem elevar gasto",
-  "status": "tested_local",
-  "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
+  "status": "implementing_local",
+  "baseCommit": "4edf7aaa317857599ceba08236a81163218c6aee",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -238,7 +238,7 @@
     "notes": "A aplicacao dos tres grupos de preco, tres RSAs novos, dois RSAs corrigidos e a atualizacao dos dois scripts vivos dependem de confirmacao e recibos."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre 93d7beafbd700791f2f6e0dc302b96f6da898808",
+    "local": "reverter somente o commit funcional deste changeId sobre 4edf7aaa317857599ceba08236a81163218c6aee, preservando todo trabalho paralelo",
     "production": "reativar cada palavra no grupo de origem, pausar sua copia no grupo de preco, remover apenas a negativa exata correspondente e restaurar as versoes anteriores dos dois scripts"
   },
   "monitoring": {

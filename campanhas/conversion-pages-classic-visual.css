@@ -727,3 +727,22 @@ body.curated-video-open { overflow: hidden; }
   .curated-video-copy { padding: 20px 18px 28px; }
   .curated-video-copy h2 { font-size: 26px; }
 }
+
+/* O poster e o vídeo ocupam o mesmo quadro, evitando salto ao iniciar. */
+@media (max-width: 680px) {
+  .curated-video-dialog { align-content: start; }
+  .curated-video-media {
+    height: min(62dvh, 580px);
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .curated-video-media video {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: contain;
+    object-position: center;
+  }
+}

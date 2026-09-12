@@ -49,7 +49,7 @@ function createFixture() {
   return fixtureRoot;
 }
 
-test("public images reserve space and videos expose a poster", () => {
+test("public images and videos reserve space, and videos expose a poster", () => {
   const result = auditSite({ root });
   for (const page of result.pages) {
     if (page.status !== 200) continue;
@@ -61,7 +61,89 @@ test("public images reserve space and videos expose a poster", () => {
     }
     for (const match of html.matchAll(/<video\b[^>]*>/gi)) {
       assert.match(match[0], /\bposter=["'][^"']+["']/i, file);
+      assert.match(match[0], /\bwidth=["']\d+["']/i, file);
+      assert.match(match[0], /\bheight=["']\d+["']/i, file);
     }
+  }
+});
+
+test("inline videos reserve their intrinsic aspect ratio before playback", () => {
+  const result = auditSite({ root });
+  for (const page of result.pages) {
+    if (page.status !== 200) continue;
+    const file = path.join(root, page.file);
+    const html = readFileSync(file, "utf8");
+    for (const match of html.matchAll(/<video\b[^>]*\bdata-inline-video\b[^>]*>/gi)) {
+      const width = match[0].match(/\bwidth=["'](\d+)["']/i)?.[1];
+      const height = match[0].match(/\bheight=["'](\d+)["']/i)?.[1];
+      assert.ok(width && height, `${file} inline video dimensions`);
+      assert.match(
+        match[0],
+        new RegExp(`\\bstyle=["'][^"']*aspect-ratio:\\s*${width}\\s*\\/\\s*${height}`),
+        `${file} inline video aspect ratio`,
+      );
+    }
+  }
+});
+
+test("portrait inline videos use matching first-frame posters", () => {
+  const expectedPosters = new Map([
+    ["video-apresentacao-clinica-liv.mp4", "video-apresentacao-clinica-liv-poster.webp"],
+    ["queixa-e-solucao-face.mp4", "queixa-e-solucao-face-poster.webp"],
+    ["olhar-envelhecido-blefaroplastia.mp4", "olhar-envelhecido-blefaroplastia-poster.webp"],
+    ["medo-de-resultados-exagerados.mp4", "medo-de-resultados-exagerados-poster.webp"],
+    ["otoplastia-em-crianca.mp4", "otoplastia-em-crianca-poster.webp"],
+  ]);
+  let matchedVideos = 0;
+  const result = auditSite({ root });
+  for (const page of result.pages) {
+    if (page.status !== 200) continue;
+    const file = path.join(root, page.file);
+    const html = readFileSync(file, "utf8");
+    for (const match of html.matchAll(/<video\b[^>]*\bdata-inline-video\b[^>]*>[\s\S]*?<\/video>/gi)) {
+      const source = match[0].match(/<source\b[^>]*\bsrc=["']([^"']+)["']/i)?.[1] || "";
+      const sourceName = source.split("?")[0].split("/").at(-1);
+      const expectedPoster = expectedPosters.get(sourceName);
+      if (!expectedPoster) continue;
+      assert.match(match[0], new RegExp(`\\bposter=["'][^"']*${expectedPoster.replaceAll(".", "\\.")}["']`, "i"), file);
+      assert.match(match[0], /\bdata-preserve-poster\b/i, file);
+      const poster = match[0].match(/\bposter=["']([^"']+)["']/i)?.[1] || "";
+      assert.ok(existsSync(path.resolve(path.dirname(file), poster)), `${file} poster exists`);
+      matchedVideos += 1;
+    }
+  }
+  assert.equal(matchedVideos, 15);
+});
+
+test("otoplasty team photos use the compact mobile media height", () => {
+  for (const relativePage of ["otoplastia-adulto/index.html", "otoplastia-infantil/index.html"]) {
+    const html = readFileSync(path.join(root, relativePage), "utf8");
+    assert.match(html, /care-gallery img[^{}]*\{height:280px;aspect-ratio:auto\}/i, relativePage);
+    assert.match(html, /equipe-cirurgica-01\.jpg/i, relativePage);
+  }
+});
+
+test("all classic conversion pages request the mobile media stylesheet revision", () => {
+  const pages = [
+    "index.html",
+    "avaliacao-facial/index.html",
+    "blefaroplastia/index.html",
+    "conteudos/consulta-cirurgia-plastica/index.html",
+    "contorno-corporal/index.html",
+    "injetaveis/index.html",
+    "lifting-cervical/index.html",
+    "lifting-facial/index.html",
+    "lipo-de-papada/index.html",
+    "mama/index.html",
+    "otoplastia/index.html",
+  ];
+  for (const relativePage of pages) {
+    const html = readFileSync(path.join(root, relativePage), "utf8");
+    assert.match(
+      html,
+      /conversion-pages-classic-visual\.css\?v=20260912-mobile-media-1/i,
+      relativePage,
+    );
   }
 });
 

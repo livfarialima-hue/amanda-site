@@ -3970,7 +3970,14 @@ html[data-auxiliary-standard="true"] .auxiliary-clinic-video small { margin-top:
   html[data-auxiliary-standard="true"] .auxiliary-team-card--video figcaption { display: none; }
   html[data-auxiliary-standard="true"] .auxiliary-carousel-controls { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
   html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button { width: 46px; height: 46px; border: 1px solid rgba(255, 250, 247, .36); border-radius: 50%; background: #fffaf7; color: #4c3934; font-size: 20px; cursor: pointer; }
-  html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button:disabled { opacity: .5; cursor: default; }
+  html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button:disabled {
+    border-color: #d8cfca;
+    background: #d8cfca;
+    color: #584b46;
+    opacity: 1;
+    cursor: default;
+    box-shadow: none;
+  }
   html[data-auxiliary-standard="true"] .auxiliary-carousel-controls button.is-end { background: #5c392f; border-color: #5c392f; color: #fff; }
   html[data-auxiliary-standard="true"] .auxiliary-content-grid { grid-template-columns: 1fr; }
   html[data-auxiliary-standard="true"] .auxiliary-content-card { min-height: 144px; }
@@ -4042,4 +4049,35 @@ html[data-page-type="home"] .whatsapp-float svg {
     max-height: 100%;
     overflow-y: auto;
   }
+}
+
+/* Reserva o mesmo quadro antes e depois do play no visualizador mobile. */
+@media (max-width: 760px) {
+  .curated-video-dialog {
+    align-content: start;
+  }
+
+  .curated-video-media,
+  html[data-auxiliary-standard="true"] .curated-video-media {
+    height: min(62dvh, 580px);
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .curated-video-media video,
+  html[data-auxiliary-standard="true"] .curated-video-media video {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+}
+
+/* Elementos discretos continuam legíveis sem depender de transparência. */
+.breadcrumb .sep {
+  color: #75584f;
+  opacity: 1;
 }

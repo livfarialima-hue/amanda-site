@@ -770,6 +770,7 @@
     var currentId = '';
     var sent = {};
     var lastFocus = null;
+    var resetTimer = 0;
 
     title.id = 'curated-video-title';
     summary.id = 'curated-video-summary';
@@ -783,13 +784,22 @@
       });
     }
 
+    function cancelPendingReset() {
+      if (!resetTimer) return;
+      window.clearTimeout(resetTimer);
+      resetTimer = 0;
+    }
+
     function closeModal() {
       if (!modal.classList.contains('is-open')) return;
       video.pause();
       modal.classList.remove('is-open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('curated-video-open');
-      window.setTimeout(function () {
+      cancelPendingReset();
+      resetTimer = window.setTimeout(function () {
+        resetTimer = 0;
+        if (modal.classList.contains('is-open')) return;
         video.removeAttribute('src');
         video.removeAttribute('poster');
         video.load();
@@ -799,6 +809,7 @@
 
     triggers.forEach(function (trigger) {
       trigger.addEventListener('click', function () {
+        cancelPendingReset();
         lastFocus = trigger;
         currentId = trigger.dataset.contentId || '';
         sent = {};
@@ -826,6 +837,7 @@
       var trigger = event.target.closest && event.target.closest('[data-curated-video]');
       if (!trigger || !document.body.contains(trigger)) return;
       event.preventDefault();
+      cancelPendingReset();
       lastFocus = trigger;
       currentId = trigger.dataset.contentId || '';
       sent = {};
