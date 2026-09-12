@@ -116,7 +116,7 @@
   },
   "verification": {
     "status": "passed_local_and_live",
-    "completedAt": "2026-09-12T09:03:35-03:00",
+    "completedAt": "2026-09-12T09:12:04-03:00",
     "sourceCandidateCommit": "c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4",
     "implementationCommit": "3ae0ba19502575b3e28792f53f7b3ccf3359a012",
     "commands": [
@@ -161,7 +161,8 @@
       "activationFlags": "RETOMADAS_AUTOMATICAS_MODELO_ATIVAS e RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM ausentes; WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED ausente",
       "syntheticProbes": "token invalido retornou HTTP 200 com Link invalido ou expirado e Nenhuma decisao foi aplicada; endpoint Netlify sem autenticacao retornou HTTP 401",
       "realMessages": "zero mensagens reais; nenhuma funcao operacional, trigger, planilha ou fila foi executado",
-      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido com 131483 bytes e SHA-256 37ecc6263b0ca49985a7fbea22e825907da8bdb7df9829f7ed733d421ddb95d7"
+      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido com 131721 bytes e SHA-256 089a713eed1410331c57b4e603fbcb428ec983527a872075fc88ddc2fbc0e6ce; nenhuma copia criada",
+      "activationReadiness": "diagnostico autenticado somente leitura em 12/09/2026 as 09:09: modelo configurado, endpoint HTTP 200 saudavel, gatilhos do processador e e-mail diario 1/1, zero plano programado, automatico por modelo, legado ou manual aprovado; caminho automatico permaneceu inativo"
     }
   },
   "release": {
@@ -169,10 +170,10 @@
     "netlifyDeployId": "6aa536c2f301b80008efe5e6",
     "appsScriptVersion": 142,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "37ecc6263b0ca49985a7fbea22e825907da8bdb7df9829f7ed733d421ddb95d7",
-    "verifiedAt": "2026-09-12T09:03:35-03:00",
-    "activationState": "published_verified_default_off",
-    "notes": "Codigo publicado no Apps Script v142 e no Netlify 6aa536c2f301b80008efe5e6, preservando o deployment canonico. As tres chaves de ativacao continuam ausentes. Nenhuma funcao operacional, trigger, planilha, fila ou mensagem real foi executado. Ativacao exige diagnostico verde e nova autorizacao explicita."
+    "drivePlanSha256": "089a713eed1410331c57b4e603fbcb428ec983527a872075fc88ddc2fbc0e6ce",
+    "verifiedAt": "2026-09-12T09:12:04-03:00",
+    "activationState": "published_verified_default_off_ready_for_activation",
+    "notes": "Codigo publicado no Apps Script v142 e no Netlify 6aa536c2f301b80008efe5e6, preservando o deployment canonico. As tres chaves de ativacao continuam ausentes. O diagnostico somente leitura confirmou modelo, endpoint, gatilhos e fila sem backlog; nenhuma funcao operacional, trigger, planilha, fila ou mensagem real foi executado. Estado PRONTO PARA ATIVAR, aguardando nova autorizacao explicita."
   },
   "rollback": {
     "local": "reverter somente os commits deste changeId sobre o baseCommit b845db8fb2cce7889abc6ae3e8334261ba3661da, preservando os recibos de otoplastia e Meta reconciliados",
