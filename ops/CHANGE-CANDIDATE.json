@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
   "title": "Separar intencao de preco e corrigir relevancia dos RSAs secundarios sem elevar gasto",
-  "status": "implementing_local",
+  "status": "tested_local",
   "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
   "authorization": {
     "required": true,
@@ -193,8 +193,8 @@
     }
   },
   "verification": {
-    "status": "failed_local",
-    "completedAt": "2026-09-12T19:04:42-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-09-12T19:09:00-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -209,18 +209,16 @@
       "git diff --check"
     ],
     "results": {
-      "focused": "38/40 testes diretamente alterados; 2 falhas bloqueiam a continuacao",
+      "focused": "40/40 testes diretamente alterados; suites cruzadas obrigatorias em 200/200",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1331/1333 testes aprovados; as mesmas 2 falhas impedem commit candidato e publicacao",
-      "siteBuild": "nao repetido depois deste refinamento bloqueado; o commit anterior passou com 180 arquivos",
-      "siteCheck": "nao repetido depois deste refinamento bloqueado; o commit anterior passou em 46/46 URLs",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 11/11 arquivos coincidem com o escopo",
-      "opsCheck": "nao executado depois das falhas; o rascunho permanece local e nao publicavel"
+      "fullSuite": "1333/1333 testes aprovados, sem falha, cancelamento ou teste ignorado",
+      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo de auditoria no artefato",
+      "siteCheck": "46/46 URLs tecnicamente validas; os dois guias de custo permanecem com HTTP logico 200, canonical, H1 e tracking",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 12/12 arquivos coincidem com o escopo",
+      "bulkImportAssets": "3 grupos, 3 RSAs novos, 2 RSAs corrigidos, 8 palavras adicionadas, 8 pausadas e 6 negativas exatas; zero excesso de caracteres",
+      "opsCheck": "SYNC_PENDING esperado: publicacao, branch canonica e recibos ainda pendentes; worktree sera limpo pelo commit candidato"
     },
-    "blockingFailures": [
-      "GoogleAdsFunnelReview: a expectativa de ordenacao das oito rotas nao coincide com a ordenacao deterministica real",
-      "procedure-context: os novos grupos de preco ainda nao foram implementados no modulo proprietario e retornam null"
-    ],
+    "blockingFailures": [],
     "crossConsumerCases": [
       "os oito grupos secundarios resolvem somente os codigos e rotas registrados",
       "os tres grupos de preco preservam procedimento, intencao e landing por codigo exato",

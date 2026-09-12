@@ -82,13 +82,13 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `S_BR_SP_CIRURGIA_MAMA` → `G26MAMA`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
-- Os nove grupos anteriores e os sete grupos secundários usam estes códigos estáveis em `{_ag}`; os nove anteriores foram conferidos em 15/08/2026, cinco grupos entraram no contrato na ativação dos pilotos e os dois grupos de preço aguardam recibo vivo em 12/09/2026:
+- Os nove grupos anteriores e os oito grupos secundários usam estes códigos estáveis em `{_ag}`; os nove anteriores foram conferidos em 15/08/2026, cinco grupos entraram no contrato na ativação dos pilotos e os três grupos de preço aguardam recibo vivo em 12/09/2026:
   - `AG_ABDOMINOPLASTIA` → `ag_abdominoplastia`
   - `AG_BLEFAROPLASTIA` → `ag_blefaroplastia`
   - `AG_CIRURGIA_FACIAL` → `ag_cirurgia_facial`
-  - `AG_CIRURGIA_MAMA_PRECO` → `ag_cirurgia_mama_preco`
+  - `AG_MASTOPEXIA_PRECO` → `ag_mastopexia_preco`
   - `AG_CERVICOPLASTIA` → `ag_lifting_cervical`
-  - `AG_CONTORNO_CORPORAL_PRECO` → `ag_contorno_corporal_preco`
+  - `AG_LIPOASPIRACAO_PRECO` → `ag_lipoaspiracao_preco`
   - `AG_LIPO_PAPADA` → `ag_lipo_papada`
   - `AG_LIPOASPIRACAO` → `ag_lipoaspiracao`
   - `AG_LIFTING_FACIAL` → `ag_lifting_facial`
@@ -99,6 +99,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `Adulto` em `S_BR_SP_OTOPLASTIA` → `ag_otoplastia_adulto`
   - `AG_OTOPLASTIA_INFANTIL` → `ag_otoplastia_infantil`
   - `AG_PROTESE_MAMA` → `ag_protese_mama`
+  - `AG_PROTESE_MAMA_PRECO` → `ag_protese_mama_preco`
 - Os aliases históricos continuam legíveis para preservar o passado, mas não devem ser usados em novas configurações.
 - O agregado externo mantém `Agregados` v2 e acrescenta `Google_Rotas` v1. Esta segunda aba só publica contagens por campanha, grupo, landing e local de CTA registrados; junção por `Opportunity ID`, valores livres/conflitantes como N/D e nenhum identificador na saída. Se o schema rico ainda não estiver materializado, registrar `schema_unavailable` em vez de inferir a rota.
 - O teste móvel do guia de lifting facial usa exclusivamente `data-cta-location="sticky_price_continuity_v1"` no botão fixo. Os novos guias usam `price_planning`/`final_price_planning`/`sticky_price_planning` em BLEF e `price_range_reference`/`final_price_range_reference`/`sticky_price_range_reference` em CERV.

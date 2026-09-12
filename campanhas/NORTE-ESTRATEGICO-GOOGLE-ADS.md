@@ -305,7 +305,7 @@ Busca orgânica, presença local e descoberta em buscadores com IA devem ser des
 | `S_BR_SP_MARCA` | `G26MARCA` | Pessoas que já procuram a Dra. Amanda ou a clínica |
 | `S_BR_SP_OTOPLASTIA` | `G26OTO` | Otoplastia, com distinção entre intenção adulta e infantil |
 
-Os nove grupos anteriores e os cinco grupos secundários publicados têm um parâmetro `{_ag}` canônico; os dois grupos de preço autorizados completam sete grupos secundários somente depois do recibo vivo. O mapa operacional completo fica em `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`; a prova de valor resolvido no clique, no site, no WhatsApp, em LEADS e no CRM continua sendo gate separado.
+Os nove grupos anteriores e os cinco grupos secundários publicados têm um parâmetro `{_ag}` canônico; os três grupos de preço autorizados completam oito grupos secundários somente depois do recibo vivo. O mapa operacional completo fica em `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`; a prova de valor resolvido no clique, no site, no WhatsApp, em LEADS e no CRM continua sendo gate separado.
 
 Esta tabela descreve as campanhas conhecidas, não o portfólio futuro obrigatório. Qualquer nova campanha deve ser sustentada por intenção, página, mensuração, capacidade e hipótese econômica, e acrescentada à tabela antes ou no momento da ativação.
 

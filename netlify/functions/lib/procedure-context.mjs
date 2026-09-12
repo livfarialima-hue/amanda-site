@@ -1,6 +1,6 @@
 const CAMPAIGN_PROCEDURE_RULES = [
   {
-    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?mastopexia\b)/i,
+    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?mastopexia(?:[_-]preco)?\b)/i,
     key: "mastopexia",
     code: "X-MASTO-01",
   },
@@ -10,7 +10,7 @@ const CAMPAIGN_PROCEDURE_RULES = [
     code: "X-REDUTORA-01",
   },
   {
-    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?pr[oó]tese(?:[_-]de)?[_-]mama\b)/i,
+    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?pr[oó]tese(?:[_-]de)?[_-]mama(?:[_-]preco)?\b)/i,
     key: "protese_mama",
     code: "X-PROTESE-01",
   },
@@ -20,7 +20,7 @@ const CAMPAIGN_PROCEDURE_RULES = [
     code: "X-ABD-01",
   },
   {
-    pattern: /(?=[\s\S]*\bG26CORP\b)(?=[\s\S]*(?:\bag[_-])?lipoaspiracao\b)/i,
+    pattern: /(?=[\s\S]*\bG26CORP\b)(?=[\s\S]*(?:\bag[_-])?lipoaspiracao(?:[_-]preco)?\b)/i,
     key: "lipoaspiracao",
     code: "X-LIPO-01",
   },
