@@ -1,278 +1,148 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
-  "title": "Reconciliar grupos de preco paralelos e corrigir relevancia dos RSAs secundarios sem elevar gasto",
+  "changeId": "SITE-EDUCATIONAL-CONTENT-SECOND-BATCH-2026-09-12",
+  "title": "Concluir o piloto educativo e aprofundar seguranca, cicatrizacao e papada",
   "status": "tested_local",
-  "baseCommit": "99b36f6c433b2017786731f02d01ea7649dd8eaa",
+  "baseCommit": "64ae2c598816c033b4e2a995d064adddf80de54a",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou aplicar o commit exato 79d456ea11b34e502ca42c215f20f649250f10f3. O preflight passou e as escritas autorizadas no Google Ads e no Apps Script foram executadas. Durante o pos-voo, o branch canonico avancou ate 99b36f6c433b2017786731f02d01ea7649dd8eaa com o lote educativo publicado em paralelo. Este candidato preserva esse trabalho e exige autorizacao do novo hash somente para integrar Git, publicar o consumidor Netlify e atualizar a mesma projecao do Plano no Drive."
+    "note": "Em 12/09/2026 Daniel pediu seguir com as proximas publicacoes e ajustes sugeridos que ainda existirem, mantendo a autorizacao anterior para publicar os conteudos e deixar a revisao medica para depois. Este lote cobre tres artigos pendentes do piloto, o aprofundamento de tres artigos existentes, biblioteca, busca, sitemap e os registros no Git e na mesma projecao do Plano no Drive. Nao cobre campanhas, bot, mensagens, Apps Script, CRM nem afirmacao de revisao medica realizada. Antes da publicacao, o remoto e a producao avancaram para 64ae2c5/6aa5e56c65ed3d0008cebf97 por outra tarefa. O lote foi integrado preservando integralmente essa base ja publicada; nao inclui nova alteracao de Apps Script, anuncios ou funcoes."
   },
   "risk": {
-    "level": "high",
+    "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "patient-journey-funnel-followups",
+      "site-publication",
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
-      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
+      "campanhas/content-library.js",
+      "campanhas/cost-guides.test.mjs",
+      "campanhas/site-technical-regression.test.mjs",
+      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+      "conteudos/index.html",
+      "conteudos/otomodelacao-ou-otoplastia/index.html",
+      "conteudos/papada-contorno-cervical/index.html",
+      "conteudos/recuperacao-lifting-cervical/index.html",
+      "conteudos/seguranca-cirurgia-plastica/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "google-ads-scripts/google-ads-search-review-email.js",
-      "google-ads-scripts/google-ads-search-review-email.test.mjs",
-      "netlify/functions/lib/procedure-context.mjs",
-      "netlify/functions/lib/procedure-context.test.mjs",
-      "ops/CHANGE-CANDIDATE.json"
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json",
+      "sitemap.xml"
     ]
   },
   "impact": {
     "consumers": [
-      "campanhas S_BR_SP_CIRURGIA_MAMA e S_BR_SP_CONTORNO_CORPORAL no Google Ads",
-      "agregado anonimo Google_Rotas e a leitura de grupo e landing por Opportunity ID",
-      "rotina somente leitura de revisao e alerta do Google Ads",
-      "LEADS e CRM que preservam campanha, grupo, landing, CTA e click ID",
-      "guias publicos de custo de cirurgia de mama e corporal"
+      "pessoas que pesquisam preparo, recuperacao cervical, orelhas, cicatrizes e papada",
+      "biblioteca e busca interna de conteudos",
+      "links relacionados dos seis artigos envolvidos",
+      "sitemap, indexacao, build estatico e publicacao Netlify"
     ],
     "preservedInvariants": [
-      "as seis campanhas faciais e seus R$ 87 por dia permanecem sem qualquer edicao",
-      "as duas campanhas secundarias permanecem em R$ 8 por dia cada, Maximizar cliques e a mesma meta qualificada",
-      "rede, parceiros, Display, cidade por presenca, idioma, idades, dispositivos, agenda e sitelinks permanecem iguais",
-      "somente as oito palavras ativas nos dois grupos genericos transitórios sao recriadas nos tres grupos especificos antes da pausa reversivel dos genericos",
-      "as seis negativas exatas ja aplicadas nos grupos de procedimento sao preservadas e nao recebem escrita duplicada",
-      "os tres novos grupos de preco recebem codigos de atribuicao fechados antes de qualquer trafego",
-      "mastopexia, protese e lipoaspiracao permanecem em grupos de preco distintos, sem RSA regional generico",
-      "somente os RSAs atuais de AG_MASTOPEXIA e AG_ABDOMINOPLASTIA sao editados; URL, caminhos, status e codigo permanecem iguais",
-      "click ID, marcacao automatica, primeira origem, privacidade e criterio de lead qualificado permanecem intactos",
-      "as paginas de destino, seus CTAs, mensagens de WhatsApp e textos clinicos permanecem sem alteracao neste teste",
-      "nenhuma mensagem, paciente, conversao, agenda ou linha operacional e criada para testar"
+      "nenhuma pagina comercial, campanha, anuncio, orcamento, bot, WhatsApp, Apps Script, LEADS, CRM ou Calendar e alterado",
+      "textos educativos sem diagnostico individual, promessa de resultado ou superioridade de tecnica; sem doses, calendario universal ou suspensao autonoma de medicamentos",
+      "CTA preserva numero, tracking e fluxo atual e convida para avaliacao individual",
+      "nome, CRM-SP 191605, Cirurgia Plastica e RQE 110472 permanecem consistentes com o site",
+      "as 49 rotas existentes permanecem acessiveis; somente os tres artigos declarados, biblioteca, busca e sitemap mudam; fotos e estilos existentes sao preservados",
+      "fontes primarias identificadas e ausencia de nova autoria ou revisao medica alegada; revisao humana posterior permanece pendente",
+      "otomodelacao comercial nao e apresentada como equivalente a moldagem neonatal nem como procedimento isento de riscos"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads 995-334-4486",
+        "contract": "site-publication",
+        "system": "Git canonico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T19:58:30-03:00",
-        "reference": "Campanhas 24239348529 e 24239348532 ativas, R$ 8/dia cada e zero impressao, clique e gasto. Uma execucao paralela criou AG_CIRURGIA_MAMA_PRECO e AG_CONTORNO_CORPORAL_PRECO, moveu para eles as oito palavras e aplicou as seis negativas exatas. Os dois RSAs genericos, AG_MASTOPEXIA e AG_ABDOMINOPLASTIA aparecem como Ruim; nenhum dos tres grupos especificos existe."
+        "checkedAt": "2026-09-12T20:52:00-03:00",
+        "reference": "Remoto em 64ae2c598816c033b4e2a995d064adddf80de54a; integracao preservadora com o lote 97d585e. Diff efetivo contra a nova base continua restrito aos 15 arquivos educativos declarados."
       },
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script, planilha LEADS e agregado Google_Rotas",
+        "contract": "site-publication",
+        "system": "Netlify",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T19:59:15-03:00",
-        "reference": "ALVO CANONICO CONFIRMADO para projeto 1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly, deployment AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A e planilha 1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU. A v148 esta implantada no mesmo deployment e GoogleAdsFunnelReview.gs vivo tem SHA-256 normalizado 6672ded1bf69d1fc93482bd43dcbcde45f73547ecacbb428ca71d04f9ae9ecbc, igual ao candidato generico a9a0d46; contem os dois aliases transitórios e ainda nao contem os tres especificos."
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads script 12117745",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T20:00:00-03:00",
-        "reference": "LIV Revisao Google Ads somente leitura esta ativa e o codigo vivo coincide com o candidato no SHA-256 normalizado e6221436e176125d22ffdb48f28f1ea06689a8a324225c4c885556a16a59401f, incluindo R$ 103/dia e os procedimentos secundarios. A lista mostra frequencia ausente, embora a ultima execucao tenha ocorrido as 09:47; restaurar o agendamento diario entre 09:00 e 10:00 sem alterar o codigo."
+        "checkedAt": "2026-09-12T20:52:00-03:00",
+        "reference": "API autenticada confirmou deploy production/ready 6aa5e56c65ed3d0008cebf97, commit 64ae2c598816c033b4e2a995d064adddf80de54a, publicado pela tarefa paralela em 12/09 as 20:51:42. O pacote funcional vivo sera preservado integralmente."
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Paginas publicas de custo de mama e corpo",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T18:51:29-03:00",
-        "reference": "As duas URLs responderam HTTP 200, canonical proprio, CTA de WhatsApp rastreado e texto correto de consulta independente do orcamento cirurgico."
+        "system": "Site e documentacao de aquisicao",
+        "status": "site_only_confirmed",
+        "checkedAt": "2026-09-12T20:35:40-03:00",
+        "reference": "Escopo educativo sem escrita em anuncios ou jornada. Drive permanece na projecao 99b36f6, SHA-256 f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645; a integracao preserva tambem o Plano mais novo de 64ae2c5. Nenhum estado de Ads, CRM ou Apps Script foi revalidado nesta tarefa."
       }
-    ],
-    "googleAdsPlan": {
-      "existingRsaEdits": [
-        {
-          "campaign": "S_BR_SP_CIRURGIA_MAMA",
-          "adGroup": "AG_MASTOPEXIA",
-          "adId": "824390505597",
-          "finalUrl": "https://draamandaschroeder.com.br/mastopexia/",
-          "path1": "mastopexia",
-          "path2": "avaliacao",
-          "headlines": [
-            "Mastopexia em São Paulo",
-            "Lifting Mamário em SP",
-            "Avaliação para Mastopexia",
-            "Cirurgia para Elevar as Mamas",
-            "Mastopexia com ou sem Prótese",
-            "Entenda a Mastopexia",
-            "Indicação para Mastopexia",
-            "Cicatrizes da Mastopexia",
-            "Recuperação da Mastopexia",
-            "Consulta em Pinheiros",
-            "Dra. Amanda Schroeder",
-            "Cirurgia Plástica na LIV",
-            "Planejamento Individual",
-            "Naturalidade e Proporção",
-            "Converse com a Equipe"
-          ],
-          "descriptions": [
-            "Entenda quando a mastopexia ou o lifting mamário pode elevar e remodelar as mamas.",
-            "Avaliação individual para planejar mastopexia com ou sem prótese, conforme os tecidos.",
-            "Veja indicação, cicatrizes, limites e recuperação da cirurgia para elevar as mamas.",
-            "Consulta particular em Pinheiros, com explicações claras e decisão sem pressão."
-          ]
-        },
-        {
-          "campaign": "S_BR_SP_CONTORNO_CORPORAL",
-          "adGroup": "AG_ABDOMINOPLASTIA",
-          "adId": "824390505726",
-          "finalUrl": "https://draamandaschroeder.com.br/abdominoplastia/",
-          "path1": "abdomen",
-          "path2": "avaliacao",
-          "headlines": [
-            "Abdominoplastia em São Paulo",
-            "Excesso de Pele no Abdômen",
-            "Cirurgia de Contorno Abdominal",
-            "Avaliação do Abdômen",
-            "Cirurgia do Abdômen em SP",
-            "Pele e Parede Abdominal",
-            "Diástase e Excesso de Pele",
-            "Entenda a Abdominoplastia",
-            "Indicação para Abdominoplastia",
-            "Cicatriz da Abdominoplastia",
-            "Recuperação do Abdômen",
-            "Consulta em Pinheiros",
-            "Dra. Amanda Schroeder",
-            "Planejamento Individual",
-            "Converse com a Equipe"
-          ],
-          "descriptions": [
-            "Entenda quando a cirurgia para excesso de pele no abdômen pode ser indicada.",
-            "Avaliação individual para planejar a cirurgia de contorno abdominal com cuidado.",
-            "Veja indicação, cicatrizes, limites e recuperação da abdominoplastia.",
-            "Consulta particular em Pinheiros, com explicações claras e decisão sem pressão."
-          ]
-        }
-      ],
-      "transitionalPriceGroups": [
-        {
-          "campaign": "S_BR_SP_CIRURGIA_MAMA",
-          "adGroup": "AG_CIRURGIA_MAMA_PRECO",
-          "trackingCode": "ag_cirurgia_mama_preco",
-          "liveState": "enabled_zero_activity",
-          "action": "pause_only_after_the_two_specific_mama_groups_are_verified"
-        },
-        {
-          "campaign": "S_BR_SP_CONTORNO_CORPORAL",
-          "adGroup": "AG_CONTORNO_CORPORAL_PRECO",
-          "trackingCode": "ag_contorno_corporal_preco",
-          "liveState": "enabled_zero_activity",
-          "action": "pause_only_after_the_specific_lipo_group_is_verified"
-        }
-      ],
-      "newPriceGroups": [
-        {
-          "campaign": "S_BR_SP_CIRURGIA_MAMA",
-          "adGroup": "AG_MASTOPEXIA_PRECO",
-          "trackingCode": "ag_mastopexia_preco",
-          "keywords": ["preço mastopexia|PHRASE", "mastopexia preço|EXACT"],
-          "finalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
-          "headlines": ["Preço da Mastopexia", "Mastopexia: Preço e Custos", "Quanto Custa a Mastopexia", "Valor da Mastopexia", "Custos da Cirurgia de Mama", "Orçamento Após Avaliação", "Equipe, Hospital e Materiais", "Avaliação em São Paulo", "Consulta em Pinheiros", "Dra. Amanda Schroeder", "Residência pela UNICAMP", "CRM 191605 | RQE 110472", "Planejamento Individual", "Formas de Pagamento", "Decisão Sem Pressão"],
-          "descriptions": ["Veja o que compõe o preço da mastopexia: equipe, anestesia, hospital e materiais.", "Entenda os custos da mastopexia com ou sem prótese e os fatores do orçamento.", "Consulta particular em Pinheiros para avaliar técnica, cicatrizes e planejamento.", "Conheça as formas de pagamento; o orçamento individual é definido após avaliação."]
-        },
-        {
-          "campaign": "S_BR_SP_CIRURGIA_MAMA",
-          "adGroup": "AG_PROTESE_MAMA_PRECO",
-          "trackingCode": "ag_protese_mama_preco",
-          "keywords": ["silicone nos seios preço|PHRASE", "prótese de silicone valor|EXACT", "prótese de silicone valor|PHRASE"],
-          "finalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
-          "headlines": ["Prótese de Silicone: Valor", "Valor da Prótese de Silicone", "Silicone nos Seios: Preço", "Preço da Prótese de Mama", "Quanto Custa a Prótese?", "Custos da Cirurgia de Mama", "Implante, Hospital e Equipe", "Orçamento Após Avaliação", "Avaliação em São Paulo", "Consulta em Pinheiros", "Dra. Amanda Schroeder", "Residência pela UNICAMP", "CRM 191605 | RQE 110472", "Formas de Pagamento", "Decisão Sem Pressão"],
-          "descriptions": ["Entenda o valor da prótese de silicone, incluindo implante, equipe e hospital.", "Veja como se forma o preço do silicone nos seios e o que altera o orçamento.", "Consulta particular em Pinheiros para avaliar volume, formato e planejamento.", "Conheça as formas de pagamento; o orçamento individual é definido após avaliação."]
-        },
-        {
-          "campaign": "S_BR_SP_CONTORNO_CORPORAL",
-          "adGroup": "AG_LIPOASPIRACAO_PRECO",
-          "trackingCode": "ag_lipoaspiracao_preco",
-          "keywords": ["lipoaspiração preço|EXACT", "lipoaspiração preço|PHRASE", "lipoescultura valor|PHRASE"],
-          "finalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/",
-          "headlines": ["Preço da Lipoaspiração", "Lipoaspiração: Preço e Custos", "Quanto Custa Lipoaspiração", "Valor da Lipoescultura", "Lipoescultura: Valor e Custos", "Custos da Cirurgia Corporal", "Orçamento Após Avaliação", "Equipe, Hospital e Anestesia", "Avaliação em São Paulo", "Consulta em Pinheiros", "Dra. Amanda Schroeder", "Residência pela UNICAMP", "CRM 191605 | RQE 110472", "Formas de Pagamento", "Decisão Sem Pressão"],
-          "descriptions": ["Veja o que compõe o preço da lipoaspiração: equipe, anestesia, hospital e extensão.", "Entenda o valor da lipoescultura e os fatores que individualizam o orçamento.", "Consulta particular em Pinheiros para avaliar áreas, proporções e planejamento.", "Conheça as formas de pagamento; o orçamento individual é definido após avaliação."]
-        }
-      ],
-      "routingNegativesExact": [
-        "AG_MASTOPEXIA|preço mastopexia",
-        "AG_MASTOPEXIA|mastopexia preço",
-        "AG_PROTESE_MAMA|silicone nos seios preço",
-        "AG_PROTESE_MAMA|prótese de silicone valor",
-        "AG_LIPOASPIRACAO|lipoaspiração preço",
-        "AG_LIPOASPIRACAO|lipoescultura valor"
-      ],
-      "routingNegativesState": "verified_live_already_applied_no_new_write"
-    }
+    ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T20:42:08-03:00",
+    "completedAt": "2026-09-12T20:54:32-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --check campanhas/content-library.js",
+      "node --test campanhas/site-technical-regression.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs"
     ],
     "results": {
-      "focused": "40/40 no pacote alterado; regressao cruzada coberta novamente pela suite integral",
-      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1339/1339 aprovados sobre a integracao com 99b36f6",
-      "siteBuild": "188 arquivos, 49 URLs do sitemap e zero erro",
-      "siteCheck": "49/49 URLs tecnicamente validas, 35 tags de video, zero pagina orfa e zero erro",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 14/14 arquivos coincidem com o escopo sobre a base 99b36f6",
-      "bulkImportAssets": "3 grupos e 3 RSAs novos, 2 RSAs corrigidos, 8 palavras adicionadas, 2 grupos transitórios pausados e zero escrita de negativas ja existentes",
-      "googleAdsPostflight": "cinco uploads concluídos sem erro: grupos 27885666172234525, RSAs novos 8370800241093983490, palavras 776172141302390487, dois RSAs corrigidos 8536118842992338984 e pausa dos grupos transitórios 3397105701539708642; AG_MASTOPEXIA e AG_ABDOMINOPLASTIA passaram de Ruim para Excelente; orcamentos seguem R$ 8/dia por campanha e zero atividade",
-      "appsScriptPostflight": "deployment canonico preservado na v149; GoogleAdsFunnelReview.gs vivo coincide com SHA-256 normalizado d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7; GET HTTP 200 ok:true e POST com segredo sintetico invalido HTTP 200 unauthorized sem escrita",
-      "reviewScriptPostflight": "script 12117745 preservado ativo, sem alteracao de fonte, com agenda diaria entre 09:00 e 10:00 ja restaurada pelo trabalho paralelo",
-      "opsCheck": "SYNC_PENDING esperado ate autorizacao e publicacao do novo commit integrado, deploy Netlify, projecao do Plano no Drive e recibos finais"
+      "contentLibrarySyntax": "passed",
+      "focusedSiteTests": "23/23 site and cost-guide tests passed; 142 cross-consumer cases passed before the parallel integration and all updated consumer cases were rerun in the final 1341-test suite",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; exact 15-file scope",
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "fullSuite": "1341/1341 passed after preserving the complete parallel 64ae2c5 release",
+      "staticBuild": "191 files; 52 sitemap URLs; no audit or operations files; zero errors",
+      "technicalSiteAudit": "52/52 expected HTTP 200, self-canonical, indexable and one H1; zero orphan pages",
+      "visualQa": "14 page/viewport combinations in Chrome: six articles and library at 1440 and 390 px; no horizontal overflow, no broken images, no false review claim; screenshots inspected after declining optional cookies",
+      "librarySearch": "pre-operatorio, preparo, recuperacao cervical, otomodelacao and orelha place the specific article first; exact query tokens outrank generic synonyms",
+      "diffCheck": "passed",
+      "liveBaselineComparison": "2026-09-12T23:54:17.352Z: 187 provider files compared against 64ae2c5/6aa5e56c65ed3d0008cebf97; zero drift; exactly six public modifications plus three new pages. Twelve current function digests and five schedules captured. Netlify, Apps Script and Google Ads source files have zero diff against this baseline.",
+      "drivePreflight": "Existing file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO unchanged at 2026-09-12T23:31:37.815Z; exact baseline equality for all 145404 characters, preserving previous parallel receipts.",
+      "operationalConsistency": "SYNC_PENDING expected until publication, external readback, receipt commit and clean canonical branch.",
+      "parallelIntegration": "The complete parallel baseline is preserved; the effective delta against 64ae2c5 is exactly the 15 educational files. Original candidate 97d585e remains preserved in its own branch. The parallel release receipt remains in 64ae2c5:ops/CHANGE-CANDIDATE.json."
     },
-    "blockingFailures": [],
     "crossConsumerCases": [
-      "os dez codigos secundarios atuais e transitórios resolvem somente grupos e rotas registrados",
-      "os dois aliases genericos permanecem legiveis sem inventar procedimento",
-      "os tres grupos de preco preservam procedimento, intencao e landing por codigo exato",
-      "a rotina de revisao reconhece termos de mama e corpo e usa R$ 103/dia como referencia total",
-      "as seis negativas exatas sao reconhecidas como roteamento intencional",
-      "os guias de custo permanecem publicados e rastreaveis sem mudanca de texto"
+      "biblioteca apresenta 27 URLs educativas unicas e contagem coerente com a busca",
+      "seis artigos declarados apresentam fontes e orientacoes de seguranca proporcionais ao tema",
+      "novas paginas possuem canonical, um H1, metadados sociais e dados estruturados sem autoria ou revisao nao realizada",
+      "desktop e mobile permanecem sem rolagem horizontal e com imagens proporcionais",
+      "52 rotas publicas no sitemap, sem perda das 49 existentes; arquivos operacionais continuam fora do build",
+      "busca prioriza as palavras exatas da pergunta sem retirar sinonimos leigos; recuperacao cervical aparece antes de outras recuperacoes"
     ]
   },
   "release": {
-    "approvedCommit": "",
-    "netlifyDeployId": "6aa5e03e5650c20008bfd3c0 preservado como baseline; publicacao do consumidor Netlify pendente do novo hash",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 149,
-    "verifiedAt": "",
+    "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "",
-    "activationState": "google_ads_and_apps_script_live_netlify_git_drive_pending",
-    "notes": "Google Ads e Apps Script foram aplicados sob autorizacao do commit 79d456ea11b34e502ca42c215f20f649250f10f3 e verificados. O branch canonico avancou em paralelo; o novo hash preservador deve ser autorizado antes de publicar o ajuste de procedure-context.mjs no Netlify, integrar o Git e substituir a mesma projecao do Plano no Drive. Nenhum orcamento, campanha facial, pagina, sitemap, mensagem, paciente, agenda ou conversao foi alterado por este refinamento."
+    "drivePlanSha256": null,
+    "activationState": "local_not_published",
+    "notes": "Apps Script v149 e snapshot do recibo paralelo 64ae2c5 preservado, nao publicacao ou verificacao viva desta tarefa. Revisao medica posterior pendente. A janela de observacao nao bloqueia publicacao autorizada."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre 99b36f6c433b2017786731f02d01ea7649dd8eaa, preservando todo trabalho paralelo",
-    "production": "pausar os tres grupos especificos, reativar os dois grupos genericos transitórios, restaurar somente os dois RSAs originais e voltar o Apps Script ao conteudo da v148; preservar as seis negativas que ja pertencem ao baseline vivo"
+    "local": "reverter somente o delta educativo sobre 64ae2c598816c033b4e2a995d064adddf80de54a, preservando as atualizacoes paralelas",
+    "production": "Se houver regressao confirmada, restaurar o deploy 6aa5e56c65ed3d0008cebf97. Nao restaurar deploy anterior a atualizacao paralela e nao alterar Apps Script ou campanhas."
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "24 horas para integridade; 7, 14 e 30 dias para negocio; gate adicional em R$ 120 por campanha sem contato valido",
+    "window": "integridade imediata e 24 horas; observacao editorial e comercial em 7, 14 e 30 dias sem espera obrigatoria entre publicacoes; revisao medica posterior quando disponivel",
     "metrics": [
-      "politica, elegibilidade, URL final, gasto e resolucao de grupo/landing",
-      "termos por intencao de preco versus procedimento",
-      "contatos validos, qualificados, consultas e custo por etapa",
-      "cobertura de classificacao e preservacao de click ID"
+      "HTTP, canonical, indexabilidade, sitemap, links internos e busca da biblioteca",
+      "consultas e impressoes organicas por tema como diagnostico intermediario",
+      "cliques contextuais nos CTAs sem perda de tracking",
+      "contatos validos, leads qualificados e consultas originados dos conteudos"
     ],
-    "rollbackRule": "reverter somente o componente afetado diante de destino, politica, atribuicao ou qualidade downstream incorretos; nao decidir por CTR, CPC ou pontuacao isolados"
+    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, conteudo medico divergente da revisao, promessa indevida ou regressao de indexabilidade"
   }
 }
