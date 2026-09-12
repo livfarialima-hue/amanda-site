@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12",
   "title": "Fortalecer a jornada segura da Bruna e medir custo efetivo por mensagem",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "7e6ea23d49b5b0fd149a66395f88f091b94b01a2",
   "createdAt": "2026-09-12T10:00:00-03:00",
   "risk": {
@@ -32,6 +32,7 @@
       "apps-script/clinica-liv-leads/OperationalEvents.gs",
       "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
       "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
@@ -131,11 +132,11 @@
       "focusedYCloudAndLedgerTests": "31/31 aprovados",
       "fullTestSuite": "1296/1296 aprovados",
       "architectureCheck": "OK",
-      "changeCheck": "OK, 40 arquivos exatos",
+      "changeCheck": "OK, 41 arquivos exatos com o recibo do alvo Apps Script",
       "siteBuild": "180 arquivos gerados e 44 URLs no sitemap",
       "siteCheck": "44/44 paginas aprovadas",
       "diffCheck": "sem erros",
-      "opsCheck": "SYNC_PENDING esperado antes do commit e da publicacao"
+      "opsCheck": "OK no fechamento sem Git; igualdade remota e Drive a confirmar depois do commit de recibos"
     },
     "commands": [
       "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
@@ -148,6 +149,24 @@
       "npm.cmd run ops:check",
       "git diff --check"
     ]
+  },
+  "release": {
+    "approvedCommit": "800e3b91801de2566b625e04a37c04d05e2d29ab",
+    "netlifyDeployId": "6aa556ba2030c700087d07d1",
+    "appsScriptVersion": 144,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "verifiedAt": "2026-09-12T10:45:23-03:00",
+    "drivePlanSha256": "8d1fda37264a8d597f3709d9bf93e1376f334d52f80ce7ed58118e35e8e39304",
+    "ycloudWebhookEndpointId": "6a651d7fb8912a1da54e0bfa",
+    "ycloudSubscribedEvents": [
+      "whatsapp.inbound_message.received",
+      "whatsapp.message.updated",
+      "whatsapp.smb.message.echoes",
+      "whatsapp.template.category_updated",
+      "whatsapp.template.quality_updated",
+      "whatsapp.template.reviewed"
+    ],
+    "noRealMessagesSent": true
   },
   "rollback": {
     "local": "reverter somente os commits deste changeId sobre 7e6ea23, preservando trabalhos paralelos",

@@ -48,7 +48,7 @@
 
 **Projeção no Drive:** https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view
 
-> **Candidata local `EVOLUCAO-BRUNA-JORNADA-2026-09-12` — NÃO PUBLICADA:** preserva Bruna como assistente ou concierge da Clínica LIV, sem explicação tecnológica ao paciente; separa Amanda, Daniel e profissionais eventuais antes de qualquer decisão de agenda; padroniza revisão humana; amplia a rastreabilidade por decisão e cria uma baseline obrigatória contra perda de comportamentos já validados. Nenhuma flag, trigger, planilha, Calendar, mensagem, deploy ou projeção do Drive foi alterado por esta candidata.
+> **Evolução `EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12` — PUBLICADA E VERIFICADA:** a Bruna permanece assistente ou concierge da Clínica LIV, com `concierge` como apresentação padrão e sem explicação tecnológica ao paciente. O pacote separa Amanda, Daniel e profissionais eventuais antes de agenda e lembretes, padroniza a revisão humana, amplia rastreabilidade sem PII e protege 47 cenários contra regressão silenciosa. O custo por mensagem entra somente como observação técnica baseada no estado entregue pela YCloud e nunca bloqueia atendimento, segurança ou cuidado. Código funcional `800e3b91801de2566b625e04a37c04d05e2d29ab`, deploy Netlify `6aa556ba2030c700087d07d1` e Apps Script v144 no deployment preservado; nenhuma mensagem real ou de teste foi enviada. Rollback: commit `7e6ea23d49b5b0fd149a66395f88f091b94b01a2`, deploy `6aa5494950d7dc34628fdf33` e Apps Script v143.
 
 ## 1. Objetivo
 
