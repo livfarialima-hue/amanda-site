@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "META-REATIVACAO-CERVICAL-FACIAL-2026-09-11",
   "title": "Reativar por 30 dias as campanhas Meta diretas de lifting cervical e facial",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "b845db8fb2cce7889abc6ae3e8334261ba3661da",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel solicitou em 11/09/2026 a reativação das duas melhores campanhas segundo os gastos padrões. Por envolver até R$ 1.200 de gasto futuro, a confirmação transacional continua obrigatória imediatamente antes da publicação exata."
+    "note": "Daniel confirmou no ato em 12/09/2026: 'vc pode publicar para mim com aquele orçamento'. A autorização foi vinculada ao commit candidato exato fd05a49c9756d3811e5c39fdc33bab640462b3f4 antes da escrita seletiva na Meta."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -55,13 +55,13 @@
         "status": "baseline_confirmed",
         "checkedAt": "2026-09-11T20:33:13-03:00",
         "reference": "Objetos canônicos, orçamento, gasto, datas, objetivo, lance, destino WhatsApp, público 40–65+, localização, anúncios ativos e sete rascunhos foram relidos na sessão autenticada; o funil agregado foi reconciliado sem PII.",
-        "check": "somente leitura; publicação ainda não executada"
+        "check": "somente leitura concluída antes da publicação"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-11T20:39:30-03:00",
+    "status": "passed_local_and_live",
+    "completedAt": "2026-09-12T08:21:25-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "npm.cmd run change:check",
@@ -70,7 +70,9 @@
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "Meta Ads: resumo seletivo de 2 campanhas, 2 conjuntos e 0 anúncios; publicação e releitura das tabelas de campanhas e conjuntos",
+      "Google Drive: releitura, substituição preservadora e download binário do mesmo Plano Executivo"
     ],
     "results": {
       "focusedTests": "126/126 aprovados",
@@ -79,17 +81,61 @@
       "fullTestSuite": "1249/1249 aprovados",
       "siteBuild": "180 arquivos e 44 URLs; nenhum arquivo de auditoria incluído no artefato",
       "siteCheck": "44/44 URLs com HTTP 200, canonical, indexabilidade e H1 válidos",
-      "opsCheck": "SYNC_PENDING esperado antes da publicação; também sinaliza branch isolada e worktree sujo durante a preparação",
-      "diffCheck": "sem erros"
+      "opsCheck": "SYNC_PENDING esperado na branch isolada; o fechamento não foi apresentado como integração da branch canônica",
+      "diffCheck": "sem erros",
+      "metaAds": "campanhas 120251248762160627 e 120251254720690627 e conjuntos 120251248762180627 e 120251254720700627 relidos como Ativo; R$ 900 por campanha; fim 11/10/2026 23:59; contador de rascunhos 11 para 7",
+      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituído e relido com 131496 bytes e SHA-256 711aa0efac47dac0c10598da155bcb591d75488dc34c96147b0626c691a1c5db",
+      "parallelWorkPreserved": "o Plano projetado incorpora a seção local, ainda não publicada nem ativada, das retomadas automáticas e os recibos de otoplastia; nenhum arquivo ou sistema da conversa paralela foi alterado",
+      "liveWrites": "somente os quatro itens seletivos na Meta e a substituição da mesma projeção canônica do Plano no Drive; nenhum anúncio, rascunho, site, Google Ads, Apps Script, LEADS, CRM, Calendar, Bruna, retomada ou mensagem foi alterado"
     }
   },
   "release": {
-    "approvedCommit": null,
-    "metaAdsMutations": [],
-    "drivePlanSha256": null,
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Nenhuma alteração na Meta foi publicada; somente a candidata local e o preflight de leitura foram preparados."
+    "approvedCommit": "fd05a49c9756d3811e5c39fdc33bab640462b3f4",
+    "netlifyDeployId": "6a99862d5c80270008ebf19b",
+    "appsScriptVersion": 141,
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "711aa0efac47dac0c10598da155bcb591d75488dc34c96147b0626c691a1c5db",
+    "metaAdsMutations": [
+      {
+        "entityType": "campaign",
+        "campaignId": "120251248762160627",
+        "campaignCode": "M26C01W",
+        "field": "lifetime_budget",
+        "before": "R$ 300,00",
+        "after": "R$ 900,00",
+        "verifiedStatus": "Ativo"
+      },
+      {
+        "entityType": "adset",
+        "campaignId": "120251248762160627",
+        "adsetId": "120251248762180627",
+        "field": "end_time",
+        "before": "2026-09-01T12:00:00-03:00",
+        "after": "2026-10-11T23:59:00-03:00",
+        "verifiedStatus": "Ativo"
+      },
+      {
+        "entityType": "campaign",
+        "campaignId": "120251254720690627",
+        "campaignCode": "M26F01W",
+        "field": "lifetime_budget",
+        "before": "R$ 300,00",
+        "after": "R$ 900,00",
+        "verifiedStatus": "Ativo"
+      },
+      {
+        "entityType": "adset",
+        "campaignId": "120251254720690627",
+        "adsetId": "120251254720700627",
+        "field": "end_time",
+        "before": "2026-09-01T12:00:00-03:00",
+        "after": "2026-10-11T23:59:00-03:00",
+        "verifiedStatus": "Ativo"
+      }
+    ],
+    "verifiedAt": "2026-09-12T08:21:25-03:00",
+    "activationState": "active_verified_meta",
+    "notes": "A Meta publicou somente 2 campanhas e 2 conjuntos; 0 anúncios. O contador de rascunhos caiu de 11 para 7 e os sete rascunhos anteriores permaneceram intactos. Netlify 6a99862d5c80270008ebf19b e Apps Script v141 ficaram fora do escopo e foram preservados. A mesma projeção do Plano no Drive foi atualizada com o registro Meta, os recibos de otoplastia e o estado ainda não publicado/não ativado das retomadas paralelas."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId e restaurar o candidato anterior se a publicação não ocorrer",
