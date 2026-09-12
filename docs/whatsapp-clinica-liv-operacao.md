@@ -2,18 +2,18 @@
 
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
-> **Candidato de retomada automática por modelo — LOCAL, NÃO PUBLICADO E NÃO ATIVADO EM 11/09/2026:** o novo caminho resolve a incompatibilidade entre a cadência de aproximadamente 24 horas e a janela de texto livre. Ele alcança somente a primeira retomada de uma conversa com exatamente duas mensagens: interesse genérico em procedimento conhecido e pergunta da Bruna ainda sem resposta. A mensagem é programada a partir de 24 horas da saída, em intervalos de 15 minutos entre 09:00 e 19:00, e expira em 48 horas. Apps Script e Netlify repetem o mesmo corredor; preço, agenda, sintomas, exames, imagens, risco, urgência, terceiro turno, takeover, opt-out, pausa, promessa humana, procedimento divergente e falta de texto exato bloqueiam. Publicar não ativa: são exigidas `WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED=true` no endpoint, `RETOMADAS_AUTOMATICAS_MODELO_ATIVAS=true` no Apps Script e uma data de ativação criada somente pela função autorizada. Conversas e planos anteriores a essa data não entram. A segunda retomada e o pós-consulta continuam manuais.
+> **Retomada automática por modelo — PUBLICADA E VERIFICADA NA v142; DEFAULT-OFF EM 12/09/2026:** o commit funcional aprovado `3d022332a6f1f2dbd7729c45c3083b1696172812` foi publicado no deployment Apps Script canônico existente e no deploy Netlify `6aa536c2f301b80008efe5e6`. O caminho alcança somente a primeira retomada de uma conversa com exatamente duas mensagens: interesse genérico em procedimento conhecido e pergunta da Bruna ainda sem resposta, entre 24 e 48 horas. Apps Script e Netlify repetem o mesmo corredor; preço, agenda, sintomas, exames, imagens, risco, urgência, terceiro turno, takeover, opt-out, pausa, promessa humana, procedimento divergente e falta de texto exato bloqueiam. Os arquivos vivos foram relidos e coincidiram com o commit aprovado; o domínio e a URL imutável coincidiram, a sonda de token inválido não aplicou decisão e o endpoint sem autenticação respondeu HTTP 401. As duas novas propriedades do Apps Script e a variável Netlify continuaram ausentes. Nenhuma função operacional, trigger, planilha, fila ou mensagem real foi executado. Publicar não ativou: conversas e planos anteriores a uma futura data de ativação não entram; a segunda retomada e o pós-consulta continuam manuais.
 
-### Ativação futura do candidato por modelo
+### Ativação futura da retomada por modelo
 
-Esta sequência só pode ser executada depois de autorização explícita para o commit final exato:
+O sinal verde deve ser dado como `PRONTO PARA ATIVAR` somente quando todos os itens abaixo forem comprovados ao vivo. Mesmo com sinal verde, a ativação exige uma nova autorização explícita e permanece separada desta publicação:
 
-1. validar projeto, deployment e planilha pelos três IDs de `production-target.json`;
-2. publicar Apps Script e Netlify ainda com as novas flags desligadas e comprovar equivalência com o commit aprovado;
+1. confirmar que o projeto, o deployment e a planilha continuam nos três IDs de `production-target.json`, com Apps Script v142 e Netlify no código aprovado;
+2. confirmar que as novas flags ainda estão desligadas e que nenhuma fila ou plano anterior foi convertido;
 3. confirmar no provedor que `retomada_manual_bruna_v1` está aprovado em `pt_BR`, com opt-in aplicável, e configurar `WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED=true` apenas em produção;
 4. usar `Central LIV > Diagnosticar retomadas automáticas`; a leitura precisa mostrar endpoint pronto, sem expor segredo nem alterar fila;
 5. revisar a fila atual e registrar que nenhum plano existente foi convertido; então executar uma única vez `ativarRetomadasAutomaticasPorModelo` no projeto canônico — a função reinstala o planejador diário das 08:00 e o processador de cinco minutos somente depois do preflight verde, antes de ligar as flags;
-6. reler propriedades e triggers, repetir o diagnóstico e acompanhar o primeiro plano elegível, 24 horas, 72 horas e 7 dias.
+6. escolher uma janela útil com a equipe disponível, reler propriedades e triggers, repetir o diagnóstico e acompanhar o primeiro plano elegível, 24 horas, 72 horas e 7 dias.
 
 A função de ativação consulta o endpoint com autenticação antes de qualquer preparação da fila. Se o modo global, o agendador, a flag automática ou o modelo não estiverem prontos, ela falha sem ligar propriedades ou trigger. Contenção imediata: executar `desativarRetomadasAutomaticasPorModelo`, confirmar a flag local inativa e depois desligar a variável do endpoint. Para desligar também o processador legado, usar `desativarRetomadasAutomaticas`. Reverter código ou deployment é uma etapa posterior e não substitui a contenção.
 
