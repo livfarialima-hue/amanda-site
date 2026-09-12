@@ -16,6 +16,16 @@ const secondaryPages = [
   "pos-bariatrica",
   "protese-de-mama",
 ];
+const refreshedSecondaryPages = new Set([
+  "abdominoplastia",
+  "braquioplastia",
+  "lipoaspiracao",
+  "mamoplastia-redutora",
+  "mastopexia",
+  "mastopexia-com-protese",
+  "pos-bariatrica",
+  "protese-de-mama",
+]);
 
 function luminance(hex) {
   const channels = hex.match(/[a-f\d]{2}/gi).map((value) => parseInt(value, 16) / 255);
@@ -38,6 +48,9 @@ test("secondary procedure colors meet WCAG AA contrast", () => {
 
 test("secondary procedure stylesheet contains scoped contrast overrides", () => {
   assert.match(stylesheet, /main \.secondary-practical :is\(\.eyebrow, h2, p\)/);
+  assert.match(stylesheet, /main \.step > span/);
+  assert.match(stylesheet, /main #resultados\.results/);
+  assert.match(stylesheet, /main #faq\.results/);
   assert.match(stylesheet, /footer :is\(a, span, strong, p, button\)/);
   assert.match(stylesheet, /footer \.footer-navigation \.footer-nav-group > strong/);
 });
@@ -45,6 +58,12 @@ test("secondary procedure stylesheet contains scoped contrast overrides", () => 
 test("every secondary procedure page requests the contrast-fixed stylesheet", () => {
   for (const page of secondaryPages) {
     const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
-    assert.match(html, /secondary-conversion\.css\?v=20260814-contrast-1/);
+    const expectedVersion = refreshedSecondaryPages.has(page)
+      ? "20260912-mobile-contrast-2"
+      : "20260814-contrast-1";
+    assert.match(
+      html,
+      new RegExp(`secondary-conversion\\.css\\?v=${expectedVersion}`),
+    );
   }
 });

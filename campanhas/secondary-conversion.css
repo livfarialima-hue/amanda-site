@@ -271,6 +271,7 @@ html[data-secondary-premium="true"] .result-card img {
 html[data-secondary-premium="true"] .result-card > div { padding: 19px 22px 23px; }
 html[data-secondary-premium="true"] .result-card > div p { color: var(--secondary-muted); }
 html[data-secondary-premium="true"] .disclaimer { color: #e4d5ce; }
+html[data-secondary-premium="true"] .curated-video-modal .curated-video-copy .disclaimer { color: #5f5652; }
 
 html[data-secondary-premium="true"] .procedure-video-section {
   padding: clamp(64px, 8vw, 112px) 0;
@@ -337,6 +338,10 @@ html[data-secondary-premium="true"] .step {
   background: #fff;
 }
 
+html[data-secondary-premium="true"][data-page-type] main .step > span {
+  color: #fff;
+}
+
 html[data-secondary-premium="true"] .internal-trust-section,
 html[data-secondary-premium="true"] .liv-reference-section { background: var(--secondary-paper); }
 
@@ -368,6 +373,32 @@ html[data-secondary-premium="true"] .faq-item summary h3 {
 }
 
 html[data-secondary-premium="true"] .faq-answer { color: var(--secondary-muted); }
+
+html[data-secondary-premium="true"][data-page-type] main #resultados.results {
+  background: var(--secondary-deep);
+  color: #fffaf7;
+}
+
+html[data-secondary-premium="true"][data-page-type] main #resultados.results .section-head > :is(.eyebrow, h2) {
+  color: #fffaf7;
+}
+
+html[data-secondary-premium="true"][data-page-type] main #resultados.results :is(.section-head > p, .disclaimer) {
+  color: #eadbd3;
+}
+
+html[data-secondary-premium="true"][data-page-type] main #faq.results {
+  background: var(--secondary-paper);
+  color: var(--secondary-ink);
+}
+
+html[data-secondary-premium="true"][data-page-type] main #faq.results .section-head > h2 {
+  color: var(--secondary-ink);
+}
+
+html[data-secondary-premium="true"][data-page-type] main #faq.results :is(.eyebrow, .section-head > p) {
+  color: var(--secondary-muted);
+}
 
 html[data-secondary-premium="true"] .contact-facts {
   overflow: hidden;
@@ -428,7 +459,7 @@ html[data-secondary-premium="true"] .secondary-practical__facts div {
 html[data-secondary-premium="true"] .secondary-practical__facts div:last-child { border-bottom: 0; }
 html[data-secondary-premium="true"] .secondary-practical__facts span {
   display: block;
-  color: #dbc7bd;
+  color: #f3e5df;
   font-size: .7rem;
   font-weight: 700;
   letter-spacing: .1em;
