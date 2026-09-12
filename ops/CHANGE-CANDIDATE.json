@@ -213,7 +213,7 @@
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T20:05:57-03:00",
+    "completedAt": "2026-09-12T20:42:08-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -228,12 +228,12 @@
       "git diff --check"
     ],
     "results": {
-      "focused": "40/40; suites cruzadas 200/200, 21/21 e 145/145",
+      "focused": "40/40 no pacote alterado; regressao cruzada coberta novamente pela suite integral",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1338/1338",
-      "siteBuild": "185 arquivos, 46 URLs do sitemap e zero erro",
-      "siteCheck": "46/46 URLs tecnicamente validas, 35 tags de video e zero erro",
-      "changeCheck": "pendente de repeticao sobre a base integrada 99b36f6",
+      "fullSuite": "1339/1339 aprovados sobre a integracao com 99b36f6",
+      "siteBuild": "188 arquivos, 49 URLs do sitemap e zero erro",
+      "siteCheck": "49/49 URLs tecnicamente validas, 35 tags de video, zero pagina orfa e zero erro",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 14/14 arquivos coincidem com o escopo sobre a base 99b36f6",
       "bulkImportAssets": "3 grupos e 3 RSAs novos, 2 RSAs corrigidos, 8 palavras adicionadas, 2 grupos transitórios pausados e zero escrita de negativas ja existentes",
       "googleAdsPostflight": "cinco uploads concluídos sem erro: grupos 27885666172234525, RSAs novos 8370800241093983490, palavras 776172141302390487, dois RSAs corrigidos 8536118842992338984 e pausa dos grupos transitórios 3397105701539708642; AG_MASTOPEXIA e AG_ABDOMINOPLASTIA passaram de Ruim para Excelente; orcamentos seguem R$ 8/dia por campanha e zero atividade",
       "appsScriptPostflight": "deployment canonico preservado na v149; GoogleAdsFunnelReview.gs vivo coincide com SHA-256 normalizado d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7; GET HTTP 200 ok:true e POST com segredo sintetico invalido HTTP 200 unauthorized sem escrita",
