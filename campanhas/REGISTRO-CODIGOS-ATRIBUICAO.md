@@ -1,6 +1,6 @@
 # Registro versionado de códigos de atribuição
 
-Versão do contrato: `v3`
+Versão do contrato: `v4`
 Data de vigência documental: 12/09/2026
 Fonte estratégica: `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 Fonte operacional Google: `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`
@@ -25,7 +25,9 @@ Este registro impede que códigos históricos sejam reinterpretados como uma ori
 | `G26BLEF` | `S_BR_SP_BLEFAROPLASTIA` | `google_ads` | canônico |
 | `G26FACE` | `S_BR_SP_CIRURGIA_FACIAL` | `google_ads` | canônico |
 | `G26CERV` | `S_BR_SP_LIFTING_CERVICAL` | `google_ads` | canônico |
+| `G26CORP` | `S_BR_SP_CONTORNO_CORPORAL` | `google_ads` | canônico desde 12/09/2026 |
 | `G26LIFT` | `S_BR_SP_LIFTING_FACIAL` | `google_ads` | canônico |
+| `G26MAMA` | `S_BR_SP_CIRURGIA_MAMA` | `google_ads` | canônico desde 12/09/2026 |
 | `G26MARCA` | `S_BR_SP_MARCA` | `google_ads` | canônico |
 | `G26OTO` | `S_BR_SP_OTOPLASTIA` | `google_ads` | canônico |
 | `G26ADS` | fallback técnico quando há click ID Google e `_camp` ausente | `google_ads` | fallback parcial; não identifica campanha |
@@ -35,14 +37,19 @@ Este registro impede que códigos históricos sejam reinterpretados como uma ori
 | Valor normalizado `{_ag}` | Objeto externo | Status |
 |---|---|---|
 | `ag_blefaroplastia` | `AG_BLEFAROPLASTIA` | canônico |
+| `ag_abdominoplastia` | `AG_ABDOMINOPLASTIA` | canônico desde 12/09/2026 |
 | `ag_cirurgia_facial` | `AG_CIRURGIA_FACIAL` | canônico |
 | `ag_lifting_cervical` | `AG_CERVICOPLASTIA` | canônico |
+| `ag_lipoaspiracao` | `AG_LIPOASPIRACAO` | canônico desde 12/09/2026 |
 | `ag_lipo_papada` | `AG_LIPO_PAPADA` | canônico |
 | `ag_lifting_facial` | `AG_LIFTING_FACIAL` | canônico |
 | `ag_lifting_facial_preco` | `AG_LIFTING_FACIAL_PRECO` | canônico |
+| `ag_mamoplastia_redutora` | `AG_MAMOPLASTIA_REDUTORA` | canônico desde 12/09/2026 |
 | `ag_marca` | `AG_MARCA` | canônico |
+| `ag_mastopexia` | `AG_MASTOPEXIA` | canônico desde 12/09/2026 |
 | `ag_otoplastia_adulto` | `Adulto` | canônico |
 | `ag_otoplastia_infantil` | `AG_OTOPLASTIA_INFANTIL` | canônico |
+| `ag_protese_mama` | `AG_PROTESE_MAMA` | canônico desde 12/09/2026 |
 
 Grupo vazio não deve ser reconstruído a partir da página. Valor que não corresponder exatamente à tabela fica `__UNKNOWN_AD_GROUP__`; o valor bruto não é publicado no agregado externo.
 
@@ -50,13 +57,13 @@ Grupo vazio não deve ser reconstruído a partir da página. Valor que não corr
 
 O agregado `Google_Rotas` v1 usa exclusivamente a primeira atribuição persistida em `_CRM_OPORTUNIDADES` e liga essa atribuição a `_FUNIL_CANONICO` pelo `Opportunity ID` exato. O identificador serve apenas à junção interna e não integra a saída.
 
-- Landing é aceita somente quando corresponder exatamente a uma rota pública registrada em `GOOGLE_ADS_LANDING_ROUTE_REGISTRY`, incluindo as páginas principais e os guias específicos de preço de lifting facial, blefaroplastia e lifting cervical.
+- Landing é aceita somente quando corresponder exatamente a uma rota pública registrada em `GOOGLE_ADS_LANDING_ROUTE_REGISTRY`, incluindo as páginas principais, os guias específicos de preço de lifting facial, blefaroplastia e lifting cervical e as rotas secundárias registradas de mama, lipoaspiração, abdominoplastia e seus dois guias gerais de custo.
 - Local de CTA é aceito somente pela lista `GOOGLE_ADS_CTA_LOCATION_REGISTRY`. Os novos códigos são `price_planning`, `final_price_planning`, `sticky_price_planning` e `sticky_price_continuity_v1`; os códigos de faixa cervical/lifting já registrados permanecem separados.
 - Valor ausente vira `__MISSING_*__` com `dimension_status=missing`. Valor livre vira `__UNKNOWN_*__` com `unregistered`. Duas atribuições conflitantes da mesma oportunidade viram `__UNKNOWN_*__` com `conflict`.
 - Se qualquer cabeçalho rico exigido estiver ausente, todas as três dimensões ficam `__UNKNOWN_*__` com `schema_unavailable`. Não usar campanha, procedimento, URL atual, texto do WhatsApp, pessoa ou data para preencher a lacuna.
 - `Agregados` v2 e `Google_Rotas` v1 são visões alternativas da mesma coorte; nunca somar seus contatos.
 
-O pré-voo vivo de 12/09/2026 constatou ausência da propriedade `ATTRIBUTION_SCHEMA_VERSION` e dos cabeçalhos ricos. A constatação autoriza apenas registrar a divergência. Migração e publicação exigem o fluxo canônico, e o passado continua N/D sem backfill por aproximação.
+O pré-voo vivo de 12/09/2026 constatou ausência da propriedade `ATTRIBUTION_SCHEMA_VERSION` e dos cabeçalhos ricos. A autorização posterior para mensurar as campanhas secundárias permite executar o fluxo canônico de dry-run, migração idempotente e pós-voo; o passado continua N/D nas dimensões ausentes e nunca recebe backfill por aproximação. Se o preflight falhar, as campanhas podem preservar campanha/click ID, mas não devem ser declaradas mensuráveis por grupo e rota.
 
 ## Aliases históricos Google Ads com resolução determinística
 

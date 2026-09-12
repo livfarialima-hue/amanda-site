@@ -697,6 +697,50 @@ test("enabled journey transports Google click IDs without exposing them in Whats
   assert.equal(envelope.click_ids.gclid, gclid);
 });
 
+test("secondary Google campaigns preserve campaign, ad group and landing in the first-party journey", () => {
+  const cases = [
+    {
+      campaign: "G26MAMA",
+      adGroup: "ag_mastopexia",
+      pathname: "/mastopexia/",
+      procedure: "mastopexia",
+    },
+    {
+      campaign: "G26CORP",
+      adGroup: "ag_abdominoplastia",
+      pathname: "/abdominoplastia/",
+      procedure: "abdominoplastia",
+    },
+  ];
+
+  for (const item of cases) {
+    const link = {
+      addEventListener() {},
+      closest() { return null; },
+      dataset: { ctaLocation: "hero", procedure: item.procedure },
+      href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+      matches() { return true; },
+      textContent: "Falar com a equipe",
+    };
+    const loaded = loadAttribution({
+      consent: "denied",
+      journeyEnabled: true,
+      links: [link],
+      pathname: item.pathname,
+      readyState: "complete",
+      search:
+        `?utm_source=google&utm_medium=cpc&utm_campaign=${item.campaign}` +
+        `&utm_adgroup=${item.adGroup}&gclid=CjwKCAjwsrbTBhAvEiwA0Bpp4${item.campaign}`,
+    });
+    const envelope = loaded.debug.journeyEnvelopeForLink(link);
+    assert.equal(envelope.first_touch.campaign_code, item.campaign);
+    assert.equal(envelope.first_touch.adgroup_code, item.adGroup.toUpperCase());
+    assert.equal(envelope.first_touch.page_path, item.pathname);
+    assert.equal(envelope.cta.location, "hero");
+    assert.equal(envelope.conversion_path, "google_site_whatsapp");
+  }
+});
+
 test("preserves first Meta touch and classifies a consented later return", () => {
   const firstPage = loadAttribution({
     consent: "granted",

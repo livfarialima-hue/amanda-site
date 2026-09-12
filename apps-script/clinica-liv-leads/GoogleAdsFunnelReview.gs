@@ -15,7 +15,9 @@ const GOOGLE_ADS_CAMPAIGN_REGISTRY = Object.freeze({
   G26BLEF: "S_BR_SP_BLEFAROPLASTIA",
   G26FACE: "S_BR_SP_CIRURGIA_FACIAL",
   G26CERV: "S_BR_SP_LIFTING_CERVICAL",
+  G26CORP: "S_BR_SP_CONTORNO_CORPORAL",
   G26LIFT: "S_BR_SP_LIFTING_FACIAL",
+  G26MAMA: "S_BR_SP_CIRURGIA_MAMA",
   G26MARCA: "S_BR_SP_MARCA",
   G26OTO: "S_BR_SP_OTOPLASTIA",
 });
@@ -80,28 +82,40 @@ const GOOGLE_ADS_ROUTE_AGGREGATE_HEADERS = Object.freeze([
 ]);
 
 const GOOGLE_ADS_AD_GROUP_REGISTRY = Object.freeze({
+  ag_abdominoplastia: "AG_ABDOMINOPLASTIA",
   ag_blefaroplastia: "AG_BLEFAROPLASTIA",
   ag_cirurgia_facial: "AG_CIRURGIA_FACIAL",
   ag_lifting_cervical: "AG_CERVICOPLASTIA",
+  ag_lipoaspiracao: "AG_LIPOASPIRACAO",
   ag_lipo_papada: "AG_LIPO_PAPADA",
   ag_lifting_facial: "AG_LIFTING_FACIAL",
   ag_lifting_facial_preco: "AG_LIFTING_FACIAL_PRECO",
+  ag_mamoplastia_redutora: "AG_MAMOPLASTIA_REDUTORA",
   ag_marca: "AG_MARCA",
+  ag_mastopexia: "AG_MASTOPEXIA",
   ag_otoplastia_adulto: "Adulto",
   ag_otoplastia_infantil: "AG_OTOPLASTIA_INFANTIL",
+  ag_protese_mama: "AG_PROTESE_MAMA",
 });
 
 const GOOGLE_ADS_LANDING_ROUTE_REGISTRY = Object.freeze({
   "/": "/",
+  "/abdominoplastia/": "/abdominoplastia/",
   "/avaliacao-facial/": "/avaliacao-facial/",
   "/blefaroplastia/": "/blefaroplastia/",
   "/lifting-cervical/": "/lifting-cervical/",
   "/lifting-facial/": "/lifting-facial/",
+  "/lipoaspiracao/": "/lipoaspiracao/",
   "/lipo-de-papada/": "/lipo-de-papada/",
+  "/mamoplastia-redutora/": "/mamoplastia-redutora/",
+  "/mastopexia/": "/mastopexia/",
   "/otoplastia/": "/otoplastia/",
   "/otoplastia-adulto/": "/otoplastia-adulto/",
   "/otoplastia-infantil/": "/otoplastia-infantil/",
+  "/protese-de-mama/": "/protese-de-mama/",
   "/conteudos/quanto-custa-blefaroplastia-sao-paulo/": "/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+  "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/": "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/",
+  "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/": "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
   "/conteudos/quanto-custa-lifting-cervical-sao-paulo/": "/conteudos/quanto-custa-lifting-cervical-sao-paulo/",
   "/conteudos/quanto-custa-lifting-facial-sao-paulo/": "/conteudos/quanto-custa-lifting-facial-sao-paulo/",
 });

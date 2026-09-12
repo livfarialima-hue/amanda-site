@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-PRICE-PAGES-CLASSIFICATION-ROUTES-2026-09-12",
-  "title": "Publicar paginas de preco BLEF/CERV, reconciliacao periodica e rotas Google Ads",
+  "changeId": "GOOGLE-ADS-SECONDARY-MAMA-CORPO-2026-09-12",
+  "title": "Lancar pilotos secundarios de mama e contorno corporal com atribuicao no funil",
   "status": "tested_local",
-  "baseCommit": "ce87041feec7103cc7fea501b36462b2bddaf55d",
+  "baseCommit": "448410378aac01c64a264e526acad58eb5f643a7",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou publicar tudo que estava pendente, ajustar o Google Ads para as novas paginas, revisar o sitemap e corrigir a transmissao de qualificados. O preflight de release ainda deve vincular essa autorizacao ao HEAD integrado exato.",
+    "note": "Daniel solicitou criar e publicar duas campanhas secundarias para mama e abdomen/contorno corporal e atualizar a mensuracao. A confirmacao no momento da aplicacao ainda vinculara o HEAD exato e a configuracao final de midia.",
     "approvedCommit": "",
     "approvedAt": "",
     "approvedBy": "",
@@ -17,7 +17,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": true
   },
   "scope": {
@@ -28,95 +28,69 @@
       "site-publication"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/ClassificationReconciliation.gs",
-      "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "blefaroplastia/index.html",
       "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
-      "campanhas/conversion-tracking.js",
       "campanhas/conversion-tracking.test.mjs",
-      "campanhas/cost-guides.test.mjs",
-      "campanhas/footer-consistency.test.mjs",
-      "campanhas/lifting-price-page.test.mjs",
-      "campanhas/site-technical-regression.test.mjs",
-      "conteudos/index.html",
-      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "lifting-cervical/index.html",
-      "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/lead-classifier.test.mjs",
+      "netlify/functions/lib/procedure-context.mjs",
+      "netlify/functions/lib/procedure-context.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
-      "scripts/run-tests.mjs",
       "sitemap.xml"
     ]
   },
   "impact": {
     "consumers": [
-      "pacientes que pesquisam preco de blefaroplastia e lifting cervical",
-      "campanhas Google Ads BLEF, CERV e LIFT",
-      "classificador Netlify e fila de classificacao",
-      "CRM canonico, Funil Comercial e importacao Google Ads",
-      "agregados anonimos Agregados e Google_Rotas",
-      "sitemap e Google Search Console"
+      "pacientes que pesquisam mastopexia, mamoplastia redutora e protese de mama em Sao Paulo",
+      "pacientes que pesquisam abdominoplastia e lipoaspiracao em Sao Paulo",
+      "Google Ads 995-334-4486 e sua meta personalizada de lead qualificado",
+      "site, WhatsApp, classificador e planilha LEADS canonica",
+      "agregados anonimos de campanha, grupo, landing e CTA",
+      "equipe da Clinica LIV que acompanha validos, qualificados e consultas"
     ],
     "preservedInvariants": [
-      "nenhuma faixa numerica de cirurgia e publicada nas paginas",
-      "a classificacao automatica nunca rebaixa fase e nao processa backlog anterior ao corte de ativacao",
+      "cirurgia facial permanece o foco principal e as seis campanhas existentes nao perdem verba nem mudam configuracao",
+      "o unico aumento autorizado e de R$ 16 por dia, dividido igualmente entre os dois pilotos e encerrado em 2026-10-12",
+      "os pilotos usam somente Pesquisa, Sao Paulo, presenca fisica, portugues e correspondencias exata e de frase",
+      "Maximizar cliques e usado apenas enquanto cada piloto nao tiver volume suficiente de qualificados; a meta continua sendo lead qualificado com GCLID",
+      "G26MAMA ou G26CORP sem grupo ou procedimento explicito nao inventa classificacao clinica",
+      "cada rota registrada conserva campanha, grupo, landing, CTA e click ID ate o funil sem publicar PII nos agregados",
       "somente evento ready com um unico click ID entra em IMPORT_GOOGLE_ADS",
-      "eventos invalidados permanecem fora da importacao e a rota de ajuste continua disponivel",
-      "Agregados e Google_Rotas nunca sao somados e nao publicam PII ou Opportunity ID",
-      "schema ausente ou dimensao conflitante falha fechada como N/D",
-      "orcamentos, lances, metas, RSAs, negativas, publicos, dispositivos, agenda, redes e geografia permanecem intactos",
-      "o sitelink cervical fica restrito a AG_CERVICOPLASTIA",
-      "trabalho paralelo do site e releases v144 permanecem preservados"
+      "as paginas de custo nao prometem abatimento da consulta nem publicam faixa cirurgica sem avaliacao",
+      "o sitemap ja contem as rotas usadas e nao recebe uma segunda copia",
+      "mudancas paralelas no site permanecem isoladas e nao sao revertidas"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "planilha LEADS canonica",
+        "system": "planilha LEADS canonica e Apps Script v145",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T11:45:00-03:00",
-        "reference": "Reconciliacao por Opportunity ID e estado atual do ledger.",
-        "evidence": "Seis eventos ready coincidem com seis linhas unicas de importacao e seis oportunidades atualmente Qualificado; dois eventos invalidados ficaram fora; AJUSTES_GOOGLE_ADS sem linha pendente."
+        "checkedAt": "2026-09-12T12:35:00-03:00",
+        "reference": "Estado da importacao de qualificados, schema de atribuicao e agregados relido antes da mudanca.",
+        "evidence": "Seis linhas ready continuam correspondendo a seis oportunidades Qualificado e a ultima importacao do Google Data Manager terminou com 6 linhas e 0 erros; o schema rico precisa de reconciliacao aditiva antes dos novos cliques."
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads 995-334-4486 e Data Manager",
+        "system": "Google Ads 995-334-4486 e Planejador de palavras-chave",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T11:43:00-03:00",
-        "reference": "Conta, acao primaria e conexao LEADS relidas em sessao autenticada.",
-        "evidence": "Importacao diaria concluida em 12/09 05:05 com 6 linhas e 0 erros; aviso da acao refere ausencia de conversao recente, nao falha da conexao."
-      },
-      {
-        "contract": "site-publication",
-        "system": "repositorio, Netlify e site oficial",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T12:01:43-03:00",
-        "reference": "Origin canonico fechado em ce87041feec7103cc7fea501b36462b2bddaf55d; Netlify production ready no deploy 6aa56848bd23060008fb10bc para o commit funcional 556c65790506fed5a0d8726131f8864f008b4305.",
-        "evidence": "A integracao foi rebaseada sobre o recibo final da revisao paralela. Dominio e deploy imutavel foram verificados, e ops/, auditorias/ e controles internos responderam 404."
+        "checkedAt": "2026-09-12T12:50:00-03:00",
+        "reference": "Conta correta, campanhas existentes, meta de conversao e demanda local conferidas em sessao autenticada.",
+        "evidence": "Seis campanhas ativas somam R$ 87/dia; mastopexia valor tem cerca de 720 buscas mensais e lipoaspiracao valor cerca de 590. A planilha de criacao das duas campanhas gerou previa de 2 alteracoes e 0 erros, sem aplicar."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T12:03:12-03:00",
+    "completedAt": "2026-09-12T12:58:00-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/classify-leads.test.mjs",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -127,19 +101,14 @@
       "git diff --check"
     ],
     "results": {
-      "integration": "rebase final concluido sobre ce87041feec7103cc7fea501b36462b2bddaf55d, preservando a revisao humana, o contraste mobile e a exclusao de controles internos do artefato",
-      "fullSuite": "1325/1325 testes aprovados",
+      "focused": "41/41 testes diretamente alterados, 199/199 de jornada, 142/142 de aquisicao e 21/21 de retomadas aprovados",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 33/33 arquivos coincidem com o escopo declarado",
-      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero arquivo de auditoria no artefato e zero erro",
-      "siteCheck": "46/46 URLs tecnicamente validas, canonical proprio, indexabilidade e H1 alinhados, zero pagina orfa e um redirecionamento esperado",
-      "gitDiffCheck": "aprovado",
-      "spreadsheet": "6/6 ready imported, 0 unmatched, 0 duplicate transaction, 2 invalidated excluded, adjustment queue empty",
-      "googleAdsDataManager": "latest scheduled run 6 rows, 0 errors",
-      "appsScriptLiveBaseline": "LeadClassification.gs e GoogleAdsFunnelReview.gs vivos coincidem por SHA-256 normalizado com a base v144; ClassificationReconciliation.gs ainda nao existe no projeto, como esperado antes da publicacao",
-      "searchConsoleBaseline": "sitemap.xml existente esta Processado com 44 paginas; o artefato aprovado passa a conter 46 URLs e exige somente o reenvio do mesmo sitemap apos o deploy",
-      "opsCheck": "SYNC_PENDING esperado antes da publicacao e do fechamento na branch canonica",
-      "externalMutations": "site, Apps Script, Google Ads and Search Console still pending release sequence"
+      "googleAdsPreview": "2 alteracoes de campanha e 0 erros; nenhuma alteracao aplicada",
+      "fullSuite": "1328/1328 testes aprovados",
+      "siteBuild": "180 arquivos, 46 URLs do sitemap, 0 erro e nenhum arquivo interno no artefato",
+      "siteCheck": "46/46 URLs tecnicamente validas, canonical proprio, indexabilidade, H1 e recursos aprovados; 0 pagina orfa",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 15/15 arquivos coincidem com o escopo declarado",
+      "opsCheck": "SYNC_PENDING esperado antes da publicacao"
     }
   },
   "release": {
@@ -149,23 +118,23 @@
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
     "verifiedAt": "",
-    "activationState": "local_integrated_tested_pending_release_preflight",
-    "notes": "A planilha ja foi corrigida no escopo autorizado. Codigo, paginas e documentacao estao integrados sobre o ultimo recibo paralelo e aguardam somente commit exato, preflight final e publicacao."
+    "activationState": "tested_local_waiting_action_time_confirmation",
+    "notes": "Campanhas permanecem somente em previa. Nenhum novo orcamento, anuncio, palavra-chave, sitelink ou schema foi aplicado ao vivo."
   },
   "rollback": {
-    "local": "reverter somente o commit integrado sobre o baseCommit, preservando releases paralelos",
-    "production": "desativar primeiro o gatilho de reconciliacao; pausar somente a palavra ou o sitelink novos; retornar Apps Script e Netlify as versoes anteriores se necessario; preservar ledger, recibos, orcamentos e lances"
+    "local": "reverter somente o commit deste piloto sobre 4484103, preservando os trabalhos paralelos",
+    "production": "pausar somente S_BR_SP_CIRURGIA_MAMA e S_BR_SP_CONTORNO_CORPORAL; restaurar Apps Script e Netlify para as versoes anteriores se a regressao vier do codigo; preservar ledger e campanhas faciais"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro ciclo e 24 horas para integridade; D+7 e D+14 para negocio",
+    "window": "integridade nas primeiras 24 horas; termos e contatos em D+3; negocio em D+7, D+14 e D+30",
     "metrics": [
-      "classificacoes reabertas somente depois de mensagem nova",
-      "contatos validos, qualificados e consultas por campanha e rota resolvida",
-      "frescor da importacao direta e fila de ajustes",
-      "HTTP 200, canonical, sitemap, tracking e politica das novas paginas",
-      "uso dos sitelinks e desempenho da palavra exata como diagnostico"
+      "gasto, termos de pesquisa e negativas necessarias por grupo",
+      "contatos validos, qualificados e consultas por campanha e rota",
+      "taxa de rota resolvida e presenca de GCLID, GBRAID ou WBRAID",
+      "frescor e erros da importacao de qualificados",
+      "status de politica, URLs finais e conformidade dos anuncios"
     ],
-    "rollbackRule": "reverter apenas o componente novo responsavel diante de backlog, fase incorreta, destino errado, vazamento, falsa atribuicao, PII, reprovacao persistente ou regressao downstream"
+    "rollbackRule": "pausar o piloto afetado diante de destino incorreto, falsa atribuicao, PII, falha de importacao, reprovacao persistente ou ausencia de contato valido apos o gate de gasto; nao compensar aumentando lances"
   }
 }

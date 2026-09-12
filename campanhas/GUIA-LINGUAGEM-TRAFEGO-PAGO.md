@@ -15,6 +15,8 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Para buscas como `lifting facial preço`, `valor do lifting` e `quanto custa lifting facial`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`. A promessa do anúncio é explicar componentes, fatores de variação e orçamento individual, não publicar faixa cirúrgica. Para indicação, técnica, resultados e recuperação, preservar `https://draamandaschroeder.com.br/lifting-facial/` como destino principal.
 - Para a palavra exata `[cirurgia de blefaroplastia preço]`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/` no nível da palavra, dentro de `AG_BLEFAROPLASTIA`. A página explica composição e avaliação; não promete faixa privada automática. O sitelink correspondente é `Preço da Blefaroplastia`, restrito ao contexto BLEF.
 - Para o sitelink `Preço do Lifting Cervical`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-cervical-sao-paulo/` somente em `AG_CERVICOPLASTIA`. Não associar a `AG_LIPO_PAPADA`, porque a página diferencia lipo, lifting cervical e planejamento cervicofacial.
+- Para `S_BR_SP_CIRURGIA_MAMA`, separar mastopexia, mamoplastia redutora e prótese em grupos próprios e levar cada termo à página específica. Para `S_BR_SP_CONTORNO_CORPORAL`, separar abdominoplastia e lipoaspiração. Os guias gerais de custo entram somente como sitelinks; não usar uma página genérica como destino principal quando o procedimento já está nomeado.
+- Nas duas campanhas secundárias, começar somente com frase/exata, um RSA por grupo e R$ 8/dia por campanha. Preservar Pesquisa Google, cidade de São Paulo por presença, português, parceiros e Display desligados e Maximizar cliques até existir sinal qualificado suficiente.
 - Os dois novos destinos só podem entrar no Google Ads depois de publicação e verificação HTTP/visual. Nesta intervenção, preservar orçamento, lance, metas, RSAs, negativas, público, agenda, dispositivos, redes e geografia.
 - Manter separados `AG_LIFTING_FACIAL` e `AG_LIFTING_FACIAL_PRECO`. No grupo geral, usar negativas **exatas** de roteamento para as cinco formas canônicas de preço: `[lifting facial preço]`, `[mini lifting facial preço]`, `[preço mini lifting facial]`, `[quanto custa lifting facial]` e `[valor lifting facial]`. As duas primeiras já estão aplicadas; as três restantes dependem de autorização específica. Nunca negativar `preço`, `valor`, `custo`, `quanto custa` ou `valor médio` em nível de campanha, conta ou lista compartilhada enquanto o grupo de preço estiver ativo.
 - Evitar promessas, superlativos, urgência artificial e afirmações como “resultado garantido”.
@@ -68,23 +70,30 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Manter a marcação automática do Google Ads ativada.
 - Preservar o sufixo completo que já está configurado nas seis campanhas: `utm_source=google&utm_medium=cpc&utm_campaign={_camp}&utm_id={campaignid}&utm_adgroup={_ag}&utm_content={creative}&utm_term={keyword}&matchtype={matchtype}&device={device}&network={network}&loc_physical_ms={loc_physical_ms}`.
 - O site reconhece o valor resolvido de `utm_campaign={_camp}` como referência não identificadora e o inclui na mensagem do WhatsApp, mesmo sem cookies. Todos os CTAs do site recebem também um código estável da página (`SITE-...` quando não há campanha), para diferenciar contato pelo site de WhatsApp direto. Quando disponíveis, GCLID, GBRAID e WBRAID também são preservados na sessão de origem e transportados ao WhatsApp para permitir a reconciliação por click ID; isso não ativa tags de medição nem altera o estado de consentimento.
-- As seis campanhas usam, desde 15/08/2026, estes códigos estáveis no parâmetro personalizado `{_camp}`:
+- As seis campanhas anteriores e as duas secundárias autorizadas em 12/09/2026 usam estes códigos estáveis no parâmetro personalizado `{_camp}`:
   - `S_BR_SP_BLEFAROPLASTIA` → `G26BLEF`
   - `S_BR_SP_CIRURGIA_FACIAL` → `G26FACE`
   - `S_BR_SP_LIFTING_CERVICAL` → `G26CERV`
+  - `S_BR_SP_CONTORNO_CORPORAL` → `G26CORP`
   - `S_BR_SP_LIFTING_FACIAL` → `G26LIFT`
+  - `S_BR_SP_CIRURGIA_MAMA` → `G26MAMA`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
-- Os nove grupos ativos usam estes códigos estáveis em `{_ag}`; todos foram conferidos em 15/08/2026 e as quatro lacunas foram corrigidas no mesmo dia:
+- Os nove grupos anteriores e os cinco grupos secundários usam estes códigos estáveis em `{_ag}`; os nove anteriores foram conferidos em 15/08/2026 e os cinco novos entram no contrato em 12/09/2026:
+  - `AG_ABDOMINOPLASTIA` → `ag_abdominoplastia`
   - `AG_BLEFAROPLASTIA` → `ag_blefaroplastia`
   - `AG_CIRURGIA_FACIAL` → `ag_cirurgia_facial`
   - `AG_CERVICOPLASTIA` → `ag_lifting_cervical`
   - `AG_LIPO_PAPADA` → `ag_lipo_papada`
+  - `AG_LIPOASPIRACAO` → `ag_lipoaspiracao`
   - `AG_LIFTING_FACIAL` → `ag_lifting_facial`
   - `AG_LIFTING_FACIAL_PRECO` → `ag_lifting_facial_preco`
   - `AG_MARCA` → `ag_marca`
+  - `AG_MAMOPLASTIA_REDUTORA` → `ag_mamoplastia_redutora`
+  - `AG_MASTOPEXIA` → `ag_mastopexia`
   - `Adulto` em `S_BR_SP_OTOPLASTIA` → `ag_otoplastia_adulto`
   - `AG_OTOPLASTIA_INFANTIL` → `ag_otoplastia_infantil`
+  - `AG_PROTESE_MAMA` → `ag_protese_mama`
 - Os aliases históricos continuam legíveis para preservar o passado, mas não devem ser usados em novas configurações.
 - O agregado externo mantém `Agregados` v2 e acrescenta `Google_Rotas` v1. Esta segunda aba só publica contagens por campanha, grupo, landing e local de CTA registrados; junção por `Opportunity ID`, valores livres/conflitantes como N/D e nenhum identificador na saída. Se o schema rico ainda não estiver materializado, registrar `schema_unavailable` em vez de inferir a rota.
 - O teste móvel do guia de lifting facial usa exclusivamente `data-cta-location="sticky_price_continuity_v1"` no botão fixo. Os novos guias usam `price_planning`/`final_price_planning`/`sticky_price_planning` em BLEF e `price_range_reference`/`final_price_range_reference`/`sticky_price_range_reference` em CERV.
@@ -93,6 +102,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Sem consentimento, GA4, Google Ads e Meta continuam bloqueados. A preservação operacional da referência e de um click ID já presente na URL ocorre sem criar cookie de publicidade e sem marcar consentimento como concedido; nenhum nome, telefone, e-mail ou conteúdo clínico deve ser transportado como parâmetro de mídia.
 - Após consentimento explícito, as tags de medição também podem registrar os eventos permitidos. O click ID permanece no bloco técnico `ID Ads` da mensagem em ambos os estados para permitir preencher a conversão qualificada na planilha.
 - Uma referência `G26...` permite classificar a origem como Google Ads, mas somente `GCLID`, `GBRAID` ou `WBRAID` permite importar a conversão pelo identificador de clique.
+- `G26MAMA` ou `G26CORP` sem `{_ag}`, landing ou procedimento nomeado nunca deve ser convertido por suposição em mastopexia, abdominoplastia ou outra cirurgia. O código resolve a campanha; o grupo e a rota resolvem a intenção específica.
 
 ## Mapa de grupos e páginas
 

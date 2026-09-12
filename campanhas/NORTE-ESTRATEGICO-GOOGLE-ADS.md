@@ -7,7 +7,7 @@
 **Criado em:** 9 de agosto de 2026
 
 **Última revisão estratégica:** 12 de setembro de 2026
-**Próxima revisão prevista:** integridade em 24 horas e leitura D+7/D+14 após a publicação autorizada do candidato de preço BLEF/CERV, ou antes diante de regressão técnica, gasto anormal ou perda de contato válido
+**Próxima revisão prevista:** integridade em 24 horas; leitura D+7/D+14 e decisão em D+30 dos pilotos secundários de mama e corpo, ou antes diante de regressão técnica, gasto anormal ou perda de atribuição
 
 ## 1. Regra de governança
 
@@ -200,11 +200,25 @@ O orçamento total informado para Google Ads é de aproximadamente **R$ 2.800 po
 
 A auditoria pode propor realocação ou aumento do investimento. Todo aumento deve apresentar cenário conservador, base e agressivo; demanda e capacidade necessárias; impacto esperado em intervalo; custo por lead qualificado, consulta e cirurgia; duração mínima; risco; e regra para interromper, manter ou ampliar. Até que essa análise seja aprovada, o valor atual e a distribuição vigente permanecem apenas como estado conhecido, não como recomendação definitiva.
 
-Desde 15 de agosto de 2026, a distribuição operacional autorizada soma **R$ 87 por dia**: blefaroplastia R$ 23, lifting facial R$ 24, lifting cervical R$ 12, otoplastia R$ 15, cirurgia facial R$ 8 e marca R$ 5. Em 4 de agosto de 2026, `S_BR_SP_OTOPLASTIA` passou de R$ 8 para R$ 15 por dia porque estava limitada pelo orçamento. A estratégia de lances permaneceu em Maximizar cliques para não combinar duas mudanças relevantes na mesma janela de observação.
+Desde 15 de agosto de 2026, as seis campanhas prioritárias somam **R$ 87 por dia**: blefaroplastia R$ 23, lifting facial R$ 24, lifting cervical R$ 12, otoplastia R$ 15, cirurgia facial R$ 8 e marca R$ 5. Em 12 de setembro de 2026, Daniel autorizou duas campanhas secundárias incrementais de R$ 8 por dia cada, elevando o total configurado para **R$ 103 por dia** durante o piloto. A referência de cobrança máxima das duas novas campanhas é de aproximadamente **R$ 486,40 por 30,4 dias**; o total mensal de referência da conta passa a aproximadamente **R$ 3.131,20**, sem reduzir ou editar as seis campanhas existentes. A estratégia de lances permanece em Maximizar cliques enquanto o sinal qualificado é escasso.
+
+### 6.3.1 Piloto controlado de mama e abdômen/contorno corporal — decisão de 12/09/2026
+
+**Decisão vigente:** abrir duas campanhas secundárias de Pesquisa por 30 dias, de 12/09 a 12/10/2026, preservando face como foco principal. `S_BR_SP_CIRURGIA_MAMA` (`G26MAMA`) e `S_BR_SP_CONTORNO_CORPORAL` (`G26CORP`) recebem R$ 8/dia cada. Ambas usam somente Rede de Pesquisa Google, português, cidade de São Paulo por presença física, todas as idades incluindo `Desconhecida`, todos os dispositivos, parceiros e Display desligados, Maximizar cliques e a meta personalizada `Lead qualificado GCLID — campanhas`. Não ativar Performance Max, correspondência ampla, expansão automática, tCPA ou conversões otimizadas para leads.
+
+**Estrutura e destinos:** mama separa `AG_MASTOPEXIA` → `/mastopexia/`, `AG_MAMOPLASTIA_REDUTORA` → `/mamoplastia-redutora/` e `AG_PROTESE_MAMA` → `/protese-de-mama/`; corpo separa `AG_ABDOMINOPLASTIA` → `/abdominoplastia/` e `AG_LIPOASPIRACAO` → `/lipoaspiracao/`. Cada grupo começa com um RSA, palavras exatas/frase e linguagem de avaliação, indicação, limites, cicatrizes, recuperação e naturalidade. Os guias gerais de custo podem aparecer apenas como sitelinks contextuais, sem faixa cirúrgica pública e sem afirmar que a consulta será abatida do orçamento.
+
+**Evidência de demanda:** no Planejador de Palavras-chave consultado em 12/09/2026, `mastopexia valor` apareceu com cerca de 720 buscas mensais e faixa superior de CPC de R$ 1,64–4,57; `lipoaspiração valor`, cerca de 590 e R$ 1,55–4,98; `lipoaspiração preço` e `lipoescultura valor`, cerca de 210 cada. Várias sementes médicas foram removidas pelo próprio Google por política de saúde; não solicitar exceção nem contornar a restrição. Volume e CPC são estimativas de plataforma, não prova de paciente qualificada.
+
+**Mensuração:** `{_camp}` mantém `G26MAMA` ou `G26CORP`; `{_ag}` distingue os cinco grupos; marcação automática e `GCLID`/`GBRAID`/`WBRAID` permanecem preservados. A jornada first-party registra campanha, grupo, landing e CTA, e LEADS/CRM resolve apenas códigos e rotas exatas. O código isolado de campanha prova Google Ads, mas não autoriza inventar o procedimento. Lead qualificado só entra na importação padrão com manifestação pessoal, fase canônica e exatamente um click ID elegível; clique, prefill e pergunta inicial de preço isolada não são conversão de negócio.
+
+**Hipótese e decisão:** procura nomeada de alta intenção pode gerar demanda incremental sem diluir face. Conferir em 24 horas elegibilidade, URLs, gasto e atribuição; em D+7 e D+14, termos, contatos válidos, qualificados e consultas; em D+30, decidir manter, redistribuir internamente ou pausar. Pausar imediatamente somente o componente afetado por destino incorreto, política, gasto anormal, perda de códigos/click ID, PII, falsa atribuição ou regressão do atendimento. Com tracking saudável, revisar uma campanha ao atingir R$ 120 sem contato válido e não escalar nenhuma antes de pelo menos dois qualificados e uma consulta agendada. CTR, CPC e força do anúncio são diagnósticos, não critério isolado.
 
 ### 6.4 Decisão vigente após a auditoria integrada — correção antes de escala
 
 A auditoria integrada de 13 de agosto de 2026 foi aprovada como base do trabalho corretivo em 14 de agosto. Até que os gates abaixo sejam cumpridos, vale o **cenário 1: correção e realocação sem aumento líquido**. A execução local das correções não autoriza publicação, renovação, aumento de orçamento nem mudança nas plataformas; cada ação externa continua sujeita a autorização específica.
+
+A autorização específica de 12/09/2026 substitui essa trava somente para o incremento controlado de R$ 16/dia descrito em 6.3.1. As seis campanhas anteriores, seus R$ 87/dia e todas as demais proteções continuam preservados.
 
 - **Google Ads:** manter o orçamento total atual como limite operacional e não adotar tCPA, Performance Max, correspondência ampla nem aumento enquanto `Lead qualificado GCLID` estiver em alerta ou sem reconciliação ponta a ponta.
 - **Meta:** manter `M26F01W/C06H01` como frente contínua de lifting facial somente no WhatsApp e como referência operacional, não como controle causal de outro procedimento. A rota facial Site `M26F02S` recebe R$ 0 de verba nova. O teste de destino será feito apenas no lifting cervical, depois da prova ponta a ponta e sob autorização específica.
@@ -279,11 +293,13 @@ Busca orgânica, presença local e descoberta em buscadores com IA devem ser des
 | `S_BR_SP_BLEFAROPLASTIA` | `G26BLEF` | Procura por blefaroplastia e avaliação das pálpebras |
 | `S_BR_SP_CIRURGIA_FACIAL` | `G26FACE` | Procura facial ainda não limitada a uma técnica |
 | `S_BR_SP_LIFTING_CERVICAL` | `G26CERV` | Pescoço, papada, pele e contorno cervical |
+| `S_BR_SP_CONTORNO_CORPORAL` | `G26CORP` | Abdominoplastia e lipoaspiração, separadas por grupo |
 | `S_BR_SP_LIFTING_FACIAL` | `G26LIFT` | Envelhecimento facial e lifting |
+| `S_BR_SP_CIRURGIA_MAMA` | `G26MAMA` | Mastopexia, mamoplastia redutora e prótese, separadas por grupo |
 | `S_BR_SP_MARCA` | `G26MARCA` | Pessoas que já procuram a Dra. Amanda ou a clínica |
 | `S_BR_SP_OTOPLASTIA` | `G26OTO` | Otoplastia, com distinção entre intenção adulta e infantil |
 
-Os nove grupos ativos têm um parâmetro `{_ag}` canônico. O mapa operacional completo fica em `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`; em 15/08/2026 a cobertura foi confirmada em 9/9 depois da correção das quatro lacunas de lipo de papada, otoplastia adulta, lifting de preço e otoplastia infantil. A prova de valor resolvido no clique, no site, no WhatsApp, em LEADS e no CRM continua sendo gate separado.
+Os nove grupos anteriores e os cinco grupos secundários têm um parâmetro `{_ag}` canônico. O mapa operacional completo fica em `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`; a prova de valor resolvido no clique, no site, no WhatsApp, em LEADS e no CRM continua sendo gate separado.
 
 Esta tabela descreve as campanhas conhecidas, não o portfólio futuro obrigatório. Qualquer nova campanha deve ser sustentada por intenção, página, mensuração, capacidade e hipótese econômica, e acrescentada à tabela antes ou no momento da ativação.
 
@@ -328,7 +344,7 @@ Arquitetura aprovada para páginas de preço:
 - termos genéricos sobre lifting, indicação, técnica, resultados ou recuperação continuam levando à página principal `lifting-facial/`;
 - dúvidas recorrentes sobre técnicas nomeadas, como `deep plane`, devem receber uma confirmação breve de que a Dra. Amanda realiza a abordagem quando indicada, preservando a avaliação individual e sem apresentar uma técnica como universalmente superior;
 - a comunicação pública da página de preço deve ser direta e positiva: não publicar faixas ou valores numéricos da cirurgia; explicar honorários profissionais, anestesia, hospital, materiais, exames, preparo, eventual pernoite e acompanhamento; apresentar opções como Sírio-Libanês, Nove de Julho, Oswaldo Cruz e hospitais com custo mais acessível; informar pagamento à vista por Pix ou débito ou parcelamento antecipado, concluído até a data da cirurgia; e permitir um CTA para conversar no WhatsApp sobre uma faixa geral informativa. Esse CTA deve dizer que a referência não é orçamento, proposta nem garantia, que o valor final pode ficar fora da faixa e que a definição individual depende da avaliação, sem expor decisões internas ou usar tom defensivo;
-- os guias de mama e corpo não apresentam faixas cirúrgicas enquanto não houver valores atuais, aprovados e documentados; também não recebem tráfego pago específico antes de existir campanha ou volume de pesquisa que justifique o teste. Não criar quase clones apenas para ampliar cobertura de busca.
+- os guias de mama e corpo não apresentam faixas cirúrgicas enquanto não houver valores atuais, aprovados e documentados. Desde a decisão de 12/09/2026, podem receber somente sitelinks contextuais das duas campanhas secundárias; as palavras principais continuam nas páginas específicas de cada procedimento. Não criar quase clones apenas para ampliar cobertura de busca.
 
 Decisão vigente para `S_BR_SP_LIFTING_FACIAL` em 15 de agosto de 2026:
 

@@ -1,5 +1,30 @@
 const CAMPAIGN_PROCEDURE_RULES = [
   {
+    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?mastopexia\b)/i,
+    key: "mastopexia",
+    code: "X-MASTO-01",
+  },
+  {
+    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?mamoplastia[_-]redutora\b)/i,
+    key: "mamoplastia_redutora",
+    code: "X-REDUTORA-01",
+  },
+  {
+    pattern: /(?=[\s\S]*\bG26MAMA\b)(?=[\s\S]*(?:\bag[_-])?pr[oó]tese(?:[_-]de)?[_-]mama\b)/i,
+    key: "protese_mama",
+    code: "X-PROTESE-01",
+  },
+  {
+    pattern: /(?=[\s\S]*\bG26CORP\b)(?=[\s\S]*(?:\bag[_-])?abdominoplastia\b)/i,
+    key: "abdominoplastia",
+    code: "X-ABD-01",
+  },
+  {
+    pattern: /(?=[\s\S]*\bG26CORP\b)(?=[\s\S]*(?:\bag[_-])?lipoaspiracao\b)/i,
+    key: "lipoaspiracao",
+    code: "X-LIPO-01",
+  },
+  {
     pattern: /\bM26F(?:01W|02S)\b/i,
     key: "lifting_facial",
     code: "M-C06-WA-01",

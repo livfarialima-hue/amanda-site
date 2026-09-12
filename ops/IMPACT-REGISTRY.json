@@ -114,6 +114,8 @@
         "campanhas/site-enhancements.js",
         "campanhas/site-technical-regression.test.mjs",
         "contorno-corporal/index.html",
+        "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+        "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
         "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
         "lifting-facial/index.html",
         "lifting-cervical/index.html",
@@ -308,6 +310,8 @@
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
         "netlify/functions/lib/lead-classifier.test.mjs",
+        "netlify/functions/lib/procedure-context.mjs",
+        "netlify/functions/lib/procedure-context.test.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
@@ -327,13 +331,14 @@
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/lead-classifier.test.mjs",
+        "netlify/functions/lib/procedure-context.test.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
         "netlify/functions/lib/whatsapp-automation.test.mjs"
       ],
       "requiredCommands": [
-        "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+        "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
         "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "npm.cmd run change:check",
         "npm.cmd run architecture:check",
@@ -371,6 +376,8 @@
         "conteudos/index.html",
         "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
         "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+        "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+        "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
         "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
         "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
         "lifting-facial/index.html",
@@ -426,6 +433,8 @@
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/patient-replies.mjs",
         "netlify/functions/lib/patient-replies.test.mjs",
+        "netlify/functions/lib/procedure-context.mjs",
+        "netlify/functions/lib/procedure-context.test.mjs",
         "sitemap.xml"
       ],
       "requiredTestFiles": [
@@ -435,10 +444,11 @@
         "campanhas/site-technical-regression.test.mjs",
         "campanhas/conversion-tracking.test.mjs",
         "google-ads-scripts/google-ads-search-review-email.test.mjs",
-        "netlify/functions/lib/patient-replies.test.mjs"
+        "netlify/functions/lib/patient-replies.test.mjs",
+        "netlify/functions/lib/procedure-context.test.mjs"
       ],
       "requiredCommands": [
-        "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
+        "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
         "npm.cmd run change:check",
         "npm.cmd run architecture:check",
         "npm.cmd test",

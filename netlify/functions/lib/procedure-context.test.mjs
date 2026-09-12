@@ -24,11 +24,21 @@ test("Google and Meta campaign references preserve their procedure mapping", () 
     ["", "G26CERV", "lifting_cervical", "G-LIFT-CERV-01"],
     ["", "G26BLEF", "blefaroplastia", "G-BLEF-01"],
     ["", "G26OTO", "otoplastia", "G-OTO-01"],
+    ["", "G26MAMA-mastopexia", "mastopexia", "X-MASTO-01"],
+    ["", "G26MAMA-mamoplastia-redutora", "mamoplastia_redutora", "X-REDUTORA-01"],
+    ["", "G26MAMA-protese-mama", "protese_mama", "X-PROTESE-01"],
+    ["", "G26CORP-abdominoplastia", "abdominoplastia", "X-ABD-01"],
+    ["", "G26CORP-lipoaspiracao", "lipoaspiracao", "X-LIPO-01"],
   ];
 
   for (const [text, reference, key, code] of cases) {
     assert.deepEqual(detectProcedure(text, reference, null), { key, code });
   }
+});
+
+test("a campanha secundária sem grupo não inventa um procedimento", () => {
+  assert.equal(detectProcedure("", "G26MAMA", null), null);
+  assert.equal(detectProcedure("", "G26CORP", null), null);
 });
 
 test("generic lifting keeps the established facial fallback", () => {

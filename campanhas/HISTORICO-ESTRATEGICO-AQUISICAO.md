@@ -6,6 +6,20 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — pilotos secundários de mama e abdômen/contorno corporal
+
+- **Status:** autorizados por Daniel; pacote local e prévia de publicação em preparação antes da escrita final no Google Ads.
+- **Área:** novas campanhas `S_BR_SP_CIRURGIA_MAMA` (`G26MAMA`) e `S_BR_SP_CONTORNO_CORPORAL` (`G26CORP`), cinco grupos, páginas específicas, LEADS/CRM e agregado anônimo. As seis campanhas existentes permanecem fora do escopo de edição.
+- **Evidência:** a conta tinha seis campanhas ativas, R$ 87/dia e somente um evento de conversão qualificada exibido em 30 dias. O Planejador indicou demanda aproximada de 720 buscas/mês para `mastopexia valor`, 590 para `lipoaspiração valor` e 210 para `lipoaspiração preço` e `lipoescultura valor`, com CPC superior estimado em torno de R$ 1,55–4,98. Várias sementes foram bloqueadas por política de saúde e não receberão pedido de exceção.
+- **Mudança:** dois pilotos de Pesquisa, R$ 8/dia cada, por 30 dias; São Paulo por presença, português, todos os dispositivos/idades incluindo desconhecida, parceiros e Display desligados, Maximizar cliques e meta personalizada de lead qualificado. Mama separa mastopexia, redução e prótese; corpo separa abdominoplastia e lipoaspiração. Um RSA por grupo, somente exata/frase, sitelinks contextuais e destinos específicos.
+- **Mensuração:** códigos canônicos de campanha e grupo, marcação automática, click ID e jornada first-party são preservados até LEADS/CRM. Os registradores aceitam somente campanha, grupo e rota exatos; código genérico de mama/corpo não inventa procedimento. A importação offline continua exigindo manifestação pessoal, fase qualificada e exatamente um identificador elegível.
+- **Correção editorial associada:** os dois guias gerais de custo deixam de afirmar que R$ 500 da consulta será abatido da cirurgia; consulta e orçamento cirúrgico ficam explicitamente independentes.
+- **Hipótese:** demanda nomeada e de alta intenção pode acrescentar pacientes compatíveis sem diluir o posicionamento facial.
+- **Métrica:** contato válido, qualificado, consulta agendada/realizada e custo por etapa, separados por campanha, grupo e landing; impressões, CTR, CPC e força do anúncio são apenas diagnóstico.
+- **Revisão:** saúde em 24 horas, busca/funil em D+7 e D+14 e decisão em D+30; revisar também ao atingir R$ 120 por campanha sem contato válido.
+- **Regra para manter/ampliar:** preservar se tracking estiver íntegro e houver progressão real; não ampliar antes de dois qualificados e uma consulta agendada.
+- **Regra para reverter:** pausar somente a campanha, grupo, palavra, anúncio ou sitelink responsável diante de destino incorreto, política, gasto anormal, perda de atribuição, falsa conversão, PII ou regressão de atendimento.
+
 ## 12 de setembro de 2026 — páginas de preço BLEF/CERV, palavra exata e leitura por rota
 
 - **Status:** candidato local em worktree isolada; nenhuma publicação de site/Apps Script, migração de planilha, alteração de Google Ads ou pausa de conexão foi executada.
