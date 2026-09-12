@@ -875,3 +875,30 @@ Decisão preparada, ainda dependente da publicação e dos preflights externos d
 **Métrica e revisão:** integridade após publicar; leitura em D+7, D+14 e D+30 de contatos válidos, qualificados e consultas atribuíveis às novas páginas. Impressões, consultas orgânicas e cliques são diagnósticos. Registrar as mudanças simultâneas do site e não atribuir causalidade a este lote sem desenho e amostra suficientes. A revisão médica posterior cabe à Dra. Amanda, quando disponível.
 
 **Manter ou corrigir:** manter se páginas, fontes, busca interna e tracking estiverem íntegros. Corrigir ou retirar o trecho afetado diante de divergência clínica, promessa indevida ou afirmação sem suporte; restaurar o deploy anterior somente diante de regressão técnica material. Publicação não equivale a aprovação médica nem a resultado de marketing.
+
+## 26. Decisão vigente de 12/09/2026 — piloto regional Meta sem alteração de orçamento
+
+A releitura autenticada do Gerenciador de Anúncios confirmou que `M26C01W` e `M26F01W` continuam ativas, cada uma com orçamento vitalício de R$ 900 e término em 11/10/2026 às 23:59, GMT-3. No conjunto cervical `120251248762180627`, a linha de base permaneceu em São Paulo +20 km, 40–65+, todos os gêneros, posicionamentos Advantage+, destino manual exclusivo WhatsApp e otimização para conversas. Os sete rascunhos anteriores continuaram separados.
+
+Daniel determinou que nenhum orçamento seja alterado. Por isso, o teste de cidades próximas usa somente a capacidade já contratada da campanha cervical e não cria campanha, conjunto, anúncio ou verba adicional.
+
+Decisão vigente:
+
+- manter a campanha facial `120251254720690627`, o conjunto `120251254720700627` e o anúncio `120251254720680627` integralmente como controle, sem mudar público, texto, mídia, data, orçamento ou estado;
+- no conjunto cervical `120251248762180627`, preservar São Paulo +20 km e acrescentar somente Jundiaí, Vinhedo e Valinhos pelos limites municipais, sem raio adicional e sem ativar a expansão para pessoas apenas interessadas nessas regiões;
+- renomear o conjunto para `M26C01W | SP 20km + Jundiaí/Vinhedo/Valinhos | 40+ | WA`, mantendo o mesmo ID e o mesmo código de atribuição;
+- no anúncio ativo `120251248762170627`, manter vídeo, identidade, CTA, modelo de conversa, mensagem pronta e código `M26C01W-C07H01`, mas explicitar que a avaliação é presencial em Pinheiros e que pessoas de outras cidades devem considerar o deslocamento para consulta e, se houver indicação, procedimento;
+- usar o título `Lifting cervical: avaliação em São Paulo` e a descrição `Consulta presencial em Pinheiros.`;
+- preservar exatamente os dois orçamentos vitalícios de R$ 900, os términos, a idade 40–65+, os gêneros, o lance, os posicionamentos, o número de WhatsApp, os estados dos anúncios e todos os demais objetos e rascunhos.
+
+**Hipótese:** tornar explícito o local presencial e incluir três cidades próximas com acesso viário a São Paulo poderá gerar demanda regional disposta a se deslocar, sem aumentar investimento e sem diluir o aprendizado da campanha facial. Como a mudança ocorre dentro do mesmo conjunto e do mesmo orçamento, o resultado é diagnóstico de viabilidade regional, não um teste causal isolado.
+
+**Métrica principal:** contatos válidos e qualificados, cidade informada, confirmação de disponibilidade para deslocamento, consultas agendadas/realizadas e custo por etapa do cervical. Conversas, alcance, frequência, CPM, CTR e custo por conversa servem como diagnóstico. Resultados por cidade devem ser lidos no detalhamento geográfico e reconciliados com o downstream; não somar a conversa da Meta ao mesmo contato da LEADS.
+
+**Revisão:** integridade logo após a publicação e em 24 horas; primeira leitura de mídia e qualidade em D+7; decisão em D+14, respeitando o fechamento da coorte e a cobertura de classificação. Não alterar orçamento durante a janela.
+
+**Regra para manter:** conservar as três cidades enquanto houver entrega sem incidente e pelo menos sinal de contato válido com disponibilidade real de deslocamento, sem piora material do custo qualificado total.
+
+**Regra para reverter:** remover somente Jundiaí, Vinhedo e Valinhos, restaurar o nome anterior do conjunto e os três textos anteriores do anúncio se houver entrega fora das cidades selecionadas, confusão sobre atendimento em São Paulo, perda de qualidade ou ausência de contato válido após R$ 150 de gasto cervical com tracking saudável. O rollback não altera orçamento, datas, campanha facial, vídeo, CTA, WhatsApp ou códigos.
+
+**Estado de execução:** rascunho privado preparado no Meta Ads, sem publicação. O contador passou de sete para nove porque o conjunto e o anúncio cervical receberam edições; na publicação final somente esses dois itens podem ser selecionados, mantendo os sete rascunhos anteriores intactos.

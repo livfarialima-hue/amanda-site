@@ -6,6 +6,17 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — piloto regional Meta cervical sem verba adicional
+
+- **Status:** rascunho privado preparado no Meta Ads; publicação externa ainda pendente da revisão e confirmação finais.
+- **Área:** conjunto cervical `120251248762180627` e anúncio ativo `120251248762170627`; campanha facial preservada como controle.
+- **Evidência:** `M26C01W` registrou 71 conversas a R$ 4,22, 65 contatos identificados, 11 válidos/qualificados e a única consulta agendada recente. A releitura autenticada confirmou orçamento vitalício de R$ 900, término em 11/10/2026 às 23:59, São Paulo +20 km, idade 40–65+, todos os gêneros, WhatsApp manual, posicionamentos Advantage+ e sete rascunhos anteriores. Daniel proibiu qualquer alteração de orçamento.
+- **Mudança preparada:** preservar São Paulo +20 km e acrescentar Jundiaí, Vinhedo e Valinhos somente pelos limites municipais; renomear o conjunto para refletir as cidades; explicitar no texto, título e descrição do anúncio que a avaliação é presencial em Pinheiros e que o deslocamento a São Paulo deve ser considerado. IDs, vídeo, CTA, modelo de conversa, mensagem pronta e código permanecem iguais.
+- **Preservações:** R$ 900 em cada campanha, datas, lance, idade, gêneros, posicionamentos, WhatsApp, estados dos anúncios, `M26F01W` e os sete rascunhos antigos não mudam. Nenhum objeto ou orçamento novo é criado.
+- **Hipótese:** a combinação de presença municipal nas três cidades com transparência sobre o atendimento em São Paulo pode identificar procura regional realmente disposta a se deslocar, usando a capacidade já disponível.
+- **Métrica:** contato válido/qualificado, cidade, disponibilidade de deslocamento, consulta agendada/realizada e custo por etapa; métricas de mídia são diagnósticas e a leitura por cidade deve ser reconciliada com o funil.
+- **Revisão:** integridade imediata e em 24 horas; qualidade em D+7; decisão em D+14. Manter com sinal válido e deslocamento confirmado; reverter apenas cidades, nome e textos diante de localização incorreta, confusão operacional, piora material ou R$ 150 sem contato válido com tracking saudável.
+
 ## 12 de setembro de 2026 — pilotos secundários de mama e abdômen/contorno corporal
 
 - **Status:** publicados, ativados e verificados ao vivo em 12/09/2026; monitoramento de integridade em 24 horas e de negócio em D+7/D+14/D+30.
