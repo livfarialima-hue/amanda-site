@@ -8,6 +8,7 @@ const bodyStylesheet = readFileSync(new URL("campanhas/conversion-pages-body.css
 const conversionStylesheet = readFileSync(new URL("campanhas/conversion-pages.css", root), "utf8");
 const contentLibraryStylesheet = readFileSync(new URL("campanhas/content-library.css", root), "utf8");
 const siteEnhancementsStylesheet = readFileSync(new URL("campanhas/site-enhancements.css", root), "utf8");
+const classicVisualStylesheet = readFileSync(new URL("campanhas/conversion-pages-classic-visual.css", root), "utf8");
 const secondaryPages = [
   "abdominoplastia",
   "braquioplastia",
@@ -100,7 +101,16 @@ test("secondary procedure stylesheet contains scoped contrast overrides", () => 
   assert.match(contentLibraryStylesheet, /\.cl-eyebrow \{[\s\S]*?color: #75584f;/);
   assert.match(contentLibraryStylesheet, /\.cl-consultation-action > span \{[\s\S]*?color: #75584f;/);
   assert.match(siteEnhancementsStylesheet, /button\[class\*="carousel-button"\]:disabled \{[\s\S]*?color: #584b46 !important;/);
+  assert.match(siteEnhancementsStylesheet, /\.auxiliary-carousel-controls button:disabled \{[\s\S]*?background: #d8cfca;[\s\S]*?color: #584b46;[\s\S]*?opacity: 1;/);
+  assert.match(siteEnhancementsStylesheet, /\.breadcrumb \.sep \{[\s\S]*?color: #75584f;[\s\S]*?opacity: 1;/);
   assert.match(contentLibraryStylesheet, /\.cl-search-suggestions button \{\s*min-height: 44px;/);
+});
+
+test("mobile video viewers keep a stable, contained media frame", () => {
+  for (const css of [siteEnhancementsStylesheet, classicVisualStylesheet]) {
+    assert.match(css, /\.curated-video-media(?:,| \{)[\s\S]*?height: min\(62dvh, 580px\);/);
+    assert.match(css, /\.curated-video-media video(?:,| \{)[\s\S]*?height: 100%;[\s\S]*?object-fit: contain/);
+  }
 });
 
 test("every secondary procedure page requests the contrast-fixed stylesheet", () => {
@@ -168,11 +178,11 @@ test("mama and body pages avoid formulaic copy and load the humanized dynamic te
   for (const page of refreshedSecondaryPages) {
     const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
     assert.match(html, /secondary-conversion\.js\?v=20260912-human-copy-2/);
-    assert.match(html, /site-enhancements\.js\?v=20260912-sitewide-copy-1/);
+    assert.match(html, /site-enhancements\.js\?v=20260912-mobile-media-1/);
   }
 
   const contourHtml = readFileSync(new URL("contorno-corporal/index.html", root), "utf8");
-  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-sitewide-copy-1/);
+  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-mobile-media-1/);
   assert.match(contourHtml, /conversion-pages-body\.css\?v=20260912-human-contrast-3/);
 
   const mamaHtml = readFileSync(new URL("mama/index.html", root), "utf8");
@@ -187,6 +197,8 @@ test("mama and body pages avoid formulaic copy and load the humanized dynamic te
   assert.match(enhancementsScript, /Um lugar reservado para conversar com calma/);
   assert.ok(enhancementsScript.includes("poster=\"/campanhas/assets/amanda-operando.jpg\""));
   assert.ok(enhancementsScript.includes("var href = item[2].replace(/^\\.\\.\\//, '/');"));
+  assert.match(enhancementsScript, /function cancelPendingReset\(\)/);
+  assert.match(enhancementsScript, /if \(modal\.classList\.contains\('is-open'\)\) return;/);
   assert.doesNotMatch(enhancementsScript, /a associação entra na conversa|orientar a leitura — não para prometer/i);
 });
 
@@ -220,7 +232,10 @@ test("public pages avoid formulaic AI wording and preserve strategic consultatio
     assert.match(text, /consulta|avaliação/i, `${pageFile} consultation cue`);
     assert.match(html, /data-track=["']whatsapp["']/i, `${pageFile} WhatsApp CTA`);
     if (/site-enhancements\.css\?v=/i.test(html)) {
-      assert.match(html, /site-enhancements\.css\?v=20260912-sitewide-copy-2/i, `${pageFile} CSS cache version`);
+      assert.match(html, /site-enhancements\.css\?v=20260912-mobile-media-1/i, `${pageFile} CSS cache version`);
+    }
+    if (/site-enhancements\.js\?v=/i.test(html)) {
+      assert.match(html, /site-enhancements\.js\?v=20260912-mobile-media-1/i, `${pageFile} script cache version`);
     }
   }
 

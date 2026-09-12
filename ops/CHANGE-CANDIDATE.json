@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-COPY-HUMANIZATION-CONVERSION-2026-09-12",
-  "title": "Humanizar a comunicacao publica e preservar a repeticao estrategica em cada pagina",
-  "status": "published_verified",
-  "baseCommit": "f6fabb80ec7ba1cc433a64b8dee75c970d0d432c",
+  "changeId": "SITE-MOBILE-MEDIA-INTEGRITY-2026-09-12",
+  "title": "Estabilizar imagens, videos e contraste do site em celulares",
+  "status": "tested_local",
+  "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou publicar todo o conjunto e ler depois da publicacao. Pediu a revisao das demais paginas, a retirada de termos com aparencia de IA e confirmou que a repeticao estrategica deve permanecer porque cada paciente acessa apenas parte do site. O preflight externo vinculara essa autorizacao ao commit funcional exato."
+    "note": "Daniel pediu para corrigir todo o site, avaliar se ficou bom e adequado para mobile e publicar depois da validacao. A autorizacao inclui os ajustes de imagens, videos, contraste e cache desta revisao, sem ampliar para campanhas, bot, planilhas ou Apps Script."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -27,9 +27,12 @@
       "avaliacao-facial/index.html",
       "blefaroplastia/index.html",
       "braquioplastia/index.html",
-      "campanhas/content-library.css",
-      "campanhas/conversion-pages.css",
-      "campanhas/secondary-conversion.css",
+      "campanhas/assets/conteudos/videos/medo-de-resultados-exagerados-poster.webp",
+      "campanhas/assets/conteudos/videos/olhar-envelhecido-blefaroplastia-poster.webp",
+      "campanhas/assets/conteudos/videos/queixa-e-solucao-face-poster.webp",
+      "campanhas/assets/otoplastia-infantil/otoplastia-em-crianca-poster.webp",
+      "campanhas/assets/video-apresentacao-clinica-liv-poster.webp",
+      "campanhas/conversion-pages-classic-visual.css",
       "campanhas/site-enhancements.css",
       "campanhas/site-enhancements.js",
       "campanhas/site-technical-regression.test.mjs",
@@ -40,7 +43,6 @@
       "conteudos/como-escolher-protese-de-mama/index.html",
       "conteudos/consulta-cirurgia-plastica/index.html",
       "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
       "conteudos/lifting-facial-ou-injetaveis/index.html",
       "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
       "conteudos/lipoenxertia-facial/index.html",
@@ -56,7 +58,6 @@
       "conteudos/recuperacao-lifting-facial/index.html",
       "conteudos/seguranca-cirurgia-plastica/index.html",
       "contorno-corporal/index.html",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "index.html",
       "injetaveis/index.html",
       "lifting-cervical/index.html",
@@ -77,90 +78,89 @@
       "pos-bariatrica/index.html",
       "privacidade/index.html",
       "procedimentos/index.html",
-      "protese-de-mama/index.html",
-      "sitemap.xml"
+      "protese-de-mama/index.html"
     ]
   },
   "impact": {
     "consumers": [
-      "pacientes que chegam diretamente a qualquer pagina de procedimento ou conteudo",
-      "CTAs de consulta e referencias por procedimento enviadas ao WhatsApp",
-      "Google Search e ferramentas de IA que leem texto visivel, metadados, dados estruturados e sitemap",
+      "pacientes que acessam qualquer pagina do site em celulares",
+      "imagens, videos diretos e visualizador de videos educativos",
+      "controles de carrossel e breadcrumbs em paginas auxiliares",
       "build estatico e publicacao do Netlify"
     ],
     "preservedInvariants": [
-      "cada pagina mantem a repeticao util de avaliacao medica, limites, seguranca, credenciais, localizacao e convite para conversar",
-      "a revisao remove bordoes e redundancias vazias sem enfraquecer nomes de procedimentos ou respostas procuradas no Google",
-      "URLs, canonicals, numero de WhatsApp, textos pre-preenchidos, atributos de tracking e destinos dos links permanecem iguais",
-      "conteudo medico continua educativo, individualizado e sem promessa de indicacao, resultado, prazo ou valor cirurgico",
-      "imagens preservam origem, dimensoes e texto alternativo; videos preservam poster, controles, playsinline e origem MP4, com correcao apenas dos caminhos dinamicos que falhavam em dois artigos",
-      "identidade visual e estrutura responsiva permanecem; cores auxiliares de baixo contraste e alvos de toque pequenos sao corrigidos sem mudar a paleta principal",
-      "Apps Script, Bruna, YCloud, LEADS, CRM, Calendar, orcamentos e campanhas permanecem sem alteracao",
-      "os pilotos secundarios de Google Ads presentes no baseline continuam apenas preparados, sem qualquer ativacao ou escrita externa nesta publicacao",
-      "o pacote de campanhas, mensuracao, Apps Script v147, plano e recibos encerrado em f6fabb80ec7ba1cc433a64b8dee75c970d0d432c permanece integral e fora do escopo desta publicacao"
+      "textos, CTAs, numero de WhatsApp, mensagens pre-preenchidas, atributos de tracking, URLs e canonicals permanecem iguais",
+      "os arquivos MP4 e o conteudo medico permanecem iguais; somente dimensoes, proporcao reservada e poster extraido do proprio video sao ajustados",
+      "cada pagina continua preservando a repeticao estrategica de avaliacao, limites, seguranca, credenciais, localizacao e convite para contato",
+      "o visualizador mobile mantem controles, playsinline, botao de fechar acessivel e quadro estavel antes e depois do play",
+      "as fotos de equipe de otoplastia preservam o arquivo original e o rosto da equipe, com altura compacta e enquadramento consistente",
+      "Apps Script, Bruna, YCloud, WhatsApp, LEADS, CRM, Calendar, campanhas, anuncios, orcamentos e dados operacionais permanecem sem alteracao"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-publication",
-        "system": "Git canonico, Netlify de producao e dominio publico",
+        "system": "Git canonico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T15:20:10-03:00",
-        "reference": "origin/reestruturacao-site esta em f6fabb80ec7ba1cc433a64b8dee75c970d0d432c; o artefato publico equivalente esta pronto no deploy Netlify 6aa59666f301b80008ffb340, commit cfee5263ddfc09681c381b08e9498622904b3ced, porque o recibo final usou skip ci."
+        "checkedAt": "2026-09-12T19:18:00-03:00",
+        "reference": "origin/reestruturacao-site confirmado em 93d7beafbd700791f2f6e0dc302b96f6da898808 antes da criacao do worktree isolado; o Netlify sera relido novamente no preflight externo do commit funcional."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T15:36:54-03:00",
+    "completedAt": "2026-09-12T19:27:07-03:00",
     "commands": [
+      "node --check campanhas/site-enhancements.js",
+      "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs campanhas/site-technical-regression.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "git diff --check"
+      "npm.cmd run site:check -- --summary",
+      "git diff --check",
+      "Chrome real em 360x800 e 430x932 nas 46 rotas, com reproducao direta e abertura de todos os modais"
     ],
     "results": {
-      "focusedCopyAndContrast": "17/17 testes aprovados; a protecao cobre as 46 rotas publicas, bloqueia bordoes artificiais e exige credenciais, referencia a consulta e CTA de WhatsApp nas paginas indexaveis",
-      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1330/1330 testes aprovados apos a reconciliacao com o baseline mais recente, sem falha, cancelamento ou teste ignorado",
-      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo interno no artefato",
-      "siteCheck": "46/46 URLs com canonical proprio, indexabilidade, uma H1, recursos presentes e zero pagina orfa",
-      "mediaTechnical": "35/35 videos estaticos com poster; todas as imagens referenciadas com dimensoes e nenhum recurso ausente",
-      "mobileVisual": "46/46 rotas verificadas novamente em navegador real a 390x844 apos corrigir os contrastes encontrados no primeiro pos-voo; zero overflow, baixo contraste, alvo pequeno, midia quebrada, erro de video ou erro de script; 18 modais de video abertos com sucesso",
-      "linkAndSchemaIntegrity": "46/46 rotas preservam hrefs, atributos de tracking do WhatsApp, fontes de imagem, posters e canonicals; todos os blocos JSON-LD continuam validos"
+      "focusedRegression": "22/22 testes focados aprovados antes do gate integral",
+      "mobileRuntime": "92 execucoes de pagina; 40 reproducoes diretas e 72 aberturas de modal; zero overflow, contraste insuficiente, midia superdimensionada, quebra de script ou mudanca de quadro no play",
+      "transientRetry": "as tres leituras tardias de /injetaveis/ em 430x932 foram repetidas em tres sessoes novas; todas as imagens carregaram e os dois videos tocaram com deslocamento de 0 px",
+      "visualReview": "otoplastia adulta e infantil, videos editoriais, video da clinica, modal, controles desativados e breadcrumb revisados em capturas reais de 430x932; enquadramento e legibilidade aprovados",
+      "fullSuite": "1335/1335 testes aprovados; architecture:check, change:check, verificacao sintatica e git diff --check aprovados",
+      "siteBuild": "185 arquivos gerados para 46 URLs, sem arquivos de auditoria ou operacao no artefato; site:check aprovou 46 HTTP 200, 46 canonicals proprios, 46 paginas indexaveis, um H1 por pagina, zero orfas, zero recursos ausentes e 35 videos com poster e dimensoes"
     },
     "crossConsumerCases": [
-      "as 46 rotas do sitemap foram revisadas e 35 paginas receberam alteracao textual",
-      "paginas de entrada mantem a mesma informacao essencial mesmo quando o paciente nao percorre o restante do site",
-      "guias de custo explicam composicao do orcamento sem publicar preco cirurgico ou prometer cobertura",
-      "CTAs continuam usando o mesmo WhatsApp, procedimento, localizacao e referencia de campanha",
-      "dateModified e sitemap registram a mudanca sem alterar lastReviewed quando a revisao medica anterior continua sendo a vigente"
+      "todos os 35 elementos de video estaticos reservam largura e altura",
+      "os 20 videos diretos reservam a proporcao intrinseca antes da reproducao",
+      "cinco fontes verticais usam posters verticais extraidos do proprio video em 15 posicoes diretas",
+      "as duas paginas de otoplastia limitam a foto de equipe a 280 px no carrossel mobile",
+      "o fechamento e a reabertura imediata do modal nao permitem que a limpeza anterior apague o novo video",
+      "28 paginas carregam a revisao de CSS e 45 carregam a revisao de JavaScript com cache novo"
     ]
   },
   "release": {
-    "approvedCommit": "d8063b058ee854a1d65ab5a2b55d2cee453610c4",
-    "netlifyDeployId": "6aa59be5502cb30008e0f6ee",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 147,
-    "verifiedAt": "2026-09-12T15:42:18-03:00",
+    "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "7bfb88a6726f0de20e97ab03cdfdcb723d762b93afef5fa94be9f3ff80dce60d",
-    "activationState": "sitewide_copy_live_monitoring",
-    "notes": "Git canonico e Netlify foram publicados com o commit funcional final. O primeiro pos-voo encontrou dois grupos de contraste residual, corrigidos no commit final e em cache novo. O dominio aprovou 46/46 rotas, 51/51 midias e a auditoria Chrome 390x844; a mesma projecao do Plano Executivo foi substituida no Drive e relida com commit, deploy e repeticao estrategica presentes. Apps Script permaneceu na v147 sem escrita neste changeId."
+    "drivePlanSha256": null,
+    "activationState": "mobile_media_fix_pending_publication",
+    "notes": "Publicacao ainda nao executada. O ultimo deploy conhecido e 6aa59be5502cb30008e0f6ee, referente ao commit funcional d8063b058ee854a1d65ab5a2b55d2cee453610c4 e ao recibo Git 93d7beafbd700791f2f6e0dc302b96f6da898808."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre o baseline f6fabb80ec7ba1cc433a64b8dee75c970d0d432c, preservando todo trabalho paralelo",
-    "production": "restaurar o deploy Netlify 6aa59666f301b80008ffb340 se houver regressao confirmada de texto, layout, midia, contraste, tracking ou indexabilidade"
+    "local": "reverter somente o commit funcional deste changeId sobre 93d7beafbd700791f2f6e0dc302b96f6da898808, preservando todo trabalho paralelo",
+    "production": "restaurar o deploy Netlify 6aa59be5502cb30008e0f6ee diante de regressao confirmada de texto, tracking, layout, midia, contraste ou indexabilidade"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
     "window": "pos-voo imediato e 24 horas para integridade; 7 e 14 dias para contatos validos e consultas",
     "metrics": [
-      "HTTP, canonical, indexabilidade, dados estruturados, sitemap e ausencia das expressoes bloqueadas",
-      "quebras de linha, overflow, contraste, imagens, posters e videos em mobile",
-      "cliques qualificados nos CTAs e referencias corretas por procedimento",
+      "HTTP, canonical, indexabilidade, sitemap e recursos estaticos",
+      "overflow, contraste, enquadramento, poster, reproducao e estabilidade visual em mobile",
+      "cliques qualificados nos CTAs sem mudanca de tracking",
       "contatos validos, leads qualificados e consultas originados das paginas"
     ],
-    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, midia indisponivel, contraste impeditivo, frase clinicamente inadequada ou regressao de indexabilidade"
+    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, midia indisponivel, contraste impeditivo, salto de layout no play ou regressao de indexabilidade"
   }
 }
