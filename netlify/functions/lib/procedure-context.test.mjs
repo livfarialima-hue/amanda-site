@@ -39,6 +39,8 @@ test("Google and Meta campaign references preserve their procedure mapping", () 
 test("a campanha secundária sem grupo não inventa um procedimento", () => {
   assert.equal(detectProcedure("", "G26MAMA", null), null);
   assert.equal(detectProcedure("", "G26CORP", null), null);
+  assert.equal(detectProcedure("", "G26MAMA-ag_cirurgia_mama_preco", null), null);
+  assert.equal(detectProcedure("", "G26CORP-ag_contorno_corporal_preco", null), null);
 });
 
 test("generic lifting keeps the established facial fallback", () => {

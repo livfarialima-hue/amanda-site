@@ -6,6 +6,20 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — candidato de roteamento por intenção nas campanhas secundárias
+
+- **Status:** implementação local autorizada; publicação coordenada e recibos vivos pendentes.
+- **Área:** `S_BR_SP_CIRURGIA_MAMA`, `S_BR_SP_CONTORNO_CORPORAL`, dois novos grupos de preço, oito palavras existentes, seis negativas exatas, dois RSAs, agregado `Google_Rotas` e rotina de revisão somente leitura.
+- **Evidência:** a releitura ao vivo encontrou as duas campanhas ativas, ainda sem impressão, clique ou gasto. Cinco palavras de preço/valor estavam misturadas aos grupos de mastopexia/prótese e três ao grupo de lipoaspiração, todas com destino na página de procedimento. Os dois guias gerais de custo já estavam publicados, HTTP 200, rastreáveis e com comunicação direta sobre composição do orçamento, consulta e pagamento. O piloto anterior de lifting facial mostrou que intenção de preço pode consumir cliques sem downstream, portanto a separação é um teste controlado, não promessa de ganho.
+- **Mudança candidata:** criar `AG_CIRURGIA_MAMA_PRECO` e `AG_CONTORNO_CORPORAL_PRECO`, apontar seus RSAs aos guias gerais, recriar neles as oito palavras com a mesma correspondência e pausar as oito originais somente depois da prévia sem erro. Acrescentar seis negativas exatas de roteamento nos grupos de origem. Preservar campanhas, R$ 8/dia em cada uma, lances, meta qualificada, redes, geografia, idades, dispositivos, agenda, sitelinks e os cinco RSAs atuais.
+- **Comunicação:** nenhuma reescrita das páginas neste ciclo. O conteúdo atual já corresponde à intenção e mudar texto junto com a estrutura impediria atribuir o efeito ao roteamento. Não criar clones nem publicar faixa cirúrgica.
+- **Mensuração e lógica:** registrar `ag_cirurgia_mama_preco` e `ag_contorno_corporal_preco` antes de ativá-los. O agregado aceita grupo e landing exatos, mas não transforma uma procura geral de preço em mastopexia, prótese, lipo ou abdominoplastia sem manifestação da pessoa. A rotina somente leitura passa a reconhecer os procedimentos das campanhas e o orçamento total vigente de R$ 103/dia.
+- **Hipótese:** o alinhamento explícito termo → RSA → guia de custo aumentará continuidade e permitirá comparar intenção de preço com intenção de procedimento sem elevar gasto.
+- **Métrica principal:** contatos válidos, qualificados, consultas e custo por etapa em cada grupo/landing; como guardrails, resolução de `{_ag}`, click ID, políticas, termos e gasto.
+- **Revisão:** integridade em 24 horas; negócio em D+7, D+14 e D+30, ou ao atingir R$ 120 por campanha sem contato válido.
+- **Regra para manter:** manter se URLs e atribuição permanecerem resolvidas e houver progressão downstream compatível, sem tráfego irrelevante consistente.
+- **Regra para reverter:** restaurar somente as palavras ao grupo de origem e retirar a negativa correspondente diante de destino/política/atribuição incorretos ou piora downstream consistente; não reverter por oscilação isolada de CTR, CPC ou pontuação do anúncio.
+
 ## 12 de setembro de 2026 — pilotos secundários de mama e abdômen/contorno corporal
 
 - **Status:** publicados, ativados e verificados ao vivo em 12/09/2026; monitoramento de integridade em 24 horas e de negócio em D+7/D+14/D+30.
