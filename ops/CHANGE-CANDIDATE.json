@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-MAMA-CORPO-2026-09-12",
   "title": "Lancar pilotos secundarios de mama e contorno corporal com atribuicao no funil",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "448410378aac01c64a264e526acad58eb5f643a7",
   "authorization": {
     "required": true,
@@ -32,6 +32,8 @@
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
       "apps-script/clinica-liv-leads/OpportunityStore.gs",
       "apps-script/clinica-liv-leads/OpportunityStore.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
@@ -88,8 +90,8 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-12T12:58:00-03:00",
+    "status": "passed_live",
+    "completedAt": "2026-09-12T15:09:00-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -106,23 +108,28 @@
     "results": {
       "focused": "43/43 testes do schema e Opportunity Store, 41/41 diretamente alterados, 199/199 de jornada, 142/142 de aquisicao e 21/21 de retomadas aprovados",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "googleAdsPreview": "2 alteracoes de campanha e 0 erros; nenhuma alteracao aplicada",
+      "googleAdsPublication": "Campanhas 2/2, grupos 5/5, palavras conformes 13/13, RSAs 5/5, sitelinks 20/20, sitelinks BLEF/CERV 2/2 e ativacao 2/2 aplicados com zero erro; termos bloqueados por politica ficaram fora sem excecao",
       "fullSuite": "1329/1329 testes aprovados, incluindo regressao que limita chamadas da migracao em uma planilha com 220 oportunidades",
       "siteBuild": "180 arquivos, 46 URLs do sitemap, 0 erro e nenhum arquivo interno no artefato",
       "siteCheck": "46/46 URLs tecnicamente validas, canonical proprio, indexabilidade, H1 e recursos aprovados; 0 pagina orfa",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 17/17 arquivos coincidem com o escopo declarado",
-      "opsCheck": "SYNC_PENDING esperado antes da publicacao"
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 19/19 arquivos coincidem com o escopo declarado",
+      "appsScript": "deployment canonico preservado na v147; schema aplicado em 24 segundos e agregados publicados em 5 segundos",
+      "spreadsheetAndDataManager": "6/6 qualificados reconciliados por Opportunity ID; IMPORT_GOOGLE_ADS com as mesmas seis transacoes; conexao LEADS concluida em 12/09 05:05 com 6 linhas e 0 erros",
+      "searchConsole": "mesmo sitemap reenviado e processado com 46 paginas; envio e ultima leitura em 12/09/2026",
+      "netlify": "deploy 6aa589ce092f3b0008413443 em production/ready no commit funcional dd1bd1d18c79eb216626e36adb49de895d27a0f6; dominio e URL imutavel HTTP 200 e identicos nas quatro paginas e sitemap",
+      "driveProjection": "mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido em lugar; 140963 bytes e SHA-256 a0393b457a8169740a2ecbb36cbed965d3ffb54fd9548fe3533d6debe87b7f33",
+      "opsCheck": "recibos externos aprovados; SYNC_PENDING esperado no worktree isolado por usar a branch codex/secondary-google-campaigns-20260912 em vez do checkout canonico compartilhado"
     }
   },
   "release": {
-    "approvedCommit": "5b202044e7338e2bd1cf078ed5ed246d10f123f7",
-    "netlifyDeployId": "",
-    "appsScriptVersion": 146,
+    "approvedCommit": "dd1bd1d18c79eb216626e36adb49de895d27a0f6",
+    "netlifyDeployId": "6aa589ce092f3b0008413443",
+    "appsScriptVersion": 147,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "",
-    "verifiedAt": "",
-    "activationState": "publication_in_progress_schema_batch_fix_pending",
-    "notes": "O commit aprovado foi enviado ao branch canonico e o Apps Script v146 preservou o deployment existente. A primeira aplicacao do schema foi interrompida ao sair do editor; a segunda atingiu seis minutos devido a leituras por celula. A correcao em lote foi validada localmente e aguarda publicacao antes da repeticao idempotente. Campanhas permanecem somente em previa."
+    "drivePlanSha256": "a0393b457a8169740a2ecbb36cbed965d3ffb54fd9548fe3533d6debe87b7f33",
+    "verifiedAt": "2026-09-12T15:09:00-03:00",
+    "activationState": "active_monitoring",
+    "notes": "O commit funcional foi publicado no branch canonico, no Netlify e no Apps Script v147 com o deployment preservado. O schema e os agregados foram aplicados, a transmissao 6/6 foi reconciliada e a conexao diaria mostrou zero erro. As duas campanhas secundarias estao ativas e em aprendizado a R$ 8/dia cada; paginas, sitelinks e sitemap foram verificados. A palavra exata adicional de preco BLEF foi bloqueada por politica e nao foi aplicada nem forcada."
   },
   "rollback": {
     "local": "reverter somente o commit deste piloto sobre 4484103, preservando os trabalhos paralelos",
