@@ -863,3 +863,15 @@ Decisão preparada, ainda dependente da publicação e dos preflights externos d
 **Regra para manter:** destinos e tracking íntegros, zero vazamento entre procedimentos e pelo menos manutenção da qualidade; manter a palavra/ativo se produzir contato válido ou etapa posterior sem piora material de custo e compatibilidade.
 
 **Regra para reverter:** pausar somente a nova palavra ou associação responsável, restaurar o rótulo/local do CTA móvel anterior e/ou deixar `Google_Rotas` sem consumo se houver destino incorreto, reprovação persistente, falsa atribuição, exposição de dado, regressão técnica/editorial ou piora downstream consistente. Orçamento, lance e RSAs não fazem parte do rollback porque não serão alterados.
+
+## 25. Decisão autorizada de 12/09/2026 — primeiro lote educativo
+
+**Decisão:** publicar os três artigos sobre escolha segura do cirurgião, recuperação da blefaroplastia e diferenças entre minilifting, lifting facial, SMAS e deep plane, integrados à biblioteca e ao sitemap. Em 12/09 Daniel autorizou publicar agora e deixar a revisão médica para depois; a espera editorial de 14 dias indicada no plano anterior não bloqueia este lote. A revisão permanece pendente e não será apresentada como realizada, nem será atribuída autoria médica não confirmada.
+
+**Motivo e evidência:** o inventário do site mostrou oportunidade de aprofundar segurança, organização da recuperação e comparação de termos com fontes identificadas. A biblioteca passa de 21 para 24 leituras únicas. Trata-se de cobertura editorial observada, não de demanda ou ganho de conversão comprovado.
+
+**Hipótese e limites:** respostas práticas e não promissoras podem reduzir dúvidas e apoiar a avaliação individual. O foco facial, as páginas comerciais, os CTAs e contratos de tracking existentes, as campanhas, os orçamentos e o fluxo do WhatsApp permanecem inalterados. Eventual reutilização em anúncios será uma etapa separada.
+
+**Métrica e revisão:** integridade após publicar; leitura em D+7, D+14 e D+30 de contatos válidos, qualificados e consultas atribuíveis às novas páginas. Impressões, consultas orgânicas e cliques são diagnósticos. Registrar as mudanças simultâneas do site e não atribuir causalidade a este lote sem desenho e amostra suficientes. A revisão médica posterior cabe à Dra. Amanda, quando disponível.
+
+**Manter ou corrigir:** manter se páginas, fontes, busca interna e tracking estiverem íntegros. Corrigir ou retirar o trecho afetado diante de divergência clínica, promessa indevida ou afirmação sem suporte; restaurar o deploy anterior somente diante de regressão técnica material. Publicação não equivale a aprovação médica nem a resultado de marketing.

@@ -512,8 +512,15 @@ test("educational pilot is complete, sourced and discoverable from the library",
   for (const article of articles) {
     const html = readFileSync(path.join(root, article.file), "utf8");
     assert.match(html, new RegExp(`<link href="${article.canonical.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}" rel="canonical"`), article.file);
-    assert.match(html, /Conteúdo educativo preparado para revisão médica/i, article.file);
-    assert.match(html, /Gate editorial: revisão médica da Dra\. Amanda obrigatória antes de qualquer publicação/i, article.file);
+    assert.match(html, /Conteúdo educativo · Atualizado/i, article.file);
+    assert.doesNotMatch(html, /Conteúdo médico revisado|preparado para revisão|Gate editorial/i, article.file);
+    const articleSchema = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+      .flatMap((match) => JSON.parse(match[1])["@graph"] || [])
+      .find((item) => item["@id"] === article.canonical + "#article");
+    assert.ok(articleSchema, article.file);
+    assert.equal(articleSchema.author, undefined, article.file);
+    assert.equal(articleSchema.reviewedBy, undefined, article.file);
+    assert.equal(articleSchema.lastReviewed, undefined, article.file);
     assert.match(html, /class="article-references"/i, article.file);
     assert.match(html, /data-track="whatsapp"/i, article.file);
     assert.match(html, /(?:não|nem) substitui (?:avaliação|exame) médic[oa]/i, article.file);

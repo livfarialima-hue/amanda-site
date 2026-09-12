@@ -8,7 +8,7 @@
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou a implementacao do pacote proposto de conteudos educativos. Esta autorizacao cobre somente preparacao, integracao e validacao local do primeiro lote; publicacao do site continua dependendo de autorizacao separada para o commit exato."
+    "note": "Em 12/09/2026 Daniel autorizou explicitamente publicar todo o lote educativo e deixar a revisao da Dra. Amanda para depois. A autorizacao desta tarefa cobre o candidato final com ajustes de veracidade editorial e seguranca, validacoes, Git, Netlify e atualizacao da mesma projecao do Plano no Drive; nao cobre novas campanhas nem mudancas no bot, WhatsApp, Apps Script ou CRM."
   },
   "risk": {
     "level": "medium",
@@ -19,9 +19,11 @@
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication"
+      "site-publication",
+      "google-ads-acquisition-conversion"
     ],
     "files": [
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "campanhas/content-library.js",
       "campanhas/cost-guides.test.mjs",
       "campanhas/site-enhancements.css",
@@ -50,7 +52,7 @@
       "o CTA convida para avaliacao individual e preserva numero, tracking e fluxo atual do WhatsApp",
       "nome, CRM-SP 191605, Cirurgia Plastica e RQE 110472 permanecem consistentes com o site",
       "as 46 rotas existentes preservam conteudo, canonicals, tracking, arquivos de midia e indexabilidade; o cabecalho compartilhado dos artigos recebe alinhamento lateral ao eixo de 1120 px e altura de imagem responsiva",
-      "os tres novos artigos possuem fontes institucionais ou revisoes cientificas identificadas e revisao medica indicada"
+      "os tres novos artigos mantem fontes identificadas, sem autoria ou revisao medica alegada; a revisao humana posterior e pendencia interna, nao validacao ja realizada"
     ],
     "liveReadOnlyPreflight": [
       {
@@ -59,12 +61,26 @@
         "status": "baseline_confirmed",
         "checkedAt": "2026-09-12T19:51:31-03:00",
         "reference": "origin/reestruturacao-site confirmado no commit 4edf7aaa317857599ceba08236a81163218c6aee; worktree isolado codex/conteudos-educativos-20260912 criado a partir desse baseline."
+      },
+      {
+        "contract": "site-publication",
+        "system": "Netlify",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-12T20:24:00-03:00",
+        "reference": "Conta autenticada confirmou site c33facb6-eafc-4635-99d6-068bf8707227, dominio draamandaschroeder.com.br, branch reestruturacao-site, deploy production/ready 6aa5d27ed28c240009514d6d e commit a975571e22f0e7129efcb3ca842f7cce0801a5df; 12 funcoes preservadas."
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Site e documentacao de aquisicao",
+        "status": "site_only_confirmed",
+        "checkedAt": "2026-09-12T20:26:00-03:00",
+        "reference": "Mudanca restrita a descoberta organica e biblioteca, sem escrita em plataformas de anuncios ou jornada. A projecao do Plano no Drive coincide integralmente com o commit paralelo dcadd240dd2b3eb64ca03050a539309964e6b74d e sera preservada, incluindo o recibo v148. Leitura operacional dessas plataformas nao foi repetida nesta tarefa."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T20:14:34-03:00",
+    "completedAt": "2026-09-12T20:28:06-03:00",
     "commands": [
       "node --check campanhas/content-library.js",
       "node --test campanhas/site-technical-regression.test.mjs",
@@ -74,18 +90,20 @@
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs"
     ],
     "results": {
       "contentLibrarySyntax": "passed",
       "focusedSiteTests": "21/21 passed",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK with exact 12-file scope",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK with exact 13-file scope",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1336/1336 passed after deterministic dependency restore from package-lock.json",
+      "fullSuite": "1336/1336 passed after final editorial and cache adjustments; 21/21 focused site tests also passed",
       "staticBuild": "188 files, 49 sitemap URLs, zero audit files and zero errors",
       "technicalSiteAudit": "49/49 expected HTTP 200, self-canonical, indexable and single-H1; zero orphan pages and zero errors",
       "visualQa": "desktop 1440 px and mobile 390 px; article axis aligned, responsive images preserve 4:5 and 4:3 ratios, and document scroll width equals viewport width",
       "diffCheck": "passed",
+      "liveBaselineComparison": "2026-09-12T23:27:42.386Z: 184 provider files compared, zero baseline drift; only four expected public modifications and three new articles. Provider packaging differences (.gitattributes, .htaccess, netlify.toml) checked separately against unchanged baseline. Twelve function digests and five schedules captured for postflight.",
       "operationalConsistency": "OPS_CHECK_STATUS=SYNC_PENDING as required for an unpublished local candidate; publication, canonical branch and clean-release receipts remain intentionally pending"
     },
     "crossConsumerCases": [
@@ -99,20 +117,20 @@
   "release": {
     "approvedCommit": null,
     "netlifyDeployId": null,
-    "appsScriptVersion": 147,
+    "appsScriptVersion": 148,
     "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": null,
-    "activationState": "educational_content_local_only",
-    "notes": "Nenhuma publicacao, projecao no Drive ou outra escrita externa foi autorizada ou executada."
+    "activationState": "educational_content_publication_authorized",
+    "notes": "Publicacao autorizada na mensagem atual de Daniel; revisao medica posterior permanece pendente. Recibo paralelo dcadd24/Drive registra v148 sem qualquer publicacao Apps Script nesta tarefa."
   },
   "rollback": {
     "local": "reverter somente o commit do primeiro lote educativo sobre 4edf7aaa317857599ceba08236a81163218c6aee",
-    "production": "nenhum rollback externo enquanto o candidato permanecer local; se futuramente publicado, restaurar o deploy Netlify 6aa5d27ed28c240009514d6d diante de regressao confirmada"
+    "production": "Se ocorrer regressao confirmada apos a publicacao, restaurar o deploy Netlify 6aa5d27ed28c240009514d6d, preservando os registros e sem alterar Apps Script ou campanhas."
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "apos eventual publicacao: integridade imediata e 24 horas; descoberta e jornada em 7, 14 e 30 dias",
+    "window": "apos publicacao: integridade imediata e 24 horas; descoberta e jornada em 7, 14 e 30 dias; revisao medica posterior quando a Dra. Amanda estiver disponivel",
     "metrics": [
       "HTTP, canonical, indexabilidade, sitemap, links internos e busca da biblioteca",
       "consultas e impressoes organicas por tema como diagnostico intermediario",
