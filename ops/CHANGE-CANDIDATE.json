@@ -3,7 +3,7 @@
   "changeId": "GOOGLE-PRICE-PAGES-CLASSIFICATION-ROUTES-2026-09-12",
   "title": "Publicar paginas de preco BLEF/CERV, reconciliacao periodica e rotas Google Ads",
   "status": "tested_local",
-  "baseCommit": "7b7976d77c2e344721d61b29dfe06d832b532676",
+  "baseCommit": "ce87041feec7103cc7fea501b36462b2bddaf55d",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -103,16 +103,16 @@
       {
         "contract": "site-publication",
         "system": "repositorio, Netlify e site oficial",
-        "status": "pending_final_parallel_reconciliation",
-        "checkedAt": "2026-09-12T11:46:00-03:00",
-        "reference": "Worktree isolada criada a partir do ultimo origin publicado; tarefa paralela do site ainda ativa.",
-        "evidence": "A integracao final sera rebaseada sobre o proximo HEAD canonico antes dos testes e do release."
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-12T12:01:43-03:00",
+        "reference": "Origin canonico fechado em ce87041feec7103cc7fea501b36462b2bddaf55d; Netlify production ready no deploy 6aa56848bd23060008fb10bc para o commit funcional 556c65790506fed5a0d8726131f8864f008b4305.",
+        "evidence": "A integracao foi rebaseada sobre o recibo final da revisao paralela. Dominio e deploy imutavel foram verificados, e ops/, auditorias/ e controles internos responderam 404."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T11:46:00-03:00",
+    "completedAt": "2026-09-12T12:03:12-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/classify-leads.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
@@ -127,9 +127,18 @@
       "git diff --check"
     ],
     "results": {
-      "integration": "pending final rebase and complete rerun",
+      "integration": "rebase final concluido sobre ce87041feec7103cc7fea501b36462b2bddaf55d, preservando a revisao humana, o contraste mobile e a exclusao de controles internos do artefato",
+      "fullSuite": "1325/1325 testes aprovados",
+      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 33/33 arquivos coincidem com o escopo declarado",
+      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero arquivo de auditoria no artefato e zero erro",
+      "siteCheck": "46/46 URLs tecnicamente validas, canonical proprio, indexabilidade e H1 alinhados, zero pagina orfa e um redirecionamento esperado",
+      "gitDiffCheck": "aprovado",
       "spreadsheet": "6/6 ready imported, 0 unmatched, 0 duplicate transaction, 2 invalidated excluded, adjustment queue empty",
       "googleAdsDataManager": "latest scheduled run 6 rows, 0 errors",
+      "appsScriptLiveBaseline": "LeadClassification.gs e GoogleAdsFunnelReview.gs vivos coincidem por SHA-256 normalizado com a base v144; ClassificationReconciliation.gs ainda nao existe no projeto, como esperado antes da publicacao",
+      "searchConsoleBaseline": "sitemap.xml existente esta Processado com 44 paginas; o artefato aprovado passa a conter 46 URLs e exige somente o reenvio do mesmo sitemap apos o deploy",
+      "opsCheck": "SYNC_PENDING esperado antes da publicacao e do fechamento na branch canonica",
       "externalMutations": "site, Apps Script, Google Ads and Search Console still pending release sequence"
     }
   },
@@ -140,8 +149,8 @@
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
     "verifiedAt": "",
-    "activationState": "local_integrated_pending_final_reconciliation",
-    "notes": "A planilha ja foi corrigida no escopo autorizado; publicacao e ativacao aguardam HEAD exato, testes e preflight final."
+    "activationState": "local_integrated_tested_pending_release_preflight",
+    "notes": "A planilha ja foi corrigida no escopo autorizado. Codigo, paginas e documentacao estao integrados sobre o ultimo recibo paralelo e aguardam somente commit exato, preflight final e publicacao."
   },
   "rollback": {
     "local": "reverter somente o commit integrado sobre o baseCommit, preservando releases paralelos",
