@@ -1209,6 +1209,27 @@ function desativarRetomadasAutomaticasPorModelo() {
   };
 }
 
+function desativarRetomadasAutomaticasPorModeloPelaCentral() {
+  const ui = SpreadsheetApp.getUi();
+  const resposta = ui.alert(
+    "Desativar retomadas automáticas por modelo?",
+    "Esta contenção interrompe imediatamente novos planejamentos e envios automáticos por modelo. Retomadas humanas, fila e histórico serão preservados.",
+    ui.ButtonSet.YES_NO,
+  );
+
+  if (resposta !== ui.Button.YES) {
+    return { ok: true, cancelled: true, changed: false };
+  }
+
+  const resultado = desativarRetomadasAutomaticasPorModelo();
+  ui.alert(
+    "Retomadas automáticas desativadas",
+    "A trava do Apps Script está inativa e a fila foi preservada. Para concluir a contenção dupla, desligue também a chave automática do endpoint no Netlify e confirme pelo diagnóstico.",
+    ui.ButtonSet.OK,
+  );
+  return resultado;
+}
+
 function desativarRetomadasAutomaticas() {
   const propriedades = PropertiesService.getScriptProperties();
   propriedades.setProperty(

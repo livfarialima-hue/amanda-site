@@ -1,195 +1,115 @@
 {
   "schemaVersion": 1,
-  "changeId": "RETOMADAS-AUTOMATICAS-MODELO-2026-09-11",
-  "title": "Corrigir a primeira retomada automatica com modelo seguro entre 24 e 48 horas",
-  "status": "published_verified",
-  "baseCommit": "b845db8fb2cce7889abc6ae3e8334261ba3661da",
+  "changeId": "RETOMADAS-AUTOMATICAS-MODELO-CONTENCAO-2026-09-12",
+  "title": "Adicionar desligamento de emergencia acessivel antes da ativacao por modelo",
+  "status": "tested_local",
+  "baseCommit": "34813b88997fb9be5f36617788436c51b24d1cd5",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario autorizou a publicacao segura de c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4 ainda desligado. O preflight revelou que esse SHA reverteria a publicacao viva de otoplastia; foi preparada a integracao preservadora 3d022332a6f1f2dbd7729c45c3083b1696172812 e Daniel confirmou 'pode sim!' antes da escrita externa. A ativacao permaneceu fora do escopo.",
-    "approvedCommit": "3d022332a6f1f2dbd7729c45c3083b1696172812",
-    "approvedAt": "2026-09-12T08:20:00-03:00",
-    "approvedBy": "Daniel",
-    "reference": "Autorizacao explicita na conversa para continuar a publicacao segura ainda desligada."
+    "note": "Daniel autorizou ativar agora e pediu antes que a nova rota ficasse facilmente desativavel. O candidato adiciona somente a contencao visivel; a publicacao e a ativacao do HEAD exato serao confirmadas no preflight externo.",
+    "approvedCommit": "",
+    "approvedAt": "",
+    "approvedBy": "",
+    "reference": ""
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "patient-journey-funnel-followups",
-      "google-ads-acquisition-conversion"
+      "patient-journey-funnel-followups"
     ],
     "files": [
       "apps-script/clinica-liv-leads/CentralAtendimento.gs",
       "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/EXECUCAO-2026-09-03.md",
-      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/artifact-data.json",
-      "auditorias/reativacao-meta-2026-09-11/EXECUCAO-2026-09-11.md",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "netlify/functions/scheduled-followup.mjs",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/CHANGE-CANDIDATE.json"
     ]
   },
   "impact": {
     "consumers": [
-      "e-mail diario da Clinica LIV",
-      "Central de Atendimento",
-      "fila _WHATSAPP_RETOMADAS",
+      "menu Central LIV",
       "processador Apps Script de retomadas",
-      "endpoint Netlify scheduled-followup",
-      "template YCloud de retomada"
+      "fila _WHATSAPP_RETOMADAS",
+      "endpoint Netlify scheduled-followup"
     ],
     "preservedInvariants": [
-      "publicar codigo nao ativa a nova rota",
-      "duas flags independentes e uma data valida sao obrigatorias",
-      "a ativacao reinstala o planejador diario e o processador somente depois do preflight verde e liga as flags por ultimo",
-      "conversa e plano anteriores a ativacao nunca entram no novo caminho",
-      "somente a primeira retomada do corredor exato pode usar modelo automatico",
-      "nenhum envio ocorre antes de 24 horas ou depois de 48 horas",
-      "preco, agenda, contexto clinico ou sensivel, turno adicional, takeover, opt-out, pausa e promessa humana continuam bloqueados",
-      "segunda retomada e pos-consulta continuam manuais",
-      "a fila atual nao e convertida nem reenfileirada",
-      "o diagnostico nao altera planilha, fila, propriedade ou mensagem",
-      "aprovacao humana por modelo permanece compativel e separada"
+      "a nova rota permanece desligada durante a publicacao do controle",
+      "o desligamento exige confirmacao humana explicita no menu",
+      "o desligamento local bloqueia imediatamente planejamento e processamento automatico por modelo",
+      "retomadas humanas, automacao-base, fila e historico permanecem preservados",
+      "a data de ativacao e removida para impedir reaproveitamento de backlog em uma reativacao",
+      "a segunda trava do endpoint continua independente e deve ser desligada para contencao dupla",
+      "nenhuma mensagem, plano ou contato e criado pelo controle de emergencia"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "planilha LEADS canonica e fila _WHATSAPP_RETOMADAS",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-11T18:56:00-03:00",
-        "reference": "Seis retomadas de marketing visiveis, todas manuais; cinco elegiveis para aprovacao humana por modelo e uma sem mensagem segura. Historico com 122 modos automaticos, 29 envios, 42 cancelamentos por whatsapp_window_closed, ultimo envio em 30/08 e ultima tentativa em 01/09.",
-        "evidence": "Leitura agregada sem PII; nenhuma celula, propriedade, trigger, funcao ou mensagem alterada."
-      },
-      {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script canonico v141 e propriedades protegidas",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T07:48:00-03:00",
-        "reference": "Sessao autenticada do navegador exibiu o projeto canonico, a versao ativa v141 e o deployment canonico existente. O verificador local confirmou os tres IDs canonicos. CentralAtendimento.gs e Retomadas.gs vivos coincidiram com 8187758e21484d63f764da897a484d21e52890cd e diferiram dos blobs candidatos somente pelo patch autorizado.",
-        "evidence": "SHA-256 normalizado vivo: CentralAtendimento.gs c44537745db61f8e236687b576bd82370fe8a99e45aaf7164ddb28b6d336ee95; Retomadas.gs 5e4ea535487c157a2ff8acaf37d40587faaad25b49092b91b3e912126552e907. As propriedades RETOMADAS_AUTOMATICAS_MODELO_ATIVAS e RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM estavam ausentes. Nenhuma escrita externa foi feita."
-      },
-      {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Netlify de producao",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T07:52:00-03:00",
-        "reference": "O deploy de producao 6a99862d5c80270008ebf19b estava ready e apontava para b845db8fb2cce7889abc6ae3e8334261ba3661da. A integracao parte desse commit para preservar integralmente as paginas e o sitemap vivos de otoplastia.",
-        "evidence": "A variavel WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED estava ausente no escopo de funcoes de producao. Nenhuma variavel, deploy ou flag foi alterado."
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "norte estrategico canonico e estado operacional ja registrado",
-        "status": "scope_confirmed_no_ads_change",
-        "checkedAt": "2026-09-11T18:56:00-03:00",
-        "reference": "A decisao altera somente a continuidade depois do contato e foi registrada no norte canonico. Campanhas, anuncios, palavras, lances, metas e orcamentos permanecem fora do escopo.",
-        "evidence": "Leitura do documento canonico e do painel executivo; nenhuma plataforma de anuncios foi alterada."
-      },
-      {
-        "contract": "change-governance",
-        "system": "projecao canonica do Plano Executivo no Google Drive",
-        "status": "baseline_confirmed_with_newer_parallel_receipts",
-        "checkedAt": "2026-09-12T08:56:00-03:00",
-        "reference": "O mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi lido antes da substituicao. A copia viva continha cinco linhas operacionais mais novas sobre a reativacao Meta.",
-        "evidence": "As linhas vivas foram preservadas por integracao do branch codex/meta-reactivation-20260911; nenhuma copia ou segundo plano foi criado."
+        "system": "Apps Script canonico v142, Netlify de producao e fila _WHATSAPP_RETOMADAS",
+        "status": "pending_refresh",
+        "checkedAt": "2026-09-12T09:09:00-03:00",
+        "reference": "Diagnostico autenticado anterior confirmou v142, endpoint saudavel, flags novas desligadas, gatilhos 1/1 e zero plano programado. A leitura sera repetida imediatamente antes da escrita.",
+        "evidence": "Leitura agregada sem PII; nenhuma mensagem real ou mutacao operacional foi executada."
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
-    "completedAt": "2026-09-12T09:12:04-03:00",
-    "sourceCandidateCommit": "c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4",
-    "implementationCommit": "3ae0ba19502575b3e28792f53f7b3ccf3359a012",
+    "status": "passed_local",
+    "completedAt": "2026-09-12T09:22:27-03:00",
     "commands": [
-      "npm.cmd run change:check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
+      "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check",
-      "navegador autenticado: comparar CentralAtendimento.gs e Retomadas.gs vivos antes e depois da escrita",
-      "editar somente o deployment Apps Script canonico existente e verificar a versao 142",
-      "sonda HTTP com token sintetico invalido e sonda Netlify sem autenticacao",
-      "comparar dominio e URL imutavel do Netlify e reler as flags nos dois lados",
-      "ler e substituir o mesmo Plano Executivo no Drive, preservando os recibos paralelos, e reler os bytes"
+      "git diff --check"
     ],
     "results": {
-      "appsScriptFollowups": "80/80 passed",
-      "central": "54/54 passed",
-      "endpoint": "16/16 passed",
-      "patientJourneyContracts": "184/184 passed",
-      "semanticContracts": "21/21 passed",
-      "googleAdsContracts": "126/126 passed",
+      "focusedCentralAndFollowups": "135/135 passed",
+      "crossConsumer": "185/185 passed",
+      "scheduledEndpoint": "21/21 passed",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1263/1263 passed",
-      "changeSafety": "OK no preflight; 15 arquivos funcionais e documentais coincidiram com o escopo aprovado sobre o baseline vivo b845db8fb2cce7889abc6ae3e8334261ba3661da; o fechamento agrega somente metadados e recibos paralelos preservados",
-      "siteBuild": "180 arquivos, 44 URLs no sitemap e zero erros",
-      "siteCheck": "OK; 44/44 HTTP 200, canonicals, indexacao e H1; zero paginas orfas e zero erros",
-      "opsCheck": "recibo atualizado para published_verified; o gate final sera repetido depois da igualdade com a mesma projecao do Drive e do fechamento limpo da branch",
-      "diffCheck": "passed",
-      "sourceCandidateBlobs": "nove arquivos funcionais e documentais sem sobreposicao coincidem exatamente com c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4",
-      "liveSiteBlobs": "paginas adulta e infantil, sitemap, teste de otoplastia e registro de impacto coincidem exatamente com b845db8fb2cce7889abc6ae3e8334261ba3661da",
-      "parallelReceipts": "os recibos de otoplastia e da reativacao Meta foram preservados; o worktree principal com alteracoes paralelas permaneceu intocado",
-      "authenticatedBrowser": "controle comprovado no projeto Apps Script canonico autenticado antes da escrita",
-      "appsScriptTarget": "os IDs canonicos de projeto, deployment e planilha foram confirmados antes da primeira escrita",
-      "liveSourceEquality": "CentralAtendimento.gs f48da306cbbebc7816e423bab649352c33e60d936506a4eb1115c8f4114f0f5b e Retomadas.gs 9ef5cd0e3c3bf59934705294fd3261000ec058dd56947eb349390c86f3936c85 coincidiram com o candidato depois da recarga",
-      "appsScriptDeployment": "o deployment existente foi preservado e atualizado para a versao 142 em 12/09/2026 as 08:44",
-      "netlify": "deploy 6aa536c2f301b80008efe5e6 ready, production e com commit_ref 3d022332a6f1f2dbd7729c45c3083b1696172812; dominio e URL imutavel responderam HTTP 200 com bytes identicos",
-      "activationFlags": "RETOMADAS_AUTOMATICAS_MODELO_ATIVAS e RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM ausentes; WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED ausente",
-      "syntheticProbes": "token invalido retornou HTTP 200 com Link invalido ou expirado e Nenhuma decisao foi aplicada; endpoint Netlify sem autenticacao retornou HTTP 401",
-      "realMessages": "zero mensagens reais; nenhuma funcao operacional, trigger, planilha ou fila foi executado",
-      "drivePlanProjection": "mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido e relido com 131721 bytes e SHA-256 089a713eed1410331c57b4e603fbcb428ec983527a872075fc88ddc2fbc0e6ce; nenhuma copia criada",
-      "activationReadiness": "diagnostico autenticado somente leitura em 12/09/2026 as 09:09: modelo configurado, endpoint HTTP 200 saudavel, gatilhos do processador e e-mail diario 1/1, zero plano programado, automatico por modelo, legado ou manual aprovado; caminho automatico permaneceu inativo"
+      "fullSuite": "1264/1264 passed",
+      "siteBuild": "180 files and 44 sitemap URLs with zero errors",
+      "siteCheck": "44/44 pages checked with zero errors",
+      "changeSafety": "6 files matched the declared scope",
+      "diffCheck": "passed"
     }
   },
   "release": {
-    "approvedCommit": "3d022332a6f1f2dbd7729c45c3083b1696172812",
+    "approvedCommit": "",
     "netlifyDeployId": "6aa536c2f301b80008efe5e6",
     "appsScriptVersion": 142,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "089a713eed1410331c57b4e603fbcb428ec983527a872075fc88ddc2fbc0e6ce",
-    "verifiedAt": "2026-09-12T09:12:04-03:00",
-    "activationState": "published_verified_default_off_ready_for_activation",
-    "notes": "Codigo publicado no Apps Script v142 e no Netlify 6aa536c2f301b80008efe5e6, preservando o deployment canonico. As tres chaves de ativacao continuam ausentes. O diagnostico somente leitura confirmou modelo, endpoint, gatilhos e fila sem backlog; nenhuma funcao operacional, trigger, planilha, fila ou mensagem real foi executado. Estado PRONTO PARA ATIVAR, aguardando nova autorizacao explicita."
+    "verifiedAt": "",
+    "activationState": "published_v142_default_off",
+    "notes": "O controle de emergencia ainda esta em implementacao local; producao permanece na v142 e desligada."
   },
   "rollback": {
-    "local": "reverter somente os commits deste changeId sobre o baseCommit b845db8fb2cce7889abc6ae3e8334261ba3661da, preservando os recibos de otoplastia e Meta reconciliados",
-    "production": "enquanto desligado, restaurar Apps Script v141 no mesmo deployment e Netlify 6a99862d5c80270008ebf19b se houver regressao de codigo. Depois de ativar, conter primeiro com desativarRetomadasAutomaticasPorModelo e desligar WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED; entao executar o rollback de versao."
+    "local": "reverter somente este candidato ao baseCommit 34813b88997fb9be5f36617788436c51b24d1cd5",
+    "production": "conter primeiro pelo menu Central LIV com desativarRetomadasAutomaticasPorModelo, depois definir WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED=false em producao; preservar fila e historico. Se necessario, retornar o Apps Script ao baseline publicado e manter o deployment canonico."
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro plano elegivel, 24 horas, 72 horas e 7 dias apos eventual ativacao",
+    "window": "primeiro plano elegivel, 24 horas, 72 horas e 7 dias apos ativacao",
     "metrics": [
+      "estado das duas travas e data de ativacao",
       "planos estritamente elegiveis, programados, enviados e respondidos",
-      "bloqueios por motivo e divergencias entre os dois gates",
-      "envios antes de 24 horas, depois de 48 horas ou anteriores a ativacao",
-      "duplicidade, procedimento incorreto, conversa alterada e takeover",
-      "opt-outs e reclamacoes",
-      "contatos validos, qualificados e consultas"
+      "envio retroativo, precoce, tardio, duplicado ou protegido",
+      "procedimento incorreto, nova atividade, takeover, opt-out e reclamacao"
     ],
-    "rollbackRule": "desativar as duas flags diante de qualquer envio retroativo, precoce, tardio, duplicado, protegido, com procedimento incorreto, depois de nova atividade ou sem rastreabilidade."
+    "rollbackRule": "usar imediatamente a contencao dupla diante de qualquer envio retroativo, precoce, tardio, duplicado, protegido, com procedimento incorreto, depois de nova atividade ou sem rastreabilidade."
   }
 }

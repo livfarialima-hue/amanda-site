@@ -64,6 +64,10 @@ function onOpen() {
       "mostrarDiagnosticoRetomadasAutomaticas",
     )
     .addItem(
+      "Desativar retomadas automáticas (emergência)",
+      "desativarRetomadasAutomaticasPorModeloPelaCentral",
+    )
+    .addItem(
       "Como usar a Central",
       "comoUsarCentralAtendimento",
     )
@@ -88,7 +92,8 @@ function comoUsarCentralAtendimento() {
       "7. Confira a elegibilidade e marque Aprovar com a Bruna. A Central sugere automaticamente a próxima faixa de maior resposta em Programar para; você pode ajustar o horário antes de usar Central LIV > Processar decisões marcadas.",
       "8. Para impedir somente uma retomada já registrada, marque Cancelar retomada. A próxima atualização automática processará a decisão; para aplicar na hora, use Central LIV > Processar decisões marcadas.",
       "9. A Bruna revalida conversa, procedimento, tempo, opt-out, takeover humano e segurança antes de qualquer envio. Use Central LIV > Diagnosticar retomadas automáticas para conferir as travas sem alterar a fila.",
-      "10. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
+      "10. Se houver qualquer erro, use Central LIV > Desativar retomadas automáticas (emergência). A contenção preserva a fila, o histórico e as retomadas humanas.",
+      "11. Depois do envio ou cancelamento, a Central se reorganiza automaticamente. Essas linhas descem para Concluído recentemente ou Cancelado recentemente e saem da visualização após 24 horas.",
     ].join("\n\n"),
     SpreadsheetApp.getUi().ButtonSet.OK,
   );

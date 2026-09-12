@@ -2180,6 +2180,73 @@ test("automatic template configuration remains off without all three properties"
   assert.equal(enableIndex > processorTriggerIndex, true);
 });
 
+test("emergency menu switch requires confirmation and preserves the base route", () => {
+  const makeContext = (answer) => {
+    const values = new Map([
+      ["RETOMADAS_AUTOMATICAS_ATIVAS", "true"],
+      ["RETOMADAS_AUTOMATICAS_MODELO_ATIVAS", "true"],
+      [
+        "RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM",
+        "2026-09-12T12:00:00.000Z",
+      ],
+    ]);
+    const alerts = [];
+    const localContext = vm.createContext({ Date });
+    vm.runInContext(source, localContext, {
+      filename: "Retomadas.gs",
+    });
+    const ui = {
+      Button: { YES: "YES" },
+      ButtonSet: { YES_NO: "YES_NO", OK: "OK" },
+      alert(...args) {
+        alerts.push(args);
+        return args[2] === "YES_NO" ? answer : "OK";
+      },
+    };
+    localContext.SpreadsheetApp = { getUi: () => ui };
+    localContext.PropertiesService = {
+      getScriptProperties: () => ({
+        getProperty: (name) => values.get(name) || "",
+        setProperty: (name, value) => values.set(name, value),
+        deleteProperty: (name) => values.delete(name),
+      }),
+    };
+    return { localContext, values, alerts };
+  };
+
+  const cancelled = makeContext("NO");
+  const cancelledResult =
+    cancelled.localContext.desativarRetomadasAutomaticasPorModeloPelaCentral();
+  assert.equal(cancelledResult.changed, false);
+  assert.equal(
+    cancelled.values.get("RETOMADAS_AUTOMATICAS_MODELO_ATIVAS"),
+    "true",
+  );
+  assert.equal(cancelled.alerts.length, 1);
+
+  const confirmed = makeContext("YES");
+  const result =
+    confirmed.localContext.desativarRetomadasAutomaticasPorModeloPelaCentral();
+  assert.equal(result.ok, true);
+  assert.equal(result.active, false);
+  assert.equal(result.baseActive, true);
+  assert.equal(
+    confirmed.values.get("RETOMADAS_AUTOMATICAS_MODELO_ATIVAS"),
+    "false",
+  );
+  assert.equal(
+    confirmed.values.has(
+      "RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM",
+    ),
+    false,
+  );
+  assert.equal(
+    confirmed.values.get("RETOMADAS_AUTOMATICAS_ATIVAS"),
+    "true",
+  );
+  assert.equal(confirmed.alerts.length, 2);
+});
+
 test("waiting-patient conversion registers one idempotent manual plan", () => {
   const phone = "+5511999999999";
   const leadHeaders = Array(25).fill("");

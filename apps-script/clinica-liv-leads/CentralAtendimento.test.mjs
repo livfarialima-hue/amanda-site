@@ -47,14 +47,22 @@ function loadContext() {
   return context;
 }
 
-test("Central menu exposes the read-only automatic follow-up diagnosis", () => {
+test("Central menu exposes diagnosis and the emergency off switch", () => {
   assert.match(
     source,
     /Diagnosticar retomadas automáticas[\s\S]*mostrarDiagnosticoRetomadasAutomaticas/,
   );
   assert.match(
     source,
+    /Desativar retomadas automáticas \(emergência\)[\s\S]*desativarRetomadasAutomaticasPorModeloPelaCentral/,
+  );
+  assert.match(
+    source,
     /Conversas anteriores à ativação nunca entram retroativamente/,
+  );
+  assert.match(
+    source,
+    /preserva a fila, o histórico e as retomadas humanas/,
   );
 });
 
