@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-MOBILE-MEDIA-INTEGRITY-2026-09-12",
   "title": "Estabilizar imagens, videos e contraste do site em celulares",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "93d7beafbd700791f2f6e0dc302b96f6da898808",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -58,6 +58,7 @@
       "conteudos/recuperacao-lifting-facial/index.html",
       "conteudos/seguranca-cirurgia-plastica/index.html",
       "contorno-corporal/index.html",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "index.html",
       "injetaveis/index.html",
       "lifting-cervical/index.html",
@@ -127,7 +128,8 @@
       "transientRetry": "as tres leituras tardias de /injetaveis/ em 430x932 foram repetidas em tres sessoes novas; todas as imagens carregaram e os dois videos tocaram com deslocamento de 0 px",
       "visualReview": "otoplastia adulta e infantil, videos editoriais, video da clinica, modal, controles desativados e breadcrumb revisados em capturas reais de 430x932; enquadramento e legibilidade aprovados",
       "fullSuite": "1335/1335 testes aprovados; architecture:check, change:check, verificacao sintatica e git diff --check aprovados",
-      "siteBuild": "185 arquivos gerados para 46 URLs, sem arquivos de auditoria ou operacao no artefato; site:check aprovou 46 HTTP 200, 46 canonicals proprios, 46 paginas indexaveis, um H1 por pagina, zero orfas, zero recursos ausentes e 35 videos com poster e dimensoes"
+      "siteBuild": "185 arquivos gerados para 46 URLs, sem arquivos de auditoria ou operacao no artefato; site:check aprovou 46 HTTP 200, 46 canonicals proprios, 46 paginas indexaveis, um H1 por pagina, zero orfas, zero recursos ausentes e 35 videos com poster e dimensoes",
+      "livePostflight": "Netlify 6aa5d27ed28c240009514d6d pronto e no commit aprovado; 46 rotas em 360x800 e 430x932, 92 execucoes, 334 imagens visiveis, 40 reproducoes diretas e 72 modais, com zero midia quebrada, baixo contraste, overflow da pagina, erro de execucao ou mudanca de quadro"
     },
     "crossConsumerCases": [
       "todos os 35 elementos de video estaticos reservam largura e altura",
@@ -139,14 +141,14 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "a975571e22f0e7129efcb3ca842f7cce0801a5df",
+    "netlifyDeployId": "6aa5d27ed28c240009514d6d",
     "appsScriptVersion": 147,
-    "verifiedAt": null,
+    "verifiedAt": "2026-09-12T19:47:12-03:00",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "activationState": "mobile_media_fix_pending_publication",
-    "notes": "Publicacao ainda nao executada. O ultimo deploy conhecido e 6aa59be5502cb30008e0f6ee, referente ao commit funcional d8063b058ee854a1d65ab5a2b55d2cee453610c4 e ao recibo Git 93d7beafbd700791f2f6e0dc302b96f6da898808."
+    "drivePlanSha256": "f01f6add4e3a28421f63f4e41f7fb9353e6bddee572265c8ef583a5c6632f5de",
+    "activationState": "mobile_media_integrity_live_monitoring",
+    "notes": "Commit funcional publicado por fast-forward na branch reestruturacao-site e confirmado no dominio e na URL imutavel do Netlify. O Plano Executivo foi substituido no mesmo arquivo do Drive e relido com 145772 bytes e SHA-256 identico ao local. O deploy anterior 6aa59be5502cb30008e0f6ee permanece pronto para rollback. Nenhuma campanha, flag, planilha, bot, WhatsApp ou Apps Script foi alterado."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre 93d7beafbd700791f2f6e0dc302b96f6da898808, preservando todo trabalho paralelo",
