@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-MAMA-CONTORNO-COMUNICACAO-2026-09-12",
-  "title": "Tornar as paginas de mama e contorno corporal mais claras, humanas e orientadas a consulta",
-  "status": "published_verified",
-  "baseCommit": "545c4d83dad1397cff351c800e3c70d2a3f10124",
+  "changeId": "SITE-MAMA-CONTORNO-LINGUAGEM-HUMANA-2026-09-12",
+  "title": "Retirar construcoes com aparencia de IA das paginas de mama e contorno corporal",
+  "status": "tested_local",
+  "baseCommit": "7b7976d77c2e344721d61b29dfe06d832b532676",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou explicitamente publicar todo o conjunto revisado e ler depois da publicacao, pedindo cuidado especial com mobile, imagens, videos e contraste. O preflight externo vinculou essa autorizacao ao commit funcional exato 46bf67fdccc0c806650611562a975dc3dd046a56 antes do push."
+    "note": "Daniel havia autorizado publicar todo o conjunto de mama e contorno e ler depois da publicacao. No turno seguinte, pediu esta revisao complementar da comunicacao e a substituicao de termos com aparencia de IA por linguagem humana. O preflight externo vinculara essa autorizacao ao commit funcional exato."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -25,8 +25,6 @@
       "abdominoplastia/index.html",
       "apps-script/clinica-liv-leads/site-contrast.test.mjs",
       "braquioplastia/index.html",
-      "campanhas/conversion-pages-body.css",
-      "campanhas/secondary-conversion.css",
       "campanhas/secondary-conversion.js",
       "campanhas/site-enhancements.js",
       "contorno-corporal/index.html",
@@ -36,103 +34,82 @@
       "mastopexia-com-protese/index.html",
       "mastopexia/index.html",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
       "pos-bariatrica/index.html",
-      "protese-de-mama/index.html",
-      "sitemap.xml"
+      "protese-de-mama/index.html"
     ]
   },
   "impact": {
     "consumers": [
-      "pacientes que pesquisam cirurgia de mama e contorno corporal em Sao Paulo",
-      "as dez paginas publicas de decisao e seus CTAs de consulta",
-      "Google Search e ferramentas de IA que indexam conteudo publico",
-      "componentes compartilhados de video, resultados, FAQ e contraste",
-      "sitemap e build de producao do Netlify"
+      "pacientes que leem as dez paginas de mama e contorno corporal",
+      "CTAs e blocos dinamicos de consulta das oito paginas secundarias",
+      "Google Search e ferramentas de IA que leem metadados e dados estruturados",
+      "build estatico e publicacao do Netlify"
     ],
     "preservedInvariants": [
-      "URLs, canonicals, numero de WhatsApp, atributos de tracking e referencias por procedimento permanecem preservados",
+      "URLs, canonicals, numero de WhatsApp, referencias por procedimento e atributos de tracking permanecem iguais",
       "conteudo medico continua educativo, individualizado e sem promessa de resultado ou indicacao a distancia",
-      "imagens mantem dimensoes declaradas e videos mantem poster, controles e reproducao em modal no mobile",
-      "o sitemap preserva as datas mais recentes das rotas de lifting e otoplastia e atualiza somente as dez rotas deste escopo",
-      "nenhum Apps Script, Bruna, YCloud, LEADS, CRM, Calendar, campanha, orcamento ou mensagem real entra neste release",
-      "a pagina local ainda nao aprovada sobre preco de blefaroplastia permanece fora do commit e do sitemap"
+      "imagens preservam dimensoes e textos alternativos; videos preservam poster, controles, playsinline e origem MP4",
+      "CSS, contraste, sitemap e estrutura das paginas permanecem fora desta revisao textual",
+      "Apps Script v144, Bruna, YCloud, LEADS, CRM, Calendar, campanhas, orcamentos e Drive permanecem sem alteracao"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-publication",
         "system": "Git canonico, Netlify de producao e dominio publico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T10:54:25-03:00",
-        "reference": "origin/reestruturacao-site fechado em 545c4d83dad1397cff351c800e3c70d2a3f10124; deploy funcional publicado 6aa556ba2030c700087d07d1 no commit 800e3b91801de2566b625e04a37c04d05e2d29ab; /mama/, /contorno-corporal/ e /sitemap.xml permanecem HTTP 200",
-        "check": "leitura somente; Apps Script v144, eventos YCloud e projecoes do Drive do release anterior foram preservados sem nova escrita por este preflight"
+        "checkedAt": "2026-09-12T11:39:42-03:00",
+        "reference": "origin/reestruturacao-site permanece em 7b7976d77c2e344721d61b29dfe06d832b532676; Netlify production permanece ready no deploy 6aa559fb631d2b00088cefb9 com commit_ref 46bf67fdccc0c806650611562a975dc3dd046a56; /mama/, /contorno-corporal/ e /sitemap.xml responderam HTTP 200"
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
-    "completedAt": "2026-09-12T11:01:15-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-09-12T11:37:53-03:00",
     "commands": [
+      "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs",
+      "node --check campanhas/secondary-conversion.js",
+      "node --check campanhas/site-enhancements.js",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "git diff --check",
-      "npm.cmd run release:preflight -- --approved-commit 46bf67fdccc0c806650611562a975dc3dd046a56 --approved-at 2026-09-12T10:56:03-03:00 --approved-by Daniel --approval-reference user_turn_pode_publicar_tudo_e_vou_ler_apos_publicado_2026-09-12 --live-preflight-at 2026-09-12T10:54:25-03:00 --live-preflight-reference origin_545c4d8_netlify_6aa556ba_public_pages_http_200",
-      "git push origin 46bf67fdccc0c806650611562a975dc3dd046a56:reestruturacao-site",
-      "Netlify API: confirmar deploy production ready e commit_ref exato",
-      "HTTP GET do dominio oficial e do endereco imutavel para paginas, assets e sitemap; sentinela auditorias em 404",
-      "navegador mobile de producao em 390x844: paginas completas, resultados, FAQ, triggers e modais de video"
+      "git diff --check"
     ],
     "results": {
-      "mobileVisual": "10/10 paginas aprovadas em 390x844 e 360x800; sem overflow do documento, imagem quebrada ou deformada, falha visivel de video, contraste insuficiente ou CTA pequeno",
-      "focusedContrast": "3/3 testes aprovados, incluindo versao de cache por pagina e overrides de resultados, FAQ e etapas",
+      "focusedCopyAndContrast": "4/4 testes aprovados; o teste bloqueia as formulas textuais retiradas, confere cache dos componentes dinamicos e preserva os contrastes AA conhecidos",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 18/18 arquivos coincidem com o escopo declarado",
-      "fullSuite": "1296/1296 testes aprovados sobre o fechamento canonico da v144",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 14/14 arquivos coincidem com o escopo declarado",
+      "fullSuite": "1297/1297 testes aprovados",
       "siteBuild": "180 arquivos e 44 URLs; zero arquivo de auditoria no artefato publico",
-      "siteCheck": "44/44 URLs tecnicamente validas; canonicals, indexabilidade e H1 alinhados; zero pagina orfa",
+      "siteCheck": "artefato tecnico valido; 44 URLs, 180 arquivos e zero erro",
       "javascriptSyntax": "site-enhancements.js e secondary-conversion.js aprovados por node --check",
       "gitDiffCheck": "aprovado",
-      "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit funcional exato 46bf67fdccc0c806650611562a975dc3dd046a56",
-      "netlify": "deploy 6aa559fb631d2b00088cefb9 em contexto production, state ready e commit_ref 46bf67fdccc0c806650611562a975dc3dd046a56",
-      "liveSite": "10/10 paginas HTTP 200 com H1 novo, canonical proprio, meta description entre 125 e 150 caracteres, FAQ e JSON-LD validos, CTAs rastreaveis e stylesheet versionado; robots libera OAI-SearchBot e GPTBot e o sitemap marca as dez rotas em 2026-09-12",
-      "artifactEquality": "dominio e endereco imutavel coincidem; sete HTMLs, quatro assets compartilhados e sitemap coincidem byte a byte com o artefato, e os tres HTMLs restantes diferem apenas pela normalizacao semantica do Netlify de ../index.html para / no link da marca",
-      "liveMobile": "10/10 paginas aprovadas em 390x844 sem overflow do documento, imagem quebrada ou deformada, falha visivel de video, trigger ou modal, contraste insuficiente, CTA pequeno ou erro de protocolo",
-      "publicArtifactSafety": "rota sentinela /auditorias/sentinela-publica/ respondeu HTTP 404; artefato continua sem auditorias e sem metadados .netlify",
-      "preservedParallelRelease": "Apps Script v144, seis eventos YCloud, Bruna, LEADS, CRM, Calendar, campanhas, orcamentos e projecoes do Drive permaneceram inalterados por este release"
+      "mobileVisual": "10/10 paginas aprovadas em 390x844 e 360x800; sem overflow do documento, texto cortado, CTA menor que 44 px ou expressao bloqueada",
+      "mediaMobile": "todas as imagens carregaram com dimensoes naturais; videos de equipe e Clinica LIV abriram em modal com poster, controles, playsinline, MP4 correto e largura contida",
+      "contrastMobile": "10/10 paginas sem texto abaixo do criterio WCAG AA na auditoria de cores compostas; o aviso translucido da abdominoplastia mediu 6,31:1"
     },
     "crossConsumerCases": [
-      "os hubs de mama e contorno orientam a escolha pela queixa antes de apresentar a tecnica",
-      "as oito paginas de procedimento distinguem indicacao, limites, cicatriz e recuperacao sem repeticao mecanica",
-      "CTA superior e principal conduzem para horarios da consulta com referencia correta do procedimento",
-      "metadados, FAQ visivel, JSON-LD, links internos e sitemap descrevem a mesma intencao de busca",
-      "triggers de video substituem o elemento nativo no mobile sem duplicacao e abrem modal com controles"
+      "nenhuma das dez paginas exibe questao central ou as demais formulas textuais bloqueadas pelo teste",
+      "blocos inseridos por JavaScript usam as mesmas frases humanas vistas no HTML",
+      "descricoes sociais e dados estruturados de mastopexia com protese, lipoaspiracao e braquioplastia usam linguagem concreta",
+      "CTAs continuam levando ao WhatsApp com a referencia correta e informacao de consulta"
     ]
   },
-  "release": {
-    "approvedCommit": "46bf67fdccc0c806650611562a975dc3dd046a56",
-    "netlifyDeployId": "6aa559fb631d2b00088cefb9",
-    "appsScriptVersion": 144,
-    "drivePlanSha256": "8d1fda37264a8d597f3709d9bf93e1376f334d52f80ce7ed58118e35e8e39304",
-    "verifiedAt": "2026-09-12T11:01:15-03:00",
-    "activationState": "active_verified",
-    "notes": "O Netlify publicou exatamente o commit funcional aprovado. O dominio oficial e o endereco do deploy foram relidos, o mobile foi inspecionado em producao e os contratos de SEO e IA foram confirmados. Apps Script v144, YCloud e a projecao vigente do Plano no Drive foram apenas preservados, sem nova escrita."
-  },
+  "release": {},
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre o baseline 545c4d83dad1397cff351c800e3c70d2a3f10124, preservando todo trabalho paralelo",
-    "production": "restaurar o deploy Netlify 6aa556ba2030c700087d07d1 se houver regressao confirmada de conteudo, midia, contraste, tracking ou indexabilidade"
+    "local": "reverter somente o commit funcional deste changeId sobre o baseline 7b7976d77c2e344721d61b29dfe06d832b532676, preservando todo trabalho paralelo",
+    "production": "restaurar o deploy Netlify 6aa559fb631d2b00088cefb9 se houver regressao confirmada de texto, layout, midia, contraste, tracking ou indexabilidade"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
     "window": "pos-voo imediato e 24 horas para integridade; 7 e 14 dias para contatos validos e consultas",
     "metrics": [
-      "HTTP, canonical, indexabilidade, dados estruturados e sitemap das dez rotas",
-      "carregamento e enquadramento de imagens, posters, videos e modais em mobile",
+      "HTTP, canonical, indexabilidade, dados estruturados e ausencia das expressoes bloqueadas",
+      "quebras de linha, overflow, contraste, imagens, posters e videos em mobile",
       "cliques qualificados nos CTAs e referencias corretas por procedimento",
       "contatos validos, leads qualificados e consultas originados das paginas"
     ],
-    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, midia indisponivel, contraste impeditivo ou regressao medica; nao decidir por clique isolado"
+    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, midia indisponivel, contraste impeditivo, frase clinicamente inadequada ou regressao de indexabilidade"
   }
 }

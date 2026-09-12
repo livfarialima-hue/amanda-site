@@ -509,69 +509,69 @@
     'mastopexia': {
       suppressResults: true,
       contents: [
-        ['Cirurgias de mama', 'Compare as possibilidades antes de decidir a técnica.', '../mama/'],
-        ['Queda e volume', 'Mastopexia com prótese: quando a associação entra na conversa.', '../mastopexia-com-protese/'],
-        ['Volume e proporção', 'Prótese de mama: medidas e objetivos antes dos mililitros.', '../protese-de-mama/']
+        ['Cirurgias de mama', 'Veja a diferença entre mastopexia, prótese e redução.', '../mama/'],
+        ['Queda e volume', 'Mastopexia com prótese: quando também é preciso recuperar volume.', '../mastopexia-com-protese/'],
+        ['Prótese de mama', 'Como as medidas do tórax ajudam a escolher o implante.', '../protese-de-mama/']
       ]
     },
     'mastopexia-com-protese': {
       suppressResults: true,
       contents: [
-        ['Queda sem implante', 'Mastopexia: quando o volume existente pode ser suficiente.', '../mastopexia/'],
-        ['Cirurgias de mama', 'Compare queda, volume, cicatriz e proporção.', '../mama/'],
-        ['Volume e proporção', 'Prótese de mama: o que o implante busca resolver.', '../protese-de-mama/']
+        ['Mastopexia sem prótese', 'Entenda quando o volume da própria mama pode ser suficiente.', '../mastopexia/'],
+        ['Cirurgias de mama', 'Veja a diferença entre queda, falta de volume e excesso de peso.', '../mama/'],
+        ['Prótese de mama', 'Saiba como o implante acrescenta volume e projeção.', '../protese-de-mama/']
       ]
     },
     'protese-de-mama': {
       suppressResults: true,
       contents: [
-        ['Queda e remodelação', 'Mastopexia: quando elevar a mama faz parte da decisão.', '../mastopexia/'],
-        ['Cirurgias de mama', 'Compare as possibilidades antes de escolher uma técnica.', '../mama/'],
+        ['Queda e remodelação', 'Mastopexia: quando também é preciso levantar a mama.', '../mastopexia/'],
+        ['Cirurgias de mama', 'Veja a diferença entre prótese, mastopexia e redução.', '../mama/'],
         ['Peso e proporção', 'Mamoplastia redutora: conforto, volume e cicatriz.', '../mamoplastia-redutora/']
       ]
     },
     'mamoplastia-redutora': {
       suppressResults: true,
       contents: [
-        ['Cirurgias de mama', 'Compare redução, mastopexia, prótese e associações.', '../mama/'],
-        ['Queda e remodelação', 'Mastopexia: o que muda quando a queixa é principalmente queda.', '../mastopexia/'],
-        ['Queda e volume', 'Mastopexia com prótese: uma associação para casos selecionados.', '../mastopexia-com-protese/']
+        ['Cirurgias de mama', 'Veja a diferença entre redução, mastopexia e prótese.', '../mama/'],
+        ['Queda e remodelação', 'Mastopexia: quando o incômodo é a posição da mama.', '../mastopexia/'],
+        ['Queda e volume', 'Mastopexia com prótese: quando também se deseja mais volume.', '../mastopexia-com-protese/']
       ]
     },
     'contorno-corporal': {
       suppressResults: true,
       contents: [
-        ['Pele e parede abdominal', 'Abdominoplastia: o que pode ser avaliado no abdome.', '../abdominoplastia/'],
-        ['Gordura localizada', 'Lipoaspiração: limites e quando a pele muda a indicação.', '../lipoaspiracao/'],
+        ['Pele e parede abdominal', 'Abdominoplastia: quando há pele solta ou diástase.', '../abdominoplastia/'],
+        ['Gordura localizada', 'Lipoaspiração: quando a pele pode acompanhar a redução de volume.', '../lipoaspiracao/'],
         ['Após grande perda de peso', 'Cirurgia pós-bariátrica: prioridades, etapas e recuperação.', '../pos-bariatrica/']
       ]
     },
     'abdominoplastia': {
       contents: [
-        ['Contorno corporal', 'Entenda como gordura, pele e parede abdominal mudam o plano.', '../contorno-corporal/'],
-        ['Gordura localizada', 'Lipoaspiração: quando pode complementar ou não o tratamento.', '../lipoaspiracao/'],
-        ['Após grande perda de peso', 'Cirurgia pós-bariátrica: planejamento por prioridades.', '../pos-bariatrica/']
+        ['Contorno corporal', 'Entenda a diferença entre gordura, pele e diástase.', '../contorno-corporal/'],
+        ['Gordura localizada', 'Lipoaspiração: quando pode ser associada à abdominoplastia.', '../lipoaspiracao/'],
+        ['Após grande perda de peso', 'Cirurgia pós-bariátrica: como decidir por onde começar.', '../pos-bariatrica/']
       ]
     },
     'lipoaspiracao': {
       contents: [
         ['Contorno corporal', 'Compare gordura localizada, pele e parede abdominal.', '../contorno-corporal/'],
-        ['Pele e abdome', 'Abdominoplastia: quando a retirada de pele entra na conversa.', '../abdominoplastia/'],
+        ['Pele e abdome', 'Abdominoplastia: quando também é preciso retirar pele.', '../abdominoplastia/'],
         ['Braços', 'Braquioplastia: quando a queixa é excesso de pele.', '../braquioplastia/']
       ]
     },
     'pos-bariatrica': {
       contents: [
-        ['Contorno corporal', 'Entenda como as prioridades são organizadas por região.', '../contorno-corporal/'],
-        ['Pele e abdome', 'Abdominoplastia: uma das possibilidades após perda importante de peso.', '../abdominoplastia/'],
-        ['Braços', 'Braquioplastia: quando a pele dos braços permanece como queixa.', '../braquioplastia/']
+        ['Contorno corporal', 'Entenda o que cada cirurgia pode tratar.', '../contorno-corporal/'],
+        ['Pele e abdome', 'Abdominoplastia depois de grande perda de peso.', '../abdominoplastia/'],
+        ['Braços', 'Braquioplastia: quando sobra pele nos braços.', '../braquioplastia/']
       ]
     },
     'braquioplastia': {
       contents: [
         ['Após grande perda de peso', 'Cirurgia pós-bariátrica: prioridades, etapas e recuperação.', '../pos-bariatrica/'],
-        ['Contorno corporal', 'Pele, gordura e proporção em uma avaliação integrada.', '../contorno-corporal/'],
-        ['Gordura localizada', 'Lipoaspiração: quando pode ou não ser suficiente.', '../lipoaspiracao/']
+        ['Contorno corporal', 'Veja a diferença entre pele solta e gordura localizada.', '../contorno-corporal/'],
+        ['Gordura localizada', 'Lipoaspiração: quando ela pode ser suficiente para os braços.', '../lipoaspiracao/']
       ]
     }
   };
@@ -630,7 +630,7 @@
     var team = document.createElement('section');
     team.className = 'auxiliary-team-section';
     team.id = 'auxiliary-team';
-    team.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Equipe e ambiente cirúrgico</span><h2>O cuidado é planejado por uma equipe, não apenas por uma técnica.</h2><p>Dra. Amanda com parte de sua equipe cirúrgica. Ambiente, anestesia e composição da equipe são organizados conforme o plano e as necessidades de cada caso.</p></div><div class="auxiliary-team-carousel" aria-label="Equipe e ambiente cirúrgico"><figure class="auxiliary-team-card auxiliary-team-card--video"><video aria-label="Dra. Amanda em ambiente cirúrgico" controls controlslist="nodownload" muted playsinline poster="../campanhas/assets/amanda-operando.jpg" preload="metadata"><source src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"></video><figcaption>Dra. Amanda em centro cirúrgico.</figcaption></figure><figure class="auxiliary-team-card"><img src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg" alt="Dra. Amanda com parte de sua equipe cirúrgica" loading="lazy" decoding="async"><figcaption>Parte da equipe cirúrgica que participa do cuidado em casos selecionados.</figcaption></figure></div><p class="auxiliary-hospital-note">Quando indicado, o procedimento pode ser realizado no Hospital Sírio-Libanês, Hospital Nove de Julho, Hospital Oswaldo Cruz ou em outra instituição criteriosamente selecionada.</p></div>';
+    team.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Equipe e ambiente cirúrgico</span><h2>Sua cirurgia envolve uma equipe inteira.</h2><p>A Dra. Amanda trabalha com profissionais de anestesia e apoio cirúrgico. A equipe e o hospital são definidos de acordo com a cirurgia e as necessidades de cada paciente.</p></div><div class="auxiliary-team-carousel" aria-label="Equipe e ambiente cirúrgico"><figure class="auxiliary-team-card auxiliary-team-card--video"><video aria-label="Dra. Amanda em ambiente cirúrgico" controls controlslist="nodownload" muted playsinline poster="../campanhas/assets/amanda-operando.jpg" preload="metadata"><source src="../campanhas/assets/equipe/amanda-operando-centro-cirurgico.mp4" type="video/mp4"></video><figcaption>Dra. Amanda em centro cirúrgico.</figcaption></figure><figure class="auxiliary-team-card"><img src="../campanhas/assets/blefaroplastia/equipe-cirurgica-01.jpg" alt="Dra. Amanda com parte de sua equipe cirúrgica" loading="lazy" decoding="async"><figcaption>Parte da equipe cirúrgica que participa do cuidado em casos selecionados.</figcaption></figure></div><p class="auxiliary-hospital-note">Quando indicado, o procedimento pode ser realizado no Hospital Sírio-Libanês, Hospital Nove de Julho, Hospital Oswaldo Cruz ou em outra instituição criteriosamente selecionada.</p></div>';
 
     var contents = document.createElement('section');
     contents.className = 'auxiliary-content-section';
@@ -638,12 +638,12 @@
     var cards = config.contents.map(function (item) {
       return '<a class="auxiliary-content-card" href="' + item[2] + '"><span>' + item[0] + '</span><strong>' + item[1] + '</strong><em>Entender melhor →</em></a>';
     }).join('');
-    contents.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Conteúdos selecionados</span><h2>Escolha a pergunta que mais ajuda a sua decisão.</h2><p>As páginas relacionadas aprofundam alternativas sem antecipar a indicação antes do exame.</p></div><div class="auxiliary-content-grid">' + cards + '</div></div>';
+    contents.innerHTML = '<div class="container"><div class="section-head"><span class="eyebrow">Conteúdos selecionados</span><h2>Leia a resposta para a dúvida que você tem agora.</h2><p>Estas páginas explicam as diferenças entre os procedimentos. A indicação para o seu caso depende da consulta e do exame.</p></div><div class="auxiliary-content-grid">' + cards + '</div></div>';
 
     var clinic = document.createElement('section');
     clinic.className = 'auxiliary-clinic-section';
     clinic.id = 'clinica-liv';
-    clinic.innerHTML = '<div class="container auxiliary-clinic-grid"><div><span class="eyebrow">Clínica LIV Faria Lima</span><h2>Consulta particular com privacidade para conversar e decidir.</h2><p>A consulta acontece em Pinheiros, com espaço para entender a queixa, examinar as estruturas envolvidas e discutir possibilidades, cicatrizes, recuperação e próximos passos.</p><p class="auxiliary-clinic-address">R. Pais Leme, 215 — cj. 710 — Pinheiros, São Paulo · Nota fiscal para reembolso.</p></div><div class="auxiliary-clinic-media"><img src="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" alt="Dra. Amanda Schroeder no consultório da Clínica LIV Faria Lima" loading="lazy" decoding="async"><button type="button" class="auxiliary-clinic-video" data-curated-video data-content-id="clinica-liv-apresentacao" data-video-disclaimer="" data-video-eyebrow="Clínica LIV Faria Lima" data-video-title="Conheça a Clínica LIV Faria Lima" data-video-summary="Um passeio breve pelo prédio e pelos ambientes de atendimento da Clínica LIV Faria Lima, em Pinheiros." data-video-poster="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" data-video-src="../campanhas/assets/video-apresentacao-clinica-liv.mp4"><span aria-hidden="true">▶</span><span><strong>Conheça a Clínica LIV</strong><small>Veja o prédio e os ambientes de atendimento</small></span></button></div></div>';
+    clinic.innerHTML = '<div class="container auxiliary-clinic-grid"><div><span class="eyebrow">Clínica LIV Faria Lima</span><h2>Um lugar reservado para conversar com calma.</h2><p>A consulta acontece em Pinheiros. Você pode explicar o que incomoda, fazer o exame físico e tirar dúvidas sobre cicatrizes, recuperação e próximos passos.</p><p class="auxiliary-clinic-address">R. Pais Leme, 215 — cj. 710 — Pinheiros, São Paulo · Nota fiscal para reembolso.</p></div><div class="auxiliary-clinic-media"><img src="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" alt="Dra. Amanda Schroeder no consultório da Clínica LIV Faria Lima" loading="lazy" decoding="async"><button type="button" class="auxiliary-clinic-video" data-curated-video data-content-id="clinica-liv-apresentacao" data-video-disclaimer="" data-video-eyebrow="Clínica LIV Faria Lima" data-video-title="Conheça a Clínica LIV Faria Lima" data-video-summary="Um passeio breve pelo prédio e pelos ambientes de atendimento da Clínica LIV Faria Lima, em Pinheiros." data-video-poster="../campanhas/assets/amanda-clinica-consultorio-desktop.webp" data-video-src="../campanhas/assets/video-apresentacao-clinica-liv.mp4"><span aria-hidden="true">▶</span><span><strong>Conheça a Clínica LIV</strong><small>Veja o prédio e os ambientes de atendimento</small></span></button></div></div>';
 
     anchor.insertAdjacentElement('beforebegin', team);
     anchor.insertAdjacentElement('beforebegin', contents);
@@ -664,8 +664,8 @@
       if (head) {
         var title = head.querySelector('h2');
         var text = head.querySelector('p');
-        if (title) title.textContent = 'Um caso combinado de mama e abdome para orientar a leitura — não para prometer uma técnica isolada.';
-        if (text) text.textContent = 'Este caso reúne procedimentos de mama e abdome. As imagens ajudam a observar contorno e proporção, mas a indicação e a evolução variam de pessoa para pessoa.';
+        if (title) title.textContent = 'Este caso mostra mama e abdome operados juntos.';
+        if (text) text.textContent = 'Observe o contorno e a proporção nas diferentes vistas. Como houve mais de uma cirurgia, as imagens não mostram o resultado isolado de uma abdominoplastia.';
       }
       var disclaimer = results.querySelector('.disclaimer');
       if (disclaimer) disclaimer.textContent = 'Caso real autorizado de cirurgia combinada de mama e abdome. As imagens não garantem resultado semelhante: anatomia, indicação, cicatrização e cuidados influenciam a evolução. Riscos e possibilidade de revisão são discutidos na consulta.';

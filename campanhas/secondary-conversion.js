@@ -4,43 +4,43 @@
   var configurations = {
     "mastopexia": {
       label: "Mastopexia",
-      title: "Confirme se elevar sem prótese, com prótese ou não operar agora é o plano mais proporcional.",
-      note: "A avaliação organiza queda, volume, tecidos, cicatrizes e o resultado que você deseja preservar."
+      title: "Na consulta, você descobre se a mastopexia pode ser feita sem prótese.",
+      note: "A Dra. Amanda examina queda, volume e pele, explica as cicatrizes e compara as opções com você."
     },
     "mastopexia-com-protese": {
       label: "Mastopexia com prótese",
-      title: "Entenda quanto do resultado depende de elevar — e quanto depende de acrescentar volume.",
-      note: "A prótese não substitui automaticamente a retirada de pele, e a escolha do implante vem depois das medidas."
+      title: "Na consulta, você entende se a prótese precisa fazer parte da mastopexia.",
+      note: "Primeiro vem o exame da queda e dos tecidos. Depois, se houver indicação, são escolhidos o volume e a projeção do implante."
     },
     "protese-de-mama": {
       label: "Prótese de mama",
-      title: "Escolha volume e projeção a partir do seu tórax, dos seus tecidos e do resultado que você busca.",
-      note: "Referências ajudam, mas o plano não deve depender de um número isolado de mililitros."
+      title: "O tamanho da prótese é escolhido depois de medir a mama e o tórax.",
+      note: "Suas referências ajudam a mostrar o resultado que você procura; o exame define quais opções são compatíveis com os seus tecidos."
     },
     "mamoplastia-redutora": {
       label: "Mamoplastia redutora",
-      title: "Avalie conforto, proporção, cicatrizes e sensibilidade antes de decidir quanto reduzir.",
-      note: "A redução procura aliviar peso e remodelar a mama sem prometer uma medida ou uma simetria padronizada."
+      title: "Na consulta, você entende quanto pode ser reduzido e como podem ficar as cicatrizes.",
+      note: "A Dra. Amanda relaciona peso, desconforto, medidas e tecidos antes de explicar as possibilidades."
     },
     "abdominoplastia": {
       label: "Abdominoplastia",
-      title: "Descubra se pele, diástase, gordura ou cicatrizes participam do que incomoda no abdome.",
-      note: "A consulta diferencia abdominoplastia, lipoaspiração e outras possibilidades antes de definir a extensão da cirurgia."
+      title: "Na consulta, você entende se o incômodo vem da pele, da gordura ou da diástase.",
+      note: "O exame mostra se há indicação de abdominoplastia, lipoaspiração, uma associação ou se é mais seguro adiar a cirurgia."
     },
     "lipoaspiracao": {
       label: "Lipoaspiração",
-      title: "Confirme se a gordura é realmente o principal componente — e se a pele pode acompanhar a mudança.",
-      note: "A lipo remodela áreas selecionadas; não substitui emagrecimento e não corrige todo excesso de pele."
+      title: "Na consulta, você descobre onde a lipo pode ajudar e como a pele pode reagir.",
+      note: "A Dra. Amanda examina gordura, flacidez e proporções para definir as áreas e explicar quando a lipo sozinha não basta."
     },
     "pos-bariatrica": {
       label: "Cirurgia pós-bariátrica",
-      title: "Organize prioridades, cicatrizes e etapas depois de uma grande perda de peso.",
-      note: "Abdome, mamas, braços e coxas não precisam — e muitas vezes não devem — ser tratados de uma só vez."
+      title: "Na consulta, você entende por onde começar e quais áreas precisam esperar.",
+      note: "A Dra. Amanda explica o que pode ser tratado primeiro, quais cicatrizes cada cirurgia deixa e como preparar a nutrição e a recuperação."
     },
     "braquioplastia": {
       label: "Braquioplastia",
-      title: "Decida se o ganho de contorno dos braços compensa a cicatriz necessária para tratar a pele.",
-      note: "A avaliação diferencia gordura de excesso cutâneo e considera axilas, tórax, peso e recuperação."
+      title: "Na consulta, você entende quanto o braço pode melhorar e onde pode ficar a cicatriz.",
+      note: "A Dra. Amanda distingue pele de gordura, examina axilas e tórax e explica como será a recuperação."
     },
     "lip-lifting": {
       label: "lip lifting",

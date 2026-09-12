@@ -26,6 +26,30 @@ const refreshedSecondaryPages = new Set([
   "pos-bariatrica",
   "protese-de-mama",
 ]);
+const mamaAndBodyPages = [
+  "mama",
+  "mamoplastia-redutora",
+  "mastopexia",
+  "mastopexia-com-protese",
+  "protese-de-mama",
+  "contorno-corporal",
+  "abdominoplastia",
+  "lipoaspiracao",
+  "braquioplastia",
+  "pos-bariatrica",
+];
+
+function visibleText(html) {
+  return html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&mdash;|&#8212;/gi, "—")
+    .replace(/&[a-z]+;|&#\d+;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 function luminance(hex) {
   const channels = hex.match(/[a-f\d]{2}/gi).map((value) => parseInt(value, 16) / 255);
@@ -66,4 +90,74 @@ test("every secondary procedure page requests the contrast-fixed stylesheet", ()
       new RegExp(`secondary-conversion\\.css\\?v=${expectedVersion}`),
     );
   }
+});
+
+test("mama and body pages avoid formulaic copy and load the humanized dynamic text", () => {
+  const bannedPatterns = [
+    /questão central/i,
+    /partes? centrais? da decisão/i,
+    /jornada organizada/i,
+    /transforma .{0,90} em/i,
+    /plano possível/i,
+    /sequência viável/i,
+    /troca cirúrgica/i,
+    /vale essa troca/i,
+    /capacidade dos tecidos/i,
+    /raciocínio geral/i,
+    /a consulta testa/i,
+    /a prioridade cruza/i,
+    /não são caminhos intercambiáveis/i,
+    /quando pode fazer sentido/i,
+    /principal componente/i,
+    /qual componente/i,
+    /entra na conversa/i,
+    /técnicas que fazem sentido/i,
+    /a redução é dimensionada/i,
+    /as respostas delimitam/i,
+    /participam da mudança/i,
+    /mantém o cuidado proporcional/i,
+    /o plano é construído/i,
+    /a cicatriz fica planejada/i,
+    /plano por prioridades/i,
+    /entram no cronograma/i,
+    /a troca que precisa ser compreendida/i,
+    /prontidão clínica/i,
+    /ajudam a ordenar/i,
+    /recuperação mais estruturada/i,
+    /cicatriz planejada/i,
+  ];
+
+  const sourceBannedPatterns = [
+    /pode fazer sentido e como a cicatriz entra na decisão/i,
+    /ponderando melhora de contorno/i,
+  ];
+
+  for (const page of mamaAndBodyPages) {
+    const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
+    const text = visibleText(html);
+    for (const pattern of bannedPatterns) {
+      assert.doesNotMatch(text, pattern, `${page}/index.html`);
+    }
+    for (const pattern of sourceBannedPatterns) {
+      assert.doesNotMatch(html, pattern, `${page}/index.html metadata`);
+    }
+  }
+
+  for (const page of refreshedSecondaryPages) {
+    const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
+    assert.match(html, /secondary-conversion\.js\?v=20260912-human-copy-2/);
+    assert.match(html, /site-enhancements\.js\?v=20260912-human-copy-2/);
+  }
+
+  const contourHtml = readFileSync(new URL("contorno-corporal/index.html", root), "utf8");
+  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-human-copy-2/);
+
+  const secondaryScript = readFileSync(new URL("campanhas/secondary-conversion.js", root), "utf8");
+  assert.match(secondaryScript, /Na consulta, você descobre onde a lipo pode ajudar/);
+  assert.doesNotMatch(secondaryScript, /principal componente|capacidade dos tecidos|vale essa troca/i);
+
+  const enhancementsScript = readFileSync(new URL("campanhas/site-enhancements.js", root), "utf8");
+  assert.match(enhancementsScript, /Sua cirurgia envolve uma equipe inteira/);
+  assert.match(enhancementsScript, /Um lugar reservado para conversar com calma/);
+  assert.doesNotMatch(enhancementsScript, /a associação entra na conversa|orientar a leitura — não para prometer/i);
 });
