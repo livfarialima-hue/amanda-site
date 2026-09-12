@@ -74,7 +74,7 @@
     "observedVariantsClicks": 3,
     "observedVariantsCostBrl": 7.14,
     "reason": "procedimento distinto e raiz acima do gate canônico de R$ 5 em 30 dias",
-    "status": "candidato à publicação"
+    "status": "publicada e verificada em 2026-09-03"
   },
   "keywordQuality": [
     {"keyword":"cirurgia plástica da orelha","matchType":"frase","impressions":1181,"clicks":73,"costBrl":171.97,"qualityScore":null,"decision":"preservar"},
@@ -96,17 +96,17 @@
   "assets": [
     {"area":"RSA adulto","state":"ativo; força Boa","finding":"180 cliques; headline duplicada apenas por capitalização; página e ativos serão corrigidos primeiro","decision":"preservar nesta janela; reavaliar após dados limpos"},
     {"area":"RSA infantil","state":"ativo; força Excelente","finding":"18 cliques e CTR de 8,18%; amostra pequena","decision":"preservar"},
-    {"area":"Frases de destaque","state":"cinco coerentes","finding":"consulta particular, Pinheiros, nota fiscal, avaliação individual e naturalidade","decision":"preservar"},
+    {"area":"Frases de destaque","state":"nove recursos de campanha ativos e coerentes","finding":"consulta particular, Pinheiros, nota fiscal, avaliação individual, naturalidade, RQE, CRM e acompanhamento","decision":"preservadas sem edição"},
     {"area":"Sitelinks","state":"níveis de conta, campanha e grupo misturados","finding":"ativos de cervical, blefaroplastia e infância podem servir fora do contexto","decision":"remover associações erradas e separar adulto/infantil por grupo"},
     {"area":"Imagens e logos","state":"há recursos elegíveis e algumas reprovações","finding":"nenhum substituto canônico melhor foi validado","decision":"preservar"}
   ],
   "decisions": [
-    {"priority":1,"action":"Retirar da campanha OTO o sitelink cervical Como Funciona a Consulta","status":"candidato","reason":"12 cliques e R$ 28,10 foram para procedimento errado"},
-    {"priority":2,"action":"Retirar Blefaroplastia do nível da conta, preservando suas associações próprias","status":"candidato","reason":"ativo de outro procedimento apareceu em OTO e consumiu R$ 4,27"},
-    {"priority":3,"action":"Separar sitelinks adulto e infantil no nível de cada grupo","status":"candidato","reason":"continuidade de intenção e público sem alterar anúncios"},
-    {"priority":4,"action":"Adicionar negativa de frase lobuloplastia em G26OTO","status":"candidato","reason":"procedimento distinto, 3 cliques e R$ 7,14"},
-    {"priority":5,"action":"Publicar resposta de valor nas páginas e esclarecer otomodelação","status":"preparado localmente","reason":"35 cliques visíveis de preço sem conversão e experiência de página abaixo da média"},
-    {"priority":6,"action":"Preservar RSAs, palavras aderentes, orçamento e lances","status":"não alterar","reason":"zero qualificados e zero consultas não sustentam escala nem múltiplos testes simultâneos"}
+    {"priority":1,"action":"Retirar da campanha OTO o sitelink cervical Como Funciona a Consulta","status":"publicada; associação OTO pausada e associação CERV ativa verificada","reason":"12 cliques e R$ 28,10 foram para procedimento errado"},
+    {"priority":2,"action":"Retirar Blefaroplastia do nível da conta, preservando o contexto próprio","status":"publicada; conta pausada, recurso não excluído e associação direta BLEF ativa","reason":"ativo de outro procedimento apareceu em OTO e consumiu R$ 4,27"},
+    {"priority":3,"action":"Separar sitelinks adulto e infantil no nível de cada grupo","status":"publicada e verificada","reason":"continuidade de intenção e público sem alterar anúncios"},
+    {"priority":4,"action":"Adicionar negativa de frase lobuloplastia em G26OTO","status":"publicada e verificada entre 61 negativas","reason":"procedimento distinto, 3 cliques e R$ 7,14"},
+    {"priority":5,"action":"Publicar resposta de valor nas páginas e esclarecer otomodelação","status":"publicada no deploy 6a99862d5c80270008ebf19b","reason":"35 cliques visíveis de preço sem conversão e experiência de página abaixo da média"},
+    {"priority":6,"action":"Preservar RSAs, palavras aderentes, orçamento e lances","status":"verificado ao vivo: R$ 15/dia, Maximizar cliques e meta específica intactos","reason":"zero qualificados e zero consultas não sustentam escala nem múltiplos testes simultâneos"}
   ],
   "dataQuality": [
     {"domain":"Mídia, grupos, palavras e ativos","confidence":"alta","safeUse":"diagnosticar entrega, custo e estado vivo das entidades"},
@@ -114,5 +114,18 @@
     {"domain":"Funil por campanha","confidence":"média-alta","safeUse":"contar contatos G26OTO sem PII e conferir GCLID"},
     {"domain":"Conversão da interface do Google","confidence":"baixa como resultado clínico","safeUse":"tratar como clique-proxy, não paciente qualificado"},
     {"domain":"Busca e IA","confidence":"alta para requisitos; desconhecida para resultado","safeUse":"melhorar clareza e elegibilidade sem prometer ranking ou citação"}
-  ]
+  ],
+  "publication": {
+    "verifiedAt": "2026-09-03T12:06:00-03:00",
+    "functionalCommit": "b845db8fb2cce7889abc6ae3e8334261ba3661da",
+    "netlifyDeployId": "6a99862d5c80270008ebf19b",
+    "netlifyState": "ready",
+    "netlifyContext": "production",
+    "productionAndImmutableHttp": 200,
+    "negativeKeywordCount": 61,
+    "adultAdGroupSitelinks": 8,
+    "childAdGroupSitelinks": 7,
+    "campaignUniversalSitelinks": ["Sobre a Dra. Amanda", "Segurança Cirúrgica"],
+    "preserved": ["budgetDailyBrl=15", "bidStrategy=Maximizar cliques", "goal=Lead qualificado GCLID — campanhas", "RSAs", "nine campaign callouts", "Apps Script v141", "funnel systems"]
+  }
 }

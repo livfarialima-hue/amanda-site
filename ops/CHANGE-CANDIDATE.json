@@ -3,12 +3,12 @@
   "changeId": "RETOMADAS-AUTOMATICAS-MODELO-2026-09-11",
   "title": "Corrigir a primeira retomada automatica com modelo seguro entre 24 e 48 horas",
   "status": "committed",
-  "baseCommit": "8187758e21484d63f764da897a484d21e52890cd",
+  "baseCommit": "b845db8fb2cce7889abc6ae3e8334261ba3661da",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuario autorizou a implementacao local em 11/09/2026. Publicacao e ativacao externa permanecem sem autorizacao e exigem decisoes separadas para o commit final exato."
+    "note": "O usuario autorizou a publicacao segura de c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4 ainda desligado. O preflight revelou que esse SHA reverteria a publicacao viva de otoplastia; em 12/09/2026 o usuario autorizou preparar a integracao local preservadora. O novo HEAD exato ainda exige autorizacao explicita antes de qualquer publicacao. Ativacao permanece fora do escopo."
   },
   "risk": {
     "level": "high",
@@ -29,6 +29,8 @@
       "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/EXECUCAO-2026-09-03.md",
+      "auditorias/auditoria-google-ads-otoplastia-2026-09-03/artifact-data.json",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -72,11 +74,19 @@
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script canonico v141 e endpoint publico atual",
-        "status": "partial_baseline_confirmed",
-        "checkedAt": "2026-09-11T18:56:00-03:00",
-        "reference": "Os tres IDs canonicos e a versao 141 foram relidos no repositorio; o GET publico do bot respondeu ativo. Estado protegido das propriedades, triggers e aprovacao atual do template ainda exige preflight autenticado antes de publicar ou ativar.",
-        "evidence": "Somente leitura. A automacao de navegador falhou antes do acesso protegido e nao foi contornada."
+        "system": "Apps Script canonico v141 e propriedades protegidas",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-12T07:48:00-03:00",
+        "reference": "Sessao autenticada do navegador exibiu o projeto canonico, a versao ativa v141 e o deployment canonico existente. O verificador local confirmou os tres IDs canonicos. CentralAtendimento.gs e Retomadas.gs vivos coincidiram com 8187758e21484d63f764da897a484d21e52890cd e diferiram dos blobs candidatos somente pelo patch autorizado.",
+        "evidence": "SHA-256 normalizado vivo: CentralAtendimento.gs c44537745db61f8e236687b576bd82370fe8a99e45aaf7164ddb28b6d336ee95; Retomadas.gs 5e4ea535487c157a2ff8acaf37d40587faaad25b49092b91b3e912126552e907. As propriedades RETOMADAS_AUTOMATICAS_MODELO_ATIVAS e RETOMADAS_AUTOMATICAS_MODELO_ATIVADAS_EM estavam ausentes. Nenhuma escrita externa foi feita."
+      },
+      {
+        "contract": "patient-journey-funnel-followups",
+        "system": "Netlify de producao",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-12T07:52:00-03:00",
+        "reference": "O deploy de producao 6a99862d5c80270008ebf19b estava ready e apontava para b845db8fb2cce7889abc6ae3e8334261ba3661da. A integracao parte desse commit para preservar integralmente as paginas e o sitemap vivos de otoplastia.",
+        "evidence": "A variavel WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED estava ausente no escopo de funcoes de producao. Nenhuma variavel, deploy ou flag foi alterado."
       },
       {
         "contract": "google-ads-acquisition-conversion",
@@ -90,8 +100,9 @@
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-11T19:40:10-03:00",
-    "implementationCommit": "e333d55953e36038c1940a93ba6b3116b8585be8",
+    "completedAt": "2026-09-12T08:14:34-03:00",
+    "sourceCandidateCommit": "c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4",
+    "implementationCommit": "3ae0ba19502575b3e28792f53f7b3ccf3359a012",
     "commands": [
       "npm.cmd run change:check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
@@ -113,11 +124,14 @@
       "googleAdsContracts": "126/126 passed",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "fullSuite": "1263/1263 passed",
-      "changeSafety": "OK; 13 arquivos, escopo exato e quatro contratos cobertos",
+      "changeSafety": "OK; 15 arquivos coincidem com o escopo declarado sobre o baseline vivo b845db8fb2cce7889abc6ae3e8334261ba3661da",
       "siteBuild": "180 arquivos, 44 URLs no sitemap e zero erros",
       "siteCheck": "OK; 44/44 HTTP 200, canonicals, indexacao e H1; zero paginas orfas e zero erros",
-      "opsCheck": "SYNC_PENDING esperado: candidato local testado, branch isolada e worktree ainda nao commitado; nenhum recibo de publicacao foi criado",
-      "diffCheck": "passed"
+      "opsCheck": "SYNC_PENDING esperado ate autorizar e publicar o novo HEAD integrado; nenhum recibo desta publicacao foi criado",
+      "diffCheck": "passed",
+      "sourceCandidateBlobs": "nove arquivos funcionais e documentais sem sobreposicao coincidem exatamente com c77293047cd614d8d08fc4ab4907d5e8c2f7e1f4",
+      "liveSiteBlobs": "paginas adulta e infantil, sitemap, teste de otoplastia e registro de impacto coincidem exatamente com b845db8fb2cce7889abc6ae3e8334261ba3661da",
+      "parallelReceipts": "os cinco hunks locais de recibo de otoplastia foram preservados exatamente; o worktree original permaneceu intocado"
     }
   },
   "release": {
@@ -127,10 +141,10 @@
     "drivePlanSha256": null,
     "verifiedAt": null,
     "activationState": "not_published_not_activated",
-    "notes": "Producao permanece no Apps Script v141 e no Netlify observado anteriormente. Nenhuma funcao operacional, trigger, propriedade, planilha, fila, Drive ou mensagem real foi alterada."
+    "notes": "Producao permanece no Apps Script v141, no deployment canonico existente e no Netlify 6a99862d5c80270008ebf19b / b845db8fb2cce7889abc6ae3e8334261ba3661da. As flags novas continuam ausentes. Nenhuma funcao operacional, trigger, propriedade, planilha, fila, Drive, deploy ou mensagem real foi alterada."
   },
   "rollback": {
-    "local": "abandonar ou reverter somente o commit deste changeId sobre o baseCommit 8187758e21484d63f764da897a484d21e52890cd",
+    "local": "abandonar ou reverter somente os commits deste changeId sobre o baseCommit b845db8fb2cce7889abc6ae3e8334261ba3661da, preservando os recibos de otoplastia reconciliados",
     "production": "antes de eventual publicacao, nao se aplica. Depois de ativar, conter primeiro com desativarRetomadasAutomaticasPorModelo e desligar WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED; entao restaurar Apps Script v141 e o deploy Netlify anterior confirmado"
   },
   "monitoring": {
