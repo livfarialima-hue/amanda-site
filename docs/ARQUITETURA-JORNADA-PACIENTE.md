@@ -40,6 +40,7 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Jornada comercial | manter oportunidade canônica e projetar o funil | `OpportunityStore.gs` | inferir qualificação apenas por campanha ou prefill |
 | Reconciliação | conferir e reparar projeções por `Opportunity ID` e fase | `FunnelReconciliation.gs` | reescrever colunas manuais protegidas |
 | Ledger de decisões | registrar códigos de decisão, rota, motivo, versões, gate e vínculo da oportunidade sem texto livre | `OperationalEvents.gs` | guardar nome, telefone, mensagem ou dado clínico |
+| Ledger de entrega e custos | consolidar o estado final e o preço informado pela YCloud por chave opaca idempotente | `ycloud-message-observability.mjs` e `WhatsAppCosts.gs` | tratar aceite HTTP como entrega, persistir identificador bruto/telefone/conteúdo ou bloquear cuidado por custo |
 | Retomadas | planejar cadência, elegibilidade, silêncio e limites | `Retomadas.gs` | enviar sem rechecagem do estado mais recente |
 | Caixa diária de decisões | projetar a Central sem escrita, coletar escolhas explícitas e delegar cada efeito ao proprietário | `PainelDecisoesDiarias.gs` | preselecionar ação, redefinir elegibilidade ou criar um caminho próprio de envio/cancelamento |
 | Execução de retomadas | revalidar e executar somente a ação ainda válida | `scheduled-followup.mjs` | criar um novo plano ou ignorar takeover/opt-out |
@@ -78,6 +79,10 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - código de campanha ou template de marketing fornece contexto, mas não prova qualificação, agendamento, comparecimento ou receita.
 - colunas manuais protegidas não podem ser modificadas pela reconciliação periódica.
 - cada decisão operacional recebe identificador próprio e, quando disponível, `Opportunity ID`, profissional, relação, etapa, rota, motivo, versão de política/prompt/conhecimento/modelo, resultado do gate, latência e responsável pela revisão. Os campos aceitam somente códigos delimitados e nunca armazenam conteúdo da conversa ou identificadores pessoais.
+- aceite HTTP do provedor significa apenas `accepted_not_delivered`. Entrega e custo só se tornam finais em `whatsapp.message.updated` com estado `delivered` ou `read` e preço numérico fornecido pela YCloud.
+- eventos repetidos de `sent`, `delivered` e `read` atualizam uma única linha por hash do identificador do provedor. `_WHATSAPP_CUSTOS` nunca recebe `wamid`, telefone, nome, conteúdo, ID de conversa ou dado clínico; o vínculo com campanha, profissional e oportunidade é apenas uma resolução best-effort de chaves técnicas já canônicas, sem inferência.
+- `_WHATSAPP_TEMPLATE_EVENTOS` registra apenas categoria, status e qualidade técnica dos modelos. Texto livre de motivo do provedor não é persistido. Falha na gravação devolve erro transitório ao webhook para permitir repetição segura.
+- custo permanece em observação: não pode impedir resposta segura, handoff, lembrete de consulta ou cuidado pós-procedimento. Qualquer limite futuro de retomada comercial exige amostra real, decisão explícita e alteração separada do contrato proprietário.
 
 ### Retomadas
 
@@ -154,7 +159,7 @@ Não mover grandes blocos do Apps Script apenas para reduzir tamanho de arquivo.
 
 ## 7. Rollback
 
-Para a candidata local `EVOLUCAO-BRUNA-JORNADA-2026-09-12`, nenhuma plataforma externa foi alterada. Antes de eventual publicação, o rollback é abandonar ou reverter apenas o commit da branch candidata. Depois de uma publicação futura autorizada, a contenção deve desligar efeitos antes de restaurar código, preservando oportunidades, decisões, consultas e eventos criados legitimamente após o release.
+Para a candidata integrada `EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12`, o baseline vivo é a v143, com retomadas por modelo já ativas e em monitoramento. Antes da publicação, o rollback é abandonar ou reverter apenas os commits desta branch. Depois da publicação autorizada, conter primeiro apenas o efeito novo que apresentar divergência; preservar fila, histórico e eventos legitimamente criados e retornar os deployments aos recibos imediatamente anteriores se a contenção não bastar.
 
 O baseline anterior a esta modularização é o commit `2862a6ddb61302430b40bb3b8e5702d310ef2dae`. O candidato foi desenvolvido na branch `codex/modularizacao-segura-jornada-20260823`.
 

@@ -9,6 +9,8 @@ const CONFIG = Object.freeze({
   messageSheetName: "_WHATSAPP_MENSAGENS",
   classificationSheetName: "_WHATSAPP_CLASSIFICACAO",
   operationalEventSheetName: "_WHATSAPP_OPERACAO_EVENTOS",
+  whatsappCostSheetName: "_WHATSAPP_CUSTOS",
+  whatsappTemplateEventSheetName: "_WHATSAPP_TEMPLATE_EVENTOS",
   leadStageEventSheetName: "_LEAD_FASE_EVENTOS",
   googleAdsEventSheetName: "_GOOGLE_ADS_EVENTOS",
   googleAdsImportSheetName: "IMPORT_GOOGLE_ADS",
@@ -288,6 +290,8 @@ function doPost(e) {
       body.action !== "record_bot_knowledge_usage" &&
       body.action !== "archive_nonlead_contact" &&
       body.action !== "record_operational_event" &&
+      body.action !== "record_ycloud_message_status" &&
+      body.action !== "record_ycloud_template_event" &&
       body.action !== "record_conversation_turn" &&
       body.action !== "get_conversation_context" &&
       body.action !== "apply_audited_lead_classifications" &&
@@ -330,6 +334,28 @@ function doPost(e) {
         body.event || {},
       );
       return json_({ ok: operationalResult.ok === true, ...operationalResult });
+    }
+
+    if (body.action === "record_ycloud_message_status") {
+      stage = "record_ycloud_message_status";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const costResult = registrarStatusMensagemYCloud_(
+        body.messageStatus || {},
+      );
+      return json_({ ok: costResult.ok === true, ...costResult });
+    }
+
+    if (body.action === "record_ycloud_template_event") {
+      stage = "record_ycloud_template_event";
+      if (!lock.tryLock(5000)) {
+        return json_({ ok: false, error: "busy_retry" });
+      }
+      const templateResult = registrarEventoTemplateYCloud_(
+        body.templateEvent || {},
+      );
+      return json_({ ok: templateResult.ok === true, ...templateResult });
     }
 
     if (body.action === "apply_audited_lead_classifications") {
@@ -1163,6 +1189,8 @@ function doPost(e) {
       "record_external_professional_contact",
       "archive_nonlead_contact",
       "record_operational_event",
+      "record_ycloud_message_status",
+      "record_ycloud_template_event",
       "record_conversation_turn",
       "get_conversation_context",
       "run_synthetic_health_check",

@@ -1,3 +1,5 @@
+import { readYCloudAcceptance } from "./ycloud-message-observability.mjs";
+
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 const DEFAULT_TEMPLATE_NAME = "pos_consulta_cuidado_liv_v1";
@@ -75,6 +77,7 @@ export async function sendYCloudPostConsult(
   );
 
   try {
+    const externalId = externalIdFor(appointmentId);
     const response = await fetchImpl(YCLOUD_MESSAGES_URL, {
       method: "POST",
       headers: {
@@ -85,7 +88,7 @@ export async function sendYCloudPostConsult(
         from,
         to,
         type: "template",
-        externalId: externalIdFor(appointmentId),
+        externalId,
         template: {
           name: String(
             env.YCLOUD_POST_CONSULT_TEMPLATE_NAME ||
@@ -113,12 +116,19 @@ export async function sendYCloudPostConsult(
       signal: controller.signal,
     });
 
+    if (!response.ok) {
+      return {
+        status: "failed",
+        httpStatus: response.status,
+        errorCode: `http_${response.status}`,
+      };
+    }
+
     return {
-      status: response.ok ? "completed" : "failed",
+      status: "completed",
       httpStatus: response.status,
-      errorCode: response.ok
-        ? "none"
-        : `http_${response.status}`,
+      errorCode: "none",
+      ...(await readYCloudAcceptance(response, { externalId })),
     };
   } catch (error) {
     return {

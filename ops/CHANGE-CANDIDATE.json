@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12",
   "title": "Fortalecer a jornada segura da Bruna e medir custo efetivo por mensagem",
-  "status": "implemented_local",
+  "status": "tested_local",
   "baseCommit": "7e6ea23d49b5b0fd149a66395f88f091b94b01a2",
   "createdAt": "2026-09-12T10:00:00-03:00",
   "risk": {
@@ -26,11 +26,15 @@
     "files": [
       "apps-script/clinica-liv-leads/AgendaCuidados.gs",
       "apps-script/clinica-liv-leads/AgendaCuidados.test.mjs",
+      "apps-script/clinica-liv-leads/Code.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
       "apps-script/clinica-liv-leads/OperationalEvents.gs",
       "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
+      "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
@@ -48,6 +52,15 @@
       "netlify/functions/lib/human-review-envelope.test.mjs",
       "netlify/functions/lib/professional-registry.mjs",
       "netlify/functions/lib/professional-registry.test.mjs",
+      "netlify/functions/lib/webhook-intake-observability.test.mjs",
+      "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+      "netlify/functions/lib/ycloud-appointment-reminder.test.mjs",
+      "netlify/functions/lib/ycloud-message-observability.mjs",
+      "netlify/functions/lib/ycloud-message-observability.test.mjs",
+      "netlify/functions/lib/ycloud-patient-message.mjs",
+      "netlify/functions/lib/ycloud-patient-message.test.mjs",
+      "netlify/functions/lib/ycloud-post-consult.mjs",
+      "netlify/functions/lib/ycloud-post-consult.test.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -72,10 +85,34 @@
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "combined-release",
+        "contract": "professional-routing",
+        "system": "Apps Script, Consultas e Google Calendar canonicos",
+        "status": "confirmed_read_only",
+        "reference": "Projeto, deployment e planilha conferidos pelos IDs canonicos; Apps Script vivo v143 coincide integralmente com o baseline local. Consultas possui Profissional e ID da consulta; Opportunity ID ainda nao existe e permanece enriquecimento opcional sem bloquear agenda."
+      },
+      {
+        "contract": "bot-decision-observability",
+        "system": "Apps Script e Google Sheets LEADS canonicos",
+        "status": "confirmed_read_only",
+        "reference": "Planilha canonica conferida; _WHATSAPP_OPERACAO_EVENTOS tem somente o cabecalho legado de 8 colunas e aceita expansao aditiva. O novo ledger usa apenas identificadores tecnicos hash e nao armazena mensagem, nome, telefone ou dado clinico."
+      },
+      {
+        "contract": "patient-lifecycle-governance",
+        "system": "Consultas, Calendar, retomadas e marcos da jornada",
+        "status": "confirmed_read_only",
+        "reference": "Schemas e codigo vivo v143 conferidos sem executar planejador, processador, mutacao de Calendar ou envio. AgendaCuidados.gs e LembretesConsultas.gs vivos coincidem com o baseline local."
+      },
+      {
+        "contract": "bruna-regression-governance",
+        "system": "Netlify, YCloud e politica publicada da Bruna",
+        "status": "confirmed_read_only",
+        "reference": "Netlify publicado no deploy 6aa5494950d7dc34628fdf33, commit 4db9fb3186b61b30de33d374e8a736804b654821, branch reestruturacao-site. Modo ativo e templates automaticos permanecem habilitados; nenhuma configuracao foi alterada no preflight."
+      },
+      {
+        "contract": "ycloud-delivery-cost-observability",
         "system": "Apps Script, LEADS, Calendar, Netlify e YCloud canonicos",
-        "status": "pending_before_release",
-        "reference": "Confirmar alvos, estado vivo, schemas e eventos do provedor antes de qualquer escrita."
+        "status": "confirmed_read_only",
+        "reference": "Webhook YCloud ativo no endpoint canonico. Eventos inbound_message.received e smb.message.echoes estao assinados; os quatro eventos tecnicos message.updated e template category/quality/reviewed estao prontos para ativacao apos os deployments. Abas _WHATSAPP_CUSTOS e _WHATSAPP_TEMPLATE_EVENTOS ainda nao existem e serao criadas somente no primeiro evento real."
       }
     ]
   },
@@ -88,8 +125,21 @@
     "reference": "faca entao as modificacoes necessarias e depois publique tudo que esta pendente"
   },
   "verification": {
-    "status": "pending",
+    "status": "passed_local",
+    "checkedAt": "2026-09-12T10:23:13-03:00",
+    "results": {
+      "focusedYCloudAndLedgerTests": "31/31 aprovados",
+      "fullTestSuite": "1296/1296 aprovados",
+      "architectureCheck": "OK",
+      "changeCheck": "OK, 40 arquivos exatos",
+      "siteBuild": "180 arquivos gerados e 44 URLs no sitemap",
+      "siteCheck": "44/44 paginas aprovadas",
+      "diffCheck": "sem erros",
+      "opsCheck": "SYNC_PENDING esperado antes do commit e da publicacao"
+    },
     "commands": [
+      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs netlify/functions/lib/ycloud-message-observability.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/ycloud-patient-message.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/ycloud-post-consult.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",

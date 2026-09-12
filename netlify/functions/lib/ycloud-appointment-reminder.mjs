@@ -1,3 +1,5 @@
+import { readYCloudAcceptance } from "./ycloud-message-observability.mjs";
+
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 const DEFAULT_TEMPLATE_NAME = "lembrete_consulta_liv_v1";
@@ -156,6 +158,10 @@ export async function sendYCloudAppointmentReminder(
   );
 
   try {
+    const externalId = externalIdFor(
+      appointmentId,
+      reminderKind,
+    );
     const response = await fetchImpl(YCLOUD_MESSAGES_URL, {
       method: "POST",
       headers: {
@@ -166,10 +172,7 @@ export async function sendYCloudAppointmentReminder(
         from,
         to,
         type: "template",
-        externalId: externalIdFor(
-          appointmentId,
-          reminderKind,
-        ),
+        externalId,
         template: {
           name: String(
             env.YCLOUD_APPOINTMENT_REMINDER_TEMPLATE_NAME ||
@@ -195,10 +198,19 @@ export async function sendYCloudAppointmentReminder(
       signal: controller.signal,
     });
 
+    if (!response.ok) {
+      return {
+        status: "failed",
+        httpStatus: response.status,
+        errorCode: "http_error",
+      };
+    }
+
     return {
-      status: response.ok ? "completed" : "failed",
+      status: "completed",
       httpStatus: response.status,
-      errorCode: response.ok ? "none" : "http_error",
+      errorCode: "none",
+      ...(await readYCloudAcceptance(response, { externalId })),
     };
   } catch (error) {
     return {

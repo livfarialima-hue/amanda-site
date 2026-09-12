@@ -6,6 +6,10 @@ import {
   isSchedulingRequest,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
+import {
+  normalizeYCloudMessageUpdated,
+  normalizeYCloudTemplateEvent,
+} from "./lib/ycloud-message-observability.mjs";
 import { normalizeAutomationMode } from "./lib/automation-mode.mjs";
 import {
   inboundReplyPriority,
@@ -3886,6 +3890,7 @@ export async function handleYCloudWebhook(
       leadDeliveryRetry: "single_idempotent_transient",
       leadDeliveryFallback: "acquisition_only",
       leadFailureEmailAlert: "required_after_retries",
+      messageCostObservability: "delivered_event_idempotent",
     });
   }
 
@@ -3945,6 +3950,123 @@ export async function handleYCloudWebhook(
       },
     });
     return json({ ok: false, error: "invalid_json" }, 400);
+  }
+
+  if (payload.type === "whatsapp.message.updated") {
+    const normalized = normalizeYCloudMessageUpdated(payload);
+    if (!normalized.ok) {
+      writeOperationalLog({
+        source: "ycloud_message_status",
+        category: "message_cost_observability",
+        reason: normalized.error,
+        fields: {
+          eventType: payload.type,
+          deployMode: process.env.CONTEXT || null,
+        },
+      });
+      return json({
+        received: true,
+        ignored: true,
+        ignoreReason: normalized.error,
+      });
+    }
+
+    const statusSync = await deliverSheetsAction(
+      "record_ycloud_message_status",
+      { messageStatus: normalized.messageStatus },
+    );
+
+    writeOperationalLog({
+      source: "ycloud_message_status",
+      category: "message_cost_observability",
+      reason: statusSync.ok ? "recorded" : "delivery_failed",
+      sourceId: normalized.messageStatus.providerMessageKey,
+      fields: {
+        eventType: payload.type,
+        status: normalized.messageStatus.status,
+        pricingCategory: normalized.messageStatus.pricingCategory,
+        finalPrice: normalized.messageStatus.finalPrice,
+        purpose: normalized.messageStatus.purpose,
+        downstreamStatus: statusSync.httpStatus,
+        downstreamError: statusSync.errorCode,
+      },
+    });
+
+    if (!statusSync.ok) {
+      return json({
+        received: false,
+        error: "message_status_delivery_failed",
+        downstreamStatus: statusSync.httpStatus,
+        downstreamError: statusSync.errorCode,
+      }, 502);
+    }
+
+    return json({
+      received: true,
+      messageStatusRecorded: true,
+      inserted: statusSync.responseData?.inserted === true,
+      updated: statusSync.responseData?.updated === true,
+      duplicate: statusSync.responseData?.duplicate === true,
+    });
+  }
+
+  if (
+    [
+      "whatsapp.template.category_updated",
+      "whatsapp.template.quality_updated",
+      "whatsapp.template.reviewed",
+    ].includes(payload.type)
+  ) {
+    const normalized = normalizeYCloudTemplateEvent(payload);
+    if (!normalized.ok) {
+      writeOperationalLog({
+        source: "ycloud_template_event",
+        category: "template_governance",
+        reason: normalized.error,
+        fields: { eventType: payload.type },
+      });
+      return json({
+        received: true,
+        ignored: true,
+        ignoreReason: normalized.error,
+      });
+    }
+
+    const templateSync = await deliverSheetsAction(
+      "record_ycloud_template_event",
+      { templateEvent: normalized.templateEvent },
+    );
+
+    writeOperationalLog({
+      source: "ycloud_template_event",
+      category: "template_governance",
+      reason: templateSync.ok ? "recorded" : "delivery_failed",
+      sourceId: normalized.templateEvent.eventKey,
+      fields: {
+        eventType: payload.type,
+        templateStatus: normalized.templateEvent.status,
+        qualityRating: normalized.templateEvent.qualityRating,
+        actionRequired: normalized.templateEvent.actionRequired,
+        downstreamStatus: templateSync.httpStatus,
+        downstreamError: templateSync.errorCode,
+      },
+    });
+
+    if (!templateSync.ok) {
+      return json({
+        received: false,
+        error: "template_event_delivery_failed",
+        downstreamStatus: templateSync.httpStatus,
+        downstreamError: templateSync.errorCode,
+      }, 502);
+    }
+
+    return json({
+      received: true,
+      templateEventRecorded: true,
+      inserted: templateSync.responseData?.inserted === true,
+      duplicate: templateSync.responseData?.duplicate === true,
+    });
   }
 
   if (payload.type === "whatsapp.smb.message.echoes") {

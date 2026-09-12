@@ -1,4 +1,5 @@
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
+import { readYCloudAcceptance } from "./ycloud-message-observability.mjs";
 
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
@@ -63,10 +64,21 @@ async function sendYCloudMessage(
       signal: controller.signal,
     });
 
+    if (!response.ok) {
+      return {
+        status: "failed",
+        httpStatus: response.status,
+        errorCode: "http_error",
+      };
+    }
+
     return {
-      status: response.ok ? "completed" : "failed",
+      status: "completed",
       httpStatus: response.status,
-      errorCode: response.ok ? "none" : "http_error",
+      errorCode: "none",
+      ...(await readYCloudAcceptance(response, {
+        externalId: payload.externalId,
+      })),
     };
   } catch (error) {
     return {

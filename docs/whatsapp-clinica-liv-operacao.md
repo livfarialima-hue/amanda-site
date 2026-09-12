@@ -8,17 +8,27 @@
 
 ### Preflight desta evolução
 
-Antes da primeira escrita externa:
+Antes da sincronização do código com produção:
 
 1. validar os três IDs de `production-target.json`;
-2. conferir em leitura o cabeçalho atual de `_BOT_EVENTOS_OPERACIONAIS`, a coluna `Profissional` de `Consultas` e a inexistência ou compatibilidade da aba técnica de custos;
-3. executar `diagnosticarReconciliacaoConsultasAgenda` e resolver manualmente qualquer divergência, sem usar o diagnóstico como comando de correção;
+2. conferir em leitura o cabeçalho atual de `_WHATSAPP_OPERACAO_EVENTOS`, a coluna `Profissional` de `Consultas` e a inexistência ou compatibilidade das abas técnicas `_WHATSAPP_CUSTOS` e `_WHATSAPP_TEMPLATE_EVENTOS`;
+3. conferir a estrutura de `Consultas` e do Calendar sem mutação; depois de sincronizar o código candidato e antes de criar a nova versão, executar `diagnosticarReconciliacaoConsultasAgenda` e resolver manualmente qualquer divergência, sem usar o diagnóstico como comando de correção;
 4. confirmar que profissionais eventuais permanecem fora de confirmação e lembrete automáticos;
 5. confirmar no provedor que eventos de atualização de mensagem chegam ao webhook canônico, sem alterar template nem enviar mensagem real;
 6. repetir testes focados, baseline de regressão, suíte integral, arquitetura, build e escopo exato;
 7. publicar o commit aprovado preservando o deployment, a ativação vigente das retomadas e todos os guardrails.
 
 O diagnóstico de Calendar é estritamente somente leitura. Ele retorna totais de agendamentos conferidos, alinhados e bloqueados, com motivos técnicos e apenas o número da linha para conferência; não inclui ID da consulta, nome, telefone ou conteúdo clínico e não escreve em `Consultas` nem no Calendar.
+
+No preflight de 12/09/2026, `Consultas` apresentou `Profissional` e `ID da consulta`, mas ainda não `Opportunity ID`. O ledger de custo trata essa ligação como enriquecimento opcional: registra entrega e preço normalmente e deixa a oportunidade vazia até a migração canônica do schema, sem herdar Amanda, procurar por nome/telefone ou bloquear agenda. O webhook YCloud canônico estava ativo com os eventos de entrada e eco; `whatsapp.message.updated` e os três eventos de governança de template estavam desmarcados e devem ser habilitados somente depois dos deployments de Apps Script e Netlify.
+
+### Entrega e custo da YCloud a partir de outubro de 2026
+
+A mudança anunciada pela YCloud entra em vigor em **1º de outubro de 2026**: mensagens de negócio enviadas passam a ser cobradas quando entregues; mensagens recebidas continuam gratuitas; as primeiras 1.000 mensagens de serviço entregues por número comercial no mês formam a franquia informada pelo provedor. Mensagens utility dentro da janela de 24 horas também entram na cobrança a partir dessa data, enquanto a janela gratuita de 72 horas originada por anúncio Click-to-WhatsApp ou botão da página permanece sujeita às condições da Meta/YCloud. A fonte operacional do valor é `totalPrice` do evento final, não uma tabela reimplementada no bot. Referências: [atualização de preços da YCloud](https://www.ycloud.com/pt/blog/whatsapp-api-message-pricing-update-effective-october-1-2026), [eventos do webhook](https://docs.ycloud.com/reference/webhook-events-payloads) e [guia de envio](https://docs.ycloud.com/reference/whatsapp-message-sending-guide).
+
+O POST aceito pelo provedor continua significando somente `accepted_not_delivered`. O webhook assinado recebe `whatsapp.message.updated`, reduz o evento a campos técnicos e envia ao Apps Script uma chave SHA-256 do identificador do provedor. `sent`, `failed`, `delivered` e `read` da mesma mensagem atualizam uma única linha de `_WHATSAPP_CUSTOS`; uma falha posterior a `sent` permanece visível, mas nunca apaga uma entrega/leitura comprovada. O preço só é final em `delivered`/`read`. Categoria, modelo `PMP`/`CBP` e tipo `regular`/`free_customer_service`/`free_entry_point` ficam separados para não confundir mensagem gratuita com cobrança. Nem o identificador bruto, nem telefone, nome, texto, ID de conversa ou dado clínico são persistidos. Eventos de categoria, revisão e qualidade de template entram, também de modo idempotente, em `_WHATSAPP_TEMPLATE_EVENTOS`.
+
+`diagnosticarCustosWhatsApp({ month: "AAAA-MM" })` é somente leitura e agrega por número comercial opaco, categoria, modelo, tipo de cobrança e moeda. Ele mostra mensagens entregues únicas, soma de preços finais, ausência de preço e a referência das 1.000 mensagens de serviço; não tenta substituir a fatura e não envia nada. A primeira fase é observacional. Segurança, acolhimento, handoff, lembrete e pós-cuidado nunca são bloqueados por custo. Um eventual teto para retomadas de marketing deve ser decidido depois da linha de base, pelo custo por contato válido, qualificado e consulta, em mudança própria e autorizada.
 
 ### Operação ativa, verificação e reativação controlada
 

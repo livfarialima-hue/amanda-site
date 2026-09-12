@@ -37,6 +37,7 @@ test("uses one utility-template variable for the professional", async () => {
   );
 
   assert.equal(result.status, "completed");
+  assert.equal(result.deliveryState, "accepted_not_delivered");
   const body = JSON.parse(calls[0].options.body);
   assert.equal(body.type, "template");
   assert.equal(

@@ -62,6 +62,34 @@ test("skips sending when configuration is incomplete", async () => {
   assert.equal(result.errorCode, "configuration_missing");
 });
 
+test("records provider acceptance as pending delivery without exposing its id", async () => {
+  const result = await sendYCloudPatientText(
+    {
+      from: "+5511961957144",
+      to: "+5511999999999",
+      eventId: "evt_acceptance_01",
+      body: "Olá!",
+    },
+    {
+      env: { YCLOUD_API_KEY: "test-key" },
+      fetchImpl: async () =>
+        new Response(JSON.stringify({
+          id: "provider-message-secret",
+          status: "accepted",
+          externalId: "liv-reply-evt_acceptance_01",
+        }), { status: 200 }),
+    },
+  );
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.deliveryState, "accepted_not_delivered");
+  assert.match(result.providerMessageKey, /^sha256:[a-f0-9]{64}$/);
+  assert.equal(
+    JSON.stringify(result).includes("provider-message-secret"),
+    false,
+  );
+});
+
 test("blocks internal references at the final free-text transport boundary", async () => {
   const result = await sendYCloudPatientText(
     {

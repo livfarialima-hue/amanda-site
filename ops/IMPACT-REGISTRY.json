@@ -526,6 +526,64 @@
       "requiresReadOnlyPreflight": true
     },
     {
+      "id": "ycloud-delivery-cost-observability",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
+        "netlify/functions/lib/ycloud-message-observability.mjs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/Code.gs",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/ycloud-patient-message.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+        "netlify/functions/lib/ycloud-post-consult.mjs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
+        "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
+        "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/webhook-intake-observability.test.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.test.mjs",
+        "netlify/functions/lib/ycloud-message-observability.mjs",
+        "netlify/functions/lib/ycloud-message-observability.test.mjs",
+        "netlify/functions/lib/ycloud-patient-message.mjs",
+        "netlify/functions/lib/ycloud-patient-message.test.mjs",
+        "netlify/functions/lib/ycloud-post-consult.mjs",
+        "netlify/functions/lib/ycloud-post-consult.test.mjs"
+      ],
+      "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
+        "netlify/functions/lib/webhook-intake-observability.test.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.test.mjs",
+        "netlify/functions/lib/ycloud-message-observability.test.mjs",
+        "netlify/functions/lib/ycloud-patient-message.test.mjs",
+        "netlify/functions/lib/ycloud-post-consult.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs netlify/functions/lib/ycloud-message-observability.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/ycloud-patient-message.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/ycloud-post-consult.test.mjs",
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run site:build",
+        "npm.cmd run site:check",
+        "npm.cmd run ops:check",
+        "git diff --check"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Google Sheets LEADS",
+        "Netlify",
+        "YCloud"
+      ],
+      "requiresReadOnlyPreflight": true
+    },
+    {
       "id": "patient-lifecycle-governance",
       "ownerFiles": [
         "apps-script/clinica-liv-leads/AgendaCuidados.gs",

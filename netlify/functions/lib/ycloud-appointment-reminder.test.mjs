@@ -79,6 +79,8 @@ test("appointment reminder uses the approved utility template", async () => {
   });
 
   assert.equal(result.status, "completed");
+  assert.equal(result.deliveryState, "accepted_not_delivered");
+  assert.equal(result.providerStatus, "accepted");
   assert.equal(calls.length, 1);
 
   const body = JSON.parse(calls[0].options.body);
