@@ -203,11 +203,18 @@ export function auditSite({ root = SCRIPT_ROOT, artifact = false } = {}) {
   const ignoreRules = artifactPlan.rules;
   const artifactFiles = artifactPlan.files;
   const auditFilesInArtifact = artifactFiles.filter((file) => file === "auditorias" || file.startsWith("auditorias/"));
+  const operationsFilesInArtifact = artifactFiles.filter((file) => file === "ops" || file.startsWith("ops/"));
   if (auditFilesInArtifact.length) {
     errors.push(error("AUDIT_ARTIFACT_LEAK", auditFilesInArtifact.join(", ")));
   }
+  if (operationsFilesInArtifact.length) {
+    errors.push(error("OPERATIONS_ARTIFACT_LEAK", operationsFilesInArtifact.join(", ")));
+  }
   if (!artifact && !ignoreRules.some((rule) => !rule.negate && rule.raw.replaceAll("\\", "/") === "auditorias/")) {
     errors.push(error("AUDIT_IGNORE_RULE_MISSING", ".netlifyignore must contain auditorias/"));
+  }
+  if (!artifact && !ignoreRules.some((rule) => !rule.negate && rule.raw.replaceAll("\\", "/") === "ops/")) {
+    errors.push(error("OPERATIONS_IGNORE_RULE_MISSING", ".netlifyignore must contain ops/"));
   }
 
   const sitemapPath = path.join(root, "sitemap.xml");
@@ -375,6 +382,7 @@ export function auditSite({ root = SCRIPT_ROOT, artifact = false } = {}) {
       redirects: redirects.length,
       artifactFiles: artifactFiles.length,
       auditFilesInArtifact: auditFilesInArtifact.length,
+      operationsFilesInArtifact: operationsFilesInArtifact.length,
       pagesWithGoogleFonts: pages.filter((page) => page.resources?.googleFontsStylesheet).length,
       pagesWithVideo: pages.filter((page) => page.resources?.videoCount).length,
       videoTags: pages.reduce((total, page) => total + (page.resources?.videoCount || 0), 0),

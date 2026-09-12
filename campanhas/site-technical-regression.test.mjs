@@ -30,7 +30,7 @@ function page({ canonical, body, robots = "index,follow", links = "" }) {
 function createFixture() {
   const fixtureRoot = mkdtempSync(path.join(os.tmpdir(), "site-technical-"));
   writeFixtureFile(fixtureRoot, "netlify.toml", "[build]\ncommand = \"node scripts/build-static-site.mjs\"\npublish = \"tmp/netlify-deploy\"\n");
-  writeFixtureFile(fixtureRoot, ".netlifyignore", ".netlify/\nauditorias/\n");
+  writeFixtureFile(fixtureRoot, ".netlifyignore", ".netlify/\nauditorias/\nops/\n");
   writeFixtureFile(fixtureRoot, "robots.txt", "User-agent: *\nAllow: /\nSitemap: https://draamandaschroeder.com.br/sitemap.xml\n");
   writeFixtureFile(fixtureRoot, "sitemap.xml", "<urlset><url><loc>https://draamandaschroeder.com.br/</loc></url><url><loc>https://draamandaschroeder.com.br/boa/</loc></url></urlset>");
   writeFixtureFile(fixtureRoot, "_redirects", "/antiga/ /boa/ 301\n");
@@ -45,6 +45,7 @@ function createFixture() {
     links: '<a href="/">Início</a>',
   }));
   writeFixtureFile(fixtureRoot, "auditorias/interna/relatorio.md", "interno");
+  writeFixtureFile(fixtureRoot, "ops/CHANGE-CANDIDATE.json", "{\"status\":\"tested_local\"}");
   return fixtureRoot;
 }
 
@@ -368,7 +369,7 @@ test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orp
   assert.ok(result.summary.redirects >= 1);
 });
 
-test("auditorias are excluded from the generated deploy artifact", () => {
+test("audit and operations files are excluded from the generated deploy artifact", () => {
   const fixtureRoot = createFixture();
   try {
     const result = auditSite({ root: fixtureRoot });
@@ -380,9 +381,11 @@ test("auditorias are excluded from the generated deploy artifact", () => {
     assert.deepEqual(result.errors, []);
     assert.deepEqual(artifactResult.errors, []);
     assert.equal(result.summary.auditFilesInArtifact, 0);
+    assert.equal(result.summary.operationsFilesInArtifact, 0);
     assert.ok(artifact.files.includes("index.html"));
     assert.ok(artifact.files.includes("sitemap.xml"));
     assert.ok(!artifact.files.some((file) => file.startsWith("auditorias/")));
+    assert.ok(!artifact.files.some((file) => file.startsWith("ops/")));
     assert.equal(
       readFileSync(path.join(fixtureRoot, artifact.outputDirectory, "index.html"), "utf8"),
       readFileSync(path.join(fixtureRoot, "index.html"), "utf8"),

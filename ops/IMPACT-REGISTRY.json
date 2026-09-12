@@ -46,6 +46,7 @@
     {
       "id": "site-publication",
       "ownerFiles": [
+        ".netlifyignore",
         "scripts/build-static-site.mjs",
         "scripts/check-site-technical.mjs"
       ],
@@ -74,6 +75,7 @@
         "protese-de-mama/index.html"
       ],
       "coveredPaths": [
+        ".netlifyignore",
         "abdominoplastia/index.html",
         "apps-script/clinica-liv-leads/site-contrast.test.mjs",
         "blefaroplastia/index.html",
@@ -99,6 +101,7 @@
         "otoplastia-infantil/index.html",
         "pos-bariatrica/index.html",
         "protese-de-mama/index.html",
+        "scripts/check-site-technical.mjs",
         "sitemap.xml"
       ],
       "requiredTestFiles": [

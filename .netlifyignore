@@ -17,6 +17,7 @@ campanhas/*.md
 docs/
 netlify/
 node_modules/
+ops/
 scripts/
 tmp/
 **/*.test.mjs
