@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "changeId": "SITE-MAMA-CONTORNO-COMUNICACAO-2026-09-12",
   "title": "Tornar as paginas de mama e contorno corporal mais claras, humanas e orientadas a consulta",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "545c4d83dad1397cff351c800e3c70d2a3f10124",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou explicitamente publicar todo o conjunto revisado e ler depois da publicacao, pedindo cuidado especial com mobile, imagens, videos e contraste. O preflight externo ainda vincula essa autorizacao ao commit funcional exato antes do push."
+    "note": "Daniel autorizou explicitamente publicar todo o conjunto revisado e ler depois da publicacao, pedindo cuidado especial com mobile, imagens, videos e contraste. O preflight externo vinculou essa autorizacao ao commit funcional exato 46bf67fdccc0c806650611562a975dc3dd046a56 antes do push."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -70,15 +70,20 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
-    "completedAt": "2026-09-12T10:55:28-03:00",
+    "status": "passed_local_and_live",
+    "completedAt": "2026-09-12T11:01:15-03:00",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "git diff --check"
+      "git diff --check",
+      "npm.cmd run release:preflight -- --approved-commit 46bf67fdccc0c806650611562a975dc3dd046a56 --approved-at 2026-09-12T10:56:03-03:00 --approved-by Daniel --approval-reference user_turn_pode_publicar_tudo_e_vou_ler_apos_publicado_2026-09-12 --live-preflight-at 2026-09-12T10:54:25-03:00 --live-preflight-reference origin_545c4d8_netlify_6aa556ba_public_pages_http_200",
+      "git push origin 46bf67fdccc0c806650611562a975dc3dd046a56:reestruturacao-site",
+      "Netlify API: confirmar deploy production ready e commit_ref exato",
+      "HTTP GET do dominio oficial e do endereco imutavel para paginas, assets e sitemap; sentinela auditorias em 404",
+      "navegador mobile de producao em 390x844: paginas completas, resultados, FAQ, triggers e modais de video"
     ],
     "results": {
       "mobileVisual": "10/10 paginas aprovadas em 390x844 e 360x800; sem overflow do documento, imagem quebrada ou deformada, falha visivel de video, contraste insuficiente ou CTA pequeno",
@@ -89,7 +94,14 @@
       "siteBuild": "180 arquivos e 44 URLs; zero arquivo de auditoria no artefato publico",
       "siteCheck": "44/44 URLs tecnicamente validas; canonicals, indexabilidade e H1 alinhados; zero pagina orfa",
       "javascriptSyntax": "site-enhancements.js e secondary-conversion.js aprovados por node --check",
-      "gitDiffCheck": "aprovado"
+      "gitDiffCheck": "aprovado",
+      "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit funcional exato 46bf67fdccc0c806650611562a975dc3dd046a56",
+      "netlify": "deploy 6aa559fb631d2b00088cefb9 em contexto production, state ready e commit_ref 46bf67fdccc0c806650611562a975dc3dd046a56",
+      "liveSite": "10/10 paginas HTTP 200 com H1 novo, canonical proprio, meta description entre 125 e 150 caracteres, FAQ e JSON-LD validos, CTAs rastreaveis e stylesheet versionado; robots libera OAI-SearchBot e GPTBot e o sitemap marca as dez rotas em 2026-09-12",
+      "artifactEquality": "dominio e endereco imutavel coincidem; sete HTMLs, quatro assets compartilhados e sitemap coincidem byte a byte com o artefato, e os tres HTMLs restantes diferem apenas pela normalizacao semantica do Netlify de ../index.html para / no link da marca",
+      "liveMobile": "10/10 paginas aprovadas em 390x844 sem overflow do documento, imagem quebrada ou deformada, falha visivel de video, trigger ou modal, contraste insuficiente, CTA pequeno ou erro de protocolo",
+      "publicArtifactSafety": "rota sentinela /auditorias/sentinela-publica/ respondeu HTTP 404; artefato continua sem auditorias e sem metadados .netlify",
+      "preservedParallelRelease": "Apps Script v144, seis eventos YCloud, Bruna, LEADS, CRM, Calendar, campanhas, orcamentos e projecoes do Drive permaneceram inalterados por este release"
     },
     "crossConsumerCases": [
       "os hubs de mama e contorno orientam a escolha pela queixa antes de apresentar a tecnica",
@@ -100,13 +112,13 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "46bf67fdccc0c806650611562a975dc3dd046a56",
+    "netlifyDeployId": "6aa559fb631d2b00088cefb9",
     "appsScriptVersion": 144,
     "drivePlanSha256": "8d1fda37264a8d597f3709d9bf93e1376f334d52f80ce7ed58118e35e8e39304",
-    "verifiedAt": null,
-    "activationState": "not_published",
-    "notes": "Nenhuma escrita externa foi realizada neste candidato. Apps Script v144, a assinatura YCloud e a projecao vigente do Plano no Drive permanecem como baselines preservados."
+    "verifiedAt": "2026-09-12T11:01:15-03:00",
+    "activationState": "active_verified",
+    "notes": "O Netlify publicou exatamente o commit funcional aprovado. O dominio oficial e o endereco do deploy foram relidos, o mobile foi inspecionado em producao e os contratos de SEO e IA foram confirmados. Apps Script v144, YCloud e a projecao vigente do Plano no Drive foram apenas preservados, sem nova escrita."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre o baseline 545c4d83dad1397cff351c800e3c70d2a3f10124, preservando todo trabalho paralelo",
