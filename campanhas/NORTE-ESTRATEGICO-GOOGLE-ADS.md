@@ -875,3 +875,15 @@ Decisão preparada, ainda dependente da publicação e dos preflights externos d
 **Métrica e revisão:** integridade após publicar; leitura em D+7, D+14 e D+30 de contatos válidos, qualificados e consultas atribuíveis às novas páginas. Impressões, consultas orgânicas e cliques são diagnósticos. Registrar as mudanças simultâneas do site e não atribuir causalidade a este lote sem desenho e amostra suficientes. A revisão médica posterior cabe à Dra. Amanda, quando disponível.
 
 **Manter ou corrigir:** manter se páginas, fontes, busca interna e tracking estiverem íntegros. Corrigir ou retirar o trecho afetado diante de divergência clínica, promessa indevida ou afirmação sem suporte; restaurar o deploy anterior somente diante de regressão técnica material. Publicação não equivale a aprovação médica nem a resultado de marketing.
+
+## 26. Decisão autorizada de 12/09/2026 — segundo lote educativo
+
+**Decisão:** concluir as três pautas restantes do piloto — preparo para cirurgia plástica, recuperação do lifting cervical e otomodelação versus otoplastia — e aprofundar os conteúdos de segurança, cicatrização e papada. Daniel solicitou seguir com as publicações e ajustes ainda existentes. A revisão médica posterior não é apresentada como realizada e não há espera obrigatória de 14 dias para este lote.
+
+**Motivo e evidência:** a comparação entre a proposta original e a biblioteca publicada confirmou as três lacunas do piloto. Os textos de cicatrização e papada ainda eram breves e sem referências externas, enquanto o de segurança já possuía estrutura mais completa, mantida nesta ampliação. A biblioteca passa de 24 para 27 leituras e o sitemap de 49 para 52 rotas. Isso mede cobertura editorial, não demanda, qualidade de lead ou conversão comprovada.
+
+**Hipótese e limites:** orientações práticas, perguntas de consulta e limites dos procedimentos podem facilitar uma decisão informada. O conteúdo distingue moldagem neonatal de propostas comerciais para adultos e não ensina suspensão autônoma de medicamentos. Nenhuma campanha, orçamento, página comercial, função, mensagem, flag ou contrato do WhatsApp é alterado. A publicação no site não autoriza disparos nem veiculação em anúncios.
+
+**Métrica e revisão:** integridade imediata e em 24 horas; observação em D+7, D+14 e D+30 de contatos válidos, qualificados e consultas atribuíveis. Busca orgânica, impressões e cliques continuam diagnósticos; mudanças simultâneas impedem afirmar causalidade. A revisão clínica posterior permanece com a Dra. Amanda. As demais pautas de prioridade 2 e cinco aprofundamentos remanescentes ficam no Plano Executivo, sem fonte paralela de planejamento.
+
+**Manter ou corrigir:** manter páginas, fontes, links, busca e tracking íntegros; corrigir trecho impreciso, afirmação clínica sem suporte ou promessa indevida assim que identificado. Se houver regressão técnica material, usar o deploy anterior registrado no candidato. Não esperar janela de marketing para corrigir segurança ou veracidade.

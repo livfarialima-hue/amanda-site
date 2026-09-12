@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-EDUCATIONAL-CONTENT-PILOT-2026-09-12",
-  "title": "Adicionar primeiro lote de conteudos educativos para decisao e seguranca",
-  "status": "published_verified",
-  "baseCommit": "4edf7aaa317857599ceba08236a81163218c6aee",
+  "changeId": "SITE-EDUCATIONAL-CONTENT-SECOND-BATCH-2026-09-12",
+  "title": "Concluir o piloto educativo e aprofundar seguranca, cicatrizacao e papada",
+  "status": "tested_local",
+  "baseCommit": "99b36f6c433b2017786731f02d01ea7649dd8eaa",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Em 12/09/2026 Daniel autorizou explicitamente publicar todo o lote educativo e deixar a revisao da Dra. Amanda para depois. A autorizacao desta tarefa cobre o candidato final com ajustes de veracidade editorial e seguranca, validacoes, Git, Netlify e atualizacao da mesma projecao do Plano no Drive; nao cobre novas campanhas nem mudancas no bot, WhatsApp, Apps Script ou CRM."
+    "note": "Em 12/09/2026 Daniel pediu seguir com as proximas publicacoes e ajustes sugeridos que ainda existirem, mantendo a autorizacao anterior para publicar os conteudos e deixar a revisao medica para depois. Este lote cobre tres artigos pendentes do piloto, o aprofundamento de tres artigos existentes, biblioteca, busca, sitemap e os registros no Git e na mesma projecao do Plano no Drive. Nao cobre campanhas, bot, mensagens, Apps Script, CRM nem afirmacao de revisao medica realizada."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -26,12 +26,14 @@
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "campanhas/content-library.js",
       "campanhas/cost-guides.test.mjs",
-      "campanhas/site-enhancements.css",
       "campanhas/site-technical-regression.test.mjs",
-      "conteudos/como-escolher-cirurgiao-plastico/index.html",
+      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
       "conteudos/index.html",
-      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
-      "conteudos/recuperacao-blefaroplastia/index.html",
+      "conteudos/otomodelacao-ou-otoplastia/index.html",
+      "conteudos/papada-contorno-cervical/index.html",
+      "conteudos/recuperacao-lifting-cervical/index.html",
+      "conteudos/seguranca-cirurgia-plastica/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
@@ -40,47 +42,47 @@
   },
   "impact": {
     "consumers": [
-      "pessoas que pesquisam seguranca, recuperacao da blefaroplastia e tipos de lifting facial",
+      "pessoas que pesquisam preparo, recuperacao cervical, orelhas, cicatrizes e papada",
       "biblioteca e busca interna de conteudos",
-      "paginas de conteudo relacionadas por links internos",
-      "cabecalhos editoriais em telas largas",
+      "links relacionados dos seis artigos envolvidos",
       "sitemap, indexacao, build estatico e publicacao Netlify"
     ],
     "preservedInvariants": [
       "nenhuma pagina comercial, campanha, anuncio, orcamento, bot, WhatsApp, Apps Script, LEADS, CRM ou Calendar e alterado",
-      "os textos sao educativos, nao fazem diagnostico individual, nao prometem resultado e nao apresentam tecnica como superior",
-      "o CTA convida para avaliacao individual e preserva numero, tracking e fluxo atual do WhatsApp",
+      "textos educativos sem diagnostico individual, promessa de resultado ou superioridade de tecnica; sem doses, calendario universal ou suspensao autonoma de medicamentos",
+      "CTA preserva numero, tracking e fluxo atual e convida para avaliacao individual",
       "nome, CRM-SP 191605, Cirurgia Plastica e RQE 110472 permanecem consistentes com o site",
-      "as 46 rotas existentes preservam conteudo, canonicals, tracking, arquivos de midia e indexabilidade; o cabecalho compartilhado dos artigos recebe alinhamento lateral ao eixo de 1120 px e altura de imagem responsiva",
-      "os tres novos artigos mantem fontes identificadas, sem autoria ou revisao medica alegada; a revisao humana posterior e pendencia interna, nao validacao ja realizada"
+      "as 49 rotas existentes permanecem acessiveis; somente os tres artigos declarados, biblioteca, busca e sitemap mudam; fotos e estilos existentes sao preservados",
+      "fontes primarias identificadas e ausencia de nova autoria ou revisao medica alegada; revisao humana posterior permanece pendente",
+      "otomodelacao comercial nao e apresentada como equivalente a moldagem neonatal nem como procedimento isento de riscos"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-publication",
         "system": "Git canonico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T19:51:31-03:00",
-        "reference": "origin/reestruturacao-site confirmado no commit 4edf7aaa317857599ceba08236a81163218c6aee; worktree isolado codex/conteudos-educativos-20260912 criado a partir desse baseline."
+        "checkedAt": "2026-09-12T20:35:40-03:00",
+        "reference": "Local e origin/reestruturacao-site iguais em 99b36f6c433b2017786731f02d01ea7649dd8eaa; lote em worktree isolado, preservando o trabalho paralelo na pasta principal."
       },
       {
         "contract": "site-publication",
         "system": "Netlify",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T20:24:00-03:00",
-        "reference": "Conta autenticada confirmou site c33facb6-eafc-4635-99d6-068bf8707227, dominio draamandaschroeder.com.br, branch reestruturacao-site, deploy production/ready 6aa5d27ed28c240009514d6d e commit a975571e22f0e7129efcb3ca842f7cce0801a5df; 12 funcoes preservadas."
+        "checkedAt": "2026-09-12T20:35:40-03:00",
+        "reference": "API autenticada confirmou site c33facb6-eafc-4635-99d6-068bf8707227 e deploy production/ready 6aa5e03e5650c20008bfd3c0, commit dd4fe1f3cf5686b1796a8512395abe76e282a16a; sera comparado novamente antes do push."
       },
       {
         "contract": "google-ads-acquisition-conversion",
         "system": "Site e documentacao de aquisicao",
         "status": "site_only_confirmed",
-        "checkedAt": "2026-09-12T20:26:00-03:00",
-        "reference": "Mudanca restrita a descoberta organica e biblioteca, sem escrita em plataformas de anuncios ou jornada. A projecao do Plano no Drive coincide integralmente com o commit paralelo dcadd240dd2b3eb64ca03050a539309964e6b74d e sera preservada, incluindo o recibo v148. Leitura operacional dessas plataformas nao foi repetida nesta tarefa."
+        "checkedAt": "2026-09-12T20:35:40-03:00",
+        "reference": "Escopo apenas educativo e descoberta organica, sem mudanca em plataformas de anuncios ou jornada. Plano existente no Drive coincide com o baseline, SHA-256 f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645; recibos paralelos preservados. Dados operacionais de anuncios e CRM nao foram relidos nesta tarefa."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T20:28:06-03:00",
+    "completedAt": "2026-09-12T20:50:30-03:00",
     "commands": [
       "node --check campanhas/content-library.js",
       "node --test campanhas/site-technical-regression.test.mjs",
@@ -95,44 +97,45 @@
     ],
     "results": {
       "contentLibrarySyntax": "passed",
-      "focusedSiteTests": "21/21 passed",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK with exact 13-file scope",
+      "focusedSiteTests": "23/23 site and cost-guide cases included in the full suite; dedicated final run recorded before commit",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; exact 15-file scope",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1336/1336 passed after final editorial and cache adjustments; 21/21 focused site tests also passed",
-      "staticBuild": "188 files, 49 sitemap URLs, zero audit files and zero errors",
-      "technicalSiteAudit": "49/49 expected HTTP 200, self-canonical, indexable and single-H1; zero orphan pages and zero errors",
-      "visualQa": "desktop 1440 px and mobile 390 px; article axis aligned, responsive images preserve 4:5 and 4:3 ratios, and document scroll width equals viewport width",
+      "fullSuite": "1338/1338 passed after the final search ranking adjustment",
+      "staticBuild": "191 files; 52 sitemap URLs; no audit or operations files; zero errors",
+      "technicalSiteAudit": "52/52 expected HTTP 200, self-canonical, indexable and one H1; zero orphan pages",
+      "visualQa": "14 page/viewport combinations in Chrome: six articles and library at 1440 and 390 px; no horizontal overflow, no broken images, no false review claim; screenshots inspected after declining optional cookies",
+      "librarySearch": "pre-operatorio, preparo, recuperacao cervical, otomodelacao and orelha place the specific article first; exact query tokens outrank generic synonyms",
       "diffCheck": "passed",
-      "liveBaselineComparison": "2026-09-12T23:27:42.386Z: 184 provider files compared, zero baseline drift; only four expected public modifications and three new articles. Provider packaging differences (.gitattributes, .htaccess, netlify.toml) checked separately against unchanged baseline. Twelve function digests and five schedules captured for postflight.",
-      "livePostflight": "2026-09-12T23:31:02.299Z: production ready dd4fe1f/6aa5e03e5650c20008bfd3c0; 49/49 public routes HTTP 200, 43 byte-identical and six with only verified Netlify pretty-URL rewriting; all 187 provider files match the artifact after documented packaging differences; 12 function digests and five schedules unchanged; audit and ops sentinels HTTP 404.",
-      "driveProjection": "Same file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO replaced in place after preserving dcadd24; authenticated readback is exactly equal to all 145404 local characters, SHA-256 f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645.",
-      "operationalConsistency": "Prepublication SYNC_PENDING was expected. Published receipts and Drive equality are recorded; the final clean canonical-branch gate is executed after committing this documentation receipt."
+      "liveBaselineComparison": "2026-09-12T23:50:29.797Z: production ready dd4fe1f/6aa5e03e5650c20008bfd3c0; 187 provider files compared; zero baseline drift; six declared public modifications plus three new articles. Provider packaging differences verified separately. Twelve function digests and five schedules captured.",
+      "drivePreflight": "Existing file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO unchanged at 2026-09-12T23:31:37.815Z; exact baseline equality for all 145404 characters, preserving previous parallel receipts.",
+      "operationalConsistency": "SYNC_PENDING expected until publication, external readback, receipt commit and clean canonical branch."
     },
     "crossConsumerCases": [
-      "a biblioteca apresenta 24 URLs educativas unicas e contagem coerente com a busca interna",
-      "cada artigo novo possui canonical proprio, um H1, metadados sociais, dados estruturados e pelo menos um link interno de entrada",
-      "os cabecalhos editoriais ficam alinhados ao eixo do site em desktop, as fotos preservam a proporcao responsiva e as paginas permanecem sem rolagem horizontal no viewport movel de 390 px",
-      "as paginas de seguranca, blefaroplastia e lifting facial continuam acessiveis por links relacionados sem criar conteudo duplicado",
-      "o build contem 49 rotas publicas e exclui arquivos operacionais e de auditoria"
+      "biblioteca apresenta 27 URLs educativas unicas e contagem coerente com a busca",
+      "seis artigos declarados apresentam fontes e orientacoes de seguranca proporcionais ao tema",
+      "novas paginas possuem canonical, um H1, metadados sociais e dados estruturados sem autoria ou revisao nao realizada",
+      "desktop e mobile permanecem sem rolagem horizontal e com imagens proporcionais",
+      "52 rotas publicas no sitemap, sem perda das 49 existentes; arquivos operacionais continuam fora do build",
+      "busca prioriza as palavras exatas da pergunta sem retirar sinonimos leigos; recuperacao cervical aparece antes de outras recuperacoes"
     ]
   },
   "release": {
-    "approvedCommit": "dd4fe1f3cf5686b1796a8512395abe76e282a16a",
-    "netlifyDeployId": "6aa5e03e5650c20008bfd3c0",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 148,
-    "verifiedAt": "2026-09-12T20:32:00-03:00",
+    "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645",
-    "activationState": "educational_content_live_medical_review_pending",
-    "notes": "Publicado em 12/09/2026 as 20:29:26-03:00 sob autorizacao explicita de Daniel nesta tarefa. Revisao medica posterior pendente, sem autoria, reviewedBy ou lastReviewed atribuidos a Dra. Amanda nos novos artigos. Apps Script v148 e snapshot do recibo paralelo dcadd24 preservado, nao publicacao ou verificacao viva feita por esta tarefa. Sem campanha, bot, mensagem ou flag alterados; registro final documental usa skip ci e nao modifica o artefato publico."
+    "drivePlanSha256": null,
+    "activationState": "local_not_published",
+    "notes": "Apps Script v148 e apenas snapshot do recibo anterior preservado; nao sera publicado nem verificado por esta tarefa. Revisao medica dos textos posteriores permanece pendente. A janela de observacao nao e bloqueio para publicacao autorizada."
   },
   "rollback": {
-    "local": "reverter somente o commit do primeiro lote educativo sobre 4edf7aaa317857599ceba08236a81163218c6aee",
-    "production": "Se ocorrer regressao confirmada apos a publicacao, restaurar o deploy Netlify 6aa5d27ed28c240009514d6d, preservando os registros e sem alterar Apps Script ou campanhas."
+    "local": "reverter somente o commit deste segundo lote sobre 99b36f6c433b2017786731f02d01ea7649dd8eaa",
+    "production": "Diante de regressao confirmada, restaurar o deploy Netlify 6aa5e03e5650c20008bfd3c0, preservando registros, funcoes, Apps Script e campanhas."
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "apos publicacao: integridade imediata e 24 horas; descoberta e jornada em 7, 14 e 30 dias; revisao medica posterior quando a Dra. Amanda estiver disponivel",
+    "window": "integridade imediata e 24 horas; observacao editorial e comercial em 7, 14 e 30 dias sem espera obrigatoria entre publicacoes; revisao medica posterior quando disponivel",
     "metrics": [
       "HTTP, canonical, indexabilidade, sitemap, links internos e busca da biblioteca",
       "consultas e impressoes organicas por tema como diagnostico intermediario",
