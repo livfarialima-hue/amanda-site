@@ -8,6 +8,8 @@ const breast = read("../conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/
 const body = read("../conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html");
 const facial = read("../conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html");
 const lifting = read("../conteudos/quanto-custa-lifting-facial-sao-paulo/index.html");
+const bleph = read("../conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html");
+const cervical = read("../conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html");
 const library = read("../conteudos/index.html");
 const breastHub = read("../mama/index.html");
 const bodyHub = read("../contorno-corporal/index.html");
@@ -57,6 +59,10 @@ test("the general facial cost guide is preserved beside the specific lifting gui
   assert.match(facial, /quanto-custa-lifting-facial-sao-paulo/);
   assert.match(lifting, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.match(sitemap, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.match(facial, /quanto-custa-blefaroplastia-sao-paulo/);
+  assert.match(facial, /quanto-custa-lifting-cervical-sao-paulo/);
+  assert.match(bleph, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.match(cervical, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
 });
 
 test("new guides are discoverable from the library, their hubs and the sitemap", () => {
@@ -70,5 +76,5 @@ test("new guides are discoverable from the library, their hubs and the sitemap",
 
   assert.match(breastHub, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
   assert.match(bodyHub, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
-  assert.match(library, /19 leituras educativas/);
+  assert.match(library, /21 leituras educativas/);
 });

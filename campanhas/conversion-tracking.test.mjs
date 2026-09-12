@@ -307,6 +307,44 @@ test("keeps the lifting price-range intent while generic CTAs stay neutral", () 
   assert.equal(genericLink.dataset.templateId, "procedure_evaluation_v1");
 });
 
+test("preserves the procedure-specific intent on the new price pages", () => {
+  const cervicalLink = {
+    addEventListener() {},
+    dataset: {
+      ctaLocation: "price_range_reference",
+      prefillIntent: "price_range_reference",
+      procedure: "lifting-cervical-preco",
+    },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() { return true; },
+    textContent: "Conversar sobre uma faixa geral",
+  };
+  const blephLink = {
+    addEventListener() {},
+    dataset: {
+      ctaLocation: "price_planning",
+      prefillIntent: "price_planning",
+      procedure: "blefaroplastia-preco",
+    },
+    href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+    matches() { return true; },
+    textContent: "Entender o planejamento",
+  };
+
+  loadAttribution({
+    consent: "denied",
+    links: [cervicalLink, blephLink],
+    readyState: "complete",
+  });
+
+  const cervicalMessage = new URL(cervicalLink.href).searchParams.get("text");
+  const blephMessage = new URL(blephLink.href).searchParams.get("text");
+  assert.match(cervicalMessage, /valor da cervicoplastia \(lifting cervical\).*faixa geral de valores/);
+  assert.match(cervicalMessage, /Ref\. SITE-lifting-cervical-preco$/);
+  assert.match(blephMessage, /valores de blefaroplastia.*como o orçamento é montado/);
+  assert.match(blephMessage, /Ref\. SITE-blefaroplastia-preco$/);
+});
+
 test("keeps the Google click ID across pages in the same unconsented session", () => {
   const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4session";
   const firstPage = loadAttribution({

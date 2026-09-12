@@ -9,10 +9,12 @@ function read(relativePath) {
 const consultation = read("../conteudos/consulta-cirurgia-plastica/index.html");
 const costs = read("../conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html");
 const liftingCosts = read("../conteudos/quanto-custa-lifting-facial-sao-paulo/index.html");
+const blephCosts = read("../conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html");
+const cervicalCosts = read("../conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html");
 const enhancements = read("./site-enhancements.js");
 
 test("the conversion articles use the complete homepage footer", () => {
-  for (const page of [consultation, costs, liftingCosts]) {
+  for (const page of [consultation, costs, liftingCosts, blephCosts, cervicalCosts]) {
     const footer = page.match(/<footer class="cv-footer">[\s\S]*?<\/footer>/)?.[0] || "";
     assert.match(footer, /class="cv-footer-brand"/);
     assert.match(footer, /class="cv-footer-map"/);

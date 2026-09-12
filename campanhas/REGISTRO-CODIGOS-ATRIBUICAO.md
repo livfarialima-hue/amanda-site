@@ -1,7 +1,7 @@
 # Registro versionado de códigos de atribuição
 
-Versão do contrato: `v2`
-Data de vigência documental: 30/08/2026
+Versão do contrato: `v3`
+Data de vigência documental: 12/09/2026
 Fonte estratégica: `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`
 Fonte operacional Google: `campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md`
 
@@ -30,7 +30,33 @@ Este registro impede que códigos históricos sejam reinterpretados como uma ori
 | `G26OTO` | `S_BR_SP_OTOPLASTIA` | `google_ads` | canônico |
 | `G26ADS` | fallback técnico quando há click ID Google e `_camp` ausente | `google_ads` | fallback parcial; não identifica campanha |
 
-Os nove grupos `{_ag}` permanecem definidos no guia operacional. Grupo vazio não deve ser reconstruído a partir da página.
+## Grupos canônicos Google Ads
+
+| Valor normalizado `{_ag}` | Objeto externo | Status |
+|---|---|---|
+| `ag_blefaroplastia` | `AG_BLEFAROPLASTIA` | canônico |
+| `ag_cirurgia_facial` | `AG_CIRURGIA_FACIAL` | canônico |
+| `ag_lifting_cervical` | `AG_CERVICOPLASTIA` | canônico |
+| `ag_lipo_papada` | `AG_LIPO_PAPADA` | canônico |
+| `ag_lifting_facial` | `AG_LIFTING_FACIAL` | canônico |
+| `ag_lifting_facial_preco` | `AG_LIFTING_FACIAL_PRECO` | canônico |
+| `ag_marca` | `AG_MARCA` | canônico |
+| `ag_otoplastia_adulto` | `Adulto` | canônico |
+| `ag_otoplastia_infantil` | `AG_OTOPLASTIA_INFANTIL` | canônico |
+
+Grupo vazio não deve ser reconstruído a partir da página. Valor que não corresponder exatamente à tabela fica `__UNKNOWN_AD_GROUP__`; o valor bruto não é publicado no agregado externo.
+
+## Contrato das dimensões de rota
+
+O agregado `Google_Rotas` v1 usa exclusivamente a primeira atribuição persistida em `_CRM_OPORTUNIDADES` e liga essa atribuição a `_FUNIL_CANONICO` pelo `Opportunity ID` exato. O identificador serve apenas à junção interna e não integra a saída.
+
+- Landing é aceita somente quando corresponder exatamente a uma rota pública registrada em `GOOGLE_ADS_LANDING_ROUTE_REGISTRY`, incluindo as páginas principais e os guias específicos de preço de lifting facial, blefaroplastia e lifting cervical.
+- Local de CTA é aceito somente pela lista `GOOGLE_ADS_CTA_LOCATION_REGISTRY`. Os novos códigos são `price_planning`, `final_price_planning`, `sticky_price_planning` e `sticky_price_continuity_v1`; os códigos de faixa cervical/lifting já registrados permanecem separados.
+- Valor ausente vira `__MISSING_*__` com `dimension_status=missing`. Valor livre vira `__UNKNOWN_*__` com `unregistered`. Duas atribuições conflitantes da mesma oportunidade viram `__UNKNOWN_*__` com `conflict`.
+- Se qualquer cabeçalho rico exigido estiver ausente, todas as três dimensões ficam `__UNKNOWN_*__` com `schema_unavailable`. Não usar campanha, procedimento, URL atual, texto do WhatsApp, pessoa ou data para preencher a lacuna.
+- `Agregados` v2 e `Google_Rotas` v1 são visões alternativas da mesma coorte; nunca somar seus contatos.
+
+O pré-voo vivo de 12/09/2026 constatou ausência da propriedade `ATTRIBUTION_SCHEMA_VERSION` e dos cabeçalhos ricos. A constatação autoriza apenas registrar a divergência. Migração e publicação exigem o fluxo canônico, e o passado continua N/D sem backfill por aproximação.
 
 ## Aliases históricos Google Ads com resolução determinística
 

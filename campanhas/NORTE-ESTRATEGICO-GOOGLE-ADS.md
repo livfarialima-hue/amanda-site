@@ -6,8 +6,8 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 3 de setembro de 2026
-**Próxima revisão prevista:** 20 de agosto de 2026 para os gates técnicos e 27 de agosto de 2026 para a primeira janela operacional, ou antes se houver queda relevante de tráfego, gasto anormal ou 10 novas conversões qualificadas aceitas
+**Última revisão estratégica:** 12 de setembro de 2026
+**Próxima revisão prevista:** integridade em 24 horas e leitura D+7/D+14 após a publicação autorizada do candidato de preço BLEF/CERV, ou antes diante de regressão técnica, gasto anormal ou perda de contato válido
 
 ## 1. Regra de governança
 
@@ -322,6 +322,8 @@ Arquitetura aprovada para páginas de preço:
 
 - `conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/` permanece como guia geral e como material da Bruna para dúvidas genéricas sobre custos de cirurgia facial;
 - `conteudos/quanto-custa-lifting-facial-sao-paulo/` atende pesquisas e anúncios específicos de preço de lifting, explica os componentes e fatores do orçamento sem publicar faixa cirúrgica e conduz tanto à página principal de lifting quanto ao WhatsApp; para reduzir a frustração de quem busca uma ordem de grandeza, pode sinalizar que a equipe conversa em privado sobre uma faixa geral informativa como ponto de partida;
+- `conteudos/quanto-custa-blefaroplastia-sao-paulo/` atende a intenção específica de preço de blefaroplastia e explica composição e comparação do orçamento, sem publicar faixa cirúrgica nem prometer uma faixa privada automática; o próximo passo é entender o plano e marcar avaliação;
+- `conteudos/quanto-custa-lifting-cervical-sao-paulo/` atende preço de cervicoplastia/lifting cervical, diferencia lipo, tratamento cervical e cervicofacial e pode oferecer conversa privada sobre faixa geral informativa, sem número público e com os mesmos limites de referência do lifting facial;
 - `conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/` e `conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/` respondem dúvidas recorrentes de custo com conteúdo próprio de cada região, explicam a composição e o pagamento e encaminham para a página principal correspondente ou para o WhatsApp;
 - termos genéricos sobre lifting, indicação, técnica, resultados ou recuperação continuam levando à página principal `lifting-facial/`;
 - dúvidas recorrentes sobre técnicas nomeadas, como `deep plane`, devem receber uma confirmação breve de que a Dra. Amanda realiza a abordagem quando indicada, preservando a avaliação individual e sem apresentar uma técnica como universalmente superior;
@@ -815,3 +817,31 @@ Decisão vigente:
 **Revisão:** primeiro pós-voo da reconciliação periódica; 24 horas e 7 dias de estabilidade do funil; depois 7 e 14 dias de cada página/recurso publicado. A decisão de mídia deve usar coortes fechadas e códigos canônicos mais aliases documentados, sem somar a conversão da interface à mesma pessoa da planilha.
 
 **Regra para manter:** zero reprocessamento retroativo não autorizado, redução de classificações congeladas, fila humana compatível com a última mensagem e melhora de retomadas sem mensagem indevida. **Regra para reverter:** desativar somente o novo gatilho diante de reprocessamento repetido, mudança incorreta de fase, divergência de identidade, competição com atendimento humano ou atualização sem mensagem nova; preservar o ledger e as correções humanas.
+## 24. Decisão autorizada de 12/09/2026 — intenção de preço BLEF/CERV e leitura por rota
+
+A auditoria autenticada de 13/08 a 11/09, reconciliada com a LEADS sem somar fontes, encontrou 1.673 cliques, R$ 2.509,89 de gasto, 18 contatos identificados por GCLID, apenas 1 qualificado e nenhuma consulta. BLEF respondeu por 454 cliques e R$ 684,71, com 2 contatos e o único qualificado; CERV, por 327 cliques e R$ 390,55, com 7 contatos e nenhum qualificado. A busca `cirurgia de blefaroplastia preço` foi a única consulta visível com conversão principal no período, custou R$ 1,78 e ainda não existia como palavra exata.
+
+O precedente de lifting justifica testar continuidade, não declarar conversão clínica: 4 dos 6 contatos `G26LIFT` da janela chegaram pela página específica de preço, porém nenhum estava classificado. Como 96,5% dos cliques da conta ocorreram em celular, o teste de CTA deve ficar restrito ao botão fixo móvel e a avaliação deve depender do downstream, não apenas do clique.
+
+Decisão preparada, ainda dependente da publicação e dos preflights externos do commit aprovado:
+
+- publicar as páginas específicas `/conteudos/quanto-custa-blefaroplastia-sao-paulo/` e `/conteudos/quanto-custa-lifting-cervical-sao-paulo/`, mantendo o guia facial geral e as páginas principais como caminhos complementares;
+- em BLEF, adicionar somente a palavra exata `[cirurgia de blefaroplastia preço]` ao grupo `AG_BLEFAROPLASTIA`, depois de nova leitura de conflitos, e usar a nova página como URL final no nível da palavra; acrescentar o sitelink `Preço da Blefaroplastia` com esse mesmo destino no contexto de BLEF;
+- em CERV, acrescentar o sitelink `Preço do Lifting Cervical` somente em `AG_CERVICOPLASTIA`. Não associá-lo a `AG_LIPO_PAPADA`, OTO, FACE ou à conta, para evitar vazamento entre procedimentos;
+- testar em LIFT somente a continuidade do CTA fixo móvel: texto `Conversar sobre faixa geral` e código `sticky_price_continuity_v1`, preservando mensagem, destino e demais CTAs. Nenhuma outra mudança de página ou campanha entra no teste;
+- preservar a aba anônima `Agregados` v2 e acrescentar `Google_Rotas` para contagens por campanha, grupo, landing e CTA. A junção é exata por `Opportunity ID`; valores ausentes, livres ou conflitantes ficam N/D e nenhum identificador ou PII é publicado;
+- tratar como divergência ativa o fato de a propriedade `ATTRIBUTION_SCHEMA_VERSION` e as colunas ricas não estarem materializadas no projeto/planilha vivos em 12/09. A migração existente só pode ser executada com IDs canônicos confirmados, backup, dry-run, autorização e pós-voo; o histórico permanece N/D, sem inferência;
+- retirar de operação a antiga programação de upload de `AJUSTES_GOOGLE_ADS` somente depois de confirmar novamente que `IMPORT_GOOGLE_ADS` está fresco, que a fila de ajustes está vazia e que os dois recibos anteriores continuam `confirmed_not_found`. Preferir pausa reversível, preservando arquivo e recibos;
+- preservar os seis orçamentos, total de R$ 87/dia, Maximizar cliques, metas, RSAs, negativas, público, dispositivos, agenda, redes e geografia. Nenhuma recomendação automática ou pontuação de otimização autoriza ampliar este escopo.
+
+**Sequência obrigatória:** publicar e validar as duas páginas em desktop/mobile e HTTP 200; publicar o agregador no Apps Script canônico; migrar e verificar o schema somente se especificamente autorizado; gerar e inspecionar `Google_Rotas` sem PII; só então apontar palavra/sitelinks do Google Ads para os novos destinos. A pausa da rota antiga de ajustes vem por último.
+
+**Hipótese:** repetir a coerência busca → promessa → página → WhatsApp para intenções de preço, com leitura downstream por rota, aumentará contatos válidos, qualificados e consultas sem aumentar investimento.
+
+**Métrica principal:** contato válido, qualificado, consulta agendada/realizada, custo por qualificado e custo por consulta, separados por campanha, grupo e landing quando `dimension_status=resolved`. Clique no CTA, conversão principal da plataforma, CTR, CPC e uso do sitelink são diagnósticos.
+
+**Revisão:** integridade em 24 horas; primeira leitura em D+7; decisão em D+14 ou depois de amostra mínima de 30 cliques na nova palavra/ativo, o que ocorrer por último. Declarar inconclusivo se classificação ou schema continuarem insuficientes.
+
+**Regra para manter:** destinos e tracking íntegros, zero vazamento entre procedimentos e pelo menos manutenção da qualidade; manter a palavra/ativo se produzir contato válido ou etapa posterior sem piora material de custo e compatibilidade.
+
+**Regra para reverter:** pausar somente a nova palavra ou associação responsável, restaurar o rótulo/local do CTA móvel anterior e/ou deixar `Google_Rotas` sem consumo se houver destino incorreto, reprovação persistente, falsa atribuição, exposição de dado, regressão técnica/editorial ou piora downstream consistente. Orçamento, lance e RSAs não fazem parte do rollback porque não serão alterados.

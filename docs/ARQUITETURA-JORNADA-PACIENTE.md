@@ -83,6 +83,8 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - eventos repetidos de `sent`, `delivered` e `read` atualizam uma única linha por hash do identificador do provedor. `_WHATSAPP_CUSTOS` nunca recebe `wamid`, telefone, nome, conteúdo, ID de conversa ou dado clínico; o vínculo com campanha, profissional e oportunidade é apenas uma resolução best-effort de chaves técnicas já canônicas, sem inferência.
 - `_WHATSAPP_TEMPLATE_EVENTOS` registra apenas categoria, status e qualidade técnica dos modelos. Texto livre de motivo do provedor não é persistido. Falha na gravação devolve erro transitório ao webhook para permitir repetição segura.
 - custo permanece em observação: não pode impedir resposta segura, handoff, lembrete de consulta ou cuidado pós-procedimento. Qualquer limite futuro de retomada comercial exige amostra real, decisão explícita e alteração separada do contrato proprietário.
+- `Agregados` e `Google_Rotas` são duas projeções anônimas da mesma coorte Google e nunca devem ser somadas. A segunda só cruza `_FUNIL_CANONICO` e `_CRM_OPORTUNIDADES` por `Opportunity ID` exato, mas não publica esse identificador.
+- grupo, landing e CTA só podem sair para o agregado por listas canônicas fechadas. Schema ausente, valor livre, lacuna ou conflito permanecem N/D; página, procedimento, pessoa e texto não autorizam backfill por inferência.
 
 ### Retomadas
 

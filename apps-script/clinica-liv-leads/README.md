@@ -111,6 +111,15 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 - Alias legado/ambíguo permanece em `__UNKNOWN_CAMPAIGN__`; não inferir campanha por procedimento ou página.
 - Primeira publicação validada: schema v1, zero PII, 16 contatos Google na coorte de 30 dias e os 16 em campanha desconhecida por falta de código G26 canônico; isso é uma limitação de atribuição, não zero de resultado.
 
+### Candidato de rotas Google — 12/09/2026
+
+- A aba `Agregados` e seu schema v2 permanecem intactos para não quebrar o revisor existente. O candidato acrescenta a aba separada `Google_Rotas`, schema `google_ads_route_aggregate_v1`, no mesmo arquivo anônimo.
+- `Google_Rotas` cruza `_FUNIL_CANONICO` com `_CRM_OPORTUNIDADES` exclusivamente por `Opportunity ID` e publica somente contagens por campanha, grupo, rota inicial e local do CTA nas coortes de 7/30/90 dias. Nenhum identificador é serializado.
+- Grupo, landing e CTA usam listas fechadas versionadas em `GoogleAdsFunnelReview.gs`. Valor ausente, não registrado ou conflitante vira `__MISSING_*__`/`__UNKNOWN_*__`, acompanhado por `dimension_status`; não há inferência por procedimento, página, texto livre ou pessoa.
+- O pré-voo somente leitura de 12/09/2026 confirmou que a propriedade `ATTRIBUTION_SCHEMA_VERSION` não está materializada no projeto vivo e que as colunas ricas ainda não existem nas abas operacionais. Até uma migração autorizada, a nova aba deve registrar `schema_unavailable`; o histórico permanece N/D, sem backfill por aproximação.
+- A migração, quando especificamente autorizada, deve usar o contrato já existente `aplicarSchemaAtribuicaoV1Autorizado()`, depois de validar os três IDs canônicos, executar o dry-run, registrar backup/recibos e reler os cabeçalhos. Publicar código não autoriza executar a migração.
+- A desativação da antiga rota `AJUSTES_GOOGLE_ADS` é uma etapa externa posterior e reversível: confirmar primeiro que a conexão direta `IMPORT_GOOGLE_ADS` continua fresca, que não existe ajuste pendente e que os recibos antigos permanecem `confirmed_not_found`; então pausar a programação antiga sem apagar histórico.
+
 Projetos divergentes não devem ser editados, renomeados, arquivados ou excluídos sem autorização específica. Em caso de dúvida, parar antes da escrita externa.
 
 ## Agregado anônimo e revisão da Meta Ads

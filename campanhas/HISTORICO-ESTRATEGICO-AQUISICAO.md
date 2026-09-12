@@ -6,6 +6,20 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — páginas de preço BLEF/CERV, palavra exata e leitura por rota
+
+- **Status:** candidato local em worktree isolada; nenhuma publicação de site/Apps Script, migração de planilha, alteração de Google Ads ou pausa de conexão foi executada.
+- **Área:** `S_BR_SP_BLEFAROPLASTIA`, `AG_BLEFAROPLASTIA`, `S_BR_SP_LIFTING_CERVICAL`, `AG_CERVICOPLASTIA`, guia de lifting facial e agregado anônimo Google.
+- **Evidência:** em 13/08–11/09, a conta somou 1.673 cliques, R$ 2.509,89, 18 contatos com GCLID, 1 qualificado e nenhuma consulta. BLEF teve 454 cliques/R$ 684,71, 2 contatos e o único qualificado; CERV teve 327 cliques/R$ 390,55 e 7 contatos, nenhum qualificado. `cirurgia de blefaroplastia preço` foi a única consulta visível com conversão principal, por R$ 1,78, e não existia como palavra exata. Em LIFT, 4 de 6 contatos chegaram pelo guia de preço, mas nenhum estava classificado; isso sustenta um teste, não prova conversão clínica.
+- **Mudança preparada:** novas páginas específicas de preço para blefaroplastia e lifting cervical; palavra exata `[cirurgia de blefaroplastia preço]` com URL no nível da palavra; sitelink BLEF para a página própria e sitelink cervical somente em `AG_CERVICOPLASTIA`; teste único do rótulo/local do CTA fixo móvel no guia de lifting; aba anônima `Google_Rotas` por grupo, landing e CTA, sem alterar `Agregados` v2.
+- **Divergência registrada:** o pré-voo vivo encontrou a propriedade `ATTRIBUTION_SCHEMA_VERSION` ausente e as colunas ricas não materializadas. O código falha fechado com `schema_unavailable`; migração exige autorização e o histórico fica N/D sem inferência.
+- **Item 7:** a rota antiga de `AJUSTES_GOOGLE_ADS` mostrou somente os dois recibos `confirmed_not_found` e nenhuma linha pendente. A retirada preparada é pausa reversível da programação, apenas após nova prova de frescor da importação direta e preservação dos recibos.
+- **Hipótese:** alinhar intenção, destino e conversa e medir o downstream por rota aumenta contatos válidos, qualificados e consultas sem elevar investimento.
+- **Métricas:** contatos válidos/qualificados, consultas e custo por etapa com `dimension_status=resolved`; cliques, CPC, CTR, conversão exibida e uso de sitelink apenas como diagnóstico.
+- **Guardrails:** páginas vivas e verificadas antes de apontar o Ads; zero faixa pública; BLEF sem promessa de faixa automática; cervical com referência privada contextualizada; total de R$ 87/dia, lances, metas, RSAs, negativas, públicos e geografia preservados; nenhum dado pessoal no agregado.
+- **Revisão:** 24 horas, D+7 e D+14 após eventual publicação; inconclusivo enquanto schema ou cobertura de classificação forem insuficientes.
+- **Regra para manter/reverter:** manter apenas com integridade e qualidade estável ou melhor; pausar individualmente palavra/sitelink ou restaurar o CTA anterior diante de destino incorreto, vazamento, falsa atribuição, reprovação persistente ou piora downstream consistente.
+
 ## 11 de setembro de 2026 — reativação controlada de Meta cervical e facial por 30 dias
 
 - **Status:** publicada e verificada ao vivo em 12/09/2026 após confirmação final de Daniel; duas campanhas e dois conjuntos ativos, sem publicação de anúncios ou dos sete rascunhos preexistentes.

@@ -259,7 +259,7 @@ test("lifting facial pages distinguish the surgical procedure and preserve conve
       relativePage: "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
       reviewPattern: /O conteúdo foi atualizado em 1º de setembro de 2026/i,
-      ctaLocations: ["header", "price_range_reference", "consultation", "final_price_range_reference", "footer", "sticky_price_range_reference"],
+      ctaLocations: ["header", "price_range_reference", "consultation", "final_price_range_reference", "footer", "sticky_price_continuity_v1"],
     },
   ];
 
@@ -314,6 +314,60 @@ test("lifting facial pages distinguish the surgical procedure and preserve conve
   );
 });
 
+test("blepharoplasty and cervical price guides are canonical, medical and conversion-safe", () => {
+  const cases = [
+    {
+      relativePage: "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+      procedureName: "Blefaroplastia",
+      procedureCode: "blefaroplastia-preco",
+      ctaLocations: ["header", "price_planning", "consultation", "final_price_planning", "footer", "sticky_price_planning"],
+    },
+    {
+      relativePage: "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-cervical-sao-paulo/",
+      procedureName: "Cervicoplastia",
+      procedureCode: "lifting-cervical-preco",
+      ctaLocations: ["header", "price_range_reference", "consultation", "final_price_range_reference", "footer", "sticky_price_range_reference"],
+    },
+  ];
+
+  for (const item of cases) {
+    const html = readFileSync(path.join(root, item.relativePage), "utf8");
+    const structuredData = JSON.parse(
+      html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] || "{}",
+    );
+    const graph = structuredData["@graph"] || [];
+    const procedure = graph.find((entry) => entry["@type"] === "MedicalProcedure");
+    const medicalPage = graph.find((entry) => {
+      const types = Array.isArray(entry["@type"]) ? entry["@type"] : [entry["@type"]];
+      return types.includes("MedicalWebPage");
+    });
+    const whatsappLinks = [...html.matchAll(/<a\b[^>]*data-track="whatsapp"[^>]*>/gi)]
+      .map((match) => match[0]);
+
+    assert.match(html, new RegExp(`rel="canonical" href="${item.canonical.replaceAll("/", "\\/")}"`, "i"));
+    assert.match(html, new RegExp(`data-procedure="${item.procedureCode}"`, "i"));
+    assert.equal(procedure?.name, item.procedureName, item.relativePage);
+    assert.equal(procedure?.procedureType, "SurgicalProcedure", item.relativePage);
+    assert.equal(medicalPage?.url, item.canonical, item.relativePage);
+    assert.equal(medicalPage?.dateModified, "2026-09-12", item.relativePage);
+    assert.equal(medicalPage?.lastReviewed, "2026-09-12", item.relativePage);
+    assert.equal(medicalPage?.reviewedBy?.["@id"], "https://draamandaschroeder.com.br/#physician", item.relativePage);
+    assert.equal(whatsappLinks.length, 6, item.relativePage);
+    assert.deepEqual(
+      whatsappLinks.map((link) => link.match(/data-cta-location="([^"]+)"/i)?.[1]),
+      item.ctaLocations,
+      item.relativePage,
+    );
+    assert.doesNotMatch(html, /R\$\s*(?:18|26|42)\s*(?:mil|[–-])/i, item.relativePage);
+  }
+
+  const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  assert.match(sitemap, /quanto-custa-blefaroplastia-sao-paulo\/<\/loc><lastmod>2026-09-12<\/lastmod>/i);
+  assert.match(sitemap, /quanto-custa-lifting-cervical-sao-paulo\/<\/loc><lastmod>2026-09-12<\/lastmod>/i);
+});
+
 test("OpenAI search and training crawlers have explicit independent rules", () => {
   const robots = readFileSync(path.join(root, "robots.txt"), "utf8");
 
@@ -359,11 +413,11 @@ test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orp
 
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishDirectory, "tmp/netlify-deploy");
-  assert.equal(result.summary.sitemapUrls, 44);
-  assert.equal(result.summary.expectedHttp200, 44);
-  assert.equal(result.summary.selfCanonical, 44);
-  assert.equal(result.summary.indexable, 44);
-  assert.equal(result.summary.oneH1, 44);
+  assert.equal(result.summary.sitemapUrls, 46);
+  assert.equal(result.summary.expectedHttp200, 46);
+  assert.equal(result.summary.selfCanonical, 46);
+  assert.equal(result.summary.indexable, 46);
+  assert.equal(result.summary.oneH1, 46);
   assert.equal(result.summary.orphanPages, 0);
   assert.equal(result.summary.auditFilesInArtifact, 0);
   assert.ok(result.summary.redirects >= 1);

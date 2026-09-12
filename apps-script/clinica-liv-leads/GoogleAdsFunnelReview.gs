@@ -1,8 +1,10 @@
 const GOOGLE_ADS_FUNNEL_REVIEW_CONFIG = Object.freeze({
   sourceSheet: "_FUNIL_CANONICO",
   milestoneSheet: "_OPORTUNIDADE_MARCOS",
+  attributionSheet: "_CRM_OPORTUNIDADES",
   aggregateSpreadsheetId: "1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0",
   aggregateSheet: "Agregados",
+  routeAggregateSheet: "Google_Rotas",
   timeZone: "America/Sao_Paulo",
   triggerHour: 8,
   triggerMinute: 15,
@@ -51,6 +53,84 @@ const GOOGLE_ADS_FUNNEL_AGGREGATE_HEADERS = Object.freeze([
   "definition_note",
 ]);
 
+const GOOGLE_ADS_ROUTE_AGGREGATE_HEADERS = Object.freeze([
+  "schema_version",
+  "generated_at",
+  "window_days",
+  "window_start",
+  "window_end",
+  "campaign",
+  "ad_group",
+  "landing_route",
+  "cta_location",
+  "contacts_identified",
+  "contacts_classified",
+  "valid_contacts_classified",
+  "qualified_or_later",
+  "scheduled_or_later",
+  "completed_or_later",
+  "patient_converted",
+  "procedure_closed_milestone",
+  "canonical_campaign_attribution",
+  "legacy_alias_resolved_attribution",
+  "unknown_campaign_attribution",
+  "dimension_status",
+  "source_rows",
+  "definition_note",
+]);
+
+const GOOGLE_ADS_AD_GROUP_REGISTRY = Object.freeze({
+  ag_blefaroplastia: "AG_BLEFAROPLASTIA",
+  ag_cirurgia_facial: "AG_CIRURGIA_FACIAL",
+  ag_lifting_cervical: "AG_CERVICOPLASTIA",
+  ag_lipo_papada: "AG_LIPO_PAPADA",
+  ag_lifting_facial: "AG_LIFTING_FACIAL",
+  ag_lifting_facial_preco: "AG_LIFTING_FACIAL_PRECO",
+  ag_marca: "AG_MARCA",
+  ag_otoplastia_adulto: "Adulto",
+  ag_otoplastia_infantil: "AG_OTOPLASTIA_INFANTIL",
+});
+
+const GOOGLE_ADS_LANDING_ROUTE_REGISTRY = Object.freeze({
+  "/": "/",
+  "/avaliacao-facial/": "/avaliacao-facial/",
+  "/blefaroplastia/": "/blefaroplastia/",
+  "/lifting-cervical/": "/lifting-cervical/",
+  "/lifting-facial/": "/lifting-facial/",
+  "/lipo-de-papada/": "/lipo-de-papada/",
+  "/otoplastia/": "/otoplastia/",
+  "/otoplastia-adulto/": "/otoplastia-adulto/",
+  "/otoplastia-infantil/": "/otoplastia-infantil/",
+  "/conteudos/quanto-custa-blefaroplastia-sao-paulo/": "/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+  "/conteudos/quanto-custa-lifting-cervical-sao-paulo/": "/conteudos/quanto-custa-lifting-cervical-sao-paulo/",
+  "/conteudos/quanto-custa-lifting-facial-sao-paulo/": "/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+});
+
+const GOOGLE_ADS_CTA_LOCATION_REGISTRY = Object.freeze([
+  "article_aside",
+  "consultation",
+  "final",
+  "final_cta",
+  "final_price_planning",
+  "final_price_range_reference",
+  "floating",
+  "footer",
+  "header",
+  "hero",
+  "page",
+  "price_explanation",
+  "price_planning",
+  "price_range_reference",
+  "sticky",
+  "sticky_price_continuity_v1",
+  "sticky_price_planning",
+  "sticky_price_range_reference",
+  "video",
+].reduce((map, value) => {
+  map[value] = value;
+  return map;
+}, {}));
+
 /**
  * Atualiza diariamente um arquivo separado, compartilhável e sem PII.
  * A rotina do Google Ads lê apenas este agregado; nunca recebe acesso à LEADS.
@@ -65,14 +145,27 @@ function publicarAgregadosFunilGoogleAds() {
   const milestoneSheet = sourceSpreadsheet.getSheetByName(
     GOOGLE_ADS_FUNNEL_REVIEW_CONFIG.milestoneSheet,
   );
+  const attributionSheet = sourceSpreadsheet.getSheetByName(
+    GOOGLE_ADS_FUNNEL_REVIEW_CONFIG.attributionSheet,
+  );
   const sourceValues = sourceSheet.getDataRange().getValues();
   const milestoneValues = milestoneSheet
     ? milestoneSheet.getDataRange().getValues()
     : [];
+  const attributionValues = attributionSheet
+    ? attributionSheet.getDataRange().getValues()
+    : [];
+  const now = new Date();
   const rows = construirAgregadosFunilGoogleAds_(
     sourceValues,
     milestoneValues,
-    new Date(),
+    now,
+  );
+  const routeRows = construirAgregadosRotasGoogleAds_(
+    sourceValues,
+    milestoneValues,
+    attributionValues,
+    now,
   );
 
   const targetSpreadsheet = SpreadsheetApp.openById(
@@ -92,11 +185,27 @@ function publicarAgregadosFunilGoogleAds() {
     .getRange(1, 1, rows.length + 1, GOOGLE_ADS_FUNNEL_AGGREGATE_HEADERS.length)
     .setValues([GOOGLE_ADS_FUNNEL_AGGREGATE_HEADERS.slice(), ...rows]);
   targetSheet.setFrozenRows(1);
+
+  let routeSheet = targetSpreadsheet.getSheetByName(
+    GOOGLE_ADS_FUNNEL_REVIEW_CONFIG.routeAggregateSheet,
+  );
+  if (!routeSheet) {
+    routeSheet = targetSpreadsheet.insertSheet(
+      GOOGLE_ADS_FUNNEL_REVIEW_CONFIG.routeAggregateSheet,
+    );
+  }
+  routeSheet.clearContents();
+  routeSheet
+    .getRange(1, 1, routeRows.length + 1, GOOGLE_ADS_ROUTE_AGGREGATE_HEADERS.length)
+    .setValues([GOOGLE_ADS_ROUTE_AGGREGATE_HEADERS.slice(), ...routeRows]);
+  routeSheet.setFrozenRows(1);
   SpreadsheetApp.flush();
 
   return {
     ok: true,
     rows: rows.length,
+    routeRows: routeRows.length,
+    routeSchemaAvailable: esquemaRotasGoogleAdsDisponivel_(attributionValues),
     generatedAt: rows.length ? rows[0][1] : null,
     containsPii: false,
   };
@@ -214,6 +323,245 @@ function construirAgregadosFunilGoogleAds_(sourceValues, milestoneValues, now) {
       });
   });
   return results;
+}
+
+/**
+ * Publica uma segunda visão anônima, sem alterar o contrato v2 da aba Agregados.
+ * As dimensões só são expostas quando correspondem exatamente aos registros
+ * canônicos abaixo. Ausência de schema, valores livres e conflitos viram N/D.
+ */
+function construirAgregadosRotasGoogleAds_(sourceValues, milestoneValues, attributionValues, now) {
+  if (!Array.isArray(sourceValues) || sourceValues.length < 1) {
+    throw new Error("google_ads_route_source_unreadable");
+  }
+  const headers = sourceValues[0].map((value) => String(value || "").trim());
+  const indexes = indexarCabecalhosAgregadoGoogleAds_(headers);
+  [
+    "Opportunity ID",
+    "Profissional",
+    "Estado",
+    "Fase",
+    "Data do contato",
+    "Plataforma de aquisição",
+    "Campanha",
+  ].forEach((header) => {
+    if (indexes[header] === undefined) {
+      throw new Error(`google_ads_route_header_missing:${header}`);
+    }
+  });
+
+  const attributionIndex = indexarAtribuicoesRotasGoogleAds_(attributionValues);
+  const closedOpportunityIds = marcosFechamentoGoogleAds_(milestoneValues);
+  const generatedAt = Utilities.formatDate(
+    now,
+    GOOGLE_ADS_FUNNEL_REVIEW_CONFIG.timeZone,
+    "yyyy-MM-dd'T'HH:mm:ssXXX",
+  );
+  const yesterday = inicioDiaGoogleAds_(new Date(now.getTime() - 86400000));
+  const sourceRows = Math.max(0, sourceValues.length - 1);
+  const results = [];
+
+  GOOGLE_ADS_FUNNEL_REVIEW_CONFIG.windows.forEach((windowDays) => {
+    const start = inicioDiaGoogleAds_(
+      new Date(yesterday.getTime() - (windowDays - 1) * 86400000),
+    );
+    const endExclusive = new Date(yesterday.getTime() + 86400000);
+    const buckets = new Map();
+
+    sourceValues.slice(1).forEach((row) => {
+      if (!linhaAmandaGoogleAds_(row[indexes["Profissional"]])) return;
+      if (!linhaGoogleAds_(row, indexes)) return;
+      const contactDate = dataGoogleAds_(row[indexes["Data do contato"]]);
+      if (!contactDate || contactDate < start || contactDate >= endExclusive) return;
+
+      const opportunityId = String(row[indexes["Opportunity ID"]] || "").trim();
+      const campaignAttribution = resolverAtribuicaoCampanhaGoogleAds_(
+        row[indexes.Campanha],
+      );
+      const route = resolverRotaOportunidadeGoogleAds_(
+        opportunityId,
+        attributionIndex,
+      );
+      const campaign = campaignAttribution.campaign || "__UNKNOWN_CAMPAIGN__";
+      const key = JSON.stringify([
+        campaign,
+        route.adGroup,
+        route.landingRoute,
+        route.ctaLocation,
+        route.status,
+      ]);
+      if (!buckets.has(key)) {
+        buckets.set(key, {
+          campaign,
+          adGroup: route.adGroup,
+          landingRoute: route.landingRoute,
+          ctaLocation: route.ctaLocation,
+          dimensionStatus: route.status,
+          metrics: novoBucketFunilGoogleAds_(),
+        });
+      }
+      acumularLinhaFunilGoogleAds_(
+        buckets.get(key).metrics,
+        normalizarTextoAgregadoGoogleAds_(row[indexes.Fase]),
+        normalizarTextoAgregadoGoogleAds_(row[indexes.Estado]),
+        campaignAttribution,
+        opportunityId,
+        closedOpportunityIds,
+      );
+    });
+
+    Array.from(buckets.values())
+      .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)))
+      .forEach((bucket) => {
+        const metrics = bucket.metrics;
+        results.push([
+          "google_ads_route_aggregate_v1",
+          generatedAt,
+          windowDays,
+          formatarDiaGoogleAds_(start),
+          formatarDiaGoogleAds_(yesterday),
+          bucket.campaign,
+          bucket.adGroup,
+          bucket.landingRoute,
+          bucket.ctaLocation,
+          metrics.contacts,
+          metrics.classified,
+          metrics.valid,
+          metrics.qualified,
+          metrics.scheduled,
+          metrics.completed,
+          metrics.converted,
+          metrics.closed,
+          metrics.canonical,
+          metrics.legacyAlias,
+          metrics.unknown,
+          bucket.dimensionStatus,
+          sourceRows,
+          "Coorte por data do contato e junção exata por Opportunity ID. Grupo, landing e CTA só são publicados por allowlist; ausências, conflitos e valores não registrados permanecem N/D. Fases refletem o estado atual e não devem ser somadas à aba Agregados.",
+        ]);
+      });
+  });
+  return results;
+}
+
+function esquemaRotasGoogleAdsDisponivel_(values) {
+  if (!Array.isArray(values) || values.length < 1) return false;
+  const indexes = indexarCabecalhosAgregadoGoogleAds_(
+    values[0].map((value) => String(value || "").trim()),
+  );
+  return [
+    "Opportunity ID",
+    "Grupo/conjunto inicial",
+    "Landing page inicial",
+    "Local do CTA inicial",
+  ].every((header) => indexes[header] !== undefined);
+}
+
+function indexarAtribuicoesRotasGoogleAds_(values) {
+  const schemaAvailable = esquemaRotasGoogleAdsDisponivel_(values);
+  const byOpportunityId = new Map();
+  if (!schemaAvailable) return { schemaAvailable, byOpportunityId };
+
+  const indexes = indexarCabecalhosAgregadoGoogleAds_(
+    values[0].map((value) => String(value || "").trim()),
+  );
+  values.slice(1).forEach((row) => {
+    const opportunityId = String(row[indexes["Opportunity ID"]] || "").trim();
+    if (!opportunityId) return;
+    const raw = {
+      adGroup: normalizarChaveRotaGoogleAds_(row[indexes["Grupo/conjunto inicial"]]),
+      landingRoute: normalizarChaveRotaGoogleAds_(row[indexes["Landing page inicial"]]),
+      ctaLocation: normalizarChaveRotaGoogleAds_(row[indexes["Local do CTA inicial"]]),
+    };
+    const fingerprint = JSON.stringify(raw);
+    const resolved = resolverDimensoesRotasGoogleAds_(raw);
+    const existing = byOpportunityId.get(opportunityId);
+    if (!existing) {
+      byOpportunityId.set(opportunityId, { ...resolved, fingerprint });
+      return;
+    }
+    if (existing.fingerprint !== fingerprint) {
+      byOpportunityId.set(opportunityId, {
+        adGroup: "__UNKNOWN_AD_GROUP__",
+        landingRoute: "__UNKNOWN_LANDING_ROUTE__",
+        ctaLocation: "__UNKNOWN_CTA_LOCATION__",
+        status: "conflict",
+        fingerprint: null,
+      });
+    }
+  });
+  return { schemaAvailable, byOpportunityId };
+}
+
+function resolverRotaOportunidadeGoogleAds_(opportunityId, attributionIndex) {
+  if (!attributionIndex.schemaAvailable) {
+    return {
+      adGroup: "__UNKNOWN_AD_GROUP__",
+      landingRoute: "__UNKNOWN_LANDING_ROUTE__",
+      ctaLocation: "__UNKNOWN_CTA_LOCATION__",
+      status: "schema_unavailable",
+    };
+  }
+  if (!opportunityId || !attributionIndex.byOpportunityId.has(opportunityId)) {
+    return {
+      adGroup: "__MISSING_AD_GROUP__",
+      landingRoute: "__MISSING_LANDING_ROUTE__",
+      ctaLocation: "__MISSING_CTA_LOCATION__",
+      status: "missing",
+    };
+  }
+  const route = attributionIndex.byOpportunityId.get(opportunityId);
+  return {
+    adGroup: route.adGroup,
+    landingRoute: route.landingRoute,
+    ctaLocation: route.ctaLocation,
+    status: route.status,
+  };
+}
+
+function resolverDimensoesRotasGoogleAds_(raw) {
+  const adGroup = resolverDimensaoRotaGoogleAds_(
+    raw.adGroup,
+    GOOGLE_ADS_AD_GROUP_REGISTRY,
+    "__MISSING_AD_GROUP__",
+    "__UNKNOWN_AD_GROUP__",
+  );
+  const landingRoute = resolverDimensaoRotaGoogleAds_(
+    raw.landingRoute,
+    GOOGLE_ADS_LANDING_ROUTE_REGISTRY,
+    "__MISSING_LANDING_ROUTE__",
+    "__UNKNOWN_LANDING_ROUTE__",
+  );
+  const ctaLocation = resolverDimensaoRotaGoogleAds_(
+    raw.ctaLocation,
+    GOOGLE_ADS_CTA_LOCATION_REGISTRY,
+    "__MISSING_CTA_LOCATION__",
+    "__UNKNOWN_CTA_LOCATION__",
+  );
+  const statuses = [adGroup.status, landingRoute.status, ctaLocation.status];
+  const status = statuses.includes("unregistered")
+    ? "unregistered"
+    : statuses.includes("missing")
+      ? "missing"
+      : "resolved";
+  return {
+    adGroup: adGroup.value,
+    landingRoute: landingRoute.value,
+    ctaLocation: ctaLocation.value,
+    status,
+  };
+}
+
+function resolverDimensaoRotaGoogleAds_(raw, registry, missingValue, unknownValue) {
+  if (!raw) return { value: missingValue, status: "missing" };
+  if (Object.prototype.hasOwnProperty.call(registry, raw)) {
+    return { value: registry[raw], status: "resolved" };
+  }
+  return { value: unknownValue, status: "unregistered" };
+}
+
+function normalizarChaveRotaGoogleAds_(value) {
+  return String(value || "").trim().toLowerCase();
 }
 
 function indexarCabecalhosAgregadoGoogleAds_(headers) {

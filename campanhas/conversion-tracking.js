@@ -36,6 +36,7 @@
     'abdominoplastia': 'abdominoplastia',
     'avaliacao-facial': 'avaliação facial',
     'blefaroplastia': 'blefaroplastia',
+    'blefaroplastia-preco': 'blefaroplastia',
     'braquioplastia': 'braquioplastia',
     'cirurgia-facial-preco': 'cirurgia plástica facial',
     'contorno-corporal': 'contorno corporal',
@@ -43,6 +44,7 @@
     'custos-cirurgia-mama': 'cirurgia plástica das mamas',
     'injetaveis': 'procedimentos injetáveis',
     'lifting-cervical': 'cervicoplastia (lifting cervical)',
+    'lifting-cervical-preco': 'cervicoplastia (lifting cervical)',
     'lifting-facial': 'lifting facial',
     'lifting-facial-preco': 'lifting facial',
     'lip-lifting': 'lip lifting',
@@ -69,8 +71,16 @@
   function marketingPrefillMessage(link) {
     var procedure = String(link.dataset.procedure || '').trim().toLowerCase();
     var intent = String(link.dataset.prefillIntent || '').trim().toLowerCase();
-    if (procedure === 'lifting-facial-preco' && intent === 'price_range_reference') {
-      return 'Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
+    if (intent === 'price_range_reference') {
+      if (procedure === 'lifting-facial-preco') {
+        return 'Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
+      }
+      if (procedure === 'lifting-cervical-preco') {
+        return 'Olá! Li sobre o valor da cervicoplastia (lifting cervical) e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
+      }
+    }
+    if (procedure === 'blefaroplastia-preco' && intent === 'price_planning') {
+      return 'Olá! Li sobre valores de blefaroplastia e gostaria de entender como o orçamento é montado e como funciona a avaliação.';
     }
     return neutralPrefillMessage(link);
   }

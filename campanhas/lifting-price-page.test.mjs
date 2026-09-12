@@ -9,6 +9,20 @@ const liftingPrice = readFileSync(
   ),
   "utf8",
 );
+const blephPrice = readFileSync(
+  new URL(
+    "../conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+    import.meta.url,
+  ),
+  "utf8",
+);
+const cervicalPrice = readFileSync(
+  new URL(
+    "../conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+    import.meta.url,
+  ),
+  "utf8",
+);
 const generalPrice = readFileSync(
   new URL(
     "../conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
@@ -80,10 +94,37 @@ test("lifting price page preserves procedure depth and direct conversion routes"
   );
 });
 
+test("the new price guides keep procedure-specific promises and no public surgical range", () => {
+  assert.match(blephPrice, /data-procedure="blefaroplastia-preco"/);
+  assert.match(blephPrice, /data-prefill-intent="price_planning"/);
+  assert.match(blephPrice, /como o orçamento é montado/i);
+  assert.doesNotMatch(blephPrice, /faixa geral de valores como ponto de partida/i);
+  assert.doesNotMatch(blephPrice, /R\$/);
+  assert.match(blephPrice, /href="\.\.\/\.\.\/blefaroplastia\/"/);
+
+  assert.match(cervicalPrice, /data-procedure="lifting-cervical-preco"/);
+  assert.match(cervicalPrice, /data-prefill-intent="price_range_reference"/);
+  assert.match(cervicalPrice, /faixa geral de valores como ponto de partida/i);
+  assert.match(cervicalPrice, /não é orçamento, proposta ou garantia de preço/i);
+  assert.match(cervicalPrice, /pode ficar fora da faixa/i);
+  assert.doesNotMatch(cervicalPrice, /R\$/);
+  assert.match(cervicalPrice, /href="\.\.\/\.\.\/lifting-cervical\/"/);
+});
+
+test("the lifting mobile CTA has a distinct continuity-test location", () => {
+  assert.match(liftingPrice, /data-cta-location="sticky_price_continuity_v1"/);
+  assert.match(liftingPrice, />Conversar sobre faixa geral<\/a>/);
+  assert.doesNotMatch(liftingPrice, /data-cta-location="sticky_price_range_reference"/);
+});
+
 test("the generic guide and lifting page link to the specific price guide", () => {
   for (const page of [generalPrice, lifting, contentIndex]) {
     assert.match(page, /quanto-custa-lifting-facial-sao-paulo/);
   }
+  assert.match(generalPrice, /quanto-custa-blefaroplastia-sao-paulo/);
+  assert.match(generalPrice, /quanto-custa-lifting-cervical-sao-paulo/);
+  assert.match(contentIndex, /quanto-custa-blefaroplastia-sao-paulo/);
+  assert.match(contentIndex, /quanto-custa-lifting-cervical-sao-paulo/);
 });
 
 test("the former surgical ranges do not leak through related public pages or structured data", () => {
@@ -110,6 +151,16 @@ test("the specific price guide is canonical and discoverable", () => {
   );
   assert.match(liftingPrice, /"@type":"FAQPage"/);
   assert.match(sitemap, /quanto-custa-lifting-facial-sao-paulo/);
+  assert.match(
+    blephPrice,
+    /rel="canonical" href="https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-blefaroplastia-sao-paulo\/"/,
+  );
+  assert.match(
+    cervicalPrice,
+    /rel="canonical" href="https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-cervical-sao-paulo\/"/,
+  );
+  assert.match(sitemap, /quanto-custa-blefaroplastia-sao-paulo/);
+  assert.match(sitemap, /quanto-custa-lifting-cervical-sao-paulo/);
 });
 
 test("price communication is patient-facing and total-plan oriented", () => {
@@ -127,4 +178,12 @@ test("price communication is patient-facing and total-plan oriented", () => {
   assert.match(liftingPrice, /Preparo e recuperação/);
   assert.match(liftingPrice, /Pix ou débito/);
   assert.match(liftingPrice, /pagamento precisa estar concluído até a data da cirurgia/);
+  for (const page of [blephPrice, cervicalPrice]) {
+    assert.match(page, /Hospital Sírio-Libanês/);
+    assert.match(page, /Hospital Nove de Julho/);
+    assert.match(page, /Hospital Alemão Oswaldo Cruz/);
+    assert.match(page, /hospitais com custo mais acessível/);
+    assert.match(page, /Pix ou débito/);
+    assert.match(page, /pagamento precisa estar concluído até a data da cirurgia/);
+  }
 });

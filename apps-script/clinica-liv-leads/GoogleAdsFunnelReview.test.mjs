@@ -112,6 +112,89 @@ test("o agregado separa alias histórico, código canônico e código ambíguo",
   assert.equal(blef7[16], 0);
 });
 
+test("o agregado de rotas publica apenas grupo, landing e CTA registrados", () => {
+  const build = load("construirAgregadosRotasGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_route_1", "amanda", "open", "Qualificado", new Date("2026-08-14T12:00:00Z"), "Google", "G26BLEF"],
+  ], [
+    ["Event ID", "Opportunity ID", "Marco"],
+    ["evt_route_1", "opp_route_1", "accepted"],
+  ], [
+    ["Opportunity ID", "Grupo/conjunto inicial", "Landing page inicial", "Local do CTA inicial"],
+    ["opp_route_1", "ag_blefaroplastia", "/conteudos/quanto-custa-blefaroplastia-sao-paulo/", "price_planning"],
+  ], new Date("2026-08-15T15:00:00Z"));
+
+  const route7 = rows.find((row) => row[2] === 7);
+  assert.equal(route7[0], "google_ads_route_aggregate_v1");
+  assert.equal(route7[5], "S_BR_SP_BLEFAROPLASTIA");
+  assert.equal(route7[6], "AG_BLEFAROPLASTIA");
+  assert.equal(route7[7], "/conteudos/quanto-custa-blefaroplastia-sao-paulo/");
+  assert.equal(route7[8], "price_planning");
+  assert.equal(route7[9], 1);
+  assert.equal(route7[12], 1);
+  assert.equal(route7[16], 1);
+  assert.equal(route7[20], "resolved");
+  const serialized = JSON.stringify(rows);
+  assert.equal(serialized.includes("opp_route_1"), false);
+  assert.equal(serialized.includes("evt_route_1"), false);
+});
+
+test("o agregado de rotas falha fechado quando o schema rico ainda não existe", () => {
+  const build = load("construirAgregadosRotasGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_schema_1", "amanda", "open", "Novo", new Date("2026-08-14T12:00:00Z"), "Google", "G26CERV"],
+  ], [], [
+    ["Opportunity ID", "Profissional", "Estado"],
+    ["opp_schema_1", "amanda", "open"],
+  ], new Date("2026-08-15T15:00:00Z"));
+
+  const route7 = rows.find((row) => row[2] === 7);
+  assert.equal(route7[6], "__UNKNOWN_AD_GROUP__");
+  assert.equal(route7[7], "__UNKNOWN_LANDING_ROUTE__");
+  assert.equal(route7[8], "__UNKNOWN_CTA_LOCATION__");
+  assert.equal(route7[20], "schema_unavailable");
+});
+
+test("dimensões livres não vazam para o agregado e permanecem não registradas", () => {
+  const build = load("construirAgregadosRotasGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_unknown_1", "amanda", "open", "Novo", new Date("2026-08-14T12:00:00Z"), "Google", "G26LIFT"],
+  ], [], [
+    ["Opportunity ID", "Grupo/conjunto inicial", "Landing page inicial", "Local do CTA inicial"],
+    ["opp_unknown_1", "grupo-livre-sensivel", "/rota-livre-sensivel/", "cta-livre-sensivel"],
+  ], new Date("2026-08-15T15:00:00Z"));
+
+  const route7 = rows.find((row) => row[2] === 7);
+  assert.equal(route7[6], "__UNKNOWN_AD_GROUP__");
+  assert.equal(route7[7], "__UNKNOWN_LANDING_ROUTE__");
+  assert.equal(route7[8], "__UNKNOWN_CTA_LOCATION__");
+  assert.equal(route7[20], "unregistered");
+  const serialized = JSON.stringify(rows);
+  assert.equal(serialized.includes("livre-sensivel"), false);
+  assert.equal(serialized.includes("opp_unknown_1"), false);
+});
+
+test("atribuições conflitantes para a mesma oportunidade permanecem N/D", () => {
+  const build = load("construirAgregadosRotasGoogleAds_");
+  const rows = build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_conflict_1", "amanda", "open", "Novo", new Date("2026-08-14T12:00:00Z"), "Google", "G26BLEF"],
+  ], [], [
+    ["Opportunity ID", "Grupo/conjunto inicial", "Landing page inicial", "Local do CTA inicial"],
+    ["opp_conflict_1", "ag_blefaroplastia", "/blefaroplastia/", "hero"],
+    ["opp_conflict_1", "ag_lifting_cervical", "/lifting-cervical/", "footer"],
+  ], new Date("2026-08-15T15:00:00Z"));
+
+  const route7 = rows.find((row) => row[2] === 7);
+  assert.equal(route7[6], "__UNKNOWN_AD_GROUP__");
+  assert.equal(route7[7], "__UNKNOWN_LANDING_ROUTE__");
+  assert.equal(route7[8], "__UNKNOWN_CTA_LOCATION__");
+  assert.equal(route7[20], "conflict");
+});
+
 test("arquivo não envia e-mail nem contém campos de PII", () => {
   ["MailApp", "GmailApp", "Telefone", "Nome do paciente", "Mensagem"].forEach((token) => {
     assert.equal(source.includes(token), false, token);

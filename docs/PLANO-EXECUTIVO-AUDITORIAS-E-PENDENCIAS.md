@@ -2,13 +2,13 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 12 de setembro de 2026, evolução da jornada e custos de mensageria em implementação autorizada
+**Atualizado em:** 12 de setembro de 2026, publicação unificada de páginas de preço, classificação periódica e rotas Google Ads autorizada
 
 **Escopo:** auditorias e execuções de Google Ads, funil, páginas, busca/IA, jornada comercial e operação diária de atendimento, incluindo otoplastia adulta/infantil
 
 **Projeção de leitura no Drive:** [00 — PLANO EXECUTIVO — pendências, prazos e publicações.md](https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view)
 
-**Divergência registrada:** esta versão local inclui `EVOLUCAO-BRUNA-JORNADA-YCLOUD-2026-09-12`, ainda não publicada nem projetada no Drive. A projeção existente continua refletindo o último fechamento publicado. Substituir o mesmo arquivo no Drive somente junto da publicação já autorizada e verificada; não criar cópia concorrente.
+**Divergência registrada:** esta versão local reúne o fechamento publicado da Bruna v144 com os candidatos autorizados de páginas de preço BLEF/CERV e classificação periódica. A projeção existente no Drive continua refletindo o último fechamento publicado até o pós-voo deste pacote; substituir o mesmo arquivo, sem criar cópia concorrente.
 
 ## 1. Como usar este arquivo
 
@@ -43,6 +43,10 @@ O responsável técnico deve:
 ## 3. Situação atual em linguagem direta
 
 **Jornada da Bruna — PUBLICADA E VERIFICADA NA v144; CUSTOS EM OBSERVAÇÃO:** Bruna permanece assistente ou concierge da Clínica LIV, com `concierge` como apresentação padrão e sem explicação tecnológica ao paciente. O pacote reconciliado sobre a v143 separa Amanda, Daniel e profissionais eventuais antes de agenda e lembretes; padroniza toda revisão humana com motivo, responsável, contexto e rascunho seguro ou `SEM SUGESTÃO PRONTA`; amplia o ledger por `Decision ID`/`Opportunity ID` sem PII; atribui marcos pós-consulta e relacionamento ao profissional correto; adiciona diagnóstico somente leitura de `Consultas` versus Calendar; trava 47 cenários contra regressão silenciosa; e registra entrega, categoria e custo final informado pela YCloud de modo idempotente. A contabilização usa hash do identificador técnico e não persiste telefone, nome, mensagem, ID de conversa ou `wamid`; começa em observação e não bloqueia resposta assistencial, segurança, lembrete ou cuidado. Passaram **31/31 testes focados de YCloud/custos**, **1.296/1.296 testes integrais**, arquitetura, contrato exato, build de 180 arquivos, 44/44 URLs e `git diff --check`. Os cinco arquivos Apps Script foram salvos, recarregados e relidos nos hashes aprovados; o deployment canônico foi preservado e avançou para v144. Os diagnósticos de custos e de Consultas versus Calendar concluíram sem erro. O commit funcional `800e3b91801de2566b625e04a37c04d05e2d29ab` foi publicado no Netlify `6aa556ba2030c700087d07d1`; domínio, branch e URL imutável responderam HTTP 200 com conteúdo idêntico, modo ativo e observabilidade de custo, e a sonda sem assinatura retornou HTTP 401. O diagnóstico final confirmou as duas travas automáticas ativas, template configurado, gatilhos 1/1 e zero plano programado. A YCloud preservou os dois eventos anteriores e persistiu os quatro eventos técnicos novos, totalizando seis. Em `Consultas`, `Profissional` e `ID da consulta` existem; `Opportunity ID` ainda não existe e permanece enriquecimento opcional sem bloquear agenda ou custo. Nenhuma mensagem real ou de teste foi enviada e nenhum planejador, processador, cancelamento ou correção de agenda foi executado. Monitorar o primeiro evento, 24 horas, 72 horas e 7 dias; conter diante de roteamento profissional incorreto, PII na telemetria, duplicidade de custo ou qualquer quebra de guardrail. Rollback: Apps Script v143, commit `7e6ea23d49b5b0fd149a66395f88f091b94b01a2` e deploy `6aa5494950d7dc34628fdf33`.
+
+**Google Ads — PÁGINAS DE PREÇO BLEF/CERV E LEITURA POR ROTA; CANDIDATO LOCAL ISOLADO:** a auditoria de 13/08–11/09 encontrou 1.673 cliques, R$ 2.509,89, 18 contatos com GCLID, 1 qualificado e nenhuma consulta. `cirurgia de blefaroplastia preço` foi a única consulta visível com conversão principal e ainda não existia como palavra exata. O candidato cria guias próprios de blefaroplastia e lifting cervical, prepara a exata no grupo BLEF, sitelinks restritos aos procedimentos, um teste móvel único no CTA fixo do guia de lifting e a aba anônima `Google_Rotas`. Nenhuma página, campanha, palavra, sitelink, Apps Script, planilha ou conexão foi alterada ao vivo. A publicação depende do commit exato aprovado; Ads só muda após os destinos responderem HTTP 200 e o schema/aggregate serem verificados.
+
+**Atribuição por rota — DIVERGÊNCIA VIVA REGISTRADA:** embora o histórico registre ativação em agosto, o pré-voo autenticado de 12/09 encontrou `ATTRIBUTION_SCHEMA_VERSION` ausente nas propriedades do projeto canônico e os cabeçalhos ricos ausentes nas abas operacionais. O candidato falha fechado com `schema_unavailable` e não reconstrói grupo, landing ou CTA por inferência. Uma migração futura exige validação dos três IDs, backup, dry-run, autorização própria e pós-voo; até lá, o passado continua N/D.
 
 **Meta — CERVICAL E FACIAL REATIVADAS E VERIFICADAS; MONITORAMENTO EM 24H/D+7/D+14/D+30/D+37:** após confirmação final de Daniel em 12/09, foram publicados somente os dois tetos vitalícios de R$ 300 para R$ 900 e os dois términos para 11/10/2026 23:59. O resumo selecionou 2 de 4 campanhas, 2 de 4 conjuntos e 0 de 3 anúncios; o contador caiu de 11 para 7, preservando os sete rascunhos preexistentes. `M26C01W` e o novo objeto 40+ de `M26F01W`, com seus conjuntos canônicos, foram relidos como `Ativo` e com R$ 900 por campanha. Público 40–65+, São Paulo +20 km, WhatsApp, criativos, C07/C06 ligados e anúncios herdados desligados ficaram iguais. A classificação anterior alcançava só 25 de 100 contatos Meta; por isso o ciclo mantém — e não escala — o padrão de R$ 20/dia, até R$ 600 novos por campanha/R$ 1.200 no total.
 
@@ -300,21 +304,21 @@ Decisão de encerramento e próximo ciclo — 16/08:
 
 ### Auditoria 2 — SEO, IA e atribuição
 
-**Estado geral:** atribuição rica e schema v1 publicados e ativados sob autorização integral; sonda sintética aprovada; fase atual é monitoramento e reconciliação ao vivo.
+**Estado geral:** feature de jornada publicada, mas `DIVERGÊNCIA ABERTA` no schema vivo; a propriedade e os cabeçalhos ricos não estavam materializados no pré-voo de 12/09. Monitorar sem inferência e migrar somente sob nova autorização.
 
 Já foi feito:
 
 - commit técnico `50d7ea1` publicado no Netlify;
-- Apps Script versão 91 publicou o pacote default-off; a produção atual é a versão 104, que preserva as rotinas anônimas, somente leitura, os códigos cervicais e o schema v1 habilitado, além da correção operacional dos comprovantes de agendamento, da regra de salas do formulário, do ledger contextual do WhatsApp, do prefill estruturado e da exclusão segura de contatos comerciais na Central;
+- Apps Script versão 91 publicou o pacote default-off; versões posteriores preservaram o código de migração e as rotinas anônimas, mas o estado vivo de 12/09 não apresentou a propriedade nem as colunas do schema rico;
 - smoke tests públicos aprovados;
 - auditorias excluídas do artefato do site;
 - logs e IDs endurecidos;
 - estrutura de atribuição rica preparada;
 - página de custo do lifting sem faixas públicas;
-- feature `attributionJourneyEnabled=true` publicada no commit `436aff0` e schema v1 habilitado no Apps Script v97;
+- feature `attributionJourneyEnabled=true` publicada no commit `436aff0`; os recibos de agosto registram habilitação do schema na v97, mas o preflight atual diverge e prevalece para qualquer nova decisão operacional;
 - risco residual do `JID` visível/editável aceito por Daniel em 15/08/2026.
 
-Ainda falta para manter a atribuição rica após a ativação:
+Ainda falta para restaurar e manter a atribuição rica:
 
 - observar o purge e validar retenção/acesso dos sistemas externos em produção;
 - confirmar a política de privacidade publicada e o comportamento real do consentimento;
@@ -323,12 +327,13 @@ Ainda falta para manter a atribuição rica após a ativação:
 - validar GSC, domínio Wix antigo, CWV e fontes externas;
 - manter rollback pronto: desligar a feature e o schema diante de PII, duplicidade, first touch sobrescrito ou regressão de atendimento.
 
-**Importante:** a ativação ocorreu em 17/08 após autorização integral. O bloco de 20/08 passa a ser a saúde D+3: não repetir a migração nem reativar o que já está ativo; verificar eventos, cobertura e rollback.
+**Importante:** a ativação registrada em 17/08 não autoriza presumir que o schema continua ativo. Não repetir a migração sem reconciliar a divergência, validar o alvo canônico, obter nova autorização e registrar backup, dry-run e pós-voo.
 
 ## 4. O que vocês precisam fazer agora
 
 | Até quando | Responsável | Ação humana | Se não for possível |
 |---|---|---|---|
+| após receber o commit exato do candidato BLEF/CERV | Daniel | autorizar ou recusar a publicação daquele commit e a sequência limitada site → Apps Script/schema → Google Ads → pausa reversível da rota antiga | manter todo o candidato somente local; nenhuma campanha ou planilha muda |
 | primeiro e-mail, depois 24 h, 72 h e 7 dias da v141 | Daniel/equipe | verificar se todos os itens aparecem, se o agrupamento ajuda e se nenhuma ação vem marcada ou ocorre ao apenas abrir | retornar o mesmo deployment à v140 diante de omissão silenciosa, mutação ao abrir, duplicidade ou decisão sem revalidação |
 | 17/08, antes das 17:30 | Daniel | participar da reunião de suporte de tags do Google; não aceitar mudanças amplas ou automáticas sem registro e revisão | coletar a recomendação e não aplicar na hora |
 | 20/08, antes das 14:00 | Amanda/equipe | localizar autorizações/consentimentos das imagens e separar dúvidas para Codame/jurídico, sem subir documentos pessoais no repositório | manter congelado novo uso/reuso das galerias |
@@ -353,6 +358,7 @@ Todas as datas usam America/Sao_Paulo. Uma data não é autorização automátic
 | diariamente, aproximadamente 10:05 | Meta Ads: saúde automatizada | `ATIVO` desde 16/08; introduzido na v104 e preservado no Apps Script v142 | gasto no mesmo dia da semana, entrega/status, idade facial, páginas, fonte e funil; todo e-mail enviado inclui resumo 7/30 de mídia e funil | e-mail somente para alerta crítico; zero mutação | token `ads_read` protegido, conta validada, Graph `v26.0` e execução real sem escrita |
 | toda terça-feira, aproximadamente 10:05 | Meta Ads: revisão tática automatizada | `ATIVO`; primeiro envio completo em 18/08 | 7 dias, sete anteriores e 30 dias; campanha, conjunto, anúncio, criativo/vídeo, segmentos, páginas e funil | e-mail automático; alterações continuam manuais e autorizadas | conferir os três primeiros relatórios e calibrar apenas falso positivo comprovado |
 | 12/09 08:16 | Meta Ads: reativar cervical e facial diretos por 30 dias | `CONCLUÍDO; PUBLICADO E VERIFICADO` | teto vitalício de `M26C01W` e do novo `M26F01W` em R$ 900; conjuntos ativos até 11/10 23:59 | até R$ 600 novos por campanha/R$ 1.200 total; 2 campanhas + 2 conjuntos publicados, 0 anúncios | IDs canônicos, 40–65+, São Paulo +20 km, WhatsApp e anúncios C07/C06 preservados; contador 11→7 e sete rascunhos mantidos |
+| após aprovação do commit de 12/09 | Google Ads + páginas: preço BLEF/CERV e leitura por rota | `CANDIDATO LOCAL; PUBLICAÇÃO PENDENTE` | publicar e validar dois guias; publicar agregador; migrar schema somente com autorização; depois adicionar exata/sitelinks e pausar a programação antiga de ajustes | Netlify, Apps Script, LEADS/agregado e Google Ads, em sequência; nenhum aumento de gasto | HTTP 200/visual mobile, alvo canônico, zero PII, `Google_Rotas` íntegra, importação direta fresca, fila de ajustes vazia e diff exato aprovado |
 | 17/08, após gates técnicos | Meta Ads: lifting facial contínuo + experimento cervical Site × WhatsApp | `PUBLICADO; INÍCIO 12H` | `M26F01W/C06H01`, `M26C01W` direto e `M26C02S` via `/lifting-cervical/`; R$ 300 total por campanha, 17/08 12h–01/09 12h; Feed 1:1 e Reels/Stories 9:16 | código/Apps v97/schema/sonda publicados primeiro; depois três publicações seletivas, cada uma com 1 campanha + 1 conjunto + 1 anúncio | conferir a entrega real, idade efetiva e primeiros eventos; não mudar público, orçamento, destino ou criativo durante a janela |
 | 20/08 19:30–19:50 | Instagram orgânico: Reels de lifting cervical | `AGENDADO` | publicar o vídeo 9:16 aprovado; manter `Clique no link da bio`; conferir link da bio e separar origem orgânica | publicação manual no Instagram | não reutilizar o post como anúncio nem atribuir o tráfego orgânico aos braços pagos |
 | 18/08, após o relatório Meta | Meta WhatsApp: confirmar entrega etária | `CONDICIONAL À PUBLICAÇÃO` | conferir `age_min=40` e distribuição real por idade nos três novos conjuntos; não reabrir a migração do objeto histórico se o novo desenho funcionar | leitura e eventual correção só com autorização | novo `M26F01W` publicado seletivamente e sem expansão abaixo de 40 |
@@ -436,20 +442,20 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 |---|---|---|---|
 | Conversão offline Google e receipts | P0 | `PUBLICADO E VERIFICADO` na v139 e preservado na v143: 2 ajustes inexistentes arquivados sem PII, duas filas zeradas, agregado v2 relido e ciclo de classificação reparado com processamento automático concluído | acompanhar os ciclos diários; não otimizar por evento rejeitado, métrica de plataforma isolada ou contato ainda em `Novo` |
 | Meta → site → WhatsApp → LEADS/CRM | P0 | sonda sintética aprovada; ciclo real `EM MONITORAMENTO` | conferir cobertura e consistência em D+3/D+7 antes de declarar o caminho funcional ao vivo |
-| Atribuição rica J0/J1/J2 | P0 | `ATIVA` desde 17/08; risco JID aceito | monitorar resolução, fallback, encaminhamento, duplicidade e rollback |
-| Schema/identidade da LEADS | P0 | schema v1 habilitado no Apps Script v97 | reconciliar LEADS/CRM e não repetir migração sem novo preflight |
+| Atribuição rica J0/J1/J2 | P0 | feature publicada; `DIVERGÊNCIA ABERTA` porque propriedade/colunas do schema não apareceram no preflight de 12/09 | manter N/D, reconciliar estado vivo e só migrar com nova autorização, backup, dry-run e pós-voo |
+| Schema/identidade da LEADS | P0 | código v1 disponível, mas schema não materializado no estado vivo de 12/09 | validar os três IDs, executar dry-run e pedir autorização própria; não inferir histórico |
 | Calendar, rotas e SLA | P0/P1 | `AGUARDAR DADOS` | reconciliar após migração/sonda |
 | Lembretes e retomadas v140, preservados na v143 | P0/P1 | `PUBLICADO E VERIFICADO`: deployment canônico preservado; a rota adicional por modelo está ativa desde 12/09 às 09:46:59, sem converter backlog | monitorar o primeiro caso e preservar v142/v141 como rollback de código; a contenção operacional não apaga fila nem histórico |
 | Retomada automática por modelo 24–48h | P0/P1 | `PUBLICADA, ATIVADA E VERIFICADA NA v143; EM MONITORAMENTO`: commit exato publicado, controle de emergência ensaiado, endpoint saudável, gatilhos 1/1, fila programada zero, flags ativas e nenhuma mensagem real ou de teste durante a ativação | observar primeiro caso, 24 h, 72 h e 7 dias; conter imediatamente pelo menu e pela variável Netlify diante de envio retroativo, duplicado, protegido ou sem rastreabilidade |
 | Evolução da jornada da Bruna por profissional e custo YCloud | P0/P1 | `CANDIDATA TESTADA, PREFLIGHT VIVO CONCLUÍDO E PUBLICAÇÃO AUTORIZADA`: 1.296 testes, arquitetura, 40 arquivos, site e alvos vivos conferidos; separação profissional, revisão humana uniforme, ledger de decisão, marcos de relacionamento, diagnóstico Calendar, baseline de regressão e contabilização idempotente de entrega/custo por mensagem sobre a v143 | publicar o commit reconciliado preservando flags, fila e histórico; assinar os quatro eventos técnicos somente após os deployments; iniciar custos em observação, sem bloquear atendimento assistencial |
 | Caixa diária de decisões v141 | P1 | `PUBLICADO E VERIFICADO`: e-mail completo agrupado por contato, painel móvel sem preseleção, confirmação única e revalidação por item; sonda inválida sem efeito externo | monitorar primeiro e-mail, 24 h, 72 h e 7 dias; reverter para v140 diante de omissão silenciosa, mutação ao abrir, ação preselecionada, duplicidade ou decisão sem revalidação |
 | Classificação periódica por conversa | P0/P1 | `PLANILHA RECONCILIADA; CANDIDATO LOCAL DEFAULT-OFF RECONCILIADO COM V144`: 18 contatos Google revistos; 5 ações reais da clínica; reconciliação futura a cada 15 min preparada sem backlog automático | obter autorização do commit exato, publicar sem alterar campanhas, ativar com corte temporal e validar fila, fases e ausência de reprocessamento no primeiro ciclo, 24 h e 7 dias |
-| Experimentos Google Ads | P1 | LIFT em Maximizar cliques desde 22/08; 12 negativas CERV publicadas em 30/08; correção isolada do autobloqueio LIPO e do sitelink publicada e verificada em 31/08; RSA OTO não iniciado; demais campanhas preservadas | monitorar integridade em 24 h e negócio em 7/14 dias; reavaliar OTO somente com downstream legível; toda janela editorial começa na publicação real |
+| Experimentos Google Ads | P1 | LIFT em Maximizar cliques; 12 negativas CERV e correção LIPO preservadas; novo pacote BLEF/CERV e teste móvel preparados localmente, com publicação autorizada; RSA OTO e demais campanhas preservados | publicar destinos primeiro, alterar apenas palavra/sitelinks autorizados e medir 24 h/D+7/D+14 por downstream; toda janela começa na publicação real |
 | Rotina automatizada Google Ads | P1 | `ATIVO` desde 15/08; script `12117745`, diário 09:00–10:00; calibração proprietária publicada e prévia verificada em 31/08 | monitorar a primeira execução programada posterior à publicação; investigar somente divergência real de fonte, alerta ou entrega |
 | Rotina automatizada Meta Ads | P1 | `ATIVO` desde 16/08; Apps Script v104; somente leitura | conferir os três primeiros relatórios completos e calibrar somente falsos positivos comprovados |
 | Meta — reativação `M26C01W` + novo `M26F01W` | P1 | `PUBLICADO E VERIFICADO` em 12/09: campanhas e conjuntos ativos, R$ 900 por campanha, fim 11/10 23:59; sete rascunhos preservados | monitorar 13/09, 19/09, 26/09, 12/10 e 19/10 por válidos, qualificados, consultas e custo por etapa; sem escala |
 | Idade das campanhas faciais | P1 | Meta 40+ mantido; Google `AGUARDAR DADOS`, sem exclusão aplicada | reconsiderar somente com downstream atribuível por idade; manter `Desconhecida` e não alterar OTO/marca/rino |
-| SEO técnico/CWV | P1/P2 | páginas cervical e lipo publicadas no deploy `6a9603e1f16be1000897d2d2`, com domínio/URL imutável, canonical, sitemap, revisão e CTAs verificados; demais áreas em baseline parcial | medir 7/14 dias e otimizar só com gargalo comprovado |
+| SEO técnico/CWV | P1/P2 | páginas cervical e lipo anteriores publicadas; novos guias de preço BLEF/CERV preparados em worktree isolada, ainda sem deploy | validar visual desktop/mobile e publicar somente o commit aprovado; medir 7/14 dias e otimizar só com gargalo comprovado |
 | GSC, Wix antigo, Bing e IA | P1/P2 | rastreabilidade técnica preservada; `OAI-SearchBot`, `GPTBot`, sitemap e IndexNow cobertos; nenhuma promessa de ranking ou citação | acompanhar indexação e consultas; não criar `llms.txt` ou marcação especial sem suporte e não confundir rastreio com visibilidade garantida |
 | Aqui Ads — piloto OOH hiperlocal | P2 | `AGENDADO PARA DECISÃO EM 16/09`; nenhuma compra autorizada | revalidar dois residenciais premium + um salão/spa, orçamento incremental, metodologia de audiência, peça e tracking; ativar apenas na primeira janela limpa |
 | Galerias, imagens e consentimentos | P0 | `DEPENDE DE VOCÊS` | Codame/jurídico e inventário restrito |
@@ -471,6 +477,8 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 - não reintroduzir faixa cirúrgica pública na página de custo;
 - não alterar galerias/imagens por inferência antes do parecer;
 - não ativar feature/schema apenas porque o código já foi publicado;
+- não apontar palavra ou sitelink para as novas páginas antes do HTTP 200 e da inspeção visual; não associar o preço cervical a `AG_LIPO_PAPADA` nem prometer faixa automática em BLEF;
+- não excluir a conexão antiga de ajustes: a etapa autorizável é pausa reversível, depois de provar que a importação direta está fresca e a fila continua vazia;
 - não comprar ou ativar Aqui Ads antes do gate de 16/09, nem retirar a verba do Google/Meta ou sobrepor o piloto a outra mudança material;
 - não usar a matriz `17-STATUS-RECOMENDACOES.csv` isoladamente: ela preserva o estado anterior ao deploy default-off.
 

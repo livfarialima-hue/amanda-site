@@ -53,7 +53,7 @@ Diretórios de entrada:
 |---|---|
 | Google Ads, Meta Ads, orçamento, campanhas, palavras, páginas e conversões | `AGENTS.md`, este documento, `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md` e `campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md` |
 | Rotina automatizada de revisão do Google Ads | `campanhas/ROTINA-AUTOMATIZADA-REVISAO-GOOGLE-ADS.md` e `google-ads-scripts/google-ads-search-review-email.js` |
-| Agregado anônimo usado pelas rotinas Google e Meta Ads | contrato no repositório e arquivo ao vivo `LIV — Agregados de mídia paga — sem PII` dentro de `02 — Campanhas`; abas `Agregados` e `Meta_Agregados`; nunca duplicar a planilha LEADS nem adicionar PII ao agregado |
+| Agregado anônimo usado pelas rotinas Google e Meta Ads | contrato no repositório e arquivo ao vivo `LIV — Agregados de mídia paga — sem PII` dentro de `02 — Campanhas`; abas `Agregados`, `Google_Rotas` e `Meta_Agregados`; `Google_Rotas` é uma visão alternativa da mesma coorte, usa somente dimensões registradas e nunca deve ser somada a `Agregados`; nunca duplicar a planilha LEADS nem adicionar PII ou identificadores ao agregado |
 | Atribuição e códigos | `campanhas/CONTRATO-ATRIBUICAO-ORIGEM.md`, `campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md` e código correspondente |
 | Bot e atendimento | `docs/whatsapp-clinica-liv-operacao.md`, `netlify/functions/` e testes correspondentes |
 | LEADS, CRM e Apps Script | `apps-script/clinica-liv-leads/README.md`, `production-target.json` e arquivos `.gs` |

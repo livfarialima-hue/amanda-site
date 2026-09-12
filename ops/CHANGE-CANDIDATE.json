@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "changeId": "LEADS-WHATSAPP-CLASSIFICATION-RECONCILIATION-2026-09-12",
-  "title": "Reconciliar o funil com a conversa completa e atualizar classificacoes futuras",
+  "changeId": "GOOGLE-PRICE-PAGES-CLASSIFICATION-ROUTES-2026-09-12",
+  "title": "Publicar paginas de preco BLEF/CERV, reconciliacao periodica e rotas Google Ads",
   "status": "tested_local",
-  "baseCommit": "46bf67fdccc0c806650611562a975dc3dd046a56",
+  "baseCommit": "7b7976d77c2e344721d61b29dfe06d832b532676",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou corrigir a planilha depois da auditoria e ajustar a logica para atualizacao periodica. O candidato foi reconciliado com os releases paralelos v144 e das paginas de mama e contorno; a publicacao continua condicionada ao HEAD exato.",
+    "note": "Daniel autorizou publicar tudo que estava pendente, ajustar o Google Ads para as novas paginas, revisar o sitemap e corrigir a transmissao de qualificados. O preflight de release ainda deve vincular essa autorizacao ao HEAD integrado exato.",
     "approvedCommit": "",
     "approvedAt": "",
     "approvedBy": "",
@@ -23,92 +23,112 @@
   "scope": {
     "contracts": [
       "change-governance",
+      "google-ads-acquisition-conversion",
       "patient-journey-funnel-followups",
-      "google-ads-acquisition-conversion"
+      "site-publication"
     ],
     "files": [
       "apps-script/clinica-liv-leads/ClassificationReconciliation.gs",
       "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
       "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
+      "blefaroplastia/index.html",
+      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
+      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
+      "campanhas/conversion-tracking.js",
+      "campanhas/conversion-tracking.test.mjs",
+      "campanhas/cost-guides.test.mjs",
+      "campanhas/footer-consistency.test.mjs",
+      "campanhas/lifting-price-page.test.mjs",
+      "campanhas/site-technical-regression.test.mjs",
+      "conteudos/index.html",
+      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "lifting-cervical/index.html",
       "netlify/functions/lib/lead-classifier.mjs",
       "netlify/functions/lib/lead-classifier.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "scripts/run-tests.mjs",
+      "sitemap.xml"
     ]
   },
   "impact": {
     "consumers": [
-      "classificador Netlify de oportunidades",
-      "fila _WHATSAPP_CLASSIFICACAO",
-      "CRM canonico e projecao Google Ads - Conversoes",
-      "Funil Comercial",
-      "gatilho Apps Script de reconciliacao periodica",
-      "estrategia de decisao do Google Ads"
+      "pacientes que pesquisam preco de blefaroplastia e lifting cervical",
+      "campanhas Google Ads BLEF, CERV e LIFT",
+      "classificador Netlify e fila de classificacao",
+      "CRM canonico, Funil Comercial e importacao Google Ads",
+      "agregados anonimos Agregados e Google_Rotas",
+      "sitemap e Google Search Console"
     ],
     "preservedInvariants": [
-      "a classificacao automatica nunca rebaixa fase",
-      "somente uma mensagem textual posterior ao watermark pode reabrir fila concluida",
-      "fila pendente ou em execucao, oportunidade encerrada e identidade divergente falham fechadas",
-      "auditoria humana atual e registros ja correntes permanecem preservados",
-      "a ativacao periodica cria um corte temporal e nao processa backlog anterior",
-      "publicar o arquivo nao cria gatilho nem envia mensagem",
-      "nenhum dado pessoal entra no repositorio, nos logs ou nos relatorios",
-      "orcamentos, lances, campanhas, anuncios, palavras e conversoes Google permanecem inalterados"
+      "nenhuma faixa numerica de cirurgia e publicada nas paginas",
+      "a classificacao automatica nunca rebaixa fase e nao processa backlog anterior ao corte de ativacao",
+      "somente evento ready com um unico click ID entra em IMPORT_GOOGLE_ADS",
+      "eventos invalidados permanecem fora da importacao e a rota de ajuste continua disponivel",
+      "Agregados e Google_Rotas nunca sao somados e nao publicam PII ou Opportunity ID",
+      "schema ausente ou dimensao conflitante falha fechada como N/D",
+      "orcamentos, lances, metas, RSAs, negativas, publicos, dispositivos, agenda, redes e geografia permanecem intactos",
+      "o sitelink cervical fica restrito a AG_CERVICOPLASTIA",
+      "trabalho paralelo do site e releases v144 permanecem preservados"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "planilha LEADS canonica e exportacoes restritas do WhatsApp",
+        "system": "planilha LEADS canonica",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T10:38:00-03:00",
-        "reference": "Os tres IDs canonicos foram confirmados. Dezoito contatos Google foram reconciliados por Opportunity ID; a aba temporaria de auditoria foi removida no mesmo lote e o pos-voo confirmou 17 Novo, 1 Qualificado, 5 clinic e 13 patient.",
-        "evidence": "Leitura e escrita limitadas as linhas auditadas; nenhum nome, telefone, click ID ou mensagem literal foi levado ao repositorio."
+        "checkedAt": "2026-09-12T11:45:00-03:00",
+        "reference": "Reconciliacao por Opportunity ID e estado atual do ledger.",
+        "evidence": "Seis eventos ready coincidem com seis linhas unicas de importacao e seis oportunidades atualmente Qualificado; dois eventos invalidados ficaram fora; AJUSTES_GOOGLE_ADS sem linha pendente."
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads conta 995-334-4486",
+        "system": "Google Ads 995-334-4486 e Data Manager",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T10:41:00-03:00",
-        "reference": "Leitura autenticada de 13/08 a 11/09 confirmou 1.673 cliques, R$ 2.509,89, uma conversao exibida e nenhuma mudanca de midia executada.",
-        "evidence": "A decisao usa o funil reconciliado; conversao da interface e contato da planilha nao foram somados."
+        "checkedAt": "2026-09-12T11:43:00-03:00",
+        "reference": "Conta, acao primaria e conexao LEADS relidas em sessao autenticada.",
+        "evidence": "Importacao diaria concluida em 12/09 05:05 com 6 linhas e 0 erros; aviso da acao refere ausencia de conversao recente, nao falha da conexao."
+      },
+      {
+        "contract": "site-publication",
+        "system": "repositorio, Netlify e site oficial",
+        "status": "pending_final_parallel_reconciliation",
+        "checkedAt": "2026-09-12T11:46:00-03:00",
+        "reference": "Worktree isolada criada a partir do ultimo origin publicado; tarefa paralela do site ainda ativa.",
+        "evidence": "A integracao final sera rebaseada sobre o proximo HEAD canonico antes dos testes e do release."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T10:56:36-03:00",
+    "completedAt": "2026-09-12T11:46:00-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/classify-leads.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
-      "npm.cmd test",
-      "npm.cmd run architecture:check",
       "npm.cmd run change:check",
+      "npm.cmd run architecture:check",
+      "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check",
-      "pos-voo por Opportunity ID em Google Ads - Conversoes, _CRM_OPORTUNIDADES, _WHATSAPP_CLASSIFICACAO e Funil Comercial"
+      "git diff --check"
     ],
     "results": {
-      "focusedClassification": "50/50 passed",
-      "fullSuite": "1304/1304 passed depois da reconciliacao com v144",
-      "focusedJourney": "187/187 passed",
-      "focusedScheduledFollowup": "21/21 passed",
-      "focusedGoogleAds": "128/128 passed",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 11 arquivos coincidem com o escopo",
-      "siteBuild": "180 arquivos e 44 URLs do sitemap, sem erro",
-      "siteCheck": "44/44 paginas aprovadas",
-      "opsCheck": "SYNC_PENDING esperado para candidato local: publicacao pendente e branch isolada",
-      "spreadsheet": "18/18 identidades, fases, responsaveis, objecoes e watermarks confirmados; coluna de data legivel e minutos numericos",
-      "googleAds": "somente leitura; nenhuma entidade alterada",
-      "realMessages": "zero mensagens reais ou de teste"
+      "integration": "pending final rebase and complete rerun",
+      "spreadsheet": "6/6 ready imported, 0 unmatched, 0 duplicate transaction, 2 invalidated excluded, adjustment queue empty",
+      "googleAdsDataManager": "latest scheduled run 6 rows, 0 errors",
+      "externalMutations": "site, Apps Script, Google Ads and Search Console still pending release sequence"
     }
   },
   "release": {
@@ -118,23 +138,23 @@
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
     "verifiedAt": "",
-    "activationState": "local_default_off_reconciled_pending_authorization",
-    "notes": "A planilha ja foi corrigida no escopo autorizado. Codigo e documentacao estao reconciliados com a v144 e permanecem locais ate o preflight do HEAD exato e autorizacao de publicacao."
+    "activationState": "local_integrated_pending_final_reconciliation",
+    "notes": "A planilha ja foi corrigida no escopo autorizado; publicacao e ativacao aguardam HEAD exato, testes e preflight final."
   },
   "rollback": {
-    "local": "reverter somente o commit deste changeId sobre o baseCommit, preservando releases paralelos",
-    "production": "desativar primeiro o gatilho de reconciliacao e a propriedade CLASSIFICATION_RECONCILIATION_ENABLED; se necessario, retornar o deployment Apps Script e o deploy Netlify anteriores, sem apagar ledger, filas ou correcoes humanas"
+    "local": "reverter somente o commit integrado sobre o baseCommit, preservando releases paralelos",
+    "production": "desativar primeiro o gatilho de reconciliacao; pausar somente a palavra ou o sitelink novos; retornar Apps Script e Netlify as versoes anteriores se necessario; preservar ledger, recibos, orcamentos e lances"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "primeiro ciclo, 24 horas e 7 dias depois da ativacao real",
+    "window": "primeiro ciclo e 24 horas para integridade; D+7 e D+14 para negocio",
     "metrics": [
-      "classificacoes reabertas e concluidas por mensagem nova",
-      "proporcao aguardando clinica versus paciente",
-      "mudancas de fase e divergencias de identidade",
-      "tempo ate primeira resposta humana e retomadas",
-      "contatos validos, qualificados e consultas por campanha"
+      "classificacoes reabertas somente depois de mensagem nova",
+      "contatos validos, qualificados e consultas por campanha e rota resolvida",
+      "frescor da importacao direta e fila de ajustes",
+      "HTTP 200, canonical, sitemap, tracking e politica das novas paginas",
+      "uso dos sitelinks e desempenho da palavra exata como diagnostico"
     ],
-    "rollbackRule": "desativar somente o novo gatilho diante de reprocessamento retroativo, repetido, identidade divergente, fase incorreta ou competicao com atendimento humano"
+    "rollbackRule": "reverter apenas o componente novo responsavel diante de backlog, fase incorreta, destino errado, vazamento, falsa atribuicao, PII, reprovacao persistente ou regressao downstream"
   }
 }
