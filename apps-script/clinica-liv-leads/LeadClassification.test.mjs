@@ -85,7 +85,8 @@ function loadFunctions() {
       "mergeConversationMessages_, classificationAdministrativeSignal_, " +
       "normalizeLeadMessageSource_, boundedConversationText_, " +
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
-      "relationshipFromClassification_, shouldAlertLowConfidenceAdministrativeChange_, " +
+      "relationshipFromClassification_, expectedPartyFromClassification_, " +
+      "shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
       "googleAdsTransactionIdSeguro_, googleConversionTransactionId_, " +
       "pseudonimoIdentidadeLead_, " +
@@ -107,6 +108,42 @@ function loadFunctions() {
   };
   return sandbox.__test;
 }
+
+test("explicit expected party replaces wording heuristics", () => {
+  const { expectedPartyFromClassification_ } = loadFunctions();
+
+  assert.equal(
+    expectedPartyFromClassification_({
+      expectedParty: "patient",
+      nextAction: "Oferecer novas informações.",
+    }),
+    "patient",
+  );
+  assert.equal(
+    expectedPartyFromClassification_({
+      expectedParty: "clinic",
+      nextAction: "Aguardar retorno.",
+    }),
+    "clinic",
+  );
+});
+
+test("legacy classifications recognize broader patient-wait wording", () => {
+  const { expectedPartyFromClassification_ } = loadFunctions();
+
+  assert.equal(
+    expectedPartyFromClassification_({
+      nextAction: "Aguardar uma mensagem pessoal sobre dúvidas.",
+    }),
+    "patient",
+  );
+  assert.equal(
+    expectedPartyFromClassification_({
+      nextAction: "Informar a faixa prometida e convidar para avaliação.",
+    }),
+    "clinic",
+  );
+});
 
 test("Google Ads import preserves the mapped conversion value header", () => {
   const { GOOGLE_ADS_IMPORT_HEADERS } = loadFunctions();

@@ -17,6 +17,7 @@ function validClassification(overrides = {}) {
     procedure: "blefaroplastia",
     summary: "Interessada em avaliação e perguntou sobre agenda.",
     nextAction: "Oferecer datas disponíveis para avaliação.",
+    expectedParty: "clinic",
     commercialReason: "Em andamento",
     evidence: "Pediu datas para agendar uma avaliação.",
     appointmentOutcome: "none",
@@ -158,6 +159,7 @@ test("an isolated structured prefill can never qualify the lead", async () => {
   assert.equal(result.classification.recommendedStatus, "Novo");
   assert.equal(result.classification.appointmentOutcome, "none");
   assert.equal(result.classification.procedureMilestone, "none");
+  assert.equal(result.classification.expectedParty, "patient");
   assert.match(result.classification.evidence, /sem intenção pessoal posterior/i);
 });
 

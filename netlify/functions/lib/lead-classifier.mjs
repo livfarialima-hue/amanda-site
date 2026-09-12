@@ -44,6 +44,7 @@ const COMMERCIAL_REASONS = [
   "Não qualificado",
   "Outro",
 ];
+const EXPECTED_PARTIES = ["clinic", "patient"];
 const RELATIONSHIP_STATES = new Set([
   "active_postop",
   "surgical_planning",
@@ -64,6 +65,7 @@ const CLASSIFICATION_SCHEMA = {
     "procedure",
     "summary",
     "nextAction",
+    "expectedParty",
     "commercialReason",
     "evidence",
     "appointmentOutcome",
@@ -93,6 +95,10 @@ const CLASSIFICATION_SCHEMA = {
     nextAction: {
       type: "string",
       maxLength: 300,
+    },
+    expectedParty: {
+      type: "string",
+      enum: EXPECTED_PARTIES,
     },
     commercialReason: {
       type: "string",
@@ -163,6 +169,7 @@ Não deduza consulta realizada ou paciente convertido apenas pela passagem do te
 
 summary deve ser um resumo curto, objetivo e administrativo da evolução da conversa.
 nextAction deve indicar a próxima ação comercial concreta, ou "Aguardar retorno" quando apropriado.
+expectedParty deve ser patient quando a clínica já respondeu ou fez uma pergunta e agora depende de nova manifestação da pessoa. Use clinic somente quando a clínica ainda deve uma resposta, cumprir uma promessa, revisar uma mensagem/mídia ou executar o próximo passo concreto. A direção da última mensagem, isoladamente, não decide esse campo.
 procedure pode conter apenas o nome genérico do procedimento ou especialidade; use string vazia quando não estiver claro.
 evidence deve citar apenas o fato comercial que sustenta a classificação, sem copiar números de telefone, códigos internos ou dados sensíveis.
 `.trim();
@@ -228,6 +235,7 @@ function isValidClassification(value) {
     typeof value.procedure === "string" &&
     typeof value.summary === "string" &&
     typeof value.nextAction === "string" &&
+    EXPECTED_PARTIES.includes(value.expectedParty) &&
     COMMERCIAL_REASONS.includes(value.commercialReason) &&
     typeof value.evidence === "string" &&
     APPOINTMENT_OUTCOMES.includes(value.appointmentOutcome) &&
@@ -305,6 +313,7 @@ export function enforcePrefillOnlyClassificationGuard({
     confidence: "high",
     summary: "Contato inicial por mensagem automática de interesse.",
     nextAction: "Aguardar uma mensagem pessoal sobre dúvidas ou próximos passos.",
+    expectedParty: "patient",
     commercialReason: "Em andamento",
     evidence: "Somente mensagem automática de origem, sem intenção pessoal posterior.",
     appointmentOutcome: "none",

@@ -778,3 +778,40 @@ Decisão vigente:
 **Regra para manter:** manter sem escala enquanto houver contato útil, custo compatível e nenhum incidente operacional; declarar inconclusivo se a cobertura de classificação continuar insuficiente.
 
 **Regra para reverter:** pausar somente a campanha afetada diante de idade efetiva abaixo de 40, destino ou código incorreto, perda de atendimento ou gasto de R$ 150 sem contato válido com tracking saudável. Qualquer extensão, terceira campanha ou valor além de R$ 1.200 novos exige nova autorização.
+
+## 23. Decisão vigente de 12/09/2026 — reclassificar o funil antes de mudar mídia
+
+A auditoria cruzou os 18 contatos Google do recorte de 30 dias com as exportações mais recentes das respectivas conversas no WhatsApp e com o ledger vivo da planilha. O estado correto permaneceu em 17 contatos `Novo`, 1 `Qualificado` e nenhuma consulta agendada. A aparente fila de 10 contatos aguardando a clínica misturava 9 casos em `Novo` e 1 já `Qualificado`; depois da leitura integral, somente 5 dependiam de ação real da clínica e 13 aguardavam nova manifestação da pessoa. Um 19º contato entrou depois do fechamento do recorte e ficou fora da reclassificação porque ainda não existia exportação correspondente.
+
+O principal erro foi de atualização, não de aquisição. A entrada da pessoa abria a classificação, mas uma saída posterior da Bruna ou da equipe era gravada no histórico sem reabrir a fila. Além disso, `Aguardando ação de` era inferido por uma expressão estreita que reconhecia `aguardar retorno`, mas falhava em redações equivalentes. No recorte, 8 de 18 classificações estavam anteriores a uma saída posterior; no histórico vivo, havia 64 filas concluídas com mensagem mais nova do que o watermark. A correção de 30/08 reiniciou tentativas esgotadas quando chegava atividade nova, mas não reconciliava classificações já concluídas depois de uma resposta da clínica.
+
+A condução também aparece como gargalo independente. Houve resposta humana em 11 de 18 conversas; a mediana até a primeira resposta humana foi 104 minutos e apenas 5 ficaram em até 30 minutos. Em 16 conversas houve resposta automática, 15 delas em até 3 minutos e uma em 35 minutos. Mesmo assim, somente 1 dos 18 contatos recebeu retomada registrada. Os motivos de não avanço ficaram em 7 casos de preço, 9 sem resposta, 1 de momento e 1 outro. Entre os 5 que realmente aguardavam a clínica estavam pedido de agenda sem oferta de horários, promessa de preço não cumprida, resposta de preço sem próximo passo, resposta inicial sem pergunta/CTA e uma entrada de mídia que exige conferência manual.
+
+Na mesma janela de 13/08 a 11/09, o Google Ads registrou 25.596 impressões, 1.673 cliques e R$ 2.509,89 de gasto. O downstream reconciliado por campanha, unindo apenas os aliases históricos exatos ao código canônico correspondente, ficou assim:
+
+| Campanha | Cliques | Gasto | Contatos | Qualificados | Consultas agendadas |
+|---|---:|---:|---:|---:|---:|
+| `S_BR_SP_LIFTING_FACIAL` | 552 | R$ 730,43 | 6 | 0 | 0 |
+| `S_BR_SP_BLEFAROPLASTIA` | 454 | R$ 684,71 | 2 | 1 | 0 |
+| `S_BR_SP_OTOPLASTIA` | 200 | R$ 444,83 | 3 | 0 | 0 |
+| `S_BR_SP_LIFTING_CERVICAL` | 327 | R$ 390,55 | 7 | 0 | 0 |
+| `S_BR_SP_CIRURGIA_FACIAL` | 129 | R$ 235,54 | 0 | 0 | 0 |
+| `S_BR_SP_MARCA` | 11 | R$ 23,84 | 0 | 0 | 0 |
+| **Total** | **1.673** | **R$ 2.509,89** | **18** | **1** | **0** |
+
+Decisão vigente:
+
+- não alterar orçamento, lance, palavras-chave, negativas, RSA, idade, rede ou meta de conversão com base nesta reclassificação;
+- corrigir primeiro a legibilidade e a continuidade do funil, registrando primeira resposta, minutos, retomada, objeção e resultado de agenda por contato;
+- publicar e ativar a reconciliação periódica somente em lote isolado, com corte de ativação que impede o processamento retroativo das 64 divergências históricas sem auditoria;
+- manter as páginas de preço de blefaroplastia e lifting cervical como propostas válidas de continuidade de intenção, mas não trocar destinos nem criar sitelinks antes de as páginas estarem publicadas, rastreadas e conciliadas com o trabalho paralelo do site;
+- quando esse gate estiver cumprido, testar primeiro um recurso/destino de preço por campanha, preservando orçamento e lance, em vez de mudar página, anúncio e mídia simultaneamente;
+- preservar OTO e não aplicar a ela cortes etários faciais; manter LIFT em observação, pois a página de preço publicada ainda não produziu qualificação ou agenda neste recorte.
+
+**Hipótese:** uma classificação que acompanha a conversa inteira e uma próxima ação explícita reduzem falsos casos `clinic`, deixam a fila humana acionável e permitem medir o efeito real das páginas de preço sem aumentar tráfego.
+
+**Métrica principal:** contatos válidos, qualificados, consultas agendadas/realizadas, proporção real aguardando a clínica, tempo de primeira resposta humana e retomadas concluídas. Cliques, CTR, CPC, conversões exibidas e pontuação de otimização continuam diagnósticos.
+
+**Revisão:** primeiro pós-voo da reconciliação periódica; 24 horas e 7 dias de estabilidade do funil; depois 7 e 14 dias de cada página/recurso publicado. A decisão de mídia deve usar coortes fechadas e códigos canônicos mais aliases documentados, sem somar a conversão da interface à mesma pessoa da planilha.
+
+**Regra para manter:** zero reprocessamento retroativo não autorizado, redução de classificações congeladas, fila humana compatível com a última mensagem e melhora de retomadas sem mensagem indevida. **Regra para reverter:** desativar somente o novo gatilho diante de reprocessamento repetido, mudança incorreta de fase, divergência de identidade, competição com atendimento humano ou atualização sem mensagem nova; preservar o ledger e as correções humanas.

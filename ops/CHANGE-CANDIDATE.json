@@ -1,158 +1,140 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-MAMA-CONTORNO-LINGUAGEM-HUMANA-2026-09-12",
-  "title": "Humanizar a comunicacao, corrigir contraste mobile e isolar o artefato publico de mama e contorno corporal",
-  "status": "published_verified",
-  "baseCommit": "7b7976d77c2e344721d61b29dfe06d832b532676",
+  "changeId": "LEADS-WHATSAPP-CLASSIFICATION-RECONCILIATION-2026-09-12",
+  "title": "Reconciliar o funil com a conversa completa e atualizar classificacoes futuras",
+  "status": "tested_local",
+  "baseCommit": "46bf67fdccc0c806650611562a975dc3dd046a56",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel havia autorizado publicar todo o conjunto de mama e contorno e ler depois da publicacao. No turno seguinte, pediu esta revisao complementar da comunicacao e a substituicao de termos com aparencia de IA por linguagem humana. O preflight externo vinculara essa autorizacao ao commit funcional exato."
+    "note": "Daniel autorizou corrigir a planilha depois da auditoria e ajustar a logica para atualizacao periodica. O candidato foi reconciliado com os releases paralelos v144 e das paginas de mama e contorno; a publicacao continua condicionada ao HEAD exato.",
+    "approvedCommit": "",
+    "approvedAt": "",
+    "approvedBy": "",
+    "reference": ""
   },
   "risk": {
-    "level": "medium",
-    "patientEffects": false,
+    "level": "high",
+    "patientEffects": true,
     "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication"
+      "patient-journey-funnel-followups",
+      "google-ads-acquisition-conversion"
     ],
     "files": [
-      ".netlifyignore",
-      "abdominoplastia/index.html",
-      "apps-script/clinica-liv-leads/site-contrast.test.mjs",
-      "braquioplastia/index.html",
-      "campanhas/conversion-pages-body.css",
-      "campanhas/secondary-conversion.css",
-      "campanhas/secondary-conversion.js",
-      "campanhas/site-enhancements.js",
-      "campanhas/site-technical-regression.test.mjs",
-      "contorno-corporal/index.html",
-      "lipoaspiracao/index.html",
-      "mama/index.html",
-      "mamoplastia-redutora/index.html",
-      "mastopexia-com-protese/index.html",
-      "mastopexia/index.html",
+      "apps-script/clinica-liv-leads/ClassificationReconciliation.gs",
+      "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/lead-classifier.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "pos-bariatrica/index.html",
-      "protese-de-mama/index.html",
-      "scripts/check-site-technical.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "pacientes que leem as dez paginas de mama e contorno corporal",
-      "CTAs e blocos dinamicos de consulta das oito paginas secundarias",
-      "Google Search e ferramentas de IA que leem metadados e dados estruturados",
-      "build estatico e publicacao do Netlify"
+      "classificador Netlify de oportunidades",
+      "fila _WHATSAPP_CLASSIFICACAO",
+      "CRM canonico e projecao Google Ads - Conversoes",
+      "Funil Comercial",
+      "gatilho Apps Script de reconciliacao periodica",
+      "estrategia de decisao do Google Ads"
     ],
     "preservedInvariants": [
-      "URLs, canonicals, numero de WhatsApp, referencias por procedimento e atributos de tracking permanecem iguais",
-      "conteudo medico continua educativo, individualizado e sem promessa de resultado ou indicacao a distancia",
-      "imagens preservam dimensoes e textos alternativos; videos preservam poster, controles, playsinline e origem MP4",
-      "estrutura, sitemap e identidade visual permanecem; a unica mudanca de estilo corrige contraste de legendas e acionadores de video no mobile",
-      "arquivos internos de operacao permanecem fora do artefato publico e agora sao bloqueados pelo gate tecnico",
-      "Apps Script v144, Bruna, YCloud, LEADS, CRM, Calendar, campanhas, orcamentos e Drive permanecem sem alteracao"
+      "a classificacao automatica nunca rebaixa fase",
+      "somente uma mensagem textual posterior ao watermark pode reabrir fila concluida",
+      "fila pendente ou em execucao, oportunidade encerrada e identidade divergente falham fechadas",
+      "auditoria humana atual e registros ja correntes permanecem preservados",
+      "a ativacao periodica cria um corte temporal e nao processa backlog anterior",
+      "publicar o arquivo nao cria gatilho nem envia mensagem",
+      "nenhum dado pessoal entra no repositorio, nos logs ou nos relatorios",
+      "orcamentos, lances, campanhas, anuncios, palavras e conversoes Google permanecem inalterados"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "site-publication",
-        "system": "Git canonico, Netlify de producao e dominio publico",
+        "contract": "patient-journey-funnel-followups",
+        "system": "planilha LEADS canonica e exportacoes restritas do WhatsApp",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T11:39:42-03:00",
-        "reference": "origin/reestruturacao-site permanece em 7b7976d77c2e344721d61b29dfe06d832b532676; Netlify production permanece ready no deploy 6aa559fb631d2b00088cefb9 com commit_ref 46bf67fdccc0c806650611562a975dc3dd046a56; /mama/, /contorno-corporal/ e /sitemap.xml responderam HTTP 200"
+        "checkedAt": "2026-09-12T10:38:00-03:00",
+        "reference": "Os tres IDs canonicos foram confirmados. Dezoito contatos Google foram reconciliados por Opportunity ID; a aba temporaria de auditoria foi removida no mesmo lote e o pos-voo confirmou 17 Novo, 1 Qualificado, 5 clinic e 13 patient.",
+        "evidence": "Leitura e escrita limitadas as linhas auditadas; nenhum nome, telefone, click ID ou mensagem literal foi levado ao repositorio."
       },
       {
-        "contract": "site-publication",
-        "system": "Git canonico, Netlify de producao e dominio publico",
-        "status": "baseline_confirmed_with_mobile_contrast_correction",
-        "checkedAt": "2026-09-12T11:50:05-03:00",
-        "reference": "origin/reestruturacao-site e o deploy Netlify production 6aa5647865ed3d000912bf0a estavam no commit d599b62c413587b4526aea72e0d8c0776ef19e9f. A verificacao visual identificou legenda branca sobre fundo claro no card de equipe; a correcao foi incorporada ao mesmo changeId antes do encerramento."
-      },
-      {
-        "contract": "site-publication",
-        "system": "artefato publico do Netlify",
-        "status": "published_artifact_issue_confirmed_and_fixed_locally",
-        "checkedAt": "2026-09-12T11:53:00-03:00",
-        "reference": "O deploy production 6aa56708ff58fc000898ad4e publicou o commit b91a560148946d0446119a58ac8a6eb8e3165846 com as paginas corretas, mas /ops/CHANGE-CANDIDATE.json respondeu HTTP 200. O diretorio ops/ foi excluido do artefato e o gate passou a bloquear regressao equivalente."
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Google Ads conta 995-334-4486",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-12T10:41:00-03:00",
+        "reference": "Leitura autenticada de 13/08 a 11/09 confirmou 1.673 cliques, R$ 2.509,89, uma conversao exibida e nenhuma mudanca de midia executada.",
+        "evidence": "A decisao usa o funil reconciliado; conversao da interface e contato da planilha nao foram somados."
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
-    "completedAt": "2026-09-12T11:59:38-03:00",
+    "status": "passed_local",
+    "completedAt": "2026-09-12T10:56:36-03:00",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs",
-      "node --check campanhas/secondary-conversion.js",
-      "node --check campanhas/site-enhancements.js",
-      "npm.cmd run change:check",
-      "npm.cmd run architecture:check",
+      "node --test apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/classify-leads.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs",
       "npm.cmd test",
+      "npm.cmd run architecture:check",
+      "npm.cmd run change:check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "npm.cmd run ops:check",
       "git diff --check",
-      "npm.cmd run release:preflight -- --approved-commit 556c65790506fed5a0d8726131f8864f008b4305 --approved-at 2026-09-12T11:40:44-03:00 --approved-by Daniel --approval-reference user_turn_pode_publicar_tudo_e_vou_ler_apos_publicado_plus_followup_linguagem_humana_2026-09-12 --live-preflight-at 2026-09-12T11:53:00-03:00 --live-preflight-reference netlify_6aa56708_commit_b91a560_pages_ok_but_ops_artifact_exposed_then_fixed",
-      "git push origin 556c65790506fed5a0d8726131f8864f008b4305:reestruturacao-site",
-      "Netlify API: confirmar deploy production ready e commit_ref exato",
-      "HTTP: comparar dominio e deploy imutavel nas dez rotas, ativos, robots, sitemap e sentinelas internas",
-      "Browser mobile 360x800: layout, contraste, imagens e modais de video em producao"
+      "pos-voo por Opportunity ID em Google Ads - Conversoes, _CRM_OPORTUNIDADES, _WHATSAPP_CLASSIFICACAO e Funil Comercial"
     ],
     "results": {
-      "focusedCopyAndContrast": "4/4 testes aprovados; o teste bloqueia as formulas textuais retiradas, confere os caches atualizados e exige contraste AA nas legendas e nos acionadores de video",
-      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 20/20 arquivos coincidem com o escopo declarado",
-      "fullSuite": "1297/1297 testes aprovados",
-      "siteBuild": "178 arquivos e 44 URLs; diretorios auditorias/ e ops/ ausentes do artefato publico",
-      "siteCheck": "artefato tecnico valido; 44 URLs, 178 arquivos, zero arquivo interno e zero erro",
-      "javascriptSyntax": "site-enhancements.js e secondary-conversion.js aprovados por node --check",
-      "gitDiffCheck": "aprovado",
-      "mobileVisual": "10/10 paginas aprovadas em 390x844 e 360x800; sem overflow do documento, texto cortado, CTA menor que 44 px ou expressao bloqueada",
-      "mediaMobile": "todas as imagens carregaram com dimensoes naturais; videos de equipe e Clinica LIV abriram em modal com poster, controles, playsinline, MP4 correto e largura contida",
-      "contrastMobile": "A verificacao em producao encontrou e documentou uma legenda branca sobre fundo claro. Depois da correcao, 10/10 paginas ficaram sem texto abaixo do criterio WCAG AA na auditoria local de cores compostas; legenda, botao de play e rotulo de video passaram a usar fundo escuro proprio.",
-      "releasePreflight": "aprovado para o commit funcional exato 556c65790506fed5a0d8726131f8864f008b4305",
-      "netlifyProduction": "deploy 6aa56848bd23060008fb10bc ready em producao, context production, commit_ref 556c65790506fed5a0d8726131f8864f008b4305 e published_at 2026-09-12T14:57:41.908Z",
-      "liveSite": "10/10 rotas responderam HTTP 200 no dominio e no deploy imutavel; H1 igual ao artefato local, canonical correto, JSON-LD valido, nenhum termo bloqueado e cache CSS atualizado",
-      "artifactEquality": "o HTML do dominio foi identico ao deploy imutavel nas dez rotas",
-      "liveMobile": "10/10 paginas aprovadas em 360x800 na versao final: zero overflow, zero texto abaixo do contraste AA, zero CTA principal menor que 44 px, zero imagem quebrada e zero termo bloqueado",
-      "liveVideo": "videos da equipe e da Clinica LIV abriram no dominio com poster, controles, playsinline, MP4 correto, readyState 4 e largura contida em 344,7 px",
-      "publicArtifactSafety": "ops/CHANGE-CANDIDATE.json, ops/IMPACT-REGISTRY.json e auditorias/ responderam HTTP 404; o gate local registrou zero arquivo operacional no artefato",
-      "searchAndAi": "robots.txt respondeu HTTP 200 com regras para OAI-SearchBot e GPTBot; sitemap.xml respondeu HTTP 200 com 44 URLs"
-    },
-    "crossConsumerCases": [
-      "nenhuma das dez paginas exibe questao central ou as demais formulas textuais bloqueadas pelo teste",
-      "blocos inseridos por JavaScript usam as mesmas frases humanas vistas no HTML",
-      "descricoes sociais e dados estruturados de mastopexia com protese, lipoaspiracao e braquioplastia usam linguagem concreta",
-      "CTAs continuam levando ao WhatsApp com a referencia correta e informacao de consulta",
-      "o build e o teste de regressao impedem que ops/CHANGE-CANDIDATE.json volte ao artefato publico"
-    ]
+      "focusedClassification": "50/50 passed",
+      "fullSuite": "1304/1304 passed depois da reconciliacao com v144",
+      "focusedJourney": "187/187 passed",
+      "focusedScheduledFollowup": "21/21 passed",
+      "focusedGoogleAds": "128/128 passed",
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK; 11 arquivos coincidem com o escopo",
+      "siteBuild": "180 arquivos e 44 URLs do sitemap, sem erro",
+      "siteCheck": "44/44 paginas aprovadas",
+      "opsCheck": "SYNC_PENDING esperado para candidato local: publicacao pendente e branch isolada",
+      "spreadsheet": "18/18 identidades, fases, responsaveis, objecoes e watermarks confirmados; coluna de data legivel e minutos numericos",
+      "googleAds": "somente leitura; nenhuma entidade alterada",
+      "realMessages": "zero mensagens reais ou de teste"
+    }
   },
   "release": {
-    "approvedCommit": "556c65790506fed5a0d8726131f8864f008b4305",
-    "netlifyDeployId": "6aa56848bd23060008fb10bc",
-    "appsScriptVersion": 144,
-    "drivePlanSha256": "8d1fda37264a8d597f3709d9bf93e1376f334d52f80ce7ed58118e35e8e39304",
-    "verifiedAt": "2026-09-12T11:59:38-03:00",
-    "activationState": "active_verified",
-    "notes": "O Netlify publicou exatamente o commit funcional aprovado. As dez paginas, o mobile, os ativos, os videos, o contraste, os contratos de SEO e IA e a exclusao de arquivos internos foram relidos em producao. Apps Script v144, YCloud e a projecao vigente do Plano no Drive foram apenas preservados, sem nova escrita."
+    "approvedCommit": "",
+    "netlifyDeployId": "",
+    "appsScriptVersion": null,
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "",
+    "verifiedAt": "",
+    "activationState": "local_default_off_reconciled_pending_authorization",
+    "notes": "A planilha ja foi corrigida no escopo autorizado. Codigo e documentacao estao reconciliados com a v144 e permanecem locais ate o preflight do HEAD exato e autorizacao de publicacao."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre o baseline 7b7976d77c2e344721d61b29dfe06d832b532676, preservando todo trabalho paralelo",
-    "production": "restaurar o deploy Netlify 6aa559fb631d2b00088cefb9 se houver regressao confirmada de texto, layout, midia, contraste, tracking ou indexabilidade"
+    "local": "reverter somente o commit deste changeId sobre o baseCommit, preservando releases paralelos",
+    "production": "desativar primeiro o gatilho de reconciliacao e a propriedade CLASSIFICATION_RECONCILIATION_ENABLED; se necessario, retornar o deployment Apps Script e o deploy Netlify anteriores, sem apagar ledger, filas ou correcoes humanas"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "pos-voo imediato e 24 horas para integridade; 7 e 14 dias para contatos validos e consultas",
+    "window": "primeiro ciclo, 24 horas e 7 dias depois da ativacao real",
     "metrics": [
-      "HTTP, canonical, indexabilidade, dados estruturados e ausencia das expressoes bloqueadas",
-      "quebras de linha, overflow, contraste, imagens, posters e videos em mobile",
-      "cliques qualificados nos CTAs e referencias corretas por procedimento",
-      "contatos validos, leads qualificados e consultas originados das paginas"
+      "classificacoes reabertas e concluidas por mensagem nova",
+      "proporcao aguardando clinica versus paciente",
+      "mudancas de fase e divergencias de identidade",
+      "tempo ate primeira resposta humana e retomadas",
+      "contatos validos, qualificados e consultas por campanha"
     ],
-    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, midia indisponivel, contraste impeditivo, frase clinicamente inadequada ou regressao de indexabilidade"
+    "rollbackRule": "desativar somente o novo gatilho diante de reprocessamento retroativo, repetido, identidade divergente, fase incorreta ou competicao com atendimento humano"
   }
 }

@@ -255,6 +255,8 @@
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "coveredPaths": [
+        "apps-script/clinica-liv-leads/ClassificationReconciliation.gs",
+        "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
@@ -276,6 +278,7 @@
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
+        "netlify/functions/lib/lead-classifier.test.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
@@ -285,6 +288,7 @@
         "netlify/functions/scheduled-followup.mjs"
       ],
       "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
         "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
@@ -293,6 +297,7 @@
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/lead-classifier.test.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",

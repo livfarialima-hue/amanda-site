@@ -2397,6 +2397,21 @@ function relationshipFromClassification_(status, classification, fallback) {
   return mapped.found ? mapped.relationshipState : String(fallback || "unknown");
 }
 
+function expectedPartyFromClassification_(classification) {
+  const explicit = String(
+    classification && classification.expectedParty || "",
+  ).trim().toLowerCase();
+  if (explicit === "clinic" || explicit === "patient") return explicit;
+  const nextAction = String(
+    classification && classification.nextAction || "",
+  ).normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return /(?:aguardar|esperar).{0,80}(?:retorno|resposta|mensagem|manifestacao)|(?:retorno|resposta|mensagem|manifestacao).{0,80}(?:paciente|pessoa|contato)/.test(
+    nextAction,
+  ) ? "patient" : "clinic";
+}
+
 function shouldAlertLowConfidenceAdministrativeChange_(classification) {
   if (String(classification && classification.confidence) !== "low") {
     return false;
@@ -3167,9 +3182,7 @@ function completeLeadClassification_(job, classification) {
         "unknown",
     ),
     "Responsável atual": "bruna",
-    "Aguardando ação de": /aguardar retorno/i.test(
-      String(classification.nextAction || ""),
-    ) ? "patient" : "clinic",
+    "Aguardando ação de": expectedPartyFromClassification_(classification),
   };
   const phaseSync = typeof sincronizarFaseOportunidadeELead_ === "function"
     ? sincronizarFaseOportunidadeELead_(spreadsheet, {
