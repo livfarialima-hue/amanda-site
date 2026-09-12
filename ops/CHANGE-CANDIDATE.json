@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-2026-09-12",
-  "title": "Separar intencao de preco e corrigir relevancia dos RSAs secundarios sem elevar gasto",
-  "status": "implementing_local",
+  "title": "Reconciliar grupos de preco paralelos e corrigir relevancia dos RSAs secundarios sem elevar gasto",
+  "status": "tested_local",
   "baseCommit": "4edf7aaa317857599ceba08236a81163218c6aee",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou preparar as mudancas de estrutura e avaliar a comunicacao. A publicacao externa continua vinculada ao commit funcional exato e a confirmacao no instante de aplicar as alteracoes no Google Ads."
+    "note": "Daniel autorizou aplicar o commit 1b5c4eee1d83132858fa65addeae8f3c3b107dd9. O preflight encontrou producao Git e Google Ads alteradas em paralelo; o candidato foi reconciliado sem sobrescrever essas mudancas e exige nova autorizacao para o hash integrado."
   },
   "risk": {
     "level": "high",
@@ -49,8 +49,8 @@
       "as seis campanhas faciais e seus R$ 87 por dia permanecem sem qualquer edicao",
       "as duas campanhas secundarias permanecem em R$ 8 por dia cada, Maximizar cliques e a mesma meta qualificada",
       "rede, parceiros, Display, cidade por presenca, idioma, idades, dispositivos, agenda e sitelinks permanecem iguais",
-      "somente oito palavras existentes de preco sao recriadas nos tres grupos novos e pausadas na origem depois da previa sem erro",
-      "seis negativas de roteamento sao exatas e nunca viram raiz de preco em campanha, conta ou lista compartilhada",
+      "somente as oito palavras ativas nos dois grupos genericos transitórios sao recriadas nos tres grupos especificos antes da pausa reversivel dos genericos",
+      "as seis negativas exatas ja aplicadas nos grupos de procedimento sao preservadas e nao recebem escrita duplicada",
       "os tres novos grupos de preco recebem codigos de atribuicao fechados antes de qualquer trafego",
       "mastopexia, protese e lipoaspiracao permanecem em grupos de preco distintos, sem RSA regional generico",
       "somente os RSAs atuais de AG_MASTOPEXIA e AG_ABDOMINOPLASTIA sao editados; URL, caminhos, status e codigo permanecem iguais",
@@ -63,22 +63,22 @@
         "contract": "google-ads-acquisition-conversion",
         "system": "Google Ads 995-334-4486",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T18:46:30-03:00",
-        "reference": "Campanhas 24239348529 e 24239348532 ativas, R$ 8/dia cada e zero impressao, clique e gasto; oito palavras de preco ainda estao nos grupos de procedimento. AG_MASTOPEXIA e AG_ABDOMINOPLASTIA aparecem como Ruim, com 15 titulos, apenas tres descricoes salvas e baixa presenca das palavras ativas."
+        "checkedAt": "2026-09-12T19:58:30-03:00",
+        "reference": "Campanhas 24239348529 e 24239348532 ativas, R$ 8/dia cada e zero impressao, clique e gasto. Uma execucao paralela criou AG_CIRURGIA_MAMA_PRECO e AG_CONTORNO_CORPORAL_PRECO, moveu para eles as oito palavras e aplicou as seis negativas exatas. Os dois RSAs genericos, AG_MASTOPEXIA e AG_ABDOMINOPLASTIA aparecem como Ruim; nenhum dos tres grupos especificos existe."
       },
       {
         "contract": "patient-journey-funnel-followups",
         "system": "Apps Script, planilha LEADS e agregado Google_Rotas",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T18:48:20-03:00",
-        "reference": "ALVO CANONICO CONFIRMADO para projeto 1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly, deployment AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A e planilha 1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU. GoogleAdsFunnelReview.gs vivo coincide com o baseline no SHA-256 normalizado f2634b37075f81d9789a22ad2244845bc4a7f77b6cd42273682409fc28cfbf59."
+        "checkedAt": "2026-09-12T19:59:15-03:00",
+        "reference": "ALVO CANONICO CONFIRMADO para projeto 1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly, deployment AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A e planilha 1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU. A v148 esta implantada no mesmo deployment e GoogleAdsFunnelReview.gs vivo tem SHA-256 normalizado 6672ded1bf69d1fc93482bd43dcbcde45f73547ecacbb428ca71d04f9ae9ecbc, igual ao candidato generico a9a0d46; contem os dois aliases transitórios e ainda nao contem os tres especificos."
       },
       {
         "contract": "google-ads-acquisition-conversion",
         "system": "Google Ads script 12117745",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T18:50:30-03:00",
-        "reference": "LIV Revisao Google Ads somente leitura permanece ativa, programada diariamente e coincide com o baseline no SHA-256 normalizado 9941f14d59987c0b3b576cd57cbbb29548e9d1936699fc562b031cec0dd98666; ainda usa referencia de R$ 87/dia e nao conhece os novos grupos."
+        "checkedAt": "2026-09-12T20:00:00-03:00",
+        "reference": "LIV Revisao Google Ads somente leitura esta ativa e o codigo vivo coincide com o candidato no SHA-256 normalizado e6221436e176125d22ffdb48f28f1ea06689a8a324225c4c885556a16a59401f, incluindo R$ 103/dia e os procedimentos secundarios. A lista mostra frequencia ausente, embora a ultima execucao tenha ocorrido as 09:47; restaurar o agendamento diario entre 09:00 e 10:00 sem alterar o codigo."
       },
       {
         "contract": "google-ads-acquisition-conversion",
@@ -153,6 +153,22 @@
           ]
         }
       ],
+      "transitionalPriceGroups": [
+        {
+          "campaign": "S_BR_SP_CIRURGIA_MAMA",
+          "adGroup": "AG_CIRURGIA_MAMA_PRECO",
+          "trackingCode": "ag_cirurgia_mama_preco",
+          "liveState": "enabled_zero_activity",
+          "action": "pause_only_after_the_two_specific_mama_groups_are_verified"
+        },
+        {
+          "campaign": "S_BR_SP_CONTORNO_CORPORAL",
+          "adGroup": "AG_CONTORNO_CORPORAL_PRECO",
+          "trackingCode": "ag_contorno_corporal_preco",
+          "liveState": "enabled_zero_activity",
+          "action": "pause_only_after_the_specific_lipo_group_is_verified"
+        }
+      ],
       "newPriceGroups": [
         {
           "campaign": "S_BR_SP_CIRURGIA_MAMA",
@@ -189,12 +205,13 @@
         "AG_PROTESE_MAMA|prótese de silicone valor",
         "AG_LIPOASPIRACAO|lipoaspiração preço",
         "AG_LIPOASPIRACAO|lipoescultura valor"
-      ]
+      ],
+      "routingNegativesState": "verified_live_already_applied_no_new_write"
     }
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T19:09:00-03:00",
+    "completedAt": "2026-09-12T20:05:57-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -209,18 +226,19 @@
       "git diff --check"
     ],
     "results": {
-      "focused": "40/40 testes diretamente alterados; suites cruzadas obrigatorias em 200/200",
+      "focused": "40/40; suites cruzadas 200/200, 21/21 e 145/145",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1333/1333 testes aprovados, sem falha, cancelamento ou teste ignorado",
-      "siteBuild": "180 arquivos, 46 URLs do sitemap, zero erro e nenhum arquivo de auditoria no artefato",
-      "siteCheck": "46/46 URLs tecnicamente validas; os dois guias de custo permanecem com HTTP logico 200, canonical, H1 e tracking",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 12/12 arquivos coincidem com o escopo",
-      "bulkImportAssets": "3 grupos, 3 RSAs novos, 2 RSAs corrigidos, 8 palavras adicionadas, 8 pausadas e 6 negativas exatas; zero excesso de caracteres",
-      "opsCheck": "SYNC_PENDING esperado: publicacao, branch canonica e recibos ainda pendentes; worktree sera limpo pelo commit candidato"
+      "fullSuite": "1338/1338",
+      "siteBuild": "185 arquivos, 46 URLs do sitemap e zero erro",
+      "siteCheck": "46/46 URLs tecnicamente validas, 35 tags de video e zero erro",
+      "changeCheck": "12/12 arquivos dentro do escopo aprovado",
+      "bulkImportAssets": "3 grupos e 3 RSAs novos, 2 RSAs corrigidos, 8 palavras adicionadas, 2 grupos transitórios pausados e zero escrita de negativas ja existentes",
+      "opsCheck": "pendente do novo commit; SYNC_PENDING e esperado ate publicacao e recibos"
     },
     "blockingFailures": [],
     "crossConsumerCases": [
-      "os oito grupos secundarios resolvem somente os codigos e rotas registrados",
+      "os dez codigos secundarios atuais e transitórios resolvem somente grupos e rotas registrados",
+      "os dois aliases genericos permanecem legiveis sem inventar procedimento",
       "os tres grupos de preco preservam procedimento, intencao e landing por codigo exato",
       "a rotina de revisao reconhece termos de mama e corpo e usa R$ 103/dia como referencia total",
       "as seis negativas exatas sao reconhecidas como roteamento intencional",
@@ -235,11 +253,11 @@
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "",
     "activationState": "local_candidate",
-    "notes": "A aplicacao dos tres grupos de preco, tres RSAs novos, dois RSAs corrigidos e a atualizacao dos dois scripts vivos dependem de confirmacao e recibos."
+    "notes": "O codigo do script de revisao ja coincide com o candidato; resta restaurar seu agendamento diario. A v148 do Apps Script e os dois grupos genericos foram aplicados em paralelo. A v149 preservadora, os tres grupos especificos, tres RSAs novos, dois RSAs corrigidos e a pausa dos dois grupos transitórios dependem do novo commit exato, confirmacao e recibos."
   },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre 4edf7aaa317857599ceba08236a81163218c6aee, preservando todo trabalho paralelo",
-    "production": "reativar cada palavra no grupo de origem, pausar sua copia no grupo de preco, remover apenas a negativa exata correspondente e restaurar as versoes anteriores dos dois scripts"
+    "production": "pausar os tres grupos especificos, reativar os dois grupos genericos transitórios, restaurar somente os dois RSAs originais e voltar o Apps Script ao conteudo da v148; preservar as seis negativas que ja pertencem ao baseline vivo"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",

@@ -85,6 +85,8 @@ const GOOGLE_ADS_AD_GROUP_REGISTRY = Object.freeze({
   ag_abdominoplastia: "AG_ABDOMINOPLASTIA",
   ag_blefaroplastia: "AG_BLEFAROPLASTIA",
   ag_cirurgia_facial: "AG_CIRURGIA_FACIAL",
+  ag_cirurgia_mama_preco: "AG_CIRURGIA_MAMA_PRECO",
+  ag_contorno_corporal_preco: "AG_CONTORNO_CORPORAL_PRECO",
   ag_lifting_cervical: "AG_CERVICOPLASTIA",
   ag_lipoaspiracao: "AG_LIPOASPIRACAO",
   ag_lipoaspiracao_preco: "AG_LIPOASPIRACAO_PRECO",

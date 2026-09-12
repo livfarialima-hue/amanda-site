@@ -82,12 +82,14 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `S_BR_SP_CIRURGIA_MAMA` → `G26MAMA`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
-- Os nove grupos anteriores e os oito grupos secundários usam estes códigos estáveis em `{_ag}`; os nove anteriores foram conferidos em 15/08/2026, cinco grupos entraram no contrato na ativação dos pilotos e os três grupos de preço aguardam recibo vivo em 12/09/2026:
+- Os nove grupos anteriores e dez códigos secundários permanecem legíveis em `{_ag}`: cinco grupos de procedimento, dois grupos genéricos de preço publicados de forma transitória e três grupos específicos de preço candidatos. Depois da migração, oito grupos secundários ficam ativos e os dois genéricos permanecem apenas como aliases históricos:
   - `AG_ABDOMINOPLASTIA` → `ag_abdominoplastia`
   - `AG_BLEFAROPLASTIA` → `ag_blefaroplastia`
   - `AG_CIRURGIA_FACIAL` → `ag_cirurgia_facial`
+  - `AG_CIRURGIA_MAMA_PRECO` → `ag_cirurgia_mama_preco` (transitório; não usar em tráfego novo)
   - `AG_MASTOPEXIA_PRECO` → `ag_mastopexia_preco`
   - `AG_CERVICOPLASTIA` → `ag_lifting_cervical`
+  - `AG_CONTORNO_CORPORAL_PRECO` → `ag_contorno_corporal_preco` (transitório; não usar em tráfego novo)
   - `AG_LIPOASPIRACAO_PRECO` → `ag_lipoaspiracao_preco`
   - `AG_LIPO_PAPADA` → `ag_lipo_papada`
   - `AG_LIPOASPIRACAO` → `ag_lipoaspiracao`
