@@ -116,20 +116,20 @@
       "appsScript": "deployment canonico preservado na v147; schema aplicado em 24 segundos e agregados publicados em 5 segundos",
       "spreadsheetAndDataManager": "6/6 qualificados reconciliados por Opportunity ID; IMPORT_GOOGLE_ADS com as mesmas seis transacoes; conexao LEADS concluida em 12/09 05:05 com 6 linhas e 0 erros",
       "searchConsole": "mesmo sitemap reenviado e processado com 46 paginas; envio e ultima leitura em 12/09/2026",
-      "netlify": "deploy 6aa589ce092f3b0008413443 em production/ready no commit funcional dd1bd1d18c79eb216626e36adb49de895d27a0f6; dominio e URL imutavel HTTP 200 e identicos nas quatro paginas e sitemap",
-      "driveProjection": "mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido em lugar; 140963 bytes e SHA-256 a0393b457a8169740a2ecbb36cbed965d3ffb54fd9548fe3533d6debe87b7f33",
+      "netlify": "deploy funcional 6aa589ce092f3b0008413443 no commit dd1bd1d18c79eb216626e36adb49de895d27a0f6; deploy de fechamento 6aa59666f301b80008ffb340 em production/ready no commit cfee5263ddfc09681c381b08e9498622904b3ced; dominio e URL imutavel HTTP 200 e identicos nas quatro paginas e sitemap",
+      "driveProjection": "mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO substituido em lugar; 141253 bytes e SHA-256 af2d0b34d2da18a91aec1bcd1abf1b527a3ad09abe0d0ba7b64e9f2ec0a41eae",
       "opsCheck": "recibos externos aprovados; SYNC_PENDING esperado no worktree isolado por usar a branch codex/secondary-google-campaigns-20260912 em vez do checkout canonico compartilhado"
     }
   },
   "release": {
     "approvedCommit": "dd1bd1d18c79eb216626e36adb49de895d27a0f6",
-    "netlifyDeployId": "6aa589ce092f3b0008413443",
+    "netlifyDeployId": "6aa59666f301b80008ffb340",
     "appsScriptVersion": 147,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "a0393b457a8169740a2ecbb36cbed965d3ffb54fd9548fe3533d6debe87b7f33",
+    "drivePlanSha256": "af2d0b34d2da18a91aec1bcd1abf1b527a3ad09abe0d0ba7b64e9f2ec0a41eae",
     "verifiedAt": "2026-09-12T15:09:00-03:00",
     "activationState": "active_monitoring",
-    "notes": "O commit funcional foi publicado no branch canonico, no Netlify e no Apps Script v147 com o deployment preservado. O schema e os agregados foram aplicados, a transmissao 6/6 foi reconciliada e a conexao diaria mostrou zero erro. As duas campanhas secundarias estao ativas e em aprendizado a R$ 8/dia cada; paginas, sitelinks e sitemap foram verificados. A palavra exata adicional de preco BLEF foi bloqueada por politica e nao foi aplicada nem forcada."
+    "notes": "O commit funcional foi publicado no branch canonico, no Netlify e no Apps Script v147 com o deployment preservado. O commit documental cfee5263ddfc09681c381b08e9498622904b3ced gerou o deploy de fechamento 6aa59666f301b80008ffb340 com o mesmo artefato publico verificado. O schema e os agregados foram aplicados, a transmissao 6/6 foi reconciliada e a conexao diaria mostrou zero erro. As duas campanhas secundarias estao ativas e em aprendizado a R$ 8/dia cada; paginas, sitelinks e sitemap foram verificados. A palavra exata adicional de preco BLEF foi bloqueada por politica e nao foi aplicada nem forcada."
   },
   "rollback": {
     "local": "reverter somente o commit deste piloto sobre 4484103, preservando os trabalhos paralelos",
