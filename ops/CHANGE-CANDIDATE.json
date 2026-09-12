@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-COPY-HUMANIZATION-CONVERSION-2026-09-12",
   "title": "Humanizar a comunicacao publica e preservar a repeticao estrategica em cada pagina",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "f6fabb80ec7ba1cc433a64b8dee75c970d0d432c",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -56,6 +56,7 @@
       "conteudos/recuperacao-lifting-facial/index.html",
       "conteudos/seguranca-cirurgia-plastica/index.html",
       "contorno-corporal/index.html",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "index.html",
       "injetaveis/index.html",
       "lifting-cervical/index.html",
@@ -137,7 +138,16 @@
       "dateModified e sitemap registram a mudanca sem alterar lastReviewed quando a revisao medica anterior continua sendo a vigente"
     ]
   },
-  "release": {},
+  "release": {
+    "approvedCommit": "d8063b058ee854a1d65ab5a2b55d2cee453610c4",
+    "netlifyDeployId": "6aa59be5502cb30008e0f6ee",
+    "appsScriptVersion": 147,
+    "verifiedAt": "2026-09-12T15:42:18-03:00",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "7bfb88a6726f0de20e97ab03cdfdcb723d762b93afef5fa94be9f3ff80dce60d",
+    "activationState": "sitewide_copy_live_monitoring",
+    "notes": "Git canonico e Netlify foram publicados com o commit funcional final. O primeiro pos-voo encontrou dois grupos de contraste residual, corrigidos no commit final e em cache novo. O dominio aprovou 46/46 rotas, 51/51 midias e a auditoria Chrome 390x844; a mesma projecao do Plano Executivo foi substituida no Drive e relida com commit, deploy e repeticao estrategica presentes. Apps Script permaneceu na v147 sem escrita neste changeId."
+  },
   "rollback": {
     "local": "reverter somente o commit funcional deste changeId sobre o baseline f6fabb80ec7ba1cc433a64b8dee75c970d0d432c, preservando todo trabalho paralelo",
     "production": "restaurar o deploy Netlify 6aa59666f301b80008ffb340 se houver regressao confirmada de texto, layout, midia, contraste, tracking ou indexabilidade"
