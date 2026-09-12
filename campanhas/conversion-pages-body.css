@@ -99,6 +99,70 @@ html[data-design="body-premium"] .cv-result { border-radius: 16px; }
   object-fit: contain;
 }
 
+html[data-design="body-premium"] .cv-body-proof .cv-proof-points span {
+  color: #eadbd3;
+}
+
+html[data-design="body-premium"] .cv-price-box dt {
+  color: #f3e5df;
+}
+
+/*
+ * O script compartilhado transforma vídeos em acionadores no mobile. Estas
+ * páginas não carregam a folha legada completa, por isso o acabamento fica
+ * neste tema para evitar botão nativo e mídia duplicada.
+ */
+html[data-design="body-premium"] .mobile-curated-video-trigger {
+  display: none;
+  width: 100%;
+  min-height: 240px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 12px;
+  padding: 0;
+  background: linear-gradient(145deg, #5b433d 0%, #241c19 100%);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+html[data-design="body-premium"] .mobile-curated-video-trigger.has-video-poster {
+  background: linear-gradient(180deg, rgba(24, 15, 13, .12), rgba(24, 15, 13, .68)), var(--mobile-video-poster) center / cover no-repeat;
+}
+
+html[data-design="body-premium"] .mobile-curated-video-trigger-media {
+  display: flex;
+  min-height: 240px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 13px;
+  padding: 22px;
+  font-size: .94rem;
+  font-weight: 750;
+  letter-spacing: .01em;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .5);
+}
+
+html[data-design="body-premium"] .mobile-curated-video-play {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .78);
+  border-radius: 50%;
+  background: rgba(31, 22, 19, .42);
+  font-size: 1.2rem;
+  text-shadow: none;
+}
+
+html[data-design="body-premium"] .mobile-curated-video-trigger:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, .9);
+  outline-offset: -4px;
+}
+
 .cv-body-paths .cv-card {
   position: relative;
   overflow: hidden;
@@ -175,4 +239,16 @@ html[data-design="body-premium"] .cv-result { border-radius: 16px; }
   }
 
   .cv-body-proof .cv-story-media { width: min(100%, 320px); }
+
+  html[data-design="body-premium"] .cv-nav > .cv-links .cv-btn {
+    min-height: 46px;
+  }
+
+  html[data-design="body-premium"] video[data-mobile-video-enhanced] {
+    display: none !important;
+  }
+
+  html[data-design="body-premium"] .mobile-curated-video-trigger {
+    display: block;
+  }
 }

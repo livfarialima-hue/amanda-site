@@ -56,6 +56,17 @@
     }
   };
 
+  var consultationCopyProcedures = {
+    "mastopexia": true,
+    "mastopexia-com-protese": true,
+    "protese-de-mama": true,
+    "mamoplastia-redutora": true,
+    "abdominoplastia": true,
+    "lipoaspiracao": true,
+    "pos-bariatrica": true,
+    "braquioplastia": true
+  };
+
   function locationFor(link) {
     if (link.closest("header")) return "header";
     if (link.closest(".hero")) return "hero";
@@ -71,6 +82,7 @@
     var procedure = root.dataset.procedure || "";
     var config = configurations[procedure];
     if (!config || root.dataset.secondaryPremiumReady === "true") return;
+    var usesConsultationCopy = !!consultationCopyProcedures[procedure];
 
     root.dataset.secondaryPremium = "true";
     root.dataset.secondaryPremiumReady = "true";
@@ -83,13 +95,15 @@
     }
 
     var navCta = document.querySelector(".nav-cta[data-track='whatsapp']");
-    if (navCta) navCta.textContent = "Dúvidas e horários";
+    if (navCta) navCta.textContent = usesConsultationCopy ? "Ver horários" : "Dúvidas e horários";
 
     var heroCta = document.querySelector(".hero-actions [data-track='whatsapp']");
-    if (heroCta) heroCta.textContent = "Ver horários para avaliação";
+    if (heroCta) heroCta.textContent = usesConsultationCopy ? "Ver horários da consulta" : "Ver horários para avaliação";
 
     var heroNote = document.querySelector(".hero-note");
-    if (heroNote) heroNote.textContent = "Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP";
+    if (heroNote) heroNote.textContent = usesConsultationCopy
+      ? "Consulta presencial particular: R$ 500 · Clínica LIV Faria Lima, em Pinheiros · CRM-SP 191605 · RQE 110472."
+      : "Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP";
 
     document.querySelectorAll("a[data-track='whatsapp']").forEach(function (link) {
       link.dataset.ctaLocation = link.dataset.ctaLocation || locationFor(link);
@@ -100,12 +114,14 @@
     var sourceLink = navCta || heroCta || document.querySelector("a[data-track='whatsapp']");
     if (!existing && anchor && sourceLink) {
       var practical = document.createElement("section");
+      var practicalCtaAttributes = usesConsultationCopy ? ' data-original-reference="' + procedure + '"' : "";
+      var practicalCtaLabel = usesConsultationCopy ? "Ver horários da consulta" : "Ver horários para avaliação de " + config.label.toLowerCase();
       practical.className = "secondary-practical";
       practical.dataset.section = "consultation_offer";
       practical.innerHTML =
         '<div class="container secondary-practical__grid">' +
           '<div><span class="eyebrow">Próximo passo</span><h2>' + config.title + '</h2><p>' + config.note + '</p>' +
-          '<a class="btn" data-track="whatsapp" data-procedure="' + procedure + '" data-cta-location="consultation_offer" href="' + sourceLink.href + '" target="_blank" rel="noopener">Ver horários para avaliação de ' + config.label.toLowerCase() + '</a></div>' +
+          '<a class="btn" data-track="whatsapp" data-procedure="' + procedure + '"' + practicalCtaAttributes + ' data-cta-location="consultation_offer" href="' + sourceLink.href + '" target="_blank" rel="noopener">' + practicalCtaLabel + '</a></div>' +
           '<div class="secondary-practical__facts" aria-label="Informações da consulta">' +
             '<div><span>Consulta presencial</span><strong>R$ 500</strong></div>' +
             '<div><span>Pagamento</span><strong>Pix, débito ou parcelamento</strong></div>' +
@@ -118,15 +134,15 @@
 
     var finalCta = document.querySelector(".cta [data-track='whatsapp']");
     if (finalCta) {
-      finalCta.textContent = "Ver horários para avaliação";
+      finalCta.textContent = usesConsultationCopy ? "Ver horários da consulta" : "Ver horários para avaliação";
       finalCta.dataset.ctaLocation = "final";
     }
 
     var floating = document.querySelector(".whatsapp-float[data-track='whatsapp']");
     if (floating) {
-      floating.textContent = "Tirar dúvidas e ver horários";
+      floating.textContent = usesConsultationCopy ? "Ver horários da consulta" : "Tirar dúvidas e ver horários";
       floating.dataset.ctaLocation = "sticky";
-      floating.setAttribute("aria-label", "Tirar dúvidas e consultar horários pelo WhatsApp");
+      floating.setAttribute("aria-label", usesConsultationCopy ? "Ver horários da consulta pelo WhatsApp" : "Tirar dúvidas e consultar horários pelo WhatsApp");
     }
   }
 
