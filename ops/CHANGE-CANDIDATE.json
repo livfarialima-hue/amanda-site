@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-EDUCATIONAL-CONTENT-SECOND-BATCH-2026-09-12",
   "title": "Concluir o piloto educativo e aprofundar seguranca, cicatrizacao e papada",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "64ae2c598816c033b4e2a995d064adddf80de54a",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -108,8 +108,10 @@
       "diffCheck": "passed",
       "liveBaselineComparison": "2026-09-12T23:54:17.352Z: 187 provider files compared against 64ae2c5/6aa5e56c65ed3d0008cebf97; zero drift; exactly six public modifications plus three new pages. Twelve current function digests and five schedules captured. Netlify, Apps Script and Google Ads source files have zero diff against this baseline.",
       "drivePreflight": "Existing file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO unchanged at 2026-09-12T23:31:37.815Z; exact baseline equality for all 145404 characters, preserving previous parallel receipts.",
-      "operationalConsistency": "SYNC_PENDING expected until publication, external readback, receipt commit and clean canonical branch.",
-      "parallelIntegration": "The complete parallel baseline is preserved; the effective delta against 64ae2c5 is exactly the 15 educational files. Original candidate 97d585e remains preserved in its own branch. The parallel release receipt remains in 64ae2c5:ops/CHANGE-CANDIDATE.json."
+      "operationalConsistency": "The prior SYNC_PENDING was expected. External receipts and exact Drive equality are recorded; final ops:check is executed after this receipt is committed on the clean canonical branch.",
+      "parallelIntegration": "The complete parallel baseline is preserved; the effective delta against 64ae2c5 is exactly the 15 educational files. Original candidate 97d585e remains preserved in its own branch. The parallel release receipt remains in 64ae2c5:ops/CHANGE-CANDIDATE.json.",
+      "livePostflight": "2026-09-12T23:57:12.831Z: production/ready de53af5/6aa5e68f41e08e0008a76b33; all 190 provider files match the artifact after verified packaging differences; 52/52 HTTP 200 and equivalent content, 46 byte-identical and six verified Netlify pretty-URL transformations. Twelve functions and five schedules unchanged from 64ae2c5; audit and ops sentinels return 404.",
+      "driveProjection": "Same file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO replaced in place at 2026-09-12T23:58:13.841Z; authenticated readback exactly equals all 150161 characters of committed plan 926077f. SHA-256 d5a9569bb9352b9e5e90957f55384ab84d70aa07f4c992193dcacf138903a533; previous parallel receipts preserved."
     },
     "crossConsumerCases": [
       "biblioteca apresenta 27 URLs educativas unicas e contagem coerente com a busca",
@@ -121,14 +123,14 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "de53af57c2d17d2fb5912379dc05f38f024dc7de",
+    "netlifyDeployId": "6aa5e68f41e08e0008a76b33",
     "appsScriptVersion": 149,
-    "verifiedAt": null,
+    "verifiedAt": "2026-09-12T20:58:20-03:00",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "activationState": "local_not_published",
-    "notes": "Apps Script v149 e snapshot do recibo paralelo 64ae2c5 preservado, nao publicacao ou verificacao viva desta tarefa. Revisao medica posterior pendente. A janela de observacao nao bloqueia publicacao autorizada."
+    "drivePlanSha256": "d5a9569bb9352b9e5e90957f55384ab84d70aa07f4c992193dcacf138903a533",
+    "activationState": "educational_content_live_medical_review_pending",
+    "notes": "Publicado em 12/09/2026 as 20:56:23 sob a autorizacao vigente de Daniel para seguir com publicacoes e ajustes educativos. A integracao preservou o baseline paralelo 64ae2c5 e seu recibo v149; nao houve escrita em anuncios, Apps Script ou mensagens. Revisao medica posterior pendente nos seis textos novos/ampliados, sem autoria ou revisao atribuida indevidamente. Projecao no Drive identica ao Plano commitado em 926077f; commits documentais posteriores usam skip ci e nao mudam o artefato publico."
   },
   "rollback": {
     "local": "reverter somente o delta educativo sobre 64ae2c598816c033b4e2a995d064adddf80de54a, preservando as atualizacoes paralelas",
