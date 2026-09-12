@@ -1115,6 +1115,7 @@ body.mobile-media-viewing .whatsapp-float {
 .consultation-hero-media img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: 50% 34%;
@@ -2994,6 +2995,15 @@ body.curated-video-open { overflow: hidden; }
   gap: clamp(30px, 5vw, 68px);
 }
 
+/* Mantém o hero editorial alinhado ao mesmo eixo de 1120px do restante do
+   site, sem perder o fundo de ponta a ponta em telas largas. */
+@media (min-width: 901px) {
+  .article-page > .article-hero.consultation-article-hero,
+  .article-page > .article-hero.professional-article-hero {
+    padding-inline: max(19px, calc(50% - 560px));
+  }
+}
+
 .professional-hero-copy { min-width: 0; }
 
 .professional-hero-media {
@@ -3006,6 +3016,7 @@ body.curated-video-open { overflow: hidden; }
 .professional-hero-media img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: 50% 42%;

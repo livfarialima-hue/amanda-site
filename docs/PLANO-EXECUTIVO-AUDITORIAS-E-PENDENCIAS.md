@@ -467,6 +467,7 @@ A aceitação do risco do `JID` resolveu apenas uma decisão. A ativação conti
 | Aqui Ads — piloto OOH hiperlocal | P2 | `AGENDADO PARA DECISÃO EM 16/09`; nenhuma compra autorizada | revalidar dois residenciais premium + um salão/spa, orçamento incremental, metodologia de audiência, peça e tracking; ativar apenas na primeira janela limpa |
 | Galerias, imagens e consentimentos | P0 | `DEPENDE DE VOCÊS` | Codame/jurídico e inventário restrito |
 | Comunicação e CRO | P1/P2 | `PUBLICADA E VERIFICADA`: 35 páginas com texto substantivamente revisado; repetição estratégica por página preservada; 92 execuções mobile, 334 imagens, 40 plays e 72 modais aprovados sem achados | observar contatos válidos, qualificados e consultas em 7/14 dias; revisar apenas com evidência, sem trocar várias hipóteses ao mesmo tempo |
+| Conteúdos educativos — lote 1 | P1 | `CANDIDATO TESTADO LOCALMENTE`: três páginas novas sobre escolha segura do cirurgião, recuperação da blefaroplastia e diferenças entre minilifting, lifting, SMAS, deep plane e opções não cirúrgicas; 1.336 testes, build de 188 arquivos, 49/49 rotas técnicas e QA visual desktop/mobile aprovados; produção permanece inalterada | obter revisão médica explícita da Dra. Amanda e aguardar a janela vigente de 14 dias antes de pedir autorização para publicar o commit exato; depois medir contatos válidos, qualificados e consultas sem mudar campanha ou CTA na mesma janela |
 
 ## 8. O que não deve ser alterado agora
 

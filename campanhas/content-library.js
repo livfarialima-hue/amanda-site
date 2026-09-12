@@ -32,7 +32,8 @@
     ['cicatriz', 'cicatrizes', 'cicatrizacao'],
     ['peito', 'seio', 'seios', 'mama', 'mamas'],
     ['rosto', 'face', 'facial', 'rejuvenescimento'],
-    ['flacidez', 'queda', 'sustentacao', 'lifting']
+    ['flacidez', 'queda', 'sustentacao', 'lifting', 'minilifting', 'smas', 'deep', 'plane'],
+    ['medico', 'medica', 'cirurgiao', 'cirurgia plastica', 'crm', 'rqe', 'seguranca']
   ];
 
   var articles = [];
@@ -64,6 +65,16 @@
       labelSearch: normalize(label + ' ' + group),
       bodySearch: normalize(description + ' ' + pathTerms)
     });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-content-total]'), function (node) {
+    if (node.classList.contains('cl-library-count')) {
+      node.textContent = articles.length + (articles.length === 1 ? ' conteúdo' : ' conteúdos');
+      node.setAttribute('aria-label', node.textContent + ' disponíveis');
+      return;
+    }
+
+    node.textContent = articles.length + (articles.length === 1 ? ' leitura educativa' : ' leituras educativas');
   });
 
   var variantsFor = function (token) {
