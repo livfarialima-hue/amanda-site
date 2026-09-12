@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-EDUCATIONAL-CONTENT-PILOT-2026-09-12",
   "title": "Adicionar primeiro lote de conteudos educativos para decisao e seguranca",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "4edf7aaa317857599ceba08236a81163218c6aee",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -104,7 +104,9 @@
       "visualQa": "desktop 1440 px and mobile 390 px; article axis aligned, responsive images preserve 4:5 and 4:3 ratios, and document scroll width equals viewport width",
       "diffCheck": "passed",
       "liveBaselineComparison": "2026-09-12T23:27:42.386Z: 184 provider files compared, zero baseline drift; only four expected public modifications and three new articles. Provider packaging differences (.gitattributes, .htaccess, netlify.toml) checked separately against unchanged baseline. Twelve function digests and five schedules captured for postflight.",
-      "operationalConsistency": "OPS_CHECK_STATUS=SYNC_PENDING as required for an unpublished local candidate; publication, canonical branch and clean-release receipts remain intentionally pending"
+      "livePostflight": "2026-09-12T23:31:02.299Z: production ready dd4fe1f/6aa5e03e5650c20008bfd3c0; 49/49 public routes HTTP 200, 43 byte-identical and six with only verified Netlify pretty-URL rewriting; all 187 provider files match the artifact after documented packaging differences; 12 function digests and five schedules unchanged; audit and ops sentinels HTTP 404.",
+      "driveProjection": "Same file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO replaced in place after preserving dcadd24; authenticated readback is exactly equal to all 145404 local characters, SHA-256 f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645.",
+      "operationalConsistency": "Prepublication SYNC_PENDING was expected. Published receipts and Drive equality are recorded; the final clean canonical-branch gate is executed after committing this documentation receipt."
     },
     "crossConsumerCases": [
       "a biblioteca apresenta 24 URLs educativas unicas e contagem coerente com a busca interna",
@@ -115,14 +117,14 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "dd4fe1f3cf5686b1796a8512395abe76e282a16a",
+    "netlifyDeployId": "6aa5e03e5650c20008bfd3c0",
     "appsScriptVersion": 148,
-    "verifiedAt": null,
+    "verifiedAt": "2026-09-12T20:32:00-03:00",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "activationState": "educational_content_publication_authorized",
-    "notes": "Publicacao autorizada na mensagem atual de Daniel; revisao medica posterior permanece pendente. Recibo paralelo dcadd24/Drive registra v148 sem qualquer publicacao Apps Script nesta tarefa."
+    "drivePlanSha256": "f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645",
+    "activationState": "educational_content_live_medical_review_pending",
+    "notes": "Publicado em 12/09/2026 as 20:29:26-03:00 sob autorizacao explicita de Daniel nesta tarefa. Revisao medica posterior pendente, sem autoria, reviewedBy ou lastReviewed atribuidos a Dra. Amanda nos novos artigos. Apps Script v148 e snapshot do recibo paralelo dcadd24 preservado, nao publicacao ou verificacao viva feita por esta tarefa. Sem campanha, bot, mensagem ou flag alterados; registro final documental usa skip ci e nao modifica o artefato publico."
   },
   "rollback": {
     "local": "reverter somente o commit do primeiro lote educativo sobre 4edf7aaa317857599ceba08236a81163218c6aee",
