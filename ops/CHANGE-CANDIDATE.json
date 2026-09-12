@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "SITE-MAMA-CONTORNO-LINGUAGEM-HUMANA-2026-09-12",
-  "title": "Retirar construcoes com aparencia de IA das paginas de mama e contorno corporal",
+  "title": "Humanizar a comunicacao e corrigir contraste mobile nas paginas de mama e contorno corporal",
   "status": "tested_local",
   "baseCommit": "7b7976d77c2e344721d61b29dfe06d832b532676",
   "authorization": {
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {
@@ -25,6 +25,8 @@
       "abdominoplastia/index.html",
       "apps-script/clinica-liv-leads/site-contrast.test.mjs",
       "braquioplastia/index.html",
+      "campanhas/conversion-pages-body.css",
+      "campanhas/secondary-conversion.css",
       "campanhas/secondary-conversion.js",
       "campanhas/site-enhancements.js",
       "contorno-corporal/index.html",
@@ -49,7 +51,7 @@
       "URLs, canonicals, numero de WhatsApp, referencias por procedimento e atributos de tracking permanecem iguais",
       "conteudo medico continua educativo, individualizado e sem promessa de resultado ou indicacao a distancia",
       "imagens preservam dimensoes e textos alternativos; videos preservam poster, controles, playsinline e origem MP4",
-      "CSS, contraste, sitemap e estrutura das paginas permanecem fora desta revisao textual",
+      "estrutura, sitemap e identidade visual permanecem; a unica mudanca de estilo corrige contraste de legendas e acionadores de video no mobile",
       "Apps Script v144, Bruna, YCloud, LEADS, CRM, Calendar, campanhas, orcamentos e Drive permanecem sem alteracao"
     ],
     "liveReadOnlyPreflight": [
@@ -59,12 +61,19 @@
         "status": "baseline_confirmed",
         "checkedAt": "2026-09-12T11:39:42-03:00",
         "reference": "origin/reestruturacao-site permanece em 7b7976d77c2e344721d61b29dfe06d832b532676; Netlify production permanece ready no deploy 6aa559fb631d2b00088cefb9 com commit_ref 46bf67fdccc0c806650611562a975dc3dd046a56; /mama/, /contorno-corporal/ e /sitemap.xml responderam HTTP 200"
+      },
+      {
+        "contract": "site-publication",
+        "system": "Git canonico, Netlify de producao e dominio publico",
+        "status": "baseline_confirmed_with_mobile_contrast_correction",
+        "checkedAt": "2026-09-12T11:50:05-03:00",
+        "reference": "origin/reestruturacao-site e o deploy Netlify production 6aa5647865ed3d000912bf0a estavam no commit d599b62c413587b4526aea72e0d8c0776ef19e9f. A verificacao visual identificou legenda branca sobre fundo claro no card de equipe; a correcao foi incorporada ao mesmo changeId antes do encerramento."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T11:37:53-03:00",
+    "completedAt": "2026-09-12T11:51:15-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs",
       "node --check campanhas/secondary-conversion.js",
@@ -77,9 +86,9 @@
       "git diff --check"
     ],
     "results": {
-      "focusedCopyAndContrast": "4/4 testes aprovados; o teste bloqueia as formulas textuais retiradas, confere cache dos componentes dinamicos e preserva os contrastes AA conhecidos",
+      "focusedCopyAndContrast": "4/4 testes aprovados; o teste bloqueia as formulas textuais retiradas, confere os caches atualizados e exige contraste AA nas legendas e nos acionadores de video",
       "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 14/14 arquivos coincidem com o escopo declarado",
+      "changeCheck": "CHANGE_SAFETY_STATUS=OK; 16/16 arquivos coincidem com o escopo declarado",
       "fullSuite": "1297/1297 testes aprovados",
       "siteBuild": "180 arquivos e 44 URLs; zero arquivo de auditoria no artefato publico",
       "siteCheck": "artefato tecnico valido; 44 URLs, 180 arquivos e zero erro",
@@ -87,7 +96,7 @@
       "gitDiffCheck": "aprovado",
       "mobileVisual": "10/10 paginas aprovadas em 390x844 e 360x800; sem overflow do documento, texto cortado, CTA menor que 44 px ou expressao bloqueada",
       "mediaMobile": "todas as imagens carregaram com dimensoes naturais; videos de equipe e Clinica LIV abriram em modal com poster, controles, playsinline, MP4 correto e largura contida",
-      "contrastMobile": "10/10 paginas sem texto abaixo do criterio WCAG AA na auditoria de cores compostas; o aviso translucido da abdominoplastia mediu 6,31:1"
+      "contrastMobile": "A verificacao em producao encontrou e documentou uma legenda branca sobre fundo claro. Depois da correcao, 10/10 paginas ficaram sem texto abaixo do criterio WCAG AA na auditoria local de cores compostas; legenda, botao de play e rotulo de video passaram a usar fundo escuro proprio."
     },
     "crossConsumerCases": [
       "nenhuma das dez paginas exibe questao central ou as demais formulas textuais bloqueadas pelo teste",

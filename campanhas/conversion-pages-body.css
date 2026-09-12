@@ -153,8 +153,16 @@ html[data-design="body-premium"] .mobile-curated-video-play {
   place-items: center;
   border: 1px solid rgba(255, 255, 255, .78);
   border-radius: 50%;
-  background: rgba(31, 22, 19, .42);
+  background: #241c19;
   font-size: 1.2rem;
+  text-shadow: none;
+}
+
+html[data-design="body-premium"] .mobile-curated-video-trigger-media > span:last-child {
+  padding: .45rem .72rem;
+  border-radius: 999px;
+  background: #241c19;
+  color: #fff;
   text-shadow: none;
 }
 

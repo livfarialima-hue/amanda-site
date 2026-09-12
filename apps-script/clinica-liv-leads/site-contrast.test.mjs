@@ -4,6 +4,7 @@ import { test } from "node:test";
 
 const root = new URL("../../", import.meta.url);
 const stylesheet = readFileSync(new URL("campanhas/secondary-conversion.css", root), "utf8");
+const bodyStylesheet = readFileSync(new URL("campanhas/conversion-pages-body.css", root), "utf8");
 const secondaryPages = [
   "abdominoplastia",
   "braquioplastia",
@@ -68,6 +69,8 @@ test("secondary procedure colors meet WCAG AA contrast", () => {
   assert.ok(contrast("#fffaf7", "#62473e") >= 4.5);
   assert.ok(contrast("#f0dfd7", "#62473e") >= 4.5);
   assert.ok(contrast("#584940", "#f0e6e0") >= 4.5);
+  assert.ok(contrast("#fffaf7", "#5a4641") >= 4.5);
+  assert.ok(contrast("#ffffff", "#241c19") >= 4.5);
 });
 
 test("secondary procedure stylesheet contains scoped contrast overrides", () => {
@@ -77,13 +80,18 @@ test("secondary procedure stylesheet contains scoped contrast overrides", () => 
   assert.match(stylesheet, /main #faq\.results/);
   assert.match(stylesheet, /footer :is\(a, span, strong, p, button\)/);
   assert.match(stylesheet, /footer \.footer-navigation \.footer-nav-group > strong/);
+  assert.match(stylesheet, /\.auxiliary-team-card \{[\s\S]*?background: #5a4641;/);
+  assert.match(stylesheet, /\.auxiliary-team-card figcaption \{ color: #fffaf7; \}/);
+  assert.match(stylesheet, /\.mobile-curated-video-trigger-media > span:last-child/);
+  assert.match(bodyStylesheet, /\.mobile-curated-video-play \{[\s\S]*?background: #241c19;/);
+  assert.match(bodyStylesheet, /\.mobile-curated-video-trigger-media > span:last-child/);
 });
 
 test("every secondary procedure page requests the contrast-fixed stylesheet", () => {
   for (const page of secondaryPages) {
     const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
     const expectedVersion = refreshedSecondaryPages.has(page)
-      ? "20260912-mobile-contrast-2"
+      ? "20260912-human-contrast-3"
       : "20260814-contrast-1";
     assert.match(
       html,
@@ -151,6 +159,10 @@ test("mama and body pages avoid formulaic copy and load the humanized dynamic te
 
   const contourHtml = readFileSync(new URL("contorno-corporal/index.html", root), "utf8");
   assert.match(contourHtml, /site-enhancements\.js\?v=20260912-human-copy-2/);
+  assert.match(contourHtml, /conversion-pages-body\.css\?v=20260912-human-contrast-3/);
+
+  const mamaHtml = readFileSync(new URL("mama/index.html", root), "utf8");
+  assert.match(mamaHtml, /conversion-pages-body\.css\?v=20260912-human-contrast-3/);
 
   const secondaryScript = readFileSync(new URL("campanhas/secondary-conversion.js", root), "utf8");
   assert.match(secondaryScript, /Na consulta, você descobre onde a lipo pode ajudar/);

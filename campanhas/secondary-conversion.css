@@ -477,7 +477,7 @@ html[data-secondary-premium="true"] .auxiliary-team-section .section-head > p { 
 html[data-secondary-premium="true"] .auxiliary-team-card {
   overflow: hidden;
   border-radius: 16px;
-  background: #fffaf7;
+  background: #5a4641;
 }
 
 html[data-secondary-premium="true"] .auxiliary-team-card :is(img, video) {
@@ -489,8 +489,19 @@ html[data-secondary-premium="true"] .auxiliary-team-card :is(img, video) {
   object-fit: contain;
 }
 
-html[data-secondary-premium="true"] .auxiliary-team-card figcaption { color: var(--secondary-ink); }
+html[data-secondary-premium="true"] .auxiliary-team-card figcaption { color: #fffaf7; }
 html[data-secondary-premium="true"] .auxiliary-hospital-note { color: #eadbd3; }
+
+html[data-secondary-premium="true"] .mobile-curated-video-play,
+html[data-secondary-premium="true"] .mobile-curated-video-trigger-media > span:last-child {
+  background: #241c19;
+  color: #fff;
+}
+
+html[data-secondary-premium="true"] .mobile-curated-video-trigger-media > span:last-child {
+  padding: .45rem .72rem;
+  border-radius: 999px;
+}
 
 html[data-secondary-premium="true"] .auxiliary-content-section { background: var(--secondary-soft); }
 html[data-secondary-premium="true"] .auxiliary-content-card {
