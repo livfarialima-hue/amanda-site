@@ -96,7 +96,7 @@
         "routes": 54
       },
       "siteCheck": "OK",
-      "opsCheck": "Fechamento em branch canonica/worktree limpo a executar apos este recibo.",
+      "opsCheck": "OPS_CHECK_STATUS=OK em reestruturacao-site, worktree limpo, apos integracao a3a3e2e; CHANGE_SAFETY_STATUS=OK com nove arquivos.",
       "environment": "npm ci recompôs dependencias ausentes; lockfile inalterado. Nao executar npm audit fix neste pacote.",
       "reconciliation": "Merge19d3dce preserva 1e638ef e todos os arquivos de preco; contrato nove arquivos, arquitetura e build/check novamente OK.",
       "finalReconciledSuite": {

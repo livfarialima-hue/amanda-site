@@ -47,6 +47,8 @@ Drive: mesmo ID `18iUqY6HttJwPusSAA1VGmrMqqRluyjTO`, mesma pasta e permissões. 
 
 Pendências de resultado, não de aplicação: primeiro ciclo programado/aceitação real de conversão, reparo técnico de atribuição `0ff0dd2` fora do escopo, e avaliação do teste geográfico com consultas maturadas. Não foi prometido aumento de conversões ou redução de custo.
 
+Fechamento: integrado por fast-forward em `reestruturacao-site` até `a3a3e2e`, preservando `1e638ef`. `OPS_CHECK_STATUS=OK`, `CHANGE_SAFETY_STATUS=OK`, nove arquivos declarados e worktree limpo. Nenhum push ou deploy de site foi realizado.
+
 ## Monitoramento e rollback
 
 Daniel/equipe: primeiro ciclo e 48h para integridade; leituras em 20/09 e 27/09, decisão em 13/10 ou mais tarde se a amostra for insuficiente. Comparar qualificados aceitos e consultas agendadas/realizadas da mesma coorte, com gasto compatível e maturação. Reverter somente o componente com regressão; não sobrescrever registros históricos, código publicado por outras tarefas ou configuração de campanhas fora deste pacote.
