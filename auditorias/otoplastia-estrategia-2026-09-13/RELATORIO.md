@@ -8,7 +8,7 @@ Há procura pela cirurgia, mas pouca continuidade comercial identificada. O hist
 
 A correção escolhida é tornar evidente por que consultar Amanda: médica com residências em Cirurgia Geral e Cirurgia Plástica pela Unicamp, RQE 110472, avaliação com a própria cirurgiã, exame de formato/dobras/projeção de cada orelha, explicação de cicatrizes e recuperação e acompanhamento. A consulta particular de R$ 500 fica visível também nos anúncios e junto ao convite nas duas páginas. A referência cirúrgica continua privada, informativa e condicionada à conversa existente; não há nova regra ou disparo de atendimento.
 
-O orçamento permanece R$ 15/dia. Preservam-se dois grupos, dois RSAs, palavras, correspondências, lances, redes, localizações, metas, públicos e atribuição. A revisão breve está agendada para 16/09 às 9h BRT; integridade em 14/09, leitura de sete dias em 20/09 e decisão com maior maturação em 27/09. Nenhuma recomendação automática deve aumentar verba ou alterar produção.
+O orçamento permanece R$ 15/dia. Preservam-se dois grupos, dois RSAs, palavras, correspondências, lances, redes, localizações, metas, públicos e atribuição. A revisão breve está agendada para 16/09 às 9h BRT; integridade em 14/09, leitura de sete dias em 21/09 e decisão com maior maturação em 28/09. Nenhuma recomendação automática deve aumentar verba ou alterar produção.
 
 ## Evidência de mídia: janelas separadas
 
@@ -91,8 +91,8 @@ Automação da própria tarefa: Reavaliar estratégia de otoplastia, ID reavalia
 |---|---|
 | 14/09, 9h | Os dois anúncios estão aprovados/elegíveis, os destinos funcionam, a origem chega e R$ 15/dia foi preservado? |
 | 16/09, 9h | Começou a haver contato identificado e continuidade útil? Onde ainda faltam evidência ou classificação? |
-| 20/09, 9h | Com sete dias fechados, há qualificados/consultas e qual gasto da mesma coorte? |
-| 27/09, 9h | Com maturação de 14 dias, manter a mensagem, corrigi-la ou recomendar pausa/redistribuição interna para decisão de Daniel? |
+| 21/09, 9h | Com sete dias fechados, há qualificados/consultas e qual gasto da mesma coorte? |
+| 28/09, 9h | Com maturação de 14 dias, manter a mensagem, corrigi-la ou recomendar pausa/redistribuição interna para decisão de Daniel? |
 
 Métricas: contatos identificados, cobertura de classificação, contatos válidos, qualificados, consultas únicas agendadas/realizadas e gasto por etapa na mesma coorte. Google_Rotas nunca é somada a Agregados. Não transformar D+3 em veredito de retorno. Se em sete dias houver zero contato novo e pelo menos 50 cliques OU R$ 105 de gasto, apresentar correção ou pausa para decisão humana, sem gastar mais para buscar significância. Pouca amostra/classificação insuficiente é inconclusiva. Qualificados sem agenda pedem revisão humana do conteúdo e do próximo passo; preço não autoriza insistência ou novas mensagens. Reprovação, destino incorreto, promessa indevida, perda de códigos ou gasto anormal exigem alerta imediato. Ganho de CTR/força do anúncio não basta para manter uma estratégia sem negócio.
 
@@ -106,4 +106,6 @@ Site publicado em 13/09/2026 às10h57 BRT (2026-09-13T13:57:01.241Z), commit 030
 
 Os dois RSAs foram salvos na sessão autenticada e reabertos. Adulto816612405034 conferido em14:03:12UTC; infantil816612778213 em14:05:34UTC. Todos os27 títulos/oito descrições coincidem com o banco aprovado. Pinagem da descrição médica1, URLs e parâmetros preservados. A interface mostrou Ativado/Qualificada; Pendente refere-se à coluna de qualidade do anúncio, não demonstra nova consulta nem é prova de reprovação. Orçamento R$15/dia mantido. O horário preciso de gravação não foi capturado como recibo do provedor; para coortes fechadas, considerar14/09 como primeiro dia completo após a aplicação de ambos.
 
-Automação criada e relida como ativa,9h America/Sao_Paulo, com marcos14/09,16/09,20/09,27/09 e pausa após o último. Plano Executivo recebe esta conclusão na mesma projeção do Drive. Os IDs e hashes de releitura ficam em PUBLICACAO.json. Não há ganho de consultas demonstrado nesta entrega; o resultado comercial será avaliado nas novas coortes.
+Automação criada e relida como ativa,9h America/Sao_Paulo, com marcos14/09,16/09,21/09,28/09 e pausa após o último. Plano Executivo recebe esta conclusão na mesma projeção do Drive. Os IDs e hashes de releitura ficam em PUBLICACAO.json. Não há ganho de consultas demonstrado nesta entrega; o resultado comercial será avaliado nas novas coortes.
+
+Ajuste dos marcos ao horário efetivo: como ambos os anúncios terminaram de ser aplicados em13/09, o primeiro dia inteiro é14/09. A leitura de sete dias completos ocorrerá em21/09 (coorte14–20/09), e a de14dias em28/09 (coorte14–27/09). Isso substitui as datas preliminares20/09 e27/09, mantendo a reavaliação breve de16/09 às9h. A automação foi atualizada e relida como ativa.

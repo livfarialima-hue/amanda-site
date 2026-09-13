@@ -251,7 +251,7 @@
   },
   "monitoring": {
     "owner": "Daniel / equipe",
-    "window": "Integridade14/09;reavaliação breve16/09;negócio20/09 e27/09, a partir do horário real de aplicação",
+    "window": "Integridade14/09; primeira leitura16/09 às9h; sete dias completos14–20/09 avaliados21/09;14dias completos14–27/09 avaliados28/09. Horário9h America/Sao_Paulo.",
     "metrics": [
       "contatos identificados",
       "contatos válidos classificados",
@@ -261,6 +261,7 @@
       "perda de atribuição",
       "aprovação dos anúncios"
     ],
-    "rollbackRule": "Corrigir imediatamente reprovação, promessa indevida, quebra de CTA ou destino. Em D+7, zero contato novo com50cliques ouR$105 exige nova decisão humana; não aumentar verba. Pouca amostra => inconclusivo."
+    "rollbackRule": "Corrigir imediatamente reprovação, promessa indevida, quebra de CTA ou destino. Em D+7, zero contato novo com50cliques ouR$105 exige nova decisão humana; não aumentar verba. Pouca amostra => inconclusivo.",
+    "automationId": "reavaliar-estrat-gia-de-otoplastia"
   }
 }

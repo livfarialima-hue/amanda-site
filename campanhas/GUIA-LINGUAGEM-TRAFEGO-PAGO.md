@@ -263,4 +263,4 @@ Na página, aproximar o bloco Por que escolher a Dra. Amanda para a otoplastia? 
 
 Infantil: criança ouvida, conversa com responsáveis e avaliação individual de indicação, anestesia e recuperação; não prometer resolução de bullying, transformação social ou cardiologia pediátrica. Não depreciar otorrinos, dentistas ou outras categorias; não alegar que só cirurgião plástico pode operar. Fonte da preferência é a formação verificável da Amanda e o cuidado oferecido. Não inventar experiência em número de casos, título, filiação ou superioridade.
 
-Banco completo antes/depois: auditorias/otoplastia-estrategia-2026-09-13/PLANO.json. Revisões 14/09,16/09,20/09,27/09; preservar R$15/dia. Ganho de cliques sem contatos úteis não valida o texto.
+Banco completo antes/depois: auditorias/otoplastia-estrategia-2026-09-13/PLANO.json. Revisões 14/09,16/09,21/09,28/09; preservar R$15/dia. Ganho de cliques sem contatos úteis não valida o texto.

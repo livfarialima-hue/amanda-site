@@ -1063,7 +1063,7 @@ O painel passa a oferecer, para retomadas proativas com telefone válido, **Canc
 
 **Hipótese e métricas:** maior clareza de formação, consulta e investimento pode reduzir abandono e melhorar continuidade útil. Medir contatos identificados, classificação, válidos, qualificados, consultas únicas agendadas/realizadas e gasto da mesma coorte. Nunca otimizar somente CTR, CPC, força do anúncio ou clique no WhatsApp. Grupo/landing/CTA continuam N/D onde ausentes. O lote de 12/09 e o site editorial publicado em 13/09 impedem atribuir causalidade a uma frase.
 
-**Revisão:** integridade em 14/09; primeira leitura breve em 16/09 às 9h; sete dias em 20/09 e 14 dias em 27/09, contados do horário real de aplicação. Automação Reavaliar estratégia de otoplastia, vinculada à tarefa, apenas lê e alerta nos marcos ou em anomalia. Nenhuma nova mudança automática, publicação ou mensagem decorre dela.
+**Revisão:** integridade em 14/09; primeira leitura breve em 16/09 às 9h; sete dias em 21/09 e 14 dias em 28/09, contados do horário real de aplicação. Automação Reavaliar estratégia de otoplastia, vinculada à tarefa, apenas lê e alerta nos marcos ou em anomalia. Nenhuma nova mudança automática, publicação ou mensagem decorre dela.
 
 **Manter ou corrigir:** manter se surgirem contatos úteis/qualificados e consultas com integridade e amostra suficiente. Em sete dias, zero contato novo com pelo menos 50 cliques OU R$ 105 exige apresentar correção ou pausa para decisão humana, sem aumento de verba. Amostra ou classificação insuficiente: inconclusivo. Corrigir promessa, destino, códigos ou reprovação imediatamente dentro do componente afetado; rollback textual estreito, preservando publicações paralelas. A transparência não deve ser retirada só para recuperar cliques.
 
