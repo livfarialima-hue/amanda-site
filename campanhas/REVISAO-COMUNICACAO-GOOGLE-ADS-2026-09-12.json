@@ -1,0 +1,415 @@
+{
+  "account": "995-334-4486",
+  "authorizedDate": "2026-09-12",
+  "status": "prepared_not_applied",
+  "scope": "Active Google Ads RSA communication only. Preserve URLs, tracking, campaign structure, budgets, bids and targeting. No site changes.",
+  "ads": [
+    {
+      "group": "AG_BLEFAROPLASTIA",
+      "headlines": [
+        "Blefaroplastia em São Paulo",
+        "Cirurgia das Pálpebras",
+        "Atenção ao Formato dos Olhos",
+        "Um Plano para o Seu Olhar",
+        "Blefaroplastia Superior",
+        "Blefaroplastia Inferior",
+        "Cicatrizes e Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Cirurgia das pálpebras com atenção ao formato dos olhos, à expressão e às cicatrizes.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_LIFTING_FACIAL",
+      "headlines": [
+        "Lifting Facial em São Paulo",
+        "Contorno de Face e Pescoço",
+        "Cirurgia e Expressão Facial",
+        "Naturalidade no Planejamento",
+        "Lifting Facial com a Amanda",
+        "Conheça o Plano Cirúrgico",
+        "Face e Pescoço em Conjunto",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Contorno de face e pescoço, com planejamento atento aos seus traços e à expressão.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_CIRURGIA_FACIAL",
+      "headlines": [
+        "Cirurgia Facial em São Paulo",
+        "Cirurgiã Plástica em SP",
+        "Face, Pálpebras e Pescoço",
+        "Naturalidade no Planejamento",
+        "Seu Plano com a Dra. Amanda",
+        "Conheça a Formação da Amanda",
+        "Cirurgia e Expressão Facial",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Converse com a Amanda sobre o que deseja mudar e os traços que quer preservar.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_CERVICOPLASTIA",
+      "headlines": [
+        "Lifting Cervical em São Paulo",
+        "Contorno de Rosto e Pescoço",
+        "Cervicoplastia em São Paulo",
+        "Atenção à Linha da Mandíbula",
+        "Naturalidade no Planejamento",
+        "Conheça o Plano Cirúrgico",
+        "Pele, Gordura e Músculos",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "O pescoço é planejado junto à mandíbula, considerando o contorno, a pele e os músculos.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_LIFTING_FACIAL_PRECO",
+      "headlines": [
+        "Lifting Facial: Preço e Custos",
+        "Planeje Sua Cirurgia Facial",
+        "Veja o Que Inclui o Orçamento",
+        "Lifting Facial com a Amanda",
+        "Equipe, Anestesia e Hospital",
+        "Orçamento Após Avaliação",
+        "Cirurgia Facial Particular",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Veja como equipe, anestesia e hospital compõem o investimento no lifting facial.",
+        "Peça uma referência geral à equipe. O orçamento individual depende da avaliação médica.",
+        "Conheça a formação da Amanda e o planejamento antes de escolher sua cirurgiã."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "Adulto",
+      "headlines": [
+        "Otoplastia para Adultos",
+        "Otoplastia em São Paulo",
+        "Proporção e Curvas das Orelhas",
+        "Otoplastia com a Dra. Amanda",
+        "Planejamento de Cada Orelha",
+        "Cirurgia das Orelhas",
+        "Entenda a Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "A projeção e as curvas de cada orelha entram no plano. Conheça a otoplastia com a Amanda.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_LIPO_PAPADA",
+      "headlines": [
+        "Lipo de Papada em São Paulo",
+        "Contorno Abaixo do Queixo",
+        "Lipo de Papada com a Amanda",
+        "Lipo ou Lifting Cervical",
+        "Atenção à Firmeza da Pele",
+        "Planejamento do Pescoço",
+        "Entenda a Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Plano para a gordura abaixo do queixo, considerando o contorno e a firmeza da pele.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_OTOPLASTIA_INFANTIL",
+      "headlines": [
+        "Otoplastia Infantil em SP",
+        "Consulta com Criança e Família",
+        "Otoplastia com a Dra. Amanda",
+        "A Criança Também é Ouvida",
+        "Cirurgia das Orelhas",
+        "Anestesia e Recuperação",
+        "Orientação aos Responsáveis",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "A criança participa da consulta com os responsáveis. Entenda cirurgia e recuperação.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_MARCA",
+      "headlines": [
+        "Dra. Amanda Schroeder",
+        "Cirurgiã Plástica em São Paulo",
+        "Formação Cirúrgica Unicamp",
+        "Conheça a Dra. Amanda",
+        "Da Consulta ao Pós-Operatório",
+        "Cirurgia Facial em Pinheiros",
+        "Seu Plano com a Dra. Amanda",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Conheça a formação da Amanda e sua atenção aos detalhes do planejamento cirúrgico.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_MASTOPEXIA",
+      "headlines": [
+        "Mastopexia em São Paulo",
+        "Mastopexia Com ou Sem Prótese",
+        "Elevação e Formato das Mamas",
+        "Lifting Mamário em São Paulo",
+        "Mastopexia com a Dra. Amanda",
+        "Proporção no Planejamento",
+        "Cicatrizes e Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Elevação e formato das mamas, com ou sem prótese. Veja o que orienta a escolha.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_MAMOPLASTIA_REDUTORA",
+      "headlines": [
+        "Mamoplastia Redutora em SP",
+        "Redução e Proporção das Mamas",
+        "Redução Mamária com a Amanda",
+        "Peso, Volume e Formato",
+        "Cirurgia de Redução Mamária",
+        "Plano para as Suas Medidas",
+        "Cicatrizes e Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Planejamento para reduzir peso e volume das mamas, considerando proporção e cicatrizes.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_PROTESE_MAMA",
+      "headlines": [
+        "Prótese de Mama em São Paulo",
+        "Volume e Proporção das Mamas",
+        "Prótese de Mama com a Amanda",
+        "Escolha Além do Volume",
+        "Formato e Medidas das Mamas",
+        "Prótese e Proporção do Tórax",
+        "Conheça o Plano Cirúrgico",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Medidas, tecidos e formato desejado orientam a escolha da prótese com a Dra. Amanda.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_ABDOMINOPLASTIA",
+      "headlines": [
+        "Abdominoplastia em São Paulo",
+        "Pele e Contorno do Abdômen",
+        "Cirurgia do Abdômen",
+        "Excesso de Pele no Abdômen",
+        "Atenção ao Umbigo e Cicatriz",
+        "Plano para a Parede Abdominal",
+        "Entenda a Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Plano para pele e parede abdominal, com atenção ao contorno, umbigo e cicatrizes.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_LIPOASPIRACAO",
+      "headlines": [
+        "Lipoaspiração em São Paulo",
+        "Proporção no Contorno Corporal",
+        "Lipoaspiração com a Amanda",
+        "Contorno Corporal Planejado",
+        "Gordura Localizada e Contorno",
+        "Planejamento por Região",
+        "Entenda a Recuperação",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "O plano considera as áreas, a proporção entre elas e a capacidade de acomodação da pele.",
+        "Conheça a formação da Amanda e converse sobre o plano da sua cirurgia.",
+        "Consulta particular em Pinheiros. Preparo, hospital e retornos explicados antes de operar."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_MASTOPEXIA_PRECO",
+      "headlines": [
+        "Mastopexia: Preço e Custos",
+        "Mastopexia Com ou Sem Prótese",
+        "Veja o Que Inclui o Orçamento",
+        "Planeje Sua Mastopexia",
+        "Equipe, Anestesia e Hospital",
+        "Orçamento Após Avaliação",
+        "Cirurgia de Mama Particular",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Entenda o investimento na mastopexia: equipe, anestesia, hospital e uso ou não de prótese.",
+        "Veja o que muda no orçamento e converse com a equipe sobre o seu planejamento.",
+        "Conheça a formação da Amanda e como o formato das mamas orienta o plano cirúrgico."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_PROTESE_MAMA_PRECO",
+      "headlines": [
+        "Prótese de Mama: Preço",
+        "Planeje Sua Prótese de Mama",
+        "Veja o Que Inclui o Orçamento",
+        "Prótese, Equipe e Hospital",
+        "Escolha Além do Volume",
+        "Orçamento Após Avaliação",
+        "Cirurgia de Mama Particular",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "O investimento inclui mais que o implante. Entenda os custos da equipe e do hospital.",
+        "Veja o que muda no orçamento e converse com a equipe sobre o seu planejamento.",
+        "Conheça a formação da Amanda e como suas medidas orientam a escolha da prótese."
+      ],
+      "description1Pinned": true
+    },
+    {
+      "group": "AG_LIPOASPIRACAO_PRECO",
+      "headlines": [
+        "Lipoaspiração: Preço e Custos",
+        "Planeje Sua Lipoaspiração",
+        "Veja o Que Inclui o Orçamento",
+        "Equipe, Anestesia e Hospital",
+        "Áreas e Extensão da Cirurgia",
+        "Orçamento Após Avaliação",
+        "Cirurgia Corporal Particular",
+        "Dra. Amanda Schroeder",
+        "Residência na Unicamp",
+        "Consulta com a Cirurgiã",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Veja como áreas tratadas, equipe, anestesia e hospital compõem o custo da lipoaspiração.",
+        "Converse com a equipe sobre o planejamento. O orçamento depende da avaliação médica.",
+        "Conheça a formação da Amanda e a avaliação das proporções no contorno corporal."
+      ],
+      "description1Pinned": true
+    }
+  ]
+}

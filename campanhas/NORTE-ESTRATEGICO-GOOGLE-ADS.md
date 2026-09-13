@@ -51,6 +51,20 @@ A reconciliação de 54 exportações do Drive, correspondentes a 53 conversas �
 
 **Hipótese:** exigir manifestação pessoal melhora a qualidade do sinal enviado ao Google sem reduzir a captura de conversas reais. **Métricas:** proporção de `Novo` que avança com evidência, qualificados aceitos, consultas agendadas/realizadas, reversões humanas e divergências LEADS–CRM–Google. **Revisão:** 28/08/2026 ou antes após dez novas decisões humanas de qualificação. **Manter:** zero prefill isolado e zero preço inicial isolado como qualificado, com continuidade do funil. **Reverter:** apenas o complemento de origem se ele atribuir anúncio incorreto; nunca reabrir a qualificação por frase automática.
 
+### Revisão de comunicação autorizada em 12/09/2026
+
+Daniel autorizou uma revisão ampla dos textos das campanhas ativas do Google Ads, tomando 12/09/2026 como marco da nova comunicação. Nesta etapa, não há alteração do site, Meta, atendimento, orçamento, lances, segmentação, palavras-chave, metas ou rastreamento. A autorização substitui a espera por testes isolados de redação; não apaga o histórico nem dispensa a qualificação real dos contatos.
+
+O nicho de comunicação é a pessoa que considera cirurgia particular, compara profissionais e valoriza o olhar estético da cirurgiã, formação verificável, cuidado nos detalhes e clareza sobre o planejamento. A mensagem deve apresentar o procedimento desejado e razões concretas para escolher Amanda: residência na Unicamp, consulta com a cirurgiã, atenção à forma e à proporção, preparo e pós-operatório. Naturalidade é objetivo do planejamento, nunca promessa de resultado. Juventude, superioridade técnica não demonstrada e preço baixo não são argumentos publicitários.
+
+Os textos de mama, corpo e otoplastia são próprios do procedimento. Recursos comuns à conta não podem pressupor cirurgia facial. Intenções de preço devem esclarecer composição do investimento e próximos passos, sem faixa cirúrgica pública inventada ou promessa de orçamento antes da avaliação. A identificação médica completa permanece na primeira descrição fixada dos anúncios responsivos. Não anunciar casos comentados, materiais, condições ou serviços que a página atual não ofereça.
+
+**Hipótese:** uma comunicação específica, com autoria médica e atributos demonstráveis, melhora a passagem da busca para contato válido e consulta entre pessoas que têm alternativas de cirurgiões. Não há ganho de conversão comprovado antecipadamente.
+
+**Métricas e revisão:** integridade e aprovação após cada alteração; primeira leitura a partir do marco de 12/09, com horário efetivo de aplicação registrado no recibo; revisão em 19/09 e 26/09. Usar contatos válidos, qualificados, consultas agendadas/realizadas e custo por etapa. CTR e cliques são diagnósticos. A mudança ampla e as alterações concomitantes de outras tarefas impedem atribuição causal a uma frase isolada.
+
+**Manter ou corrigir:** manter enquanto houver conformidade, pertinência ao procedimento e continuidade íntegra até o atendimento. Corrigir ou restaurar somente os textos responsáveis por reprovação, expectativa incompatível, incoerência com a página ou deterioração consistente de qualidade. Não restaurar promessas de resultado ou recursos faciais fora de contexto. A lista preparada e o recibo de execução ficam nos arquivos `REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.*`; o estado publicado será declarado somente depois de releitura na conta.
+
 ## 3. Posicionamento da Dra. Amanda
 
 ### 3.1 Espaço que queremos ocupar
