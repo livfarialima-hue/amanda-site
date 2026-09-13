@@ -121,7 +121,8 @@
         "duplicateTransactions": 0,
         "classifierQueue": "done"
       },
-      "operationalConsistency": "Publication receipts recorded; final clean-worktree ops:check pending"
+      "operationalConsistency": "OK",
+      "finalOpsCheckAt": "2026-09-13T22:49:30.000Z"
     }
   },
   "previousCompletedRelease": {
