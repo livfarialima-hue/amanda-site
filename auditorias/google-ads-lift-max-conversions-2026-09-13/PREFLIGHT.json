@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
+  "status": "blocked_before_google_ads_live_preflight",
+  "capturedAt": "2026-09-13T23:41:47.368Z",
+  "timezone": "America/Sao_Paulo",
+  "account": {
+    "id": "995-334-4486",
+    "name": "Dra Amanda Schroeder"
+  },
+  "authorization": [
+    "entao faça todos os ajustes que vc sugeriu aqui lá no google ads.",
+    "pode aumentar para 30 o orçamento"
+  ],
+  "authorizedIntent": {
+    "campaignId": "24028216444",
+    "campaign": "S_BR_SP_LIFTING_FACIAL",
+    "code": "G26LIFT",
+    "bidding": {
+      "before": "MAXIMIZE_CLICKS",
+      "after": "MAXIMIZE_CONVERSIONS",
+      "targetCpaBRL": null
+    },
+    "budget": {
+      "beforeDailyBRL": 24,
+      "afterDailyBRL": 30,
+      "googleRecommendationDailyBRL": 47,
+      "applyGoogleRecommendation": false
+    },
+    "accountDailyBudgetBRL": {
+      "before": 99,
+      "after": 105
+    }
+  },
+  "registeredGoogleAdsBaseline": {
+    "status": "latest_verified_receipt_not_current_live_preflight",
+    "verifiedAt": "2026-09-13T23:15:23Z",
+    "source": "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json",
+    "activeCampaigns": 8,
+    "accountDailyBudgetBRL": 99,
+    "liftDailyBudgetBRL": 24,
+    "liftBidding": "MAXIMIZE_CLICKS",
+    "liftMaxCpcLimitBRL": null,
+    "measurementGoal": "Lead qualificado GCLID — campanhas"
+  },
+  "liveLeadsPreflight": {
+    "status": "verified_read_only",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "source": "Saúde das Integrações, _GOOGLE_ADS_EVENTOS e _GOOGLE_ADS_AJUSTE_RECIBOS",
+    "operationalHealth": {
+      "markedVsExportedDifference": 0,
+      "conflictingClickIds": 0,
+      "activeVsCanonicalFunnelDifference": 0,
+      "latestPreparedConversionAt": "2026-09-13T19:36:40-03:00"
+    },
+    "eventStates": {
+      "ready": 7,
+      "quarantinedLegacy": 5,
+      "invalidatedDowngradedToNew": 2
+    },
+    "liftCohort": {
+      "window": "2026-08-14/2026-09-12 by contact date",
+      "identifiedContacts": 7,
+      "currentPhaseNew": 7,
+      "qualified": 0,
+      "consultations": 0
+    },
+    "readyEventsResolvedToLift": 1,
+    "googleAdsAcceptance": "not_proven",
+    "limitation": "LEADS prova preparo e consistência local; não prova ingestão, aceite ou atribuição da ação no Google Ads."
+  },
+  "liveGoogleAdsPreflight": {
+    "status": "blocked_runtime_unavailable_before_initialization",
+    "checkedAt": "2026-09-13T23:41:47.368Z",
+    "error": "failed to write kernel assets: The system cannot find the path specified. (os error 3)",
+    "attemptedControllers": [
+      "mcp__cua_repl after reset",
+      "mcp__node_repl with @oai/sky after reset"
+    ],
+    "externalWritesPerformed": false,
+    "requiredRereadBeforeWrite": [
+      "authenticated account ID and campaign ID",
+      "campaign status, current budget and current bid strategy",
+      "absence of target CPA and shared budget",
+      "qualified-lead goal and conversion-action status",
+      "recent accepted conversions and actual spend",
+      "automatic-application settings and change history",
+      "all eight campaign budgets and account total"
+    ]
+  },
+  "blocker": {
+    "reason": "The authenticated browser controller failed before a current Google Ads read-only preflight could begin.",
+    "resolution": "Start a fresh Codex task or process, prove authenticated browser control, repeat the full live preflight, then apply and reread only the authorized campaign changes.",
+    "bypassAllowed": false
+  }
+}

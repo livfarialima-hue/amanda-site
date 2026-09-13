@@ -6,6 +6,14 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 13 de setembro de 2026 — candidato LIFT para Maximizar conversões e R$ 30/dia
+
+- **Decisão canônica:** seção 37 do Norte. Daniel escolheu `G26LIFT`, sua campanha prioritária, para o piloto de Maximizar conversões sem CPA desejado e definiu R$ 30/dia; a sugestão de R$ 47 fica recusada.
+- **Escopo:** somente campanha `24028216444`, com lance Maximizar cliques → Maximizar conversões e orçamento R$ 24 → R$ 30; total esperado R$ 99 → R$ 105/dia. Os outros sete orçamentos/lances e todos os demais objetos ficam preservados.
+- **Evidência e limite:** a coorte LIFT de 14/08–12/09 tem sete contatos identificados, todos em `Novo`, sem qualificado/consulta. A LEADS registra sete eventos `ready`, um resolvido para LIFT, mas não prova aceite no Google Ads. A baixa amostra exige piloto reversível e leitura downstream.
+- **Estado:** candidato local, sem escrita externa. O runtime do navegador falhou antes do preflight Google Ads; até nova leitura e readback, o estado vigente continua Maximizar cliques e R$ 24/dia, conta em R$ 99/dia.
+- **Revisão/rollback:** integridade imediata/24–48h e D+7/D+14/D+28 a partir da ativação verificada. Restaurar apenas LIFT para Maximizar cliques sem teto e R$ 24/dia diante de configuração divergente, falha de mensuração, gasto anormal ou regressão downstream consistente.
+
 ## 13 de setembro de 2026 — contenção de face genérica e exatas cervicais observadas
 
 - **Decisão canônica:** seção 36 do Norte; pacote externo limitado a `G26FACE` e `G26CERV`, sem alteração de site.

@@ -6,8 +6,8 @@
 
 **Criado em:** 9 de agosto de 2026
 
-**Última revisão estratégica:** 12 de setembro de 2026
-**Próxima revisão prevista:** integridade em 24 horas; leitura D+7/D+14 e decisão em D+30 dos pilotos secundários de mama e corpo, ou antes diante de regressão técnica, gasto anormal ou perda de atribuição
+**Última revisão estratégica:** 13 de setembro de 2026
+**Próxima revisão prevista:** integridade em 24 horas; leitura D+7/D+14 e decisão em D+30 dos pilotos secundários de mama e corpo; para o candidato LIFT, D+7/D+14/D+28 somente depois da ativação verificada, ou antes diante de regressão técnica, gasto anormal ou perda de atribuição
 
 ## 1. Regra de governança
 
@@ -1084,3 +1084,19 @@ O painel passa a oferecer, para retomadas proativas com telefone válido, **Canc
 **Hipótese e métrica:** a contenção deve reduzir buscas comparativas/navegacionais pouco aderentes em face, enquanto as exatas cervicais dão controle a uma demanda leiga de alta intenção sem ampliar verba. Medir termos, contatos identificados/válidos, qualificados aceitos, consultas agendadas/realizadas e custo por etapa da mesma coorte. Cliques, CTR, CPC e nota são diagnósticos; classificação insuficiente torna a leitura inconclusiva.
 
 **Revisão e rollback:** verificar integridade em 24–48 horas, sete dias completos em 21/09 e 14 dias completos em 28/09. Manter se a intenção ficar mais aderente sem perda desproporcional de contatos válidos. Restaurar apenas `G26FACE` a R$ 8/dia, reativar apenas a frase pausada e/ou pausar a nova exata responsável diante de regressão comprovada. Não apagar palavras, histórico, conversões ou dados. O estado aplicado depende do readback em `auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json`.
+
+## 37. Candidato autorizado — Maximizar conversões em lifting facial, 13/09/2026
+
+**Decisão autorizada, ainda não aplicada:** lifting facial é a campanha mais importante para Daniel. Ele autorizou usar `S_BR_SP_LIFTING_FACIAL` (`G26LIFT`, ID `24028216444`) como piloto de Maximizar conversões e definiu o orçamento exato em R$ 30/dia. O pacote troca somente o lance de Maximizar cliques para Maximizar conversões, sem CPA desejado, e eleva somente `G26LIFT` de R$ 24 para R$ 30/dia. Mantido o último baseline verificado de R$ 99/dia, o total esperado é R$ 105/dia. A recomendação do Google de R$ 47/dia não foi autorizada e fica recusada.
+
+**Motivo e evidência:** face continua sendo o eixo estratégico e lifting é a prioridade declarada. O lance automatizado pode usar sinais de leilão e dados da conta, mas a evidência downstream ainda é fraca: na coorte canônica de 14/08 a 12/09 há sete contatos identificados em `G26LIFT`, todos atualmente em `Novo`, sem qualificado ou consulta registrada. A LEADS contém sete eventos qualificados em estado `ready`, um resolvido para LIFT, porém não há recibo atual que comprove aceite ou atribuição pelo Google Ads. Isso sustenta um piloto estreito e reversível; não sustenta R$ 47, CPA desejado ou generalização para as outras campanhas.
+
+**Preflight e estado:** a saúde da LEADS foi relida sem divergência entre marcação e exportação, sem conflito de click ID e sem diferença entre funil ativo e canônico. O controlador autenticado do Google Ads falhou antes da inicialização com `failed to write kernel assets: The system cannot find the path specified. (os error 3)`. Portanto, o estado vivo da campanha não foi confirmado e nenhuma escrita externa ocorreu. O plano fica como candidato local em `auditorias/google-ads-lift-max-conversions-2026-09-13/`; o estado vigente continua Maximizar cliques e R$ 24/dia até readback posterior provar a aplicação.
+
+**Invariantes:** preservar os outros sete orçamentos e lances, todas as palavras e negativas, meta e ações de conversão, Pesquisa sem Display/parceiros, geografia por presença, idiomas, idades incluindo Desconhecida, dispositivos, agenda, RSAs, fixações, URLs, parâmetros e recursos. Aplicação automática de recomendações continua desligada. Não criar CPA/ROAS, ampla, Performance Max, visita à loja, nova conversão, site, Apps Script, LEADS, CRM, WhatsApp, Calendar ou Meta.
+
+**Execução e verificação obrigatórias:** em processo novo e com navegador autenticado funcional, reler conta, campanha, orçamento, lance, ausência de CPA e orçamento compartilhado, meta qualificada, estado da ação, conversões aceitas, gasto, recomendações automáticas, histórico e os oito orçamentos. Se o baseline divergir, interromper e reconciliar. Depois da escrita, reler `G26LIFT` em Maximizar conversões sem CPA e R$ 30/dia, conta em R$ 105/dia e histórico sem outro objeto alterado.
+
+**Hipótese e métrica:** em campanha prioritária, o lance por conversão pode direcionar o orçamento limitado a leilões com maior probabilidade de produzir o sinal qualificado. Medir contatos identificados/válidos, qualificados aceitos, consultas agendadas/realizadas e custo por etapa da mesma coorte. Conversão da interface, aprendizado, pontuação, clique, CTR e CPC são diagnósticos; baixa amostra ou classificação incompleta tornam a leitura inconclusiva.
+
+**Revisão e rollback:** registrar o horário real de ativação e contar integridade imediata/24–48h, D+7, D+14 e D+28 a partir dele. Reverter somente `G26LIFT` para Maximizar cliques sem teto de CPC e R$ 24/dia se surgir CPA inesperado, orçamento diferente de R$ 30, total diferente de R$ 105, falha de meta/atribuição, mudança concorrente indevida, gasto anormal ou regressão downstream consistente com mensuração saudável. Preservar histórico e toda mudança não pertencente a este pacote.

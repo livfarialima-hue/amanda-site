@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
+  "status": "candidate_blocked_pending_live_google_ads_preflight",
+  "accountId": "995-334-4486",
+  "authorization": [
+    "Daniel: entao faça todos os ajustes que vc sugeriu aqui lá no google ads.",
+    "Daniel: pode aumentar para 30 o orçamento"
+  ],
+  "baseCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
+  "registeredBaseline": {
+    "source": "latest verified Google Ads readback; must be confirmed live before write",
+    "verifiedAt": "2026-09-13T23:15:23Z",
+    "activeCampaigns": 8,
+    "accountDailyBudgetBRL": 99
+  },
+  "pilot": {
+    "campaignId": "24028216444",
+    "campaign": "S_BR_SP_LIFTING_FACIAL",
+    "code": "G26LIFT",
+    "reason": "Lifting facial is the declared strategic priority. The pilot is intentionally bounded because accepted qualified-conversion volume in Google Ads is not yet proven.",
+    "changes": {
+      "bidding": {
+        "before": "MAXIMIZE_CLICKS",
+        "after": "MAXIMIZE_CONVERSIONS",
+        "targetCpaBRL": null,
+        "portfolioStrategy": false
+      },
+      "budget": {
+        "beforeDailyBRL": 24,
+        "afterDailyBRL": 30,
+        "googleRecommendationDailyBRL": 47,
+        "applyGoogleRecommendation": false
+      }
+    }
+  },
+  "accountDailyBudgetBRL": {
+    "before": 99,
+    "after": 105
+  },
+  "preconditions": [
+    "Authenticated live readback matches account 995-334-4486 and campaign 24028216444.",
+    "G26LIFT is active, at R$ 24/day, on Maximize clicks, without a target CPA or shared budget.",
+    "The campaign still uses the qualified-lead goal and its conversion action is eligible for bidding.",
+    "All other budgets total R$ 75/day so the exact post-change account total is R$ 105/day.",
+    "No unreviewed draft, experiment, recommendation or concurrent change touches G26LIFT.",
+    "Current conversion acceptance and recent spend are captured without assuming that ready LEADS rows were accepted by Google."
+  ],
+  "executionSequence": [
+    "Reread the full precondition set without writing.",
+    "Change only G26LIFT bidding to Maximize conversions, leaving target CPA unset.",
+    "Change only G26LIFT average daily budget from R$ 24 to R$ 30.",
+    "Save, then reread campaign ID, bidding strategy, target CPA, budget, goal and status.",
+    "Reread every campaign budget and confirm the exact account total of R$ 105/day.",
+    "Inspect change history and automatic-application settings for unintended writes."
+  ],
+  "preserved": [
+    "the other seven campaign budgets and bid strategies",
+    "G26LIFT campaign, ad groups, keywords, negatives and search terms",
+    "qualified-lead goal and all conversion actions",
+    "Search network only, with Display and search partners disabled",
+    "São Paulo by presence, language, ages including Unknown, devices and schedule",
+    "RSAs, pins, URLs, tracking parameters, sitelinks and other assets",
+    "automatic recommendation application disabled",
+    "site, Netlify, Apps Script, LEADS, CRM, WhatsApp, Calendar and Meta"
+  ],
+  "notApplied": [
+    "Google budget recommendation of R$ 47/day",
+    "target CPA",
+    "target ROAS or conversion-value bidding",
+    "Maximize clicks or target impression share recommendations on other campaigns",
+    "broad match expansion",
+    "Display inclusion, search partners, Performance Max or optimized targeting",
+    "automatic RSA text generation or automatic keyword removal",
+    "store-visit goals or new conversion actions"
+  ],
+  "monitoring": {
+    "activationAt": null,
+    "integrity": "immediately after save and again in 24–48 hours",
+    "business": "D+7, D+14 and D+28 from verified activation",
+    "primaryMetrics": [
+      "identified and valid contacts from G26LIFT",
+      "qualified leads accepted by Google Ads",
+      "consultations scheduled and completed from the same cohort",
+      "cost per qualified lead and cost per consultation"
+    ],
+    "diagnosticOnly": [
+      "clicks",
+      "CTR",
+      "CPC",
+      "optimization score",
+      "learning status"
+    ],
+    "interpretation": "Low volume or incomplete classification is inconclusive; do not claim benefit from platform conversions alone."
+  },
+  "rollback": {
+    "trigger": "Unexpected target CPA, budget other than R$ 30, total other than R$ 105, goal/tracking failure, unintended concurrent setting, or sustained downstream/spend regression with healthy measurement.",
+    "action": "Restore only G26LIFT to Maximize clicks without CPC cap and R$ 24/day, then reread it and the R$ 99/day account total. Preserve all history and unrelated changes."
+  },
+  "execution": {
+    "status": "not_started",
+    "externalWritesPerformed": false,
+    "blocker": "Authenticated Google Ads controller failed before live preflight initialization.",
+    "receipt": "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md"
+  }
+}

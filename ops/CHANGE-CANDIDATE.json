@@ -1,28 +1,26 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
-  "title": "Contenção de face genérica e exatas cervicais observadas",
-  "status": "published_verified",
-  "baseCommit": "d9f945ce8b9c30c9491598e0f668841632607c44",
+  "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
+  "title": "Piloto de Maximizar conversões e R$ 30 por dia em lifting facial",
+  "status": "committed",
+  "baseCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou aplicar as modificações julgadas necessárias nas campanhas Google. O pacote exato limita-se a orçamento e palavras de G26FACE/G26CERV, sem site, atendimento ou dados de pacientes. O preflight de release foi aprovado para o commit 84230d90f882d170c53da5b2752a42c1377d34ac antes da escrita externa.",
-    "releasePreflight": {
-      "approvedCommit": "84230d90f882d170c53da5b2752a42c1377d34ac",
-      "approvedAt": "2026-09-13T22:49:20Z",
-      "approvedBy": "Daniel",
-      "reference": "faça as modificações que vc julgar necessarias nas campanhas do google então",
-      "result": "CHANGE_SAFETY_STATUS=OK"
-    }
+    "note": "Daniel autorizou aplicar os ajustes recomendados no Google Ads e definiu R$ 30/dia para lifting facial. O candidato restringe-se a G26LIFT, sem CPA desejado; a sugestão automática de R$ 47 fica fora. O release ainda depende de preflight vivo e de um commit candidato exato.",
+    "references": [
+      "entao faça todos os ajustes que vc sugeriu aqui lá no google ads.",
+      "pode aumentar para 30 o orçamento"
+    ],
+    "releasePreflight": null
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false,
-    "externalWritesScope": "Google Ads conta 995-334-4486: um orçamento, pausa de uma palavra, criação de três palavras exatas e uma tentativa recusada por política sem exceção; mesma projeção canônica do Plano no Drive após readback."
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true,
+    "externalWritesScope": "Google Ads conta 995-334-4486: somente campanha 24028216444/G26LIFT, lance Maximizar cliques para Maximizar conversões sem CPA desejado e orçamento médio diário de R$ 24 para R$ 30; total esperado R$ 99 para R$ 105/dia."
   },
   "scope": {
     "contracts": [
@@ -30,12 +28,12 @@
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/google-ads-ajustes-campanhas-2026-09-13/EXECUCAO.md",
-      "auditorias/google-ads-ajustes-campanhas-2026-09-13/PLANO.json",
-      "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json",
+      "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md",
+      "auditorias/google-ads-lift-max-conversions-2026-09-13/PLANO.json",
+      "auditorias/google-ads-lift-max-conversions-2026-09-13/PREFLIGHT.json",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/google-ads-campaign-adjustments-20260913.test.mjs",
+      "campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -52,21 +50,30 @@
       "docs/ARQUITETURA-JORNADA-PACIENTE.md"
     ],
     "preservedInvariants": [
-      "Somente campanhas 24028168714/G26FACE e 24023843174/G26CERV",
-      "G26FACE R$8 para R$4; G26CERV R$12; demais orçamentos iguais; total R$103 para R$99",
-      "Pausa sem exclusão de uma frase; três exatas observadas criadas e uma quarta recusada por política sem exceção; nenhuma negativa em lote",
-      "Lances, metas, ações de conversão, redes, geografia, idiomas, idade, dispositivos e agenda preservados",
-      "RSAs, textos, fixações, URLs, parâmetros, recursos e site preservados",
-      "Zero alteração de LEADS, CRM, Apps Script, WhatsApp, Calendar, Meta, paciente, consulta ou conversão"
+      "Somente campanha 24028216444/G26LIFT; os outros sete orçamentos e lances permanecem iguais",
+      "G26LIFT R$ 24 para R$ 30 e conta R$ 99 para R$ 105; a recomendação R$ 47 não é aplicada",
+      "Maximizar conversões sem CPA desejado, sem ROAS, portfólio ou teto inventado",
+      "Meta Lead qualificado GCLID e ações de conversão preservadas; evento ready na LEADS não é tratado como aceite do Google",
+      "Palavras, negativas, RSAs, URLs, recursos, redes, geografia, idioma, idade, dispositivo e agenda preservados",
+      "Aplicação automática de recomendações permanece desligada",
+      "Zero alteração de site, Netlify, Apps Script, LEADS, CRM, WhatsApp, Calendar, Meta, paciente, consulta ou conversão"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads",
+        "system": "Google Sheets LEADS",
         "status": "verified_read_only",
-        "reference": "auditorias/google-ads-ajustes-campanhas-2026-09-13/EXECUCAO.md",
-        "checkedAt": "2026-09-13T22:49:20Z",
-        "evidence": "Conta995-334-4486; oito campanhas/R$103dia. FACE ativa R$8,131cliques,R$239,81,0resultado; CERV ativa R$12,321cliques,R$377,22,0resultado. Nenhuma escrita no preflight."
+        "reference": "auditorias/google-ads-lift-max-conversions-2026-09-13/PREFLIGHT.json",
+        "checkedAt": "2026-09-13T23:41:47.368Z",
+        "evidence": "Saúde operacional com três divergências em zero; sete eventos ready, cinco legados em quarentena e dois invalidados; nenhum aceite no Google Ads inferido."
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Google Ads",
+        "status": "blocked_runtime_before_preflight",
+        "reference": "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md",
+        "checkedAt": "2026-09-13T23:41:47.368Z",
+        "evidence": "Runtime autenticado falhou antes da inicialização; nenhuma escrita externa ocorreu e o último recibo verificado continua sendo apenas baseline registrado."
       }
     ]
   },
@@ -82,24 +89,28 @@
       "npm.cmd run ops:check",
       "git diff --check",
       "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test campanhas/google-ads-campaign-adjustments-20260913.test.mjs"
+      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs"
     ],
-    "completedAt": "2026-09-13T23:20:03Z",
+    "completedAt": "2026-09-13T23:46:54.789Z",
     "results": {
-      "fullSuite": {
-        "passed": 1481,
+      "candidateContract": {
+        "passed": 6,
         "failed": 0
       },
       "acquisitionFocused": {
         "passed": 149,
         "failed": 0
       },
-      "settingsAndPackage": {
-        "passed": 9,
+      "settingsAndCandidate": {
+        "passed": 10,
+        "failed": 0
+      },
+      "fullSuite": {
+        "passed": 1481,
         "failed": 0
       },
       "architecture": "OK",
-      "changeSafety": "OK",
+      "changeSafety": "OK; nine changed files match the declared scope",
       "build": {
         "files": 193,
         "routes": 54,
@@ -109,72 +120,32 @@
         "routes": 54,
         "errors": 0
       },
-      "externalReadBack": {
-        "verifiedAt": "2026-09-13T23:15:23Z",
-        "activeCampaigns": 8,
-        "accountDailyBudgetBRL": 99,
-        "faceDailyBudgetBRL": 4,
-        "cervicalDailyBudgetBRL": 12,
-        "pausedKeywords": 1,
-        "exactKeywordsCreated": 3,
-        "policyExcluded": 1
-      },
-      "operationalConsistency": "OK após integração canônica, readback Google Ads e igualdade da projeção Drive"
+      "operationalConsistency": "expected SYNC_PENDING until external publication and receipts"
     }
   },
   "previousCompletedRelease": {
-    "changeId": "RECONCILIACAO-LEADS-CONVERSAS-2026-09-13",
-    "sourceCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
-    "verifiedAt": "2026-09-13T22:48:30.000Z",
-    "canonicalClosureCommit": "d9f945ce8b9c30c9491598e0f668841632607c44",
-    "appsScriptVersion": 152,
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "9d78c4ada29a4f29edcec97dfa6011a0980a900684560ddc42ffbf3a1793a5b0",
-    "receiptPath": "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
-  },
-  "rollback": {
-    "local": "Reverter somente os nove arquivos declarados deste pacote, preservando todo trabalho paralelo.",
-    "production": "Restaurar apenas G26FACE para R$8/dia, reativar somente a frase pausada e/ou pausar a nova exata responsável. Não apagar palavras, histórico, conversões ou dados; reler cada entidade."
-  },
-  "monitoring": {
-    "owner": "Daniel / equipe LIV",
-    "window": "Integridade24-48h; sete dias completos em21/09; quatorze dias completos em28/09, America/Sao_Paulo.",
-    "metrics": [
-      "termos nominais de terceiros em G26FACE",
-      "contatos identificados e válidos",
-      "qualificados aceitos",
-      "consultas agendadas e realizadas",
-      "custo por etapa"
-    ],
-    "rollbackRule": "Reverter somente o item responsável por destino/política/atribuição incorretos ou piora downstream consistente; baixa amostra/classificação insuficiente é inconclusiva."
-  },
-  "release": {
+    "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
     "approvedCommit": "84230d90f882d170c53da5b2752a42c1377d34ac",
     "reconciledCandidateCommit": "962c1b0daa6d8261ee84e2608e92f86ec107f363",
     "verifiedAt": "2026-09-13T23:17:43.485Z",
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "netlifyPublishedByThisChange": false,
-    "netlifyState": "inherited_from_verified_otoplasty_release",
-    "appsScriptVersion": 152,
-    "appsScriptPublishedByThisChange": false,
-    "googleAdsAccountId": "995-334-4486",
-    "googleAdsReadBack": true,
     "googleAdsAccountDailyBudgetBRL": 99,
-    "googleAdsFaceDailyBudgetBRL": 4,
-    "googleAdsCervicalDailyBudgetBRL": 12,
-    "googleAdsKeywordPauseReadBack": true,
-    "googleAdsExactKeywordsCreated": 3,
-    "googleAdsKeywordsPendingReview": 3,
-    "googleAdsPolicyExcluded": 1,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "002ec1abe2f287257d3a8fe7519e7258460519557a8ba45106210daa8f78de54",
-    "drivePlanReadBack": {
-      "modified": "2026-09-13T23:17:43.485Z",
-      "bytes": 178082,
-      "equal": true,
-      "preservedParallelLeadReconciliation": true
-    },
     "receiptPath": "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json"
-  }
+  },
+  "rollback": {
+    "local": "Reverter somente os nove arquivos declarados deste candidato, preservando todo trabalho paralelo.",
+    "production": "Se o pacote vier a ser aplicado e algum guardrail falhar, restaurar somente G26LIFT para Maximizar cliques sem teto de CPC e R$ 24/dia; reler a campanha e o total R$ 99/dia sem apagar histórico."
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Integridade imediata e 24–48h; D+7, D+14 e D+28 contados apenas do horário real de ativação verificada.",
+    "metrics": [
+      "contatos identificados e válidos de G26LIFT",
+      "qualificados aceitos pelo Google Ads",
+      "consultas agendadas e realizadas da mesma coorte",
+      "custo por qualificado e custo por consulta"
+    ],
+    "rollbackRule": "Configuração divergente, falha de meta/atribuição, gasto anormal ou regressão downstream consistente com mensuração saudável; baixa amostra ou classificação insuficiente é inconclusiva."
+  },
+  "release": null
 }

@@ -662,7 +662,11 @@
         "auditorias/google-ads-ajustes-campanhas-2026-09-13/PLANO.json",
         "auditorias/google-ads-ajustes-campanhas-2026-09-13/EXECUCAO.md",
         "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json",
-        "campanhas/google-ads-campaign-adjustments-20260913.test.mjs"
+        "campanhas/google-ads-campaign-adjustments-20260913.test.mjs",
+        "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md",
+        "auditorias/google-ads-lift-max-conversions-2026-09-13/PLANO.json",
+        "auditorias/google-ads-lift-max-conversions-2026-09-13/PREFLIGHT.json",
+        "campanhas/google-ads-lift-max-conversions-20260913.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
@@ -676,7 +680,8 @@
         "netlify/functions/lib/procedure-context.test.mjs",
         "campanhas/google-ads-communication.test.mjs",
         "campanhas/google-ads-settings.test.mjs",
-        "campanhas/google-ads-campaign-adjustments-20260913.test.mjs"
+        "campanhas/google-ads-campaign-adjustments-20260913.test.mjs",
+        "campanhas/google-ads-lift-max-conversions-20260913.test.mjs"
       ],
       "requiredCommands": [
         "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -687,7 +692,8 @@
         "npm.cmd run site:check",
         "npm.cmd run ops:check",
         "git diff --check",
-        "node --test campanhas/google-ads-settings.test.mjs"
+        "node --test campanhas/google-ads-settings.test.mjs",
+        "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
