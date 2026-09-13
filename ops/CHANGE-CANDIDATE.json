@@ -33,6 +33,7 @@
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/scheduled-care.mjs",
       "netlify/functions/lib/scheduled-care.test.mjs",
@@ -83,7 +84,7 @@
       "focused": "227/227",
       "fullSuite": "1460/1460",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "change": "18 arquivos exatos",
+      "change": "19 arquivos exatos",
       "staticArtifact": "193 arquivos iguais byte a byte ao artefato completo anterior;54rotas,zeroerro e nenhum arquivo operacional publico",
       "localCopyBuild": "Aprovado apos liberacao de espaco: 193 arquivos, 54 rotas, zero erro e nenhum arquivo operacional publico.",
       "diff": "git diff --check OK"

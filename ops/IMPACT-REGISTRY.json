@@ -894,6 +894,7 @@
         "netlify/functions/lib/scheduled-care.mjs",
         "netlify/functions/lib/scheduled-care.test.mjs",
         "apps-script/clinica-liv-leads/README.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
         "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
         "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html",
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
