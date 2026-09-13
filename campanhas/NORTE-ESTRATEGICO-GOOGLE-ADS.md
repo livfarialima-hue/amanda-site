@@ -37,7 +37,7 @@ A auditoria integrada pode questionar qualquer decisão vigente e propor altera�
 
 ## 2. Resumo executivo
 
-A estratégia não é competir por menor preço nem tentar apresentar a Dra. Amanda como uma cirurgiã-celebridade já consolidada. O espaço escolhido é o de uma cirurgia plástica particular, criteriosa e próxima: formação verificável, atendimento direto, naturalidade, decisão sem pressão e acompanhamento cuidadoso.
+A estratégia não é competir por menor preço nem tentar apresentar a Dra. Amanda como uma cirurgiã-celebridade já consolidada. O espaço escolhido é o de uma cirurgia plástica particular, criteriosa e próxima: segurança em primeiro lugar, formação verificável, atendimento direto, naturalidade, decisão sem pressão e acompanhamento cuidadoso.
 
 A aquisição digital deve captar pessoas com intenção real de avaliar um procedimento, conduzi-las a uma página coerente com sua procura e transformar essa descoberta em uma conversa qualificada no WhatsApp. Google Ads é o principal canal pago atual, mas site, busca orgânica, presença local e descoberta em buscadores com IA devem funcionar como um sistema coerente. O resultado de negócio não é o clique, a posição, a citação ou a mensagem iniciada: é, progressivamente, o lead qualificado, a consulta agendada, a consulta realizada e a cirurgia.
 
@@ -77,6 +77,7 @@ O complemento entra no mesmo marco de revisão de 12/09/2026, com as mesmas mét
 
 ### 3.1 Espaço que queremos ocupar
 
+- Segurança em primeiro lugar, demonstrada pelo cuidado com a indicação, pela cardiologia integrada na própria LIV e pelo critério de formação na escolha dos anestesistas. A consulta cardiológica pré-operatória está incluída no pacote cirúrgico; limites e aplicação por canal estão na seção 29.
 - Cirurgia plástica particular de boa qualidade, sem comunicação ostentatória.
 - Médica acessível, presente e próxima durante a avaliação e o acompanhamento.
 - Formação sólida e verificável: residência médica em Cirurgia Plástica pela Unicamp, pós-graduação em Cosmiatria e Procedimentos pelo Einstein, CRM-SP 191605 e RQE 110472.
@@ -95,7 +96,7 @@ O complemento entra no mesmo marco de revisão de 12/09/2026, com as mesmas mét
 
 ### 3.3 Proposta de valor em uma frase
 
-> Cirurgia plástica para quem quer avaliar uma mudança com cuidado, naturalidade e acompanhamento próximo, sem deixar de se reconhecer.
+> Cirurgia plástica com segurança em primeiro lugar, naturalidade e acompanhamento próximo, para quem quer mudar sem deixar de se reconhecer.
 
 ## 4. Público que queremos captar
 
@@ -939,3 +940,34 @@ Decisão vigente:
 **Métrica e revisão:** integridade imediata e em 24 horas; observação em D+7, D+14 e D+30 de contatos válidos, qualificados e consultas atribuíveis. Busca orgânica, impressões e cliques continuam diagnósticos; mudanças simultâneas impedem afirmar causalidade. A revisão clínica posterior permanece com a Dra. Amanda. As demais pautas de prioridade 2 e cinco aprofundamentos remanescentes ficam no Plano Executivo, sem fonte paralela de planejamento.
 
 **Manter ou corrigir:** manter páginas, fontes, links, busca e tracking íntegros; corrigir trecho impreciso, afirmação clínica sem suporte ou promessa indevida assim que identificado. Se houver regressão técnica material, usar o deploy anterior registrado no candidato. Não esperar janela de marketing para corrigir segurança ou veracidade.
+## 28. Decisão autorizada de 12/09/2026 — conteúdo acolhedor, breve e orientado à consulta
+
+**Decisão vigente:** por solicitação explícita de Daniel, priorizar português brasileiro natural, acolhedor e conciso. A informação deve responder à dúvida central, despertar interesse e ajudar a iniciar a consulta com a Amanda. Isso substitui a preferência operacional por textos longos nos lotes 25 e 27; o mínimo arbitrário de 700 palavras não é objetivo editorial nem requisito de qualidade.
+
+**Aplicação:** revisar os nove textos novos ou ampliados dos dois lotes, preservando mídias, referências e alertas essenciais; acrescentar um comparativo curto entre lip lifting e preenchimento labial. A biblioteca passa de 27 para 28 leituras e o sitemap de 52 para 53 rotas. O registro de publicação efetiva ficará no Plano Executivo e no candidato, após verificação.
+
+**Critério de linguagem:** abrir com a dúvida da pessoa e uma resposta simples; explicar termos apenas quando ajudam; cortar repetições, listas extensas e frases burocráticas. Convidar para conversar com a Amanda, sem exigir que a pessoa conheça a técnica ou já tenha decidido operar. Nos guias curtos desta rodada, o corpo principal tem faixa de controle de 150–450 palavras, até seis seções e parágrafos curtos; essa faixa é um guardrail de concisão, não uma meta universal de SEO. Segurança mantém seu formato próprio, com vídeo e perguntas recolhidas.
+
+**Motivo e evidência:** feedback direto do usuário sobre excesso de informação e aparência de texto de IA; os seis guias recentes tinham 545–648 palavras só no corpo principal. Não há evidência nova de desempenho ou de preferência medida das pacientes.
+
+**Hipótese:** menos esforço de leitura e um convite mais próximo podem ajudar pessoas interessadas a chegar à consulta. Não esconder riscos ou limitações para aumentar conversão; preservar mensagens de urgência e proibição de mudar medicamentos por conta própria. Fontes ficam disponíveis sem dominar a leitura. A revisão médica posterior continua pendente, sem autoria ou revisão atribuída indevidamente.
+
+**Métrica e revisão:** contatos válidos, qualificados e consultas atribuíveis; cliques, busca e impressões apenas como diagnóstico. Integridade imediata/24 h; leitura em 19/09, 26/09 e 12/10, sem espera obrigatória para corrigir ou publicar. Mudanças simultâneas e amostra pequena impedem atribuir ganho causal ao tom.
+
+**Manter ou corrigir:** manter clareza, veracidade e navegação íntegra; ajustar frases após revisão humana ou diante de dúvidas recorrentes; retirar afirmação imprecisa imediatamente. Reverter apenas o delta afetado se houver regressão técnica. Páginas comerciais, anúncios, verba, bot, WhatsApp, funções e tracking permanecem fora do escopo; reutilização em campanhas exige etapa própria.
+
+## 29. Decisão autorizada de 12/09/2026 — segurança em primeiro lugar e equipe integrada
+
+**Decisão vigente:** tornar a segurança uma prioridade explícita da comunicação, apoiada em cuidados concretos: indicação criteriosa, avaliação cardiológica na própria Clínica LIV e anestesistas selecionados criteriosamente, com atenção à formação. A facilidade de comunicação entre cardiologista, cirurgiã e anestesistas é o benefício a explicar; o nome de uma instituição de ensino, sozinho, não demonstra ausência de risco.
+
+**Motivo e evidência:** Daniel identificou esse diferencial e pediu sua incorporação ao site e às diretrizes. Confirmou expressamente que a consulta cardiológica pré-operatória está incluída no pacote cirúrgico. A [apresentação oficial da LIV](https://livfarialima.com.br/), consultada em 12/09/2026, informa a formação do Dr. Daniel Added na USP, Cardiologia no InCor/HC-FMUSP, CRM-SP 199104, RQE 145565 e a inclusão da consulta no pacote. A seleção dos anestesistas conforme sua formação foi informada por Daniel; não há autorização para inventar títulos, instituições, protocolos ou certificações adicionais.
+
+**Aplicação no site:** mensagem curta na faixa de confiança da home e nos blocos já existentes de segurança, equipe e clínica; reforço em avaliação facial, blefaroplastia, lifting facial e lifting cervical; explicação complementar no artigo de segurança. Preservar os cuidados oculares específicos da blefaroplastia e as demais informações essenciais. Cada página deve funcionar sozinha, sem repetir toda a explicação em cada seção. A mensagem não ocupa o lugar da queixa que trouxe a pessoa nem de um convite simples à consulta com Amanda.
+
+**Limites clínicos e comerciais:** a consulta cardiológica é parte do pacote cirúrgico, não da primeira consulta com a Dra. Amanda, contratada separadamente. Não anunciar como brinde, gratuidade, desconto, liberação automática ou exames incluídos. Não prometer atendimento no mesmo dia, ECG/eco para todas as pacientes, menor risco comprovado, resultado garantido ou cirurgia sem risco. Exames e decisões são individualizados, e cardiologia não substitui a avaliação anestésica. A referência à USP descreve a formação do cardiologista, não vínculo, chancela ou parceria da clínica; não se estende aos anestesistas. Ao identificar o profissional no material detalhado, preservar nome, Médico, especialidade, CRM e RQE corretos.
+
+**Aplicação futura em marketing:** uma ideia principal por peça. Em público frio, manter uma abertura acolhedora e uma prova de cuidado; não reunir queixa, currículo, cardiologia, hospital, anestesia e pacote no mesmo anúncio. Em conteúdos de confiança e para pessoas já interessadas, explicar como a equipe se comunica. A inclusão no pacote entra como esclarecimento de organização do preparo, nunca incentivo para fechar cirurgia. O guia de linguagem detalha exemplos subordinados a esta decisão. Esta rodada não altera anúncios, verba, público, conversões, bot ou mensagens; eventual veiculação exige etapa própria.
+
+**Hipótese, métrica e revisão:** explicar o cuidado de forma concreta pode reduzir dúvidas e facilitar o interesse em consultar Amanda. Não há ganho de conversão demonstrado. Acompanhar dúvidas sobre segurança, entendimento do pacote, contatos válidos, qualificados e consultas; cliques são diagnóstico. Integridade imediata e em 24 h; leitura em 19/09, 26/09 e 12/10; revisão clínica posterior quando disponível, sem apresentá-la como já feita.
+
+**Manter ou corrigir:** manter enquanto verdadeiro, claro e coerente com o serviço prestado. Corrigir prontamente confusão sobre exames, primeira consulta, função do cardiologista/anestesista ou vínculo com a USP. Se o serviço ou a condição comercial mudar, atualizar juntos Norte, guia e páginas afetadas. Reverter apenas o delta afetado por regressão, preservando publicações paralelas.

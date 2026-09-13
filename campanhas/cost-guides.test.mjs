@@ -76,5 +76,5 @@ test("new guides are discoverable from the library, their hubs and the sitemap",
 
   assert.match(breastHub, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
   assert.match(bodyHub, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
-  assert.match(library, /27 leituras educativas/);
+  assert.match(library, /28 leituras educativas/);
 });

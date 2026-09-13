@@ -491,7 +491,7 @@ test("all public pages use one current version for every tracking asset", () => 
   }
 });
 
-test("educational pilot is complete, sourced and discoverable from the library", () => {
+test("educational articles are concise, sourced and discoverable from the library", () => {
   const articles = [
     {
       file: "conteudos/como-escolher-cirurgiao-plastico/index.html",
@@ -506,12 +506,12 @@ test("educational pilot is complete, sourced and discoverable from the library",
     {
       file: "conteudos/minilifting-lifting-facial-deep-plane/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/minilifting-lifting-facial-deep-plane/",
-      required: [/Deep plane é uma abordagem cirúrgica, não um selo de superioridade/i, /pubmed\.ncbi\.nlm\.nih\.gov\/41100833/i],
+      required: [/não significa que seja a melhor opção para todas as pessoas/i, /pubmed\.ncbi\.nlm\.nih\.gov\/41100833/i],
     },
     {
       file: "conteudos/como-se-preparar-cirurgia-plastica/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/como-se-preparar-cirurgia-plastica/",
-      required: [/Não suspenda anticoagulantes/i, /asahq\.org\/preparing-for-surgery/i, /Jejum e orientações/i],
+      required: [/Não suspenda anticoagulantes/i, /asahq\.org\/preparing-for-surgery/i, /Jejum e exames/i],
     },
     {
       file: "conteudos/recuperacao-lifting-cervical/index.html",
@@ -521,9 +521,15 @@ test("educational pilot is complete, sourced and discoverable from the library",
     {
       file: "conteudos/otomodelacao-ou-otoplastia/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/otomodelacao-ou-otoplastia/",
-      required: [/Moldagem em bebês é uma situação diferente/i, /chop\.edu\/treatments\/ear-molding/i, /não deve ser apresentada como tratamento para perda de audição/i],
+      required: [/Moldagem em bebês é uma situação diferente/i, /chop\.edu\/treatments\/ear-molding/i, /não é um tratamento para perda de audição/i],
     },
   ];
+
+  articles.push({
+    file: "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+    canonical: "https://draamandaschroeder.com.br/conteudos/lip-lifting-ou-preenchimento-labial/",
+    required: [/não encurta a pele entre o nariz e o lábio superior/i, /cicatriz nessa região/i, /raramente, complicações graves na circulação/i, /clevelandclinic\.org\/health\/procedures\/lip-lift/, /fda\.gov\/medical-devices/, /data-procedure="lip-lifting"/],
+  });
 
   for (const article of articles) {
     const html = readFileSync(path.join(root, article.file), "utf8");
@@ -543,22 +549,25 @@ test("educational pilot is complete, sourced and discoverable from the library",
     assert.doesNotMatch(html, /R\$\s*\d/i, article.file);
     article.required.forEach((pattern) => assert.match(html, pattern, article.file));
 
-    const readableText = html
-      .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&[a-z0-9#]+;/gi, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    assert.ok(readableText.split(" ").length >= 700, `${article.file} should contain at least 700 readable words`);
+    // Prefer focused answers; required clinical coverage above still applies.
+    const body = html.match(/<div class="article-body">([\s\S]*?)<details class="article-references">/)?.[1] || "";
+    const readableText = body.replace(/<[^>]+>/g, " ").replace(/&[a-z0-9#]+;/gi, " ").trim();
+    const words = readableText.split(/\s+/).length;
+    assert.ok(words >= 150 && words <= 450, article.file + ": focused body must be 150–450 words, got " + words);
+    assert.ok([...body.matchAll(/<h2>/g)].length <= 6, article.file + " should not read like a manual");
+    for (const paragraph of body.matchAll(/<p>([\s\S]*?)<\/p>/g)) {
+      assert.ok(paragraph[1].replace(/<[^>]+>/g, " ").trim().split(/\s+/).length <= 85, article.file + " needs short paragraphs");
+    }
+    assert.match(html, /(?:consulta com a|Na consulta, a|Converse com a) (?:Dra\. )?Amanda/i, article.file + " needs a clear, respectful invitation");
   }
 
   const library = readFileSync(path.join(root, "conteudos/index.html"), "utf8");
   const uniqueArticleLinks = new Set(
     [...library.matchAll(/class="cl-article" href="([^"]+)"/g)].map((match) => match[1]),
   );
-  assert.equal(uniqueArticleLinks.size, 27);
-  assert.match(library, /data-content-total>27 leituras educativas/);
-  assert.match(library, /class="cl-library-count" data-content-total>27 conteúdos/);
+  assert.equal(uniqueArticleLinks.size, 28);
+  assert.match(library, /data-content-total>28 leituras educativas/);
+  assert.match(library, /class="cl-library-count" data-content-total>28 conteúdos/);
   articles.forEach((article) => {
     const relativeHref = article.file.replace(/^conteudos\//, "").replace(/index\.html$/, "");
     assert.match(library, new RegExp(`class="cl-article" href="${relativeHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
@@ -589,9 +598,9 @@ test("educational pilot is complete, sourced and discoverable from the library",
 
 test("expanded educational articles preserve prior material and do not claim unperformed medical review", () => {
   const expected = [
-    ["cuidados-cicatrizacao-cirurgia", /Silicone e massagem não começam em qualquer momento/i, /aad\.org\/public\/diseases\/a-z\/scars-treatment/],
+    ["cuidados-cicatrizacao-cirurgia", /Quando usar silicone ou fazer massagem/i, /aad\.org\/public\/diseases\/a-z\/scars-treatment/],
     ["papada-contorno-cervical", /Quando retirar gordura pode não ser suficiente/i, /plasticsurgery\.org\/cosmetic-procedures\/liposuction/],
-    ["seguranca-cirurgia-plastica", /Uma lista de perguntas para conferir o plano/i, /cirurgiaplastica\.org\.br\/seguranca-do-paciente\/seguranca-e-riscos/],
+    ["seguranca-cirurgia-plastica", /Três perguntas para levar à consulta/i, /cirurgiaplastica\.org\.br\/seguranca-do-paciente\/seguranca-e-riscos/],
   ];
   for (const [slug, heading, source] of expected) {
     const html = readFileSync(path.join(root, "conteudos", slug, "index.html"), "utf8");
@@ -644,11 +653,11 @@ test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orp
 
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishDirectory, "tmp/netlify-deploy");
-  assert.equal(result.summary.sitemapUrls, 52);
-  assert.equal(result.summary.expectedHttp200, 52);
-  assert.equal(result.summary.selfCanonical, 52);
-  assert.equal(result.summary.indexable, 52);
-  assert.equal(result.summary.oneH1, 52);
+  assert.equal(result.summary.sitemapUrls, 53);
+  assert.equal(result.summary.expectedHttp200, 53);
+  assert.equal(result.summary.selfCanonical, 53);
+  assert.equal(result.summary.indexable, 53);
+  assert.equal(result.summary.oneH1, 53);
   assert.equal(result.summary.orphanPages, 0);
   assert.equal(result.summary.auditFilesInArtifact, 0);
   assert.ok(result.summary.redirects >= 1);
@@ -684,6 +693,59 @@ test("audit and operations files are excluded from the generated deploy artifact
   } finally {
     rmSync(fixtureRoot, { recursive: true, force: true });
   }
+});
+
+test("safety-first pages explain integrated care and the surgical package without promotional promises", () => {
+  const pages = [
+    "index.html",
+    "avaliacao-facial/index.html",
+    "blefaroplastia/index.html",
+    "lifting-facial/index.html",
+    "lifting-cervical/index.html",
+    "conteudos/seguranca-cirurgia-plastica/index.html",
+  ];
+  for (const file of pages) {
+    const html = readFileSync(path.join(root, file), "utf8");
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || "";
+    const visible = main.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    assert.match(visible, /sua segurança vem primeiro/i, file);
+    assert.match(visible, /pacote cirúrgico inclui a consulta cardiológica pré-operatória na própria LIV/i, file);
+    assert.match(visible, /cardiologista com formação na USP/i, file);
+    assert.match(visible, /anestesistas.{0,80}selecionados criteriosamente, com atenção à formação/i, file);
+    assert.match(visible, /(?:troca de informações|comunicação entre os profissionais|comunicação com a cirurgiã)/i, file);
+    assert.match(html, /id="seguranca-integrada"/, file);
+    assert.doesNotMatch(visible, /segurança garantida|cirurgia sem risco|mais segura que|consulta grátis|ganhe a consulta|equipe da USP|clínica vinculada à USP|exames incluídos|liberação automática/i, file);
+    if (!file.startsWith("conteudos/")) {
+      assert.match(main, /href="(?:\.\.\/)?conteudos\/seguranca-cirurgia-plastica\/"/, file);
+    }
+  }
+});
+
+test("safety guide distinguishes the cardiac consultation, initial appointment and anesthesia evaluation", () => {
+  const html = readFileSync(path.join(root, "conteudos/seguranca-cirurgia-plastica/index.html"), "utf8");
+  const cardiac = html.match(/<section[^>]*id="seguranca-integrada"[^>]*>([\s\S]*?)<\/section>/)?.[1] || "";
+  assert.match(cardiac, /Dr\. Daniel Added, médico cardiologista com formação na USP — CRM-SP 199104 · RQE 145565/);
+  assert.match(html, /primeira consulta com a Dra\. Amanda, que é contratada separadamente/);
+  assert.match(html, /A consulta com o cardiologista substitui a avaliação anestésica\?/);
+  assert.match(html, /Não\. São avaliações com funções diferentes/);
+  assert.match(html, /Os cuidados e os exames são definidos conforme cada paciente/);
+  assert.match(html, /não tornam uma cirurgia isenta de complicações/);
+  assert.equal((html.match(/class="faq-item"/g) || []).length, 7);
+  assert.doesNotMatch(html, /reviewedBy|Revisado pela|Conteúdo médico revisado/i);
+  const bleph = readFileSync(path.join(root, "blefaroplastia/index.html"), "utf8");
+  assert.match(bleph, /Fechamento, sintomas, olho seco e função das pálpebras/);
+  assert.match(bleph, /Avaliação oftalmológica pode ser solicitada/);
+});
+
+test("communication guidance ties the safety message to confirmed facts and channel limits", () => {
+  const north = readFileSync(path.join(root, "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md"), "utf8");
+  const guide = readFileSync(path.join(root, "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md"), "utf8");
+  assert.match(north, /## 29\. Decisão autorizada de 12\/09\/2026 — segurança em primeiro lugar e equipe integrada/);
+  assert.match(guide, /Diretriz vigente: seção 29 do Norte Estratégico/);
+  assert.match(guide, /A primeira consulta com Amanda é separada/);
+  assert.match(guide, /A USP qualifica a formação do cardiologista; não é selo da clínica/);
+  assert.match(guide, /não modifica campanhas ou respostas automáticas/);
+  assert.match(north, /revisão clínica posterior quando disponível, sem apresentá-la como já feita/);
 });
 
 test("offline site gate fails closed for missing pages, noindex, canonical, H1, orphan and redirect regressions", () => {
