@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
-  "status": "site_published_verified_drive_pending",
+  "status": "published_verified",
   "baseline": {
     "canonicalCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
     "previousSiteCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
@@ -1762,17 +1762,36 @@
       "whatsappClicks": 0,
       "optionalCookiesAccepted": false
     },
-    "closureMetadataOnly": true
+    "closureMetadataOnly": true,
+    "opsClosure": "ops:check obrigatorio apos commit final, antes da entrega",
+    "cleanupAndParallelChangesPreserved": true
   },
   "drive": {
-    "status": "pending",
+    "status": "verified",
     "folderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2",
-    "planId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    "documentationCommit": "1a932056f6df0ef5743dad5206a2f62198944a38",
+    "plan": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view",
+      "modified": "2026-09-13T13:28:07.046Z",
+      "characters": 168596,
+      "sha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+      "equal": true
+    },
+    "closedReport": {
+      "id": "1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA",
+      "url": "https://drive.google.com/file/d/1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA/view?usp=drivesdk",
+      "modified": "2026-09-13T13:28:09.426Z",
+      "characters": 13429,
+      "sha256": "def372b83bbbc45bc3ed6cbc9aa3116a6bb35f3ebf4fb449789debfb84f42f8b",
+      "equal": true
+    }
   },
   "rollback": {
     "netlifyDeployId": "6aa6998a46297000089e1e5d",
     "appsScriptMustRemain": 151
   },
   "patientTestMessages": 0,
-  "syntheticConversions": 0
+  "syntheticConversions": 0,
+  "verifiedAt": "2026-09-13T13:28:29Z"
 }

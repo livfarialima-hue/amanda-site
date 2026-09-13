@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
   "title": "Comunicacao do site por intencao e escolha da cirurgia com Amanda",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
   "authorization": {
     "required": true,
@@ -116,7 +116,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_release",
     "commands": [
       "node --test campanhas/site-communication.test.mjs",
       "node --check campanhas/content-library.js",
@@ -164,7 +164,7 @@
         "priceGuideCta": "present_in_article_not_hero",
         "previewUrl": "http://127.0.0.1:4186/lifting-facial/"
       },
-      "opsCheck": "SYNC_PENDING ate releitura do Plano no Drive e recibo final",
+      "opsCheck": "Fechamento exige ops:check OK em branch canonica limpa; recibos completos, executar apos commit.",
       "reconciliation": "Delta exclusivo de comunicacao; nenhum arquivo em apps-script ou netlify difere do baseline fcae9e42",
       "public": {
         "pages": 54,
@@ -208,10 +208,10 @@
   "release": {
     "approvedCommit": "77433528d0247c46f5482db29932094e0f534783",
     "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
-    "verifiedAt": "2026-09-13T13:24:39.167Z",
+    "verifiedAt": "2026-09-13T13:28:29Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanProjectionStatus": "pending_readback",
-    "notes": "Site publicado e verificado; Plano e copia fechada da auditoria em sincronizacao. Bruna: hashes das12funcoes e5programacoes identicos. Apps Script151 herdado, nao republicado. Candidato de atribuicao0ff0dd2 intocado. Metadados de observacao no manifesto sao recibo apenas; commit funcional da Bruna permanece30c44f03.",
+    "drivePlanProjectionStatus": "verified",
+    "notes": "Site7743352 publicado e verificado; Plano no mesmo ID e relatorio fechado relidos iguais por SHA256. Apps Script151 herdado;12funcoes/5programacoes identicas e aniversario manual preservado. Finalizacao documental apenas, sem novo deploy funcional. Candidato de atribuicao0ff0dd2 intocado.",
     "integrationRequiredBeforePublication": false,
     "observedParallelCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
     "appsScriptVersion": 151,
@@ -220,7 +220,25 @@
       "appsScriptPublishedByThisTask": false,
       "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117"
     },
-    "driveAuditFolderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2"
+    "driveAuditFolderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2",
+    "drivePlanSha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+    "drivePlanReadback": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view",
+      "modified": "2026-09-13T13:28:07.046Z",
+      "characters": 168596,
+      "sha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+      "equal": true
+    },
+    "driveClosedAuditReadback": {
+      "id": "1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA",
+      "url": "https://drive.google.com/file/d/1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA/view?usp=drivesdk",
+      "modified": "2026-09-13T13:28:09.426Z",
+      "characters": 13429,
+      "sha256": "def372b83bbbc45bc3ed6cbc9aa3116a6bb35f3ebf4fb449789debfb84f42f8b",
+      "equal": true
+    },
+    "documentationCommit": "1a932056f6df0ef5743dad5206a2f62198944a38"
   },
   "rollback": {
     "local": "Reverter somente o delta editorial, sem tocar em midias compartilhadas ou trabalho paralelo.",
