@@ -6,6 +6,15 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — abordagem de preço consultiva e revisão com fonte
+
+- **Decisão:** seção 31 do Norte. Pergunta de preço é planejamento; preservar primeira resposta sem números, lista autorizada e autonomia da paciente.
+- **Evidência/motivo:** solicitação de Daniel; oito regressões reproduzidas antes da correção. Referências históricas de 2025 relidas no Drive, sem tratá-las como preço atual da Amanda.
+- **Mudança:** oferta mais breve, pagamento somente quando perguntado, faixa facial pertinente, bloqueio de valores extras, rascunho interno com ressalva e fonte; variação superior/completa distinguida. Casos sem fonte não recebem número inventado.
+- **Hipótese/métrica:** melhorar clareza e passagem de contato qualificado a consulta, sem pressão. A teoria consultiva é adaptação, não comprovação de ganho clínico/comercial.
+- **Revisão:** integridade imediata/24h, D+7 em 19/09; manter/corrigir segundo as regras do Norte. Não houve mensagem real de teste nem modificação da LEADS, Calendar ou Apps Script.
+- **Estado:** candidato em validação; publicação, commit e verificação constarão de auditorias/bruna-preco-2026-09-12/PUBLICACAO.json.
+
 ## 12 de setembro de 2026 — SEO e descoberta por IA com evidência do Search Console
 
 - **Decisão canônica:** seção 30 do Norte; preservadas as diretrizes de concisão, segurança e aquisição qualificada.

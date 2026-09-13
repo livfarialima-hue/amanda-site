@@ -52,7 +52,7 @@ test("the first known lifting price response answers without a mandatory continu
   assert.doesNotMatch(reply, /qual cirurgia ou qual região/i);
   assert.match(
     reply,
-    /referência mais concreta.+faixa geral de valores como ponto de partida/is,
+    /posso te passar uma faixa geral de valores como ponto de partida/is,
   );
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.match(
@@ -79,9 +79,9 @@ test("the first cervical price response uses the approved soft range offer", () 
     reply,
     [
       "Claro, Adriana.",
-      "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso.",
+      "Ter uma noção de valor ajuda no planejamento. Na cervicoplastia, o valor depende da extensão do tratamento do pescoço e de possíveis associações à face, definidas na avaliação.",
       "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
-      "Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.",
+      "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.",
     ].join("\n\n"),
   );
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
@@ -116,7 +116,7 @@ test("the real adult otoplasty question answers the safe comparison before price
   assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.match(
     reply,
-    /referência mais concreta.+faixa geral de valores como ponto de partida/is,
+    /posso te passar uma faixa geral de valores como ponto de partida/is,
   );
   assert.doesNotMatch(reply, /R\$\s*(?:8|14)\s*mil/i);
   assert.doesNotMatch(reply, /é um procedimento não cirúrgico/i);
@@ -186,7 +186,7 @@ test("the approved Brenda lifting reply offers a range elegantly on the next ste
       "Claro, Brenda.",
       "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.",
       "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
-      "Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.",
+      "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.",
     ].join("\n\n"),
   );
   assert.doesNotMatch(reply, /R\$\s*\d/);
@@ -284,8 +284,8 @@ test("creates a patient-ready lifting facial price suggestion for human review",
   assert.match(reply, /técnica, complexidade, necessidades individuais/i);
   assert.match(reply, /equipe, hospital, anestesia, materiais e acompanhamento/i);
   assert.match(reply, /não representa honorários isolados/i);
-  assert.match(reply, /parcelado antecipadamente/i);
-  assert.match(reply, /desconto à vista/i);
+  assert.doesNotMatch(reply, /parcelado antecipadamente/i);
+  assert.doesNotMatch(reply, /desconto à vista/i);
   assert.match(
     reply,
     /conteudos\/quanto-custa-lifting-facial-sao-paulo/,
@@ -321,8 +321,8 @@ test("creates the approved lifting price reply for direct patient delivery", () 
   assert.match(reply, /valor final é definido após avaliação e planejamento/i);
   assert.match(reply, /pode ficar fora dessa faixa/i);
   assert.match(reply, /não representa honorários isolados/i);
-  assert.match(reply, /parcelado antecipadamente/i);
-  assert.match(reply, /desconto à vista/i);
+  assert.doesNotMatch(reply, /parcelado antecipadamente/i);
+  assert.doesNotMatch(reply, /desconto à vista/i);
   assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.doesNotMatch(reply, /explico a avaliação|prefere manhã ou tarde/i);
   assert.doesNotMatch(reply, /obrigada por aguardar/i);
@@ -406,7 +406,7 @@ test("acknowledges a price request while the approved value is pending", () => {
   });
 
   assert.match(daytime, /^Olá, Van! Eu sou a Bruna/);
-  assert.match(daytime, /faixa atual de valor para a blefaroplastia completa/);
+  assert.match(daytime, /faixa atual de valor para a blefaroplastia/);
   assert.doesNotMatch(daytime, /desconto à vista/);
   assert.doesNotMatch(daytime, /parcelado antecipadamente/);
   assert.match(daytime, /te retorno por aqui/);
@@ -763,13 +763,14 @@ test("price review alert contains the original question and a copyable answer", 
   assert.match(alert, /Revise e copie manualmente/);
   assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
-  assert.match(alert, /parcelamento antecipado/);
-  assert.match(alert, /desconto à vista/);
-  assert.match(alert, /segurança, naturalidade/);
+  assert.doesNotMatch(alert, /parcelamento antecipado|desconto à vista/);
+  assert.match(alert, /Base histórica interna/);
+  assert.match(alert, /confirmar valores atuais/);
+  assert.match(alert, /não é orçamento, proposta nem garantia de preço/);
   assert.match(alert, /hospital, anestesista, auxiliar, instrumentador/i);
   assert.match(alert, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.doesNotMatch(alert, /Prefere manhã ou tarde|posso verificar horários/i);
-  assert.ok(alert.length <= 1100);
+  assert.ok(alert.length <= 1600); // Internal email keeps source and the complete draft.
 });
 
 test("price review alert preserves the one-guide-per-conversation rule", () => {

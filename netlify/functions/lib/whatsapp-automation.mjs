@@ -1,4 +1,5 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
+import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
   isCommercialSolicitation,
@@ -81,31 +82,17 @@ const DIRECT_LIFTING_PRICE_PROCEDURES = new Set([
 ]);
 const DIRECT_OTOPLASTY_PRICE_PROCEDURES = new Set(["otoplastia"]);
 
-const LIFTING_FACIAL_PRICE_RANGE_REPLY_PATTERN =
-  /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
-const LIFTING_CERVICAL_PRICE_RANGE_REPLY_PATTERN =
-  /cervicoplastia(?:\s*\(lifting\s+cervical\))?[\s\S]{0,180}R\$\s*18\s*mil\s+e\s+R\$\s*26\s*mil/i;
 const OTOPLASTY_PRICE_RANGE_REPLY_PATTERN =
   /otoplastia[\s\S]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i;
 
-function isAutomaticSurgicalPriceProcedure(procedure) {
-  return (
-    DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure) ||
-    DIRECT_OTOPLASTY_PRICE_PROCEDURES.has(procedure)
-  );
-}
-
 function hasPreviousLiftingRangeReply(recentConversation, procedure) {
   if (!DIRECT_LIFTING_PRICE_PROCEDURES.has(procedure)) return false;
-  const pattern = procedure === "lifting_cervical"
-    ? LIFTING_CERVICAL_PRICE_RANGE_REPLY_PATTERN
-    : LIFTING_FACIAL_PRICE_RANGE_REPLY_PATTERN;
   return (Array.isArray(recentConversation) ? recentConversation : []).some(
     (turn) =>
       (
         turn?.role === "assistant" ||
         ["bruna", "equipe_humana"].includes(turn?.source)
-      ) && pattern.test(String(turn?.text || "")),
+      ) && containsApprovedSurgicalRange(String(turn?.text || ""), procedure),
   );
 }
 

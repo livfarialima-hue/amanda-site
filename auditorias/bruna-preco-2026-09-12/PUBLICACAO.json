@@ -1,0 +1,19 @@
+{
+  "changeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
+  "status": "tested_local",
+  "baselineCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
+  "baselineDeploy": "6aa6038eb31161000809495b",
+  "appsScriptVersion": 150,
+  "patientTestMessages": 0,
+  "tests": {
+    "baseline": "8/8 novos cenários reproduziram falhas antes das correções.",
+    "fullSuite": "1456/1456 aprovados",
+    "focused": "170/170 antes do cenário adicional de valor intercalado; cenário adicional incluído na suíte integral de 1456.",
+    "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+    "site": "193 arquivos, 54 rotas, zero erro ou arquivo operacional público",
+    "diff": "git diff --check sem erro",
+    "live": "Netlify autenticado em 2026-09-13T02:39:51Z mantém 6c38ca5 / 6aa6038eb31161000809495b ready,12 funções e cinco programações. Drive Plano e manual coincidem por SHA256 com o baseline local.",
+    "model": "Não houve avaliação adicional do modelo vivo; respostas de modelo simuladas nos testes.",
+    "scope": "25 arquivos; Apps Script, LEADS e Calendar sem alteração."
+  }
+}

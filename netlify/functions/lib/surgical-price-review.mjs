@@ -1,4 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import { isAutomaticSurgicalPriceProcedure, facialPriceLines } from "./surgical-price-policy.mjs";
 import {
   buildConsultationInformationReply,
   hasClinicLocationInConversation,
@@ -341,15 +342,15 @@ function clarificationFor(
   }
 
   if (procedure === "mastopexia") {
-    return `${hello} Para eu te passar uma referência correta, você está pesquisando mastopexia com ou sem prótese? A tabela tem valores diferentes para cada opção, e o orçamento final depende da avaliação.`;
+    return `${hello} Para eu te passar uma referência correta, você está pesquisando mastopexia com ou sem prótese? Os valores variam entre essas possibilidades, e o orçamento final depende da avaliação.`;
   }
 
   if (procedure === "cirurgias_combinadas") {
-    return `${hello} Para eu te passar uma referência correta, quais cirurgias você está pensando em combinar? A tabela muda conforme a combinação, e o orçamento final depende da avaliação.`;
+    return `${hello} Para eu te passar uma referência correta, quais cirurgias você está pensando em combinar? Os valores variam conforme a combinação, e o orçamento final depende da avaliação.`;
   }
 
   if (procedure === "contorno_corporal") {
-    return `${hello} Para eu te passar uma referência correta, qual região ou cirurgia de contorno corporal você está pesquisando? A tabela varia conforme o procedimento.`;
+    return `${hello} Para eu te passar uma referência correta, qual região ou cirurgia de contorno corporal você está pesquisando? Os valores variam conforme o procedimento.`;
   }
 
   if (procedure === "avaliacao_facial") {
@@ -398,6 +399,25 @@ export function getSurgicalPriceReference(procedure) {
   };
 }
 
+function internalPriceReferenceForConversation(procedure, currentText, recentConversation = []) {
+  const patientTurns = (Array.isArray(recentConversation) ? recentConversation : [])
+    .filter(t => t?.role === "user" || t?.source === "paciente");
+  const specific = [String(currentText || ""), ...patientTurns.slice().reverse().map(t => String(t.text || ""))]
+    .find(t => /superior|inferior|completa|consult[oó]rio|hospitalar|secund[aá]ria|revis[aã]o|incompleta/i.test(t)) || "";
+  if (procedure === "blefaroplastia") {
+    if (/superior/i.test(specific) && !/inferior|completa/i.test(specific)) {
+      return {
+        label: "a blefaroplastia superior", rangeMinimum: 14000, rangeMaximum: 18000,
+        source: "CIRURGIAS 2025!A5:C5 + Página7!A3:D3",
+      };
+    }
+    if (/inferior/i.test(specific) && !/superior|completa/i.test(specific)) return null;
+  }
+  if (procedure === "ninfoplastia" && /consult[oó]rio/i.test(specific)) return null;
+  if (procedure === "rinoplastia" && /secund[aá]ria|revis[aã]o|incompleta/i.test(specific)) return null;
+  return getSurgicalPriceReference(procedure);
+}
+
 export function buildSurgicalInitialPriceReply({
   patientName,
   procedure,
@@ -416,15 +436,11 @@ export function buildSurgicalInitialPriceReply({
     : "";
   const initialExplanation =
     procedure === "lifting_cervical"
-      ? "Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso."
+      ? "Ter uma noção de valor ajuda no planejamento. Na cervicoplastia, o valor depende da extensão do tratamento do pescoço e de possíveis associações à face, definidas na avaliação."
       : "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
   const guide = priceGuideParagraph(procedure, recentConversation);
-  const approvedRangeOffer = [
-    "lifting_facial",
-    "lifting_cervical",
-    "otoplastia",
-  ].includes(procedure)
-    ? "Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida."
+  const approvedRangeOffer = isAutomaticSurgicalPriceProcedure(procedure)
+    ? "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida."
     : "";
   const otoplastyOverview = otoplastyOverviewParagraphs({
     procedure,
@@ -457,6 +473,12 @@ export function buildSurgicalPriceSuggestedReply({
   currentText = "",
   introduceBruna = true,
 }) {
+  if (directToPatient && !isAutomaticSurgicalPriceProcedure(procedure)) {
+    return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
+  }
+  const paymentContext = /parcel|pagamento|desconto|[àa]\s+vista|quantas?\s+vezes/i.test(currentText)
+    ? "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista."
+    : "";
   if (procedure === "otoplastia" && directToPatient) {
     const guide = conversationContainsFacialPriceGuide(recentConversation)
       ? ""
@@ -469,7 +491,7 @@ export function buildSurgicalPriceSuggestedReply({
       ),
       "Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
+      paymentContext,
       guide,
     ].filter(Boolean).join("\n\n");
   }
@@ -494,7 +516,7 @@ export function buildSurgicalPriceSuggestedReply({
       location,
       "Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a extensão do procedimento, eventual associação a outras abordagens da face e do pescoço, equipe, hospital, anestesia, materiais e necessidades individuais. Não representa honorários isolados.",
-      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
+      paymentContext,
       guide,
     ].filter(Boolean).join("\n\n");
   }
@@ -519,11 +541,10 @@ export function buildSurgicalPriceSuggestedReply({
         location,
         [
           "Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço:",
-          "• Minilifting: entre R$ 18 mil e R$ 25 mil",
-          "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+          ...facialPriceLines(currentText, recentConversation),
         ].join("\n"),
         "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-        "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
+        paymentContext,
         guide,
       ].filter(Boolean).join("\n\n");
     }
@@ -533,16 +554,15 @@ export function buildSurgicalPriceSuggestedReply({
       location,
       [
         "Estimativas gerais, apenas informativas — não são orçamento, proposta nem garantia de preço:",
-        "• Minilifting: entre R$ 18 mil e R$ 25 mil",
-        "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
+        ...facialPriceLines(currentText, recentConversation),
       ].join("\n"),
       "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-      "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.",
+      paymentContext,
       guide,
     ].filter(Boolean).join("\n\n");
   }
 
-  const priceReference = getSurgicalPriceReference(procedure);
+  const priceReference = internalPriceReferenceForConversation(procedure, currentText, recentConversation);
   if (!priceReference) {
     return clarificationFor(
       procedure,
@@ -553,15 +573,14 @@ export function buildSurgicalPriceSuggestedReply({
 
   const priceContext = [
     waitingGreeting(patientName),
-    `Como referência, ${priceReference.label} costuma ficar entre ${formatBRL(priceReference.rangeMinimum)} e ${formatBRL(priceReference.rangeMaximum)}.`,
-    priceVariation(procedure),
+    `Como estimativa geral, ${priceReference.label} pode ficar entre ${formatBRL(priceReference.rangeMinimum)} e ${formatBRL(priceReference.rangeMaximum)}. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.`,
   ].join(" ");
   const budgetContext =
-    "A indicação e o valor final variam conforme o planejamento. A Dra. Amanda prioriza segurança, naturalidade e preservação das suas características.";
+    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. A extensão do procedimento e as necessidades individuais podem modificar o total.";
   const careAndPayment = [
-    "Hospital, anestesista, auxiliar, instrumentador, materiais e acompanhamento variam por caso.",
-    "Há desconto à vista e parcelamento antecipado, com quitação antes da cirurgia.",
-  ].join(" ");
+    "Hospital, anestesista, auxiliar, instrumentador, materiais e acompanhamento variam por caso. Não representa honorários isolados.",
+    paymentContext,
+  ].filter(Boolean).join(" ");
   const procedureGuide = priceGuideForProcedure(procedure);
   const guide = procedureGuide && !conversationContainsPriceGuide(
     recentConversation,
@@ -616,7 +635,7 @@ export function buildSurgicalPriceHoldingReply({
       : /inclu[ií]|hospital|anestes/i.test(text)
         ? "quais itens se aplicam ao orçamento"
         : reference
-          ? `a faixa atual de valor para ${reference.label}`
+          ? `a faixa atual de valor para ${procedure === "blefaroplastia" ? "a blefaroplastia" : reference.label}`
           : "a faixa atual de valor desse procedimento";
   const paymentContext =
     /parcel|quantas?\s+vezes|desconto|[àa]\s+vista/i.test(text)
@@ -660,6 +679,16 @@ export function buildPendingHospitalQuoteAlert({
   ].join("\n");
 }
 
+export function buildPriceReviewSourceNote({procedure, currentText = "", recentConversation = []}) {
+  const reference = internalPriceReferenceForConversation(procedure, currentText, recentConversation);
+  if (isAutomaticSurgicalPriceProcedure(procedure)) {
+    return "Base: faixa operacional já autorizada para este procedimento. Reenvio ou negociação continuam sujeitos à sua revisão.";
+  }
+  return reference
+    ? `Base histórica interna: TABELA DR. JOÃO 2025.xlsx — ${reference.source}. Estimativa sugerida, não tabela atual da Dra. Amanda: confirmar valores atuais, variante, hospital e itens antes de enviar.`
+    : "SEM FAIXA SEGURA para o procedimento/variante informado. Falta referência compatível; definir a faixa atual ou esclarecer o procedimento antes de enviar valores.";
+}
+
 export function buildPriceReviewAlert({
   patientName,
   patientMessage,
@@ -674,11 +703,15 @@ export function buildPriceReviewAlert({
     recentConversation,
     referenceCategory,
     sourceReference,
+    currentText: patientMessage,
   });
+  const sourceNote = buildPriceReviewSourceNote({procedure, currentText: patientMessage, recentConversation});
 
   return [
     "PREÇO CIRÚRGICO — REVISAR",
     `Pergunta: ${limitText(patientMessage, 80) || "Mensagem sem texto."}`,
+    sourceNote,
+    "Ação: conferir faixa e texto; depois enviar manualmente no WhatsApp. Este e-mail não agenda nem autoriza o envio de preço pela Bruna.",
     "VALOR NÃO ENVIADO. Revise e copie manualmente:",
     suggestion,
   ].join("\n");

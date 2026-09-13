@@ -42,6 +42,8 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Contexto de automação | normalizar `off`, `shadow` e `active` | `automation-mode.mjs` | enviar mensagens ou acessar ambiente/rede |
 | Contexto de marketing | reconhecer template, prioridade de prefill e códigos Google/Meta | `marketing-prefill.mjs` | qualificar lead ou agendar consulta |
 | Contexto de procedimento | resolver procedimento falado, campanha e histórico recente | `procedure-context.mjs` | prometer indicação, preço ou resultado |
+| Permissão de faixa cirúrgica | lista autorizada, variante facial e validação exata de valores | `surgical-price-policy.mjs` | inferir autorização a partir da tabela interna ou de aprovação de cuidados |
+| Rascunho de preço e fonte | gerar texto com ressalva e referência histórica compatível para revisão | `surgical-price-review.mjs` | enviar valores não autorizados ou transformar fonte histórica em orçamento atual |
 | Identidade profissional | resolver menções de Amanda, Daniel e profissionais eventuais e declarar elegibilidade de automação | `professional-registry.mjs` | transformar profissional ausente ou eventual em Amanda |
 | Planejamento de conversa | definir rota, motivo, profissional, procedimento e elegibilidade | `whatsapp-automation.mjs` | contornar takeover, opt-out ou gate de saída |
 | Política semântica | revisar significado e contexto de respostas elegíveis | `semantic-reply-policy.mjs` e módulos especialistas | executar efeito diretamente |

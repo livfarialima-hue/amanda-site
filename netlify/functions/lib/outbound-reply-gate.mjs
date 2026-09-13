@@ -9,6 +9,7 @@ import {
 import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 import { recordDurableConversationTurn } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
+import { containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   classifyBrunaCta,
@@ -22,12 +23,6 @@ const LIFTING_PRICE_GUIDE_PATTERN =
   /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/?$/i;
 const FACIAL_PRICE_GUIDE_PATTERN =
   /^https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-cirurgia-plastica-facial-sao-paulo\/?$/i;
-const FULL_LIFTING_RANGE_PATTERN =
-  /minilifting[\s\S]{0,120}R\$\s*18\s*mil\s+e\s+R\$\s*25\s*mil[\s\S]{0,500}lifting\s+facial[\s\S]{0,120}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i;
-const FULL_CERVICAL_RANGE_PATTERN =
-  /cervicoplastia(?:\s*\(lifting\s+cervical\))?[\s\S]{0,180}R\$\s*18\s*mil\s+e\s+R\$\s*26\s*mil/i;
-const FULL_OTOPLASTY_RANGE_PATTERN =
-  /otoplastia[\s\S]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i;
 
 function normalizedPhone(value) {
   const compact = String(value || "").replace(/[\s()-]/g, "");
@@ -140,7 +135,7 @@ function isProtectedLiftingRangeReply(value, recentConversation = []) {
     : replyUrls.length === 0 &&
       conversationContainsFacialPriceGuide(recentConversation);
   return (
-    FULL_LIFTING_RANGE_PATTERN.test(String(value || "")) &&
+    containsApprovedSurgicalRange(value, "lifting_facial") &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
     /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
       text,
@@ -158,7 +153,7 @@ function isProtectedOtoplastyRangeReply(value, recentConversation = []) {
     : replyUrls.length === 0 &&
       conversationContainsFacialPriceGuide(recentConversation);
   return (
-    FULL_OTOPLASTY_RANGE_PATTERN.test(String(value || "")) &&
+    containsApprovedSurgicalRange(value, "otoplastia") &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
     /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
       text,
@@ -176,7 +171,7 @@ function isProtectedCervicalRangeReply(value, recentConversation = []) {
     : replyUrls.length === 0 &&
       conversationContainsFacialPriceGuide(recentConversation);
   return (
-    FULL_CERVICAL_RANGE_PATTERN.test(String(value || "")) &&
+    containsApprovedSurgicalRange(value, "lifting_cervical") &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
     /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
       text,
@@ -212,6 +207,9 @@ function semanticUnsafeReplyReason(
   );
   const protectedApprovedRange =
     protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange;
+  if (protectedApprovedRange && !hasOnlyApprovedSurgicalAmounts(raw)) {
+    return "unapproved_monetary_amount";
+  }
 
   if (
     contract.experienceVersion === BRUNA_CONVERSION_EXPERIENCE_VERSION
@@ -351,7 +349,7 @@ function semanticUnsafeReplyReason(
     contract.sourceReason === "price_initial_information"
   ) {
     const approvedCervicalOffer =
-      /(?:Se voc[eê] quiser, posso (?:te|lhe) passar uma faixa geral como refer[eê]ncia inicial|Se, depois desse contexto, voc[eê] quiser uma refer[eê]ncia mais concreta, tamb[eé]m posso (?:te|lhe) passar uma faixa geral de valores como ponto de partida)\./i;
+      /(?:Se voc[eê] quiser, posso (?:te|lhe) passar uma faixa geral (?:como refer[eê]ncia inicial|de valores como ponto de partida)|Se, depois desse contexto, voc[eê] quiser uma refer[eê]ncia mais concreta, tamb[eé]m posso (?:te|lhe) passar uma faixa geral de valores como ponto de partida)\./i;
     const withoutApprovedOffer = raw.replace(approvedCervicalOffer, "");
     if (
       !approvedCervicalOffer.test(raw) ||

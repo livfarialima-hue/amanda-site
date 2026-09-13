@@ -36,6 +36,7 @@ import {
   buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
+  buildPriceReviewSourceNote,
 } from "./lib/surgical-price-review.mjs";
 import {
   CONVERSATION_ACTIONS,
@@ -128,6 +129,7 @@ function alertText(
     actionRequired: "Conferir a pendência e responder no WhatsApp; não repetir informação já enviada pela equipe.",
     contextSummary: [
       heading,
+      PRICE_REVIEW_REASONS.has(reason) ? buildPriceReviewSourceNote({procedure: job.procedure, currentText: job.text, recentConversation: job.recentConversation}) : "",
       `Última entrada: ${job.receivedAt || "horário indisponível"}`,
       `Mensagem: ${limitedText(job.text, 1500) || "Material recebido sem texto legível."}`,
       holdingSent ? "A confirmação de recebimento já foi enviada uma única vez." : "Nenhuma mensagem automática foi enviada à paciente nesta tentativa. Após entregar este alerta, poderá sair no máximo uma confirmação curta de recebimento.",
@@ -628,7 +630,7 @@ export async function processHumanResumeJob(
         job.procedure ||
         null;
       return holdAndAlert(
-        job,
+        { ...job, procedure: priceProcedure },
         policy.reason,
         dependencies,
         buildSurgicalPriceHoldingReply({
@@ -645,6 +647,7 @@ export async function processHumanResumeJob(
           recentConversation: job.recentConversation,
           referenceCategory: job.referenceCategory,
           sourceReference: job.reference,
+          currentText: job.text,
           introduceBruna: false,
         }),
         conversationAction,

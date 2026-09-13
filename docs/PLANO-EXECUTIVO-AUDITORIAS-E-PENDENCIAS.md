@@ -1,5 +1,7 @@
 # Plano executivo — auditorias, pendências e prazos
 
+**Ajuste de preço — 12/09/2026, em validação local:** primeira resposta sem números e oferta mais breve; faixa uma vez apenas para procedimentos autorizados, adequada à variante. Sem desconto ou parcelamento espontâneo. Outros preços geram e-mail com fonte histórica, faixa sugerida e rascunho com ressalva de avaliação, sujeito à conferência e envio manual. Ausência de referência compatível aparece como SEM FAIXA SEGURA. O e-mail não autoriza o envio nem usa o botão de cuidados como aprovação de preço. Evidência e recibo: `auditorias/bruna-preco-2026-09-12/RELATORIO.md` e `PUBLICACAO.json`.
+
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
 **Atualizado em:** 12 de setembro de 2026, Bruna contextual/LEADS/cuidados e SEO publicados; modelo de aniversário em análise

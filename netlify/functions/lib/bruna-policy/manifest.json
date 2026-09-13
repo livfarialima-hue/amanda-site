@@ -24,7 +24,9 @@
     "rollbackCommit": "f63d2fd7738df64d8916256a78ef7f72cf6c4300",
     "rollbackDeployId": "6aa60074bdfc8c0008aab53c",
     "publishedAt": "2026-09-13T02:00:18.021Z",
-    "lastVerifiedAt": "2026-09-13T02:10:21.890Z"
+    "lastVerifiedAt": "2026-09-13T02:10:21.890Z",
+    "candidateChangeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
+    "candidateStatus": "tested_local_pending"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
