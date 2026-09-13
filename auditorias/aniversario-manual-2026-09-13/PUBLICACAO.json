@@ -1,0 +1,10 @@
+{
+  "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
+  "status": "tested_local",
+  "baselineCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
+  "baselineDeploy": "6aa60d89d5920c0008dc059e",
+  "baselineAppsScriptVersion": 150,
+  "patientTestMessages": 0,
+  "realTestEmails": 0,
+  "checkedAt": "2026-09-13T11:47:42.923Z"
+}

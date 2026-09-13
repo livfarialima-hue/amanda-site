@@ -136,7 +136,7 @@ test("late execution respects the care closing hour and weekdays, including the 
   h.ctx.processarCuidadosProgramados_(new h.Clock(), "synthetic", h.ctx.PropertiesService.getScriptProperties());
   assert.equal(sends, 0); assert.equal(h.ctx.carregarDecisoesCuidados_(h.spreadsheet)[item.sourceKey].row[17], "care_outside_send_window");
   assert.equal(h.ctx.janelaEnvioCuidadoPermitida_(new h.Clock("2026-09-19T13:30:00Z"), "post_consult"), false);
-  assert.equal(h.ctx.janelaEnvioCuidadoPermitida_(new h.Clock("2026-09-19T13:30:00Z"), "birthday"), true);
+  assert.equal(h.ctx.janelaEnvioCuidadoPermitida_(new h.Clock("2026-09-19T13:30:00Z"), "birthday"), false);
 });
 
 test("approval keeps the exact reviewed message and validates Calendar, consent and later patient activity", () => {
@@ -171,16 +171,72 @@ test("past Calendar dates alone do not become attended consultations or postoper
   assert.equal(h.items().some(i => /pós-cirúrgica/.test(i.categoria)), false);
 });
 
-test("birthdays are opt-in, exact neutral text, once per telephone/year and never backfilled on activation day", () => {
+test("birthdays are manual reminders regardless of legacy bot opt-in and cannot be activated or approved", () => {
   const h = harness(); const birthday = h.items().find(i => i.care.purpose === "birthday");
   assert.equal(birthday.sugestao, BIRTHDAY_CARE_TEXT);
+  h.set("Aniversário pelo bot", "Não");
+  assert.ok(h.items().find(i => i.care.purpose === "birthday"));
   h.props.set("LIV_ANIVERSARIOS_AUTOMATICOS_ATIVOS", "true"); h.props.set("LIV_ANIVERSARIOS_ATIVADOS_EM", "2026-09-14T03:00:01Z");
   const props = h.ctx.PropertiesService.getScriptProperties();
   assert.equal(h.ctx.planejarAniversariosCuidados_(h.spreadsheet, new h.Clock(), props), 0);
   h.props.set("LIV_ANIVERSARIOS_ATIVADOS_EM", "2026-09-13T12:00:00Z");
-  assert.equal(h.ctx.planejarAniversariosCuidados_(h.spreadsheet, new h.Clock(), props), 1);
+  assert.equal(h.ctx.entregaCuidadoAtiva_("birthday"), false);
+  assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet, birthday, "approve", new h.Clock()).reason, "birthday_manual_only");
+  assert.equal(h.ctx.ativarAniversariosAutomaticos().reason, "birthday_manual_only");
   assert.equal(h.ctx.planejarAniversariosCuidados_(h.spreadsheet, new h.Clock(), props), 0);
-  h.set("Consentimento para contato", ""); assert.equal(h.ctx.motivoBloqueioCuidado_(h.items().find(i => i.care.purpose === "birthday"), h.conversation, {}, new h.Clock(), null), "contact_consent_required");
+  assert.equal(h.writes(), 0);
+});
+
+test("birthday reminder is once per phone/year, only today, and dismissal survives duplicate consultations", () => {
+  const h = harness(); const original = h.items().find(i => i.care.purpose === "birthday");
+  const copy = h.consultations.values[1].slice(); copy[0] = "consult-synthetic-2";
+  h.consultations.values.push(copy);
+  assert.equal(h.items().filter(i => i.care.purpose === "birthday").length, 1);
+  h.ctx.decidirCuidadoCentral_(h.spreadsheet, original, "dismiss", new h.Clock());
+  const projected = () => h.ctx.projetarDecisoesCuidados_(h.spreadsheet, h.items(), new h.Clock());
+  assert.equal(projected().some(i => i.care.purpose === "birthday"), false);
+  h.clock.at = "2026-09-13T12:00:00Z"; assert.equal(h.items().some(i => i.care.purpose === "birthday"), false);
+  h.clock.at = "2026-09-15T12:00:00Z"; assert.equal(projected().some(i => i.care.purpose === "birthday"), false);
+  h.clock.at = "2027-09-14T12:00:00Z"; assert.ok(projected().find(i => i.care.purpose === "birthday"));
+});
+
+test("manual birthdays respect refusal, previous contact, valid birth dates and established patient status", () => {
+  const h = harness(); const birthdays = () => h.items().filter(i => i.care.purpose === "birthday");
+  h.set("Consentimento para contato", "Não"); assert.equal(birthdays().length, 0);
+  h.set("Consentimento para contato", "Sim"); h.set("Aniversário pelo bot", ""); assert.equal(birthdays().length, 1);
+  h.set("Status", "Cancelada"); assert.equal(birthdays().length, 0);
+  h.set("Status", "Realizada"); h.set("Data de nascimento", "31/02/1986"); assert.equal(birthdays().length, 0);
+  h.set("Data de nascimento", "1986-09-14"); h.set("Último aniversário contatado", new h.Clock()); assert.equal(birthdays().length, 0);
+  h.set("Último aniversário contatado", ""); h.ctx.carregarPreferenciasContatoPorTelefone_ = () => ({ "+5511900000000": { neverFollowUp: true } }); assert.equal(birthdays().length, 0);
+});
+
+test("a stale birthday approval or scheduled row cannot send or move the reminder to tomorrow", () => {
+  const h = harness(); const item = h.items().find(i => i.care.purpose === "birthday");
+  const headers = vm.runInContext("CENTRAL_ATENDIMENTO_HEADERS", h.ctx);
+  const fields = { "Fila": "Ação manual hoje", "Chave operacional": item.sourceKey, "Fonte": "Jornada de cuidado", "Modo": "Manual", "Status operacional": "Aberto", "Mensagem final": item.sugestao, "Programar para": new h.Clock("2026-09-14T13:30:00Z"), "Elegibilidade da Bruna": "Elegível para aprovação", "Próxima ação": "Aniversário", "Telefone": item.telefone };
+  const central = h.sheet("Central de Atendimento", [Array.from(headers), headers.map(header => fields[header] || "")]);
+  const decision = h.ctx.listarItensPainelDecisoesCentral_(central, new h.Clock())[0];
+  assert.equal(decision.approvalAvailable, false); assert.equal(decision.dismissAvailable, true); assert.equal(decision.deferAvailable, false);
+  assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet, { ...item, deferUntil: new h.Clock("2026-09-15T12:00:00Z") }, "defer", new h.Clock()).reason, "birthday_manual_only");
+  const row = Array(22).fill(""); row[0] = item.sourceKey; row[1] = "Programado"; row[3] = item.telefone; row[7] = "birthday"; row[8] = "2026-09-14"; row[9] = item.sugestao; row[10] = new h.Clock(); row[11] = new h.Clock(); row[20] = "Aniversário";
+  h.ctx.gravarDecisaoCuidado_(h.spreadsheet, row);
+  let sends = 0; h.ctx.enviarRetomadaAutomatica_ = () => { sends++; throw new Error("must not send"); };
+  h.props.set("LIV_ANIVERSARIOS_AUTOMATICOS_ATIVOS", "true");
+  assert.equal(h.ctx.projetarDecisoesCuidados_(h.spreadsheet, h.items(), new h.Clock()).find(i => i.sourceKey === item.sourceKey).automatico, false);
+  h.ctx.processarCuidadosProgramados_(new h.Clock(), "synthetic", h.ctx.PropertiesService.getScriptProperties());
+  assert.equal(sends, 0);
+  h.clock.at = "2026-09-15T12:00:00Z";
+  assert.equal(h.ctx.projetarDecisoesCuidados_(h.spreadsheet, h.items(), new h.Clock()).some(i => i.sourceKey === item.sourceKey), false);
+});
+
+test("every birthday draft is in the daily email even after the first six manual decisions", () => {
+  const h = harness();
+  const items = Array.from({ length: 8 }, (_, i) => ({ sourceKey: "care:synthetic-" + i, name: "Paciente sintética " + i, nextAction: "Aniversário", finalMessage: BIRTHDAY_CARE_TEXT, owner: "Equipe", manualToday: true }));
+  const result = h.ctx.montarResumoPraticoCuidados_(items, "14/09", "https://example.test/panel", "https://example.test/central", []);
+  assert.ok(result.html.includes("Aniversariantes de hoje — envio manual"));
+  assert.equal(result.html.split(BIRTHDAY_CARE_TEXT).length - 1, 8);
+  assert.ok(result.text.includes("Envio manual por você"));
+  assert.equal(result.automatic, 0); assert.equal(result.represented, 8);
 });
 
 test("clinical concern, opt-out, unresolved human commitment and active conversation block proactive care", () => {

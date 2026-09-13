@@ -84,7 +84,8 @@ export function getScheduledFollowupHealth(env = process.env) {
     scheduledFollowupsEnabled:
       env.WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED === "true",
     careEnabled: env.WHATSAPP_SCHEDULED_CARE_ENABLED === "true",
-    birthdayEnabled: env.WHATSAPP_BIRTHDAY_CARE_ENABLED === "true",
+    birthdayEnabled: false,
+    birthdayDeliveryMode: "manual_daily_reminder",
     birthdayTemplateConfigured: Boolean(String(env.YCLOUD_BIRTHDAY_TEMPLATE_NAME || "").trim()),
     automaticTemplateEnabled:
       env.WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED === "true",

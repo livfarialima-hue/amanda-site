@@ -56,14 +56,14 @@ test("missing memory and missing canonical confirmation both fail closed", async
   assert.equal((await (await missing.request()).json()).sent, false); assert.equal(missing.count.send, 0);
 });
 
-test("birthday uses only its approved fixed greeting, on the date, under independent flags", async () => {
+test("birthday is refused before reservation even with an approved template and enabled legacy flags", async () => {
   const birthday = { ...care, purpose: "birthday", referenceDate: "2026-09-14", body: BIRTHDAY_CARE_TEXT };
-  assert.equal(validateCareReceipt(birthday, now), "");
-  assert.equal(validateCareReceipt({ ...birthday, body: "Feliz aniversário! Agende sua cirurgia." }, now), "birthday_contract_mismatch");
-  assert.equal(validateCareReceipt({ ...birthday, referenceDate: "2026-09-13" }, now), "birthday_contract_mismatch");
+  assert.equal(validateCareReceipt(birthday, now), "birthday_manual_only");
   const h = setup({ callSheetsImpl: async () => ({ status: "completed", data: birthday }) });
+  assert.equal((await (await h.request()).json()).error, "birthday_manual_only");
+  assert.equal(h.count.send, 0); assert.equal(h.records.size, 0); assert.equal(h.count.append, 0);
   delete h.deps.env.YCLOUD_BIRTHDAY_TEMPLATE_NAME;
-  assert.equal((await (await h.request()).json()).error, "birthday_template_missing"); assert.equal(h.count.send, 0);
+  assert.equal((await (await h.request()).json()).error, "birthday_manual_only"); assert.equal(h.count.send, 0);
 });
 
 test("status-only receipt reconciliation never starts a patient send", async () => {
@@ -71,17 +71,17 @@ test("status-only receipt reconciliation never starts a patient send", async () 
   assert.equal(result.status, "not_attempted"); assert.equal(h.count.send, 0); assert.equal(h.count.read, 0);
 });
 
-test("the transport blocks care after 18h and weekend milestones while permitting same-day weekend birthdays", async () => {
+test("the transport blocks care after 18h and weekend milestones and always keeps birthdays manual", async () => {
   const evening = new Date("2026-09-14T21:10:00Z");
   assert.equal(validateCareReceipt({ ...care, checkedAt: evening.toISOString() }, evening), "care_outside_send_window");
   const weekend = new Date("2026-09-19T13:30:00Z");
   const fresh = { ...care, checkedAt: weekend.toISOString(), approvedAt: "2026-09-19T12:00:00Z" };
   assert.equal(validateCareReceipt(fresh, weekend), "care_outside_send_window");
-  assert.equal(validateCareReceipt({ ...fresh, purpose: "birthday", body: BIRTHDAY_CARE_TEXT, referenceDate: "2026-09-19" }, weekend), "");
+  assert.equal(validateCareReceipt({ ...fresh, purpose: "birthday", body: BIRTHDAY_CARE_TEXT, referenceDate: "2026-09-19" }, weekend), "birthday_manual_only");
 });
 
-test("birthday transport sends an exact parameter-free template", async () => {
+test("the legacy birthday adapter cannot call the provider", async () => {
   let captured;
   const result = await sendBirthdayCare({ from: "+5511999999999", to: care.patientPhone, eventId: "synthetic" }, { env: setup().deps.env, fetchImpl: async (_url, options) => { captured = JSON.parse(options.body); return new Response("{}", { status: 200 }); } });
-  assert.equal(result.status, "completed"); assert.deepEqual(captured.template.components, []); assert.equal(captured.template.name, "synthetic_birthday");
+  assert.equal(result.status, "failed"); assert.equal(result.errorCode, "birthday_manual_only"); assert.equal(captured, undefined);
 });

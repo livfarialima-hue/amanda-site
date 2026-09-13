@@ -1,175 +1,133 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-IMMEDIATE-SETTINGS-2026-09-12",
-  "title": "Correcoes de origem e teste de presenca sem aumento de orcamento",
-  "status": "published_verified",
-  "baseCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
+  "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
+  "title": "Aniversarios somente no lembrete diario para envio humano",
+  "status": "tested_local",
+  "baseCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Solicitacao explicita de Daniel nesta conversa para aplicar os ajustes imediatos da avaliacao anterior. Autorizacao por escopo; nao ha autorizacao nova para site/Netlify/Apps Script, nem alegacao de SHA digitado pelo usuario."
+    "note": "Pedido atual para aniversario manual e autorizacao cumulativa para publicar os ajustes desta conversa; nenhuma mensagem real de teste ou envio de aniversario pela Bruna."
   },
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true,
-    "externalOperationalWritesPerformed": true,
-    "externalDocumentationWritesPerformed": true
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "google-ads-acquisition-conversion"
+      "patient-care-milestones"
     ],
     "files": [
-      "auditorias/google-ads-ajustes-imediatos-2026-09-12/EXECUCAO.md",
-      "auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
-      "campanhas/google-ads-settings.test.mjs",
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
+      "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
+      "auditorias/aniversario-manual-2026-09-13/PUBLICACAO.json",
+      "auditorias/aniversario-manual-2026-09-13/RELATORIO.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/scheduled-care.mjs",
+      "netlify/functions/lib/scheduled-care.test.mjs",
+      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "netlify/functions/scheduled-followup.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "Google Ads: seis anuncios e duas configuracoes geograficas",
-      "Data Manager: conexao LEADS existente",
-      "captura/LEADS/CRM e importacao por click ID ja publicados",
-      "Norte, registro, historico e Plano Executivo na mesma projecao Drive"
+      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "netlify/functions/scheduled-followup.mjs"
     ],
     "preservedInvariants": [
-      "Oito campanhas, R$103/dia; lances/redes/palavras/textos/URLs preservados",
-      "Nenhum site, bot, Apps Script, mensagem ou registro de paciente alterado",
-      "Nenhum identificador pessoal ou consentimento inventado enviado ao Google",
-      "Nao executar upload manual ou fabricar conversao; preparado nao significa aceito",
-      "Publicacao Bruna preco24a6f19/1e638ef e Apps Script150 preservados sem redeploy"
+      "Aniversario e somente lembrete interno para envio humano; nenhuma flag ou aprovacao reativa o transporte.",
+      "Uma sugestao por telefone e aniversario; somente no dia; respeitar recusa, nascimento confiavel e dispensa persistida.",
+      "Outros cuidados continuam com aprovacao individual, mesma fila e validacao de conversa e Calendar."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads",
+        "contract": "patient-care-milestones",
+        "system": "Apps Script / LEADS / Netlify / Drive",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T02:38:00Z",
-        "reference": "Oito campanhas/R$103; seis IDs e valores de parametros revalidados; detalhe geografico lido na avaliacao anterior, repetir antes de salvar; conexao existente sera relida antes do efeito."
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Drive",
-        "status": "baseline_equivalent",
-        "checkedAt": "2026-09-13T02:39:00Z",
-        "reference": "Plano mesmo ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO; modified 02:09:13.838Z; 163583 caracteres; igualdade normalizada com base73d6877."
+        "checkedAt": "2026-09-13T11:40:39.261Z",
+        "reference": "Editor dos tres arquivos equivale ao baseline por SHA256. Diagnostico somente leitura: cuidados ativos, aniversarios inativos,83colunas, fila vazia,1gatilho. Netlify24a6f19/6aa60d89 ready; flag aniversariofalse. Mesmas projecoes Drive iguais ao baseline. Calendar e YCloud preservados, sem efeito neste pacote."
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_live",
+    "status": "passed_local",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
-      "git diff --check",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "node --test campanhas/google-ads-settings.test.mjs"
+      "git diff --check",
+      "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs"
     ],
     "results": {
-      "focusedTests": {
-        "passed": 153,
-        "failed": 0
-      },
-      "fullSuite": {
-        "passed": 1444,
-        "failed": 0
-      },
-      "changeCheck": "OK",
-      "architectureCheck": "OK",
-      "diffCheck": "OK",
-      "siteBuild": {
-        "files": 193,
-        "routes": 54
-      },
-      "siteCheck": "OK",
-      "opsCheck": "OPS_CHECK_STATUS=OK em reestruturacao-site, worktree limpo, apos integracao a3a3e2e; CHANGE_SAFETY_STATUS=OK com nove arquivos.",
-      "environment": "npm ci recompôs dependencias ausentes; lockfile inalterado. Nao executar npm audit fix neste pacote.",
-      "reconciliation": "Merge19d3dce preserva 1e638ef e todos os arquivos de preco; contrato nove arquivos, arquitetura e build/check novamente OK.",
-      "finalReconciledSuite": {
-        "passed": 1456,
-        "failed": 0,
-        "note": "Suites integrais do runner; teste dedicado de settings tambem executado separadamente (4/4)."
-      },
-      "live": "Seis parametros relidos,17anuncios ativos Qualificada,7mapas LEADS,2Presenca confirmadas,8orcamentos somam103BRL; sem deploy/mensagem/uploadmanual."
-    }
-  },
-  "release": {
-    "approvedCommit": "da367845af5de8b76b93b4c58c9c9aea4c200cfe",
-    "verifiedAt": "2026-09-13T03:04:17Z",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
-    "activationState": "ads_settings_active_measurement_outcome_pending",
-    "notes": "Seis anuncios, sete mapas e duas opcoes geograficas salvos e relidos. Plano no mesmo ID Drive equivalente. Netlify/Apps Script sao recibos HERDADOS da publicacao paralela, sem edicao/deploy nesta tarefa. da367845 define exatamente o plano aplicado; merge posterior preserva preco24a6f19/1e638ef. Aceitacao real de nova conversao e candidato tecnico0ff0dd2 continuam pendentes.",
-    "netlifyDeployId": "6aa60d89d5920c0008dc059e",
-    "appsScriptVersion": 150,
-    "inheritedPlatformState": {
-      "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
-      "netlifyAndAppsScriptPublishedByThisTask": false
-    },
-    "drivePlanProjectionStatus": "verified",
-    "drivePlanReadback": {
-      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "modified": "2026-09-13T03:03:53.303Z",
-      "characters": 165776,
-      "sha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
-      "equal": true
+      "baselineFailures": "5/5 novos cenarios falharam antes da correcao",
+      "focused": "227/227",
+      "fullSuite": "1460/1460",
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "change": "18 arquivos exatos",
+      "staticArtifact": "193 arquivos iguais byte a byte ao artefato completo anterior;54rotas,zeroerro e nenhum arquivo operacional publico",
+      "localCopyBuild": "Aprovado apos liberacao de espaco: 193 arquivos, 54 rotas, zero erro e nenhum arquivo operacional publico.",
+      "diff": "git diff --check OK"
     }
   },
   "previousCompletedRelease": {
-    "changeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
-    "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
+    "changeId": "GOOGLE-ADS-IMMEDIATE-SETTINGS-2026-09-12",
+    "sourceCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
     "release": {
-      "approvedCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+      "approvedCommit": "da367845af5de8b76b93b4c58c9c9aea4c200cfe",
+      "verifiedAt": "2026-09-13T03:04:17Z",
+      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "drivePlanSha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
+      "activationState": "ads_settings_active_measurement_outcome_pending",
+      "notes": "Seis anuncios, sete mapas e duas opcoes geograficas salvos e relidos. Plano no mesmo ID Drive equivalente. Netlify/Apps Script sao recibos HERDADOS da publicacao paralela, sem edicao/deploy nesta tarefa. da367845 define exatamente o plano aplicado; merge posterior preserva preco24a6f19/1e638ef. Aceitacao real de nova conversao e candidato tecnico0ff0dd2 continuam pendentes.",
       "netlifyDeployId": "6aa60d89d5920c0008dc059e",
       "appsScriptVersion": 150,
-      "verifiedAt": "2026-09-13T02:43:53.5222839Z",
-      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanSha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
+      "inheritedPlatformState": {
+        "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
+        "netlifyAndAppsScriptPublishedByThisTask": false
+      },
+      "drivePlanProjectionStatus": "verified",
       "drivePlanReadback": {
         "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-        "modified": "2026-09-13T02:45:07.695Z",
-        "characters": 164657,
-        "sha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
+        "modified": "2026-09-13T03:03:53.303Z",
+        "characters": 165776,
+        "sha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
         "equal": true
-      },
-      "driveManualReadback": {
-        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-        "modified": "2026-09-13T02:45:10.252Z",
-        "characters": 101054,
-        "sha256": "a9fd063a9d5445d0a15a102d45d4c9f28d56d4d3e6f4293d955f0309ab195f17",
-        "equal": true
-      },
-      "activationState": "price_policy_active_manual_review_preserved",
-      "receiptPath": "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json",
-      "notes": "Publicação Netlify autorizada pela instrução cumulativa da conversa; Apps Script150 é estado herdado, sem edição/publicação/ativação nesta etapa. Nenhuma mensagem ou e-mail real de teste. Nenhuma faixa individual adicional foi autorizada."
+      }
     }
   },
   "rollback": {
-    "local": "Reverter somente estes arquivos documentais.",
-    "production": "Restaurar apenas parametros/opcao geografica antes de cada objeto conforme PLANO.json; desfazer somente mapeamento novo incompativel. Nao apagar dados/acoes ou reverter site."
+    "local": "Reverter apenas este candidato, preservando o trabalho paralelo Google Ads e Bruna preco.",
+    "production": "Restaurar Apps Script150 e Netlify6aa60d89d5920c0008dc059e, mantendo as duas flags de aniversariofalse. Sem migracao, exclusao ou edicao de pacientes."
   },
   "monitoring": {
-    "owner": "Daniel e equipe da Clinica LIV",
-    "window": "Primeiro ciclo e48h;20/09,27/09 e13/10/2026; sem automacao nova",
+    "owner": "Daniel/equipe",
+    "window": "Primeiro lembrete diario e48horas; sem nova automacao Codex",
     "metrics": [
-      "campos/codigos coerentes",
-      "conversoes qualificadas aceitas sem duplicidade",
-      "consultas agendadas e realizadas por coorte"
+      "aniversarios somente em envio manual",
+      "rascunho integral no email",
+      "dispensa nao reaparece no mesmo aniversario",
+      "demais cuidados aprovados preservados"
     ],
-    "rollbackRule": "Conter somente componente com perda/mistura de origem ou exclusao de demanda externa viavel."
+    "rollbackRule": "Conter o componente se houver aniversario automatico, sugestao duplicada ou perda do email diario."
   }
 }

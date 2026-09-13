@@ -102,6 +102,8 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 
 ### Retomadas
 
+- Aniversários são somente sugestões internas para envio manual, uma por telefone/ano e apenas no próprio dia. Não entram em aprovação, adiamento ou transporte da Bruna; nenhum modelo ou flag antiga pode reativar o automático. A dispensa persiste para aquele aniversário. Demais marcos mantêm seus proprietários e aprovações.
+
 - o planejamento e o envio são etapas distintas.
 - abrir o e-mail diário, a Central ou o painel móvel é somente leitura e não equivale a aprovar, cancelar, adiar ou enviar.
 - nenhuma decisão do painel móvel pode vir preselecionada; uma confirmação em lote só alcança os itens escolhidos e cada item deve ser relido pelo `sourceKey` opaco imediatamente antes do efeito.

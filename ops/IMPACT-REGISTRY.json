@@ -31,7 +31,11 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/run-tests.mjs",
         "auditorias/bruna-preco-2026-09-12/RELATORIO.md",
-        "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json"
+        "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json",
+        "netlify/functions/lib/bruna-policy/manifest.json",
+        "docs/estrategia-abordagem-bruna.md",
+        "auditorias/aniversario-manual-2026-09-13/RELATORIO.md",
+        "auditorias/aniversario-manual-2026-09-13/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -891,7 +895,10 @@
         "netlify/functions/lib/scheduled-care.test.mjs",
         "apps-script/clinica-liv-leads/README.md",
         "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
-        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html"
+        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html",
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "netlify/functions/scheduled-followup.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
@@ -917,7 +924,12 @@
         "Netlify",
         "YCloud"
       ],
-      "requiresReadOnlyPreflight": true
+      "requiresReadOnlyPreflight": true,
+      "invariants": [
+        "Aniversario e somente lembrete interno para envio humano; nenhuma flag ou aprovacao reativa o transporte.",
+        "Uma sugestao por telefone e aniversario; somente no dia; respeitar recusa, nascimento confiavel e dispensa persistida.",
+        "Outros cuidados continuam com aprovacao individual, mesma fila e validacao de conversa e Calendar."
+      ]
     }
   ]
 }

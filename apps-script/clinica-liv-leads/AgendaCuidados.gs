@@ -1,5 +1,5 @@
 const AGENDA_CUIDADOS_CONFIG = Object.freeze({
-  diasAntecedenciaAniversario: 7,
+  diasAntecedenciaAniversario: 0,
   diasAntecedenciaAgenda: 7,
   horarioAniversario: "10:30",
   horarioChecagemPosConsulta: "11:00",
@@ -186,6 +186,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora, options) {
     );
     const adicionarDaLinha = function (item) {
       if (typeof enriquecerMarcoCuidado_ === "function") item = enriquecerMarcoCuidado_(item, linha, colunas);
+      if (item.categoria === "Aniversário" && typeof validarCadastroAniversario_ === "function" && typeof planilha.getParent === "function" && validarCadastroAniversario_(planilha.getParent(), item)) return;
       const automaticoExterno =
         item.automatico === true &&
         !profissionalFundamentalAgendaCuidados_(profissional);
@@ -238,6 +239,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora, options) {
         nome: identidade,
         primeiroNome: primeiroNome,
         profissional: profissional,
+        status: status,
         adicionar: adicionarDaLinha,
       });
     }
@@ -352,17 +354,13 @@ function criarAgendaCuidadosConsultas_(planilha, agora, options) {
 }
 
 function adicionarAniversarioAgendaCuidados_(entrada) {
-  const dataNascimento = dataAgendaCuidados_(
+  const parseBirth = typeof dataNascimentoCuidado_ === "function" ? dataNascimentoCuidado_ : dataAgendaCuidados_;
+  const dataNascimento = parseBirth(
     valorAgendaCuidados_(
       entrada.linha,
       entrada.colunas,
       ["data de nascimento"],
     ),
-  );
-  const aniversarioAtivo = valorAgendaCuidados_(
-    entrada.linha,
-    entrada.colunas,
-    ["aniversario pelo bot"],
   );
   const ultimoAniversario = dataAgendaCuidados_(
     valorAgendaCuidados_(
@@ -373,10 +371,9 @@ function adicionarAniversarioAgendaCuidados_(entrada) {
   );
 
   if (
-    !dataNascimento ||
-    !valorExplicitamenteAtivoAgendaCuidados_(
-      aniversarioAtivo,
-    )
+    !dataNascimento || !entrada.telefone ||
+    dataNascimento > entrada.agora || entrada.agora - dataNascimento > 120 * 366 * 86400000 ||
+    !["realizada", "consulta realizada"].includes(entrada.status)
   ) {
     return;
   }
@@ -418,14 +415,14 @@ function adicionarAniversarioAgendaCuidados_(entrada) {
     ),
     contexto:
       diasAte === 0
-        ? "Mensagem de cuidado, sem oferta comercial."
+        ? "Envio manual por você. Conferir a conversa e a permissão de contato antes de copiar a mensagem; sem oferta comercial."
         : "Aniversário em " +
           formatarDataRetomadas_(
             proximoAniversario,
             "dd/MM",
           ) +
           " — preparar uma mensagem pessoal.",
-    responsavel: responsavelAgendaCuidados_(entrada.profissional),
+    responsavel: "Equipe Clínica LIV — envio manual",
     automatico: false,
     futuro: diasAte > 0,
     prioridade: diasAte === 0 ? 4 : 9,

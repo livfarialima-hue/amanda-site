@@ -2497,7 +2497,9 @@ function prepararAprovacaoRetomadaCentral_(row, rowNumber, columns, now) {
         { allowOutsideWhatsappWindow: true },
       )
     : "";
-  const careConversion = /^elegivel/.test(normalizarTextoCentral_(valorLinhaCentral_(row, columns, "elegibilidade da bruna"))) && sourceKey.indexOf("care:") === 0 && source === "jornada de cuidado" && mode === "manual" && safeSuggestion && Boolean(programFor) && !/lembrete|fechamento|confirmar profissional/i.test(String(valorLinhaCentral_(row, columns, "proxima acao")));
+  const birthdayManual = normalizarTextoCentral_(valorLinhaCentral_(row, columns, "proxima acao")) === "aniversario";
+  if (birthdayManual) programFor = null;
+  const careConversion = !birthdayManual && /^elegivel/.test(normalizarTextoCentral_(valorLinhaCentral_(row, columns, "elegibilidade da bruna"))) && sourceKey.indexOf("care:") === 0 && source === "jornada de cuidado" && mode === "manual" && safeSuggestion && Boolean(programFor) && !/lembrete|fechamento|confirmar profissional/i.test(String(valorLinhaCentral_(row, columns, "proxima acao")));
   const eligible =
     safeSuggestion &&
     Boolean(programFor) &&
@@ -2773,6 +2775,7 @@ function listarItensPainelDecisoesCentral_(sheet, now) {
       cancellationAvailable: cancellation.eligible === true,
       dismissAvailable: (sourceKey.indexOf("care:") === 0 && typeof dispensaCuidadoPermitida_ === "function" && dispensaCuidadoPermitida_(valorLinhaCentral_(row, columns, "proxima acao"))) || cancellation.eligible === true,
       deferAvailable:
+        normalizarTextoCentral_(valorLinhaCentral_(row, columns, "proxima acao")) !== "aniversario" &&
         !automatic &&
         !["concluido", "cancelado"].includes(normalizedStatus),
       approvalDecision: approval,

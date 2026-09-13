@@ -17,11 +17,13 @@ function hashCuidado_(value) {
 }
 
 function entregaCuidadoAtiva_(purpose) {
+  if (purpose === "birthday") return false;
   const props = PropertiesService.getScriptProperties();
   return props.getProperty(CUIDADOS_PROGRAMADOS.enabled) === "true" && (purpose !== "birthday" || props.getProperty(CUIDADOS_PROGRAMADOS.birthdays) === "true");
 }
 
 function janelaEnvioCuidadoPermitida_(date, purpose) {
+  if (purpose === "birthday") return false;
   const hour = Number(formatarDataRetomadas_(date, "H"));
   const day = new Date(formatarDataRetomadas_(date, "yyyy-MM-dd") + "T12:00:00-03:00").getUTCDay();
   return hour >= 9 && hour < 18 && (purpose === "birthday" || ![0, 6].includes(day));
@@ -109,6 +111,7 @@ function diagnosticarCuidadosProgramados() {
   });
   const result = { ok: true, readOnly: true, active: entregaCuidadoAtiva_("post_consult"),
     birthdaysActive: entregaCuidadoAtiva_("birthday"),
+    birthdayDeliveryMode: "manual_daily_reminder",
     missingHeaders: CUIDADOS_PROGRAMADOS.consultationHeaders.filter(function (header) { return !headers.includes(header); }),
     consultationColumns: headers.length, ledgerPresent: Boolean(ledger), states: states,
     existingFollowupTriggers: ScriptApp.getProjectTriggers().filter(function (trigger) { return trigger.getHandlerFunction() === "processarRetomadasAutomaticas"; }).length,
@@ -130,7 +133,7 @@ function enriquecerMarcoCuidado_(item, row, columns) {
   const identity = String(val("id da consulta") || "").trim();
   const professional = chaveProfissionalAgendaCuidados_(val("profissional"));
   const anchor = reference || date("data da proxima retomada") || date("data realizada") || date("data agendada");
-  const sourceKey = "care:" + hashCuidado_([
+  const sourceKey = "care:" + hashCuidado_(purpose === "birthday" ? ["birthday", item.telefone, formatarDataRetomadas_(reference, "yyyy")].join("|") : [
     item.telefone || item.nome, professional, identity, item.categoria,
     anchor ? formatarDataRetomadas_(anchor, "yyyy-MM-dd") : String(val("proxima acao") || ""),
   ].join("|"));
@@ -205,6 +208,7 @@ function assinaturaContextoCuidado_(care, conversation) {
 }
 
 function janelaRespostaCuidado_(now, conversation, purpose, requestedAt) {
+  if (purpose === "birthday") return null;
   const earliest = new Date(Math.max(now.getTime() + 15 * 60000, requestedAt ? requestedAt.getTime() : 0));
   const buckets = {};
   (conversation || []).filter(function (m) {
@@ -281,17 +285,21 @@ function validarCadastroAniversario_(spreadsheet, item) {
   const columns = mapearCabecalhosAgendaCuidados_(rows[0]);
   const birthDates = new Set();
   let denied = false;
+  let contacted = false;
   rows.slice(1).forEach(function (row) {
     if (normalizarTelefoneRetomadas_(valorAgendaCuidados_(row, columns, ["telefone e 164"])) !== item.telefone) return;
     const birth = dataNascimentoCuidado_(valorAgendaCuidados_(row, columns, ["data de nascimento"]));
     if (birth) birthDates.add(formatarDataRetomadas_(birth, "yyyy-MM-dd"));
     if (!contatoPermitidoAgendaCuidados_(valorAgendaCuidados_(row, columns, ["consentimento para contato"]))) denied = true;
+    if (String(valorAgendaCuidados_(row, columns, ["motivo de supressao"]) || "").trim()) denied = true;
+    const last = dataAgendaCuidados_(valorAgendaCuidados_(row, columns, ["ultimo aniversario contatado"]));
+    if (last && formatarDataRetomadas_(last, "yyyy") === String(item.care.referenceDate).slice(0, 4)) contacted = true;
   });
-  return denied ? "contact_suspended" : birthDates.size !== 1 ? "birthday_identity_conflict" : "";
+  return denied ? "contact_suspended" : birthDates.size !== 1 ? "birthday_identity_conflict" : contacted ? "birthday_already_contacted" : "";
 }
 
 function rotuloFalhaCuidado_(reason) {
-  const labels = { conversation_changed: "A conversa mudou", care_context_changed: "A conversa ou o cadastro mudou", patient_waiting_for_reply: "A paciente está aguardando uma resposta", sensitive_context: "Há assunto delicado para a equipe avaliar", contact_consent_required: "Falta confirmar a permissão de contato", contact_suspended: "Contato suspenso no cadastro", identity_requires_review: "Conferir consulta, profissional e vínculo com a LEADS", birthday_identity_conflict: "Há datas de nascimento divergentes no cadastro", calendar_changed: "O compromisso foi alterado no Calendar", care_schedule_expired: "O horário previsto passou", birthday_template_missing: "O modelo de aniversário ainda não está disponível", pending_human_commitment: "Há uma tarefa humana pendente", request_failed: "O resultado do envio precisa ser conferido" };
+  const labels = { birthday_manual_only: "Aniversário: envio manual pela equipe", conversation_changed: "A conversa mudou", care_context_changed: "A conversa ou o cadastro mudou", patient_waiting_for_reply: "A paciente está aguardando uma resposta", sensitive_context: "Há assunto delicado para a equipe avaliar", contact_consent_required: "Falta confirmar a permissão de contato", contact_suspended: "Contato suspenso no cadastro", identity_requires_review: "Conferir consulta, profissional e vínculo com a LEADS", birthday_identity_conflict: "Há datas de nascimento divergentes no cadastro", calendar_changed: "O compromisso foi alterado no Calendar", care_schedule_expired: "O horário previsto passou", birthday_template_missing: "O modelo de aniversário ainda não está disponível", pending_human_commitment: "Há uma tarefa humana pendente", request_failed: "O resultado do envio precisa ser conferido" };
   return labels[String(reason || "")] || "Conferir a conversa e o registro do envio antes de qualquer novo contato";
 }
 
@@ -316,6 +324,7 @@ function projetarDecisoesCuidados_(spreadsheet, items, now) {
     if (!state) return item;
     const row = state.row;
     if (["Dispensado", "Enviado"].includes(row[1])) return null;
+    if (item.care && item.care.purpose === "birthday") return Object.assign({}, item, { automatico: false, approvalBlocked: true, responsavel: "Equipe Clínica LIV — envio manual" });
     if (row[1] === "Adiado" && dataAgendaCuidados_(row[2]) > now) return null;
     if (["Programado", "Enviando"].includes(row[1])) return Object.assign({}, item, { automatico: true, responsavel: "Bruna/automação", sugestao: row[9], dataReferencia: formatarDataRetomadas_(row[10], "yyyy-MM-dd"), horario: formatarDataRetomadas_(row[10], "HH:mm"), futuro: formatarDataRetomadas_(row[10], "yyyy-MM-dd") > formatarDataRetomadas_(now, "yyyy-MM-dd") });
     if (["Revisar", "Incerto", "Reconciliar"].includes(row[1])) return Object.assign({}, item, { automatico: false, approvalBlocked: true, contexto: item.contexto + " " + rotuloFalhaCuidado_(row[17]) + "." });
@@ -327,6 +336,7 @@ function projetarDecisoesCuidados_(spreadsheet, items, now) {
   Object.keys(states).forEach(function (key) {
     const row = states[key].row;
     if (present.has(key) || ["Dispensado", "Enviado"].includes(row[1]) || (row[1] === "Adiado" && dataAgendaCuidados_(row[2]) > now)) return;
+    if (row[7] === "birthday" && !["Enviando", "Incerto", "Reconciliar"].includes(row[1])) return;
     const restored = row[1] === "Adiado" ? obterMarcoCuidado_(spreadsheet, key, now) : null;
     projected.push(Object.assign({}, restored || {}, { sourceKey: key, telefone: row[3], nome: restored ? restored.nome : "", categoria: restored ? restored.categoria : "Retomada de cuidado — " + row[1], dataReferencia: formatarDataRetomadas_(now, "yyyy-MM-dd"), horario: "", automatico: ["Programado", "Enviando"].includes(row[1]), futuro: false, prioridade: 1, responsavel: responsavelAgendaCuidados_(row[4]), sugestao: restored ? restored.sugestao : row[9], contexto: "Conferir o marco original e o histórico. " + (row[17] ? rotuloFalhaCuidado_(row[17]) : "Revisão adiada pela equipe."), care: restored ? restored.care : { purpose: "" } }));
   });
@@ -357,6 +367,7 @@ function decidirCuidadoCentral_(spreadsheet, item, action, now) {
     const dismissed = existing.row.slice(); dismissed[1] = "Dispensado"; gravarDecisaoCuidado_(spreadsheet, dismissed); return { ok: true };
   }
   if (!care) return { ok: false, reason: "item_changed" };
+  if (care.care.purpose === "birthday" && action !== "dismiss") return { ok: false, reason: "birthday_manual_only" };
   if (action === "dismiss" && !dispensaCuidadoPermitida_(care.categoria)) return { ok: false, reason: "care_requires_human_resolution" };
   let row = existing ? existing.row.slice() : Array(CUIDADOS_PROGRAMADOS.headers.length).fill("");
   row[0] = item.sourceKey; row[3] = care.telefone; row[4] = care.care.professional;
@@ -412,6 +423,7 @@ function validarEnvioCuidado_(input) {
   const state = carregarDecisoesCuidados_(spreadsheet)[String(input.planId || "")];
   if (!state || state.row[1] !== "Enviando") return { ok: false, error: "care_not_claimed" };
   const row = state.row;
+  if (row[7] === "birthday") return { ok: false, error: "birthday_manual_only" };
   const now = new Date();
   if (!janelaEnvioCuidadoPermitida_(now, row[7])) return { ok: false, error: "care_outside_send_window" };
   if (!row[11] || !row[10] || now - row[10] < 0 || now - row[10] > 60 * 60000) return { ok: false, error: "care_schedule_expired" };
@@ -428,30 +440,9 @@ function validarEnvioCuidado_(input) {
   return { ok: true, planId: row[0], patientPhone: row[3], professional: row[4], opportunityId: row[5], purpose: row[7], referenceDate: row[8], body: row[9], approvedAt: row[11].toISOString(), contextSignature: row[12], contextAnchorMessageId: row[13], checkedAt: now.toISOString() };
 }
 
-function planejarAniversariosCuidados_(spreadsheet, now, props) {
-  if (props.getProperty(CUIDADOS_PROGRAMADOS.birthdays) !== "true") return 0;
-  const activatedAt = dataAgendaCuidados_(props.getProperty(CUIDADOS_PROGRAMADOS.activatedAt));
-  if (!activatedAt || now <= activatedAt) return 0;
-  const states = carregarDecisoesCuidados_(spreadsheet);
-  const sheet = spreadsheet.getSheetByName(RETOMADAS_CONFIG.planilhaConsultas);
-  const items = criarAgendaCuidadosConsultas_(sheet, now, { raw: true });
-  const phones = {};
-  let planned = 0;
-  items.filter(function (item) { return item.care && item.care.purpose === "birthday" && !item.futuro; }).forEach(function (item) {
-    // One greeting per telephone/year, including duplicated consultation records.
-    const year = item.care.referenceDate.slice(0, 4);
-    if (phones[item.telefone] || Object.keys(states).some(function (key) { const row = states[key].row; return row[3] === item.telefone && ((row[7] === "birthday" && String(row[8]).slice(0, 4) === year) || ["Programado", "Enviando", "Incerto", "Reconciliar"].includes(row[1]) || (row[16] && now - row[16] < 7 * 86400000)); })) return;
-    phones[item.telefone] = true;
-    const operational = contextoOperacionalCuidados_(spreadsheet);
-    const conversation = operational.conversations[item.telefone] || [];
-    if (motivoBloqueioCuidado_(item, conversation, operational.preferences[item.telefone] || {}, now, null)) return;
-    if (listarCompromissosPendentesPaciente_(spreadsheet, item.telefone).length) return;
-    const startDay = new Date(item.care.referenceDate + "T00:00:00-03:00");
-    if (startDay < activatedAt) return; // No birthday backfill on the activation day.
-    const result = decidirCuidadoCentral_(spreadsheet, { sourceKey: item.sourceKey, finalMessage: item.sugestao }, "approve", now);
-    if (result.ok) planned += 1;
-  });
-  return planned;
+// Compatibility entry point: birthdays are internal reminders, never queue plans.
+function planejarAniversariosCuidados_() {
+  return 0;
 }
 
 function processarCuidadosProgramados_(now, secret, props) {
@@ -465,6 +456,7 @@ function processarCuidadosProgramados_(now, secret, props) {
     if (sent + reviewed >= 10) return;
     const row = states[key].row;
     if (row[1] !== "Programado" || !row[10] || row[10] > now) return;
+    if (row[7] === "birthday") { row[1] = "Revisar"; row[17] = "birthday_manual_only"; reviewed += 1; gravarDecisaoCuidado_(spreadsheet, row); return; }
     row[1] = "Enviando"; row[15] = now;
     gravarDecisaoCuidado_(spreadsheet, row);
     const validation = validarEnvioCuidado_({ planId: key });
@@ -501,26 +493,32 @@ function textoPrevistoCuidado_(item) {
 }
 
 function montarResumoPraticoCuidados_(items, day, panelUrl, centralUrl, warnings) {
-  const manual = items.filter(function (item) { return item.manualToday; });
-  const automatic = items.filter(function (item) { return item.automatic && !item.future; });
+  const isBirthday = function (item) { return normalizarTextoRetomadas_(item.nextAction) === "aniversario"; };
+  const birthdays = items.filter(function (item) { return isBirthday(item) && !item.future; });
+  const manual = items.filter(function (item) { return item.manualToday && !isBirthday(item); });
+  const automatic = items.filter(function (item) { return item.automatic && !item.future && !isBirthday(item); });
   const future = items.filter(function (item) { return item.future; });
+  const manualCount = manual.length + birthdays.length;
   const esc = escaparHtmlRetomadas_;
-  const lines = ["Clínica LIV — " + day, manual.length + " decisões hoje; " + automatic.length + " envios previstos; " + future.length + " próximos.", "Revisar e decidir: " + panelUrl, "Aprovar programa o envio; dispensar retira somente a sugestão escolhida; adiar muda a revisão."];
-  let html = '<div style="font:15px/1.5 Arial,sans-serif;max-width:660px;margin:auto;color:#243d31"><h2>Cuidados e decisões — ' + esc(day) + '</h2><p><strong>' + manual.length + ' decisões hoje</strong> · ' + automatic.length + ' envios previstos · ' + future.length + ' próximos</p><p><a style="display:block;background:#356854;color:white;text-decoration:none;text-align:center;padding:14px;border-radius:10px" href="' + esc(panelUrl) + '">Revisar, aprovar, dispensar ou adiar</a></p><p>Aprovar já programa o envio pela Bruna. <strong>Dispensar esta sugestão</strong> impede que ela volte amanhã, preservando futuros marcos.</p>';
+  const instruction = "Aniversários: envio manual por você; a Bruna não envia. Nos demais itens elegíveis, aprovar programa o envio. Dispensar retira somente a sugestão escolhida; adiar muda a revisão.";
+  const lines = ["Clínica LIV — " + day, manualCount + " decisões hoje; " + automatic.length + " envios previstos; " + future.length + " próximos.", "Revisar e decidir: " + panelUrl, instruction];
+  let html = '<div style="font:15px/1.5 Arial,sans-serif;max-width:660px;margin:auto;color:#243d31"><h2>Cuidados e decisões — ' + esc(day) + '</h2><p><strong>' + manualCount + ' decisões hoje</strong> · ' + automatic.length + ' envios previstos · ' + future.length + ' próximos</p><p><a style="display:block;background:#356854;color:white;text-decoration:none;text-align:center;padding:14px;border-radius:10px" href="' + esc(panelUrl) + '">Revisar as sugestões do dia</a></p><p>' + esc(instruction) + ' <strong>Dispensar esta sugestão</strong> preserva os futuros marcos.</p>';
   if ((warnings || []).length) { html += '<p style="color:#9a3412"><strong>ATENÇÃO:</strong> ' + esc(warnings.join(" ")) + '</p>'; lines.push("ATENÇÃO: " + warnings.join(" ")); }
-  [["Decidir hoje", manual], ["Envios previstos", automatic], ["Próximos dias", future]].forEach(function (section) {
+  [["Decidir hoje", manual], ["Aniversariantes de hoje — envio manual", birthdays], ["Envios previstos", automatic], ["Próximos dias", future]].forEach(function (section) {
     html += '<h3>' + esc(section[0]) + ' (' + section[1].length + ')</h3>';
+    lines.push(section[0]);
     section[1].forEach(function (item, index) {
+      const birthday = isBirthday(item);
       const message = item.sourceKey.indexOf("care:") === 0 ? textoPrevistoCuidado_(item) : item.finalMessage;
-      const when = item.programFor ? formatarDataRetomadas_(item.programFor, "dd/MM HH:mm") : item.dueAt ? formatarDataRetomadas_(item.dueAt, "dd/MM HH:mm") : "Revisar";
+      const when = birthday ? "Envio manual por você" : item.programFor ? formatarDataRetomadas_(item.programFor, "dd/MM HH:mm") : item.dueAt ? formatarDataRetomadas_(item.dueAt, "dd/MM HH:mm") : "Revisar";
       lines.push(item.name + " — " + item.nextAction + " — " + when + " — " + item.owner, item.context || "", message || "SEM SUGESTÃO PRONTA");
       html += '<div style="border-top:1px solid #dde5df;padding:10px 0"><strong>' + esc(item.name) + '</strong> · ' + esc(when) + '<br>' + esc(item.nextAction) + '<br><small>' + esc(item.owner) + '</small>';
-      if (section[0] === "Decidir hoje" && index < 6) html += '<p style="margin:7px 0">' + esc(item.context) + '</p><blockquote style="margin:8px 0;padding:10px;background:#f3f6f3">' + esc(message || "SEM SUGESTÃO PRONTA") + '</blockquote>';
+      if (birthday || (section[0] === "Decidir hoje" && index < 6)) html += '<p style="margin:7px 0">' + esc(item.context) + '</p><blockquote style="margin:8px 0;padding:10px;background:#f3f6f3">' + esc(message || "SEM SUGESTÃO PRONTA") + '</blockquote>';
       html += '</div>';
     });
   });
-  html += '<p>Todos os ' + items.length + ' itens estão listados. As primeiras seis decisões trazem o texto aqui; os demais textos completos estão no painel.</p><p><a href="' + esc(centralUrl) + '">Abrir Central de Atendimento</a></p></div>';
-  return { html: html, text: lines.join("\n\n"), manual: manual.length, automatic: automatic.length, future: future.length, represented: items.length };
+  html += '<p>Todos os ' + items.length + ' itens estão listados. Todos os aniversários e as primeiras seis decisões trazem o texto aqui; os demais textos completos estão no painel.</p><p><a href="' + esc(centralUrl) + '">Abrir Central de Atendimento</a></p></div>';
+  return { html: html, text: lines.join("\n\n"), manual: manualCount, automatic: automatic.length, future: future.length, represented: items.length };
 }
 
 function ativarCuidadosProgramados() {
@@ -533,13 +531,9 @@ function ativarCuidadosProgramados() {
   return { ok: true, birthdayActive: false };
 }
 
+// Retained for old operator links. A legacy flag/template cannot restore sending.
 function ativarAniversariosAutomaticos() {
-  const props = PropertiesService.getScriptProperties();
-  const health = consultarSaudeEndpointRetomadasAutomaticas_(props, props.getProperty(RETOMADAS_CONFIG.propriedadeSegredo));
-  if (props.getProperty(CUIDADOS_PROGRAMADOS.enabled) !== "true" || !health || !health.birthdayEnabled || !health.birthdayTemplateConfigured) throw new Error("birthday_endpoint_not_ready");
-  props.setProperty(CUIDADOS_PROGRAMADOS.activatedAt, new Date().toISOString());
-  props.setProperty(CUIDADOS_PROGRAMADOS.birthdays, "true");
-  return { ok: true, active: true, backfill: false };
+  return { ok: false, active: false, reason: "birthday_manual_only" };
 }
 
 function registrarAniversarioContatado_(spreadsheet, phone, now) {

@@ -102,6 +102,9 @@ const AUTOMATIC_TEMPLATE_ENV = {
 };
 
 test("authenticated health check reports only non-sensitive readiness flags", async () => {
+  const legacyBirthdayFlags = getScheduledFollowupHealth({ ...AUTOMATIC_TEMPLATE_ENV, WHATSAPP_BIRTHDAY_CARE_ENABLED: "true", YCLOUD_BIRTHDAY_TEMPLATE_NAME: "synthetic_birthday" });
+  assert.equal(legacyBirthdayFlags.birthdayEnabled, false);
+  assert.equal(legacyBirthdayFlags.birthdayDeliveryMode, "manual_daily_reminder");
   const direct = getScheduledFollowupHealth(
     AUTOMATIC_TEMPLATE_ENV,
   );

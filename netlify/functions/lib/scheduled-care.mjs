@@ -11,32 +11,21 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), { status
 
 export function validateCareReceipt(care, now) {
   if (!care || care.ok !== true || !/^care:[\w-]{43}$/.test(care.planId || "") || !/^\+\d{8,15}$/.test(care.patientPhone || "")) return "care_identity_invalid";
-  if (!["amanda", "daniel"].includes(care.professional) || !["birthday", "post_consult", "post_surgery", "quote"].includes(care.purpose)) return "care_purpose_invalid";
+  if (care.purpose === "birthday") return "birthday_manual_only";
+  if (!["amanda", "daniel"].includes(care.professional) || !["post_consult", "post_surgery", "quote"].includes(care.purpose)) return "care_purpose_invalid";
   const local = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", hour: "2-digit", hourCycle: "h23", weekday: "short" }).formatToParts(now).map(part => [part.type, part.value]));
-  if (Number(local.hour) < 9 || Number(local.hour) >= 18 || (care.purpose !== "birthday" && ["Sat", "Sun"].includes(local.weekday))) return "care_outside_send_window";
+  if (Number(local.hour) < 9 || Number(local.hour) >= 18 || ["Sat", "Sun"].includes(local.weekday)) return "care_outside_send_window";
   const age = now.getTime() - Date.parse(care.checkedAt);
   if (!Number.isFinite(age) || age < -5000 || age > 60000 || !care.contextSignature || !care.contextAnchorMessageId) return "care_receipt_expired";
   const approvedAt = Date.parse(care.approvedAt);
   if (!Number.isFinite(approvedAt) || approvedAt > now.getTime() || now.getTime() - approvedAt > 4 * 86400000) return "care_approval_expired";
   if (!care.body || Array.from(care.body).length > 900) return "care_message_invalid";
-  if (care.purpose === "birthday") {
-    const day = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
-    if (care.body !== BIRTHDAY_CARE_TEXT || care.referenceDate !== day) return "birthday_contract_mismatch";
-  }
   return "";
 }
 
-export async function sendBirthdayCare({ from, to, eventId }, { env, fetchImpl }) {
-  const template = String(env.YCLOUD_BIRTHDAY_TEMPLATE_NAME || "").trim();
-  if (!template || env.WHATSAPP_BIRTHDAY_CARE_ENABLED !== "true") return { status: "failed", errorCode: "birthday_template_missing" };
-  try {
-    const response = await fetchImpl("https://api.ycloud.com/v2/whatsapp/messages", {
-      method: "POST", headers: { "content-type": "application/json", "X-API-Key": env.YCLOUD_API_KEY },
-      body: JSON.stringify({ from, to, type: "template", externalId: eventId, template: { name: template, language: { code: "pt_BR" }, components: [] } }),
-      signal: AbortSignal.timeout(8000),
-    });
-    return response.ok ? { status: "completed" } : { status: "failed", errorCode: "provider_rejected" };
-  } catch { return { status: "failed", errorCode: "delivery_unknown" }; }
+// Compatibility adapter: birthday greetings must be sent by the human team.
+export async function sendBirthdayCare() {
+  return { status: "failed", errorCode: "birthday_manual_only" };
 }
 
 // The request supplies only a plan identity. Recipient, exact text, purpose,
@@ -45,7 +34,7 @@ export async function handleScheduledCare(payload, {
   env = process.env, fetchImpl = fetch, now = new Date(), getStoreImpl = getStore,
   callSheetsImpl = callClassificationSheets, readMemoryImpl = readConversationTurns,
   getBusinessNumberImpl = getBusinessNumber, appendMemoryImpl = appendConversationTurn,
-  sendBirthdayImpl = sendBirthdayCare, sendTemplateImpl = sendYCloudPatientFollowupTemplate,
+  sendTemplateImpl = sendYCloudPatientFollowupTemplate,
 } = {}) {
   if (env.WHATSAPP_SCHEDULED_CARE_ENABLED !== "true") return json({ ok: false, sent: false, error: "care_disabled" }, 503);
   const planId = String(payload.planId || "");
@@ -70,8 +59,7 @@ export async function handleScheduledCare(payload, {
   const care = await read();
   const invalid = care.error || validateCareReceipt(care, currentTime());
   if (invalid) return json({ ok: false, sent: false, error: invalid }, 409);
-  if (care.purpose === "birthday" && (env.WHATSAPP_BIRTHDAY_CARE_ENABLED !== "true" || !env.YCLOUD_BIRTHDAY_TEMPLATE_NAME)) return json({ ok: false, sent: false, error: "birthday_template_missing" }, 503);
-  if (care.purpose !== "birthday" && !env.YCLOUD_FOLLOWUP_TEMPLATE_NAME) return json({ ok: false, sent: false, error: "followup_template_missing" }, 503);
+  if (!env.YCLOUD_FOLLOWUP_TEMPLATE_NAME) return json({ ok: false, sent: false, error: "followup_template_missing" }, 503);
   const from = await getBusinessNumberImpl({ env });
   if (!from || !env.YCLOUD_API_KEY) return json({ ok: false, sent: false, error: "configuration_missing" }, 503);
 
@@ -92,10 +80,10 @@ export async function handleScheduledCare(payload, {
     await receiptStore.setJSON(key, { status: "cancelled", reason: "care_context_changed", at: now.toISOString() });
     return json({ ok: false, sent: false, error: "care_context_changed" }, 409);
   }
-  const effectiveBody = care.purpose === "birthday" ? care.body : renderYCloudFollowupTemplateText(care.body);
+  const effectiveBody = renderYCloudFollowupTemplateText(care.body);
   let result;
   try {
-    result = await (care.purpose === "birthday" ? sendBirthdayImpl : sendTemplateImpl)(
+    result = await sendTemplateImpl(
       { from, to: care.patientPhone, eventId, body: care.body }, { env, fetchImpl },
     );
   } catch { result = { status: "failed", errorCode: "delivery_unknown" }; }
