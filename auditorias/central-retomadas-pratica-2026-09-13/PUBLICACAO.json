@@ -50,7 +50,7 @@
     "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "sameDeployment": true,
     "deployedAt": "2026-09-13T13:27:00Z",
-    "verifiedAt": "2026-09-13T13:37:10.000Z",
+    "verifiedAt": "2026-09-13T13:37:10Z",
     "description": "Central prática: copiar, personalizar e cancelar definitivamente — 7a5cf98",
     "normalizedSha256": {
       "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
@@ -66,7 +66,7 @@
     "staticBuild": "193 arquivos e 54 rotas",
     "staticCheck": "ok, zero erro e zero arquivo operacional publico",
     "diffCheck": "OK",
-    "opsCheck": "Repetir no branch canonico limpo apos o commit de fechamento",
+    "opsCheck": "OPS_CHECK_STATUS=OK no branch canonico limpo, repetido no HEAD final",
     "postMergeFullSuite": "1481/1481"
   },
   "postflight": {
