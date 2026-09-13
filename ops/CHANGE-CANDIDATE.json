@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-SAFETY-FIRST-INTEGRATED-CARE-2026-09-12",
   "title": "Seguranca como prioridade, cardiologia incluida no pacote cirurgico e criterios da equipe",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "a9f03abcf03cae80df6a4fef5247f5bc3edb0ba8",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -104,7 +104,10 @@
       "ctaPreservation": "All WhatsApp opening tags and all image/video/source tags byte-identical on the six changed pages.",
       "liveBaseline": "2026-09-13T00:35:22.453Z: authenticated production/ready 6aa5ec483ca1f7000909ff0a, fd76cf8; all 191 provider files reconciled, allowing only verified packaging differences. Exactly six changed HTML files, no drift or added/removed public route. Twelve functions and five schedules captured.",
       "parallelPreservation": "Drive advanced to a 155021-character Plan at 00:27:50.799Z, exactly equal to committed 4daf30599fe99f52f8aaf0ba8d3070145304c954. Its pending Bruna/LEADS paragraph is preserved in this Plan, with source and no inclusion of its functional code. Origin remains a9f03ab.",
-      "operationalConsistency": "SYNC_PENDING expected while tested_local, isolated branch and not yet published; final check required on clean canonical branch after receipts."
+      "operationalConsistency": "External receipts reconciled. Final ops:check required on clean canonical branch after this documentation-only receipt commit; no claim that pending parallel Bruna work was released.",
+      "releasePreflight": "CHANGE_SAFETY_STATUS=OK in release mode for 996f4dacaddce0195befc960242ddc94cfd0682e at 2026-09-13T00:37:39Z; continuing site publication authority and package confirmation recorded. Exact twelve-file scope.",
+      "livePostflight": "2026-09-13T00:38:44.195Z: production/ready 996f4da/6aa5f068ff6f6f00084695c0. All 191 provider files reconcile with the artifact; 53/53 HTTP 200 and equivalent (47 byte-identical, six known Netlify pretty-URL transformations); 12 function digests and five schedules identical. Ops/audit sentinels HTTP 404.",
+      "driveProjection": "Same file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO updated at 2026-09-13T00:39:29.854Z. Readback exactly equals 157430 characters / 161669 bytes of committed Plan cf41668f6d93531a59497fb90a3b39347b2b6ab9; SHA256 c7a94ded8445d85526a361d81f311c46848b711fcafa3ffcf4ee75e00cb4960a. Pending Bruna/LEADS paragraph from 4daf305 preserved in full."
     },
     "crossConsumerCases": [
       "seguranca prioritaria e provas concretas nas seis paginas sem alongamento desnecessario",
@@ -116,13 +119,14 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "996f4dacaddce0195befc960242ddc94cfd0682e",
+    "netlifyDeployId": "6aa5f068ff6f6f00084695c0",
     "appsScriptVersion": 149,
-    "verifiedAt": null,
+    "verifiedAt": "2026-09-13T00:39:30Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "activationState": "local_not_published",
-    "notes": "Apps Script v149 e contexto herdado; nenhuma escrita nessa plataforma. Revisao clinica posterior permanece pendente."
+    "drivePlanSha256": "c7a94ded8445d85526a361d81f311c46848b711fcafa3ffcf4ee75e00cb4960a",
+    "activationState": "safety_communication_live_medical_review_pending",
+    "notes": "Publicado em 12/09/2026 as 21:38:26: seis paginas e diretriz de seguranca, cardiologia incluida no pacote cirurgico e anestesistas selecionados com criterio de formacao. Nenhum anuncio, Apps Script, bot, mensagem, preco ou tracking alterado; v149 e somente contexto herdado. Revisao clinica posterior pendente, sem atribuicao de revisao inexistente no artigo. Plano publicado em cf41668 e atualizado no mesmo Drive com igualdade exata; registro Bruna/LEADS preservado sem incorporar seu codigo. Recibos documentais usam skip ci e nao alteram o artefato."
   },
   "rollback": {
     "local": "Reverter somente o delta de comunicacao deste candidato sobre o baseline preservando terceiros.",
