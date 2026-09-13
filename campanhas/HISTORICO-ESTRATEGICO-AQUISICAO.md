@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — SEO e descoberta por IA com evidência do Search Console
+
+- **Decisão canônica:** seção 30 do Norte; preservadas as diretrizes de concisão, segurança e aquisição qualificada.
+- **Motivo/evidência:** pedido de Daniel; cinco XLSX fornecidos, com 21 cliques/2.042 impressões entre 09/07 e 10/09. Maior exposição recente e baixo clique nos guias de custos; sem evidência de consultas ou resultado causal. Posições convertidas em data são N/D, e cobertura até 03/09 não é o estado atual.
+- **Mudança:** perfil da Amanda, identidade pessoa/clínica/site uniforme, endereço, breadcrumbs, links, metadados selecionados e redirects estritos. Não alterar política de preços, bot, Ads, tracking ou mídias.
+- **Hipótese/métrica:** facilitar descoberta e interesse em consulta; medir contatos orgânicos válidos, qualificados e consultas com atribuição verificável. Impressões e CTR são diagnóstico.
+- **Revisão:** integridade imediata/24h, indexação após recrawl, primeira leitura em 26/09 e 28 dias em 10/10; sem automação criada.
+- **Manter/corrigir:** preservar fatos e navegação; corrigir regressão ou imprecisão, não perseguir oscilação de baixa amostra. Sem prometer ranking ou citação. Revisão médica não é fabricada.
+- **Estado:** preparado localmente; os recibos de publicação e verificação ficam no relatório `auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md` e no Plano Executivo. Integração canônica `a9a7ea6` preserva a execução Ads e a pendência Bruna do `4a0d633`.
+
 ## 12 de setembro de 2026 — segurança em primeiro lugar e cardiologia integrada
 
 - **Decisão canônica:** seção 29 e posicionamento da seção 3 do Norte Estratégico.

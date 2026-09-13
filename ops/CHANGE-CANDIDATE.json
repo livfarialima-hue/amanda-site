@@ -1,145 +1,193 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-COMMUNICATION-SAFETY-2026-09-12",
-  "title": "Comunicacao das oito campanhas ativas: seguranca concreta, formacao e planejamento individual",
-  "status": "published_verified",
-  "baseCommit": "05d99efab863196947273a4341f3e7fcecd6d13d",
+  "changeId": "SITE-SEO-AI-DISCOVERY-2026-09-12",
+  "title": "SEO tecnico, identidade medica e descoberta organica com dados do Search Console",
+  "status": "tested_local",
+  "baseCommit": "a9a7ea6ac0f112c77b819cf88e2260f6647a96d6",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou nesta tarefa revisar toda comunicacao das campanhas ativas, atualizar diretrizes e o mesmo Plano no Drive, sem mexer no site. Complementou seguranca, cardiologia integrada na propria clinica, formacao USP do cardiologista e selecao criteriosa dos anestesistas. Autorizacao de campanha ja executada; gate final e somente a projecao documental. Nao autoriza deploy de site, Apps Script, mensagens, verba ou estrutura."
+    "note": "Daniel solicitou auditoria especializada de SEO e descoberta por IA e todos os ajustes necessarios no site, mantendo autorizacao anterior para publicacao do site. Escopo exclusivamente publico/editorial/tecnico do site e suas diretrizes. Os dois exports GSC foram fornecidos pelo usuario para leitura; nao alterar arquivos-fonte. Sem nova autoridade para Ads, GBP, DNS, dominios externos, credenciais, bot, mensagens, LEADS ou Apps Script. Commit exato e producao devem ser reconfirmados no preflight."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
+      "site-publication",
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-ANTES.json",
-      "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-RECURSOS.json",
-      "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-SEGURANCA.json",
-      "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-VERIFICACAO.json",
-      "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.json",
+      "_redirects",
+      "abdominoplastia/index.html",
+      "apps-script/clinica-liv-leads/site-contrast.test.mjs",
+      "auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md",
+      "avaliacao-facial/index.html",
+      "blefaroplastia/index.html",
+      "braquioplastia/index.html",
       "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.md",
-      "campanhas/google-ads-communication.test.mjs",
+      "campanhas/lifting-price-page.test.mjs",
+      "campanhas/seo-discovery.test.mjs",
+      "campanhas/site-enhancements.js",
+      "campanhas/site-technical-regression.test.mjs",
+      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+      "conteudos/botox-preenchimento-bioestimulador/index.html",
+      "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+      "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+      "conteudos/como-escolher-cirurgiao-plastico/index.html",
+      "conteudos/como-escolher-protese-de-mama/index.html",
+      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      "conteudos/consulta-cirurgia-plastica/index.html",
+      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+      "conteudos/index.html",
+      "conteudos/lifting-facial-ou-injetaveis/index.html",
+      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+      "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+      "conteudos/lipoenxertia-facial/index.html",
+      "conteudos/mastopexia-com-ou-sem-protese/index.html",
+      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+      "conteudos/naturalidade-envelhecimento/index.html",
+      "conteudos/otomodelacao-ou-otoplastia/index.html",
+      "conteudos/papada-contorno-cervical/index.html",
+      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      "conteudos/recuperacao-blefaroplastia/index.html",
+      "conteudos/recuperacao-lifting-cervical/index.html",
+      "conteudos/recuperacao-lifting-facial/index.html",
+      "conteudos/seguranca-cirurgia-plastica/index.html",
+      "contorno-corporal/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/seo-technical-quality-gates.md",
+      "dra-amanda-schroeder/index.html",
+      "index.html",
+      "injetaveis/index.html",
+      "lifting-cervical/index.html",
+      "lifting-facial/index.html",
+      "lip-lifting/index.html",
+      "lipo-de-papada/index.html",
+      "lipoaspiracao/index.html",
+      "mama/index.html",
+      "mamoplastia-redutora/index.html",
+      "mastopexia-com-protese/index.html",
+      "mastopexia/index.html",
+      "ninfoplastia/index.html",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
-      "scripts/run-tests.mjs"
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html",
+      "otoplastia/index.html",
+      "pos-bariatrica/index.html",
+      "privacidade/index.html",
+      "procedimentos/index.html",
+      "protese-de-mama/index.html",
+      "scripts/check-site-technical.mjs",
+      "scripts/run-tests.mjs",
+      "scripts/seo-identity.mjs",
+      "sitemap.xml"
     ]
   },
   "impact": {
     "consumers": [
-      "pessoas que veem os 17 RSAs e recursos das oito campanhas ativas",
-      "producao futura de comunicacao subordinada ao Norte",
-      "Plano Executivo local e sua mesma projecao no Drive"
+      "53 paginas publicas existentes, nova pagina de perfil, links institucionais e dados estruturados estaticos",
+      "Googlebot, Bing, OAI-SearchBot e outros leitores do HTML, sem tratamento de conteudo diferenciado",
+      "pipeline de build, redirects do alias Netlify apenas nas rotas publicas e testes de regressao",
+      "diretrizes editoriais, Norte, Plano Executivo e mesma projecao do Drive"
     ],
     "preservedInvariants": [
-      "identificacao medica na descricao 1 fixada; 30/90 caracteres e verdade verificavel",
-      "cardiologia quando indicada; USP somente como formacao do cardiologista; nenhum risco zero ou promessa de resultado",
-      "publicidade infantil sem pressupor cardiologia pediatrica",
-      "URLs, caminhos, rastreamento, campanhas, grupos, palavras, publico, verba, lances e metas preservados",
-      "nenhuma alteracao ou publicacao de site, Apps Script, bot, CRM ou mensagens por esta tarefa",
-      "publicacoes paralelas do site e pendencia Bruna/LEADS 4a0d633 preservadas; codigo da pendencia nao incorporado"
+      "Nenhuma promessa de ranking, indexacao, citacao ou resultado clinico; nenhuma revisao medica/autoria nova atribuida sem evidencia.",
+      "Conteudo acolhedor, foco na consulta; sem paginas porta, cidades ficticias, keyword stuffing, avaliacoes inventadas ou textos secretos para IA.",
+      "Cardiologia incluida somente no pacote cirurgico; formacao USP so do cardiologista; nenhuma alteracao de preco ou orientacao medica.",
+      "Preservar hrefs e atributos de todos os WhatsApps existentes, fotos e videos, tracking, consentimento, logica JavaScript de tracking, 12 funcoes e cinco schedules.",
+      "Identidade Person da Amanda distinta de MedicalClinic, @ids estaveis, CRM/RQE corretos, endereco cj.710 e horario fisico nao inferido do WhatsApp.",
+      "HTTP 200, sitemap e robots sao condicoes tecnicas, nao evidencia de indexacao; amostra GSC encerrada antes das mudancas de hoje.",
+      "Preservar producao e pendencias paralelas Bruna/LEADS; nenhum dado bruto de paciente ou export do GSC no artefato publico.",
+      "Unica alteracao funcional de UI em site-enhancements.js: um link no template do rodape; atualizar apenas sua revisao de cache no HTML. Nenhum outro comportamento, evento, consentimento ou CTA alterado."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads",
-        "status": "baseline_confirmed_and_post_save_reread",
-        "checkedAt": "2026-09-13T01:12:57.226Z",
-        "reference": "Conta 995-334-4486, 17 RSAs ativos em oito campanhas. Formularios lidos antes das gravacoes; 17 listagens finais e 9 releituras completas adicionais. 63 destaques e 76 sitelinks inventariados. Recibos em auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-VERIFICACAO.json."
+        "contract": "site-publication",
+        "system": "Git/Netlify/site publico",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-13T01:36:05.498Z",
+        "reference": "Origin/main 05d99ef; Netlify production ready 6aa5f068ff6f6f00084695c0 do commit996f4da. 53/53 HTTP200 autocanonicas e equivalentes ao fonte. SiteId c33facb6-eafc-4635-99d6-068bf8707227. Nenhuma escrita externa. Integracao preservadora a9a7ea6: dez commits locais canonicos de documentacao/controle Ads, sem mudanca dos arquivos publicos ou funcoes. Drive lido 13/09 01:22:26 UTC,161190 caracteres; pendencia Bruna ampliada do4a0d633 preservada. tmp/seo-release-preflight.json:191 provider files,0 unexpected baseline drift,12 functions/5 schedules. Bruna pending-plan6327ce3 matched Drive162963chars; no functional integration."
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Drive / Plano Executivo",
-        "status": "baseline_byte_equal",
-        "checkedAt": "2026-09-13T01:03:13Z",
-        "reference": "Mesmo ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO; 163195 bytes relidos iguais ao Plano commitado em 4a0d633. Sua pendencia mais recente preservada no arquivo local; nenhum codigo Bruna importado."
+        "system": "Search Console por exports fornecidos, site e diretrizes",
+        "status": "site_only_confirmed",
+        "checkedAt": "2026-09-13T00:54:24.596Z",
+        "reference": "Exports lidos intactos em Downloads. Busca Web 09/07-10/09:21 cliques/2042 impressoes. Cobertura ate03/09:42 indexadas+8 nao indexadas. Fontes/periodos/graos separados; posicoes convertidas em data sao N/D. Browser falhou antes de inicializar e Sheets403; sem alteracoes de Ads, GA4 ou atendimento. Tres drilldowns recebidos:404 malformado,2detectadas e rastreadas(videoMP4 e URL antiga). Sem reconstruir datas1969."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "npm.cmd run release:preflight",
       "npm.cmd run ops:check",
       "git diff --check",
-      "node --test campanhas/google-ads-communication.test.mjs"
+      "node --check campanhas/content-library.js",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test campanhas/seo-discovery.test.mjs",
+      "node --check campanhas/site-enhancements.js"
     ],
     "results": {
-      "editorial": "5/5 tests passed; 17 groups, 236 headlines, 68 descriptions; 29 callout changes; 8 sitelink models / 12 associations; 9 exact detailed UI rereads.",
-      "scope": "14 files: canonical communication documents, five non-public evidence JSONs, editorial test plus its test-runner registration and two operational metadata records. No public-site file modified.",
-      "artifactIsolation": "All five operational JSON receipts kept under auditorias/, excluded from the site build. No public source files changed.",
-      "fullSuite": "1349/1349 passed (including 5/5 editorial receipt assertions). Initial missing @netlify/blobs dependency resolved by using the unchanged canonical installed dependencies; no application code fix.",
-      "crossConsumerTests": "145/145 passed",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK, exact 14 files",
-      "staticArtifact": "192 files, 53 routes; zero audit/operations files in public artifact. Local check only, no Netlify publication.",
-      "driveProjection": "Same ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO replaced at 2026-09-13T01:22:26.776Z; exact readback of 165572 bytes / 161190 characters from commit 14b59bbbd5ba1567c47dbe53b0e45a5331b62c29; SHA256 e953f2f4f38c235c8156296f55fad312a54e866946f29b8f9eb7c48faa4a5376. Title, parent folder and pending Bruna record preserved.",
-      "releasePreflight": "CHANGE_SAFETY_STATUS=OK on clean commit 14b59bbbd5ba1567c47dbe53b0e45a5331b62c29 for the authorized Google Ads communication / same Drive Plan scope; no site or Apps Script release.",
-      "operationalConsistency": "On clean canonical reestruturacao-site at 1e0ac57: CHANGE_SAFETY_STATUS=OK (exact 14 files), JOURNEY_MODULE_BOUNDARIES=OK and OPS_CHECK_STATUS=OK. No remote push, Netlify deploy, Apps Script write or patient message."
+      "fullSuite": "1357/1357",
+      "site": "54 routes,193 artifact files,0 audit leaks",
+      "scope": "72/72",
+      "browser": "20 cases 390/1440,profile/footer link works",
+      "invariants": "53 old pages: WA/media exact,scripts only footer-cache revision",
+      "architecture": "OK",
+      "live": "191 provider files,expected 56 changed+1 new,12 functions/5 schedules",
+      "pending": "Publication and Drive readback;GSC panel actions/field CWV not verified"
     },
-    "completedAt": "2026-09-13T01:22:52Z"
-  },
-  "release": {
-    "approvedCommit": "14b59bbbd5ba1567c47dbe53b0e45a5331b62c29",
-    "netlifyDeployId": "6aa5f068ff6f6f00084695c0",
-    "appsScriptVersion": 149,
-    "verifiedAt": "2026-09-13T01:22:52Z",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "e953f2f4f38c235c8156296f55fad312a54e866946f29b8f9eb7c48faa4a5376",
-    "activationState": "google_ads_texts_saved_policy_review_pending",
-    "notes": "Netlify and Apps Script identifiers are inherited context from the preceding completed release, not publications or live revalidations performed here. New publication surfaces are Google Ads communication and the same Drive Plan only. Google Ads: 17 RSAs saved, 29 callout associations and 12 sitelink associations updated and re-read. All 17 listings active/qualified; assets under policy review. Drive exact byte equality confirmed. Historical source Plan update 4a0d633 preserved without its functional code. Five operational JSON files are excluded from the public site artifact under auditorias/.",
-    "driveModifiedAt": "2026-09-13T01:22:26.776Z",
-    "externalSurfacesWritten": [
-      "Google Ads text assets",
-      "Google Drive existing executive Plan"
+    "crossConsumerCases": [
+      "Identidade medica e endereco coerentes nas54 paginas; autoria/revisao nao fabricadas.",
+      "FAQ visivel preservado, esquema alinhado a titulo/descricao, breadcrumbs e destinos existentes.",
+      "Links institucionais e nova pagina de perfil com navegação acessivel; no mobile sem overflow.",
+      "Alias Netlify somente rotas publicas, sem redirecionar endpoints; canonicals index.html preservados para evitar loops do prettyURL.",
+      "Snapshots GSC: nao somar graos e nao reconstruir posicao a partir de datas corrompidas; relatorio distingue periodo e extracao."
     ]
   },
-  "previousCompletedRelease": {
-    "changeId": "SITE-SAFETY-FIRST-INTEGRATED-CARE-2026-09-12",
-    "sourceCommit": "05d99efab863196947273a4341f3e7fcecd6d13d",
-    "release": {
-      "approvedCommit": "996f4dacaddce0195befc960242ddc94cfd0682e",
-      "netlifyDeployId": "6aa5f068ff6f6f00084695c0",
-      "appsScriptVersion": 149,
-      "verifiedAt": "2026-09-13T00:39:30Z",
-      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanSha256": "c7a94ded8445d85526a361d81f311c46848b711fcafa3ffcf4ee75e00cb4960a",
-      "activationState": "safety_communication_live_medical_review_pending",
-      "notes": "Publicado em 12/09/2026 as 21:38:26: seis paginas e diretriz de seguranca, cardiologia incluida no pacote cirurgico e anestesistas selecionados com criterio de formacao. Nenhum anuncio, Apps Script, bot, mensagem, preco ou tracking alterado; v149 e somente contexto herdado. Revisao clinica posterior pendente, sem atribuicao de revisao inexistente no artigo. Plano publicado em cf41668 e atualizado no mesmo Drive com igualdade exata; registro Bruna/LEADS preservado sem incorporar seu codigo. Recibos documentais usam skip ci e nao alteram o artefato."
-    },
-    "note": "Previous completed site receipt preserved in Git and here; its clinical review remains pending. This Ads record does not claim that site publication."
+  "release": {
+    "approvedCommit": null,
+    "netlifyDeployId": null,
+    "appsScriptVersion": 149,
+    "verifiedAt": null,
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": null,
+    "activationState": "local_only",
+    "notes": "Ainda nao publicado. GSC export e diagnostico, nao estado vivo certificado. Apps Script149 somente contexto herdado, sem escrita."
   },
   "rollback": {
-    "local": "Restaurar apenas documento ou texto comprovadamente incorreto, preservando trabalhos paralelos.",
-    "production": "Restaurar apenas textos/associacoes afetados com o backup disponivel; original AG_MASTOPEXIA_PRECO ausente, sem reconstruir por suposicao. Nunca restaurar promessa indevida; nao mudar verba, lance, site ou estrutura."
+    "local": "Reverter apenas delta SEO deste candidato sobre baseline, preservando trabalho paralelo.",
+    "production": "Restaurar deploy6aa5f068ff6f6f00084695c0 apenas se nao houver avancos posteriores; caso contrario reverter delta SEO sobre producao atual."
   },
   "monitoring": {
-    "owner": "Daniel e equipe da Clinica LIV",
-    "window": "integridade/politica no proximo ciclo; leituras de negocio em 19/09 e 26/09, sem automacao nova",
+    "owner": "Daniel e equipe Clinica LIV",
+    "window": "Integridade imediata e24h; reavaliar indexacao/CTR por URL apos recrawl e janelas comparaveis de28dias, sem automacao criada.",
     "metrics": [
-      "contatos validos e qualificados",
-      "consultas agendadas e realizadas",
-      "custo por qualificado e por consulta",
-      "reprovacao de politica, expectativa incorreta e vazamento entre procedimentos"
+      "HTTP, canonicals, links, identificacao medica e ausencia de loops",
+      "GSC por pagina/consulta/pais/dispositivo, datas da coleta e consultas anonimizadas",
+      "contatos organicos validos, qualificados e consultas quando mensuraveis, sem tratar clique como consulta",
+      "inclusao/citacoes em busca por IA somente quando demonstradas por fonte"
     ],
-    "rollbackRule": "Corrigir componente com erro confirmado. Nao alegar ganho causal de conversao ou reverter por CTR/nota da plataforma isolados."
+    "rollbackRule": "Corrigir regressao tecnica ou informacao imprecisa imediatamente; nao desfazer por oscilacao de baixa amostra nem atribuir melhora causal a mudancas simultaneas."
   }
 }

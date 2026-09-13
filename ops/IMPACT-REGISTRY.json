@@ -48,7 +48,8 @@
       "ownerFiles": [
         ".netlifyignore",
         "scripts/build-static-site.mjs",
-        "scripts/check-site-technical.mjs"
+        "scripts/check-site-technical.mjs",
+        "scripts/seo-identity.mjs"
       ],
       "consumerFiles": [
         "abdominoplastia/index.html",
@@ -69,6 +70,7 @@
         "campanhas/otoplasty-pages.test.mjs",
         "campanhas/secondary-conversion.css",
         "campanhas/secondary-conversion.js",
+        "campanhas/seo-discovery.test.mjs",
         "campanhas/site-enhancements.css",
         "campanhas/site-enhancements.js",
         "conteudos/como-escolher-cirurgiao-plastico/index.html",
@@ -87,6 +89,7 @@
         "conteudos/recuperacao-lifting-cervical/index.html",
         "conteudos/seguranca-cirurgia-plastica/index.html",
         "contorno-corporal/index.html",
+        "dra-amanda-schroeder/index.html",
         "lifting-cervical/index.html",
         "lifting-facial/index.html",
         "lipo-de-papada/index.html",
@@ -100,8 +103,10 @@
       ],
       "coveredPaths": [
         ".netlifyignore",
+        "_redirects",
         "abdominoplastia/index.html",
         "apps-script/clinica-liv-leads/site-contrast.test.mjs",
+        "auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md",
         "avaliacao-facial/index.html",
         "blefaroplastia/index.html",
         "braquioplastia/index.html",
@@ -121,6 +126,7 @@
         "campanhas/otoplasty-pages.test.mjs",
         "campanhas/secondary-conversion.css",
         "campanhas/secondary-conversion.js",
+        "campanhas/seo-discovery.test.mjs",
         "campanhas/site-enhancements.css",
         "campanhas/site-enhancements.js",
         "campanhas/site-technical-regression.test.mjs",
@@ -134,8 +140,8 @@
         "conteudos/consulta-cirurgia-plastica/index.html",
         "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
         "conteudos/index.html",
-        "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
         "conteudos/lifting-facial-ou-injetaveis/index.html",
+        "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
         "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
         "conteudos/lipoenxertia-facial/index.html",
         "conteudos/mastopexia-com-ou-sem-protese/index.html",
@@ -154,6 +160,8 @@
         "conteudos/recuperacao-lifting-facial/index.html",
         "conteudos/seguranca-cirurgia-plastica/index.html",
         "contorno-corporal/index.html",
+        "docs/seo-technical-quality-gates.md",
+        "dra-amanda-schroeder/index.html",
         "index.html",
         "injetaveis/index.html",
         "lifting-cervical/index.html",
@@ -174,6 +182,8 @@
         "procedimentos/index.html",
         "protese-de-mama/index.html",
         "scripts/check-site-technical.mjs",
+        "scripts/run-tests.mjs",
+        "scripts/seo-identity.mjs",
         "sitemap.xml"
       ],
       "requiredTestFiles": [
@@ -182,7 +192,8 @@
         "campanhas/footer-consistency.test.mjs",
         "campanhas/lifting-price-page.test.mjs",
         "campanhas/site-technical-regression.test.mjs",
-        "scripts/check-site-technical.mjs"
+        "scripts/check-site-technical.mjs",
+        "campanhas/seo-discovery.test.mjs"
       ],
       "requiredCommands": [
         "node --check campanhas/content-library.js",

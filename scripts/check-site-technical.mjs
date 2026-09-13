@@ -74,7 +74,7 @@ function parseRedirects(content) {
     .filter(Boolean)
     .map((line) => {
       const [source, target, status = "301"] = line.split(/\s+/);
-      return { source, target, status: Number(status) };
+      return { source, target, status: Number(status.replace(/!$/, "")), force: status.endsWith("!") };
     });
 }
 

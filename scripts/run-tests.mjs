@@ -14,6 +14,7 @@ const standaloneTests = [
   "campanhas/footer-consistency.test.mjs",
   "campanhas/lifting-price-page.test.mjs",
   "campanhas/site-technical-regression.test.mjs",
+  "campanhas/seo-discovery.test.mjs",
   "scripts/check-change-safety.test.mjs",
   "scripts/check-operational-consistency.test.mjs",
 ];

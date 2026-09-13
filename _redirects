@@ -1,2 +1,63 @@
 # Netlify/hosts compatíveis. As páginas HTML antigas também mantêm fallback em JavaScript.
 /conteudos/instagram/        /conteudos/                                 301
+
+# URL malformada do export GSC: forma codificada e normalizada pelo navegador.
+/conteudos/%20Toxina%20%0Abotul%C3%ADnica-preenchimento-bioestimulador/ /conteudos/botox-preenchimento-bioestimulador/ 301
+/conteudos/%20Toxina%20botul%C3%ADnica-preenchimento-bioestimulador/ /conteudos/botox-preenchimento-bioestimulador/ 301
+
+# Consolidate only known static pages on the provider alias.
+# Function endpoints and preview-deploy hosts must remain untouched.
+https://inspiring-sprite-b35ca4.netlify.app/ https://draamandaschroeder.com.br/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/procedimentos/ https://draamandaschroeder.com.br/procedimentos/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/avaliacao-facial/ https://draamandaschroeder.com.br/avaliacao-facial/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/mama/ https://draamandaschroeder.com.br/mama/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/mastopexia/ https://draamandaschroeder.com.br/mastopexia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/mastopexia-com-protese/ https://draamandaschroeder.com.br/mastopexia-com-protese/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/mamoplastia-redutora/ https://draamandaschroeder.com.br/mamoplastia-redutora/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/protese-de-mama/ https://draamandaschroeder.com.br/protese-de-mama/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/injetaveis/ https://draamandaschroeder.com.br/injetaveis/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/blefaroplastia/ https://draamandaschroeder.com.br/blefaroplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/lifting-facial/ https://draamandaschroeder.com.br/lifting-facial/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/lifting-cervical/ https://draamandaschroeder.com.br/lifting-cervical/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/lipo-de-papada/ https://draamandaschroeder.com.br/lipo-de-papada/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/lip-lifting/ https://draamandaschroeder.com.br/lip-lifting/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/otoplastia/ https://draamandaschroeder.com.br/otoplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/otoplastia-adulto/ https://draamandaschroeder.com.br/otoplastia-adulto/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/otoplastia-infantil/ https://draamandaschroeder.com.br/otoplastia-infantil/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/contorno-corporal/ https://draamandaschroeder.com.br/contorno-corporal/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/lipoaspiracao/ https://draamandaschroeder.com.br/lipoaspiracao/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/abdominoplastia/ https://draamandaschroeder.com.br/abdominoplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/pos-bariatrica/ https://draamandaschroeder.com.br/pos-bariatrica/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/braquioplastia/ https://draamandaschroeder.com.br/braquioplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/ninfoplastia/ https://draamandaschroeder.com.br/ninfoplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/ https://draamandaschroeder.com.br/conteudos/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/quanto-custa-lifting-facial-sao-paulo/ https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/quanto-custa-blefaroplastia-sao-paulo/ https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/quanto-custa-lifting-cervical-sao-paulo/ https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-cervical-sao-paulo/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/ https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/ https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/lifting-facial-ou-injetaveis/ https://draamandaschroeder.com.br/conteudos/lifting-facial-ou-injetaveis/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/blefaroplastia-quando-faz-sentido/ https://draamandaschroeder.com.br/conteudos/blefaroplastia-quando-faz-sentido/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/mastopexia-com-ou-sem-protese/ https://draamandaschroeder.com.br/conteudos/mastopexia-com-ou-sem-protese/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/lipoaspiracao-ou-abdominoplastia/ https://draamandaschroeder.com.br/conteudos/lipoaspiracao-ou-abdominoplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/recuperacao-lifting-facial/ https://draamandaschroeder.com.br/conteudos/recuperacao-lifting-facial/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/cicatrizes-cirurgia-de-mama/ https://draamandaschroeder.com.br/conteudos/cicatrizes-cirurgia-de-mama/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/cirurgia-plastica-apos-emagrecimento/ https://draamandaschroeder.com.br/conteudos/cirurgia-plastica-apos-emagrecimento/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/como-escolher-protese-de-mama/ https://draamandaschroeder.com.br/conteudos/como-escolher-protese-de-mama/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/botox-preenchimento-bioestimulador/ https://draamandaschroeder.com.br/conteudos/botox-preenchimento-bioestimulador/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/consulta-cirurgia-plastica/ https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/seguranca-cirurgia-plastica/ https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/naturalidade-envelhecimento/ https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/lipoenxertia-facial/ https://draamandaschroeder.com.br/conteudos/lipoenxertia-facial/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/papada-contorno-cervical/ https://draamandaschroeder.com.br/conteudos/papada-contorno-cervical/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/cuidados-cicatrizacao-cirurgia/ https://draamandaschroeder.com.br/conteudos/cuidados-cicatrizacao-cirurgia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/como-escolher-cirurgiao-plastico/ https://draamandaschroeder.com.br/conteudos/como-escolher-cirurgiao-plastico/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/recuperacao-blefaroplastia/ https://draamandaschroeder.com.br/conteudos/recuperacao-blefaroplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/minilifting-lifting-facial-deep-plane/ https://draamandaschroeder.com.br/conteudos/minilifting-lifting-facial-deep-plane/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/como-se-preparar-cirurgia-plastica/ https://draamandaschroeder.com.br/conteudos/como-se-preparar-cirurgia-plastica/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/recuperacao-lifting-cervical/ https://draamandaschroeder.com.br/conteudos/recuperacao-lifting-cervical/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/otomodelacao-ou-otoplastia/ https://draamandaschroeder.com.br/conteudos/otomodelacao-ou-otoplastia/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/privacidade/ https://draamandaschroeder.com.br/privacidade/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/conteudos/lip-lifting-ou-preenchimento-labial/ https://draamandaschroeder.com.br/conteudos/lip-lifting-ou-preenchimento-labial/ 301!
+https://inspiring-sprite-b35ca4.netlify.app/dra-amanda-schroeder/ https://draamandaschroeder.com.br/dra-amanda-schroeder/ 301!

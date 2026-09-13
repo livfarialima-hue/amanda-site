@@ -473,7 +473,7 @@
       '<div class="footer-nav-group"><strong>Corpo e cirurgia íntima</strong>' +
         '<a href="/contorno-corporal/">Contorno corporal</a><a href="/abdominoplastia/">Abdominoplastia</a><a href="/lipoaspiracao/">Lipoaspiração</a><a href="/pos-bariatrica/">Pós-bariátrica</a><a href="/ninfoplastia/">Cirurgia íntima</a>' +
       '</div>' +
-      '<div class="footer-nav-group footer-nav-group-compact"><strong>Conteúdos</strong><a href="/conteudos/">Conteúdos educativos</a></div>';
+      '<div class="footer-nav-group footer-nav-group-compact"><strong>Conteúdos</strong><a href="/dra-amanda-schroeder/">Conheça a Dra. Amanda</a><a href="/conteudos/">Conteúdos educativos</a></div>';
     var exploreGroup = navigation.querySelector('.footer-nav-group-compact');
     if (exploreGroup) {
       var exploreTitle = exploreGroup.querySelector('strong');

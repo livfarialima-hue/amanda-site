@@ -149,7 +149,7 @@ test("the specific price guide is canonical and discoverable", () => {
     liftingPrice,
     /rel="canonical" href="https:\/\/draamandaschroeder\.com\.br\/conteudos\/quanto-custa-lifting-facial-sao-paulo\/"/,
   );
-  assert.match(liftingPrice, /"@type":"FAQPage"/);
+  assert.match(liftingPrice, /"@type"\s*:\s*"FAQPage"/);
   assert.match(sitemap, /quanto-custa-lifting-facial-sao-paulo/);
   assert.match(
     blephPrice,
