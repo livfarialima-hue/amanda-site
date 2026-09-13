@@ -795,3 +795,14 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Motivo/evidência:** divergências revalidadas por ID de anúncio/grupo; conexão existente sem dois mapeamentos; geografia das duas campanhas inclui interesse. Total oito campanhas/R$103 por dia, sem expansão de redes ou lances. A localização é hipótese de melhor logística, não prova de desperdício fora da cidade.
 - **Invariantes:** sem site, código operacional, mensagens, dados de pacientes, retroatividade, consentimento inventado, upload manual, texto, URL, nova conversão, verba, teto de CPC ou palavra nova. Candidato técnico `0ff0dd2` preservado, sem publicação.
 - **Métrica/revisão:** integridade no primeiro ciclo/48h; qualidade e consultas em 20/09, 27/09 e 13/10 com maturação, sem inferência por clique/pontuação. Manter se integridade e consultas úteis forem preservadas; reverter somente configuração responsável por perda de origem ou demanda externa viável.
+
+
+## 13/09/2026 — comunicação do site: escolha da cirurgiã e preparo concreto
+
+- **Estado:** publicado e verificado em 13/09/2026 às 10h22 BRT, commit `77433528d0247c46f5482db29932094e0f534783`, Netlify `6aa6a37365ed3d0008e3d1cc`. Reconciliado sobre `fcae9e42`; 1.468/1.468 testes, 54/54 páginas, 63/63 sondas e 12 funções/cinco programações idênticas. Apps Script151 e aniversário manual preservados. Nenhuma mensagem de teste ou alteração de Ads.
+- **Pedido:** revisar o site sob três perspectivas — vendas, jornada do paciente e escolha em cirurgia plástica — com ênfase facial e preservação de mama/corpo.
+- **Decisão:** Norte seção 33. Linguagem específica por procedimento, foco facial nas páginas pertinentes, consulta com autoria e valor transparente, limites e segurança integrada. Não vender por superioridade, juventude, promoção ou promessa.
+- **Base:** GA4 14/06–11/09; Ads 05–11/09; agregado LEADS de 13/09. Vinte contatos de 30 dias, apenas um classificado, sem ligação confiável a landing/CTA. Perguntas públicas brasileiras usadas qualitativamente. Não há evidência de lift comercial.
+- **Escopo:** 39 páginas; metadados selecionados e FAQ coerente; guias canônicos e testes. Inventário completo e antes/depois em `auditorias/site-comunicacao-2026-09-13/REVISAO.json`.
+- **Preservado:** tracking, links, imagens, vídeos, depoimentos, preços cirúrgicos, funções, pacientes, campanhas e candidato técnico de atribuição. Nenhuma autoria/revisão médica nova.
+- **Revisão e reversão:** integridade imediata/24h; D+7 em 20/09, D+14 em 27/09 e D+30 em 13/10, por Daniel/equipe, sem automação. Corrigir inexatidão ou regressão; avaliar contatos qualificados e consultas somente com classificação e maturação suficientes. Predecessor Netlify `6aa6998a46297000089e1e5d`, sem reversão de Apps Script/dados; se houver publicação posterior, reverter apenas o delta editorial.

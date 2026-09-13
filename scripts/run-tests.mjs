@@ -9,6 +9,7 @@ const roots = [
 ];
 
 const standaloneTests = [
+  "campanhas/site-communication.test.mjs",
   "campanhas/cost-guides.test.mjs",
   "campanhas/google-ads-communication.test.mjs",
   "campanhas/footer-consistency.test.mjs",

@@ -18,13 +18,13 @@
   "release": {
     "status": "published",
     "functionalCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
-    "lastObservedProductionCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
+    "lastObservedProductionCommit": "77433528d0247c46f5482db29932094e0f534783",
     "functionalDeployId": "6aa6998a46297000089e1e5d",
-    "lastObservedProductionDeployId": "6aa6998a46297000089e1e5d",
+    "lastObservedProductionDeployId": "6aa6a37365ed3d0008e3d1cc",
     "rollbackCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
     "rollbackDeployId": "6aa60d89d5920c0008dc059e",
     "publishedAt": "2026-09-13T12:40:11.812Z",
-    "lastVerifiedAt": "2026-09-13T12:45:53.115Z",
+    "lastVerifiedAt": "2026-09-13T13:24:39.167Z",
     "candidateChangeId": "ANIVERSARIO-MANUAL-2026-09-13",
     "candidateStatus": "published_verified"
   },

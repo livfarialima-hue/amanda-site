@@ -3,7 +3,7 @@
   "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
   "title": "Central de retomadas com copia, contexto e cancelamento definitivo",
   "status": "tested_local",
-  "baseCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+  "baseCommit": "8c115f8bca193f703a30e319f8011318d85dff3e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -67,28 +67,28 @@
         "contract": "patient-journey-funnel-followups",
         "system": "Apps Script / LEADS / Netlify",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22.000Z",
+        "checkedAt": "2026-09-13T13:13:22Z",
         "reference": "Alvo canonico confirmado; Retomadas e painel vivos iguais ao baseline. Diagnostico autenticado somente leitura: endpoint 200, um gatilho do processador, um do email diario, dois planos legados programados preservados, zero template automatico e zero manual aprovado."
       },
       {
         "contract": "appointment-reminders",
         "system": "Apps Script / LEADS / Google Calendar",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22.000Z",
+        "checkedAt": "2026-09-13T13:13:22Z",
         "reference": "Alvo canonico confirmado; 83 colunas e zero cabecalho ausente. A mudanca nao altera Calendar, consulta ou disparador; lembretes confirmados ficam fora do cancelamento definitivo."
       },
       {
         "contract": "patient-lifecycle-governance",
         "system": "Apps Script / LEADS / Google Calendar / YCloud",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22.000Z",
+        "checkedAt": "2026-09-13T13:13:22Z",
         "reference": "Painel e cuidados vivos iguais ao baseline; diagnostico readOnly=true confirmou schema de 83 colunas, ledger presente, um gatilho e nenhuma escrita de paciente, agenda ou preferencia."
       },
       {
         "contract": "patient-care-milestones",
         "system": "Apps Script / LEADS / Netlify",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22.000Z",
+        "checkedAt": "2026-09-13T13:13:22Z",
         "reference": "CuidadosProgramados vivo igual ao baseline; cuidados ativos, aniversario automatico desligado, modo manual_daily_reminder, zero cabecalho ausente e endpoint com careEnabled=true e birthdayEnabled=false."
       }
     ]
@@ -125,16 +125,66 @@
     }
   },
   "previousCompletedRelease": {
-    "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
-    "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+    "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
+    "sourceCommit": "8c115f8bca193f703a30e319f8011318d85dff3e",
     "release": {
-      "approvedCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
-      "verifiedAt": "2026-09-13T12:45:53.115Z",
-      "netlifyDeployId": "6aa6998a46297000089e1e5d",
-      "appsScriptVersion": 151,
+      "approvedCommit": "77433528d0247c46f5482db29932094e0f534783",
+      "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
+      "verifiedAt": "2026-09-13T13:28:29Z",
       "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanSha256": "08d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8",
-      "activationState": "birthday_manual_daily_reminder"
+      "drivePlanProjectionStatus": "verified",
+      "notes": "Site7743352 publicado e verificado; Plano no mesmo ID e relatorio fechado relidos iguais por SHA256. Apps Script151 herdado;12funcoes/5programacoes identicas e aniversario manual preservado. Finalizacao documental apenas, sem novo deploy funcional. Candidato de atribuicao0ff0dd2 intocado.",
+      "integrationRequiredBeforePublication": false,
+      "observedParallelCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+      "appsScriptVersion": 151,
+      "publishedAt": "2026-09-13T13:22:23.809Z",
+      "inheritedPlatformState": {
+        "appsScriptPublishedByThisTask": false,
+        "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117"
+      },
+      "driveAuditFolderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2",
+      "drivePlanSha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+      "drivePlanReadback": {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view",
+        "modified": "2026-09-13T13:28:07.046Z",
+        "characters": 168596,
+        "sha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+        "equal": true
+      },
+      "driveClosedAuditReadback": {
+        "id": "1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA",
+        "url": "https://drive.google.com/file/d/1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA/view?usp=drivesdk",
+        "modified": "2026-09-13T13:28:09.426Z",
+        "characters": 13429,
+        "sha256": "def372b83bbbc45bc3ed6cbc9aa3116a6bb35f3ebf4fb449789debfb84f42f8b",
+        "equal": true
+      },
+      "documentationCommit": "1a932056f6df0ef5743dad5206a2f62198944a38"
+    },
+    "previousCompletedRelease": {
+      "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
+      "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+      "release": {
+        "approvedCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
+        "verifiedAt": "2026-09-13T12:45:53.115Z",
+        "netlifyDeployId": "6aa6998a46297000089e1e5d",
+        "appsScriptVersion": 151,
+        "drivePlanSha256": "08d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8",
+        "receipts": {
+          "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+          "appsScriptFilesMatched": 3,
+          "appsScriptDiagnostic": "active=true;birthdaysActive=false;birthdayDeliveryMode=manual_daily_reminder;consultationColumns=83;states={};existingFollowupTriggers=1",
+          "netlifyPublishedAt": "2026-09-13T12:40:11.812Z",
+          "productionHttpStatus": 200,
+          "unauthenticatedScheduledFollowupStatus": 401,
+          "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+          "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+          "driveManualSha256": "0b760620cdc7037dd85f9416e6352bd8ca82cd83003f55e462f40540ae153e2a",
+          "patientTestMessages": 0,
+          "realTestEmails": 0
+        }
+      }
     }
   },
   "release": {},
