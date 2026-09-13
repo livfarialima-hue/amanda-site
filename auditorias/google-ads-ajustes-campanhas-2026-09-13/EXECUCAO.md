@@ -1,6 +1,6 @@
 # Ajustes de campanhas Google Ads — 13/09/2026
 
-Status: preflight vivo concluído; alterações externas ainda não gravadas neste registro.
+Status: publicado e verificado no Google Ads; Plano canônico projetado e relido no Drive.
 
 ## Escopo autorizado
 
@@ -22,7 +22,19 @@ Conta autenticada `995-334-4486`, relida em 13/09/2026 às 19h49 BRT. Oito campa
 
 ## Aplicação e readback
 
-Pendente. Este trecho será atualizado com IDs/estados relidos, horário, orçamento total, itens eventualmente recusados por política e recibo da projeção no Drive. Uma tentativa ou tela intermediária não será registrada como aplicação.
+Aplicação encerrada e relida em 13/09/2026 às 20h15 BRT, na conta `995-334-4486`:
+
+- `S_BR_SP_CIRURGIA_FACIAL` (`24028168714`) passou de R$ 8 para R$ 4/dia; a própria tabela de campanhas mostrou R$ 4/dia após o salvamento;
+- a frase `cirurgiã plástica em são paulo`, em `AG_CIRURGIA_FACIAL`, foi pausada sem exclusão e reapareceu na tabela com status `Pausada`;
+- `[lipo de papada valor]` e `[lipo de papada preço]` foram criadas em `AG_LIPO_PAPADA`, correspondência exata, e relidas como `Pendente / Em análise`;
+- `[cervicoplastia valor]` foi criada em `AG_CERVICOPLASTIA`, correspondência exata, e relida como `Pendente / Em análise`;
+- `[cirurgia de papada preço]` não foi criada: o Google Ads a bloqueou em `Health in personalized advertising`. Nenhuma exceção foi solicitada e nenhum termo mais amplo foi usado como substituto;
+- `S_BR_SP_LIFTING_CERVICAL` permaneceu em R$ 12/dia; a tabela final mostrou oito campanhas ativas e total de R$ 99/dia;
+- as três recomendações genéricas do Google e todas as demais expansões recusadas no plano continuaram sem aplicação.
+
+O status `Pendente / Em análise` comprova a criação dos três objetos, não a aprovação futura pelo Google. A integridade e a política desses termos precisam ser relidas no ciclo de 24–48 horas. Site, anúncios, URLs, lances, metas, redes, geografia, negativas, LEADS, CRM, Apps Script, WhatsApp, Calendar e Meta não foram alterados. Nenhuma mensagem, consulta, conversão ou linha de lead foi criada por esta execução.
+
+O recibo estruturado está em `PUBLICACAO.json`. A projeção do Plano foi reconciliada com a auditoria paralela de LEADS, substituída no mesmo arquivo Drive `18iUqY6HttJwPusSAA1VGmrMqqRluyjTO` e relida com igualdade exata: 178.082 bytes, SHA-256 `002ec1abe2f287257d3a8fe7519e7258460519557a8ba45106210daa8f78de54`, modificação `2026-09-13T23:17:43.485Z`. Nenhuma segunda cópia de planejamento foi criada.
 
 ## Monitoramento e rollback
 

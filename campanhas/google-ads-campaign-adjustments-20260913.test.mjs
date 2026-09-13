@@ -12,6 +12,16 @@ const plan = JSON.parse(
   ),
 );
 
+const publication = JSON.parse(
+  readFileSync(
+    new URL(
+      '../auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json',
+      import.meta.url,
+    ),
+    'utf8',
+  ),
+);
+
 test('pacote reduz somente G26FACE e preserva o total em R$ 99/dia', () => {
   assert.equal(plan.accountId, '995-334-4486');
   assert.equal(plan.changes.budgets.length, 1);
@@ -34,7 +44,7 @@ test('pausa é reversível e limitada à frase genérica de face', () => {
   assert.equal(keyword.delete, false);
 });
 
-test('quatro exatas cervicais reproduzem demanda observada e ficam nos grupos corretos', () => {
+test('plano limita quatro candidatas cervicais a demanda observada e grupos corretos', () => {
   const keywords = plan.changes.addExactKeywords;
   assert.equal(keywords.length, 4);
   assert.deepEqual(
@@ -51,6 +61,46 @@ test('quatro exatas cervicais reproduzem demanda observada e ficam nos grupos co
     assert.ok(keyword.observedClicks >= 3);
     assert.ok(keyword.observedCostBRL > 0);
   }
+});
+
+test('recibo distingue três criações da exclusão por política', () => {
+  const created = publication.applied.filter(
+    (entry) => entry.entityType === 'keyword_create',
+  );
+  assert.deepEqual(
+    created.map(({ adGroup, text, matchType, readBack }) => ({
+      adGroup,
+      text,
+      matchType,
+      readBack,
+    })),
+    [
+      {
+        adGroup: 'AG_LIPO_PAPADA',
+        text: 'lipo de papada valor',
+        matchType: 'EXACT',
+        readBack: 'Pendente / Em análise',
+      },
+      {
+        adGroup: 'AG_LIPO_PAPADA',
+        text: 'lipo de papada preço',
+        matchType: 'EXACT',
+        readBack: 'Pendente / Em análise',
+      },
+      {
+        adGroup: 'AG_CERVICOPLASTIA',
+        text: 'cervicoplastia valor',
+        matchType: 'EXACT',
+        readBack: 'Pendente / Em análise',
+      },
+    ],
+  );
+  const blocked = publication.notApplied.find(
+    (entry) => entry.text === 'cirurgia de papada preço',
+  );
+  assert.equal(blocked.created, false);
+  assert.equal(blocked.exceptionRequested, false);
+  assert.match(blocked.reason, /Health in personalized advertising/);
 });
 
 test('recomendações automáticas expansivas e termos genéricos ficam excluídos', () => {

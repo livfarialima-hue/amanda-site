@@ -1,12 +1,89 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
-  "status": "pending_external_write",
+  "status": "published_verified",
   "accountId": "995-334-4486",
-  "publishedAt": null,
-  "readBack": false,
-  "applied": [],
-  "notApplied": [],
+  "publishedAt": "2026-09-13T23:15:23Z",
+  "readBack": true,
+  "applied": [
+    {
+      "entityType": "campaign_budget",
+      "campaignId": "24028168714",
+      "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+      "beforeDailyBRL": 8,
+      "afterDailyBRL": 4,
+      "readBackDailyBRL": 4
+    },
+    {
+      "entityType": "keyword_pause",
+      "campaignId": "24028168714",
+      "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+      "adGroup": "AG_CIRURGIA_FACIAL",
+      "text": "cirurgiã plástica em são paulo",
+      "matchType": "PHRASE",
+      "before": "Ativada",
+      "after": "Pausada",
+      "readBack": "Pausada",
+      "deleted": false
+    },
+    {
+      "entityType": "keyword_create",
+      "campaignId": "24023843174",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "text": "lipo de papada valor",
+      "matchType": "EXACT",
+      "readBack": "Pendente / Em análise"
+    },
+    {
+      "entityType": "keyword_create",
+      "campaignId": "24023843174",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "text": "lipo de papada preço",
+      "matchType": "EXACT",
+      "readBack": "Pendente / Em análise"
+    },
+    {
+      "entityType": "keyword_create",
+      "campaignId": "24023843174",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_CERVICOPLASTIA",
+      "text": "cervicoplastia valor",
+      "matchType": "EXACT",
+      "readBack": "Pendente / Em análise"
+    }
+  ],
+  "notApplied": [
+    {
+      "entityType": "keyword_create",
+      "campaignId": "24023843174",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "text": "cirurgia de papada preço",
+      "matchType": "EXACT",
+      "reason": "Bloqueada pelo Google Ads em Health in personalized advertising",
+      "exceptionRequested": false,
+      "created": false
+    },
+    {
+      "entityType": "google_recommendations",
+      "items": [
+        "procedimento para papada",
+        "estetica papada",
+        "gordura queixo"
+      ],
+      "reason": "Sugestões genéricas não aprovadas neste pacote"
+    }
+  ],
+  "accountReadBack": {
+    "verifiedAt": "2026-09-13T23:15:23Z",
+    "activeCampaigns": 8,
+    "dailyBudgetBRL": 99,
+    "faceDailyBudgetBRL": 4,
+    "cervicalDailyBudgetBRL": 12,
+    "otherBudgetsChanged": false
+  },
   "patientEffects": {
     "messages": 0,
     "appointments": 0,
@@ -15,7 +92,10 @@
   },
   "drivePlan": {
     "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "updated": false,
-    "readBackEqual": false
+    "updated": true,
+    "readBackEqual": true,
+    "sha256": "002ec1abe2f287257d3a8fe7519e7258460519557a8ba45106210daa8f78de54",
+    "modifiedTime": "2026-09-13T23:17:43.485Z",
+    "bytes": 178082
   }
 }

@@ -10,12 +10,12 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 - **Decisão canônica:** seção 36 do Norte; pacote externo limitado a `G26FACE` e `G26CERV`, sem alteração de site.
 - **Motivo/evidência:** `G26FACE` gastou R$ 239,81/131 cliques e zero qualificado no recorte; a frase genérica respondeu por R$ 215,61/118 cliques e zero qualificado. Quatro buscas cervicais de preço tiveram de 3 a 11 cliques e ainda não existiam como exatas.
-- **Mudança:** `G26FACE` de R$ 8 para R$ 4/dia; pausa reversível da frase `cirurgiã plástica em são paulo`; quatro exatas de preço em seus grupos cervicais, com `G26CERV` preservada em R$ 12/dia. Total previsto R$ 99/dia.
+- **Mudança:** `G26FACE` de R$ 8 para R$ 4/dia; pausa reversível da frase `cirurgiã plástica em são paulo`; três exatas de preço/valor criadas nos grupos cervicais, com `G26CERV` preservada em R$ 12/dia. A quarta tentativa, `[cirurgia de papada preço]`, foi recusada por política e não criada. Total aplicado R$ 99/dia.
 - **Limite:** termos divulgados cobrem só parte do custo e não indicam qual palavra os acionou. Perguntar preço não desqualifica a pessoa. Nenhum termo nominal de terceiro foi negativado em lote.
-- **Não aplicado:** três sugestões genéricas do Google, aumentos de orçamento, mudança de lance, Display, parceiros, Performance Max, orçamento compartilhado e remoção em massa de exatas.
+- **Não aplicado:** `[cirurgia de papada preço]`, bloqueada em `Health in personalized advertising` sem pedido de exceção; três sugestões genéricas do Google; aumentos de orçamento, mudança de lance, Display, parceiros, Performance Max, orçamento compartilhado e remoção em massa de exatas.
 - **Hipótese/métrica:** melhorar aderência de intenção e leitura por termo; acompanhar válidos, qualificados aceitos, consultas e custo por etapa. Pontuação, CTR, CPC e cliques são diagnósticos.
 - **Revisão/rollback:** integridade em 24–48h; negócio em 21/09 e 28/09. Baixa classificação é inconclusiva. Reverter somente o orçamento, a frase ou a nova exata responsável, sem apagar histórico.
-- **Estado:** preflight vivo concluído; publicação e readback devem constar no recibo específico antes de declarar a mudança aplicada.
+- **Estado:** Google Ads aplicado e relido em 13/09 às 20h15 BRT. `G26FACE` R$ 4/dia, frase genérica pausada, três exatas cervicais `Pendente / Em análise`, `G26CERV` R$ 12/dia e conta R$ 99/dia. Criação não antecipa aprovação do Google. Recibo específico registra a exclusão por política e a projeção do Drive.
 
 ## 12 de setembro de 2026 — abordagem de preço consultiva e revisão com fonte
 

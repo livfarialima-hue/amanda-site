@@ -2,20 +2,27 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
   "title": "Contenção de face genérica e exatas cervicais observadas",
-  "status": "tested_local",
-  "baseCommit": "9f2059fd506cfa0b0570bc6cc7ba6ddd457f98d0",
+  "status": "published_verified",
+  "baseCommit": "d9f945ce8b9c30c9491598e0f668841632607c44",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou aplicar as modificações julgadas necessárias nas campanhas Google. O pacote exato limita-se a orçamento e palavras de G26FACE/G26CERV, sem site, atendimento ou dados de pacientes."
+    "note": "Daniel autorizou aplicar as modificações julgadas necessárias nas campanhas Google. O pacote exato limita-se a orçamento e palavras de G26FACE/G26CERV, sem site, atendimento ou dados de pacientes. O preflight de release foi aprovado para o commit 84230d90f882d170c53da5b2752a42c1377d34ac antes da escrita externa.",
+    "releasePreflight": {
+      "approvedCommit": "84230d90f882d170c53da5b2752a42c1377d34ac",
+      "approvedAt": "2026-09-13T22:49:20Z",
+      "approvedBy": "Daniel",
+      "reference": "faça as modificações que vc julgar necessarias nas campanhas do google então",
+      "result": "CHANGE_SAFETY_STATUS=OK"
+    }
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true,
-    "externalWritesScope": "Google Ads conta 995-334-4486: um orçamento, pausa de uma palavra e criação de quatro palavras exatas; mesma projeção canônica do Plano no Drive após readback."
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false,
+    "externalWritesScope": "Google Ads conta 995-334-4486: um orçamento, pausa de uma palavra, criação de três palavras exatas e uma tentativa recusada por política sem exceção; mesma projeção canônica do Plano no Drive após readback."
   },
   "scope": {
     "contracts": [
@@ -47,7 +54,7 @@
     "preservedInvariants": [
       "Somente campanhas 24028168714/G26FACE e 24023843174/G26CERV",
       "G26FACE R$8 para R$4; G26CERV R$12; demais orçamentos iguais; total R$103 para R$99",
-      "Pausa sem exclusão de uma frase e adição de quatro exatas observadas; nenhuma negativa em lote",
+      "Pausa sem exclusão de uma frase; três exatas observadas criadas e uma quarta recusada por política sem exceção; nenhuma negativa em lote",
       "Lances, metas, ações de conversão, redes, geografia, idiomas, idade, dispositivos e agenda preservados",
       "RSAs, textos, fixações, URLs, parâmetros, recursos e site preservados",
       "Zero alteração de LEADS, CRM, Apps Script, WhatsApp, Calendar, Meta, paciente, consulta ou conversão"
@@ -77,7 +84,7 @@
       "node --test campanhas/google-ads-settings.test.mjs",
       "node --test campanhas/google-ads-campaign-adjustments-20260913.test.mjs"
     ],
-    "completedAt": "2026-09-13T22:57:25Z",
+    "completedAt": "2026-09-13T23:20:03Z",
     "results": {
       "fullSuite": {
         "passed": 1481,
@@ -88,7 +95,7 @@
         "failed": 0
       },
       "settingsAndPackage": {
-        "passed": 8,
+        "passed": 9,
         "failed": 0
       },
       "architecture": "OK",
@@ -102,8 +109,29 @@
         "routes": 54,
         "errors": 0
       },
-      "operationalConsistency": "SYNC_PENDING esperado antes da escrita externa, readback, integração canônica e projeção Drive"
+      "externalReadBack": {
+        "verifiedAt": "2026-09-13T23:15:23Z",
+        "activeCampaigns": 8,
+        "accountDailyBudgetBRL": 99,
+        "faceDailyBudgetBRL": 4,
+        "cervicalDailyBudgetBRL": 12,
+        "pausedKeywords": 1,
+        "exactKeywordsCreated": 3,
+        "policyExcluded": 1
+      },
+      "operationalConsistency": "OK após integração canônica, readback Google Ads e igualdade da projeção Drive"
     }
+  },
+  "previousCompletedRelease": {
+    "changeId": "RECONCILIACAO-LEADS-CONVERSAS-2026-09-13",
+    "sourceCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
+    "verifiedAt": "2026-09-13T22:48:30.000Z",
+    "canonicalClosureCommit": "d9f945ce8b9c30c9491598e0f668841632607c44",
+    "appsScriptVersion": 152,
+    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "9d78c4ada29a4f29edcec97dfa6011a0980a900684560ddc42ffbf3a1793a5b0",
+    "receiptPath": "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
   },
   "rollback": {
     "local": "Reverter somente os nove arquivos declarados deste pacote, preservando todo trabalho paralelo.",
@@ -122,11 +150,31 @@
     "rollbackRule": "Reverter somente o item responsável por destino/política/atribuição incorretos ou piora downstream consistente; baixa amostra/classificação insuficiente é inconclusiva."
   },
   "release": {
-    "approvedCommit": null,
-    "verifiedAt": null,
-    "googleAdsReadBack": false,
+    "approvedCommit": "84230d90f882d170c53da5b2752a42c1377d34ac",
+    "reconciledCandidateCommit": "962c1b0daa6d8261ee84e2608e92f86ec107f363",
+    "verifiedAt": "2026-09-13T23:17:43.485Z",
+    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+    "netlifyPublishedByThisChange": false,
+    "netlifyState": "inherited_from_verified_otoplasty_release",
+    "appsScriptVersion": 152,
+    "appsScriptPublishedByThisChange": false,
+    "googleAdsAccountId": "995-334-4486",
+    "googleAdsReadBack": true,
+    "googleAdsAccountDailyBudgetBRL": 99,
+    "googleAdsFaceDailyBudgetBRL": 4,
+    "googleAdsCervicalDailyBudgetBRL": 12,
+    "googleAdsKeywordPauseReadBack": true,
+    "googleAdsExactKeywordsCreated": 3,
+    "googleAdsKeywordsPendingReview": 3,
+    "googleAdsPolicyExcluded": 1,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanReadBack": false,
+    "drivePlanSha256": "002ec1abe2f287257d3a8fe7519e7258460519557a8ba45106210daa8f78de54",
+    "drivePlanReadBack": {
+      "modified": "2026-09-13T23:17:43.485Z",
+      "bytes": 178082,
+      "equal": true,
+      "preservedParallelLeadReconciliation": true
+    },
     "receiptPath": "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json"
   }
 }

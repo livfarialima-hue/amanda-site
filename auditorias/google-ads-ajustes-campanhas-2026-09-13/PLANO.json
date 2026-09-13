@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "accountId": "995-334-4486",
   "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
-  "status": "preflight_verified",
+  "status": "published_verified",
   "authorization": "Daniel: faça as modificações que vc julgar necessarias nas campanhas do google então.",
   "baseCommit": "9f2059fd506cfa0b0570bc6cc7ba6ddd457f98d0",
   "baseline": {
@@ -105,6 +105,53 @@
         "observedCostBRL": 5.15
       }
     ]
+  },
+  "execution": {
+    "verifiedAt": "2026-09-13T23:15:23Z",
+    "outcome": "applied_with_one_policy_exclusion",
+    "applied": {
+      "budgetChanges": 1,
+      "keywordPauses": 1,
+      "exactKeywordsCreated": 3
+    },
+    "createdExactKeywords": [
+      {
+        "adGroup": "AG_LIPO_PAPADA",
+        "text": "lipo de papada valor",
+        "matchType": "EXACT",
+        "readBack": "Pendente / Em análise"
+      },
+      {
+        "adGroup": "AG_LIPO_PAPADA",
+        "text": "lipo de papada preço",
+        "matchType": "EXACT",
+        "readBack": "Pendente / Em análise"
+      },
+      {
+        "adGroup": "AG_CERVICOPLASTIA",
+        "text": "cervicoplastia valor",
+        "matchType": "EXACT",
+        "readBack": "Pendente / Em análise"
+      }
+    ],
+    "policyExcluded": [
+      {
+        "adGroup": "AG_LIPO_PAPADA",
+        "text": "cirurgia de papada preço",
+        "matchType": "EXACT",
+        "policy": "Health in personalized advertising",
+        "exceptionRequested": false,
+        "created": false
+      }
+    ],
+    "accountReadBack": {
+      "activeCampaigns": 8,
+      "dailyBudgetBRL": 99,
+      "faceDailyBudgetBRL": 4,
+      "cervicalDailyBudgetBRL": 12,
+      "faceKeyword": "Pausada",
+      "otherBudgetsChanged": false
+    }
   },
   "budgetAfterDailyBRL": 99,
   "declinedRecommendations": [
