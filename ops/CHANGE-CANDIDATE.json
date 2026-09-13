@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "changeId": "META-CERVICAL-REGIONAL-SEM-ORCAMENTO-2026-09-12",
   "title": "Testar cidades proximas na campanha Meta cervical sem alterar orcamento",
-  "status": "published_verified",
-  "baseCommit": "05c03829dbb6d2ba7a371fadff0644b18c027f24",
+  "status": "committed",
+  "baseCommit": "725f4dd107ea5211bed2ddf270707ccf011908b4",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -47,6 +47,7 @@
       "video, CTA, modelo de conversa, mensagem pronta e codigo M26C01W-C07H01 permanecem intactos",
       "a campanha facial, seus objetos e textos permanecem sem qualquer edicao como controle",
       "os sete rascunhos preexistentes permanecem sem publicacao, alteracao ou descarte",
+      "o lote educativo, o roteamento secundario, o Apps Script v149 e a producao Netlify 6aa5e68f41e08e0008a76b33 permanecem integrais",
       "nenhuma campanha, conjunto ou anuncio novo foi criado; Google Ads, site, Bruna, retomadas, LEADS, CRM, Calendar e Apps Script ficaram fora da escrita Meta"
     ],
     "liveReadOnlyPreflight": [
@@ -84,9 +85,8 @@
       "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit 4c1a63306bb26415e6b08e0993c2a648efea5af3 e para a autorizacao final registrada",
       "metaDraftReview": "0 de 2 campanhas, 1 de 3 conjuntos e 1 de 4 anuncios; somente conjunto 120251248762180627 e anuncio 120251248762170627 selecionados; sete rascunhos anteriores desmarcados",
       "metaPostflight": "Meta confirmou 1 conjunto de anuncios e 1 anuncio publicados; contador de rascunhos voltou de nove para sete; conjunto e anuncio cervical relidos como Ativo; facial relido como Ativo e inalterado; R$ 900 em cada campanha e nenhum limite adicional",
-      "parallelIntegration": "origin/reestruturacao-site 05c03829dbb6d2ba7a371fadff0644b18c027f24 incorporado por merge, preservando o commit autorizado e os recibos paralelos do lote educativo",
-      "integratedChecks": "sobre o baseline canonico 05c0382 integrado: CHANGE_SAFETY_STATUS=OK com cinco arquivos exatos, JOURNEY_MODULE_BOUNDARIES=OK, 1341/1341 testes aprovados e git diff --check sem erros",
-      "driveProjection": "o mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi substituido em lugar em 12/09/2026 as 21:05:34 BRT; releitura autenticada com 154556 bytes e SHA-256 417305a1d63f62c4f154edd7ac1ff93190beb83e28d7e027c9ea35d8dd217204, identico ao Plano local integrado"
+      "parallelIntegration": "origin/reestruturacao-site 725f4dd107ea5211bed2ddf270707ccf011908b4 incorporado por merge, preservando o commit Meta autorizado, o lote educativo e o fechamento do roteamento secundario",
+      "integratedChecks": "sobre o codigo da ponta integrada: CHANGE_SAFETY_STATUS=OK com cinco arquivos exatos, JOURNEY_MODULE_BOUNDARIES=OK, 1341/1341 testes aprovados e git diff --check sem erros; nova checagem documental sera feita depois do merge"
     }
   },
   "release": {
@@ -108,13 +108,13 @@
       }
     ],
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "417305a1d63f62c4f154edd7ac1ff93190beb83e28d7e027c9ea35d8dd217204",
-    "verifiedAt": "2026-09-12T21:05:34-03:00",
-    "activationState": "meta_cervical_regional_live_monitoring",
-    "notes": "A escrita Meta foi concluida e relida sem alterar orcamento. Netlify 6aa5e68f41e08e0008a76b33 e Apps Script v149 sao recibos atuais herdados do baseline paralelo e nao foram republicados por esta tarefa. A projecao final foi substituida no mesmo arquivo do Drive e relida com igualdade de tamanho e SHA-256."
+    "drivePlanSha256": null,
+    "verifiedAt": null,
+    "activationState": "meta_cervical_regional_live_drive_reconciliation_pending",
+    "notes": "A escrita Meta foi concluida sem alterar orcamento. Netlify 6aa5e68f41e08e0008a76b33 e Apps Script v149 sao recibos atuais herdados do baseline paralelo e nao foram republicados por esta tarefa. A projecao final do Plano sera relida e substituida no mesmo arquivo do Drive apos este merge."
   },
   "rollback": {
-    "local": "reverter somente os commits Meta cuja arvore parte do commit autorizado 4c1a63306bb26415e6b08e0993c2a648efea5af3, preservando o baseline paralelo 05c03829dbb6d2ba7a371fadff0644b18c027f24",
+    "local": "reverter somente os commits Meta cuja arvore parte do commit autorizado 4c1a63306bb26415e6b08e0993c2a648efea5af3, preservando o baseline paralelo 725f4dd107ea5211bed2ddf270707ccf011908b4",
     "production": "remover somente Jundiai, Vinhedo e Valinhos, restaurar o nome anterior e os tres textos anteriores do anuncio, sem alterar orcamento, datas, campanha facial, video, CTA, WhatsApp ou codigos"
   },
   "monitoring": {
