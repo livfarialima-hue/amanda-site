@@ -1,0 +1,49 @@
+{
+  "status": "prepared",
+  "date": "2026-09-12",
+  "account": "995-334-4486",
+  "applyScope": "Only each named currently active association, not all shared associations; preserve paused campaigns.",
+  "edits": {
+    "account": {
+      "Clínica com foco facial": "Consulta com a cirurgiã",
+      "Técnica moderna e precisa": "Anestesistas selecionados",
+      "Resultados sutis e seguro": "Preparo e pós-operatório",
+      "Sem aspecto esticado": "Cicatrizes planejadas",
+      "Naturalidade preservada": "Atenção às proporções",
+      "Formação pela UNICAMP": "Residência na Unicamp",
+      "Planejamento facial": "Planejamento individual",
+      "Pálpebras e olhar cansado": "Equipe médica integrada",
+      "Sem perder sua identidade": "Cuidado antes e depois",
+      "Avaliação facial completa": "Decisão com orientação"
+    },
+    "campaigns": {
+      "S_BR_SP_MARCA": {
+        "Bigode chinês": "Cardiologia na clínica",
+        "Linhas de marionete": "Residência na Unicamp",
+        "Contorno mandibular": "Consulta com a cirurgiã",
+        "Papada e flacidez": "Anestesistas selecionados",
+        "Pálpebras e olhar cansado": "Equipe médica integrada",
+        "Flacidez facial": "Preparo e pós-operatório",
+        "Preservação da identidade": "Atenção às proporções",
+        "Flacidez cervical": "Cuidado antes e depois",
+        "Planejamento facial": "Planejamento individual"
+      },
+      "S_BR_SP_LIFTING_CERVICAL": {
+        "Preservação da expressão": "Atenção aos seus traços",
+        "Pescoço mais jovem": "Contorno do pescoço",
+        "Segurança em cada etapa": "Cardiologia na clínica"
+      },
+      "S_BR_SP_CIRURGIA_FACIAL": {
+        "Preservação da expressão": "Atenção aos seus traços",
+        "Segurança em cada etapa": "Cardiologia na clínica",
+        "Formação e experiência": "Residência na Unicamp"
+      },
+      "S_BR_SP_LIFTING_FACIAL": {
+        "Sem perder sua identidade": "Atenção aos seus traços",
+        "Sem aspecto esticado": "Anestesistas selecionados",
+        "Naturalidade preservada": "Atenção às proporções",
+        "Reconhecendo no espelho": "Cardiologia na clínica"
+      }
+    }
+  }
+}
