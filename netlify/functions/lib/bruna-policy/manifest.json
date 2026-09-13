@@ -17,15 +17,15 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
-    "lastObservedProductionCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
-    "functionalDeployId": "6aa60d89d5920c0008dc059e",
-    "lastObservedProductionDeployId": "6aa60d89d5920c0008dc059e",
-    "rollbackCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
-    "rollbackDeployId": "6aa6038eb31161000809495b",
-    "publishedAt": "2026-09-13T02:42:52.628Z",
-    "lastVerifiedAt": "2026-09-13T11:47:42.923Z",
-    "candidateChangeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
+    "functionalCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
+    "lastObservedProductionCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
+    "functionalDeployId": "6aa6998a46297000089e1e5d",
+    "lastObservedProductionDeployId": "6aa6998a46297000089e1e5d",
+    "rollbackCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+    "rollbackDeployId": "6aa60d89d5920c0008dc059e",
+    "publishedAt": "2026-09-13T12:40:11.812Z",
+    "lastVerifiedAt": "2026-09-13T12:45:53.115Z",
+    "candidateChangeId": "ANIVERSARIO-MANUAL-2026-09-13",
     "candidateStatus": "published_verified"
   },
   "documentation": {
@@ -37,6 +37,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "a9fd063a9d5445d0a15a102d45d4c9f28d56d4d3e6f4293d955f0309ab195f17"
+    "driveProjectionSha256": "0b760620cdc7037dd85f9416e6352bd8ca82cd83003f55e462f40540ae153e2a"
   }
 }

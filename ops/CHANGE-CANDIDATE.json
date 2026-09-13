@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
   "title": "Aniversarios somente no lembrete diario para envio humano",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": true
   },
   "scope": {
@@ -67,7 +67,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_release",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -113,6 +113,26 @@
         "sha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
         "equal": true
       }
+    }
+  },
+  "release": {
+    "approvedCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
+    "verifiedAt": "2026-09-13T12:45:53.115Z",
+    "netlifyDeployId": "6aa6998a46297000089e1e5d",
+    "appsScriptVersion": 151,
+    "drivePlanSha256": "08d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8",
+    "receipts": {
+      "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+      "appsScriptFilesMatched": 3,
+      "appsScriptDiagnostic": "active=true;birthdaysActive=false;birthdayDeliveryMode=manual_daily_reminder;consultationColumns=83;states={};existingFollowupTriggers=1",
+      "netlifyPublishedAt": "2026-09-13T12:40:11.812Z",
+      "productionHttpStatus": 200,
+      "unauthenticatedScheduledFollowupStatus": 401,
+      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "driveManualSha256": "0b760620cdc7037dd85f9416e6352bd8ca82cd83003f55e462f40540ae153e2a",
+      "patientTestMessages": 0,
+      "realTestEmails": 0
     }
   },
   "rollback": {
