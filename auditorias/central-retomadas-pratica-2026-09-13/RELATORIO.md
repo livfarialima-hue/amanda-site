@@ -1,6 +1,6 @@
 # Central de retomadas prática e contextual — 13/09/2026
 
-## Resultado proposto
+## Resultado publicado
 
 A página aberta pelo e-mail diário passa a oferecer **Copiar mensagem** em cada sugestão pronta. A cópia usa exatamente o texto exibido no cartão. Para marcos de cuidado, esse também é o rascunho que uma aprovação posterior programaria para a Bruna; um complemento exclusivo do e-mail não altera mais a mensagem mostrada no painel.
 
@@ -31,6 +31,18 @@ Em 13/09/2026, antes de qualquer gravação de código:
 - o diagnóstico de retomadas informou endpoint HTTP 200, um gatilho de processamento e um de e-mail diário. Havia 328 linhas históricas e dois planos legados programados, ambos anteriores e preservados; zero plano de template automático seguro e zero plano manual aprovado.
 
 Nenhuma conversa, planilha, preferência, consulta, Calendar, e-mail diário ou mensagem de paciente foi alterada por esse pré-voo.
+
+## Publicação e pós-voo
+
+O commit funcional `7a5cf98bebbe571014f0721ee8df1c85a99ecf79` foi publicado no mesmo deployment canônico como Apps Script v152, com a descrição `Central prática: copiar, personalizar e cancelar definitivamente — 7a5cf98`. Depois do salvamento, os três arquivos vivos foram recarregados e coincidiram com o código aprovado:
+
+- `PainelDecisoesDiarias.gs`: `ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4`;
+- `Retomadas.gs`: `255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a`;
+- `CuidadosProgramados.gs`: `ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568`.
+
+A URL canônica com token sintético inválido respondeu HTTP 200, mostrou link inválido e `Nenhuma decisão foi aplicada`. Às 10:27–10:28 (America/Sao_Paulo), os diagnósticos somente leitura confirmaram o mesmo endpoint saudável, um gatilho de processamento, um de e-mail diário, os dois planos legados preservados, zero plano de template automático seguro, zero plano manual aprovado, cuidados ativos, aniversários automáticos desligados em `manual_daily_reminder`, 83 colunas e nenhum cabeçalho ausente.
+
+Esta publicação enviou zero mensagem, zero e-mail diário, mudou zero consulta, zero preferência e executou zero cancelamento de retomada.
 
 ## Validação local
 
