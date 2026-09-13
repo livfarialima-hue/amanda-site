@@ -1,154 +1,218 @@
 {
   "schemaVersion": 1,
-  "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
-  "title": "Aniversarios somente no lembrete diario para envio humano",
-  "status": "published_verified",
-  "baseCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
+  "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
+  "title": "Comunicacao do site por intencao e escolha da cirurgia com Amanda",
+  "status": "tested_local",
+  "baseCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido atual para aniversario manual e autorizacao cumulativa para publicar os ajustes desta conversa; nenhuma mensagem real de teste ou envio de aniversario pela Bruna."
+    "note": "Autorizacao externa recebida de Daniel nesta conversa: \"ok, publique quando for adequado.\" Alcanca a revisao editorial ja apresentada, reconciliada ao ultimo release; o release:preflight registra o HEAD exato validado. Nao autoriza mudar bot, Apps Script, Ads ou mensuracao."
   },
   "risk": {
-    "level": "high",
+    "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "patient-care-milestones"
+      "site-publication",
+      "site-editorial-copy"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "auditorias/aniversario-manual-2026-09-13/PUBLICACAO.json",
-      "auditorias/aniversario-manual-2026-09-13/RELATORIO.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "abdominoplastia/index.html",
+      "auditorias/site-comunicacao-2026-09-13/PUBLICACAO.json",
+      "auditorias/site-comunicacao-2026-09-13/RELATORIO.md",
+      "auditorias/site-comunicacao-2026-09-13/REVISAO.json",
+      "avaliacao-facial/index.html",
+      "blefaroplastia/index.html",
+      "braquioplastia/index.html",
+      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
+      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "campanhas/site-communication.test.mjs",
+      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+      "conteudos/botox-preenchimento-bioestimulador/index.html",
+      "conteudos/como-escolher-protese-de-mama/index.html",
+      "conteudos/consulta-cirurgia-plastica/index.html",
+      "conteudos/lifting-facial-ou-injetaveis/index.html",
+      "conteudos/lipoenxertia-facial/index.html",
+      "conteudos/naturalidade-envelhecimento/index.html",
+      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      "conteudos/recuperacao-lifting-facial/index.html",
+      "conteudos/seguranca-cirurgia-plastica/index.html",
+      "contorno-corporal/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/scheduled-care.mjs",
-      "netlify/functions/lib/scheduled-care.test.mjs",
-      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "netlify/functions/scheduled-followup.mjs",
+      "dra-amanda-schroeder/index.html",
+      "index.html",
+      "injetaveis/index.html",
+      "lifting-cervical/index.html",
+      "lifting-facial/index.html",
+      "lip-lifting/index.html",
+      "lipo-de-papada/index.html",
+      "lipoaspiracao/index.html",
+      "mama/index.html",
+      "mamoplastia-redutora/index.html",
+      "mastopexia-com-protese/index.html",
+      "mastopexia/index.html",
+      "ninfoplastia/index.html",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html",
+      "otoplastia/index.html",
+      "pos-bariatrica/index.html",
+      "procedimentos/index.html",
+      "protese-de-mama/index.html",
+      "scripts/run-tests.mjs"
     ]
   },
   "impact": {
     "consumers": [
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "netlify/functions/scheduled-followup.mjs"
+      "Paginas comerciais e educativas; visitantes de Google Ads, organico e redes",
+      "Metadados e FAQ visivel/estruturado das paginas revisadas",
+      "WhatsApp: links, prefill, rotas e atributos preservados",
+      "Norte, guia, historico e Plano Executivo no mesmo ID Drive"
     ],
     "preservedInvariants": [
-      "Aniversario e somente lembrete interno para envio humano; nenhuma flag ou aprovacao reativa o transporte.",
-      "Uma sugestao por telefone e aniversario; somente no dia; respeitar recusa, nascimento confiavel e dispensa persistida.",
-      "Outros cuidados continuam com aprovacao individual, mesma fila e validacao de conversa e Calendar."
+      "Sem faixa cirurgica publica nova; consulta R$500 preservada",
+      "Foco em face nas paginas faciais; mama e corpo com mensagem propria",
+      "Sem alteracoes em tracking, campanhas, verba, bot, planilhas ou mensagens",
+      "Sem promessa de resultado, superioridade, urgencia, risco zero ou chancela USP",
+      "Galerias, imagens, depoimentos e CRM/RQE preservados",
+      "Nenhuma revisao medica nova atribuida; revisao clinica humana pendente"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "patient-care-milestones",
-        "system": "Apps Script / LEADS / Netlify / Drive",
+        "contract": "site-publication",
+        "system": "Netlify autenticado e site publico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T11:40:39.261Z",
-        "reference": "Editor dos tres arquivos equivale ao baseline por SHA256. Diagnostico somente leitura: cuidados ativos, aniversarios inativos,83colunas, fila vazia,1gatilho. Netlify24a6f19/6aa60d89 ready; flag aniversariofalse. Mesmas projecoes Drive iguais ao baseline. Calendar e YCloud preservados, sem efeito neste pacote."
+        "checkedAt": "2026-09-13T13:20:40.407Z",
+        "reference": "API Netlify autenticada: site c33facb6-eafc-4635-99d6-068bf8707227/deploy6aa6998a46297000089e1e5d/commit30c44f03, pronto;12 funcoes e5 programacoes. Baseline54/54 HTTP200 equivalente:48 exatas,6 somente reescrita deterministica de <a href=\"../index.html\"> para raiz."
+      },
+      {
+        "contract": "site-editorial-copy",
+        "system": "GA4 / Google Ads / LEADS agregado",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-13T11:45:00Z",
+        "reference": "3 CSV GA4 14/06-11/09; Ads interface 05-11/09; Agregados e Google_Rotas de13/09 08:10BRT. Coortes nao somadas."
+      },
+      {
+        "contract": "site-editorial-copy",
+        "system": "Google Drive e checkout principal",
+        "status": "baseline_equivalent",
+        "checkedAt": "2026-09-13T13:15:03.807Z",
+        "reference": "Plano mesmo ID,166542 caracteres,SHA25608d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8;igual ao checkout fcae9e42 limpo,ops:check OK e remoto igual. Release paralelo encerrado; merge preserva todos os seus arquivos. Apps Script151 herdado, sem edicao."
       }
     ]
   },
   "verification": {
-    "status": "passed_release",
+    "status": "passed_local",
     "commands": [
+      "node --test campanhas/site-communication.test.mjs",
+      "node --check campanhas/content-library.js",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "npm.cmd run ops:check",
       "git diff --check",
-      "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs"
+      "npm.cmd run ops:check"
     ],
     "results": {
-      "baselineFailures": "5/5 novos cenarios falharam antes da correcao",
-      "focused": "227/227",
-      "fullSuite": "1460/1460",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "change": "19 arquivos exatos",
-      "staticArtifact": "193 arquivos iguais byte a byte ao artefato completo anterior;54rotas,zeroerro e nenhum arquivo operacional publico",
-      "localCopyBuild": "Aprovado apos liberacao de espaco: 193 arquivos, 54 rotas, zero erro e nenhum arquivo operacional publico.",
-      "diff": "git diff --check OK"
+      "focusedTests": {
+        "passed": 47,
+        "failed": 0
+      },
+      "editorialTests": {
+        "passed": 8,
+        "failed": 0
+      },
+      "fullSuite": {
+        "passed": 1468,
+        "failed": 0
+      },
+      "changeCheck": "OK: 50 arquivos",
+      "architectureCheck": "OK",
+      "siteBuild": {
+        "files": 193,
+        "routes": 54,
+        "errors": 0
+      },
+      "siteCheck": "OK",
+      "diffCheck": "OK",
+      "visual": {
+        "testedPages": 12,
+        "widths": [
+          390,
+          1440
+        ],
+        "checks": 24,
+        "horizontalOverflow": false,
+        "blephRecoveryDisclosureOpens": true,
+        "whatsappClicksPerformed": false,
+        "cookieMeasurementOptedIn": false,
+        "priceGuideCta": "present_in_article_not_hero",
+        "previewUrl": "http://127.0.0.1:4186/lifting-facial/"
+      },
+      "opsCheck": "SYNC_PENDING: candidato local, branch isolada e publicacao pendente",
+      "reconciliation": "Delta exclusivo de comunicacao; nenhum arquivo em apps-script ou netlify difere do baseline fcae9e42"
     }
   },
   "previousCompletedRelease": {
-    "changeId": "GOOGLE-ADS-IMMEDIATE-SETTINGS-2026-09-12",
-    "sourceCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
+    "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
+    "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
     "release": {
-      "approvedCommit": "da367845af5de8b76b93b4c58c9c9aea4c200cfe",
-      "verifiedAt": "2026-09-13T03:04:17Z",
-      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanSha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
-      "activationState": "ads_settings_active_measurement_outcome_pending",
-      "notes": "Seis anuncios, sete mapas e duas opcoes geograficas salvos e relidos. Plano no mesmo ID Drive equivalente. Netlify/Apps Script sao recibos HERDADOS da publicacao paralela, sem edicao/deploy nesta tarefa. da367845 define exatamente o plano aplicado; merge posterior preserva preco24a6f19/1e638ef. Aceitacao real de nova conversao e candidato tecnico0ff0dd2 continuam pendentes.",
-      "netlifyDeployId": "6aa60d89d5920c0008dc059e",
-      "appsScriptVersion": 150,
-      "inheritedPlatformState": {
-        "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
-        "netlifyAndAppsScriptPublishedByThisTask": false
-      },
-      "drivePlanProjectionStatus": "verified",
-      "drivePlanReadback": {
-        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-        "modified": "2026-09-13T03:03:53.303Z",
-        "characters": 165776,
-        "sha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
-        "equal": true
+      "approvedCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
+      "verifiedAt": "2026-09-13T12:45:53.115Z",
+      "netlifyDeployId": "6aa6998a46297000089e1e5d",
+      "appsScriptVersion": 151,
+      "drivePlanSha256": "08d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8",
+      "receipts": {
+        "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+        "appsScriptFilesMatched": 3,
+        "appsScriptDiagnostic": "active=true;birthdaysActive=false;birthdayDeliveryMode=manual_daily_reminder;consultationColumns=83;states={};existingFollowupTriggers=1",
+        "netlifyPublishedAt": "2026-09-13T12:40:11.812Z",
+        "productionHttpStatus": 200,
+        "unauthenticatedScheduledFollowupStatus": 401,
+        "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "driveManualSha256": "0b760620cdc7037dd85f9416e6352bd8ca82cd83003f55e462f40540ae153e2a",
+        "patientTestMessages": 0,
+        "realTestEmails": 0
       }
     }
   },
   "release": {
-    "approvedCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
-    "verifiedAt": "2026-09-13T12:45:53.115Z",
-    "netlifyDeployId": "6aa6998a46297000089e1e5d",
-    "appsScriptVersion": 151,
-    "drivePlanSha256": "08d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8",
-    "receipts": {
-      "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-      "appsScriptFilesMatched": 3,
-      "appsScriptDiagnostic": "active=true;birthdaysActive=false;birthdayDeliveryMode=manual_daily_reminder;consultationColumns=83;states={};existingFollowupTriggers=1",
-      "netlifyPublishedAt": "2026-09-13T12:40:11.812Z",
-      "productionHttpStatus": 200,
-      "unauthenticatedScheduledFollowupStatus": 401,
-      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "driveManualSha256": "0b760620cdc7037dd85f9416e6352bd8ca82cd83003f55e462f40540ae153e2a",
-      "patientTestMessages": 0,
-      "realTestEmails": 0
-    }
+    "approvedCommit": null,
+    "netlifyDeployId": null,
+    "verifiedAt": null,
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanProjectionStatus": "pending_authorized_release",
+    "notes": "Reconciliacao com fcae9e42 incorporada; publicar somente depois dos gates finais e preflight do HEAD. Pacote de atribuicao0ff0dd2 permanece separado.",
+    "integrationRequiredBeforePublication": false,
+    "observedParallelCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117"
   },
   "rollback": {
-    "local": "Reverter apenas este candidato, preservando o trabalho paralelo Google Ads e Bruna preco.",
-    "production": "Restaurar Apps Script150 e Netlify6aa60d89d5920c0008dc059e, mantendo as duas flags de aniversariofalse. Sem migracao, exclusao ou edicao de pacientes."
+    "local": "Reverter somente o delta editorial, sem tocar em midias compartilhadas ou trabalho paralelo.",
+    "production": "Restaurar o deploy6aa6998a46297000089e1e5d somente se ainda for o predecessor imediato; preserva aniversario manual e Apps Script151. Se houver release posterior, reverter apenas o delta editorial e republicar. Nenhuma reversao de dados ou Apps Script."
   },
   "monitoring": {
-    "owner": "Daniel/equipe",
-    "window": "Primeiro lembrete diario e48horas; sem nova automacao Codex",
+    "owner": "Daniel e Dra. Amanda",
+    "window": "Integridade imediata/24h apos publicacao; D+7/D+14 e D+30. Nenhuma automacao nova.",
     "metrics": [
-      "aniversarios somente em envio manual",
-      "rascunho integral no email",
-      "dispensa nao reaparece no mesmo aniversario",
-      "demais cuidados aprovados preservados"
+      "Contatos validos e qualificados, com cobertura de classificacao",
+      "Consultas agendadas e realizadas por coorte e procedimento",
+      "Duvidas de preco, seguranca, indicacao e integridade dos CTAs"
     ],
-    "rollbackRule": "Conter o componente se houver aniversario automatico, sugestao duplicada ou perda do email diario."
+    "rollbackRule": "Corrigir erro clinico/comercial, promessa ou regressao tecnica. Nao reverter por CTR ou baixa amostra isolada."
   }
 }

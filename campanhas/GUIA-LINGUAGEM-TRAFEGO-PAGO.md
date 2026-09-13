@@ -236,3 +236,21 @@ Base de conferência: [Clínica LIV](https://livfarialima.com.br/), condição c
 - Corpo perfeito garantido
 - Resultado sem cicatriz
 - A melhor cirurgiã de São Paulo
+
+
+## Aplicação editorial no site — revisão de 13/09/2026
+
+Subordinada à seção 33 do Norte; este é um repertório de execução, não outro posicionamento.
+
+- Começar pela dúvida: pálpebras, flacidez, papada, lábio, volume ou recuperação. Explicar o procedimento antes de empilhar currículo e provas de segurança.
+- Nas páginas faciais, dizer de forma natural que Amanda tem atuação focada em face e explicar o benefício: avaliar estruturas próximas, proporções, expressão e limites. Não declarar exclusividade, superioridade ou uma nova especialidade formal.
+- Nas páginas de mama e corpo, manter a mensagem própria: pele, volume, formato, cicatrizes e rotina. Não importar o argumento facial para esses textos.
+- Trocar frases abstratas por ações: em vez de “formação sólida e cuidado diferenciado”, mostrar a formação verificada e o que a cirurgiã examina e explica. Não substituir um clichê por outro em todas as páginas.
+- Preferir “Ver horários da consulta” quando o botão abre a conversa com a equipe. Não dizer que o clique confirma agendamento. Preservar endereço, mensagem, código e atributos do botão.
+- Explicar a consulta particular de R$ 500 antes do contato nas páginas principais. Ela não inclui cirurgia nem a avaliação cardiológica do pacote. Não criar desconto, preço de cirurgia ou condição de pagamento nova.
+- Responder sobre trabalho, convívio social e cicatrização como etapas diferentes; não anunciar prazo garantido. Explicar naturalidade como intenção individual, não promessa de manter exatamente um traço ou de ausência de complicações.
+- Integrar segurança aos blocos existentes. USP qualifica o cardiologista; anestesistas são selecionados com atenção à formação. A proximidade facilita comunicação, não elimina riscos ou substitui avaliações.
+- Perguntas de redes e fóruns são pistas qualitativas, não pesquisa representativa. Não copiar respostas médicas, relatos ou alegações de eficácia dessas fontes.
+- Revisão editorial não equivale a revisão médica. Não atualizar assinatura/data de revisão clínica sem a conferência real. Fotos, depoimentos e regras técnicas ficam preservados.
+
+A solicitação atual permite revisar os textos antes congelados no primeiro ciclo dos guias de custo; não altera o roteamento dos anúncios. A redação anterior de congelamento descreve a rodada de 12/09, não bloqueia esta revisão local expressamente solicitada.

@@ -1,0 +1,1928 @@
+{
+  "schemaVersion": 1,
+  "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
+  "asOf": "2026-09-13",
+  "baseCommit": "4ea1bae3df9f4a69bdc7611c50f0eeb3932ab35d",
+  "status": "tested_local_publication_authorized",
+  "reconciledBaselineCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+  "inventory": {
+    "publicPages": 54,
+    "changedPages": 39,
+    "unchangedPages": [
+      "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+      "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+      "conteudos/como-escolher-cirurgiao-plastico/index.html",
+      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+      "conteudos/index.html",
+      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+      "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+      "conteudos/mastopexia-com-ou-sem-protese/index.html",
+      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+      "conteudos/otomodelacao-ou-otoplastia/index.html",
+      "conteudos/papada-contorno-cervical/index.html",
+      "conteudos/recuperacao-blefaroplastia/index.html",
+      "conteudos/recuperacao-lifting-cervical/index.html",
+      "privacidade/index.html"
+    ]
+  },
+  "data": {
+    "ga4": {
+      "period": [
+        "2026-06-14",
+        "2026-09-11"
+      ],
+      "sessions": 1355,
+      "paidSearchSessions": 953,
+      "whatsappClickEvents": 158,
+      "whatsappClickUsers": 100,
+      "generateLeadEvents": 4,
+      "generateLeadUsers": 2,
+      "configuredKeyEventNames": "not_verified",
+      "consultations": "not_measured_by_these_counts"
+    },
+    "ads": {
+      "account": "995-334-4486",
+      "period": [
+        "2026-09-05",
+        "2026-09-11"
+      ],
+      "clicks": 426,
+      "costBRLRounded": 602,
+      "searchThemes": [
+        "procedimento e indicacao",
+        "preco e composicao",
+        "antes e depois",
+        "tecnicas e diferencas"
+      ],
+      "source": "authenticated_interface_read_only"
+    },
+    "leadsAggregate": {
+      "sheetId": "1ofyZRGRyo8S90u1Na9FnVUBjVCjoRGicBCkdw4yQOz0",
+      "generatedAt": "2026-09-13T08:10:43-03:00",
+      "period": [
+        "2026-08-14",
+        "2026-09-12"
+      ],
+      "identifiedContacts": 20,
+      "classifiedContacts": 1,
+      "validContacts": 1,
+      "qualifiedContacts": 1,
+      "consultationsScheduledRecorded": 0,
+      "consultationsCompletedRecorded": 0,
+      "classificationUnknown": 19,
+      "canonicalContacts": 7,
+      "legacyContacts": 13,
+      "pageAndCtaAttribution": "not_available",
+      "interpretation": "Ausencia de classificacao nao e desqualificacao; zero registrado nao prova zero consultas reais."
+    }
+  },
+  "pages": [
+    {
+      "file": "abdominoplastia/index.html",
+      "before": {
+        "h1": "Abdominoplastia trata pele e parede abdominal — não só gordura.",
+        "lead": "Depois da gestação ou do emagrecimento, podem ficar pele solta, diástase, mudanças no umbigo e gordura localizada. Na consulta, você entende o que a abdominoplastia pode melhorar e como pode ficar a cicatriz."
+      },
+      "after": {
+        "h1": "Abdominoplastia trata pele e parede abdominal — não só gordura.",
+        "lead": "Pele solta depois da gestação ou do emagrecimento pode vir acompanhada de diástase e alterações no umbigo. Amanda examina cada componente e explica o que a abdominoplastia pode tratar, onde fica a cicatriz e como organizar a recuperação."
+      },
+      "protectedHashes": {
+        "navigation": "cb13f3e7c4262a694bd4619a41a327ba95d91000aa6c8d676d803af09a7219ec",
+        "media": "9d3c2e1655ad3f3bb5c6ac4bcb49a2e3ef9d56309e901ab878f65121d8a85f9c",
+        "scripts": "f3f715ee710f68e3b0a95d3dd22aa1b30ae8478f310b03b3d10f5c41aaac2c51"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Depois da gestação ou do emagrecimento, podem ficar pele solta, diástase, mudanças no umbigo e gordura localizada. Na consulta, você entende o que a abdominoplastia pode melhorar e como pode ficar a cicatriz.",
+          "to": "Pele solta depois da gestação ou do emagrecimento pode vir acompanhada de diástase e alterações no umbigo. Amanda examina cada componente e explica o que a abdominoplastia pode tratar, onde fica a cicatriz e como organizar a recuperação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "avaliacao-facial/index.html",
+      "before": {
+        "h1": "Você não precisa escolher uma cirurgia antes de entender o seu rosto.",
+        "lead": "Se você veio pensando em lifting, pálpebras, papada ou apenas percebendo uma mudança, a consulta começa pelo que incomoda. Depois do exame, a Dra. Amanda explica se há indicação de cirurgia, se um tratamento menor pode ajudar ou se o melhor é apenas acompanhar."
+      },
+      "after": {
+        "h1": "Você não precisa escolher uma cirurgia antes de entender o seu rosto.",
+        "lead": "Olhar cansado, flacidez ou mudança no contorno? A Dra. Amanda tem atuação focada em cirurgias da face. Na consulta, você entende o que está por trás da sua queixa, o que pode ser tratado e quais cuidados cada opção exige."
+      },
+      "protectedHashes": {
+        "navigation": "77614f7dcf0e83b9db359941ed27ebea61b10786ba121c6b0f4e8559d5334a9c",
+        "media": "b4c226f2b85c3a13d80b4196998484ec2ef9ef476ed0515d3ab618742c22b172",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Se você veio pensando em lifting, pálpebras, papada ou apenas percebendo uma mudança, a consulta começa pelo que incomoda. Depois do exame, a Dra. Amanda explica se há indicação de cirurgia, se um tratamento menor pode ajudar ou se o melhor é apenas acompanhar.",
+          "to": "Olhar cansado, flacidez ou mudança no contorno? A Dra. Amanda tem atuação focada em cirurgias da face. Na consulta, você entende o que está por trás da sua queixa, o que pode ser tratado e quais cuidados cada opção exige.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Formação sólida, indicação cuidadosa e acompanhamento de perto.",
+          "to": "Quem vai cuidar do seu rosto.",
+          "reason": "Trocar adjetivos por autoria concreta"
+        },
+        {
+          "from": "Na hora de escolher quem vai cuidar do seu rosto, vale conhecer a formação, os resultados, a equipe e os hospitais utilizados, além de entender como serão o planejamento e o acompanhamento.",
+          "to": "Na consulta, você conversa diretamente com a cirurgiã sobre o que deseja mudar e o que quer preservar. A Dra. Amanda explica a indicação, mostra onde ficam as cicatrizes e conversa sobre a recuperação e as alternativas.",
+          "reason": "Ligar escolha da Amanda ao que acontece na consulta"
+        },
+        {
+          "from": "Um espaço discreto para conversar, examinar e decidir com calma.",
+          "to": "Sua consulta na Clínica LIV Faria Lima.",
+          "reason": "Retirar formula repetitiva"
+        },
+        {
+          "from": "A Clínica LIV Faria Lima reúne atendimento, planejamento e organização pré-operatória em Pinheiros.",
+          "to": "Consulta em Pinheiros, perto da estação de metrô, com privacidade para conversar e examinar.",
+          "reason": "Informacao pratica de acesso e privacidade"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Avaliação facial com a Dra. Amanda Schroeder em Pinheiros para entender flacidez, olhar, contorno, pescoço e alternativas cirúrgicas ou não cirúrgicas.\">",
+          "to": "<meta name=\"description\" content=\"Não sabe qual tratamento procurar? Conheça a avaliação com a Dra. Amanda, cirurgiã plástica com foco em face. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Avaliação facial com a Dra. Amanda Schroeder em Pinheiros para entender flacidez, olhar, contorno, pescoço e alternativas cirúrgicas ou não cirúrgicas.\">",
+          "to": "<meta property=\"og:description\" content=\"Não sabe qual tratamento procurar? Conheça a avaliação com a Dra. Amanda, cirurgiã plástica com foco em face. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta name=\"twitter:description\" content=\"Avaliação facial com a Dra. Amanda Schroeder em Pinheiros para entender flacidez, olhar, contorno, pescoço e alternativas cirúrgicas ou não cirúrgicas.\">",
+          "to": "<meta name=\"twitter:description\" content=\"Não sabe qual tratamento procurar? Conheça a avaliação com a Dra. Amanda, cirurgiã plástica com foco em face. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Avaliação facial com a Dra. Amanda Schroeder em Pinheiros para entender flacidez, olhar, contorno, pescoço e alternativas cirúrgicas ou não cirúrgicas.",
+          "to": "Não sabe qual tratamento procurar? Conheça a avaliação com a Dra. Amanda, cirurgiã plástica com foco em face. Consulta em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "blefaroplastia/index.html",
+      "before": {
+        "h1": "Cuidar das pálpebras sem perder de vista a face inteira.",
+        "lead": "Quando a pálpebra pesa ou as bolsas insistem em transmitir cansaço, a resposta não está simplesmente em “retirar pele”. Uma cirurgiã plástica com atuação concentrada em face avalia como pálpebras, sobrancelhas, têmporas e maçãs do rosto se relacionam — para indicar apenas o que pode melhorar o olhar sem descaracterizar a face."
+      },
+      "after": {
+        "h1": "Cuidar das pálpebras sem perder de vista a face inteira.",
+        "lead": "Pálpebras pesadas e bolsas podem dar ao olhar um aspecto de cansaço. A Dra. Amanda, cirurgiã plástica com atuação focada em face, avalia também sobrancelhas, expressão e fechamento dos olhos. Assim, você entende o que a blefaroplastia pode mudar no seu caso."
+      },
+      "protectedHashes": {
+        "navigation": "83bfe9dd2632491d69d900480d56aba7edc1140493b109216ffb0a65ba741ddb",
+        "media": "a5a0bacb71dc2f08b5fc0ae804867a4be01abfce97ca66be1439da1f6a851a2e",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Quando a pálpebra pesa ou as bolsas insistem em transmitir cansaço, a resposta não está simplesmente em “retirar pele”. Uma cirurgiã plástica com atuação concentrada em face avalia como pálpebras, sobrancelhas, têmporas e maçãs do rosto se relacionam — para indicar apenas o que pode melhorar o olhar sem descaracterizar a face.",
+          "to": "Pálpebras pesadas e bolsas podem dar ao olhar um aspecto de cansaço. A Dra. Amanda, cirurgiã plástica com atuação focada em face, avalia também sobrancelhas, expressão e fechamento dos olhos. Assim, você entende o que a blefaroplastia pode mudar no seu caso.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Olhos, sobrancelhas e face precisam contar a mesma história.",
+          "to": "A causa do olhar cansado nem sempre está só nas pálpebras.",
+          "reason": "Trocar metafora por resposta concreta"
+        },
+        {
+          "from": "O foco em cirurgia facial amplia a leitura do problema: ajuda a distinguir o que pertence às pálpebras, o que vem das estruturas ao redor e o que a blefaroplastia, sozinha, não deve prometer resolver.",
+          "to": "Ao avaliar a face, a Dra. Amanda observa se a mudança vem das pálpebras, das sobrancelhas ou das regiões próximas. Isso ajuda a explicar o que a blefaroplastia pode tratar — e o que precisa de outro cuidado.",
+          "reason": "Traduzir beneficio do foco facial"
+        },
+        {
+          "from": "Muitas pacientes retomam atividades sociais leves em cerca de 10 a 14 dias. A evolução é individual.",
+          "to": "Muitas pacientes retomam atividades sociais leves em cerca de 10 a 14 dias. Para voltar ao trabalho, também contam o uso de telas, a exposição ao público e o esforço da sua rotina. Inchaço e cicatrizes continuam evoluindo; a liberação depende do acompanhamento.",
+          "reason": "Resposta util sobre afastamento, sem prazo garantido"
+        },
+        {
+          "from": "Um espaço discreto para examinar o olhar e decidir com calma.",
+          "to": "Sua avaliação das pálpebras na LIV.",
+          "reason": "Evitar frase repetida"
+        },
+        {
+          "from": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"blefaroplastia\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20blefaroplastia%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o%20com%20a%20Dra.%20Amanda.%0A%0ARefer%C3%AAncia%3A%20Blefaroplastia\" rel=\"noopener\" target=\"_blank\">Ver horários para avaliação</a>",
+          "to": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"blefaroplastia\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20blefaroplastia%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o%20com%20a%20Dra.%20Amanda.%0A%0ARefer%C3%AAncia%3A%20Blefaroplastia\" rel=\"noopener\" target=\"_blank\">Ver horários da consulta</a>",
+          "reason": "CTA explicita consulta, preservando destino e medicao"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Blefaroplastia em São Paulo com cirurgiã plástica de atuação concentrada em face. Avaliação de pálpebras, sobrancelhas e expressão no conjunto facial.\">",
+          "to": "<meta name=\"description\" content=\"Pálpebras pesadas ou bolsas? A Dra. Amanda avalia o olhar e a face antes de indicar a blefaroplastia. Conheça a consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Blefaroplastia em São Paulo com cirurgiã plástica de atuação concentrada em face. Avaliação de pálpebras, sobrancelhas e expressão no conjunto facial.\">",
+          "to": "<meta property=\"og:description\" content=\"Pálpebras pesadas ou bolsas? A Dra. Amanda avalia o olhar e a face antes de indicar a blefaroplastia. Conheça a consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta name=\"twitter:description\" content=\"Blefaroplastia em São Paulo com cirurgiã plástica de atuação concentrada em face. Avaliação de pálpebras, sobrancelhas e expressão no conjunto facial.\">",
+          "to": "<meta name=\"twitter:description\" content=\"Pálpebras pesadas ou bolsas? A Dra. Amanda avalia o olhar e a face antes de indicar a blefaroplastia. Conheça a consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Muitas pacientes retomam atividades sociais leves em cerca de 10 a 14 dias, mas edema, equimoses e cicatrizes continuam evoluindo por semanas ou meses.",
+          "to": "Muitas pacientes retomam atividades sociais leves em cerca de 10 a 14 dias. Para voltar ao trabalho, também contam o uso de telas, a exposição ao público e o esforço da sua rotina. Inchaço e cicatrizes continuam evoluindo; a liberação depende do acompanhamento.",
+          "reason": "FAQ estruturado igual ao texto visivel; divergencia detectada pelo teste"
+        },
+        {
+          "from": "Blefaroplastia em São Paulo com cirurgiã plástica de atuação concentrada em face. Avaliação de pálpebras, sobrancelhas e expressão no conjunto facial.",
+          "to": "Pálpebras pesadas ou bolsas? A Dra. Amanda avalia o olhar e a face antes de indicar a blefaroplastia. Conheça a consulta em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "braquioplastia/index.html",
+      "before": {
+        "h1": "Braquioplastia: menos pele nos braços, com uma cicatriz a considerar.",
+        "lead": "Quando a pele não acompanha o emagrecimento, a braquioplastia pode melhorar o contorno dos braços. Para saber se ela é indicada, é preciso distinguir pele de gordura e conversar com clareza sobre a cicatriz."
+      },
+      "after": {
+        "h1": "Braquioplastia: menos pele nos braços, com uma cicatriz a considerar.",
+        "lead": "A braquioplastia pode retirar a pele que ficou nos braços depois do emagrecimento. Amanda avalia a relação entre pele e gordura e mostra onde a cicatriz precisará ficar. Essa troca precisa fazer sentido para você."
+      },
+      "protectedHashes": {
+        "navigation": "ca66e22f642903f15a8d6bc951095ce2b056b1336b11907c0fc35e4b0d453cb4",
+        "media": "4387ebb47061440a8456b2b6bb855d12ce696cf45c73cdc0fe711459289d37bd",
+        "scripts": "8a05169278a13106874955de0f6bbbb432493957e00a32c130c690b9cdc929cd"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Quando a pele não acompanha o emagrecimento, a braquioplastia pode melhorar o contorno dos braços. Para saber se ela é indicada, é preciso distinguir pele de gordura e conversar com clareza sobre a cicatriz.",
+          "to": "A braquioplastia pode retirar a pele que ficou nos braços depois do emagrecimento. Amanda avalia a relação entre pele e gordura e mostra onde a cicatriz precisará ficar. Essa troca precisa fazer sentido para você.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+      "before": {
+        "h1": "Blefaroplastia: quando o aspecto cansado pode vir das pálpebras",
+        "lead": "Nem toda aparência cansada é causada pelo mesmo problema. Excesso de pele, bolsas, sobrancelha, sulcos e qualidade da pele precisam ser avaliados em conjunto."
+      },
+      "after": {
+        "h1": "Blefaroplastia: quando o aspecto cansado pode vir das pálpebras",
+        "lead": "Pálpebra pesada, bolsas e olheiras podem parecer a mesma queixa, mas têm causas diferentes. A avaliação mostra o que a blefaroplastia pode tratar e o que precisa de outro cuidado."
+      },
+      "protectedHashes": {
+        "navigation": "2dd1b65cd8db424c0043b1f6b3a3f7a1e6812fe906bda1a7adae4c171391ea10",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "d7e3691b30a64a3dfea668a643b88f2791deefd8e6941a6fab3e2aa24f1488be"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Nem toda aparência cansada é causada pelo mesmo problema. Excesso de pele, bolsas, sobrancelha, sulcos e qualidade da pele precisam ser avaliados em conjunto.",
+          "to": "Pálpebra pesada, bolsas e olheiras podem parecer a mesma queixa, mas têm causas diferentes. A avaliação mostra o que a blefaroplastia pode tratar e o que precisa de outro cuidado.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/botox-preenchimento-bioestimulador/index.html",
+      "before": {
+        "h1": "Toxina botulínica, preenchimento ou bioestimulador: qual problema cada um trata",
+        "lead": "Os três tratamentos não são versões diferentes da mesma coisa. Eles atuam sobre movimento, volume e qualidade dos tecidos."
+      },
+      "after": {
+        "h1": "Toxina botulínica, preenchimento ou bioestimulador: qual problema cada um trata",
+        "lead": "Rugas ao sorrir, perda de volume e flacidez não pedem o mesmo tratamento. Veja onde toxina botulínica, preenchimento e bioestimuladores podem ajudar e por que não são intercambiáveis."
+      },
+      "protectedHashes": {
+        "navigation": "e78274eac04b149dfba0f2093f0f87e748bdc5e25a09aca086945e0db3140da0",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "d7e3691b30a64a3dfea668a643b88f2791deefd8e6941a6fab3e2aa24f1488be"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Os três tratamentos não são versões diferentes da mesma coisa. Eles atuam sobre movimento, volume e qualidade dos tecidos.",
+          "to": "Rugas ao sorrir, perda de volume e flacidez não pedem o mesmo tratamento. Veja onde toxina botulínica, preenchimento e bioestimuladores podem ajudar e por que não são intercambiáveis.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/como-escolher-protese-de-mama/index.html",
+      "before": {
+        "h1": "Como é escolhida a prótese de mama: além do número de mililitros",
+        "lead": "A escolha não começa em um volume isolado. Base mamária, tórax, tecidos e preferência de resultado precisam conversar entre si."
+      },
+      "after": {
+        "h1": "Como é escolhida a prótese de mama: além do número de mililitros",
+        "lead": "Uma prótese do mesmo tamanho pode ficar diferente em dois corpos. Tórax, base da mama, pele e o formato que você deseja são parte da escolha, além dos mililitros."
+      },
+      "protectedHashes": {
+        "navigation": "b5db00f2bfd7ac06cec95d558efea22b92efe7894d09e41a217ff094506ef633",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "d7e3691b30a64a3dfea668a643b88f2791deefd8e6941a6fab3e2aa24f1488be"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "A escolha não começa em um volume isolado. Base mamária, tórax, tecidos e preferência de resultado precisam conversar entre si.",
+          "to": "Uma prótese do mesmo tamanho pode ficar diferente em dois corpos. Tórax, base da mama, pele e o formato que você deseja são parte da escolha, além dos mililitros.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/consulta-cirurgia-plastica/index.html",
+      "before": {
+        "h1": "Como funciona a consulta com a Dra. Amanda.",
+        "lead": "Você não precisa chegar sabendo qual cirurgia quer. A consulta começa pela sua queixa, passa pelo exame e termina com uma explicação clara sobre possibilidades, limites e próximos passos."
+      },
+      "after": {
+        "h1": "Como funciona a consulta com a Dra. Amanda.",
+        "lead": "A consulta é com a Amanda. Você conta o que gostaria de mudar, passa pelo exame e conversa sobre opções, cicatrizes, recuperação e custos. Se houver indicação, a equipe organiza o orçamento. Marcar a consulta não é assumir o compromisso de operar."
+      },
+      "protectedHashes": {
+        "navigation": "efbbe285b946276dd6d6edbb16b54f134e37d6b6e6615657aad9e636536a91d9",
+        "media": "74e1a6cacd32d1f8e434378a8def57a039afb6533f22b0ad55542e7dd7a4c7c2",
+        "scripts": "7947a8c0f3b811d0be5a916fce3c4788b8f77db500184f9a6439227803e4d37f"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Você não precisa chegar sabendo qual cirurgia quer. A consulta começa pela sua queixa, passa pelo exame e termina com uma explicação clara sobre possibilidades, limites e próximos passos.",
+          "to": "A consulta é com a Amanda. Você conta o que gostaria de mudar, passa pelo exame e conversa sobre opções, cicatrizes, recuperação e custos. Se houver indicação, a equipe organiza o orçamento. Marcar a consulta não é assumir o compromisso de operar.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/lifting-facial-ou-injetaveis/index.html",
+      "before": {
+        "h1": "Lifting facial ou procedimentos injetáveis: como entender a diferença",
+        "lead": "Quando o incômodo é flacidez, perda de contorno ou aparência cansada, a dúvida não deveria começar pela técnica. Entenda o que cada abordagem consegue tratar."
+      },
+      "after": {
+        "h1": "Lifting facial ou procedimentos injetáveis: como entender a diferença",
+        "lead": "Preenchimento ou lifting? A resposta depende de a mudança vir da perda de volume, da flacidez ou de ambos. Entender essa diferença ajuda a comparar as opções sem escolher só pelo nome da técnica."
+      },
+      "protectedHashes": {
+        "navigation": "f6f817510dd4038081890876b970f37f269bc673111b67b47f9e4d907362eba4",
+        "media": "59c9da40b2e8a34b1ab0f798c12e3a9ff3a1ab0eabcf2ea3234cc418d5eb1ce6",
+        "scripts": "d7e3691b30a64a3dfea668a643b88f2791deefd8e6941a6fab3e2aa24f1488be"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Quando o incômodo é flacidez, perda de contorno ou aparência cansada, a dúvida não deveria começar pela técnica. Entenda o que cada abordagem consegue tratar.",
+          "to": "Preenchimento ou lifting? A resposta depende de a mudança vir da perda de volume, da flacidez ou de ambos. Entender essa diferença ajuda a comparar as opções sem escolher só pelo nome da técnica.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/lipoenxertia-facial/index.html",
+      "before": {
+        "h1": "Lipoenxertia facial: como a gordura pode restaurar volumes",
+        "lead": "A gordura da própria paciente pode ser utilizada em áreas selecionadas do rosto, com planejamento de volume, integração aos tecidos e expectativas realistas."
+      },
+      "after": {
+        "h1": "Lipoenxertia facial: como a gordura pode restaurar volumes",
+        "lead": "A lipoenxertia usa gordura da própria pessoa para repor volume em pontos do rosto. Ela pode fazer parte do planejamento facial, mas a quantidade que permanece e a recuperação variam."
+      },
+      "protectedHashes": {
+        "navigation": "3ba96b81f554b817551f612c271d722037e443984685f5971b079ea6cfd68fe3",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "9ec5d299584eda81efaeb5aa0a3b3fff8e8b364be145a1cfe76fe49215ece4d3"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "A gordura da própria paciente pode ser utilizada em áreas selecionadas do rosto, com planejamento de volume, integração aos tecidos e expectativas realistas.",
+          "to": "A lipoenxertia usa gordura da própria pessoa para repor volume em pontos do rosto. Ela pode fazer parte do planejamento facial, mas a quantidade que permanece e a recuperação variam.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"A lipoenxertia usa gordura da própria pessoa para repor volume em pontos do rosto. Ela pode fazer parte do planejamento facial, mas a quantidade que permanece e a recuperação variam.\">",
+          "to": "<meta name=\"description\" content=\"Como a gordura da própria pessoa pode repor volume no rosto? Entenda a lipoenxertia facial, a recuperação e os limites desse tratamento.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"A lipoenxertia usa gordura da própria pessoa para repor volume em pontos do rosto. Ela pode fazer parte do planejamento facial, mas a quantidade que permanece e a recuperação variam.\">",
+          "to": "<meta property=\"og:description\" content=\"Como a gordura da própria pessoa pode repor volume no rosto? Entenda a lipoenxertia facial, a recuperação e os limites desse tratamento.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "A lipoenxertia usa gordura da própria pessoa para repor volume em pontos do rosto. Ela pode fazer parte do planejamento facial, mas a quantidade que permanece e a recuperação variam.",
+          "to": "Como a gordura da própria pessoa pode repor volume no rosto? Entenda a lipoenxertia facial, a recuperação e os limites desse tratamento.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/naturalidade-envelhecimento/index.html",
+      "before": {
+        "h1": "Naturalidade e envelhecimento: quando cuidar não significa transformar",
+        "lead": "Prevenção, limites e respeito à identidade ajudam a construir resultados coerentes, sem perseguir padrões ou apagar a expressão individual."
+      },
+      "after": {
+        "h1": "Naturalidade e envelhecimento: quando cuidar não significa transformar",
+        "lead": "Como mudar algo no rosto e continuar se reconhecendo? Levar essa pergunta à consulta ajuda a conversar sobre proporções, expressão e limites, tanto nos injetáveis quanto na cirurgia."
+      },
+      "protectedHashes": {
+        "navigation": "e317f44d6605729a7e2a02dbd8d419ac70e8f3a7bce55f8ce158bafc44169078",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "9ec5d299584eda81efaeb5aa0a3b3fff8e8b364be145a1cfe76fe49215ece4d3"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Prevenção, limites e respeito à identidade ajudam a construir resultados coerentes, sem perseguir padrões ou apagar a expressão individual.",
+          "to": "Como mudar algo no rosto e continuar se reconhecendo? Levar essa pergunta à consulta ajuda a conversar sobre proporções, expressão e limites, tanto nos injetáveis quanto na cirurgia.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Como mudar algo no rosto e continuar se reconhecendo? Levar essa pergunta à consulta ajuda a conversar sobre proporções, expressão e limites, tanto nos injetáveis quanto na cirurgia.\">",
+          "to": "<meta name=\"description\" content=\"Como mudar o rosto e continuar se reconhecendo? Entenda por que proporções, expressão e limites importam na escolha de uma cirurgia ou de injetáveis.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Como mudar algo no rosto e continuar se reconhecendo? Levar essa pergunta à consulta ajuda a conversar sobre proporções, expressão e limites, tanto nos injetáveis quanto na cirurgia.\">",
+          "to": "<meta property=\"og:description\" content=\"Como mudar o rosto e continuar se reconhecendo? Entenda por que proporções, expressão e limites importam na escolha de uma cirurgia ou de injetáveis.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Como mudar algo no rosto e continuar se reconhecendo? Levar essa pergunta à consulta ajuda a conversar sobre proporções, expressão e limites, tanto nos injetáveis quanto na cirurgia.",
+          "to": "Como mudar o rosto e continuar se reconhecendo? Entenda por que proporções, expressão e limites importam na escolha de uma cirurgia ou de injetáveis.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      "before": {
+        "h1": "Quanto custa uma blefaroplastia em São Paulo?",
+        "lead": "Não existe um valor único para todos os casos. O orçamento é definido depois da avaliação, quando é possível diferenciar pálpebras superiores e inferiores, bolsas, pele, sobrancelhas e sulcos — e organizar equipe médica, anestesia, hospital, materiais, preparo e acompanhamento."
+      },
+      "after": {
+        "h1": "Quanto custa uma blefaroplastia em São Paulo?",
+        "lead": "Operar só as pálpebras superiores é diferente de tratar também as inferiores. Essa é uma das razões para o valor variar. Veja quais itens entram no orçamento da blefaroplastia e o que esclarecer antes de marcar a cirurgia."
+      },
+      "protectedHashes": {
+        "navigation": "a9435219154d9209e2874f45ee41db66fdfa430cb81a59d056e12c04d78d4fd3",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "b77f09affdc0e48855078d444b54b1c6f276336b1c4e9b811150611bd79910d2"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "lastReviewed": "2026-09-12"
+        }
+      ],
+      "changes": [
+        {
+          "from": "Não existe um valor único para todos os casos. O orçamento é definido depois da avaliação, quando é possível diferenciar pálpebras superiores e inferiores, bolsas, pele, sobrancelhas e sulcos — e organizar equipe médica, anestesia, hospital, materiais, preparo e acompanhamento.",
+          "to": "Operar só as pálpebras superiores é diferente de tratar também as inferiores. Essa é uma das razões para o valor variar. Veja quais itens entram no orçamento da blefaroplastia e o que esclarecer antes de marcar a cirurgia.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "before": {
+        "h1": "Quanto custa uma cirurgia plástica corporal em São Paulo?",
+        "lead": "Lipoaspiração, abdominoplastia e cirurgias após grande perda de peso tratam componentes diferentes. O orçamento depende do procedimento, das áreas, da extensão, da equipe, da anestesia, do hospital e da recuperação necessária."
+      },
+      "after": {
+        "h1": "Quanto custa uma cirurgia plástica corporal em São Paulo?",
+        "lead": "Lipo, abdominoplastia ou cirurgia em etapas? O orçamento depende das regiões tratadas e do plano. Veja quais despesas conferir, inclusive na recuperação, antes de comparar os valores."
+      },
+      "protectedHashes": {
+        "navigation": "e802015159ab9ff4e87cce1efdc7e75adc71dffec4baa9091cbcd8d8b1c33796",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "1d26554e69d7188328b881d636bf4c21192e7e031a56d1972255768a57a9fde9"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Lipoaspiração, abdominoplastia e cirurgias após grande perda de peso tratam componentes diferentes. O orçamento depende do procedimento, das áreas, da extensão, da equipe, da anestesia, do hospital e da recuperação necessária.",
+          "to": "Lipo, abdominoplastia ou cirurgia em etapas? O orçamento depende das regiões tratadas e do plano. Veja quais despesas conferir, inclusive na recuperação, antes de comparar os valores.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+      "before": {
+        "h1": "Quanto custa uma cirurgia plástica facial em São Paulo?",
+        "lead": "O orçamento costuma reunir três grupos de despesas: honorários dos profissionais, estrutura do hospital e cuidados da recuperação. Entenda por que anestesiologista, cirurgião auxiliar e instrumentador têm funções diferentes, o que pode aparecer na conta hospitalar e em quais situações o convênio pode participar."
+      },
+      "after": {
+        "h1": "Quanto custa uma cirurgia plástica facial em São Paulo?",
+        "lead": "Pesquisar preço faz parte da decisão. Para comparar propostas, você precisa saber qual cirurgia está prevista, quem participa e o que está incluído. Este guia ajuda a organizar essas perguntas antes da consulta."
+      },
+      "protectedHashes": {
+        "navigation": "4d4aded9d50b1b7d83f74a88b2b20fe8d9090bc4c86eba3d8ee0a180706ebed2",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "7947a8c0f3b811d0be5a916fce3c4788b8f77db500184f9a6439227803e4d37f"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "O orçamento costuma reunir três grupos de despesas: honorários dos profissionais, estrutura do hospital e cuidados da recuperação. Entenda por que anestesiologista, cirurgião auxiliar e instrumentador têm funções diferentes, o que pode aparecer na conta hospitalar e em quais situações o convênio pode participar.",
+          "to": "Pesquisar preço faz parte da decisão. Para comparar propostas, você precisa saber qual cirurgia está prevista, quem participa e o que está incluído. Este guia ajuda a organizar essas perguntas antes da consulta.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Entenda os custos de uma cirurgia facial: cirurgiã, anestesiologista, auxiliar, instrumentador, hospital e o que o convênio pode cobrir.\">",
+          "to": "<meta name=\"description\" content=\"Compare os custos de uma cirurgia facial: equipe, anestesia, hospital e recuperação. Saiba o que perguntar antes de escolher sua cirurgiã.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Entenda os custos de uma cirurgia facial: cirurgiã, anestesiologista, auxiliar, instrumentador, hospital e o que o convênio pode cobrir.\">",
+          "to": "<meta property=\"og:description\" content=\"Compare os custos de uma cirurgia facial: equipe, anestesia, hospital e recuperação. Saiba o que perguntar antes de escolher sua cirurgiã.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta name=\"twitter:description\" content=\"Entenda os custos de uma cirurgia facial: cirurgiã, anestesiologista, auxiliar, instrumentador, hospital e o que o convênio pode cobrir.\">",
+          "to": "<meta name=\"twitter:description\" content=\"Compare os custos de uma cirurgia facial: equipe, anestesia, hospital e recuperação. Saiba o que perguntar antes de escolher sua cirurgiã.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Entenda os custos de uma cirurgia facial: cirurgiã, anestesiologista, auxiliar, instrumentador, hospital e o que o convênio pode cobrir.",
+          "to": "Compare os custos de uma cirurgia facial: equipe, anestesia, hospital e recuperação. Saiba o que perguntar antes de escolher sua cirurgiã.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+      "before": {
+        "h1": "Quanto custa uma cirurgia de mama em São Paulo?",
+        "lead": "Mastopexia, prótese de mama e mamoplastia redutora têm objetivos e estruturas diferentes. O orçamento é definido depois do exame e costuma reunir honorários profissionais, anestesia, hospital, materiais, eventual implante e acompanhamento."
+      },
+      "after": {
+        "h1": "Quanto custa uma cirurgia de mama em São Paulo?",
+        "lead": "O valor muda entre prótese de mama, mastopexia e redução, e também entre pacientes. Veja como implante, equipe, hospital e acompanhamento entram na conta para comparar propostas com clareza."
+      },
+      "protectedHashes": {
+        "navigation": "292e7691dae08ceb45b44a84b6b3fc91631d1afa687c32ae5356442c2e702a7a",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "1d26554e69d7188328b881d636bf4c21192e7e031a56d1972255768a57a9fde9"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Mastopexia, prótese de mama e mamoplastia redutora têm objetivos e estruturas diferentes. O orçamento é definido depois do exame e costuma reunir honorários profissionais, anestesia, hospital, materiais, eventual implante e acompanhamento.",
+          "to": "O valor muda entre prótese de mama, mastopexia e redução, e também entre pacientes. Veja como implante, equipe, hospital e acompanhamento entram na conta para comparar propostas com clareza.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      "before": {
+        "h1": "Quanto custa um lifting cervical em São Paulo?",
+        "lead": "Não existe um valor único para todos os casos. O orçamento é definido depois da avaliação, quando é possível entender a participação de pele, gordura, platisma, queixo, face e mandíbula — e organizar equipe médica, hospital, anestesia, materiais, preparo e acompanhamento."
+      },
+      "after": {
+        "h1": "Quanto custa um lifting cervical em São Paulo?",
+        "lead": "Uma noção de custo ajuda a se organizar. O orçamento do lifting cervical muda conforme o que será tratado no pescoço, a equipe e o hospital. Veja o que comparar e como pedir uma referência geral antes da avaliação."
+      },
+      "protectedHashes": {
+        "navigation": "fbf71bb3e5b2167543557fbe0408abc27959204a5e47284e70d3e31a8990fc47",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "b77f09affdc0e48855078d444b54b1c6f276336b1c4e9b811150611bd79910d2"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "lastReviewed": "2026-09-12"
+        }
+      ],
+      "changes": [
+        {
+          "from": "Não existe um valor único para todos os casos. O orçamento é definido depois da avaliação, quando é possível entender a participação de pele, gordura, platisma, queixo, face e mandíbula — e organizar equipe médica, hospital, anestesia, materiais, preparo e acompanhamento.",
+          "to": "Uma noção de custo ajuda a se organizar. O orçamento do lifting cervical muda conforme o que será tratado no pescoço, a equipe e o hospital. Veja o que comparar e como pedir uma referência geral antes da avaliação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      "before": {
+        "h1": "Quanto custa um lifting facial em São Paulo?",
+        "lead": "Não existe um valor único para todos os casos. O orçamento é definido depois da avaliação, quando é possível indicar a extensão do procedimento e organizar equipe médica, hospital, anestesia, materiais, exames, preparo e acompanhamento de acordo com cada planejamento."
+      },
+      "after": {
+        "h1": "Quanto custa um lifting facial em São Paulo?",
+        "lead": "O orçamento é definido depois da avaliação. Antes da consulta, você pode entender o que muda o valor — regiões tratadas, equipe e hospital — e pedir uma referência geral para se planejar."
+      },
+      "protectedHashes": {
+        "navigation": "a80e3d7cd40db1f05fabeb5730085efba0b6db3d0818aa869eaf658b41c133ee",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "88e89cf4530ce72dc0bde30dcbdaab1ed367f519f1a8fd942b9a2f4096e63200"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "lastReviewed": "2026-09-01"
+        }
+      ],
+      "changes": [
+        {
+          "from": "Não existe um valor único para todos os casos. O orçamento é definido depois da avaliação, quando é possível indicar a extensão do procedimento e organizar equipe médica, hospital, anestesia, materiais, exames, preparo e acompanhamento de acordo com cada planejamento.",
+          "to": "Quer entender se o lifting cabe no seu planejamento? O valor muda conforme as regiões tratadas, a equipe e o hospital. Aqui você vê o que comparar entre propostas e como pedir uma referência geral antes da consulta.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "O orçamento final reúne esses itens e mostra o que está incluído e quais despesas podem ficar de fora.",
+          "to": "Na LIV, a consulta cardiológica pré-operatória na própria clínica está incluída no pacote cirúrgico. A primeira consulta com a Dra. Amanda é separada. Confirme no orçamento quais exames e outras despesas estão incluídos.",
+          "reason": "Diferencial economico verificavel sem preco cirurgico publico"
+        },
+        {
+          "from": "Naturalidade e identidade",
+          "to": "A mudança que você quer — e os traços que quer manter",
+          "reason": "Menos abstracao"
+        },
+        {
+          "from": "Quer entender se o lifting cabe no seu planejamento? O valor muda conforme as regiões tratadas, a equipe e o hospital. Aqui você vê o que comparar entre propostas e como pedir uma referência geral antes da consulta.",
+          "to": "O orçamento é definido depois da avaliação. Antes da consulta, você pode entender o que muda o valor — regiões tratadas, equipe e hospital — e pedir uma referência geral para se planejar.",
+          "reason": "Orcamento individual explicito na primeira resposta"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/recuperacao-lifting-facial/index.html",
+      "before": {
+        "h1": "Recuperação do lifting facial: o que planejar antes da cirurgia",
+        "lead": "A recuperação não é apenas o número de dias até voltar ao trabalho. Edema, rotina, apoio, retornos e adaptação social precisam ser organizados."
+      },
+      "after": {
+        "h1": "Recuperação do lifting facial: o que planejar antes da cirurgia",
+        "lead": "Quando voltar ao trabalho, sair em público ou viajar? Esses prazos podem ser diferentes. Antes do lifting, converse sobre apoio em casa, retornos e uma margem de tempo para a recuperação."
+      },
+      "protectedHashes": {
+        "navigation": "57bcd74a5c90786b35595a0ed49f7ba7d91c04506db29f7656bd3b240fbdf4b8",
+        "media": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scripts": "d7e3691b30a64a3dfea668a643b88f2791deefd8e6941a6fab3e2aa24f1488be"
+      },
+      "reviewAttribution": [
+        {
+          "type": [
+            "MedicalWebPage",
+            "Article"
+          ],
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "A recuperação não é apenas o número de dias até voltar ao trabalho. Edema, rotina, apoio, retornos e adaptação social precisam ser organizados.",
+          "to": "Quando voltar ao trabalho, sair em público ou viajar? Esses prazos podem ser diferentes. Antes do lifting, converse sobre apoio em casa, retornos e uma margem de tempo para a recuperação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "conteudos/seguranca-cirurgia-plastica/index.html",
+      "before": {
+        "h1": "Segurança não começa no centro cirúrgico.",
+        "lead": "Na LIV, sua segurança vem primeiro. Você merece conhecer a equipe, entender os cuidados e ter espaço para falar dos seus receios. Essa conversa começa na consulta."
+      },
+      "after": {
+        "h1": "Segurança não começa no centro cirúrgico.",
+        "lead": "Quem vai cuidar de mim? Onde será a cirurgia? Como funciona o preparo? Conheça a cardiologia na própria LIV, a escolha da equipe de anestesia e os cuidados que entram no planejamento com a Dra. Amanda."
+      },
+      "protectedHashes": {
+        "navigation": "686545494bfb2dda3624d274fa7bdd3889610d089b3a130653fd103029a583bf",
+        "media": "d2c6654c87930ea0978806c9817e84f679f1e998903ce342fadb3b5d1c8ae80f",
+        "scripts": "b08767e003925ddde590f19ad9e31cc2eb2fd03c8a5a425ce5a38e31f5e971da"
+      },
+      "reviewAttribution": [],
+      "changes": [
+        {
+          "from": "Na LIV, sua segurança vem primeiro. Você merece conhecer a equipe, entender os cuidados e ter espaço para falar dos seus receios. Essa conversa começa na consulta.",
+          "to": "Quem vai cuidar de mim? Onde será a cirurgia? Como funciona o preparo? Conheça a cardiologia na própria LIV, a escolha da equipe de anestesia e os cuidados que entram no planejamento com Amanda.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Quem vai cuidar de mim? Onde será a cirurgia? Como funciona o preparo? Conheça a cardiologia na própria LIV, a escolha da equipe de anestesia e os cuidados que entram no planejamento com Amanda.",
+          "to": "Quem vai cuidar de mim? Onde será a cirurgia? Como funciona o preparo? Conheça a cardiologia na própria LIV, a escolha da equipe de anestesia e os cuidados que entram no planejamento com a Dra. Amanda.",
+          "reason": "Identificacao profissional"
+        },
+        {
+          "from": "Os cuidados e os exames são definidos conforme cada paciente. Nenhuma cirurgia é livre de riscos.",
+          "to": "Sua segurança vem primeiro. Os cuidados e os exames são definidos conforme cada paciente. Nenhuma cirurgia é livre de riscos.",
+          "reason": "Preservar prioridade explicita de seguranca exigida pelo contrato vigente"
+        }
+      ]
+    },
+    {
+      "file": "contorno-corporal/index.html",
+      "before": {
+        "h1": "Pele solta, gordura localizada e diástase não são a mesma coisa.",
+        "lead": "\"Pochete\", pele depois da gestação e abdômen estufado podem se parecer no espelho, mas têm causas diferentes. Na consulta, a Dra. Amanda examina pele, gordura e parede abdominal antes de indicar uma cirurgia."
+      },
+      "after": {
+        "h1": "Pele solta, gordura localizada e diástase não são a mesma coisa.",
+        "lead": "Depois da gestação ou do emagrecimento, nem sempre é fácil distinguir gordura, pele solta e diástase. A Dra. Amanda examina o abdômen e o contorno corporal para explicar o que a lipo ou a retirada de pele podem mudar, com quais cicatrizes e cuidados."
+      },
+      "protectedHashes": {
+        "navigation": "1fd50c9a2501d6b8fc37e3424f97c40a272d2bdf23e8ea24c9c5304c71c4ea06",
+        "media": "f48bc521635d142b43d9ca131c0c41d3636772f2f3112239fca8cd65d02bfa28",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "\"Pochete\", pele depois da gestação e abdômen estufado podem se parecer no espelho, mas têm causas diferentes. Na consulta, a Dra. Amanda examina pele, gordura e parede abdominal antes de indicar uma cirurgia.",
+          "to": "Depois da gestação ou do emagrecimento, nem sempre é fácil distinguir gordura, pele solta e diástase. A Dra. Amanda examina o abdômen e o contorno corporal para explicar o que a lipo ou a retirada de pele podem mudar, com quais cicatrizes e cuidados.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        }
+      ]
+    },
+    {
+      "file": "dra-amanda-schroeder/index.html",
+      "before": {
+        "h1": "Dra. Amanda Schroeder",
+        "lead": "Uma consulta para conversar com calma sobre o que importa para você."
+      },
+      "after": {
+        "h1": "Dra. Amanda Schroeder",
+        "lead": "Conheça a médica que vai avaliar, operar e acompanhar você."
+      },
+      "protectedHashes": {
+        "navigation": "6776f1282d75020dbee46c3ce7e03ab0def040fce530c053334db132224dee8d",
+        "media": "b77f20c39ab254c4a51a12ef272f785eb5bd054d747a6993caa7826948ce5441",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [],
+      "changes": [
+        {
+          "from": "Uma consulta para conversar com calma sobre o que importa para você.",
+          "to": "Conheça a médica que vai avaliar, operar e acompanhar você.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "index.html",
+      "before": {
+        "h1": "Cirurgia plástica para quem quer mudar sem deixar de se reconhecer.",
+        "lead": "A Dra. Amanda Schroeder avalia face, mamas e corpo considerando sua anatomia, sua rotina e o que você deseja preservar. A melhor orientação pode ser uma cirurgia, um tratamento não cirúrgico ou apenas acompanhamento naquele momento."
+      },
+      "after": {
+        "h1": "Cirurgia plástica para quem quer mudar sem deixar de se reconhecer.",
+        "lead": "Conte à Dra. Amanda o que você gostaria de mudar. Ela examina, explica as opções e conversa sobre cicatrizes, recuperação e custos. Cirurgias da face, das mamas e do corpo na Clínica LIV Faria Lima, com segurança em primeiro lugar."
+      },
+      "protectedHashes": {
+        "navigation": "45cfe6a3fdacf6d33544438e32369c410c54a09d63b5a24ee5221964e004b323",
+        "media": "0f5da4c0d45e802887f8c11d9313987147db58ace9eccb8a114c948f1fc37ce9",
+        "scripts": "6d58c2156e68e5a590ced04d42064173bc5dea5a8762e75d818af3c376ad4328"
+      },
+      "reviewAttribution": [],
+      "changes": [
+        {
+          "from": "A Dra. Amanda Schroeder avalia face, mamas e corpo considerando sua anatomia, sua rotina e o que você deseja preservar. A melhor orientação pode ser uma cirurgia, um tratamento não cirúrgico ou apenas acompanhamento naquele momento.",
+          "to": "Conte à Amanda o que você gostaria de mudar. Ela examina, explica as opções e conversa sobre cicatrizes, recuperação e custos. Cirurgias da face, das mamas e do corpo na Clínica LIV Faria Lima, com segurança em primeiro lugar.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Conte à Amanda o que você gostaria de mudar.",
+          "to": "Conte à Dra. Amanda o que você gostaria de mudar.",
+          "reason": "Identificacao profissional no primeiro contato"
+        },
+        {
+          "from": "Para algumas pacientes, ser atendida por uma cirurgiã pode tornar mais confortável a conversa sobre envelhecimento, maternidade, sexualidade, cicatrizes, mudanças no corpo e questões íntimas que atravessam diferentes momentos da vida.",
+          "to": "Se você se sente mais à vontade para falar sobre seu corpo com outra mulher, essa identificação pode ajudar na consulta.",
+          "reason": "Cortar repeticao e generalizacoes sobre genero; preservar autonomia"
+        },
+        {
+          "from": "Essa preferência pode estar relacionada à percepção de maior proximidade com experiências femininas e com as pressões sociais, culturais e estéticas que frequentemente recaem sobre o corpo da mulher.",
+          "to": "Há espaço para conversar sobre envelhecimento, maternidade, intimidade e expectativas — inclusive as de outras pessoas.",
+          "reason": "Cortar repeticao e generalizacoes sobre genero; preservar autonomia"
+        },
+        {
+          "from": "Essa identificação, por si só, não substitui formação, competência técnica ou segurança. Pode, no entanto, favorecer uma conversa mais franca e sem julgamentos, ajudando a compreender o que a paciente realmente deseja, aquilo que prefere preservar e quanto de sua decisão pode estar sendo influenciado por expectativas externas.",
+          "to": "Identificação importa, mas não substitui formação e segurança. A Dra. Amanda explica o que pode ser feito, o que a cirurgia não resolve e quais cuidados ela exige.",
+          "reason": "Cortar repeticao e generalizacoes sobre genero; preservar autonomia"
+        },
+        {
+          "from": "O papel da cirurgiã não é definir como uma mulher deve parecer. É oferecer informação clara, avaliar riscos e possibilidades e respeitar a autonomia de cada paciente para escolher o que deseja modificar, preservar ou não tratar.",
+          "to": "É você quem diz o que gostaria de mudar e o que prefere preservar.",
+          "reason": "Cortar repeticao e generalizacoes sobre genero; preservar autonomia"
+        },
+        {
+          "from": "A decisão é sempre da paciente, tomada com informação, liberdade e sem pressão para operar.",
+          "to": "Consultar não obriga você a operar.",
+          "reason": "Cortar repeticao e generalizacoes sobre genero; preservar autonomia"
+        },
+        {
+          "from": "Um espaço discreto para conversar, examinar e decidir com calma.",
+          "to": "Conheça a Clínica LIV Faria Lima.",
+          "reason": "Titulo direto"
+        },
+        {
+          "from": "Histórico de saúde, exames, anestesia, hospital e tempo cirúrgico são organizados conforme o procedimento e cada paciente.",
+          "to": "Histórico, exames e hospital são avaliados para cada cirurgia. Os anestesistas são escolhidos criteriosamente, com atenção à formação e às necessidades de cada caso.",
+          "reason": "Seguranca explicada com pratica concreta"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Cirurgiã plástica · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Cirurgiã plástica · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        }
+      ]
+    },
+    {
+      "file": "injetaveis/index.html",
+      "before": {
+        "h1": "Tratar o que incomoda sem transformar o seu rosto.",
+        "lead": "Toxina botulínica, preenchimento e bioestimuladores atuam de maneiras diferentes. O plano começa pela sua queixa e pela anatomia — não por uma lista de áreas ou seringas."
+      },
+      "after": {
+        "h1": "Injetáveis: o que faz sentido tratar no seu rosto?",
+        "lead": "Suavizar uma ruga, repor volume e cuidar da firmeza da pele são objetivos diferentes. A Dra. Amanda avalia a face para explicar onde toxina botulínica, preenchimento ou bioestimuladores podem ajudar, quais são os limites e quando outro tratamento faz mais sentido."
+      },
+      "protectedHashes": {
+        "navigation": "d0a783c1f41cac6d4317fa6e9c1bd5ee1e17a05dc49827861b84f915bf80287d",
+        "media": "201e99330967611a6bed03819df0a1e4002fda750b550f909f00614dfbbc4b3b",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Toxina botulínica, preenchimento e bioestimuladores atuam de maneiras diferentes. O plano começa pela sua queixa e pela anatomia — não por uma lista de áreas ou seringas.",
+          "to": "Suavizar uma ruga, repor volume e cuidar da firmeza da pele são objetivos diferentes. A Dra. Amanda avalia a face para explicar onde toxina botulínica, preenchimento ou bioestimuladores podem ajudar, quais são os limites e quando outro tratamento faz mais sentido.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Tratar o que incomoda sem transformar o seu rosto.",
+          "to": "Injetáveis: o que faz sentido tratar no seu rosto?",
+          "reason": "Título específico sem garantia de resultado"
+        },
+        {
+          "from": "Conhecer cirurgia também ajuda a não exagerar nos injetáveis.",
+          "to": "Injetáveis e cirurgia têm funções diferentes.",
+          "reason": "Evitar superioridade e insinuacao sobre outros profissionais"
+        },
+        {
+          "from": "Essa visão permite comparar procedimento, cirurgia e ausência de tratamento com honestidade — sem tentar resolver toda queixa com volume.",
+          "to": "Com atuação focada em face, a Dra. Amanda compara o que cada opção pode oferecer. Acrescentar volume não trata todas as causas de flacidez, e um procedimento pode não ser necessário.",
+          "reason": "Nicho facial sem desvalorizar outras abordagens"
+        },
+        {
+          "from": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"injetaveis\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20tratamentos%20faciais%20injet%C3%A1veis%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios.%0A%0ARefer%C3%AAncia%3A%20Injet%C3%A1veis\" rel=\"noopener\" target=\"_blank\">Ver horários para avaliação</a>",
+          "to": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"injetaveis\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20tratamentos%20faciais%20injet%C3%A1veis%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios.%0A%0ARefer%C3%AAncia%3A%20Injet%C3%A1veis\" rel=\"noopener\" target=\"_blank\">Ver horários da consulta</a>",
+          "reason": "CTA explicita consulta, preservando destino e medicao"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Toxina botulínica, preenchimento e bioestimuladores em São Paulo com planejamento facial, produtos regularizados, segurança e busca por resultados naturais.\">",
+          "to": "<meta name=\"description\" content=\"Toxina, preenchimento ou bioestimulador? A Dra. Amanda explica o que cada opção pode tratar no seu rosto. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Toxina botulínica, preenchimento e bioestimuladores em São Paulo com planejamento facial, produtos regularizados, segurança e busca por resultados naturais.\">",
+          "to": "<meta property=\"og:description\" content=\"Toxina, preenchimento ou bioestimulador? A Dra. Amanda explica o que cada opção pode tratar no seu rosto. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Toxina botulínica, preenchimento e bioestimuladores em São Paulo com planejamento facial, produtos regularizados, segurança e busca por resultados naturais.",
+          "to": "Toxina, preenchimento ou bioestimulador? A Dra. Amanda explica o que cada opção pode tratar no seu rosto. Consulta em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "lifting-cervical/index.html",
+      "before": {
+        "h1": "Cervicoplastia: um pescoço mais definido, sem a aparência de rosto puxado.",
+        "lead": "A cervicoplastia, também chamada de lifting cervical, reúne cirurgias que tratam o contorno do pescoço. Quando a papada, a pele solta ou as “cordas” incomodam, gordura, pele, músculos e relação com a mandíbula são avaliados antes de definir a técnica e a extensão adequadas."
+      },
+      "after": {
+        "h1": "Cervicoplastia: quando tratar a flacidez do pescoço.",
+        "lead": "Pele solta, papada e “cordas” no pescoço pedem avaliações diferentes. A Dra. Amanda tem atuação focada em cirurgias da face e examina a relação entre pescoço, queixo e mandíbula para definir o que pode ser tratado pela cervicoplastia, também chamada de lifting cervical."
+      },
+      "protectedHashes": {
+        "navigation": "258961404a9b3c0e51e494af307fce3478248769aa09bcb4b4daf7810da7ee73",
+        "media": "e976f56a86c74fbd8f66a6cf7e3ebbbc4046a6b7305a3b03a99f7b055f46f5ba",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "lastReviewed": "2026-08-31"
+        }
+      ],
+      "changes": [
+        {
+          "from": "A cervicoplastia, também chamada de lifting cervical, reúne cirurgias que tratam o contorno do pescoço. Quando a papada, a pele solta ou as “cordas” incomodam, gordura, pele, músculos e relação com a mandíbula são avaliados antes de definir a técnica e a extensão adequadas.",
+          "to": "Pele solta, papada e “cordas” no pescoço pedem avaliações diferentes. A Dra. Amanda tem atuação focada em cirurgias da face e examina a relação entre pescoço, queixo e mandíbula para definir o que pode ser tratado pela cervicoplastia, também chamada de lifting cervical.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Cervicoplastia: um pescoço mais definido, sem a aparência de rosto puxado.",
+          "to": "Flacidez no pescoço: quando a cervicoplastia pode ajudar.",
+          "reason": "Título específico sem garantia de resultado"
+        },
+        {
+          "from": "Naturalidade não significa fazer pouco a qualquer custo. Significa escolher vetores, extensão e limites que respeitem expressão, anatomia e expectativa.",
+          "to": "Na consulta, mostre o que você deseja melhorar e o que teme mudar. A Dra. Amanda explica como pele, músculos, queixo e face entram no plano. O objetivo é respeitar suas proporções; nenhum procedimento garante um resultado específico.",
+          "reason": "Retirar jargao de vetores e promessa implicita"
+        },
+        {
+          "from": "Um espaço reservado para decidir com calma.",
+          "to": "Preparo na LIV, com a equipe em contato.",
+          "reason": "Beneficio de continuidade"
+        },
+        {
+          "from": "Exames, preparo e acompanhamento coordenados conforme cada caso.",
+          "to": "O pacote cirúrgico inclui a consulta cardiológica pré-operatória na própria LIV, com cardiologista com formação na USP. A proximidade facilita a comunicação com a cirurgiã e os anestesistas.",
+          "reason": "Diferencial concreto de cardiologia integrada"
+        },
+        {
+          "from": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"lifting-cervical\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20lifting%20cervical%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o.%0A%0ARefer%C3%AAncia%3A%20Lifting%20cervical\" rel=\"noopener\" target=\"_blank\">Ver horários para avaliação</a>",
+          "to": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"lifting-cervical\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20lifting%20cervical%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o.%0A%0ARefer%C3%AAncia%3A%20Lifting%20cervical\" rel=\"noopener\" target=\"_blank\">Ver horários da consulta</a>",
+          "reason": "CTA explicita consulta, preservando destino e medicao"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Cervicoplastia, também chamada de lifting cervical, para tratar flacidez, papada, bandas do platisma e perda do contorno do pescoço.\">",
+          "to": "<meta name=\"description\" content=\"Pele solta ou papada? Entenda quando a cervicoplastia pode ajudar e como a Dra. Amanda avalia face e pescoço. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Cervicoplastia, também chamada de lifting cervical, para tratar flacidez, papada, bandas do platisma e perda do contorno do pescoço.\">",
+          "to": "<meta property=\"og:description\" content=\"Pele solta ou papada? Entenda quando a cervicoplastia pode ajudar e como a Dra. Amanda avalia face e pescoço. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Flacidez no pescoço: quando a cervicoplastia pode ajudar.",
+          "to": "Cervicoplastia: quando tratar a flacidez do pescoço.",
+          "reason": "Nome do procedimento no titulo, sem promessa"
+        },
+        {
+          "from": "Cervicoplastia, também chamada de lifting cervical, para tratar flacidez, papada, bandas do platisma e perda do contorno do pescoço.",
+          "to": "Pele solta ou papada? Entenda quando a cervicoplastia pode ajudar e como a Dra. Amanda avalia face e pescoço. Consulta em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "lifting-facial/index.html",
+      "before": {
+        "h1": "Lifting facial para melhorar a flacidez sem apagar sua expressão.",
+        "lead": "Se você chegou até aqui pesquisando uma solução para o rosto caído, a perda do contorno ou a flacidez do pescoço, esta página mostra o que o lifting pode — e o que ele não pode — tratar. A indicação é individual, com planejamento para preservar suas características."
+      },
+      "after": {
+        "h1": "Lifting facial com atenção ao contorno e à sua expressão.",
+        "lead": "A flacidez pode mudar o contorno das bochechas, da mandíbula e do pescoço. Com atuação focada em cirurgias da face, a Dra. Amanda planeja o lifting a partir do que você deseja melhorar e dos traços que quer preservar."
+      },
+      "protectedHashes": {
+        "navigation": "3c14535d995f70f7a663666dd5fad5ac5fcdfba0b318d6eeb544a2d3ff618514",
+        "media": "346dc6283396ae4cf5f5c96b9c29dc168687f736d5ec76f7836b85f0384a5eea",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "lastReviewed": "2026-09-01"
+        }
+      ],
+      "changes": [
+        {
+          "from": "Se você chegou até aqui pesquisando uma solução para o rosto caído, a perda do contorno ou a flacidez do pescoço, esta página mostra o que o lifting pode — e o que ele não pode — tratar. A indicação é individual, com planejamento para preservar suas características.",
+          "to": "A flacidez pode mudar o contorno das bochechas, da mandíbula e do pescoço. Com atuação focada em cirurgias da face, a Dra. Amanda planeja o lifting a partir do que você deseja melhorar e dos traços que quer preservar.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Lifting facial para melhorar a flacidez sem apagar sua expressão.",
+          "to": "Lifting facial com atenção ao contorno e à sua expressão.",
+          "reason": "Título específico sem garantia de resultado"
+        },
+        {
+          "from": "Formação sólida, indicação cuidadosa e acompanhamento de perto.",
+          "to": "Quem vai cuidar do seu rosto.",
+          "reason": "Trocar adjetivos por autoria concreta"
+        },
+        {
+          "from": "Na hora de escolher quem vai cuidar do seu rosto, vale conhecer a formação, os resultados, a equipe e os hospitais utilizados, além de entender como serão o planejamento e o acompanhamento depois da cirurgia.",
+          "to": "Na consulta, você conversa diretamente com a cirurgiã sobre o que deseja mudar e o que quer preservar. A Dra. Amanda explica a indicação, mostra onde ficam as cicatrizes e conversa sobre a recuperação e as alternativas.",
+          "reason": "Ligar escolha da Amanda ao que acontece na consulta"
+        },
+        {
+          "from": "Uma boa indicação também sabe dizer “não”.",
+          "to": "Nem toda mudança no rosto pede um lifting.",
+          "reason": "Especificidade em vez de frase de efeito"
+        },
+        {
+          "from": "O planejamento busca reposicionar tecidos e recuperar contornos preservando expressão, proporções e características individuais. Naturalidade depende da indicação correta e do respeito aos limites de cada rosto.",
+          "to": "A intenção é melhorar o contorno sem apagar seus traços. Conte à Dra. Amanda o que você não gostaria de mudar: expressão, sorriso e proporções entram na conversa. O resultado depende da anatomia, da técnica e da cicatrização; não é possível garantir um aspecto específico.",
+          "reason": "Responder receio de artificialidade sem garantia"
+        },
+        {
+          "from": "Alguns pacientes retomam atividades sociais leves em cerca de 10 a 14 dias. Edema, sensibilidade, tensão e cicatrizes continuam evoluindo por semanas ou meses.",
+          "to": "Alguns pacientes retomam atividades sociais leves em cerca de 10 a 14 dias, mas isso não significa recuperação completa. Trabalho presencial, esforço físico e eventos importantes exigem planejamento próprio. Inchaço, sensibilidade e cicatrizes seguem evoluindo por semanas ou meses; a liberação é individual.",
+          "reason": "Separar volta social, trabalho e recuperacao completa"
+        },
+        {
+          "from": "Um espaço discreto para examinar, conversar e decidir com calma.",
+          "to": "Seu preparo também acontece na LIV.",
+          "reason": "Diferenciar clinica de hospital"
+        },
+        {
+          "from": "A Clínica LIV Faria Lima reúne consulta, planejamento e organização pré-operatória em Pinheiros. O ambiente permite conversar com calma sobre o que acontece antes e depois da cirurgia.",
+          "to": "Consulta e organização do pré-operatório em Pinheiros. A equipe orienta exames, hospital e retornos para que você saiba o que acontece em cada etapa.",
+          "reason": "Menos repeticao, mais clareza de jornada"
+        },
+        {
+          "from": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"lifting-facial\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20lifting%20facial%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o%20com%20a%20Dra.%20Amanda.%0A%0ARefer%C3%AAncia%3A%20Lifting%20facial\" rel=\"noopener\" target=\"_blank\">Ver horários para avaliação de lifting</a>",
+          "to": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"lifting-facial\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20lifting%20facial%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o%20com%20a%20Dra.%20Amanda.%0A%0ARefer%C3%AAncia%3A%20Lifting%20facial\" rel=\"noopener\" target=\"_blank\">Ver horários da consulta</a>",
+          "reason": "CTA explicita consulta, preservando destino e medicao"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Entenda indicação, naturalidade, cicatrizes e recuperação do lifting facial com a Dra. Amanda Schroeder. Consulta particular em Pinheiros, São Paulo.\">",
+          "to": "<meta name=\"description\" content=\"Lifting facial com a Dra. Amanda, cirurgiã plástica com foco em face. Entenda indicação, cicatrizes e recuperação. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Entenda indicação, naturalidade, cicatrizes e recuperação do lifting facial com a Dra. Amanda Schroeder. Consulta particular em Pinheiros, São Paulo.\">",
+          "to": "<meta property=\"og:description\" content=\"Lifting facial com a Dra. Amanda, cirurgiã plástica com foco em face. Entenda indicação, cicatrizes e recuperação. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta name=\"twitter:description\" content=\"Entenda indicação, naturalidade, cicatrizes e recuperação do lifting facial com a Dra. Amanda Schroeder. Consulta particular em Pinheiros, São Paulo.\">",
+          "to": "<meta name=\"twitter:description\" content=\"Lifting facial com a Dra. Amanda, cirurgiã plástica com foco em face. Entenda indicação, cicatrizes e recuperação. Consulta em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Entenda indicação, naturalidade, cicatrizes e recuperação do lifting facial com a Dra. Amanda Schroeder. Consulta particular em Pinheiros, São Paulo.",
+          "to": "Lifting facial com a Dra. Amanda, cirurgiã plástica com foco em face. Entenda indicação, cicatrizes e recuperação. Consulta em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "lip-lifting/index.html",
+      "before": {
+        "h1": "Lip lifting: cirurgia para reduzir a distância entre o nariz e o lábio superior.",
+        "lead": "O lip lifting modifica uma relação anatômica: encurta o lábio superior cutâneo e pode aumentar a exposição do vermelhão e dos dentes. A indicação exige avaliar sorriso, nariz, proporções e a cicatriz que ficará na base nasal."
+      },
+      "after": {
+        "h1": "Lip lifting: a proporção entre o lábio e o sorriso.",
+        "lead": "O lip lifting reduz a distância entre o nariz e o lábio superior e pode deixar mais visível a parte rosada dos lábios. A Dra. Amanda tem atuação focada em face e avalia seu sorriso, suas proporções e a cicatriz que a cirurgia deixa."
+      },
+      "protectedHashes": {
+        "navigation": "7f15be816aa0cebe7e32513792a84288e17ef63585a01325205145dca3977a85",
+        "media": "8041842a6138fc257d71bcf99fa26631403daedfd663b418986399d5a58751dd",
+        "scripts": "5fcdeedda9825109cfc6307f1255932ced548d39ec278b466f680cf0e45b178f"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "O lip lifting modifica uma relação anatômica: encurta o lábio superior cutâneo e pode aumentar a exposição do vermelhão e dos dentes. A indicação exige avaliar sorriso, nariz, proporções e a cicatriz que ficará na base nasal.",
+          "to": "O lip lifting reduz a distância entre o nariz e o lábio superior e pode deixar mais visível a parte rosada dos lábios. A Dra. Amanda tem atuação focada em face e avalia seu sorriso, suas proporções e a cicatriz que a cirurgia deixa.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Lip lifting: cirurgia para reduzir a distância entre o nariz e o lábio superior.",
+          "to": "Lip lifting: a proporção entre o lábio e o sorriso.",
+          "reason": "Título específico sem garantia de resultado"
+        },
+        {
+          "from": "Formação cirúrgica aplicada às proporções da face.",
+          "to": "Atuação focada em face, com atenção ao seu sorriso.",
+          "reason": "Foco facial especifico ao procedimento"
+        },
+        {
+          "from": "<meta content=\"Lip lifting em São Paulo para avaliar lábio superior longo, pouca exposição dos dentes e relação entre nariz, boca e sorriso, com planejamento de cicatriz.\" name=\"description\"/>",
+          "to": "<meta content=\"Lip lifting com a Dra. Amanda: entenda a relação entre nariz, lábio e sorriso, a cicatriz e os limites da cirurgia. Consulta em Pinheiros, São Paulo.\" name=\"description\"/>",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta content=\"Lip lifting em São Paulo para avaliar lábio superior longo, pouca exposição dos dentes e relação entre nariz, boca e sorriso, com planejamento de cicatriz.\" property=\"og:description\"/>",
+          "to": "<meta content=\"Lip lifting com a Dra. Amanda: entenda a relação entre nariz, lábio e sorriso, a cicatriz e os limites da cirurgia. Consulta em Pinheiros, São Paulo.\" property=\"og:description\"/>",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Lip lifting em São Paulo para avaliar lábio superior longo, pouca exposição dos dentes e relação entre nariz, boca e sorriso, com planejamento de cicatriz.",
+          "to": "Lip lifting com a Dra. Amanda: entenda a relação entre nariz, lábio e sorriso, a cicatriz e os limites da cirurgia. Consulta em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "lipo-de-papada/index.html",
+      "before": {
+        "h1": "Mais definição abaixo do queixo, quando a gordura é realmente a causa.",
+        "lead": "A lipo de papada, também chamada de lipoaspiração submentoniana, trata gordura localizada abaixo do queixo. A “papada” também pode vir de pele solta, músculos, posição do queixo ou da combinação entre eles; por isso, a lipo funciona melhor quando o exame confirma gordura localizada e boa capacidade de acomodação da pele."
+      },
+      "after": {
+        "h1": "Lipo de papada: quando a gordura muda o contorno do queixo.",
+        "lead": "A lipo de papada retira gordura localizada abaixo do queixo. Se também houver pele solta ou pouca projeção do queixo, ela pode não ser suficiente. Com atuação focada em face, a Dra. Amanda examina essas diferenças antes de indicar a cirurgia."
+      },
+      "protectedHashes": {
+        "navigation": "5cccbc89457c0ba17e32525911438920526f4675de39869b79f98a422767a833",
+        "media": "88021797ed3fa90a69f45b30aed516a71364b6fb7dd21b725fbcefd9aacd29c7",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "lastReviewed": "2026-08-31"
+        }
+      ],
+      "changes": [
+        {
+          "from": "A lipo de papada, também chamada de lipoaspiração submentoniana, trata gordura localizada abaixo do queixo. A “papada” também pode vir de pele solta, músculos, posição do queixo ou da combinação entre eles; por isso, a lipo funciona melhor quando o exame confirma gordura localizada e boa capacidade de acomodação da pele.",
+          "to": "A lipo de papada retira gordura localizada abaixo do queixo. Se também houver pele solta ou pouca projeção do queixo, ela pode não ser suficiente. Com atuação focada em face, a Dra. Amanda examina essas diferenças antes de indicar a cirurgia.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Mais definição abaixo do queixo, quando a gordura é realmente a causa.",
+          "to": "Lipo de papada: quando a gordura muda o contorno do queixo.",
+          "reason": "Título específico sem garantia de resultado"
+        },
+        {
+          "from": "A avaliação organiza causa, intensidade e alternativas. Às vezes a lipo é adequada; às vezes fazer menos ou escolher outro tratamento é melhor.",
+          "to": "A pergunta é simples: o que forma a sua papada? Se a lipo não responder à queixa, a Dra. Amanda explica por quê e apresenta as alternativas.",
+          "reason": "Trocar abstração por pergunta real"
+        },
+        {
+          "from": "O orçamento só é montado depois de definir o que será feito e em qual estrutura.",
+          "to": "A extensão da cirurgia, a anestesia e o local são definidos após a avaliação. Os anestesistas são selecionados criteriosamente, com atenção à formação e às necessidades do caso.",
+          "reason": "Secao de seguranca deve explicar seguranca, nao apenas preco"
+        },
+        {
+          "from": "Preparo e acompanhamento coordenados conforme o plano.",
+          "to": "O pacote cirúrgico inclui a consulta cardiológica pré-operatória na própria LIV, com cardiologista com formação na USP. Ela não substitui a avaliação anestésica.",
+          "reason": "Diferencial e limite da integracao"
+        },
+        {
+          "from": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"lipo-de-papada\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20lipo%20de%20papada%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o.%0A%0ARefer%C3%AAncia%3A%20Lipo%20de%20papada\" rel=\"noopener\" target=\"_blank\">Ver horários para avaliação</a>",
+          "to": "<a class=\"cv-btn\" data-track=\"whatsapp\" data-procedure=\"lipo-de-papada\" data-cta-location=\"hero\" href=\"https://wa.me/5511961957144?text=Ol%C3%A1%2C%20estou%20pesquisando%20lipo%20de%20papada%20e%20gostaria%20de%20consultar%20os%20hor%C3%A1rios%20para%20uma%20avalia%C3%A7%C3%A3o.%0A%0ARefer%C3%AAncia%3A%20Lipo%20de%20papada\" rel=\"noopener\" target=\"_blank\">Ver horários da consulta</a>",
+          "reason": "CTA explicita consulta, preservando destino e medicao"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Lipo de papada, ou lipoaspiração submentoniana, com avaliação de gordura, pele, platisma, mandíbula e queixo antes da indicação em São Paulo.\">",
+          "to": "<meta name=\"description\" content=\"A lipo de papada trata gordura, mas pode não resolver pele solta. Conheça a avaliação da Dra. Amanda, com foco em face, em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Lipo de papada, ou lipoaspiração submentoniana, com avaliação de gordura, pele, platisma, mandíbula e queixo antes da indicação em São Paulo.\">",
+          "to": "<meta property=\"og:description\" content=\"A lipo de papada trata gordura, mas pode não resolver pele solta. Conheça a avaliação da Dra. Amanda, com foco em face, em Pinheiros, São Paulo.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Lipo de papada, ou lipoaspiração submentoniana, com avaliação de gordura, pele, platisma, mandíbula e queixo antes da indicação em São Paulo.",
+          "to": "A lipo de papada trata gordura, mas pode não resolver pele solta. Conheça a avaliação da Dra. Amanda, com foco em face, em Pinheiros, São Paulo.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "lipoaspiracao/index.html",
+      "before": {
+        "h1": "Lipoaspiração trata gordura localizada — e a pele também conta.",
+        "lead": "A lipo pode melhorar o contorno quando há gordura localizada. Se a pele estiver muito flácida, a retirada de volume pode deixar essa flacidez mais aparente."
+      },
+      "after": {
+        "h1": "Lipoaspiração trata gordura localizada — e a pele também conta.",
+        "lead": "A lipoaspiração pode tratar a gordura localizada que incomoda no contorno do corpo. Na consulta, Amanda avalia também a pele: se houver muita flacidez, retirar gordura pode deixá-la mais aparente. Essa diferença ajuda a escolher a cirurgia."
+      },
+      "protectedHashes": {
+        "navigation": "30f2dd65fc82b60a8ffb303c64a9d9b6b970c5cf76056eeb08319a367e3e6901",
+        "media": "d508a39b7042657b6c12855016ad09f4c7fbd5061a86a5ac71d5b71514e91dbe",
+        "scripts": "f3f715ee710f68e3b0a95d3dd22aa1b30ae8478f310b03b3d10f5c41aaac2c51"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "A lipo pode melhorar o contorno quando há gordura localizada. Se a pele estiver muito flácida, a retirada de volume pode deixar essa flacidez mais aparente.",
+          "to": "A lipoaspiração pode tratar a gordura localizada que incomoda no contorno do corpo. Na consulta, Amanda avalia também a pele: se houver muita flacidez, retirar gordura pode deixá-la mais aparente. Essa diferença ajuda a escolher a cirurgia.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "mama/index.html",
+      "before": {
+        "h1": "Cirurgia de mama: primeiro, entenda o que mudou.",
+        "lead": "Queda depois da gestação, mamas pesadas, perda de volume e assimetria são queixas diferentes. Na consulta, a Dra. Amanda examina o que mudou antes de conversar sobre mastopexia, prótese ou redução."
+      },
+      "after": {
+        "h1": "Cirurgia de mama: primeiro, entenda o que mudou.",
+        "lead": "Você quer levantar, reduzir ou recuperar o volume das mamas? A Dra. Amanda avalia formato, pele e proporção para explicar as opções, as cicatrizes e o que muda na recuperação. Você não precisa chegar com a cirurgia escolhida."
+      },
+      "protectedHashes": {
+        "navigation": "4ba2a4252f4cacf1e37b43f444f3e1bad3c101c1d12d9eecf794b2c2fc346e99",
+        "media": "f48bc521635d142b43d9ca131c0c41d3636772f2f3112239fca8cd65d02bfa28",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Queda depois da gestação, mamas pesadas, perda de volume e assimetria são queixas diferentes. Na consulta, a Dra. Amanda examina o que mudou antes de conversar sobre mastopexia, prótese ou redução.",
+          "to": "Você quer levantar, reduzir ou recuperar o volume das mamas? A Dra. Amanda avalia formato, pele e proporção para explicar as opções, as cicatrizes e o que muda na recuperação. Você não precisa chegar com a cirurgia escolhida.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP</p>",
+          "to": "<p class=\"cv-trust-line\">Dra. Amanda Schroeder · CRM-SP 191605 · RQE 110472 · Membro da SBCP<br>Consulta particular: R$ 500 · Atendimento pelo WhatsApp.</p>",
+          "reason": "Valor da consulta e canal visiveis antes do contato; nao preco cirurgico"
+        }
+      ]
+    },
+    {
+      "file": "mamoplastia-redutora/index.html",
+      "before": {
+        "h1": "Mamoplastia redutora: menos peso, mais conforto na rotina.",
+        "lead": "Peso, dor, marcas de alça, assaduras e dificuldade para treinar mostram quanto o volume interfere na vida. A consulta relaciona esses sintomas à proporção, aos tecidos e ao que pode ser reduzido com segurança."
+      },
+      "after": {
+        "h1": "Mamoplastia redutora: menos peso, mais conforto na rotina.",
+        "lead": "O peso das mamas pode interferir no exercício, nas roupas e no conforto do dia a dia. Amanda ouve essas dificuldades e avalia quanto é possível reduzir, como ficam as cicatrizes e os possíveis efeitos sobre sensibilidade e amamentação."
+      },
+      "protectedHashes": {
+        "navigation": "5e682f7bece1d1c4079c90e0f8d2d78b03c13b2cad89e07db0bffe8fce6b0773",
+        "media": "163adcbe24e4d690e7a7307e4cc14e6afb2c5848c0a7491bbb41d2969a4576ff",
+        "scripts": "99be88e913c5feb42857daf72092817350543304eb8751e4822a5bcfed04f78d"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Peso, dor, marcas de alça, assaduras e dificuldade para treinar mostram quanto o volume interfere na vida. A consulta relaciona esses sintomas à proporção, aos tecidos e ao que pode ser reduzido com segurança.",
+          "to": "O peso das mamas pode interferir no exercício, nas roupas e no conforto do dia a dia. Amanda ouve essas dificuldades e avalia quanto é possível reduzir, como ficam as cicatrizes e os possíveis efeitos sobre sensibilidade e amamentação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "mastopexia-com-protese/index.html",
+      "before": {
+        "h1": "Mastopexia com prótese: quando é preciso levantar e também recuperar volume.",
+        "lead": "Quando a mama cai e também perde volume, a prótese pode fazer parte da mastopexia. Na consulta, a Dra. Amanda avalia quanto é preciso levantar e se os tecidos conseguem sustentar o volume desejado."
+      },
+      "after": {
+        "h1": "Mastopexia com prótese: quando é preciso levantar e também recuperar volume.",
+        "lead": "Se a mama caiu e você também deseja mais volume, a prótese pode fazer parte da mastopexia. Amanda avalia a sustentação dos tecidos e conversa sobre o tamanho desejado, as cicatrizes e os cuidados da recuperação."
+      },
+      "protectedHashes": {
+        "navigation": "a8b6468ef8acc41ae3d0bdc3aa5974d316bf3040365baa3650935efb509659e1",
+        "media": "163adcbe24e4d690e7a7307e4cc14e6afb2c5848c0a7491bbb41d2969a4576ff",
+        "scripts": "99be88e913c5feb42857daf72092817350543304eb8751e4822a5bcfed04f78d"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Quando a mama cai e também perde volume, a prótese pode fazer parte da mastopexia. Na consulta, a Dra. Amanda avalia quanto é preciso levantar e se os tecidos conseguem sustentar o volume desejado.",
+          "to": "Se a mama caiu e você também deseja mais volume, a prótese pode fazer parte da mastopexia. Amanda avalia a sustentação dos tecidos e conversa sobre o tamanho desejado, as cicatrizes e os cuidados da recuperação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "mastopexia/index.html",
+      "before": {
+        "h1": "Mastopexia levanta e remodela a mama. A prótese não é obrigatória.",
+        "lead": "A mama pode cair e perder volume depois da gestação, da amamentação ou do emagrecimento. Na consulta, a Dra. Amanda avalia cada mudança para saber se é possível fazer a mastopexia sem implante."
+      },
+      "after": {
+        "h1": "Mastopexia levanta e remodela a mama. A prótese não é obrigatória.",
+        "lead": "Quer levantar as mamas, mas prefere evitar uma prótese? Essa possibilidade merece ser avaliada. Amanda examina o volume que você já tem, a pele e a posição das aréolas para explicar o que a mastopexia pode fazer e quais cicatrizes são necessárias."
+      },
+      "protectedHashes": {
+        "navigation": "5dba5b1eca56f49dcfb21e3d07fb37aca7661a76c3fe00f26b273a57334a5b8d",
+        "media": "163adcbe24e4d690e7a7307e4cc14e6afb2c5848c0a7491bbb41d2969a4576ff",
+        "scripts": "99be88e913c5feb42857daf72092817350543304eb8751e4822a5bcfed04f78d"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "A mama pode cair e perder volume depois da gestação, da amamentação ou do emagrecimento. Na consulta, a Dra. Amanda avalia cada mudança para saber se é possível fazer a mastopexia sem implante.",
+          "to": "Quer levantar as mamas, mas prefere evitar uma prótese? Essa possibilidade merece ser avaliada. Amanda examina o volume que você já tem, a pele e a posição das aréolas para explicar o que a mastopexia pode fazer e quais cicatrizes são necessárias.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "ninfoplastia/index.html",
+      "before": {
+        "h1": "Conforto íntimo, função e privacidade antes de qualquer decisão.",
+        "lead": "Atrito, desconforto com roupas ou atividade física, assimetrias e incômodo estético podem motivar a avaliação. A conversa é reservada e diferencia anatomia, função, expectativas e limites sem impor um padrão."
+      },
+      "after": {
+        "h1": "Conforto íntimo, função e privacidade antes de qualquer decisão.",
+        "lead": "Você pode conversar sobre atrito, desconforto com roupas ou exercícios e dúvidas sobre a aparência da região íntima. Amanda faz a avaliação em ambiente reservado, explica possibilidades e limites e respeita a diversidade da anatomia de cada mulher."
+      },
+      "protectedHashes": {
+        "navigation": "9996649e11b87a245bde30cfdecd1eb802c6620b9ef950ef8719d3215ab3577a",
+        "media": "e0f5d726e129efc8d3bbd95c1a17c7e954eec8589289ccfa294d288995b93923",
+        "scripts": "2762160690fc89a0d45eff47e77047c495f686a8b093023df40eae323a521744"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Atrito, desconforto com roupas ou atividade física, assimetrias e incômodo estético podem motivar a avaliação. A conversa é reservada e diferencia anatomia, função, expectativas e limites sem impor um padrão.",
+          "to": "Você pode conversar sobre atrito, desconforto com roupas ou exercícios e dúvidas sobre a aparência da região íntima. Amanda faz a avaliação em ambiente reservado, explica possibilidades e limites e respeita a diversidade da anatomia de cada mulher.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "otoplastia-adulto/index.html",
+      "before": {
+        "h1": "Otoplastia em adultos: menos projeção, preservando as curvas naturais.",
+        "lead": "Muitos adultos chegam à consulta depois de anos escolhendo penteados, ângulos em fotos ou acessórios para se sentirem mais à vontade. Não existe uma fase “tarde demais” para conversar sobre isso: na consulta, a Dra. Amanda examina projeção, formato, cartilagem e assimetrias antes de conversar sobre a cirurgia."
+      },
+      "after": {
+        "h1": "Otoplastia em adultos: menos projeção, preservando as curvas naturais.",
+        "lead": "Se você pensa em mudar a posição das orelhas, vale entender quanto pode ser corrigido e como ficam as curvas naturais. Na consulta, a Dra. Amanda examina formato, projeção e diferenças entre os lados, e explica cicatrizes e recuperação."
+      },
+      "protectedHashes": {
+        "navigation": "faf5492a15401c758d478fc35824688fdd8320a9c91139c4ddc1d278c1c6cda1",
+        "media": "06e350e0d36c416d689e1ce4040e75453f37d688080762c69c408688b73ef686",
+        "scripts": "e5a6e8ae5dd5c1e61f6624862ab705da672c2d2692ee4046361e64e6f1ddec98"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Muitos adultos chegam à consulta depois de anos escolhendo penteados, ângulos em fotos ou acessórios para se sentirem mais à vontade. Não existe uma fase “tarde demais” para conversar sobre isso: na consulta, a Dra. Amanda examina projeção, formato, cartilagem e assimetrias antes de conversar sobre a cirurgia.",
+          "to": "Se você pensa em mudar a posição das orelhas, vale entender quanto pode ser corrigido e como ficam as curvas naturais. Na consulta, a Dra. Amanda examina formato, projeção e diferenças entre os lados, e explica cicatrizes e recuperação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "otoplastia-infantil/index.html",
+      "before": {
+        "h1": "Otoplastia infantil: uma decisão em família, com a criança ouvida.",
+        "lead": "Às vezes, a conversa começa quando situações simples — prender o cabelo, aparecer em fotos ou deixar o boné de lado — ganham um peso que antes não tinham. A avaliação não parte da pressão para operar: considera anatomia, desenvolvimento, saúde, vontade da criança e capacidade da família de organizar os cuidados, inclusive quando a melhor decisão é acompanhar ou aguardar."
+      },
+      "after": {
+        "h1": "Otoplastia infantil: uma decisão em família, com a criança ouvida.",
+        "lead": "A avaliação considera o que a criança sente e deseja, além do formato das orelhas, da saúde e dos cuidados em casa. A Dra. Amanda conversa com a família sobre a cirurgia e sobre quando é melhor esperar. A vontade dos adultos, sozinha, não define a indicação."
+      },
+      "protectedHashes": {
+        "navigation": "e1f0c5a5fd36eb01b88199a7983421a4ad1cb43542978f32ebf073bd47b21901",
+        "media": "20bc539ce136fd7ea3907fdb1162a6f935697ff838bdfc76588613c7a275ecbb",
+        "scripts": "e96e2c541da6bd7a3c9b9048d549253ec9428ed9ddc2d94ef796a3d4ab280c4e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Às vezes, a conversa começa quando situações simples — prender o cabelo, aparecer em fotos ou deixar o boné de lado — ganham um peso que antes não tinham. A avaliação não parte da pressão para operar: considera anatomia, desenvolvimento, saúde, vontade da criança e capacidade da família de organizar os cuidados, inclusive quando a melhor decisão é acompanhar ou aguardar.",
+          "to": "A avaliação considera o que a criança sente e deseja, além do formato das orelhas, da saúde e dos cuidados em casa. A Dra. Amanda conversa com a família sobre a cirurgia e sobre quando é melhor esperar. A vontade dos adultos, sozinha, não define a indicação.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "otoplastia/index.html",
+      "before": {
+        "h1": "Orelhas mais equilibradas, sem perder seus contornos naturais.",
+        "lead": "A otoplastia pode reduzir projeção, recriar dobras e melhorar assimetrias em crianças e adultos. Escolha abaixo se a avaliação é para uma criança ou para um adulto."
+      },
+      "after": {
+        "h1": "Otoplastia: avaliação das orelhas em crianças e adultos.",
+        "lead": "A cirurgia pode reduzir a projeção e remodelar as dobras das orelhas. A decisão e a recuperação têm particularidades em cada idade. Escolha abaixo para conhecer a avaliação com a Dra. Amanda."
+      },
+      "protectedHashes": {
+        "navigation": "1b49ef81b00caef579be578a3a6f64cf710f10b472e1149229d30787b5e8f34c",
+        "media": "837ae210910465a6478505920597d0ddd66044f8ae4459db6763f21f290ab615",
+        "scripts": "a2603007c147429c412ccae27f958cd1906d3818ed0b990eea790f9bc2ab943e"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "A otoplastia pode reduzir projeção, recriar dobras e melhorar assimetrias em crianças e adultos. Escolha abaixo se a avaliação é para uma criança ou para um adulto.",
+          "to": "A cirurgia pode reduzir a projeção e remodelar as dobras das orelhas. A decisão e a recuperação têm particularidades em cada idade. Escolha abaixo para conhecer a avaliação com a Dra. Amanda.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        },
+        {
+          "from": "Orelhas mais equilibradas, sem perder seus contornos naturais.",
+          "to": "Otoplastia: avaliação das orelhas em crianças e adultos.",
+          "reason": "Título específico sem garantia de resultado"
+        },
+        {
+          "from": "<meta name=\"description\" content=\"Otoplastia em São Paulo para crianças e adultos com orelhas proeminentes ou assimétricas, com indicação cuidadosa, resultado natural e acompanhamento próximo.\">",
+          "to": "<meta name=\"description\" content=\"Otoplastia em São Paulo com a Dra. Amanda. Entenda a avaliação das orelhas, cicatrizes e recuperação, com orientações para crianças e adultos.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "<meta property=\"og:description\" content=\"Otoplastia em São Paulo para crianças e adultos com orelhas proeminentes ou assimétricas, com indicação cuidadosa, resultado natural e acompanhamento próximo.\">",
+          "to": "<meta property=\"og:description\" content=\"Otoplastia em São Paulo com a Dra. Amanda. Entenda a avaliação das orelhas, cicatrizes e recuperação, com orientações para crianças e adultos.\">",
+          "reason": "Descricao de busca coerente com a pagina"
+        },
+        {
+          "from": "Otoplastia em São Paulo para crianças e adultos com orelhas proeminentes ou assimétricas, com indicação cuidadosa, resultado natural e acompanhamento próximo.",
+          "to": "Otoplastia em São Paulo com a Dra. Amanda. Entenda a avaliação das orelhas, cicatrizes e recuperação, com orientações para crianças e adultos.",
+          "reason": "Descricao estruturada igual ao metadado de busca"
+        }
+      ]
+    },
+    {
+      "file": "pos-bariatrica/index.html",
+      "before": {
+        "h1": "Cirurgia pós-bariátrica: por onde começar?",
+        "lead": "Depois de grande perda de peso, abdome, mamas, braços e coxas podem incomodar ao mesmo tempo. Na consulta, você entende por onde começar, o que pode ser associado e o que precisa ficar para outra etapa."
+      },
+      "after": {
+        "h1": "Cirurgia pós-bariátrica: por onde começar?",
+        "lead": "Quando várias regiões incomodam depois de uma grande perda de peso, a primeira decisão é por onde começar. Amanda avalia suas prioridades, sua saúde e a recuperação para conversar sobre abdômen, mamas, braços e outras áreas, em uma ou mais etapas."
+      },
+      "protectedHashes": {
+        "navigation": "c8023f547f6d9cd087ac2f1f5f805c9876c188d46082a52ed13d536381a942fd",
+        "media": "d508a39b7042657b6c12855016ad09f4c7fbd5061a86a5ac71d5b71514e91dbe",
+        "scripts": "f3f715ee710f68e3b0a95d3dd22aa1b30ae8478f310b03b3d10f5c41aaac2c51"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "Depois de grande perda de peso, abdome, mamas, braços e coxas podem incomodar ao mesmo tempo. Na consulta, você entende por onde começar, o que pode ser associado e o que precisa ficar para outra etapa.",
+          "to": "Quando várias regiões incomodam depois de uma grande perda de peso, a primeira decisão é por onde começar. Amanda avalia suas prioridades, sua saúde e a recuperação para conversar sobre abdômen, mamas, braços e outras áreas, em uma ou mais etapas.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "procedimentos/index.html",
+      "before": {
+        "h1": "Conheça os procedimentos e comece pelo que você deseja avaliar.",
+        "lead": "Conheça as possibilidades para face, pescoço, mamas, contorno corporal e região íntima. A avaliação mostra quando uma cirurgia pode ajudar e quando um tratamento não cirúrgico é mais adequado."
+      },
+      "after": {
+        "h1": "Conheça os procedimentos e comece pelo que você deseja avaliar.",
+        "lead": "Você pode começar pela região que deseja avaliar: face e pescoço, mamas, corpo ou região íntima. Em cada página, veja o que a cirurgia pode tratar, quais são seus limites e como funciona a consulta com a Amanda."
+      },
+      "protectedHashes": {
+        "navigation": "12f20f50c1f93d7612c8aafa46c0bb3ca670c17ffba596d4b67377559b728a9c",
+        "media": "160ecc9d7040d21512113dbd86af433e5d70e322922943cb5af63479a6695e5d",
+        "scripts": "e8b1274ef56777a3b34a4dfdfccf81c5ea4296b01a5a7fcadfafb525b4e2ff8c"
+      },
+      "reviewAttribution": [],
+      "changes": [
+        {
+          "from": "Conheça as possibilidades para face, pescoço, mamas, contorno corporal e região íntima. A avaliação mostra quando uma cirurgia pode ajudar e quando um tratamento não cirúrgico é mais adequado.",
+          "to": "Você pode começar pela região que deseja avaliar: face e pescoço, mamas, corpo ou região íntima. Em cada página, veja o que a cirurgia pode tratar, quais são seus limites e como funciona a consulta com a Amanda.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    },
+    {
+      "file": "protese-de-mama/index.html",
+      "before": {
+        "h1": "Prótese de mama: a escolha não começa nos mililitros.",
+        "lead": "O mesmo volume pode parecer diferente em cada corpo. Na consulta, a Dra. Amanda mede o tórax e a base da mama, avalia a pele e entende o resultado que você procura — inclusive quando a queda precisa de outro tratamento."
+      },
+      "after": {
+        "h1": "Prótese de mama: a escolha não começa nos mililitros.",
+        "lead": "Mais volume, um colo diferente ou correção de assimetria? Conte à Amanda o que procura. Ela avalia tórax, pele e base da mama para discutir tamanho, formato do implante e seus limites. O mesmo volume pode parecer diferente em cada corpo."
+      },
+      "protectedHashes": {
+        "navigation": "2acfda7ca89caf16891d523f1045525e57f442d40b1351ff8ea148555f25fe85",
+        "media": "163adcbe24e4d690e7a7307e4cc14e6afb2c5848c0a7491bbb41d2969a4576ff",
+        "scripts": "99be88e913c5feb42857daf72092817350543304eb8751e4822a5bcfed04f78d"
+      },
+      "reviewAttribution": [
+        {
+          "type": "MedicalWebPage",
+          "author": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          },
+          "reviewedBy": {
+            "@id": "https://draamandaschroeder.com.br/#physician"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "from": "O mesmo volume pode parecer diferente em cada corpo. Na consulta, a Dra. Amanda mede o tórax e a base da mama, avalia a pele e entende o resultado que você procura — inclusive quando a queda precisa de outro tratamento.",
+          "to": "Mais volume, um colo diferente ou correção de assimetria? Conte à Amanda o que procura. Ela avalia tórax, pele e base da mama para discutir tamanho, formato do implante e seus limites. O mesmo volume pode parecer diferente em cada corpo.",
+          "reason": "Abertura direta, própria da intenção; benefício concreto da avaliação"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "status": "passed_local",
+    "focusedTests": {
+      "passed": 47,
+      "failed": 0
+    },
+    "fullSuite": {
+      "passed": 1468,
+      "failed": 0
+    },
+    "staticSite": {
+      "files": 193,
+      "routes": 54,
+      "errors": 0
+    },
+    "visual": {
+      "testedPages": 12,
+      "widths": [
+        390,
+        1440
+      ],
+      "checks": 24,
+      "horizontalOverflow": false,
+      "blephRecoveryDisclosureOpens": true,
+      "whatsappClicksPerformed": false,
+      "cookieMeasurementOptedIn": false,
+      "priceGuideCta": "present_in_article_not_hero",
+      "previewUrl": "http://127.0.0.1:4186/lifting-facial/"
+    },
+    "clinicalHumanReview": "pending",
+    "sitePublication": "authorized_when_adequate_pending_exact_head_preflight",
+    "measurementRepair": "separate_candidate_0ff0dd2",
+    "integration": "reconciled_fcae9e42_functional_files_preserved",
+    "driveProjection": "baseline_verified_update_after_publication"
+  },
+  "cleanup": {
+    "authorized": true,
+    "regenerableOnly": true,
+    "mechanism": "npm cache clean and npm cache npx rm with four verified keys",
+    "npxKeys": [
+      "90d26507e643fcc0",
+      "da5c1b6ea715e8b4",
+      "e41f203b7505f1fb",
+      "fbb846d901625138"
+    ],
+    "freeBytesAfter": 984772608,
+    "mainWorktreeClean": true,
+    "doctoralRootPreserved": true,
+    "mediaAndCodePreserved": true
+  }
+}
