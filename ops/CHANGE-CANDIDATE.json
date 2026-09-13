@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMMUNICATION-SAFETY-2026-09-12",
   "title": "Comunicacao das oito campanhas ativas: seguranca concreta, formacao e planejamento individual",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "05d99efab863196947273a4341f3e7fcecd6d13d",
   "authorization": {
     "required": true,
@@ -91,19 +91,26 @@
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "changeSafety": "CHANGE_SAFETY_STATUS=OK, exact 14 files",
       "staticArtifact": "192 files, 53 routes; zero audit/operations files in public artifact. Local check only, no Netlify publication.",
-      "driveProjection": "Pending replacement and exact readback of the same Plan ID; latest remote metadata still 163195 bytes, 2026-09-13T00:53:42.984Z."
+      "driveProjection": "Same ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO replaced at 2026-09-13T01:22:26.776Z; exact readback of 165572 bytes / 161190 characters from commit 14b59bbbd5ba1567c47dbe53b0e45a5331b62c29; SHA256 e953f2f4f38c235c8156296f55fad312a54e866946f29b8f9eb7c48faa4a5376. Title, parent folder and pending Bruna record preserved.",
+      "releasePreflight": "CHANGE_SAFETY_STATUS=OK on clean commit 14b59bbbd5ba1567c47dbe53b0e45a5331b62c29 for the authorized Google Ads communication / same Drive Plan scope; no site or Apps Script release.",
+      "operationalConsistency": "Final check follows documentary closeout commit and fast-forward into the clean canonical branch; no claim of deployment or remote Git push."
     },
-    "completedAt": "2026-09-13T01:23:00Z"
+    "completedAt": "2026-09-13T01:22:52Z"
   },
   "release": {
-    "approvedCommit": "",
+    "approvedCommit": "14b59bbbd5ba1567c47dbe53b0e45a5331b62c29",
     "netlifyDeployId": "6aa5f068ff6f6f00084695c0",
     "appsScriptVersion": 149,
-    "verifiedAt": "",
+    "verifiedAt": "2026-09-13T01:22:52Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "",
+    "drivePlanSha256": "e953f2f4f38c235c8156296f55fad312a54e866946f29b8f9eb7c48faa4a5376",
     "activationState": "google_ads_texts_saved_policy_review_pending",
-    "notes": "Netlify and Apps Script identifiers are inherited context from the preceding completed release, not publications or live revalidations performed here. New publication surfaces are Google Ads communication and the same Drive Plan only."
+    "notes": "Netlify and Apps Script identifiers are inherited context from the preceding completed release, not publications or live revalidations performed here. New publication surfaces are Google Ads communication and the same Drive Plan only. Google Ads: 17 RSAs saved, 29 callout associations and 12 sitelink associations updated and re-read. All 17 listings active/qualified; assets under policy review. Drive exact byte equality confirmed. Historical source Plan update 4a0d633 preserved without its functional code. Five operational JSON files are excluded from the public site artifact under auditorias/.",
+    "driveModifiedAt": "2026-09-13T01:22:26.776Z",
+    "externalSurfacesWritten": [
+      "Google Ads text assets",
+      "Google Drive existing executive Plan"
+    ]
   },
   "previousCompletedRelease": {
     "changeId": "SITE-SAFETY-FIRST-INTEGRATED-CARE-2026-09-12",
