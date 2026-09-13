@@ -4,7 +4,7 @@
   "campaignId": "24029985112",
   "campaign": "G26OTO",
   "dailyBudgetBRL": 15,
-  "status": "prepared_local",
+  "status": "published_verified",
   "ads": [
     {
       "group": "Adulto",
@@ -68,6 +68,23 @@
         "mobileFinalUrlEnabled": false,
         "companyName": "AMANDA SCHROEDER",
         "headlinePins": []
+      },
+      "liveReadback": {
+        "adId": "816612405034",
+        "group": "Adulto",
+        "verifiedAt": "2026-09-13T14:03:12.700Z",
+        "headlinesMatched": 14,
+        "descriptionsMatched": 4,
+        "description1Pinned": true,
+        "url": "https://draamandaschroeder.com.br/otoplastia-adulto/",
+        "path1": "otoplastia",
+        "path2": "adultos",
+        "trackingTemplate": "",
+        "finalUrlSuffix": "",
+        "customParameters": {},
+        "status": "Ativado / Qualificada",
+        "adStrength": "Pendente",
+        "adStrengthIsNotPolicyOrBusinessOutcome": true
       }
     },
     {
@@ -132,6 +149,25 @@
         "mobileFinalUrlEnabled": false,
         "companyName": "AMANDA SCHROEDER",
         "headlinePins": []
+      },
+      "liveReadback": {
+        "adId": "816612778213",
+        "group": "AG_OTOPLASTIA_INFANTIL",
+        "verifiedAt": "2026-09-13T14:05:34.872Z",
+        "headlinesMatched": 13,
+        "descriptionsMatched": 4,
+        "description1Pinned": true,
+        "url": "https://draamandaschroeder.com.br/otoplastia-infantil/",
+        "path1": "otoplastia",
+        "path2": "infantil",
+        "trackingTemplate": "",
+        "finalUrlSuffix": "",
+        "customParameters": {
+          "ag": "ag_otoplastia_infantil"
+        },
+        "status": "Ativado / Qualificada",
+        "adStrength": "Pendente",
+        "adStrengthIsNotPolicyOrBusinessOutcome": true
       }
     }
   ],
@@ -192,5 +228,6 @@
     "network": "Rede de pesquisa do Google",
     "goal": "Lead qualificado GCLID — campanhas",
     "status": "Ativada"
-  }
+  },
+  "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82"
 }

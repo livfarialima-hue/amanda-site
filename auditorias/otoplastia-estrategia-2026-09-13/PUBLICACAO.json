@@ -1,9 +1,461 @@
 {
   "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
-  "status": "tested_local",
-  "approvedCommit": null,
-  "netlify": null,
-  "googleAds": null,
+  "status": "published_pending_drive_reconciliation",
+  "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
+  "netlify": {
+    "verifiedAt": "2026-09-13T14:00:10.497Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6aa6ab8ec7bf45000934fe35",
+    "commit": "030c57da84878f0910111d5e8de2a71b91538e82",
+    "context": "production",
+    "state": "ready",
+    "publishedAt": "2026-09-13T13:57:01.241Z",
+    "functionsUnchanged": 12,
+    "schedulesUnchanged": 5,
+    "httpPages": 54,
+    "exactPages": 48,
+    "knownLinkRewritePages": 6,
+    "pages": [
+      {
+        "url": "https://draamandaschroeder.com.br/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 32402
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/abdominoplastia/",
+        "status": 200,
+        "exact": false,
+        "equivalent": true,
+        "bytes": 30835
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/avaliacao-facial/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 35749
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/blefaroplastia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 39602
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/braquioplastia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 20192
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/",
+        "status": 200,
+        "exact": false,
+        "equivalent": true,
+        "bytes": 25091
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/blefaroplastia-quando-faz-sentido/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16488
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/botox-preenchimento-bioestimulador/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15901
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/cicatrizes-cirurgia-de-mama/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15346
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/cirurgia-plastica-apos-emagrecimento/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15506
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/como-escolher-cirurgiao-plastico/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16135
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/como-escolher-protese-de-mama/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15574
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/como-se-preparar-cirurgia-plastica/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16005
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 20640
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/cuidados-cicatrizacao-cirurgia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 12914
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/lifting-facial-ou-injetaveis/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 17865
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/lip-lifting-ou-preenchimento-labial/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15593
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/lipoaspiracao-ou-abdominoplastia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16057
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/lipoenxertia-facial/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 11543
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/mastopexia-com-ou-sem-protese/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16145
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/minilifting-lifting-facial-deep-plane/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16378
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 12041
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/otomodelacao-ou-otoplastia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15812
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/papada-contorno-cervical/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 12869
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 26512
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 26736
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 44799
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 26474
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-cervical-sao-paulo/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 27457
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 35981
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/recuperacao-blefaroplastia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16168
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/recuperacao-lifting-cervical/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 16195
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/recuperacao-lifting-facial/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 17445
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 18063
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/contorno-corporal/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 37486
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/dra-amanda-schroeder/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 15379
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/injetaveis/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 31587
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lifting-cervical/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 39930
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 45019
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lip-lifting/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 20692
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lipo-de-papada/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 36541
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lipoaspiracao/",
+        "status": 200,
+        "exact": false,
+        "equivalent": true,
+        "bytes": 29090
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/mama/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 36330
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/mamoplastia-redutora/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 26858
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/mastopexia-com-protese/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 28449
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/mastopexia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 27125
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/ninfoplastia/",
+        "status": 200,
+        "exact": false,
+        "equivalent": true,
+        "bytes": 29085
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/otoplastia-adulto/",
+        "status": 200,
+        "exact": false,
+        "equivalent": true,
+        "bytes": 91585
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/otoplastia-infantil/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 95579
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/otoplastia/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 33866
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/pos-bariatrica/",
+        "status": 200,
+        "exact": false,
+        "equivalent": true,
+        "bytes": 28381
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/privacidade/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 13593
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/procedimentos/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 17028
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/protese-de-mama/",
+        "status": 200,
+        "exact": true,
+        "equivalent": true,
+        "bytes": 28220
+      }
+    ],
+    "nonPatientHealth": [
+      {
+        "path": "/api/ycloud/webhook",
+        "status": 200
+      },
+      {
+        "path": "/.netlify/functions/scheduled-followup",
+        "status": 401
+      }
+    ]
+  },
+  "googleAds": {
+    "account": "995-334-4486",
+    "campaignId": "24029985112",
+    "dailyBudgetBeforeBRL": 15,
+    "dailyBudgetAfterBRL": 15,
+    "budgetChanged": false,
+    "bidding": "Maximizar cliques",
+    "goal": "Lead qualificado GCLID — campanhas",
+    "adsEdited": 2,
+    "newAdsCreated": 0,
+    "otherSettingsChanged": false,
+    "readbacks": [
+      {
+        "adId": "816612405034",
+        "group": "Adulto",
+        "verifiedAt": "2026-09-13T14:03:12.700Z",
+        "headlinesMatched": 14,
+        "descriptionsMatched": 4,
+        "description1Pinned": true,
+        "url": "https://draamandaschroeder.com.br/otoplastia-adulto/",
+        "path1": "otoplastia",
+        "path2": "adultos",
+        "trackingTemplate": "",
+        "finalUrlSuffix": "",
+        "customParameters": {},
+        "status": "Ativado / Qualificada",
+        "adStrength": "Pendente",
+        "adStrengthIsNotPolicyOrBusinessOutcome": true
+      },
+      {
+        "adId": "816612778213",
+        "group": "AG_OTOPLASTIA_INFANTIL",
+        "verifiedAt": "2026-09-13T14:05:34.872Z",
+        "headlinesMatched": 13,
+        "descriptionsMatched": 4,
+        "description1Pinned": true,
+        "url": "https://draamandaschroeder.com.br/otoplastia-infantil/",
+        "path1": "otoplastia",
+        "path2": "infantil",
+        "trackingTemplate": "",
+        "finalUrlSuffix": "",
+        "customParameters": {
+          "ag": "ag_otoplastia_infantil"
+        },
+        "status": "Ativado / Qualificada",
+        "adStrength": "Pendente",
+        "adStrengthIsNotPolicyOrBusinessOutcome": true
+      }
+    ]
+  },
   "automation": {
     "id": "reavaliar-estrat-gia-de-otoplastia",
     "name": "Reavaliar estratégia de otoplastia",
@@ -21,7 +473,11 @@
     "stopAfterFinalReview": true,
     "configurationReadBack": true
   },
-  "drive": null,
+  "drive": {
+    "status": "pending",
+    "folderId": "1GP7-vSNqReAyI9nIFFR4oGN-b7kxrKBy",
+    "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+  },
   "baseline": {
     "canonicalCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
     "netlifyDeployId": "6aa6a754d28c24000883bb45",
@@ -166,5 +622,13 @@
   "patientMessagesSent": 0,
   "crmWrites": 0,
   "consultationsCreated": 0,
-  "conversionsCreated": 0
+  "conversionsCreated": 0,
+  "authorization": {
+    "authorizedBy": "Daniel",
+    "scope": "Pedido explícito desta tarefa para fazer as modificações e agendar reavaliação, sem aumento de orçamento",
+    "appliedToExactCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
+    "releasePreflightAt": "2026-09-13T13:56:33.6361001Z",
+    "preflightResult": "CHANGE_SAFETY_STATUS=OK"
+  },
+  "completedAt": "2026-09-13T14:06:55.100Z"
 }
