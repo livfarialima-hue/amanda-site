@@ -9,6 +9,14 @@ const MAX_TURNS = 32;
 const MAX_TURN_TEXT_LENGTH = 1_600;
 const MAX_OPENAI_TURN_TEXT_LENGTH = 1_200;
 const TRUNCATION_MARKER = " … ";
+const MAX_WRITE_ATTEMPTS = 4;
+
+function conversationSource(turn) {
+  if (["human", "equipe_humana", "human_team"].includes(turn?.source)) return "human";
+  if (turn?.source === "bruna") return "bruna";
+  if (turn?.role === "assistant") return "unknown";
+  return "patient";
+}
 
 function text(value, maximumLength = MAX_TURN_TEXT_LENGTH) {
   const characters = Array.from(String(value || "").trim());
@@ -89,11 +97,7 @@ function normalizeTurn(turn, now) {
     text: text(turn.text),
     eventId: text(turn.eventId, 200),
     at: timestamp(turn.at, now),
-    source: ["patient", "bruna", "human"].includes(turn.source)
-      ? turn.source
-      : turn.role === "user"
-        ? "patient"
-        : "bruna",
+    source: conversationSource(turn),
     templateId: text(turn.templateId, 80).toLowerCase(),
   };
 }
@@ -151,6 +155,25 @@ function store(getStoreImpl = getStore) {
     name: STORE_NAME,
     consistency: "strong",
   });
+}
+
+// Every retry merges against the current version: an AI result must never
+// replace a patient message or human echo that arrived while it was computed.
+async function mutateConversation(phone, getStoreImpl, now, calculate) {
+  const conversationStore = store(getStoreImpl);
+  const key = conversationKey(phone);
+  for (let attempt = 0; attempt < MAX_WRITE_ATTEMPTS; attempt += 1) {
+    const entry = await conversationStore.getWithMetadata(key, {
+      type: "json", consistency: "strong",
+    });
+    if (entry && !entry.etag) throw new Error("conversation_version_unavailable");
+    const update = calculate(normalizeConversation(entry?.data, now));
+    if (!update.conversation) return update.result;
+    const write = await conversationStore.setJSON(key, update.conversation,
+      entry ? { onlyIfMatch: entry.etag } : { onlyIfNew: true });
+    if (write?.modified === true) return update.result;
+  }
+  throw new Error("conversation_write_conflict");
 }
 
 function turnIdentity(turn) {
@@ -215,15 +238,7 @@ export async function appendConversationTurn(
   }
 
   try {
-    const conversationStore = store(getStoreImpl);
-    const key = conversationKey(phone);
-    const normalized = normalizeConversation(
-      await conversationStore.get(key, {
-        type: "json",
-        consistency: "strong",
-      }),
-      now,
-    );
+    return await mutateConversation(phone, getStoreImpl, now, (normalized) => {
     const existing = normalized.conversation;
     const historyBefore = existing.turns;
     const normalizedEventId = text(eventId, 200);
@@ -232,13 +247,13 @@ export async function appendConversationTurn(
       normalizedEventId &&
       historyBefore.some((turn) => turn.eventId === normalizedEventId)
     ) {
-      return {
+      return { result: {
         status: "duplicate",
         expired: false,
         historyBefore,
         historyAfter: historyBefore,
         semanticState: existing.semanticState,
-      };
+      } };
     }
 
     const nextTurn = normalizeTurn({
@@ -256,15 +271,14 @@ export async function appendConversationTurn(
       semanticState: existing.semanticState,
     };
 
-    await conversationStore.setJSON(key, nextConversation);
-
-    return {
+    return { conversation: nextConversation, result: {
       status: "completed",
       expired: normalized.expired,
       historyBefore,
       historyAfter: nextConversation.turns,
       semanticState: nextConversation.semanticState,
-    };
+    } };
+    });
   } catch {
     return {
       status: "failed",
@@ -291,15 +305,7 @@ export async function hydrateConversationMemory(
   }
 
   try {
-    const conversationStore = store(getStoreImpl);
-    const key = conversationKey(phone);
-    const normalized = normalizeConversation(
-      await conversationStore.get(key, {
-        type: "json",
-        consistency: "strong",
-      }),
-      now,
-    );
+    return await mutateConversation(phone, getStoreImpl, now, (normalized) => {
     const durableTurns = turns
       .map((turn) => normalizeTurn(turn, now))
       .filter(Boolean);
@@ -307,23 +313,22 @@ export async function hydrateConversationMemory(
       durableTurns,
       normalized.conversation.turns,
     );
-    const nextState = normalizeConversationSemanticState(semanticState) ||
-      normalized.conversation.semanticState;
+    const nextState = normalized.conversation.semanticState ||
+      normalizeConversationSemanticState(semanticState);
     const nextConversation = {
       version: MEMORY_VERSION,
       updatedAt: new Date(now).toISOString(),
       turns: merged,
       semanticState: nextState,
     };
-    await conversationStore.setJSON(key, nextConversation);
-
-    return {
+    return { conversation: nextConversation, result: {
       status: "completed",
       expired: normalized.expired,
       historyBefore: normalized.conversation.turns,
       historyAfter: merged,
       semanticState: nextState,
-    };
+    } };
+    });
   } catch {
     return {
       status: "failed",
@@ -336,30 +341,31 @@ export async function hydrateConversationMemory(
 }
 
 export async function updateConversationSemanticState(
-  { phone, semanticState },
+  { phone, semanticState, basedOnEventId },
   { getStoreImpl = getStore, now = Date.now() } = {},
 ) {
   const normalizedState = normalizeConversationSemanticState(semanticState);
   if (!phone || !normalizedState) return { status: "skipped" };
 
   try {
-    const conversationStore = store(getStoreImpl);
-    const key = conversationKey(phone);
-    const normalized = normalizeConversation(
-      await conversationStore.get(key, {
-        type: "json",
-        consistency: "strong",
-      }),
-      now,
-    );
+    return await mutateConversation(phone, getStoreImpl, now, (normalized) => {
+    if (basedOnEventId) {
+      const turns = normalized.conversation.turns;
+      const anchor = turns.findIndex((turn) => turn.eventId === basedOnEventId);
+      if (anchor < 0 || turns.slice(anchor + 1).some((turn) =>
+        turn.role === "user" || turn.source !== "bruna")) {
+        return { result: { status: "superseded", reason: "newer_conversation_activity" } };
+      }
+    }
     const nextConversation = {
       ...normalized.conversation,
       version: MEMORY_VERSION,
       updatedAt: new Date(now).toISOString(),
       semanticState: normalizedState,
     };
-    await conversationStore.setJSON(key, nextConversation);
-    return { status: "completed", semanticState: normalizedState };
+    return { conversation: nextConversation,
+      result: { status: "completed", semanticState: normalizedState } };
+    });
   } catch {
     return { status: "failed" };
   }
@@ -424,11 +430,11 @@ export function toOpenAIConversation(turns) {
         ...(templateId ? { templateId } : {}),
         ...(hasValidAt ? { at: parsedAt.toISOString() } : {}),
         source:
-          turn.source === "human"
+          conversationSource(turn) === "human"
             ? "equipe_humana"
-            : turn.source === "bruna"
+            : conversationSource(turn) === "bruna"
               ? "bruna"
-              : "paciente",
+              : turn.role === "assistant" ? "clinica_autoria_desconhecida" : "paciente",
       };
     })
     .filter((turn) => turn.text);

@@ -278,7 +278,7 @@ test("cervical pages expose visible answer-first medical content and matching re
       html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] || "{}",
     );
     const graph = structuredData["@graph"] || [];
-    const physician = graph.find((entry) => entry["@type"] === "Physician");
+    const physician = graph.find((entry) => entry["@type"] === "Person" && entry["@id"] === "https://draamandaschroeder.com.br/#physician");
     const procedure = graph.find((entry) => entry["@type"] === "MedicalProcedure");
     const medicalPage = graph.find((entry) => entry["@type"] === "MedicalWebPage");
     const whatsappLinks = [...html.matchAll(
@@ -653,14 +653,28 @@ test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orp
 
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishDirectory, "tmp/netlify-deploy");
-  assert.equal(result.summary.sitemapUrls, 53);
-  assert.equal(result.summary.expectedHttp200, 53);
-  assert.equal(result.summary.selfCanonical, 53);
-  assert.equal(result.summary.indexable, 53);
-  assert.equal(result.summary.oneH1, 53);
+  assert.equal(result.summary.sitemapUrls, 54);
+  assert.equal(result.summary.expectedHttp200, 54);
+  assert.equal(result.summary.selfCanonical, 54);
+  assert.equal(result.summary.indexable, 54);
+  assert.equal(result.summary.oneH1, 54);
   assert.equal(result.summary.orphanPages, 0);
   assert.equal(result.summary.auditFilesInArtifact, 0);
   assert.ok(result.summary.redirects >= 1);
+});
+
+test("forced permanent redirects are accepted without accepting temporary redirects or loops", () => {
+  const fixtureRoot = createFixture();
+  try {
+    writeFixtureFile(fixtureRoot, "_redirects", "/antiga/ /boa/ 301!\n");
+    assert.deepEqual(auditSite({ root: fixtureRoot }).errors, []);
+    writeFixtureFile(fixtureRoot, "_redirects", "/antiga/ /boa/ 302!\n");
+    assert.ok(auditSite({ root: fixtureRoot }).errors.some(e => e.code === "REDIRECT_NOT_PERMANENT"));
+    writeFixtureFile(fixtureRoot, "_redirects", "/ciclo-a/ /ciclo-b/ 301!\n/ciclo-b/ /ciclo-a/ 301!\n");
+    assert.ok(auditSite({ root: fixtureRoot }).errors.some(e => e.code === "REDIRECT_CYCLE"));
+  } finally {
+    rmSync(fixtureRoot, { recursive: true, force: true });
+  }
 });
 
 test("audit and operations files are excluded from the generated deploy artifact", () => {

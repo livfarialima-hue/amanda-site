@@ -14,18 +14,78 @@ import {
 
 function fakeBlobs(initialValue = null) {
   let value = initialValue;
+  let revision = 1;
 
   return {
     getStoreImpl: () => ({
       get: async () => value,
-      setJSON: async (_key, nextValue) => {
+      getWithMetadata: async () => value ? { data: structuredClone(value), etag: String(revision) } : null,
+      setJSON: async (_key, nextValue, conditions = {}) => {
+        if ((conditions.onlyIfNew && value) ||
+            (conditions.onlyIfMatch && conditions.onlyIfMatch !== String(revision))) {
+          return { modified: false };
+        }
         value = nextValue;
-        return { modified: true, etag: "test" };
+        revision += 1;
+        return { modified: true, etag: String(revision) };
       },
     }),
     value: () => value,
   };
 }
+
+test("concurrent patient and human turns both survive the memory write", async () => {
+  const blobs = fakeBlobs();
+  const opts = { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-09-12T15:00:02Z") };
+  const results = await Promise.all([
+    appendConversationTurn({ phone: "+5511900000000", role: "user", source: "patient", text: "Qual o endereço?", eventId: "patient", at: "2026-09-12T15:00:00Z" }, opts),
+    appendConversationTurn({ phone: "+5511900000000", role: "assistant", source: "human", text: "Vou conferir a sua solicitação.", eventId: "human", at: "2026-09-12T15:00:01Z" }, opts),
+  ]);
+  assert.ok(results.every((r) => r.status === "completed"));
+  assert.deepEqual(blobs.value().turns.map((t) => t.eventId), ["patient", "human"]);
+});
+
+test("a late semantic result cannot replace the state after a newer patient message", async () => {
+  const blobs = fakeBlobs();
+  const opts = { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-09-12T15:00:02Z") };
+  await appendConversationTurn({ phone: "+5511900000000", role: "user", text: "Quero agendar", eventId: "old" }, opts);
+  const results = await Promise.all([
+    appendConversationTurn({ phone: "+5511900000000", role: "user", text: "Prefiro pensar mais", eventId: "new" }, opts),
+    updateConversationSemanticState({ phone: "+5511900000000", basedOnEventId: "old", semanticState: { activeTopic: "agendar", owner: "bruna" } }, opts),
+  ]);
+  assert.equal(results[1].status, "superseded");
+  assert.deepEqual(blobs.value().turns.map((t) => t.eventId), ["old", "new"]);
+  assert.equal(blobs.value().semanticState, null);
+});
+
+test("durable hydration cannot erase a simultaneous human echo", async () => {
+  const blobs = fakeBlobs();
+  const opts = { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-09-12T15:00:02Z") };
+  await Promise.all([
+    appendConversationTurn({ phone: "+5511900000000", role: "assistant", source: "human", text: "Já estou verificando", eventId: "human", at: "2026-09-12T15:00:01Z" }, opts),
+    hydrateConversationMemory({ phone: "+5511900000000", turns: [{ role: "user", source: "paciente", text: "Olá", eventId: "patient", at: "2026-09-12T15:00:00Z" }] }, opts),
+  ]);
+  assert.deepEqual(blobs.value().turns.map((t) => t.eventId), ["patient", "human"]);
+});
+
+test("unresolved storage contention never reports a successful memory write", async () => {
+  let writes = 0;
+  const result = await appendConversationTurn({ phone: "+5511900000000", role: "user", text: "Olá", eventId: "patient" }, {
+    getStoreImpl: () => ({ get: async () => null, getWithMetadata: async () => null,
+      setJSON: async (_key, _value, options) => { writes += 1; assert.equal(options.onlyIfNew, true); return { modified: false }; } }),
+  });
+  assert.equal(result.status, "failed");
+  assert.ok(writes > 1 && writes <= 4);
+});
+
+test("conversation adapters preserve human aliases and unknown clinic authorship", () => {
+  const turns = toOpenAIConversation([
+    { role: "assistant", source: "equipe_humana", text: "Estou verificando" },
+    { role: "assistant", text: "Mensagem importada" },
+  ]);
+  assert.equal(turns[0].source, "equipe_humana");
+  assert.equal(turns[1].source, "clinica_autoria_desconhecida");
+});
 
 test("conversation key is stable and omits the phone", () => {
   const phone = "+5511961957144";

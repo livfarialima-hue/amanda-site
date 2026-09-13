@@ -6,7 +6,7 @@ import {
   procedureOpeningMicrovalue,
 } from "./bruna-conversion-experience.mjs";
 import { getRecommendedSiteResource } from "./site-content.mjs";
-import { normalizeConversationSemanticState } from "./conversation-memory.mjs";
+import { normalizeConversationSemanticState, toOpenAIConversation } from "./conversation-memory.mjs";
 import {
   applyKnowledgeDecisionGuard,
   normalizeKnowledgeContext,
@@ -27,8 +27,6 @@ const DEFAULT_MODEL = "gpt-5.6-terra";
 const DEFAULT_REASONING_EFFORT = "medium";
 const OPENAI_TIMEOUT_MS = 8_000;
 const MAX_USER_TEXT_LENGTH = 2_000;
-const MAX_RECENT_TURNS = 32;
-const MAX_RECENT_TURN_LENGTH = 1_200;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
 const PATIENT_RELATIONSHIP_STATES = new Set([
   "new_lead",
@@ -137,7 +135,12 @@ function result(status, details = {}) {
 }
 
 function limitUserText(value) {
-  return Array.from(String(value || "")).slice(0, MAX_USER_TEXT_LENGTH).join("");
+  const characters = Array.from(String(value || ""));
+  if (characters.length <= MAX_USER_TEXT_LENGTH) return characters.join("");
+  const marker = " … ";
+  const head = Math.ceil((MAX_USER_TEXT_LENGTH - marker.length) * 0.6);
+  const tail = MAX_USER_TEXT_LENGTH - marker.length - head;
+  return characters.slice(0, head).join("") + marker + characters.slice(-tail).join("");
 }
 
 function limitText(value, maximumLength) {
@@ -147,28 +150,7 @@ function limitText(value, maximumLength) {
 }
 
 function normalizeRecentConversation(value) {
-  if (!Array.isArray(value)) return [];
-
-  return value
-    .slice(-MAX_RECENT_TURNS)
-    .map((turn) => {
-      const at = limitText(turn?.at, 40);
-
-      return {
-        role: turn?.role === "assistant" ? "assistant" : "patient",
-        source: ["bruna", "equipe_humana", "paciente"].includes(turn?.source)
-          ? turn.source
-          : turn?.role === "assistant"
-            ? "bruna"
-            : "paciente",
-        text: limitText(turn?.text, MAX_RECENT_TURN_LENGTH),
-        ...(limitText(turn?.eventId, 200)
-          ? { eventId: limitText(turn.eventId, 200) }
-          : {}),
-        ...(at ? { at } : {}),
-      };
-    })
-    .filter((turn) => turn.text);
+  return toOpenAIConversation(value);
 }
 
 function normalizeReplyContract(value) {
@@ -1061,6 +1043,11 @@ export async function runOpenAIShadow(
               }
             : {}),
           previousConversationState: normalizedConversationState,
+          contextLimitations: {
+            currentMessageTruncated: Array.from(String(text || "")).length > MAX_USER_TEXT_LENGTH,
+            historyMayBePartial: true,
+            previousStateIsAdvisory: true,
+          },
           recentConversation: normalizedConversation,
           currentMessage: limitUserText(text),
         }),

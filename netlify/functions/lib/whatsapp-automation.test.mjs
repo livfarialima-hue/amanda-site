@@ -1,4 +1,19 @@
 import assert from "node:assert/strict";
+
+test("conversation enrichment cannot revive a rejected procedure or choose one in a price comparison", () => {
+  for (const text of ["Não quero lifting facial", "Qual a diferença de preço entre lifting facial e lifting cervical?"]) {
+    const current = planAutomation({ text, messageType: "text", reference: "M26F01W" });
+    const enriched = enrichAutomationPlanFromConversation(current, [
+      { role: "user", text: "Quero lifting facial" },
+      { role: "assistant", source: "bruna", text: "Sobre lifting facial" },
+      { role: "user", text },
+    ]);
+    assert.equal(enriched.procedure, null);
+    assert.equal(enriched.replyCode, null);
+    assert.equal(enriched.automaticAllowed, current.automaticAllowed);
+    assert.equal(enriched.route, current.route);
+  }
+});
 import test from "node:test";
 import {
   enrichAutomationPlanFromConversation,

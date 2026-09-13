@@ -146,18 +146,40 @@ const PROCEDURES = [
   },
 ];
 
-function matchesAny(text, patterns) {
-  return patterns.some((pattern) => pattern.test(text));
+function namedProcedureContext(text) {
+  let normalizedText = String(text || "");
+  const corrections = [...normalizedText.matchAll(/\b(?:na verdade|corrigindo|quis dizer|me refiro a)\b/gi)];
+  if (corrections.length) {
+    const corrected = normalizedText.slice(corrections.at(-1).index);
+    if (PROCEDURES.some((p) => p.patterns.some((pattern) => pattern.test(corrected)))) normalizedText = corrected;
+  }
+  const mentions = [];
+  for (const procedure of PROCEDURES) {
+    for (const pattern of procedure.patterns) {
+      for (const match of normalizedText.matchAll(new RegExp(pattern.source, "gi"))) {
+        const clause = normalizedText.slice(0, match.index).normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "").toLowerCase()
+          .split(/[.!?;,\n]|\b(?:mas|porem)\b/).at(-1);
+        const negated = /\b(?:nao|nem)\s+(?:(?:e|eh|quero|desejo|pretendo|busco|procuro|tenho interesse em)\s+)?(?:(?:o|a|os|as|mais|fazer|saber sobre|entender|sobre|um|uma|no|na)\s+)*$/.test(clause);
+        mentions.push({ procedure, start: match.index, end: match.index + match[0].length, negated });
+      }
+    }
+  }
+  // A specific name such as lipo de papada owns a contained generic match.
+  const specific = mentions.filter((m) => !mentions.some((other) =>
+    other.start <= m.start && other.end >= m.end && other.end - other.start > m.end - m.start));
+  const positive = new Map(specific.filter((m) => !m.negated).map((m) => [m.procedure.key, m.procedure]));
+  const selected = positive.size === 1 ? [...positive.values()][0] : null;
+  return { mentioned: mentions.length > 0, procedure: selected ? { key: selected.key, code: selected.code } : null };
 }
 
 export function detectNamedProcedure(text) {
-  const normalizedText = String(text || "");
-  for (const procedure of PROCEDURES) {
-    if (matchesAny(normalizedText, procedure.patterns)) {
-      return { key: procedure.key, code: procedure.code };
-    }
-  }
-  return null;
+  return namedProcedureContext(text).procedure;
+}
+
+export function hasUnresolvedNamedProcedure(text) {
+  const context = namedProcedureContext(text);
+  return context.mentioned && !context.procedure;
 }
 
 export function detectCampaignProcedure(text) {
@@ -177,8 +199,8 @@ export function detectProcedure(text, reference, referralContext) {
       : String(referralContext || "");
   const combined = `${reference || ""} ${referralText} ${text || ""}`;
 
-  const namedInCurrentMessage = detectNamedProcedure(text);
-  if (namedInCurrentMessage) return namedInCurrentMessage;
+  const current = namedProcedureContext(text);
+  if (current.mentioned) return current.procedure;
 
   if (/\bC06(?:H\d{2})?\b/i.test(combined)) {
     return { key: "lifting_facial", code: "M-C06-WA-01" };
@@ -222,10 +244,11 @@ export function detectRecentPatientProcedure(recentConversation) {
   const patientTurns = turns.filter(
     (turn) =>
       turn?.role !== "assistant" &&
-      !["bruna", "equipe_humana"].includes(turn?.source),
+      !["bruna", "human", "human_team", "equipe_humana", "clinica_autoria_desconhecida"].includes(turn?.source),
   );
 
   for (const turn of patientTurns.reverse()) {
+    if (namedProcedureContext(turn?.text).mentioned) return detectNamedProcedure(turn?.text);
     const procedure = detectProcedure(
       turn?.text,
       turn?.reference,

@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — SEO e descoberta por IA com evidência do Search Console
+
+- **Decisão canônica:** seção 30 do Norte; preservadas as diretrizes de concisão, segurança e aquisição qualificada.
+- **Motivo/evidência:** pedido de Daniel; cinco XLSX fornecidos, com 21 cliques/2.042 impressões entre 09/07 e 10/09. Maior exposição recente e baixo clique nos guias de custos; sem evidência de consultas ou resultado causal. Posições convertidas em data são N/D, e cobertura até 03/09 não é o estado atual.
+- **Mudança:** perfil da Amanda, identidade pessoa/clínica/site uniforme, endereço, breadcrumbs, links, metadados selecionados e redirects estritos. Não alterar política de preços, bot, Ads, tracking ou mídias.
+- **Hipótese/métrica:** facilitar descoberta e interesse em consulta; medir contatos orgânicos válidos, qualificados e consultas com atribuição verificável. Impressões e CTR são diagnóstico.
+- **Revisão:** integridade imediata/24h, indexação após recrawl, primeira leitura em 26/09 e 28 dias em 10/10; sem automação criada.
+- **Manter/corrigir:** preservar fatos e navegação; corrigir regressão ou imprecisão, não perseguir oscilação de baixa amostra. Sem prometer ranking ou citação. Revisão médica não é fabricada.
+- **Estado:** publicado pelo commit `56fc749c92c35aa6dbef7a4aa27b7e822a1779b1`, Netlify `6aa5ff87bc6cda0008747ef9`, 12/09 às 22:43:01. Pós-voo: 54/54 rotas equivalentes, 65/65 sondas, 12 funções/cinco programações preservadas; 1.357 testes aprovados. Recibos no relatório `auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md` e no Plano. Integração `a9a7ea6` e registro de pendência `6327ce3` preservados, sem publicar código Bruna. Inspeções no painel GSC e revisão clínica posterior continuam pendentes.
+
 ## 12 de setembro de 2026 — segurança em primeiro lugar e cardiologia integrada
 
 - **Decisão canônica:** seção 29 e posicionamento da seção 3 do Norte Estratégico.

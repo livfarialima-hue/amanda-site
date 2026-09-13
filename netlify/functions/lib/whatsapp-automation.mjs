@@ -14,6 +14,7 @@ import {
   detectProcedure,
   detectRecentClinicProcedure,
   detectRecentPatientProcedure,
+  hasUnresolvedNamedProcedure,
 } from "./procedure-context.mjs";
 
 export { normalizeAutomationMode } from "./automation-mode.mjs";
@@ -287,6 +288,9 @@ export function enrichAutomationPlanFromConversation(
         turn?.role === "user" ||
         ["patient", "paciente"].includes(String(turn?.source || "")),
     );
+  if (hasUnresolvedNamedProcedure(plan.currentText || latestPatientTurn?.text)) {
+    return { ...plan, procedure: null, replyCode: null };
+  }
   const acceptedPriceRangeOffer = Boolean(
     PRICE_RANGE_OFFER_PATTERN.test(String(lastClinicTurn?.text || "")) &&
       PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN.test(

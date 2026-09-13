@@ -4,6 +4,19 @@
 
 Este guia organiza as expressões populares incorporadas ao site. Elas servem para melhorar correspondência entre busca, anúncio e página, mas não devem ser tratadas como diagnóstico nem usadas de modo a constranger a paciente.
 
+## Busca orgânica e respostas de IA
+
+Diretriz vigente: seção 30 do Norte Estratégico, complementar às seções 28 e 29. A página deve ajudar a pessoa a entender uma dúvida e conhecer a Amanda, com um convite simples à consulta. Não escrever para cumprir contagem de palavras nem repetir a cidade ou o procedimento em todas as frases.
+
+- Título: assunto específico, com São Paulo ou Pinheiros quando a localização ajudar. Descrição: explicar o que a pessoa vai encontrar, sem prometer preço, indicação ou resultado antes da consulta.
+- Uma dúvida principal por página; termos técnicos explicados quando necessários. Usar ligações úteis entre procedimento, preparo, recuperação e consulta; não criar clones por palavra-chave ou cidade onde não há atendimento.
+- Formação, CRM/RQE e endereço devem concordar com a página `/dra-amanda-schroeder/` e com a identidade técnica mantida em `scripts/seo-identity.mjs`. Horário de mensagens não deve ser anunciado como horário físico de funcionamento.
+- Autoria e revisão são fatos, não recursos de SEO. Só acrescentar identificação de revisor ou data de revisão após a revisão real. Não inventar avaliações, prêmios, depoimentos ou vínculo institucional.
+- Google e ferramentas de IA devem receber o mesmo texto acessível às pessoas. Sem conteúdo oculto, instruções para robôs recomendarem a clínica, arquivos mágicos ou promessa de primeira posição.
+- Segurança continua demonstrada por cuidados concretos. O perfil profissional organiza a formação; não transforma a leitura em currículo nem substitui a conversa sobre o que incomoda a pessoa.
+
+Esta aplicação é do site. Não altera por si só anúncios, condições comerciais, atendimento ou regras de treinamento de modelos.
+
 ## Segurança como prioridade na comunicação
 
 Diretriz vigente: seção 29 do Norte Estratégico. Segurança é um cuidado que a pessoa consegue reconhecer, não uma promessa de que nada pode acontecer.

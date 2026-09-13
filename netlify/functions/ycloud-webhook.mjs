@@ -2023,6 +2023,7 @@ async function persistSemanticAssessmentState({
   }
   const stateResult = await updateConversationSemanticState({
     phone,
+    basedOnEventId: eventId,
     semanticState: result.decision.conversationState,
   });
   writeOperationalLog({
@@ -2814,6 +2815,7 @@ async function completeOpenAIActive({
 
     const semanticStateResult = await updateConversationSemanticState({
       phone: to,
+      basedOnEventId: input.eventId,
       semanticState: activeResult.decision.conversationState,
     });
     writeOperationalLog({

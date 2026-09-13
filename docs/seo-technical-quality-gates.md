@@ -43,6 +43,16 @@ O JSON também preserva baseline técnico por URL: bytes do HTML, bytes dos recu
 
 O teste `campanhas/site-technical-regression.test.mjs` faz parte da suíte padrão e usa fixtures locais para demonstrar que as falhas críticas são detectadas e que o artefato físico exclui `auditorias/**`, sem rede.
 
+## Identidade e descoberta — controle semântico de setembro de 2026
+
+`campanhas/seo-discovery.test.mjs`, incluído na suíte padrão, exige identidade uniforme nas 54 páginas, `Person` para Amanda, `MedicalClinic` separado, CRM/RQE e endereço coerentes, perfil com formação verificável, títulos/descrições únicos, breadcrumb canônico e conexões com `WebSite`. O identificador legado `#physician` é preservado para não quebrar referências; o tipo passa a representar a pessoa corretamente. `ProfilePage` é exclusivo da biografia, não da home comercial.
+
+Os dez artigos explicitamente pendentes de revisão nos recibos anteriores não podem ganhar `author`, `reviewedBy` ou `lastReviewed`. Atribuições antigas são preservadas, com referências à mesma pessoa; esse teste técnico não certifica uma revisão clínica.
+
+O parser admite o sufixo Netlify `301!`, mantendo bloqueio de redirecionamentos temporários e ciclos, demonstrado por fixture. Apenas as rotas estáticas enumeradas do alias de produção são forçadas ao domínio canônico; funções, hosts de preview e variantes `index.html` não são abrangidos. Duas formas codificadas do endereço malformado fornecido no GSC levam ao artigo correspondente, sem regra genérica para 404.
+
+As condições locais não provam indexação ou citação em IA. O pós-voo precisa conferir redirecionamentos reais, parâmetros de consulta, páginas equivalentes e funções/programações preservadas. Teste local de navegador sem limitação de rede não substitui Core Web Vitals de campo.
+
 ## Gate antes de publicação
 
 Uma publicação futura, somente após autorização específica, deve exigir:

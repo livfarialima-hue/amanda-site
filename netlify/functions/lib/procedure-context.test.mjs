@@ -2,11 +2,35 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  detectNamedProcedure,
   detectProcedure,
   detectRecentClinicProcedure,
   detectRecentPatientProcedure,
 } from "./procedure-context.mjs";
 import { detectProcedure as legacyDetectProcedure } from "./whatsapp-automation.mjs";
+
+test("an explicit correction excludes the rejected procedure, even with a stale ad", () => {
+  for (const text of [
+    "Não quero lifting facial, quero lifting cervical",
+    "Não é lifting facial. É cervicoplastia",
+    "Vi lifting facial, mas na verdade quero cervicoplastia",
+  ]) assert.equal(detectProcedure(text, "M26F01W", null)?.key, "lifting_cervical", text);
+  assert.equal(detectProcedure("Não quero lifting facial", "M26F01W", null), null);
+});
+
+test("comparing procedures does not choose a price topic arbitrarily", () => {
+  assert.equal(detectNamedProcedure("Qual a diferença entre lifting facial e lifting cervical?"), null);
+  assert.equal(detectProcedure("Qual a diferença entre lifting facial e lifting cervical?", "M26F01W", null), null);
+  assert.equal(detectNamedProcedure("Não sei se quero lifting cervical")?.key, "lifting_cervical");
+});
+
+test("a patient rejection stops stale recent context and a human alias is not a patient", () => {
+  assert.equal(detectRecentPatientProcedure([
+    { role: "user", text: "Quero lifting facial" },
+    { role: "user", text: "Não quero lifting facial" },
+  ]), null);
+  assert.equal(detectRecentPatientProcedure([{ role: "user", source: "human", text: "Sobre lifting facial" }]), null);
+});
 
 test("the procedure stated by the patient overrides a stale campaign reference", () => {
   assert.deepEqual(

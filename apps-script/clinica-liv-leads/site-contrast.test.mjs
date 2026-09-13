@@ -178,11 +178,11 @@ test("mama and body pages avoid formulaic copy and load the humanized dynamic te
   for (const page of refreshedSecondaryPages) {
     const html = readFileSync(new URL(`${page}/index.html`, root), "utf8");
     assert.match(html, /secondary-conversion\.js\?v=20260912-human-copy-2/);
-    assert.match(html, /site-enhancements\.js\?v=20260912-mobile-media-1/);
+    assert.match(html, /site-enhancements\.js\?v=20260912-seo-profile-1/);
   }
 
   const contourHtml = readFileSync(new URL("contorno-corporal/index.html", root), "utf8");
-  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-mobile-media-1/);
+  assert.match(contourHtml, /site-enhancements\.js\?v=20260912-seo-profile-1/);
   assert.match(contourHtml, /conversion-pages-body\.css\?v=20260912-human-contrast-3/);
 
   const mamaHtml = readFileSync(new URL("mama/index.html", root), "utf8");
@@ -235,7 +235,7 @@ test("public pages avoid formulaic AI wording and preserve strategic consultatio
       assert.match(html, /site-enhancements\.css\?v=20260912-mobile-media-1/i, `${pageFile} CSS cache version`);
     }
     if (/site-enhancements\.js\?v=/i.test(html)) {
-      assert.match(html, /site-enhancements\.js\?v=20260912-mobile-media-1/i, `${pageFile} script cache version`);
+      assert.match(html, /site-enhancements\.js\?v=20260912-seo-profile-1/i, `${pageFile} script cache version`);
     }
   }
 

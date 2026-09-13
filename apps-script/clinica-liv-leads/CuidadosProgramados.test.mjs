@@ -75,6 +75,20 @@ test("a care dismissal survives Central regeneration and calendar-day changes, w
   assert.notEqual(h.post().sourceKey, care.sourceKey);
 });
 
+test("release diagnostics report the additive schema and existing decisions without changing or sending anything", () => {
+  const h = harness();
+  h.ctx.ScriptApp = { getProjectTriggers: () => [{ getHandlerFunction: () => "processarRetomadasAutomaticas" }] };
+  h.ctx.decidirCuidadoCentral_(h.spreadsheet, h.post(), "dismiss", new h.Clock());
+  const before = h.writes();
+  const result = h.ctx.diagnosticarCuidadosProgramados();
+  assert.equal(result.readOnly, true);
+  assert.equal(result.ledgerPresent, true);
+  assert.equal(result.missingHeaders.length, 3);
+  assert.equal(result.existingFollowupTriggers, 1);
+  assert.equal(Object.values(result.states).reduce((a, b) => a + b, 0), 1);
+  assert.equal(h.writes(), before);
+});
+
 test("snooze persists and an overdue review does not disappear when the suggestion window ends", () => {
   const h = harness(); const item = h.post();
   assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet, { ...item, deferUntil: new h.Clock("2026-09-25T12:00:00Z") }, "defer", new h.Clock()).ok, true);

@@ -1380,6 +1380,28 @@ test("only OpenAI is called and the request omits the raw phone", async () => {
   assert.equal(body.text.format.strict, true);
 });
 
+test("model context preserves the final correction, human authorship and prefill provenance", async () => {
+  let payload;
+  await runOpenAIShadow({ phone: PHONE,
+    text: "Tenho uma dúvida. " + "Contexto anterior. ".repeat(150) + "Na verdade prefiro pensar mais.",
+    recentConversation: [
+      { role: "assistant", source: "human", text: "Texto longo. ".repeat(120) + "Ainda vou conferir o horário.", eventId: "human-1" },
+      { role: "patient", source: "patient", text: "Quero informações", templateId: "procedure_evaluation_v1" },
+      { role: "assistant", text: "Mensagem com autoria não confirmada" },
+    ],
+  }, { env: { OPENAI_API_KEY: "test-key" }, fetchImpl: async (_url, options) => {
+    payload = JSON.parse(JSON.parse(options.body).input);
+    return new Response(JSON.stringify(validResponse()), { status: 200 });
+  } });
+  assert.match(payload.currentMessage, /Na verdade prefiro pensar mais\.$/);
+  assert.equal(payload.contextLimitations.currentMessageTruncated, true);
+  assert.equal(payload.contextLimitations.previousStateIsAdvisory, true);
+  assert.equal(payload.recentConversation[0].source, "equipe_humana");
+  assert.match(payload.recentConversation[0].text, /Ainda vou conferir o horário\.$/);
+  assert.equal(payload.recentConversation[1].templateId, "procedure_evaluation_v1");
+  assert.equal(payload.recentConversation[2].source, "clinica_autoria_desconhecida");
+});
+
 test("appointment review is accepted as a strict structured route", () => {
   const result = parseOpenAIShadowResponse(
     validResponse(

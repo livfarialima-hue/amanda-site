@@ -95,6 +95,28 @@ function prepararEstruturaCuidadosProgramados() {
   return { ok: true, addedOnly: true, active: false };
 }
 
+// Read-only release/operations check. Does not plan, approve or send contact.
+function diagnosticarCuidadosProgramados() {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const consultations = spreadsheet.getSheetByName(RETOMADAS_CONFIG.planilhaConsultas);
+  const headers = consultations ? consultations.getRange(1, 1, 1, consultations.getLastColumn()).getValues()[0] : [];
+  const ledger = tabelaCuidados_(spreadsheet, false);
+  const states = {};
+  const decisions = carregarDecisoesCuidados_(spreadsheet);
+  Object.keys(decisions).forEach(function (key) {
+    const state = String(decisions[key].row[1] || "Sem estado");
+    states[state] = (states[state] || 0) + 1;
+  });
+  const result = { ok: true, readOnly: true, active: entregaCuidadoAtiva_("post_consult"),
+    birthdaysActive: entregaCuidadoAtiva_("birthday"),
+    missingHeaders: CUIDADOS_PROGRAMADOS.consultationHeaders.filter(function (header) { return !headers.includes(header); }),
+    consultationColumns: headers.length, ledgerPresent: Boolean(ledger), states: states,
+    existingFollowupTriggers: ScriptApp.getProjectTriggers().filter(function (trigger) { return trigger.getHandlerFunction() === "processarRetomadasAutomaticas"; }).length,
+  };
+  console.log(JSON.stringify(result));
+  return result;
+}
+
 function enriquecerMarcoCuidado_(item, row, columns) {
   const val = function (name) { return valorAgendaCuidados_(row, columns, [name]); };
   const date = function (name) { return dataAgendaCuidados_(val(name)); };
