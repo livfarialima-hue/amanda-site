@@ -778,3 +778,11 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Revisão:** integridade/política no próximo ciclo; negócio em 19/09 e 26/09, Daniel/equipe. Nenhum monitor novo criado. O marco editorial não reinicia tecnicamente conversões nem elimina histórico.
 - **Regra para manter:** conformidade, pertinência por procedimento e continuidade até o atendimento, com pelo menos manutenção da qualidade dos contatos.
 - **Regra para corrigir/reverter:** corrigir somente o componente responsável por erro de política, expectativa, destino ou piora de qualidade demonstrada; usar os registros anteriores disponíveis e nunca restaurar promessa indevida, inventar original ou mudar orçamento/lance sob pretexto de rollback textual.
+
+### 12 de setembro de 2026 — configuração imediata Google Ads, sem verba adicional
+
+- **Status:** autorizado por Daniel para execução imediata; preparado em pacote separado, aplicação ainda sujeita à releitura e ao recibo.
+- **Escopo:** seis parâmetros de anúncio (cinco `_camp`, três `_ag`), GBRAID/WBRAID na conexão LEADS e teste de Presença apenas em LIFT/CERV. Plano exato e baseline em `auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json`.
+- **Motivo/evidência:** divergências revalidadas por ID de anúncio/grupo; conexão existente sem dois mapeamentos; geografia das duas campanhas inclui interesse. Total oito campanhas/R$103 por dia, sem expansão de redes ou lances. A localização é hipótese de melhor logística, não prova de desperdício fora da cidade.
+- **Invariantes:** sem site, código operacional, mensagens, dados de pacientes, retroatividade, consentimento inventado, upload manual, texto, URL, nova conversão, verba, teto de CPC ou palavra nova. Candidato técnico `0ff0dd2` preservado, sem publicação.
+- **Métrica/revisão:** integridade no primeiro ciclo/48h; qualidade e consultas em 20/09, 27/09 e 13/10 com maturação, sem inferência por clique/pontuação. Manter se integridade e consultas úteis forem preservadas; reverter somente configuração responsável por perda de origem ou demanda externa viável.

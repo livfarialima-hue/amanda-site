@@ -524,7 +524,10 @@
         "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-VERIFICACAO.json",
         "auditorias/google-ads-comunicacao-2026-09-12/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.json",
         "campanhas/REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.md",
-        "campanhas/google-ads-communication.test.mjs"
+        "campanhas/google-ads-communication.test.mjs",
+        "auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json",
+        "auditorias/google-ads-ajustes-imediatos-2026-09-12/EXECUCAO.md",
+        "campanhas/google-ads-settings.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
@@ -536,7 +539,8 @@
         "google-ads-scripts/google-ads-search-review-email.test.mjs",
         "netlify/functions/lib/patient-replies.test.mjs",
         "netlify/functions/lib/procedure-context.test.mjs",
-        "campanhas/google-ads-communication.test.mjs"
+        "campanhas/google-ads-communication.test.mjs",
+        "campanhas/google-ads-settings.test.mjs"
       ],
       "requiredCommands": [
         "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -546,7 +550,8 @@
         "npm.cmd run site:build",
         "npm.cmd run site:check",
         "npm.cmd run ops:check",
-        "git diff --check"
+        "git diff --check",
+        "node --test campanhas/google-ads-settings.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",

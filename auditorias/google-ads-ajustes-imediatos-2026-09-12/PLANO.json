@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "accountId": "995-334-4486",
+  "status": "planned",
+  "authorization": "Daniel: faça as alterações que acha que deve fazer no imediato. Escopo limitado à configuração Google Ads discutida na avaliação anterior; sem site, verba nova ou lances novos.",
+  "baseCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
+  "budgetDailyBRL": 103,
+  "budgetByCampaign": {
+    "G26LIFT": 24,
+    "G26BLEF": 23,
+    "G26OTO": 15,
+    "G26CERV": 12,
+    "G26FACE": 8,
+    "G26MARCA": 5,
+    "G26MAMA": 8,
+    "G26CORP": 8
+  },
+  "parameters": [
+    {
+      "adId": "816479308278",
+      "adGroupId": "201887571281",
+      "campaign": "G26BLEF",
+      "group": "AG_BLEFAROPLASTIA",
+      "before": {
+        "ag": "ag_blefaroplastia",
+        "camp": "g26f03"
+      },
+      "after": {
+        "ag": "ag_blefaroplastia",
+        "camp": "G26BLEF"
+      }
+    },
+    {
+      "adId": "816580854431",
+      "adGroupId": "196629569725",
+      "campaign": "G26FACE",
+      "group": "AG_CIRURGIA_FACIAL",
+      "before": {
+        "ag": "ag_cirurgia_facial_sp",
+        "camp": "g26f00"
+      },
+      "after": {
+        "ag": "ag_cirurgia_facial",
+        "camp": "G26FACE"
+      }
+    },
+    {
+      "adId": "816477682074",
+      "adGroupId": "205062156184",
+      "campaign": "G26CERV",
+      "group": "AG_CERVICOPLASTIA",
+      "before": {
+        "ag": "ag_lifting_cervical",
+        "camp": "g26f02"
+      },
+      "after": {
+        "ag": "ag_lifting_cervical",
+        "camp": "G26CERV"
+      }
+    },
+    {
+      "adId": "817459414056",
+      "adGroupId": "199989515913",
+      "campaign": "G26CERV",
+      "group": "AG_LIPO_PAPADA",
+      "before": {
+        "ag": "ag_lifting_cervical",
+        "camp": "g26f02"
+      },
+      "after": {
+        "ag": "ag_lipo_papada",
+        "camp": "G26CERV"
+      }
+    },
+    {
+      "adId": "820414650683",
+      "adGroupId": "200002586158",
+      "campaign": "G26LIFT",
+      "group": "AG_LIFTING_FACIAL_PRECO",
+      "before": {
+        "ag": "ag_lifting_facial",
+        "camp": "G26LIFT"
+      },
+      "after": {
+        "ag": "ag_lifting_facial_preco",
+        "camp": "G26LIFT"
+      }
+    },
+    {
+      "adId": "816570038294",
+      "adGroupId": "198487981339",
+      "campaign": "G26MARCA",
+      "group": "AG_MARCA",
+      "before": {
+        "ag": "ag_marca",
+        "camp": "g26b01"
+      },
+      "after": {
+        "ag": "ag_marca",
+        "camp": "G26MARCA"
+      }
+    }
+  ],
+  "geo": [
+    {
+      "campaignId": "24028216444",
+      "campaign": "S_BR_SP_LIFTING_FACIAL",
+      "location": "São Paulo, São Paulo, Brasil cidade",
+      "before": "PRESENCE_OR_INTEREST",
+      "after": "PRESENCE",
+      "dailyBudgetBRL": 24
+    },
+    {
+      "campaignId": "24023843174",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "location": "São Paulo, São Paulo, Brasil cidade",
+      "before": "PRESENCE_OR_INTEREST",
+      "after": "PRESENCE",
+      "dailyBudgetBRL": 12
+    }
+  ],
+  "mapping": {
+    "connection": "LEADS",
+    "conversionActionId": "7697681883",
+    "add": [
+      {
+        "source": "GBRAID",
+        "destination": "GBRAID"
+      },
+      {
+        "source": "WBRAID",
+        "destination": "WBRAID"
+      }
+    ],
+    "preserve": [
+      "GCLID",
+      "ID da transação",
+      "Data/hora da conversão",
+      "Valor da conversão",
+      "Código da moeda"
+    ],
+    "runManually": false,
+    "consentChanges": false,
+    "enhancedConversions": false
+  },
+  "excluded": [
+    "site",
+    "Netlify",
+    "Apps Script",
+    "mensagens",
+    "reclassificação",
+    "dados históricos",
+    "orçamentos",
+    "lances",
+    "CPC máximo",
+    "palavras-chave",
+    "textos",
+    "URLs finais",
+    "sufixos",
+    "novas ações de conversão"
+  ],
+  "review": {
+    "owner": "Daniel e equipe LIV",
+    "health": "primeiro ciclo e 48 horas",
+    "business": [
+      "2026-09-20",
+      "2026-09-27",
+      "2026-10-13"
+    ],
+    "rule": "Qualificados aceitos, consultas únicas agendadas/realizadas e custo por etapa. Baixo volume é inconclusivo; não decidir por clique ou pontuação.",
+    "rollback": "Restaurar somente parâmetro ou opção geográfica afetados. Remover somente mapeamento novo incompatível. Não apagar ações, dados ou transações."
+  }
+}

@@ -1,439 +1,154 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-CONVERSAO-CUIDADO-LEADS-2026-09-12",
-  "title": "Bruna: continuidade, cuidado, LEADS e retomadas com decisões persistentes",
-  "status": "published_verified",
-  "baseCommit": "a9a7ea6ac0f112c77b819cf88e2260f6647a96d6",
+  "changeId": "GOOGLE-ADS-IMMEDIATE-SETTINGS-2026-09-12",
+  "title": "Correcoes de origem e teste de presenca sem aumento de orcamento",
+  "status": "tested_local",
+  "baseCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
   "authorization": {
     "required": true,
-    "note": "Daniel autorizou expressamente em 12/09/2026 revisar e corrigir o entendimento contextual e, após os ajustes, publicar todo o pacote pendente desta conversa. Abrange código, migração aditiva da LEADS, ativação do envio após aprovação individual e submissão do modelo de aniversário; aniversário automático depende de modelo aprovado e cadastro/consentimento elegível. Nenhuma retomada humana individual é aprovada por esta publicação.",
     "recording": "external_release_preflight",
-    "publicationAuthorizedInCommit": false
+    "publicationAuthorizedInCommit": false,
+    "note": "Solicitacao explicita de Daniel nesta conversa para aplicar os ajustes imediatos da avaliacao anterior. Autorizacao por escopo; nao ha autorizacao nova para site/Netlify/Apps Script, nem alegacao de SHA digitado pelo usuario."
   },
   "risk": {
-    "externalWritesPerformed": true,
-    "externalDocumentationWritesPerformed": true,
-    "externalOperationalWritesPerformed": true,
-    "defaultOffUntilPublication": true,
-    "patientEffects": true,
-    "level": "high"
+    "level": "high",
+    "patientEffects": false,
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
-    "files": [
-      "_redirects",
-      "abdominoplastia/index.html",
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "apps-script/clinica-liv-leads/site-contrast.test.mjs",
-      "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
-      "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html",
-      "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
-      "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
-      "auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md",
-      "avaliacao-facial/index.html",
-      "blefaroplastia/index.html",
-      "braquioplastia/index.html",
-      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/lifting-price-page.test.mjs",
-      "campanhas/seo-discovery.test.mjs",
-      "campanhas/site-enhancements.js",
-      "campanhas/site-technical-regression.test.mjs",
-      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
-      "conteudos/botox-preenchimento-bioestimulador/index.html",
-      "conteudos/cicatrizes-cirurgia-de-mama/index.html",
-      "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
-      "conteudos/como-escolher-cirurgiao-plastico/index.html",
-      "conteudos/como-escolher-protese-de-mama/index.html",
-      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
-      "conteudos/consulta-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
-      "conteudos/lifting-facial-ou-injetaveis/index.html",
-      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
-      "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
-      "conteudos/lipoenxertia-facial/index.html",
-      "conteudos/mastopexia-com-ou-sem-protese/index.html",
-      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
-      "conteudos/naturalidade-envelhecimento/index.html",
-      "conteudos/otomodelacao-ou-otoplastia/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
-      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "conteudos/recuperacao-blefaroplastia/index.html",
-      "conteudos/recuperacao-lifting-cervical/index.html",
-      "conteudos/recuperacao-lifting-facial/index.html",
-      "conteudos/seguranca-cirurgia-plastica/index.html",
-      "contorno-corporal/index.html",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/seo-technical-quality-gates.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "dra-amanda-schroeder/index.html",
-      "index.html",
-      "injetaveis/index.html",
-      "lifting-cervical/index.html",
-      "lifting-facial/index.html",
-      "lip-lifting/index.html",
-      "lipo-de-papada/index.html",
-      "lipoaspiracao/index.html",
-      "mama/index.html",
-      "mamoplastia-redutora/index.html",
-      "mastopexia-com-protese/index.html",
-      "mastopexia/index.html",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/bruna-conversion-experience.mjs",
-      "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-action-controller.test.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/conversation-memory.mjs",
-      "netlify/functions/lib/conversation-memory.test.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/human-resume-policy.test.mjs",
-      "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/human-resume-queue.mjs",
-      "netlify/functions/lib/human-resume-queue.test.mjs",
-      "netlify/functions/lib/human-review-envelope.mjs",
-      "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/lead-classifier.test.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/patient-replies.test.mjs",
-      "netlify/functions/lib/procedure-context.mjs",
-      "netlify/functions/lib/procedure-context.test.mjs",
-      "netlify/functions/lib/scheduled-care.mjs",
-      "netlify/functions/lib/scheduled-care.test.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/lib/whatsapp-automation.test.mjs",
-      "netlify/functions/lib/ycloud-review-alert.mjs",
-      "netlify/functions/lib/ycloud-review-alert.test.mjs",
-      "netlify/functions/scheduled-followup.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
-      "ninfoplastia/index.html",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "otoplastia/index.html",
-      "pos-bariatrica/index.html",
-      "privacidade/index.html",
-      "procedimentos/index.html",
-      "protese-de-mama/index.html",
-      "scripts/check-site-technical.mjs",
-      "scripts/run-tests.mjs",
-      "scripts/seo-identity.mjs",
-      "sitemap.xml"
-    ],
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "patient-journey-funnel-followups",
-      "bruna-conversion-experience",
-      "bot-decision-observability",
-      "google-ads-acquisition-conversion",
-      "patient-care-milestones",
-      "appointment-reminders",
-      "site-publication"
+      "google-ads-acquisition-conversion"
+    ],
+    "files": [
+      "auditorias/google-ads-ajustes-imediatos-2026-09-12/EXECUCAO.md",
+      "auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json",
+      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
+      "campanhas/google-ads-settings.test.mjs",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
-    "liveReadOnlyPreflight": [
-      {
-        "reference": "Leitura autenticada de metadados e cabeçalhos; 302 mensagens recentes, CRM, filas e autoria; resultados desidentificados no relatório",
-        "status": "baseline_confirmed",
-        "contract": "patient-journey-funnel-followups",
-        "check": "somente leitura",
-        "system": "LEADS canônica",
-        "checkedAt": "2026-09-12T21:03:37.7283799-03:00"
-      },
-      {
-        "reference": "API autenticada: deploy ready 6aa5e68f41e08e0008a76b33, commit de53af57c2d17d2fb5912379dc05f38f024dc7de; health active",
-        "status": "baseline_confirmed",
-        "contract": "bruna-conversation-safety",
-        "check": "somente leitura",
-        "system": "Netlify",
-        "checkedAt": "2026-09-12T21:03:37.7370269-03:00"
-      },
-      {
-        "reference": "Cabeçalhos Google Ads - Conversões, CRM e Consultas inspecionados; nenhuma escrita ou conversão adicional",
-        "status": "baseline_confirmed",
-        "contract": "google-ads-acquisition-conversion",
-        "check": "preservar atribuição, fase e campos manuais",
-        "system": "LEADS canônica",
-        "checkedAt": "2026-09-12T21:03:37.7370924-03:00"
-      },
-      {
-        "contract": "bruna-conversion-experience",
-        "system": "LEADS e Netlify",
-        "check": "autoria, procedimento, contexto e baseline publicados",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:18:51.279Z",
-        "reference": "Recorte autenticado de mensagens e CRM; produção de53af5 com Bruna ativa. API administrativa expõe chave de IA mascarada; avaliação adicional do modelo não concluída."
-      },
-      {
-        "contract": "bot-decision-observability",
-        "system": "LEADS e Apps Script",
-        "check": "ledger, canais de revisão e deployment canônico",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:18:51.28Z",
-        "reference": "Cabeçalhos e ledger operacional autenticados. Interface Apps Script: versão 149, deployment canônico, projeto e planilha corretos; sem envio de alerta."
-      },
-      {
-        "contract": "change-governance",
-        "system": "Netlify e Git",
-        "check": "reconciliar publicação paralela antes do commit",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:23:23.684Z",
-        "reference": "Produção avançou de de53af5 para fd76cf8, deploy ready 6aa5ec483ca1f7000909ff0a. Fast-forward preservou 20 arquivos de conteúdo, campanhas, plano e governança. Nenhuma função Bruna mudou no intervalo; reaplicado somente este candidato, preservando o Plano atual e as adições do registro de impacto."
-      },
-      {
-        "contract": "bruna-conversation-safety",
-        "system": "Netlify",
-        "check": "Confirmar baseline antes de ampliar retomada humana",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:34:06.184Z",
-        "reference": "API autenticada: produção fd76cf8; deploy 6aa5ec483ca1f7000909ff0a ready. Sem nova publicação ou mensagem."
-      },
-      {
-        "contract": "change-governance",
-        "system": "Netlify e Git",
-        "check": "Reconciliar publicação paralela de segurança antes do candidato final",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:47:35.452Z",
-        "reference": "Netlify ready 6aa5f068ff6f6f00084695c0, commit 996f4dacaddce0195befc960242ddc94cfd0682e. Fechamento 05d99ef e Plano Drive coincidem; mudanças de conteúdo preservadas integralmente."
-      },
-      {
-        "contract": "patient-journey-funnel-followups",
-        "system": "LEADS e Calendar Sala 1",
-        "check": "Cadastro, consentimento, filas e vínculos canônicos",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:00:57.918Z",
-        "reference": "Consultas A2:CB200: 57 registros, 28 nascimentos, zero aniversário habilitado, 6 consentimentos preenchidos, 17 vínculos de agenda, 31 realizadas. Central A2:Z100: 56 itens, 11 ações manuais. Calendar Sala 1: 17 eventos em 01–19/09/2026. Leitura autenticada; nenhuma mensagem."
-      },
-      {
-        "contract": "patient-care-milestones",
-        "system": "LEADS, Calendar e Netlify",
-        "check": "Cabeçalhos, cadastro, fila e vínculo; transporte novo default-off",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:14:28.774Z",
-        "reference": "LEADS Consultas A1:CB200, Central A1:Z100, Retomadas A1:R150, mensagens A1:P1; Sala1 canônica 01–19/09; Netlify ready 996f4dac. Modelo aniversário não configurado nesta tarefa; transporte bloqueado até aprovação do modelo."
-      },
-      {
-        "contract": "appointment-reminders",
-        "system": "Consultas e Calendar Sala 1",
-        "check": "Preservar proprietário do vínculo vivo de compromisso",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:24:00.154Z",
-        "reference": "Quatro de quatro consultas vinculadas à Sala1 dentro de 01–19/09/2026 encontradas no Calendar sem divergência de data. Cuidados reutilizam validarVinculoAgendaLembreteConsulta_; transporte de lembretes inalterado."
-      },
-      {
-        "contract": "change-governance",
-        "system": "Git, Netlify e Drive",
-        "check": "reconciliação final de baseline",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:33:56.818Z",
-        "reference": "Git canônico limpo a9a7ea6 preservado; API Netlify mantém production/ready 6aa5f068ff6f6f00084695c0, commit 996f4dac. Plano Drive modificado 01:22:26Z relido; revisão paralela Google Ads incorporada sem edição da conta."
-      },
-      {
-        "contract": "change-governance",
-        "system": "Git e API autenticada Netlify",
-        "check": "preservar publicação paralela de descoberta/identidade",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:46:56.045Z",
-        "reference": "Produção ready 6aa5ff87bc6cda0008747ef9, commit 56fc749; nenhum executável Apps Script nem função Netlify alterados por SEO. Fechamento e5384eb incorporado."
-      },
-      {
-        "contract": "site-publication",
-        "system": "Git/Netlify/site publico",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:36:05.498Z",
-        "reference": "Origin/main 05d99ef; Netlify production ready 6aa5f068ff6f6f00084695c0 do commit996f4da. 53/53 HTTP200 autocanonicas e equivalentes ao fonte. SiteId c33facb6-eafc-4635-99d6-068bf8707227. Nenhuma escrita externa. Integracao preservadora a9a7ea6: dez commits locais canonicos de documentacao/controle Ads, sem mudanca dos arquivos publicos ou funcoes. Drive lido 13/09 01:22:26 UTC,161190 caracteres; pendencia Bruna ampliada do4a0d633 preservada. tmp/seo-release-preflight.json:191 provider files,0 unexpected baseline drift,12 functions/5 schedules. Bruna pending-plan6327ce3 matched Drive162963chars; no functional integration."
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Search Console por exports fornecidos, site e diretrizes",
-        "status": "site_only_confirmed",
-        "checkedAt": "2026-09-13T00:54:24.596Z",
-        "reference": "Exports lidos intactos em Downloads. Busca Web 09/07-10/09:21 cliques/2042 impressoes. Cobertura ate03/09:42 indexadas+8 nao indexadas. Fontes/periodos/graos separados; posicoes convertidas em data sao N/D. Browser falhou antes de inicializar e Sheets403; sem alteracoes de Ads, GA4 ou atendimento. Tres drilldowns recebidos:404 malformado,2detectadas e rastreadas(videoMP4 e URL antiga). Sem reconstruir datas1969."
-      },
-      {
-        "contract": "bruna-conversation-safety",
-        "system": "Apps Script canônico autenticado",
-        "check": "comparação integral dos arquivos antes da escrita",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T01:52:14.246Z",
-        "reference": "Código/Code, Retomadas, CentralAtendimento, AgendaCuidados, LeadClassification e PainelDecisoesDiarias iguais à base 56fc749 após normalização LF. CuidadosProgramados ausente e será o único arquivo novo. Três IDs canônicos confirmados."
-      }
-    ],
     "consumers": [
-      "webhook e human-resume",
-      "pacientes de marketing e pacientes em cuidado",
-      "e-mail interno e alerta WhatsApp",
-      "classify-leads e fila de classificação",
-      "LEADS e CRM canônicos",
-      "agenda e marcos administrativos",
-      "retomadas, Central e Funil Comercial",
-      "conversão qualificada Google Ads"
+      "Google Ads: seis anuncios e duas configuracoes geograficas",
+      "Data Manager: conexao LEADS existente",
+      "captura/LEADS/CRM e importacao por click ID ja publicados",
+      "Norte, registro, historico e Plano Executivo na mesma projecao Drive"
     ],
     "preservedInvariants": [
-      "prefill não qualifica",
-      "incerteza não confirma agenda nem fechamento",
-      "sem diagnóstico, promessa de resultado, coerção ou preço novo",
-      "takeover e preferências persistem",
-      "origem inicial, Opportunity ID, fases humanas e colunas manuais preservados",
-      "nenhuma duplicação ou reordenação da LEADS",
-      "Nova atividade humana ou paciente invalida a resposta antiga, inclusive durante a preparação do envio.",
-      "Aviso de espera exige alerta entregue; falha no alerta mantém pendência recuperável.",
-      "Uma confirmação de espera por geração humana; novas dúvidas não liberam compromissos clínicos pendentes.",
-      "Adiamento mantém a sugestão revisável além da janela original, com dados atuais; aniversário nunca é recuperado fora da data. Hora e dia úteis são conferidos novamente no transporte.",
-      "Histórico é mesclado por versão; resumo anterior não pode apagar atividade nova. Correção explícita do paciente prevalece sobre campanha; autoria desconhecida não é atribuída à Bruna.",
-      "Publicação autorizada; testes sem mensagens reais e sem alterar consentimentos, cadastros ou preferências por inferência."
+      "Oito campanhas, R$103/dia; lances/redes/palavras/textos/URLs preservados",
+      "Nenhum site, bot, Apps Script, mensagem ou registro de paciente alterado",
+      "Nenhum identificador pessoal ou consentimento inventado enviado ao Google",
+      "Nao executar upload manual ou fabricar conversao; preparado nao significa aceito",
+      "Codigo e recibos Bruna v150 da base 73d6877 preservados"
     ],
-    "documentaryBaselineCommit": "e5384eba2847623a05f7c45c163533c804fc24e4",
-    "documentaryBaselineNote": "Publicação paralela SEO 56fc749 e fechamento e5384eb preservados integralmente por merge. Candidato Bruna 6327ce3 e revisão contextual reaplicados sem alterar conteúdo, tracking ou outras funcionalidades do site.",
-    "productionBaselineCommit": "56fc749c92c35aa6dbef7a4aa27b7e822a1779b1",
-    "preservedParallelRelease": {
-      "changeId": "SITE-SEO-AI-DISCOVERY-2026-09-12",
-      "status": "published_verified",
-      "release": {
-        "approvedCommit": "56fc749c92c35aa6dbef7a4aa27b7e822a1779b1",
-        "netlifyDeployId": "6aa5ff87bc6cda0008747ef9",
-        "appsScriptVersion": 149,
-        "verifiedAt": "2026-09-13T01:45:57Z",
-        "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-        "drivePlanSha256": "157c155a552ec5eaefea3558bd96e8ba50a07befe8974109bf8c19691b41217a",
-        "activationState": "public_site_verified_no_operational_activation",
-        "notes": "Site publicado e verificado. 54/54 HTTP200/equivalentes,65/65 sondas,192arquivos do provedor equivalentes,12funcoes/5schedules intactos. Apps Script149 apenas contexto herdado: nenhum executavel, versao ou ativacao alterado. GSC pedidos de indexacao,controlesIA e CWV de campo continuam nao executados/verificados.",
-        "drivePlanReadback": {
-          "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-          "modified": "2026-09-13T01:45:17.697Z",
-          "characters": 165211,
-          "sha256": "157c155a552ec5eaefea3558bd96e8ba50a07befe8974109bf8c19691b41217a",
-          "equal": true
-        },
-        "driveAuditReadback": {
-          "id": "1YiaxIZtmyKaOCFYuaUX7Pmelvgg11n5Y",
-          "equal": true,
-          "characters": 13123,
-          "sha256": "0201ef47a14634af4395c2ca10234b749de5a245bb80e5ad58b005c7aaf1dc56"
-        },
-        "documentationCommit": "e5384eb",
-        "baselineDeploy": "6aa5f068ff6f6f00084695c0",
-        "publicPostflightAt": "2026-09-13T01:43:47.922Z",
-        "approvalReference": "Autorizacao textual cumulativa desta tarefa para publicar conteudos e ajustes do site; preflight do commit56fc749 registrado antes do push, sem ampliar para atendimento."
+    "liveReadOnlyPreflight": [
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Google Ads",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-13T02:38:00Z",
+        "reference": "Oito campanhas/R$103; seis IDs e valores de parametros revalidados; detalhe geografico lido na avaliacao anterior, repetir antes de salvar; conexao existente sera relida antes do efeito."
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Google Drive",
+        "status": "baseline_equivalent",
+        "checkedAt": "2026-09-13T02:39:00Z",
+        "reference": "Plano mesmo ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO; modified 02:09:13.838Z; 163583 caracteres; igualdade normalizada com base73d6877."
       }
-    }
+    ]
   },
   "verification": {
+    "status": "passed_local",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "git diff --check",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
-      "npm.cmd run release:preflight",
-      "node --check campanhas/content-library.js",
-      "node --test campanhas/seo-discovery.test.mjs",
-      "node --check campanhas/site-enhancements.js",
-      "node --test netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/procedure-context.test.mjs netlify/functions/lib/openai-shadow.test.mjs apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs"
+      "node --test campanhas/google-ads-settings.test.mjs"
     ],
-    "status": "passed_local_and_live",
     "results": {
-      "regressionBeforeFix": "10/10 cenários novos falharam no baseline, reproduzindo perda de contexto, autoria, pendência e rascunho",
-      "crossConsumer": "111/111 testes de conversa, e-mail e integração aprovados; suíte nova com 20 cenários sintéticos.",
-      "additionalFailureReproductions": "4/4 proteções adicionais falharam antes do ajuste; conclusão do worker também reproduziu perda de autoria antes da releitura canônica.",
-      "previousBaselineFullSuite": "Histórico: 1363/1363 na etapa inicial; ver finalFullSuite para o pacote atual.",
-      "finalFullSuite": "1444/1444; 188/188 seleção contextual/cuidados. Oito falhas iniciais reproduzidas; teste integrado de enriquecimento também corrigido. SEO 56fc749/e5384eb preservado.",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "scope": "CHANGE_SAFETY_STATUS=OK; 124 arquivos declarados, incluindo SEO preservado e recibos finais.",
-      "site": "193 arquivos; 54/54 rotas, sem erro e sem auditorias ou operações públicas; SEO preservado.",
-      "target": "ALVO CANÔNICO CONFIRMADO; mesmos IDs, Apps Script v150 publicado e web app HTTP 200.",
-      "modelEvaluation": "Não concluída: credencial mascarada na API administrativa. Não é evidência de falha da chave usada em produção.",
-      "mixedConversationBaseline": "7 dos 8 novos cenários reproduziram falhas antes da correção: repetição de entrada, perda de handoff, corrida humana, histórico indisponível, alerta perdido, ausência de recebimento e alerta sem tarefa.",
-      "previousMixedSuite": "Histórico: 1386/1386 na etapa de cooperação Bruna/equipe; preservada e incluída no pacote atual.",
-      "careCrossConsumer": "149/149 regressões de lembretes/retomadas/cuidados antes dos cinco casos adicionais; 34/34 testes próprios finais. Revisões adiadas permanecem aprováveis com cadastro atual; revisão interna de fechamento não pode ser dispensada como contato.",
-      "contextModel": "Payload e guardrails testados; não houve avaliação adicional do modelo vivo com pacientes.",
-      "publicPostflight": "Bruna active no endpoint canônico; POST sem assinatura HTTP 401; scheduled-followup sem autenticação HTTP 401; 12 funções implantadas. Diagnóstico de cuidados ativo, aniversários desligados, 83 colunas, ledger vazio, gatilho único."
+      "focusedTests": {
+        "passed": 153,
+        "failed": 0
+      },
+      "fullSuite": {
+        "passed": 1444,
+        "failed": 0
+      },
+      "changeCheck": "OK",
+      "architectureCheck": "OK",
+      "diffCheck": "OK",
+      "siteBuild": {
+        "files": 193,
+        "routes": 54
+      },
+      "siteCheck": "OK",
+      "opsCheck": "SYNC_PENDING esperado antes da aplicacao, branch isolada e worktree em preparacao",
+      "environment": "npm ci recompôs dependencias ausentes; lockfile inalterado. Nao executar npm audit fix neste pacote."
     }
   },
   "release": {
+    "approvedCommit": null,
+    "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
-    "drivePlanProjectionStatus": "verified",
-    "drivePlanVerifiedAt": "2026-09-13T02:09:13.838Z",
-    "netlifyDeployId": "6aa6038eb31161000809495b",
-    "verifiedAt": "2026-09-13T02:10:21.890Z",
-    "appsScriptVersion": 150,
-    "approvedCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
-    "activationState": "care_active_birthday_template_in_review",
-    "notes": "Código publicado nos dois destinos; migração aditiva confirmada; envio após aprovação individual ativo. Aniversário submetido em pt_BR/Marketing e ainda em análise, flags desligadas. Nenhuma mensagem de teste, aprovação individual ou consentimento inferido.",
-    "receiptPath": "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
-    "drivePlanReadback": {
-      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "modified": "2026-09-13T02:09:13.838Z",
-      "characters": 163583,
-      "sha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
-      "equal": true
-    },
-    "driveManualReadback": {
-      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "modified": "2026-09-13T02:09:19.875Z",
-      "characters": 99584,
-      "sha256": "de9031502e5216cb3bcfc2b087f36c7985db1e774e884fff97d8030e6887a589",
-      "equal": true
+    "drivePlanSha256": null,
+    "activationState": "not_applied",
+    "notes": "Pacote exclusivo de configuracao Google Ads/documentacao, sem deploy Netlify ou Apps Script."
+  },
+  "previousCompletedRelease": {
+    "changeId": "BRUNA-CONVERSAO-CUIDADO-LEADS-2026-09-12",
+    "sourceCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
+    "release": {
+      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "drivePlanSha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
+      "drivePlanProjectionStatus": "verified",
+      "drivePlanVerifiedAt": "2026-09-13T02:09:13.838Z",
+      "netlifyDeployId": "6aa6038eb31161000809495b",
+      "verifiedAt": "2026-09-13T02:10:21.890Z",
+      "appsScriptVersion": 150,
+      "approvedCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
+      "activationState": "care_active_birthday_template_in_review",
+      "notes": "Código publicado nos dois destinos; migração aditiva confirmada; envio após aprovação individual ativo. Aniversário submetido em pt_BR/Marketing e ainda em análise, flags desligadas. Nenhuma mensagem de teste, aprovação individual ou consentimento inferido.",
+      "receiptPath": "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
+      "drivePlanReadback": {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "modified": "2026-09-13T02:09:13.838Z",
+        "characters": 163583,
+        "sha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
+        "equal": true
+      },
+      "driveManualReadback": {
+        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "modified": "2026-09-13T02:09:19.875Z",
+        "characters": 99584,
+        "sha256": "de9031502e5216cb3bcfc2b087f36c7985db1e774e884fff97d8030e6887a589",
+        "equal": true
+      }
     }
   },
   "rollback": {
-    "production": "Conter primeiro os cuidados pelas flags; Apps Script v149 no mesmo deployment e Netlify 6aa60074bdfc8c0008aab53c, commit f63d2fd7738df64d8916256a78ef7f72cf6c4300. Preservar ledger, colunas, históricos e trabalhos posteriores.",
-    "local": "Reverter apenas o commit deste candidato no worktree isolado; preservar trabalhos paralelos.",
-    "care": "Desativar novas flags e preservar ledger/colunas; nunca apagar recibo para forçar repetição."
+    "local": "Reverter somente estes arquivos documentais.",
+    "production": "Restaurar apenas parametros/opcao geografica antes de cada objeto conforme PLANO.json; desfazer somente mapeamento novo incompativel. Nao apagar dados/acoes ou reverter site."
   },
   "monitoring": {
-    "window": "primeiro ciclo, 24h, 48h e D+7 após publicação autorizada",
+    "owner": "Daniel e equipe da Clinica LIV",
+    "window": "Primeiro ciclo e48h;20/09,27/09 e13/10/2026; sem automacao nova",
     "metrics": [
-      "resposta ao pedido atual",
-      "continuidade e consultas por origem",
-      "pendências atribuídas corretamente",
-      "e-mails com rascunho integral ou ausência explícita",
-      "zero promoção por prefill/baixa confiança",
-      "zero regressão de cuidado/agenda/atribuição",
-      "Sobreposição evitada por nova atividade, avisos de recebimento por geração, alerta entregue versus tentativa, pendências em espera e erros de consulta de preferências.",
-      "Dispensas reaparecidas, recibos incertos, consentimentos válidos, duplicidade anual e concordância texto aprovado/enviado."
+      "campos/codigos coerentes",
+      "conversoes qualificadas aceitas sem duplicidade",
+      "consultas agendadas e realizadas por coorte"
     ],
-    "rollbackRule": "Conter diante de resposta clínica indevida, perda de handoff, duplicidade, troca de profissional ou avanço comercial sem evidência.",
-    "owner": "Daniel e equipe da Clínica LIV",
-    "birthdayDependency": "Modelo aniversario_clinica_liv_v1 recebido pelo WhatsApp e IN_REVIEW. Ativação permanece desligada até aprovação; autorização de Daniel já recebida, sem necessidade de repetir. Cadastro individual/consentimento não inferidos."
+    "rollbackRule": "Conter somente componente com perda/mistura de origem ou exclusao de demanda externa viavel."
   }
 }

@@ -144,3 +144,7 @@ Para incluir ou mudar um código:
 - Correção: ambos os anúncios ativos passaram a usar `_camp=G26LIFT`.
 - Limite histórico: `g26f01` permanece como evidência bruta dos cliques anteriores. Em 30/08/2026, a correspondência exata passou a resolver somente a dimensão histórica `legacy_alias_resolved`, sem backfill da célula bruta, sem promovê-la a captura canônica e sem usar procedimento, página, pessoa ou data para decidir.
 - Verificação: exatamente dois anúncios ativos foram relidos com `G26LIFT`; nenhuma outra campanha ou referência foi alterada.
+
+## Correção pontual de parâmetros — autorização de 12/09/2026
+
+A releitura atual encontrou cinco aliases legados e três grupos divergentes ainda sobrescritos em seis anúncios. A documentação de remoção anterior descreve aquela execução, não prova que a correção permaneceu. O pacote `auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json` identifica anúncio, grupo real e antes/depois exatos, sem alterar taxonomia v4 nem reinterpretar histórico. Aplicação deve ser comprovada no recibo do mesmo diretório. O delta de sessão do site no candidato `0ff0dd2` permanece pendente; esta correção não o substitui.
