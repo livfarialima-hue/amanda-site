@@ -1,5 +1,5 @@
 {
-  "status": "prepared",
+  "status": "callouts_applied_and_reread_sitelinks_prepared",
   "date": "2026-09-12",
   "account": "995-334-4486",
   "applyScope": "Only each named currently active association, not all shared associations; preserve paused campaigns.",
@@ -45,5 +45,67 @@
         "Reconhecendo no espelho": "Cardiologia na clínica"
       }
     }
-  }
+  },
+  "calloutAssociationsChanged": 29,
+  "sitelinks": [
+    {
+      "match": "Dra. Amanda Schroeder",
+      "level": "Conta",
+      "title": "Conheça a Dra. Amanda",
+      "description1": "Residência em cirurgia na Unicamp",
+      "description2": "Conheça sua trajetória"
+    },
+    {
+      "match": "Agende Sua Consulta",
+      "level": "Conta",
+      "title": "Ver Horários da Consulta",
+      "description1": "Consulta com a Dra. Amanda",
+      "description2": "Atendimento em Pinheiros"
+    },
+    {
+      "match": "Resultados Reais",
+      "level": "Conta",
+      "title": "Resultados de Cirurgias",
+      "description1": "Veja casos e suas diferenças",
+      "description2": "Resultados variam em cada caso"
+    },
+    {
+      "match": "Segurança Cirúrgica",
+      "baselineDescription1": "Planejamento antes da cirurgia",
+      "level": "Conta and only live-verified matching associations",
+      "title": "Preparo para a Cirurgia",
+      "description1": "Equipe médica em comunicação",
+      "description2": "Preparo e anestesia planejados"
+    },
+    {
+      "match": "Sobre a Dra. Amanda",
+      "baselineDescription2": "Conheça sua abordagem e médica",
+      "level": "Adulto",
+      "title": "Conheça a Dra. Amanda",
+      "description1": "Residência em cirurgia na Unicamp",
+      "description2": "Conheça sua trajetória"
+    },
+    {
+      "match": "Naturalidade do Resultado",
+      "level": "Adulto",
+      "title": "Proporção das Orelhas",
+      "description1": "Projeção e curvas de cada orelha",
+      "description2": "Planejamento com a Dra. Amanda"
+    },
+    {
+      "match": "Naturalidade Infantil",
+      "level": "AG_OTOPLASTIA_INFANTIL",
+      "title": "Planejamento das Orelhas",
+      "description1": "Atenção à proporção e às curvas",
+      "description2": "Plano para cada criança"
+    },
+    {
+      "match": "Lifting Cervical",
+      "baselineDescription1": "Quando o pescoço também pesa",
+      "level": "S_BR_SP_LIFTING_FACIAL",
+      "title": "Lifting Cervical",
+      "description1": "Planejamento de face e pescoço",
+      "description2": "Indicação, cicatrizes e preparo"
+    }
+  ]
 }
