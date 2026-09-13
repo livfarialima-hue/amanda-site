@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-WARM-CONCISE-EDUCATION-2026-09-12",
   "title": "Linguagem acolhedora e concisa em nove conteudos e novo guia de lip lifting",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "39c0f5e31976604306b7eb06368fb79c2e90f0a4",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -110,9 +110,12 @@
       "ctaPreservation": "Read-only comparison confirmed all WhatsApp opening tags byte-identical in nine existing articles; only visible copy changes. New article uses lip-lifting procedure and the canonical number.",
       "brevity": "Six recent guide bodies reduced from 545-648 to 216-257 words; essential medical coverage and urgency alerts remain. Length is not a proxy for clinical approval.",
       "liveBaseline": "2026-09-13T00:19:32.807Z: 190 provider files; zero unexplained drift; exactly eleven changed public files and one added article; nine original CTA attribute sets identical; twelve functions and five schedules captured.",
-      "operationalConsistency": "SYNC_PENDING expected until publication, Drive projection and clean canonical reconciliation. Invalid initial draft status corrected to tested_local.",
+      "operationalConsistency": "Publication and exact Drive receipts recorded. Final ops:check runs after the receipt commit on the clean canonical checkout; prior SYNC_PENDING while unpublished was expected.",
       "fullSuite": "1341/1341 passed on the integrated baseline 39c0f5e; no medical or style guardrail removed.",
-      "parallelIntegration": "Baseline documental 39c0f5e integralmente preservado; estrategia editorial renumerada para secao 28. Recibo externo da tarefa paralela preservado no historico 39c0f5e:ops/CHANGE-CANDIDATE.json."
+      "parallelIntegration": "Baseline documental 39c0f5e integralmente preservado; estrategia editorial renumerada para secao 28. Recibo externo da tarefa paralela preservado no historico 39c0f5e:ops/CHANGE-CANDIDATE.json.",
+      "releasePreflight": "CHANGE_SAFETY_STATUS=OK in release mode for fd76cf86fc8ce8e0ed05e8590fca51bdd1e167c5 at 2026-09-13T00:20:25Z; continuing editorial publication authority recorded, exact nineteen-file scope.",
+      "livePostflight": "2026-09-13T00:21:22.557Z: production/ready fd76cf8/6aa5ec483ca1f7000909ff0a; all 191 provider files match, allowing only verified packaging differences. 53/53 public routes HTTP 200 and equivalent to local artifact (47 byte-identical, six verified Netlify pretty-URL transformations). Twelve functions and five schedules identical; audit and ops sentinels 404.",
+      "driveProjection": "Same Drive file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO updated at 2026-09-13T00:22:19.937Z. Readback exactly equals all 153454 characters / 157562 bytes of committed plan 399578b192ba83b2af2f1e19b9fc40696aabac3e. SHA-256 a65fccd189dc4fc38c303aaf506171d1501ded4d54b96904c583c3dd7ddfd964. Parallel receipts preserved."
     },
     "crossConsumerCases": [
       "28 leituras unicas, contagens e busca coerentes, comparativo labial encontravel",
@@ -124,13 +127,14 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "fd76cf86fc8ce8e0ed05e8590fca51bdd1e167c5",
+    "netlifyDeployId": "6aa5ec483ca1f7000909ff0a",
     "appsScriptVersion": 149,
-    "verifiedAt": null,
+    "verifiedAt": "2026-09-13T00:22:58Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "activationState": "not_published",
-    "notes": "Revisao clinica posterior permanece pendente; v149 e apenas o recibo herdado, sem escrita ou revalidacao de Apps Script nesta tarefa."
+    "drivePlanSha256": "a65fccd189dc4fc38c303aaf506171d1501ded4d54b96904c583c3dd7ddfd964",
+    "activationState": "educational_content_live_medical_review_pending",
+    "notes": "Publicado em 12/09/2026 as 21:20:48 sob autorizacao continuada de Daniel. Nove revisoes de linguagem e um comparativo labial; 28 leituras e 53 rotas. Baseline 39c0f5e preservado, inclusive recibos Meta/roteamento. Nenhuma escrita em Ads, Apps Script, CRM ou mensagens; v149 e apenas registro herdado. Revisao clinica posterior pendente, sem autoria ou revisao atribuida. Plano commitado em 399578b192ba83b2af2f1e19b9fc40696aabac3e e substituido no mesmo Drive; igualdade exata relida. Commits de recibo usam skip ci e nao alteram o artefato publico."
   },
   "rollback": {
     "local": "Reverter somente o delta editorial sobre 39c0f5e31976604306b7eb06368fb79c2e90f0a4, preservando as atualizacoes paralelas.",
