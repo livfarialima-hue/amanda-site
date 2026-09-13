@@ -14,7 +14,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 - **Hipótese/métrica:** facilitar descoberta e interesse em consulta; medir contatos orgânicos válidos, qualificados e consultas com atribuição verificável. Impressões e CTR são diagnóstico.
 - **Revisão:** integridade imediata/24h, indexação após recrawl, primeira leitura em 26/09 e 28 dias em 10/10; sem automação criada.
 - **Manter/corrigir:** preservar fatos e navegação; corrigir regressão ou imprecisão, não perseguir oscilação de baixa amostra. Sem prometer ranking ou citação. Revisão médica não é fabricada.
-- **Estado:** preparado localmente; os recibos de publicação e verificação ficam no relatório `auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md` e no Plano Executivo. Integração canônica `a9a7ea6` preserva a execução Ads e a pendência Bruna do `4a0d633`.
+- **Estado:** publicado pelo commit `56fc749c92c35aa6dbef7a4aa27b7e822a1779b1`, Netlify `6aa5ff87bc6cda0008747ef9`, 12/09 às 22:43:01. Pós-voo: 54/54 rotas equivalentes, 65/65 sondas, 12 funções/cinco programações preservadas; 1.357 testes aprovados. Recibos no relatório `auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md` e no Plano. Integração `a9a7ea6` e registro de pendência `6327ce3` preservados, sem publicar código Bruna. Inspeções no painel GSC e revisão clínica posterior continuam pendentes.
 
 ## 12 de setembro de 2026 — segurança em primeiro lugar e cardiologia integrada
 

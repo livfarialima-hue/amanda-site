@@ -1,6 +1,6 @@
 # SEO e descoberta por IA — Dra. Amanda Schroeder
 
-Data: 12/09/2026, horário de São Paulo. Candidato `SITE-SEO-AI-DISCOVERY-2026-09-12`. Situação: implementação local, publicação ainda não realizada. O Plano Executivo continua sendo o único painel de próximas ações.
+Data: 12/09/2026, horário de São Paulo. Candidato `SITE-SEO-AI-DISCOVERY-2026-09-12`. Situação: site publicado e verificado. O Plano Executivo continua sendo o único painel de próximas ações.
 
 ## Conclusão executiva
 
@@ -81,4 +81,10 @@ Conferência viva de 12/09 às 22:36 BRT: 191 arquivos do provedor comparados, z
 
 Governança paralela: a ampliação Bruna/retomadas de cuidado foi relida do commit `6327ce3c8a7a48b8bfd0b7e418d3d97fa68f7fe3`; sua projeção de 162963 caracteres coincidiu com o Drive. Incorporado apenas o registro no Plano, sem publicar o código pendente ou acionar atendimento.
 
-Pendente: commit, deploy, pós-voo e igualdade da projeção no Drive.
+Publicação: commit funcional `56fc749c92c35aa6dbef7a4aa27b7e822a1779b1`, Netlify `6aa5ff87bc6cda0008747ef9`, `production/ready`, publicado em 12/09 às 22:43:01 BRT. Pré-voo autorizado para o commit exato aprovado e suíte de 1.357 testes repetida no commit, sem falhas.
+
+Pós-voo em 12/09 às 22:43:47 BRT: 192 arquivos do provedor equivalentes ao artefato de 193; `.gitattributes`/`.htaccess` são apenas locais e `netlify.toml` somente no inventário do provedor, com hashes conferidos. Zero divergência inesperada. Das 54 rotas, 48 são idênticas byte a byte e seis têm apenas a transformação conhecida de links pelo Netlify; todas HTTP 200 e autocanônicas. As 65 sondas adicionais passaram, incluindo duas formas do 404 corrigidas por 301, 54 aliases públicos, continuidade dos parâmetros, vídeo 200, URLs privadas/sentinelas 404 e `index.html` sem loop. Doze funções e cinco programações permaneceram idênticas. Os cinco hashes originais dos XLSX foram reconferidos sem alteração.
+
+IndexNow: plugin existente preservado, sem nova execução manual. O estado ready do deploy não comprova sozinho o aceite da notificação; nenhum recibo IndexNow foi afirmado sem leitura do resultado. Não houve pedido de indexação pelo painel do Google.
+
+Fechamento: o mesmo Plano no Drive `18iUqY6HttJwPusSAA1VGmrMqqRluyjTO` recebe a projeção canônica; igualdade, hash e ID da cópia fechada deste relatório são registrados em `ops/CHANGE-CANDIDATE.json`. O relatório não é um segundo planejamento editável.
