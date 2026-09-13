@@ -491,7 +491,7 @@ test("all public pages use one current version for every tracking asset", () => 
   }
 });
 
-test("educational pilot is complete, sourced and discoverable from the library", () => {
+test("educational articles are concise, sourced and discoverable from the library", () => {
   const articles = [
     {
       file: "conteudos/como-escolher-cirurgiao-plastico/index.html",
@@ -506,12 +506,12 @@ test("educational pilot is complete, sourced and discoverable from the library",
     {
       file: "conteudos/minilifting-lifting-facial-deep-plane/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/minilifting-lifting-facial-deep-plane/",
-      required: [/Deep plane é uma abordagem cirúrgica, não um selo de superioridade/i, /pubmed\.ncbi\.nlm\.nih\.gov\/41100833/i],
+      required: [/não significa que seja a melhor opção para todas as pessoas/i, /pubmed\.ncbi\.nlm\.nih\.gov\/41100833/i],
     },
     {
       file: "conteudos/como-se-preparar-cirurgia-plastica/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/como-se-preparar-cirurgia-plastica/",
-      required: [/Não suspenda anticoagulantes/i, /asahq\.org\/preparing-for-surgery/i, /Jejum e orientações/i],
+      required: [/Não suspenda anticoagulantes/i, /asahq\.org\/preparing-for-surgery/i, /Jejum e exames/i],
     },
     {
       file: "conteudos/recuperacao-lifting-cervical/index.html",
@@ -521,9 +521,15 @@ test("educational pilot is complete, sourced and discoverable from the library",
     {
       file: "conteudos/otomodelacao-ou-otoplastia/index.html",
       canonical: "https://draamandaschroeder.com.br/conteudos/otomodelacao-ou-otoplastia/",
-      required: [/Moldagem em bebês é uma situação diferente/i, /chop\.edu\/treatments\/ear-molding/i, /não deve ser apresentada como tratamento para perda de audição/i],
+      required: [/Moldagem em bebês é uma situação diferente/i, /chop\.edu\/treatments\/ear-molding/i, /não é um tratamento para perda de audição/i],
     },
   ];
+
+  articles.push({
+    file: "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+    canonical: "https://draamandaschroeder.com.br/conteudos/lip-lifting-ou-preenchimento-labial/",
+    required: [/não encurta a pele entre o nariz e o lábio superior/i, /cicatriz nessa região/i, /raramente, complicações graves na circulação/i, /clevelandclinic\.org\/health\/procedures\/lip-lift/, /fda\.gov\/medical-devices/, /data-procedure="lip-lifting"/],
+  });
 
   for (const article of articles) {
     const html = readFileSync(path.join(root, article.file), "utf8");
@@ -543,22 +549,25 @@ test("educational pilot is complete, sourced and discoverable from the library",
     assert.doesNotMatch(html, /R\$\s*\d/i, article.file);
     article.required.forEach((pattern) => assert.match(html, pattern, article.file));
 
-    const readableText = html
-      .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&[a-z0-9#]+;/gi, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    assert.ok(readableText.split(" ").length >= 700, `${article.file} should contain at least 700 readable words`);
+    // Prefer focused answers; required clinical coverage above still applies.
+    const body = html.match(/<div class="article-body">([\s\S]*?)<details class="article-references">/)?.[1] || "";
+    const readableText = body.replace(/<[^>]+>/g, " ").replace(/&[a-z0-9#]+;/gi, " ").trim();
+    const words = readableText.split(/\s+/).length;
+    assert.ok(words >= 150 && words <= 450, article.file + ": focused body must be 150–450 words, got " + words);
+    assert.ok([...body.matchAll(/<h2>/g)].length <= 6, article.file + " should not read like a manual");
+    for (const paragraph of body.matchAll(/<p>([\s\S]*?)<\/p>/g)) {
+      assert.ok(paragraph[1].replace(/<[^>]+>/g, " ").trim().split(/\s+/).length <= 85, article.file + " needs short paragraphs");
+    }
+    assert.match(html, /(?:consulta com a|Na consulta, a|Converse com a) (?:Dra\. )?Amanda/i, article.file + " needs a clear, respectful invitation");
   }
 
   const library = readFileSync(path.join(root, "conteudos/index.html"), "utf8");
   const uniqueArticleLinks = new Set(
     [...library.matchAll(/class="cl-article" href="([^"]+)"/g)].map((match) => match[1]),
   );
-  assert.equal(uniqueArticleLinks.size, 27);
-  assert.match(library, /data-content-total>27 leituras educativas/);
-  assert.match(library, /class="cl-library-count" data-content-total>27 conteúdos/);
+  assert.equal(uniqueArticleLinks.size, 28);
+  assert.match(library, /data-content-total>28 leituras educativas/);
+  assert.match(library, /class="cl-library-count" data-content-total>28 conteúdos/);
   articles.forEach((article) => {
     const relativeHref = article.file.replace(/^conteudos\//, "").replace(/index\.html$/, "");
     assert.match(library, new RegExp(`class="cl-article" href="${relativeHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
@@ -589,9 +598,9 @@ test("educational pilot is complete, sourced and discoverable from the library",
 
 test("expanded educational articles preserve prior material and do not claim unperformed medical review", () => {
   const expected = [
-    ["cuidados-cicatrizacao-cirurgia", /Silicone e massagem não começam em qualquer momento/i, /aad\.org\/public\/diseases\/a-z\/scars-treatment/],
+    ["cuidados-cicatrizacao-cirurgia", /Quando usar silicone ou fazer massagem/i, /aad\.org\/public\/diseases\/a-z\/scars-treatment/],
     ["papada-contorno-cervical", /Quando retirar gordura pode não ser suficiente/i, /plasticsurgery\.org\/cosmetic-procedures\/liposuction/],
-    ["seguranca-cirurgia-plastica", /Uma lista de perguntas para conferir o plano/i, /cirurgiaplastica\.org\.br\/seguranca-do-paciente\/seguranca-e-riscos/],
+    ["seguranca-cirurgia-plastica", /Três perguntas para levar à consulta/i, /cirurgiaplastica\.org\.br\/seguranca-do-paciente\/seguranca-e-riscos/],
   ];
   for (const [slug, heading, source] of expected) {
     const html = readFileSync(path.join(root, "conteudos", slug, "index.html"), "utf8");
@@ -644,11 +653,11 @@ test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orp
 
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishDirectory, "tmp/netlify-deploy");
-  assert.equal(result.summary.sitemapUrls, 52);
-  assert.equal(result.summary.expectedHttp200, 52);
-  assert.equal(result.summary.selfCanonical, 52);
-  assert.equal(result.summary.indexable, 52);
-  assert.equal(result.summary.oneH1, 52);
+  assert.equal(result.summary.sitemapUrls, 53);
+  assert.equal(result.summary.expectedHttp200, 53);
+  assert.equal(result.summary.selfCanonical, 53);
+  assert.equal(result.summary.indexable, 53);
+  assert.equal(result.summary.oneH1, 53);
   assert.equal(result.summary.orphanPages, 0);
   assert.equal(result.summary.auditFilesInArtifact, 0);
   assert.ok(result.summary.redirects >= 1);

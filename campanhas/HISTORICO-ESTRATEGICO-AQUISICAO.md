@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — linguagem educativa acolhedora e concisa
+
+- **Decisão canônica:** seção 28 do Norte Estratégico; execução editorial autorizada, publicação condicionada aos testes e à verificação registrada no Plano Executivo.
+- **Motivo e evidência:** Daniel pediu menos aparência de IA, português acolhedor, menos informação e interesse na consulta com a Amanda. Os seis guias recentes tinham 545–648 palavras no corpo principal, além de referências e navegação.
+- **Mudança:** nove revisões de textos, um comparativo curto de lip lifting e preenchimento labial, biblioteca e sitemap. Eliminar a exigência de 700 palavras e manter cobertura de segurança, fontes, parágrafos curtos e convite respeitoso.
+- **Hipótese:** reduzir esforço de leitura e facilitar a primeira conversa, sem promessa de conversão.
+- **Métrica:** contatos válidos, qualificados e consultas atribuíveis; cliques e descoberta apenas como diagnóstico.
+- **Revisão:** integridade em 24 h; leitura editorial/comercial em 19/09, 26/09 e 12/10; revisão clínica pela Dra. Amanda quando disponível, sem alegá-la realizada.
+- **Manter ou reverter:** manter conteúdo correto, legível e navegação íntegra; corrigir trecho impreciso ou excessivamente técnico e reverter apenas o componente afetado por regressão. Não alterar campanhas, bot, mensagens, funções, páginas comerciais ou atribuição.
+
 ## 12 de setembro de 2026 — piloto regional Meta cervical sem verba adicional
 
 - **Status:** publicado e verificado ao vivo no Meta Ads em 12/09/2026; monitoramento de integridade em 24 horas e de qualidade em D+7/D+14 iniciado.

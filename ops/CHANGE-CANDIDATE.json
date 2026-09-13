@@ -1,71 +1,93 @@
 {
   "schemaVersion": 1,
-  "changeId": "META-CERVICAL-REGIONAL-SEM-ORCAMENTO-2026-09-12",
-  "title": "Testar cidades proximas na campanha Meta cervical sem alterar orcamento",
-  "status": "published_verified",
-  "baseCommit": "725f4dd107ea5211bed2ddf270707ccf011908b4",
+  "changeId": "SITE-WARM-CONCISE-EDUCATION-2026-09-12",
+  "title": "Linguagem acolhedora e concisa em nove conteudos e novo guia de lip lifting",
+  "status": "tested_local",
+  "baseCommit": "39c0f5e31976604306b7eb06368fb79c2e90f0a4",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel solicitou os ajustes no Gerenciador do Facebook, proibiu qualquer mudanca de orcamento e, em 12/09/2026 as 20:58:25 BRT, respondeu 'pode' depois de receber o resumo exato do commit aprovado 4c1a63306bb26415e6b08e0993c2a648efea5af3 e dos dois itens Meta selecionados."
+    "note": "Daniel pediu continuar produzindo ou revisando os materiais em 12/09/2026, com portugues acolhedor, menos aparencia de IA, menos informacao e foco em despertar interesse na consulta com Amanda. Permanece a autorizacao explicita anterior para seguir publicacoes educativas e revisar clinicamente depois. Escopo: nove revisoes editoriais, novo comparativo lip lifting/preenchimento, biblioteca, sitemap, testes e registros canonicos. Nao autoriza campanhas, bot, mensagens ou revisao medica ficticia. Antes do envio, o Git e o Plano no Drive avancaram em paralelo para 39c0f5e, com recibos do Meta e do roteamento secundario. Esse baseline documental foi preservado integralmente, incluindo sua estrategia e historico. A producao funcional permaneceu em de53af5/6aa5e68f41e08e0008a76b33. Nenhuma escrita desta tarefa e feita nas plataformas de anuncios ou de atendimento."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
       "change-governance",
+      "site-publication",
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/reativacao-meta-2026-09-11/EXECUCAO-2026-09-11.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "campanhas/cost-guides.test.mjs",
+      "campanhas/site-technical-regression.test.mjs",
+      "conteudos/como-escolher-cirurgiao-plastico/index.html",
+      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+      "conteudos/index.html",
+      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+      "conteudos/otomodelacao-ou-otoplastia/index.html",
+      "conteudos/papada-contorno-cervical/index.html",
+      "conteudos/recuperacao-blefaroplastia/index.html",
+      "conteudos/recuperacao-lifting-cervical/index.html",
+      "conteudos/seguranca-cirurgia-plastica/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "ops/CHANGE-CANDIDATE.json"
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json",
+      "sitemap.xml"
     ]
   },
   "impact": {
     "consumers": [
-      "conta Meta Ads 1643959806249995",
-      "conjunto cervical 120251248762180627",
-      "anuncio cervical 120251248762170627",
-      "pessoas de Jundiai, Vinhedo e Valinhos que possam se deslocar a Sao Paulo",
-      "rotina anonima de revisao Meta",
-      "estrategia, historico e Plano Executivo canonicos"
+      "leitores dos nove artigos revisados e interessados em lip lifting ou preenchimento labial",
+      "biblioteca com busca e links relacionados",
+      "sitemap, indexacao, build estatico e publicacao Netlify",
+      "diretriz editorial de aquisicao e painel executivo no Git e na mesma projecao do Drive"
     ],
     "preservedInvariants": [
-      "os orcamentos vitalicios de M26C01W e M26F01W permanecem exatamente em R$ 900 cada, sem limite adicional de conjunto e sem nova verba",
-      "o termino permanece em 11/10/2026 23:59 GMT-3 e a data inicial historica nao muda",
-      "Sao Paulo +20 km, idade 40-65+, todos os generos e posicionamentos Advantage+ permanecem no conjunto cervical",
-      "Jundiai, Vinhedo e Valinhos entram apenas pelos limites municipais, sem raio adicional e sem expansao para pessoas apenas interessadas na regiao",
-      "destino manual exclusivo WhatsApp e numero +55 11 96195-7144 permanecem intactos",
-      "video, CTA, modelo de conversa, mensagem pronta e codigo M26C01W-C07H01 permanecem intactos",
-      "a campanha facial, seus objetos e textos permanecem sem qualquer edicao como controle",
-      "os sete rascunhos preexistentes permanecem sem publicacao, alteracao ou descarte",
-      "o lote educativo, o roteamento secundario, o Apps Script v149 e a producao Netlify 6aa5e68f41e08e0008a76b33 permanecem integrais",
-      "nenhuma campanha, conjunto ou anuncio novo foi criado; Google Ads, site, Bruna, retomadas, LEADS, CRM, Calendar e Apps Script ficaram fora da escrita Meta"
+      "nenhuma pagina comercial, anuncio, orcamento, bot, mensagem, Apps Script, LEADS, CRM, Calendar ou comportamento de tracking e alterado",
+      "resposta principal concisa, portugues cotidiano e convite a consulta sem pressao, vergonha, promessa de resultado ou superioridade universal de tecnica",
+      "riscos essenciais e sinais de urgencia preservados; sem diagnostico individual, doses, prazo universal ou suspensao autonoma de medicamentos",
+      "nos nove artigos existentes os hrefs e atributos dos CTAs WhatsApp permanecem identicos; numero e procedimento corretos no novo artigo",
+      "as 52 rotas existentes permanecem acessiveis, com fotos, videos, credenciais e estilos preservados; acrescenta somente uma rota educativa",
+      "nao atribuir autoria, reviewedBy ou revisao medica nao realizada; fontes primarias e revisao humana posterior pendente",
+      "comparativo labial distingue volume, proporcao, cicatriz e riscos sem equiparar cirurgia a preenchimento permanente"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Meta Ads 1643959806249995",
+        "contract": "site-publication",
+        "system": "Git canonico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T20:25:36-03:00",
-        "reference": "Sessao autenticada confirmou as duas campanhas ativas e sete rascunhos anteriores. No cervical: campanha e conjunto ativos, orcamento vitalicio R$ 900, nenhum limite de conjunto, fim 11/10/2026 23:59, Sao Paulo +20 km, 40-65+, todos os generos, posicionamentos Advantage+, WhatsApp manual e maximizacao de conversas. Anuncio ativo, video, CTA, modelo e mensagem pronta foram relidos antes da edicao.",
-        "check": "preflight somente leitura concluido antes do rascunho e da publicacao"
+        "checkedAt": "2026-09-13T00:18:31Z",
+        "reference": "Integracao sobre origin/reestruturacao-site 39c0f5e31976604306b7eb06368fb79c2e90f0a4. Candidato ccde86b preservado em branch propria; cinco arquivos documentais paralelos mantidos integralmente. O delta desta rodada continua nos 19 arquivos declarados."
+      },
+      {
+        "contract": "site-publication",
+        "system": "Netlify",
+        "status": "baseline_confirmed",
+        "checkedAt": "2026-09-13T00:19:32.807Z",
+        "reference": "API autenticada production/ready 6aa5e68f41e08e0008a76b33, commit de53af57c2d17d2fb5912379dc05f38f024dc7de. Comparacao completa dos 190 arquivos do provedor sem drift; exatamente 11 modificacoes publicas e uma nova rota. Doze funcoes, cinco schedules e todos os atributos WhatsApp dos nove artigos preservados."
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Site e documentacao de aquisicao",
+        "status": "site_only_confirmed",
+        "checkedAt": "2026-09-13T00:18:31Z",
+        "reference": "Mesma projecao Drive 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO, modificada em 2026-09-13T00:08:27.749Z, relida: igualdade exata com os 150983 caracteres do Plano em 39c0f5e. Recibos Meta/roteamento preservados, sem revalidacao ou escrita de Ads, CRM ou Apps Script nesta tarefa."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T21:08:27-03:00",
+    "completedAt": "2026-09-13T00:20:00Z",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
@@ -73,62 +95,56 @@
       "npm.cmd run site:check",
       "npm.cmd run release:preflight",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "git diff --check",
+      "node --check campanhas/content-library.js",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs"
     ],
     "results": {
-      "focusedTestsBeforePublication": "142/142 testes focados aprovados no commit autorizado",
-      "changeCheckBeforePublication": "CHANGE_SAFETY_STATUS=OK para os cinco arquivos declarados",
-      "architectureCheckBeforePublication": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullTestSuiteBeforePublication": "1336/1336 testes aprovados no commit autorizado",
-      "siteBuildBeforePublication": "188 arquivos gerados para 49 URLs, sem erros e sem artefatos de auditoria ou operacao",
-      "siteCheckBeforePublication": "49/49 rotas aprovadas",
-      "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit 4c1a63306bb26415e6b08e0993c2a648efea5af3 e para a autorizacao final registrada",
-      "metaDraftReview": "0 de 2 campanhas, 1 de 3 conjuntos e 1 de 4 anuncios; somente conjunto 120251248762180627 e anuncio 120251248762170627 selecionados; sete rascunhos anteriores desmarcados",
-      "metaPostflight": "Meta confirmou 1 conjunto de anuncios e 1 anuncio publicados; contador de rascunhos voltou de nove para sete; conjunto e anuncio cervical relidos como Ativo; facial relido como Ativo e inalterado; R$ 900 em cada campanha e nenhum limite adicional",
-      "parallelIntegration": "origin/reestruturacao-site 725f4dd107ea5211bed2ddf270707ccf011908b4 incorporado por merge, preservando o commit Meta autorizado, o lote educativo e o fechamento do roteamento secundario",
-      "integratedChecks": "sobre o codigo da ponta integrada: CHANGE_SAFETY_STATUS=OK com cinco arquivos exatos, JOURNEY_MODULE_BOUNDARIES=OK, 1341/1341 testes aprovados e git diff --check sem erros; checagens documentais repetidas depois do merge final",
-      "driveProjection": "o mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi substituido em lugar em 12/09/2026 as 21:08:27 BRT; releitura autenticada com 155023 bytes e SHA-256 54e83227f613ebd5b293f3acb37ab33c6da2007f96c46418adf487e59cb8ac45, identico ao Plano integrado"
-    }
+      "focusedTests": "23/23 site/cost tests and 6/6 human-language/contrast tests passed",
+      "crossConsumerTests": "145/145 passed",
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK, exact 19 files",
+      "staticBuild": "192 files, 53 routes, zero excluded operations or audit files, zero errors",
+      "technicalAudit": "53/53 valid canonicals, one H1, indexable; zero orphan pages",
+      "visualQa": "22 Chrome page/viewport combinations at 1440 and 390 pixels; zero overflow or broken images; primary article and mobile screenshots inspected. Search correctly prioritizes lip lifting and preenchimento labial as well as five existing query cases.",
+      "ctaPreservation": "Read-only comparison confirmed all WhatsApp opening tags byte-identical in nine existing articles; only visible copy changes. New article uses lip-lifting procedure and the canonical number.",
+      "brevity": "Six recent guide bodies reduced from 545-648 to 216-257 words; essential medical coverage and urgency alerts remain. Length is not a proxy for clinical approval.",
+      "liveBaseline": "2026-09-13T00:19:32.807Z: 190 provider files; zero unexplained drift; exactly eleven changed public files and one added article; nine original CTA attribute sets identical; twelve functions and five schedules captured.",
+      "operationalConsistency": "SYNC_PENDING expected until publication, Drive projection and clean canonical reconciliation. Invalid initial draft status corrected to tested_local.",
+      "fullSuite": "1341/1341 passed on the integrated baseline 39c0f5e; no medical or style guardrail removed.",
+      "parallelIntegration": "Baseline documental 39c0f5e integralmente preservado; estrategia editorial renumerada para secao 28. Recibo externo da tarefa paralela preservado no historico 39c0f5e:ops/CHANGE-CANDIDATE.json."
+    },
+    "crossConsumerCases": [
+      "28 leituras unicas, contagens e busca coerentes, comparativo labial encontravel",
+      "53 rotas publicas validas sem perda de canonical, H1 ou indexabilidade",
+      "nove artigos mantem CTA e midia originais; leitura mais curta sem suprimir avisos essenciais",
+      "novo artigo tem fontes primarias, identidade correta e ausencia de revisao nao realizada",
+      "Chrome desktop e mobile sem overflow ou imagens quebradas",
+      "funcoes, agendamentos e arquivos publicos fora do escopo identicos ao baseline vivo"
+    ]
   },
   "release": {
-    "approvedCommit": "4c1a63306bb26415e6b08e0993c2a648efea5af3",
-    "netlifyDeployId": "6aa5e68f41e08e0008a76b33",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 149,
-    "metaAdsMutations": [
-      {
-        "status": "published_verified",
-        "type": "adset",
-        "id": "120251248762180627",
-        "changes": "nome operacional e inclusao municipal de Jundiai, Vinhedo e Valinhos; Sao Paulo +20 km preservado"
-      },
-      {
-        "status": "published_verified",
-        "type": "ad",
-        "id": "120251248762170627",
-        "changes": "texto principal, titulo e descricao explicitam atendimento presencial em Pinheiros e deslocamento a Sao Paulo"
-      }
-    ],
+    "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "54e83227f613ebd5b293f3acb37ab33c6da2007f96c46418adf487e59cb8ac45",
-    "verifiedAt": "2026-09-12T21:08:27-03:00",
-    "activationState": "meta_cervical_regional_live_monitoring",
-    "notes": "A escrita Meta foi concluida e relida sem alterar orcamento. Netlify 6aa5e68f41e08e0008a76b33 e Apps Script v149 sao recibos atuais herdados do baseline paralelo e nao foram republicados por esta tarefa. O Plano integrado preserva o lote educativo e o fechamento do roteamento secundario; foi substituido no mesmo arquivo do Drive e relido com igualdade de tamanho e SHA-256."
+    "activationState": "not_published",
+    "notes": "Revisao clinica posterior permanece pendente; v149 e apenas o recibo herdado, sem escrita ou revalidacao de Apps Script nesta tarefa."
   },
   "rollback": {
-    "local": "reverter somente os commits Meta cuja arvore parte do commit autorizado 4c1a63306bb26415e6b08e0993c2a648efea5af3, preservando o baseline paralelo 725f4dd107ea5211bed2ddf270707ccf011908b4",
-    "production": "remover somente Jundiai, Vinhedo e Valinhos, restaurar o nome anterior e os tres textos anteriores do anuncio, sem alterar orcamento, datas, campanha facial, video, CTA, WhatsApp ou codigos"
+    "local": "Reverter somente o delta editorial sobre 39c0f5e31976604306b7eb06368fb79c2e90f0a4, preservando as atualizacoes paralelas.",
+    "production": "Se a producao nao tiver avancado, restaurar 6aa5e68f41e08e0008a76b33. Se houver publicacao paralela posterior, reverter apenas o delta editorial sobre ela; nunca apagar alteracoes de terceiros."
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "pos-voo imediato e 24 horas para integridade; 7 e 14 dias para qualidade e decisao regional",
+    "window": "integridade imediata e 24 horas; observacao editorial e comercial em 7, 14 e 30 dias sem espera obrigatoria entre publicacoes; revisao medica posterior quando disponivel",
     "metrics": [
-      "orcamento vitalicio e estado de veiculacao",
-      "entrega e conversas por cidade",
-      "cidade informada e disponibilidade real de deslocamento",
-      "contatos validos e qualificados",
-      "consultas agendadas e realizadas",
-      "custo por qualificado e por consulta"
+      "HTTP, canonical, indexabilidade, sitemap, links internos e busca da biblioteca",
+      "consultas e impressoes organicas por tema como diagnostico intermediario",
+      "cliques contextuais nos CTAs sem perda de tracking",
+      "contatos validos, leads qualificados e consultas originados dos conteudos"
     ],
-    "rollbackRule": "remover somente as tres cidades e restaurar nome e textos diante de entrega geografica incorreta, confusao sobre atendimento em Sao Paulo, piora material ou R$ 150 de gasto cervical sem contato valido com tracking saudavel; nunca alterar o orcamento neste rollback"
+    "rollbackRule": "Reverter somente o delta editorial em caso de rota quebrada, perda de tracking, regressao de indexacao ou afirmacao clinica indevida; ajustar a redacao apos revisao humana."
   }
 }

@@ -917,3 +917,18 @@ Decisão vigente:
 **Métrica e revisão:** integridade imediata e em 24 horas; observação em D+7, D+14 e D+30 de contatos válidos, qualificados e consultas atribuíveis. Busca orgânica, impressões e cliques continuam diagnósticos; mudanças simultâneas impedem afirmar causalidade. A revisão clínica posterior permanece com a Dra. Amanda. As demais pautas de prioridade 2 e cinco aprofundamentos remanescentes ficam no Plano Executivo, sem fonte paralela de planejamento.
 
 **Manter ou corrigir:** manter páginas, fontes, links, busca e tracking íntegros; corrigir trecho impreciso, afirmação clínica sem suporte ou promessa indevida assim que identificado. Se houver regressão técnica material, usar o deploy anterior registrado no candidato. Não esperar janela de marketing para corrigir segurança ou veracidade.
+## 28. Decisão autorizada de 12/09/2026 — conteúdo acolhedor, breve e orientado à consulta
+
+**Decisão vigente:** por solicitação explícita de Daniel, priorizar português brasileiro natural, acolhedor e conciso. A informação deve responder à dúvida central, despertar interesse e ajudar a iniciar a consulta com a Amanda. Isso substitui a preferência operacional por textos longos nos lotes 25 e 27; o mínimo arbitrário de 700 palavras não é objetivo editorial nem requisito de qualidade.
+
+**Aplicação:** revisar os nove textos novos ou ampliados dos dois lotes, preservando mídias, referências e alertas essenciais; acrescentar um comparativo curto entre lip lifting e preenchimento labial. A biblioteca passa de 27 para 28 leituras e o sitemap de 52 para 53 rotas. O registro de publicação efetiva ficará no Plano Executivo e no candidato, após verificação.
+
+**Critério de linguagem:** abrir com a dúvida da pessoa e uma resposta simples; explicar termos apenas quando ajudam; cortar repetições, listas extensas e frases burocráticas. Convidar para conversar com a Amanda, sem exigir que a pessoa conheça a técnica ou já tenha decidido operar. Nos guias curtos desta rodada, o corpo principal tem faixa de controle de 150–450 palavras, até seis seções e parágrafos curtos; essa faixa é um guardrail de concisão, não uma meta universal de SEO. Segurança mantém seu formato próprio, com vídeo e perguntas recolhidas.
+
+**Motivo e evidência:** feedback direto do usuário sobre excesso de informação e aparência de texto de IA; os seis guias recentes tinham 545–648 palavras só no corpo principal. Não há evidência nova de desempenho ou de preferência medida das pacientes.
+
+**Hipótese:** menos esforço de leitura e um convite mais próximo podem ajudar pessoas interessadas a chegar à consulta. Não esconder riscos ou limitações para aumentar conversão; preservar mensagens de urgência e proibição de mudar medicamentos por conta própria. Fontes ficam disponíveis sem dominar a leitura. A revisão médica posterior continua pendente, sem autoria ou revisão atribuída indevidamente.
+
+**Métrica e revisão:** contatos válidos, qualificados e consultas atribuíveis; cliques, busca e impressões apenas como diagnóstico. Integridade imediata/24 h; leitura em 19/09, 26/09 e 12/10, sem espera obrigatória para corrigir ou publicar. Mudanças simultâneas e amostra pequena impedem atribuir ganho causal ao tom.
+
+**Manter ou corrigir:** manter clareza, veracidade e navegação íntegra; ajustar frases após revisão humana ou diante de dúvidas recorrentes; retirar afirmação imprecisa imediatamente. Reverter apenas o delta afetado se houver regressão técnica. Páginas comerciais, anúncios, verba, bot, WhatsApp, funções e tracking permanecem fora do escopo; reutilização em campanhas exige etapa própria.
