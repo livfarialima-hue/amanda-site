@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
-  "status": "local_candidate",
+  "status": "published_verified",
   "baseline": {
     "repositoryCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
     "appsScriptVersion": 151,
@@ -30,7 +30,7 @@
     "CuidadosProgramados.gs"
   ],
   "readOnlyPreflight": {
-    "checkedAt": "2026-09-13T13:13:22.000Z",
+    "checkedAt": "2026-09-13T13:13:22Z",
     "activeVersion": 151,
     "liveSourcesMatchBaseline": true,
     "consultationColumns": 83,
@@ -44,10 +44,19 @@
     "scheduledManualApprovedBeforeRelease": 0
   },
   "publication": {
-    "performed": false,
-    "approvedCommit": "",
-    "appsScriptVersion": null,
-    "deployedAt": ""
+    "performed": true,
+    "approvedCommit": "7a5cf98bebbe571014f0721ee8df1c85a99ecf79",
+    "appsScriptVersion": 152,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "sameDeployment": true,
+    "deployedAt": "2026-09-13T13:27:00Z",
+    "verifiedAt": "2026-09-13T13:34:26.528Z",
+    "description": "Central prática: copiar, personalizar e cancelar definitivamente — 7a5cf98",
+    "normalizedSha256": {
+      "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
+      "Retomadas.gs": "255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a",
+      "CuidadosProgramados.gs": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568"
+    }
   },
   "localVerification": {
     "focusedTests": "131/131",
@@ -57,9 +66,39 @@
     "staticBuild": "193 arquivos e 54 rotas",
     "staticCheck": "ok, zero erro e zero arquivo operacional publico",
     "diffCheck": "OK",
-    "opsCheck": "SYNC_PENDING esperado antes da publicacao"
+    "opsCheck": "Repetir no branch canonico limpo apos o commit de fechamento",
+    "postMergeFullSuite": "1481/1481"
   },
-  "postflight": {},
+  "postflight": {
+    "checkedAt": "2026-09-13T13:28:18Z",
+    "webApp": {
+      "httpStatus": 200,
+      "syntheticInvalidToken": true,
+      "invalidLink": true,
+      "noDecisionApplied": true
+    },
+    "followups": {
+      "readOnly": true,
+      "endpointHttpStatus": 200,
+      "processorTriggers": 1,
+      "dailyEmailTriggers": 1,
+      "historicalRows": 328,
+      "scheduledLegacy": 2,
+      "scheduledAutomaticTemplate": 0,
+      "scheduledManualApproved": 0
+    },
+    "care": {
+      "readOnly": true,
+      "active": true,
+      "birthdaysActive": false,
+      "birthdayDeliveryMode": "manual_daily_reminder",
+      "consultationColumns": 83,
+      "missingHeaders": [],
+      "ledgerPresent": true,
+      "states": {},
+      "existingFollowupTriggers": 1
+    }
+  },
   "patientEffects": {
     "messagesSentByThisWork": 0,
     "dailyEmailsSentByThisWork": 0,
@@ -70,5 +109,24 @@
     "appsScriptVersion": 151,
     "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "schemaMigrationRequired": false
+  },
+  "drive": {
+    "status": "verified",
+    "plan": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view",
+      "modified": "2026-09-13T13:33:21.408Z",
+      "characters": 169933,
+      "sha256": "a939905dfd59d65efb678763eec85f97185fe1140154d79379cbdbae8c009f90",
+      "equal": true
+    },
+    "manual": {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "url": "https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view",
+      "modified": "2026-09-13T13:33:27.015Z",
+      "characters": 159190,
+      "sha256": "df2301c1a16d21957a1043515268afec747390bcfc98617cff686f5acd44eab0",
+      "equal": true
+    }
   }
 }

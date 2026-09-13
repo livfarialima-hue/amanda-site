@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
   "title": "Central de retomadas com copia, contexto e cancelamento definitivo",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "8c115f8bca193f703a30e319f8011318d85dff3e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido explicito para corrigir a Central e autorizacao cumulativa da conversa para publicar tudo que ficar pendente; nenhuma mensagem, email real ou decisao de paciente sera acionada em teste."
+    "note": "Publicacao autorizada na conversa e registrada pelo preflight exato; nenhuma mensagem, email diario ou decisao de paciente foi acionada."
   },
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -94,7 +94,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_release",
     "commands": [
       "node --test apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/ContactPreferences.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
       "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
@@ -115,13 +115,13 @@
       "baselineFailures": "7/7 novos cenarios falharam antes da implementacao inicial",
       "focused": "131/131 apos o alinhamento final entre texto exibido, copiado e aprovavel",
       "expandedContracts": "216/216, 20/20, 180/180, 206/206, 21/21, 122/122 e 83/83",
-      "fullSuite": "1473/1473",
+      "fullSuite": "1473/1473 no commit funcional; 1481/1481 apos integrar a publicacao editorial preservada",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "change": "18 arquivos exatos",
       "staticArtifact": "193 arquivos, 54 rotas, zero erro, zero arquivo de auditoria ou operacao no artefato publico",
       "visual": "PREVIA-PAINEL.html renderizada em 860x2400; copia, cancelamento definitivo, dispensa e preservacao de lembretes revisados",
       "diff": "git diff --check OK",
-      "ops": "SYNC_PENDING esperado ate publicacao, projecao Drive e merge no branch canonico"
+      "ops": "Recibos completos; repetir ops:check no branch canonico limpo apos o commit de fechamento"
     }
   },
   "previousCompletedRelease": {
@@ -187,7 +187,44 @@
       }
     }
   },
-  "release": {},
+  "release": {
+    "approvedCommit": "7a5cf98bebbe571014f0721ee8df1c85a99ecf79",
+    "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
+    "netlifyState": "inherited_from_verified_site_release",
+    "netlifyPublishedByThisChange": false,
+    "appsScriptVersion": 152,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "appsScriptSameDeployment": true,
+    "appsScriptPublishedAt": "2026-09-13T13:27:00Z",
+    "verifiedAt": "2026-09-13T13:34:26.528Z",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "a939905dfd59d65efb678763eec85f97185fe1140154d79379cbdbae8c009f90",
+    "drivePlanReadback": {
+      "modified": "2026-09-13T13:33:21.408Z",
+      "characters": 169933,
+      "equal": true
+    },
+    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveManualSha256": "df2301c1a16d21957a1043515268afec747390bcfc98617cff686f5acd44eab0",
+    "driveManualReadback": {
+      "modified": "2026-09-13T13:33:27.015Z",
+      "characters": 159190,
+      "equal": true
+    },
+    "liveSourceSha256": {
+      "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
+      "Retomadas.gs": "255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a",
+      "CuidadosProgramados.gs": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568"
+    },
+    "patientEffects": {
+      "messages": 0,
+      "dailyEmails": 0,
+      "cancellations": 0,
+      "appointments": 0,
+      "preferenceChanges": 0
+    },
+    "receiptPath": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json"
+  },
   "rollback": {
     "local": "Reverter apenas este candidato para fcae9e4, preservando os demais trabalhos paralelos.",
     "production": "Restaurar Apps Script v151 no mesmo deployment; nenhuma migracao de planilha ou alteracao de paciente e necessaria."
