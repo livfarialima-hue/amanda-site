@@ -28,11 +28,11 @@ test("child and adult landing pages keep their result cases audience-specific", 
 });
 
 test("the persuasion layer addresses emotional context and the three main barriers", () => {
-  assert.match(child, /situações simples — prender o cabelo, aparecer em fotos ou deixar o boné de lado/);
+  assert.match(child, /A vontade dos adultos, sozinha, não define a indicação/);
   assert.match(child, /Três dúvidas que merecem resposta sem pressa/);
   assert.equal((child.match(/<article class="oti2-barrier-card">/g) || []).length, 3);
 
-  assert.match(adult, /Não existe uma fase “tarde demais”/);
+  assert.match(adult, /Você entende as possibilidades de correção, as cicatrizes e a recuperação antes de decidir/);
   assert.match(adult, /Três barreiras que podem ser esclarecidas na avaliação/);
   assert.equal((adult.match(/<article class="ota2-barrier-card">/g) || []).length, 3);
   assert.match(adult, /\.ota2-barriers\{order:4\}/);
@@ -62,7 +62,7 @@ test("audience pages prepare their WhatsApp message before attribution runs", ()
 
 test("the revised audience pages expose the current modification date", () => {
   for (const page of [child, adult]) {
-    assert.match(page, /"dateModified"\s*:\s*"2026-09-03"/);
+    assert.match(page, /"dateModified"\s*:\s*"2026-09-13"/);
   }
 });
 

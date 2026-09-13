@@ -1,0 +1,196 @@
+{
+  "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
+  "account": "995-334-4486",
+  "campaignId": "24029985112",
+  "campaign": "G26OTO",
+  "dailyBudgetBRL": 15,
+  "status": "prepared_local",
+  "ads": [
+    {
+      "group": "Adulto",
+      "adId": "816612405034",
+      "url": "https://draamandaschroeder.com.br/otoplastia-adulto/",
+      "headlines": [
+        "Otoplastia para Adultos",
+        "Otoplastia em São Paulo",
+        "Cirurgiã Plástica pela Unicamp",
+        "Otoplastia com a Dra. Amanda",
+        "Planejamento de Cada Orelha",
+        "Orelhas: Forma e Proporção",
+        "Especialista com RQE",
+        "Dra. Amanda Schroeder",
+        "Consulta com a Cirurgiã",
+        "Cicatrizes e Recuperação",
+        "Preparo e Pós-Operatório",
+        "Consultório em Pinheiros",
+        "Consulta Particular: R$ 500",
+        "Segurança em Cada Etapa"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Residência em Cirurgia Plástica na Unicamp. Avaliação e cirurgia com a Dra. Amanda.",
+        "Formato, dobras e proporção das orelhas com plano individual e acompanhamento próximo.",
+        "Consulta particular: R$ 500. Entenda o plano, os cuidados e os próximos passos."
+      ],
+      "description1Pinned": true,
+      "before": {
+        "group": "Adulto",
+        "headlines": [
+          "Otoplastia para Adultos",
+          "Otoplastia em São Paulo",
+          "Proporção e Curvas das Orelhas",
+          "Otoplastia com a Dra. Amanda",
+          "Planejamento de Cada Orelha",
+          "Cirurgia das Orelhas",
+          "Entenda a Recuperação",
+          "Dra. Amanda Schroeder",
+          "Residência na Unicamp",
+          "Consulta com a Cirurgiã",
+          "Preparo e Pós-Operatório",
+          "Consultório em Pinheiros",
+          "Segurança em Primeiro Lugar",
+          "Cardiologia na Própria Clínica"
+        ],
+        "descriptions": [
+          "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+          "A projeção e as curvas de cada orelha entram no plano. Conheça a otoplastia com a Amanda.",
+          "Avaliação cardiológica na clínica, quando indicada, com médico formado pela USP.",
+          "Equipe anestésica selecionada com critério e comunicação próxima com a cirurgiã."
+        ],
+        "description1Pinned": true,
+        "liveVerifiedAt": "2026-09-13T13:45:36.295Z",
+        "liveFieldsExact": true,
+        "path1": "otoplastia",
+        "path2": "adultos",
+        "trackingTemplate": "",
+        "finalUrlSuffix": "",
+        "customParameters": {},
+        "mobileFinalUrlEnabled": false,
+        "companyName": "AMANDA SCHROEDER",
+        "headlinePins": []
+      }
+    },
+    {
+      "group": "AG_OTOPLASTIA_INFANTIL",
+      "adId": "816612778213",
+      "url": "https://draamandaschroeder.com.br/otoplastia-infantil/",
+      "headlines": [
+        "Otoplastia Infantil em SP",
+        "Cirurgiã Plástica pela Unicamp",
+        "Otoplastia com a Dra. Amanda",
+        "A Criança Também é Ouvida",
+        "Consulta com Criança e Família",
+        "Orelhas: Forma e Proporção",
+        "Especialista com RQE",
+        "Dra. Amanda Schroeder",
+        "Consulta com a Cirurgiã",
+        "Anestesia e Recuperação",
+        "Orientação aos Responsáveis",
+        "Consultório em Pinheiros",
+        "Consulta Particular: R$ 500"
+      ],
+      "descriptions": [
+        "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+        "Cirurgiã plástica com residência na Unicamp. Avaliação com a criança e os responsáveis.",
+        "Formato das orelhas, vontade da criança, anestesia e recuperação orientam o plano.",
+        "Consulta particular: R$ 500. A família entende indicação, cuidados e acompanhamento."
+      ],
+      "description1Pinned": true,
+      "before": {
+        "group": "AG_OTOPLASTIA_INFANTIL",
+        "headlines": [
+          "Otoplastia Infantil em SP",
+          "Consulta com Criança e Família",
+          "Otoplastia com a Dra. Amanda",
+          "A Criança Também é Ouvida",
+          "Cirurgia das Orelhas",
+          "Anestesia e Recuperação",
+          "Orientação aos Responsáveis",
+          "Dra. Amanda Schroeder",
+          "Residência na Unicamp",
+          "Consulta com a Cirurgiã",
+          "Preparo e Pós-Operatório",
+          "Consultório em Pinheiros",
+          "Segurança em Primeiro Lugar"
+        ],
+        "descriptions": [
+          "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+          "A criança participa da consulta com os responsáveis. Entenda cirurgia e recuperação.",
+          "Preparo e anestesia planejados conforme a idade, a saúde e a cirurgia da criança.",
+          "Equipe anestésica selecionada com critério e comunicação próxima com a cirurgiã."
+        ],
+        "description1Pinned": true,
+        "liveVerifiedAt": "2026-09-13T13:45:36.296Z",
+        "liveFieldsExact": true,
+        "path1": "otoplastia",
+        "path2": "infantil",
+        "trackingTemplate": "",
+        "finalUrlSuffix": "",
+        "customParameters": {
+          "ag": "ag_otoplastia_infantil"
+        },
+        "mobileFinalUrlEnabled": false,
+        "companyName": "AMANDA SCHROEDER",
+        "headlinePins": []
+      }
+    }
+  ],
+  "scope": "Revisão textual de dois RSAs e duas páginas, sem nova campanha nem verba. Backup do banco12/09 exige comparação com campos vivos antes de salvar.",
+  "evaluationDates": [
+    "2026-09-14",
+    "2026-09-16",
+    "2026-09-20",
+    "2026-09-27"
+  ],
+  "siteBaseline": {
+    "canonicalCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
+    "productionCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
+    "netlifyDeployId": "6aa6a754d28c24000883bb45",
+    "reconciled": true,
+    "parallelAppsScriptVersion": 152
+  },
+  "pages": [
+    {
+      "file": "otoplastia-adulto/index.html",
+      "before": {
+        "h1": "Otoplastia em adultos: menos projeção, preservando as curvas naturais.",
+        "lead": "Se você pensa em mudar a posição das orelhas, vale entender quanto pode ser corrigido e como ficam as curvas naturais. Na consulta, a Dra. Amanda examina formato, projeção e diferenças entre os lados, e explica cicatrizes e recuperação."
+      },
+      "after": {
+        "h1": "Otoplastia em adultos: o cuidado de uma cirurgiã plástica.",
+        "lead": "Com residência em Cirurgia Geral e Cirurgia Plástica pela Unicamp, a Dra. Amanda avalia a forma de cada orelha e sua proporção com o rosto. Você entende as possibilidades de correção, as cicatrizes e a recuperação antes de decidir."
+      },
+      "protectedHashes": {
+        "navigation": "6b1573b1f0235c16a71092529b6266b0d02723e12fd5648b4a32232f672508d4",
+        "scripts": "e5a6e8ae5dd5c1e61f6624862ab705da672c2d2692ee4046361e64e6f1ddec98",
+        "media": "b21536c2608ca9f55461a5dbc058555d3a9d796c76af6cab8682beaa2f7e8820"
+      },
+      "continuation": "Revisão OTO autorizada em13/09 após o lote editorial. Somente posição da autoridade, dois links educativos e textos; CTAs, mídia e scripts preservados. A ordem de mídia/navegação acompanha a seção movida."
+    },
+    {
+      "file": "otoplastia-infantil/index.html",
+      "before": {
+        "h1": "Otoplastia infantil: uma decisão em família, com a criança ouvida.",
+        "lead": "A avaliação considera o que a criança sente e deseja, além do formato das orelhas, da saúde e dos cuidados em casa. A Dra. Amanda conversa com a família sobre a cirurgia e sobre quando é melhor esperar. A vontade dos adultos, sozinha, não define a indicação."
+      },
+      "after": {
+        "h1": "Otoplastia infantil com cirurgiã plástica.",
+        "lead": "Com residência em Cirurgia Plástica pela Unicamp, a Dra. Amanda avalia as orelhas, ouve a criança e conversa com a família sobre cirurgia, anestesia e recuperação. A vontade dos adultos, sozinha, não define a indicação; acompanhar ou esperar também podem ser as melhores escolhas."
+      },
+      "protectedHashes": {
+        "navigation": "5af2abfc9342b31053802f8976d621730fa452a69ae8ba95368619efbe5357cd",
+        "scripts": "e96e2c541da6bd7a3c9b9048d549253ec9428ed9ddc2d94ef796a3d4ab280c4e",
+        "media": "b2c46f268ebfecbeb13bd80ed4cce3324544388046dc59089322da6e3611bc19"
+      },
+      "continuation": "Revisão OTO autorizada em13/09 após o lote editorial. Somente posição da autoridade, dois links educativos e textos; CTAs, mídia e scripts preservados. A ordem de mídia/navegação acompanha a seção movida."
+    }
+  ],
+  "liveCampaignBefore": {
+    "checkedAt": "2026-09-13T13:45:36.296Z",
+    "budgetBRL": 15,
+    "bidding": "Maximizar cliques",
+    "network": "Rede de pesquisa do Google",
+    "goal": "Lead qualificado GCLID — campanhas",
+    "status": "Ativada"
+  }
+}

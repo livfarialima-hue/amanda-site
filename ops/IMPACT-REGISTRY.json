@@ -649,7 +649,10 @@
         "campanhas/google-ads-communication.test.mjs",
         "auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json",
         "auditorias/google-ads-ajustes-imediatos-2026-09-12/EXECUCAO.md",
-        "campanhas/google-ads-settings.test.mjs"
+        "campanhas/google-ads-settings.test.mjs",
+        "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
+        "auditorias/otoplastia-estrategia-2026-09-13/PLANO.json",
+        "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",

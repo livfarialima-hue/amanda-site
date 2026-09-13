@@ -1,0 +1,170 @@
+{
+  "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
+  "status": "tested_local",
+  "approvedCommit": null,
+  "netlify": null,
+  "googleAds": null,
+  "automation": {
+    "id": "reavaliar-estrat-gia-de-otoplastia",
+    "name": "Reavaliar estratégia de otoplastia",
+    "kind": "heartbeat",
+    "status": "ACTIVE",
+    "timezone": "America/Sao_Paulo",
+    "checkpoints": [
+      "2026-09-14T09:00:00-03:00",
+      "2026-09-16T09:00:00-03:00",
+      "2026-09-20T09:00:00-03:00",
+      "2026-09-27T09:00:00-03:00"
+    ],
+    "readOnly": true,
+    "notifyOnlyOnCheckpointOrMeaningfulChange": true,
+    "stopAfterFinalReview": true,
+    "configurationReadBack": true
+  },
+  "drive": null,
+  "baseline": {
+    "canonicalCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
+    "netlifyDeployId": "6aa6a754d28c24000883bb45",
+    "netlifyCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
+    "appsScriptVersion": 152,
+    "appsScriptReceipt": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
+    "appsScriptPublishedByThisChange": false,
+    "netlifyPublishedAt": "2026-09-13T13:38:55.233Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "sha256": "446b5f19b2fa7bba64c4e6d9841a43a17bf0ebfda20a3168c132d37af8bcebd5",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "sha256": "398980038208e073167b78bcbfad73cd07f3d5944d15976a1888e97484c3ebdf",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "sha256": "0f3642b05a90d8deb8b7ac591e470142e30c87ce48404825416fec5467ab49cd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "sha256": "7a79dcf841a45b49692501f466417a1edbb6a4ad6650ead99f6e8710f5081de6",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "sha256": "056b0a80d62206f318496980d30ffd30d18786e90775977dab13bb6212664b26",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "sha256": "bb9fa9792e324e922d8ca49299a2833a0e0116a024d0e5da6486e4d713d8d67e",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "sha256": "91d6ec4ee7005b233ab3bc7fe31c28007f14de8b057fca385f07a98bffe33473",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "sha256": "4d100333d05e6f0ba835f5af4482aca238907e4da1bda11b6cbd0d46fd3a6044",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "sha256": "606ee92f2a5a87c879af75cf6c8442d11765fb37ffb718a2a929e0a7d057cf90",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "sha256": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "sha256": "5efbd9fc5089728ab2dcc0c1c98711d10b2ab5f0cccbdb4d237493a0749d15a1",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "sha256": "63e07321859610d1154c57af6e2d18c33ccad6eaeb7e68afb6fb12de5e136930",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
+  },
+  "localVerification": {
+    "focusTests": {
+      "passed": 23,
+      "failed": 0
+    },
+    "acquisitionContractTests": {
+      "passed": 153,
+      "failed": 0
+    },
+    "siteBuild": {
+      "files": 193,
+      "routes": 54,
+      "errors": 0
+    },
+    "visual": {
+      "viewports": [
+        {
+          "width": 390,
+          "height": 844
+        },
+        {
+          "width": 1440,
+          "height": 900
+        }
+      ],
+      "pages": [
+        "otoplastia-adulto",
+        "otoplastia-infantil"
+      ],
+      "horizontalOverflow": 0,
+      "visibleBrokenImages": 0,
+      "ctaTagsPerPage": 5,
+      "mediaAndCtaTagsUnchanged": true,
+      "runtimeHeroAndFinalLabel": "Entender a avaliação"
+    },
+    "fullSuite": {
+      "passed": 1481,
+      "failed": 0
+    },
+    "initialIssuesResolved": [
+      "Dependências do worktree disponibilizadas por junction local",
+      "Descrição estruturada alinhada ao meta description",
+      "Fim de linha LF normalizado nos recibos de hashes após rebase"
+    ],
+    "architecture": "OK",
+    "exactScope": 14,
+    "diffCheck": "OK"
+  },
+  "patientMessagesSent": 0,
+  "crmWrites": 0,
+  "consultationsCreated": 0,
+  "conversionsCreated": 0
+}

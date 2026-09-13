@@ -6,6 +6,12 @@ import { createHash } from 'node:crypto';
 const root = new URL('../', import.meta.url);
 const read = file => readFileSync(new URL(file, root), 'utf8');
 const audit = JSON.parse(read('auditorias/site-comunicacao-2026-09-13/REVISAO.json'));
+// The frozen editorial audit remains historical; later authorized OTO copy has its own receipt.
+const otoContinuation = JSON.parse(read('auditorias/otoplastia-estrategia-2026-09-13/PLANO.json'));
+const currentPages = audit.pages.map(page => {
+  const continuation = otoContinuation.pages.find(item => item.file === page.file);
+  return continuation ? { ...page, after: { ...page.after, ...continuation.after }, protectedHashes: continuation.protectedHashes } : page;
+});
 const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const plain = value => String(value || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 const nodes = html => [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap(match => {
@@ -18,7 +24,7 @@ test('editorial inventory covers the requested scope without adding public route
   assert.equal(audit.pages.length, 39);
   assert.equal(audit.inventory.unchangedPages.length, 15);
   assert.equal(new Set(audit.pages.map(page => page.file)).size, 39);
-  for (const page of audit.pages) {
+  for (const page of currentPages) {
     const html = read(page.file);
     assert.equal([...html.matchAll(/<h1\b/g)].length, 1, page.file);
     assert.equal(plain(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1]), page.after.h1, page.file);
@@ -28,7 +34,7 @@ test('editorial inventory covers the requested scope without adding public route
 });
 
 test('all revised pages preserve link destinations, attribution and operational scripts', () => {
-  for (const page of audit.pages) {
+  for (const page of currentPages) {
     const html = read(page.file);
     const navigation = [...html.matchAll(/\b(?:href|data-track|data-procedure|data-cta-location|data-attribution-code)="[^"]*"/g)].map(match => match[0]);
     const scripts = [...html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)].map(match => match[0]).filter(source => !source.includes('application/ld+json'));
@@ -38,7 +44,7 @@ test('all revised pages preserve link destinations, attribution and operational 
 });
 
 test('images, video, embeds and existing medical attribution are unchanged', () => {
-  for (const page of audit.pages) {
+  for (const page of currentPages) {
     const html = read(page.file);
     const media = [...html.matchAll(/<(?:img|video|source|iframe)\b[^>]*>/g)].map(match => match[0]);
     assert.equal(hash(media), page.protectedHashes.media, page.file + ' media');
@@ -84,7 +90,7 @@ test('revised FAQ answers agree between visible copy and structured data', () =>
 });
 
 test('new copy contains no surgical fee, superiority or risk-free claim', () => {
-  for (const page of audit.pages) {
+  for (const page of currentPages) {
     for (const change of page.changes) {
       const text = plain(change.to);
       assert.doesNotMatch(text, /melhor cirurgiã|mais segura que|resultado garantido|cirurgia sem risco|risco zero|clínica da USP|equipe da USP|garantia de resultado/i, page.file);

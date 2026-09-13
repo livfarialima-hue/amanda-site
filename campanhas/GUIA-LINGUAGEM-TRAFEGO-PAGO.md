@@ -254,3 +254,13 @@ Subordinada à seção 33 do Norte; este é um repertório de execução, não o
 - Revisão editorial não equivale a revisão médica. Não atualizar assinatura/data de revisão clínica sem a conferência real. Fotos, depoimentos e regras técnicas ficam preservados.
 
 A solicitação atual permite revisar os textos antes congelados no primeiro ciclo dos guias de custo; não altera o roteamento dos anúncios. A redação anterior de congelamento descreve a rodada de 12/09, não bloqueia esta revisão local expressamente solicitada.
+
+## Otoplastia — repertório específico de 13/09/2026
+
+Execução subordinada à seção 35 do Norte. Usar Cirurgiã Plástica pela Unicamp, Especialista com RQE, Consulta com a Cirurgiã e Planejamento de Cada Orelha como diferenciais verificáveis; explicar formato, dobras, proporção, cicatrizes e recuperação. Identificação completa permanece na descrição 1 fixada. Consulta Particular: R$ 500 comunica a primeira consulta, nunca cirurgia incluída.
+
+Na página, aproximar o bloco Por que escolher a Dra. Amanda para a otoplastia? do início. Preferir Conversar sobre a consulta neste fluxo ainda exploratório, preservando endereço, mensagem preparada, OT01/OT02 e atributos. É uma escolha específica da jornada OTO, não mudança dos demais convites do site. O convite pode informar que a equipe oferece referência cirúrgica privada para planejamento; toda faixa é informativa, não orçamento/proposta/garantia, e a avaliação pode indicar valor fora dela.
+
+Infantil: criança ouvida, conversa com responsáveis e avaliação individual de indicação, anestesia e recuperação; não prometer resolução de bullying, transformação social ou cardiologia pediátrica. Não depreciar otorrinos, dentistas ou outras categorias; não alegar que só cirurgião plástico pode operar. Fonte da preferência é a formação verificável da Amanda e o cuidado oferecido. Não inventar experiência em número de casos, título, filiação ou superioridade.
+
+Banco completo antes/depois: auditorias/otoplastia-estrategia-2026-09-13/PLANO.json. Revisões 14/09,16/09,20/09,27/09; preservar R$15/dia. Ganho de cliques sem contatos úteis não valida o texto.

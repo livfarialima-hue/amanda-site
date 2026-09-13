@@ -1,248 +1,266 @@
 {
   "schemaVersion": 1,
-  "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
-  "title": "Central de retomadas com copia, contexto e cancelamento definitivo",
-  "status": "published_verified",
-  "baseCommit": "8c115f8bca193f703a30e319f8011318d85dff3e",
+  "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
+  "title": "Escolha da cirurgiã e continuidade de otoplastia sem aumento de orçamento",
+  "status": "tested_local",
+  "baseCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Publicacao autorizada na conversa e registrada pelo preflight exato; nenhuma mensagem, email diario ou decisao de paciente foi acionada."
+    "note": "Daniel pediu estudar a campanha Google de otoplastia, rever diferenciais da Amanda, fazer as modificações e programar reavaliação breve, sem aumentar orçamento. Autorização da tarefa aplicada ao pacote exato; nenhum contato com paciente autorizado."
   },
   "risk": {
-    "level": "high",
+    "level": "medium",
     "patientEffects": false,
     "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "defaultOffUntilPublication": true,
+    "externalWritesScope": "Somente automação de reavaliação já criada; anúncios e site ainda não publicados por este pacote."
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "patient-journey-funnel-followups",
-      "appointment-reminders",
-      "patient-lifecycle-governance",
-      "patient-care-milestones"
+      "site-publication",
+      "google-ads-acquisition-conversion",
+      "site-editorial-copy"
     ],
     "files": [
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "auditorias/central-retomadas-pratica-2026-09-13/PREVIA-PAINEL.html",
-      "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
-      "auditorias/central-retomadas-pratica-2026-09-13/RELATORIO.md",
+      "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
+      "auditorias/otoplastia-estrategia-2026-09-13/PLANO.json",
+      "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
+      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html",
+      "campanhas/otoplasty-pages.test.mjs",
+      "sitemap.xml",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
-      "netlify/functions/lib/bruna-policy/manifest.json"
+      "campanhas/site-communication.test.mjs"
     ]
   },
   "impact": {
     "consumers": [
-      "apps-script/clinica-liv-leads/ContactPreferences.gs",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "netlify/functions/lib/bruna-policy/manifest.json"
+      "abdominoplastia/index.html",
+      "avaliacao-facial/index.html",
+      "blefaroplastia/index.html",
+      "braquioplastia/index.html",
+      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+      "conteudos/botox-preenchimento-bioestimulador/index.html",
+      "conteudos/como-escolher-protese-de-mama/index.html",
+      "conteudos/consulta-cirurgia-plastica/index.html",
+      "conteudos/lifting-facial-ou-injetaveis/index.html",
+      "conteudos/lipoenxertia-facial/index.html",
+      "conteudos/naturalidade-envelhecimento/index.html",
+      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      "conteudos/recuperacao-lifting-facial/index.html",
+      "conteudos/seguranca-cirurgia-plastica/index.html",
+      "contorno-corporal/index.html",
+      "dra-amanda-schroeder/index.html",
+      "index.html",
+      "injetaveis/index.html",
+      "lifting-cervical/index.html",
+      "lifting-facial/index.html",
+      "lip-lifting/index.html",
+      "lipo-de-papada/index.html",
+      "lipoaspiracao/index.html",
+      "mama/index.html",
+      "mamoplastia-redutora/index.html",
+      "mastopexia-com-protese/index.html",
+      "mastopexia/index.html",
+      "ninfoplastia/index.html",
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html",
+      "otoplastia/index.html",
+      "pos-bariatrica/index.html",
+      "procedimentos/index.html",
+      "protese-de-mama/index.html",
+      "AGENTS.md",
+      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "campanhas/assets/conteudos/videos/medo-de-resultados-exagerados-poster.webp",
+      "campanhas/assets/conteudos/videos/olhar-envelhecido-blefaroplastia-poster.webp",
+      "campanhas/assets/conteudos/videos/queixa-e-solucao-face-poster.webp",
+      "campanhas/assets/otoplastia-infantil/otoplastia-em-crianca-poster.webp",
+      "campanhas/assets/video-apresentacao-clinica-liv-poster.webp",
+      "campanhas/content-library.css",
+      "campanhas/content-library.js",
+      "campanhas/conversion-pages-body.css",
+      "campanhas/conversion-pages-classic-visual.css",
+      "campanhas/cost-guides.test.mjs",
+      "campanhas/footer-consistency.test.mjs",
+      "campanhas/lifting-price-page.test.mjs",
+      "campanhas/otoplasty-pages.test.mjs",
+      "campanhas/secondary-conversion.css",
+      "campanhas/secondary-conversion.js",
+      "campanhas/seo-discovery.test.mjs",
+      "campanhas/site-enhancements.css",
+      "campanhas/site-enhancements.js",
+      "conteudos/como-escolher-cirurgiao-plastico/index.html",
+      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+      "conteudos/index.html",
+      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+      "conteudos/otomodelacao-ou-otoplastia/index.html",
+      "conteudos/papada-contorno-cervical/index.html",
+      "conteudos/recuperacao-blefaroplastia/index.html",
+      "conteudos/recuperacao-lifting-cervical/index.html",
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+      "google-ads-scripts/google-ads-search-review-email.js",
+      "netlify/functions/lib/patient-replies.mjs"
     ],
     "preservedInvariants": [
-      "Abrir o painel e copiar uma mensagem sao operacoes somente leitura; nenhuma decisao vem preselecionada.",
-      "Cancelar definitivamente exige confirmacao explicita, vale somente para o telefone relido no item e grava a preferencia canonica Nunca retomar antes de cancelar planos pendentes.",
-      "Nunca retomar impede contatos proativos, mas nao cancela consulta nem bloqueia lembretes operacionais de consulta confirmada.",
-      "Personalizacao usa apenas primeiro nome seguro e contexto ja identificado; dado ausente ou ambiguo nao e inventado.",
-      "Aprovacao com a Bruna apenas programa e continua sujeita a revalidacao de conversa, preferencias, janela e seguranca antes do envio."
+      "Somente campanha 24029985112 / G26OTO, dois RSAs e duas páginas próprias",
+      "R$15/dia e demais orçamentos preservados; nenhuma mudança de lance, rede, palavra, segmentação ou meta",
+      "OT01/OT02, cinco CTAs por página, URLs e atributos de tracking preservados",
+      "Sem promessas, comparação depreciativa, superioridade presumida ou faixa cirúrgica pública",
+      "Criança ouvida; nenhuma promessa de cardiologia pediátrica",
+      "Zero alteração de bot, Apps Script, CRM, agenda, mensagens e contatos antigos"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Apps Script / LEADS / Netlify",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22Z",
-        "reference": "Alvo canonico confirmado; Retomadas e painel vivos iguais ao baseline. Diagnostico autenticado somente leitura: endpoint 200, um gatilho do processador, um do email diario, dois planos legados programados preservados, zero template automatico e zero manual aprovado."
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Google Ads / LEADS / Netlify",
+        "status": "verified_read_only",
+        "reference": "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
+        "checkedAt": "2026-09-13T13:25:52.234Z",
+        "evidence": "Conta995-334-4486; campanha ativa R$15/dia;357cliques,R$788,89,6conversões históricas de interface até12/09. Agregado13/09 e CRM:3contatos Novo,0consulta; produção6aa6998a46297000089e1e5d. Página infantil idêntica; adulta apenas reescrita do link inicial pelo Netlify."
       },
       {
-        "contract": "appointment-reminders",
-        "system": "Apps Script / LEADS / Google Calendar",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22Z",
-        "reference": "Alvo canonico confirmado; 83 colunas e zero cabecalho ausente. A mudanca nao altera Calendar, consulta ou disparador; lembretes confirmados ficam fora do cancelamento definitivo."
+        "contract": "site-editorial-copy",
+        "system": "Netlify",
+        "status": "verified_read_only",
+        "reference": "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
+        "checkedAt": "2026-09-13T13:37:00.959Z",
+        "evidence": "Release paralelo 77433528 publicado em 13:22:23.809Z, deploy6aa6a37365ed3d0008e3d1cc ready. Rebase sobre fechamento8c115f8; duas aberturas reconciliadas, todos os demais deltas preservados."
       },
       {
-        "contract": "patient-lifecycle-governance",
-        "system": "Apps Script / LEADS / Google Calendar / YCloud",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22Z",
-        "reference": "Painel e cuidados vivos iguais ao baseline; diagnostico readOnly=true confirmou schema de 83 colunas, ledger presente, um gatilho e nenhuma escrita de paciente, agenda ou preferencia."
+        "contract": "change-governance",
+        "system": "Repositório / recibo do Apps Script",
+        "status": "verified_read_only",
+        "reference": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
+        "checkedAt": "2026-09-13T13:51:36.252Z",
+        "evidence": "Reconciliado sobre dbe738d, com Central v152 publicada e verificada por tarefa paralela; esta tarefa não executa Apps Script. Netlify6aa6a373 permanece predecessor observado."
       },
       {
-        "contract": "patient-care-milestones",
-        "system": "Apps Script / LEADS / Netlify",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T13:13:22Z",
-        "reference": "CuidadosProgramados vivo igual ao baseline; cuidados ativos, aniversario automatico desligado, modo manual_daily_reminder, zero cabecalho ausente e endpoint com careEnabled=true e birthdayEnabled=false."
+        "contract": "site-publication",
+        "system": "Netlify authenticated API",
+        "status": "verified_read_only",
+        "checkedAt": "2026-09-13T13:55:25.244Z",
+        "reference": "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json",
+        "evidence": "Current ready production 6aa6a754d28c24000883bb45, commit dbe738d32d53cc91bf9625ec761e12b7ce18f2d9, published 2026-09-13T13:38:55.233Z. Automatic parallel deployment preserved before publishing OTO."
       }
     ]
   },
   "verification": {
-    "status": "passed_release",
+    "status": "passed_local",
     "commands": [
-      "node --test apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/ContactPreferences.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
+      "git diff --check",
+      "node --check campanhas/content-library.js",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run ops:check",
-      "git diff --check"
+      "node --test campanhas/google-ads-settings.test.mjs",
+      "node --test campanhas/otoplasty-pages.test.mjs",
+      "node --test campanhas/site-communication.test.mjs"
     ],
+    "completedAt": "2026-09-13T13:55:25.243Z",
     "results": {
-      "baselineFailures": "7/7 novos cenarios falharam antes da implementacao inicial",
-      "focused": "131/131 apos o alinhamento final entre texto exibido, copiado e aprovavel",
-      "expandedContracts": "216/216, 20/20, 180/180, 206/206, 21/21, 122/122 e 83/83",
-      "fullSuite": "1473/1473 no commit funcional; 1481/1481 apos integrar a publicacao editorial preservada",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "change": "18 arquivos exatos",
-      "staticArtifact": "193 arquivos, 54 rotas, zero erro, zero arquivo de auditoria ou operacao no artefato publico",
-      "visual": "PREVIA-PAINEL.html renderizada em 860x2400; copia, cancelamento definitivo, dispensa e preservacao de lembretes revisados",
-      "diff": "git diff --check OK",
-      "ops": "OPS_CHECK_STATUS=OK no branch canonico limpo, repetido no HEAD final"
+      "fullSuite": {
+        "passed": 1481,
+        "failed": 0
+      },
+      "focused": {
+        "passed": 23,
+        "failed": 0
+      },
+      "acquisition": {
+        "passed": 153,
+        "failed": 0
+      },
+      "architecture": "OK",
+      "changeSafety": "OK",
+      "build": {
+        "files": 193,
+        "routes": 54,
+        "errors": 0
+      },
+      "visual": "Adulto/infantil in mobile390x844 and desktop1440x900; no overflow, five CTA tags preserved",
+      "operationalConsistency": "SYNC_PENDING expected before publication/Drive reconciliation"
     }
   },
   "previousCompletedRelease": {
-    "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
-    "sourceCommit": "8c115f8bca193f703a30e319f8011318d85dff3e",
+    "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
+    "sourceCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
     "release": {
-      "approvedCommit": "77433528d0247c46f5482db29932094e0f534783",
+      "approvedCommit": "7a5cf98bebbe571014f0721ee8df1c85a99ecf79",
       "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
-      "verifiedAt": "2026-09-13T13:28:29Z",
+      "netlifyState": "inherited_from_verified_site_release",
+      "netlifyPublishedByThisChange": false,
+      "appsScriptVersion": 152,
+      "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+      "appsScriptSameDeployment": true,
+      "appsScriptPublishedAt": "2026-09-13T13:27:00Z",
+      "verifiedAt": "2026-09-13T13:37:10Z",
       "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanProjectionStatus": "verified",
-      "notes": "Site7743352 publicado e verificado; Plano no mesmo ID e relatorio fechado relidos iguais por SHA256. Apps Script151 herdado;12funcoes/5programacoes identicas e aniversario manual preservado. Finalizacao documental apenas, sem novo deploy funcional. Candidato de atribuicao0ff0dd2 intocado.",
-      "integrationRequiredBeforePublication": false,
-      "observedParallelCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
-      "appsScriptVersion": 151,
-      "publishedAt": "2026-09-13T13:22:23.809Z",
-      "inheritedPlatformState": {
-        "appsScriptPublishedByThisTask": false,
-        "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117"
-      },
-      "driveAuditFolderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2",
-      "drivePlanSha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+      "drivePlanSha256": "a939905dfd59d65efb678763eec85f97185fe1140154d79379cbdbae8c009f90",
       "drivePlanReadback": {
-        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-        "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view",
-        "modified": "2026-09-13T13:28:07.046Z",
-        "characters": 168596,
-        "sha256": "f3a484f1f4514056d0afab805d2370305d5261d2d7b805c021bc3a3430ba3b85",
+        "modified": "2026-09-13T13:33:21.408Z",
+        "characters": 169933,
         "equal": true
       },
-      "driveClosedAuditReadback": {
-        "id": "1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA",
-        "url": "https://drive.google.com/file/d/1r5eHKdEIv8QLSmRLSR4u6cjDXZvfWqrA/view?usp=drivesdk",
-        "modified": "2026-09-13T13:28:09.426Z",
-        "characters": 13429,
-        "sha256": "def372b83bbbc45bc3ed6cbc9aa3116a6bb35f3ebf4fb449789debfb84f42f8b",
-        "equal": true
+      "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "driveManualSha256": "6af64e0be2250581019c0a947f01a40553fc91f89856e277e50abae11761edac",
+      "driveManualReadback": {
+        "localPath": "docs/estrategia-abordagem-bruna.md",
+        "modified": "2026-09-13T13:37:05.064Z",
+        "characters": 102443,
+        "equal": true,
+        "correctionCompletedBeforeClosure": true
       },
-      "documentationCommit": "1a932056f6df0ef5743dad5206a2f62198944a38"
-    },
-    "previousCompletedRelease": {
-      "changeId": "ANIVERSARIO-MANUAL-2026-09-13",
-      "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
-      "release": {
-        "approvedCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
-        "verifiedAt": "2026-09-13T12:45:53.115Z",
-        "netlifyDeployId": "6aa6998a46297000089e1e5d",
-        "appsScriptVersion": 151,
-        "drivePlanSha256": "08d36b09e75bd909df88a9af27b6fc485c3849fdaaf2a17ac1032fe42fffd4b8",
-        "receipts": {
-          "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-          "appsScriptFilesMatched": 3,
-          "appsScriptDiagnostic": "active=true;birthdaysActive=false;birthdayDeliveryMode=manual_daily_reminder;consultationColumns=83;states={};existingFollowupTriggers=1",
-          "netlifyPublishedAt": "2026-09-13T12:40:11.812Z",
-          "productionHttpStatus": 200,
-          "unauthenticatedScheduledFollowupStatus": 401,
-          "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-          "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-          "driveManualSha256": "0b760620cdc7037dd85f9416e6352bd8ca82cd83003f55e462f40540ae153e2a",
-          "patientTestMessages": 0,
-          "realTestEmails": 0
-        }
-      }
+      "liveSourceSha256": {
+        "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
+        "Retomadas.gs": "255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a",
+        "CuidadosProgramados.gs": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568"
+      },
+      "patientEffects": {
+        "messages": 0,
+        "dailyEmails": 0,
+        "cancellations": 0,
+        "appointments": 0,
+        "preferenceChanges": 0
+      },
+      "receiptPath": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json"
     }
   },
-  "release": {
-    "approvedCommit": "7a5cf98bebbe571014f0721ee8df1c85a99ecf79",
-    "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
-    "netlifyState": "inherited_from_verified_site_release",
-    "netlifyPublishedByThisChange": false,
-    "appsScriptVersion": 152,
-    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-    "appsScriptSameDeployment": true,
-    "appsScriptPublishedAt": "2026-09-13T13:27:00Z",
-    "verifiedAt": "2026-09-13T13:37:10Z",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "a939905dfd59d65efb678763eec85f97185fe1140154d79379cbdbae8c009f90",
-    "drivePlanReadback": {
-      "modified": "2026-09-13T13:33:21.408Z",
-      "characters": 169933,
-      "equal": true
-    },
-    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-    "driveManualSha256": "6af64e0be2250581019c0a947f01a40553fc91f89856e277e50abae11761edac",
-    "driveManualReadback": {
-      "localPath": "docs/estrategia-abordagem-bruna.md",
-      "modified": "2026-09-13T13:37:05.064Z",
-      "characters": 102443,
-      "equal": true,
-      "correctionCompletedBeforeClosure": true
-    },
-    "liveSourceSha256": {
-      "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
-      "Retomadas.gs": "255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a",
-      "CuidadosProgramados.gs": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568"
-    },
-    "patientEffects": {
-      "messages": 0,
-      "dailyEmails": 0,
-      "cancellations": 0,
-      "appointments": 0,
-      "preferenceChanges": 0
-    },
-    "receiptPath": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json"
-  },
   "rollback": {
-    "local": "Reverter apenas este candidato para fcae9e4, preservando os demais trabalhos paralelos.",
-    "production": "Restaurar Apps Script v151 no mesmo deployment; nenhuma migracao de planilha ou alteracao de paciente e necessaria."
+    "local": "Reverter somente o pacote OTO preservando alterações paralelas.",
+    "production": "Reverter somente o delta OTO e restaurar os dois RSAs do backup. Predecessor imediato 6aa6a754d28c24000883bb45, commit dbe738d32d53cc91bf9625ec761e12b7ce18f2d9; se houver publicação posterior, não restaurar um deploy antigo sobre ela. Preservar R$15/dia, Apps Script152 e todas as políticas do atendimento."
   },
   "monitoring": {
-    "owner": "Daniel/equipe",
-    "window": "Primeiro painel diario, 24 horas e 72 horas; sem nova automacao Codex",
+    "owner": "Daniel / equipe",
+    "window": "Integridade14/09;reavaliação breve16/09;negócio20/09 e27/09, a partir do horário real de aplicação",
     "metrics": [
-      "copia preserva exatamente a mensagem exibida",
-      "sugestao usa nome e assunto somente quando seguros",
-      "cancelamento definitivo nao reaparece em retomadas proativas",
-      "lembretes de consulta confirmada continuam preservados",
-      "nenhuma decisao afeta outro telefone"
+      "contatos identificados",
+      "contatos válidos classificados",
+      "qualificados",
+      "consultas agendadas e realizadas",
+      "custo por etapa",
+      "perda de atribuição",
+      "aprovação dos anúncios"
     ],
-    "rollbackRule": "Restaurar a v151 se a Central copiar texto divergente, bloquear outro contato, perder lembrete operacional ou aplicar decisao sem confirmacao."
+    "rollbackRule": "Corrigir imediatamente reprovação, promessa indevida, quebra de CTA ou destino. Em D+7, zero contato novo com50cliques ouR$105 exige nova decisão humana; não aumentar verba. Pouca amostra => inconclusivo."
   }
 }
