@@ -30,6 +30,8 @@
     ['cansado', 'cansados', 'cansada', 'cansadas'],
     ['pos-operatorio', 'pos operatorio', 'recuperacao', 'edema'],
     ['cicatriz', 'cicatrizes', 'cicatrizacao'],
+    ['preparo', 'preparacao', 'preparar', 'preoperatorio', 'pre-operatorio', 'pre operatorio'],
+    ['orelha', 'orelhas', 'otoplastia', 'otomodelacao'],
     ['peito', 'seio', 'seios', 'mama', 'mamas'],
     ['rosto', 'face', 'facial', 'rejuvenescimento'],
     ['flacidez', 'queda', 'sustentacao', 'lifting', 'minilifting', 'smas', 'deep', 'plane'],
@@ -96,13 +98,13 @@
       for (var j = 0; j < variants.length; j += 1) {
         var term = variants[j];
         if (article.titleSearch.indexOf(term) > -1) {
-          best = Math.max(best, 6);
+          best = Math.max(best, term === tokens[i] ? 9 : 6);
           matched = true;
         } else if (article.labelSearch.indexOf(term) > -1) {
-          best = Math.max(best, 3);
+          best = Math.max(best, term === tokens[i] ? 6 : 3);
           matched = true;
         } else if (article.bodySearch.indexOf(term) > -1) {
-          best = Math.max(best, 1);
+          best = Math.max(best, term === tokens[i] ? 4 : 1);
           matched = true;
         }
       }

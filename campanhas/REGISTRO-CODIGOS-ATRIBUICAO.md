@@ -39,6 +39,11 @@ Este registro impede que códigos históricos sejam reinterpretados como uma ori
 | `ag_blefaroplastia` | `AG_BLEFAROPLASTIA` | canônico |
 | `ag_abdominoplastia` | `AG_ABDOMINOPLASTIA` | canônico desde 12/09/2026 |
 | `ag_cirurgia_facial` | `AG_CIRURGIA_FACIAL` | canônico |
+| `ag_cirurgia_mama_preco` | `AG_CIRURGIA_MAMA_PRECO` | alias histórico publicado na v148; grupo pausado em 12/09/2026 após a migração específica |
+| `ag_contorno_corporal_preco` | `AG_CONTORNO_CORPORAL_PRECO` | alias histórico publicado na v148; grupo pausado em 12/09/2026 após a migração específica |
+| `ag_lipoaspiracao_preco` | `AG_LIPOASPIRACAO_PRECO` | canônico e ativo desde 12/09/2026; registrado no Apps Script v149 |
+| `ag_mastopexia_preco` | `AG_MASTOPEXIA_PRECO` | canônico e ativo desde 12/09/2026; registrado no Apps Script v149 |
+| `ag_protese_mama_preco` | `AG_PROTESE_MAMA_PRECO` | canônico e ativo desde 12/09/2026; registrado no Apps Script v149 |
 | `ag_lifting_cervical` | `AG_CERVICOPLASTIA` | canônico |
 | `ag_lipoaspiracao` | `AG_LIPOASPIRACAO` | canônico desde 12/09/2026 |
 | `ag_lipo_papada` | `AG_LIPO_PAPADA` | canônico |

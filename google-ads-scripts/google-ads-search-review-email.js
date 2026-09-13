@@ -31,7 +31,7 @@ const CONFIG = Object.freeze({
   anomalyLookbackWeeks: 8,
   minAbsoluteAnomalyCost: 30,
   minClicksForSegmentDecision: 30,
-  totalDailyBudgetReference: 87,
+  totalDailyBudgetReference: 103,
 });
 
 const IRRELEVANT_TERM_RULES = Object.freeze([
@@ -51,7 +51,9 @@ const PROTECTED_LAY_TERMS = Object.freeze([
 ]);
 
 const PROCEDURE_TOKENS = Object.freeze([
+  "abdominoplastia",
   "blefaroplastia",
+  "cirurgia de mama",
   "palpebra",
   "lifting facial",
   "mini lifting",
@@ -61,7 +63,17 @@ const PROCEDURE_TOKENS = Object.freeze([
   "cervicoplastia",
   "platismoplastia",
   "lipo de papada",
+  "lipoaspiracao",
+  "lipoescultura",
   "papada",
+  "mamoplastia",
+  "mastopexia",
+  "lifting mamario",
+  "protese de mama",
+  "protese de silicone",
+  "reducao de mama",
+  "silicone nos seios",
+  "contorno corporal",
   "otoplastia",
   "orelha de abano",
   "cirurgia facial",
@@ -78,6 +90,12 @@ const INTENTIONAL_ROUTING_NEGATIVES = Object.freeze([
   { campaign: "S_BR_SP_LIFTING_FACIAL", adGroup: "—", text: "cirurgia de palpebras", matchType: "PHRASE" },
   { campaign: "S_BR_SP_OTOPLASTIA", adGroup: "Adulto", text: "orelha de abano crianca", matchType: "PHRASE" },
   { campaign: "S_BR_SP_LIFTING_FACIAL", adGroup: "AG_LIFTING_FACIAL", text: "valor", matchType: "PHRASE" },
+  { campaign: "S_BR_SP_CIRURGIA_MAMA", adGroup: "AG_MASTOPEXIA", text: "preço mastopexia", matchType: "EXACT" },
+  { campaign: "S_BR_SP_CIRURGIA_MAMA", adGroup: "AG_MASTOPEXIA", text: "mastopexia preço", matchType: "EXACT" },
+  { campaign: "S_BR_SP_CIRURGIA_MAMA", adGroup: "AG_PROTESE_MAMA", text: "silicone nos seios preço", matchType: "EXACT" },
+  { campaign: "S_BR_SP_CIRURGIA_MAMA", adGroup: "AG_PROTESE_MAMA", text: "prótese de silicone valor", matchType: "EXACT" },
+  { campaign: "S_BR_SP_CONTORNO_CORPORAL", adGroup: "AG_LIPOASPIRACAO", text: "lipoaspiração preço", matchType: "EXACT" },
+  { campaign: "S_BR_SP_CONTORNO_CORPORAL", adGroup: "AG_LIPOASPIRACAO", text: "lipoescultura valor", matchType: "EXACT" },
 ]);
 
 function main() {
