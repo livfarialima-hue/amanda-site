@@ -9,7 +9,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 ### Google Pesquisa
 
 - Usar os termos populares em grupos temáticos pequenos, com correspondência de frase ou exata no início.
-- Manter o título do anúncio clínico e sóbrio: problema percebido + avaliação + localização.
+- Apresentar o procedimento desejado, a escolha da cirurgiã e um motivo concreto de confiança. Combinar intenção de busca, benefício estético como objetivo do planejamento, formação verificável, segurança organizada e localização; não limitar todo anúncio a 'avaliação'.
 - Levar cada grupo à página específica que repete naturalmente aquela linguagem.
 - Separar intenção informativa de intenção de consulta; não misturar lifting, procedimentos minimamente invasivos e preço no mesmo grupo.
 - Para buscas como `lifting facial preço`, `valor do lifting` e `quanto custa lifting facial`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`. A promessa do anúncio é explicar componentes, fatores de variação e orçamento individual, não publicar faixa cirúrgica. Para indicação, técnica, resultados e recuperação, preservar `https://draamandaschroeder.com.br/lifting-facial/` como destino principal.
@@ -20,6 +20,18 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Os dois novos destinos só podem entrar no Google Ads depois de publicação e verificação HTTP/visual. Nesta intervenção, preservar orçamento, lance, metas, RSAs, negativas, público, agenda, dispositivos, redes e geografia.
 - Manter separados `AG_LIFTING_FACIAL` e `AG_LIFTING_FACIAL_PRECO`. No grupo geral, usar negativas **exatas** de roteamento para as cinco formas canônicas de preço: `[lifting facial preço]`, `[mini lifting facial preço]`, `[preço mini lifting facial]`, `[quanto custa lifting facial]` e `[valor lifting facial]`. As duas primeiras já estão aplicadas; as três restantes dependem de autorização específica. Nunca negativar `preço`, `valor`, `custo`, `quanto custa` ou `valor médio` em nível de campanha, conta ou lista compartilhada enquanto o grupo de preço estiver ativo.
 - Evitar promessas, superlativos, urgência artificial e afirmações como “resultado garantido”.
+
+### Segurança como diferencial de comunicação — revisão de 12/09/2026
+
+- Segurança é a primeira prioridade, antes de preferência estética, conveniência ou preço. Comunicar os cuidados concretos, nunca 'risco zero', 'cirurgia sem risco', superioridade não demonstrada ou promessa de ausência de complicações.
+- Nos anúncios de cirurgia para adultos, valorizar a possibilidade de avaliação cardiológica na própria Clínica LIV **quando indicada**, com comunicação entre cardiologia, cirurgia plástica e anestesia. Não dizer que todos precisam desse atendimento nem que esteja automaticamente incluído na consulta ou no preço da cirurgia.
+- A página pública de segurança identifica o Dr. Daniel Added como cardiologista formado pela USP e médico do InCor, CRM-SP 199104. Preferir a atribuição precisa 'médico formado pela USP' / 'cardiologista formado pela USP'; não 'clínica da USP', 'equipe USP' ou 'cirurgia com chancela da USP'. Formação não significa vínculo institucional da LIV nem aval da universidade. Anúncio nominal de outro especialista exigirá conferir também sua identificação profissional completa.
+- A boa formação e a seleção criteriosa dos anestesistas são critérios de composição da equipe, informados por Daniel. Usar 'Anestesistas selecionados' ou 'Equipe anestésica selecionada com critério e comunicação próxima com a cirurgiã'. Não presumir formação USP de todos nem prometer um profissional específico sem confirmação.
+- Otoplastia infantil: explicar preparo conforme idade e condições clínicas e comunicação com os responsáveis. Não reutilizar o argumento de cardiologista adulto como promessa de atendimento cardiológico pediátrico.
+- Arquitetura dos textos: título do procedimento; títulos complementares sobre Amanda/formação/segurança; identificação médica completa na descrição 1 fixada; descrição estética específica; cardiologia condicional e/ou equipe anestésica em descrições e recursos pertinentes. Recursos compartilhados na conta devem servir também a mama, corpo e otoplastia.
+- Frases aprovadas para uso pertinente: `Segurança em Primeiro Lugar` (título, 27); `Cardiologia na Própria Clínica` (título, 30); `Cardiologia na clínica` (destaque, 22); `Anestesistas selecionados` (destaque, 25); `Preparo e pós-operatório` (destaque, 24).
+- O sitelink de segurança deve apontar para o conteúdo público existente `https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/`. Nesta tarefa, não editar o site. A cópia do anúncio precisa manter essa coerência sem prometer novos exames, comodidades ou serviços.
+- Em grupos de preço, preservar uma explicação útil de composição do orçamento e acrescentar segurança como critério da escolha, sem desconto ou economia obtida pela redução de cuidados.
 
 ### Meta
 

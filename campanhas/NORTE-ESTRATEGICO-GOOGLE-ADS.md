@@ -65,6 +65,14 @@ Os textos de mama, corpo e otoplastia são próprios do procedimento. Recursos c
 
 **Manter ou corrigir:** manter enquanto houver conformidade, pertinência ao procedimento e continuidade íntegra até o atendimento. Corrigir ou restaurar somente os textos responsáveis por reprovação, expectativa incompatível, incoerência com a página ou deterioração consistente de qualidade. Não restaurar promessas de resultado ou recursos faciais fora de contexto. A lista preparada e o recibo de execução ficam nos arquivos `REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.*`; o estado publicado será declarado somente depois de releitura na conta.
 
+### Complemento autorizado — segurança integrada como diferencial
+
+A segurança deve ser o primeiro critério de decisão comunicado, sustentado por preparo individual, avaliação cardiológica na própria LIV quando indicada, comunicação entre cirurgia plástica, cardiologia e anestesia, seleção criteriosa dos anestesistas e acompanhamento. A formação do cardiologista pela USP é um atributo do profissional, não chancela institucional da clínica nem garantia de resultado. A página pública de segurança já sustenta a avaliação integrada e a formação; Daniel confirmou nesta tarefa a seleção criteriosa da equipe anestésica.
+
+Esse benefício facilita o cuidado e a organização do preparo; não torna consulta cardiológica obrigatória para todos nem permite dizer que está incluída no preço. A publicidade infantil não presume atendimento cardiológico pediátrico. Segurança e naturalidade não são diferenciais exclusivos comprovados perante concorrentes: o posicionamento os torna concretos e verificáveis na experiência da clínica.
+
+O complemento entra no mesmo marco de revisão de 12/09/2026, com as mesmas métricas, datas e regras de correção. O banco editorial final é `REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-SEGURANCA.json`; o banco inicial fica apenas como histórico da primeira etapa. Diretrizes operacionais detalhadas no guia de linguagem, sem alteração do site nesta tarefa.
+
 ## 3. Posicionamento da Dra. Amanda
 
 ### 3.1 Espaço que queremos ocupar
