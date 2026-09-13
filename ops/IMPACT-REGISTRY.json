@@ -147,7 +147,9 @@
         "netlify/functions/lib/bruna-policy/manifest.json",
         "docs/estrategia-abordagem-bruna.md",
         "auditorias/aniversario-manual-2026-09-13/RELATORIO.md",
-        "auditorias/aniversario-manual-2026-09-13/PUBLICACAO.json"
+        "auditorias/aniversario-manual-2026-09-13/PUBLICACAO.json",
+        "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
+        "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -516,7 +518,9 @@
         "netlify/functions/lib/whatsapp-automation.test.mjs",
         "netlify/functions/scheduled-followup.mjs",
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md"
+        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
+        "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
+        "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
@@ -652,7 +656,9 @@
         "campanhas/google-ads-settings.test.mjs",
         "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
         "auditorias/otoplastia-estrategia-2026-09-13/PLANO.json",
-        "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json"
+        "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json",
+        "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
+        "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",

@@ -1,162 +1,73 @@
 {
   "schemaVersion": 1,
-  "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
-  "title": "Escolha da cirurgiã e continuidade de otoplastia sem aumento de orçamento",
-  "status": "published_verified",
-  "baseCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
+  "changeId": "RECONCILIACAO-LEADS-CONVERSAS-2026-09-13",
+  "title": "Reconciliar classificação da LEADS com conversas exportadas e preparar conversões qualificadas",
+  "status": "tested_local",
+  "baseCommit": "9f2059fd506cfa0b0570bc6cc7ba6ddd457f98d0",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu estudar a campanha Google de otoplastia, rever diferenciais da Amanda, fazer as modificações e programar reavaliação breve, sem aumentar orçamento. Autorização da tarefa aplicada ao pacote exato; nenhum contato com paciente autorizado."
+    "note": "Daniel pediu diretamente a correção da LEADS a partir das conversas exportadas e já autorizou publicar o que estivesse pendente. A autorização cobre a classificação auditada, os payloads pertinentes e os recibos deste pacote; não cobre mensagens a pacientes nem alterações de campanha."
   },
   "risk": {
-    "level": "medium",
-    "patientEffects": false,
+    "level": "high",
+    "patientEffects": true,
     "externalWritesPerformed": true,
     "defaultOffUntilPublication": false,
-    "externalWritesScope": "Dois RSAs, duas páginas no Netlify, automação de leitura e projeção/evidências no Drive. Zero escrita de CRM, mensagem, consulta ou conversão artificial."
+    "externalWritesScope": "Uma oportunidade da Dra. Amanda promovida de Novo para Qualificado, sincronizada no CRM/funil e preparada para importação Google. Backup privado anterior; zero mensagem, agenda, dado clínico ou configuração de campanha."
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication",
-      "google-ads-acquisition-conversion",
-      "site-editorial-copy"
+      "patient-journey-funnel-followups",
+      "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
-      "auditorias/otoplastia-estrategia-2026-09-13/PLANO.json",
-      "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
+      "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
+      "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "campanhas/otoplasty-pages.test.mjs",
-      "sitemap.xml",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "campanhas/site-communication.test.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ]
   },
   "impact": {
     "consumers": [
-      "abdominoplastia/index.html",
-      "avaliacao-facial/index.html",
-      "blefaroplastia/index.html",
-      "braquioplastia/index.html",
-      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
-      "conteudos/botox-preenchimento-bioestimulador/index.html",
-      "conteudos/como-escolher-protese-de-mama/index.html",
-      "conteudos/consulta-cirurgia-plastica/index.html",
-      "conteudos/lifting-facial-ou-injetaveis/index.html",
-      "conteudos/lipoenxertia-facial/index.html",
-      "conteudos/naturalidade-envelhecimento/index.html",
-      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "conteudos/recuperacao-lifting-facial/index.html",
-      "conteudos/seguranca-cirurgia-plastica/index.html",
-      "contorno-corporal/index.html",
-      "dra-amanda-schroeder/index.html",
-      "index.html",
-      "injetaveis/index.html",
-      "lifting-cervical/index.html",
-      "lifting-facial/index.html",
-      "lip-lifting/index.html",
-      "lipo-de-papada/index.html",
-      "lipoaspiracao/index.html",
-      "mama/index.html",
-      "mamoplastia-redutora/index.html",
-      "mastopexia-com-protese/index.html",
-      "mastopexia/index.html",
-      "ninfoplastia/index.html",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "otoplastia/index.html",
-      "pos-bariatrica/index.html",
-      "procedimentos/index.html",
-      "protese-de-mama/index.html",
-      "AGENTS.md",
-      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "campanhas/assets/conteudos/videos/medo-de-resultados-exagerados-poster.webp",
-      "campanhas/assets/conteudos/videos/olhar-envelhecido-blefaroplastia-poster.webp",
-      "campanhas/assets/conteudos/videos/queixa-e-solucao-face-poster.webp",
-      "campanhas/assets/otoplastia-infantil/otoplastia-em-crianca-poster.webp",
-      "campanhas/assets/video-apresentacao-clinica-liv-poster.webp",
-      "campanhas/content-library.css",
-      "campanhas/content-library.js",
-      "campanhas/conversion-pages-body.css",
-      "campanhas/conversion-pages-classic-visual.css",
-      "campanhas/cost-guides.test.mjs",
-      "campanhas/footer-consistency.test.mjs",
-      "campanhas/lifting-price-page.test.mjs",
-      "campanhas/otoplasty-pages.test.mjs",
-      "campanhas/secondary-conversion.css",
-      "campanhas/secondary-conversion.js",
-      "campanhas/seo-discovery.test.mjs",
-      "campanhas/site-enhancements.css",
-      "campanhas/site-enhancements.js",
-      "conteudos/como-escolher-cirurgiao-plastico/index.html",
-      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
-      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
-      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
-      "conteudos/otomodelacao-ou-otoplastia/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
-      "conteudos/recuperacao-blefaroplastia/index.html",
-      "conteudos/recuperacao-lifting-cervical/index.html",
-      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
-      "google-ads-scripts/google-ads-search-review-email.js",
-      "netlify/functions/lib/patient-replies.mjs"
+      "Planilha LEADS canônica",
+      "CRM e funil por Opportunity ID",
+      "_LEAD_FASE_EVENTOS",
+      "_GOOGLE_ADS_CONVERSION_EVENTS",
+      "IMPORT_GOOGLE_ADS",
+      "fila periódica de classificação",
+      "conexão diária LEADS para Google Ads",
+      "Plano executivo e histórico estratégico"
     ],
     "preservedInvariants": [
-      "Somente campanha 24029985112 / G26OTO, dois RSAs e duas páginas próprias",
-      "R$15/dia e demais orçamentos preservados; nenhuma mudança de lance, rede, palavra, segmentação ou meta",
-      "OT01/OT02, cinco CTAs por página, URLs e atributos de tracking preservados",
-      "Sem promessas, comparação depreciativa, superioridade presumida ou faixa cirúrgica pública",
-      "Criança ouvida; nenhuma promessa de cardiologia pediátrica",
-      "Zero alteração de bot, Apps Script, CRM, agenda, mensagens e contatos antigos"
+      "Somente oportunidades da Dra. Amanda em Qualificado ou fase posterior podem ser preparadas para a ação qualificada",
+      "Exatamente um entre GCLID, GBRAID e WBRAID é obrigatório; ausência ou conflito mantém Enviar ao Google Ads? diferente de Sim",
+      "Prefill isolado, preço/localização sem intenção prática, silêncio e mídia sem texto não qualificam",
+      "Fases superiores e pacientes estabelecidos não são rebaixados nem tratados como nova aquisição",
+      "Ação exata Lead qualificado GCLID, valor 1, BRL e transação idempotente",
+      "Nenhuma mensagem, consulta, cirurgia, dado clínico, orçamento ou configuração de campanha alterada",
+      "Backup integral privado precede a escrita; reversão é pontual e não sobrescreve mudanças concorrentes"
     ],
     "liveReadOnlyPreflight": [
       {
+        "contract": "patient-journey-funnel-followups",
+        "system": "LEADS / CRM / funil / Drive restrito",
+        "status": "verified_read_only",
+        "reference": "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
+        "checkedAt": "2026-09-13T22:20:00.000Z",
+        "evidence": "377 ZIPs consolidados em 289 conversas únicas; coorte recente de 140, com 132 vínculos diretos e oito resoluções manuais. Um único Novo apresentou manifestação pessoal e interesse concreto suficientes; fases superiores e contatos não pertinentes preservados."
+      },
+      {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads / LEADS / Netlify",
+        "system": "LEADS / Google Ads import source",
         "status": "verified_read_only",
-        "reference": "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
-        "checkedAt": "2026-09-13T13:25:52.234Z",
-        "evidence": "Conta995-334-4486; campanha ativa R$15/dia;357cliques,R$788,89,6conversões históricas de interface até12/09. Agregado13/09 e CRM:3contatos Novo,0consulta; produção6aa6998a46297000089e1e5d. Página infantil idêntica; adulta apenas reescrita do link inicial pelo Netlify."
-      },
-      {
-        "contract": "site-editorial-copy",
-        "system": "Netlify",
-        "status": "verified_read_only",
-        "reference": "auditorias/otoplastia-estrategia-2026-09-13/RELATORIO.md",
-        "checkedAt": "2026-09-13T13:37:00.959Z",
-        "evidence": "Release paralelo 77433528 publicado em 13:22:23.809Z, deploy6aa6a37365ed3d0008e3d1cc ready. Rebase sobre fechamento8c115f8; duas aberturas reconciliadas, todos os demais deltas preservados."
-      },
-      {
-        "contract": "change-governance",
-        "system": "Repositório / recibo do Apps Script",
-        "status": "verified_read_only",
-        "reference": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
-        "checkedAt": "2026-09-13T13:51:36.252Z",
-        "evidence": "Reconciliado sobre dbe738d, com Central v152 publicada e verificada por tarefa paralela; esta tarefa não executa Apps Script. Netlify6aa6a373 permanece predecessor observado."
-      },
-      {
-        "contract": "site-publication",
-        "system": "Netlify authenticated API",
-        "status": "verified_read_only",
-        "checkedAt": "2026-09-13T13:55:25.244Z",
-        "reference": "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json",
-        "evidence": "Current ready production 6aa6a754d28c24000883bb45, commit dbe738d32d53cc91bf9625ec761e12b7ce18f2d9, published 2026-09-13T13:38:55.233Z. Automatic parallel deployment preserved before publishing OTO."
+        "reference": "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
+        "checkedAt": "2026-09-13T22:24:00.000Z",
+        "evidence": "Alvo canônico confirmado; seis linhas elegíveis e válidas antes da correção, ação exata Lead qualificado GCLID, zero problemas e zero duplicidades. Uma candidata adicional tinha exatamente um GCLID e os campos obrigatórios."
       }
     ]
   },
@@ -167,122 +78,90 @@
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "git diff --check",
-      "node --check campanhas/content-library.js",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run ops:check",
-      "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test campanhas/otoplasty-pages.test.mjs",
-      "node --test campanhas/site-communication.test.mjs"
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test campanhas/google-ads-settings.test.mjs"
     ],
-    "completedAt": "2026-09-13T13:55:25.243Z",
+    "completedAt": "2026-09-13T22:47:30.000Z",
     "results": {
       "fullSuite": {
         "passed": 1481,
         "failed": 0
       },
-      "focused": {
-        "passed": 23,
+      "journeyFocused": {
+        "passed": 247,
         "failed": 0
       },
-      "acquisition": {
+      "googleFocused": {
         "passed": 153,
         "failed": 0
       },
       "architecture": "OK",
       "changeSafety": "OK",
-      "build": {
+      "siteBuild": {
         "files": 193,
         "routes": 54,
         "errors": 0
       },
-      "visual": "Adulto/infantil in mobile390x844 and desktop1440x900; no overflow, five CTA tags preserved",
-      "operationalConsistency": "SYNC_PENDING expected before publication/Drive reconciliation"
-    },
-    "closure": "Google Ads fields/pinning/destinations reread;54public pages equivalent;12functions/5schedules unchanged;Drive plan/report/ad bank raw bytes equal;automation active with complete-day cohorts."
+      "siteCheck": {
+        "routes": 54,
+        "http200": 54,
+        "selfCanonical": 54,
+        "errors": 0
+      },
+      "livePostflight": {
+        "eligible": 7,
+        "valid": 7,
+        "issues": 0,
+        "duplicateTransactions": 0,
+        "classifierQueue": "done"
+      },
+      "operationalConsistency": "SYNC_PENDING expected before commit, Drive projection and release receipt"
+    }
   },
   "previousCompletedRelease": {
-    "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
-    "sourceCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
+    "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
+    "sourceCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
     "release": {
-      "approvedCommit": "7a5cf98bebbe571014f0721ee8df1c85a99ecf79",
-      "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
-      "netlifyState": "inherited_from_verified_site_release",
-      "netlifyPublishedByThisChange": false,
+      "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
+      "verifiedAt": "2026-09-13T14:12:11.464Z",
+      "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+      "netlifyPublishedAt": "2026-09-13T13:57:01.241Z",
       "appsScriptVersion": 152,
-      "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-      "appsScriptSameDeployment": true,
-      "appsScriptPublishedAt": "2026-09-13T13:27:00Z",
-      "verifiedAt": "2026-09-13T13:37:10Z",
+      "appsScriptPublishedByThisChange": false,
+      "appsScriptInheritedReceipt": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
+      "drivePlanSha256": "396b4ebea1fab9a785c293892ba55be06dfa9807c5f80484a7d55cb73a090408",
       "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanSha256": "a939905dfd59d65efb678763eec85f97185fe1140154d79379cbdbae8c009f90",
-      "drivePlanReadback": {
-        "modified": "2026-09-13T13:33:21.408Z",
-        "characters": 169933,
-        "equal": true
-      },
-      "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "driveManualSha256": "6af64e0be2250581019c0a947f01a40553fc91f89856e277e50abae11761edac",
-      "driveManualReadback": {
-        "localPath": "docs/estrategia-abordagem-bruna.md",
-        "modified": "2026-09-13T13:37:05.064Z",
-        "characters": 102443,
-        "equal": true,
-        "correctionCompletedBeforeClosure": true
-      },
-      "liveSourceSha256": {
-        "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
-        "Retomadas.gs": "255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a",
-        "CuidadosProgramados.gs": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568"
-      },
-      "patientEffects": {
-        "messages": 0,
-        "dailyEmails": 0,
-        "cancellations": 0,
-        "appointments": 0,
-        "preferenceChanges": 0
-      },
-      "receiptPath": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json"
+      "googleAdsCampaignId": "24029985112",
+      "googleAdsIds": [
+        "816612405034",
+        "816612778213"
+      ],
+      "googleAdsBudgetBRL": 15,
+      "googleAdsReadBack": true,
+      "automationId": "reavaliar-estrat-gia-de-otoplastia",
+      "receiptPath": "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json"
     }
   },
   "rollback": {
-    "local": "Reverter somente o pacote OTO preservando alterações paralelas.",
-    "production": "Reverter somente o delta OTO e restaurar os dois RSAs do backup. Predecessor imediato 6aa6a754d28c24000883bb45, commit dbe738d32d53cc91bf9625ec761e12b7ce18f2d9; se houver publicação posterior, não restaurar um deploy antigo sobre ela. Preservar R$15/dia, Apps Script152 e todas as políticas do atendimento."
+    "local": "Reverter somente os seis arquivos documentais deste pacote, preservando registros e releases posteriores.",
+    "production": "Se a evidência de qualificação estiver errada, executar correção pontual pela rotina auditada, conferindo a fase atual. Se a conversão já tiver sido aceita, criar a retração idempotente; não restaurar o backup integral sobre mudanças concorrentes."
   },
   "monitoring": {
     "owner": "Daniel / equipe",
-    "window": "Integridade14/09; primeira leitura16/09 às9h; sete dias completos14–20/09 avaliados21/09;14dias completos14–27/09 avaliados28/09. Horário9h America/Sao_Paulo.",
+    "window": "Próxima conexão LEADS → Google Ads em 14/09/2026 entre 05:00 e 06:00 BRT; releitura depois da execução e acompanhamento em sete dias.",
     "metrics": [
-      "contatos identificados",
-      "contatos válidos classificados",
-      "qualificados",
-      "consultas agendadas e realizadas",
-      "custo por etapa",
-      "perda de atribuição",
-      "aprovação dos anúncios"
+      "estado e recibo da linha nova",
+      "linhas prontas e aceitas",
+      "duplicidade de transação",
+      "divergência LEADS/CRM/funil",
+      "contatos qualificados e consultas por coorte"
     ],
-    "rollbackRule": "Corrigir imediatamente reprovação, promessa indevida, quebra de CTA ou destino. Em D+7, zero contato novo com50cliques ouR$105 exige nova decisão humana; não aumentar verba. Pouca amostra => inconclusivo.",
-    "automationId": "reavaliar-estrat-gia-de-otoplastia"
-  },
-  "release": {
-    "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
-    "verifiedAt": "2026-09-13T14:12:11.464Z",
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "netlifyPublishedAt": "2026-09-13T13:57:01.241Z",
-    "appsScriptVersion": 152,
-    "appsScriptPublishedByThisChange": false,
-    "appsScriptInheritedReceipt": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
-    "drivePlanSha256": "396b4ebea1fab9a785c293892ba55be06dfa9807c5f80484a7d55cb73a090408",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "googleAdsCampaignId": "24029985112",
-    "googleAdsIds": [
-      "816612405034",
-      "816612778213"
-    ],
-    "googleAdsBudgetBRL": 15,
-    "googleAdsReadBack": true,
-    "automationId": "reavaliar-estrat-gia-de-otoplastia",
-    "receiptPath": "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json"
+    "rollbackRule": "Reverter somente diante de evidência de fase incorreta, ação divergente, identificador inválido, duplicidade ou projeções inconsistentes; ready sem aceite é pendência de monitoramento, não erro de classificação."
   }
 }

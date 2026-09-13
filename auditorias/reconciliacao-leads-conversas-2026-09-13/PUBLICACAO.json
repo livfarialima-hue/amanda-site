@@ -1,0 +1,63 @@
+{
+  "changeId": "RECONCILIACAO-LEADS-CONVERSAS-2026-09-13",
+  "status": "live_data_verified",
+  "authorizedBy": "Daniel",
+  "authorizationReference": "Pedido direto para revisar as conversas exportadas, atualizar os casos qualificáveis e preparar os eventos pertinentes para o Google Ads; autorização de publicação já registrada na conversa.",
+  "executedAt": "2026-09-13T19:37:07-03:00",
+  "verifiedAt": "2026-09-13T19:39:00-03:00",
+  "candidateCommit": null,
+  "documentationCommit": null,
+  "canonicalTargets": {
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "appsScriptVersion": 152,
+    "targetVerification": "ALVO CANÔNICO CONFIRMADO"
+  },
+  "sources": {
+    "whatsappZipFiles": 377,
+    "uniqueLatestConversations": 289,
+    "recentUniqueConversations": 140,
+    "recentDirectMatches": 132,
+    "recentManualResolutions": 8,
+    "liveOpportunities": 284
+  },
+  "result": {
+    "promotedFromNewToQualified": 1,
+    "googleReadyBefore": 6,
+    "googleReadyAfter": 7,
+    "googleEligibilityIssuesAfter": 0,
+    "duplicateTransactionsAfter": 0,
+    "conversionAction": "Lead qualificado GCLID",
+    "sendToGoogle": "Sim",
+    "importState": "ready",
+    "googleAcceptance": "pending_next_scheduled_connector_run"
+  },
+  "execution": {
+    "function": "aplicarAuditoriaClassificacaoDaAba",
+    "phaseProjection": "main_crm_funnel_aligned",
+    "phaseEvent": "human_conversation_audit",
+    "temporaryAuditSheetRemoved": true,
+    "classifierQueue": "done",
+    "appsScriptSourceChanged": false,
+    "appsScriptDeploymentChanged": false
+  },
+  "backup": {
+    "fileId": "1KdZwJtIkK53xODKz-hH7XIxaPO_9KIal93zIAIa9Xzk",
+    "title": "LEADS — backup antes da classificação auditada — 2026-09-13 19h24",
+    "restricted": true,
+    "restorePolicy": "Não restaurar a cópia inteira sobre alterações concorrentes; reverter somente a oportunidade pela rotina auditada."
+  },
+  "patientEffects": {
+    "messagesSent": 0,
+    "appointmentsChanged": 0,
+    "clinicalDataChanged": 0,
+    "campaignSettingsChanged": 0
+  },
+  "drive": {
+    "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "planSha256": null,
+    "closedAuditFileId": null,
+    "readbackVerified": false
+  }
+}
