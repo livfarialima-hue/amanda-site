@@ -15,6 +15,7 @@ const DEFAULT_TEMPLATE_NAME = "alerta_revisao_liv_v1";
 const DEFAULT_TEMPLATE_LANGUAGE = "pt_BR";
 const ALERT_TIMEOUT_MS = 6_000;
 const MAX_ALERT_TEXT_LENGTH = 1_024;
+const MAX_EMAIL_TEXT_LENGTH = 10_000;
 const EMAIL_COPY_TIMEOUT_MS = 6_000;
 
 function result(status, details = {}) {
@@ -44,17 +45,35 @@ export function ensureReviewAlertSuggestion({
   messageText,
   patientName,
   urgent = false,
+  maximumLength = MAX_ALERT_TEXT_LENGTH,
 }) {
   const original =
     String(messageText || "").trim() || "Mensagem sem texto.";
 
   if (
     (
-      /sugest[aã]o\s+(?:para copiar|de resposta)/i.test(original) ||
-      /revise e copie manualmente/i.test(original)
+      /sugest[aã]o\s+(?:(?:contextual|segura)\s+)?(?:para (?:revisar e )?copiar|de resposta)/i.test(original) ||
+      /revise e copie manualmente|SEM SUGESTÃO PRONTA/i.test(original)
     )
   ) {
-    return limitText(original, MAX_ALERT_TEXT_LENGTH);
+    if (Array.from(original).length <= maximumLength) return original;
+    const prepared = original.match(/sugest[aã]o\s+(?:(?:contextual|segura)\s+)?(?:para (?:revisar e )?copiar|de resposta)[^\n]*\n|revise e copie manualmente:[^\n]*\n/i);
+    if (prepared && !/SEM SUGESTÃO PRONTA/i.test(original)) {
+      // Only shorten context and metadata, never a prepared patient reply.
+      const suggestion = original.slice(prepared.index).split("\nContexto para conferência:")[0].trim();
+      const notice = "Contexto abreviado: confira a conversa antes de enviar.";
+      const budget = maximumLength - Array.from(suggestion).length - notice.length - 4;
+      if (budget >= 80) {
+        const prefix = original.slice(0, prepared.index).split("\n")
+          .filter(line => !/^(?:REVISÃO HUMANA — CONTEXTO OPERACIONAL|Relação:|Risco:|Ação necessária:|Contexto para conferência:)/.test(line))
+          .join("\n").trim();
+        return [limitText(prefix, budget), notice, suggestion].filter(Boolean).join("\n\n");
+      }
+    }
+    // Never display a clipped draft as something safe to copy.
+    const notice = "Resumo abreviado. Abra a conversa e confira o e-mail de revisão, quando disponível, antes de responder. SEM SUGESTÃO PRONTA neste alerta abreviado.";
+    const prefix = original.split(/(?:sugest[aã]o\s+(?:(?:contextual|segura)\s+)?(?:para (?:revisar e )?copiar|de resposta)|revise e copie manualmente)/i)[0];
+    return limitText(prefix, Math.max(0, maximumLength - notice.length - 2)) + "\n\n" + notice;
   }
 
   const reply = buildContextualHumanSuggestion({
@@ -73,7 +92,7 @@ export function ensureReviewAlertSuggestion({
       ].join("\n");
   const prefixLimit = Math.max(
     0,
-    MAX_ALERT_TEXT_LENGTH - Array.from(suffix).length - 2,
+    maximumLength - Array.from(suffix).length - 2,
   );
   const prefix = limitText(original, prefixLimit);
 
@@ -124,7 +143,7 @@ export async function sendReviewAlertEmailCopy(
           patientPhone:
             normalizePhone(patientPhone) || "Não informado",
           messageText:
-            limitText(messageText, MAX_ALERT_TEXT_LENGTH) ||
+            limitText(messageText, MAX_EMAIL_TEXT_LENGTH) ||
             "Mensagem sem texto.",
         },
       }),
@@ -166,8 +185,8 @@ export async function sendReviewAlertEmailCopy(
 
 export function isReviewAlertConfigured(env = process.env) {
   return Boolean(
-    env.YCLOUD_API_KEY &&
-      normalizePhone(env.WHATSAPP_ALERT_NUMBER),
+    (env.YCLOUD_API_KEY && normalizePhone(env.WHATSAPP_ALERT_NUMBER)) ||
+    (env.GOOGLE_SHEETS_WEBHOOK_URL && env.GOOGLE_SHEETS_WEBHOOK_SECRET),
   );
 }
 
@@ -196,12 +215,6 @@ export async function sendYCloudReviewAlert(
   const sender = normalizePhone(from);
   const recipient = normalizePhone(env.WHATSAPP_ALERT_NUMBER);
 
-  if (!apiKey || !sender || !recipient) {
-    return result("skipped", {
-      errorCode: "configuration_missing",
-    });
-  }
-
   const takeoverControl = await getHumanResumeControlImpl(
     patientPhone,
   ).catch(() => null);
@@ -215,19 +228,18 @@ export async function sendYCloudReviewAlert(
     takeoverControl?.generation === resumeGeneration
   );
 
-  if (
+  const suppressWhatsAppForTakeover = Boolean(
     takeoverControl?.status === "human_active" &&
     !currentHumanResumeGeneration
-  ) {
-    return result("skipped", {
-      errorCode: "human_takeover_active",
-    });
-  }
+  );
 
   const alertMessageText = ensureReviewAlertSuggestion({
     messageText,
     patientName,
     urgent,
+  });
+  const emailMessageText = ensureReviewAlertSuggestion({
+    messageText, patientName, urgent, maximumLength: MAX_EMAIL_TEXT_LENGTH,
   });
 
   // Email is an independent safety channel. A WhatsApp cooldown or a YCloud
@@ -239,7 +251,7 @@ export async function sendYCloudReviewAlert(
           eventId,
           patientName,
           patientPhone,
-          messageText: alertMessageText,
+          messageText: emailMessageText,
         },
         { env, fetchImpl },
       )
@@ -260,6 +272,19 @@ export async function sendYCloudReviewAlert(
       duplicate: emailCopy.duplicate === true,
     },
   });
+
+  const delivered = (status, details = {}) => result(status, {
+    ...details,
+    ...(sendEmailCopy && env.GOOGLE_SHEETS_WEBHOOK_URL && env.GOOGLE_SHEETS_WEBHOOK_SECRET
+      ? { emailStatus: emailCopy.status } : {}),
+  });
+
+  if (!apiKey || !sender || !recipient || suppressWhatsAppForTakeover) {
+    return delivered("skipped", {
+      errorCode: suppressWhatsAppForTakeover ? "human_takeover_active" : "configuration_missing",
+      ...(emailCopy.status === "completed" ? { emailStatus: "completed" } : {}),
+    });
+  }
 
   let alertSlot = null;
   if (!urgent) {
@@ -282,7 +307,7 @@ export async function sendYCloudReviewAlert(
     );
 
     if (alertSlot.status === "suppressed") {
-      return result("skipped", {
+      return delivered("skipped", {
         errorCode: alertSlot.reason,
       });
     }
@@ -354,7 +379,7 @@ export async function sendYCloudReviewAlert(
       if (alertSlot) {
         await releaseReviewAlertSlotImpl(alertSlot);
       }
-      return result("failed", {
+      return delivered("failed", {
         httpStatus: response.status,
         errorCode: "http_error",
       });
@@ -364,14 +389,14 @@ export async function sendYCloudReviewAlert(
       await completeReviewAlertSlotImpl(alertSlot, { now });
     }
 
-    return result("completed", {
+    return delivered("completed", {
       httpStatus: response.status,
     });
   } catch (error) {
     if (alertSlot) {
       await releaseReviewAlertSlotImpl(alertSlot);
     }
-    return result("failed", {
+    return delivered("failed", {
       httpStatus: null,
       errorCode:
         error?.name === "AbortError"

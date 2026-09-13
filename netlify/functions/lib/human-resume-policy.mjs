@@ -242,7 +242,11 @@ export function classifyHumanResume({
   preliminaryPlan,
   enrichedPlan,
   recentConversation,
+  pendingCommitments = [],
 }) {
+  if (preliminaryPlan?.reason === "possible_urgent_symptoms") {
+    return { action: "sensitive", reason: "possible_urgent_symptoms" };
+  }
   const normalizedText = String(text || "").trim();
   const scheduling =
     isSchedulingRequest(normalizedText) ||
@@ -260,8 +264,13 @@ export function classifyHumanResume({
     plan: enrichedPlan || preliminaryPlan,
     recentConversation,
     humanTakeoverActive: false,
+    pendingCommitments,
     schedulingRequest: scheduling,
   });
+
+  if (conversationAction.pendingHumanCommitmentAcknowledged) {
+    return { action: "no_action", reason: "pending_human_commitment_acknowledged" };
+  }
 
   if (
     conversationAction.action ===
@@ -289,9 +298,16 @@ export function classifyHumanResume({
     CONVERSATION_ACTIONS.WAIT_PATIENT
   ) {
     return {
-      action: "alert_only",
+      action: "no_action",
       reason: conversationAction.reason,
     };
+  }
+
+  if (enrichedPlan?.reason === "contact_preference_no_bot") {
+    return { action: "no_action", reason: "contact_preference_no_bot" };
+  }
+  if (/^known_patient_(?:active_care|active_postop|pending_human_task)$/.test(enrichedPlan?.reason || "")) {
+    return { action: "sensitive", reason: enrichedPlan.reason };
   }
 
   if (scheduling) {
@@ -404,3 +420,24 @@ export function classifyHumanResume({
 
 export const HUMAN_RESUME_HOLDING_MESSAGE =
   "";
+
+export function buildDelayedHumanReceipt({ text, messageType = "text", reason, recentConversation = [] } = {}) {
+  if (reason === "possible_urgent_symptoms" || reason === "contact_preference_no_bot") return "";
+  if (messageType === "text" && !hasUnresolvedPatientRequest(text, recentConversation)) return "";
+  const subject = reason === "scheduling_or_confirmation"
+    ? "seu pedido sobre o agendamento"
+    : messageType !== "text"
+      ? "o material que você enviou"
+      : "sua mensagem";
+  return `Recebi ${subject}. A equipe foi avisada para conferir e retornar por aqui assim que possível.`;
+}
+
+export function buildDelayedHumanReviewSuggestion({ text, reason } = {}) {
+  if (reason === "scheduling_or_confirmation") {
+    return "Recebi seu pedido sobre o agendamento. Vou conferir a disponibilidade com a equipe e retorno por aqui com as opções.";
+  }
+  if (reason !== "possible_urgent_symptoms" && /nota\s+fiscal|recibo/i.test(String(text || ""))) {
+    return "Recebi seu pedido sobre o documento. Vou conferir com a equipe responsável e retorno por aqui.";
+  }
+  return "";
+}

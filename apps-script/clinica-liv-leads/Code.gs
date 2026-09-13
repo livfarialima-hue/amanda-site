@@ -294,10 +294,15 @@ function doPost(e) {
       body.action !== "record_ycloud_template_event" &&
       body.action !== "record_conversation_turn" &&
       body.action !== "get_conversation_context" &&
+      body.action !== "validate_care_send" &&
       body.action !== "apply_audited_lead_classifications" &&
       body.action !== "run_synthetic_health_check"
     ) {
       return json_({ ok: false, error: "unsupported_action" });
+    }
+
+    if (body.action === "validate_care_send") {
+      return json_(validarEnvioCuidado_(body.care || {}));
     }
 
     if (body.action === "get_conversation_context") {
@@ -2023,7 +2028,7 @@ function sendReviewAlertEmail_(input) {
   const patientPhone =
     normalizePhone_(input.patientPhone) || "Não informado";
   const messageText =
-    boundedText_(input.messageText, 1024) || "Mensagem sem texto.";
+    boundedText_(input.messageText, 10000) || "Mensagem sem texto.";
   const recipient = CONFIG.reviewAlertEmail;
   const spreadsheet = SpreadsheetApp.openById(
     CONFIG.spreadsheetId,

@@ -29,7 +29,7 @@ function assinaturaPainelDecisoesDiarias_(day) {
   return Utilities.base64EncodeWebSafe(signature).replace(/=+$/g, "");
 }
 
-function assinaturaItemPainelDecisoesDiarias_(day, sourceKey) {
+function assinaturaItemPainelDecisoesDiarias_(day, sourceKey, revision) {
   if (typeof Utilities === "undefined") return "";
   const localDay = String(day || "").trim();
   const key = String(sourceKey || "").trim().slice(0, 300);
@@ -43,10 +43,14 @@ function assinaturaItemPainelDecisoesDiarias_(day, sourceKey) {
   }
 
   const signature = Utilities.computeHmacSha256Signature(
-    "item_painel_decisoes_diarias|" + localDay + "|" + key,
+    "item_painel_decisoes_diarias|" + localDay + "|" + key + (revision ? "|" + revision : ""),
     secret,
   );
   return Utilities.base64EncodeWebSafe(signature).replace(/=+$/g, "");
+}
+
+function revisaoCuidadoPainel_(item) {
+  return String(item.sourceKey || "").indexOf("care:") === 0 ? JSON.stringify([item.finalMessage, item.programFor, item.status, item.context]) : "";
 }
 
 function tokensPainelIguais_(left, right) {
@@ -126,6 +130,7 @@ function renderPainelDecisoesDiarias_(parameters) {
       itemToken: assinaturaItemPainelDecisoesDiarias_(
         day,
         item.sourceKey,
+        revisaoCuidadoPainel_(item),
       ),
     });
   }).filter(function (item) {
@@ -223,6 +228,9 @@ function montarOpcoesItemPainelDecisoes_(item, day) {
       token +
       '" value="cancel"> <span><strong>Cancelar só esta retomada</strong><small>Não altera a preferência futura do contato.</small></span></label>';
   }
+  if (item.dismissAvailable) {
+    options += '<label class="choice choice-cancel"><input type="radio" name="decision-' + token + '" value="dismiss"> <span><strong>Dispensar esta sugestão</strong><small>Ela não volta amanhã. Outros marcos e contatos continuam permitidos.</small></span></label>';
+  }
   if (item.deferAvailable) {
     options +=
       '<label class="choice choice-defer"><input type="radio" name="decision-' +
@@ -253,7 +261,7 @@ function montarCardItemPainelDecisoes_(item, day) {
       phone +
       '" target="_blank" rel="noopener">Abrir WhatsApp</a>'
     : "";
-  const message = String(item.finalMessage || "").trim();
+  const message = String(item.sourceKey || "").indexOf("care:") === 0 && typeof textoPrevistoCuidado_ === "function" ? textoPrevistoCuidado_(item) : String(item.finalMessage || "").trim();
 
   return (
     '<article class="item-card" data-item-token="' +
@@ -266,7 +274,7 @@ function montarCardItemPainelDecisoes_(item, day) {
     escaparHtmlRetomadas_(rotuloDataItemPainelDecisoes_(item)) +
     '</time></div><p class="action"><strong>' +
     escaparHtmlRetomadas_(item.nextAction || item.queue || "Revisar") +
-    '</strong></p><p class="context">' +
+    '</strong></p>' + (item.approvalAvailable && item.programFor ? '<p>Envio previsto após aprovação: <strong>' + escaparHtmlRetomadas_(formatarDataRetomadas_(item.programFor, "dd/MM HH:mm")) + '</strong></p>' : "") + '<p class="context">' +
     escaparHtmlRetomadas_(item.context || "Sem contexto adicional.") +
     '</p><div class="meta"><span>Responsável: ' +
     escaparHtmlRetomadas_(item.owner || "Equipe") +
@@ -311,7 +319,7 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
   const actionable = (items || []).filter(function (item) {
     return item.approvalAvailable ||
       item.cancellationAvailable ||
-      item.deferAvailable;
+      item.deferAvailable || item.dismissAvailable;
   }).length;
   const safeDay = JSON.stringify(String(day || "")).replace(/</g, "\\u003c");
   const safeToken = JSON.stringify(String(token || "")).replace(/</g, "\\u003c");
@@ -353,7 +361,7 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
     '</div><div class="warning"><strong>Importante:</strong> nenhuma opção está marcada. “Nunca retomar” não faz parte deste painel e continua sendo uma decisão separada.</div></header>' +
     montarSecaoPainelDecisoes_(
       "Decisões humanas de hoje",
-      "Você pode abrir o WhatsApp, passar uma retomada elegível para a Bruna, cancelar só a retomada ou adiar a revisão.",
+      "Você pode abrir o WhatsApp, passar uma retomada elegível para a Bruna, dispensar uma sugestão ou adiar a revisão. Ao aprovar, a Bruna envia na janela indicada se o contexto continuar adequado.",
       grouped.manual,
       day,
       "manual",
@@ -377,7 +385,7 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
     safeDay +
     ';var painelToken=' +
     safeToken +
-    ';function coletarDecisoes(){var cards=document.querySelectorAll(".item-card");var decisions=[];cards.forEach(function(card){var selected=card.querySelector("input[type=radio]:checked");if(!selected){return;}var itemToken=card.getAttribute("data-item-token");var decision={itemToken:itemToken,action:selected.value};if(selected.value==="defer"){var date=card.querySelector("input[data-defer-for]");decision.deferDate=date?date.value:"";}decisions.push(decision);});return decisions;}function mensagemConfirmacao(decisions){var counts={approve:0,cancel:0,defer:0};decisions.forEach(function(item){if(counts[item.action]!==undefined){counts[item.action]+=1;}});return "Confirmar "+counts.approve+" aprovação(ões), "+counts.cancel+" cancelamento(s) e "+counts.defer+" adiamento(s)? Cada item será relido antes da alteração.";}function marcarResultados(result){var rows=(result&&result.results)||[];rows.forEach(function(row){var cards=document.querySelectorAll(".item-card");cards.forEach(function(card){if(card.getAttribute("data-item-token")!==row.itemToken){return;}var target=card.querySelector(".item-result");target.textContent=row.message|| (row.ok?"Decisão aplicada.":"Item mantido sem alteração.");target.className="item-result "+(row.ok?"ok":"error");if(row.ok){card.classList.add("resolved");card.querySelectorAll("input").forEach(function(input){input.disabled=true;});}});});var global=document.getElementById("global-result");global.textContent=(result&&result.summary)||"Processamento concluído.";}function processarDecisoes(){var decisions=coletarDecisoes();if(!decisions.length){alert("Selecione pelo menos uma ação.");return;}if(!confirm(mensagemConfirmacao(decisions))){return;}var button=document.getElementById("process");button.disabled=true;button.textContent="Revalidando...";google.script.run.withSuccessHandler(function(result){marcarResultados(result);button.disabled=false;button.textContent="Confirmar decisões selecionadas";}).withFailureHandler(function(){document.getElementById("global-result").textContent="Falha temporária. Nenhuma conclusão foi presumida; tente novamente.";button.disabled=false;button.textContent="Tentar novamente";}).processarDecisoesPainelDiario({day:painelDia,token:painelToken,decisions:decisions});}</script></body></html>'
+    ';function coletarDecisoes(){var cards=document.querySelectorAll(".item-card");var decisions=[];cards.forEach(function(card){var selected=card.querySelector("input[type=radio]:checked");if(!selected){return;}var itemToken=card.getAttribute("data-item-token");var decision={itemToken:itemToken,action:selected.value};if(selected.value==="defer"){var date=card.querySelector("input[data-defer-for]");decision.deferDate=date?date.value:"";}decisions.push(decision);});return decisions;}function mensagemConfirmacao(decisions){var counts={approve:0,cancel:0,defer:0,dismiss:0};decisions.forEach(function(item){if(counts[item.action]!==undefined){counts[item.action]+=1;}});return "Confirmar "+counts.approve+" aprovação(ões), "+counts.cancel+" cancelamento(s) e "+counts.defer+" adiamento(s) e "+counts.dismiss+" dispensa(s)? Cada item será relido antes da alteração.";}function marcarResultados(result){var rows=(result&&result.results)||[];rows.forEach(function(row){var cards=document.querySelectorAll(".item-card");cards.forEach(function(card){if(card.getAttribute("data-item-token")!==row.itemToken){return;}var target=card.querySelector(".item-result");target.textContent=row.message|| (row.ok?"Decisão aplicada.":"Item mantido sem alteração.");target.className="item-result "+(row.ok?"ok":"error");if(row.ok){card.classList.add("resolved");card.querySelectorAll("input").forEach(function(input){input.disabled=true;});}});});var global=document.getElementById("global-result");global.textContent=(result&&result.summary)||"Processamento concluído.";}function processarDecisoes(){var decisions=coletarDecisoes();if(!decisions.length){alert("Selecione pelo menos uma ação.");return;}if(!confirm(mensagemConfirmacao(decisions))){return;}var button=document.getElementById("process");button.disabled=true;button.textContent="Revalidando...";google.script.run.withSuccessHandler(function(result){marcarResultados(result);button.disabled=false;button.textContent="Confirmar decisões selecionadas";}).withFailureHandler(function(){document.getElementById("global-result").textContent="Falha temporária. Nenhuma conclusão foi presumida; tente novamente.";button.disabled=false;button.textContent="Tentar novamente";}).processarDecisoesPainelDiario({day:painelDia,token:painelToken,decisions:decisions});}</script></body></html>'
   );
 }
 
@@ -405,6 +413,7 @@ function dataAdiamentoPainelDecisoes_(day, now) {
 }
 
 function mensagemResultadoPainelDecisoes_(action, result) {
+  if (result.ok && action === "dismiss") return "Sugestão dispensada. Ela não voltará no próximo e-mail.";
   if (result && result.ok) {
     if (action === "approve") {
       return "Retomada programada com a Bruna e ainda sujeita à validação final antes do envio.";
@@ -476,7 +485,7 @@ function processarDecisoesPainelDiario(payload) {
     const action = String(decisions[index].action || "").trim();
     if (
       !itemToken ||
-      !["approve", "cancel", "defer"].includes(action) ||
+      !["approve", "cancel", "defer", "dismiss"].includes(action) ||
       seen[itemToken]
     ) {
       return {
@@ -526,6 +535,7 @@ function processarDecisoesPainelDiario(payload) {
       const itemToken = assinaturaItemPainelDecisoesDiarias_(
         day,
         item.sourceKey,
+        revisaoCuidadoPainel_(item),
       );
       if (itemToken) liveByToken[itemToken] = item;
     });
@@ -533,6 +543,7 @@ function processarDecisoesPainelDiario(payload) {
     const approvals = [];
     const cancellations = [];
     const deferrals = [];
+    const dismissals = [];
     const pending = [];
 
     normalized.forEach(function (decision) {
@@ -580,6 +591,12 @@ function processarDecisoesPainelDiario(payload) {
           action: decision.action,
           decision: item.cancellationDecision,
         });
+        return;
+      }
+
+      if (decision.action === "dismiss") {
+        if (!item.dismissAvailable) pending.push({ itemToken: decision.itemToken, action: decision.action, ok: false, reason: "item_not_eligible" });
+        else dismissals.push({ itemToken: decision.itemToken, action: decision.action, decision: { rowNumber: item.rowNumber, sourceKey: item.sourceKey } });
         return;
       }
 
@@ -656,6 +673,9 @@ function processarDecisoesPainelDiario(payload) {
         ),
       );
     }
+    if (dismissals.length) {
+      incorporarResultados(dismissals, dispensarItensCentralInterno_(spreadsheet, sheet, now, dismissals.map(function (item) { return item.decision; })));
+    }
     if (deferrals.length) {
       incorporarResultados(
         deferrals,
@@ -694,7 +714,8 @@ function processarDecisoesPainelDiario(payload) {
     const deferred = results.filter(function (item) {
       return item.ok && item.action === "defer";
     }).length;
-    const skipped = results.length - approved - cancelled - deferred;
+    const dismissed = results.filter(function (item) { return item.ok && item.action === "dismiss"; }).length;
+    const skipped = results.length - approved - cancelled - deferred - dismissed;
 
     return {
       ok: true,
@@ -702,6 +723,7 @@ function processarDecisoesPainelDiario(payload) {
       approved: approved,
       cancelled: cancelled,
       deferred: deferred,
+      dismissed: dismissed,
       skipped: skipped,
       summary:
         approved +
@@ -709,7 +731,7 @@ function processarDecisoesPainelDiario(payload) {
         cancelled +
         " cancelada(s), " +
         deferred +
-        " adiada(s) e " +
+        " adiada(s), " + dismissed + " dispensada(s) e " +
         skipped +
         " mantida(s) sem alteração.",
       results: results,

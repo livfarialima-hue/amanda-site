@@ -249,6 +249,7 @@ test("email copy still arrives when WhatsApp alert is on cooldown", async () => 
   });
 
   assert.deepEqual(result, {
+    emailStatus: "completed",
     status: "skipped",
     errorCode: "same_patient_cooldown",
   });
@@ -416,6 +417,7 @@ test("YCloud failure does not suppress the email copy", async () => {
   });
 
   assert.deepEqual(result, {
+    emailStatus: "completed",
     status: "failed",
     httpStatus: 400,
     errorCode: "http_error",
@@ -743,7 +745,7 @@ test("image webhook acknowledges the photo as Bruna and keeps human review", asy
       patientReply.text.body,
       /Obrigada por compartilhar sua foto e confiar na gente/i,
     );
-    assert.match(
+    assert.doesNotMatch(
       patientReply.text.body,
       /boas abordagens que podem ajudar a tratar/i,
     );

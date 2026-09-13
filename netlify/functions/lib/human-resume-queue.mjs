@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { getStore } from "@netlify/blobs";
+import { normalizePatientRelationship } from "./patient-relationship.mjs";
 
 const STORE_NAME = "liv-human-resume-v1";
 const VERSION = 1;
@@ -25,8 +26,9 @@ function identity(phone) {
     .digest("hex");
 }
 
-function pendingKey(phone) {
-  return `pending/${identity(phone)}`;
+function pendingKey(phone, eventId = "") {
+  const suffix = eventId ? `/${createHash("sha256").update(eventId).digest("hex")}` : "";
+  return `pending/${identity(phone)}${suffix}`;
 }
 
 function controlKey(phone) {
@@ -72,6 +74,14 @@ function normalizedControl(value) {
     status: value.status,
     generation: limitedText(value.generation, 120),
     updatedAt: limitedText(value.updatedAt, 40),
+    lastHumanAt: limitedText(value.lastHumanAt || value.updatedAt, 40),
+    latestInboundAt: limitedText(value.latestInboundAt, 40),
+    latestInboundEventId: limitedText(value.latestInboundEventId, 200),
+    handledEventId: limitedText(value.handledEventId, 200),
+    receiptAttemptedAt: limitedText(value.receiptAttemptedAt, 40),
+    holdingSent: value.holdingSent === true,
+    alertDeliveredAt: limitedText(value.alertDeliveredAt, 40),
+    alertEventId: limitedText(value.alertEventId, 240),
   };
 }
 
@@ -111,6 +121,14 @@ function normalizedPending(value) {
         ? value.referralContext
         : null,
     recentConversation: normalizedHistory(value.recentConversation),
+    professional: limitedText(value.professional, 80),
+    opportunityId: limitedText(value.opportunityId, 160),
+    patientRelationship: normalizePatientRelationship(value.patientRelationship),
+    preserveHumanOwnership: value.preserveHumanOwnership === true,
+    receiptAttemptedAt: limitedText(value.receiptAttemptedAt, 40),
+    holdingSent: value.holdingSent === true,
+    alertDeliveredAt: limitedText(value.alertDeliveredAt, 40),
+    alertEventId: limitedText(value.alertEventId, 240),
     morningResume: value.morningResume === true,
     receivedAt: limitedText(value.receivedAt, 40),
     dueAt,
@@ -141,14 +159,23 @@ export async function markHumanTakeover(
     const store = resumeStore(getStoreImpl);
     const generation =
       limitedText(eventId, 100) || `takeover-${now}`;
-    await store.delete(pendingKey(phone));
-    await store.setJSON(controlKey(phone), {
-      version: VERSION,
-      status: "human_active",
-      generation,
-      updatedAt: new Date(parsedTime(at, now)).toISOString(),
-    });
-    return { status: "completed", generation };
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const entry = await store.getWithMetadata(controlKey(phone), { type: "json", consistency: "strong" });
+      const previous = normalizedControl(entry?.data);
+      const humanAt = parsedTime(at, now);
+      if (previous?.generation === generation) return { status: "completed", generation };
+      if (previous && parsedTime(previous.lastHumanAt, 0) > humanAt) {
+        return { status: "superseded", reason: "newer_human_activity" };
+      }
+      const write = await store.setJSON(controlKey(phone), {
+        version: VERSION, status: "human_active", generation,
+        lastHumanAt: new Date(humanAt).toISOString(),
+        updatedAt: new Date(humanAt).toISOString(),
+      }, entry?.etag ? { onlyIfMatch: entry.etag } : { onlyIfNew: true });
+      // A generation change invalidates the old job without deleting a newer inbound.
+      if (write.modified) return { status: "completed", generation };
+    }
+    return { status: "superseded", reason: "concurrent_activity" };
   } catch {
     return { status: "failed" };
   }
@@ -173,6 +200,7 @@ export async function scheduleHumanResume(
     getStoreImpl = getStore,
     now = Date.now(),
     delayMs = DEFAULT_DELAY_MS,
+    attempt = 0,
   } = {},
 ) {
   const phone = normalizedPhone(input?.phone);
@@ -196,7 +224,12 @@ export async function scheduleHumanResume(
 
   try {
     const store = resumeStore(getStoreImpl);
-    let control = await readControl(phone, getStoreImpl);
+    const controlEntry = await store.getWithMetadata(controlKey(phone), { type: "json", consistency: "strong" });
+    let control = normalizedControl(controlEntry?.data);
+    const key = pendingKey(phone, eventId);
+    const pendingEntry = await store.getWithMetadata(key, { type: "json", consistency: "strong" });
+    const pending = normalizedPending(pendingEntry?.data) || (!control?.latestInboundEventId
+      ? normalizedPending(await store.get(pendingKey(phone), { type: "json", consistency: "strong" })) : null);
     const receivedAt = parsedTime(input.receivedAt, now);
     const expectedGeneration = limitedText(
       input.expectedHumanGeneration,
@@ -214,10 +247,10 @@ export async function scheduleHumanResume(
     }
 
     const controlUpdatedAt = new Date(
-      control?.updatedAt || 0,
+      control?.lastHumanAt || 0,
     ).getTime();
     if (
-      control?.status === "human_active" &&
+      control &&
       Number.isFinite(controlUpdatedAt) &&
       controlUpdatedAt > receivedAt
     ) {
@@ -227,25 +260,36 @@ export async function scheduleHumanResume(
       };
     }
 
-    if (control?.status === "waiting_human") {
-      return { status: "waiting_human" };
+    if (control?.handledEventId === eventId || (pending?.eventId === eventId && pending.generation === control?.generation)) {
+      return { status: "duplicate", dueAt: pending ? new Date(pending.dueAt).toISOString() : null };
     }
 
-    if (!control || control.status !== "human_active") {
+    if (parsedTime(control?.latestInboundAt, 0) > receivedAt ||
+        (pending?.generation === control?.generation && parsedTime(pending?.receivedAt, 0) > receivedAt)) {
+      return { status: "superseded", reason: "newer_patient_activity" };
+    }
+    if (!control || control.status === "bruna_resumed") {
       control = {
         version: VERSION,
         status: "human_active",
         generation: `legacy-${new Date(now).toISOString().slice(0, 10)}`,
         updatedAt: new Date(now).toISOString(),
+        lastHumanAt: control?.lastHumanAt || new Date(receivedAt).toISOString(),
       };
-      await store.setJSON(controlKey(phone), control);
     }
+
+    control = { ...control, latestInboundAt: new Date(receivedAt).toISOString(), latestInboundEventId: eventId };
+    const reserved = await store.setJSON(controlKey(phone), control,
+      controlEntry?.etag ? { onlyIfMatch: controlEntry.etag } : { onlyIfNew: true });
+    if (!reserved.modified) return attempt < 2
+      ? scheduleHumanResume(input, { getStoreImpl, now, delayMs, attempt: attempt + 1 })
+      : { status: "superseded", reason: "concurrent_activity" };
 
     const dueAt = Math.max(
       now,
       receivedAt + Math.max(1, delayMs),
     );
-    await store.setJSON(pendingKey(phone), {
+    const written = await store.setJSON(key, {
       version: VERSION,
       status: "pending",
       phone,
@@ -259,6 +303,10 @@ export async function scheduleHumanResume(
       reference: limitedText(input.reference, 200),
       referenceCategory: limitedText(input.referenceCategory, 80),
       procedure: limitedText(input.procedure, 120),
+      professional: limitedText(input.professional, 80),
+      opportunityId: limitedText(input.opportunityId, 160),
+      patientRelationship: normalizePatientRelationship(input.patientRelationship),
+      preserveHumanOwnership: control.status === "waiting_human",
       templateId: limitedText(input.templateId, 80).toLowerCase(),
       referralContext: input.referralContext || null,
       recentConversation: normalizedHistory(input.recentConversation),
@@ -267,7 +315,8 @@ export async function scheduleHumanResume(
       dueAt,
       attempts: 0,
       updatedAt: new Date(now).toISOString(),
-    });
+    }, pendingEntry?.etag ? { onlyIfMatch: pendingEntry.etag } : { onlyIfNew: true });
+    if (!written.modified) return { status: "superseded", reason: "concurrent_activity" };
 
     return {
       status: "scheduled",
@@ -281,12 +330,23 @@ export async function scheduleHumanResume(
 
 export async function cancelPendingHumanResume(
   phone,
-  { getStoreImpl = getStore } = {},
+  { getStoreImpl = getStore, receivedAt, eventId, now = Date.now() } = {},
 ) {
   if (!normalizedPhone(phone)) return { status: "skipped" };
 
   try {
-    await resumeStore(getStoreImpl).delete(pendingKey(phone));
+    const store = resumeStore(getStoreImpl);
+    const entry = await store.getWithMetadata(controlKey(phone), { type: "json", consistency: "strong" });
+    const control = normalizedControl(entry?.data);
+    if (!control) return { status: "completed" };
+    if (receivedAt && parsedTime(control.latestInboundAt, 0) > parsedTime(receivedAt, now)) return { status: "superseded" };
+    const write = await store.setJSON(controlKey(phone), {
+      ...control,
+      latestInboundEventId: limitedText(eventId, 200) || `cancelled-${now}`,
+      latestInboundAt: new Date(parsedTime(receivedAt, now)).toISOString(),
+      handledEventId: limitedText(eventId, 200) || control.latestInboundEventId,
+    }, { onlyIfMatch: entry.etag });
+    if (!write.modified) return { status: "superseded" };
     return { status: "completed" };
   } catch {
     return { status: "failed" };
@@ -325,7 +385,7 @@ export async function markBrunaResumed(
     const write = await store.setJSON(
       controlKey(phone),
       {
-        version: VERSION,
+        ...control,
         status: "bruna_resumed",
         generation: control.generation,
         updatedAt: new Date(parsedTime(at, now)).toISOString(),
@@ -340,7 +400,6 @@ export async function markBrunaResumed(
       };
     }
 
-    await store.delete(pendingKey(phone));
     return { status: "completed" };
   } catch {
     return { status: "failed" };
@@ -382,16 +441,24 @@ export async function claimDueHumanResumes(
       const control = await readControl(pending.phone, getStoreImpl);
       if (
         !control ||
-        control.status !== "human_active" ||
-        control.generation !== pending.generation
+        !["human_active", "waiting_human"].includes(control.status) ||
+        control.generation !== pending.generation ||
+        control.handledEventId === pending.eventId ||
+        (control.latestInboundEventId && control.latestInboundEventId !== pending.eventId)
       ) {
-        await store.delete(blob.key);
+        if (blob.key.split("/").length === 3) await store.delete(blob.key);
+        else await store.setJSON(blob.key, { version: VERSION, status: "completed" }, { onlyIfMatch: entry.etag });
         continue;
       }
 
       const claimToken = randomUUID();
       const claimed = {
         ...pending,
+        preserveHumanOwnership: pending.preserveHumanOwnership || control.status === "waiting_human",
+        receiptAttemptedAt: control.receiptAttemptedAt,
+        holdingSent: control.holdingSent,
+        alertDeliveredAt: control.alertDeliveredAt,
+        alertEventId: control.alertEventId,
         status: "processing",
         claimToken,
         claimUntil: now + CLAIM_TTL_MS,
@@ -434,8 +501,10 @@ export async function isHumanResumeClaimCurrent(
       pending?.status === "processing" &&
         pending.claimToken === job.claimToken &&
         pending.eventId === job.eventId &&
-        control?.status === "human_active" &&
-        control.generation === job.generation,
+        ["human_active", "waiting_human"].includes(control?.status) &&
+        control.generation === job.generation &&
+        control.handledEventId !== job.eventId &&
+        (!control.latestInboundEventId || control.latestInboundEventId === job.eventId),
     );
   } catch {
     return false;
@@ -459,20 +528,25 @@ export async function completeHumanResume(
       return { status: "skipped" };
     }
 
+    const store = resumeStore(getStoreImpl);
+    const entry = await store.getWithMetadata(controlKey(job.phone), { type: "json", consistency: "strong" });
+    const control = normalizedControl(entry?.data);
     const current = await isHumanResumeClaimCurrent(job, {
       getStoreImpl,
     });
     if (!current) return { status: "superseded" };
 
-    const store = resumeStore(getStoreImpl);
-    await store.delete(job.queueKey);
-    await store.setJSON(controlKey(job.phone), {
-      version: VERSION,
+    const written = await store.setJSON(controlKey(job.phone), {
+      ...control,
       status: controlStatus,
       generation: job.generation,
+      handledEventId: job.eventId,
       updatedAt: new Date(now).toISOString(),
-    });
-    return { status: "completed" };
+    }, { onlyIfMatch: entry.etag });
+    // Per-event keys cannot contain a newer patient's message. Legacy per-phone
+    // keys remain for conditional cleanup by the claimant during migration.
+    if (written.modified && job.queueKey.split("/").length === 3) await store.delete(job.queueKey);
+    return { status: written.modified ? "completed" : "superseded" };
   } catch {
     return { status: "failed" };
   }
@@ -519,3 +593,25 @@ export async function rescheduleHumanResume(
 }
 
 export const HUMAN_RESUME_DELAY_MS = DEFAULT_DELAY_MS;
+
+// Delivery progress survives a retry; reserving a receipt precedes its send.
+export async function updateHumanResumeDeliveryState(job, updates, { getStoreImpl = getStore, now = Date.now() } = {}) {
+  try {
+    const store = resumeStore(getStoreImpl);
+    const entry = await store.getWithMetadata(controlKey(job.phone), { type: "json", consistency: "strong" });
+    const control = normalizedControl(entry?.data);
+    if (!await isHumanResumeClaimCurrent(job, { getStoreImpl })) return { status: "superseded" };
+    const data = { ...control };
+    if (updates.receiptAttempted) {
+      if (control.receiptAttemptedAt) return { status: "duplicate" };
+      data.receiptAttemptedAt = new Date(now).toISOString();
+    }
+    if (updates.holdingSent) data.holdingSent = true;
+    if (updates.alertDelivered) {
+      data.alertDeliveredAt = new Date(now).toISOString();
+      data.alertEventId = limitedText(updates.alertEventId, 240);
+    }
+    const write = await store.setJSON(controlKey(job.phone), data, { onlyIfMatch: entry.etag });
+    return { status: write.modified ? "completed" : "superseded" };
+  } catch { return { status: "failed" }; }
+}

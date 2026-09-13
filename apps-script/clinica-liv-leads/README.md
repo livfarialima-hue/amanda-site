@@ -143,3 +143,13 @@ Projetos divergentes não devem ser editados, renomeados, arquivados ou excluíd
 - Privacidade: nenhum nome, telefone, e-mail, mensagem, click ID, `Opportunity ID`, `Event ID` ou informação clínica no agregado/e-mail.
 - Taxonomia: `M26F01W` e `M26C01W` resolvem `meta_whatsapp_direct`; `M26F02S` e `M26C02S` resolvem `meta_site_whatsapp`. `M26O01W`, `M26O02W` e aliases desconhecidos permanecem N/D até evidência canônica.
 - Manual completo: `campanhas/ROTINA-AUTOMATIZADA-REVISAO-META-ADS.md`.
+
+## Cuidados programados — preparação local de 12/09/2026
+
+Ainda não publicado/ativado. Após aprovar e publicar o commit canônico, prepararEstruturaCuidadosProgramados acrescenta três cabeçalhos ao fim de Consultas e cria _CUIDADOS_PROGRAMADOS. Preserva lacunas, índices, fórmulas e dados. Conferir o diff de cabeçalhos antes/depois. A função é idempotente. Não preencher dados ou consentimentos em lote por inferência.
+
+Netlify: WHATSAPP_SCHEDULED_CARE_ENABLED=true habilita o transporte dos cuidados, sujeito às flags gerais já existentes. Apps Script: ativarCuidadosProgramados verifica a saúde autenticada, aplica a estrutura aditiva e habilita LIV_CUIDADOS_PROGRAMADOS_ATIVOS. A rotina usa processarRetomadasAutomaticas e não liga o marketing se ele estiver desligado.
+
+Aniversário exige confirmação separada do modelo aprovado no YCloud. Preparar um template MARKETING em pt_BR, sem variáveis, cabeçalho ou botões, corpo exato: **A equipe da Clínica LIV deseja um feliz aniversário! Que seu novo ciclo traga saúde e bons momentos. Receba nosso carinho.** Nome proposto para submissão: aniversario_clinica_liv_v1 (ainda não submetido nem confirmado como aprovado). Após verificar o modelo canônico e o corpo, configurar YCLOUD_BIRTHDAY_TEMPLATE_NAME e WHATSAPP_BIRTHDAY_CARE_ENABLED=true; só então executar ativarAniversariosAutomaticos. Essa função exige o transporte pronto e grava watermark para não reprocessar aniversários anteriores ou o próprio dia da ativação. Habilitação individual usa Data de nascimento, Consentimento para contato e Aniversário pelo bot; nenhum destes foi alterado nesta preparação.
+
+Desligamento: desativarCuidadosProgramados interrompe cuidados e aniversários; desativarRetomadasAutomaticas é o desligamento do gatilho compartilhado. Rollback preserva a aba de recibos e as colunas adicionadas. Recibos incertos são reconciliados por reconciliarRecibosCuidadosProgramados, sem disparos. Aprovação futura deve separar publicação, migração, habilitação de entrega após aprovação humana, submissão do modelo e ativação dos aniversários.

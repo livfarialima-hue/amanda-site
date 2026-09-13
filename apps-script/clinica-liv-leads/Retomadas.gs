@@ -1115,6 +1115,9 @@ function consultarSaudeEndpointRetomadasAutomaticas_(
     automaticTemplateEnabled:
       corpo.automaticTemplateEnabled === true,
     templateConfigured: corpo.templateConfigured === true,
+    careEnabled: corpo.careEnabled === true,
+    birthdayEnabled: corpo.birthdayEnabled === true,
+    birthdayTemplateConfigured: corpo.birthdayTemplateConfigured === true,
     patientSideEffectsAllowed:
       corpo.patientSideEffectsAllowed === true,
     automationMode: String(corpo.automationMode || "unknown"),
@@ -1231,6 +1234,7 @@ function desativarRetomadasAutomaticasPorModeloPelaCentral() {
 }
 
 function desativarRetomadasAutomaticas() {
+  if (typeof desativarCuidadosProgramados === "function") desativarCuidadosProgramados();
   const propriedades = PropertiesService.getScriptProperties();
   propriedades.setProperty(
     RETOMADAS_CONFIG.propriedadeAtiva,
@@ -1859,6 +1863,17 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
       "O painel móvel está indisponível; use os links individuais e a Central.",
     );
   }
+  let practical = null;
+  let registeredBeforeEmail = false;
+  if (typeof montarResumoPraticoCuidados_ === "function" && painelUrl) {
+    try {
+      registrarRetomadasEnviadas_(planilhaControle, selecionados, agora);
+      registeredBeforeEmail = true;
+      atualizarCentralAtendimentoInterno_(arquivo, agora);
+      const panelItems = listarItensPainelDecisoesCentral_(arquivo.getSheetByName(CENTRAL_ATENDIMENTO_CONFIG.sheetName), agora);
+      practical = montarResumoPraticoCuidados_(panelItems, dataApresentacao, painelUrl, centralUrl, avisosIntegridade);
+    } catch (error) { avisosIntegridade.push("Não foi possível consolidar o resumo do painel. Confira a Central antes de decidir."); }
+  }
   const cuidadosEmail = agendaCuidados.concat(
     selecionados.map(converterRetomadaParaCuidadoEmail_),
   );
@@ -1875,7 +1890,7 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
     cuidadosEmail,
     avisosIntegridade,
   );
-  const assunto =
+  const assunto = practical ? "Clínica LIV — " + practical.manual + " decisões • " + practical.automatic + " envios previstos — " + dataApresentacao :
     (integridade.avisos.length ? "ATENÇÃO — " : "") +
     "Clínica LIV — " +
     manuaisHoje +
@@ -1910,16 +1925,12 @@ function enviarEmailDiarioRetomadasInterno_(agora) {
   MailApp.sendEmail({
     to: RETOMADAS_CONFIG.destinatario,
     subject: assunto,
-    body: corpoTexto,
-    htmlBody: corpoHtml,
+    body: practical ? practical.text : corpoTexto,
+    htmlBody: practical ? practical.html : corpoHtml,
     name: "Clínica LIV — Agenda de cuidado",
   });
 
-  registrarRetomadasEnviadas_(
-    planilhaControle,
-    selecionados,
-    agora,
-  );
+  if (!registeredBeforeEmail) registrarRetomadasEnviadas_(planilhaControle, selecionados, agora);
   if (
     typeof atualizarCentralAtendimentoInterno_ === "function"
   ) {
@@ -2056,7 +2067,7 @@ function carregarLeadsRetomadas_(planilha) {
   return resultado;
 }
 
-function carregarConversasRetomadas_(planilha) {
+function carregarConversasRetomadas_(planilha, options) {
   const ultimaLinha = planilha.getLastRow();
   const resultado = {};
 
@@ -2065,7 +2076,7 @@ function carregarConversasRetomadas_(planilha) {
   }
 
   const valores = planilha
-    .getRange(2, 1, ultimaLinha - 1, 7)
+    .getRange(2, 1, ultimaLinha - 1, options && options.includeAuthorship ? 12 : 7)
     .getValues();
 
   valores.forEach(function (linha) {
@@ -2090,6 +2101,7 @@ function carregarConversasRetomadas_(planilha) {
       dataHora: dataHora,
       messageId: messageId,
       texto: texto,
+      ...(options && options.includeAuthorship ? { source: ["bruna", "human", "patient"].includes(String(linha[10] || "")) ? String(linha[10]) : "unknown", opportunityId: String(linha[7] || ""), professional: String(linha[8] || ""), eventId: String(linha[4] || "") } : {}),
     });
   });
 
@@ -3900,11 +3912,12 @@ function registrarRetomadasEnviadas_(planilha, candidatos, agora) {
 
 function processarRetomadasAutomaticas() {
   const propriedades = PropertiesService.getScriptProperties();
+  const careActive = typeof CUIDADOS_PROGRAMADOS !== "undefined" && propriedades.getProperty(CUIDADOS_PROGRAMADOS.enabled) === "true";
 
   if (
     propriedades.getProperty(
       RETOMADAS_CONFIG.propriedadeAtiva,
-    ) !== "true"
+    ) !== "true" && !careActive
   ) {
     return { ok: true, active: false, sent: 0 };
   }
@@ -3937,11 +3950,9 @@ function processarRetomadasAutomaticas() {
   }
 
   try {
-    return processarRetomadasAutomaticasInterno_(
-      agora,
-      segredo,
-      propriedades,
-    );
+    const care = typeof processarCuidadosProgramados_ === "function" ? processarCuidadosProgramados_(agora, segredo, propriedades) : null;
+    const marketing = propriedades.getProperty(RETOMADAS_CONFIG.propriedadeAtiva) === "true" ? processarRetomadasAutomaticasInterno_(agora, segredo, propriedades) : { ok: true, active: false, sent: 0 };
+    return Object.assign({}, marketing, { care: care });
   } finally {
     lock.releaseLock();
   }
@@ -4449,7 +4460,7 @@ function enviarRetomadaAutomatica_(payload, segredo, propriedades) {
       muteHttpExceptions: true,
     });
   } catch (error) {
-    return { ok: false, sent: false, error: "request_failed" };
+    return { ok: false, sent: false, uncertain: true, error: "request_failed" };
   }
 
   let corpo = {};
@@ -4466,6 +4477,8 @@ function enviarRetomadaAutomatica_(payload, segredo, propriedades) {
       resposta.getResponseCode() < 300 &&
       corpo.ok === true,
     sent: corpo.sent === true,
+    uncertain: corpo.uncertain === true,
+    effectiveBody: corpo.effectiveBody || "",
     error: [
       corpo.error ||
         "http_" + String(resposta.getResponseCode()),

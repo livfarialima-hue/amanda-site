@@ -3,6 +3,7 @@ import { buildConversationGuidelines } from "./conversation-guidelines.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   isBrunaConversionExperienceEnabled,
+  procedureOpeningMicrovalue,
 } from "./bruna-conversion-experience.mjs";
 import { getRecommendedSiteResource } from "./site-content.mjs";
 import { normalizeConversationSemanticState } from "./conversation-memory.mjs";
@@ -364,6 +365,7 @@ function hasConcreteCurrentMessage(currentMessage) {
     .replace(/^(?:ol[aá]|oi|bom\s+dia|boa\s+tarde|boa\s+noite)[!,.]?\s*/iu, "")
     .trim();
 
+  if (/^(?:(?:o|a|no|na)\s+)?(?:cervicoplastia|lifting(?:\s+(?:facial|cervical))?|pesco[cç]o|papada|rosto|p[aá]lpebras?|orelhas?|blefaroplastia|otoplastia|tudo(?:\s*[,!]?\s*por\s+favor)?)[.!\s]*$/iu.test(normalized)) return true;
   if (normalized.length < 10) return false;
   if (
     /^(?:sim|n[aã]o|ok|certo|entendi|combinado|perfeito|obrigad[oa])(?:\s+obrigad[oa])?[!.\s]*$/iu.test(
@@ -401,7 +403,7 @@ export function applyAnsweredDiscoveryQuestionGuard(
     return decision;
   }
 
-  const suggestedReply = String(decision.suggestedReply)
+  let suggestedReply = String(decision.suggestedReply)
     .replace(
       /(?:\s+|^)(?:Posso|Consigo)\s+(?:te|lhe)\s+orientar\s+sobre\s+[^.?!]{1,160}\s+e\s+tamb[eé]m\s+(?:te\s+)?(?:orientar|conversar)\s+sobre\s+[^.?!]{1,160}[.?!]\s*/giu,
       " ",
@@ -413,6 +415,11 @@ export function applyAnsweredDiscoveryQuestionGuard(
     .replace(/\s{2,}/gu, " ")
     .trim();
 
+  if (suggestedReply !== decision.suggestedReply && decision.professional === "amanda" &&
+    decision.confidence === "high" && decision.automaticAllowed === true &&
+    (!suggestedReply || /^(?:claro[,!.]?\s*)?(?:estamos falando(?:\s+de)?\s+[^.?!]{1,80}|entendi|certo)[.?!\s]*$/iu.test(suggestedReply))) {
+    suggestedReply = procedureOpeningMicrovalue(decision.procedure) || suggestedReply;
+  }
   if (!suggestedReply) return decision;
 
   return {

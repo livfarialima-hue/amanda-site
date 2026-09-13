@@ -75,7 +75,7 @@ function diagnosticarAgendaCuidados() {
   return resultado;
 }
 
-function criarAgendaCuidadosConsultas_(planilha, agora) {
+function criarAgendaCuidadosConsultas_(planilha, agora, options) {
   if (!planilha || planilha.getLastRow() < 2) return [];
 
   const valores = planilha.getDataRange().getValues();
@@ -101,7 +101,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
   }
 
   function adicionar(item) {
-    const chave = [
+    const chave = item.sourceKey || [
       item.categoria,
       item.telefone || item.nome,
       item.dataReferencia || hoje,
@@ -185,6 +185,7 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
       chaveProfissionalAgendaCuidados_(profissional),
     );
     const adicionarDaLinha = function (item) {
+      if (typeof enriquecerMarcoCuidado_ === "function") item = enriquecerMarcoCuidado_(item, linha, colunas);
       const automaticoExterno =
         item.automatico === true &&
         !profissionalFundamentalAgendaCuidados_(profissional);
@@ -320,6 +321,8 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
         adicionar: adicionarDaLinha,
       });
 
+      if (typeof adicionarMarcosCirurgiaOrcamento_ === "function") adicionarMarcosCirurgiaOrcamento_({ linha: linha, colunas: colunas, agora: agora, hoje: hoje, telefone: telefone, nome: identidade, profissional: profissional, proximaAcao: proximaAcao, retomadaEncerrada: retomadaEncerrada, adicionar: adicionarDaLinha });
+
       adicionarClienteAntigoAgendaCuidados_({
         linha: linha,
         colunas: colunas,
@@ -337,7 +340,9 @@ function criarAgendaCuidadosConsultas_(planilha, agora) {
     }
   });
 
-  return itens.sort(function (a, b) {
+  const projected = !(options && options.raw) && typeof projetarDecisoesCuidados_ === "function" && typeof planilha.getParent === "function"
+    ? projetarDecisoesCuidados_(planilha.getParent(), itens, agora) : itens;
+  return projected.sort(function (a, b) {
     if (a.futuro !== b.futuro) return a.futuro ? 1 : -1;
     if (a.prioridade !== b.prioridade) {
       return a.prioridade - b.prioridade;
@@ -424,10 +429,7 @@ function adicionarAniversarioAgendaCuidados_(entrada) {
     automatico: false,
     futuro: diasAte > 0,
     prioridade: diasAte === 0 ? 4 : 9,
-    sugestao:
-      "Oi, " +
-      entrada.primeiroNome +
-      "! Passando para desejar um feliz aniversário. Que seu novo ciclo seja leve, saudável e cheio de bons momentos. Um carinho da equipe da Clínica LIV.",
+    sugestao: typeof CUIDADOS_PROGRAMADOS !== "undefined" ? CUIDADOS_PROGRAMADOS.birthdayText : "A equipe da Clínica LIV deseja um feliz aniversário! Que seu novo ciclo traga saúde e bons momentos. Receba nosso carinho.",
   });
 }
 

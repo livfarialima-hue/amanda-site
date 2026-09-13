@@ -199,6 +199,8 @@
       "id": "bruna-conversation-safety",
       "ownerFiles": [
         "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/human-resume-policy.mjs",
+        "netlify/functions/lib/human-resume-queue.mjs",
         "netlify/functions/lib/inbound-burst-context.mjs",
         "netlify/functions/lib/outbound-reply-gate.mjs",
         "netlify/functions/lib/surgical-price-review.mjs"
@@ -218,17 +220,22 @@
         "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
+        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
         "netlify/functions/human-resume.mjs",
-        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
         "netlify/functions/lib/conversation-action-controller.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
-        "netlify/functions/lib/inbound-burst-context.mjs",
-        "netlify/functions/lib/inbound-burst-context.test.mjs",
         "netlify/functions/lib/conversation-ledger.mjs",
         "netlify/functions/lib/conversation-ledger.test.mjs",
+        "netlify/functions/lib/human-resume-policy.mjs",
+        "netlify/functions/lib/human-resume-policy.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/human-resume-queue.mjs",
+        "netlify/functions/lib/human-resume-queue.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs",
         "netlify/functions/lib/openai-shadow.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
@@ -239,11 +246,14 @@
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
-        "netlify/functions/lib/inbound-burst-context.test.mjs",
-        "netlify/functions/lib/human-resume-processor.test.mjs",
         "netlify/functions/lib/conversation-ledger.test.mjs",
+        "netlify/functions/lib/human-resume-policy.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/human-resume-queue.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/price-holding-webhook.test.mjs",
         "netlify/functions/lib/surgical-price-review.test.mjs"
@@ -251,7 +261,9 @@
       "requiredCommands": [
         "npm.cmd run architecture:check",
         "npm.cmd test",
-        "git diff --check"
+        "git diff --check",
+        "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
@@ -272,7 +284,8 @@
         "apps-script/clinica-liv-leads/Code.gs",
         "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
-        "netlify/functions/appointment-reminder.mjs"
+        "netlify/functions/appointment-reminder.mjs",
+        "apps-script/clinica-liv-leads/CuidadosProgramados.gs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/AgendaCuidados.gs",
@@ -363,7 +376,9 @@
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
         "netlify/functions/lib/whatsapp-automation.mjs",
         "netlify/functions/lib/whatsapp-automation.test.mjs",
-        "netlify/functions/scheduled-followup.mjs"
+        "netlify/functions/scheduled-followup.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
@@ -380,7 +395,8 @@
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
-        "netlify/functions/lib/whatsapp-automation.test.mjs"
+        "netlify/functions/lib/whatsapp-automation.test.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs"
       ],
       "requiredCommands": [
         "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -391,7 +407,8 @@
         "npm.cmd run site:build",
         "npm.cmd run site:check",
         "npm.cmd run ops:check",
-        "git diff --check"
+        "git diff --check",
+        "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
@@ -647,7 +664,9 @@
         "netlify/functions/lib/human-review-envelope.mjs"
       ],
       "consumerFiles": [
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/ycloud-review-alert.mjs",
+        "apps-script/clinica-liv-leads/Code.gs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/OperationalEvents.gs",
@@ -656,11 +675,17 @@
         "docs/whatsapp-clinica-liv-operacao.md",
         "netlify/functions/lib/human-review-envelope.mjs",
         "netlify/functions/lib/human-review-envelope.test.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
+        "netlify/functions/lib/ycloud-review-alert.mjs",
+        "netlify/functions/lib/ycloud-review-alert.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
-        "netlify/functions/lib/human-review-envelope.test.mjs"
+        "netlify/functions/lib/human-review-envelope.test.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "netlify/functions/lib/ycloud-review-alert.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
@@ -668,7 +693,8 @@
         "npm.cmd run architecture:check",
         "npm.cmd test",
         "npm.cmd run ops:check",
-        "git diff --check"
+        "git diff --check",
+        "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
@@ -813,6 +839,56 @@
         "Google Drive",
         "Netlify",
         "OpenAI"
+      ],
+      "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "patient-care-milestones",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
+        "netlify/functions/lib/scheduled-care.mjs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
+        "netlify/functions/scheduled-followup.mjs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
+        "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "netlify/functions/lib/scheduled-care.mjs",
+        "netlify/functions/lib/scheduled-care.test.mjs",
+        "apps-script/clinica-liv-leads/README.md",
+        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
+        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html"
+      ],
+      "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
+        "netlify/functions/lib/scheduled-care.test.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs"
+      ],
+      "requiredCommands": [
+        "npm.cmd run change:check",
+        "npm.cmd run architecture:check",
+        "npm.cmd test",
+        "npm.cmd run site:build",
+        "npm.cmd run site:check",
+        "npm.cmd run ops:check"
+      ],
+      "liveSystems": [
+        "Google Sheets LEADS",
+        "Apps Script",
+        "Google Calendar",
+        "Netlify",
+        "YCloud"
       ],
       "requiresReadOnlyPreflight": true
     }

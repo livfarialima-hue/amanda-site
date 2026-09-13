@@ -6,6 +6,18 @@
 
 Este documento complementa a governança operacional. Ele não substitui o norte estratégico, os contratos clínicos, o manual da Bruna nem os registros canônicos do Apps Script.
 
+**Extensão candidata Bruna/equipe — 12/09/2026:** `human-resume-policy.mjs` decide elegibilidade e texto determinístico de recebimento; `human-resume-queue.mjs` mantém geração, entrada atual, entrega de alerta e reserva única de aviso com escrita condicional. O processador relê histórico durável e preferências e conserva compromissos. `outbound-reply-gate.mjs` relê a autorização imediatamente depois de reservar o envio; não assume que a ausência de erro de IA permite responder. `LeadClassification.gs` mantém a confirmação de recebimento como pendência da clínica. Consumidores e regressão cruzada estão no contrato `bruna-conversation-safety`; filas e gatilhos existentes são reutilizados.
+
+## Candidato de continuidade e classificação — 12/09/2026
+
+Implementação testada localmente, pendente de publicação; evidência em `auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md`.
+
+- `lead-classifier.mjs` preserva autoria e conteúdo indisponível, prioriza o contexto mais recente e impede qualificação por prefill/mídia sem evidência pessoal.
+- `LeadClassification.gs` ordena antes de limitar, confere telefone/profissional mesmo com oportunidade vinculada e relê a autoria no momento de concluir a gravação. O worker não devolve a transcrição na conclusão. Baixa confiança não avança fase nem escreve marco administrativo; versão de conversa divergente volta à fila antes de qualquer sincronização.
+- `Relacionamento`, `Responsável atual` e `Aguardando ação de` são dimensões distintas. Intervenção humana não libera takeover; cuidado ativo e responsável humano são preservados. Origem e colunas manuais não são inferidas novamente.
+- `human-review-envelope.mjs` fornece ação necessária, responsável, rascunho seguro e contexto; `ycloud-review-alert.mjs` transporta o e-mail até 10 mil caracteres independentemente da disponibilidade/cooldown do alerta WhatsApp. Rascunho ausente ou excessivo não vira texto incompleto pronto para copiar. `Code.gs` mantém deduplicação por evento.
+- A regressão cruzada `bruna-marketing-care.integration.test.mjs` cobre os consumidores de conversa, classificador, CRM, marcos e e-mail sem efetuar rede ou escrita reais.
+
 ## 1. Princípio central
 
 Cada decisão deve ter um único dono. Módulos de política interpretam dados e devolvem decisões puras; módulos de efeito executam rede, persistência, agenda ou envio somente depois dos gates aplicáveis.
@@ -172,3 +184,9 @@ O baseline anterior a esta modularização é o commit `2862a6ddb61302430b40bb3b
 - dados de pacientes, oportunidades, agenda e histórico não devem ser revertidos automaticamente junto com código.
 
 O rollback precisa ser seguido de smoke tests, conferência do modo de automação, webhook, filas programadas, funil e agenda. A causa deve ser registrada antes de uma nova tentativa.
+
+## Cuidados programados — candidato local 12/09/2026
+
+CuidadosProgramados.gs é o proprietário de identidade de marco, decisão persistente, consentimento, planejamento de horário, validação do Calendar e recibo operacional dos cuidados. AgendaCuidados.gs gera as propostas; CentralAtendimento.gs e PainelDecisoesDiarias.gs projetam e recebem decisões explícitas; Retomadas.gs reutiliza o gatilho existente e o transporte autenticado, sem ampliar a regra de retomada automática de marketing. scheduled-care.mjs recebe apenas a identidade do plano e relê validate_care_send em Code.gs antes e depois da reserva. Seu recibo de reserva não expira em um novo disparo. Reconciliar recibo é somente leitura no provedor e escrita do registro local da operação.
+
+Invariantes: GET do painel não escreve; dispensar não altera preferência permanente; dias decorridos no Calendar não significam atendimento realizado; nascimento/consentimento não são inferidos; aprovação liga texto, horário e contexto; cadastro/profissional/evento alterados invalidam o envio; falha ambígua nunca autoriza nova tentativa automática. A integração é coberta por CuidadosProgramados.test.mjs e scheduled-care.test.mjs, além dos consumidores existentes. O histórico usa o escritor canônico registrarTurnoConversa_, com Opportunity ID e profissional. A migração aditiva ocorre somente após publicação autorizada, sem deslocar índices existentes.

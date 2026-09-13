@@ -128,6 +128,14 @@ test("explicit expected party replaces wording heuristics", () => {
   );
 });
 
+test("a Bruna receipt keeps the pending task with the clinic despite classifier wording", () => {
+  const { expectedPartyFromClassification_ } = loadFunctions();
+  const messages = [{ direction: "OUT", source: "bruna", eventId: "synthetic-human-resume-holding:bruna", text: "Recebi sua mensagem. A equipe foi avisada para conferir e retornar por aqui assim que possível." }];
+  assert.equal(expectedPartyFromClassification_({ expectedParty: "patient" }, { messages }), "clinic");
+  messages.push({ direction: "OUT", source: "equipe_humana", text: "Resolvemos o pedido." });
+  assert.equal(expectedPartyFromClassification_({ expectedParty: "patient" }, { messages }), "patient");
+});
+
 test("legacy classifications recognize broader patient-wait wording", () => {
   const { expectedPartyFromClassification_ } = loadFunctions();
 
@@ -814,7 +822,7 @@ test("classification recovers later unknown messages only for a verified opportu
     false,
   );
   assert.deepEqual(
-    withoutRecovery.map((message) => message.messageId),
+    Array.from(withoutRecovery, (message) => message.messageId),
     ["linked", "explicit-amanda"],
   );
 
@@ -827,7 +835,7 @@ test("classification recovers later unknown messages only for a verified opportu
     true,
   );
   assert.deepEqual(
-    withRecovery.map((message) => message.messageId),
+    Array.from(withRecovery, (message) => message.messageId),
     ["linked", "unknown-after", "explicit-amanda"],
   );
   assert.equal(withRecovery[0].templateId, "procedure_evaluation_v1");
@@ -992,7 +1000,7 @@ test("administrative milestones protect funnel updates", () => {
   );
   assert.equal(
     shouldApplyLeadStatus_("Novo", "Consulta agendada", "low", true),
-    true,
+    false,
   );
 });
 

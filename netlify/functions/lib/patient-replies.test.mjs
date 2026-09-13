@@ -69,7 +69,8 @@ test("acknowledges a patient photo gently without interpreting it", () => {
     /^Olá, Mariana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
   );
   assert.match(firstReply, /Obrigada por compartilhar sua foto e confiar na gente/i);
-  assert.match(firstReply, /boas abordagens que podem ajudar a tratar/i);
+  assert.doesNotMatch(firstReply, /boas abordagens que podem ajudar a tratar|melhor opção|indicado para você/i);
+  assert.match(firstReply, /avaliação|avaliar/i);
   assert.match(firstReply, /Vou mostrar a foto à Dra\. Amanda/i);
   assert.match(firstReply, /respeitando suas características/i);
   assert.doesNotMatch(firstReply, /momento pessoal|algo tão sensível/i);

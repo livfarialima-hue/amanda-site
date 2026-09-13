@@ -354,7 +354,7 @@ test("uses a holding message only for a non-sensitive uncertainty", () => {
   assert.equal(result.action, "holding_and_alert");
 });
 
-test("alerts silently when uncertainty has no concrete unanswered request", () => {
+test("does not alert when the patient chooses to think calmly", () => {
   const result = classifyHumanResume({
     text: "Entendi, vou pensar com calma",
     messageType: "text",
@@ -377,7 +377,7 @@ test("alerts silently when uncertainty has no concrete unanswered request", () =
     ],
   });
 
-  assert.equal(result.action, "alert_only");
+  assert.equal(result.action, "no_action");
 });
 
 test("recognizes both direct requests and answers to a pending question", () => {

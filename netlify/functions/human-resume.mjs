@@ -5,6 +5,8 @@ import {
 import { allowsPatientSideEffects } from "./lib/automation-mode.mjs";
 import {
   buildOvernightHandoffMessage,
+  buildDelayedHumanReceipt,
+  buildDelayedHumanReviewSuggestion,
   classifyHumanResume,
   hasConcreteResponseExpectation,
   isHumanResumeServiceOpen,
@@ -16,6 +18,7 @@ import {
   completeHumanResume,
   isHumanResumeClaimCurrent,
   rescheduleHumanResume,
+  updateHumanResumeDeliveryState,
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import { shouldSendOpenAIPatientReply } from "./lib/patient-replies.mjs";
@@ -25,6 +28,10 @@ import {
 } from "./lib/conversation-memory.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
 import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
+import { buildHumanReviewEnvelope, formatHumanReviewEnvelope } from "./lib/human-review-envelope.mjs";
+import { applyPatientRelationshipPolicy, blocksAutomatedPatientMessages } from "./lib/patient-relationship.mjs";
+import { callClassificationSheets } from "./lib/sheets-classification-client.mjs";
+import { getDurableConversationContext } from "./lib/conversation-ledger.mjs";
 import {
   buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
@@ -81,6 +88,18 @@ export function hasNewerOutboundReply(job, turns) {
   ));
 }
 
+function hasNewerConversationActivity(job, turns) {
+  const otherTurns = (Array.isArray(turns) ? turns : []).filter(turn =>
+    !(turn.source === "bruna" && String(turn.eventId || "").startsWith(`${job.eventId}-human-resume-`)));
+  return hasNewerOutboundReply(job, otherTurns) || otherTurns.some(turn =>
+    ["user", "patient"].includes(turn.role) && timeMs(turn.at) > timeMs(job.receivedAt));
+}
+
+async function readCurrentRelationship(job, dependencies = {}) {
+  const lookup = dependencies.callClassificationSheetsImpl || callClassificationSheets;
+  return lookup("get_patient_relationship", { patient: { phone: job.phone, professional: job.professional || "", includeIdentity: false } }, { env: dependencies.env || process.env });
+}
+
 function limitedText(value, maximumLength = 260) {
   return Array.from(String(value || "").trim())
     .slice(0, maximumLength)
@@ -101,26 +120,33 @@ function alertText(
     observation: "RETOMADA HUMANA — REVISAR CONVERSA",
   }[kind] || "RETOMADA HUMANA — RESPOSTA NECESSÁRIA";
 
-  if (suggestedReply) {
-    return [
+  const history = (job.recentConversation || []).slice(-10).map(turn =>
+    `${turn.source || turn.role}: ${limitedText(turn.text, 300)}`).join("\n");
+  const envelope = buildHumanReviewEnvelope({
+    reason, professional: job.professional, relationship: job.patientRelationship,
+    urgent: reason === "possible_urgent_symptoms", suggestedReply,
+    actionRequired: "Conferir a pendência e responder no WhatsApp; não repetir informação já enviada pela equipe.",
+    contextSummary: [
       heading,
-      `Mensagem: ${limitedText(job.text, 100) || "Sem texto."}`,
-      holdingSent
-        ? "A mensagem de espera foi enviada uma única vez. A automação permanecerá em silêncio até sua resposta."
-        : "Nenhuma mensagem automática foi enviada à paciente.",
-      `Sugestão para copiar após conferir: ${limitedText(suggestedReply, 820)}`,
-    ].join("\n");
-  }
+      `Última entrada: ${job.receivedAt || "horário indisponível"}`,
+      `Mensagem: ${limitedText(job.text, 1500) || "Material recebido sem texto legível."}`,
+      holdingSent ? "A confirmação de recebimento já foi enviada uma única vez." : "Nenhuma mensagem automática foi enviada à paciente nesta tentativa. Após entregar este alerta, poderá sair no máximo uma confirmação curta de recebimento.",
+      history,
+    ].join("\n"),
+  });
+  return formatHumanReviewEnvelope(envelope);
+}
 
-  return [
-    heading,
-    "A paciente aguardou pelo menos 10 minutos após a tomada humana.",
-    `Mensagem: ${limitedText(job.text) || "Sem texto."}`,
-    `Motivo interno: ${limitedText(reason, 120) || "confirmação humana"}.`,
-    holdingSent
-      ? "A mensagem de espera foi enviada uma única vez. A automação permanecerá em silêncio até sua resposta."
-      : "Nenhuma mensagem automática foi enviada à paciente.",
-  ].filter(Boolean).join("\n");
+async function retryJob(job, status, dependencies = {}, dueAt = null) {
+  const reschedule = dependencies.rescheduleHumanResumeImpl || rescheduleHumanResume;
+  const now = dependencies.now ?? Date.now();
+  const retried = await reschedule(job, dueAt ?? now + Math.min(30, 5 * Math.max(1, job.attempts || 1)) * 60000);
+  return { status: retried.status === "superseded" ? "superseded" : status, reason: status };
+}
+
+async function recordDelivery(job, updates, dependencies) {
+  const persist = dependencies.updateHumanResumeDeliveryStateImpl || updateHumanResumeDeliveryState;
+  return persist(job, updates, { now: dependencies.now });
 }
 
 async function alertReviewer(job, details, dependencies = {}) {
@@ -139,9 +165,16 @@ async function alertReviewer(job, details, dependencies = {}) {
     dependencies.sendYCloudReviewAlertImpl ||
     sendYCloudReviewAlert;
 
-  return sendAlert({
+  const now = dependencies.now ?? Date.now();
+  const alertEventId = `${job.eventId}-human-resume-alert`;
+  if (job.alertEventId === alertEventId && job.alertDeliveredAt) return { status: "completed", emailStatus: "completed" };
+  if (job.alertDeliveredAt && details.reason !== "possible_urgent_symptoms" &&
+      now < timeMs(job.alertDeliveredAt) + 30 * 60000) {
+    return { status: "throttled", retryAt: timeMs(job.alertDeliveredAt) + 30 * 60000 };
+  }
+  const result = await sendAlert({
     from: job.from,
-    eventId: `${job.eventId}-human-resume-alert`,
+    eventId: alertEventId,
     patientName: job.patientName,
     patientPhone: job.phone,
     messageText: alertText(job, details),
@@ -149,6 +182,16 @@ async function alertReviewer(job, details, dependencies = {}) {
       details.reason === "possible_urgent_symptoms",
     expectedHumanResumeGeneration: job.generation,
   });
+  if (result.emailStatus === "completed" || (result.status === "completed" && !result.emailStatus)) {
+    const saved = await recordDelivery(job, { alertDelivered: true, alertEventId }, dependencies);
+    if (saved.status === "completed") {
+      job.alertEventId = alertEventId;
+      job.alertDeliveredAt = new Date(now).toISOString();
+      return { ...result, status: "completed" };
+    }
+    return { status: saved.status === "superseded" ? "superseded" : "failed", errorCode: "alert_receipt_not_persisted" };
+  }
+  return { ...result, status: result.emailStatus === "failed" ? "failed" : result.status };
 }
 
 async function sendPatientMessage(
@@ -173,6 +216,20 @@ async function sendPatientMessage(
   const sendPatient =
     dependencies.sendControlledPatientReplyImpl ||
     sendControlledPatientReply;
+  const finalCheck = async () => {
+    const read = dependencies.readConversationTurnsImpl || readConversationTurns;
+    const latest = await read(job.phone);
+    if (latest?.status !== "completed" || hasNewerConversationActivity(job, latest.turns)) return false;
+    const lookup = await readCurrentRelationship(job, dependencies);
+    if (lookup.status !== "completed" || !lookup.data?.relationship || blocksAutomatedPatientMessages(lookup.data.relationship)) return false;
+    if (conversationAction?.action === CONVERSATION_ACTIONS.RESPOND &&
+        applyPatientRelationshipPolicy({ route: "standard_reply", automaticAllowed: true }, lookup.data.relationship).automaticAllowed === false) return false;
+    return currentCheck(job);
+  };
+  if (job.patientWindowClosed || blocksAutomatedPatientMessages(job.patientRelationship)) {
+    return { status: "blocked", errorCode: "patient_contact_not_allowed" };
+  }
+  if (!await finalCheck()) return { status: "superseded", errorCode: "newer_activity" };
   return sendPatient({
     from: job.from,
     to: job.phone,
@@ -181,7 +238,10 @@ async function sendPatientMessage(
     currentText: job.text,
     recentConversation: job.recentConversation,
     conversationAction,
+    opportunityId: job.opportunityId,
+    professional: job.professional,
   }, {
+    beforeSendImpl: finalCheck,
     sendYCloudPatientTextImpl:
       dependencies.sendYCloudPatientTextImpl ||
       sendYCloudPatientText,
@@ -206,7 +266,18 @@ async function finish(job, controlStatus, dependencies = {}) {
   const complete =
     dependencies.completeHumanResumeImpl ||
     completeHumanResume;
-  return complete(job, { controlStatus });
+  const retainedStatus = ["bruna_resumed", "human_active"].includes(controlStatus) && job.preserveHumanOwnership
+    ? "waiting_human" : controlStatus;
+  return complete(job, { controlStatus: retainedStatus });
+}
+
+async function finishReply(job, reason, dependencies) {
+  const completed = await finish(job, "bruna_resumed", dependencies);
+  return {
+    status: completed.status !== "completed" ? (completed.status === "superseded" ? "superseded" : "reply_sent_control_pending")
+      : job.preserveHumanOwnership ? "waiting_human" : "bruna_resumed",
+    reason, replied: true,
+  };
 }
 
 async function deliverScheduledMorningResume(
@@ -218,21 +289,7 @@ async function deliverScheduledMorningResume(
 
   if (!body) {
     const reason = "morning_resume_context_required";
-    await alertReviewer(
-      job,
-      {
-        kind: "uncertain",
-        reason,
-        holdingSent: false,
-        suggestedReply: "",
-      },
-      dependencies,
-    );
-    await finish(job, "waiting_human", dependencies);
-    return {
-      status: "waiting_human",
-      reason,
-    };
+    return alertOnly(job, reason, dependencies);
   }
 
   const morningAction = {
@@ -254,21 +311,7 @@ async function deliverScheduledMorningResume(
     }
     const reason =
       sendResult.errorCode || "morning_resume_delivery_failed";
-    await alertReviewer(
-      job,
-      {
-        kind: "uncertain",
-        reason,
-        holdingSent: false,
-        suggestedReply: body,
-      },
-      dependencies,
-    );
-    await finish(job, "waiting_human", dependencies);
-    return {
-      status: "delivery_failed",
-      reason,
-    };
+    return deliveryFailure(job, reason, dependencies, body);
   }
 
   await recordBrunaTurn(
@@ -277,11 +320,7 @@ async function deliverScheduledMorningResume(
     "morning-resume-memory",
     dependencies,
   );
-  await finish(job, "bruna_resumed", dependencies);
-  return {
-    status: "bruna_resumed",
-    reason: "scheduled_morning_resume",
-  };
+  return finishReply(job, "scheduled_morning_resume", dependencies);
 }
 
 async function holdAndAlert(
@@ -292,6 +331,14 @@ async function holdAndAlert(
   suggestedReply = "",
   conversationAction = null,
 ) {
+  const alertResult = await alertReviewer(job, {
+    kind: "uncertain", reason, holdingSent: job.holdingSent === true,
+    suggestedReply: suggestedReply || buildDelayedHumanReviewSuggestion({ ...job, reason }),
+  }, dependencies);
+  if (alertResult.status === "superseded") return { status: "superseded", reason: "newer_activity" };
+  if (alertResult.status !== "completed") {
+    return retryJob(job, "alert_retry_pending", dependencies, alertResult.retryAt);
+  }
   const holdingAction =
     conversationAction?.action ===
       CONVERSATION_ACTIONS.WAIT_TEAM
@@ -300,8 +347,14 @@ async function holdAndAlert(
           action: CONVERSATION_ACTIONS.WAIT_TEAM,
           allowHoldingReply: true,
         };
-  const contextualHolding = String(holdingMessage || "").trim();
-  const holdingResult = contextualHolding
+  const contextualHolding = job.receiptAttemptedAt || job.patientWindowClosed || blocksAutomatedPatientMessages(job.patientRelationship)
+    ? ""
+    : String(holdingMessage || buildDelayedHumanReceipt({ ...job, reason })).trim();
+  const receiptReservation = contextualHolding
+    ? await recordDelivery(job, { receiptAttempted: true }, dependencies)
+    : { status: "skipped" };
+  if (receiptReservation.status === "superseded") return { status: "superseded", reason: "newer_activity" };
+  const holdingResult = contextualHolding && receiptReservation.status === "completed"
     ? await sendPatientMessage(
         job,
         contextualHolding,
@@ -321,6 +374,7 @@ async function holdAndAlert(
   }
 
   if (holdingSent) {
+    await recordDelivery(job, { holdingSent: true }, dependencies);
     await recordBrunaTurn(
       job,
       contextualHolding,
@@ -329,16 +383,6 @@ async function holdAndAlert(
     );
   }
 
-  await alertReviewer(
-    job,
-    {
-      kind: "uncertain",
-      reason,
-      holdingSent,
-      suggestedReply,
-    },
-    dependencies,
-  );
   await finish(job, "waiting_human", dependencies);
 
   return {
@@ -371,12 +415,19 @@ async function alertOnly(
     };
   }
 
+  if (alertResult.status !== "completed") return retryJob(job, "alert_retry_pending", dependencies, alertResult.retryAt);
+
   await finish(job, "waiting_human", dependencies);
   return {
     status: "waiting_human",
     holdingSent: false,
     reason,
   };
+}
+
+async function deliveryFailure(job, reason, dependencies, suggestion = "") {
+  const result = await alertOnly(job, reason, dependencies, suggestion);
+  return result.status === "waiting_human" ? { status: "delivery_failed", reason } : result;
 }
 
 export async function processHumanResumeJob(
@@ -387,6 +438,8 @@ export async function processHumanResumeJob(
     ...dependencies
   } = {},
 ) {
+  dependencies = { ...dependencies, now, env };
+  job = { ...job, patientWindowClosed: now - timeMs(job.receivedAt) >= 24 * 60 * 60000 };
   if (!allowsPatientSideEffects(env.WHATSAPP_AUTOMATION_MODE)) {
     const reschedule =
       dependencies.rescheduleHumanResumeImpl ||
@@ -398,7 +451,8 @@ export async function processHumanResumeJob(
     return { status: "automation_inactive" };
   }
 
-  if (isExtremeNight(now, env)) {
+  const urgentInput = planAutomation({ text: job.text, messageType: job.messageType }).reason === "possible_urgent_symptoms";
+  if (isExtremeNight(now, env) && !urgentInput) {
     const reschedule =
       dependencies.rescheduleHumanResumeImpl ||
       rescheduleHumanResume;
@@ -415,9 +469,10 @@ export async function processHumanResumeJob(
     readConversationTurns;
   const currentConversation =
     await readCurrentConversation(job.phone);
+  if (currentConversation?.status !== "completed") return retryJob(job, "context_unavailable", dependencies);
   if (
     currentConversation?.status === "completed" &&
-    hasNewerOutboundReply(job, currentConversation.turns)
+    hasNewerConversationActivity(job, currentConversation.turns)
   ) {
     await finish(job, "human_active", dependencies);
     return {
@@ -431,9 +486,28 @@ export async function processHumanResumeJob(
   ) {
     job = {
       ...job,
-      recentConversation: currentConversation.turns.slice(-20),
+      recentConversation: currentConversation.turns.slice().sort((a, b) => timeMs(a.at) - timeMs(b.at)).slice(-20),
     };
   }
+
+  const relationshipLookup = await readCurrentRelationship(job, dependencies);
+  if (relationshipLookup.status !== "completed" || !relationshipLookup.data?.relationship) return retryJob(job, "contact_context_unavailable", dependencies);
+  job.patientRelationship = relationshipLookup.data.relationship;
+  if (blocksAutomatedPatientMessages(job.patientRelationship)) return alertOnly(job, "contact_preference_no_bot", dependencies);
+  const readDurable = dependencies.getDurableConversationContextImpl || getDurableConversationContext;
+  const durable = await readDurable({ phone: job.phone, opportunityId: job.opportunityId, professional: job.professional, limit: 20 }, {
+    callSheetsImpl: (action, payload, options) => (dependencies.callClassificationSheetsImpl || callClassificationSheets)(action, payload, { ...options, env }),
+  });
+  if (durable.status !== "completed") return retryJob(job, "context_unavailable", dependencies);
+  if (hasNewerConversationActivity(job, durable.turns)) {
+    await finish(job, "human_active", dependencies);
+    return { status: "superseded", reason: "newer_conversation_activity" };
+  }
+  // Keep the freshest activity guard in memory and consult the durable ledger
+  // for commitments and history that survive a cache reset.
+  if (durable.turns?.length > (job.recentConversation?.length || 0)) job.recentConversation = durable.turns;
+  job.pendingCommitments = durable.pendingCommitments || [];
+  if (job.pendingCommitments.length) job.preserveHumanOwnership = true;
 
   const outsideServiceHours = !isHumanResumeServiceOpen(now, env);
 
@@ -452,17 +526,20 @@ export async function processHumanResumeJob(
           procedure: job.procedure,
         }
       : currentMessagePlan;
-  const enrichedPlan = enrichAutomationPlanFromConversation(
+  const enrichedPlan = applyPatientRelationshipPolicy(enrichAutomationPlanFromConversation(
     preliminaryPlan,
     job.recentConversation,
     now,
-  );
+  ), job.patientRelationship);
+  job.professional = job.professional || enrichedPlan.professional || "";
+  if (enrichedPlan.patientRelationship?.hasPendingHumanTask || /^known_patient_active/.test(enrichedPlan.reason || "")) job.preserveHumanOwnership = true;
   const policy = classifyHumanResume({
     text: job.text,
     messageType: job.messageType,
     preliminaryPlan,
     enrichedPlan,
     recentConversation: job.recentConversation,
+    pendingCommitments: job.pendingCommitments,
   });
   const semanticPlan =
     policy.action === "attempt_reply" &&
@@ -486,6 +563,7 @@ export async function processHumanResumeJob(
     plan: semanticPlan,
     recentConversation: job.recentConversation,
     humanTakeoverActive: false,
+    pendingCommitments: job.pendingCommitments,
     schedulingRequest:
       policy.reason === "scheduling_or_confirmation",
     conversionExperienceEnabled:
@@ -541,6 +619,8 @@ export async function processHumanResumeJob(
     };
   }
 
+  if (job.patientWindowClosed) return alertOnly(job, "patient_window_expired", dependencies);
+
   if (policy.action === "sensitive") {
     if (PRICE_REVIEW_REASONS.has(policy.reason)) {
       const priceProcedure =
@@ -588,27 +668,7 @@ export async function processHumanResumeJob(
       );
     }
 
-    const alertResult = await alertReviewer(
-      job,
-      {
-        kind: "sensitive",
-        reason: policy.reason,
-        holdingSent: false,
-      },
-      dependencies,
-    );
-    if (alertResult.status === "superseded") {
-      return {
-        status: "superseded",
-        reason: "newer_activity",
-      };
-    }
-    await finish(job, "waiting_human", dependencies);
-    return {
-      status: "waiting_human",
-      holdingSent: false,
-      reason: policy.reason,
-    };
+    return holdAndAlert(job, policy.reason, dependencies, "", "", conversationAction);
   }
 
   if (policy.action === "holding_and_alert") {
@@ -735,22 +795,12 @@ export async function processHumanResumeJob(
       !approvedPriceReplyConfirmed,
   );
 
+  if (aiResult.status === "completed" && aiResult.decision?.urgent === true) {
+    return alertOnly(job, "possible_urgent_symptoms", dependencies);
+  }
+
   if (deterministicReplyContextMismatch) {
-    await alertReviewer(
-      job,
-      {
-        kind: "uncertain",
-        reason: "deterministic_context_mismatch",
-        holdingSent: false,
-        suggestedReply: "",
-      },
-      dependencies,
-    );
-    await finish(job, "waiting_human", dependencies);
-    return {
-      status: "waiting_human",
-      reason: "deterministic_context_mismatch",
-    };
+    return alertOnly(job, "deterministic_context_mismatch", dependencies);
   }
 
   const maySend =
@@ -802,7 +852,8 @@ export async function processHumanResumeJob(
         reason,
         dependencies,
         "",
-        "",
+        aiResult.decision?.route === "human_review" && aiResult.decision?.confidence === "high" && !aiResult.decision?.urgent
+          ? suggestedReply : "",
         {
           action: CONVERSATION_ACTIONS.WAIT_TEAM,
           allowHoldingReply: true,
@@ -848,23 +899,7 @@ export async function processHumanResumeJob(
           reason: "newer_activity",
         };
       }
-      await alertReviewer(
-        job,
-        {
-          kind: "uncertain",
-          reason:
-            sendResult.errorCode ||
-            "approved_price_delivery_failed",
-          holdingSent: false,
-          suggestedReply: reply,
-        },
-        dependencies,
-      );
-      await finish(job, "waiting_human", dependencies);
-      return {
-        status: "delivery_failed",
-        reason: sendResult.errorCode,
-      };
+      return deliveryFailure(job, sendResult.errorCode || "approved_price_delivery_failed", dependencies, reply);
     }
 
     await recordBrunaTurn(
@@ -873,11 +908,7 @@ export async function processHumanResumeJob(
       "human-resume-approved-price-memory",
       dependencies,
     );
-    await finish(job, "bruna_resumed", dependencies);
-    return {
-      status: "bruna_resumed",
-      reason: enrichedPlan.reason,
-    };
+    return finishReply(job, enrichedPlan.reason, dependencies);
   }
 
   const reply = String(aiResult.decision.suggestedReply || "").trim();
@@ -896,22 +927,7 @@ export async function processHumanResumeJob(
         reason: "newer_activity",
       };
     }
-    await alertReviewer(
-      job,
-      {
-        kind: "uncertain",
-        reason:
-          sendResult.errorCode ||
-          "automatic_reply_delivery_failed",
-        holdingSent: false,
-      },
-      dependencies,
-    );
-    await finish(job, "waiting_human", dependencies);
-    return {
-      status: "delivery_failed",
-      reason: sendResult.errorCode,
-    };
+    return deliveryFailure(job, sendResult.errorCode || "automatic_reply_delivery_failed", dependencies);
   }
 
   await recordBrunaTurn(
@@ -920,12 +936,7 @@ export async function processHumanResumeJob(
     "human-resume-reply-memory",
     dependencies,
   );
-  await finish(job, "bruna_resumed", dependencies);
-
-  return {
-    status: "bruna_resumed",
-    reason: policy.reason,
-  };
+  return finishReply(job, policy.reason, dependencies);
 }
 
 export default async () => {

@@ -403,7 +403,6 @@ export function buildImageAcknowledgementReply({
   ].filter(Boolean).join(" ");
   const acknowledgement = [
     "Obrigada por compartilhar sua foto e confiar na gente.",
-    "Entendo que você queira saber o que pode ser feito, e acredito que temos boas abordagens que podem ajudar a tratar esse tipo de queixa.",
     "Vou mostrar a foto à Dra. Amanda para que ela veja o que você gostaria de melhorar.",
     "Em uma avaliação, ela poderá observar todos os detalhes com cuidado e conversar com você sobre o caminho que faça mais sentido, sempre respeitando suas características.",
   ].join(" ");

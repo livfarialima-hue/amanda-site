@@ -620,6 +620,7 @@ function carregarCuidadosCentral_(
     return [];
   }
 
+  const careConversations = typeof contextoOperacionalCuidados_ === "function" && typeof consultationSheet.getParent === "function" ? contextoOperacionalCuidados_(consultationSheet.getParent()).conversations : {};
   return criarAgendaCuidadosConsultas_(
     consultationSheet,
     now,
@@ -653,7 +654,9 @@ function carregarCuidadosCentral_(
       context: care.contexto,
       status: care.futuro ? "Programado" : "Aberto",
       source: "Jornada de cuidado",
-      sourceKey: [
+      approvalBrunaEligible: Boolean(care.care && care.care.purpose && typeof entregaCuidadoAtiva_ === "function" && entregaCuidadoAtiva_(care.care.purpose) && care.care.consultationId && care.care.opportunityId && !care.approvalBlocked && !care.automatico && care.care.consent && ["amanda", "daniel"].includes(care.care.professional)),
+      programFor: typeof janelaRespostaCuidado_ === "function" ? janelaRespostaCuidado_(now, careConversations[phone] || [], care.care && care.care.purpose, care.futuro ? dueAt : null) : null,
+      sourceKey: care.sourceKey || [
         "care",
         care.categoria,
         phone || care.nome,
@@ -2084,7 +2087,7 @@ function processarEdicaoCentralAtendimento_(event) {
         mode === "manual" &&
         statusProgramavelRetomadaCentral_(currentStatus) &&
         safeMessage &&
-        (registeredFollowUp || waitingConversion)
+        (registeredFollowUp || waitingConversion || sourceKey.indexOf("care:") === 0)
           ? sugerirProximaJanelaRespostaCentral_(
               now,
               lastInteractionAt,
@@ -2117,10 +2120,11 @@ function processarEdicaoCentralAtendimento_(event) {
             : "Elegível — horário sugerido automaticamente";
       }
 
+      const careConversion = sourceKey.indexOf("care:") === 0 && mode === "manual" && safeMessage;
       const eligible =
         Boolean(suggestedAt) &&
         (
-          registeredFollowUp ||
+          registeredFollowUp || careConversion ||
           eligibilityReason ===
             "Elegível após conferência da mensagem e do procedimento"
         );
@@ -2451,9 +2455,14 @@ function prepararAprovacaoRetomadaCentral_(row, rowNumber, columns, now) {
     valorLinhaCentral_(row, columns, "mensagem final"),
     900,
   );
-  const programFor = dataCentralValida_(
+  let programFor = dataCentralValida_(
     valorLinhaCentral_(row, columns, "programar para"),
   );
+  if (sourceKey.indexOf("care:") === 0 && typeof janelaRespostaCuidado_ === "function" && (!programFor || programFor <= (now || new Date()))) {
+    const label = normalizarTextoCentral_(valorLinhaCentral_(row, columns, "proxima acao"));
+    const dueAt = dataCentralValida_(valorLinhaCentral_(row, columns, "agir ate"));
+    programFor = janelaRespostaCuidado_(now || new Date(), [], /aniversario/.test(label) ? "birthday" : "post_consult", dueAt);
+  }
   const safeSuggestion =
     Boolean(finalMessage) &&
     normalizarTextoCentral_(finalMessage).indexOf(
@@ -2488,11 +2497,12 @@ function prepararAprovacaoRetomadaCentral_(row, rowNumber, columns, now) {
         { allowOutsideWhatsappWindow: true },
       )
     : "";
+  const careConversion = /^elegivel/.test(normalizarTextoCentral_(valorLinhaCentral_(row, columns, "elegibilidade da bruna"))) && sourceKey.indexOf("care:") === 0 && source === "jornada de cuidado" && mode === "manual" && safeSuggestion && Boolean(programFor) && !/lembrete|fechamento|confirmar profissional/i.test(String(valorLinhaCentral_(row, columns, "proxima acao")));
   const eligible =
     safeSuggestion &&
     Boolean(programFor) &&
     (
-      registeredFollowUp ||
+      registeredFollowUp || careConversion ||
       (
         waitingConversion &&
         waitingReason ===
@@ -2513,6 +2523,7 @@ function prepararAprovacaoRetomadaCentral_(row, rowNumber, columns, now) {
     messageId: waitingConversion
       ? sourceKey.slice("conversation:".length)
       : "",
+    careConversion: careConversion,
     waitingConversion: waitingConversion,
     eligible: eligible,
   };
@@ -2738,7 +2749,7 @@ function listarItensPainelDecisoesCentral_(sheet, now) {
         valorLinhaCentral_(row, columns, "mensagem final"),
         900,
       ),
-      programFor: dataCentralValida_(
+      programFor: approval.careConversion ? approval.programFor : dataCentralValida_(
         valorLinhaCentral_(row, columns, "programar para"),
       ),
       context: textoCentral_(
@@ -2760,6 +2771,7 @@ function listarItensPainelDecisoesCentral_(sheet, now) {
       manualToday: manualToday,
       approvalAvailable: approval.eligible === true,
       cancellationAvailable: cancellation.eligible === true,
+      dismissAvailable: (sourceKey.indexOf("care:") === 0 && typeof dispensaCuidadoPermitida_ === "function" && dispensaCuidadoPermitida_(valorLinhaCentral_(row, columns, "proxima acao"))) || cancellation.eligible === true,
       deferAvailable:
         !automatic &&
         !["concluido", "cancelado"].includes(normalizedStatus),
@@ -2873,6 +2885,11 @@ function adiarItensCentralInterno_(sheet, now, selected) {
       return;
     }
 
+    if (sourceKey.indexOf("care:") === 0 && typeof decidirCuidadoCentral_ === "function") {
+      const persisted = decidirCuidadoCentral_(sheet.getParent(), { sourceKey: sourceKey, deferUntil: deferUntil }, "defer", instant);
+      if (!persisted.ok) { skipped += 1; results.push({ rowNumber: rowNumber, ok: false, reason: persisted.reason }); return; }
+    }
+
     sheet
       .getRange(rowNumber, columns["adiar ate"] + 1)
       .setValue(deferUntil);
@@ -2950,7 +2967,9 @@ function aprovarRetomadasMarcadasCentralInterno_(
     let planKey = item.planKey;
     let planReady = !item.waitingConversion;
 
-    if (
+    if (item.careConversion && item.eligible && typeof decidirCuidadoCentral_ === "function") {
+      result = decidirCuidadoCentral_(spreadsheet, item, "approve", now);
+    } else if (
       item.eligible &&
       typeof assinaturaAprovacaoRetomadaBot_ === "function" &&
       typeof aprovarPlanoRetomadaParaBot_ === "function"

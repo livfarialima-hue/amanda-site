@@ -65,6 +65,9 @@ function dependencies() {
       turns: [],
     }),
     isHumanResumeClaimCurrentImpl: async () => true,
+    updateHumanResumeDeliveryStateImpl: async () => ({ status: "completed" }),
+    callClassificationSheetsImpl: async () => ({ status: "completed", data: { relationship: { state: "unknown" } } }),
+    getDurableConversationContextImpl: async () => ({ status: "completed", turns: [], pendingCommitments: [] }),
     sendYCloudPatientTextImpl: async (input) => {
       patientMessages.push(input);
       return { status: "completed" };
@@ -83,6 +86,141 @@ function dependencies() {
     },
   };
 }
+
+test("unavailable current history postpones any patient reply", async () => {
+  const deps = dependencies();
+  deps.readConversationTurnsImpl = async () => ({ status: "failed", turns: [] });
+  deps.rescheduleHumanResumeImpl = async () => ({ status: "rescheduled" });
+  deps.runOpenAIShadowImpl = async () => { throw new Error("must not reason on stale history"); };
+  const result = await processHumanResumeJob(job(), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "context_unavailable");
+  assert.equal(deps.patientMessages.length, 0);
+});
+
+test("failed alert remains queued and cannot support a receipt promise", async () => {
+  const deps = dependencies();
+  deps.sendYCloudReviewAlertImpl = async () => ({ status: "failed", emailStatus: "failed" });
+  const retry = [];
+  deps.rescheduleHumanResumeImpl = async (...args) => { retry.push(args); return { status: "rescheduled" }; };
+  const result = await processHumanResumeJob(job({ text: "Quero agendar a consulta" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "alert_retry_pending");
+  assert.equal(retry.length, 1);
+  assert.equal(deps.completions.length, 0);
+  assert.equal(deps.patientMessages.length, 0);
+});
+
+test("a delayed pending request gets one receipt after the email is delivered", async () => {
+  const deps = dependencies();
+  const events = [];
+  deps.updateHumanResumeDeliveryStateImpl = async () => ({ status: "completed" });
+  deps.sendYCloudReviewAlertImpl = async (input) => { deps.alerts.push(input); events.push("email"); return { status: "skipped", emailStatus: "completed" }; };
+  deps.sendYCloudPatientTextImpl = async (input) => { deps.patientMessages.push(input); events.push("receipt"); return { status: "completed" }; };
+  const result = await processHumanResumeJob(job({ text: "Quero agendar a consulta" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.holdingSent, true);
+  assert.deepEqual(events, ["email", "receipt"]);
+  assert.match(deps.patientMessages[0].body, /recebi|recebemos/i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /amanhã|amanha|confirmad[oa]|às\s+\d/i);
+  assert.match(deps.alerts[0].messageText, /Responsável:|Responsavel:/);
+});
+
+test("patient deferral does not create an alert for the human to do nothing", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(job({ text: "Entendi, vou pensar com calma" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "no_action");
+  assert.equal(deps.alerts.length, 0);
+});
+
+test("a second pending question cannot produce another receipt in the same human generation", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(job({ text: "Quero agendar a consulta", receiptAttemptedAt: "2026-07-28T15:10:00Z", holdingSent: true }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "waiting_human");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 1);
+});
+
+test("new nonurgent messages consolidate the review alert for thirty minutes", async () => {
+  const deps = dependencies();
+  const due = [];
+  deps.rescheduleHumanResumeImpl = async (_, at) => { due.push(at); return { status: "rescheduled" }; };
+  const result = await processHumanResumeJob(job({ text: "Quero agendar a consulta", alertDeliveredAt: "2026-07-28T15:20:00Z", alertEventId: "earlier-alert" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "alert_retry_pending");
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(due[0], Date.parse("2026-07-28T15:50:00Z"));
+});
+
+test("simple information can be answered while the previous human task stays owned by the team", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({ status: "completed", decision: {
+    route: "standard_reply", automaticAllowed: true, confidence: "high", urgent: false,
+    suggestedReply: "A consulta é individual e serve para entender seus objetivos.", reviewReason: "",
+  } });
+  await processHumanResumeJob(job({ preserveHumanOwnership: true }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(deps.patientMessages.length, 1);
+  assert.equal(deps.completions[0].options.controlStatus, "waiting_human");
+});
+
+test("an opt-out recorded during response generation cancels the send", async () => {
+  const deps = dependencies();
+  let reads = 0;
+  deps.callClassificationSheetsImpl = async () => ({ status: "completed", data: { relationship: { state: "new_lead", neverBotReply: ++reads > 1 } } });
+  deps.runOpenAIShadowImpl = async () => ({ status: "completed", decision: {
+    route: "standard_reply", automaticAllowed: true, confidence: "high", urgent: false,
+    suggestedReply: "A consulta é individual e serve para entender seus objetivos.", reviewReason: "",
+  } });
+  const result = await processHumanResumeJob(job(), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "superseded");
+  assert.equal(deps.patientMessages.length, 0);
+});
+
+test("a newer patient message arriving during reasoning invalidates the older answer", async () => {
+  const deps = dependencies();
+  let reads = 0;
+  deps.readConversationTurnsImpl = async () => ({ status: "completed", turns: ++reads === 1 ? [] : [{ role: "user", source: "patient", text: "Na verdade, preciso cancelar", at: "2026-07-28T15:29:00Z" }] });
+  deps.runOpenAIShadowImpl = async () => ({ status: "completed", decision: {
+    route: "standard_reply", automaticAllowed: true, confidence: "high", urgent: false,
+    suggestedReply: "A consulta é individual e serve para entender seus objetivos.", reviewReason: "",
+  } });
+  const result = await processHumanResumeJob(job(), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "superseded");
+  assert.equal(deps.patientMessages.length, 0);
+});
+
+test("an expired WhatsApp window creates only a human review", async () => {
+  const deps = dependencies();
+  const result = await processHumanResumeJob(job({ receivedAt: "2026-07-27T15:00:00Z" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.reason, "patient_window_expired");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 1);
+});
+
+test("postoperative urgency alerts without a waiting promise even at night", async () => {
+  const deps = dependencies();
+  deps.callClassificationSheetsImpl = async () => ({ status: "completed", data: { relationship: { state: "active_postop" } } });
+  const result = await processHumanResumeJob(job({ text: "Estou com falta de ar e dor no peito", receivedAt: "2026-07-29T04:00:00Z" }), { env: ACTIVE_ENV, now: EXTREME_NIGHT_NOW, ...deps });
+  assert.equal(result.reason, "possible_urgent_symptoms");
+  assert.equal(deps.alerts[0].urgent, true);
+  assert.equal(deps.patientMessages.length, 0);
+});
+
+test("acknowledging a durable human commitment does not duplicate a reply or alert", async () => {
+  const deps = dependencies();
+  deps.getDurableConversationContextImpl = async () => ({ status: "completed", turns: [], pendingCommitments: [{ eventId: "human-task", kind: "document", owner: "human_team", status: "pending" }] });
+  const result = await processHumanResumeJob(job({ text: "Obrigada, fico no aguardo" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.status, "no_action");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts.length, 0);
+  assert.equal(deps.completions[0].options.controlStatus, "waiting_human");
+});
+
+test("urgency recognized by semantic review cannot become a waiting receipt", async () => {
+  const deps = dependencies();
+  deps.runOpenAIShadowImpl = async () => ({ status: "completed", decision: { route: "human_review", urgent: true, automaticAllowed: false, confidence: "high", reviewReason: "clinical_risk", suggestedReply: "" } });
+  const result = await processHumanResumeJob(job(), { env: ACTIVE_ENV, now: NOW, ...deps });
+  assert.equal(result.reason, "possible_urgent_symptoms");
+  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(deps.alerts[0].urgent, true);
+});
 
 test("inactive automation reschedules the job without attempting a reply", async () => {
   const deps = dependencies();
@@ -590,7 +728,7 @@ test("a blocked morning continuation becomes a visible human fallback with the r
   );
   assert.match(
     deps.alerts[0].messageText,
-    /Sugestão para copiar após conferir: Bom dia, Marisa!/i,
+    /Sugestão para copiar após conferir:\s+Bom dia, Marisa!/i,
   );
   assert.equal(
     deps.completions[0].options.controlStatus,
@@ -1017,7 +1155,7 @@ test("the approved lifting price may continue directly at night", async () => {
   assert.equal(deps.alerts.length, 0);
 });
 
-test("low confidence alerts silently when no contextual holding can be written", async () => {
+test("low confidence receives a delayed receipt after the review alert", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
     status: "completed",
@@ -1038,8 +1176,8 @@ test("low confidence alerts silently when no contextual holding can be written",
   });
 
   assert.equal(result.status, "waiting_human");
-  assert.equal(result.holdingSent, false);
-  assert.equal(deps.patientMessages.length, 0);
+  assert.equal(result.holdingSent, true);
+  assert.equal(deps.patientMessages.length, 1);
   assert.equal(HUMAN_RESUME_HOLDING_MESSAGE, "");
   assert.equal(deps.alerts.length, 1);
   assert.equal(
@@ -1048,7 +1186,7 @@ test("low confidence alerts silently when no contextual holding can be written",
   );
 });
 
-test("low confidence without a pending request alerts without an awkward holding message", async () => {
+test("an explicit deferral stays silent without creating a human task", async () => {
   const deps = dependencies();
   const result = await processHumanResumeJob(
     job({
@@ -1073,18 +1211,9 @@ test("low confidence without a pending request alerts without an awkward holding
     },
   );
 
-  assert.equal(result.status, "waiting_human");
-  assert.equal(result.holdingSent, false);
+  assert.equal(result.status, "no_action");
   assert.equal(deps.patientMessages.length, 0);
-  assert.equal(deps.alerts.length, 1);
-  assert.match(
-    deps.alerts[0].messageText,
-    /REVISAR CONVERSA/,
-  );
-  assert.match(
-    deps.alerts[0].messageText,
-    /Nenhuma mensagem automática foi enviada/,
-  );
+  assert.equal(deps.alerts.length, 0);
 });
 
 test("new human activity cancels the automatic send and alert", async () => {

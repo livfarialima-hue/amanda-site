@@ -8,7 +8,10 @@ import {
   markBrunaResumed,
   markHumanTakeover,
   scheduleHumanResume,
+  updateHumanResumeDeliveryState,
 } from "./human-resume-queue.mjs";
+import { processHumanResumeJob } from "../human-resume.mjs";
+import { sendControlledPatientReply } from "./outbound-reply-gate.mjs";
 
 function memoryStore() {
   const values = new Map();
@@ -32,6 +35,7 @@ function memoryStore() {
     },
     async setJSON(key, data, options = {}) {
       const current = values.get(key);
+      if (options.onlyIfNew && current) return { modified: false };
       if (
         options.onlyIfMatch &&
         current?.etag !== options.onlyIfMatch
@@ -62,6 +66,96 @@ function memoryStore() {
     },
   };
 }
+
+test("out-of-order inbound cannot replace a newer patient's question", async () => {
+  const store = memoryStore();
+  const options = { getStoreImpl: () => store, now: Date.parse("2026-07-28T15:05:00Z"), delayMs: 1 };
+  await markHumanTakeover({ phone: sampleInput().phone, eventId: "earlier-human", at: "2026-07-28T14:55:00Z" }, options);
+  await scheduleHumanResume(sampleInput({ eventId: "new", receivedAt: "2026-07-28T15:05:00Z" }), options);
+  const older = await scheduleHumanResume(sampleInput({ eventId: "old" }), options);
+  assert.equal(older.status, "superseded");
+  const claim = await claimDueHumanResumes({ ...options, now: options.now + 2 });
+  assert.equal(claim.jobs[0].eventId, "new");
+});
+
+test("queue, processor and outbound gate send one receipt and keep the human task pending", async () => {
+  const store = memoryStore();
+  const getStoreImpl = () => store;
+  const start = Date.parse("2026-07-28T15:00:00Z");
+  const sent = [];
+  const alerts = [];
+  let now = start + 600000;
+  const dependencies = {
+    env: { WHATSAPP_AUTOMATION_MODE: "active" },
+    readConversationTurnsImpl: async () => ({ status: "completed", turns: [] }),
+    getDurableConversationContextImpl: async () => ({ status: "completed", turns: [], pendingCommitments: [] }),
+    callClassificationSheetsImpl: async () => ({ status: "completed", data: { relationship: { state: "new_lead" } } }),
+    isHumanResumeClaimCurrentImpl: async job => (await import("./human-resume-queue.mjs")).isHumanResumeClaimCurrent(job, { getStoreImpl }),
+    updateHumanResumeDeliveryStateImpl: (job, updates) => updateHumanResumeDeliveryState(job, updates, { getStoreImpl, now }),
+    completeHumanResumeImpl: (job, options) => completeHumanResume(job, { ...options, getStoreImpl, now }),
+    sendYCloudReviewAlertImpl: async input => { alerts.push(input); return { status: "skipped", emailStatus: "completed" }; },
+    sendControlledPatientReplyImpl: (input, options) => sendControlledPatientReply(input, { ...options, getStoreImpl, now, recordDurableConversationTurnImpl: async () => ({ status: "completed" }) }),
+    sendYCloudPatientTextImpl: async input => { sent.push(input); return { status: "completed" }; },
+    appendConversationTurnImpl: async () => ({ status: "completed" }),
+  };
+  await scheduleHumanResume(sampleInput({ text: "Quero agendar a consulta" }), { getStoreImpl, now: start });
+  const first = (await claimDueHumanResumes({ getStoreImpl, now })).jobs[0];
+  const result = await processHumanResumeJob(first, { ...dependencies, now });
+  assert.equal(result.holdingSent, true);
+  const control = await getHumanResumeControl(sampleInput().phone, { getStoreImpl });
+  assert.equal(control.status, "waiting_human");
+  assert.equal(control.holdingSent, true);
+  assert.ok(control.receiptAttemptedAt);
+  assert.equal((await store.list({ prefix: "pending/" })).blobs.length, 0);
+  now = start + 40 * 60000;
+  await scheduleHumanResume(sampleInput({ text: "E quais horários vocês têm?", eventId: "second-question", receivedAt: new Date(now).toISOString() }), { getStoreImpl, now });
+  now += 600000;
+  const second = (await claimDueHumanResumes({ getStoreImpl, now })).jobs[0];
+  await processHumanResumeJob(second, { ...dependencies, now });
+  assert.equal(sent.length, 1);
+  assert.equal(alerts.length, 2);
+  assert.equal((await getHumanResumeControl(sampleInput().phone, { getStoreImpl })).status, "waiting_human");
+});
+
+test("replayed inbound does not reset an existing job or its delivery state", async () => {
+  const store = memoryStore();
+  const options = { getStoreImpl: () => store, now: Date.parse("2026-07-28T15:00:00Z") };
+  const first = await scheduleHumanResume(sampleInput(), options);
+  const duplicate = await scheduleHumanResume(sampleInput(), { ...options, now: options.now + 11 * 60000 });
+  assert.equal(duplicate.status, "duplicate");
+  assert.equal(duplicate.dueAt, first.dueAt);
+});
+
+test("a waiting-human conversation can evaluate a new question without losing the earlier handoff", async () => {
+  const store = memoryStore();
+  const options = { getStoreImpl: () => store, now: Date.parse("2026-07-28T15:00:00Z"), delayMs: 1 };
+  await scheduleHumanResume(sampleInput(), options);
+  const claim = await claimDueHumanResumes({ ...options, now: options.now + 1 });
+  await completeHumanResume(claim.jobs[0], { ...options, controlStatus: "waiting_human" });
+  const scheduled = await scheduleHumanResume(sampleInput({ eventId: "new-question", receivedAt: "2026-07-28T15:10:00Z" }), { ...options, now: options.now + 600000 });
+  assert.equal(scheduled.status, "scheduled");
+  const next = await claimDueHumanResumes({ ...options, now: options.now + 600001 });
+  assert.equal(next.jobs[0].preserveHumanOwnership, true);
+});
+
+test("completion cannot overwrite a human message arriving between read and write", async () => {
+  const store = memoryStore();
+  const options = { getStoreImpl: () => store, now: Date.parse("2026-07-28T15:00:00Z"), delayMs: 1 };
+  await scheduleHumanResume(sampleInput(), options);
+  const claim = await claimDueHumanResumes({ ...options, now: options.now + 1 });
+  const originalSet = store.setJSON.bind(store);
+  let raced = false;
+  store.setJSON = async (key, data, opts) => {
+    if (!raced && key.startsWith("control/") && data.status === "bruna_resumed") {
+      raced = true;
+      await markHumanTakeover({ phone: sampleInput().phone, eventId: "human-new" }, { ...options, now: options.now + 3 });
+    }
+    return originalSet(key, data, opts);
+  };
+  const completion = await completeHumanResume(claim.jobs[0], { ...options, controlStatus: "bruna_resumed" });
+  assert.equal(completion.status, "superseded");
+  assert.equal((await getHumanResumeControl(sampleInput().phone, options)).generation, "human-new");
+});
 
 function sampleInput(overrides = {}) {
   return {

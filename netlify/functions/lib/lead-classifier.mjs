@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { normalizeMarketingPrefillTemplateId } from "./whatsapp-automation.mjs";
+import { normalizeMarketingPrefillTemplateId } from "./marketing-prefill.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -46,6 +46,8 @@ const COMMERCIAL_REASONS = [
 ];
 const EXPECTED_PARTIES = ["clinic", "patient"];
 const RELATIONSHIP_STATES = new Set([
+  "new_lead",
+  "engaged_lead",
   "active_postop",
   "surgical_planning",
   "appointment_scheduled",
@@ -170,6 +172,12 @@ Não deduza consulta realizada ou paciente convertido apenas pela passagem do te
 summary deve ser um resumo curto, objetivo e administrativo da evolução da conversa.
 nextAction deve indicar a próxima ação comercial concreta, ou "Aguardar retorno" quando apropriado.
 expectedParty deve ser patient quando a clínica já respondeu ou fez uma pergunta e agora depende de nova manifestação da pessoa. Use clinic somente quando a clínica ainda deve uma resposta, cumprir uma promessa, revisar uma mensagem/mídia ou executar o próximo passo concreto. A direção da última mensagem, isoladamente, não decide esse campo.
+Uma oferta da clínica ("posso ver horários?") não é aceite da pessoa. "Entendi", "tá certo" ou agradecimento, depois de uma explicação, não autorizam enviar agenda nem provam interesse pessoal em consultar. Perguntar como funciona a avaliação pode ser apenas pesquisa. Só qualifique quando houver pedido prático pessoal de avanço, situado no histórico.
+source distingue paciente, bruna, equipe_humana e autoria desconhecida. Uma saída automática não prova que a equipe conferiu agenda, examinou uma imagem, enviou documento ou concluiu tarefa. Não use uma alegação da própria Bruna como comprovação de ação humana.
+Uma confirmação automática de recebimento que informa que a equipe foi avisada não resolve a solicitação: expectedParty continua clinic, com a tarefa concreta ainda pendente. Um "obrigada, aguardo" posterior também não transfere essa tarefa à paciente. Nova manifestação humana ou cancelamento explícito pode mudar essa leitura; uma dúvida simples respondida pela Bruna não apaga outros compromissos humanos.
+contentUnavailable sinaliza mídia ou mensagem sem texto recuperável. Não invente seu conteúdo nem a trate como confirmação, ausência de resposta ou desinteresse. Quando ainda depender de leitura, a próxima ação é revisão humana do conteúdo.
+Se a pessoa diz que vai pesquisar e retornará por iniciativa própria, expectedParty é patient e nextAction é "Aguardar retorno por iniciativa da pessoa"; não acrescente retomada comercial. Se pediu contato em uma data e a equipe aceitou, registre esse compromisso e a data administrativa disponível, sem sugerir contato antecipado nem alegar que a retomada já foi programada.
+Histórico de atendimento e intenção comercial atual são dimensões distintas. Retorno, documento, pagamento da consulta ou acompanhamento de paciente conhecida não são nova aquisição nem fechamento de cirurgia. Registre a pendência administrativa concreta; questões sensíveis ficam para a equipe, sem conteúdo clínico nos campos comerciais.
 procedure pode conter apenas o nome genérico do procedimento ou especialidade; use string vazia quando não estiver claro.
 evidence deve citar apenas o fato comercial que sustenta a classificação, sem copiar números de telefone, códigos internos ou dados sensíveis.
 `.trim();
@@ -254,19 +262,28 @@ export function isLikelyClassifierMarketingPrefill(value) {
 function sanitizeMessages(messages) {
   const normalized = [];
   let remaining = MAX_TOTAL_TEXT_LENGTH;
-
-  for (const message of (messages || []).slice(-MAX_MESSAGES)) {
+  const ordered = (Array.isArray(messages) ? messages : []).map((message, order) => ({ message, order }));
+  // Unknown timestamps keep their positions. Sort the dated slots without a
+  // non-transitive comparator and bound only after reconstructing chronology.
+  const dated = ordered.filter(({ message }) => Number.isFinite(Date.parse(message?.at)))
+    .sort((a, b) => Date.parse(a.message.at) - Date.parse(b.message.at) || a.order - b.order);
+  let dateIndex = 0;
+  const chronological = ordered.map(item => Number.isFinite(Date.parse(item.message?.at)) ? dated[dateIndex++].message : item.message);
+  for (const message of chronological.slice(-MAX_MESSAGES).reverse()) {
     if (remaining <= 0) break;
 
     const direction =
       String(message?.direction || "").toUpperCase() === "OUT"
         ? "OUT"
         : "IN";
-    const text = Array.from(String(message?.text || ""))
-      .slice(0, Math.min(MAX_MESSAGE_LENGTH, remaining))
-      .join("");
-
-    if (!text.trim()) continue;
+    const contentUnavailable = !String(message?.text || "").trim();
+    const characters = Array.from(contentUnavailable ? "[Conteúdo não textual ou indisponível; requer leitura humana.]" : String(message.text));
+    const maximum = Math.min(MAX_MESSAGE_LENGTH, remaining);
+    const marker = " … ";
+    const head = Math.ceil((maximum - marker.length) * 0.6);
+    const text = characters.length <= maximum ? characters.join("") : maximum < 10
+      ? characters.slice(-maximum).join("")
+      : characters.slice(0, head).join("") + marker + characters.slice(-(maximum - marker.length - head)).join("");
 
     const templateId = normalizeMarketingPrefillTemplateId(
       message?.templateId || message?.template_id,
@@ -276,6 +293,8 @@ function sanitizeMessages(messages) {
       direction,
       at: String(message?.at || ""),
       text,
+      source: direction === "IN" ? "paciente" : ["bruna", "equipe_humana"].includes(message?.source) ? message.source : "unknown",
+      contentUnavailable,
       templateId,
       marketingPrefill:
         direction === "IN" &&
@@ -284,7 +303,7 @@ function sanitizeMessages(messages) {
     remaining -= text.length;
   }
 
-  return normalized;
+  return normalized.reverse();
 }
 
 export function enforcePrefillOnlyClassificationGuard({
@@ -295,9 +314,10 @@ export function enforcePrefillOnlyClassificationGuard({
   const inbound = (Array.isArray(messages) ? messages : []).filter(
     (message) => message?.direction === "IN",
   );
+  const unavailableContent = inbound.some(message => message.contentUnavailable === true);
   const isolatedPrefill =
     inbound.length > 0 &&
-    inbound.every((message) => message.marketingPrefill === true);
+    inbound.every((message) => message.marketingPrefill === true || message.contentUnavailable === true);
 
   if (
     String(currentStatus || "Novo") !== "Novo" ||
@@ -310,12 +330,20 @@ export function enforcePrefillOnlyClassificationGuard({
   return {
     ...classification,
     recommendedStatus: "Novo",
-    confidence: "high",
-    summary: "Contato inicial por mensagem automática de interesse.",
-    nextAction: "Aguardar uma mensagem pessoal sobre dúvidas ou próximos passos.",
-    expectedParty: "patient",
+    confidence: unavailableContent ? "low" : "high",
+    summary: unavailableContent
+      ? "Contato inicial com conteúdo não textual pendente de revisão humana."
+      : "Contato inicial por mensagem automática de interesse.",
+    nextAction: unavailableContent ? "Revisar conteúdo não textual antes de classificar a intenção."
+      : messages.some(message => message.direction === "OUT")
+      ? classification.nextAction
+      : "Responder ao contato inicial, sem presumir intenção de agendar.",
+    expectedParty: !unavailableContent && messages.some(message => message.direction === "OUT")
+      ? classification.expectedParty
+      : "clinic",
     commercialReason: "Em andamento",
-    evidence: "Somente mensagem automática de origem, sem intenção pessoal posterior.",
+    evidence: unavailableContent ? "Conteúdo indisponível não comprova intenção nem marco administrativo."
+      : "Somente mensagem automática de origem, sem intenção pessoal posterior.",
     appointmentOutcome: "none",
     procedureMilestone: "none",
   };

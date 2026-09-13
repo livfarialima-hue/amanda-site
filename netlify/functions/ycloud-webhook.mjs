@@ -5808,6 +5808,9 @@ export async function handleYCloudWebhook(
         reference: attribution.reference,
         referenceCategory: attribution.referenceCategory,
         procedure: humanContextPlan.procedure,
+        professional: delivery.professional,
+        opportunityId: delivery.opportunityId,
+        patientRelationship,
         templateId: prefillTemplateId,
         referralContext,
         recentConversation: conversationHistoryWithCurrent,
@@ -5828,7 +5831,10 @@ export async function handleYCloudWebhook(
     !suppressExactDuplicate
   ) {
     const cancelResult =
-      await cancelPendingHumanResume(phone);
+      await cancelPendingHumanResume(phone, {
+        eventId: String(eventId),
+        receivedAt: String(message.sendTime || payload.createTime || ""),
+      });
     humanResumeScheduleStatus =
       cancelResult.status === "completed"
         ? "cancelled_no_pending_request"

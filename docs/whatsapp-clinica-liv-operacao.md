@@ -1,5 +1,7 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+> **Bruna/LEADS — CANDIDATO LOCAL DE 12/09/2026, AINDA NÃO PUBLICADO:** o pacote de continuidade comercial e cuidado humano usa a produção observada Netlify `fd76cf8` e Apps Script v149 como baseline reconciliado. Nenhuma aba/coluna foi reorganizada. Após publicação autorizada, o ciclo de classificação preservará autoria, relacionamento, responsável e pendência; baixa confiança não confirmará consulta/fechamento, e nova atividade invalidará resultado antigo antes da gravação. A autoria é relida na planilha durante a conclusão, pois o worker não envia novamente o histórico. O e-mail terá limite próprio de 10 mil caracteres, independente do template WhatsApp de 1.024, com rascunho integral ou `SEM SUGESTÃO PRONTA`. E-mail não equivale a resposta enviada ao paciente. O alerta WhatsApp mantém seu cooldown, e a cópia de e-mail mantém a deduplicação por evento. Não foi executada reclassificação retroativa em massa. Relatório e gates: `auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md`.
+
 > **Governança:** este arquivo descreve a operação técnica do atendimento. O norte estratégico de aquisição e conversão fica em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`.
 
 > **Retomada automática por modelo — PUBLICADA, ATIVADA E VERIFICADA NA v143 EM 12/09/2026:** o commit exato autorizado `4db9fb3186b61b30de33d374e8a736804b654821` foi publicado no deployment Apps Script canônico existente e no deploy Netlify final `6aa5494950d7dc34628fdf33`. O controle de emergência foi publicado e ensaiado antes da ativação: `Central LIV > Desativar retomadas automáticas (emergência)` desligou a trava local sem apagar fila, histórico ou trabalho humano, e o diagnóstico confirmou o corte. A ativação única ocorreu às 09:46:59; às 09:47:32, o pós-voo mostrou as duas travas ativas, endpoint HTTP 200 pronto, gatilhos 1/1 e zero plano programado. O endpoint sem autenticação respondeu HTTP 401. Nenhum planejador ou processador foi executado manualmente e nenhuma mensagem real ou de teste foi enviada. O caminho alcança somente a primeira retomada de uma conversa posterior à ativação com exatamente duas mensagens: interesse genérico em procedimento conhecido e primeira resposta exata da Bruna ainda sem resposta, entre 24 e 48 horas. Qualquer retomada manual/anterior registrada, terceiro turno, nova atividade ou takeover muda a etapa ou a âncora e bloqueia ou cancela o automático; Apps Script e Netlify relêem o histórico imediatamente antes do envio. Preço, agenda, sintomas, exames, imagens, risco, urgência, opt-out, pausa, promessa humana, procedimento divergente e falta de texto exato continuam bloqueando. Uma saída externa que não esteja registrada no histórico canônico é o limite observável conhecido.
@@ -322,7 +324,7 @@ Quando uma mensagem é enviada pelo WhatsApp Business da clínica para a pessoa,
 Se a paciente responder depois de uma mensagem humana, a Bruna não entra imediatamente. A entrada concreta mais recente é programada para no mínimo dez minutos depois de seu próprio horário; uma rotina executada a cada cinco minutos processa a pendência, portanto a retomada costuma ocorrer entre aproximadamente dez e quinze minutos. Antes de decidir, a rotina relê até os 20 turnos atuais, em ordem, e não depende de a equipe ter usado uma frase específica para reconhecer uma nova dúvida segura e autônoma:
 
 - entre 06:00 e 23:59, somente dúvidas simples, seguras e de alta confiança podem continuar; agenda final, cuidado clínico e demais assuntos protegidos permanecem com a equipe;
-- cada nova entrada da paciente substitui a pendência anterior e reinicia a janela de dez minutos;
+- cada nova entrada cronologicamente mais recente substitui a pendência anterior e reinicia a janela de dez minutos; repetições e eventos atrasados não a substituem;
 - uma nova mensagem humana cancela a retomada, inclusive durante a elaboração da resposta e antes do envio final;
 - agradecimentos e encerramentos simples não provocam nova mensagem;
 - entre 00:00 e 05:59, nenhum preço, faixa, link, CTA, resposta longa, qualificação ou confirmação de agenda é enviado: a primeira mensagem acionável recebe no máximo uma confirmação curta e contextual, e as seguintes apenas atualizam a retomada das 8h; se a paciente pedir para continuar amanhã, nenhuma nova mensagem é enviada naquela madrugada;
@@ -330,12 +332,12 @@ Se a paciente responder depois de uma mensagem humana, a Bruna não entra imedia
 - fora da janela de 00:00 a 05:59, somente respostas de preço que já tenham contrato automático aprovado para o procedimento podem seguir; demais valores cirúrgicos, condições exatas de pagamento, agenda e confirmação continuam dependendo da equipe;
 - sintomas, possível urgência, segurança, documentos, pré ou pós-operatório, cardiologia, sofrimento intenso e demais temas reservados seguem para revisão humana; situações potencialmente urgentes nunca recebem promessa de aguardar até a manhã;
 - se o tema não for reservado, mas a Bruna não tiver confiança para responder, a mensagem de espera só é enviada quando há uma pergunta, pedido ou resposta a uma pergunta da clínica realmente pendente;
-- se não houver solicitação concreta pendente, a paciente não recebe uma mensagem artificial de espera: Amanda recebe o alerta para revisar a conversa;
-- depois de uma resposta segura da Bruna, a automação volta a conduzir normalmente a conversa;
-- depois da mensagem de espera ou de um bloqueio sensível, somente uma nova mensagem humana libera a conversa;
+- agradecimento, encerramento, decisão de pensar e ciência de compromisso já assumido não geram mensagem nem alerta sem tarefa concreta;
+- depois de uma resposta segura, a Bruna só reassume a condução se não houver compromisso humano pendente; uma resposta pontual mantém a equipe responsável por tarefas anteriores;
+- depois de um aviso ou bloqueio sensível, a tarefa fica com a equipe. Nova dúvida independente pode ser reavaliada após a espera, sem apagar a pendência nem repetir o aviso;
 - o horário não interrompe uma conversa que a própria paciente iniciou ou manteve.
 
-Cada geração de tomada humana admite no máximo uma retomada automática. Uma nova mensagem enviada pelo WhatsApp Business inicia uma nova geração e reinicia todas as proteções.
+**Extensão candidata de 12/09/2026, ainda sem publicação:** cada geração de tomada humana admite no máximo uma tentativa de confirmação de recebimento; a reserva anterior ao envio evita duplicar até depois de timeout. Um novo pedido pode ser avaliado, mas o controle mantém compromissos e a responsabilidade humana. Cada mensagem humana inicia outra geração. A fila usa chaves por evento, aceita registros antigos e evita apagar a entrada nova ao concluir a antiga. O e-mail contém responsável, pendência, histórico recente e rascunho integral seguro ou `SEM SUGESTÃO PRONTA`. A entrega do alerta precede o aviso; falha reprograma a pendência, com intervalos de cinco a trinta minutos. Novas perguntas não urgentes consolidam alertas por trinta minutos; urgência não espera essa consolidação nem recebe promessa de aguardar até a manhã. Preferência de não receber robô e janela de 24 horas são relidas ou conferidas antes do efeito. O aviso não conta como atendimento concluído na LEADS.
 
 ## Aprendizado supervisionado
 
@@ -642,3 +644,13 @@ momento do disparo e devolvem `automation_inactive` quando o modo não é
 - Validação local: 657/657 testes, 44/44 URLs no gate técnico e artefato de 173 arquivos sem `auditorias/**`.
 - Smoke live: páginas, tracking, `robots.txt`, `sitemap.xml` e web app HTTP 200; sentinela de auditoria HTTP 404; endpoint de jornada HTTP 405 em GET; nenhuma faixa antiga ou `JID` no HTML público.
 - Rollback: Netlify para o deploy anterior `6a808fcc31dd650008489886`; Apps Script para a versão 90 no mesmo deployment.
+
+## Candidato: e-mail prático e cuidados por marco — 12/09/2026
+
+Aguardando publicação e ativação próprias. No e-mail, abrir o painel, conferir mensagem e horário e escolher Aprovar, Dispensar esta sugestão ou Adiar revisão. Confirmar apenas os itens escolhidos; nenhuma opção vem selecionada. Dispensar evita a repetição do mesmo marco, preservando a preferência de contato. Cuidados com mensagem personalizada/ clínica ficam com envio humano. A aprovação entrega automaticamente a mensagem prevista, se a releitura final ainda permitir.
+
+Novos campos manuais no fim de Consultas: Data da cirurgia realizada, Data do orçamento enviado e Próxima checagem após cirurgia. Não preencher retrospectivamente por suposição. O Calendar continua fonte de compromisso e vínculo; status Realizada e data realizada são evidência do atendimento, não a mera passagem do horário.
+
+A fila _CUIDADOS_PROGRAMADOS mantém decisões e recibos. Enviando/Incerto/Reconciliar exigem conferência; não apagar linhas para tentar reenviar. reconciliarRecibosCuidadosProgramados consulta somente recibos existentes e recompõe histórico/aniversário; não envia. DesativarCuidadosProgramados interrompe os efeitos novos; desativarRetomadasAutomaticas também interrompe esses cuidados e o gatilho compartilhado. Incerteza no provedor nunca é retentada automaticamente.
+
+O adiamento de um cuidado conserva o rascunho para a nova revisão, inclusive após a janela inicial. A recuperação usa os dados atuais da consulta, nunca uma aprovação antiga. Aniversário não é recuperado depois da data. A revisão interna de fechamento comercial não pode ser dispensada como uma sugestão de contato. A hora limite e os dias permitidos são revalidados antes da chamada ao provedor.

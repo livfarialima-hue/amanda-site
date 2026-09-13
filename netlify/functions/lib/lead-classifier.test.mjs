@@ -159,7 +159,7 @@ test("an isolated structured prefill can never qualify the lead", async () => {
   assert.equal(result.classification.recommendedStatus, "Novo");
   assert.equal(result.classification.appointmentOutcome, "none");
   assert.equal(result.classification.procedureMilestone, "none");
-  assert.equal(result.classification.expectedParty, "patient");
+  assert.equal(result.classification.expectedParty, "clinic");
   assert.match(result.classification.evidence, /sem intenção pessoal posterior/i);
 });
 
@@ -231,6 +231,7 @@ test("request is private, structured, bounded and excludes raw phone", async () 
   assert.match(requestBody.instructions, /não congela a oportunidade atual/);
   assert.match(requestBody.instructions, /marcos administrativos/);
   assert.match(requestBody.instructions, /quote_sent isolado nunca é conversão/);
+  assert.match(requestBody.instructions, /confirmação automática de recebimento[\s\S]*expectedParty continua clinic/);
   assert.match(requestBody.instructions, /respostas curtas da pessoa no contexto imediato/);
   assert.match(requestBody.instructions, /external/);
   assert.match(requestBody.instructions, /nonpatient/);

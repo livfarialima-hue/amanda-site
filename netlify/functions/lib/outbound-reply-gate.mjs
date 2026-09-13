@@ -790,6 +790,7 @@ export async function sendControlledPatientReply(
     recordDurableConversationTurnImpl = recordDurableConversationTurn,
     getStoreImpl = getStore,
     now = Date.now(),
+    beforeSendImpl = null,
   } = {},
 ) {
   const conformedBody = conformOutboundReplyToContract({
@@ -824,6 +825,11 @@ export async function sendControlledPatientReply(
       status: "blocked",
       errorCode: "reply_claim_unavailable",
     };
+  }
+
+  if (beforeSendImpl && !await beforeSendImpl()) {
+    await updateClaim(claim, "released", { getStoreImpl, now });
+    return { status: "superseded", errorCode: "newer_activity_before_send" };
   }
 
   const delivery = await sendYCloudPatientTextImpl({

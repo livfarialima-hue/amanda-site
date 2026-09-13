@@ -2,6 +2,7 @@ import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
+  procedureOpeningMicrovalue,
 } from "./bruna-conversion-experience.mjs";
 
 export const CONVERSATION_ACTIONS = Object.freeze({
@@ -511,6 +512,14 @@ function buildReplyContract({
   const approvedLiftingInformation =
     plan?.procedure === "lifting_facial" &&
     intents.some((intent) => intent.startsWith("lifting_"));
+  const approvedGeneralInformation = conversionExperienceEnabled &&
+    action === CONVERSATION_ACTIONS.RESPOND &&
+    plan?.route === "standard_reply" && plan?.automaticAllowed !== false &&
+    plan?.marketingPrefill !== true && !humanContext && !details.humanTakeoverActive &&
+    Boolean(procedureOpeningMicrovalue(plan?.procedure)) &&
+    Array.isArray(recentConversation) && recentConversation.some(turn => turn?.role === "assistant") &&
+    !intents.some(intent => ["photo", "clinical_or_general", "price_surgery", "price_consultation",
+      "payment_terms", "scheduling", "location", "insurance", "resource"].includes(intent));
   const maxLinks =
     !canWrite || intents.includes("photo") ||
     (
@@ -533,7 +542,7 @@ function buildReplyContract({
     if (approvedInitialRangeOffer) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.PRICE_REFERENCE);
     }
-    if (approvedLiftingInformation) {
+    if (approvedLiftingInformation || approvedGeneralInformation) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION);
     }
   }
@@ -543,7 +552,7 @@ function buildReplyContract({
       intents.includes("scheduling") ||
       intents.includes("price_consultation") ||
       approvedInitialRangeOffer ||
-      approvedLiftingInformation
+      approvedLiftingInformation || approvedGeneralInformation
     );
 
   return Object.freeze({

@@ -2030,14 +2030,19 @@ function collectLeadMessagesForOpportunity_(
     .getValues();
   const normalizedPhone = normalizePhone_(phone);
   const normalizedProfessional = String(professional || "");
+  function matchesLinkedIdentity(row) {
+    const rowProfessional = String(row[8] || "");
+    return Boolean(normalizedPhone && normalizePhone_(row[0]) === normalizedPhone &&
+      (!rowProfessional || rowProfessional === "unknown" || rowProfessional === normalizedProfessional));
+  }
   const firstLinkedIndex = opportunityId
     ? values.findIndex(function findFirstLinkedMessage(row) {
-        return String(row[7] || "") === String(opportunityId);
+        return String(row[7] || "") === String(opportunityId) && matchesLinkedIdentity(row);
       })
     : -1;
   const matching = values.filter(function matchMessage(row, index) {
     if (opportunityId && String(row[7] || "") === String(opportunityId)) {
-      return true;
+      return matchesLinkedIdentity(row);
     }
     const rowProfessional = String(row[8] || "");
     const canRecoverUnassigned = Boolean(
@@ -2063,7 +2068,7 @@ function collectLeadMessagesForOpportunity_(
       )
     );
   });
-  return matching.slice(-Math.max(1, Number(limit) || 12)).map(function (row) {
+  const messages = matching.map(function (row) {
     const direction = String(row[1] || "IN");
     return {
       direction: direction,
@@ -2080,6 +2085,7 @@ function collectLeadMessagesForOpportunity_(
       templateId: String(row[11] || "").toLowerCase(),
     };
   });
+  return mergeConversationMessages_([messages], limit);
 }
 
 function collectHumanTakeoverMessagesForPhone_(
@@ -2384,6 +2390,12 @@ function effectiveLeadStatusFromClassification_(
 }
 
 function relationshipFromClassification_(status, classification, fallback) {
+  const knownStates = ["active_postop", "surgical_planning", "appointment_scheduled",
+    "consultation_completed", "former_patient", "known_patient"];
+  const previous = knownStates.includes(String(fallback || "")) ? String(fallback) : "";
+  if (classification && classification.confidence === "low") {
+    return previous || relationshipFromCanonicalLeadStatus_(status).relationshipState;
+  }
   const signal = classificationAdministrativeSignal_(classification);
   if (signal.procedureMilestone === "completed") return "active_postop";
   if ([
@@ -2393,11 +2405,34 @@ function relationshipFromClassification_(status, classification, fallback) {
   ].includes(signal.procedureMilestone)) {
     return "surgical_planning";
   }
+  if (previous === "active_postop" || previous === "surgical_planning") return previous;
   const mapped = relationshipFromCanonicalLeadStatus_(status);
-  return mapped.found ? mapped.relationshipState : String(fallback || "unknown");
+  return mapped.found ? mapped.relationshipState : previous ||
+    (status === "Qualificado" ? "engaged_lead" : status === "Novo" ? "new_lead" : "unknown");
 }
 
-function expectedPartyFromClassification_(classification) {
+function ownerFromClassificationContext_(classification, job, relationship, currentOwner) {
+  const activeCare = ["active_postop", "surgical_planning", "appointment_scheduled", "consultation_completed"];
+  const messages = job && Array.isArray(job.messages) ? job.messages : [];
+  const humanAuthorship = messages.some(function humanTurn(message) {
+    return message.direction === "OUT" && message.source === "equipe_humana";
+  });
+  if (lastMessageIsHumanResumeReceipt_(job) || String(currentOwner || "") === "human_team" || humanAuthorship ||
+    activeCare.includes(relationship) || classification && classification.confidence === "low" ||
+    job && job.patientRelationship && job.patientRelationship.hasPendingHumanTask === true) return "human_team";
+  return "bruna";
+}
+
+function lastMessageIsHumanResumeReceipt_(job) {
+  const messages = job && Array.isArray(job.messages) ? job.messages : [];
+  const last = messages[messages.length - 1];
+  return Boolean(last && last.direction === "OUT" && last.source === "bruna" &&
+    (/-human-resume-holding(?::bruna)?$/.test(String(last.eventId || last.messageId || "")) ||
+     /^Recebi (?:sua mensagem|seu pedido sobre o agendamento|o material que você enviou)\. A equipe foi avisada para conferir e retornar por aqui assim que possível\.$/.test(String(last.text || ""))));
+}
+
+function expectedPartyFromClassification_(classification, job) {
+  if (lastMessageIsHumanResumeReceipt_(job)) return "clinic";
   const explicit = String(
     classification && classification.expectedParty || "",
   ).trim().toLowerCase();
@@ -2624,9 +2659,13 @@ function hydrateLeadClassificationJobs_(claimedJobs) {
       if (!messages.length) {
         return Object.assign(base, { errorCode: "waiting_messages" });
       }
-      const relationship = relationshipFromCanonicalLeadStatus_(
-        currentStatus,
-      );
+      const relationshipColumn = headers["Relacionamento"] || 0;
+      const relationshipState = relationshipFromClassification_(currentStatus, {},
+        relationshipColumn ? String(leadValues[relationshipColumn - 1] || "") : "unknown");
+      const relationship = {
+        found: !["new_lead", "engaged_lead", "unknown"].includes(relationshipState),
+        relationshipState: relationshipState,
+      };
       return Object.assign(base, {
         leadRow,
         throughMessageId: base.throughMessageId ||
@@ -2672,7 +2711,8 @@ function shouldApplyLeadStatus_(
   confidence,
   allowLowConfidenceAdministrative,
 ) {
-  if (confidence === "low" && !allowLowConfidenceAdministrative) return false;
+  // Uncertain evidence belongs to review, including administrative milestones.
+  if (confidence === "low") return false;
   if (proposedStatus === "Não qualificado") {
     return confidence === "high" && leadStatusRank_(currentStatus) <= 2;
   }
@@ -3078,6 +3118,12 @@ function completeLeadClassification_(job, classification) {
     return { status: "ignored", error: "stale_row_version" };
   }
   const currentStatus = String(currentValues[statusColumn - 1] || "Novo");
+  const queuedLatestMessageId = String(queueSheet.getRange(queueRow, 9).getDisplayValue() || "");
+  if (queuedLatestMessageId && job.throughMessageId && queuedLatestMessageId !== String(job.throughMessageId)) {
+    queueSheet.getRange(queueRow, 5, 1, 2).setValues([["pending", ""]]);
+    queueSheet.getRange(queueRow, 16).setValue("");
+    return { status: "ignored", error: "stale_conversation_revision" };
+  }
   const rawProposedStatus = String(
     classification.recommendedStatus || currentStatus,
   );
@@ -3171,18 +3217,29 @@ function completeLeadClassification_(job, classification) {
     };
   }
 
+  const storedRelationship = String(currentValues[(columns["Relacionamento"] || 0) - 1] || "");
+  const relationshipToKeep = relationshipFromClassification_(statusToKeep, classification,
+    storedRelationship || job.patientRelationship && job.patientRelationship.relationshipState || "unknown");
+  // The worker returns identifiers and classification, not the raw transcript.
+  // Re-read authorship here, at the owner of the canonical write.
+  const completionContext = {
+    messages: collectLeadMessagesForOpportunity_(
+      spreadsheet.getSheetByName(CONFIG.messageSheetName),
+      canonicalOpportunityId, phone, professional, 24,
+    ),
+  };
   const automaticValues = {
     "Resumo automático": safeText_(classification.summary, 600),
-    "Próxima ação automática": safeText_(classification.nextAction, 300),
+    "Próxima ação automática": lastMessageIsHumanResumeReceipt_(completionContext)
+      ? "Equipe: conferir a solicitação pendente e responder; houve apenas confirmação automática de recebimento."
+      : confidence === "low"
+      ? "Revisar o histórico antes de confirmar a próxima ação; classificação incerta."
+      : safeText_(classification.nextAction, 300),
     "Objeção principal": safeText_(classification.commercialReason, 80),
-    "Relacionamento": relationshipFromClassification_(
-      statusToKeep,
-      classification,
-      job.patientRelationship && job.patientRelationship.relationshipState ||
-        "unknown",
-    ),
-    "Responsável atual": "bruna",
-    "Aguardando ação de": expectedPartyFromClassification_(classification),
+    "Relacionamento": relationshipToKeep,
+    "Responsável atual": ownerFromClassificationContext_(classification, completionContext, relationshipToKeep,
+      currentValues[(columns["Responsável atual"] || 0) - 1]),
+    "Aguardando ação de": confidence === "low" ? "clinic" : expectedPartyFromClassification_(classification, completionContext),
   };
   const phaseSync = typeof sincronizarFaseOportunidadeELead_ === "function"
     ? sincronizarFaseOportunidadeELead_(spreadsheet, {
@@ -3205,6 +3262,7 @@ function completeLeadClassification_(job, classification) {
   if (!phaseSync.ok) needsClassificationReview = true;
 
   const appointmentUpdate =
+    confidence !== "low" &&
     administrativeSignal.appointmentOutcome !== "none" &&
     typeof registrarMarcoAdministrativoClassificado_ === "function"
       ? registrarMarcoAdministrativoClassificado_(spreadsheet, {
@@ -3219,6 +3277,7 @@ function completeLeadClassification_(job, classification) {
       : { updated: false, reason: "no_appointment_signal" };
 
   const businessMilestone =
+    confidence !== "low" &&
     administrativeSignal.procedureMilestone !== "none" &&
     typeof registrarMarcoOportunidade_ === "function"
       ? registrarMarcoOportunidade_(spreadsheet, {
@@ -3324,7 +3383,8 @@ function completeLeadClassification_(job, classification) {
           : "",
         patientPhone: phone,
         messageText: [
-          "A planilha foi atualizada por um marco administrativo com baixa confiança.",
+          "Decisão humana necessária: conferir o marco administrativo antes de alterar a fase.",
+          "O marco incerto não foi aplicado automaticamente à agenda ou ao fechamento.",
           "Status anterior: " + currentStatus,
           "Status aplicado: " + appliedStatus,
           "Resultado da consulta: " + administrativeSignal.appointmentOutcome,
@@ -3332,6 +3392,7 @@ function completeLeadClassification_(job, classification) {
           "Consulta localizada: " + (appointmentUpdate.updated ? "sim" : "não"),
           "Evidência administrativa: " + String(classification.evidence || ""),
           "Revise a linha do lead e a aba Revisões do Bot.",
+          "SEM SUGESTÃO PRONTA: confirme o registro administrativo antes de responder sobre agenda ou fechamento.",
         ].join("\n"),
       });
     } catch (alertError) {

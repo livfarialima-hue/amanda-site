@@ -62,6 +62,28 @@ const respond = {
   allowHoldingReply: false,
 };
 
+test("activity arriving while claiming the outbound slot prevents the provider call", async () => {
+  const blobs = fakeBlobs();
+  const store = blobs.getStoreImpl();
+  const original = store.setJSON.bind(store);
+  let humanReplied = false;
+  let deliveries = 0;
+  store.setJSON = async (...args) => {
+    const result = await original(...args);
+    if (args[1].status === "processing") humanReplied = true;
+    return result;
+  };
+  const result = await sendControlledPatientReply({
+    from: "+5511900000000", to: "+5511900000001", eventId: "mixed-race", body: "A consulta é individual.",
+    currentText: "Como funciona a consulta?", conversationAction: respond,
+  }, {
+    ...blobs, beforeSendImpl: async () => !humanReplied,
+    sendYCloudPatientTextImpl: async () => { deliveries++; return { status: "completed" }; },
+  });
+  assert.equal(result.status, "superseded");
+  assert.equal(deliveries, 0);
+});
+
 test("final validation blocks replies after closing or deferral", () => {
   for (const currentText of [
     "Ok, obrigada",

@@ -1,3 +1,4 @@
+import { handleScheduledCare } from "./lib/scheduled-care.mjs";
 import { timingSafeEqual } from "node:crypto";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
 import { appendConversationTurn } from "./lib/conversation-memory.mjs";
@@ -82,6 +83,9 @@ export function getScheduledFollowupHealth(env = process.env) {
     service: "scheduled-followup",
     scheduledFollowupsEnabled:
       env.WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED === "true",
+    careEnabled: env.WHATSAPP_SCHEDULED_CARE_ENABLED === "true",
+    birthdayEnabled: env.WHATSAPP_BIRTHDAY_CARE_ENABLED === "true",
+    birthdayTemplateConfigured: Boolean(String(env.YCLOUD_BIRTHDAY_TEMPLATE_NAME || "").trim()),
     automaticTemplateEnabled:
       env.WHATSAPP_AUTOMATIC_FOLLOWUP_TEMPLATES_ENABLED === "true",
     templateConfigured: Boolean(
@@ -125,6 +129,8 @@ function normalizePayload(value) {
       : {};
 
   return {
+    purpose: body.purpose === "patient_care" ? "patient_care" : "marketing",
+    statusOnly: body.statusOnly === true,
     planId: String(body.planId || "").trim().slice(0, 160),
     patientPhone: String(body.patientPhone || "").trim(),
     body: Array.from(String(body.body || "").trim())
@@ -484,6 +490,8 @@ export async function handleScheduledFollowup(
   } catch {
     return json({ ok: false, error: "invalid_json" }, 400);
   }
+
+  if (payload.purpose === "patient_care") return handleScheduledCare(payload, { env, fetchImpl, now });
 
   if (!payload.planId || !payload.patientPhone || !payload.body) {
     return json({ ok: false, error: "invalid_payload" }, 400);

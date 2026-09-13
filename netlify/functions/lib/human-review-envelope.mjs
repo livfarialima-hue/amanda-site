@@ -4,7 +4,7 @@ export const NO_SAFE_REVIEW_SUGGESTION =
   "SEM SUGESTÃO PRONTA — leia o histórico completo antes de responder. Se o contexto continuar ambíguo ou depender de decisão clínica, mantenha o caso com a pessoa responsável.";
 
 function limited(value, maxLength) {
-  return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+  return String(value || "").replace(/[ \t]+/g, " ").trim().slice(0, maxLength);
 }
 
 function safeCode(value, fallback) {
@@ -34,8 +34,10 @@ export function buildHumanReviewEnvelope({
   urgent = false,
   risk = "",
   owner = "",
+  actionRequired = "Conferir a solicitação no contexto e decidir a resposta pelo WhatsApp.",
 } = {}) {
-  const suggestion = String(suggestedReply || "").trim();
+  const rawSuggestion = String(suggestedReply || "").trim();
+  const suggestion = rawSuggestion.length <= 1_500 ? rawSuggestion : "";
   const normalizedRisk = ["low", "medium", "high"].includes(
     String(risk || "").toLowerCase(),
   )
@@ -50,13 +52,14 @@ export function buildHumanReviewEnvelope({
     professional: safeCode(professional, "unknown"),
     relationship: relationshipState(relationship),
     risk: normalizedRisk,
+    actionRequired: limited(actionRequired, 400),
     contextSummary: limited(contextSummary, 3_500),
     suggestionStatus: suggestion
       ? "ready_for_human_review"
-      : suggestionAvailable
+      : !rawSuggestion && suggestionAvailable
         ? "ready_in_context"
         : "none_safe",
-    suggestedReply: suggestion.slice(0, 1_500),
+    suggestedReply: suggestion,
   });
 }
 
@@ -69,6 +72,7 @@ export function formatHumanReviewEnvelope(envelope) {
     `Profissional: ${value.professional}`,
     `Relação: ${value.relationship}`,
     `Risco: ${value.risk}`,
+    `Ação necessária: ${value.actionRequired || "Revisar a solicitação."}`,
   ];
   const content = value.contextSummary
     ? ["Contexto para conferência:", value.contextSummary]
@@ -79,5 +83,5 @@ export function formatHumanReviewEnvelope(envelope) {
       ? []
       : [NO_SAFE_REVIEW_SUGGESTION];
 
-  return [...header, ...content, ...suggestion].filter(Boolean).join("\n");
+  return [...header, ...suggestion, ...content].filter(Boolean).join("\n");
 }

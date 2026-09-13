@@ -16,6 +16,26 @@ const standardPlan = {
   automaticAllowed: true,
 };
 
+test("safe procedure continuation can offer information without collecting scheduling preferences", () => {
+  const decision = decideConversationAction({ text: "Quero entender a cervicoplastia", messageType: "text",
+    plan: { ...standardPlan, professional: "amanda", procedure: "lifting_cervical" },
+    recentConversation: [{ role: "assistant", source: "bruna", text: "O que gostaria de entender sobre cervicoplastia?" }],
+    conversionExperienceEnabled: true,
+  });
+  assert.equal(decision.replyContract.allowCta, true);
+  assert.deepEqual(decision.replyContract.allowedCtaTypes, ["informational_continuation"]);
+});
+
+test("active care and photo review never gain a commercial CTA from the general information path", () => {
+  for (const reason of ["known_patient_active_postop", "known_patient_active_care", "image_review"]) {
+    const decision = decideConversationAction({ text: "Quero entender a cervicoplastia", messageType: "text",
+      plan: { route: "human_review", reason, professional: "amanda", procedure: "lifting_cervical", automaticAllowed: false },
+      recentConversation: [{ role: "assistant", text: "Como posso ajudar?" }], conversionExperienceEnabled: true,
+    });
+    assert.equal(decision.replyContract.allowCta, false);
+  }
+});
+
 const pendingPriceCommitment = [{
   eventId: "evt-price-review",
   kind: "procedure_price",
