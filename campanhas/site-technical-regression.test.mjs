@@ -695,6 +695,59 @@ test("audit and operations files are excluded from the generated deploy artifact
   }
 });
 
+test("safety-first pages explain integrated care and the surgical package without promotional promises", () => {
+  const pages = [
+    "index.html",
+    "avaliacao-facial/index.html",
+    "blefaroplastia/index.html",
+    "lifting-facial/index.html",
+    "lifting-cervical/index.html",
+    "conteudos/seguranca-cirurgia-plastica/index.html",
+  ];
+  for (const file of pages) {
+    const html = readFileSync(path.join(root, file), "utf8");
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || "";
+    const visible = main.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    assert.match(visible, /sua segurança vem primeiro/i, file);
+    assert.match(visible, /pacote cirúrgico inclui a consulta cardiológica pré-operatória na própria LIV/i, file);
+    assert.match(visible, /cardiologista com formação na USP/i, file);
+    assert.match(visible, /anestesistas.{0,80}selecionados criteriosamente, com atenção à formação/i, file);
+    assert.match(visible, /(?:troca de informações|comunicação entre os profissionais|comunicação com a cirurgiã)/i, file);
+    assert.match(html, /id="seguranca-integrada"/, file);
+    assert.doesNotMatch(visible, /segurança garantida|cirurgia sem risco|mais segura que|consulta grátis|ganhe a consulta|equipe da USP|clínica vinculada à USP|exames incluídos|liberação automática/i, file);
+    if (!file.startsWith("conteudos/")) {
+      assert.match(main, /href="(?:\.\.\/)?conteudos\/seguranca-cirurgia-plastica\/"/, file);
+    }
+  }
+});
+
+test("safety guide distinguishes the cardiac consultation, initial appointment and anesthesia evaluation", () => {
+  const html = readFileSync(path.join(root, "conteudos/seguranca-cirurgia-plastica/index.html"), "utf8");
+  const cardiac = html.match(/<section[^>]*id="seguranca-integrada"[^>]*>([\s\S]*?)<\/section>/)?.[1] || "";
+  assert.match(cardiac, /Dr\. Daniel Added, médico cardiologista com formação na USP — CRM-SP 199104 · RQE 145565/);
+  assert.match(html, /primeira consulta com a Dra\. Amanda, que é contratada separadamente/);
+  assert.match(html, /A consulta com o cardiologista substitui a avaliação anestésica\?/);
+  assert.match(html, /Não\. São avaliações com funções diferentes/);
+  assert.match(html, /Os cuidados e os exames são definidos conforme cada paciente/);
+  assert.match(html, /não tornam uma cirurgia isenta de complicações/);
+  assert.equal((html.match(/class="faq-item"/g) || []).length, 7);
+  assert.doesNotMatch(html, /reviewedBy|Revisado pela|Conteúdo médico revisado/i);
+  const bleph = readFileSync(path.join(root, "blefaroplastia/index.html"), "utf8");
+  assert.match(bleph, /Fechamento, sintomas, olho seco e função das pálpebras/);
+  assert.match(bleph, /Avaliação oftalmológica pode ser solicitada/);
+});
+
+test("communication guidance ties the safety message to confirmed facts and channel limits", () => {
+  const north = readFileSync(path.join(root, "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md"), "utf8");
+  const guide = readFileSync(path.join(root, "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md"), "utf8");
+  assert.match(north, /## 29\. Decisão autorizada de 12\/09\/2026 — segurança em primeiro lugar e equipe integrada/);
+  assert.match(guide, /Diretriz vigente: seção 29 do Norte Estratégico/);
+  assert.match(guide, /A primeira consulta com Amanda é separada/);
+  assert.match(guide, /A USP qualifica a formação do cardiologista; não é selo da clínica/);
+  assert.match(guide, /não modifica campanhas ou respostas automáticas/);
+  assert.match(north, /revisão clínica posterior quando disponível, sem apresentá-la como já feita/);
+});
+
 test("offline site gate fails closed for missing pages, noindex, canonical, H1, orphan and redirect regressions", () => {
   const fixtureRoot = createFixture();
   try {

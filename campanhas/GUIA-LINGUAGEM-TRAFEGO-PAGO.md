@@ -4,6 +4,55 @@
 
 Este guia organiza as expressões populares incorporadas ao site. Elas servem para melhorar correspondência entre busca, anúncio e página, mas não devem ser tratadas como diagnóstico nem usadas de modo a constranger a paciente.
 
+## Segurança como prioridade na comunicação
+
+Diretriz vigente: seção 29 do Norte Estratégico. Segurança é um cuidado que a pessoa consegue reconhecer, não uma promessa de que nada pode acontecer.
+
+### Mensagem principal e provas
+
+**Mensagem principal:** “Sua segurança vem primeiro.”
+
+Explicar com poucos fatos, conforme a dúvida e o espaço:
+
+- **Preparo integrado:** a consulta cardiológica pré-operatória está incluída no pacote cirúrgico e acontece na própria LIV, com cardiologista com formação na USP.
+- **Equipe em contato:** estar na mesma clínica facilita a troca de informações com a Dra. Amanda e os anestesistas.
+- **Anestesia com critério:** anestesistas selecionados criteriosamente, com atenção à formação e às necessidades de cada cirurgia.
+
+A USP qualifica a formação do cardiologista; não é selo da clínica. Não atribuir a mesma formação aos anestesistas. Na identificação detalhada: Dr. Daniel Added, Médico Cardiologista, CRM-SP 199104, RQE 145565. Não acrescentar titulação sem confirmação.
+
+### Onde e quanto dizer
+
+- **Home:** uma frase na faixa de confiança; explicar nos blocos existentes de segurança e clínica, sem aumentar o texto de abertura.
+- **Páginas de procedimentos:** uma menção ao preparo integrado e à equipe, mantendo os cuidados específicos do procedimento. Link opcional para o artigo de segurança.
+- **Artigo de segurança:** explicar quem participa, por que a proximidade ajuda e o que está incluído; esclarecer que cardiologia não substitui avaliação anestésica.
+- **Google Pesquisa:** preservar a correspondência com a busca. Segurança pode ser uma prova de cuidado, sem deslocar o tema do anúncio ou mudar o destino por conta própria.
+- **Meta, público frio:** uma ideia por peça; não abrir com uma lista de exames ou receios. Evitar juntar queixa, currículo, cardiologia, hospital e pacote.
+- **Conteúdo de confiança/retargeting:** mostrar a equipe e explicar a comunicação entre os profissionais. A condição do pacote esclarece o preparo; não é gancho de promoção.
+
+### Repertório de frases
+
+**Apresentação:** “Sua segurança vem primeiro, desde a primeira conversa.”
+
+**Equipe:** “A avaliação cardiológica acontece na própria LIV. Isso facilita a comunicação entre os profissionais que cuidam de você.”
+
+**Condição comercial:** “O pacote cirúrgico inclui a consulta cardiológica pré-operatória na própria LIV, com cardiologista com formação na USP.”
+
+**Anestesia:** “Os anestesistas são selecionados criteriosamente, com atenção à formação e às necessidades de cada cirurgia.”
+
+**Convite:** “Marque uma consulta com a Amanda para conversar sobre suas dúvidas e os cuidados no seu caso.”
+
+Usar como repertório, não copiar todas as frases em cada peça. Preferir um parágrafo curto e um convite tranquilo; não transformar cada benefício em um slogan.
+
+### Limites que devem aparecer na revisão
+
+A confirmação de Daniel em 12/09/2026 refere-se à consulta cardiológica pré-operatória no **pacote cirúrgico**. A primeira consulta com Amanda é separada. Não estender a inclusão a exames, outras consultas ou procedimentos; não prometer mesmo dia, agenda imediata, gratuidade ou liberação para operar.
+
+Evitar: “cirurgia sem risco”, “segurança garantida”, “mais segura”, “equipe da USP”, “clínica vinculada à USP”, “cardiologista libera a anestesia” e “feche a cirurgia e ganhe a consulta”. A avaliação pode orientar mudanças no plano ou o adiamento da cirurgia.
+
+Antes de publicar uma peça, conferir: fato confirmado; formação atribuída ao profissional certo; pacote distinguido da primeira consulta; ausência de promessa; identificação profissional quando aplicável; texto curto, acolhedor e convite sem pressão. A revisão da Dra. Amanda não pode ser declarada antes de acontecer.
+
+Base de conferência: [Clínica LIV](https://livfarialima.com.br/), condição comercial confirmada pelo usuário e [orientações do CFM para identificação profissional](https://publicidademedica.cfm.org.br/manual/resolucao-comentada/capitulo-2), consultadas em 12/09/2026. Esta diretriz não modifica campanhas ou respostas automáticas; cada publicação nesses canais exige seu fluxo próprio.
+
 ## Regra de uso por canal
 
 ### Google Pesquisa

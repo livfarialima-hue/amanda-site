@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-WARM-CONCISE-EDUCATION-2026-09-12",
-  "title": "Linguagem acolhedora e concisa em nove conteudos e novo guia de lip lifting",
-  "status": "published_verified",
-  "baseCommit": "39c0f5e31976604306b7eb06368fb79c2e90f0a4",
+  "changeId": "SITE-SAFETY-FIRST-INTEGRATED-CARE-2026-09-12",
+  "title": "Seguranca como prioridade, cardiologia incluida no pacote cirurgico e criterios da equipe",
+  "status": "tested_local",
+  "baseCommit": "a9f03abcf03cae80df6a4fef5247f5bc3edb0ba8",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu continuar produzindo ou revisando os materiais em 12/09/2026, com portugues acolhedor, menos aparencia de IA, menos informacao e foco em despertar interesse na consulta com Amanda. Permanece a autorizacao explicita anterior para seguir publicacoes educativas e revisar clinicamente depois. Escopo: nove revisoes editoriais, novo comparativo lip lifting/preenchimento, biblioteca, sitemap, testes e registros canonicos. Nao autoriza campanhas, bot, mensagens ou revisao medica ficticia. Antes do envio, o Git e o Plano no Drive avancaram em paralelo para 39c0f5e, com recibos do Meta e do roteamento secundario. Esse baseline documental foi preservado integralmente, incluindo sua estrategia e historico. A producao funcional permaneceu em de53af5/6aa5e68f41e08e0008a76b33. Nenhuma escrita desta tarefa e feita nas plataformas de anuncios ou de atendimento."
+    "note": "Daniel pediu pensar e ajustar o site e as diretrizes para colocar seguranca em primeiro lugar, cardiologia integrada na propria LIV com cardiologista da USP e anestesistas de boa formacao selecionados criteriosamente. Em 12/09 confirmou explicitamente: a consulta cardiologica esta incluida no pacote cirurgico. Permanece a autorizacao anterior para seguir publicacoes do site e revisao clinica posterior. Escopo limitado a seis paginas e diretrizes; nenhum anuncio, bot, mensagem, agenda ou politica de atendimento e alterado. Publicacao do commit exato depende de preflight registrado. O Plano do Drive avancou para a pendencia Bruna/LEADS commitada em 4daf305. Essa entrada e preservada sem publicar seu codigo ou revalidar suas conclusoes clinicas/operacionais."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "contracts": [
@@ -23,70 +23,63 @@
       "google-ads-acquisition-conversion"
     ],
     "files": [
+      "avaliacao-facial/index.html",
+      "blefaroplastia/index.html",
+      "campanhas/GUIA-LINGUAGEM-TRAFEGO-PAGO.md",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/cost-guides.test.mjs",
       "campanhas/site-technical-regression.test.mjs",
-      "conteudos/como-escolher-cirurgiao-plastico/index.html",
-      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
-      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
-      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
-      "conteudos/otomodelacao-ou-otoplastia/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
-      "conteudos/recuperacao-blefaroplastia/index.html",
-      "conteudos/recuperacao-lifting-cervical/index.html",
       "conteudos/seguranca-cirurgia-plastica/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "sitemap.xml"
+      "index.html",
+      "lifting-cervical/index.html",
+      "lifting-facial/index.html",
+      "ops/CHANGE-CANDIDATE.json"
     ]
   },
   "impact": {
     "consumers": [
-      "leitores dos nove artigos revisados e interessados em lip lifting ou preenchimento labial",
-      "biblioteca com busca e links relacionados",
-      "sitemap, indexacao, build estatico e publicacao Netlify",
-      "diretriz editorial de aquisicao e painel executivo no Git e na mesma projecao do Drive"
+      "visitantes da home, avaliacao facial e paginas BLEF, lifting facial e cervical",
+      "leitores do guia de seguranca, busca organica e navegacao interna",
+      "producao futura de linguagem de site e marketing subordinada ao Norte",
+      "build estatico e Netlify; Plano Executivo local e mesma projecao Drive"
     ],
     "preservedInvariants": [
-      "nenhuma pagina comercial, anuncio, orcamento, bot, mensagem, Apps Script, LEADS, CRM, Calendar ou comportamento de tracking e alterado",
-      "resposta principal concisa, portugues cotidiano e convite a consulta sem pressao, vergonha, promessa de resultado ou superioridade universal de tecnica",
-      "riscos essenciais e sinais de urgencia preservados; sem diagnostico individual, doses, prazo universal ou suspensao autonoma de medicamentos",
-      "nos nove artigos existentes os hrefs e atributos dos CTAs WhatsApp permanecem identicos; numero e procedimento corretos no novo artigo",
-      "as 52 rotas existentes permanecem acessiveis, com fotos, videos, credenciais e estilos preservados; acrescenta somente uma rota educativa",
-      "nao atribuir autoria, reviewedBy ou revisao medica nao realizada; fontes primarias e revisao humana posterior pendente",
-      "comparativo labial distingue volume, proporcao, cicatriz e riscos sem equiparar cirurgia a preenchimento permanente"
+      "seguranca e prioridade de processo, nunca promessa de risco zero, resultado garantido ou superioridade universal",
+      "consulta cardiologica pre-operatoria incluida no pacote cirurgico, sem confundir com primeira consulta da Amanda, sem prometer exames incluidos, mesmo dia, gratuidade ou liberacao automatica",
+      "USP descreve formacao do cardiologista, nao vinculo institucional da clinica nem formacao atribuida aos anestesistas",
+      "cardiologia nao substitui avaliacao anestesica; exames e decisoes clinicas individualizados; preservar cuidados oculares da blefaroplastia",
+      "53 rotas, fotos, videos, precos, hrefs e atributos WhatsApp, tracking, JavaScript, CSS, funcoes e schedules preservados",
+      "nenhuma alteracao em Google Ads, Meta Ads, Apps Script, CRM, LEADS, bot, mensagens ou agenda",
+      "nao atribuir revisao medica nao realizada; preservar todos os registros e publicacoes paralelos"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-publication",
         "system": "Git canonico",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:18:31Z",
-        "reference": "Integracao sobre origin/reestruturacao-site 39c0f5e31976604306b7eb06368fb79c2e90f0a4. Candidato ccde86b preservado em branch propria; cinco arquivos documentais paralelos mantidos integralmente. O delta desta rodada continua nos 19 arquivos declarados."
+        "checkedAt": "2026-09-13T00:27:31Z",
+        "reference": "Main e origin limpos em a9f03abcf03cae80df6a4fef5247f5bc3edb0ba8; branch isolada codex/seguranca-integrada-site-20260912 no mesmo baseline."
       },
       {
         "contract": "site-publication",
         "system": "Netlify",
         "status": "baseline_confirmed",
-        "checkedAt": "2026-09-13T00:19:32.807Z",
-        "reference": "API autenticada production/ready 6aa5e68f41e08e0008a76b33, commit de53af57c2d17d2fb5912379dc05f38f024dc7de. Comparacao completa dos 190 arquivos do provedor sem drift; exatamente 11 modificacoes publicas e uma nova rota. Doze funcoes, cinco schedules e todos os atributos WhatsApp dos nove artigos preservados."
+        "checkedAt": "2026-09-13T00:35:22.453Z",
+        "reference": "2026-09-13T00:35:22.453Z: authenticated production/ready 6aa5ec483ca1f7000909ff0a, fd76cf8; all 191 provider files reconciled, allowing only verified packaging differences. Exactly six changed HTML files, no drift or added/removed public route. Twelve functions and five schedules captured."
       },
       {
         "contract": "google-ads-acquisition-conversion",
         "system": "Site e documentacao de aquisicao",
         "status": "site_only_confirmed",
-        "checkedAt": "2026-09-13T00:18:31Z",
-        "reference": "Mesma projecao Drive 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO, modificada em 2026-09-13T00:08:27.749Z, relida: igualdade exata com os 150983 caracteres do Plano em 39c0f5e. Recibos Meta/roteamento preservados, sem revalidacao ou escrita de Ads, CRM ou Apps Script nesta tarefa."
+        "checkedAt": "2026-09-13T00:37:00Z",
+        "reference": "Drive advanced to a 155021-character Plan at 00:27:50.799Z, exactly equal to committed 4daf30599fe99f52f8aaf0ba8d3070145304c954. Its pending Bruna/LEADS paragraph is preserved in this Plan, with source and no inclusion of its functional code. Origin remains a9f03ab. Only the pending documentation is reconciled; no writes to Ads or care platforms."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-13T00:20:00Z",
+    "completedAt": "2026-09-13T00:37:00Z",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -100,55 +93,50 @@
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs"
     ],
     "results": {
-      "focusedTests": "23/23 site/cost tests and 6/6 human-language/contrast tests passed",
+      "fullSuite": "1344/1344 passed",
+      "focusedTests": "28/28 technical, safety communication, clinical distinctions and language tests passed",
       "crossConsumerTests": "145/145 passed",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK, exact 19 files",
-      "staticBuild": "192 files, 53 routes, zero excluded operations or audit files, zero errors",
-      "technicalAudit": "53/53 valid canonicals, one H1, indexable; zero orphan pages",
-      "visualQa": "22 Chrome page/viewport combinations at 1440 and 390 pixels; zero overflow or broken images; primary article and mobile screenshots inspected. Search correctly prioritizes lip lifting and preenchimento labial as well as five existing query cases.",
-      "ctaPreservation": "Read-only comparison confirmed all WhatsApp opening tags byte-identical in nine existing articles; only visible copy changes. New article uses lip-lifting procedure and the canonical number.",
-      "brevity": "Six recent guide bodies reduced from 545-648 to 216-257 words; essential medical coverage and urgency alerts remain. Length is not a proxy for clinical approval.",
-      "liveBaseline": "2026-09-13T00:19:32.807Z: 190 provider files; zero unexplained drift; exactly eleven changed public files and one added article; nine original CTA attribute sets identical; twelve functions and five schedules captured.",
-      "operationalConsistency": "Publication and exact Drive receipts recorded. Final ops:check runs after the receipt commit on the clean canonical checkout; prior SYNC_PENDING while unpublished was expected.",
-      "fullSuite": "1341/1341 passed on the integrated baseline 39c0f5e; no medical or style guardrail removed.",
-      "parallelIntegration": "Baseline documental 39c0f5e integralmente preservado; estrategia editorial renumerada para secao 28. Recibo externo da tarefa paralela preservado no historico 39c0f5e:ops/CHANGE-CANDIDATE.json.",
-      "releasePreflight": "CHANGE_SAFETY_STATUS=OK in release mode for fd76cf86fc8ce8e0ed05e8590fca51bdd1e167c5 at 2026-09-13T00:20:25Z; continuing editorial publication authority recorded, exact nineteen-file scope.",
-      "livePostflight": "2026-09-13T00:21:22.557Z: production/ready fd76cf8/6aa5ec483ca1f7000909ff0a; all 191 provider files match, allowing only verified packaging differences. 53/53 public routes HTTP 200 and equivalent to local artifact (47 byte-identical, six verified Netlify pretty-URL transformations). Twelve functions and five schedules identical; audit and ops sentinels 404.",
-      "driveProjection": "Same Drive file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO updated at 2026-09-13T00:22:19.937Z. Readback exactly equals all 153454 characters / 157562 bytes of committed plan 399578b192ba83b2af2f1e19b9fc40696aabac3e. SHA-256 a65fccd189dc4fc38c303aaf506171d1501ded4d54b96904c583c3dd7ddfd964. Parallel receipts preserved."
+      "changeSafety": "CHANGE_SAFETY_STATUS=OK, exact 12 files",
+      "staticBuild": "192 artifact files, 53 routes, zero excluded operational files or errors",
+      "technicalAudit": "53/53 self-canonical, indexable, one H1; zero orphan pages or missing media",
+      "visualQa": "Chrome: 12 page/viewport combinations at 1440 and 390 pixels; zero overflow, broken images or unperformed review claims on the educational page. Homepage, BLEF, facial/cervical and cardiac detail screenshots inspected.",
+      "ctaPreservation": "All WhatsApp opening tags and all image/video/source tags byte-identical on the six changed pages.",
+      "liveBaseline": "2026-09-13T00:35:22.453Z: authenticated production/ready 6aa5ec483ca1f7000909ff0a, fd76cf8; all 191 provider files reconciled, allowing only verified packaging differences. Exactly six changed HTML files, no drift or added/removed public route. Twelve functions and five schedules captured.",
+      "parallelPreservation": "Drive advanced to a 155021-character Plan at 00:27:50.799Z, exactly equal to committed 4daf30599fe99f52f8aaf0ba8d3070145304c954. Its pending Bruna/LEADS paragraph is preserved in this Plan, with source and no inclusion of its functional code. Origin remains a9f03ab.",
+      "operationalConsistency": "SYNC_PENDING expected while tested_local, isolated branch and not yet published; final check required on clean canonical branch after receipts."
     },
     "crossConsumerCases": [
-      "28 leituras unicas, contagens e busca coerentes, comparativo labial encontravel",
-      "53 rotas publicas validas sem perda de canonical, H1 ou indexabilidade",
-      "nove artigos mantem CTA e midia originais; leitura mais curta sem suprimir avisos essenciais",
-      "novo artigo tem fontes primarias, identidade correta e ausencia de revisao nao realizada",
-      "Chrome desktop e mobile sem overflow ou imagens quebradas",
-      "funcoes, agendamentos e arquivos publicos fora do escopo identicos ao baseline vivo"
+      "seguranca prioritaria e provas concretas nas seis paginas sem alongamento desnecessario",
+      "pacote cirurgico distinguido de primeira consulta; cardiologia distinguida de anestesia",
+      "formacao USP vinculada somente ao cardiologista; identidade e RQE no guia detalhado",
+      "53 rotas e atributos WhatsApp das seis paginas preservados",
+      "Chrome desktop e mobile sem overflow ou midia quebrada",
+      "funcoes, schedules e arquivos publicos fora do escopo iguais ao baseline"
     ]
   },
   "release": {
-    "approvedCommit": "fd76cf86fc8ce8e0ed05e8590fca51bdd1e167c5",
-    "netlifyDeployId": "6aa5ec483ca1f7000909ff0a",
+    "approvedCommit": null,
+    "netlifyDeployId": null,
     "appsScriptVersion": 149,
-    "verifiedAt": "2026-09-13T00:22:58Z",
+    "verifiedAt": null,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "a65fccd189dc4fc38c303aaf506171d1501ded4d54b96904c583c3dd7ddfd964",
-    "activationState": "educational_content_live_medical_review_pending",
-    "notes": "Publicado em 12/09/2026 as 21:20:48 sob autorizacao continuada de Daniel. Nove revisoes de linguagem e um comparativo labial; 28 leituras e 53 rotas. Baseline 39c0f5e preservado, inclusive recibos Meta/roteamento. Nenhuma escrita em Ads, Apps Script, CRM ou mensagens; v149 e apenas registro herdado. Revisao clinica posterior pendente, sem autoria ou revisao atribuida. Plano commitado em 399578b192ba83b2af2f1e19b9fc40696aabac3e e substituido no mesmo Drive; igualdade exata relida. Commits de recibo usam skip ci e nao alteram o artefato publico."
+    "activationState": "local_not_published",
+    "notes": "Apps Script v149 e contexto herdado; nenhuma escrita nessa plataforma. Revisao clinica posterior permanece pendente."
   },
   "rollback": {
-    "local": "Reverter somente o delta editorial sobre 39c0f5e31976604306b7eb06368fb79c2e90f0a4, preservando as atualizacoes paralelas.",
-    "production": "Se a producao nao tiver avancado, restaurar 6aa5e68f41e08e0008a76b33. Se houver publicacao paralela posterior, reverter apenas o delta editorial sobre ela; nunca apagar alteracoes de terceiros."
+    "local": "Reverter somente o delta de comunicacao deste candidato sobre o baseline preservando terceiros.",
+    "production": "Se a producao nao tiver avancado, restaurar 6aa5ec483ca1f7000909ff0a; se houver publicacoes posteriores, reverter apenas o delta de comunicacao sobre o estado atual."
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "integridade imediata e 24 horas; observacao editorial e comercial em 7, 14 e 30 dias sem espera obrigatoria entre publicacoes; revisao medica posterior quando disponivel",
+    "window": "integridade imediata e 24 horas; leitura editorial/comercial em 19/09, 26/09 e 12/10; revisao clinica posterior quando disponivel, sem criar automacao nesta tarefa",
     "metrics": [
-      "HTTP, canonical, indexabilidade, sitemap, links internos e busca da biblioteca",
-      "consultas e impressoes organicas por tema como diagnostico intermediario",
-      "cliques contextuais nos CTAs sem perda de tracking",
-      "contatos validos, leads qualificados e consultas originados dos conteudos"
+      "HTTP, canonicals, links internos e layout mobile",
+      "compreensao da inclusao da consulta cardiologica no pacote cirurgico",
+      "duvidas recebidas sobre seguranca, cardiologia e anestesia sem coleta adicional de dados sensiveis",
+      "contatos validos, qualificados e consultas; cliques apenas diagnosticos"
     ],
-    "rollbackRule": "Reverter somente o delta editorial em caso de rota quebrada, perda de tracking, regressao de indexacao ou afirmacao clinica indevida; ajustar a redacao apos revisao humana."
+    "rollbackRule": "Corrigir informacao imprecisa, confusao comercial ou regressao tecnica; reverter somente o trecho afetado, sem alterar campanhas nem atribuir melhora de conversao sem evidencia."
   }
 }

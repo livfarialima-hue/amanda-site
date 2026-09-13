@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — segurança em primeiro lugar e cardiologia integrada
+
+- **Decisão canônica:** seção 29 e posicionamento da seção 3 do Norte Estratégico.
+- **Motivo e evidência:** Daniel pediu dar destaque à prioridade da segurança, à cardiologia na própria LIV com formação na USP e à seleção criteriosa de anestesistas. Confirmou que a consulta cardiológica pré-operatória está incluída no pacote cirúrgico; a apresentação oficial da LIV informa a mesma condição e a formação do Dr. Daniel Added.
+- **Mudança:** revisar seis páginas nos blocos existentes de confiança, equipe e clínica; explicar a inclusão no artigo de segurança; atualizar o guia de linguagem sem veicular anúncios ou alterar atendimento automatizado.
+- **Limites:** não confundir com a primeira consulta com Amanda; não prometer exames incluídos, mesmo dia, gratuidade, risco zero ou liberação automática. USP refere-se à formação do cardiologista, não à clínica ou aos anestesistas. Cardiologia não substitui avaliação anestésica.
+- **Hipótese e métrica:** cuidados concretos podem facilitar confiança e interesse na consulta. Observar dúvidas, contatos válidos, qualificados e consultas, sem atribuir ganho causal ao texto.
+- **Revisão:** integridade imediata/24 h; leitura em 19/09, 26/09 e 12/10; revisão clínica posterior quando disponível.
+- **Manter ou reverter:** manter informação verdadeira e clara; corrigir confusão comercial/clínica imediatamente. Reverter só o delta afetado, preservando terceiros. O recibo de publicação e a atualização do mesmo Plano no Drive são registrados após verificação.
+
 ## 12 de setembro de 2026 — linguagem educativa acolhedora e concisa
 
 - **Decisão canônica:** seção 28 do Norte Estratégico; execução editorial autorizada, publicação condicionada aos testes e à verificação registrada no Plano Executivo.
