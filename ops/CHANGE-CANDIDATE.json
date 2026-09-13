@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "META-CERVICAL-REGIONAL-SEM-ORCAMENTO-2026-09-12",
   "title": "Testar cidades proximas na campanha Meta cervical sem alterar orcamento",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "05c03829dbb6d2ba7a371fadff0644b18c027f24",
   "authorization": {
     "required": true,
@@ -62,7 +62,7 @@
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T21:00:00-03:00",
+    "completedAt": "2026-09-12T21:05:34-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run change:check",
@@ -85,7 +85,8 @@
       "metaDraftReview": "0 de 2 campanhas, 1 de 3 conjuntos e 1 de 4 anuncios; somente conjunto 120251248762180627 e anuncio 120251248762170627 selecionados; sete rascunhos anteriores desmarcados",
       "metaPostflight": "Meta confirmou 1 conjunto de anuncios e 1 anuncio publicados; contador de rascunhos voltou de nove para sete; conjunto e anuncio cervical relidos como Ativo; facial relido como Ativo e inalterado; R$ 900 em cada campanha e nenhum limite adicional",
       "parallelIntegration": "origin/reestruturacao-site 05c03829dbb6d2ba7a371fadff0644b18c027f24 incorporado por merge, preservando o commit autorizado e os recibos paralelos do lote educativo",
-      "integratedChecks": "pendentes ate a conclusao do merge e da projecao do Plano no Drive"
+      "integratedChecks": "sobre o baseline canonico 05c0382 integrado: CHANGE_SAFETY_STATUS=OK com cinco arquivos exatos, JOURNEY_MODULE_BOUNDARIES=OK, 1341/1341 testes aprovados e git diff --check sem erros",
+      "driveProjection": "o mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi substituido em lugar em 12/09/2026 as 21:05:34 BRT; releitura autenticada com 154556 bytes e SHA-256 417305a1d63f62c4f154edd7ac1ff93190beb83e28d7e027c9ea35d8dd217204, identico ao Plano local integrado"
     }
   },
   "release": {
@@ -107,10 +108,10 @@
       }
     ],
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "verifiedAt": null,
-    "activationState": "meta_cervical_regional_live_drive_reconciliation_pending",
-    "notes": "A escrita Meta foi concluida sem alterar orcamento. Netlify 6aa5e68f41e08e0008a76b33 e Apps Script v149 sao recibos atuais herdados do baseline paralelo e nao foram republicados por esta tarefa. A projecao final no mesmo arquivo do Drive ainda esta pendente neste estado intermediario."
+    "drivePlanSha256": "417305a1d63f62c4f154edd7ac1ff93190beb83e28d7e027c9ea35d8dd217204",
+    "verifiedAt": "2026-09-12T21:05:34-03:00",
+    "activationState": "meta_cervical_regional_live_monitoring",
+    "notes": "A escrita Meta foi concluida e relida sem alterar orcamento. Netlify 6aa5e68f41e08e0008a76b33 e Apps Script v149 sao recibos atuais herdados do baseline paralelo e nao foram republicados por esta tarefa. A projecao final foi substituida no mesmo arquivo do Drive e relida com igualdade de tamanho e SHA-256."
   },
   "rollback": {
     "local": "reverter somente os commits Meta cuja arvore parte do commit autorizado 4c1a63306bb26415e6b08e0993c2a648efea5af3, preservando o baseline paralelo 05c03829dbb6d2ba7a371fadff0644b18c027f24",

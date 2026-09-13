@@ -2,13 +2,13 @@
 
 **Status:** fonte canônica executiva para decidir o que fazer, quando executar e quando publicar
 
-**Atualizado em:** 12 de setembro de 2026, segundo lote educativo publicado e verificado, preservando o refinamento paralelo de roteamento
+**Atualizado em:** 12 de setembro de 2026, piloto regional cervical no Meta publicado e verificado sem alterar orçamento, preservando o lote educativo e o refinamento paralelo de roteamento
 
 **Escopo:** auditorias e execuções de Google Ads, funil, páginas, busca/IA, jornada comercial e operação diária de atendimento, incluindo otoplastia adulta/infantil
 
 **Projeção de leitura no Drive:** [00 — PLANO EXECUTIVO — pendências, prazos e publicações.md](https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view)
 
-**Projeção canônica:** este arquivo registra o pós-voo do Apps Script v148, do deploy funcional Netlify `6aa589ce092f3b0008413443`, do fechamento das campanhas no deploy `6aa59666f301b80008ffb340`, da revisão sitewide no deploy `6aa59be5502cb30008e0f6ee`, dos ativos BLEF/CERV, das campanhas secundárias e do Search Console. A mesma projeção do Drive é substituída em lugar a cada fechamento, sem criar cópia concorrente.
+**Projeção canônica:** este arquivo registra o Apps Script v149, a produção Netlify `6aa5e68f41e08e0008a76b33`, os ativos BLEF/CERV, as campanhas secundárias, o Search Console e o piloto regional cervical no Meta. A mesma projeção do Drive é substituída em lugar a cada fechamento, sem criar cópia concorrente.
 
 **Conteúdos educativos — LOTE 1 PUBLICADO E VERIFICADO:** em 12/09 às 20:29, o commit `dd4fe1f3cf5686b1796a8512395abe76e282a16a` entrou no deploy Netlify `6aa5e03e5650c20008bfd3c0`, `production/ready`. A biblioteca passou a 24 leituras e o sitemap a 49 páginas. Pós-voo às 20:31: 49/49 rotas HTTP 200 e conteúdo equivalente ao artefato; 43 idênticas byte a byte e seis apenas com a reescrita conhecida de links `../index.html` para `/` pelo Netlify. Os 187 arquivos registrados pelo provedor coincidem com o pacote, consideradas as diferenças de empacotamento verificadas; 12 funções e cinco programações ficaram iguais. Os três novos artigos não atribuem autoria ou revisão à Dra. Amanda; Daniel autorizou publicar primeiro, e a revisão médica posterior permanece pendente. Nenhuma campanha, mensagem, flag de automação ou versão Apps Script foi alterada nesta tarefa. A projeção anterior do Drive foi preservada integralmente a partir do recibo paralelo `dcadd24`, incluindo o registro v148.
 
