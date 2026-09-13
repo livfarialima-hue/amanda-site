@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-SEO-AI-DISCOVERY-2026-09-12",
   "title": "SEO tecnico, identidade medica e descoberta organica com dados do Search Console",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "a9a7ea6ac0f112c77b819cf88e2260f6647a96d6",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -155,7 +155,9 @@
       "invariants": "53 old pages: WA/media exact,scripts only footer-cache revision",
       "architecture": "OK",
       "live": "191 provider files,expected 56 changed+1 new,12 functions/5 schedules",
-      "pending": "Publication and Drive readback;GSC panel actions/field CWV not verified"
+      "pending": "Somente painel GSC (inspecao/pedido indexacao,controlesIA,CWV) e revisao clinica posterior; publicacao e Drive concluidos.",
+      "publicPostflight": "54/54 rotas equivalentes(48 byte-exact,6 prettyURL);65/65 probes;12funcoes/5schedules iguais;zero drift",
+      "drive": "Plano165211caracteres e relatorio13123caracteres relidos iguais aos arquivos locais commitados; hashes registrados"
     },
     "crossConsumerCases": [
       "Identidade medica e endereco coerentes nas54 paginas; autoria/revisao nao fabricadas.",
@@ -166,14 +168,31 @@
     ]
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
+    "approvedCommit": "56fc749c92c35aa6dbef7a4aa27b7e822a1779b1",
+    "netlifyDeployId": "6aa5ff87bc6cda0008747ef9",
     "appsScriptVersion": 149,
-    "verifiedAt": null,
+    "verifiedAt": "2026-09-13T01:45:57Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "activationState": "local_only",
-    "notes": "Ainda nao publicado. GSC export e diagnostico, nao estado vivo certificado. Apps Script149 somente contexto herdado, sem escrita."
+    "drivePlanSha256": "157c155a552ec5eaefea3558bd96e8ba50a07befe8974109bf8c19691b41217a",
+    "activationState": "public_site_verified_no_operational_activation",
+    "notes": "Site publicado e verificado. 54/54 HTTP200/equivalentes,65/65 sondas,192arquivos do provedor equivalentes,12funcoes/5schedules intactos. Apps Script149 apenas contexto herdado: nenhum executavel, versao ou ativacao alterado. GSC pedidos de indexacao,controlesIA e CWV de campo continuam nao executados/verificados.",
+    "drivePlanReadback": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-13T01:45:17.697Z",
+      "characters": 165211,
+      "sha256": "157c155a552ec5eaefea3558bd96e8ba50a07befe8974109bf8c19691b41217a",
+      "equal": true
+    },
+    "driveAuditReadback": {
+      "id": "1YiaxIZtmyKaOCFYuaUX7Pmelvgg11n5Y",
+      "equal": true,
+      "characters": 13123,
+      "sha256": "0201ef47a14634af4395c2ca10234b749de5a245bb80e5ad58b005c7aaf1dc56"
+    },
+    "documentationCommit": "e5384eb",
+    "baselineDeploy": "6aa5f068ff6f6f00084695c0",
+    "publicPostflightAt": "2026-09-13T01:43:47.922Z",
+    "approvalReference": "Autorizacao textual cumulativa desta tarefa para publicar conteudos e ajustes do site; preflight do commit56fc749 registrado antes do push, sem ampliar para atendimento."
   },
   "rollback": {
     "local": "Reverter apenas delta SEO deste candidato sobre baseline, preservando trabalho paralelo.",
