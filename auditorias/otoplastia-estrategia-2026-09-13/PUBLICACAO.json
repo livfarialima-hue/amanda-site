@@ -1,6 +1,6 @@
 {
   "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
-  "status": "published_pending_drive_reconciliation",
+  "status": "published_verified",
   "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
   "netlify": {
     "verifiedAt": "2026-09-13T14:00:10.497Z",
@@ -471,12 +471,51 @@
     "readOnly": true,
     "notifyOnlyOnCheckpointOrMeaningfulChange": true,
     "stopAfterFinalReview": true,
-    "configurationReadBack": true
+    "configurationReadBack": true,
+    "lastConfigurationVerifiedAt": "2026-09-13T14:12:11.464Z",
+    "firstFullDay": "2026-09-14",
+    "cohorts": {
+      "sevenDays": {
+        "from": "2026-09-14",
+        "to": "2026-09-20",
+        "review": "2026-09-21T09:00:00-03:00"
+      },
+      "fourteenDays": {
+        "from": "2026-09-14",
+        "to": "2026-09-27",
+        "review": "2026-09-28T09:00:00-03:00"
+      }
+    }
   },
   "drive": {
-    "status": "pending",
+    "status": "verified",
     "folderId": "1GP7-vSNqReAyI9nIFFR4oGN-b7kxrKBy",
-    "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    "documentationCommit": "41fcc427c7e1fd87ecee3d13e72cd306fb41b6cd",
+    "verifiedAt": "2026-09-13T14:12:11.464Z",
+    "plan": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view",
+      "modifiedAt": "2026-09-13T14:08:53.622Z",
+      "equal": true,
+      "bytes": 176759,
+      "sha256": "396b4ebea1fab9a785c293892ba55be06dfa9807c5f80484a7d55cb73a090408"
+    },
+    "closedReport": {
+      "id": "1ka0cDOKmgwtf4KASRshn-ZnSgoWdPxhX",
+      "url": "https://drive.google.com/file/d/1ka0cDOKmgwtf4KASRshn-ZnSgoWdPxhX/view",
+      "modifiedAt": "2026-09-13T14:09:00.239Z",
+      "equal": true,
+      "bytes": 18156,
+      "sha256": "6560c106ad235fbbed5c7aa7c5ab39453701c46c285998829ce360ec0311a530"
+    },
+    "closedAdBank": {
+      "id": "1iN0SP2kRvn2tKDdEZHTDYDpjL4jRqpw7",
+      "url": "https://drive.google.com/file/d/1iN0SP2kRvn2tKDdEZHTDYDpjL4jRqpw7/view",
+      "modifiedAt": "2026-09-13T14:09:02.290Z",
+      "equal": true,
+      "bytes": 10304,
+      "sha256": "24f8ce77e75f856699a001587057913ba13bd37ea058dc2b89910b13b4ced87e"
+    }
   },
   "baseline": {
     "canonicalCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
@@ -630,5 +669,5 @@
     "releasePreflightAt": "2026-09-13T13:56:33.6361001Z",
     "preflightResult": "CHANGE_SAFETY_STATUS=OK"
   },
-  "completedAt": "2026-09-13T14:06:55.100Z"
+  "completedAt": "2026-09-13T14:12:11.464Z"
 }

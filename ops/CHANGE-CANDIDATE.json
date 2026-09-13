@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
   "title": "Escolha da cirurgiã e continuidade de otoplastia sem aumento de orçamento",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "dbe738d32d53cc91bf9625ec761e12b7ce18f2d9",
   "authorization": {
     "required": true,
@@ -14,8 +14,8 @@
     "level": "medium",
     "patientEffects": false,
     "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true,
-    "externalWritesScope": "Somente automação de reavaliação já criada; anúncios e site ainda não publicados por este pacote."
+    "defaultOffUntilPublication": false,
+    "externalWritesScope": "Dois RSAs, duas páginas no Netlify, automação de leitura e projeção/evidências no Drive. Zero escrita de CRM, mensagem, consulta ou conversão artificial."
   },
   "scope": {
     "contracts": [
@@ -199,7 +199,8 @@
       },
       "visual": "Adulto/infantil in mobile390x844 and desktop1440x900; no overflow, five CTA tags preserved",
       "operationalConsistency": "SYNC_PENDING expected before publication/Drive reconciliation"
-    }
+    },
+    "closure": "Google Ads fields/pinning/destinations reread;54public pages equivalent;12functions/5schedules unchanged;Drive plan/report/ad bank raw bytes equal;automation active with complete-day cohorts."
   },
   "previousCompletedRelease": {
     "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
@@ -263,5 +264,25 @@
     ],
     "rollbackRule": "Corrigir imediatamente reprovação, promessa indevida, quebra de CTA ou destino. Em D+7, zero contato novo com50cliques ouR$105 exige nova decisão humana; não aumentar verba. Pouca amostra => inconclusivo.",
     "automationId": "reavaliar-estrat-gia-de-otoplastia"
+  },
+  "release": {
+    "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
+    "verifiedAt": "2026-09-13T14:12:11.464Z",
+    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+    "netlifyPublishedAt": "2026-09-13T13:57:01.241Z",
+    "appsScriptVersion": 152,
+    "appsScriptPublishedByThisChange": false,
+    "appsScriptInheritedReceipt": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
+    "drivePlanSha256": "396b4ebea1fab9a785c293892ba55be06dfa9807c5f80484a7d55cb73a090408",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "googleAdsCampaignId": "24029985112",
+    "googleAdsIds": [
+      "816612405034",
+      "816612778213"
+    ],
+    "googleAdsBudgetBRL": 15,
+    "googleAdsReadBack": true,
+    "automationId": "reavaliar-estrat-gia-de-otoplastia",
+    "receiptPath": "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json"
   }
 }
