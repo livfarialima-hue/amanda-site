@@ -43,7 +43,8 @@
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "netlify/functions/lib/bruna-policy/manifest.json"
     ]
   },
   "impact": {
@@ -53,7 +54,8 @@
       "apps-script/clinica-liv-leads/AgendaCuidados.gs",
       "apps-script/clinica-liv-leads/LembretesConsultas.gs",
       "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
-      "apps-script/clinica-liv-leads/Code.gs"
+      "apps-script/clinica-liv-leads/Code.gs",
+      "netlify/functions/lib/bruna-policy/manifest.json"
     ],
     "preservedInvariants": [
       "Abrir o painel e copiar uma mensagem sao operacoes somente leitura; nenhuma decisao vem preselecionada.",
@@ -196,7 +198,7 @@
     "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
     "appsScriptSameDeployment": true,
     "appsScriptPublishedAt": "2026-09-13T13:27:00Z",
-    "verifiedAt": "2026-09-13T13:34:26.528Z",
+    "verifiedAt": "2026-09-13T13:37:10.000Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": "a939905dfd59d65efb678763eec85f97185fe1140154d79379cbdbae8c009f90",
     "drivePlanReadback": {
@@ -205,11 +207,13 @@
       "equal": true
     },
     "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-    "driveManualSha256": "df2301c1a16d21957a1043515268afec747390bcfc98617cff686f5acd44eab0",
+    "driveManualSha256": "6af64e0be2250581019c0a947f01a40553fc91f89856e277e50abae11761edac",
     "driveManualReadback": {
-      "modified": "2026-09-13T13:33:27.015Z",
-      "characters": 159190,
-      "equal": true
+      "localPath": "docs/estrategia-abordagem-bruna.md",
+      "modified": "2026-09-13T13:37:05.064Z",
+      "characters": 102443,
+      "equal": true,
+      "correctionCompletedBeforeClosure": true
     },
     "liveSourceSha256": {
       "PainelDecisoesDiarias.gs": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
