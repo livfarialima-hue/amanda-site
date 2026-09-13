@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "SITE-COMUNICACAO-FACE-2026-09-13",
-  "status": "tested_local",
+  "status": "site_published_verified_drive_pending",
   "baseline": {
     "canonicalCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
     "previousSiteCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
@@ -1075,13 +1075,23 @@
     "source": "Current conversation, Daniel: ok, publique quando for adequado.",
     "scope": "Reviewed editorial revision, preserving the current operational release. Exact validated HEAD bound at release preflight; no additional marketing/clinical/automation effects."
   },
-  "publication": null,
+  "publication": {
+    "approvedCommit": "77433528d0247c46f5482db29932094e0f534783",
+    "netlifySiteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
+    "context": "production",
+    "state": "ready",
+    "publishedAt": "2026-09-13T13:22:23.809Z",
+    "publicUrl": "https://draamandaschroeder.com.br",
+    "preflightAt": "2026-09-13T13:21:44Z",
+    "preflightPassed": true
+  },
   "verification": {
-    "phase": "local",
+    "phase": "production",
     "fullTests": 1468,
     "focusedTests": 47,
     "editorialTests": 8,
-    "scopeFiles": 50,
+    "scopeFiles": 51,
     "artifactFiles": 193,
     "publicPages": 54,
     "architecture": "OK",
@@ -1100,9 +1110,665 @@
       "cookieMeasurementOptedIn": false,
       "priceGuideCta": "present_in_article_not_hero",
       "previewUrl": "http://127.0.0.1:4186/lifting-facial/"
-    }
+    },
+    "checkedAt": "2026-09-13T13:24:39.167Z",
+    "pages": {
+      "checkedAt": "2026-09-13T13:23:26.042Z",
+      "base": "artifact",
+      "origin": "https://draamandaschroeder.com.br",
+      "total": 54,
+      "exact": 48,
+      "http200": 54,
+      "rows": [
+        {
+          "file": "abdominoplastia/index.html",
+          "route": "/abdominoplastia/",
+          "status": 200,
+          "exact": false,
+          "knownRewriteEquivalent": true,
+          "sourceSha256": "dc2ce61d8f8ed1f60df75d9a39051758886639e73b67e40c39ed3a59a2ffb21d",
+          "publicSha256": "590083caffe71bb175160a6a0253adefb77301fbb2127d6ac40b5bafd973614a",
+          "detail": {
+            "pos": 9568,
+            "expected": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label=\"Dra. Amanda Schroeder — página inicial\" class=\"brand\" href=\"../index.html\"><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191",
+            "actual": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label='Dra. Amanda Schroeder — página inicial' class='brand' href='/'><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191605 · RQE 11",
+            "lengthDifference": -12
+          }
+        },
+        {
+          "file": "conteudos/botox-preenchimento-bioestimulador/index.html",
+          "route": "/conteudos/botox-preenchimento-bioestimulador/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "a7ec89e39f3a0a536022bfb7af4156c81ad3d1e9a9c81eb8bccddf9e0afc2f37",
+          "publicSha256": "a7ec89e39f3a0a536022bfb7af4156c81ad3d1e9a9c81eb8bccddf9e0afc2f37"
+        },
+        {
+          "file": "avaliacao-facial/index.html",
+          "route": "/avaliacao-facial/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "4a6821af87c2a63b497abab36cc8af60b7e0430094b979ac6ddb854d97ffb98f",
+          "publicSha256": "4a6821af87c2a63b497abab36cc8af60b7e0430094b979ac6ddb854d97ffb98f"
+        },
+        {
+          "file": "braquioplastia/index.html",
+          "route": "/braquioplastia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "7618ed402de35186724fdfad1a213d6040b78ccec631aeedb67b99addcea64d8",
+          "publicSha256": "7618ed402de35186724fdfad1a213d6040b78ccec631aeedb67b99addcea64d8"
+        },
+        {
+          "file": "blefaroplastia/index.html",
+          "route": "/blefaroplastia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "734a6521e27a5657f9ab14282114fdd009d13c1f72fb102032625d4042b0a660",
+          "publicSha256": "734a6521e27a5657f9ab14282114fdd009d13c1f72fb102032625d4042b0a660"
+        },
+        {
+          "file": "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+          "route": "/conteudos/blefaroplastia-quando-faz-sentido/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "dd476b880788bae9f1c9de284d44d4ea400c701b834124f95bd541d8f07ff2d8",
+          "publicSha256": "dd476b880788bae9f1c9de284d44d4ea400c701b834124f95bd541d8f07ff2d8"
+        },
+        {
+          "file": "conteudos/como-escolher-cirurgiao-plastico/index.html",
+          "route": "/conteudos/como-escolher-cirurgiao-plastico/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "ef4f2608d13ecf6b1b1ddfca51d4788cba7b1bdc362d8ef44d0462254b1a871d",
+          "publicSha256": "ef4f2608d13ecf6b1b1ddfca51d4788cba7b1bdc362d8ef44d0462254b1a871d"
+        },
+        {
+          "file": "conteudos/como-escolher-protese-de-mama/index.html",
+          "route": "/conteudos/como-escolher-protese-de-mama/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "5d3f5f128059ae894c6d12c599bdddcdedd0502326cf473075e367fa65835aa0",
+          "publicSha256": "5d3f5f128059ae894c6d12c599bdddcdedd0502326cf473075e367fa65835aa0"
+        },
+        {
+          "file": "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+          "route": "/conteudos/cicatrizes-cirurgia-de-mama/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "f93a95e8066e5aa7245c55a6e85ea612c41654dc94c3234a6a3d5913b73ab6e8",
+          "publicSha256": "f93a95e8066e5aa7245c55a6e85ea612c41654dc94c3234a6a3d5913b73ab6e8"
+        },
+        {
+          "file": "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+          "route": "/conteudos/cirurgia-plastica-apos-emagrecimento/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "d3ffb060f33f700b4dab71f6c39e95e4579fbfe4121edcd48f0027e9e4caecc6",
+          "publicSha256": "d3ffb060f33f700b4dab71f6c39e95e4579fbfe4121edcd48f0027e9e4caecc6"
+        },
+        {
+          "file": "conteudos/consulta-cirurgia-plastica/index.html",
+          "route": "/conteudos/consulta-cirurgia-plastica/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "ea23204df60ef7482d9e2800c664558eb8cf84d757fe02e88a8cfa0f0cf49f45",
+          "publicSha256": "ea23204df60ef7482d9e2800c664558eb8cf84d757fe02e88a8cfa0f0cf49f45"
+        },
+        {
+          "file": "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+          "route": "/conteudos/como-se-preparar-cirurgia-plastica/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "d09d28305451a31e7c36e3c668d1097cf8a25fc9eefb63d416538eb5794dbfdf",
+          "publicSha256": "d09d28305451a31e7c36e3c668d1097cf8a25fc9eefb63d416538eb5794dbfdf"
+        },
+        {
+          "file": "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+          "route": "/conteudos/lip-lifting-ou-preenchimento-labial/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "7efd5d69208380f035151832726ff33a6958cd5c57cdbbf3bb5e19e9c1dd1ab7",
+          "publicSha256": "7efd5d69208380f035151832726ff33a6958cd5c57cdbbf3bb5e19e9c1dd1ab7"
+        },
+        {
+          "file": "conteudos/index.html",
+          "route": "/conteudos/",
+          "status": 200,
+          "exact": false,
+          "knownRewriteEquivalent": true,
+          "sourceSha256": "18b61c5a55739a5466e0e0322aeefe4ddd08e8fd7279fe1aae1689ea33ec57b4",
+          "publicSha256": "b6418be15aea7e9e4d7def06956e7f56f2e52a7de20bd05201135f2029b3a57b",
+          "detail": {
+            "pos": 5881,
+            "expected": "ader class=\"cl-header\"><div class=\"cl-shell cl-header-inner\"><a class=\"cl-brand\" href=\"../index.html\"><strong>Dra. Amanda Schroeder</strong><span><em>Cirurgia Plástica</em> · CRM-SP 191605 · RQE 110472</span></a><a class",
+            "actual": "ader class=\"cl-header\"><div class=\"cl-shell cl-header-inner\"><a class='cl-brand' href='/'><strong>Dra. Amanda Schroeder</strong><span><em>Cirurgia Plástica</em> · CRM-SP 191605 · RQE 110472</span></a><a class=\"cl-btn\" da",
+            "lengthDifference": -12
+          }
+        },
+        {
+          "file": "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+          "route": "/conteudos/lipoaspiracao-ou-abdominoplastia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "2f7664618216582bfe6d8c9bb3f61f98992b72a5736dff633cfa84b3eacf518e",
+          "publicSha256": "2f7664618216582bfe6d8c9bb3f61f98992b72a5736dff633cfa84b3eacf518e"
+        },
+        {
+          "file": "conteudos/lifting-facial-ou-injetaveis/index.html",
+          "route": "/conteudos/lifting-facial-ou-injetaveis/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "72dab916781f3730367ddfaac6a069ea227b16e2f772de9b207fe7260a299a10",
+          "publicSha256": "72dab916781f3730367ddfaac6a069ea227b16e2f772de9b207fe7260a299a10"
+        },
+        {
+          "file": "conteudos/lipoenxertia-facial/index.html",
+          "route": "/conteudos/lipoenxertia-facial/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "e6f34512d3654ced72cad62662aa65f0836c4ef886e0eaafc2ead9a7cdfac4bf",
+          "publicSha256": "e6f34512d3654ced72cad62662aa65f0836c4ef886e0eaafc2ead9a7cdfac4bf"
+        },
+        {
+          "file": "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+          "route": "/conteudos/cuidados-cicatrizacao-cirurgia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "169d82fd3a6e9df04af1eb5c9d99365e3eaf3e865968dcb1e160850ba880428f",
+          "publicSha256": "169d82fd3a6e9df04af1eb5c9d99365e3eaf3e865968dcb1e160850ba880428f"
+        },
+        {
+          "file": "conteudos/mastopexia-com-ou-sem-protese/index.html",
+          "route": "/conteudos/mastopexia-com-ou-sem-protese/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "72cb3ff13c79032f67aac4a504e71008900256d748ec51326d47b2ddc9a61124",
+          "publicSha256": "72cb3ff13c79032f67aac4a504e71008900256d748ec51326d47b2ddc9a61124"
+        },
+        {
+          "file": "conteudos/naturalidade-envelhecimento/index.html",
+          "route": "/conteudos/naturalidade-envelhecimento/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "9834ad9e295cfab9302de3604dd03f3c5790a7a58d1d365477a65778e97bc73c",
+          "publicSha256": "9834ad9e295cfab9302de3604dd03f3c5790a7a58d1d365477a65778e97bc73c"
+        },
+        {
+          "file": "conteudos/otomodelacao-ou-otoplastia/index.html",
+          "route": "/conteudos/otomodelacao-ou-otoplastia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "a6310288050f15b8c14fc151b36052035813eed319cbeac3e456156324242f02",
+          "publicSha256": "a6310288050f15b8c14fc151b36052035813eed319cbeac3e456156324242f02"
+        },
+        {
+          "file": "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+          "route": "/conteudos/minilifting-lifting-facial-deep-plane/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "4dd6c8bb62b6996afe1c4bc9193ba43124f1c17cdbb893eb990e9e68d582d67e",
+          "publicSha256": "4dd6c8bb62b6996afe1c4bc9193ba43124f1c17cdbb893eb990e9e68d582d67e"
+        },
+        {
+          "file": "conteudos/papada-contorno-cervical/index.html",
+          "route": "/conteudos/papada-contorno-cervical/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "bd1af5420e93ae0067dd40279a9cb0e80b852e869c41dadf00bb2cdcea36e33e",
+          "publicSha256": "bd1af5420e93ae0067dd40279a9cb0e80b852e869c41dadf00bb2cdcea36e33e"
+        },
+        {
+          "file": "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+          "route": "/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "4660806c017b7deed5dd7d4e81c267546fdc5b99efb1e81375db12e7cac5a09b",
+          "publicSha256": "4660806c017b7deed5dd7d4e81c267546fdc5b99efb1e81375db12e7cac5a09b"
+        },
+        {
+          "file": "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+          "route": "/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "d97862050fa5066a0bbdecaf3ca9b37a2c4acfda13486aad959d70fd0bc8bc54",
+          "publicSha256": "d97862050fa5066a0bbdecaf3ca9b37a2c4acfda13486aad959d70fd0bc8bc54"
+        },
+        {
+          "file": "conteudos/recuperacao-blefaroplastia/index.html",
+          "route": "/conteudos/recuperacao-blefaroplastia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "357194a919d32c93480355a8c30df97c360d6b5224a582a4b0d6529136007f84",
+          "publicSha256": "357194a919d32c93480355a8c30df97c360d6b5224a582a4b0d6529136007f84"
+        },
+        {
+          "file": "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+          "route": "/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "016b8af5b9dc7fbf4536c4ff853b2ddfb55287e9b451cced631b6a6784e1243e",
+          "publicSha256": "016b8af5b9dc7fbf4536c4ff853b2ddfb55287e9b451cced631b6a6784e1243e"
+        },
+        {
+          "file": "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+          "route": "/conteudos/quanto-custa-lifting-cervical-sao-paulo/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "6d5ae86ee55f7e5560aa14c83454eece0c1c6956cdf4c752b935ad4edc8174ec",
+          "publicSha256": "6d5ae86ee55f7e5560aa14c83454eece0c1c6956cdf4c752b935ad4edc8174ec"
+        },
+        {
+          "file": "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+          "route": "/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "9273758a49d20882cfc3f28b953c3b5e1c2284af1ffe62d7578aa12a101e7ea4",
+          "publicSha256": "9273758a49d20882cfc3f28b953c3b5e1c2284af1ffe62d7578aa12a101e7ea4"
+        },
+        {
+          "file": "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+          "route": "/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "003ea846db99d15d237792c2f81b1a399d30b720e0a784bd1b05c1cb734b8b19",
+          "publicSha256": "003ea846db99d15d237792c2f81b1a399d30b720e0a784bd1b05c1cb734b8b19"
+        },
+        {
+          "file": "conteudos/recuperacao-lifting-cervical/index.html",
+          "route": "/conteudos/recuperacao-lifting-cervical/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "4ce55e61183fd1e70bef767fd27cdbad4dd91e18aff6f92323245fdbb02280ae",
+          "publicSha256": "4ce55e61183fd1e70bef767fd27cdbad4dd91e18aff6f92323245fdbb02280ae"
+        },
+        {
+          "file": "index.html",
+          "route": "/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "ef7e84b3adda5d3827815965d7136e010a712435af5a471670c5efbbc1cb9d65",
+          "publicSha256": "ef7e84b3adda5d3827815965d7136e010a712435af5a471670c5efbbc1cb9d65"
+        },
+        {
+          "file": "conteudos/seguranca-cirurgia-plastica/index.html",
+          "route": "/conteudos/seguranca-cirurgia-plastica/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "bad65d7bef9a5395d634952d6ba6a04802c1539236ea72384f99fedec5fadb7a",
+          "publicSha256": "bad65d7bef9a5395d634952d6ba6a04802c1539236ea72384f99fedec5fadb7a"
+        },
+        {
+          "file": "dra-amanda-schroeder/index.html",
+          "route": "/dra-amanda-schroeder/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "6713c9189e490f60750b84d6ab7e4b6781c703f96708fd4c6b1a1cc0e59c8e2c",
+          "publicSha256": "6713c9189e490f60750b84d6ab7e4b6781c703f96708fd4c6b1a1cc0e59c8e2c"
+        },
+        {
+          "file": "conteudos/recuperacao-lifting-facial/index.html",
+          "route": "/conteudos/recuperacao-lifting-facial/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "2b139ae5975d1f7c64b47105a9efaad5c2beb290f3c319eb05d7c5b1f1d6fc85",
+          "publicSha256": "2b139ae5975d1f7c64b47105a9efaad5c2beb290f3c319eb05d7c5b1f1d6fc85"
+        },
+        {
+          "file": "contorno-corporal/index.html",
+          "route": "/contorno-corporal/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "ddec1c7b6df6193d9627777ad7a3a21e53eec9041629100e00d646a8fcda299f",
+          "publicSha256": "ddec1c7b6df6193d9627777ad7a3a21e53eec9041629100e00d646a8fcda299f"
+        },
+        {
+          "file": "lifting-facial/index.html",
+          "route": "/lifting-facial/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "3f415cdf50f31834ac99262be6997d7e2fa3946e3beb06df564616463814bf90",
+          "publicSha256": "3f415cdf50f31834ac99262be6997d7e2fa3946e3beb06df564616463814bf90"
+        },
+        {
+          "file": "injetaveis/index.html",
+          "route": "/injetaveis/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "d6a5a66dabccb3cd5c819d64390ba0ac70c627782a82ebada237dd23b4d8cc2e",
+          "publicSha256": "d6a5a66dabccb3cd5c819d64390ba0ac70c627782a82ebada237dd23b4d8cc2e"
+        },
+        {
+          "file": "lifting-cervical/index.html",
+          "route": "/lifting-cervical/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "3eda9418125ac462f287b28d2bb8c105e64d997b626a7e116d1bbfaefdfcd60a",
+          "publicSha256": "3eda9418125ac462f287b28d2bb8c105e64d997b626a7e116d1bbfaefdfcd60a"
+        },
+        {
+          "file": "lipo-de-papada/index.html",
+          "route": "/lipo-de-papada/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "3c6e62f129047cfd2fa6ee8cf3e20ad8ee539430ace4e509041b9df433a3ffa7",
+          "publicSha256": "3c6e62f129047cfd2fa6ee8cf3e20ad8ee539430ace4e509041b9df433a3ffa7"
+        },
+        {
+          "file": "lip-lifting/index.html",
+          "route": "/lip-lifting/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "f8f720a8e42a95fb344651cc62487d30bcb8c00441495cb548f05da39f43d9e4",
+          "publicSha256": "f8f720a8e42a95fb344651cc62487d30bcb8c00441495cb548f05da39f43d9e4"
+        },
+        {
+          "file": "lipoaspiracao/index.html",
+          "route": "/lipoaspiracao/",
+          "status": 200,
+          "exact": false,
+          "knownRewriteEquivalent": true,
+          "sourceSha256": "ca50a18a4d46035b18a9ee482aa7998984db7e5a5cc863fa94cb501ec0f0cd84",
+          "publicSha256": "dfc8ddd66c692dfbdad7496801bcc50fcb7f26959d2da67940b8ab33423c7e13",
+          "detail": {
+            "pos": 9524,
+            "expected": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label=\"Dra. Amanda Schroeder — página inicial\" class=\"brand\" href=\"../index.html\"><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191",
+            "actual": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label='Dra. Amanda Schroeder — página inicial' class='brand' href='/'><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191605 · RQE 11",
+            "lengthDifference": -12
+          }
+        },
+        {
+          "file": "otoplastia-adulto/index.html",
+          "route": "/otoplastia-adulto/",
+          "status": 200,
+          "exact": false,
+          "knownRewriteEquivalent": true,
+          "sourceSha256": "76e60dfc9b6b8189b052fe7d0fb232b572307b5ce19d72e1c739979126da9419",
+          "publicSha256": "6748b88434526f57f337375e50745f497a259b353440d3e3e12869cfa531c2c5",
+          "detail": {
+            "pos": 52604,
+            "expected": "ader\">\n  <div class=\"ota2-shell ota2-header-inner\">\n    <a aria-label=\"Dra. Amanda Schroeder — página inicial\" class=\"ota2-brand\" href=\"../index.html\">\n      <strong>Dra. Amanda Schroeder</strong>\n      <span><span class",
+            "actual": "ader\">\n  <div class=\"ota2-shell ota2-header-inner\">\n    <a aria-label='Dra. Amanda Schroeder — página inicial' class='ota2-brand' href='/'>\n      <strong>Dra. Amanda Schroeder</strong>\n      <span><span class=\"ota2-brand",
+            "lengthDifference": -12
+          }
+        },
+        {
+          "file": "mamoplastia-redutora/index.html",
+          "route": "/mamoplastia-redutora/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "cb83d0fb28f302ec70689fae2019b0c2dbcd9df787301d7dffd80d496671d319",
+          "publicSha256": "cb83d0fb28f302ec70689fae2019b0c2dbcd9df787301d7dffd80d496671d319"
+        },
+        {
+          "file": "mama/index.html",
+          "route": "/mama/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "67f672118af58c705ed4b5df920c9f3dc807995ff84dd857203c424a3ae9cbc9",
+          "publicSha256": "67f672118af58c705ed4b5df920c9f3dc807995ff84dd857203c424a3ae9cbc9"
+        },
+        {
+          "file": "mastopexia-com-protese/index.html",
+          "route": "/mastopexia-com-protese/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "5f543d2e97f4dd3f4ee5dbc0a4f98314a5daaabb3585641b4ea2e03767f195e4",
+          "publicSha256": "5f543d2e97f4dd3f4ee5dbc0a4f98314a5daaabb3585641b4ea2e03767f195e4"
+        },
+        {
+          "file": "mastopexia/index.html",
+          "route": "/mastopexia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "044cffe5b8f8dceeabd9f444dd7d959fb4f0bca22ba4b18fcffc4fac6efed140",
+          "publicSha256": "044cffe5b8f8dceeabd9f444dd7d959fb4f0bca22ba4b18fcffc4fac6efed140"
+        },
+        {
+          "file": "ninfoplastia/index.html",
+          "route": "/ninfoplastia/",
+          "status": 200,
+          "exact": false,
+          "knownRewriteEquivalent": true,
+          "sourceSha256": "a22442f600edc8f22acb47064309a670ea89606651fdf617f394794cf48e362d",
+          "publicSha256": "7ae017a31585db02741da30f200f3d7464d8b761ff7a40bed6a9c802c1d0ded8",
+          "detail": {
+            "pos": 9614,
+            "expected": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label=\"Dra. Amanda Schroeder — página inicial\" class=\"brand\" href=\"../index.html\"><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191",
+            "actual": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label='Dra. Amanda Schroeder — página inicial' class='brand' href='/'><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191605 · RQE 11",
+            "lengthDifference": -12
+          }
+        },
+        {
+          "file": "otoplastia-infantil/index.html",
+          "route": "/otoplastia-infantil/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "a274e59240a4c813d803ae8ca7fef75a67f825e9b69ccd7e6138016015847724",
+          "publicSha256": "a274e59240a4c813d803ae8ca7fef75a67f825e9b69ccd7e6138016015847724"
+        },
+        {
+          "file": "procedimentos/index.html",
+          "route": "/procedimentos/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "45b2e9d60c3dd9d921f85f0e03c97e690e7f6ddc2f03f4d06b9a73d20d4b8746",
+          "publicSha256": "45b2e9d60c3dd9d921f85f0e03c97e690e7f6ddc2f03f4d06b9a73d20d4b8746"
+        },
+        {
+          "file": "pos-bariatrica/index.html",
+          "route": "/pos-bariatrica/",
+          "status": 200,
+          "exact": false,
+          "knownRewriteEquivalent": true,
+          "sourceSha256": "cb081626ab0ce44b1c6a4a153074bf38800aec19cc8f52bd4b91b5e33754c253",
+          "publicSha256": "5c50acabc2651f6964d986c58c4132b160ddae55bce72d6a8fa7632e13c7b1d2",
+          "detail": {
+            "pos": 9543,
+            "expected": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label=\"Dra. Amanda Schroeder — página inicial\" class=\"brand\" href=\"../index.html\"><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191",
+            "actual": "nteúdo principal</a>\n<header><div class=\"container nav\"><a aria-label='Dra. Amanda Schroeder — página inicial' class='brand' href='/'><strong>Dra. Amanda Schroeder</strong><span>Cirurgia Plástica · CRM-SP 191605 · RQE 11",
+            "lengthDifference": -12
+          }
+        },
+        {
+          "file": "otoplastia/index.html",
+          "route": "/otoplastia/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "3ddbcce825752293a35f12bd8997093a2875c529e821dc8c6f12243d7641bab2",
+          "publicSha256": "3ddbcce825752293a35f12bd8997093a2875c529e821dc8c6f12243d7641bab2"
+        },
+        {
+          "file": "privacidade/index.html",
+          "route": "/privacidade/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "be621a2c623b518e8fa864581c7c4abafd73f74d864e5886d3328704c521ba52",
+          "publicSha256": "be621a2c623b518e8fa864581c7c4abafd73f74d864e5886d3328704c521ba52"
+        },
+        {
+          "file": "protese-de-mama/index.html",
+          "route": "/protese-de-mama/",
+          "status": 200,
+          "exact": true,
+          "knownRewriteEquivalent": false,
+          "sourceSha256": "a39301f29b126a9a2c139bf920e3febefea304e708b01186a124100e08b6c77b",
+          "publicSha256": "a39301f29b126a9a2c139bf920e3febefea304e708b01186a124100e08b6c77b"
+        }
+      ]
+    },
+    "providerFilesMatched": 192,
+    "providerFilesCompared": 192,
+    "providerDifferences": [],
+    "functionsEqual": true,
+    "schedulesEqual": true,
+    "functionHashes": [
+      {
+        "n": "appointment-reminder",
+        "d": "446b5f19b2fa7bba64c4e6d9841a43a17bf0ebfda20a3168c132d37af8bcebd5",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "appointment-review",
+        "d": "398980038208e073167b78bcbfad73cd07f3d5944d15976a1888e97484c3ebdf",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "attribution-journey",
+        "d": "0f3642b05a90d8deb8b7ac591e470142e30c87ce48404825416fec5467ab49cd",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "attribution-journey-purge",
+        "d": "7a79dcf841a45b49692501f466417a1edbb6a4ad6650ead99f6e8710f5081de6",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "classify-leads",
+        "d": "056b0a80d62206f318496980d30ffd30d18786e90775977dab13bb6212664b26",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "classify-leads-background",
+        "d": "bb9fa9792e324e922d8ca49299a2833a0e0116a024d0e5da6486e4d713d8d67e",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "human-resume",
+        "d": "91d6ec4ee7005b233ab3bc7fe31c28007f14de8b057fca385f07a98bffe33473",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "post-consult-followup",
+        "d": "4d100333d05e6f0ba835f5af4482aca238907e4da1bda11b6cbd0d46fd3a6044",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "scheduled-followup",
+        "d": "606ee92f2a5a87c879af75cf6c8442d11765fb37ffb718a2a929e0a7d057cf90",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "synthetic-integration-health",
+        "d": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "ycloud-recovery",
+        "d": "5efbd9fc5089728ab2dcc0c1c98711d10b2ab5f0cccbdb4d237493a0749d15a1",
+        "r": "nodejs24.x"
+      },
+      {
+        "n": "ycloud-webhook",
+        "d": "63e07321859610d1154c57af6e2d18c33ccad6eaeb7e68afb6fb12de5e136930",
+        "r": "nodejs24.x"
+      }
+    ],
+    "functionSchedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "smoke": {
+      "tested": 63,
+      "passed": 63,
+      "failed": 0,
+      "redirectQueryPreserved": true,
+      "privatePaths404": true,
+      "unauthenticatedScheduledFollowup": 401,
+      "unauthenticatedWebhook": 401,
+      "videoHead": 200
+    },
+    "publicBrowser": {
+      "pages": [
+        "lifting-facial",
+        "blefaroplastia",
+        "lifting-cervical",
+        "mama",
+        "contorno-corporal"
+      ],
+      "checks": 8,
+      "widths": [
+        390,
+        1440
+      ],
+      "horizontalOverflow": false,
+      "blephRecoveryDisclosureOpen": true,
+      "liftingVideoErrors": 0,
+      "whatsappClicks": 0,
+      "optionalCookiesAccepted": false
+    },
+    "closureMetadataOnly": true
   },
-  "drive": null,
+  "drive": {
+    "status": "pending",
+    "folderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2",
+    "planId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+  },
   "rollback": {
     "netlifyDeployId": "6aa6998a46297000089e1e5d",
     "appsScriptMustRemain": 151

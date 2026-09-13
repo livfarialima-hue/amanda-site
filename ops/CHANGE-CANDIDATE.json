@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": true
   },
   "scope": {
@@ -63,6 +63,7 @@
       "mamoplastia-redutora/index.html",
       "mastopexia-com-protese/index.html",
       "mastopexia/index.html",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "ninfoplastia/index.html",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
@@ -140,7 +141,7 @@
         "passed": 1468,
         "failed": 0
       },
-      "changeCheck": "OK: 50 arquivos",
+      "changeCheck": "OK: 51 arquivos incluindo recibo observacional de producao no manifesto",
       "architectureCheck": "OK",
       "siteBuild": {
         "files": 193,
@@ -163,8 +164,21 @@
         "priceGuideCta": "present_in_article_not_hero",
         "previewUrl": "http://127.0.0.1:4186/lifting-facial/"
       },
-      "opsCheck": "SYNC_PENDING: candidato local, branch isolada e publicacao pendente",
-      "reconciliation": "Delta exclusivo de comunicacao; nenhum arquivo em apps-script ou netlify difere do baseline fcae9e42"
+      "opsCheck": "SYNC_PENDING ate releitura do Plano no Drive e recibo final",
+      "reconciliation": "Delta exclusivo de comunicacao; nenhum arquivo em apps-script ou netlify difere do baseline fcae9e42",
+      "public": {
+        "pages": 54,
+        "exact": 48,
+        "knownHomeLinkRewrite": 6,
+        "providerFiles": 192,
+        "providerFilesEqual": 192,
+        "functionsEqual": 12,
+        "schedulesEqual": 5,
+        "smokeChecks": 63,
+        "smokePassed": 63,
+        "patientTestMessages": 0,
+        "syntheticConversions": 0
+      }
     }
   },
   "previousCompletedRelease": {
@@ -192,14 +206,21 @@
     }
   },
   "release": {
-    "approvedCommit": null,
-    "netlifyDeployId": null,
-    "verifiedAt": null,
+    "approvedCommit": "77433528d0247c46f5482db29932094e0f534783",
+    "netlifyDeployId": "6aa6a37365ed3d0008e3d1cc",
+    "verifiedAt": "2026-09-13T13:24:39.167Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanProjectionStatus": "pending_authorized_release",
-    "notes": "Reconciliacao com fcae9e42 incorporada; publicar somente depois dos gates finais e preflight do HEAD. Pacote de atribuicao0ff0dd2 permanece separado.",
+    "drivePlanProjectionStatus": "pending_readback",
+    "notes": "Site publicado e verificado; Plano e copia fechada da auditoria em sincronizacao. Bruna: hashes das12funcoes e5programacoes identicos. Apps Script151 herdado, nao republicado. Candidato de atribuicao0ff0dd2 intocado. Metadados de observacao no manifesto sao recibo apenas; commit funcional da Bruna permanece30c44f03.",
     "integrationRequiredBeforePublication": false,
-    "observedParallelCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117"
+    "observedParallelCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+    "appsScriptVersion": 151,
+    "publishedAt": "2026-09-13T13:22:23.809Z",
+    "inheritedPlatformState": {
+      "appsScriptPublishedByThisTask": false,
+      "sourceCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117"
+    },
+    "driveAuditFolderId": "1HKvmMDorChglKmAP7W91S4jlwW7PxBg2"
   },
   "rollback": {
     "local": "Reverter somente o delta editorial, sem tocar em midias compartilhadas ou trabalho paralelo.",
