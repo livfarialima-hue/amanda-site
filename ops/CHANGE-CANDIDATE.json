@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-IMMEDIATE-SETTINGS-2026-09-12",
   "title": "Correcoes de origem e teste de presenca sem aumento de orcamento",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
   "authorization": {
     "required": true,
@@ -16,7 +16,7 @@
     "externalWritesPerformed": true,
     "defaultOffUntilPublication": true,
     "externalOperationalWritesPerformed": true,
-    "externalDocumentationWritesPerformed": false
+    "externalDocumentationWritesPerformed": true
   },
   "scope": {
     "contracts": [
@@ -67,7 +67,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_live",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -96,23 +96,37 @@
         "routes": 54
       },
       "siteCheck": "OK",
-      "opsCheck": "SYNC_PENDING esperado antes da aplicacao, branch isolada e worktree em preparacao",
+      "opsCheck": "Fechamento em branch canonica/worktree limpo a executar apos este recibo.",
       "environment": "npm ci recompôs dependencias ausentes; lockfile inalterado. Nao executar npm audit fix neste pacote.",
-      "reconciliation": "Main avancou para1e638ef durante a tarefa; merge preserva todos os arquivos publicados, novo teste integral pendente."
+      "reconciliation": "Merge19d3dce preserva 1e638ef e todos os arquivos de preco; contrato nove arquivos, arquitetura e build/check novamente OK.",
+      "finalReconciledSuite": {
+        "passed": 1456,
+        "failed": 0,
+        "note": "Suites integrais do runner; teste dedicado de settings tambem executado separadamente (4/4)."
+      },
+      "live": "Seis parametros relidos,17anuncios ativos Qualificada,7mapas LEADS,2Presenca confirmadas,8orcamentos somam103BRL; sem deploy/mensagem/uploadmanual."
     }
   },
   "release": {
     "approvedCommit": "da367845af5de8b76b93b4c58c9c9aea4c200cfe",
-    "verifiedAt": "2026-09-13T03:00:05Z",
+    "verifiedAt": "2026-09-13T03:04:17Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "activationState": "ads_applied_drive_pending",
-    "notes": "Configuracoes Google Ads aplicadas e relidas; Drive ainda pendente. Netlify/Apps Script sao recibos HERDADOS da publicacao paralela, preservados sem edicao/deploy nesta tarefa. Commit da367845 define exatamente o plano aplicado; merge documental posterior preserva preco24a6f19/1e638ef.",
+    "drivePlanSha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
+    "activationState": "ads_settings_active_measurement_outcome_pending",
+    "notes": "Seis anuncios, sete mapas e duas opcoes geograficas salvos e relidos. Plano no mesmo ID Drive equivalente. Netlify/Apps Script sao recibos HERDADOS da publicacao paralela, sem edicao/deploy nesta tarefa. da367845 define exatamente o plano aplicado; merge posterior preserva preco24a6f19/1e638ef. Aceitacao real de nova conversao e candidato tecnico0ff0dd2 continuam pendentes.",
     "netlifyDeployId": "6aa60d89d5920c0008dc059e",
     "appsScriptVersion": 150,
     "inheritedPlatformState": {
       "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
       "netlifyAndAppsScriptPublishedByThisTask": false
+    },
+    "drivePlanProjectionStatus": "verified",
+    "drivePlanReadback": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-13T03:03:53.303Z",
+      "characters": 165776,
+      "sha256": "6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4",
+      "equal": true
     }
   },
   "previousCompletedRelease": {

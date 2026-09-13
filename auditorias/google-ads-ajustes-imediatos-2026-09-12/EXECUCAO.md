@@ -1,6 +1,6 @@
 # Ajustes imediatos Google Ads — 12/09/2026
 
-Status: configurações Google Ads aplicadas e relidas; encerramento documental em andamento. Janela de aplicação: 12/09/2026 à noite até 13/09/2026 00h00 BRT (03h00 UTC).
+Status: configurações Google Ads e mesma projeção Drive aplicadas e verificadas. Janela de aplicação: 12/09/2026 à noite até 13/09/2026 00h00 BRT (03h00 UTC); readback documental concluído às 00h04 BRT.
 
 ## Escopo e autorização
 
@@ -41,7 +41,11 @@ Geografia: IDs 24028216444 (LIFT, R$24) e 24023843174 (CERV, R$12) revalidados a
 
 Durante a tarefa a branch canônica avançou de `73d6877` para `1e638ef` com a política de preços publicada por outra tarefa (código `24a6f19`, Netlify `6aa60d89d5920c0008dc059e`, Apps Script150 herdado). A projeção Drive mudou às 02:45:07.695Z e foi relida equivalente ao novo Plano local; a cópia antiga NÃO foi sobrescrita. Merge mantém todos os arquivos dessa publicação; a decisão de preço permanece seção31 do Norte e os ajustes Google passam à seção32. Os IDs de Netlify/Apps Script no recibo são estado herdado, não publicação deste pacote. A versão técnica de atribuição `0ff0dd2` continua fora do merge.
 
-Pendente neste ponto: regressão da reconciliação e substituição/verificação da mesma projeção Drive. Fechamento só será registrado após essas confirmações.
+Reconciliação concluída no merge `19d3dce`: 1456/1456 testes integrais, arquitetura e escopo exato de nove arquivos aprovados; build/check novamente com 193 arquivos/54 rotas, zero erro e zero arquivo operacional público. O teste dedicado deste pacote passou 4/4 na seleção de 153 testes pré-aplicação. Nenhum arquivo funcional difere da base paralela `1e638ef`.
+
+Drive: mesmo ID `18iUqY6HttJwPusSAA1VGmrMqqRluyjTO`, mesma pasta e permissões. Atualização 2026-09-13T03:03:53.303Z, 165776 caracteres relidos iguais ao Plano local; SHA256 `6cc4ab2917848b06e89f73b96b3857bd55d062dd1ec6db3a128f21691c4a76e4`. A releitura imediatamente anterior ainda coincidia com `1e638ef`; nenhuma edição concorrente foi perdida. Fechamento operacional deve ser executado na branch canônica após integração, com worktree limpo. Sem push/deploy do site nesta tarefa.
+
+Pendências de resultado, não de aplicação: primeiro ciclo programado/aceitação real de conversão, reparo técnico de atribuição `0ff0dd2` fora do escopo, e avaliação do teste geográfico com consultas maturadas. Não foi prometido aumento de conversões ou redução de custo.
 
 ## Monitoramento e rollback
 
