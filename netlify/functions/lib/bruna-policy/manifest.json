@@ -17,16 +17,16 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
-    "lastObservedProductionCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
-    "functionalDeployId": "6aa6038eb31161000809495b",
-    "lastObservedProductionDeployId": "6aa6038eb31161000809495b",
-    "rollbackCommit": "f63d2fd7738df64d8916256a78ef7f72cf6c4300",
-    "rollbackDeployId": "6aa60074bdfc8c0008aab53c",
-    "publishedAt": "2026-09-13T02:00:18.021Z",
-    "lastVerifiedAt": "2026-09-13T02:10:21.890Z",
+    "functionalCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+    "lastObservedProductionCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+    "functionalDeployId": "6aa60d89d5920c0008dc059e",
+    "lastObservedProductionDeployId": "6aa60d89d5920c0008dc059e",
+    "rollbackCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
+    "rollbackDeployId": "6aa6038eb31161000809495b",
+    "publishedAt": "2026-09-13T02:42:52.628Z",
+    "lastVerifiedAt": "2026-09-13T02:43:53.5222839Z",
     "candidateChangeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
-    "candidateStatus": "tested_local_pending"
+    "candidateStatus": "published_verified"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -37,6 +37,6 @@
     "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "de9031502e5216cb3bcfc2b087f36c7985db1e774e884fff97d8030e6887a589"
+    "driveProjectionSha256": "a9fd063a9d5445d0a15a102d45d4c9f28d56d4d3e6f4293d955f0309ab195f17"
   }
 }

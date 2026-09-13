@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
   "title": "Preço como planejamento: faixa autorizada, contexto preciso e revisão humana com fonte",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
   "authorization": {
     "required": true,
@@ -13,7 +13,9 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true,
+    "externalDocumentationWritesPerformed": true,
+    "externalOperationalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -123,7 +125,7 @@
     "previousReceipt": "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json"
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_live",
     "commands": [
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
@@ -150,7 +152,9 @@
       "diff": "git diff --check sem erro",
       "live": "Netlify autenticado em 2026-09-13T02:39:51Z mantém 6c38ca5 / 6aa6038eb31161000809495b ready,12 funções e cinco programações. Drive Plano e manual coincidem por SHA256 com o baseline local.",
       "model": "Não houve avaliação adicional do modelo vivo; respostas de modelo simuladas nos testes.",
-      "scope": "25 arquivos; Apps Script, LEADS e Calendar sem alteração."
+      "scope": "25 arquivos; Apps Script, LEADS e Calendar sem alteração.",
+      "finalCross": "74/74",
+      "documentation": "Mesmo Plano e manual no Drive substituídos e relidos iguais por SHA256."
     }
   },
   "rollback": {
@@ -168,5 +172,29 @@
     ],
     "rollbackRule": "Conter se preço não autorizado chegar ao paciente, fonte ambígua parecer orçamento confirmado ou regra de cooperação humana regredir."
   },
-  "release": {}
+  "release": {
+    "approvedCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+    "netlifyDeployId": "6aa60d89d5920c0008dc059e",
+    "appsScriptVersion": 150,
+    "verifiedAt": "2026-09-13T02:43:53.5222839Z",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
+    "drivePlanReadback": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-13T02:45:07.695Z",
+      "characters": 164657,
+      "sha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
+      "equal": true
+    },
+    "driveManualReadback": {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "modified": "2026-09-13T02:45:10.252Z",
+      "characters": 101054,
+      "sha256": "a9fd063a9d5445d0a15a102d45d4c9f28d56d4d3e6f4293d955f0309ab195f17",
+      "equal": true
+    },
+    "activationState": "price_policy_active_manual_review_preserved",
+    "receiptPath": "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json",
+    "notes": "Publicação Netlify autorizada pela instrução cumulativa da conversa; Apps Script150 é estado herdado, sem edição/publicação/ativação nesta etapa. Nenhuma mensagem ou e-mail real de teste. Nenhuma faixa individual adicional foi autorizada."
+  }
 }

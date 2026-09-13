@@ -1,10 +1,79 @@
 {
   "changeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
-  "status": "tested_local",
+  "status": "published_verified",
   "baselineCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
+  "baselineProductionCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
   "baselineDeploy": "6aa6038eb31161000809495b",
+  "approvedCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+  "netlifyDeployId": "6aa60d89d5920c0008dc059e",
   "appsScriptVersion": 150,
-  "patientTestMessages": 0,
+  "verifiedAt": "2026-09-13T02:43:53.5222839Z",
+  "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+  "drivePlanSha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
+  "drivePlanReadback": {
+    "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "modified": "2026-09-13T02:45:07.695Z",
+    "characters": 164657,
+    "sha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
+    "equal": true
+  },
+  "driveManualReadback": {
+    "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "modified": "2026-09-13T02:45:10.252Z",
+    "characters": 101054,
+    "sha256": "a9fd063a9d5445d0a15a102d45d4c9f28d56d4d3e6f4293d955f0309ab195f17",
+    "equal": true
+  },
+  "activationState": "price_policy_active_manual_review_preserved",
+  "receiptPath": "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json",
+  "notes": "Publicação Netlify autorizada pela instrução cumulativa da conversa; Apps Script150 é estado herdado, sem edição/publicação/ativação nesta etapa. Nenhuma mensagem ou e-mail real de teste. Nenhuma faixa individual adicional foi autorizada.",
+  "publishedAt": "2026-09-13T02:42:52.628Z",
+  "postflight": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "state": "ready",
+    "context": "production",
+    "domainHealth": 200,
+    "immutableHealth": 200,
+    "automationMode": "active",
+    "unsignedWebhook": 401,
+    "functions": 12,
+    "schedules": [
+      {
+        "n": "attribution-journey-purge",
+        "schedule": "17 6 * * *"
+      },
+      {
+        "n": "classify-leads",
+        "schedule": "*/5 * * * *"
+      },
+      {
+        "n": "human-resume",
+        "schedule": "*/5 * * * *"
+      },
+      {
+        "n": "synthetic-integration-health",
+        "schedule": "17 12 * * *"
+      },
+      {
+        "n": "ycloud-recovery",
+        "schedule": "*/5 * * * *"
+      }
+    ],
+    "functionNames": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "human-resume",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-webhook"
+    ]
+  },
   "tests": {
     "baseline": "8/8 novos cenários reproduziram falhas antes das correções.",
     "fullSuite": "1456/1456 aprovados",
@@ -14,6 +83,16 @@
     "diff": "git diff --check sem erro",
     "live": "Netlify autenticado em 2026-09-13T02:39:51Z mantém 6c38ca5 / 6aa6038eb31161000809495b ready,12 funções e cinco programações. Drive Plano e manual coincidem por SHA256 com o baseline local.",
     "model": "Não houve avaliação adicional do modelo vivo; respostas de modelo simuladas nos testes.",
-    "scope": "25 arquivos; Apps Script, LEADS e Calendar sem alteração."
-  }
+    "scope": "25 arquivos; Apps Script, LEADS e Calendar sem alteração.",
+    "finalCross": "74/74",
+    "documentation": "Mesmo Plano e manual no Drive substituídos e relidos iguais por SHA256."
+  },
+  "patientTestMessages": 0,
+  "realTestEmails": 0,
+  "rollback": {
+    "local": "Reverter somente este candidato, preservando o baseline 73d6877 e trabalho paralelo.",
+    "production": "Restaurar Netlify deploy 6aa6038eb31161000809495b, commit funcional 6c38ca5859f86c2224646f88607f554f8dd4fbe4. Apps Script150 e dados permanecem equivalentes."
+  },
+  "previousReleaseReceipt": "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
+  "approvalReference": "Solicitação atual de ajustar abordagem de preço; autorização cumulativa anterior para publicar os ajustes desta conversa. Nenhuma autorização de faixa individual é inferida da publicação."
 }

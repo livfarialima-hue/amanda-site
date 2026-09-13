@@ -13,7 +13,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 - **Mudança:** oferta mais breve, pagamento somente quando perguntado, faixa facial pertinente, bloqueio de valores extras, rascunho interno com ressalva e fonte; variação superior/completa distinguida. Casos sem fonte não recebem número inventado.
 - **Hipótese/métrica:** melhorar clareza e passagem de contato qualificado a consulta, sem pressão. A teoria consultiva é adaptação, não comprovação de ganho clínico/comercial.
 - **Revisão:** integridade imediata/24h, D+7 em 19/09; manter/corrigir segundo as regras do Norte. Não houve mensagem real de teste nem modificação da LEADS, Calendar ou Apps Script.
-- **Estado:** candidato em validação; publicação, commit e verificação constarão de auditorias/bruna-preco-2026-09-12/PUBLICACAO.json.
+- **Estado:** publicado e verificado: commit24a6f19, Netlify6aa60d89d5920c0008dc059e, 12/09 às23h42; 1456 testes e serviços ativos. Recibo em auditorias/bruna-preco-2026-09-12/PUBLICACAO.json.
 
 ## 12 de setembro de 2026 — SEO e descoberta por IA com evidência do Search Console
 
