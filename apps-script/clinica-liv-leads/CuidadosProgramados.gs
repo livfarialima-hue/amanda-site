@@ -165,6 +165,10 @@ function enriquecerMarcoCuidado_(item, row, columns) {
 function adicionarMarcosCirurgiaOrcamento_(entrada) {
   if (entrada.retomadaEncerrada) return;
   const val = function (name) { return valorAgendaCuidados_(entrada.linha, entrada.colunas, [name]); };
+  const primeiroNome = typeof primeiroNomeSeguroRetomada_ === "function"
+    ? primeiroNomeSeguroRetomada_(entrada.nome)
+    : "";
+  const saudacao = primeiroNome ? "Oi, " + primeiroNome + "!" : "Olá!";
   const outcome = normalizarTextoRetomadas_(resultadoComercialAgendaCuidados_(val("resultado comercial")));
   const surgery = dataAgendaCuidados_(val("data da cirurgia realizada"));
   const quote = dataAgendaCuidados_(val("data do orcamento enviado"));
@@ -184,16 +188,16 @@ function adicionarMarcosCirurgiaOrcamento_(entrada) {
     });
   }
   if (surgery) {
-    if (explicitCheck) add("post_surgery", explicitCheck, 0, "Checagem pós-cirúrgica combinada", "Olá! A equipe da Clínica LIV está à disposição para ajudar com a organização do seu acompanhamento. Há algo que você gostaria de encaminhar ao profissional?", 3);
+    if (explicitCheck) add("post_surgery", explicitCheck, 0, "Checagem pós-cirúrgica combinada", saudacao + " A equipe da Clínica LIV está à disposição para ajudar com a organização do seu acompanhamento. Há algo que você gostaria de encaminhar ao profissional?", 3);
     else {
-      add("post_surgery", surgery, 2, "Checagem pós-cirúrgica — D+2", "Olá! Passando para saber se há alguma dúvida que você gostaria de encaminhar à equipe responsável pelo seu acompanhamento. Estamos à disposição por aqui.", 2);
-      add("post_surgery", surgery, 14, "Checagem pós-cirúrgica — D+14", "Olá! A equipe da Clínica LIV está à disposição para ajudar com a organização do seu acompanhamento. Há algo que você gostaria de encaminhar ao profissional?", 3);
+      add("post_surgery", surgery, 2, "Checagem pós-cirúrgica — D+2", saudacao + " Passando para saber se há alguma dúvida que você gostaria de encaminhar à equipe responsável pelo seu acompanhamento. Estamos à disposição por aqui.", 2);
+      add("post_surgery", surgery, 14, "Checagem pós-cirúrgica — D+14", saudacao + " A equipe da Clínica LIV está à disposição para ajudar com a organização do seu acompanhamento. Há algo que você gostaria de encaminhar ao profissional?", 3);
     }
   }
   if (quote && !surgery && !/fechado|nao fechou|encerrado|desist/.test(outcome)) {
-    add("quote", quote, 3, "Retomada do orçamento — D+3", "Olá! Ficou alguma dúvida sobre o orçamento que a equipe enviou? Se algum ponto precisar de esclarecimento, podemos ajudar com calma.", 2);
+    add("quote", quote, 3, "Retomada do orçamento — D+3", saudacao + " Ficou alguma dúvida sobre o orçamento que a equipe enviou? Se algum ponto precisar de esclarecimento, podemos ajudar com calma.", 2);
     if (/avali|pens|decid|orcament/.test(normalizarTextoRetomadas_(entrada.proximaAcao))) {
-      add("quote", quote, 10, "Retomada do orçamento — D+10", "Olá! Se ainda fizer sentido conversar sobre o planejamento, a equipe está à disposição para esclarecer dúvidas. Fique à vontade para retomar quando for um bom momento para você.", 3);
+      add("quote", quote, 10, "Retomada do orçamento — D+10", saudacao + " Se ainda fizer sentido conversar sobre o planejamento, a equipe está à disposição para esclarecer dúvidas. Fique à vontade para retomar quando for um bom momento para você.", 3);
     }
   }
 }

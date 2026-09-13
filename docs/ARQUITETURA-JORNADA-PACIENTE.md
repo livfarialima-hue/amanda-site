@@ -107,8 +107,8 @@ O gate `npm run architecture:check` bloqueia regressões dessas fronteiras. Ele 
 - o planejamento e o envio são etapas distintas.
 - abrir o e-mail diário, a Central ou o painel móvel é somente leitura e não equivale a aprovar, cancelar, adiar ou enviar.
 - nenhuma decisão do painel móvel pode vir preselecionada; uma confirmação em lote só alcança os itens escolhidos e cada item deve ser relido pelo `sourceKey` opaco imediatamente antes do efeito.
-- o painel móvel não possui regras concorrentes: aprovação e cancelamento reutilizam as funções proprietárias de `Retomadas.gs`/`CentralAtendimento.gs`; adiamento altera apenas os controles humanos persistentes da Central e nunca envia mensagem.
-- `Nunca retomar` e `Nunca responder com robô` permanecem decisões permanentes separadas e não aparecem entre as escolhas rápidas do painel.
+- o painel móvel não possui regras concorrentes: aprovação e cancelamento pontual reutilizam as funções proprietárias de `Retomadas.gs`/`CentralAtendimento.gs`; copiar lê exatamente o texto renderizado; adiamento altera apenas os controles humanos persistentes da Central e nunca envia mensagem.
+- `Nunca retomar` aparece somente em cartões de contato proativo com telefone válido, nunca em lembrete de consulta. A ação exige seleção e confirmação explícitas, relê o item, grava a preferência canônica pelo telefone e só então cancela os planos pendentes daquele contato. `Nunca responder com robô` permanece fora do painel e separado.
 - o e-mail deve declarar itens encontrados, representados e omitidos. Não pode limitar silenciosamente a lista; falha de projeção deve aparecer como `ATENÇÃO` e manter acesso à Central completa.
 - cada envio revalida opt-out, takeover, janela, atividade mais recente, identidade do plano, número máximo de tentativas e contrato semântico.
 - uma nova fala da paciente ou da equipe invalida qualquer decisão reaproveitada que não continue comprovadamente atual.

@@ -1795,14 +1795,23 @@ test("cancel action stops only pending plans for the selected phone", () => {
     Array(15).fill(""),
     Array(15).fill(""),
     Array(15).fill(""),
+    Array(15).fill(""),
+    Array(15).fill(""),
+    Array(15).fill(""),
   ];
   rows[0][2] = "+5511999990000";
   rows[0][10] = "Programada";
   rows[0][11] = new Date("2026-08-09T13:30:00-03:00");
-  rows[1][2] = "+5511888880000";
-  rows[1][10] = "Programada";
+  rows[1][2] = "+5511999990000";
+  rows[1][10] = "Ação manual";
   rows[2][2] = "+5511999990000";
-  rows[2][10] = "Enviada";
+  rows[2][10] = "Suspensa na planilha";
+  rows[3][2] = "+5511999990000";
+  rows[3][10] = "Falha — revisar";
+  rows[4][2] = "+5511888880000";
+  rows[4][10] = "Programada";
+  rows[5][2] = "+5511999990000";
+  rows[5][10] = "Enviada";
   const writes = [];
   const sheet = {
     getLastRow: () => rows.length + 1,
@@ -1824,11 +1833,12 @@ test("cancel action stops only pending plans for the selected phone", () => {
     now,
   );
 
-  assert.equal(cancelled, 1);
-  assert.equal(writes.length, 1);
-  assert.equal(writes[0].row, 2);
-  assert.equal(writes[0].values[0][0], "Cancelada — nunca retomar");
-  assert.equal(writes[0].values[0][4], "never_follow_up");
+  assert.equal(cancelled, 4);
+  assert.deepEqual(writes.map((write) => write.row), [2, 3, 4, 5]);
+  for (const write of writes) {
+    assert.equal(write.values[0][0], "Cancelada — nunca retomar");
+    assert.equal(write.values[0][4], "never_follow_up");
+  }
 });
 
 function lead(overrides = {}) {
@@ -2690,6 +2700,111 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
     second,
     /encerrar minhas retomadas|última retomada|inconveniente/,
   );
+});
+
+test("every contextual follow-up uses a safe first name and the known conversation point", () => {
+  const shared = ["lifting facial", "Marina Souza"];
+  const consultationPrice = context.sugerirMensagemRetomada_(
+    1,
+    false,
+    null,
+    false,
+    true,
+    "",
+    false,
+    ...shared,
+    true,
+    true,
+  );
+  const surgicalPrice = context.sugerirMensagemRetomada_(
+    1,
+    true,
+    null,
+    false,
+    true,
+    "",
+    false,
+    ...shared,
+  );
+  const schedule = context.sugerirMensagemRetomada_(
+    1,
+    true,
+    null,
+    true,
+    false,
+    "",
+    false,
+    ...shared,
+  );
+  const objection = context.sugerirMensagemRetomada_(
+    1,
+    false,
+    null,
+    false,
+    false,
+    "manter naturalidade, expressão e identidade",
+    true,
+    ...shared,
+  );
+  const material = context.sugerirMensagemRetomada_(
+    2,
+    false,
+    {
+      sobre: "naturalidade no lifting facial",
+      descricao: "Ele explica como o planejamento preserva a expressão",
+      url: "https://draamandaschroeder.com.br/conteudos/naturalidade-envelhecimento/",
+    },
+    false,
+    false,
+    "",
+    true,
+    ...shared,
+  );
+  const finalPrice = context.sugerirMensagemRetomada_(
+    2,
+    true,
+    null,
+    false,
+    true,
+    "",
+    false,
+    ...shared,
+  );
+
+  for (const message of [
+    consultationPrice,
+    surgicalPrice,
+    schedule,
+    objection,
+    material,
+    finalPrice,
+  ]) {
+    assert.match(message, /^Oi, Marina!/);
+  }
+  assert.match(consultationPrice, /valor da consulta/);
+  assert.match(consultationPrice, /endereço da Clínica LIV/);
+  assert.doesNotMatch(consultationPrice, /lifting|orçamento cirúrgico/i);
+  assert.match(surgicalPrice, /orçamento de lifting facial/);
+  assert.match(schedule, /avaliação de lifting facial/);
+  assert.match(objection, /naturalidade, expressão e identidade/);
+  assert.match(material, /naturalidade no lifting facial/);
+  assert.match(finalPrice, /valores sobre lifting facial/);
+});
+
+test("all contextual branches keep a neutral greeting when the name is unsafe", () => {
+  const messages = [
+    context.sugerirMensagemRetomada_(1, false, null, false, true, "", false, "lifting facial", "Clínica Exemplo", true, false),
+    context.sugerirMensagemRetomada_(1, false, null, true, false, "", false, "lifting facial", "+55 11 99999-9999"),
+    context.sugerirMensagemRetomada_(1, false, null, false, false, "manter naturalidade", true, "lifting facial", "Paciente"),
+    context.sugerirMensagemRetomada_(2, false, { sobre: "naturalidade", descricao: "Conteúdo seguro", url: "https://example.test" }, false, false, "", false, "lifting facial", "Não informado"),
+    context.sugerirMensagemRetomada_(2, false, null, false, true, "", false, "lifting facial", "Marketing"),
+    context.sugerirMensagemRetomada_(2, false, null, true, false, "", false, "lifting facial", "Sem nome"),
+  ];
+
+  for (const message of messages) {
+    assert.match(message, /^Olá!/);
+    assert.doesNotMatch(message, /^Oi,/);
+  }
 });
 
 test("last follow-up uses a neutral greeting when the LEADS name is unsafe", () => {

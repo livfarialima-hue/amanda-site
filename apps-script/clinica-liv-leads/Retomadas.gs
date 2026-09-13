@@ -683,7 +683,12 @@ function cancelarPlanosPendentesRetomadas_(arquivo, telefone, agora) {
   linhas.forEach(function (linha, indice) {
     if (
       normalizarTelefoneRetomadas_(linha[2]) !== normalizado ||
-      String(linha[10] || "").trim() !== "Programada"
+      ![
+        "Programada",
+        "Ação manual",
+        "Suspensa na planilha",
+        "Falha — revisar",
+      ].includes(String(linha[10] || "").trim())
     ) {
       return;
     }
@@ -2937,6 +2942,10 @@ function sugerirMensagemRetomada_(
   contextoLocalAtendimento,
 ) {
   const assunto = String(assuntoRetomada || "").trim();
+  const primeiroNome = primeiroNomeSeguroRetomada_(nomePaciente);
+  const saudacao = primeiroNome
+    ? "Oi, " + primeiroNome + "!"
+    : "Olá!";
   const complementoAssunto = assunto ? " sobre " + assunto : "";
   const complementoAvaliacao = assunto ? " de " + assunto : "";
   const complementoOrcamento = assunto
@@ -2945,17 +2954,19 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 1 && contextoPreco && contextoValorConsulta) {
     return (
-      "Olá! Queria saber se ficou alguma dúvida sobre o valor da consulta" +
+      saudacao +
+      " Você tinha perguntado sobre o valor da consulta" +
       (contextoLocalAtendimento
-        ? " ou o endereço da Clínica LIV"
+        ? " e o endereço da Clínica LIV"
         : "") +
-      ". Se quiser continuar, posso ajudar com o próximo passo por aqui."
+      ". Ficou alguma dúvida que eu possa esclarecer? Se quiser continuar, posso ajudar com o próximo passo por aqui."
     );
   }
 
   if (etapa === 1 && contextoPreco) {
     return (
-      "Olá! Você tinha perguntado sobre o valor e o que está incluído" +
+      saudacao +
+      " Você tinha perguntado sobre o valor e o que está incluído" +
       complementoOrcamento +
       ". Posso retomar exatamente esse ponto e explicar, de forma objetiva, como o orçamento completo é definido?" +
       (contextoAgenda
@@ -2966,7 +2977,8 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 1 && contextoAgenda) {
     return (
-      "Olá! Você tinha comentado que gostaria de marcar uma avaliação" +
+      saudacao +
+      " Você tinha comentado que gostaria de marcar uma avaliação" +
       complementoAvaliacao +
       ". Se ainda fizer sentido para você, posso retomar de onde paramos e verificar duas opções reais de horário. Se tiver preferência por algum dia ou por manhã ou tarde, pode me dizer que eu considero na busca."
     );
@@ -2974,7 +2986,8 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 1 && objecao) {
     return (
-      "Olá! Você tinha comentado que sua principal preocupação era " +
+      saudacao +
+      " Você tinha comentado que sua principal preocupação era " +
       objecao +
       ". Posso retomar exatamente esse ponto e organizar o que vale esclarecer na avaliação com a Dra. Amanda, sem pressa?"
     );
@@ -2982,7 +2995,8 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 1 && contextoQualificado && assunto) {
     return (
-      "Olá! Queria retomar nossa conversa sobre " +
+      saudacao +
+      " Queria retomar nossa conversa sobre " +
       assunto +
       ". Você tinha demonstrado interesse em entender as possibilidades para o seu caso. Ficou alguma dúvida que eu possa esclarecer antes de você decidir se a avaliação faz sentido?"
     );
@@ -2990,7 +3004,8 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 1 && assunto) {
     return (
-      "Olá! Queria retomar nossa conversa sobre " +
+      saudacao +
+      " Queria retomar nossa conversa sobre " +
       assunto +
       ". Ficou alguma dúvida que eu possa esclarecer para você? Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda, para você entender esse próximo passo com calma."
     );
@@ -3002,7 +3017,8 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 2 && material) {
     return (
-      "Olá! Separei um conteúdo da Dra. Amanda que conversa com a sua dúvida " +
+      saudacao +
+      " Separei um conteúdo da Dra. Amanda que conversa com a sua dúvida " +
       material.sobre +
       ". " +
       material.descricao +
@@ -3014,7 +3030,8 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 2 && contextoPreco) {
     return (
-      "Olá! Queria retomar sua dúvida sobre valores" +
+      saudacao +
+      " Queria retomar sua dúvida sobre valores" +
       complementoAssunto +
       ". O orçamento cirúrgico reúne honorários, hospital, anestesia, materiais e acompanhamento, e o valor final depende do planejamento definido após a avaliação. Se quiser, posso esclarecer o que está incluído e continuar exatamente desse ponto."
     );
@@ -3022,19 +3039,14 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 2 && contextoAgenda) {
     return (
-      "Olá! Você tinha demonstrado interesse na avaliação" +
+      saudacao +
+      " Você tinha demonstrado interesse na avaliação" +
       complementoAvaliacao +
       ". Nela, a Dra. Amanda examina a região e conversa sobre possibilidades, limites, recuperação e orçamento; nada precisa ser decidido naquele momento. Se quiser retomar, posso verificar duas opções reais de horário dentro da sua preferência."
     );
   }
 
   if (etapa === 2) {
-    const primeiroNome = primeiroNomeSeguroRetomada_(
-      nomePaciente,
-    );
-    const saudacao = primeiroNome
-      ? "Oi, " + primeiroNome + "!"
-      : "Olá!";
     return (
       saudacao +
       " Vou deixar você à vontade por aqui, sem novas mensagens. Se mais adiante quiser retomar nossa conversa" +

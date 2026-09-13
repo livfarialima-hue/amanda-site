@@ -431,6 +431,8 @@ Na aba `Google Ads - Conversões`, as três colunas administrativas após o cada
 
 As duas primeiras colunas usam caixas de seleção. Em caso de dúvida, marcar `Nunca responder com robô`, pois é a opção mais restritiva. A preferência é lida novamente imediatamente antes de qualquer envio automático; assim, uma marcação feita enquanto a resposta está sendo elaborada também cancela o disparo.
 
+No painel diário, `Cancelar retomadas definitivamente` oferece o mesmo efeito canônico de `Nunca retomar` somente em cartões proativos com telefone válido. A escolha não vem marcada, exige confirmação destacada, relê o item e grava a preferência antes de limpar os planos pendentes daquele telefone. O botão não aparece em lembretes de consulta; consulta e lembretes operacionais confirmados continuam preservados. Se o telefone ou a linha da LEADS não puderem ser confirmados, a ação falha sem presumir cancelamento.
+
 Ao alterar `Situação do lead` para `Consulta agendada`, a automação cria ou atualiza a linha correspondente em `Consultas`, usando ID e telefone para evitar duplicidade. Se data e horário ainda não estiverem disponíveis, a linha é criada sem inventá-los e fica pronta para complemento. Uma confirmação explícita no WhatsApp também pode preencher a aba quando a conversa contiver data e horário inequívocos; sem os dois elementos, o sistema não presume um agendamento.
 
 Ao alterar o status para `Consulta realizada`, a consulta é atualizada e o pós-consulta entra em uma fila única. O contato é feito somente uma vez, aproximadamente três horas depois da marcação e entre 09:00 e 19:00; se esse horário cair à noite, fica para a próxima manhã. Recusa de contato, cancelamento, ausência de telefone válido ou envio já registrado impedem novo disparo. Se houver interação humana posterior à consulta, o pós-consulta é suprimido e a razão fica registrada na própria linha.
@@ -518,13 +520,14 @@ Desde a v141, o assunto do e-mail informa quantas decisões humanas, envios auto
 
 O botão principal abrirá um painel móvel somente leitura. Abrir o e-mail ou o painel não altera planilha, agenda, fila nem mensagem, e nenhuma opção virá marcada. Para resolver vários itens:
 
-1. abrir o WhatsApp do contato e conferir o histórico quando necessário;
-2. escolher individualmente `Passar para a Bruna`, `Cancelar só esta retomada` ou `Adiar revisão` nos cartões aplicáveis;
-3. deixar sem escolha qualquer item duvidoso;
-4. tocar uma vez em `Confirmar decisões selecionadas` e conferir a contagem exibida;
-5. ler o resultado por item: se o contexto mudou, a ação será recusada e permanecerá sem alteração.
+1. usar `Copiar mensagem` quando o texto estiver adequado; a cópia preserva exatamente o que aparece no cartão e não registra decisão;
+2. abrir o WhatsApp do contato e conferir o histórico quando necessário;
+3. escolher individualmente `Passar para a Bruna`, `Cancelar só esta retomada`, `Dispensar esta sugestão`, `Adiar revisão` ou `Cancelar retomadas definitivamente` nos cartões aplicáveis;
+4. deixar sem escolha qualquer item duvidoso;
+5. tocar uma vez em `Confirmar decisões selecionadas` e conferir a contagem exibida; o cancelamento definitivo recebe alerta próprio sobre o efeito permanente;
+6. ler o resultado por item: se o contexto mudou, a ação será recusada e permanecerá sem alteração.
 
-`Passar para a Bruna` apenas programa uma retomada ainda elegível e não envia naquele clique. `Cancelar só esta retomada` não cancela consulta nem cria bloqueio permanente. `Adiar revisão` apenas agenda nova análise humana e não pode ser usado sobre envio automático. `Nunca retomar` e `Nunca responder com robô` continuam fora do painel rápido para evitar bloqueio permanente acidental.
+`Passar para a Bruna` apenas programa uma retomada ainda elegível e não envia naquele clique. `Cancelar só esta retomada` não cancela consulta nem cria bloqueio permanente. `Adiar revisão` apenas agenda nova análise humana e não pode ser usado sobre envio automático. `Cancelar retomadas definitivamente` grava `Nunca retomar` somente depois da confirmação e retira os planos proativos do telefone relido; `Nunca responder com robô` continua fora do painel.
 
 O e-mail organiza a agenda diária e separa com clareza:
 

@@ -206,6 +206,25 @@ function rotuloDataItemPainelDecisoes_(item) {
     : dataPainelDecisoes_(item.dueAt, "HH:mm");
 }
 
+function itemPermiteCancelamentoDefinitivoPainel_(item) {
+  if (!item) return false;
+  const phone = String(item.phone || "").replace(/\D/g, "");
+  const sourceKey = String(item.sourceKey || "").trim();
+  const nextAction = String(item.nextAction || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+
+  if (phone.length < 10 || phone.length > 15) return false;
+  if (sourceKey.indexOf("followup:") === 0) return true;
+  return (
+    sourceKey.indexOf("care:") === 0 &&
+    nextAction.indexOf("lembrete de consulta") !== 0
+  );
+}
+
 function montarOpcoesItemPainelDecisoes_(item, day) {
   if (!item) return "";
   const token = escaparHtmlRetomadas_(item.itemToken);
@@ -230,6 +249,12 @@ function montarOpcoesItemPainelDecisoes_(item, day) {
   }
   if (item.dismissAvailable) {
     options += '<label class="choice choice-cancel"><input type="radio" name="decision-' + token + '" value="dismiss"> <span><strong>Dispensar esta sugestão</strong><small>Ela não volta amanhã. Outros marcos e contatos continuam permitidos.</small></span></label>';
+  }
+  if (itemPermiteCancelamentoDefinitivoPainel_(item)) {
+    options +=
+      '<label class="choice choice-permanent"><input type="radio" name="decision-' +
+      token +
+      '" value="never_follow_up"> <span><strong>Cancelar retomadas definitivamente</strong><small>Marca “Nunca retomar” para este contato e cancela seus planos pendentes. Lembretes de consulta confirmada continuam.</small></span></label>';
   }
   if (item.deferAvailable) {
     options +=
@@ -261,7 +286,9 @@ function montarCardItemPainelDecisoes_(item, day) {
       phone +
       '" target="_blank" rel="noopener">Abrir WhatsApp</a>'
     : "";
-  const message = String(item.sourceKey || "").indexOf("care:") === 0 && typeof textoPrevistoCuidado_ === "function" ? textoPrevistoCuidado_(item) : String(item.finalMessage || "").trim();
+  // The panel must show and copy the exact draft that a later approval would
+  // schedule. E-mail-only presentation helpers must not change this text.
+  const message = String(item.finalMessage || "").trim();
 
   return (
     '<article class="item-card" data-item-token="' +
@@ -282,9 +309,9 @@ function montarCardItemPainelDecisoes_(item, day) {
     escaparHtmlRetomadas_(item.mode || "Manual") +
     '</span></div>' +
     (message
-      ? '<div class="message"><span>Mensagem prevista ou sugerida</span><p>' +
+      ? '<div class="message"><div class="message-head"><span class="message-label">Mensagem prevista ou sugerida</span><button class="copy-message" type="button" onclick="copiarMensagem(this)">Copiar mensagem</button></div><p data-copy-source>' +
         escaparHtmlRetomadas_(message) +
-        "</p></div>"
+        '</p><div class="copy-result" aria-live="polite"></div></div>'
       : '<div class="message message-empty">SEM SUGESTÃO PRONTA</div>') +
     '<div class="links">' +
     whatsapp +
@@ -319,7 +346,8 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
   const actionable = (items || []).filter(function (item) {
     return item.approvalAvailable ||
       item.cancellationAvailable ||
-      item.deferAvailable || item.dismissAvailable;
+      item.deferAvailable || item.dismissAvailable ||
+      itemPermiteCancelamentoDefinitivoPainel_(item);
   }).length;
   const safeDay = JSON.stringify(String(day || "")).replace(/</g, "\\u003c");
   const safeToken = JSON.stringify(String(token || "")).replace(/</g, "\\u003c");
@@ -341,9 +369,9 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
     '.item-card{background:#fff;border:1px solid #e4e1dc;border-radius:18px;padding:17px;margin:12px 0;box-shadow:0 7px 22px rgba(23,35,30,.06)}.card-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}' +
     '.priority{display:inline-block;color:#7a4a10;background:#fff4df;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;text-transform:uppercase}.card-head h3{font-size:20px;margin:7px 0 0}.card-head time{font-weight:800;color:#356854;white-space:nowrap}' +
     '.action{margin:14px 0 6px}.context{margin:0;color:#4e5953}.meta{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.meta span{background:#f2f4f2;border-radius:999px;padding:5px 8px;font-size:12px}' +
-    '.message{background:#f7f6f2;border-left:4px solid #9bb7aa;border-radius:9px;padding:11px 12px;margin:12px 0}.message span{display:block;color:#59645e;font-size:11px;font-weight:800;text-transform:uppercase}.message p{margin:5px 0 0;white-space:pre-wrap}.message-empty{color:#8a4f14;font-weight:800}' +
+    '.message{background:#f7f6f2;border-left:4px solid #9bb7aa;border-radius:9px;padding:11px 12px;margin:12px 0}.message-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.message-label{display:block;color:#59645e;font-size:11px;font-weight:800;text-transform:uppercase}.message p{margin:8px 0 0;white-space:pre-wrap}.copy-message{border:1px solid #aec1b8;background:#fff;color:#2d5848;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:800;cursor:pointer}.copy-message:focus{outline:3px solid rgba(53,104,84,.22);outline-offset:2px}.copy-result{min-height:18px;margin-top:6px;color:#356854;font-size:12px;font-weight:700}.message-empty{color:#8a4f14;font-weight:800}' +
     '.links{margin:10px 0}.choices{border:0;border-top:1px solid #e5e7eb;margin:15px 0 0;padding:14px 0 0}.choices legend{font-size:12px;font-weight:800;color:#59645e;padding:0 6px 0 0}.choice{display:flex;gap:10px;align-items:flex-start;border:1px solid #dfe4e1;border-radius:12px;padding:11px;margin:8px 0;cursor:pointer}' +
-    '.choice input{width:20px;height:20px;margin:1px 0 0}.choice span{display:block}.choice small{display:block;color:#65716b;margin-top:2px}.choice-approve{background:#f2f8f5}.choice-cancel{background:#fff6f2}.choice-defer{background:#f7f6f2}' +
+    '.choice input{width:20px;height:20px;margin:1px 0 0}.choice span{display:block}.choice small{display:block;color:#65716b;margin-top:2px}.choice-approve{background:#f2f8f5}.choice-cancel{background:#fff6f2}.choice-permanent{background:#fff0ec;border-color:#e8b8aa}.choice-defer{background:#f7f6f2}' +
     '.defer-date{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:7px 0 0;padding:9px 11px;color:#59645e}.defer-date input{min-height:40px;border:1px solid #ccd3cf;border-radius:9px;padding:7px;background:#fff}.read-only,.empty{color:#68736d;background:#f2f4f2;border-radius:12px;padding:12px}' +
     '.item-result{display:none;margin-top:12px;padding:10px;border-radius:10px}.item-result.ok{display:block;background:#e9f7ef;color:#176b43}.item-result.error{display:block;background:#fff2ed;color:#9a3412}.item-card.resolved{opacity:.68}' +
     '.sticky{position:fixed;z-index:10;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid #dfe4e1;padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px rgba(23,35,30,.09)}.sticky-inner{max-width:692px;margin:auto;display:flex;gap:10px;align-items:center}' +
@@ -358,10 +386,10 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
     String(grouped.future.length) +
     '</strong><span>próximos 7 dias</span></div></div><div class="toolbar">' +
     centralButton +
-    '</div><div class="warning"><strong>Importante:</strong> nenhuma opção está marcada. “Nunca retomar” não faz parte deste painel e continua sendo uma decisão separada.</div></header>' +
+    '</div><div class="warning"><strong>Importante:</strong> nenhuma opção está marcada. O cancelamento definitivo exige confirmação, vale somente para o contato relido e não cancela consultas ou seus lembretes operacionais.</div></header>' +
     montarSecaoPainelDecisoes_(
       "Decisões humanas de hoje",
-      "Você pode abrir o WhatsApp, passar uma retomada elegível para a Bruna, dispensar uma sugestão ou adiar a revisão. Ao aprovar, a Bruna envia na janela indicada se o contexto continuar adequado.",
+      "Você pode copiar a mensagem, abrir o WhatsApp, passar uma retomada elegível para a Bruna, dispensar, adiar ou impedir novas retomadas daquele contato. Ao aprovar, a Bruna envia na janela indicada se o contexto continuar adequado.",
       grouped.manual,
       day,
       "manual",
@@ -385,7 +413,13 @@ function paginaPainelDecisoesDiarias_(items, day, token, centralUrl) {
     safeDay +
     ';var painelToken=' +
     safeToken +
-    ';function coletarDecisoes(){var cards=document.querySelectorAll(".item-card");var decisions=[];cards.forEach(function(card){var selected=card.querySelector("input[type=radio]:checked");if(!selected){return;}var itemToken=card.getAttribute("data-item-token");var decision={itemToken:itemToken,action:selected.value};if(selected.value==="defer"){var date=card.querySelector("input[data-defer-for]");decision.deferDate=date?date.value:"";}decisions.push(decision);});return decisions;}function mensagemConfirmacao(decisions){var counts={approve:0,cancel:0,defer:0,dismiss:0};decisions.forEach(function(item){if(counts[item.action]!==undefined){counts[item.action]+=1;}});return "Confirmar "+counts.approve+" aprovação(ões), "+counts.cancel+" cancelamento(s) e "+counts.defer+" adiamento(s) e "+counts.dismiss+" dispensa(s)? Cada item será relido antes da alteração.";}function marcarResultados(result){var rows=(result&&result.results)||[];rows.forEach(function(row){var cards=document.querySelectorAll(".item-card");cards.forEach(function(card){if(card.getAttribute("data-item-token")!==row.itemToken){return;}var target=card.querySelector(".item-result");target.textContent=row.message|| (row.ok?"Decisão aplicada.":"Item mantido sem alteração.");target.className="item-result "+(row.ok?"ok":"error");if(row.ok){card.classList.add("resolved");card.querySelectorAll("input").forEach(function(input){input.disabled=true;});}});});var global=document.getElementById("global-result");global.textContent=(result&&result.summary)||"Processamento concluído.";}function processarDecisoes(){var decisions=coletarDecisoes();if(!decisions.length){alert("Selecione pelo menos uma ação.");return;}if(!confirm(mensagemConfirmacao(decisions))){return;}var button=document.getElementById("process");button.disabled=true;button.textContent="Revalidando...";google.script.run.withSuccessHandler(function(result){marcarResultados(result);button.disabled=false;button.textContent="Confirmar decisões selecionadas";}).withFailureHandler(function(){document.getElementById("global-result").textContent="Falha temporária. Nenhuma conclusão foi presumida; tente novamente.";button.disabled=false;button.textContent="Tentar novamente";}).processarDecisoesPainelDiario({day:painelDia,token:painelToken,decisions:decisions});}</script></body></html>'
+    ';function copiarFallback(text,source){var area=document.createElement("textarea");area.value=text;area.setAttribute("readonly","");area.style.position="fixed";area.style.opacity="0";document.body.appendChild(area);area.focus();area.select();var copied=false;try{copied=Boolean(document.execCommand&&document.execCommand("copy"));}catch(error){}document.body.removeChild(area);if(!copied&&source&&window.getSelection){var range=document.createRange();range.selectNodeContents(source);var selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);}return copied;}' +
+    'function mostrarResultadoCopia(button,ok){var message=button.closest(".message");var target=message?message.querySelector(".copy-result"):null;if(target){target.textContent=ok?"Mensagem copiada.":"Não foi possível copiar. O texto ficou selecionado para cópia manual.";}button.textContent=ok?"Copiada ✓":"Selecionar texto";}' +
+    'function copiarMensagem(button){var message=button.closest(".message");var source=message?message.querySelector("[data-copy-source]"):null;var value=source?source.textContent:"";if(!value){mostrarResultadoCopia(button,false);return;}if(navigator.clipboard&&typeof navigator.clipboard.writeText==="function"){navigator.clipboard.writeText(value).then(function(){mostrarResultadoCopia(button,true);}).catch(function(){mostrarResultadoCopia(button,copiarFallback(value,source));});return;}mostrarResultadoCopia(button,copiarFallback(value,source));}' +
+    'function coletarDecisoes(){var cards=document.querySelectorAll(".item-card");var decisions=[];cards.forEach(function(card){var selected=card.querySelector("input[type=radio]:checked");if(!selected){return;}var itemToken=card.getAttribute("data-item-token");var decision={itemToken:itemToken,action:selected.value};if(selected.value==="defer"){var date=card.querySelector("input[data-defer-for]");decision.deferDate=date?date.value:"";}if(selected.value==="never_follow_up"){decision.confirmedPermanent=true;}decisions.push(decision);});return decisions;}' +
+    'function mensagemConfirmacao(decisions){var counts={approve:0,cancel:0,defer:0,dismiss:0,never_follow_up:0};decisions.forEach(function(item){if(counts[item.action]!==undefined){counts[item.action]+=1;}});var summary="Confirmar "+counts.approve+" aprovação(ões), "+counts.cancel+" cancelamento(s) pontual(is), "+counts.defer+" adiamento(s) e "+counts.dismiss+" dispensa(s)? Cada item será relido antes da alteração.";if(counts.never_follow_up){return "ATENÇÃO: "+counts.never_follow_up+" contato(s) será(ão) marcado(s) como Nunca retomar. Isso cancela planos pendentes e impede novas abordagens proativas; consultas e lembretes operacionais confirmados continuam. Deseja confirmar? "+summary;}return summary;}' +
+    'function marcarResultados(result){var rows=(result&&result.results)||[];rows.forEach(function(row){var cards=document.querySelectorAll(".item-card");cards.forEach(function(card){if(card.getAttribute("data-item-token")!==row.itemToken){return;}var target=card.querySelector(".item-result");target.textContent=row.message||(row.ok?"Decisão aplicada.":"Item mantido sem alteração.");target.className="item-result "+(row.ok?"ok":"error");if(row.ok){card.classList.add("resolved");card.querySelectorAll("input").forEach(function(input){input.disabled=true;});}});});var global=document.getElementById("global-result");global.textContent=(result&&result.summary)||"Processamento concluído.";}' +
+    'function processarDecisoes(){var decisions=coletarDecisoes();if(!decisions.length){alert("Selecione pelo menos uma ação.");return;}if(!confirm(mensagemConfirmacao(decisions))){return;}var button=document.getElementById("process");button.disabled=true;button.textContent="Revalidando...";google.script.run.withSuccessHandler(function(result){marcarResultados(result);button.disabled=false;button.textContent="Confirmar decisões selecionadas";}).withFailureHandler(function(){document.getElementById("global-result").textContent="Falha temporária. Nenhuma conclusão foi presumida; tente novamente.";button.disabled=false;button.textContent="Tentar novamente";}).processarDecisoesPainelDiario({day:painelDia,token:painelToken,decisions:decisions});}</script></body></html>'
   );
 }
 
@@ -424,6 +458,11 @@ function mensagemResultadoPainelDecisoes_(action, result) {
     if (action === "defer") {
       return "Revisão adiada; nenhuma mensagem foi enviada.";
     }
+    if (action === "never_follow_up") {
+      return result.cleanupFailed
+        ? "Contato marcado como “Nunca retomar”. A preferência já impede novas abordagens proativas, mas a limpeza imediata de uma fila precisa ser conferida; consultas e lembretes confirmados continuam."
+        : "Contato marcado como “Nunca retomar”. Os planos pendentes deste telefone foram cancelados; consultas e lembretes de consulta confirmada continuam.";
+    }
   }
 
   const labels = {
@@ -443,6 +482,11 @@ function mensagemResultadoPainelDecisoes_(action, result) {
     approval_unavailable: "A aprovação não está disponível.",
     approval_token_missing: "A aprovação segura não pôde ser validada.",
     cancellation_token_missing: "O cancelamento seguro não pôde ser validado.",
+    invalid_phone: "O telefone do contato não pôde ser validado. Nada foi alterado.",
+    lead_not_found: "O contato não foi localizado na LEADS. Nada foi cancelado.",
+    preference_handler_unavailable: "A preferência permanente não está disponível. Nada foi cancelado.",
+    preference_write_failed: "Não foi possível confirmar a preferência permanente. Nenhum cancelamento foi presumido.",
+    conflicting_contact_decisions: "Há outra decisão definitiva para este mesmo contato; este item foi mantido sem alteração.",
   };
   return labels[String(result && result.reason || "")] ||
     "O item foi mantido sem alteração após a revalidação.";
@@ -485,7 +529,7 @@ function processarDecisoesPainelDiario(payload) {
     const action = String(decisions[index].action || "").trim();
     if (
       !itemToken ||
-      !["approve", "cancel", "defer", "dismiss"].includes(action) ||
+      !["approve", "cancel", "defer", "dismiss", "never_follow_up"].includes(action) ||
       seen[itemToken]
     ) {
       return {
@@ -497,11 +541,24 @@ function processarDecisoesPainelDiario(payload) {
         results: [],
       };
     }
+    if (
+      action === "never_follow_up" &&
+      decisions[index].confirmedPermanent !== true
+    ) {
+      return {
+        ok: false,
+        error: "permanent_confirmation_required",
+        summary: "O cancelamento definitivo exige confirmação explícita. Nada foi aplicado.",
+        results: [],
+      };
+    }
     seen[itemToken] = true;
     normalized.push({
       itemToken: itemToken,
       action: action,
       deferDate: String(decisions[index].deferDate || "").trim(),
+      confirmedPermanent:
+        decisions[index].confirmedPermanent === true,
     });
   }
 
@@ -544,6 +601,7 @@ function processarDecisoesPainelDiario(payload) {
     const cancellations = [];
     const deferrals = [];
     const dismissals = [];
+    const permanentStops = [];
     const pending = [];
 
     normalized.forEach(function (decision) {
@@ -572,6 +630,7 @@ function processarDecisoesPainelDiario(payload) {
           itemToken: decision.itemToken,
           action: decision.action,
           decision: item.approvalDecision,
+          phone: item.phone,
         });
         return;
       }
@@ -590,13 +649,37 @@ function processarDecisoesPainelDiario(payload) {
           itemToken: decision.itemToken,
           action: decision.action,
           decision: item.cancellationDecision,
+          phone: item.phone,
         });
         return;
       }
 
       if (decision.action === "dismiss") {
         if (!item.dismissAvailable) pending.push({ itemToken: decision.itemToken, action: decision.action, ok: false, reason: "item_not_eligible" });
-        else dismissals.push({ itemToken: decision.itemToken, action: decision.action, decision: { rowNumber: item.rowNumber, sourceKey: item.sourceKey } });
+        else dismissals.push({ itemToken: decision.itemToken, action: decision.action, phone: item.phone, decision: { rowNumber: item.rowNumber, sourceKey: item.sourceKey } });
+        return;
+      }
+
+      if (decision.action === "never_follow_up") {
+        if (!itemPermiteCancelamentoDefinitivoPainel_(item)) {
+          pending.push({
+            itemToken: decision.itemToken,
+            action: decision.action,
+            ok: false,
+            reason: "item_not_eligible",
+          });
+        } else {
+          permanentStops.push({
+            itemToken: decision.itemToken,
+            action: decision.action,
+            phone: item.phone,
+            sourceKey: item.sourceKey,
+            decision: {
+              rowNumber: item.rowNumber,
+              sourceKey: item.sourceKey,
+            },
+          });
+        }
         return;
       }
 
@@ -618,6 +701,7 @@ function processarDecisoesPainelDiario(payload) {
       deferrals.push({
         itemToken: decision.itemToken,
         action: decision.action,
+        phone: item.phone,
         decision: {
           rowNumber: item.rowNumber,
           sourceKey: item.sourceKey,
@@ -647,42 +731,154 @@ function processarDecisoesPainelDiario(payload) {
       });
     }
 
-    if (approvals.length) {
+    function chaveTelefonePainel_(phone) {
+      return String(phone || "").replace(/\D/g, "");
+    }
+
+    const permanentPhoneKeys = {};
+    permanentStops.forEach(function (item) {
+      const key = chaveTelefonePainel_(item.phone);
+      if (key) permanentPhoneKeys[key] = true;
+    });
+
+    function removerConflitosComBloqueio_(items) {
+      return items.filter(function (item) {
+        const key = chaveTelefonePainel_(item.phone);
+        if (!key || !permanentPhoneKeys[key]) return true;
+        pending.push({
+          itemToken: item.itemToken,
+          action: item.action,
+          ok: false,
+          reason: "conflicting_contact_decisions",
+        });
+        return false;
+      });
+    }
+
+    const approvalsToApply = removerConflitosComBloqueio_(approvals);
+    const cancellationsToApply = removerConflitosComBloqueio_(cancellations);
+    const dismissalsToApply = removerConflitosComBloqueio_(dismissals);
+    const deferralsToApply = removerConflitosComBloqueio_(deferrals);
+    const permanentResultByPhone = {};
+
+    permanentStops.forEach(function (item) {
+      const phoneKey = chaveTelefonePainel_(item.phone);
+      let operation = permanentResultByPhone[phoneKey];
+
+      if (!operation) {
+        if (typeof marcarNuncaRetomarPorTelefone_ !== "function") {
+          operation = {
+            ok: false,
+            reason: "preference_handler_unavailable",
+          };
+        } else {
+          try {
+            const preference = marcarNuncaRetomarPorTelefone_(
+              spreadsheet,
+              item.phone,
+              "Nunca retomar confirmado no painel diário em " +
+                formatarDataRetomadas_(now, "dd/MM/yyyy HH:mm"),
+            );
+            operation = {
+              ok: preference && preference.ok === true,
+              reason: preference && preference.ok === true
+                ? ""
+                : String(preference && preference.error || "preference_write_failed"),
+              alreadyBlocked:
+                preference && preference.alreadyBlocked === true,
+              cleanupFailed: false,
+            };
+            if (operation.ok) {
+              try {
+                operation.cancelledPlans =
+                  typeof cancelarPlanosPendentesRetomadas_ === "function"
+                    ? cancelarPlanosPendentesRetomadas_(
+                        spreadsheet,
+                        item.phone,
+                        now,
+                      )
+                    : 0;
+              } catch (cleanupError) {
+                operation.cleanupFailed = true;
+              }
+            }
+          } catch (preferenceError) {
+            operation = {
+              ok: false,
+              reason: "preference_write_failed",
+            };
+          }
+        }
+        permanentResultByPhone[phoneKey] = operation;
+      }
+
+      if (
+        operation.ok &&
+        item.sourceKey.indexOf("care:") === 0 &&
+        typeof dispensarItensCentralInterno_ === "function"
+      ) {
+        try {
+          const careResult = dispensarItensCentralInterno_(
+            spreadsheet,
+            sheet,
+            now,
+            [item.decision],
+          );
+          const careRow = careResult && careResult.results &&
+            careResult.results[0];
+          if (!careRow || careRow.ok !== true) {
+            operation.cleanupFailed = true;
+          }
+        } catch (careError) {
+          operation.cleanupFailed = true;
+        }
+      }
+
+      pending.push({
+        itemToken: item.itemToken,
+        action: item.action,
+        ok: operation.ok === true,
+        reason: operation.reason || "",
+        cleanupFailed: operation.cleanupFailed === true,
+      });
+    });
+
+    if (approvalsToApply.length) {
       incorporarResultados(
-        approvals,
+        approvalsToApply,
         aprovarRetomadasMarcadasCentralInterno_(
           spreadsheet,
           sheet,
           now,
-          approvals.map(function (item) {
+          approvalsToApply.map(function (item) {
             return item.decision;
           }),
         ),
       );
     }
-    if (cancellations.length) {
+    if (cancellationsToApply.length) {
       incorporarResultados(
-        cancellations,
+        cancellationsToApply,
         cancelarRetomadasMarcadasCentralInterno_(
           spreadsheet,
           sheet,
           now,
-          cancellations.map(function (item) {
+          cancellationsToApply.map(function (item) {
             return item.decision;
           }),
         ),
       );
     }
-    if (dismissals.length) {
-      incorporarResultados(dismissals, dispensarItensCentralInterno_(spreadsheet, sheet, now, dismissals.map(function (item) { return item.decision; })));
+    if (dismissalsToApply.length) {
+      incorporarResultados(dismissalsToApply, dispensarItensCentralInterno_(spreadsheet, sheet, now, dismissalsToApply.map(function (item) { return item.decision; })));
     }
-    if (deferrals.length) {
+    if (deferralsToApply.length) {
       incorporarResultados(
-        deferrals,
+        deferralsToApply,
         adiarItensCentralInterno_(
           sheet,
           now,
-          deferrals.map(function (item) {
+          deferralsToApply.map(function (item) {
             return item.decision;
           }),
         ),
@@ -715,7 +911,10 @@ function processarDecisoesPainelDiario(payload) {
       return item.ok && item.action === "defer";
     }).length;
     const dismissed = results.filter(function (item) { return item.ok && item.action === "dismiss"; }).length;
-    const skipped = results.length - approved - cancelled - deferred - dismissed;
+    const stopped = results.filter(function (item) {
+      return item.ok && item.action === "never_follow_up";
+    }).length;
+    const skipped = results.length - approved - cancelled - deferred - dismissed - stopped;
 
     return {
       ok: true,
@@ -724,6 +923,7 @@ function processarDecisoesPainelDiario(payload) {
       cancelled: cancelled,
       deferred: deferred,
       dismissed: dismissed,
+      stopped: stopped,
       skipped: skipped,
       summary:
         approved +
@@ -731,7 +931,9 @@ function processarDecisoesPainelDiario(payload) {
         cancelled +
         " cancelada(s), " +
         deferred +
-        " adiada(s), " + dismissed + " dispensada(s) e " +
+        " adiada(s), " + dismissed + " dispensada(s), " +
+        stopped +
+        " encerrada(s) definitivamente e " +
         skipped +
         " mantida(s) sem alteração.",
       results: results,

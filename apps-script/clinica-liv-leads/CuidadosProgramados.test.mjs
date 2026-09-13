@@ -290,13 +290,22 @@ test("schema preparation appends columns without changing existing positions or 
 });
 
 test("quote milestones need a confirmed sending date and stop after closure or surgery", () => {
-  const h = harness(); h.set("Data do orçamento enviado", new h.Clock("2026-09-11T12:00:00Z"));
-  assert.ok(h.items().find(i => i.care.purpose === "quote"));
+  const h = harness(); h.set("Nome do paciente", "Marina Souza"); h.set("Data do orçamento enviado", new h.Clock("2026-09-11T12:00:00Z"));
+  const quote = h.items().find(i => i.care.purpose === "quote");
+  assert.ok(quote); assert.match(quote.sugestao, /^Oi, Marina!/);
   h.set("Resultado comercial", "Não fechou"); assert.equal(h.items().some(i => i.care.purpose === "quote"), false);
   h.set("Resultado comercial", "Procedimento fechado"); assert.equal(h.items().some(i => i.care.purpose === "quote"), false);
   h.set("Resultado comercial", "Pendente"); h.set("Data da cirurgia realizada", new h.Clock("2026-09-12T12:00:00Z"));
   assert.equal(h.items().some(i => i.care.purpose === "quote"), false);
-  assert.ok(h.items().find(i => i.care.purpose === "post_surgery"));
+  const postSurgery = h.items().find(i => i.care.purpose === "post_surgery");
+  assert.ok(postSurgery); assert.match(postSurgery.sugestao, /^Oi, Marina!/);
+});
+
+test("surgery and quote milestones keep a neutral greeting when the stored name is unsafe", () => {
+  const h = harness(); h.set("Nome do paciente", "+5511900000000"); h.set("Data do orçamento enviado", new h.Clock("2026-09-11T12:00:00Z"));
+  assert.match(h.items().find(i => i.care.purpose === "quote").sugestao, /^Olá!/);
+  h.set("Data do orçamento enviado", ""); h.set("Data da cirurgia realizada", new h.Clock("2026-09-12T12:00:00Z"));
+  assert.match(h.items().find(i => i.care.purpose === "post_surgery").sugestao, /^Olá!/);
 });
 
 test("birthday blocks contradictory birth dates and an explicit refusal on a duplicated consultation", () => {

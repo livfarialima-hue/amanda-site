@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "changeId": "CENTRAL-RETOMADAS-PRATICA-2026-09-13",
+  "status": "local_candidate",
+  "baseline": {
+    "repositoryCommit": "fcae9e42af77ba4fdf536d0f525eb4053c581117",
+    "appsScriptVersion": 151,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "normalizedSha256": {
+      "Retomadas.gs": "872d3f4f75f53e05af22c9520860dc1fa398a098da3d84a95d32fb1aea069304",
+      "PainelDecisoesDiarias.gs": "759b763d730816fcc5c3d0cd6a56443b161c4364e5875ba0aec22ade4219957c",
+      "CuidadosProgramados.gs": "3a638a711ec0132c25c176686bbc7750b4ef91922db5e449a36192fa46f14589"
+    }
+  },
+  "target": {
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "verified": true
+  },
+  "authorization": {
+    "publicationAuthorized": true,
+    "basis": "Daniel autorizou cumulativamente publicar tudo que ficasse pendente nesta conversa e confirmou seguir com a publicação; a mudança atual atende ao pedido posterior para aprimorar a Central.",
+    "patientMessagesAuthorized": false,
+    "dailyEmailTestAuthorized": false
+  },
+  "plannedAppsScriptFiles": [
+    "PainelDecisoesDiarias.gs",
+    "Retomadas.gs",
+    "CuidadosProgramados.gs"
+  ],
+  "readOnlyPreflight": {
+    "checkedAt": "2026-09-13T13:13:22.000Z",
+    "activeVersion": 151,
+    "liveSourcesMatchBaseline": true,
+    "consultationColumns": 83,
+    "missingHeaders": [],
+    "birthdayDeliveryMode": "manual_daily_reminder",
+    "birthdayAutomaticActive": false,
+    "processorTriggers": 1,
+    "dailyEmailTriggers": 1,
+    "scheduledPlansBeforeRelease": 2,
+    "scheduledAutomaticTemplateBeforeRelease": 0,
+    "scheduledManualApprovedBeforeRelease": 0
+  },
+  "publication": {
+    "performed": false,
+    "approvedCommit": "",
+    "appsScriptVersion": null,
+    "deployedAt": ""
+  },
+  "localVerification": {
+    "focusedTests": "131/131",
+    "fullSuite": "1473/1473",
+    "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+    "changeSafety": "OK, 18 arquivos exatos",
+    "staticBuild": "193 arquivos e 54 rotas",
+    "staticCheck": "ok, zero erro e zero arquivo operacional publico",
+    "diffCheck": "OK",
+    "opsCheck": "SYNC_PENDING esperado antes da publicacao"
+  },
+  "postflight": {},
+  "patientEffects": {
+    "messagesSentByThisWork": 0,
+    "dailyEmailsSentByThisWork": 0,
+    "contactsBlockedByThisWork": 0,
+    "appointmentsChangedByThisWork": 0
+  },
+  "rollback": {
+    "appsScriptVersion": 151,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "schemaMigrationRequired": false
+  }
+}
