@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "RECONCILIACAO-LEADS-CONVERSAS-2026-09-13",
   "title": "Reconciliar classificação da LEADS com conversas exportadas e preparar conversões qualificadas",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "9f2059fd506cfa0b0570bc6cc7ba6ddd457f98d0",
   "authorization": {
     "required": true,
@@ -121,7 +121,7 @@
         "duplicateTransactions": 0,
         "classifierQueue": "done"
       },
-      "operationalConsistency": "SYNC_PENDING expected before commit, Drive projection and release receipt"
+      "operationalConsistency": "Publication receipts recorded; final clean-worktree ops:check pending"
     }
   },
   "previousCompletedRelease": {
@@ -163,5 +163,35 @@
       "contatos qualificados e consultas por coorte"
     ],
     "rollbackRule": "Reverter somente diante de evidência de fase incorreta, ação divergente, identificador inválido, duplicidade ou projeções inconsistentes; ready sem aceite é pendência de monitoramento, não erro de classificação."
+  },
+  "release": {
+    "approvedCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
+    "verifiedAt": "2026-09-13T22:48:30.000Z",
+    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+    "netlifyPublishedByThisChange": false,
+    "netlifyState": "inherited_from_verified_otoplasty_release",
+    "appsScriptVersion": 152,
+    "appsScriptPublishedByThisChange": false,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "appsScriptSameDeployment": true,
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "spreadsheetBackupFileId": "1KdZwJtIkK53xODKz-hH7XIxaPO_9KIal93zIAIa9Xzk",
+    "qualifiedCorrections": 1,
+    "googleReadyBefore": 6,
+    "googleReadyAfter": 7,
+    "googleEligibilityIssues": 0,
+    "googleDuplicateTransactions": 0,
+    "googleImportState": "ready",
+    "googleAcceptance": "pending_next_scheduled_connector_run",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "9d78c4ada29a4f29edcec97dfa6011a0980a900684560ddc42ffbf3a1793a5b0",
+    "drivePlanReadback": {
+      "modified": "2026-09-13T22:48:06.124Z",
+      "bytes": 176899,
+      "equal": true
+    },
+    "driveClosedAuditFileId": "1yyUh7u7WWepQvkgasliHoqxru-LNJTYw",
+    "driveClosedAuditSha256": "4551be79f5ef77923a69b965b2c2485fd66396c3943568688038fe5fab33dc02",
+    "receiptPath": "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
   }
 }

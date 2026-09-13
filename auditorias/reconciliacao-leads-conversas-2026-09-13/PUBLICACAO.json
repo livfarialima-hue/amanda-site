@@ -5,8 +5,8 @@
   "authorizationReference": "Pedido direto para revisar as conversas exportadas, atualizar os casos qualificáveis e preparar os eventos pertinentes para o Google Ads; autorização de publicação já registrada na conversa.",
   "executedAt": "2026-09-13T19:37:07-03:00",
   "verifiedAt": "2026-09-13T19:39:00-03:00",
-  "candidateCommit": null,
-  "documentationCommit": null,
+  "candidateCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
+  "documentationCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
   "canonicalTargets": {
     "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
     "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
@@ -56,8 +56,18 @@
   },
   "drive": {
     "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "planSha256": null,
-    "closedAuditFileId": null,
-    "readbackVerified": false
+    "planSha256": "9d78c4ada29a4f29edcec97dfa6011a0980a900684560ddc42ffbf3a1793a5b0",
+    "closedAuditFileId": "1yyUh7u7WWepQvkgasliHoqxru-LNJTYw",
+    "readbackVerified": true,
+    "planModifiedAt": "2026-09-13T22:48:06.124Z",
+    "planBytes": 176899,
+    "closedAuditSha256": "4551be79f5ef77923a69b965b2c2485fd66396c3943568688038fe5fab33dc02",
+    "closedAuditModifiedAt": "2026-09-13T22:48:00.982Z"
+  },
+  "repository": {
+    "branch": "reestruturacao-site",
+    "candidateCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
+    "netlifyDeployIdInherited": "6aa6ab8ec7bf45000934fe35",
+    "netlifyChangedByThisTask": false
   }
 }
