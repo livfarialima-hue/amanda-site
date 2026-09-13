@@ -6,6 +6,7 @@ import {
   isSchedulingRequest,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
+import { isAutomaticSurgicalPriceProcedure } from "./lib/surgical-price-policy.mjs";
 import {
   normalizeYCloudMessageUpdated,
   normalizeYCloudTemplateEvent,
@@ -3455,11 +3456,7 @@ function enrichPricePlanFromPatientRelationship(
       "price_without_confirmed_procedure",
     ].includes(plan.reason)
   ) {
-    const automaticPrice = [
-      "lifting_facial",
-      "lifting_cervical",
-      "otoplastia",
-    ].includes(contextPlan.procedure);
+    const automaticPrice = isAutomaticSurgicalPriceProcedure(contextPlan.procedure);
     return {
       ...plan,
       route: automaticPrice ? "standard_reply" : "human_review",

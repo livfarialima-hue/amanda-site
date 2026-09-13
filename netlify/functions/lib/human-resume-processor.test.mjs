@@ -942,7 +942,9 @@ test("another surgical price still waits for human review with a complete sugges
   assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal(deps.alerts.length, 1);
   assert.match(deps.alerts[0].messageText, /entre R\$ 18 mil e R\$ 23 mil/);
-  assert.match(deps.alerts[0].messageText, /segurança, naturalidade/);
+  assert.match(deps.alerts[0].messageText, /não é orçamento, proposta nem garantia de preço/);
+  assert.match(deps.alerts[0].messageText, /Base histórica interna/);
+  assert.match(deps.alerts[0].messageText, /confirmar valores atuais/);
   assert.doesNotMatch(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
 });
 

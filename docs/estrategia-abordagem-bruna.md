@@ -1,5 +1,7 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+**Ajuste de preço — PUBLICADO E VERIFICADO em 12/09/2026 às 23h42:** commit `24a6f19ad5e29660653744c697ae6fbd356417e9`, Netlify `6aa60d89d5920c0008dc059e`. Primeira resposta sem números, oferta mais breve e faixa autorizada uma vez, adequada à variante. Sem desconto ou parcelamento espontâneo. Outros preços geram e-mail com fonte histórica, faixa sugerida e rascunho com ressalva de avaliação, para conferência e envio manual. Falta de referência compatível aparece como SEM FAIXA SEGURA. O e-mail não aprova envio e o botão de cuidados não autoriza preço. Testes: 1.456/1.456 integrais e 74/74 finais entre consumidores; oito falhas reproduzidas antes da correção. Domínio e URL imutável ativos (HTTP 200), POST sem assinatura recusado (401), 12 funções/cinco programações preservadas. Apps Script v150, LEADS e Calendar sem alteração. Rollback: código `6c38ca5859f86c2224646f88607f554f8dd4fbe4`, deploy `6aa6038eb31161000809495b`. Nenhuma mensagem de teste ou e-mail real enviado. Relatório/recibo: `auditorias/bruna-preco-2026-09-12/RELATORIO.md` e `PUBLICACAO.json`.
+
 **Atualização de 12/09/2026 — publicada na v150 e Netlify 6aa6038eb31161000809495b:** revisão de continuidade comercial, cuidado humano e precisão da LEADS. Respostas curtas sobre o procedimento devem receber explicação útil, sem repetir descoberta. A continuação informativa permanece sujeita aos gates de cuidado, preço, agenda, autoria e takeover. Preço, distância e acompanhamento são tratados com informação confirmada, sem presumir itens incluídos, consulta remota ou quantidade de retornos. Preferências já fornecidas são aproveitadas. O e-mail mantém contexto e rascunho seguros, ou ausência explícita, sem completar lacunas com uma resposta inventada. A conversa compartilhada passa a usar a entrada mais recente e uma janela protegida de dez minutos, processada a cada cinco minutos. Antes de responder, relê histórico, compromissos e preferências; nova atividade humana ou da paciente invalida a tentativa, inclusive depois de reservar o envio. Dúvida segura pode ter uma resposta pontual, mantendo qualquer tarefa humana anterior. Solicitação que depende da equipe recebe no máximo uma confirmação de recebimento por geração, somente após entrega do alerta; não promete horário ou resultado. Alertas de novas mensagens são consolidados por trinta minutos, com exceção de urgência, e falhas continuam recuperáveis. Agradecimento, encerramento e ciência de compromisso humano não criam trabalho artificial. O aviso de recebimento mantém a LEADS aguardando a clínica. Evidência, testes, limites e sequência de publicação em `auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md`; o Norte Estratégico continua prevalecendo.
 
 **Release `2026-09-01.1` — PUBLICADA E VERIFICADA:** a apresentação da Bruna continua obrigatória na primeira resposta real, mas deixa de ser repetida nas respostas determinísticas de preço quando o cadastro já demonstra uma interação anterior, mesmo se o histórico conversacional estiver temporariamente indisponível. Nesse caso, a continuação começa diretamente pelo assunto — por exemplo, `Claro, Gabis. Vou confirmar a faixa atual...` — sem repetir `Olá` nem `Eu sou a Bruna`. Uma primeira resposta recuperada depois de falha transitória na gravação continua se apresentando normalmente. Retomadas protegidas também são sempre tratadas como continuação. Código funcional `96c6b22f0194f6c6100fda0b47b6d563b2164bd1`, deploy Netlify `6a98af91799bcb0008bec6c4`; **144/144 testes focados**, **307/307 do contrato de conversão**, **256/256 de segurança entre consumidores** e **1235/1235 integrais** no pacote. Domínio e URL imutável responderam HTTP 200, o webhook sem assinatura retornou HTTP 401 e nenhuma mensagem real foi enviada. Procedimentos, faixas, política de preço, agenda, qualificação, takeover, opt-out, atribuição, LEADS, CRM e Apps Script permaneceram inalterados. Rollback: commit `b88065979e27b9ed1e69c39b0fba7b2eebc436c8` e deploy `6a98ae4db280b5000881e3b3`.
@@ -367,9 +369,9 @@ A pergunta de preço é legítima. Responder sem parecer evasiva, sem transforma
 >
 > Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/
 >
-> Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.
+> Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.
 
-O guia acima é o exemplo facial do fluxo automático de lifting facial. A primeira resposta automática usa um único material correspondente ao procedimento confirmado:
+O guia acima é o exemplo facial do fluxo automático de lifting facial. Nos três procedimentos autorizados, a primeira resposta automática usa somente o guia facial. Mama e corpo abaixo são referências para rascunhos internos, sujeitos à revisão e envio manual:
 
 - face e pescoço: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/
 - mama: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/
@@ -377,13 +379,13 @@ O guia acima é o exemplo facial do fluxo automático de lifting facial. A prime
 
 Para `cervicoplastia (lifting cervical)`, usar a abertura específica aprovada, sem divulgar números no primeiro turno e com o guia facial antes da oferta:
 
-> Entendo — ter uma noção de valor ajuda bastante no planejamento. Na cervicoplastia, o orçamento pode variar porque o tratamento pode ser mais localizado ou envolver uma abordagem mais completa do pescoço e da face. A Dra. Amanda define isso após avaliar cada caso.
+> Ter uma noção de valor ajuda no planejamento. Na cervicoplastia, o valor depende da extensão do tratamento do pescoço e de possíveis associações à face, definidas na avaliação.
 >
 > Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/
 >
-> Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.
+> Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.
 
-Para `lifting facial`, `cervicoplastia (lifting cervical)` e `otoplastia`, terminar a primeira resposta com `Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.`, sempre depois do guia facial e sem número nesse turno. Se a mesma mensagem de otoplastia trouxer outras dúvidas seguras, respondê-las antes de falar de preço. `Otomodelação` deve ser tratada como um nome ambíguo, usado para abordagens diferentes: não presumir injetáveis, ausência de cirurgia, duração temporária ou indicação somente pelo termo. Explicar de forma conservadora a diferença de escopo e, se a técnica específica realmente mudar a resposta, pedir uma única clarificação. Para qualquer outro procedimento, a primeira pergunta de preço não recebe resposta automática: o sistema gera alerta interno com uma sugestão pronta para a equipe revisar e enviar.
+Para `lifting facial`, `cervicoplastia (lifting cervical)` e `otoplastia`, terminar a primeira resposta com `Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.`, sempre depois do guia facial e sem número nesse turno. Se a mesma mensagem de otoplastia trouxer outras dúvidas seguras, respondê-las antes de falar de preço. `Otomodelação` deve ser tratada como um nome ambíguo, usado para abordagens diferentes: não presumir injetáveis, ausência de cirurgia, duração temporária ou indicação somente pelo termo. Explicar de forma conservadora a diferença de escopo e, se a técnica específica realmente mudar a resposta, pedir uma única clarificação. Para qualquer outro procedimento, a primeira pergunta de preço não recebe resposta automática: o sistema gera alerta interno com uma sugestão pronta para a equipe revisar e enviar.
 
 Nos três procedimentos automáticos, terminar aí. As únicas ofertas informativas de faixa permitidas nessa etapa são as de lifting facial, cervicoplastia e otoplastia descritas acima. Nos demais procedimentos ou quando a cirurgia não estiver identificada, gerar revisão humana com resposta sugerida. Não perguntar automaticamente o que mais incomoda no corpo ou no rosto. No primeiro pedido automático:
 
@@ -407,7 +409,7 @@ Informar uma única vez no mesmo contexto:
 
 Resposta-base adaptável:
 
-> Para ajudar no planejamento, como estimativa geral, o lifting facial costuma ficar entre R$ 26 mil e R$ 42 mil. Essa faixa é informativa: não é orçamento, proposta nem garantia de preço. O valor final é definido após avaliação e planejamento, pode ficar fora da faixa e varia conforme técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais. O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
+> Para ajudar no planejamento, como estimativa geral, o lifting facial costuma ficar entre R$ 26 mil e R$ 42 mil. Essa faixa é informativa: não é orçamento, proposta nem garantia de preço. O valor final é definido após avaliação e planejamento, pode ficar fora da faixa e varia conforme técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais. Não representa honorários isolados. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/
 
 Para minilifting, trocar apenas o procedimento e a faixa. Se a paciente comparar as duas opções, informar ambas. Nova repetição ou contexto ambíguo vai para revisão humana.
 
@@ -425,7 +427,7 @@ Resposta-base:
 >
 > O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a extensão do procedimento, eventual associação a outras abordagens da face e do pescoço, equipe, hospital, anestesia, materiais e necessidades individuais. Não representa honorários isolados.
 >
-> O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.
+Pagamento somente se perguntado: parcelamento antecipado, quitação antes da cirurgia e desconto à vista, sem condições específicas inventadas.
 
 O aceite explícito da oferta — inclusive `Sim` ou `Pode me passar` interpretados contra a última fala da clínica — ou um novo pedido explícito por valor, média ou faixa autoriza essa referência uma única vez. Uma conversa cervical nunca recebe as faixas de minilifting ou lifting facial. Se o guia facial geral já tiver sido enviado, não repetir link; sem guia anterior, usar uma única vez https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/. Nova repetição ou contexto ambíguo segue para revisão humana.
 
@@ -441,13 +443,13 @@ Resposta-base:
 >
 > O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.
 >
-> O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista.
+Pagamento somente se perguntado: parcelamento antecipado, quitação antes da cirurgia e desconto à vista, sem condições específicas inventadas.
 
 O primeiro pedido continua sem números. O aceite claro da oferta — inclusive `Sim` ou `Pode me passar` lidos contra o turno anterior — ou um novo pedido explícito por valor, média ou faixa autoriza essa resposta. Se o guia facial já tiver sido enviado, não repetir link; sem guia anterior, acrescentar uma única vez https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/. Não incluir CTA ou pergunta junto da faixa. Nova tentativa de enviar a faixa no mesmo contexto, outro intervalo ou ausência das ressalvas obrigatórias deve ser bloqueada e seguir para revisão humana.
 
 ### Outras cirurgias
 
-Desde a primeira pergunta de preço, preparar sugestão interna pela tabela aprovada e emitir alerta para a equipe. Fora das exceções expressamente aprovadas de lifting/minilifting, cervicoplastia e otoplastia, nunca enviar faixa automaticamente para a paciente.
+Desde a primeira pergunta de preço, preparar sugestão interna e emitir e-mail com a fonte e o rascunho completos. A TABELA DR. JOÃO 2025.xlsx é uma referência histórica: confirmar valores atuais, variante, hospital e composição; não tratá-la como tabela atual da Amanda. A faixa sugerida tem ressalva de avaliação e não garantia. Blefaroplastia superior usa a referência específica quando nomeada; inferior isolada, revisão de rinoplastia, ninfoplastia em consultório ou procedimentos sem base compatível não herdam a faixa de outra variante: mostrar SEM FAIXA SEGURA e um texto de esclarecimento. O envio é manual depois da revisão; este e-mail não aprova envio automático. Fora das exceções expressamente aprovadas de lifting/minilifting, cervicoplastia e otoplastia, nunca enviar faixa automaticamente para a paciente.
 
 ### Comparação com outro orçamento
 

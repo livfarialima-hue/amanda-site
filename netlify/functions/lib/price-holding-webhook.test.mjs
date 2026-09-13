@@ -202,7 +202,7 @@ test("a first lifting price question receives the approved initial information w
     assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
     assert.match(
       patientRequest.text.body,
-      /referência mais concreta.+faixa geral de valores como ponto de partida/is,
+      /posso te passar uma faixa geral de valores como ponto de partida/is,
     );
     assert.ok(Array.from(patientRequest.text.body).length <= 650);
     assert.doesNotMatch(

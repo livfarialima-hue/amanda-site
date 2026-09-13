@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-IMMEDIATE-SETTINGS-2026-09-12",
   "title": "Correcoes de origem e teste de presenca sem aumento de orcamento",
-  "status": "tested_local",
-  "baseCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
+  "status": "committed",
+  "baseCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -13,8 +13,10 @@
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": true,
+    "externalOperationalWritesPerformed": true,
+    "externalDocumentationWritesPerformed": false
   },
   "scope": {
     "contracts": [
@@ -45,7 +47,7 @@
       "Nenhum site, bot, Apps Script, mensagem ou registro de paciente alterado",
       "Nenhum identificador pessoal ou consentimento inventado enviado ao Google",
       "Nao executar upload manual ou fabricar conversao; preparado nao significa aceito",
-      "Codigo e recibos Bruna v150 da base 73d6877 preservados"
+      "Publicacao Bruna preco24a6f19/1e638ef e Apps Script150 preservados sem redeploy"
     ],
     "liveReadOnlyPreflight": [
       {
@@ -95,46 +97,51 @@
       },
       "siteCheck": "OK",
       "opsCheck": "SYNC_PENDING esperado antes da aplicacao, branch isolada e worktree em preparacao",
-      "environment": "npm ci recompôs dependencias ausentes; lockfile inalterado. Nao executar npm audit fix neste pacote."
+      "environment": "npm ci recompôs dependencias ausentes; lockfile inalterado. Nao executar npm audit fix neste pacote.",
+      "reconciliation": "Main avancou para1e638ef durante a tarefa; merge preserva todos os arquivos publicados, novo teste integral pendente."
     }
   },
   "release": {
-    "approvedCommit": null,
-    "verifiedAt": null,
+    "approvedCommit": "da367845af5de8b76b93b4c58c9c9aea4c200cfe",
+    "verifiedAt": "2026-09-13T03:00:05Z",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "drivePlanSha256": null,
-    "activationState": "not_applied",
-    "notes": "Pacote exclusivo de configuracao Google Ads/documentacao, sem deploy Netlify ou Apps Script."
+    "activationState": "ads_applied_drive_pending",
+    "notes": "Configuracoes Google Ads aplicadas e relidas; Drive ainda pendente. Netlify/Apps Script sao recibos HERDADOS da publicacao paralela, preservados sem edicao/deploy nesta tarefa. Commit da367845 define exatamente o plano aplicado; merge documental posterior preserva preco24a6f19/1e638ef.",
+    "netlifyDeployId": "6aa60d89d5920c0008dc059e",
+    "appsScriptVersion": 150,
+    "inheritedPlatformState": {
+      "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
+      "netlifyAndAppsScriptPublishedByThisTask": false
+    }
   },
   "previousCompletedRelease": {
-    "changeId": "BRUNA-CONVERSAO-CUIDADO-LEADS-2026-09-12",
-    "sourceCommit": "73d6877a45e8b1973ed4393663311e3a403bb456",
+    "changeId": "BRUNA-PRECO-CONSULTIVO-2026-09-12",
+    "sourceCommit": "1e638efc5bc2f0c1256640a6ca2aa2cafdb5a33e",
     "release": {
-      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "drivePlanSha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
-      "drivePlanProjectionStatus": "verified",
-      "drivePlanVerifiedAt": "2026-09-13T02:09:13.838Z",
-      "netlifyDeployId": "6aa6038eb31161000809495b",
-      "verifiedAt": "2026-09-13T02:10:21.890Z",
+      "approvedCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
+      "netlifyDeployId": "6aa60d89d5920c0008dc059e",
       "appsScriptVersion": 150,
-      "approvedCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
-      "activationState": "care_active_birthday_template_in_review",
-      "notes": "Código publicado nos dois destinos; migração aditiva confirmada; envio após aprovação individual ativo. Aniversário submetido em pt_BR/Marketing e ainda em análise, flags desligadas. Nenhuma mensagem de teste, aprovação individual ou consentimento inferido.",
-      "receiptPath": "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
+      "verifiedAt": "2026-09-13T02:43:53.5222839Z",
+      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "drivePlanSha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
       "drivePlanReadback": {
         "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-        "modified": "2026-09-13T02:09:13.838Z",
-        "characters": 163583,
-        "sha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
+        "modified": "2026-09-13T02:45:07.695Z",
+        "characters": 164657,
+        "sha256": "1489d2c13b8e850b430abbfe5ced5698b4f3956e8ce1b15faa491bcee5c8d896",
         "equal": true
       },
       "driveManualReadback": {
         "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-        "modified": "2026-09-13T02:09:19.875Z",
-        "characters": 99584,
-        "sha256": "de9031502e5216cb3bcfc2b087f36c7985db1e774e884fff97d8030e6887a589",
+        "modified": "2026-09-13T02:45:10.252Z",
+        "characters": 101054,
+        "sha256": "a9fd063a9d5445d0a15a102d45d4c9f28d56d4d3e6f4293d955f0309ab195f17",
         "equal": true
-      }
+      },
+      "activationState": "price_policy_active_manual_review_preserved",
+      "receiptPath": "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json",
+      "notes": "Publicação Netlify autorizada pela instrução cumulativa da conversa; Apps Script150 é estado herdado, sem edição/publicação/ativação nesta etapa. Nenhuma mensagem ou e-mail real de teste. Nenhuma faixa individual adicional foi autorizada."
     }
   },
   "rollback": {

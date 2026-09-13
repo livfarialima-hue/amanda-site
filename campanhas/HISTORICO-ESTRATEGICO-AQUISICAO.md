@@ -6,6 +6,15 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 12 de setembro de 2026 — abordagem de preço consultiva e revisão com fonte
+
+- **Decisão:** seção 31 do Norte. Pergunta de preço é planejamento; preservar primeira resposta sem números, lista autorizada e autonomia da paciente.
+- **Evidência/motivo:** solicitação de Daniel; oito regressões reproduzidas antes da correção. Referências históricas de 2025 relidas no Drive, sem tratá-las como preço atual da Amanda.
+- **Mudança:** oferta mais breve, pagamento somente quando perguntado, faixa facial pertinente, bloqueio de valores extras, rascunho interno com ressalva e fonte; variação superior/completa distinguida. Casos sem fonte não recebem número inventado.
+- **Hipótese/métrica:** melhorar clareza e passagem de contato qualificado a consulta, sem pressão. A teoria consultiva é adaptação, não comprovação de ganho clínico/comercial.
+- **Revisão:** integridade imediata/24h, D+7 em 19/09; manter/corrigir segundo as regras do Norte. Não houve mensagem real de teste nem modificação da LEADS, Calendar ou Apps Script.
+- **Estado:** publicado e verificado: commit24a6f19, Netlify6aa60d89d5920c0008dc059e, 12/09 às23h42; 1456 testes e serviços ativos. Recibo em auditorias/bruna-preco-2026-09-12/PUBLICACAO.json.
+
 ## 12 de setembro de 2026 — SEO e descoberta por IA com evidência do Search Console
 
 - **Decisão canônica:** seção 30 do Norte; preservadas as diretrizes de concisão, segurança e aquisição qualificada.
@@ -781,7 +790,7 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 
 ### 12 de setembro de 2026 — configuração imediata Google Ads, sem verba adicional
 
-- **Status:** autorizado por Daniel para execução imediata; preparado em pacote separado, aplicação ainda sujeita à releitura e ao recibo.
+- **Status:** aplicado e relido na conta entre 12/09 à noite e 13/09/2026 00h00 BRT; seis anúncios com IDs originais, sete campos mapeados e duas opções de Presença confirmados. Plano exato do commit `da367845`; recibo em `auditorias/google-ads-ajustes-imediatos-2026-09-12/EXECUCAO.md`. Publicação paralela da política de preço `24a6f19`/`1e638ef` preservada na reconciliação documental.
 - **Escopo:** seis parâmetros de anúncio (cinco `_camp`, três `_ag`), GBRAID/WBRAID na conexão LEADS e teste de Presença apenas em LIFT/CERV. Plano exato e baseline em `auditorias/google-ads-ajustes-imediatos-2026-09-12/PLANO.json`.
 - **Motivo/evidência:** divergências revalidadas por ID de anúncio/grupo; conexão existente sem dois mapeamentos; geografia das duas campanhas inclui interesse. Total oito campanhas/R$103 por dia, sem expansão de redes ou lances. A localização é hipótese de melhor logística, não prova de desperdício fora da cidade.
 - **Invariantes:** sem site, código operacional, mensagens, dados de pacientes, retroatividade, consentimento inventado, upload manual, texto, URL, nova conversão, verba, teto de CPC ou palavra nova. Candidato técnico `0ff0dd2` preservado, sem publicação.

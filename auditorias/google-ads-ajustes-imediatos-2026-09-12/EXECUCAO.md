@@ -1,6 +1,6 @@
 # Ajustes imediatos Google Ads — 12/09/2026
 
-Status: preparado; nenhuma escrita externa deste pacote até este registro.
+Status: configurações Google Ads aplicadas e relidas; encerramento documental em andamento. Janela de aplicação: 12/09/2026 à noite até 13/09/2026 00h00 BRT (03h00 UTC).
 
 ## Escopo e autorização
 
@@ -18,7 +18,30 @@ O candidato anterior 0ff0dd2 continua separado e não é publicado por este paco
 
 ## Verificação e recibos
 
-Pendente: testes locais, commit/preflight, releitura das dez alterações, equivalência do restante e atualização da mesma projeção do Plano no Drive. Autorização por escopo textual desta conversa, não por uma afirmação de que Daniel digitou o SHA.
+Commit do plano aplicado: `da367845af5de8b76b93b4c58c9c9aea4c200cfe`. Autorização por escopo textual desta conversa, não por uma afirmação de que Daniel digitou o SHA. Preflight de publicação passou em 2026-09-13T02:50:25Z, worktree limpo, vinculando esse HEAD ao pedido expresso de execução imediata. Antes da aplicação passaram 153/153 testes focados, 1444/1444 integrais, arquitetura, escopo exato de nove arquivos, diff e build/check de 193 arquivos/54 rotas. A primeira suíte encontrou dependências ausentes no worktree novo; `npm ci` recompôs o ambiente sem alterar lockfile; nenhuma correção ampla de dependências foi aplicada.
+
+### Resultado relido na plataforma
+
+| Anúncio | Grupo final | Campanha final | Estado |
+|---|---|---|---|
+| 816479308278 | ag_blefaroplastia | G26BLEF | Qualificada |
+| 816580854431 | ag_cirurgia_facial | G26FACE | Qualificada |
+| 816477682074 | ag_lifting_cervical | G26CERV | Qualificada |
+| 817459414056 | ag_lipo_papada | G26CERV | Qualificada |
+| 820414650683 | ag_lifting_facial_preco | G26LIFT | Qualificada |
+| 816570038294 | ag_marca | G26MARCA | Qualificada |
+
+Os IDs de anúncio/grupo e os sufixos explícitos ou herdados foram preservados. Somente os campos de parâmetro foram digitados nos editores; nenhum título, descrição, fixação, destino ou status foi alterado. A primeira tentativa de BLEF não persistiu: releitura após atualizar confirmou o valor antigo; nova digitação e saída do campo salvaram G26BLEF, depois relido na tabela. O total continuou em 17 anúncios ativos, todos Qualificada. A coluna de força de alguns anúncios ficou Pendente durante recálculo, distinta de reprovação/status de veiculação.
+
+Conexão LEADS: confirmação “O mapeamento dos campos de conexão foi atualizado”, sete campos mapeados. Reabertura confirmou GBRAID→GBRAID e WBRAID→WBRAID, sem transformação; Data_e_hora_da_convers_o, ID_da_transa_o, GCLID, Valor_R_ e Moeda preservados. E-mail, telefone, IP e consentimento não mapeados. Agenda diária 05–06h GMT-03 e próxima execução 13/09 05h05 mantidas; não acionado Executar agora. Último ciclo anterior: seis linhas/zero erro, sem inferir conversões novas ou aceitas.
+
+Geografia: IDs 24028216444 (LIFT, R$24) e 24023843174 (CERV, R$12) revalidados antes de salvar, ambos antes em Presença ou interesse e só São Paulo cidade. Reabertura após salvar confirmou Presença marcada e mesma cidade/verba. Não adicionados locais ou exclusões.
+
+### Reconciliação com trabalho paralelo
+
+Durante a tarefa a branch canônica avançou de `73d6877` para `1e638ef` com a política de preços publicada por outra tarefa (código `24a6f19`, Netlify `6aa60d89d5920c0008dc059e`, Apps Script150 herdado). A projeção Drive mudou às 02:45:07.695Z e foi relida equivalente ao novo Plano local; a cópia antiga NÃO foi sobrescrita. Merge mantém todos os arquivos dessa publicação; a decisão de preço permanece seção31 do Norte e os ajustes Google passam à seção32. Os IDs de Netlify/Apps Script no recibo são estado herdado, não publicação deste pacote. A versão técnica de atribuição `0ff0dd2` continua fora do merge.
+
+Pendente neste ponto: regressão da reconciliação e substituição/verificação da mesma projeção Drive. Fechamento só será registrado após essas confirmações.
 
 ## Monitoramento e rollback
 

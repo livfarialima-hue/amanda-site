@@ -185,7 +185,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida/,
+    /Se você quiser, posso te passar uma faixa geral de valores como ponto de partida/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,

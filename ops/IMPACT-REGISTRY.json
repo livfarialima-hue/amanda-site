@@ -29,7 +29,9 @@
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
         "scripts/check-journey-module-boundaries.mjs",
-        "scripts/run-tests.mjs"
+        "scripts/run-tests.mjs",
+        "auditorias/bruna-preco-2026-09-12/RELATORIO.md",
+        "auditorias/bruna-preco-2026-09-12/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -216,7 +218,8 @@
         "netlify/functions/lib/human-resume-queue.mjs",
         "netlify/functions/lib/inbound-burst-context.mjs",
         "netlify/functions/lib/outbound-reply-gate.mjs",
-        "netlify/functions/lib/surgical-price-review.mjs"
+        "netlify/functions/lib/surgical-price-review.mjs",
+        "netlify/functions/lib/surgical-price-policy.mjs"
       ],
       "consumerFiles": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -257,7 +260,9 @@
         "netlify/functions/lib/price-holding-webhook.test.mjs",
         "netlify/functions/lib/surgical-price-review.mjs",
         "netlify/functions/lib/surgical-price-review.test.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/price-journey.integration.test.mjs",
+        "netlify/functions/lib/surgical-price-policy.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
@@ -272,7 +277,8 @@
         "netlify/functions/lib/inbound-burst-context.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/price-holding-webhook.test.mjs",
-        "netlify/functions/lib/surgical-price-review.test.mjs"
+        "netlify/functions/lib/surgical-price-review.test.mjs",
+        "netlify/functions/lib/price-journey.integration.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
