@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "accountId": "995-334-4486",
+  "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
+  "status": "preflight_verified",
+  "authorization": "Daniel: faça as modificações que vc julgar necessarias nas campanhas do google então.",
+  "baseCommit": "9f2059fd506cfa0b0570bc6cc7ba6ddd457f98d0",
+  "baseline": {
+    "checkedAt": "2026-09-13T22:49:20Z",
+    "source": "Google Ads autenticado e exportações fornecidas por Daniel",
+    "dateWindow": "2026-08-14/2026-09-12",
+    "accountDailyBudgetBRL": 103,
+    "campaigns": [
+      {
+        "campaignId": "24028168714",
+        "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+        "code": "G26FACE",
+        "status": "Ativada/Qualificada",
+        "dailyBudgetBRL": 8,
+        "clicks": 131,
+        "costBRL": 239.81,
+        "qualifiedConversions": 0
+      },
+      {
+        "campaignId": "24023843174",
+        "campaign": "S_BR_SP_LIFTING_CERVICAL",
+        "code": "G26CERV",
+        "status": "Ativada/Qualificada (limitada por volume)",
+        "dailyBudgetBRL": 12,
+        "clicks": 321,
+        "costBRL": 377.22,
+        "qualifiedConversions": 0
+      }
+    ],
+    "faceGenericKeyword": {
+      "adGroup": "AG_CIRURGIA_FACIAL",
+      "text": "cirurgiã plástica em são paulo",
+      "matchType": "PHRASE",
+      "status": "Ativada",
+      "clicks": 118,
+      "costBRL": 215.61,
+      "qualifiedConversions": 0,
+      "shareOfCampaignCost": 0.8991
+    },
+    "searchTermsCoverageOfAccountCost": 0.4725,
+    "measurementCaveat": "A coluna de termos não informa a palavra acionadora e apenas 47,25% do custo tem consulta detalhada; não atribuir todo termo nominal à palavra genérica nem tratar ausência de classificação como perda."
+  },
+  "changes": {
+    "budgets": [
+      {
+        "campaignId": "24028168714",
+        "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+        "code": "G26FACE",
+        "beforeDailyBRL": 8,
+        "afterDailyBRL": 4
+      }
+    ],
+    "pauseKeywords": [
+      {
+        "campaignId": "24028168714",
+        "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+        "adGroup": "AG_CIRURGIA_FACIAL",
+        "text": "cirurgiã plástica em são paulo",
+        "matchType": "PHRASE",
+        "before": "Ativada",
+        "after": "Pausada",
+        "delete": false
+      }
+    ],
+    "addExactKeywords": [
+      {
+        "campaignId": "24023843174",
+        "campaign": "S_BR_SP_LIFTING_CERVICAL",
+        "adGroup": "AG_LIPO_PAPADA",
+        "text": "lipo de papada valor",
+        "matchType": "EXACT",
+        "observedClicks": 11,
+        "observedCostBRL": 11.86
+      },
+      {
+        "campaignId": "24023843174",
+        "campaign": "S_BR_SP_LIFTING_CERVICAL",
+        "adGroup": "AG_LIPO_PAPADA",
+        "text": "cirurgia de papada preço",
+        "matchType": "EXACT",
+        "observedClicks": 5,
+        "observedCostBRL": 5.73
+      },
+      {
+        "campaignId": "24023843174",
+        "campaign": "S_BR_SP_LIFTING_CERVICAL",
+        "adGroup": "AG_LIPO_PAPADA",
+        "text": "lipo de papada preço",
+        "matchType": "EXACT",
+        "observedClicks": 3,
+        "observedCostBRL": 3.15
+      },
+      {
+        "campaignId": "24023843174",
+        "campaign": "S_BR_SP_LIFTING_CERVICAL",
+        "adGroup": "AG_CERVICOPLASTIA",
+        "text": "cervicoplastia valor",
+        "matchType": "EXACT",
+        "observedClicks": 5,
+        "observedCostBRL": 5.15
+      }
+    ]
+  },
+  "budgetAfterDailyBRL": 99,
+  "declinedRecommendations": [
+    {
+      "items": [
+        "procedimento para papada",
+        "estetica papada",
+        "gordura queixo"
+      ],
+      "reason": "Não são os termos literais de melhor intenção observados; estética ainda conflita com negativa existente e procedimento pode atrair alternativas não cirúrgicas."
+    },
+    {
+      "items": [
+        "aumentos de orçamento",
+        "Maximizar conversões",
+        "Display",
+        "parceiros de pesquisa",
+        "Performance Max/Merchant Center",
+        "orçamento compartilhado",
+        "remoção em massa de palavras exatas"
+      ],
+      "reason": "Um único qualificado, cobertura de classificação incompleta e maior perda por classificação do que por orçamento não sustentam ampliação ou automação de lance."
+    }
+  ],
+  "preserved": [
+    "orçamentos das outras sete campanhas",
+    "R$ 12/dia em G26CERV",
+    "Maximizar cliques e CPC máximo existente",
+    "metas e ações de conversão",
+    "Pesquisa Google sem parceiros e sem Display",
+    "geografia por presença, idiomas, idades, dispositivos e agenda",
+    "RSAs, textos, fixações, URLs, parâmetros e recursos",
+    "negativas existentes e termos de preço/valor/quanto custa",
+    "site, Netlify, Apps Script, LEADS, CRM, WhatsApp, Calendar e Meta"
+  ],
+  "review": {
+    "owner": "Daniel e equipe LIV",
+    "integrity": "24 a 48 horas",
+    "businessDates": [
+      "2026-09-21",
+      "2026-09-28"
+    ],
+    "metrics": [
+      "termos nominais de terceiros em G26FACE",
+      "contatos identificados e válidos",
+      "leads qualificados aceitos",
+      "consultas agendadas e realizadas",
+      "custo por etapa"
+    ],
+    "rule": "Manter se a intenção ficar mais aderente sem perda desproporcional de contatos válidos. Classificação insuficiente torna a leitura inconclusiva. Restaurar somente o item responsável por regressão comprovada."
+  },
+  "rollback": {
+    "budget": "Restaurar somente G26FACE de R$ 4/dia para R$ 8/dia.",
+    "keyword": "Reativar somente a frase pausada e/ou pausar apenas a nova exata responsável. Não apagar histórico, outras palavras ou listas."
+  }
+}

@@ -6,6 +6,17 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 13 de setembro de 2026 — contenção de face genérica e exatas cervicais observadas
+
+- **Decisão canônica:** seção 36 do Norte; pacote externo limitado a `G26FACE` e `G26CERV`, sem alteração de site.
+- **Motivo/evidência:** `G26FACE` gastou R$ 239,81/131 cliques e zero qualificado no recorte; a frase genérica respondeu por R$ 215,61/118 cliques e zero qualificado. Quatro buscas cervicais de preço tiveram de 3 a 11 cliques e ainda não existiam como exatas.
+- **Mudança:** `G26FACE` de R$ 8 para R$ 4/dia; pausa reversível da frase `cirurgiã plástica em são paulo`; quatro exatas de preço em seus grupos cervicais, com `G26CERV` preservada em R$ 12/dia. Total previsto R$ 99/dia.
+- **Limite:** termos divulgados cobrem só parte do custo e não indicam qual palavra os acionou. Perguntar preço não desqualifica a pessoa. Nenhum termo nominal de terceiro foi negativado em lote.
+- **Não aplicado:** três sugestões genéricas do Google, aumentos de orçamento, mudança de lance, Display, parceiros, Performance Max, orçamento compartilhado e remoção em massa de exatas.
+- **Hipótese/métrica:** melhorar aderência de intenção e leitura por termo; acompanhar válidos, qualificados aceitos, consultas e custo por etapa. Pontuação, CTR, CPC e cliques são diagnósticos.
+- **Revisão/rollback:** integridade em 24–48h; negócio em 21/09 e 28/09. Baixa classificação é inconclusiva. Reverter somente o orçamento, a frase ou a nova exata responsável, sem apagar histórico.
+- **Estado:** preflight vivo concluído; publicação e readback devem constar no recibo específico antes de declarar a mudança aplicada.
+
 ## 12 de setembro de 2026 — abordagem de preço consultiva e revisão com fonte
 
 - **Decisão:** seção 31 do Norte. Pergunta de preço é planejamento; preservar primeira resposta sem números, lista autorizada e autonomia da paciente.

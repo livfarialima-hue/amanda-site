@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
+  "status": "pending_external_write",
+  "accountId": "995-334-4486",
+  "publishedAt": null,
+  "readBack": false,
+  "applied": [],
+  "notApplied": [],
+  "patientEffects": {
+    "messages": 0,
+    "appointments": 0,
+    "conversionsCreated": 0,
+    "leadRowsChanged": 0
+  },
+  "drivePlan": {
+    "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "updated": false,
+    "readBackEqual": false
+  }
+}

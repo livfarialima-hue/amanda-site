@@ -1,32 +1,34 @@
 {
   "schemaVersion": 1,
-  "changeId": "RECONCILIACAO-LEADS-CONVERSAS-2026-09-13",
-  "title": "Reconciliar classificação da LEADS com conversas exportadas e preparar conversões qualificadas",
-  "status": "published_verified",
+  "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
+  "title": "Contenção de face genérica e exatas cervicais observadas",
+  "status": "tested_local",
   "baseCommit": "9f2059fd506cfa0b0570bc6cc7ba6ddd457f98d0",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu diretamente a correção da LEADS a partir das conversas exportadas e já autorizou publicar o que estivesse pendente. A autorização cobre a classificação auditada, os payloads pertinentes e os recibos deste pacote; não cobre mensagens a pacientes nem alterações de campanha."
+    "note": "Daniel autorizou aplicar as modificações julgadas necessárias nas campanhas Google. O pacote exato limita-se a orçamento e palavras de G26FACE/G26CERV, sem site, atendimento ou dados de pacientes."
   },
   "risk": {
-    "level": "high",
-    "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false,
-    "externalWritesScope": "Uma oportunidade da Dra. Amanda promovida de Novo para Qualificado, sincronizada no CRM/funil e preparada para importação Google. Backup privado anterior; zero mensagem, agenda, dado clínico ou configuração de campanha."
+    "level": "medium",
+    "patientEffects": false,
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true,
+    "externalWritesScope": "Google Ads conta 995-334-4486: um orçamento, pausa de uma palavra e criação de quatro palavras exatas; mesma projeção canônica do Plano no Drive após readback."
   },
   "scope": {
     "contracts": [
       "change-governance",
-      "patient-journey-funnel-followups",
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
-      "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
+      "auditorias/google-ads-ajustes-campanhas-2026-09-13/EXECUCAO.md",
+      "auditorias/google-ads-ajustes-campanhas-2026-09-13/PLANO.json",
+      "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "campanhas/google-ads-campaign-adjustments-20260913.test.mjs",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -34,165 +36,97 @@
   },
   "impact": {
     "consumers": [
-      "Planilha LEADS canônica",
-      "CRM e funil por Opportunity ID",
-      "_LEAD_FASE_EVENTOS",
-      "_GOOGLE_ADS_CONVERSION_EVENTS",
-      "IMPORT_GOOGLE_ADS",
-      "fila periódica de classificação",
-      "conexão diária LEADS para Google Ads",
-      "Plano executivo e histórico estratégico"
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
+      "google-ads-scripts/google-ads-search-review-email.js",
+      "netlify/functions/lib/patient-replies.mjs",
+      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md"
     ],
     "preservedInvariants": [
-      "Somente oportunidades da Dra. Amanda em Qualificado ou fase posterior podem ser preparadas para a ação qualificada",
-      "Exatamente um entre GCLID, GBRAID e WBRAID é obrigatório; ausência ou conflito mantém Enviar ao Google Ads? diferente de Sim",
-      "Prefill isolado, preço/localização sem intenção prática, silêncio e mídia sem texto não qualificam",
-      "Fases superiores e pacientes estabelecidos não são rebaixados nem tratados como nova aquisição",
-      "Ação exata Lead qualificado GCLID, valor 1, BRL e transação idempotente",
-      "Nenhuma mensagem, consulta, cirurgia, dado clínico, orçamento ou configuração de campanha alterada",
-      "Backup integral privado precede a escrita; reversão é pontual e não sobrescreve mudanças concorrentes"
+      "Somente campanhas 24028168714/G26FACE e 24023843174/G26CERV",
+      "G26FACE R$8 para R$4; G26CERV R$12; demais orçamentos iguais; total R$103 para R$99",
+      "Pausa sem exclusão de uma frase e adição de quatro exatas observadas; nenhuma negativa em lote",
+      "Lances, metas, ações de conversão, redes, geografia, idiomas, idade, dispositivos e agenda preservados",
+      "RSAs, textos, fixações, URLs, parâmetros, recursos e site preservados",
+      "Zero alteração de LEADS, CRM, Apps Script, WhatsApp, Calendar, Meta, paciente, consulta ou conversão"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "LEADS / CRM / funil / Drive restrito",
-        "status": "verified_read_only",
-        "reference": "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
-        "checkedAt": "2026-09-13T22:20:00.000Z",
-        "evidence": "377 ZIPs consolidados em 289 conversas únicas; coorte recente de 140, com 132 vínculos diretos e oito resoluções manuais. Um único Novo apresentou manifestação pessoal e interesse concreto suficientes; fases superiores e contatos não pertinentes preservados."
-      },
-      {
         "contract": "google-ads-acquisition-conversion",
-        "system": "LEADS / Google Ads import source",
+        "system": "Google Ads",
         "status": "verified_read_only",
-        "reference": "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
-        "checkedAt": "2026-09-13T22:24:00.000Z",
-        "evidence": "Alvo canônico confirmado; seis linhas elegíveis e válidas antes da correção, ação exata Lead qualificado GCLID, zero problemas e zero duplicidades. Uma candidata adicional tinha exatamente um GCLID e os campos obrigatórios."
+        "reference": "auditorias/google-ads-ajustes-campanhas-2026-09-13/EXECUCAO.md",
+        "checkedAt": "2026-09-13T22:49:20Z",
+        "evidence": "Conta995-334-4486; oito campanhas/R$103dia. FACE ativa R$8,131cliques,R$239,81,0resultado; CERV ativa R$12,321cliques,R$377,22,0resultado. Nenhuma escrita no preflight."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
     "commands": [
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
-      "git diff --check",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test campanhas/google-ads-settings.test.mjs"
+      "git diff --check",
+      "node --test campanhas/google-ads-settings.test.mjs",
+      "node --test campanhas/google-ads-campaign-adjustments-20260913.test.mjs"
     ],
-    "completedAt": "2026-09-13T22:47:30.000Z",
+    "completedAt": "2026-09-13T22:57:25Z",
     "results": {
       "fullSuite": {
         "passed": 1481,
         "failed": 0
       },
-      "journeyFocused": {
-        "passed": 247,
+      "acquisitionFocused": {
+        "passed": 149,
         "failed": 0
       },
-      "googleFocused": {
-        "passed": 153,
+      "settingsAndPackage": {
+        "passed": 8,
         "failed": 0
       },
       "architecture": "OK",
       "changeSafety": "OK",
-      "siteBuild": {
+      "build": {
         "files": 193,
         "routes": 54,
         "errors": 0
       },
       "siteCheck": {
         "routes": 54,
-        "http200": 54,
-        "selfCanonical": 54,
         "errors": 0
       },
-      "livePostflight": {
-        "eligible": 7,
-        "valid": 7,
-        "issues": 0,
-        "duplicateTransactions": 0,
-        "classifierQueue": "done"
-      },
-      "operationalConsistency": "OK",
-      "finalOpsCheckAt": "2026-09-13T22:49:30.000Z"
-    }
-  },
-  "previousCompletedRelease": {
-    "changeId": "OTOPLASTIA-ESTRATEGIA-2026-09-13",
-    "sourceCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
-    "release": {
-      "approvedCommit": "030c57da84878f0910111d5e8de2a71b91538e82",
-      "verifiedAt": "2026-09-13T14:12:11.464Z",
-      "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-      "netlifyPublishedAt": "2026-09-13T13:57:01.241Z",
-      "appsScriptVersion": 152,
-      "appsScriptPublishedByThisChange": false,
-      "appsScriptInheritedReceipt": "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
-      "drivePlanSha256": "396b4ebea1fab9a785c293892ba55be06dfa9807c5f80484a7d55cb73a090408",
-      "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "googleAdsCampaignId": "24029985112",
-      "googleAdsIds": [
-        "816612405034",
-        "816612778213"
-      ],
-      "googleAdsBudgetBRL": 15,
-      "googleAdsReadBack": true,
-      "automationId": "reavaliar-estrat-gia-de-otoplastia",
-      "receiptPath": "auditorias/otoplastia-estrategia-2026-09-13/PUBLICACAO.json"
+      "operationalConsistency": "SYNC_PENDING esperado antes da escrita externa, readback, integração canônica e projeção Drive"
     }
   },
   "rollback": {
-    "local": "Reverter somente os seis arquivos documentais deste pacote, preservando registros e releases posteriores.",
-    "production": "Se a evidência de qualificação estiver errada, executar correção pontual pela rotina auditada, conferindo a fase atual. Se a conversão já tiver sido aceita, criar a retração idempotente; não restaurar o backup integral sobre mudanças concorrentes."
+    "local": "Reverter somente os nove arquivos declarados deste pacote, preservando todo trabalho paralelo.",
+    "production": "Restaurar apenas G26FACE para R$8/dia, reativar somente a frase pausada e/ou pausar a nova exata responsável. Não apagar palavras, histórico, conversões ou dados; reler cada entidade."
   },
   "monitoring": {
-    "owner": "Daniel / equipe",
-    "window": "Próxima conexão LEADS → Google Ads em 14/09/2026 entre 05:00 e 06:00 BRT; releitura depois da execução e acompanhamento em sete dias.",
+    "owner": "Daniel / equipe LIV",
+    "window": "Integridade24-48h; sete dias completos em21/09; quatorze dias completos em28/09, America/Sao_Paulo.",
     "metrics": [
-      "estado e recibo da linha nova",
-      "linhas prontas e aceitas",
-      "duplicidade de transação",
-      "divergência LEADS/CRM/funil",
-      "contatos qualificados e consultas por coorte"
+      "termos nominais de terceiros em G26FACE",
+      "contatos identificados e válidos",
+      "qualificados aceitos",
+      "consultas agendadas e realizadas",
+      "custo por etapa"
     ],
-    "rollbackRule": "Reverter somente diante de evidência de fase incorreta, ação divergente, identificador inválido, duplicidade ou projeções inconsistentes; ready sem aceite é pendência de monitoramento, não erro de classificação."
+    "rollbackRule": "Reverter somente o item responsável por destino/política/atribuição incorretos ou piora downstream consistente; baixa amostra/classificação insuficiente é inconclusiva."
   },
   "release": {
-    "approvedCommit": "a457c588662ac15e76bcc37a5c60686a84d7d178",
-    "verifiedAt": "2026-09-13T22:48:30.000Z",
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "netlifyPublishedByThisChange": false,
-    "netlifyState": "inherited_from_verified_otoplasty_release",
-    "appsScriptVersion": 152,
-    "appsScriptPublishedByThisChange": false,
-    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
-    "appsScriptSameDeployment": true,
-    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
-    "spreadsheetBackupFileId": "1KdZwJtIkK53xODKz-hH7XIxaPO_9KIal93zIAIa9Xzk",
-    "qualifiedCorrections": 1,
-    "googleReadyBefore": 6,
-    "googleReadyAfter": 7,
-    "googleEligibilityIssues": 0,
-    "googleDuplicateTransactions": 0,
-    "googleImportState": "ready",
-    "googleAcceptance": "pending_next_scheduled_connector_run",
+    "approvedCommit": null,
+    "verifiedAt": null,
+    "googleAdsReadBack": false,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "9d78c4ada29a4f29edcec97dfa6011a0980a900684560ddc42ffbf3a1793a5b0",
-    "drivePlanReadback": {
-      "modified": "2026-09-13T22:48:06.124Z",
-      "bytes": 176899,
-      "equal": true
-    },
-    "driveClosedAuditFileId": "1yyUh7u7WWepQvkgasliHoqxru-LNJTYw",
-    "driveClosedAuditSha256": "4551be79f5ef77923a69b965b2c2485fd66396c3943568688038fe5fab33dc02",
-    "receiptPath": "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json"
+    "drivePlanReadBack": false,
+    "receiptPath": "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json"
   }
 }
