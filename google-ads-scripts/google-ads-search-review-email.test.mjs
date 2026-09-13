@@ -55,6 +55,15 @@ test("separa preço de irrelevância", () => {
   assert.equal(classify("curso de blefaroplastia").kind, "negative_candidate");
 });
 
+test("reconhece os procedimentos dos pilotos secundários e o orçamento total vigente", () => {
+  const classify = loadFunction("classifySearchTerm");
+  const config = loadFunction("CONFIG");
+  assert.equal(classify("mastopexia sem prótese").kind, "relevant");
+  assert.equal(classify("lipoaspiração em são paulo").kind, "relevant");
+  assert.equal(classify("abdominoplastia").kind, "relevant");
+  assert.equal(config.totalDailyBudgetReference, 103);
+});
+
 test("sugere positiva exata apenas para termo compatível com evidência mínima", () => {
   const buildSuggestions = loadFunction("buildSuggestions");
   const suggestions = buildSuggestions({
@@ -204,6 +213,15 @@ test("preserva roteamentos verificados e sinaliza autobloqueio cervical", () => 
   const risks = suggestions.filter((row) => row.problem === "Negativa com risco de bloquear busca legítima");
   assert.equal(risks.length, 1);
   assert.equal(risks[0].area.includes("LIFTING_CERVICAL"), true);
+});
+
+test("registra como intencionais as seis negativas exatas dos novos grupos de preço", () => {
+  const routes = loadFunction("INTENTIONAL_ROUTING_NEGATIVES");
+  const secondary = routes.filter((row) =>
+    ["S_BR_SP_CIRURGIA_MAMA", "S_BR_SP_CONTORNO_CORPORAL"].includes(row.campaign),
+  );
+  assert.equal(secondary.length, 6);
+  assert.equal(secondary.every((row) => row.matchType === "EXACT"), true);
 });
 
 test("meta personalizada válida prevalece sobre categoria/origem não biddable", () => {

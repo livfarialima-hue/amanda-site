@@ -3,6 +3,7 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, statSync, wri
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { runInNewContext } from "node:vm";
 import { auditSite } from "../scripts/check-site-technical.mjs";
 import {
   buildStaticSite,
@@ -507,6 +508,21 @@ test("educational pilot is complete, sourced and discoverable from the library",
       canonical: "https://draamandaschroeder.com.br/conteudos/minilifting-lifting-facial-deep-plane/",
       required: [/Deep plane é uma abordagem cirúrgica, não um selo de superioridade/i, /pubmed\.ncbi\.nlm\.nih\.gov\/41100833/i],
     },
+    {
+      file: "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/como-se-preparar-cirurgia-plastica/",
+      required: [/Não suspenda anticoagulantes/i, /asahq\.org\/preparing-for-surgery/i, /Jejum e orientações/i],
+    },
+    {
+      file: "conteudos/recuperacao-lifting-cervical/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/recuperacao-lifting-cervical/",
+      required: [/não aguarde resposta por WhatsApp/i, /não faça compressas frias por conta própria/i, /neck-lift\/recovery/i],
+    },
+    {
+      file: "conteudos/otomodelacao-ou-otoplastia/index.html",
+      canonical: "https://draamandaschroeder.com.br/conteudos/otomodelacao-ou-otoplastia/",
+      required: [/Moldagem em bebês é uma situação diferente/i, /chop\.edu\/treatments\/ear-molding/i, /não deve ser apresentada como tratamento para perda de audição/i],
+    },
   ];
 
   for (const article of articles) {
@@ -540,9 +556,9 @@ test("educational pilot is complete, sourced and discoverable from the library",
   const uniqueArticleLinks = new Set(
     [...library.matchAll(/class="cl-article" href="([^"]+)"/g)].map((match) => match[1]),
   );
-  assert.equal(uniqueArticleLinks.size, 24);
-  assert.match(library, /data-content-total>24 leituras educativas/);
-  assert.match(library, /class="cl-library-count" data-content-total>24 conteúdos/);
+  assert.equal(uniqueArticleLinks.size, 27);
+  assert.match(library, /data-content-total>27 leituras educativas/);
+  assert.match(library, /class="cl-library-count" data-content-total>27 conteúdos/);
   articles.forEach((article) => {
     const relativeHref = article.file.replace(/^conteudos\//, "").replace(/index\.html$/, "");
     assert.match(library, new RegExp(`class="cl-article" href="${relativeHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
@@ -570,16 +586,69 @@ test("educational pilot is complete, sourced and discoverable from the library",
   );
 });
 
+
+test("expanded educational articles preserve prior material and do not claim unperformed medical review", () => {
+  const expected = [
+    ["cuidados-cicatrizacao-cirurgia", /Silicone e massagem não começam em qualquer momento/i, /aad\.org\/public\/diseases\/a-z\/scars-treatment/],
+    ["papada-contorno-cervical", /Quando retirar gordura pode não ser suficiente/i, /plasticsurgery\.org\/cosmetic-procedures\/liposuction/],
+    ["seguranca-cirurgia-plastica", /Uma lista de perguntas para conferir o plano/i, /cirurgiaplastica\.org\.br\/seguranca-do-paciente\/seguranca-e-riscos/],
+  ];
+  for (const [slug, heading, source] of expected) {
+    const html = readFileSync(path.join(root, "conteudos", slug, "index.html"), "utf8");
+    assert.match(html, heading, slug);
+    assert.match(html, source, slug);
+    assert.match(html, /class="article-references"/, slug);
+    assert.match(html, /Conteúdo educativo · Atualizado/i, slug);
+    assert.doesNotMatch(html, /Revisado pela|Conteúdo médico revisado/i, slug);
+    const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    assert.equal(schema.author, undefined, slug);
+    assert.equal(schema.reviewedBy, undefined, slug);
+    assert.equal(schema.lastReviewed, undefined, slug);
+    assert.match(html, /data-track="whatsapp"/, slug);
+    assert.match(html, /href="\.\.\/(?:como-se-preparar-cirurgia-plastica|recuperacao-lifting-cervical)\//, slug);
+  }
+  const safety = readFileSync(path.join(root, "conteudos/seguranca-cirurgia-plastica/index.html"), "utf8");
+  assert.match(safety, /amanda-planejamento-congresso\.webp/);
+  assert.match(safety, /anestesia-geral-seguranca\.mp4/);
+  assert.match(safety, /Dr\. Daniel Added/);
+  assert.equal([...safety.matchAll(/class="faq-item"/g)].length, 7);
+  const scars = readFileSync(path.join(root, "conteudos/cuidados-cicatrizacao-cirurgia/index.html"), "utf8");
+  assert.match(scars, /data-source-id="posts_1-51"/);
+  const neck = readFileSync(path.join(root, "conteudos/papada-contorno-cervical/index.html"), "utf8");
+  assert.equal([...neck.matchAll(/data-source-id="reels-25"/g)].length, 3);
+  const libraryScript = readFileSync(path.join(root, "campanhas/content-library.js"), "utf8");
+  assert.match(libraryScript, /'preparo', 'preparacao', 'preparar', 'preoperatorio'/);
+  assert.match(libraryScript, /'orelha', 'orelhas', 'otoplastia', 'otomodelacao'/);
+});
+
+test("library search prioritizes exact topic terms while preserving plain-language synonyms", () => {
+  const script = readFileSync(path.join(root, "campanhas/content-library.js"), "utf8");
+  const normalization = script.slice(script.indexOf("  var normalize ="), script.indexOf("  var articles ="));
+  const scoring = script.slice(script.indexOf("  var variantsFor ="), script.indexOf("  var createResult ="));
+  const score = runInNewContext(normalization + scoring + "; scoreArticle;");
+  const neck = { titleSearch: "cuidados depois do lifting cervical", labelSearch: "recuperacao cervical", bodySearch: "inchaco curativos sono trabalho direcao exercicio pescoco" };
+  const eyelid = { titleSearch: "como organizar a recuperacao da blefaroplastia", labelSearch: "recuperacao", bodySearch: "olhos secos edema trabalho telas face e pescoco" };
+  assert.ok(score(neck, "recuperação cervical") > score(eyelid, "recuperação cervical"));
+  assert.ok(score(neck, "recuperação do pescoço") > 0);
+  assert.equal(score(neck, "recuperação astronomia"), 0, "unmatched words must not create unrelated results");
+  assert.ok(score(neck, "recuperação pescoço") > 0);
+  const prep = { titleSearch: "como se preparar para uma cirurgia plastica", labelSearch: "preparo e seguranca", bodySearch: "medicamentos exames acompanhante" };
+  assert.ok(score(prep, "pré-operatório") > 0);
+  const ear = { titleSearch: "otomodelacao ou otoplastia", labelSearch: "orelhas", bodySearch: "moldagem em bebes e tecnicas para adultos" };
+  assert.ok(score(ear, "orelha") > 0);
+  assert.equal(score(ear, "recuperação cervical"), 0);
+});
+
 test("offline site gate covers sitemap, expected 200, canonical, robots, H1, orphans and redirects", () => {
   const result = auditSite({ root });
 
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishDirectory, "tmp/netlify-deploy");
-  assert.equal(result.summary.sitemapUrls, 49);
-  assert.equal(result.summary.expectedHttp200, 49);
-  assert.equal(result.summary.selfCanonical, 49);
-  assert.equal(result.summary.indexable, 49);
-  assert.equal(result.summary.oneH1, 49);
+  assert.equal(result.summary.sitemapUrls, 52);
+  assert.equal(result.summary.expectedHttp200, 52);
+  assert.equal(result.summary.selfCanonical, 52);
+  assert.equal(result.summary.indexable, 52);
+  assert.equal(result.summary.oneH1, 52);
   assert.equal(result.summary.orphanPages, 0);
   assert.equal(result.summary.auditFilesInArtifact, 0);
   assert.ok(result.summary.redirects >= 1);

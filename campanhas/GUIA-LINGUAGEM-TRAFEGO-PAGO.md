@@ -15,9 +15,12 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
 - Para buscas como `lifting facial preço`, `valor do lifting` e `quanto custa lifting facial`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`. A promessa do anúncio é explicar componentes, fatores de variação e orçamento individual, não publicar faixa cirúrgica. Para indicação, técnica, resultados e recuperação, preservar `https://draamandaschroeder.com.br/lifting-facial/` como destino principal.
 - Para a palavra exata `[cirurgia de blefaroplastia preço]`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/` no nível da palavra, dentro de `AG_BLEFAROPLASTIA`. A página explica composição e avaliação; não promete faixa privada automática. O sitelink correspondente é `Preço da Blefaroplastia`, restrito ao contexto BLEF.
 - Para o sitelink `Preço do Lifting Cervical`, usar `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-cervical-sao-paulo/` somente em `AG_CERVICOPLASTIA`. Não associar a `AG_LIPO_PAPADA`, porque a página diferencia lipo, lifting cervical e planejamento cervicofacial.
-- Para `S_BR_SP_CIRURGIA_MAMA`, separar mastopexia, mamoplastia redutora e prótese em grupos próprios e levar cada termo à página específica. Para `S_BR_SP_CONTORNO_CORPORAL`, separar abdominoplastia e lipoaspiração. Os guias gerais de custo entram somente como sitelinks; não usar uma página genérica como destino principal quando o procedimento já está nomeado.
+- Para `S_BR_SP_CIRURGIA_MAMA`, manter mastopexia, mamoplastia redutora e prótese em grupos próprios e levar intenção de procedimento à página específica. Separar também o preço por procedimento: `AG_MASTOPEXIA_PRECO` e `AG_PROTESE_MAMA_PRECO` usam o guia `/conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/`, mas preservam títulos, descrições e `{_ag}` próprios. Em `S_BR_SP_CONTORNO_CORPORAL`, manter abdominoplastia e lipoaspiração por procedimento e usar `AG_LIPOASPIRACAO_PRECO` para as buscas explícitas de preço/valor de lipo, com destino no guia `/conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/`. Não reunir mastopexia e prótese em um único RSA genérico: isso reduz a correspondência entre palavra, anúncio e leitura do funil.
+- Nos grupos originais, usar somente as seis negativas **exatas** de roteamento correspondentes às consultas movidas: `[preço mastopexia]`, `[mastopexia preço]`, `[silicone nos seios preço]`, `[prótese de silicone valor]`, `[lipoaspiração preço]` e `[lipoescultura valor]`. Não negativar as raízes `preço`, `valor`, `custo` ou `quanto custa` em nível de campanha, conta, lista compartilhada ou correspondência de frase.
+- Os dois guias gerais já respondem diretamente à intenção, explicam a composição do orçamento, formas de pagamento, consulta de R$ 500 independente do orçamento e próximo passo. Preservar o texto durante o primeiro ciclo para medir apenas o efeito do novo roteamento; não criar clones por palavra nem publicar faixa cirúrgica.
 - Nas duas campanhas secundárias, começar somente com frase/exata, um RSA por grupo e R$ 8/dia por campanha. Preservar Pesquisa Google, cidade de São Paulo por presença, português, parceiros e Display desligados e Maximizar cliques até existir sinal qualificado suficiente.
-- Os dois novos destinos só podem entrar no Google Ads depois de publicação e verificação HTTP/visual. Nesta intervenção, preservar orçamento, lance, metas, RSAs, negativas, público, agenda, dispositivos, redes e geografia.
+- Cada RSA deve usar 15 títulos distintos, quatro descrições efetivamente salvas e repetição natural das expressões ativas do próprio grupo. O diagnóstico `Ruim` não autoriza copiar construções artificiais nem usar inserção dinâmica genérica. No ajuste de 12/09, editar somente os RSAs de `AG_MASTOPEXIA` e `AG_ABDOMINOPLASTIA`, mantendo URL, caminhos, código e promessa clínica: o primeiro passa a reconhecer `lifting mamário`; o segundo, `excesso de pele no abdômen` e `cirurgia de contorno abdominal`.
+- Os dois guias de custo só podem entrar no Google Ads depois de publicação e verificação HTTP/visual. Nesta intervenção, preservar orçamento, lance, metas, negativas, público, agenda, dispositivos, redes e geografia; fora dos dois RSAs diagnosticados e dos três novos RSAs de preço, os anúncios atuais permanecem intocados.
 - Manter separados `AG_LIFTING_FACIAL` e `AG_LIFTING_FACIAL_PRECO`. No grupo geral, usar negativas **exatas** de roteamento para as cinco formas canônicas de preço: `[lifting facial preço]`, `[mini lifting facial preço]`, `[preço mini lifting facial]`, `[quanto custa lifting facial]` e `[valor lifting facial]`. As duas primeiras já estão aplicadas; as três restantes dependem de autorização específica. Nunca negativar `preço`, `valor`, `custo`, `quanto custa` ou `valor médio` em nível de campanha, conta ou lista compartilhada enquanto o grupo de preço estiver ativo.
 - Evitar promessas, superlativos, urgência artificial e afirmações como “resultado garantido”.
 
@@ -91,11 +94,15 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `S_BR_SP_CIRURGIA_MAMA` → `G26MAMA`
   - `S_BR_SP_MARCA` → `G26MARCA`
   - `S_BR_SP_OTOPLASTIA` → `G26OTO`
-- Os nove grupos anteriores e os cinco grupos secundários usam estes códigos estáveis em `{_ag}`; os nove anteriores foram conferidos em 15/08/2026 e os cinco novos entram no contrato em 12/09/2026:
+- Dez códigos secundários permanecem legíveis em `{_ag}`: cinco grupos de procedimento, três grupos específicos de preço ativos e dois aliases genéricos históricos. Depois da migração verificada em 12/09/2026, oito grupos secundários ficam ativos e os dois genéricos permanecem pausados, apenas para leitura histórica:
   - `AG_ABDOMINOPLASTIA` → `ag_abdominoplastia`
   - `AG_BLEFAROPLASTIA` → `ag_blefaroplastia`
   - `AG_CIRURGIA_FACIAL` → `ag_cirurgia_facial`
+  - `AG_CIRURGIA_MAMA_PRECO` → `ag_cirurgia_mama_preco` (transitório; não usar em tráfego novo)
+  - `AG_MASTOPEXIA_PRECO` → `ag_mastopexia_preco`
   - `AG_CERVICOPLASTIA` → `ag_lifting_cervical`
+  - `AG_CONTORNO_CORPORAL_PRECO` → `ag_contorno_corporal_preco` (transitório; não usar em tráfego novo)
+  - `AG_LIPOASPIRACAO_PRECO` → `ag_lipoaspiracao_preco`
   - `AG_LIPO_PAPADA` → `ag_lipo_papada`
   - `AG_LIPOASPIRACAO` → `ag_lipoaspiracao`
   - `AG_LIFTING_FACIAL` → `ag_lifting_facial`
@@ -106,6 +113,7 @@ Este guia organiza as expressões populares incorporadas ao site. Elas servem pa
   - `Adulto` em `S_BR_SP_OTOPLASTIA` → `ag_otoplastia_adulto`
   - `AG_OTOPLASTIA_INFANTIL` → `ag_otoplastia_infantil`
   - `AG_PROTESE_MAMA` → `ag_protese_mama`
+  - `AG_PROTESE_MAMA_PRECO` → `ag_protese_mama_preco`
 - Os aliases históricos continuam legíveis para preservar o passado, mas não devem ser usados em novas configurações.
 - O agregado externo mantém `Agregados` v2 e acrescenta `Google_Rotas` v1. Esta segunda aba só publica contagens por campanha, grupo, landing e local de CTA registrados; junção por `Opportunity ID`, valores livres/conflitantes como N/D e nenhum identificador na saída. Se o schema rico ainda não estiver materializado, registrar `schema_unavailable` em vez de inferir a rota.
 - O teste móvel do guia de lifting facial usa exclusivamente `data-cta-location="sticky_price_continuity_v1"` no botão fixo. Os novos guias usam `price_planning`/`final_price_planning`/`sticky_price_planning` em BLEF e `price_range_reference`/`final_price_range_reference`/`sticky_price_range_reference` em CERV.

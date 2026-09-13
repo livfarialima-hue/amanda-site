@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
   "changeId": "META-CERVICAL-REGIONAL-SEM-ORCAMENTO-2026-09-12",
-  "title": "Testar cidades próximas na campanha Meta cervical sem alterar orçamento",
-  "status": "committed",
-  "baseCommit": "99b36f6c433b2017786731f02d01ea7649dd8eaa",
+  "title": "Testar cidades proximas na campanha Meta cervical sem alterar orcamento",
+  "status": "published_verified",
+  "baseCommit": "725f4dd107ea5211bed2ddf270707ccf011908b4",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel solicitou em 12/09/2026 os ajustes necessários no Gerenciador do Facebook para o plano e determinou expressamente que o orçamento não fosse alterado. O rascunho foi preparado sem mudança financeira; a confirmação de ação continua pendente imediatamente antes do clique final em Publicar."
+    "note": "Daniel solicitou os ajustes no Gerenciador do Facebook, proibiu qualquer mudanca de orcamento e, em 12/09/2026 as 20:58:25 BRT, respondeu 'pode' depois de receber o resumo exato do commit aprovado 4c1a63306bb26415e6b08e0993c2a648efea5af3 e dos dois itens Meta selecionados."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
     "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "contracts": [
@@ -41,13 +41,14 @@
     "preservedInvariants": [
       "os orcamentos vitalicios de M26C01W e M26F01W permanecem exatamente em R$ 900 cada, sem limite adicional de conjunto e sem nova verba",
       "o termino permanece em 11/10/2026 23:59 GMT-3 e a data inicial historica nao muda",
-      "Sao Paulo +20 km, idade rigida 40-65+, todos os generos e posicionamentos Advantage+ permanecem no conjunto cervical",
-      "Jundiai, Vinhedo e Valinhos entram apenas pelos limites municipais, sem raio adicional e sem expansao por interesse na regiao",
+      "Sao Paulo +20 km, idade 40-65+, todos os generos e posicionamentos Advantage+ permanecem no conjunto cervical",
+      "Jundiai, Vinhedo e Valinhos entram apenas pelos limites municipais, sem raio adicional e sem expansao para pessoas apenas interessadas na regiao",
       "destino manual exclusivo WhatsApp e numero +55 11 96195-7144 permanecem intactos",
       "video, CTA, modelo de conversa, mensagem pronta e codigo M26C01W-C07H01 permanecem intactos",
       "a campanha facial, seus objetos e textos permanecem sem qualquer edicao como controle",
-      "os sete rascunhos preexistentes nao serao publicados, alterados nem descartados",
-      "nenhuma campanha, conjunto ou anuncio novo sera criado; Google Ads, site, Bruna, retomadas, LEADS, CRM, Calendar e Apps Script ficam fora do escopo"
+      "os sete rascunhos preexistentes permanecem sem publicacao, alteracao ou descarte",
+      "o lote educativo, o roteamento secundario, o Apps Script v149 e a producao Netlify 6aa5e68f41e08e0008a76b33 permanecem integrais",
+      "nenhuma campanha, conjunto ou anuncio novo foi criado; Google Ads, site, Bruna, retomadas, LEADS, CRM, Calendar e Apps Script ficaram fora da escrita Meta"
     ],
     "liveReadOnlyPreflight": [
       {
@@ -55,14 +56,14 @@
         "system": "Meta Ads 1643959806249995",
         "status": "baseline_confirmed",
         "checkedAt": "2026-09-12T20:25:36-03:00",
-        "reference": "Sessao autenticada confirmou duas campanhas ativas e sete rascunhos anteriores. No cervical: campanha e conjunto ativos, orcamento vitalicio R$ 900, nenhum limite de conjunto, fim 11/10/2026 23:59, Sao Paulo +20 km, 40-65+, todos os generos, posicionamentos Advantage+, WhatsApp manual e maximizacao de conversas. O anuncio ativo, o video, o CTA, o modelo e a mensagem pronta foram relidos antes da edicao.",
-        "check": "preflight somente leitura concluido antes do rascunho; nenhuma publicacao executada"
+        "reference": "Sessao autenticada confirmou as duas campanhas ativas e sete rascunhos anteriores. No cervical: campanha e conjunto ativos, orcamento vitalicio R$ 900, nenhum limite de conjunto, fim 11/10/2026 23:59, Sao Paulo +20 km, 40-65+, todos os generos, posicionamentos Advantage+, WhatsApp manual e maximizacao de conversas. Anuncio ativo, video, CTA, modelo e mensagem pronta foram relidos antes da edicao.",
+        "check": "preflight somente leitura concluido antes do rascunho e da publicacao"
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T20:42:36-03:00",
+    "completedAt": "2026-09-12T21:08:27-03:00",
     "commands": [
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run change:check",
@@ -70,46 +71,52 @@
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "npm.cmd run release:preflight",
       "npm.cmd run ops:check",
       "git diff --check"
     ],
     "results": {
-      "focusedTests": "142/142 testes focados aprovados sobre o baseline canonico integrado",
-      "changeCheck": "CHANGE_SAFETY_STATUS=OK para os cinco arquivos declarados",
-      "architectureCheck": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullTestSuite": "1336/1336 testes aprovados",
-      "siteBuild": "188 arquivos gerados para 49 URLs, sem erros e sem artefatos de auditoria ou operacao",
-      "siteCheck": "49/49 rotas com HTTP 200, canonical proprio, indexabilidade e um H1; zero orfas, recursos ausentes ou erros",
-      "opsCheck": "SYNC_PENDING esperado antes da publicacao e da reconciliacao documental final",
-      "diffCheck": "aprovado sem erros de whitespace",
-      "metaDraftReview": "em 12/09/2026 20:45 BRT, resumo confirmado em 0 de 2 campanhas, 1 de 3 conjuntos e 1 de 4 anuncios; somente conjunto 120251248762180627 e anuncio 120251248762170627 selecionados; Meta lista apenas Nome do conjunto de anuncios e Publico e Criativo; sete rascunhos anteriores desmarcados; Publicar habilitado e nao acionado"
+      "focusedTestsBeforePublication": "142/142 testes focados aprovados no commit autorizado",
+      "changeCheckBeforePublication": "CHANGE_SAFETY_STATUS=OK para os cinco arquivos declarados",
+      "architectureCheckBeforePublication": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "fullTestSuiteBeforePublication": "1336/1336 testes aprovados no commit autorizado",
+      "siteBuildBeforePublication": "188 arquivos gerados para 49 URLs, sem erros e sem artefatos de auditoria ou operacao",
+      "siteCheckBeforePublication": "49/49 rotas aprovadas",
+      "releasePreflight": "CHANGE_SAFETY_STATUS=OK para o commit 4c1a63306bb26415e6b08e0993c2a648efea5af3 e para a autorizacao final registrada",
+      "metaDraftReview": "0 de 2 campanhas, 1 de 3 conjuntos e 1 de 4 anuncios; somente conjunto 120251248762180627 e anuncio 120251248762170627 selecionados; sete rascunhos anteriores desmarcados",
+      "metaPostflight": "Meta confirmou 1 conjunto de anuncios e 1 anuncio publicados; contador de rascunhos voltou de nove para sete; conjunto e anuncio cervical relidos como Ativo; facial relido como Ativo e inalterado; R$ 900 em cada campanha e nenhum limite adicional",
+      "parallelIntegration": "origin/reestruturacao-site 725f4dd107ea5211bed2ddf270707ccf011908b4 incorporado por merge, preservando o commit Meta autorizado, o lote educativo e o fechamento do roteamento secundario",
+      "integratedChecks": "sobre o codigo da ponta integrada: CHANGE_SAFETY_STATUS=OK com cinco arquivos exatos, JOURNEY_MODULE_BOUNDARIES=OK, 1341/1341 testes aprovados e git diff --check sem erros; checagens documentais repetidas depois do merge final",
+      "driveProjection": "o mesmo arquivo 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO foi substituido em lugar em 12/09/2026 as 21:08:27 BRT; releitura autenticada com 155023 bytes e SHA-256 54e83227f613ebd5b293f3acb37ab33c6da2007f96c46418adf487e59cb8ac45, identico ao Plano integrado"
     }
   },
   "release": {
-    "approvedCommit": null,
+    "approvedCommit": "4c1a63306bb26415e6b08e0993c2a648efea5af3",
+    "netlifyDeployId": "6aa5e68f41e08e0008a76b33",
+    "appsScriptVersion": 149,
     "metaAdsMutations": [
       {
-        "status": "draft_prepared",
+        "status": "published_verified",
         "type": "adset",
         "id": "120251248762180627",
         "changes": "nome operacional e inclusao municipal de Jundiai, Vinhedo e Valinhos; Sao Paulo +20 km preservado"
       },
       {
-        "status": "draft_prepared",
+        "status": "published_verified",
         "type": "ad",
         "id": "120251248762170627",
         "changes": "texto principal, titulo e descricao explicitam atendimento presencial em Pinheiros e deslocamento a Sao Paulo"
       }
     ],
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": null,
-    "verifiedAt": null,
-    "activationState": "meta_draft_prepared_not_published",
-    "notes": "O contador do Meta passou de sete para nove porque somente um conjunto e um anuncio cervical receberam edicoes privadas. A revisao final seleciona apenas esses dois itens; os sete rascunhos antigos permanecem fora do pacote. Orcamentos e veiculacao atuais nao foram alterados."
+    "drivePlanSha256": "54e83227f613ebd5b293f3acb37ab33c6da2007f96c46418adf487e59cb8ac45",
+    "verifiedAt": "2026-09-12T21:08:27-03:00",
+    "activationState": "meta_cervical_regional_live_monitoring",
+    "notes": "A escrita Meta foi concluida e relida sem alterar orcamento. Netlify 6aa5e68f41e08e0008a76b33 e Apps Script v149 sao recibos atuais herdados do baseline paralelo e nao foram republicados por esta tarefa. O Plano integrado preserva o lote educativo e o fechamento do roteamento secundario; foi substituido no mesmo arquivo do Drive e relido com igualdade de tamanho e SHA-256."
   },
   "rollback": {
-    "local": "reverter somente o commit funcional deste changeId sobre 99b36f6c433b2017786731f02d01ea7649dd8eaa, preservando todo trabalho paralelo",
-    "production": "antes da publicacao, descartar somente os rascunhos do conjunto 120251248762180627 e do anuncio 120251248762170627; depois da publicacao, remover somente Jundiai, Vinhedo e Valinhos, restaurar o nome anterior e os tres textos anteriores, sem alterar orcamento, datas, campanha facial, video, CTA, WhatsApp ou codigos"
+    "local": "reverter somente os commits Meta cuja arvore parte do commit autorizado 4c1a63306bb26415e6b08e0993c2a648efea5af3, preservando o baseline paralelo 725f4dd107ea5211bed2ddf270707ccf011908b4",
+    "production": "remover somente Jundiai, Vinhedo e Valinhos, restaurar o nome anterior e os tres textos anteriores do anuncio, sem alterar orcamento, datas, campanha facial, video, CTA, WhatsApp ou codigos"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
