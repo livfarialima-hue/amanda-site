@@ -1,5 +1,6 @@
 {
   "source": "Own task transcript, UI-only reads captured before edits",
+  "coverage": "Original headline and description text recovered for 16 of 17 RSAs. AG_MASTOPEXIA_PRECO original text is missing; do not treat this as a complete account export. No original text was inferred.",
   "originals": {
     "AG_LIFTING_FACIAL": {
       "sourceLine": 1588,

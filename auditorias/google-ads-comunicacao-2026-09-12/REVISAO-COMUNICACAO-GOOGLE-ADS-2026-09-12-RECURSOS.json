@@ -1,8 +1,8 @@
 {
-  "status": "callouts_applied_and_reread_sitelinks_prepared",
+  "status": "29_callout_and_12_sitelink_associations_applied_and_reread",
   "date": "2026-09-12",
   "account": "995-334-4486",
-  "applyScope": "Only each named currently active association, not all shared associations; preserve paused campaigns.",
+  "applyScope": "Only verified active associations. Account edits isolated from paused shared campaigns. Shared safety callout edited in its two verified active facial campaigns; shared safety sitelink edited in its five verified active associations. Paused campaigns preserved.",
   "edits": {
     "account": {
       "Clínica com foco facial": "Consulta com a cirurgiã",
@@ -47,6 +47,11 @@
     }
   },
   "calloutAssociationsChanged": 29,
+  "calloutAssociationsReviewed": 63,
+  "sitelinkTextModelsChanged": 8,
+  "sitelinkAssociationsChanged": 12,
+  "sitelinkAssociationsReviewed": 76,
+  "verification": "REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-VERIFICACAO.json",
   "sitelinks": [
     {
       "match": "Dra. Amanda Schroeder",
@@ -58,8 +63,8 @@
     {
       "match": "Agende Sua Consulta",
       "level": "Conta",
-      "title": "Ver Horários da Consulta",
-      "description1": "Consulta com a Dra. Amanda",
+      "title": "Consulta com a Cirurgiã",
+      "description1": "Converse com a Dra. Amanda",
       "description2": "Atendimento em Pinheiros"
     },
     {
@@ -72,7 +77,7 @@
     {
       "match": "Segurança Cirúrgica",
       "baselineDescription1": "Planejamento antes da cirurgia",
-      "level": "Conta and only live-verified matching associations",
+      "level": "Conta; S_BR_SP_MARCA; S_BR_SP_BLEFAROPLASTIA; S_BR_SP_CIRURGIA_FACIAL; S_BR_SP_OTOPLASTIA / Adulto",
       "title": "Preparo para a Cirurgia",
       "description1": "Equipe médica em comunicação",
       "description2": "Preparo e anestesia planejados"

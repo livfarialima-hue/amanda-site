@@ -1,6 +1,8 @@
 {
   "account": "995-334-4486",
-  "status": "prepared_addendum_user_requested",
+  "status": "applied_to_17_active_rsas_and_reread_2026_09_12",
+  "verification": "REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12-VERIFICACAO.json",
+  "reviewStatus": "Saved in live Google Ads; policy review and delivery are separate from this publication receipt.",
   "supersedes": "REVISAO-COMUNICACAO-GOOGLE-ADS-2026-09-12.json",
   "sources": [
     "User clarification 2026-09-12",
