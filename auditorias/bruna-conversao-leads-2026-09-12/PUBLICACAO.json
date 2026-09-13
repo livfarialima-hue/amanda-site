@@ -1,0 +1,96 @@
+{
+  "changeId": "BRUNA-CONVERSAO-CUIDADO-LEADS-2026-09-12",
+  "approvedCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
+  "verifiedAt": "2026-09-13T02:10:21.890Z",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6aa6038eb31161000809495b",
+    "commit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
+    "state": "ready",
+    "publishedAt": "2026-09-13T02:00:18.021Z",
+    "botMode": "active",
+    "unsignedWebhookStatus": 401,
+    "unauthenticatedScheduledFollowupStatus": 401,
+    "availableFunctions": 12
+  },
+  "appsScript": {
+    "version": 150,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "publishedAtLocal": "2026-09-12T22:59:00-03:00",
+    "sameDeployment": true,
+    "allSevenFilesReloadedAndCompared": true,
+    "normalizedSha256": {
+      "Code.gs": "637fad56bbcc78e9ed6088077f87680a196de8365dc6c50421d43e24d2afb467",
+      "Retomadas.gs": "872d3f4f75f53e05af22c9520860dc1fa398a098da3d84a95d32fb1aea069304",
+      "CentralAtendimento.gs": "20bdcc0356b8f8103c27b36a9d0fbeb18c64dbf9a1ed150d1661e21df6448496",
+      "AgendaCuidados.gs": "0b4ede4c21fd054362e6dd3d03b400131143851b0e37f8e22be4a057fd4fb1a5",
+      "LeadClassification.gs": "159515860c525c19520860848765655115d46f637f4f7393f6df9767dcdd1bdb",
+      "PainelDecisoesDiarias.gs": "759b763d730816fcc5c3d0cd6a56443b161c4364e5875ba0aec22ade4219957c",
+      "CuidadosProgramados.gs": "f27767afc97ced72fcca902d1468b5f85ec6ed22e44b7b3a36f8803a04b4f76d"
+    }
+  },
+  "spreadsheet": {
+    "id": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "consultationsSheetId": 2026072801,
+    "oldColumns": 80,
+    "newColumns": 83,
+    "oldHeaderCellDataExactlyPreserved": true,
+    "addedHeaders": [
+      "Data da cirurgia realizada",
+      "Data do orçamento enviado",
+      "Próxima checagem após cirurgia"
+    ],
+    "ledgerSheetId": 669273333,
+    "ledgerHeaders": 22,
+    "ledgerHidden": true,
+    "noPatientBackfill": true
+  },
+  "activation": {
+    "careEnabled": true,
+    "birthdayEnabled": false,
+    "followupTriggers": 1,
+    "ledgerStates": {},
+    "diagnosticCompletedAt": "2026-09-13T02:06:07Z",
+    "manualPatientTestMessages": 0
+  },
+  "birthdayTemplate": {
+    "name": "aniversario_clinica_liv_v1",
+    "language": "pt_BR",
+    "category": "MARKETING",
+    "status": "IN_REVIEW",
+    "submittedAt": "2026-09-13T02:05:39Z",
+    "messageValiditySeconds": 43200,
+    "body": "A equipe da Clínica LIV deseja um feliz aniversário! Que seu novo ciclo traga saúde e bons momentos. Receba nosso carinho.",
+    "eligibleIndividualBirthdayOptInsObserved": 0
+  },
+  "validation": {
+    "fullTests": 1444,
+    "focusedTests": 188,
+    "siteFiles": 193,
+    "publicRoutes": 54,
+    "modelLiveEvaluation": false,
+    "governanceTests": 8
+  },
+  "rollback": {
+    "commit": "f63d2fd7738df64d8916256a78ef7f72cf6c4300",
+    "deployId": "6aa60074bdfc8c0008aab53c",
+    "appsScriptVersion": 149
+  },
+  "drive": {
+    "status": "verified",
+    "plan": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-13T02:09:13.838Z",
+      "characters": 163583,
+      "sha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
+      "equal": true
+    },
+    "manual": {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "modified": "2026-09-13T02:09:19.875Z",
+      "characters": 99584,
+      "sha256": "de9031502e5216cb3bcfc2b087f36c7985db1e774e884fff97d8030e6887a589",
+      "equal": true
+    }
+  }
+}

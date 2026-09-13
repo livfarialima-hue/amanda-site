@@ -24,6 +24,9 @@ O comando precisa terminar com `ALVO CANÔNICO CONFIRMADO`. Qualquer divergênci
 
 ## Publicação
 
+**Bruna contextual, LEADS e cuidados — PUBLICADOS E VERIFICADOS em 12/09/2026:** commit `6c38ca5859f86c2224646f88607f554f8dd4fbe4`, Netlify `6aa6038eb31161000809495b` (23h00) e Apps Script v150 no deployment canônico existente (22h59). Sete arquivos Apps Script salvos, recarregados e comparados integralmente; webhook ativo, assinatura ausente recusada e web app saudável. A LEADS recebeu três campos no fim de Consultas (80 → 83 colunas); os 80 cabeçalhos anteriores, formatos, notas e validações foram relidos idênticos. A nova fila interna guarda decisões e recibos. Envio de cuidados após aprovação individual ativo desde 23h05; diagnóstico às 23h06: um gatilho, fila vazia, nenhuma mensagem de teste. Modelo de aniversário `aniversario_clinica_liv_v1`, pt_BR/Marketing, submetido às 23h05 com validade de 12 horas, ainda em análise; aniversário automático permanece desligado até aprovação. Nenhum consentimento ou aniversário individual foi habilitado por inferência. Validação: 1.444/1.444 testes, 188/188 focados, arquitetura, build e 54 rotas; testes do modelo usam respostas simuladas. Rollback: Apps Script v149, commit `f63d2fd7738df64d8916256a78ef7f72cf6c4300` e Netlify `6aa60074bdfc8c0008aab53c`, preservando dados e recibos. Evidência: `auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json`.
+
+
 1. confirmar que o branch é `reestruturacao-site` e que somente arquivos intencionais estão no commit;
 2. executar a suíte integral;
 3. obter autorização explícita para publicar;

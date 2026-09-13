@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSAO-CUIDADO-LEADS-2026-09-12",
   "title": "Bruna: continuidade, cuidado, LEADS e retomadas com decisões persistentes",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "a9a7ea6ac0f112c77b819cf88e2260f6647a96d6",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "externalWritesPerformed": true,
     "externalDocumentationWritesPerformed": true,
-    "externalOperationalWritesPerformed": false,
+    "externalOperationalWritesPerformed": true,
     "defaultOffUntilPublication": true,
     "patientEffects": true,
     "level": "high"
@@ -32,9 +32,11 @@
       "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
       "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/Retomadas.gs",
+      "apps-script/clinica-liv-leads/production-target.json",
       "apps-script/clinica-liv-leads/site-contrast.test.mjs",
       "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
       "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html",
+      "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
       "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
       "auditorias/seo-descoberta-ia-2026-09-12/RELATORIO.md",
       "avaliacao-facial/index.html",
@@ -97,6 +99,7 @@
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/conversation-action-controller.mjs",
       "netlify/functions/lib/conversation-action-controller.test.mjs",
@@ -366,7 +369,7 @@
       "node --check campanhas/site-enhancements.js",
       "node --test netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/procedure-context.test.mjs netlify/functions/lib/openai-shadow.test.mjs apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs"
     ],
-    "status": "passed_local",
+    "status": "passed_local_and_live",
     "results": {
       "regressionBeforeFix": "10/10 cenários novos falharam no baseline, reproduzindo perda de contexto, autoria, pendência e rascunho",
       "crossConsumer": "111/111 testes de conversa, e-mail e integração aprovados; suíte nova com 20 cenários sintéticos.",
@@ -374,28 +377,46 @@
       "previousBaselineFullSuite": "Histórico: 1363/1363 na etapa inicial; ver finalFullSuite para o pacote atual.",
       "finalFullSuite": "1444/1444; 188/188 seleção contextual/cuidados. Oito falhas iniciais reproduzidas; teste integrado de enriquecimento também corrigido. SEO 56fc749/e5384eb preservado.",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "scope": "CHANGE_SAFETY_STATUS=OK; 121 arquivos declarados, incluindo preservação do pacote SEO já publicado.",
+      "scope": "CHANGE_SAFETY_STATUS=OK; 124 arquivos declarados, incluindo SEO preservado e recibos finais.",
       "site": "193 arquivos; 54/54 rotas, sem erro e sem auditorias ou operações públicas; SEO preservado.",
-      "target": "ALVO CANÔNICO CONFIRMADO para projeto, deployment e LEADS; Apps Script v149 observado por interface autenticada.",
+      "target": "ALVO CANÔNICO CONFIRMADO; mesmos IDs, Apps Script v150 publicado e web app HTTP 200.",
       "modelEvaluation": "Não concluída: credencial mascarada na API administrativa. Não é evidência de falha da chave usada em produção.",
       "mixedConversationBaseline": "7 dos 8 novos cenários reproduziram falhas antes da correção: repetição de entrada, perda de handoff, corrida humana, histórico indisponível, alerta perdido, ausência de recebimento e alerta sem tarefa.",
       "previousMixedSuite": "Histórico: 1386/1386 na etapa de cooperação Bruna/equipe; preservada e incluída no pacote atual.",
       "careCrossConsumer": "149/149 regressões de lembretes/retomadas/cuidados antes dos cinco casos adicionais; 34/34 testes próprios finais. Revisões adiadas permanecem aprováveis com cadastro atual; revisão interna de fechamento não pode ser dispensada como contato.",
-      "contextModel": "Payload e guardrails testados; não houve avaliação adicional do modelo vivo com pacientes."
+      "contextModel": "Payload e guardrails testados; não houve avaliação adicional do modelo vivo com pacientes.",
+      "publicPostflight": "Bruna active no endpoint canônico; POST sem assinatura HTTP 401; scheduled-followup sem autenticação HTTP 401; 12 funções implantadas. Diagnóstico de cuidados ativo, aniversários desligados, 83 colunas, ledger vazio, gatilho único."
     }
   },
   "release": {
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "38d60151a0bfc557f0eac6a0a6887ee0ac447d6ec99784f83324fa8eefe63e7d",
+    "drivePlanSha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
     "drivePlanProjectionStatus": "verified",
-    "drivePlanVerifiedAt": "2026-09-13T01:34:18.075Z",
-    "netlifyDeployId": null,
-    "verifiedAt": null,
-    "appsScriptVersion": null,
-    "approvedCommit": null
+    "drivePlanVerifiedAt": "2026-09-13T02:09:13.838Z",
+    "netlifyDeployId": "6aa6038eb31161000809495b",
+    "verifiedAt": "2026-09-13T02:10:21.890Z",
+    "appsScriptVersion": 150,
+    "approvedCommit": "6c38ca5859f86c2224646f88607f554f8dd4fbe4",
+    "activationState": "care_active_birthday_template_in_review",
+    "notes": "Código publicado nos dois destinos; migração aditiva confirmada; envio após aprovação individual ativo. Aniversário submetido em pt_BR/Marketing e ainda em análise, flags desligadas. Nenhuma mensagem de teste, aprovação individual ou consentimento inferido.",
+    "receiptPath": "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
+    "drivePlanReadback": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-13T02:09:13.838Z",
+      "characters": 163583,
+      "sha256": "31e81a95cdc01b3e83edb6f364f8e4e0725f73b8df11c014998c7d07972c8055",
+      "equal": true
+    },
+    "driveManualReadback": {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "modified": "2026-09-13T02:09:19.875Z",
+      "characters": 99584,
+      "sha256": "de9031502e5216cb3bcfc2b087f36c7985db1e774e884fff97d8030e6887a589",
+      "equal": true
+    }
   },
   "rollback": {
-    "production": "Antes de publicar, comparar código vivo e recibos novamente. Se autorizado e houver regressão, conter o efeito novo e restaurar somente os arquivos afetados na versão anterior, preservando filas, histórico, origens e mensagens.",
+    "production": "Conter primeiro os cuidados pelas flags; Apps Script v149 no mesmo deployment e Netlify 6aa60074bdfc8c0008aab53c, commit f63d2fd7738df64d8916256a78ef7f72cf6c4300. Preservar ledger, colunas, históricos e trabalhos posteriores.",
     "local": "Reverter apenas o commit deste candidato no worktree isolado; preservar trabalhos paralelos.",
     "care": "Desativar novas flags e preservar ledger/colunas; nunca apagar recibo para forçar repetição."
   },
@@ -412,6 +433,7 @@
       "Dispensas reaparecidas, recibos incertos, consentimentos válidos, duplicidade anual e concordância texto aprovado/enviado."
     ],
     "rollbackRule": "Conter diante de resposta clínica indevida, perda de handoff, duplicidade, troca de profissional ou avanço comercial sem evidência.",
-    "owner": "Daniel e equipe da Clínica LIV"
+    "owner": "Daniel e equipe da Clínica LIV",
+    "birthdayDependency": "Modelo aniversario_clinica_liv_v1 recebido pelo WhatsApp e IN_REVIEW. Ativação permanece desligada até aprovação; autorização de Daniel já recebida, sem necessidade de repetir. Cadastro individual/consentimento não inferidos."
   }
 }
