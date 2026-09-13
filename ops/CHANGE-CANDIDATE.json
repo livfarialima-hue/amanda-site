@@ -309,7 +309,38 @@
     ],
     "documentaryBaselineCommit": "e5384eba2847623a05f7c45c163533c804fc24e4",
     "documentaryBaselineNote": "Publicação paralela SEO 56fc749 e fechamento e5384eb preservados integralmente por merge. Candidato Bruna 6327ce3 e revisão contextual reaplicados sem alterar conteúdo, tracking ou outras funcionalidades do site.",
-    "productionBaselineCommit": "56fc749c92c35aa6dbef7a4aa27b7e822a1779b1"
+    "productionBaselineCommit": "56fc749c92c35aa6dbef7a4aa27b7e822a1779b1",
+    "preservedParallelRelease": {
+      "changeId": "SITE-SEO-AI-DISCOVERY-2026-09-12",
+      "status": "published_verified",
+      "release": {
+        "approvedCommit": "56fc749c92c35aa6dbef7a4aa27b7e822a1779b1",
+        "netlifyDeployId": "6aa5ff87bc6cda0008747ef9",
+        "appsScriptVersion": 149,
+        "verifiedAt": "2026-09-13T01:45:57Z",
+        "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "drivePlanSha256": "157c155a552ec5eaefea3558bd96e8ba50a07befe8974109bf8c19691b41217a",
+        "activationState": "public_site_verified_no_operational_activation",
+        "notes": "Site publicado e verificado. 54/54 HTTP200/equivalentes,65/65 sondas,192arquivos do provedor equivalentes,12funcoes/5schedules intactos. Apps Script149 apenas contexto herdado: nenhum executavel, versao ou ativacao alterado. GSC pedidos de indexacao,controlesIA e CWV de campo continuam nao executados/verificados.",
+        "drivePlanReadback": {
+          "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+          "modified": "2026-09-13T01:45:17.697Z",
+          "characters": 165211,
+          "sha256": "157c155a552ec5eaefea3558bd96e8ba50a07befe8974109bf8c19691b41217a",
+          "equal": true
+        },
+        "driveAuditReadback": {
+          "id": "1YiaxIZtmyKaOCFYuaUX7Pmelvgg11n5Y",
+          "equal": true,
+          "characters": 13123,
+          "sha256": "0201ef47a14634af4395c2ca10234b749de5a245bb80e5ad58b005c7aaf1dc56"
+        },
+        "documentationCommit": "e5384eb",
+        "baselineDeploy": "6aa5f068ff6f6f00084695c0",
+        "publicPostflightAt": "2026-09-13T01:43:47.922Z",
+        "approvalReference": "Autorizacao textual cumulativa desta tarefa para publicar conteudos e ajustes do site; preflight do commit56fc749 registrado antes do push, sem ampliar para atendimento."
+      }
+    }
   },
   "verification": {
     "commands": [
