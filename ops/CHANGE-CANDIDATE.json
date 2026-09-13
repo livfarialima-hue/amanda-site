@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-EDUCATIONAL-CONTENT-SECOND-BATCH-2026-09-12",
-  "title": "Concluir o piloto educativo e aprofundar seguranca, cicatrizacao e papada",
-  "status": "published_verified",
-  "baseCommit": "64ae2c598816c033b4e2a995d064adddf80de54a",
+  "changeId": "GOOGLE-ADS-SECONDARY-PRICE-ROUTING-CLOSEOUT-2026-09-12",
+  "title": "Fechar os recibos do roteamento secundario preservando a publicacao educativa paralela",
+  "status": "committed",
+  "baseCommit": "05c03829dbb6d2ba7a371fadff0644b18c027f24",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Em 12/09/2026 Daniel pediu seguir com as proximas publicacoes e ajustes sugeridos que ainda existirem, mantendo a autorizacao anterior para publicar os conteudos e deixar a revisao medica para depois. Este lote cobre tres artigos pendentes do piloto, o aprofundamento de tres artigos existentes, biblioteca, busca, sitemap e os registros no Git e na mesma projecao do Plano no Drive. Nao cobre campanhas, bot, mensagens, Apps Script, CRM nem afirmacao de revisao medica realizada. Antes da publicacao, o remoto e a producao avancaram para 64ae2c5/6aa5e56c65ed3d0008cebf97 por outra tarefa. O lote foi integrado preservando integralmente essa base ja publicada; nao inclui nova alteracao de Apps Script, anuncios ou funcoes."
+    "note": "Daniel autorizou explicitamente publicar o commit funcional exato 64ae2c598816c033b4e2a995d064adddf80de54a no branch canonico e no Netlify e atualizar a mesma projecao do Plano no Drive. O commit funcional foi publicado e verificado antes de este fechamento documental. O branch avancou em paralelo ate 05c03829dbb6d2ba7a371fadff0644b18c027f24 com o segundo lote educativo publicado, verificado e projetado no Drive; este fechamento parte dessa ponta e preserva todo esse trabalho."
   },
   "risk": {
     "level": "medium",
@@ -19,132 +19,103 @@
   "scope": {
     "contracts": [
       "change-governance",
-      "site-publication",
       "google-ads-acquisition-conversion"
     ],
     "files": [
+      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/content-library.js",
-      "campanhas/cost-guides.test.mjs",
-      "campanhas/site-technical-regression.test.mjs",
-      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
-      "conteudos/otomodelacao-ou-otoplastia/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
-      "conteudos/recuperacao-lifting-cervical/index.html",
-      "conteudos/seguranca-cirurgia-plastica/index.html",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "sitemap.xml"
+      "ops/CHANGE-CANDIDATE.json"
     ]
   },
   "impact": {
     "consumers": [
-      "pessoas que pesquisam preparo, recuperacao cervical, orelhas, cicatrizes e papada",
-      "biblioteca e busca interna de conteudos",
-      "links relacionados dos seis artigos envolvidos",
-      "sitemap, indexacao, build estatico e publicacao Netlify"
+      "estrategia canonica de aquisicao",
+      "historico de Google Ads e conversao",
+      "painel executivo de pendencias",
+      "mesma projecao de leitura do Plano no Drive",
+      "gate operacional do release"
     ],
     "preservedInvariants": [
-      "nenhuma pagina comercial, campanha, anuncio, orcamento, bot, WhatsApp, Apps Script, LEADS, CRM ou Calendar e alterado",
-      "textos educativos sem diagnostico individual, promessa de resultado ou superioridade de tecnica; sem doses, calendario universal ou suspensao autonoma de medicamentos",
-      "CTA preserva numero, tracking e fluxo atual e convida para avaliacao individual",
-      "nome, CRM-SP 191605, Cirurgia Plastica e RQE 110472 permanecem consistentes com o site",
-      "as 49 rotas existentes permanecem acessiveis; somente os tres artigos declarados, biblioteca, busca e sitemap mudam; fotos e estilos existentes sao preservados",
-      "fontes primarias identificadas e ausencia de nova autoria ou revisao medica alegada; revisao humana posterior permanece pendente",
-      "otomodelacao comercial nao e apresentada como equivalente a moldagem neonatal nem como procedimento isento de riscos"
+      "o commit funcional autorizado 64ae2c598816c033b4e2a995d064adddf80de54a permanece ancestral da producao atual",
+      "o segundo lote educativo de53af57c2d17d2fb5912379dc05f38f024dc7de e seus recibos 926077f e 05c0382 sao preservados integralmente",
+      "nenhum codigo, pagina, sitemap, campanha, orcamento, Apps Script, mensagem, paciente, agenda ou conversao muda neste fechamento",
+      "a projecao do Plano mantem o mesmo file ID 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "lead qualificado continua exigindo manifestacao pessoal, fase canonica e exatamente um click ID elegivel"
+    ],
+    "externalSystems": [
+      "GitHub branch reestruturacao-site",
+      "Netlify site c33facb6-eafc-4635-99d6-068bf8707227",
+      "Google Drive file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "Google Ads account 995-334-4486 em leitura",
+      "Apps Script deployment AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A em leitura"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "site-publication",
-        "system": "Git canonico",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T20:52:00-03:00",
-        "reference": "Remoto em 64ae2c598816c033b4e2a995d064adddf80de54a; integracao preservadora com o lote 97d585e. Diff efetivo contra a nova base continua restrito aos 15 arquivos educativos declarados."
-      },
-      {
-        "contract": "site-publication",
-        "system": "Netlify",
-        "status": "baseline_confirmed",
-        "checkedAt": "2026-09-12T20:52:00-03:00",
-        "reference": "API autenticada confirmou deploy production/ready 6aa5e56c65ed3d0008cebf97, commit 64ae2c598816c033b4e2a995d064adddf80de54a, publicado pela tarefa paralela em 12/09 as 20:51:42. O pacote funcional vivo sera preservado integralmente."
+        "contract": "google-ads-acquisition-conversion",
+        "checkedAt": "2026-09-12T20:50:50-03:00",
+        "reference": "Google Ads releu MAMA e CORP com os tres grupos especificos de preco ativos e os dois aliases genericos pausados, zero atividade e orcamentos preservados; Apps Script confirmou alvo canonico, v149, GET ok:true e segredo invalido recusado sem escrita."
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Site e documentacao de aquisicao",
-        "status": "site_only_confirmed",
-        "checkedAt": "2026-09-12T20:35:40-03:00",
-        "reference": "Escopo educativo sem escrita em anuncios ou jornada. Drive permanece na projecao 99b36f6, SHA-256 f6a0ec8e52f38dcace9243c7c9f9d3fe11bca6de0a64e11658e580aebfd71645; a integracao preserva tambem o Plano mais novo de 64ae2c5. Nenhum estado de Ads, CRM ou Apps Script foi revalidado nesta tarefa."
+        "checkedAt": "2026-09-12T21:02:17-03:00",
+        "reference": "Git confirmou 64ae2c5 ancestral de 05c0382; Netlify confirmou 6aa5e56c65ed3d0008cebf97 ready no commit exato e producao atual descendente de53af5/6aa5e68f41e08e0008a76b33; o Drive foi relido depois do fechamento educativo antes de qualquer nova escrita."
       }
     ]
   },
   "verification": {
     "status": "passed_local",
-    "completedAt": "2026-09-12T20:54:32-03:00",
+    "completedAt": "2026-09-12T21:04:36-03:00",
     "commands": [
-      "node --check campanhas/content-library.js",
-      "node --test campanhas/site-technical-regression.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run ops:check",
-      "git diff --check",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs"
+      "git diff --check"
     ],
     "results": {
-      "contentLibrarySyntax": "passed",
-      "focusedSiteTests": "23/23 site and cost-guide tests passed; 142 cross-consumer cases passed before the parallel integration and all updated consumer cases were rerun in the final 1341-test suite",
-      "changeSafety": "CHANGE_SAFETY_STATUS=OK; exact 15-file scope",
-      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "fullSuite": "1341/1341 passed after preserving the complete parallel 64ae2c5 release",
-      "staticBuild": "191 files; 52 sitemap URLs; no audit or operations files; zero errors",
-      "technicalSiteAudit": "52/52 expected HTTP 200, self-canonical, indexable and one H1; zero orphan pages",
-      "visualQa": "14 page/viewport combinations in Chrome: six articles and library at 1440 and 390 px; no horizontal overflow, no broken images, no false review claim; screenshots inspected after declining optional cookies",
-      "librarySearch": "pre-operatorio, preparo, recuperacao cervical, otomodelacao and orelha place the specific article first; exact query tokens outrank generic synonyms",
-      "diffCheck": "passed",
-      "liveBaselineComparison": "2026-09-12T23:54:17.352Z: 187 provider files compared against 64ae2c5/6aa5e56c65ed3d0008cebf97; zero drift; exactly six public modifications plus three new pages. Twelve current function digests and five schedules captured. Netlify, Apps Script and Google Ads source files have zero diff against this baseline.",
-      "drivePreflight": "Existing file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO unchanged at 2026-09-12T23:31:37.815Z; exact baseline equality for all 145404 characters, preserving previous parallel receipts.",
-      "operationalConsistency": "The prior SYNC_PENDING was expected. External receipts and exact Drive equality are recorded; final ops:check is executed after this receipt is committed on the clean canonical branch.",
-      "parallelIntegration": "The complete parallel baseline is preserved; the effective delta against 64ae2c5 is exactly the 15 educational files. Original candidate 97d585e remains preserved in its own branch. The parallel release receipt remains in 64ae2c5:ops/CHANGE-CANDIDATE.json.",
-      "livePostflight": "2026-09-12T23:57:12.831Z: production/ready de53af5/6aa5e68f41e08e0008a76b33; all 190 provider files match the artifact after verified packaging differences; 52/52 HTTP 200 and equivalent content, 46 byte-identical and six verified Netlify pretty-URL transformations. Twelve functions and five schedules unchanged from 64ae2c5; audit and ops sentinels return 404.",
-      "driveProjection": "Same file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO replaced in place at 2026-09-12T23:58:13.841Z; authenticated readback exactly equals all 150161 characters of committed plan 926077f. SHA-256 d5a9569bb9352b9e5e90957f55384ab84d70aa07f4c992193dcacf138903a533; previous parallel receipts preserved."
+      "functionalCandidate": "40/40 testes focados, 1339/1339 integrais, arquitetura, build de 188 arquivos e 49/49 URLs aprovados no commit funcional 64ae2c5",
+      "parallelBaseline": "segundo lote educativo de53af5 aprovado com 1341/1341 testes, 23/23 focais, 52/52 URLs e 12 funcoes preservadas sobre 64ae2c5",
+      "releasePostflight": "64ae2c598816c033b4e2a995d064adddf80de54a publicado por fast-forward; Netlify 6aa5e56c65ed3d0008cebf97 production/ready com commit_ref identico; dominio e URL imutavel em modo active com o mesmo estado de saude",
+      "closeoutFocused": "145/145 testes focados de aquisicao, classificacao, conversao, revisao de Ads e contexto de procedimento aprovados sobre a ponta paralela preservada",
+      "closeoutFullSuite": "1341/1341 testes integrais e arquitetura aprovados",
+      "closeoutSite": "build com 191 arquivos e 52 URLs; site:check aprovou 52/52, zero pagina orfa e zero erro",
+      "closeout": "igualdade final do Drive sera registrada no recibo pos-publicacao"
     },
+    "blockingFailures": [],
     "crossConsumerCases": [
-      "biblioteca apresenta 27 URLs educativas unicas e contagem coerente com a busca",
-      "seis artigos declarados apresentam fontes e orientacoes de seguranca proporcionais ao tema",
-      "novas paginas possuem canonical, um H1, metadados sociais e dados estruturados sem autoria ou revisao nao realizada",
-      "desktop e mobile permanecem sem rolagem horizontal e com imagens proporcionais",
-      "52 rotas publicas no sitemap, sem perda das 49 existentes; arquivos operacionais continuam fora do build",
-      "busca prioriza as palavras exatas da pergunta sem retirar sinonimos leigos; recuperacao cervical aparece antes de outras recuperacoes"
+      "os tres codigos de preco especificos preservam procedimento, intencao e landing",
+      "os dois aliases genericos permanecem apenas como leitura historica sem inventar procedimento",
+      "o descendente educativo preserva as 12 funcoes do baseline funcional",
+      "o Plano combina os dois fechamentos sem reverter texto, estrategia ou estado operacional paralelo"
     ]
   },
   "release": {
-    "approvedCommit": "de53af57c2d17d2fb5912379dc05f38f024dc7de",
-    "netlifyDeployId": "6aa5e68f41e08e0008a76b33",
+    "approvedCommit": "64ae2c598816c033b4e2a995d064adddf80de54a",
+    "netlifyDeployId": "6aa5e56c65ed3d0008cebf97",
     "appsScriptVersion": 149,
-    "verifiedAt": "2026-09-12T20:58:20-03:00",
+    "verifiedAt": "",
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "d5a9569bb9352b9e5e90957f55384ab84d70aa07f4c992193dcacf138903a533",
-    "activationState": "educational_content_live_medical_review_pending",
-    "notes": "Publicado em 12/09/2026 as 20:56:23 sob a autorizacao vigente de Daniel para seguir com publicacoes e ajustes educativos. A integracao preservou o baseline paralelo 64ae2c5 e seu recibo v149; nao houve escrita em anuncios, Apps Script ou mensagens. Revisao medica posterior pendente nos seis textos novos/ampliados, sem autoria ou revisao atribuida indevidamente. Projecao no Drive identica ao Plano commitado em 926077f; commits documentais posteriores usam skip ci e nao mudam o artefato publico."
+    "drivePlanSha256": "47394fd574fde17da550c158eba636aa1b781064a22cc6464675d635e99b94a3",
+    "activationState": "functional_live_documentation_closeout_pending_drive",
+    "notes": "O artefato funcional autorizado esta ao vivo e preservado no descendente de producao. Falta somente publicar este fechamento documental e substituir a mesma projecao do Plano no Drive depois de confirmar que o remoto nao avancou novamente."
   },
   "rollback": {
-    "local": "reverter somente o delta educativo sobre 64ae2c598816c033b4e2a995d064adddf80de54a, preservando as atualizacoes paralelas",
-    "production": "Se houver regressao confirmada, restaurar o deploy 6aa5e56c65ed3d0008cebf97. Nao restaurar deploy anterior a atualizacao paralela e nao alterar Apps Script ou campanhas."
+    "local": "reverter somente os quatro arquivos deste fechamento sobre 05c03829dbb6d2ba7a371fadff0644b18c027f24, preservando 64ae2c5, de53af5 e todos os recibos educativos",
+    "production": "se a projecao divergir, restaurar no mesmo file ID a versao anterior de hash d5a9569bb9352b9e5e90957f55384ab84d70aa07f4c992193dcacf138903a533 e reverter apenas o recibo documental; nao alterar anuncios, Apps Script, paginas ou funcoes"
   },
   "monitoring": {
     "owner": "Daniel e equipe da Clinica LIV",
-    "window": "integridade imediata e 24 horas; observacao editorial e comercial em 7, 14 e 30 dias sem espera obrigatoria entre publicacoes; revisao medica posterior quando disponivel",
+    "window": "24 horas para integridade; 7, 14 e 30 dias para negocio; gate adicional em R$ 120 por campanha sem contato valido",
     "metrics": [
-      "HTTP, canonical, indexabilidade, sitemap, links internos e busca da biblioteca",
-      "consultas e impressoes organicas por tema como diagnostico intermediario",
-      "cliques contextuais nos CTAs sem perda de tracking",
-      "contatos validos, leads qualificados e consultas originados dos conteudos"
+      "politica, elegibilidade, URL final, gasto e resolucao de grupo e landing",
+      "termos por intencao de preco versus procedimento",
+      "contatos validos, qualificados, consultas e custo por etapa",
+      "cobertura de classificacao e preservacao de click ID"
     ],
-    "rollbackRule": "restaurar o deploy anterior diante de rota quebrada, perda de tracking, conteudo medico divergente da revisao, promessa indevida ou regressao de indexabilidade"
+    "rollbackRule": "reverter somente o componente afetado diante de destino, politica, atribuicao ou qualidade downstream incorretos; nao decidir por CTR, CPC ou pontuacao isolados"
   }
 }
