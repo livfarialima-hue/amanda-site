@@ -1,5 +1,559 @@
 {
-  "status": "not_published",
+  "schemaVersion": 1,
+  "changeId": "BRUNA-ENTRADA-RECUPERACAO-2026-09-14",
+  "status": "published_verified",
+  "approvedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+  "approvedBy": "Daniel",
+  "approvedAt": "2026-09-14T16:16:25.948Z",
+  "publishedAt": "2026-09-14T16:17:19.628Z",
+  "verifiedAt": "2026-09-14T16:22:49.396Z",
+  "netlify": {
+    "verifiedAt": "2026-09-14T16:18:04.601Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "approvedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "deployId": "6aa81deec1740500082bb22c",
+    "mode": "active",
+    "publishedAt": "2026-09-14T16:17:19.628Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "520faa417462e6c22e1d14d6dd7863cc67a880b2d5669e6ee6e1e6ad65076afe",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "1e80d94d83e5c4b5d1d7f520abcec0283f902082bc4ae2c3ea0f4a13fd424c7a",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "3a5074eed51b906c7a97c365cdfce5eb90acc29cccfb6b14dcc501813f3893fb",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "64c478350d7980dad504f44eab1bc6f9bffcd90e89f0c79e49c8712dbd2635f4",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "d97c82547977e92abcadf8c922b3f5376920d371c1d7f783b530bf14c31bd1cd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "debd5eb5d1016d8d895bb4bf738c3acc8d2416f8d8889755b6355cc946e9ce5f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "a23829b181fff9561ce51fbe8144c2a38e2043be9ad9bc9e41441eca94f1048b",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "staticFilesUnchanged": 192,
+    "probes": [
+      {
+        "name": "canonical",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "immutable",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "signature",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "followup-auth",
+        "status": 401,
+        "passed": true
+      }
+    ],
+    "realMessagesSentByAgent": 0
+  },
+  "stages": {
+    "storage": {
+      "approvedCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
+      "deployId": "6aa8180f6bc83b386142c5fc",
+      "off": {
+        "verifiedAt": "2026-09-14T15:48:56.289Z",
+        "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+        "approvedCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
+        "deployId": "6aa8171d93b1f00008fbc785",
+        "mode": "off",
+        "publishedAt": "2026-09-14T15:48:20.821Z",
+        "functions": [
+          {
+            "name": "appointment-reminder",
+            "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "appointment-review",
+            "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "attribution-journey",
+            "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "attribution-journey-purge",
+            "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "classify-leads",
+            "digest": "520faa417462e6c22e1d14d6dd7863cc67a880b2d5669e6ee6e1e6ad65076afe",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "classify-leads-background",
+            "digest": "1e80d94d83e5c4b5d1d7f520abcec0283f902082bc4ae2c3ea0f4a13fd424c7a",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "human-resume",
+            "digest": "3a5074eed51b906c7a97c365cdfce5eb90acc29cccfb6b14dcc501813f3893fb",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "post-consult-followup",
+            "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "scheduled-followup",
+            "digest": "64c478350d7980dad504f44eab1bc6f9bffcd90e89f0c79e49c8712dbd2635f4",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "synthetic-integration-health",
+            "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "ycloud-recovery",
+            "digest": "7e1fdf1201d455c04d6ad31862a897d3544c1af73d6aa93aedc14c8d939a0133",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "ycloud-webhook",
+            "digest": "b42c38e84b1c1ccf461ee4193f95d4e3c378281452567b3b54e610a3e480d229",
+            "runtime": "nodejs24.x"
+          }
+        ],
+        "schedules": [
+          {
+            "cron": "17 6 * * *",
+            "name": "attribution-journey-purge"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "classify-leads"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "human-resume"
+          },
+          {
+            "cron": "17 12 * * *",
+            "name": "synthetic-integration-health"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "ycloud-recovery"
+          }
+        ],
+        "staticFilesUnchanged": 192,
+        "probes": [
+          {
+            "name": "canonical",
+            "status": 200,
+            "automationMode": "off",
+            "passed": true
+          },
+          {
+            "name": "immutable",
+            "status": 200,
+            "automationMode": "off",
+            "passed": true
+          },
+          {
+            "name": "signature",
+            "status": 401,
+            "passed": true
+          },
+          {
+            "name": "followup-auth",
+            "status": 401,
+            "passed": true
+          }
+        ],
+        "realMessagesSentByAgent": 0
+      },
+      "publishedAt": "2026-09-14T15:52:15.243Z"
+    },
+    "background": {
+      "approvedCommit": "232c70414c5386723d596e82e5dbf4b188f320be",
+      "deployId": "6aa81c98b3a7ac46500e80e8",
+      "off": {
+        "verifiedAt": "2026-09-14T16:10:56.271Z",
+        "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+        "approvedCommit": "232c70414c5386723d596e82e5dbf4b188f320be",
+        "deployId": "6aa81c4c5766b400089a7e0f",
+        "mode": "off",
+        "publishedAt": "2026-09-14T16:10:21.693Z",
+        "functions": [
+          {
+            "name": "appointment-reminder",
+            "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "appointment-review",
+            "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "attribution-journey",
+            "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "attribution-journey-purge",
+            "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "classify-leads",
+            "digest": "520faa417462e6c22e1d14d6dd7863cc67a880b2d5669e6ee6e1e6ad65076afe",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "classify-leads-background",
+            "digest": "1e80d94d83e5c4b5d1d7f520abcec0283f902082bc4ae2c3ea0f4a13fd424c7a",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "human-resume",
+            "digest": "3a5074eed51b906c7a97c365cdfce5eb90acc29cccfb6b14dcc501813f3893fb",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "post-consult-followup",
+            "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "scheduled-followup",
+            "digest": "64c478350d7980dad504f44eab1bc6f9bffcd90e89f0c79e49c8712dbd2635f4",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "synthetic-integration-health",
+            "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "ycloud-recovery",
+            "digest": "c57825b2e586cf50a781beb2b4479d633fe66b1e091ba53973fd0c5502ab87b5",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "ycloud-recovery-background",
+            "digest": "4482d66b2063c84c7419c3e2be3bd285984b622b3bf43c71182d08e7a49dec82",
+            "runtime": "nodejs24.x"
+          },
+          {
+            "name": "ycloud-webhook",
+            "digest": "96a3145e734df3bffceb77cc33b3f24476695b3d9dbb80bd8067349c09b4fb63",
+            "runtime": "nodejs24.x"
+          }
+        ],
+        "schedules": [
+          {
+            "cron": "17 6 * * *",
+            "name": "attribution-journey-purge"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "classify-leads"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "human-resume"
+          },
+          {
+            "cron": "17 12 * * *",
+            "name": "synthetic-integration-health"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "ycloud-recovery"
+          }
+        ],
+        "staticFilesUnchanged": 192,
+        "probes": [
+          {
+            "name": "canonical",
+            "status": 200,
+            "automationMode": "off",
+            "passed": true
+          },
+          {
+            "name": "immutable",
+            "status": 200,
+            "automationMode": "off",
+            "passed": true
+          },
+          {
+            "name": "signature",
+            "status": 401,
+            "passed": true
+          },
+          {
+            "name": "followup-auth",
+            "status": 401,
+            "passed": true
+          }
+        ],
+        "realMessagesSentByAgent": 0
+      },
+      "publishedAt": "2026-09-14T16:11:38.844Z"
+    },
+    "terminalCleanup": {
+      "approvedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+      "deployId": "6aa81deec1740500082bb22c",
+      "patientEffectsAdded": false,
+      "reason": "Remove only canonical pending key with terminal receipt for the same event; mechanisms already verified default-off"
+    },
+    "activationFailure": {
+      "deployId": "6aa8178be2da9e52ef7d3079",
+      "cause": "Netlify HTTP 500 updateSiteDeploy after successful build and bundling",
+      "reachedProduction": false
+    },
+    "temporaryOffSeconds": 312
+  },
+  "appsScript": {
+    "version": 153,
+    "changed": false,
+    "receiptInherited": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
+  },
+  "storageProbe": {
+    "at": "2026-09-14T15:47:58.881Z",
+    "kind": "synthetic_technical_key_outside_pending_namespace",
+    "patientData": false,
+    "networkWrites": 5,
+    "onlyIfNewRejected": true,
+    "concurrentOwners": 1,
+    "readbackOwner": "worker-b",
+    "deleted": true
+  },
+  "firstCycle": {
+    "status": "observed",
+    "checkedAt": "2026-09-14T16:21:03.565Z",
+    "cycle": "2026-09-14T16:20:00Z",
+    "summary": "No primeiro ciclo natural da versão final, as três pendências técnicas com comprovante de conclusão foram removidas: fila de 3 para 0, com os comprovantes terminais e suas datas preservados. O scheduler despachou e o background foi observado após 13h20 BRT. A API de logs retornou linhas sem conteúdo; a confirmação de término usa também a releitura do estado persistido.",
+    "queue": {
+      "checkedAt": "2026-09-14T16:21:03.565Z",
+      "before": 3,
+      "remaining": 0,
+      "rows": [
+        {
+          "pending": false,
+          "completed": true,
+          "outcome": "appointment_selection_processed",
+          "completedAt": "2026-09-14T13:29:51.684Z"
+        },
+        {
+          "pending": false,
+          "completed": true,
+          "outcome": "human_takeover",
+          "completedAt": "2026-09-10T15:35:58.389Z"
+        },
+        {
+          "pending": false,
+          "completed": true,
+          "outcome": "processed",
+          "completedAt": "2026-08-25T13:50:10.825Z"
+        }
+      ]
+    },
+    "manualJobExecution": false,
+    "caseReadback": {
+      "inbound": 1,
+      "outbound": 1,
+      "outboundSource": "equipe_humana",
+      "originalOutboundAt": "2026-09-14T15:27:12Z"
+    }
+  },
+  "tests": {
+    "fullSuite": {
+      "tests": 1537,
+      "passed": 1537,
+      "failed": 0,
+      "outputSha256": "4f0047dc86e62780ea0c99637b3fa8cac7f9e641f530afb4ac1ed090ea9f726b"
+    },
+    "focused": {
+      "tests": 43,
+      "passed": 43,
+      "failed": 0
+    },
+    "crossConsumer": {
+      "tests": 158,
+      "passed": 158,
+      "failed": 0
+    },
+    "baselineReproduction": {
+      "sdk": "10.7.10",
+      "tests": 3,
+      "failed": 3,
+      "outputSha256": "d3154bd27eee7ef3614a4bfb458f91ba07dc60dc0facecfea5708889ae039282"
+    },
+    "fixedSdk": "10.7.12",
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "siteBuild": {
+      "files": 193,
+      "sitemapUrls": 54
+    },
+    "siteCheck": "OK",
+    "realMessagesSentByAgent": 0,
+    "runtimeBaseline": {
+      "tests": 1,
+      "failed": 1,
+      "outputSha256": "4a10875fa3ad3a3ab4ea5ddfedd2adb33cda840232a48c26a1cb794696a80c69"
+    },
+    "runtimeBudget": "Scheduler dispatch <=5s; background lifecycle; 16-minute lease; reserve one job at a time",
+    "newBackgroundFunction": "ycloud-recovery-background",
+    "terminalRaceBaseline": {
+      "tests": 5,
+      "passed": 3,
+      "failed": 2
+    },
+    "terminalQueueCleanup": "Somente chaves pendentes com comprovante terminal do mesmo evento; sem replay"
+  },
+  "caseReadback": {
+    "inboundAt": "2026-09-14T14:53:14Z",
+    "outboundSource": "equipe_humana",
+    "outboundAt": "2026-09-14T15:27:12Z",
+    "completedOutcome": "human_takeover",
+    "completedAt": "2026-09-14T15:29:57.968Z",
+    "manuallyReplayed": false
+  },
   "realMessagesSentByAgent": 0,
-  "historicalWrites": 0
+  "historicalCRMWrites": 0,
+  "technicalProbeMutations": 5,
+  "automaticTerminalPendingCleanup": 3,
+  "rollback": {
+    "commit": "232c70414c5386723d596e82e5dbf4b188f320be",
+    "netlifyDeployId": "6aa81c98b3a7ac46500e80e8",
+    "appsScriptVersion": 153
+  },
+  "limitations": [
+    "Timeouts externos ainda podem ocorrer",
+    "Caso atendido pela equipe não comprova resposta automática da nova versão",
+    "Logs novos retornaram linhas sem conteúdo; ciclo conferido também pelo estado persistido",
+    "Ausência de perda de contatos durante contenção não estabelecida"
+  ],
+  "documentation": {
+    "status": "verified_equal",
+    "verifiedAt": "2026-09-14T16:22:49.396Z",
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "037787511a6477df5e27bb0ec42641ca69d6e56f784892ba18e4b983068cf1b9",
+      "remoteSha256": "037787511a6477df5e27bb0ec42641ca69d6e56f784892ba18e4b983068cf1b9",
+      "bytes": 186189,
+      "readbackEqual": true,
+      "modifiedAt": "2026-09-14T16:22:12.434Z",
+      "inPlace": true
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "localPath": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe",
+      "remoteSha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe",
+      "bytes": 108540,
+      "readbackEqual": true,
+      "modifiedAt": "2026-09-14T16:22:15.141Z",
+      "inPlace": true
+    },
+    "audit": {
+      "fileId": "1cWE8mJOLI439vjG5Uc5ZTJJdD4JVN3_c",
+      "localPath": "auditorias/bruna-entrada-recuperacao-2026-09-14/RELATORIO.md",
+      "sha256": "d6f11787e308decd67aabddb45b214ada3d468be53f2d0bf02ec40f45e540230",
+      "remoteSha256": "d6f11787e308decd67aabddb45b214ada3d468be53f2d0bf02ec40f45e540230",
+      "bytes": 6855,
+      "readbackEqual": true,
+      "modifiedAt": "2026-09-14T16:22:17.978Z",
+      "inPlace": false
+    }
+  },
+  "localCloseout": {
+    "functionalCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "receiptCommit": "Descendente documental com [skip netlify]; sem alteração de código funcional",
+    "requiredFinalGate": "npm.cmd run ops:check"
+  }
 }

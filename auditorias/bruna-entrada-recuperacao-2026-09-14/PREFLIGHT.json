@@ -32,7 +32,13 @@
   "correlationLimitation": "Vínculo entre log anonimizado e caso por horário e atributos operacionais; o estado durável foi consultado pela chave do evento.",
   "authorization": {
     "source": "Mensagem do usuário nesta tarefa: Corrija a causa e publique",
-    "scope": "Correção da recuperação e publicação; sem replay ou mensagem a pacientes"
+    "scope": "Pacote final da recuperacao, incluindo remocao idempotente de pendencias com comprovante terminal; nenhum replay manual",
+    "approvedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "approvedAt": "2026-09-14T16:16:25.948Z",
+    "approvedBy": "Daniel",
+    "approvalReference": "Mensagem do usuario nesta tarefa: Corrija a causa e publique",
+    "livePreflightAt": "2026-09-14T16:16:25.813Z",
+    "livePreflightReference": "C:/Users/danie/AppData/Local/Temp/bruna-entrada-20260914/final/live-preflight.json"
   },
   "rollbackReady": true,
   "live": {
@@ -399,5 +405,26 @@
     },
     "reason": "Três pendências coexistem com comprovantes terminais anteriores; limpar apenas a projeção pendente do mesmo evento",
     "activation": "Nenhum novo caminho de mensagem; os mecanismos de efeito foram publicados default-off e conferidos na etapa anterior"
+  },
+  "finalLive": {
+    "checkedAt": "2026-09-14T16:16:25.813Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aa81c98b3a7ac46500e80e8",
+    "baselineCommit": "232c70414c5386723d596e82e5dbf4b188f320be",
+    "functions": 13,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ],
+    "appsScript": {
+      "version": 153,
+      "unchanged": true,
+      "receipt": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
+    }
   }
 }

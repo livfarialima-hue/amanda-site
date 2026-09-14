@@ -2,20 +2,20 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-ENTRADA-RECUPERACAO-2026-09-14",
   "title": "Preservar exclusividade e executar recuperacao longa fora do limite do agendamento",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "3932b5ca73090ff636362a6df160383565579db4",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Usuário autorizou corrigir a causa e publicar nesta tarefa; vincular o SHA testado no preflight externo.",
+    "note": "Correção e publicação autorizadas pelo pedido do usuário nesta tarefa; SHA final 9c44c9389e63f4f4c6200c0cd059171488c3d890 vinculado ao preflight externo.",
     "approvalReference": "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json"
   },
   "risk": {
     "level": "critical",
     "patientEffects": true,
     "externalWritesPerformed": true,
-    "defaultOffUntilPublication": true
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -82,9 +82,10 @@
         "contract": "durable-storage-conditional-writes",
         "system": "Netlify/Blobs/LEADS",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-14T16:06:25.529Z",
+        "checkedAt": "2026-09-14T16:16:25.813Z",
         "reference": "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json",
-        "limitation": "Logs e estado persistido confirmam timeouts e reinício de job; correlação do log com o caso por horário e conteúdo operacional. Contato já recebeu atendimento humano."
+        "limitation": "Logs e estado persistido confirmam timeouts e reinício de job; correlação do log com o caso por horário e conteúdo operacional. Contato já recebeu atendimento humano.",
+        "additionalEvidence": "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json"
       }
     ]
   },
@@ -101,7 +102,7 @@
       "npm.cmd run ops:check",
       "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs"
     ],
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "completedAt": "2026-09-14T16:15:39.825Z",
     "results": {
       "fullSuite": {
@@ -147,7 +148,8 @@
         "passed": 3,
         "failed": 2
       },
-      "terminalQueueCleanup": "Somente chaves pendentes com comprovante terminal do mesmo evento; sem replay"
+      "terminalQueueCleanup": "Somente chaves pendentes com comprovante terminal do mesmo evento; sem replay",
+      "productionVerified": true
     }
   },
   "rollback": {
@@ -167,5 +169,15 @@
       "Respostas duplicadas e respeito ao atendimento humano"
     ],
     "rollbackRule": "Conter diante de duplicidade, perda de reserva, resposta após takeover ou degradação do endpoint."
+  },
+  "release": {
+    "approvedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "netlifyDeployId": "6aa81deec1740500082bb22c",
+    "appsScriptVersion": 153,
+    "verifiedAt": "2026-09-14T16:22:49.396Z",
+    "receipt": "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json",
+    "drivePlanSha256": "037787511a6477df5e27bb0ec42641ca69d6e56f784892ba18e4b983068cf1b9",
+    "driveManualSha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe",
+    "driveClosedAuditFileId": "1cWE8mJOLI439vjG5Uc5ZTJJdD4JVN3_c"
   }
 }

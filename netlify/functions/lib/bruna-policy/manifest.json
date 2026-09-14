@@ -17,15 +17,15 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
-    "lastObservedProductionCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
-    "functionalDeployId": "6aa7e218d56b0f48420dcd98",
-    "lastObservedProductionDeployId": "6aa7e218d56b0f48420dcd98",
-    "rollbackCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
-    "rollbackDeployId": "6aa72fd3ff58fc000803e345",
-    "publishedAt": "2026-09-14T12:02:05.39Z",
-    "lastVerifiedAt": "2026-09-14T12:21:52.249Z",
-    "candidateChangeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
+    "functionalCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "lastObservedProductionCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "functionalDeployId": "6aa81deec1740500082bb22c",
+    "lastObservedProductionDeployId": "6aa81deec1740500082bb22c",
+    "rollbackCommit": "232c70414c5386723d596e82e5dbf4b188f320be",
+    "rollbackDeployId": "6aa81c98b3a7ac46500e80e8",
+    "publishedAt": "2026-09-14T16:17:19.628Z",
+    "lastVerifiedAt": "2026-09-14T16:22:49.396Z",
+    "candidateChangeId": "BRUNA-ENTRADA-RECUPERACAO-2026-09-14",
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-09-14.1"
   },
@@ -35,10 +35,10 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "13D-TxVKtKqP7R0kmRRJ-4J6qtE0wuFNj",
+    "driveClosedAuditFileId": "1cWE8mJOLI439vjG5Uc5ZTJJdD4JVN3_c",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "75fea9424bbff9c54a6413986c5c55a087ee9f04573c3e4ec87653553f6317eb"
+    "driveProjectionSha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe"
   },
   "reliabilityContract": "durable-storage-conditional-writes"
 }
