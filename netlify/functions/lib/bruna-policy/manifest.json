@@ -17,17 +17,18 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
-    "lastObservedProductionCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
-    "functionalDeployId": "6aa869f3237a3b809a7bdcb2",
-    "lastObservedProductionDeployId": "6aa869f3237a3b809a7bdcb2",
-    "rollbackCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
-    "rollbackDeployId": "6aa854c90a4310d49417bd44",
-    "publishedAt": "2026-09-14T21:41:40.686Z",
-    "lastVerifiedAt": "2026-09-14T21:43:28.292Z",
-    "candidateChangeId": "BRUNA-REDUNDANCIA-2026-09-14",
+    "functionalCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "lastObservedProductionCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "functionalDeployId": "6aa86fc2b2999d0009b2d245",
+    "lastObservedProductionDeployId": "6aa86fc2b2999d0009b2d245",
+    "rollbackCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+    "rollbackDeployId": "6aa869f3237a3b809a7bdcb2",
+    "publishedAt": "2026-09-14T22:09:00.000Z",
+    "lastVerifiedAt": "2026-09-14T22:19:02.658Z",
+    "candidateChangeId": "BRUNA-RETOMADA-CONTEXTUAL-2026-09-14",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-14.3"
+    "bundleVersion": "2026-09-14.4",
+    "appsScriptVersion": 154
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -35,17 +36,13 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1QKi8rn6rXJcjhzLcddBK9ANeP55S5s5F",
+    "driveClosedAuditFileId": "1o2m9KcuAl6zVoxr6nVYRZYH3eSG24mBH",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "9a8cd48de7dcd2a08bf03a7cc719a0af055049879d04fbac96ca0decc8039ae1"
+    "driveProjectionSha256": "fba6fe1fd64e582a8150b1018f2fa0df3a9f3aacfa1b4fb7c91a827d79b2290c"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "pendingRelease": {
-    "changeId": "BRUNA-RETOMADA-CONTEXTUAL-2026-09-14",
-    "bundleVersion": "2026-09-14.4"
-  },
   "followupCopyContract": "followup-message-copy"
 }

@@ -1,4 +1,281 @@
 {
-  "status": "pending_authorized_publication",
-  "realMessagesSentByAgent": 0
+  "schemaVersion": 1,
+  "changeId": "BRUNA-RETOMADA-CONTEXTUAL-2026-09-14",
+  "status": "published_verified",
+  "approvedCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+  "approvedBy": "Daniel",
+  "approvedAt": "2026-09-14T22:05:31.9989264Z",
+  "publishedAt": "2026-09-14T22:09:00.000Z",
+  "publishedAtPrecision": "minute_from_deployment_UI",
+  "verifiedAt": "2026-09-14T22:19:02.658Z",
+  "netlify": {
+    "verifiedAt": "2026-09-14T22:07:19.494Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "approvedCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "deployId": "6aa86fc2b2999d0009b2d245",
+    "mode": "active",
+    "publishedAt": "2026-09-14T22:06:27.969Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "520faa417462e6c22e1d14d6dd7863cc67a880b2d5669e6ee6e1e6ad65076afe",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "1e80d94d83e5c4b5d1d7f520abcec0283f902082bc4ae2c3ea0f4a13fd424c7a",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "c5ce4c768df419274ebb9f327911910d630489fd759917315f66200bf1f62024",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "337e117f794755b6030774f720ba53a72a07356caa28646796b03edd6ce8ddb1",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "03502e14f746cc33deb4a10a5e611e3358a8741feb727946af7acd941d61678f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "26794ce0264468a57d10032797e460f16137dee624cc449d2580d30193d8df98",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "efd8334aa34c0d0844f451159f9978f799ebc8a6f0ce4468196a0cac7a1af75f",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "staticFilesUnchanged": 192,
+    "probes": [
+      {
+        "name": "canonical",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "immutable",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "signature",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "followup-auth",
+        "status": 401,
+        "passed": true
+      }
+    ],
+    "realMessagesSentByAgent": 0
+  },
+  "appsScript": {
+    "version": 154,
+    "publishedAt": "2026-09-14T22:09:00.000Z",
+    "publishedAtPrecision": "minute_from_deployment_UI",
+    "confirmedAt": "2026-09-14T22:10:38.747Z",
+    "sourceVerifiedAt": "2026-09-14T22:08:26.126Z",
+    "normalizedSha256": "3aeb59a9486baa52757955ca1c18568bfa10fc8568d453025941e692919d84b9",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "sameDeployment": true,
+    "changedFiles": [
+      "Retomadas.gs"
+    ],
+    "flagsChanged": false,
+    "triggersExecuted": false,
+    "realMessagesSentByAgent": 0,
+    "probes": [
+      {
+        "name": "health",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "invalid-cancel",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "invalid-secret",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-14T22:17:41.994Z",
+        "response": {
+          "ok": false,
+          "error": "unauthorized"
+        }
+      }
+    ],
+    "verifiedAt": "2026-09-14T22:17:41.994Z",
+    "probeAttempts": [
+      {
+        "name": "invalid-secret",
+        "status": 200,
+        "passed": false,
+        "verifiedAt": "2026-09-14T22:12:14.118Z",
+        "note": "Initial predicate did not pass; response was not retained. Side-effect-free refusal independently verified on retry."
+      }
+    ]
+  },
+  "changedFunctions": [
+    "scheduled-followup"
+  ],
+  "rollout": {
+    "strategy": "compatible_consumer_before_producer",
+    "steps": [
+      "Netlify aceita textos antigos e novos enquanto Apps Script continua gerando o texto antigo",
+      "Conferir SHA e sondas do Netlify",
+      "Salvar somente Retomadas.gs e atualizar o deployment Apps Script existente",
+      "Reler arquivo e versao, conferir endpoints e sincronizar documentacao"
+    ],
+    "automationModeChange": false,
+    "flagsChanged": false,
+    "queueRewrite": false,
+    "templateChanged": false
+  },
+  "controlledPauseSeconds": 0,
+  "validation": {
+    "fullSuite": {
+      "tests": 1578,
+      "passed": 1578,
+      "failed": 0,
+      "outputSha256": "8c2271349be262dd4cd82a82ef37d7d0774a388bae386df2b874c327e1a46200"
+    },
+    "focused": {
+      "tests": 91,
+      "passed": 91,
+      "failed": 0,
+      "outputSha256": "54b71dcb6bc1a77597fa44ed9379df25345c3c3b34f97caca4e1223ee6dde4fe"
+    },
+    "crossConsumer": {
+      "tests": 134,
+      "passed": 134,
+      "failed": 0,
+      "outputSha256": "2d9001bf115fa199ce571d87b74cbc63b462aec1e8e6579d245e0d4118595e49"
+    },
+    "baselineReproduction": {
+      "tests": 5,
+      "passed": 1,
+      "failed": 4,
+      "outputSha256": "36c2503ebc65d626d723000759a26ba97b52e9ebc078af7d04d9238e59dc9b45"
+    },
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "siteBuild": {
+      "files": 193,
+      "sitemapUrls": 54
+    },
+    "siteCheck": "OK",
+    "realMessagesSentByAgent": 0
+  },
+  "realMessagesSentByAgent": 0,
+  "patientReplay": false,
+  "rollback": {
+    "local": "Reverter somente este candidato no worktree isolado.",
+    "production": "Restaurar Apps Script v153 no mesmo deployment e Netlify 6aa869f3237a3b809a7bdcb2, preservando dados e filas.",
+    "verifiedNetlifyDeployId": "6aa869f3237a3b809a7bdcb2",
+    "verifiedCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+    "appsScriptVersion": 153
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Sondas apos publicacao; revisoes 16/09 e 21/09 as 19h30 BRT",
+    "metrics": [
+      "Respostas uteis e alinhamento de contexto",
+      "Repeticao e convite duplo",
+      "Bloqueios indevidos, takeover, duplicidade e consultas com evidencia"
+    ],
+    "rollbackRule": "Conter se houver perda de contexto, envio fora do corredor ou regressao de preferencia/tomada humana."
+  },
+  "drive": {
+    "verifiedAt": "2026-09-14T22:19:02.658Z",
+    "documents": [
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "modifiedAt": "2026-09-14T22:18:13.039Z",
+        "bytes": 192213,
+        "byteEqual": true,
+        "sha256": "e978863a473bda3fb00ad87f0e713e653c2940f5536660b0fd9299ee2f62e1d0"
+      },
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "modifiedAt": "2026-09-14T22:18:20.849Z",
+        "bytes": 114564,
+        "byteEqual": true,
+        "sha256": "fba6fe1fd64e582a8150b1018f2fa0df3a9f3aacfa1b4fb7c91a827d79b2290c"
+      }
+    ],
+    "closedAudit": {
+      "fileId": "1o2m9KcuAl6zVoxr6nVYRZYH3eSG24mBH",
+      "path": "auditorias/bruna-retomada-contextual-2026-09-14/RELATORIO.md",
+      "modifiedAt": "2026-09-14T22:18:48.353Z",
+      "bytes": 5321,
+      "byteEqual": true,
+      "sha256": "e29258b7125ca134fd47352fbb0bf4f03dd02a21eb6674cbab83d7a021ae4f9c"
+    }
+  }
 }

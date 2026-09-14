@@ -2,19 +2,20 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RETOMADA-CONTEXTUAL-2026-09-14",
   "title": "Retomada agradavel e contextual com uma entrada simples",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "684d30b72db5beef939c855cd696965f2b95199e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Continuacao do ajuste de comportamento da Bruna com publicacao autorizada nesta conversa; vincular ao SHA exato no preflight."
+    "note": "Continuacao do ajuste de comportamento da Bruna com publicacao autorizada nesta conversa; vincular ao SHA exato no preflight.",
+    "approvalReference": "auditorias/bruna-retomada-contextual-2026-09-14/PREFLIGHT.json"
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -73,7 +74,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "commands": [
       "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
@@ -118,7 +119,8 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0
+      "realMessagesSentByAgent": 0,
+      "productionVerified": true
     }
   },
   "rollback": {
@@ -138,7 +140,16 @@
     ],
     "rollbackRule": "Conter se houver perda de contexto, envio fora do corredor ou regressao de preferencia/tomada humana."
   },
-  "release": {},
+  "release": {
+    "approvedCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "netlifyDeployId": "6aa86fc2b2999d0009b2d245",
+    "appsScriptVersion": 154,
+    "verifiedAt": "2026-09-14T22:19:02.658Z",
+    "receipt": "auditorias/bruna-retomada-contextual-2026-09-14/PUBLICACAO.json",
+    "drivePlanSha256": "e978863a473bda3fb00ad87f0e713e653c2940f5536660b0fd9299ee2f62e1d0",
+    "driveManualSha256": "fba6fe1fd64e582a8150b1018f2fa0df3a9f3aacfa1b4fb7c91a827d79b2290c",
+    "driveClosedAuditFileId": "1o2m9KcuAl6zVoxr6nVYRZYH3eSG24mBH"
+  },
   "rollout": {
     "strategy": "compatible_consumer_before_producer",
     "steps": [

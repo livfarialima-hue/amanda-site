@@ -1,6 +1,6 @@
 # Histórico do pacote Bruna
 
-## 2026-09-14.4 — retomada mais agradável e contextual (candidato autorizado)
+## 2026-09-14.4 — retomada mais agradável e contextual (publicado, 9be771e)
 
 - Usa assunto conhecido e última pergunta para uma retomada breve com uma entrada simples.
 - Evita nova coleta de nome, repetição da avaliação e convite duplo; preserva preço, agenda e objeção conhecidos.

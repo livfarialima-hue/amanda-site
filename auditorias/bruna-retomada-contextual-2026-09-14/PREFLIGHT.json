@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-14T21:49:01.272Z",
+  "checkedAt": "2026-09-14T22:05:31.883Z",
   "authenticated": true,
   "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
   "baseline": "6aa869f3237a3b809a7bdcb2",
@@ -228,5 +228,15 @@
       "canonicalEqual": true,
       "sha256": "9a8cd48de7dcd2a08bf03a7cc719a0af055049879d04fbac96ca0decc8039ae1"
     }
-  ]
+  ],
+  "authorization": {
+    "approvedCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "approvedAt": "2026-09-14T22:05:31.9989264Z",
+    "approvedBy": "Daniel",
+    "authorization": "Continuacao das melhorias de comportamento do bot com publicacao autorizada pelo usuario nesta conversa (Pode publicar).",
+    "currentRequest": "O texto da retomada automática não pode ser um pouco mais agradável e interessante e com contexto?",
+    "scope": "Texto de retomada em Retomadas.gs e reconhecimento dos novos textos pelo endpoint Netlify; sem ampliar elegibilidade nem executar mensagens.",
+    "noPatientReplay": true,
+    "preflight": "Autorizacao vinculada ao SHA exato em worktree limpo; tres IDs canonicos confirmados."
+  }
 }
