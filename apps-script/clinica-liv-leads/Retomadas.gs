@@ -2393,6 +2393,7 @@ function criarCandidatoRetomada_(
       lead.nome,
       contextoValorConsulta,
       contextoLocalAtendimento,
+      conversa,
     ),
     chaveDiaria: [
       dataLocal,
@@ -2539,12 +2540,15 @@ function sugestaoExataRetomadaModelo_(texto, procedimentoId) {
   const frases = frasesProcedimentoRetomadaModelo_(procedimentoId);
 
   return frases.some(function (frase) {
-    return (
-      normalizado ===
+    return [
       "ola queria retomar nossa conversa sobre " +
         frase +
-        " ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma"
-    );
+        " ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma",
+      "ola voce comentou que queria saber sobre " + frase +
+        " me conta voce ja tem alguma mudanca em mente ou esta comecando a pesquisar",
+      "ola voce comentou que queria saber sobre " + frase +
+        " podemos comecar por uma duvida pratica voce prefere saber sobre o procedimento ou sobre a recuperacao",
+    ].includes(normalizado);
   });
 }
 
@@ -3011,6 +3015,7 @@ function sugerirMensagemRetomada_(
   nomePaciente,
   contextoValorConsulta,
   contextoLocalAtendimento,
+  conversa,
 ) {
   const assunto = String(assuntoRetomada || "").trim();
   const primeiroNome = primeiroNomeSeguroRetomada_(nomePaciente);
@@ -3030,7 +3035,7 @@ function sugerirMensagemRetomada_(
       (contextoLocalAtendimento
         ? " e o endereço da Clínica LIV"
         : "") +
-      ". Ficou alguma dúvida que eu possa esclarecer? Se quiser continuar, posso ajudar com o próximo passo por aqui."
+      ". Quer esclarecer algum ponto sobre isso antes de pensar no próximo passo?"
     );
   }
 
@@ -3039,10 +3044,7 @@ function sugerirMensagemRetomada_(
       saudacao +
       " Você tinha perguntado sobre o valor e o que está incluído" +
       complementoOrcamento +
-      ". Posso retomar exatamente esse ponto e explicar, de forma objetiva, como o orçamento completo é definido?" +
-      (contextoAgenda
-        ? " Se depois fizer sentido para você, também posso consultar a agenda e separar duas opções reais de horário para a avaliação."
-        : "")
+      ". Quer que eu ajude a esclarecer algum ponto sobre isso?"
     );
   }
 
@@ -3051,34 +3053,36 @@ function sugerirMensagemRetomada_(
       saudacao +
       " Você tinha comentado que gostaria de marcar uma avaliação" +
       complementoAvaliacao +
-      ". Se ainda fizer sentido para você, posso retomar de onde paramos e verificar duas opções reais de horário. Se tiver preferência por algum dia ou por manhã ou tarde, pode me dizer que eu considero na busca."
+      ". Posso verificar duas opções reais de horário para continuarmos de onde paramos?"
     );
   }
 
   if (etapa === 1 && objecao) {
     return (
       saudacao +
-      " Você tinha comentado que sua principal preocupação era " +
+      " Você comentou sobre " +
       objecao +
-      ". Posso retomar exatamente esse ponto e organizar o que vale esclarecer na avaliação com a Dra. Amanda, sem pressa?"
-    );
-  }
-
-  if (etapa === 1 && contextoQualificado && assunto) {
-    return (
-      saudacao +
-      " Queria retomar nossa conversa sobre " +
-      assunto +
-      ". Você tinha demonstrado interesse em entender as possibilidades para o seu caso. Ficou alguma dúvida que eu possa esclarecer antes de você decidir se a avaliação faz sentido?"
+      ". Quer que a gente continue por esse ponto?"
     );
   }
 
   if (etapa === 1 && assunto) {
+    const assuntoCurto = assunto.replace(/^cervicoplastia \(lifting cervical\)$/i, "lifting cervical");
+    const mensagens = Array.isArray(conversa) ? conversa : [];
+    const procedimento = identificarProcedimentoRetomadaModelo_(assuntoCurto);
+    const mencionadoPelaPaciente = procedimento && mensagens.some(function (mensagem) {
+      return mensagem.direcao === "IN" && identificarProcedimentoRetomadaModelo_(mensagem.texto) === procedimento;
+    });
+    const ultimaSaida = mensagens.slice().reverse().find(function (mensagem) { return mensagem.direcao === "OUT"; });
+    const perguntaAnterior = normalizarTextoRetomadas_(ultimaSaida && ultimaSaida.texto);
+    const descobertaJaPerguntada = /o que (?:voce )?gostaria de (?:entender|saber|melhorar|preservar)|o que mais (?:te )?incomoda|o que mais chamou/.test(perguntaAnterior);
     return (
       saudacao +
-      " Queria retomar nossa conversa sobre " +
-      assunto +
-      ". Ficou alguma dúvida que eu possa esclarecer para você? Se preferir, também posso explicar como funciona a avaliação com a Dra. Amanda, para você entender esse próximo passo com calma."
+      (mencionadoPelaPaciente ? " Você comentou que queria saber sobre " : " Podemos conversar sobre ") +
+      assuntoCurto +
+      (descobertaJaPerguntada
+        ? ". Podemos começar por uma dúvida prática: você prefere saber sobre o procedimento ou sobre a recuperação?"
+        : ". Me conta: você já tem alguma mudança em mente ou está começando a pesquisar?")
     );
   }
 

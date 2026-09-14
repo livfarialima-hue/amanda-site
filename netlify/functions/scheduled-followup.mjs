@@ -284,10 +284,11 @@ function isExactSimpleProcedureFollowup(text, procedure) {
   const normalized = normalizeSimpleFollowupText(text);
   const phrases = SIMPLE_FOLLOWUP_PROCEDURE_PHRASES[procedure] || [];
 
-  return phrases.some((phrase) =>
-    normalized ===
-      `ola queria retomar nossa conversa sobre ${phrase} ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma`,
-  );
+  return phrases.some((phrase) => [
+    `ola queria retomar nossa conversa sobre ${phrase} ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma`,
+    `ola voce comentou que queria saber sobre ${phrase} me conta voce ja tem alguma mudanca em mente ou esta comecando a pesquisar`,
+    `ola voce comentou que queria saber sobre ${phrase} podemos comecar por uma duvida pratica voce prefere saber sobre o procedimento ou sobre a recuperacao`,
+  ].includes(normalized));
 }
 
 export function isSimpleUnansweredProcedureInterestFollowup(payload) {

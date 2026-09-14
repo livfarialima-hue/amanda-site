@@ -1295,6 +1295,58 @@
         "Google Drive"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "followup-message-copy",
+      "ownerFiles": [
+        "apps-script/clinica-liv-leads/Retomadas.gs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
+        "netlify/functions/scheduled-followup.mjs"
+      ],
+      "coveredPaths": [
+        "apps-script/clinica-liv-leads/README.md",
+        "apps-script/clinica-liv-leads/Retomadas.gs",
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "apps-script/clinica-liv-leads/production-target.json",
+        "auditorias/bruna-retomada-contextual-2026-09-14/PREFLIGHT.json",
+        "auditorias/bruna-retomada-contextual-2026-09-14/PUBLICACAO.json",
+        "auditorias/bruna-retomada-contextual-2026-09-14/RELATORIO.md",
+        "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "docs/estrategia-abordagem-bruna.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+        "netlify/functions/lib/bruna-policy/manifest.json",
+        "netlify/functions/lib/bruna-policy/rules.jsonl",
+        "netlify/functions/scheduled-followup.mjs",
+        "ops/CHANGE-CANDIDATE.json",
+        "ops/IMPACT-REGISTRY.json"
+      ],
+      "requiredTestFiles": [
+        "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+        "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
+        "apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
+        "netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      ],
+      "liveSystems": [
+        "Apps Script",
+        "Netlify",
+        "Google Drive"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

@@ -1,5 +1,11 @@
 # Histórico do pacote Bruna
 
+## 2026-09-14.4 — retomada mais agradável e contextual (candidato autorizado)
+
+- Usa assunto conhecido e última pergunta para uma retomada breve com uma entrada simples.
+- Evita nova coleta de nome, repetição da avaliação e convite duplo; preserva preço, agenda e objeção conhecidos.
+- Gates Apps Script/Netlify aceitam os novos textos exatos e conservam os planos legados.
+
 ## 2026-09-14.3 — continuidade geral sem repetição (publicado, ebaa3c0)
 
 - Índice do histórico e guarda de explicações, perguntas respondidas, fórmulas de empatia e ofertas anteriores; não apenas semelhança com a última mensagem.

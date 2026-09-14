@@ -205,3 +205,7 @@ Invariantes: GET do painel não escreve; dispensar não altera preferência perm
 ### Integridade contextual, revisão de 12/09/2026
 
 conversation-memory é o proprietário da adaptação de histórico para IA e da gravação condicional por versão, incluindo recuperação e resumo semântico. openai-shadow reutiliza essa adaptação e preserva a cauda da mensagem atual quando há limite de tamanho. O webhook vincula o resumo ao evento de entrada: atividade posterior humana ou do paciente invalida o resultado antigo. procedure-context resolve correções e ambiguidades de nomes; whatsapp-automation importa a regra para não restaurar um procedimento recusado/comparado ao enriquecer pelo histórico. Essas regras não modificam atribuição, identidade, preços aprovados ou fatos clínicos.
+
+### Cópia contextual das retomadas — 14/09/2026
+
+Retomadas.gs mantém a autoria da sugestão e consulta a última pergunta da clínica para evitar reapresentação, nova coleta de nome ou a mesma descoberta aberta. scheduled-followup.mjs espelha apenas o texto exato permitido no corredor automático existente, preservando o veto semântico para os demais casos. A mudança não replaneja fila nem altera cadência, janela, cuidado, preferências, aprovação ou gatilhos. Contrato: followup-message-copy.

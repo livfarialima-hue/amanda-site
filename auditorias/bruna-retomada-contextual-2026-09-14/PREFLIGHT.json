@@ -1,0 +1,232 @@
+{
+  "checkedAt": "2026-09-14T21:49:01.272Z",
+  "authenticated": true,
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "baseline": "6aa869f3237a3b809a7bdcb2",
+  "baselineCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+  "functions": 13,
+  "schedules": 5,
+  "staticFiles": 192,
+  "mode": [
+    {
+      "context": "production",
+      "value": "active"
+    }
+  ],
+  "appsScript": {
+    "version": 153,
+    "editorAuthenticated": true,
+    "checkedAt": "2026-09-14T22:00:27.563Z",
+    "comparedFiles": 27,
+    "files": [
+      {
+        "name": "Retomadas.gs",
+        "liveNormalizedSha256": "3a14024e5ad71d7433c7c395de1dee0c3a49a7ee5c3ff95e15b35da5a4bf0795",
+        "canonicalNormalizedSha256": "3a14024e5ad71d7433c7c395de1dee0c3a49a7ee5c3ff95e15b35da5a4bf0795",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "Code.gs",
+        "liveNormalizedSha256": "beb296efe52c3bab9466ac016dbe82726e9fc18593067048f914d42e6f5c99a9",
+        "canonicalNormalizedSha256": "beb296efe52c3bab9466ac016dbe82726e9fc18593067048f914d42e6f5c99a9",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "LembretesConsultas.gs",
+        "liveNormalizedSha256": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724",
+        "canonicalNormalizedSha256": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "ConsultasSync.gs",
+        "liveNormalizedSha256": "dbd2e4b3ece884cbc11aeb714b8c14276ad84a19c7f530b7a337df82e9493368",
+        "canonicalNormalizedSha256": "dbd2e4b3ece884cbc11aeb714b8c14276ad84a19c7f530b7a337df82e9493368",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "AgendaCuidados.gs",
+        "liveNormalizedSha256": "a82f3e1518a39b0bad4ebff7480a40c73060c944a328329f5ed606dfd54e1910",
+        "canonicalNormalizedSha256": "a82f3e1518a39b0bad4ebff7480a40c73060c944a328329f5ed606dfd54e1910",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "CentralAtendimento.gs",
+        "liveNormalizedSha256": "db23877045588b20a9c9aa6c58a7ed336b9c87abf56a3832846b4193630c4d39",
+        "canonicalNormalizedSha256": "db23877045588b20a9c9aa6c58a7ed336b9c87abf56a3832846b4193630c4d39",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "LeadClassification.gs",
+        "liveNormalizedSha256": "b552155a2ff5674b37ef8110a28369604aee57053b511d5ab354289c0ca3420f",
+        "canonicalNormalizedSha256": "b552155a2ff5674b37ef8110a28369604aee57053b511d5ab354289c0ca3420f",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "ContactPreferences.gs",
+        "liveNormalizedSha256": "f755183eaccd75ab569bf67e4d0e92bccd9b2d158f3bf32cd6a08f6cdf02cdd1",
+        "canonicalNormalizedSha256": "f755183eaccd75ab569bf67e4d0e92bccd9b2d158f3bf32cd6a08f6cdf02cdd1",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "RoomBooking.gs",
+        "liveNormalizedSha256": "d01e2e6fd008e3ecf94698ac5fcc16bb44f2acc555db3e446c43c2a57f02d5ee",
+        "canonicalNormalizedSha256": "d01e2e6fd008e3ecf94698ac5fcc16bb44f2acc555db3e446c43c2a57f02d5ee",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "RoomBookingForm.html",
+        "liveNormalizedSha256": "45e93d4952171a1b88404f4737f2aaf1d6991ae0ed00829b086fe8138d310519",
+        "canonicalNormalizedSha256": "45e93d4952171a1b88404f4737f2aaf1d6991ae0ed00829b086fe8138d310519",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "KnowledgeBase.gs",
+        "liveNormalizedSha256": "7bdfdff8346e54d8c64a2c0cddaf3efc228cc40fdf3850e6caed9986d365bd05",
+        "canonicalNormalizedSha256": "7bdfdff8346e54d8c64a2c0cddaf3efc228cc40fdf3850e6caed9986d365bd05",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "OpportunityStore.gs",
+        "liveNormalizedSha256": "c14d14baec0c742d924713e43fa92afd7ad54243211eb0d6ccffb6549be82376",
+        "canonicalNormalizedSha256": "c14d14baec0c742d924713e43fa92afd7ad54243211eb0d6ccffb6549be82376",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "BusinessMilestones.gs",
+        "liveNormalizedSha256": "e4250350616aa4a0296da1fa1b539ee39dd8bc543bb7de09eb59cf064f01f50c",
+        "canonicalNormalizedSha256": "e4250350616aa4a0296da1fa1b539ee39dd8bc543bb7de09eb59cf064f01f50c",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "DataQualityRepair.gs",
+        "liveNormalizedSha256": "ec3ce38c0c8dc12acb4b05985220c4f9781bcad51f997598d13c1ba8a8ab3fe1",
+        "canonicalNormalizedSha256": "ec3ce38c0c8dc12acb4b05985220c4f9781bcad51f997598d13c1ba8a8ab3fe1",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "OperationalEvents.gs",
+        "liveNormalizedSha256": "4390ec4de184b38367871074a3df3752f9fd51af8b2c6106a47a87db70afb02c",
+        "canonicalNormalizedSha256": "4390ec4de184b38367871074a3df3752f9fd51af8b2c6106a47a87db70afb02c",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "SyntheticHealth.gs",
+        "liveNormalizedSha256": "f37e652a967cc20d3b9dedf91a356b769f5c00e6dae1b5c8388bdce1cc7fa18b",
+        "canonicalNormalizedSha256": "334b9ef173b5ed10ca03d4333ba6f50e26cd74a9f4e2af2a1a657c2cd4ccff21",
+        "equal": false,
+        "onlyFinalWhitespaceDiffers": true
+      },
+      {
+        "name": "QualityDashboards.gs",
+        "liveNormalizedSha256": "a5a908edc25bb54beb13c213d422d1b8b3dca937cbba27d62186b443b8199c55",
+        "canonicalNormalizedSha256": "a5a908edc25bb54beb13c213d422d1b8b3dca937cbba27d62186b443b8199c55",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "ScheduleMaintenance.gs",
+        "liveNormalizedSha256": "37d7e90956f9807a3a9a5a7ea59180beb28da7153c5ed1806493dcba7034915e",
+        "canonicalNormalizedSha256": "37d7e90956f9807a3a9a5a7ea59180beb28da7153c5ed1806493dcba7034915e",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "FunnelDashboards.gs",
+        "liveNormalizedSha256": "a09b7ac5b77ff07fdaacca296c230ac12d3fb0ec95d87c307fb20072ba6b5e0d",
+        "canonicalNormalizedSha256": "a09b7ac5b77ff07fdaacca296c230ac12d3fb0ec95d87c307fb20072ba6b5e0d",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "GoogleAdsFunnelReview.gs",
+        "liveNormalizedSha256": "d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7",
+        "canonicalNormalizedSha256": "d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "MetaAdsFunnelReview.gs",
+        "liveNormalizedSha256": "e59c3c1aceacf501a7ee6fbfffc526fb27bbe9ae9dcb44fba82f9c5476efa0e8",
+        "canonicalNormalizedSha256": "e59c3c1aceacf501a7ee6fbfffc526fb27bbe9ae9dcb44fba82f9c5476efa0e8",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "MetaAdsReview.gs",
+        "liveNormalizedSha256": "2657e30e1b055dfe822dde3d674400adb0068a09089fc5fac2f4186490cbb09b",
+        "canonicalNormalizedSha256": "758e621087b75727fad9e279e86f74af1ff1e3080b513b19f55b20a5db97320c",
+        "equal": false,
+        "onlyFinalWhitespaceDiffers": true
+      },
+      {
+        "name": "FunnelReconciliation.gs",
+        "liveNormalizedSha256": "3081887b6f7f49d6f733115e3fecafae75b0fda6d48e3acb7b9f413dc750200c",
+        "canonicalNormalizedSha256": "795bb4a96766463c4e3272c2c84494b3d2bd4fc3138fb641a32717ff5b686a10",
+        "equal": false,
+        "onlyFinalWhitespaceDiffers": true
+      },
+      {
+        "name": "PainelDecisoesDiarias.gs",
+        "liveNormalizedSha256": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
+        "canonicalNormalizedSha256": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "WhatsAppCosts.gs",
+        "liveNormalizedSha256": "b728ba451177ddabfe17dd3ef42182b7a0d60ab7731d77dc77cd720bd34567d4",
+        "canonicalNormalizedSha256": "b728ba451177ddabfe17dd3ef42182b7a0d60ab7731d77dc77cd720bd34567d4",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "ClassificationReconciliation.gs",
+        "liveNormalizedSha256": "a76ff89e0ae5528f1533ad93938a7a147f56ad45733d856782158782c3a9a6c3",
+        "canonicalNormalizedSha256": "a76ff89e0ae5528f1533ad93938a7a147f56ad45733d856782158782c3a9a6c3",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      },
+      {
+        "name": "CuidadosProgramados.gs",
+        "liveNormalizedSha256": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568",
+        "canonicalNormalizedSha256": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568",
+        "equal": true,
+        "onlyFinalWhitespaceDiffers": false
+      }
+    ],
+    "changedFile": "Retomadas.gs",
+    "equivalent": true
+  },
+  "case": {
+    "source": "anexo do usuario e texto canonico de Retomadas.gs",
+    "pattern": "retomada generica apos pergunta de nome e explicacao da avaliacao",
+    "patientIdentifiersStored": false
+  },
+  "driveBefore": [
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "canonicalEqual": true,
+      "sha256": "540ee4767e88cf613c8d053d3e3356f0fe33a9ce5803137d5d114bda39a58216"
+    },
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "canonicalEqual": true,
+      "sha256": "9a8cd48de7dcd2a08bf03a7cc719a0af055049879d04fbac96ca0decc8039ae1"
+    }
+  ]
+}

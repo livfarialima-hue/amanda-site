@@ -1,126 +1,115 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-REDUNDANCIA-2026-09-14",
-  "title": "Continuidade geral da conversa sem repetir explicacoes, perguntas ou convites",
-  "status": "published_verified",
-  "baseCommit": "e74ec28d14a86f0da044fcd7472cf03f28f55707",
+  "changeId": "BRUNA-RETOMADA-CONTEXTUAL-2026-09-14",
+  "title": "Retomada agradavel e contextual com uma entrada simples",
+  "status": "tested_local",
+  "baseCommit": "684d30b72db5beef939c855cd696965f2b95199e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Correcao geral e publicacao autorizadas pelo usuario; preflight externo vinculado ao commit funcional ebaa3c0a3808643de024bd85336762d56dff063f.",
-    "approvalReference": "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json"
+    "note": "Continuacao do ajuste de comportamento da Bruna com publicacao autorizada nesta conversa; vincular ao SHA exato no preflight."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "files": [
-      "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json",
-      "auditorias/bruna-redundancia-2026-09-14/PUBLICACAO.json",
-      "auditorias/bruna-redundancia-2026-09-14/RELATORIO.md",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "apps-script/clinica-liv-leads/production-target.json",
+      "auditorias/bruna-retomada-contextual-2026-09-14/PREFLIGHT.json",
+      "auditorias/bruna-retomada-contextual-2026-09-14/PUBLICACAO.json",
+      "auditorias/bruna-retomada-contextual-2026-09-14/RELATORIO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/conversation-guidelines.test.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/reply-continuity.integration.test.mjs",
-      "netlify/functions/lib/reply-continuity.mjs",
-      "netlify/functions/lib/reply-continuity.test.mjs",
+      "netlify/functions/scheduled-followup.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "scripts/check-journey-module-boundaries.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
       "change-governance",
-      "reply-continuity"
+      "followup-message-copy"
     ]
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/human-resume-processor.mjs",
-      "netlify/functions/lib/inbound-burst-context.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/ycloud-webhook.mjs"
+      "netlify/functions/lib/scheduled-followup-context-review.mjs",
+      "netlify/functions/scheduled-followup.mjs"
     ],
     "preservedInvariants": [
-      "Cada turno aproveita o historico sem inventar fatos ausentes",
-      "Pergunta ou explicacao repetida e preservada quando explicitamente solicitada e permitida pelo contrato",
-      "Nunca remover um fato novo, valor, prazo ou ressalva clinica necessaria como estilo",
-      "Faixas cirurgicas nao podem ser reenviadas por excecao de repeticao",
-      "Uma revisao no maximo dentro do timeout original; sem loop, replay ou envio vazio",
-      "Tomada humana, identidade, consentimento, agenda, precos aprovados e deduplicacao continuam nos gates existentes",
-      "Texto conformado enviado e gravado e identico"
+      "Somente fatos e assunto presentes no contexto",
+      "Uma pergunta ou convite principal, sem repetir nome ou avaliacao",
+      "Qualificado nao comprova relato pessoal",
+      "Janelas, cadencia, flags, templates, filas e gatilhos preservados",
+      "Corredor automatico identico nos dois sistemas, com compatibilidade para textos legados",
+      "Preco, agenda, cuidado, promessa humana, pausa e opt-out continuam protegidos",
+      "Sem mensagem real de teste ou replay"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "reply-continuity",
-        "system": "Netlify/LEADS/Drive",
+        "contract": "followup-message-copy",
+        "system": "Apps Script/Netlify/Drive",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-14T21:37:01.211Z",
-        "reference": "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json",
-        "limitation": "O caso confirma repeticao; testes sinteticos e verificacao do deploy nao medem ganho de conversao."
+        "checkedAt": "2026-09-14T21:49:01.272Z",
+        "reference": "auditorias/bruna-retomada-contextual-2026-09-14/PREFLIGHT.json",
+        "limitation": "Codigo e destinos conferidos; o ganho de resposta depende de observar futuras retomadas elegiveis. Tres arquivos Apps Script diferem apenas na quebra de linha final e permanecem intocados."
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_production",
+    "status": "passed_local",
     "commands": [
-      "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
-      "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
-      "git diff --check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
+      "git diff --check",
       "npm.cmd run ops:check"
     ],
-    "completedAt": "2026-09-14T21:38:05.360Z",
+    "completedAt": "2026-09-14T22:04:48.830Z",
     "results": {
       "fullSuite": {
-        "tests": 1573,
-        "passed": 1573,
+        "tests": 1578,
+        "passed": 1578,
         "failed": 0,
-        "outputSha256": "fbed821436852b79d9157cb6bbc97d06e77d71f767ea5f332f5fb51e923da032"
+        "outputSha256": "8c2271349be262dd4cd82a82ef37d7d0774a388bae386df2b874c327e1a46200"
       },
       "focused": {
-        "tests": 19,
-        "passed": 19,
+        "tests": 91,
+        "passed": 91,
         "failed": 0,
-        "outputSha256": "19a97fda38a4415ea53989601afcfe58f20df3615a96f30cc53bdfe29677f09e"
+        "outputSha256": "54b71dcb6bc1a77597fa44ed9379df25345c3c3b34f97caca4e1223ee6dde4fe"
       },
       "crossConsumer": {
-        "tests": 399,
-        "passed": 399,
+        "tests": 134,
+        "passed": 134,
         "failed": 0,
-        "outputSha256": "c9509923571df511c711b13bf92bb1ee2f1ac53c79995dee36f2a6b2e1c577c9"
+        "outputSha256": "2d9001bf115fa199ce571d87b74cbc63b462aec1e8e6579d245e0d4118595e49"
       },
       "baselineReproduction": {
-        "tests": 10,
-        "passed": 2,
-        "failed": 8,
-        "outputSha256": "0fbda0083aef60f2df3607453c51388152fc499e712206008a4a57e1caa318c6"
+        "tests": 5,
+        "passed": 1,
+        "failed": 4,
+        "outputSha256": "36c2503ebc65d626d723000759a26ba97b52e9ebc078af7d04d9238e59dc9b45"
       },
       "changeCheck": "OK",
       "architectureCheck": "OK",
@@ -129,36 +118,38 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0,
-      "productionVerified": true
+      "realMessagesSentByAgent": 0
     }
   },
   "rollback": {
-    "local": "Reverter apenas este candidato em worktree isolado.",
-    "production": "Restaurar deploy 6aa854c90a4310d49417bd44; preservar dados e Apps Script v153.",
-    "verifiedNetlifyDeployId": "6aa854c90a4310d49417bd44",
-    "verifiedCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
+    "local": "Reverter somente este candidato no worktree isolado.",
+    "production": "Restaurar Apps Script v153 no mesmo deployment e Netlify 6aa869f3237a3b809a7bdcb2, preservando dados e filas.",
+    "verifiedNetlifyDeployId": "6aa869f3237a3b809a7bdcb2",
+    "verifiedCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
     "appsScriptVersion": 153
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Sondas apos ativacao e revisoes em 16/09 e 21/09 as 19h BRT",
+    "window": "Sondas apos publicacao; revisoes 16/09 e 21/09 as 19h30 BRT",
     "metrics": [
-      "Explicacoes, perguntas e convites repetidos",
-      "Respostas uteis apos detalhe novo",
-      "Revisoes por falta de progresso e latencia",
-      "Silencio indevido, tomada humana, duplicidade e consultas com evidencia propria"
+      "Respostas uteis e alinhamento de contexto",
+      "Repeticao e convite duplo",
+      "Bloqueios indevidos, takeover, duplicidade e consultas com evidencia"
     ],
-    "rollbackRule": "Conter diante de perda de informacao util, repeticao de envio, quebra de takeover ou crescimento de respostas vazias/revisoes sem contexto."
+    "rollbackRule": "Conter se houver perda de contexto, envio fora do corredor ou regressao de preferencia/tomada humana."
   },
-  "release": {
-    "approvedCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
-    "netlifyDeployId": "6aa869f3237a3b809a7bdcb2",
-    "appsScriptVersion": 153,
-    "verifiedAt": "2026-09-14T21:43:28.292Z",
-    "receipt": "auditorias/bruna-redundancia-2026-09-14/PUBLICACAO.json",
-    "drivePlanSha256": "540ee4767e88cf613c8d053d3e3356f0fe33a9ce5803137d5d114bda39a58216",
-    "driveManualSha256": "9a8cd48de7dcd2a08bf03a7cc719a0af055049879d04fbac96ca0decc8039ae1",
-    "driveClosedAuditFileId": "1QKi8rn6rXJcjhzLcddBK9ANeP55S5s5F"
+  "release": {},
+  "rollout": {
+    "strategy": "compatible_consumer_before_producer",
+    "steps": [
+      "Netlify aceita textos antigos e novos enquanto Apps Script continua gerando o texto antigo",
+      "Conferir SHA e sondas do Netlify",
+      "Salvar somente Retomadas.gs e atualizar o deployment Apps Script existente",
+      "Reler arquivo e versao, conferir endpoints e sincronizar documentacao"
+    ],
+    "automationModeChange": false,
+    "flagsChanged": false,
+    "queueRewrite": false,
+    "templateChanged": false
   }
 }
