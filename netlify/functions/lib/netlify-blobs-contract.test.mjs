@@ -82,6 +82,29 @@ const incoming = {
   rawBody: "{}", signature: "synthetic-signature", origin: "https://example.test",
 };
 
+for (const entryPoint of ["claim", "complete"]) {
+  test(`a completed event cannot remain in the pending queue after a legacy race (${entryPoint})`, async () => {
+    const { getStoreImpl } = transportStore();
+    const now = Date.parse("2026-09-14T12:00:00Z");
+    await registerInboundRecovery(incoming, { getStoreImpl, now, recoveryDelayMs: 0 });
+    const [job] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+    await completeInboundRecovery(job, { getStoreImpl, now, outcome: "human_takeover" });
+    const store = getStoreImpl({ name: "liv-whatsapp-inbound-recovery-v1" });
+    // Reproduce an unconditional write racing with the completion tombstone
+    // in SDK 10.7.10, without changing the original terminal receipt.
+    await store.setJSON(job.queueKey, { ...job, status: "pending", claimToken: "", claimUntil: 0 });
+    if (entryPoint === "claim") {
+      assert.equal((await claimDueInboundRecoveries({ getStoreImpl, now: now + 20 * 60_000 })).jobs.length, 0);
+    } else {
+      assert.equal((await completeInboundRecovery(job, { getStoreImpl, now })).duplicate, true);
+    }
+    assert.equal(await store.get(job.queueKey, { type: "json" }), null);
+    assert.deepEqual(await registerInboundRecovery(incoming, { getStoreImpl, now }), {
+      status: "duplicate", reason: "already_completed",
+    });
+  });
+}
+
 test("provider retry and recovery self-registration preserve the claimed job after timeout", async () => {
   const { getStoreImpl } = transportStore();
   const now = Date.parse("2026-09-14T12:00:00Z");

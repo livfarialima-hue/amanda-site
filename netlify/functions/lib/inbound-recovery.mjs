@@ -247,8 +247,19 @@ export async function claimDueInboundRecoveries(
         consistency: "strong",
       });
       const pending = normalizedPending(entry?.data);
+      if (!pending || blob.key !== pendingKey(pending.eventId)) continue;
+      const completed = await store.get(completedKey(pending.eventId), {
+        type: "json",
+        consistency: "strong",
+      });
+      if (completed?.eventId === pending.eventId) {
+        // Old unconditional registrations could recreate pending after the
+        // terminal receipt. That receipt wins: discard only this exact queue
+        // key, before reserving work or invoking any patient-facing handler.
+        await store.delete(blob.key);
+        continue;
+      }
       if (
-        !pending ||
         pending.dueAt > now ||
         (
           pending.status === "processing" &&
@@ -299,6 +310,7 @@ export async function completeInboundRecovery(
       consistency: "strong",
     });
     if (done?.eventId === eventId) {
+      await store.delete(pendingKey(eventId));
       return { status: "completed", duplicate: true };
     }
     const key = job?.queueKey || pendingKey(eventId);

@@ -102,17 +102,17 @@
       "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs"
     ],
     "status": "passed_local",
-    "completedAt": "2026-09-14T16:08:36.122Z",
+    "completedAt": "2026-09-14T16:15:39.825Z",
     "results": {
       "fullSuite": {
-        "tests": 1535,
-        "passed": 1535,
+        "tests": 1537,
+        "passed": 1537,
         "failed": 0,
-        "outputSha256": "8c39222b7bcb19560146bfac7bc72f414c88a072c9c955668afd5885370d1a17"
+        "outputSha256": "4f0047dc86e62780ea0c99637b3fa8cac7f9e641f530afb4ac1ed090ea9f726b"
       },
       "focused": {
-        "tests": 41,
-        "passed": 41,
+        "tests": 43,
+        "passed": 43,
         "failed": 0
       },
       "crossConsumer": {
@@ -141,14 +141,20 @@
         "outputSha256": "4a10875fa3ad3a3ab4ea5ddfedd2adb33cda840232a48c26a1cb794696a80c69"
       },
       "runtimeBudget": "Scheduler dispatch <=5s; background lifecycle; 16-minute lease; reserve one job at a time",
-      "newBackgroundFunction": "ycloud-recovery-background"
+      "newBackgroundFunction": "ycloud-recovery-background",
+      "terminalRaceBaseline": {
+        "tests": 5,
+        "passed": 3,
+        "failed": 2
+      },
+      "terminalQueueCleanup": "Somente chaves pendentes com comprovante terminal do mesmo evento; sem replay"
     }
   },
   "rollback": {
     "local": "Reverter apenas este candidato em worktree isolado.",
-    "production": "Conter e restaurar o deploy 6aa8180f6bc83b386142c5fc com o SDK corrigido; preserva dados e mensagens. Este rollback ainda tem o limite do agendamento e exige revisão humana das pendências.",
-    "verifiedNetlifyDeployId": "6aa8180f6bc83b386142c5fc",
-    "verifiedCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
+    "production": "Restaurar 6aa81c98b3a7ac46500e80e8, com SDK e background já corrigidos; preservar dados e recibos. Não reabrir entradas com comprovante terminal.",
+    "verifiedNetlifyDeployId": "6aa81c98b3a7ac46500e80e8",
+    "verifiedCommit": "232c70414c5386723d596e82e5dbf4b188f320be",
     "appsScriptVersion": 153
   },
   "monitoring": {
