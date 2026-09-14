@@ -2,19 +2,20 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-SITE-CONTEXTO-2026-09-14",
   "title": "Continuar a conversa no WhatsApp sem devolver a paciente a pagina de origem",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "6ac89db78c047a52e0d4697debeace27ae87c8c5",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido explicito do usuario: Ajuste e publique; vincular ao SHA final no preflight externo."
+    "note": "Ajuste e publicação autorizados pelo usuário; preflight externo vinculado ao commit funcional b924bc0854a79929f09136936b90e9457c1c1288.",
+    "approvalReference": "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json"
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -84,7 +85,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "commands": [
       "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
       "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
@@ -133,7 +134,8 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0
+      "realMessagesSentByAgent": 0,
+      "productionVerified": true
     }
   },
   "rollback": {
@@ -154,5 +156,14 @@
     ],
     "rollbackRule": "Conter diante de envio indevido, perda de resposta util ou regressao de takeover/agenda."
   },
-  "release": {}
+  "release": {
+    "approvedCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
+    "netlifyDeployId": "6aa854c90a4310d49417bd44",
+    "appsScriptVersion": 153,
+    "verifiedAt": "2026-09-14T20:14:08.237Z",
+    "receipt": "auditorias/bruna-site-contexto-2026-09-14/PUBLICACAO.json",
+    "drivePlanSha256": "b7eb61f063699d7d63bb3b08a0cdcdd9ec16c4827fb1f199946ff3c359c985bd",
+    "driveManualSha256": "825aa3d440c995dc2260e2457073e3d478f5f3a680ce92881ef042a359f8ccb3",
+    "driveClosedAuditFileId": "1K6Cbp5sKW2zggKiR4V4azD4elcEKEILA"
+  }
 }

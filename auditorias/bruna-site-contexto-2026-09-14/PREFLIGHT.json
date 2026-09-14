@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-14T20:07:38.511Z",
+  "checkedAt": "2026-09-14T20:09:08.229Z",
   "authenticated": true,
   "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
   "baseline": "6aa81deec1740500082bb22c",
@@ -40,5 +40,13 @@
       "canonicalEqual": true,
       "sha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe"
     }
-  ]
+  ],
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-09-14T20:09:08.3549317Z",
+    "authorization": "Pedido expresso nesta tarefa: Ajuste e publique",
+    "approvedCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
+    "livePreflightAt": "2026-09-14T20:09:08.229Z",
+    "reference": "Pedido explicito do usuario nesta tarefa; preflight externo passou para o SHA exato em worktree limpo."
+  }
 }

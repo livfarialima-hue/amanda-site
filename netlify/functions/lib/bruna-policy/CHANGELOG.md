@@ -1,6 +1,6 @@
 # Histórico do pacote Bruna
 
-## 2026-09-14.2 — continuidade site → WhatsApp (candidato autorizado)
+## 2026-09-14.2 — continuidade site → WhatsApp (publicado, b924bc0)
 
 - Corrige Ref. SITE interpretada como pedido de link e preserva passagem pelo site mesmo com aquisição Google/Meta.
 - Primeiro responde no WhatsApp e faz uma pergunta pertinente; não presume prontidão pelo prefill.
