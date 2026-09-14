@@ -1,12 +1,174 @@
 {
   "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
-  "status": "prepared_not_published",
+  "status": "publication_in_progress",
   "accountId": "995-334-4486",
   "createdAt": "2026-09-14T00:32:06.416Z",
   "authorizedRequest": "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer.",
-  "adReadbacks": [],
-  "sitelinkReadbacks": [],
+  "adReadbacks": [
+    {
+      "group": "AG_MASTOPEXIA_PRECO",
+      "adId": "824532190985",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:34:48.762Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_PROTESE_MAMA_PRECO",
+      "adId": "824532190988",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:37:38.626Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "pins": true
+      },
+      "note": "Antes textual em REVISAO.json; apenas os cinco campos previstos alterados. Objeto before da função não persistiu; releitura integral posterior confirmada."
+    },
+    {
+      "group": "AG_PROTESE_MAMA",
+      "adId": "824390505723",
+      "quality": "Ruim",
+      "verifiedAt": "2026-09-14T00:39:20.718Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      },
+      "note": "Rascunho já preparado antes da captura final; baseline original em REVISAO.json."
+    },
+    {
+      "group": "AG_LIPOASPIRACAO_PRECO",
+      "adId": "824532190991",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:40:07.293Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_LIPOASPIRACAO",
+      "adId": "824390505729",
+      "quality": "Ruim",
+      "verifiedAt": "2026-09-14T00:42:09.173Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_LIFTING_FACIAL_PRECO",
+      "adId": "820414650683",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:42:52.057Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_LIFTING_FACIAL",
+      "adId": "816509565979",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:44:02.233Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_BLEFAROPLASTIA",
+      "adId": "816479308278",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:44:43.170Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_CERVICOPLASTIA",
+      "adId": "816477682074",
+      "quality": "Bom",
+      "verifiedAt": "2026-09-14T00:45:30.399Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "Adulto",
+      "adId": "816612405034",
+      "quality": "Bom",
+      "verifiedAt": "2026-09-14T00:46:31.617Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    },
+    {
+      "group": "AG_OTOPLASTIA_INFANTIL",
+      "adId": "816612778213",
+      "quality": "Excelente",
+      "verifiedAt": "2026-09-14T00:47:18.453Z",
+      "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      }
+    }
+  ],
+  "sitelinkReadbacks": [
+    {
+      "campaign": "S_BR_SP_CIRURGIA_MAMA",
+      "status": "saved_and_reopened",
+      "assets": [
+        "Custos Cirurgia Mamária",
+        "Cirurgias de Mama"
+      ],
+      "existingAccountLinksPreserved": 4,
+      "qualityAfter": "Excelente"
+    },
+    {
+      "campaign": "S_BR_SP_CONTORNO_CORPORAL",
+      "status": "saved_and_reopened",
+      "assets": [
+        "Custos Cirurgia Corporal",
+        "Lipo ou Abdominoplastia"
+      ],
+      "existingAccountLinksPreserved": 4,
+      "qualityAfter": "Excelente"
+    }
+  ],
   "googleAdsReadBack": false,
   "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-  "limits": "Salvar e reler não comprova aprovação de política nem ganho de qualificados/consultas."
+  "limits": "Salvar e reler não comprova aprovação de política nem ganho de qualificados/consultas.",
+  "approvedCommit": "8abe57d8fc3cc8355a84c5868da7d02301627137",
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedAt": "2026-09-14T00:33:40.6502331Z",
+    "approvedBy": "Daniel",
+    "authorization": "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer."
+  }
 }

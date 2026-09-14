@@ -1,7 +1,7 @@
 {
   "accountId": "995-334-4486",
   "observedAt": "2026-09-14T00:32:06.416Z",
-  "status": "prepared_not_published",
+  "status": "first_pass_published_refinement_prepared",
   "authorization": "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer.",
   "source": "Editor autenticado dos 17 RSAs; banco de 12/09 conferido e baseline OTO atualizado pela leitura viva de 13/09. Antes de cada save, comparar campos e proteger URLs/pins/tracking.",
   "scope": {
@@ -73,6 +73,47 @@
           "Otoplastia em São Paulo",
           "Cirurgiã Plástica pela Unicamp",
           "Otoplastia com a Dra. Amanda",
+          "Otoplastia: Preço e Avaliação",
+          "Cirurgia de Orelha de Abano",
+          "Especialista com RQE",
+          "Dra. Amanda Schroeder",
+          "Consulta com a Cirurgiã",
+          "Cicatrizes e Recuperação",
+          "Correção de Orelha de Abano",
+          "Consultório em Pinheiros",
+          "Consulta Particular: R$ 500",
+          "Cirurgia de Orelha: Valor",
+          "Cirurgia Plástica da Orelha"
+        ],
+        "descriptions": [
+          "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+          "Otoplastia para adultos com a Dra. Amanda, cirurgiã plástica com residência na Unicamp.",
+          "Otoplastia: preço e plano definidos após avaliação das orelhas com a Dra. Amanda.",
+          "Consulta particular: R$ 500. Entenda o plano, os cuidados e os próximos passos."
+        ],
+        "description1Pinned": true
+      },
+      "textChanged": true,
+      "edits": {
+        "h": {
+          "4": "Otoplastia: Preço e Avaliação",
+          "5": "Cirurgia de Orelha de Abano",
+          "10": "Correção de Orelha de Abano",
+          "13": "Cirurgia de Orelha: Valor",
+          "14": "Cirurgia Plástica da Orelha"
+        },
+        "d": {
+          "1": "Otoplastia para adultos com a Dra. Amanda, cirurgiã plástica com residência na Unicamp.",
+          "2": "Otoplastia: preço e plano definidos após avaliação das orelhas com a Dra. Amanda."
+        }
+      },
+      "firstPassAfter": {
+        "group": "Adulto",
+        "headlines": [
+          "Otoplastia para Adultos",
+          "Otoplastia em São Paulo",
+          "Cirurgiã Plástica pela Unicamp",
+          "Otoplastia com a Dra. Amanda",
           "Planejamento de Cada Orelha",
           "Cirurgia de Orelha de Abano",
           "Especialista com RQE",
@@ -93,17 +134,19 @@
         ],
         "description1Pinned": true
       },
-      "textChanged": true,
-      "edits": {
-        "h": {
-          "5": "Cirurgia de Orelha de Abano",
-          "10": "Correção de Orelhas de Abano",
-          "14": "Cirurgia Plástica da Orelha"
+      "refinement": {
+        "delta": {
+          "h": {
+            "4": "Otoplastia: Preço e Avaliação",
+            "10": "Correção de Orelha de Abano",
+            "13": "Cirurgia de Orelha: Valor"
+          },
+          "d": {
+            "2": "Otoplastia: preço e plano definidos após avaliação das orelhas com a Dra. Amanda."
+          }
         },
-        "d": {
-          "1": "Otoplastia para adultos com a Dra. Amanda, cirurgiã plástica com residência na Unicamp.",
-          "2": "Cirurgia de orelha de abano: avalie formato, dobras, proporção e recuperação."
-        }
+        "reason": "Editor mantinha Bom e recomendava termos restantes. Rascunho complementar testado visualmente como Excelente, sem salvar.",
+        "draftQuality": "Excelente"
       }
     },
     {
@@ -1164,6 +1207,47 @@
           "Lifting Cervical em São Paulo",
           "Lifting de Pescoço",
           "Cervicoplastia em São Paulo",
+          "Flacidez no Pescoço",
+          "Rejuvenescimento do Pescoço",
+          "Conheça o Plano Cirúrgico",
+          "Platismoplastia: Avaliação",
+          "Dra. Amanda Schroeder",
+          "Residência na Unicamp",
+          "Consulta com a Cirurgiã",
+          "Preparo e Pós-Operatório",
+          "Consultório em Pinheiros",
+          "Segurança em Primeiro Lugar",
+          "Cardiologia na Própria Clínica",
+          "Plástica no Pescoço"
+        ],
+        "descriptions": [
+          "Dra. Amanda Schroeder. Médica, cirurgiã plástica. CRM-SP 191605. RQE 110472.",
+          "Cervicoplastia e lifting de pescoço: contorno, pele e músculos orientam o plano cirúrgico.",
+          "Avaliação cardiológica na clínica, quando indicada, com médico formado pela USP.",
+          "Platismoplastia e flacidez no pescoço: avalie indicação, preparo e recuperação."
+        ],
+        "description1Pinned": true
+      },
+      "textChanged": true,
+      "edits": {
+        "h": {
+          "1": "Lifting de Pescoço",
+          "3": "Flacidez no Pescoço",
+          "4": "Rejuvenescimento do Pescoço",
+          "6": "Platismoplastia: Avaliação",
+          "14": "Plástica no Pescoço"
+        },
+        "d": {
+          "1": "Cervicoplastia e lifting de pescoço: contorno, pele e músculos orientam o plano cirúrgico.",
+          "3": "Platismoplastia e flacidez no pescoço: avalie indicação, preparo e recuperação."
+        }
+      },
+      "firstPassAfter": {
+        "group": "AG_CERVICOPLASTIA",
+        "headlines": [
+          "Lifting Cervical em São Paulo",
+          "Lifting de Pescoço",
+          "Cervicoplastia em São Paulo",
           "Atenção à Linha da Mandíbula",
           "Rejuvenescimento do Pescoço",
           "Conheça o Plano Cirúrgico",
@@ -1185,17 +1269,18 @@
         ],
         "description1Pinned": true
       },
-      "textChanged": true,
-      "edits": {
-        "h": {
-          "1": "Lifting de Pescoço",
-          "4": "Rejuvenescimento do Pescoço",
-          "14": "Plástica no Pescoço"
+      "refinement": {
+        "delta": {
+          "h": {
+            "3": "Flacidez no Pescoço",
+            "6": "Platismoplastia: Avaliação"
+          },
+          "d": {
+            "3": "Platismoplastia e flacidez no pescoço: avalie indicação, preparo e recuperação."
+          }
         },
-        "d": {
-          "1": "Cervicoplastia e lifting de pescoço: contorno, pele e músculos orientam o plano cirúrgico.",
-          "3": "Lifting cervical com preparo individual, equipe anestésica e acompanhamento próximo."
-        }
+        "reason": "Editor mantinha Bom e recomendava termos restantes. Rascunho complementar testado visualmente como Excelente, sem salvar.",
+        "draftQuality": "Excelente"
       }
     },
     {
@@ -1308,5 +1393,6 @@
         }
       ]
     }
-  ]
+  ],
+  "refinementPreparedAt": "2026-09-14T00:51:57.687Z"
 }

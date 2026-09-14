@@ -16,8 +16,8 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true,
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false,
     "externalWritesScope": "Conta 995-334-4486: texto de 11 RSAs dentre 17 ativos; associar dois sitelinks existentes a S_BR_SP_CIRURGIA_MAMA e dois a S_BR_SP_CONTORNO_CORPORAL. Sem gasto adicional ou mudança de segmentação."
   },
   "scope": {
@@ -77,8 +77,8 @@
         "system": "Google Ads",
         "status": "verified_read_only",
         "reference": "auditorias/google-ads-qualidade-2026-09-13/REVISAO.json",
-        "checkedAt": "2026-09-14T00:33:30.998Z",
-        "evidence": "Chrome autenticado, 17 RSAs em oito campanhas; avaliação de cada editor carregada. Seis Excelente, onze com sugestões de termos; três grupos de preço com falta de dois sitelinks. Biblioteca e escopo de associação em campanha conferidos."
+        "checkedAt": "2026-09-14T00:51:57.702Z",
+        "evidence": "Chrome autenticado, 17 RSAs em oito campanhas; avaliação de cada editor carregada. Seis Excelente, onze com sugestões de termos; três grupos de preço com falta de dois sitelinks. Biblioteca e escopo de associação em campanha conferidos. Primeira passagem em onze RSAs salva e relida. Complementos de CERV e Adulto testados em rascunhos Excelente; pendentes de gravação."
       }
     ]
   },
@@ -108,7 +108,8 @@
       "buildFiles": 193,
       "siteRoutes": 54,
       "artifactErrors": 0,
-      "diff": "OK"
+      "diff": "OK",
+      "refinement": "Dois rascunhos passaram a Excelente ao incorporar os termos ainda ausentes; nova validação focada e gates antes do segundo save."
     }
   },
   "previousCompletedRelease": {
