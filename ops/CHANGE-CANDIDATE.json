@@ -1,24 +1,25 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
-  "title": "Termos relevantes em 11 RSAs e sitelinks nas campanhas de mama e corpo",
-  "status": "published_verified",
-  "baseCommit": "4749d356eb57474ca2ef8c1ad68e68fe43c9964b",
+  "changeId": "GOOGLE-ADS-RECHECAGEM-QUALIDADE-2026-09-13",
+  "title": "Registrar a inspeção das notas, palavras pausadas e decisão de manter cervical",
+  "status": "tested_local",
+  "baseCommit": "420936a69a2d8fc8ee6bb1e69e0594de1c318346",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido explícito de Daniel autoriza executar as melhorias de qualidade nos anúncios existentes. O SHA exato preparado será vinculado a esse pedido no preflight, antes de salvar.",
+    "note": "Pedidos atuais autorizam revisão e recomendação; as instruções permanentes exigem registrar a etapa e substituir a mesma projeção do plano. Nenhuma mudança de lance ou segmentação está incluída.",
     "references": [
-      "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer."
+      "queria tentar deixar todos como excelente.",
+      "posso usar maximizar conversões para lifting cervical tambem?"
     ]
   },
   "risk": {
-    "level": "medium",
+    "level": "low",
     "patientEffects": false,
-    "externalWritesPerformed": true,
+    "externalWritesPerformed": false,
     "defaultOffUntilPublication": false,
-    "externalWritesScope": "Conta 995-334-4486: texto de 11 RSAs dentre 17 ativos; associar dois sitelinks existentes a S_BR_SP_CIRURGIA_MAMA e dois a S_BR_SP_CONTORNO_CORPORAL. Sem gasto adicional ou mudança de segmentação."
+    "externalWritesScope": "Somente a projeção existente do plano no Drive. Google Ads, site, Apps Script e dados operacionais apenas preservados."
   },
   "scope": {
     "contracts": [
@@ -28,13 +29,8 @@
     "files": [
       "auditorias/google-ads-qualidade-2026-09-13/EXECUCAO.md",
       "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json",
-      "auditorias/google-ads-qualidade-2026-09-13/REVISAO.json",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/google-ads-ad-strength-20260913.test.mjs",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/CHANGE-CANDIDATE.json"
     ]
   },
   "impact": {
@@ -62,23 +58,20 @@
       "docs/ARQUITETURA-JORNADA-PACIENTE.md"
     ],
     "preservedInvariants": [
-      "Identidade médica na descrição 1, fixada na posição 1; títulos até 30 e descrições até 90 caracteres",
-      "Preservar integralmente URLs, caminhos, tracking, parâmetros e fixações de cada RSA; reler o baseline antes de salvar",
-      "Seis RSAs avaliados como Excelente sem mudança de texto; nenhum RSA novo ou exclusão",
-      "Recursos reutilizados, sem editar conteúdo compartilhado; adição apenas nas campanhas de mama e corpo",
-      "LIFT continua Maximizar conversões sem CPA e R$30/dia; total da conta R$105/dia e outros lances/orçamentos preservados",
-      "Recomendações automáticas desligadas; não alterar palavras, negativas, metas, redes ou públicos",
-      "OTO mantém consulta particular R$500, residência na Unicamp e criança ouvida; sem promessa médica",
-      "Nenhuma mudança de site, Apps Script, LEADS, CRM, WhatsApp, Calendar, Meta ou paciente"
+      "Zero escrita no Google Ads; manter os 17 RSAs e todos os campos, palavras, recursos e segmentação",
+      "CERV permanece Maximizar cliques/R$12; LIFT preservado em R$30 e total R$105",
+      "Separar notas da listagem e do editor; não alegar 17 Excelente ou ganho comercial",
+      "Não acessar ou exportar dados pessoais; não publicar site/Apps Script nem criar mensagens, conversões ou automações",
+      "Substituir a mesma projeção do Drive após comparar o baseline integral, preservando todos os registros anteriores"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads",
+        "system": "Google Ads e Google Drive",
         "status": "verified_read_only",
-        "reference": "auditorias/google-ads-qualidade-2026-09-13/REVISAO.json",
-        "checkedAt": "2026-09-14T00:51:57.702Z",
-        "evidence": "Chrome autenticado, 17 RSAs em oito campanhas; avaliação de cada editor carregada. Seis Excelente, onze com sugestões de termos; três grupos de preço com falta de dois sitelinks. Biblioteca e escopo de associação em campanha conferidos. Primeira passagem em onze RSAs salva e relida. Complementos de CERV e Adulto testados em rascunhos Excelente; pendentes de gravação."
+        "reference": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json#readOnlyRecheck",
+        "checkedAt": "2026-09-14T01:10:34Z",
+        "evidence": "17 anúncios na conta correta, seis editores divergentes, palavras dos dois grupos e configurações/relatório CERV. Projeção Drive integral idêntica ao plano canônico antes da edição."
       }
     ]
   },
@@ -97,10 +90,9 @@
       "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
       "node --test campanhas/google-ads-ad-strength-20260913.test.mjs"
     ],
-    "completedAt": "2026-09-14T00:58:14.897Z",
+    "completedAt": "2026-09-14T01:12:56Z",
     "results": {
-      "focusedNew": 5,
-      "acquisitionConsumers": 164,
+      "focusedAndConsumers": 164,
       "fullSuite": 1481,
       "failed": 0,
       "architecture": "OK",
@@ -109,68 +101,27 @@
       "siteRoutes": 54,
       "artifactErrors": 0,
       "diff": "OK",
-      "refinement": "Dois rascunhos passaram a Excelente ao incorporar os termos ainda ausentes; nova validação focada e gates antes do segundo save.",
-      "finalEditorGrades": {
-        "Excelente": 15,
-        "Ruim": 2
-      },
-      "googleAds": "Eleven RSAs and four sitelink associations saved and read back; remaining generic keyword recommendation in two groups recorded separately.",
-      "operationalConsistency": "External receipts complete; run ops:check in clean canonical branch after fast-forward"
+      "initialOpsCheck": "SYNC_PENDING as expected before Drive publication and canonical reconciliation"
     }
   },
   "previousCompletedRelease": {
-    "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
-    "approvedCommit": "ba7314888ddb8226a227c72328bf0374c5c3c05a",
-    "reconciledCommit": "4749d356eb57474ca2ef8c1ad68e68fe43c9964b",
-    "receiptPath": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json",
-    "googleAdsAccountDailyBudgetBRL": 105
+    "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
+    "reconciledCommit": "420936a69a2d8fc8ee6bb1e69e0594de1c318346",
+    "receiptPath": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json",
+    "approvedCommit": "bd2ca37eff20e2607b787d0752ffd16975d133f2"
   },
   "rollback": {
-    "local": "Reverter somente os nove arquivos do pacote, preservando trabalhos posteriores.",
-    "production": "Restaurar somente os campos de texto alterados a partir do banco before e remover somente as quatro associações acrescentadas. Não excluir recursos, anúncios, histórico ou modificar LIFT."
+    "local": "Reverter somente os quatro arquivos desta rechecagem, preservando o release de anúncios anterior.",
+    "production": "Restaurar somente o texto anterior da mesma projeção do plano. Não há alteração Ads, site ou Apps Script para reverter."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Integridade e política em 14–15/09; revisão de contatos válidos, qualificados e consultas em 21/09 e 28/09. Sem nova automação.",
+    "window": "Integridade14–15/09; contatos válidos, qualificados aceitos e consultas21/09/28/09. Piloto LIFT nas datas já registradas. Sem nova automação.",
     "metrics": [
-      "contatos identificados e válidos",
-      "qualificados aceitos",
-      "consultas agendadas e realizadas",
-      "custo por etapa da mesma coorte"
+      "equivalência da projeção do Drive",
+      "integridade da meta qualificada",
+      "contatos qualificados e consultas da mesma coorte"
     ],
-    "rollbackRule": "Corrigir somente o delta responsável se houver reprovação, destino incorreto, perda de identificação/rastreamento ou regressão downstream consistente. Nota e amostra baixa não provam resultado."
-  },
-  "release": {
-    "approvedCommit": "bd2ca37eff20e2607b787d0752ffd16975d133f2",
-    "appliedCommits": [
-      "8abe57d8fc3cc8355a84c5868da7d02301627137",
-      "bd2ca37eff20e2607b787d0752ffd16975d133f2"
-    ],
-    "verifiedAt": "2026-09-14T00:58:14.897Z",
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "netlifyPublishedByThisChange": false,
-    "netlifyState": "inherited_from_verified_previous_release",
-    "appsScriptVersion": 152,
-    "appsScriptPublishedByThisChange": false,
-    "googleAdsAccountId": "995-334-4486",
-    "googleAdsReadBack": true,
-    "googleAdsAdsReviewed": 17,
-    "googleAdsModifiedAdIds": 11,
-    "googleAdsSitelinkAssociations": 4,
-    "googleAdsAccountDailyBudgetBRL": 105,
-    "googleAdsLiftDailyBudgetBRL": 30,
-    "googleAdsBidding": "MAXIMIZE_CONVERSIONS",
-    "googleAdsTargetCpaBRL": null,
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "1378eaea2ff1a9b977a16bec2a7e75f4a7ac011cef78734b92a9c528e701102b",
-    "drivePlanReadBack": {
-      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "modified": "2026-09-14T00:58:14.897Z",
-      "bytes": 181087,
-      "sha256": "1378eaea2ff1a9b977a16bec2a7e75f4a7ac011cef78734b92a9c528e701102b",
-      "equal": true,
-      "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
-    },
-    "receiptPath": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json"
+    "rollbackRule": "Corrigir apenas o registro se houver divergência de leitura ou projeção; não ativar tráfego para obter nota."
   }
 }

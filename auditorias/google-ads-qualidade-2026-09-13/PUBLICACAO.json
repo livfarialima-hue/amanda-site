@@ -275,5 +275,114 @@
     "equal": true,
     "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
   },
-  "closedAt": "2026-09-14T00:58:14.897Z"
+  "closedAt": "2026-09-14T00:58:14.897Z",
+  "readOnlyRecheck": {
+    "checkedAt": "2026-09-14T01:10:34Z",
+    "requests": [
+      "queria tentar deixar todos como excelente.",
+      "posso usar maximizar conversões para lifting cervical tambem?"
+    ],
+    "accountId": "995-334-4486",
+    "googleAdsWrites": 0,
+    "tableGrades": {
+      "Excelente": 11,
+      "Bom": 3,
+      "Pendente": 3
+    },
+    "resultAfterEditorChecks": {
+      "Excelente": 15,
+      "Ruim": 2
+    },
+    "excellentEditorChecks": [
+      {
+        "group": "AG_MAMOPLASTIA_REDUTORA",
+        "adId": "824390505720",
+        "list": "Bom",
+        "editor": "Excelente"
+      },
+      {
+        "group": "AG_LIPOASPIRACAO_PRECO",
+        "adId": "824532190991",
+        "list": "Bom",
+        "editor": "Excelente"
+      },
+      {
+        "group": "AG_PROTESE_MAMA_PRECO",
+        "adId": "824532190988",
+        "list": "Bom",
+        "editor": "Excelente"
+      },
+      {
+        "group": "AG_MASTOPEXIA_PRECO",
+        "adId": "824532190985",
+        "list": "Pendente",
+        "editor": "Excelente"
+      }
+    ],
+    "excellentEditorCategories": "Nas quatro releituras, quantidade de títulos, presença de palavras, variedade de títulos/descrições e sitelinks estavam todos altos. Os outros onze já exibiam Excelente na listagem.",
+    "inactiveKeywordGroups": [
+      {
+        "group": "AG_PROTESE_MAMA",
+        "groupId": "200313959939",
+        "adId": "824390505723",
+        "editor": "Ruim",
+        "activeKeywords": 0,
+        "pausedPhraseKeywords": [
+          "silicone nos seios preço",
+          "prótese de silicone valor"
+        ],
+        "routedTo": "AG_PROTESE_MAMA_PRECO"
+      },
+      {
+        "group": "AG_LIPOASPIRACAO",
+        "groupId": "200313960139",
+        "adId": "824390505729",
+        "editor": "Ruim",
+        "activeKeywords": 0,
+        "pausedPhraseKeywords": [
+          "lipoaspiração preço",
+          "lipoescultura valor"
+        ],
+        "routedTo": "AG_LIPOASPIRACAO_PRECO"
+      }
+    ],
+    "limitation": "Os dois editores Ruim pedem genericamente palavras nos títulos, sem listar termos. Os grupos têm somente as duas palavras de preço pausadas após roteamento. Ausência de termos ativos é contexto verificado, não causalidade comprovada da nota. Não reativar preço no destino genérico nem criar segmentação apenas para obter Excelente.",
+    "action": "Preservar os textos já aprovados; nenhuma nova alteração de anúncio, palavra, associação, lance ou orçamento foi salva. Diagnóstico dos dois grupos concluído; nota de todos os 17 Excelente não alcançada.",
+    "cervical": {
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "periodFrom": "2026-08-14",
+      "periodTo": "2026-09-12",
+      "bidding": "Maximizar cliques",
+      "dailyBudgetBRL": 12,
+      "goal": "Lead qualificado GCLID — campanhas",
+      "impressions": 5724,
+      "clicks": 321,
+      "costBRL": 377.22,
+      "conversionsCurrentModel": 1,
+      "costPerConversionCurrentModelBRL": 377.22,
+      "resultsLabel": "Lead qualificado (Site): 1,00",
+      "evidenceLimit": "Contagem da plataforma para a meta; não comprova consultas nem o aceite das sete linhas ready da LEADS. Nenhum dado de paciente foi aberto ou exportado nesta revisão.",
+      "recommendation": "Manter o lance atual por enquanto. Um resultado em 30 dias não demonstra superioridade de outro lance; acompanhar integridade do sinal e o piloto LIFT antes de propor expansão. Não há exigência inventada de um mínimo universal de conversões."
+    },
+    "accountDailyBudgetBRL": 105,
+    "liftDailyBudgetBRL": 30,
+    "drive": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "baselineEqual": true,
+      "baselineModifiedAt": "2026-09-14T00:58:14.897Z",
+      "status": "pending_same_file_update"
+    },
+    "verification": {
+      "focusedAndConsumers": 164,
+      "fullSuite": 1481,
+      "failed": 0,
+      "architecture": "OK",
+      "changeSafety": "OK",
+      "buildFiles": 193,
+      "siteRoutes": 54,
+      "artifactErrors": 0,
+      "diff": "OK",
+      "initialOpsCheck": "SYNC_PENDING as expected before Drive publication and canonical reconciliation"
+    }
+  }
 }
