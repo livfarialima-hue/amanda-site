@@ -54,7 +54,7 @@ test("every locked Bruna scenario remains unique and executable", async () => {
   }
 });
 
-test("the manifest versions the candidate and preserves the previous published receipt", async () => {
+test("the published manifest matches the current bundle and closes the candidate receipt", async () => {
   const [manifest, baseline] = await Promise.all([
     readJson("manifest.json"),
     readJson("regression-baseline.json"),
@@ -74,8 +74,9 @@ test("the manifest versions the candidate and preserves the previous published r
   );
   assert.equal(manifest.release.status, "published");
   assert.equal(manifest.bundleVersion, "2026-09-14.1");
-  assert.equal(manifest.release.bundleVersion, "2026-09-01.1");
-  assert.equal(manifest.pendingRelease.published, false);
+  assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
+  assert.equal(manifest.release.candidateStatus, "published_verified");
+  assert.equal(manifest.pendingRelease, undefined);
 });
 
 test("Bruna's patient-facing identity stays human-readable and technology-neutral", async () => {

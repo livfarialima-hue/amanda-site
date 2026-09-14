@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
+  "status": "published_verified",
+  "approvedCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-09-14T11:17:29Z",
+    "reference": "Conversa atual: Pode publicar sim"
+  },
+  "publishedAt": "2026-09-14T12:02:05.39Z",
+  "verifiedAt": "2026-09-14T12:21:52.249Z",
+  "netlify": {
+    "verifiedAt": "2026-09-14T12:13:45.097Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6aa7e218d56b0f48420dcd98",
+    "approvedCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "publishedAt": "2026-09-14T12:02:05.390Z",
+    "context": "production",
+    "state": "ready",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "446b5f19b2fa7bba64c4e6d9841a43a17bf0ebfda20a3168c132d37af8bcebd5",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "398980038208e073167b78bcbfad73cd07f3d5944d15976a1888e97484c3ebdf",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "0f3642b05a90d8deb8b7ac591e470142e30c87ce48404825416fec5467ab49cd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "7a79dcf841a45b49692501f466417a1edbb6a4ad6650ead99f6e8710f5081de6",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "3f64c994bb5c0c8da5370a2b64ee4d2a55df62769a65d6bad59003cc1e764d31",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "85e6fc2ee131f753bb44929a0c05daa3dda9f129c5dcc4fa48107914a5d1aa8c",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "d1ea71b7cbf4e42c24d8f266ae9bda5489150630a19132296bb27f449eacf8b9",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "4d100333d05e6f0ba835f5af4482aca238907e4da1bda11b6cbd0d46fd3a6044",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "606ee92f2a5a87c879af75cf6c8442d11765fb37ffb718a2a929e0a7d057cf90",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "490d07f221a04ac35063d3f643d41dd3d6388cfbe41dccd369debcbf14a3e0a4",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "561d21c7ea5bfafcfc7ee3963de09e916b2bbc5945ef0f64a0140a97aa1d1c01",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "staticFilesUnchanged": 192,
+    "probes": [
+      {
+        "name": "canonical",
+        "status": 200,
+        "data": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "direct_with_background_completion",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "passed": true
+      },
+      {
+        "name": "immutable",
+        "status": 200,
+        "data": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "direct_with_background_completion",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "passed": true
+      },
+      {
+        "name": "signature-gate",
+        "status": 401,
+        "data": {
+          "ok": false,
+          "error": "invalid_signature"
+        },
+        "passed": true
+      },
+      {
+        "name": "followup-auth",
+        "status": 401,
+        "data": {
+          "ok": false,
+          "error": "unauthorized"
+        },
+        "passed": true
+      }
+    ],
+    "realMessagesSentByTests": 0,
+    "appsScriptHealth": [
+      {
+        "method": "GET",
+        "httpStatus": 200,
+        "finalHost": "script.googleusercontent.com",
+        "data": {
+          "ok": true,
+          "service": "clinica-liv-leads",
+          "deduplication": "one_open_opportunity_per_contact_and_professional"
+        },
+        "checkedAt": "2026-09-14T12:15:04.848Z"
+      },
+      {
+        "method": "POST",
+        "httpStatus": 200,
+        "finalHost": "script.googleusercontent.com",
+        "data": {
+          "ok": false,
+          "error": "unauthorized"
+        },
+        "checkedAt": "2026-09-14T12:15:21.970Z"
+      }
+    ],
+    "additionalObservations": {
+      "initialAppsScriptGet": {
+        "name": "apps-script",
+        "status": 404,
+        "data": {
+          "nonJson": true
+        },
+        "passed": false
+      },
+      "backgroundUnauthenticatedProbe": {
+        "status": 202,
+        "meaning": "Aceite assíncrono do transporte Netlify; não é prova de autenticação ou classificação. O handler valida o segredo antes do processamento; contrato local verificado.",
+        "realDataInPayload": false
+      },
+      "appsScriptGetRepeat": "Sonda GET com parâmetro de diagnóstico e cache desabilitado respondeu JSON 200. A primeira leitura recebeu página Google 404; o ContentService usa redirecionamento de uso único. Não foi alterado código nem permissão para a repetição."
+    }
+  },
+  "appsScript": {
+    "version": 153,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "approvedCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "verifiedAt": "2026-09-14T11:59:10.056Z",
+    "files": [
+      {
+        "file": "Code.gs",
+        "equalApproved": true,
+        "sha256": "beb296efe52c3bab9466ac016dbe82726e9fc18593067048f914d42e6f5c99a9"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "equalApproved": true,
+        "sha256": "b552155a2ff5674b37ef8110a28369604aee57053b511d5ab354289c0ca3420f"
+      },
+      {
+        "file": "Retomadas.gs",
+        "equalApproved": true,
+        "sha256": "3a14024e5ad71d7433c7c395de1dee0c3a49a7ee5c3ff95e15b35da5a4bf0795"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "equalApproved": true,
+        "sha256": "db23877045588b20a9c9aa6c58a7ed336b9c87abf56a3832846b4193630c4d39"
+      }
+    ]
+  },
+  "sheet": {
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "changedAt": "2026-09-14T11:55:53.761Z",
+    "schema": {
+      "range": "_WHATSAPP_MENSAGENS!M1:N1",
+      "headers": [
+        "Tipo de mensagem",
+        "Message ID relacionado"
+      ],
+      "beforeEmpty": true,
+      "readbackEqual": true,
+      "preservedColumns": "A:L"
+    },
+    "leaseCutover": {
+      "count": 1,
+      "scope": "Somente lease expirado da fila de classificação; identidade, profissional e versão relidos antes da escrita",
+      "stateBefore": "running",
+      "stateAfter": "pending",
+      "leaseAndTokenCleared": true,
+      "attemptsPreserved": 2,
+      "waitedPastMaximumBackgroundLifetime": true,
+      "reason": "hydrate_invalid_response anterior à publicação; protege a troca de versão",
+      "clinicalOrCRMCorrection": false
+    },
+    "projection": {
+      "checkedAt": "2026-09-14T12:16:44.138Z",
+      "rows": 137,
+      "automaticRefresh": true,
+      "pendingApprovalRows": [],
+      "caseChecks": [
+        {
+          "sourceRowAtReview": 95,
+          "projectionMatches": [
+            {
+              "rowAtReview": 138,
+              "queue": "Aguardando paciente",
+              "nextAction": "Aguardar resposta sobre dúvidas ou interesse em verificar datas de consulta.",
+              "hasDraft": false,
+              "responsible": "Equipe",
+              "status": "Aguardando paciente",
+              "mode": "Silêncio",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        },
+        {
+          "sourceRowAtReview": 285,
+          "projectionMatches": []
+        },
+        {
+          "sourceRowAtReview": 297,
+          "projectionMatches": [
+            {
+              "rowAtReview": 125,
+              "queue": "Aguardando paciente",
+              "nextAction": "Encerrar oportunidade por preço; sem nova ação comercial.",
+              "hasDraft": false,
+              "responsible": "Bruna/bot",
+              "status": "Suspenso",
+              "mode": "Silêncio",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        },
+        {
+          "sourceRowAtReview": 303,
+          "projectionMatches": [
+            {
+              "rowAtReview": 98,
+              "queue": "Resposta agora",
+              "nextAction": "Informar o valor da consulta e orientar como agendar.",
+              "hasDraft": false,
+              "responsible": "Equipe",
+              "status": "Aberto",
+              "mode": "Manual",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        },
+        {
+          "sourceRowAtReview": 304,
+          "projectionMatches": [
+            {
+              "rowAtReview": 116,
+              "queue": "Automático hoje",
+              "nextAction": "1ª retomada",
+              "hasDraft": true,
+              "responsible": "Equipe",
+              "status": "Programado",
+              "mode": "Automático",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        },
+        {
+          "sourceRowAtReview": 305,
+          "projectionMatches": [
+            {
+              "rowAtReview": 97,
+              "queue": "Resposta agora",
+              "nextAction": "Revisar humanamente o conteúdo não textual enviado pela equipe e responder à pessoa conforme necessário.",
+              "hasDraft": false,
+              "responsible": "Equipe",
+              "status": "Aberto",
+              "mode": "Manual",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        },
+        {
+          "sourceRowAtReview": 306,
+          "projectionMatches": [
+            {
+              "rowAtReview": 99,
+              "queue": "Resposta agora",
+              "nextAction": "Responder ao contato inicial, sem presumir intenção de agendar.",
+              "hasDraft": false,
+              "responsible": "Equipe",
+              "status": "Aberto",
+              "mode": "Manual",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        },
+        {
+          "sourceRowAtReview": 307,
+          "projectionMatches": [
+            {
+              "rowAtReview": 132,
+              "queue": "Aguardando paciente",
+              "nextAction": "Aguardar retorno",
+              "hasDraft": false,
+              "responsible": "Equipe",
+              "status": "Aguardando paciente",
+              "mode": "Silêncio",
+              "updatedAtSerial": 46279.38306995371
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "firstCycles": {
+    "windowStart": "2026-09-14T12:02:05Z",
+    "windowEnd": "2026-09-14T12:16:00Z",
+    "ledgerRecoveryCycles": [
+      {
+        "status": "completed",
+        "counts": {
+          "persisted": 0,
+          "failed": 0,
+          "uncertain": 0
+        }
+      },
+      {
+        "status": "completed",
+        "counts": {
+          "persisted": 0,
+          "failed": 1,
+          "uncertain": 0
+        }
+      }
+    ],
+    "classificationCycles": [
+      {
+        "status": "processed",
+        "jobs": 1,
+        "results": [
+          {
+            "status": "completed",
+            "errorCode": "none"
+          }
+        ]
+      },
+      {
+        "status": "processed",
+        "jobs": 0,
+        "results": []
+      }
+    ],
+    "limitation": "Execução real dos jobs observada sem disparo manual. Recuperação concluída com fila vazia não prova reparo de uma saída real nem ganho de conversão."
+  },
+  "incident": {
+    "temporaryDeployId": "6aa7dc0a77fe2f1c53e54d1f",
+    "startedAt": "2026-09-14T11:38:25.207Z",
+    "restoredAt": "2026-09-14T11:39:33.929Z",
+    "durationSeconds": 68.722,
+    "failure": "Pacote temporário compilado com dependência por junction omitiu @netlify/blobs e respondeu 502",
+    "recovery": "Restaurado imediatamente o deploy original saudável; dependências físicas recompiladas, importação dos 12 pacotes validada e draft testado antes de nova contenção",
+    "fixedContainmentDeployId": "6aa7deb53b851e330002d2ee",
+    "fixedContainmentPublishedAt": "2026-09-14T11:48:45.207Z",
+    "patientImpact": "Não estabelecido. Logs confirmam falha de dependência; não comprovam ausência de interação de pacientes na janela.",
+    "preventRepeat": "Testar importação e saúde do artefato temporário antes da promoção; não usar junction para empacotar dependências."
+  },
+  "rollback": {
+    "netlifyCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
+    "netlifyDeployId": "6aa72fd3ff58fc000803e345",
+    "appsScriptVersion": 152,
+    "appsScriptDeploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "data": "Preservar mensagens, recibos e fatos clínicos; nunca reenviar para reparar histórico."
+  },
+  "validation": {
+    "fullSuite": 1512,
+    "fullPassed": 1512,
+    "crossConsumer": 220,
+    "crossConsumerPassed": 220,
+    "requiredContractCommands": 11,
+    "realTestMessages": 0,
+    "realTestEmails": 0,
+    "patientModelTests": 0,
+    "historicalBatchRepairs": 0
+  },
+  "remainingHistoricalReview": [
+    "Nome explícito: confirmar interlocutor e origem antes de corrigir cadastro antigo",
+    "Saída antiga ausente: obter ID do provedor e inserir somente registro idempotente, nunca reenviar",
+    "Anexo sem conteúdo: conferir evento original; não inferir imagem/reação/comprovante",
+    "Pagamento: conferência da equipe; ausência na Central não comprova quitação",
+    "Retorno datado antigo: conferir cumprimento e mensagens; o primeiro ciclo atualizou a próxima ação, mas não comprova que o compromisso foi cumprido",
+    "Telefone compartilhado: confirmar beneficiário e preservar pausa"
+  ],
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "firstCycle": "Verificado em 14/09: recuperação do ledger concluída e uma classificação concluída; Central atualizada automaticamente",
+    "integrityReviewAt": "2026-09-16T12:02:05.39Z",
+    "businessReviewAt": "2026-09-21T12:02:05.39Z",
+    "newAutomationCreated": false
+  },
+  "documentation": {
+    "status": "verified_equal",
+    "verifiedAt": "2026-09-14T12:21:52.249Z",
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "238682f8a9e94c96e551d4fce0c2908163915f6787574c436c7d843d99ef53d7",
+      "remoteSha256": "238682f8a9e94c96e551d4fce0c2908163915f6787574c436c7d843d99ef53d7",
+      "bytes": 184137,
+      "modifiedAt": "2026-09-14T12:20:19.006Z",
+      "readbackEqual": true,
+      "inPlace": true
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "localPath": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "75fea9424bbff9c54a6413986c5c55a087ee9f04573c3e4ec87653553f6317eb",
+      "remoteSha256": "75fea9424bbff9c54a6413986c5c55a087ee9f04573c3e4ec87653553f6317eb",
+      "bytes": 106488,
+      "modifiedAt": "2026-09-14T12:20:21.648Z",
+      "readbackEqual": true,
+      "inPlace": true
+    },
+    "audit": {
+      "fileId": "13D-TxVKtKqP7R0kmRRJ-4J6qtE0wuFNj",
+      "localPath": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+      "sha256": "c91cd10691b53e5ab581661d83b77cc59b411ebf703e10c4fef8c26aed4a896c",
+      "remoteSha256": "c91cd10691b53e5ab581661d83b77cc59b411ebf703e10c4fef8c26aed4a896c",
+      "bytes": 15917,
+      "modifiedAt": "2026-09-14T12:20:55.850Z",
+      "readbackEqual": true,
+      "inPlace": false
+    }
+  },
+  "localCloseout": {
+    "receiptGovernanceTests": { "tests": 12, "passed": 12, "failed": 0 },
+    "centralVisualQA": "Google Sheets a 100%; ação de revisão manual legível em F97, cabeçalhos e formatação preservados. Inspeção sem edição ou envio.",
+    "gitReceiptCommit": "Commit intencional descendente do SHA funcional, com [skip netlify]; SHA conferível no histórico git",
+    "requiredFinalCommand": "npm.cmd run ops:check",
+    "finalGitGate": "Executar após commit, sem omitir a verificação de branch/HEAD/worktree"
+  }
+}

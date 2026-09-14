@@ -17,17 +17,17 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "30c44f03a1308359acdc69f568deeb14b23ed7a1",
-    "lastObservedProductionCommit": "77433528d0247c46f5482db29932094e0f534783",
-    "functionalDeployId": "6aa6998a46297000089e1e5d",
-    "lastObservedProductionDeployId": "6aa6a37365ed3d0008e3d1cc",
-    "rollbackCommit": "24a6f19ad5e29660653744c697ae6fbd356417e9",
-    "rollbackDeployId": "6aa60d89d5920c0008dc059e",
-    "publishedAt": "2026-09-13T12:40:11.812Z",
-    "lastVerifiedAt": "2026-09-13T13:24:39.167Z",
-    "candidateChangeId": "ANIVERSARIO-MANUAL-2026-09-13",
+    "functionalCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "lastObservedProductionCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "functionalDeployId": "6aa7e218d56b0f48420dcd98",
+    "lastObservedProductionDeployId": "6aa7e218d56b0f48420dcd98",
+    "rollbackCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
+    "rollbackDeployId": "6aa72fd3ff58fc000803e345",
+    "publishedAt": "2026-09-14T12:02:05.39Z",
+    "lastVerifiedAt": "2026-09-14T12:21:52.249Z",
+    "candidateChangeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-01.1"
+    "bundleVersion": "2026-09-14.1"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -35,14 +35,9 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1Fw12uukeIa2qKx-a-teI9BQhobNUdHVB",
+    "driveClosedAuditFileId": "13D-TxVKtKqP7R0kmRRJ-4J6qtE0wuFNj",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "6af64e0be2250581019c0a947f01a40553fc91f89856e277e50abae11761edac"
-  },
-  "pendingRelease": {
-    "changeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
-    "published": false,
-    "report": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md"
+    "driveProjectionSha256": "75fea9424bbff9c54a6413986c5c55a087ee9f04573c3e4ec87653553f6317eb"
   }
 }

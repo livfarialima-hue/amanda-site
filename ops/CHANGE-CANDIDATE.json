@@ -2,17 +2,18 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
   "title": "Corrigir continuidade, identidade, classificação e projeção da ação humana",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "28f07a8c5e436fd38ca30372dc0fb66ac2397b31",
   "authorization": {
-    "note": "Daniel autorizou implementar as propostas com Ajuste tudo isso e melhore. Publicação depende do SHA candidato, conforme governança do projeto.",
+    "note": "Implementação autorizada por Daniel; publicação autorizada para o SHA bef9c1e1e4ef49e6bd604688adddebc1be69eb02 com Pode publicar sim em 2026-09-14T11:17:29Z. Recibo externo transcrito em auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json.",
     "publicationAuthorizedInCommit": false,
     "required": true,
-    "recording": "external_release_preflight"
+    "recording": "external_release_preflight",
+    "approvalReference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json"
   },
   "risk": {
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true,
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false,
     "patientEffects": true,
     "level": "critical"
   },
@@ -27,6 +28,9 @@
       "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "apps-script/clinica-liv-leads/production-target.json",
+      "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+      "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json",
       "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -118,55 +122,55 @@
         "status": "verified_read_only",
         "system": "Repositório, LEADS canônica e webhook público",
         "contract": "change-governance",
-        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
-        "checkedAt": "2026-09-14T10:06:31.6118434Z",
-        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
-        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+        "limitation": "Leitura viva de versão, três IDs, 27 arquivos Apps Script, configuração Netlify e intervalo aditivo antes da escrita; primeiro ciclo e conferências individuais registrados no pós-voo.",
+        "checkedAt": "2026-09-14T11:31:06.148Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+        "additionalEvidence": "Produção e readbacks em auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
       },
       {
         "status": "verified_read_only",
         "system": "Repositório, LEADS canônica e webhook público",
         "contract": "bruna-conversation-safety",
-        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
-        "checkedAt": "2026-09-14T10:06:31.6193927Z",
-        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
-        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+        "limitation": "Leitura viva de versão, três IDs, 27 arquivos Apps Script, configuração Netlify e intervalo aditivo antes da escrita; primeiro ciclo e conferências individuais registrados no pós-voo.",
+        "checkedAt": "2026-09-14T11:31:06.148Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+        "additionalEvidence": "Produção e readbacks em auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
       },
       {
         "status": "verified_read_only",
         "system": "Repositório, LEADS canônica e webhook público",
         "contract": "patient-journey-funnel-followups",
-        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
-        "checkedAt": "2026-09-14T10:06:31.6194516Z",
-        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
-        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+        "limitation": "Leitura viva de versão, três IDs, 27 arquivos Apps Script, configuração Netlify e intervalo aditivo antes da escrita; primeiro ciclo e conferências individuais registrados no pós-voo.",
+        "checkedAt": "2026-09-14T11:31:06.148Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+        "additionalEvidence": "Produção e readbacks em auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
       },
       {
         "status": "verified_read_only",
         "system": "Repositório, LEADS canônica e webhook público",
         "contract": "google-ads-acquisition-conversion",
-        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
-        "checkedAt": "2026-09-14T10:06:31.6194651Z",
-        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
-        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+        "limitation": "Leitura viva de versão, três IDs, 27 arquivos Apps Script, configuração Netlify e intervalo aditivo antes da escrita; primeiro ciclo e conferências individuais registrados no pós-voo.",
+        "checkedAt": "2026-09-14T11:31:06.148Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+        "additionalEvidence": "Produção e readbacks em auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
       },
       {
         "status": "verified_read_only",
         "system": "Repositório, LEADS canônica e webhook público",
         "contract": "bruna-conversion-experience",
-        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
-        "checkedAt": "2026-09-14T10:06:31.6194771Z",
-        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
-        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+        "limitation": "Leitura viva de versão, três IDs, 27 arquivos Apps Script, configuração Netlify e intervalo aditivo antes da escrita; primeiro ciclo e conferências individuais registrados no pós-voo.",
+        "checkedAt": "2026-09-14T11:31:06.148Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+        "additionalEvidence": "Produção e readbacks em auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
       },
       {
         "status": "verified_read_only",
         "system": "Repositório, LEADS canônica e webhook público",
         "contract": "bruna-regression-governance",
-        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
-        "checkedAt": "2026-09-14T10:06:31.6194913Z",
-        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
-        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+        "limitation": "Leitura viva de versão, três IDs, 27 arquivos Apps Script, configuração Netlify e intervalo aditivo antes da escrita; primeiro ciclo e conferências individuais registrados no pós-voo.",
+        "checkedAt": "2026-09-14T11:31:06.148Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/PREFLIGHT.json",
+        "additionalEvidence": "Produção e readbacks em auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
       }
     ]
   },
@@ -191,7 +195,7 @@
       "npm.cmd run site:check",
       "npm.cmd test"
     ],
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "completedAt": "2026-09-14T10:56:24.038Z",
     "results": {
       "fullSuite": {
@@ -212,19 +216,29 @@
       "siteBuild": "passed",
       "siteCheck": "passed",
       "diffCheck": "passed",
-      "operationalCloseout": "SYNC_PENDING",
-      "productionVerified": false,
+      "operationalCloseout": "Recibos externos conferidos; executar ops:check completo após commit",
+      "receiptGovernanceTests": { "tests": 12, "passed": 12, "failed": 0 },
+      "productionVerified": true,
       "realMessagesSent": 0,
       "historicalWrites": 0,
       "limitations": [
         "Sem avaliação semântica com pacientes ou medição causal de conversão",
-        "Publicação exige autorização do SHA e comparação viva dos destinos"
-      ]
+        "Conferências históricas individuais não equivalem a saneamento em lote",
+        "Impacto da interrupção temporária de 69 segundos em pacientes não estabelecido"
+      ],
+      "sheetWrites": {
+        "additiveHeaders": 2,
+        "expiredLeaseRequeued": 1,
+        "historicalCRMRepairs": 0
+      }
     }
   },
   "rollback": {
     "production": "Restaurar deployments anteriores verificados sem reverter dados, recibos, mensagens ou compromissos legítimos. Conter apenas o efeito novo; nunca reenviar para reparar histórico.",
-    "local": "Reverter apenas o candidato na branch isolada, preservando o baseline e trabalho paralelo."
+    "local": "Reverter apenas o candidato na branch isolada, preservando o baseline e trabalho paralelo.",
+    "verifiedNetlifyDeployId": "6aa72fd3ff58fc000803e345",
+    "verifiedCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
+    "appsScriptVersion": 152
   },
   "monitoring": {
     "window": "Primeiro ciclo, 48 horas e 7 dias após publicação autorizada",
@@ -238,5 +252,15 @@
       "Consultas agendadas e comparecimento"
     ],
     "rollbackRule": "Conter diante de identidade incorreta, retomada indevida, perda de pergunta pendente ou duplicidade."
+  },
+  "release": {
+    "approvedCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "netlifyDeployId": "6aa7e218d56b0f48420dcd98",
+    "appsScriptVersion": 153,
+    "verifiedAt": "2026-09-14T12:21:52.249Z",
+    "receipt": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json",
+    "drivePlanSha256": "238682f8a9e94c96e551d4fce0c2908163915f6787574c436c7d843d99ef53d7",
+    "driveManualSha256": "75fea9424bbff9c54a6413986c5c55a087ee9f04573c3e4ec87653553f6317eb",
+    "driveClosedAuditFileId": "13D-TxVKtKqP7R0kmRRJ-4J6qtE0wuFNj"
   }
 }

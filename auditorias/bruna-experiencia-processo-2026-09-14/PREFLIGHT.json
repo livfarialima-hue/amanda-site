@@ -1,0 +1,193 @@
+{
+  "approvedCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+  "approvedBy": "Daniel",
+  "approvedAt": "2026-09-14T11:17:29Z",
+  "approvalReference": "Conversa atual: Pode publicar sim",
+  "checkedAt": "2026-09-14T11:31:06.148Z",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "authenticated": true,
+    "baseline": "6aa72fd3ff58fc000803e345",
+    "baselineCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
+    "files": 192,
+    "functions": 12,
+    "containment": "Plano inicial: preservar fonte de baseline e arquivos estáticos; conter modo de produção e pausar a programação de classificação. Execução, recompilação e incidente registrados em PUBLICACAO.json.",
+    "authorizationVerifiedThrough": "API autenticada de configuração e funções; identificador canônico do site conferido"
+  },
+  "appsScript": {
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "version": 152,
+    "sourceHashes": [
+      {
+        "file": "Code.gs",
+        "equalBaseline": true,
+        "hash": "637fad56bbcc78e9ed6088077f87680a196de8365dc6c50421d43e24d2afb467"
+      },
+      {
+        "file": "Retomadas.gs",
+        "bytes": 152699,
+        "equalBaseline": true,
+        "hash": "255be81e093eb635fd9754ee11932c792a38e707b2a3c9af141a2daeafcc748a"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "bytes": 128002,
+        "equalBaseline": true,
+        "hash": "4c717fca1dcfe1736fbe57a97f19c492f24315340fb1788639a9763c2a5b5385"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "bytes": 124024,
+        "equalBaseline": true,
+        "hash": "159515860c525c19520860848765655115d46f637f4f7393f6df9767dcdd1bdb"
+      },
+      {
+        "file": "LembretesConsultas.gs",
+        "bytes": 42141,
+        "equalBaseline": true,
+        "hash": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724"
+      },
+      {
+        "file": "ConsultasSync.gs",
+        "bytes": 172852,
+        "equalBaseline": true,
+        "hash": "dbd2e4b3ece884cbc11aeb714b8c14276ad84a19c7f530b7a337df82e9493368"
+      },
+      {
+        "file": "AgendaCuidados.gs",
+        "bytes": 60515,
+        "equalBaseline": true,
+        "hash": "a82f3e1518a39b0bad4ebff7480a40c73060c944a328329f5ed606dfd54e1910"
+      },
+      {
+        "file": "ContactPreferences.gs",
+        "bytes": 14469,
+        "equalBaseline": true,
+        "hash": "f755183eaccd75ab569bf67e4d0e92bccd9b2d158f3bf32cd6a08f6cdf02cdd1"
+      },
+      {
+        "file": "RoomBooking.gs",
+        "bytes": 8778,
+        "equalBaseline": true,
+        "hash": "d01e2e6fd008e3ecf94698ac5fcc16bb44f2acc555db3e446c43c2a57f02d5ee"
+      },
+      {
+        "file": "RoomBookingForm.html",
+        "bytes": 10123,
+        "equalBaseline": true,
+        "hash": "45e93d4952171a1b88404f4737f2aaf1d6991ae0ed00829b086fe8138d310519"
+      },
+      {
+        "file": "KnowledgeBase.gs",
+        "bytes": 29910,
+        "equalBaseline": true,
+        "hash": "7bdfdff8346e54d8c64a2c0cddaf3efc228cc40fdf3850e6caed9986d365bd05"
+      },
+      {
+        "file": "OpportunityStore.gs",
+        "bytes": 82325,
+        "equalBaseline": true,
+        "hash": "c14d14baec0c742d924713e43fa92afd7ad54243211eb0d6ccffb6549be82376"
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "bytes": 2517,
+        "equalBaseline": true,
+        "hash": "e4250350616aa4a0296da1fa1b539ee39dd8bc543bb7de09eb59cf064f01f50c"
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "bytes": 81297,
+        "equalBaseline": true,
+        "hash": "ec3ce38c0c8dc12acb4b05985220c4f9781bcad51f997598d13c1ba8a8ab3fe1"
+      },
+      {
+        "file": "OperationalEvents.gs",
+        "bytes": 22767,
+        "equalBaseline": true,
+        "hash": "4390ec4de184b38367871074a3df3752f9fd51af8b2c6106a47a87db70afb02c"
+      },
+      {
+        "file": "SyntheticHealth.gs",
+        "bytes": 4360,
+        "equalBaseline": true,
+        "hash": "334b9ef173b5ed10ca03d4333ba6f50e26cd74a9f4e2af2a1a657c2cd4ccff21"
+      },
+      {
+        "file": "QualityDashboards.gs",
+        "bytes": 5684,
+        "equalBaseline": true,
+        "hash": "a5a908edc25bb54beb13c213d422d1b8b3dca937cbba27d62186b443b8199c55"
+      },
+      {
+        "file": "ScheduleMaintenance.gs",
+        "bytes": 3977,
+        "equalBaseline": true,
+        "hash": "37d7e90956f9807a3a9a5a7ea59180beb28da7153c5ed1806493dcba7034915e"
+      },
+      {
+        "file": "FunnelDashboards.gs",
+        "bytes": 18971,
+        "equalBaseline": true,
+        "hash": "a09b7ac5b77ff07fdaacca296c230ac12d3fb0ec95d87c307fb20072ba6b5e0d"
+      },
+      {
+        "file": "GoogleAdsFunnelReview.gs",
+        "bytes": 26082,
+        "equalBaseline": true,
+        "hash": "d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7"
+      },
+      {
+        "file": "MetaAdsFunnelReview.gs",
+        "bytes": 12589,
+        "equalBaseline": true,
+        "hash": "e59c3c1aceacf501a7ee6fbfffc526fb27bbe9ae9dcb44fba82f9c5476efa0e8"
+      },
+      {
+        "file": "MetaAdsReview.gs",
+        "bytes": 53509,
+        "equalBaseline": true,
+        "hash": "758e621087b75727fad9e279e86f74af1ff1e3080b513b19f55b20a5db97320c"
+      },
+      {
+        "file": "FunnelReconciliation.gs",
+        "bytes": 24871,
+        "equalBaseline": true,
+        "hash": "795bb4a96766463c4e3272c2c84494b3d2bd4fc3138fb641a32717ff5b686a10"
+      },
+      {
+        "file": "PainelDecisoesDiarias.gs",
+        "bytes": 42283,
+        "equalBaseline": true,
+        "hash": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4"
+      },
+      {
+        "file": "WhatsAppCosts.gs",
+        "bytes": 19422,
+        "equalBaseline": true,
+        "hash": "b728ba451177ddabfe17dd3ef42182b7a0d60ab7731d77dc77cd720bd34567d4"
+      },
+      {
+        "file": "ClassificationReconciliation.gs",
+        "bytes": 14765,
+        "equalBaseline": true,
+        "hash": "a76ff89e0ae5528f1533ad93938a7a147f56ad45733d856782158782c3a9a6c3"
+      },
+      {
+        "file": "CuidadosProgramados.gs",
+        "bytes": 42317,
+        "equalBaseline": true,
+        "hash": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568"
+      }
+    ]
+  },
+  "sheet": {
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "messageColumnsMN": "empty; 2407 rows read immediately before publication"
+  },
+  "rollback": {
+    "netlify": "6aa72fd3ff58fc000803e345",
+    "appsScript": 152
+  }
+}

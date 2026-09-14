@@ -1,8 +1,8 @@
 # Histórico do pacote Bruna
 
-## 2026-09-14.1 — candidato local
+## 2026-09-14.1 — publicada e verificada
 
-Continuidade contextual e acolhimento específico; correção de nome de aquisição com origem; perguntas pendentes e objeções por evidência; anexos e telefone compartilhado sem marcos administrativos presumidos; Central orientada pelo CRM; retorno datado como tarefa humana; histórico de saídas recuperável e idempotente. Sem mudança de modelo, preços, permissões clínicas ou publicação. Evidência: auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md.
+Continuidade contextual e acolhimento específico; correção de nome de aquisição com origem; perguntas pendentes e objeções por evidência; anexos e telefone compartilhado sem marcos administrativos presumidos; Central orientada pelo CRM; retorno datado como tarefa humana; histórico de saídas recuperável e idempotente. Modelo, preços e permissões clínicas preservados. Publicado o commit `bef9c1e1e4ef49e6bd604688adddebc1be69eb02` no Netlify `6aa7e218d56b0f48420dcd98` e Apps Script v153. Evidência: auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md.
 
 ## 2026-09-01.1 — publicada e verificada
 
