@@ -845,3 +845,7 @@ Esta entrada substitui, para Google Ads, qualquer fotografia antiga de orçament
 - **Guardrails:** exatamente um identificador de clique; Dra. Amanda; fase qualificada ou posterior; data/hora e transação válidas. Nenhuma mensagem, agenda, dado clínico, campanha, verba, lance ou código foi alterado. Uma cópia integral privada precedeu a escrita.
 - **Métrica e revisão:** conferir a aceitação da linha nova após o ciclo de 14/09 entre 05:00 e 06:00 BRT e manter a leitura por contatos válidos, qualificados e consultas. `ready` na planilha comprova preparo, não aceite pelo Google Ads.
 - **Regra para corrigir/reverter:** diante de evidência de fase incorreta, reverter somente a oportunidade pela rotina auditada; se o evento já tiver sido importado, emitir a retração idempotente. Nunca restaurar o backup completo sobre alterações concorrentes.
+
+## 13 de setembro de 2026 — melhorias de qualidade nos 17 RSAs
+
+Seção38 do Norte: Daniel autorizou seguir as sugestões nos anúncios. Auditoria dos editores: seis Excelente e onze com oportunidade de termos relevantes; três grupos de preço pedem sitelinks. Preparados onze deltas de texto e quatro associações existentes nas campanhas MAMA/CORPO. Preservar identificação médica, destinos, rastreamento e todos os lances/orçamentos, inclusive LIFT R$30 sem CPA. Hipótese: maior aderência e informação útil; medir contatos válidos, qualificados e consultas, sem inferir resultado pela nota. Revisão14–15/09,21/09 e28/09; rollback restrito ao delta documentado. Banco e recibo em auditorias/google-ads-qualidade-2026-09-13/.

@@ -1,34 +1,24 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
-  "title": "Piloto de Maximizar conversões e R$ 30 por dia em lifting facial",
-  "status": "published_verified",
-  "baseCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
+  "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
+  "title": "Termos relevantes em 11 RSAs e sitelinks nas campanhas de mama e corpo",
+  "status": "tested_local",
+  "baseCommit": "4749d356eb57474ca2ef8c1ad68e68fe43c9964b",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou explicitamente retomar e aplicar o commit ba73148 com Maximizar conversões sem CPA desejado e R$ 30/dia somente em LIFT. Release preflight do SHA completo aprovado antes da primeira escrita externa.",
+    "note": "Pedido explícito de Daniel autoriza executar as melhorias de qualidade nos anúncios existentes. O SHA exato preparado será vinculado a esse pedido no preflight, antes de salvar.",
     "references": [
-      "entao faça todos os ajustes que vc sugeriu aqui lá no google ads.",
-      "pode aumentar para 30 o orçamento",
-      "Retome o candidato ba73148. Teste primeiro o acesso ao Google Ads e aplique em lifting facial: Maximizar conversões sem CPA desejado e orçamento de R$ 30/dia. Confirme tudo após salvar."
-    ],
-    "releasePreflight": {
-      "approvedCommit": "ba7314888ddb8226a227c72328bf0374c5c3c05a",
-      "approvedAt": "2026-09-14T00:02:40Z",
-      "approvedBy": "Daniel",
-      "reference": "Retome o candidato ba73148. Teste primeiro o acesso ao Google Ads e aplique em lifting facial: Maximizar conversões sem CPA desejado e orçamento de R$ 30/dia. Confirme tudo após salvar.",
-      "result": "CHANGE_SAFETY_STATUS=OK",
-      "livePreflightReference": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json#preflight"
-    }
+      "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer."
+    ]
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false,
-    "externalWritesScope": "Google Ads conta 995-334-4486: somente campanha 24028216444/G26LIFT, lance Maximizar cliques para Maximizar conversões sem CPA desejado e orçamento médio diário de R$ 24 para R$ 30; total esperado R$ 99 para R$ 105/dia."
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true,
+    "externalWritesScope": "Conta 995-334-4486: texto de 11 RSAs dentre 17 ativos; associar dois sitelinks existentes a S_BR_SP_CIRURGIA_MAMA e dois a S_BR_SP_CONTORNO_CORPORAL. Sem gasto adicional ou mudança de segmentação."
   },
   "scope": {
     "contracts": [
@@ -36,13 +26,12 @@
       "google-ads-acquisition-conversion"
     ],
     "files": [
-      "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md",
-      "auditorias/google-ads-lift-max-conversions-2026-09-13/PLANO.json",
-      "auditorias/google-ads-lift-max-conversions-2026-09-13/PREFLIGHT.json",
-      "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json",
+      "auditorias/google-ads-qualidade-2026-09-13/EXECUCAO.md",
+      "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json",
+      "auditorias/google-ads-qualidade-2026-09-13/REVISAO.json",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+      "campanhas/google-ads-ad-strength-20260913.test.mjs",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -51,38 +40,45 @@
   "impact": {
     "consumers": [
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "campanhas/REGISTRO-CODIGOS-ATRIBUICAO.md",
+      "blefaroplastia/index.html",
+      "campanhas/cost-guides.test.mjs",
+      "campanhas/lifting-price-page.test.mjs",
       "google-ads-scripts/google-ads-search-review-email.js",
       "netlify/functions/lib/patient-replies.mjs",
+      "conteudos/index.html",
+      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+      "lifting-facial/index.html",
+      "lifting-cervical/index.html",
+      "lipo-de-papada/index.html",
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md"
     ],
     "preservedInvariants": [
-      "Somente campanha 24028216444/G26LIFT; os outros sete orçamentos e lances permanecem iguais",
-      "G26LIFT R$ 24 para R$ 30 e conta R$ 99 para R$ 105; a recomendação R$ 47 não é aplicada",
-      "Maximizar conversões sem CPA desejado, sem ROAS, portfólio ou teto inventado",
-      "Meta Lead qualificado GCLID e ações de conversão preservadas; evento ready na LEADS não é tratado como aceite do Google",
-      "Palavras, negativas, RSAs, URLs, recursos, redes, geografia, idioma, idade, dispositivo e agenda preservados",
-      "Aplicação automática de recomendações permanece desligada",
-      "Zero alteração de site, Netlify, Apps Script, LEADS, CRM, WhatsApp, Calendar, Meta, paciente, consulta ou conversão"
+      "Identidade médica na descrição 1, fixada na posição 1; títulos até 30 e descrições até 90 caracteres",
+      "Preservar integralmente URLs, caminhos, tracking, parâmetros e fixações de cada RSA; reler o baseline antes de salvar",
+      "Seis RSAs avaliados como Excelente sem mudança de texto; nenhum RSA novo ou exclusão",
+      "Recursos reutilizados, sem editar conteúdo compartilhado; adição apenas nas campanhas de mama e corpo",
+      "LIFT continua Maximizar conversões sem CPA e R$30/dia; total da conta R$105/dia e outros lances/orçamentos preservados",
+      "Recomendações automáticas desligadas; não alterar palavras, negativas, metas, redes ou públicos",
+      "OTO mantém consulta particular R$500, residência na Unicamp e criança ouvida; sem promessa médica",
+      "Nenhuma mudança de site, Apps Script, LEADS, CRM, WhatsApp, Calendar, Meta ou paciente"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Google Sheets LEADS",
-        "status": "verified_read_only",
-        "reference": "auditorias/google-ads-lift-max-conversions-2026-09-13/PREFLIGHT.json",
-        "checkedAt": "2026-09-13T23:41:47.368Z",
-        "evidence": "Saúde operacional com três divergências em zero; sete eventos ready, cinco legados em quarentena e dois invalidados; nenhum aceite no Google Ads inferido."
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
         "system": "Google Ads",
         "status": "verified_read_only",
-        "reference": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json#preflight",
-        "checkedAt": "2026-09-14T00:02:40Z",
-        "evidence": "Chrome autenticado; campanha ativa em R$24/Maximizar cliques, meta qualificada principal; oito orçamentos R$99; recomendações automáticas 0/7 e 0/14; aviso de dados recentes registrado sem inferir aceite da LEADS."
+        "reference": "auditorias/google-ads-qualidade-2026-09-13/REVISAO.json",
+        "checkedAt": "2026-09-14T00:33:30.998Z",
+        "evidence": "Chrome autenticado, 17 RSAs em oito campanhas; avaliação de cada editor carregada. Seis Excelente, onze com sugestões de termos; três grupos de preço com falta de dois sitelinks. Biblioteca e escopo de associação em campanha conferidos."
       }
     ]
   },
@@ -98,98 +94,43 @@
       "npm.cmd run ops:check",
       "git diff --check",
       "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs"
+      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs"
     ],
-    "completedAt": "2026-09-14T00:09:23.087Z",
+    "completedAt": "2026-09-14T00:33:30.997Z",
     "results": {
-      "candidateContract": {
-        "passed": 6,
-        "failed": 0
-      },
-      "acquisitionFocused": {
-        "passed": 149,
-        "failed": 0
-      },
-      "settingsAndCandidate": {
-        "passed": 10,
-        "failed": 0
-      },
-      "fullSuite": {
-        "passed": 1481,
-        "failed": 0
-      },
+      "focusedNew": 5,
+      "acquisitionConsumers": 164,
+      "fullSuite": 1481,
+      "failed": 0,
       "architecture": "OK",
-      "changeSafety": "OK; ten files including publication receipt",
-      "build": {
-        "files": 193,
-        "routes": 54,
-        "errors": 0
-      },
-      "siteCheck": {
-        "routes": 54,
-        "errors": 0
-      },
-      "operationalConsistency": "Gate de fechamento: integrar na branch canônica limpa e executar ops:check; recibos Ads e Drive presentes.",
-      "resumeChecks": {
-        "candidateAndSettings": {
-          "passed": 10,
-          "failed": 0
-        },
-        "architecture": "OK",
-        "diff": "OK",
-        "releasePreflight": "OK for approved ba73148 before external writes",
-        "googleAds": "persisted bidding, no target CPA, budget and eight-campaign total verified",
-        "drive": "complete readable text equal; provider size matches local179687 bytes"
-      }
+      "changeSafety": "OK",
+      "buildFiles": 193,
+      "siteRoutes": 54,
+      "artifactErrors": 0,
+      "diff": "OK"
     }
   },
   "previousCompletedRelease": {
-    "changeId": "GOOGLE-ADS-AJUSTES-CAMPANHAS-2026-09-13",
-    "approvedCommit": "84230d90f882d170c53da5b2752a42c1377d34ac",
-    "reconciledCandidateCommit": "962c1b0daa6d8261ee84e2608e92f86ec107f363",
-    "verifiedAt": "2026-09-13T23:17:43.485Z",
-    "googleAdsAccountDailyBudgetBRL": 99,
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "receiptPath": "auditorias/google-ads-ajustes-campanhas-2026-09-13/PUBLICACAO.json"
+    "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
+    "approvedCommit": "ba7314888ddb8226a227c72328bf0374c5c3c05a",
+    "reconciledCommit": "4749d356eb57474ca2ef8c1ad68e68fe43c9964b",
+    "receiptPath": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json",
+    "googleAdsAccountDailyBudgetBRL": 105
   },
   "rollback": {
-    "local": "Reverter somente os dez arquivos declarados deste pacote, preservando todo trabalho paralelo.",
-    "production": "Se o pacote vier a ser aplicado e algum guardrail falhar, restaurar somente G26LIFT para Maximizar cliques sem teto de CPC e R$ 24/dia; reler a campanha e o total R$ 99/dia sem apagar histórico."
+    "local": "Reverter somente os nove arquivos do pacote, preservando trabalhos posteriores.",
+    "production": "Restaurar somente os campos de texto alterados a partir do banco before e remover somente as quatro associações acrescentadas. Não excluir recursos, anúncios, histórico ou modificar LIFT."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Ativado e relido em 13/09/2026 às 21h04 BRT. Integridade em 14/09 e 15/09; D+7 em20/09, D+14 em27/09 e D+28 em11/10, no mesmo horário. Sem nova automação.",
+    "window": "Integridade e política em 14–15/09; revisão de contatos válidos, qualificados e consultas em 21/09 e 28/09. Sem nova automação.",
     "metrics": [
-      "contatos identificados e válidos de G26LIFT",
-      "qualificados aceitos pelo Google Ads",
-      "consultas agendadas e realizadas da mesma coorte",
-      "custo por qualificado e custo por consulta"
+      "contatos identificados e válidos",
+      "qualificados aceitos",
+      "consultas agendadas e realizadas",
+      "custo por etapa da mesma coorte"
     ],
-    "rollbackRule": "Configuração divergente, falha de meta/atribuição, gasto anormal ou regressão downstream consistente com mensuração saudável; baixa amostra ou classificação insuficiente é inconclusiva."
-  },
-  "release": {
-    "approvedCommit": "ba7314888ddb8226a227c72328bf0374c5c3c05a",
-    "verifiedAt": "2026-09-14T00:09:23.087Z",
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "netlifyPublishedByThisChange": false,
-    "netlifyState": "inherited_from_verified_previous_release",
-    "appsScriptVersion": 152,
-    "appsScriptPublishedByThisChange": false,
-    "googleAdsAccountId": "995-334-4486",
-    "googleAdsReadBack": true,
-    "googleAdsCampaignId": "24028216444",
-    "googleAdsBidding": "MAXIMIZE_CONVERSIONS",
-    "googleAdsTargetCpaBRL": null,
-    "googleAdsLiftDailyBudgetBRL": 30,
-    "googleAdsAccountDailyBudgetBRL": 105,
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "de7c70efe3477057ae10d2132d60094debc4803507bc74b9a0a808861aeb4b0a",
-    "drivePlanReadBack": {
-      "modified": "2026-09-14T00:09:23.087Z",
-      "bytes": 179687,
-      "equal": true,
-      "comparison": "Complete readable text normalized for line endings and terminal newline; local SHA256 and matching provider byte size recorded"
-    },
-    "receiptPath": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json"
+    "rollbackRule": "Corrigir somente o delta responsável se houver reprovação, destino incorreto, perda de identificação/rastreamento ou regressão downstream consistente. Nota e amostra baixa não provam resultado."
   }
 }
