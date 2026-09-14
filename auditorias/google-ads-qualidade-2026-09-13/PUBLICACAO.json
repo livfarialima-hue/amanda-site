@@ -370,7 +370,12 @@
       "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
       "baselineEqual": true,
       "baselineModifiedAt": "2026-09-14T00:58:14.897Z",
-      "status": "pending_same_file_update"
+      "status": "same_file_updated_and_reread",
+      "modified": "2026-09-14T01:13:48.542Z",
+      "bytes": 182213,
+      "sha256": "b34a5828cd64f305c6100950531bcaacd328bae47949e7992b303a294cb2f0e8",
+      "equal": true,
+      "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
     },
     "verification": {
       "focusedAndConsumers": 164,
@@ -383,6 +388,13 @@
       "artifactErrors": 0,
       "diff": "OK",
       "initialOpsCheck": "SYNC_PENDING as expected before Drive publication and canonical reconciliation"
+    },
+    "publication": {
+      "approvedCommit": "58ab543d1b60b45e10dc25bd92180d8366cdc0c6",
+      "preflightAt": "2026-09-14T01:13:26Z",
+      "scope": "Google Drive plan projection only",
+      "verifiedAt": "2026-09-14T01:13:48.542Z",
+      "googleAdsWrites": 0
     }
   }
 }

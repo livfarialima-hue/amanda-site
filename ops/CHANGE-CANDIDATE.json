@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-RECHECAGEM-QUALIDADE-2026-09-13",
   "title": "Registrar a inspeção das notas, palavras pausadas e decisão de manter cervical",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "420936a69a2d8fc8ee6bb1e69e0594de1c318346",
   "authorization": {
     "required": true,
@@ -17,7 +17,7 @@
   "risk": {
     "level": "low",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false,
     "externalWritesScope": "Somente a projeção existente do plano no Drive. Google Ads, site, Apps Script e dados operacionais apenas preservados."
   },
@@ -123,5 +123,32 @@
       "contatos qualificados e consultas da mesma coorte"
     ],
     "rollbackRule": "Corrigir apenas o registro se houver divergência de leitura ou projeção; não ativar tráfego para obter nota."
+  },
+  "release": {
+    "approvedCommit": "58ab543d1b60b45e10dc25bd92180d8366cdc0c6",
+    "verifiedAt": "2026-09-14T01:13:48.542Z",
+    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+    "netlifyPublishedByThisChange": false,
+    "netlifyState": "inherited_from_verified_previous_release",
+    "appsScriptVersion": 152,
+    "appsScriptPublishedByThisChange": false,
+    "googleAdsAccountId": "995-334-4486",
+    "googleAdsReadBack": true,
+    "googleAdsWrites": 0,
+    "googleAdsAccountDailyBudgetBRL": 105,
+    "googleAdsLiftDailyBudgetBRL": 30,
+    "googleAdsCervicalDailyBudgetBRL": 12,
+    "googleAdsCervicalBidding": "MAXIMIZE_CLICKS",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "b34a5828cd64f305c6100950531bcaacd328bae47949e7992b303a294cb2f0e8",
+    "drivePlanReadBack": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-14T01:13:48.542Z",
+      "bytes": 182213,
+      "sha256": "b34a5828cd64f305c6100950531bcaacd328bae47949e7992b303a294cb2f0e8",
+      "equal": true,
+      "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
+    },
+    "receiptPath": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json"
   }
 }
