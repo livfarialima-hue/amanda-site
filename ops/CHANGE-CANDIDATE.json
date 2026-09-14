@@ -1,154 +1,242 @@
 {
   "schemaVersion": 1,
-  "changeId": "GOOGLE-ADS-RECHECAGEM-QUALIDADE-2026-09-13",
-  "title": "Registrar a inspeção das notas, palavras pausadas e decisão de manter cervical",
-  "status": "published_verified",
-  "baseCommit": "420936a69a2d8fc8ee6bb1e69e0594de1c318346",
+  "changeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
+  "title": "Corrigir continuidade, identidade, classificação e projeção da ação humana",
+  "status": "tested_local",
+  "baseCommit": "28f07a8c5e436fd38ca30372dc0fb66ac2397b31",
   "authorization": {
-    "required": true,
-    "recording": "external_release_preflight",
+    "note": "Daniel autorizou implementar as propostas com Ajuste tudo isso e melhore. Publicação depende do SHA candidato, conforme governança do projeto.",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedidos atuais autorizam revisão e recomendação; as instruções permanentes exigem registrar a etapa e substituir a mesma projeção do plano. Nenhuma mudança de lance ou segmentação está incluída.",
-    "references": [
-      "queria tentar deixar todos como excelente.",
-      "posso usar maximizar conversões para lifting cervical tambem?"
-    ]
+    "required": true,
+    "recording": "external_release_preflight"
   },
   "risk": {
-    "level": "low",
-    "patientEffects": false,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false,
-    "externalWritesScope": "Somente a projeção existente do plano no Drive. Google Ads, site, Apps Script e dados operacionais apenas preservados."
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true,
+    "patientEffects": true,
+    "level": "critical"
   },
   "scope": {
+    "files": [
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/Code.schema.test.mjs",
+      "apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/classify-leads.mjs",
+      "netlify/functions/lib/bruna-conversation-evals.test.mjs",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+      "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/bruna-policy/regression-baseline.json",
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-ledger.mjs",
+      "netlify/functions/lib/conversation-ledger.test.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/lead-classifier.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/outbound-reply-gate.test.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/patient-replies.test.mjs",
+      "netlify/functions/lib/procedure-context.mjs",
+      "netlify/functions/lib/profile-name.mjs",
+      "netlify/functions/lib/profile-name.test.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/surgical-price-review.test.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
+      "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json"
+    ],
     "contracts": [
       "change-governance",
-      "google-ads-acquisition-conversion"
-    ],
-    "files": [
-      "auditorias/google-ads-qualidade-2026-09-13/EXECUCAO.md",
-      "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "ops/CHANGE-CANDIDATE.json"
+      "bruna-conversation-safety",
+      "patient-journey-funnel-followups",
+      "google-ads-acquisition-conversion",
+      "bruna-conversion-experience",
+      "bruna-regression-governance"
     ]
   },
   "impact": {
     "consumers": [
+      "AGENTS.md",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
+      "apps-script/clinica-liv-leads/Code.gs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
       "blefaroplastia/index.html",
       "campanhas/cost-guides.test.mjs",
       "campanhas/lifting-price-page.test.mjs",
-      "google-ads-scripts/google-ads-search-review-email.js",
-      "netlify/functions/lib/patient-replies.mjs",
       "conteudos/index.html",
       "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
       "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
       "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
       "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
       "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
       "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "lifting-facial/index.html",
-      "lifting-cervical/index.html",
-      "lipo-de-papada/index.html",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md"
+      "google-ads-scripts/google-ads-search-review-email.js",
+      "lifting-cervical/index.html",
+      "lifting-facial/index.html",
+      "lipo-de-papada/index.html",
+      "netlify/functions/classify-leads.mjs",
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+      "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/scheduled-followup.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
+      "otoplastia-adulto/index.html",
+      "otoplastia-infantil/index.html"
     ],
     "preservedInvariants": [
-      "Zero escrita no Google Ads; manter os 17 RSAs e todos os campos, palavras, recursos e segmentação",
-      "CERV permanece Maximizar cliques/R$12; LIFT preservado em R$30 e total R$105",
-      "Separar notas da listagem e do editor; não alegar 17 Excelente ou ganho comercial",
-      "Não acessar ou exportar dados pessoais; não publicar site/Apps Script nem criar mensagens, conversões ou automações",
-      "Substituir a mesma projeção do Drive após comparar o baseline integral, preservando todos os registros anteriores"
+      "Nenhum envio real, correção histórica em lote ou alteração clínica durante implementação",
+      "Opportunity ID e profissional preservados; não unir pessoas por nome ou telefone compartilhado",
+      "Preço da consulta distinto de cirurgia; faixas autorizadas e gatilhos preservados",
+      "Takeover, opt-out, cuidado, agenda e confirmação financeira continuam protegidos",
+      "Origem, consentimento e importação de conversão não são inferidos por mensagem automática"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads e Google Drive",
         "status": "verified_read_only",
-        "reference": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json#readOnlyRecheck",
-        "checkedAt": "2026-09-14T01:10:34Z",
-        "evidence": "17 anúncios na conta correta, seis editores divergentes, palavras dos dois grupos e configurações/relatório CERV. Projeção Drive integral idêntica ao plano canônico antes da edição."
+        "system": "Repositório, LEADS canônica e webhook público",
+        "contract": "change-governance",
+        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
+        "checkedAt": "2026-09-14T10:06:31.6118434Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+      },
+      {
+        "status": "verified_read_only",
+        "system": "Repositório, LEADS canônica e webhook público",
+        "contract": "bruna-conversation-safety",
+        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
+        "checkedAt": "2026-09-14T10:06:31.6193927Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+      },
+      {
+        "status": "verified_read_only",
+        "system": "Repositório, LEADS canônica e webhook público",
+        "contract": "patient-journey-funnel-followups",
+        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
+        "checkedAt": "2026-09-14T10:06:31.6194516Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+      },
+      {
+        "status": "verified_read_only",
+        "system": "Repositório, LEADS canônica e webhook público",
+        "contract": "google-ads-acquisition-conversion",
+        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
+        "checkedAt": "2026-09-14T10:06:31.6194651Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+      },
+      {
+        "status": "verified_read_only",
+        "system": "Repositório, LEADS canônica e webhook público",
+        "contract": "bruna-conversion-experience",
+        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
+        "checkedAt": "2026-09-14T10:06:31.6194771Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
+      },
+      {
+        "status": "verified_read_only",
+        "system": "Repositório, LEADS canônica e webhook público",
+        "contract": "bruna-regression-governance",
+        "limitation": "Leitura de estados e cabeçalhos; ainda exige comparação do deployment e arquivos Apps Script imediatamente antes da publicação.",
+        "checkedAt": "2026-09-14T10:06:31.6194913Z",
+        "reference": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md",
+        "additionalEvidence": "Leitura de _WHATSAPP_MENSAGENS!M1:N2407 vazia em 14/09; expansão aditiva declarada. Equivalência dos deployments será conferida no pré-voo de publicação."
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
     "commands": [
+      "git diff --check",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "npm.cmd run change:check",
+      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
+      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+      "node --test campanhas/google-ads-settings.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run architecture:check",
-      "npm.cmd test",
+      "npm.cmd run change:check",
+      "npm.cmd run ops:check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "npm.cmd run ops:check",
-      "git diff --check",
-      "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
-      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs"
+      "npm.cmd test"
     ],
-    "completedAt": "2026-09-14T01:12:56Z",
+    "status": "passed_local",
+    "completedAt": "2026-09-14T10:56:24.038Z",
     "results": {
-      "focusedAndConsumers": 164,
-      "fullSuite": 1481,
-      "failed": 0,
-      "architecture": "OK",
-      "changeSafety": "OK",
-      "buildFiles": 193,
-      "siteRoutes": 54,
-      "artifactErrors": 0,
-      "diff": "OK",
-      "initialOpsCheck": "SYNC_PENDING as expected before Drive publication and canonical reconciliation"
+      "fullSuite": {
+        "tests": 1512,
+        "passed": 1512,
+        "failed": 0,
+        "outputSha256": "189c1dee7325faeef2bd8ad0970ffebc5f124ade613184181283e24ed6e17e4e"
+      },
+      "crossConsumerSuite": {
+        "tests": 220,
+        "passed": 220,
+        "failed": 0,
+        "outputSha256": "2edf9b618450901513f2efd7b9b6e241cdcce1e5b5ce5fe8e1226d92b8ff263c"
+      },
+      "requiredContractCommands": 11,
+      "changeCheck": "OK",
+      "architectureCheck": "OK",
+      "siteBuild": "passed",
+      "siteCheck": "passed",
+      "diffCheck": "passed",
+      "operationalCloseout": "SYNC_PENDING",
+      "productionVerified": false,
+      "realMessagesSent": 0,
+      "historicalWrites": 0,
+      "limitations": [
+        "Sem avaliação semântica com pacientes ou medição causal de conversão",
+        "Publicação exige autorização do SHA e comparação viva dos destinos"
+      ]
     }
   },
-  "previousCompletedRelease": {
-    "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
-    "reconciledCommit": "420936a69a2d8fc8ee6bb1e69e0594de1c318346",
-    "receiptPath": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json",
-    "approvedCommit": "bd2ca37eff20e2607b787d0752ffd16975d133f2"
-  },
   "rollback": {
-    "local": "Reverter somente os quatro arquivos desta rechecagem, preservando o release de anúncios anterior.",
-    "production": "Restaurar somente o texto anterior da mesma projeção do plano. Não há alteração Ads, site ou Apps Script para reverter."
+    "production": "Restaurar deployments anteriores verificados sem reverter dados, recibos, mensagens ou compromissos legítimos. Conter apenas o efeito novo; nunca reenviar para reparar histórico.",
+    "local": "Reverter apenas o candidato na branch isolada, preservando o baseline e trabalho paralelo."
   },
   "monitoring": {
+    "window": "Primeiro ciclo, 48 horas e 7 dias após publicação autorizada",
     "owner": "Daniel / equipe LIV",
-    "window": "Integridade14–15/09; contatos válidos, qualificados aceitos e consultas21/09/28/09. Piloto LIFT nas datas já registradas. Sem nova automação.",
     "metrics": [
-      "equivalência da projeção do Drive",
-      "integridade da meta qualificada",
-      "contatos qualificados e consultas da mesma coorte"
+      "Divergências CRM/Central",
+      "Perguntas pendentes sem responsável",
+      "Classificações desatualizadas e correções humanas",
+      "Compromissos datados e cumpridos",
+      "Mensagens duplicadas e contatos após pausa",
+      "Consultas agendadas e comparecimento"
     ],
-    "rollbackRule": "Corrigir apenas o registro se houver divergência de leitura ou projeção; não ativar tráfego para obter nota."
-  },
-  "release": {
-    "approvedCommit": "58ab543d1b60b45e10dc25bd92180d8366cdc0c6",
-    "verifiedAt": "2026-09-14T01:13:48.542Z",
-    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
-    "netlifyPublishedByThisChange": false,
-    "netlifyState": "inherited_from_verified_previous_release",
-    "appsScriptVersion": 152,
-    "appsScriptPublishedByThisChange": false,
-    "googleAdsAccountId": "995-334-4486",
-    "googleAdsReadBack": true,
-    "googleAdsWrites": 0,
-    "googleAdsAccountDailyBudgetBRL": 105,
-    "googleAdsLiftDailyBudgetBRL": 30,
-    "googleAdsCervicalDailyBudgetBRL": 12,
-    "googleAdsCervicalBidding": "MAXIMIZE_CLICKS",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "b34a5828cd64f305c6100950531bcaacd328bae47949e7992b303a294cb2f0e8",
-    "drivePlanReadBack": {
-      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "modified": "2026-09-14T01:13:48.542Z",
-      "bytes": 182213,
-      "sha256": "b34a5828cd64f305c6100950531bcaacd328bae47949e7992b303a294cb2f0e8",
-      "equal": true,
-      "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
-    },
-    "receiptPath": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json"
+    "rollbackRule": "Conter diante de identidade incorreta, retomada indevida, perda de pergunta pendente ou duplicidade."
   }
 }

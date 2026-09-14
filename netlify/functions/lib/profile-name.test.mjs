@@ -2,10 +2,30 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   resolvePatientDisplayName,
+  resolveContactIdentity,
   usableKnownPatientName,
   usableProfileFirstName,
   usableProfileName,
 } from "./profile-name.mjs";
+
+test("explicit correction has provenance and shared contacts are not patient identity", () => {
+  const corrected = resolveContactIdentity({ profileName: "Lulu", currentText: "Meu nome é Helena." });
+  assert.equal(corrected.name, "Helena");
+  assert.equal(corrected.nameSource, "self_declared");
+  assert.equal(corrected.nameSubject, "self");
+  const shared = resolveContactIdentity({ profileName: "Rosa", currentText: "Me chamo Helena, quero marcar para minha mãe e para mim." });
+  assert.equal(shared.name, "Helena");
+  assert.equal(shared.nameSubject, "contact_only");
+});
+
+test("a role or praise is never extracted as a name", () => {
+  for (const currentText of ["Sou a mãe da criança", "Eu sou interessada na consulta", "Sou de Santos", "Estou perguntando para minha mãe, meu nome é Helena"]) {
+    const identity = resolveContactIdentity({ profileName: "", currentText });
+    if (currentText.includes("Helena")) assert.equal(identity.nameSubject, "contact_only");
+    else assert.equal(identity.name, "");
+  }
+  for (const profileName of ["Super", "Gratidão", "Abençoada"]) assert.equal(usableProfileName(profileName), "");
+});
 
 test("self-identified patient name overrides an unrelated WhatsApp profile", () => {
   const name = resolvePatientDisplayName({

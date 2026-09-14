@@ -1468,7 +1468,68 @@ function obterPlanilhaCompromissos_(arquivo) {
   return planilha;
 }
 
+// A date here creates a manual team task, never an automatic WhatsApp send.
+function extrairRetornoHumanoCombinado_(input, previousPatientText) {
+  const text = normalizarTextoRetomadas_(input.text);
+  const previous = normalizarTextoRetomadas_(previousPatientText);
+  if ((input.messageType && input.messageType !== "text") || !text ||
+    /\b(?:nao|talvez|posso tentar|se der|quem sabe)\b/.test(text)) return null;
+  const action = /\b(?:te (?:chamo|chamarei|ligo|ligarei|retorno|retornarei)|(?:vou|vamos) (?:te |lhe )?(?:chamar|ligar|retornar|entrar em contato)|(?:retorno|retornaremos) (?:para|pra|a voce))\b/;
+  const request = /\b(?:me (?:cham(?:ar|[ae])|lig(?:ar|[ae])|retorn(?:ar|[ae]))|entrar em contato comigo|pode retornar)\b/;
+  const agreement = /^(?:sim[,.! ]*)?(?:combinado|tudo bem|pode deixar|certo|ok|perfeito)[.! ]*$/;
+  const dateText = action.test(text) ? text : agreement.test(text) && request.test(previous) ? previous : "";
+  if (!dateText) return null;
+  const at = dataRetomadaValida_(input.at);
+  if (!at) return null;
+  const local = Utilities.formatDate(at, "America/Sao_Paulo", "yyyy-MM-dd");
+  const day = new Date(local + "T12:00:00-03:00");
+  const explicit = dateText.match(/\b(?:dia\s+)?(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?\b/);
+  if (explicit) {
+    const year = Number(explicit[3] || local.slice(0, 4));
+    const month = Number(explicit[2]), date = Number(explicit[1]);
+    const candidate = new Date(Date.UTC(year, month - 1, date, 15));
+    if (candidate.getUTCFullYear() !== year || candidate.getUTCMonth() !== month - 1 ||
+      candidate.getUTCDate() !== date) return null;
+    day.setTime(candidate.getTime());
+  } else if (/\bamanha\b/.test(dateText)) {
+    day.setUTCDate(day.getUTCDate() + 1);
+  } else if (!/\bhoje\b/.test(dateText)) {
+    const weekday = dateText.match(/\b(domingo|segunda|terca|quarta|quinta|sexta|sabado)(?:-feira)?\b/);
+    if (!weekday) return null;
+    const days = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+    let offset = (days.indexOf(weekday[1]) - day.getUTCDay() + 7) % 7;
+    if (offset === 0 && /\b(?:proxima|que vem)\b/.test(dateText)) offset = 7;
+    day.setUTCDate(day.getUTCDate() + offset);
+  }
+  // The default is an internal deadline, not a promised contact time.
+  const hour = dateText.match(/\b(?:as|pelas)\s+(\d{1,2})(?::(\d{2})|h(?:(\d{2}))?)?\b/);
+  const hours = hour ? Number(hour[1]) : 18;
+  const minutes = hour ? Number(hour[2] || hour[3] || 0) : 0;
+  if (hours > 23 || minutes > 59) return null;
+  day.setUTCHours(hours + 3, minutes, 0, 0);
+  if (day.getTime() < at.getTime() || day.getTime() - at.getTime() > 180 * 86400000) return null;
+  return { kind: "Retorno combinado", owner: "Equipe", dueAt: day,
+    summary: "Cumprir o retorno combinado para " + Utilities.formatDate(day, "America/Sao_Paulo", "dd/MM/yyyy") +
+      ". Conferir o assunto e quem será atendido antes de entrar em contato.", source: "WhatsApp — compromisso humano" };
+}
+
 function registrarCompromissoPaciente_(input) {
+  input = input || {};
+  if (input.source === "human_echo") {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const opportunity = typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
+      ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, input.phone) : null;
+    const messages = opportunity && typeof collectLeadMessagesForOpportunity_ === "function"
+      ? collectLeadMessagesForOpportunity_(spreadsheet.getSheetByName(CONFIG.messageSheetName),
+          opportunity.opportunityId, input.phone, opportunity.professional, 24, false) : [];
+    const previous = messages.filter(function (message) {
+      const age = new Date(input.at).getTime() - new Date(message.at).getTime();
+      return message.direction === "IN" && age >= 0 && age <= 86400000;
+    }).pop();
+    const promise = extrairRetornoHumanoCombinado_(input, previous && previous.text || "");
+    if (!promise) return { ok: true, created: false, ignored: true };
+    input = Object.assign({}, input, promise);
+  }
   const telefone = normalizarTelefoneRetomadas_(
     input.phone,
   );
@@ -1498,7 +1559,7 @@ function registrarCompromissoPaciente_(input) {
         (
           normalizarTelefoneRetomadas_(linha[1]) === telefone &&
           normalizarTextoRetomadas_(linha[2]) ===
-            normalizarTextoRetomadas_(kind) &&
+            normalizarTextoRetomadas_(kind) && kind !== "Retorno combinado" &&
           normalizarTextoRetomadas_(linha[7]) === "pendente"
         )
       );
@@ -1536,6 +1597,14 @@ function registrarCompromissoPaciente_(input) {
 }
 
 function resolverCompromissosPaciente_(input) {
+  input = input || {};
+  // Replies do not prove that a commitment was fulfilled. Close one exact task
+  // with an explicit reason, as the human Central action already does.
+  const commitmentEventId = String(input.commitmentEventId || "").trim();
+  const resolutionReason = textoCompromissoPaciente_(input.resolutionReason, 300);
+  if (!commitmentEventId || !resolutionReason) {
+    return { ok: true, resolved: 0, preserved: true, reason: "explicit_resolution_required" };
+  }
   const telefone = normalizarTelefoneRetomadas_(
     input.phone,
   );
@@ -1568,6 +1637,7 @@ function resolverCompromissosPaciente_(input) {
   valores.forEach(function (linha, indice) {
     if (
       normalizarTelefoneRetomadas_(linha[1]) !== telefone ||
+      String(linha[0] || "") !== commitmentEventId ||
       normalizarTextoRetomadas_(linha[7]) !== "pendente"
     ) {
       return;
@@ -1575,6 +1645,7 @@ function resolverCompromissosPaciente_(input) {
 
     planilha.getRange(indice + 2, 8).setValue("Resolvido");
     planilha.getRange(indice + 2, 9).setValue(agora);
+    planilha.getRange(indice + 2, 11).setValue(resolutionReason);
     resolvidos += 1;
   });
 

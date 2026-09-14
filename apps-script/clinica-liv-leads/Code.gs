@@ -1755,7 +1755,11 @@ function normalizeLead_(input) {
     wbraid,
     professional: safeText_(input.professional, 80),
     opportunityId: safeText_(input.opportunityId, 120),
-    name: safeText_(input.name, 120),
+    name: input.nameSubject === "contact_only" ? "" : safeText_(input.name, 120),
+    nameSource: input.nameSource === "self_declared" ? "self_declared" : "profile",
+    nameSubject: input.nameSubject === "self" ? "self" : "contact_only",
+    messageType: safeText_(input.messageType, 30).toLowerCase(),
+    relatedMessageId: safeText_(input.relatedMessageId, 500),
     text: safeText_(input.text, 4000),
     templateId:
       String(input.templateId || "").trim().toLowerCase() ===
@@ -2270,6 +2274,8 @@ function registrarAtendimentoHumano_(input) {
         professional: opportunity && opportunity.professional,
         leadSheetName: opportunity && opportunity.sheetName,
         source: "human",
+        messageType: safeText_(input.messageType, 30),
+        relatedMessageId: safeText_(input.relatedMessageId, 500),
       },
       "OUT",
     );
@@ -2657,7 +2663,8 @@ function mergeLeadIntoExistingRow_(sheet, row, lead) {
     else if (lead.wbraid) sheet.getRange(row, 13).setValue(lead.wbraid);
   }
 
-  gravarNomeLeadSeDisponivel_(sheet, row, lead.name, true);
+  gravarNomeLeadSeDisponivel_(sheet, row, lead.name, true,
+    Object.assign({}, lead, { currentStage: String(values[4] || "Novo") }));
 
   SpreadsheetApp.flush();
 }
@@ -2756,21 +2763,25 @@ function gravarNomeLeadSeDisponivel_(
   row,
   name,
   preserveExisting,
+  identity,
 ) {
   const safeName = safeText_(name, 120);
   const column = colunaNomeLead_(sheet);
 
   if (!safeName || !column) return false;
-  if (
-    preserveExisting &&
-    String(
-      sheet.getRange(row, column).getDisplayValue() || "",
-    ).trim()
-  ) {
+  const current = preserveExisting ? String(sheet.getRange(row, column).getDisplayValue() || "").trim() : "";
+  const explicitCorrection = identity && identity.nameSource === "self_declared" &&
+    identity.nameSubject === "self" && ["Novo", "Qualificado", "Não qualificado"].includes(identity.currentStage);
+  if (preserveExisting && current && !/^(?:n[aã]o informad[oa]|sem nome)$/i.test(current) && !explicitCorrection) {
     return false;
   }
-
+  if (explicitCorrection && current.split(/\s+/)[0].toLocaleLowerCase() === safeName.toLocaleLowerCase()) return false;
   sheet.getRange(row, column).setValue(safeName);
+  if (identity && typeof sheet.getRange(row, column).setNote === "function") {
+    sheet.getRange(row, column).setNote(identity.nameSource === "self_declared"
+      ? "Nome de tratamento informado pelo próprio contato. Cadastro clínico e nomes de familiares não foram alterados."
+      : "Nome originado do perfil do WhatsApp; não comprova identidade civil.");
+  }
   return true;
 }
 

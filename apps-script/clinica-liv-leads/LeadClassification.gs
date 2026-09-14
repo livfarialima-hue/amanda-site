@@ -11,6 +11,8 @@ const LEAD_MESSAGE_HEADERS = Object.freeze([
   "Aba do lead",
   "Origem",
   "Template ID",
+  "Tipo de mensagem",
+  "Message ID relacionado",
 ]);
 
 const LEAD_CLASSIFICATION_HEADERS = Object.freeze([
@@ -1737,6 +1739,7 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
     messageId,
   );
   const created = !existingMessageRow;
+  let enriched = false;
   if (!existingMessageRow) {
     messageSheet.appendRow([
       phone,
@@ -1751,6 +1754,8 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
       safeText_(lead.leadSheetName, 120),
       source,
       safeText_(lead.templateId, 80).toLowerCase(),
+      normalizarTipoMensagemClassificacao_(lead.messageType, lead.text),
+      safeText_(lead.relatedMessageId, 500),
     ]);
   } else if (
     Number(leadRow) > 0 ||
@@ -1786,13 +1791,36 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
       .getRange(existingMessageRow, 12)
       .setValue(safeText_(lead.templateId, 80).toLowerCase());
   }
+  if (existingMessageRow && lead.messageType && !messageSheet.getRange(existingMessageRow, 13).getDisplayValue()) {
+    messageSheet.getRange(existingMessageRow, 13, 1, 2).setValues([[
+      normalizarTipoMensagemClassificacao_(lead.messageType, lead.text), safeText_(lead.relatedMessageId, 500),
+    ]]);
+    enriched = true;
+  } else if (existingMessageRow && lead.relatedMessageId && !messageSheet.getRange(existingMessageRow, 14).getDisplayValue()) {
+    messageSheet.getRange(existingMessageRow, 14).setValue(safeText_(lead.relatedMessageId, 500));
+    enriched = true;
+  }
 
   return {
     phone: phone,
     messageId: messageId,
     at: at,
     created: created,
+    enriched: enriched,
   };
+}
+
+function normalizarTipoMensagemClassificacao_(value, text) {
+  const kind = String(value || "").toLowerCase();
+  return ["text", "image", "audio", "video", "document", "reaction", "sticker"].includes(kind)
+    ? kind : String(text || "").trim() ? "text" : "unknown";
+}
+
+function revisaoHistoricoClassificacao_(messages) {
+  return stableLeadHash_(JSON.stringify((messages || []).map(function (message) {
+    return [message.messageId, message.eventId, message.at, message.direction, message.source,
+      message.text, message.messageType || "unknown", message.relatedMessageId || ""];
+  })));
 }
 
 function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
@@ -1853,17 +1881,20 @@ function recordLeadMessageAndQueue_(spreadsheet, leadRow, lead, direction) {
   const current = queueSheet
     .getRange(queueRow, 1, 1, LEAD_CLASSIFICATION_HEADERS.length)
     .getValues()[0];
-  const messageCount = Number(current[9] || 0) + 1;
+  if (!recorded.created && !recorded.enriched) return recorded;
+  const messageCount = Number(current[9] || 0) + (recorded.created ? 1 : 0);
+  const previousAt = parseClassificationDate_(current[2]);
+  const latestIsCurrent = previousAt && previousAt.getTime() > at.getTime();
 
   queueSheet.getRange(queueRow, 2, 1, 5).setValues([[
     leadRow,
-    at,
-    dueAt,
+    latestIsCurrent ? previousAt : at,
+    latestIsCurrent ? new Date(previousAt.getTime() + CONFIG.classificationDelayMinutes * 60000) : dueAt,
     "pending",
     "",
   ]]);
   queueSheet.getRange(queueRow, 9, 1, 2).setValues([[
-    messageId,
+    latestIsCurrent ? current[8] : messageId,
     messageCount,
   ]]);
   resetClassificationAttemptCycle_(queueSheet, queueRow);
@@ -2083,6 +2114,8 @@ function collectLeadMessagesForOpportunity_(
         row[4],
       ),
       templateId: String(row[11] || "").toLowerCase(),
+      messageType: normalizarTipoMensagemClassificacao_(row[12], row[5]),
+      relatedMessageId: String(row[13] || ""),
     };
   });
   return mergeConversationMessages_([messages], limit);
@@ -2168,6 +2201,21 @@ function boundedConversationText_(value, limit) {
     characters.slice(-(available - headLength)).join("");
 }
 
+function vinculoConversaPorEvento_(spreadsheet, phone, parentEventId) {
+  if (!parentEventId) return null;
+  const sheet = spreadsheet.getSheetByName(CONFIG.messageSheetName);
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  const matches = sheet.getRange(2, 1, sheet.getLastRow() - 1, 10).getValues()
+    .filter(function (row) {
+      return normalizePhone_(row[0]) === phone && String(row[4] || "") === parentEventId && row[7];
+    });
+  const identities = new Set(matches.map(function (row) { return row[7] + ":" + row[8]; }));
+  if (identities.size !== 1) return null;
+  const row = matches[0];
+  return { opportunityId: String(row[7]), professional: String(row[8] || ""),
+    sheetName: String(row[9] || ""), leadRow: Number(row[6]) || null };
+}
+
 function registrarTurnoConversa_(input) {
   input = input && typeof input === "object" ? input : {};
   const phone = normalizePhone_(input.phone);
@@ -2180,10 +2228,21 @@ function registrarTurnoConversa_(input) {
   }
 
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const latest = typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
-    ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone)
-    : null;
+  const parentEventId = safeText_(input.parentEventId, 200);
+  const linked = vinculoConversaPorEvento_(spreadsheet, phone, parentEventId);
+  // A delayed receipt must stay attached to its originating opportunity.
+  // Missing parent evidence is recoverable; guessing the newest patient is not.
+  if (parentEventId && !linked && !input.opportunityId) {
+    return { ok: false, error: "conversation_parent_not_found" };
+  }
+  const latest = linked || (!parentEventId &&
+    typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
+    ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone) : null);
   const requestedOpportunityId = safeText_(input.opportunityId, 120);
+  if (linked && (requestedOpportunityId && requestedOpportunityId !== linked.opportunityId ||
+    input.professional && input.professional !== linked.professional)) {
+    return { ok: false, error: "conversation_identity_conflict" };
+  }
   const opportunityMatches = Boolean(
     latest &&
     (!requestedOpportunityId || latest.opportunityId === requestedOpportunityId),
@@ -2207,10 +2266,12 @@ function registrarTurnoConversa_(input) {
     leadSheetName: leadSheetName,
     source: safeText_(input.source, 40),
     templateId: safeText_(input.templateId, 80).toLowerCase(),
+    messageType: normalizarTipoMensagemClassificacao_(input.messageType, text),
+    relatedMessageId: safeText_(input.relatedMessageId, 500),
   };
-  // A mensagem de entrada já abriu a janela do classificador. A saída da
-  // Bruna só precisa entrar no ledger; não deve criar uma segunda execução.
-  const recorded = recordLeadMessageOnly_(
+  // Every newly persisted turn invalidates a completed or running view. Replay
+  // keeps the same message and does not increment the queue a second time.
+  const recorded = recordLeadMessageAndQueue_(
     spreadsheet,
     leadRow || "",
     lead,
@@ -2273,9 +2334,10 @@ function obterContextoConversa_(input) {
       at: message.at,
       eventId: safeText_(message.eventId || message.messageId, 200),
       text: boundedConversationText_(message.text, 1600),
+      messageType: message.messageType || "unknown",
     };
   }).filter(function nonEmptyConversationTurn(turn) {
-    return Boolean(turn.text);
+    return Boolean(turn.text) || turn.messageType !== "reaction";
   });
   const pendingCommitments =
     typeof listarCompromissosPendentesPaciente_ === "function"
@@ -2668,6 +2730,8 @@ function hydrateLeadClassificationJobs_(claimedJobs) {
       };
       return Object.assign(base, {
         leadRow,
+        conversationRevision: revisaoHistoricoClassificacao_(messages),
+        includeUnassignedUnknown: canRecoverUnassignedMessages,
         throughMessageId: base.throughMessageId ||
           String(messages[messages.length - 1].messageId || ""),
         currentStatus,
@@ -3118,6 +3182,15 @@ function completeLeadClassification_(job, classification) {
     return { status: "ignored", error: "stale_row_version" };
   }
   const currentStatus = String(currentValues[statusColumn - 1] || "Novo");
+  if (job.conversationRevision) {
+    const liveMessages = collectLeadMessagesForOpportunity_(spreadsheet.getSheetByName(CONFIG.messageSheetName),
+      opportunityId, phone, professional, 24, job.includeUnassignedUnknown === true);
+    if (revisaoHistoricoClassificacao_(liveMessages) !== String(job.conversationRevision)) {
+      queueSheet.getRange(queueRow, 5, 1, 2).setValues([["pending", ""]]);
+      queueSheet.getRange(queueRow, 16).setValue("");
+      return { status: "ignored", error: "stale_conversation_revision" };
+    }
+  }
   const queuedLatestMessageId = String(queueSheet.getRange(queueRow, 9).getDisplayValue() || "");
   if (queuedLatestMessageId && job.throughMessageId && queuedLatestMessageId !== String(job.throughMessageId)) {
     queueSheet.getRange(queueRow, 5, 1, 2).setValues([["pending", ""]]);

@@ -1,5 +1,9 @@
 # Histórico do pacote Bruna
 
+## 2026-09-14.1 — candidato local
+
+Continuidade contextual e acolhimento específico; correção de nome de aquisição com origem; perguntas pendentes e objeções por evidência; anexos e telefone compartilhado sem marcos administrativos presumidos; Central orientada pelo CRM; retorno datado como tarefa humana; histórico de saídas recuperável e idempotente. Sem mudança de modelo, preços, permissões clínicas ou publicação. Evidência: auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md.
+
 ## 2026-09-01.1 — publicada e verificada
 
 - A apresentação permanece obrigatória na primeira resposta real, mas respostas determinísticas de preço e retomadas protegidas reconhecem a interação anterior e não repetem `Olá, <nome>! Eu sou a Bruna` apenas porque o ledger recente está temporariamente vazio.

@@ -131,7 +131,7 @@ Classifique somente informações comerciais e administrativas. Não diagnostiqu
 
 Use exatamente estas definições:
 - Novo: contato inicial ou pergunta apenas sobre preço, localização ou informação genérica, sem intenção concreta de avançar.
-- Qualificado: demonstrou interesse real em consulta ou procedimento; pediu agenda, datas disponíveis, como agendar, formas de pagamento ou disse que deseja fazer uma avaliação.
+- Qualificado: uma manifestação pessoal posterior ao prefill demonstra intenção concreta de avançar na avaliação ou procedimento. Pedido pessoal de agenda, datas ou declaração de querer fazer uma avaliação são evidências; pergunta isolada sobre preço ou formas de pagamento não basta.
 - Consulta agendada: data e horário foram confirmados.
 - Consulta realizada: há evidência explícita de que a pessoa efetivamente compareceu à consulta.
 - Paciente convertido: há evidência explícita de que fechou o procedimento.
@@ -176,6 +176,10 @@ Uma oferta da clínica ("posso ver horários?") não é aceite da pessoa. "Enten
 source distingue paciente, bruna, equipe_humana e autoria desconhecida. Uma saída automática não prova que a equipe conferiu agenda, examinou uma imagem, enviou documento ou concluiu tarefa. Não use uma alegação da própria Bruna como comprovação de ação humana.
 Uma confirmação automática de recebimento que informa que a equipe foi avisada não resolve a solicitação: expectedParty continua clinic, com a tarefa concreta ainda pendente. Um "obrigada, aguardo" posterior também não transfere essa tarefa à paciente. Nova manifestação humana ou cancelamento explícito pode mudar essa leitura; uma dúvida simples respondida pela Bruna não apaga outros compromissos humanos.
 contentUnavailable sinaliza mídia ou mensagem sem texto recuperável. Não invente seu conteúdo nem a trate como confirmação, ausência de resposta ou desinteresse. Quando ainda depender de leitura, a próxima ação é revisão humana do conteúdo.
+messageType distingue imagem/documento/áudio/vídeo, reação e texto indisponível. Reação não cria tarefa nem comprova aceite. Um evento antigo sem texto não torna automaticamente toda a conversa pendente: considere respostas humanas posteriores. Material recebido após instrução de pagamento exige conferência; não escreva que nada chegou nem confirme pagamento pela existência de um anexo.
+Perguntar quanto custa é dúvida de preço, não objeção. commercialReason Preço exige barreira expressa pela pessoa (caro, inviável, fora do orçamento). Medo, confiança e logística não são deduzidos de preço. Registre somente a barreira administrativa explicitada, sem dados clínicos.
+Uma despedida da equipe, emoji ou agradecimento não responde uma pergunta incluída na mensagem anterior. Confira se cada pedido foi efetivamente atendido antes de trocar expectedParty para patient.
+Separe interlocutor e pessoa atendida: nome do perfil ou autoapresentação não identifica a mãe, filha ou outro beneficiário. Se uma conversa envolver mais de uma pessoa, não una consultas, pagamentos ou marcos; mantenha revisão humana do vínculo e não avance fase por evidência de outra pessoa.
 Se a pessoa diz que vai pesquisar e retornará por iniciativa própria, expectedParty é patient e nextAction é "Aguardar retorno por iniciativa da pessoa"; não acrescente retomada comercial. Se pediu contato em uma data e a equipe aceitou, registre esse compromisso e a data administrativa disponível, sem sugerir contato antecipado nem alegar que a retomada já foi programada.
 Histórico de atendimento e intenção comercial atual são dimensões distintas. Retorno, documento, pagamento da consulta ou acompanhamento de paciente conhecida não são nova aquisição nem fechamento de cirurgia. Registre a pendência administrativa concreta; questões sensíveis ficam para a equipe, sem conteúdo clínico nos campos comerciais.
 procedure pode conter apenas o nome genérico do procedimento ou especialidade; use string vazia quando não estiver claro.
@@ -276,8 +280,12 @@ function sanitizeMessages(messages) {
       String(message?.direction || "").toUpperCase() === "OUT"
         ? "OUT"
         : "IN";
-    const contentUnavailable = !String(message?.text || "").trim();
-    const characters = Array.from(contentUnavailable ? "[Conteúdo não textual ou indisponível; requer leitura humana.]" : String(message.text));
+    const messageType = ["text", "image", "audio", "video", "document", "reaction", "sticker", "unknown"].includes(message?.messageType)
+      ? message.messageType : "unknown";
+    const reactionOnly = messageType === "reaction";
+    const contentUnavailable = !String(message?.text || "").trim() && !reactionOnly;
+    const characters = Array.from(reactionOnly ? "[Reação; não comprova aceite nem cria tarefa.]"
+      : contentUnavailable ? "[Conteúdo não textual ou indisponível; conferir tipo e respostas posteriores.]" : String(message.text));
     const maximum = Math.min(MAX_MESSAGE_LENGTH, remaining);
     const marker = " … ";
     const head = Math.ceil((maximum - marker.length) * 0.6);
@@ -295,6 +303,7 @@ function sanitizeMessages(messages) {
       text,
       source: direction === "IN" ? "paciente" : ["bruna", "equipe_humana"].includes(message?.source) ? message.source : "unknown",
       contentUnavailable,
+      messageType,
       templateId,
       marketingPrefill:
         direction === "IN" &&
@@ -312,7 +321,7 @@ export function enforcePrefillOnlyClassificationGuard({
   classification,
 }) {
   const inbound = (Array.isArray(messages) ? messages : []).filter(
-    (message) => message?.direction === "IN",
+    (message) => message?.direction === "IN" && message?.messageType !== "reaction",
   );
   const unavailableContent = inbound.some(message => message.contentUnavailable === true);
   const isolatedPrefill =
@@ -347,6 +356,76 @@ export function enforcePrefillOnlyClassificationGuard({
     appointmentOutcome: "none",
     procedureMilestone: "none",
   };
+}
+
+// Narrow evidence gates around common classifier overreach. These gates never
+// infer a booking, payment or identity; uncertain administrative milestones stay human.
+export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", messages = [], classification }) {
+  if (!classification) return classification;
+  const result = { ...classification };
+  const meaningful = messages.filter(message => message.messageType !== "reaction");
+  const inbound = meaningful.filter(message => message.direction === "IN" && !message.marketingPrefill);
+  const personalText = inbound.filter(message => !message.contentUnavailable).map(message => String(message.text || "")).join("\n");
+  const barrierText = personalText.replace(/\bn[aã]o (?:[ée]|est[aá]|acho|achei)(?: t[aã]o| muito)? car[oa]\b/gi, "");
+  const financialBarrier = /\b(?:car[oa]|custos? altos?|invi[aá]vel|n[aã]o (?:consigo|posso) pagar|fora d[oa] (?:meu |minha )?(?:or[cç]amento|realidade)|sem condi[cç][oõ]es|n[aã]o tenho (?:esse|o) (?:valor|dinheiro))\b/i.test(barrierText);
+  if (result.commercialReason === "Preço" && !financialBarrier) result.commercialReason = "Em andamento";
+  const practicalIntent = /\b(?:quero|gostaria de|pretendo|vou|preciso)\s+(?:mesmo\s+)?(?:marcar|agendar|fazer (?:a|uma) (?:consulta|avalia[cç][aã]o))|\b(?:quais? (?:os )?(?:dias|hor[aá]rios|datas)|como (?:fa[cç]o para )?(?:agendar|marcar)|pode (?:ver|verificar|marcar|agendar))\b/i.test(personalText);
+  const onlyResearch = inbound.length > 0 && inbound.every(message => message.contentUnavailable ||
+    /^(?:t[aá] certo|entendi|ok|obrigad[oa]|certo|sim)[.!\s]*$/i.test(String(message.text || "")) ||
+    /(?:qual|quanto|onde|como).*(?:valor|custa|pre[cç]o|fica|funciona|avalia[cç][aã]o)|avalia[cç][aã]o.*(?:saber|melhor procedimento)/i.test(String(message.text || "")));
+  if (currentStatus === "Novo" && result.recommendedStatus === "Qualificado" && onlyResearch && !practicalIntent) {
+    result.recommendedStatus = "Novo";
+    result.evidence = "Pesquisa ou ciência da informação, sem pedido pessoal de avanço confirmado.";
+  }
+  if (!practicalIntent && onlyResearch && /(?:oferecer|enviar|apresentar|verificar).*(?:datas|hor[aá]rios|agenda)/i.test(result.nextAction)) {
+    const last = meaningful.at(-1);
+    const lastText = String(last?.text || "");
+    const question = last?.direction === "IN" && /\?|como|qual|quanto|onde|avalia[cç][aã]o/i.test(lastText);
+    result.expectedParty = question ? "clinic" : "patient";
+    result.nextAction = question ? "Esclarecer a dúvida sobre a avaliação, sem presumir pedido de horários." : "Aguardar manifestação da pessoa; não houve pedido de horários.";
+  }
+  const priceQuestion = /(?:valor|pre[cç]o|custa|cobram|cobrada).{0,50}(?:consulta|avalia[cç][aã]o)|(?:consulta|avalia[cç][aã]o).{0,50}(?:valor|pre[cç]o|custa|cobram|cobrada)/i;
+  const lastPriceIndex = meaningful.findLastIndex(message => {
+    const text = String(message.text || "");
+    return message.direction === "IN" && !message.marketingPrefill && priceQuestion.test(text) &&
+      !/\b(?:paguei|pago|j[aá] sei|recebi|entendi o valor)\b/i.test(text) &&
+      (/\?|(?:qual|quanto|custa|cobram|cobrada|gostaria de saber|queria saber)/i.test(text) ||
+        /^(?:o )?(?:valor|pre[cç]o) (?:da |de |para )?(?:consulta|avalia[cç][aã]o)[.! ]*$/i.test(text));
+  });
+  if (lastPriceIndex >= 0 && result.professional !== "daniel" && result.recommendedStatus !== "Não qualificado") {
+    const answered = meaningful.slice(lastPriceIndex + 1).some(message => message.direction === "OUT" &&
+      /(?:R\$\s*500|500\s*reais)/i.test(message.text || "") &&
+      !/vou (?:ver|conferir|confirmar)|n[aã]o (?:[ée]|custa)/i.test(message.text || ""));
+    if (!answered) {
+      result.expectedParty = "clinic";
+      result.nextAction = "Informar o valor da consulta e esclarecer a dúvida pendente antes de propor agendamento.";
+    }
+  }
+  const last = meaningful.at(-1);
+  if (last?.direction === "IN" && ["image", "document", "audio", "video"].includes(last.messageType)) {
+    result.expectedParty = "clinic";
+    result.nextAction = /pix|pagamento|comprovante|sinal/i.test(meaningful.map(message => message.text || "").join(" "))
+      ? "Conferir o material recebido e definir o próximo passo administrativo; não presumir pagamento confirmado."
+      : "Conferir o material recebido e responder à solicitação, sem interpretar seu conteúdo automaticamente.";
+    if (result.appointmentOutcome !== "none" || result.procedureMilestone !== "none") {
+      result.recommendedStatus = currentStatus;
+      result.confidence = "low";
+      result.appointmentOutcome = "none";
+      result.procedureMilestone = "none";
+    }
+  }
+  const lastPersonalText = String(inbound.at(-1)?.text || "");
+  if (/\b(?:eu e (?:minha|meu)|para mim e|pra mim e|n[oó]s (?:duas|dois))\b/i.test(lastPersonalText)) {
+    result.expectedParty = "clinic";
+    result.nextAction = "Confirmar quem será atendido e vincular cada pessoa à sua oportunidade antes de registrar agendamento ou pagamento.";
+    if (result.appointmentOutcome !== "none" || result.procedureMilestone !== "none") {
+      result.recommendedStatus = currentStatus;
+      result.confidence = "low";
+      result.appointmentOutcome = "none";
+      result.procedureMilestone = "none";
+    }
+  }
+  return result;
 }
 
 function sanitizePatientRelationship(value) {
@@ -526,10 +605,10 @@ export async function runLeadClassifier(
 
     return {
       ...parsed,
-      classification: enforcePrefillOnlyClassificationGuard({
+      classification: enforceCommercialEvidenceGuard({
         currentStatus,
         messages: sanitizedMessages,
-        classification: parsed.classification,
+        classification: enforcePrefillOnlyClassificationGuard({ currentStatus, messages: sanitizedMessages, classification: parsed.classification }),
       }),
     };
   } catch (error) {

@@ -101,6 +101,19 @@ export function usableProfileName(value) {
       "doutor",
       "admin",
       "adm",
+      "super",
+      "gratidão",
+      "abençoada",
+      "abençoado",
+      "interessada",
+      "interessado",
+      "de",
+      "mãe",
+      "pai",
+      "filha",
+      "filho",
+      "esposa",
+      "esposo",
     ].includes(normalized) ||
     normalizedProfileName.startsWith("@")
   ) {
@@ -116,31 +129,26 @@ export function usableProfileFirstName(value) {
 }
 
 const SELF_IDENTIFICATION_PATTERN =
-  /\b(?:(?:eu\s+)?sou\s+(?:a|o)?\s*|me\s+chamo\s+|meu\s+nome\s+(?:[eé]\s+))([\p{L}\p{M}][\p{L}\p{M}'’–-]{1,17})\b/iu;
+  /\b(?:(?:eu\s+)?sou\s+(?:(?:a|o)\s+)?|me\s+chamo\s+|meu\s+nome\s+[eé]\s+|pode\s+me\s+chamar\s+de\s+)([\p{L}\p{M}][\p{L}\p{M}'’–-]{1,17})(?=\s|[.,!?:;]|$)/iu;
+
+export function resolveContactIdentity({ profileName, currentText = "", recentConversation = [] } = {}) {
+  const patientTexts = (Array.isArray(recentConversation) ? recentConversation : [])
+    .filter(turn => turn?.role === "user" || turn?.source === "patient")
+    .map(turn => String(turn?.text || "").trim());
+  patientTexts.push(String(currentText || "").trim());
+  const contactOnly = patientTexts.some(value => /\b(?:minha|meu)\s+(?:m[aã]e|pai|filh[oa]|espos[oa]|marido|mulher|irm[aã]o?|av[oóô])\b|\bpara\s+(?:outra pessoa|n[oó]s duas|n[oó]s dois)\b/i.test(value));
+  for (const value of patientTexts.reverse()) {
+    const name = usableProfileName(value.match(SELF_IDENTIFICATION_PATTERN)?.[1] || "");
+    if (name) return { name, nameSource: "self_declared", nameSubject: contactOnly ? "contact_only" : "self" };
+  }
+  const name = usableProfileName(profileName);
+  return { name, nameSource: name ? "profile" : "unknown", nameSubject: contactOnly ? "contact_only" : "unknown" };
+}
 
 export function resolvePatientDisplayName({
   profileName,
   currentText = "",
   recentConversation = [],
 } = {}) {
-  const patientTexts = (Array.isArray(recentConversation)
-    ? recentConversation
-    : [])
-    .filter(
-      (turn) =>
-        turn?.role === "user" || turn?.source === "patient",
-    )
-    .map((turn) => String(turn?.text || "").trim())
-    .filter(Boolean);
-  if (String(currentText || "").trim()) {
-    patientTexts.push(String(currentText).trim());
-  }
-
-  for (const text of patientTexts.reverse()) {
-    const match = text.match(SELF_IDENTIFICATION_PATTERN);
-    const identifiedName = usableProfileName(match?.[1] || "");
-    if (identifiedName) return identifiedName;
-  }
-
-  return usableProfileName(profileName);
+  return resolveContactIdentity({ profileName, currentText, recentConversation }).name;
 }

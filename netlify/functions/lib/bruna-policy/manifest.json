@@ -1,11 +1,11 @@
 {
-  "bundleVersion": "2026-09-01.1",
-  "promptVersion": "bruna-concierge-2026-09-01.1",
+  "bundleVersion": "2026-09-14.1",
+  "promptVersion": "bruna-concierge-2026-09-14.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-01.1",
+  "knowledgeSnapshot": "kb-2026-09-14.1",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
-  "regressionBaselineVersion": "2026-09-12.1",
+  "regressionBaselineVersion": "2026-09-14.1",
   "runtimeModel": "gpt-5.6-terra",
   "runtimeReasoningEffort": "medium",
   "classifierModel": "gpt-5.6-terra",
@@ -26,7 +26,8 @@
     "publishedAt": "2026-09-13T12:40:11.812Z",
     "lastVerifiedAt": "2026-09-13T13:24:39.167Z",
     "candidateChangeId": "ANIVERSARIO-MANUAL-2026-09-13",
-    "candidateStatus": "published_verified"
+    "candidateStatus": "published_verified",
+    "bundleVersion": "2026-09-01.1"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -38,5 +39,10 @@
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
     "driveProjectionSha256": "6af64e0be2250581019c0a947f01a40553fc91f89856e277e50abae11761edac"
+  },
+  "pendingRelease": {
+    "changeId": "BRUNA-EXPERIENCIA-PROCESSO-2026-09-14",
+    "published": false,
+    "report": "auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md"
   }
 }

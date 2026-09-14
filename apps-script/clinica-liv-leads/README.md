@@ -1,5 +1,7 @@
 # Apps Script da Clínica LIV
 
+**Candidato local de 14/09/2026:** BRUNA-EXPERIENCIA-PROCESSO-2026-09-14 altera projeção da Central, identidade de aquisição, revisão do histórico e compromissos humanos. _WHATSAPP_MENSAGENS acrescenta M/N (Tipo de mensagem/Message ID relacionado), preservando A:L; leitura somente consulta de M1:N2407 em 14/09 encontrou o intervalo vazio. Revalidar o intervalo e os três IDs antes de publicar. A coluna K de compromissos já é Motivo da resolução. Não há migração histórica automática. Publicar este Apps Script e as funções do mesmo SHA em janela controlada, com envios e classificação contidos, verificar equivalência e só então reativar os fluxos autorizados. A v152 abaixo continua sendo a produção previamente registrada.
+
 ## Fonte e alvo canônicos
 
 - Código local: `apps-script/clinica-liv-leads`

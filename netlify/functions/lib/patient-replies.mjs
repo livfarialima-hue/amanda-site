@@ -4,6 +4,7 @@ import {
   CONTEXT_CONTINUATION_CODE,
 } from "./semantic-reply-policy.mjs";
 import { procedureOpeningMicrovalue } from "./bruna-conversion-experience.mjs";
+import { isOnlyNamedProcedure } from "./procedure-context.mjs";
 
 const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
@@ -188,6 +189,14 @@ export function buildMarketingPrefilledOpeningReply({
         : "O que você gostaria de entender primeiro?";
 
   return `${introduction} ${context} ${question}`;
+}
+
+export function buildProcedureContinuationReply({ currentText, procedure, recentConversation = [] } = {}) {
+  if (!isOnlyNamedProcedure(currentText, procedure)) return "";
+  const previous = recentConversation.findLast(turn => turn?.role === "assistant");
+  if (previous?.source !== "bruna" || !/o que.*(?:entender|saber)|qual.*d[uú]vida|como posso.*ajudar/i.test(previous.text || "")) return "";
+  const information = procedureOpeningMicrovalue(procedure);
+  return information ? `Claro. ${information} Na consulta, você pode esclarecer as possibilidades antes de decidir se deseja seguir.` : "";
 }
 
 export function buildInsuranceCoverageReply({ text, procedure }) {
@@ -403,8 +412,8 @@ export function buildImageAcknowledgementReply({
   ].filter(Boolean).join(" ");
   const acknowledgement = [
     "Obrigada por compartilhar sua foto e confiar na gente.",
-    "Vou mostrar a foto à Dra. Amanda para que ela veja o que você gostaria de melhorar.",
-    "Em uma avaliação, ela poderá observar todos os detalhes com cuidado e conversar com você sobre o caminho que faça mais sentido, sempre respeitando suas características.",
+    "Vou mostrar a foto à Dra. Amanda.",
+    "Na avaliação presencial, ela poderá examinar com cuidado e conversar sobre as possibilidades, respeitando suas características.",
   ].join(" ");
 
   return [opening, acknowledgement].filter(Boolean).join(" ");

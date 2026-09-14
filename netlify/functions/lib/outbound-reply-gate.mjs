@@ -7,7 +7,8 @@ import {
   isSimpleConversationClosing,
 } from "./conversation-action-controller.mjs";
 import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
-import { recordDurableConversationTurn } from "./conversation-ledger.mjs";
+import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
+  markConversationLedgerAccepted, completeConversationLedgerReceipt } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
 import { containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts } from "./surgical-price-policy.mjs";
 import {
@@ -672,8 +673,8 @@ export async function claimOutboundReply(
     });
     const existing = entry?.data;
 
-    if (existing?.status === "sent") {
-      return { status: "duplicate", reason: "already_sent" };
+    if (["sent", "sending", "uncertain"].includes(existing?.status)) {
+      return { status: "duplicate", reason: existing.status === "sent" ? "already_sent" : "delivery_uncertain" };
     }
     if (
       existing?.status === "processing" &&
@@ -739,6 +740,10 @@ async function updateClaim(
   if (!claim?.key || !claim?.claimToken) {
     return { status: "skipped" };
   }
+  if (claim.claimToken === "local-development" && getStoreImpl === getStore &&
+    process.env.NETLIFY !== "true" && !process.env.CONTEXT) {
+    return { status: "completed" };
+  }
 
   try {
     const replyStore = store(getStoreImpl);
@@ -782,6 +787,7 @@ export async function sendControlledPatientReply(
     conversationAction,
     opportunityId = "",
     professional = "",
+    parentEventId = eventId,
   },
   {
     sendYCloudPatientTextImpl = sendYCloudPatientText,
@@ -830,33 +836,42 @@ export async function sendControlledPatientReply(
     return { status: "superseded", errorCode: "newer_activity_before_send" };
   }
 
-  const delivery = await sendYCloudPatientTextImpl({
-    from,
-    to,
-    eventId,
-    body: validation.body,
-  });
+  const turn = { phone: to, eventId: `${eventId}:bruna`, parentEventId,
+    messageId: `bruna:${eventId}`, text: validation.body, at: new Date(now).toISOString(),
+    source: "bruna", opportunityId, professional };
+  // Preserve the existing explicit local-development path. Production always
+  // requires durable storage; unit tests exercise that path with an injected store.
+  const localDevelopment = claim.claimToken === "local-development";
+  const receipt = localDevelopment ? { status: "completed", localDevelopment: true }
+    : await prepareConversationLedgerReceipt(turn, { getStoreImpl, now });
+  if (receipt.status !== "completed") return { status: receipt.status === "duplicate" ? "duplicate" : "blocked", errorCode: "ledger_receipt_unavailable" };
+  const attempted = await updateClaim(claim, "sending", { getStoreImpl, now });
+  if (attempted.status !== "completed") return { status: "blocked", errorCode: "reply_attempt_not_recorded" };
+  if (beforeSendImpl && !await beforeSendImpl()) return { status: "superseded", errorCode: "newer_activity_before_send" };
+  let delivery;
+  try {
+    delivery = await sendYCloudPatientTextImpl({ from, to, eventId, body: validation.body });
+  } catch {
+    delivery = { status: "failed", errorCode: "request_failed", httpStatus: null };
+  }
   await updateClaim(
     claim,
-    delivery.status === "completed" ? "sent" : "released",
+    delivery.status === "completed" ? "sent" : "uncertain",
     { getStoreImpl, now },
   );
 
   if (delivery.status === "completed") {
-    const ledger = await recordDurableConversationTurnImpl({
-      phone: to,
-      eventId: `${eventId}:bruna`,
-      messageId: `bruna:${eventId}`,
-      text: validation.body,
-      at: new Date(now).toISOString(),
-      source: "bruna",
-      opportunityId,
-      professional,
-    });
+    const accepted = localDevelopment ? { status: "skipped" }
+      : await markConversationLedgerAccepted(receipt, { getStoreImpl });
+    let ledger;
+    try { ledger = await recordDurableConversationTurnImpl(turn); }
+    catch { ledger = { status: "failed" }; }
+    if (ledger.status === "completed" && !localDevelopment) await completeConversationLedgerReceipt(receipt, { getStoreImpl });
     return {
       ...delivery,
       body: validation.body,
       conversationLedgerStatus: ledger.status,
+      conversationLedgerRecovery: ledger.status === "completed" ? "not_needed" : accepted.status === "completed" ? "pending" : "manual_review",
     };
   }
 

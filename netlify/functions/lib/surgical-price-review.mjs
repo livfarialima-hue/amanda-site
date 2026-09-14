@@ -437,7 +437,7 @@ export function buildSurgicalInitialPriceReply({
   const initialExplanation =
     procedure === "lifting_cervical"
       ? "Ter uma noção de valor ajuda no planejamento. Na cervicoplastia, o valor depende da extensão do tratamento do pescoço e de possíveis associações à face, definidas na avaliação."
-      : "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.";
+      : "É natural querer saber o valor antes de decidir. A Dra. Amanda confirma o valor exato após a avaliação, conforme o planejamento da cirurgia.";
   const guide = priceGuideParagraph(procedure, recentConversation);
   const approvedRangeOffer = isAutomaticSurgicalPriceProcedure(procedure)
     ? "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida."

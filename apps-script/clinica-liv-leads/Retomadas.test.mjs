@@ -85,6 +85,46 @@ vm.runInContext(agendaSource, context, {
   filename: "AgendaCuidados.gs",
 });
 
+test("human promises become dated manual tasks without authorizing a send", () => {
+  const promise = context.extrairRetornoHumanoCombinado_({
+    text: "Vou te chamar na segunda-feira.", at: "2026-09-11T15:00:00-03:00", messageType: "text",
+  }, "");
+  assert.equal(promise.dueAt.toISOString(), "2026-09-14T21:00:00.000Z");
+  assert.equal(promise.owner, "Equipe");
+  assert.equal(promise.kind, "Retorno combinado");
+  const agreement = context.extrairRetornoHumanoCombinado_({
+    text: "Combinado!", at: "2026-09-11T15:00:00-03:00",
+  }, "Pode me chamar na segunda às 10h?");
+  assert.equal(agreement.dueAt.toISOString(), "2026-09-14T13:00:00.000Z");
+  const nextWeek = context.extrairRetornoHumanoCombinado_({
+    text: "Vou te chamar na segunda que vem.", at: "2026-09-14T10:00:00-03:00",
+  }, "");
+  assert.equal(nextWeek.dueAt.toISOString(), "2026-09-21T21:00:00.000Z");
+});
+
+test("vague, negative, past and non-text messages do not create a promised return", () => {
+  for (const text of ["Talvez te chamo na segunda", "Não vou te chamar amanhã",
+    "Vou te chamar dia 31/02", "Vou te chamar dia 01/09", "Boa noite!", "Te chamo qualquer dia"]) {
+    assert.equal(context.extrairRetornoHumanoCombinado_({
+      text, at: "2026-09-11T15:00:00-03:00",
+    }, ""), null, text);
+  }
+  assert.equal(context.extrairRetornoHumanoCombinado_({
+    text: "Combinado", messageType: "reaction", at: "2026-09-11T15:00:00-03:00",
+  }, "Me chame na segunda"), null);
+  assert.equal(context.extrairRetornoHumanoCombinado_({
+    text: "Certo", at: "2026-09-11T15:00:00-03:00",
+  }, "Minha consulta será na segunda"), null);
+});
+
+test("human messages cannot close all commitments by phone", () => {
+  const result = context.resolverCompromissosPaciente_({
+    phone: "+5511900000000", text: "Boa noite, obrigada", at: "2026-09-14T15:00:00Z",
+  });
+  assert.equal(result.resolved, 0);
+  assert.equal(result.preserved, true);
+});
+
 test("sends the daily follow-up email to Amanda and Daniel", () => {
   assert.match(
     source,

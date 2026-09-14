@@ -34,6 +34,7 @@ import {
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
+  buildProcedureContinuationReply,
   buildMissingInboundTextClarificationReply,
   buildOfficialChannelsReply,
   buildPatientReply,
@@ -213,6 +214,7 @@ import {
 } from "./lib/professional-fact-review.mjs";
 import {
   resolvePatientDisplayName,
+  resolveContactIdentity,
   usableKnownPatientName,
   usableProfileFirstName,
   usableProfileName,
@@ -1329,11 +1331,11 @@ async function recordAutomaticReplyOperationally({
   }
 }
 
-async function resolvePatientCommitments(phone, at) {
+async function reconcileHumanCommitments(phone, at, eventId, text, messageType) {
   return deliverSheetsAction(
-    "resolve_patient_commitments",
+    "record_patient_commitment",
     {
-      resolution: { phone, at },
+      commitment: { phone, at, eventId, text, messageType, source: "human_echo" },
     },
   );
 }
@@ -2674,6 +2676,15 @@ async function completeOpenAIActive({
           },
           usage: null,
         }
+      : buildProcedureContinuationReply({ currentText: input.text, procedure: plan?.procedure || input.procedure,
+          recentConversation: input.recentConversation || [] })
+      ? { status: "completed", model: "deterministic-procedure-continuation", decision: {
+          route: "standard_reply", confidence: "high", automaticAllowed: true, urgent: false,
+          professional: "amanda", procedure: plan?.procedure || input.procedure,
+          replyCode: "CONTEXT-CONTINUE-01", reviewReason: "context_continue:procedure",
+          suggestedReply: buildProcedureContinuationReply({ currentText: input.text,
+            procedure: plan?.procedure || input.procedure, recentConversation: input.recentConversation || [] }),
+        }, usage: null }
       : standaloneMarketingPrefilledMessage
       ? {
           status: "completed",
@@ -3033,6 +3044,7 @@ async function completeOpenAIActive({
         from,
         to,
         eventId: `${input.eventId}-unknown-holding`,
+        parentEventId: input.eventId,
         body: holdingReply,
         currentText: input.text,
         recentConversation: input.recentConversation,
@@ -3819,6 +3831,7 @@ async function sendCurrentInboundReply({
       from,
       to,
       eventId,
+      parentEventId: revisionEventId,
       body,
       currentText,
       recentConversation,
@@ -4219,6 +4232,8 @@ export async function handleYCloudWebhook(
       phone: patientPhone,
       takenAt: echoAt,
       text: echoText,
+      messageType: String(echo.type || ""),
+      relatedMessageId: String(echo.context?.id || echo.reaction?.message_id || ""),
     });
 
     writeOperationalLog({
@@ -4297,9 +4312,12 @@ export async function handleYCloudWebhook(
         : "not_found"
       : humanInteractionSync.errorCode;
     const commitmentResolution =
-      await resolvePatientCommitments(
+      await reconcileHumanCommitments(
         patientPhone,
         echoAt,
+        String(eventId),
+        echoText,
+        echo.type || (echoText ? "text" : "unknown"),
       );
 
     return json({
@@ -4553,10 +4571,13 @@ export async function handleYCloudWebhook(
     eventId: String(eventId),
     messageId: String(messageId),
     phone,
-    name: resolvePatientDisplayName({
+    ...resolveContactIdentity({
       profileName: String(message.customerProfile?.name || ""),
       currentText: text,
+      recentConversation: rememberedConversation?.turns || [],
     }),
+    messageType: normalizedMessageType,
+    relatedMessageId: String(message.context?.id || message.reaction?.message_id || ""),
     text,
     reference: attribution.reference,
     platform: attribution.platform,

@@ -184,7 +184,7 @@ test("the approved Brenda lifting reply offers a range elegantly on the next ste
     reply,
     [
       "Claro, Brenda.",
-      "Entendo — é natural querer saber o valor antes de decidir. Como cada cirurgia é planejada de forma individual, a Dra. Amanda confirma o valor exato após a avaliação.",
+      "É natural querer saber o valor antes de decidir. A Dra. Amanda confirma o valor exato após a avaliação, conforme o planejamento da cirurgia.",
       "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
       "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.",
     ].join("\n\n"),

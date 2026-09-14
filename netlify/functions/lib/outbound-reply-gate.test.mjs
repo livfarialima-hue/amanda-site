@@ -53,6 +53,8 @@ function fakeBlobs() {
       });
       return { modified: true, etag: `etag-${version}` };
     },
+    async delete(key) { values.delete(key); },
+    async list({ prefix }) { return { blobs: [...values.keys()].filter(key => key.startsWith(prefix)).map(key => ({ key })) }; },
   };
   return { getStoreImpl: () => store };
 }
@@ -61,6 +63,32 @@ const respond = {
   action: CONVERSATION_ACTIONS.RESPOND,
   allowHoldingReply: false,
 };
+
+test("an accepted reply with a failed ledger never sends a second WhatsApp message", async () => {
+  const blobs = fakeBlobs(); let sends = 0;
+  const input = { from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-ledger-gap",
+    body: "A consulta custa R$ 500.", currentText: "Qual o valor da consulta?", recentConversation: [], conversationAction: respond };
+  const dependencies = { ...blobs, sendYCloudPatientTextImpl: async () => { sends++; return { status: "completed" }; },
+    recordDurableConversationTurnImpl: async () => ({ status: "failed" }) };
+  const first = await sendControlledPatientReply(input, dependencies);
+  assert.equal(first.status, "completed");
+  assert.equal(first.conversationLedgerStatus, "failed");
+  assert.equal(first.conversationLedgerRecovery, "pending");
+  const second = await sendControlledPatientReply(input, dependencies);
+  assert.equal(second.status, "duplicate");
+  assert.equal(sends, 1);
+});
+
+test("provider timeout remains uncertain even after the old claim TTL", async () => {
+  const blobs = fakeBlobs(); let sends = 0; const now = Date.now();
+  const input = { from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-uncertain",
+    body: "A consulta custa R$ 500.", currentText: "Qual o valor da consulta?", recentConversation: [], conversationAction: respond };
+  const dependencies = { ...blobs, now, sendYCloudPatientTextImpl: async () => { sends++; return { status: "failed", errorCode: "timeout", httpStatus: null }; } };
+  await sendControlledPatientReply(input, dependencies);
+  const second = await sendControlledPatientReply(input, { ...dependencies, now: now + 600000 });
+  assert.equal(second.status, "duplicate");
+  assert.equal(sends, 1);
+});
 
 test("activity arriving while claiming the outbound slot prevents the provider call", async () => {
   const blobs = fakeBlobs();

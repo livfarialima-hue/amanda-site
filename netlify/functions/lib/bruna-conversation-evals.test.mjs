@@ -9,6 +9,8 @@ import {
   validateOutboundReply,
 } from "./outbound-reply-gate.mjs";
 import { assessBrunaReplyExperience } from "./bruna-conversion-experience.mjs";
+import { enforceCommercialEvidenceGuard } from "./lead-classifier.mjs";
+import { buildProcedureContinuationReply } from "./patient-replies.mjs";
 
 const evalPath = fileURLToPath(
   new URL("./bruna-policy/conversation-evals.jsonl", import.meta.url),
@@ -50,6 +52,20 @@ test("the Bruna eval set measures conversion quality in addition to routing safe
 
 for (const scenario of scenarios) {
   test(`Bruna eval: ${scenario.id}`, () => {
+    if (scenario.kind === "classification_evidence") {
+      const decision = enforceCommercialEvidenceGuard(scenario.input);
+      for (const [key, value] of Object.entries(scenario.expect)) {
+        assert.equal(decision[key], value, scenario.id + ":" + key);
+      }
+      return;
+    }
+    if (scenario.kind === "procedure_continuation") {
+      const reply = buildProcedureContinuationReply(scenario.input);
+      assert.ok(reply.length > 40 && Array.from(reply).length <= scenario.expect.maximumCharacters);
+      assert.doesNotMatch(reply, /Eu sou|O que.*entender|\?|horários/i);
+      assert.match(reply, /consulta/i);
+      return;
+    }
     if (scenario.kind === "action") {
       const decision = decideConversationAction(scenario.input);
       const comparable = {

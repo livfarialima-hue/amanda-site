@@ -314,6 +314,14 @@ test("patient name is stored only in the additive LEADS name column", () => {
     false,
   );
   assert.equal(storedName, "Marina Souza");
+  assert.equal(gravarNomeLeadSeDisponivel_(sheet, 2, "Helena", true,
+    { nameSource: "self_declared", nameSubject: "self", currentStage: "Novo" }), true);
+  assert.equal(storedName, "Helena");
+  assert.equal(gravarNomeLeadSeDisponivel_(sheet, 2, "Rosa", true,
+    { nameSource: "self_declared", nameSubject: "contact_only", currentStage: "Novo" }), false);
+  assert.equal(gravarNomeLeadSeDisponivel_(sheet, 2, "Rosa", true,
+    { nameSource: "self_declared", nameSubject: "self", currentStage: "Consulta realizada" }), false);
+  assert.equal(storedName, "Helena");
 });
 
 test("Meta site reference fills the canonical campaign and page fields", () => {

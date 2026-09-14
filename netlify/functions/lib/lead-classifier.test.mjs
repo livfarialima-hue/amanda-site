@@ -1,11 +1,89 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+test("a contextual amount answers the price question and Amanda's price rule does not overwrite cardiology", () => {
+  for (const [professional, amount] of [["amanda", "R$ 500"], ["daniel", "R$ 700"]]) {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      { direction: "IN", text: "Qual o valor da consulta?", messageType: "text" },
+      { direction: "OUT", text: amount, messageType: "text" },
+    ], classification: { professional, recommendedStatus: "Novo", nextAction: "Aguardar paciente",
+      expectedParty: "patient", commercialReason: "Em andamento", appointmentOutcome: "none", procedureMilestone: "none" } });
+    assert.equal(result.expectedParty, "patient", professional);
+    assert.equal(result.nextAction, "Aguardar paciente");
+  }
+});
+
+test("a payment statement is not reopened as a consultation price question", () => {
+  const result = enforceCommercialEvidenceGuard({ currentStatus: "Consulta realizada", messages: [
+    { direction: "IN", text: "Já paguei o valor da consulta.", messageType: "text" },
+  ], classification: { recommendedStatus: "Consulta realizada", nextAction: "Conferir recebimento", expectedParty: "clinic", commercialReason: "Em andamento", appointmentOutcome: "none", procedureMilestone: "none" } });
+  assert.equal(result.nextAction, "Conferir recebimento");
+});
+
+test("a captioned receipt or shared-phone request cannot confirm an administrative milestone", () => {
+  for (const message of [
+    { direction: "IN", text: "Comprovante do Pix", messageType: "image" },
+    { direction: "IN", text: "Eu e minha mãe queremos marcar as consultas.", messageType: "text" },
+  ]) {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Qualificado", messages: [message],
+      classification: { recommendedStatus: "Consulta agendada", nextAction: "Aguardar consulta", expectedParty: "patient", appointmentOutcome: "scheduled", procedureMilestone: "paid" } });
+    assert.equal(result.recommendedStatus, "Qualificado");
+    assert.equal(result.appointmentOutcome, "none");
+    assert.equal(result.procedureMilestone, "none");
+    assert.equal(result.expectedParty, "clinic");
+  }
+});
 import {
   createClassifierSafetyIdentifier,
   isLikelyClassifierMarketingPrefill,
   parseLeadClassificationResponse,
   runLeadClassifier,
+  enforceCommercialEvidenceGuard,
 } from "./lead-classifier.mjs";
+
+test("price inquiry is not a financial objection or consent to send dates", () => {
+  const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+    { direction: "IN", text: "Onde fica a clínica e qual o valor da consulta?" },
+    { direction: "OUT", text: "A consulta custa R$ 500, em São Paulo.", source: "bruna" },
+    { direction: "IN", text: "Tá certo" },
+  ], classification: validClassification({ commercialReason: "Preço" }) });
+  assert.equal(result.commercialReason, "Em andamento");
+  assert.equal(result.recommendedStatus, "Novo");
+  assert.equal(result.expectedParty, "patient");
+  assert.doesNotMatch(result.nextAction, /Oferecer datas/);
+});
+
+test("farewell leaves an unanswered consultation price question with the clinic", () => {
+  const result = enforceCommercialEvidenceGuard({ currentStatus: "Qualificado", messages: [
+    { direction: "IN", text: "Vou conversar em casa. Qual o valor da consulta? Obrigada!" },
+    { direction: "OUT", text: "Por nada! Boa semana!", source: "equipe_humana" },
+  ], classification: validClassification({ expectedParty: "patient", nextAction: "Aguardar retorno" }) });
+  assert.equal(result.expectedParty, "clinic");
+  assert.match(result.nextAction, /valor da consulta/);
+});
+
+test("image after PIX is a document to review, not a confirmed surgical payment", () => {
+  const result = enforceCommercialEvidenceGuard({ currentStatus: "Consulta realizada", messages: [
+    { direction: "OUT", text: "Segue a chave PIX da consulta.", source: "equipe_humana" },
+    { direction: "IN", text: "", messageType: "image", contentUnavailable: true },
+  ], classification: validClassification({ recommendedStatus: "Paciente convertido", procedureMilestone: "payment_confirmed" }) });
+  assert.equal(result.recommendedStatus, "Consulta realizada");
+  assert.equal(result.procedureMilestone, "none");
+  assert.equal(result.expectedParty, "clinic");
+  assert.match(result.nextAction, /Conferir o material recebido/);
+});
+
+test("explicit request to schedule and explicit financial barriers remain distinguishable", () => {
+  const ready = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+    { direction: "IN", text: "Quero marcar uma consulta. Quais horários estão disponíveis?" },
+  ], classification: validClassification() });
+  assert.equal(ready.recommendedStatus, "Qualificado");
+  const refused = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+    { direction: "IN", text: "O investimento está fora do meu orçamento, não vou prosseguir." },
+  ], classification: validClassification({ recommendedStatus: "Não qualificado", commercialReason: "Preço", expectedParty: "patient", nextAction: "Encerrar; sem nova ação comercial" }) });
+  assert.equal(refused.commercialReason, "Preço");
+  assert.equal(refused.recommendedStatus, "Não qualificado");
+});
 
 const PHONE = "+5511967743374";
 

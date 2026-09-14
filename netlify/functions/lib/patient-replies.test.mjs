@@ -9,6 +9,7 @@ import {
   buildInsuranceAcceptanceReply,
   buildInsuranceCoverageReply,
   buildMarketingPrefilledOpeningReply,
+  buildProcedureContinuationReply,
   buildMissingInboundTextClarificationReply,
   buildOfficialChannelsReply,
   buildPatientReply,
@@ -19,6 +20,22 @@ import {
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("a named procedure after discovery receives useful information without restarting discovery", () => {
+  const reply = buildProcedureContinuationReply({ currentText: "Cervicoplastia", procedure: "lifting_cervical",
+    recentConversation: [{ role: "assistant", source: "bruna", text: "O que você gostaria de entender primeiro?" }] });
+  assert.match(reply, /pele, volumes e contorno do pescoço/);
+  assert.doesNotMatch(reply, /Eu sou|gostaria de entender|Como posso|\?/);
+  for (const currentText of ["Cervicoplastia dói?", "Preço da cervicoplastia", "Não quero cervicoplastia"]) {
+    assert.equal(buildProcedureContinuationReply({ currentText, procedure: "lifting_cervical", recentConversation: [] }), "");
+  }
+});
+
+test("photo acknowledgement stays brief and cannot restart a known conversation", () => {
+  const reply = buildImageAcknowledgementReply({ greetPatient: false, introduceBruna: false });
+  assert.ok(reply.split(/\s+/).length <= 55);
+  assert.doesNotMatch(reply, /Eu sou|agenda|horário|\?/);
+});
 
 test("asks for context naturally when the provider omits the inbound text", () => {
   const reply = buildMissingInboundTextClarificationReply({

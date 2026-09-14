@@ -1,5 +1,7 @@
 # Arquitetura da jornada da paciente
 
+**Extensão candidata — 14/09/2026:** profile-name.mjs decide nome de tratamento e interlocutor distinto da pessoa atendida; Code.gs só propaga identificação própria explícita sobre cadastro de aquisição, preservando nome clínico. lead-classifier.mjs limita inferências por evidência; LeadClassification.gs é proprietário da revisão do histórico, tipos de mensagem e vínculo de saída ao evento original. conversation-ledger.mjs mantém recibo durável anterior ao envio e recupera apenas persistência após aceite; outbound-reply-gate.mjs impede segunda tentativa quando a entrega é incerta. O job existente classify-leads.mjs recupera até três recibos aceitos por ciclo sem chamar o provedor de WhatsApp. Retomadas.gs registra retorno humano explicitamente combinado e permite conclusão identificada; CentralAtendimento.gs projeta responsável/pendência do CRM, preserva cuidado e deixa revisão manual quando o estado está antigo ou o vínculo é ambíguo. E-mail e painel continuam consumidores dessa Central. Fronteiras e regressão cruzada: contratos bruna-conversation-safety e patient-journey-funnel-followups do registro de impacto.
+
 **Status:** contrato canônico de modularidade e responsabilidade
 
 **Objetivo:** permitir ajuste fino do bot, funil, retomadas, agenda e atribuição sem ampliar silenciosamente o efeito de uma mudança local.

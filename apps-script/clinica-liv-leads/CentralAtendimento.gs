@@ -199,7 +199,7 @@ function atualizarCentralAtendimentoInterno_(
   const conversations =
     messagesSheet &&
     typeof carregarConversasRetomadas_ === "function"
-      ? carregarConversasRetomadas_(messagesSheet)
+      ? carregarConversasRetomadas_(messagesSheet, { includeAuthorship: true })
       : {};
   const leads =
     leadsSheet &&
@@ -270,6 +270,10 @@ function atualizarCentralAtendimentoInterno_(
     adicionarItemCentral_(itemsByPatient, item);
   });
 
+  const canonicalProjection = projetarDecisoesCanonicasCentral_(
+    itemsByPatient, carregarDecisoesCanonicasCentral_(spreadsheet, conversations),
+    conversations, leads, profiles, now,
+  );
   const items = Object.keys(itemsByPatient)
     .map(function (key) {
       return aplicarControleCentral_(
@@ -304,7 +308,119 @@ function atualizarCentralAtendimentoInterno_(
     sla,
     scheduleMaintenance,
     automaticCancellations,
+    canonicalProjection,
   };
+}
+
+// Read the canonical opportunity; never create sheets, reclassify or send here.
+function carregarDecisoesCanonicasCentral_(spreadsheet, conversations) {
+  function unavailable() {
+    const result = {};
+    Object.keys(conversations || {}).forEach(function (phone) {
+      result[phone] = { phone, opportunityId: "unavailable", professional: "", relationship: "unknown",
+        expectedParty: "", updatedAt: null, ambiguous: true, version: 0 };
+    });
+    return result;
+  }
+  const sheet = spreadsheet.getSheetByName("_CRM_OPORTUNIDADES");
+  if (!sheet || sheet.getLastRow() < 2) return unavailable();
+  const rows = sheet.getRange(1, 1, sheet.getLastRow(), 26).getValues();
+  const headers = rows.shift().map(String);
+  const index = {};
+  headers.forEach(function (header, i) { index[header] = i; });
+  const required = ["Opportunity ID", "Telefone (E.164)", "Profissional", "Estado", "Fase",
+    "Relacionamento", "Responsável atual", "Aguardando ação de", "Próxima ação automática", "Atualizado em"];
+  if (required.some(function (header) { return index[header] === undefined; })) return unavailable();
+  const grouped = {};
+  rows.forEach(function (row) {
+    const get = function (header) { return row[index[header]]; };
+    const phone = normalizarTelefoneCentral_(get("Telefone (E.164)"));
+    const opportunityId = textoCentral_(get("Opportunity ID"), 120);
+    const professional = String(get("Profissional") || "");
+    if (!phone || !opportunityId || !["amanda", "daniel"].includes(professional)) return;
+    (grouped[phone] || (grouped[phone] = [])).push({ phone, opportunityId, professional,
+      state: String(get("Estado") || ""), stage: String(get("Fase") || ""),
+      relationship: String(get("Relacionamento") || "unknown"), owner: String(get("Responsável atual") || ""),
+      expectedParty: String(get("Aguardando ação de") || ""), summary: textoCentral_(get("Resumo automático"), 600),
+      nextAction: textoCentral_(get("Próxima ação automática"), 300),
+      version: Number(get("Versão") || 0), updatedAt: dataCentralValida_(get("Atualizado em")) });
+  });
+  const result = {};
+  Object.keys(grouped).forEach(function (phone) {
+    const candidates = grouped[phone].sort(function (a, b) {
+      return (b.updatedAt ? b.updatedAt.getTime() : 0) - (a.updatedAt ? a.updatedAt.getTime() : 0);
+    });
+    const messages = conversations[phone] || [];
+    const last = messages[messages.length - 1] || {};
+    const exact = last.opportunityId && candidates.filter(function (item) {
+      return item.opportunityId === last.opportunityId && (!last.professional || item.professional === last.professional);
+    });
+    const open = candidates.filter(function (item) { return item.state === "open"; });
+    const selected = exact && exact.length === 1 ? exact[0] : open.length === 1 ? open[0] : candidates[0];
+    result[phone] = Object.assign({}, selected, {
+      ambiguous: Boolean(last.opportunityId && (!exact || exact.length !== 1)) ||
+        !(exact && exact.length === 1) && open.length > 1,
+    });
+  });
+  return result;
+}
+
+function projetarDecisoesCanonicasCentral_(items, decisions, conversations, leads, profiles, now) {
+  const counts = { projected: 0, disagreements: 0, stale: 0, ambiguous: 0 };
+  Object.keys(decisions || {}).forEach(function (phone) {
+    const decision = decisions[phone];
+    const messages = conversations[phone] || [];
+    const last = messages[messages.length - 1];
+    const lastAt = last && dataCentralValida_(last.dataHora);
+    const stale = !decision.updatedAt || Boolean(lastAt && lastAt.getTime() > decision.updatedAt.getTime());
+    const uncertain = stale || decision.ambiguous || !["clinic", "patient"].includes(decision.expectedParty);
+    if (stale) counts.stale += 1;
+    if (decision.ambiguous) counts.ambiguous += 1;
+    const profile = profiles[phone] || {};
+    const lead = leads[phone] || {};
+    const current = items[phone];
+    if (!current && !messages.length && decision.expectedParty !== "clinic") return;
+    const care = ["active_postop", "surgical_planning", "appointment_scheduled", "consultation_completed", "known_patient", "former_patient"].includes(decision.relationship);
+    const closed = !care && (decision.stage === "Não qualificado" || ["closed", "archived"].includes(decision.state));
+    const pause = /(?:iniciativa (?:da|d[eo])|sem nova a[cç][aã]o comercial|aguardar retorno informado|aguardar.*fim do m[eê]s)/i.test(decision.nextAction);
+    const clinic = uncertain || decision.expectedParty === "clinic";
+    const protectedItem = current && (/^(?:care:|appointment:|consultation:|commitment:)/.test(current.sourceKey) ||
+      current.source === "Jornada de cuidado");
+    if (protectedItem && !clinic) return;
+    if (current && /^commitment:/.test(current.sourceKey) && !uncertain &&
+      /(?:retorn|retomar|contato combinado)/i.test(decision.nextAction)) return;
+    // Preserve legitimately approved follow-ups and care. A canonical pending
+    // response gets its own item when a care item is already on this phone.
+    if (!uncertain && !clinic && !closed && !pause && current &&
+      normalizarTextoCentral_(current.source) === "retomada de marketing") return;
+    if (!current && !clinic) return;
+    const waiting = !uncertain && (closed || !clinic);
+    const nextAction = uncertain
+      ? decision.ambiguous
+        ? "Revisar quem será atendido e a oportunidade correta antes de orientar a próxima ação."
+        : "Revisar as mensagens mais recentes e atualizar a classificação antes de confirmar a próxima ação."
+      : decision.nextAction || (waiting ? "Aguardar manifestação da pessoa" : "Conferir a solicitação pendente e responder");
+    const owner = clinic || care || decision.owner === "human_team" ? "Equipe" : "Bruna/bot";
+    const queue = waiting ? "Aguardando paciente" : "Resposta agora";
+    if (current && (current.queue !== queue || current.owner !== owner || current.nextAction !== nextAction)) counts.disagreements += 1;
+    const item = criarItemCentral_({ phone, queue, name: profile.name || lead.nome,
+      relationship: decision.relationship, owner, mode: waiting ? "Silêncio" : "Manual",
+      dueAt: waiting ? null : prazoRespostaCentral_(lastAt || decision.updatedAt || now),
+      nextAction, suggestion: "", context: uncertain
+        ? "A decisão anterior não comprova o estado atual. Conferir a conversa e o vínculo antes de agir."
+        : decision.summary,
+      lastInteractionAt: lastAt || decision.updatedAt,
+      origin: profile.origin || lead.plataforma || lead.origemEvento || "",
+      status: closed || pause ? "Suspenso" : waiting ? "Aguardando paciente" : "Aberto",
+      source: "CRM — oportunidade",
+      sourceKey: "crm:" + decision.opportunityId + ":" + decision.version + ":" +
+        (decision.updatedAt ? decision.updatedAt.getTime() : "unknown") + ":" + (lastAt ? lastAt.getTime() : "none"),
+    });
+    item.canonicalExpectedParty = waiting ? "patient" : "clinic";
+    items[protectedItem ? phone + ":crm:" + decision.opportunityId : phone] = item;
+    counts.projected += 1;
+  });
+  return counts;
 }
 
 function identificarTelefonesProfissionaisExternosCentral_(conversations) {
@@ -375,6 +491,8 @@ function carregarCompromissosCentral_(
       items.push(criarItemCentral_({
         queue: commercialContact
           ? "Revisar exclusão comercial"
+          : dueAt && formatarDataCentral_(dueAt, "yyyy-MM-dd") > formatarDataCentral_(now, "yyyy-MM-dd")
+            ? "Consultas e cuidados"
           : overdue
             ? "Pendência vencida"
             : "Ação manual hoje",
@@ -1558,6 +1676,14 @@ function aplicarControleCentral_(item, controls, now) {
   const control = controls[item.sourceKey];
 
   if (!control) return item;
+
+  // A local panel label or stale draft is not evidence that the clinic answered.
+  // Canonical items are refreshed by the opportunity owner after actual action.
+  if (String(item.sourceKey || "").indexOf("crm:") === 0) {
+    item.teamNote = control.teamNote || "";
+    item.lastTeamActionAt = control.lastTeamActionAt || item.lastTeamActionAt;
+    return item;
+  }
 
   const generatedStatus = item.status;
 

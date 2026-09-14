@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "baselineVersion": "2026-09-12.1",
+  "baselineVersion": "2026-09-14.1",
   "purpose": "Impedir que uma evolucao de comportamento remova silenciosamente protecoes, respostas ou limites ja validados para a Bruna.",
   "identityContract": {
     "name": "Bruna",
@@ -57,7 +57,10 @@
     "conversion_ninfoplastia_opening_is_reserved",
     "conversion_consultation_price_is_direct",
     "conversion_mechanical_disclaimer_is_blocked",
-    "unanswered_flacidez_and_consultation_price_are_answered_together"
+    "unanswered_flacidez_and_consultation_price_are_answered_together",
+    "named_procedure_after_discovery_continues_without_restart",
+    "research_price_question_is_not_financial_objection_or_qualification",
+    "captioned_payment_attachment_requires_human_confirmation"
   ],
   "deprecatedScenarioIds": [],
   "incidentPolicy": {

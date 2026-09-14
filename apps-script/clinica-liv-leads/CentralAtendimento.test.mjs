@@ -47,6 +47,90 @@ function loadContext() {
   return context;
 }
 
+// Synthetic incidents: no names, phones or messages from the exports.
+function canonicalDecision(overrides = {}) {
+  return { phone: "+5511999999999", opportunityId: "synthetic-op", professional: "amanda",
+    state: "open", stage: "Qualificado", relationship: "engaged_lead", owner: "human_team",
+    expectedParty: "clinic", summary: "Pergunta administrativa pendente.",
+    nextAction: "Informar o valor da consulta.", updatedAt: new Date("2026-09-14T12:00:00Z"),
+    version: 4, ...overrides };
+}
+
+test("canonical clinic obligation survives an outgoing farewell and old waiting control", () => {
+  const c = loadContext(); const phone = "+5511999999999";
+  const items = { [phone]: c.criarItemCentral_({ phone, queue: "Aguardando paciente",
+    owner: "Bruna/bot", mode: "Silêncio", nextAction: "Aguardar iniciativa da paciente",
+    sourceKey: "conversation:farewell" }) };
+  c.projetarDecisoesCanonicasCentral_(items, { [phone]: canonicalDecision() }, {}, {}, {}, new Date("2026-09-14T13:00:00Z"));
+  const item = Object.values(items)[0];
+  assert.equal(item.queue, "Resposta agora");
+  assert.equal(item.owner, "Equipe");
+  assert.match(item.nextAction, /valor da consulta/);
+  assert.equal(item.approvalBrunaEligible, false);
+  const controlled = c.aplicarControleCentral_(item, { [item.sourceKey]: { status: "Aguardando paciente", owner: "Bruna/bot", finalMessageDefined: true, finalMessage: "Texto antigo" } }, new Date());
+  assert.equal(controlled.queue, "Resposta agora");
+  assert.equal(controlled.owner, "Equipe");
+  assert.notEqual(controlled.finalMessage, "Texto antigo");
+});
+
+test("canonical refusal removes stale price draft without touching a care item", () => {
+  const c = loadContext(); const phone = "+5511999999999";
+  const items = { [phone]: c.criarItemCentral_({ phone, queue: "Resposta agora", suggestion: "Vou confirmar valores", source: "WhatsApp — mensagem recebida" }) };
+  const decision = canonicalDecision({ stage: "Não qualificado", relationship: "unknown", expectedParty: "patient", nextAction: "Encerrar oportunidade por preço; sem nova ação comercial." });
+  c.projetarDecisoesCanonicasCentral_(items, { [phone]: decision }, {}, {}, {}, new Date());
+  assert.equal(items[phone].mode, "Silêncio");
+  assert.equal(items[phone].suggestion, "");
+  assert.equal(items[phone].approvalBrunaEligible, false);
+  const care = c.criarItemCentral_({ phone, queue: "Ação manual hoje", sourceKey: "care:synthetic", nextAction: "Conferir documento da consulta", source: "Cuidado programado" });
+  const protectedItems = { [phone]: care };
+  c.projetarDecisoesCanonicasCentral_(protectedItems, { [phone]: decision }, {}, {}, {}, new Date());
+  assert.equal(protectedItems[phone].nextAction, "Conferir documento da consulta");
+});
+
+test("newer message and ambiguous identity require human review of the current conversation", () => {
+  const c = loadContext(); const phone = "+5511999999999";
+  for (const ambiguous of [false, true]) {
+    const items = {};
+    c.projetarDecisoesCanonicasCentral_(items, { [phone]: canonicalDecision({ ambiguous }) },
+      { [phone]: [{ dataHora: new Date("2026-09-14T12:30:00Z"), direcao: "IN", texto: "Quero conversar novamente" }] }, {}, {}, new Date("2026-09-14T13:00:00Z"));
+    assert.equal(Object.values(items)[0].owner, "Equipe");
+    assert.match(Object.values(items)[0].nextAction, /Revisar/);
+    assert.equal(Object.values(items)[0].suggestion, "");
+  }
+});
+
+test("canonical commitment is visible even without a conversation waiting row", () => {
+  const c = loadContext(); const phone = "+5511999999999"; const items = {};
+  c.projetarDecisoesCanonicasCentral_(items, { [phone]: canonicalDecision({ nextAction: "Retomar em 14/09/2026 para esclarecer a consulta." }) }, {}, {}, {}, new Date("2026-09-14T13:00:00Z"));
+  assert.match(items[phone].nextAction, /Retomar em 14\/09\/2026/);
+  assert.equal(items[phone].owner, "Equipe");
+  assert.equal(items[phone].approvalBrunaEligible, false);
+});
+
+test("missing canonical headers cannot silently restore a stale commercial draft", () => {
+  const c = loadContext(), phone = "+5511999999999";
+  const conversations = { [phone]: [{ texto: "Mensagem atual", dataHora: new Date() }] };
+  const decisions = c.carregarDecisoesCanonicasCentral_({ getSheetByName: () => null }, conversations);
+  const items = { [phone]: c.criarItemCentral_({ phone, suggestion: "Preço antigo", sourceKey: "conversation:old" }) };
+  c.projetarDecisoesCanonicasCentral_(items, decisions, conversations, {}, {}, new Date());
+  assert.equal(items[phone].suggestion, "");
+  assert.equal(items[phone].approvalBrunaEligible, false);
+  assert.equal(items[phone].owner, "Equipe");
+});
+
+test("a dated human return keeps its deadline and remains a manual task", () => {
+  const c = loadContext(), phone = "+5511999999999";
+  const dueAt = new Date("2026-09-21T21:00:00Z");
+  const item = c.criarItemCentral_({ phone, queue: "Consultas e cuidados", dueAt,
+    sourceKey: "commitment:synthetic", source: "Compromisso humano", mode: "Manual", nextAction: "Retorno combinado" });
+  const items = { [phone]: item };
+  c.projetarDecisoesCanonicasCentral_(items, { [phone]: canonicalDecision({ nextAction: "Retornar na próxima segunda" }) },
+    {}, {}, {}, new Date("2026-09-14T13:00:00Z"));
+  assert.equal(Object.keys(items).length, 1);
+  assert.equal(items[phone].dueAt.toISOString(), dueAt.toISOString());
+  assert.equal(items[phone].approvalBrunaEligible, false);
+});
+
 test("Central menu exposes diagnosis and the emergency off switch", () => {
   assert.match(
     source,

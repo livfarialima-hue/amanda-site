@@ -1,7 +1,76 @@
 import { callClassificationSheets } from "./sheets-classification-client.mjs";
+import { getStore } from "@netlify/blobs";
+import { createHash } from "node:crypto";
 
 const MAX_TURNS = 32;
 const MAX_TEXT_LENGTH = 1_600;
+const RECEIPT_STORE = "liv-whatsapp-conversation-ledger-receipts-v1";
+
+function ledgerReceiptStore(getStoreImpl) {
+  return getStoreImpl({ name: RECEIPT_STORE, consistency: "strong" });
+}
+
+export async function prepareConversationLedgerReceipt(turn, { getStoreImpl = getStore, now = Date.now() } = {}) {
+  if (!turn?.phone || !turn?.eventId || !turn?.text) return { status: "failed", errorCode: "invalid_ledger_receipt" };
+  const key = "pending/" + createHash("sha256").update(`${turn.phone}|${turn.eventId}`).digest("hex");
+  try {
+    const storage = ledgerReceiptStore(getStoreImpl);
+    const done = await storage.getWithMetadata(key.replace("pending/", "done/"), { type: "json", consistency: "strong" });
+    if (done?.data?.state === "persisted") return { status: "duplicate", key, state: "persisted" };
+    const existing = await storage.getWithMetadata(key, { type: "json", consistency: "strong" });
+    if (existing?.data) return { status: "duplicate", key, state: existing.data.state };
+    const write = await storage.setJSON(key, { state: "prepared", turn: {
+      phone: boundedText(turn.phone, 20), eventId: boundedText(turn.eventId, 200),
+      parentEventId: boundedText(turn.parentEventId, 200), messageId: boundedText(turn.messageId, 500),
+      text: boundedText(turn.text, 4000), source: "bruna", at: turn.at || new Date(now).toISOString(),
+      opportunityId: boundedText(turn.opportunityId, 120), professional: boundedText(turn.professional, 80),
+    }, createdAt: new Date(now).toISOString() }, { onlyIfNew: true });
+    return { status: write.modified ? "completed" : "duplicate", key };
+  } catch { return { status: "failed", errorCode: "ledger_receipt_unavailable" }; }
+}
+
+export async function markConversationLedgerAccepted(receipt, { getStoreImpl = getStore } = {}) {
+  try {
+    const storage = ledgerReceiptStore(getStoreImpl);
+    const entry = await storage.getWithMetadata(receipt.key, { type: "json", consistency: "strong" });
+    if (!entry?.etag || !["prepared", "accepted"].includes(entry.data?.state)) return { status: "ignored" };
+    const write = await storage.setJSON(receipt.key, { ...entry.data, state: "accepted" }, { onlyIfMatch: entry.etag });
+    return { status: write.modified ? "completed" : "failed" };
+  } catch { return { status: "failed" }; }
+}
+
+export async function completeConversationLedgerReceipt(receipt, { getStoreImpl = getStore } = {}) {
+  try {
+    const storage = ledgerReceiptStore(getStoreImpl);
+    const entry = await storage.getWithMetadata(receipt.key, { type: "json", consistency: "strong" });
+    if (!entry?.etag) return { status: "ignored" };
+    // Keep only an opaque tombstone; no transcript after canonical persistence.
+    await storage.setJSON(receipt.key.replace("pending/", "done/"), { state: "persisted" }, { onlyIfNew: true });
+    await storage.delete(receipt.key);
+    return { status: "completed" };
+  } catch { return { status: "failed" }; }
+}
+
+export async function reconcileConversationLedgerReceipts({ getStoreImpl = getStore,
+  recordImpl = recordDurableConversationTurn, limit = 3 } = {}) {
+  const counts = { persisted: 0, failed: 0, uncertain: 0 };
+  try {
+    const storage = ledgerReceiptStore(getStoreImpl);
+    const listing = await storage.list({ prefix: "pending/" });
+    for (const blob of listing.blobs || []) {
+      if (counts.persisted + counts.failed >= Math.min(10, Math.max(1, limit))) break;
+      const entry = await storage.getWithMetadata(blob.key, { type: "json", consistency: "strong" });
+      if (entry?.data?.state === "prepared") { counts.uncertain += 1; continue; }
+      if (entry?.data?.state !== "accepted" || !entry.data.turn) continue;
+      const result = await recordImpl(entry.data.turn);
+      if (result.status === "completed") {
+        await completeConversationLedgerReceipt({ key: blob.key }, { getStoreImpl });
+        counts.persisted += 1;
+      } else counts.failed += 1;
+    }
+    return { status: "completed", ...counts };
+  } catch { return { status: "failed", ...counts }; }
+}
 
 function boundedText(value, maximumLength = MAX_TEXT_LENGTH) {
   return Array.from(String(value || "").trim())
@@ -11,8 +80,8 @@ function boundedText(value, maximumLength = MAX_TEXT_LENGTH) {
 
 function normalizeTurn(turn) {
   if (!turn || typeof turn !== "object") return null;
-  const text = boundedText(turn.text);
-  if (!text) return null;
+  const messageType = ["text", "image", "audio", "video", "document", "reaction", "sticker"].includes(turn.messageType) ? turn.messageType : "unknown";
+  const text = boundedText(turn.text) || (messageType === "reaction" ? "[Reação recebida.]" : "[Conteúdo indisponível; conferir o tipo e o contexto.]");
   const role = turn.role === "assistant" ? "assistant" : "user";
   const source = ["patient", "bruna", "human"].includes(turn.source)
     ? turn.source
@@ -25,6 +94,7 @@ function normalizeTurn(turn) {
     role,
     source,
     text,
+    messageType,
     eventId: boundedText(turn.eventId, 200),
     templateId: boundedText(turn.templateId, 80).toLowerCase(),
     at: Number.isFinite(parsedAt.getTime())
@@ -101,6 +171,7 @@ export async function recordDurableConversationTurn(
   {
     phone,
     eventId,
+    parentEventId = "",
     messageId,
     text,
     at,
@@ -120,6 +191,7 @@ export async function recordDurableConversationTurn(
     conversation: {
       phone,
       eventId: boundedText(eventId, 200),
+      parentEventId: boundedText(parentEventId, 200),
       messageId: boundedText(messageId || `bruna:${eventId}`, 500),
       text: normalizedText,
       at: at || new Date().toISOString(),

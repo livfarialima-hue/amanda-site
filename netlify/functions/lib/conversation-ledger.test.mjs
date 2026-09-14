@@ -3,7 +3,50 @@ import test from "node:test";
 import {
   getDurableConversationContext,
   recordDurableConversationTurn,
+  prepareConversationLedgerReceipt,
+  markConversationLedgerAccepted,
+  reconcileConversationLedgerReceipts,
 } from "./conversation-ledger.mjs";
+
+function receiptStore() {
+  const data = new Map(); let revision = 0;
+  const store = {
+    async getWithMetadata(key) { return data.has(key) ? structuredClone(data.get(key)) : null; },
+    async setJSON(key, value, options = {}) {
+      const old = data.get(key);
+      if (options.onlyIfNew && old || options.onlyIfMatch && old?.etag !== options.onlyIfMatch) return { modified: false };
+      data.set(key, { data: structuredClone(value), etag: String(++revision) }); return { modified: true };
+    },
+    async list() { return { blobs: [...data.keys()].map(key => ({ key })) }; },
+    async delete(key) { data.delete(key); },
+  };
+  return { getStoreImpl: () => store, data };
+}
+
+test("ledger recovery persists only accepted messages and never invokes WhatsApp", async () => {
+  const fake = receiptStore(); const writes = [];
+  const turn = { phone: "+5511900000000", eventId: "synthetic:bruna", parentEventId: "synthetic", text: "A consulta custa R$ 500.", professional: "amanda", opportunityId: "op-synthetic" };
+  const receipt = await prepareConversationLedgerReceipt(turn, fake);
+  assert.equal(receipt.status, "completed");
+  const recordImpl = async payload => { writes.push(payload); return { status: "completed" }; };
+  await reconcileConversationLedgerReceipts({ ...fake, recordImpl });
+  assert.equal(writes.length, 0, "prepared does not prove provider acceptance");
+  await markConversationLedgerAccepted(receipt, fake);
+  await reconcileConversationLedgerReceipts({ ...fake, recordImpl });
+  await reconcileConversationLedgerReceipts({ ...fake, recordImpl });
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].parentEventId, "synthetic");
+  assert.equal([...fake.data.values()][0].data.turn, undefined, "receipt drops transcript after persistence");
+});
+
+test("failed ledger recovery remains pending for idempotent persistence", async () => {
+  const fake = receiptStore();
+  const receipt = await prepareConversationLedgerReceipt({ phone: "+5511900000000", eventId: "synthetic-2", text: "Informação administrativa" }, fake);
+  await markConversationLedgerAccepted(receipt, fake);
+  const result = await reconcileConversationLedgerReceipts({ ...fake, recordImpl: async () => ({ status: "failed" }) });
+  assert.equal(result.failed, 1);
+  assert.equal([...fake.data.values()][0].data.state, "accepted");
+});
 
 test("durable history preserves role, authorship and bounded identity", async () => {
   let request;

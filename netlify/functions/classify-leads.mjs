@@ -1,5 +1,6 @@
 import { runLeadClassifier } from "./lib/lead-classifier.mjs";
 import { callClassificationSheets } from "./lib/sheets-classification-client.mjs";
+import { reconcileConversationLedgerReceipts } from "./lib/conversation-ledger.mjs";
 
 const MAX_JOBS_PER_RUN = 1;
 const SHEETS_WRITE_ATTEMPTS = 3;
@@ -91,6 +92,8 @@ async function persistJob(
           professional: job.professional,
           leadSheetName: job.leadSheetName,
           claimedVersion: job.claimedVersion,
+          conversationRevision: job.conversationRevision,
+          includeUnassignedUnknown: job.includeUnassignedUnknown === true,
           errorCode:
             classificationResult.errorCode ||
             "classification_failed",
@@ -124,6 +127,8 @@ async function persistJob(
           professional: job.professional,
           leadSheetName: job.leadSheetName,
           claimedVersion: job.claimedVersion,
+          conversationRevision: job.conversationRevision,
+          includeUnassignedUnknown: job.includeUnassignedUnknown === true,
         },
       classification:
         classificationResult.classification,
@@ -210,6 +215,8 @@ export async function processClaimedJobs(
 }
 
 export async function runLeadClassificationBatch() {
+  const ledgerRecovery = await reconcileConversationLedgerReceipts();
+  console.log(JSON.stringify({ source: "conversation_ledger_recovery", ...ledgerRecovery }));
   const claim = await callSheetsWithRetry(
     "claim_due_classifications",
     { limit: MAX_JOBS_PER_RUN },

@@ -54,7 +54,7 @@ test("every locked Bruna scenario remains unique and executable", async () => {
   }
 });
 
-test("the manifest points to the regression gate without changing the published bundle", async () => {
+test("the manifest versions the candidate and preserves the previous published receipt", async () => {
   const [manifest, baseline] = await Promise.all([
     readJson("manifest.json"),
     readJson("regression-baseline.json"),
@@ -73,7 +73,9 @@ test("the manifest points to the regression gate without changing the published 
     "assistente_ou_concierge_da_clinica_liv",
   );
   assert.equal(manifest.release.status, "published");
-  assert.equal(manifest.bundleVersion, "2026-09-01.1");
+  assert.equal(manifest.bundleVersion, "2026-09-14.1");
+  assert.equal(manifest.release.bundleVersion, "2026-09-01.1");
+  assert.equal(manifest.pendingRelease.published, false);
 });
 
 test("Bruna's patient-facing identity stays human-readable and technology-neutral", async () => {

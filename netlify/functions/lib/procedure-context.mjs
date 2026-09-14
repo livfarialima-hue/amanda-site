@@ -177,6 +177,12 @@ export function detectNamedProcedure(text) {
   return namedProcedureContext(text).procedure;
 }
 
+export function isOnlyNamedProcedure(text, key) {
+  const value = String(text || "").trim().replace(/[.!?]+$/, "").trim();
+  const definition = PROCEDURES.find(item => item.key === key);
+  return Boolean(definition && definition.patterns.some(pattern => value.match(pattern)?.[0]?.length === value.length));
+}
+
 export function hasUnresolvedNamedProcedure(text) {
   const context = namedProcedureContext(text);
   return context.mentioned && !context.procedure;
