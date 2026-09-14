@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
   "title": "Termos relevantes em 11 RSAs e sitelinks nas campanhas de mama e corpo",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "4749d356eb57474ca2ef8c1ad68e68fe43c9964b",
   "authorization": {
     "required": true,
@@ -97,7 +97,7 @@
       "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
       "node --test campanhas/google-ads-ad-strength-20260913.test.mjs"
     ],
-    "completedAt": "2026-09-14T00:33:30.997Z",
+    "completedAt": "2026-09-14T00:58:14.897Z",
     "results": {
       "focusedNew": 5,
       "acquisitionConsumers": 164,
@@ -109,7 +109,13 @@
       "siteRoutes": 54,
       "artifactErrors": 0,
       "diff": "OK",
-      "refinement": "Dois rascunhos passaram a Excelente ao incorporar os termos ainda ausentes; nova validação focada e gates antes do segundo save."
+      "refinement": "Dois rascunhos passaram a Excelente ao incorporar os termos ainda ausentes; nova validação focada e gates antes do segundo save.",
+      "finalEditorGrades": {
+        "Excelente": 15,
+        "Ruim": 2
+      },
+      "googleAds": "Eleven RSAs and four sitelink associations saved and read back; remaining generic keyword recommendation in two groups recorded separately.",
+      "operationalConsistency": "External receipts complete; run ops:check in clean canonical branch after fast-forward"
     }
   },
   "previousCompletedRelease": {
@@ -133,5 +139,38 @@
       "custo por etapa da mesma coorte"
     ],
     "rollbackRule": "Corrigir somente o delta responsável se houver reprovação, destino incorreto, perda de identificação/rastreamento ou regressão downstream consistente. Nota e amostra baixa não provam resultado."
+  },
+  "release": {
+    "approvedCommit": "bd2ca37eff20e2607b787d0752ffd16975d133f2",
+    "appliedCommits": [
+      "8abe57d8fc3cc8355a84c5868da7d02301627137",
+      "bd2ca37eff20e2607b787d0752ffd16975d133f2"
+    ],
+    "verifiedAt": "2026-09-14T00:58:14.897Z",
+    "netlifyDeployId": "6aa6ab8ec7bf45000934fe35",
+    "netlifyPublishedByThisChange": false,
+    "netlifyState": "inherited_from_verified_previous_release",
+    "appsScriptVersion": 152,
+    "appsScriptPublishedByThisChange": false,
+    "googleAdsAccountId": "995-334-4486",
+    "googleAdsReadBack": true,
+    "googleAdsAdsReviewed": 17,
+    "googleAdsModifiedAdIds": 11,
+    "googleAdsSitelinkAssociations": 4,
+    "googleAdsAccountDailyBudgetBRL": 105,
+    "googleAdsLiftDailyBudgetBRL": 30,
+    "googleAdsBidding": "MAXIMIZE_CONVERSIONS",
+    "googleAdsTargetCpaBRL": null,
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "1378eaea2ff1a9b977a16bec2a7e75f4a7ac011cef78734b92a9c528e701102b",
+    "drivePlanReadBack": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modified": "2026-09-14T00:58:14.897Z",
+      "bytes": 181087,
+      "sha256": "1378eaea2ff1a9b977a16bec2a7e75f4a7ac011cef78734b92a9c528e701102b",
+      "equal": true,
+      "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
+    },
+    "receiptPath": "auditorias/google-ads-qualidade-2026-09-13/PUBLICACAO.json"
   }
 }

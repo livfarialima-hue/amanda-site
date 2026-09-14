@@ -1,6 +1,6 @@
 {
   "changeId": "GOOGLE-ADS-QUALIDADE-2026-09-13",
-  "status": "publication_in_progress",
+  "status": "published_verified",
   "accountId": "995-334-4486",
   "createdAt": "2026-09-14T00:32:06.416Z",
   "authorizedRequest": "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer.",
@@ -105,9 +105,17 @@
     {
       "group": "AG_CERVICOPLASTIA",
       "adId": "816477682074",
-      "quality": "Bom",
+      "quality": "Excelente",
       "verifiedAt": "2026-09-14T00:45:30.399Z",
       "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      },
+      "firstPassQuality": "Bom",
+      "refinementVerifiedAt": "2026-09-14T00:55:19.126Z",
+      "refinementChecks": {
         "headlines": true,
         "descriptions": true,
         "fields": true,
@@ -117,9 +125,17 @@
     {
       "group": "Adulto",
       "adId": "816612405034",
-      "quality": "Bom",
+      "quality": "Excelente",
       "verifiedAt": "2026-09-14T00:46:31.617Z",
       "checks": {
+        "headlines": true,
+        "descriptions": true,
+        "fields": true,
+        "pins": true
+      },
+      "firstPassQuality": "Bom",
+      "refinementVerifiedAt": "2026-09-14T00:56:18.653Z",
+      "refinementChecks": {
         "headlines": true,
         "descriptions": true,
         "fields": true,
@@ -161,14 +177,103 @@
       "qualityAfter": "Excelente"
     }
   ],
-  "googleAdsReadBack": false,
+  "googleAdsReadBack": true,
   "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
   "limits": "Salvar e reler não comprova aprovação de política nem ganho de qualificados/consultas.",
-  "approvedCommit": "8abe57d8fc3cc8355a84c5868da7d02301627137",
+  "approvedCommit": "bd2ca37eff20e2607b787d0752ffd16975d133f2",
   "releasePreflight": {
     "status": "CHANGE_SAFETY_STATUS=OK",
     "approvedAt": "2026-09-14T00:33:40.6502331Z",
     "approvedBy": "Daniel",
     "authorization": "nesta pagina tem todos os anuncios e eles tem sua qualidade. qnd coloco o mouse em cima da qualidade do anuncio aparecem sugestoes para melhorar a qualidade. quero que vc siga todas as sugestoes para todos os anuncios. veja no print. só clicar em melhorar o anuncio aí e fazer."
-  }
+  },
+  "appliedCommits": [
+    "8abe57d8fc3cc8355a84c5868da7d02301627137",
+    "bd2ca37eff20e2607b787d0752ffd16975d133f2"
+  ],
+  "refinementPreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedAt": "2026-09-14T00:53:00.9512541Z",
+    "approvedBy": "Daniel",
+    "scope": "Complemento em CERV e Adulto, sem ampliar o escopo de onze RSAs"
+  },
+  "verifiedAt": "2026-09-14T00:56:18.653Z",
+  "finalEditorGrades": {
+    "Excelente": 15,
+    "Ruim": 2
+  },
+  "remainingRecommendation": {
+    "groups": [
+      {
+        "group": "AG_PROTESE_MAMA",
+        "groupId": "200313959939",
+        "campaignId": "24239348529",
+        "eligibleKeywords": 0,
+        "rejectedKeywords": 0,
+        "impressionsToday": 0
+      },
+      {
+        "group": "AG_LIPOASPIRACAO",
+        "groupId": "200313960139",
+        "campaignId": "24239348532",
+        "eligibleKeywords": 0,
+        "rejectedKeywords": 0,
+        "impressionsToday": 0
+      }
+    ],
+    "status": "separate_keyword_review_required",
+    "evidence": "Tabela Grupos de anúncios, coluna Número de palavras-chave qualificadas, e editores sem lista de palavras-chave; ambos continuam Ruim e pedem termos em títulos/descrições. Texto corrigido; não se atribui causalidade comprovada à contagem zero.",
+    "actionNotTaken": "Nenhuma palavra-chave, segmentação, grupo ou campanha foi criada, reativada ou alterada para elevar a nota."
+  },
+  "finalBudgetReadback": {
+    "checkedAt": "2026-09-14T00:57:53.420Z",
+    "source": "Tabela Campanhas autenticada após os treze saves de texto (onze RSAs e dois complementos)",
+    "budgetsBRL": {
+      "S_BR_SP_BLEFAROPLASTIA": 23,
+      "S_BR_SP_CIRURGIA_MAMA": 8,
+      "S_BR_SP_OTOPLASTIA": 15,
+      "S_BR_SP_CONTORNO_CORPORAL": 8,
+      "S_BR_SP_LIFTING_FACIAL": 30,
+      "S_BR_SP_LIFTING_CERVICAL": 12,
+      "S_BR_SP_CIRURGIA_FACIAL": 4,
+      "S_BR_SP_MARCA": 5
+    },
+    "sumBRL": 105,
+    "liftGoal": "Lead qualificado GCLID — campanhas (personalizada)",
+    "liftStatus": "Qualificada (aprendizado)",
+    "biddingReceipt": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json",
+    "biddingChangedByThisPackage": false
+  },
+  "fieldComparison": "Todos os textos esperados foram relidos; dez RSAs tiveram comparação de campos/pins antes e depois. PROTESE_MAMA_PRECO: objeto before não persistiu entre chamadas; só os cinco campos textuais previstos foram tocados, baseline textual documentado e leitura integral posterior confirmada. Entrada opcional de URL móvel vazia pode estar ausente durante carregamento e foi normalizada no comparador.",
+  "validation": {
+    "focusedNew": 5,
+    "acquisitionConsumers": 164,
+    "fullSuite": 1481,
+    "failed": 0,
+    "architecture": "OK",
+    "changeSafety": "OK",
+    "siteRoutes": 54,
+    "buildFiles": 193,
+    "siteErrors": 0,
+    "refinementFocused": 5,
+    "refinementFullSuite": 1481
+  },
+  "finalScope": {
+    "reviewedAds": 17,
+    "modifiedAdIds": 11,
+    "unchangedTextAds": 6,
+    "additionalSitelinkAssociations": 4,
+    "affectedSitelinkCampaigns": 2,
+    "keywordOrBudgetWrites": 0
+  },
+  "policyReview": "Editor Excellent não é aprovação final de política. Tabelas ainda mostram Pendente/Bom em parte dos anúncios, em recálculo; o resumo 15 Excelente/2 Ruim vem dos editores carregados durante a conferência.",
+  "driveReadback": {
+    "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "modified": "2026-09-14T00:58:14.897Z",
+    "bytes": 181087,
+    "sha256": "1378eaea2ff1a9b977a16bec2a7e75f4a7ac011cef78734b92a9c528e701102b",
+    "equal": true,
+    "comparison": "Complete readable text normalized only for line endings and terminal newlines; matching provider byte size; local SHA256 recorded"
+  },
+  "closedAt": "2026-09-14T00:58:14.897Z"
 }
