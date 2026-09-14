@@ -666,6 +666,7 @@
         "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md",
         "auditorias/google-ads-lift-max-conversions-2026-09-13/PLANO.json",
         "auditorias/google-ads-lift-max-conversions-2026-09-13/PREFLIGHT.json",
+        "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json",
         "campanhas/google-ads-lift-max-conversions-20260913.test.mjs"
       ],
       "requiredTestFiles": [

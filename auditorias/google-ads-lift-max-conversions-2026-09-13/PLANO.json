@@ -1,16 +1,17 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
-  "status": "candidate_blocked_pending_live_google_ads_preflight",
+  "status": "applied_verified",
   "accountId": "995-334-4486",
   "authorization": [
     "Daniel: entao faça todos os ajustes que vc sugeriu aqui lá no google ads.",
-    "Daniel: pode aumentar para 30 o orçamento"
+    "Daniel: pode aumentar para 30 o orçamento",
+    "Daniel: Retome o candidato ba73148; aplique em lifting facial Maximizar conversões sem CPA desejado e R$ 30/dia; confirme após salvar."
   ],
   "baseCommit": "6e5d6587c72e558fd9bb8ef921d3c25eefd9f36f",
   "registeredBaseline": {
-    "source": "latest verified Google Ads readback; must be confirmed live before write",
-    "verifiedAt": "2026-09-13T23:15:23Z",
+    "source": "Authenticated Google Ads UI readback immediately before this release",
+    "verifiedAt": "2026-09-14T00:02:40Z",
     "activeCampaigns": 8,
     "accountDailyBudgetBRL": 99
   },
@@ -75,7 +76,7 @@
     "store-visit goals or new conversion actions"
   ],
   "monitoring": {
-    "activationAt": null,
+    "activationAt": "2026-09-14T00:04:39Z",
     "integrity": "immediately after save and again in 24–48 hours",
     "business": "D+7, D+14 and D+28 from verified activation",
     "primaryMetrics": [
@@ -91,16 +92,29 @@
       "optimization score",
       "learning status"
     ],
-    "interpretation": "Low volume or incomplete classification is inconclusive; do not claim benefit from platform conversions alone."
+    "interpretation": "Low volume or incomplete classification is inconclusive; do not claim benefit from platform conversions alone.",
+    "reviewDates": {
+      "integrity": [
+        "2026-09-14",
+        "2026-09-15"
+      ],
+      "D7": "2026-09-20",
+      "D14": "2026-09-27",
+      "D28": "2026-10-11",
+      "timezone": "America/Sao_Paulo"
+    }
   },
   "rollback": {
     "trigger": "Unexpected target CPA, budget other than R$ 30, total other than R$ 105, goal/tracking failure, unintended concurrent setting, or sustained downstream/spend regression with healthy measurement.",
     "action": "Restore only G26LIFT to Maximize clicks without CPC cap and R$ 24/day, then reread it and the R$ 99/day account total. Preserve all history and unrelated changes."
   },
   "execution": {
-    "status": "not_started",
-    "externalWritesPerformed": false,
-    "blocker": "Authenticated Google Ads controller failed before live preflight initialization.",
-    "receipt": "auditorias/google-ads-lift-max-conversions-2026-09-13/EXECUCAO.md"
+    "status": "applied_verified",
+    "externalWritesPerformed": true,
+    "approvedCommit": "ba7314888ddb8226a227c72328bf0374c5c3c05a",
+    "verifiedAt": "2026-09-14T00:05:50Z",
+    "blocker": null,
+    "receipt": "auditorias/google-ads-lift-max-conversions-2026-09-13/PUBLICACAO.json",
+    "previousAttempt": "PREFLIGHT.json preserves the blocked first attempt with zero external writes."
   }
 }

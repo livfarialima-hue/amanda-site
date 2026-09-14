@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-LIFT-MAX-CONVERSIONS-2026-09-13",
+  "status": "published_verified",
+  "accountId": "995-334-4486",
+  "approvedCommit": "ba7314888ddb8226a227c72328bf0374c5c3c05a",
+  "verifiedAt": "2026-09-14T00:09:23.087Z",
+  "activationVerifiedAt": "2026-09-14T00:04:39Z",
+  "readBack": true,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "recordedAt": "2026-09-14T00:02:40Z",
+    "reference": "Retome o candidato ba73148. Teste primeiro o acesso ao Google Ads e aplique em lifting facial: Maximizar conversões sem CPA desejado e orçamento de R$ 30/dia. Confirme tudo após salvar.",
+    "releasePreflight": "CHANGE_SAFETY_STATUS=OK; 9 arquivos; worktree limpo; HEAD exato"
+  },
+  "applied": [
+    {
+      "entityType": "campaign_bidding",
+      "campaignId": "24028216444",
+      "campaign": "S_BR_SP_LIFTING_FACIAL",
+      "before": "MAXIMIZE_CLICKS",
+      "after": "MAXIMIZE_CONVERSIONS",
+      "targetCpaBRL": null,
+      "portfolioStrategy": false,
+      "readBack": "Maximizar conversões; estratégia aplicada apenas nesta campanha; nenhum CPA desejado definido"
+    },
+    {
+      "entityType": "campaign_budget",
+      "campaignId": "24028216444",
+      "campaign": "S_BR_SP_LIFTING_FACIAL",
+      "beforeDailyBRL": 24,
+      "afterDailyBRL": 30,
+      "readBackDailyBRL": 30
+    }
+  ],
+  "goalReadBack": "Específicas da campanha: Lead qualificado GCLID — campanhas",
+  "statusReadBack": "Qualificada (aprendizado); Estratégia de lances com aprendizado em andamento",
+  "accountReadBack": {
+    "activeCampaigns": 8,
+    "beforeDailyBudgetBRL": 99,
+    "dailyBudgetBRL": 105,
+    "otherBudgetsChanged": false,
+    "budgetsBRL": {
+      "S_BR_SP_LIFTING_FACIAL": 30,
+      "S_BR_SP_BLEFAROPLASTIA": 23,
+      "S_BR_SP_OTOPLASTIA": 15,
+      "S_BR_SP_LIFTING_CERVICAL": 12,
+      "S_BR_SP_CIRURGIA_FACIAL": 4,
+      "S_BR_SP_MARCA": 5,
+      "S_BR_SP_CONTORNO_CORPORAL": 8,
+      "S_BR_SP_CIRURGIA_MAMA": 8
+    }
+  },
+  "preflight": {
+    "checkedAt": "2026-09-14T00:02:40Z",
+    "authenticatedChrome": true,
+    "accountId": "995-334-4486",
+    "campaignId": "24028216444",
+    "bidding": "Maximizar cliques",
+    "dailyBudgetBRL": 24,
+    "goal": "Lead qualificado GCLID — campanhas",
+    "conversionAction": {
+      "name": "Lead qualificado GCLID",
+      "optimization": "Principal",
+      "source": "Site (Importar de cliques)",
+      "accountAllConversions": 1,
+      "from": "2026-08-14",
+      "to": "2026-09-12",
+      "lastRecordedConversion": "2026-09-01",
+      "warning": "Requer atenção: não há conversões recentes; conversões otimizadas sem dados recentes",
+      "readySourceRowsAreNotGoogleAcceptance": true
+    },
+    "recentLift": {
+      "from": "2026-08-14",
+      "to": "2026-09-12",
+      "clicks": 574,
+      "impressions": 6216,
+      "costBRL": 750.13
+    },
+    "budgetsTotalBRL": 99,
+    "otherBudgetsTotalBRL": 75,
+    "automaticRecommendations": {
+      "maintainSelected": 0,
+      "growSelected": 0
+    },
+    "draftsInProgress": 0,
+    "latestPreviousChange": "2026-09-13 20:07:33 BRT, palavras cervicais do pacote anterior",
+    "legacyAdjustmentUpload": "13/09/2026 06:46:03 BRT: Concluído(a), Sem alterações; não representa aceite da conexão LEADS."
+  },
+  "changeHistory": {
+    "status": "inspected_new_entries_not_yet_visible",
+    "lastVisibleEntry": "2026-09-13T20:07:33-03:00",
+    "note": "A conferência imediata não exibiu ainda as novas entradas; configuração salva confirmada no editor reaberto e na listagem recarregada. Rever propagação na janela de integridade."
+  },
+  "automaticRecommendationsChanged": false,
+  "patientEffects": {
+    "messages": 0,
+    "appointments": 0,
+    "conversionsCreated": 0,
+    "leadRowsChanged": 0
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "timezone": "America/Sao_Paulo",
+    "integrityDates": [
+      "2026-09-14",
+      "2026-09-15"
+    ],
+    "businessDates": {
+      "D7": "2026-09-20",
+      "D14": "2026-09-27",
+      "D28": "2026-10-11"
+    },
+    "anchor": "21h04 BRT em 13/09/2026, horário de ativação verificada",
+    "newAutomationCreated": false,
+    "successNotYetDemonstrated": true
+  },
+  "drivePlan": {
+    "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "beforeModifiedTime": "2026-09-13T23:17:43.485Z",
+    "beforeLocalSha256": "002ec1abe2f287257d3a8fe7519e7258460519557a8ba45106210daa8f78de54",
+    "beforeBytes": 178082,
+    "beforeReadableTextEqual": true,
+    "updated": true,
+    "readBackEqual": true,
+    "comparison": "Complete readable text normalized for line endings and terminal newline; local SHA256 and matching provider byte size recorded",
+    "sha256": "de7c70efe3477057ae10d2132d60094debc4803507bc74b9a0a808861aeb4b0a",
+    "modifiedTime": "2026-09-14T00:09:23.087Z",
+    "bytes": 179687
+  }
+}

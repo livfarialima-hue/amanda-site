@@ -65,9 +65,11 @@ test('demais campanhas, mensuração e recomendações automáticas ficam preser
   }
 });
 
-test('falha do runtime mantém o candidato sem escrita externa', () => {
-  assert.equal(plan.execution.status, 'not_started');
-  assert.equal(plan.execution.externalWritesPerformed, false);
+test('falha da primeira tentativa permanece histórica e retomada tem recibo', () => {
+  assert.equal(plan.execution.status, 'applied_verified');
+  assert.equal(plan.execution.externalWritesPerformed, true);
+  assert.equal(plan.execution.approvedCommit, 'ba7314888ddb8226a227c72328bf0374c5c3c05a');
+  assert.match(plan.execution.receipt, /PUBLICACAO\.json$/);
   assert.equal(preflight.status, 'blocked_before_google_ads_live_preflight');
   assert.equal(
     preflight.liveGoogleAdsPreflight.status,
@@ -80,7 +82,10 @@ test('falha do runtime mantém o candidato sem escrita externa', () => {
 });
 
 test('monitoramento depende do horário real de ativação e mede downstream', () => {
-  assert.equal(plan.monitoring.activationAt, null);
+  assert.equal(plan.monitoring.activationAt, '2026-09-14T00:04:39Z');
+  assert.equal(plan.monitoring.reviewDates.D7, '2026-09-20');
+  assert.equal(plan.monitoring.reviewDates.D14, '2026-09-27');
+  assert.equal(plan.monitoring.reviewDates.D28, '2026-10-11');
   assert.deepEqual(plan.monitoring.primaryMetrics, [
     'identified and valid contacts from G26LIFT',
     'qualified leads accepted by Google Ads',

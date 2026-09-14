@@ -6,13 +6,13 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
-## 13 de setembro de 2026 — candidato LIFT para Maximizar conversões e R$ 30/dia
+## 13 de setembro de 2026 — piloto LIFT aplicado para Maximizar conversões e R$ 30/dia
 
 - **Decisão canônica:** seção 37 do Norte. Daniel escolheu `G26LIFT`, sua campanha prioritária, para o piloto de Maximizar conversões sem CPA desejado e definiu R$ 30/dia; a sugestão de R$ 47 fica recusada.
-- **Escopo:** somente campanha `24028216444`, com lance Maximizar cliques → Maximizar conversões e orçamento R$ 24 → R$ 30; total esperado R$ 99 → R$ 105/dia. Os outros sete orçamentos/lances e todos os demais objetos ficam preservados.
+- **Escopo:** somente campanha `24028216444`, com lance Maximizar cliques → Maximizar conversões e orçamento R$ 24 → R$ 30; total relido R$ 99 → R$ 105/dia. Os outros sete orçamentos/lances e todos os demais objetos ficam preservados.
 - **Evidência e limite:** a coorte LIFT de 14/08–12/09 tem sete contatos identificados, todos em `Novo`, sem qualificado/consulta. A LEADS registra sete eventos `ready`, um resolvido para LIFT, mas não prova aceite no Google Ads. A baixa amostra exige piloto reversível e leitura downstream.
-- **Estado:** candidato local, sem escrita externa. O runtime do navegador falhou antes do preflight Google Ads; até nova leitura e readback, o estado vigente continua Maximizar cliques e R$ 24/dia, conta em R$ 99/dia.
-- **Revisão/rollback:** integridade imediata/24–48h e D+7/D+14/D+28 a partir da ativação verificada. Restaurar apenas LIFT para Maximizar cliques sem teto e R$ 24/dia diante de configuração divergente, falha de mensuração, gasto anormal ou regressão downstream consistente.
+- **Estado:** aplicado e relido em 13/09 às 21h04–21h05 BRT após autorização do SHA `ba7314888ddb8226a227c72328bf0374c5c3c05a`. O acesso voltou; preflight passou. LIFT está em Maximizar conversões sem CPA, R$ 30/dia, aprendizado; conta R$ 105/dia. A ação principal registra uma conversão entre 14/08 e 12/09, última em 01/09, e aviso de dados recentes; não comprova aceite dos sete ready. O histórico ainda não havia propagado as duas entradas na conferência imediata. Recibo `PUBLICACAO.json` no pacote LIFT preserva a falha anterior e a nova execução.
+- **Revisão/rollback:** integridade em 14/09 e 15/09; D+7 20/09, D+14 27/09 e D+28 11/10, às 21h04 BRT, por Daniel/equipe, sem nova automação. Restaurar apenas LIFT para Maximizar cliques sem teto e R$ 24/dia diante de configuração divergente, falha de mensuração, gasto anormal ou regressão downstream consistente.
 
 ## 13 de setembro de 2026 — contenção de face genérica e exatas cervicais observadas
 
