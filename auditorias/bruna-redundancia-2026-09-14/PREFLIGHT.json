@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-14T21:37:01.211Z",
+  "checkedAt": "2026-09-14T21:38:36.864Z",
   "authenticated": true,
   "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
   "baseline": "6aa854c90a4310d49417bd44",
@@ -41,5 +41,14 @@
       "canonicalEqual": true,
       "sha256": "825aa3d440c995dc2260e2457073e3d478f5f3a680ce92881ef042a359f8ccb3"
     }
-  ]
+  ],
+  "authorization": {
+    "approvedCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+    "approvedAt": "2026-09-14T21:38:36.9902309Z",
+    "approvedBy": "Daniel",
+    "authorization": "Muito redundante nao? Arrume pra nao ser redundante e pra melhorar o comportamento. Pode publicar",
+    "scopeClarification": "Calma, mas é o problema geral de ser repetitivo a principal correção",
+    "noPatientReplay": true,
+    "reference": "Pedido explicito do usuario nesta tarefa; preflight externo passou para o SHA exato em worktree limpo."
+  }
 }

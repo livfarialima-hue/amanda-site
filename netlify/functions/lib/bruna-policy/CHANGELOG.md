@@ -1,6 +1,6 @@
 # Histórico do pacote Bruna
 
-## 2026-09-14.3 — continuidade geral sem repetição (candidato autorizado)
+## 2026-09-14.3 — continuidade geral sem repetição (publicado, ebaa3c0)
 
 - Índice do histórico e guarda de explicações, perguntas respondidas, fórmulas de empatia e ofertas anteriores; não apenas semelhança com a última mensagem.
 - Informação nova primeiro; o exemplo cervical é uma regressão entre vários assuntos.

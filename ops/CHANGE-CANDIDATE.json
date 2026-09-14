@@ -2,19 +2,20 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-REDUNDANCIA-2026-09-14",
   "title": "Continuidade geral da conversa sem repetir explicacoes, perguntas ou convites",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "e74ec28d14a86f0da044fcd7472cf03f28f55707",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Usuario autorizou corrigir repeticao geral e publicar; vincular ao SHA exato no preflight externo."
+    "note": "Correcao geral e publicacao autorizadas pelo usuario; preflight externo vinculado ao commit funcional ebaa3c0a3808643de024bd85336762d56dff063f.",
+    "approvalReference": "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json"
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -83,7 +84,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "commands": [
       "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
       "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
@@ -128,7 +129,8 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0
+      "realMessagesSentByAgent": 0,
+      "productionVerified": true
     }
   },
   "rollback": {
@@ -149,5 +151,14 @@
     ],
     "rollbackRule": "Conter diante de perda de informacao util, repeticao de envio, quebra de takeover ou crescimento de respostas vazias/revisoes sem contexto."
   },
-  "release": {}
+  "release": {
+    "approvedCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+    "netlifyDeployId": "6aa869f3237a3b809a7bdcb2",
+    "appsScriptVersion": 153,
+    "verifiedAt": "2026-09-14T21:43:28.292Z",
+    "receipt": "auditorias/bruna-redundancia-2026-09-14/PUBLICACAO.json",
+    "drivePlanSha256": "540ee4767e88cf613c8d053d3e3356f0fe33a9ce5803137d5d114bda39a58216",
+    "driveManualSha256": "9a8cd48de7dcd2a08bf03a7cc719a0af055049879d04fbac96ca0decc8039ae1",
+    "driveClosedAuditFileId": "1QKi8rn6rXJcjhzLcddBK9ANeP55S5s5F"
+  }
 }

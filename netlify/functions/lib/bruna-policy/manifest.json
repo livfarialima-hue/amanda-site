@@ -17,17 +17,17 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
-    "lastObservedProductionCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
-    "functionalDeployId": "6aa854c90a4310d49417bd44",
-    "lastObservedProductionDeployId": "6aa854c90a4310d49417bd44",
-    "rollbackCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
-    "rollbackDeployId": "6aa81deec1740500082bb22c",
-    "publishedAt": "2026-09-14T20:11:35.866Z",
-    "lastVerifiedAt": "2026-09-14T20:14:08.237Z",
-    "candidateChangeId": "BRUNA-SITE-CONTEXTO-2026-09-14",
+    "functionalCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+    "lastObservedProductionCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
+    "functionalDeployId": "6aa869f3237a3b809a7bdcb2",
+    "lastObservedProductionDeployId": "6aa869f3237a3b809a7bdcb2",
+    "rollbackCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
+    "rollbackDeployId": "6aa854c90a4310d49417bd44",
+    "publishedAt": "2026-09-14T21:41:40.686Z",
+    "lastVerifiedAt": "2026-09-14T21:43:28.292Z",
+    "candidateChangeId": "BRUNA-REDUNDANCIA-2026-09-14",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-14.2"
+    "bundleVersion": "2026-09-14.3"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -35,16 +35,12 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1K6Cbp5sKW2zggKiR4V4azD4elcEKEILA",
+    "driveClosedAuditFileId": "1QKi8rn6rXJcjhzLcddBK9ANeP55S5s5F",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "825aa3d440c995dc2260e2457073e3d478f5f3a680ce92881ef042a359f8ccb3"
+    "driveProjectionSha256": "9a8cd48de7dcd2a08bf03a7cc719a0af055049879d04fbac96ca0decc8039ae1"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
-  "pendingRelease": {
-    "changeId": "BRUNA-REDUNDANCIA-2026-09-14",
-    "bundleVersion": "2026-09-14.3"
-  },
   "replyContinuityContract": "reply-continuity"
 }
