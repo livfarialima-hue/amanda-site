@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-09-14.3 — continuidade geral sem repetição (candidato autorizado)
+
+- Índice do histórico e guarda de explicações, perguntas respondidas, fórmulas de empatia e ofertas anteriores; não apenas semelhança com a última mensagem.
+- Informação nova primeiro; o exemplo cervical é uma regressão entre vários assuntos.
+- Uma revisão quando o rascunho inteiro não progride, compartilhando o timeout original; falha exige humano sem replay.
+- Fatos novos, ressalvas, valores, agenda, tomada humana e envio único preservados.
+
+
 ## 2026-09-14.2 — continuidade site → WhatsApp (publicado, b924bc0)
 
 - Corrige Ref. SITE interpretada como pedido de link e preserva passagem pelo site mesmo com aquisição Google/Meta.

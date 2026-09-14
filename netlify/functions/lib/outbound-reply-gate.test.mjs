@@ -64,6 +64,27 @@ const respond = {
   allowHoldingReply: false,
 };
 
+test("continuity edits reach the provider and durable history once, preserving human recheck", async () => {
+  const blobs = fakeBlobs(); let sent = "", saved = "", checks = 0, sends = 0;
+  const input = { from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-continuity-send",
+    currentText: "Qual o valor da consulta?",
+    recentConversation: [{ role: "assistant", source: "bruna", text: "Na consulta, a Dra. Amanda examina a região e explica possibilidades e limites." }],
+    body: "Na avaliação, a Dra. Amanda observa a região e conversa sobre possibilidades e limites. A consulta custa R$ 500.",
+    conversationAction: respond };
+  const dependencies = { ...blobs,
+    beforeSendImpl: async () => { checks++; return { allowed: true }; },
+    sendYCloudPatientTextImpl: async ({ body }) => { sent = body; sends++; return { status: "completed" }; },
+    recordDurableConversationTurnImpl: async ({ text }) => { saved = text; return { status: "completed" }; } };
+  const result = await sendControlledPatientReply(input, dependencies);
+  assert.equal(result.status, "completed");
+  assert.equal(sent, "A consulta custa R$ 500.");
+  assert.equal(saved, sent);
+  assert.equal(result.body, sent);
+  assert.equal(checks, 2);
+  assert.equal((await sendControlledPatientReply(input, dependencies)).status, "duplicate");
+  assert.equal(sends, 1);
+});
+
 test("an accepted reply with a failed ledger never sends a second WhatsApp message", async () => {
   const blobs = fakeBlobs(); let sends = 0;
   const input = { from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-ledger-gap",
@@ -455,10 +476,10 @@ test("the full lifting range and its URL are blocked when already sent", () => {
   assert.equal(result.reason, "substantially_repeated_reply");
 });
 
-test("an ordinary resource remains blocked when its URL was already shared", () => {
+test("an unsolicited resource remains blocked when its URL was already shared", () => {
   const result = validateOutboundReply({
     body: "Veja novamente: https://draamandaschroeder.com.br/lifting-facial/",
-    currentText: "Pode mandar o link?",
+    currentText: "O que me incomoda é a flacidez.",
     recentConversation: [
       {
         role: "assistant",
@@ -469,6 +490,27 @@ test("an ordinary resource remains blocked when its URL was already shared", () 
     conversationAction: respond,
   });
 
+  assert.equal(result.allowed, false);
+  assert.equal(result.reason, "repeated_resource");
+});
+
+test("an explicitly requested clinic link passes conformance and final validation even when identical", () => {
+  const body = "Claro: https://draamandaschroeder.com.br/lifting-facial/";
+  const input = { body, currentText: "Pode mandar o link?",
+    recentConversation: [{ role: "assistant", source: "bruna", text: body }],
+    conversationAction: respond };
+  const conformed = conformOutboundReplyToContract(input);
+  assert.equal(conformed, body);
+  assert.equal(validateOutboundReply({ ...input, body: conformed }).allowed, true);
+});
+
+test("a clinic-link request does not authorize repetition of a foreign resource", () => {
+  const result = validateOutboundReply({
+    body: "Veja novamente: https://example.org/material/",
+    currentText: "Pode mandar o link?",
+    recentConversation: [{ role: "assistant", source: "bruna", text: "Material: https://example.org/material/" }],
+    conversationAction: respond,
+  });
   assert.equal(result.allowed, false);
   assert.equal(result.reason, "repeated_resource");
 });

@@ -40,6 +40,7 @@ const PURE_POLICY_MODULES = [
   "netlify/functions/lib/automation-mode.mjs",
   "netlify/functions/lib/marketing-prefill.mjs",
   "netlify/functions/lib/procedure-context.mjs",
+  "netlify/functions/lib/reply-continuity.mjs",
 ];
 
 function importedModuleFor(source, importedName) {

@@ -21,6 +21,7 @@ import {
   CONTEXT_REOPEN_CODE,
 } from "./semantic-reply-policy.mjs";
 import { approvedLiftingFacialFacts } from "./lifting-information.mjs";
+import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -958,7 +959,9 @@ export async function runOpenAIShadow(
       DEFAULT_REASONING_EFFORT,
   );
   const controller = new AbortController();
+  const startedAt = Date.now();
   const timeout = setTimeout(() => controller.abort(), OPENAI_TIMEOUT_MS);
+  let continuityFallback = null;
   const normalizedConversation = normalizeRecentConversation(
     recentConversation,
   );
@@ -995,7 +998,7 @@ export async function runOpenAIShadow(
           });
 
   try {
-    const response = await fetchImpl(OPENAI_RESPONSES_URL, {
+    const request = {
       method: "POST",
       headers: {
         authorization: `Bearer ${apiKey}`,
@@ -1040,6 +1043,7 @@ export async function runOpenAIShadow(
             previousStateIsAdvisory: true,
           },
           recentConversation: normalizedConversation,
+          replyContinuity: buildReplyContinuityContext({ currentMessage: text, recentConversation: normalizedConversation }),
           currentMessage: limitUserText(text),
         }),
         text: {
@@ -1053,7 +1057,8 @@ export async function runOpenAIShadow(
         },
       }),
       signal: controller.signal,
-    });
+    };
+    const response = await fetchImpl(OPENAI_RESPONSES_URL, request);
 
     if (!response.ok) {
       return result("failed", {
@@ -1073,7 +1078,7 @@ export async function runOpenAIShadow(
       });
     }
 
-    return parseOpenAIShadowResponse(responseData, model, {
+    const parseOptions = {
       deterministicUrgent,
       currentMessage: text,
       patientProfileName,
@@ -1089,8 +1094,40 @@ export async function runOpenAIShadow(
       humanContextContinuationCandidate:
         normalizedPolicyHints?.humanContextContinuationCandidate === true,
       conversionExperienceEnabled,
-    });
+    };
+    const parsed = parseOpenAIShadowResponse(responseData, model, parseOptions);
+    if (!conversionExperienceEnabled || parsed.status !== "completed" ||
+        parsed.decision?.route !== "standard_reply" || parsed.decision.confidence !== "high" ||
+        !parsed.decision.automaticAllowed || parsed.decision.urgent) return parsed;
+
+    const assess = value => assessReplyContinuity({ body: value, currentMessage: text, recentConversation: normalizedConversation });
+    const continuity = assess(parsed.decision.suggestedReply);
+    if (!continuity.needsRevision) return { ...parsed, decision: { ...parsed.decision, suggestedReply: continuity.body } };
+
+    continuityFallback = { ...parsed, decision: { ...parsed.decision, route: "human_review", automaticAllowed: false,
+      suggestedReply: "", reviewReason: "reply_continuity_no_progress",
+      conversationState: { ...parsed.decision.conversationState, owner: "human_team",
+        nextExpectedAction: "revisar a resposta repetitiva e responder ao assunto pendente" } } };
+    // One revision shares the original eight-second deadline. Never restart
+    // the timeout, authorize a send, or replay an inbound event to fix style.
+    if (controller.signal.aborted || Date.now() - startedAt > OPENAI_TIMEOUT_MS - 1500) return continuityFallback;
+    const revisionRequest = JSON.parse(request.body);
+    revisionRequest.input = JSON.stringify({ ...JSON.parse(revisionRequest.input), continuityRevision: {
+      previousDraft: parsed.decision.suggestedReply,
+      repeatedElements: continuity.removed,
+      instruction: "Reescreva a resposta a partir da informação nova da paciente. Não repita a explicação nem acrescente fatos, promessas, indicação ou agenda sem base. Se não houver resposta útil e segura, mantenha revisão humana.",
+    } });
+    const revisedResponse = await fetchImpl(OPENAI_RESPONSES_URL, { ...request, body: JSON.stringify(revisionRequest) });
+    if (!revisedResponse.ok) return continuityFallback;
+    const revised = parseOpenAIShadowResponse(await revisedResponse.json(), model, parseOptions);
+    if (revised.status !== "completed") return continuityFallback;
+    if (revised.decision?.route !== "standard_reply" || !revised.decision.automaticAllowed || revised.decision.urgent) return revised;
+    if (revised.decision.confidence !== "high") return continuityFallback;
+    const revisedContinuity = assess(revised.decision.suggestedReply);
+    if (revisedContinuity.needsRevision || !revisedContinuity.body) return continuityFallback;
+    return { ...revised, decision: { ...revised.decision, suggestedReply: revisedContinuity.body } };
   } catch (error) {
+    if (continuityFallback) return continuityFallback;
     return result("failed", {
       httpStatus: null,
       errorCode: error?.name === "AbortError" ? "timeout" : "request_failed",

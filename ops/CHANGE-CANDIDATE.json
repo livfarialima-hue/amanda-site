@@ -1,51 +1,50 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-SITE-CONTEXTO-2026-09-14",
-  "title": "Continuar a conversa no WhatsApp sem devolver a paciente a pagina de origem",
-  "status": "published_verified",
-  "baseCommit": "6ac89db78c047a52e0d4697debeace27ae87c8c5",
+  "changeId": "BRUNA-REDUNDANCIA-2026-09-14",
+  "title": "Continuidade geral da conversa sem repetir explicacoes, perguntas ou convites",
+  "status": "tested_local",
+  "baseCommit": "e74ec28d14a86f0da044fcd7472cf03f28f55707",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Ajuste e publicação autorizados pelo usuário; preflight externo vinculado ao commit funcional b924bc0854a79929f09136936b90e9457c1c1288.",
-    "approvalReference": "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json"
+    "note": "Usuario autorizou corrigir repeticao geral e publicar; vincular ao SHA exato no preflight externo."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "files": [
-      "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json",
-      "auditorias/bruna-site-contexto-2026-09-14/PUBLICACAO.json",
-      "auditorias/bruna-site-contexto-2026-09-14/RELATORIO.md",
+      "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json",
+      "auditorias/bruna-redundancia-2026-09-14/PUBLICACAO.json",
+      "auditorias/bruna-redundancia-2026-09-14/RELATORIO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/conversation-action-controller.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
       "netlify/functions/lib/conversation-guidelines.test.mjs",
       "netlify/functions/lib/openai-shadow.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/site-content.mjs",
-      "netlify/functions/lib/site-content.test.mjs",
-      "netlify/functions/lib/site-continuity.test.mjs",
+      "netlify/functions/lib/reply-continuity.integration.test.mjs",
+      "netlify/functions/lib/reply-continuity.mjs",
+      "netlify/functions/lib/reply-continuity.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "scripts/check-journey-module-boundaries.mjs"
     ],
     "contracts": [
       "change-governance",
-      "website-conversation-continuity"
+      "reply-continuity"
     ]
   },
   "impact": {
@@ -55,77 +54,72 @@
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/human-resume-policy.mjs",
       "netlify/functions/lib/human-resume-processor.mjs",
+      "netlify/functions/lib/inbound-burst-context.mjs",
       "netlify/functions/lib/openai-shadow.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/patient-replies.mjs",
       "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/scheduled-followup.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/inbound-burst-context.mjs"
+      "netlify/functions/ycloud-webhook.mjs"
     ],
     "preservedInvariants": [
-      "Origem comercial e passagem pelo site coexistem sem reclassificar dados de atribuicao",
-      "Prefill nao e pedido de link nem prontidao para agendamento",
-      "Pedido explicito permite pagina pertinente ou reenvio; link nao substitui resposta",
-      "Somente frase de pagina repetida nao solicitada e removida; texto vazio continua bloqueado",
-      "Takeover, opt-out, precos aprovados, identidade, duplicidade e agenda permanecem nos gates existentes",
-      "Sem replay, mensagem real de teste ou alteracao retroativa de paciente"
+      "Cada turno aproveita o historico sem inventar fatos ausentes",
+      "Pergunta ou explicacao repetida e preservada quando explicitamente solicitada e permitida pelo contrato",
+      "Nunca remover um fato novo, valor, prazo ou ressalva clinica necessaria como estilo",
+      "Faixas cirurgicas nao podem ser reenviadas por excecao de repeticao",
+      "Uma revisao no maximo dentro do timeout original; sem loop, replay ou envio vazio",
+      "Tomada humana, identidade, consentimento, agenda, precos aprovados e deduplicacao continuam nos gates existentes",
+      "Texto conformado enviado e gravado e identico"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "website-conversation-continuity",
+        "contract": "reply-continuity",
         "system": "Netlify/LEADS/Drive",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-14T20:07:38.511Z",
-        "reference": "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json",
-        "limitation": "Preflight confirma caso e deploy atual; nao demonstra ganho de conversao."
+        "checkedAt": "2026-09-14T21:37:01.211Z",
+        "reference": "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json",
+        "limitation": "O caso confirma repeticao; testes sinteticos e verificacao do deploy nao medem ganho de conversao."
       }
     ]
   },
   "verification": {
-    "status": "passed_local_and_production",
+    "status": "passed_local",
     "commands": [
-      "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
-      "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
+      "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
+      "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "git diff --check",
-      "npm.cmd run change:check",
-      "npm.cmd run architecture:check",
-      "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "git diff --check",
       "npm.cmd run ops:check"
     ],
-    "completedAt": "2026-09-14T20:08:39.673Z",
+    "completedAt": "2026-09-14T21:38:05.360Z",
     "results": {
       "fullSuite": {
-        "tests": 1551,
-        "passed": 1551,
+        "tests": 1573,
+        "passed": 1573,
         "failed": 0,
-        "outputSha256": "70791d5a2769b39a4123c16c3ea9722bd319cd1a21d4c92b1b7d8c10296bedc1"
+        "outputSha256": "fbed821436852b79d9157cb6bbc97d06e77d71f767ea5f332f5fb51e923da032"
       },
       "focused": {
-        "tests": 30,
-        "passed": 30,
+        "tests": 19,
+        "passed": 19,
         "failed": 0,
-        "outputSha256": "87450f2c4e349b0f1c7a2d8ddd7d52e5a67c31c7221408c0e6b6fb9251030fef"
+        "outputSha256": "19a97fda38a4415ea53989601afcfe58f20df3615a96f30cc53bdfe29677f09e"
       },
       "crossConsumer": {
-        "tests": 360,
-        "passed": 360,
+        "tests": 399,
+        "passed": 399,
         "failed": 0,
-        "outputSha256": "e9dc444b24812943bfdb28ab45953aae84e2eca820da2a2f44429a41cdf5c097"
+        "outputSha256": "c9509923571df511c711b13bf92bb1ee2f1ac53c79995dee36f2a6b2e1c577c9"
       },
       "baselineReproduction": {
-        "tests": 11,
-        "passed": 1,
-        "failed": 10,
-        "outputSha256": "4f3005b35c6f5c2354d107190fd814dab943eea98393539c1f464a90286e24cf"
+        "tests": 10,
+        "passed": 2,
+        "failed": 8,
+        "outputSha256": "0fbda0083aef60f2df3607453c51388152fc499e712206008a4a57e1caa318c6"
       },
       "changeCheck": "OK",
       "architectureCheck": "OK",
@@ -134,36 +128,26 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0,
-      "productionVerified": true
+      "realMessagesSentByAgent": 0
     }
   },
   "rollback": {
-    "local": "Reverter apenas o candidato em worktree isolado.",
-    "production": "Restaurar o deploy 6aa81deec1740500082bb22c; preservar dados, mensagens e Apps Script v153.",
-    "verifiedNetlifyDeployId": "6aa81deec1740500082bb22c",
-    "verifiedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+    "local": "Reverter apenas este candidato em worktree isolado.",
+    "production": "Restaurar deploy 6aa854c90a4310d49417bd44; preservar dados e Apps Script v153.",
+    "verifiedNetlifyDeployId": "6aa854c90a4310d49417bd44",
+    "verifiedCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
     "appsScriptVersion": 153
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Sondas apos ativacao; revisoes em 16/09 e 21/09 as 17h30 BRT",
+    "window": "Sondas apos ativacao e revisoes em 16/09 e 21/09 as 19h BRT",
     "metrics": [
-      "Links repetidos sem pedido",
-      "Pergunta pertinente e duvida respondida",
-      "Correcao humana e silencio indevido",
-      "Contatos qualificados e consultas com evidencia propria"
+      "Explicacoes, perguntas e convites repetidos",
+      "Respostas uteis apos detalhe novo",
+      "Revisoes por falta de progresso e latencia",
+      "Silencio indevido, tomada humana, duplicidade e consultas com evidencia propria"
     ],
-    "rollbackRule": "Conter diante de envio indevido, perda de resposta util ou regressao de takeover/agenda."
+    "rollbackRule": "Conter diante de perda de informacao util, repeticao de envio, quebra de takeover ou crescimento de respostas vazias/revisoes sem contexto."
   },
-  "release": {
-    "approvedCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
-    "netlifyDeployId": "6aa854c90a4310d49417bd44",
-    "appsScriptVersion": 153,
-    "verifiedAt": "2026-09-14T20:14:08.237Z",
-    "receipt": "auditorias/bruna-site-contexto-2026-09-14/PUBLICACAO.json",
-    "drivePlanSha256": "b7eb61f063699d7d63bb3b08a0cdcdd9ec16c4827fb1f199946ff3c359c985bd",
-    "driveManualSha256": "825aa3d440c995dc2260e2457073e3d478f5f3a680ce92881ef042a359f8ccb3",
-    "driveClosedAuditFileId": "1K6Cbp5sKW2zggKiR4V4azD4elcEKEILA"
-  }
+  "release": {}
 }

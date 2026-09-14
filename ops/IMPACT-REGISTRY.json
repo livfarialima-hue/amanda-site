@@ -1226,6 +1226,75 @@
         "Google Drive"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "reply-continuity",
+      "ownerFiles": [
+        "netlify/functions/lib/reply-continuity.mjs"
+      ],
+      "consumerFiles": [
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/semantic-reply-policy.mjs",
+        "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/human-resume-policy.mjs",
+        "netlify/functions/lib/human-resume-processor.mjs",
+        "netlify/functions/lib/inbound-burst-context.mjs",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/human-resume.mjs"
+      ],
+      "coveredPaths": [
+        "auditorias/bruna-redundancia-2026-09-14/PREFLIGHT.json",
+        "auditorias/bruna-redundancia-2026-09-14/PUBLICACAO.json",
+        "auditorias/bruna-redundancia-2026-09-14/RELATORIO.md",
+        "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "docs/estrategia-abordagem-bruna.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/bruna-conversion-experience.mjs",
+        "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+        "netlify/functions/lib/bruna-policy/manifest.json",
+        "netlify/functions/lib/bruna-policy/rules.jsonl",
+        "netlify/functions/lib/conversation-guidelines.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/reply-continuity.integration.test.mjs",
+        "netlify/functions/lib/reply-continuity.mjs",
+        "netlify/functions/lib/reply-continuity.test.mjs",
+        "ops/CHANGE-CANDIDATE.json",
+        "ops/IMPACT-REGISTRY.json",
+        "scripts/check-journey-module-boundaries.mjs"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/reply-continuity.test.mjs",
+        "netlify/functions/lib/reply-continuity.integration.test.mjs",
+        "netlify/functions/lib/openai-shadow.test.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/conversation-action-controller.test.mjs",
+        "netlify/functions/lib/bruna-conversion-experience.test.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/patient-replies.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/human-resume-policy.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs",
+        "netlify/functions/lib/semantic-reply-policy.test.mjs",
+        "netlify/functions/lib/bruna-conversation-evals.test.mjs",
+        "netlify/functions/lib/site-continuity.test.mjs",
+        "netlify/functions/lib/site-content.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
+        "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      ],
+      "liveSystems": [
+        "Netlify",
+        "LEADS",
+        "Google Drive"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import { isUnrequestedRepeatedSiteUrl } from "./site-content.mjs";
+import { isDirectSiteRequest, isUnrequestedRepeatedSiteUrl } from "./site-content.mjs";
+import { assessReplyContinuity, patientRequestsRepetition } from "./reply-continuity.mjs";
 import { getStore } from "@netlify/blobs";
 import {
   CONVERSATION_ACTIONS,
@@ -11,7 +12,7 @@ import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
   markConversationLedgerAccepted, completeConversationLedgerReceipt } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
-import { containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts } from "./surgical-price-policy.mjs";
+import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   classifyBrunaCta,
@@ -120,7 +121,8 @@ export function conformOutboundReplyToContract({
     );
   }
 
-  return reply;
+  const continuity = assessReplyContinuity({ body: reply, currentMessage: currentText, recentConversation });
+  return continuity.needsRevision ? "" : continuity.body;
 }
 
 function conversationContainsFacialPriceGuide(recentConversation) {
@@ -626,10 +628,19 @@ export function validateOutboundReply({
     return { allowed: false, reason: semanticUnsafeReason };
   }
 
+  if (assessReplyContinuity({ body: reply, currentMessage: currentText, recentConversation }).needsRevision) {
+    return { allowed: false, reason: "reply_continuity_no_progress" };
+  }
+
   const previousAssistant = lastAssistantTurn(recentConversation);
   const previousText = String(previousAssistant?.text || "");
+  const replyUrls = urls(reply);
+  const requestedSiteResource = isDirectSiteRequest(currentText) &&
+    replyUrls.length > 0 && replyUrls.every(url =>
+      /^https:\/\/(?:www\.)?draamandaschroeder\.com\.br(?:\/|$)/i.test(url));
   if (
-    previousText &&
+    previousText && ((!patientRequestsRepetition(currentText) && !requestedSiteResource) ||
+      Object.values(APPROVED_SURGICAL_RANGE_PATTERNS).some(pattern => pattern.test(reply))) &&
     (
       normalizedText(previousText) === normalizedText(reply) ||
       similarity(previousText, reply) >= 0.82
@@ -646,10 +657,10 @@ export function validateOutboundReply({
       .flatMap((turn) => urls(turn?.text))
       .map((url) => url.toLowerCase()),
   );
-  const repeatedUrls = urls(reply).filter((url) =>
+  const repeatedUrls = replyUrls.filter((url) =>
     previousUrls.has(url.toLowerCase()),
   );
-  if (repeatedUrls.length > 0) {
+  if (repeatedUrls.length > 0 && !requestedSiteResource) {
     return {
       allowed: false,
       reason: "repeated_resource",

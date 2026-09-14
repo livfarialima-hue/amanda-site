@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-09-14.2",
-  "promptVersion": "bruna-concierge-2026-09-14.2",
+  "bundleVersion": "2026-09-14.3",
+  "promptVersion": "bruna-concierge-2026-09-14.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-14.2",
+  "knowledgeSnapshot": "kb-2026-09-14.3",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -41,5 +41,10 @@
     "driveProjectionSha256": "825aa3d440c995dc2260e2457073e3d478f5f3a680ce92881ef042a359f8ccb3"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
-  "siteContinuityContract": "website-conversation-continuity"
+  "siteContinuityContract": "website-conversation-continuity",
+  "pendingRelease": {
+    "changeId": "BRUNA-REDUNDANCIA-2026-09-14",
+    "bundleVersion": "2026-09-14.3"
+  },
+  "replyContinuityContract": "reply-continuity"
 }

@@ -232,6 +232,9 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
 });
 
 test("playbook uses approved site content at a strategic moment", () => {
+  assert.match(CONVERSATION_GUIDELINES, /Não troque apenas as palavras para repetir o mesmo conteúdo/);
+  assert.match(CONVERSATION_GUIDELINES, /não reiniciam o assunto/);
+  assert.match(CONVERSATION_GUIDELINES, /nunca remova uma ressalva necessária/);
   assert.match(CONVERSATION_GUIDELINES, /passagem pelo site mesmo quando source é Google ou Meta/);
   assert.match(CONVERSATION_GUIDELINES, /Não presuma que a pessoa leu toda a página/);
   assert.match(CONVERSATION_GUIDELINES, /sem perguntar novamente/);

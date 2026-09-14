@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-09-14T21:37:01.211Z",
+  "authenticated": true,
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "baseline": "6aa854c90a4310d49417bd44",
+  "baselineCommit": "b924bc0854a79929f09136936b90e9457c1c1288",
+  "functions": 13,
+  "schedules": 5,
+  "staticFiles": 192,
+  "mode": [
+    {
+      "context": "production",
+      "value": "active"
+    }
+  ],
+  "appsScript": {
+    "version": 153,
+    "unchanged": true,
+    "receipt": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
+  },
+  "case": {
+    "source": "LEADS _WHATSAPP_MENSAGENS e anexo do usuario",
+    "observedAt": "2026-09-14T21:14:00Z",
+    "repeatedExplanations": 3,
+    "authorship": "bruna",
+    "patientReplySplitInTwo": true
+  },
+  "scopeClarification": "O usuario definiu repeticao geral como prioridade; caso cervical e apenas uma regressao sintetica.",
+  "conversionExperience": "enabled in production",
+  "privacy": "Sem nomes, telefones, identificadores de pacientes ou transcricoes brutas.",
+  "driveBefore": [
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "canonicalEqual": true,
+      "sha256": "b7eb61f063699d7d63bb3b08a0cdcdd9ec16c4827fb1f199946ff3c359c985bd"
+    },
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "canonicalEqual": true,
+      "sha256": "825aa3d440c995dc2260e2457073e3d478f5f3a680ce92881ef042a359f8ccb3"
+    }
+  ]
+}
