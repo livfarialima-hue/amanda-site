@@ -127,11 +127,13 @@ export async function processInboundRecoveryJob(
   }
 
   if (job.attempts < MAX_RECOVERY_ATTEMPTS) {
-    await rescheduleInboundRecoveryImpl(job, {
+    const reschedule = await rescheduleInboundRecoveryImpl(job, {
       delayMs: retryDelay(job.attempts),
     });
     return {
-      status: "rescheduled",
+      status: reschedule?.status === "completed"
+        ? "rescheduled"
+        : `reschedule_${reschedule?.status || "failed"}`,
       httpStatus: response?.status || null,
       aiActiveStatus: activeStatus || "unknown",
       leadRouted: body?.leadRouted === true,
@@ -157,11 +159,13 @@ export async function processInboundRecoveryJob(
     };
   }
 
-  await rescheduleInboundRecoveryImpl(job, {
+  const reschedule = await rescheduleInboundRecoveryImpl(job, {
     delayMs: 5 * 60_000,
   });
   return {
-    status: "alert_failed_rescheduled",
+    status: reschedule?.status === "completed"
+      ? "alert_failed_rescheduled"
+      : `alert_failed_reschedule_${reschedule?.status || "failed"}`,
     emailStatus: email?.status || "failed",
     whatsappAlertStatus: alert?.status || "unknown",
   };

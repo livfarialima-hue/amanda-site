@@ -1,0 +1,66 @@
+{
+  "status": "read_only_baseline_verified",
+  "checkedAt": "2026-09-14T15:36:00Z",
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "productionDeployId": "6aa7e218d56b0f48420dcd98",
+  "productionCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+  "appsScriptVersion": 153,
+  "appsScriptReceiptInherited": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json",
+  "privateEvidence": "Logs, evento e registro persistido examinados em diretório temporário privado; nenhum identificador ou transcrição de paciente neste recibo.",
+  "timelineUTC": [
+    {
+      "at": "2026-09-14T14:53:14Z",
+      "fact": "Mensagem inbound registrada na LEADS; primeira resposta não concluída"
+    },
+    {
+      "at": "2026-09-14T14:53:46Z",
+      "fact": "Timeout Sheets seguido de retry/timeout; registro durável existe"
+    },
+    {
+      "at": "2026-09-14T15:02:12Z",
+      "fact": "Recuperação falha por timeout OpenAI; log diz rescheduled sem conferir a escrita"
+    },
+    {
+      "at": "2026-09-14T15:27:12Z",
+      "fact": "Resposta na LEADS com origem equipe_humana"
+    },
+    {
+      "at": "2026-09-14T15:29:42Z",
+      "fact": "Mesmo evento pendente com createdAt reiniciado, attempts=0 e claim vazio"
+    }
+  ],
+  "correlationLimitation": "Vínculo entre log anonimizado e caso por horário e atributos operacionais; o estado durável foi consultado pela chave do evento.",
+  "authorization": {
+    "source": "Mensagem do usuário nesta tarefa: Corrija a causa e publique",
+    "scope": "Correção da recuperação e publicação; sem replay ou mensagem a pacientes"
+  },
+  "rollbackReady": true,
+  "live": {
+    "checkedAt": "2026-09-14T15:45:20.049Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aa7e218d56b0f48420dcd98",
+    "baselineCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "functions": 12,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ],
+    "appsScript": {
+      "version": 153,
+      "unchanged": true,
+      "receipt": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
+    }
+  },
+  "latestCaseRead": {
+    "checkedAt": "2026-09-14T15:42:00Z",
+    "pending": false,
+    "completed": true,
+    "outcome": "human_takeover",
+    "completedAt": "2026-09-14T15:29:57.968Z"
+  }
+}

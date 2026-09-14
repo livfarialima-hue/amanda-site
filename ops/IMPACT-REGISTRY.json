@@ -152,7 +152,10 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
-        "scripts/run-tests.mjs"
+        "scripts/run-tests.mjs",
+        "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json",
+        "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json",
+        "auditorias/bruna-entrada-recuperacao-2026-09-14/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -1094,6 +1097,57 @@
         "Uma sugestao por telefone e aniversario; somente no dia; respeitar recusa, nascimento confiavel e dispensa persistida.",
         "Outros cuidados continuam com aprovacao individual, mesma fila e validacao de conversa e Calendar."
       ]
+    },
+    {
+      "id": "durable-storage-conditional-writes",
+      "ownerFiles": [
+        "package.json",
+        "package-lock.json"
+      ],
+      "consumerFiles": [
+        "netlify/functions/lib/appointment-review-store.mjs",
+        "netlify/functions/lib/business-number-registry.mjs",
+        "netlify/functions/lib/attribution-journey-store.mjs",
+        "netlify/functions/lib/external-professional-context.mjs",
+        "netlify/functions/lib/human-resume-queue.mjs",
+        "netlify/functions/lib/conversation-memory.mjs",
+        "netlify/functions/lib/conversation-ledger.mjs",
+        "netlify/functions/lib/inbound-recovery.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/patient-reply-throttle.mjs",
+        "netlify/functions/lib/review-alert-throttle.mjs",
+        "netlify/functions/lib/reply-debounce.mjs",
+        "netlify/functions/lib/scheduled-care.mjs",
+        "netlify/functions/ycloud-recovery.mjs",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/scheduled-followup.mjs",
+        "netlify/functions/appointment-reminder.mjs"
+      ],
+      "coveredPaths": [
+        "package.json",
+        "package-lock.json",
+        "netlify/functions/lib/netlify-blobs-contract.test.mjs",
+        "netlify/functions/lib/ycloud-recovery.test.mjs",
+        "netlify/functions/ycloud-recovery.mjs",
+        "docs/whatsapp-clinica-liv-operacao.md"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/netlify-blobs-contract.test.mjs",
+        "netlify/functions/lib/inbound-recovery.test.mjs",
+        "netlify/functions/lib/ycloud-recovery.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
+        "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+        "npm.cmd test"
+      ],
+      "liveSystems": [
+        "Netlify functions",
+        "Netlify Blobs",
+        "LEADS canonical read-only"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

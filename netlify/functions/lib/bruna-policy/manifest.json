@@ -39,5 +39,6 @@
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
     "driveProjectionSha256": "75fea9424bbff9c54a6413986c5c55a087ee9f04573c3e4ec87653553f6317eb"
-  }
+  },
+  "reliabilityContract": "durable-storage-conditional-writes"
 }

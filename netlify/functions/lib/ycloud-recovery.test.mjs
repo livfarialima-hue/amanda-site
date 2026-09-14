@@ -9,6 +9,27 @@ test("recovery checks the fallback queue every five minutes", () => {
   assert.equal(config.schedule, "*/5 * * * *");
 });
 
+for (const attempts of [1, 3]) {
+  for (const writeStatus of ["failed", "superseded", "skipped"]) {
+    test(`recovery reports ${writeStatus} instead of claiming reschedule at attempt ${attempts}`, async () => {
+      const result = await processInboundRecoveryJob({
+        eventId: "synthetic-lost-claim", phone: "+5511900000000", attempts,
+        rawBody: "{}", signature: "synthetic-signature", origin: "https://example.test",
+        queueKey: "pending/synthetic-lost-claim", claimToken: "old-claim",
+      }, {
+        getLatestInboundReplyMarkerImpl: async () => ({ status: "completed", found: false }),
+        processImpl: async () => Response.json({ leadRecorded: true, automaticWorkFinished: false,
+          aiActiveStatus: "failed" }),
+        rescheduleInboundRecoveryImpl: async () => ({ status: writeStatus }),
+        completeInboundRecoveryImpl: async () => assert.fail("Unfinished work must not complete"),
+        sendReviewAlertEmailCopyImpl: async () => ({ status: "failed" }),
+        sendYCloudReviewAlertImpl: async () => ({ status: "failed" }),
+      });
+      assert.equal(result.status, `${attempts === 3 ? "alert_failed_" : ""}reschedule_${writeStatus}`);
+    });
+  }
+}
+
 test("recovery remains pending until the lead reaches Sheets", async () => {
   let completed = false;
   let rescheduled = false;
