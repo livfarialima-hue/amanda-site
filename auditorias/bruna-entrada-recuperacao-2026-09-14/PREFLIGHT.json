@@ -62,5 +62,178 @@
     "completed": true,
     "outcome": "human_takeover",
     "completedAt": "2026-09-14T15:29:57.968Z"
+  },
+  "phaseOne": {
+    "approval": {
+      "approvedCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
+      "approvedAt": "2026-09-14T15:47:18.587Z",
+      "approvedBy": "Daniel",
+      "approvalReference": "Mensagem do usuario nesta tarefa: Corrija a causa e publique",
+      "scope": "Hotfix de recuperacao, verificacao e ativacao; nenhum replay a paciente",
+      "livePreflightAt": "2026-09-14T15:47:18.451Z",
+      "livePreflightReference": "C:/Users/danie/AppData/Local/Temp/bruna-entrada-20260914/live-preflight.json"
+    },
+    "active": {
+      "verifiedAt": "2026-09-14T15:53:24.771Z",
+      "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+      "approvedCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
+      "deployId": "6aa8180f6bc83b386142c5fc",
+      "mode": "active",
+      "publishedAt": "2026-09-14T15:52:15.243Z",
+      "functions": [
+        {
+          "name": "appointment-reminder",
+          "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "appointment-review",
+          "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "attribution-journey",
+          "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "attribution-journey-purge",
+          "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "classify-leads",
+          "digest": "520faa417462e6c22e1d14d6dd7863cc67a880b2d5669e6ee6e1e6ad65076afe",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "classify-leads-background",
+          "digest": "1e80d94d83e5c4b5d1d7f520abcec0283f902082bc4ae2c3ea0f4a13fd424c7a",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "human-resume",
+          "digest": "3a5074eed51b906c7a97c365cdfce5eb90acc29cccfb6b14dcc501813f3893fb",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "post-consult-followup",
+          "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "scheduled-followup",
+          "digest": "64c478350d7980dad504f44eab1bc6f9bffcd90e89f0c79e49c8712dbd2635f4",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "synthetic-integration-health",
+          "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "ycloud-recovery",
+          "digest": "7e1fdf1201d455c04d6ad31862a897d3544c1af73d6aa93aedc14c8d939a0133",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "ycloud-webhook",
+          "digest": "b42c38e84b1c1ccf461ee4193f95d4e3c378281452567b3b54e610a3e480d229",
+          "runtime": "nodejs24.x"
+        }
+      ],
+      "schedules": [
+        {
+          "cron": "17 6 * * *",
+          "name": "attribution-journey-purge"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "classify-leads"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "human-resume"
+        },
+        {
+          "cron": "17 12 * * *",
+          "name": "synthetic-integration-health"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "ycloud-recovery"
+        }
+      ],
+      "staticFilesUnchanged": 192,
+      "probes": [
+        {
+          "name": "canonical",
+          "status": 200,
+          "automationMode": "active",
+          "passed": true
+        },
+        {
+          "name": "immutable",
+          "status": 200,
+          "automationMode": "active",
+          "passed": true
+        },
+        {
+          "name": "signature",
+          "status": 401,
+          "passed": true
+        },
+        {
+          "name": "followup-auth",
+          "status": 401,
+          "passed": true
+        }
+      ],
+      "realMessagesSentByAgent": 0
+    },
+    "storageProbe": {
+      "at": "2026-09-14T15:47:58.881Z",
+      "kind": "synthetic_technical_key_outside_pending_namespace",
+      "patientData": false,
+      "networkWrites": 5,
+      "onlyIfNewRejected": true,
+      "concurrentOwners": 1,
+      "readbackOwner": "worker-b",
+      "deleted": true
+    },
+    "failedActivationDeploy": "6aa8178be2da9e52ef7d3079",
+    "failure": "Netlify internal HTTP 500 during deployment; same SHA retried"
+  },
+  "phaseTwo": {
+    "live": {
+      "checkedAt": "2026-09-14T16:06:25.529Z",
+      "authenticated": true,
+      "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+      "baseline": "6aa8180f6bc83b386142c5fc",
+      "baselineCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
+      "functions": 12,
+      "schedules": 5,
+      "staticFiles": 192,
+      "mode": [
+        {
+          "context": "production",
+          "value": "active"
+        }
+      ],
+      "appsScript": {
+        "version": 153,
+        "unchanged": true,
+        "receipt": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
+      }
+    },
+    "finding": "Scheduled handler performs slow network/model work despite the 30-second platform ceiling",
+    "evidence": {
+      "priorScheduledReportsAtThirtySeconds": true,
+      "firstCycleObservedAt": "2026-09-14T15:55:08.273Z",
+      "pendingJobs": 3,
+      "allClaimsStillProcessingAt": "2026-09-14T15:57:35.215Z",
+      "subsequentAttemptIncrementObserved": true
+    },
+    "limitation": "New logs API returned empty lines; the state persisted by the scheduler and prior duration reports are the usable evidence."
   }
 }

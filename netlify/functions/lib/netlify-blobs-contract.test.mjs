@@ -94,6 +94,8 @@ test("provider retry and recovery self-registration preserve the claimed job aft
   const jobs = claims.flatMap((claim) => claim.jobs);
   assert.equal(jobs.length, 1);
   const job = jobs[0];
+  assert.ok(job.claimUntil > now + 15 * 60_000,
+    "An overlapping schedule cannot steal a lease from a still-running background invocation");
   const duplicate = await registerInboundRecovery(incoming, { ...options, now: now + 1_000 });
   assert.deepEqual(duplicate, { status: "duplicate", reason: "already_pending" });
   const result = await processInboundRecoveryJob(job, {

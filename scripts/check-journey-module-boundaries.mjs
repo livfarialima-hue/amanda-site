@@ -7,6 +7,14 @@ const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const AUTOMATION_MODE_CONSUMERS = [
   {
+    path: "netlify/functions/ycloud-recovery.mjs",
+    names: ["allowsPatientSideEffects"],
+  },
+  {
+    path: "netlify/functions/ycloud-recovery-background.mjs",
+    names: ["allowsPatientSideEffects"],
+  },
+  {
     path: "netlify/functions/ycloud-webhook.mjs",
     names: ["normalizeAutomationMode"],
   },

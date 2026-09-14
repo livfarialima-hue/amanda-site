@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-ENTRADA-RECUPERACAO-2026-09-14",
-  "title": "Preservar exclusividade e continuidade da recuperação após timeout",
+  "title": "Preservar exclusividade e executar recuperacao longa fora do limite do agendamento",
   "status": "tested_local",
   "baseCommit": "3932b5ca73090ff636362a6df160383565579db4",
   "authorization": {
@@ -14,7 +14,7 @@
   "risk": {
     "level": "critical",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": true
   },
   "scope": {
@@ -22,17 +22,22 @@
       "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json",
       "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json",
       "auditorias/bruna-entrada-recuperacao-2026-09-14/RELATORIO.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+      "netlify/functions/lib/inbound-recovery.mjs",
       "netlify/functions/lib/netlify-blobs-contract.test.mjs",
       "netlify/functions/lib/ycloud-recovery.test.mjs",
+      "netlify/functions/ycloud-recovery-background.mjs",
       "netlify/functions/ycloud-recovery.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
       "package-lock.json",
-      "package.json"
+      "package.json",
+      "scripts/check-journey-module-boundaries.mjs"
     ],
     "contracts": [
       "change-governance",
@@ -61,21 +66,23 @@
       "netlify/functions/lib/scheduled-care.mjs",
       "netlify/functions/scheduled-followup.mjs",
       "netlify/functions/ycloud-recovery.mjs",
-      "netlify/functions/ycloud-webhook.mjs"
+      "netlify/functions/ycloud-webhook.mjs",
+      "netlify/functions/ycloud-recovery-background.mjs"
     ],
     "preservedInvariants": [
       "Registro repetido do mesmo evento não reinicia prazo, tentativas ou claim",
       "Uma versão do registro concede somente uma reserva concorrente",
       "Timeout não equivale a envio ou conclusão; transição só é relatada após confirmação",
       "Tomada humana, opt-out, identidade, preços e roteamento existentes permanecem aplicáveis",
-      "Nenhum replay do caso, mensagem de teste a pessoas ou mutação histórica em lote"
+      "Nenhum replay do caso, mensagem de teste a pessoas ou mutação histórica em lote",
+      "Agendamento apenas despacha; background respeita lease de 16 minutos e bloqueia replay antigo ou excessivo"
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "durable-storage-conditional-writes",
         "system": "Netlify/Blobs/LEADS",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-14T15:45:20.049Z",
+        "checkedAt": "2026-09-14T16:06:25.529Z",
         "reference": "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json",
         "limitation": "Logs e estado persistido confirmam timeouts e reinício de job; correlação do log com o caso por horário e conteúdo operacional. Contato já recebeu atendimento humano."
       }
@@ -91,20 +98,21 @@
       "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "npm.cmd run ops:check"
+      "npm.cmd run ops:check",
+      "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs"
     ],
     "status": "passed_local",
-    "completedAt": "2026-09-14T15:46:37.296Z",
+    "completedAt": "2026-09-14T16:08:36.122Z",
     "results": {
       "fullSuite": {
-        "tests": 1521,
-        "passed": 1521,
+        "tests": 1535,
+        "passed": 1535,
         "failed": 0,
-        "outputSha256": "f1e4e2dc2e762d353d195e6895d31f2f7c6264c5cef364f0afc6dc83139fd9a3"
+        "outputSha256": "8c39222b7bcb19560146bfac7bc72f414c88a072c9c955668afd5885370d1a17"
       },
       "focused": {
-        "tests": 27,
-        "passed": 27,
+        "tests": 41,
+        "passed": 41,
         "failed": 0
       },
       "crossConsumer": {
@@ -126,14 +134,21 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0
+      "realMessagesSentByAgent": 0,
+      "runtimeBaseline": {
+        "tests": 1,
+        "failed": 1,
+        "outputSha256": "4a10875fa3ad3a3ab4ea5ddfedd2adb33cda840232a48c26a1cb794696a80c69"
+      },
+      "runtimeBudget": "Scheduler dispatch <=5s; background lifecycle; 16-minute lease; reserve one job at a time",
+      "newBackgroundFunction": "ycloud-recovery-background"
     }
   },
   "rollback": {
     "local": "Reverter apenas este candidato em worktree isolado.",
-    "production": "Restaurar deploy 6aa7e218d56b0f48420dcd98; manter efeito contido se retornar a biblioteca defeituosa. Não reverter dados ou reenviar mensagens.",
-    "verifiedNetlifyDeployId": "6aa7e218d56b0f48420dcd98",
-    "verifiedCommit": "bef9c1e1e4ef49e6bd604688adddebc1be69eb02",
+    "production": "Conter e restaurar o deploy 6aa8180f6bc83b386142c5fc com o SDK corrigido; preserva dados e mensagens. Este rollback ainda tem o limite do agendamento e exige revisão humana das pendências.",
+    "verifiedNetlifyDeployId": "6aa8180f6bc83b386142c5fc",
+    "verifiedCommit": "fd8b7a78c245fff3a1180e636db1d730bd6fa132",
     "appsScriptVersion": 153
   },
   "monitoring": {

@@ -1102,7 +1102,9 @@
       "id": "durable-storage-conditional-writes",
       "ownerFiles": [
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "netlify/functions/lib/inbound-recovery.mjs",
+        "netlify/functions/ycloud-recovery.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/lib/appointment-review-store.mjs",
@@ -1122,7 +1124,8 @@
         "netlify/functions/ycloud-webhook.mjs",
         "netlify/functions/human-resume.mjs",
         "netlify/functions/scheduled-followup.mjs",
-        "netlify/functions/appointment-reminder.mjs"
+        "netlify/functions/appointment-reminder.mjs",
+        "netlify/functions/ycloud-recovery-background.mjs"
       ],
       "coveredPaths": [
         "package.json",
@@ -1130,17 +1133,24 @@
         "netlify/functions/lib/netlify-blobs-contract.test.mjs",
         "netlify/functions/lib/ycloud-recovery.test.mjs",
         "netlify/functions/ycloud-recovery.mjs",
-        "docs/whatsapp-clinica-liv-operacao.md"
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/inbound-recovery.mjs",
+        "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+        "netlify/functions/ycloud-recovery-background.mjs",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "scripts/check-journey-module-boundaries.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/netlify-blobs-contract.test.mjs",
         "netlify/functions/lib/inbound-recovery.test.mjs",
-        "netlify/functions/lib/ycloud-recovery.test.mjs"
+        "netlify/functions/lib/ycloud-recovery.test.mjs",
+        "netlify/functions/lib/inbound-recovery-runtime.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
         "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
-        "npm.cmd test"
+        "npm.cmd test",
+        "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs"
       ],
       "liveSystems": [
         "Netlify functions",

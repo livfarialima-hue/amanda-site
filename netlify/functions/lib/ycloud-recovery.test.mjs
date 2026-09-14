@@ -13,7 +13,7 @@ for (const attempts of [1, 3]) {
   for (const writeStatus of ["failed", "superseded", "skipped"]) {
     test(`recovery reports ${writeStatus} instead of claiming reschedule at attempt ${attempts}`, async () => {
       const result = await processInboundRecoveryJob({
-        eventId: "synthetic-lost-claim", phone: "+5511900000000", attempts,
+        eventId: "synthetic-lost-claim", phone: "+5511900000000", attempts, createdAt: new Date().toISOString(),
         rawBody: "{}", signature: "synthetic-signature", origin: "https://example.test",
         queueKey: "pending/synthetic-lost-claim", claimToken: "old-claim",
       }, {
@@ -39,6 +39,7 @@ test("recovery remains pending until the lead reaches Sheets", async () => {
       eventId: "fallback-event",
       phone: "+5511976360209",
       attempts: 1,
+      createdAt: new Date().toISOString(),
       rawBody: "{}",
       signature: "signature",
       contentType: "application/json",
@@ -93,6 +94,7 @@ test("route_pending is never completed as a harmless duplicate", async () => {
       eventId: "pending-route-event",
       phone: "+5511900005416",
       attempts: 1,
+      createdAt: new Date().toISOString(),
       rawBody: "{}",
       signature: "signature",
       contentType: "application/json",
@@ -145,6 +147,7 @@ test("recovery completes only after routing and automatic work finish", async ()
       eventId: "fully-processed-event",
       phone: "+5511900005416",
       attempts: 1,
+      createdAt: new Date().toISOString(),
       rawBody: "{}",
       signature: "signature",
       contentType: "application/json",
@@ -194,6 +197,7 @@ test("final lead failure is completed only after the email is confirmed", async 
       eventId: "final-fallback-event",
       phone: "+5511976360209",
       attempts: 3,
+      createdAt: new Date().toISOString(),
       rawBody: JSON.stringify({
         whatsappInboundMessage: {
           from: "+5511976360209",
@@ -263,6 +267,7 @@ test("failed email keeps the missing lead in the retry queue", async () => {
       eventId: "email-failed-event",
       phone: "+5511976360209",
       attempts: 3,
+      createdAt: new Date().toISOString(),
       rawBody: "{}",
       signature: "signature",
       contentType: "application/json",

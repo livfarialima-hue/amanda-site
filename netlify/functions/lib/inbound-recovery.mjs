@@ -3,7 +3,9 @@ import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "liv-whatsapp-inbound-recovery-v1";
 const DEFAULT_RECOVERY_DELAY_MS = 2 * 60 * 1_000;
-const CLAIM_TTL_MS = 90 * 1_000;
+// A background invocation can run for 15 minutes. A lease must outlive it,
+// including when the next five-minute schedule overlaps the current worker.
+const CLAIM_TTL_MS = 16 * 60 * 1_000;
 
 function limited(value, maximumLength = 20_000) {
   return Array.from(String(value || "").trim())
