@@ -73,10 +73,17 @@ test("the published manifest matches the current bundle and closes the candidate
     "assistente_ou_concierge_da_clinica_liv",
   );
   assert.equal(manifest.release.status, "published");
-  assert.equal(manifest.bundleVersion, "2026-09-14.1");
-  assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
+  assert.equal(manifest.promptVersion, `bruna-concierge-${manifest.bundleVersion}`);
+  if (manifest.pendingRelease) {
+    assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);
+    assert.equal(manifest.pendingRelease.bundleVersion, manifest.bundleVersion);
+    const candidate = await readJson("../../../../ops/CHANGE-CANDIDATE.json");
+    assert.equal(manifest.pendingRelease.changeId, candidate.changeId);
+    assert.ok(["implementing_local", "tested_local", "committed"].includes(candidate.status));
+  } else {
+    assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
+  }
   assert.equal(manifest.release.candidateStatus, "published_verified");
-  assert.equal(manifest.pendingRelease, undefined);
 });
 
 test("Bruna's patient-facing identity stays human-readable and technology-neutral", async () => {

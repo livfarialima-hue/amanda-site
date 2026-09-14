@@ -1158,6 +1158,74 @@
         "LEADS canonical read-only"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "website-conversation-continuity",
+      "ownerFiles": [
+        "netlify/functions/lib/site-content.mjs"
+      ],
+      "consumerFiles": [
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/scheduled-followup.mjs",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/lib/human-resume-processor.mjs",
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/semantic-reply-policy.mjs",
+        "netlify/functions/lib/human-resume-policy.mjs",
+        "netlify/functions/lib/inbound-burst-context.mjs"
+      ],
+      "coveredPaths": [
+        "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json",
+        "auditorias/bruna-site-contexto-2026-09-14/PUBLICACAO.json",
+        "auditorias/bruna-site-contexto-2026-09-14/RELATORIO.md",
+        "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "docs/estrategia-abordagem-bruna.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+        "netlify/functions/lib/bruna-policy/manifest.json",
+        "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "netlify/functions/lib/bruna-policy/rules.jsonl",
+        "netlify/functions/lib/conversation-action-controller.mjs",
+        "netlify/functions/lib/conversation-guidelines.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/site-content.mjs",
+        "netlify/functions/lib/site-content.test.mjs",
+        "netlify/functions/lib/site-continuity.test.mjs",
+        "ops/CHANGE-CANDIDATE.json",
+        "ops/IMPACT-REGISTRY.json"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/site-continuity.test.mjs",
+        "netlify/functions/lib/site-content.test.mjs",
+        "netlify/functions/lib/patient-replies.test.mjs",
+        "netlify/functions/lib/conversation-action-controller.test.mjs",
+        "netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "netlify/functions/lib/conversation-guidelines.test.mjs",
+        "netlify/functions/lib/openai-shadow.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "netlify/functions/lib/semantic-reply-policy.test.mjs",
+        "netlify/functions/lib/bruna-conversation-evals.test.mjs",
+        "netlify/functions/lib/human-resume-policy.test.mjs",
+        "netlify/functions/lib/inbound-burst-context.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
+        "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs"
+      ],
+      "liveSystems": [
+        "Netlify",
+        "LEADS",
+        "Google Drive"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

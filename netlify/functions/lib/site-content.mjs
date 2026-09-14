@@ -1,4 +1,4 @@
-import { isLikelyMarketingPrefilledMessage } from "./whatsapp-automation.mjs";
+import { isLikelyMarketingPrefilledMessage } from "./marketing-prefill.mjs";
 
 const SITE_BASE_URL = "https://draamandaschroeder.com.br";
 
@@ -207,8 +207,11 @@ function absoluteUrl(path) {
 
 function canonicalUrl(value) {
   try {
-    const url = new URL(String(value || ""));
+    const url = new URL(String(value || "").replace(/[.!?,;]+$/, ""));
     url.hash = "";
+    url.search = "";
+    url.hostname = url.hostname.replace(/^www\./i, "");
+    url.pathname = url.pathname.replace(/\/$/, "") || "/";
     return url.toString();
   } catch {
     return String(value || "").split("#")[0];
@@ -234,12 +237,17 @@ function sharedSiteUrls(recentConversation) {
 }
 
 export function isDirectSiteRequest(currentMessage) {
-  const text = String(currentMessage || "");
+  // Transport metadata describes acquisition, never a patient request.
+  const text = String(currentMessage || "")
+    .replace(/\bRef\.?\s*:?\s*(?:SITE-|[MG]26)[A-Z0-9_-]+/gi, " ")
+    .replace(/\bJID\s*:\s*[A-Z0-9_-]+/gi, " ")
+    .replace(/https?:\/\/\S+/gi, " ");
+  if (/\b(?:n[aã]o\s+(?:precisa\s+(?:me\s+)?(?:mandar|enviar)|quero(?:\s+(?:receber|ver))?|mande|envie)\s+(?:(?:o|um|nenhum|mais)\s+)?|sem\s+(?:o\s+)?)(?:link|site|material|p[aá]gina)\b/i.test(text)) return false;
 
   return (
-    /\b(?:site|website|link|p[aá]gina|endere[cç]o\s+eletr[oô]nico)\b/i.test(
-      text,
-    ) ||
+    /^\s*(?:o\s+)?(?:site|website|link|p[aá]gina)\s*\??\s*$/i.test(text) ||
+    /\b(?:qual|cad[eê]|onde|manda|mande|mandar|envia|envie|enviar|reenvi\w*|passa|passe|passar|quero|queria|gostaria|preciso|tem|teria)\b[^.!?\n]{0,65}\b(?:site|website|link|p[aá]gina|endere[cç]o\s+eletr[oô]nico)\b/i.test(text) ||
+    /\b(?:site|website|link|p[aá]gina)\b[^.!?\n]{0,45}\b(?:manda|mande|mandar|envia|envie|enviar|reenvi\w*|passa|passe|passar)\b/i.test(text) ||
     /\b(?:material|conte[uú]do|leitura|artigo|foto|fotos|casos?|resultados?)\b.{0,45}\b(?:manda|mandar|envia|enviar|ver|mostrar|tem|teria|gostaria)\b/i.test(
       text,
     ) ||
@@ -391,6 +399,36 @@ export function cameFromWebsite(referenceCategory) {
   );
 }
 
+export function websiteEntryContext({ referenceCategory, currentMessage, recentConversation } = {}) {
+  const conversation = Array.isArray(recentConversation) ? recentConversation : [];
+  const patientTexts = [currentMessage, ...conversation.filter(isPatientTurn).map(turn => turn.text)];
+  const originUrls = new Set();
+  let fromWebsite = cameFromWebsite(referenceCategory);
+  for (const value of patientTexts) {
+    const text = String(value || "");
+    if (/\bSITE-[A-Z0-9_-]+|\borigem do contato\s*:\s*site|\b(?:vim|cheguei|vi|li|acessei|estava)\s+(?:aqui\s+)?(?:pelo|no|do|na|pela|pelo seu|no seu|o)\s+(?:site|p[aá]gina)\b/i.test(text)) fromWebsite = true;
+    for (const match of text.matchAll(/\bSITE-([A-Z0-9_-]+)/gi)) {
+      const slug = match[1].toLowerCase();
+      const page = Object.values(PROCEDURE_PAGES).find(([, path]) => path === `/${slug}/`);
+      if (page) originUrls.add(canonicalUrl(absoluteUrl(page[1])));
+    }
+    for (const url of sharedSiteUrls([{ text }])) {
+      fromWebsite = true;
+      originUrls.add(url);
+    }
+  }
+  return { cameFromWebsite: fromWebsite, originUrls: [...originUrls] };
+}
+
+export function isUnrequestedRepeatedSiteUrl(url, { currentMessage, recentConversation } = {}) {
+  if (isDirectSiteRequest(currentMessage)) return false;
+  const seen = new Set([
+    ...websiteEntryContext({ currentMessage, recentConversation }).originUrls,
+    ...sharedSiteUrls(recentConversation),
+  ]);
+  return seen.has(canonicalUrl(url));
+}
+
 export function getRecommendedSiteResource({
   procedure,
   referenceCategory,
@@ -398,13 +436,12 @@ export function getRecommendedSiteResource({
   currentMessage,
   currentTemplateId = "",
 }) {
-  if (cameFromWebsite(referenceCategory)) return null;
-
   const conversation = Array.isArray(recentConversation)
     ? recentConversation
     : [];
   const sharedUrls = sharedSiteUrls(conversation);
   const directRequest = isDirectSiteRequest(currentMessage);
+  if (!directRequest && websiteEntryContext({ referenceCategory, currentMessage, recentConversation: conversation }).cameFromWebsite) return null;
 
   if (!directRequest) {
     const hasClinicReply = conversation.some(isClinicTurn);
@@ -454,7 +491,7 @@ export function getRecommendedSiteResource({
 
   return (
     candidates.find(
-      (candidate) => !sharedUrls.has(canonicalUrl(candidate.url)),
+      (candidate) => directRequest || !sharedUrls.has(canonicalUrl(candidate.url)),
     ) || null
   );
 }

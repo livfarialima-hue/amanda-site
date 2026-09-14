@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-09-14T20:07:38.511Z",
+  "authenticated": true,
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "baseline": "6aa81deec1740500082bb22c",
+  "baselineCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
+  "functions": 13,
+  "schedules": 5,
+  "staticFiles": 192,
+  "mode": [
+    {
+      "context": "production",
+      "value": "active"
+    }
+  ],
+  "appsScript": {
+    "version": 153,
+    "unchanged": true,
+    "receipt": "auditorias/bruna-experiencia-processo-2026-09-14/PUBLICACAO.json"
+  },
+  "case": {
+    "source": "LEADS _WHATSAPP_MENSAGENS; anexo do usuario",
+    "checkedAt": "2026-09-14T19:55:00Z",
+    "inboundAt": "2026-09-14T19:51:02Z",
+    "outboundAt": "2026-09-14T19:51:35Z",
+    "authorship": "bruna",
+    "templateId": "procedure_evaluation_v1",
+    "websiteReferencePresent": true,
+    "samePageReturned": true
+  },
+  "privacy": "Dados identificadores e conversa completa nao incluidos; testes sinteticos.",
+  "driveBefore": [
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "canonicalEqual": true,
+      "sha256": "037787511a6477df5e27bb0ec42641ca69d6e56f784892ba18e4b983068cf1b9"
+    },
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "canonicalEqual": true,
+      "sha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe"
+    }
+  ]
+}

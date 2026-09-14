@@ -290,7 +290,7 @@ test("routes common objections and comparisons to the matching educational mater
   }
 });
 
-test("does not offer the site to people who came from it", () => {
+test("does not proactively offer the site to people who came from it", () => {
   for (const referenceCategory of [
     "site_cta",
     "site_page",
@@ -302,7 +302,7 @@ test("does not offer the site to people who came from it", () => {
         procedure: "blefaroplastia",
         referenceCategory,
         recentConversation: RESEARCH_CONVERSATION,
-        currentMessage: "Tem fotos de antes e depois?",
+        currentMessage: "Estou pesquisando como funciona a avaliação",
       }),
       null,
     );
@@ -350,7 +350,7 @@ test("allows a different specific resource after an explicit request for more ma
   );
 });
 
-test("does not repeat the same page with a results anchor", () => {
+test("allows the results anchor when the patient explicitly asks for it", () => {
   assert.equal(
     getRecommendedSiteResource({
       procedure: "lifting_facial",
@@ -362,8 +362,8 @@ test("does not repeat the same page with a results anchor", () => {
         },
       ],
       currentMessage: "Pode mandar o link com os antes e depois?",
-    }),
-    null,
+    })?.url,
+    "https://draamandaschroeder.com.br/lifting-facial/#resultados",
   );
 });
 

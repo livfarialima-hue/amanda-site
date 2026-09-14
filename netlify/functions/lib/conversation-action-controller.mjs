@@ -1,4 +1,5 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
+import { isDirectSiteRequest } from "./site-content.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -55,8 +56,6 @@ const CREDENTIALS_PATTERN =
   /\b(?:crm|rqe|forma[cç][ãa]o|especialista|cirurgi(?:ã|[ãa]o)|curr[íi]culo|experi[eê]ncia)\b/i;
 const INSURANCE_PATTERN =
   /\b(?:conv[eê]nio|plano\s+de\s+sa[úu]de|reembolso)\b/i;
-const RESOURCE_PATTERN =
-  /\b(?:site|p[áa]gina|link|instagram|material|conte[úu]do)\b/i;
 const PROCEDURE_INFORMATION_PATTERN =
   /(?:\b(?:saber|entender|explicar|explique|informa[cç][oõ]es?|como\s+funciona)\b[\s\S]{0,180}\b(?:flacidez|papada|pesco[cç]o|p[áa]lpebras?|blefaroplastia|lifting|cervicoplastia|otoplastia|rinoplastia|ninfoplastia|lipo(?:aspira[cç][ãa]o)?)\b|\b(?:flacidez|papada|pesco[cç]o|p[áa]lpebras?|blefaroplastia|lifting|cervicoplastia|otoplastia|rinoplastia|ninfoplastia|lipo(?:aspira[cç][ãa]o)?)\b[\s\S]{0,180}\b(?:como\s+funciona|saber|entender|explicar|informa[cç][oõ]es?)\b)/i;
 const APPEARANCE_CONCERN_PATTERN =
@@ -408,7 +407,7 @@ function inferUnresolvedIntents({
   if (RECOVERY_PATTERN.test(value)) add("recovery");
   if (CREDENTIALS_PATTERN.test(value)) add("credentials");
   if (INSURANCE_PATTERN.test(value)) add("insurance");
-  if (RESOURCE_PATTERN.test(value)) add("resource");
+  if (isDirectSiteRequest(value) || /\binstagram\b/i.test(value)) add("resource");
   if (
     plan?.marketingPrefill !== true &&
     hasProcedureInformationRequest(value)

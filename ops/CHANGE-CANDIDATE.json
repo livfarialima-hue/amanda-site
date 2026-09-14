@@ -1,47 +1,50 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-ENTRADA-RECUPERACAO-2026-09-14",
-  "title": "Preservar exclusividade e executar recuperacao longa fora do limite do agendamento",
-  "status": "published_verified",
-  "baseCommit": "3932b5ca73090ff636362a6df160383565579db4",
+  "changeId": "BRUNA-SITE-CONTEXTO-2026-09-14",
+  "title": "Continuar a conversa no WhatsApp sem devolver a paciente a pagina de origem",
+  "status": "tested_local",
+  "baseCommit": "6ac89db78c047a52e0d4697debeace27ae87c8c5",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Correção e publicação autorizadas pelo pedido do usuário nesta tarefa; SHA final 9c44c9389e63f4f4c6200c0cd059171488c3d890 vinculado ao preflight externo.",
-    "approvalReference": "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json"
+    "note": "Pedido explicito do usuario: Ajuste e publique; vincular ao SHA final no preflight externo."
   },
   "risk": {
-    "level": "critical",
+    "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "defaultOffUntilPublication": false
+    "externalWritesPerformed": false,
+    "defaultOffUntilPublication": true
   },
   "scope": {
     "files": [
-      "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json",
-      "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json",
-      "auditorias/bruna-entrada-recuperacao-2026-09-14/RELATORIO.md",
+      "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json",
+      "auditorias/bruna-site-contexto-2026-09-14/PUBLICACAO.json",
+      "auditorias/bruna-site-contexto-2026-09-14/RELATORIO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
-      "netlify/functions/lib/inbound-recovery.mjs",
-      "netlify/functions/lib/netlify-blobs-contract.test.mjs",
-      "netlify/functions/lib/ycloud-recovery.test.mjs",
-      "netlify/functions/ycloud-recovery-background.mjs",
-      "netlify/functions/ycloud-recovery.mjs",
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-guidelines.test.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/outbound-reply-gate.test.mjs",
+      "netlify/functions/lib/site-content.mjs",
+      "netlify/functions/lib/site-content.test.mjs",
+      "netlify/functions/lib/site-continuity.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "package-lock.json",
-      "package.json",
-      "scripts/check-journey-module-boundaries.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
       "change-governance",
-      "durable-storage-conditional-writes"
+      "website-conversation-continuity"
     ]
   },
   "impact": {
@@ -49,85 +52,80 @@
       "AGENTS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "netlify/functions/appointment-reminder.mjs",
       "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/appointment-review-store.mjs",
-      "netlify/functions/lib/attribution-journey-store.mjs",
-      "netlify/functions/lib/business-number-registry.mjs",
-      "netlify/functions/lib/conversation-ledger.mjs",
-      "netlify/functions/lib/conversation-memory.mjs",
-      "netlify/functions/lib/external-professional-context.mjs",
-      "netlify/functions/lib/human-resume-queue.mjs",
-      "netlify/functions/lib/inbound-recovery.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/human-resume-processor.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/patient-reply-throttle.mjs",
-      "netlify/functions/lib/reply-debounce.mjs",
-      "netlify/functions/lib/review-alert-throttle.mjs",
-      "netlify/functions/lib/scheduled-care.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/semantic-reply-policy.mjs",
       "netlify/functions/scheduled-followup.mjs",
-      "netlify/functions/ycloud-recovery.mjs",
       "netlify/functions/ycloud-webhook.mjs",
-      "netlify/functions/ycloud-recovery-background.mjs"
+      "netlify/functions/lib/human-resume-policy.mjs",
+      "netlify/functions/lib/inbound-burst-context.mjs"
     ],
     "preservedInvariants": [
-      "Registro repetido do mesmo evento não reinicia prazo, tentativas ou claim",
-      "Uma versão do registro concede somente uma reserva concorrente",
-      "Timeout não equivale a envio ou conclusão; transição só é relatada após confirmação",
-      "Tomada humana, opt-out, identidade, preços e roteamento existentes permanecem aplicáveis",
-      "Nenhum replay do caso, mensagem de teste a pessoas ou mutação histórica em lote",
-      "Agendamento apenas despacha; background respeita lease de 16 minutos e bloqueia replay antigo ou excessivo"
+      "Origem comercial e passagem pelo site coexistem sem reclassificar dados de atribuicao",
+      "Prefill nao e pedido de link nem prontidao para agendamento",
+      "Pedido explicito permite pagina pertinente ou reenvio; link nao substitui resposta",
+      "Somente frase de pagina repetida nao solicitada e removida; texto vazio continua bloqueado",
+      "Takeover, opt-out, precos aprovados, identidade, duplicidade e agenda permanecem nos gates existentes",
+      "Sem replay, mensagem real de teste ou alteracao retroativa de paciente"
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "durable-storage-conditional-writes",
-        "system": "Netlify/Blobs/LEADS",
+        "contract": "website-conversation-continuity",
+        "system": "Netlify/LEADS/Drive",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-14T16:16:25.813Z",
-        "reference": "auditorias/bruna-entrada-recuperacao-2026-09-14/PREFLIGHT.json",
-        "limitation": "Logs e estado persistido confirmam timeouts e reinício de job; correlação do log com o caso por horário e conteúdo operacional. Contato já recebeu atendimento humano.",
-        "additionalEvidence": "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json"
+        "checkedAt": "2026-09-14T20:07:38.511Z",
+        "reference": "auditorias/bruna-site-contexto-2026-09-14/PREFLIGHT.json",
+        "limitation": "Preflight confirma caso e deploy atual; nao demonstra ganho de conversao."
       }
     ]
   },
   "verification": {
+    "status": "passed_local",
     "commands": [
+      "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
+      "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
       "npm.cmd run change:check",
       "npm.cmd run architecture:check",
       "npm.cmd test",
       "git diff --check",
-      "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
-      "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+      "npm.cmd run change:check",
+      "npm.cmd run architecture:check",
+      "npm.cmd test",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "npm.cmd run ops:check",
-      "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs"
+      "git diff --check",
+      "npm.cmd run ops:check"
     ],
-    "status": "passed_local_and_production",
-    "completedAt": "2026-09-14T16:15:39.825Z",
+    "completedAt": "2026-09-14T20:08:39.673Z",
     "results": {
       "fullSuite": {
-        "tests": 1537,
-        "passed": 1537,
+        "tests": 1551,
+        "passed": 1551,
         "failed": 0,
-        "outputSha256": "4f0047dc86e62780ea0c99637b3fa8cac7f9e641f530afb4ac1ed090ea9f726b"
+        "outputSha256": "70791d5a2769b39a4123c16c3ea9722bd319cd1a21d4c92b1b7d8c10296bedc1"
       },
       "focused": {
-        "tests": 43,
-        "passed": 43,
-        "failed": 0
+        "tests": 30,
+        "passed": 30,
+        "failed": 0,
+        "outputSha256": "87450f2c4e349b0f1c7a2d8ddd7d52e5a67c31c7221408c0e6b6fb9251030fef"
       },
       "crossConsumer": {
-        "tests": 158,
-        "passed": 158,
-        "failed": 0
+        "tests": 360,
+        "passed": 360,
+        "failed": 0,
+        "outputSha256": "e9dc444b24812943bfdb28ab45953aae84e2eca820da2a2f44429a41cdf5c097"
       },
       "baselineReproduction": {
-        "sdk": "10.7.10",
-        "tests": 3,
-        "failed": 3,
-        "outputSha256": "d3154bd27eee7ef3614a4bfb458f91ba07dc60dc0facecfea5708889ae039282"
+        "tests": 11,
+        "passed": 1,
+        "failed": 10,
+        "outputSha256": "4f3005b35c6f5c2354d107190fd814dab943eea98393539c1f464a90286e24cf"
       },
-      "fixedSdk": "10.7.12",
       "changeCheck": "OK",
       "architectureCheck": "OK",
       "siteBuild": {
@@ -135,49 +133,26 @@
         "sitemapUrls": 54
       },
       "siteCheck": "OK",
-      "realMessagesSentByAgent": 0,
-      "runtimeBaseline": {
-        "tests": 1,
-        "failed": 1,
-        "outputSha256": "4a10875fa3ad3a3ab4ea5ddfedd2adb33cda840232a48c26a1cb794696a80c69"
-      },
-      "runtimeBudget": "Scheduler dispatch <=5s; background lifecycle; 16-minute lease; reserve one job at a time",
-      "newBackgroundFunction": "ycloud-recovery-background",
-      "terminalRaceBaseline": {
-        "tests": 5,
-        "passed": 3,
-        "failed": 2
-      },
-      "terminalQueueCleanup": "Somente chaves pendentes com comprovante terminal do mesmo evento; sem replay",
-      "productionVerified": true
+      "realMessagesSentByAgent": 0
     }
   },
   "rollback": {
-    "local": "Reverter apenas este candidato em worktree isolado.",
-    "production": "Restaurar 6aa81c98b3a7ac46500e80e8, com SDK e background já corrigidos; preservar dados e recibos. Não reabrir entradas com comprovante terminal.",
-    "verifiedNetlifyDeployId": "6aa81c98b3a7ac46500e80e8",
-    "verifiedCommit": "232c70414c5386723d596e82e5dbf4b188f320be",
+    "local": "Reverter apenas o candidato em worktree isolado.",
+    "production": "Restaurar o deploy 6aa81deec1740500082bb22c; preservar dados, mensagens e Apps Script v153.",
+    "verifiedNetlifyDeployId": "6aa81deec1740500082bb22c",
+    "verifiedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
     "appsScriptVersion": 153
   },
   "monitoring": {
-    "window": "Primeiro ciclo natural após ativação; revisão em 48 horas e 7 dias no plano executivo",
     "owner": "Daniel / equipe LIV",
+    "window": "Sondas apos ativacao; revisoes em 16/09 e 21/09 as 17h30 BRT",
     "metrics": [
-      "Timeouts Sheets/OpenAI",
-      "Tentativas e prazos preservados nos jobs",
-      "Falhas reais de reschedule/completion",
-      "Respostas duplicadas e respeito ao atendimento humano"
+      "Links repetidos sem pedido",
+      "Pergunta pertinente e duvida respondida",
+      "Correcao humana e silencio indevido",
+      "Contatos qualificados e consultas com evidencia propria"
     ],
-    "rollbackRule": "Conter diante de duplicidade, perda de reserva, resposta após takeover ou degradação do endpoint."
+    "rollbackRule": "Conter diante de envio indevido, perda de resposta util ou regressao de takeover/agenda."
   },
-  "release": {
-    "approvedCommit": "9c44c9389e63f4f4c6200c0cd059171488c3d890",
-    "netlifyDeployId": "6aa81deec1740500082bb22c",
-    "appsScriptVersion": 153,
-    "verifiedAt": "2026-09-14T16:22:49.396Z",
-    "receipt": "auditorias/bruna-entrada-recuperacao-2026-09-14/PUBLICACAO.json",
-    "drivePlanSha256": "037787511a6477df5e27bb0ec42641ca69d6e56f784892ba18e4b983068cf1b9",
-    "driveManualSha256": "7bd05a10ca3be9e3f301530da9fbade8def298725691d48a7847cbc99186f4fe",
-    "driveClosedAuditFileId": "1cWE8mJOLI439vjG5Uc5ZTJJdD4JVN3_c"
-  }
+  "release": {}
 }

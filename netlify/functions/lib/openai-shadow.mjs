@@ -5,7 +5,7 @@ import {
   isBrunaConversionExperienceEnabled,
   procedureOpeningMicrovalue,
 } from "./bruna-conversion-experience.mjs";
-import { getRecommendedSiteResource } from "./site-content.mjs";
+import { getRecommendedSiteResource, isDirectSiteRequest, websiteEntryContext } from "./site-content.mjs";
 import { normalizeConversationSemanticState, toOpenAIConversation } from "./conversation-memory.mjs";
 import {
   applyKnowledgeDecisionGuard,
@@ -979,10 +979,7 @@ export async function runOpenAIShadow(
     text,
     procedure,
   });
-  const explicitResourceRequest =
-    /\b(?:site|link|material|casos?|antes\s+e\s+depois|resultados?)\b/i.test(
-      String(text || ""),
-    );
+  const explicitResourceRequest = isDirectSiteRequest(text);
   const siteResource =
     normalizedPatientRelationship.hasPendingHumanTask
       ? null
@@ -1016,13 +1013,7 @@ export async function runOpenAIShadow(
         input: JSON.stringify({
           source: String(platform || "WhatsApp direto"),
           procedureContext: limitText(procedure, 100),
-          cameFromWebsite: siteResource
-            ? false
-            : [
-                "site_cta",
-                "site_page",
-                "site_uncoded",
-              ].includes(String(referenceCategory || "")),
+          cameFromWebsite: websiteEntryContext({ referenceCategory, currentMessage: text, recentConversation: normalizedConversation }).cameFromWebsite,
           siteResource,
           whatsappProfileName: usableProfileName(patientProfileName),
           metaAdContext: normalizeReferralContext(referralContext),

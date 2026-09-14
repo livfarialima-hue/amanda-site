@@ -50,6 +50,7 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Rascunho de preço e fonte | gerar texto com ressalva e referência histórica compatível para revisão | `surgical-price-review.mjs` | enviar valores não autorizados ou transformar fonte histórica em orçamento atual |
 | Identidade profissional | resolver menções de Amanda, Daniel e profissionais eventuais e declarar elegibilidade de automação | `professional-registry.mjs` | transformar profissional ausente ou eventual em Amanda |
 | Planejamento de conversa | definir rota, motivo, profissional, procedimento e elegibilidade | `whatsapp-automation.mjs` | contornar takeover, opt-out ou gate de saída |
+| Continuidade com o site | distinguir origem, pedido explícito e página já conhecida | `site-content.mjs` | reclassificar atribuição, presumir leitura completa ou substituir resposta por link |
 | Política semântica | revisar significado e contexto de respostas elegíveis | `semantic-reply-policy.mjs` e módulos especialistas | executar efeito diretamente |
 | Ação conversacional | coordenar a ação permitida para o turno atual | `conversation-action-controller.mjs` | reaproveitar decisão de outro turno sem revalidação |
 | Saída | impor o contrato final de segurança e conteúdo | `outbound-reply-gate.mjs` | inventar fatos para completar uma resposta |

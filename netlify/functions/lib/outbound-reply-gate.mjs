@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { isUnrequestedRepeatedSiteUrl } from "./site-content.mjs";
 import { getStore } from "@netlify/blobs";
 import {
   CONVERSATION_ACTIONS,
@@ -51,11 +52,13 @@ function urls(value) {
   return limited(value).match(/https?:\/\/[^\s)]+/gi) || [];
 }
 
-function withoutLinkBearingSentences(value) {
+function withoutLinkBearingSentences(value, shouldRemove = () => true) {
   const linkMarker = "\uE000LIV_LINK\uE001";
   const marked = String(value || "").replace(
     /https?:\/\/[^\s)]+/gi,
-    (match) => `${linkMarker}${/[.!?]$/.test(match) ? match.slice(-1) : ""}`,
+    (match) => shouldRemove(match.replace(/[.!?,;]+$/, ""))
+      ? `${linkMarker}${/[.!?]$/.test(match) ? match.slice(-1) : ""}`
+      : match,
   );
   const kept = marked
     .split(/(?:\r?\n)+|(?<=[.!?])\s+/u)
@@ -93,11 +96,16 @@ function withoutDisallowedTrailingCta(value, allowedCtaTypes = []) {
 export function conformOutboundReplyToContract({
   body,
   conversationAction,
+  currentText,
+  recentConversation,
 }) {
   let reply = String(body || "").trim();
   const maxLinks = conversationAction?.replyContract?.maxLinks;
   if ([0, "0"].includes(maxLinks) && urls(reply).length > 0) {
     reply = withoutLinkBearingSentences(reply);
+  }
+  if (urls(reply).some(url => isUnrequestedRepeatedSiteUrl(url, { currentMessage: currentText, recentConversation }))) {
+    reply = withoutLinkBearingSentences(reply, url => isUnrequestedRepeatedSiteUrl(url, { currentMessage: currentText, recentConversation }));
   }
 
   const contract = conversationAction?.replyContract || {};
@@ -800,6 +808,8 @@ export async function sendControlledPatientReply(
   const conformedBody = conformOutboundReplyToContract({
     body,
     conversationAction,
+    currentText,
+    recentConversation,
   });
   const validation = validateOutboundReply({
     body: conformedBody,

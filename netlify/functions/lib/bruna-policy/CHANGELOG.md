@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-09-14.2 — continuidade site → WhatsApp (candidato autorizado)
+
+- Corrige Ref. SITE interpretada como pedido de link e preserva passagem pelo site mesmo com aquisição Google/Meta.
+- Primeiro responde no WhatsApp e faz uma pergunta pertinente; não presume prontidão pelo prefill.
+- Gate final remove frase de página repetida não solicitada, preservando resposta útil, URLs pertinentes e pedido explícito de reenvio.
+- Preços, takeover, identidade, agenda e atribuição permanecem protegidos.
+
+
 ## 2026-09-14.1 — publicada e verificada
 
 Continuidade contextual e acolhimento específico; correção de nome de aquisição com origem; perguntas pendentes e objeções por evidência; anexos e telefone compartilhado sem marcos administrativos presumidos; Central orientada pelo CRM; retorno datado como tarefa humana; histórico de saídas recuperável e idempotente. Modelo, preços e permissões clínicas preservados. Publicado o commit `bef9c1e1e4ef49e6bd604688adddebc1be69eb02` no Netlify `6aa7e218d56b0f48420dcd98` e Apps Script v153. Evidência: auditorias/bruna-experiencia-processo-2026-09-14/RELATORIO.md.

@@ -923,6 +923,43 @@ test("a zero-link continuation removes the link sentence and sends the useful an
   assert.doesNotMatch(deliveredBody, /https?:\/\//i);
 });
 
+test("a SITE origin link is removed before provider send and durable history, without replay", async () => {
+  let deliveredBody = "", ledgerBody = "", sends = 0;
+  const blobs = fakeBlobs();
+  const input = {
+    from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-site-origin",
+    currentText: "Como funciona a avaliação? Ref. SITE-lifting-facial",
+    body: "A avaliação começa com uma conversa sobre seus objetivos.\n\nSe ajudar, veja https://draamandaschroeder.com.br/lifting-facial/\n\nO que gostaria de melhorar ou preservar no rosto?",
+    recentConversation: [],
+    conversationAction: { ...respond, replyContract: { maxLinks: 1, maxQuestions: 1, allowCta: false, allowAppointmentConfirmation: false } },
+  };
+  const dependencies = {
+    ...blobs,
+    sendYCloudPatientTextImpl: async ({ body }) => { sends++; deliveredBody = body; return { status: "completed" }; },
+    recordDurableConversationTurnImpl: async ({ text }) => { ledgerBody = text; return { status: "completed" }; },
+  };
+  const result = await sendControlledPatientReply(input, dependencies);
+  assert.equal(result.status, "completed");
+  assert.equal(result.body, deliveredBody);
+  assert.equal(ledgerBody, deliveredBody);
+  assert.doesNotMatch(deliveredBody, /https?:|Se ajudar/);
+  assert.match(deliveredBody, /preservar no rosto\?/);
+  assert.equal((await sendControlledPatientReply(input, dependencies)).status, "duplicate");
+  assert.equal(sends, 1);
+});
+
+test("removing a repeated origin page cannot send an empty answer", async () => {
+  let sends = 0;
+  const result = await sendControlledPatientReply({
+    from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-site-only",
+    currentText: "Como funciona? Ref. SITE-lifting-facial",
+    body: "Veja https://draamandaschroeder.com.br/lifting-facial/",
+    conversationAction: { ...respond, replyContract: { maxLinks: 1 } },
+  }, { sendYCloudPatientTextImpl: async () => { sends++; } });
+  assert.equal(result.status, "blocked");
+  assert.equal(sends, 0);
+});
+
 test("a zero-link contract still fails closed when the reply contains only a link", async () => {
   let sends = 0;
   const result = await sendControlledPatientReply(
