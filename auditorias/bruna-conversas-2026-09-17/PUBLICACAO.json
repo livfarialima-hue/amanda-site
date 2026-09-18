@@ -7,7 +7,7 @@
   "approvedAt": "2026-09-18T00:29:38.422808+00:00",
   "authorizationReference": "Pedido explicito desta tarefa: analisar, alterar e publicar a logica da Bruna. Autorizacao vinculada ao candidato testado.",
   "publishedAt": "2026-09-18T00:32:00.000Z",
-  "verifiedAt": "2026-09-18T00:37:01.042Z",
+  "verifiedAt": "2026-09-18T00:39:17.722Z",
   "netlify": {
     "verifiedAt": "2026-09-18T00:30:52.156Z",
     "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
@@ -301,32 +301,32 @@
     "rollbackRule": "Conter diante de resposta clinica indevida, perda de prioridade humana, envio duplicado ou contexto incorreto."
   },
   "drive": {
-    "verifiedAt": "2026-09-18T00:37:01.042Z",
+    "verifiedAt": "2026-09-18T00:39:17.722Z",
     "documents": [
       {
         "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
         "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "modifiedAt": "2026-09-18T00:36:13.028Z",
-        "bytes": 194691,
+        "modifiedAt": "2026-09-18T00:39:00.264Z",
+        "bytes": 194047,
         "byteEqual": true,
-        "sha256": "298b8d02c63407bba3c8d0f66ba26fdefa3d9f05dd4dfad1357dd6400a38c089"
+        "sha256": "98e75db25d67c46c3006d60f8824074fe4924f6d62f6416345c6d457e228ef86"
       },
       {
         "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
         "path": "docs/estrategia-abordagem-bruna.md",
-        "modifiedAt": "2026-09-18T00:36:16.159Z",
-        "bytes": 117118,
+        "modifiedAt": "2026-09-18T00:39:03.206Z",
+        "bytes": 116398,
         "byteEqual": true,
-        "sha256": "615ab59c4d8170e8df6d11be336c1757ae483d928e2afe3bc20c42c0320117e6"
+        "sha256": "748c78e26048d7dc5352fc080d509156db001f5e0e07b9b5a944426d763a9cf1"
       }
     ],
     "closedAudit": {
       "fileId": "1UaAv7mv_x-J3kZbPy1-X7y5D6FPwp-4r",
       "path": "auditorias/bruna-conversas-2026-09-17/RELATORIO.md",
-      "modifiedAt": "2026-09-18T00:36:19.081Z",
-      "bytes": 9761,
+      "modifiedAt": "2026-09-18T00:39:05.470Z",
+      "bytes": 9701,
       "byteEqual": true,
-      "sha256": "438fb47eadfd4b7da50da593ff2c022eec13f9ded11fefa5693d97c6dd3b3058"
+      "sha256": "78cc729ea1dbe7a4c99c9dae9a344e272e9e920aca9bc257319a65d766fedb0e"
     }
   }
 }
