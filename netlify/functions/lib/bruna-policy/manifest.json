@@ -24,7 +24,7 @@
     "rollbackCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
     "rollbackDeployId": "6aa86fc2b2999d0009b2d245",
     "publishedAt": "2026-09-18T00:32:00.000Z",
-    "lastVerifiedAt": "2026-09-18T00:35:29.938922+00:00",
+    "lastVerifiedAt": "2026-09-18T00:37:01.042Z",
     "candidateChangeId": "BRUNA-CONVERSAS-2026-09-17",
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-09-17.1",
@@ -36,10 +36,10 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1o2m9KcuAl6zVoxr6nVYRZYH3eSG24mBH",
+    "driveClosedAuditFileId": "1UaAv7mv_x-J3kZbPy1-X7y5D6FPwp-4r",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "fba6fe1fd64e582a8150b1018f2fa0df3a9f3aacfa1b4fb7c91a827d79b2290c"
+    "driveProjectionSha256": "615ab59c4d8170e8df6d11be336c1757ae483d928e2afe3bc20c42c0320117e6"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSAS-2026-09-17",
-  "status": "published_pending_documentation",
+  "status": "published_verified",
   "approvedCommit": "162c283c29cc7e7895a28ef7f1bbda9986dfc48e",
   "approvedBy": "Daniel",
   "approvedAt": "2026-09-18T00:29:38.422808+00:00",
   "authorizationReference": "Pedido explicito desta tarefa: analisar, alterar e publicar a logica da Bruna. Autorizacao vinculada ao candidato testado.",
   "publishedAt": "2026-09-18T00:32:00.000Z",
-  "verifiedAt": "2026-09-18T00:35:29.938922+00:00",
+  "verifiedAt": "2026-09-18T00:37:01.042Z",
   "netlify": {
     "verifiedAt": "2026-09-18T00:30:52.156Z",
     "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
@@ -299,5 +299,34 @@
       "Resposta util a retomada, sem contar resposta comercial automatica como interesse"
     ],
     "rollbackRule": "Conter diante de resposta clinica indevida, perda de prioridade humana, envio duplicado ou contexto incorreto."
+  },
+  "drive": {
+    "verifiedAt": "2026-09-18T00:37:01.042Z",
+    "documents": [
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "modifiedAt": "2026-09-18T00:36:13.028Z",
+        "bytes": 194691,
+        "byteEqual": true,
+        "sha256": "298b8d02c63407bba3c8d0f66ba26fdefa3d9f05dd4dfad1357dd6400a38c089"
+      },
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "modifiedAt": "2026-09-18T00:36:16.159Z",
+        "bytes": 117118,
+        "byteEqual": true,
+        "sha256": "615ab59c4d8170e8df6d11be336c1757ae483d928e2afe3bc20c42c0320117e6"
+      }
+    ],
+    "closedAudit": {
+      "fileId": "1UaAv7mv_x-J3kZbPy1-X7y5D6FPwp-4r",
+      "path": "auditorias/bruna-conversas-2026-09-17/RELATORIO.md",
+      "modifiedAt": "2026-09-18T00:36:19.081Z",
+      "bytes": 9761,
+      "byteEqual": true,
+      "sha256": "438fb47eadfd4b7da50da593ff2c022eec13f9ded11fefa5693d97c6dd3b3058"
+    }
   }
 }
