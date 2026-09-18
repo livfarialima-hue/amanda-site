@@ -1,11 +1,664 @@
 {
-  "status": "intermediate_published_followup_pending",
+  "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-2026-09-18",
-  "intermediate": {
-    "commit": "49ebec0387ded4d296732355690809dbe98d4ae6",
-    "netlifyDeployId": "6aac962a9e5f643776b72474",
-    "appsScriptVersion": 156
+  "status": "published_pending_documentation",
+  "approvedCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
+  "approvedBy": "Daniel",
+  "authorizationReference": "Usuario nesta tarefa: pode publicar tudo que tiver pendente",
+  "authorizationRecordedAt": "2026-09-18T02:12:15.6857060Z",
+  "publishedAt": "2026-09-18T02:19:48.365Z",
+  "verifiedAt": "2026-09-18T02:24:21.457Z",
+  "netlify": {
+    "verifiedAt": "2026-09-18T02:21:34.726Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "approvedCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
+    "deployId": "6aac9f8da827906987749510",
+    "mode": "active",
+    "publishedAt": "2026-09-18T02:19:48.365Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "d379362f719036546470bd25e0b36c9e42acc8011d90586430fc795a9de7a2cd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "103c64054f37f71ea2e7812ec1964f4043edeb88f35fe9086e50d13dbc725ce7",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "26ecc1b062f92967084cdf8d0f00e5b8ecbb5e370a85c65f01c4632de09516de",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "9b528a26ab9387ac1f67af4c41ea8746fc92f10ca6f6ffbd9a2cf1e586e2bea0",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "a42121736ee9a6cb96d425e21ca8f01c677269e14510642b4b32726090f89504",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "ec81a4a4c672970a64da721678535bb87a43f7db2656f4affad9d7190582453c",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "3f2192cc8908339a3c305b67bf18b77700ca6d65a179a81f763116bd7ba935cf",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "staticFilesUnchanged": 192,
+    "probes": [
+      {
+        "name": "canonical",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "immutable",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "signature",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "followup-auth",
+        "status": 401,
+        "passed": true
+      }
+    ],
+    "realMessagesSentByAgent": 0
   },
-  "rootCause": "O primeiro ciclo revelou stale_lease: quatro oportunidades tinham uma linha anterior reservada e outra posterior concluida. A busca na conclusao/falha selecionava a ultima, e nao a reserva exata.",
-  "realMessagesSentByAgent": 0
+  "appsScript": {
+    "projectId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "version": 157,
+    "approvedCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
+    "verifiedAt": "2026-09-18T02:18:25.225Z",
+    "uiSuccess": "Implantação atualizada. Versão 157 em 17 de set. de 2026, 23:17",
+    "sourceReadback": [
+      {
+        "file": "KnowledgeBase.gs",
+        "matched": true,
+        "sha256": "7fd655b29215318095c579005deddf7888f5fb7b273d011c7d014cda504ce87d"
+      },
+      {
+        "file": "Retomadas.gs",
+        "matched": true,
+        "sha256": "5e373e89089a2a0ca6cce74bd79ae784c151a73d352ed4a6fd5468edbbce560b"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "matched": true,
+        "sha256": "58928fab783b86fed355f478d4db3a3d797e0379b502703443ba8a2494833382"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "matched": true,
+        "sha256": "6b1864eb756c1869ea035bb422360c2e04edd183fbfefac1c199f889a24dedcd"
+      },
+      {
+        "file": "Code.gs",
+        "matched": true,
+        "sha256": "314b00afd8f8bf8e8b2ad2673a55348c5b68274e484c738f25265856f4730f1a"
+      }
+    ],
+    "probes": [
+      {
+        "name": "health",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-18T02:18:24.130Z"
+      },
+      {
+        "name": "invalid-cancel",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-18T02:18:24.363Z"
+      },
+      {
+        "name": "invalid-secret",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-18T02:18:25.225Z"
+      }
+    ],
+    "baselineAllSourcesVerified": "gas-followup-baseline.json"
+  },
+  "intermediate": {
+    "netlify": {
+      "verifiedAt": "2026-09-18T01:39:48.320Z",
+      "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+      "approvedCommit": "49ebec0387ded4d296732355690809dbe98d4ae6",
+      "deployId": "6aac962a9e5f643776b72474",
+      "mode": "active",
+      "publishedAt": "2026-09-18T01:39:38.369Z",
+      "functions": [
+        {
+          "name": "appointment-reminder",
+          "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "appointment-review",
+          "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "attribution-journey",
+          "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "attribution-journey-purge",
+          "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "classify-leads",
+          "digest": "04c787d4b96f23ee7906a626045cd73c05e9d8a620e21f5fedce28234f2b15a9",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "classify-leads-background",
+          "digest": "047070f455bab241fb29200b34294d25ed917eb046c3c499221426c04173c38d",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "human-resume",
+          "digest": "26ecc1b062f92967084cdf8d0f00e5b8ecbb5e370a85c65f01c4632de09516de",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "post-consult-followup",
+          "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "scheduled-followup",
+          "digest": "9b528a26ab9387ac1f67af4c41ea8746fc92f10ca6f6ffbd9a2cf1e586e2bea0",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "synthetic-integration-health",
+          "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "ycloud-recovery",
+          "digest": "a42121736ee9a6cb96d425e21ca8f01c677269e14510642b4b32726090f89504",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "ycloud-recovery-background",
+          "digest": "ec81a4a4c672970a64da721678535bb87a43f7db2656f4affad9d7190582453c",
+          "runtime": "nodejs24.x"
+        },
+        {
+          "name": "ycloud-webhook",
+          "digest": "3f2192cc8908339a3c305b67bf18b77700ca6d65a179a81f763116bd7ba935cf",
+          "runtime": "nodejs24.x"
+        }
+      ],
+      "schedules": [
+        {
+          "cron": "17 6 * * *",
+          "name": "attribution-journey-purge"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "classify-leads"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "human-resume"
+        },
+        {
+          "cron": "17 12 * * *",
+          "name": "synthetic-integration-health"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "ycloud-recovery"
+        }
+      ],
+      "staticFilesUnchanged": 192,
+      "probes": [
+        {
+          "name": "canonical",
+          "status": 200,
+          "automationMode": "active",
+          "passed": true
+        },
+        {
+          "name": "immutable",
+          "status": 200,
+          "automationMode": "active",
+          "passed": true
+        },
+        {
+          "name": "signature",
+          "status": 401,
+          "passed": true
+        },
+        {
+          "name": "followup-auth",
+          "status": 401,
+          "passed": true
+        }
+      ],
+      "realMessagesSentByAgent": 0
+    },
+    "appsScript": {
+      "projectId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+      "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+      "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+      "version": 156,
+      "approvedCommit": "49ebec0387ded4d296732355690809dbe98d4ae6",
+      "verifiedAt": "2026-09-18T01:38:45.795Z",
+      "uiSuccess": "Implantação atualizada. Versão 156 em 17 de set. de 2026, 22:38",
+      "sourceReadback": [
+        {
+          "file": "KnowledgeBase.gs",
+          "matched": true,
+          "sha256": "7fd655b29215318095c579005deddf7888f5fb7b273d011c7d014cda504ce87d"
+        },
+        {
+          "file": "Retomadas.gs",
+          "matched": true,
+          "sha256": "5e373e89089a2a0ca6cce74bd79ae784c151a73d352ed4a6fd5468edbbce560b"
+        },
+        {
+          "file": "LeadClassification.gs",
+          "matched": true,
+          "sha256": "be0dc28213f1b7a79206949fea2d115c49c229b64c1568b7b2d6dbf660cf8d68"
+        },
+        {
+          "file": "CentralAtendimento.gs",
+          "matched": true,
+          "sha256": "6b1864eb756c1869ea035bb422360c2e04edd183fbfefac1c199f889a24dedcd"
+        },
+        {
+          "file": "Code.gs",
+          "matched": true,
+          "sha256": "314b00afd8f8bf8e8b2ad2673a55348c5b68274e484c738f25265856f4730f1a"
+        }
+      ],
+      "probes": [
+        {
+          "name": "health",
+          "status": 200,
+          "passed": true,
+          "verifiedAt": "2026-09-18T01:38:45.783Z"
+        },
+        {
+          "name": "invalid-cancel",
+          "status": 200,
+          "passed": true,
+          "verifiedAt": "2026-09-18T01:38:45.617Z"
+        },
+        {
+          "name": "invalid-secret",
+          "status": 200,
+          "passed": true,
+          "verifiedAt": "2026-09-18T01:38:45.795Z"
+        }
+      ]
+    },
+    "rootCause": "O primeiro ciclo revelou stale_lease: quatro oportunidades tinham uma linha anterior reservada e outra posterior concluida. A busca na conclusao/falha selecionava a ultima, e nao a reserva exata."
+  },
+  "migrations": {
+    "knowledge": {
+      "verifiedAt": "2026-09-18T01:40:21.090Z",
+      "ok": true,
+      "created": 5,
+      "active": 5,
+      "snapshotVersion": "kb-2026-09-18.1"
+    },
+    "commitments": {
+      "verifiedAt": "2026-09-18T01:40:56.984Z",
+      "ok": true,
+      "protectedRows": 164,
+      "legacyDataPreserved": true,
+      "identityColumns": 3
+    },
+    "recoveryDryRun": {
+      "verifiedAt": "2026-09-18T01:41:31.204Z",
+      "ok": true,
+      "candidates": 4,
+      "requeued": 0,
+      "applied": false
+    },
+    "recovery": {
+      "verifiedAt": "2026-09-18T01:41:56.707Z",
+      "ok": true,
+      "candidates": 4,
+      "requeued": 4,
+      "applied": true
+    }
+  },
+  "operationalReadback": {
+    "commitments": {
+      "verifiedAt": "2026-09-18T01:41:16.821Z",
+      "rows": 164,
+      "oldDataEqual": true,
+      "header": [
+        "Event ID",
+        "Telefone",
+        "Tipo",
+        "Resumo operacional",
+        "Responsável",
+        "Criado em",
+        "Prazo",
+        "Status",
+        "Resolvido em",
+        "Origem",
+        "Motivo da resolução",
+        "Opportunity ID",
+        "Profissional",
+        "Request ID"
+      ],
+      "pending": 26
+    },
+    "knowledge": {
+      "verifiedAt": "2026-09-18T01:41:47.362Z",
+      "count": 5,
+      "allApproved": true,
+      "ids": [
+        "KB-ADMIN-LOCAL",
+        "KB-ADMIN-CONSULTA-VALOR",
+        "KB-ADMIN-CONSULTA-PAGAMENTO",
+        "KB-ADMIN-CONSULTA-FUNCIONAMENTO",
+        "KB-ADMIN-PARTICULAR"
+      ]
+    },
+    "recoveryReadback": {
+      "verifiedAt": "2026-09-18T01:42:16.362Z",
+      "rows": [
+        {
+          "row": 293,
+          "status": "pending",
+          "error": "operator_requeued:2026-09-18",
+          "attempts": "0"
+        },
+        {
+          "row": 295,
+          "status": "pending",
+          "error": "operator_requeued:2026-09-18",
+          "attempts": "0"
+        },
+        {
+          "row": 298,
+          "status": "pending",
+          "error": "operator_requeued:2026-09-18",
+          "attempts": "0"
+        },
+        {
+          "row": 313,
+          "status": "pending",
+          "error": "operator_requeued:2026-09-18",
+          "attempts": "0"
+        }
+      ]
+    }
+  },
+  "firstClassificationCycle": {
+    "verifiedAt": "2026-09-18T02:23:32.577Z",
+    "source": "Google Sheets _WHATSAPP_CLASSIFICACAO A290:T340 via connector",
+    "completed": 1,
+    "allCompleted": false,
+    "rows": [
+      {
+        "row": 293,
+        "status": "running",
+        "leaseUntil": "2026-09-18T02:15:28.176Z",
+        "error": "operator_requeued:2026-09-18",
+        "attempts": 2,
+        "hasLease": true,
+        "classifiedAtSheetSerial": 46279.66780747686
+      },
+      {
+        "row": 295,
+        "status": "running",
+        "leaseUntil": "2026-09-18T02:20:29.404Z",
+        "error": "operator_requeued:2026-09-18",
+        "attempts": 2,
+        "hasLease": true,
+        "classifiedAtSheetSerial": 46279.71939491898
+      },
+      {
+        "row": 298,
+        "status": "running",
+        "leaseUntil": "2026-09-18T02:25:33.470Z",
+        "error": "operator_requeued:2026-09-18",
+        "attempts": 2,
+        "hasLease": true,
+        "classifiedAtSheetSerial": 46279.76792038194
+      },
+      {
+        "row": 313,
+        "status": "done",
+        "leaseUntil": "",
+        "error": "",
+        "attempts": 0,
+        "hasLease": false,
+        "classifiedAtSheetSerial": 46282.97276645833
+      }
+    ],
+    "laterDuplicateRows": [
+      {
+        "row": 308,
+        "unchanged": true
+      },
+      {
+        "row": 309,
+        "unchanged": true
+      },
+      {
+        "row": 305,
+        "unchanged": true
+      },
+      {
+        "row": 321,
+        "unchanged": true
+      }
+    ],
+    "manualInvocation": false,
+    "migrationRepeated": false
+  },
+  "validation": {
+    "fullSuite": {
+      "tests": 1614,
+      "passed": 1614,
+      "failed": 0,
+      "outputSha256": "e86db98471e0b8995958a2e51c88d56c0a9fb2c57833f1635ff5b3a7937e0a93"
+    },
+    "focusedTests": 237,
+    "crossConsumerCommands": [
+      {
+        "command": "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "26ee767a1e9c9ea2db837eb1a1b3079391f3399dc55d770147c204eedb9af8c7"
+      },
+      {
+        "command": "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "b231406c99bfad112db89737fc8ccbbbfead1d01956050def7952400d739259f"
+      },
+      {
+        "command": "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "84f062377d7e66f6ca6ca36850d8ccfbc8ceda07c81f05a20a9b198af5560af9"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "3a9deb25dbd124da04c8487835df0b141d9bc7cc7d7c288dae3fb5202c451381"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "8e096607fc7218a445541b8acaea11322eb1f384c8d12309c7a6796c346a0e76"
+      },
+      {
+        "command": "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "8118645025574fa01867a525189c7636a16e672f58f3963ef86a69ff332df2c3"
+      },
+      {
+        "command": "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "f0b5f9c0b3938f88fc93c8aaeb25368c64790b9deb724eff461c4fc9ee600a49"
+      },
+      {
+        "command": "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "73b76ba87cf18bbc54fcdfcf421d6220ed9abccf160077746626645f88fef3be"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "ee757ad09a4e22892b8645a92b04ab3aa9b401aaedfd46819b73287c82739b9f"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "02a61254f051e15a9f713686368ec8b4e42f8f6655120aa7332d8cc9ada1b508"
+      },
+      {
+        "command": "node --test scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "9f2f644a51e0b10e7cbd0098903348ec87513e7259c74f33fa9b6779a5aaeadb"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/bruna-marketing-care.integration.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "dfca07772bf45a11d90c9ea3023be1ac1a5cbd6f4642f3fa92130f977f61de00"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/bruna-marketing-care.integration.test.mjs netlify/functions/lib/classify-leads.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/procedure-context.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "7175ce1f08bdd2ecc85fb9a3bd881eb8eded29bb219e771e8ae2807e631fcd55"
+      },
+      {
+        "command": "node --test netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/interaction-continuity.test.mjs netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-replies.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "f56768d5fbbeeec1fba6d505fdcc2dd7504cb2b84504f2f118b90c912da2bedf"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "a22e05d0a73f879041f8c903eab6da0988a79d0d2a58320f0ca22e44a90d78f1"
+      },
+      {
+        "command": "node --test netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs netlify/functions/lib/interaction-continuity.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "6ee8cd9f57d976b85731a314c1bb8e28db62098ffa11281802158361b1148b0b"
+      }
+    ],
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "siteBuild": "passed",
+    "siteCheck": "passed",
+    "opsBeforePublication": "SYNC_PENDING",
+    "realMessagesSentByAgent": 0,
+    "followupFocusedTests": 51
+  },
+  "rollout": {
+    "strategy": "compatible_service_before_client",
+    "steps": [
+      "Publicar Apps Script compativel com cliente antigo",
+      "Publicar Netlify do mesmo commit",
+      "Aplicar biblioteca e extensao de compromissos com readback",
+      "Recuperar somente as quatro falhas tecnicas elegiveis",
+      "Verificar estado e reconciliar Drive"
+    ],
+    "automationModeChange": false,
+    "flagsChanged": false,
+    "queueRewrite": true,
+    "templateChanged": false,
+    "knowledgeSnapshotChange": true
+  },
+  "rollback": {
+    "local": "Reverter somente este candidato isolado.",
+    "production": "Restaurar primeiro Netlify 6aac860da2c8aa0008212017, depois Apps Script v155 no mesmo deployment, preservando a compatibilidade entre cliente e servico; preservar dados e colunas adicionais.",
+    "verifiedNetlifyDeployId": "6aac860da2c8aa0008212017"
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Sondas imediatas, primeiro ciclo de classificacao e revisao em 48 horas",
+    "metrics": [
+      "Expiracoes de classificacao por etapa",
+      "Pendencias reais versus aguardando paciente",
+      "Continuidade e aceites informativos",
+      "Encaminhamentos humanos e respostas seguras",
+      "Opt-out, duplicidade e inferencias administrativas"
+    ],
+    "rollbackRule": "Conter diante de mensagem indevida, perda de pendencia real, identidade incorreta ou duplicidade."
+  },
+  "realMessagesSentByAgent": 0,
+  "patientReplay": false
 }

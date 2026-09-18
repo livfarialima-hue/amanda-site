@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-2026-09-18",
   "title": "Continuidade de intencao, classificacao recuperavel e autonomia segura por assunto",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "1820ff07b58f6a156421207d2beea813410270b2",
   "authorization": {
     "required": true,
@@ -285,5 +285,12 @@
       "crossGroups": 16,
       "focusedTests": 51
     }
+  },
+  "release": {
+    "approvedCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
+    "netlifyDeployId": "6aac9f8da827906987749510",
+    "appsScriptVersion": 157,
+    "verifiedAt": "2026-09-18T02:24:21.457Z",
+    "documentationStatus": "awaiting_drive_readback"
   }
 }

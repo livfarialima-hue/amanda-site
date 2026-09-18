@@ -1,4 +1,4 @@
-## 2026-09-18.1 — candidato autorizado
+## 2026-09-18.1 — publicado e verificado (c6b2bf2)
 
 Reserva idempotente, intenção recente, biblioteca administrativa revisada, compromissos por solicitação e Central com revisão técnica separada. Publicação e efeitos documentados no recibo do pacote.
 

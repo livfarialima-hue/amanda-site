@@ -1,6 +1,6 @@
 # Bruna — continuidade, autonomia administrativa e classificação
 
-Status: publicação intermediária 49ebec0 / Apps Script v156 concluída; ajuste de busca por reserva exata em validação. Fechamento operacional e projeções ainda pendentes.
+Status: publicado e verificado. Commit `c6b2bf2c9a609848735c35a8bb656d74896b68d4`, Netlify `6aac9f8da827906987749510` ativo e Apps Script v157 no deployment canônico. Biblioteca, identidade e recuperação delimitada aplicadas e relidas.
 
 ## Diagnóstico verificado
 
@@ -21,16 +21,16 @@ A Central separa revisão técnica da obrigação de responder e preserva ambas 
 
 ## Validação e publicação
 
-237 testes focados, 1.607 testes integrais e 16 grupos de consumidores aprovados. Arquitetura, contrato de mudança, build e conferência do artefato passaram. O estado e os recibos finais serão registrados em PUBLICACAO.json.
+Validação final: 1.614 testes integrais e 16 grupos de consumidores aprovados, incluindo 51 testes focados na reserva duplicada e no processamento. Os testes de reprodução falharam antes da correção e passaram depois. Arquitetura, contrato de mudança, build e conferência do artefato passaram. Recibos técnicos e operacionais em PUBLICACAO.json.
 
-Ordem: Apps Script compatível no deployment existente; cliente Netlify do mesmo commit; biblioteca e extensão dos compromissos; recuperação técnica limitada; leitura de verificação; sincronização dos documentos no Drive.
+Publicação intermediária: Apps Script v156 e Netlify 49ebec0; depois, biblioteca com cinco fatos aprovados, três colunas de identidade e recuperação única dos quatro registros técnicos elegíveis. Leitura independente confirmou preservação integral dos 164 registros anteriores e das 26 pendências humanas. O ciclo automático revelou a busca incorreta entre duplicatas, corrigida no commit final. Apps Script v157 verificado em 17/09/2026, 23:18 BRT; Netlify final publicado em 17/09/2026, 23:19 BRT. A leitura operacional confirmou 1 das quatro classificações recuperadas concluídas; 3 seguem os ciclos regulares, sem nova migração ou replay. Sondas do Apps Script e do Netlify aprovadas. Os 192 arquivos estáticos permaneceram iguais ao baseline; 13 funções e cinco programações conferidas. Nenhuma mensagem real de teste foi enviada. Manual e plano executivo usam os mesmos IDs do Drive; a igualdade final é registrada no recibo de fechamento.
 
 ## Limites e reversão
 
 Não se promete redução medida de intervenção ou aumento de conversão antes de observar novas conversas. Não se encerra por inferência nenhuma das 26 tarefas humanas antigas. Falhas órfãs de agosto e conteúdo ausente permanecem conferência operacional, fora da recuperação delimitada.
 
-Rollback: Apps Script v155 e Netlify 6aac860da2c8aa0008212017. Colunas adicionais são compatíveis com o leitor antigo. A biblioteca nova pode ser retirada do snapshot ativo sem apagar dados. Não há replay de mensagens. Revisar primeira execução e em 48 horas; conter diante de identidade incorreta, perda de compromisso real, mensagem após recusa ou duplicidade.
+Rollback: primeiro Netlify 6aac860da2c8aa0008212017, depois Apps Script v155 no mesmo deployment. Colunas adicionais são compatíveis com o leitor antigo. A biblioteca nova pode ser retirada do snapshot ativo sem apagar dados. Não há replay de mensagens. Revisar primeira execução e em 48 horas; conter diante de identidade incorreta, perda de compromisso real, mensagem após recusa ou duplicidade.
 
 ## Falha revelada pelo primeiro ciclo
 
-Os registros de execução, disponibilizados com atraso pelo provedor, mostraram conclusão do modelo em menos de um minuto, seguida de `stale_lease`. Cada uma das quatro oportunidades tinha uma linha histórica anterior e uma posterior já concluída. A reserva selecionava a primeira; a conclusão e a liberação buscavam a última por oportunidade. O ajuste exige correspondência única de token, oportunidade, telefone e profissional, preservando os gates de versão e revisão da conversa. Testes reproduziram a escolha da linha errada antes da correção e conferem a preservação da linha histórica. Limites totais de espera e registros por etapa são proteção adicional, sem dados de pacientes nos logs. A migração única não será repetida.
+Os registros de execução, disponibilizados com atraso pelo provedor, mostraram conclusão do modelo em menos de um minuto, seguida de `stale_lease`. Cada uma das quatro oportunidades tinha uma linha histórica anterior e uma posterior já concluída. A reserva selecionava a primeira; a conclusão e a liberação buscavam a última por oportunidade. O ajuste exige correspondência única de token, oportunidade, telefone e profissional, preservando os gates de versão e revisão da conversa. Testes reproduziram a escolha da linha errada antes da correção e conferem a preservação da linha histórica. Limites totais de espera e registros por etapa são proteção adicional, sem dados de pacientes nos logs. A migração única não foi repetida. A leitura posterior da fila confirmou o avanço normal com a seleção corrigida.
