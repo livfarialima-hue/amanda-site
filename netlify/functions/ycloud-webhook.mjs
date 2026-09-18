@@ -57,6 +57,7 @@ import {
   readConversationTurns,
   toOpenAIConversation,
   updateConversationSemanticState,
+  shouldHydrateConversationHistory,
 } from "./lib/conversation-memory.mjs";
 import {
   getDurableConversationContext,
@@ -4806,21 +4807,7 @@ export async function handleYCloudWebhook(
       templateId: prefillTemplateId,
     });
     const volatileConversationExpired = memoryResult.expired === true;
-    const shouldHydrateDurableHistory = Boolean(
-      delivery.ok &&
-        (
-          memoryResult.status === "failed" ||
-          memoryResult.expired === true ||
-          (
-            memoryResult.historyBefore.length === 0 &&
-            (
-              delivery.updated === true ||
-              delivery.routed === false ||
-              delivery.routeStatus === "pending"
-            )
-          )
-        ),
-    );
+    const shouldHydrateDurableHistory = shouldHydrateConversationHistory({ memoryResult, delivery });
     if (shouldHydrateDurableHistory) {
       const durableContext = await getDurableConversationContext({
         phone,

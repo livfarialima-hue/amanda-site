@@ -20,7 +20,7 @@ import {
   CONTEXT_CONTINUATION_CODE,
   CONTEXT_REOPEN_CODE,
 } from "./semantic-reply-policy.mjs";
-import { approvedLiftingFacialFacts } from "./lifting-information.mjs";
+import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
@@ -978,9 +978,10 @@ export async function runOpenAIShadow(
   const conversionExperienceEnabled =
     isBrunaConversionExperienceEnabled(env);
   const normalizedPolicyHints = normalizePolicyHints(policyHints);
-  const approvedClinicalFacts = approvedLiftingFacialFacts({
+  const approvedClinicalFacts = approvedProcedureInformationFacts({
     text,
     procedure,
+    recentConversation: normalizedConversation,
   });
   const explicitResourceRequest = isDirectSiteRequest(text);
   const siteResource =

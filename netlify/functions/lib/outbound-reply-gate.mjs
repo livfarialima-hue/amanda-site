@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { isDirectSiteRequest, isUnrequestedRepeatedSiteUrl } from "./site-content.mjs";
 import { assessReplyContinuity, patientRequestsRepetition } from "./reply-continuity.mjs";
 import { getStore } from "@netlify/blobs";
+import { appendConversationTurn } from "./conversation-memory.mjs";
 import {
   CONVERSATION_ACTIONS,
   isExplicitDeferralWithoutRequest,
@@ -811,6 +812,7 @@ export async function sendControlledPatientReply(
   {
     sendYCloudPatientTextImpl = sendYCloudPatientText,
     recordDurableConversationTurnImpl = recordDurableConversationTurn,
+    appendConversationTurnImpl = appendConversationTurn,
     getStoreImpl = getStore,
     now = Date.now(),
     beforeSendImpl = null,
@@ -884,6 +886,12 @@ export async function sendControlledPatientReply(
   if (delivery.status === "completed") {
     const accepted = localDevelopment ? { status: "skipped" }
       : await markConversationLedgerAccepted(receipt, { getStoreImpl });
+    // Save the exact delivered body before any slow external ledger/log call.
+    // A timeout after provider acceptance must not erase the offer next turn.
+    let memory;
+    try {
+      memory = await appendConversationTurnImpl({ ...turn, role: "assistant" }, { getStoreImpl, now });
+    } catch { memory = { status: "failed" }; }
     let ledger;
     try { ledger = await recordDurableConversationTurnImpl(turn); }
     catch { ledger = { status: "failed" }; }
@@ -891,6 +899,7 @@ export async function sendControlledPatientReply(
     return {
       ...delivery,
       body: validation.body,
+      conversationMemoryStatus: memory.status,
       conversationLedgerStatus: ledger.status,
       conversationLedgerRecovery: ledger.status === "completed" ? "not_needed" : accepted.status === "completed" ? "pending" : "manual_review",
     };

@@ -48,6 +48,33 @@ test("failed ledger recovery remains pending for idempotent persistence", async 
   assert.equal([...fake.data.values()][0].data.state, "accepted");
 });
 
+test("accepted receipt restores the delivered turn before retrying the ledger, without rewriting its timestamp", async () => {
+  const fake = receiptStore(); const restored = []; const sequence = [];
+  const turn = { phone: "+5511900000000", eventId: "synthetic-memory-repair:bruna", text: "Posso explicar a consulta.", at: new Date().toISOString() };
+  const receipt = await prepareConversationLedgerReceipt(turn, fake);
+  const deps = { ...fake, appendImpl: async value => { restored.push(value); sequence.push("memory"); }, recordImpl: async () => { sequence.push("ledger"); return { status: "completed" }; } };
+  await reconcileConversationLedgerReceipts(deps);
+  assert.equal(restored.length, 0);
+  await markConversationLedgerAccepted(receipt, fake);
+  await reconcileConversationLedgerReceipts(deps);
+  await reconcileConversationLedgerReceipts(deps);
+  assert.deepEqual(sequence, ["memory", "ledger"]);
+  assert.equal(restored[0].at, turn.at);
+  assert.equal(restored[0].text, turn.text);
+  assert.equal(restored[0].source, "bruna");
+});
+
+test("old accepted receipts reach the ledger without reviving expired memory", async () => {
+  const fake = receiptStore(); let cached = 0; let persisted = 0;
+  const now = Date.parse("2026-09-17T18:00:00Z");
+  const turn = { phone: "+5511900000000", eventId: "synthetic-expired", text: "Informação antiga", at: "2026-09-01T18:00:00Z" };
+  const receipt = await prepareConversationLedgerReceipt(turn, { ...fake, now });
+  await markConversationLedgerAccepted(receipt, fake);
+  await reconcileConversationLedgerReceipts({ ...fake, now, appendImpl: async () => { cached++; }, recordImpl: async () => { persisted++; return { status: "completed" }; } });
+  assert.equal(cached, 0);
+  assert.equal(persisted, 1);
+});
+
 test("durable history preserves role, authorship and bounded identity", async () => {
   let request;
   const result = await getDurableConversationContext(

@@ -11,6 +11,11 @@ const MAX_OPENAI_TURN_TEXT_LENGTH = 1_200;
 const TRUNCATION_MARKER = " … ";
 const MAX_WRITE_ATTEMPTS = 4;
 
+export function conversationTurnWithinMemoryWindow(turn, now = Date.now()) {
+  const at = Date.parse(turn?.at);
+  return Number.isFinite(at) && at <= now && now - at <= MEMORY_TTL_MS;
+}
+
 function conversationSource(turn) {
   if (["human", "equipe_humana", "human_team"].includes(turn?.source)) return "human";
   if (turn?.source === "bruna") return "bruna";
@@ -206,6 +211,14 @@ export function conversationKey(phone) {
   return createHash("sha256")
     .update(`liv-conversation-v1:${String(phone || "")}`)
     .digest("hex");
+}
+
+export function shouldHydrateConversationHistory({ memoryResult, delivery }) {
+  return Boolean(delivery?.ok && (
+    memoryResult?.status === "failed" || memoryResult?.expired === true ||
+    memoryResult?.historyBefore?.length > 0 || delivery.updated === true ||
+    delivery.routed === false || delivery.routeStatus === "pending"
+  ));
 }
 
 export async function appendConversationTurn(

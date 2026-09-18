@@ -91,7 +91,7 @@ test("contextual copy resumes a name-only opening with one easy question and no 
     {direcao:"OUT",texto:"Na avaliação, a Dra. Amanda observa a região e explica possibilidades. Como posso te chamar?"},
   ];
   const body = context.sugerirMensagemRetomada_(1,false,null,false,false,"",false,"cervicoplastia (lifting cervical)","",false,false,conversation);
-  assert.equal(body,"Olá! Você comentou que queria saber sobre lifting cervical. Me conta: você já tem alguma mudança em mente ou está começando a pesquisar?");
+  assert.equal(body,"Olá! Sobre lifting cervical, posso te ajudar com uma dúvida prática: como se organizar para a recuperação. Quer que eu te explique?");
   assert.equal((body.match(/\?/g)||[]).length,1);
   assert.doesNotMatch(body,/como posso te chamar|Ficou alguma dúvida|como funciona a avaliação|horário|agenda/i);
 });
@@ -100,14 +100,15 @@ test("contextual copy changes the entry point after an unanswered discovery ques
   const conversation = [{direcao:"OUT",texto:"O que você gostaria de entender primeiro sobre otoplastia?"}];
   const body = context.sugerirMensagemRetomada_(1,false,null,false,false,"",false,"otoplastia","Marina Souza",false,false,conversation);
   assert.match(body,/^Oi, Marina!/);
-  assert.match(body,/prefere saber sobre o procedimento ou sobre a recuperação/);
+  assert.match(body,/como se organizar para a recuperação/);
   assert.doesNotMatch(body,/mudança em mente|o que você gostaria de entender/i);
 });
 
 test("contextual copy does not invent personal engagement from qualified status", () => {
   const body = context.sugerirMensagemRetomada_(1,false,null,false,false,"",true,"lifting facial","",false,false,[]);
   assert.doesNotMatch(body,/interesse.*seu caso|já me contou|principal preocupação/);
-  assert.match(body,/começando a pesquisar/);
+  assert.match(body,/Sobre lifting facial/);
+  assert.doesNotMatch(body,/Você comentou|começando a pesquisar|procedimento ou/);
 });
 
 test("contextual copy keeps price and scheduling suggestions to one next step", () => {
@@ -849,8 +850,8 @@ test("prefill-only candidate receives a contextual continuation without agenda",
   assert.equal(candidate.contextoAgenda, false);
   assert.equal(candidate.contextoPreco, false);
   assert.equal(candidate.assuntoRetomada, "lifting facial");
-  assert.match(candidate.sugestao, /queria saber sobre lifting facial/);
-  assert.match(candidate.sugestao, /prefere saber sobre o procedimento ou sobre a recuperação/);
+  assert.match(candidate.sugestao, /Sobre lifting facial/);
+  assert.match(candidate.sugestao, /como se organizar para a recuperação/);
   assert.doesNotMatch(candidate.sugestao, /agenda|horário/);
   assert.equal(context.responsavelRetomada_(candidate), "bruna");
 });
@@ -1017,8 +1018,8 @@ test("contextual first follow-up names the procedure without offering agenda", (
     "lifting facial",
   );
 
-  assert.match(message, /Podemos conversar sobre lifting facial/);
-  assert.match(message, /começando a pesquisar/);
+  assert.match(message, /Sobre lifting facial/);
+  assert.match(message, /como se organizar para a recuperação/);
   assert.doesNotMatch(message, /Ficou alguma dúvida|como funciona a avaliação/);
   assert.doesNotMatch(message, /agenda|horário|menu|caminhos/);
 });
@@ -2780,8 +2781,8 @@ test("follow-up sequence stays warm, unhurried and respectful", () => {
   );
   assert.match(price, /o valor e o que está incluído/);
   assert.match(schedule, /duas opções reais/);
-  assert.match(general, /Podemos conversar sobre lifting facial/);
-  assert.match(general, /começando a pesquisar/);
+  assert.match(general, /Sobre lifting facial/);
+  assert.match(general, /como se organizar para a recuperação/);
   assert.doesNotMatch(general, /Ficou alguma dúvida|como funciona a avaliação/);
   assert.doesNotMatch(general, /agenda|horário|caminhos/);
   assert.match(second, /nossa conversa sobre lifting facial/);

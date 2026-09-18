@@ -1,5 +1,6 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
+import { isClearInformationAcceptance } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -129,7 +130,7 @@ export function clinicTurnInvitesResponse(turn) {
     value &&
       (
         assistantQuestionBeyondSocialGreeting(turn) ||
-        /\b(?:posso|podemos)\s+(?:te|lhe)?\s*(?:explicar|contar|mostrar|enviar|orientar|detalhar|ajudar)\b/i.test(value) ||
+        /\b(?:posso|podemos)\s+(?:te|lhe)?\s*(?:explicar|contar|mostrar|enviar|passar|orientar|detalhar|ajudar)\b/i.test(value) ||
         /\b(?:quer|gostaria)\s+que\s+eu\s+(?:te|lhe)?\s*(?:explique|conte|mostre|envie|oriente|detalhe|ajude)\b/i.test(value)
       ),
   );
@@ -239,7 +240,7 @@ export function isShortAffirmativeReplyToHumanQuestion(
   return Boolean(
     humanOwned &&
       assistantQuestionBeyondSocialGreeting(clinicTurn) &&
-      SHORT_AFFIRMATIVE_REPLY_PATTERN.test(normalized(text)),
+      (SHORT_AFFIRMATIVE_REPLY_PATTERN.test(normalized(text)) || isClearInformationAcceptance(text)),
   );
 }
 
@@ -267,7 +268,8 @@ export function hasDirectPatientRequest(text) {
     Boolean(value) &&
     (
       DIRECT_QUESTION_PATTERN.test(value) ||
-      DIRECT_REQUEST_PATTERN.test(value)
+      DIRECT_REQUEST_PATTERN.test(value) ||
+      /\b(?:passa|passe|informa|informe|manda|mande|envia|envie)\s+(?:(?:o|a|os|as)\s+)?(?:valor(?:es)?|pre[cç]os?|endere[cç]o|informa[cç][oõ]es?|faixa)\b/i.test(value)
     )
   );
 }

@@ -45,9 +45,8 @@ test("asks for context naturally when the provider omits the inbound text", () =
   assert.equal(
     reply,
     "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-      "Sua primeira mensagem não carregou para mim. " +
-      "Pode me reenviar sua dúvida em uma frase? " +
-      "Assim já consigo te orientar por aqui.",
+      "Recebi seu contato, mas o texto veio incompleto por aqui. " +
+      "Pode me contar qual é a sua dúvida?",
   );
   assert.equal((reply.match(/\?/g) || []).length, 1);
   assert.doesNotMatch(reply, /diagnóstico|indicação|erro|falha técnica/i);

@@ -37,6 +37,7 @@ const AUTOMATION_MODE_CONSUMERS = [
 ];
 
 const PURE_POLICY_MODULES = [
+  "netlify/functions/lib/patient-turn-context.mjs",
   "netlify/functions/lib/automation-mode.mjs",
   "netlify/functions/lib/marketing-prefill.mjs",
   "netlify/functions/lib/procedure-context.mjs",

@@ -1,6 +1,7 @@
 import { callClassificationSheets } from "./sheets-classification-client.mjs";
 import { getStore } from "@netlify/blobs";
 import { createHash } from "node:crypto";
+import { appendConversationTurn, conversationTurnWithinMemoryWindow } from "./conversation-memory.mjs";
 
 const MAX_TURNS = 32;
 const MAX_TEXT_LENGTH = 1_600;
@@ -52,7 +53,7 @@ export async function completeConversationLedgerReceipt(receipt, { getStoreImpl 
 }
 
 export async function reconcileConversationLedgerReceipts({ getStoreImpl = getStore,
-  recordImpl = recordDurableConversationTurn, limit = 3 } = {}) {
+  recordImpl = recordDurableConversationTurn, appendImpl = appendConversationTurn, limit = 3, now = Date.now() } = {}) {
   const counts = { persisted: 0, failed: 0, uncertain: 0 };
   try {
     const storage = ledgerReceiptStore(getStoreImpl);
@@ -62,6 +63,11 @@ export async function reconcileConversationLedgerReceipts({ getStoreImpl = getSt
       const entry = await storage.getWithMetadata(blob.key, { type: "json", consistency: "strong" });
       if (entry?.data?.state === "prepared") { counts.uncertain += 1; continue; }
       if (entry?.data?.state !== "accepted" || !entry.data.turn) continue;
+      // Accepted receipts prove delivery. Rebuild only those cache turns, with
+      // their original timestamp; this never calls the provider or replays IN.
+      if (conversationTurnWithinMemoryWindow(entry.data.turn, now)) {
+        await appendImpl({ ...entry.data.turn, role: "assistant", source: "bruna" }, { getStoreImpl, now });
+      }
       const result = await recordImpl(entry.data.turn);
       if (result.status === "completed") {
         await completeConversationLedgerReceipt({ key: blob.key }, { getStoreImpl });

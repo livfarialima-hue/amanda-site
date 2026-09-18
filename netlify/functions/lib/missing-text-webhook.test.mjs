@@ -123,11 +123,11 @@ test("a text event with an omitted body receives one safe clarification", async 
     );
     assert.match(
       patientMessages[0].text.body,
-      /primeira mensagem não carregou para mim/i,
+      /texto veio incompleto por aqui/i,
     );
     assert.match(
       patientMessages[0].text.body,
-      /reenviar sua dúvida em uma frase/i,
+      /contar qual é a sua dúvida/i,
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -275,9 +275,8 @@ test("an unsupported inbound event receives one safe clarification without infer
     assert.equal(
       patientMessages[0].text.body,
       "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-        "Sua primeira mensagem não carregou para mim. " +
-        "Pode me reenviar sua dúvida em uma frase? " +
-        "Assim já consigo te orientar por aqui.",
+        "Recebi seu contato, mas o texto veio incompleto por aqui. " +
+        "Pode me contar qual é a sua dúvida?",
     );
     assert.equal(
       (patientMessages[0].text.body.match(/\?/g) || []).length,

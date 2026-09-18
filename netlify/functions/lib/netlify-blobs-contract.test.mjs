@@ -122,6 +122,7 @@ test("provider retry and recovery self-registration preserve the claimed job aft
   const duplicate = await registerInboundRecovery(incoming, { ...options, now: now + 1_000 });
   assert.deepEqual(duplicate, { status: "duplicate", reason: "already_pending" });
   const result = await processInboundRecoveryJob(job, {
+    now,
     getLatestInboundReplyMarkerImpl: async () => ({ status: "completed", found: false }),
     processImpl: async () => {
       assert.equal((await registerInboundRecovery(incoming, options)).reason, "already_pending");

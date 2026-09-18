@@ -1,4 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import { informationRequestText } from "./patient-turn-context.mjs";
 
 export const LIFTING_FACIAL_INFORMATION_REPLY_CODE =
   "LIFTING-FACIAL-INFORMATION-01";
@@ -104,6 +105,30 @@ export function approvedLiftingFacialFacts({ text, procedure } = {}) {
       "A avaliação pode inclusive concluir que a cirurgia ainda não está indicada.",
     ],
   };
+}
+
+export function approvedProcedureInformationFacts({ text, procedure, recentConversation = [] } = {}) {
+  const request = informationRequestText({ text, recentConversation });
+  const facial = approvedLiftingFacialFacts({ text: request, procedure });
+  if (facial) return facial;
+  if (!RECOVERY_PATTERN.test(request)) return null;
+  // Educational excerpts from the already published canonical procedure pages.
+  // They describe recovery generally and never clear an individual activity.
+  const recovery = {
+    lifting_cervical: {
+      source: "lifting-cervical/index.html#recuperacao",
+      statement: "Nos primeiros dias do lifting cervical, pode haver inchaço, sensação de tensão e curativos. O inchaço e os roxos diminuem gradualmente; a volta às atividades leves depende da evolução e do tipo de cirurgia. As orientações e os retornos são individualizados pela equipe.",
+    },
+    otoplastia: {
+      source: "otoplastia/index.html#recuperacao",
+      statement: "Nos primeiros dias da otoplastia, curativo ou faixa, inchaço e sensibilidade podem fazer parte da recuperação. Escola e trabalho retornam progressivamente; atividades com risco de trauma dependem de liberação da equipe. Cuidados com a incisão e uso da faixa são orientados para cada caso.",
+    },
+  }[procedure];
+  return recovery ? { procedure, topics: ["recovery"], facts: [{ topic: "recovery", ...recovery }], boundaries: [
+    "Contexto educativo para quem está pesquisando, não orientação de pós-operatório individual.",
+    "Não prescrever cuidados, posição, medicamento, exercícios, curativo ou tempo de uso de faixa.",
+    "Não definir liberação ou prazo individual; sintomas, complicações e cuidado em andamento exigem a equipe.",
+  ] } : null;
 }
 
 export function buildLiftingFacialInformationReply({

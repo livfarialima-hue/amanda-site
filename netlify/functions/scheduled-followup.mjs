@@ -288,6 +288,7 @@ function isExactSimpleProcedureFollowup(text, procedure) {
     `ola queria retomar nossa conversa sobre ${phrase} ficou alguma duvida que eu possa esclarecer para voce se preferir tambem posso explicar como funciona a avaliacao com a dra amanda para voce entender esse proximo passo com calma`,
     `ola voce comentou que queria saber sobre ${phrase} me conta voce ja tem alguma mudanca em mente ou esta comecando a pesquisar`,
     `ola voce comentou que queria saber sobre ${phrase} podemos comecar por uma duvida pratica voce prefere saber sobre o procedimento ou sobre a recuperacao`,
+    `ola sobre ${phrase} posso te ajudar com uma duvida pratica como se organizar para a recuperacao quer que eu te explique`,
   ].includes(normalized));
 }
 

@@ -1,4 +1,5 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
+import { isClearInformationAcceptance, isAutomatedBusinessReply } from "./patient-turn-context.mjs";
 import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
@@ -280,9 +281,9 @@ export function enrichAutomationPlanFromConversation(
   }
   const acceptedPriceRangeOffer = Boolean(
     PRICE_RANGE_OFFER_PATTERN.test(String(lastClinicTurn?.text || "")) &&
-      PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN.test(
+      (PRICE_RANGE_OFFER_ACCEPTANCE_PATTERN.test(
         String(plan.currentText || latestPatientTurn?.text || ""),
-      ),
+      ) || isClearInformationAcceptance(plan.currentText || latestPatientTurn?.text)),
   );
 
   if (acceptedPriceRangeOffer) {
@@ -362,7 +363,7 @@ export function enrichAutomationPlanFromConversation(
       recentClinicProcedure?.key ||
       context.procedure;
     if (isAutomaticSurgicalPriceProcedure(procedure)) {
-      return {
+      plan = {
         ...plan,
         route: "standard_reply",
         reason: "price_initial_information",
@@ -370,8 +371,9 @@ export function enrichAutomationPlanFromConversation(
         procedure,
         automaticAllowed: true,
       };
-    }
-    return {
+      // Continue through the prior-offer/range checks below. Returning here
+      // used to restart price education whenever this turn omitted the name.
+    } else return {
       ...plan,
       professional: plan.professional || context.professional || "amanda",
       procedure: procedure || null,
@@ -582,6 +584,11 @@ export function planAutomation({
       procedure: procedure?.key || null,
       automaticAllowed: false,
     };
+  }
+
+  if (isAutomatedBusinessReply(normalizedText)) {
+    return { route: "ignore", reason: "automated_business_reply", replyCode: null,
+      professional: null, procedure: null, automaticAllowed: false };
   }
 
   if (matchesAny(normalizedText, IRRELEVANT_PERSONAL_PATTERNS)) {

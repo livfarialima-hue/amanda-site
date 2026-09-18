@@ -424,9 +424,8 @@ export function buildMissingInboundTextClarificationReply({
 } = {}) {
   return [
     `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`,
-    "Sua primeira mensagem não carregou para mim.",
-    "Pode me reenviar sua dúvida em uma frase?",
-    "Assim já consigo te orientar por aqui.",
+    "Recebi seu contato, mas o texto veio incompleto por aqui.",
+    "Pode me contar qual é a sua dúvida?",
   ].join(" ");
 }
 

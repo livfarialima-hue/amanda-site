@@ -1,0 +1,529 @@
+{
+  "checkedAt": "2026-09-18T00:03:42.939810+00:00",
+  "baseCommit": "f6b60264d44862b75cbbe13206327218e1aae8a5",
+  "netlify": {
+    "verifiedAt": "2026-09-17T23:49:16.545Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "branch": "reestruturacao-site",
+    "commit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "deployId": "6aa86fc2b2999d0009b2d245",
+    "publishedAt": "2026-09-14T22:06:27.969Z",
+    "functions": [
+      {
+        "n": "appointment-reminder",
+        "d": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "3b974a265419778cda2dfe24931fcc4d84b5fe7dd04e8170da6292efeebf9fae",
+        "s": 365193,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.473Z",
+        "a": "016005051599",
+        "oid": "98a7c49a2a06b23ee5b5b2b71009c20cad2d65dd8fddc4a533a4af862df3f4d7",
+        "im": "stream"
+      },
+      {
+        "n": "appointment-review",
+        "d": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "47bed2ec967bef1be730f93a6bec7204639c37fbc244ff41b76b4a2d019dc140",
+        "s": 365512,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.502Z",
+        "a": "041063310524",
+        "oid": "ab65016deed1260144313fa52739f3ce24f56df8e0818611c61d759faaa75b1e",
+        "im": "stream"
+      },
+      {
+        "n": "attribution-journey",
+        "d": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "ro": [
+          {
+            "p": "/.netlify/functions/attribution-journey",
+            "l": "/.netlify/functions/attribution-journey",
+            "e": null,
+            "m": [],
+            "ps": false
+          }
+        ],
+        "p": 10,
+        "tr": {
+          "action": {
+            "config": {
+              "aggregate": {
+                "keys": [
+                  {
+                    "type": "ip"
+                  },
+                  {
+                    "type": "domain"
+                  }
+                ]
+              },
+              "rate_limit_config": {
+                "algorithm": "sliding_window",
+                "window_limit": 20,
+                "window_size": 60
+              }
+            },
+            "type": "rate_limit"
+          }
+        },
+        "id": "f30cbf614e9189eed727c83ed82361e676ac2af0c481e9a99a03dbe6e672c68d",
+        "s": 365916,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.472Z",
+        "a": "105186839156",
+        "oid": "a3354ac02c8324ef80f2ef2b0b81af030541ee4841b252296b1289e89eeb79c6",
+        "im": "stream"
+      },
+      {
+        "n": "attribution-journey-purge",
+        "d": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "26987474c2d020361bc7418ae064b2d5daf201b55b1bde325a9c317930c1f0dc",
+        "s": 365405,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.463Z",
+        "a": "539293845005",
+        "oid": "8b608a0123cd351c5dcb65a6cbbc634ca45bef1e0d8587dcfd68cd6adf70eba6",
+        "im": "stream"
+      },
+      {
+        "n": "classify-leads",
+        "d": "520faa417462e6c22e1d14d6dd7863cc67a880b2d5669e6ee6e1e6ad65076afe",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "8554bf8117adb740b4d0decb5566b6eb6688719a838321056f00c0303867b32c",
+        "s": 374668,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.503Z",
+        "a": "468299678394",
+        "oid": "4bf33bef5f8bd38662adf72f050b03418693a88481ce033a05d93593a9d51779",
+        "im": "stream"
+      },
+      {
+        "n": "classify-leads-background",
+        "d": "1e80d94d83e5c4b5d1d7f520abcec0283f902082bc4ae2c3ea0f4a13fd424c7a",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "7affbff92b3d9d597c46356174fffa4976cd7aeb47cd9ab149b65dafaa8f0295",
+        "s": 374634,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.501Z",
+        "a": "372283770107",
+        "oid": "e54b0378eb68b8290457382fade4b778454919a27ab00e22245c4fa65131dbc2",
+        "im": "background"
+      },
+      {
+        "n": "human-resume",
+        "d": "c5ce4c768df419274ebb9f327911910d630489fd759917315f66200bf1f62024",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "7398684d15bf948aac20d878dc3e0f6a04187742fcc8480444a3344d98df1e28",
+        "s": 488252,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T21:41:39.985Z",
+        "a": "041063310524",
+        "oid": "a66de3d5c5a27a5a6cb99a62f73772ecc64881e9ca88403dfe372a723dd09779",
+        "im": "stream"
+      },
+      {
+        "n": "post-consult-followup",
+        "d": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "da35e6eb9271768525d691e87f6feed7a0a3cecde82a08c3ce30e8a26854b6ab",
+        "s": 364365,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T15:52:12.468Z",
+        "a": "761546455604",
+        "oid": "9e4c09f2f8ab4af09d7818bb346948b6747b9dd69d701eb75217515317413473",
+        "im": "stream"
+      },
+      {
+        "n": "scheduled-followup",
+        "d": "337e117f794755b6030774f720ba53a72a07356caa28646796b03edd6ce8ddb1",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "9ad463b163b118b488fdfd60cfbf24c5519ac1fab39aa3b99c62a1bd6566e7b8",
+        "a": "837451400009",
+        "c": "2026-09-14T22:06:27.377Z",
+        "im": "stream",
+        "m": 1024,
+        "obl": "netlify-observability-extension",
+        "oblv": 32,
+        "oid": "9fb0c66e122d0e9899e66bcfb976d656053d0805ff9be6e3d5029bf1839f01be",
+        "r": "nodejs24.x",
+        "rg": "us-east-2",
+        "s": 378622
+      },
+      {
+        "n": "synthetic-integration-health",
+        "d": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "5ee70ef32bb454fa80198e17897cbf4e3bfae4df5a5cf8f841f155c65a8355d0",
+        "s": 338255,
+        "r": "nodejs24.x",
+        "c": "2026-09-13T02:00:17.212Z",
+        "a": "191106063332",
+        "oid": "edeb703223c3abc1959127828b080018f1da51bb904d0bdeb28b1eff086abda7",
+        "im": "stream"
+      },
+      {
+        "n": "ycloud-recovery",
+        "d": "03502e14f746cc33deb4a10a5e611e3358a8741feb727946af7acd941d61678f",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "90c5ddc1847114eb21b2781d998253246c453d9c02b2b239ea3e2316e45d6294",
+        "s": 562270,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T21:41:39.960Z",
+        "a": "496498411776",
+        "oid": "b396e1494b324d6e83dcce6daa6cbce30bc7aa04cdf9dde0ae926f137e827fd3",
+        "im": "stream"
+      },
+      {
+        "n": "ycloud-recovery-background",
+        "d": "26794ce0264468a57d10032797e460f16137dee624cc449d2580d30193d8df98",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "p": 10,
+        "id": "232749c4354913da4b388c1580f907aeddfe66e9d5045af7424aa0cc2d6a1997",
+        "s": 562097,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T21:41:40.047Z",
+        "a": "250705260819",
+        "oid": "1325e53531ab2e814e7ac917f5556ab5dc1568fe1c77992b3093913980a003ae",
+        "im": "background"
+      },
+      {
+        "n": "ycloud-webhook",
+        "d": "efd8334aa34c0d0844f451159f9978f799ebc8a6f0ce4468196a0cac7a1af75f",
+        "dn": null,
+        "g": null,
+        "bd": {
+          "bootstrapVersion": "2.18.0",
+          "runtimeAPIVersion": 2
+        },
+        "ro": [
+          {
+            "p": "/api/ycloud/webhook",
+            "l": "/api/ycloud/webhook",
+            "e": null,
+            "m": [],
+            "ps": false
+          }
+        ],
+        "p": 10,
+        "id": "bd347a7cfa49a4ba730a002cea7eef766d43d72922ab1c24f98d5a2296f3dc06",
+        "s": 559191,
+        "r": "nodejs24.x",
+        "c": "2026-09-14T21:41:39.992Z",
+        "a": "999581846204",
+        "oid": "62d2a0c4e4146306d4a0667d587f435e0b26723cbd8d179f1f8dafcf49c15f04",
+        "im": "stream"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
+  },
+  "evidence": {
+    "driveFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
+    "newExports": 76,
+    "uniqueTranscripts": 75,
+    "allDownloadSizesVerified": true,
+    "rawTranscriptsCommitted": false,
+    "ledgerRange": "_WHATSAPP_MENSAGENS!A1700:N2795",
+    "operationalRange": "_WHATSAPP_OPERACAO_EVENTOS!A1200:Z1779",
+    "cachedConversationsRead": 73,
+    "pendingLedgerReceipts": {
+      "accepted": 38,
+      "prepared": 5
+    }
+  },
+  "appsScript": {
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "version": 154,
+    "liveVerification": "verified_read_only",
+    "sourceComparison": {
+      "checkedAt": "2026-09-18T00:09:18.289Z",
+      "files": [
+        {
+          "file": "Código.gs",
+          "bytes": 85759,
+          "exact": false,
+          "normalized": true,
+          "sha256": "2e37ba10ad53410cf5045d3dbe557f5fa0d91cb8e0f873aee53dcf10b3a0d96e"
+        },
+        {
+          "file": "Retomadas.gs",
+          "bytes": 158414,
+          "exact": false,
+          "normalized": true,
+          "sha256": "726b3f7e6eeaad215e64b1bdec7b3c10277ab2f6fb58bf6380b4f4fc7f5be2c7"
+        },
+        {
+          "file": "LembretesConsultas.gs",
+          "bytes": 42248,
+          "exact": false,
+          "normalized": true,
+          "sha256": "cacfa666ada4254fa244715ac5f66ef70ceec803b95c1780ebf293b0cb7cc9c4"
+        },
+        {
+          "file": "ConsultasSync.gs",
+          "bytes": 173077,
+          "exact": false,
+          "normalized": true,
+          "sha256": "422cb34936f828e4c9abfafac7f6ff1b5b6c36f824c34e72635ea123cf06d57e"
+        },
+        {
+          "file": "AgendaCuidados.gs",
+          "bytes": 60712,
+          "exact": false,
+          "normalized": true,
+          "sha256": "225c587362a033196cf3de06a831ed83e44efb65fa8d98438e4a41e7d2dafe9d"
+        },
+        {
+          "file": "CentralAtendimento.gs",
+          "bytes": 136403,
+          "normalized": true,
+          "sha256": "be0c65074c244490749b0653b3d7c56f74b14f54dd7361969653ce17670c1d3f"
+        },
+        {
+          "file": "LeadClassification.gs",
+          "bytes": 128518,
+          "normalized": true,
+          "sha256": "01110b957ebc3433ff53e18431609a2edff148deffb1c5b487b1ebdbd077ab7c"
+        },
+        {
+          "file": "ContactPreferences.gs",
+          "bytes": 14494,
+          "normalized": true,
+          "sha256": "f32bdb9617b4d2b2daaa161dccf3cf0ac6e2baecbd43a4205aaf523199d1eaf1"
+        },
+        {
+          "file": "RoomBooking.gs",
+          "bytes": 8805,
+          "normalized": true,
+          "sha256": "b91d34ee14e5ca00594baeb7f5795b9c4cbbaff8747aa9a2038b881757f61a84"
+        },
+        {
+          "file": "RoomBookingForm.html",
+          "bytes": 10163,
+          "normalized": true,
+          "sha256": "ea3c5d0f7e0f1da3c0622456ac5fbaaae532f04d4da193b24bbd442938ac534e"
+        },
+        {
+          "file": "KnowledgeBase.gs",
+          "bytes": 29989,
+          "normalized": true,
+          "sha256": "5826db8a4602c91d6b160cf38a3ab901006089bdda3c7406f8f883727231ef65"
+        },
+        {
+          "file": "OpportunityStore.gs",
+          "bytes": 82509,
+          "normalized": true,
+          "sha256": "27bfadec03e71b8448beafd7df5858c1269b4d9d7535c182c2677299c30aaf16"
+        },
+        {
+          "file": "BusinessMilestones.gs",
+          "bytes": 2518,
+          "normalized": true,
+          "sha256": "051ddc32640701f757372a7eedafb798b268c8a03dcfc5dbb1c056e223b434b6"
+        },
+        {
+          "file": "DataQualityRepair.gs",
+          "bytes": 81367,
+          "normalized": true,
+          "sha256": "07922c6e0249aed52702e0f5c6a5f6f0fb4636cc2028ad1af517ac381f77653d"
+        },
+        {
+          "file": "OperationalEvents.gs",
+          "bytes": 22803,
+          "normalized": true,
+          "sha256": "bbda6ae9ea1ee7ff3d196426200033b92053b6872fdd4d6d27f350f5aa8c80cc"
+        },
+        {
+          "file": "SyntheticHealth.gs",
+          "bytes": 4371,
+          "normalized": true,
+          "sha256": "c4ef244bbaa94e0a4bd3a3e8ae5ba1922e85bc7131ca61850ba74e0c5a97442d"
+        },
+        {
+          "file": "QualityDashboards.gs",
+          "bytes": 5724,
+          "normalized": true,
+          "sha256": "5578b4b330d5752a49a67953f389dcace9aae942446749f97644bc9c925053be"
+        },
+        {
+          "file": "ScheduleMaintenance.gs",
+          "bytes": 3980,
+          "normalized": true,
+          "sha256": "73922ac04d71ee59d6762ba70da37abff2fec9749d2c3b3e5bed922c32158bb7"
+        },
+        {
+          "file": "FunnelDashboards.gs",
+          "bytes": 19004,
+          "normalized": true,
+          "sha256": "ce12d7b3a965db16efd9e9a7cc4eec07d726153963d538f55c024075a507985f"
+        },
+        {
+          "file": "GoogleAdsFunnelReview.gs",
+          "bytes": 26142,
+          "normalized": true,
+          "sha256": "0638ec10ef77a925ea456128792583b3b58043b51e35a619235113d9ceec4ee7"
+        },
+        {
+          "file": "MetaAdsFunnelReview.gs",
+          "bytes": 12636,
+          "normalized": true,
+          "sha256": "186b8c60505466df2a0694053f7f3a6d30e78ad9d54c99c8449f1a69831e29e3"
+        },
+        {
+          "file": "MetaAdsReview.gs",
+          "bytes": 53823,
+          "normalized": true,
+          "sha256": "4a8ba634891bff1fb351888554bb14d2e813aea9ac98a7266620fc1632da3ed8"
+        },
+        {
+          "file": "FunnelReconciliation.gs",
+          "bytes": 24939,
+          "normalized": true,
+          "sha256": "89e5e4dc0727f9650f4fa30b763ad4f478a2e6fb27dfeab692d7b91df8b36c7f"
+        },
+        {
+          "file": "PainelDecisoesDiarias.gs",
+          "bytes": 42473,
+          "normalized": true,
+          "sha256": "bd8c98ea766a621bd285dfaed8166dd466b5583e46756b00c28f7686e3c31d67"
+        },
+        {
+          "file": "WhatsAppCosts.gs",
+          "bytes": 19457,
+          "normalized": true,
+          "sha256": "f31ed535389628c97418c5fc7bdbfd2d7d74e474f5dbba679ca24fbc25215f44"
+        },
+        {
+          "file": "ClassificationReconciliation.gs",
+          "bytes": 14765,
+          "normalized": true,
+          "sha256": "9ba41f6ceed12429433f8ed820af53c387369360efee144ce89bebda5f06b1d0"
+        },
+        {
+          "file": "CuidadosProgramados.gs",
+          "bytes": 42459,
+          "normalized": true,
+          "sha256": "1c74522fdc7c1a5cb5f69acad5d07ac36da8c2ee0a08416c9b42d1a4d131028b"
+        }
+      ]
+    }
+  },
+  "authorization": "Usuario autorizou diagnosticar, alterar e publicar nesta tarefa; nenhuma mensagem de teste ou replay autorizado.",
+  "finalLiveReadOnly": {
+    "checkedAt": "2026-09-18T00:26:43.360Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aa86fc2b2999d0009b2d245",
+    "baselineCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "functions": 13,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ],
+    "appsScript": {
+      "version": 154,
+      "sourcesCompared": 27,
+      "receipt": "auditorias/bruna-conversas-2026-09-17/PREFLIGHT.json"
+    }
+  }
+}

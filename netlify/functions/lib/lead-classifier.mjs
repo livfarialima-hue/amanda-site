@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { normalizeMarketingPrefillTemplateId } from "./marketing-prefill.mjs";
+import { isAutomatedBusinessReply } from "./patient-turn-context.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.6-terra";
@@ -324,9 +325,10 @@ export function enforcePrefillOnlyClassificationGuard({
     (message) => message?.direction === "IN" && message?.messageType !== "reaction",
   );
   const unavailableContent = inbound.some(message => message.contentUnavailable === true);
+  const automatedResponse = inbound.some(message => isAutomatedBusinessReply(message.text));
   const isolatedPrefill =
     inbound.length > 0 &&
-    inbound.every((message) => message.marketingPrefill === true || message.contentUnavailable === true);
+    inbound.every((message) => message.marketingPrefill === true || message.contentUnavailable === true || isAutomatedBusinessReply(message.text));
 
   if (
     String(currentStatus || "Novo") !== "Novo" ||
@@ -342,12 +344,14 @@ export function enforcePrefillOnlyClassificationGuard({
     confidence: unavailableContent ? "low" : "high",
     summary: unavailableContent
       ? "Contato inicial com conteúdo não textual pendente de revisão humana."
+      : automatedResponse ? "Contato de origem seguido por resposta automática de conta comercial, sem manifestação pessoal."
       : "Contato inicial por mensagem automática de interesse.",
     nextAction: unavailableContent ? "Revisar conteúdo não textual antes de classificar a intenção."
+      : automatedResponse ? "Aguardar uma mensagem pessoal antes de continuar o atendimento."
       : messages.some(message => message.direction === "OUT")
       ? classification.nextAction
       : "Responder ao contato inicial, sem presumir intenção de agendar.",
-    expectedParty: !unavailableContent && messages.some(message => message.direction === "OUT")
+    expectedParty: automatedResponse && !unavailableContent ? "patient" : !unavailableContent && messages.some(message => message.direction === "OUT")
       ? classification.expectedParty
       : "clinic",
     commercialReason: "Em andamento",
@@ -363,7 +367,8 @@ export function enforcePrefillOnlyClassificationGuard({
 export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", messages = [], classification }) {
   if (!classification) return classification;
   const result = { ...classification };
-  const meaningful = messages.filter(message => message.messageType !== "reaction");
+  const meaningful = messages.filter(message => message.messageType !== "reaction" &&
+    !(message.direction === "IN" && isAutomatedBusinessReply(message.text)));
   const inbound = meaningful.filter(message => message.direction === "IN" && !message.marketingPrefill);
   const personalText = inbound.filter(message => !message.contentUnavailable).map(message => String(message.text || "")).join("\n");
   const barrierText = personalText.replace(/\bn[aã]o (?:[ée]|est[aá]|acho|achei)(?: t[aã]o| muito)? car[oa]\b/gi, "");

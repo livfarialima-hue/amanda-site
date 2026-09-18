@@ -209,3 +209,11 @@ conversation-memory é o proprietário da adaptação de histórico para IA e da
 ### Cópia contextual das retomadas — 14/09/2026
 
 Retomadas.gs mantém a autoria da sugestão e consulta a última pergunta da clínica para evitar reapresentação, nova coleta de nome ou a mesma descoberta aberta. scheduled-followup.mjs espelha apenas o texto exato permitido no corredor automático existente, preservando o veto semântico para os demais casos. A mudança não replaneja fila nem altera cadência, janela, cuidado, preferências, aprovação ou gatilhos. Contrato: followup-message-copy.
+
+## Integridade de continuidade — 17/09/2026
+
+`patient-turn-context.mjs` é proprietário puro dos sinais de aceite informativo, resposta automática comercial e recuperação do assunto da última oferta; não autoriza preço, agenda ou envio. `whatsapp-automation`, `conversation-action-controller`, `lead-classifier` e `lifting-information` consomem esses sinais nos próprios contratos.
+
+`outbound-reply-gate` registra em `conversation-memory` somente o corpo efetivo confirmado pelo provedor, antes de aguardar o ledger externo. `conversation-ledger` recompõe esse mesmo turno a partir de recibo aceito, sem reenvio. `conversation-memory` mantém merge condicional, autoria, cronologia e limite existente; cache preenchido não dispensa conferência durável em uma continuação. Falha nessa leitura preserva o contexto disponível, sem fabricar turnos.
+
+`lifting-information` mantém os fatos educativos por procedimento; o aceite pode selecionar o tema da última oferta informativa, nunca outro procedimento. Novos fatos de recuperação derivam das páginas canônicas cervical/otoplastia; cuidado individual segue humano. `Retomadas.gs` continua proprietário do texto, com equivalência no gate Netlify e compatibilidade de cópias legadas.

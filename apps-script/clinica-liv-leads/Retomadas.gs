@@ -2548,6 +2548,8 @@ function sugestaoExataRetomadaModelo_(texto, procedimentoId) {
         " me conta voce ja tem alguma mudanca em mente ou esta comecando a pesquisar",
       "ola voce comentou que queria saber sobre " + frase +
         " podemos comecar por uma duvida pratica voce prefere saber sobre o procedimento ou sobre a recuperacao",
+      "ola sobre " + frase +
+        " posso te ajudar com uma duvida pratica como se organizar para a recuperacao quer que eu te explique",
     ].includes(normalizado);
   });
 }
@@ -3068,21 +3070,20 @@ function sugerirMensagemRetomada_(
 
   if (etapa === 1 && assunto) {
     const assuntoCurto = assunto.replace(/^cervicoplastia \(lifting cervical\)$/i, "lifting cervical");
-    const mensagens = Array.isArray(conversa) ? conversa : [];
-    const procedimento = identificarProcedimentoRetomadaModelo_(assuntoCurto);
-    const mencionadoPelaPaciente = procedimento && mensagens.some(function (mensagem) {
-      return mensagem.direcao === "IN" && identificarProcedimentoRetomadaModelo_(mensagem.texto) === procedimento;
-    });
-    const ultimaSaida = mensagens.slice().reverse().find(function (mensagem) { return mensagem.direcao === "OUT"; });
-    const perguntaAnterior = normalizarTextoRetomadas_(ultimaSaida && ultimaSaida.texto);
-    const descobertaJaPerguntada = /o que (?:voce )?gostaria de (?:entender|saber|melhorar|preservar)|o que mais (?:te )?incomoda|o que mais chamou/.test(perguntaAnterior);
+    const recuperacaoComBase = /^(?:lifting cervical|cervicoplastia|lifting facial|otoplastia|cirurgia das orelhas)$/i.test(assuntoCurto);
+    if (!recuperacaoComBase) {
+      const mensagens = Array.isArray(conversa) ? conversa : [];
+      const procedimento = identificarProcedimentoRetomadaModelo_(assuntoCurto);
+      const mencionadoPelaPaciente = procedimento && mensagens.some(function (mensagem) {
+        return mensagem.direcao === "IN" && identificarProcedimentoRetomadaModelo_(mensagem.texto) === procedimento;
+      });
+      return saudacao + (mencionadoPelaPaciente ? " Você comentou que queria saber sobre " : " Podemos conversar sobre ") +
+        assuntoCurto + ". Me conta: você já tem alguma mudança em mente ou está começando a pesquisar?";
+    }
     return (
-      saudacao +
-      (mencionadoPelaPaciente ? " Você comentou que queria saber sobre " : " Podemos conversar sobre ") +
+      saudacao + " Sobre " +
       assuntoCurto +
-      (descobertaJaPerguntada
-        ? ". Podemos começar por uma dúvida prática: você prefere saber sobre o procedimento ou sobre a recuperação?"
-        : ". Me conta: você já tem alguma mudança em mente ou está começando a pesquisar?")
+      ", posso te ajudar com uma dúvida prática: como se organizar para a recuperação. Quer que eu te explique?"
     );
   }
 
@@ -3143,6 +3144,7 @@ function primeiroNomeSeguroRetomada_(valor) {
     !nome ||
     nome.length > 80 ||
     !/^[A-Za-zÀ-ÖØ-öø-ÿ'’.\-\s]+$/.test(nome) ||
+    /\b(?:solucoes|servicos|digital|digitais|tecnologia|empreendimentos|sou|estou|estamos|somos|feliz|felizes|deus|fiel|aposentad[oa]|casad[oa]|solteir[oa]|interessad[oa])\b/.test(normalizado) ||
     /\b(?:nao informado|sem nome|cliente|paciente|contato|desconhecido|clinica|consultorio|hospital|empresa|loja|studio|estudio|oficial|atendimento|recepcao|comercial|vendas|marketing|equipe|grupo|familia|mamae|papai|trabalho)\b/.test(
       normalizado,
     )
@@ -3158,6 +3160,7 @@ function primeiroNomeSeguroRetomada_(valor) {
     "",
   );
   if (primeiro.length < 2 || primeiro.length > 18) return "";
+  if (palavras.length === 1 && !/[aeiou]/.test(normalizado)) return "";
 
   return (
     primeiro.charAt(0).toUpperCase() +

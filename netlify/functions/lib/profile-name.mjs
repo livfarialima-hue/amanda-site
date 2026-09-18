@@ -2,6 +2,7 @@ const MAX_PROFILE_NAME_LENGTH = 80;
 const MAX_FIRST_NAME_LENGTH = 18;
 const MAX_KNOWN_PATIENT_NAME_LENGTH = 120;
 const PERSONAL_NAME_CHARACTER_PATTERN = /^[\p{L}\p{M}'’.\-\s]+$/u;
+const NONPERSONAL_NAME_PATTERN = /\b(?:solu[cç][oõ]es|servi[cç]os|digital|digitais|tecnologia|empreendimentos|sou|estou|estamos|somos|feliz|felizes|deus|fiel|aposentad[oa]|casad[oa]|solteir[oa]|interessad[oa])\b/i;
 
 export function usableKnownPatientName(value) {
   const name = Array.from(String(value || "").trim())
@@ -65,6 +66,7 @@ export function usableProfileName(value) {
     !profileName ||
     boundedProfileName.length > MAX_PROFILE_NAME_LENGTH ||
     !PERSONAL_NAME_CHARACTER_PATTERN.test(profileName) ||
+    NONPERSONAL_NAME_PATTERN.test(profileName) ||
     suspiciousProfilePattern.test(profileName)
   ) {
     return "";
@@ -83,7 +85,7 @@ export function usableProfileName(value) {
     words.length === 1 &&
     foldedFirstName.length >= 2 &&
     foldedFirstName.length <= 5 &&
-    !/[aeiouy]/i.test(foldedFirstName);
+    !/[aeiou]/i.test(foldedFirstName);
 
   if (
     firstName.length < 2 ||

@@ -64,6 +64,29 @@ const respond = {
   allowHoldingReply: false,
 };
 
+test("cache stores the accepted body before a failed ledger and never stores an uncertain send", async () => {
+  for (const delivered of ["completed", "failed"]) {
+    const sequence = [];
+    let cached;
+    const result = await sendControlledPatientReply({ from: "+5511900000001", to: "+5511900000000",
+      eventId: `synthetic-order-${delivered}`, body: "A consulta custa R$ 500.",
+      currentText: "Qual o valor da consulta?", recentConversation: [], conversationAction: respond }, {
+      ...fakeBlobs(),
+      sendYCloudPatientTextImpl: async () => { sequence.push("provider"); return { status: delivered }; },
+      appendConversationTurnImpl: async turn => { cached = turn; sequence.push("memory"); return { status: "completed" }; },
+      recordDurableConversationTurnImpl: async () => { sequence.push("ledger"); throw new Error("synthetic timeout"); },
+    });
+    assert.deepEqual(sequence, delivered === "completed" ? ["provider", "memory", "ledger"] : ["provider"]);
+    if (delivered === "completed") {
+      assert.equal(cached.text, result.body);
+      assert.equal(cached.source, "bruna");
+      assert.equal(cached.eventId, `synthetic-order-${delivered}:bruna`);
+      assert.equal(result.conversationMemoryStatus, "completed");
+      assert.equal(result.conversationLedgerRecovery, "pending");
+    } else assert.equal(cached, undefined);
+  }
+});
+
 test("continuity edits reach the provider and durable history once, preserving human recheck", async () => {
   const blobs = fakeBlobs(); let sent = "", saved = "", checks = 0, sends = 0;
   const input = { from: "+5511900000001", to: "+5511900000000", eventId: "synthetic-continuity-send",

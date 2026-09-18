@@ -1,5 +1,13 @@
 # Histórico do pacote Bruna
 
+## 2026-09-17.1 — continuidade, autonomia informativa e retomada (candidato local)
+
+- Resposta confirmada entra na memória antes do registro externo; continuações conferem histórico durável.
+- Aceite coloquial e pedido de preço com procedimento histórico não reiniciam a descoberta.
+- Perfil pessoal conservador; ausência automática comercial não conta como intenção.
+- Retomada com pergunta única sobre ponto prático; aceite recebe fatos aprovados do mesmo procedimento.
+- Sem relaxar limites clínicos, agenda, preço, prioridade humana ou preferências.
+
 ## 2026-09-14.4 — retomada mais agradável e contextual (publicado, 9be771e)
 
 - Usa assunto conhecido e última pergunta para uma retomada breve com uma entrada simples.
