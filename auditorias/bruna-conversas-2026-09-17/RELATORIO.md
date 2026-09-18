@@ -1,6 +1,6 @@
 # Diagnóstico das conversas e melhoria da Bruna — 17/09/2026
 
-Estado: candidato local; publicação e verificações finais pendentes.
+Estado: publicado e verificado em 17/09/2026 às 21h32 BRT. Commit `162c283c29cc7e7895a28ef7f1bbda9986dfc48e`, Netlify `6aac860da2c8aa0008212017`, Apps Script v155.
 
 ## Evidência e limites
 
@@ -18,7 +18,7 @@ Nenhum telefone, nome, transcrição literal de paciente ou anexo clínico integ
 | Aceites coloquiais mal reconhecidos | Variações de aceite com gentileza ou confirmação adicional escapavam ao reconhecedor de faixa. | Reconhecer aceites curtos apenas contra a última oferta concreta; não repetir o convite. Negação, condição, desconto, outro procedimento e agenda não são aceites de faixa. |
 | Novo pedido de valor reiniciava a explicação | Quando o procedimento vinha do histórico, uma saída antecipada retornava à primeira etapa e pulava a verificação da oferta anterior. | Continuar no mesmo procedimento e aplicar a regra existente: faixa aprovada uma vez após aceite ou novo pedido; preços, ressalvas e limites inalterados. |
 | Nome de empresa, sigla ou frase em saudação | Validação aceitava palavras de perfil que não eram nome pessoal; certas siglas com Y escapavam. | Validação conservadora na conversa e na retomada. Autodeclaração de estado civil/ocupação não substitui o nome. Não reescrever identidades históricas. |
-| Retomada gerava uma escolha confusa | A oferta de procedimento ou recuperação foi interpretada em conversa como dois procedimentos. | Um convite concreto para explicar a recuperação, com uma única pergunta. Aceitar leva ao assunto oferecido, sem reabrir a descoberta ou oferecer outra vez a consulta. Cópias antigas continuam aceitas pelos gates. |
+| Retomada gerava uma escolha confusa | A oferta de procedimento ou recuperação foi interpretada em conversa como dois procedimentos. | Um convite concreto para explicar a recuperação cervical, facial ou da otoplastia, com uma única pergunta e base aprovada disponível. Aceitar leva ao assunto oferecido, sem reabrir a descoberta ou oferecer outra vez a consulta. Cópias antigas continuam aceitas pelos gates. |
 | Dúvida segura podia ficar sem base factual no turno curto | O seletor buscava o tema apenas no texto atual; um aceite não contém a palavra recuperação. | Recuperar o assunto da oferta informativa e disponibilizar os fatos educativos já publicados nas páginas canônicas de lifting cervical e otoplastia, além dos fatos faciais existentes. Nunca aplicar os fatos de um procedimento a outro ou liberar conduta individual. |
 | Resposta automática de conta comercial parecia interesse | Mensagem de ausência/agradecimento podia ser tratada como fala pessoal. | Silêncio no atendimento e exclusão desse sinal como evidência de qualificação ou marco comercial, sem desqualificar pessoa nem alterar oportunidade existente. Pergunta pessoal ou sintoma prevalece. |
 | Conteúdo visível no export chega vazio à integração | Há entradas sem texto na LEADS; o export por si só não prova qual corpo chegou no webhook. | Acolhimento curto e transparente quando o conteúdo vem indisponível. Não inventar a mensagem a partir do anúncio. A origem exata da omissão no provedor permanece indeterminada. |
@@ -51,9 +51,9 @@ Baseline: repositório `f6b60264d44862b75cbbe13206327218e1aae8a5`; produção fu
 
 No pré-voo havia 38 recibos aceitos pendentes de confirmação de persistência e cinco preparados de resultado incerto. Isso não significa 43 mensagens perdidas: alguns registros já existem na planilha. Somente aceite confirmado permite recomposição da memória; recibo preparado nunca autoriza reenvio. O saldo e a latência devem ser observados no ciclo normal, sem executar replay manual.
 
-Testes: regressões sintéticas de preço, aceite, identidade, mensagem fragmentada, recuperação de contexto, ordem de gravação e timeout; consumidores de retomada, cuidado, agendamento e classificação; suíte integral, arquitetura, mudança, build e consistência operacional. Resultados finais serão registrados em `PUBLICACAO.json` e no candidato.
+Testes: regressões sintéticas de preço, aceite, identidade, mensagem fragmentada, recuperação de contexto, ordem de gravação e timeout; consumidores de retomada, cuidado, agendamento e classificação; suíte integral, arquitetura, mudança, build e consistência operacional. Resultado: 1.591/1.591 testes integrais, 13 grupos entre consumidores, arquitetura e escopo aprovados; build com 193 arquivos e 54 URLs, nenhum artefato operacional publicado. Recibos em `PUBLICACAO.json` e no candidato.
 
-Publicar primeiro o consumidor Netlify compatível com textos antigos e novos; depois atualizar somente Retomadas.gs no deployment canônico. Validar SHA, versão, código e sondas que não enviam mensagens. Rollback: Netlify anterior e Apps Script v154, preservando dados, filas e preferências.
+Netlify publicado primeiro às 21h30 BRT, compatível com textos antigos e novos; depois somente Retomadas.gs atualizado no deployment canônico, v155 às 21h32 BRT. SHA, versão, fonte salva e sondas sem mensagens conferidos: domínio/URL imutável ativos, POST sem assinatura e endpoint sem autenticação recusados, Apps Script saudável e tokens inválidos recusados. As 13 funções e cinco programações estão presentes e os 192 arquivos estáticos são idênticos ao baseline. Rollback: Netlify anterior e Apps Script v154, preservando dados, filas e preferências.
 
 Revisar as primeiras conversas elegíveis e em 48 horas: respostas úteis, perguntas repetidas, aceite não cumprido, passagem humana indevida, latência, integridade da memória e duplicidade. O ganho comercial e a redução real de intervenção humana exigem observação após a publicação; testes não provam melhora de conversão.
 

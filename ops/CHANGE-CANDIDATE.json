@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSAS-2026-09-17",
   "title": "Continuidade confiavel, aceites informativos e retomada contextual",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "f6b60264d44862b75cbbe13206327218e1aae8a5",
   "authorization": {
     "required": true,
@@ -14,8 +14,8 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -279,5 +279,12 @@
     "flagsChanged": false,
     "queueRewrite": false,
     "templateChanged": false
+  },
+  "release": {
+    "approvedCommit": "162c283c29cc7e7895a28ef7f1bbda9986dfc48e",
+    "netlifyDeployId": "6aac860da2c8aa0008212017",
+    "appsScriptVersion": 155,
+    "verifiedAt": "2026-09-18T00:35:29.938922+00:00",
+    "documentationStatus": "awaiting_drive_readback"
   }
 }

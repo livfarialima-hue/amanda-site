@@ -17,18 +17,18 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
-    "lastObservedProductionCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
-    "functionalDeployId": "6aa86fc2b2999d0009b2d245",
-    "lastObservedProductionDeployId": "6aa86fc2b2999d0009b2d245",
-    "rollbackCommit": "ebaa3c0a3808643de024bd85336762d56dff063f",
-    "rollbackDeployId": "6aa869f3237a3b809a7bdcb2",
-    "publishedAt": "2026-09-14T22:09:00.000Z",
-    "lastVerifiedAt": "2026-09-14T22:19:02.658Z",
-    "candidateChangeId": "BRUNA-RETOMADA-CONTEXTUAL-2026-09-14",
+    "functionalCommit": "162c283c29cc7e7895a28ef7f1bbda9986dfc48e",
+    "lastObservedProductionCommit": "162c283c29cc7e7895a28ef7f1bbda9986dfc48e",
+    "functionalDeployId": "6aac860da2c8aa0008212017",
+    "lastObservedProductionDeployId": "6aac860da2c8aa0008212017",
+    "rollbackCommit": "9be771eda78e79e27b0a1730c62c8d43fc473572",
+    "rollbackDeployId": "6aa86fc2b2999d0009b2d245",
+    "publishedAt": "2026-09-18T00:32:00.000Z",
+    "lastVerifiedAt": "2026-09-18T00:35:29.938922+00:00",
+    "candidateChangeId": "BRUNA-CONVERSAS-2026-09-17",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-14.4",
-    "appsScriptVersion": 154
+    "bundleVersion": "2026-09-17.1",
+    "appsScriptVersion": 155
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -44,10 +44,5 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-09-17.1",
-    "changeId": "BRUNA-CONVERSAS-2026-09-17",
-    "status": "tested_local"
-  }
+  "followupCopyContract": "followup-message-copy"
 }
