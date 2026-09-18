@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-2026-09-18",
-  "status": "published_pending_documentation",
+  "status": "published_verified",
   "approvedCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
   "approvedBy": "Daniel",
   "authorizationReference": "Usuario nesta tarefa: pode publicar tudo que tiver pendente",
   "authorizationRecordedAt": "2026-09-18T02:12:15.6857060Z",
   "publishedAt": "2026-09-18T02:19:48.365Z",
-  "verifiedAt": "2026-09-18T02:24:21.457Z",
+  "verifiedAt": "2026-09-18T02:27:03.293Z",
   "netlify": {
     "verifiedAt": "2026-09-18T02:21:34.726Z",
     "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
@@ -660,5 +660,96 @@
     "rollbackRule": "Conter diante de mensagem indevida, perda de pendencia real, identidade incorreta ou duplicidade."
   },
   "realMessagesSentByAgent": 0,
-  "patientReplay": false
+  "patientReplay": false,
+  "drive": {
+    "verifiedAt": "2026-09-18T02:25:55.654Z",
+    "documentationCommit": "63d5bf608e393e9f67149a82cdf8c599555969fc",
+    "documents": [
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "modifiedAt": "2026-09-18T02:25:07.989Z",
+        "bytes": 119070,
+        "byteEqual": true,
+        "commitEqual": true,
+        "sha256": "fa433494a3318b635a9e6ac54e7416661a72fbad96f247010f0cd53b1581b00c"
+      },
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "modifiedAt": "2026-09-18T02:25:17.141Z",
+        "bytes": 196719,
+        "byteEqual": true,
+        "commitEqual": true,
+        "sha256": "1bf24bb06ccb23399fd7c1e060a1631897d6db04cecfd96557240ad7456a70b3"
+      }
+    ],
+    "closedAudit": {
+      "fileId": "16dWc8eInrPLDU53eXlTN4PCq-EUbHgSD",
+      "path": "auditorias/bruna-autonomia-2026-09-18/RELATORIO.md",
+      "modifiedAt": "2026-09-18T02:25:25.853Z",
+      "bytes": 6964,
+      "byteEqual": true,
+      "commitEqual": true,
+      "sha256": "b62cf313ede6140d66f63a950e39b4201c8f6de8c6ba5de799bf0c045bfc868b"
+    }
+  },
+  "finalOperationalReadback": {
+    "verifiedAt": "2026-09-18T02:27:02.817Z",
+    "source": "Google Sheets _WHATSAPP_CLASSIFICACAO A290:T340",
+    "completed": 2,
+    "rows": [
+      {
+        "row": 293,
+        "status": "done",
+        "hasLease": false,
+        "error": "",
+        "attempts": 0
+      },
+      {
+        "row": 295,
+        "status": "running",
+        "hasLease": true,
+        "error": "operator_requeued:2026-09-18",
+        "attempts": 2
+      },
+      {
+        "row": 298,
+        "status": "running",
+        "hasLease": true,
+        "error": "operator_requeued:2026-09-18",
+        "attempts": 2
+      },
+      {
+        "row": 313,
+        "status": "done",
+        "hasLease": false,
+        "error": "",
+        "attempts": 0
+      }
+    ],
+    "workerCycle": {
+      "startUtc": "2026-09-18T02:25:08.411Z",
+      "endUtc": "2026-09-18T02:26:07.708Z",
+      "source": "Netlify live function logs, classify-leads-background",
+      "status": "processed",
+      "jobs": 1,
+      "completed": 1,
+      "errorCode": "none",
+      "stageElapsedMs": {
+        "claim": 4552,
+        "hydrate": 8973,
+        "classify": 5446,
+        "complete": 27689
+      },
+      "totalDurationMs": 59297.58,
+      "ledgerRecovery": {
+        "persisted": 0,
+        "failed": 3,
+        "uncertain": 0,
+        "classificationNotBlocked": true
+      }
+    },
+    "manualInvocation": false
+  }
 }
