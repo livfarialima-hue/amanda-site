@@ -1,6 +1,6 @@
 # Bruna — continuidade, autonomia administrativa e classificação
 
-Status: candidato testado localmente, autorizado para publicação. Nenhuma escrita externa deste pacote realizada ainda.
+Status: publicação intermediária 49ebec0 / Apps Script v156 concluída; ajuste de busca por reserva exata em validação. Fechamento operacional e projeções ainda pendentes.
 
 ## Diagnóstico verificado
 
@@ -30,3 +30,7 @@ Ordem: Apps Script compatível no deployment existente; cliente Netlify do mesmo
 Não se promete redução medida de intervenção ou aumento de conversão antes de observar novas conversas. Não se encerra por inferência nenhuma das 26 tarefas humanas antigas. Falhas órfãs de agosto e conteúdo ausente permanecem conferência operacional, fora da recuperação delimitada.
 
 Rollback: Apps Script v155 e Netlify 6aac860da2c8aa0008212017. Colunas adicionais são compatíveis com o leitor antigo. A biblioteca nova pode ser retirada do snapshot ativo sem apagar dados. Não há replay de mensagens. Revisar primeira execução e em 48 horas; conter diante de identidade incorreta, perda de compromisso real, mensagem após recusa ou duplicidade.
+
+## Falha revelada pelo primeiro ciclo
+
+Os registros de execução, disponibilizados com atraso pelo provedor, mostraram conclusão do modelo em menos de um minuto, seguida de `stale_lease`. Cada uma das quatro oportunidades tinha uma linha histórica anterior e uma posterior já concluída. A reserva selecionava a primeira; a conclusão e a liberação buscavam a última por oportunidade. O ajuste exige correspondência única de token, oportunidade, telefone e profissional, preservando os gates de versão e revisão da conversa. Testes reproduziram a escolha da linha errada antes da correção e conferem a preservação da linha histórica. Limites totais de espera e registros por etapa são proteção adicional, sem dados de pacientes nos logs. A migração única não será repetida.

@@ -512,7 +512,8 @@
         "netlify/functions/classify-leads.mjs",
         "netlify/functions/scheduled-followup.mjs",
         "netlify/functions/ycloud-webhook.mjs",
-        "apps-script/clinica-liv-leads/KnowledgeBase.gs"
+        "apps-script/clinica-liv-leads/KnowledgeBase.gs",
+        "netlify/functions/classify-leads-background.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",

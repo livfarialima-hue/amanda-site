@@ -2,6 +2,60 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { processClaimedJobs } from "../classify-leads.mjs";
 
+test("an unresponsive classifier releases its exact lease instead of waiting for lease expiry", { timeout: 250 }, async () => {
+  const writes = [];
+  const result = await processClaimedJobs([{ phone: "+551100000099", leaseToken: "lease-deadline", opportunityId: "opp-deadline", professional: "amanda" }], {
+    classifier: () => new Promise(() => {}), classificationTimeoutMs: 10,
+    callSheets: async (action, payload) => { writes.push({ action, payload }); return { status: "completed" }; },
+  });
+  assert.equal(result[0].status, "failed");
+  assert.equal(result[0].errorCode, "classification_timeout");
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].action, "fail_classification");
+  assert.equal(writes[0].payload.job.leaseToken, "lease-deadline");
+  assert.equal(writes[0].payload.job.opportunityId, "opp-deadline");
+});
+
+test("an unexpected classifier rejection releases the lease with a technical reason", async () => {
+  const writes = [];
+  const result = await processClaimedJobs([{ phone: "+551100000099", leaseToken: "lease-rejection" }], {
+    classifier: async () => { throw new Error("private unexpected payload"); },
+    callSheets: async (action, payload) => { writes.push({ action, payload }); return { status: "completed" }; },
+  });
+  assert.equal(result[0].errorCode, "classification_exception");
+  assert.equal(writes[0].action, "fail_classification");
+  assert.equal(writes[0].payload.job.leaseToken, "lease-rejection");
+  assert.doesNotMatch(JSON.stringify(result), /private unexpected payload/);
+});
+
+test("a classifier result arriving after its deadline cannot complete the released lease", async () => {
+  let finish;
+  const writes = [];
+  const result = await processClaimedJobs([{ phone: "+551100000099", leaseToken: "lease-late" }], {
+    classifier: () => new Promise(resolve => { finish = resolve; }), classificationTimeoutMs: 10,
+    callSheets: async (action) => { writes.push(action); return { status: "completed" }; },
+  });
+  finish(completedClassification());
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(result[0].status, "failed");
+  assert.deepEqual(writes, ["fail_classification"]);
+});
+
+test("an unresponsive completion is bounded and falls back to the same lease release", async () => {
+  const { withClassificationDeadline } = await import("../classify-leads.mjs");
+  const writes = [];
+  const result = await processClaimedJobs([{ phone: "+551100000099", leaseToken: "lease-write" }], {
+    classifier: async () => completedClassification(), waitImpl: async () => {},
+    deadline: operation => withClassificationDeadline(operation, 10),
+    callSheets: async (action, payload) => { writes.push({ action, payload }); return action === "complete_classification" ? new Promise(() => {}) : { status: "completed" }; },
+  });
+  assert.equal(result[0].status, "failed");
+  assert.equal(writes.length, 4);
+  assert.equal(writes.at(-1).action, "fail_classification");
+  assert.equal(writes.at(-1).payload.job.leaseToken, "lease-write");
+  assert.equal(writes.at(-1).payload.job.errorCode, "complete_timeout");
+});
+
 function completedClassification(status = "Qualificado") {
   return {
     status: "completed",

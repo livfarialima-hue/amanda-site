@@ -80,7 +80,7 @@ function loadFunctions() {
     `${codeSource}\n${classificationSource}\n${readFileSync(new URL("./KnowledgeBase.gs", import.meta.url), "utf8")}\n` +
       "globalThis.__test = { findLeadRowByPhone_, " +
       "shouldApplyLeadStatus_, ensureQualifiedGoogleConversion_, " +
-      "compareClassificationCandidates_, classificationLeaseMatches_, " +
+      "compareClassificationCandidates_, classificationLeaseMatches_, findClassificationQueueRow_, " +
       "collectLeadMessagesForOpportunity_, collectHumanTakeoverMessagesForPhone_, " +
       "mergeConversationMessages_, classificationAdministrativeSignal_, " +
       "normalizeLeadMessageSource_, boundedConversationText_, " +
@@ -108,6 +108,27 @@ function loadFunctions() {
   };
   return sandbox.__test;
 }
+
+test("a leased older queue row is selected even when a later duplicate already completed", () => {
+  const { findClassificationQueueRow_ } = loadFunctions();
+  const earlier = Array(20).fill(""); Object.assign(earlier, { 0: "551100000099", 4: "running", 15: "exact-lease", 16: "opp-duplicate", 17: "amanda" });
+  const later = [...earlier]; later[4] = "done"; later[15] = "";
+  const rows = [earlier, later], sheet = { getLastRow: () => rows.length + 1, getRange: () => ({ getDisplayValues: () => rows }) };
+  assert.equal(findClassificationQueueRow_(sheet, "opp-duplicate", "+551100000099", "amanda", "exact-lease"), 2);
+  assert.equal(findClassificationQueueRow_(sheet, "opp-duplicate", "+551100000099", "amanda", "stale-token"), null);
+  assert.equal(findClassificationQueueRow_(sheet, "opp-duplicate", "+551100000098", "amanda", "exact-lease"), null);
+  assert.equal(findClassificationQueueRow_(sheet, "opp-duplicate", "+551100000099", "daniel", "exact-lease"), null);
+  rows.push([...earlier]);
+  assert.equal(findClassificationQueueRow_(sheet, "opp-duplicate", "+551100000099", "amanda", "exact-lease"), null, "ambiguous identical leases must fail closed");
+});
+
+test("a later legacy phone row cannot replace an explicit opportunity match", () => {
+  const { findClassificationQueueRow_ } = loadFunctions();
+  const exact = Array(20).fill(""); Object.assign(exact, { 0: "551100000099", 16: "opp-specific", 17: "amanda" });
+  const legacy = [...exact]; legacy[16] = "";
+  const sheet = { getLastRow: () => 3, getRange: () => ({ getDisplayValues: () => [exact, legacy] }) };
+  assert.equal(findClassificationQueueRow_(sheet, "opp-specific", "+551100000099", "amanda"), 2);
+});
 
 test("explicit expected party replaces wording heuristics", () => {
   const { expectedPartyFromClassification_ } = loadFunctions();
@@ -1257,7 +1278,7 @@ function reservationFixture() {
     const row=Array(20).fill(""); row[0]="+551190000000"+i; row[3]=new Date(Date.now()-60000);
     row[4]="pending";row[8]="m"+i;row[16]="synthetic-op-"+i;row[17]="amanda";row[18]="Google Ads - Conversões";return row;
   })];
-  const sheet={getLastRow:()=>rows.length,getRange:(r,c,n=1,w=1)=>({getValues:()=>rows.slice(r-1,r-1+n).map(row=>row.slice(c-1,c-1+w)),setValues:values=>values.forEach((v,i)=>rows[r-1+i].splice(c-1,w,...v))})};
+  const sheet={getLastRow:()=>rows.length,getRange:(r,c,n=1,w=1)=>({getValues:()=>rows.slice(r-1,r-1+n).map(row=>row.slice(c-1,c-1+w)),getDisplayValues:()=>rows.slice(r-1,r-1+n).map(row=>row.slice(c-1,c-1+w).map(String)),getValue:()=>rows[r-1][c-1],getDisplayValue:()=>String(rows[r-1][c-1]||""),setValue:v=>{rows[r-1][c-1]=v;},setValues:values=>values.forEach((v,i)=>rows[r-1+i].splice(c-1,w,...v))})};
   const sandbox={Date,console,CONFIG:{spreadsheetId:"synthetic",classificationSheetName:"queue",classificationLeaseMinutes:10,classificationMaxAttempts:8},
     SpreadsheetApp:{openById:()=>({}),flush(){}},getOrCreateLeadAuxiliarySheet_:()=>sheet,
     Utilities:{getUuid:()=>"synthetic-lease"},normalizePhone_:v=>v,parseClassificationDate_:v=>v?new Date(v):null,
@@ -1274,6 +1295,26 @@ test("Apps Script returns the existing lease on an idempotent claim retry",()=>{
   assert.equal(first.jobs.length,1); assert.equal(second.jobs[0].leaseToken,first.jobs[0].leaseToken);
   assert.equal(second.recoveredReservation,true); assert.equal(rows[1][14],1); assert.equal(rows[2][4],"pending");
   assert.equal(sandbox.claimDueLeadClassifications_(1,`claim-${Date.now()-360000}-00000000-0000-4000-8000-000000000001`).error,"invalid_claim_request");
+});
+
+test("completion and failure mutate the reserved row while preserving a later duplicate", () => {
+  for (const operation of ["complete", "fail"]) {
+    const { rows, sandbox } = reservationFixture();
+    const job = sandbox.claimDueLeadClassifications_(1).jobs[0];
+    const historical = [...rows[1]]; historical[4] = "done"; historical[15] = ""; rows.push(historical);
+    sandbox.safeText_ = value => String(value || "");
+    sandbox.SpreadsheetApp.openById = () => ({ getSheetByName: () => ({ getLastColumn: () => 1, getRange: () => ({ getDisplayValues: () => [["2"]] }) }) });
+    sandbox.localizarLeadPorOportunidadeOuTelefone_ = () => 2;
+    sandbox.mapaCabecalhosOportunidade_ = () => ({ "Versão da oportunidade": 1 });
+    const result = operation === "complete"
+      ? sandbox.completeLeadClassification_({ ...job, claimedVersion: 1 }, {})
+      : sandbox.failLeadClassification_({ ...job, errorCode: "synthetic_failure" });
+    if (operation === "complete") assert.equal(result.error, "stale_row_version");
+    else assert.equal(result.status, "failed");
+    assert.equal(rows[1][4], operation === "complete" ? "pending" : "failed");
+    assert.equal(rows[1][15], "");
+    assert.deepEqual(rows.at(-1), historical);
+  }
 });
 
 test("bounded recovery selects only the dated technical failures with one exact open opportunity",()=>{

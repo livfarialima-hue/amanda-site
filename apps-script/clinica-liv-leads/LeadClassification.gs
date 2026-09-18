@@ -1650,6 +1650,7 @@ function findClassificationQueueRow_(
   opportunityId,
   phone,
   professional,
+  leaseToken,
 ) {
   if (!sheet || sheet.getLastRow() < 2) return null;
   const values = sheet
@@ -1664,11 +1665,28 @@ function findClassificationQueueRow_(
   const normalizedProfessional = typeof normalizarProfissionalOportunidade_ === "function"
     ? normalizarProfissionalOportunidade_(professional)
     : String(professional || "");
+  if (leaseToken) {
+    const matches = [];
+    values.forEach(function (row, index) {
+      const sameIdentity = opportunityId
+        ? String(row[16] || "") === String(opportunityId)
+        : !row[16];
+      const sameProfessional = opportunityId ? String(row[17] || "") === normalizedProfessional
+        : !row[17] || String(row[17]) === normalizedProfessional;
+      if (sameIdentity && normalizePhone_(row[0]) === normalizedPhone && sameProfessional &&
+        String(row[4]) === "running" && String(row[15] || "") === String(leaseToken)) matches.push(index + 2);
+    });
+    // Duplicate historical rows are legitimate evidence, not interchangeable
+    // reservations. Never complete or release a different row by proximity.
+    return matches.length === 1 ? matches[0] : null;
+  }
+  if (opportunityId) {
+    for (let index = values.length - 1; index >= 0; index -= 1) {
+      if (String(values[index][16] || "") === String(opportunityId)) return index + 2;
+    }
+  }
   for (let index = values.length - 1; index >= 0; index -= 1) {
     const row = values[index];
-    if (opportunityId && String(row[16] || "") === String(opportunityId)) {
-      return index + 2;
-    }
     if (
       !row[16] &&
       normalizePhone_(row[0]) === normalizedPhone &&
@@ -3197,6 +3215,7 @@ function completeLeadClassification_(job, classification) {
     opportunityId,
     phone,
     professional,
+    job.leaseToken,
   );
   const leadRow = leadsSheet
     ? localizarLeadPorOportunidadeOuTelefone_(
@@ -3206,7 +3225,8 @@ function completeLeadClassification_(job, classification) {
       )
     : null;
 
-  if (!queueRow || !leadRow) {
+  if (!queueRow) return { status: "ignored", error: "stale_lease" };
+  if (!leadRow) {
     return { status: "ignored", error: "lead_not_found" };
   }
 
@@ -3562,9 +3582,10 @@ function failLeadClassification_(job) {
     job.opportunityId,
     job.phone,
     job.professional,
+    job.leaseToken,
   );
 
-  if (!queueRow) return { status: "ignored" };
+  if (!queueRow) return { status: "ignored", error: "stale_lease" };
 
   if (!classificationLeaseMatches_(queueSheet, queueRow, job.leaseToken)) {
     return { status: "ignored", error: "stale_lease" };

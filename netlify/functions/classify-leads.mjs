@@ -7,6 +7,25 @@ const MAX_JOBS_PER_RUN = 1;
 const SHEETS_WRITE_ATTEMPTS = 3;
 const SHEETS_WRITE_TIMEOUT_MS = 45_000;
 const SHEETS_FAIL_TIMEOUT_MS = 30_000;
+const CLASSIFICATION_TIMEOUT_MS = 20_000;
+
+export async function withClassificationDeadline(operation, timeoutMs) {
+  let timer;
+  try {
+    return await Promise.race([
+      Promise.resolve().then(operation),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(Object.assign(new Error("deadline"), { code: "deadline" })), timeoutMs);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function logClassificationStep(step, status, details = {}) {
+  console.log(JSON.stringify({ source: "lead_classifier_step", step, status, ...details }));
+}
 
 function wait(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -20,12 +39,23 @@ async function callSheetsWithRetry(
     waitImpl = wait,
     attempts = SHEETS_WRITE_ATTEMPTS,
     timeoutMs,
+    deadline = withClassificationDeadline,
   } = {},
 ) {
   let lastResult = null;
 
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    lastResult = await callSheets(action, payload, { timeoutMs });
+    const started = Date.now();
+    logClassificationStep(action, "started", { attempt });
+    try {
+      lastResult = await deadline(() => callSheets(action, payload, { timeoutMs }), (timeoutMs || 8_000) + 1_000);
+    } catch (error) {
+      lastResult = { status: "failed", errorCode: error?.code === "deadline" ? "timeout" : "request_failed" };
+    }
+    if (!lastResult || typeof lastResult.status !== "string") lastResult = { status: "failed", errorCode: "request_failed" };
+    logClassificationStep(action, lastResult?.status || "failed", {
+      attempt, elapsedMs: Date.now() - started, errorCode: lastResult?.errorCode || "none",
+    });
 
     if (
       lastResult.status === "completed" &&
@@ -56,9 +86,13 @@ async function callSheetsWithRetry(
 
 async function classifyJob(
   job,
-  { classifier = runLeadClassifier } = {},
+  { classifier = runLeadClassifier, classificationTimeoutMs = CLASSIFICATION_TIMEOUT_MS } = {},
 ) {
-  const classificationResult = await classifier({
+  const started = Date.now();
+  logClassificationStep("classify", "started");
+  let classificationResult;
+  try {
+    classificationResult = await withClassificationDeadline(() => classifier({
     phone: job.phone,
     currentStatus: job.currentStatus,
     currentSummary: job.currentSummary,
@@ -68,6 +102,18 @@ async function classifyJob(
     patientRelationship: job.patientRelationship,
     classificationGuidance: job.classificationGuidance,
     messages: job.messages,
+    }), classificationTimeoutMs);
+  } catch (error) {
+    classificationResult = {
+      status: "failed",
+      errorCode: error?.code === "deadline" ? "classification_timeout" : "classification_exception",
+    };
+  }
+  if (!classificationResult || typeof classificationResult.status !== "string") {
+    classificationResult = { status: "failed", errorCode: "classification_invalid_result" };
+  }
+  logClassificationStep("classify", classificationResult?.status || "failed", {
+    elapsedMs: Date.now() - started, errorCode: classificationResult?.errorCode || "none",
   });
 
   return { job, classificationResult };
@@ -78,6 +124,7 @@ async function persistJob(
   {
     callSheets = callClassificationSheets,
     waitImpl = wait,
+    deadline = withClassificationDeadline,
   } = {},
 ) {
   const { job, classificationResult } = outcome;
@@ -105,6 +152,7 @@ async function persistJob(
         callSheets,
         waitImpl,
         timeoutMs: SHEETS_FAIL_TIMEOUT_MS,
+        deadline,
       },
     );
 
@@ -139,6 +187,7 @@ async function persistJob(
       callSheets,
       waitImpl,
       timeoutMs: SHEETS_WRITE_TIMEOUT_MS,
+      deadline,
     },
   );
 
@@ -164,6 +213,7 @@ async function persistJob(
         callSheets,
         waitImpl,
         timeoutMs: SHEETS_FAIL_TIMEOUT_MS,
+        deadline,
       },
     );
 
@@ -216,14 +266,20 @@ export async function processClaimedJobs(
   return results;
 }
 
-export async function claimClassificationBatch({ callSheets = callClassificationSheets, waitImpl = wait, now = Date.now, uuid = randomUUID } = {}) {
+export async function claimClassificationBatch({ callSheets = callClassificationSheets, waitImpl = wait, now = Date.now, uuid = randomUUID, deadline = withClassificationDeadline } = {}) {
   const requestId = `claim-${now()}-${uuid()}`;
   return callSheetsWithRetry("claim_due_classifications", { limit: MAX_JOBS_PER_RUN, requestId },
-    { callSheets, waitImpl, attempts: 2, timeoutMs: 60_000 });
+    { callSheets, waitImpl, attempts: 2, timeoutMs: 60_000, deadline });
 }
 
 export async function runLeadClassificationBatch() {
-  const ledgerRecovery = await reconcileConversationLedgerReceipts();
+  let ledgerRecovery;
+  try {
+    ledgerRecovery = await withClassificationDeadline(() => reconcileConversationLedgerReceipts(), 30_000);
+  } catch (error) {
+    logClassificationStep("ledger_recovery", "failed", { errorCode: error?.code === "deadline" ? "timeout" : "request_failed" });
+    return;
+  }
   console.log(JSON.stringify({ source: "conversation_ledger_recovery", ...ledgerRecovery }));
   const claim = await claimClassificationBatch();
 

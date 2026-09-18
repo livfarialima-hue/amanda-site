@@ -1,6 +1,11 @@
 {
-  "status": "not_published",
-  "baselineAppsScriptVersion": 155,
-  "baselineNetlifyDeployId": "6aac860da2c8aa0008212017",
+  "status": "intermediate_published_followup_pending",
+  "changeId": "BRUNA-AUTONOMIA-2026-09-18",
+  "intermediate": {
+    "commit": "49ebec0387ded4d296732355690809dbe98d4ae6",
+    "netlifyDeployId": "6aac962a9e5f643776b72474",
+    "appsScriptVersion": 156
+  },
+  "rootCause": "O primeiro ciclo revelou stale_lease: quatro oportunidades tinham uma linha anterior reservada e outra posterior concluida. A busca na conclusao/falha selecionava a ultima, e nao a reserva exata.",
   "realMessagesSentByAgent": 0
 }
