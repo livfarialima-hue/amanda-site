@@ -5671,7 +5671,10 @@ export async function handleYCloudWebhook(
 
   if (patientCommitment) {
     const commitmentResult =
-      await recordPatientCommitment(patientCommitment);
+      await recordPatientCommitment({ ...patientCommitment,
+        opportunityId: delivery.opportunityId && ["amanda", "daniel"].includes(delivery.professional) ? delivery.opportunityId : "",
+        professional: delivery.opportunityId && ["amanda", "daniel"].includes(delivery.professional) ? delivery.professional : "",
+        requestId: String(eventId) });
     commitmentSyncStatus = commitmentResult.ok
       ? commitmentResult.responseData?.duplicate
         ? "duplicate"

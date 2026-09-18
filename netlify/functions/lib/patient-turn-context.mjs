@@ -4,8 +4,9 @@ export function isClearInformationAcceptance(text) {
   const value = String(text || "").trim()
     .replace(/^(?:oi|ol[áa]|bom dia|boa tarde|boa noite)[,!\s]+/i, "")
     .replace(/[,!\s]+(?:por favor|por gentileza|obrigad[ao])[.!\s]*$/i, "")
+    .replace(/,\s*/g, " ")
     .trim();
-  return /^(?:sim|claro|pode(?:\s+sim)?|sim[,\s]+pode|(?:quero|gostaria)(?:\s+sim)?|(?:pode\s+)?(?:me\s+)?passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores|essa\s+refer[eê]ncia))?)[.!\s]*$/i.test(value);
+  return /^(?:sim|claro|pode(?:\s+sim)?|sim\s+pode|(?:quero|gostaria)(?:\s+sim)?|(?:sim\s+)?(?:eu\s+)?(?:quero|gostaria de)\s+(?:saber|entender)(?:\s+mais)?|(?:pode\s+)?(?:me\s+)?explica(?:r)?(?:\s+sim)?|(?:pode\s+)?(?:me\s+)?passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores|essa\s+refer[eê]ncia))?)[.!\s]*$/i.test(value);
 }
 
 export function isAutomatedBusinessReply(text) {

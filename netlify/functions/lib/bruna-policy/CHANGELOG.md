@@ -1,3 +1,7 @@
+## 2026-09-18.1 — candidato autorizado
+
+Reserva idempotente, intenção recente, biblioteca administrativa revisada, compromissos por solicitação e Central com revisão técnica separada. Publicação e efeitos documentados no recibo do pacote.
+
 # Histórico do pacote Bruna
 
 ## 2026-09-17.1 — continuidade, autonomia informativa e retomada (publicado, 162c283)

@@ -107,3 +107,18 @@ test("the actual model request includes the accepted topic after conversation no
   assert.deepEqual(input.approvedClinicalFacts.topics, ["recovery"]);
   assert.match(input.approvedClinicalFacts.facts[0].source, /^lifting-cervical\//);
 });
+
+
+test("natural information acceptances recover only the concrete prior explanation", async () => {
+  const {isClearInformationAcceptance}=await import("./patient-turn-context.mjs");
+  for(const text of ["Pode me explicar", "Sim, quero saber", "Gostaria, sim", "Me explica", "Quero saber mais, por favor"]) {
+    assert.equal(isClearInformationAcceptance(text),true,text);
+    const facts=approvedProcedureInformationFacts({procedure:"lifting_cervical",text,recentConversation:[
+      {role:"assistant",source:"bruna",text:"Quer que eu te explique como se organizar para a recuperação?"},
+    ]});
+    assert.ok(facts?.topics.includes("recovery"),text);
+  }
+  for(const text of ["Não, obrigada", "Pode me explicar, mas antes me diga o endereço", "Quero saber se posso operar", "Sim, com desconto"]) {
+    assert.equal(isClearInformationAcceptance(text),false,text);
+  }
+});

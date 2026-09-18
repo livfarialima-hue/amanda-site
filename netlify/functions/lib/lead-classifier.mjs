@@ -123,6 +123,7 @@ const CLASSIFICATION_SCHEMA = {
 };
 
 const SYSTEM_INSTRUCTIONS = `
+As pendências humanas estruturadas continuam válidas até resolução explícita. "Obrigada, aguardo" não transfere a obrigação para a pessoa. Considere a ordem temporal: uma pausa mais recente prevalece sobre pergunta comercial antiga e uma restrição financeira explicitamente superada não continua como objeção. Pedido isolado de parcelamento é pesquisa de condições, sem comprovar prontidão para agenda.
 classificationGuidance contém decisões anteriores já concluídas pela equipe. Use-as como exemplos operacionais somente quando o contexto for equivalente; as definições fixas e a conversa atual continuam prevalecendo.
 
 Você classifica conversas comerciais da Clínica LIV Faria Lima para atualizar uma planilha de leads.
@@ -371,13 +372,21 @@ export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", message
     !(message.direction === "IN" && isAutomatedBusinessReply(message.text)));
   const inbound = meaningful.filter(message => message.direction === "IN" && !message.marketingPrefill);
   const personalText = inbound.filter(message => !message.contentUnavailable).map(message => String(message.text || "")).join("\n");
-  const barrierText = personalText.replace(/\bn[aã]o (?:[ée]|est[aá]|acho|achei)(?: t[aã]o| muito)? car[oa]\b/gi, "");
-  const financialBarrier = /\b(?:car[oa]|custos? altos?|invi[aá]vel|n[aã]o (?:consigo|posso) pagar|fora d[oa] (?:meu |minha )?(?:or[cç]amento|realidade)|sem condi[cç][oõ]es|n[aã]o tenho (?:esse|o) (?:valor|dinheiro))\b/i.test(barrierText);
+  const barrierPattern = /\b(?:car[oa]|custos? altos?|invi[aá]vel|n[aã]o (?:consigo|posso) pagar|fora d[oa] (?:meu |minha )?(?:or[cç]amento|realidade)|sem condi[cç][oõ]es|n[aã]o tenho (?:esse|o) (?:valor|dinheiro))\b/i;
+  const resolvedBudget = /\b(?:agora (?:consigo|posso) pagar|j[aá] (?:me organizei|consegui (?:o dinheiro|me organizar))|(?:valor|investimento|pre[cç]o) (?:agora )?(?:cabe|est[aá] dentro) (?:n[oa]|d[oa]) (?:meu |minha )?or[cç]amento)\b/i;
+  let financialBarrier = false;
+  for (const message of inbound) {
+    const text = String(message.text || "").replace(/\bn[aã]o (?:[ée]|est[aá]|acho|achei)(?: t[aã]o| muito)? car[oa]\b/gi, "");
+    const barrierIndex = [...text.matchAll(new RegExp(barrierPattern.source, "gi"))].at(-1)?.index ?? -1;
+    const resolvedIndex = [...text.matchAll(new RegExp(resolvedBudget.source, "gi"))].at(-1)?.index ?? -1;
+    if (resolvedIndex > barrierIndex) financialBarrier = false;
+    else if (barrierIndex >= 0) financialBarrier = true;
+  }
   if (result.commercialReason === "Preço" && !financialBarrier) result.commercialReason = "Em andamento";
   const practicalIntent = /\b(?:quero|gostaria de|pretendo|vou|preciso)\s+(?:mesmo\s+)?(?:marcar|agendar|fazer (?:a|uma) (?:consulta|avalia[cç][aã]o))|\b(?:quais? (?:os )?(?:dias|hor[aá]rios|datas)|como (?:fa[cç]o para )?(?:agendar|marcar)|pode (?:ver|verificar|marcar|agendar))\b/i.test(personalText);
   const onlyResearch = inbound.length > 0 && inbound.every(message => message.contentUnavailable ||
     /^(?:t[aá] certo|entendi|ok|obrigad[oa]|certo|sim)[.!\s]*$/i.test(String(message.text || "")) ||
-    /(?:qual|quanto|onde|como).*(?:valor|custa|pre[cç]o|fica|funciona|avalia[cç][aã]o)|avalia[cç][aã]o.*(?:saber|melhor procedimento)/i.test(String(message.text || "")));
+    /(?:qual|quanto|onde|como).*(?:valor|custa|pre[cç]o|fica|funciona|avalia[cç][aã]o)|avalia[cç][aã]o.*(?:saber|melhor procedimento)|^(?:voc[eê]s? |a cl[ií]nica )?(?:parcelam|parcela|tem parcelamento|aceitam cart[aã]o|aceita cart[aã]o|quais (?:as )?formas de pagamento)[?!.\s]*$/i.test(String(message.text || "")));
   if (currentStatus === "Novo" && result.recommendedStatus === "Qualificado" && onlyResearch && !practicalIntent) {
     result.recommendedStatus = "Novo";
     result.evidence = "Pesquisa ou ciência da informação, sem pedido pessoal de avanço confirmado.";
@@ -430,6 +439,21 @@ export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", message
       result.procedureMilestone = "none";
     }
   }
+  // A later explicit pause supersedes old unanswered commercial questions.
+  // Acknowledgements after the pause do not reopen it. Contact preferences
+  // remain the owner of consent and the final sending veto.
+  const pauseIndex = inbound.findLastIndex(message => /\b(?:prefiro (?:pausar|parar)|(?:eu |eu mesma |eu mesmo )?(?:volto|retorno|entro em contato) quando (?:eu )?(?:quiser|puder|decidir)|n[aã]o (?:quero|desejo) (?:mais )?(?:receber mensagens|contato)|n[aã]o me (?:mande|envie|chame))\b/i.test(message.text || ""));
+  const renewedRequest = pauseIndex >= 0 && inbound.slice(pauseIndex + 1).some(message =>
+    /\?|\b(?:quero|gostaria|preciso|pode me|como|qual|quanto|onde)\b/i.test(message.text || ""));
+  const questionAlongsidePause = pauseIndex >= 0 && /\?/.test(inbound[pauseIndex].text || "");
+  if (pauseIndex >= 0 && !renewedRequest && !questionAlongsidePause) {
+    result.expectedParty = "patient";
+    result.nextAction = "Aguardar iniciativa da pessoa; pausa solicitada, sem nova ação comercial.";
+    result.evidence = "A pessoa pediu uma pausa após as mensagens anteriores.";
+    result.appointmentOutcome = "none";
+    result.procedureMilestone = "none";
+    result.recommendedStatus = currentStatus;
+  }
   return result;
 }
 
@@ -438,6 +462,7 @@ function sanitizePatientRelationship(value) {
 
   return {
     found: value?.found === true,
+    hasPendingHumanTask: value?.hasPendingHumanTask === true,
     relationshipState: RELATIONSHIP_STATES.has(state)
       ? state
       : "unknown",
@@ -515,6 +540,7 @@ export async function runLeadClassifier(
     currentNextAction,
     currentProfessional,
     patientRelationship,
+    pendingCommitments,
     classificationGuidance,
     messages,
   },
@@ -568,6 +594,11 @@ export async function runLeadClassifier(
           ),
           patientRelationship:
             sanitizePatientRelationship(patientRelationship),
+          pendingCommitments: (Array.isArray(pendingCommitments) ? pendingCommitments : []).slice(0, 10).map(task => ({
+            kind: String(task.kind || "").slice(0, 80), summary: String(task.summary || "").slice(0, 180),
+            owner: String(task.owner || "").slice(0, 80), dueAt: String(task.dueAt || ""),
+            status: String(task.status || "pending"),
+          })),
           classificationGuidance:
             sanitizeClassificationGuidance(classificationGuidance),
           messages: sanitizedMessages,

@@ -1,0 +1,175 @@
+{
+  "checkedAt": "2026-09-18T01:30:44.296531+00:00",
+  "netlify": {
+    "checkedAt": "2026-09-18T01:29:07.669Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aac860da2c8aa0008212017",
+    "baselineCommit": "162c283c29cc7e7895a28ef7f1bbda9986dfc48e",
+    "functions": 13,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ],
+    "appsScript": {
+      "version": 155,
+      "sourcesCompared": 27,
+      "receipt": "auditorias/bruna-autonomia-2026-09-18/PREFLIGHT.json"
+    }
+  },
+  "sheets": {
+    "classificationRows": 338,
+    "deadLetters": 4,
+    "approvedKnowledgeRows": 0,
+    "matchedVisibleLeads": 333,
+    "commitmentHeadersExtension": "L:N empty; first 11 headers canonical"
+  },
+  "appsScript": {
+    "version": 155,
+    "sourceComparison": "verified_read_only",
+    "files": [
+      {
+        "file": "AgendaCuidados.gs",
+        "match": true,
+        "sha256": "1ad2d3f89fe74b1b4d1afb8ebbd52dbbc85905e4e43c9dc8eda6fe0792718ad7"
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "match": true,
+        "sha256": "f3d9a7fc771bd049daeaeee7ea86ecf1d1223f32e12b3979754e7a047f11ec9b"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "match": true,
+        "sha256": "46aa06291892fafe11b3ff01ddb92250670623e53a77e123afcc61b2295aa97c"
+      },
+      {
+        "file": "ClassificationReconciliation.gs",
+        "match": true,
+        "sha256": "7829c2557ce8db33c4577fc8a791773363052ae3eb71ee4613cc1f5e45fbc10c"
+      },
+      {
+        "file": "Code.gs",
+        "match": true,
+        "sha256": "fa65ee056a703f35c75d8effb82685daed9aec2e3b8aaa7c2a3537e9035db2d4"
+      },
+      {
+        "file": "ConsultasSync.gs",
+        "match": true,
+        "sha256": "456596a8daea5800c70e046eb9e673ef27b38c2ad91eb14786bc58df017b671c"
+      },
+      {
+        "file": "ContactPreferences.gs",
+        "match": true,
+        "sha256": "6dc9390b94bd97eb9ea6c702875e1ca42cec1fcaed24c76f3fec3a8b430ccbf1"
+      },
+      {
+        "file": "CuidadosProgramados.gs",
+        "match": true,
+        "sha256": "cbc1b732bdf0ff98e8118f0140cfbb611f46ee8e025c26ba67c14e7b6319d0ca"
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "match": true,
+        "sha256": "1b328375054d6903619d6e0fa3d815949b3c4bafaa79c535dfc3eda93d66c189"
+      },
+      {
+        "file": "FunnelDashboards.gs",
+        "match": true,
+        "sha256": "0ef41f8ad6fc8f086d943db3a3cbccf99f33bb61dce9973a7be078cb9b23d7da"
+      },
+      {
+        "file": "FunnelReconciliation.gs",
+        "match": true,
+        "sha256": "3081887b6f7f49d6f733115e3fecafae75b0fda6d48e3acb7b9f413dc750200c"
+      },
+      {
+        "file": "GoogleAdsFunnelReview.gs",
+        "match": true,
+        "sha256": "9cd468cb7dc197621f1ea9a20fe4e6f33cee55d8b1ef12fb2c0157b2c163fd92"
+      },
+      {
+        "file": "KnowledgeBase.gs",
+        "match": true,
+        "sha256": "29767abf5b86b92aeb953393d8e2b70b4d18f59650c155082847cef6b6990241"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "match": true,
+        "sha256": "018cc873174de637f5f3fed798b201a95b14489a16cc6c1074bd36a48d88139d"
+      },
+      {
+        "file": "LembretesConsultas.gs",
+        "match": true,
+        "sha256": "37f8afe237acc3bbd6feaf62653052970318da06ee81f22567ed5ca1a6cd61d6"
+      },
+      {
+        "file": "MetaAdsFunnelReview.gs",
+        "match": true,
+        "sha256": "b3afc34022589ebdffc6349f645c023bf22193e161f7e690407c7e68c8a70389"
+      },
+      {
+        "file": "MetaAdsReview.gs",
+        "match": true,
+        "sha256": "2657e30e1b055dfe822dde3d674400adb0068a09089fc5fac2f4186490cbb09b"
+      },
+      {
+        "file": "OperationalEvents.gs",
+        "match": true,
+        "sha256": "2c8f57ef21d19979f6ef7e9337b68d82bf0d355fdd78d431bb906ef0c31ce60b"
+      },
+      {
+        "file": "OpportunityStore.gs",
+        "match": true,
+        "sha256": "55aefbfeab282d9c6ff188a618ea2a671a00f50fdf5ae58e2b48bc71284e323e"
+      },
+      {
+        "file": "PainelDecisoesDiarias.gs",
+        "match": true,
+        "sha256": "1bb1a43c94a8ffa3a0694e05484b610c25c9b8fbc53f2bd69bc1b628c34845aa"
+      },
+      {
+        "file": "QualityDashboards.gs",
+        "match": true,
+        "sha256": "89d6109984550223315affd8da659b77cb6dccc42d3399aecbfed1914e18263d"
+      },
+      {
+        "file": "Retomadas.gs",
+        "match": true,
+        "sha256": "3e84be3f96ba52eb81ebdc192270b01b6d9d76f268c9a4bf921e02c14bc9b625"
+      },
+      {
+        "file": "RoomBooking.gs",
+        "match": true,
+        "sha256": "6f34f9c42e7d1e17c830704fd431f09eb09d359b1c66216aaa084db96393a35b"
+      },
+      {
+        "file": "RoomBookingForm.html",
+        "match": true,
+        "sha256": "9cea7d8a085e105556c9016e42f119e3b43ddaa998d4b56a850ddc60b1f9d39e"
+      },
+      {
+        "file": "ScheduleMaintenance.gs",
+        "match": true,
+        "sha256": "4e145ad28277de0412a53b05bc86bc4e3902087b4eeccd2d87972826ef3fbf1d"
+      },
+      {
+        "file": "SyntheticHealth.gs",
+        "match": true,
+        "sha256": "f37e652a967cc20d3b9dedf91a356b769f5c00e6dae1b5c8388bdce1cc7fa18b"
+      },
+      {
+        "file": "WhatsAppCosts.gs",
+        "match": true,
+        "sha256": "8ae1b7955712a9a2aa218ca615137c6b519f5f33c1f5175e155a1a54960ce4a7"
+      }
+    ],
+    "canonicalIdsVerified": true,
+    "checkedAt": "2026-09-18T01:28:48.362Z"
+  },
+  "patientWrites": 0
+}

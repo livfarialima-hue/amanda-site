@@ -120,3 +120,13 @@ test("an ignored stale completion is not reported as success", async () => {
     ["complete_classification", "fail_classification"],
   );
 });
+
+
+test("a timeout retries the same classification reservation instead of claiming another lead", async () => {
+  const {claimClassificationBatch}=await import("../classify-leads.mjs");
+  const calls=[];
+  const result=await claimClassificationBatch({now:()=>1789693200000,uuid:()=>"00000000-0000-4000-8000-000000000001",waitImpl:async()=>{},
+    callSheets:async(action,payload,options)=>{calls.push({action,payload,options});return calls.length===1?{status:"failed",errorCode:"timeout"}:{status:"completed",data:{jobs:[]}};}});
+  assert.equal(result.status,"completed"); assert.equal(calls.length,2); assert.deepEqual(calls[0],calls[1]);
+  assert.equal(calls[0].payload.limit,1); assert.equal(calls[0].options.timeoutMs,60000);
+});

@@ -1432,15 +1432,16 @@ function obterPlanilhaCompromissos_(arquivo) {
   if (planilha) {
     if (
       typeof planilha.getMaxColumns === "function" &&
-      planilha.getMaxColumns() < 11 &&
+      planilha.getMaxColumns() < 14 &&
       typeof planilha.insertColumnsAfter === "function"
     ) {
       planilha.insertColumnsAfter(
         planilha.getMaxColumns(),
-        11 - planilha.getMaxColumns(),
+        14 - planilha.getMaxColumns(),
       );
     }
     planilha.getRange(1, 11).setValue("Motivo da resolução");
+    planilha.getRange(1, 12, 1, 3).setValues([["Opportunity ID", "Profissional", "Request ID"]]);
     return planilha;
   }
 
@@ -1448,7 +1449,7 @@ function obterPlanilhaCompromissos_(arquivo) {
     RETOMADAS_CONFIG.planilhaCompromissos,
   );
   planilha
-    .getRange(1, 1, 1, 11)
+    .getRange(1, 1, 1, 14)
     .setValues([[
       "Event ID",
       "Telefone",
@@ -1461,6 +1462,7 @@ function obterPlanilhaCompromissos_(arquivo) {
       "Resolvido em",
       "Origem",
       "Motivo da resolução",
+      "Opportunity ID", "Profissional", "Request ID",
     ]]);
   planilha.setFrozenRows(1);
   planilha.hideSheet();
@@ -1549,9 +1551,22 @@ function registrarCompromissoPaciente_(input) {
     80,
   );
 
+  const opportunityId = textoCompromissoPaciente_(input.opportunityId, 120);
+  const professional = textoCompromissoPaciente_(input.professional, 80);
+  const requestId = textoCompromissoPaciente_(input.requestId || eventId, 200);
+  if (opportunityId || professional) {
+    const crm = arquivo.getSheetByName("_CRM_OPORTUNIDADES");
+    const matches = !crm || crm.getLastRow() < 2 ? [] : crm.getRange(2, 1, crm.getLastRow() - 1, 7).getValues()
+      .filter(function (row) { return String(row[0] || "") === opportunityId; });
+    if (!opportunityId || !professional || matches.length !== 1 ||
+      normalizarTelefoneRetomadas_(matches[0][1]) !== telefone || matches[0][3] !== professional || matches[0][6] === "voided") {
+      return { ok: false, error: "commitment_identity_unverified" };
+    }
+  }
+
   if (ultimaLinha >= 2) {
     const compromissos = planilha
-      .getRange(2, 1, ultimaLinha - 1, 8)
+      .getRange(2, 1, ultimaLinha - 1, 14)
       .getDisplayValues();
     const duplicado = compromissos.some(function (linha) {
       return (
@@ -1559,7 +1574,10 @@ function registrarCompromissoPaciente_(input) {
         (
           normalizarTelefoneRetomadas_(linha[1]) === telefone &&
           normalizarTextoRetomadas_(linha[2]) ===
-            normalizarTextoRetomadas_(kind) && kind !== "Retorno combinado" &&
+            normalizarTextoRetomadas_(kind) && opportunityId && professional && requestId &&
+          String(linha[11] || "") === opportunityId &&
+          String(linha[12] || "") === professional &&
+          String(linha[13] || "") === requestId &&
           normalizarTextoRetomadas_(linha[7]) === "pendente"
         )
       );
@@ -1591,6 +1609,7 @@ function registrarCompromissoPaciente_(input) {
       input.source || "WhatsApp",
       80,
     ),
+    "", opportunityId, professional, requestId,
   ]);
 
   return { ok: true, created: true };
@@ -1656,6 +1675,7 @@ function listarCompromissosPendentesPaciente_(
   arquivo,
   telefoneInput,
   limiteInput,
+  contextInput,
 ) {
   const telefone = normalizarTelefoneRetomadas_(telefoneInput);
   const limite = Math.max(1, Math.min(10, Number(limiteInput) || 5));
@@ -1668,12 +1688,14 @@ function listarCompromissosPendentesPaciente_(
   if (!planilha || planilha.getLastRow() < 2) return [];
 
   return planilha
-    .getRange(2, 1, planilha.getLastRow() - 1, 10)
+    .getRange(2, 1, planilha.getLastRow() - 1, Math.min(14, typeof planilha.getMaxColumns === "function" ? planilha.getMaxColumns() : 10))
     .getValues()
     .reduce(function (pendentes, linha) {
       if (
         normalizarTelefoneRetomadas_(linha[1]) !== telefone ||
-        normalizarTextoRetomadas_(linha[7]) !== "pendente"
+        normalizarTextoRetomadas_(linha[7]) !== "pendente" ||
+        (contextInput && contextInput.opportunityId && linha[11] && String(linha[11]) !== String(contextInput.opportunityId)) ||
+        (contextInput && contextInput.professional && linha[12] && String(linha[12]) !== String(contextInput.professional))
       ) {
         return pendentes;
       }
@@ -1689,6 +1711,9 @@ function listarCompromissosPendentesPaciente_(
         dueAt: prazo ? prazo.toISOString() : "",
         status: "pending",
         source: textoCompromissoPaciente_(linha[9], 80),
+        opportunityId: textoCompromissoPaciente_(linha[11], 120),
+        professional: textoCompromissoPaciente_(linha[12], 80),
+        requestId: textoCompromissoPaciente_(linha[13], 200),
       });
       return pendentes;
     }, [])
@@ -3603,7 +3628,7 @@ function mensagemSemRetomada_(texto) {
 
 function retornoFuturoRecente_(conversa, agora) {
   const entradas = conversa.filter(function (mensagem) {
-    return mensagem.direcao === "IN";
+    return mensagem.direcao === "IN" && !/^(?:obrigad[ao]|ok|certo|entendi|t[aá] bom)[.!\s]*$/i.test(String(mensagem.texto || "").trim());
   });
 
   if (!entradas.length) return false;
@@ -3623,6 +3648,7 @@ function retornoFuturoRecente_(conversa, agora) {
 
 function mensagemIndicaRetornoFuturo_(texto) {
   const normalizado = normalizarTextoRetomadas_(texto);
+  if (/\b(?:prefiro (?:pausar|parar)|(?:eu |eu mesma |eu mesmo )?(?:volto|retorno|entro em contato) quando (?:eu )?(?:quiser|puder|decidir))\b/.test(normalizado)) return true;
 
   return /(?:vou|irei|pretendo) (?:entrar em contato|chamar|falar|retornar|procurar)|(?:entro|entrarei|retorno|retornarei|chamo|falarei|procuro|procurarei) (?:em contato|depois|mais tarde|voces|quando)|(?:te|lhes?) (?:chamo|aviso|procuro)|(?:falo|volto a falar) com (?:voces|a clinica)|mais pra frente|quando (?:eu )?(?:decidir|puder|conseguir)/.test(
     normalizado,
@@ -5171,4 +5197,25 @@ function escaparHtmlRetomadas_(valor) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+
+function prepararCompromissosPorSolicitacao20260918() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("busy_retry");
+  try {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const previous = spreadsheet.getSheetByName(RETOMADAS_CONFIG.planilhaCompromissos);
+    const rowCount = previous ? previous.getLastRow() : 0;
+    const before = !previous || rowCount < 2 ? [] : previous.getRange(2, 1, rowCount - 1, 11).getValues();
+    const headers = previous ? previous.getRange(1, 12, 1, 3).getValues()[0] : [];
+    const expected = ["Opportunity ID", "Profissional", "Request ID"];
+    if (headers.some(function (value, index) { return value && value !== expected[index]; })) throw new Error("commitment_schema_conflict");
+    const sheet = obterPlanilhaCompromissos_(spreadsheet);
+    const after = sheet.getLastRow() < 2 ? [] : sheet.getRange(2, 1, sheet.getLastRow() - 1, 11).getValues();
+    if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("commitment_legacy_data_changed");
+    const result = { ok: true, protectedRows: before.length, legacyDataPreserved: true, identityColumns: 3 };
+    console.log(JSON.stringify(result));
+    return result;
+  } finally { lock.releaseLock(); }
 }

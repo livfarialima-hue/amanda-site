@@ -400,11 +400,14 @@ function projetarDecisoesCanonicasCentral_(items, decisions, conversations, lead
         ? "Revisar quem será atendido e a oportunidade correta antes de orientar a próxima ação."
         : "Revisar as mensagens mais recentes e atualizar a classificação antes de confirmar a próxima ação."
       : decision.nextAction || (waiting ? "Aguardar manifestação da pessoa" : "Conferir a solicitação pendente e responder");
-    const owner = clinic || care || decision.owner === "human_team" ? "Equipe" : "Bruna/bot";
-    const queue = waiting ? "Aguardando paciente" : "Resposta agora";
+    const technical = stale && !decision.ambiguous && !care && !protectedItem;
+    const safeBruna = !uncertain && !care && !protectedItem && decision.owner === "bruna" &&
+      /^Bruna: esclarecer /.test(nextAction) && last && last.direcao === "IN";
+    const owner = safeBruna ? "Bruna/bot" : clinic || care || decision.owner === "human_team" ? "Equipe" : "Bruna/bot";
+    const queue = technical ? "Revisão técnica" : waiting ? "Aguardando paciente" : "Resposta agora";
     if (current && (current.queue !== queue || current.owner !== owner || current.nextAction !== nextAction)) counts.disagreements += 1;
     const item = criarItemCentral_({ phone, queue, name: profile.name || lead.nome,
-      relationship: decision.relationship, owner, mode: waiting ? "Silêncio" : "Manual",
+      relationship: decision.relationship, owner, mode: safeBruna ? "Elegível para Bruna" : waiting ? "Silêncio" : "Manual",
       dueAt: waiting ? null : prazoRespostaCentral_(lastAt || decision.updatedAt || now),
       nextAction, suggestion: "", context: uncertain
         ? "A decisão anterior não comprova o estado atual. Conferir a conversa e o vínculo antes de agir."
@@ -417,7 +420,8 @@ function projetarDecisoesCanonicasCentral_(items, decisions, conversations, lead
         (decision.updatedAt ? decision.updatedAt.getTime() : "unknown") + ":" + (lastAt ? lastAt.getTime() : "none"),
     });
     item.canonicalExpectedParty = waiting ? "patient" : "clinic";
-    items[protectedItem ? phone + ":crm:" + decision.opportunityId : phone] = item;
+    items[protectedItem || technical && current && current.queue === "Resposta agora"
+      ? phone + ":crm:" + decision.opportunityId : phone] = item;
     counts.projected += 1;
   });
   return counts;
@@ -4016,6 +4020,7 @@ function prioridadeCentralPorFila_(queue) {
   const priorities = {
     "Pendência vencida": { rank: 0, label: "Crítica" },
     "Resposta agora": { rank: 1, label: "Alta" },
+    "Revisão técnica": { rank: 2, label: "Alta" },
     "Ação manual hoje": { rank: 2, label: "Alta" },
     "Automático hoje": { rank: 3, label: "Normal" },
     "Consultas e cuidados": { rank: 4, label: "Normal" },

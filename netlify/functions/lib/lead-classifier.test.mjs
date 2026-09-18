@@ -290,6 +290,7 @@ test("request is private, structured, bounded and excludes raw phone", async () 
   const input = JSON.parse(requestBody.input);
   assert.deepEqual(input.patientRelationship, {
     found: true,
+    hasPendingHumanTask: false,
     relationshipState: "known_patient",
   });
   assert.equal(input.currentProfessional, "amanda");
@@ -328,4 +329,44 @@ test("missing API configuration skips classification", async () => {
     status: "skipped",
     errorCode: "configuration_missing",
   });
+});
+
+
+test("latest pause supersedes an old unanswered price question, including a courtesy afterwards", () => {
+  for (const ending of [[], [{direction:"IN",text:"Obrigada!"}]]) {
+    const c = enforceCommercialEvidenceGuard({currentStatus:"Qualificado",messages:[
+      {direction:"IN",text:"Qual o valor da consulta?"},
+      {direction:"OUT",text:"Posso explicar a avaliação."},
+      {direction:"IN",text:"Prefiro pausar. Eu mesma volto quando quiser."}, ...ending,
+    ], classification:validClassification()});
+    assert.equal(c.expectedParty,"patient"); assert.match(c.nextAction,/pausa solicitada/);
+    assert.equal(c.appointmentOutcome,"none");
+  }
+});
+
+test("explicit new engagement after a pause restores the current request", () => {
+  const c=enforceCommercialEvidenceGuard({currentStatus:"Qualificado",messages:[
+    {direction:"IN",text:"Prefiro pausar"},{direction:"IN",text:"Agora quero agendar a consulta."},
+  ],classification:validClassification()});
+  assert.equal(c.expectedParty,"clinic"); assert.doesNotMatch(c.nextAction,/pausa/);
+});
+
+test("financial objection follows the latest explicit budget evidence", () => {
+  for (const [text,reason] of [
+    ["Já me organizei. Agora consigo pagar e quero marcar.","Em andamento"],
+    ["Antes estava fora do meu orçamento, mas agora consigo pagar.","Em andamento"],
+    ["Agora consigo pagar a consulta, mas não consigo pagar a cirurgia.","Preço"],
+  ]) {
+    const c=enforceCommercialEvidenceGuard({currentStatus:"Qualificado",messages:[
+      {direction:"IN",text:"Está fora do meu orçamento"},{direction:"IN",text},
+    ],classification:validClassification({commercialReason:"Preço"})});
+    assert.equal(c.commercialReason,reason,text);
+  }
+});
+
+test("an isolated installment query cannot become readiness for scheduling", () => {
+  for(const text of ["Vocês parcelam?","Tem parcelamento?","Aceitam cartão?"]) {
+    const c=enforceCommercialEvidenceGuard({currentStatus:"Novo",messages:[{direction:"IN",text}],classification:validClassification()});
+    assert.equal(c.recommendedStatus,"Novo",text); assert.doesNotMatch(c.nextAction,/Oferecer datas/);
+  }
 });

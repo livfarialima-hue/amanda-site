@@ -125,3 +125,32 @@ test("an unanswered unknown creates an operational response review with context"
   assert.match(recorded.context, /Pergunta da paciente:/);
   assert.equal(recorded.suggestion, "Rascunho seguro para conferência.");
 });
+
+
+test("administrative catalog matches an isolated question and rejects broader or clinical requests",()=>{
+  const c=runtime();
+  for(const text of ["Qual o endereço?","Onde fica a clínica?","Qual o valor da consulta?","Parcelam a consulta?","Como funciona a avaliação?"]){
+    assert.ok(c.classificarPerguntaAdministrativaSegura_(text,"amanda"),text);
+    assert.equal(c.classificarPerguntaAdministrativaSegura_(text,"daniel"),null,text);
+  }
+  for(const text of ["Quanto custa a cirurgia?","Qual o endereço e posso operar tomando remédio?","Estou com febre","Não quero saber o endereço","Qual o endereço da outra clínica?","Pode confirmar amanhã às 10?"])
+    assert.equal(c.classificarPerguntaAdministrativaSegura_(text,"amanda"),null,text);
+});
+
+test("approved catalog publication is idempotent and refuses unrelated or edited knowledge",()=>{
+  const rows=[Array(22).fill("")],props=new Map();
+  const sheet={getLastRow:()=>rows.length,getRange:(r,c,n=1,w=1)=>({getValues:()=>rows.slice(r-1,r-1+n).map(row=>row.slice(c-1,c-1+w))}),appendRow:row=>rows.push(row)};
+  const c=runtime(); c.CONFIG={spreadsheetId:"synthetic"};c.SpreadsheetApp={openById:()=>({getSheetByName:()=>sheet}),flush(){}};
+  c.LockService={getScriptLock:()=>({tryLock:()=>true,releaseLock(){}})};
+  c.PropertiesService={getScriptProperties:()=>({getProperty:k=>props.get(k),setProperty:(k,v)=>props.set(k,v)})};
+  c.obterPlanilhaRespostasAprovadas_=()=>sheet;
+  assert.equal(c.diagnosticarBibliotecaAdministrativa20260918().existing,0);
+  const first=c.publicarBibliotecaAdministrativa20260918();assert.equal(first.created,5);
+  assert.equal(c.publicarBibliotecaAdministrativa20260918().created,0);
+  assert.equal(props.get("BRUNA_KB_SNAPSHOT"),"kb-2026-09-18.1");
+  const original=rows[1][6];rows[1][6]="Resposta alterada pela equipe";
+  assert.equal(c.diagnosticarBibliotecaAdministrativa20260918().conflicts,1);
+  assert.throws(()=>c.publicarBibliotecaAdministrativa20260918(),/knowledge_catalog_changed/);
+  assert.equal(rows[1][6],"Resposta alterada pela equipe");rows[1][6]=original;
+  rows.push(["unrelated-rule"]);assert.throws(()=>c.publicarBibliotecaAdministrativa20260918(),/knowledge_catalog_changed/);
+});

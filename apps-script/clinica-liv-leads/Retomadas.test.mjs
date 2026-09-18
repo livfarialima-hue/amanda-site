@@ -4111,3 +4111,33 @@ test("automatic follow-up diagnosis is aggregate, authenticated and read-only", 
   assert.equal(result.endpoint.automaticTemplateEnabled, true);
   assert.equal(result.endpoint.templateConfigured, true);
 });
+
+
+test("a courtesy after a requested pause does not permit a commercial follow-up",()=>{
+  const conversation=[{direcao:"IN",texto:"Prefiro pausar. Eu mesma volto quando quiser."},{direcao:"OUT",texto:"Tudo bem."},{direcao:"IN",texto:"Obrigada!"}];
+  assert.equal(context.retornoFuturoRecente_(conversation,new Date()),true);
+  assert.equal(context.retornoFuturoRecente_([...conversation,{direcao:"IN",texto:"Quero agendar agora."}],new Date()),false);
+});
+
+test("commitments deduplicate by the exact request and preserve distinct requests on one phone",()=>{
+  const rows=[Array(14).fill("")],writes=[];
+  const sheet={getMaxColumns:()=>26,getLastRow:()=>rows.length,
+    getRange:(r,c,n=1,w=1)=>({getValues:()=>rows.slice(r-1,r-1+n).map(x=>x.slice(c-1,c-1+w)),
+      getDisplayValues:()=>rows.slice(r-1,r-1+n).map(x=>x.slice(c-1,c-1+w).map(String)),
+      setValue:v=>{rows[r-1][c-1]=v;},setValues:vs=>vs.forEach((v,i)=>rows[r-1+i].splice(c-1,w,...v))}),
+    appendRow:row=>{rows.push(row);writes.push(row);}};
+  const crm={getLastRow:()=>3,getRange:()=>({getValues:()=>[["synthetic-op","+5511900000000","","amanda","","","open"],["other-op","+5511900000000","","amanda","","","open"]]})};
+  const runtime=vm.createContext({Date,CONFIG:{spreadsheetId:"synthetic"},SpreadsheetApp:{openById:()=>({getSheetByName:name=>name==="_CRM_OPORTUNIDADES"?crm:sheet})}});
+  vm.runInContext(source,runtime);
+  const base={phone:"+5511900000000",kind:"human_review",summary:"Conferir solicitação",opportunityId:"synthetic-op",professional:"amanda",requestId:"request-1",eventId:"event-1"};
+  assert.equal(runtime.registrarCompromissoPaciente_(base).created,true);
+  assert.equal(runtime.registrarCompromissoPaciente_(base).duplicate,true);
+  assert.equal(runtime.registrarCompromissoPaciente_({...base,eventId:"same-request-alternate-event"}).duplicate,true);
+  assert.equal(runtime.registrarCompromissoPaciente_({...base,eventId:"event-2",requestId:"request-2"}).created,true);
+  assert.equal(runtime.registrarCompromissoPaciente_({...base,eventId:"event-3",opportunityId:"other-op",requestId:"request-1"}).created,true);
+  const pending=runtime.listarCompromissosPendentesPaciente_({getSheetByName:()=>sheet},base.phone,10,{opportunityId:"synthetic-op",professional:"amanda"});
+  assert.equal(pending.length,2); assert.equal(writes.length,3); assert.equal(writes[0][11],"synthetic-op");
+  assert.equal(runtime.registrarCompromissoPaciente_({...base,eventId:"bad-identity",professional:"daniel"}).error,"commitment_identity_unverified");
+  assert.equal(writes.length,3);
+  assert.equal(runtime.resolverCompromissosPaciente_({phone:base.phone,text:"Obrigada"}).preserved,true);
+});

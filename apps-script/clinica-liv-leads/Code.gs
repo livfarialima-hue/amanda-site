@@ -399,10 +399,10 @@ function doPost(e) {
 
     if (body.action === "claim_due_classifications") {
       stage = "claim_due_classifications";
-      if (!lock.tryLock(5000)) {
+      if (!lock.tryLock(body.requestId ? 30000 : 5000)) {
         return json_({ ok: false, error: "busy_retry" });
       }
-      const claimResult = claimDueLeadClassifications_(body.limit);
+      const claimResult = claimDueLeadClassifications_(body.limit, body.requestId);
       return json_({ ok: true, ...claimResult });
     }
 

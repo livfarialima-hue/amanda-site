@@ -2197,3 +2197,23 @@ test("deferring from the panel revalidates the exact row and rejects automatic o
   );
   assert.equal(writes.some((write) => write.row === 3), false);
 });
+
+
+test("technical classification review does not replace the actual unanswered request",()=>{
+  const c=loadContext(),phone="+5511999999999",items={};
+  items[phone]=c.criarItemCentral_({phone,queue:"Resposta agora",owner:"Equipe",nextAction:"Conferir o documento enviado",sourceKey:"conversation:synthetic"});
+  c.projetarDecisoesCanonicasCentral_(items,{[phone]:canonicalDecision()},
+    {[phone]:[{direcao:"IN",texto:"Segue o documento",dataHora:new Date("2026-09-14T13:00:00Z")}]},{},{},new Date("2026-09-14T13:01:00Z"));
+  assert.equal(items[phone].nextAction,"Conferir o documento enviado");
+  assert.ok(Object.values(items).some(item=>item.queue==="Revisão técnica"));
+});
+
+test("verified routine response eligibility is distinct from human work and care",()=>{
+  const c=loadContext(),phone="+5511999999999",items={};
+  const decision=canonicalDecision({owner:"bruna",nextAction:"Bruna: esclarecer localização com a resposta administrativa aprovada, após os gates do turno."});
+  const messages={[phone]:[{direcao:"IN",texto:"Qual o endereço?",dataHora:new Date("2026-09-14T11:59:00Z")}]};
+  c.projetarDecisoesCanonicasCentral_(items,{[phone]:decision},messages,{},{},new Date("2026-09-14T12:01:00Z"));
+  assert.equal(items[phone].owner,"Bruna/bot"); assert.equal(items[phone].mode,"Elegível para Bruna");
+  const careItems={}; c.projetarDecisoesCanonicasCentral_(careItems,{[phone]:{...decision,relationship:"active_postop"}},messages,{},{},new Date());
+  assert.equal(careItems[phone].owner,"Equipe");assert.equal(careItems[phone].mode,"Manual");
+});

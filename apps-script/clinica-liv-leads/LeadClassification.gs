@@ -2473,13 +2473,43 @@ function relationshipFromClassification_(status, classification, fallback) {
     (status === "Qualificado" ? "engaged_lead" : status === "Novo" ? "new_lead" : "unknown");
 }
 
+function classificationOperationalContext_(spreadsheet, phone, opportunityId, professional) {
+  const available = typeof listarCompromissosPendentesPaciente_ === "function" &&
+    typeof houveAtendimentoHumanoNoDia_ === "function";
+  if (!available) return { operationalContextVerified: false, pendingCommitments: [] };
+  const pending = listarCompromissosPendentesPaciente_(spreadsheet, phone, 10,
+    { opportunityId: opportunityId, professional: professional });
+  return { operationalContextVerified: true, professional: professional, opportunityId: opportunityId,
+    checkedAt: new Date().toISOString(), pendingCommitments: pending,
+    humanTakeoverToday: houveAtendimentoHumanoNoDia_(spreadsheet, phone, new Date()),
+    patientRelationship: { hasPendingHumanTask: pending.length > 0 } };
+}
+
+function safeAdministrativeClassification_(job, relationship) {
+  if (!job || !job.operationalContextVerified || job.humanTakeoverToday ||
+    job.patientRelationship && job.patientRelationship.hasPendingHumanTask ||
+    !["new_lead", "engaged_lead", "unknown"].includes(relationship) ||
+    typeof classificarPerguntaAdministrativaSegura_ !== "function") return null;
+  const messages = Array.isArray(job.messages) ? job.messages : [];
+  const last = messages[messages.length - 1];
+  if (!last || last.direction !== "IN" || last.messageType && last.messageType !== "text") return null;
+  const now = parseClassificationDate_(job.checkedAt) || new Date();
+  const recentHuman = messages.some(function (message) {
+    if (message.direction !== "OUT" || message.source !== "equipe_humana") return false;
+    const at = parseClassificationDate_(message.at);
+    return !at || now.getTime() - at.getTime() < 24 * 60 * 60 * 1000;
+  });
+  return recentHuman ? null : classificarPerguntaAdministrativaSegura_(last.text, job.professional);
+}
+
 function ownerFromClassificationContext_(classification, job, relationship, currentOwner) {
+  if (safeAdministrativeClassification_(job, relationship) && String(currentOwner || "") !== "human") return "bruna";
   const activeCare = ["active_postop", "surgical_planning", "appointment_scheduled", "consultation_completed"];
   const messages = job && Array.isArray(job.messages) ? job.messages : [];
   const humanAuthorship = messages.some(function humanTurn(message) {
     return message.direction === "OUT" && message.source === "equipe_humana";
   });
-  if (lastMessageIsHumanResumeReceipt_(job) || String(currentOwner || "") === "human_team" || humanAuthorship ||
+  if (lastMessageIsHumanResumeReceipt_(job) || ["human_team", "human"].includes(String(currentOwner || "")) || humanAuthorship ||
     activeCare.includes(relationship) || classification && classification.confidence === "low" ||
     job && job.patientRelationship && job.patientRelationship.hasPendingHumanTask === true) return "human_team";
   return "bruna";
@@ -2494,6 +2524,7 @@ function lastMessageIsHumanResumeReceipt_(job) {
 }
 
 function expectedPartyFromClassification_(classification, job) {
+  if (job && job.patientRelationship && job.patientRelationship.hasPendingHumanTask === true) return "clinic";
   if (lastMessageIsHumanResumeReceipt_(job)) return "clinic";
   const explicit = String(
     classification && classification.expectedParty || "",
@@ -2518,13 +2549,18 @@ function shouldAlertLowConfidenceAdministrativeChange_(classification) {
     signal.procedureMilestone !== "none";
 }
 
-function claimDueLeadClassifications_(requestedLimit) {
+function claimDueLeadClassifications_(requestedLimit, requestIdInput) {
+  const requestId = String(requestIdInput || "");
+  if (requestId && (!/^claim-\d{13}-[a-f0-9-]{36}$/.test(requestId) ||
+    Math.abs(Date.now() - Number(requestId.split("-")[1])) > 5 * 60 * 1000)) {
+    return { jobs: [], error: "invalid_claim_request" };
+  }
   const limit = Math.min(Math.max(Number(requestedLimit) || 5, 1), 20);
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  const reaper = executarReaperFilaClassificacaoInterno_(
-    spreadsheet,
-    true,
-  );
+  // The idempotent reservation path must not rescan the incident archive under
+  // the global lock. Expired leases and exhausted attempts are handled below;
+  // the full reaper remains available for operational reconciliation.
+  const reaper = requestId ? { deferred: true } : executarReaperFilaClassificacaoInterno_(spreadsheet, true);
   const queueSheet = getOrCreateLeadAuxiliarySheet_(
     spreadsheet,
     CONFIG.classificationSheetName,
@@ -2545,6 +2581,19 @@ function claimDueLeadClassifications_(requestedLimit) {
     )
     .getValues();
   const queueUpdates = [];
+  if (requestId) {
+    const existing = queueValues.filter(function (row) {
+      return String(row[15] || "").indexOf(requestId + ":") === 0;
+    });
+    if (existing.length) return { jobs: existing.filter(function (row) {
+      const lease = parseClassificationDate_(row[5]);
+      return String(row[4]) === "running" && lease && lease > now;
+    }).map(function (row) {
+      return { phone: normalizePhone_(row[0]), throughMessageId: String(row[8] || row[7] || ""),
+        leaseToken: String(row[15]), opportunityId: String(row[16] || ""),
+        professional: String(row[17] || ""), leadSheetName: String(row[18] || "") };
+    }), recoveredReservation: true, reaper };
+  }
 
   const candidates = [];
   for (let index = 0; index < queueValues.length; index += 1) {
@@ -2587,7 +2636,7 @@ function claimDueLeadClassifications_(requestedLimit) {
     const phone = normalizePhone_(row[0]);
     const throughMessageId = String(row[8] || row[7] || "");
     const attempts = candidate.attempts + 1;
-    const leaseToken = Utilities.getUuid();
+    const leaseToken = (requestId ? requestId + ":" : "") + Utilities.getUuid();
     row[4] = "running";
     // Em atualizacoes em lote, algumas planilhas converteram Date para o
     // serial zero. ISO preserva o instante e parseClassificationDate_ o le.
@@ -2728,7 +2777,9 @@ function hydrateLeadClassificationJobs_(claimedJobs) {
         found: !["new_lead", "engaged_lead", "unknown"].includes(relationshipState),
         relationshipState: relationshipState,
       };
-      return Object.assign(base, {
+      const operational = classificationOperationalContext_(spreadsheet, phone, opportunityId, professional);
+      relationship.hasPendingHumanTask = Boolean(operational.patientRelationship && operational.patientRelationship.hasPendingHumanTask);
+      return Object.assign(base, operational, {
         leadRow,
         conversationRevision: revisaoHistoricoClassificacao_(messages),
         includeUnassignedUnknown: canRecoverUnassignedMessages,
@@ -3301,9 +3352,16 @@ function completeLeadClassification_(job, classification) {
       canonicalOpportunityId, phone, professional, 24,
     ),
   };
+  Object.assign(completionContext, classificationOperationalContext_(spreadsheet, phone, canonicalOpportunityId, professional));
+  const safeAdministrative = safeAdministrativeClassification_(completionContext, relationshipToKeep);
+  const pendingHumanTask = completionContext.patientRelationship && completionContext.patientRelationship.hasPendingHumanTask;
   const automaticValues = {
     "Resumo automático": safeText_(classification.summary, 600),
-    "Próxima ação automática": lastMessageIsHumanResumeReceipt_(completionContext)
+    "Próxima ação automática": pendingHumanTask
+      ? "Equipe: conferir e resolver a solicitação pendente antes de nova ação comercial."
+      : safeAdministrative
+      ? "Bruna: esclarecer " + safeAdministrative.subject.toLowerCase() + " com a resposta administrativa aprovada, após os gates do turno."
+      : lastMessageIsHumanResumeReceipt_(completionContext)
       ? "Equipe: conferir a solicitação pendente e responder; houve apenas confirmação automática de recebimento."
       : confidence === "low"
       ? "Revisar o histórico antes de confirmar a próxima ação; classificação incerta."
@@ -3312,7 +3370,7 @@ function completeLeadClassification_(job, classification) {
     "Relacionamento": relationshipToKeep,
     "Responsável atual": ownerFromClassificationContext_(classification, completionContext, relationshipToKeep,
       currentValues[(columns["Responsável atual"] || 0) - 1]),
-    "Aguardando ação de": confidence === "low" ? "clinic" : expectedPartyFromClassification_(classification, completionContext),
+    "Aguardando ação de": safeAdministrative || confidence === "low" ? "clinic" : expectedPartyFromClassification_(classification, completionContext),
   };
   const phaseSync = typeof sincronizarFaseOportunidadeELead_ === "function"
     ? sincronizarFaseOportunidadeELead_(spreadsheet, {
@@ -3787,4 +3845,65 @@ function aplicarReaberturaCicloClassificacaoComNovaAtividadeConfirmada() {
   });
   console.log(JSON.stringify(result));
   return result;
+}
+
+function classificationRecoveryCandidates20260918_(queueRows, opportunityRows) {
+  const opportunities = {};
+  (opportunityRows || []).slice(1).forEach(function (row) {
+    if (row[0]) (opportunities[row[0]] || (opportunities[row[0]] = [])).push(row);
+  });
+  return (queueRows || []).slice(1).reduce(function (selected, row, index) {
+    const activity = parseClassificationDate_(row[2]), classified = parseClassificationDate_(row[6]);
+    const matches = opportunities[row[16]] || [];
+    const opportunity = matches[0];
+    if (String(row[4]) !== "dead_letter" || Number(row[14]) !== 8 ||
+      String(row[13]) !== "max_attempts_exceeded:reaper_requeued:expired_lease" ||
+      !activity || !classified || activity <= classified ||
+      activity < new Date("2026-09-15T00:00:00-03:00") || activity > new Date("2026-09-16T23:59:59-03:00") ||
+      !row[8] || !row[16] || row[17] !== "amanda" || matches.length !== 1 ||
+      opportunity[6] !== "open" || opportunity[3] !== row[17] ||
+      normalizePhone_(opportunity[1]) !== normalizePhone_(row[0])) return selected;
+    selected.push({ row: index + 2, opportunityVersion: Number(opportunity[22] || 0) });
+    return selected;
+  }, []);
+}
+
+function recuperarClassificacoesExpiradas20260918_(apply) {
+  const props = PropertiesService.getScriptProperties();
+  const key = "BRUNA_CLASSIFICATION_RECOVERY_20260918";
+  if (props.getProperty(key)) return { ok: true, alreadyApplied: true, requeued: 0 };
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const queue = spreadsheet.getSheetByName(CONFIG.classificationSheetName);
+  const crm = spreadsheet.getSheetByName("_CRM_OPORTUNIDADES");
+  if (!queue || !crm) throw new Error("recovery_source_missing");
+  const candidates = classificationRecoveryCandidates20260918_(queue.getDataRange().getValues(), crm.getDataRange().getValues());
+  if (candidates.length > 4) throw new Error("recovery_scope_changed");
+  const result = { ok: true, candidates: candidates.length, requeued: 0, applied: apply === true };
+  if (!apply) return result;
+  candidates.forEach(function (item) {
+    const fields = queue.getRange(item.row, 4, 1, 13).getValues()[0];
+    fields[0] = new Date(); fields[1] = "pending"; fields[2] = "";
+    fields[10] = "operator_requeued:2026-09-18"; fields[11] = 0; fields[12] = "";
+    queue.getRange(item.row, 4, 1, 13).setValues([fields]);
+    result.requeued += 1;
+  });
+  SpreadsheetApp.flush();
+  props.setProperty(key, JSON.stringify({ at: new Date().toISOString(), requeued: result.requeued }));
+  return result;
+}
+
+function diagnosticarClassificacoesExpiradas20260918() {
+  const result = recuperarClassificacoesExpiradas20260918_(false);
+  console.log(JSON.stringify(result));
+  return result;
+}
+
+function aplicarRecuperacaoClassificacoesExpiradas20260918() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("busy_retry");
+  try {
+    const result = recuperarClassificacoesExpiradas20260918_(true);
+    console.log(JSON.stringify(result));
+    return result;
+  } finally { lock.releaseLock(); }
 }

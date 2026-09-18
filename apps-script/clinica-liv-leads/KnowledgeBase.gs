@@ -9,6 +9,83 @@ const BOT_KNOWLEDGE_CONFIG = Object.freeze({
   maximumRulesInDigest: 8,
 });
 
+// Administrative facts already approved in patient-replies.mjs. This catalog
+// is versioned code; the Sheet is its reviewed operational projection.
+const BRUNA_ADMIN_KNOWLEDGE_20260918 = Object.freeze([
+  { id: "KB-ADMIN-LOCAL", subject: "Localização da clínica",
+    examples: "Onde fica a clínica?; Qual o endereço?; Onde vocês atendem?",
+    pattern: "^(?:onde fica(?: a clinica)?|qual (?:e )?o endereco(?: da clinica)?|onde voces atendem)$",
+    answer: "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150." },
+  { id: "KB-ADMIN-CONSULTA-VALOR", subject: "Valor da consulta presencial com a Dra. Amanda",
+    examples: "Qual o valor da consulta?; Quanto custa a avaliação?; A consulta é paga?",
+    pattern: "^(?:qual (?:e )?o (?:valor|preco) (?:da|de uma) (?:consulta|avaliacao)|quanto custa (?:a |uma )?(?:consulta|avaliacao)|a consulta e paga)$",
+    answer: "A consulta presencial com a Dra. Amanda custa R$ 500." },
+  { id: "KB-ADMIN-CONSULTA-PAGAMENTO", subject: "Formas de pagamento da consulta",
+    examples: "Quais as formas de pagamento da consulta?; Posso pagar a consulta por Pix?; Parcelam a consulta?",
+    pattern: "^(?:quais (?:sao )?(?:as )?formas de pagamento da consulta|posso pagar a consulta (?:por|com) pix|(?:voces )?parcelam a consulta)$",
+    answer: "O pagamento da consulta pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal." },
+  { id: "KB-ADMIN-CONSULTA-FUNCIONAMENTO", subject: "Como funciona a avaliação",
+    examples: "Como funciona a consulta?; Como é a avaliação?",
+    pattern: "^(?:como (?:funciona|e) (?:a |uma )?(?:consulta|avaliacao))$",
+    answer: "Na avaliação, você conversa com a Dra. Amanda sobre o que gostaria de melhorar ou preservar. Ela avalia a região e explica as possibilidades, os limites e a recuperação. Você não precisa decidir pela cirurgia nesse momento." },
+  { id: "KB-ADMIN-PARTICULAR", subject: "Consulta particular e reembolso",
+    examples: "A consulta é particular?; Vocês atendem por convênio?; A consulta tem reembolso?",
+    pattern: "^(?:a consulta e particular|(?:voces )?atendem (?:por )?convenio|a consulta tem reembolso)$",
+    answer: "A consulta com a Dra. Amanda é particular. Emitimos nota fiscal, que pode ser apresentada ao seu plano para uma eventual solicitação de reembolso, conforme as regras do contrato e a análise do próprio plano." },
+]);
+
+function classificarPerguntaAdministrativaSegura_(text, professional) {
+  if (professional !== "amanda") return null;
+  const value = String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/^(?:oi|ola|bom dia|boa tarde|boa noite)[,! .]+/, "")
+    .replace(/[,! .]+(?:por favor|por gentileza|obrigad[ao])[.!? ]*$/, "")
+    .replace(/[.!?]+$/, "").trim();
+  return BRUNA_ADMIN_KNOWLEDGE_20260918.find(function (rule) { return new RegExp(rule.pattern).test(value); }) || null;
+}
+
+function diagnosticarBibliotecaAdministrativa20260918() {
+  const sheet = SpreadsheetApp.openById(CONFIG.spreadsheetId).getSheetByName(BOT_KNOWLEDGE_CONFIG.approvedSheetName);
+  const rows = !sheet || sheet.getLastRow() < 2 ? [] : sheet.getRange(2, 1, sheet.getLastRow() - 1, 22).getValues();
+  const conflicts = rows.filter(function (row) {
+    if (!String(row[0] || "").trim()) return false;
+    const rule = BRUNA_ADMIN_KNOWLEDGE_20260918.find(function (item) { return item.id === row[0]; });
+    return !rule || row[6] !== rule.answer || row[1] !== "Aprovada" || row[2] !== "Automática" ||
+      row[3] !== "Baixo" || row[17] !== "active" || row[18] !== "kb-2026-09-18.1";
+  });
+  return { ok: !conflicts.length, existing: rows.length, expected: BRUNA_ADMIN_KNOWLEDGE_20260918.length, conflicts: conflicts.length };
+}
+
+function publicarBibliotecaAdministrativa20260918() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("busy_retry");
+  try {
+    const preflight = diagnosticarBibliotecaAdministrativa20260918();
+    if (!preflight.ok) throw new Error("knowledge_catalog_changed_review_required");
+    const sheet = obterPlanilhaRespostasAprovadas_(SpreadsheetApp.openById(CONFIG.spreadsheetId));
+    const existing = sheet.getLastRow() < 2 ? [] : sheet.getRange(2, 1, sheet.getLastRow() - 1, 22).getValues();
+    const version = "kb-2026-09-18.1", now = new Date();
+    let created = 0;
+    BRUNA_ADMIN_KNOWLEDGE_20260918.forEach(function (rule) {
+      if (existing.some(function (row) { return row[0] === rule.id; })) return;
+      sheet.appendRow([rule.id, "Aprovada", "Automática", "Baixo", rule.subject, rule.examples, rule.answer,
+        "Somente dúvida administrativa isolada sobre a Dra. Amanda. Não usar para outros profissionais, orçamento de cirurgia, indicação clínica, condição individual, confirmação de agenda, desconto ou número de parcelas. Respeitar pausa, cuidado e pendência humana.",
+        "", "Daniel — autorização do pacote de 18/09/2026", now, new Date("2026-12-18T23:59:59-03:00"),
+        0, "", 0, "Contrato vigente em patient-replies.mjs", "1", "active", version,
+        "Daniel — autorização do pacote de 18/09/2026", now, ""]);
+      created += 1;
+    });
+    SpreadsheetApp.flush();
+    const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 22).getValues();
+    if (BRUNA_ADMIN_KNOWLEDGE_20260918.some(function (rule) {
+      return !rows.some(function (row) { return row[0] === rule.id && row[6] === rule.answer && row[17] === "active" && row[18] === version; });
+    })) throw new Error("knowledge_readback_mismatch");
+    PropertiesService.getScriptProperties().setProperty("BRUNA_KB_SNAPSHOT", version);
+    const result = { ok: true, created: created, active: BRUNA_ADMIN_KNOWLEDGE_20260918.length, snapshotVersion: version };
+    console.log(JSON.stringify(result));
+    return result;
+  } finally { lock.releaseLock(); }
+}
+
 const BOT_KNOWLEDGE_HEADERS = Object.freeze([
   "ID da regra",
   "Status",

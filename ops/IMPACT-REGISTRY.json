@@ -511,7 +511,8 @@
         "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
         "netlify/functions/classify-leads.mjs",
         "netlify/functions/scheduled-followup.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "apps-script/clinica-liv-leads/KnowledgeBase.gs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
@@ -522,6 +523,8 @@
         "apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs",
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
+        "apps-script/clinica-liv-leads/KnowledgeBase.gs",
+        "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
         "apps-script/clinica-liv-leads/LeadClassification.gs",
         "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
         "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
@@ -530,6 +533,9 @@
         "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "auditorias/bruna-autonomia-2026-09-18/PREFLIGHT.json",
+        "auditorias/bruna-autonomia-2026-09-18/PUBLICACAO.json",
+        "auditorias/bruna-autonomia-2026-09-18/RELATORIO.md",
         "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
@@ -538,6 +544,7 @@
         "netlify/functions/classify-leads.mjs",
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
         "netlify/functions/lib/bruna-policy/rules.jsonl",
+        "netlify/functions/lib/classify-leads.test.mjs",
         "netlify/functions/lib/commercial-contact.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
@@ -573,7 +580,8 @@
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
-        "netlify/functions/lib/whatsapp-automation.test.mjs"
+        "netlify/functions/lib/whatsapp-automation.test.mjs",
+        "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs"
       ],
       "requiredCommands": [
         "git diff --check",

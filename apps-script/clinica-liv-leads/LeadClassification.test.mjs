@@ -77,7 +77,7 @@ function loadFunctions() {
   };
 
   vm.runInNewContext(
-    `${codeSource}\n${classificationSource}\n` +
+    `${codeSource}\n${classificationSource}\n${readFileSync(new URL("./KnowledgeBase.gs", import.meta.url), "utf8")}\n` +
       "globalThis.__test = { findLeadRowByPhone_, " +
       "shouldApplyLeadStatus_, ensureQualifiedGoogleConversion_, " +
       "compareClassificationCandidates_, classificationLeaseMatches_, " +
@@ -85,7 +85,7 @@ function loadFunctions() {
       "mergeConversationMessages_, classificationAdministrativeSignal_, " +
       "normalizeLeadMessageSource_, boundedConversationText_, " +
       "administrativeLeadStatus_, effectiveLeadStatusFromClassification_, " +
-      "relationshipFromClassification_, expectedPartyFromClassification_, " +
+      "relationshipFromClassification_, expectedPartyFromClassification_, ownerFromClassificationContext_, safeAdministrativeClassification_, classificationRecoveryCandidates20260918_, " +
       "shouldAlertLowConfidenceAdministrativeChange_, " +
       "validarLinhaImportacaoGoogleAds_, GOOGLE_ADS_IMPORT_HEADERS, " +
       "googleAdsTransactionIdSeguro_, googleConversionTransactionId_, " +
@@ -1225,4 +1225,66 @@ test("Daniel is never eligible for the Google Ads import", () => {
     false,
   );
   assert.equal(writes, 0);
+});
+
+
+test("known pending human obligation survives a thanks after the holding receipt",()=>{
+  const f=loadFunctions();
+  assert.equal(f.expectedPartyFromClassification_({expectedParty:"patient"},{messages:[
+    {direction:"OUT",source:"bruna",eventId:"request-human-resume-holding"},
+    {direction:"IN",text:"Obrigada, aguardo o retorno."},
+  ],patientRelationship:{hasPendingHumanTask:true}}),"clinic");
+});
+
+test("routine questions can leave a stale human owner only with verified operational context",()=>{
+  const f=loadFunctions(), classification={confidence:"low"};
+  const job={operationalContextVerified:true,professional:"amanda",checkedAt:"2026-09-18T00:00:00Z",humanTakeoverToday:false,
+    patientRelationship:{hasPendingHumanTask:false},messages:[
+      {direction:"OUT",source:"equipe_humana",at:"2026-09-15T12:00:00Z",text:"Obrigada"},
+      {direction:"IN",messageType:"text",text:"Qual o endereço?"},
+    ]};
+  assert.equal(f.ownerFromClassificationContext_(classification,job,"engaged_lead","human_team"),"bruna");
+  for(const [patch,relationship] of [
+    [{operationalContextVerified:false},"engaged_lead"], [{humanTakeoverToday:true},"engaged_lead"],
+    [{patientRelationship:{hasPendingHumanTask:true}},"engaged_lead"], [{},"active_postop"],
+    [{professional:"daniel"},"engaged_lead"], [{messages:[{direction:"IN",text:"Qual cirurgia devo fazer?"}]},"engaged_lead"],
+  ]) assert.equal(f.ownerFromClassificationContext_(classification,{...job,...patch},relationship,"human_team"),"human_team");
+  assert.equal(f.ownerFromClassificationContext_(classification,job,"engaged_lead","human"),"human_team");
+});
+
+function reservationFixture() {
+  const rows=[Array(20).fill(""),...Array.from({length:2},(_,i)=>{
+    const row=Array(20).fill(""); row[0]="+551190000000"+i; row[3]=new Date(Date.now()-60000);
+    row[4]="pending";row[8]="m"+i;row[16]="synthetic-op-"+i;row[17]="amanda";row[18]="Google Ads - Conversões";return row;
+  })];
+  const sheet={getLastRow:()=>rows.length,getRange:(r,c,n=1,w=1)=>({getValues:()=>rows.slice(r-1,r-1+n).map(row=>row.slice(c-1,c-1+w)),setValues:values=>values.forEach((v,i)=>rows[r-1+i].splice(c-1,w,...v))})};
+  const sandbox={Date,console,CONFIG:{spreadsheetId:"synthetic",classificationSheetName:"queue",classificationLeaseMinutes:10,classificationMaxAttempts:8},
+    SpreadsheetApp:{openById:()=>({}),flush(){}},getOrCreateLeadAuxiliarySheet_:()=>sheet,
+    Utilities:{getUuid:()=>"synthetic-lease"},normalizePhone_:v=>v,parseClassificationDate_:v=>v?new Date(v):null,
+    executarReaperFilaClassificacaoInterno_:()=>({}),};
+  vm.createContext(sandbox);vm.runInContext(classificationSource,sandbox);
+  sandbox.getOrCreateLeadAuxiliarySheet_=()=>sheet;
+  return {rows,sandbox};
+}
+
+test("Apps Script returns the existing lease on an idempotent claim retry",()=>{
+  const {rows,sandbox}=reservationFixture();
+  const id=`claim-${Date.now()}-00000000-0000-4000-8000-000000000001`;
+  const first=sandbox.claimDueLeadClassifications_(1,id),second=sandbox.claimDueLeadClassifications_(1,id);
+  assert.equal(first.jobs.length,1); assert.equal(second.jobs[0].leaseToken,first.jobs[0].leaseToken);
+  assert.equal(second.recoveredReservation,true); assert.equal(rows[1][14],1); assert.equal(rows[2][4],"pending");
+  assert.equal(sandbox.claimDueLeadClassifications_(1,`claim-${Date.now()-360000}-00000000-0000-4000-8000-000000000001`).error,"invalid_claim_request");
+});
+
+test("bounded recovery selects only the dated technical failures with one exact open opportunity",()=>{
+  const {classificationRecoveryCandidates20260918_:select}=loadFunctions();
+  const q=Array(20).fill(""); q[0]="+5511900000000";q[2]="2026-09-15T12:00:00Z";q[4]="dead_letter";q[6]="2026-09-14T12:00:00Z";
+  q[8]="synthetic-message";q[13]="max_attempts_exceeded:reaper_requeued:expired_lease";q[14]=8;q[16]="synthetic-op";q[17]="amanda";
+  const crm=Array(26).fill("");crm[0]=q[16];crm[1]=q[0];crm[3]="amanda";crm[6]="open";crm[7]="Qualificado";crm[22]=7;
+  assert.equal(select([[],q],[[],crm]).length,1);
+  assert.equal(select([[],q],[[],crm,crm]).length,0);
+  for(const [index,value] of [[4,"done"],[13,"clinical_review"],[17,"daniel"],[2,"2026-09-18T00:00:00Z"]]){
+    const changed=[...q];changed[index]=value;assert.equal(select([[],changed],[[],crm]).length,0);
+  }
+  assert.equal(crm[7],"Qualificado");
 });
