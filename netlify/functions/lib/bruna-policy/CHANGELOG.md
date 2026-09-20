@@ -1,3 +1,7 @@
+# 2026-09-20.3 — convite Google mais gentil
+
+Agradecimento breve, acolhimento e convite opcional ao relato livre, somente para a Dra. Amanda. Critérios, aprovação e transporte existentes preservados. Publicação em `auditorias/bruna-convite-gentil-2026-09-20/PUBLICACAO.json`.
+
 # 2026-09-20.1 — continuidade observada nas conversas
 
 Aceites naturais, proteção contra holding contraditório, preservação da promessa de manhã após cortesia, prioridade de B2B sobre reativação, abertura curta e retomada por assunto. Preços, cadência, templates, cuidado e condução humana preservados. Evidência: `auditorias/bruna-conversas-2026-09-20/RELATORIO.md`.

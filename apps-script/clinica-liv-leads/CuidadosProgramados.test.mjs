@@ -14,7 +14,7 @@ function reviewHarness() {
 test("Google invitation is optional, Amanda-only, attended-only and independent of praise or commercial outcome", () => {
   const h = reviewHarness(); const count = h.writes(); const item = h.review();
   assert.ok(item); assert.equal(item.automatico, false); assert.equal(h.writes(), count);
-  assert.match(item.sugestao, /Se quiser compartilhar sua experiência com a Dra\. Amanda/);
+  assert.match(item.sugestao, /^Obrigada pela confiança na Dra\. Amanda\. Foi um prazer receber você!\n\nSe quiser contar como foi sua experiência/);
   assert.match(item.sugestao, /placeid=ChIJ7-dPJgtXzpQRMfKy91PM_qs/);
   assert.doesNotMatch(item.sugestao, /5 estrelas|cinco estrelas|avaliação positiva|se gostou|desconto/i);
   for (const outcome of ["Fechado", "Não fechou", "Ainda pensando", ""]) {
@@ -94,6 +94,7 @@ test("Google care receipt agrees with the owner and is accepted once after indiv
   h.ctx.enviarRetomadaAutomatica_=payload=>{
     const receipt=h.ctx.validarEnvioCuidado_({planId:payload.planId});
     assert.equal(receipt.ok,true,JSON.stringify(receipt));
+    assert.equal(receipt.body,item.sugestao);
     assert.equal(validateCareReceipt(receipt,new h.Clock()),""); sends++; return {ok:true,sent:true};
   };
   h.ctx.processarCuidadosProgramados_(new h.Clock(),"synthetic",h.ctx.PropertiesService.getScriptProperties());

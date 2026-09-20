@@ -1,0 +1,199 @@
+{
+  "checkedAt": "2026-09-20T15:30:32.549Z",
+  "baseCommit": "40e39cf82f824828702c7839a8b2788c514e1b39",
+  "netlify": {
+    "checkedAt": "2026-09-20T15:30:32.549Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aaff69f4624540008da1b5f",
+    "baselineCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "functions": 13,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ]
+  },
+  "appsScript": {
+    "checkedAt": "2026-09-20T15:31:06.748Z",
+    "files": [
+      {
+        "file": "Code.gs",
+        "uri": "file:///editor-1/file_1.js",
+        "equal": true,
+        "sha256": "314b00afd8f8bf8e8b2ad2673a55348c5b68274e484c738f25265856f4730f1a"
+      },
+      {
+        "file": "Retomadas.gs",
+        "uri": "file:///editor-1/file_2.js",
+        "equal": true,
+        "sha256": "8e52768102d589223d20ab2649f1f240a3617f99943f275dc6ab9030fc147d89"
+      },
+      {
+        "file": "LembretesConsultas.gs",
+        "uri": "file:///editor-1/file_3.js",
+        "equal": true,
+        "sha256": "37f8afe237acc3bbd6feaf62653052970318da06ee81f22567ed5ca1a6cd61d6"
+      },
+      {
+        "file": "ConsultasSync.gs",
+        "uri": "file:///editor-1/file_4.js",
+        "equal": true,
+        "sha256": "456596a8daea5800c70e046eb9e673ef27b38c2ad91eb14786bc58df017b671c"
+      },
+      {
+        "file": "AgendaCuidados.gs",
+        "uri": "file:///editor-1/file_5.js",
+        "equal": true,
+        "sha256": "051705a5fd0284903b65276f283612c0faecc6504577bfe262f76206c44d7f19"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "uri": "file:///editor-1/file_6.js",
+        "equal": true,
+        "sha256": "6b1864eb756c1869ea035bb422360c2e04edd183fbfefac1c199f889a24dedcd"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "uri": "file:///editor-1/file_7.js",
+        "equal": true,
+        "sha256": "58928fab783b86fed355f478d4db3a3d797e0379b502703443ba8a2494833382"
+      },
+      {
+        "file": "ContactPreferences.gs",
+        "uri": "file:///editor-1/file_8.js",
+        "equal": true,
+        "sha256": "6dc9390b94bd97eb9ea6c702875e1ca42cec1fcaed24c76f3fec3a8b430ccbf1"
+      },
+      {
+        "file": "RoomBooking.gs",
+        "uri": "file:///editor-1/file_9.js",
+        "equal": true,
+        "sha256": "6f34f9c42e7d1e17c830704fd431f09eb09d359b1c66216aaa084db96393a35b"
+      },
+      {
+        "file": "RoomBookingForm.html",
+        "uri": "file:///editor-1/file_10.html",
+        "equal": true,
+        "sha256": "9cea7d8a085e105556c9016e42f119e3b43ddaa998d4b56a850ddc60b1f9d39e"
+      },
+      {
+        "file": "KnowledgeBase.gs",
+        "uri": "file:///editor-1/file_11.js",
+        "equal": true,
+        "sha256": "7fd655b29215318095c579005deddf7888f5fb7b273d011c7d014cda504ce87d"
+      },
+      {
+        "file": "OpportunityStore.gs",
+        "uri": "file:///editor-1/file_12.js",
+        "equal": true,
+        "sha256": "55aefbfeab282d9c6ff188a618ea2a671a00f50fdf5ae58e2b48bc71284e323e"
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "uri": "file:///editor-1/file_13.js",
+        "equal": true,
+        "sha256": "f3d9a7fc771bd049daeaeee7ea86ecf1d1223f32e12b3979754e7a047f11ec9b"
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "uri": "file:///editor-1/file_14.js",
+        "equal": true,
+        "sha256": "1b328375054d6903619d6e0fa3d815949b3c4bafaa79c535dfc3eda93d66c189"
+      },
+      {
+        "file": "OperationalEvents.gs",
+        "uri": "file:///editor-1/file_15.js",
+        "equal": true,
+        "sha256": "2c8f57ef21d19979f6ef7e9337b68d82bf0d355fdd78d431bb906ef0c31ce60b"
+      },
+      {
+        "file": "SyntheticHealth.gs",
+        "uri": "file:///editor-1/file_16.js",
+        "equal": true,
+        "sha256": "f37e652a967cc20d3b9dedf91a356b769f5c00e6dae1b5c8388bdce1cc7fa18b"
+      },
+      {
+        "file": "QualityDashboards.gs",
+        "uri": "file:///editor-1/file_17.js",
+        "equal": true,
+        "sha256": "89d6109984550223315affd8da659b77cb6dccc42d3399aecbfed1914e18263d"
+      },
+      {
+        "file": "ScheduleMaintenance.gs",
+        "uri": "file:///editor-1/file_18.js",
+        "equal": true,
+        "sha256": "4e145ad28277de0412a53b05bc86bc4e3902087b4eeccd2d87972826ef3fbf1d"
+      },
+      {
+        "file": "FunnelDashboards.gs",
+        "uri": "file:///editor-1/file_19.js",
+        "equal": true,
+        "sha256": "0ef41f8ad6fc8f086d943db3a3cbccf99f33bb61dce9973a7be078cb9b23d7da"
+      },
+      {
+        "file": "GoogleAdsFunnelReview.gs",
+        "uri": "file:///editor-1/file_20.js",
+        "equal": true,
+        "sha256": "9cd468cb7dc197621f1ea9a20fe4e6f33cee55d8b1ef12fb2c0157b2c163fd92"
+      },
+      {
+        "file": "MetaAdsFunnelReview.gs",
+        "uri": "file:///editor-1/file_21.js",
+        "equal": true,
+        "sha256": "b3afc34022589ebdffc6349f645c023bf22193e161f7e690407c7e68c8a70389"
+      },
+      {
+        "file": "MetaAdsReview.gs",
+        "uri": "file:///editor-1/file_22.js",
+        "equal": true,
+        "sha256": "2657e30e1b055dfe822dde3d674400adb0068a09089fc5fac2f4186490cbb09b"
+      },
+      {
+        "file": "FunnelReconciliation.gs",
+        "uri": "file:///editor-1/file_23.js",
+        "equal": true,
+        "sha256": "3081887b6f7f49d6f733115e3fecafae75b0fda6d48e3acb7b9f413dc750200c"
+      },
+      {
+        "file": "PainelDecisoesDiarias.gs",
+        "uri": "file:///editor-1/file_24.js",
+        "equal": true,
+        "sha256": "1bb1a43c94a8ffa3a0694e05484b610c25c9b8fbc53f2bd69bc1b628c34845aa"
+      },
+      {
+        "file": "WhatsAppCosts.gs",
+        "uri": "file:///editor-1/file_25.js",
+        "equal": true,
+        "sha256": "8ae1b7955712a9a2aa218ca615137c6b519f5f33c1f5175e155a1a54960ce4a7"
+      },
+      {
+        "file": "ClassificationReconciliation.gs",
+        "uri": "file:///editor-1/file_26.js",
+        "equal": true,
+        "sha256": "7829c2557ce8db33c4577fc8a791773363052ae3eb71ee4613cc1f5e45fbc10c"
+      },
+      {
+        "file": "CuidadosProgramados.gs",
+        "uri": "file:///editor-1/file_27.js",
+        "equal": true,
+        "sha256": "3d4c652cd78da12916a168c4121f8017951f20ceb16042eeb5f71e3687dbd3c4"
+      }
+    ],
+    "version": 159,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A"
+  },
+  "sheets": {
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "checkedAt": "2026-09-20T15:30:32Z",
+    "headersRange": "_CUIDADOS_PROGRAMADOS!A1:V1",
+    "headerCount": 22,
+    "statesRange": "_CUIDADOS_PROGRAMADOS!B2:B1000",
+    "statesCount": 0
+  },
+  "readOnly": true,
+  "realMessagesSentByAgent": 0
+}

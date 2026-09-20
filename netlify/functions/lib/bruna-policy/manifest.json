@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-09-20.2",
-  "promptVersion": "bruna-concierge-2026-09-20.2",
+  "bundleVersion": "2026-09-20.3",
+  "promptVersion": "bruna-concierge-2026-09-20.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-20.2",
+  "knowledgeSnapshot": "kb-2026-09-20.3",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -44,5 +44,10 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy"
+  "followupCopyContract": "followup-message-copy",
+  "pendingRelease": {
+    "bundleVersion": "2026-09-20.3",
+    "changeId": "BRUNA-CONVITE-GENTIL-2026-09-20",
+    "baseCommit": "40e39cf82f824828702c7839a8b2788c514e1b39"
+  }
 }

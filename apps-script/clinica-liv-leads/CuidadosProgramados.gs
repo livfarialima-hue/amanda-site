@@ -20,8 +20,9 @@ const AVALIACAO_GOOGLE_AMANDA = Object.freeze({
 });
 
 function textoConviteAvaliacaoGoogle_() {
-  return "Se quiser compartilhar sua experiência com a Dra. Amanda, este é o espaço de avaliações no Google: " +
-    AVALIACAO_GOOGLE_AMANDA.url + "\nSeu relato pode ajudar outras pessoas a conhecer o atendimento.";
+  return "Obrigada pela confiança na Dra. Amanda. Foi um prazer receber você!\n\n" +
+    "Se quiser contar como foi sua experiência, deixo aqui o link para avaliar o atendimento no Google: " +
+    AVALIACAO_GOOGLE_AMANDA.url + "\nSeu relato pode ajudar quem também está escolhendo com quem se cuidar.";
 }
 
 function adicionarConviteAvaliacaoGoogle_(entrada) {
