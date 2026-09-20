@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSAS-2026-09-20",
   "title": "Continuidade dos aceites, retornos prometidos, resposta unica e retomada contextual",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "5fc0b808f438b2874914fd72aff23243ca373845",
   "authorization": {
     "required": true,
@@ -309,22 +309,17 @@
       "Atualizar as mesmas projecoes de documentacao no Drive"
     ]
   },
-  "followup": {
-    "reason": "O primeiro ciclo revelou stale_lease: quatro oportunidades tinham uma linha anterior reservada e outra posterior concluida. A busca na conclusao/falha selecionava a ultima, e nao a reserva exata.",
-    "evidence": "Logs reais de 01:45–01:55 UTC e pares de linhas 293/308, 295/309, 298/305, 313/321; reproducao local falhou antes do ajuste.",
-    "publishedIntermediate": {
-      "commit": "49ebec0387ded4d296732355690809dbe98d4ae6",
-      "netlifyDeployId": "6aac962a9e5f643776b72474",
-      "appsScriptVersion": 156
-    },
-    "fix": "Selecionar linha unica por token, oportunidade, telefone e profissional; preservar rejeicao de versao/historico obsoletos. Limites externos e rastreamento por etapa adicionais sao protecao preventiva; a causa observada foi a escolha da linha duplicada.",
-    "automaticRetry": "Nao repetir a migracao unica. Reservas ja existentes seguem os ciclos regulares com a selecao corrigida.",
-    "validation": {
-      "duplicateTestsFailedBeforeFix": true,
-      "deadlineTestsFailedBeforeFix": true,
-      "fullTests": 1614,
-      "crossGroups": 16,
-      "focusedTests": 51
-    }
+  "release": {
+    "approvedCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+    "netlifyDeployId": "6aafef4e987f7a6ee60b2b5b",
+    "appsScriptVersion": 158,
+    "verifiedAt": "2026-09-20T14:39:31.589390+00:00",
+    "documentationStatus": "verified_equal_to_commit",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "8a21cb7ca102bab533c1af8715579cc61dea44bdc30edf6a800af823cb9d6a11",
+    "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveActiveSha256": "bf4e53dcae4000ab5da1e1f27820140dcdecf6c74db6d2495ecaef36cc947298",
+    "driveClosedAuditFileId": "1u-jkx2cNqEMh2jli6cEiiEu3N_rdRHJ7",
+    "documentationCommit": "776e5364c89af6d06c339a82e286c407be96c689"
   }
 }

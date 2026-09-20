@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-CONVERSAS-2026-09-20",
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "authorizationReference": "Usuario: conforme voce vai diagnosticando ja pode ir alterando e ao fim de todas as alteracoes publique",
   "realMessagesSentByAgent": 0,
   "validation": {
@@ -257,5 +257,45 @@
       }
     ]
   },
-  "verifiedAt": "2026-09-20T14:37:35.903Z"
+  "verifiedAt": "2026-09-20T14:39:31.589390+00:00",
+  "drive": {
+    "verifiedAt": "2026-09-20T14:39:31.589390+00:00",
+    "documentationCommit": "776e5364c89af6d06c339a82e286c407be96c689",
+    "files": [
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "8a21cb7ca102bab533c1af8715579cc61dea44bdc30edf6a800af823cb9d6a11",
+        "size": 198389,
+        "equalsCommittedFile": true
+      },
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "bf4e53dcae4000ab5da1e1f27820140dcdecf6c74db6d2495ecaef36cc947298",
+        "size": 120740,
+        "equalsCommittedFile": true
+      },
+      {
+        "fileId": "1u-jkx2cNqEMh2jli6cEiiEu3N_rdRHJ7",
+        "path": "auditorias/bruna-conversas-2026-09-20/RELATORIO.md",
+        "sha256": "a7e7b763d45305afdd93337151069ae9c4689bd982e724651822e67eb3ff0010",
+        "size": 15962,
+        "equalsCommittedFile": true
+      }
+    ]
+  },
+  "closure": {
+    "approvedCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+    "netlifyDeployId": "6aafef4e987f7a6ee60b2b5b",
+    "appsScriptVersion": 158,
+    "verifiedAt": "2026-09-20T14:39:31.589390+00:00",
+    "documentationStatus": "verified_equal_to_commit",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "8a21cb7ca102bab533c1af8715579cc61dea44bdc30edf6a800af823cb9d6a11",
+    "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveActiveSha256": "bf4e53dcae4000ab5da1e1f27820140dcdecf6c74db6d2495ecaef36cc947298",
+    "driveClosedAuditFileId": "1u-jkx2cNqEMh2jli6cEiiEu3N_rdRHJ7",
+    "documentationCommit": "776e5364c89af6d06c339a82e286c407be96c689"
+  }
 }
