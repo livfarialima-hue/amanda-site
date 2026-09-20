@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVITE-GENTIL-2026-09-20",
   "title": "Convite Google da Amanda com agradecimento e linguagem mais gentil",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "40e39cf82f824828702c7839a8b2788c514e1b39",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -180,5 +180,12 @@
       "Reler fontes e testar disponibilidade sem envio real",
       "Atualizar mesmas projecoes do Drive e reconciliar checkout principal"
     ]
+  },
+  "release": {
+    "approvedCommit": "cf90c398ac45575eb044bfccf401296e1ea03368",
+    "netlifyDeployId": "6aaffd4954313500081bc6a2",
+    "appsScriptVersion": 160,
+    "verifiedAt": "2026-09-20T15:38:59.760Z",
+    "documentationStatus": "pending_drive_projection"
   }
 }

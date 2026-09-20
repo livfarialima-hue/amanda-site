@@ -1,6 +1,6 @@
 # Convite Google — linguagem mais gentil
 
-Status: candidato local, publicação pendente.
+Status: publicado e verificado em 20/09/2026, 12:38 BRT. Commit cf90c398ac45575eb044bfccf401296e1ea03368; Netlify 6aaffd4954313500081bc6a2; Apps Script v160.
 
 O convite para avaliar a Dra. Amanda começa com agradecimento pela confiança e acolhimento. A experiência continua sendo descrita livremente, se a pessoa quiser. Preservados perfil exclusivo Amanda, aprovação individual, atendimento realizado, janela D+7 a D+30, intervalo de 48 horas e impedimento de nova abordagem por silêncio ou recusa. Não altera o modelo de WhatsApp, flags, gatilhos, agenda ou dados de pacientes.
 
@@ -18,3 +18,5 @@ A mudança é de redação. Os critérios de convite e o envio após aprovação
 Rollback: Apps Script v159 e Netlify 6aaff69f4624540008da1b5f. Revisão com o primeiro convite aprovado e nas datas 22/09 e 27/09; ganho na receptividade ainda não medido.
 
 Validação local: 39 testes do proprietário, 115 entre convite, transporte e gate; 1.631/1.631 na suíte integral. Contrato, arquitetura, build e verificação do site aprovados. Corpo renderizado completo (318 caracteres), abaixo do limite do transporte. `ops:check` permanece `SYNC_PENDING` até publicação e reconciliação dos recibos.
+
+Verificação de produção: 27 fontes equivalentes ao commit; somente CuidadosProgramados.gs alterado. Treze funções, cinco programações e 192 arquivos estáticos preservados. Sondas de disponibilidade e recusa de autenticação passaram. A consulta limitada a B2:B1000 da fila não apresentou decisões antes nem depois; nenhum convite foi aprovado ou enviado pelo agente. A publicação comprova a nova redação disponível, sem afirmar entrega a paciente ou avaliação publicada.

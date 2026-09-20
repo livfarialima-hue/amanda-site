@@ -1,7 +1,7 @@
 # WhatsApp Clínica LIV — rotina operacional
 
 <!-- BRUNA-CONVITE-GENTIL-2026-09-20 -->
-**Pacote 2026-09-20.3 — CANDIDATO LOCAL, publicação pendente.** O convite para avaliar a Dra. Amanda começa com agradecimento pela confiança e acolhimento. A experiência continua sendo descrita livremente, se a pessoa quiser. Preservados perfil exclusivo Amanda, aprovação individual, atendimento realizado, janela D+7 a D+30, intervalo de 48 horas e impedimento de nova abordagem por silêncio ou recusa. Não altera o modelo de WhatsApp, flags, gatilhos, agenda ou dados de pacientes. Evidência: `auditorias/bruna-convite-gentil-2026-09-20/RELATORIO.md`.
+**Pacote 2026-09-20.3 — PUBLICADO E VERIFICADO em 20/09/2026, 12:38 BRT.** Commit funcional `cf90c398ac45575eb044bfccf401296e1ea03368`, Netlify `6aaffd4954313500081bc6a2` e Apps Script v160 no mesmo deployment canônico. O convite Google começa com “Obrigada pela confiança na Dra. Amanda. Foi um prazer receber você!” e convida, de modo opcional, a contar a experiência para ajudar quem está escolhendo com quem se cuidar. Perfil exclusivo Amanda, aprovação individual, critérios, janela e proteção contra repetição mantidos. Texto completo conferido no painel e no transporte; template externo preservado. Validação: 39 testes do proprietário, 115 entre consumidores e 1.631/1.631 na suíte integral; 27 fontes Apps Script comparadas ao commit após salvar e recarregar. Nenhum envio real de teste. Evidência: `auditorias/bruna-convite-gentil-2026-09-20/RELATORIO.md`. Revisão junto ao primeiro convite aprovado, 22/09 e 27/09. Rollback: Apps Script v159 e Netlify 6aaff69f4624540008da1b5f.
 <!-- /BRUNA-CONVITE-GENTIL-2026-09-20 -->
 
 <!-- BRUNA-AVALIACAO-GOOGLE-2026-09-20 -->
