@@ -220,3 +220,9 @@ Retomadas.gs mantém a autoria da sugestão e consulta a última pergunta da cl�
 `outbound-reply-gate` registra em `conversation-memory` somente o corpo efetivo confirmado pelo provedor, antes de aguardar o ledger externo. `conversation-ledger` recompõe esse mesmo turno a partir de recibo aceito, sem reenvio. `conversation-memory` mantém merge condicional, autoria, cronologia e limite existente; cache preenchido não dispensa conferência durável em uma continuação. Falha nessa leitura preserva o contexto disponível, sem fabricar turnos.
 
 `lifting-information` mantém os fatos educativos por procedimento; o aceite pode selecionar o tema da última oferta informativa, nunca outro procedimento. Novos fatos de recuperação derivam das páginas canônicas cervical/otoplastia; cuidado individual segue humano. `Retomadas.gs` continua proprietário do texto, com equivalência no gate Netlify e compatibilidade de cópias legadas.
+
+## Convite Google — 20/09/2026
+
+`CuidadosProgramados.gs` é o proprietário do propósito `google_review`, texto, janela e identidade durável por telefone. `AgendaCuidados.gs` apenas inclui o marco; Central/painel/e-mail apresentam a sugestão para aprovação individual. `scheduled-care.mjs` transporta somente recibo canônico atual e recusa outros profissionais. `outbound-reply-gate.mjs` impede que texto livre da IA substitua essa decisão. O convite não muda relacionamento, fase, qualificação, nota do Google ou dados clínicos.
+
+`Retomadas.gs` consulta o reconhecedor do convite em `CuidadosProgramados.gs` para que silêncio após avaliação pública nunca inicie retomada de vendas, mesmo com fase comercial antiga.

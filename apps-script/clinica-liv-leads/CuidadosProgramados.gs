@@ -10,6 +10,56 @@ const CUIDADOS_PROGRAMADOS = Object.freeze({
   consultationHeaders: ["Data da cirurgia realizada", "Data do orçamento enviado", "Próxima checagem após cirurgia"],
 });
 
+// A public review is a separate, optional relationship milestone. This owner
+// supplies the exact text; neither sentiment nor a sale is an eligibility input.
+const AVALIACAO_GOOGLE_AMANDA = Object.freeze({
+  url: "https://search.google.com/local/writereview?placeid=ChIJ7-dPJgtXzpQRMfKy91PM_qs",
+  category: "Convite para avaliação no Google",
+  minimumDays: 7,
+  maximumDays: 30,
+});
+
+function textoConviteAvaliacaoGoogle_() {
+  return "Se quiser compartilhar sua experiência com a Dra. Amanda, este é o espaço de avaliações no Google: " +
+    AVALIACAO_GOOGLE_AMANDA.url + "\nSeu relato pode ajudar outras pessoas a conhecer o atendimento.";
+}
+
+function adicionarConviteAvaliacaoGoogle_(entrada) {
+  if (entrada.retomadaEncerrada || !entrada.telefone || chaveProfissionalAgendaCuidados_(entrada.profissional) !== "amanda") return;
+  const val = function (name) { return valorAgendaCuidados_(entrada.linha, entrada.colunas, [name]); };
+  if (!["realizada", "consulta realizada"].includes(normalizarTextoRetomadas_(val("status")))) return;
+  const attended = dataAgendaCuidados_(val("data realizada"));
+  if (!attended || attended > entrada.agora || !String(val("id da consulta") || "").trim() || !String(val("opportunity id") || "").trim()) return;
+  const age = diferencaDiasLocaisRetomadas_(attended, entrada.agora);
+  if (age < AVALIACAO_GOOGLE_AMANDA.minimumDays || age > AVALIACAO_GOOGLE_AMANDA.maximumDays) return;
+  if (valorExplicitamenteAtivoAgendaCuidados_(val("ficaram duvidas"))) return;
+  if (/duvida|queixa|exame|intercorr|sintoma|pos.?oper|pre.?oper|cirurg|retorno pendente/.test(normalizarTextoRetomadas_(val("proxima acao")))) return;
+  const surgery = dataAgendaCuidados_(val("data da cirurgia realizada"));
+  if (surgery && diferencaDiasLocaisRetomadas_(surgery, entrada.agora) < 30) return;
+  entrada.adicionar({ categoria: AVALIACAO_GOOGLE_AMANDA.category,
+    telefone: entrada.telefone, nome: entrada.nome, dataReferencia: entrada.hoje,
+    horario: "16:30", responsavel: "Amanda/equipe — conferir momento do convite",
+    automatico: false, futuro: false, prioridade: 6,
+    contexto: "Atendimento realizado com Amanda. Convite único e opcional, sem selecionar por satisfação. Conferir se o atendimento está resolvido e se já houve convite, recusa ou avaliação; não cobrar resposta nem detalhes clínicos.",
+    sugestao: textoConviteAvaliacaoGoogle_(),
+  });
+}
+
+function mensagemConviteAvaliacaoGoogle_(value) {
+  const text = normalizarTextoRetomadas_(value);
+  return (/google/.test(text) && /avali|resenha|experiencia/.test(text)) ||
+    /local\/writereview|g\.page\/[^\s]+\/review|share\.google\/ggguczihc6eolco4e/.test(text);
+}
+
+function avaliacaoGoogleJaAbordada_(conversation) {
+  return conversation.some(function (message) {
+    const text = normalizarTextoRetomadas_(message.texto);
+    const review = /google/.test(text) && /avali|resenha|experiencia/.test(text);
+    if (message.direcao === "OUT") return mensagemConviteAvaliacaoGoogle_(message.texto);
+    return review && /ja (?:fiz|deixei|escrevi|publiquei|avaliei)|nao (?:quero|vou|desejo)|prefiro nao|nao (?:me )?(?:peca|mande|envie)|pare de pedir/.test(text);
+  });
+}
+
 function hashCuidado_(value) {
   return Utilities.base64EncodeWebSafe(Utilities.computeDigest(
     Utilities.DigestAlgorithm.SHA_256, String(value), Utilities.Charset.UTF_8,
@@ -31,7 +81,7 @@ function janelaEnvioCuidadoPermitida_(date, purpose) {
 
 function dispensaCuidadoPermitida_(category) {
   const text = normalizarTextoRetomadas_(category);
-  return !/conferir fechamento|confirmar profissional|lembrete/.test(text) && /retomada|follow.up|cliente antigo|aniversario|pos.consulta|pos.cirurg|jornada cirurgica/.test(text);
+  return !/conferir fechamento|confirmar profissional|lembrete/.test(text) && /retomada|follow.up|cliente antigo|aniversario|pos.consulta|pos.cirurg|jornada cirurgica|convite para avaliacao no google/.test(text);
 }
 
 function dataNascimentoCuidado_(value) {
@@ -127,13 +177,14 @@ function enriquecerMarcoCuidado_(item, row, columns) {
   let purpose = "";
   let reference = null;
   if (category === "aniversario") { purpose = "birthday"; reference = dataAgendaCuidados_(item.dataReferencia); }
+  else if (category === normalizarTextoRetomadas_(AVALIACAO_GOOGLE_AMANDA.category)) { purpose = "google_review"; reference = date("data realizada"); }
   else if (/orcamento/.test(category)) { purpose = "quote"; reference = date("data do orcamento enviado"); }
   else if (/pos.cirurg/.test(category)) { purpose = "post_surgery"; reference = date("data da cirurgia realizada"); }
   else if (/pos.consulta/.test(category) && !/conferir fechamento/.test(category)) { purpose = "post_consult"; reference = date("data realizada"); }
   const identity = String(val("id da consulta") || "").trim();
   const professional = chaveProfissionalAgendaCuidados_(val("profissional"));
   const anchor = reference || date("data da proxima retomada") || date("data realizada") || date("data agendada");
-  const sourceKey = "care:" + hashCuidado_(purpose === "birthday" ? ["birthday", item.telefone, formatarDataRetomadas_(reference, "yyyy")].join("|") : [
+  const sourceKey = "care:" + hashCuidado_(purpose === "google_review" ? ["google_review", item.telefone].join("|") : purpose === "birthday" ? ["birthday", item.telefone, formatarDataRetomadas_(reference, "yyyy")].join("|") : [
     item.telefone || item.nome, professional, identity, item.categoria,
     anchor ? formatarDataRetomadas_(anchor, "yyyy-MM-dd") : String(val("proxima acao") || ""),
   ].join("|"));
@@ -245,6 +296,11 @@ function motivoBloqueioCuidado_(item, conversation, preferences, now, approvedAt
   if (!conversation.length) return "conversation_missing";
   const last = conversation[conversation.length - 1];
   if (!last.messageId || !last.dataHora) return "conversation_missing";
+  if (care.purpose === "google_review") {
+    if (care.professional !== "amanda" || !["realizada", "consulta realizada"].includes(care.status) || !care.referenceDate || item.sugestao !== textoConviteAvaliacaoGoogle_()) return "google_review_not_eligible";
+    if (avaliacaoGoogleJaAbordada_(conversation)) return "google_review_already_addressed";
+    if (!Number.isFinite(last.dataHora.getTime()) || now - last.dataHora < 48 * 3600000 || (care.lastHumanAt && now - care.lastHumanAt < 48 * 3600000)) return "google_review_recent_contact";
+  }
   if (approvedAt && (last.dataHora > approvedAt || (care.lastHumanAt && care.lastHumanAt > approvedAt))) return "conversation_changed";
   const recent = conversation.filter(function (m) { return now - m.dataHora <= 30 * 86400000; });
   if (recent.some(function (m) { return m.direcao === "IN" && (mensagemSemRetomada_(m.texto) || mensagemIndicaRetornoFuturo_(m.texto)); })) return "patient_requested_pause";
@@ -263,7 +319,7 @@ function motivoBloqueioCuidado_(item, conversation, preferences, now, approvedAt
 
 function validarCalendarioCuidado_(item) {
   const care = item.care || {};
-  if (care.purpose !== "post_consult") return "";
+  if (!["post_consult", "google_review"].includes(care.purpose)) return "";
   if (!care.calendarId && !care.calendarEventId) return ""; // Attended legacy record; no Calendar event was asserted.
   if (!care.calendarId || !care.calendarEventId || !care.appointmentAt) return "calendar_link_incomplete";
   if (typeof validarVinculoAgendaLembreteConsulta_ !== "function") return "calendar_unavailable";
@@ -349,10 +405,15 @@ function projetarDecisoesCuidados_(spreadsheet, items, now) {
 
 function obterMarcoCuidado_(spreadsheet, sourceKey, now) {
   const sheet = spreadsheet.getSheetByName(RETOMADAS_CONFIG.planilhaConsultas);
-  const find = function (date) { return criarAgendaCuidadosConsultas_(sheet, date, { raw: true }).find(function (item) { return item.sourceKey === sourceKey; }); };
+  const stored = carregarDecisoesCuidados_(spreadsheet)[sourceKey];
+  const find = function (date) { return criarAgendaCuidadosConsultas_(sheet, date, { raw: true }).find(function (item) {
+    return item.sourceKey === sourceKey && (!stored || stored.row[7] !== "google_review" ||
+      (item.care.consultationId === stored.row[6] && item.care.opportunityId === stored.row[5] && item.care.referenceDate === stored.row[8]));
+  }); };
   const current = find(now);
   if (current) return current;
-  const stored = carregarDecisoesCuidados_(spreadsheet)[sourceKey];
+  // A postponed invitation cannot turn into a new solicitation months later.
+  if (stored && stored.row[7] === "google_review") return null;
   if (!stored || !["Adiado", "Programado", "Enviando"].includes(stored.row[1]) || !stored.row[7] || stored.row[7] === "birthday") return null;
   const day = dataAgendaCuidados_(stored.row[21]);
   // Re-run the owner against TODAY'S consultation data using the original

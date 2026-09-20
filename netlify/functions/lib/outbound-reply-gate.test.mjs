@@ -64,6 +64,13 @@ const respond = {
   allowHoldingReply: false,
 };
 
+test("free-form replies cannot solicit Google reviews outside the approved care flow", () => {
+  for (const body of ["Deixe uma avaliação no Google!", "Nos avalie no Google", "Dê 5 estrelas no Google", "Deixe sua opinião no Google", "Se quiser compartilhar sua experiência no Google, avalie por aqui.", "https://search.google.com/local/writereview?placeid=ChIJ7-dPJgtXzpQRMfKy91PM_qs"]) {
+    assert.equal(validateOutboundReply({body,currentText:"Gostei muito",conversationAction:respond}).reason,"google_review_requires_approved_care");
+  }
+  assert.equal(validateOutboundReply({body:"A consulta de avaliação custa R$ 500.",currentText:"Qual o valor da consulta?",conversationAction:respond}).allowed,true);
+});
+
 test("a holding response shares the inbound lock with the answer already delivered", async () => {
   const deps = {...fakeBlobs(), sendYCloudPatientTextImpl:async()=>({status:"completed"}),
     appendConversationTurnImpl:async()=>({status:"completed"}), recordDurableConversationTurnImpl:async()=>({status:"completed"})};

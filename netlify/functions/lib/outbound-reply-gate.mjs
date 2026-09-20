@@ -396,6 +396,11 @@ function semanticUnsafeReplyReason(
 
 function unsafeReplyContentReason(value) {
   const text = String(value || "");
+  const normalized = normalizedText(text);
+  if (/local\/writereview|g\.page\/[^\s]+\/review/i.test(text) ||
+      (/google/.test(normalized) && /avali|experienc|estrel|opiniao|depoimento/.test(normalized) && /deixe|deixar|avalie|avaliar|compartilh|escreva|nos ajude|estrel/.test(normalized))) {
+    return "google_review_requires_approved_care";
+  }
 
   if (hasInternalReferenceExposure(text)) {
     return "internal_reference_exposure";

@@ -12,7 +12,8 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), { status
 export function validateCareReceipt(care, now) {
   if (!care || care.ok !== true || !/^care:[\w-]{43}$/.test(care.planId || "") || !/^\+\d{8,15}$/.test(care.patientPhone || "")) return "care_identity_invalid";
   if (care.purpose === "birthday") return "birthday_manual_only";
-  if (!["amanda", "daniel"].includes(care.professional) || !["post_consult", "post_surgery", "quote"].includes(care.purpose)) return "care_purpose_invalid";
+  if (!["amanda", "daniel"].includes(care.professional) || !["post_consult", "post_surgery", "quote", "google_review"].includes(care.purpose)) return "care_purpose_invalid";
+  if (care.purpose === "google_review" && care.professional !== "amanda") return "google_review_professional_invalid";
   const local = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", hour: "2-digit", hourCycle: "h23", weekday: "short" }).formatToParts(now).map(part => [part.type, part.value]));
   if (Number(local.hour) < 9 || Number(local.hour) >= 18 || ["Sat", "Sun"].includes(local.weekday)) return "care_outside_send_window";
   const age = now.getTime() - Date.parse(care.checkedAt);
@@ -74,6 +75,7 @@ export async function handleScheduledCare(payload, {
   const memory = await readMemoryImpl(care.patientPhone, { now: now.getTime() });
   const changed = fresh.error || validateCareReceipt(fresh, currentTime()) ||
     fresh.contextSignature !== care.contextSignature || fresh.body !== care.body || fresh.patientPhone !== care.patientPhone ||
+    fresh.purpose !== care.purpose || fresh.professional !== care.professional || fresh.opportunityId !== care.opportunityId ||
     memory.status !== "completed" ||
     (memory.turns || []).some(turn => Date.parse(turn.at) > Date.parse(care.approvedAt));
   if (changed) {

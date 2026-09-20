@@ -325,6 +325,8 @@ function criarAgendaCuidadosConsultas_(planilha, agora, options) {
 
       if (typeof adicionarMarcosCirurgiaOrcamento_ === "function") adicionarMarcosCirurgiaOrcamento_({ linha: linha, colunas: colunas, agora: agora, hoje: hoje, telefone: telefone, nome: identidade, profissional: profissional, proximaAcao: proximaAcao, retomadaEncerrada: retomadaEncerrada, adicionar: adicionarDaLinha });
 
+      if (contactPreferences.neverBotReply !== true && typeof adicionarConviteAvaliacaoGoogle_ === "function") adicionarConviteAvaliacaoGoogle_({ linha: linha, colunas: colunas, agora: agora, hoje: hoje, telefone: telefone, nome: identidade, profissional: profissional, retomadaEncerrada: retomadaEncerrada, adicionar: adicionarDaLinha });
+
       adicionarClienteAntigoAgendaCuidados_({
         linha: linha,
         colunas: colunas,

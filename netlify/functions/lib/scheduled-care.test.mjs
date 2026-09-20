@@ -18,6 +18,31 @@ function setup(overrides = {}) {
   return { deps, count, records, request: () => handleScheduledCare({ planId: care.planId }, deps) };
 }
 
+test("Google review delivery requires Amanda, a canonical individual approval and a single reserved attempt", async () => {
+  const invitation = {...care,purpose:"google_review",body:"Convite individual aprovado no cadastro"};
+  assert.equal(validateCareReceipt(invitation,now),"");
+  assert.equal(validateCareReceipt({...invitation,professional:"daniel"},now),"google_review_professional_invalid");
+  const h=setup({callSheetsImpl:async()=>({status:"completed",data:invitation})});
+  assert.equal((await (await h.request()).json()).sent,true);
+  assert.equal((await (await h.request()).json()).duplicate,true); assert.equal(h.count.send,1);
+  const denied=setup({callSheetsImpl:async()=>({status:"completed",data:{...invitation,professional:"daniel"}})});
+  assert.equal((await (await denied.request()).json()).error,"google_review_professional_invalid"); assert.equal(denied.count.send,0);
+});
+
+test("Google review cannot change purpose or professional during the last canonical check", async () => {
+  for (const change of [{purpose:"post_consult"},{professional:"daniel"},{opportunityId:"other"}]) {
+    let reads=0; const h=setup({callSheetsImpl:async()=>({status:"completed",data:{...care,purpose:"google_review",...(reads++ ? change : {})}})});
+    assert.equal((await (await h.request()).json()).error,"care_context_changed"); assert.equal(h.count.send,0);
+  }
+});
+
+test("uncertain Google invitations remain reserved and are never retried because the patient was silent", async () => {
+  const h=setup({callSheetsImpl:async()=>({status:"completed",data:{...care,purpose:"google_review"}}),sendTemplateImpl:async()=>{throw new Error("timeout");}});
+  assert.equal((await (await h.request()).json()).uncertain,true);
+  const reads=h.count.read;
+  assert.equal((await (await h.request()).json()).error,"care_delivery_requires_reconciliation"); assert.equal(h.count.read,reads);
+});
+
 test("delivery uses canonical recipient/text, rechecks after reservation, and deduplicates repeated requests", async () => {
   const h = setup();
   const first = await (await handleScheduledCare({ planId: care.planId, body: "injected", patientPhone: "+5511888888888" }, h.deps)).json();

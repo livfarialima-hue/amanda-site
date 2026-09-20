@@ -1,0 +1,168 @@
+{
+  "changeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
+  "status": "tested_local",
+  "authorizationReference": "Usuario nesta tarefa autorizou alterar e publicar; continuacao: coloque isso na logica da Bruna; destino confirmado: somente Dra. Amanda. Nenhum envio real de teste ou aprovacao em lote.",
+  "localValidation": {
+    "testsPassed": 1631,
+    "crossConsumerGroups": 13,
+    "checks": [
+      {
+        "command": "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "5c25d27c0ab5ba7ac81cc14cecee85e5a43299e1a1685e18b81b5b3d8393ae9a",
+        "tests": 20
+      },
+      {
+        "command": "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "64a9bd22d77132728c0a6441fe6b9fc2fbb2d865e2a97134d3624d8f91793d91",
+        "tests": 198
+      },
+      {
+        "command": "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "a860119b6e3d8ebb29191caf320d4473b7db98d9853ca4c87c326f2dd0221138",
+        "tests": 12
+      },
+      {
+        "command": "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "b02c7011610d7e72ede85c7050fe584d0d28fcde5360f90139ad43f06938b91e",
+        "tests": 340
+      },
+      {
+        "command": "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "019551bc4a6c07992ace492d12962cf641639257525eeeb042b87883b686c52b",
+        "tests": 19
+      },
+      {
+        "command": "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "d2ce7f18aaac7968695691911fe287cfc3f546a6dc465b6d2cab67786e014056",
+        "tests": 83
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "6598f525e5de62a51b19958883353032697c3dae00add9a038a3786ad42b7152",
+        "tests": 115
+      },
+      {
+        "command": "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "0f986e43028922b0b4905cc2f1d1b4ac27fc67bcbd596affe03ef2ddbf7d4b46",
+        "tests": 29
+      },
+      {
+        "command": "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "da5b220c1fa7d4df37709758e90514f043248c9a0d4233d1cbb56c26ff898234",
+        "tests": 171
+      },
+      {
+        "command": "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "a83ad887aa22720bfb60809af85d4c1da9718bec61475f5253cbf5fc8d61d224",
+        "tests": 14
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "a9017584fea0e2369a9f021ef9ab95cfbafe53f78c4d80bb827038796e95a467",
+        "tests": 231
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "0a1d1f5a99e3f3a489c76b17f84b132c6f69873229dcc941ba203829919cefa9",
+        "tests": 240
+      },
+      {
+        "command": "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "90e5faadf405e82f219fd691cfee12e83df62d0a4db3069d107c6226d9660241",
+        "tests": 21
+      },
+      {
+        "command": "npm.cmd run change:check",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "73a5f1e842ee151bd854e6bfa48a48e7a7f5c87717198b66dd340515db2aa4e3"
+      },
+      {
+        "command": "npm.cmd run architecture:check",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "8b1ff5feffef13eb76c67166a8f2dc23fd43fb297124ecb841ee65a0a446cb83"
+      },
+      {
+        "command": "npm.cmd test",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "73dfda281f60704f334cc5f40581d3d956deaa2d0661e3ccfd3e89c906b310d6",
+        "tests": 1631
+      },
+      {
+        "command": "npm.cmd run site:build",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "ed2cc3f6ff623b30933dc50bc248416d3d70567fd54c47cbc206fb6f299893f2"
+      },
+      {
+        "command": "npm.cmd run site:check",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "1e4ca08215497c4a279f2a0c862474069c591248666a9c9e818adb10ada1bc00"
+      },
+      {
+        "command": "npm.cmd run ops:check",
+        "exitCode": 2,
+        "expectedPending": true,
+        "passed": true,
+        "outputSha256": "8400d81bd1a2c0d6c26ff5fd64a5e5a1e68bf9ec33551ef58752e4258a6e07ba"
+      },
+      {
+        "command": "git diff --check",
+        "exitCode": 0,
+        "expectedPending": false,
+        "passed": true,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "regressionGoogleSilencePrevented": true,
+    "realMessagesSentByAgent": 0
+  },
+  "realMessagesSentByAgent": 0
+}

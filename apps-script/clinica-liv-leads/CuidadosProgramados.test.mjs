@@ -5,6 +5,125 @@ import vm from "node:vm";
 import test from "node:test";
 import { BIRTHDAY_CARE_TEXT, validateCareReceipt } from "../../netlify/functions/lib/scheduled-care.mjs";
 
+function reviewHarness() {
+  const h = harness(); h.clock.at = "2026-09-21T13:30:00Z";
+  h.review = () => h.items().find(i => i.care.purpose === "google_review");
+  return h;
+}
+
+test("Google invitation is optional, Amanda-only, attended-only and independent of praise or commercial outcome", () => {
+  const h = reviewHarness(); const count = h.writes(); const item = h.review();
+  assert.ok(item); assert.equal(item.automatico, false); assert.equal(h.writes(), count);
+  assert.match(item.sugestao, /Se quiser compartilhar sua experiência com a Dra\. Amanda/);
+  assert.match(item.sugestao, /placeid=ChIJ7-dPJgtXzpQRMfKy91PM_qs/);
+  assert.doesNotMatch(item.sugestao, /5 estrelas|cinco estrelas|avaliação positiva|se gostou|desconto/i);
+  for (const outcome of ["Fechado", "Não fechou", "Ainda pensando", ""]) {
+    h.set("Resultado comercial", outcome); assert.equal(h.review()?.sourceKey, item.sourceKey);
+  }
+  for (const professional of ["Daniel", "Marina", ""]) { h.set("Profissional", professional); assert.equal(h.review(), undefined); }
+  h.set("Profissional", "Amanda");
+  for (const status of ["Agendada", "Cancelada", "Não compareceu", ""]) { h.set("Status", status); assert.equal(h.review(), undefined); }
+  h.set("Status", "Realizada"); h.set("Data realizada", ""); assert.equal(h.review(), undefined);
+});
+
+test("Google invitation has one persistent key per phone across consultations and never returns after dismissal", () => {
+  const h = reviewHarness(); const first = h.review(); assert.ok(first);
+  h.set("ID da consulta", "second-consultation"); h.set("Data realizada", new h.Clock("2026-09-12T15:00:00Z"));
+  assert.equal(h.review().sourceKey, first.sourceKey);
+  const row = h.consultations.values[1].slice(); h.consultations.values.push(row);
+  assert.equal(h.items().filter(i => i.care.purpose === "google_review").length, 1);
+  assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet, h.review(), "dismiss", new h.Clock()).ok, true);
+  assert.equal(h.ctx.projetarDecisoesCuidados_(h.spreadsheet, h.items(), new h.Clock()).some(i => i.care.purpose === "google_review"), false);
+});
+
+test("Google invitation waits for a suitable care moment, without asking only satisfied patients", () => {
+  const h = reviewHarness(); const item = h.review(); assert.ok(item);
+  const check = (conversation, pref={}) => h.ctx.motivoBloqueioCuidado_(item, conversation, pref, new h.Clock(), null);
+  assert.equal(check(h.conversation), "");
+  for (const text of ["Gostei do atendimento", "Não gostei do atendimento"]) {
+    const history=[{direcao:"IN",messageId:"feedback",dataHora:new h.Clock("2026-09-15T12:00:00Z"),texto:text},h.conversation[1]];
+    assert.equal(check(history), "");
+  }
+  assert.equal(check(h.conversation,{neverFollowUp:true}), "contact_suspended");
+  assert.equal(check(h.conversation,{neverBotReply:true}), "contact_suspended");
+  const msg=(text,direction="IN")=>({direcao:direction,messageId:"history-review",dataHora:new h.Clock("2026-09-15T12:00:00Z"),texto:text});
+  for (const text of ["Já avaliei no Google", "Não quero avaliar no Google", "Prefiro não deixar avaliação no Google"]) {
+    assert.equal(check([msg(text), h.conversation[1]]), "google_review_already_addressed");
+  }
+  assert.equal(check([msg(item.sugestao,"OUT"),h.conversation[1]]), "google_review_already_addressed");
+  assert.equal(check([...h.conversation,{...msg("Bom dia"),dataHora:new h.Clock()}]), "google_review_recent_contact");
+  h.set("Data da cirurgia realizada", new h.Clock("2026-09-19T15:00:00Z")); assert.equal(h.review(), undefined);
+  h.set("Data da cirurgia realizada", ""); h.set("Ficaram dúvidas?", "Sim"); assert.equal(h.review(), undefined);
+});
+
+test("Google invitation approval binds the original consultation and revalidates prior invitations", () => {
+  const h = reviewHarness(); const item = h.review(); assert.ok(item);
+  const decision = h.ctx.decidirCuidadoCentral_(h.spreadsheet,item,"approve",new h.Clock()); assert.equal(decision.ok,true,JSON.stringify(decision));
+  h.set("ID da consulta", "replaced-consultation");
+  assert.equal(h.ctx.obterMarcoCuidado_(h.spreadsheet,item.sourceKey,new h.Clock()),null);
+});
+
+test("Google invitation cannot start early, return as a stale solicitation or ignore a new question", () => {
+  const h=reviewHarness(); h.clock.at="2026-09-16T13:30:00Z"; assert.equal(h.review(),undefined);
+  h.clock.at="2026-09-21T13:30:00Z"; const item=h.review(); assert.ok(item);
+  assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet,{...item,deferUntil:new h.Clock("2026-11-02T12:00:00Z")},"defer",new h.Clock()).ok,true);
+  h.clock.at="2026-11-02T12:00:00Z";
+  assert.equal(h.review(),undefined);
+  assert.equal(h.ctx.obterMarcoCuidado_(h.spreadsheet,item.sourceKey,new h.Clock()),null);
+  assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet,item,"approve",new h.Clock()).ok,false);
+  const fresh=reviewHarness(); const offer=fresh.review();
+  const approved=fresh.ctx.decidirCuidadoCentral_(fresh.spreadsheet,offer,"approve",new fresh.Clock()); assert.equal(approved.ok,true);
+  fresh.clock.at=approved.scheduledAt.toISOString();
+  fresh.conversation.push({direcao:"IN",messageId:"new-question",dataHora:new fresh.Clock(),texto:"Estou com uma dúvida, podem me ajudar?"});
+  let sends=0; fresh.ctx.enviarRetomadaAutomatica_=()=>{sends++;return {ok:true,sent:true};};
+  fresh.ctx.processarCuidadosProgramados_(new fresh.Clock(),"synthetic",fresh.ctx.PropertiesService.getScriptProperties()); assert.equal(sends,0);
+});
+
+test("a prior invitation or decline is reread at approval and leaves other care available", () => {
+  const h=reviewHarness(); const item=h.review();
+  h.conversation.push({direcao:"OUT",messageId:"manual-invite",dataHora:new h.Clock("2026-09-15T13:00:00Z"),texto:item.sugestao});
+  assert.equal(h.ctx.decidirCuidadoCentral_(h.spreadsheet,item,"approve",new h.Clock()).reason,"google_review_already_addressed");
+  assert.equal(h.ctx.motivoBloqueioCuidado_({...item,care:{...item.care,purpose:"post_consult"}},h.conversation,{},new h.Clock(),null),"");
+});
+
+test("Google care receipt agrees with the owner and is accepted once after individual approval", () => {
+  const h=reviewHarness(); const item=h.review(); assert.ok(item);
+  const decision=h.ctx.decidirCuidadoCentral_(h.spreadsheet,item,"approve",new h.Clock()); assert.equal(decision.ok,true,JSON.stringify(decision));
+  h.clock.at=decision.scheduledAt.toISOString(); let sends=0;
+  h.ctx.registrarTurnoConversa_=()=>({ok:true});
+  h.ctx.enviarRetomadaAutomatica_=payload=>{
+    const receipt=h.ctx.validarEnvioCuidado_({planId:payload.planId});
+    assert.equal(receipt.ok,true,JSON.stringify(receipt));
+    assert.equal(validateCareReceipt(receipt,new h.Clock()),""); sends++; return {ok:true,sent:true};
+  };
+  h.ctx.processarCuidadosProgramados_(new h.Clock(),"synthetic",h.ctx.PropertiesService.getScriptProperties());
+  h.ctx.processarCuidadosProgramados_(new h.Clock(),"synthetic",h.ctx.PropertiesService.getScriptProperties());
+  assert.equal(sends,1);
+});
+
+test("Central, decision panel and daily email preserve the review invitation as an explicit individual choice", () => {
+  const h=reviewHarness(); const item=h.review(); const before=h.writes();
+  const projected=h.ctx.carregarCuidadosCentral_(h.consultations,{},new h.Clock()).find(i=>i.sourceKey===item.sourceKey);
+  assert.ok(projected); assert.equal(projected.approvalBrunaEligible,true); assert.equal(h.writes(),before);
+  const headers=vm.runInContext("CENTRAL_ATENDIMENTO_HEADERS",h.ctx);
+  const fields={"Fila":"Ação manual hoje","Chave operacional":item.sourceKey,"Fonte":"Jornada de cuidado","Modo":"Manual","Status operacional":"Aberto","Mensagem final":item.sugestao,"Programar para":projected.programFor,"Elegibilidade da Bruna":"Elegível para aprovação","Próxima ação":item.categoria,"Telefone":item.telefone,"Paciente":"Paciente sintética"};
+  const central=h.sheet("Central de Atendimento",[Array.from(headers),headers.map(header=>fields[header]||"")]);
+  const list=h.ctx.listarItensPainelDecisoesCentral_(central,new h.Clock());
+  assert.equal(list[0].approvalAvailable,true); assert.equal(list[0].dismissAvailable,true);
+  const email=h.ctx.montarResumoPraticoCuidados_(list,"21/09","https://example.test/panel","https://example.test/central",[]);
+  assert.ok(email.text.includes(item.sugestao)); assert.ok(email.html.includes("Convite para avaliação no Google"));
+  assert.equal(h.writes(),before);
+  const result=h.ctx.aprovarRetomadasMarcadasCentralInterno_(h.spreadsheet,central,new h.Clock(),[list[0].approvalDecision]);
+  assert.equal(result.approved,1); assert.equal(h.ctx.carregarDecisoesCuidados_(h.spreadsheet)[item.sourceKey].row[1],"Programado");
+});
+
+test("a Google review invitation cannot become an unanswered commercial follow-up even when CRM is stale", () => {
+  const h=reviewHarness(); const invitation=h.review().sugestao;
+  const conversation=[{direcao:"IN",messageId:"old-interest",dataHora:new h.Clock("2026-09-18T12:00:00Z"),texto:"Gostaria de saber sobre lifting cervical"},
+    {direcao:"OUT",messageId:"review-invite",dataHora:new h.Clock("2026-09-19T13:00:00Z"),texto:invitation}];
+  assert.equal(h.ctx.criarCandidatoRetomada_("+5511900000000",{nome:"Paciente",status:"Qualificado",resumo:"lifting cervical"},conversation,new h.Clock(),"2026-09-21"),null);
+});
+
 export function harness() {
   const clock = { at: "2026-09-14T12:00:00.000Z" };
   class Clock extends Date { constructor(...args) { super(...(args.length ? args : [clock.at])); } static now() { return new Date(clock.at).getTime(); } }

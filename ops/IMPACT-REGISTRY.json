@@ -1083,21 +1083,27 @@
         "netlify/functions/scheduled-followup.mjs"
       ],
       "coveredPaths": [
+        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
         "apps-script/clinica-liv-leads/CuidadosProgramados.gs",
         "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
-        "apps-script/clinica-liv-leads/AgendaCuidados.gs",
-        "netlify/functions/lib/scheduled-care.mjs",
-        "netlify/functions/lib/scheduled-care.test.mjs",
         "apps-script/clinica-liv-leads/README.md",
-        "docs/whatsapp-clinica-liv-operacao.md",
+        "auditorias/bruna-avaliacao-google-2026-09-20/PREFLIGHT.json",
+        "auditorias/bruna-avaliacao-google-2026-09-20/PUBLICACAO.json",
+        "auditorias/bruna-avaliacao-google-2026-09-20/RELATORIO.md",
+        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
+        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html",
         "auditorias/central-retomadas-pratica-2026-09-13/PREVIA-PAINEL.html",
         "auditorias/central-retomadas-pratica-2026-09-13/PUBLICACAO.json",
         "auditorias/central-retomadas-pratica-2026-09-13/RELATORIO.md",
-        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-EMAIL.html",
-        "auditorias/bruna-conversao-leads-2026-09-12/PREVIA-PAINEL.html",
-        "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-        "netlify/functions/scheduled-followup.mjs",
-        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs"
+        "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
+        "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "netlify/functions/lib/bruna-policy/rules.jsonl",
+        "netlify/functions/lib/scheduled-care.mjs",
+        "netlify/functions/lib/scheduled-care.test.mjs",
+        "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+        "netlify/functions/scheduled-followup.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs",
@@ -1114,7 +1120,8 @@
         "npm.cmd test",
         "npm.cmd run site:build",
         "npm.cmd run site:check",
-        "npm.cmd run ops:check"
+        "npm.cmd run ops:check",
+        "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs"
       ],
       "liveSystems": [
         "Google Sheets LEADS",
@@ -1127,7 +1134,8 @@
       "invariants": [
         "Aniversario e somente lembrete interno para envio humano; nenhuma flag ou aprovacao reativa o transporte.",
         "Uma sugestao por telefone e aniversario; somente no dia; respeitar recusa, nascimento confiavel e dispensa persistida.",
-        "Outros cuidados continuam com aprovacao individual, mesma fila e validacao de conversa e Calendar."
+        "Outros cuidados continuam com aprovacao individual, mesma fila e validacao de conversa e Calendar.",
+        "Convite Google somente para atendimento realizado com Amanda, neutro e opcional; uma chave por telefone, aprovacao individual e nenhuma cobranca ou selecao por satisfacao."
       ]
     },
     {

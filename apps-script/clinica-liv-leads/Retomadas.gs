@@ -2259,6 +2259,7 @@ function criarCandidatoRetomada_(
   if (
     ultimaMensagem.direcao !== "OUT" ||
     !ultimaMensagem.texto ||
+    (typeof mensagemConviteAvaliacaoGoogle_ === "function" && mensagemConviteAvaliacaoGoogle_(ultimaMensagem.texto)) ||
     mensagemSemRetomada_(ultimaMensagem.texto)
   ) {
     return null;

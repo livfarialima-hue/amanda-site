@@ -1,0 +1,62 @@
+{
+  "checkedAt": "2026-09-20T15:06:11.621Z",
+  "status": "verified_read_only",
+  "baseline": {
+    "checkedAt": "2026-09-20T15:06:11.621Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aafef4e987f7a6ee60b2b5b",
+    "baselineCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+    "functions": 13,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ],
+    "appsScript": {
+      "version": 158,
+      "sourcesCompared": 27,
+      "receipt": "auditorias/bruna-conversas-2026-09-20/PREFLIGHT.json"
+    }
+  },
+  "appsScript": {
+    "version": 158,
+    "sourcesCompared": 27,
+    "allEquivalent": true,
+    "checkedAt": "2026-09-20T14:52:14.250Z"
+  },
+  "sheets": {
+    "consultationColumns": 83,
+    "careLedgerColumns": 22,
+    "careDecisions": 0,
+    "additiveMigrationRequired": false
+  },
+  "googleReview": {
+    "professional": "amanda",
+    "profileName": "Dra. Amanda Schroeder | Cirurgia Plastica em Sao Paulo | Cirurgias Faciais e Procedimentos Esteticos",
+    "placeId": "ChIJ7-dPJgtXzpQRMfKy91PM_qs",
+    "url": "https://search.google.com/local/writereview?placeid=ChIJ7-dPJgtXzpQRMfKy91PM_qs",
+    "verifiedInBrowser": true
+  },
+  "limitations": "Sem chamadas ao provedor de WhatsApp, sem escrita de dados ou testes com pacientes. Calendar e YCloud mantem integracao existente; nao houve consulta de compromissos individuais.",
+  "careConfiguration": {
+    "checkedAt": "2026-09-20T15:01:45.380Z",
+    "appsScriptCareEnabled": true,
+    "settingsChanged": false,
+    "WHATSAPP_SCHEDULED_CARE_ENABLED": [
+      {
+        "context": "production",
+        "value": "true"
+      }
+    ],
+    "YCLOUD_FOLLOWUP_TEMPLATE_NAME": [
+      {
+        "context": "production",
+        "value": "retomada_manual_bruna_v1"
+      }
+    ]
+  }
+}

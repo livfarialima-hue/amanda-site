@@ -852,3 +852,7 @@ Seção38 do Norte: Daniel autorizou seguir as sugestões nos anúncios. Auditor
 
 
 **Estado em13/09, 21h34–21h56 BRT:** onze deltas de texto salvos e relidos; seis textos preservados; quatro associações existentes relidas em duas campanhas. Contagem dos editores:15 Excelente/2 Ruim. Permanecem com recomendação genérica os anúncios gerais de prótese e lipoaspiração, cujos grupos exibem zero palavras-chave qualificadas, zero reprovadas e zero impressões no dia. Isso é contexto operacional, não causalidade comprovada; abrir revisão de palavras com Daniel/equipe em14–15/09, sem reativar ou incluir termos para perseguir a nota neste pacote. Tabelas ainda podem exibir estados transitórios. Todos os oito orçamentos relidos, total R$105 e LIFT R$30. Recibo em PUBLICACAO.json, incluindo a limitação do objeto before de um RSA e as comparações realizadas.
+
+### 20/09/2026 — convite opcional para avaliação da Amanda
+
+Decisão: convite único após consulta realizada, com conferência individual; relato livre e destino exclusivo Amanda. Motivo, evidência, hipótese, métricas e regra de contenção no Norte, seção “Convite a avaliação pública”. Candidato 2026-09-20.2; publicação registrada no relatório do pacote.

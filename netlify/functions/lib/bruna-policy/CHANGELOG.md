@@ -274,3 +274,7 @@ Continuidade contextual e acolhimento específico; correção de nome de aquisi�
 - Tornado o envio de resposta idempotente e fechado em caso de falha de armazenamento em produção.
 - Limitado o aprendizado automático a regras de baixo risco, aprovadas e promovidas em snapshot.
 - Versionados prompt, esquema de dados, política e snapshot de conhecimento para rollback.
+
+## 2026-09-20.2
+
+Convite Google neutro e único para atendimento realizado com Amanda, gerado no acompanhamento com aprovação individual; IA não improvisa pedidos por elogio. Candidato local; recibo de produção no pacote de avaliação Google.
