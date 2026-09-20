@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSAS-2026-09-20",
   "title": "Continuidade dos aceites, retornos prometidos, resposta unica e retomada contextual",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "5fc0b808f438b2874914fd72aff23243ca373845",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "defaultOffUntilPublication": false
   },
   "scope": {

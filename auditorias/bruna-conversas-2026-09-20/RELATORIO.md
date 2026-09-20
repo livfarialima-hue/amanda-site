@@ -8,7 +8,7 @@
 
 **As retomadas estão mais curtas, mas pouco adaptadas à razão da interrupção.** Quatro retomadas automáticas presentes nos anexos repetiram o convite sobre recuperação e não tiveram resposta posterior observável. É uma amostra pequena e recente; sustenta testar relevância, não aumentar insistência.
 
-**Implementação autorizada em 20/09:** foram corrigidos localmente os aceites, a proteção contra espera contraditória, o retorno prometido após cortesia, o bloqueio de fornecedor e a linguagem de abertura/retomada. Publicação ainda depende dos testes e dos recibos.
+**Implementação autorizada em 20/09:** foram corrigidos localmente os aceites, a proteção contra espera contraditória, o retorno prometido após cortesia, o bloqueio de fornecedor e a linguagem de abertura/retomada. Pacote publicado e verificado em 20/09/2026, às 11h37 BRT.
 
 ## O recorte acompanha a publicação real
 
@@ -113,4 +113,8 @@ Não há comparação controlada antes/depois, nem consultas, comparecimento ou 
 
 ## Validação local
 
-1.618/1.618 testes integrais e 16 grupos de consumidores aprovados. Três regressões reproduzidas antes da correção. Contrato de mudança, arquitetura, build, verificação do site e diff aprovados. `ops:check` permanece `SYNC_PENDING` até publicação e reconciliação. As 27 fontes Apps Script coincidem com o baseline, normalizando apenas finais de linha e a última quebra.
+1.618/1.618 testes integrais e 16 grupos de consumidores aprovados. Três regressões reproduzidas antes da correção. Contrato de mudança, arquitetura, build, verificação do site e diff aprovados. Antes da publicação, `ops:check` indicou `SYNC_PENDING`, conforme o contrato. As 27 fontes Apps Script coincidem com o baseline, normalizando apenas finais de linha e a última quebra.
+
+## Publicação
+
+**Pacote 2026-09-20.1 — PUBLICADO E VERIFICADO em 20/09/2026, 11:37 BRT.** Commit funcional `e4bfebcf19c36436275fbfa61883baf36778fa77`, Netlify `6aafef4e987f7a6ee60b2b5b` ativo e Apps Script v158 no mesmo deployment canônico. Auditoria de 33 exportações recentes, 31 contatos distintos; 29 com atividade posterior à última publicação (27 pacientes e 2 fornecedores). Corrigidos aceites como “pode ser”, espera contraditória após resposta entregue, cancelamento do retorno de manhã por cortesia e reativação de fornecedor. Abertura mais curta e primeira retomada genérica oferece procedimento ou valores, preservando dúvidas específicas. Validação: 1.618/1.618 testes, 16 grupos entre consumidores, contrato, arquitetura e artefato. Conferidas 27 fontes Apps Script no baseline e igualdade do arquivo alterado após salvar e recarregar; 13 funções, cinco programações e 192 arquivos estáticos preservados. Sondas de produção e recusa de autenticação aprovadas. Nenhuma mensagem real de teste ou replay. Cadência, flags, templates, dados de pacientes, agenda, preços e limites clínicos preservados. A equipe continua responsável pelos retornos já encaminhados a humano; publicação não comprova sua execução. Revisar conversas naturais nas próximas 48 horas: aceites, duplicidade, retornos, motivos de bloqueio e resposta às retomadas. Ganho comercial ainda não medido. Evidência: `auditorias/bruna-conversas-2026-09-20/RELATORIO.md` e `PUBLICACAO.json`. Rollback: Netlify `6aac9f8da827906987749510` e Apps Script v157, preservando dados e endereços.

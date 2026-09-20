@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-CONVERSAS-2026-09-20",
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "authorizationReference": "Usuario: conforme voce vai diagnosticando ja pode ir alterando e ao fim de todas as alteracoes publique",
   "realMessagesSentByAgent": 0,
   "validation": {
@@ -99,5 +99,163 @@
     "siteCheck": "passed",
     "opsBeforePublication": "SYNC_PENDING",
     "realMessagesSentByAgent": 0
-  }
+  },
+  "approvedCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+  "netlify": {
+    "verifiedAt": "2026-09-20T14:37:35.903Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "approvedCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+    "deployId": "6aafef4e987f7a6ee60b2b5b",
+    "mode": "active",
+    "publishedAt": "2026-09-20T14:37:04.587Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "d379362f719036546470bd25e0b36c9e42acc8011d90586430fc795a9de7a2cd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "103c64054f37f71ea2e7812ec1964f4043edeb88f35fe9086e50d13dbc725ce7",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "fe454efe80bd0fc23cf50734668e42673f5d9ac227105cf29d552676383aaf9d",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "45d60a5734b4a5e315cb4deb9b504f80c52d0ae5bf5da84c554f3bd3370cb7bd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "23d05c7e577dd06bae5b96e2c5b4a7bdcd849b2a225b2bbfeaa5e8f040688dd5",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "eee81200ed85cbd66284e53b084b8a9c5ce8c667f038e1339db188a62278d470",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "1ebb1b55421f37a50e12dedebe32d3ed029e0f229a7b6f06fddb8a2e30cd62c9",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "staticFilesUnchanged": 192,
+    "probes": [
+      {
+        "name": "canonical",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "immutable",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "signature",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "followup-auth",
+        "status": 401,
+        "passed": true
+      }
+    ],
+    "realMessagesSentByAgent": 0
+  },
+  "appsScript": {
+    "version": 158,
+    "approvedCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+    "verifiedAt": "2026-09-20T14:35:52.909Z",
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "sourceFile": "Retomadas.gs",
+    "sourceSha256": "5941d003b3c079a834a153c2e2645c17f1d58e4837d3443fb3f7dd17ae23337b",
+    "savedReloadedEqual": true,
+    "baselineSourcesVerified": 27,
+    "uiConfirmation": "Implantação atualizada. Versão 158 em 20 de set. de 2026, 11:35",
+    "probes": [
+      {
+        "name": "health",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-20T14:35:51.863Z"
+      },
+      {
+        "name": "invalid-cancel",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-20T14:35:52.908Z"
+      },
+      {
+        "name": "invalid-secret",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-20T14:35:52.231Z"
+      }
+    ]
+  },
+  "verifiedAt": "2026-09-20T14:37:35.903Z"
 }
