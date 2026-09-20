@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "authorizationReference": "Usuario nesta tarefa autorizou alterar e publicar; continuacao: coloque isso na logica da Bruna; destino confirmado: somente Dra. Amanda. Nenhum envio real de teste ou aprovacao em lote.",
   "localValidation": {
     "testsPassed": 1631,
@@ -164,5 +164,307 @@
     "regressionGoogleSilencePrevented": true,
     "realMessagesSentByAgent": 0
   },
-  "realMessagesSentByAgent": 0
+  "realMessagesSentByAgent": 0,
+  "approvedCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+  "netlify": {
+    "verifiedAt": "2026-09-20T15:08:18.791Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "approvedCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "deployId": "6aaff69f4624540008da1b5f",
+    "mode": "active",
+    "publishedAt": "2026-09-20T15:07:42.786Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "0db9449614d4e92c2815dde1739a30f66440ab4c38ad1e238d906bec954efad8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "cd943c070d6d17484e08cc46a01268a1ee23972751783d4598db0b6b618d067f",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "c8d5c37726ac65e4d6be14cc1f7134cdd36e285ef3a3f9caa42c01342e0405a8",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "d1d8fa0c29a09b2ee4e8afe38f03be5b8d3212f4f5d8649932645b8620a1a943",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "d379362f719036546470bd25e0b36c9e42acc8011d90586430fc795a9de7a2cd",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "103c64054f37f71ea2e7812ec1964f4043edeb88f35fe9086e50d13dbc725ce7",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "8a6c676c5686ba032614d8d5ecbcd16f450c34bc120d5923b5f93debdaae60f3",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "b7e324c1cd0ef08bb886b9b83172ebaeda3ec76204a93b10f7d518ba9960e34e",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "9ab3ad62f44c71a4574e0f67ed35d9a00bc1337754c8f45e685a089238b1b651",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "22e3dcd44b3a5c598b784404637b49e8ebc397fcbcaafe2e546c40a7df5ab028",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "9197106d3ff03ee3a8fc8dcf09fc17e456e2d1d7adb58586098acd1ed982b9b6",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "11849e69e537cac39a9e3e469ae6c4583068c4d6caa7ac923d02ff4a60b126d5",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "40b2029bf379c670be32acc26cc9a06a22bb1bac3ca0c1e5f9af228b3687e8ee",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "staticFilesUnchanged": 192,
+    "probes": [
+      {
+        "name": "canonical",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "immutable",
+        "status": 200,
+        "automationMode": "active",
+        "passed": true
+      },
+      {
+        "name": "signature",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "followup-auth",
+        "status": 401,
+        "passed": true
+      }
+    ],
+    "realMessagesSentByAgent": 0
+  },
+  "appsScript": {
+    "version": 159,
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "approvedCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "verifiedAt": "2026-09-20T15:12:39.801Z",
+    "confirmation": "  - generic: Implantação atualizada.\n  - generic: Versão 159 em 20 de set. de 2026, 12:11\n  - generic: AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A\n  - link \"https://script.google.com/macros/s/AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A/exec\":\n    - /url: https://script.google.com/macros/s/AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A/exec\n  - link \"https://script.google.com/macros/library/d/1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly/159\":\n    - /url: https://script.google.com/macros/library/d/1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly/159\n  - button \"Concluído\":\n    - generic: Concluído",
+    "sourcesCompared": 27,
+    "changedFiles": [
+      "Retomadas.gs",
+      "AgendaCuidados.gs",
+      "CuidadosProgramados.gs"
+    ],
+    "probes": [
+      {
+        "name": "health",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-20T15:12:39.801Z"
+      },
+      {
+        "name": "invalid-cancel",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-20T15:12:15.272Z"
+      },
+      {
+        "name": "invalid-secret",
+        "status": 200,
+        "passed": true,
+        "verifiedAt": "2026-09-20T15:12:29.987Z"
+      }
+    ]
+  },
+  "sourceComparison": {
+    "verifiedAt": "2026-09-20T15:09:59.297Z",
+    "files": [
+      {
+        "file": "Code.gs",
+        "equivalent": true,
+        "sha256": "bb8edc0faa8809be75783d323ed096667dda8f2f992c2302588b58f8e5bedd09"
+      },
+      {
+        "file": "Retomadas.gs",
+        "equivalent": true,
+        "sha256": "9cf87f615a08ee90e41a779b94da93fe221f20f2c889cd7beabf9bd26eef3ad8"
+      },
+      {
+        "file": "LembretesConsultas.gs",
+        "equivalent": true,
+        "sha256": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724"
+      },
+      {
+        "file": "ConsultasSync.gs",
+        "equivalent": true,
+        "sha256": "dbd2e4b3ece884cbc11aeb714b8c14276ad84a19c7f530b7a337df82e9493368"
+      },
+      {
+        "file": "AgendaCuidados.gs",
+        "equivalent": true,
+        "sha256": "a3daffd6fc1881a9d7f4ceb0fb8133ad7783e9a32a875ebdbd741dfd777914d8"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "equivalent": true,
+        "sha256": "7be3bff00c6f4e68ed779e6a3f27d2319a5b3eb1c170ac60411900d87404c716"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "equivalent": true,
+        "sha256": "0c749d81ec9db57a864e4cc29093af2248822081ff41568a9472e624fabd7800"
+      },
+      {
+        "file": "ContactPreferences.gs",
+        "equivalent": true,
+        "sha256": "f755183eaccd75ab569bf67e4d0e92bccd9b2d158f3bf32cd6a08f6cdf02cdd1"
+      },
+      {
+        "file": "RoomBooking.gs",
+        "equivalent": true,
+        "sha256": "d01e2e6fd008e3ecf94698ac5fcc16bb44f2acc555db3e446c43c2a57f02d5ee"
+      },
+      {
+        "file": "RoomBookingForm.html",
+        "equivalent": true,
+        "sha256": "45e93d4952171a1b88404f4737f2aaf1d6991ae0ed00829b086fe8138d310519"
+      },
+      {
+        "file": "KnowledgeBase.gs",
+        "equivalent": true,
+        "sha256": "af6719a17bab75a3b10eb7130ead10262c5c43a7d6b4e1774c8a447c63c93623"
+      },
+      {
+        "file": "OpportunityStore.gs",
+        "equivalent": true,
+        "sha256": "c14d14baec0c742d924713e43fa92afd7ad54243211eb0d6ccffb6549be82376"
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "equivalent": true,
+        "sha256": "e4250350616aa4a0296da1fa1b539ee39dd8bc543bb7de09eb59cf064f01f50c"
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "equivalent": true,
+        "sha256": "ec3ce38c0c8dc12acb4b05985220c4f9781bcad51f997598d13c1ba8a8ab3fe1"
+      },
+      {
+        "file": "OperationalEvents.gs",
+        "equivalent": true,
+        "sha256": "4390ec4de184b38367871074a3df3752f9fd51af8b2c6106a47a87db70afb02c"
+      },
+      {
+        "file": "SyntheticHealth.gs",
+        "equivalent": true,
+        "sha256": "334b9ef173b5ed10ca03d4333ba6f50e26cd74a9f4e2af2a1a657c2cd4ccff21"
+      },
+      {
+        "file": "QualityDashboards.gs",
+        "equivalent": true,
+        "sha256": "a5a908edc25bb54beb13c213d422d1b8b3dca937cbba27d62186b443b8199c55"
+      },
+      {
+        "file": "ScheduleMaintenance.gs",
+        "equivalent": true,
+        "sha256": "37d7e90956f9807a3a9a5a7ea59180beb28da7153c5ed1806493dcba7034915e"
+      },
+      {
+        "file": "FunnelDashboards.gs",
+        "equivalent": true,
+        "sha256": "a09b7ac5b77ff07fdaacca296c230ac12d3fb0ec95d87c307fb20072ba6b5e0d"
+      },
+      {
+        "file": "GoogleAdsFunnelReview.gs",
+        "equivalent": true,
+        "sha256": "d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7"
+      },
+      {
+        "file": "MetaAdsFunnelReview.gs",
+        "equivalent": true,
+        "sha256": "e59c3c1aceacf501a7ee6fbfffc526fb27bbe9ae9dcb44fba82f9c5476efa0e8"
+      },
+      {
+        "file": "MetaAdsReview.gs",
+        "equivalent": true,
+        "sha256": "758e621087b75727fad9e279e86f74af1ff1e3080b513b19f55b20a5db97320c"
+      },
+      {
+        "file": "FunnelReconciliation.gs",
+        "equivalent": true,
+        "sha256": "795bb4a96766463c4e3272c2c84494b3d2bd4fc3138fb641a32717ff5b686a10"
+      },
+      {
+        "file": "PainelDecisoesDiarias.gs",
+        "equivalent": true,
+        "sha256": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4"
+      },
+      {
+        "file": "WhatsAppCosts.gs",
+        "equivalent": true,
+        "sha256": "b728ba451177ddabfe17dd3ef42182b7a0d60ab7731d77dc77cd720bd34567d4"
+      },
+      {
+        "file": "ClassificationReconciliation.gs",
+        "equivalent": true,
+        "sha256": "a76ff89e0ae5528f1533ad93938a7a147f56ad45733d856782158782c3a9a6c3"
+      },
+      {
+        "file": "CuidadosProgramados.gs",
+        "equivalent": true,
+        "sha256": "6d8f9070e9c1db8d2c5d4b083e80ef1c9eb53a8393ddbda34c98e5837707f787"
+      }
+    ]
+  },
+  "careDecisionsBefore": 0,
+  "careDecisionsAfter": 0,
+  "settingsChanged": false,
+  "reviewProfile": "amanda_only"
 }

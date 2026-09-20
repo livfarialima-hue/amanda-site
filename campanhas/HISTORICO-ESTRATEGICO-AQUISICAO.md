@@ -855,4 +855,4 @@ Seção38 do Norte: Daniel autorizou seguir as sugestões nos anúncios. Auditor
 
 ### 20/09/2026 — convite opcional para avaliação da Amanda
 
-Decisão: convite único após consulta realizada, com conferência individual; relato livre e destino exclusivo Amanda. Motivo, evidência, hipótese, métricas e regra de contenção no Norte, seção “Convite a avaliação pública”. Candidato 2026-09-20.2; publicação registrada no relatório do pacote.
+Decisão: convite único após consulta realizada, com conferência individual; relato livre e destino exclusivo Amanda. Motivo, evidência, hipótese, métricas e regra de contenção no Norte, seção “Convite a avaliação pública”. Pacote 2026-09-20.2 publicado e verificado em 20/09/2026; recibos no relatório do pacote.

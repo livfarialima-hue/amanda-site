@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
   "title": "Convite unico e opcional para avaliar atendimento real com Dra. Amanda no Google",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "79bf6ae548e807b4bcf3f790e3c533892d12fa73",
   "authorization": {
     "required": true,
@@ -13,8 +13,8 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false
   },
   "scope": {
     "files": [
@@ -349,5 +349,12 @@
       "Comparar fontes, preservar flags e verificar destinos sem envio",
       "Reconciliar documentos e as mesmas projecoes do Drive"
     ]
+  },
+  "release": {
+    "approvedCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "netlifyDeployId": "6aaff69f4624540008da1b5f",
+    "appsScriptVersion": 159,
+    "verifiedAt": "2026-09-20T15:12:39.801Z",
+    "documentationStatus": "pending_drive_projection"
   }
 }

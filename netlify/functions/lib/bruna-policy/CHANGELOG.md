@@ -277,4 +277,4 @@ Continuidade contextual e acolhimento específico; correção de nome de aquisi�
 
 ## 2026-09-20.2
 
-Convite Google neutro e único para atendimento realizado com Amanda, gerado no acompanhamento com aprovação individual; IA não improvisa pedidos por elogio. Candidato local; recibo de produção no pacote de avaliação Google.
+Convite Google neutro e único para atendimento realizado com Amanda, gerado no acompanhamento com aprovação individual; IA não improvisa pedidos por elogio. Publicado em 20/09/2026: commit c3969d2, Apps Script v159 e recibo no pacote de avaliação Google.
