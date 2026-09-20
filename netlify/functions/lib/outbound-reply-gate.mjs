@@ -671,6 +671,16 @@ export function validateOutboundReply({
   return { allowed: true, reason: "allowed", body: reply };
 }
 
+export async function readOutboundReplyStatus({ phone, eventId }, { getStoreImpl = getStore } = {}) {
+  if (!normalizedPhone(phone) || !eventId) return "missing";
+  try {
+    const entry = await store(getStoreImpl).getWithMetadata(replyKey(normalizedPhone(phone), limited(eventId, 200)), {type:"json",consistency:"strong"});
+    return entry?.data?.status || "missing";
+  } catch {
+    return getStoreImpl === getStore && process.env.NETLIFY !== "true" && !process.env.CONTEXT ? "missing" : "unavailable";
+  }
+}
+
 export async function claimOutboundReply(
   { phone, eventId },
   {
@@ -838,7 +848,9 @@ export async function sendControlledPatientReply(
   }
 
   const claim = await claimOutboundReply(
-    { phone: to, eventId },
+    // A holding reply cannot contradict an answer delivered for this request.
+    // Keep separate IDs for the ledger and intentional partial responses.
+    { phone: to, eventId: conversationAction?.action === CONVERSATION_ACTIONS.WAIT_TEAM ? parentEventId : eventId },
     { getStoreImpl, now },
   );
   if (claim.status === "duplicate") {

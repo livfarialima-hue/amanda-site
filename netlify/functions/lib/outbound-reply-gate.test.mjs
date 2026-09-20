@@ -64,6 +64,16 @@ const respond = {
   allowHoldingReply: false,
 };
 
+test("a holding response shares the inbound lock with the answer already delivered", async () => {
+  const deps = {...fakeBlobs(), sendYCloudPatientTextImpl:async()=>({status:"completed"}),
+    appendConversationTurnImpl:async()=>({status:"completed"}), recordDurableConversationTurnImpl:async()=>({status:"completed"})};
+  const input={from:"+5511900000001",to:"+5511900000000",eventId:"synthetic-price-root",body:"A consulta custa R$ 500.",currentText:"Qual o valor da consulta?",recentConversation:[],conversationAction:respond};
+  assert.equal((await sendControlledPatientReply(input,deps)).status,"completed");
+  const holding=await sendControlledPatientReply({...input,eventId:"synthetic-price-root-price-holding",parentEventId:input.eventId,body:"Vou confirmar o valor da consulta com a equipe e retorno por aqui.",conversationAction:{action:CONVERSATION_ACTIONS.WAIT_TEAM,allowHoldingReply:true}},deps);
+  assert.equal(holding.status,"duplicate");
+  assert.equal(holding.errorCode,"already_sent");
+});
+
 test("cache stores the accepted body before a failed ledger and never stores an uncertain send", async () => {
   for (const delivered of ["completed", "failed"]) {
     const sequence = [];

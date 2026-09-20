@@ -1,0 +1,213 @@
+{
+  "checkedAt": "2026-09-20T14:27:49.501624+00:00",
+  "netlify": {
+    "checkedAt": "2026-09-20T14:15:18.553Z",
+    "authenticated": true,
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "baseline": "6aac9f8da827906987749510",
+    "baselineCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
+    "functions": 13,
+    "schedules": 5,
+    "staticFiles": 192,
+    "mode": [
+      {
+        "context": "production",
+        "value": "active"
+      }
+    ],
+    "appsScript": {
+      "version": 157,
+      "sourcesCompared": 27
+    }
+  },
+  "appsScript": {
+    "version": 157,
+    "verifiedAt": "2026-09-20T14:26:03.928Z",
+    "normalization": "CRLF to LF and one final newline",
+    "files": [
+      {
+        "file": "AgendaCuidados.gs",
+        "sha256": "a82f3e1518a39b0bad4ebff7480a40c73060c944a328329f5ed606dfd54e1910",
+        "matched": true
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "sha256": "e4250350616aa4a0296da1fa1b539ee39dd8bc543bb7de09eb59cf064f01f50c",
+        "matched": true
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "sha256": "7be3bff00c6f4e68ed779e6a3f27d2319a5b3eb1c170ac60411900d87404c716",
+        "matched": true
+      },
+      {
+        "file": "ClassificationReconciliation.gs",
+        "sha256": "a76ff89e0ae5528f1533ad93938a7a147f56ad45733d856782158782c3a9a6c3",
+        "matched": true
+      },
+      {
+        "file": "Code.gs",
+        "sha256": "bb8edc0faa8809be75783d323ed096667dda8f2f992c2302588b58f8e5bedd09",
+        "matched": true
+      },
+      {
+        "file": "ConsultasSync.gs",
+        "sha256": "dbd2e4b3ece884cbc11aeb714b8c14276ad84a19c7f530b7a337df82e9493368",
+        "matched": true
+      },
+      {
+        "file": "ContactPreferences.gs",
+        "sha256": "f755183eaccd75ab569bf67e4d0e92bccd9b2d158f3bf32cd6a08f6cdf02cdd1",
+        "matched": true
+      },
+      {
+        "file": "CuidadosProgramados.gs",
+        "sha256": "ae74a369a2c951111105224d224d8ec31539a3f12cc05020fb676eec47f7a568",
+        "matched": true
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "sha256": "ec3ce38c0c8dc12acb4b05985220c4f9781bcad51f997598d13c1ba8a8ab3fe1",
+        "matched": true
+      },
+      {
+        "file": "FunnelDashboards.gs",
+        "sha256": "a09b7ac5b77ff07fdaacca296c230ac12d3fb0ec95d87c307fb20072ba6b5e0d",
+        "matched": true
+      },
+      {
+        "file": "FunnelReconciliation.gs",
+        "sha256": "795bb4a96766463c4e3272c2c84494b3d2bd4fc3138fb641a32717ff5b686a10",
+        "matched": true
+      },
+      {
+        "file": "GoogleAdsFunnelReview.gs",
+        "sha256": "d846de34a0a289fb11cd7a27794b1dd9693649d67d48bfa2db110e01d090e7c7",
+        "matched": true
+      },
+      {
+        "file": "KnowledgeBase.gs",
+        "sha256": "af6719a17bab75a3b10eb7130ead10262c5c43a7d6b4e1774c8a447c63c93623",
+        "matched": true
+      },
+      {
+        "file": "LeadClassification.gs",
+        "sha256": "0c749d81ec9db57a864e4cc29093af2248822081ff41568a9472e624fabd7800",
+        "matched": true
+      },
+      {
+        "file": "LembretesConsultas.gs",
+        "sha256": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724",
+        "matched": true
+      },
+      {
+        "file": "MetaAdsFunnelReview.gs",
+        "sha256": "e59c3c1aceacf501a7ee6fbfffc526fb27bbe9ae9dcb44fba82f9c5476efa0e8",
+        "matched": true
+      },
+      {
+        "file": "MetaAdsReview.gs",
+        "sha256": "758e621087b75727fad9e279e86f74af1ff1e3080b513b19f55b20a5db97320c",
+        "matched": true
+      },
+      {
+        "file": "OperationalEvents.gs",
+        "sha256": "4390ec4de184b38367871074a3df3752f9fd51af8b2c6106a47a87db70afb02c",
+        "matched": true
+      },
+      {
+        "file": "OpportunityStore.gs",
+        "sha256": "c14d14baec0c742d924713e43fa92afd7ad54243211eb0d6ccffb6549be82376",
+        "matched": true
+      },
+      {
+        "file": "PainelDecisoesDiarias.gs",
+        "sha256": "ea7532f9f1eb8e6b557073dbf7ce2019e806cfd5becc8a4baa0fbef59fe81ed4",
+        "matched": true
+      },
+      {
+        "file": "QualityDashboards.gs",
+        "sha256": "a5a908edc25bb54beb13c213d422d1b8b3dca937cbba27d62186b443b8199c55",
+        "matched": true
+      },
+      {
+        "file": "Retomadas.gs",
+        "sha256": "f7ea728e3f48f6caa8def1f1fd2674b85dc61efe32d27e61c6608e100915a348",
+        "matched": true
+      },
+      {
+        "file": "RoomBooking.gs",
+        "sha256": "d01e2e6fd008e3ecf94698ac5fcc16bb44f2acc555db3e446c43c2a57f02d5ee",
+        "matched": true
+      },
+      {
+        "file": "RoomBookingForm.html",
+        "sha256": "45e93d4952171a1b88404f4737f2aaf1d6991ae0ed00829b086fe8138d310519",
+        "matched": true
+      },
+      {
+        "file": "ScheduleMaintenance.gs",
+        "sha256": "37d7e90956f9807a3a9a5a7ea59180beb28da7153c5ed1806493dcba7034915e",
+        "matched": true
+      },
+      {
+        "file": "SyntheticHealth.gs",
+        "sha256": "334b9ef173b5ed10ca03d4333ba6f50e26cd74a9f4e2af2a1a657c2cd4ccff21",
+        "matched": true
+      },
+      {
+        "file": "WhatsAppCosts.gs",
+        "sha256": "b728ba451177ddabfe17dd3ef42182b7a0d60ab7731d77dc77cd720bd34567d4",
+        "matched": true
+      }
+    ]
+  },
+  "data": {
+    "source": "33 exportacoes Drive de 20/09 reconciliadas com LEADS vivo",
+    "contacts": 31,
+    "postReleaseContacts": 29,
+    "patientConversations": 27,
+    "vendorConversations": 2,
+    "cutoff": "2026-09-18T02:20:00Z",
+    "authorship": "LEADS por mensagem; nao inferida pelo estilo",
+    "morning": [
+      {
+        "case": "C03",
+        "status": "human_active",
+        "updatedAt": "2026-09-20T11:05:07.606Z",
+        "jobs": []
+      },
+      {
+        "case": "C04",
+        "status": "human_active",
+        "updatedAt": "2026-09-20T11:05:07.864Z",
+        "jobs": []
+      },
+      {
+        "case": "C17",
+        "status": "waiting_human",
+        "updatedAt": "2026-09-19T11:35:29.544Z",
+        "jobs": []
+      },
+      {
+        "case": "C26",
+        "status": "human_active",
+        "updatedAt": "2026-09-18T15:12:55.000Z",
+        "jobs": []
+      },
+      {
+        "case": "C27",
+        "status": "human_active",
+        "updatedAt": "2026-09-18T15:12:00.000Z",
+        "jobs": []
+      },
+      {
+        "case": "C28",
+        "status": "human_active",
+        "updatedAt": "2026-09-18T11:10:12.161Z",
+        "jobs": []
+      }
+    ]
+  },
+  "scope": "Sem leitura de chaves ou dados brutos no recibo. Sem replay ou mensagens reais de teste. Dados crus restritos ao temporario privado."
+}

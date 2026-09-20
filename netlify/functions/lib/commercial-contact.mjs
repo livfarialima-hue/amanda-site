@@ -133,6 +133,14 @@ export function latestInboundIsCommercialSolicitation(turns) {
   );
 }
 
+export function isCommercialProfileContinuation(text, turns) {
+  const value = normalizeCommercialText(text);
+  if (EXPLICIT_PERSONAL_CARE_INTENT_PATTERN.test(value) || /\b(?:meu|minha|febre|dor|sangramento)\b|\b(?:valor|preco)\b.{0,40}\b(?:consulta|cirurgia)\b/.test(value)) return false;
+  return /\b(?:perfil|pagina|cadastro)\b/.test(value) &&
+    /\b(?:link|acess\w*|gerenci\w*|atualiz\w*|reivindic\w*)\b/.test(value) &&
+    latestInboundIsCommercialSolicitation(turns);
+}
+
 export function hasRecentCommercialSolicitationContext(
   turns,
   {

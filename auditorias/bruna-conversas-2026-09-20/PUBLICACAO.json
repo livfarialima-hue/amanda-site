@@ -1,0 +1,103 @@
+{
+  "changeId": "BRUNA-CONVERSAS-2026-09-20",
+  "status": "tested_local",
+  "authorizationReference": "Usuario: conforme voce vai diagnosticando ja pode ir alterando e ao fim de todas as alteracoes publique",
+  "realMessagesSentByAgent": 0,
+  "validation": {
+    "fullSuite": {
+      "tests": 1618,
+      "passed": 1618,
+      "failed": 0,
+      "outputSha256": "d7f7380b0039c984931ed2efeaaa0509560b1596626a1c6f8365908eeb69e416"
+    },
+    "crossConsumerCommands": [
+      {
+        "command": "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "caef0f834505fc2a3f3b86d7dd0084b02365edca6851e634d61ab16f9b29b408"
+      },
+      {
+        "command": "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "308cd351bc1a76e8455496583a1f7610133cee3f4e5c20c7b782660bcc43a8a8"
+      },
+      {
+        "command": "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "36a2d0a6245315ef5b4cd14fca2118c0e49aac2859f1149f9c654ebf3286460e"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "ee5838b4b36bbbed56b317526e5cd7ee7d27fe89c1d468298fe02e04f90e945d"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "f9f0f9f7e20b4117598da7e357d270dda34cab46346f541e1393c2c68741af7b"
+      },
+      {
+        "command": "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "689f9c95efd7f5f9d396bd41fb0984e4ea9f15320959f2311ce2db3186a9f4cf"
+      },
+      {
+        "command": "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "6b404807b24017f33de20e06e7e6f40c6496496b6c34d7a228f427bcbcbc4f65"
+      },
+      {
+        "command": "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "404c0688298dd62993d8011562fd2efb9cbc3f217bd9a9f966fcd73d9eaf1fa9"
+      },
+      {
+        "command": "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "d735ac65a978b27c9ca758401912f67f14787aab11af5da8779e4d66962e565b"
+      },
+      {
+        "command": "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "eea8678059e929165e133b6ac5a4259d04a712cb764bb31260805dad40a61a14"
+      },
+      {
+        "command": "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "a6986d4712f99927bd291c208591584c8a130659ca367f216ada9ee8a3100975"
+      },
+      {
+        "command": "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "76241b23ccf4bfef0d7b2a0f01a565e138482f7dad67877eaba0b646da758fc8"
+      },
+      {
+        "command": "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "0b87b9ef249626b41767d266dd593dcf03d616451d96a9402d780da6cb5cb0e2"
+      },
+      {
+        "command": "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "bc3c009e02c02432cee0baf4fa2a90622a1c86bc60126da991d043a99fb61beb"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "c7e72a308326ffd6f44a39443fee7bfe35d5d16f7cc564c6c44afdcf105f179a"
+      },
+      {
+        "command": "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "exitCode": 0,
+        "outputSha256": "1e302438557f7add87d12bf5bfbed59559d56a2451a98a6bd780832f34ad79d8"
+      }
+    ],
+    "reproductionsFailedBeforeFix": 3,
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "siteBuild": "passed",
+    "siteCheck": "passed",
+    "opsBeforePublication": "SYNC_PENDING",
+    "realMessagesSentByAgent": 0
+  }
+}

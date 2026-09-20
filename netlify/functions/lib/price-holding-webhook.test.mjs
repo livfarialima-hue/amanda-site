@@ -1,12 +1,36 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
-import webhook from "../ycloud-webhook.mjs";
+import webhook, { handleYCloudWebhook } from "../ycloud-webhook.mjs";
 
 const WEBHOOK_SECRET = "price-holding-webhook-secret";
 const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
+
+test("reprocessing an answered inbound cannot create a contradictory holding or commitment", async () => {
+  const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:"synthetic",GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:"synthetic",WHATSAPP_AUTOMATION_MODE:"active",OPENAI_API_KEY:"synthetic"};
+  const saved=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));
+  const originalFetch=globalThis.fetch, originalLog=console.log, actions=[];
+  Object.assign(process.env,settings);console.log=()=>{};
+  globalThis.fetch=async (url,options)=>{
+    assert.equal(String(url),SHEETS_URL,"no provider or model side effect after a delivered answer");
+    const data=JSON.parse(options.body);actions.push(data.action);
+    return new Response(JSON.stringify({ok:true,duplicate:true,updated:true,humanTakeoverToday:false,patientRelationship:{found:false},opportunityId:"synthetic-answered",professional:"amanda",routeStatus:"resolved",routed:true}),{status:200});
+  };
+  try {
+    const response=await handleYCloudWebhook(requestFor({id:"synthetic-answered-root",type:"whatsapp.inbound_message.received",createTime:"2026-09-20T15:00:00Z",whatsappInboundMessage:{id:"synthetic-answered-message",from:"+5511900000000",to:"+5511900000001",sendTime:"2026-09-20T15:00:00Z",type:"text",text:{body:"Pode me passar a faixa de valor do lifting facial"}}}),{}, {readOutboundReplyStatusImpl:async()=>"sent"});
+    const body=await response.json();
+    assert.equal(response.status,200);
+    assert.equal(body.priceHoldingQueued,false);
+    assert.equal(body.commitmentSyncStatus,"skipped");
+    assert.equal(body.aiActiveQueued,false);
+    assert.ok(!actions.includes("record_patient_commitment"));
+  } finally {
+    globalThis.fetch=originalFetch;console.log=originalLog;
+    for(const [k,v] of Object.entries(saved)) {if(v===undefined) delete process.env[k];else process.env[k]=v;}
+  }
+});
 
 function requestFor(payload) {
   const rawBody = JSON.stringify(payload);

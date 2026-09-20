@@ -2543,6 +2543,7 @@ function saidaBrunaExataRetomadaModelo_(texto, procedimentoId) {
     const perguntas = [
       "o que voce gostaria de entender primeiro",
       "como posso te chamar",
+      "qual e a sua principal duvida",
       "o que voce gostaria de entender primeiro sobre " + frase,
     ];
     if (procedimentoId === "cervical") {
@@ -2575,6 +2576,8 @@ function sugestaoExataRetomadaModelo_(texto, procedimentoId) {
         " podemos comecar por uma duvida pratica voce prefere saber sobre o procedimento ou sobre a recuperacao",
       "ola sobre " + frase +
         " posso te ajudar com uma duvida pratica como se organizar para a recuperacao quer que eu te explique",
+      "ola sobre " + frase +
+        " voce prefere entender como funciona o procedimento ou como sao definidos os valores",
     ].includes(normalizado);
   });
 }
@@ -3052,7 +3055,7 @@ function sugerirMensagemRetomada_(
   const complementoAssunto = assunto ? " sobre " + assunto : "";
   const complementoAvaliacao = assunto ? " de " + assunto : "";
   const complementoOrcamento = assunto
-    ? " no orçamento de " + assunto
+    ? " de " + assunto
     : "";
 
   if (etapa === 1 && contextoPreco && contextoValorConsulta) {
@@ -3069,7 +3072,7 @@ function sugerirMensagemRetomada_(
   if (etapa === 1 && contextoPreco) {
     return (
       saudacao +
-      " Você tinha perguntado sobre o valor e o que está incluído" +
+      " Você tinha perguntado sobre os valores" +
       complementoOrcamento +
       ". Quer que eu ajude a esclarecer algum ponto sobre isso?"
     );
@@ -3108,7 +3111,7 @@ function sugerirMensagemRetomada_(
     return (
       saudacao + " Sobre " +
       assuntoCurto +
-      ", posso te ajudar com uma dúvida prática: como se organizar para a recuperação. Quer que eu te explique?"
+      ", você prefere entender como funciona o procedimento ou como são definidos os valores?"
     );
   }
 

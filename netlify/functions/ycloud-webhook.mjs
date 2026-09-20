@@ -172,6 +172,7 @@ import {
 } from "./lib/extreme-night-policy.mjs";
 import {
   sendControlledPatientReply,
+  readOutboundReplyStatus,
 } from "./lib/outbound-reply-gate.mjs";
 import {
   buildSemanticReplyConversationAction,
@@ -2826,6 +2827,11 @@ async function completeOpenAIActive({
       };
     }
 
+    // Another processing attempt may have completed while this model ran.
+    // Do not turn its delivered answer into a new promise or human task.
+    if (["sent", "sending", "uncertain"].includes(await readOutboundReplyStatus({phone:to,eventId:input.eventId}))) {
+      return {status:"completed_no_reply",replySent:false,errorCode:"request_already_answered"};
+    }
     const semanticStateResult = await updateConversationSemanticState({
       phone: to,
       basedOnEventId: input.eventId,
@@ -3867,7 +3873,7 @@ async function sendCurrentInboundReply({
 export async function handleYCloudWebhook(
   request,
   context,
-  { resolveAttributionImpl = resolveAttributionJourney } = {},
+  { resolveAttributionImpl = resolveAttributionJourney, readOutboundReplyStatusImpl = readOutboundReplyStatus } = {},
 ) {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const automationMode = normalizeAutomationMode(
@@ -4785,7 +4791,9 @@ export async function handleYCloudWebhook(
     });
   }
 
-  const suppressExactDuplicate = shouldSuppressExactInboundDuplicate({
+  const priorOutboundStatus = delivery.ok
+    ? await readOutboundReplyStatusImpl({phone, eventId:String(eventId)}) : "missing";
+  const suppressExactDuplicate = ["sent", "sending", "uncertain"].includes(priorOutboundStatus) || shouldSuppressExactInboundDuplicate({
     exactMessageDuplicate,
     recoveredExactDuplicate,
     durableRetry,
@@ -5223,6 +5231,10 @@ export async function handleYCloudWebhook(
         procedure: null,
         automaticAllowed: false,
       }
+    : preliminaryAutomationPlan.route === "ignore"
+      ? preliminaryAutomationPlan
+    : enrichAutomationPlanFromConversation(preliminaryAutomationPlan, conversationHistory).reason === "commercial_solicitation_or_partnership"
+      ? enrichAutomationPlanFromConversation(preliminaryAutomationPlan, conversationHistory)
     : conversationExpired
       ? {
           route: "reactivation_notice",

@@ -306,7 +306,7 @@ test("a clear personal name with a trailing emoji personalizes the lifting prefi
   assert.doesNotMatch(reply, /🥰/u);
 });
 
-test("conversion opening adds one procedure-specific microvalue and one easy question", () => {
+test("conversion opening names the procedure once and asks one concise question", () => {
   const reply = buildMarketingPrefilledOpeningReply({
     patientName: "Rosana",
     procedure: "lifting_facial",
@@ -318,10 +318,10 @@ test("conversion opening adds one procedure-specific microvalue and one easy que
     reply,
     "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre lifting facial. " +
-      "Na avaliação, a Dra. Amanda considera o rosto e o pescoço em conjunto para entender quais possibilidades fazem sentido para você. " +
-      "O que você gostaria de entender primeiro sobre lifting facial?",
+      "Qual é a sua principal dúvida?",
   );
   assert.equal((reply.match(/\?/g) || []).length, 1);
+  assert.equal((reply.match(/lifting facial/g) || []).length, 1);
   assert.doesNotMatch(reply, /agendar|horário|valor/i);
 });
 
@@ -346,7 +346,7 @@ test("conversion opening still uses the only question to request an unknown name
     conversionExperienceEnabled: true,
   });
 
-  assert.match(reply, /pálpebras superiores e inferiores/i);
+  assert.match(reply, /Posso te orientar sobre blefaroplastia/i);
   assert.match(reply, /Como posso te chamar\?$/);
   assert.doesNotMatch(reply, /Monah|Semijoias/i);
   assert.equal((reply.match(/\?/g) || []).length, 1);

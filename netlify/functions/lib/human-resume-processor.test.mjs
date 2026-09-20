@@ -686,6 +686,28 @@ test("a generic procedure lead promised a morning return receives the contextual
   );
 });
 
+test("a courtesy after the night receipt preserves the promised morning response", async () => {
+  const deps = dependencies();
+  const receivedAt = new Date(NOW - 5 * 3600000).toISOString();
+  const turns = [
+    {role:"user", source:"patient", text:"Quero saber sobre lifting facial", at:receivedAt},
+    {role:"assistant", source:"bruna", text:"Como já é madrugada, retomaremos por aqui pela manhã.", at:new Date(NOW - 5 * 3600000 + 30000).toISOString()},
+    {role:"user", source:"patient", text:"Ok, obrigada!", at:new Date(NOW - 5 * 3600000 + 60000).toISOString()},
+  ];
+  deps.readConversationTurnsImpl = async () => ({status:"completed",turns});
+  deps.getDurableConversationContextImpl = async () => ({status:"completed",turns,pendingCommitments:[]});
+  deps.runOpenAIShadowImpl = async () => { throw new Error("known promise needs no model"); };
+  const result = await processHumanResumeJob(job({morningResume:true,text:turns[0].text,receivedAt,recentConversation:turns}),{env:ACTIVE_ENV,now:NOW,...deps});
+  assert.equal(result.reason,"scheduled_morning_resume");
+  assert.equal(deps.patientMessages.length,1);
+  for (const text of ["Não quero mais", "Pode deixar que eu retorno", "Agora quero falar sobre outra cirurgia", "Ok, mas onde fica?"]) {
+    turns[2].text=text; deps.patientMessages.length=0;
+    const stopped = await processHumanResumeJob(job({morningResume:true,text:turns[0].text,receivedAt,recentConversation:turns}),{env:ACTIVE_ENV,now:NOW,...deps});
+    assert.equal(stopped.status,"superseded",text);
+    assert.equal(deps.patientMessages.length,0);
+  }
+});
+
 test("a blocked morning continuation becomes a visible human fallback with the ready reply", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => {

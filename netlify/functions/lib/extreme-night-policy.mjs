@@ -161,6 +161,12 @@ export function isExtremeNightAcknowledgement(text) {
   return EXTREME_NIGHT_ACK_PATTERN.test(String(text || ""));
 }
 
+// A receipt is not a new request or a withdrawal of a promised response.
+// Deliberately narrow: any condition, new question or refusal invalidates it.
+export function isMorningPromiseCourtesy(text) {
+  return /^(?:(?:ok(?:ay)?|certo|combinado|t[aá] bom|obrigad[ao]|muito obrigad[ao]|perfeito)[,!\.\s]*)+$/i.test(String(text || "").trim());
+}
+
 export function hasExtremeNightAcknowledgement(
   recentConversation = [],
   currentAt = null,

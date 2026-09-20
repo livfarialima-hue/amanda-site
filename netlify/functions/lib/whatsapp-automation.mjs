@@ -4,6 +4,7 @@ import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange } from
 import {
   hasRecentCommercialSolicitationContext,
   isCommercialSolicitation,
+  isCommercialProfileContinuation,
 } from "./commercial-contact.mjs";
 import {
   foldMarketingText,
@@ -235,6 +236,10 @@ export function enrichAutomationPlanFromConversation(
 ) {
   if (!plan || !Array.isArray(recentConversation) || !recentConversation.length) {
     return plan;
+  }
+
+  if (plan.reason !== "possible_urgent_symptoms" && isCommercialProfileContinuation(plan.currentText, recentConversation)) {
+    return {...plan,route:"ignore",reason:"commercial_solicitation_or_partnership",automaticAllowed:false,replyCode:null,professional:null,procedure:null};
   }
 
   const hasClinicTurn = recentConversation.some(

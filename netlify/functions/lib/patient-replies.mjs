@@ -168,7 +168,7 @@ export function buildMarketingPrefilledOpeningReply({
   const introduction = introduceBruna
     ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
     : "Claro.";
-  const microvalue = conversionExperienceEnabled
+  const microvalue = conversionExperienceEnabled && SENSITIVE_PROCEDURES.has(procedure)
     ? procedureOpeningMicrovalue(procedure)
     : "";
   const context = procedureLabel
@@ -183,7 +183,7 @@ export function buildMarketingPrefilledOpeningReply({
     : conversionExperienceEnabled && procedureLabel
       ? SENSITIVE_PROCEDURES.has(procedure)
         ? "Qual é a sua principal dúvida sobre a avaliação?"
-        : `O que você gostaria de entender primeiro sobre ${procedureLabel}?`
+        : "Qual é a sua principal dúvida?"
       : procedure === "lifting_cervical"
         ? "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?"
         : "O que você gostaria de entender primeiro?";

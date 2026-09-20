@@ -49,6 +49,7 @@ import {
   buildMorningResumeOpening,
   isExtremeNight,
   isExtremeNightAcknowledgement,
+  isMorningPromiseCourtesy,
 } from "./lib/extreme-night-policy.mjs";
 import {
   sendControlledPatientReply,
@@ -93,7 +94,8 @@ function hasNewerConversationActivity(job, turns) {
   const otherTurns = (Array.isArray(turns) ? turns : []).filter(turn =>
     !(turn.source === "bruna" && String(turn.eventId || "").startsWith(`${job.eventId}-human-resume-`)));
   return hasNewerOutboundReply(job, otherTurns) || otherTurns.some(turn =>
-    ["user", "patient"].includes(turn.role) && timeMs(turn.at) > timeMs(job.receivedAt));
+    ["user", "patient"].includes(turn.role) && timeMs(turn.at) > timeMs(job.receivedAt) &&
+    !(job.morningResume === true && isMorningPromiseCourtesy(turn.text)));
 }
 
 async function readCurrentRelationship(job, dependencies = {}) {

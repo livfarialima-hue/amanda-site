@@ -1,3 +1,7 @@
+# 2026-09-20.1 — continuidade observada nas conversas
+
+Aceites naturais, proteção contra holding contraditório, preservação da promessa de manhã após cortesia, prioridade de B2B sobre reativação, abertura curta e retomada por assunto. Preços, cadência, templates, cuidado e condução humana preservados. Evidência: `auditorias/bruna-conversas-2026-09-20/RELATORIO.md`.
+
 ## 2026-09-18.1 — publicado e verificado (c6b2bf2)
 
 Reserva idempotente, intenção recente, biblioteca administrativa revisada, compromissos por solicitação e Central com revisão técnica separada. Publicação e efeitos documentados no recibo do pacote.

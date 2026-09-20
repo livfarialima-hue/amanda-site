@@ -14,12 +14,20 @@ const opening = [
   { role: "user", source: "patient", text: "Quero informações de lifting cervical." },
   { role: "assistant", source: "bruna", text: "Posso te passar uma faixa geral de valores como ponto de partida." },
 ];
+
+test("a seller's profile link remains commercial while a personal patient request can reopen", () => {
+  const history=[{role:"user",source:"patient",text:"Sou fundador da Agenda Exemplo. Temos paciente buscando esse procedimento e gostaria de enviar a página de agendamento."}];
+  assert.equal(plan("Seu perfil já está disponível. Use o link para acessar e atualizar a página.",history).reason,"commercial_solicitation_or_partnership");
+  for (const text of ["Quero marcar uma consulta para mim", "Qual o valor da consulta?", "Estou com dor depois da cirurgia", "Me manda a localização da clínica"]) {
+    assert.notEqual(plan(text,history).reason,"commercial_solicitation_or_partnership",text);
+  }
+});
 function plan(text, history = opening) {
   return enrichAutomationPlanFromConversation(planAutomation({ text, messageType: "text", platform: "WhatsApp direto" }), history);
 }
 
 test("polite acceptance fulfills the existing price offer once without asking again", () => {
-  for (const text of ["Quero sim, por gentileza.", "Sim, por favor!", "Gostaria sim", "Pode me passar, por favor."]) {
+  for (const text of ["Pode ser", "Pode mandar", "Pode enviar, por favor", "Quero sim, por gentileza.", "Sim, por favor!", "Gostaria sim", "Pode me passar, por favor."]) {
     const result = plan(text);
     assert.equal(result.reason, "lifting_price_range_direct", text);
     assert.equal(result.procedure, "lifting_cervical");

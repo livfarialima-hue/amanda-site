@@ -1,5 +1,10 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-CONVERSAS-2026-09-20 -->
+**Pacote 2026-09-20.1 — EM VALIDAÇÃO LOCAL.** Auditoria de 33 exportações recentes, 31 contatos distintos; 29 com atividade posterior à última publicação (27 pacientes e 2 fornecedores). Corrigidos aceites como “pode ser”, resposta de espera contraditória após resposta entregue, perda do retorno de manhã por simples cortesia e reativação de fornecedor. Abertura reduzida e primeira retomada genérica oferece procedimento ou valores, preservando dúvidas específicas. Publicação autorizada nesta tarefa; depende da validação e dos recibos. Nenhuma mensagem real de teste, replay ou alteração de dados de pacientes. Cadência, flags, templates, agenda, faixas de preço e limites clínicos preservados. Revisão das conversas naturais nas 48 horas seguintes: aceites, duplicidade, retornos, motivos de bloqueio e resposta às retomadas. Não atribuir conversão à amostra. Evidência: `auditorias/bruna-conversas-2026-09-20/RELATORIO.md`.
+<!-- /BRUNA-CONVERSAS-2026-09-20 -->
+
+
 <!-- BRUNA-AUTONOMIA-2026-09-18 -->
 **Pacote 2026-09-18.1 — PUBLICADO E VERIFICADO em 17/09/2026, 23:19 BRT.** Commit funcional `c6b2bf2c9a609848735c35a8bb656d74896b68d4`, Netlify `6aac9f8da827906987749510` ativo e Apps Script v157 no mesmo deployment canônico. Publicados: continuidade da intenção recente, classificação recuperável, autonomia em assuntos administrativos seguros, compromissos por solicitação e oportunidade, aceites naturais e respeito à pausa na retomada, além de cinco respostas administrativas aprovadas. A clínica continua responsável enquanto houver compromisso humano pendente. Elegibilidade na Central não comprova envio; cuidado, tomada humana atual, preferências, confirmação de agenda e política de preço continuam obrigatórios.
 

@@ -264,6 +264,7 @@ function isExactBrunaProcedureQuestion(text, procedure) {
     const questions = [
       "o que voce gostaria de entender primeiro",
       "como posso te chamar",
+      "qual e a sua principal duvida",
       `o que voce gostaria de entender primeiro sobre ${phrase}`,
     ];
     if (procedure === "cervical") {
@@ -289,6 +290,7 @@ function isExactSimpleProcedureFollowup(text, procedure) {
     `ola voce comentou que queria saber sobre ${phrase} me conta voce ja tem alguma mudanca em mente ou esta comecando a pesquisar`,
     `ola voce comentou que queria saber sobre ${phrase} podemos comecar por uma duvida pratica voce prefere saber sobre o procedimento ou sobre a recuperacao`,
     `ola sobre ${phrase} posso te ajudar com uma duvida pratica como se organizar para a recuperacao quer que eu te explique`,
+    `ola sobre ${phrase} voce prefere entender como funciona o procedimento ou como sao definidos os valores`,
   ].includes(normalized));
 }
 
