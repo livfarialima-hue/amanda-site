@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
   "title": "Convite unico e opcional para avaliar atendimento real com Dra. Amanda no Google",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "79bf6ae548e807b4bcf3f790e3c533892d12fa73",
   "authorization": {
     "required": true,
@@ -354,7 +354,13 @@
     "approvedCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
     "netlifyDeployId": "6aaff69f4624540008da1b5f",
     "appsScriptVersion": 159,
-    "verifiedAt": "2026-09-20T15:12:39.801Z",
-    "documentationStatus": "pending_drive_projection"
+    "verifiedAt": "2026-09-20T15:15:12.300014+00:00",
+    "documentationStatus": "verified_equal_to_commit",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "a1e0ed253567e892bb5acba2e6353aed0f8d56b63ba06e429da6441e7bfc49f7",
+    "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveActiveSha256": "d5d90e5eda8e2c8c0ac94b67f0c19b770ffbff45f6be535cc43133db4ee39dde",
+    "driveClosedAuditFileId": "1DQlWQDFwwjaoE5eyM1GU-elzPfGl1EZ5",
+    "documentationCommit": "fde09da996afed01458b87e46a4dcf641aa76c1f"
   }
 }

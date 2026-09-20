@@ -17,18 +17,18 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
-    "lastObservedProductionCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
-    "functionalDeployId": "6aafef4e987f7a6ee60b2b5b",
-    "lastObservedProductionDeployId": "6aafef4e987f7a6ee60b2b5b",
-    "rollbackCommit": "c6b2bf2c9a609848735c35a8bb656d74896b68d4",
-    "rollbackDeployId": "6aac9f8da827906987749510",
-    "publishedAt": "2026-09-20T14:37:04.587Z",
-    "lastVerifiedAt": "2026-09-20T14:39:31.589390+00:00",
-    "candidateChangeId": "BRUNA-CONVERSAS-2026-09-20",
+    "functionalCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "lastObservedProductionCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "functionalDeployId": "6aaff69f4624540008da1b5f",
+    "lastObservedProductionDeployId": "6aaff69f4624540008da1b5f",
+    "rollbackCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
+    "rollbackDeployId": "6aafef4e987f7a6ee60b2b5b",
+    "publishedAt": "2026-09-20T15:07:42.786Z",
+    "lastVerifiedAt": "2026-09-20T15:15:12.300014+00:00",
+    "candidateChangeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-20.1",
-    "appsScriptVersion": 158
+    "bundleVersion": "2026-09-20.2",
+    "appsScriptVersion": 159
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -36,18 +36,13 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1u-jkx2cNqEMh2jli6cEiiEu3N_rdRHJ7",
+    "driveClosedAuditFileId": "1DQlWQDFwwjaoE5eyM1GU-elzPfGl1EZ5",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "bf4e53dcae4000ab5da1e1f27820140dcdecf6c74db6d2495ecaef36cc947298"
+    "driveProjectionSha256": "d5d90e5eda8e2c8c0ac94b67f0c19b770ffbff45f6be535cc43133db4ee39dde"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-09-20.2",
-    "changeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
-    "baseCommit": "79bf6ae548e807b4bcf3f790e3c533892d12fa73"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

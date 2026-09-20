@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "authorizationReference": "Usuario nesta tarefa autorizou alterar e publicar; continuacao: coloque isso na logica da Bruna; destino confirmado: somente Dra. Amanda. Nenhum envio real de teste ou aprovacao em lote.",
   "localValidation": {
     "testsPassed": 1631,
@@ -466,5 +466,33 @@
   "careDecisionsBefore": 0,
   "careDecisionsAfter": 0,
   "settingsChanged": false,
-  "reviewProfile": "amanda_only"
+  "reviewProfile": "amanda_only",
+  "drive": {
+    "verifiedAt": "2026-09-20T15:15:12.300014+00:00",
+    "documentationCommit": "fde09da996afed01458b87e46a4dcf641aa76c1f",
+    "files": [
+      {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "bytes": 199659,
+        "sha256": "a1e0ed253567e892bb5acba2e6353aed0f8d56b63ba06e429da6441e7bfc49f7",
+        "equal": true
+      },
+      {
+        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "bytes": 122010,
+        "sha256": "d5d90e5eda8e2c8c0ac94b67f0c19b770ffbff45f6be535cc43133db4ee39dde",
+        "equal": true
+      },
+      {
+        "id": "1DQlWQDFwwjaoE5eyM1GU-elzPfGl1EZ5",
+        "path": "auditorias/bruna-avaliacao-google-2026-09-20/RELATORIO.md",
+        "bytes": 2910,
+        "sha256": "abf36c992b81f97c572e3c4432dc896bdcb9df005a7791d78ee9e7cb02967fdc",
+        "equal": true
+      }
+    ]
+  },
+  "verifiedAt": "2026-09-20T15:15:12.300014+00:00"
 }
