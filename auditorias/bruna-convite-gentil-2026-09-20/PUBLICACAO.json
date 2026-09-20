@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-CONVITE-GENTIL-2026-09-20",
   "approvedCommit": "cf90c398ac45575eb044bfccf401296e1ea03368",
   "authorization": {
@@ -310,5 +310,33 @@
   "careDecisionsAfter": 0,
   "settingsChanged": false,
   "realMessagesSentByAgent": 0,
-  "reviewProfile": "amanda_only"
+  "reviewProfile": "amanda_only",
+  "documentation": {
+    "commit": "f29405f7095a136598f3f2335705a438a88a80c0",
+    "verifiedAt": "2026-09-20T15:43:42.192213+00:00",
+    "files": [
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "49674196df09220e9f4b11c5bc99de0513febfc2aeba015c42fe5292707f19a1",
+        "bytes": 123110,
+        "equal": true
+      },
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "aba6a9c468ff474b458b4b39a8a2f6d1a718af6d2230773e83315df7ab7ef44c",
+        "bytes": 200759,
+        "equal": true
+      },
+      {
+        "fileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
+        "path": "auditorias/bruna-convite-gentil-2026-09-20/RELATORIO.md",
+        "sha256": "11c999dacc5c6e78978723f03ba0314bc790c51fd6c1eed8a25a164c6c29d619",
+        "bytes": 2509,
+        "equal": true
+      }
+    ]
+  },
+  "verifiedAt": "2026-09-20T15:43:42.192213+00:00"
 }

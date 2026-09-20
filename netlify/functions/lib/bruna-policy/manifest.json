@@ -17,18 +17,18 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
-    "lastObservedProductionCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
-    "functionalDeployId": "6aaff69f4624540008da1b5f",
-    "lastObservedProductionDeployId": "6aaff69f4624540008da1b5f",
-    "rollbackCommit": "e4bfebcf19c36436275fbfa61883baf36778fa77",
-    "rollbackDeployId": "6aafef4e987f7a6ee60b2b5b",
-    "publishedAt": "2026-09-20T15:07:42.786Z",
-    "lastVerifiedAt": "2026-09-20T15:15:12.300014+00:00",
-    "candidateChangeId": "BRUNA-AVALIACAO-GOOGLE-2026-09-20",
+    "functionalCommit": "cf90c398ac45575eb044bfccf401296e1ea03368",
+    "lastObservedProductionCommit": "cf90c398ac45575eb044bfccf401296e1ea03368",
+    "functionalDeployId": "6aaffd4954313500081bc6a2",
+    "lastObservedProductionDeployId": "6aaffd4954313500081bc6a2",
+    "rollbackCommit": "c3969d26426f053a91d10ede69bc76c6bcf66e94",
+    "rollbackDeployId": "6aaff69f4624540008da1b5f",
+    "publishedAt": "2026-09-20T15:36:03.129Z",
+    "lastVerifiedAt": "2026-09-20T15:43:42.192213+00:00",
+    "candidateChangeId": "BRUNA-CONVITE-GENTIL-2026-09-20",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-20.2",
-    "appsScriptVersion": 159
+    "bundleVersion": "2026-09-20.3",
+    "appsScriptVersion": 160
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -36,18 +36,13 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1DQlWQDFwwjaoE5eyM1GU-elzPfGl1EZ5",
+    "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "d5d90e5eda8e2c8c0ac94b67f0c19b770ffbff45f6be535cc43133db4ee39dde"
+    "driveProjectionSha256": "49674196df09220e9f4b11c5bc99de0513febfc2aeba015c42fe5292707f19a1"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-09-20.3",
-    "changeId": "BRUNA-CONVITE-GENTIL-2026-09-20",
-    "baseCommit": "40e39cf82f824828702c7839a8b2788c514e1b39"
-  }
+  "followupCopyContract": "followup-message-copy"
 }
