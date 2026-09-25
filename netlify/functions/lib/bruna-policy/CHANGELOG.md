@@ -1,3 +1,7 @@
+# 2026-09-25.1 — respostas contextualizadas e proporcionais
+
+Relatos pessoais recebem informação breve antes de qualquer material; links espontâneos bloqueados no seletor e no contrato de saída. Contexto educativo aprovado sobre papada sem inferir causa, lipo, emagrecimento ou prontidão. Perguntas, preços e recursos explicitamente pedidos preservados. Instruções evitam currículo, espelhamento interrogativo, repetição da consulta e agenda prematura. Histórico humano não cria fatos clínicos nem credenciais. Modelos da equipe no manual canônico. Evidência e limites: auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md.
+
 # 2026-09-20.3 — convite Google mais gentil
 
 Agradecimento breve, acolhimento e convite opcional ao relato livre, somente para a Dra. Amanda. Critérios, aprovação e transporte existentes preservados. Publicação em `auditorias/bruna-convite-gentil-2026-09-20/PUBLICACAO.json`.

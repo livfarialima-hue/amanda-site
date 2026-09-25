@@ -1,6 +1,6 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
-import { isClearInformationAcceptance } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isPersonalAppearanceConcern } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -523,6 +523,11 @@ function buildReplyContract({
       "payment_terms", "scheduling", "location", "insurance", "resource"].includes(intent));
   const maxLinks =
     !canWrite || intents.includes("photo") ||
+    (
+      isPersonalAppearanceConcern(value) &&
+      !intents.some(intent => ["resource", "location"].includes(intent)) &&
+      !protectedApprovedRange && !approvedInitialSurgicalGuide
+    ) ||
     (
       priceIntent &&
       !protectedApprovedRange &&

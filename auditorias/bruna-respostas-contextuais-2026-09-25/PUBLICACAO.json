@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25",
+  "status": "not_published",
+  "authorization": {
+    "approvedBy": "Daniel",
+    "reference": "Este tambem. Precisa ser melhor. Veja tudo que da pra melhorar e melhore. Logo apos publique."
+  },
+  "appsScript": {
+    "version": 160,
+    "unchanged": true
+  },
+  "documentation": {
+    "status": "pending"
+  },
+  "validation": {
+    "fullSuite": {
+      "passed": 1682,
+      "failed": 0
+    },
+    "focused": {
+      "passed": 211,
+      "failed": 0
+    },
+    "requiredCommandsPassed": 17,
+    "regressionBeforeFix": "3 novos cenarios falharam antes da correcao; regressao preservada",
+    "source": "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md",
+    "commands": [
+      {
+        "command": "npm.cmd run change:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run architecture:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd test",
+        "status": "passed"
+      },
+      {
+        "command": "git diff --check",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/site-content.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/interaction-continuity.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run site:build",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run site:check",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+        "status": "passed"
+      },
+      {
+        "command": "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "status": "passed"
+      }
+    ]
+  }
+}

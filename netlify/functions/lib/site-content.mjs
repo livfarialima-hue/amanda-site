@@ -1,4 +1,5 @@
 import { isLikelyMarketingPrefilledMessage } from "./marketing-prefill.mjs";
+import { isPersonalAppearanceConcern } from "./patient-turn-context.mjs";
 
 const SITE_BASE_URL = "https://draamandaschroeder.com.br";
 
@@ -441,6 +442,7 @@ export function getRecommendedSiteResource({
     : [];
   const sharedUrls = sharedSiteUrls(conversation);
   const directRequest = isDirectSiteRequest(currentMessage);
+  if (!directRequest && isPersonalAppearanceConcern(currentMessage)) return null;
   if (!directRequest && websiteEntryContext({ referenceCategory, currentMessage, recentConversation: conversation }).cameFromWebsite) return null;
 
   if (!directRequest) {

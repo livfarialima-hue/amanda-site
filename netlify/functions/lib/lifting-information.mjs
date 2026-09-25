@@ -110,8 +110,23 @@ export function approvedLiftingFacialFacts({ text, procedure } = {}) {
 export function approvedProcedureInformationFacts({ text, procedure, recentConversation = [] } = {}) {
   const request = informationRequestText({ text, recentConversation });
   const facial = approvedLiftingFacialFacts({ text: request, procedure });
-  if (facial) return facial;
-  if (!RECOVERY_PATTERN.test(request)) return null;
+  const facts = [...(facial?.facts || [])];
+  const boundaries = [...(facial?.boundaries || [])];
+  if (
+    ["lifting_cervical", "lipo_papada", "avaliacao_facial", "lifting_facial", "mini_lifting"].includes(procedure) &&
+    /\bpapada\b|contorno (?:do pesco[cç]o|cervical)/i.test(request)
+  ) {
+    facts.push({
+      topic: "neck_contour",
+      source: "conteudos/papada-contorno-cervical/index.html",
+      statement: "A papada pode ter relação com gordura, flacidez da pele, músculos e formato do queixo, em combinações diferentes. Essas diferenças são consideradas no exame para discutir as possibilidades de tratamento.",
+    });
+    boundaries.push(
+      "Não concluir a causa, a indicação de lipo ou de lifting, nem a necessidade de cirurgia para essa pessoa.",
+      "O relato sobre peso ou emagrecimento não autoriza recomendar perder peso, estabelecer uma meta ou condicionar a consulta.",
+      "Não avaliar o corpo nem confirmar gordura localizada a partir de texto ou foto. Usar apenas contexto educativo geral.",
+    );
+  }
   // Educational excerpts from the already published canonical procedure pages.
   // They describe recovery generally and never clear an individual activity.
   const recovery = {
@@ -124,11 +139,15 @@ export function approvedProcedureInformationFacts({ text, procedure, recentConve
       statement: "Nos primeiros dias da otoplastia, curativo ou faixa, inchaço e sensibilidade podem fazer parte da recuperação. Escola e trabalho retornam progressivamente; atividades com risco de trauma dependem de liberação da equipe. Cuidados com a incisão e uso da faixa são orientados para cada caso.",
     },
   }[procedure];
-  return recovery ? { procedure, topics: ["recovery"], facts: [{ topic: "recovery", ...recovery }], boundaries: [
-    "Contexto educativo para quem está pesquisando, não orientação de pós-operatório individual.",
-    "Não prescrever cuidados, posição, medicamento, exercícios, curativo ou tempo de uso de faixa.",
-    "Não definir liberação ou prazo individual; sintomas, complicações e cuidado em andamento exigem a equipe.",
-  ] } : null;
+  if (recovery && RECOVERY_PATTERN.test(request)) {
+    facts.push({ topic: "recovery", ...recovery });
+    boundaries.push(
+      "Contexto educativo para quem está pesquisando, não orientação de pós-operatório individual.",
+      "Não prescrever cuidados, posição, medicamento, exercícios, curativo ou tempo de uso de faixa.",
+      "Não definir liberação ou prazo individual; sintomas, complicações e cuidado em andamento exigem a equipe.",
+    );
+  }
+  return facts.length ? { procedure, topics: facts.map(fact => fact.topic), facts, boundaries } : null;
 }
 
 export function buildLiftingFacialInformationReply({

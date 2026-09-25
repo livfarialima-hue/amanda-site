@@ -10,6 +10,16 @@ const RESEARCH_CONVERSATION = [
   { role: "patient", text: "Sim, ainda estou pesquisando." },
 ];
 
+test("a personal appearance concern receives conversation before an unsolicited article", () => {
+  const input = {procedure: "lifting_cervical", referenceCategory: "whatsapp_uncoded",
+    recentConversation: RESEARCH_CONVERSATION, currentMessage: "Minha papada me incomoda e estou acima do peso."};
+  assert.equal(getRecommendedSiteResource(input), null);
+  assert.match(getRecommendedSiteResource({...input, currentMessage: input.currentMessage + " Pode mandar um artigo sobre papada?"}).url, /papada-contorno-cervical/);
+  for (const currentMessage of ["Meu olhar parece cansado e tenho bolsas", "Emagreci muito depois da bariátrica", "Tenho gordura na papada", "Quero melhorar o contorno do rosto"]) {
+    assert.equal(getRecommendedSiteResource({...input,currentMessage}),null,currentMessage);
+  }
+});
+
 test("offers the complete procedure page after the first meaningful exchange", () => {
   assert.deepEqual(
     getRecommendedSiteResource({
@@ -205,7 +215,7 @@ test("prefers the complete procedure page over the generic consultation article"
   );
 });
 
-test("routes common objections and comparisons to the matching educational material", () => {
+test("routes explicitly requested educational material to the matching topic", () => {
   const cases = [
     [
       "blefaroplastia",
@@ -279,7 +289,7 @@ test("routes common objections and comparisons to the matching educational mater
       procedure,
       referenceCategory: "google_coded",
       recentConversation: RESEARCH_CONVERSATION,
-      currentMessage,
+      currentMessage: currentMessage + " Pode mandar um material sobre isso?",
     });
 
     assert.equal(

@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-09-25T19:59:06.310Z",
+  "baselineCommit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
+  "baselineDeploy": "6ab6ceb59b48eb00087c67c0",
+  "evidence": {
+    "screenshotRepliesAuthorship": "human_team",
+    "confirmedIn": [
+      "WHATSAPP_MENSAGENS",
+      "WHATSAPP_ATENDIMENTO_HUMANO"
+    ],
+    "recentRowsReviewed": 187,
+    "automaticRepliesReviewed": 20,
+    "period": "2026-09-23 a 2026-09-25",
+    "limitation": "Amostra, nao auditoria integral de todas as conversas. Nenhum dado individual neste recibo."
+  },
+  "productionRecheckedAt": "2026-09-25T20:08:40.221Z",
+  "production": {
+    "commit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
+    "deployId": "6ab6ceb59b48eb00087c67c0",
+    "autoPublishing": true,
+    "branch": "reestruturacao-site",
+    "health": {
+      "httpStatus": 200,
+      "automationMode": "active",
+      "processingMode": "durable_background_intake",
+      "signatureProtection": "active"
+    },
+    "remoteBranchCommit": "fa950dd825c2894e8f712379c0546c0cc728009e"
+  },
+  "driveBaselines": [
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "825391b4920697bd4f2a86643b4da4b2b6ca3da472830a44a523562e1725331e",
+      "verifiedRawDownload": true
+    },
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "49674196df09220e9f4b11c5bc99de0513febfc2aeba015c42fe5292707f19a1",
+      "verifiedRawDownload": true
+    }
+  ]
+}

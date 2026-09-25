@@ -60,7 +60,11 @@
     "unanswered_flacidez_and_consultation_price_are_answered_together",
     "named_procedure_after_discovery_continues_without_restart",
     "research_price_question_is_not_financial_objection_or_qualification",
-    "captioned_payment_attachment_requires_human_confirmation"
+    "captioned_payment_attachment_requires_human_confirmation",
+    "personal_concern_no_unsolicited_link",
+    "personal_concern_explicit_article_preserved",
+    "personal_concern_safe_context_allowed",
+    "personal_concern_unsolicited_procedure_link_blocked"
   ],
   "deprecatedScenarioIds": [],
   "incidentPolicy": {

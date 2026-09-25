@@ -2,6 +2,17 @@
 // it never authorizes a procedure, payment, booking or clinical recommendation.
 export const UNAVAILABLE_PATIENT_TEXT = "[Mensagem de texto indisponível na integração.]";
 
+// A conversational signal, never a diagnosis or evidence of surgical intent.
+export function isPersonalAppearanceConcern(text) {
+  const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  const appearance = "(?:papada|pescoco|rosto|face|pele|flacidez|flacid[oa]|gordura|peso|aparencia|olhar|bolsas|palpebras?|orelhas?|abdome|barriga|mamas?|seios|contorno|rugas?)";
+  const possessive = new RegExp("\\b(?:minha|minhas|meu|meus)\\s+" + appearance + "\\b");
+  const selfDescription = new RegExp("\\btenho\\s+(?:(?:o|a|um|uma|muita|muito)\\s+)?" + appearance + "\\b");
+  const personal = /\b(?:me incomoda|me incomodam|quero melhorar|queria melhorar|estou (?:acima|abaixo|com))\b/.test(value);
+  return possessive.test(value) || selfDescription.test(value) || /\b(?:emagreci|engordei)\b/.test(value) ||
+    (personal && new RegExp("\\b" + appearance + "\\b").test(value));
+}
+
 export function hasUnansweredUnavailablePatientText(recentConversation = []) {
   // Only the current unanswered block counts; an old failure must not explain
   // a new conversation. The marker is supplied by the inbound/ledger adapters.

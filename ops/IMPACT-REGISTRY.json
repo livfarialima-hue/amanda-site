@@ -166,7 +166,10 @@
         "auditorias/bruna-contexto-indisponivel-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/RELATORIO.md",
-        "docs/whatsapp-clinica-liv-operacao.md"
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "auditorias/bruna-respostas-contextuais-2026-09-25/PREFLIGHT.json",
+        "auditorias/bruna-respostas-contextuais-2026-09-25/PUBLICACAO.json",
+        "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

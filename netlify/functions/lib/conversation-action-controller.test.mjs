@@ -1,5 +1,28 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+test("a personal concern has no unsolicited links or availability pitch", () => {
+  const action = decideConversationAction({text: "Minha papada me incomoda e estou acima do peso.",
+    messageType: "text", plan: {route:"standard_reply", reason:"known_procedure", procedure:"lifting_cervical", automaticAllowed:true},
+    recentConversation:[{role:"assistant",source:"human",text:"O que você gostaria de entender ou melhorar?"}],
+    conversionExperienceEnabled:true});
+  assert.equal(action.action, "respond");
+  assert.equal(action.replyContract.maxLinks, 0);
+  assert.ok(!action.replyContract.allowedCtaTypes?.includes("availability_exploration"));
+  assert.ok(!action.replyContract.allowedCtaTypes?.includes("scheduling_preference"));
+});
+
+test("a personal concern preserves explicit resource, location and consultation requests", () => {
+  const plan = {route:"standard_reply",reason:"known_procedure",procedure:"lifting_cervical",automaticAllowed:true};
+  for (const text of ["Minha papada me incomoda. Pode mandar um artigo sobre papada?", "Minha papada me incomoda. Me manda a localização da clínica?"]) {
+    const decision = decideConversationAction({text,plan,conversionExperienceEnabled:true});
+    assert.equal(decision.action,"respond");
+    assert.equal(decision.replyContract.maxLinks,1,text);
+  }
+  const price = decideConversationAction({text:"Minha papada me incomoda. Qual o valor da consulta?",plan:{...plan,reason:"consultation_information_request"},conversionExperienceEnabled:true});
+  assert.equal(price.action,"respond");
+  assert.ok(price.replyContract.allowedCtaTypes.includes("availability_exploration"));
+});
 import {
   CONVERSATION_ACTIONS,
   clinicTurnInvitesResponse,

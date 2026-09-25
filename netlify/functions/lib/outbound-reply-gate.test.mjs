@@ -22,6 +22,17 @@ import {
   buildConsultationInformationReply,
 } from "./patient-replies.mjs";
 
+test("personal concern reply contract reaches the final link guard", () => {
+  const currentText="Minha papada me incomoda e estou acima do peso.";
+  const recentConversation=[{role:"assistant",source:"bruna",text:"O que gostaria de entender sobre papada?"}];
+  const conversationAction=decideConversationAction({text:currentText,recentConversation,plan:{route:"standard_reply",reason:"known_procedure",procedure:"lifting_cervical",automaticAllowed:true},conversionExperienceEnabled:true});
+  const body="Gordura, pele e formato do queixo podem participar do contorno da papada. A avaliação ajuda a distinguir esses fatores.";
+  assert.equal(validateOutboundReply({body,currentText,recentConversation,conversationAction}).allowed,true);
+  const linked=validateOutboundReply({body:body+" https://draamandaschroeder.com.br/lipo-de-papada/",currentText,recentConversation,conversationAction});
+  assert.equal(linked.allowed,false);
+  assert.equal(linked.reason,"too_many_links_for_context");
+});
+
 function fakeBlobs() {
   const values = new Map();
   let version = 0;

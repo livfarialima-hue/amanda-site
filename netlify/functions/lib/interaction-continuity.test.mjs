@@ -1,5 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+test("a papada concern carries general approved facts without assuming a lipo indication", () => {
+  const facts = approvedProcedureInformationFacts({procedure:"lifting_cervical", text:"Minha papada me incomoda e estou acima do peso."});
+  assert.ok(facts);
+  assert.ok(facts.topics.includes("neck_contour"));
+  assert.match(facts.facts.map(f=>f.statement).join(" "), /gordura|flacidez/);
+  assert.match(facts.boundaries.join(" "), /Não concluir.*indicação/);
+  assert.match(facts.boundaries.join(" "), /peso|emagrecimento/);
+  assert.doesNotMatch(facts.facts.map(f=>f.statement).join(" "), /você precisa|seu caso|deve emagrecer|R\$/);
+});
 import { planAutomation, enrichAutomationPlanFromConversation } from "./whatsapp-automation.mjs";
 import { hasUnresolvedPatientRequest, clinicTurnInvitesResponse } from "./conversation-action-controller.mjs";
 import { classifyHumanResume } from "./human-resume-policy.mjs";
@@ -9,6 +19,33 @@ import { coalesceUnansweredPatientBlock } from "./inbound-burst-context.mjs";
 import { shouldHydrateConversationHistory } from "./conversation-memory.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { runOpenAIShadow } from "./openai-shadow.mjs";
+import { isPersonalAppearanceConcern } from "./patient-turn-context.mjs";
+
+test("personal concerns are linguistic context, not every mention of a body region", () => {
+  for (const text of ["Minha papada me incomoda", "Estou acima do peso", "Tenho o pescoço flácido", "Quero melhorar o contorno do rosto"]) assert.equal(isPersonalAppearanceConcern(text),true,text);
+  for (const text of ["Como funciona a cervicoplastia?", "Qual o valor da consulta?", "Pode mandar um artigo sobre papada?", "Estou pesquisando a clínica", "Minha dúvida é sobre papada e contorno do pescoço", "Tenho dúvida sobre enxerto de gordura no rosto"]) assert.equal(isPersonalAppearanceConcern(text),false,text);
+});
+
+test("neck information does not erase a second approved topic or invent recovery facts", () => {
+  const both=approvedProcedureInformationFacts({procedure:"lifting_cervical",text:"Quero entender a papada e como é a recuperação do lifting cervical"});
+  assert.deepEqual(both.topics,["neck_contour","recovery"]);
+  assert.equal(approvedProcedureInformationFacts({procedure:"otoplastia",text:"Minha papada me incomoda"}),null);
+  const accepted=approvedProcedureInformationFacts({procedure:"avaliacao_facial",text:"Pode me explicar",recentConversation:[{role:"assistant",text:"Quer que eu te explique quais fatores podem influenciar a papada?"}]});
+  assert.deepEqual(accepted.topics,["neck_contour"]);
+});
+
+test("the model receives approved neck context without an unsolicited resource", async () => {
+  let input;
+  await runOpenAIShadow({phone:"+5511900000000",text:"Minha papada me incomoda e estou acima do peso.",procedure:"lifting_cervical",recentConversation:[
+    {role:"assistant",source:"human",text:"O que você gostaria de entender ou melhorar?"},
+  ]},{env:{OPENAI_API_KEY:"synthetic-key"},fetchImpl:async (_url,options)=>{
+    input=JSON.parse(JSON.parse(options.body).input);
+    return new Response("{}",{status:200});
+  }});
+  assert.ok(input.approvedClinicalFacts.topics.includes("neck_contour"));
+  assert.match(input.approvedClinicalFacts.facts[0].source,/papada-contorno-cervical/);
+  assert.ok(!input.siteResource);
+});
 
 const opening = [
   { role: "user", source: "patient", text: "Quero informações de lifting cervical." },
