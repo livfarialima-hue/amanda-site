@@ -40,11 +40,54 @@
   "verification": {
     "localTests": 1658,
     "failedTests": 0,
-    "newInboundAfterActivationObserved": false,
-    "newReplyDeliveryConfirmed": false,
+    "newInboundAfterActivationObserved": true,
+    "newReplyDeliveryConfirmed": true,
     "patientTestSentByAgent": false,
     "outageReplayPerformed": false,
-    "humanPausePreserved": true
+    "humanPausePreserved": true,
+    "liveReply": {
+      "verifiedAt": "2026-09-25T00:47:28Z",
+      "sources": [
+        "Netlify ycloud-webhook",
+        "Netlify ycloud-recovery-background",
+        "LEADS _WHATSAPP_MENSAGENS",
+        "LEADS _WHATSAPP_CUSTOS / ycloud_message_updated"
+      ],
+      "naturalInboundCount": 2,
+      "conversationCount": 1,
+      "webhookAckDurationMs": [
+        809.94,
+        445.93
+      ],
+      "dispatchHttpStatus": 202,
+      "leadDelivery": "success_first_attempt_for_both",
+      "workerDurationMs": [
+        55785.73,
+        67140.27
+      ],
+      "workerCompletedCount": 2,
+      "patientReplyCount": 1,
+      "patientReplyKind": "price_information_holding_for_human_review",
+      "providerStatus": "delivered",
+      "providerSentAt": "2026-09-25T00:43:59Z",
+      "providerDeliveredAt": "2026-09-25T00:43:59Z",
+      "deliveryLinkedToInbound": true,
+      "originalHumanPausePreserved": true,
+      "firstInboundOutcome": "completed_no_reply_human_review",
+      "secondInboundOutcome": "awaiting_human_learning_after_holding_reply",
+      "recoveryCycle": {
+        "at": "2026-09-25T00:45:20Z",
+        "status": "idle",
+        "jobs": 0
+      },
+      "observability": {
+        "deliveryStatusFirstWrite": "timeout",
+        "deliveryStatusRetry": "recorded",
+        "internalWhatsAppReviewAlert": "failed",
+        "internalReviewEmailCopy": "completed"
+      },
+      "limitation": "Confirma transporte e entrega de resposta de acolhimento; nao comprova todos os roteiros, fornecimento automatico de preco nem fechamento humano. Janela de 48 horas permanece com Daniel/equipe LIV."
+    }
   },
   "rollback": {
     "commit": "cf90c398ac45575eb044bfccf401296e1ea03368",
@@ -53,7 +96,7 @@
     "preserveQueue": true
   },
   "documentation": {
-    "status": "verified",
+    "status": "pending_updated_delivery_evidence",
     "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "baselineSha256": "aba6a9c468ff474b458b4b39a8a2f6d1a718af6d2230773e83315df7ab7ef44c",
     "baselineEqual": true,
@@ -69,5 +112,5 @@
       }
     ]
   },
-  "serviceOutcome": "awaiting_new_inbound_after_activation"
+  "serviceOutcome": "new_natural_inbound_reply_delivered"
 }

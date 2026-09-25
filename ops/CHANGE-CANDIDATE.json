@@ -226,9 +226,52 @@
         "WRONG_BRANCH",
         "DIRTY_WORKTREE before intentional commit"
       ],
-      "productionValidated": false,
+      "productionValidated": true,
       "productionInfrastructureVerified": true,
-      "patientDeliveryVerified": false
+      "patientDeliveryVerified": true,
+      "postActivation": {
+        "verifiedAt": "2026-09-25T00:47:28Z",
+        "sources": [
+          "Netlify ycloud-webhook",
+          "Netlify ycloud-recovery-background",
+          "LEADS _WHATSAPP_MENSAGENS",
+          "LEADS _WHATSAPP_CUSTOS / ycloud_message_updated"
+        ],
+        "naturalInboundCount": 2,
+        "conversationCount": 1,
+        "webhookAckDurationMs": [
+          809.94,
+          445.93
+        ],
+        "dispatchHttpStatus": 202,
+        "leadDelivery": "success_first_attempt_for_both",
+        "workerDurationMs": [
+          55785.73,
+          67140.27
+        ],
+        "workerCompletedCount": 2,
+        "patientReplyCount": 1,
+        "patientReplyKind": "price_information_holding_for_human_review",
+        "providerStatus": "delivered",
+        "providerSentAt": "2026-09-25T00:43:59Z",
+        "providerDeliveredAt": "2026-09-25T00:43:59Z",
+        "deliveryLinkedToInbound": true,
+        "originalHumanPausePreserved": true,
+        "firstInboundOutcome": "completed_no_reply_human_review",
+        "secondInboundOutcome": "awaiting_human_learning_after_holding_reply",
+        "recoveryCycle": {
+          "at": "2026-09-25T00:45:20Z",
+          "status": "idle",
+          "jobs": 0
+        },
+        "observability": {
+          "deliveryStatusFirstWrite": "timeout",
+          "deliveryStatusRetry": "recorded",
+          "internalWhatsAppReviewAlert": "failed",
+          "internalReviewEmailCopy": "completed"
+        },
+        "limitation": "Confirma transporte e entrega de resposta de acolhimento; nao comprova todos os roteiros, fornecimento automatico de preco nem fechamento humano. Janela de 48 horas permanece com Daniel/equipe LIV."
+      }
     }
   },
   "rollback": {
@@ -246,7 +289,13 @@
       "Fila sem pendencias envelhecidas e sem alertas terminais inesperados"
     ],
     "rollbackRule": "Conter por flag diante de perda de entrada, duplicidade, destinatario divergente, quebra da pausa humana ou crescimento persistente de pendencias.",
-    "status": "awaiting_new_inbound_after_activation"
+    "status": "first_reply_delivered_first_recovery_cycle_idle",
+    "review48h": {
+      "owner": "Daniel / equipe Clinica LIV",
+      "dueAt": "2026-09-27T00:36:48Z",
+      "status": "pending_owner_review",
+      "automationCreated": false
+    }
   },
   "rollout": {
     "strategy": "default_off_then_authorized_activation",
@@ -263,10 +312,11 @@
     "netlifyDeployId": "6ab5c206aaaf04e7e71dd958",
     "appsScriptVersion": 160,
     "verifiedAt": "2026-09-25T00:37:11Z",
-    "documentationStatus": "verified",
-    "realReplyValidation": "pending",
+    "documentationStatus": "pending_updated_delivery_evidence",
+    "realReplyValidation": "delivered",
     "documentationVerifiedAt": "2026-09-25T00:41:47Z",
     "drivePlanSha256": "1cc328c9ea6639dfa7ecd924a144b2c6ed7a41ae3298adeb1750b42c1b9bbb01",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "realReplyVerifiedAt": "2026-09-25T00:47:28Z"
   }
 }
