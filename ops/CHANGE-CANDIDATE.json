@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-ENTRADA-ASSINCRONA-2026-09-24",
   "title": "Confirmacao duravel da entrada e processamento da Bruna em background",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "375de1c2a0ccf9502cf560fc610f19c4db995c1e",
   "authorization": {
     "required": true,
@@ -226,7 +226,9 @@
         "WRONG_BRANCH",
         "DIRTY_WORKTREE before intentional commit"
       ],
-      "productionValidated": false
+      "productionValidated": false,
+      "productionInfrastructureVerified": true,
+      "patientDeliveryVerified": false
     }
   },
   "rollback": {
@@ -243,7 +245,8 @@
       "Nenhuma resposta apos tomada humana, duplicada ou para contato interno",
       "Fila sem pendencias envelhecidas e sem alertas terminais inesperados"
     ],
-    "rollbackRule": "Conter por flag diante de perda de entrada, duplicidade, destinatario divergente, quebra da pausa humana ou crescimento persistente de pendencias."
+    "rollbackRule": "Conter por flag diante de perda de entrada, duplicidade, destinatario divergente, quebra da pausa humana ou crescimento persistente de pendencias.",
+    "status": "awaiting_new_inbound_after_activation"
   },
   "rollout": {
     "strategy": "default_off_then_authorized_activation",
@@ -260,7 +263,10 @@
     "netlifyDeployId": "6ab5c206aaaf04e7e71dd958",
     "appsScriptVersion": 160,
     "verifiedAt": "2026-09-25T00:37:11Z",
-    "documentationStatus": "pending",
-    "realReplyValidation": "pending"
+    "documentationStatus": "verified",
+    "realReplyValidation": "pending",
+    "documentationVerifiedAt": "2026-09-25T00:41:47Z",
+    "drivePlanSha256": "1cc328c9ea6639dfa7ecd924a144b2c6ed7a41ae3298adeb1750b42c1b9bbb01",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
   }
 }
