@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-ACEITE-CORTESIA-2026-09-25",
-  "status": "not_published",
+  "status": "published_documentation_pending",
   "authorization": {
     "approvedBy": "Daniel",
-    "reference": "To precisando intervir muito. Pq nao seguiu aqui? Arrume. Continuidade da autorizacao de corrigir e publicar nesta tarefa."
+    "reference": "To precisando intervir muito. Pq nao seguiu aqui? Arrume. Continuidade da autorizacao de corrigir e publicar nesta tarefa.",
+    "recordedAt": "2026-09-25T20:34:24.065Z"
   },
   "appsScript": {
     "version": 160,
@@ -100,5 +101,101 @@
         "status": "expected_sync_pending"
       }
     ]
+  },
+  "approvedCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab6dae04b46000008d93fec",
+    "approvedCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "buildCompletedAt": "2026-09-25T20:35:10Z",
+    "publishedAt": "2026-09-25T20:35:11Z",
+    "verifiedAt": "2026-09-25T20:38:17.595Z",
+    "functionsCount": 13,
+    "deployedFilesCount": 192,
+    "scheduledFunctionsPreserved": 5,
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active",
+    "flagUnchanged": true,
+    "unsignedRequestHttpStatus": 401
+  },
+  "verification": {
+    "localTests": 1694,
+    "focusedTests": 152,
+    "failedTests": 0,
+    "requiredCommandsPassed": 17,
+    "productionAndImmutableUrlChecked": true,
+    "healthChecks": [
+      {
+        "url": "https://draamandaschroeder.com.br",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedRequestHttpStatus": 401,
+        "verifiedAt": "2026-09-25T20:38:16.171Z"
+      },
+      {
+        "url": "https://6ab6dae04b46000008d93fec--inspiring-sprite-b35ca4.netlify.app",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedRequestHttpStatus": 401,
+        "verifiedAt": "2026-09-25T20:38:17.595Z"
+      }
+    ],
+    "patientTestSentByAgent": false,
+    "outageReplayPerformed": false,
+    "newNaturalIncidentCaseObserved": false,
+    "livePatientDeliveryConfirmed": false,
+    "limitation": "Aceite, faixa aprovada, fluxo completo simulado e publicacao verificados; a resposta de um novo caso natural ainda nao foi observada. O evento antigo de revisao nao foi reexecutado."
+  },
+  "rollback": {
+    "commit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+    "netlifyDeployId": "6ab6d50398c196000844f21a",
+    "preserveQueue": true
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe Clinica LIV",
+    "dueAt": "2026-09-27T20:35:11Z",
+    "status": "pending_owner_review",
+    "automationCreated": false
   }
 }

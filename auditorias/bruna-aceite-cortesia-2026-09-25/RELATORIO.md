@@ -1,6 +1,6 @@
 # Bruna — aceite de cortesia, 25/09/2026
 
-**Estado: testado localmente, publicação autorizada e pendente.** Baseline local 43b978dfb180a2ee9e3d942fcfcbf71b0de2cadd; produção 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8 / Netlify 6ab6d50398c196000844f21a.
+**Estado: publicado e verificado em produção; fechamento das projeções documentais em andamento.** Baseline local 43b978dfb180a2ee9e3d942fcfcbf71b0de2cadd; produção 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8 / Netlify 6ab6d50398c196000844f21a.
 
 ## Diagnóstico observado
 
@@ -33,3 +33,7 @@ Destino: Netlify canônico, branch reestruturacao-site. Autoridade: solicitaçã
 Responsável: Daniel/equipe, primeiros aceites elegíveis e revisão em 48 horas. Observar se a oferta aceita é cumprida sem nova pergunta, se a faixa é única e compatível e se recusas continuam respeitadas. Ainda não há observação de um novo caso natural após este pacote. Nenhuma automação de monitoramento criada.
 
 Reverter para Netlify 6ab6d50398c196000844f21a / commit 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8 se ocorrer aceite falso, faixa indevida, repetição ou quebra dos controles. Preservar registros, filas e as correções anteriores.
+
+## Recibo de produção
+
+Commit funcional 1358a1db111e04d23ca636d182fb7a110d2d6c6b, Netlify 6ab6dae04b46000008d93fec, publicado em 25/09/2026 às 17:35:11 BRT. A tela autenticada confirma produção, 13 funções, 192 arquivos, build concluído às 17:35:10 e as cinco programações existentes. Domínio e URL imutável responderam HTTP 200 em modo ativo, entrada durável e assinatura ativa; requisições sem assinatura foram bloqueadas com HTTP 401. Apps Script v160 preservado. Nenhuma mensagem real ou reexecução do evento antigo. PUBLICACAO.json contém o recibo da publicação e da reconciliação documental.

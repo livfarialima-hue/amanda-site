@@ -17,17 +17,17 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
-    "lastObservedProductionCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
-    "functionalDeployId": "6ab6d50398c196000844f21a",
-    "lastObservedProductionDeployId": "6ab6d50398c196000844f21a",
-    "rollbackCommit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
-    "rollbackDeployId": "6ab6ceb59b48eb00087c67c0",
-    "publishedAt": "2026-09-25T20:10:09Z",
-    "lastVerifiedAt": "2026-09-25T20:11:27.480Z",
-    "candidateChangeId": "BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25",
+    "functionalCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
+    "lastObservedProductionCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
+    "functionalDeployId": "6ab6dae04b46000008d93fec",
+    "lastObservedProductionDeployId": "6ab6dae04b46000008d93fec",
+    "rollbackCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+    "rollbackDeployId": "6ab6d50398c196000844f21a",
+    "publishedAt": "2026-09-25T20:35:11Z",
+    "lastVerifiedAt": "2026-09-25T20:38:17.595Z",
+    "candidateChangeId": "BRUNA-ACEITE-CORTESIA-2026-09-25",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-25.1",
+    "bundleVersion": "2026-09-25.2",
     "appsScriptVersion": 160
   },
   "documentation": {
@@ -44,11 +44,5 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-ACEITE-CORTESIA-2026-09-25",
-    "bundleVersion": "2026-09-25.2",
-    "status": "tested_local",
-    "baselineFunctionalCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

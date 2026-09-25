@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -146,6 +146,14 @@
       "Sem preco sem oferta, mistura de procedimento ou faixa repetida",
       "Sem confirmacao de agenda ou quebra de cuidado/takeover"
     ],
-    "rollbackRule": "Conter se houver aceite falso, faixa indevida, repeticao ou efeito fora dos guardrails."
+    "rollbackRule": "Conter se houver aceite falso, faixa indevida, repeticao ou efeito fora dos guardrails.",
+    "dueAt": "2026-09-27T20:35:11Z"
+  },
+  "release": {
+    "approvedCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
+    "netlifyDeployId": "6ab6dae04b46000008d93fec",
+    "appsScriptVersion": 160,
+    "verifiedAt": "2026-09-25T20:38:17.595Z",
+    "documentationStatus": "pending"
   }
 }
