@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "published_pending_documentation",
+  "status": "published_verified",
   "changeId": "BRUNA-CONTEXTO-INDISPONIVEL-2026-09-25",
   "authorization": {
     "approvedBy": "Daniel",
@@ -30,10 +30,21 @@
     "preserveQueue": true
   },
   "documentation": {
-    "status": "pending",
+    "status": "verified",
     "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "baselineSha256": "cfac02ae3c0b6e46dd2c88ac6328c505c85f7eceb383bd80bf0cb0d03ec5b402",
-    "baselineEqual": true
+    "baselineEqual": true,
+    "commit": "7f242a66d0cd295c0f35f394163d149b1215d438",
+    "verifiedAt": "2026-09-25T19:45:11.2898527Z",
+    "files": [
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "825391b4920697bd4f2a86643b4da4b2b6ca3da472830a44a523562e1725331e",
+        "bytes": 204739,
+        "equal": true
+      }
+    ]
   },
   "approvedCommit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
   "netlify": {

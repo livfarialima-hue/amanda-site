@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTEXTO-INDISPONIVEL-2026-09-25",
   "title": "Contexto indisponivel sem suposicao de procedimento na resposta de preco",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "91504821af4251d2e5e9c06b1b082eafa98c0044",
   "authorization": {
     "required": true,
@@ -143,7 +143,10 @@
     "netlifyDeployId": "6ab6ceb59b48eb00087c67c0",
     "appsScriptVersion": 160,
     "verifiedAt": "2026-09-25T19:43:31.058Z",
-    "documentationStatus": "pending",
-    "realReplyValidation": "not_observed"
+    "documentationStatus": "verified",
+    "realReplyValidation": "not_observed",
+    "documentationVerifiedAt": "2026-09-25T19:45:11.2898527Z",
+    "drivePlanSha256": "825391b4920697bd4f2a86643b4da4b2b6ca3da472830a44a523562e1725331e",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
   }
 }
