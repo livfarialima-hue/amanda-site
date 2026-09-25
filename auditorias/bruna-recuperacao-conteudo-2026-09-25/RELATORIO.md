@@ -18,10 +18,19 @@ Os cenarios sao sinteticos; nenhum identificador ou conteudo de paciente foi inc
 
 ## Validacao
 
-1706/1706 testes integrais e 121 focados passaram, com 18 comandos contratuais, arquitetura, build de 192 arquivos e site:check. ops:check permanece SYNC_PENDING ate concluir a reconciliacao documental. Foram conferidas as 27 fontes Apps Script contra o baseline, os tres IDs canonicos e os bytes das duas projecoes do Drive. Publicacao autorizada realizada somente depois do commit e preflight; nenhum envio real ou alteracao manual de dados de pacientes.
+1706/1706 testes integrais e 121 focados passaram, com 18 comandos contratuais, arquitetura, build de 192 arquivos e site:check. A reconciliacao documental foi verificada nos mesmos IDs do Drive; o fechamento final exige ops:check OK no checkout canonico limpo. Foram conferidas as 27 fontes Apps Script contra o baseline, os tres IDs canonicos e os bytes das duas projecoes do Drive. Publicacao autorizada realizada somente depois do commit e preflight; nenhum envio real ou alteracao manual de dados de pacientes.
 
 ## Reversao compativel
 
 Conter a recuperacao se houver regressao. Reverter Code.gs/LeadClassification.gs ao Apps Script v160 e os demais modulos Netlify ao baseline 1358a1d, mantendo o leitor inbound-recovery.mjs desta candidata ate drenar as entradas pending/<hash>/text e /unavailable. Nao restaurar isoladamente o deploy antigo enquanto existirem essas chaves; o leitor antigo nao as reconhece. Preservar historico, assinaturas, recibos e pausas; sem replay manual.
 
 A recuperacao aguarda o lease do worker anterior para impedir duas respostas concorrentes. Consulta tambem recibos das perguntas de esclarecimento e do atendimento fora do horario. Falha nessa leitura mantem a entrada pendente; nenhum envio e autorizado por falta de recibo.
+
+## Reconciliação documental
+
+Manual e Plano foram commitados em 33f95757d4b1a24d8078844f40d01af7363e8c0b antes de atualizar as projeções existentes. O baseline remoto permaneceu idêntico ao preflight. As releituras integrais depois da atualização coincidiram byte a byte com os arquivos do commit; IDs e permissões preservados.
+
+- docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md: 03b8aeee814e97247eede4afedab6d4d928cb3d6fdc7ec93bbc282a35d74b343 (210683 bytes), Drive 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO.
+- docs/estrategia-abordagem-bruna.md: efc3c0e899f062ad322447718860c43e386718a6e7459bbd3426bbf664506697 (131666 bytes), Drive 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF.
+
+O código funcional publicado é 1920658; commits seguintes registram somente documentação e recibos, com [skip netlify]. Os 20 arquivos da mudança funcional permanecem no escopo; dois arquivos adicionais registram a projeção do manual e o recibo do manifesto, totalizando 22. Nenhuma confirmação de recuperação ou entrega real a paciente foi inferida das sondas técnicas.

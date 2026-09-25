@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "approvedCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
   "authorization": {
     "by": "Daniel",
@@ -130,5 +130,30 @@
     "dueAt": "2026-09-27T21:41:40Z",
     "status": "pending_owner_review",
     "automationCreated": false
+  },
+  "documentation": {
+    "status": "verified",
+    "commit": "33f95757d4b1a24d8078844f40d01af7363e8c0b",
+    "verifiedAt": "2026-09-25T21:44:18.732Z",
+    "files": [
+      {
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "sha256": "03b8aeee814e97247eede4afedab6d4d928cb3d6fdc7ec93bbc282a35d74b343",
+        "bytes": 210683,
+        "equal": true,
+        "verifiedAt": "2026-09-25T21:44:18.732Z"
+      },
+      {
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "sha256": "efc3c0e899f062ad322447718860c43e386718a6e7459bbd3426bbf664506697",
+        "bytes": 131666,
+        "equal": true,
+        "verifiedAt": "2026-09-25T21:44:18.732Z"
+      }
+    ],
+    "baselineEqual": true,
+    "existingIdsPreserved": true
   }
 }

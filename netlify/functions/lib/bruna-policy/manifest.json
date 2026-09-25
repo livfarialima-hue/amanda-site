@@ -27,7 +27,7 @@
     "publishedAt": "2026-09-25T21:41:40Z",
     "lastVerifiedAt": "2026-09-25T21:42:05.670Z",
     "candidateChangeId": "BRUNA-RECUPERACAO-CONTEUDO-2026-09-25",
-    "candidateStatus": "published_documentation_pending",
+    "candidateStatus": "published_verified",
     "bundleVersion": "2026-09-25.2",
     "appsScriptVersion": 161
   },
@@ -40,7 +40,7 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "96a0631ac7ddcc0a1a7800041a460c465e74bf1bb1b9bf4402055fe4a47f41a5"
+    "driveProjectionSha256": "efc3c0e899f062ad322447718860c43e386718a6e7459bbd3426bbf664506697"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",

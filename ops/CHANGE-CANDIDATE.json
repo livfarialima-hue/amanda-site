@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RECUPERACAO-CONTEUDO-2026-09-25",
   "title": "Recuperar texto posterior da mesma mensagem sem duplicar respostas",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "318cf8e48f37bc23a4eb869c6af59480320d55b7",
   "authorization": {
     "required": true,
@@ -143,7 +143,12 @@
       "requiredCommandsPassed": 18,
       "regressionBeforeFix": "Cinco cenarios falharam antes da correcao; sem envios reais.",
       "reference": "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
-      "prepublicationOperationalCheck": "expected_sync_pending_before_publication"
+      "prepublicationOperationalCheck": "expected_sync_pending_before_publication",
+      "documentationGuards": {
+        "passed": 8,
+        "failed": 0,
+        "command": "node --test scripts/check-operational-consistency.test.mjs scripts/check-change-safety.test.mjs"
+      }
     }
   },
   "rollback": {
@@ -166,6 +171,12 @@
     "netlifyDeployId": "6ab6ea73cea89200081ef8d5",
     "appsScriptVersion": 161,
     "verifiedAt": "2026-09-25T21:42:05.670Z",
-    "documentationStatus": "pending"
+    "documentationStatus": "verified",
+    "documentationVerifiedAt": "2026-09-25T21:44:18.732Z",
+    "documentationCommit": "33f95757d4b1a24d8078844f40d01af7363e8c0b",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "03b8aeee814e97247eede4afedab6d4d928cb3d6fdc7ec93bbc282a35d74b343",
+    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveManualSha256": "efc3c0e899f062ad322447718860c43e386718a6e7459bbd3426bbf664506697"
   }
 }
