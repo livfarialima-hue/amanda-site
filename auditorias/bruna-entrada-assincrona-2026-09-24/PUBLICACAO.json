@@ -96,21 +96,28 @@
     "preserveQueue": true
   },
   "documentation": {
-    "status": "pending_updated_delivery_evidence",
+    "status": "verified",
     "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "baselineSha256": "aba6a9c468ff474b458b4b39a8a2f6d1a718af6d2230773e83315df7ab7ef44c",
     "baselineEqual": true,
-    "commit": "6c94c9b1f2bbc380e285d49c57f5ee98b3f755a0",
-    "verifiedAt": "2026-09-25T00:41:47Z",
+    "commit": "3487e7cc5488a859ed63dcbaf5ad552019dced7f",
+    "verifiedAt": "2026-09-25T00:49:05.604Z",
     "files": [
       {
         "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
         "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "sha256": "1cc328c9ea6639dfa7ecd924a144b2c6ed7a41ae3298adeb1750b42c1b9bbb01",
-        "bytes": 202255,
+        "sha256": "cfac02ae3c0b6e46dd2c88ac6328c505c85f7eceb383bd80bf0cb0d03ec5b402",
+        "bytes": 202822,
         "equal": true
       }
-    ]
+    ],
+    "previousProjection": {
+      "commit": "6c94c9b1f2bbc380e285d49c57f5ee98b3f755a0",
+      "verifiedAt": "2026-09-25T00:41:47Z",
+      "sha256": "1cc328c9ea6639dfa7ecd924a144b2c6ed7a41ae3298adeb1750b42c1b9bbb01"
+    },
+    "preDeliveryUpdateSha256": "1cc328c9ea6639dfa7ecd924a144b2c6ed7a41ae3298adeb1750b42c1b9bbb01",
+    "preDeliveryUpdateEqual": true
   },
   "serviceOutcome": "new_natural_inbound_reply_delivered"
 }
