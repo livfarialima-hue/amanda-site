@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25",
-  "status": "not_published",
+  "status": "published_documentation_pending",
   "authorization": {
     "approvedBy": "Daniel",
-    "reference": "Este tambem. Precisa ser melhor. Veja tudo que da pra melhorar e melhore. Logo apos publique."
+    "reference": "Este tambem. Precisa ser melhor. Veja tudo que da pra melhorar e melhore. Logo apos publique.",
+    "recordedAt": "2026-09-25T20:09:22.727Z"
   },
   "appsScript": {
     "version": 160,
@@ -95,5 +96,47 @@
         "status": "passed"
       }
     ]
+  },
+  "approvedCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab6d50398c196000844f21a",
+    "approvedCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "buildCompletedAt": "2026-09-25T20:10:08Z",
+    "publishedAt": "2026-09-25T20:10:09Z",
+    "verifiedAt": "2026-09-25T20:11:27.480Z",
+    "functionsCount": 13,
+    "deployedFilesCount": 192,
+    "scheduledFunctionsPreserved": 5,
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active",
+    "flagUnchanged": true,
+    "unsignedRequestHttpStatus": 401
+  },
+  "verification": {
+    "localTests": 1682,
+    "focusedTests": 211,
+    "failedTests": 0,
+    "requiredCommandsPassed": 17,
+    "productionAndImmutableUrlChecked": true,
+    "patientTestSentByAgent": false,
+    "outageReplayPerformed": false,
+    "newNaturalIncidentCaseObserved": false,
+    "livePatientDeliveryConfirmed": false,
+    "limitation": "Regras, contexto e publicacao verificados. Redacao futura do modelo e aplicacao manual pela equipe exigem observacao de conversas naturais; nao houve mensagem real de teste."
+  },
+  "rollback": {
+    "commit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
+    "netlifyDeployId": "6ab6ceb59b48eb00087c67c0",
+    "preserveQueue": true
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe Clinica LIV",
+    "dueAt": "2026-09-27T20:10:09Z",
+    "status": "pending_owner_review",
+    "automationCreated": false
   }
 }

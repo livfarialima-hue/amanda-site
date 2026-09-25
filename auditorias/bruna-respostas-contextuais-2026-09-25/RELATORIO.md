@@ -1,6 +1,6 @@
 # Bruna — respostas contextuais, 25/09/2026
 
-**Estado: testado localmente; publicação autorizada por Daniel, ainda pendente.** Baseline do repositório: fa950dd825c2894e8f712379c0546c0cc728009e. Produção anterior: commit 31105d3bf8f9dc0f19f97f8344bf9966e85da3d7, Netlify 6ab6ceb59b48eb00087c67c0.
+**Estado: produção publicada e verificada em 25/09/2026, 17:10 BRT; recibos finais em PUBLICACAO.json.** Baseline do repositório: fa950dd825c2894e8f712379c0546c0cc728009e. Produção anterior: commit 31105d3bf8f9dc0f19f97f8344bf9966e85da3d7, Netlify 6ab6ceb59b48eb00087c67c0.
 
 ## Evidência e limites
 
@@ -29,8 +29,12 @@ Esses testes demonstram contratos e contexto corretos; não garantem a redação
 
 ## Publicação e reversão
 
-Destino: Netlify canônico inspiring-sprite-b35ca4, branch reestruturacao-site. Apps Script v160 preservado, sem escrita. A solicitação atual autoriza publicar após validação e será vinculada ao commit no preflight externo. PUBLICACAO.json registra o resultado. Plano e manual substituem as mesmas projeções no Drive, com conferência de hash antes e depois.
+Destino: Netlify canônico inspiring-sprite-b35ca4, branch reestruturacao-site. Apps Script v160 preservado, sem escrita. A solicitação atual foi vinculada ao commit aprovado no preflight externo, que passou antes da escrita. PUBLICACAO.json registra o resultado. Plano e manual substituem as mesmas projeções no Drive, com conferência de hash antes e depois.
 
 Reversão: restaurar Netlify 6ab6ceb59b48eb00087c67c0 / commit 31105d3bf8f9dc0f19f97f8344bf9966e85da3d7, preservando filas, registros, flags e a correção anterior. Conter se houver indicação individual, silêncio indevido, perda de pedido explícito ou quebra de proteção.
 
 Acompanhamento operacional: Daniel/equipe, primeiras conversas elegíveis e 48 horas após a publicação. Verificar se a resposta atende à dúvida concreta, se não há link ou agenda prematura, repetição, biografia ou diagnóstico. Reavaliar no painel executivo; nenhuma automação de monitoramento foi criada e ganho de conversão ainda não foi medido.
+
+## Recibo de produção
+
+Commit funcional 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8, Netlify 6ab6d50398c196000844f21a, contexto production. Build terminou em 25/09 às 20:10:08 UTC; site ativo às 20:10:09 UTC (17:10 BRT). Página autenticada confirmou Published, 13 funções e 192 arquivos; log confirmou as cinco programações anteriores. Domínio canônico e URL imutável retornaram 200, automação ativa, entrada durável e proteção por assinatura; POST sem assinatura retornou 401 em ambos. Apps Script v160 mantido, sem escrita. Nenhuma mensagem de teste foi enviada. O fechamento documental registra a substituição das duas projeções canônicas com hash no recibo, sem mudar o commit funcional publicado.

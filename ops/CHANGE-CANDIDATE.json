@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -156,5 +156,13 @@
       "Guarda clinica, preco e takeover preservados"
     ],
     "rollbackRule": "Reverter se houver silencio indevido, indicacao individual, perda de resposta segura ou quebra dos guardrails."
+  },
+  "release": {
+    "approvedCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+    "netlifyDeployId": "6ab6d50398c196000844f21a",
+    "appsScriptVersion": 160,
+    "verifiedAt": "2026-09-25T20:11:27.480Z",
+    "documentationStatus": "pending_drive_verification",
+    "realReplyValidation": "not_observed"
   }
 }

@@ -1,10 +1,10 @@
 # WhatsApp Clínica LIV — rotina operacional
 
 <!-- BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25 -->
-**Pacote 2026-09-25.1 — TESTADO LOCALMENTE, publicação pendente.** Melhoria autorizada por Daniel para publicação após validação. A conversa do print foi conferida nos registros canônicos e suas respostas foram humanas; não é prova de falha de autoria da Bruna. A revisão complementar de 20 respostas automáticas recentes orientou os ajustes, sem representar auditoria integral.
+**Pacote 2026-09-25.1 — PUBLICADO E VERIFICADO em 25/09/2026, 17:10 BRT.** Commit funcional 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8, Netlify 6ab6d50398c196000844f21a ativo. Melhoria autorizada por Daniel. A conversa do print foi conferida nos registros canônicos e suas respostas foram humanas; não é prova de falha de autoria da Bruna. A revisão complementar de 20 respostas automáticas recentes orientou os ajustes, sem representar auditoria integral.
 
 Respostas pessoais passam a priorizar informação útil e breve, sem artigo espontâneo, indicação presumida de lipo, orientação sobre emagrecimento, currículo ou agenda prematura. Pedidos explícitos, preços aprovados, proteção clínica, cuidado, domínio humano e a correção anterior de mensagem indisponível são preservados. Apps Script v160, campanhas, filas, cadência e mensagens antigas não fazem parte da alteração. Evidência: auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md.
-Validação: 1.682 testes integrais, 211 focados e 17 comandos obrigatórios aprovados. Responsável pelo acompanhamento: Daniel/equipe, primeiras conversas elegíveis e próximas 48 horas. Reverter diante de indicação individual, perda de pedido explícito ou silêncio indevido. Nenhum envio real de teste.
+Validação: 1.682 testes integrais, 211 focados e 17 comandos obrigatórios aprovados. Produção e URL imutável com automação ativa, entrada durável e assinatura protegida; pedido sem assinatura rejeitado com 401. Treze funções, cinco programações e 192 arquivos preservados. Responsável pelo acompanhamento: Daniel/equipe, primeiras conversas elegíveis e revisão em 27/09 às 17:10 BRT. Resultado em novas conversas ainda não observado. Reverter diante de indicação individual, perda de pedido explícito ou silêncio indevido. Nenhum envio real de teste.
 <!-- /BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25 -->
 
 
