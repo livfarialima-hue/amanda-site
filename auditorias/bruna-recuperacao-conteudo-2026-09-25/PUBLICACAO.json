@@ -1,3 +1,134 @@
 {
-  "status": "not_published"
+  "status": "published_documentation_pending",
+  "approvedCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
+  "authorization": {
+    "by": "Daniel",
+    "reference": "Autorizacao continuada nesta tarefa: corrigir, publicar e ativar; investigar e resolver as entradas incompletas.",
+    "releasePreflightAt": "2026-09-25T21:34:54.9031300Z"
+  },
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab6ea73cea89200081ef8d5",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "commit": "1920658fa469b640099d3d4908e01945097cbaf3",
+    "publishedAt": "2026-09-25T21:41:40Z",
+    "buildCompletedAt": "2026-09-25T21:41:38Z",
+    "verifiedAt": "2026-09-25T21:42:05.670Z",
+    "functionsCount": 13,
+    "scheduledFunctionsPreserved": 5,
+    "deployedFilesCount": 192,
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active"
+  },
+  "appsScript": {
+    "version": 161,
+    "projectId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "publishedAtLocal": "2026-09-25T18:40:00-03:00",
+    "publishedTimePrecision": "minute_from_deployment_UI",
+    "verifiedAt": "2026-09-25T21:42:05.670Z",
+    "canonicalIdsVerified": true,
+    "all27SourcesComparedBeforeWrite": true,
+    "unchangedSources": 25,
+    "savedSourcesReloadedAndComparedToApprovedCommit": {
+      "Code.gs": "cc4563881793d65cd36e54fa10a1d457fa0ffd8b15fef8ec5d21d4b96fa54ade",
+      "LeadClassification.gs": "75510feb62ad66157de516c90c55796d02f186c0eb8df78dfbc56bf2ce1496b6"
+    },
+    "hashNormalization": "CRLF to LF, trimEnd, SHA-256",
+    "accessAndDeploymentUnchanged": true
+  },
+  "verification": {
+    "verifiedAt": "2026-09-25T21:42:05.670Z",
+    "commit": "1920658fa469b640099d3d4908e01945097cbaf3",
+    "deploy": "6ab6ea73cea89200081ef8d5",
+    "checks": [
+      {
+        "root": "https://draamandaschroeder.com.br",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedRequestHttpStatus": 401
+      },
+      {
+        "root": "https://6ab6ea73cea89200081ef8d5--inspiring-sprite-b35ca4.netlify.app",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedRequestHttpStatus": 401
+      }
+    ],
+    "appsScript": {
+      "version": 161,
+      "webAppHttpStatus": 200,
+      "unauthorizedRequest": {
+        "ok": false,
+        "error": "unauthorized"
+      }
+    },
+    "patientTestSent": false,
+    "localFullTests": 1706,
+    "localFocusedTests": 121,
+    "failedTests": 0,
+    "requiredCommandsPassed": 18,
+    "outageReplayPerformed": false,
+    "historicalConversationRewritten": false,
+    "newNaturalRecoveryObserved": false,
+    "limitation": "Falhas locais reproduzidas e corrigidas. Primeira entrega real veio sem texto; nao ha prova de reenvio enriquecido no incidente. Publicacao nao comprova recuperacao ou entrega a paciente."
+  },
+  "rollback": {
+    "local": "Descartar apenas a candidata isolada.",
+    "production": "Conter a recuperacao se houver regressao. Reverter Code.gs/LeadClassification.gs ao Apps Script v160 e os demais modulos Netlify ao baseline 1358a1d, mantendo o leitor inbound-recovery.mjs desta candidata ate drenar as entradas pending/<hash>/text e /unavailable. Nao restaurar isoladamente o deploy antigo enquanto existirem essas chaves; o leitor antigo nao as reconhece. Preservar historico, assinaturas, recibos e pausas; sem replay manual."
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Primeiras recuperacoes naturais e 48 horas",
+    "signals": [
+      "Mensagem recuperada preenche historico com horario e identidade originais",
+      "Nenhuma resposta repetida, reativacao humana ou substituicao de texto valido",
+      "Falhas e prazo da fila"
+    ],
+    "rollbackRule": "Conter diante de duplicidade, mistura de identidade ou regressao da fila.",
+    "dueAt": "2026-09-27T21:41:40Z",
+    "status": "pending_owner_review",
+    "automationCreated": false
+  }
 }

@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -28,7 +28,9 @@
       "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/conversation-memory.mjs",
       "netlify/functions/lib/conversation-memory.test.mjs",
       "netlify/functions/lib/inbound-background-intake.test.mjs",
@@ -156,6 +158,14 @@
       "Nenhuma resposta repetida, reativacao humana ou substituicao de texto valido",
       "Falhas e prazo da fila"
     ],
-    "rollbackRule": "Conter diante de duplicidade, mistura de identidade ou regressao da fila."
+    "rollbackRule": "Conter diante de duplicidade, mistura de identidade ou regressao da fila.",
+    "dueAt": "2026-09-27T21:41:40Z"
+  },
+  "release": {
+    "approvedCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
+    "netlifyDeployId": "6ab6ea73cea89200081ef8d5",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-25T21:42:05.670Z",
+    "documentationStatus": "pending"
   }
 }

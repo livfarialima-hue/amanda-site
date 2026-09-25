@@ -1,5 +1,16 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+<!-- BRUNA-RECUPERACAO-CONTEUDO-2026-09-25 -->
+**PUBLICADO E VERIFICADO em 25/09/2026, 18:41 BRT.** Commit funcional 1920658fa469b640099d3d4908e01945097cbaf3, Netlify 6ab6ea73cea89200081ef8d5 e Apps Script v161 no deployment canonico. Corrige falhas locais reproduzidas na fila, na memoria e no historico: texto entregue depois para a mesma mensagem pode preencher apenas conteudo antes indisponivel, conservando identidade e horario originais. Os corpos assinados sao preservados separadamente; a conclusao antiga nao apaga a versao recuperada. A recuperacao aguarda o processamento anterior e consulta seus recibos para nao repetir resposta, inclusive quando o provedor usa outro event ID para o mesmo wamid. Texto valido, atendimento humano, assinaturas, janelas e precos preservados.
+
+Validacao: 1.706 testes integrais e 121 focados sem falhas; 18 comandos contratuais, arquitetura, build e verificacoes publicas. Treze funcoes, cinco programacoes e 192 arquivos preservados. Dominio e URL imutavel respondem 200, automacao active, entrada duravel e assinatura ativa; pedido sem assinatura retorna 401. Apps Script v161 e fontes salvas conferidos; requisicao sem segredo rejeitada. Nenhuma mensagem real de teste, replay ou reescrita de conversas antigas. Registros legados concluidos sem recibo de disponibilidade permanecem fechados.
+
+Limite da evidencia: a entrega original na Meta/YCloud veio como unsupported/131060, sem corpo; nao foi comprovado reenvio enriquecido nesse incidente. A correcao local nao recria texto nunca entregue. Primeira recuperacao natural ainda nao observada. Conferir os primeiros casos e revisar ate 27/09/2026, 18:41 BRT, responsavel Daniel/equipe LIV. Chamado ao provedor nao enviado sem autorizacao especifica.
+
+Rollback: baseline 1358a1d / Netlify 6ab6dae04b46000008d93fec e Apps Script v160, com restricao obrigatoria: manter o leitor inbound-recovery.mjs deste pacote ate drenar as novas chaves pending/<hash>/text e /unavailable. Nao restaurar isoladamente o deploy antigo enquanto existirem essas entradas. Preservar assinaturas, recibos e pausas, sem replay manual. Evidencias e recibos: auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md e PUBLICACAO.json. Plano e manual sao projetados nos mesmos IDs do Drive e comparados byte a byte antes do fechamento.
+<!-- /BRUNA-RECUPERACAO-CONTEUDO-2026-09-25 -->
+
+
 <!-- BRUNA-ACEITE-CORTESIA-2026-09-25 -->
 **Pacote 2026-09-25.2 — PUBLICADO E VERIFICADO em 25/09/2026, 17:35 BRT.** Commit funcional 1358a1db111e04d23ca636d182fb7a110d2d6c6b, Netlify 6ab6dae04b46000008d93fec ativo. Validação: 1.694 testes integrais e 152 focados, sem falhas. Correção e publicação autorizadas por Daniel nesta tarefa. Por favor e Por gentileza continuam a última oferta informativa concreta, incluindo faixa autorizada, sem nova pergunta. Sem oferta, com recusa, condição adicional ou faixa já enviada, não liberam preço ou agenda. No incidente, a entrada foi recebida; o aceite isolado não ativava a prévia da faixa e o processamento terminou em revisão humana por baixa confiança, sem resposta automática. Recusa explícita de valores também deixa de contar como novo pedido.
 
