@@ -1,5 +1,6 @@
 import processYCloudWebhook from "./ycloud-webhook.mjs";
-import { allowsPatientSideEffects } from "./lib/automation-mode.mjs";
+import { dispatchInboundRecovery } from "./lib/inbound-recovery-dispatch.mjs";
+export { dispatchInboundRecovery } from "./lib/inbound-recovery-dispatch.mjs";
 import {
   claimDueInboundRecoveries,
   completeInboundRecovery,
@@ -87,6 +88,7 @@ export async function processInboundRecoveryJob(
     phone: job.phone,
   });
   if (
+    job.primaryIntake !== true &&
     latest.status === "completed" &&
     latest.found &&
     latest.eventId !== String(job.eventId)
@@ -97,6 +99,10 @@ export async function processInboundRecoveryJob(
     return { status: completion?.status === "completed"
       ? "superseded" : `completion_${completion?.status || "failed"}` };
   }
+
+  // A primary intake has not reached LEADS yet. Even if a newer message arrived,
+  // persist its history through the regular handler before the final reply gate
+  // suppresses an outdated answer. Legacy recovery already passed that intake.
 
   let response;
   let body = null;
@@ -113,7 +119,7 @@ export async function processInboundRecoveryJob(
         },
         body: job.rawBody,
       }),
-      {},
+      { livInboundBackground: true },
     );
     try {
       body = response ? await response.clone().json() : null;
@@ -227,41 +233,12 @@ export async function runInboundRecoveryBatch({
   return result;
 }
 
-export async function dispatchInboundRecovery({
-  env = process.env, fetchImpl = fetch, logImpl = writeOperationalLog,
-} = {}) {
-  let result;
-  const siteUrl = String(env.URL || "").replace(/\/$/, "");
-  if (!allowsPatientSideEffects(env.WHATSAPP_AUTOMATION_MODE)) {
-    result = { status: "dispatch_skipped", reason: "automation_inactive" };
-  } else if (!siteUrl || !env.GOOGLE_SHEETS_WEBHOOK_SECRET) {
-    result = { status: "dispatch_skipped", reason: "configuration_missing" };
-  } else {
-    try {
-      const response = await fetchImpl(`${siteUrl}/.netlify/functions/ycloud-recovery-background`, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ secret: env.GOOGLE_SHEETS_WEBHOOK_SECRET }),
-        signal: AbortSignal.timeout(5_000),
-      });
-      result = { status: response.status === 202 ? "dispatched" : "dispatch_failed",
-        httpStatus: response.status };
-    } catch {
-      result = { status: "dispatch_failed", reason: "request_failed" };
-    }
-  }
-  logImpl({ source: "ycloud_recovery_dispatch", category: "ycloud_recovery_schedule",
-    reason: result.status, fields: result });
-  return result;
-}
-
 export default async () => {
   await dispatchInboundRecovery();
 };
 
 export const config = {
-  // O webhook principal processa cada mensagem imediatamente e registra uma
-  // recuperacao duravel somente como rede de seguranca. Verificar a fila a
-  // cada cinco minutos preserva o fallback sem gastar uma invocacao ociosa
-  // por minuto durante todo o mes.
+  // Fallback duravel; com entrada assincrona habilitada, o webhook tambem
+  // dispara este mesmo worker imediatamente depois de persistir a entrada.
   schedule: "*/5 * * * *",
 };

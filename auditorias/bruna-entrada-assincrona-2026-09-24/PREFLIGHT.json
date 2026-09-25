@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-ENTRADA-ASSINCRONA-2026-09-24",
+  "checkedAt": "2026-09-25T00:25:06Z",
+  "readOnly": true,
+  "externalWritesPerformed": false,
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "siteName": "inspiring-sprite-b35ca4",
+    "functionalCommit": "cf90c398ac45575eb044bfccf401296e1ea03368",
+    "deployId": "6aaffd4954313500081bc6a2",
+    "observedWebhookDurationMs": [30039, 30359, 30000],
+    "leadConfirmation": "two_timeouts_no_active_reply_queued",
+    "recoveryStoreRoot": ["completed/"],
+    "pendingPrefixVisible": false,
+    "processingMode": "direct_with_background_completion"
+  },
+  "appsScript": {
+    "canonicalVersion": 160,
+    "targetRegistry": "apps-script/clinica-liv-leads/production-target.json",
+    "observedEntryDurationMs": 27650,
+    "entryRecordedInLeads": true,
+    "subsequentHumanTakeover": true,
+    "writesPlanned": false
+  },
+  "ycloud": {
+    "phoneStatusAfterReconnect": "Connected",
+    "webhookResult": "client_timeout",
+    "newInboundObserved": true
+  },
+  "limits": [
+    "Resumo de consultas operacionais durante a tarefa, com ultimo readback da fila; nao e captura atomica de todos os sistemas.",
+    "Nenhum identificador individual, transcricao ou dado pessoal exportado para este recibo.",
+    "A confirmacao de recebimento e os testes locais nao comprovam resposta ou entrega real.",
+    "Renovar preflight e autorizacao do commit antes de qualquer publicacao."
+  ]
+}

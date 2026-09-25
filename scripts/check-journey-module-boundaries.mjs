@@ -7,8 +7,9 @@ const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const AUTOMATION_MODE_CONSUMERS = [
   {
-    path: "netlify/functions/ycloud-recovery.mjs",
+    path: "netlify/functions/lib/inbound-recovery-dispatch.mjs",
     names: ["allowsPatientSideEffects"],
+    module: "./automation-mode.mjs",
   },
   {
     path: "netlify/functions/ycloud-recovery-background.mjs",
@@ -66,9 +67,10 @@ export function collectJourneyBoundaryViolations(root = PROJECT_ROOT) {
     const source = read(consumer.path);
     for (const importedName of consumer.names) {
       const importedFrom = importedModuleFor(source, importedName);
-      if (importedFrom !== "./lib/automation-mode.mjs") {
+      const expectedModule = consumer.module || "./lib/automation-mode.mjs";
+      if (importedFrom !== expectedModule) {
         violations.push(
-          `${consumer.path}: ${importedName} must come from ./lib/automation-mode.mjs`,
+          `${consumer.path}: ${importedName} must come from ${expectedModule}`,
         );
       }
     }

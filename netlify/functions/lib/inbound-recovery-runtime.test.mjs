@@ -159,3 +159,38 @@ test("failed completion does not become a successful recovery receipt", async ()
   });
   assert.equal(result.status, "completion_failed");
 });
+
+test("worker supplies trusted execution context and preserves human takeover as a terminal outcome", async () => {
+  let outcome;
+  const result = await processInboundRecoveryJob(job, {
+    now,
+    getLatestInboundReplyMarkerImpl: async () => ({ status: "completed", found: false }),
+    processImpl: async (request, context) => {
+      assert.equal(context.livInboundBackground, true);
+      assert.equal(request.headers.get("X-LIV-Durable-Retry"), "1");
+      assert.equal(await request.text(), job.rawBody);
+      return Response.json({ leadRecorded: true, automaticWorkFinished: true, humanTakeoverToday: true });
+    },
+    completeInboundRecoveryImpl: async (_job, options) => {
+      outcome = options.outcome; return { status: "completed" };
+    },
+    rescheduleInboundRecoveryImpl: async () => assert.fail("Do not replay a conversation owned by the team"),
+  });
+  assert.equal(result.status, "completed");
+  assert.equal(outcome, "human_takeover");
+});
+
+test("newer inbound must not discard primary intake before its message is recorded", async () => {
+  let recorded = false;
+  const result = await processInboundRecoveryJob({ ...job, primaryIntake: true }, {
+    now,
+    getLatestInboundReplyMarkerImpl: async () => ({ status: "completed", found: true, eventId: "newer-event" }),
+    processImpl: async () => {
+      recorded = true;
+      return Response.json({ leadRecorded: true, automaticWorkFinished: true, aiActiveStatus: "superseded" });
+    },
+    completeInboundRecoveryImpl: async () => ({ status: "completed" }),
+  });
+  assert.equal(recorded, true);
+  assert.equal(result.status, "completed");
+});

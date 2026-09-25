@@ -125,3 +125,57 @@ test("a non-transient append failure remains fail closed without a retry", async
   assert.equal(result.deliveryAttempts, 1);
   assert.equal(result.recoveredAfterTransientFailure, false);
 });
+
+test("background delivery survives the observed 27.65 second Sheets cold path without a duplicate append", async (t) => {
+  const keys = ["GOOGLE_SHEETS_WEBHOOK_URL", "GOOGLE_SHEETS_WEBHOOK_SECRET"];
+  const previous = keys.map((key) => process.env[key]);
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = "https://sheets.test/webhook";
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "synthetic-secret";
+  t.after(() => keys.forEach((key, index) => {
+    if (previous[index] === undefined) delete process.env[key]; else process.env[key] = previous[index];
+  }));
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let appends = 0, aborted = false, finished = false;
+  t.mock.method(globalThis, "fetch", async (_url, options) => {
+    assert.equal(JSON.parse(options.body).action, "append_lead");
+    appends++;
+    return new Promise((resolve, reject) => {
+      options.signal.addEventListener("abort", () => {
+        aborted = true; reject(new DOMException("timeout", "AbortError"));
+      }, { once: true });
+      setTimeout(() => resolve(Response.json({ ok: true, routed: true,
+        professional: "amanda", routeStatus: "resolved", inserted: true })), 27_650);
+    });
+  });
+  const pending = deliverLead({ eventId: "synthetic-slow-append", messageId: "synthetic-slow-message" },
+    { backgroundExecution: true }).then((result) => { finished = true; return result; });
+  t.mock.timers.tick(20_001);
+  await Promise.resolve();
+  assert.equal(aborted, false);
+  assert.equal(finished, false, "No success before Sheets confirms the route");
+  t.mock.timers.tick(7_650);
+  const result = await pending;
+  assert.equal(result.ok, true);
+  assert.equal(result.inserted, true);
+  assert.equal(result.deliveryAttempts, 1);
+  assert.equal(appends, 1);
+});
+
+test("background retries the identical event once with a bounded confirmation window", async () => {
+  const lead = { eventId: "synthetic-background-retry", messageId: "synthetic-message" };
+  const attempts = [];
+  const result = await deliverLead(lead, {
+    backgroundExecution: true, waitImpl: async () => {},
+    deliverSheetsActionImpl: async (action, payload, options) => {
+      attempts.push({ action, payload, options });
+      return attempts.length === 1 ? { ok: false, errorCode: "timeout" }
+        : { ok: true, httpStatus: 200, responseData: { ok: true, duplicate: true, humanTakeoverToday: true } };
+    },
+  });
+  assert.equal(attempts.length, 2);
+  assert.equal(attempts[0].options.timeoutMs, 45_000);
+  assert.equal(attempts[1].options.timeoutMs, 30_000);
+  assert.deepEqual(attempts.map((entry) => entry.payload.lead), [lead, lead]);
+  assert.equal(result.humanTakeoverToday, true);
+  assert.equal(result.duplicate, true);
+});

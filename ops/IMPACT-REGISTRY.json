@@ -159,7 +159,9 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
-        "scripts/run-tests.mjs"
+        "scripts/run-tests.mjs",
+        "auditorias/bruna-entrada-assincrona-2026-09-24/RELATORIO.md",
+        "auditorias/bruna-entrada-assincrona-2026-09-24/PREFLIGHT.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -1148,7 +1150,8 @@
         "package.json",
         "package-lock.json",
         "netlify/functions/lib/inbound-recovery.mjs",
-        "netlify/functions/ycloud-recovery.mjs"
+        "netlify/functions/ycloud-recovery.mjs",
+        "netlify/functions/lib/inbound-recovery-dispatch.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/lib/appointment-review-store.mjs",
@@ -1182,19 +1185,25 @@
         "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
         "netlify/functions/ycloud-recovery-background.mjs",
         "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-        "scripts/check-journey-module-boundaries.mjs"
+        "scripts/check-journey-module-boundaries.mjs",
+        "netlify/functions/lib/inbound-recovery-dispatch.mjs",
+        "netlify/functions/lib/inbound-background-intake.test.mjs",
+        "netlify/functions/lib/sheets-action-timeout.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/netlify-blobs-contract.test.mjs",
         "netlify/functions/lib/inbound-recovery.test.mjs",
         "netlify/functions/lib/ycloud-recovery.test.mjs",
-        "netlify/functions/lib/inbound-recovery-runtime.test.mjs"
+        "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+        "netlify/functions/lib/inbound-background-intake.test.mjs",
+        "netlify/functions/lib/sheets-action-timeout.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
         "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
         "npm.cmd test",
-        "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs"
+        "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+        "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs"
       ],
       "liveSystems": [
         "Netlify functions",

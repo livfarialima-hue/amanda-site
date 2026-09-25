@@ -201,6 +201,10 @@ import {
   shouldSuppressExactInboundDuplicate,
 } from "./lib/inbound-recovery.mjs";
 import {
+  dispatchInboundRecovery,
+  isInboundBackgroundEnabled,
+} from "./lib/inbound-recovery-dispatch.mjs";
+import {
   applyPatientRelationshipPolicy,
   blocksAutomatedPatientMessages,
   buildPatientCommitment,
@@ -1109,6 +1113,7 @@ export async function deliverLead(
   lead,
   {
     deliverSheetsActionImpl = deliverSheetsAction,
+    backgroundExecution = false,
     waitImpl = (milliseconds) =>
       new Promise((resolve) => setTimeout(resolve, milliseconds)),
   } = {},
@@ -1116,6 +1121,7 @@ export async function deliverLead(
   const firstResult = await deliverSheetsActionImpl(
     "append_lead",
     { lead },
+    backgroundExecution ? { timeoutMs: 45_000 } : undefined,
   );
   if (!shouldRetryLeadDelivery(firstResult)) {
     return leadDeliveryResult(firstResult, {
@@ -1138,7 +1144,7 @@ export async function deliverLead(
     "append_lead",
     { lead },
     {
-      timeoutMs: leadDeliveryRetryTimeoutMs(
+      timeoutMs: backgroundExecution ? 30_000 : leadDeliveryRetryTimeoutMs(
         process.env.GOOGLE_SHEETS_APPEND_RETRY_TIMEOUT_MS,
       ),
     },
@@ -3873,7 +3879,13 @@ async function sendCurrentInboundReply({
 export async function handleYCloudWebhook(
   request,
   context,
-  { resolveAttributionImpl = resolveAttributionJourney, readOutboundReplyStatusImpl = readOutboundReplyStatus } = {},
+  {
+    resolveAttributionImpl = resolveAttributionJourney,
+    readOutboundReplyStatusImpl = readOutboundReplyStatus,
+    registerInboundRecoveryImpl = registerInboundRecovery,
+    markLatestInboundForReplyImpl = markLatestInboundForReply,
+    dispatchInboundRecoveryImpl = dispatchInboundRecovery,
+  } = {},
 ) {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
   const automationMode = normalizeAutomationMode(
@@ -3881,6 +3893,11 @@ export async function handleYCloudWebhook(
   );
   const durableRetry =
     request.headers.get("X-LIV-Durable-Retry") === "1";
+  const backgroundEnabled = isInboundBackgroundEnabled(process.env);
+  // Only the in-process worker can select the extended Sheets budget. Provider
+  // headers are not execution context and cannot bypass durable intake.
+  const backgroundExecution = backgroundEnabled && context?.livInboundBackground === true;
+  const backgroundIntake = backgroundEnabled && !backgroundExecution;
 
   if (request.method === "GET") {
     return json({
@@ -3902,7 +3919,8 @@ export async function handleYCloudWebhook(
         isBrunaConversionExperienceEnabled(process.env)
           ? BRUNA_CONVERSION_EXPERIENCE_VERSION
           : "off",
-      processingMode: "direct_with_background_completion",
+      processingMode: backgroundEnabled
+        ? "durable_background_intake" : "direct_with_background_completion",
       contactPreferencesGuard: "active",
       internalPhoneExclusionConfigured:
         hasConfiguredInternalTeamPhones(),
@@ -4391,8 +4409,6 @@ export async function handleYCloudWebhook(
     });
   }
 
-  await rememberBusinessNumber(message.to);
-
   const eventId = payload.id || message.id || message.wamid;
 
   if (!eventId) {
@@ -4442,7 +4458,7 @@ export async function handleYCloudWebhook(
     : [];
   const recoveryRegistration =
     normalizedMessageType === "text" && text.trim()
-      ? await registerInboundRecovery({
+      ? await registerInboundRecoveryImpl({
           rawBody,
           signature: request.headers.get("YCloud-Signature"),
           contentType:
@@ -4450,15 +4466,30 @@ export async function handleYCloudWebhook(
           origin: new URL(request.url).origin,
           eventId: String(eventId),
           phone,
-        })
+          primaryIntake: backgroundIntake,
+        }, backgroundIntake ? { recoveryDelayMs: 0 } : undefined)
       : { status: "skipped" };
+  const enqueueInbound = backgroundIntake && normalizedMessageType === "text" && Boolean(text.trim());
+  if (enqueueInbound) {
+    if (recoveryRegistration.status === "duplicate" && recoveryRegistration.reason === "already_completed") {
+      return json({ received: true, ignored: true, ignoreReason: "already_completed",
+        automaticWorkFinished: true, recoveryStatus: "already_completed" });
+    }
+    if (!(recoveryRegistration.status === "completed" ||
+        (recoveryRegistration.status === "duplicate" && recoveryRegistration.reason === "already_pending"))) {
+      writeOperationalLog({ source: "ycloud_webhook_intake", category: "webhook_intake",
+        reason: "durable_intake_failed", sourceId: eventId,
+        fields: { recoveryStatus: recoveryRegistration.status } });
+      return json({ received: false, error: "durable_intake_failed", automaticWorkFinished: false }, 503);
+    }
+  }
   let replyDebounceMarkerStatus = "skipped";
   const inboundReplyKind = replyDebounceKindForInbound({
     messageType: normalizedMessageType,
     unsupportedInboundContent,
   });
   if (inboundReplyKind) {
-    const markerResult = await markLatestInboundForReply({
+    const markerResult = await markLatestInboundForReplyImpl({
       phone,
       eventId: String(eventId),
       eventAt: contactAt,
@@ -4471,6 +4502,19 @@ export async function handleYCloudWebhook(
     });
     replyDebounceMarkerStatus = markerResult.status;
   }
+  if (enqueueInbound) {
+    const dispatch = replyDebounceMarkerStatus === "completed"
+      ? await dispatchInboundRecoveryImpl()
+      : { status: "dispatch_skipped", reason: "inbound_marker_failed" };
+    const accepted = dispatch.status === "dispatched";
+    writeOperationalLog({ source: "ycloud_webhook_intake", category: "webhook_intake",
+      reason: accepted ? "durable_intake_accepted" : "durable_intake_dispatch_failed", sourceId: eventId,
+      fields: { recoveryStatus: "pending", dispatchStatus: dispatch.status, automaticWorkFinished: false } });
+    return json({ received: accepted, processingMode: "durable_background_intake",
+      recoveryStatus: "pending", leadRecorded: false, aiActiveQueued: accepted,
+      aiActiveStatus: "deferred", automaticWorkFinished: false }, accepted ? 202 : 503);
+  }
+  await rememberBusinessNumber(message.to);
   const finishEarlyRecovery = async (outcome) => {
     if (!["completed", "duplicate"].includes(recoveryRegistration.status)) {
       return recoveryRegistration.status;
@@ -4761,7 +4805,7 @@ export async function handleYCloudWebhook(
   // behavior.
   lead.professional = preliminaryAutomationPlan.professional;
 
-  let delivery = await deliverLead(lead);
+  let delivery = await deliverLead(lead, { backgroundExecution });
   let patientRelationship = {
     ...(delivery.patientRelationship || {}),
     lookupStatus: delivery.patientRelationship
@@ -5069,7 +5113,7 @@ export async function handleYCloudWebhook(
       const recoveredDelivery = await deliverLead({
         ...lead,
         professional: semanticProfessional,
-      });
+      }, { backgroundExecution });
       if (
         recoveredDelivery.ok &&
         recoveredDelivery.routed !== false &&
@@ -6845,9 +6889,7 @@ export async function handleYCloudWebhook(
 export default handleYCloudWebhook;
 
 export const config = {
-  // Keep the patient-facing webhook on the simplest path. Expensive reply
-  // work still uses `context.waitUntil` when Netlify provides it, while the
-  // final outbound lock prevents a concurrent human or retry from duplicating
-  // the response.
+  // With durable intake enabled, text work runs in the authenticated background
+  // worker. The default-off path retains the previous direct processing flow.
   path: "/api/ycloud/webhook",
 };

@@ -82,6 +82,29 @@ const incoming = {
   rawBody: "{}", signature: "synthetic-signature", origin: "https://example.test",
 };
 
+test("durable intake preserves every signed byte and makes a new job immediately claimable", async () => {
+  const { getStoreImpl } = transportStore();
+  const rawBody = '  {"text":"Mensagem sintética"}\r\n';
+  const now = Date.parse("2026-09-24T23:00:00Z");
+  const result = await registerInboundRecovery({ ...incoming, rawBody, primaryIntake: true },
+    { getStoreImpl, now, recoveryDelayMs: 0 });
+  assert.equal(result.status, "completed");
+  const [job] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+  assert.equal(job.rawBody, rawBody);
+  assert.equal(job.primaryIntake, true);
+  assert.equal(job.dueAt, now);
+});
+
+for (const [field, length] of [["rawBody", 40_001], ["eventId", 301], ["signature", 2_001], ["origin", 1_001]]) {
+  test(`durable intake rejects oversized ${field} without silently truncating it`, async () => {
+    const { getStoreImpl, requests } = transportStore();
+    const result = await registerInboundRecovery({ ...incoming, [field]: "x".repeat(length) }, { getStoreImpl });
+    assert.equal(result.status, "skipped");
+    assert.equal(result.reason, "invalid_event");
+    assert.equal(requests.length, 0);
+  });
+}
+
 for (const entryPoint of ["claim", "complete"]) {
   test(`a completed event cannot remain in the pending queue after a legacy race (${entryPoint})`, async () => {
     const { getStoreImpl } = transportStore();

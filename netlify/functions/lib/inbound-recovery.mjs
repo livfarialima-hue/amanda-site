@@ -147,15 +147,24 @@ function normalizedPending(value) {
 
   const eventId = limited(value.eventId, 300);
   const phone = normalizedPhone(value.phone);
-  const rawBody = limited(value.rawBody, 40_000);
+  // The signature covers the original bytes, including surrounding whitespace.
+  // Reject oversized inputs instead of acknowledging a truncated, unreplayable job.
+  const rawBody = String(value.rawBody || "");
   const signature = limited(value.signature, 2_000);
   const origin = limited(value.origin, 1_000);
+  if (
+    Array.from(rawBody).length > 40_000 ||
+    Array.from(String(value.eventId || "").trim()).length > 300 ||
+    Array.from(String(value.signature || "").trim()).length > 2_000 ||
+    Array.from(String(value.origin || "").trim()).length > 1_000
+  ) return null;
   if (!eventId || !phone || !rawBody || !signature || !origin) {
     return null;
   }
 
   return {
     version: 1,
+    primaryIntake: value.primaryIntake === true,
     status: ["pending", "processing"].includes(value.status)
       ? value.status
       : "pending",
@@ -183,6 +192,7 @@ export async function registerInboundRecovery(
     signature,
     contentType,
     origin,
+    primaryIntake = false,
   },
   {
     getStoreImpl = getStore,
@@ -192,6 +202,7 @@ export async function registerInboundRecovery(
 ) {
   const normalized = normalizedPending({
     status: "pending",
+    primaryIntake,
     eventId,
     phone,
     rawBody,
