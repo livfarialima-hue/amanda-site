@@ -1,6 +1,6 @@
 # Bruna — timeout após reconexão, 24/09/2026
 
-Estado: candidato testado localmente; não publicado ou ativado. Nenhum envio real de teste, replay manual, alteração de LEADS ou publicação externa.
+Estado: código publicado e ativado; verificação de uma nova resposta real ainda pendente. Nenhum envio manual de teste pelo agente, replay manual ou alteração direta de LEADS.
 
 ## Evidência operacional
 
@@ -19,13 +19,13 @@ Reutilizar a fila e o worker existentes. A nova entrada fica desligada por padr�
 
 No worker, a confirmação do registro admite 45 segundos e uma repetição idempotente de 30 segundos. O contexto que permite esse orçamento é passado internamente; cabeçalhos externos não o selecionam. Uma mensagem primária deve chegar ao registro mesmo quando outra mensagem mais recente já tiver chegado; a guarda final de saída preserva a supressão de resposta desatualizada. Assinatura, identidade, preferência, preços, agenda, pausa humana e regras de envio único permanecem nos proprietários existentes. Corpo maior que o limite é recusado sem truncamento.
 
-Baseline local `375de1c2a0ccf9502cf560fc610f19c4db995c1e`: contém o código funcional do deploy `6aaffd4954313500081bc6a2`, commit `cf90c398ac45575eb044bfccf401296e1ea03368`, seguido somente de recibos e reconciliação documental. Worktree isolada. A publicação anterior permanece em produção.
+Baseline local `375de1c2a0ccf9502cf560fc610f19c4db995c1e`: contém o código funcional do deploy `6aaffd4954313500081bc6a2`, commit `cf90c398ac45575eb044bfccf401296e1ea03368`, seguido somente de recibos e reconciliação documental. Worktree isolada. Esse baseline foi preservado como rollback; a versão aprovada foi publicada conforme o registro abaixo.
 
 ## Verificação
 
 A regressão “signed inbound is persisted and acknowledged before slow downstream work starts” falhou no baseline: HTTP 502 em vez de 202. Após a implementação, passaram 26 testes focados de entrada/timeout, 16 de execução do worker e 435 verificações nos grupos de consumidores registrados (há sobreposição com a suíte). O teste cruzado executou o controlador real pelo worker com confirmação de LEADS em 27,65 segundos simulados e tomada humana, sem resposta de paciente ou recursão do despacho.
 
-Suíte integral: **1.658/1.658**, sem falhas, cancelamentos ou testes ignorados. `change:check`, `architecture:check`, build, verificação do site e revisão de whitespace aprovados. Build local: 193 arquivos, 54 URLs no sitemap, nenhum arquivo de auditoria no artefato. O repositório principal continua limpo no baseline; todo o candidato está na worktree isolada. O gate operacional permanece `SYNC_PENDING`, com publicação pendente e branch de candidato distinta da produção; isto não é conclusão em produção.
+Suíte integral: **1.658/1.658**, sem falhas, cancelamentos ou testes ignorados. `change:check`, `architecture:check`, build, verificação do site e revisão de whitespace aprovados. Build local: 193 arquivos, 54 URLs no sitemap, nenhum arquivo de auditoria no artefato. O repositório principal continua limpo no baseline; todo o candidato está na worktree isolada. O fechamento operacional exige o recibo da projeção do Plano no Drive e reconciliação da branch local; até concluir essas etapas o gate permanece `SYNC_PENDING`.
 
 Resultados, comandos e hashes dos logs locais estão em `ops/CHANGE-CANDIDATE.json`. Nenhuma alteração nas regras de preço, agenda, cuidado ou preferência; o manifesto continua descrevendo a última produção efetivamente verificada.
 
@@ -38,3 +38,11 @@ Rollback: desligar a flag, preservando os trabalhos já reservados e os recibos;
 ## Referências técnicas
 
 A YCloud aceita respostas 2xx e recomenda confirmar rapidamente, deixando o processamento em fila: [guia oficial de webhooks](https://docs.ycloud.com/reference/webhook-integration-guide). A Netlify oferece execução de background com resposta inicial 202 e duração maior: [documentação oficial](https://docs.netlify.com/build/functions/background-functions/). Os 30 segundos citados acima são observados neste incidente; não representam uma afirmação geral sobre todos os planos ou funções Netlify.
+
+## Publicação executada
+
+Daniel autorizou “Pode publicar” e “E ativar” nesta tarefa. Preflight do commit exato passou em 25/09/2026 00:34:09 UTC. O push foi avanço direto de 375de1c para `64a289a0bb2ffc4c1fea57b160f2bb1be353a25a`. Primeiro deploy `6ab5c1949a9a3b00080aed17`, concluído às 21:34:59 BRT, ainda com flag ausente. Em seguida foi criada a flag: produção `true`, previews/branches/desenvolvimento `false`. A republicação do mesmo commit gerou `6ab5c206aaaf04e7e71dd958`, concluída às 21:36:48 BRT, com 13 funções e 192 arquivos no painel.
+
+Readback público em 25/09 00:37 UTC: `ok:true`, `automationMode:active`, `processingMode:durable_background_intake`, assinatura ativa e contatos internos protegidos. POST sem assinatura retornou 401 antes de qualquer processamento. Nenhuma mensagem enviada pelo agente. As duas respostas observadas às 21:32 e 21:35 pertencem a entradas anteriores à ativação e não comprovam o novo caminho. Aguardando a próxima entrada após 21:36:48 para conferir resposta real. A conversa original continua sob atendimento humano.
+
+A projeção do Plano no Drive foi lida antes da escrita e era byte a byte idêntica ao baseline local (SHA-256 aba6a9c468ff474b458b4b39a8a2f6d1a718af6d2230773e83315df7ab7ef44c). Substituição e readback finais ainda pendentes neste recibo.

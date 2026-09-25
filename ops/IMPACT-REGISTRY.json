@@ -161,7 +161,8 @@
         "scripts/check-operational-consistency.test.mjs",
         "scripts/run-tests.mjs",
         "auditorias/bruna-entrada-assincrona-2026-09-24/RELATORIO.md",
-        "auditorias/bruna-entrada-assincrona-2026-09-24/PREFLIGHT.json"
+        "auditorias/bruna-entrada-assincrona-2026-09-24/PREFLIGHT.json",
+        "auditorias/bruna-entrada-assincrona-2026-09-24/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

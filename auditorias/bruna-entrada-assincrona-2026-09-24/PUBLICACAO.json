@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "status": "published_active_validation_pending",
+  "changeId": "BRUNA-ENTRADA-ASSINCRONA-2026-09-24",
+  "approvedCommit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a",
+  "authorization": {
+    "recordedAt": "2026-09-25T00:34:09.3692903Z",
+    "approvedBy": "Daniel",
+    "reference": "Pode publicar; E ativar — nesta tarefa",
+    "scope": "Publicacao do candidato 64a289a na Netlify e ativacao para proximas mensagens, sem replay manual da queda"
+  },
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "initialDefaultOffDeployId": "6ab5c1949a9a3b00080aed17",
+    "deployId": "6ab5c206aaaf04e7e71dd958",
+    "approvedCommit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "buildCompletedAt": "2026-09-25T00:36:48Z",
+    "verifiedAt": "2026-09-25T00:37:11Z",
+    "functionsCount": 13,
+    "deployedFilesCount": 192,
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "flag": {
+      "name": "WHATSAPP_INBOUND_BACKGROUND_ENABLED",
+      "production": "true",
+      "deployPreviews": "false",
+      "branchDeploys": "false",
+      "previewServer": "false",
+      "localDevelopment": "false",
+      "scopes": "all_available_on_current_plan"
+    },
+    "unsignedRequestHttpStatus": 401
+  },
+  "appsScript": {
+    "version": 160,
+    "unchanged": true
+  },
+  "verification": {
+    "localTests": 1658,
+    "failedTests": 0,
+    "newInboundAfterActivationObserved": false,
+    "newReplyDeliveryConfirmed": false,
+    "patientTestSentByAgent": false,
+    "outageReplayPerformed": false,
+    "humanPausePreserved": true
+  },
+  "rollback": {
+    "commit": "cf90c398ac45575eb044bfccf401296e1ea03368",
+    "netlifyDeployId": "6aaffd4954313500081bc6a2",
+    "disableFlag": true,
+    "preserveQueue": true
+  },
+  "documentation": {
+    "status": "pending",
+    "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "baselineSha256": "aba6a9c468ff474b458b4b39a8a2f6d1a718af6d2230773e83315df7ab7ef44c",
+    "baselineEqual": true
+  }
+}

@@ -2,28 +2,30 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-ENTRADA-ASSINCRONA-2026-09-24",
   "title": "Confirmacao duravel da entrada e processamento da Bruna em background",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "375de1c2a0ccf9502cf560fc610f19c4db995c1e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Diagnostico e reparo local solicitados. Publicacao deste commit e ativacao da flag ainda sem autorizacao."
+    "note": "Autorizacao do commit 64a289a e ativacao registrada externamente no preflight e no recibo PUBLICACAO.json; recibos documentais nao alteram o comportamento aprovado."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "defaultOffUntilPublication": true,
+    "externalWritesPerformed": true,
+    "defaultOffUntilPublication": false,
     "note": "Transporte de mensagem; nao altera identidade, destinatario, consentimento, regras de deduplicacao, preco ou decisao clinica."
   },
   "scope": {
     "files": [
       "auditorias/bruna-entrada-assincrona-2026-09-24/PREFLIGHT.json",
+      "auditorias/bruna-entrada-assincrona-2026-09-24/PUBLICACAO.json",
       "auditorias/bruna-entrada-assincrona-2026-09-24/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/inbound-background-intake.test.mjs",
       "netlify/functions/lib/inbound-recovery-dispatch.mjs",
       "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
@@ -252,5 +254,13 @@
       "Ativar flag somente conforme autorizacao; observar proxima mensagem natural sem criar paciente ou mensagem artificial",
       "Reconciliar recibos e mesma projecao do Plano no Drive apos verificacao"
     ]
+  },
+  "release": {
+    "approvedCommit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a",
+    "netlifyDeployId": "6ab5c206aaaf04e7e71dd958",
+    "appsScriptVersion": 160,
+    "verifiedAt": "2026-09-25T00:37:11Z",
+    "documentationStatus": "pending",
+    "realReplyValidation": "pending"
   }
 }
