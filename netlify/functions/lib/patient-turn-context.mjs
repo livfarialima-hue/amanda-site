@@ -29,6 +29,9 @@ export function isClearInformationAcceptance(text) {
     .replace(/[,!\s]+(?:por favor|por gentileza|obrigad[ao])[.!\s]*$/i, "")
     .replace(/,\s*/g, " ")
     .trim();
+  // A standalone polite request accepts the concrete offer in the caller's
+  // context. It does not establish what was offered or authorize any new step.
+  if (/^(?:por\s*favor|por\s+gentileza|pfvr?|(?:manda|mande|envia|envie)(?:\s+sim)?)[.!?\s]*$/i.test(value)) return true;
   return /^(?:sim|claro|pode(?:\s+(?:sim|ser|(?:me\s+)?(?:mandar|enviar)))?|sim\s+pode|(?:quero|gostaria)(?:\s+sim)?|(?:sim\s+)?(?:eu\s+)?(?:quero|gostaria de)\s+(?:saber|entender)(?:\s+mais)?|(?:pode\s+)?(?:me\s+)?explica(?:r)?(?:\s+sim)?|(?:pode\s+)?(?:me\s+)?passa(?:r)?(?:\s+(?:a\s+faixa|os\s+valores|essa\s+refer[eê]ncia))?)[.!\s]*$/i.test(value);
 }
 

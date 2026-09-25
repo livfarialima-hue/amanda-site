@@ -1,3 +1,7 @@
+# 2026-09-25.2 — aceite curto de oferta informativa
+
+Por favor, Por gentileza e abreviações estritas continuam a última oferta concreta. Contexto de faixa aprovada chega ao modelo e ao transporte sem reiniciar descoberta. Recusa explícita de valor não é novo pedido. Preço, envio único, consulta/agenda, cuidado e humano preservados. Evidência: auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md.
+
 # 2026-09-25.1 — respostas contextualizadas e proporcionais
 
 Relatos pessoais recebem informação breve antes de qualquer material; links espontâneos bloqueados no seletor e no contrato de saída. Contexto educativo aprovado sobre papada sem inferir causa, lipo, emagrecimento ou prontidão. Perguntas, preços e recursos explicitamente pedidos preservados. Instruções evitam currículo, espelhamento interrogativo, repetição da consulta e agenda prematura. Histórico humano não cria fatos clínicos nem credenciais. Modelos da equipe no manual canônico. Evidência e limites: auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md.

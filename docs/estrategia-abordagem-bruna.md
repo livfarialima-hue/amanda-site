@@ -1,5 +1,12 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+<!-- BRUNA-ACEITE-CORTESIA-2026-09-25 -->
+**Pacote 2026-09-25.2 — TESTADO LOCALMENTE, publicação pendente.** Validação: 1.694 testes integrais e 152 focados, sem falhas. Correção e publicação autorizadas nesta tarefa. Por favor e Por gentileza passam a continuar a última oferta informativa concreta, incluindo faixa autorizada, sem nova pergunta. Sem oferta, recusa, condição adicional ou faixa já enviada, não liberam preço ou agenda. A mensagem do incidente foi recebida; a falta de reconhecimento levou à triagem sem prévia de faixa e à revisão humana por baixa confiança, sem resposta automática. Recusa explícita de valores também deixa de contar como novo pedido.
+
+Preços e ressalvas, envio único, procedimento, cuidado, prioridade humana, opt-out, mensagem mais recente e segurança semântica preservados. Apps Script v160 inalterado. Nenhuma mensagem real de teste, replay ou intervenção na conversa antiga. Responsável: Daniel/equipe; revisar primeiros aceites e 48 horas, conter se houver faixa indevida, repetição ou aceite falso. Evidência: auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md.
+<!-- /BRUNA-ACEITE-CORTESIA-2026-09-25 -->
+
+
 <!-- BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25 -->
 **Pacote 2026-09-25.1 — PUBLICADO E VERIFICADO em 25/09/2026, 17:10 BRT.** Commit funcional 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8, Netlify 6ab6d50398c196000844f21a ativo. Melhoria autorizada por Daniel. A conversa do print foi conferida nos registros canônicos e suas respostas foram humanas; não é prova de falha de autoria da Bruna. A revisão complementar de 20 respostas automáticas recentes orientou os ajustes, sem representar auditoria integral.
 
@@ -68,7 +75,7 @@ No primeiro ciclo natural da versão final, as três pendências técnicas com c
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-09-25.1
+**Versão:** 2026-09-25.2
 
 **Release `2026-08-31.1` — publicado, ativado e verificado:** a experiência conversacional protegida por `BRUNA_CONVERSION_EXPERIENCE_V1` está ativa somente no contexto de produção. A abertura de marketing mantém nome e procedimento validados, acrescenta um único microvalor específico para cada procedimento — inclusive os de menor procura — e termina com uma pergunta fácil. A pergunta isolada sobre a consulta responde primeiro `R$ 500`, Pix, débito ou parcelamento e nota fiscal; omite a explicação da avaliação quando ela não resolve uma dúvida nova e só inclui endereço se também tiver sido solicitado. O modelo relê o histórico, evita repetir o nome em turnos consecutivos, mantém salvaguardas como política interna e usa apenas uma progressão compatível com o estágio: continuação informativa, oferta de faixa já autorizada, consulta de horários ou coleta de preferência. O gate remove somente uma CTA final incompatível quando o restante da resposta é seguro, preservando a informação útil; também bloqueia a exposição mecânica de frases como `sem prometer um resultado específico`. Procedimentos, preços, agenda, confirmação humana, takeover, opt-out, deduplicação, debounce, retomadas, CRM e Apps Script permaneceram inalterados. Código funcional `67f00a2a0c614f57a2fc1a70fdcc3c59c265d815`; deploy verificado ainda desligado `6a954ed0e6d4950008ba7051`; deploy ativo `6a95502db8459ddb8876d56e`; **303/303 testes focados**, **1210/1210 integrais**, arquitetura, contrato de mudança, build de 180 arquivos e 44 URLs aprovados. Domínio e URL imutável reportaram `automationMode=active` e `conversionExperience=bruna-conversion-v1`; requisições sem assinatura retornaram HTTP 401 antes de qualquer efeito. Nenhuma mensagem real foi enviada. Apps Script v139 e seus IDs canônicos foram preservados. Rollback imediato: remover ou desligar `BRUNA_CONVERSION_EXPERIENCE_V1` e confirmar `conversionExperience=off` antes de qualquer rollback de código.
 
@@ -470,6 +477,12 @@ Resposta-base adaptável:
 Para minilifting, trocar apenas o procedimento e a faixa. Se a paciente comparar as duas opções, informar ambas. Nova repetição ou contexto ambíguo vai para revisão humana.
 
 No lifting facial, o aceite explícito de `posso te passar uma faixa geral de valores como ponto de partida` — inclusive respostas curtas como `Sim` ou `Pode me passar` interpretadas contra essa oferta — autoriza essa referência uma única vez. O primeiro pedido continua sem números; a faixa só entra no turno seguinte, depois do aceite ou de um novo pedido explícito por valor, média ou faixa. Todas as ressalvas permanecem obrigatórias. Se o guia facial já tiver sido enviado no primeiro turno, a mensagem da faixa não repete link; se nenhum guia facial estiver no histórico, inclui o guia específico de lifting como fallback seguro.
+
+### Aceites curtos de uma oferta concreta
+
+Depois de oferecer uma informação específica, “Por favor”, “Por gentileza”, “Pfv”, “Pfvr”, “Pode passar” e “Manda sim” podem ser aceites dessa oferta. Cumprir o que acabou de ser oferecido, sem perguntar novamente se a pessoa quer saber. Se foi uma faixa cirúrgica autorizada, usar somente a referência correta, uma única vez e com as ressalvas vigentes; não repetir o guia já enviado.
+
+Sem oferta anterior, depois de outra pergunta, com recusa, mudança de procedimento, pedido de condição não aprovada ou faixa já entregue, não presumir autorização. “Obrigada” isolado não é novo pedido. “Por favor, não quero valores” é uma recusa, não uma pergunta de preço. Aceite de informação não confirma consulta, pagamento nem cirurgia. Risco clínico, cuidado e condução humana mantêm seus limites.
 
 ### Aceite da oferta ou novo pedido explícito de faixa de cervicoplastia
 

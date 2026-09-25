@@ -64,7 +64,13 @@
     "personal_concern_no_unsolicited_link",
     "personal_concern_explicit_article_preserved",
     "personal_concern_safe_context_allowed",
-    "personal_concern_unsolicited_procedure_link_blocked"
+    "personal_concern_unsolicited_procedure_link_blocked",
+    "courtesy_accepts_facial_price_offer",
+    "courtesy_accepts_cervical_price_offer",
+    "courtesy_accepts_otoplasty_price_offer",
+    "courtesy_without_offer_does_not_release_price",
+    "courtesy_cannot_repeat_already_sent_range",
+    "price_refusal_is_not_a_renewed_amount_request"
   ],
   "deprecatedScenarioIds": [],
   "incidentPolicy": {

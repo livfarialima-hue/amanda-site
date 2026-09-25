@@ -11,6 +11,7 @@ import {
 import { assessBrunaReplyExperience } from "./bruna-conversion-experience.mjs";
 import { enforceCommercialEvidenceGuard } from "./lead-classifier.mjs";
 import { buildProcedureContinuationReply } from "./patient-replies.mjs";
+import { planAutomation, enrichAutomationPlanFromConversation } from "./whatsapp-automation.mjs";
 
 const evalPath = fileURLToPath(
   new URL("./bruna-policy/conversation-evals.jsonl", import.meta.url),
@@ -52,6 +53,16 @@ test("the Bruna eval set measures conversion quality in addition to routing safe
 
 for (const scenario of scenarios) {
   test(`Bruna eval: ${scenario.id}`, () => {
+    if (scenario.kind === "contextual_price_acceptance") {
+      const decision = enrichAutomationPlanFromConversation(
+        planAutomation({text:scenario.input.text,messageType:"text",platform:"WhatsApp direto"}),
+        scenario.input.recentConversation,
+      );
+      for (const [key,value] of Object.entries(scenario.expect)) {
+        assert.equal(decision[key],value,scenario.id+":"+key);
+      }
+      return;
+    }
     if (scenario.kind === "classification_evidence") {
       const decision = enforceCommercialEvidenceGuard(scenario.input);
       for (const [key, value] of Object.entries(scenario.expect)) {

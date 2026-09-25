@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-09-25T20:28:13.349Z",
+  "baselineCommit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+  "baselineDeploy": "6ab6d50398c196000844f21a",
+  "evidence": {
+    "source": [
+      "LEADS _WHATSAPP_MENSAGENS e _WHATSAPP_EVENTOS",
+      "Netlify ycloud-recovery-background, ultima hora"
+    ],
+    "date": "2026-09-25",
+    "inboundAtBrt": "16:57:21",
+    "inboundRegistered": true,
+    "previousOfferAuthorship": "bruna",
+    "historyTurns": 2,
+    "modelCompleted": true,
+    "semanticRoute": "human_review",
+    "semanticConfidence": "low",
+    "result": "completed_no_reply",
+    "reviewAlertCompleted": true,
+    "finding": "Por favor nao satisfazia o reconhecedor de aceite e nao produzia a previa deterministica de faixa; triagem semantica encaminhou para humano.",
+    "limitation": "Causa reproduzida localmente e resultado operacional observado; o raciocinio interno do modelo nao e observavel. Sem dados identificaveis neste recibo."
+  },
+  "productionRecheckedAt": "2026-09-25T20:34:04.435Z",
+  "production": {
+    "commit": "38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8",
+    "deployId": "6ab6d50398c196000844f21a",
+    "autoPublishing": true,
+    "branch": "reestruturacao-site",
+    "remoteBranchCommit": "43b978dfb180a2ee9e3d942fcfcbf71b0de2cadd",
+    "health": {
+      "httpStatus": 200,
+      "automationMode": "active",
+      "processingMode": "durable_background_intake",
+      "signatureProtection": "active"
+    }
+  },
+  "driveBaselines": [
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "6cde221cf5bee1f0db15e5157b886fe7081a964d366f01b5734c6d818cf1eda1",
+      "verifiedRawDownload": true
+    },
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "9b24e7125407eee5853b25164e76eac6122570ded019d8285d0f396e50acda59",
+      "verifiedRawDownload": true
+    }
+  ]
+}

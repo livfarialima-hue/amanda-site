@@ -65,6 +65,8 @@ const AMANDA_PATTERNS = [
 
 const PRICE_AMOUNT_PATTERN =
   /\b(?:pre[cç]os?|valor(?:es)?|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento|faixa(?:\s+de\s+pre[cç]os?)?)\b/i;
+const DECLINED_PRICE_AMOUNT_PATTERN =
+  /\bn[aã]o\s+(?:quero|preciso|gostaria(?:\s+de)?)(?:\s+(?:saber|receber|ver|conhecer|entender))?\s+(?:(?:o|os|a|as|um|uma|sobre|de|dos|das)\s+){0,2}(?:pre[cç]os?|valor(?:es)?|or[cç]amento|faixa(?:\s+de\s+(?:pre[cç]os?|valores))?)\b/gi;
 
 const PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;
@@ -666,7 +668,11 @@ export function planAutomation({
   }
 
   const mentionsAmanda = matchesAny(normalizedText, AMANDA_PATTERNS);
-  const asksPriceAmount = PRICE_AMOUNT_PATTERN.test(normalizedText);
+  // A declined amount is not a renewed request. Only remove the explicit
+  // refusal clause so another actual price question in the turn survives.
+  const asksPriceAmount = PRICE_AMOUNT_PATTERN.test(
+    normalizedText.replace(DECLINED_PRICE_AMOUNT_PATTERN, " "),
+  );
   const asksPriceTerms = PRICE_TERMS_PATTERN.test(normalizedText);
   const asksPrice = asksPriceAmount || asksPriceTerms;
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);

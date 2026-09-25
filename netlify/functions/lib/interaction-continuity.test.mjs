@@ -63,6 +63,52 @@ function plan(text, history = opening) {
   return enrichAutomationPlanFromConversation(planAutomation({ text, messageType: "text", platform: "WhatsApp direto" }), history);
 }
 
+test("standalone courtesy accepts the immediately preceding approved range offer", () => {
+  for (const [procedure, label, reason] of [
+    ["lifting_facial", "lifting facial", "lifting_price_range_direct"],
+    ["lifting_cervical", "lifting cervical", "lifting_price_range_direct"],
+    ["otoplastia", "otoplastia", "otoplasty_price_range_direct"],
+  ]) {
+    const history=[{role:"user",source:"patient",text:"Quero saber o valor de "+label+"."},opening[1]];
+    for (const text of ["Por favor", "Por favor!", "Por gentileza.", "Pfv", "Pfvr", "Pode passar", "Manda sim"]) {
+      const result=plan(text,history);
+      assert.equal(result.reason,reason,text+" / "+procedure);
+      assert.equal(result.procedure,procedure);
+      assert.equal(result.automaticAllowed,true);
+    }
+  }
+});
+
+test("courtesy does not create a price offer or override a different latest question", () => {
+  for (const history of [
+    [],
+    [{role:"user",source:"patient",text:"Quero saber sobre lifting facial."}],
+    [...opening,{role:"assistant",source:"bruna",text:"Qual período você prefere para a consulta?"}],
+    [{role:"user",source:"patient",text:"Quero saber sobre lipo de papada."},opening[1]],
+  ]) {
+    const result=plan("Por favor",history);
+    assert.notEqual(result.reason,"lifting_price_range_direct");
+    assert.notEqual(result.reason,"otoplasty_price_range_direct");
+  }
+});
+
+test("polite acceptance cannot repeat a range, negotiate it or erase a refusal", () => {
+  for(const text of ["Por favor, mas não quero operar","Por favor, com desconto","Por favor, para lipo de papada","Por favor, não quero valores","Obrigada"]){
+    assert.notEqual(plan(text).reason,"lifting_price_range_direct",text);
+  }
+  const alreadySent=[...opening,{role:"assistant",source:"bruna",text:"Como estimativa geral, a cervicoplastia costuma ficar entre R$ 18 mil e R$ 26 mil."}];
+  assert.notEqual(plan("Por favor",alreadySent).reason,"lifting_price_range_direct");
+  const repeated=plan("Por favor",[...alreadySent,opening[1]]);
+  assert.equal(repeated.reason,"lifting_price_range_already_sent_review");
+  assert.equal(repeated.automaticAllowed,false);
+});
+
+test("courtesy fulfills an educational offer without starting a scheduling flow", () => {
+  const facts=approvedProcedureInformationFacts({procedure:"lifting_cervical",text:"Por gentileza",recentConversation:[{role:"assistant",source:"bruna",text:"Posso te explicar como é a recuperação do lifting cervical."}]});
+  assert.deepEqual(facts.topics,["recovery"]);
+  assert.equal(approvedProcedureInformationFacts({procedure:"lifting_cervical",text:"Por favor",recentConversation:[{role:"assistant",text:"Posso conferir os horários?"}]}),null);
+});
+
 test("polite acceptance fulfills the existing price offer once without asking again", () => {
   for (const text of ["Pode ser", "Pode mandar", "Pode enviar, por favor", "Quero sim, por gentileza.", "Sim, por favor!", "Gostaria sim", "Pode me passar, por favor."]) {
     const result = plan(text);

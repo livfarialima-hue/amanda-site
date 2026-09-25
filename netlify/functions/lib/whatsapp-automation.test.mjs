@@ -15,6 +15,16 @@ test("conversation enrichment cannot revive a rejected procedure or choose one i
   }
 });
 import test from "node:test";
+
+test("an explicit price refusal is not an amount request, but a separate question remains actionable", () => {
+  for (const text of ["Por favor, não quero valores", "Não preciso saber o preço", "Não gostaria de receber a faixa"]) {
+    assert.notEqual(planAutomation({text,messageType:"text"}).priceRequestKind,"amount",text);
+  }
+  for (const text of ["Não quero cirurgia agora, mas quero saber o preço", "Não quero valores da cirurgia. Qual o valor da consulta?"]) {
+    const decision=planAutomation({text,messageType:"text"});
+    assert.ok(decision.priceRequestKind==="amount"||decision.reason==="consultation_information_request",text);
+  }
+});
 import {
   enrichAutomationPlanFromConversation,
   hasCampaignReferenceCode,

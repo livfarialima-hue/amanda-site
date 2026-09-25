@@ -1,5 +1,12 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-ACEITE-CORTESIA-2026-09-25 -->
+**Pacote 2026-09-25.2 — TESTADO LOCALMENTE, publicação pendente.** Validação: 1.694 testes integrais e 152 focados, sem falhas. Correção e publicação autorizadas nesta tarefa. Por favor e Por gentileza passam a continuar a última oferta informativa concreta, incluindo faixa autorizada, sem nova pergunta. Sem oferta, recusa, condição adicional ou faixa já enviada, não liberam preço ou agenda. A mensagem do incidente foi recebida; a falta de reconhecimento levou à triagem sem prévia de faixa e à revisão humana por baixa confiança, sem resposta automática. Recusa explícita de valores também deixa de contar como novo pedido.
+
+Preços e ressalvas, envio único, procedimento, cuidado, prioridade humana, opt-out, mensagem mais recente e segurança semântica preservados. Apps Script v160 inalterado. Nenhuma mensagem real de teste, replay ou intervenção na conversa antiga. Responsável: Daniel/equipe; revisar primeiros aceites e 48 horas, conter se houver faixa indevida, repetição ou aceite falso. Evidência: auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md.
+<!-- /BRUNA-ACEITE-CORTESIA-2026-09-25 -->
+
+
 <!-- BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25 -->
 **Pacote 2026-09-25.1 — PUBLICADO E VERIFICADO em 25/09/2026, 17:10 BRT.** Commit funcional 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8, Netlify 6ab6d50398c196000844f21a ativo. Melhoria autorizada por Daniel. A conversa do print foi conferida nos registros canônicos e suas respostas foram humanas; não é prova de falha de autoria da Bruna. A revisão complementar de 20 respostas automáticas recentes orientou os ajustes, sem representar auditoria integral.
 

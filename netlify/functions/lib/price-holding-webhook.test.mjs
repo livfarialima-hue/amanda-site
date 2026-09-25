@@ -8,6 +8,47 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+test("a polite range acceptance supplies the approved draft and sends exactly that continuation", async (t) => {
+  const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:"synthetic",
+    GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:"synthetic",
+    WHATSAPP_AUTOMATION_MODE:"active",WHATSAPP_INBOUND_BACKGROUND_ENABLED:"true",
+    WHATSAPP_HUMAN_REPLY_GUARD_MS:"0",WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:"0",
+    OPENAI_API_KEY:"synthetic",WHATSAPP_ALERT_NUMBER:"+5511900000002",
+    YCLOUD_ALERT_TEMPLATE_NAME:"synthetic_review",YCLOUD_ALERT_TEMPLATE_LANGUAGE:"pt_BR"};
+  const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));
+  Object.assign(process.env,settings);
+  t.after(()=>{for(const [k,v] of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+  t.mock.method(console,"log",()=>{});
+  const sent=[];
+  const turns=[
+    {role:"user",source:"patient",eventId:"synthetic-courtesy-origin",at:"2026-09-25T18:51:00Z",text:"Quero saber o valor do lifting facial.",messageType:"text"},
+    {role:"assistant",source:"bruna",eventId:"synthetic-courtesy-offer",at:"2026-09-25T18:53:00Z",text:"Este material explica a composicao: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/\nSe você quiser, posso te passar uma faixa geral de valores como ponto de partida.",messageType:"text"},
+  ];
+  t.mock.method(globalThis,"fetch",async(url,options)=>{
+    const data=JSON.parse(options.body);
+    if(url===SHEETS_URL)return new Response(JSON.stringify(data.action==="get_conversation_context"
+      ? {ok:true,turns,professional:"amanda",opportunityId:"synthetic-courtesy"}
+      : {ok:true,updated:true,duplicate:false,routed:true,routeStatus:"resolved",professional:"amanda",opportunityId:"synthetic-courtesy",humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
+    if(url==="https://api.openai.com/v1/responses"){
+      const input=JSON.parse(data.input);
+      assert.equal(input.policyHints.deterministicReplyCode,"LIFTING-PRICE-RANGE-01","the model must receive the approved range, not generic triage");
+      assert.match(input.policyHints.deterministicReplyPreview,/R\$ 26 mil.*R\$ 42 mil/);
+      return new Response(JSON.stringify({model:"synthetic",output_text:JSON.stringify({route:"standard_reply",confidence:"high",automaticAllowed:true,urgent:false,professional:"amanda",procedure:"lifting_facial",replyCode:"LIFTING-PRICE-RANGE-01",suggestedReply:input.policyHints.deterministicReplyPreview,reviewReason:"lifting_price_range_direct",conversationState:{activeTopic:"faixa de lifting facial",patientAct:"answer",refersToEventId:"synthetic-courtesy-offer",lastClinicQuestion:"",lastClinicOffer:"faixa geral",unresolvedQuestions:["faixa geral"],factsAlreadyProvided:["guia de composicao"],owner:"bruna",nextExpectedAction:"responder faixa aprovada",ambiguity:"",contextConfidence:"high"}})}),{status:200});
+    }
+    assert.equal(url,YCLOUD_URL,"all external destinations are mocked");
+    sent.push(data);return new Response('{"status":"accepted"}',{status:200});
+  });
+  const response=await handleYCloudWebhook(requestFor({id:"synthetic-courtesy-inbound",type:"whatsapp.inbound_message.received",createTime:"2026-09-25T18:57:00Z",whatsappInboundMessage:{id:"synthetic-courtesy-message",from:"+5511900000000",to:"+5511900000001",sendTime:"2026-09-25T18:57:00Z",type:"text",text:{body:"Por favor"}}}),{livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:"completed"})});
+  const result=await response.json();
+  assert.equal(response.status,200);
+  const replies=sent.filter(m=>m.to==="+5511900000000");
+  assert.equal(replies.length,1,JSON.stringify(result));
+  assert.match(replies[0].text.body,/R\$ 26 mil.*R\$ 42 mil/);
+  assert.doesNotMatch(replies[0].text.body,/https:|qual procedimento|posso te passar|\?/i);
+  assert.equal(result.approvedPriceReplySent,true);
+  assert.equal(result.approvedPriceReplyKind,"lifting_range");
+});
+
 for (const scenario of ["unavailable", "cervical", "human_takeover"]) {
   test(`background price continuation preserves ${scenario} context`, async (t) => {
     const settings = {

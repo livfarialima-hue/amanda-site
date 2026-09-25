@@ -169,7 +169,10 @@
         "docs/whatsapp-clinica-liv-operacao.md",
         "auditorias/bruna-respostas-contextuais-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-respostas-contextuais-2026-09-25/PUBLICACAO.json",
-        "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md"
+        "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md",
+        "auditorias/bruna-aceite-cortesia-2026-09-25/PREFLIGHT.json",
+        "auditorias/bruna-aceite-cortesia-2026-09-25/PUBLICACAO.json",
+        "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
