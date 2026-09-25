@@ -85,6 +85,24 @@ test("signed inbound is persisted and acknowledged before slow downstream work s
   assert.equal(stored.primaryIntake, true);
 });
 
+for (const type of ["unsupported", "text"]) {
+  test(`unavailable ${type} enters durable intake before slow downstream work`, async (t) => {
+    const remoteCalls = setup(t);
+    let stored;
+    const value = { ...payload, whatsappInboundMessage: { ...payload.whatsappInboundMessage,
+      type, text: {}, ...(type === "unsupported" ? {unsupported: {type: "unknown"}, errors: [{code: "131060"}]} : {}),
+    }};
+    const response = await handleYCloudWebhook(request(value), {}, dependencies({
+      registerInboundRecoveryImpl: async (input) => {stored=input; return {status:"completed"};},
+    }));
+    assert.equal(response.status, 202);
+    assert.equal((await response.json()).automaticWorkFinished, false);
+    assert.equal(stored.rawBody, JSON.stringify(value));
+    assert.equal(stored.primaryIntake, true);
+    assert.equal(remoteCalls(), 0);
+  });
+}
+
 for (const registration of [
   { status: "failed", reason: "storage_failed" },
   { status: "skipped", reason: "invalid_event" },
@@ -184,9 +202,9 @@ for (const [mode, flag] of [["active", ""], ["active", "false"], ["off", "true"]
   });
 }
 
-test("empty and nontext messages keep their existing guarded path", async (t) => {
+test("media keeps its existing guarded path", async (t) => {
   setup(t);
-  for (const type of ["text", "image", "unsupported"]) {
+  for (const type of ["image", "audio", "video", "document", "reaction"]) {
     const response = await handleYCloudWebhook(request({ ...payload,
       whatsappInboundMessage: { ...payload.whatsappInboundMessage, type, text: { body: "" } },
     }), {}, dependencies({
@@ -197,10 +215,13 @@ test("empty and nontext messages keep their existing guarded path", async (t) =>
   }
 });
 
-test("worker crosses the real controller, awaits slow canonical confirmation and preserves human takeover", async (t) => {
+for (const messageType of ["text", "unsupported"]) {
+test(`worker crosses the real ${messageType} controller, awaits slow canonical confirmation and preserves human takeover`, async (t) => {
   setup(t);
   t.mock.timers.enable({ apis: ["setTimeout"] });
-  const signed = request();
+  const signed = request(messageType === "text" ? payload : {
+    ...payload, whatsappInboundMessage: {...payload.whatsappInboundMessage, type: "unsupported", text: {}, unsupported: {}},
+  });
   const job = { eventId: payload.id, phone: payload.whatsappInboundMessage.from, primaryIntake: true,
     rawBody: await signed.text(), signature: signed.headers.get("YCloud-Signature"),
     origin: "https://example.test", attempts: 1, createdAt: payload.createTime };
@@ -252,3 +273,4 @@ test("worker crosses the real controller, awaits slow canonical confirmation and
   assert.equal(handlerResult.aiActiveQueued, false);
   assert.equal(actions.filter((action) => action === "append_lead").length, 1);
 });
+}

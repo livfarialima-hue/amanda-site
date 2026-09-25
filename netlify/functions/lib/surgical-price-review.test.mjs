@@ -1,5 +1,32 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+test("price continuation after unavailable text explains the gap without inventing a facial procedure", () => {
+  const reply = buildSurgicalPriceHoldingReply({
+    patientName: "Pessoa Teste",
+    currentText: "E o preço",
+    recentConversation: [{ role: "patient", source: "paciente", text: "[Mensagem de texto indisponível na integração.]" }],
+  });
+  assert.match(reply, /mensagem anterior não apareceu completa por aqui/i);
+  assert.match(reply, /reenviar só o nome do procedimento/i);
+  assert.doesNotMatch(reply, /cirurgia facial|pálpebras|rosto|pescoço|papada|R\$|equipe|te retorno/i);
+  assert.equal((reply.match(/\?/g) || []).length, 1);
+});
+
+test("a price question without any known procedure stays neutral without claiming a read failure", () => {
+  const reply = buildSurgicalPriceHoldingReply({currentText: "E o preço"});
+  assert.match(reply, /qual procedimento/i);
+  assert.doesNotMatch(reply, /cirurgia facial|pálpebras|rosto|pescoço|papada|mensagem anterior/i);
+});
+
+test("an answered missing-message event does not become a new read-failure claim", () => {
+  const reply = buildSurgicalPriceHoldingReply({ currentText: "E o preço", recentConversation: [
+    {role:"patient", text:"[Mensagem de texto indisponível na integração.]"},
+    {role:"assistant", source:"bruna", text:"Recebi seu contato, mas o texto veio incompleto por aqui. Pode me contar qual é a sua dúvida?"},
+  ]});
+  assert.doesNotMatch(reply, /mensagem anterior/i);
+  assert.match(reply, /qual procedimento/i);
+});
 import {
   buildPendingHospitalQuoteAlert,
   buildPriceReviewAlert,

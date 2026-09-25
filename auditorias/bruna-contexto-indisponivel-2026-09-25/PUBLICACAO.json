@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "status": "not_published",
+  "changeId": "BRUNA-CONTEXTO-INDISPONIVEL-2026-09-25",
+  "authorization": {
+    "approvedBy": "Daniel",
+    "reference": "Ajuste e publique corrigindo esse mal comportamento - nesta tarefa",
+    "scope": "Correcao de contexto indisponivel na Bruna e publicacao do candidato validado"
+  },
+  "appsScript": {"version": 160, "unchanged": true},
+  "verification": {"patientTestSentByAgent": false, "outageReplayPerformed": false},
+  "rollback": {"commit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a", "netlifyDeployId": "6ab5c206aaaf04e7e71dd958", "preserveQueue": true},
+  "documentation": {"status": "pending", "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"}
+}

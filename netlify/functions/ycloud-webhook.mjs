@@ -7,6 +7,7 @@ import {
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
 import { isAutomaticSurgicalPriceProcedure } from "./lib/surgical-price-policy.mjs";
+import { UNAVAILABLE_PATIENT_TEXT } from "./lib/patient-turn-context.mjs";
 import {
   normalizeYCloudMessageUpdated,
   normalizeYCloudTemplateEvent,
@@ -4456,8 +4457,12 @@ export async function handleYCloudWebhook(
         .filter(Boolean)
         .slice(0, 5)
     : [];
+  const recoverableInbound = Boolean(
+    (normalizedMessageType === "text" && text.trim()) ||
+    (backgroundEnabled && unavailableInboundContent),
+  );
   const recoveryRegistration =
-    normalizedMessageType === "text" && text.trim()
+    recoverableInbound
       ? await registerInboundRecoveryImpl({
           rawBody,
           signature: request.headers.get("YCloud-Signature"),
@@ -4469,7 +4474,7 @@ export async function handleYCloudWebhook(
           primaryIntake: backgroundIntake,
         }, backgroundIntake ? { recoveryDelayMs: 0 } : undefined)
       : { status: "skipped" };
-  const enqueueInbound = backgroundIntake && normalizedMessageType === "text" && Boolean(text.trim());
+  const enqueueInbound = backgroundIntake && recoverableInbound;
   if (enqueueInbound) {
     if (recoveryRegistration.status === "duplicate" && recoveryRegistration.reason === "already_completed") {
       return json({ received: true, ignored: true, ignoreReason: "already_completed",
@@ -4844,15 +4849,15 @@ export async function handleYCloudWebhook(
     recoveryRegistration,
   });
 
+  const conversationInboundText = unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text;
   if (
     !suppressExactDuplicate &&
-    normalizedMessageType === "text" &&
-    text.trim().length > 0
+    ((normalizedMessageType === "text" && text.trim().length > 0) || unavailableInboundContent)
   ) {
     let memoryResult = await appendConversationTurn({
       phone,
       role: "user",
-      text,
+      text: conversationInboundText,
       eventId: String(eventId),
       at: contactAt,
       source: "patient",
@@ -4887,7 +4892,7 @@ export async function handleYCloudWebhook(
               ...durableHistoryBefore,
               {
                 role: "user",
-                text,
+                text: conversationInboundText,
                 eventId: String(eventId),
                 at: contactAt,
                 source: "patient",

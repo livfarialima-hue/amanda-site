@@ -2,6 +2,7 @@ import { callClassificationSheets } from "./sheets-classification-client.mjs";
 import { getStore } from "@netlify/blobs";
 import { createHash } from "node:crypto";
 import { appendConversationTurn, conversationTurnWithinMemoryWindow } from "./conversation-memory.mjs";
+import { UNAVAILABLE_PATIENT_TEXT } from "./patient-turn-context.mjs";
 
 const MAX_TURNS = 32;
 const MAX_TEXT_LENGTH = 1_600;
@@ -86,8 +87,10 @@ function boundedText(value, maximumLength = MAX_TEXT_LENGTH) {
 
 function normalizeTurn(turn) {
   if (!turn || typeof turn !== "object") return null;
-  const messageType = ["text", "image", "audio", "video", "document", "reaction", "sticker"].includes(turn.messageType) ? turn.messageType : "unknown";
-  const text = boundedText(turn.text) || (messageType === "reaction" ? "[Reação recebida.]" : "[Conteúdo indisponível; conferir o tipo e o contexto.]");
+  const messageType = ["text", "unsupported", "image", "audio", "video", "document", "reaction", "sticker"].includes(turn.messageType) ? turn.messageType : "unknown";
+  const text = boundedText(turn.text) || (["text", "unsupported"].includes(messageType)
+    ? UNAVAILABLE_PATIENT_TEXT
+    : messageType === "reaction" ? "[Reação recebida.]" : "[Conteúdo indisponível; conferir o tipo e o contexto.]");
   const role = turn.role === "assistant" ? "assistant" : "user";
   const source = ["patient", "bruna", "human"].includes(turn.source)
     ? turn.source

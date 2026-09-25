@@ -1,4 +1,5 @@
 import { isCommercialSolicitation } from "./commercial-contact.mjs";
+import { UNAVAILABLE_PATIENT_TEXT } from "./patient-turn-context.mjs";
 import {
   introducesStandalonePatientRequest,
   isExplicitDeferralWithoutRequest,
@@ -105,6 +106,7 @@ function isPatientBlockBoundary(turn) {
 }
 
 function substantivePatientContent(turn) {
+  if (turn?.text === UNAVAILABLE_PATIENT_TEXT) return "";
   return String(turn?.text || "")
     .replace(
       /^(?:(?:oi|ol[áa]|bom\s+dia|boa\s+tarde|boa\s+noite)[,!\s]*)+/i,

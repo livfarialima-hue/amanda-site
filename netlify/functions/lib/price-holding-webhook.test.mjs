@@ -8,6 +8,95 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+for (const scenario of ["unavailable", "cervical", "human_takeover"]) {
+  test(`background price continuation preserves ${scenario} context`, async (t) => {
+    const settings = {
+      YCLOUD_WEBHOOK_SECRET: WEBHOOK_SECRET, YCLOUD_API_KEY: "synthetic",
+      GOOGLE_SHEETS_WEBHOOK_URL: SHEETS_URL, GOOGLE_SHEETS_WEBHOOK_SECRET: "synthetic",
+      WHATSAPP_AUTOMATION_MODE: "active", WHATSAPP_INBOUND_BACKGROUND_ENABLED: "true",
+      WHATSAPP_HUMAN_REPLY_GUARD_MS: "0", WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS: "0",
+      OPENAI_API_KEY: scenario === "cervical" ? "synthetic" : "", WHATSAPP_ALERT_NUMBER: "+5511900000002",
+      YCLOUD_ALERT_TEMPLATE_NAME: "synthetic_review", YCLOUD_ALERT_TEMPLATE_LANGUAGE: "pt_BR",
+    };
+    const previous = Object.fromEntries(Object.keys(settings).map(key => [key, process.env[key]]));
+    Object.assign(process.env, settings);
+    t.after(() => {
+      for (const [key, value] of Object.entries(previous)) {
+        if (value === undefined) delete process.env[key]; else process.env[key] = value;
+      }
+    });
+    t.mock.method(console, "log", () => {});
+    const sent = [];
+    const priorTurn = {
+      role: "user", source: "patient", eventId: `synthetic-${scenario}-prior`,
+      at: scenario === "cervical" ? "2026-09-25T16:30:00.000Z" : "2026-09-25T17:00:00.000Z",
+      text: scenario === "cervical" ? "Quero saber sobre lifting cervical com a Dra. Amanda." : "",
+      messageType: scenario === "cervical" ? "text" : "unsupported",
+    };
+    t.mock.method(globalThis, "fetch", async (url, options) => {
+      const input = JSON.parse(options.body);
+      if (url === SHEETS_URL) {
+        const body = input.action === "get_conversation_context"
+          ? { ok: true, turns: [priorTurn], professional: "amanda", opportunityId: `synthetic-${scenario}` }
+          : { ok: true, updated: true, duplicate: false, routed: true, routeStatus: "resolved",
+            professional: "amanda", opportunityId: `synthetic-${scenario}`,
+            humanTakeoverToday: scenario === "human_takeover", patientRelationship: { found: false } };
+        return new Response(JSON.stringify(body), { status: 200 });
+      }
+      if (url === "https://api.openai.com/v1/responses") {
+        assert.equal(scenario, "cervical");
+        return new Response(JSON.stringify({model: "synthetic", output: [{type: "message", content: [{
+          type: "output_text", text: JSON.stringify({
+            route: "standard_reply", confidence: "high", automaticAllowed: true, urgent: false,
+            professional: "amanda", procedure: "lifting_cervical", replyCode: "SURGICAL-PRICE-INITIAL-01",
+            suggestedReply: "A pergunta e sobre o valor da cirurgia.", reviewReason: "price_initial_information",
+            conversationState: {activeTopic: "preco do lifting cervical", patientAct: "question",
+              refersToEventId: priorTurn.eventId, lastClinicQuestion: "", lastClinicOffer: "",
+              unresolvedQuestions: ["valor da cirurgia"], factsAlreadyProvided: ["lifting cervical"],
+              owner: "bruna", nextExpectedAction: "responder preco inicial", ambiguity: "", contextConfidence: "high"},
+          }),
+        }]}]}), {status: 200});
+      }
+      assert.equal(url, YCLOUD_URL, "all external destinations must be mocked");
+      sent.push(input);
+      return new Response('{"status":"accepted"}', { status: 200 });
+    });
+    const response = await handleYCloudWebhook(requestFor({
+      id: `synthetic-${scenario}-price`, type: "whatsapp.inbound_message.received",
+      createTime: "2026-09-25T17:00:06.000Z",
+      whatsappInboundMessage: {
+        id: `synthetic-${scenario}-message`, from: "+5511900000000", to: "+5511900000001",
+        sendTime: "2026-09-25T17:00:06.000Z", type: "text", text: { body: "E o preço" },
+      },
+    }), { livInboundBackground: true }, {
+      registerInboundRecoveryImpl: async () => ({ status: "completed" }),
+    });
+    const result = await response.json();
+    assert.equal(response.status, 200);
+    const replies = sent.filter(message => message.to === "+5511900000000");
+    if (scenario === "human_takeover") {
+      assert.equal(replies.length, 0);
+      assert.equal(result.priceHoldingSent, false);
+      return;
+    }
+    assert.equal(replies.length, 1, JSON.stringify(result));
+    const reply = replies[0].text.body;
+    assert.doesNotMatch(reply, /qual região|pálpebras, rosto|R\$\s*\d/);
+    if (scenario === "unavailable") {
+      assert.match(reply, /mensagem anterior não apareceu completa/);
+      assert.match(reply, /reenviar só o nome do procedimento/);
+      assert.doesNotMatch(reply, /cirurgia facial|papada/);
+      assert.equal((reply.match(/\?/g) || []).length, 1);
+      assert.equal(result.priceHoldingSent, true);
+    } else {
+      assert.equal(result.approvedPriceReplyKind, "initial_information");
+      assert.equal(result.approvedPriceReplySent, true);
+      assert.match(reply, /faixa geral/);
+      assert.doesNotMatch(reply, /qual procedimento|nome do procedimento|mensagem anterior/);
+    }
+  });
+}
+
 test("reprocessing an answered inbound cannot create a contradictory holding or commitment", async () => {
   const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:"synthetic",GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:"synthetic",WHATSAPP_AUTOMATION_MODE:"active",OPENAI_API_KEY:"synthetic"};
   const saved=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));

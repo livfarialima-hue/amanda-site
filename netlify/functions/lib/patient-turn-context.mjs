@@ -1,5 +1,17 @@
 // Pure linguistic signals. Acceptance needs an explicit offer in the caller;
 // it never authorizes a procedure, payment, booking or clinical recommendation.
+export const UNAVAILABLE_PATIENT_TEXT = "[Mensagem de texto indisponível na integração.]";
+
+export function hasUnansweredUnavailablePatientText(recentConversation = []) {
+  // Only the current unanswered block counts; an old failure must not explain
+  // a new conversation. The marker is supplied by the inbound/ledger adapters.
+  for (const turn of [...recentConversation].reverse()) {
+    if (turn?.role === "assistant" || ["bruna", "human", "human_team", "equipe_humana", "clinica_autoria_desconhecida"].includes(turn?.source)) return false;
+    if (["user", "patient"].includes(turn?.role) && turn?.text === UNAVAILABLE_PATIENT_TEXT) return true;
+  }
+  return false;
+}
+
 export function isClearInformationAcceptance(text) {
   const value = String(text || "").trim()
     .replace(/^(?:oi|ol[áa]|bom dia|boa tarde|boa noite)[,!\s]+/i, "")

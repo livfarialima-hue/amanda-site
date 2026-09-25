@@ -162,7 +162,11 @@
         "scripts/run-tests.mjs",
         "auditorias/bruna-entrada-assincrona-2026-09-24/RELATORIO.md",
         "auditorias/bruna-entrada-assincrona-2026-09-24/PREFLIGHT.json",
-        "auditorias/bruna-entrada-assincrona-2026-09-24/PUBLICACAO.json"
+        "auditorias/bruna-entrada-assincrona-2026-09-24/PUBLICACAO.json",
+        "auditorias/bruna-contexto-indisponivel-2026-09-25/PREFLIGHT.json",
+        "auditorias/bruna-contexto-indisponivel-2026-09-25/PUBLICACAO.json",
+        "auditorias/bruna-contexto-indisponivel-2026-09-25/RELATORIO.md",
+        "docs/whatsapp-clinica-liv-operacao.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

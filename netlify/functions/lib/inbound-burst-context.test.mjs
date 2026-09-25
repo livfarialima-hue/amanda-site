@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+test("an unreadable inbound marker is context, not an additional patient request", () => {
+  const result = coalesceUnansweredPatientBlock({
+    recentConversation: [{role:"patient", source:"paciente", text:"[Mensagem de texto indisponível na integração.]", eventId:"missing-content", at:"2026-09-25T17:00:00Z"}],
+    currentText:"E o preço", currentEventId:"price-continuation", currentAt:"2026-09-25T17:00:06Z",
+  });
+  assert.equal(result.multipleRequests, false);
+  assert.equal(result.substantiveTurnCount, 1);
+});
+
 import {
   coalesceLatestPatientBurst,
   coalesceUnansweredPatientBlock,

@@ -1,5 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+test("unavailable text keeps a distinct marker while ordinary media stays media", async () => {
+  const result = await getDurableConversationContext({phone: "+5511900000081"}, {
+    callSheetsImpl: async () => ({status: "completed", data: {turns: [
+      {role: "user", source: "patient", text: "", messageType: "unsupported"},
+      {role: "user", source: "patient", text: "", messageType: "text"},
+      {role: "user", source: "patient", text: "", messageType: "image"},
+      {role: "user", source: "patient", text: "lifting cervical", messageType: "text"},
+    ]}}),
+  });
+  assert.equal(result.turns[0].text, "[Mensagem de texto indisponível na integração.]");
+  assert.equal(result.turns[1].text, result.turns[0].text);
+  assert.notEqual(result.turns[2].text, result.turns[0].text);
+  assert.equal(result.turns[3].text, "lifting cervical");
+});
 import {
   getDurableConversationContext,
   recordDurableConversationTurn,

@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-09-25T19:33:52.057Z",
+  "netlify": {
+    "commit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a",
+    "deployId": "6ab5c206aaaf04e7e71dd958",
+    "mode": "active",
+    "backgroundEnabled": true
+  },
+  "appsScriptVersion": 160,
+  "incident": {
+    "upstreamType": "unsupported",
+    "upstreamErrorCode": "131060",
+    "textPresent": false,
+    "referralPresent": false,
+    "nextTextIsPriceContinuation": true,
+    "incorrectReply": "facial_assumption_without_procedure"
+  },
+  "limitation": "Nao ha texto ou anuncio recuperavel no payload observado. Nenhum paciente, mensagem, telefone ou identificador individual foi exportado."
+}
