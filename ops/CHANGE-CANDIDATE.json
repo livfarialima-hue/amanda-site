@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25",
   "title": "Respostas breves e uteis a relatos pessoais, sem antecipar procedimento ou agenda",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "fa950dd825c2894e8f712379c0546c0cc728009e",
   "authorization": {
     "required": true,
@@ -162,7 +162,13 @@
     "netlifyDeployId": "6ab6d50398c196000844f21a",
     "appsScriptVersion": 160,
     "verifiedAt": "2026-09-25T20:11:27.480Z",
-    "documentationStatus": "pending_drive_verification",
-    "realReplyValidation": "not_observed"
+    "documentationStatus": "verified",
+    "realReplyValidation": "not_observed",
+    "documentationVerifiedAt": "2026-09-25T20:12:51.601Z",
+    "documentationCommit": "f2e795f8f7d98a4dab371c989e09ef28b7ddc90a",
+    "drivePlanSha256": "6cde221cf5bee1f0db15e5157b886fe7081a964d366f01b5734c6d818cf1eda1",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "driveManualSha256": "9b24e7125407eee5853b25164e76eac6122570ded019d8285d0f396e50acda59",
+    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
   }
 }

@@ -39,7 +39,7 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "49674196df09220e9f4b11c5bc99de0513febfc2aeba015c42fe5292707f19a1"
+    "driveProjectionSha256": "9b24e7125407eee5853b25164e76eac6122570ded019d8285d0f396e50acda59"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-RESPOSTAS-CONTEXTUAIS-2026-09-25",
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "authorization": {
     "approvedBy": "Daniel",
     "reference": "Este tambem. Precisa ser melhor. Veja tudo que da pra melhorar e melhore. Logo apos publique.",
@@ -12,7 +12,29 @@
     "unchanged": true
   },
   "documentation": {
-    "status": "pending"
+    "status": "verified",
+    "commit": "f2e795f8f7d98a4dab371c989e09ef28b7ddc90a",
+    "verifiedAt": "2026-09-25T20:12:51.601Z",
+    "files": [
+      {
+        "bytes": 206390,
+        "equal": true,
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "6cde221cf5bee1f0db15e5157b886fe7081a964d366f01b5734c6d818cf1eda1",
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "verifiedAt": "2026-09-25T20:12:26.2216714Z"
+      },
+      {
+        "bytes": 126477,
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "9b24e7125407eee5853b25164e76eac6122570ded019d8285d0f396e50acda59",
+        "verifiedAt": "2026-09-25T20:12:26.2216840Z",
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "equal": true
+      }
+    ],
+    "baselineEqual": true,
+    "existingIdsPreserved": true
   },
   "validation": {
     "fullSuite": {
