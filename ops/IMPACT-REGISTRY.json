@@ -172,7 +172,10 @@
         "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md",
         "auditorias/bruna-aceite-cortesia-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-aceite-cortesia-2026-09-25/PUBLICACAO.json",
-        "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md"
+        "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md",
+        "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
+        "auditorias/bruna-recuperacao-conteudo-2026-09-25/PUBLICACAO.json",
+        "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

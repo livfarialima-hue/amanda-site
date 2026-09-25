@@ -1,50 +1,48 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-ACEITE-CORTESIA-2026-09-25",
-  "title": "Aceite curto cumpre oferta informativa anterior sem nova intervencao humana",
-  "status": "published_verified",
-  "baseCommit": "43b978dfb180a2ee9e3d942fcfcbf71b0de2cadd",
+  "changeId": "BRUNA-RECUPERACAO-CONTEUDO-2026-09-25",
+  "title": "Recuperar texto posterior da mesma mensagem sem duplicar respostas",
+  "status": "tested_local",
+  "baseCommit": "318cf8e48f37bc23a4eb869c6af59480320d55b7",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Correcao e publicacao nesta tarefa, conforme autorizacao continuada de Daniel."
+    "note": "Autorizacao continuada de Daniel nesta tarefa para corrigir e publicar."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-aceite-cortesia-2026-09-25/PREFLIGHT.json",
-      "auditorias/bruna-aceite-cortesia-2026-09-25/PUBLICACAO.json",
-      "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/Code.schema.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
+      "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
+      "auditorias/bruna-recuperacao-conteudo-2026-09-25/PUBLICACAO.json",
+      "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-conversation-evals.test.mjs",
-      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
-      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/regression-baseline.json",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/interaction-continuity.test.mjs",
-      "netlify/functions/lib/patient-turn-context.mjs",
-      "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/lib/whatsapp-automation.test.mjs",
+      "netlify/functions/lib/conversation-memory.mjs",
+      "netlify/functions/lib/conversation-memory.test.mjs",
+      "netlify/functions/lib/inbound-background-intake.test.mjs",
+      "netlify/functions/lib/inbound-recovery.mjs",
+      "netlify/functions/lib/netlify-blobs-contract.test.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
       "change-governance",
       "bruna-conversation-safety",
-      "bruna-conversion-experience",
-      "bruna-regression-governance",
-      "patient-journey-funnel-followups"
+      "patient-journey-funnel-followups",
+      "durable-storage-conditional-writes"
     ]
   },
   "impact": {
@@ -60,106 +58,104 @@
       "apps-script/clinica-liv-leads/Retomadas.gs",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "netlify/functions/appointment-reminder.mjs",
       "netlify/functions/classify-leads-background.mjs",
       "netlify/functions/classify-leads.mjs",
       "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/lib/appointment-review-store.mjs",
+      "netlify/functions/lib/attribution-journey-store.mjs",
+      "netlify/functions/lib/business-number-registry.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-ledger.mjs",
+      "netlify/functions/lib/conversation-memory.mjs",
+      "netlify/functions/lib/external-professional-context.mjs",
+      "netlify/functions/lib/human-resume-queue.mjs",
+      "netlify/functions/lib/inbound-recovery.mjs",
       "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/patient-reply-throttle.mjs",
+      "netlify/functions/lib/reply-debounce.mjs",
+      "netlify/functions/lib/review-alert-throttle.mjs",
+      "netlify/functions/lib/scheduled-care.mjs",
       "netlify/functions/lib/whatsapp-automation.mjs",
       "netlify/functions/scheduled-followup.mjs",
+      "netlify/functions/ycloud-recovery-background.mjs",
+      "netlify/functions/ycloud-recovery.mjs",
       "netlify/functions/ycloud-webhook.mjs"
     ],
     "preservedInvariants": [
-      "Aceite depende da ultima oferta concreta; cortesia isolada sem oferta nao autoriza preco ou agenda.",
-      "Procedimento confirmado, faixa autorizada unica e regras clinicas preservados.",
-      "Takeover, cuidado, recusa, mensagens novas, opt-out e gate final continuam obrigatorios.",
-      "Sem replay, envio real de teste, alteracao de Apps Script, filas ou campanhas."
+      "Mesma identidade e horario original; preencher somente texto antes indisponivel, nunca sobrescrever texto valido.",
+      "Historico recuperado nao autoriza nova resposta, reabre atendimento humano ou repete envio.",
+      "Assinatura, recibos, exclusividade de processamento, prazo, tomada humana e gates de envio preservados.",
+      "Sem replay manual, migracao de conversas antigas, mensagem de teste ou mudanca de precos e campanhas."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "bruna-regression-governance",
-        "system": "LEADS canonico e Netlify",
+        "contract": "patient-journey-funnel-followups",
+        "system": "Netlify, YCloud e LEADS canonicos; Apps Script",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-25T20:28:13.349Z",
-        "reference": "auditorias/bruna-aceite-cortesia-2026-09-25/PREFLIGHT.json"
+        "reference": "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
+        "checkedAt": "2026-09-25T21:27:59.898Z"
       },
       {
-        "contract": "patient-journey-funnel-followups",
-        "system": "LEADS canonico e Netlify",
+        "contract": "durable-storage-conditional-writes",
+        "system": "Netlify, YCloud e LEADS canonicos; Apps Script",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-25T20:32:16.851Z",
-        "reference": "auditorias/bruna-aceite-cortesia-2026-09-25/PREFLIGHT.json"
+        "reference": "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
+        "checkedAt": "2026-09-25T21:27:59.898Z"
       }
     ]
   },
   "verification": {
     "status": "passed_local",
     "commands": [
-      "npm.cmd run change:check",
-      "npm.cmd run architecture:check",
-      "npm.cmd test",
       "git diff --check",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test netlify/functions/lib/interaction-continuity.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs",
-      "npm.cmd run site:build",
-      "npm.cmd run site:check",
-      "node --test netlify/functions/lib/whatsapp-automation.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
+      "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/inbound-background-intake.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
       "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "npm.cmd run ops:check"
+      "npm.cmd run architecture:check",
+      "npm.cmd run change:check",
+      "npm.cmd run ops:check",
+      "npm.cmd run site:build",
+      "npm.cmd run site:check",
+      "npm.cmd test"
     ],
-    "completedAt": "2026-09-25T20:34:04.430Z",
+    "completedAt": "2026-09-25T21:34:32.709Z",
     "results": {
       "fullSuite": {
-        "passed": 1694,
+        "passed": 1706,
         "failed": 0
       },
       "focused": {
-        "passed": 152,
+        "passed": 121,
         "failed": 0
       },
-      "requiredCommandsPassed": 17,
-      "regressionBeforeFix": "2 cenarios de aceite e 1 cenario de recusa falharam antes das respectivas correcoes",
-      "reference": "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md",
+      "requiredCommandsPassed": 18,
+      "regressionBeforeFix": "Cinco cenarios falharam antes da correcao; sem envios reais.",
+      "reference": "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
       "prepublicationOperationalCheck": "expected_sync_pending_before_publication"
     }
   },
   "rollback": {
-    "local": "Descartar apenas esta candidata.",
-    "production": "Restaurar Netlify 6ab6d50398c196000844f21a / commit 38f4a0d, preservando filas e as correcoes anteriores."
+    "local": "Descartar apenas a candidata isolada.",
+    "production": "Conter a recuperacao se houver regressao. Reverter Code.gs/LeadClassification.gs ao Apps Script v160 e os demais modulos Netlify ao baseline 1358a1d, mantendo o leitor inbound-recovery.mjs desta candidata ate drenar as entradas pending/<hash>/text e /unavailable. Nao restaurar isoladamente o deploy antigo enquanto existirem essas chaves; o leitor antigo nao as reconhece. Preservar historico, assinaturas, recibos e pausas; sem replay manual."
   },
   "monitoring": {
-    "owner": "Daniel / equipe Clinica LIV",
-    "window": "Primeiros aceites e 48 horas",
+    "owner": "Daniel / equipe LIV",
+    "window": "Primeiras recuperacoes naturais e 48 horas",
     "signals": [
-      "Oferta aceita recebe informacao prometida",
-      "Sem preco sem oferta, mistura de procedimento ou faixa repetida",
-      "Sem confirmacao de agenda ou quebra de cuidado/takeover"
+      "Mensagem recuperada preenche historico com horario e identidade originais",
+      "Nenhuma resposta repetida, reativacao humana ou substituicao de texto valido",
+      "Falhas e prazo da fila"
     ],
-    "rollbackRule": "Conter se houver aceite falso, faixa indevida, repeticao ou efeito fora dos guardrails.",
-    "dueAt": "2026-09-27T20:35:11Z"
-  },
-  "release": {
-    "approvedCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
-    "netlifyDeployId": "6ab6dae04b46000008d93fec",
-    "appsScriptVersion": 160,
-    "verifiedAt": "2026-09-25T20:38:17.595Z",
-    "documentationStatus": "verified",
-    "documentationVerifiedAt": "2026-09-25T20:39:29.721Z",
-    "documentationCommit": "36221798c5f05ba53bd254da0a635ac1a93bad99",
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "02ab9136b657dfda19e761c61f4169a3bdb292f7248fc9da41a0d7c5a930c416",
-    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-    "driveManualSha256": "96a0631ac7ddcc0a1a7800041a460c465e74bf1bb1b9bf4402055fe4a47f41a5"
+    "rollbackRule": "Conter diante de duplicidade, mistura de identidade ou regressao da fila."
   }
 }

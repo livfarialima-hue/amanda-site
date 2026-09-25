@@ -853,7 +853,7 @@ function doPost(e) {
         route.professional,
         route.routeStatus,
       );
-      recordLeadMessageAndQueue_(
+      const recoveredMessage = recordLeadMessageAndQueue_(
         spreadsheet,
         recoveredLeadRow,
         lead,
@@ -866,6 +866,8 @@ function doPost(e) {
         updated: !insertedDuringRecovery,
         duplicate: true,
         duplicateReason: "route_pending_recovered",
+        contentRecovered: recoveredMessage && recoveredMessage.contentRecovered === true,
+        messageEventId: recoveredMessage ? recoveredMessage.eventId : "",
         routed: true,
         row: recoveredLeadRow,
         eventId: lead.eventId,
@@ -883,11 +885,25 @@ function doPost(e) {
       const duplicateRouted =
         processedEvent.result !== "route_pending" &&
         processedEvent.routeStatus !== "pending";
+      const recoverableContent = processedEvent.result !== "nonlead" && lead.messageType === "text" && lead.text;
+      const recoveredContent = recoverableContent
+        ? (duplicateRouted ? recordLeadMessageAndQueue_ : recordLeadMessageOnly_)(
+            spreadsheet, processedEvent.leadRow, {
+              ...lead,
+              opportunityId: processedEvent.opportunityId || lead.opportunityId,
+              professional: processedEvent.professional || lead.professional,
+            }, "IN")
+        : null;
+      if (recoverableContent && !recoveredContent) {
+        return json_({ ok: false, error: "inbound_content_conflict" });
+      }
       return json_({
         ok: true,
         inserted: false,
         duplicate: true,
         duplicateReason: "message_id",
+        contentRecovered: recoveredContent && recoveredContent.contentRecovered === true,
+        messageEventId: recoveredContent ? recoveredContent.eventId : "",
         routed: duplicateRouted,
         row: processedEvent.leadRow,
         eventId: lead.eventId,

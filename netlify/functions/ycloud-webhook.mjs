@@ -1096,6 +1096,8 @@ function leadDeliveryResult(result, details = {}) {
     duplicateReason: normalizeDuplicateReason(responseData),
     inserted: responseData?.inserted === true,
     updated: responseData?.updated === true,
+    contentRecovered: responseData?.contentRecovered === true,
+    messageEventId: String(responseData?.messageEventId || ""),
     routed: responseData?.routed !== false,
     opportunityId: String(responseData?.opportunityId || ""),
     professional: String(responseData?.professional || ""),
@@ -3884,6 +3886,7 @@ export async function handleYCloudWebhook(
     resolveAttributionImpl = resolveAttributionJourney,
     readOutboundReplyStatusImpl = readOutboundReplyStatus,
     registerInboundRecoveryImpl = registerInboundRecovery,
+    appendConversationTurnImpl = appendConversationTurn,
     markLatestInboundForReplyImpl = markLatestInboundForReply,
     dispatchInboundRecoveryImpl = dispatchInboundRecovery,
   } = {},
@@ -4525,7 +4528,7 @@ export async function handleYCloudWebhook(
       return recoveryRegistration.status;
     }
     const completion = await completeInboundRecovery(
-      { eventId: String(eventId) },
+      { eventId: String(eventId), rawBody },
       { outcome },
     );
     return completion.status;
@@ -4840,9 +4843,20 @@ export async function handleYCloudWebhook(
     });
   }
 
+  const inboundHistoryEventId = delivery.messageEventId || String(eventId);
   const priorOutboundStatus = delivery.ok
     ? await readOutboundReplyStatusImpl({phone, eventId:String(eventId)}) : "missing";
-  const suppressExactDuplicate = ["sent", "sending", "uncertain"].includes(priorOutboundStatus) || shouldSuppressExactInboundDuplicate({
+  const originalReplyStatuses = delivery.contentRecovered || (exactMessageDuplicate && delivery.messageEventId)
+    ? await Promise.all(["", "-missing-text-clarification", "-semantic-route-clarification",
+        "-extreme-night-acknowledgement", "-overnight-handoff"].map(suffix =>
+        !suffix && inboundHistoryEventId === String(eventId) ? priorOutboundStatus
+          : readOutboundReplyStatusImpl({ phone, eventId: `${inboundHistoryEventId}${suffix}` })))
+    : [];
+  if (originalReplyStatuses.includes("unavailable")) {
+    return json({ received: false, leadRecorded: delivery.ok, automaticWorkFinished: false,
+      recoveryStatus: "pending", error: "original_reply_receipt_unavailable" }, 503);
+  }
+  const suppressExactDuplicate = [priorOutboundStatus, ...originalReplyStatuses].some(status => ["sent", "sending", "uncertain"].includes(status)) || shouldSuppressExactInboundDuplicate({
     exactMessageDuplicate,
     recoveredExactDuplicate,
     durableRetry,
@@ -4851,14 +4865,14 @@ export async function handleYCloudWebhook(
 
   const conversationInboundText = unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text;
   if (
-    !suppressExactDuplicate &&
+    (!suppressExactDuplicate || delivery.contentRecovered) &&
     ((normalizedMessageType === "text" && text.trim().length > 0) || unavailableInboundContent)
   ) {
-    let memoryResult = await appendConversationTurn({
+    let memoryResult = await appendConversationTurnImpl({
       phone,
       role: "user",
       text: conversationInboundText,
-      eventId: String(eventId),
+      eventId: inboundHistoryEventId,
       at: contactAt,
       source: "patient",
       templateId: prefillTemplateId,
@@ -4883,7 +4897,7 @@ export async function handleYCloudWebhook(
           conversationHistorySource = "durable_ledger";
         } else {
           const durableHistoryBefore = durableContext.turns
-            .filter((turn) => turn.eventId !== String(eventId))
+            .filter((turn) => turn.eventId !== inboundHistoryEventId)
             .slice(-31);
           memoryResult = {
             ...memoryResult,
@@ -4893,7 +4907,7 @@ export async function handleYCloudWebhook(
               {
                 role: "user",
                 text: conversationInboundText,
-                eventId: String(eventId),
+                eventId: inboundHistoryEventId,
                 at: contactAt,
                 source: "patient",
                 templateId: prefillTemplateId,
@@ -4909,7 +4923,7 @@ export async function handleYCloudWebhook(
     conversationExpired = volatileConversationExpired;
     conversationHistory = toOpenAIConversation(
       memoryResult.historyAfter.filter(
-        (turn) => turn.eventId !== String(eventId),
+        (turn) => turn.eventId !== inboundHistoryEventId,
       ),
     );
     conversationHistoryWithCurrent = toOpenAIConversation(
@@ -6489,6 +6503,7 @@ export async function handleYCloudWebhook(
         activePromise,
         {
           eventId: String(eventId),
+          rawBody,
           outcome: immediateHumanContextContinuationCandidate
             ? "processed"
             : humanTakeoverActive
@@ -6661,7 +6676,7 @@ export async function handleYCloudWebhook(
     })
   ) {
     const recoveryCompletion = await completeInboundRecovery(
-      { eventId: String(eventId) },
+      { eventId: String(eventId), rawBody },
       {
         outcome: humanTakeoverActive
           ? "human_takeover"

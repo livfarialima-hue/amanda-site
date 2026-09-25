@@ -26,8 +26,30 @@ function eventHash(eventId) {
     .digest("hex");
 }
 
-function pendingKey(eventId) {
-  return `pending/${eventHash(eventId)}`;
+function contentReceipt(rawBody) {
+  try {
+    const payload = JSON.parse(rawBody);
+    const message = payload?.whatsappInboundMessage;
+    const from = normalizedPhone(message?.from), to = normalizedPhone(message?.to);
+    const id = String(message?.wamid || message?.id || "");
+    const at = Date.parse(message?.sendTime || "");
+    if (payload?.type !== "whatsapp.inbound_message.received" || !from || !to || !id || !Number.isFinite(at)) return null;
+    const body = [message?.text?.body, typeof message?.text === "string" ? message.text : "", message?.body]
+      .find(value => typeof value === "string" && value.trim());
+    const kind = message.type === "text" && body ? "text"
+      : ["text", "unsupported"].includes(message.type) && !body ? "unavailable" : "other";
+    return { identity: createHash("sha256").update(JSON.stringify([from, to, id, at])).digest("hex"), kind };
+  } catch { return null; }
+}
+
+function isContentUpgrade(previous, next) {
+  return previous?.kind === "unavailable" && next?.kind === "text" && previous.identity === next.identity;
+}
+
+function pendingKey(eventId, receipt) {
+  // Separate immutable payloads: an old worker can only remove its own version.
+  const suffix = ["text", "unavailable"].includes(receipt?.kind) ? `/${receipt.kind}` : "";
+  return `pending/${eventHash(eventId)}${suffix}`;
 }
 
 function completedKey(eventId) {
@@ -108,6 +130,7 @@ export async function settleDeferredInboundRecovery(
   work,
   {
     eventId,
+    rawBody,
     outcome = "processed",
     completeInboundRecoveryImpl = completeInboundRecovery,
   } = {},
@@ -133,7 +156,7 @@ export async function settleDeferredInboundRecovery(
   }
 
   const completion = await completeInboundRecoveryImpl(
-    { eventId: String(eventId || "") },
+    { eventId: String(eventId || ""), rawBody },
     { outcome },
   );
   return {
@@ -171,6 +194,7 @@ function normalizedPending(value) {
     eventId,
     phone,
     rawBody,
+    contentReceipt: contentReceipt(rawBody),
     signature,
     contentType:
       limited(value.contentType, 200) || "application/json",
@@ -222,11 +246,27 @@ export async function registerInboundRecovery(
       type: "json",
       consistency: "strong",
     });
-    if (done?.eventId === normalized.eventId) {
+    if (done?.eventId === normalized.eventId && !isContentUpgrade(done.contentReceipt, normalized.contentReceipt)) {
       return { status: "duplicate", reason: "already_completed" };
     }
 
-    const key = pendingKey(normalized.eventId);
+    const key = pendingKey(normalized.eventId, normalized.contentReceipt);
+    if (normalized.contentReceipt) {
+      const alternativeKeys = [...new Set([pendingKey(normalized.eventId),
+        pendingKey(normalized.eventId, { kind: "text" }), pendingKey(normalized.eventId, { kind: "unavailable" })])]
+        .filter(candidate => candidate !== key);
+      for (const otherKey of alternativeKeys) {
+        const existing = await store.get(otherKey, { type: "json", consistency: "strong" });
+        if (!existing) continue;
+        const previous = contentReceipt(existing.rawBody);
+        if (previous?.identity && previous.identity !== normalized.contentReceipt.identity) {
+          return { status: "failed", reason: "inbound_identity_conflict" };
+        }
+        if (!isContentUpgrade(previous, normalized.contentReceipt)) {
+          return { status: "duplicate", reason: "already_pending" };
+        }
+      }
+    }
     const write = await store.setJSON(key, normalized, {
       onlyIfNew: true,
     });
@@ -258,17 +298,32 @@ export async function claimDueInboundRecoveries(
         consistency: "strong",
       });
       const pending = normalizedPending(entry?.data);
-      if (!pending || blob.key !== pendingKey(pending.eventId)) continue;
+      if (!pending || ![pendingKey(pending.eventId), pendingKey(pending.eventId, pending.contentReceipt)].includes(blob.key)) continue;
       const completed = await store.get(completedKey(pending.eventId), {
         type: "json",
         consistency: "strong",
       });
-      if (completed?.eventId === pending.eventId) {
+      if (completed?.eventId === pending.eventId && !isContentUpgrade(completed.contentReceipt, pending.contentReceipt)) {
         // Old unconditional registrations could recreate pending after the
         // terminal receipt. That receipt wins: discard only this exact queue
         // key, before reserving work or invoking any patient-facing handler.
         await store.delete(blob.key);
         continue;
+      }
+      if (pending.contentReceipt?.kind === "unavailable") {
+        const recovered = await store.get(pendingKey(pending.eventId, { kind: "text" }), { type: "json", consistency: "strong" });
+        if (isContentUpgrade(pending.contentReceipt, contentReceipt(recovered?.rawBody))) continue;
+      }
+      if (pending.contentReceipt?.kind === "text") {
+        let previousWorkerActive = false;
+        for (const oldKey of [pendingKey(pending.eventId), pendingKey(pending.eventId, { kind: "unavailable" })]) {
+          if (oldKey === blob.key) continue;
+          const previous = await store.get(oldKey, { type: "json", consistency: "strong" });
+          if (previous?.status === "processing" && previous.claimUntil > now) previousWorkerActive = true;
+        }
+        // Finish the original response claim before checking its receipt. Two
+        // workers for the same message must not race a clarification and answer.
+        if (previousWorkerActive) continue;
       }
       if (
         pending.dueAt > now ||
@@ -316,15 +371,17 @@ export async function completeInboundRecovery(
 
   try {
     const store = recoveryStore(getStoreImpl);
-    const done = await store.get(completedKey(eventId), {
+    const doneEntry = await store.getWithMetadata(completedKey(eventId), {
       type: "json",
       consistency: "strong",
     });
-    if (done?.eventId === eventId) {
-      await store.delete(pendingKey(eventId));
+    const done = doneEntry?.data;
+    const receipt = contentReceipt(job?.rawBody);
+    const key = job?.queueKey || pendingKey(eventId, receipt);
+    if (done?.eventId === eventId && !isContentUpgrade(done.contentReceipt, receipt)) {
+      await store.delete(key);
       return { status: "completed", duplicate: true };
     }
-    const key = job?.queueKey || pendingKey(eventId);
     const entry = await store.getWithMetadata(key, {
       type: "json",
       consistency: "strong",
@@ -336,16 +393,18 @@ export async function completeInboundRecovery(
       return { status: "superseded" };
     }
 
-    await store.setJSON(
+    const write = await store.setJSON(
       completedKey(eventId),
       {
         version: 1,
         eventId,
+        contentReceipt: receipt || contentReceipt(entry?.data?.rawBody),
         outcome: limited(outcome, 100),
         completedAt: new Date(now).toISOString(),
       },
-      { onlyIfNew: true },
+      doneEntry ? { onlyIfMatch: doneEntry.etag } : { onlyIfNew: true },
     );
+    if (!write.modified) return { status: "superseded" };
     if (entry) await store.delete(key);
     return { status: "completed" };
   } catch {

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
+import { UNAVAILABLE_PATIENT_TEXT } from "./patient-turn-context.mjs";
 
 const STORE_NAME = "liv-whatsapp-conversations-v1";
 const MEMORY_VERSION = 2;
@@ -186,6 +187,13 @@ function turnIdentity(turn) {
   return [turn.role, turn.source, turn.at, turn.text].join("|");
 }
 
+function recoversUnavailableTurn(previous, next) {
+  return previous?.role === "user" && next?.role === "user" &&
+    previous.source === "patient" && next.source === "patient" &&
+    previous.eventId === next.eventId && previous.at === next.at &&
+    previous.text === UNAVAILABLE_PATIENT_TEXT && next.text !== UNAVAILABLE_PATIENT_TEXT;
+}
+
 function mergeTurns(...collections) {
   const indexed = new Map();
   let sequence = 0;
@@ -193,6 +201,8 @@ function mergeTurns(...collections) {
   for (const collection of collections) {
     for (const turn of Array.isArray(collection) ? collection : []) {
       sequence += 1;
+      const previous = indexed.get(turnIdentity(turn))?.turn;
+      if (recoversUnavailableTurn(turn, previous)) continue;
       indexed.set(turnIdentity(turn), { turn, sequence });
     }
   }
@@ -255,10 +265,12 @@ export async function appendConversationTurn(
     const existing = normalized.conversation;
     const historyBefore = existing.turns;
     const normalizedEventId = text(eventId, 200);
+    const nextTurn = normalizeTurn({ role, text: turnText, eventId: normalizedEventId, at, source, templateId }, now);
+    const previousTurn = historyBefore.find(turn => turn.eventId === normalizedEventId);
 
     if (
       normalizedEventId &&
-      historyBefore.some((turn) => turn.eventId === normalizedEventId)
+      previousTurn && !recoversUnavailableTurn(previousTurn, nextTurn)
     ) {
       return { result: {
         status: "duplicate",
@@ -269,14 +281,6 @@ export async function appendConversationTurn(
       } };
     }
 
-    const nextTurn = normalizeTurn({
-      role,
-      text: turnText,
-      eventId: normalizedEventId,
-      at,
-      source,
-      templateId,
-    }, now);
     const nextConversation = {
       version: MEMORY_VERSION,
       updatedAt: new Date(now).toISOString(),

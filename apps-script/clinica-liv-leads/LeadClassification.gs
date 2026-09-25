@@ -1758,6 +1758,27 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
   );
   const created = !existingMessageRow;
   let enriched = false;
+  let contentRecovered = false;
+  let canonicalEventId = eventId;
+  if (existingMessageRow) {
+    const prior = messageSheet.getRange(existingMessageRow, 1, 1, 14).getValues()[0];
+    // Provider corrections fill an absent body, never a different person, turn,
+    // direction or valid text. Keep the original event id and provider time.
+    if (normalizePhone_(prior[0]) !== phone || String(prior[1]) !== (direction === "OUT" ? "OUT" : "IN") ||
+        new Date(prior[2]).getTime() !== at.getTime()) return null;
+    if (direction === "IN" && String(prior[5] || "").trim() && String(lead.text || "").trim() &&
+        String(prior[5]) !== safeText_(lead.text, 4000)) return null;
+    canonicalEventId = String(prior[4] || eventId);
+    if (direction === "IN" && !String(prior[5] || "").trim() &&
+        ["", "unknown", "unsupported", "text"].includes(String(prior[12] || "")) &&
+        lead.messageType === "text" && String(lead.text || "").trim()) {
+      messageSheet.getRange(existingMessageRow, 6, 1, 8).setValues([[
+        safeText_(lead.text, 4000), ...prior.slice(6, 12), "text",
+      ]]);
+      enriched = true;
+      contentRecovered = true;
+    }
+  }
   if (!existingMessageRow) {
     messageSheet.appendRow([
       phone,
@@ -1825,6 +1846,8 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
     at: at,
     created: created,
     enriched: enriched,
+    contentRecovered: contentRecovered,
+    eventId: canonicalEventId,
   };
 }
 

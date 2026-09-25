@@ -60,6 +60,35 @@ function dependencies(overrides = {}) {
   };
 }
 
+for (const recovered of [true, false]) {
+ for (const suffix of ["", "-missing-text-clarification"]) {
+  test(`recovered delivery retains the canonical event and cannot resend an answered original (recovered=${recovered}, suffix=${suffix})`, async t => {
+    setup(t, { YCLOUD_API_KEY: "synthetic", WHATSAPP_HUMAN_REPLY_GUARD_MS: "0", WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS: "0" });
+    let memorized = null;
+    const reads = [];
+    t.mock.method(globalThis, "fetch", async (url, options) => {
+      assert.equal(String(url), "https://sheets.test/webhook", "No patient send or model call");
+      return Response.json({ ok: true, duplicate: true, duplicateReason: "message_id", routed: true,
+        contentRecovered: recovered, messageEventId: "synthetic-original", professional: "amanda",
+        routeStatus: "resolved", opportunityId: "synthetic-opp", humanTakeoverToday: false });
+    });
+    const result = await handleYCloudWebhook(request(), { livInboundBackground: true }, dependencies({
+      readOutboundReplyStatusImpl: async ({ eventId }) => { reads.push(eventId); return eventId === `synthetic-original${suffix}` ? "sent" : "missing"; },
+      appendConversationTurnImpl: async turn => { memorized = turn; return {status: "completed", historyBefore: [], historyAfter: [turn]}; },
+    }));
+    const body = await result.json();
+    assert.equal(result.status, 200);
+    assert.ok(reads.includes("synthetic-original"));
+    assert.equal(body.aiActiveQueued, false);
+    if (recovered) {
+      assert.equal(memorized.eventId, "synthetic-original");
+      assert.equal(memorized.text, payload.whatsappInboundMessage.text.body);
+      assert.equal(memorized.at, payload.whatsappInboundMessage.sendTime);
+    } else assert.equal(memorized, null);
+  });
+ }
+}
+
 test("signed inbound is persisted and acknowledged before slow downstream work starts", async (t) => {
   const remoteCalls = setup(t);
   const order = [];

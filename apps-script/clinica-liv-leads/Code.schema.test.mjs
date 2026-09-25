@@ -8,6 +8,30 @@ const source = readFileSync(
   "utf8",
 );
 
+test("duplicate provider deliveries still reach canonical content recovery without creating a lead", () => {
+  const sandbox = { Date, console, LockService: { getScriptLock: () => ({ tryLock: () => true, hasLock: () => false }) },
+    PropertiesService: { getScriptProperties: () => ({ getProperty: () => "synthetic-secret" }) },
+    SpreadsheetApp: { openById: () => ({}) } };
+  vm.runInNewContext(source, sandbox);
+  Object.assign(sandbox, {
+    parseBody_: () => ({ secret: "synthetic-secret", action: "append_lead", lead: {} }),
+    normalizeLead_: () => ({ phone: "+5511900000000", messageId: "synthetic-wamid", eventId: "synthetic-new", contactAt: new Date(), messageType: "text", text: "Lifting cervical", professional: "amanda" }),
+    getOrCreateEventSheet_: () => ({}), houveAtendimentoHumanoNoDia_: () => true,
+    findProcessedEvent_: () => ({ result: "inserted", routeStatus: "resolved", leadRow: 8, opportunityId: "synthetic-opp", professional: "amanda" }),
+    recordLeadMessageAndQueue_: (_sheet, row, lead) => {
+      assert.equal(row, 8); assert.equal(lead.opportunityId, "synthetic-opp");
+      return { contentRecovered: true, eventId: "synthetic-original" };
+    }, json_: value => value,
+  });
+  const result = sandbox.doPost({});
+  assert.equal(result.ok, true);
+  assert.equal(result.inserted, false);
+  assert.equal(result.duplicate, true);
+  assert.equal(result.contentRecovered, true);
+  assert.equal(result.messageEventId, "synthetic-original");
+  assert.equal(result.humanTakeoverToday, true);
+});
+
 function loadCode({ schemaEnabled = true } = {}) {
   const properties = new Map(
     schemaEnabled ? [["ATTRIBUTION_SCHEMA_VERSION", "v1"]] : [],

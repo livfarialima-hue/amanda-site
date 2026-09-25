@@ -1,0 +1,40 @@
+{
+  "status": "verified_read_only",
+  "baseline": "318cf8e48f37bc23a4eb869c6af59480320d55b7",
+  "netlifyDeployId": "6ab6dae04b46000008d93fec",
+  "appsScriptVersion": 160,
+  "diagnosis": {
+    "upstream": "Evento observado na YCloud como unsupported, erro 131060, sem texto/referral.",
+    "local": "Reproduzido: nova versao textual com mesmo evento descartada pela fila e pela memoria.",
+    "limitation": "Nao comprovado reenvio enriquecido no incidente real."
+  },
+  "patientMessagesSent": 0,
+  "checkedAt": "2026-09-25T21:27:59.898Z",
+  "canonicalIdsVerified": true,
+  "appsScriptSavedSourceMatchesBaseline": {
+    "Code.gs": "314b00afd8f8bf8e8b2ad2673a55348c5b68274e484c738f25265856f4730f1a",
+    "LeadClassification.gs": "58928fab783b86fed355f478d4db3a3d797e0379b502703443ba8a2494833382"
+  },
+  "health": {
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active"
+  },
+  "liveReads": [
+    "YCloud original event and Inbox",
+    "LEADS original IN and OUT rows from this task",
+    "Authenticated Apps Script canonical editor and deployment v160",
+    "Authenticated Netlify Published deploy 1358a1d, 13 functions, 192 static files"
+  ],
+  "appsScriptAll27SourcesMatchBaseline": true,
+  "driveBaselines": {
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "02ab9136b657dfda19e761c61f4169a3bdb292f7248fc9da41a0d7c5a930c416"
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "96a0631ac7ddcc0a1a7800041a460c465e74bf1bb1b9bf4402055fe4a47f41a5"
+    }
+  }
+}

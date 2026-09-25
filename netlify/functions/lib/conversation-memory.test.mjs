@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { UNAVAILABLE_PATIENT_TEXT } from "./patient-turn-context.mjs";
 import {
   appendConversationTurn,
   conversationKey,
@@ -33,6 +34,31 @@ function fakeBlobs(initialValue = null) {
     value: () => value,
   };
 }
+
+test("recovered patient content replaces only an unavailable turn and cannot be downgraded by hydration", async () => {
+  const blobs = fakeBlobs();
+  const opts = { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-09-25T20:00:10Z") };
+  const turn = { phone: "+5511900000000", role: "user", source: "patient", eventId: "synthetic-recovered", at: "2026-09-25T20:00:00Z", text: UNAVAILABLE_PATIENT_TEXT };
+  await appendConversationTurn(turn, opts);
+  await appendConversationTurn({ ...turn, eventId: "synthetic-following", at: "2026-09-25T20:00:06Z", text: "E o preço?" }, opts);
+  const recovered = await appendConversationTurn({ ...turn, text: "Quero saber sobre lifting cervical." }, opts);
+  assert.equal(recovered.status, "completed");
+  assert.equal(recovered.historyAfter.length, 2);
+  assert.match(recovered.historyAfter[0].text, /lifting cervical/);
+  await hydrateConversationMemory({ phone: turn.phone, turns: [turn] }, opts);
+  assert.match(blobs.value().turns[0].text, /lifting cervical/);
+  await appendConversationTurn({ ...turn, text: "Outro texto" }, opts);
+  assert.match(blobs.value().turns[0].text, /lifting cervical/);
+});
+
+test("a complete durable turn replaces an unavailable cache turn without changing chronology", async () => {
+  const blobs = fakeBlobs();
+  const opts = { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-09-25T20:00:10Z") };
+  const turn = { phone: "+5511900000000", role: "user", source: "patient", eventId: "synthetic-hydrate", at: "2026-09-25T20:00:00Z", text: UNAVAILABLE_PATIENT_TEXT };
+  await appendConversationTurn(turn, opts);
+  await hydrateConversationMemory({ phone: turn.phone, turns: [{ ...turn, text: "Lifting cervical" }] }, opts);
+  assert.equal(blobs.value().turns[0].text, "Lifting cervical");
+});
 
 test("concurrent patient and human turns both survive the memory write", async () => {
   const blobs = fakeBlobs();

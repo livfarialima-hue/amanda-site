@@ -82,6 +82,64 @@ const incoming = {
   rawBody: "{}", signature: "synthetic-signature", origin: "https://example.test",
 };
 
+function recoverableMessage(type, overrides = {}) {
+  return JSON.stringify({ id: incoming.eventId, type: "whatsapp.inbound_message.received",
+    whatsappInboundMessage: { from: incoming.phone, to: "+5511900000001", wamid: "synthetic-original",
+      sendTime: "2026-09-25T20:00:00Z", type,
+      ...(type === "text" ? { text: { body: "Quero saber sobre lifting cervical." } } : { errors: [{ code: "131060" }] }),
+      ...overrides } });
+}
+
+for (const terminal of [false, true]) {
+  test(`a recovered signed text survives an unavailable event (${terminal ? "completed" : "pending"})`, async () => {
+    const { getStoreImpl } = transportStore();
+    const now = Date.parse("2026-09-25T20:00:01Z");
+    await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage("unsupported") }, { getStoreImpl, now, recoveryDelayMs: 0 });
+    const [oldJob] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+    if (terminal) await completeInboundRecovery(oldJob, { getStoreImpl, now });
+    const rawBody = recoverableMessage("text");
+    const upgrade = await registerInboundRecovery({ ...incoming, rawBody, signature: "recovered-signature" }, { getStoreImpl, now, recoveryDelayMs: 0 });
+    assert.equal(upgrade.status, "completed");
+    // The older worker must not delete the recovered version when it finishes.
+    await completeInboundRecovery(oldJob, { getStoreImpl, now });
+    const [recovered] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+    assert.equal(recovered.rawBody, rawBody);
+    assert.equal(recovered.signature, "recovered-signature");
+    await completeInboundRecovery(recovered, { getStoreImpl, now });
+    assert.equal((await claimDueInboundRecoveries({ getStoreImpl, now })).jobs.length, 0);
+    for (const type of ["text", "unsupported"]) {
+      assert.equal((await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage(type) }, { getStoreImpl, now })).reason, "already_completed");
+    }
+  });
+}
+
+test("recovery cannot change the original message identity or replace known text", async () => {
+  for (const initial of ["unsupported", "text"]) {
+    const { getStoreImpl } = transportStore();
+    const now = Date.parse("2026-09-25T20:00:01Z");
+    await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage(initial) }, { getStoreImpl, now, recoveryDelayMs: 0 });
+    const [job] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+    await completeInboundRecovery(job, { getStoreImpl, now });
+    const rawBody = recoverableMessage("text", { wamid: "different-message", text: { body: "Texto diferente" } });
+    assert.equal((await registerInboundRecovery({ ...incoming, rawBody }, { getStoreImpl, now })).reason, "already_completed");
+  }
+});
+
+test("recovered text waits for the old worker and a late completion cannot erase it", async () => {
+  const { getStoreImpl } = transportStore();
+  const now = Date.parse("2026-09-25T20:00:01Z");
+  await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage("unsupported") }, { getStoreImpl, now, recoveryDelayMs: 0 });
+  const [old] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+  await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage("text") }, { getStoreImpl, now, recoveryDelayMs: 0 });
+  assert.equal((await claimDueInboundRecoveries({ getStoreImpl, now })).jobs.length, 0);
+  await completeInboundRecovery(old, { getStoreImpl, now });
+  const [recovered] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+  assert.equal(JSON.parse(recovered.rawBody).whatsappInboundMessage.type, "text");
+  await completeInboundRecovery(recovered, { getStoreImpl, now });
+  await completeInboundRecovery(old, { getStoreImpl, now });
+  assert.equal((await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage("text") }, { getStoreImpl, now })).reason, "already_completed");
+});
+
 test("durable intake preserves every signed byte and makes a new job immediately claimable", async () => {
   const { getStoreImpl } = transportStore();
   const rawBody = '  {"text":"Mensagem sintética"}\r\n';

@@ -12,6 +12,35 @@ const classificationSource = readFileSync(
   "utf8",
 );
 
+test("canonical ledger fills recovered text once without rewriting identity or chronology", () => {
+  const at = new Date("2026-09-25T20:00:00Z");
+  const row = ["+5511900000000", "IN", at, "synthetic-wamid", "synthetic-original-event", "", 8, "synthetic-opp", "amanda", "Google Ads - Conversões", "paciente", "", "unknown", ""];
+  const sheet = { getRange(_r, column, _height = 1, width = 1) { return {
+    getValues: () => [row.slice(column - 1, column - 1 + width)],
+    getDisplayValue: () => String(row[column - 1] || ""),
+    setValue: value => { row[column - 1] = value; },
+    setValues: values => { row.splice(column - 1, width, ...values[0]); },
+  }; } };
+  const sandbox = { Date, console };
+  vm.runInNewContext(codeSource + "\n" + classificationSource, sandbox);
+  sandbox.getOrCreateLeadAuxiliarySheet_ = () => sheet;
+  sandbox.findMessageRowInSheet_ = () => 2;
+  const lead = { phone: row[0], messageId: row[3], eventId: "synthetic-new-event", contactAt: at,
+    text: "Quero saber sobre lifting cervical.", messageType: "text" };
+  const result = sandbox.recordLeadMessageOnly_({}, 8, lead, "IN");
+  assert.equal(result.contentRecovered, true);
+  assert.equal(result.eventId, "synthetic-original-event");
+  assert.equal(row[5], lead.text);
+  assert.equal(row[12], "text");
+  assert.equal(row[2], at);
+  assert.equal(row[4], "synthetic-original-event");
+  sandbox.recordLeadMessageOnly_({}, 8, { ...lead, text: "Outro texto" }, "IN");
+  assert.equal(row[5], lead.text);
+  const before = JSON.stringify(row);
+  assert.equal(sandbox.recordLeadMessageOnly_({}, 99, { ...lead, phone: "+5511900000002" }, "IN"), null);
+  assert.equal(JSON.stringify(row), before);
+});
+
 function loadFunctions() {
   const scriptProperties = new Map([
     ["GOOGLE_ADS_TRANSACTION_HMAC_SECRET", "S".repeat(43)],
