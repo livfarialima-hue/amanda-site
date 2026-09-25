@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-ACEITE-CORTESIA-2026-09-25",
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "authorization": {
     "approvedBy": "Daniel",
     "reference": "To precisando intervir muito. Pq nao seguiu aqui? Arrume. Continuidade da autorizacao de corrigir e publicar nesta tarefa.",
@@ -12,7 +12,29 @@
     "unchanged": true
   },
   "documentation": {
-    "status": "pending"
+    "status": "verified",
+    "commit": "36221798c5f05ba53bd254da0a635ac1a93bad99",
+    "verifiedAt": "2026-09-25T20:39:29.721Z",
+    "files": [
+      {
+        "sha256": "02ab9136b657dfda19e761c61f4169a3bdb292f7248fc9da41a0d7c5a930c416",
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "verifiedAt": "2026-09-25T20:39:04.5704347Z",
+        "equal": true,
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "bytes": 208320
+      },
+      {
+        "bytes": 129303,
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "sha256": "96a0631ac7ddcc0a1a7800041a460c465e74bf1bb1b9bf4402055fe4a47f41a5",
+        "verifiedAt": "2026-09-25T20:39:04.5434739Z",
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "equal": true
+      }
+    ],
+    "baselineEqual": true,
+    "existingIdsPreserved": true
   },
   "validation": {
     "fullSuite": {
@@ -24,7 +46,6 @@
       "failed": 0
     },
     "requiredCommandsPassed": 17,
-    "operationalCheck": "expected_sync_pending_before_publication",
     "regressionBeforeFix": "2 cenarios de aceite e 1 cenario de recusa falharam antes das respectivas correcoes",
     "reference": "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md",
     "commands": [
@@ -100,7 +121,8 @@
         "command": "npm.cmd run ops:check",
         "status": "expected_sync_pending"
       }
-    ]
+    ],
+    "prepublicationOperationalCheck": "expected_sync_pending_before_publication"
   },
   "approvedCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
   "netlify": {

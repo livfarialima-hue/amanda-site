@@ -1,6 +1,6 @@
 # Bruna — aceite de cortesia, 25/09/2026
 
-**Estado: publicado e verificado em produção; fechamento das projeções documentais em andamento.** Baseline local 43b978dfb180a2ee9e3d942fcfcbf71b0de2cadd; produção 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8 / Netlify 6ab6d50398c196000844f21a.
+**Estado: publicado e verificado; projeções documentais reconciliadas nos mesmos IDs do Drive.** Baseline local 43b978dfb180a2ee9e3d942fcfcbf71b0de2cadd; produção 38f4a0d9ce94ae80c3df91425e8e4260c3b1bcb8 / Netlify 6ab6d50398c196000844f21a.
 
 ## Diagnóstico observado
 
@@ -37,3 +37,12 @@ Reverter para Netlify 6ab6d50398c196000844f21a / commit 38f4a0d9ce94ae80c3df9142
 ## Recibo de produção
 
 Commit funcional 1358a1db111e04d23ca636d182fb7a110d2d6c6b, Netlify 6ab6dae04b46000008d93fec, publicado em 25/09/2026 às 17:35:11 BRT. A tela autenticada confirma produção, 13 funções, 192 arquivos, build concluído às 17:35:10 e as cinco programações existentes. Domínio e URL imutável responderam HTTP 200 em modo ativo, entrada durável e assinatura ativa; requisições sem assinatura foram bloqueadas com HTTP 401. Apps Script v160 preservado. Nenhuma mensagem real ou reexecução do evento antigo. PUBLICACAO.json contém o recibo da publicação e da reconciliação documental.
+
+## Reconciliação documental
+
+Manual e Plano foram commitados em 36221798c5f05ba53bd254da0a635ac1a93bad99 antes da substituição das projeções existentes. O baseline remoto permaneceu igual ao conferido; após a escrita, ambas as releituras integrais coincidiram byte a byte com o commit. IDs e permissões preservados.
+
+- docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md: 02ab9136b657dfda19e761c61f4169a3bdb292f7248fc9da41a0d7c5a930c416 (208320 bytes), Drive 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO.
+- docs/estrategia-abordagem-bruna.md: 96a0631ac7ddcc0a1a7800041a460c465e74bf1bb1b9bf4402055fe4a47f41a5 (129303 bytes), Drive 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF.
+
+Código funcional permanece 1358a1d; commits posteriores registram somente documentação e recibos, com [skip netlify]. O fechamento no checkout canônico exige HEAD igual a origin/reestruturacao-site, árvore limpa e ops:check OK. Não há nova confirmação de entrega a paciente, replay ou encerramento da revisão humana antiga.
