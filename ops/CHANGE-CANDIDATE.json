@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Recuperacao transparente de entrada indisponivel e resposta sem suposicao; precos e regras clinicas preservados."
   },
   "scope": {
@@ -129,6 +129,21 @@
       "Entrada indisponivel recebida sem timeout e sem inventar contexto",
       "Pausas humanas e envio unico preservados"
     ],
-    "rollbackRule": "Reverter se houver procedimento/preco inventado, duplicidade, quebra de pausa humana ou regressao da fila."
+    "rollbackRule": "Reverter se houver procedimento/preco inventado, duplicidade, quebra de pausa humana ou regressao da fila.",
+    "status": "production_verified_waiting_natural_case",
+    "review48h": {
+      "owner": "Daniel / equipe Clinica LIV",
+      "dueAt": "2026-09-27T19:43:19Z",
+      "status": "pending_owner_review",
+      "automationCreated": false
+    }
+  },
+  "release": {
+    "approvedCommit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
+    "netlifyDeployId": "6ab6ceb59b48eb00087c67c0",
+    "appsScriptVersion": 160,
+    "verifiedAt": "2026-09-25T19:43:31.058Z",
+    "documentationStatus": "pending",
+    "realReplyValidation": "not_observed"
   }
 }

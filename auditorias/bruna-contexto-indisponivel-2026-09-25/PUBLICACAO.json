@@ -1,14 +1,63 @@
 {
   "schemaVersion": 1,
-  "status": "not_published",
+  "status": "published_pending_documentation",
   "changeId": "BRUNA-CONTEXTO-INDISPONIVEL-2026-09-25",
   "authorization": {
     "approvedBy": "Daniel",
     "reference": "Ajuste e publique corrigindo esse mal comportamento - nesta tarefa",
-    "scope": "Correcao de contexto indisponivel na Bruna e publicacao do candidato validado"
+    "scope": "Correcao de contexto indisponivel na Bruna e publicacao do candidato validado",
+    "recordedAt": "2026-09-25T19:42:31.182Z"
   },
-  "appsScript": {"version": 160, "unchanged": true},
-  "verification": {"patientTestSentByAgent": false, "outageReplayPerformed": false},
-  "rollback": {"commit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a", "netlifyDeployId": "6ab5c206aaaf04e7e71dd958", "preserveQueue": true},
-  "documentation": {"status": "pending", "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"}
+  "appsScript": {
+    "version": 160,
+    "unchanged": true
+  },
+  "verification": {
+    "patientTestSentByAgent": false,
+    "outageReplayPerformed": false,
+    "localTests": 1669,
+    "focusedTests": 99,
+    "failedTests": 0,
+    "allRequiredConsumerGroupsPassed": true,
+    "productionAndImmutableUrlChecked": true,
+    "newNaturalIncidentCaseObserved": false,
+    "livePatientDeliveryConfirmed": false,
+    "limitation": "Publicacao e sondas verificadas; comportamento validado com testes simulados. O erro upstream 131060 pode persistir e conteudo ausente nao pode ser reconstruido."
+  },
+  "rollback": {
+    "commit": "64a289a0bb2ffc4c1fea57b160f2bb1be353a25a",
+    "netlifyDeployId": "6ab5c206aaaf04e7e71dd958",
+    "preserveQueue": true
+  },
+  "documentation": {
+    "status": "pending",
+    "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "baselineSha256": "cfac02ae3c0b6e46dd2c88ac6328c505c85f7eceb383bd80bf0cb0d03ec5b402",
+    "baselineEqual": true
+  },
+  "approvedCommit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab6ceb59b48eb00087c67c0",
+    "approvedCommit": "31105d3bf8f9dc0f19f97f8344bf9966e85da3d7",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "buildCompletedAt": "2026-09-25T19:43:18Z",
+    "publishedAt": "2026-09-25T19:43:19Z",
+    "verifiedAt": "2026-09-25T19:43:31.058Z",
+    "functionsCount": 13,
+    "deployedFilesCount": 192,
+    "scheduledFunctionsPreserved": 5,
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active",
+    "flagUnchanged": true,
+    "unsignedRequestHttpStatus": 401
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe Clinica LIV",
+    "dueAt": "2026-09-27T19:43:19Z",
+    "status": "pending_owner_review",
+    "automationCreated": false
+  }
 }

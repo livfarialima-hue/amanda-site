@@ -1,6 +1,6 @@
 # Bruna — contexto indisponível, 25/09/2026
 
-Candidato testado localmente, ainda não publicado. Daniel solicitou: “Ajuste e publique corrigindo esse mal comportamento”. A autorização cobre esta correção e sua publicação após validação.
+Correção publicada e ativa em 25/09/2026, 16:43 BRT. Daniel solicitou: “Ajuste e publique corrigindo esse mal comportamento”. A autorização cobre esta correção e sua publicação após validação.
 
 ## Evidência e causa
 
@@ -25,6 +25,6 @@ Preflight vivo: Netlify publicou o baseline funcional `64a289a0bb2ffc4c1fea57b16
 
 ## Publicação e acompanhamento
 
-O recibo `PUBLICACAO.json` deve registrar commit funcional, deploy, sondas e atualização da mesma projeção do Plano. Até lá, estado local testado e `SYNC_PENDING`. Confirmar primeiras conversas elegíveis e revisar em 48 horas após publicação com Daniel/equipe LIV. Não confundir publicação e testes simulados com resposta entregue a uma paciente.
+Commit funcional `31105d3bf8f9dc0f19f97f8344bf9966e85da3d7` publicado no deploy `6ab6ceb59b48eb00087c67c0`. Conferidos 13 funções, cinco programações, 192 arquivos e sondas de domínio/URL imutável: HTTP 200, active/durable_background_intake, assinatura ativa e POST sem autenticação recusado com 401. Recibo em `PUBLICACAO.json`; resta reconciliar a mesma projeção do Plano. Ainda não foi observado um novo caso natural específico após a publicação. Confirmar primeiras conversas elegíveis e revisar em 48 horas após publicação com Daniel/equipe LIV. Não confundir publicação e testes simulados com resposta entregue a uma paciente.
 
 Rollback: restaurar Netlify `6ab5c206aaaf04e7e71dd958` / commit `64a289a0bb2ffc4c1fea57b160f2bb1be353a25a`, mantendo fila, histórico e pausas. Reverter se surgir procedimento/preço inventado, duplicidade, quebra de takeover ou regressão da fila. A pendência anterior da validação “Falha — revisar” e a falha do alerta interno WhatsApp permanecem fora deste pacote.
