@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
-    "lastObservedProductionCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
-    "functionalDeployId": "6ab7a3b5dda1f60008f631fe",
-    "lastObservedProductionDeployId": "6ab7a3b5dda1f60008f631fe",
-    "rollbackCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
-    "rollbackDeployId": "6ab6ea73cea89200081ef8d5",
-    "rollbackConstraint": "Restaurar Netlify 6ab6ea73cea89200081ef8d5 / commit 1920658fa469b640099d3d4908e01945097cbaf3; preservar Apps Script v161, fila, historico, recibos e pausas. Sem replay.",
-    "publishedAt": "2026-09-26T10:52:00Z",
-    "publishedTimePrecision": "minute_from_deployment_UI",
-    "lastVerifiedAt": "2026-09-26T10:52:17.451Z",
-    "candidateChangeId": "BRUNA-ACOLHIMENTO-2026-09-26",
-    "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-26.1",
+    "functionalCommit": "fe879a6093d97a405320665fde667fb254dde4aa",
+    "lastObservedProductionCommit": "fe879a6093d97a405320665fde667fb254dde4aa",
+    "functionalDeployId": "6ab7b1e5c8225e00080535dd",
+    "lastObservedProductionDeployId": "6ab7b1e5c8225e00080535dd",
+    "rollbackCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+    "rollbackDeployId": "6ab7a3b5dda1f60008f631fe",
+    "rollbackConstraint": "Restaurar Netlify 6ab7a3b5dda1f60008f631fe / commit dd2dcfe63efc0dec4a982133b1e28459aeb3a421; preservar Apps Script v161, dados, historico, filas e pausas; sem replay.",
+    "publishedAt": "2026-09-26T11:52:34Z",
+    "publishedTimePrecision": "second_from_deployment_log",
+    "lastVerifiedAt": "2026-09-26T11:52:50.639Z",
+    "candidateChangeId": "BRUNA-PRECO-DIRETO-2026-09-26",
+    "candidateStatus": "published_documentation_pending",
+    "bundleVersion": "2026-09-26.2",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -46,10 +46,5 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-PRECO-DIRETO-2026-09-26",
-    "bundleVersion": "2026-09-26.2",
-    "status": "tested_local"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

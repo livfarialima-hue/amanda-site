@@ -1,12 +1,13 @@
 {
-  "status": "pending_publication",
+  "status": "published_documentation_pending",
   "authorization": {
     "by": "Daniel",
-    "reference": "Entao ajuste e publique tudp"
+    "reference": "Entao ajuste e publique tudp",
+    "releasePreflightAt": "2026-09-26T11:51:42.632Z"
   },
   "baseline": "1ee5976726ddea8ce34749abb46e01f0ef38a270",
   "verification": {
-    "status": "passed_local",
+    "status": "published_verified_awaiting_documentation",
     "focusedTests": 18,
     "patientTestSent": false,
     "naturalPostreleaseInteractionObserved": false,
@@ -137,7 +138,63 @@
         "status": 2,
         "expected": "SYNC_PENDING antes da publicação e reconciliação"
       }
-    ]
+    ],
+    "commit": "fe879a6093d97a405320665fde667fb254dde4aa",
+    "deploy": "6ab7b1e5c8225e00080535dd",
+    "checks": [
+      {
+        "root": "https://draamandaschroeder.com.br",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      },
+      {
+        "root": "https://6ab7b1e5c8225e00080535dd--inspiring-sprite-b35ca4.netlify.app",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      }
+    ],
+    "verifiedAt": "2026-09-26T11:52:50.639Z",
+    "limitation": "Publicacao e protecoes verificadas; nenhuma nova conversa natural observada nem ganho de conversao medido. Sem mensagem real de teste."
   },
   "appsScript": {
     "version": 161,
@@ -158,6 +215,34 @@
     ],
     "rollbackRule": "Conter diante de valor indevido, indicacao individual, faixa sem pedido ou duplicidade.",
     "status": "pending_owner_review",
-    "automationCreated": false
+    "automationCreated": false,
+    "dueAt": "2026-09-28T11:52:34Z",
+    "secondReviewAt": "2026-10-03T11:52:34Z"
+  },
+  "approvedCommit": "fe879a6093d97a405320665fde667fb254dde4aa",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab7b1e5c8225e00080535dd",
+    "commit": "fe879a6093d97a405320665fde667fb254dde4aa",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "publishedAt": "2026-09-26T11:52:34Z",
+    "publishedTimePrecision": "second_from_deployment_log",
+    "buildStartedAt": "2026-09-26T11:52:06Z",
+    "buildCompletedAt": "2026-09-26T11:52:33Z",
+    "verifiedAt": "2026-09-26T11:52:50.639Z",
+    "functionsCount": 13,
+    "newFunctionUploads": 4,
+    "newStaticFileUploads": 0,
+    "scheduledFunctionsPreserved": [
+      "attribution-journey-purge",
+      "classify-leads",
+      "human-resume",
+      "synthetic-integration-health",
+      "ycloud-recovery"
+    ],
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active"
   }
 }

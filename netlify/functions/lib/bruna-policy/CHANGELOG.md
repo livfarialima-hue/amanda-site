@@ -1,4 +1,4 @@
-## 2026-09-26.2 — preço direto, em validação local
+## 2026-09-26.2 — preço direto, publicado e verificado
 
 Pedido explícito recebe faixa aprovada no primeiro turno; artigo deixa de ser obrigatório. Consulta ganha explicação breve quando nova. Próximo passo opcional respeita recusa e histórico. Redução de orelha diferencia tamanho/afastamento. As regressões de segunda permissão e guia obrigatório são substituídas por casos de preço direto com envio único, valores e ressalvas preservados. Nove falhas reproduzidas antes da correção; ver recibo do pacote.
 
