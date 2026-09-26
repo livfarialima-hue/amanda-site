@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
-    "lastObservedProductionCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
-    "functionalDeployId": "6ab7cb3dd904e20008eabd38",
-    "lastObservedProductionDeployId": "6ab7cb3dd904e20008eabd38",
-    "rollbackCommit": "d3df40c136c51c0c83bc2a07e3145f99c1032f09",
-    "rollbackDeployId": "6ab7c11ced13e90009556ee4",
-    "rollbackConstraint": "Restaurar Netlify 6ab7c11ced13e90009556ee4 / d3df40c136c51c0c83bc2a07e3145f99c1032f09. Preservar Apps Script v161, dados e filas; sem replay.",
-    "publishedAt": "2026-09-26T13:40:43Z",
+    "functionalCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+    "lastObservedProductionCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+    "functionalDeployId": "6ab7dbe15ccd459069e61eac",
+    "lastObservedProductionDeployId": "6ab7dbe15ccd459069e61eac",
+    "rollbackCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
+    "rollbackDeployId": "6ab7cb3dd904e20008eabd38",
+    "rollbackConstraint": "Desligar WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED e restaurar Netlify 6ab7cb3dd904e20008eabd38 / 324584eda7233ef523fc78716de439ce76bcdd86. Preservar filas, recibos e Apps Script v161; nao reenviar mensagens.",
+    "publishedAt": "2026-09-26T14:51:47Z",
     "publishedTimePrecision": "second_from_deployment_log",
-    "lastVerifiedAt": "2026-09-26T13:41:23.145Z",
-    "candidateChangeId": "BRUNA-MENSAGENS-FRAGMENTADAS-2026-09-26",
+    "lastVerifiedAt": "2026-09-26T14:55:33Z",
+    "candidateChangeId": "BRUNA-RETOMADA-MANHA-2026-09-26",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-26.4",
+    "bundleVersion": "2026-09-26.5",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -41,16 +41,10 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "579b78faa1f0d182e2d9f56126a12227ab707555e700041f63318c1b7071007b"
+    "driveProjectionSha256": "617ce21ccc4e76d15f234883acf084b7494c08b9f7b37643d1b00817cbcde909"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-RETOMADA-MANHA-2026-09-26",
-    "bundleVersion": "2026-09-26.5",
-    "status": "tested_local",
-    "authorization": "Arrume e publique"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

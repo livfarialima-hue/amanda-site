@@ -1,5 +1,5 @@
 {
-  "status": "production_verified_documentation_pending",
+  "status": "published_verified",
   "authorization": {
     "by": "Daniel",
     "reference": "Arrume e publique",
@@ -163,7 +163,7 @@
       {
         "command": "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
         "status": 0,
-        "log": "tmp/morning-validation/check-20.log"
+        "log": "tmp/morning-validation/entrypoint-focused.log"
       },
       {
         "command": "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
@@ -238,7 +238,7 @@
       {
         "command": "npm.cmd test",
         "status": 0,
-        "log": "tmp/morning-validation/check-38.log"
+        "log": "tmp/morning-validation/entrypoint-full.log"
       },
       {
         "command": "npm.cmd run site:build",
@@ -255,7 +255,9 @@
         "status": 1,
         "log": "tmp/morning-validation/check-35.log"
       }
-    ]
+    ],
+    "documentaryRegressionTests": 4,
+    "documentaryRegressionStatus": "passed"
   },
   "netlify": {
     "baselineDeployId": "6ab7cb3dd904e20008eabd38",
@@ -403,6 +405,21 @@
     "limitation": "Nenhuma retomada natural elegivel observada apos publicacao; ciclo idle nao comprova entrega ao paciente. Incidente antigo preservado para revisao humana, sem replay."
   },
   "documentation": {
-    "status": "pending_projection"
+    "verifiedAt": "2026-09-26T14:57:23.492Z",
+    "commit": "f7f47c7a710c7eae78c6f4b2157db2964753a9b3",
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "989adbebb4540435d62d7cc6f4e7a350ae2a412637e02b8ec5efc2323674ca25",
+      "bytes": 221756,
+      "downloadCompared": true
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "617ce21ccc4e76d15f234883acf084b7494c08b9f7b37643d1b00817cbcde909",
+      "bytes": 137181,
+      "downloadCompared": true
+    }
   }
 }
