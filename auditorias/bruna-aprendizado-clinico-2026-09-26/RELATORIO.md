@@ -1,6 +1,6 @@
 # Aprendizado de dúvidas frequentes sobre papada e cervicoplastia
 
-Status: correção local testada, aguardando publicação e verificação. A publicação anterior permanece ativa até a verificação do novo pacote.
+Status: publicado e verificado em produção às 18:21 BRT de 26/09/2026. Projeções no Drive em fechamento.
 
 ## Evidência e causa
 
@@ -37,3 +37,9 @@ Daniel/equipe: primeiras conversas naturais, 48 horas e sete dias. Observar cobe
 Rollback: restaurar Netlify 6ab7dbe15ccd459069e61eac, commit funcional 624d7e65abe867fe1556fbfdd788fe9a8dd81358, preservando Apps Script v161, filas e recibos. Conter diante de faixa indevida, indicação clínica individual, duplicidade ou interferência no atendimento humano.
 
 Validação concluída em 2026-09-26T21:18:43.844Z: 1.808 testes integrais, 14 novos casos de regressão e 32 comandos contratuais/build sem falha. Gate operacional em SYNC_PENDING até publicação e equivalência das projeções.
+
+## Recibo de produção
+
+**Pacote 2026-09-26.6 — PUBLICADO E VERIFICADO em produção em 26/09/2026, 18:21 BRT.** Commit funcional 012692d69a3148ac2a2cccfe78309337122ccb62; Netlify 6ab8370595a6f500088ea9e1; Apps Script v161 preservado. Reconhecimento de custo, contexto de associação explícita de lipo de papada com cervicoplastia, explicações do site sobre pele/gordura/platisma e recuperação da lipo, com preservação das demais perguntas quando há preço. Comparações e lipo isolada não herdam faixa cervical. As mesmas ressalvas de preço e proteções clínicas continuam obrigatórias. Validação: 1.808 testes integrais, 14 novos casos, 32 comandos de validação/build sem falha; domínio e URL imutável com bot ativo e POST sem assinatura rejeitado com 401. Quatorze funções publicadas; nenhuma mensagem real de teste ou nova conversa natural foi observada após a publicação. Rollback: Netlify 6ab7dbe15ccd459069e61eac / 624d7e65abe867fe1556fbfdd788fe9a8dd81358, preservando filas e Apps Script v161. Evidência: auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md.
+
+A publicação automática foi temporariamente bloqueada para conferir a URL imutável antes da promoção. O mesmo deploy foi promovido e a configuração de publicação automática foi restaurada. Nenhuma flag, credencial ou dado operacional de paciente foi alterado. O horário de publicação tem precisão de minuto; a verificação HTTP foi registrada às 21:21:38.060Z.

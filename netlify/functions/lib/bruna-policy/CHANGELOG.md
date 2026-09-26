@@ -1,4 +1,4 @@
-## 2026-09-26.6 — aprendizado de dúvidas educativas, candidato local
+## 2026-09-26.6 — aprendizado de dúvidas educativas, publicado e verificado
 
 Fatos aprovados do site para papada/platisma e recuperação da lipo; custo reconhecido e associação cervical explícita preservada. A resposta de preço não descarta outra pergunta. Faixas, limites clínicos e atendimento humano preservados. Documento de contribuições recebe fatos para revisão, sem ingestão automática. Evidência: auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md.
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26",
   "title": "Responder duvidas educativas de papada com o contexto e as fontes do site",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "eb9c4e5697bc0495b359f47d741d3907b2d21eca",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -22,6 +22,7 @@
       "auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",

@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "published_pending_documentation",
   "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26",
   "baselineFunctionalCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
   "baselineDeployId": "6ab7dbe15ccd459069e61eac",
@@ -20,5 +20,36 @@
     "id": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
     "nativeReadbackVerified": true,
     "autoIngestion": false
+  },
+  "approvedCommit": "012692d69a3148ac2a2cccfe78309337122ccb62",
+  "netlifyDeployId": "6ab8370595a6f500088ea9e1",
+  "publishedAt": "2026-09-26T21:21:00Z",
+  "publishedTimePrecision": "minute_from_publish_action",
+  "verifiedAt": "2026-09-26T21:21:38.060Z",
+  "productionUrl": "https://draamandaschroeder.com.br",
+  "immutableUrl": "https://6ab8370595a6f500088ea9e1--inspiring-sprite-b35ca4.netlify.app",
+  "functionsDeployed": 14,
+  "autoPublishingRestored": true,
+  "firstNaturalInteractionObserved": false,
+  "candidateSmoke": {
+    "checkedAt": "2026-09-26T21:21:10.032Z",
+    "deployId": "6ab8370595a6f500088ea9e1",
+    "healthStatus": 200,
+    "url": "https://6ab8370595a6f500088ea9e1--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "sheetsConfigured": true,
+    "openAIConfigured": true,
+    "unsignedPost": 401
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-09-26T21:21:38.060Z",
+    "healthStatus": 200,
+    "endpoint": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "sheetsConfigured": true,
+    "openAIConfigured": true,
+    "unsignedPost": 401
   }
 }
