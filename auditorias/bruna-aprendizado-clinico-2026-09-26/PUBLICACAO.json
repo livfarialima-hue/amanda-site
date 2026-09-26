@@ -1,5 +1,5 @@
 {
-  "status": "published_pending_documentation",
+  "status": "published_verified",
   "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26",
   "baselineFunctionalCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
   "baselineDeployId": "6ab7dbe15ccd459069e61eac",
@@ -51,5 +51,21 @@
     "sheetsConfigured": true,
     "openAIConfigured": true,
     "unsignedPost": 401
+  },
+  "documentationCommit": "653634e3a5ba626c2eb06b9513175dc02505b5d7",
+  "documentationVerifiedAt": "2026-09-26T21:25:55.335Z",
+  "drive": {
+    "manual": {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "96f07a2feadda43ff41e41bce4e079d8b948f0eb691b12e9a2f26e8c1919409c",
+      "bytes": 139665,
+      "readbackMatches": true
+    },
+    "plan": {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "2eb2e490243952efa5e1b5786f551e0f64209dc811e594413841631e503c5018",
+      "bytes": 224240,
+      "readbackMatches": true
+    }
   }
 }

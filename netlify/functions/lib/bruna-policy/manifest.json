@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
-    "lastObservedProductionCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
-    "functionalDeployId": "6ab7dbe15ccd459069e61eac",
-    "lastObservedProductionDeployId": "6ab7dbe15ccd459069e61eac",
-    "rollbackCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
-    "rollbackDeployId": "6ab7cb3dd904e20008eabd38",
-    "rollbackConstraint": "Desligar WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED e restaurar Netlify 6ab7cb3dd904e20008eabd38 / 324584eda7233ef523fc78716de439ce76bcdd86. Preservar filas, recibos e Apps Script v161; nao reenviar mensagens.",
-    "publishedAt": "2026-09-26T14:51:47Z",
-    "publishedTimePrecision": "second_from_deployment_log",
-    "lastVerifiedAt": "2026-09-26T14:55:33Z",
-    "candidateChangeId": "BRUNA-RETOMADA-MANHA-2026-09-26",
+    "functionalCommit": "012692d69a3148ac2a2cccfe78309337122ccb62",
+    "lastObservedProductionCommit": "012692d69a3148ac2a2cccfe78309337122ccb62",
+    "functionalDeployId": "6ab8370595a6f500088ea9e1",
+    "lastObservedProductionDeployId": "6ab8370595a6f500088ea9e1",
+    "rollbackCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+    "rollbackDeployId": "6ab7dbe15ccd459069e61eac",
+    "rollbackConstraint": "Restaurar o deploy anterior preservando Apps Script v161, filas, pausas e recibos; sem replay.",
+    "publishedAt": "2026-09-26T21:21:00Z",
+    "publishedTimePrecision": "minute_from_publish_action",
+    "lastVerifiedAt": "2026-09-26T21:25:55.335Z",
+    "candidateChangeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-26.5",
+    "bundleVersion": "2026-09-26.6",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -41,17 +41,11 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "617ce21ccc4e76d15f234883acf084b7494c08b9f7b37643d1b00817cbcde909",
+    "driveProjectionSha256": "96f07a2feadda43ff41e41bce4e079d8b948f0eb691b12e9a2f26e8c1919409c",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-09-26.6",
-    "status": "tested_local",
-    "baselineCommit": "eb9c4e5697bc0495b359f47d741d3907b2d21eca",
-    "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

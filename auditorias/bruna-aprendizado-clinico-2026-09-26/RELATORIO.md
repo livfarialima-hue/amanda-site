@@ -1,6 +1,6 @@
 # Aprendizado de dúvidas frequentes sobre papada e cervicoplastia
 
-Status: publicado e verificado em produção às 18:21 BRT de 26/09/2026. Projeções no Drive em fechamento.
+Status: publicado e verificado em produção às 18:21 BRT de 26/09/2026. Plano e manual projetados nos mesmos IDs do Drive e relidos com igualdade SHA-256.
 
 ## Evidência e causa
 
@@ -43,3 +43,5 @@ Validação concluída em 2026-09-26T21:18:43.844Z: 1.808 testes integrais, 14 n
 **Pacote 2026-09-26.6 — PUBLICADO E VERIFICADO em produção em 26/09/2026, 18:21 BRT.** Commit funcional 012692d69a3148ac2a2cccfe78309337122ccb62; Netlify 6ab8370595a6f500088ea9e1; Apps Script v161 preservado. Reconhecimento de custo, contexto de associação explícita de lipo de papada com cervicoplastia, explicações do site sobre pele/gordura/platisma e recuperação da lipo, com preservação das demais perguntas quando há preço. Comparações e lipo isolada não herdam faixa cervical. As mesmas ressalvas de preço e proteções clínicas continuam obrigatórias. Validação: 1.808 testes integrais, 14 novos casos, 32 comandos de validação/build sem falha; domínio e URL imutável com bot ativo e POST sem assinatura rejeitado com 401. Quatorze funções publicadas; nenhuma mensagem real de teste ou nova conversa natural foi observada após a publicação. Rollback: Netlify 6ab7dbe15ccd459069e61eac / 624d7e65abe867fe1556fbfdd788fe9a8dd81358, preservando filas e Apps Script v161. Evidência: auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md.
 
 A publicação automática foi temporariamente bloqueada para conferir a URL imutável antes da promoção. O mesmo deploy foi promovido e a configuração de publicação automática foi restaurada. Nenhuma flag, credencial ou dado operacional de paciente foi alterado. O horário de publicação tem precisão de minuto; a verificação HTTP foi registrada às 21:21:38.060Z.
+
+Fechamento documental: commit 653634e3a5ba626c2eb06b9513175dc02505b5d7; projeções conferidas em 2026-09-26T21:25:55.335Z. Não houve incorporação automática de fatos ainda pendentes no documento de contribuições.

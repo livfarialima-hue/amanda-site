@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26",
   "title": "Responder duvidas educativas de papada com o contexto e as fontes do site",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "eb9c4e5697bc0495b359f47d741d3907b2d21eca",
   "authorization": {
     "required": true,
@@ -291,5 +291,17 @@
       "Autoria e pausa humana preservadas."
     ],
     "rollbackRule": "Conter diante de numero nao aprovado, indicacao individual, perda de pergunta ou interrupcao de atendimento humano."
+  },
+  "release": {
+    "approvedCommit": "012692d69a3148ac2a2cccfe78309337122ccb62",
+    "netlifyDeployId": "6ab8370595a6f500088ea9e1",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-26T21:25:55.335Z",
+    "documentationStatus": "verified",
+    "productionReceipt": "auditorias/bruna-aprendizado-clinico-2026-09-26/PUBLICACAO.json",
+    "drivePlanSha256": "2eb2e490243952efa5e1b5786f551e0f64209dc811e594413841631e503c5018",
+    "driveManualSha256": "96f07a2feadda43ff41e41bce4e079d8b948f0eb691b12e9a2f26e8c1919409c",
+    "documentationCommit": "653634e3a5ba626c2eb06b9513175dc02505b5d7",
+    "documentationVerifiedAt": "2026-09-26T21:25:55.335Z"
   }
 }
