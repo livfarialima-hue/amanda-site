@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26",
   "title": "Responder perguntas conjuntas e encaminhar apenas pendencias concretas",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "af18dcacec575562760cfb92d1ecc820b76791e9",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -217,5 +217,13 @@
       "Sem valor nao aprovado, diagnostico, repeticao ou perda de contexto"
     ],
     "rollbackRule": "Conter diante de valor indevido, indicacao individual, faixa sem pedido ou duplicidade."
+  },
+  "release": {
+    "approvedCommit": "d3df40c136c51c0c83bc2a07e3145f99c1032f09",
+    "netlifyDeployId": "6ab7c11ced13e90009556ee4",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-26T12:58:21.171Z",
+    "documentationStatus": "pending",
+    "productionReceipt": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PUBLICACAO.json"
   }
 }

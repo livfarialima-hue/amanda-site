@@ -1,12 +1,13 @@
 {
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "authorization": {
     "by": "Daniel",
-    "reference": "Da pra arrumar com seguranca qnd fazem esse tipo de abordagem?? Arrume e publique"
+    "reference": "Da pra arrumar com seguranca qnd fazem esse tipo de abordagem?? Arrume e publique",
+    "releasePreflightAt": "2026-09-26T12:56:18.232Z"
   },
   "baseline": "af18dcacec575562760cfb92d1ecc820b76791e9",
   "verification": {
-    "status": "passed_local",
+    "status": "published_verified",
     "completedAt": "2026-09-26T12:55:46.598Z",
     "focusedTests": 26,
     "localFullTests": 1763,
@@ -139,11 +140,110 @@
         "command": "npm.cmd run ops:check",
         "status": "SYNC_PENDING_expected"
       }
-    ]
+    ],
+    "health": [
+      {
+        "root": "https://draamandaschroeder.com.br",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      },
+      {
+        "root": "https://6ab7c11ced13e90009556ee4--inspiring-sprite-b35ca4.netlify.app",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      }
+    ],
+    "verifiedAt": "2026-09-26T12:58:21.171Z",
+    "limitation": "Publicacao e protecoes verificadas; nenhuma nova conversa natural observada nem aumento de conversao medido."
   },
   "appsScript": {
     "version": 161,
     "changed": false,
     "liveReverified": false
+  },
+  "approvedCommit": "d3df40c136c51c0c83bc2a07e3145f99c1032f09",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab7c11ced13e90009556ee4",
+    "commit": "d3df40c136c51c0c83bc2a07e3145f99c1032f09",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "publishedAt": "2026-09-26T12:57:31Z",
+    "publishedTimePrecision": "second_from_deployment_log",
+    "buildStartedAt": "2026-09-26T12:57:02Z",
+    "buildCompletedAt": "2026-09-26T12:57:30Z",
+    "verifiedAt": "2026-09-26T12:58:21.171Z",
+    "functionsCount": 13,
+    "newFunctionUploads": 4,
+    "newStaticFileUploads": 0,
+    "deployedFilesDisplayed": 192,
+    "scheduledFunctionsPreserved": [
+      "attribution-journey-purge",
+      "classify-leads",
+      "human-resume",
+      "synthetic-integration-health",
+      "ycloud-recovery"
+    ],
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active"
+  },
+  "rollback": {
+    "local": "Descartar apenas a candidata isolada.",
+    "production": "Restaurar Netlify 6ab7b1e5c8225e00080535dd / fe879a6093d97a405320665fde667fb254dde4aa; preservar Apps Script v161, filas, dados e pausas; sem replay."
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Primeiras conversas naturais, 48 horas e sete dias",
+    "signals": [
+      "Cobertura de todas as perguntas do bloco",
+      "Pendencias online/documento com alerta concreto; sem promessas",
+      "Sem valor nao aprovado, diagnostico, repeticao ou perda de contexto"
+    ],
+    "rollbackRule": "Conter diante de valor indevido, indicacao individual, faixa sem pedido ou duplicidade.",
+    "status": "pending_owner_review",
+    "automationCreated": false,
+    "dueAt": "2026-09-28T12:57:31Z",
+    "secondReviewAt": "2026-10-03T12:57:31Z"
   }
 }

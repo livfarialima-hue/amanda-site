@@ -50,6 +50,10 @@
   "pendingRelease": {
     "changeId": "BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26",
     "bundleVersion": "2026-09-26.3",
-    "status": "tested_local"
+    "status": "committed",
+    "functionalCommit": "d3df40c136c51c0c83bc2a07e3145f99c1032f09",
+    "functionalDeployId": "6ab7c11ced13e90009556ee4",
+    "publishedAt": "2026-09-26T12:57:31Z",
+    "documentationStatus": "pending"
   }
 }

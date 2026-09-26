@@ -1,4 +1,4 @@
-## 2026-09-26.3 — perguntas conjuntas, candidata
+## 2026-09-26.3 — perguntas conjuntas, publicada e verificada
 
 Composição completa e compartilhada de consulta, cirurgia, convênio, online e relatório. Confirmações pendentes exigem alerta entregue. Consulta e faixa somente com ambos os pedidos; lifting genérico exige escopo explícito. Sem nova política de preço, diagnóstico, garantia ou mudança no transporte. Evidência: auditorias/bruna-perguntas-conjuntas-2026-09-26/RELATORIO.md.
 
