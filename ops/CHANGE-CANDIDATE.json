@@ -1,48 +1,38 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26",
-  "title": "Responder perguntas conjuntas e encaminhar apenas pendencias concretas",
-  "status": "published_verified",
-  "baseCommit": "af18dcacec575562760cfb92d1ecc820b76791e9",
+  "changeId": "BRUNA-MENSAGENS-FRAGMENTADAS-2026-09-26",
+  "title": "Preservar fragmentos antes do processamento e reler o conjunto antes da resposta",
+  "status": "tested_local",
+  "baseCommit": "2503f8c25c928cdd03d0fe108c2a533b511a112b",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu explicitamente arrumar com seguranca e publicar o atendimento de multiplas perguntas nesta tarefa em 26/09/2026."
+    "note": "Daniel pediu explicitamente: Quando a pessoa quebra a conversa em varias assim... Ajuste e publique. Em 26/09/2026."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
-      "auditorias/bruna-perguntas-conjuntas-2026-09-26/PUBLICACAO.json",
-      "auditorias/bruna-perguntas-conjuntas-2026-09-26/RELATORIO.md",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+      "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+      "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PUBLICACAO.json",
+      "auditorias/bruna-mensagens-fragmentadas-2026-09-26/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/consultation-question-bundle.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/patient-turn-context.mjs",
+      "netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
+      "netlify/functions/lib/inbound-background-intake.test.mjs",
+      "netlify/functions/lib/inbound-reply-context.mjs",
+      "netlify/functions/lib/inbound-reply-context.test.mjs",
       "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/surgical-price-policy.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/lib/reply-debounce.mjs",
+      "netlify/functions/lib/reply-debounce.test.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -120,47 +110,47 @@
       "otoplastia-infantil/index.html"
     ],
     "preservedInvariants": [
-      "Somente faixas ja aprovadas; consulta R$500; valor individual exige avaliacao; nenhuma garantia ou indicacao.",
-      "Preco explicito de procedimento conhecido pode receber faixa no primeiro pedido; prefill generico, recusa e pergunta apenas de pagamento nao autorizam numeros.",
-      "Faixa uma vez por contexto, sem misturar procedimentos; ambiguidade e variantes sem referencia ficam em revisao humana.",
-      "Sem alterar transporte, recuperacao, Apps Script, campanhas, agenda, filas, takeover, opt-out ou dados.",
-      "Cada pergunta recebe resposta confirmada, esclarecimento essencial ou pendencia concreta com alerta entregue; nao presumir teleconsulta nem relatorio."
+      "Assinatura, modo ativo, exclusoes e fila duravel antes do aceite; LEADS continua canonica.",
+      "Pausa curta existente 3 a 8 segundos; retry do mesmo evento nao reinicia a espera.",
+      "Evento anterior nunca substitui um posterior, inclusive em concorrencia; saudacao/prefill nao apagam pergunta substantiva.",
+      "Historico compartilhado antes do despacho; revalidacao de marcador e prioridade humana antes do envio; sem replay de conversas antigas.",
+      "Sem mudanca em precos, agenda, diagnostico, campanhas, Apps Script, opt-out, takeover ou reserva idempotente de saida."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "patient-journey-funnel-followups",
         "system": "Netlify autenticado e endpoint publico; metadados Drive; Apps Script preservado conforme baseline.",
         "status": "verified_read_only",
-        "reference": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
-        "checkedAt": "2026-09-26T12:56:18.232Z"
+        "reference": "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+        "checkedAt": "2026-09-26T13:39:20.879Z"
       },
       {
         "contract": "google-ads-acquisition-conversion",
         "system": "Netlify autenticado e endpoint publico; metadados Drive; Apps Script preservado conforme baseline.",
         "status": "verified_read_only",
-        "reference": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
-        "checkedAt": "2026-09-26T12:56:18.232Z"
+        "reference": "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+        "checkedAt": "2026-09-26T13:39:20.879Z"
       },
       {
         "contract": "durable-storage-conditional-writes",
         "system": "Netlify autenticado e endpoint publico; metadados Drive; Apps Script preservado conforme baseline.",
         "status": "verified_read_only",
-        "reference": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
-        "checkedAt": "2026-09-26T12:56:18.232Z"
+        "reference": "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+        "checkedAt": "2026-09-26T13:39:20.879Z"
       },
       {
         "contract": "website-conversation-continuity",
         "system": "Netlify autenticado e endpoint publico; metadados Drive; Apps Script preservado conforme baseline.",
         "status": "verified_read_only",
-        "reference": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
-        "checkedAt": "2026-09-26T12:56:18.232Z"
+        "reference": "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+        "checkedAt": "2026-09-26T13:39:20.879Z"
       },
       {
         "contract": "reply-continuity",
         "system": "Netlify autenticado e endpoint publico; metadados Drive; Apps Script preservado conforme baseline.",
         "status": "verified_read_only",
-        "reference": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
-        "checkedAt": "2026-09-26T12:56:18.232Z"
+        "reference": "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+        "checkedAt": "2026-09-26T13:39:20.879Z"
       }
     ]
   },
@@ -183,6 +173,7 @@
       "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
       "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+      "node --test netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
       "node --test netlify/functions/lib/interaction-continuity.test.mjs",
       "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
       "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
@@ -198,36 +189,24 @@
       "npm.cmd run site:check",
       "npm.cmd test"
     ],
-    "completedAt": "2026-09-26T12:55:46.598Z",
-    "fullTests": 1763,
-    "focusedTests": 26,
-    "requiredCommandsPassed": 28,
+    "completedAt": "2026-09-26T13:39:20.879Z",
+    "fullTests": 1778,
+    "focusedTests": 15,
+    "requiredCommandsPassed": 30,
     "opsPrepublication": "SYNC_PENDING: publication and Drive receipts pending; isolated worktree intentionally active"
   },
   "rollback": {
     "local": "Descartar apenas a candidata isolada.",
-    "production": "Restaurar Netlify 6ab7b1e5c8225e00080535dd / fe879a6093d97a405320665fde667fb254dde4aa; preservar Apps Script v161, filas, dados e pausas; sem replay."
+    "production": "Restaurar Netlify 6ab7c11ced13e90009556ee4 / d3df40c136c51c0c83bc2a07e3145f99c1032f09. Preservar Apps Script v161, dados e filas; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
     "window": "Primeiras conversas naturais, 48 horas e sete dias",
     "signals": [
-      "Cobertura de todas as perguntas do bloco",
-      "Pendencias online/documento com alerta concreto; sem promessas",
-      "Sem valor nao aprovado, diagnostico, repeticao ou perda de contexto"
+      "Cobertura do conjunto de mensagens pendentes",
+      "Ausencia de duplicidade e resposta a contexto antigo",
+      "Falhas de memoria ou marcador permanecem recuperaveis e visiveis"
     ],
     "rollbackRule": "Conter diante de valor indevido, indicacao individual, faixa sem pedido ou duplicidade."
-  },
-  "release": {
-    "approvedCommit": "d3df40c136c51c0c83bc2a07e3145f99c1032f09",
-    "netlifyDeployId": "6ab7c11ced13e90009556ee4",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-09-26T12:58:21.171Z",
-    "documentationStatus": "verified",
-    "productionReceipt": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PUBLICACAO.json",
-    "drivePlanSha256": "3ce3249b409f0059e8c99fe8dcbc0268f62c3ad73e9a936f295534b403ed728c",
-    "driveManualSha256": "615815ee71ac3afba1b6ca1b4141b86f925d118fa607720a18f85375ccb85936",
-    "documentationCommit": "461b144e3a49af9f3ad799283506b26b2cde9faf",
-    "documentationVerifiedAt": "2026-09-26T13:00:06.241Z"
   }
 }

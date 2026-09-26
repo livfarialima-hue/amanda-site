@@ -1185,7 +1185,8 @@
         "package-lock.json",
         "netlify/functions/lib/inbound-recovery.mjs",
         "netlify/functions/ycloud-recovery.mjs",
-        "netlify/functions/lib/inbound-recovery-dispatch.mjs"
+        "netlify/functions/lib/inbound-recovery-dispatch.mjs",
+        "netlify/functions/lib/inbound-reply-context.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/lib/appointment-review-store.mjs",
@@ -1222,7 +1223,15 @@
         "scripts/check-journey-module-boundaries.mjs",
         "netlify/functions/lib/inbound-recovery-dispatch.mjs",
         "netlify/functions/lib/inbound-background-intake.test.mjs",
-        "netlify/functions/lib/sheets-action-timeout.test.mjs"
+        "netlify/functions/lib/sheets-action-timeout.test.mjs",
+        "netlify/functions/lib/inbound-reply-context.mjs",
+        "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PREFLIGHT.json",
+        "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PUBLICACAO.json",
+        "auditorias/bruna-mensagens-fragmentadas-2026-09-26/RELATORIO.md",
+        "netlify/functions/lib/inbound-reply-context.test.mjs",
+        "netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
+        "netlify/functions/lib/reply-debounce.mjs",
+        "netlify/functions/lib/reply-debounce.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/netlify-blobs-contract.test.mjs",
@@ -1230,14 +1239,17 @@
         "netlify/functions/lib/ycloud-recovery.test.mjs",
         "netlify/functions/lib/inbound-recovery-runtime.test.mjs",
         "netlify/functions/lib/inbound-background-intake.test.mjs",
-        "netlify/functions/lib/sheets-action-timeout.test.mjs"
+        "netlify/functions/lib/sheets-action-timeout.test.mjs",
+        "netlify/functions/lib/inbound-reply-context.test.mjs",
+        "netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
         "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
         "npm.cmd test",
         "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
-        "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs"
+        "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
+        "node --test netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs"
       ],
       "liveSystems": [
         "Netlify functions",

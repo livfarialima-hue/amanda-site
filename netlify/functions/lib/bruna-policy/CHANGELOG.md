@@ -1,3 +1,7 @@
+## 2026-09-26.4 — mensagens fragmentadas, candidata local
+
+Cada fragmento autenticado passa a entrar na memória compartilhada antes do despacho para processamento, mantendo a fila assinada e LEADS canônicos. Depois da pausa existente, o controlador relê e reúne as entradas pendentes antes da decisão semântica. O marcador usa escrita condicional para impedir que processamento antigo substitua mensagem nova; reprocessamento do mesmo evento não reinicia a pausa, e empate no segundo do provedor não devolve a vez ao evento antigo. Leitura ou gravação indisponível permanece recuperável. Sem nova cadência, alteração de preço, agenda, takeover, opt-out, Apps Script ou envio de testes a pacientes. Evidência: auditorias/bruna-mensagens-fragmentadas-2026-09-26/RELATORIO.md.
+
 ## 2026-09-26.3 — perguntas conjuntas, publicada e verificada
 
 Composição completa e compartilhada de consulta, cirurgia, convênio, online e relatório. Confirmações pendentes exigem alerta entregue. Consulta e faixa somente com ambos os pedidos; lifting genérico exige escopo explícito. Sem nova política de preço, diagnóstico, garantia ou mudança no transporte. Evidência: auditorias/bruna-perguntas-conjuntas-2026-09-26/RELATORIO.md.

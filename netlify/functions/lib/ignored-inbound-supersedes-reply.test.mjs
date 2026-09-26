@@ -7,11 +7,13 @@ import {
 } from "./reply-debounce.mjs";
 
 function fakeBlobs() {
-  let value = null;
+  let value = null, version = 0;
   const store = {
-    async setJSON(_key, nextValue) {
-      value = structuredClone(nextValue);
+    async setJSON(_key, nextValue, options = {}) {
+      if ((options.onlyIfNew && value) || (options.onlyIfMatch && options.onlyIfMatch !== String(version))) return {modified:false};
+      value = structuredClone(nextValue); version++; return {modified:true};
     },
+    async getWithMetadata() {return value ? {data:structuredClone(value),etag:String(version)} : null;},
     async get() {
       return value ? structuredClone(value) : null;
     },

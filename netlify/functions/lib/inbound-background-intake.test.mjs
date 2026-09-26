@@ -53,6 +53,7 @@ function setup(t, overrides = {}) {
 
 function dependencies(overrides = {}) {
   return {
+    appendConversationTurnImpl: async turn => ({ status: "completed", historyBefore: [], historyAfter: [turn] }),
     registerInboundRecoveryImpl: async () => ({ status: "completed", queueKey: "synthetic-key" }),
     markLatestInboundForReplyImpl: async () => ({ status: "completed" }),
     dispatchInboundRecoveryImpl: async () => ({ status: "dispatched", httpStatus: 202 }),
@@ -303,3 +304,31 @@ test(`worker crosses the real ${messageType} controller, awaits slow canonical c
   assert.equal(actions.filter((action) => action === "append_lead").length, 1);
 });
 }
+
+
+test('each accepted fragment is visible before background workers can dispatch', async t => {
+  setup(t); const order=[];
+  const response=await handleYCloudWebhook(request(),{},dependencies({
+    appendConversationTurnImpl:async turn=>{order.push('memory');assert.equal(turn.text,payload.whatsappInboundMessage.text.body);assert.equal(turn.eventId,payload.id);return {status:'completed'};},
+    dispatchInboundRecoveryImpl:async()=>{order.push('dispatch');return {status:'dispatched'};},
+  }));
+  assert.equal(response.status,202);assert.deepEqual(order,['memory','dispatch']);
+});
+
+test('intake memory failure is retriable instead of acknowledging incomplete context', async t => {
+  setup(t); let dispatched=false;
+  const response=await handleYCloudWebhook(request(),{},dependencies({
+    appendConversationTurnImpl:async()=>({status:'failed'}),
+    dispatchInboundRecoveryImpl:async()=>{dispatched=true;return {status:'dispatched'};},
+  }));
+  assert.equal(response.status,503);assert.equal(dispatched,false);
+});
+
+
+test('a worker with exhausted marker conflicts retries without replying or starting slow work',async t=>{
+  const calls=setup(t);
+  const response=await handleYCloudWebhook(request(),{livInboundBackground:true},dependencies({
+    markLatestInboundForReplyImpl:async()=>({status:'failed',reason:'concurrent_update'}),
+  }));
+  assert.equal(response.status,503);assert.equal((await response.json()).error,'inbound_marker_conflict');assert.equal(calls(),0);
+});

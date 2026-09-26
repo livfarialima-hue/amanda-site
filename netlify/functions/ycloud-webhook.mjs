@@ -1,3 +1,4 @@
+import { refreshInboundReplyContext } from "./lib/inbound-reply-context.mjs";
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import {
   enrichAutomationPlanFromConversation,
@@ -2262,6 +2263,7 @@ async function completeOpenAIActive({
   patientRelationship,
   appointmentNeedsPreference,
   approvedPriceReplyKind,
+  refreshInboundReplyContextImpl = refreshInboundReplyContext,
   humanContextContinuationCandidate = false,
   humanResumeGeneration = "",
   precomputedSemanticResult = null,
@@ -2342,13 +2344,13 @@ async function completeOpenAIActive({
         requiresContextualReply: refreshed.requiresContextualReply,
       };
     } else {
-      const pendingBlock = coalesceUnansweredPatientBlock({
-        recentConversation: input.recentConversation,
-        currentText: input.text,
-        currentEventId: input.eventId,
-        currentAt: input.receivedAt,
-        currentTemplateId: input.templateId,
-      });
+      const refreshed = await refreshInboundReplyContextImpl(input);
+      if (refreshed.status !== "completed" && replyDebounceMarkerStatus === "completed") {
+        // Retry the durable job; never treat an unreadable accepted context as complete.
+        return { status: "failed", errorCode: "inbound_context_unavailable", replySent: false };
+      }
+      const pendingBlock = refreshed.block;
+      refreshedContextSource = refreshed.source;
       unansweredPatientBlock = pendingBlock;
       if (pendingBlock.coalesced) {
         input = {
@@ -3907,6 +3909,7 @@ export async function handleYCloudWebhook(
   {
     resolveAttributionImpl = resolveAttributionJourney,
     readOutboundReplyStatusImpl = readOutboundReplyStatus,
+    refreshInboundReplyContextImpl = refreshInboundReplyContext,
     registerInboundRecoveryImpl = registerInboundRecovery,
     appendConversationTurnImpl = appendConversationTurn,
     markLatestInboundForReplyImpl = markLatestInboundForReply,
@@ -4513,6 +4516,22 @@ export async function handleYCloudWebhook(
       return json({ received: false, error: "durable_intake_failed", automaticWorkFinished: false }, 503);
     }
   }
+  if (enqueueInbound) {
+    // Store the accepted fragment before slow LEADS work or worker dispatch.
+    // The signed durable job remains the recovery source; this is the existing cache.
+    const intakeMemory = await appendConversationTurnImpl({
+      phone, role: "user", source: "patient", eventId: String(eventId), at: contactAt,
+      text: unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text,
+      templateId: extractPrefillTemplateId(message, null, classifyAttribution(payload, message, text, null)),
+    });
+    if (!["completed", "duplicate"].includes(intakeMemory.status)) {
+      writeOperationalLog({source:"ycloud_webhook_intake", category:"webhook_intake",
+        reason:"inbound_context_persistence_failed",sourceId:eventId,
+        fields:{recoveryStatus:"pending",automaticWorkFinished:false}});
+      return json({received:false,error:"inbound_context_persistence_failed",
+        automaticWorkFinished:false,recoveryStatus:"pending"},503);
+    }
+  }
   let replyDebounceMarkerStatus = "skipped";
   const inboundReplyKind = replyDebounceKindForInbound({
     messageType: normalizedMessageType,
@@ -4523,6 +4542,7 @@ export async function handleYCloudWebhook(
       phone,
       eventId: String(eventId),
       eventAt: contactAt,
+      isReplay: durableRetry || recoveryRegistration.status === "duplicate",
       priority:
         normalizedMessageType === "image"
           ? inboundReplyPriority("A paciente enviou uma foto.")
@@ -4531,6 +4551,10 @@ export async function handleYCloudWebhook(
             : inboundReplyPriority(text),
     });
     replyDebounceMarkerStatus = markerResult.status;
+    if (markerResult.status === "failed" && markerResult.reason === "concurrent_update") {
+      return json({received:false,error:"inbound_marker_conflict",
+        automaticWorkFinished:false,recoveryStatus:"pending"},503);
+    }
   }
   if (enqueueInbound) {
     const dispatch = replyDebounceMarkerStatus === "completed"
@@ -6430,6 +6454,7 @@ export async function handleYCloudWebhook(
         ].includes(recoveredRelationshipState)
     );
     const activePromise = completeOpenAIActive({
+      refreshInboundReplyContextImpl,
       input: {
         eventId: String(eventId),
         opportunityId: delivery.opportunityId,

@@ -15,10 +15,13 @@ import {
 
 function fakeBlobs() {
   let value = null;
+  let version = 0;
   const store = {
-    async setJSON(_key, nextValue) {
-      value = structuredClone(nextValue);
+    async setJSON(_key, nextValue, options = {}) {
+      if ((options.onlyIfNew && value) || (options.onlyIfMatch && options.onlyIfMatch !== String(version))) return { modified: false };
+      value = structuredClone(nextValue); version++; return { modified: true };
     },
+    async getWithMetadata() { return value ? {data: structuredClone(value), etag: String(version)} : null; },
     async get() {
       return value ? structuredClone(value) : null;
     },
@@ -385,4 +388,42 @@ test("an older phone marker does not block recovery of a newer exact duplicate",
     }),
     true,
   );
+});
+
+
+test('concurrent older write cannot overwrite a newer message', async () => {
+  const blobs = fakeBlobs();
+  const phone = '+5511900000000';
+  await Promise.all([
+    markLatestInboundForReply({phone,eventId:'new',eventAt:'2026-09-26T12:01:00Z'},blobs),
+    markLatestInboundForReply({phone,eventId:'old',eventAt:'2026-09-26T12:00:00Z'},blobs),
+  ]);
+  assert.equal((await getLatestInboundReplyMarker({phone},blobs)).eventId,'new');
+});
+
+test('same event replay preserves the original quiet window', async () => {
+  const blobs = fakeBlobs(), phone = '+5511900000000', now=Date.parse('2026-09-26T12:00:00Z');
+  const input={phone,eventId:'same',eventAt:new Date(now).toISOString()};
+  await markLatestInboundForReply(input,{...blobs,now});
+  await markLatestInboundForReply(input,{...blobs,now:now+4000});
+  let waited=0;
+  const result=await waitForLatestInboundReply({phone,eventId:'same',markerStatus:'completed',replyKind:'ai'},
+    {...blobs,now:now+4000,waitImpl:async ms=>{waited+=ms;}});
+  assert.equal(result.shouldProcess,true); assert.equal(waited,1000);
+});
+
+
+test('a replay cannot reclaim a different event with the same provider second',async()=>{
+  const blobs=fakeBlobs(),phone='+5511900000000',eventAt='2026-09-26T12:00:00Z';
+  await markLatestInboundForReply({phone,eventId:'first',eventAt},blobs);
+  await markLatestInboundForReply({phone,eventId:'second',eventAt},blobs);
+  await markLatestInboundForReply({phone,eventId:'first',eventAt,isReplay:true},blobs);
+  assert.equal((await getLatestInboundReplyMarker({phone},blobs)).eventId,'second');
+});
+
+test('exhausted marker conflicts report a recoverable failure',async()=>{
+  let writes=0;
+  const result=await markLatestInboundForReply({phone:'+5511900000000',eventId:'conflict'},
+    {getStoreImpl:()=>({getWithMetadata:async()=>null,setJSON:async()=>{writes++;return {modified:false};}})});
+  assert.equal(result.status,'failed');assert.equal(writes,4);
 });

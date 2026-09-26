@@ -1,3 +1,4 @@
+import { refreshInboundReplyContext } from "./inbound-reply-context.mjs";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
@@ -8,7 +9,7 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
-for (const scenario of ['bundle', 'bundle_combined_price', 'bundle_alert_failure', 'bundle_semantic_veto']) {
+for (const scenario of ['bundle', 'bundle_combined_price', 'bundle_alert_failure', 'bundle_semantic_veto', 'bundle_late_cache', 'bundle_cache_failure']) {
   test(`webhook answers a complete pending question block: ${scenario}`, async t => {
     const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',
       GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',
@@ -29,7 +30,7 @@ for (const scenario of ['bundle', 'bundle_combined_price', 'bundle_alert_failure
       if(url===SHEETS_URL) {
         if(data.action==='send_review_alert_email') {order.push('email');return new Response(JSON.stringify(scenario==='bundle_alert_failure'?{ok:false}:{ok:true,sent:true}),{status:scenario==='bundle_alert_failure'?500:200});}
         return new Response(JSON.stringify(data.action==='get_conversation_context'
-          ? {ok:true,turns,professional:'amanda',opportunityId:scenario}
+          ? {ok:true,turns:scenario==='bundle_late_cache'?[]:turns,professional:'amanda',opportunityId:scenario}
           : {ok:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
       }
       if(url==='https://api.openai.com/v1/responses') {
@@ -47,8 +48,12 @@ for (const scenario of ['bundle', 'bundle_combined_price', 'bundle_alert_failure
       return new Response('{"status":"accepted"}',{status:scenario==='bundle_alert_failure'?500:200});
     });
     const response=await handleYCloudWebhook(requestFor({id:`${scenario}-final`,type:'whatsapp.inbound_message.received',createTime:'2026-09-26T11:33:00Z',
-      whatsappInboundMessage:{id:`${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-09-26T11:33:00Z',type:'text',text:{body:texts.at(-1)}}}),{livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'})});
+      whatsappInboundMessage:{id:`${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-09-26T11:33:00Z',type:'text',text:{body:texts.at(-1)}}}),{livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'}),
+      ...(scenario==='bundle_late_cache'?{refreshInboundReplyContextImpl:input=>refreshInboundReplyContext(input,{readConversationTurnsImpl:async()=>({status:'completed',turns})})}:{}),
+      ...(scenario==='bundle_cache_failure'?{markLatestInboundForReplyImpl:async()=>({status:'completed'}),refreshInboundReplyContextImpl:async()=>({status:'failed'})}:{}),
+    });
     const result=await response.json(); const replies=sent.filter(m=>m.to==='+5511900000000');
+    if(scenario==='bundle_cache_failure'){assert.equal(modelCalls,0);assert.equal(replies.length,0);assert.equal(result.aiActiveStatus,'failed');assert.equal(result.automaticWorkFinished,false);return;}
     assert.ok(modelCalls>0,JSON.stringify(result));
     if(['bundle_alert_failure','bundle_semantic_veto'].includes(scenario)) {assert.equal(replies.length,0,JSON.stringify(result));return;}
     assert.equal(replies.length,1,JSON.stringify(result));const body=replies[0].text.body;

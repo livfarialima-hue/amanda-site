@@ -58,7 +58,7 @@ function store(getStoreImpl = getStore) {
 }
 
 export async function markLatestInboundForReply(
-  { phone, eventId, eventAt, priority = 100 },
+  { phone, eventId, eventAt, priority = 100, isReplay = false },
   { getStoreImpl = getStore, now = Date.now() } = {},
 ) {
   if (!phone || !eventId) {
@@ -67,46 +67,57 @@ export async function markLatestInboundForReply(
 
   try {
     const replyStore = store(getStoreImpl);
-    const current = await replyStore.get(key(phone), {
-      type: "json",
-      consistency: "strong",
-    });
-    const incomingAt = Date.parse(String(eventAt || ""));
-    const currentEventAt = Date.parse(String(current?.eventAt || ""));
-    const currentMarkedAt = Date.parse(String(current?.markedAt || ""));
-    const incomingPriority = Number(priority) || 0;
-    const currentPriority = Number(current?.priority) || 0;
-    const currentIsRecent =
-      Number.isFinite(currentMarkedAt) &&
-      now - currentMarkedAt >= 0 &&
-      now - currentMarkedAt <= PRIORITY_HOLD_MS;
-    const currentIsNewer =
-      Number.isFinite(incomingAt) &&
-      Number.isFinite(currentEventAt) &&
-      currentEventAt > incomingAt;
-    const protectsMoreSpecificMessage =
-      current?.eventId &&
-      current.eventId !== String(eventId) &&
-      currentIsRecent &&
-      currentPriority > incomingPriority;
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const entry = await replyStore.getWithMetadata(key(phone), {
+        type: "json",
+        consistency: "strong",
+      });
+      const current = entry?.data;
+      const incomingAt = Date.parse(String(eventAt || ""));
+      const currentEventAt = Date.parse(String(current?.eventAt || ""));
+      const currentMarkedAt = Date.parse(String(current?.markedAt || ""));
+      const incomingPriority = Number(priority) || 0;
+      const currentPriority = Number(current?.priority) || 0;
+      const currentIsRecent =
+        Number.isFinite(currentMarkedAt) &&
+        now - currentMarkedAt >= 0 &&
+        now - currentMarkedAt <= PRIORITY_HOLD_MS;
+      const currentIsNewer =
+        Number.isFinite(incomingAt) &&
+        Number.isFinite(currentEventAt) &&
+        currentEventAt > incomingAt;
+      const protectsMoreSpecificMessage =
+        current?.eventId &&
+        current.eventId !== String(eventId) &&
+        currentIsRecent &&
+        currentPriority > incomingPriority;
 
-    if (currentIsNewer || protectsMoreSpecificMessage) {
-      return {
-        status: "completed",
-        preserved: true,
-        eventId: String(current.eventId),
-      };
+      const replayCannotAdvance = isReplay && current?.eventId !== String(eventId) && current?.eventId &&
+        (!Number.isFinite(incomingAt) || !Number.isFinite(currentEventAt) || incomingAt <= currentEventAt);
+      if (currentIsNewer || protectsMoreSpecificMessage || replayCannotAdvance) {
+        return {
+          status: "completed",
+          preserved: true,
+          eventId: String(current.eventId),
+        };
+      }
+
+      // The worker and provider retries must not restart the same quiet window.
+      if (current?.eventId === String(eventId) && currentPriority >= incomingPriority) {
+        return { status: "completed", preserved: true, eventId: String(eventId) };
+      }
+      const write = await replyStore.setJSON(key(phone), {
+        eventId: String(eventId),
+        eventAt: Number.isFinite(incomingAt)
+          ? new Date(incomingAt).toISOString()
+          : null,
+        priority: incomingPriority,
+        markedAt: current?.eventId === String(eventId) && Number.isFinite(currentMarkedAt)
+          ? current.markedAt : new Date(now).toISOString(),
+      }, entry ? { onlyIfMatch: entry.etag } : { onlyIfNew: true });
+      if (write.modified) return { status: "completed" };
     }
-
-    await replyStore.setJSON(key(phone), {
-      eventId: String(eventId),
-      eventAt: Number.isFinite(incomingAt)
-        ? new Date(incomingAt).toISOString()
-        : null,
-      priority: incomingPriority,
-      markedAt: new Date(now).toISOString(),
-    });
-    return { status: "completed" };
+    return { status: "failed", reason: "concurrent_update" };
   } catch {
     return { status: "failed" };
   }
