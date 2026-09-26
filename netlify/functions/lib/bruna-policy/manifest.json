@@ -17,18 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
-    "lastObservedProductionCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
-    "functionalDeployId": "6ab6ea73cea89200081ef8d5",
-    "lastObservedProductionDeployId": "6ab6ea73cea89200081ef8d5",
-    "rollbackCommit": "1358a1db111e04d23ca636d182fb7a110d2d6c6b",
-    "rollbackDeployId": "6ab6dae04b46000008d93fec",
-    "rollbackConstraint": "Conter a recuperacao se houver regressao. Reverter Code.gs/LeadClassification.gs ao Apps Script v160 e os demais modulos Netlify ao baseline 1358a1d, mantendo o leitor inbound-recovery.mjs desta candidata ate drenar as entradas pending/<hash>/text e /unavailable. Nao restaurar isoladamente o deploy antigo enquanto existirem essas chaves; o leitor antigo nao as reconhece. Preservar historico, assinaturas, recibos e pausas; sem replay manual.",
-    "publishedAt": "2026-09-25T21:41:40Z",
-    "lastVerifiedAt": "2026-09-25T21:42:05.670Z",
-    "candidateChangeId": "BRUNA-RECUPERACAO-CONTEUDO-2026-09-25",
+    "functionalCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+    "lastObservedProductionCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+    "functionalDeployId": "6ab7a3b5dda1f60008f631fe",
+    "lastObservedProductionDeployId": "6ab7a3b5dda1f60008f631fe",
+    "rollbackCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
+    "rollbackDeployId": "6ab6ea73cea89200081ef8d5",
+    "rollbackConstraint": "Restaurar Netlify 6ab6ea73cea89200081ef8d5 / commit 1920658fa469b640099d3d4908e01945097cbaf3; preservar Apps Script v161, fila, historico, recibos e pausas. Sem replay.",
+    "publishedAt": "2026-09-26T10:52:00Z",
+    "publishedTimePrecision": "minute_from_deployment_UI",
+    "lastVerifiedAt": "2026-09-26T10:52:17.451Z",
+    "candidateChangeId": "BRUNA-ACOLHIMENTO-2026-09-26",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-25.2",
+    "bundleVersion": "2026-09-26.1",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -40,15 +41,10 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "efc3c0e899f062ad322447718860c43e386718a6e7459bbd3426bbf664506697"
+    "driveProjectionSha256": "d7de78697d328ca6e30e15d37b8cc1790ee0117643c9af6863d3e662512e4c5d"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-ACOLHIMENTO-2026-09-26",
-    "bundleVersion": "2026-09-26.1",
-    "status": "tested_local"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "approvedCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
   "authorization": {
     "by": "Daniel",
@@ -110,5 +110,21 @@
     "dueAt": "2026-09-28T10:52:00Z",
     "status": "pending_owner_review",
     "automationCreated": false
+  },
+  "documentation": {
+    "verifiedAt": "2026-09-26T10:54:23.134Z",
+    "commit": "4ebe411c18d795f88cfebffc41d5582318b3a6c6",
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "cff58be974c5f793ac1b803a548197b8f63a5ce177f675c4134057b2e7b7e3e5",
+      "bytes": 213488,
+      "downloadCompared": true
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "d7de78697d328ca6e30e15d37b8cc1790ee0117643c9af6863d3e662512e4c5d",
+      "bytes": 134471,
+      "downloadCompared": true
+    }
   }
 }
