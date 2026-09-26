@@ -273,6 +273,9 @@ export function buildInsuranceAcceptanceReply({
 }
 
 function consultationDescription(procedure, procedureLabel) {
+  if (procedure === "otoplastia") {
+    return "Na avaliação de otoplastia, a Dra. Amanda escuta o que você gostaria de mudar e examina a projeção, as dobras e as assimetrias de cada orelha. A partir disso, explica as possibilidades e a recuperação. Você pode tirar suas dúvidas com calma, sem precisar decidir pela cirurgia nesse momento.";
+  }
   if (procedure === "lifting_facial") {
     return [
       "A avaliação de lifting facial começa com uma conversa sobre o que você percebe no rosto e o que gostaria de melhorar ou preservar.",

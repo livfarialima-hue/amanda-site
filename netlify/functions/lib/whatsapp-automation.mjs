@@ -1,5 +1,5 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
-import { isClearInformationAcceptance, isAutomatedBusinessReply } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry } from "./patient-turn-context.mjs";
 import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
@@ -63,8 +63,6 @@ const AMANDA_PATTERNS = [
   /\bprocedimento\s+est[eé]tico\b/i,
 ];
 
-const PRICE_AMOUNT_PATTERN =
-  /\b(?:pre[cç]os?|valor(?:es)?|quanto\s+custa|quanto\s+fica|m[eé]dia|or[cç]amento|faixa(?:\s+de\s+pre[cç]os?)?)\b/i;
 const DECLINED_PRICE_AMOUNT_PATTERN =
   /\bn[aã]o\s+(?:quero|preciso|gostaria(?:\s+de)?)(?:\s+(?:saber|receber|ver|conhecer|entender))?\s+(?:(?:o|os|a|as|um|uma|sobre|de|dos|das)\s+){0,2}(?:pre[cç]os?|valor(?:es)?|or[cç]amento|faixa(?:\s+de\s+(?:pre[cç]os?|valores))?)\b/gi;
 
@@ -112,8 +110,6 @@ const CONSULTATION_EXPLANATION_REQUEST_PATTERN =
 const CONSULTATION_ACCESS_PATTERN =
   /\bcomo\s+(?:eu\s+)?fa[cç]o\s+para\s+(?:passar|marcar|agendar)\s+(?:em|uma)?\s*(?:consulta|avalia[cç][aã]o)\b/i;
 
-const CONSULTATION_PRICE_PATTERN =
-  /\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|tem\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\b.{0,45}\b(?:a\s+|da\s+)?(?:consulta|avalia[cç][aã]o)\b|\b(?:consulta|avalia[cç][aã]o)\b.{0,45}\b(?:pre[cç]o|valor|quanto\s+custa|quanto\s+fica|tem\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\b/i;
 
 const AVAILABILITY_REQUEST_PATTERN =
   /\b(?:consultar|conferir|ver|saber)\s+(?:a\s+)?disponibilidade\b|\b(?:quais?|ver|consultar|conferir|saber)\b.{0,35}\b(?:hor[aá]rios?|datas?)\b|\b(?:agendar|marcar)\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o)\b/i;
@@ -202,12 +198,12 @@ export function isConsultationInformationRequest(text) {
     CONSULTATION_INFORMATION_PATTERN.test(value) ||
     CONSULTATION_EXPLANATION_REQUEST_PATTERN.test(value) ||
     CONSULTATION_ACCESS_PATTERN.test(value) ||
-    CONSULTATION_PRICE_PATTERN.test(value)
+    isConsultationCostInquiry(value)
   );
 }
 
 export function isConsultationPriceRequest(text) {
-  return CONSULTATION_PRICE_PATTERN.test(String(text || ""));
+  return isConsultationCostInquiry(String(text || ""));
 }
 
 export function isAvailabilityRequest(text) {
@@ -670,7 +666,7 @@ export function planAutomation({
   const mentionsAmanda = matchesAny(normalizedText, AMANDA_PATTERNS);
   // A declined amount is not a renewed request. Only remove the explicit
   // refusal clause so another actual price question in the turn survives.
-  const asksPriceAmount = PRICE_AMOUNT_PATTERN.test(
+  const asksPriceAmount = isPriceAmountInquiry(
     normalizedText.replace(DECLINED_PRICE_AMOUNT_PATTERN, " "),
   );
   const asksPriceTerms = PRICE_TERMS_PATTERN.test(normalizedText);

@@ -1,6 +1,6 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
-import { isClearInformationAcceptance, isPersonalAppearanceConcern } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -39,10 +39,6 @@ const EXPLICIT_RETURN_LATER_PATTERN =
   /\b(?:qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s*[,]?\s*(?:eu\s+)?(?:volto|retorno|aviso|chamo)|se\s+eu\s+decidir\s*[,]?\s*(?:eu\s+)?(?:volto|retorno|aviso|chamo)|vou\s+(?:pensar|avaliar|analisar|decidir)(?:\s+com\s+calma)?\s+e\s+(?:depois\s+)?(?:volto|retorno|aviso|chamo))\b/i;
 const PATIENT_DECLINE_PATTERN =
   /\b(?:n[ãa]o\s+(?:tenho\s+)?interesse|prefiro\s+n[ãa]o|n[ãa]o\s+quero|desisti|vou\s+deixar\s+(?:pra|para)\s+(?:depois|mais\s+pra\s+frente)|fora\s+do\s+meu\s+or[cç]amento|acima\s+do\s+meu\s+or[cç]amento|n[ãa]o\s+cabe\s+no\s+meu\s+or[cç]amento|muito\s+car[oa]\s+(?:pra|para)\s+mim|vou\s+me\s+programar\s+e\s+(?:retorno|volto))\b/i;
-const PRICE_PATTERN =
-  /\b(?:valor(?:es)?|pre[cç]os?|quanto\s+custa|investimento|or[cç]amento|faixa)\b/i;
-const CONSULTATION_PATTERN = /\bconsult(?:a|ar|as|inha)\b/i;
-const CHARGE_PATTERN = /\bcobr(?:a|am|ado|ada|ados|adas|ar|am-se)\b/i;
 const KNOWN_PROCEDURE_PATTERN =
   /\b(?:lifting|mini[-\s]?lifting|cervicoplastia|lipo(?:aspira[cç][ãa]o)?(?:\s+de\s+papada)?|papada|blefaroplastia|p[áa]lpebra|otoplastia|orelha|rinoplastia|mamoplastia|mastopexia|pr[óo]tese|abdominoplastia|braquioplastia|cruroplastia|ninfoplastia|ginecomastia)\b/i;
 const PAYMENT_PATTERN =
@@ -167,7 +163,7 @@ function hasProcedureInformationRequest(value) {
         PROCEDURE_INFORMATION_PATTERN.test(part) &&
         (
           APPEARANCE_CONCERN_PATTERN.test(part) ||
-          (!PRICE_PATTERN.test(part) && !PAYMENT_PATTERN.test(part))
+          (!isPriceAmountInquiry(part) && !PAYMENT_PATTERN.test(part))
         ),
     );
 }
@@ -376,12 +372,9 @@ function inferUnresolvedIntents({
   };
 
   if (String(messageType || "").toLowerCase() === "image") add("photo");
-  const consultationPriceRequest = Boolean(
-    CONSULTATION_PATTERN.test(value) &&
-      (PRICE_PATTERN.test(value) || CHARGE_PATTERN.test(value)),
-  );
+  const consultationPriceRequest = isConsultationCostInquiry(value);
   if (
-    (PRICE_PATTERN.test(value) || consultationPriceRequest) &&
+    (isPriceAmountInquiry(value) || consultationPriceRequest) &&
     plan?.priceMentionIsTemplateContext !== true
   ) {
     add(consultationPriceRequest ? "price_consultation" : "price_surgery");
@@ -538,11 +531,12 @@ function buildReplyContract({
       : 1;
   const silenceReason = canWrite ? "" : reason || "reply_not_authorized";
   const allowedCtaTypes = [];
+  const declinesAvailability = /\b(?:n[aã]o\s+(?:quero|pretendo|vou)|sem\s+(?:querer|intenc[aã]o\s+de))\s+(?:agendar|marcar)|\b(?:vou\s+pensar|prefiro\s+pensar|s[oó]\s+(?:estou\s+)?pesquisando)\b/i.test(value);
   if (canWrite && conversionExperienceEnabled) {
     if (intents.includes("scheduling")) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.PREFERENCE);
     }
-    if (intents.includes("price_consultation")) {
+    if (intents.includes("price_consultation") && !declinesAvailability) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.AVAILABILITY);
     }
     if (approvedInitialRangeOffer) {
@@ -556,7 +550,7 @@ function buildReplyContract({
     canWrite &&
     (
       intents.includes("scheduling") ||
-      intents.includes("price_consultation") ||
+      (intents.includes("price_consultation") && !declinesAvailability) ||
       approvedInitialRangeOffer ||
       approvedLiftingInformation || approvedGeneralInformation
     );

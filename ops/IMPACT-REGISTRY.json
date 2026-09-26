@@ -175,7 +175,10 @@
         "auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/PUBLICACAO.json",
-        "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md"
+        "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
+        "auditorias/bruna-acolhimento-2026-09-26/PREFLIGHT.json",
+        "auditorias/bruna-acolhimento-2026-09-26/PUBLICACAO.json",
+        "auditorias/bruna-acolhimento-2026-09-26/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -819,7 +822,8 @@
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/patient-replies.mjs",
         "netlify/functions/lib/patient-replies.test.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/bruna-acolhimento.integration.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-conversation-evals.test.mjs",
@@ -831,14 +835,16 @@
         "netlify/functions/lib/lifting-information.test.mjs",
         "netlify/functions/lib/openai-shadow.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
-        "netlify/functions/lib/patient-replies.test.mjs"
+        "netlify/functions/lib/patient-replies.test.mjs",
+        "netlify/functions/lib/bruna-acolhimento.integration.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
         "npm.cmd run architecture:check",
         "npm.cmd test",
         "git diff --check",
-        "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs"
+        "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+        "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs"
       ],
       "liveSystems": [
         "Google Drive",

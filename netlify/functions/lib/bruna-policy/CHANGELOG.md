@@ -1,3 +1,7 @@
+# 2026-09-26.1 — acolhimento e continuidade
+
+Apresentação na primeira resposta apesar de várias entradas do paciente. Interpretação comum de perguntas naturais de custo preserva oferta aprovada de faixa e convite opcional da consulta. Acolhimento concreto, avaliação de otoplastia específica e respeito a adiamento. Sem alteração de transporte, recuperação, preços, agenda ou Apps Script. Evidência: auditorias/bruna-acolhimento-2026-09-26/RELATORIO.md.
+
 # 2026-09-25.2 — aceite curto de oferta informativa
 
 Por favor, Por gentileza e abreviações estritas continuam a última oferta concreta. Contexto de faixa aprovada chega ao modelo e ao transporte sem reiniciar descoberta. Recusa explícita de valor não é novo pedido. Preço, envio único, consulta/agenda, cuidado e humano preservados. Evidência: auditorias/bruna-aceite-cortesia-2026-09-25/RELATORIO.md.

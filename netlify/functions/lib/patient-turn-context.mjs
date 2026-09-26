@@ -2,6 +2,21 @@
 // it never authorizes a procedure, payment, booking or clinical recommendation.
 export const UNAVAILABLE_PATIENT_TEXT = "[Mensagem de texto indisponível na integração.]";
 
+// Same linguistic signal for planning and the outbound contract. It identifies a
+// question about cost, not consent to a range, a booking, or a price objection.
+const PRICE_AMOUNT_PATTERN = /\b(?:precos?|valor(?:es)?|investimento|media|orcamento|faixa|quanto\s+(?:custa|fica|sai|e)(?!\s+(?:(?:o|a|um|uma)\s+)?(?:tempo|prazo|periodo|risco|tamanho|inchaco|inchad[oa]|vermelh[oa]|dolorid[oa]|sensivel|afastad[oa]|internad[oa])\b))\b/i;
+const CONSULTATION_COST_PATTERN = new RegExp(
+  `(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b).{0,45}\\b(?:consulta|avalia[cç][aã]o)\\b|` +
+  `\\b(?:consulta|avalia[cç][aã]o)\\b.{0,45}(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b)`, "i");
+
+export function isPriceAmountInquiry(text) {
+  return PRICE_AMOUNT_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, ""));
+}
+
+export function isConsultationCostInquiry(text) {
+  return CONSULTATION_COST_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, ""));
+}
+
 // A conversational signal, never a diagnosis or evidence of surgical intent.
 export function isPersonalAppearanceConcern(text) {
   const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();

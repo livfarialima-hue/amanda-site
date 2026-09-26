@@ -1,5 +1,15 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-ACOLHIMENTO-2026-09-26 -->
+**Pacote 2026-09-26.1 — CANDIDATA LOCAL, publicação pendente.** Daniel pediu uma conversa mais acolhedora e cuidadosa e autorizou a publicação após validação. A hipótese de modificar a recuperação foi cancelada antes de qualquer alteração; transporte, timeouts, fila, cadência e Apps Script v161 permanecem fora da mudança.
+
+A primeira resposta mantém saudação e apresentação mesmo se a pessoa enviar prefill e uma saudação em mensagens separadas. Histórico de entradas não comprova resposta anterior da clínica. Continuação real não repete apresentação; na ausência de histórico, mantém-se o indício legado de cadastro atualizado, exceto na repetição da mesma mensagem ou recuperação de gravação. Perguntas como “quanto é a cirurgia” e “quanto fica a consulta” usam a mesma interpretação no planejamento e no envio. A primeira resposta cirúrgica preserva a oferta aprovada de faixa sem números; a consulta informa R$ 500 e pode oferecer uma vez conferir horários. Recusa, adiamento e convite anterior evitam insistência. A avaliação de otoplastia explica o cuidado com as orelhas de forma específica, sem indicação individual.
+
+Tom: atenção à dúvida concreta, acolhimento de receios realmente declarados e um próximo passo pertinente. Sem empatia decorativa, pressão, currículo ou explicação repetidos. Preço, aceite, envio único, preferência humana, opt-out, urgência, agenda verificada e prioridade da mensagem recente continuam obrigatórios. Sem replay, reescrita da conversa ou envio real de teste.
+
+Hipótese: clareza e acolhimento facilitam a continuidade até a consulta; aumento de conversão ainda não medido. Acompanhar apresentações únicas, resolução das perguntas, ofertas pertinentes, respostas qualificadas e consultas confirmadas/realizadas. Responsável Daniel/equipe: primeiras conversas naturais e 48 horas após publicação; conter diante de pressão, perda de contexto, valor indevido ou duplicidade. Rollback: commit 1920658fa469b640099d3d4908e01945097cbaf3, Netlify 6ab6ea73cea89200081ef8d5, preservando Apps Script v161 e dados. Evidência: auditorias/bruna-acolhimento-2026-09-26/RELATORIO.md e PUBLICACAO.json.
+<!-- /BRUNA-ACOLHIMENTO-2026-09-26 -->
+
 <!-- BRUNA-RECUPERACAO-CONTEUDO-2026-09-25 -->
 **PUBLICADO E VERIFICADO em 25/09/2026, 18:41 BRT.** Commit funcional 1920658fa469b640099d3d4908e01945097cbaf3, Netlify 6ab6ea73cea89200081ef8d5 e Apps Script v161 no deployment canonico. Corrige falhas locais reproduzidas na fila, na memoria e no historico: texto entregue depois para a mesma mensagem pode preencher apenas conteudo antes indisponivel, conservando identidade e horario originais. Os corpos assinados sao preservados separadamente; a conclusao antiga nao apaga a versao recuperada. A recuperacao aguarda o processamento anterior e consulta seus recibos para nao repetir resposta, inclusive quando o provedor usa outro event ID para o mesmo wamid. Texto valido, atendimento humano, assinaturas, janelas e precos preservados.
 

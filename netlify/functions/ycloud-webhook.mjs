@@ -119,6 +119,7 @@ import {
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   isBrunaConversionExperienceEnabled,
+  hasKnownPriorClinicInteraction,
 } from "./lib/bruna-conversion-experience.mjs";
 import {
   cancelPendingHumanResume,
@@ -4973,13 +4974,9 @@ export async function handleYCloudWebhook(
   if (!conversationHistoryWithCurrent.length) {
     conversationHistoryWithCurrent = conversationHistory;
   }
-  const priorInteractionKnown = Boolean(
-    conversationHistory.length > 0 ||
-      (
-        delivery.updated === true &&
-        delivery.recoveredAfterTransientFailure !== true
-      ),
-  );
+  const priorInteractionKnown = hasKnownPriorClinicInteraction({
+    recentConversation: conversationHistory, delivery,
+  });
 
   if (automationMode === "off") {
     const recoveryStatus = delivery.ok

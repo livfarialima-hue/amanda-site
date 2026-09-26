@@ -1,0 +1,54 @@
+{
+  "status": "verified_read_only",
+  "checkedAt": "2026-09-26T10:50:40.388Z",
+  "baseline": "61ecfff6a99c8b263611f60233c37612527ef15d",
+  "netlifyDeployId": "6ab6ea73cea89200081ef8d5",
+  "appsScriptVersion": 161,
+  "diagnosis": {
+    "evidence": "Print fornecido e respostas correspondentes na YCloud e nos logs Netlify, 26/09/2026 07:36, 07:38 e 07:40 BRT.",
+    "local": "Historico somente de entradas podia suprimir a apresentacao. Detectores de preco divergiam entre planejamento e contrato de saida.",
+    "scope": "Usuario cancelou a mudanca na recuperacao. Nenhuma alteracao nessa area foi feita; este pacote trata somente qualidade e continuidade da conversa."
+  },
+  "patientMessagesSent": 0,
+  "liveReads": [
+    "LEADS canonica, mensagens IN completas e oportunidade roteada",
+    "YCloud Inbox, primeira resposta automatica antes de qualquer alteracao",
+    "Netlify background, tres respostas concluidas e modo active",
+    "Apps Script canonico, doPost versao 161"
+  ],
+  "limitations": [
+    "Sem teste de envio real. A causa exata da latencia HTTP fica fora do escopo a pedido do usuario."
+  ],
+  "health": {
+    "ok": true,
+    "service": "ycloud-webhook",
+    "apiKeyConfigured": true,
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "sheetsSecretConfigured": true,
+    "openAIConfigured": true,
+    "reviewAlertConfigured": true,
+    "appointmentReviewEnabled": true,
+    "automationMode": "active",
+    "conversionExperience": "bruna-conversion-v1",
+    "processingMode": "durable_background_intake",
+    "contactPreferencesGuard": "active",
+    "internalPhoneExclusionConfigured": true,
+    "leadDeliveryRetry": "single_idempotent_transient",
+    "leadDeliveryFallback": "acquisition_only",
+    "leadFailureEmailAlert": "required_after_retries",
+    "messageCostObservability": "delivered_event_idempotent"
+  },
+  "netlifyPublishedCommit": "1920658fa469b640099d3d4908e01945097cbaf3",
+  "netlifyVerification": "Netlify Deploys autenticado: Published 1920658, autopublicacao reestruturacao-site; 26/09/2026.",
+  "driveBaselines": {
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "03b8aeee814e97247eede4afedab6d4d928cb3d6fdc7ec93bbc282a35d74b343"
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "efc3c0e899f062ad322447718860c43e386718a6e7459bbd3426bbf664506697"
+    }
+  }
+}
