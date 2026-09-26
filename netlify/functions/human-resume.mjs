@@ -1060,8 +1060,11 @@ export async function runHumanResumeBatch({
 }
 
 export default async () => {
-  if (isHumanResumeBackgroundEnabled()) return dispatchHumanResume();
-  return runLegacyScheduledHumanResumes();
+  if (isHumanResumeBackgroundEnabled()) {
+    await dispatchHumanResume();
+    return;
+  }
+  await runLegacyScheduledHumanResumes();
 };
 
 export const config = {

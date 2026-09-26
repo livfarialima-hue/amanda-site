@@ -14,6 +14,6 @@ Publicar o commit validado com o worker desativado. Conferir a função e depois
 
 ## Validação local
 
-1.793 testes integrais aprovados, incluindo 15 novas regressões; 135 testes focados aprovados. Os 38 comandos de testes, contratos, arquitetura e build passaram. O 39º comando, ops:check, mantém SYNC_PENDING até publicação, ativação e conciliação do Drive. Build: 193 arquivos e 54 URLs, nenhum arquivo de auditoria no artefato. Nenhuma mensagem real de teste ou replay foi enviado.
+1.794 testes integrais aprovados, incluindo 16 novas regressões; 136 testes focados aprovados. Os 38 comandos de testes, contratos, arquitetura e build passaram. O 39º comando, ops:check, mantém SYNC_PENDING até publicação, ativação e conciliação do Drive. Build: 193 arquivos e 54 URLs, nenhum arquivo de auditoria no artefato. Nenhuma mensagem real de teste ou replay foi enviado.
 
 Revisão do diff: a mudança do marcador de envio mantém as duas conferências de contexto; a segunda ocorre antes da reserva final de tentativa. Recibo aceito/persistido não é substituído. Falha no preparo não prova aceite. Ativação usa o modo global e segredo existentes, com flag específica apenas em produção; o handler anterior permanece como fallback desligado da migração. Não houve alteração dos valores aprovados ou da estratégia de aquisição.

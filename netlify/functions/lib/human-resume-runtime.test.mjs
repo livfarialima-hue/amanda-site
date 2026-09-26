@@ -1,12 +1,29 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { dispatchHumanResume, runHumanResumeBatch } from "../human-resume.mjs";
+import scheduledHandler, { dispatchHumanResume, runHumanResumeBatch } from "../human-resume.mjs";
 import { handleHumanResumeBackground } from "../human-resume-background.mjs";
 
 // Synthetic jobs: no patient, provider or production queue is contacted.
 const env = { URL: "https://example.test", GOOGLE_SHEETS_WEBHOOK_SECRET: "synthetic-secret", WHATSAPP_AUTOMATION_MODE: "active", WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED: "true" };
 const noLog = () => {};
 const request = (secret = env.GOOGLE_SHEETS_WEBHOOK_SECRET) => new Request("https://example.test", { method: "POST", body: JSON.stringify({ secret }) });
+
+test("Netlify scheduled entrypoint completes with no unsupported object response", async () => {
+  const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
+  const originalFetch = globalThis.fetch;
+  let dispatches = 0;
+  try {
+    Object.assign(process.env, env);
+    globalThis.fetch = async () => { dispatches++; return new Response(null, { status: 202 }); };
+    assert.equal(await scheduledHandler(), undefined);
+    assert.equal(dispatches, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  }
+});
 
 test("morning scheduler dispatches authenticated background work without claiming delivery", async () => {
   const result = await dispatchHumanResume({ env, logImpl: noLog, fetchImpl: async (url, options) => {
