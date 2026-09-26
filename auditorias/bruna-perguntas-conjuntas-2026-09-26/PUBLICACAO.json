@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "authorization": {
     "by": "Daniel",
     "reference": "Da pra arrumar com seguranca qnd fazem esse tipo de abordagem?? Arrume e publique",
@@ -245,5 +245,23 @@
     "automationCreated": false,
     "dueAt": "2026-09-28T12:57:31Z",
     "secondReviewAt": "2026-10-03T12:57:31Z"
+  },
+  "documentation": {
+    "verifiedAt": "2026-09-26T13:00:06.241Z",
+    "commit": "461b144e3a49af9f3ad799283506b26b2cde9faf",
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "3ce3249b409f0059e8c99fe8dcbc0268f62c3ad73e9a936f295534b403ed728c",
+      "bytes": 218345,
+      "downloadCompared": true
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "615815ee71ac3afba1b6ca1b4141b86f925d118fa607720a18f85375ccb85936",
+      "bytes": 133770,
+      "downloadCompared": true
+    }
   }
 }

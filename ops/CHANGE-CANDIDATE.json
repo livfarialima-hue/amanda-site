@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26",
   "title": "Responder perguntas conjuntas e encaminhar apenas pendencias concretas",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "af18dcacec575562760cfb92d1ecc820b76791e9",
   "authorization": {
     "required": true,
@@ -223,7 +223,11 @@
     "netlifyDeployId": "6ab7c11ced13e90009556ee4",
     "appsScriptVersion": 161,
     "verifiedAt": "2026-09-26T12:58:21.171Z",
-    "documentationStatus": "pending",
-    "productionReceipt": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PUBLICACAO.json"
+    "documentationStatus": "verified",
+    "productionReceipt": "auditorias/bruna-perguntas-conjuntas-2026-09-26/PUBLICACAO.json",
+    "drivePlanSha256": "3ce3249b409f0059e8c99fe8dcbc0268f62c3ad73e9a936f295534b403ed728c",
+    "driveManualSha256": "615815ee71ac3afba1b6ca1b4141b86f925d118fa607720a18f85375ccb85936",
+    "documentationCommit": "461b144e3a49af9f3ad799283506b26b2cde9faf",
+    "documentationVerifiedAt": "2026-09-26T13:00:06.241Z"
   }
 }
