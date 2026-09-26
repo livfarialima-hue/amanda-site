@@ -17,6 +17,33 @@ export function isConsultationCostInquiry(text) {
   return CONSULTATION_COST_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, ""));
 }
 
+// Independent questions in one unanswered block; this supplies topics, never
+// medical facts or numeric permission. A consultation *for* a procedure does
+// not also ask for that surgery's price.
+export function consultationQuestionTopics(text) {
+  const value = String(text || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const clauses = value.split(/[\n.!?;]+/).filter(Boolean);
+  const active = clauses.filter(c => !/\b(?:nao quero|nao preciso|sem interesse em)\b.{0,30}\b(?:precos?|valor(?:es)?|faixa|orcamento)\b/.test(c));
+  const consultationPrice = active.some(isConsultationCostInquiry);
+  const surgeryWord = /\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|mastopexia|abdominoplastia|lipoaspiracao|ninfoplastia|mamoplastia|minilifting|procedimento)\b/;
+  const surgeryPrice = active.some(c => {
+    if (!surgeryWord.test(c)) return false;
+    if (!isPriceAmountInquiry(c)) return consultationPrice && /^\s*e\s+(?:[oa]|d[oa])\s+(?:lifting|cervicoplastia|otoplastia|cirurgia)\b/.test(c);
+    if (!isConsultationCostInquiry(c)) return true;
+    // A shared price question: "preço da consulta e do lifting", in either order.
+    return /\b(?:consulta|avaliacao)\s*(?:presencial\s*)?(?:,|e|ou)\s*(?:(?:tambem|d[oa]|[oa])\s+)*(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c) ||
+      /\b(?:cirurgia|lifting(?: facial| cervical)?|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\s*(?:,|e|ou)\s*(?:d[ae]|a|da minha)?\s*(?:consulta|avaliacao)\b/.test(c) ||
+      /\b(?:e|tambem)\s+(?:qual\s+(?:e\s+)?(?:o\s+)?|quanto\s+|[oa]\s+)?(?:preco|valor|faixa|media|custa|fica)\b.{0,45}\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c);
+  });
+  return [
+    consultationPrice && 'price_consultation',
+    surgeryPrice && 'price_surgery',
+    /\b(?:convenio|plano de saude|bradesco|unimed|sulamerica|amil)\b/.test(value) && 'insurance',
+    /\b(?:online|on-line|teleconsulta|videochamada|videoconsulta|consulta (?:por video|remota|a distancia))\b/.test(value) && 'remote_consultation',
+    /\b(?:relatorio|laudo|documentacao|documentos?)\b[\s\S]{0,120}\breembolso\b|\breembolso\b[\s\S]{0,120}\b(?:relatorio|laudo|documentacao|documentos?)\b/.test(value) && 'reimbursement_document',
+  ].filter(Boolean);
+}
+
 // A conversational signal, never a diagnosis or evidence of surgical intent.
 export function isPersonalAppearanceConcern(text) {
   const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();

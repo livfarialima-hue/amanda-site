@@ -1,3 +1,6 @@
+import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
+import { consultationQuestionTopics } from './lib/patient-turn-context.mjs';
+import { coalesceUnansweredPatientBlock } from './lib/inbound-burst-context.mjs';
 import {
   enrichAutomationPlanFromConversation,
   planAutomation,
@@ -510,6 +513,11 @@ export async function processHumanResumeJob(
   // Keep the freshest activity guard in memory and consult the durable ledger
   // for commitments and history that survive a cache reset.
   if (durable.turns?.length > (job.recentConversation?.length || 0)) job.recentConversation = durable.turns;
+  const unansweredBlock = coalesceUnansweredPatientBlock({recentConversation:job.recentConversation,
+    currentText:job.text, currentEventId:job.eventId, currentAt:job.receivedAt});
+  if (unansweredBlock.coalesced && consultationQuestionTopics(unansweredBlock.text).length >= 2) {
+    job = {...job, text:unansweredBlock.text, recentConversation:unansweredBlock.recentConversation};
+  }
   job.pendingCommitments = durable.pendingCommitments || [];
   if (job.pendingCommitments.length) job.preserveHumanOwnership = true;
 
@@ -696,7 +704,9 @@ export async function processHumanResumeJob(
     return alertOnly(job, policy.reason, dependencies);
   }
 
-  const approvedPriceReplyKind =
+  const consultationBundle = buildConsultationQuestionBundle({plan:enrichedPlan, text:job.text,
+    recentConversation:job.recentConversation, patientName:job.patientName, introduceBruna:false});
+  const approvedPriceReplyKind = consultationBundle ? 'consultation_bundle' :
     enrichedPlan.reason === "price_initial_information"
       ? "initial_information"
       : enrichedPlan.reason === "lifting_price_range_direct" &&
@@ -708,15 +718,15 @@ export async function processHumanResumeJob(
             enrichedPlan.procedure === "otoplastia"
           ? "otoplasty_range"
         : "";
-  const approvedPriceReplyCode =
+  const approvedPriceReplyCode = consultationBundle?.candidate.decision.replyCode || (
     approvedPriceReplyKind === "lifting_range"
       ? "LIFTING-PRICE-RANGE-01"
       : approvedPriceReplyKind === "otoplasty_range"
         ? "OTOPLASTY-PRICE-RANGE-01"
       : approvedPriceReplyKind === "initial_information"
         ? "SURGICAL-PRICE-INITIAL-01"
-        : "";
-  const approvedPriceReply =
+        : "");
+  const approvedPriceReply = consultationBundle?.body || (
     approvedPriceReplyKind === "initial_information"
       ? buildSurgicalInitialPriceReply({
           patientName: job.patientName,
@@ -739,8 +749,8 @@ export async function processHumanResumeJob(
             currentText: job.text,
             introduceBruna: false,
           })
-        : "";
-  const approvedPriceReplyCandidate = approvedPriceReply
+        : "");
+  const approvedPriceReplyCandidate = consultationBundle?.candidate || (approvedPriceReply
     ? {
         status: "completed",
         decision: {
@@ -760,7 +770,7 @@ export async function processHumanResumeJob(
           reviewReason: "",
         },
       }
-    : null;
+    : null);
   const runOpenAI =
     dependencies.runOpenAIShadowImpl || runOpenAIShadow;
   const aiResult = await runOpenAI(
@@ -796,9 +806,9 @@ export async function processHumanResumeJob(
   const deterministicReplyContextMismatch = Boolean(
     approvedPriceReplyCandidate &&
       aiResult.status === "completed" &&
-      ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(
+      (consultationBundle && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(
         aiResult.decision?.replyCode,
-      ) &&
+      )) &&
       !approvedPriceReplyConfirmed,
   );
 
@@ -891,6 +901,11 @@ export async function processHumanResumeJob(
     approvedPriceReplyConfirmed
   ) {
     const reply = approvedPriceReply;
+    if (consultationBundle?.pendingDetails.length) {
+      return holdAndAlert(job, 'consultation_details_review', dependencies, reply,
+        `Confirmar: ${consultationBundle.pendingDetails.join('; ')}.\nResposta com fatos já confirmados: ${reply}`,
+        {...semanticConversationAction, action:CONVERSATION_ACTIONS.WAIT_TEAM, allowHoldingReply:true});
+    }
     const sendResult = await sendPatientMessage(
       job,
       reply,

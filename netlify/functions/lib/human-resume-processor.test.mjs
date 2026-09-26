@@ -16,6 +16,46 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const scenario of ['complete', 'alert_failed', 'semantic_veto', 'newer_activity', 'combined_price']) {
+  test(`multiple pending questions after human contact: ${scenario}`, async()=>{
+    const deps=dependencies(); const order=[];
+    const texts=scenario==='combined_price' ? ['Quanto custa a consulta e o lifting cervical?'] : [
+      'O pescoço é o que mais me incomoda.', 'Qual o preço da consulta? Pode ser online?',
+      'Tenho Unimed e preciso de relatório para reembolso.', 'Qual a média de valores para lifting?'];
+    const turns=[{role:'assistant',source:'equipe_humana',text:'Sou da equipe da Dra. Amanda. Como posso ajudar?',at:'2026-07-28T14:30:00Z',eventId:'bundle-human'},
+      ...texts.slice(0,-1).map((text,i)=>({role:'patient',source:'paciente',text,at:new Date(Date.parse('2026-07-28T14:50:00Z')+i*45000).toISOString(),eventId:`bundle-${i}`}))];
+    const input=job({text:texts.at(-1),recentConversation:turns,procedure:'',eventId:'bundle-final'});
+    deps.sendYCloudReviewAlertImpl=async payload=>{deps.alerts.push(payload);order.push('alert');return scenario==='alert_failed'?{status:'failed',emailStatus:'failed'}:{status:'skipped',emailStatus:'completed'};};
+    deps.rescheduleHumanResumeImpl=async()=>({status:'rescheduled'});
+    deps.sendYCloudPatientTextImpl=async payload=>{deps.patientMessages.push(payload);order.push('patient');return {status:'completed'};};
+    deps.runOpenAIShadowImpl=async payload=>{
+      assert.equal(payload.policyHints.deterministicReplyCode,'AMANDA-CONSULTA-BUNDLE-01');
+      assert.match(payload.policyHints.deterministicReplyPreview,/R\$ 500/);
+      return {status:'completed',decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+        professional:'amanda',procedure:scenario==='combined_price'?'lifting_cervical':'',replyCode:scenario==='semantic_veto'?'INSURANCE-ACCEPTANCE-01':'AMANDA-CONSULTA-BUNDLE-01',
+        suggestedReply:scenario==='semantic_veto'?'Atendimento particular.':payload.policyHints.deterministicReplyPreview,reviewReason:''}};
+    };
+    if(scenario==='newer_activity') deps.readConversationTurnsImpl=async()=>({status:'completed',turns:[{role:'assistant',source:'equipe_humana',text:'Já respondi.',at:'2026-07-28T15:20:00Z',eventId:'new-human'}]});
+    const result=await processHumanResumeJob(input,{env:ACTIVE_ENV,now:NOW,...deps});
+    if(['alert_failed','semantic_veto','newer_activity'].includes(scenario)) {
+      assert.equal(deps.patientMessages.length,0,JSON.stringify(result));
+      assert.equal(result.status,scenario==='alert_failed'?'alert_retry_pending':scenario==='newer_activity'?'superseded':'waiting_human');
+      return;
+    }
+    assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+    const body=deps.patientMessages[0].body;
+    assert.match(body,/R\$ 500/);
+    if(scenario==='combined_price') assert.match(body,/18 mil e R\$ 26 mil/);
+    else {
+      assert.deepEqual(order,['alert','patient']);
+      assert.match(body,/consulta online/);assert.match(body,/emissão do relatório/);
+      assert.match(body,/pescoço apenas ou também para o rosto/);
+      assert.equal(result.status,'waiting_human');
+      assert.match(deps.alerts[0].messageText,/emissão do relatório/);
+    }
+  });
+}
+
 function job(overrides = {}) {
   return {
     queueKey: "pending/test",

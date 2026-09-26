@@ -1,5 +1,16 @@
 # Norte estratégico de aquisição e conversão
 
+<!-- BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26 -->
+**Pacote 2026-09-26.3 — CANDIDATO LOCAL; publicação autorizada por Daniel, ainda pendente.** Cada pergunta do bloco sobre consulta, cirurgia, convênio, atendimento online e relatório de reembolso recebe uma resposta confirmada, um esclarecimento essencial ou uma pendência específica. Consulta presencial R$ 500 e atendimento particular com nota fiscal são fatos confirmados. Atendimento online, seu valor e emissão de relatório exigem confirmação da equipe; nenhuma garantia de reembolso. Essas pendências só podem gerar promessa ao paciente depois do alerta entregue.
+
+Consulta e cirurgia podem ter seus valores na mesma resposta exclusivamente quando ambas foram pedidas, com procedimento confirmado, faixa já aprovada, ressalvas e envio único. Lifting sem especificação não é convertido em facial pela idade ou pela flacidez: esclarecer rosto/pescoço, respeitando a prioridade descrita. Perguntas não contempladas pela prévia impedem sua seleção automática. Webhook e retomada após atendimento humano usam o mesmo compositor, com avaliação semântica, janela, preferência humana e gate final preservados.
+
+Evidência: exemplo do usuário anonimizado; reprodução local de seleção isolada do convênio, bloqueio de consulta junto da faixa cirúrgica e inferência de lifting facial. Não auditamos autoria ou entrega da conversa original ao vivo. Hipótese: responder cada ponto evita intervenção e favorece continuidade; conversão ainda não medida. Daniel/equipe: conferir primeiras conversas naturais, rever em 28/09 e 03/10/2026. Medir perguntas cobertas, pendências resolvidas, intervenções, qualificados e consultas confirmadas/realizadas. Conter diante de valor indevido, promessa não confirmada, pergunta perdida, duplicidade ou perda de prioridade humana.
+
+Rollback: Netlify 6ab7b1e5c8225e00080535dd / fe879a6093d97a405320665fde667fb254dde4aa; preservar Apps Script v161, dados, filas e pausas. Sem replay, conversa artificial ou contato antigo. Recibos: auditorias/bruna-perguntas-conjuntas-2026-09-26/.
+<!-- /BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26 -->
+
+
 <!-- BRUNA-PRECO-DIRETO-2026-09-26 -->
 **Pacote 2026-09-26.2 — PUBLICADO E VERIFICADO em 26/09/2026, 08:52 BRT.** Commit funcional fe879a6093d97a405320665fde667fb254dde4aa, Netlify 6ab7b1e5c8225e00080535dd, Apps Script v161 preservado. Validação: 1.737 testes integrais, 18 regressões específicas e 28 comandos de validação sem falhas. Domínio e URL imutável ativos, assinatura protegida e requisições sem assinatura rejeitadas com 401. Treze funções e cinco programações conferidas; nenhum novo arquivo estático enviado. Não houve mensagem real de teste ou observação de uma nova conversa natural. Resposta explícita de preço recebe a faixa operacional já aprovada do procedimento confirmado no primeiro pedido, sem segunda permissão nem artigo obrigatório. Valores, orçamento individual após avaliação, segurança e envio único são preservados. Pergunta apenas de pagamento, interesse genérico e recusa não liberam faixa. Redução de tamanho de orelha exige referência humana; tamanho versus afastamento ambíguo recebe esclarecimento específico. Consulta informa R$500, explica a avaliação somente se ainda necessário e oferece próximo passo opcional, respeitando recusas e convites anteriores.
 

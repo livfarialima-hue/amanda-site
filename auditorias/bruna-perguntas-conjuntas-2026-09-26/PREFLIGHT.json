@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-09-26T12:56:18.232Z",
+  "baseline": "af18dcacec575562760cfb92d1ecc820b76791e9",
+  "productionCommit": "fe879a6093d97a405320665fde667fb254dde4aa",
+  "netlifyDeployId": "6ab7b1e5c8225e00080535dd",
+  "netlifyUi": "Authenticated livfarialima team; Published production reestruturacao-site @fe879a6; auto publishing on",
+  "health": {
+    "status": 200,
+    "ok": true,
+    "service": "ycloud-webhook",
+    "apiKeyConfigured": true,
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "sheetsSecretConfigured": true,
+    "openAIConfigured": true,
+    "reviewAlertConfigured": true,
+    "appointmentReviewEnabled": true,
+    "automationMode": "active",
+    "conversionExperience": "bruna-conversion-v1",
+    "processingMode": "durable_background_intake",
+    "contactPreferencesGuard": "active",
+    "internalPhoneExclusionConfigured": true,
+    "leadDeliveryRetry": "single_idempotent_transient",
+    "leadDeliveryFallback": "acquisition_only",
+    "leadFailureEmailAlert": "required_after_retries",
+    "messageCostObservability": "delivered_event_idempotent"
+  },
+  "drive": [
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "size": 215702,
+      "modifiedTime": "2026-09-26T11:54:56.063Z"
+    },
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "size": 131127,
+      "modifiedTime": "2026-09-26T11:54:58.537Z"
+    }
+  ],
+  "appsScript": {
+    "versionFromBaseline": 161,
+    "changed": false,
+    "liveReverified": false
+  },
+  "source": "Exemplo anonimizado do usuario; nao auditamos autoria nem entrega da conversa ao vivo."
+}

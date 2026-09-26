@@ -1,3 +1,15 @@
+## 2026-09-26 — perguntas conjuntas no atendimento privado
+
+<!-- BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26 -->
+**Pacote 2026-09-26.3 — CANDIDATO LOCAL; publicação autorizada por Daniel, ainda pendente.** Cada pergunta do bloco sobre consulta, cirurgia, convênio, atendimento online e relatório de reembolso recebe uma resposta confirmada, um esclarecimento essencial ou uma pendência específica. Consulta presencial R$ 500 e atendimento particular com nota fiscal são fatos confirmados. Atendimento online, seu valor e emissão de relatório exigem confirmação da equipe; nenhuma garantia de reembolso. Essas pendências só podem gerar promessa ao paciente depois do alerta entregue.
+
+Consulta e cirurgia podem ter seus valores na mesma resposta exclusivamente quando ambas foram pedidas, com procedimento confirmado, faixa já aprovada, ressalvas e envio único. Lifting sem especificação não é convertido em facial pela idade ou pela flacidez: esclarecer rosto/pescoço, respeitando a prioridade descrita. Perguntas não contempladas pela prévia impedem sua seleção automática. Webhook e retomada após atendimento humano usam o mesmo compositor, com avaliação semântica, janela, preferência humana e gate final preservados.
+
+Evidência: exemplo do usuário anonimizado; reprodução local de seleção isolada do convênio, bloqueio de consulta junto da faixa cirúrgica e inferência de lifting facial. Não auditamos autoria ou entrega da conversa original ao vivo. Hipótese: responder cada ponto evita intervenção e favorece continuidade; conversão ainda não medida. Daniel/equipe: conferir primeiras conversas naturais, rever em 28/09 e 03/10/2026. Medir perguntas cobertas, pendências resolvidas, intervenções, qualificados e consultas confirmadas/realizadas. Conter diante de valor indevido, promessa não confirmada, pergunta perdida, duplicidade ou perda de prioridade humana.
+
+Rollback: Netlify 6ab7b1e5c8225e00080535dd / fe879a6093d97a405320665fde667fb254dde4aa; preservar Apps Script v161, dados, filas e pausas. Sem replay, conversa artificial ou contato antigo. Recibos: auditorias/bruna-perguntas-conjuntas-2026-09-26/.
+<!-- /BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26 -->
+
 # Histórico estratégico de aquisição e conversão
 
 **Status:** registro histórico subordinado

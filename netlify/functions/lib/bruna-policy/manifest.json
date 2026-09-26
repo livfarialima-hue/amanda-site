@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-09-26.2",
-  "promptVersion": "bruna-concierge-2026-09-26.2",
+  "bundleVersion": "2026-09-26.3",
+  "promptVersion": "bruna-concierge-2026-09-26.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-26.2",
+  "knowledgeSnapshot": "kb-2026-09-26.3",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -46,5 +46,10 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy"
+  "followupCopyContract": "followup-message-copy",
+  "pendingRelease": {
+    "changeId": "BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26",
+    "bundleVersion": "2026-09-26.3",
+    "status": "tested_local"
+  }
 }

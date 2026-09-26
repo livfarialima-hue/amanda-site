@@ -370,6 +370,9 @@ function inferUnresolvedIntents({
   const add = (intent) => {
     if (!intents.includes(intent)) intents.push(intent);
   };
+  if (plan?.reason === 'consultation_question_bundle') {
+    for (const topic of plan.questionTopics || []) add(topic);
+  }
 
   if (String(messageType || "").toLowerCase() === "image") add("photo");
   const consultationPriceRequest = isConsultationCostInquiry(value);
@@ -394,7 +397,8 @@ function inferUnresolvedIntents({
   if (PAYMENT_PATTERN.test(value)) add("payment_terms");
   if (
     schedulingRequest ||
-    SCHEDULING_PATTERN.test(valueWithoutSocialGreeting)
+    (SCHEDULING_PATTERN.test(valueWithoutSocialGreeting) &&
+      (plan?.reason !== 'consultation_question_bundle' || /\b(?:agendar|marcar|hor[aá]rio|disponibilidade)\b/i.test(valueWithoutSocialGreeting)))
   ) {
     add("scheduling");
   }
@@ -488,6 +492,8 @@ function buildReplyContract({
   ) {
     maxQuestions = 0;
   }
+  const questionBundle = plan?.reason === 'consultation_question_bundle';
+  if (canWrite && questionBundle && plan.questionTopics?.includes('price_surgery') && !plan.bundledPricePlan?.procedure) maxQuestions = 1;
 
   const protectedApprovedRange = [
     "lifting_price_range_direct",
@@ -567,15 +573,16 @@ function buildReplyContract({
     silenceReason,
     maxQuestions,
     maxLinks,
-    allowCta,
+    allowCta: questionBundle ? false : allowCta,
     allowAppointmentConfirmation: false,
     requirePhotoDistanceLimit: intents.includes("photo"),
     sourceReason: plan?.reason || reason || "",
     procedure: plan?.procedure || null,
+    ...(questionBundle ? {questionBundle:true, surgicalPriceReason:plan.bundledPricePlan?.reason || ''} : {}),
     ...(conversionExperienceEnabled
       ? {
           experienceVersion: BRUNA_CONVERSION_EXPERIENCE_VERSION,
-          allowedCtaTypes,
+          allowedCtaTypes: questionBundle ? [] : allowedCtaTypes,
           preferredMaxCharacters: priceIntent ? 650 : 420,
         }
       : {}),

@@ -181,7 +181,10 @@
         "auditorias/bruna-acolhimento-2026-09-26/RELATORIO.md",
         "auditorias/bruna-preco-direto-2026-09-26/PREFLIGHT.json",
         "auditorias/bruna-preco-direto-2026-09-26/PUBLICACAO.json",
-        "auditorias/bruna-preco-direto-2026-09-26/RELATORIO.md"
+        "auditorias/bruna-preco-direto-2026-09-26/RELATORIO.md",
+        "auditorias/bruna-perguntas-conjuntas-2026-09-26/PREFLIGHT.json",
+        "auditorias/bruna-perguntas-conjuntas-2026-09-26/PUBLICACAO.json",
+        "auditorias/bruna-perguntas-conjuntas-2026-09-26/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -798,7 +801,8 @@
         "netlify/functions/lib/bruna-conversion-experience.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/lifting-information.mjs",
-        "netlify/functions/lib/patient-replies.mjs"
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/consultation-question-bundle.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/human-resume.mjs",
@@ -829,7 +833,9 @@
         "netlify/functions/lib/patient-replies.mjs",
         "netlify/functions/lib/patient-replies.test.mjs",
         "netlify/functions/ycloud-webhook.mjs",
-        "netlify/functions/lib/bruna-acolhimento.integration.test.mjs"
+        "netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+        "netlify/functions/lib/consultation-question-bundle.mjs",
+        "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-conversation-evals.test.mjs",
@@ -842,7 +848,8 @@
         "netlify/functions/lib/openai-shadow.test.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/patient-replies.test.mjs",
-        "netlify/functions/lib/bruna-acolhimento.integration.test.mjs"
+        "netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+        "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
@@ -850,7 +857,8 @@
         "npm.cmd test",
         "git diff --check",
         "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
-        "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs"
       ],
       "liveSystems": [
         "Google Drive",

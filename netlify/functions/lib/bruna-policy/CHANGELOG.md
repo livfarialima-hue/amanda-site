@@ -1,3 +1,7 @@
+## 2026-09-26.3 — perguntas conjuntas, candidata
+
+Composição completa e compartilhada de consulta, cirurgia, convênio, online e relatório. Confirmações pendentes exigem alerta entregue. Consulta e faixa somente com ambos os pedidos; lifting genérico exige escopo explícito. Sem nova política de preço, diagnóstico, garantia ou mudança no transporte. Evidência: auditorias/bruna-perguntas-conjuntas-2026-09-26/RELATORIO.md.
+
 ## 2026-09-26.2 — preço direto, publicado e verificado
 
 Pedido explícito recebe faixa aprovada no primeiro turno; artigo deixa de ser obrigatório. Consulta ganha explicação breve quando nova. Próximo passo opcional respeita recusa e histórico. Redução de orelha diferencia tamanho/afastamento. As regressões de segunda permissão e guia obrigatório são substituídas por casos de preço direto com envio único, valores e ressalvas preservados. Nove falhas reproduzidas antes da correção; ver recibo do pacote.

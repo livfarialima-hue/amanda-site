@@ -676,7 +676,7 @@ function normalizePolicyHints(value) {
   }
   const deterministicReplyPreview = limitText(
     value.deterministicReplyPreview,
-    1_200,
+    value.deterministicReplyCode === 'AMANDA-CONSULTA-BUNDLE-01' ? 1_500 : 1_200,
   );
   if (deterministicReplyPreview) {
     normalized.deterministicReplyPreview = deterministicReplyPreview;

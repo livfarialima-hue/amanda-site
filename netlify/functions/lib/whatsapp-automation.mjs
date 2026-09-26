@@ -1,6 +1,6 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
-import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry } from "./patient-turn-context.mjs";
-import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
+import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics } from "./patient-turn-context.mjs";
+import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, resolveBundledSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
   isCommercialSolicitation,
@@ -238,6 +238,11 @@ export function enrichAutomationPlanFromConversation(
 
   if (plan.reason !== "possible_urgent_symptoms" && isCommercialProfileContinuation(plan.currentText, recentConversation)) {
     return {...plan,route:"ignore",reason:"commercial_solicitation_or_partnership",automaticAllowed:false,replyCode:null,professional:null,procedure:null};
+  }
+
+  if (plan.reason === 'consultation_question_bundle') {
+    const bundledPricePlan = resolveBundledSurgicalPricePlan(plan.currentText, plan.questionTopics, recentConversation);
+    return {...plan, bundledPricePlan, procedure:bundledPricePlan?.procedure || null};
   }
 
   const hasClinicTurn = recentConversation.some(
@@ -699,6 +704,14 @@ export function planAutomation({
     isConsultationInformationRequest(normalizedText);
   const asksInsuranceAcceptance =
     isInsuranceAcceptanceRequest(normalizedText);
+
+  const questionTopics = consultationQuestionTopics(normalizedText);
+  if (!marketingPrefilledMessage && !LEGACY_ADMINISTRATIVE_REQUEST_PATTERN.test(normalizedText) && questionTopics.length >= 2) {
+    const bundledPricePlan = resolveBundledSurgicalPricePlan(normalizedText, questionTopics, recentConversation);
+    return {route:'standard_reply', reason:'consultation_question_bundle', replyCode:'AMANDA-CONSULTA-BUNDLE-01',
+      professional:'amanda', procedure:bundledPricePlan?.procedure || null, automaticAllowed:true,
+      currentText:normalizedText, questionTopics, bundledPricePlan};
+  }
 
   if (asksInsuranceAcceptance) {
     return {

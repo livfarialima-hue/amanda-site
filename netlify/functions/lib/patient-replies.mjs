@@ -6,6 +6,10 @@ import {
 import { procedureOpeningMicrovalue } from "./bruna-conversion-experience.mjs";
 import { isOnlyNamedProcedure } from "./procedure-context.mjs";
 
+export const AMANDA_CONSULTATION_PRICE_REPLY = 'A consulta presencial com a Dra. Amanda custa R$ 500.';
+export const AMANDA_CONSULTATION_PAYMENT_REPLY = 'O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.';
+export const AMANDA_PRIVATE_REIMBURSEMENT_REPLY = 'O atendimento da Dra. Amanda é particular. Emitimos nota fiscal para solicitar eventual reembolso, que depende das regras e da análise do seu plano.';
+
 const PROCEDURE_LABELS = Object.freeze({
   lifting_facial: "lifting facial",
   lifting_cervical: "cervicoplastia (lifting cervical)",
@@ -337,10 +341,10 @@ export function buildConsultationInformationReply({
         procedureLabel,
       );
   const opening = consultationPriceRequested
-    ? `${introduction} A consulta presencial com a Dra. Amanda custa R$ 500.`
+    ? `${introduction} ${AMANDA_CONSULTATION_PRICE_REPLY}`
     : `${introduction} ${consultationContext}`;
   const paymentInformation = consultationPriceRequested
-    ? "O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal."
+    ? AMANDA_CONSULTATION_PAYMENT_REPLY
     : "";
   const resourceUrl = /^https:\/\/draamandaschroeder\.com\.br\//i.test(
     String(siteResource?.url || ""),

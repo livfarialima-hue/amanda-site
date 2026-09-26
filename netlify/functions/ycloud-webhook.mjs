@@ -1,3 +1,4 @@
+import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import {
   enrichAutomationPlanFromConversation,
   isAvailabilityRequest,
@@ -1641,12 +1642,14 @@ async function completeReviewAlert(input) {
       input.patientPhone,
       alertResult,
     );
+    return alertResult;
   } catch {
     logReviewAlertResult(input.eventId, input.patientPhone, {
       status: "failed",
       httpStatus: null,
       errorCode: "request_failed",
     });
+    return {status:'failed', errorCode:'request_failed'};
   }
 }
 
@@ -2477,6 +2480,8 @@ async function completeOpenAIActive({
       text: input.text,
       procedure: plan?.procedure || input.procedure || "",
     });
+    const consultationBundle = buildConsultationQuestionBundle({plan, text:input.text,
+      recentConversation:input.recentConversation, patientName:input.patientProfileName, introduceBruna});
     const insuranceAcceptanceReply = buildInsuranceAcceptanceReply({
       text: input.text,
       patientName: input.patientProfileName,
@@ -2556,7 +2561,7 @@ async function completeOpenAIActive({
         patientName: input.patientProfileName,
         introduceBruna,
       });
-    const deterministicReplyResult = appointmentPreferenceBody
+    const deterministicReplyResult = consultationBundle?.candidate || (appointmentPreferenceBody
       ? {
           status: "completed",
           model: "deterministic-appointment-preference",
@@ -2761,7 +2766,7 @@ async function completeOpenAIActive({
           },
           usage: null,
         }
-      : null;
+      : null);
     const mayReusePrecomputedSemanticResult = Boolean(
       precomputedSemanticResult?.status === "completed" &&
         !deterministicReplyResult,
@@ -2794,13 +2799,13 @@ async function completeOpenAIActive({
       );
     const selectedDeterministicReply = Boolean(
       semanticConfirmedDeterministicReply &&
-        !unansweredPatientBlock.requiresContextualReply,
+        (!unansweredPatientBlock.requiresContextualReply || Boolean(consultationBundle)),
     );
     const deterministicReplyContextMismatch = Boolean(
       deterministicReplyResult &&
         semanticResult?.status === "completed" &&
-        semanticResult.decision?.replyCode ===
-          deterministicReplyResult.decision?.replyCode &&
+        (semanticResult.decision?.replyCode === deterministicReplyResult.decision?.replyCode ||
+          (consultationBundle && semanticResult.decision?.route === 'standard_reply')) &&
         !semanticConfirmedDeterministicReply,
     );
     const replyKind = selectedDeterministicReply
@@ -3177,6 +3182,20 @@ async function completeOpenAIActive({
         status: contactPreferenceGuard.status,
         replySent: false,
       };
+    }
+
+    if (consultationBundle?.pendingDetails.length && selectedDeterministicReply) {
+      const pendingAlert = await completeReviewAlert(prepareReviewAlertInput(alertInput, {
+        decision:{...activeResult.decision, route:'human_review', automaticAllowed:false,
+          suggestedReply:consultationBundle.body,
+          reviewReason:`consultation_details_review: ${consultationBundle.pendingDetails.join('; ')}`}, plan,
+      }));
+      if (pendingAlert.emailStatus !== 'completed' && pendingAlert.status !== 'completed') {
+        return {status:'failed', errorCode:'consultation_details_alert_failed', replySent:false};
+      }
+      await updateConversationSemanticState({phone:to, basedOnEventId:input.eventId,
+        semanticState:{...activeResult.decision.conversationState, owner:'human_team',
+          unresolvedQuestions:consultationBundle.pendingDetails, nextExpectedAction:'Confirmar os detalhes de atendimento solicitados'}});
     }
 
     const replyResult = await sendControlledPatientReply({

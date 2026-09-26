@@ -1,3 +1,4 @@
+import { detectNamedProcedure, hasUnresolvedNamedProcedure } from './procedure-context.mjs';
 // Numeric permission is independent of the internal reference table.
 const AUTOMATIC_PROCEDURES = new Set(['lifting_facial', 'lifting_cervical', 'otoplastia']);
 export function isAutomaticSurgicalPriceProcedure(procedure) {
@@ -56,10 +57,15 @@ export function containsApprovedSurgicalRange(body, procedure) {
   return false;
 }
 
-export function hasOnlyApprovedSurgicalAmounts(body) {
+export function hasOnlyApprovedSurgicalAmounts(body, { allowConsultationPrice = false } = {}) {
   // Remove at most one of each authorized range; every remaining monetary value
   // is rejected, including duplicated ranges and amounts without the R$ prefix.
   let remaining = String(body || '');
+  if (allowConsultationPrice) {
+    // Only the canonical consultation fact, once. No standalone 500, surgical
+    // fee of 500, duplicate, alternative price or extension of numeric policy.
+    remaining = remaining.replace(/A consulta presencial com a Dra\. Amanda custa R\$ 500\./, '');
+  }
   const groups = ['lifting_facial', 'lifting_cervical', 'otoplastia']
     .filter(procedure => containsApprovedSurgicalRange(remaining, procedure));
   if (groups.length !== 1) return false;
@@ -67,6 +73,24 @@ export function hasOnlyApprovedSurgicalAmounts(body) {
     remaining = remaining.replace(pattern, '');
   }
   return !/R\$|\b\d[\d.,]*\s*(?:mil|reais)\b/i.test(remaining);
+}
+
+export function resolveBundledSurgicalPricePlan(text, topics, recentConversation = []) {
+  if (!topics.includes('price_surgery')) return null;
+  let named = detectNamedProcedure(text);
+  const unresolved = hasUnresolvedNamedProcedure(text) || /lifting\s+(?:facial\s+(?:e|ou)\s+cervical|cervical\s+(?:e|ou)\s+facial)/i.test(text);
+  // A bare lifting request does not identify a facial rather than neck surgery.
+  if (!named && !unresolved && !/\blifting\b/i.test(text)) {
+    for (const turn of [...recentConversation].reverse()) {
+      if (turn?.role !== 'user' && !['patient', 'paciente'].includes(turn?.source)) continue;
+      if (hasUnresolvedNamedProcedure(turn.text)) break;
+      named = detectNamedProcedure(turn.text);
+      if (named) break;
+    }
+  }
+  const procedure = unresolved ? null : named?.key || null;
+  return resolveSurgicalPricePlan({route:'human_review', reason:procedure ? 'surgical_price_review' : 'price_without_confirmed_procedure',
+    professional:'amanda', procedure, currentText:text, priceRequestKind:'amount', automaticAllowed:false}, recentConversation);
 }
 
 export function facialPriceLines(currentText, recentConversation = []) {

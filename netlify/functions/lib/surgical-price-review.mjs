@@ -485,6 +485,8 @@ export function buildSurgicalPriceSuggestedReply({
   directToPatient = false,
   currentText = "",
   introduceBruna = true,
+  offerNextStep = true,
+  includeGreeting = true,
 }) {
   if ((!procedure || procedure === 'otoplastia') && earPriceScope(currentText, recentConversation)) {
     return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
@@ -503,14 +505,14 @@ export function buildSurgicalPriceSuggestedReply({
         ? 'Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.'
         : 'Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.';
     return [
-      directPriceGreeting(patientName, recentConversation, introduceBruna),
+      includeGreeting ? directPriceGreeting(patientName, recentConversation, introduceBruna) : '',
       range,
       'O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia com o caso, técnica, equipe, hospital, anestesia e materiais. Não representa honorários isolados.',
       ...otoplastyOverviewParagraphs({procedure,currentText,recentConversation}),
       paymentContext,
       LOCATION_REQUEST_PATTERN.test(currentText) && !hasClinicLocationInConversation(recentConversation) ? CLINIC_LOCATION_REPLY.split('\n')[0] : '',
       requestedPriceGuide(procedure, currentText, recentConversation),
-      priceNextStep(recentConversation, currentText),
+      offerNextStep ? priceNextStep(recentConversation, currentText) : '',
     ].filter(Boolean).join('\n\n');
   }
   if (procedure === "lifting_cervical") {

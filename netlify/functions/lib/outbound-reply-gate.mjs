@@ -216,11 +216,15 @@ function semanticUnsafeReplyReason(
   );
   const protectedApprovedRange =
     protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange;
-  if (protectedApprovedRange && !hasOnlyApprovedSurgicalAmounts(raw)) {
+  const bundleRangeAuthorized = contract.questionBundle === true && contract.sourceReason === 'consultation_question_bundle' &&
+    ['lifting_price_range_direct', 'otoplasty_price_range_direct'].includes(contract.surgicalPriceReason) &&
+    contract.unresolvedIntents?.includes('price_surgery');
+  const allowConsultationPrice = bundleRangeAuthorized && contract.unresolvedIntents?.includes('price_consultation');
+  if (protectedApprovedRange && !hasOnlyApprovedSurgicalAmounts(raw, {allowConsultationPrice})) {
     return "unapproved_monetary_amount";
   }
   if (protectedApprovedRange && contract.sourceReason &&
-      !['lifting_price_range_direct', 'otoplasty_price_range_direct'].includes(contract.sourceReason)) {
+      !['lifting_price_range_direct', 'otoplasty_price_range_direct'].includes(contract.sourceReason) && !bundleRangeAuthorized) {
     return 'surgical_range_not_authorized';
   }
   if (protectedApprovedRange && contract.procedure && !containsApprovedSurgicalRange(raw, contract.procedure)) {

@@ -1,6 +1,9 @@
 import { brunaConversionGuidelinesAppendix } from "./bruna-conversion-experience.mjs";
 
 export const CONVERSATION_GUIDELINES = `
+Perguntas conjuntas:
+- Para perguntas conjuntas sobre preço de consulta, cirurgia, convênio, consulta online e documento de reembolso, responda cada ponto confirmado e nomeie cada pendência. A consulta presencial custa R$ 500; não atribua esse valor a uma consulta online. O atendimento da Dra. Amanda é particular, com nota fiscal e eventual reembolso sujeito ao plano. Não confirme atendimento online nem emissão de relatório específico: esses dois pontos precisam da equipe. Lifting sem especificação não permite escolher facial ou cervical a partir da idade ou de uma queixa de flacidez. Se policyHints trouxer AMANDA-CONSULTA-BUNDLE-01, a prévia reúne as respostas e pendências em uma única mensagem e pode cobrir um bloco com vários pedidos. Só confirme esse código se TODOS os pedidos estiverem contemplados, inclusive perguntas fora desses temas; caso contrário, escolha revisão humana ou esclarecimento. A preferência por brevidade nunca autoriza cortar um dos pedidos ou as ressalvas de valor. O sistema só envia essa prévia com promessa de confirmação após entregar o alerta das pendências à equipe.
+
 Avaliação pública no Google:
 - O convite para avaliar o atendimento com a Dra. Amanda pertence ao acompanhamento de consulta realizada, com aprovação individual da equipe e registro único por telefone. Não crie esse convite em texto livre, após elogios, agradecimentos, interesse, orçamento ou agendamento. Nunca peça estrelas, avaliação positiva, favor, recompensa, texto específico ou detalhes clínicos públicos. Não cobre nem relembre quem ficou em silêncio; não confunda avaliação no Google com consulta de avaliação. Pedidos diretos sobre avaliação pública seguem para a equipe, sem desviar de dúvidas de atendimento ou desencorajar relatos negativos.
 

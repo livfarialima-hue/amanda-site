@@ -8,6 +8,56 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+for (const scenario of ['bundle', 'bundle_combined_price', 'bundle_alert_failure', 'bundle_semantic_veto']) {
+  test(`webhook answers a complete pending question block: ${scenario}`, async t => {
+    const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',
+      GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',
+      WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
+      WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
+      OPENAI_API_KEY:'synthetic',WHATSAPP_ALERT_NUMBER:'+5511900000002',YCLOUD_ALERT_TEMPLATE_NAME:'synthetic_review',YCLOUD_ALERT_TEMPLATE_LANGUAGE:'pt_BR'};
+    const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]])); Object.assign(process.env,settings);
+    t.after(()=>{for(const [k,v] of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+    t.mock.method(console,'log',()=>{});
+    const sent=[],order=[];let modelCalls=0;
+    const texts=scenario==='bundle_combined_price' ? ['Quanto custa a consulta e o lifting cervical?'] : [
+      'O pescoço é o que mais me incomoda.', 'Gostaria de saber valores de consulta. E se é possível online.',
+      'Tenho convênio Unimed.', 'Preciso de relatório para reembolso.', 'E qual a média de valores para lifting?'];
+    const turns=[{role:'assistant',source:'bruna',eventId:`${scenario}-opening`,at:'2026-09-26T11:20:00Z',text:'Olá! Sou a Bruna, da equipe da Dra. Amanda. Como posso ajudar?'},
+      ...texts.slice(0,-1).map((text,i)=>({role:'user',source:'patient',eventId:`${scenario}-${i}`,at:new Date(Date.parse('2026-09-26T11:30:00Z')+i*45000).toISOString(),text,messageType:'text'}))];
+    t.mock.method(globalThis,'fetch',async(url,options)=>{
+      const data=JSON.parse(options.body);
+      if(url===SHEETS_URL) {
+        if(data.action==='send_review_alert_email') {order.push('email');return new Response(JSON.stringify(scenario==='bundle_alert_failure'?{ok:false}:{ok:true,sent:true}),{status:scenario==='bundle_alert_failure'?500:200});}
+        return new Response(JSON.stringify(data.action==='get_conversation_context'
+          ? {ok:true,turns,professional:'amanda',opportunityId:scenario}
+          : {ok:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
+      }
+      if(url==='https://api.openai.com/v1/responses') {
+        modelCalls++;const input=JSON.parse(data.input);
+        assert.equal(input.policyHints.deterministicReplyCode,'AMANDA-CONSULTA-BUNDLE-01');
+        assert.match(input.policyHints.deterministicReplyPreview,/R\$ 500/);
+        return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+          professional:'amanda',procedure:scenario==='bundle_combined_price'?'lifting_cervical':'',
+          replyCode:scenario==='bundle_semantic_veto'?'INSURANCE-ACCEPTANCE-01':'AMANDA-CONSULTA-BUNDLE-01',
+          suggestedReply:scenario==='bundle_semantic_veto'?'O atendimento é particular.':input.policyHints.deterministicReplyPreview,reviewReason:'',
+          conversationState:{activeTopic:'perguntas sobre atendimento',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['consulta','cirurgia'],factsAlreadyProvided:[],owner:'bruna',nextExpectedAction:'responder perguntas',ambiguity:'',contextConfidence:'high'}})}),{status:200});
+      }
+      assert.equal(url,YCLOUD_URL,'all external calls mocked');sent.push(data);
+      if(data.to==='+5511900000000')order.push('patient');
+      return new Response('{"status":"accepted"}',{status:scenario==='bundle_alert_failure'?500:200});
+    });
+    const response=await handleYCloudWebhook(requestFor({id:`${scenario}-final`,type:'whatsapp.inbound_message.received',createTime:'2026-09-26T11:33:00Z',
+      whatsappInboundMessage:{id:`${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-09-26T11:33:00Z',type:'text',text:{body:texts.at(-1)}}}),{livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'})});
+    const result=await response.json(); const replies=sent.filter(m=>m.to==='+5511900000000');
+    assert.ok(modelCalls>0,JSON.stringify(result));
+    if(['bundle_alert_failure','bundle_semantic_veto'].includes(scenario)) {assert.equal(replies.length,0,JSON.stringify(result));return;}
+    assert.equal(replies.length,1,JSON.stringify(result));const body=replies[0].text.body;
+    assert.match(body,/R\$ 500/);
+    if(scenario==='bundle_combined_price') assert.match(body,/18 mil e R\$ 26 mil/);
+    else {assert.match(body,/online.*emissão do relatório/s);assert.match(body,/pescoço apenas ou também para o rosto/);assert.ok(order.indexOf('email')<order.indexOf('patient'));}
+  });
+}
+
 test("a polite range acceptance supplies the approved draft and sends exactly that continuation", async (t) => {
   const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:"synthetic",
     GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:"synthetic",
