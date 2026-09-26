@@ -306,3 +306,7 @@ Continuidade contextual e acolhimento específico; correção de nome de aquisi�
 ## 2026-09-20.2
 
 Convite Google neutro e único para atendimento realizado com Amanda, gerado no acompanhamento com aprovação individual; IA não improvisa pedidos por elogio. Publicado em 20/09/2026: commit c3969d2, Apps Script v159 e recibo no pacote de avaliação Google.
+
+## 2026-09-26.5 — retorno prometido pela manhã
+
+Em validação local: execução autenticada em background, consultas com orçamento próprio, retomada de falhas pré-envio a cada cinco minutos e alerta técnico após três falhas. Reserva idempotente distingue preparação e tentativa; apenas recibo preparado e ainda não tentado pode ser reaproveitado pelo proprietário de saída. Estados incertos legados e domínio humano permanecem protegidos.

@@ -1507,3 +1507,20 @@ test("conversion gate rejects a CTA from a later stage when validation is called
     reason: "cta_type_not_allowed_for_context",
   });
 });
+
+for (const failure of ['false', 'throw']) {
+  test('pre-send check failure remains retryable without an uncertain send: '+failure, async () => {
+    const blobs=fakeBlobs(); let checks=0, sends=0;
+    const input={from:'+5511900000001',to:'+5511900000000',eventId:'synthetic-pre-send-'+failure,body:'A consulta custa R$ 500.',currentText:'Qual o valor da consulta?',conversationAction:respond};
+    const deps={...blobs,now:1_000_000,appendConversationTurnImpl:async()=>({status:'completed'}),recordDurableConversationTurnImpl:async()=>({status:'completed'}),
+      beforeSendImpl:async()=>{if(++checks!==2)return true;if(failure==='throw')throw new Error('synthetic lookup timeout');return false;},
+      sendYCloudPatientTextImpl:async()=>{sends++;return {status:'completed'};}};
+    const first=await sendControlledPatientReply(input,deps);
+    assert.equal(sends,0);
+    assert.equal(first.status,failure==='throw'?'deferred':'superseded');
+    const second=await sendControlledPatientReply(input,{...deps,now:1_010_000,beforeSendImpl:async()=>true});
+    assert.equal(second.status,'completed',JSON.stringify(second));
+    assert.equal(sends,1);
+    assert.equal((await sendControlledPatientReply(input,deps)).errorCode,'already_sent');
+  });
+}

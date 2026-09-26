@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-09-26.4",
-  "promptVersion": "bruna-concierge-2026-09-26.4",
+  "bundleVersion": "2026-09-26.5",
+  "promptVersion": "bruna-concierge-2026-09-26.5",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-26.4",
+  "knowledgeSnapshot": "kb-2026-09-26.5",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -46,5 +46,11 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy"
+  "followupCopyContract": "followup-message-copy",
+  "pendingRelease": {
+    "changeId": "BRUNA-RETOMADA-MANHA-2026-09-26",
+    "bundleVersion": "2026-09-26.5",
+    "status": "tested_local",
+    "authorization": "Arrume e publique"
+  }
 }

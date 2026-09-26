@@ -250,3 +250,9 @@ Retomadas.gs mantém a autoria da sugestão e consulta a última pergunta da cl�
 ### Preço direto — 26/09/2026
 
 `surgical-price-policy.mjs` é proprietário da liberação numérica, envio único e distinção de escopo de redução de orelha. O planejador e o enriquecimento por relacionamento importam a mesma resolução; reconhecimento de pergunta não define indicação ou orçamento. O contrato de saída valida o motivo, procedimento e ressalvas antes de admitir a faixa. `surgical-price-review.mjs` gera a cópia, artigo solicitado e próximo passo opcional; `conversation-action-controller.mjs` conserva autoridade sobre CTA, recusa e quantidade de links. Sem mudança de transporte, Apps Script ou filas.
+
+### Execução da retomada prometida — 26/09/2026
+
+O horário e a elegibilidade continuam pertencendo à política de retomada. O agendador `human-resume.mjs` despacha `human-resume-background.mjs` somente com a flag de produção `WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED=true`; sem ativação, preserva o agendador anterior. O worker autentica o segredo existente e respeita o modo global. Cada reserva é adquirida apenas quando o atendimento vai começar; a fila original permanece canônica e seu estado de revisão humana não é reaberto por publicação.
+
+Falha em uma leitura obrigatória antes da chamada ao provedor é recuperável. Não se chama o provedor sem contexto. `outbound-reply-gate.mjs` mantém a reserva como processamento enquanto relê o contexto e registra a tentativa imediatamente antes da chamada ao provedor. O ledger só substitui recibo preparado se o proprietário de saída confirmar uma reserva atual e ainda não tentada; nunca substitui aceito/persistido. Timeout do provedor e estados antigos incertos continuam em revisão, sem reset automático. O alerta técnico de atraso reutiliza o adaptador de e-mail e sua deduplicação canônica, sem assumir autoria humana ou retirar o atendimento da fila.

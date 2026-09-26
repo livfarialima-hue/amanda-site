@@ -205,3 +205,14 @@ test("ledger outages fail closed for hydration without exposing text", async () 
     pendingCommitments: [],
   });
 });
+
+test('only the outbound owner can replace an unattempted prepared receipt; accepted receipts stay closed', async()=>{
+ const fake=receiptStore(); const turn={phone:'+5511900000000',eventId:'synthetic-prepared-retry',text:'Como funciona a avaliação?'};
+ assert.equal((await prepareConversationLedgerReceipt(turn,fake)).status,'completed');
+ assert.equal((await prepareConversationLedgerReceipt(turn,fake)).status,'duplicate');
+ assert.equal((await prepareConversationLedgerReceipt(turn,{...fake,canReplacePreparedImpl:async()=>false})).status,'duplicate');
+ const replaced=await prepareConversationLedgerReceipt({...turn,text:'A avaliação é individual.'},{...fake,canReplacePreparedImpl:async()=>true});
+ assert.equal(replaced.status,'completed');
+ await markConversationLedgerAccepted(replaced,fake);
+ assert.equal((await prepareConversationLedgerReceipt(turn,{...fake,canReplacePreparedImpl:async()=>true})).status,'duplicate');
+});

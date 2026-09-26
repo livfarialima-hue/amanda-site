@@ -879,10 +879,19 @@ export async function sendControlledPatientReply(
     };
   }
 
-  if (beforeSendImpl && !await beforeSendImpl()) {
-    await updateClaim(claim, "released", { getStoreImpl, now });
-    return { status: "superseded", errorCode: "newer_activity_before_send" };
-  }
+  const checkBeforeAttempt = async () => {
+    try {
+      if (!beforeSendImpl || await beforeSendImpl()) return null;
+      await updateClaim(claim, "released", { getStoreImpl, now });
+      return { status: "superseded", errorCode: "newer_activity_before_send" };
+    } catch {
+      // No provider call has happened. Keep this different from uncertain delivery.
+      await updateClaim(claim, "released", { getStoreImpl, now });
+      return { status: "deferred", errorCode: "pre_send_context_unavailable" };
+    }
+  };
+  const initialCheck = await checkBeforeAttempt();
+  if (initialCheck) return initialCheck;
 
   const turn = { phone: to, eventId: `${eventId}:bruna`, parentEventId,
     messageId: `bruna:${eventId}`, text: validation.body, at: new Date(now).toISOString(),
@@ -891,11 +900,17 @@ export async function sendControlledPatientReply(
   // requires durable storage; unit tests exercise that path with an injected store.
   const localDevelopment = claim.claimToken === "local-development";
   const receipt = localDevelopment ? { status: "completed", localDevelopment: true }
-    : await prepareConversationLedgerReceipt(turn, { getStoreImpl, now });
+    : await prepareConversationLedgerReceipt(turn, { getStoreImpl, now, canReplacePreparedImpl: async () => {
+      const entry = await store(getStoreImpl).getWithMetadata(claim.key, { type: "json", consistency: "strong" });
+      return entry?.data?.status === "processing" && entry.data.claimToken === claim.claimToken;
+    } });
   if (receipt.status !== "completed") return { status: receipt.status === "duplicate" ? "duplicate" : "blocked", errorCode: "ledger_receipt_unavailable" };
+  const finalCheck = await checkBeforeAttempt();
+  if (finalCheck) return finalCheck;
+  // The durable attempt marker is the last operation before invoking the provider.
+  // All slow context checks run while the reservation is still retryable.
   const attempted = await updateClaim(claim, "sending", { getStoreImpl, now });
   if (attempted.status !== "completed") return { status: "blocked", errorCode: "reply_attempt_not_recorded" };
-  if (beforeSendImpl && !await beforeSendImpl()) return { status: "superseded", errorCode: "newer_activity_before_send" };
   let delivery;
   try {
     delivery = await sendYCloudPatientTextImpl({ from, to, eventId, body: validation.body });

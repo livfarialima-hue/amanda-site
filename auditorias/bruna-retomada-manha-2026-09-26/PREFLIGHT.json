@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-09-26T14:42:00.759Z",
+  "baseline": "b1161c6478c5a125474bad858ca5ee534ed7aeeb",
+  "productionCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
+  "netlifyDeployId": "6ab7cb3dd904e20008eabd38",
+  "netlifyUi": "Authenticated livfarialima; production reestruturacao-site @324584e; auto publishing on",
+  "health": {
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active"
+  },
+  "incident": {
+    "date": "2026-09-26",
+    "timeZone": "America/Sao_Paulo",
+    "nightPromise": "05:27",
+    "firstAttempt": "08:00",
+    "contextFailures": [
+      "08:00",
+      "08:15",
+      "08:35",
+      "09:01"
+    ],
+    "executionWithoutCompletion": {
+      "time": "08:30",
+      "durationMs": 30000
+    },
+    "humanAlert": {
+      "time": "09:35",
+      "reason": "delivery_uncertain"
+    },
+    "humanInterventionFound": false,
+    "deliveryConfirmed": false,
+    "limits": "Logs and canonical conversation/e-mail read in the immediately preceding diagnosis; exact provider attempt versus internal interruption was not proven.",
+    "providerInboxRead": {
+      "checkedAt": "2026-09-26T14:42:00.759Z",
+      "onlyNightAcknowledgementVisible": true,
+      "laterHumanMessageVisible": false,
+      "replayPerformed": false
+    }
+  },
+  "appsScript": {
+    "versionFromBaseline": 161,
+    "changed": false,
+    "liveReverified": false
+  },
+  "activation": {
+    "flag": "WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED",
+    "default": false,
+    "plannedProductionOnly": true
+  },
+  "sensitiveDataRecorded": false,
+  "drive": [
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "size": 219908,
+      "modifiedTime": "2026-09-26T13:43:21.215Z"
+    },
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "size": 135333,
+      "modifiedTime": "2026-09-26T13:43:02.533Z"
+    }
+  ]
+}

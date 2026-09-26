@@ -12,7 +12,7 @@ function ledgerReceiptStore(getStoreImpl) {
   return getStoreImpl({ name: RECEIPT_STORE, consistency: "strong" });
 }
 
-export async function prepareConversationLedgerReceipt(turn, { getStoreImpl = getStore, now = Date.now() } = {}) {
+export async function prepareConversationLedgerReceipt(turn, { getStoreImpl = getStore, now = Date.now(), canReplacePreparedImpl = null } = {}) {
   if (!turn?.phone || !turn?.eventId || !turn?.text) return { status: "failed", errorCode: "invalid_ledger_receipt" };
   const key = "pending/" + createHash("sha256").update(`${turn.phone}|${turn.eventId}`).digest("hex");
   try {
@@ -20,13 +20,17 @@ export async function prepareConversationLedgerReceipt(turn, { getStoreImpl = ge
     const done = await storage.getWithMetadata(key.replace("pending/", "done/"), { type: "json", consistency: "strong" });
     if (done?.data?.state === "persisted") return { status: "duplicate", key, state: "persisted" };
     const existing = await storage.getWithMetadata(key, { type: "json", consistency: "strong" });
-    if (existing?.data) return { status: "duplicate", key, state: existing.data.state };
+    if (existing?.data) {
+      // Reuse only a prepared receipt backed by the current, unattempted outbound
+      // reservation. Accepted/persisted receipts and legacy uncertain sends stay closed.
+      if (existing.data.state !== "prepared" || !canReplacePreparedImpl || !await canReplacePreparedImpl()) return { status: "duplicate", key, state: existing.data.state };
+    }
     const write = await storage.setJSON(key, { state: "prepared", turn: {
       phone: boundedText(turn.phone, 20), eventId: boundedText(turn.eventId, 200),
       parentEventId: boundedText(turn.parentEventId, 200), messageId: boundedText(turn.messageId, 500),
       text: boundedText(turn.text, 4000), source: "bruna", at: turn.at || new Date(now).toISOString(),
       opportunityId: boundedText(turn.opportunityId, 120), professional: boundedText(turn.professional, 80),
-    }, createdAt: new Date(now).toISOString() }, { onlyIfNew: true });
+    }, createdAt: new Date(now).toISOString() }, existing?.etag ? { onlyIfMatch: existing.etag } : { onlyIfNew: true });
     return { status: write.modified ? "completed" : "duplicate", key };
   } catch { return { status: "failed", errorCode: "ledger_receipt_unavailable" }; }
 }

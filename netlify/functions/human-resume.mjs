@@ -1,6 +1,8 @@
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import { consultationQuestionTopics } from './lib/patient-turn-context.mjs';
 import { coalesceUnansweredPatientBlock } from './lib/inbound-burst-context.mjs';
+import { dispatchHumanResume, isHumanResumeBackgroundEnabled } from "./lib/human-resume-dispatch.mjs";
+export { dispatchHumanResume } from "./lib/human-resume-dispatch.mjs";
 import {
   enrichAutomationPlanFromConversation,
   planAutomation,
@@ -30,7 +32,7 @@ import {
   readConversationTurns,
 } from "./lib/conversation-memory.mjs";
 import { sendYCloudPatientText } from "./lib/ycloud-patient-message.mjs";
-import { sendYCloudReviewAlert } from "./lib/ycloud-review-alert.mjs";
+import { sendYCloudReviewAlert, sendReviewAlertEmailCopy } from "./lib/ycloud-review-alert.mjs";
 import { buildHumanReviewEnvelope, formatHumanReviewEnvelope } from "./lib/human-review-envelope.mjs";
 import { applyPatientRelationshipPolicy, blocksAutomatedPatientMessages } from "./lib/patient-relationship.mjs";
 import { callClassificationSheets } from "./lib/sheets-classification-client.mjs";
@@ -103,7 +105,10 @@ function hasNewerConversationActivity(job, turns) {
 
 async function readCurrentRelationship(job, dependencies = {}) {
   const lookup = dependencies.callClassificationSheetsImpl || callClassificationSheets;
-  return lookup("get_patient_relationship", { patient: { phone: job.phone, professional: job.professional || "", includeIdentity: false } }, { env: dependencies.env || process.env });
+  const env = dependencies.env || process.env;
+  return lookup("get_patient_relationship", { patient: { phone: job.phone, professional: job.professional || "", includeIdentity: false } }, {
+    env, timeoutMs: isHumanResumeBackgroundEnabled(env) ? 20_000 : 8_000,
+  });
 }
 
 function limitedText(value, maximumLength = 260) {
@@ -147,8 +152,23 @@ function alertText(
 async function retryJob(job, status, dependencies = {}, dueAt = null) {
   const reschedule = dependencies.rescheduleHumanResumeImpl || rescheduleHumanResume;
   const now = dependencies.now ?? Date.now();
-  const retried = await reschedule(job, dueAt ?? now + Math.min(30, 5 * Math.max(1, job.attempts || 1)) * 60000);
-  return { status: retried.status === "superseded" ? "superseded" : status, reason: status };
+  let delayAlertStatus;
+  if (job.morningResume === true && job.attempts >= 3 &&
+      ["context_unavailable", "contact_context_unavailable", "pre_send_context_unavailable"].includes(status)) {
+    const current = dependencies.isHumanResumeClaimCurrentImpl || isHumanResumeClaimCurrent;
+    if (await current(job)) {
+      const alert = dependencies.sendReviewAlertEmailCopyImpl || sendReviewAlertEmailCopy;
+      const sent = await alert({ eventId: `${job.eventId}-morning-delay-alert`, patientName: job.patientName, patientPhone: job.phone,
+        messageText: "RETORNO PROMETIDO PELA MANHÃ — ATRASO TÉCNICO\nNão foi possível concluir a consulta aos dados do atendimento. A retomada permanece pendente e será verificada novamente em cinco minutos. Conferir a conversa e responder se necessário; uma intervenção humana cancela a resposta automática antiga. Nenhum envio ao paciente foi iniciado nesta tentativa." }, { env: dependencies.env || process.env });
+      // The existing email adapter deduplicates by event ID. Do not turn this
+      // technical warning into a human-ownership change or a patient receipt.
+      delayAlertStatus = sent?.status || "failed";
+    }
+  }
+  // A promised morning return stays on the five-minute recovery cadence.
+  const delayMinutes = job.morningResume === true ? 5 : Math.min(30, 5 * Math.max(1, job.attempts || 1));
+  const retried = await reschedule(job, dueAt ?? now + delayMinutes * 60000);
+  return { status: retried.status === "superseded" ? "superseded" : status, reason: status, ...(delayAlertStatus ? { delayAlertStatus } : {}) };
 }
 
 async function recordDelivery(job, updates, dependencies) {
@@ -223,12 +243,15 @@ async function sendPatientMessage(
   const sendPatient =
     dependencies.sendControlledPatientReplyImpl ||
     sendControlledPatientReply;
+  let contextError = "";
   const finalCheck = async () => {
     const read = dependencies.readConversationTurnsImpl || readConversationTurns;
     const latest = await read(job.phone);
-    if (latest?.status !== "completed" || hasNewerConversationActivity(job, latest.turns)) return false;
+    if (latest?.status !== "completed") { contextError = "context_unavailable"; return false; }
+    if (hasNewerConversationActivity(job, latest.turns)) return false;
     const lookup = await readCurrentRelationship(job, dependencies);
-    if (lookup.status !== "completed" || !lookup.data?.relationship || blocksAutomatedPatientMessages(lookup.data.relationship)) return false;
+    if (lookup.status !== "completed" || !lookup.data?.relationship) { contextError = "contact_context_unavailable"; return false; }
+    if (blocksAutomatedPatientMessages(lookup.data.relationship)) return false;
     if (conversationAction?.action === CONVERSATION_ACTIONS.RESPOND &&
         applyPatientRelationshipPolicy({ route: "standard_reply", automaticAllowed: true }, lookup.data.relationship).automaticAllowed === false) return false;
     return currentCheck(job);
@@ -236,8 +259,8 @@ async function sendPatientMessage(
   if (job.patientWindowClosed || blocksAutomatedPatientMessages(job.patientRelationship)) {
     return { status: "blocked", errorCode: "patient_contact_not_allowed" };
   }
-  if (!await finalCheck()) return { status: "superseded", errorCode: "newer_activity" };
-  return sendPatient({
+  if (!await finalCheck()) return { status: contextError ? "deferred" : "superseded", errorCode: contextError || "newer_activity" };
+  const result = await sendPatient({
     from: job.from,
     to: job.phone,
     eventId: `${job.eventId}-${suffix}`,
@@ -253,6 +276,7 @@ async function sendPatientMessage(
       dependencies.sendYCloudPatientTextImpl ||
       sendYCloudPatientText,
   });
+  return contextError && result.status === "superseded" ? { ...result, status: "deferred", errorCode: contextError } : result;
 }
 
 async function recordBrunaTurn(job, text, suffix, dependencies = {}) {
@@ -433,6 +457,7 @@ async function alertOnly(
 }
 
 async function deliveryFailure(job, reason, dependencies, suggestion = "") {
+  if (["context_unavailable", "contact_context_unavailable", "pre_send_context_unavailable"].includes(reason)) return retryJob(job, reason, dependencies);
   const result = await alertOnly(job, reason, dependencies, suggestion);
   return result.status === "waiting_human" ? { status: "delivery_failed", reason } : result;
 }
@@ -503,7 +528,9 @@ export async function processHumanResumeJob(
   if (blocksAutomatedPatientMessages(job.patientRelationship)) return alertOnly(job, "contact_preference_no_bot", dependencies);
   const readDurable = dependencies.getDurableConversationContextImpl || getDurableConversationContext;
   const durable = await readDurable({ phone: job.phone, opportunityId: job.opportunityId, professional: job.professional, limit: 20 }, {
-    callSheetsImpl: (action, payload, options) => (dependencies.callClassificationSheetsImpl || callClassificationSheets)(action, payload, { ...options, env }),
+    callSheetsImpl: (action, payload, options) => (dependencies.callClassificationSheetsImpl || callClassificationSheets)(action, payload, {
+      ...options, env, ...(isHumanResumeBackgroundEnabled(env) ? { timeoutMs: 20_000 } : {}),
+    }),
   });
   if (durable.status !== "completed") return retryJob(job, "context_unavailable", dependencies);
   if (hasNewerConversationActivity(job, durable.turns)) {
@@ -961,7 +988,7 @@ export async function processHumanResumeJob(
   return finishReply(job, policy.reason, dependencies);
 }
 
-export default async () => {
+async function runLegacyScheduledHumanResumes() {
   const claim = await claimDueHumanResumes({
     limit: MAX_JOBS_PER_RUN,
   });
@@ -999,6 +1026,42 @@ export default async () => {
       results,
     },
   });
+}
+
+export async function runHumanResumeBatch({
+  claimImpl = claimDueHumanResumes, processImpl = processHumanResumeJob,
+  rescheduleImpl = rescheduleHumanResume, now = Date.now, logImpl = writeOperationalLog,
+} = {}) {
+  const startedAt = now();
+  const results = [];
+  let status = "idle";
+  while (results.length < MAX_JOBS_PER_RUN && now() - startedAt < 10 * 60_000) {
+    // Waiting jobs keep their lease until the worker is actually ready for them.
+    const claim = await claimImpl({ limit: 1 });
+    if (claim.status !== "completed") { status = "claim_failed"; break; }
+    const [job] = claim.jobs;
+    if (!job) break;
+    let result;
+    try { result = await processImpl(job); }
+    catch {
+      // A retry still goes through the durable outbound gate; an attempted or
+      // uncertain provider send can never be repeated by this recovery path.
+      const retry = await rescheduleImpl(job, now() + 5 * 60_000);
+      result = { status: retry?.status === "completed" ? "rescheduled" : "reschedule_failed", reason: "processing_failed" };
+    }
+    results.push({ correlationId: logCorrelationId(job.eventId), attempts: job.attempts, ...result });
+    status = "processed";
+    logImpl({ source: "human_resume_worker", category: "human_resume_schedule", reason: result.reason || result.status,
+      sourceId: job.eventId, fields: { ...result, attempts: job.attempts, morningResume: job.morningResume === true, execution: "background" } });
+  }
+  const result = { status, jobs: results.length, results };
+  logImpl({ source: "human_resume_schedule", category: "human_resume_schedule", reason: status, fields: { ...result, execution: "background" } });
+  return result;
+}
+
+export default async () => {
+  if (isHumanResumeBackgroundEnabled()) return dispatchHumanResume();
+  return runLegacyScheduledHumanResumes();
 };
 
 export const config = {

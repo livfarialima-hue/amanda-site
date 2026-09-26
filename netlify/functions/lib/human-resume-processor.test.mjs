@@ -1484,3 +1484,30 @@ test("thinking and promising to return later stays silent even after a clinic qu
     "human_active",
   );
 });
+
+for (const stage of [1, 2, 3, 4]) {
+  test('morning context failure at lookup '+stage+' stays queued without becoming human takeover', async()=>{
+    const deps=dependencies(); let calls=0; const retries=[]; const emails=[];
+    const input=job({morningResume:true,attempts:3,receivedAt:new Date(NOW-4*3600000).toISOString(),text:'Quero saber sobre lifting facial com a Dra. Amanda.',recentConversation:[{role:'assistant',source:'bruna',text:'Como já é madrugada, retomaremos por aqui pela manhã.'}]});
+    deps.callClassificationSheetsImpl=async(action,payload,options)=>{assert.equal(options.timeoutMs,20000);return ++calls===stage?{status:'failed',errorCode:'timeout'}:{status:'completed',data:{relationship:{state:'unknown'}}};};
+    deps.rescheduleHumanResumeImpl=async(_job,dueAt)=>{retries.push(dueAt);return {status:'completed'};};
+    deps.sendReviewAlertEmailCopyImpl=async payload=>{emails.push(payload);return {status:'completed'};};
+    const result=await processHumanResumeJob(input,{env:{...ACTIVE_ENV,WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED:'true'},now:NOW,...deps});
+    assert.equal(result.status,'contact_context_unavailable',JSON.stringify(result));
+    assert.equal(deps.patientMessages.length,0);
+    assert.equal(deps.completions.length,0);
+    assert.deepEqual(retries,[NOW+5*60000]);
+    assert.equal(emails.length,1);
+    assert.equal(emails[0].eventId,input.eventId+'-morning-delay-alert');
+    assert.match(emails[0].messageText,/RETORNO PROMETIDO/);
+  });
+}
+
+test('morning delay alert reuses its ID and a failed email never removes the pending job', async()=>{
+  const deps=dependencies(), retries=[], ids=[];
+  deps.readConversationTurnsImpl=async()=>({status:'failed',turns:[]});
+  deps.rescheduleHumanResumeImpl=async(_job,dueAt)=>{retries.push(dueAt);return {status:'completed'};};
+  deps.sendReviewAlertEmailCopyImpl=async payload=>{ids.push(payload.eventId);return {status:'failed'};};
+  for(const attempts of [3,4]) await processHumanResumeJob(job({morningResume:true,attempts}),{env:ACTIVE_ENV,now:NOW,...deps});
+  assert.equal(retries.length,2);assert.equal(ids[0],ids[1]);assert.equal(deps.patientMessages.length,0);assert.equal(deps.completions.length,0);
+});

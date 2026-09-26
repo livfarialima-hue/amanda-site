@@ -7,6 +7,15 @@ const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const AUTOMATION_MODE_CONSUMERS = [
   {
+    path: "netlify/functions/lib/human-resume-dispatch.mjs",
+    names: ["allowsPatientSideEffects"],
+    module: "./automation-mode.mjs",
+  },
+  {
+    path: "netlify/functions/human-resume-background.mjs",
+    names: ["allowsPatientSideEffects"],
+  },
+  {
     path: "netlify/functions/lib/inbound-recovery-dispatch.mjs",
     names: ["allowsPatientSideEffects"],
     module: "./automation-mode.mjs",
