@@ -1,6 +1,6 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
 import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry } from "./patient-turn-context.mjs";
-import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange } from "./surgical-price-policy.mjs";
+import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
   isCommercialSolicitation,
@@ -289,6 +289,12 @@ export function enrichAutomationPlanFromConversation(
       ) || isClearInformationAcceptance(plan.currentText || latestPatientTurn?.text)),
   );
 
+  if (/price_range_direct$/.test(plan.reason)) return resolveSurgicalPricePlan(plan, recentConversation);
+  if (acceptedPriceRangeOffer && earPriceScope(plan.currentText || latestPatientTurn?.text, recentConversation)) {
+    return resolveSurgicalPricePlan({...plan, reason:'price_initial_information',
+      currentText:plan.currentText || latestPatientTurn?.text, procedure:plan.procedure || recentPatientProcedure?.key}, recentConversation);
+  }
+
   if (acceptedPriceRangeOffer) {
     const procedure =
       plan.procedure ||
@@ -366,14 +372,15 @@ export function enrichAutomationPlanFromConversation(
       recentClinicProcedure?.key ||
       context.procedure;
     if (isAutomaticSurgicalPriceProcedure(procedure)) {
-      plan = {
+      plan = resolveSurgicalPricePlan({
         ...plan,
         route: "standard_reply",
         reason: "price_initial_information",
         professional: "amanda",
         procedure,
         automaticAllowed: true,
-      };
+      }, recentConversation);
+      if (plan.reason !== 'price_initial_information') return plan;
       // Continue through the prior-offer/range checks below. Returning here
       // used to restart price education whenever this turn omitted the name.
     } else return {
@@ -406,6 +413,10 @@ export function enrichAutomationPlanFromConversation(
     }
   }
 
+  if (plan.reason === 'price_initial_information') {
+    const resolved = resolveSurgicalPricePlan(plan, recentConversation);
+    if (resolved.reason !== 'price_initial_information') return resolved;
+  }
   if (!hasClinicTurn) return plan;
 
   if (plan.reason === "simple_greeting") {
@@ -670,6 +681,7 @@ export function planAutomation({
     normalizedText.replace(DECLINED_PRICE_AMOUNT_PATTERN, " "),
   );
   const asksPriceTerms = PRICE_TERMS_PATTERN.test(normalizedText);
+  const requestsAmountAlongsideTerms = /\bquanto\s+(?:custa|fica|sai|[eé])\b|\bqual\s+(?:[eé]\s+)?(?:o\s+)?(?:valor|pre[cç]o|custo)\b|\b(?:saber|passar|informe|informa|manda|mande)\b.{0,30}\b(?:valor|pre[cç]o|faixa|m[eé]dia)\b/i.test(normalizedText);
   const asksPrice = asksPriceAmount || asksPriceTerms;
   const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
   const marketingPrefilledMessage =
@@ -776,7 +788,7 @@ export function planAutomation({
   if (asksPrice && !priceMentionIsTemplateContext) {
     const procedureKey = procedure?.key || null;
     const automaticPrice = isAutomaticSurgicalPriceProcedure(procedureKey);
-    return {
+    return resolveSurgicalPricePlan({
       route: automaticPrice ? "standard_reply" : "human_review",
       reason: automaticPrice
         ? "price_initial_information"
@@ -787,10 +799,10 @@ export function planAutomation({
       professional: "amanda",
       procedure: procedureKey,
       automaticAllowed: automaticPrice,
-      priceRequestKind: asksPriceTerms ? "terms" : "amount",
+      priceRequestKind: asksPriceAmount && (!asksPriceTerms || requestsAmountAlongsideTerms) ? "amount" : "terms",
       platform: platform || null,
       currentText: normalizedText,
-    };
+    });
   }
 
   if (marketingPrefilledMessage && !procedure) {

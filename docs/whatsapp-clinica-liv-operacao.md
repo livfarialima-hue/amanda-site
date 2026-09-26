@@ -1,5 +1,13 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+<!-- BRUNA-PRECO-DIRETO-2026-09-26 -->
+**Pacote 2026-09-26.2 — TESTADO LOCALMENTE; publicação autorizada por Daniel.** Resposta explícita de preço recebe a faixa operacional já aprovada do procedimento confirmado no primeiro pedido, sem segunda permissão nem artigo obrigatório. Valores, orçamento individual após avaliação, segurança e envio único são preservados. Pergunta apenas de pagamento, interesse genérico e recusa não liberam faixa. Redução de tamanho de orelha exige referência humana; tamanho versus afastamento ambíguo recebe esclarecimento específico. Consulta informa R$500, explica a avaliação somente se ainda necessário e oferece próximo passo opcional, respeitando recusas e convites anteriores.
+
+Evidência: exemplos fornecidos nesta tarefa e nove falhas sintéticas reproduzidas antes da correção. Hipótese: clareza e menos etapas favorecem continuidade; conversão não foi medida. Revisão: primeiras conversas naturais, 48h e sete dias após publicação, Daniel/equipe. Medir perguntas respondidas, intervenções humanas, qualificados, consultas confirmadas/realizadas; conter diante de valor indevido, repetição, indicação individual ou perda de contexto. Rollback: Netlify 6ab7a3b5dda1f60008f631fe / dd2dcfe63efc0dec4a982133b1e28459aeb3a421, preservando Apps Script v161 e dados. Sem contato antigo ou mensagem real de teste. Recibos: auditorias/bruna-preco-direto-2026-09-26/.
+A política de preço deste pacote substitui a exigência anterior de primeiro turno sem números. Os recibos e relatos datados abaixo preservam o comportamento histórico e não devem ser usados como orientação vigente de preço.
+<!-- /BRUNA-PRECO-DIRETO-2026-09-26 -->
+
+
 <!-- BRUNA-ACOLHIMENTO-2026-09-26 -->
 **Pacote 2026-09-26.1 — PUBLICADO E VERIFICADO em 26/09/2026, 07:52 BRT.** Commit funcional dd2dcfe63efc0dec4a982133b1e28459aeb3a421, Netlify 6ab7a3b5dda1f60008f631fe, Apps Script v161 preservado. Validação: 1.718 testes integrais, 12 regressões do incidente, 225 entre consumidores e 28 comandos obrigatórios sem falhas. Domínio e URL imutável ativos, assinatura protegida e pedido sem assinatura rejeitado com 401; 13 funções, cinco programações e 192 arquivos conferidos. A primeira conversa natural após esta publicação ainda não foi observada. Daniel pediu uma conversa mais acolhedora e cuidadosa e autorizou a publicação após validação. A hipótese de modificar a recuperação foi cancelada antes de qualquer alteração; transporte, timeouts, fila, cadência e Apps Script v161 permanecem fora da mudança.
 

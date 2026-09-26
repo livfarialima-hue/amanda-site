@@ -44,19 +44,13 @@ test("real clinic history and legacy continuity still prevent repeated introduct
   assert.equal(hasKnownPriorClinicInteraction({ delivery: { updated: true } }), true);
 });
 
-test("natural surgical price question reaches the approved initial answer with its offer intact", () => {
+test("an ear-reduction price request stays specific and does not presume the otoplasty scope", () => {
   const text = "Eu gostaria de saber quanto é uma cirurgia para redução de orelha";
   const plan = planFor(text);
   assert.equal(plan.procedure, "otoplastia");
-  assert.equal(plan.reason, "price_initial_information");
-  const conversationAction = actionFor(text, plan, history);
-  const body = buildSurgicalInitialPriceReply({ procedure: plan.procedure, recentConversation: history, currentText: text, introduceBruna: false });
-  const final = conformOutboundReplyToContract({ body, currentText: text, conversationAction, recentConversation: history });
-  assert.match(final, /posso te passar uma faixa geral/i);
-  assert.doesNotMatch(final, /R\$|Eu sou a Bruna/);
-  assert.equal(validateOutboundReply({ body: final, currentText: text, conversationAction, recentConversation: history }).allowed, true);
-  const accepted = planFor("Por favor", [...history, clinic(final)]);
-  assert.equal(accepted.reason, "otoplasty_price_range_direct");
+  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.automaticAllowed, false);
+  assert.equal(plan.priceClarification, "ambiguous");
 });
 
 for (const text of ["Quanto fica para eu fazer uma consulta", "Quanto é a consulta?", "Quanto sai a avaliação?", "Qual o preço da consulta?"]) {

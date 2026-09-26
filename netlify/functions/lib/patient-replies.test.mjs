@@ -477,8 +477,8 @@ test("answers the consultation value directly and invites the next step without 
 
   assert.match(reply, /^Olá, Renata!/);
   assert.match(reply, /consulta presencial com a Dra\. Amanda custa R\$ 500/i);
-  assert.match(reply, /Na avaliação, a Dra\. Amanda entende o que você busca/i);
-  assert.match(reply, /sem obrigação de decidir nada nesse momento/i);
+  assert.match(reply, /Na avaliação, a Dra\. Amanda entende o que você gostaria de mudar/i);
+  assert.match(reply, /sem obrigação de decidir pela cirurgia/i);
   assert.match(reply, /Pix, débito ou parcelamento/i);
   assert.match(reply, /nota fiscal/i);
   assert.match(reply, /R\. Pais Leme, 215/);
@@ -526,13 +526,14 @@ test("keeps a consultation price reply especially short when the evaluation was 
   assert.doesNotMatch(reply, /avaliação|examina|possibilidades|decidir/i);
 });
 
-test("conversion consultation-price reply is concise and does not repeat unasked context or location", () => {
+test("conversion consultation-price reply is concise and does not repeat already shared context or location", () => {
   const reply = buildConsultationInformationReply({
     patientName: "Paula",
     consultationPriceRequested: true,
     conversionExperienceEnabled: true,
     introduceBruna: false,
     locationPreviouslyShared: false,
+    consultationContextPreviouslyShared: true,
   });
 
   assert.equal(

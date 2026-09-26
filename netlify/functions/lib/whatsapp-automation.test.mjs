@@ -98,7 +98,7 @@ test("known procedure remains eligible for a standard reply", () => {
   assert.equal(plan.automaticAllowed, true);
 });
 
-test("the first lifting price question receives only the approved initial information", () => {
+test("the first lifting price question receives the approved range on the first request", () => {
   const plan = planAutomation({
     text: "Qual o valor do lifting facial?",
     messageType: "text",
@@ -107,7 +107,7 @@ test("the first lifting price question receives only the approved initial inform
   });
 
   assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.reason, "lifting_price_range_direct");
   assert.equal(plan.procedure, "lifting_facial");
   assert.equal(plan.priceRequestKind, "amount");
   assert.equal(plan.automaticAllowed, true);
@@ -132,7 +132,7 @@ test("a repeated lifting price question receives the approved ranges automatical
     ],
   );
 
-  assert.equal(preliminaryPlan.reason, "price_initial_information");
+  assert.equal(preliminaryPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.route, "standard_reply");
   assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.procedure, "lifting_facial");
@@ -188,7 +188,7 @@ test("the real cervical sequence receives the softer first price response instea
   );
 
   assert.equal(enrichedPlan.route, "standard_reply");
-  assert.equal(enrichedPlan.reason, "price_initial_information");
+  assert.equal(enrichedPlan.reason, "lifting_price_range_direct");
   assert.equal(enrichedPlan.procedure, "lifting_cervical");
   assert.equal(enrichedPlan.automaticAllowed, true);
 });
@@ -223,7 +223,7 @@ test("a cervical patient who accepts the approved offer receives the range", () 
   assert.equal(enrichedPlan.automaticAllowed, true);
 });
 
-test("the first otoplasty price question keeps the range for the next step", () => {
+test("the first otoplasty price question receives the range on the first request", () => {
   const plan = planAutomation({
     text: "Tudo sobre otoplastia, inclusive valores",
     messageType: "text",
@@ -232,7 +232,7 @@ test("the first otoplasty price question keeps the range for the next step", () 
   });
 
   assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.reason, "otoplasty_price_range_direct");
   assert.equal(plan.procedure, "otoplastia");
   assert.equal(plan.priceRequestKind, "amount");
   assert.equal(plan.automaticAllowed, true);
@@ -448,7 +448,7 @@ test("conversation context restores the automatic cervical price path", () => {
   assert.equal(preliminaryPlan.route, "human_review");
   assert.equal(preliminaryPlan.reason, "price_without_confirmed_procedure");
   assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.reason, "lifting_price_range_direct");
   assert.equal(plan.procedure, "lifting_cervical");
   assert.equal(plan.automaticAllowed, true);
 });
@@ -809,7 +809,7 @@ test("an explicit lifting price question added to a marketing template uses the 
   });
 
   assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.reason, "lifting_price_range_direct");
 });
 
 test("Google codes personalize the procedure without implying scheduling", () => {
@@ -1374,7 +1374,7 @@ test("an explicit price question added to the standard availability template is 
   });
 
   assert.equal(plan.route, "standard_reply");
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.reason, "lifting_price_range_direct");
   assert.equal(plan.procedure, "lifting_facial");
 });
 

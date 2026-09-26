@@ -594,7 +594,7 @@ test("the reply contract removes forced questions from a known surgical price an
 
   assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
   assert.equal(decision.replyContract.maxQuestions, 0);
-  assert.equal(decision.replyContract.maxLinks, 1);
+  assert.equal(decision.replyContract.maxLinks, 0);
   assert.equal(decision.replyContract.allowCta, false);
 });
 
@@ -647,28 +647,28 @@ test("a flacidez question followed by consultation price keeps both requests in 
   assert.equal(decision.replyContract.allowCta, true);
 });
 
-test("the cervical first price contract permits only the approved range offer", () => {
+test("the cervical first price contract allows an optional next step without a mandatory guide", () => {
   const decision = decideConversationAction({
     text: "Gostaria de saber os valores da cervicoplastia",
     plan: {
       ...standardPlan,
-      reason: "price_initial_information",
+      reason: "lifting_price_range_direct",
       procedure: "lifting_cervical",
     },
   });
 
   assert.deepEqual(decision.replyContract.unresolvedIntents, ["price_surgery"]);
   assert.equal(decision.replyContract.maxQuestions, 0);
-  assert.equal(decision.replyContract.maxLinks, 1);
+  assert.equal(decision.replyContract.maxLinks, 0);
   assert.equal(decision.replyContract.allowCta, true);
 });
 
-test("the otoplasty price contracts permit the approved offer and range guide", () => {
+test("the otoplasty price contracts allow the first range without mandatory links", () => {
   const initial = decideConversationAction({
     text: "Tudo sobre otoplastia, inclusive valores",
     plan: {
       ...standardPlan,
-      reason: "price_initial_information",
+      reason: "otoplasty_price_range_direct",
       procedure: "otoplastia",
     },
   });
@@ -682,12 +682,12 @@ test("the otoplasty price contracts permit the approved offer and range guide", 
   });
 
   assert.equal(initial.replyContract.maxQuestions, 0);
-  assert.equal(initial.replyContract.maxLinks, 1);
+  assert.equal(initial.replyContract.maxLinks, 0);
   assert.equal(initial.replyContract.allowCta, true);
   assert.deepEqual(range.replyContract.unresolvedIntents, ["price_surgery"]);
   assert.equal(range.replyContract.maxQuestions, 0);
-  assert.equal(range.replyContract.maxLinks, 1);
-  assert.equal(range.replyContract.allowCta, false);
+  assert.equal(range.replyContract.maxLinks, 0);
+  assert.equal(range.replyContract.allowCta, true);
 });
 
 test("the reply contract allows one necessary question only when the surgery is unknown", () => {
@@ -807,7 +807,7 @@ test("conversion contract separates informational, price-reference and schedulin
     text: "Quanto custa a cervicoplastia?",
     plan: {
       route: "standard_reply",
-      reason: "price_initial_information",
+      reason: "lifting_price_range_direct",
       professional: "amanda",
       procedure: "lifting_cervical",
       automaticAllowed: true,
@@ -818,7 +818,7 @@ test("conversion contract separates informational, price-reference and schedulin
     text: "Quanto custa o lifting facial?",
     plan: {
       route: "standard_reply",
-      reason: "price_initial_information",
+      reason: "lifting_price_range_direct",
       professional: "amanda",
       procedure: "lifting_facial",
       automaticAllowed: true,
@@ -843,12 +843,12 @@ test("conversion contract separates informational, price-reference and schedulin
   );
   assert.deepEqual(
     cervicalPrice.replyContract.allowedCtaTypes,
-    ["price_reference_offer"],
+    ["informational_continuation", "availability_exploration"],
   );
   assert.equal(facialPrice.replyContract.allowCta, true);
   assert.deepEqual(
     facialPrice.replyContract.allowedCtaTypes,
-    ["price_reference_offer"],
+    ["informational_continuation", "availability_exploration"],
   );
   assert.deepEqual(
     scheduling.replyContract.allowedCtaTypes,

@@ -796,7 +796,9 @@ export async function processHumanResumeJob(
   const deterministicReplyContextMismatch = Boolean(
     approvedPriceReplyCandidate &&
       aiResult.status === "completed" &&
-      aiResult.decision?.replyCode === approvedPriceReplyCode &&
+      ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(
+        aiResult.decision?.replyCode,
+      ) &&
       !approvedPriceReplyConfirmed,
   );
 

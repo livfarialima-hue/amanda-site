@@ -144,8 +144,7 @@ function isProtectedLiftingRangeReply(value, recentConversation = []) {
   const replyUrls = urls(value);
   const hasRequiredGuide = replyUrls.length === 1
     ? LIFTING_PRICE_GUIDE_PATTERN.test(replyUrls[0])
-    : replyUrls.length === 0 &&
-      conversationContainsFacialPriceGuide(recentConversation);
+    : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "lifting_facial") &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
@@ -162,8 +161,7 @@ function isProtectedOtoplastyRangeReply(value, recentConversation = []) {
   const replyUrls = urls(value);
   const hasRequiredGuide = replyUrls.length === 1
     ? FACIAL_PRICE_GUIDE_PATTERN.test(replyUrls[0])
-    : replyUrls.length === 0 &&
-      conversationContainsFacialPriceGuide(recentConversation);
+    : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "otoplastia") &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
@@ -180,8 +178,7 @@ function isProtectedCervicalRangeReply(value, recentConversation = []) {
   const replyUrls = urls(value);
   const hasRequiredGuide = replyUrls.length === 1
     ? FACIAL_PRICE_GUIDE_PATTERN.test(replyUrls[0])
-    : replyUrls.length === 0 &&
-      conversationContainsFacialPriceGuide(recentConversation);
+    : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "lifting_cervical") &&
     /nao e orcamento proposta nem garantia de preco/.test(text) &&
@@ -221,6 +218,13 @@ function semanticUnsafeReplyReason(
     protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange;
   if (protectedApprovedRange && !hasOnlyApprovedSurgicalAmounts(raw)) {
     return "unapproved_monetary_amount";
+  }
+  if (protectedApprovedRange && contract.sourceReason &&
+      !['lifting_price_range_direct', 'otoplasty_price_range_direct'].includes(contract.sourceReason)) {
+    return 'surgical_range_not_authorized';
+  }
+  if (protectedApprovedRange && contract.procedure && !containsApprovedSurgicalRange(raw, contract.procedure)) {
+    return 'surgical_range_procedure_mismatch';
   }
 
   if (

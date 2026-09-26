@@ -242,3 +242,7 @@ Retomadas.gs mantém a autoria da sugestão e consulta a última pergunta da cl�
 ### Acolhimento e intenção de preço — 26/09/2026
 
 `bruna-conversion-experience.mjs` decide se há interação anterior da clínica; entradas da pessoa não suprimem a primeira apresentação. O indício legado de cadastro atualizado só se aplica sem histórico e fora da repetição da mesma mensagem/recuperação de gravação. `patient-turn-context.mjs` é o proprietário linguístico comum de pergunta de custo, consumido por `whatsapp-automation.mjs` e `conversation-action-controller.mjs`; reconhecer pergunta não autoriza faixa, agenda ou qualificação. As políticas próprias de preço, CTA, repetição e transporte permanecem obrigatórias. Nenhuma mudança na recuperação assíncrona.
+
+### Preço direto — 26/09/2026
+
+`surgical-price-policy.mjs` é proprietário da liberação numérica, envio único e distinção de escopo de redução de orelha. O planejador e o enriquecimento por relacionamento importam a mesma resolução; reconhecimento de pergunta não define indicação ou orçamento. O contrato de saída valida o motivo, procedimento e ressalvas antes de admitir a faixa. `surgical-price-review.mjs` gera a cópia, artigo solicitado e próximo passo opcional; `conversation-action-controller.mjs` conserva autoridade sobre CTA, recusa e quantidade de links. Sem mudança de transporte, Apps Script ou filas.

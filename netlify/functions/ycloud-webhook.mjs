@@ -6,7 +6,7 @@ import {
   isSchedulingRequest,
   planAutomation,
 } from "./lib/whatsapp-automation.mjs";
-import { isAutomaticSurgicalPriceProcedure } from "./lib/surgical-price-policy.mjs";
+import { isAutomaticSurgicalPriceProcedure, resolveSurgicalPricePlan } from "./lib/surgical-price-policy.mjs";
 import { UNAVAILABLE_PATIENT_TEXT } from "./lib/patient-turn-context.mjs";
 import {
   normalizeYCloudMessageUpdated,
@@ -2374,6 +2374,7 @@ async function completeOpenAIActive({
           input.recentConversation,
         ),
         patientRelationship,
+        input.recentConversation,
       );
       if (
         humanContextContinuationCandidate &&
@@ -3451,6 +3452,7 @@ function appointmentEmailBody({
 function enrichPricePlanFromPatientRelationship(
   plan,
   relationship,
+  recentConversation = [],
 ) {
   if (
     !plan ||
@@ -3486,7 +3488,7 @@ function enrichPricePlanFromPatientRelationship(
     ].includes(plan.reason)
   ) {
     const automaticPrice = isAutomaticSurgicalPriceProcedure(contextPlan.procedure);
-    return {
+    return resolveSurgicalPricePlan({
       ...plan,
       route: automaticPrice ? "standard_reply" : "human_review",
       reason: automaticPrice
@@ -3495,7 +3497,7 @@ function enrichPricePlanFromPatientRelationship(
       professional: plan.professional || "amanda",
       procedure: contextPlan.procedure,
       automaticAllowed: automaticPrice,
-    };
+    }, recentConversation);
   }
 
   const directLiftingRange =
@@ -5355,6 +5357,7 @@ export async function handleYCloudWebhook(
     enrichPricePlanFromPatientRelationship(
       baseAutomationPlan,
       patientRelationship,
+      conversationHistory,
     );
   const automationPlan = applyPatientRelationshipPolicy(
     relationshipAwarePlan,

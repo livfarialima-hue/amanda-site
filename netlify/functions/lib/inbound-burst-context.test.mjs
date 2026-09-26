@@ -439,9 +439,9 @@ test("the coalesced cervical information and price turn keeps the approved envel
     }),
   );
 
-  assert.equal(plan.reason, "price_initial_information");
+  assert.equal(plan.reason, "lifting_price_range_direct");
   assert.equal(plan.procedure, "lifting_cervical");
-  assert.equal(action.replyContract.maxLinks, 1);
+  assert.equal(action.replyContract.maxLinks, 0);
   assert.equal(action.replyContract.allowCta, true);
   assert.equal(action.replyContract.allowAppointmentConfirmation, false);
 });

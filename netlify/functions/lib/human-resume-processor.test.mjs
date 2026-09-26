@@ -758,7 +758,7 @@ test("a blocked morning continuation becomes a visible human fallback with the r
   );
 });
 
-test("the initial price information is sent after the human-resume window without an alert", async () => {
+test("the approved price range is sent after the human-resume window without an alert", async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
     status: "completed",
@@ -767,9 +767,9 @@ test("the initial price information is sent after the human-resume window withou
       confidence: "high",
       automaticAllowed: true,
       urgent: false,
-      replyCode: "SURGICAL-PRICE-INITIAL-01",
+      replyCode: "LIFTING-PRICE-RANGE-01",
       suggestedReply: "Resposta semântica validada.",
-      reviewReason: "price_initial_information",
+      reviewReason: "lifting_price_range_direct",
     },
   });
   const result = await processHumanResumeJob(
@@ -796,22 +796,16 @@ test("the initial price information is sent after the human-resume window withou
   );
 
   assert.equal(result.status, "bruna_resumed");
-  assert.equal(result.reason, "price_initial_information");
+  assert.equal(result.reason, "lifting_price_range_direct");
   assert.equal(deps.patientMessages.length, 1);
-  assert.doesNotMatch(
-    deps.patientMessages[0].body,
-    /R\$ 18 mil|R\$ 26 mil/,
-  );
-  assert.match(deps.patientMessages[0].body, /é natural querer saber o valor antes de decidir/i);
-  assert.match(deps.patientMessages[0].body, /confirma o valor exato após a avaliação/i);
+  assert.match(deps.patientMessages[0].body, /R\$ 26 mil e R\$ 42 mil/);
+  assert.match(deps.patientMessages[0].body, /estimativa geral/i);
+  assert.match(deps.patientMessages[0].body, /valor final é definido após avaliação/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal((deps.patientMessages[0].body.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(deps.patientMessages[0].body, /o que mais te incomoda/i);
-  assert.doesNotMatch(deps.patientMessages[0].body, /técnica|complexidade|materiais/i);
-  assert.match(
-    deps.patientMessages[0].body,
-    /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
-  );
+  assert.match(deps.patientMessages[0].body, /técnica.*hospital.*anestesia.*materiais/i);
+  assert.doesNotMatch(deps.patientMessages[0].body, /https?:/);
   assert.equal(deps.alerts.length, 0);
   assert.equal(
     deps.completions[0].options.controlStatus,
@@ -853,9 +847,9 @@ test("a standalone safe question resumes from refreshed context without dependin
         urgent: false,
         professional: "amanda",
         procedure: "lifting_cervical",
-        replyCode: "SURGICAL-PRICE-INITIAL-01",
+        replyCode: "LIFTING-PRICE-RANGE-01",
         suggestedReply: "Resposta semântica validada.",
-        reviewReason: "price_initial_information",
+        reviewReason: "lifting_price_range_direct",
       },
     };
   };
@@ -877,7 +871,7 @@ test("a standalone safe question resumes from refreshed context without dependin
   );
 
   assert.equal(result.status, "bruna_resumed");
-  assert.equal(result.reason, "price_initial_information");
+  assert.equal(result.reason, "lifting_price_range_direct");
   assert.equal(deps.patientMessages.length, 1);
   assert.equal(deps.alerts.length, 0);
   assert.equal(semanticInput.recentConversation.length, 2);
@@ -885,13 +879,11 @@ test("a standalone safe question resumes from refreshed context without dependin
     semanticInput.recentConversation[0].text,
     /Caso queira saber mais/,
   );
-  assert.doesNotMatch(
-    deps.patientMessages[0].body,
-    /R\$ 18 mil|R\$ 26 mil/,
-  );
+  assert.match(deps.patientMessages[0].body, /R\$ 18 mil e R\$ 26 mil/);
 });
 
-test("a deterministic code with a conflicting procedure fails closed", async () => {
+for (const conflictingCode of ["LIFTING-PRICE-RANGE-01", "SURGICAL-PRICE-INITIAL-01"]) {
+test(`a deterministic code with a conflicting procedure fails closed: ${conflictingCode}`, async () => {
   const deps = dependencies();
   deps.runOpenAIShadowImpl = async () => ({
     status: "completed",
@@ -902,9 +894,9 @@ test("a deterministic code with a conflicting procedure fails closed", async () 
       urgent: false,
       professional: "amanda",
       procedure: "blefaroplastia",
-      replyCode: "SURGICAL-PRICE-INITIAL-01",
+      replyCode: conflictingCode,
       suggestedReply: "A pergunta é sobre o valor da blefaroplastia.",
-      reviewReason: "price_initial_information",
+      reviewReason: "lifting_price_range_direct",
     },
   });
 
@@ -925,6 +917,8 @@ test("a deterministic code with a conflicting procedure fails closed", async () 
   assert.equal(deps.patientMessages.length, 0);
   assert.equal(deps.alerts.length, 1);
 });
+
+}
 
 test("another surgical price still waits for human review with a complete suggestion", async () => {
   const deps = dependencies();

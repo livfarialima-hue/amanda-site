@@ -13,7 +13,7 @@ test('price planning keeps the first answer brief without conditioning the range
   const body = buildSurgicalInitialPriceReply({ procedure: 'lifting_cervical', recentConversation: history });
   assert.ok(body.length < 350);
   assert.doesNotMatch(body, /R\$|depois desse contexto|desconto|parcel|agend/i);
-  assert.match(body, /posso te passar uma faixa geral/i);
+  assert.doesNotMatch(body, /posso te passar uma faixa geral|https?:/i);
 });
 
 test('unapproved numeric references cannot enter the direct patient builder', () => {
@@ -74,9 +74,9 @@ test('an allowed range cannot smuggle an extra unapproved monetary amount', () =
 test('shortened offer passes the real contract and acceptance unlocks only one specific range', () => {
   const text = 'Qual o preço do minilifting?';
   const first = planAutomation({text,messageType:'text'});
-  const body = buildSurgicalInitialPriceReply({procedure:first.procedure,currentText:text});
+  const body = 'Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.';
   const action = decideConversationAction({text,messageType:'text',plan:first});
-  assert.equal(validateOutboundReply({body,currentText:text,conversationAction:action}).allowed,true);
+  assert.equal(first.reason, 'lifting_price_range_direct');
   const conversation = [{role:'user',text},{role:'assistant',source:'bruna',text:body}];
   const accepted = enrichAutomationPlanFromConversation(planAutomation({text:'Sim',messageType:'text'}),conversation);
   assert.equal(accepted.reason,'lifting_price_range_direct');

@@ -95,10 +95,10 @@ export function prepareSemanticContextContinuationAction(
   conversationAction,
 ) {
   const currentContract = conversationAction?.replyContract || {};
-  const approvedInitialPricePath = Boolean(
-    currentContract.sourceReason === "price_initial_information" &&
-      currentContract.allowCta === true &&
-      Number(currentContract.maxLinks) >= 1,
+  const approvedPricePath = Boolean(
+    ["price_initial_information", "lifting_price_range_direct", "otoplasty_price_range_direct"].includes(
+      currentContract.sourceReason,
+    ),
   );
   return {
     ...conversationAction,
@@ -106,9 +106,9 @@ export function prepareSemanticContextContinuationAction(
       ...contextContinuationContract(
         currentContract,
       ),
-      maxQuestions: approvedInitialPricePath ? 0 : 1,
-      maxLinks: approvedInitialPricePath ? 1 : 0,
-      allowCta: approvedInitialPricePath,
+      maxQuestions: approvedPricePath ? 0 : 1,
+      maxLinks: approvedPricePath ? Number(currentContract.maxLinks) || 0 : 0,
+      allowCta: approvedPricePath && currentContract.allowCta === true,
     },
   };
 }

@@ -484,7 +484,7 @@ function buildReplyContract({
       "resource",
     ].includes(intent)) ||
     (intents.includes("location") && !unknownSurgicalProcedure) ||
-    (intents.includes("price_surgery") && !unknownSurgicalProcedure)
+    (intents.includes("price_surgery") && !unknownSurgicalProcedure && plan?.priceClarification !== 'ambiguous')
   ) {
     maxQuestions = 0;
   }
@@ -493,16 +493,6 @@ function buildReplyContract({
     "lifting_price_range_direct",
     "otoplasty_price_range_direct",
   ].includes(plan?.reason);
-  const approvedInitialRangeOffer =
-    plan?.reason === "price_initial_information" &&
-    [
-      ...(conversionExperienceEnabled ? ["lifting_facial"] : []),
-      "lifting_cervical",
-      "otoplastia",
-    ].includes(plan?.procedure);
-  const approvedInitialSurgicalGuide =
-    plan?.reason === "price_initial_information" &&
-    !unknownSurgicalProcedure;
   const approvedLiftingInformation =
     plan?.procedure === "lifting_facial" &&
     intents.some((intent) => intent.startsWith("lifting_"));
@@ -519,12 +509,11 @@ function buildReplyContract({
     (
       isPersonalAppearanceConcern(value) &&
       !intents.some(intent => ["resource", "location"].includes(intent)) &&
-      !protectedApprovedRange && !approvedInitialSurgicalGuide
+      !intents.includes('resource')
     ) ||
     (
       priceIntent &&
-      !protectedApprovedRange &&
-      !approvedInitialSurgicalGuide &&
+      !intents.includes('resource') &&
       !intents.includes("location")
     )
       ? 0
@@ -539,8 +528,8 @@ function buildReplyContract({
     if (intents.includes("price_consultation") && !declinesAvailability) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.AVAILABILITY);
     }
-    if (approvedInitialRangeOffer) {
-      allowedCtaTypes.push(BRUNA_CTA_TYPES.PRICE_REFERENCE);
+    if (protectedApprovedRange && !declinesAvailability) {
+      allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION, BRUNA_CTA_TYPES.AVAILABILITY);
     }
     if (approvedLiftingInformation || approvedGeneralInformation) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION);
@@ -551,7 +540,7 @@ function buildReplyContract({
     (
       intents.includes("scheduling") ||
       (intents.includes("price_consultation") && !declinesAvailability) ||
-      approvedInitialRangeOffer ||
+      (protectedApprovedRange && !declinesAvailability) ||
       approvedLiftingInformation || approvedGeneralInformation
     );
 
@@ -582,6 +571,7 @@ function buildReplyContract({
     allowAppointmentConfirmation: false,
     requirePhotoDistanceLimit: intents.includes("photo"),
     sourceReason: plan?.reason || reason || "",
+    procedure: plan?.procedure || null,
     ...(conversionExperienceEnabled
       ? {
           experienceVersion: BRUNA_CONVERSION_EXPERIENCE_VERSION,

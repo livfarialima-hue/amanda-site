@@ -1,6 +1,6 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { hasUnansweredUnavailablePatientText } from "./patient-turn-context.mjs";
-import { isAutomaticSurgicalPriceProcedure, facialPriceLines } from "./surgical-price-policy.mjs";
+import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope } from "./surgical-price-policy.mjs";
 import {
   buildConsultationInformationReply,
   hasClinicLocationInConversation,
@@ -276,6 +276,21 @@ function priceGuideParagraph(procedure, recentConversation) {
   return `Este conteúdo explica de forma simples o que costuma compor o valor de ${guide.label}: ${safeLink(priceGuideUrl(guide))}`;
 }
 
+function requestedPriceGuide(procedure, currentText, recentConversation) {
+  if (!/\b(?:artigo|guia|link|material|conte[uú]do|site)\b/i.test(currentText)) return '';
+  if (procedure === 'lifting_facial' && !conversationContainsFacialPriceGuide(recentConversation)) {
+    return `Veja o que compõe o valor: ${safeLink(LIFTING_PRICE_GUIDE_URL)}`;
+  }
+  return priceGuideParagraph(procedure, recentConversation);
+}
+
+function priceNextStep(recentConversation, currentText) {
+  if (/n[aã]o\s+(?:quero|pretendo|vou)\s+(?:agendar|marcar)|vou pensar|prefiro pensar|s[oó]\s+(?:estou\s+)?pesquisando/i.test(currentText)) return '';
+  return hasConsultationExplanationInConversation(recentConversation)
+    ? 'Se quiser, posso verificar opções de horário.'
+    : 'Se quiser, posso te explicar como funciona a avaliação com a Dra. Amanda.';
+}
+
 function priceVariation(procedure) {
   if (procedure === "lifting_facial") {
     return "O valor final pode variar conforme o plano envolva face, pescoço ou ambos.";
@@ -401,6 +416,7 @@ export function getSurgicalPriceReference(procedure) {
 }
 
 function internalPriceReferenceForConversation(procedure, currentText, recentConversation = []) {
+  if ((!procedure || procedure === 'otoplastia') && earPriceScope(currentText, recentConversation)) return null;
   const patientTurns = (Array.isArray(recentConversation) ? recentConversation : [])
     .filter(t => t?.role === "user" || t?.source === "paciente");
   const specific = [String(currentText || ""), ...patientTurns.slice().reverse().map(t => String(t.text || ""))]
@@ -439,10 +455,7 @@ export function buildSurgicalInitialPriceReply({
     procedure === "lifting_cervical"
       ? "Ter uma noção de valor ajuda no planejamento. Na cervicoplastia, o valor depende da extensão do tratamento do pescoço e de possíveis associações à face, definidas na avaliação."
       : "É natural querer saber o valor antes de decidir. A Dra. Amanda confirma o valor exato após a avaliação, conforme o planejamento da cirurgia.";
-  const guide = priceGuideParagraph(procedure, recentConversation);
-  const approvedRangeOffer = isAutomaticSurgicalPriceProcedure(procedure)
-    ? "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida."
-    : "";
+  const guide = requestedPriceGuide(procedure, currentText, recentConversation);
   const otoplastyOverview = otoplastyOverviewParagraphs({
     procedure,
     currentText,
@@ -456,9 +469,8 @@ export function buildSurgicalInitialPriceReply({
     ),
     location,
     ...otoplastyOverview,
-    initialExplanation,
+    asksAboutTerms ? '' : initialExplanation,
     guide,
-    approvedRangeOffer,
     paymentContext,
     initialPriceDiscoveryQuestion(procedure),
   ].filter(Boolean).join("\n\n");
@@ -474,29 +486,33 @@ export function buildSurgicalPriceSuggestedReply({
   currentText = "",
   introduceBruna = true,
 }) {
+  if ((!procedure || procedure === 'otoplastia') && earPriceScope(currentText, recentConversation)) {
+    return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
+  }
   if (directToPatient && !isAutomaticSurgicalPriceProcedure(procedure)) {
     return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
   }
   const paymentContext = /parcel|pagamento|desconto|[àa]\s+vista|quantas?\s+vezes/i.test(currentText)
     ? "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista."
     : "";
-  if (procedure === "otoplastia" && directToPatient) {
-    const guide = conversationContainsFacialPriceGuide(recentConversation)
-      ? ""
-      : `Entenda como o orçamento é composto: ${safeLink(priceGuideUrl(PRICE_GUIDES.facial))}`;
+  if (directToPatient) {
+    const range = procedure === 'lifting_facial'
+      ? ['Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço:',
+          ...facialPriceLines(currentText, recentConversation)].join('\n')
+      : procedure === 'lifting_cervical'
+        ? 'Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.'
+        : 'Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.';
     return [
-      directPriceGreeting(
-        patientName,
-        recentConversation,
-        introduceBruna,
-      ),
-      "Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
-      "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a anatomia, se a correção será em uma ou nas duas orelhas, técnica, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+      directPriceGreeting(patientName, recentConversation, introduceBruna),
+      range,
+      'O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia com o caso, técnica, equipe, hospital, anestesia e materiais. Não representa honorários isolados.',
+      ...otoplastyOverviewParagraphs({procedure,currentText,recentConversation}),
       paymentContext,
-      guide,
-    ].filter(Boolean).join("\n\n");
+      LOCATION_REQUEST_PATTERN.test(currentText) && !hasClinicLocationInConversation(recentConversation) ? CLINIC_LOCATION_REPLY.split('\n')[0] : '',
+      requestedPriceGuide(procedure, currentText, recentConversation),
+      priceNextStep(recentConversation, currentText),
+    ].filter(Boolean).join('\n\n');
   }
-
   if (procedure === "lifting_cervical") {
     const guide = conversationContainsFacialPriceGuide(recentConversation)
       ? ""
@@ -531,24 +547,6 @@ export function buildSurgicalPriceSuggestedReply({
       LOCATION_REQUEST_PATTERN.test(String(currentText || ""))
         ? CLINIC_LOCATION_REPLY
         : "";
-
-    if (directToPatient) {
-      return [
-        directPriceGreeting(
-          patientName,
-          recentConversation,
-          introduceBruna,
-        ),
-        location,
-        [
-          "Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço:",
-          ...facialPriceLines(currentText, recentConversation),
-        ].join("\n"),
-        "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
-        paymentContext,
-        guide,
-      ].filter(Boolean).join("\n\n");
-    }
 
     return [
       waitingGreeting(patientName),
@@ -613,6 +611,12 @@ export function buildSurgicalPriceHoldingReply({
   const reference = PRICE_REFERENCES[procedure];
   const returnTiming = overnight ? "pela manhã" : "por aqui";
   const text = String(currentText || "");
+  const earScope = !procedure || procedure === 'otoplastia' ? earPriceScope(currentText, recentConversation) : '';
+  if (earScope) return [opening,
+    earScope === 'size'
+      ? 'Para a redução do tamanho das orelhas, vou confirmar a referência adequada com a equipe e continuar por aqui. O planejamento e o valor dependem da avaliação com a Dra. Amanda.'
+      : 'Quando você fala em reduzir a orelha, quer diminuir o tamanho ou corrigir o afastamento em relação à cabeça? Isso muda o procedimento e a referência de valor.',
+  ].join('\n\n');
   const unresolvedFacialProcedure =
     !procedure || procedure === "avaliacao_facial";
   const location =

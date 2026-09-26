@@ -1,0 +1,53 @@
+{
+  "status": "verified_read_only",
+  "checkedAt": "2026-09-26T11:50:36.345Z",
+  "baseline": "1ee5976726ddea8ce34749abb46e01f0ef38a270",
+  "netlifyPublishedCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+  "netlifyDeployId": "6ab7a3b5dda1f60008f631fe",
+  "netlifyVerification": "Netlify autenticado relido: dd2dcfe publicado, branch reestruturacao-site, autopublicacao ativa; origem Git continua no baseline 1ee5976.",
+  "health": {
+    "status": 200,
+    "body": {
+      "ok": true,
+      "service": "ycloud-webhook",
+      "apiKeyConfigured": true,
+      "signatureProtection": "active",
+      "sheetsWebhookConfigured": true,
+      "sheetsSecretConfigured": true,
+      "openAIConfigured": true,
+      "reviewAlertConfigured": true,
+      "appointmentReviewEnabled": true,
+      "automationMode": "active",
+      "conversionExperience": "bruna-conversion-v1",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active",
+      "internalPhoneExclusionConfigured": true,
+      "leadDeliveryRetry": "single_idempotent_transient",
+      "leadDeliveryFallback": "acquisition_only",
+      "leadFailureEmailAlert": "required_after_retries",
+      "messageCostObservability": "delivered_event_idempotent"
+    }
+  },
+  "appsScript": {
+    "version": 161,
+    "changed": false,
+    "source": "recibo do baseline; nenhum consumidor Apps Script alterado"
+  },
+  "driveBaselines": [
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "size": 213488,
+      "modifiedAt": "2026-09-26T10:53:40.458Z"
+    },
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "size": 134471,
+      "modifiedAt": "2026-09-26T10:53:43.309Z"
+    }
+  ],
+  "patientMessagesSent": 0,
+  "limitations": [
+    "Sem novo envio a paciente ou auditoria integral de conversas.",
+    "A aprovacao do fluxo nao constitui parecer normativo. Mantidas exclusivamente as faixas operacionais existentes, sem orcamento individual."
+  ]
+}

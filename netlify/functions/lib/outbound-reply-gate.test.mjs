@@ -238,7 +238,7 @@ test("an explicitly scheduled morning resume may continue a night deferral", () 
   assert.equal(result.allowed, true);
 });
 
-test("the approved first cervical price reply passes with its bounded range offer", () => {
+test("the approved first cervical price reply cannot require a second permission after the policy change", () => {
   const currentText = "E gostaria de saber os valores";
   const conversationAction = decideConversationAction({
     text: currentText,
@@ -257,7 +257,7 @@ test("the approved first cervical price reply passes with its bounded range offe
     conversationAction,
   });
 
-  assert.equal(result.allowed, true);
+  assert.equal(result.allowed, false);
 });
 
 test("the cervical price exception does not permit a scheduling CTA", () => {
@@ -330,7 +330,7 @@ test("the protected lifting range omits a guide already shared", () => {
   assert.equal(result.allowed, true);
 });
 
-test("the lifting range without a current or prior guide is blocked", () => {
+test("the lifting range without a current or prior guide is allowed with its protected caveats", () => {
   const body = [
     "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
     "• Minilifting: entre R$ 18 mil e R$ 25 mil",
@@ -344,8 +344,8 @@ test("the lifting range without a current or prior guide is blocked", () => {
     conversationAction: respond,
   });
 
-  assert.equal(result.allowed, false);
-  assert.equal(result.reason, "unapproved_monetary_amount");
+  assert.equal(result.allowed, true);
+  assert.equal(result.reason, "allowed");
 });
 
 test("the protected otoplasty range passes with the facial price guide", () => {

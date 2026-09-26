@@ -49,8 +49,6 @@ test("creates an empathetic first price response and answers payment terms brief
   });
 
   assert.match(reply, /^Olá, Eliana! Eu sou a Bruna/);
-  assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /confirma o valor exato após a avaliação/i);
   assert.match(reply, /orçamento reúne os itens aplicáveis/i);
   assert.match(reply, /parcelado antecipadamente/i);
   assert.match(reply, /quitação antes da cirurgia/i);
@@ -59,11 +57,11 @@ test("creates an empathetic first price response and answers payment terms brief
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /técnica|complexidade|materiais|honorário isolado/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.match(
+  assert.doesNotMatch(
     reply,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
   assert.ok(Array.from(reply).length <= 850);
 });
 
@@ -77,18 +75,18 @@ test("the first known lifting price response answers without a mandatory continu
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /qual cirurgia ou qual região/i);
-  assert.match(
+  assert.doesNotMatch(
     reply,
     /posso te passar uma faixa geral de valores como ponto de partida/is,
   );
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.match(
+  assert.doesNotMatch(
     reply,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
 });
 
-test("the first cervical price response uses the approved soft range offer", () => {
+test("the first cervical price response legacy information no longer imposes a range offer", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Adriana",
     procedure: "lifting_cervical",
@@ -107,12 +105,10 @@ test("the first cervical price response uses the approved soft range offer", () 
     [
       "Claro, Adriana.",
       "Ter uma noção de valor ajuda no planejamento. Na cervicoplastia, o valor depende da extensão do tratamento do pescoço e de possíveis associações à face, definidas na avaliação.",
-      "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
-      "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.",
     ].join("\n\n"),
   );
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
 });
 
 test("the real adult otoplasty question answers the safe comparison before price", () => {
@@ -140,8 +136,8 @@ test("the real adult otoplasty question answers the safe comparison before price
   assert.match(reply, /examina as duas orelhas/i);
   assert.match(reply, /cicatrizes, anestesia e recuperação/i);
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
-  assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
-  assert.match(
+  assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.doesNotMatch(
     reply,
     /posso te passar uma faixa geral de valores como ponto de partida/is,
   );
@@ -149,7 +145,7 @@ test("the real adult otoplasty question answers the safe comparison before price
   assert.doesNotMatch(reply, /é um procedimento não cirúrgico/i);
   assert.doesNotMatch(reply, /com injetáveis ou poucos pontos/i);
   assert.doesNotMatch(reply, /costuma ser temporário/i);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
 });
 
 test("does not repeat the otoplasty overview after the clinic answered it", () => {
@@ -182,18 +178,18 @@ test("the short price question receives a concise direct copy", () => {
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /técnica|complexidade|equipe|hospital|anestesia|materiais/i);
-  assert.match(
+  assert.doesNotMatch(
     reply,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
-  assert.match(
+  assert.doesNotMatch(
     reply,
     /faixa geral de valores como ponto de partida/i,
   );
   assert.ok(Array.from(reply).length <= 600);
 });
 
-test("the approved Brenda lifting reply offers a range elegantly on the next step", () => {
+test("the approved Brenda lifting reply legacy information contains no mandatory offer or article", () => {
   const reply = buildSurgicalInitialPriceReply({
     patientName: "Brenda",
     procedure: "lifting_facial",
@@ -212,8 +208,6 @@ test("the approved Brenda lifting reply offers a range elegantly on the next ste
     [
       "Claro, Brenda.",
       "É natural querer saber o valor antes de decidir. A Dra. Amanda confirma o valor exato após a avaliação, conforme o planejamento da cirurgia.",
-      "Este conteúdo explica de forma simples o que costuma compor o valor de uma cirurgia facial: https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/",
-      "Se você quiser, posso te passar uma faixa geral de valores como ponto de partida.",
     ].join("\n\n"),
   );
   assert.doesNotMatch(reply, /R\$\s*\d/);
@@ -229,8 +223,8 @@ test("consultation price suggestion explains the value and next step without uns
   assert.match(reply, /R\$ 500/);
   assert.match(reply, /Pix, débito ou parcelamento/);
   assert.match(reply, /nota fiscal/);
-  assert.match(reply, /Na avaliação, a Dra\. Amanda entende o que você busca/);
-  assert.match(reply, /sem obrigação de decidir nada nesse momento/);
+  assert.match(reply, /Na avaliação, a Dra\. Amanda entende o que você gostaria de mudar/);
+  assert.match(reply, /sem obrigação de decidir pela cirurgia/);
   assert.match(reply, /Pais Leme, 215/);
   assert.match(reply, /posso verificar opções de horário/i);
   assert.doesNotMatch(reply, /reembols|devolvid|descontad|abatid/i);
@@ -265,7 +259,7 @@ test("consultation price suggestion omits an evaluation explanation already shar
       {
         role: "assistant",
         source: "bruna",
-        text: "Na consulta, a Dra. Amanda entende o que você busca, avalia com cuidado e explica possibilidades e limites.",
+        text: "Na consulta, a Dra. Amanda entende o que você gostaria de mudar, avalia com cuidado e explica possibilidades e limites.",
       },
     ],
   });
@@ -350,12 +344,12 @@ test("creates the approved lifting price reply for direct patient delivery", () 
   assert.match(reply, /não representa honorários isolados/i);
   assert.doesNotMatch(reply, /parcelado antecipadamente/i);
   assert.doesNotMatch(reply, /desconto à vista/i);
-  assert.match(reply, /quanto-custa-lifting-facial-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-lifting-facial-sao-paulo/);
   assert.doesNotMatch(reply, /explico a avaliação|prefere manhã ou tarde/i);
   assert.doesNotMatch(reply, /obrigada por aguardar/i);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
   assert.ok(Array.from(reply).length <= 800);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
 });
 
 test("creates the approved otoplasty range once for direct delivery", () => {
@@ -373,11 +367,11 @@ test("creates the approved otoplasty range once for direct delivery", () => {
   assert.match(reply, /apenas informativa/i);
   assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
   assert.match(reply, /pode ficar fora dessa faixa/i);
-  assert.match(reply, /uma ou nas duas orelhas/i);
+  assert.match(reply, /Varia com o caso, técnica/i);
   assert.match(reply, /não representa honorários isolados/i);
-  assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
   assert.equal((reply.match(/\?/g) || []).length, 0);
 });
 
@@ -409,7 +403,7 @@ test("direct lifting price answers location in the same first reply", () => {
 
   assert.match(reply, /R\. Pais Leme, 215, cj\. 710/);
   assert.match(reply, /CEP 05424-150/);
-  assert.match(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
+  assert.doesNotMatch(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
   assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
 });
@@ -616,12 +610,12 @@ test("delivers the approved range after a cervical patient accepts the offer", (
   assert.doesNotMatch(reply, /Minilifting|R\$ 25 mil/i);
   assert.doesNotMatch(reply, /Lifting facial.+R\$ 26 mil e R\$ 42 mil/is);
   assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
-  assert.match(reply, /eventual associação a outras abordagens da face e do pescoço/i);
+  assert.match(reply, /Varia com o caso, técnica/i);
   assert.doesNotMatch(reply, /condições?.+confirmação humana/i);
   assert.doesNotMatch(reply, /https?:\/\//);
 });
 
-test("the cervical range keeps the general facial guide as a safe fallback", () => {
+test("the cervical range does not send an unrequested guide", () => {
   const reply = buildSurgicalPriceSuggestedReply({
     patientName: "Adriana",
     procedure: "lifting_cervical",
@@ -635,9 +629,9 @@ test("the cervical range keeps the general facial guide as a safe fallback", () 
     ],
   });
 
-  assert.match(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.doesNotMatch(reply, /quanto-custa-lifting-facial-sao-paulo/);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
 });
 
 test("patient-facing price replies never expose internal confirmation language", () => {
@@ -694,7 +688,7 @@ test("the first lifting price answer stays concise when a guide is already in th
   assert.doesNotMatch(reply, /o que mais te incomoda/i);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
   assert.doesNotMatch(reply, /https?:\/\//);
-  assert.match(reply, /faixa geral de valores como ponto de partida/i);
+  assert.doesNotMatch(reply, /faixa geral de valores como ponto de partida/i);
 });
 
 test("the first body price answer uses the body composition guide", () => {
@@ -706,10 +700,10 @@ test("the first body price answer uses the body composition guide", () => {
   assert.match(reply, /é natural querer saber o valor antes de decidir/i);
   assert.equal((reply.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(reply, /R\$ 18 mil|R\$ 26 mil/);
-  assert.match(reply, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
   assert.doesNotMatch(reply, /quanto-custa-(?:cirurgia-plastica-facial|lifting-facial)/);
   assert.doesNotMatch(reply, /faixa geral de valores como ponto de partida/i);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
 });
 
 test("the first breast price answer uses the breast composition guide", () => {
@@ -718,10 +712,10 @@ test("the first breast price answer uses the breast composition guide", () => {
     procedure: "mastopexia",
   });
 
-  assert.match(reply, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
+  assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-mama-sao-paulo/);
   assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-(?:facial|corporal)-sao-paulo/);
   assert.doesNotMatch(reply, /faixa geral de valores como ponto de partida/i);
-  assert.equal((reply.match(/https?:\/\//g) || []).length, 1);
+  assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
 });
 
 test("does not replace the composition guide with the main lifting page", () => {

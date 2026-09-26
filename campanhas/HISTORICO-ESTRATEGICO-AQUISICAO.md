@@ -6,6 +6,16 @@
 
 Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisão e a regra de manutenção ou reversão de mudanças estratégicas e operacionais. Ele não cria um norte concorrente. Se uma entrada antiga divergir da decisão vigente, prevalece o documento canônico.
 
+## 26 de setembro de 2026 — preço direto na conversa privada
+
+<!-- BRUNA-PRECO-DIRETO-2026-09-26 -->
+**Pacote 2026-09-26.2 — TESTADO LOCALMENTE; publicação autorizada por Daniel.** Resposta explícita de preço recebe a faixa operacional já aprovada do procedimento confirmado no primeiro pedido, sem segunda permissão nem artigo obrigatório. Valores, orçamento individual após avaliação, segurança e envio único são preservados. Pergunta apenas de pagamento, interesse genérico e recusa não liberam faixa. Redução de tamanho de orelha exige referência humana; tamanho versus afastamento ambíguo recebe esclarecimento específico. Consulta informa R$500, explica a avaliação somente se ainda necessário e oferece próximo passo opcional, respeitando recusas e convites anteriores.
+
+Evidência: exemplos fornecidos nesta tarefa e nove falhas sintéticas reproduzidas antes da correção. Hipótese: clareza e menos etapas favorecem continuidade; conversão não foi medida. Revisão: primeiras conversas naturais, 48h e sete dias após publicação, Daniel/equipe. Medir perguntas respondidas, intervenções humanas, qualificados, consultas confirmadas/realizadas; conter diante de valor indevido, repetição, indicação individual ou perda de contexto. Rollback: Netlify 6ab7a3b5dda1f60008f631fe / dd2dcfe63efc0dec4a982133b1e28459aeb3a421, preservando Apps Script v161 e dados. Sem contato antigo ou mensagem real de teste. Recibos: auditorias/bruna-preco-direto-2026-09-26/.
+<!-- /BRUNA-PRECO-DIRETO-2026-09-26 -->
+
+Decisão canônica: seção 10 do Norte. Daniel aprovou a proposta de simplificar o atendimento e pediu ajuste e publicação. Nenhuma campanha, orçamento, site, número das faixas ou regra de qualificação foi alterada. A mudança substitui o rito de segunda pergunta e o artigo obrigatório, mantendo os limites de orçamento individual, procedimento, revisão humana e segurança.
+
 ## 13 de setembro de 2026 — piloto LIFT aplicado para Maximizar conversões e R$ 30/dia
 
 - **Decisão canônica:** seção 37 do Norte. Daniel escolheu `G26LIFT`, sua campanha prioritária, para o piloto de Maximizar conversões sem CPA desejado e definiu R$ 30/dia; a sugestão de R$ 47 fica recusada.

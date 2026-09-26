@@ -329,9 +329,9 @@ export function buildConsultationInformationReply({
       ].join(" ")
     : "Claro.";
   const consultationContext = consultationPriceRequested
-    ? conversionExperienceEnabled || consultationContextPreviouslyShared
+    ? consultationContextPreviouslyShared
       ? ""
-      : "Na avaliação, a Dra. Amanda entende o que você busca, examina com cuidado e explica as possibilidades e os próximos passos, sem obrigação de decidir nada nesse momento."
+      : "Na avaliação, a Dra. Amanda entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia."
     : consultationDescription(
         procedure,
         procedureLabel,

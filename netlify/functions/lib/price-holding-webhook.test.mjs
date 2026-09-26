@@ -89,8 +89,8 @@ for (const scenario of ["unavailable", "cervical", "human_takeover"]) {
         return new Response(JSON.stringify({model: "synthetic", output: [{type: "message", content: [{
           type: "output_text", text: JSON.stringify({
             route: "standard_reply", confidence: "high", automaticAllowed: true, urgent: false,
-            professional: "amanda", procedure: "lifting_cervical", replyCode: "SURGICAL-PRICE-INITIAL-01",
-            suggestedReply: "A pergunta e sobre o valor da cirurgia.", reviewReason: "price_initial_information",
+            professional: "amanda", procedure: "lifting_cervical", replyCode: "LIFTING-PRICE-RANGE-01",
+            suggestedReply: JSON.parse(input.input).policyHints.deterministicReplyPreview, reviewReason: "lifting_price_range_direct",
             conversationState: {activeTopic: "preco do lifting cervical", patientAct: "question",
               refersToEventId: priorTurn.eventId, lastClinicQuestion: "", lastClinicOffer: "",
               unresolvedQuestions: ["valor da cirurgia"], factsAlreadyProvided: ["lifting cervical"],
@@ -122,17 +122,18 @@ for (const scenario of ["unavailable", "cervical", "human_takeover"]) {
     }
     assert.equal(replies.length, 1, JSON.stringify(result));
     const reply = replies[0].text.body;
-    assert.doesNotMatch(reply, /qual região|pálpebras, rosto|R\$\s*\d/);
+    assert.doesNotMatch(reply, /qual região|pálpebras, rosto/);
     if (scenario === "unavailable") {
+      assert.doesNotMatch(reply, /R\$\s*\d/);
       assert.match(reply, /mensagem anterior não apareceu completa/);
       assert.match(reply, /reenviar só o nome do procedimento/);
       assert.doesNotMatch(reply, /cirurgia facial|papada/);
       assert.equal((reply.match(/\?/g) || []).length, 1);
       assert.equal(result.priceHoldingSent, true);
     } else {
-      assert.equal(result.approvedPriceReplyKind, "initial_information");
+      assert.equal(result.approvedPriceReplyKind, "lifting_range");
       assert.equal(result.approvedPriceReplySent, true);
-      assert.match(reply, /faixa geral/);
+      assert.match(reply, /R\$ 18 mil e R\$ 26 mil/);
       assert.doesNotMatch(reply, /qual procedimento|nome do procedimento|mensagem anterior/);
     }
   });
@@ -178,7 +179,7 @@ function requestFor(payload) {
   });
 }
 
-test("a first lifting price question receives the approved initial information without an alert", async () => {
+test("a first lifting price question receives the approved range without an alert", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",
     "YCLOUD_API_KEY",
@@ -254,9 +255,9 @@ test("a first lifting price question receives the approved initial information w
                     urgent: false,
                     professional: "amanda",
                     procedure: "lifting_facial",
-                    replyCode: "SURGICAL-PRICE-INITIAL-01",
-                    suggestedReply: "A pergunta é sobre o valor da cirurgia.",
-                    reviewReason: "price_initial_information",
+                    replyCode: "LIFTING-PRICE-RANGE-01",
+                    suggestedReply: JSON.parse(JSON.parse(options.body).input).policyHints.deterministicReplyPreview,
+                    reviewReason: "lifting_price_range_direct",
                     conversationState: {
                       activeTopic: "preço do lifting facial",
                       patientAct: "question",
@@ -316,12 +317,12 @@ test("a first lifting price question receives the approved initial information w
     assert.equal(body.reviewAlertQueued, false);
     assert.equal(body.priceHoldingQueued, false);
     assert.equal(body.priceHoldingSent, false);
-    assert.equal(body.approvedPriceReplyKind, "initial_information");
+    assert.equal(body.approvedPriceReplyKind, "lifting_range");
     assert.equal(body.approvedPriceReplyQueued, true);
     assert.equal(body.approvedPriceReplySent, true);
     assert.equal(body.aiActiveQueued, true);
-    assert.equal(body.directLiftingPriceQueued, false);
-    assert.equal(body.directLiftingPriceSent, false);
+    assert.equal(body.directLiftingPriceQueued, true);
+    assert.equal(body.directLiftingPriceSent, true);
     assert.equal(body.overnightHandoffQueued, false);
 
     const ycloudRequests = requests.filter(
@@ -336,28 +337,22 @@ test("a first lifting price question receives the approved initial information w
       (request) => request.to === "+5511900000000",
     );
     assert.equal(patientRequest.type, "text");
-    assert.doesNotMatch(patientRequest.text.body, /R\$ 18 mil|R\$ 26 mil/);
+    assert.match(patientRequest.text.body, /R\$ 26 mil e R\$ 42 mil/);
     assert.equal(
       (patientRequest.text.body.match(/https?:\/\//g) || []).length,
-      1,
+      0,
     );
-    assert.match(
-      patientRequest.text.body,
-      /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
-    );
+    assert.match(patientRequest.text.body, /Eu sou a Bruna/);
     assert.doesNotMatch(
       patientRequest.text.body,
       /[\u200B-\u200D\u2060\uFEFF]/,
     );
-    assert.match(patientRequest.text.body, /é natural querer saber o valor antes de decidir/i);
-    assert.match(patientRequest.text.body, /confirma o valor exato após a avaliação/i);
+    assert.match(patientRequest.text.body, /estimativa geral/i);
+    assert.match(patientRequest.text.body, /valor final é definido após avaliação/i);
     assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
-    assert.doesNotMatch(patientRequest.text.body, /técnica|complexidade|hospital|anestesia|materiais/i);
-    assert.match(
-      patientRequest.text.body,
-      /posso te passar uma faixa geral de valores como ponto de partida/is,
-    );
+    assert.match(patientRequest.text.body, /técnica.*hospital.*anestesia.*materiais/i);
+    assert.doesNotMatch(patientRequest.text.body, /posso te passar uma faixa/is);
     assert.ok(Array.from(patientRequest.text.body).length <= 650);
     assert.doesNotMatch(
       patientRequest.text.body,

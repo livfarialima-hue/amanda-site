@@ -1,5 +1,13 @@
 # Norte estratégico de aquisição e conversão
 
+<!-- BRUNA-PRECO-DIRETO-2026-09-26 -->
+**Pacote 2026-09-26.2 — TESTADO LOCALMENTE; publicação autorizada por Daniel.** Resposta explícita de preço recebe a faixa operacional já aprovada do procedimento confirmado no primeiro pedido, sem segunda permissão nem artigo obrigatório. Valores, orçamento individual após avaliação, segurança e envio único são preservados. Pergunta apenas de pagamento, interesse genérico e recusa não liberam faixa. Redução de tamanho de orelha exige referência humana; tamanho versus afastamento ambíguo recebe esclarecimento específico. Consulta informa R$500, explica a avaliação somente se ainda necessário e oferece próximo passo opcional, respeitando recusas e convites anteriores.
+
+Evidência: exemplos fornecidos nesta tarefa e nove falhas sintéticas reproduzidas antes da correção. Hipótese: clareza e menos etapas favorecem continuidade; conversão não foi medida. Revisão: primeiras conversas naturais, 48h e sete dias após publicação, Daniel/equipe. Medir perguntas respondidas, intervenções humanas, qualificados, consultas confirmadas/realizadas; conter diante de valor indevido, repetição, indicação individual ou perda de contexto. Rollback: Netlify 6ab7a3b5dda1f60008f631fe / dd2dcfe63efc0dec4a982133b1e28459aeb3a421, preservando Apps Script v161 e dados. Sem contato antigo ou mensagem real de teste. Recibos: auditorias/bruna-preco-direto-2026-09-26/.
+A política de preço deste pacote substitui a exigência anterior de primeiro turno sem números. Os recibos e relatos datados abaixo preservam o comportamento histórico e não devem ser usados como orientação vigente de preço.
+<!-- /BRUNA-PRECO-DIRETO-2026-09-26 -->
+
+
 <!-- BRUNA-ACOLHIMENTO-2026-09-26 -->
 **Pacote 2026-09-26.1 — PUBLICADO E VERIFICADO em 26/09/2026, 07:52 BRT.** Commit funcional dd2dcfe63efc0dec4a982133b1e28459aeb3a421, Netlify 6ab7a3b5dda1f60008f631fe, Apps Script v161 preservado. Validação: 1.718 testes integrais, 12 regressões do incidente, 225 entre consumidores e 28 comandos obrigatórios sem falhas. Domínio e URL imutável ativos, assinatura protegida e pedido sem assinatura rejeitado com 401; 13 funções, cinco programações e 192 arquivos conferidos. A primeira conversa natural após esta publicação ainda não foi observada. Daniel pediu uma conversa mais acolhedora e cuidadosa e autorizou a publicação após validação. A hipótese de modificar a recuperação foi cancelada antes de qualquer alteração; transporte, timeouts, fila, cadência e Apps Script v161 permanecem fora da mudança.
 
@@ -148,7 +156,7 @@ O complemento entra no mesmo marco de revisão de 12/09/2026, com as mesmas mét
 - **Segurança, experiência, naturalidade e recuperação:** são barreiras relevantes e devem ter respostas disponíveis.
 - **Idade da médica:** pode ser uma hipótese de percepção, mas não apareceu de forma relevante e explícita na auditoria das conversas. Não deve ser o centro da comunicação sem evidência nova.
 
-No WhatsApp, o primeiro pedido de valor recebe resposta automática somente em lifting facial, cervicoplastia e otoplastia: resposta útil sem números, um único guia facial de composição e a oferta leve `Se, depois desse contexto, você quiser uma referência mais concreta, também posso te passar uma faixa geral de valores como ponto de partida.` Em cervicoplastia, reconhecer antes que uma noção de valor ajuda no planejamento e explicar a diferença entre abordagem mais localizada e mais completa. Em otoplastia, responder primeiro eventuais dúvidas seguras do mesmo turno. `Otomodelação` é termo ambíguo e não autoriza afirmar injetáveis, ausência de cirurgia, duração temporária ou indicação. Depois de aceite claro ou novo pedido explícito, enviar uma única vez somente a faixa do procedimento correto: cervicoplastia de R$ 18 mil a R$ 26 mil; lifting facial/minilifting nas referências vigentes; e otoplastia de R$ 8 mil a R$ 14 mil. Uma conversa cervical nunca recebe preço de minilifting ou lifting facial. O guia já enviado não deve ser repetido; sem guia no histórico, cervicoplastia e otoplastia usam o guia facial geral e lifting facial usa seu guia específico. Toda pergunta de preço de outro procedimento gera revisão humana desde o primeiro pedido, com alerta e resposta sugerida. A resposta à paciente não expõe a linguagem interna de confirmação humana. A hipótese é reduzir silêncio e evasividade sem misturar procedimentos, transformar preço em promessa ou pressionar por agenda. Medir pergunta respondida, continuidade após a primeira resposta, aceite da faixa, alertas corretos, lead qualificado e consulta; revisar sete dias depois da publicação ou antes diante de mensagem indevida. Manter se houver continuidade sem mistura de faixa, repetição, reclamação ou envio fora de contexto; reverter para revisão humana também nos três procedimentos se qualquer faixa automática cruzar contexto ou romper as travas. Esta autorização altera somente o atendimento: não muda campanha, orçamento, lance, palavra-chave, anúncio ou página do Google Ads.
+No WhatsApp, aplicar a decisão vigente da seção 10: resposta direta ao pedido explícito com uma única faixa já aprovada e compatível, todas as ressalvas e artigo somente solicitado. Redução de tamanho de orelha e variantes sem referência ficam com a equipe. Respeitar pausas e convites anteriores; pergunta de preço é legítima e não comprova prontidão para agenda.
 
 ### 4.4 Prioridade de procedimentos
 
@@ -505,29 +513,19 @@ Para lead qualificado:
 - Nunca afirmar que o valor será reembolsado, devolvido, descontado, creditado ou abatido de uma cirurgia.
 - O valor da consulta é tratado separadamente da precificação de procedimentos. A orientação oficial do CFM permite informar valores de consultas, meios e formas de pagamento; esta decisão não autoriza publicar antecipadamente valores de cirurgia.
 
-### 10.2 Primeira pergunta sobre cirurgia
+### 10.2 Pedido explícito de cirurgia: referência direta
 
-Explicar que:
+A decisão de 26/09/2026 substitui a regra de oferta seguida de novo aceite: no WhatsApp individual, a pergunta explícita de valor recebe uma única vez a faixa já aprovada do procedimento confirmado. Minilifting R$18-25mil; lifting facial R$26-42mil; cervicoplastia R$18-26mil; otoplastia R$8-14mil. Valores não alterados. A decisão não autoriza faixa pública em anúncios ou site, promessa de orçamento individual ou indicação clínica.
 
-- o valor é individual e só é definido após avaliação e planejamento;
-- em lifting facial, cervicoplastia e otoplastia, a primeira resposta é breve, não antecipa faixa nem lista de componentes e envia no máximo o guia facial de composição;
-- para qualquer outro procedimento, a primeira pergunta já gera revisão humana com alerta e resposta sugerida; sem procedimento confirmado, nenhum guia é escolhido por suposição;
-- o guia específico de lifting aparece somente como fallback da faixa de lifting facial; cervicoplastia e otoplastia usam o guia facial geral quando nenhum guia tiver sido compartilhado antes;
-- para lifting facial, cervicoplastia e otoplastia, a resposta inicial pode oferecer uma faixa geral como próximo passo, sem números; a faixa só entra depois de aceite claro ou de novo pedido explícito;
-- condições de pagamento só devem ser respondidas com a informação vigente e aprovada, sem transformar a conversa em oferta fechada de procedimento antes da avaliação.
+Uma pergunta apenas de pagamento, recusa de valores ou interesse genérico não autoriza números. Manter as ressalvas no mesmo envio: estimativa geral informativa, não orçamento, proposta ou garantia; valor final após avaliação e planejamento, podendo ficar fora da faixa e variar conforme caso, técnica, equipe, hospital, anestesia e materiais; não representa honorários isolados. Artigo somente por pedido e sem repetição. Consulta custa R$500 e é distinguida da cirurgia.
 
-Não responder apenas “depende” e não usar um discurso genérico de segurança para fugir da pergunta.
+A dúvida de redução de orelha pede diferenciação entre tamanho e afastamento quando ambígua; tamanho já confirmado segue para revisão humana da referência específica, sem herdar a faixa automática de otoplastia. Outros procedimentos, variantes não cobertas e faixa já enviada também seguem para revisão humana com ciência específica e alerta completo. Não inferir capacidade de pagamento nem prontidão para agendar.
 
-### 10.3 Segunda pergunta por média
+### 10.3 Continuidade e limites
 
-- Lifting facial e minilifting podem receber as faixas previamente aprovadas somente em conversa individual de WhatsApp, depois de aceite claro da oferta específica ou de novo pedido explícito por média ou faixa.
-- Cervicoplastia recebe exclusivamente a faixa de R$ 18 mil a R$ 26 mil. Ela nunca recebe, na mesma resposta automática, a faixa de minilifting ou lifting facial.
-- Otoplastia preserva a faixa aprovada de R$ 8 mil a R$ 14 mil no mesmo contrato de aceite ou novo pedido explícito.
-- A mensagem que contiver a faixa deve dizer, no mesmo envio, que se trata de estimativa geral informativa, sem caráter de orçamento, proposta comercial, garantia de preço ou indicação para aquele caso; que o valor final pode ficar fora da faixa conforme avaliação, técnica, extensão, equipe, anestesia, hospital, materiais e necessidades individuais; e que o orçamento só é definido depois da consulta e do planejamento.
-- A mensagem que contiver a faixa não repete o guia facial já enviado na primeira resposta. Se o histórico não contiver guia, lifting facial usa `https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/`; cervicoplastia e otoplastia usam `https://draamandaschroeder.com.br/conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/`. A faixa automática não deve ser enviada mais de uma vez na mesma conversa.
-- Outros procedimentos exigem revisão humana desde a primeira pergunta de preço e o alerta deve conter uma resposta sugerida para conferência e envio manual.
-- Honorários isolados da Dra. Amanda não devem ser divulgados como se fossem o preço da cirurgia.
-- As ressalvas reduzem o risco de a estimativa ser confundida com preço individual, mas não substituem parecer da Codame ou assessoria jurídica e não garantem conformidade. Uma orientação formal contrária suspende imediatamente o envio automático da faixa.
+Após responder, oferecer uma vez explicar a avaliação; se já explicada, oferecer verificar horários. Não coletar dias/período sem intenção de agenda. Recusa, adiamento e convite prévio retiram a nova oferta. Aceites de ofertas anteriores continuam reconhecidos para cumprir o que foi prometido, respeitando contexto e envio único.
+
+A autorização operacional não constitui parecer normativo. O CFM distingue valores de consultas da precificação de procedimentos individualizados; ressalvas não garantem conformidade nem substituem orientação da Codame/assessoria. Uma orientação formal contrária suspende o envio automático. Preservar orçamento final somente após avaliação e planejamento. Fonte: https://publicidademedica.cfm.org.br/manual/resolucao-comentada/capitulo-4
 
 ## 11. Conversões e lances
 
@@ -1028,7 +1026,7 @@ Métricas: reaparição de dispensas, mensagens duplicadas e desacordo texto apr
 
 Perguntar preço é uma necessidade legítima de planejamento. Não classificar a pessoa como desqualificada ou sem capacidade financeira por essa pergunta, nem transformar o tema em exploração de insatisfação corporal. A resposta reconhece a dúvida, explica a incerteza de forma breve e oferece somente o próximo passo pertinente. Não condicionar a faixa à leitura de material ou ao agendamento, não criar urgência, desconto espontâneo ou pressão para decidir.
 
-Permissão numérica permanece fechada: minilifting R$ 18–25 mil; lifting facial R$ 26–42 mil; cervicoplastia R$ 18–26 mil; otoplastia R$ 8–14 mil. Primeira resposta sem números, seguida de faixa uma única vez após aceite claro da oferta específica ou novo pedido explícito. Se a pessoa nomear minilifting ou lifting facial, mostrar só a referência correspondente; ambas apenas em comparação ou lifting não especificado. Consulta de R$ 500 continua separada. Toda faixa cirúrgica é informativa, não orçamento, proposta ou garantia, e depende da avaliação e planejamento; pode ficar fora do intervalo.
+Permissão numérica permanece fechada: minilifting R$ 18–25 mil; lifting facial R$ 26–42 mil; cervicoplastia R$ 18–26 mil; otoplastia R$ 8–14 mil. Atualização autorizada em 26/09/2026, pacote 2026-09-26.2: faixa uma única vez, já no primeiro pedido explícito de valor do procedimento confirmado; aceite de oferta antiga continua válido. Pergunta apenas sobre pagamento, prefill genérico, recusa e variante sem referência não autorizam números. Se a pessoa nomear minilifting ou lifting facial, mostrar só a referência correspondente; ambas apenas em comparação ou lifting não especificado. Consulta de R$ 500 continua separada. Toda faixa cirúrgica é informativa, não orçamento, proposta ou garantia, e depende da avaliação e planejamento; pode ficar fora do intervalo.
 
 Outras cirurgias seguem para e-mail com rascunho e faixa sugerida quando há referência compatível. A fonte histórica TABELA DR. JOÃO 2025.xlsx é identificada internamente e precisa de confirmação de atualidade, variante e composição. Não é apresentada como tabela vigente da Amanda. Para blefaroplastia superior expressamente pedida, a referência interna corresponde à superior (R$ 14–18 mil), nunca à completa (R$ 18–23 mil). Esses números continuam exclusivamente internos. Falta de referência ou variante incompatível gera SEM FAIXA SEGURA e texto de esclarecimento, sem inventar preço. O e-mail não aprova nem agenda envio: a equipe revisa e envia manualmente; autorização geral de publicação não autoriza um preço individual. O botão de aprovação dos marcos de cuidado não é autorização de orçamento.
 
