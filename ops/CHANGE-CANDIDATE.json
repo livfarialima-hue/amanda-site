@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RETOMADA-MANHA-2026-09-26",
   "title": "Recuperar a retomada da manha sem duplicar mensagens",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "b1161c6478c5a125474bad858ca5ee534ed7aeeb",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -331,5 +331,13 @@
       "Nenhuma resposta apos atividade humana, opt-out ou mudanca de contexto"
     ],
     "rollbackRule": "Conter diante de duplicidade, perda de dominio humano ou falha de autenticacao."
+  },
+  "release": {
+    "approvedCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+    "netlifyDeployId": "6ab7dbe15ccd459069e61eac",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-26T14:55:33Z",
+    "documentationStatus": "pending_projection",
+    "productionReceipt": "auditorias/bruna-retomada-manha-2026-09-26/PUBLICACAO.json"
   }
 }

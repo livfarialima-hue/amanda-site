@@ -1,9 +1,9 @@
 {
-  "status": "tested_local",
+  "status": "production_verified_documentation_pending",
   "authorization": {
     "by": "Daniel",
     "reference": "Arrume e publique",
-    "receivedAt": "2026-09-26T14:36:14.055Z"
+    "releasePreflightAt": "2026-09-26T14:44:50.9639486Z"
   },
   "baseline": "b1161c6478c5a125474bad858ca5ee534ed7aeeb",
   "verification": {
@@ -265,8 +265,38 @@
         "commit": "0c8fd71291ee5ecf34eb7476935a870ea912b927",
         "publishedAt": "2026-09-26T14:43:08Z",
         "backgroundActivated": false
+      },
+      {
+        "id": "6ab7da6dbd664c00082c0a0d",
+        "commit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+        "backgroundActivated": false,
+        "publishedTimePrecision": "minute_from_deploy_list",
+        "publishedAt": "2026-09-26T14:45:00Z"
       }
-    ]
+    ],
+    "id": "6ab7dbe15ccd459069e61eac",
+    "commit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+    "publishedAt": "2026-09-26T14:51:47Z",
+    "publishedTimePrecision": "second_from_deployment_log",
+    "buildStartedAt": "2026-09-26T14:51:15Z",
+    "buildCompletedAt": "2026-09-26T14:51:46Z",
+    "functionsCount": 14,
+    "deployedFilesDisplayed": 192,
+    "newStaticFileUploads": 0,
+    "scheduledFunctionsPreserved": [
+      "attribution-journey-purge",
+      "classify-leads",
+      "human-resume",
+      "synthetic-integration-health",
+      "ycloud-recovery"
+    ],
+    "deployId": "6ab7dbe15ccd459069e61eac",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "verifiedAt": "2026-09-26T14:55:33Z"
   },
   "appsScript": {
     "changed": false,
@@ -284,6 +314,95 @@
       "Falha de consulta preserva pendencia e alerta tecnico sem duplicacao",
       "Nenhuma resposta apos atividade humana, opt-out ou mudanca de contexto"
     ],
-    "rollbackRule": "Conter diante de duplicidade, perda de dominio humano ou falha de autenticacao."
+    "rollbackRule": "Conter diante de duplicidade, perda de dominio humano ou falha de autenticacao.",
+    "status": "pending_owner_review",
+    "automationCreated": false,
+    "firstCycleVerifiedAt": "2026-09-26T14:55:33Z",
+    "dueAt": "2026-09-28T14:51:47Z",
+    "secondReviewAt": "2026-10-03T14:51:47Z"
+  },
+  "approvedCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+  "postPublication": {
+    "endpoints": [
+      {
+        "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      },
+      {
+        "url": "https://6ab7dbe15ccd459069e61eac--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      }
+    ],
+    "verifiedAt": "2026-09-26T14:55:33Z",
+    "activation": {
+      "checkedAt": "2026-09-26 14:51:17 UTC",
+      "production": true,
+      "deployPreviews": false,
+      "branchDeploys": false,
+      "previewServer": false,
+      "localDevelopment": false
+    },
+    "automaticCycle": {
+      "manualInvocation": false,
+      "dispatch": {
+        "status": "dispatched",
+        "httpStatus": 202,
+        "loggedAt": "2026-09-26T14:55:09.071Z",
+        "durationMs": 343.29
+      },
+      "worker": {
+        "status": "idle",
+        "jobs": 0,
+        "execution": "background",
+        "loggedAt": "2026-09-26T14:55:10.093Z",
+        "durationMs": 200.13
+      }
+    },
+    "limitation": "Nenhuma retomada natural elegivel observada apos publicacao; ciclo idle nao comprova entrega ao paciente. Incidente antigo preservado para revisao humana, sem replay."
+  },
+  "documentation": {
+    "status": "pending_projection"
   }
 }

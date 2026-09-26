@@ -309,4 +309,4 @@ Convite Google neutro e único para atendimento realizado com Amanda, gerado no 
 
 ## 2026-09-26.5 — retorno prometido pela manhã
 
-Em validação local: execução autenticada em background, consultas com orçamento próprio, retomada de falhas pré-envio a cada cinco minutos e alerta técnico após três falhas. Reserva idempotente distingue preparação e tentativa; apenas recibo preparado e ainda não tentado pode ser reaproveitado pelo proprietário de saída. Estados incertos legados e domínio humano permanecem protegidos.
+Publicada e ativada em 26/09/2026, 11:51:47 BRT: execução autenticada em background, consultas com orçamento próprio, retomada de falhas pré-envio a cada cinco minutos e alerta técnico após três falhas. Commit 624d7e65abe867fe1556fbfdd788fe9a8dd81358, Netlify 6ab7dbe15ccd459069e61eac. Primeiro ciclo automático conferido; primeira retomada natural ainda não observada. Reserva idempotente distingue preparação e tentativa; apenas recibo preparado e ainda não tentado pode ser reaproveitado pelo proprietário de saída. Estados incertos legados e domínio humano permanecem protegidos.
