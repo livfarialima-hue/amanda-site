@@ -16,6 +16,37 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const scenario of ['explanation', 'recovery', 'invalid_amount']) {
+  test(`a resumed price answer preserves other questions and price safety: ${scenario}`, async () => {
+    const deps = dependencies();
+    const text = scenario === 'recovery'
+      ? 'Qual o custo da cervicoplastia e como é a recuperação?'
+      : 'Como é feita a lipo de papada com cervicoplastia e o custo?';
+    const explanation = scenario === 'recovery'
+      ? 'Nos primeiros dias, pode haver inchaço e roxos; o retorno às atividades leves depende da evolução e da avaliação da equipe.'
+      : 'A lipo de papada trata a gordura. A cervicoplastia pode tratar também pele e platisma; a associação depende da avaliação.';
+    deps.runOpenAIShadowImpl = async payload => {
+      assert.equal(payload.policyHints.deterministicReplyCode, 'LIFTING-PRICE-RANGE-01');
+      assert.ok(payload.replyContract.unresolvedIntents.includes(scenario === 'recovery' ? 'recovery' : 'procedure_information'));
+      const reply = `${explanation}\n\n${payload.policyHints.deterministicReplyPreview}` + (scenario === 'invalid_amount' ? ' Há um custo adicional de R$ 900.' : '');
+      return {status:'completed', decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+        professional:'amanda',procedure:'lifting_cervical',replyCode:'LIFTING-PRICE-RANGE-01',suggestedReply:reply,reviewReason:''}};
+    };
+    const result = await processHumanResumeJob(job({text, procedure:'lifting_cervical', recentConversation:[
+      {role:'user',source:'patient',text:'Quero informações de lifting cervical.'},
+      {role:'assistant',source:'bruna',text:'Olá! Sou a Bruna. Qual a sua dúvida?'},
+    ]}), {env:ACTIVE_ENV,now:NOW,...deps});
+    if (scenario === 'invalid_amount') {
+      assert.equal(deps.patientMessages.length, 0, JSON.stringify(result));
+      return;
+    }
+    assert.equal(deps.patientMessages.length, 1, JSON.stringify(result));
+    assert.match(deps.patientMessages[0].body, scenario === 'recovery' ? /inchaço e roxos/ : /pele e platisma/);
+    assert.match(deps.patientMessages[0].body, /R\$ 18 mil e R\$ 26 mil/);
+    assert.equal(deps.alerts.length, 0, JSON.stringify(result));
+  });
+}
+
 for (const scenario of ['complete', 'alert_failed', 'semantic_veto', 'newer_activity', 'combined_price']) {
   test(`multiple pending questions after human contact: ${scenario}`, async()=>{
     const deps=dependencies(); const order=[];

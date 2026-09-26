@@ -174,7 +174,7 @@ test("nonempty cache is not proof of a complete conversation", () => {
 });
 
 test("acceptance of a recovery explanation loads approved facts for the same procedure", () => {
-  for (const procedure of ["lifting_cervical", "lifting_facial", "otoplastia"]) {
+  for (const procedure of ["lifting_cervical", "lifting_facial", "otoplastia", "lipo_papada"]) {
     const facts = approvedProcedureInformationFacts({ procedure, text: "Quero sim, por favor", recentConversation: [
       { role: "assistant", source: "bruna", text: "Posso te ajudar com uma dúvida prática: como se organizar para a recuperação. Quer que eu te explique?" },
     ] });
@@ -182,7 +182,7 @@ test("acceptance of a recovery explanation loads approved facts for the same pro
     assert.ok(facts.topics.includes("recovery"));
     assert.ok(facts.boundaries.length);
   }
-  assert.equal(approvedProcedureInformationFacts({ procedure: "lipo_papada", text: "Como é a recuperação?" }), null);
+  assert.equal(approvedProcedureInformationFacts({ procedure: "rinoplastia", text: "Como é a recuperação?" }), null);
   assert.equal(approvedProcedureInformationFacts({ procedure: "lifting_cervical", text: "Sim", recentConversation: [{ role: "assistant", text: "Quer que eu confira os horários?" }] }), null);
 });
 

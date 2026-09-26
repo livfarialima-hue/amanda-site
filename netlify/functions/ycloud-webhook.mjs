@@ -184,6 +184,7 @@ import {
   CONTEXT_CONTINUATION_CODE,
   prepareSemanticContextContinuationAction,
   semanticDecisionConfirmsDeterministicReply,
+  deterministicReplyCoversPatientQuestions,
 } from "./lib/semantic-reply-policy.mjs";
 export { semanticDecisionConfirmsDeterministicReply };
 import {
@@ -2801,6 +2802,7 @@ async function completeOpenAIActive({
       );
     const selectedDeterministicReply = Boolean(
       semanticConfirmedDeterministicReply &&
+        deterministicReplyCoversPatientQuestions(deterministicReplyResult, conversationAction) &&
         (!unansweredPatientBlock.requiresContextualReply || Boolean(consultationBundle)),
     );
     const deterministicReplyContextMismatch = Boolean(

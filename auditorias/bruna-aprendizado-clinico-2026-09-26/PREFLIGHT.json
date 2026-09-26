@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-09-26T21:04:21.075Z",
+  "baselineCommit": "eb9c4e5697bc0495b359f47d741d3907b2d21eca",
+  "productionFunctionalCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+  "productionDeployId": "6ab7dbe15ccd459069e61eac",
+  "productionReceipt": "auditorias/bruna-retomada-manha-2026-09-26/PUBLICACAO.json",
+  "observations": {
+    "export": "Ultima exportacao adicionada em 26/09/2026, consultada sem copiar PII para o repositorio.",
+    "authorship": "Uma resposta automatica inicial e oito respostas humanas confirmadas na LEADS.",
+    "pendingReviews": "Duas perguntas recebidas e encaminhadas a revisao sem rascunho seguro.",
+    "siteSources": [
+      "https://draamandaschroeder.com.br/lipo-de-papada/",
+      "https://draamandaschroeder.com.br/lifting-cervical/"
+    ],
+    "botHealth": {
+      "automationMode": "active",
+      "processingMode": "durable_background_intake",
+      "sheetsConfigured": true,
+      "openAIConfigured": true
+    }
+  },
+  "clinicalPending": [
+    "Preco proprio de lipo isolada",
+    "Observacao hospitalar e criterios de alta",
+    "Aplicabilidade de 7 a 14 dias"
+  ],
+  "externalEffects": "Criado somente documento de contribuicoes, sem PII. Nenhuma mensagem, fila ou regra operacional alterada.",
+  "netlifyAuthenticated": {
+    "checkedAt": "2026-09-26T21:14:53.133Z",
+    "team": "livfarialima",
+    "project": "inspiring-sprite-b35ca4",
+    "publishedCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+    "publishedDeployId": "6ab7dbe15ccd459069e61eac",
+    "productionBranch": "reestruturacao-site",
+    "autoPublishing": true
+  }
+}

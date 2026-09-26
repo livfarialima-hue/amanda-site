@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-09-26.5",
-  "promptVersion": "bruna-concierge-2026-09-26.5",
+  "bundleVersion": "2026-09-26.6",
+  "promptVersion": "bruna-concierge-2026-09-26.6",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-26.5",
+  "knowledgeSnapshot": "kb-2026-09-26.6",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -41,10 +41,17 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "617ce21ccc4e76d15f234883acf084b7494c08b9f7b37643d1b00817cbcde909"
+    "driveProjectionSha256": "617ce21ccc4e76d15f234883acf084b7494c08b9f7b37643d1b00817cbcde909",
+    "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy"
+  "followupCopyContract": "followup-message-copy",
+  "pendingRelease": {
+    "bundleVersion": "2026-09-26.6",
+    "status": "tested_local",
+    "baselineCommit": "eb9c4e5697bc0495b359f47d741d3907b2d21eca",
+    "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26"
+  }
 }

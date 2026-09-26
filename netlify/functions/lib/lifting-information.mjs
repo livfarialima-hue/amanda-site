@@ -1,5 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
-import { informationRequestText } from "./patient-turn-context.mjs";
+import { informationRequestText, isProcedureExplanationInquiry } from "./patient-turn-context.mjs";
 
 export const LIFTING_FACIAL_INFORMATION_REPLY_CODE =
   "LIFTING-FACIAL-INFORMATION-01";
@@ -112,6 +112,31 @@ export function approvedProcedureInformationFacts({ text, procedure, recentConve
   const facial = approvedLiftingFacialFacts({ text: request, procedure });
   const facts = [...(facial?.facts || [])];
   const boundaries = [...(facial?.boundaries || [])];
+  const neckProcedure = ["lifting_cervical", "lipo_papada"].includes(procedure);
+  const platysmaQuestion = /\b(?:platisma|platismoplastia|plastimoplastia)\b/i.test(request);
+  if (neckProcedure && (isProcedureExplanationInquiry(request) || platysmaQuestion)) {
+    facts.push({
+      topic: "neck_procedure_explanation",
+      source: procedure === "lipo_papada" ? "lipo-de-papada/index.html" : "lifting-cervical/index.html",
+      statement: procedure === "lipo_papada" && !platysmaQuestion
+        ? "A lipo de papada remove gordura localizada abaixo do queixo. Quando há flacidez de pele ou alterações do platisma, retirar apenas gordura pode não tratar todos os componentes do contorno. A avaliação distingue essas situações."
+        : "A lipo de papada trata a gordura localizada abaixo do queixo. A cervicoplastia pode tratar também a flacidez da pele e o músculo platisma. Essas abordagens podem ser associadas no planejamento do pescoço, conforme o exame; a necessidade e a extensão de cada parte são definidas na avaliação.",
+    });
+    boundaries.push(
+      "Não escolher técnica, concluir indicação, nem afirmar que lipo ou tratamento do platisma seja suficiente para essa pessoa.",
+      "A explicação de uma associação não autoriza transferir preço de cervicoplastia para lipo isolada ou platismoplastia isolada; valores dependem da política de preço separada.",
+      "Não descrever etapas operatórias individuais nem prometer resultado, alta ou duração de internação.",
+    );
+  }
+  if (neckProcedure && /\b(?:hospital|anestes(?:ia|ista))\b/i.test(request) &&
+      !/\b(?:internad[ao]|interna[cç][aã]o|alta|pernoit|passa a noite)\b/i.test(request)) {
+    facts.push({
+      topic: "surgical_setting",
+      source: procedure === "lipo_papada" ? "lipo-de-papada/index.html" : "lifting-cervical/index.html",
+      statement: "A cirurgia é realizada em ambiente hospitalar, com anestesista e estrutura compatível. A instituição e o tipo de anestesia são definidos conforme o procedimento, a extensão e a avaliação clínica.",
+    });
+    boundaries.push("Não confirmar hospital reservado, anestesia individual, risco individual, internação ou alta.");
+  }
   if (
     ["lifting_cervical", "lipo_papada", "avaliacao_facial", "lifting_facial", "mini_lifting"].includes(procedure) &&
     /\bpapada\b|contorno (?:do pesco[cç]o|cervical)/i.test(request)
@@ -130,6 +155,10 @@ export function approvedProcedureInformationFacts({ text, procedure, recentConve
   // Educational excerpts from the already published canonical procedure pages.
   // They describe recovery generally and never clear an individual activity.
   const recovery = {
+    lipo_papada: {
+      source: "lipo-de-papada/index.html#recuperacao",
+      statement: "Nos primeiros dias da lipo de papada, pode haver inchaço, sensibilidade e roxos. A melhora é gradual e o retorno às atividades leves depende da evolução. A necessidade de faixa e as liberações são orientadas individualmente pela equipe.",
+    },
     lifting_cervical: {
       source: "lifting-cervical/index.html#recuperacao",
       statement: "Nos primeiros dias do lifting cervical, pode haver inchaço, sensação de tensão e curativos. O inchaço e os roxos diminuem gradualmente; a volta às atividades leves depende da evolução e do tipo de cirurgia. As orientações e os retornos são individualizados pela equipe.",

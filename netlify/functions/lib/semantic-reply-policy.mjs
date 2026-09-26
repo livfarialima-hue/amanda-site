@@ -137,6 +137,17 @@ export function semanticDecisionConfirmsDeterministicReply(
   );
 }
 
+// Semantic agreement with a price code does not mean a price-only template
+// covers the whole turn. Keep the model's contextual answer for other topics;
+// the existing outbound gate still checks its amounts, ownership and safety.
+export function deterministicReplyCoversPatientQuestions(candidate, conversationAction) {
+  const code = candidate?.decision?.replyCode;
+  if (!["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(code)) return true;
+  return (conversationAction?.replyContract?.unresolvedIntents || []).every(
+    intent => ["price_surgery", "price_consultation"].includes(intent),
+  );
+}
+
 export function buildSemanticReplyConversationAction(
   conversationAction,
   decision,

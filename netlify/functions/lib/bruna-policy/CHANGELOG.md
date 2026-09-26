@@ -1,3 +1,7 @@
+## 2026-09-26.6 — aprendizado de dúvidas educativas, candidato local
+
+Fatos aprovados do site para papada/platisma e recuperação da lipo; custo reconhecido e associação cervical explícita preservada. A resposta de preço não descarta outra pergunta. Faixas, limites clínicos e atendimento humano preservados. Documento de contribuições recebe fatos para revisão, sem ingestão automática. Evidência: auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md.
+
 ## 2026-09-26.4 — mensagens fragmentadas, publicada e verificada
 
 Cada fragmento autenticado passa a entrar na memória compartilhada antes do despacho para processamento, mantendo a fila assinada e LEADS canônicos. Depois da pausa existente, o controlador relê e reúne as entradas pendentes antes da decisão semântica. O marcador usa escrita condicional para impedir que processamento antigo substitua mensagem nova; reprocessamento do mesmo evento não reinicia a pausa, e empate no segundo do provedor não devolve a vez ao evento antigo. Leitura ou gravação indisponível permanece recuperável. Sem nova cadência, alteração de preço, agenda, takeover, opt-out, Apps Script ou envio de testes a pacientes. Evidência: auditorias/bruna-mensagens-fragmentadas-2026-09-26/RELATORIO.md.

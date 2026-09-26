@@ -64,7 +64,7 @@ const AMANDA_PATTERNS = [
 ];
 
 const DECLINED_PRICE_AMOUNT_PATTERN =
-  /\bn[aã]o\s+(?:quero|preciso|gostaria(?:\s+de)?)(?:\s+(?:saber|receber|ver|conhecer|entender))?\s+(?:(?:o|os|a|as|um|uma|sobre|de|dos|das)\s+){0,2}(?:pre[cç]os?|valor(?:es)?|or[cç]amento|faixa(?:\s+de\s+(?:pre[cç]os?|valores))?)\b/gi;
+  /\bn[aã]o\s+(?:quero|preciso|gostaria(?:\s+de)?)(?:\s+(?:saber|receber|ver|conhecer|entender))?\s+(?:(?:o|os|a|as|um|uma|sobre|de|dos|das)\s+){0,2}(?:pre[cç]os?|custos?|valor(?:es)?|or[cç]amento|faixa(?:\s+de\s+(?:pre[cç]os?|valores))?)\b/gi;
 
 const PRICE_TERMS_PATTERN =
   /\b(?:parcel(?:am|amento|ar)|quantas?\s+vezes|formas?\s+de\s+pagamento)\b|\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b.{0,55}\b(?:hospital|anestes(?:ia|ista))\b|\b(?:hospital|anestes(?:ia|ista))\b.{0,55}\b(?:inclu[ií](?:do|da|dos|das)?|inclus[oa]s?)\b/i;

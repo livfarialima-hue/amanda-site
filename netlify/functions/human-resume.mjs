@@ -63,6 +63,7 @@ import {
   buildSemanticReplyConversationAction,
   prepareSemanticContextContinuationAction,
   semanticDecisionConfirmsDeterministicReply,
+  deterministicReplyCoversPatientQuestions,
 } from "./lib/semantic-reply-policy.mjs";
 import {
   logCorrelationId,
@@ -925,7 +926,8 @@ export async function processHumanResumeJob(
 
   if (
     approvedPriceReplyKind &&
-    approvedPriceReplyConfirmed
+    approvedPriceReplyConfirmed &&
+    deterministicReplyCoversPatientQuestions(approvedPriceReplyCandidate, openAIConversationAction)
   ) {
     const reply = approvedPriceReply;
     if (consultationBundle?.pendingDetails.length) {

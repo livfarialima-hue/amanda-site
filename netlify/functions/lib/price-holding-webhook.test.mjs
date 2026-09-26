@@ -9,6 +9,49 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+test('webhook keeps technique explanation beside an approved price in the actual outbound body', async t => {
+  const settings = {YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',
+    GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',
+    WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
+    WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
+    OPENAI_API_KEY:'synthetic',WHATSAPP_ALERT_NUMBER:'+5511900000002',YCLOUD_ALERT_TEMPLATE_NAME:'synthetic_review',YCLOUD_ALERT_TEMPLATE_LANGUAGE:'pt_BR'};
+  const previous = Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));
+  Object.assign(process.env,settings);
+  t.after(()=>{for(const [k,v] of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+  t.mock.method(console,'log',()=>{});
+  const sent = [];
+  const turns = [
+    {role:'user',source:'patient',eventId:'education-origin',at:'2026-09-26T17:20:00Z',text:'Quero informações de lifting cervical.',messageType:'text'},
+    {role:'assistant',source:'bruna',eventId:'education-opening',at:'2026-09-26T17:21:00Z',text:'Olá! Sou a Bruna. Qual a sua dúvida?',messageType:'text'},
+  ];
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    const data = JSON.parse(options.body);
+    if (url === SHEETS_URL) return new Response(JSON.stringify(data.action==='get_conversation_context'
+      ? {ok:true,turns,professional:'amanda',opportunityId:'synthetic-education'}
+      : {ok:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:'synthetic-education',humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
+    if (url === 'https://api.openai.com/v1/responses') {
+      const input = JSON.parse(data.input);
+      assert.equal(input.policyHints.deterministicReplyCode,'LIFTING-PRICE-RANGE-01');
+      assert.ok(input.approvedClinicalFacts.topics.includes('neck_procedure_explanation'));
+      assert.ok(input.replyContract.unresolvedIntents.includes('procedure_information'));
+      return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+        professional:'amanda',procedure:'lifting_cervical',replyCode:'LIFTING-PRICE-RANGE-01',
+        suggestedReply:'A lipo de papada trata a gordura. A cervicoplastia pode tratar também pele e platisma; a associação depende da avaliação.\n\n'+input.policyHints.deterministicReplyPreview,reviewReason:'',
+        conversationState:{activeTopic:'explicação e preço cervical',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['como é feita','custo'],factsAlreadyProvided:[],owner:'bruna',nextExpectedAction:'responder ambas as perguntas',ambiguity:'',contextConfidence:'high'}})}),{status:200});
+    }
+    assert.equal(url,YCLOUD_URL,'all external calls mocked');
+    sent.push(data); return new Response('{"status":"accepted"}',{status:200});
+  });
+  const response = await handleYCloudWebhook(requestFor({id:'education-cost-final',type:'whatsapp.inbound_message.received',createTime:'2026-09-26T17:23:00Z',
+    whatsappInboundMessage:{id:'education-cost-message',from:'+5511900000000',to:'+5511900000001',sendTime:'2026-09-26T17:23:00Z',type:'text',text:{body:'Como é feita a lipo de papada com cervicoplastia e o custo?'}}}),
+    {livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'})});
+  const result = await response.json();
+  const replies = sent.filter(m=>m.to==='+5511900000000');
+  assert.equal(replies.length,1,JSON.stringify(result));
+  assert.match(replies[0].text.body,/pele e platisma/);
+  assert.match(replies[0].text.body,/R\$ 18 mil e R\$ 26 mil/);
+});
+
 for (const scenario of ['bundle', 'bundle_combined_price', 'bundle_alert_failure', 'bundle_semantic_veto', 'bundle_late_cache', 'bundle_cache_failure']) {
   test(`webhook answers a complete pending question block: ${scenario}`, async t => {
     const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',

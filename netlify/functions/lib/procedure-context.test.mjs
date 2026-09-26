@@ -9,6 +9,24 @@ import {
 } from "./procedure-context.mjs";
 import { detectProcedure as legacyDetectProcedure } from "./whatsapp-automation.mjs";
 
+test("a named lipo association keeps cervical context but comparisons and corrections do not", () => {
+  for (const text of [
+    "Como é feita a lipo de papada com cervicoplastia?",
+    "Cervicoplastia associada à lipo de papada",
+    "Lipo de papada + lifting cervical",
+  ]) assert.equal(detectNamedProcedure(text)?.key, "lifting_cervical", text);
+  for (const text of [
+    "Lipo de papada ou cervicoplastia?",
+    "Qual a diferença entre lipo de papada e cervicoplastia?",
+    "Compare lipo de papada com cervicoplastia",
+    "Qual é melhor, lipo de papada com cervicoplastia ou só lipo?",
+    "Preço da lipo de papada. E da cervicoplastia?",
+    "Vi lipo de papada com cervicoplastia, mas quero saber só o custo da lipo",
+  ]) assert.equal(detectNamedProcedure(text), null, text);
+  assert.equal(detectNamedProcedure("Não quero cervicoplastia, só lipo de papada")?.key, "lipo_papada");
+  assert.equal(detectNamedProcedure("Lipo de papada com cervicoplastia, na verdade só lipo de papada")?.key, "lipo_papada");
+});
+
 test("an explicit correction excludes the rejected procedure, even with a stale ad", () => {
   for (const text of [
     "Não quero lifting facial, quero lifting cervical",

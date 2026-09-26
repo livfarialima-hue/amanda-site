@@ -1,0 +1,24 @@
+{
+  "status": "pending",
+  "changeId": "BRUNA-APRENDIZADO-CLINICO-2026-09-26",
+  "baselineFunctionalCommit": "624d7e65abe867fe1556fbfdd788fe9a8dd81358",
+  "baselineDeployId": "6ab7dbe15ccd459069e61eac",
+  "appsScriptVersion": 161,
+  "clinicalConfirmationsPending": [
+    "lipo_isolada_preco",
+    "observacao_hospitalar",
+    "prazo_social_recuperacao"
+  ],
+  "patientMessagesSent": 0,
+  "validation": {
+    "fullTests": 1808,
+    "newRegressions": 14,
+    "requiredCommandsPassed": 32,
+    "completedAt": "2026-09-26T21:18:43.844Z"
+  },
+  "contributionDocument": {
+    "id": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
+    "nativeReadbackVerified": true,
+    "autoIngestion": false
+  }
+}

@@ -169,7 +169,17 @@ function namedProcedureContext(text) {
   const specific = mentions.filter((m) => !mentions.some((other) =>
     other.start <= m.start && other.end >= m.end && other.end - other.start > m.end - m.start));
   const positive = new Map(specific.filter((m) => !m.negated).map((m) => [m.procedure.key, m.procedure]));
-  const selected = positive.size === 1 ? [...positive.values()][0] : null;
+  let selected = positive.size === 1 ? [...positive.values()][0] : null;
+  // Explicit cervical planning can include lipo. A comparison, alternative or
+  // separately priced procedure must remain unresolved, never pick a range.
+  const active = specific.filter(m => !m.negated).sort((a, b) => a.start - b.start);
+  if (!selected && active.length === 2 && positive.size === 2 &&
+      positive.has("lifting_cervical") && positive.has("lipo_papada") &&
+      !/\b(?:ou|versus|vs|compar\w*|diferenca|melhor|isolad[ao]s?|separad[ao]s?)\b|\b(?:so|apenas|somente)\b.{0,40}\blipo\b/i.test(normalizedText.normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) {
+    const connector = normalizedText.slice(active[0].end, active[1].start)
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    if (/^(?:com|associad[ao]\s+(?:a|ao)|\+)$/i.test(connector)) selected = positive.get("lifting_cervical");
+  }
   return { mentioned: mentions.length > 0, procedure: selected ? { key: selected.key, code: selected.code } : null };
 }
 

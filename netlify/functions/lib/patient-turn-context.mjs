@@ -4,17 +4,25 @@ export const UNAVAILABLE_PATIENT_TEXT = "[Mensagem de texto indisponível na int
 
 // Same linguistic signal for planning and the outbound contract. It identifies a
 // question about cost, not consent to a range, a booking, or a price objection.
-const PRICE_AMOUNT_PATTERN = /\b(?:precos?|valor(?:es)?|investimento|media|orcamento|faixa|quanto\s+(?:custa|fica|sai|e)(?!\s+(?:(?:o|a|um|uma)\s+)?(?:tempo|prazo|periodo|risco|tamanho|inchaco|inchad[oa]|vermelh[oa]|dolorid[oa]|sensivel|afastad[oa]|internad[oa])\b))\b/i;
+const PRICE_AMOUNT_PATTERN = /\b(?:precos?|custos?(?![\s-]*beneficio)|valor(?:es)?|investimento|media|orcamento|faixa|quanto\s+(?:custa|fica|sai|e)(?!\s+(?:(?:o|a|um|uma)\s+)?(?:tempo|prazo|periodo|risco|tamanho|inchaco|inchad[oa]|vermelh[oa]|dolorid[oa]|sensivel|afastad[oa]|internad[oa])\b))\b/i;
 const CONSULTATION_COST_PATTERN = new RegExp(
   `(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b).{0,45}\\b(?:consulta|avalia[cç][aã]o)\\b|` +
   `\\b(?:consulta|avalia[cç][aã]o)\\b.{0,45}(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b)`, "i");
 
 export function isPriceAmountInquiry(text) {
-  return PRICE_AMOUNT_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, ""));
+  return PRICE_AMOUNT_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/\ba todo custo\b/gi, ""));
+}
+
+// Asking how a procedure works remains a separate question even beside price.
+// This identifies intent only; callers still require procedure-specific facts.
+export function isProcedureExplanationInquiry(text) {
+  const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "");
+  const questions = value.matchAll(/\bcomo\s+(?:(?:e|eh|sao|seria|sera)\s+)?(?:feit[oa]s?|realizad[oa]s?|funcionam?|se\s+faz)\b/gi);
+  return [...questions].some(question => !/^\s+(?:(?:o|a|os|as|essa|esse|minha|meu)\s+)?(?:consulta|avaliacao|pagamento|parcelamento|agendamento|reembolso|contato|reserva)\b/i.test(value.slice(question.index + question[0].length)));
 }
 
 export function isConsultationCostInquiry(text) {
-  return CONSULTATION_COST_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, ""));
+  return CONSULTATION_COST_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/\ba todo custo\b/gi, ""));
 }
 
 // Independent questions in one unanswered block; this supplies topics, never
@@ -23,7 +31,7 @@ export function isConsultationCostInquiry(text) {
 export function consultationQuestionTopics(text) {
   const value = String(text || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
   const clauses = value.split(/[\n.!?;]+/).filter(Boolean);
-  const active = clauses.filter(c => !/\b(?:nao quero|nao preciso|sem interesse em)\b.{0,30}\b(?:precos?|valor(?:es)?|faixa|orcamento)\b/.test(c));
+  const active = clauses.filter(c => !/\b(?:nao quero|nao preciso|sem interesse em)\b.{0,30}\b(?:precos?|custos?|valor(?:es)?|faixa|orcamento)\b/.test(c));
   const consultationPrice = active.some(isConsultationCostInquiry);
   const surgeryWord = /\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|mastopexia|abdominoplastia|lipoaspiracao|ninfoplastia|mamoplastia|minilifting|procedimento)\b/;
   const surgeryPrice = active.some(c => {

@@ -1,6 +1,6 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
-import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -156,6 +156,7 @@ export function introducesStandalonePatientRequest(text) {
 }
 
 function hasProcedureInformationRequest(value) {
+  if (isProcedureExplanationInquiry(value)) return true;
   return String(value || "")
     .split(/\n+/)
     .some(
