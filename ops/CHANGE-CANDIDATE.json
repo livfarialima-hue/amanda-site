@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -218,6 +218,14 @@
       "Resposta util e contextual; oferta de faixa ou disponibilidade somente quando pertinente",
       "Ausencia de repeticao, pressao ou regressao de preco, identidade e takeover"
     ],
-    "rollbackRule": "Conter diante de valores indevidos, indicacao individual, duplicidade ou perda de pergunta explicita."
+    "rollbackRule": "Conter diante de valores indevidos, indicacao individual, duplicidade ou perda de pergunta explicita.",
+    "dueAt": "2026-09-28T10:52:00Z"
+  },
+  "release": {
+    "approvedCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+    "netlifyDeployId": "6ab7a3b5dda1f60008f631fe",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-26T10:52:17.451Z",
+    "documentationStatus": "pending"
   }
 }

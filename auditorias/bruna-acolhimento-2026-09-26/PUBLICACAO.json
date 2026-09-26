@@ -1,4 +1,114 @@
 {
-  "status": "pending",
-  "patientMessagesSent": 0
+  "status": "published_documentation_pending",
+  "approvedCommit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+  "authorization": {
+    "by": "Daniel",
+    "reference": "Melhorar a qualidade da interacao, apresentacao, empatia e cuidado; publicar. Mudanca de recuperacao cancelada.",
+    "releasePreflightAt": "2026-09-26T10:51:29Z"
+  },
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ab7a3b5dda1f60008f631fe",
+    "commit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "publishedAtLocal": "2026-09-26T07:52:00-03:00",
+    "publishedTimePrecision": "minute_from_deployment_UI",
+    "buildCompletedAt": "2026-09-26T10:52:07Z",
+    "verifiedAt": "2026-09-26T10:52:17.451Z",
+    "functionsCount": 13,
+    "scheduledFunctionsPreserved": 5,
+    "deployedFilesCount": 192,
+    "automationMode": "active",
+    "processingMode": "durable_background_intake",
+    "signatureProtection": "active"
+  },
+  "appsScript": {
+    "version": 161,
+    "changed": false,
+    "verification": "Execucoes doPost no projeto canonico v161 observadas antes da publicacao; nenhum arquivo Apps Script ou alvo modificado."
+  },
+  "verification": {
+    "commit": "dd2dcfe63efc0dec4a982133b1e28459aeb3a421",
+    "deploy": "6ab7a3b5dda1f60008f631fe",
+    "checks": [
+      {
+        "root": "https://draamandaschroeder.com.br",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      },
+      {
+        "root": "https://6ab7a3b5dda1f60008f631fe--inspiring-sprite-b35ca4.netlify.app",
+        "httpStatus": 200,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        },
+        "unsignedHttpStatus": 401
+      }
+    ],
+    "verifiedAt": "2026-09-26T10:52:17.451Z",
+    "patientTestSent": false,
+    "localFullTests": 1718,
+    "focusedTests": 12,
+    "consumerTests": 225,
+    "requiredCommandsPassed": 28,
+    "failedTests": 0,
+    "naturalPostreleaseInteractionObserved": false,
+    "outageReplayPerformed": false,
+    "limitation": "Publicacao, protecoes e regressao verificadas. Sem novo caso natural observado nem ganho de conversao medido. Nao foi enviado teste a paciente."
+  },
+  "rollback": {
+    "local": "Descartar apenas a candidata isolada.",
+    "production": "Restaurar Netlify 6ab6ea73cea89200081ef8d5 / commit 1920658fa469b640099d3d4908e01945097cbaf3; preservar Apps Script v161, fila, historico, recibos e pausas. Sem replay."
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Primeiras conversas naturais e 48 horas",
+    "signals": [
+      "Apresentacao unica na primeira resposta, inclusive com saudacao anterior do paciente",
+      "Resposta util e contextual; oferta de faixa ou disponibilidade somente quando pertinente",
+      "Ausencia de repeticao, pressao ou regressao de preco, identidade e takeover"
+    ],
+    "rollbackRule": "Conter diante de valores indevidos, indicacao individual, duplicidade ou perda de pergunta explicita.",
+    "dueAt": "2026-09-28T10:52:00Z",
+    "status": "pending_owner_review",
+    "automationCreated": false
+  }
 }
