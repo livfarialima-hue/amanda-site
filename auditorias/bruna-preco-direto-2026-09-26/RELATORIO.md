@@ -1,6 +1,6 @@
 # Bruna — preço direto e continuidade cuidadosa — 26/09/2026
 
-Estado: 1.737 testes integrais e 18 regressões específicas aprovados; publicação explicitamente autorizada por Daniel: “Entao ajuste e publique tudp”. Sem envio real de teste.
+Estado: publicado e verificado em 26/09/2026 às 08:52:34 BRT; 1.737 testes integrais e 18 regressões específicas aprovados. Publicação autorizada por Daniel: “Entao ajuste e publique tudp”. Plano e manual substituídos nos mesmos IDs do Drive e conferidos por SHA-256. Sem envio real de teste.
 
 ## Problema e decisão
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PRECO-DIRETO-2026-09-26",
   "title": "Resposta direta a preco, contexto especifico e proximo passo opcional",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "1ee5976726ddea8ce34749abb46e01f0ef38a270",
   "authorization": {
     "required": true,
@@ -230,7 +230,11 @@
     "netlifyDeployId": "6ab7b1e5c8225e00080535dd",
     "appsScriptVersion": 161,
     "verifiedAt": "2026-09-26T11:52:50.639Z",
-    "documentationStatus": "pending_drive_reconciliation",
-    "productionReceipt": "auditorias/bruna-preco-direto-2026-09-26/PUBLICACAO.json"
+    "documentationStatus": "verified",
+    "productionReceipt": "auditorias/bruna-preco-direto-2026-09-26/PUBLICACAO.json",
+    "drivePlanSha256": "92222bd0ab9c327950d647c2f4fce5f6ec58fcfb285f8f1de24ba95d510349bf",
+    "driveManualSha256": "22181e1536b57cd43d46ff54eec2fb1d197b239bcd1a4e9c8101e5a1e1ce17f4",
+    "documentationCommit": "4bdfa8b481154fb672617819c4a8dff9eed580d7",
+    "documentationVerifiedAt": "2026-09-26T11:55:44.504Z"
   }
 }

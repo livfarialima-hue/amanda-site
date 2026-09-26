@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "authorization": {
     "by": "Daniel",
     "reference": "Entao ajuste e publique tudp",
@@ -7,7 +7,7 @@
   },
   "baseline": "1ee5976726ddea8ce34749abb46e01f0ef38a270",
   "verification": {
-    "status": "published_verified_awaiting_documentation",
+    "status": "published_verified",
     "focusedTests": 18,
     "patientTestSent": false,
     "naturalPostreleaseInteractionObserved": false,
@@ -244,5 +244,21 @@
     "automationMode": "active",
     "processingMode": "durable_background_intake",
     "signatureProtection": "active"
+  },
+  "documentation": {
+    "verifiedAt": "2026-09-26T11:55:44.504Z",
+    "commit": "4bdfa8b481154fb672617819c4a8dff9eed580d7",
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "92222bd0ab9c327950d647c2f4fce5f6ec58fcfb285f8f1de24ba95d510349bf",
+      "bytes": 215702,
+      "downloadCompared": true
+    },
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "22181e1536b57cd43d46ff54eec2fb1d197b239bcd1a4e9c8101e5a1e1ce17f4",
+      "bytes": 131127,
+      "downloadCompared": true
+    }
   }
 }
