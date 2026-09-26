@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-MENSAGENS-FRAGMENTADAS-2026-09-26",
   "title": "Preservar fragmentos antes do processamento e reler o conjunto antes da resposta",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "2503f8c25c928cdd03d0fe108c2a533b511a112b",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -208,5 +208,13 @@
       "Falhas de memoria ou marcador permanecem recuperaveis e visiveis"
     ],
     "rollbackRule": "Conter diante de valor indevido, indicacao individual, faixa sem pedido ou duplicidade."
+  },
+  "release": {
+    "approvedCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
+    "netlifyDeployId": "6ab7cb3dd904e20008eabd38",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-26T13:41:23.145Z",
+    "documentationStatus": "pending",
+    "productionReceipt": "auditorias/bruna-mensagens-fragmentadas-2026-09-26/PUBLICACAO.json"
   }
 }

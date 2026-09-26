@@ -1,6 +1,6 @@
 # Mensagens fragmentadas — 26/09/2026
 
-Status: testada localmente; publicação pendente.
+Status: produção publicada e verificada; projeções documentais em atualização.
 
 Cada fragmento autenticado passa a entrar na memória compartilhada antes do despacho para processamento, mantendo a fila assinada e LEADS canônicos. Depois da pausa existente, o controlador relê e reúne as entradas pendentes antes da decisão semântica. O marcador usa escrita condicional para impedir que processamento antigo substitua mensagem nova; reprocessamento do mesmo evento não reinicia a pausa, e empate no segundo do provedor não devolve a vez ao evento antigo. Leitura ou gravação indisponível permanece recuperável. Sem nova cadência, alteração de preço, agenda, takeover, opt-out, Apps Script ou envio de testes a pacientes.
 
@@ -19,3 +19,7 @@ Restaurar Netlify 6ab7c11ced13e90009556ee4 / d3df40c136c51c0c83bc2a07e3145f99c10
 ## Validação local
 
 1.778 testes passaram, incluindo 15 novos casos. 30 comandos exigidos concluídos sem falhas. Build e verificação do site passaram. ops:check retorna SYNC_PENDING até a publicação e igualdade das projeções.
+
+## Publicação
+
+Commit funcional 324584eda7233ef523fc78716de439ce76bcdd86; Netlify 6ab7cb3dd904e20008eabd38; Apps Script v161 preservado. Validação: 1.778 testes (15 novos), 30 comandos, build de 193 arquivos/54 URLs sem erro. Publicação conferida no domínio e URL imutável: automação ativa, assinatura protegida, chamadas sem assinatura rejeitadas com 401. Treze funções e cinco programações preservadas; três funções atualizadas, zero arquivos estáticos novos. Sem conversa real de teste; primeira interação natural ainda não observada. Rollback: Netlify 6ab7c11ced13e90009556ee4 / d3df40c136c51c0c83bc2a07e3145f99c1032f09. Daniel/equipe: conferir primeiras conversas, 28/09 e 03/10/2026; nenhuma automação nova criada.

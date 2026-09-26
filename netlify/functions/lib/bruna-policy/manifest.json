@@ -49,8 +49,11 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "bundleVersion": "2026-09-26.4",
-    "status": "tested_local",
-    "productionStillUses": "2026-09-26.3",
-    "changeId": "BRUNA-MENSAGENS-FRAGMENTADAS-2026-09-26"
+    "status": "committed",
+    "changeId": "BRUNA-MENSAGENS-FRAGMENTADAS-2026-09-26",
+    "functionalCommit": "324584eda7233ef523fc78716de439ce76bcdd86",
+    "netlifyDeployId": "6ab7cb3dd904e20008eabd38",
+    "publishedAt": "2026-09-26T13:40:43Z",
+    "documentationStatus": "pending"
   }
 }
