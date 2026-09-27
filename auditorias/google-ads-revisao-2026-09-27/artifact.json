@@ -1,0 +1,964 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Google Ads: qualidade melhorou; aquisição de pacientes ainda não comprovada",
+    "description": "Revisão de 27/09/2026. Comparação 31/08–12/09 versus 14–26/09 e plano de otimização com orçamento preservado.",
+    "generatedAt": "2026-09-27T12:39:49.686Z",
+    "sources": [
+      {
+        "id": "audit",
+        "label": "Google Ads ao vivo + LEADS: comparação auditada em 27/09/2026",
+        "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+        "query": {
+          "language": "python",
+          "engine": "Python",
+          "description": "Google Ads: valores de campanha transcritos da interface autenticada. CRM: união em memória por Opportunity ID; fonte inicial Google Ads, profissional Amanda, estado não voided; coorte por data do contato. Persistência apenas agregada.",
+          "tables_used": [
+            "_CRM_OPORTUNIDADES",
+            "_FUNIL_CANONICO",
+            "Funil Comercial",
+            "_OPORTUNIDADE_MARCOS",
+            "Consultas",
+            "Google Ads: Campanhas"
+          ],
+          "filters": [
+            "31/08–12/09 e 14–26/09/2026",
+            "13 dias por janela; 13/09 excluído",
+            "Google Ads como origem inicial, Amanda, oportunidades não anuladas",
+            "Fase atual em 27/09; sem igualdade de maturação"
+          ],
+          "metric_definitions": {
+            "contacts": "Número de oportunidades com origem inicial Google Ads e data do contato na janela; inclui Novo não classificado.",
+            "qualified": "Fase Qualificado, Consulta agendada, Consulta realizada ou Paciente convertido na leitura de 27/09.",
+            "cost": "Soma do custo BRL das oito campanhas na interface, por janela.",
+            "scheduled": "Marco/fase de consulta agendada ou posterior; conferido contra Consultas por Opportunity ID/telefone em memória, sem persistir identificadores."
+          },
+          "executed_at": "2026-09-27T12:39:49.686Z"
+        }
+      },
+      {
+        "id": "plan",
+        "label": "Escopo aprovado pela solicitação do usuário",
+        "path": "auditorias/google-ads-revisao-2026-09-27/PLANO.json"
+      },
+      {
+        "id": "exports",
+        "label": "14 CSVs, ZIP de marca e XLSX de recomendações",
+        "path": "auditorias/google-ads-revisao-2026-09-27/EXPORTACOES.json"
+      },
+      {
+        "id": "receipt",
+        "label": "Verificação das alterações",
+        "path": "auditorias/google-ads-revisao-2026-09-27/PUBLICACAO.json"
+      },
+      {
+        "id": "chart_source",
+        "label": "Google Ads: campanhas capturadas em 27/09/2026",
+        "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+        "query": {
+          "sql": "SELECT json_extract(item.value, '$.period') AS period, json_extract(item.value, '$.periodLabel') AS periodLabel, json_extract(item.value, '$.campaign') AS campaign, json_extract(item.value, '$.impressions') AS impressions, json_extract(item.value, '$.clicks') AS clicks, json_extract(item.value, '$.cost') AS cost, json_extract(item.value, '$.adsQualified') AS adsQualified, json_extract(item.value, '$.contacts') AS contacts, json_extract(item.value, '$.qualified') AS qualified, json_extract(item.value, '$.scheduled') AS scheduled, json_extract(item.value, '$.completed') AS completed, json_extract(item.value, '$.closed') AS closed FROM audit_snapshot, json_each(audit_snapshot.payload, '$.campaigns') AS item;",
+          "engine": "SQLite 3 / JSON1",
+          "language": "sql",
+          "description": "Tabela audit_snapshot recebe integralmente ANALISE.json; query executada no notebook analise.ipynb. Dados originais lidos do Google Ads autenticado, transcritos e conferidos com totais.",
+          "tables_used": [
+            "audit_snapshot"
+          ],
+          "filters": [
+            "31/08–12/09 e 14–26/09/2026",
+            "Oito campanhas; valores em BRL"
+          ],
+          "executed_at": "2026-09-27T12:43:51.444Z"
+        }
+      },
+      {
+        "id": "comparison_table_source",
+        "label": "Google Ads + LEADS: agregados auditados",
+        "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+        "query": {
+          "sql": "SELECT json_extract(item.value, '$.period') AS \"period\", json_extract(item.value, '$.periodLabel') AS \"periodLabel\", json_extract(item.value, '$.impressions') AS \"impressions\", json_extract(item.value, '$.clicks') AS \"clicks\", json_extract(item.value, '$.cost') AS \"cost\", json_extract(item.value, '$.adsQualified') AS \"adsQualified\", json_extract(item.value, '$.contacts') AS \"contacts\", json_extract(item.value, '$.qualified') AS \"qualified\", json_extract(item.value, '$.scheduled') AS \"scheduled\", json_extract(item.value, '$.completed') AS \"completed\", json_extract(item.value, '$.closed') AS \"closed\", json_extract(item.value, '$.cpc') AS \"cpc\", json_extract(item.value, '$.ctr') AS \"ctr\", json_extract(item.value, '$.costPerContact') AS \"costPerContact\", json_extract(item.value, '$.costPerQualified') AS \"costPerQualified\" FROM report_snapshot, json_each(report_snapshot.payload, '$.totals') AS item;",
+          "engine": "SQLite 3 / JSON1",
+          "language": "sql",
+          "description": "report_snapshot recebe datasets do artifact.json, derivados das capturas descritas em ANALISE.json e PLANO.json. Extração reproduzida no notebook; não há consulta SQL ao Google Ads ou à LEADS.",
+          "tables_used": [
+            "report_snapshot"
+          ],
+          "filters": [
+            "Apenas agregados revisados; sem dados pessoais"
+          ],
+          "executed_at": "2026-09-27T12:44:23.410Z"
+        }
+      },
+      {
+        "id": "campaign_table_source",
+        "label": "Google Ads + LEADS: agregados auditados",
+        "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+        "query": {
+          "sql": "SELECT json_extract(item.value, '$.period') AS \"period\", json_extract(item.value, '$.periodLabel') AS \"periodLabel\", json_extract(item.value, '$.campaign') AS \"campaign\", json_extract(item.value, '$.impressions') AS \"impressions\", json_extract(item.value, '$.clicks') AS \"clicks\", json_extract(item.value, '$.cost') AS \"cost\", json_extract(item.value, '$.adsQualified') AS \"adsQualified\", json_extract(item.value, '$.contacts') AS \"contacts\", json_extract(item.value, '$.qualified') AS \"qualified\", json_extract(item.value, '$.scheduled') AS \"scheduled\", json_extract(item.value, '$.completed') AS \"completed\", json_extract(item.value, '$.closed') AS \"closed\", json_extract(item.value, '$.beforeCost') AS \"beforeCost\", json_extract(item.value, '$.beforeClicks') AS \"beforeClicks\", json_extract(item.value, '$.beforeContacts') AS \"beforeContacts\", json_extract(item.value, '$.beforeQualified') AS \"beforeQualified\", json_extract(item.value, '$.cpc') AS \"cpc\", json_extract(item.value, '$.ctr') AS \"ctr\" FROM report_snapshot, json_each(report_snapshot.payload, '$.after') AS item;",
+          "engine": "SQLite 3 / JSON1",
+          "language": "sql",
+          "description": "report_snapshot recebe datasets do artifact.json, derivados das capturas descritas em ANALISE.json e PLANO.json. Extração reproduzida no notebook; não há consulta SQL ao Google Ads ou à LEADS.",
+          "tables_used": [
+            "report_snapshot"
+          ],
+          "filters": [
+            "Apenas agregados revisados; sem dados pessoais"
+          ],
+          "executed_at": "2026-09-27T12:44:23.410Z"
+        }
+      },
+      {
+        "id": "actions_table_source",
+        "label": "Plano de alterações baseado em termos verificados",
+        "path": "auditorias/google-ads-revisao-2026-09-27/PLANO.json",
+        "query": {
+          "sql": "SELECT json_extract(item.value, '$.id') AS \"id\", json_extract(item.value, '$.campaign') AS \"campaign\", json_extract(item.value, '$.keyword') AS \"keyword\", json_extract(item.value, '$.action') AS \"action\", json_extract(item.value, '$.cost') AS \"cost\", json_extract(item.value, '$.status') AS \"status\" FROM report_snapshot, json_each(report_snapshot.payload, '$.actions') AS item;",
+          "engine": "SQLite 3 / JSON1",
+          "language": "sql",
+          "description": "report_snapshot recebe datasets do artifact.json, derivados das capturas descritas em ANALISE.json e PLANO.json. Extração reproduzida no notebook; não há consulta SQL ao Google Ads ou à LEADS.",
+          "tables_used": [
+            "report_snapshot"
+          ],
+          "filters": [
+            "Apenas agregados revisados; sem dados pessoais"
+          ],
+          "executed_at": "2026-09-27T12:44:23.410Z"
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Google Ads: qualidade melhorou; aquisição de pacientes ainda não comprovada"
+      },
+      {
+        "id": "summary",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "audit",
+        "body": "## Resumo executivo\n\n**Há sinal inicial de melhora, mas ainda não há prova de mais pacientes.** Nas janelas de 13 dias, os contatos identificados passaram de **6 para 7**, e os qualificados de **1 para 2**. Consultas e fechamentos vinculados continuam em **zero no registro**. A amostra é pequena e as coortes têm maturação diferente.\n\nO gasto total passou de **R$1.127,76 para R$1.362,38 (+20,8%)**. Mama e corpo explicam R$211,00 dos R$234,62 adicionais. Entre as seis campanhas antigas, o gasto aumentou **2,1%**. O custo por qualificado caiu de R$1.127,76 para R$681,19, mas depende de apenas três qualificações somadas.\n\n**Decisão:** preservar R$105/dia, fazer quatro restrições de intenção de busca e não escalar até demonstrar consultas."
+      },
+      {
+        "id": "comparison",
+        "type": "table",
+        "layout": "full",
+        "tableId": "comparison_table"
+      },
+      {
+        "id": "spend",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "campaign_cost"
+      },
+      {
+        "id": "campaign_detail",
+        "type": "table",
+        "layout": "full",
+        "tableId": "campaign_table"
+      },
+      {
+        "id": "diagnosis",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Onde está a melhora e onde ainda há desperdício\n\n- **Otoplastia:** 1→3 contatos identificados, 0→1 qualificado, com gasto menor. A palavra exata “cirurgia de orelha valor” recebeu uma conversão qualificada no Ads. Preservar intenção de preço.\n- **Lifting:** 2→3 contatos, 0→1 qualificado. Gasto +33,7% e CPC de R$1,10→R$3,42. O piloto compra cliques mais caros; precisa demonstrar progressão para consulta até o D28 de 11/10. Não há base para escalá-lo agora.\n- **Blefaroplastia:** CPC caiu de R$1,59 para R$1,05 e cliques subiram, mas ficou em 1 contato nas duas janelas; o qualificado anterior não se repetiu. Eficiência de tráfego ainda não é eficiência comercial.\n- **Mama e corpo:** R$214,38 na janela recente e nenhum contato identificado com essas campanhas. Atribuição e maturação limitam a interpretação; manter o limite do piloto e revisar em 12/10.\n- **Face genérica:** gasto caiu quase pela metade; a busca por avaliação de outro médico mostra desvio de intenção. Cabe bloqueio exato, sem alargar o conjunto de exclusões.\n\nO alerta de importação investigado é de **30/08**. A conexão direta consta excelente, com atualização em **25/09**. Não é evidência de falha atual e não justifica desfazer o piloto. Evento “ready” na LEADS também não prova aceite pelo Google."
+      },
+      {
+        "id": "actions_heading",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Mudanças de escopo controlado\n\nQuatro ações reversíveis, preparadas para aplicação na conta 995-334-4486. O orçamento total permanece R$105/dia. Os valores abaixo são gasto observado de 14–26/09, sem previsão de economia mensal."
+      },
+      {
+        "id": "actions",
+        "type": "table",
+        "layout": "full",
+        "tableId": "actions_table"
+      },
+      {
+        "id": "affordability",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Como atrair quem considera uma cirurgia particular\n\nA melhor seleção disponível combina **procedimento cirúrgico explícito, localização atendida, informação de investimento e diferenciais médicos verificáveis**. Não é possível inferir renda individual de uma busca.\n\nPreservar termos como cirurgia, lifting, cervicoplastia, blefaroplastia e otoplastia, incluindo preço e valor quando a página atende à pergunta. Manter consulta de R$500 comunicada com clareza e orçamento cirúrgico individual após avaliação. Evitar promessa de resultado, promoção e aparência de atendimento popular.\n\nNão excluir renda desconhecida, bairros ou faixas etárias por suposição. Não criar públicos personalizados de condição/procedimento de saúde a partir da LEADS. Reforçar a sequência anúncio → página do procedimento → resposta objetiva → consulta. A mudança da Bruna de 26/09 ainda é recente demais para esta comparação.\n\nO Índice de Qualidade continua baixo em palavras importantes, apesar de anúncios mais completos. O próximo teste deve investigar relevância e experiência da página, especialmente no celular, com mensuração de contato qualificado e consulta; nota do anúncio isolada não basta. Não foi feita alteração de página neste pacote.\n\nNa leitura demográfica de 14–26/09, as duas conversões principais apareceram em 21–30% de renda estimada (LIFT/AG_LIFTING_FACIAL: R$19,70, 4 cliques, 1 conversão) e 50% com menor renda (OTO/Adulto: R$49,99, 28 cliques, 1 conversão). Essas são categorias estimadas do Ads, sem inferir renda individual. Restringir aos 10% superiores teria excluído os dois registros observados; a amostra não permite concluir superioridade de qualquer renda.\n\nO Google descreve esses dados como inferidos/estimados e alerta que excluir “desconhecido” reduz alcance. [Documentação oficial](https://support.google.com/google-ads/answer/2580383?hl=pt-BR)."
+      },
+      {
+        "id": "next",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Próximas decisões e critérios\n\n**29/09:** conferir veiculação e se alguma restrição interceptou uma procura válida. **04/10:** revisar classificação, qualificados e consultas por campanha. **11/10:** decidir o piloto LIFT no D28 com conversões válidas e consultas. **12/10:** revisar mama/corpo; não aumentar verba antes de pelo menos dois qualificados e uma consulta.\n\nReverter somente as quatro mudanças deste pacote se restringirem procura válida. Priorizar preenchimento consistente da LEADS e vínculo da consulta à oportunidade. Não houve mensagem a pacientes nem edição da LEADS."
+      },
+      {
+        "id": "limits",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Fontes, limites e recomendações recusadas\n\nO comparativo usa o Google Ads aberto no Chrome e a LEADS, lidos em 27/09. Os 14 CSVs anexados cobrem **23/06–20/09**, e o arquivo de negativas estava filtrado por “valor”: cinco linhas não representavam a lista completa. Os históricos ajudam a explicar as mudanças, mas suas 44 conversões misturam definições antigas e não equivalem a 44 pacientes ou qualificados.\n\nSó **R$670,59 (49,2%)** do gasto recente aparece em termos divulgados. Não é possível diagnosticar toda a busca oculta. Coortes são pela data do contato e fase atual; origens não identificadas podem esconder aquisições. Ausência de marco de consulta significa ausência no registro, não prova ausência de atendimento real.\n\nOs relatórios de locais mostram alvos, não renda ou residência precisa. Dispositivos e horários são diagnósticos agregados; sem consultas suficientes por segmento, não sustentam cortes. O ZIP de marca mede alcance/frequência, não aquisição. Recomendações de elevar orçamento, usar ampla, Display, parceiros ou maximizar conversões nas demais campanhas não passaram pelo critério comercial.\n\nNão foi adicionada negativa para “blefaroplastia preço popular”: a expressão não reapareceu na janela recente, e o registro da lista compartilhada já documenta a exclusão em frase. Evitou-se uma mudança redundante baseada em dado antigo."
+      }
+    ],
+    "charts": [
+      {
+        "id": "campaign_cost",
+        "title": "Gasto por campanha antes e depois das mudanças",
+        "subtitle": "Duas janelas de 13 dias; mama e corpo explicam a maior parte do acréscimo de gasto.",
+        "type": "bar",
+        "dataset": "campaigns",
+        "sourceId": "chart_source",
+        "layout": "full",
+        "encodings": {
+          "x": {
+            "field": "campaign",
+            "type": "ordinal",
+            "label": "Campanha"
+          },
+          "y": {
+            "field": "cost",
+            "type": "quantitative",
+            "label": "Gasto (R$)",
+            "format": "number"
+          },
+          "color": {
+            "field": "periodLabel",
+            "type": "nominal",
+            "label": "Período"
+          }
+        },
+        "options": {
+          "grouping": "grouped"
+        },
+        "valueFormat": "number",
+        "maxRows": 16
+      }
+    ],
+    "tables": [
+      {
+        "id": "comparison_table",
+        "title": "Resultado geral: tráfego, contatos e consultas",
+        "dataset": "totals",
+        "sourceId": "comparison_table_source",
+        "layout": "full",
+        "defaultSort": {
+          "field": "periodLabel",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "periodLabel",
+            "label": "Período"
+          },
+          {
+            "field": "cost",
+            "label": "Gasto (R$)",
+            "format": "number"
+          },
+          {
+            "field": "clicks",
+            "label": "Cliques",
+            "format": "number"
+          },
+          {
+            "field": "ctr",
+            "label": "CTR",
+            "format": "percent"
+          },
+          {
+            "field": "contacts",
+            "label": "Contatos identificados",
+            "format": "number"
+          },
+          {
+            "field": "qualified",
+            "label": "Qualificados",
+            "format": "number"
+          },
+          {
+            "field": "scheduled",
+            "label": "Consultas registradas",
+            "format": "number"
+          },
+          {
+            "field": "costPerQualified",
+            "label": "R$/qualificado",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "campaign_table",
+        "title": "Campanhas: janela recente e comparação comercial",
+        "dataset": "after",
+        "sourceId": "campaign_table_source",
+        "layout": "full",
+        "defaultSort": {
+          "field": "cost",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "campaign",
+            "label": "Campanha"
+          },
+          {
+            "field": "beforeCost",
+            "label": "Gasto antes (R$)",
+            "format": "number"
+          },
+          {
+            "field": "cost",
+            "label": "Gasto depois (R$)",
+            "format": "number"
+          },
+          {
+            "field": "beforeContacts",
+            "label": "Contatos antes",
+            "format": "number"
+          },
+          {
+            "field": "contacts",
+            "label": "Contatos depois",
+            "format": "number"
+          },
+          {
+            "field": "beforeQualified",
+            "label": "Qualif. antes",
+            "format": "number"
+          },
+          {
+            "field": "qualified",
+            "label": "Qualif. depois",
+            "format": "number"
+          },
+          {
+            "field": "scheduled",
+            "label": "Consultas",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "actions_table",
+        "title": "Mudanças propostas e evidência",
+        "dataset": "actions",
+        "sourceId": "actions_table_source",
+        "layout": "full",
+        "defaultSort": {
+          "field": "id",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "id",
+            "label": "ID"
+          },
+          {
+            "field": "campaign",
+            "label": "Campanha"
+          },
+          {
+            "field": "keyword",
+            "label": "Termo exato"
+          },
+          {
+            "field": "action",
+            "label": "Ação"
+          },
+          {
+            "field": "cost",
+            "label": "Gasto observado (R$)",
+            "format": "number"
+          },
+          {
+            "field": "status",
+            "label": "Estado"
+          }
+        ]
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "status": "ready",
+    "generatedAt": "2026-09-27T12:39:49.686Z",
+    "datasets": {
+      "totals": [
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "impressions": 10797,
+          "clicks": 789,
+          "cost": 1127.76,
+          "adsQualified": 1,
+          "contacts": 6,
+          "qualified": 1,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "cpc": 1.4293536121673003,
+          "ctr": 0.0730758544040011,
+          "costPerContact": 187.96,
+          "costPerQualified": 1127.76
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "impressions": 8999,
+          "clicks": 858,
+          "cost": 1362.38,
+          "adsQualified": 2,
+          "contacts": 7,
+          "qualified": 2,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "cpc": 1.587855477855478,
+          "ctr": 0.09534392710301144,
+          "costPerContact": 194.6257142857143,
+          "costPerQualified": 681.19
+        }
+      ],
+      "campaigns": [
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26LIFT",
+          "impressions": 2870,
+          "clicks": 296,
+          "cost": 325.33,
+          "adsQualified": 0,
+          "contacts": 2,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26BLEF",
+          "impressions": 3092,
+          "clicks": 192,
+          "cost": 304.4,
+          "adsQualified": 1,
+          "contacts": 1,
+          "qualified": 1,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26OTO",
+          "impressions": 1316,
+          "clicks": 95,
+          "cost": 205.26,
+          "adsQualified": 0,
+          "contacts": 1,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26CERV",
+          "impressions": 2218,
+          "clicks": 136,
+          "cost": 158.36,
+          "adsQualified": 0,
+          "contacts": 1,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26FACE",
+          "impressions": 1249,
+          "clicks": 58,
+          "cost": 106.99,
+          "adsQualified": 0,
+          "contacts": 1,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26MARCA",
+          "impressions": 26,
+          "clicks": 10,
+          "cost": 24.04,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26MAMA",
+          "impressions": 20,
+          "clicks": 0,
+          "cost": 0,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "antes",
+          "periodLabel": "31/08–12/09",
+          "campaign": "G26CORP",
+          "impressions": 6,
+          "clicks": 2,
+          "cost": 3.38,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26LIFT",
+          "impressions": 1307,
+          "clicks": 127,
+          "cost": 434.89,
+          "adsQualified": 1,
+          "contacts": 3,
+          "qualified": 1,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26BLEF",
+          "impressions": 2652,
+          "clicks": 285,
+          "cost": 300.58,
+          "adsQualified": 0,
+          "contacts": 1,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26OTO",
+          "impressions": 1091,
+          "clicks": 108,
+          "cost": 190.4,
+          "adsQualified": 1,
+          "contacts": 3,
+          "qualified": 1,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26CERV",
+          "impressions": 1684,
+          "clicks": 149,
+          "cost": 160.7,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26FACE",
+          "impressions": 224,
+          "clicks": 18,
+          "cost": 54.71,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26MARCA",
+          "impressions": 11,
+          "clicks": 2,
+          "cost": 6.72,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26MAMA",
+          "impressions": 1224,
+          "clicks": 94,
+          "cost": 105.84,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26CORP",
+          "impressions": 806,
+          "clicks": 75,
+          "cost": 108.54,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0
+        }
+      ],
+      "after": [
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26LIFT",
+          "impressions": 1307,
+          "clicks": 127,
+          "cost": 434.89,
+          "adsQualified": 1,
+          "contacts": 3,
+          "qualified": 1,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 325.33,
+          "beforeClicks": 296,
+          "beforeContacts": 2,
+          "beforeQualified": 0,
+          "cpc": 3.4243307086614174,
+          "ctr": 0.0971690895179801
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26BLEF",
+          "impressions": 2652,
+          "clicks": 285,
+          "cost": 300.58,
+          "adsQualified": 0,
+          "contacts": 1,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 304.4,
+          "beforeClicks": 192,
+          "beforeContacts": 1,
+          "beforeQualified": 1,
+          "cpc": 1.0546666666666666,
+          "ctr": 0.1074660633484163
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26OTO",
+          "impressions": 1091,
+          "clicks": 108,
+          "cost": 190.4,
+          "adsQualified": 1,
+          "contacts": 3,
+          "qualified": 1,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 205.26,
+          "beforeClicks": 95,
+          "beforeContacts": 1,
+          "beforeQualified": 0,
+          "cpc": 1.762962962962963,
+          "ctr": 0.09899175068744272
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26CERV",
+          "impressions": 1684,
+          "clicks": 149,
+          "cost": 160.7,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 158.36,
+          "beforeClicks": 136,
+          "beforeContacts": 1,
+          "beforeQualified": 0,
+          "cpc": 1.078523489932886,
+          "ctr": 0.08847980997624703
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26FACE",
+          "impressions": 224,
+          "clicks": 18,
+          "cost": 54.71,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 106.99,
+          "beforeClicks": 58,
+          "beforeContacts": 1,
+          "beforeQualified": 0,
+          "cpc": 3.0394444444444444,
+          "ctr": 0.08035714285714286
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26MARCA",
+          "impressions": 11,
+          "clicks": 2,
+          "cost": 6.72,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 24.04,
+          "beforeClicks": 10,
+          "beforeContacts": 0,
+          "beforeQualified": 0,
+          "cpc": 3.36,
+          "ctr": 0.18181818181818182
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26MAMA",
+          "impressions": 1224,
+          "clicks": 94,
+          "cost": 105.84,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 0,
+          "beforeClicks": 0,
+          "beforeContacts": 0,
+          "beforeQualified": 0,
+          "cpc": 1.1259574468085107,
+          "ctr": 0.07679738562091504
+        },
+        {
+          "period": "depois",
+          "periodLabel": "14–26/09",
+          "campaign": "G26CORP",
+          "impressions": 806,
+          "clicks": 75,
+          "cost": 108.54,
+          "adsQualified": 0,
+          "contacts": 0,
+          "qualified": 0,
+          "scheduled": 0,
+          "completed": 0,
+          "closed": 0,
+          "beforeCost": 3.38,
+          "beforeClicks": 2,
+          "beforeContacts": 0,
+          "beforeQualified": 0,
+          "cpc": 1.4472,
+          "ctr": 0.09305210918114144
+        }
+      ],
+      "actions": [
+        {
+          "id": "N1",
+          "campaign": "S_BR_SP_LIFTING_FACIAL",
+          "keyword": "lifting facial em bh",
+          "action": "Negativa exata",
+          "cost": 9.31,
+          "status": "Preparada"
+        },
+        {
+          "id": "N2",
+          "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+          "keyword": "avaliações sobre dr joel abdala",
+          "action": "Negativa exata",
+          "cost": 6.1,
+          "status": "Preparada"
+        },
+        {
+          "id": "P1",
+          "campaign": "S_BR_SP_LIFTING_CERVICAL",
+          "keyword": "estetica papada",
+          "action": "Pausar palavra",
+          "cost": 5.92,
+          "status": "Preparada"
+        },
+        {
+          "id": "P2",
+          "campaign": "S_BR_SP_LIFTING_CERVICAL",
+          "keyword": "procedimento para papada",
+          "action": "Pausar palavra",
+          "cost": 4.66,
+          "status": "Preparada"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "audit",
+      "label": "Google Ads ao vivo + LEADS: comparação auditada em 27/09/2026",
+      "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+      "query": {
+        "language": "python",
+        "engine": "Python",
+        "description": "Google Ads: valores de campanha transcritos da interface autenticada. CRM: união em memória por Opportunity ID; fonte inicial Google Ads, profissional Amanda, estado não voided; coorte por data do contato. Persistência apenas agregada.",
+        "tables_used": [
+          "_CRM_OPORTUNIDADES",
+          "_FUNIL_CANONICO",
+          "Funil Comercial",
+          "_OPORTUNIDADE_MARCOS",
+          "Consultas",
+          "Google Ads: Campanhas"
+        ],
+        "filters": [
+          "31/08–12/09 e 14–26/09/2026",
+          "13 dias por janela; 13/09 excluído",
+          "Google Ads como origem inicial, Amanda, oportunidades não anuladas",
+          "Fase atual em 27/09; sem igualdade de maturação"
+        ],
+        "metric_definitions": {
+          "contacts": "Número de oportunidades com origem inicial Google Ads e data do contato na janela; inclui Novo não classificado.",
+          "qualified": "Fase Qualificado, Consulta agendada, Consulta realizada ou Paciente convertido na leitura de 27/09.",
+          "cost": "Soma do custo BRL das oito campanhas na interface, por janela.",
+          "scheduled": "Marco/fase de consulta agendada ou posterior; conferido contra Consultas por Opportunity ID/telefone em memória, sem persistir identificadores."
+        },
+        "executed_at": "2026-09-27T12:39:49.686Z"
+      }
+    },
+    {
+      "id": "plan",
+      "label": "Escopo aprovado pela solicitação do usuário",
+      "path": "auditorias/google-ads-revisao-2026-09-27/PLANO.json"
+    },
+    {
+      "id": "exports",
+      "label": "14 CSVs, ZIP de marca e XLSX de recomendações",
+      "path": "auditorias/google-ads-revisao-2026-09-27/EXPORTACOES.json"
+    },
+    {
+      "id": "receipt",
+      "label": "Verificação das alterações",
+      "path": "auditorias/google-ads-revisao-2026-09-27/PUBLICACAO.json"
+    },
+    {
+      "id": "chart_source",
+      "label": "Google Ads: campanhas capturadas em 27/09/2026",
+      "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+      "query": {
+        "sql": "SELECT json_extract(item.value, '$.period') AS period, json_extract(item.value, '$.periodLabel') AS periodLabel, json_extract(item.value, '$.campaign') AS campaign, json_extract(item.value, '$.impressions') AS impressions, json_extract(item.value, '$.clicks') AS clicks, json_extract(item.value, '$.cost') AS cost, json_extract(item.value, '$.adsQualified') AS adsQualified, json_extract(item.value, '$.contacts') AS contacts, json_extract(item.value, '$.qualified') AS qualified, json_extract(item.value, '$.scheduled') AS scheduled, json_extract(item.value, '$.completed') AS completed, json_extract(item.value, '$.closed') AS closed FROM audit_snapshot, json_each(audit_snapshot.payload, '$.campaigns') AS item;",
+        "engine": "SQLite 3 / JSON1",
+        "language": "sql",
+        "description": "Tabela audit_snapshot recebe integralmente ANALISE.json; query executada no notebook analise.ipynb. Dados originais lidos do Google Ads autenticado, transcritos e conferidos com totais.",
+        "tables_used": [
+          "audit_snapshot"
+        ],
+        "filters": [
+          "31/08–12/09 e 14–26/09/2026",
+          "Oito campanhas; valores em BRL"
+        ],
+        "executed_at": "2026-09-27T12:43:51.444Z"
+      }
+    },
+    {
+      "id": "comparison_table_source",
+      "label": "Google Ads + LEADS: agregados auditados",
+      "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+      "query": {
+        "sql": "SELECT json_extract(item.value, '$.period') AS \"period\", json_extract(item.value, '$.periodLabel') AS \"periodLabel\", json_extract(item.value, '$.impressions') AS \"impressions\", json_extract(item.value, '$.clicks') AS \"clicks\", json_extract(item.value, '$.cost') AS \"cost\", json_extract(item.value, '$.adsQualified') AS \"adsQualified\", json_extract(item.value, '$.contacts') AS \"contacts\", json_extract(item.value, '$.qualified') AS \"qualified\", json_extract(item.value, '$.scheduled') AS \"scheduled\", json_extract(item.value, '$.completed') AS \"completed\", json_extract(item.value, '$.closed') AS \"closed\", json_extract(item.value, '$.cpc') AS \"cpc\", json_extract(item.value, '$.ctr') AS \"ctr\", json_extract(item.value, '$.costPerContact') AS \"costPerContact\", json_extract(item.value, '$.costPerQualified') AS \"costPerQualified\" FROM report_snapshot, json_each(report_snapshot.payload, '$.totals') AS item;",
+        "engine": "SQLite 3 / JSON1",
+        "language": "sql",
+        "description": "report_snapshot recebe datasets do artifact.json, derivados das capturas descritas em ANALISE.json e PLANO.json. Extração reproduzida no notebook; não há consulta SQL ao Google Ads ou à LEADS.",
+        "tables_used": [
+          "report_snapshot"
+        ],
+        "filters": [
+          "Apenas agregados revisados; sem dados pessoais"
+        ],
+        "executed_at": "2026-09-27T12:44:23.410Z"
+      }
+    },
+    {
+      "id": "campaign_table_source",
+      "label": "Google Ads + LEADS: agregados auditados",
+      "path": "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+      "query": {
+        "sql": "SELECT json_extract(item.value, '$.period') AS \"period\", json_extract(item.value, '$.periodLabel') AS \"periodLabel\", json_extract(item.value, '$.campaign') AS \"campaign\", json_extract(item.value, '$.impressions') AS \"impressions\", json_extract(item.value, '$.clicks') AS \"clicks\", json_extract(item.value, '$.cost') AS \"cost\", json_extract(item.value, '$.adsQualified') AS \"adsQualified\", json_extract(item.value, '$.contacts') AS \"contacts\", json_extract(item.value, '$.qualified') AS \"qualified\", json_extract(item.value, '$.scheduled') AS \"scheduled\", json_extract(item.value, '$.completed') AS \"completed\", json_extract(item.value, '$.closed') AS \"closed\", json_extract(item.value, '$.beforeCost') AS \"beforeCost\", json_extract(item.value, '$.beforeClicks') AS \"beforeClicks\", json_extract(item.value, '$.beforeContacts') AS \"beforeContacts\", json_extract(item.value, '$.beforeQualified') AS \"beforeQualified\", json_extract(item.value, '$.cpc') AS \"cpc\", json_extract(item.value, '$.ctr') AS \"ctr\" FROM report_snapshot, json_each(report_snapshot.payload, '$.after') AS item;",
+        "engine": "SQLite 3 / JSON1",
+        "language": "sql",
+        "description": "report_snapshot recebe datasets do artifact.json, derivados das capturas descritas em ANALISE.json e PLANO.json. Extração reproduzida no notebook; não há consulta SQL ao Google Ads ou à LEADS.",
+        "tables_used": [
+          "report_snapshot"
+        ],
+        "filters": [
+          "Apenas agregados revisados; sem dados pessoais"
+        ],
+        "executed_at": "2026-09-27T12:44:23.410Z"
+      }
+    },
+    {
+      "id": "actions_table_source",
+      "label": "Plano de alterações baseado em termos verificados",
+      "path": "auditorias/google-ads-revisao-2026-09-27/PLANO.json",
+      "query": {
+        "sql": "SELECT json_extract(item.value, '$.id') AS \"id\", json_extract(item.value, '$.campaign') AS \"campaign\", json_extract(item.value, '$.keyword') AS \"keyword\", json_extract(item.value, '$.action') AS \"action\", json_extract(item.value, '$.cost') AS \"cost\", json_extract(item.value, '$.status') AS \"status\" FROM report_snapshot, json_each(report_snapshot.payload, '$.actions') AS item;",
+        "engine": "SQLite 3 / JSON1",
+        "language": "sql",
+        "description": "report_snapshot recebe datasets do artifact.json, derivados das capturas descritas em ANALISE.json e PLANO.json. Extração reproduzida no notebook; não há consulta SQL ao Google Ads ou à LEADS.",
+        "tables_used": [
+          "report_snapshot"
+        ],
+        "filters": [
+          "Apenas agregados revisados; sem dados pessoais"
+        ],
+        "executed_at": "2026-09-27T12:44:23.410Z"
+      }
+    }
+  ]
+}

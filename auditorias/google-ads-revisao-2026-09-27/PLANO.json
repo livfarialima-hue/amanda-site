@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
+  "accountId": "995-334-4486",
+  "status": "planned",
+  "authorization": "Pedido de Daniel nesta tarefa em 27/09/2026: proponha e faça mudanças que valham a pena para adquirirmos mais pacientes.",
+  "baselineCommit": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
+  "decision": "Refinar intenção de busca com quatro mudanças reversíveis; preservar orçamento total de R$105/dia e o piloto LIFT até a revisão D28.",
+  "actions": [
+    {
+      "id": "N1",
+      "type": "add_negative",
+      "campaign": "S_BR_SP_LIFTING_FACIAL",
+      "level": "campaign",
+      "match": "exact",
+      "keyword": "lifting facial em bh",
+      "before": "Nenhum (termo não excluído)",
+      "after": "[lifting facial em bh]",
+      "evidence": {
+        "period": "2026-09-14/2026-09-26",
+        "clicks": 1,
+        "cost": 9.31,
+        "qualified": 0
+      },
+      "reason": "Busca explicita por servico em Belo Horizonte; atendimento local em Sao Paulo. Exata preserva viajantes e outras buscas."
+    },
+    {
+      "id": "N2",
+      "type": "add_negative",
+      "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+      "level": "campaign",
+      "match": "exact",
+      "keyword": "avaliações sobre dr joel abdala",
+      "before": "Nenhum (termo não excluído)",
+      "after": "[avaliações sobre dr joel abdala]",
+      "evidence": {
+        "period": "2026-09-14/2026-09-26",
+        "clicks": 2,
+        "cost": 6.1,
+        "qualified": 0
+      },
+      "reason": "Intencao de avaliar outro profissional; exata preserva busca generica pela cirurgia."
+    },
+    {
+      "id": "P1",
+      "type": "pause_keyword",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "match": "exact",
+      "keyword": "estetica papada",
+      "before": "Ativado",
+      "after": "Pausado",
+      "evidence": {
+        "period": "2026-09-14/2026-09-26",
+        "clicks": 6,
+        "cost": 5.92,
+        "qualified": 0
+      },
+      "reason": "Recomendacao recusada na secao 36, mas adicionada via app em 14/09; intencao ampla de estetica conflita com foco cirurgico e negativa existente."
+    },
+    {
+      "id": "P2",
+      "type": "pause_keyword",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "match": "exact",
+      "keyword": "procedimento para papada",
+      "before": "Ativado",
+      "after": "Pausado",
+      "evidence": {
+        "period": "2026-09-14/2026-09-26",
+        "clicks": 4,
+        "cost": 4.66,
+        "qualified": 0
+      },
+      "reason": "Recomendacao recusada na secao 36, mas adicionada em 14/09; termo nao define interesse cirurgico. Pausa reversivel por alinhamento, nao por significancia estatistica."
+    }
+  ],
+  "notApplied": [
+    "Negativa blefaroplastia preco popular: nao houve termo recente; registro aponta frase ja existente em lista. Evitar duplicar negativa de dado historico.",
+    "Nenhuma negativa generica preco/valor/quanto custa, exclusao de renda desconhecida, bairro, sexo ou idade.",
+    "Sem aumento de verba, Display, parceiros, ampla, Performance Max, CPA desejado ou troca de lance nas outras campanhas.",
+    "Sem nova alteracao de RSA, site, bot, LEADS, classificacao ou importacao manual de conversoes.",
+    "Nenhuma conclusao de capacidade financeira individual a partir da busca, CEP ou comportamento."
+  ],
+  "invariants": {
+    "totalDailyBudget": 105,
+    "budgets": {
+      "G26LIFT": 30,
+      "G26BLEF": 23,
+      "G26OTO": 15,
+      "G26CERV": 12,
+      "G26FACE": 4,
+      "G26MARCA": 5,
+      "G26MAMA": 8,
+      "G26CORP": 8
+    },
+    "liftBidding": "Maximizar conversoes sem CPA desejado",
+    "consultationPrice": 500,
+    "primaryGoal": "Lead qualificado GCLID",
+    "proxy": "Clique no WhatsApp - proxy temporaria secundaria"
+  },
+  "readOnlyPreflight": {
+    "checkedAt": "2026-09-27T12:40:44.325Z",
+    "googleAds": "Chrome conta 995-334-4486; comparacao campanha, conversoes, palavras e termos; N1/N2 Nenhum e filtro de negativas joel,bh sem resultados; P1/P2 Ativadas.",
+    "leads": "CRM, funil canonico, marcos e Consultas; somente agregados persistidos.",
+    "diagnostics": "Aviso de upload e de 30/08; conexao direta excelente e atualizada em 25/09. Ready na LEADS nao equivale a aceito.",
+    "exports": "14 CSVs, ZIP e XLSX do usuario; periodo real 23/06–20/09. Negativas exportadas filtradas por valor."
+  },
+  "rollback": "Remover somente N1/N2 exatas criadas neste pacote e reativar P1/P2 se surgirem contatos validos atribuiveis ou restricao indevida; nao restaurar listas/campanhas em massa.",
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "checks": [
+      "2026-09-29: verificar veiculacao, termos e nenhum bloqueio indevido",
+      "2026-10-04: contatos classificados, qualificados e consultas por campanha",
+      "2026-10-11: D28 do piloto LIFT; manter ou reverter com mensuracao valida",
+      "2026-10-12: encerrar/reavaliar MAMA/CORP; sem escalar sem 2 qualificados e 1 consulta"
+    ],
+    "guardrails": [
+      "Reverter negativa se interceptar procura valida pela Dra Amanda.",
+      "Pausas sao alinhamento de intencao; nao alegar economia mensal prevista.",
+      "Sem elevar orçamento enquanto ganho em consultas nao estiver demonstrado."
+    ]
+  }
+}

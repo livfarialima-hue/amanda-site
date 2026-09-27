@@ -770,7 +770,15 @@
         "auditorias/google-ads-qualidade-2026-09-13/REVISAO.json",
         "campanhas/google-ads-ad-strength-20260913.test.mjs",
         "ops/CHANGE-CANDIDATE.json",
-        "ops/IMPACT-REGISTRY.json"
+        "ops/IMPACT-REGISTRY.json",
+        "auditorias/google-ads-revisao-2026-09-27/ANALISE.json",
+        "auditorias/google-ads-revisao-2026-09-27/EXPORTACOES.json",
+        "auditorias/google-ads-revisao-2026-09-27/PLANO.json",
+        "auditorias/google-ads-revisao-2026-09-27/PUBLICACAO.json",
+        "auditorias/google-ads-revisao-2026-09-27/RELATORIO.md",
+        "auditorias/google-ads-revisao-2026-09-27/analise.ipynb",
+        "auditorias/google-ads-revisao-2026-09-27/analyze_exports.py",
+        "auditorias/google-ads-revisao-2026-09-27/artifact.json"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
