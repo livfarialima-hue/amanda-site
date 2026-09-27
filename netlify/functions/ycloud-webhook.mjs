@@ -2418,6 +2418,9 @@ async function completeOpenAIActive({
             humanContextContinuationCandidate: true,
           }
         : refreshedPlan;
+      // Facts and the semantic decision must use the same refreshed procedure.
+      // An empty/ambiguous refreshed context must not inherit a stale procedure.
+      input = { ...input, procedure: plan?.procedure || "" };
       schedulingRequest = isSchedulingRequestInPatientBlock(input.text);
       const refreshedConversationAction = decideConversationAction({
         text: input.text,
@@ -2974,10 +2977,8 @@ async function completeOpenAIActive({
         decision: activeResult.decision,
         risk: learningRisk,
       });
-    let learningRecord = null;
-
     if (unknownClarification || unknownReview) {
-      learningRecord = await recordBotUnknownQuestion({
+      await recordBotUnknownQuestion({
         eventId: String(input.eventId),
         phone: to,
         patientName: input.patientProfileName,
@@ -2994,7 +2995,7 @@ async function completeOpenAIActive({
           ? "Aguardando esclarecimento"
           : "Aguardando resposta humana",
         priority:
-          learningRisk === "Alto" ? "Imediata" : "Resumo diário",
+          unknownReview || learningRisk === "Alto" ? "Imediata" : "Resumo diário",
         procedure:
           activeResult.decision.procedure || plan?.procedure || "",
         suggestedReply: internalReviewSuggestion,
@@ -3016,16 +3017,15 @@ async function completeOpenAIActive({
         : "";
 
     if (unknownReview || pediatricReviewAcknowledgement) {
+      // A learning record is not a delivered handoff. Retry the same event ID
+      // even if an earlier caller queued an alert without retaining its receipt.
+      // The alert transport deduplicates the email by event ID.
+      let unknownReviewAlert = null;
       if (
-        (
-          pediatricReviewAcknowledgement ||
-          learningRisk === "Alto" ||
-          learningRecord?.ok !== true
-        ) &&
-        !reviewAlertAlreadyQueued &&
+        (unknownReview || !reviewAlertAlreadyQueued) &&
         isReviewAlertConfigured()
       ) {
-        await completeReviewAlert(
+        unknownReviewAlert = await completeReviewAlert(
           prepareReviewAlertInput(alertInput, {
             decision: {
               ...activeResult.decision,
@@ -3034,6 +3034,28 @@ async function completeOpenAIActive({
             plan,
           }),
         );
+      }
+
+      if (unknownReview) {
+        if (unknownReviewAlert?.status !== "completed" && unknownReviewAlert?.emailStatus !== "completed") {
+          return {status: "failed", errorCode: "unknown_review_alert_failed", replySent: false};
+        }
+        await recordOperationalEvent({
+          eventId: `${input.eventId}-human-handoff`,
+          parentEventId: input.eventId,
+          opportunityId: input.opportunityId,
+          phone: to,
+          professional: input.professional,
+          type: "human_handoff_queued",
+          source: "bruna",
+          at: new Date().toISOString(),
+          outcome: "queued",
+          ...operationalDecisionMetadata({
+            decision: activeResult.decision, plan, relationship: patientRelationship,
+            gateResult: "review", gateReason: "unknown_review_alert_delivered",
+            model: activeResult.model, receivedAt: input.receivedAt,
+          }),
+        });
       }
 
       const contactPreferenceGuard =

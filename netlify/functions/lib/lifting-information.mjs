@@ -43,6 +43,11 @@ export function liftingFacialInformationTopics({
   if (comparesLiftingScopes) topics.push("scope_comparison");
   if (procedureValue !== "lifting_facial") return topics;
 
+  if (/\bdeep[\s-]*plane\b/i.test(value)) topics.push("deep_plane");
+  if (isProcedureExplanationInquiry(value)) topics.push("procedure_explanation");
+  if (/\b(?:onde|como|quais)\b[^.!?\n]{0,70}\bcicatriz(?:es)?\b|\bcicatriz(?:es)?\b[^.!?\n]{0,40}\b(?:ficam|fica|ficar[aã]o|s[aã]o|vis[ií]veis|aparentes)\b|(?:^|[.!?\n])\s*(?:e\s+)?(?:a\s+|as\s+)?cicatriz(?:es)?\s*\?/i.test(value)) topics.push("scars");
+  if (/\banestesia\b/i.test(value)) topics.push("anesthesia");
+  if (/\b(?:hospital|hospitais)\b/i.test(value)) topics.push("hospital");
   if (DURATION_PATTERN.test(value)) topics.push("duration");
   if (RECOVERY_PATTERN.test(value)) topics.push("recovery");
   if (INDICATION_PATTERN.test(value)) topics.push("indication");
@@ -65,6 +70,16 @@ export function approvedLiftingFacialFacts({ text, procedure } = {}) {
   if (!topics.length) return null;
 
   const facts = [];
+  const publicFaq = {
+    deep_plane: "Sim, a Dra. Amanda realiza lifting facial com abordagem deep plane quando há indicação. A escolha é feita na avaliação, conforme a anatomia, as regiões a tratar e os objetivos de cada pessoa.",
+    procedure_explanation: "O lifting facial reposiciona os tecidos da face e pode incluir o pescoço, conforme o planejamento. A extensão e a abordagem são definidas na avaliação, considerando a anatomia e os objetivos de cada pessoa.",
+    scars: "As incisões do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo. A posição e a extensão são discutidas na avaliação.",
+    anesthesia: "No lifting facial, pode ser usada anestesia geral ou sedação, conforme a extensão da cirurgia, os procedimentos associados, a estrutura e a avaliação clínica. A definição é individualizada pela equipe.",
+    hospital: "A Dra. Amanda opera em hospitais como Sírio-Libanês, Alemão Oswaldo Cruz e Nove de Julho, além de outras instituições selecionadas com estrutura compatível. O local depende do procedimento e do planejamento de cada caso.",
+  };
+  for (const topic of topics) {
+    if (publicFaq[topic]) facts.push({topic, source: "lifting-facial/index.html", statement: publicFaq[topic]});
+  }
   if (topics.includes("scope_comparison")) {
     facts.push({
       topic: "scope_comparison",
@@ -101,6 +116,8 @@ export function approvedLiftingFacialFacts({ text, procedure } = {}) {
     boundaries: [
       "Não informar uma duração numérica exata sem uma referência aprovada.",
       "Não concluir indicação individual pelo WhatsApp.",
+      "Realizar uma abordagem quando indicada não confirma que ela seja adequada para essa pessoa nem que seja superior às demais.",
+      "Não confirmar anestesia, hospital reservado, cicatriz, resultado ou alta para um caso individual; não descrever etapas operatórias nem inventar equipamentos ou credenciais.",
       "Não prometer que o minilifting terá cicatriz menor, recuperação mais rápida ou será suficiente para o caso individual.",
       "A avaliação pode inclusive concluir que a cirurgia ainda não está indicada.",
     ],
@@ -189,6 +206,12 @@ export function buildLiftingFacialInformationReply({
   if (!approved) return "";
 
   const name = formattedFirstName(patientName);
+  if (approved.topics.some(topic => ["deep_plane", "procedure_explanation", "scars", "anesthesia", "hospital"].includes(topic))) {
+    const opening = introduceBruna
+      ? `${name ? `Olá, ${name}!` : "Olá!"} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+      : "";
+    return [opening, ...approved.facts.map(fact => fact.statement)].filter(Boolean).join("\n\n");
+  }
   if (
     approved.topics.length === 1 &&
     approved.topics[0] === "scope_comparison"

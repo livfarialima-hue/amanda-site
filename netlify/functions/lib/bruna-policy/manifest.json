@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-09-27.1",
-  "promptVersion": "bruna-concierge-2026-09-27.1",
+  "bundleVersion": "2026-09-27.2",
+  "promptVersion": "bruna-concierge-2026-09-27.2",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-09-27.1",
+  "knowledgeSnapshot": "kb-2026-09-27.2",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -31,6 +31,10 @@
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-09-27.1",
     "appsScriptVersion": 161
+  },
+  "pendingRelease": {
+    "bundleVersion": "2026-09-27.2",
+    "changeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27"
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",

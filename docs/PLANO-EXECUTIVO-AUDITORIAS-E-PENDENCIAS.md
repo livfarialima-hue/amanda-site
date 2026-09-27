@@ -1,5 +1,12 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-PERGUNTAS-SIMPLES-2026-09-27 -->
+**Pacote 2026-09-27.2 — TESTADO LOCALMENTE, PUBLICAÇÃO PENDENTE.** A pergunta institucional sobre deep plane e as dúvidas gerais sobre funcionamento, cicatrizes, anestesia e hospitais do lifting facial passam a usar fatos da página canônica, sem indicação individual. O procedimento recalculado ao reunir mensagens é repassado ao contexto semântico e à seleção dos fatos. Toda UNKNOWN-REVIEW exige alerta interno com recibo antes de encerrar a recuperação; registro no resumo diário não substitui atendimento. Falha de alerta mantém a pendência recuperável. Sem mudança de preço, agenda, cuidado ativo, opt-out, takeover, Apps Script ou Ads. Nenhum replay ou envio manual a paciente. Rollback: Netlify 6ab91021e447e700078e94e1 / a2eaf6dba1b72cbe7688092c501e905fc4c548ec, preservando Apps Script v161 e recibos. Evidência: auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md.
+
+Daniel/equipe: conferir primeiras interações naturais, especialmente resposta institucional, perguntas fragmentadas e alertas de dúvida desconhecida; falha ou resposta clínica individual exige revisão/rollback. Revisões já previstas em 29/09 e 04/10/2026 preservadas, sem nova automação.
+<!-- /BRUNA-PERGUNTAS-SIMPLES-2026-09-27 -->
+
+
 <!-- GOOGLE-ADS-REVISAO-2026-09-27 -->
 **Google Ads — revisão 27/09/2026: quatro ajustes PUBLICADOS E VERIFICADOS.** Comparação 31/08–12/09 versus 14–26/09: contatos identificados 6→7, qualificados 1→2, consultas vinculadas zero; R$1.127,76→R$1.362,38 (+20,8%). Nas seis campanhas antigas, gasto +2,1%; mama/corpo explicam quase todo o acréscimo. Escopo: negativas exatas de BH e avaliação de outro médico; pausa das duas sugestões amplas de papada adicionadas em 14/09 após recusa estratégica. Orçamento R$105/dia preservado. Autoridade: pedido de Daniel nesta tarefa para analisar e fazer otimizações. Evidência: `auditorias/google-ads-revisao-2026-09-27/RELATORIO.md`; plano/rollback no mesmo diretório.
 

@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-09-27T14:30:00Z",
+  "status": "verified_read_only",
+  "baseCommit": "9e4646e0e2dcc30e88dc4556d3c6c23590d79dd0",
+  "production": {
+    "commit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+    "netlifyDeployId": "6ab91021e447e700078e94e1",
+    "bundleVersion": "2026-09-27.1",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "completeInboundMessages": 2,
+    "correctRouting": true,
+    "humanTakeover": false,
+    "patientOptOut": false,
+    "outboundReplies": 0,
+    "classification": "human_review / UNKNOWN-REVIEW-01 / unknown_digest",
+    "learningPriority": "Resumo diário",
+    "learningRisk": "Médio",
+    "activeStatus": "awaiting_human_learning",
+    "recoveryStatus": "completed",
+    "internalAlertFound": false,
+    "workerIdleAfterProcessing": true,
+    "missingApprovedFact": "A página pública de lifting facial confirma a realização da abordagem deep plane quando indicada; esse fato estava ausente do contexto aprovado fornecido à Bruna."
+  },
+  "sources": [
+    "LEADS: _WHATSAPP_MENSAGENS, _WHATSAPP_EVENTOS, _WHATSAPP_CLASSIFICACAO, _CRM_OPORTUNIDADES, _WHATSAPP_DUVIDAS, _WHATSAPP_ALERTAS_EMAIL, _WHATSAPP_ATENDIMENTO_HUMANO, _WHATSAPP_OPERACAO_EVENTOS",
+    "Netlify: ycloud-recovery-background, janela de 27/09/2026 10:29–11:29 America/Sao_Paulo",
+    "https://draamandaschroeder.com.br/lifting-facial/"
+  ],
+  "privacy": "Somente conclusões agregadas; sem telefone, nome, texto identificável ou IDs operacionais de paciente.",
+  "externalWritesPerformed": false,
+  "publicationPreflight": {
+    "checkedAt": "2026-09-27T14:48:25.716Z",
+    "productionCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "netlifyProject": "inspiring-sprite-b35ca4",
+    "gitRemoteBaseline": "9e4646e0e2dcc30e88dc4556d3c6c23590d79dd0",
+    "rootClean": true,
+    "driveProjections": [
+      {
+        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "sha256": "a096445f3a68b0a183116bd768ec20b92ca06b429ed00f8d08fda6b1806100c8"
+      },
+      {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "sha256": "32664583ee3bff4eee8493a711f470680fefbf13b651733deaed39e20816ac78"
+      }
+    ],
+    "rawReadbackMatchesBaseline": true
+  }
+}
