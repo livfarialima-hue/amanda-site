@@ -20,7 +20,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 27 de setembro de 2026 — revisão comercial e quatro restrições de intenção
 
-**Candidato local; publicação pendente.** Decisão canônica: seção 39 do Norte. Motivo: qualificação melhorou de 1 para 2, mas consultas continuam sem marco nas coortes e o gasto total cresceu 20,8%. Hipótese: retirar procura explícita por outra cidade/outro médico e restaurar intenção cirúrgica de papada reduz dispersão com o mesmo orçamento. Escopo: duas negativas exatas e duas pausas, detalhadas em `auditorias/google-ads-revisao-2026-09-27/PLANO.json`. Nenhuma mudança de orçamento, lance, meta, site, bot ou LEADS.
+**Publicado e verificado no Google Ads em 27/09/2026.** Decisão canônica: seção 39 do Norte. Motivo: qualificação melhorou de 1 para 2, mas consultas continuam sem marco nas coortes e o gasto total cresceu 20,8%. Hipótese: retirar procura explícita por outra cidade/outro médico e restaurar intenção cirúrgica de papada reduz dispersão com o mesmo orçamento. Escopo: duas negativas exatas e duas pausas, detalhadas em `auditorias/google-ads-revisao-2026-09-27/PLANO.json`. Nenhuma mudança de orçamento, lance, meta, site, bot ou LEADS.
 
 Métricas: qualificados, consultas e fechamentos atribuídos; não confundir cliques ou conversões históricas de proxy com pacientes. Revisões: 29/09, 04/10, D28 LIFT em 11/10 e mama/corpo em 12/10. Reversão limitada aos quatro objetos se houver bloqueio de procura válida. A frase compartilhada preço popular já era documentada; não duplicar exclusão por custo histórico. Evidência principal ao vivo em 27/09, com anexos históricos 23/06–20/09 como apoio.
 

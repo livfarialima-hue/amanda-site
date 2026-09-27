@@ -1157,7 +1157,7 @@ Motivo: solicitação de Daniel nesta tarefa, com destino confirmado somente par
 
 ## 39. Revisão de 27/09/2026 — intenção cirúrgica e progressão para consulta
 
-**Estado: candidato local, ainda sem escrita externa.** Escopo autorizado pelo pedido de Daniel para analisar e fazer mudanças úteis; conta 995-334-4486. Evidência e recibos: `auditorias/google-ads-revisao-2026-09-27/`.
+**Estado: publicado e verificado no Google Ads em 27/09/2026.** Escopo autorizado pelo pedido de Daniel para analisar e fazer mudanças úteis; conta 995-334-4486. Evidência e recibos: `auditorias/google-ads-revisao-2026-09-27/`.
 
 Comparação de 31/08–12/09 versus 14–26/09 (13 dias, excluído 13/09): R$1.127,76 → R$1.362,38; contatos Google identificados 6 → 7; qualificados 1 → 2; consultas/fechamentos vinculados zero. Aumento de apenas 2,1% do gasto nas seis campanhas antigas; mama/corpo explicam R$211,00 do acréscimo. Coortes pela data do contato e fase atual, com maturação desigual e amostra insuficiente para causalidade.
 

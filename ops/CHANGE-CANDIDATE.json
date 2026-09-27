@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
   "title": "Revisar aquisição Google Ads e restringir quatro desvios de intenção",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -104,7 +104,9 @@
       "ops": "SYNC_PENDING expected in isolated unpublished candidate",
       "notebook": "three code cells executed and SQLite datasets equal source captures",
       "artifact": "MCP validation passed"
-    }
+    },
+    "fullTests": 1808,
+    "external": "Google Ads actions applied_verified; Drive plan pending"
   },
   "rollback": {
     "local": "Reverter somente os arquivos deste pacote; preservar trabalho paralelo.",

@@ -1,4 +1,4 @@
-# Google Ads: qualidade melhorou; aquisição de pacientes ainda não comprovada
+# Google Ads: sinais de melhora, consultas ainda não comprovadas
 
 ## Resumo executivo
 
@@ -40,16 +40,16 @@ O alerta de importação investigado é de **30/08**. A conexão direta consta e
 
 ## Mudanças de escopo controlado
 
-Quatro ações reversíveis, preparadas para aplicação na conta 995-334-4486. O orçamento total permanece R$105/dia. Os valores abaixo são gasto observado de 14–26/09, sem previsão de economia mensal.
+Quatro ações reversíveis aplicadas e verificadas na conta 995-334-4486 em 27/09/2026. O orçamento total permanece R$105/dia. Os valores abaixo são gasto observado de 14–26/09, sem previsão de economia mensal.
 
-### Mudanças propostas e evidência
+### Mudanças aplicadas e verificadas
 
 | ID | Campanha | Termo exato | Ação | Gasto observado (R$) | Estado |
 | --- | --- | --- | --- | --- | --- |
-| N1 | S_BR_SP_LIFTING_FACIAL | lifting facial em bh | Negativa exata | 9,31 | Preparada |
-| N2 | S_BR_SP_CIRURGIA_FACIAL | avaliações sobre dr joel abdala | Negativa exata | 6,10 | Preparada |
-| P1 | S_BR_SP_LIFTING_CERVICAL | estetica papada | Pausar palavra | 5,92 | Preparada |
-| P2 | S_BR_SP_LIFTING_CERVICAL | procedimento para papada | Pausar palavra | 4,66 | Preparada |
+| N1 | S_BR_SP_LIFTING_FACIAL | lifting facial em bh | Negativa exata | 9,31 | Aplicada e verificada |
+| N2 | S_BR_SP_CIRURGIA_FACIAL | avaliações sobre dr joel abdala | Negativa exata | 6,10 | Aplicada e verificada |
+| P1 | S_BR_SP_LIFTING_CERVICAL | estetica papada | Pausar palavra | 5,92 | Aplicada e verificada |
+| P2 | S_BR_SP_LIFTING_CERVICAL | procedimento para papada | Pausar palavra | 4,66 | Aplicada e verificada |
 
 ## Como atrair quem considera uma cirurgia particular
 

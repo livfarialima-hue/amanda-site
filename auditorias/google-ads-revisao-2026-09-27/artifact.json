@@ -3,7 +3,7 @@
   "manifest": {
     "version": 1,
     "surface": "report",
-    "title": "Google Ads: qualidade melhorou; aquisição de pacientes ainda não comprovada",
+    "title": "Google Ads: sinais de melhora, consultas ainda não comprovadas",
     "description": "Revisão de 27/09/2026. Comparação 31/08–12/09 versus 14–26/09 e plano de otimização com orçamento preservado.",
     "generatedAt": "2026-09-27T12:39:49.686Z",
     "sources": [
@@ -132,7 +132,7 @@
         "id": "title",
         "type": "markdown",
         "layout": "full",
-        "body": "# Google Ads: qualidade melhorou; aquisição de pacientes ainda não comprovada"
+        "body": "# Google Ads: sinais de melhora, consultas ainda não comprovadas"
       },
       {
         "id": "summary",
@@ -169,7 +169,7 @@
         "id": "actions_heading",
         "type": "markdown",
         "layout": "full",
-        "body": "## Mudanças de escopo controlado\n\nQuatro ações reversíveis, preparadas para aplicação na conta 995-334-4486. O orçamento total permanece R$105/dia. Os valores abaixo são gasto observado de 14–26/09, sem previsão de economia mensal."
+        "body": "## Mudanças aplicadas e verificadas\n\nAs quatro ações foram salvas e relidas na conta 995-334-4486 em 27/09/2026. As duas negativas estão em correspondência exata nas respectivas campanhas, e as duas palavras de papada aparecem como Pausado. Os oito orçamentos foram relidos: total preservado em R$105/dia. Os valores abaixo são gasto observado de 14–26/09, sem previsão de economia mensal."
       },
       {
         "id": "actions",
@@ -337,7 +337,7 @@
       },
       {
         "id": "actions_table",
-        "title": "Mudanças propostas e evidência",
+        "title": "Mudanças aplicadas e verificadas",
         "dataset": "actions",
         "sourceId": "actions_table_source",
         "layout": "full",
@@ -811,7 +811,7 @@
           "keyword": "lifting facial em bh",
           "action": "Negativa exata",
           "cost": 9.31,
-          "status": "Preparada"
+          "status": "Aplicada e verificada"
         },
         {
           "id": "N2",
@@ -819,7 +819,7 @@
           "keyword": "avaliações sobre dr joel abdala",
           "action": "Negativa exata",
           "cost": 6.1,
-          "status": "Preparada"
+          "status": "Aplicada e verificada"
         },
         {
           "id": "P1",
@@ -827,7 +827,7 @@
           "keyword": "estetica papada",
           "action": "Pausar palavra",
           "cost": 5.92,
-          "status": "Preparada"
+          "status": "Aplicada e verificada"
         },
         {
           "id": "P2",
@@ -835,7 +835,7 @@
           "keyword": "procedimento para papada",
           "action": "Pausar palavra",
           "cost": 4.66,
-          "status": "Preparada"
+          "status": "Aplicada e verificada"
         }
       ]
     }

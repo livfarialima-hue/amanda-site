@@ -1,6 +1,92 @@
 {
-  "status": "pending",
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
+  "status": "google_ads_published_verified",
+  "approvedCommit": "2af02dae351326c46044a1ffbc87ccd1297c822b",
   "accountId": "995-334-4486",
-  "actions": [],
-  "externalWritesPerformed": false
+  "verifiedAt": "2026-09-27T12:55:28.419Z",
+  "authorization": "Pedido de Daniel nesta tarefa em 27/09/2026: proponha e faça mudanças que valham a pena para adquirirmos mais pacientes.",
+  "releasePreflight": "passed 2026-09-27T12:51:13.2084217Z, exact approved commit",
+  "actions": [
+    {
+      "id": "N1",
+      "campaign": "S_BR_SP_LIFTING_FACIAL",
+      "adGroup": null,
+      "keyword": "lifting facial em bh",
+      "match": "exact",
+      "before": "Nenhum (termo não excluído)",
+      "after": "[lifting facial em bh]",
+      "status": "applied_verified",
+      "evidence": "UI Palavras-chave negativas: termo entre colchetes, campanha exata e tipo Corresp. exata. Ambos relidos juntos após salvar."
+    },
+    {
+      "id": "N2",
+      "campaign": "S_BR_SP_CIRURGIA_FACIAL",
+      "adGroup": null,
+      "keyword": "avaliações sobre dr joel abdala",
+      "match": "exact",
+      "before": "Nenhum (termo não excluído)",
+      "after": "[avaliações sobre dr joel abdala]",
+      "status": "applied_verified",
+      "evidence": "UI Palavras-chave negativas: termo entre colchetes, campanha exata e tipo Corresp. exata. Ambos relidos juntos após salvar."
+    },
+    {
+      "id": "P1",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "keyword": "estetica papada",
+      "match": "exact",
+      "before": "Ativado",
+      "after": "Pausado",
+      "status": "applied_verified",
+      "evidence": "UI Palavras-chave, filtro ativadas e pausadas: estado Pausado e status Pausada, AG_LIPO_PAPADA."
+    },
+    {
+      "id": "P2",
+      "campaign": "S_BR_SP_LIFTING_CERVICAL",
+      "adGroup": "AG_LIPO_PAPADA",
+      "keyword": "procedimento para papada",
+      "match": "exact",
+      "before": "Ativado",
+      "after": "Pausado",
+      "status": "applied_verified",
+      "evidence": "UI Palavras-chave, filtro ativadas e pausadas: estado Pausado e status Pausada, AG_LIPO_PAPADA."
+    }
+  ],
+  "budgetsBefore": {
+    "G26LIFT": 30,
+    "G26BLEF": 23,
+    "G26OTO": 15,
+    "G26CERV": 12,
+    "G26FACE": 4,
+    "G26MARCA": 5,
+    "G26MAMA": 8,
+    "G26CORP": 8
+  },
+  "budgetsAfter": {
+    "G26LIFT": 30,
+    "G26BLEF": 23,
+    "G26OTO": 15,
+    "G26CERV": 12,
+    "G26FACE": 4,
+    "G26MARCA": 5,
+    "G26MAMA": 8,
+    "G26CORP": 8
+  },
+  "totalBefore": 105,
+  "totalAfter": 105,
+  "externalWritesPerformed": true,
+  "externalWritesLimitedTo": "Google Ads: duas negativas exatas e duas pausas. Nenhuma escrita em LEADS, Apps Script, Netlify ou mensagem.",
+  "otherProductionDestinations": {
+    "changed": false,
+    "netlifyDeployId": "6ab8370595a6f500088ea9e1",
+    "appsScriptVersion": 161,
+    "evidence": "Recibo de baseline versionado; nenhum novo deploy neste pacote."
+  },
+  "drivePlan": {
+    "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "beforeSha256": "2eb2e490243952efa5e1b5786f551e0f64209dc811e594413841631e503c5018",
+    "status": "pending"
+  },
+  "outcome": "Somente configuracao verificada; ganho futuro em pacientes ainda nao medido."
 }
