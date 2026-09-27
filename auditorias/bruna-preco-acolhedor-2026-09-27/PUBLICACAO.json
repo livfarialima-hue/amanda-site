@@ -136,17 +136,17 @@
     "prefillAndAttributionVerified": true,
     "whatsappLinkActivated": false
   },
-  "documentationCommit": "1327592d3f02e5738438994d1f4ef66d1fcbf271",
-  "documentationVerifiedAt": "2026-09-27T12:57:26Z",
+  "documentationCommit": "0a2fe4ef846d3d542fc92b157e6b7d1febb15ec0",
+  "documentationVerifiedAt": "2026-09-27T13:00:00.984Z",
   "driveProjections": [
     {
       "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
       "source": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "66cb304d66a5d2c4c9f9b06bd30820e5af960d719294130397297c9d9db82d11",
+      "sha256": "a096445f3a68b0a183116bd768ec20b92ca06b429ed00f8d08fda6b1806100c8",
       "bytes": 142165,
       "sameFileId": true,
       "rawReadbackMatchesLocal": true,
-      "verifiedAt": "2026-09-27T12:57:26Z"
+      "verifiedAt": "2026-09-27T13:00:00.984Z"
     },
     {
       "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",

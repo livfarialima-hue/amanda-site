@@ -442,9 +442,9 @@
     "verifiedAt": "2026-09-27T12:50:07.523Z",
     "documentationStatus": "published_verified",
     "productionReceipt": "auditorias/bruna-preco-acolhedor-2026-09-27/PUBLICACAO.json",
-    "documentationCommit": "1327592d3f02e5738438994d1f4ef66d1fcbf271",
-    "documentationVerifiedAt": "2026-09-27T12:57:26Z",
-    "driveManualSha256": "66cb304d66a5d2c4c9f9b06bd30820e5af960d719294130397297c9d9db82d11",
+    "documentationCommit": "0a2fe4ef846d3d542fc92b157e6b7d1febb15ec0",
+    "documentationVerifiedAt": "2026-09-27T13:00:00.984Z",
+    "driveManualSha256": "a096445f3a68b0a183116bd768ec20b92ca06b429ed00f8d08fda6b1806100c8",
     "drivePlanSha256": "24924f8e76da7bca6da84f2ef746d2e7827779a09d0f1771209b74aee57b20b6"
   }
 }
