@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -20,7 +20,7 @@
   "bundleVersion": "2026-09-27.2",
   "publishedAt": "2026-09-27T14:52:15Z",
   "publishedTimePrecision": "confirmation_after_publish_action",
-  "verifiedAt": "2026-09-27T14:53:29.970Z",
+  "verifiedAt": "2026-09-27T14:55:22.609Z",
   "candidateSmoke": {
     "checkedAt": "2026-09-27T14:51:23.954Z",
     "base": "https://6ab92cfd510c0500080cfc82--inspiring-sprite-b35ca4.netlify.app",
@@ -66,5 +66,27 @@
     "deployId": "6ab91021e447e700078e94e1",
     "appsScriptVersion": 161,
     "noReplay": true
-  }
+  },
+  "documentationCommit": "639ed805c9348718585ee2a44a0de1c0b561dbe8",
+  "documentationVerifiedAt": "2026-09-27T14:55:22.609Z",
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "7d237ac8604dfab3362ec31f061b765bb8d957cf4a8a2d35169b47b965801cb3",
+      "bytes": 144010,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-27T14:55:22.609Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "614d0bd4638b6d08072b7f1382fbc608710687beb033e7554653057f173f394e",
+      "bytes": 229078,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-27T14:55:22.609Z"
+    }
+  ]
 }

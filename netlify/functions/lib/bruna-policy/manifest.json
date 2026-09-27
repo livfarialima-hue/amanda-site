@@ -26,7 +26,7 @@
     "rollbackConstraint": "Restaurar o deploy anterior preservando Apps Script v161, filas, pausas e recibos; sem replay.",
     "publishedAt": "2026-09-27T14:52:15Z",
     "publishedTimePrecision": "confirmation_after_publish_action",
-    "lastVerifiedAt": "2026-09-27T14:53:29.970Z",
+    "lastVerifiedAt": "2026-09-27T14:55:22.609Z",
     "candidateChangeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27",
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-09-27.2",
@@ -41,7 +41,7 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "a096445f3a68b0a183116bd768ec20b92ca06b429ed00f8d08fda6b1806100c8",
+    "driveProjectionSha256": "7d237ac8604dfab3362ec31f061b765bb8d957cf4a8a2d35169b47b965801cb3",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
