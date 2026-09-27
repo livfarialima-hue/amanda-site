@@ -58,9 +58,9 @@ test("lifting price page answers the cost-composition intent above the first art
   );
   assert.match(
     liftingPrice.slice(0, firstBlock),
-    /não é orçamento, proposta ou garantia de preço/i,
+    /não é um orçamento fechado/i,
   );
-  assert.match(liftingPrice.slice(0, firstBlock), /pode ficar fora da faixa/i);
+  assert.match(liftingPrice.slice(0, firstBlock), /valor individual é definido após avaliação/i);
   assert.match(liftingPrice, /data-cta-location="price_range_reference"/);
   assert.match(liftingPrice, />Conversar sobre uma faixa geral<\/a>/);
 
@@ -85,7 +85,7 @@ test("lifting price page preserves procedure depth and direct conversion routes"
   assert.match(liftingPrice, /data-track="whatsapp"/);
   assert.match(
     liftingPrice,
-    /gostaria%20de%20conversar%20sobre%20uma%20faixa%20geral%20de%20valores/,
+    /Gostaria%20de%20uma%20faixa%20geral%20de%20valores%20para%20o%20lifting%20facial/,
   );
   assert.match(liftingPrice, /Refer%C3%AAncia%3A%20pre%C3%A7o%20de%20lifting%20facial/);
   assert.match(
@@ -105,8 +105,8 @@ test("the new price guides keep procedure-specific promises and no public surgic
   assert.match(cervicalPrice, /data-procedure="lifting-cervical-preco"/);
   assert.match(cervicalPrice, /data-prefill-intent="price_range_reference"/);
   assert.match(cervicalPrice, /faixa geral de valores como ponto de partida/i);
-  assert.match(cervicalPrice, /não é orçamento, proposta ou garantia de preço/i);
-  assert.match(cervicalPrice, /pode ficar fora da faixa/i);
+  assert.match(cervicalPrice, /não é um orçamento fechado/i);
+  assert.match(cervicalPrice, /valor individual é definido após avaliação/i);
   assert.doesNotMatch(cervicalPrice, /R\$/);
   assert.match(cervicalPrice, /href="\.\.\/\.\.\/lifting-cervical\/"/);
 });

@@ -198,14 +198,14 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(CONVERSATION_GUIDELINES, /Pergunta apenas sobre pagamento, recusa de valores e prefill genérico não autorizam faixa/);
   assert.match(CONVERSATION_GUIDELINES, /não envie guia nem resposta comercial diretamente/);
-  assert.match(CONVERSATION_GUIDELINES, /não orçamento, proposta nem garantia/i);
+  assert.match(CONVERSATION_GUIDELINES, /não é um orçamento fechado/i);
   assert.match(
     CONVERSATION_GUIDELINES,
     /não apresente honorários isolados|faixa não representa honorários isolados/i,
   );
   assert.match(CONVERSATION_GUIDELINES, /quanto-custa-lifting-facial-sao-paulo/);
   assert.match(CONVERSATION_GUIDELINES, /Se a faixa já tiver sido enviada no contexto recente, use human_review/i);
-  assert.match(CONVERSATION_GUIDELINES, /podendo ficar fora da faixa/i);
+  assert.match(CONVERSATION_GUIDELINES, /valor individual é definido após avaliação/i);
   assert.doesNotMatch(
     CONVERSATION_GUIDELINES,
     /As condições exatas dependem da confirmação humana/i,

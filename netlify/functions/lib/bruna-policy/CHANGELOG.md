@@ -1,3 +1,7 @@
+## 2026-09-27.1 — preço com referência clara e continuação contextual, publicado e verificado
+
+Substitui os avisos literais defensivos por ressalva curta validada em um único proprietário. Conserva números e restrições de envio; bloqueia garantias e inclusões não confirmadas. Mensagens de página não alegam leitura nem provam prontidão; explicação prévia não abre agenda. Testes antigos mantidos, com asserções de ressalva substituídas pelo contrato equivalente; 12 regressões novas. Publicado no commit funcional a2eaf6dba1b72cbe7688092c501e905fc4c548ec, deploy 6ab91021e447e700078e94e1. Recibos: auditorias/bruna-preco-acolhedor-2026-09-27/PUBLICACAO.json.
+
 ## 2026-09-26.6 — aprendizado de dúvidas educativas, publicado e verificado
 
 Fatos aprovados do site para papada/platisma e recuperação da lipo; custo reconhecido e associação cervical explícita preservada. A resposta de preço não descarta outra pergunta. Faixas, limites clínicos e atendimento humano preservados. Documento de contribuições recebe fatos para revisão, sem ingestão automática. Evidência: auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md.

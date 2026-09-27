@@ -88,5 +88,12 @@
     "beforeSha256": "2eb2e490243952efa5e1b5786f551e0f64209dc811e594413841631e503c5018",
     "status": "pending"
   },
-  "outcome": "Somente configuracao verificada; ganho futuro em pacientes ainda nao medido."
+  "outcome": "Somente configuracao verificada; ganho futuro em pacientes ainda nao medido.",
+  "integration": {
+    "baseline": "bd8070a7da37b7bf5e973ea173a507167da72660",
+    "preservedConcurrentChange": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
+    "netlifyDeployAtCloseout": "6ab91021e447e700078e94e1",
+    "appsScriptVersion": 161,
+    "evidence": "Recibo publicado do fechamento paralelo bd8070a; este pacote nao publicou codigo."
+  }
 }

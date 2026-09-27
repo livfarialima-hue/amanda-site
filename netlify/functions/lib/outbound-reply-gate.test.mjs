@@ -478,7 +478,7 @@ test("the otoplasty range without all approved caveats is blocked", () => {
     patientName: "Maria",
     procedure: "otoplastia",
     directToPatient: true,
-  }).replace("Não representa honorários isolados.", "");
+  }).replace("não é um orçamento fechado", "é um orçamento fechado");
   const result = validateOutboundReply({
     body,
     currentText: "Pode me passar a faixa?",

@@ -445,11 +445,11 @@ test("a first lifting price question receives the approved range without an aler
       patientRequest.text.body,
       /[\u200B-\u200D\u2060\uFEFF]/,
     );
-    assert.match(patientRequest.text.body, /estimativa geral/i);
-    assert.match(patientRequest.text.body, /valor final é definido após avaliação/i);
+    assert.match(patientRequest.text.body, /referência para planejamento/i);
+    assert.match(patientRequest.text.body, /valor individual é definido após avaliação/i);
     assert.equal((patientRequest.text.body.match(/\?/g) || []).length, 0);
     assert.doesNotMatch(patientRequest.text.body, /o que mais te incomoda/i);
-    assert.match(patientRequest.text.body, /técnica.*hospital.*anestesia.*materiais/i);
+    assert.match(patientRequest.text.body, /plano cirúrgico.*hospital.*anestesia.*materiais/i);
     assert.doesNotMatch(patientRequest.text.body, /posso te passar uma faixa/is);
     assert.ok(Array.from(patientRequest.text.body).length <= 650);
     assert.doesNotMatch(
@@ -650,10 +650,10 @@ test("an accepted otoplasty range offer is delivered once through the full webho
     assert.equal(patientRequests.length, 1);
     assert.match(
       patientRequests[0].text.body,
-      /otoplastia costuma ficar entre R\$ 8 mil e R\$ 14 mil/i,
+      /otoplastia tem uma referência entre R\$ 8 mil e R\$ 14 mil/i,
     );
-    assert.match(patientRequests[0].text.body, /pode ficar fora dessa faixa/i);
-    assert.match(patientRequests[0].text.body, /não representa honorários isolados/i);
+    assert.match(patientRequests[0].text.body, /valor individual é definido após avaliação/i);
+    assert.match(patientRequests[0].text.body, /plano cirúrgico, a equipe, o hospital, a anestesia e os materiais/i);
     assert.equal((patientRequests[0].text.body.match(/https?:\/\//g) || []).length, 0);
     assert.equal((patientRequests[0].text.body.match(/\?/g) || []).length, 0);
   } finally {

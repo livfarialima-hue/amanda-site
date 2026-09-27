@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-09-27T12:35:54.085Z",
+  "baselineCommit": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
+  "baselineFunctionalCommit": "012692d69a3148ac2a2cccfe78309337122ccb62",
+  "baselineDeployId": "6ab8370595a6f500088ea9e1",
+  "netlify": {
+    "project": "inspiring-sprite-b35ca4",
+    "team": "livfarialima",
+    "verifiedThrough": "authenticated Chrome dashboard",
+    "autoPublishing": true
+  },
+  "publicHealth": {
+    "status": 200,
+    "ok": true,
+    "service": "ycloud-webhook",
+    "apiKeyConfigured": true,
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "sheetsSecretConfigured": true,
+    "openAIConfigured": true,
+    "reviewAlertConfigured": true,
+    "appointmentReviewEnabled": true,
+    "automationMode": "active",
+    "conversionExperience": "bruna-conversion-v1",
+    "processingMode": "durable_background_intake",
+    "contactPreferencesGuard": "active",
+    "internalPhoneExclusionConfigured": true,
+    "leadDeliveryRetry": "single_idempotent_transient",
+    "leadDeliveryFallback": "acquisition_only",
+    "leadFailureEmailAlert": "required_after_retries",
+    "messageCostObservability": "delivered_event_idempotent"
+  },
+  "appsScriptVersionPreserved": 161,
+  "scopeLimit": "Sem escrita em Apps Script, YCloud, OpenAI, LEADS ou gerenciadores de anúncios. Estado funcional desses consumidores não foi inferido de uma entrega a paciente. Publicação altera código da Netlify e documentação; nenhum disparo manual.",
+  "patientMessagesSent": 0,
+  "releasePreflightAt": "2026-09-27T12:45:09.473Z"
+}

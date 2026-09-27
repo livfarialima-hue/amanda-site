@@ -295,16 +295,16 @@ test("creates a patient-ready lifting facial price suggestion for human review",
 
   assert.match(reply, /^Rô, obrigada por aguardar\./);
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
-  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
-  assert.match(reply, /estimativas gerais, apenas informativas/i);
-  assert.match(reply, /não são orçamento, proposta nem garantia de preço/i);
+  assert.match(reply, /[Ll]ifting facial(?:\:| tem uma referência) entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /referências iniciais/i);
+  assert.match(reply, /não é um orçamento fechado/i);
   assert.doesNotMatch(reply, /R\$ 36\.400|R\$ 38\.400/);
   assert.doesNotMatch(reply, /referência hospitalar|valor do hospital/i);
-  assert.match(reply, /valor final é definido após avaliação e planejamento/i);
-  assert.match(reply, /pode ficar fora dessa faixa/i);
-  assert.match(reply, /técnica, complexidade, necessidades individuais/i);
-  assert.match(reply, /equipe, hospital, anestesia, materiais e acompanhamento/i);
-  assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /valor individual é definido após avaliação, conforme o plano cirúrgico/i);
+  assert.match(reply, /valor individual é definido após avaliação/i);
+  assert.match(reply, /avaliação, conforme o plano cirúrgico/i);
+  assert.match(reply, /equipe, o hospital, a anestesia e os materiais/i);
+  assert.match(reply, /plano cirúrgico, a equipe, o hospital, a anestesia e os materiais/i);
   assert.doesNotMatch(reply, /parcelado antecipadamente/i);
   assert.doesNotMatch(reply, /desconto à vista/i);
   assert.match(
@@ -336,12 +336,12 @@ test("creates the approved lifting price reply for direct patient delivery", () 
     /^Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
   );
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
-  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
-  assert.match(reply, /apenas informativa/i);
-  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
-  assert.match(reply, /valor final é definido após avaliação e planejamento/i);
-  assert.match(reply, /pode ficar fora dessa faixa/i);
-  assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /[Ll]ifting facial(?:\:| tem uma referência) entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /referência para planejamento/i);
+  assert.match(reply, /não é um orçamento fechado/i);
+  assert.match(reply, /valor individual é definido após avaliação, conforme o plano cirúrgico/i);
+  assert.match(reply, /valor individual é definido após avaliação/i);
+  assert.match(reply, /plano cirúrgico, a equipe, o hospital, a anestesia e os materiais/i);
   assert.doesNotMatch(reply, /parcelado antecipadamente/i);
   assert.doesNotMatch(reply, /desconto à vista/i);
   assert.doesNotMatch(reply, /quanto-custa-lifting-facial-sao-paulo/);
@@ -363,12 +363,12 @@ test("creates the approved otoplasty range once for direct delivery", () => {
     reply,
     /^Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
   );
-  assert.match(reply, /otoplastia costuma ficar entre R\$ 8 mil e R\$ 14 mil/i);
-  assert.match(reply, /apenas informativa/i);
-  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
-  assert.match(reply, /pode ficar fora dessa faixa/i);
-  assert.match(reply, /Varia com o caso, técnica/i);
-  assert.match(reply, /não representa honorários isolados/i);
+  assert.match(reply, /otoplastia tem uma referência entre R\$ 8 mil e R\$ 14 mil/i);
+  assert.match(reply, /referência para planejamento/i);
+  assert.match(reply, /não é um orçamento fechado/i);
+  assert.match(reply, /valor individual é definido após avaliação/i);
+  assert.match(reply, /conforme o plano cirúrgico, a equipe/i);
+  assert.match(reply, /plano cirúrgico, a equipe, o hospital, a anestesia e os materiais/i);
   assert.doesNotMatch(reply, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.doesNotMatch(reply, /[\u200B-\u200D\u2060\uFEFF]/);
   assert.equal((reply.match(/https?:\/\//g) || []).length, 0);
@@ -405,7 +405,7 @@ test("direct lifting price answers location in the same first reply", () => {
   assert.match(reply, /CEP 05424-150/);
   assert.doesNotMatch(reply, /maps\.app\.goo\.gl\/yDFBmbcn5oDpHSM46/);
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
-  assert.match(reply, /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/);
+  assert.match(reply, /[Ll]ifting facial(?:\:| tem uma referência) entre R\$ 26 mil e R\$ 42 mil/);
 });
 
 test("acknowledges a price request while the approved value is pending", () => {
@@ -605,12 +605,12 @@ test("delivers the approved range after a cervical patient accepts the offer", (
   assert.match(reply, /^Claro, Adriana\./);
   assert.match(
     reply,
-    /cervicoplastia \(lifting cervical\) costuma ficar entre R\$ 18 mil e R\$ 26 mil/i,
+    /cervicoplastia \(lifting cervical\) tem uma referência entre R\$ 18 mil e R\$ 26 mil/i,
   );
   assert.doesNotMatch(reply, /Minilifting|R\$ 25 mil/i);
   assert.doesNotMatch(reply, /Lifting facial.+R\$ 26 mil e R\$ 42 mil/is);
-  assert.match(reply, /não é orçamento, proposta nem garantia de preço/i);
-  assert.match(reply, /Varia com o caso, técnica/i);
+  assert.match(reply, /não é um orçamento fechado/i);
+  assert.match(reply, /conforme o plano cirúrgico, a equipe/i);
   assert.doesNotMatch(reply, /condições?.+confirmação humana/i);
   assert.doesNotMatch(reply, /https?:\/\//);
 });
@@ -787,8 +787,8 @@ test("price review alert contains the original question and a copyable answer", 
   assert.doesNotMatch(alert, /parcelamento antecipado|desconto à vista/);
   assert.match(alert, /Base histórica interna/);
   assert.match(alert, /confirmar valores atuais/);
-  assert.match(alert, /não é orçamento, proposta nem garantia de preço/);
-  assert.match(alert, /hospital, anestesista, auxiliar, instrumentador/i);
+  assert.match(alert, /não é um orçamento fechado/);
+  assert.match(alert, /equipe, o hospital, a anestesia e os materiais/i);
   assert.match(alert, /quanto-custa-cirurgia-plastica-facial-sao-paulo/);
   assert.doesNotMatch(alert, /Prefere manhã ou tarde|posso verificar horários/i);
   assert.ok(alert.length <= 1600); // Internal email keeps source and the complete draft.

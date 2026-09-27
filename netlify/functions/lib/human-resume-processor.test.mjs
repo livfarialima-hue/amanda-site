@@ -870,12 +870,12 @@ test("the approved price range is sent after the human-resume window without an 
   assert.equal(result.reason, "lifting_price_range_direct");
   assert.equal(deps.patientMessages.length, 1);
   assert.match(deps.patientMessages[0].body, /R\$ 26 mil e R\$ 42 mil/);
-  assert.match(deps.patientMessages[0].body, /estimativa geral/i);
-  assert.match(deps.patientMessages[0].body, /valor final é definido após avaliação/i);
+  assert.match(deps.patientMessages[0].body, /referência para planejamento/i);
+  assert.match(deps.patientMessages[0].body, /valor individual é definido após avaliação/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal((deps.patientMessages[0].body.match(/\?/g) || []).length, 0);
   assert.doesNotMatch(deps.patientMessages[0].body, /o que mais te incomoda/i);
-  assert.match(deps.patientMessages[0].body, /técnica.*hospital.*anestesia.*materiais/i);
+  assert.match(deps.patientMessages[0].body, /plano cirúrgico.*hospital.*anestesia.*materiais/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /https?:/);
   assert.equal(deps.alerts.length, 0);
   assert.equal(
@@ -1029,7 +1029,7 @@ test("another surgical price still waits for human review with a complete sugges
   assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal(deps.alerts.length, 1);
   assert.match(deps.alerts[0].messageText, /entre R\$ 18 mil e R\$ 23 mil/);
-  assert.match(deps.alerts[0].messageText, /não é orçamento, proposta nem garantia de preço/);
+  assert.match(deps.alerts[0].messageText, /não é um orçamento fechado/);
   assert.match(deps.alerts[0].messageText, /Base histórica interna/);
   assert.match(deps.alerts[0].messageText, /confirmar valores atuais/);
   assert.doesNotMatch(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
@@ -1083,8 +1083,8 @@ test("direct lifting price resume does not repeat the composition guide", async 
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,
   );
   assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
-  assert.match(deps.patientMessages[0].body, /não é orçamento, proposta nem garantia/i);
-  assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
+  assert.match(deps.patientMessages[0].body, /não é um orçamento fechado/i);
+  assert.match(deps.patientMessages[0].body, /valor individual é definido após avaliação/i);
   assert.equal(deps.alerts.length, 0);
 });
 
@@ -1132,7 +1132,7 @@ test("a cervical price resume keeps the cervical procedure and its own range", a
   assert.equal(deps.patientMessages.length, 1);
   assert.match(
     deps.patientMessages[0].body,
-    /cervicoplastia \(lifting cervical\) costuma ficar entre R\$ 18 mil e R\$ 26 mil/i,
+    /cervicoplastia \(lifting cervical\) tem uma referência entre R\$ 18 mil e R\$ 26 mil/i,
   );
   assert.doesNotMatch(
     deps.patientMessages[0].body,
@@ -1187,10 +1187,10 @@ test("an accepted otoplasty range offer resumes with the approved range once", a
   assert.equal(deps.patientMessages.length, 1);
   assert.match(
     deps.patientMessages[0].body,
-    /otoplastia costuma ficar entre R\$ 8 mil e R\$ 14 mil/i,
+    /otoplastia tem uma referência entre R\$ 8 mil e R\$ 14 mil/i,
   );
-  assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
-  assert.match(deps.patientMessages[0].body, /não representa honorários isolados/i);
+  assert.match(deps.patientMessages[0].body, /valor individual é definido após avaliação/i);
+  assert.match(deps.patientMessages[0].body, /plano cirúrgico, a equipe, o hospital, a anestesia e os materiais/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
   assert.equal(deps.alerts.length, 0);
 });
@@ -1236,10 +1236,10 @@ test("the approved lifting price may continue directly at night", async () => {
   assert.equal(deps.patientMessages.length, 1);
   assert.match(
     deps.patientMessages[0].body,
-    /Lifting facial: entre R\$ 26 mil e R\$ 42 mil/,
+    /[Ll]ifting facial(?:\:| tem uma referência) entre R\$ 26 mil e R\$ 42 mil/,
   );
   assert.doesNotMatch(deps.patientMessages[0].body, /https?:\/\//);
-  assert.match(deps.patientMessages[0].body, /pode ficar fora dessa faixa/i);
+  assert.match(deps.patientMessages[0].body, /valor individual é definido após avaliação/i);
   assert.doesNotMatch(deps.patientMessages[0].body, /retorno pela manhã/);
   assert.equal(deps.alerts.length, 0);
 });

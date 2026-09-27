@@ -26,8 +26,8 @@ test('ranges do not introduce discounts or installments when only price was aske
   for (const procedure of ['lifting_facial','lifting_cervical','otoplastia']) {
     const body = range(procedure);
     assert.doesNotMatch(body, /desconto|parcel|agend/i);
-    assert.match(body, /não é orçamento, proposta nem garantia de preço/i);
-    assert.match(body, /após avaliação e planejamento/i);
+    assert.match(body, /não é um orçamento fechado/i);
+    assert.match(body, /após avaliação, conforme o plano cirúrgico/i);
     assert.ok(body.length <= 650);
   }
 });
@@ -45,8 +45,8 @@ test('internal price draft has a historical source, proposed range and assessmen
   assert.match(alert, /histórica|histórico/i);
   assert.match(alert, /confirmar valores atuais/i);
   assert.match(alert, /18 mil e R\$ 23 mil/);
-  assert.match(alert, /não é orçamento, proposta nem garantia de preço/i);
-  assert.match(alert, /após avaliação e planejamento/i);
+  assert.match(alert, /não é um orçamento fechado/i);
+  assert.match(alert, /após avaliação, conforme o plano cirúrgico/i);
   assert.match(alert, /VALOR NÃO ENVIADO/);
 });
 
@@ -113,6 +113,6 @@ test('internal email delivery retains the full proposed range, caveat and source
   assert.equal(payload.action,'send_review_alert_email');
   assert.match(payload.alert.messageText,/14 mil e R\$ 18 mil/);
   assert.match(payload.alert.messageText,/2025/);
-  assert.match(payload.alert.messageText,/garantia de preço/);
+  assert.match(payload.alert.messageText,/não é um orçamento fechado/);
   assert.match(payload.alert.messageText,/quanto-custa-cirurgia-plastica-facial-sao-paulo\/$/);
 });

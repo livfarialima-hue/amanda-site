@@ -3,7 +3,7 @@
   "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
   "title": "Revisar aquisição Google Ads e restringir quatro desvios de intenção",
   "status": "committed",
-  "baseCommit": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
+  "baseCommit": "bd8070a7da37b7bf5e973ea173a507167da72660",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -120,5 +120,11 @@
       "Pausas sao alinhamento de intencao; nao alegar economia mensal prevista.",
       "Sem elevar orçamento enquanto ganho em consultas nao estiver demonstrado."
     ]
+  },
+  "integration": {
+    "originalPublicationBaseline": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
+    "originalApprovedCommit": "2af02dae351326c46044a1ffbc87ccd1297c822b",
+    "inheritedConcurrentRelease": "bd8070a7da37b7bf5e973ea173a507167da72660",
+    "note": "Merge preserva integralmente a publicacao paralela da Bruna; diff deste candidato e medido contra seu fechamento. Aprovacao e quatro objetos Ads permanecem os mesmos."
   }
 }

@@ -1,3 +1,11 @@
+## 2026-09-27 — referência de preço com linguagem acolhedora
+
+<!-- BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->
+**Pacote 2026-09-27.1 — PUBLICADO E VERIFICADO em produção em 27/09/2026, às 09h50 BRT.** Commit funcional a2eaf6dba1b72cbe7688092c501e905fc4c548ec; Netlify 6ab91021e447e700078e94e1; Apps Script v161 preservado. Ressalva curta de preço, referência por procedimento preservada, mensagem automática sem alegar leitura e sem inferir prontidão. Resposta à pergunta antes do convite; explicação prévia da consulta não dispara oferta de agenda. Gate comum mantém orçamento individual e bloqueia promessa de preço fixo/inclusões. Webhook, retomada humana, alertas, manual, páginas e FAQ alinhados. Validação: 1.820 testes integrais, 12 novas regressões; build de 193 arquivos/54 URLs sem erro. Domínio e URL imutável conferidos com bot ativo e assinatura protegida; POST sem assinatura rejeitado com 401. Quatorze funções e cinco arquivos estáticos publicados. Página de preço facial conferida visualmente em computador e celular, sem estouro horizontal ou erro de console. Oito parágrafos de preço do documento de contribuições atualizados e relidos; demais textos não foram alvo de escrita, preservando edições simultâneas do usuário, estilos e links. Sem ingestão automática das outras contribuições. Publicação automática da Netlify restaurada. Nenhuma mensagem real de teste, replay ou primeira conversa natural observada. Rollback: Netlify 6ab8370595a6f500088ea9e1 / 012692d69a3148ac2a2cccfe78309337122ccb62, preservando filas, pausas e Apps Script v161. Daniel/equipe: primeiras conversas naturais, revisão em 29/09 e 04/10/2026; avaliar clareza, intervenção, qualificação e consultas, sem atribuir ganho ainda. Nenhuma automação nova criada. Evidência: auditorias/bruna-preco-acolhedor-2026-09-27/RELATORIO.md.
+<!-- /BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->
+
+Decisão, hipótese, métricas e reversão: seção 39 do Norte estratégico. Reprodução do exemplo com mensagem automática da página, sem inferir leitura pessoal ou prontidão. Valores e qualificações inalterados; ganhos dependem da observação futura.
+
 ## 2026-09-26 — perguntas conjuntas no atendimento privado
 
 <!-- BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26 -->
@@ -20,7 +28,7 @@ Este arquivo preserva o motivo, a evidência, a hipótese, a métrica, a revisã
 
 ## 27 de setembro de 2026 — revisão comercial e quatro restrições de intenção
 
-**Publicado e verificado no Google Ads em 27/09/2026.** Decisão canônica: seção 39 do Norte. Motivo: qualificação melhorou de 1 para 2, mas consultas continuam sem marco nas coortes e o gasto total cresceu 20,8%. Hipótese: retirar procura explícita por outra cidade/outro médico e restaurar intenção cirúrgica de papada reduz dispersão com o mesmo orçamento. Escopo: duas negativas exatas e duas pausas, detalhadas em `auditorias/google-ads-revisao-2026-09-27/PLANO.json`. Nenhuma mudança de orçamento, lance, meta, site, bot ou LEADS.
+**Publicado e verificado no Google Ads em 27/09/2026.** Decisão canônica: seção 40 do Norte. Motivo: qualificação melhorou de 1 para 2, mas consultas continuam sem marco nas coortes e o gasto total cresceu 20,8%. Hipótese: retirar procura explícita por outra cidade/outro médico e restaurar intenção cirúrgica de papada reduz dispersão com o mesmo orçamento. Escopo: duas negativas exatas e duas pausas, detalhadas em `auditorias/google-ads-revisao-2026-09-27/PLANO.json`. Nenhuma mudança de orçamento, lance, meta, site, bot ou LEADS.
 
 Métricas: qualificados, consultas e fechamentos atribuídos; não confundir cliques ou conversões históricas de proxy com pacientes. Revisões: 29/09, 04/10, D28 LIFT em 11/10 e mama/corpo em 12/10. Reversão limitada aos quatro objetos se houver bloqueio de procura válida. A frase compartilhada preço popular já era documentada; não duplicar exclusão por custo histórico. Evidência principal ao vivo em 27/09, com anexos históricos 23/06–20/09 como apoio.
 

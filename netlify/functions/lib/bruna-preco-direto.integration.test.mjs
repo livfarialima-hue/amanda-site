@@ -29,8 +29,8 @@ for (const [text,procedure,range] of [
     assert.equal(plan.procedure,procedure);
     assert.match(body,range);
     assert.match(body,/Eu sou a Bruna/);
-    assert.match(body,/não é orçamento, proposta nem garantia de preço/);
-    assert.match(body,/pode ficar fora dessa faixa/);
+    assert.match(body,/não é um orçamento fechado/);
+    assert.match(body,/valor individual é definido após avaliação/);
     assert.doesNotMatch(body,/https?:|posso te passar|desconto|Quais dias/);
     assert.equal(validation.allowed,true,JSON.stringify(validation));
   });
