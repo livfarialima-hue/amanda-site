@@ -3,7 +3,7 @@
   "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
   "title": "Revisar aquisição Google Ads e restringir quatro desvios de intenção",
   "status": "published_verified",
-  "baseCommit": "bd8070a7da37b7bf5e973ea173a507167da72660",
+  "baseCommit": "6c789ec6a30c8d8749fe2a491bbfb248a19014fa",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
@@ -126,7 +126,7 @@
   "integration": {
     "originalPublicationBaseline": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
     "originalApprovedCommit": "2af02dae351326c46044a1ffbc87ccd1297c822b",
-    "inheritedConcurrentRelease": "bd8070a7da37b7bf5e973ea173a507167da72660",
+    "inheritedConcurrentRelease": "6c789ec6a30c8d8749fe2a491bbfb248a19014fa",
     "note": "Merge preserva integralmente a publicacao paralela da Bruna; diff deste candidato e medido contra seu fechamento. Aprovacao e quatro objetos Ads permanecem os mesmos."
   },
   "release": {
@@ -141,6 +141,6 @@
       "Google Ads",
       "Google Drive: same executive plan file"
     ],
-    "unchangedCodeDestinations": "Netlify and Apps Script inherited from verified parallel closeout bd8070a; no deploy by this package."
+    "unchangedCodeDestinations": "Netlify and Apps Script inherited from verified concurrent closeout 6c789ec; no deploy by this package."
   }
 }

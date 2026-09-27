@@ -97,7 +97,8 @@
     "preservedConcurrentChange": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
     "netlifyDeployAtCloseout": "6ab91021e447e700078e94e1",
     "appsScriptVersion": 161,
-    "evidence": "Recibo publicado do fechamento paralelo bd8070a; este pacote nao publicou codigo."
+    "evidence": "Verified concurrent closeout 6c789ec, including manual version and Drive hash. No code deployed by this Google Ads package.",
+    "finalBaseline": "6c789ec6a30c8d8749fe2a491bbfb248a19014fa"
   },
   "closedAt": "2026-09-27T13:02:59.267206+00:00",
   "validation": {
