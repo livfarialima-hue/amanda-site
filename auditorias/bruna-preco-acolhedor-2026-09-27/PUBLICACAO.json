@@ -1,5 +1,5 @@
 {
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "changeId": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
   "appsScriptVersion": 161,
   "patientMessagesSent": 0,
@@ -13,9 +13,127 @@
   },
   "contributionDocument": {
     "id": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "paragraphEditsPlanned": 8,
-    "otherParagraphsPreserved": 204,
-    "status": "prepared_not_written",
+    "paragraphs": 212,
+    "paragraphEdits": 8,
+    "paragraphsNotTargeted": 204,
+    "targetedWritesOnly": true,
+    "allTargetParagraphsMatch": true,
+    "concurrentExternalEditsOutsideScope": 1,
+    "stylesPreserved": true,
+    "linksPreserved": true,
+    "status": "published_verified",
+    "verifiedAt": "2026-09-27T12:47:50.901Z",
     "autoIngestion": false
+  },
+  "candidateSmoke": {
+    "checkedAt": "2026-09-27T12:48:37.534Z",
+    "deployId": "6ab91021e447e700078e94e1",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "pages": [
+      {
+        "path": "campanhas/conversion-tracking.js",
+        "status": 200,
+        "matchesBuiltArtifact": true
+      },
+      {
+        "path": "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+        "status": 200,
+        "matchesBuiltArtifact": true
+      },
+      {
+        "path": "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+        "status": 200,
+        "matchesBuiltArtifact": true
+      },
+      {
+        "path": "otoplastia-adulto/index.html",
+        "status": 200,
+        "matchesBuiltArtifact": false,
+        "matchesAfterDocumentedPostprocessing": true,
+        "netlifyPostprocessing": "Uma linha: link da marca ../index.html normalizado para /, com aspas simples; demais bytes iguais."
+      },
+      {
+        "path": "otoplastia-infantil/index.html",
+        "status": 200,
+        "matchesBuiltArtifact": true
+      }
+    ],
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-09-27T12:50:07.523Z",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "pages": [
+      {
+        "path": "campanhas/conversion-tracking.js",
+        "status": 200,
+        "matchesImmutable": true,
+        "oldCaveat": false
+      },
+      {
+        "path": "conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "status": 200,
+        "matchesImmutable": true,
+        "newCaveat": true,
+        "oldCaveat": false
+      },
+      {
+        "path": "conteudos/quanto-custa-lifting-cervical-sao-paulo/",
+        "status": 200,
+        "matchesImmutable": true,
+        "newCaveat": true,
+        "oldCaveat": false
+      },
+      {
+        "path": "otoplastia-adulto/",
+        "status": 200,
+        "matchesImmutable": true,
+        "newCaveat": true,
+        "oldCaveat": false
+      },
+      {
+        "path": "otoplastia-infantil/",
+        "status": 200,
+        "matchesImmutable": true,
+        "newCaveat": true,
+        "oldCaveat": false
+      }
+    ],
+    "passed": true
+  },
+  "approvedCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+  "netlifyDeployId": "6ab91021e447e700078e94e1",
+  "bundleVersion": "2026-09-27.1",
+  "publishedAt": "2026-09-27T12:50:04Z",
+  "publishedTimePrecision": "confirmation_after_publish_action",
+  "verifiedAt": "2026-09-27T12:50:07.523Z",
+  "functionsPublished": 14,
+  "staticFilesPublished": 5,
+  "autoPublishingRestored": true,
+  "firstNaturalInteractionObserved": false,
+  "rollback": {
+    "commit": "012692d69a3148ac2a2cccfe78309337122ccb62",
+    "deployId": "6ab8370595a6f500088ea9e1",
+    "appsScriptVersion": 161,
+    "noReplay": true
+  },
+  "visualQa": {
+    "checkedAt": "2026-09-27T12:56:08.024Z",
+    "path": "/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+    "desktopWidth": 1280,
+    "mobileWidth": 390,
+    "horizontalOverflow": false,
+    "consoleErrors": 0,
+    "priceBlockAndButtonLegible": true,
+    "prefillAndAttributionVerified": true,
+    "whatsappLinkActivated": false
   }
 }

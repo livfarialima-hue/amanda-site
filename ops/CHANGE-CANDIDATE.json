@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
   "title": "Referência de preço acolhedora e contextual",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -434,5 +434,13 @@
       "Guardrails de preço, duplicidade, pressão e prioridade humana"
     ],
     "rollbackRule": "Conter e restaurar baseline diante de faixa indevida, promessa não confirmada, perda de pergunta, duplicidade ou pressão."
+  },
+  "release": {
+    "approvedCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+    "netlifyDeployId": "6ab91021e447e700078e94e1",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-27T12:50:07.523Z",
+    "documentationStatus": "drive_projection_pending",
+    "productionReceipt": "auditorias/bruna-preco-acolhedor-2026-09-27/PUBLICACAO.json"
   }
 }
