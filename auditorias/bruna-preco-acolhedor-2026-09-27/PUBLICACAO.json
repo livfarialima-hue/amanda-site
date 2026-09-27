@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
   "appsScriptVersion": 161,
   "patientMessagesSent": 0,
@@ -135,5 +135,34 @@
     "priceBlockAndButtonLegible": true,
     "prefillAndAttributionVerified": true,
     "whatsappLinkActivated": false
+  },
+  "documentationCommit": "1327592d3f02e5738438994d1f4ef66d1fcbf271",
+  "documentationVerifiedAt": "2026-09-27T12:57:26Z",
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "66cb304d66a5d2c4c9f9b06bd30820e5af960d719294130397297c9d9db82d11",
+      "bytes": 142165,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-27T12:57:26Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "24924f8e76da7bca6da84f2ef746d2e7827779a09d0f1771209b74aee57b20b6",
+      "bytes": 226092,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-27T12:57:26Z"
+    }
+  ],
+  "authorization": {
+    "source": "user_current_task",
+    "exactCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+    "recordedAt": "2026-09-27T12:45:29.6957018Z",
+    "livePreflightAt": "2026-09-27T12:45:09.473Z",
+    "scope": "Ajustar e publicar o comportamento de preço, páginas e documentação associada; nenhum envio manual a pacientes."
   }
 }

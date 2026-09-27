@@ -21,3 +21,7 @@ A autorização externa do commit exato foi registrada em 27/09/2026 às 12:45:2
 O Google Doc foi conferido às 12:47:50.901Z: 212 parágrafos, 37 perguntas frequentes, oito substituições únicas, todos os textos-alvo confirmados, estilos e links preservados. Dois conflitos de revisão anteriores foram rejeitados sem escrita; a atualização bem-sucedida usou a revisão fresca. Nenhuma contribuição clínica paralela foi publicada automaticamente.
 
 Conferência visual da página de preço facial: computador 1280 px e celular 390 px, sem estouro horizontal; bloco de referência e botão legíveis. Destino do WhatsApp preservado e mensagem nova confirmada no DOM, com Ref. e JID; o link não foi acionado. Console sem erros. Os quatro HTMLs e o JavaScript foram conferidos por conteúdo no domínio público.
+
+## Reconciliação documental
+
+Documentação de publicação commitada em 1327592d3f02e5738438994d1f4ef66d1fcbf271. Os mesmos arquivos ativos do Drive foram substituídos, sem novo arquivo ou mudança de acesso; download bruto e SHA-256 confirmaram igualdade às 2026-09-27T12:57:26Z. Manual: 66cb304d66a5d2c4c9f9b06bd30820e5af960d719294130397297c9d9db82d11 (142165 bytes). Plano executivo: 24924f8e76da7bca6da84f2ef746d2e7827779a09d0f1771209b74aee57b20b6 (226092 bytes). O documento nativo de contribuições mantém o mesmo ID e suas edições simultâneas. O manifesto e o candidato registram o commit funcional efetivamente publicado, distinto dos commits documentais com [skip netlify].

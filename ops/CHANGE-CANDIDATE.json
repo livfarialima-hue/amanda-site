@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
   "title": "Referência de preço acolhedora e contextual",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "89f722e6f00eedb4b6b1c6905ba20f92889c7f12",
   "authorization": {
     "required": true,
@@ -197,7 +197,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "commands": [
       "git diff --check",
       "node --check campanhas/content-library.js",
@@ -418,7 +418,7 @@
         ]
       }
     ],
-    "expectedPending": "ops:check mantém SYNC_PENDING até publicação e documentação reconciliadas"
+    "localGateHistory": "ops:check mantém SYNC_PENDING até publicação e documentação reconciliadas"
   },
   "rollback": {
     "local": "Reverter este pacote isolado sem descartar trabalho paralelo.",
@@ -440,7 +440,11 @@
     "netlifyDeployId": "6ab91021e447e700078e94e1",
     "appsScriptVersion": 161,
     "verifiedAt": "2026-09-27T12:50:07.523Z",
-    "documentationStatus": "drive_projection_pending",
-    "productionReceipt": "auditorias/bruna-preco-acolhedor-2026-09-27/PUBLICACAO.json"
+    "documentationStatus": "published_verified",
+    "productionReceipt": "auditorias/bruna-preco-acolhedor-2026-09-27/PUBLICACAO.json",
+    "documentationCommit": "1327592d3f02e5738438994d1f4ef66d1fcbf271",
+    "documentationVerifiedAt": "2026-09-27T12:57:26Z",
+    "driveManualSha256": "66cb304d66a5d2c4c9f9b06bd30820e5af960d719294130397297c9d9db82d11",
+    "drivePlanSha256": "24924f8e76da7bca6da84f2ef746d2e7827779a09d0f1771209b74aee57b20b6"
   }
 }
