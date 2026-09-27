@@ -296,7 +296,7 @@ test("keeps the lifting price-range intent while generic CTAs stay neutral", () 
   const genericMessage = new URL(genericLink.href).searchParams.get("text");
   assert.match(
     rangeMessage,
-    /^Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida\./,
+    /^Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida\./,
   );
   assert.match(rangeMessage, /Ref\. SITE-lifting-facial-preco$/);
   assert.equal(rangeLink.dataset.templateId, "procedure_evaluation_v1");
@@ -339,7 +339,7 @@ test("preserves the procedure-specific intent on the new price pages", () => {
 
   const cervicalMessage = new URL(cervicalLink.href).searchParams.get("text");
   const blephMessage = new URL(blephLink.href).searchParams.get("text");
-  assert.match(cervicalMessage, /valor da cervicoplastia \(lifting cervical\).*faixa geral de valores/);
+  assert.match(cervicalMessage, /faixa geral de valores para a cervicoplastia \(lifting cervical\)/);
   assert.match(cervicalMessage, /Ref\. SITE-lifting-cervical-preco$/);
   assert.match(blephMessage, /valores de blefaroplastia.*como o orçamento é montado/);
   assert.match(blephMessage, /Ref\. SITE-blefaroplastia-preco$/);

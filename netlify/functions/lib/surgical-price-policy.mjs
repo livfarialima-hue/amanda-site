@@ -1,4 +1,20 @@
 import { detectNamedProcedure, hasUnresolvedNamedProcedure } from './procedure-context.mjs';
+
+// One disclosure contract for automatic replies and human-reviewed suggestions.
+export const SURGICAL_PRICE_DISCLOSURE = 'É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais.';
+
+export function hasApprovedSurgicalPriceDisclosure(value) {
+  const text = String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  // An approved amount does not authorize a fixed quote or unconfirmed inclusions.
+  if (/\b(?:tudo incluido|preco (?:e )?garantido|valor (?:e )?garantido|preco fechado|nunca ultrapassa|nao passa de)\b|\b(?:apenas|somente|so) (?:os )?honorarios\b/.test(text)) return false;
+  const concise = /e uma referencia para planejamento nao e um orcamento fechado/.test(text) &&
+    /o valor individual e definido apos avaliacao conforme o plano cirurgico a equipe o hospital a anestesia e os materiais/.test(text);
+  // Existing, already-approved replies may still appear in delayed reviews/history.
+  const legacy = /nao e orcamento proposta nem garantia de preco/.test(text) &&
+    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(text) &&
+    /nao representa honorarios isolados/.test(text);
+  return concise || legacy;
+}
 // Numeric permission is independent of the internal reference table.
 const AUTOMATIC_PROCEDURES = new Set(['lifting_facial', 'lifting_cervical', 'otoplastia']);
 export function isAutomaticSurgicalPriceProcedure(procedure) {

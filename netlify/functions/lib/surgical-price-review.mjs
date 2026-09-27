@@ -1,6 +1,7 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { hasUnansweredUnavailablePatientText } from "./patient-turn-context.mjs";
-import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope } from "./surgical-price-policy.mjs";
+import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
+import { isDirectSiteRequest } from "./site-content.mjs";
 import {
   buildConsultationInformationReply,
   hasClinicLocationInConversation,
@@ -277,7 +278,7 @@ function priceGuideParagraph(procedure, recentConversation) {
 }
 
 function requestedPriceGuide(procedure, currentText, recentConversation) {
-  if (!/\b(?:artigo|guia|link|material|conte[uú]do|site)\b/i.test(currentText)) return '';
+  if (!isDirectSiteRequest(currentText) && !/\b(?:mand[ae]|envi[ae]|quero|gostaria|pode.*(?:mandar|enviar))\b.{0,70}\b(?:artigo|guia|link|material|conte[uú]do)\b/i.test(currentText)) return '';
   if (procedure === 'lifting_facial' && !conversationContainsFacialPriceGuide(recentConversation)) {
     return `Veja o que compõe o valor: ${safeLink(LIFTING_PRICE_GUIDE_URL)}`;
   }
@@ -287,7 +288,7 @@ function requestedPriceGuide(procedure, currentText, recentConversation) {
 function priceNextStep(recentConversation, currentText) {
   if (/n[aã]o\s+(?:quero|pretendo|vou)\s+(?:agendar|marcar)|vou pensar|prefiro pensar|s[oó]\s+(?:estou\s+)?pesquisando/i.test(currentText)) return '';
   return hasConsultationExplanationInConversation(recentConversation)
-    ? 'Se quiser, posso verificar opções de horário.'
+    ? ''
     : 'Se quiser, posso te explicar como funciona a avaliação com a Dra. Amanda.';
 }
 
@@ -476,6 +477,13 @@ export function buildSurgicalInitialPriceReply({
   ].filter(Boolean).join("\n\n");
 }
 
+function facialReferenceParagraph(currentText, recentConversation) {
+  const lines = facialPriceLines(currentText, recentConversation);
+  if (lines.length > 1) return ['Como referências iniciais:', ...lines].join('\n');
+  const [label, range] = lines[0].replace(/^•\s*/, '').split(': ');
+  return `Para você ter uma noção de valores, o ${label.toLowerCase()} tem uma referência ${range}.`;
+}
+
 export function buildSurgicalPriceSuggestedReply({
   patientName,
   procedure,
@@ -499,15 +507,14 @@ export function buildSurgicalPriceSuggestedReply({
     : "";
   if (directToPatient) {
     const range = procedure === 'lifting_facial'
-      ? ['Estimativa geral, apenas informativa — não é orçamento, proposta nem garantia de preço:',
-          ...facialPriceLines(currentText, recentConversation)].join('\n')
+      ? facialReferenceParagraph(currentText, recentConversation)
       : procedure === 'lifting_cervical'
-        ? 'Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.'
-        : 'Como estimativa geral, a otoplastia costuma ficar entre R$ 8 mil e R$ 14 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.';
+        ? 'Para você ter uma noção de valores, a cervicoplastia (lifting cervical) tem uma referência entre R$ 18 mil e R$ 26 mil.'
+        : 'Para você ter uma noção de valores, a otoplastia tem uma referência entre R$ 8 mil e R$ 14 mil.';
     return [
       includeGreeting ? directPriceGreeting(patientName, recentConversation, introduceBruna) : '',
       range,
-      'O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia com o caso, técnica, equipe, hospital, anestesia e materiais. Não representa honorários isolados.',
+      SURGICAL_PRICE_DISCLOSURE,
       ...otoplastyOverviewParagraphs({procedure,currentText,recentConversation}),
       paymentContext,
       LOCATION_REQUEST_PATTERN.test(currentText) && !hasClinicLocationInConversation(recentConversation) ? CLINIC_LOCATION_REPLY.split('\n')[0] : '',
@@ -533,8 +540,8 @@ export function buildSurgicalPriceSuggestedReply({
           )
         : waitingGreeting(patientName),
       location,
-      "Como estimativa geral, a cervicoplastia (lifting cervical) costuma ficar entre R$ 18 mil e R$ 26 mil. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.",
-      "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia conforme a extensão do procedimento, eventual associação a outras abordagens da face e do pescoço, equipe, hospital, anestesia, materiais e necessidades individuais. Não representa honorários isolados.",
+      "Para você ter uma noção de valores, a cervicoplastia (lifting cervical) tem uma referência entre R$ 18 mil e R$ 26 mil.",
+      SURGICAL_PRICE_DISCLOSURE,
       paymentContext,
       guide,
     ].filter(Boolean).join("\n\n");
@@ -553,11 +560,8 @@ export function buildSurgicalPriceSuggestedReply({
     return [
       waitingGreeting(patientName),
       location,
-      [
-        "Estimativas gerais, apenas informativas — não são orçamento, proposta nem garantia de preço:",
-        ...facialPriceLines(currentText, recentConversation),
-      ].join("\n"),
-      "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+      facialReferenceParagraph(currentText, recentConversation),
+      SURGICAL_PRICE_DISCLOSURE,
       paymentContext,
       guide,
     ].filter(Boolean).join("\n\n");
@@ -574,12 +578,11 @@ export function buildSurgicalPriceSuggestedReply({
 
   const priceContext = [
     waitingGreeting(patientName),
-    `Como estimativa geral, ${priceReference.label} pode ficar entre ${formatBRL(priceReference.rangeMinimum)} e ${formatBRL(priceReference.rangeMaximum)}. Essa faixa é apenas informativa: não é orçamento, proposta nem garantia de preço.`,
+    `Como referência inicial, ${priceReference.label} tem uma faixa entre ${formatBRL(priceReference.rangeMinimum)} e ${formatBRL(priceReference.rangeMaximum)}.`,
   ].join(" ");
   const budgetContext =
-    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. A extensão do procedimento e as necessidades individuais podem modificar o total.";
+    SURGICAL_PRICE_DISCLOSURE;
   const careAndPayment = [
-    "Hospital, anestesista, auxiliar, instrumentador, materiais e acompanhamento variam por caso. Não representa honorários isolados.",
     paymentContext,
   ].filter(Boolean).join(" ");
   const procedureGuide = priceGuideForProcedure(procedure);

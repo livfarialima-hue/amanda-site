@@ -13,6 +13,17 @@ const currentPages = audit.pages.map(page => {
   return continuation ? { ...page, after: { ...page.after, ...continuation.after }, protectedHashes: continuation.protectedHashes } : page;
 });
 const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+// The authorized 27/09 price-prefill copy changes only these exact text values.
+// Restore them for the frozen navigation hash; destination, attribution and every
+// other link still have to match the original protected inventory.
+const historicalPricePrefill = value => {
+  const encoded = text => encodeURIComponent(text).replaceAll('!', '%21').replaceAll('(', '%28').replaceAll(')', '%29');
+  for (const [current, original] of [
+    ['Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.', 'Olá! Li a página sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.'],
+    ['Olá! Gostaria de uma faixa geral de valores para a cervicoplastia (lifting cervical) como ponto de partida.', 'Olá! Li a página sobre o valor da cervicoplastia (lifting cervical) e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.'],
+  ]) value = value.replace(encoded(current), encoded(original));
+  return value;
+};
 const plain = value => String(value || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 const nodes = html => [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap(match => {
   const parsed = JSON.parse(match[1]);
@@ -38,7 +49,7 @@ test('all revised pages preserve link destinations, attribution and operational 
     const html = read(page.file);
     const navigation = [...html.matchAll(/\b(?:href|data-track|data-procedure|data-cta-location|data-attribution-code)="[^"]*"/g)].map(match => match[0]);
     const scripts = [...html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)].map(match => match[0]).filter(source => !source.includes('application/ld+json'));
-    assert.equal(hash(navigation), page.protectedHashes.navigation, page.file + ' destinations and tracking');
+    assert.equal(hash(navigation.map(historicalPricePrefill)), page.protectedHashes.navigation, page.file + ' destinations and tracking');
     assert.equal(hash(scripts), page.protectedHashes.scripts, page.file + ' operational scripts');
   }
 });

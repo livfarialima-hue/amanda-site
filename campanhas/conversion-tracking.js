@@ -73,10 +73,10 @@
     var intent = String(link.dataset.prefillIntent || '').trim().toLowerCase();
     if (intent === 'price_range_reference') {
       if (procedure === 'lifting-facial-preco') {
-        return 'Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
+        return 'Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.';
       }
       if (procedure === 'lifting-cervical-preco') {
-        return 'Olá! Li sobre o valor da cervicoplastia (lifting cervical) e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.';
+        return 'Olá! Gostaria de uma faixa geral de valores para a cervicoplastia (lifting cervical) como ponto de partida.';
       }
     }
     if (procedure === 'blefaroplastia-preco' && intent === 'price_planning') {

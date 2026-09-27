@@ -1,3 +1,11 @@
+## 2026-09-27 — referência de preço com linguagem acolhedora
+
+<!-- BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->
+**Pacote 2026-09-27.1 — TESTADO LOCALMENTE, PUBLICAÇÃO PENDENTE.** Ressalva curta de preço, referência por procedimento preservada, prefill sem alegar leitura e sem inferir prontidão. Resposta à pergunta antes do convite; explicação prévia da consulta não dispara oferta de agenda. Gate comum mantém orçamento individual e bloqueia promessa de preço fixo/inclusões. Webhook, retomada humana, alertas, manual, páginas de preço e FAQ devem usar a mesma regra. Apps Script v161 e cadências preservados. Rollback: Netlify 6ab8370595a6f500088ea9e1 / 012692d69a3148ac2a2cccfe78309337122ccb62, sem replay. Daniel/equipe: primeiras conversas naturais, revisão em 29/09 e 04/10/2026; avaliar clareza, intervenção, qualificação e consultas, sem atribuir ganho ainda. Evidência: auditorias/bruna-preco-acolhedor-2026-09-27/RELATORIO.md.
+<!-- /BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->
+
+Decisão, hipótese, métricas e reversão: seção 39 do Norte estratégico. Reprodução do exemplo com mensagem automática da página, sem inferir leitura pessoal ou prontidão. Valores e qualificações inalterados; ganhos dependem da observação futura.
+
 ## 2026-09-26 — perguntas conjuntas no atendimento privado
 
 <!-- BRUNA-PERGUNTAS-CONJUNTAS-2026-09-26 -->

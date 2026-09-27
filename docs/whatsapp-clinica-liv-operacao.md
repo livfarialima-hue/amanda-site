@@ -1,5 +1,10 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+<!-- BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->
+**Pacote 2026-09-27.1 — TESTADO LOCALMENTE, PUBLICAÇÃO PENDENTE.** Ressalva curta de preço, referência por procedimento preservada, prefill sem alegar leitura e sem inferir prontidão. Resposta à pergunta antes do convite; explicação prévia da consulta não dispara oferta de agenda. Gate comum mantém orçamento individual e bloqueia promessa de preço fixo/inclusões. Webhook, retomada humana, alertas, manual, páginas de preço e FAQ devem usar a mesma regra. Apps Script v161 e cadências preservados. Rollback: Netlify 6ab8370595a6f500088ea9e1 / 012692d69a3148ac2a2cccfe78309337122ccb62, sem replay. Daniel/equipe: primeiras conversas naturais, revisão em 29/09 e 04/10/2026; avaliar clareza, intervenção, qualificação e consultas, sem atribuir ganho ainda. Evidência: auditorias/bruna-preco-acolhedor-2026-09-27/RELATORIO.md.
+<!-- /BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->
+
+
 **Pacote 2026-09-26.6 — PUBLICADO E VERIFICADO em produção em 26/09/2026, 18:21 BRT.** Commit funcional 012692d69a3148ac2a2cccfe78309337122ccb62; Netlify 6ab8370595a6f500088ea9e1; Apps Script v161 preservado. Reconhecimento de custo, contexto de associação explícita de lipo de papada com cervicoplastia, explicações do site sobre pele/gordura/platisma e recuperação da lipo, com preservação das demais perguntas quando há preço. Comparações e lipo isolada não herdam faixa cervical. As mesmas ressalvas de preço e proteções clínicas continuam obrigatórias. Validação: 1.808 testes integrais, 14 novos casos, 32 comandos de validação/build sem falha; domínio e URL imutável com bot ativo e POST sem assinatura rejeitado com 401. Quatorze funções publicadas; nenhuma mensagem real de teste ou nova conversa natural foi observada após a publicação. Rollback: Netlify 6ab7dbe15ccd459069e61eac / 624d7e65abe867fe1556fbfdd788fe9a8dd81358, preservando filas e Apps Script v161. Evidência: auditorias/bruna-aprendizado-clinico-2026-09-26/RELATORIO.md.
 
 

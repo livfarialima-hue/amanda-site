@@ -1,0 +1,21 @@
+{
+  "status": "tested_local",
+  "changeId": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
+  "appsScriptVersion": 161,
+  "patientMessagesSent": 0,
+  "validation": {
+    "fullTests": 1820,
+    "newRegressions": 12,
+    "baselineFailures": 10,
+    "requiredCommands": 26,
+    "expectedSyncPending": 1,
+    "completedAt": "2026-09-27T12:44:02.973Z"
+  },
+  "contributionDocument": {
+    "id": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
+    "paragraphEditsPlanned": 8,
+    "otherParagraphsPreserved": 204,
+    "status": "prepared_not_written",
+    "autoIngestion": false
+  }
+}

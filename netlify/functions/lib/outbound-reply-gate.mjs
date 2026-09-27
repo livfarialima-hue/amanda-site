@@ -13,7 +13,7 @@ import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
   markConversationLedgerAccepted, completeConversationLedgerReceipt } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
-import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts } from "./surgical-price-policy.mjs";
+import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts, hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   classifyBrunaCta,
@@ -140,52 +140,37 @@ function conversationContainsFacialPriceGuide(recentConversation) {
 }
 
 function isProtectedLiftingRangeReply(value, recentConversation = []) {
-  const text = normalizedText(value);
   const replyUrls = urls(value);
   const hasRequiredGuide = replyUrls.length === 1
     ? LIFTING_PRICE_GUIDE_PATTERN.test(replyUrls[0])
     : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "lifting_facial") &&
-    /nao e orcamento proposta nem garantia de preco/.test(text) &&
-    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
-      text,
-    ) &&
-    /nao representa honorarios isolados/.test(text) &&
+    hasApprovedSurgicalPriceDisclosure(value) &&
     hasRequiredGuide
   );
 }
 
 function isProtectedOtoplastyRangeReply(value, recentConversation = []) {
-  const text = normalizedText(value);
   const replyUrls = urls(value);
   const hasRequiredGuide = replyUrls.length === 1
     ? FACIAL_PRICE_GUIDE_PATTERN.test(replyUrls[0])
     : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "otoplastia") &&
-    /nao e orcamento proposta nem garantia de preco/.test(text) &&
-    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
-      text,
-    ) &&
-    /nao representa honorarios isolados/.test(text) &&
+    hasApprovedSurgicalPriceDisclosure(value) &&
     hasRequiredGuide
   );
 }
 
 function isProtectedCervicalRangeReply(value, recentConversation = []) {
-  const text = normalizedText(value);
   const replyUrls = urls(value);
   const hasRequiredGuide = replyUrls.length === 1
     ? FACIAL_PRICE_GUIDE_PATTERN.test(replyUrls[0])
     : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "lifting_cervical") &&
-    /nao e orcamento proposta nem garantia de preco/.test(text) &&
-    /valor final e definido apos avaliacao e planejamento e pode ficar fora dessa faixa/.test(
-      text,
-    ) &&
-    /nao representa honorarios isolados/.test(text) &&
+    hasApprovedSurgicalPriceDisclosure(value) &&
     hasRequiredGuide
   );
 }
