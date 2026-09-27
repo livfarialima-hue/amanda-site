@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
-  "status": "google_ads_published_verified",
+  "status": "published_verified",
   "approvedCommit": "2af02dae351326c46044a1ffbc87ccd1297c822b",
   "accountId": "995-334-4486",
   "verifiedAt": "2026-09-27T12:55:28.419Z",
@@ -86,7 +86,10 @@
   "drivePlan": {
     "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "beforeSha256": "2eb2e490243952efa5e1b5786f551e0f64209dc811e594413841631e503c5018",
-    "status": "pending"
+    "status": "replaced_same_file_and_hash_verified",
+    "sha256": "32664583ee3bff4eee8493a711f470680fefbf13b651733deaed39e20816ac78",
+    "updatedAt": "2026-09-27T13:01:56.235Z",
+    "preservedConcurrentBaselineSha256": "24924f8e76da7bca6da84f2ef746d2e7827779a09d0f1771209b74aee57b20b6"
   },
   "outcome": "Somente configuracao verificada; ganho futuro em pacientes ainda nao medido.",
   "integration": {
@@ -95,5 +98,16 @@
     "netlifyDeployAtCloseout": "6ab91021e447e700078e94e1",
     "appsScriptVersion": 161,
     "evidence": "Recibo publicado do fechamento paralelo bd8070a; este pacote nao publicou codigo."
+  },
+  "closedAt": "2026-09-27T13:02:59.267206+00:00",
+  "validation": {
+    "beforeAds": 1808,
+    "afterIntegration": 1820,
+    "focused": "passed",
+    "architecture": "passed",
+    "siteBuild": "passed",
+    "siteCheck": "passed",
+    "artifact": "validated and render_artifact called",
+    "notebook": "executed and datasets reconciled"
   }
 }

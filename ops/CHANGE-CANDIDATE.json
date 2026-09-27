@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-REVISAO-2026-09-27",
   "title": "Revisar aquisição Google Ads e restringir quatro desvios de intenção",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "bd8070a7da37b7bf5e973ea173a507167da72660",
   "authorization": {
     "required": true,
@@ -106,7 +106,9 @@
       "artifact": "MCP validation passed"
     },
     "fullTests": 1808,
-    "external": "Google Ads actions applied_verified; Drive plan pending"
+    "external": "Google Ads verified and same Drive plan replaced/read back with identical SHA-256",
+    "integratedFullTests": 1820,
+    "integratedAt": "2026-09-27T13:02:59.267206+00:00"
   },
   "rollback": {
     "local": "Reverter somente os arquivos deste pacote; preservar trabalho paralelo.",
@@ -126,5 +128,19 @@
     "originalApprovedCommit": "2af02dae351326c46044a1ffbc87ccd1297c822b",
     "inheritedConcurrentRelease": "bd8070a7da37b7bf5e973ea173a507167da72660",
     "note": "Merge preserva integralmente a publicacao paralela da Bruna; diff deste candidato e medido contra seu fechamento. Aprovacao e quatro objetos Ads permanecem os mesmos."
+  },
+  "release": {
+    "approvedCommit": "2af02dae351326c46044a1ffbc87ccd1297c822b",
+    "netlifyDeployId": "6ab91021e447e700078e94e1",
+    "appsScriptVersion": 161,
+    "drivePlanSha256": "32664583ee3bff4eee8493a711f470680fefbf13b651733deaed39e20816ac78",
+    "verifiedAt": "2026-09-27T13:02:59.267206+00:00",
+    "googleAdsAccount": "995-334-4486",
+    "googleAdsReceipt": "auditorias/google-ads-revisao-2026-09-27/PUBLICACAO.json",
+    "destinationsChanged": [
+      "Google Ads",
+      "Google Drive: same executive plan file"
+    ],
+    "unchangedCodeDestinations": "Netlify and Apps Script inherited from verified parallel closeout bd8070a; no deploy by this package."
   }
 }
