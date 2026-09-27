@@ -17,24 +17,20 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
-    "lastObservedProductionCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
-    "functionalDeployId": "6ab91021e447e700078e94e1",
-    "lastObservedProductionDeployId": "6ab91021e447e700078e94e1",
-    "rollbackCommit": "012692d69a3148ac2a2cccfe78309337122ccb62",
-    "rollbackDeployId": "6ab8370595a6f500088ea9e1",
+    "functionalCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "lastObservedProductionCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "functionalDeployId": "6ab92cfd510c0500080cfc82",
+    "lastObservedProductionDeployId": "6ab92cfd510c0500080cfc82",
+    "rollbackCommit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+    "rollbackDeployId": "6ab91021e447e700078e94e1",
     "rollbackConstraint": "Restaurar o deploy anterior preservando Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-09-27T12:50:04Z",
+    "publishedAt": "2026-09-27T14:52:15Z",
     "publishedTimePrecision": "confirmation_after_publish_action",
-    "lastVerifiedAt": "2026-09-27T12:57:26Z",
-    "candidateChangeId": "BRUNA-PRECO-ACOLHEDOR-2026-09-27",
+    "lastVerifiedAt": "2026-09-27T14:53:29.970Z",
+    "candidateChangeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-27.1",
-    "appsScriptVersion": 161
-  },
-  "pendingRelease": {
     "bundleVersion": "2026-09-27.2",
-    "changeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27"
+    "appsScriptVersion": 161
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27",
   "title": "Responder dúvidas públicas de lifting e impedir encaminhamento silencioso de pergunta desconhecida",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "9e4646e0e2dcc30e88dc4556d3c6c23590d79dd0",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -355,5 +355,12 @@
       "UNKNOWN-REVIEW exige recibo de alerta interno; falha mantém recuperação pendente.",
       "Nenhuma duplicação, resposta clínica individual ou envio fora das permissões."
     ]
+  },
+  "release": {
+    "approvedCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "netlifyDeployId": "6ab92cfd510c0500080cfc82",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-27T14:53:29.970Z",
+    "documentationStatus": "pending_existing_drive_projections"
   }
 }

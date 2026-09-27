@@ -1,5 +1,5 @@
 {
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "changeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -14,5 +14,57 @@
     "diff": "passed",
     "ops": "SYNC_PENDING expected before publication",
     "completedAt": "2026-09-27T14:48:25.716Z"
+  },
+  "approvedCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+  "netlifyDeployId": "6ab92cfd510c0500080cfc82",
+  "bundleVersion": "2026-09-27.2",
+  "publishedAt": "2026-09-27T14:52:15Z",
+  "publishedTimePrecision": "confirmation_after_publish_action",
+  "verifiedAt": "2026-09-27T14:53:29.970Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-09-27T14:51:23.954Z",
+    "base": "https://6ab92cfd510c0500080cfc82--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "sourcePage": {
+      "status": 200,
+      "containsApprovedDeepPlaneFact": true
+    },
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-09-27T14:51:47.436Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "sourcePage": {
+      "status": 200,
+      "containsApprovedDeepPlaneFact": true
+    },
+    "passed": true
+  },
+  "functionsPublished": 14,
+  "staticFilesChanged": 0,
+  "autoPublishingRestored": true,
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "approvedAt": "2026-09-27T14:48:40.0247481Z",
+    "approvedBy": "Daniel",
+    "source": "user_current_task",
+    "livePreflightAt": "2026-09-27T14:48:25.716Z",
+    "scope": "Corrigir e publicar comportamento da Bruna; sem mensagem manual ou replay"
+  },
+  "rollback": {
+    "commit": "a2eaf6dba1b72cbe7688092c501e905fc4c548ec",
+    "deployId": "6ab91021e447e700078e94e1",
+    "appsScriptVersion": 161,
+    "noReplay": true
   }
 }

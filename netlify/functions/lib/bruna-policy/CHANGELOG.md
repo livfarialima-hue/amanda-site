@@ -1,6 +1,6 @@
-## 2026-09-27.2 — perguntas públicas e encaminhamento comprovado, testado localmente
+## 2026-09-27.2 — perguntas públicas e encaminhamento comprovado, publicado e verificado
 
-Fatos da página de lifting facial disponíveis à Bruna, procedimento sincronizado após agregação das mensagens e UNKNOWN-REVIEW condicionado a recibo de alerta. Sem flexibilizar indicação individual ou bloqueios. Testes sintéticos cobrem recepção fragmentada, mudança de procedimento, veto semântico e falhas de alerta; sem mensagens reais. Evidência: auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md.
+Fatos da página de lifting facial disponíveis à Bruna, procedimento sincronizado após agregação das mensagens e UNKNOWN-REVIEW condicionado a recibo de alerta. Sem flexibilizar indicação individual ou bloqueios. Commit funcional ee2c560129a3299b5b4e7d6dcac15325ac5bdf21; Netlify 6ab92cfd510c0500080cfc82. Testes sintéticos cobrem recepção fragmentada, mudança de procedimento, veto semântico e falhas de alerta; sem mensagens reais. Evidência: auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md.
 
 ## 2026-09-27.1 — preço com referência clara e continuação contextual, publicado e verificado
 
