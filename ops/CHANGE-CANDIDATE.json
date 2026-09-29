@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSA-NATURAL-2026-09-29",
   "title": "Acolher relatos de aparência sem presumir sofrimento nem repetir descoberta",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "b5bdd8c68f8fb1496e342b7bd038240817b05b3d",
   "authorization": {
     "required": true,
@@ -344,7 +344,8 @@
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    }
+    },
+    "external": "Exact functional commit published; immutable and production health verified; both existing Drive projections match raw bytes."
   },
   "rollback": {
     "local": "Reverter apenas este pacote, preservando mudanças anteriores.",
@@ -364,7 +365,13 @@
     "approvedCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
     "netlifyDeployId": "6abb7905e0d2af0007dbe177",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-09-29T08:42:25.967Z",
-    "documentationStatus": "pending_existing_drive_projections"
+    "verifiedAt": "2026-09-29T08:43:03.918Z",
+    "documentationStatus": "same_drive_files_verified",
+    "drivePlanSha256": "bf8ee1da3a4bd14c4030c1ebd12b0b84eb6af5aa7a286ffdd1545ab0c4a17f34",
+    "destinationsChanged": [
+      "Netlify",
+      "Google Drive: manual and executive plan, same IDs"
+    ],
+    "receipt": "auditorias/bruna-conversa-natural-2026-09-29/PUBLICACAO.json"
   }
 }
