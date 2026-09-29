@@ -3,6 +3,9 @@ const MAX_FIRST_NAME_LENGTH = 18;
 const MAX_KNOWN_PATIENT_NAME_LENGTH = 120;
 const PERSONAL_NAME_CHARACTER_PATTERN = /^[\p{L}\p{M}'’.\-\s]+$/u;
 const NONPERSONAL_NAME_PATTERN = /\b(?:solu[cç][oõ]es|servi[cç]os|digital|digitais|tecnologia|empreendimentos|sou|estou|estamos|somos|feliz|felizes|deus|fiel|aposentad[oa]|casad[oa]|solteir[oa]|interessad[oa])\b/i;
+// Profile labels are not verified identities. Omit commercial descriptions
+// instead of extracting a plausible first word from a business display name.
+const BUSINESS_DESCRIPTION_PATTERN = /\b(?:imove(?:l|is)|corretor(?:a|es|as)?|corretagem|consultoria|seguros?|engenharia|construc(?:ao|oes)|transportes?|turismo|viagens|confeitaria|padaria|farmacia|cosmeticos|perfumaria|atacado|varejo)\b/;
 
 export function usableKnownPatientName(value) {
   const name = Array.from(String(value || "").trim())
@@ -58,7 +61,9 @@ export function usableProfileName(value) {
     .replace(/\s+/g, " ")
     .trim();
   const profileName = stripBoundaryDecorations(boundedProfileName);
-  const normalizedProfileName = profileName.toLocaleLowerCase("pt-BR");
+  const normalizedProfileName = profileName.toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "");
   const suspiciousProfilePattern =
     /\b(?:cl[ií]nica|consult[oó]rio|hospital|empresa|loja|store|shop|studio|est[uú]dio|est[eé]tica|sal[aã]o|oficial|atendimento|recep[cç][aã]o|comercial|vendas|marketing|equipe|grupo|cirurgia|pl[aá]stica|odontologia|ltda|semijoias?|joias?|joalheria|acess[oó]rios|boutique|moda|beauty|imobili[aá]ria|advocacia|arquitetura|fotografia|doces|restaurante|fam[ií]lia|mam[aã]e?|papai|amor|vida|trabalho|n[uú]mero\s+novo|sem\s+nome)\b/i;
 
@@ -67,6 +72,7 @@ export function usableProfileName(value) {
     boundedProfileName.length > MAX_PROFILE_NAME_LENGTH ||
     !PERSONAL_NAME_CHARACTER_PATTERN.test(profileName) ||
     NONPERSONAL_NAME_PATTERN.test(profileName) ||
+    BUSINESS_DESCRIPTION_PATTERN.test(normalizedProfileName) ||
     suspiciousProfilePattern.test(profileName)
   ) {
     return "";

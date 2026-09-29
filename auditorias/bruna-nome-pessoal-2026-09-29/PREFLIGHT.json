@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-09-29T22:14:10.366Z",
+  "status": "verified_read_only",
+  "baseCommit": "5d04f535701a01acd1683611c59f97c276946587",
+  "production": {
+    "commit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "netlifyDeployId": "6abb7fa0f3fe0b00082c987f",
+    "bundleVersion": "2026-09-29.2",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "netlifyUi": "Projeto canônico, commit publicado e autopublishing ativo conferidos ao vivo.",
+    "health": "GET /api/ycloud/webhook: ok true, modo active, assinatura active, processamento durável.",
+    "userEvidence": "Captura fornecida mostra vocativo comercial na abertura e continuação. Sem cópia de nome, telefone ou conversa no repositório.",
+    "baselineReproduction": "Oito regressões sintéticas falharam no baseline por nome comercial aceito. Filtro existente não reconhecia termos imobiliários; coordenação humana não usava o proprietário comum."
+  },
+  "limitations": "Nenhuma consulta ou alteração de identidade na LEADS; mudança só afeta nome de tratamento. Sem execução, replay ou envio de mensagem.",
+  "externalWritesPerformed": false,
+  "driveBaseline": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "44cf5b18af0ba844dfa2449fb5748defa4f8c82affcf248bcb7b3f4caee60785",
+      "rawReadbackMatchesBaseline": true
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "f8857aa557d2c1ad70e5dc0d175862ad9274e34b2f1c5009ae7e2fc57c5701fe",
+      "rawReadbackMatchesBaseline": true
+    }
+  ],
+  "publicationPreflight": {
+    "checkedAt": "2026-09-29T22:18:14.684Z",
+    "productionCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "netlifyDeployId": "6abb7fa0f3fe0b00082c987f",
+    "health": {
+      "checkedAt": "2026-09-29T22:17:05.230Z",
+      "base": "https://draamandaschroeder.com.br",
+      "healthStatus": 200,
+      "automationMode": "active",
+      "signatureProtection": "active",
+      "processingMode": "durable_background_intake",
+      "unsignedPost": 401,
+      "patientMessagesSent": 0,
+      "passed": true
+    },
+    "gitRemoteBaseline": "5d04f535701a01acd1683611c59f97c276946587"
+  }
+}

@@ -1,4 +1,5 @@
 import { isAppointmentPreferenceReply } from "./appointment-suggestions.mjs";
+import { usableProfileFirstName } from "./profile-name.mjs";
 import { detectPatientAppointmentReply } from "./appointment-confirmation.mjs";
 import { isSchedulingRequest } from "./whatsapp-automation.mjs";
 import {
@@ -206,19 +207,11 @@ export function classifySimpleCoordinationAcknowledgement(
   return null;
 }
 
-function usableFirstName(value) {
-  const firstName = String(value || "")
-    .trim()
-    .split(/\s+/)[0]
-    ?.replace(/[^\p{L}\p{M}'’-]/gu, "");
-  return firstName && firstName.length >= 2 ? firstName : "";
-}
-
 export function buildSimpleCoordinationReply({
   kind,
   patientName,
 } = {}) {
-  const firstName = usableFirstName(patientName);
+  const firstName = usableProfileFirstName(patientName);
   const opening = firstName ? `Perfeito, ${firstName}.` : "Perfeito.";
 
   if (kind === "send_exams_later") {

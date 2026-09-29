@@ -1,5 +1,11 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+<!-- BRUNA-NOME-PESSOAL-2026-09-29 -->
+**Pacote 2026-09-29.3 — VALIDADO LOCALMENTE.** A Bruna usa saudação neutra quando o perfil contém descrição comercial, profissão, marca ou outro nome não pessoal reconhecido. Imóveis, corretagem e demais descrições comerciais não viram vocativo nem fornecem primeiro nome por recorte. Nome explicitamente informado pela pessoa continua prioritário. Responder à dúvida antes de qualquer coleta; perguntar como prefere ser chamada apenas na abertura sem nome confiável, quando não houver outra pergunta ou histórico. Em continuidade, seguir sem nome. Sem alteração de cadastro clínico, destinatário, preço, agenda, cadência ou prioridade humana.
+
+Evidência: `auditorias/bruna-nome-pessoal-2026-09-29/RELATORIO.md`. Validação: 1.870 testes integrais, oito regressões novas e 47 comandos obrigatórios aprovados; sem mensagem de teste ou alteração de dados de pacientes. Publicação e equivalência ainda pendentes. Daniel/equipe: observar os próximos contatos naturais e revisar em 01/10/2026; omissões indevidas de nomes pessoais exigem revisão do filtro.
+<!-- /BRUNA-NOME-PESSOAL-2026-09-29 -->
+
 <!-- BRUNA-PONTE-CONSULTA-2026-09-29 -->
 **Pacote 2026-09-29.2 — PUBLICADO E VERIFICADO em produção em 29/09/2026.** Commit funcional 678538d7fe51f2cc59f1698335c77cf8566c7bae; Netlify 6abb7fa0f3fe0b00082c987f; Apps Script v161 preservado. A resposta atende primeiro à dúvida e pode oferecer uma única vez conferir horários após relato pessoal específico e avaliação explicada, ou pedido explícito de explicar a consulta. Convite anterior, recusa, pesquisa genérica, prefill, dúvida clínica pendente ou cuidado em andamento impedem esse avanço automático. Preço cirúrgico isolado não ativa esta ponte. Aceite curto vale para a última oferta concreta e preferências já informadas são aproveitadas. Validação: 1.862 testes integrais, 12 regressões novas e 45 comandos do contrato; build/check de 193 arquivos e 54 URLs sem erros. Domínio e URL imutável ativos, assinatura protegida e POST sem assinatura rejeitado com 401. Quatorze funções publicadas; publicação automática restaurada. Nenhuma mensagem manual ou replay. Primeira interação natural após a publicação e ganho de conversão ainda não observados.
 

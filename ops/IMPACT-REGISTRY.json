@@ -389,7 +389,18 @@
         "netlify/functions/lib/conversation-action-controller.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
         "netlify/functions/lib/whatsapp-automation.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/surgical-price-review.mjs",
+        "netlify/functions/lib/appointment-suggestions.mjs",
+        "netlify/functions/lib/appointment-confirmation.mjs",
+        "netlify/functions/lib/extreme-night-policy.mjs",
+        "netlify/functions/lib/knowledge-learning.mjs",
+        "netlify/functions/lib/consultation-question-bundle.mjs",
+        "netlify/functions/lib/lifting-information.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/professional-fact-review.mjs",
+        "netlify/functions/appointment-review.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -458,7 +469,11 @@
         "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
         "auditorias/bruna-ponte-consulta-2026-09-29/PREFLIGHT.json",
         "auditorias/bruna-ponte-consulta-2026-09-29/PUBLICACAO.json",
-        "auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md"
+        "auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md",
+        "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+        "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json",
+        "auditorias/bruna-nome-pessoal-2026-09-29/PUBLICACAO.json",
+        "auditorias/bruna-nome-pessoal-2026-09-29/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -484,7 +499,8 @@
         "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
-        "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs"
+        "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+        "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
@@ -498,7 +514,8 @@
         "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
-        "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",

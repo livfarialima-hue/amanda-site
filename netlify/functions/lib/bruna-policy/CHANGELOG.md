@@ -1,3 +1,7 @@
+## 2026-09-29.3 — nome de tratamento conservador, validação local
+
+A Bruna usa saudação neutra quando o perfil contém descrição comercial, profissão, marca ou outro nome não pessoal reconhecido. Imóveis, corretagem e demais descrições comerciais não viram vocativo nem fornecem primeiro nome por recorte. Nome explicitamente informado pela pessoa continua prioritário. Responder à dúvida antes de qualquer coleta; perguntar como prefere ser chamada apenas na abertura sem nome confiável, quando não houver outra pergunta ou histórico. Em continuidade, seguir sem nome. Sem alteração de cadastro clínico, destinatário, preço, agenda, cadência ou prioridade humana. Regressões de abertura, preço, coordenação humana, madrugada, agenda e entrada semântica; nomes pessoais com acentos, emojis e declaração explícita preservados.
+
 ## 2026-09-29.2 — próximo passo contextual até a consulta, publicado e verificado
 
 Commit funcional 678538d7fe51f2cc59f1698335c77cf8566c7bae; Netlify 6abb7fa0f3fe0b00082c987f. Permissão compartilhada de convite opcional único após orientação pessoal ou explicação solicitada da consulta. Evita redescoberta, repetição após convite/recusa e aceite indevido de uma oferta antiga. Mantém atendimento à dúvida, preços, prefill, risco clínico, agenda verificada e revisão humana. Hipótese de experiência, sem ganho de conversão comprovado. Evidência: auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md.

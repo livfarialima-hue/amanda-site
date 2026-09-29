@@ -1,0 +1,23 @@
+{
+  "status": "tested_local",
+  "changeId": "BRUNA-NOME-PESSOAL-2026-09-29",
+  "patientMessagesSent": 0,
+  "appsScriptVersion": 161,
+  "validation": {
+    "fullTests": 1870,
+    "newRegressions": 8,
+    "baselineFailures": 8,
+    "requiredCommands": 47,
+    "architecture": "passed",
+    "siteBuild": "193 files / 54 URLs / no errors",
+    "siteCheck": "passed",
+    "diff": "passed",
+    "ops": "SYNC_PENDING expected before publication",
+    "completedAt": "2026-09-29T22:18:14.684Z"
+  },
+  "rollback": {
+    "commit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "deployId": "6abb7fa0f3fe0b00082c987f",
+    "noReplay": true
+  }
+}
