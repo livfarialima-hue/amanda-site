@@ -1,6 +1,6 @@
-## 2026-09-29.2 — próximo passo contextual até a consulta, testado localmente
+## 2026-09-29.2 — próximo passo contextual até a consulta, publicado e verificado
 
-Permissão compartilhada de convite opcional único após orientação pessoal ou explicação solicitada da consulta. Evita redescoberta, repetição após convite/recusa e aceite indevido de uma oferta antiga. Mantém atendimento à dúvida, preços, prefill, risco clínico, agenda verificada e revisão humana. Hipótese de experiência, sem ganho de conversão comprovado. Evidência: auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md.
+Commit funcional 678538d7fe51f2cc59f1698335c77cf8566c7bae; Netlify 6abb7fa0f3fe0b00082c987f. Permissão compartilhada de convite opcional único após orientação pessoal ou explicação solicitada da consulta. Evita redescoberta, repetição após convite/recusa e aceite indevido de uma oferta antiga. Mantém atendimento à dúvida, preços, prefill, risco clínico, agenda verificada e revisão humana. Hipótese de experiência, sem ganho de conversão comprovado. Evidência: auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md.
 
 ## 2026-09-29.1 — continuidade e acolhimento proporcional, publicado e verificado
 

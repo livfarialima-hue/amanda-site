@@ -1,5 +1,5 @@
 {
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "changeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -14,5 +14,57 @@
     "diff": "passed",
     "ops": "SYNC_PENDING expected before publication",
     "completedAt": "2026-09-29T09:05:28.142Z"
+  },
+  "approvedCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+  "netlifyDeployId": "6abb7fa0f3fe0b00082c987f",
+  "bundleVersion": "2026-09-29.2",
+  "publishedAt": "2026-09-29T09:09:11Z",
+  "verifiedAt": "2026-09-29T09:09:54.723Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-09-29T09:08:34.296Z",
+    "base": "https://6abb7fa0f3fe0b00082c987f--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "sourcePage": {
+      "status": 200,
+      "containsEyeAssessmentSource": true
+    },
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-09-29T09:09:13.516Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "sourcePage": {
+      "status": 200,
+      "containsEyeAssessmentSource": true
+    },
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "functionsPublished": 14,
+  "autoPublishingRestored": true,
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "boundAt": "2026-09-29T09:05:55.1770329Z",
+    "scope": "Passagem contextual da orientação até a consulta, proteção de aceite, registros e projeções existentes",
+    "approvedCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "authorization": "A forma como ela conduz até fornecer informações de agendamento está adequada pra maximizar a conversao ? Ajuste e publique se precisar melhorar",
+    "patientMessagesAuthorized": false
+  },
+  "rollback": {
+    "commit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+    "deployId": "6abb7905e0d2af0007dbe177",
+    "appsScriptVersion": 161,
+    "noReplay": true
   }
 }

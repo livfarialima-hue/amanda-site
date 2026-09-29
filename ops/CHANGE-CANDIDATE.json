@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
   "title": "Próximo passo opcional e contextual até a consulta, sem redescoberta ou insistência",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "1883da3ed2feaa8a924bdc145c133f823ec6e12b",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -366,5 +366,12 @@
       "Intervenção humana, revisão, silêncio, opt-out e duplicidade; amostras pequenas são descritivas, não efeito causal.",
       "Reverter diante de agenda indevida, insistência, perda de resposta ou quebra de qualquer proteção."
     ]
+  },
+  "release": {
+    "approvedCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "netlifyDeployId": "6abb7fa0f3fe0b00082c987f",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-29T09:09:54.723Z",
+    "documentationStatus": "pending_existing_drive_projections"
   }
 }

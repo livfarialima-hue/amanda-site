@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
-    "lastObservedProductionCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
-    "functionalDeployId": "6abb7905e0d2af0007dbe177",
-    "lastObservedProductionDeployId": "6abb7905e0d2af0007dbe177",
-    "rollbackCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
-    "rollbackDeployId": "6ab92cfd510c0500080cfc82",
+    "functionalCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "lastObservedProductionCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "functionalDeployId": "6abb7fa0f3fe0b00082c987f",
+    "lastObservedProductionDeployId": "6abb7fa0f3fe0b00082c987f",
+    "rollbackCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+    "rollbackDeployId": "6abb7905e0d2af0007dbe177",
     "rollbackConstraint": "Restaurar o deploy anterior preservando Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-09-29T08:41:43Z",
+    "publishedAt": "2026-09-29T09:09:11Z",
     "publishedTimePrecision": "confirmation_after_publish_action",
-    "lastVerifiedAt": "2026-09-29T08:43:03.918Z",
-    "candidateChangeId": "BRUNA-CONVERSA-NATURAL-2026-09-29",
+    "lastVerifiedAt": "2026-09-29T09:09:54.723Z",
+    "candidateChangeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-29.1",
+    "bundleVersion": "2026-09-29.2",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -47,9 +47,5 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-09-29.2",
-    "changeId": "BRUNA-PONTE-CONSULTA-2026-09-29"
-  }
+  "followupCopyContract": "followup-message-copy"
 }
