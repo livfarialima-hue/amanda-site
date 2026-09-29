@@ -1,4 +1,4 @@
-## 2026-09-29.3 — nome de tratamento conservador, validação local
+## 2026-09-29.3 — nome de tratamento conservador, publicado e verificado
 
 A Bruna usa saudação neutra quando o perfil contém descrição comercial, profissão, marca ou outro nome não pessoal reconhecido. Imóveis, corretagem e demais descrições comerciais não viram vocativo nem fornecem primeiro nome por recorte. Nome explicitamente informado pela pessoa continua prioritário. Responder à dúvida antes de qualquer coleta; perguntar como prefere ser chamada apenas na abertura sem nome confiável, quando não houver outra pergunta ou histórico. Em continuidade, seguir sem nome. Sem alteração de cadastro clínico, destinatário, preço, agenda, cadência ou prioridade humana. Regressões de abertura, preço, coordenação humana, madrugada, agenda e entrada semântica; nomes pessoais com acentos, emojis e declaração explícita preservados.
 

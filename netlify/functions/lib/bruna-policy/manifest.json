@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
-    "lastObservedProductionCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
-    "functionalDeployId": "6abb7fa0f3fe0b00082c987f",
-    "lastObservedProductionDeployId": "6abb7fa0f3fe0b00082c987f",
-    "rollbackCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
-    "rollbackDeployId": "6abb7905e0d2af0007dbe177",
-    "rollbackConstraint": "Restaurar o deploy anterior preservando Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-09-29T09:09:11Z",
+    "functionalCommit": "d700926465386ea34842a459b5c690544485d069",
+    "lastObservedProductionCommit": "d700926465386ea34842a459b5c690544485d069",
+    "functionalDeployId": "6abc3954a368c700089a974e",
+    "lastObservedProductionDeployId": "6abc3954a368c700089a974e",
+    "rollbackCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
+    "rollbackDeployId": "6abb7fa0f3fe0b00082c987f",
+    "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
+    "publishedAt": "2026-09-29T22:20:51.411Z",
     "publishedTimePrecision": "confirmation_after_publish_action",
-    "lastVerifiedAt": "2026-09-29T09:11:13.779Z",
-    "candidateChangeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
+    "lastVerifiedAt": "2026-09-29T22:21:52.248Z",
+    "candidateChangeId": "BRUNA-NOME-PESSOAL-2026-09-29",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-09-29.2",
+    "bundleVersion": "2026-09-29.3",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -41,16 +41,11 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "44cf5b18af0ba844dfa2449fb5748defa4f8c82affcf248bcb7b3f4caee60785",
+    "driveProjectionSha256": "7992fd8e844c1a805caf4d1bf4c8166f6038045886929cca5c8136f6044e88f5",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-09-29.3",
-    "changeId": "BRUNA-NOME-PESSOAL-2026-09-29",
-    "status": "tested_local"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

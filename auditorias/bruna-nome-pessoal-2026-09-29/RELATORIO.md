@@ -1,6 +1,8 @@
 # Nome pessoal nas respostas da Bruna — 29/09/2026
 
-Estado: validado localmente; publicação pendente.
+Estado: publicado e verificado; manual e Plano no Drive relidos byte a byte nos mesmos IDs.
+
+Commit funcional d700926465386ea34842a459b5c690544485d069; deploy 6abc3954a368c700089a974e; verificado em 2026-09-29T22:21:05.241Z. Sem mensagem real de teste ou observação de nova conversa natural.
 
 Validação: 1.870 testes integrais, oito regressões novas (oito falhas reproduzidas no baseline), 47 comandos obrigatórios, arquitetura e build/check de 193 arquivos e 54 URLs sem erros.
 

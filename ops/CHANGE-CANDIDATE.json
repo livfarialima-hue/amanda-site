@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-NOME-PESSOAL-2026-09-29",
   "title": "Omitir descrições comerciais do nome de tratamento",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "5d04f535701a01acd1683611c59f97c276946587",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -332,7 +332,8 @@
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    }
+    },
+    "external": "Functional commit published, immutable and production health verified; existing Drive projections match local bytes."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -348,6 +349,16 @@
     ]
   },
   "release": {
-    "status": "pending"
+    "approvedCommit": "d700926465386ea34842a459b5c690544485d069",
+    "netlifyDeployId": "6abc3954a368c700089a974e",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-29T22:21:52.248Z",
+    "documentationStatus": "same_drive_files_verified",
+    "destinationsChanged": [
+      "Netlify",
+      "Google Drive: manual and executive plan, same IDs"
+    ],
+    "receipt": "auditorias/bruna-nome-pessoal-2026-09-29/PUBLICACAO.json",
+    "drivePlanSha256": "902aa6b79414eeb3da9afa90825013eeaf3a746244158aa7bfe0707dfb1b1a1f"
   }
 }

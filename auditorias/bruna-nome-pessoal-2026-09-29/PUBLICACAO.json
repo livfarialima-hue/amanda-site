@@ -1,5 +1,5 @@
 {
-  "status": "tested_local",
+  "status": "published_verified",
   "changeId": "BRUNA-NOME-PESSOAL-2026-09-29",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -19,5 +19,65 @@
     "commit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
     "deployId": "6abb7fa0f3fe0b00082c987f",
     "noReplay": true
-  }
+  },
+  "approvedCommit": "d700926465386ea34842a459b5c690544485d069",
+  "netlifyDeployId": "6abc3954a368c700089a974e",
+  "bundleVersion": "2026-09-29.3",
+  "publishedAt": "2026-09-29T22:20:51.411Z",
+  "verifiedAt": "2026-09-29T22:21:05.241Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-09-29T22:20:17.720Z",
+    "base": "https://6abc3954a368c700089a974e--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-09-29T22:20:51.411Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "functionsPublished": 14,
+  "autoPublishingRestored": true,
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-09-29T22:18:30.5782110Z",
+    "approvedCommit": "d700926465386ea34842a459b5c690544485d069",
+    "request": "Qnd nao parecer o nome de uma pessoa, melhor nao usar ou perguntar o nome.",
+    "publicationAuthority": "Autorização persistente desta conversa para ajustar e publicar o comportamento da Bruna em todos os locais necessários.",
+    "scope": "Nome de tratamento, consumidores e diretrizes existentes",
+    "patientMessagesAuthorized": false
+  },
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "7992fd8e844c1a805caf4d1bf4c8166f6038045886929cca5c8136f6044e88f5",
+      "bytes": 149858,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-29T22:21:50.9398741Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "902aa6b79414eeb3da9afa90825013eeaf3a746244158aa7bfe0707dfb1b1a1f",
+      "bytes": 234926,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-29T22:21:51.6661311Z"
+    }
+  ],
+  "documentationVerifiedAt": "2026-09-29T22:21:52.248Z"
 }
