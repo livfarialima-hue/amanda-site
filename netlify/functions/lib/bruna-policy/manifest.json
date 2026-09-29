@@ -26,7 +26,7 @@
     "rollbackConstraint": "Restaurar o deploy anterior preservando Apps Script v161, filas, pausas e recibos; sem replay.",
     "publishedAt": "2026-09-29T09:09:11Z",
     "publishedTimePrecision": "confirmation_after_publish_action",
-    "lastVerifiedAt": "2026-09-29T09:09:54.723Z",
+    "lastVerifiedAt": "2026-09-29T09:11:13.779Z",
     "candidateChangeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-09-29.2",
@@ -41,7 +41,7 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "6607be916d07700fb1c1ca9e4d1b57e0a46f98324b71464731b87660800a30a1",
+    "driveProjectionSha256": "44cf5b18af0ba844dfa2449fb5748defa4f8c82affcf248bcb7b3f4caee60785",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",

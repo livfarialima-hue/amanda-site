@@ -1,5 +1,5 @@
 {
-  "status": "published_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -19,7 +19,7 @@
   "netlifyDeployId": "6abb7fa0f3fe0b00082c987f",
   "bundleVersion": "2026-09-29.2",
   "publishedAt": "2026-09-29T09:09:11Z",
-  "verifiedAt": "2026-09-29T09:09:54.723Z",
+  "verifiedAt": "2026-09-29T09:11:13.779Z",
   "candidateSmoke": {
     "checkedAt": "2026-09-29T09:08:34.296Z",
     "base": "https://6abb7fa0f3fe0b00082c987f--inspiring-sprite-b35ca4.netlify.app",
@@ -66,5 +66,27 @@
     "deployId": "6abb7905e0d2af0007dbe177",
     "appsScriptVersion": 161,
     "noReplay": true
-  }
+  },
+  "documentationCommit": "fe45e395c2cbe660150e03d6ddc6224e221bd81f",
+  "documentationVerifiedAt": "2026-09-29T09:11:13.779Z",
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "44cf5b18af0ba844dfa2449fb5748defa4f8c82affcf248bcb7b3f4caee60785",
+      "bytes": 148356,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-29T09:11:13.779Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "f8857aa557d2c1ad70e5dc0d175862ad9274e34b2f1c5009ae7e2fc57c5701fe",
+      "bytes": 233424,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-09-29T09:11:13.779Z"
+    }
+  ]
 }

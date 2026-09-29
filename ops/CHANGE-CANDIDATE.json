@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PONTE-CONSULTA-2026-09-29",
   "title": "Próximo passo opcional e contextual até a consulta, sem redescoberta ou insistência",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "1883da3ed2feaa8a924bdc145c133f823ec6e12b",
   "authorization": {
     "required": true,
@@ -351,7 +351,8 @@
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    }
+    },
+    "external": "Exact functional commit published; immutable and production health verified; both existing Drive projections match raw bytes."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -371,7 +372,13 @@
     "approvedCommit": "678538d7fe51f2cc59f1698335c77cf8566c7bae",
     "netlifyDeployId": "6abb7fa0f3fe0b00082c987f",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-09-29T09:09:54.723Z",
-    "documentationStatus": "pending_existing_drive_projections"
+    "verifiedAt": "2026-09-29T09:11:13.779Z",
+    "documentationStatus": "same_drive_files_verified",
+    "drivePlanSha256": "f8857aa557d2c1ad70e5dc0d175862ad9274e34b2f1c5009ae7e2fc57c5701fe",
+    "destinationsChanged": [
+      "Netlify",
+      "Google Drive: manual and executive plan, same IDs"
+    ],
+    "receipt": "auditorias/bruna-ponte-consulta-2026-09-29/PUBLICACAO.json"
   }
 }
