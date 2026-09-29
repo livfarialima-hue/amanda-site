@@ -41,7 +41,7 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "7992fd8e844c1a805caf4d1bf4c8166f6038045886929cca5c8136f6044e88f5",
+    "driveProjectionSha256": "c4ff0eb44af3b0d0e5ff83588dc8a5d0089d07e812bbc28ef511b943fa260296",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",

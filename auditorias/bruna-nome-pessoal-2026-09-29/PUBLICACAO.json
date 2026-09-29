@@ -63,11 +63,11 @@
     {
       "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
       "source": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "7992fd8e844c1a805caf4d1bf4c8166f6038045886929cca5c8136f6044e88f5",
+      "sha256": "c4ff0eb44af3b0d0e5ff83588dc8a5d0089d07e812bbc28ef511b943fa260296",
       "bytes": 149858,
       "sameFileId": true,
       "rawReadbackMatchesLocal": true,
-      "verifiedAt": "2026-09-29T22:21:50.9398741Z"
+      "verifiedAt": "2026-09-29T22:23:15.6618848Z"
     },
     {
       "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
@@ -79,5 +79,5 @@
       "verifiedAt": "2026-09-29T22:21:51.6661311Z"
     }
   ],
-  "documentationVerifiedAt": "2026-09-29T22:21:52.248Z"
+  "documentationVerifiedAt": "2026-09-29T22:23:15.6618848Z"
 }
