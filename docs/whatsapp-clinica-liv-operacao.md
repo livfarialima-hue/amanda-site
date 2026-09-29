@@ -1,5 +1,14 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+<!-- BRUNA-PONTE-CONSULTA-2026-09-29 -->
+**Pacote 2026-09-29.2 — TESTADO LOCALMENTE, PUBLICAÇÃO PENDENTE.** A passagem à consulta deve responder primeiro à dúvida e oferecer um próximo passo opcional, sem voltar à descoberta. Após relato pessoal específico e explicação da avaliação, ou pedido explícito de explicar a consulta, o contrato pode permitir uma única oferta de conferir horários. Convite anterior, recusa, pesquisa genérica, prefill, dúvida clínica pendente ou cuidado em andamento impedem esse avanço automático. Preço de cirurgia isolado não ativa esta ponte; a resposta comercial vigente permanece.
+
+Exemplo após orientação útil: “Se quiser, posso verificar opções de horário com a equipe.” Isso não classifica prontidão, não indica cirurgia, não coleta dados e não reserva horário. Só aceite da última oferta concreta ou pedido pessoal de agenda segue para o fluxo vigente de conferência humana, aproveitando dia e período já informados. Um “sim” a uma explicação não aceita uma oferta antiga de agenda. Convite já feito ou recusado não é repetido ao responder preço da consulta.
+
+Evidência e recibos: auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md. Hipótese: menos redescoberta e um próximo passo claro facilitam a continuidade; ganho de conversão ainda não medido. Daniel/equipe: qualidade em 01/10/2026 e revisão de funil em 13/10/2026, sem nova automação. Medir pedidos pessoais de agenda e consultas marcadas/realizadas por contato qualificado, por origem/procedimento; observar intervenção, repetição, silêncio, revisão humana e opt-out. Amostras curtas são descritivas. Reverter se houver insistência, agendamento indevido, perda de resposta ou quebra de proteção. Rollback: 6abb7905e0d2af0007dbe177 / 5baf6784da8ad0fc4829b4abf1f34a01b7767bcd. Sem mensagens manuais, replay, Ads ou Apps Script; v161 preservada.
+<!-- /BRUNA-PONTE-CONSULTA-2026-09-29 -->
+
+
 <!-- BRUNA-CONVERSA-NATURAL-2026-09-29 -->
 **Pacote 2026-09-29.1 — PUBLICADO E VERIFICADO em produção em 29/09/2026.** Commit funcional 5baf6784da8ad0fc4829b4abf1f34a01b7767bcd; Netlify 6abb7905e0d2af0007dbe177; Apps Script v161 preservado. Acolhimento proporcional, integração das respostas fragmentadas e orientação específica após a descrição, sem repetir descoberta nem presumir sofrimento. Avaliação conjunta de pálpebras, sobrancelhas e rosto usa a página canônica de blefaroplastia, sem escolher cirurgia. Perguntas necessárias, preço, agenda e proteções clínicas preservados. Validação: 1.850 testes integrais, 15 regressões novas e 43 comandos do contrato; build/check de 193 arquivos e 54 URLs sem erros. Domínio e URL imutável ativos com assinatura protegida e POST sem assinatura rejeitado com 401. Quatorze funções publicadas; publicação automática restaurada. Nenhuma mensagem real de teste ou replay. Primeira interação natural após a publicação ainda não observada.
 

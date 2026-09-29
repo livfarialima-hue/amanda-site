@@ -454,7 +454,11 @@
         "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
         "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json",
         "auditorias/bruna-conversa-natural-2026-09-29/PUBLICACAO.json",
-        "auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md"
+        "auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md",
+        "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+        "auditorias/bruna-ponte-consulta-2026-09-29/PREFLIGHT.json",
+        "auditorias/bruna-ponte-consulta-2026-09-29/PUBLICACAO.json",
+        "auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -479,7 +483,8 @@
         "netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
-        "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs"
+        "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+        "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
@@ -492,7 +497,8 @@
         "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
         "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
-        "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
@@ -844,7 +850,8 @@
         "netlify/functions/lib/conversation-guidelines.mjs",
         "netlify/functions/lib/lifting-information.mjs",
         "netlify/functions/lib/patient-replies.mjs",
-        "netlify/functions/lib/consultation-question-bundle.mjs"
+        "netlify/functions/lib/consultation-question-bundle.mjs",
+        "netlify/functions/lib/appointment-suggestions.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/human-resume.mjs",
@@ -881,7 +888,12 @@
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json",
         "auditorias/bruna-perguntas-simples-2026-09-27/PUBLICACAO.json",
-        "auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md"
+        "auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md",
+        "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+        "auditorias/bruna-ponte-consulta-2026-09-29/PREFLIGHT.json",
+        "auditorias/bruna-ponte-consulta-2026-09-29/PUBLICACAO.json",
+        "auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md",
+        "netlify/functions/lib/appointment-suggestions.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-conversation-evals.test.mjs",
@@ -896,7 +908,9 @@
         "netlify/functions/lib/patient-replies.test.mjs",
         "netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
         "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs",
-        "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs"
+        "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+        "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+        "netlify/functions/lib/appointment-suggestions.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
@@ -906,7 +920,9 @@
         "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
         "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-        "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+        "node --test netlify/functions/lib/appointment-suggestions.test.mjs"
       ],
       "liveSystems": [
         "Google Drive",

@@ -317,6 +317,7 @@ export function buildConsultationInformationReply({
   siteResource,
   procedure,
   availabilityRequested = false,
+  consultationNextStep = "",
   consultationContextPreviouslyShared = false,
   consultationPriceRequested = false,
   conversionExperienceEnabled = false,
@@ -382,7 +383,9 @@ export function buildConsultationInformationReply({
             : "Esta página reúne explicações sobre o procedimento e a consulta:",
           resourceUrl,
         ].join(" ")
-      : consultationPriceRequested
+      : consultationNextStep === "offer_availability" && conversionExperienceEnabled
+        ? "Se quiser, posso verificar opções de horário com a equipe."
+      : consultationPriceRequested && consultationNextStep !== "answer_only"
         ? conversionExperienceEnabled
           ? "Se quiser, posso verificar opções de horário."
           : "Se fizer sentido para você, posso verificar opções de horário."
@@ -390,6 +393,7 @@ export function buildConsultationInformationReply({
   const explorationQuestion =
     !availabilityRequested &&
     !consultationPriceRequested &&
+    !consultationNextStep &&
     !siteRequested
       ? procedureLabel
         ? `O que seria mais útil entender agora sobre ${procedureLabel}?`

@@ -1,9 +1,11 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
+import { buildReplyContinuityContext } from "./reply-continuity.mjs";
 import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
+  classifyBrunaCta,
   procedureOpeningMicrovalue,
 } from "./bruna-conversion-experience.mjs";
 
@@ -420,6 +422,7 @@ function inferUnresolvedIntents({
   })) {
     add(`lifting_${topic}`);
   }
+  if (plan?.reason === "consultation_information_request" && intents.length === 0) add("consultation_information");
   if (hasDirectPatientRequest(value) && intents.length === 0) add("clinical_or_general");
   return intents;
 }
@@ -528,27 +531,51 @@ function buildReplyContract({
   const silenceReason = canWrite ? "" : reason || "reply_not_authorized";
   const allowedCtaTypes = [];
   const declinesAvailability = /\b(?:n[aã]o\s+(?:quero|pretendo|vou)|sem\s+(?:querer|intenc[aã]o\s+de))\s+(?:agendar|marcar)|\b(?:vou\s+pensar|prefiro\s+pensar|s[oó]\s+(?:estou\s+)?pesquisando)\b/i.test(value);
+  const history = (Array.isArray(recentConversation) ? recentConversation : []).slice(-16);
+  const clinicTurn = turn => turn?.role === "assistant" || ["bruna", "human", "equipe_humana"].includes(turn?.source);
+  const priorAvailabilityOffer = history.filter(clinicTurn).some(turn =>
+    classifyBrunaCta(turn?.text) === BRUNA_CTA_TYPES.AVAILABILITY ||
+    classifyBrunaCta(turn?.text) === BRUNA_CTA_TYPES.PREFERENCE);
+  const declinedEarlier = history.filter(turn => !clinicTurn(turn)).some(turn =>
+    EXPLICIT_DEFERRAL_PATTERN.test(String(turn?.text || "")) ||
+    /\b(?:n[aã]o\s+(?:quero|pretendo|vou)\s+(?:agendar|marcar)|s[oó]\s+(?:estou\s+)?pesquisando|sem\s+interesse)\b/i.test(String(turn?.text || "")));
+  const mayOfferAvailability = !declinesAvailability && !declinedEarlier && !priorAvailabilityOffer;
+  const continuity = buildReplyContinuityContext({currentMessage:text,recentConversation:history});
+  const personalAnswer = isPersonalAppearanceConcern(continuity.patientAnswer) ||
+    (continuity.answeredDiscovery && /\b(?:excesso de pele|flacidez|olhar ca[ií]do|p[aá]lpebras? ca[ií]d[ao]s?)\b/i.test(continuity.patientAnswer));
+  const consultationNextStep = conversionExperienceEnabled && mayOfferAvailability &&
+    action === CONVERSATION_ACTIONS.RESPOND && plan?.route === "standard_reply" &&
+    plan?.automaticAllowed !== false && plan?.professional === "amanda" &&
+    plan?.marketingPrefill !== true && !humanContext && !details.humanTakeoverActive && !questionBundle &&
+    Boolean(procedureOpeningMicrovalue(plan?.procedure)) &&
+    !intents.some(intent => ["photo", "clinical_or_general", "price_surgery", "price_consultation",
+      "payment_terms", "scheduling", "location", "insurance", "resource", "recovery"].includes(intent)) &&
+    (plan?.reason === "consultation_information_request" ||
+      (personalAnswer && continuity.previouslyExplained.includes("consultation_process")))
+      ? "offer_availability" : "answer_only";
   if (canWrite && conversionExperienceEnabled) {
     if (intents.includes("scheduling")) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.PREFERENCE);
     }
-    if (intents.includes("price_consultation") && !declinesAvailability) {
+    if (intents.includes("price_consultation") && mayOfferAvailability) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.AVAILABILITY);
     }
     if (protectedApprovedRange && !declinesAvailability) {
-      allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION, BRUNA_CTA_TYPES.AVAILABILITY);
+      allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION);
+      if (mayOfferAvailability) allowedCtaTypes.push(BRUNA_CTA_TYPES.AVAILABILITY);
     }
     if (approvedLiftingInformation || approvedGeneralInformation) {
       allowedCtaTypes.push(BRUNA_CTA_TYPES.INFORMATION);
     }
+    if (consultationNextStep === "offer_availability") allowedCtaTypes.push(BRUNA_CTA_TYPES.AVAILABILITY);
   }
   const allowCta =
     canWrite &&
     (
       intents.includes("scheduling") ||
-      (intents.includes("price_consultation") && !declinesAvailability) ||
+      (intents.includes("price_consultation") && mayOfferAvailability) ||
       (protectedApprovedRange && !declinesAvailability) ||
-      approvedLiftingInformation || approvedGeneralInformation
+      approvedLiftingInformation || approvedGeneralInformation || consultationNextStep === "offer_availability"
     );
 
   return Object.freeze({
@@ -584,6 +611,9 @@ function buildReplyContract({
       ? {
           experienceVersion: BRUNA_CONVERSION_EXPERIENCE_VERSION,
           allowedCtaTypes: questionBundle ? [] : allowedCtaTypes,
+          consultationNextStep: !questionBundle && !protectedApprovedRange &&
+            allowedCtaTypes.includes(BRUNA_CTA_TYPES.AVAILABILITY)
+              ? "offer_availability" : "answer_only",
           preferredMaxCharacters: priceIntent ? 650 : 420,
         }
       : {}),

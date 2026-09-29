@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-09-29T08:56:32.204Z",
+  "status": "verified_read_only",
+  "baseCommit": "1883da3ed2feaa8a924bdc145c133f823ec6e12b",
+  "production": {
+    "commit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+    "netlifyDeployId": "6abb7905e0d2af0007dbe177",
+    "bundleVersion": "2026-09-29.1",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "source": "LEADS: metadata + cabeçalhos + buscas limitadas em _WHATSAPP_MENSAGENS A3300:N3626 e A3470:N3626",
+    "availabilitySearchMatches": 19,
+    "botSearchRows": 40,
+    "findings": "Convites e conclusão de agenda frequentemente mediados pela equipe na amostra. Código retorna à descoberta após explicar consulta e restringe próximo passo contextual. Amostra não permite estimar ganho causal de conversão.",
+    "productionUi": "Netlify publicado no commit e deploy indicados; auto publishing on"
+  },
+  "sources": [
+    "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
+    "docs/estrategia-abordagem-bruna.md",
+    "https://www.nice.org.uk/guidance/ng197/chapter/recommendations"
+  ],
+  "privacy": "Somente conclusões agregadas. Fixtures sintéticas; sem nomes, telefones ou IDs de paciente.",
+  "externalWritesPerformed": false,
+  "publicationPreflight": {
+    "checkedAt": "2026-09-29T09:05:28.142Z",
+    "productionCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+    "netlifyDeployId": "6abb7905e0d2af0007dbe177",
+    "health": {
+      "checkedAt": "2026-09-29T09:02:47.069Z",
+      "base": "https://draamandaschroeder.com.br",
+      "healthStatus": 200,
+      "automationMode": "active",
+      "signatureProtection": "active",
+      "processingMode": "durable_background_intake",
+      "unsignedPost": 401,
+      "sourcePage": {
+        "status": 200,
+        "containsEyeAssessmentSource": true
+      },
+      "patientMessagesSent": 0,
+      "passed": true
+    },
+    "gitRemoteBaseline": "1883da3ed2feaa8a924bdc145c133f823ec6e12b",
+    "rootClean": true,
+    "driveProjections": [
+      {
+        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "sha256": "6607be916d07700fb1c1ca9e4d1b57e0a46f98324b71464731b87660800a30a1",
+        "rawReadbackMatchesBaseline": true
+      },
+      {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "sha256": "bf8ee1da3a4bd14c4030c1ebd12b0b84eb6af5aa7a286ffdd1545ab0c4a17f34",
+        "rawReadbackMatchesBaseline": true
+      }
+    ]
+  }
+}

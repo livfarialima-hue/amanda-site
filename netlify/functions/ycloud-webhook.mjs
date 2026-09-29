@@ -2755,6 +2755,7 @@ async function completeOpenAIActive({
                 input.procedure ||
                 "",
               availabilityRequested,
+              consultationNextStep: conversationAction?.replyContract?.consultationNextStep,
               consultationContextPreviouslyShared,
               consultationPriceRequested:
                 isConsultationPriceRequest(input.text),

@@ -1,3 +1,13 @@
+## 2026-09-29 — próximo passo contextual até a consulta
+
+<!-- BRUNA-PONTE-CONSULTA-2026-09-29 -->
+**Pacote 2026-09-29.2 — TESTADO LOCALMENTE, PUBLICAÇÃO PENDENTE.** A passagem à consulta deve responder primeiro à dúvida e oferecer um próximo passo opcional, sem voltar à descoberta. Após relato pessoal específico e explicação da avaliação, ou pedido explícito de explicar a consulta, o contrato pode permitir uma única oferta de conferir horários. Convite anterior, recusa, pesquisa genérica, prefill, dúvida clínica pendente ou cuidado em andamento impedem esse avanço automático. Preço de cirurgia isolado não ativa esta ponte; a resposta comercial vigente permanece.
+
+Exemplo após orientação útil: “Se quiser, posso verificar opções de horário com a equipe.” Isso não classifica prontidão, não indica cirurgia, não coleta dados e não reserva horário. Só aceite da última oferta concreta ou pedido pessoal de agenda segue para o fluxo vigente de conferência humana, aproveitando dia e período já informados. Um “sim” a uma explicação não aceita uma oferta antiga de agenda. Convite já feito ou recusado não é repetido ao responder preço da consulta.
+
+Evidência e recibos: auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md. Hipótese: menos redescoberta e um próximo passo claro facilitam a continuidade; ganho de conversão ainda não medido. Daniel/equipe: qualidade em 01/10/2026 e revisão de funil em 13/10/2026, sem nova automação. Medir pedidos pessoais de agenda e consultas marcadas/realizadas por contato qualificado, por origem/procedimento; observar intervenção, repetição, silêncio, revisão humana e opt-out. Amostras curtas são descritivas. Reverter se houver insistência, agendamento indevido, perda de resposta ou quebra de proteção. Rollback: 6abb7905e0d2af0007dbe177 / 5baf6784da8ad0fc4829b4abf1f34a01b7767bcd. Sem mensagens manuais, replay, Ads ou Apps Script; v161 preservada.
+<!-- /BRUNA-PONTE-CONSULTA-2026-09-29 -->
+
 ## 2026-09-27 — referência de preço com linguagem acolhedora
 
 <!-- BRUNA-PRECO-ACOLHEDOR-2026-09-27 -->

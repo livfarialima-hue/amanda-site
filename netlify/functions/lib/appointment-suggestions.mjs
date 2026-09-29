@@ -1,4 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import { classifyBrunaCta, BRUNA_CTA_TYPES } from "./bruna-conversion-experience.mjs";
 
 const MAX_ALERT_TEXT_LENGTH = 650;
 const SCHEDULING_CONTEXT_PATTERN =
@@ -6,7 +7,7 @@ const SCHEDULING_CONTEXT_PATTERN =
 const APPOINTMENT_OFFER_PATTERN =
   /\b(?:duas?\s+op[cç][oõ]es|ver\s+(?:os\s+)?hor[aá]rios|ver\s+(?:a\s+)?agenda|posso\s+(?:verificar|separar|mostrar)|quer\s+(?:que\s+eu\s+)?(?:veja|ver|receber)|agendar|marcar\s+(?:uma\s+)?(?:consulta|avalia[cç][aã]o))\b/i;
 const APPOINTMENT_ACCEPTANCE_PATTERN =
-  /^(?:sim|claro|pode|por\s+favor|sim[,!]?\s+por\s+favor|quero|gostaria|vamos|pode\s+ser|quero\s+sim)[.!\s]*$/i;
+  /^(?:sim|claro|pode(?:\s+sim)?|por\s+favor|sim[,!]?\s+por\s+favor|quero|gostaria|vamos|pode\s+ser|quero\s+sim)[.!\s]*$/i;
 const PERIODS = {
   morning: ["manha", "matutino"],
   afternoon: ["tarde", "vespertino"],
@@ -171,20 +172,17 @@ export function isAppointmentOfferAcceptance(
   const current = String(value || "").trim();
 
   if (!APPOINTMENT_ACCEPTANCE_PATTERN.test(current)) return false;
-
-  return recentConversation
-    .slice()
-    .reverse()
-    .some((turn) => {
-      const isClinic =
-        turn?.role === "assistant" ||
-        ["bruna", "equipe_humana"].includes(turn?.source);
-
-      return (
-        isClinic &&
-        APPOINTMENT_OFFER_PATTERN.test(String(turn?.text || ""))
-      );
-    });
+  const history = Array.isArray(recentConversation) ? recentConversation : [];
+  const lastClinic = history.findLastIndex(turn => turn?.role === "assistant" ||
+    ["bruna", "equipe_humana"].includes(turn?.source));
+  if (lastClinic < 0) return false;
+  // A later informational offer or refusal invalidates an older scheduling offer.
+  if (history.slice(lastClinic + 1).some(turn =>
+    /\b(?:nao quero|nao vou|prefiro nao|vou pensar|so estou pesquisando)\b/.test(normalize(turn?.text)))) return false;
+  const lastOffer = String(history[lastClinic]?.text || "");
+  return classifyBrunaCta(lastOffer) === BRUNA_CTA_TYPES.AVAILABILITY ||
+    (APPOINTMENT_OFFER_PATTERN.test(lastOffer) &&
+      /\b(?:horarios?|agenda|agendar|marcar|disponibilidade|duas? opcoes)\b/.test(normalize(lastOffer)));
 }
 
 export function selectAppointmentSlots(slots, preferenceText = "") {

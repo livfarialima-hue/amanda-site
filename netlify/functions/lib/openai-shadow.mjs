@@ -211,6 +211,9 @@ function normalizeReplyContract(value) {
       ? {
           experienceVersion: BRUNA_CONVERSION_EXPERIENCE_VERSION,
           allowedCtaTypes,
+          consultationNextStep: value.consultationNextStep === "offer_availability" &&
+            value.allowCta === true && allowedCtaTypes.includes("availability_exploration")
+              ? "offer_availability" : "answer_only",
           preferredMaxCharacters: Math.max(
             160,
             Math.min(700, Number(value.preferredMaxCharacters) || 420),

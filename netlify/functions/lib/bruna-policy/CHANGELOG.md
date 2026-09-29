@@ -1,3 +1,7 @@
+## 2026-09-29.2 — próximo passo contextual até a consulta, testado localmente
+
+Permissão compartilhada de convite opcional único após orientação pessoal ou explicação solicitada da consulta. Evita redescoberta, repetição após convite/recusa e aceite indevido de uma oferta antiga. Mantém atendimento à dúvida, preços, prefill, risco clínico, agenda verificada e revisão humana. Hipótese de experiência, sem ganho de conversão comprovado. Evidência: auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md.
+
 ## 2026-09-29.1 — continuidade e acolhimento proporcional, publicado e verificado
 
 Commit funcional 5baf6784da8ad0fc4829b4abf1f34a01b7767bcd; Netlify 6abb7905e0d2af0007dbe177. Corrige variantes de descoberta, redescoberta ampla após descrição estética e acolhimento que presume sofrimento. Fato educativo da página de blefaroplastia sustenta orientação útil; perguntas necessárias e todos os vetos permanecem. Substitui apenas a asserção de pergunta abstrata por não repetir descoberta; regressões de autonomia e não exploração de insegurança mantidas. Evidência: auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md.

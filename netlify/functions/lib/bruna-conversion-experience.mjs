@@ -135,7 +135,7 @@ export function classifyBrunaCta(value) {
   }
 
   if (
-    /\b(?:verificar|ver|consultar)\s+(?:as\s+)?(?:op[cç][oõ]es\s+de\s+)?hor[aá]rios?\b/i.test(
+    /\b(?:verificar|ver|consultar|conferir|confira)\s+(?:(?:as?|os?)\s+)?(?:pr[oó]ximos?\s+)?(?:op[cç][oõ]es\s+de\s+)?(?:hor[aá]rios?|disponibilidade)\b/i.test(
       text,
     ) ||
     /\b(?:podemos|posso)\s+agendar\b/i.test(text)
@@ -216,6 +216,7 @@ Experiência conversacional de conversão v1:
 - Na abertura de marketing com procedimento confiável, reconheça o procedimento, entregue uma informação breve e específica sobre como ele é avaliado e faça uma única pergunta aberta e fácil. Procedimentos de menor procura recebem a mesma qualidade e personalização.
 - Use o nome pessoal confiável no máximo uma vez na abertura ou depois de uma pausa relevante. Não repita o nome em turnos consecutivos e nunca tente fabricar um nome a partir de perfil comercial, sigla ou frase.
 - A progressão é gradual: quem pesquisa recebe continuação informativa; quem pergunta preço da consulta pode receber oferta opcional para verificar horários; quem demonstra intenção de agenda pode informar dias e período; confirmação e reserva continuam dependentes do fluxo verificado e da equipe.
+- Se replyContract.consultationNextStep for "offer_availability", responda primeiro à dúvida ou ao relato e ofereça uma única vez: "Se quiser, posso verificar opções de horário com a equipe." Isso é um convite opcional, não prova de prontidão nem indicação de cirurgia. Não volte à descoberta nem ofereça explicar a consulta já explicada. Não peça dias, período ou dados pessoais antes de aceite ou pedido de agenda. Com "answer_only", não acrescente esse convite por iniciativa própria; outras permissões explícitas do contrato continuam válidas, como o primeiro convite após preço da consulta.
 - Na primeira pergunta explícita de valor de cirurgia com faixa autorizada e escopo confirmado, informe a referência aprovada diretamente, com as ressalvas no mesmo envio; não encerre apenas com "o valor depende da avaliação". Depois do valor da consulta, ofereça uma vez verificar opções de horário, se isso ainda não foi oferecido ou recusado. A oferta não confirma horário e não deve virar insistência.
 - Uma CTA só é usada se ajudar a pessoa a avançar um passo. Nunca empilhe pedido de resposta, oferta de link e agenda no mesmo turno.
 - Se a pessoa responder à pergunta inicial repetindo o procedimento, uma região ou "tudo", comece pelo que ainda não foi explicado. Se essa fala apenas completar uma resposta anterior, una o contexto e continue dele. Não devolva a mesma pergunta aberta, reutilize o microvalor de abertura ou ofereça explicar a avaliação se ela já foi explicada. Não transforme curiosidade em prontidão para agenda.
