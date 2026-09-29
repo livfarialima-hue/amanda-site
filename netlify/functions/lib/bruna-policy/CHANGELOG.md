@@ -1,6 +1,6 @@
-## 2026-09-29.1 — continuidade e acolhimento proporcional, testado localmente
+## 2026-09-29.1 — continuidade e acolhimento proporcional, publicado e verificado
 
-Corrige variantes de descoberta, redescoberta ampla após descrição estética e acolhimento que presume sofrimento. Fato educativo da página de blefaroplastia sustenta orientação útil; perguntas necessárias e todos os vetos permanecem. Substitui apenas a asserção de pergunta abstrata por não repetir descoberta; regressões de autonomia e não exploração de insegurança mantidas. Evidência: auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md.
+Commit funcional 5baf6784da8ad0fc4829b4abf1f34a01b7767bcd; Netlify 6abb7905e0d2af0007dbe177. Corrige variantes de descoberta, redescoberta ampla após descrição estética e acolhimento que presume sofrimento. Fato educativo da página de blefaroplastia sustenta orientação útil; perguntas necessárias e todos os vetos permanecem. Substitui apenas a asserção de pergunta abstrata por não repetir descoberta; regressões de autonomia e não exploração de insegurança mantidas. Evidência: auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md.
 
 ## 2026-09-27.2 — perguntas públicas e encaminhamento comprovado, publicado e verificado
 

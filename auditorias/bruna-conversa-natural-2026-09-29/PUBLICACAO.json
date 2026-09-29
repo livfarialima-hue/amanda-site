@@ -1,5 +1,5 @@
 {
-  "status": "tested_local",
+  "status": "published_documentation_pending",
   "changeId": "BRUNA-CONVERSA-NATURAL-2026-09-29",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -14,5 +14,58 @@
     "diff": "passed",
     "ops": "SYNC_PENDING expected before publication",
     "completedAt": "2026-09-29T08:37:09.977Z"
+  },
+  "approvedCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+  "netlifyDeployId": "6abb7905e0d2af0007dbe177",
+  "bundleVersion": "2026-09-29.1",
+  "publishedAt": "2026-09-29T08:41:43Z",
+  "verifiedAt": "2026-09-29T08:42:25.967Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-09-29T08:41:06.942Z",
+    "base": "https://6abb7905e0d2af0007dbe177--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "sourcePage": {
+      "status": 200,
+      "containsEyeAssessmentSource": true
+    },
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-09-29T08:41:45.687Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "sourcePage": {
+      "status": 200,
+      "containsEyeAssessmentSource": true
+    },
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "functionsPublished": 14,
+  "autoPublishingRestored": true,
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+    "approvedBy": "Daniel",
+    "authorization": "Analise e ajuste o comportamento e publique.",
+    "scope": "Correção de continuidade e acolhimento proporcional da Bruna; atualização dos registros canônicos e projeções existentes.",
+    "boundAt": "2026-09-29T08:37:09.977Z",
+    "preflight": "CHANGE_SAFETY_STATUS=OK",
+    "patientMessagesAuthorized": false
+  },
+  "rollback": {
+    "commit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "deployId": "6ab92cfd510c0500080cfc82",
+    "appsScriptVersion": 161,
+    "noReplay": true
   }
 }

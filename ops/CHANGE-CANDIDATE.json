@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONVERSA-NATURAL-2026-09-29",
   "title": "Acolher relatos de aparência sem presumir sofrimento nem repetir descoberta",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "b5bdd8c68f8fb1496e342b7bd038240817b05b3d",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -359,5 +359,12 @@
       "Sem aumento de revisão humana por continuidade, duplicação, diagnóstico, preço ou agenda indevidos.",
       "Reverter se houver bypass de segurança, perda de resposta ou repetição introduzida pelo pacote."
     ]
+  },
+  "release": {
+    "approvedCommit": "5baf6784da8ad0fc4829b4abf1f34a01b7767bcd",
+    "netlifyDeployId": "6abb7905e0d2af0007dbe177",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-09-29T08:42:25.967Z",
+    "documentationStatus": "pending_existing_drive_projections"
   }
 }
