@@ -1116,7 +1116,7 @@ export async function runOpenAIShadow(
     revisionRequest.input = JSON.stringify({ ...JSON.parse(revisionRequest.input), continuityRevision: {
       previousDraft: parsed.decision.suggestedReply,
       repeatedElements: continuity.removed,
-      instruction: "Reescreva a resposta a partir da informação nova da paciente. Não repita a explicação nem acrescente fatos, promessas, indicação ou agenda sem base. Se não houver resposta útil e segura, mantenha revisão humana.",
+      instruction: "Reescreva a resposta a partir da informação nova da paciente e dos approvedClinicalFacts disponíveis. A descrição já recebida responde à descoberta: ofereça uma informação específica útil, sem repetir a explicação geral da consulta, presumir sofrimento ou pedir novamente região/objetivo. Não acrescente fatos, promessas, indicação ou agenda sem base. Encerre sem pergunta quando suficiente; se não houver resposta útil e segura, mantenha revisão humana.",
     } });
     const revisedResponse = await fetchImpl(OPENAI_RESPONSES_URL, { ...request, body: JSON.stringify(revisionRequest) });
     if (!revisedResponse.ok) return continuityFallback;

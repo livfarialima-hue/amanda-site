@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-09-29T08:29:39.080Z",
+  "status": "verified_read_only",
+  "baseCommit": "b5bdd8c68f8fb1496e342b7bd038240817b05b3d",
+  "production": {
+    "commit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "netlifyDeployId": "6ab92cfd510c0500080cfc82",
+    "bundleVersion": "2026-09-27.2",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "inboundMessages": 5,
+    "outboundReplies": 3,
+    "completeFragments": true,
+    "source": "bruna",
+    "pending": "awaiting_patient",
+    "recentHumanTakeoverFound": false,
+    "cause": "Instrução de empatia desproporcional; detector não reconhece variantes de descoberta; ausência de fato educativo específico para descrição do olhar."
+  },
+  "sources": [
+    "LEADS: _WHATSAPP_MENSAGENS linhas 3619–3626, _CRM_OPORTUNIDADES, busca limitada de _WHATSAPP_ATENDIMENTO_HUMANO",
+    "Netlify: deploys / commit publicado observado na interface",
+    "https://draamandaschroeder.com.br/blefaroplastia/"
+  ],
+  "privacy": "Somente conclusões sem nome, telefone ou identificador operacional; fixtures sintéticas.",
+  "externalWritesPerformed": false,
+  "publicationPreflight": {
+    "checkedAt": "2026-09-29T08:37:09.977Z",
+    "productionCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
+    "netlifyDeployId": "6ab92cfd510c0500080cfc82",
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPostStatus": 401,
+    "netlifyProject": "inspiring-sprite-b35ca4",
+    "gitRemoteBaseline": "b5bdd8c68f8fb1496e342b7bd038240817b05b3d",
+    "rootClean": true,
+    "driveProjections": [
+      {
+        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "sha256": "7d237ac8604dfab3362ec31f061b765bb8d957cf4a8a2d35169b47b965801cb3"
+      },
+      {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "sha256": "614d0bd4638b6d08072b7f1382fbc608710687beb033e7554653057f173f394e"
+      }
+    ],
+    "rawReadbackMatchesBaseline": true
+  }
+}

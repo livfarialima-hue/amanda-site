@@ -1,36 +1,38 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-PERGUNTAS-SIMPLES-2026-09-27",
-  "title": "Responder dúvidas públicas de lifting e impedir encaminhamento silencioso de pergunta desconhecida",
-  "status": "published_verified",
-  "baseCommit": "9e4646e0e2dcc30e88dc4556d3c6c23590d79dd0",
+  "changeId": "BRUNA-CONVERSA-NATURAL-2026-09-29",
+  "title": "Acolher relatos de aparência sem presumir sofrimento nem repetir descoberta",
+  "status": "tested_local",
+  "baseCommit": "b5bdd8c68f8fb1496e342b7bd038240817b05b3d",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Usuário autorizou corrigir e publicar nesta tarefa; o recibo externo vinculará a autorização ao SHA testado."
+    "note": "Usuário autorizou analisar, ajustar o comportamento e publicar nesta tarefa; vincular ao SHA testado no preflight externo."
   },
   "risk": {
-    "level": "medium",
+    "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json",
-      "auditorias/bruna-perguntas-simples-2026-09-27/PUBLICACAO.json",
-      "auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md",
+      "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json",
+      "auditorias/bruna-conversa-natural-2026-09-29/PUBLICACAO.json",
+      "auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-guidelines.test.mjs",
       "netlify/functions/lib/lifting-information.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/reply-continuity.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ],
@@ -156,131 +158,131 @@
       "protese-de-mama/index.html"
     ],
     "preservedInvariants": [
-      "Sem diagnóstico, indicação individual, prescrição ou promessa de resultado.",
-      "Política de preço, agenda, urgência, opt-out, takeover e permissões sem ampliação.",
-      "Mensagens fragmentadas, checagem semântica e envio único preservados.",
-      "Sem mensagem manual a paciente, replay, alteração de Apps Script ou Ads.",
-      "Respostas desconhecidas exigem encaminhamento entregue antes de encerrar o processamento; falha permanece recuperável."
+      "Sem diagnóstico, escolha de cirurgia, prescrição, promessa de resultado ou inferência de sofrimento.",
+      "Preço, agenda, urgência, opt-out, takeover e limites automáticos preservados.",
+      "Recepção, agrupamento, timeout, reserva e envio único preservados.",
+      "Sem contato manual com paciente, replay, migração, Ads ou Apps Script.",
+      "Perguntas específicas necessárias permanecem permitidas; descrição estética não conclui qualificação ou agendamento."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "change-governance",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "bruna-conversation-safety",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "bruna-conversion-experience",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
-        "system": "LEADS, Netlify e site público; Drive será relido antes da projeção",
+        "system": "LEADS, Netlify e site público; projeções Drive relidas antes de escrever",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-27T14:30:00Z",
-        "reference": "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json"
+        "checkedAt": "2026-09-29T08:29:39.08Z",
+        "reference": "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json"
       }
     ]
   },
@@ -299,6 +301,7 @@
       "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
@@ -330,44 +333,31 @@
       "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
     ],
-    "completedAt": "2026-09-27T14:48:25.716Z",
+    "completedAt": "2026-09-29T08:37:09.977Z",
     "results": {
-      "fullTests": 1835,
+      "fullTests": 1850,
       "newRegressions": 15,
-      "baselineFailures": 13,
-      "requiredCommands": 42,
+      "baselineFailures": 11,
+      "requiredCommands": 43,
       "architecture": "passed",
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    },
-    "external": "Exact commit published; immutable and production health verified; both existing Drive projections match raw bytes."
+    }
   },
   "rollback": {
-    "local": "Reverter somente este pacote preservando a revisão Ads já incorporada.",
-    "production": "Restaurar deploy 6ab91021e447e700078e94e1, commit a2eaf6dba1b72cbe7688092c501e905fc4c548ec, preservando Apps Script v161, filas e recibos; sem replay."
+    "local": "Reverter apenas este pacote, preservando mudanças anteriores.",
+    "production": "Restaurar deploy 6ab92cfd510c0500080cfc82 / commit ee2c560129a3299b5b4e7d6dcac15325ac5bdf21; preservar Apps Script v161, filas e recibos. Sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Verificação da publicação e primeira interação natural disponível",
+    "window": "Publicação, primeira interação natural disponível e revisão em 48 horas",
     "signals": [
-      "Pergunta simples coberta não vira UNKNOWN-REVIEW por falta de fato.",
-      "UNKNOWN-REVIEW exige recibo de alerta interno; falha mantém recuperação pendente.",
-      "Nenhuma duplicação, resposta clínica individual ou envio fora das permissões."
+      "Relato já explicado recebe informação útil em vez de redescoberta.",
+      "Acolhimento proporcional, sem pressupor sofrimento ou confirmar defeito.",
+      "Sem aumento de revisão humana por continuidade, duplicação, diagnóstico, preço ou agenda indevidos.",
+      "Reverter se houver bypass de segurança, perda de resposta ou repetição introduzida pelo pacote."
     ]
-  },
-  "release": {
-    "approvedCommit": "ee2c560129a3299b5b4e7d6dcac15325ac5bdf21",
-    "netlifyDeployId": "6ab92cfd510c0500080cfc82",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-09-27T14:55:22.609Z",
-    "documentationStatus": "same_drive_files_verified",
-    "drivePlanSha256": "614d0bd4638b6d08072b7f1382fbc608710687beb033e7554653057f173f394e",
-    "destinationsChanged": [
-      "Netlify",
-      "Google Drive: manual and executive plan, same IDs"
-    ],
-    "receipt": "auditorias/bruna-perguntas-simples-2026-09-27/PUBLICACAO.json"
   }
 }

@@ -450,7 +450,11 @@
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "auditorias/bruna-perguntas-simples-2026-09-27/PREFLIGHT.json",
         "auditorias/bruna-perguntas-simples-2026-09-27/PUBLICACAO.json",
-        "auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md"
+        "auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md",
+        "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+        "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json",
+        "auditorias/bruna-conversa-natural-2026-09-29/PUBLICACAO.json",
+        "auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -474,7 +478,8 @@
         "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
         "netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
-        "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs"
+        "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+        "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
@@ -486,7 +491,8 @@
         "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
         "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
         "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
-        "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
@@ -1408,7 +1414,11 @@
         "netlify/functions/lib/semantic-reply-policy.mjs",
         "ops/CHANGE-CANDIDATE.json",
         "ops/IMPACT-REGISTRY.json",
-        "scripts/check-journey-module-boundaries.mjs"
+        "scripts/check-journey-module-boundaries.mjs",
+        "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+        "auditorias/bruna-conversa-natural-2026-09-29/PREFLIGHT.json",
+        "auditorias/bruna-conversa-natural-2026-09-29/PUBLICACAO.json",
+        "auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/reply-continuity.test.mjs",
@@ -1425,11 +1435,13 @@
         "netlify/functions/lib/semantic-reply-policy.test.mjs",
         "netlify/functions/lib/bruna-conversation-evals.test.mjs",
         "netlify/functions/lib/site-continuity.test.mjs",
-        "netlify/functions/lib/site-content.test.mjs"
+        "netlify/functions/lib/site-content.test.mjs",
+        "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
-        "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+        "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+        "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs"
       ],
       "liveSystems": [
         "Netlify",

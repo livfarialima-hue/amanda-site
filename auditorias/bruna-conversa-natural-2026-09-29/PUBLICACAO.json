@@ -1,0 +1,18 @@
+{
+  "status": "tested_local",
+  "changeId": "BRUNA-CONVERSA-NATURAL-2026-09-29",
+  "patientMessagesSent": 0,
+  "appsScriptVersion": 161,
+  "validation": {
+    "fullTests": 1850,
+    "newRegressions": 15,
+    "baselineFailures": 11,
+    "requiredCommands": 43,
+    "architecture": "passed",
+    "siteBuild": "193 files / 54 URLs / no errors",
+    "siteCheck": "passed",
+    "diff": "passed",
+    "ops": "SYNC_PENDING expected before publication",
+    "completedAt": "2026-09-29T08:37:09.977Z"
+  }
+}

@@ -1,6 +1,6 @@
 import { classifyBrunaCta } from "./bruna-conversion-experience.mjs";
 
-export const REPLY_CONTINUITY_VERSION = "reply-continuity-v1";
+export const REPLY_CONTINUITY_VERSION = "reply-continuity-v2";
 
 function fold(value) {
   return String(value || "").normalize("NFD").replace(/\p{Diacritic}/gu, "")
@@ -34,7 +34,7 @@ function topics(value) {
 }
 
 function discoveryQuestion(value) {
-  return /\?/.test(value) && /(?:o que (?:voce )?(?:gostaria|quer) (?:de )?(?:entender|saber|melhorar|preservar)|o que mais (?:te |lhe )?incomoda|o que mais chamou (?:sua |a sua )?atencao|como posso (?:te |lhe )?ajudar)/.test(fold(value));
+  return /\?/.test(value) && /(?:o que (?:voce )?(?:gostaria|quer) (?:de )?(?:entender|saber|melhorar|preservar)|o que mais (?:te |lhe )?incomoda|o que mais cham(?:a|ou) (?:sua |a sua )?atencao|qual (?:e )?(?:a )?sua (?:principal )?duvida|como posso (?:te |lhe )?ajudar)/.test(fold(value));
 }
 
 function isSubstantiveAnswer(value) {
@@ -110,6 +110,9 @@ export function assessReplyContinuity({ body, currentMessage, recentConversation
   const requested = new Set(context.requestedTopics);
   const removed = [], kept = [];
   const previousEmpathy = clinicTurns.slice(-2).some(t => /^(?:entendo|compreendo)\b/i.test(String(t.text || "").trim()));
+  const patientWords = fold([...(Array.isArray(recentConversation) ? recentConversation : []).slice(-16).filter(patient).map(t => t.text), context.patientAnswer].join(" "));
+  const expressedDistress = /\b(?:triste|tristeza|sofrimento|sofrendo|angustia|angustiad[oa]|autoestima|vergonha|deprimid[oa]|ansiedade|afeta minha vida|pesa no meu dia)\b/.test(patientWords);
+  const appearanceDescription = /\b(?:excesso de pele|flacidez|olhar caido|palpebras? caid[ao]s?)\b/.test(fold(context.patientAnswer));
   for (const sentence of sentences(body)) {
     const value = fold(sentence), sentenceTopics = topics(sentence);
     let reason = "";
@@ -121,7 +124,12 @@ export function assessReplyContinuity({ body, currentMessage, recentConversation
       const novelMeaning = hasNovelMeaning(sentence, previousSentences);
       if (!sentence.includes("?") && !protectedDetail && !novelMeaning && genericTopics.length &&
           genericTopics.every(t => known.has(t)) && !genericTopics.some(t => requested.has(t))) reason = "repeated_explanation";
-      if (context.answeredDiscovery && !novelMeaning && discoveryQuestion(sentence)) reason = "answered_discovery_question";
+      if (context.answeredDiscovery && discoveryQuestion(sentence)) reason = "answered_discovery_question";
+      // A described appearance concern is not a request to select a surgery.
+      // Keep specific clarifications (upper/lower, consultation/surgery price),
+      // but do not restart broad eye-versus-face sorting after discovery.
+      if (context.answeredDiscovery && appearanceDescription && !requested.has("consultation_price") &&
+          sentence.includes("?") && /\bpalpebras?\b/.test(value) && /\b(?:rosto|face)\b/.test(value) && /\bou\b/.test(value)) reason = "redundant_region_discovery";
       const cta = classifyBrunaCta(sentence);
       if (cta && /\b(?:consulta|avaliacao)\b/.test(value) && /\b(?:explicar|explique|contar|conte)\b/.test(value) && known.has("consultation_process")) reason = "already_explained_offer";
       if (cta && context.previousOffers.some(previous => classifyBrunaCta(previous) === cta && similarity(previous, sentence) >= 0.65)) reason = "repeated_offer";
@@ -129,9 +137,11 @@ export function assessReplyContinuity({ body, currentMessage, recentConversation
           !sentenceTopics.some(t => requested.has(t)) && previousSentences.some(previous => similarity(previous, sentence) >= 0.86)) reason ||= "repeated_sentence";
       if (previousEmpathy && /^(?:entendo|compreendo)\b/.test(value) && isBareAcknowledgement(sentence)) reason = "repeated_empathy_formula";
     }
+    if (!expressedDistress && /^(?:entendo|compreendo)\b.{0,100}\b(?:pode pesar|pesa no dia a dia|deve ser dificil)\b/.test(value) &&
+        !/\b(?:dor|visao|urgente|sangramento)\b/.test(value)) reason = "assumed_distress";
     if (reason) removed.push(reason); else kept.push(sentence);
   }
   const text = kept.join(" ").trim();
   const hasProgress = kept.some(s => !isBareAcknowledgement(s));
-  return { body: removed.length ? text : String(body || "").trim(), removed: [...new Set(removed)], needsRevision: removed.length > 0 && !hasProgress, context };
+  return { body: removed.length ? text : String(body || "").trim(), removed: [...new Set(removed)], needsRevision: removed.includes("redundant_region_discovery") || (removed.length > 0 && !hasProgress), context };
 }

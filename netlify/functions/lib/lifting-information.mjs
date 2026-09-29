@@ -129,6 +129,19 @@ export function approvedProcedureInformationFacts({ text, procedure, recentConve
   const facial = approvedLiftingFacialFacts({ text: request, procedure });
   const facts = [...(facial?.facts || [])];
   const boundaries = [...(facial?.boundaries || [])];
+  if (["lifting_facial", "mini_lifting", "avaliacao_facial", "blefaroplastia"].includes(procedure) &&
+      /\b(?:olhar|p[aá]lpebras?|sobrancelhas?)\b/i.test(request)) {
+    facts.push({
+      topic: "eye_face_assessment",
+      source: "blefaroplastia/index.html",
+      statement: "Na avaliação do olhar, a Dra. Amanda observa as pálpebras, a posição das sobrancelhas e a relação com o restante do rosto. A pessoa não precisa chegar sabendo qual cirurgia fazer; as possibilidades são discutidas após o exame.",
+    });
+    boundaries.push(
+      "Não escolher cirurgia, concluir indicação ou atribuir a causa do olhar caído pelo relato, texto ou foto.",
+      "Não equiparar olhar caído a excesso de pele nem sugerir associação de cirurgias. Sintomas novos, alteração da visão e cuidado em andamento seguem os bloqueios clínicos existentes.",
+      "Usar o fato específico para avançar após a descrição, sem repetir toda a explicação da consulta nem obrigar a pessoa a escolher entre pálpebras e rosto.",
+    );
+  }
   const neckProcedure = ["lifting_cervical", "lipo_papada"].includes(procedure);
   const platysmaQuestion = /\b(?:platisma|platismoplastia|plastimoplastia)\b/i.test(request);
   if (neckProcedure && (isProcedureExplanationInquiry(request) || platysmaQuestion)) {

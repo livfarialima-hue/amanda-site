@@ -1,3 +1,7 @@
+## 2026-09-29.1 — continuidade e acolhimento proporcional, testado localmente
+
+Corrige variantes de descoberta, redescoberta ampla após descrição estética e acolhimento que presume sofrimento. Fato educativo da página de blefaroplastia sustenta orientação útil; perguntas necessárias e todos os vetos permanecem. Substitui apenas a asserção de pergunta abstrata por não repetir descoberta; regressões de autonomia e não exploração de insegurança mantidas. Evidência: auditorias/bruna-conversa-natural-2026-09-29/RELATORIO.md.
+
 ## 2026-09-27.2 — perguntas públicas e encaminhamento comprovado, publicado e verificado
 
 Fatos da página de lifting facial disponíveis à Bruna, procedimento sincronizado após agregação das mensagens e UNKNOWN-REVIEW condicionado a recibo de alerta. Sem flexibilizar indicação individual ou bloqueios. Commit funcional ee2c560129a3299b5b4e7d6dcac15325ac5bdf21; Netlify 6ab92cfd510c0500080cfc82. Testes sintéticos cobrem recepção fragmentada, mudança de procedimento, veto semântico e falhas de alerta; sem mensagens reais. Evidência: auditorias/bruna-perguntas-simples-2026-09-27/RELATORIO.md.

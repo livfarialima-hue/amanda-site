@@ -333,7 +333,7 @@ test("playbook handles appearance insecurity without exploiting it", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /o que gostaria de perceber diferente — e o que é importante continuar reconhecendo como seu/,
+    /não peça que descreva novamente o que deseja mudar ou preservar/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
