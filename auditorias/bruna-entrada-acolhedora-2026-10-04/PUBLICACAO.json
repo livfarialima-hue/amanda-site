@@ -1,0 +1,35 @@
+{
+  "status": "pending",
+  "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
+  "patientMessagesSent": 0,
+  "appsScriptVersion": 161,
+  "validationProgress": {
+    "fullTestsPassed": 1921,
+    "commandsPassed": 49,
+    "commandsRequired": 49,
+    "pendingCommand": null,
+    "blocker": null,
+    "priorBlocker": "ENOSPC",
+    "resolvedAt": "2026-10-04T16:47:15.796Z",
+    "temporaryArtifactDeletedByAgent": false,
+    "oldTemporaryArtifactAbsentAtPreflight": true,
+    "compressionHashesPreserved": true
+  },
+  "validation": {
+    "fullTests": 1921,
+    "newRegressions": 21,
+    "baselineFailures": 12,
+    "requiredCommands": 49,
+    "architecture": "passed",
+    "siteBuild": "193 files / 54 URLs / no errors",
+    "siteCheck": "passed",
+    "diff": "passed",
+    "ops": "SYNC_PENDING expected before publication",
+    "completedAt": "2026-10-04T16:46:04.708Z"
+  },
+  "rollback": {
+    "commit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "deployId": "6ac267688469a20008853374",
+    "noReplay": true
+  }
+}

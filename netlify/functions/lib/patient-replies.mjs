@@ -432,12 +432,19 @@ export function buildImageAcknowledgementReply({
 
 export function buildMissingInboundTextClarificationReply({
   patientName,
+  introduceBruna = true,
+  professional = "unknown",
 } = {}) {
+  if (!introduceBruna) return "Como posso ajudar você agora?";
+  const canIntroduceAmanda = ["", "unknown", "amanda"].includes(
+    String(professional || "").trim().toLowerCase(),
+  );
   return [
     `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`,
-    "Recebi seu contato, mas o texto veio incompleto por aqui.",
-    "Pode me contar qual é a sua dúvida?",
-  ].join(" ");
+    canIntroduceAmanda
+      ? "A Dra. Amanda Schroeder é cirurgiã plástica e atende aqui na clínica. Me conta: o que você gostaria de avaliar ou melhorar?"
+      : "Como posso ajudar com seu atendimento?",
+  ].join("\n\n");
 }
 
 export function buildContextRoutingClarificationReply({

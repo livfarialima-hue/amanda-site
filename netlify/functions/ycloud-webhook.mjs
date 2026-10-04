@@ -1,4 +1,6 @@
 import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
+import { extractInboundText } from "./lib/extract-inbound-text.mjs";
+export { extractInboundText } from "./lib/extract-inbound-text.mjs";
 import { refreshInboundReplyContext } from "./lib/inbound-reply-context.mjs";
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import {
@@ -214,6 +216,7 @@ import {
 import {
   applyPatientRelationshipPolicy,
   blocksAutomatedPatientMessages,
+  isKnownPatientRelationship,
   buildPatientCommitment,
   buildRelationshipAlertMessage,
   normalizePatientRelationship,
@@ -725,32 +728,6 @@ export function stripAttributionTransportToken(text) {
       "",
     )
     .trim();
-}
-
-export function extractInboundText(message) {
-  const candidates = [
-    message?.text?.body,
-    typeof message?.text === "string" ? message.text : "",
-    message?.body,
-    message?.content?.text?.body,
-    typeof message?.content?.text === "string"
-      ? message.content.text
-      : "",
-    message?.message?.text?.body,
-    message?.image?.caption,
-    message?.video?.caption,
-    message?.document?.caption,
-    message?.content?.image?.caption,
-    message?.content?.video?.caption,
-    message?.content?.document?.caption,
-  ];
-
-  const text = candidates.find(
-    (candidate) =>
-      typeof candidate === "string" && candidate.trim().length > 0,
-  );
-
-  return String(text || "");
 }
 
 export function classifyAttribution(payload, message, text, resolvedJourney) {
@@ -6660,6 +6637,9 @@ export async function handleYCloudWebhook(
     const clarificationBody =
       buildMissingInboundTextClarificationReply({
         patientName: patientDisplayName,
+        introduceBruna:
+          !priorInteractionKnown && !isKnownPatientRelationship(patientRelationship),
+        professional: delivery.professional || "unknown",
       });
     const clarificationResult = await sendCurrentInboundReply({
       from: String(message.to || ""),

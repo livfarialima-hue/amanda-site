@@ -1,3 +1,7 @@
+## 2026-10-04.3 — acolhimento e leitura consistente da entrada, validação local
+
+Quando faltar texto utilizável, primeiro preservar e aproveitar conteúdo confiável que esteja disponível. O extrator puro é comum à entrada e ao recibo de recuperação: os envelopes de texto já reconhecidos pelo webhook também são aceitos pela fila, mantendo assinatura, identidade e corpo originais. Sem conteúdo recuperável, no primeiro contato a Bruna se apresenta, apresenta brevemente a Dra. Amanda como cirurgiã plástica e pergunta o que a pessoa gostaria de avaliar ou melhorar. Não dizer que a mensagem veio incompleta, não solicitar reenvio e não inventar procedimento, anúncio ou diagnóstico. Conversas já iniciadas e pacientes conhecidos não recebem nova apresentação; profissional diferente já identificado mantém abordagem neutra. Pergunta posterior de preço sem procedimento recebe somente esclarecimento neutro, sem alegar falha técnica.
+
 ## 2026-10-04.2 — reações sem recibo de material, publicado em 04/10/2026
 
 Reações do WhatsApp (inclusive remoção de reação) são reconhecidas pelo tipo do evento e não são anexos nem novas solicitações. Não geram resposta, alerta, lead, retomada, confirmação de agenda ou substituição de pergunta pendente. Jobs antigos de reação são concluídos em silêncio, preservando a posse humana e os recibos anteriores. Somente foto, vídeo, documento ou áudio identificados podem receber a descrição de material; tipos desconhecidos mantêm linguagem neutra. Anexos reais e perguntas textuais seguem os fluxos vigentes.

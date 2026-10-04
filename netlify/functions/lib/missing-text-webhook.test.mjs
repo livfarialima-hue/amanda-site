@@ -123,11 +123,11 @@ test("a text event with an omitted body receives one safe clarification", async 
     );
     assert.match(
       patientMessages[0].text.body,
-      /texto veio incompleto por aqui/i,
+      /A Dra\. Amanda Schroeder é cirurgiã plástica/i,
     );
     assert.match(
       patientMessages[0].text.body,
-      /contar qual é a sua dúvida/i,
+      /o que você gostaria de avaliar ou melhorar/i,
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -274,9 +274,9 @@ test("an unsupported inbound event receives one safe clarification without infer
     assert.equal(patientMessages.length, 1);
     assert.equal(
       patientMessages[0].text.body,
-      "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-        "Recebi seu contato, mas o texto veio incompleto por aqui. " +
-        "Pode me contar qual é a sua dúvida?",
+      "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.\n\n" +
+        "A Dra. Amanda Schroeder é cirurgiã plástica e atende aqui na clínica. " +
+        "Me conta: o que você gostaria de avaliar ou melhorar?",
     );
     assert.equal(
       (patientMessages[0].text.body.match(/\?/g) || []).length,
@@ -284,7 +284,7 @@ test("an unsupported inbound event receives one safe clarification without infer
     );
     assert.doesNotMatch(
       patientMessages[0].text.body,
-      /lifting|procedimento|M26|131060/i,
+      /lifting|procedimento|M26|131060|incomplet|reenvi|falha/i,
     );
     assert.equal(processingLog?.inboundAvailability, "upstream_unsupported");
     assert.equal(processingLog?.unsupportedSubtype, "unknown");

@@ -401,7 +401,8 @@
         "netlify/functions/lib/openai-shadow.mjs",
         "netlify/functions/lib/professional-fact-review.mjs",
         "netlify/functions/appointment-review.mjs",
-        "netlify/functions/lib/inbound-message-kind.mjs"
+        "netlify/functions/lib/inbound-message-kind.mjs",
+        "netlify/functions/lib/extract-inbound-text.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -483,7 +484,12 @@
         "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
         "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json",
         "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json",
-        "auditorias/bruna-reacoes-2026-10-04/RELATORIO.md"
+        "auditorias/bruna-reacoes-2026-10-04/RELATORIO.md",
+        "netlify/functions/lib/extract-inbound-text.mjs",
+        "netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+        "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json",
+        "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json",
+        "auditorias/bruna-entrada-acolhedora-2026-10-04/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -512,7 +518,8 @@
         "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
         "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
         "netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
-        "netlify/functions/lib/bruna-reacoes.integration.test.mjs"
+        "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+        "netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
@@ -529,7 +536,8 @@
         "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
-        "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",

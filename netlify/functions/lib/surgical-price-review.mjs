@@ -1,5 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
-import { hasUnansweredUnavailablePatientText, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
+import { resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
@@ -653,10 +653,7 @@ export function buildSurgicalPriceHoldingReply({
       : "";
 
   if (unresolvedFacialProcedure) {
-    const missingPreviousText = hasUnansweredUnavailablePatientText(recentConversation);
-    const clarification = missingPreviousText
-      ? "Consigo te orientar sobre o valor. Sua mensagem anterior não apareceu completa por aqui. Pode reenviar só o nome do procedimento?"
-      : procedure === "avaliacao_facial"
+    const clarification = procedure === "avaliacao_facial"
         ? "Consigo te orientar sobre valores. Como “cirurgia facial” pode envolver procedimentos diferentes, qual região ou procedimento você está pesquisando — pálpebras, rosto ou pescoço/papada? Assim consigo verificar a referência correta para você."
         : "Consigo te orientar sobre valores. Você quer saber o valor de qual procedimento?";
     return [

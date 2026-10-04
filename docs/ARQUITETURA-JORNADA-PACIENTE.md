@@ -60,6 +60,7 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Camada | Responsabilidade | Proprietário principal | Não deve decidir |
 |---|---|---|---|
 | Entrada | validar, normalizar e deduplicar o evento recebido | `ycloud-webhook.mjs` | conteúdo clínico, envio final ou fase comercial por suposição |
+| Texto do evento recebido | ler os envelopes já suportados sem inventar texto de anúncio, erro ou citação | `extract-inbound-text.mjs` | consultar plataformas, alterar assinatura, identidade, fila ou enviar |
 | Tipo do evento recebido | distinguir reação de mídia real pelo tipo informado, sem inferir pelo texto | `inbound-message-kind.mjs` | ler estado, enviar, alertar ou alterar prioridade |
 | Contexto de automação | normalizar `off`, `shadow` e `active` | `automation-mode.mjs` | enviar mensagens ou acessar ambiente/rede |
 | Contexto de marketing | reconhecer template, prioridade de prefill e códigos Google/Meta | `marketing-prefill.mjs` | qualificar lead ou agendar consulta |
@@ -279,3 +280,9 @@ O `conversation-action-controller.mjs` continua proprietário da permissão: `re
 ### Reações sem efeitos de atendimento — 2026-10-04.2
 
 `inbound-message-kind.mjs` é proprietário puro da distinção entre reação e mídia real. Webhook o aplica depois da assinatura e identidade obrigatórias, antes de recuperação, memória, CRM, debounce e filas. Planejador e política de retomada importam a mesma regra. `human-resume-queue.mjs` não agenda reações nem substitui perguntas reais. O processador descarta jobs legados pela conclusão condicional existente, com `controlStatus: preserve`: preserva a posse atual, geração, recibos e intervenção concorrente. O recibo só chama de material tipos reais de mídia. Emoji dentro de texto continua sendo texto e passa por triagem normal. Sem alteração de eco humano, Apps Script, cadência, fontes clínicas ou regras comerciais. Regressões: `bruna-reacoes.integration.test.mjs` e `human-resume-queue.test.mjs`.
+
+### Entrada ausente e acolhimento — 2026-10-04.3
+
+`extract-inbound-text.mjs` é o proprietário puro da leitura de texto; webhook e `inbound-recovery.mjs` o importam. O reexport do webhook preserva compatibilidade dos consumidores existentes. A fila só aceita melhoria de indisponível para texto com o mesmo telefone de origem/destino, ID e horário; nenhum anúncio, erro ou citação vira pergunta. Mídia continua com seu tipo próprio. A extração é idêntica à anterior do webhook; a correção é a equivalência dos envelopes na recuperação, comprovada antes/depois com o SDK instalado e payloads sintéticos. Assinatura, bytes, geração, ETag, lease e exclusão condicional não mudam.
+
+`patient-replies.mjs` é proprietário do acolhimento sem conteúdo. O webhook fornece apenas a evidência já existente de interação anterior, relacionamento e profissional. Primeiro contato sem contexto recebe apresentação e uma pergunta; histórico conhecido não reinicia aquisição e profissional diferente não recebe apresentação da Amanda. O dado continua desconhecido no CRM até haver conteúdo confiável, independentemente do texto de boas-vindas. `surgical-price-review.mjs` mantém esclarecimento neutro quando falta procedimento, sem alegação de mensagem incompleta. Assunto conhecido, takeover, opt-out, atendimento ativo, duplicidade, modo off/shadow, fala mais recente e reação mantêm os gates existentes. Não muda estratégia comercial, faixa, agenda, Apps Script nem cadência. Regressões: `bruna-entrada-acolhedora.integration.test.mjs`, `missing-text-webhook.test.mjs` e `netlify-blobs-contract.test.mjs`.

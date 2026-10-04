@@ -1,39 +1,43 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-REACOES-2026-10-04",
-  "title": "Reações não são anexos nem novas solicitações",
-  "status": "published_verified",
-  "baseCommit": "9af6dd99ef6131fed56d7bf3fee285c1f7ca9f77",
+  "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
+  "title": "Recuperar texto disponível e acolher quando o conteúdo faltar",
+  "status": "tested_local",
+  "baseCommit": "c670bb109b71fed4caccc44589abce800b72c22b",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Continuação da correção/publicação solicitada por Daniel para esta conversa: novo relato de recibo indevido de material após reação. A autorização de corrigir e publicar persiste; não autoriza mensagem manual, replay ou edição de pacientes."
+    "note": "Daniel pediu tentar corrigir texto incompleto e, se persistir, apresentar Bruna/doutora e perguntar a queixa. Continuação do trabalho de correção e publicação já autorizado; não autoriza mensagem real, replay nem alteração de paciente."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json",
-      "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json",
-      "auditorias/bruna-reacoes-2026-10-04/RELATORIO.md",
+      "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json",
+      "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json",
+      "auditorias/bruna-entrada-acolhedora-2026-10-04/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/human-resume-queue.mjs",
-      "netlify/functions/lib/human-resume-queue.test.mjs",
-      "netlify/functions/lib/inbound-message-kind.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/extract-inbound-text.mjs",
+      "netlify/functions/lib/inbound-recovery.mjs",
+      "netlify/functions/lib/missing-text-webhook.test.mjs",
+      "netlify/functions/lib/netlify-blobs-contract.test.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/patient-replies.test.mjs",
+      "netlify/functions/lib/price-holding-webhook.test.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/surgical-price-review.test.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
@@ -129,6 +133,7 @@
       "netlify/functions/lib/conversation-ledger.mjs",
       "netlify/functions/lib/conversation-memory.mjs",
       "netlify/functions/lib/external-professional-context.mjs",
+      "netlify/functions/lib/extract-inbound-text.mjs",
       "netlify/functions/lib/extreme-night-policy.mjs",
       "netlify/functions/lib/human-resume-dispatch.mjs",
       "netlify/functions/lib/human-resume-policy.mjs",
@@ -169,110 +174,110 @@
       "protese-de-mama/index.html"
     ],
     "preservedInvariants": [
-      "Reações tipadas não respondem, não alertam, não cancelam perguntas, não criam lead nem substituem pendência real.",
-      "Jobs legados de reação encerram silenciosamente sem liberar posse humana; conclusão condicional protege corrida com novo turno.",
-      "Fotos, documentos, áudios e vídeos mantêm encaminhamento; apenas mídia identificada pode ser chamada de material.",
-      "Texto, urgência, preços, agenda, opt-out, assinatura, janela e cadência permanecem sob as políticas vigentes.",
-      "Sem mensagem real, replay, alteração manual de paciente ou publicação de Apps Script."
+      "Ler somente conteúdo do mesmo evento assinado, preservando identidade, horário e corpo original; não inventar texto a partir do anúncio ou de outra pessoa.",
+      "Recuperação reconhece os mesmos envelopes seguros que a entrada; recibos e exclusão condicional preservam versão recuperada e envio único.",
+      "Conteúdo ainda ausente inicia acolhimento sem alegar texto incompleto; histórico conhecido não é apagado nem reapresentado.",
+      "Profissional conhecido diferente de Amanda, cuidado ativo, takeover, opt-out, urgência, janela e assinatura continuam protegidos.",
+      "Sem mudança de valores, fonte clínica, Apps Script, campanhas, cadência, flags, paciente ou replay."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
         "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:49:15.297Z",
-        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T16:14:10.140Z",
+        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
       }
     ]
   },
@@ -296,6 +301,7 @@
       "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
@@ -328,44 +334,33 @@
       "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
     ],
-    "completedAt": "2026-10-04T14:49:15.297Z",
+    "completedAt": "2026-10-04T16:46:04.708Z",
     "results": {
-      "fullTests": 1900,
-      "newRegressions": 16,
-      "baselineFailures": 10,
-      "requiredCommands": 48,
+      "fullTests": 1921,
+      "newRegressions": 21,
+      "baselineFailures": 12,
+      "requiredCommands": 49,
       "architecture": "passed",
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    },
-    "external": "Functional commit published via existing Git integration; immutable and production health verified; same Drive files match committed local bytes."
+    }
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
-    "production": "Restaurar Netlify 6ac2609d3913cd0008d6a2b1 / 10b7a7d4bfde7e306ec785e6d7b70ee66a369723, ou revert intencional via branch de produção; preservar Apps Script v161, filas e recibos; sem replay."
+    "production": "Restaurar Netlify 6ac267688469a20008853374 / cda9fa181ee04c889e7d8a1a09efc930042612b9, ou revert intencional na branch de produção. Preservar Apps Script v161, filas, pausas, recibos e corpo original; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
     "window": "Próximas conversas naturais e revisão em 06/10/2026; sem nova automação",
     "signals": [
-      "Reação sem resposta, alerta, nova pendência ou perda de pergunta anterior.",
-      "Anexos reais continuam encaminhados; intervenções e novos textos mantêm prioridade e segurança.",
-      "Conter se houver falsa confirmação de material ou liberação de atendimento humano."
+      "Primeira entrada ausente acolhe sem jargão; mensagem recuperada segue seu pedido concreto sem segunda resposta.",
+      "Procedimento e autoria não são inferidos; conhecido não reinicia descoberta; reação permanece silenciosa.",
+      "Conter diante de saudação duplicada, assunto conhecido ignorado, conteúdo de outra mensagem ou atendimento humano liberado."
     ]
   },
   "release": {
-    "approvedCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
-    "netlifyDeployId": "6ac267688469a20008853374",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-04T14:51:19.520Z",
-    "documentationStatus": "same_drive_files_verified",
-    "destinationsChanged": [
-      "Netlify",
-      "Google Drive: manual and executive plan, same IDs"
-    ],
-    "receipt": "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json",
-    "drivePlanSha256": "970227bb0cd56f6ca7060b65d332f922001df904895d4c568e439feef6719f18"
+    "status": "pending"
   }
 }

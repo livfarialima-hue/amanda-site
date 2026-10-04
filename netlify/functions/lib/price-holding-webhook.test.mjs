@@ -265,9 +265,8 @@ for (const scenario of ["unavailable", "cervical", "human_takeover"]) {
     assert.doesNotMatch(reply, /qual região|pálpebras, rosto/);
     if (scenario === "unavailable") {
       assert.doesNotMatch(reply, /R\$\s*\d/);
-      assert.match(reply, /mensagem anterior não apareceu completa/);
-      assert.match(reply, /reenviar só o nome do procedimento/);
-      assert.doesNotMatch(reply, /cirurgia facial|papada/);
+      assert.match(reply, /qual procedimento/);
+      assert.doesNotMatch(reply, /cirurgia facial|papada|mensagem anterior|incomplet|reenvi/);
       assert.equal((reply.match(/\?/g) || []).length, 1);
       assert.equal(result.priceHoldingSent, true);
     } else {

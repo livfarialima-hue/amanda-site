@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-04T16:14:10.140Z",
+  "status": "verified_read_only",
+  "baseCommit": "c670bb109b71fed4caccc44589abce800b72c22b",
+  "production": {
+    "commit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "netlifyDeployId": "6ac267688469a20008853374",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "netlify": "Projeto canônico mostra Published reestruturacao-site @cda9fa1 na interface autenticada.",
+    "leads": "Entrada do incidente sem texto e referência no ledger e no evento; screenshot fornecido mostra texto no aplicativo e resposta de conteúdo incompleto.",
+    "code": "Recibo da fila reconhece menos envelopes de texto que o extrator de entrada. Fallback expõe falha técnica e reapresenta sem contexto. Não há prova de recuperação natural neste incidente."
+  },
+  "limitations": "Sessão YCloud solicita login; evento original ainda não conferido. Não atribuir causalidade confirmada à Meta. Sem mensagens, replay ou escrita de paciente.",
+  "externalWritesPerformed": false,
+  "releasePreflightAt": "2026-10-04T16:46:04.708Z",
+  "health": {
+    "checkedAt": "2026-10-04T16:46:04.708Z",
+    "status": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401
+  },
+  "driveBaselines": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "01ce724ae7b7966f70caa9194f3e6acbadec054a0a337cbbbba7ca161a0b2d87",
+      "rawReadbackMatchesBaseline": true
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "970227bb0cd56f6ca7060b65d332f922001df904895d4c568e439feef6719f18",
+      "rawReadbackMatchesBaseline": true
+    }
+  ],
+  "scopeOfVerification": "Produção e modo ativos, assinatura exigida, LEADS com entrada ausente, Drive fiel ao baseline. YCloud original não consultado por sessão expirada; correção local reproduzida independentemente, sem mudar provedor, conexão ou recuperar paciente por suposição."
+}

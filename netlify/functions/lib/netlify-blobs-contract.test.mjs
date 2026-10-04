@@ -90,14 +90,19 @@ function recoverableMessage(type, overrides = {}) {
       ...overrides } });
 }
 
-for (const terminal of [false, true]) {
-  test(`a recovered signed text survives an unavailable event (${terminal ? "completed" : "pending"})`, async () => {
+for (const [envelope, overrides] of [
+  ["canonical", {}],
+  ["content.text.body", { text: {}, content: { text: { body: "Quero saber sobre lifting cervical." } } }],
+  ["content.text", { text: {}, content: { text: "Quero saber sobre lifting cervical." } }],
+  ["message.text.body", { text: {}, message: { text: { body: "Quero saber sobre lifting cervical." } } }],
+]) for (const terminal of [false, true]) {
+  test(`a recovered signed ${envelope} survives an unavailable event (${terminal ? "completed" : "pending"})`, async () => {
     const { getStoreImpl } = transportStore();
     const now = Date.parse("2026-09-25T20:00:01Z");
     await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage("unsupported") }, { getStoreImpl, now, recoveryDelayMs: 0 });
     const [oldJob] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
     if (terminal) await completeInboundRecovery(oldJob, { getStoreImpl, now });
-    const rawBody = recoverableMessage("text");
+    const rawBody = recoverableMessage("text", overrides);
     const upgrade = await registerInboundRecovery({ ...incoming, rawBody, signature: "recovered-signature" }, { getStoreImpl, now, recoveryDelayMs: 0 });
     assert.equal(upgrade.status, "completed");
     // The older worker must not delete the recovered version when it finishes.
@@ -114,14 +119,35 @@ for (const terminal of [false, true]) {
 }
 
 test("recovery cannot change the original message identity or replace known text", async () => {
-  for (const initial of ["unsupported", "text"]) {
+  for (const initial of ["unsupported", "text"]) for (const identity of [
+    { wamid: "different-message" }, { from: "+5511900000088" },
+    { to: "+5511900000088" }, { sendTime: "2026-09-25T20:00:05Z" },
+    ...(initial === "text" ? [{}] : []),
+  ]) {
     const { getStoreImpl } = transportStore();
     const now = Date.parse("2026-09-25T20:00:01Z");
     await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage(initial) }, { getStoreImpl, now, recoveryDelayMs: 0 });
     const [job] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
     await completeInboundRecovery(job, { getStoreImpl, now });
-    const rawBody = recoverableMessage("text", { wamid: "different-message", text: { body: "Texto diferente" } });
+    const rawBody = recoverableMessage("text", { ...identity, text: {}, content: { text: { body: "Texto diferente" } } });
     assert.equal((await registerInboundRecovery({ ...incoming, rawBody }, { getStoreImpl, now })).reason, "already_completed");
+  }
+});
+
+test("media, provider errors and referral copy cannot upgrade a completed unavailable event to text", async () => {
+  for (const message of [
+    { type: "image", image: { caption: "Legenda da foto" } },
+    { type: "unsupported", errors: [{ message: "Quero lifting" }] },
+    { type: "unsupported", referral: { headline: "Lifting cervical" } },
+    { type: "reaction", reaction: { message_id: "old-message", emoji: "👍" } },
+  ]) {
+    const { getStoreImpl } = transportStore(), now = Date.parse("2026-09-25T20:00:01Z");
+    await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage("unsupported") }, { getStoreImpl, now, recoveryDelayMs: 0 });
+    const [job] = (await claimDueInboundRecoveries({ getStoreImpl, now })).jobs;
+    await completeInboundRecovery(job, { getStoreImpl, now });
+    const result = await registerInboundRecovery({ ...incoming, rawBody: recoverableMessage(message.type, message) }, { getStoreImpl, now });
+    assert.equal(result.reason, "already_completed");
+    assert.equal((await claimDueInboundRecoveries({ getStoreImpl, now })).jobs.length, 0);
   }
 });
 

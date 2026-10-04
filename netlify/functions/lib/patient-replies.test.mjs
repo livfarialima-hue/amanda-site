@@ -44,12 +44,24 @@ test("asks for context naturally when the provider omits the inbound text", () =
 
   assert.equal(
     reply,
-    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
-      "Recebi seu contato, mas o texto veio incompleto por aqui. " +
-      "Pode me contar qual é a sua dúvida?",
+    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.\n\n" +
+      "A Dra. Amanda Schroeder é cirurgiã plástica e atende aqui na clínica. " +
+      "Me conta: o que você gostaria de avaliar ou melhorar?",
   );
   assert.equal((reply.match(/\?/g) || []).length, 1);
-  assert.doesNotMatch(reply, /diagnóstico|indicação|erro|falha técnica/i);
+  assert.doesNotMatch(reply, /diagnóstico|indicação|erro|falha|incomplet|reenv|repita/i);
+});
+
+test("unavailable content does not restart an established conversation", () => {
+  const reply = buildMissingInboundTextClarificationReply({ patientName: "Rosana", introduceBruna: false });
+  assert.equal(reply, "Como posso ajudar você agora?");
+});
+
+test("missing-content welcome respects a known non-Amanda professional", () => {
+  const reply = buildMissingInboundTextClarificationReply({ professional: "daniel" });
+  assert.match(reply, /Eu sou a Bruna/);
+  assert.match(reply, /Como posso ajudar com seu atendimento\?/);
+  assert.doesNotMatch(reply, /Amanda|cirurgiã|incomplet/i);
 });
 
 test("keeps the missing-text recovery neutral when the profile name is not personal", () => {

@@ -1,15 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-test("price continuation after unavailable text explains the gap without inventing a facial procedure", () => {
+test("price continuation after unavailable text asks only the missing procedure without exposing a gap", () => {
   const reply = buildSurgicalPriceHoldingReply({
     patientName: "Pessoa Teste",
     currentText: "E o preço",
     recentConversation: [{ role: "patient", source: "paciente", text: "[Mensagem de texto indisponível na integração.]" }],
   });
-  assert.match(reply, /mensagem anterior não apareceu completa por aqui/i);
-  assert.match(reply, /reenviar só o nome do procedimento/i);
-  assert.doesNotMatch(reply, /cirurgia facial|pálpebras|rosto|pescoço|papada|R\$|equipe|te retorno/i);
+  assert.match(reply, /qual procedimento/i);
+  assert.doesNotMatch(reply, /cirurgia facial|pálpebras|rosto|pescoço|papada|R\$|equipe|te retorno|incomplet|reenvi|mensagem anterior/i);
   assert.equal((reply.match(/\?/g) || []).length, 1);
 });
 

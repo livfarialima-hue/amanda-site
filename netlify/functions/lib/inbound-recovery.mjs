@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { getStore } from "@netlify/blobs";
+import { extractInboundText } from "./extract-inbound-text.mjs";
 
 const STORE_NAME = "liv-whatsapp-inbound-recovery-v1";
 const DEFAULT_RECOVERY_DELAY_MS = 2 * 60 * 1_000;
@@ -34,8 +35,7 @@ function contentReceipt(rawBody) {
     const id = String(message?.wamid || message?.id || "");
     const at = Date.parse(message?.sendTime || "");
     if (payload?.type !== "whatsapp.inbound_message.received" || !from || !to || !id || !Number.isFinite(at)) return null;
-    const body = [message?.text?.body, typeof message?.text === "string" ? message.text : "", message?.body]
-      .find(value => typeof value === "string" && value.trim());
+    const body = extractInboundText(message);
     const kind = message.type === "text" && body ? "text"
       : ["text", "unsupported"].includes(message.type) && !body ? "unavailable" : "other";
     return { identity: createHash("sha256").update(JSON.stringify([from, to, id, at])).digest("hex"), kind };
