@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "netlify_verified_documentation_pending",
   "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -31,5 +31,44 @@
     "commit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
     "deployId": "6ac267688469a20008853374",
     "noReplay": true
+  },
+  "approvedCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+  "netlifyDeployId": "6ac2830ee4b0b50008ce8e5a",
+  "bundleVersion": "2026-10-04.3",
+  "publishedAt": "2026-10-04T16:47:42.000Z",
+  "publishedTimeSource": "Netlify production deploy log: Site is live",
+  "verifiedAt": "2026-10-04T16:48:39.638Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-10-04T16:48:38.838Z",
+    "base": "https://6ac2830ee4b0b50008ce8e5a--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-10-04T16:48:39.535Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "publicationMethod": "existing Git integration; no permission, flag, automation-mode or auto-publishing changes",
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-10-04T16:47:17.763Z",
+    "approvedCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "request": "Publique",
+    "authorizationContext": "Autorização explícita renovada após apresentar a correção de texto indisponível e superar o bloqueio de espaço.",
+    "scope": "Leitura consistente na recuperação; abertura acolhedora quando faltar conteúdo; preservação do contexto e diretrizes canônicas.",
+    "patientMessagesAuthorized": false
   }
 }

@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -345,7 +345,8 @@
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    }
+    },
+    "external": "Netlify functional commit published and read-only smoke passed; Drive reconciliation pending."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -361,6 +362,16 @@
     ]
   },
   "release": {
-    "status": "pending"
+    "status": "netlify_verified_documentation_pending",
+    "approvedCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "netlifyDeployId": "6ac2830ee4b0b50008ce8e5a",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-10-04T16:48:39.638Z",
+    "documentationStatus": "pending_same_drive_files",
+    "destinationsChanged": [
+      "Netlify",
+      "Google Drive: manual and executive plan, same IDs"
+    ],
+    "receipt": "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json"
   }
 }

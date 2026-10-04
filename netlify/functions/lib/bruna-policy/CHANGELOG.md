@@ -1,4 +1,4 @@
-## 2026-10-04.3 — acolhimento e leitura consistente da entrada, validação local
+## 2026-10-04.3 — acolhimento e leitura consistente da entrada, publicado em 04/10/2026
 
 Quando faltar texto utilizável, primeiro preservar e aproveitar conteúdo confiável que esteja disponível. O extrator puro é comum à entrada e ao recibo de recuperação: os envelopes de texto já reconhecidos pelo webhook também são aceitos pela fila, mantendo assinatura, identidade e corpo originais. Sem conteúdo recuperável, no primeiro contato a Bruna se apresenta, apresenta brevemente a Dra. Amanda como cirurgiã plástica e pergunta o que a pessoa gostaria de avaliar ou melhorar. Não dizer que a mensagem veio incompleta, não solicitar reenvio e não inventar procedimento, anúncio ou diagnóstico. Conversas já iniciadas e pacientes conhecidos não recebem nova apresentação; profissional diferente já identificado mantém abordagem neutra. Pergunta posterior de preço sem procedimento recebe somente esclarecimento neutro, sem alegar falha técnica.
 
