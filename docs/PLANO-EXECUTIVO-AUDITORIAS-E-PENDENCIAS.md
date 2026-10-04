@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-DOIS-ASSUNTOS-2026-10-04 -->
+**Pacote 2026-10-04.1 — TESTADO LOCALMENTE; PUBLICAÇÃO PENDENTE.** Após uma oferta de explicar o procedimento ou os valores, Os dois, Ambos e aceites equivalentes recuperam ambos os assuntos da última pergunta. A Bruna explica primeiro com os fatos aprovados e informa a referência autorizada do procedimento confirmado, com a ressalva vigente, sem nova apresentação nem espera desnecessária. A resposta conjunta é a mesma na entrada e na retomada e continua sujeita à validação semântica e aos gates. Sem oferta, com outro assunto, duas cirurgias, condição adicional, faixa já enviada, procedimento não autorizado ou bloqueio humano, não há nova permissão.
+
+Evidência: `auditorias/bruna-dois-assuntos-2026-10-04/RELATORIO.md`. Reprodução sintética e leitura restrita da LEADS confirmaram a falha de continuidade; sem PII no pacote, mensagem real de teste, replay ou edição de paciente. Preços, cadência, agenda, Apps Script v161 e prioridade humana preservados. Daniel/equipe: observar próximas conversas naturais e revisar em 06/10/2026; conter se houver assunto perdido, faixa indevida, repetição ou quebra de prioridade humana. Publicação e projeções ainda pendentes.
+<!-- /BRUNA-DOIS-ASSUNTOS-2026-10-04 -->
+
 <!-- BRUNA-NOME-PESSOAL-2026-09-29 -->
 **Pacote 2026-09-29.3 — PUBLICADO E VERIFICADO EM PRODUÇÃO em 29/09/2026.** A Bruna usa saudação neutra quando o perfil contém descrição comercial, profissão, marca ou outro nome não pessoal reconhecido. Imóveis, corretagem e demais descrições comerciais não viram vocativo nem fornecem primeiro nome por recorte. Nome explicitamente informado pela pessoa continua prioritário. Responder à dúvida antes de qualquer coleta; perguntar como prefere ser chamada apenas na abertura sem nome confiável, quando não houver outra pergunta ou histórico. Em continuidade, seguir sem nome. Sem alteração de cadastro clínico, destinatário, preço, agenda, cadência ou prioridade humana.
 

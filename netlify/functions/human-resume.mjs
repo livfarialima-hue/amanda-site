@@ -41,6 +41,7 @@ import {
   buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
+  buildAcceptedProcedurePriceReply,
   buildPriceReviewSourceNote,
 } from "./lib/surgical-price-review.mjs";
 import {
@@ -734,6 +735,7 @@ export async function processHumanResumeJob(
 
   const consultationBundle = buildConsultationQuestionBundle({plan:enrichedPlan, text:job.text,
     recentConversation:job.recentConversation, patientName:job.patientName, introduceBruna:false});
+  const acceptedProcedurePriceReply = buildAcceptedProcedurePriceReply({plan:enrichedPlan,currentText:job.text,recentConversation:job.recentConversation});
   const approvedPriceReplyKind = consultationBundle ? 'consultation_bundle' :
     enrichedPlan.reason === "price_initial_information"
       ? "initial_information"
@@ -754,7 +756,7 @@ export async function processHumanResumeJob(
       : approvedPriceReplyKind === "initial_information"
         ? "SURGICAL-PRICE-INITIAL-01"
         : "");
-  const approvedPriceReply = consultationBundle?.body || (
+  const approvedPriceReply = consultationBundle?.body || acceptedProcedurePriceReply?.decision.suggestedReply || (
     approvedPriceReplyKind === "initial_information"
       ? buildSurgicalInitialPriceReply({
           patientName: job.patientName,
@@ -778,7 +780,7 @@ export async function processHumanResumeJob(
             introduceBruna: false,
           })
         : "");
-  const approvedPriceReplyCandidate = consultationBundle?.candidate || (approvedPriceReply
+  const approvedPriceReplyCandidate = consultationBundle?.candidate || acceptedProcedurePriceReply || (approvedPriceReply
     ? {
         status: "completed",
         decision: {

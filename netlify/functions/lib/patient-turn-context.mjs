@@ -95,7 +95,33 @@ export function isAutomatedBusinessReply(text) {
   return acknowledgement && (unavailable || businessResponse);
 }
 
+// A plural answer selects topics, never procedures or administrative actions.
+// Keep it separate from isClearInformationAcceptance, also used by scheduling.
+export function resolveOfferedInformationChoice({ text, recentConversation = [] } = {}) {
+  const answer = String(text || '').normalize('NFD').replace(/\p{M}/gu, '')
+    .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '').trim();
+  if (!/^(?:(?:quero|gostaria de saber|pode (?:me )?explicar)\s+)?(?:os\s+(?:dois|2)|as\s+(?:duas|2)|ambos|ambas)(?:[,\s]+(?:por favor|por gentileza))?[.!?\s]*$/i.test(answer)) return null;
+  const lastClinic = [...recentConversation].reverse().find(turn =>
+    turn?.role === 'assistant' || ['bruna','human','human_team','equipe_humana','clinica_autoria_desconhecida'].includes(turn?.source));
+  const offer = String(lastClinic?.text || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  // Only this concrete two-topic offer is covered. A third topic, another
+  // question, a different latest offer or an operational choice stays semantic.
+  if (!/\b(?:prefere|quer|gostaria|posso)\b/.test(offer) || (offer.match(/\?/g) || []).length !== 1 ||
+      /\b(?:consulta|avaliacao|agendar|agendamento|horarios?|pagamento|parcelamento|recuperacao|cicatrizes?|anestesia|hospital)\b/.test(offer)) return null;
+  const alternatives = offer.split(/\bou\b/);
+  if (alternatives.length !== 2) return null;
+  const topics = alternatives.map(part => {
+    const explanation = /\bcomo\s+funciona\s+(?:o\s+)?procedimento\b/.test(part);
+    const price = isPriceAmountInquiry(part);
+    return explanation !== price ? (explanation ? 'procedure_information' : 'price_surgery') : '';
+  });
+  if (!topics.includes('procedure_information') || !topics.includes('price_surgery')) return null;
+  return {topics:['procedure_information','price_surgery'],requestText:'Como funciona o procedimento? Como são definidos os valores?'};
+}
+
 export function informationRequestText({ text, recentConversation = [] }) {
+  const choice = resolveOfferedInformationChoice({text, recentConversation});
+  if (choice) return choice.requestText;
   if (!isClearInformationAcceptance(text)) return String(text || "");
   const lastClinic = [...recentConversation].reverse().find(turn => turn.role === "assistant");
   const offer = String(lastClinic?.text || "");

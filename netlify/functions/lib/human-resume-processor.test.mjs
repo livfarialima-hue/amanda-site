@@ -16,6 +16,28 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const scenario of ['both_topics','both_topics_veto','both_topics_new_human']) {
+  test(`resumption shares the complete informational answer and human guard: ${scenario}`,async()=>{
+    const deps=dependencies();
+    const turns=[{role:'user',source:'patient',text:'Quero saber sobre lifting facial.'},
+      {role:'assistant',source:'bruna',text:'Sobre lifting facial, você prefere entender como funciona o procedimento ou como são definidos os valores?'}];
+    deps.runOpenAIShadowImpl=async payload=>{
+      assert.match(payload.policyHints.deterministicReplyPreview,/reposiciona os tecidos/);
+      assert.ok(payload.replyContract.unresolvedIntents.includes('procedure_information'));
+      const veto=scenario.endsWith('veto');
+      return {status:'completed',decision:{route:veto?'human_review':'standard_reply',confidence:'high',automaticAllowed:!veto,urgent:false,
+        professional:'amanda',procedure:'lifting_facial',replyCode:'LIFTING-PRICE-RANGE-01',suggestedReply:'A faixa de referência é R$ 26 mil a R$ 42 mil.',reviewReason:veto?'synthetic_review':''}};
+    };
+    if(scenario.endsWith('new_human'))deps.readConversationTurnsImpl=async()=>({status:'completed',turns:[{role:'assistant',source:'equipe_humana',text:'Já estou atendendo.',at:'2026-07-28T15:20:00Z',eventId:'synthetic-new-human'}]});
+    const result=await processHumanResumeJob(job({text:'Os dois',procedure:'lifting_facial',recentConversation:turns}),{env:ACTIVE_ENV,now:NOW,...deps});
+    if(scenario!=='both_topics'){assert.equal(deps.patientMessages.length,0,JSON.stringify(result));return;}
+    assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+    const body=deps.patientMessages[0].body;
+    assert.match(body,/reposiciona os tecidos/);assert.match(body,/R\$ 26 mil e R\$ 42 mil/);
+    assert.match(body,/não é um orçamento fechado/);assert.doesNotMatch(body,/Olá|sou a Bruna/);assert.equal(deps.alerts.length,0);
+  });
+}
+
 for (const scenario of ['explanation', 'recovery', 'invalid_amount']) {
   test(`a resumed price answer preserves other questions and price safety: ${scenario}`, async () => {
     const deps = dependencies();

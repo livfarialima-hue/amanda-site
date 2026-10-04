@@ -9,6 +9,48 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+for (const scenario of ['both_topics','both_topics_semantic_veto']) {
+  test(`webhook follows the actual offered pair without dropping the explanation: ${scenario}`,async t=>{
+    const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,
+      GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
+      WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
+      OPENAI_API_KEY:'synthetic',WHATSAPP_ALERT_NUMBER:'+5511900000002',YCLOUD_ALERT_TEMPLATE_NAME:'synthetic_review',YCLOUD_ALERT_TEMPLATE_LANGUAGE:'pt_BR'};
+    const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
+    t.after(()=>{for(const[k,v]of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+    t.mock.method(console,'log',()=>{});
+    const sent=[];let modelCalls=0;
+    const turns=[{role:'user',source:'patient',text:'Quero saber sobre lifting facial.',at:'2026-10-03T19:52:00Z',eventId:'synthetic-prefill'},
+      {role:'assistant',source:'bruna',text:'Olá! Sou a Bruna. Qual a sua dúvida?',at:'2026-10-03T19:53:00Z',eventId:'synthetic-intro'},
+      {role:'assistant',source:'bruna',text:'Sobre lifting facial, você prefere entender como funciona o procedimento ou como são definidos os valores?',at:'2026-10-04T13:34:00Z',eventId:'synthetic-followup'}];
+    t.mock.method(globalThis,'fetch',async(url,options)=>{
+      const data=JSON.parse(options.body);
+      if(url===SHEETS_URL)return new Response(JSON.stringify(data.action==='get_conversation_context'?{ok:true,turns,professional:'amanda',opportunityId:scenario}:
+        {ok:true,sent:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
+      if(url==='https://api.openai.com/v1/responses'){
+        modelCalls++;const input=JSON.parse(data.input);
+        assert.equal(input.policyHints.deterministicReplyCode,'LIFTING-PRICE-RANGE-01');
+        assert.ok(input.approvedClinicalFacts.topics.includes('procedure_explanation'));
+        assert.ok(input.replyContract.unresolvedIntents.includes('procedure_information'));
+        assert.match(input.policyHints.deterministicReplyPreview,/reposiciona os tecidos/);
+        const veto=scenario.endsWith('veto');
+        return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:veto?'human_review':'standard_reply',confidence:'high',automaticAllowed:!veto,urgent:false,
+          professional:'amanda',procedure:'lifting_facial',replyCode:'LIFTING-PRICE-RANGE-01',suggestedReply:'A faixa de referência é R$ 26 mil a R$ 42 mil.',reviewReason:veto?'synthetic_review':'',
+          conversationState:{activeTopic:'procedimento e valores',patientAct:'question',refersToEventId:'synthetic-followup',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['procedimento','valores'],factsAlreadyProvided:[],owner:'bruna',nextExpectedAction:'responder ambos',ambiguity:'',contextConfidence:'high'}})}),{status:200});
+      }
+      assert.equal(url,YCLOUD_URL,'all external effects mocked');sent.push(data);return new Response('{"status":"accepted"}',{status:200});
+    });
+    const response=await handleYCloudWebhook(requestFor({id:`${scenario}-final`,type:'whatsapp.inbound_message.received',createTime:'2026-10-04T13:58:00Z',
+      whatsappInboundMessage:{id:`${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-10-04T13:58:00Z',type:'text',text:{body:'Os dois'}}}),
+      {livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'})});
+    const result=await response.json(),replies=sent.filter(m=>m.to==='+5511900000000');
+    assert.ok(modelCalls>0,JSON.stringify(result));
+    if(scenario.endsWith('veto')){assert.equal(replies.length,0,JSON.stringify(result));return;}
+    assert.equal(replies.length,1,JSON.stringify(result));const body=replies[0].text.body;
+    assert.match(body,/reposiciona os tecidos/);assert.match(body,/R\$ 26 mil e R\$ 42 mil/);
+    assert.match(body,/não é um orçamento fechado/);assert.doesNotMatch(body,/Olá|sou a Bruna|confirmar.*equipe/);
+  });
+}
+
 test('webhook keeps technique explanation beside an approved price in the actual outbound body', async t => {
   const settings = {YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',
     GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',

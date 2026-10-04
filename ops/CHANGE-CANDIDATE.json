@@ -1,36 +1,43 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-NOME-PESSOAL-2026-09-29",
-  "title": "Omitir descrições comerciais do nome de tratamento",
-  "status": "published_verified",
-  "baseCommit": "5d04f535701a01acd1683611c59f97c276946587",
+  "changeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
+  "title": "Cumprir os dois assuntos aceitos após uma oferta informativa",
+  "status": "tested_local",
+  "baseCommit": "08fe1bd44398c604809cd6b30342299f4a97244d",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Correção solicitada por Daniel nesta conversa: quando não parecer nome de pessoa, omitir ou perguntar. Publicação segue a autorização anterior da mesma tarefa para ajustar e publicar o comportamento da Bruna, vinculada externamente ao SHA testado."
+    "note": "Daniel pediu: Por que não seguiu explicando? Corrija e publique. Autorização vinculada externamente ao SHA testado; não autoriza mensagem manual, replay ou edição de pacientes."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json",
-      "auditorias/bruna-nome-pessoal-2026-09-29/PUBLICACAO.json",
-      "auditorias/bruna-nome-pessoal-2026-09-29/RELATORIO.md",
+      "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json",
+      "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json",
+      "auditorias/bruna-dois-assuntos-2026-10-04/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/lib/conversation-action-controller.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/profile-name.mjs",
+      "netlify/functions/lib/human-resume-processor.test.mjs",
+      "netlify/functions/lib/patient-turn-context.mjs",
+      "netlify/functions/lib/price-holding-webhook.test.mjs",
+      "netlify/functions/lib/semantic-reply-policy.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ],
@@ -164,109 +171,109 @@
       "protese-de-mama/index.html"
     ],
     "preservedInvariants": [
-      "Nome clínico, telefone, destinatário, identidade canônica e consentimento não são alterados.",
-      "Nome comercial é omitido, não recortado; nome próprio declarado continua prioritário.",
-      "Sem nome não significa sem resposta; não atrasar pergunta de preço ou repetir coleta.",
-      "Preço, procedimento, agenda, janela, humano, opt-out, cadência, filas e envio único preservados."
+      "Os dois resolve somente os dois assuntos da última oferta informativa reconhecida, sem virar duas cirurgias ou aceite de agenda.",
+      "Fontes clínicas, procedimento confirmado, faixas existentes e envio único continuam obrigatórios.",
+      "Takeover, opt-out, cuidado ativo, compromisso humano, urgência, janela e veto semântico permanecem protegidos.",
+      "Sem alteração de paciente, filas, cadência, Apps Script, destinatário ou mensagem real de teste."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
-        "system": "Netlify ao vivo e evidência fornecida; sem escrita na LEADS ou Apps Script",
+        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-09-29T22:14:10.366Z",
-        "reference": "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:20:06.652Z",
+        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
       }
     ]
   },
@@ -288,6 +295,7 @@
       "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
@@ -318,47 +326,34 @@
       "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
       "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test netlify/functions/lib/profile-name.test.mjs"
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
     ],
-    "completedAt": "2026-09-29T22:18:14.684Z",
+    "completedAt": "2026-10-04T14:20:06.652Z",
     "results": {
-      "fullTests": 1870,
-      "newRegressions": 8,
-      "baselineFailures": 8,
+      "fullTests": 1884,
+      "newRegressions": 14,
+      "baselineFailures": 6,
       "requiredCommands": 47,
       "architecture": "passed",
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    },
-    "external": "Functional commit published, immutable and production health verified; existing Drive projections match local bytes."
+    }
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
-    "production": "Restaurar Netlify 6abb7fa0f3fe0b00082c987f / commit 678538d7fe51f2cc59f1698335c77cf8566c7bae; preservar Apps Script v161, filas e recibos, sem replay."
+    "production": "Restaurar Netlify 6abc3954a368c700089a974e / d700926465386ea34842a459b5c690544485d069; manter Apps Script v161, filas e recibos; sem replay. Alternativa autenticada pelo repositório: reverter somente o commit funcional e publicar essa reversão na mesma branch de produção."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Próximos contatos naturais e revisão em 01/10/2026, sem nova automação",
+    "window": "Próximas conversas naturais e revisão em 06/10/2026; sem nova automação",
     "signals": [
-      "Vocativos comerciais devem desaparecer das aberturas e continuações.",
-      "Nomes pessoais, acentos e autodeclaração continuam utilizáveis.",
-      "Rever ou reverter diante de perda de resposta, tratamento indevido ou regressão de segurança."
+      "Cobertura dos dois assuntos, revisão humana indevida, repetição de apresentação e latência.",
+      "Conter diante de faixa incorreta, nova permissão indevida, resposta parcial ou prioridade humana perdida."
     ]
   },
   "release": {
-    "approvedCommit": "d700926465386ea34842a459b5c690544485d069",
-    "netlifyDeployId": "6abc3954a368c700089a974e",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-09-29T22:21:52.248Z",
-    "documentationStatus": "same_drive_files_verified",
-    "destinationsChanged": [
-      "Netlify",
-      "Google Drive: manual and executive plan, same IDs"
-    ],
-    "receipt": "auditorias/bruna-nome-pessoal-2026-09-29/PUBLICACAO.json",
-    "drivePlanSha256": "902aa6b79414eeb3da9afa90825013eeaf3a746244158aa7bfe0707dfb1b1a1f"
+    "status": "pending"
   }
 }

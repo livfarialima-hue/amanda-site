@@ -1,5 +1,5 @@
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
-import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
 import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, resolveBundledSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
@@ -286,6 +286,13 @@ export function enrichAutomationPlanFromConversation(
     );
   if (hasUnresolvedNamedProcedure(plan.currentText || latestPatientTurn?.text)) {
     return { ...plan, procedure: null, replyCode: null };
+  }
+  const currentText = plan.currentText || latestPatientTurn?.text;
+  const acceptedTopics = resolveOfferedInformationChoice({text:currentText,recentConversation});
+  if (acceptedTopics && ['ai_safety_triage','outside_conservative_rules','known_conversation_continuation'].includes(plan.reason)) {
+    // Resolve the informational request before the existing price/procedure
+    // gates. Preserve the original message and never widen protected routes.
+    plan = {...plan, ...planAutomation({text:acceptedTopics.requestText,messageType:'text'}), currentText};
   }
   const acceptedPriceRangeOffer = Boolean(
     PRICE_RANGE_OFFER_PATTERN.test(String(lastClinicTurn?.text || "")) &&

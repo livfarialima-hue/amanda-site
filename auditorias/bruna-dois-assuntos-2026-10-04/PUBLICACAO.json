@@ -1,0 +1,23 @@
+{
+  "status": "pending",
+  "changeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
+  "patientMessagesSent": 0,
+  "appsScriptVersion": 161,
+  "validation": {
+    "fullTests": 1884,
+    "newRegressions": 14,
+    "baselineFailures": 6,
+    "requiredCommands": 47,
+    "architecture": "passed",
+    "siteBuild": "193 files / 54 URLs / no errors",
+    "siteCheck": "passed",
+    "diff": "passed",
+    "ops": "SYNC_PENDING expected before publication",
+    "completedAt": "2026-10-04T14:20:06.652Z"
+  },
+  "rollback": {
+    "commit": "d700926465386ea34842a459b5c690544485d069",
+    "deployId": "6abc3954a368c700089a974e",
+    "noReplay": true
+  }
+}

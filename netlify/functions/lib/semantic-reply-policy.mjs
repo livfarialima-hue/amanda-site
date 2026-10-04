@@ -144,7 +144,7 @@ export function deterministicReplyCoversPatientQuestions(candidate, conversation
   const code = candidate?.decision?.replyCode;
   if (!["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(code)) return true;
   return (conversationAction?.replyContract?.unresolvedIntents || []).every(
-    intent => ["price_surgery", "price_consultation"].includes(intent),
+    intent => ["price_surgery", "price_consultation"].includes(intent) || candidate?.coveredIntents?.includes(intent),
   );
 }
 

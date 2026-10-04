@@ -1,5 +1,6 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
-import { hasUnansweredUnavailablePatientText } from "./patient-turn-context.mjs";
+import { hasUnansweredUnavailablePatientText, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
+import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
 import {
@@ -598,6 +599,27 @@ export function buildSurgicalPriceSuggestedReply({
     careAndPayment,
     guide,
   ].filter(Boolean).join("\n\n");
+}
+
+// Shared by inbound and human-resume. Only existing approved facts and a
+// price plan already authorized by surgical-price-policy can enter this reply.
+export function buildAcceptedProcedurePriceReply({plan, currentText, recentConversation = []} = {}) {
+  const choice = resolveOfferedInformationChoice({text:currentText,recentConversation});
+  if (!choice || plan?.reason !== 'lifting_price_range_direct' || plan.automaticAllowed !== true ||
+      !['lifting_facial','lifting_cervical'].includes(plan.procedure)) return null;
+  const approved = approvedProcedureInformationFacts({text:currentText,procedure:plan.procedure,recentConversation});
+  const explanation = approved?.facts.filter(fact => ['procedure_explanation','neck_procedure_explanation'].includes(fact.topic)) || [];
+  if (!explanation.length) return null;
+  const price = buildSurgicalPriceSuggestedReply({procedure:plan.procedure,currentText:choice.requestText,
+    recentConversation,directToPatient:true,introduceBruna:false,includeGreeting:false});
+  return {
+    status:'completed', model:'deterministic-approved-procedure-price',
+    // Internal coverage, not model output. Extra requests still veto selection.
+    coveredIntents:[...choice.topics,...explanation.filter(fact=>fact.topic==='procedure_explanation').map(()=> 'lifting_procedure_explanation')],
+    decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+      professional:'amanda',procedure:plan.procedure,replyCode:'LIFTING-PRICE-RANGE-01',reviewReason:'',
+      suggestedReply:['Claro, te explico os dois.',...explanation.map(fact=>fact.statement),price].join('\n\n')},
+  };
 }
 
 export function buildSurgicalPriceHoldingReply({

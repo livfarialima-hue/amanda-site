@@ -473,7 +473,11 @@
         "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
         "auditorias/bruna-nome-pessoal-2026-09-29/PREFLIGHT.json",
         "auditorias/bruna-nome-pessoal-2026-09-29/PUBLICACAO.json",
-        "auditorias/bruna-nome-pessoal-2026-09-29/RELATORIO.md"
+        "auditorias/bruna-nome-pessoal-2026-09-29/RELATORIO.md",
+        "netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
+        "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json",
+        "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json",
+        "auditorias/bruna-dois-assuntos-2026-10-04/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -500,7 +504,8 @@
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
         "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
-        "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs"
+        "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+        "netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
@@ -515,7 +520,8 @@
         "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
-        "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",

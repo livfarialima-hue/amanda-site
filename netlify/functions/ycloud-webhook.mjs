@@ -116,6 +116,7 @@ import {
   buildSurgicalInitialPriceReply,
   buildSurgicalPriceHoldingReply,
   buildSurgicalPriceSuggestedReply,
+  buildAcceptedProcedurePriceReply,
   isSurgicalPriceReview,
 } from "./lib/surgical-price-review.mjs";
 import {
@@ -2567,7 +2568,8 @@ async function completeOpenAIActive({
         patientName: input.patientProfileName,
         introduceBruna,
       });
-    const deterministicReplyResult = consultationBundle?.candidate || (appointmentPreferenceBody
+    const acceptedProcedurePriceReply = buildAcceptedProcedurePriceReply({plan,currentText:input.text,recentConversation:input.recentConversation});
+    const deterministicReplyResult = consultationBundle?.candidate || acceptedProcedurePriceReply || (appointmentPreferenceBody
       ? {
           status: "completed",
           model: "deterministic-appointment-preference",

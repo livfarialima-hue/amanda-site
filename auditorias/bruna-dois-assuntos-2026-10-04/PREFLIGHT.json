@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-10-04T14:20:06.652Z",
+  "status": "verified_read_only",
+  "baseCommit": "08fe1bd44398c604809cd6b30342299f4a97244d",
+  "production": {
+    "commit": "d700926465386ea34842a459b5c690544485d069",
+    "netlifyDeployId": "6abc3954a368c700089a974e",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "netlify": "Projeto canônico e commit publicado conferidos na interface autenticada; health active, assinatura active e durable_background_intake.",
+    "leads": "A sequência informativa e o aceite chegaram integrais; ledger registrou encaminhamento UNKNOWN-REVIEW por explicação e valor. A resposta foi somente espera de preço. Sem IDs ou conteúdo identificável neste recibo.",
+    "baseline": "Reprodução sintética: Os dois após oferta de procedimento/valores produz ai_safety_triage, fatos aprovados nulos e lista de pedidos vazia.",
+    "telemetryLimitation": "O evento relata versão de política antiga; isso não é usado como prova da versão implantada, conferida diretamente no Netlify."
+  },
+  "externalWritesPerformed": false,
+  "limitations": "Leitura restrita à conversa e seu evento. Sem mensagem, replay ou edição. Interface Netlify consultada em conta de leitura; publicação autorizada via integração Git existente, sem mudar permissões ou flags.",
+  "health": {
+    "status": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401
+  },
+  "driveBaselines": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "c4ff0eb44af3b0d0e5ff83588dc8a5d0089d07e812bbc28ef511b943fa260296",
+      "rawReadbackMatchesBaseline": true
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "902aa6b79414eeb3da9afa90825013eeaf3a746244158aa7bfe0707dfb1b1a1f",
+      "rawReadbackMatchesBaseline": true
+    }
+  ]
+}

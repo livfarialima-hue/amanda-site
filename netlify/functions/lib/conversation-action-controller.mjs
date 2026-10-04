@@ -1,7 +1,7 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
 import { buildReplyContinuityContext } from "./reply-continuity.mjs";
-import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -440,7 +440,7 @@ function buildReplyContract({
 }) {
   const value = normalized(text);
   const intents = inferUnresolvedIntents({
-    text: value,
+    text: resolveOfferedInformationChoice({text:value,recentConversation})?.requestText || value,
     messageType,
     schedulingRequest,
     plan,

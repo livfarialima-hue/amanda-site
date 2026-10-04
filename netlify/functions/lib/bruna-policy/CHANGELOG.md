@@ -1,3 +1,7 @@
+## 2026-10-04.1 — dois assuntos aceitos, validação local
+
+Após uma oferta de explicar o procedimento ou os valores, Os dois, Ambos e aceites equivalentes recuperam ambos os assuntos da última pergunta. A Bruna explica primeiro com os fatos aprovados e informa a referência autorizada do procedimento confirmado, com a ressalva vigente, sem nova apresentação nem espera desnecessária. A resposta conjunta é a mesma na entrada e na retomada e continua sujeita à validação semântica e aos gates. Sem oferta, com outro assunto, duas cirurgias, condição adicional, faixa já enviada, procedimento não autorizado ou bloqueio humano, não há nova permissão. Sem ampliar números, indicação, agenda ou permissão de envio.
+
 ## 2026-09-29.3 — nome de tratamento conservador, publicado e verificado
 
 A Bruna usa saudação neutra quando o perfil contém descrição comercial, profissão, marca ou outro nome não pessoal reconhecido. Imóveis, corretagem e demais descrições comerciais não viram vocativo nem fornecem primeiro nome por recorte. Nome explicitamente informado pela pessoa continua prioritário. Responder à dúvida antes de qualquer coleta; perguntar como prefere ser chamada apenas na abertura sem nome confiável, quando não houver outra pergunta ou histórico. Em continuidade, seguir sem nome. Sem alteração de cadastro clínico, destinatário, preço, agenda, cadência ou prioridade humana. Regressões de abertura, preço, coordenação humana, madrugada, agenda e entrada semântica; nomes pessoais com acentos, emojis e declaração explícita preservados.
