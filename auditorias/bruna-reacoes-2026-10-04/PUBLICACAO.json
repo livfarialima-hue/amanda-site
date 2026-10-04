@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "netlify_verified_documentation_pending",
   "changeId": "BRUNA-REACOES-2026-10-04",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -19,5 +19,44 @@
     "commit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
     "deployId": "6ac2609d3913cd0008d6a2b1",
     "noReplay": true
+  },
+  "approvedCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+  "netlifyDeployId": "6ac267688469a20008853374",
+  "bundleVersion": "2026-10-04.2",
+  "publishedAt": "2026-10-04T14:49:44.000Z",
+  "publishedTimeSource": "Netlify production deploy log: Site is live",
+  "verifiedAt": "2026-10-04T14:50:29.231Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-10-04T14:50:28.476Z",
+    "base": "https://6ac267688469a20008853374--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-10-04T14:50:29.193Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "publicationMethod": "existing Git integration; no permission, flag, automation-mode or auto-publishing changes",
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-10-04T14:49:22.492Z",
+    "approvedCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "request": "Que porcaria foi essa a respeito de material.",
+    "authorizationContext": "Continuação da correção da mesma conversa, já autorizada com Corrija e publique; autorização persistente para corrigir comportamento e publicar.",
+    "scope": "Reações tipadas sem recibo, alerta ou nova pendência; proteção de jobs legados e diretrizes canônicas.",
+    "patientMessagesAuthorized": false
   }
 }

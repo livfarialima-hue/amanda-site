@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -339,7 +339,8 @@
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    }
+    },
+    "external": "Netlify functional commit published and read-only smoke passed; Drive reconciliation pending."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -355,6 +356,16 @@
     ]
   },
   "release": {
-    "status": "pending"
+    "status": "netlify_verified_documentation_pending",
+    "approvedCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "netlifyDeployId": "6ac267688469a20008853374",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-10-04T14:50:29.231Z",
+    "documentationStatus": "pending_same_drive_files",
+    "destinationsChanged": [
+      "Netlify",
+      "Google Drive: manual and executive plan, same IDs"
+    ],
+    "receipt": "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json"
   }
 }

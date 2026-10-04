@@ -1,4 +1,4 @@
-## 2026-10-04.2 — reações sem recibo de material, validação local
+## 2026-10-04.2 — reações sem recibo de material, publicado em 04/10/2026
 
 Reações do WhatsApp (inclusive remoção de reação) são reconhecidas pelo tipo do evento e não são anexos nem novas solicitações. Não geram resposta, alerta, lead, retomada, confirmação de agenda ou substituição de pergunta pendente. Jobs antigos de reação são concluídos em silêncio, preservando a posse humana e os recibos anteriores. Somente foto, vídeo, documento ou áudio identificados podem receber a descrição de material; tipos desconhecidos mantêm linguagem neutra. Anexos reais e perguntas textuais seguem os fluxos vigentes.
 
