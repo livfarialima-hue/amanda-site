@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -339,7 +339,8 @@
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    }
+    },
+    "external": "Netlify functional commit published and read-only smoke passed; Drive reconciliation pending."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -354,6 +355,16 @@
     ]
   },
   "release": {
-    "status": "pending"
+    "status": "netlify_verified_documentation_pending",
+    "approvedCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
+    "netlifyDeployId": "6ac2609d3913cd0008d6a2b1",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-10-04T14:22:13.586Z",
+    "documentationStatus": "pending_same_drive_files",
+    "destinationsChanged": [
+      "Netlify",
+      "Google Drive: manual and executive plan, same IDs"
+    ],
+    "receipt": "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json"
   }
 }

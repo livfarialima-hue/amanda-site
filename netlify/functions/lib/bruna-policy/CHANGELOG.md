@@ -1,4 +1,4 @@
-## 2026-10-04.1 — dois assuntos aceitos, validação local
+## 2026-10-04.1 — dois assuntos aceitos, publicado em 04/10/2026
 
 Após uma oferta de explicar o procedimento ou os valores, Os dois, Ambos e aceites equivalentes recuperam ambos os assuntos da última pergunta. A Bruna explica primeiro com os fatos aprovados e informa a referência autorizada do procedimento confirmado, com a ressalva vigente, sem nova apresentação nem espera desnecessária. A resposta conjunta é a mesma na entrada e na retomada e continua sujeita à validação semântica e aos gates. Sem oferta, com outro assunto, duas cirurgias, condição adicional, faixa já enviada, procedimento não autorizado ou bloqueio humano, não há nova permissão. Sem ampliar números, indicação, agenda ou permissão de envio.
 

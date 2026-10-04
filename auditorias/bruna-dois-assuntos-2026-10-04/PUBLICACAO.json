@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "netlify_verified_documentation_pending",
   "changeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -19,5 +19,52 @@
     "commit": "d700926465386ea34842a459b5c690544485d069",
     "deployId": "6abc3954a368c700089a974e",
     "noReplay": true
+  },
+  "approvedCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
+  "netlifyDeployId": "6ac2609d3913cd0008d6a2b1",
+  "bundleVersion": "2026-10-04.1",
+  "publishedAt": "2026-10-04T14:20:41.000Z",
+  "publishedTimeSource": "Netlify production deploy log: Site is live",
+  "verifiedAt": "2026-10-04T14:22:13.586Z",
+  "candidateSmoke": {
+    "checkedAt": "2026-10-04T14:21:34.996Z",
+    "base": "https://6ac2609d3913cd0008d6a2b1--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-10-04T14:21:35.694Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "functionsUpdated": 5,
+  "newStaticFiles": 0,
+  "schedulesPreserved": [
+    "attribution-journey-purge",
+    "classify-leads",
+    "human-resume",
+    "synthetic-integration-health",
+    "ycloud-recovery"
+  ],
+  "publicationMethod": "existing Git integration; no permission, flag, automation-mode or auto-publishing changes",
+  "firstNaturalInteractionObserved": false,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-10-04T14:20:24.609Z",
+    "approvedCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
+    "request": "Pq vc nao seguiu explicando? Corrija e publique.",
+    "scope": "Continuidade dos dois assuntos oferecidos pela Bruna, consumidores e diretrizes canônicas",
+    "patientMessagesAuthorized": false
   }
 }
