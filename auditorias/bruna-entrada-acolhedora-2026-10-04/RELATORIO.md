@@ -1,6 +1,6 @@
 # Entrada sem conteúdo e acolhimento — 04/10/2026
 
-Estado: produção verificada; reconciliação documental em andamento.
+Estado: publicado e verificado; documentação reconciliada.
 
 O ledger e o evento canônicos registram entrada sem texto e sem referência; o print mostra texto no aplicativo. O evento original na YCloud ainda requer sessão autenticada, portanto a causa upstream não está confirmada. A fila local reconhecia menos envelopes que o próprio extrator do webhook, podendo rejeitar uma versão enriquecida em formato já suportado.
 
@@ -27,3 +27,7 @@ Na retomada autorizada com “Publique”, o disco apresentou 1,3 GB livres e a 
 ## Publicação
 
 Commit c40e0f47b08d48e86ef0e2d50b237236a3e6046b, Netlify 6ac2830ee4b0b50008ce8e5a, versão 2026-10-04.3. Publicado via integração Git existente às 13:47:42 BRT, conforme Site is live no log da Netlify. GET de saúde ativo e POST sem assinatura recusado com 401 no domínio e na URL imutável. Isso comprova publicação e proteção técnica; o comportamento foi validado com eventos sintéticos, sem mensagem de teste nem replay da conversa real. Primeira interação natural ainda não observada.
+
+## Reconciliação documental
+
+Diretrizes e Plano foram substituídos nos mesmos arquivos existentes do Drive. Leitura integral posterior idêntica aos bytes locais commitados; hashes e horários no recibo. Manifesto, candidato e recibos apontam para o mesmo commit funcional e deploy. Nenhum arquivo concorrente de planejamento, permissão ou gatilho foi criado.

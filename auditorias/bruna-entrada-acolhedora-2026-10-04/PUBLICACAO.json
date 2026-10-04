@@ -1,5 +1,5 @@
 {
-  "status": "netlify_verified_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -70,5 +70,26 @@
     "authorizationContext": "Autorização explícita renovada após apresentar a correção de texto indisponível e superar o bloqueio de espaço.",
     "scope": "Leitura consistente na recuperação; abertura acolhedora quando faltar conteúdo; preservação do contexto e diretrizes canônicas.",
     "patientMessagesAuthorized": false
-  }
+  },
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "ad435ef67be8f43dcf7ca6a7def8451b507fb5edfd9f6414c3e566c5a7746fad",
+      "bytes": 156143,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-10-04T16:49:31.181Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "56e21dd53460b1a87e9800d6d853f87ae4e73875167e03770f914532359edd8a",
+      "bytes": 241175,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-10-04T16:49:31.181Z"
+    }
+  ],
+  "documentationVerifiedAt": "2026-10-04T16:49:31.181Z"
 }

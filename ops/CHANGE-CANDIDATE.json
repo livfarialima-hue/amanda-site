@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
   "title": "Recuperar texto disponível e acolher quando o conteúdo faltar",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "c670bb109b71fed4caccc44589abce800b72c22b",
   "authorization": {
     "required": true,
@@ -346,7 +346,7 @@
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
     },
-    "external": "Netlify functional commit published and read-only smoke passed; Drive reconciliation pending."
+    "external": "Functional commit published via existing Git integration; immutable and production health verified; same Drive files match committed local bytes."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -362,16 +362,16 @@
     ]
   },
   "release": {
-    "status": "netlify_verified_documentation_pending",
     "approvedCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
     "netlifyDeployId": "6ac2830ee4b0b50008ce8e5a",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-04T16:48:39.638Z",
-    "documentationStatus": "pending_same_drive_files",
+    "verifiedAt": "2026-10-04T16:49:31.181Z",
+    "documentationStatus": "same_drive_files_verified",
     "destinationsChanged": [
       "Netlify",
       "Google Drive: manual and executive plan, same IDs"
     ],
-    "receipt": "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json"
+    "receipt": "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json",
+    "drivePlanSha256": "56e21dd53460b1a87e9800d6d853f87ae4e73875167e03770f914532359edd8a"
   }
 }

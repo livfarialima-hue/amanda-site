@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
-    "lastObservedProductionCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
-    "functionalDeployId": "6ac267688469a20008853374",
-    "lastObservedProductionDeployId": "6ac267688469a20008853374",
-    "rollbackCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
-    "rollbackDeployId": "6ac2609d3913cd0008d6a2b1",
+    "functionalCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "lastObservedProductionCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "functionalDeployId": "6ac2830ee4b0b50008ce8e5a",
+    "lastObservedProductionDeployId": "6ac2830ee4b0b50008ce8e5a",
+    "rollbackCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "rollbackDeployId": "6ac267688469a20008853374",
     "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-04T14:49:44.000Z",
+    "publishedAt": "2026-10-04T16:47:42.000Z",
     "publishedTimePrecision": "Netlify deploy log",
-    "lastVerifiedAt": "2026-10-04T14:50:29.193Z",
-    "candidateChangeId": "BRUNA-REACOES-2026-10-04",
+    "lastVerifiedAt": "2026-10-04T16:48:39.535Z",
+    "candidateChangeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-04.2",
+    "bundleVersion": "2026-10-04.3",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -41,16 +41,11 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "01ce724ae7b7966f70caa9194f3e6acbadec054a0a337cbbbba7ca161a0b2d87",
+    "driveProjectionSha256": "ad435ef67be8f43dcf7ca6a7def8451b507fb5edfd9f6414c3e566c5a7746fad",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-10-04.3",
-    "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
-    "status": "tested_local"
-  }
+  "followupCopyContract": "followup-message-copy"
 }
