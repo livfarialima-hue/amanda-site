@@ -1,3 +1,4 @@
+import { isReactionMessageType, isMaterialMessageType } from "./inbound-message-kind.mjs";
 import { isAppointmentPreferenceReply } from "./appointment-suggestions.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { detectPatientAppointmentReply } from "./appointment-confirmation.mjs";
@@ -237,6 +238,9 @@ export function classifyHumanResume({
   recentConversation,
   pendingCommitments = [],
 }) {
+  if (isReactionMessageType(messageType)) {
+    return { action: "no_action", reason: "reaction_event" };
+  }
   if (preliminaryPlan?.reason === "possible_urgent_symptoms") {
     return { action: "sensitive", reason: "possible_urgent_symptoms" };
   }
@@ -415,11 +419,12 @@ export const HUMAN_RESUME_HOLDING_MESSAGE =
   "";
 
 export function buildDelayedHumanReceipt({ text, messageType = "text", reason, recentConversation = [] } = {}) {
+  if (isReactionMessageType(messageType)) return "";
   if (reason === "possible_urgent_symptoms" || reason === "contact_preference_no_bot") return "";
   if (messageType === "text" && !hasUnresolvedPatientRequest(text, recentConversation)) return "";
   const subject = reason === "scheduling_or_confirmation"
     ? "seu pedido sobre o agendamento"
-    : messageType !== "text"
+    : isMaterialMessageType(messageType)
       ? "o material que você enviou"
       : "sua mensagem";
   return `Recebi ${subject}. A equipe foi avisada para conferir e retornar por aqui assim que possível.`;

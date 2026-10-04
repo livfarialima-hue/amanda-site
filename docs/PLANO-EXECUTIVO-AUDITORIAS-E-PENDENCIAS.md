@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-REACOES-2026-10-04 -->
+**Pacote 2026-10-04.2 — TESTADO LOCALMENTE; PUBLICAÇÃO PENDENTE.** Reações do WhatsApp (inclusive remoção de reação) são reconhecidas pelo tipo do evento e não são anexos nem novas solicitações. Não geram resposta, alerta, lead, retomada, confirmação de agenda ou substituição de pergunta pendente. Jobs antigos de reação são concluídos em silêncio, preservando a posse humana e os recibos anteriores. Somente foto, vídeo, documento ou áudio identificados podem receber a descrição de material; tipos desconhecidos mantêm linguagem neutra. Anexos reais e perguntas textuais seguem os fluxos vigentes.
+
+Evidência: `auditorias/bruna-reacoes-2026-10-04/RELATORIO.md`. Leitura restrita da LEADS confirmou reação vinculada ao recibo indevido. Sem PII, mensagem real de teste, replay ou edição de paciente. Daniel/equipe: observar próximas conversas naturais e revisar em 06/10/2026; conter se reaparecer falso recibo, perda de pergunta ou liberação de posse humana. Publicação e projeções pendentes.
+<!-- /BRUNA-REACOES-2026-10-04 -->
+
 <!-- BRUNA-DOIS-ASSUNTOS-2026-10-04 -->
 **Pacote 2026-10-04.1 — PUBLICADO E VERIFICADO EM PRODUÇÃO em 04/10/2026, 11h20 BRT.** Após uma oferta de explicar o procedimento ou os valores, Os dois, Ambos e aceites equivalentes recuperam ambos os assuntos da última pergunta. A Bruna explica primeiro com os fatos aprovados e informa a referência autorizada do procedimento confirmado, com a ressalva vigente, sem nova apresentação nem espera desnecessária. A resposta conjunta é a mesma na entrada e na retomada e continua sujeita à validação semântica e aos gates. Sem oferta, com outro assunto, duas cirurgias, condição adicional, faixa já enviada, procedimento não autorizado ou bloqueio humano, não há nova permissão.
 

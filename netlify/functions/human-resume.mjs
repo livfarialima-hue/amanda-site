@@ -1,3 +1,4 @@
+import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import { consultationQuestionTopics } from './lib/patient-turn-context.mjs';
 import { coalesceUnansweredPatientBlock } from './lib/inbound-burst-context.mjs';
@@ -473,6 +474,11 @@ export async function processHumanResumeJob(
   } = {},
 ) {
   dependencies = { ...dependencies, now, env };
+  if (isReactionMessageType(job.messageType)) {
+    const completed = await finish(job, "preserve", dependencies);
+    return { status: completed.status === "completed" ? "no_action" : completed.status,
+      reason: "reaction_event" };
+  }
   job = { ...job, patientWindowClosed: now - timeMs(job.receivedAt) >= 24 * 60 * 60000 };
   if (!allowsPatientSideEffects(env.WHATSAPP_AUTOMATION_MODE)) {
     const reschedule =

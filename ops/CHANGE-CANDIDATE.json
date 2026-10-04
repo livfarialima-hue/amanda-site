@@ -1,41 +1,38 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
-  "title": "Cumprir os dois assuntos aceitos após uma oferta informativa",
-  "status": "published_verified",
-  "baseCommit": "08fe1bd44398c604809cd6b30342299f4a97244d",
+  "changeId": "BRUNA-REACOES-2026-10-04",
+  "title": "Reações não são anexos nem novas solicitações",
+  "status": "tested_local",
+  "baseCommit": "9af6dd99ef6131fed56d7bf3fee285c1f7ca9f77",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu: Por que não seguiu explicando? Corrija e publique. Autorização vinculada externamente ao SHA testado; não autoriza mensagem manual, replay ou edição de pacientes."
+    "note": "Continuação da correção/publicação solicitada por Daniel para esta conversa: novo relato de recibo indevido de material após reação. A autorização de corrigir e publicar persiste; não autoriza mensagem manual, replay ou edição de pacientes."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json",
-      "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json",
-      "auditorias/bruna-dois-assuntos-2026-10-04/RELATORIO.md",
+      "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json",
+      "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json",
+      "auditorias/bruna-reacoes-2026-10-04/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/patient-turn-context.mjs",
-      "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+      "netlify/functions/lib/human-resume-policy.mjs",
+      "netlify/functions/lib/human-resume-queue.mjs",
+      "netlify/functions/lib/human-resume-queue.test.mjs",
+      "netlify/functions/lib/inbound-message-kind.mjs",
       "netlify/functions/lib/whatsapp-automation.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
@@ -138,6 +135,7 @@
       "netlify/functions/lib/human-resume-processor.mjs",
       "netlify/functions/lib/human-resume-queue.mjs",
       "netlify/functions/lib/inbound-burst-context.mjs",
+      "netlify/functions/lib/inbound-message-kind.mjs",
       "netlify/functions/lib/inbound-recovery.mjs",
       "netlify/functions/lib/knowledge-learning.mjs",
       "netlify/functions/lib/lead-classifier.mjs",
@@ -171,109 +169,110 @@
       "protese-de-mama/index.html"
     ],
     "preservedInvariants": [
-      "Os dois resolve somente os dois assuntos da última oferta informativa reconhecida, sem virar duas cirurgias ou aceite de agenda.",
-      "Fontes clínicas, procedimento confirmado, faixas existentes e envio único continuam obrigatórios.",
-      "Takeover, opt-out, cuidado ativo, compromisso humano, urgência, janela e veto semântico permanecem protegidos.",
-      "Sem alteração de paciente, filas, cadência, Apps Script, destinatário ou mensagem real de teste."
+      "Reações tipadas não respondem, não alertam, não cancelam perguntas, não criam lead nem substituem pendência real.",
+      "Jobs legados de reação encerram silenciosamente sem liberar posse humana; conclusão condicional protege corrida com novo turno.",
+      "Fotos, documentos, áudios e vídeos mantêm encaminhamento; apenas mídia identificada pode ser chamada de material.",
+      "Texto, urgência, preços, agenda, opt-out, assinatura, janela e cadência permanecem sob as políticas vigentes.",
+      "Sem mensagem real, replay, alteração manual de paciente ou publicação de Apps Script."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
-        "system": "Netlify e LEADS somente leitura; mesma jornada e contratos preservados",
+        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
         "status": "verified_read_only",
-        "checkedAt": "2026-10-04T14:20:06.652Z",
-        "reference": "auditorias/bruna-dois-assuntos-2026-10-04/PREFLIGHT.json"
+        "checkedAt": "2026-10-04T14:49:15.297Z",
+        "reference": "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json"
       }
     ]
   },
@@ -296,6 +295,7 @@
       "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
@@ -328,43 +328,33 @@
       "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
     ],
-    "completedAt": "2026-10-04T14:20:06.652Z",
+    "completedAt": "2026-10-04T14:49:15.297Z",
     "results": {
-      "fullTests": 1884,
-      "newRegressions": 14,
-      "baselineFailures": 6,
-      "requiredCommands": 47,
+      "fullTests": 1900,
+      "newRegressions": 16,
+      "baselineFailures": 10,
+      "requiredCommands": 48,
       "architecture": "passed",
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "passed",
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
-    },
-    "external": "Functional commit published via existing Git integration; immutable and production health verified; same Drive files match committed local bytes."
+    }
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
-    "production": "Restaurar Netlify 6abc3954a368c700089a974e / d700926465386ea34842a459b5c690544485d069; manter Apps Script v161, filas e recibos; sem replay. Alternativa autenticada pelo repositório: reverter somente o commit funcional e publicar essa reversão na mesma branch de produção."
+    "production": "Restaurar Netlify 6ac2609d3913cd0008d6a2b1 / 10b7a7d4bfde7e306ec785e6d7b70ee66a369723, ou revert intencional via branch de produção; preservar Apps Script v161, filas e recibos; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
     "window": "Próximas conversas naturais e revisão em 06/10/2026; sem nova automação",
     "signals": [
-      "Cobertura dos dois assuntos, revisão humana indevida, repetição de apresentação e latência.",
-      "Conter diante de faixa incorreta, nova permissão indevida, resposta parcial ou prioridade humana perdida."
+      "Reação sem resposta, alerta, nova pendência ou perda de pergunta anterior.",
+      "Anexos reais continuam encaminhados; intervenções e novos textos mantêm prioridade e segurança.",
+      "Conter se houver falsa confirmação de material ou liberação de atendimento humano."
     ]
   },
   "release": {
-    "approvedCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
-    "netlifyDeployId": "6ac2609d3913cd0008d6a2b1",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-04T14:23:28.079Z",
-    "documentationStatus": "same_drive_files_verified",
-    "destinationsChanged": [
-      "Netlify",
-      "Google Drive: manual and executive plan, same IDs"
-    ],
-    "receipt": "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json",
-    "drivePlanSha256": "7e940757e83da3949342835ad447801457b934c921ab98d95970601e30883479"
+    "status": "pending"
   }
 }

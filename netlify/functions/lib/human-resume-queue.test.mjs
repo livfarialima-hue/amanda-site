@@ -67,6 +67,74 @@ function memoryStore() {
   };
 }
 
+test("a reaction after a real question cannot supersede it or create another pending job", async () => {
+  const store = memoryStore();
+  const now = Date.parse("2026-10-04T15:00:00Z"), options = { getStoreImpl: () => store, now, delayMs: 1 };
+  const input = sampleInput({ receivedAt: new Date(now).toISOString(), eventId: "real-question" });
+  await scheduleHumanResume(input, options);
+  const before = await getHumanResumeControl(input.phone, options);
+  const reaction = await scheduleHumanResume({ ...input, eventId: "newer-reaction", text: "", messageType: "reaction",
+    receivedAt: new Date(now + 1000).toISOString() }, { ...options, now: now + 1000 });
+  assert.deepEqual(reaction, { status: "skipped", reason: "reaction_event" });
+  assert.deepEqual(await getHumanResumeControl(input.phone, options), before);
+  const claim = await claimDueHumanResumes({ ...options, now: now + 1001 });
+  assert.deepEqual(claim.jobs.map(j => j.eventId), ["real-question"]);
+});
+
+for (const status of ["human_active", "waiting_human"]) {
+  test(`legacy reaction job is removed without changing ${status} ownership or receipts`, async () => {
+    const store = memoryStore(), now = Date.parse("2026-10-04T15:00:00Z");
+    const options = { getStoreImpl: () => store, now, delayMs: 1 };
+    const input = sampleInput({ receivedAt: new Date(now).toISOString(), eventId: "legacy-reaction" });
+    await scheduleHumanResume(input, options);
+    // Seed the shape written before the fix; the new scheduler refuses reactions.
+    const [{ key: pendingKey }] = (await store.list({ prefix: "pending/" })).blobs;
+    await store.setJSON(pendingKey, { ...await store.get(pendingKey), messageType: "reaction", text: "" });
+    const [{ key: controlKey }] = (await store.list({ prefix: "control/" })).blobs;
+    await store.setJSON(controlKey, { ...await store.get(controlKey), status, holdingSent: true, alertEventId: "older-review" });
+    const before = await getHumanResumeControl(input.phone, options);
+    const { jobs: [job] } = await claimDueHumanResumes({ ...options, now: now + 1 });
+    const result = await processHumanResumeJob(job, {
+      env: { WHATSAPP_AUTOMATION_MODE: "active" }, now: now + 1,
+      completeHumanResumeImpl: (j, opts) => completeHumanResume(j, { ...options, ...opts, now: now + 1 }),
+      sendYCloudPatientTextImpl: async () => assert.fail("no receipt for a reaction"),
+      sendYCloudReviewAlertImpl: async () => assert.fail("no alert for a reaction"),
+    });
+    assert.equal(result.status, "no_action");
+    const after = await getHumanResumeControl(input.phone, options);
+    for (const key of ["status", "generation", "lastHumanAt", "holdingSent", "alertEventId", "alertDeliveredAt", "receiptAttemptedAt"]) {
+      assert.equal(after[key], before[key], key);
+    }
+    assert.equal((await store.list({ prefix: "pending/" })).blobs.length, 0);
+    assert.equal(after.handledEventId, "legacy-reaction");
+    const next = await scheduleHumanResume({ ...input, eventId: "next-real-question", text: "Como funciona a consulta?",
+      receivedAt: new Date(now + 2000).toISOString() }, { ...options, now: now + 2000 });
+    assert.equal(next.status, "scheduled");
+    const nextClaim = await claimDueHumanResumes({ ...options, now: now + 2001 });
+    assert.equal(nextClaim.jobs[0].eventId, "next-real-question");
+    assert.equal(nextClaim.jobs[0].preserveHumanOwnership, status === "waiting_human");
+  });
+}
+
+test("silent completion cannot overwrite a concurrent human intervention", async () => {
+  const store = memoryStore(), now = Date.parse("2026-10-04T15:00:00Z");
+  const options = { getStoreImpl: () => store, now, delayMs: 1 };
+  await scheduleHumanResume(sampleInput({ receivedAt: new Date(now).toISOString() }), options);
+  const { jobs: [job] } = await claimDueHumanResumes({ ...options, now: now + 1 });
+  const originalSet = store.setJSON.bind(store);
+  let raced = false;
+  store.setJSON = async (key, data, opts) => {
+    if (!raced && key.startsWith("control/") && data.handledEventId === job.eventId) {
+      raced = true;
+      await markHumanTakeover({ phone: job.phone, eventId: "new-human" }, { ...options, now: now + 2 });
+    }
+    return originalSet(key, data, opts);
+  };
+  const result = await completeHumanResume(job, { ...options, controlStatus: "preserve" });
+  assert.equal(result.status, "superseded");
+  assert.equal((await getHumanResumeControl(job.phone, options)).generation, "new-human");
+});
+
 test("out-of-order inbound cannot replace a newer patient's question", async () => {
   const store = memoryStore();
   const options = { getStoreImpl: () => store, now: Date.parse("2026-07-28T15:05:00Z"), delayMs: 1 };

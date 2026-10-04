@@ -1,3 +1,4 @@
+import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
 import { refreshInboundReplyContext } from "./lib/inbound-reply-context.mjs";
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import {
@@ -4484,6 +4485,13 @@ export async function handleYCloudWebhook(
   const normalizedMessageType = String(message.type || "")
     .trim()
     .toLowerCase();
+  // Signature, sender and event ID were validated above. A reaction is not a
+  // new request: stop before recovery, memory, debounce, CRM or human queues.
+  if (isReactionMessageType(normalizedMessageType)) {
+    writeOperationalLog({ source: "ycloud_webhook_intake", category: "webhook_intake",
+      reason: "reaction_event", fields: { eventType: payload.type, messageType: normalizedMessageType } });
+    return json({ received: true, ignored: true, reason: "reaction_event" });
+  }
   const rawInboundText = extractInboundText(message);
   const text = stripAttributionTransportToken(rawInboundText);
   const missingInboundText = Boolean(

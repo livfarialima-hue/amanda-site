@@ -60,6 +60,7 @@ Quando mais de uma dessas dimensões precisar mudar, cada contrato deve ser alte
 | Camada | Responsabilidade | Proprietário principal | Não deve decidir |
 |---|---|---|---|
 | Entrada | validar, normalizar e deduplicar o evento recebido | `ycloud-webhook.mjs` | conteúdo clínico, envio final ou fase comercial por suposição |
+| Tipo do evento recebido | distinguir reação de mídia real pelo tipo informado, sem inferir pelo texto | `inbound-message-kind.mjs` | ler estado, enviar, alertar ou alterar prioridade |
 | Contexto de automação | normalizar `off`, `shadow` e `active` | `automation-mode.mjs` | enviar mensagens ou acessar ambiente/rede |
 | Contexto de marketing | reconhecer template, prioridade de prefill e códigos Google/Meta | `marketing-prefill.mjs` | qualificar lead ou agendar consulta |
 | Contexto de procedimento | resolver procedimento falado, campanha e histórico recente | `procedure-context.mjs` | prometer indicação, preço ou resultado |
@@ -274,3 +275,7 @@ O `conversation-action-controller.mjs` continua proprietário da permissão: `re
 ### Aceite de dois assuntos informativos — 2026-10-04.1
 
 `patient-turn-context.mjs` resolve apenas a escolha plural estrita dos dois assuntos da última oferta reconhecida (procedimento e valores); não amplia o aceite genérico usado por agenda. `whatsapp-automation.mjs` passa esse pedido contextual pela política de preço vigente, sem reescrever a mensagem original. `lifting-information.mjs` e o contrato de `conversation-action-controller.mjs` consomem a mesma resolução. `surgical-price-review.mjs` compõe fatos aprovados e faixa já autorizada, declarando exatamente os assuntos cobertos. Webhook e retomada humana compartilham o compositor; `semantic-reply-policy.mjs` exige concordância semântica e cobertura de todos os pedidos, antes do gate final. Campos de cobertura são internos ao candidato, nunca aceitos da IA. Nenhuma alteração de fontes clínicas, valores, efeitos, cadência, fila, preferência humana, agenda ou classificação. Regressão: `bruna-dois-assuntos.integration.test.mjs`, transporte e retomada simulados.
+
+### Reações sem efeitos de atendimento — 2026-10-04.2
+
+`inbound-message-kind.mjs` é proprietário puro da distinção entre reação e mídia real. Webhook o aplica depois da assinatura e identidade obrigatórias, antes de recuperação, memória, CRM, debounce e filas. Planejador e política de retomada importam a mesma regra. `human-resume-queue.mjs` não agenda reações nem substitui perguntas reais. O processador descarta jobs legados pela conclusão condicional existente, com `controlStatus: preserve`: preserva a posse atual, geração, recibos e intervenção concorrente. O recibo só chama de material tipos reais de mídia. Emoji dentro de texto continua sendo texto e passa por triagem normal. Sem alteração de eco humano, Apps Script, cadência, fontes clínicas ou regras comerciais. Regressões: `bruna-reacoes.integration.test.mjs` e `human-resume-queue.test.mjs`.

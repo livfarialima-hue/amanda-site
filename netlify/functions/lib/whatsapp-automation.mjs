@@ -1,3 +1,4 @@
+import { isReactionMessageType } from "./inbound-message-kind.mjs";
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
 import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
 import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, resolveBundledSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
@@ -573,6 +574,10 @@ export function planAutomation({
 }) {
   const normalizedText = String(text || "").trim();
   const normalizedType = String(messageType || "text").toLowerCase();
+  if (isReactionMessageType(messageType)) {
+    return { route: "ignore", reason: "reaction_event", replyCode: null,
+      professional: null, procedure: null, automaticAllowed: false };
+  }
   const procedure = detectProcedure(
     normalizedText,
     reference,

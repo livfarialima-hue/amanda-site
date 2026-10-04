@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-04T14:49:15.297Z",
+  "status": "verified_read_only",
+  "baseCommit": "9af6dd99ef6131fed56d7bf3fee285c1f7ca9f77",
+  "production": {
+    "commit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
+    "netlifyDeployId": "6ac2609d3913cd0008d6a2b1",
+    "appsScriptVersion": 161
+  },
+  "observations": {
+    "netlify": "Projeto canônico mostra Published reestruturacao-site @10b7a7d na interface autenticada.",
+    "leads": "Ledger confirma encerramento humano, reação recebida sem texto e recibo de material onze minutos depois, correlacionado ao mesmo evento de reação. Não houve anexo no turno.",
+    "code": "Entrada não separa reação de mídia; fila aceita qualquer não-texto; recibo chama qualquer não-texto de material."
+  },
+  "externalWritesPerformed": false,
+  "limitations": "Leitura restrita ao incidente; recibo sem PII. Sem envio, replay ou mudança de paciente.",
+  "health": {
+    "status": 200,
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "processingMode": "durable_background_intake",
+    "unsignedPost": 401
+  },
+  "driveBaselines": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "ee97123268c8f1a6b0367e63b7c74d299e27f926018ac134234d7a8aa11eb227",
+      "rawReadbackMatchesBaseline": true
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "7e940757e83da3949342835ad447801457b934c921ab98d95970601e30883479",
+      "rawReadbackMatchesBaseline": true
+    }
+  ]
+}

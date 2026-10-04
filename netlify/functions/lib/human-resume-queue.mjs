@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 import { normalizePatientRelationship } from "./patient-relationship.mjs";
+import { isReactionMessageType } from "./inbound-message-kind.mjs";
 
 const STORE_NAME = "liv-human-resume-v1";
 const VERSION = 1;
@@ -209,6 +210,9 @@ export async function scheduleHumanResume(
   const messageType =
     limitedText(input?.messageType, 40).toLowerCase() ||
     "text";
+
+  // A reaction must not supersede a real pending request or touch ownership.
+  if (isReactionMessageType(messageType)) return { status: "skipped", reason: "reaction_event" };
 
   if (
     !phone ||
@@ -521,7 +525,7 @@ export async function completeHumanResume(
 ) {
   try {
     if (
-      !["human_active", "bruna_resumed", "waiting_human"].includes(
+      !["human_active", "bruna_resumed", "waiting_human", "preserve"].includes(
         controlStatus,
       )
     ) {
@@ -538,7 +542,8 @@ export async function completeHumanResume(
 
     const written = await store.setJSON(controlKey(job.phone), {
       ...control,
-      status: controlStatus,
+      // Discarding a legacy non-conversational job must not release a takeover.
+      status: controlStatus === "preserve" ? control.status : controlStatus,
       generation: job.generation,
       handledEventId: job.eventId,
       updatedAt: new Date(now).toISOString(),
