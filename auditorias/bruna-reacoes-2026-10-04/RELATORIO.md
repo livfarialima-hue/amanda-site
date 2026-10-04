@@ -1,6 +1,6 @@
 # Reação confundida com material — 04/10/2026
 
-Estado: produção verificada; reconciliação documental em andamento.
+Estado: publicado e verificado; documentação reconciliada.
 
 A leitura restrita da LEADS confirmou reação tipada após encerramento humano e um recibo tardio de material vinculado à mesma reação. A entrada não excluía reações; a fila aceitava o evento não textual; o recibo tratava qualquer não texto como material.
 
@@ -15,3 +15,7 @@ As projeções existentes no Drive coincidem com o baseline por leitura integral
 ## Publicação
 
 Commit cda9fa181ee04c889e7d8a1a09efc930042612b9, Netlify 6ac267688469a20008853374, versão 2026-10-04.2. Publicado via integração Git existente às 11:49:44 BRT, conforme Site is live no log da Netlify. GET de saúde ativo e POST sem assinatura recusado com 401 no domínio e na URL imutável. Isso comprova publicação e proteção técnica; o comportamento foi validado com eventos sintéticos, sem mensagem de teste nem replay da conversa real. Primeira interação natural ainda não observada.
+
+## Reconciliação documental
+
+Diretrizes e Plano foram substituídos nos mesmos arquivos existentes do Drive. Leitura integral posterior idêntica aos bytes locais commitados; hashes e horários no recibo. Manifesto, candidato e recibos apontam para o mesmo commit funcional e deploy. Nenhum arquivo concorrente de planejamento, permissão ou gatilho foi criado.

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-REACOES-2026-10-04",
   "title": "Reações não são anexos nem novas solicitações",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "9af6dd99ef6131fed56d7bf3fee285c1f7ca9f77",
   "authorization": {
     "required": true,
@@ -340,7 +340,7 @@
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
     },
-    "external": "Netlify functional commit published and read-only smoke passed; Drive reconciliation pending."
+    "external": "Functional commit published via existing Git integration; immutable and production health verified; same Drive files match committed local bytes."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -356,16 +356,16 @@
     ]
   },
   "release": {
-    "status": "netlify_verified_documentation_pending",
     "approvedCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
     "netlifyDeployId": "6ac267688469a20008853374",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-04T14:50:29.231Z",
-    "documentationStatus": "pending_same_drive_files",
+    "verifiedAt": "2026-10-04T14:51:19.520Z",
+    "documentationStatus": "same_drive_files_verified",
     "destinationsChanged": [
       "Netlify",
       "Google Drive: manual and executive plan, same IDs"
     ],
-    "receipt": "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json"
+    "receipt": "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json",
+    "drivePlanSha256": "970227bb0cd56f6ca7060b65d332f922001df904895d4c568e439feef6719f18"
   }
 }

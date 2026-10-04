@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
-    "lastObservedProductionCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
-    "functionalDeployId": "6ac2609d3913cd0008d6a2b1",
-    "lastObservedProductionDeployId": "6ac2609d3913cd0008d6a2b1",
-    "rollbackCommit": "d700926465386ea34842a459b5c690544485d069",
-    "rollbackDeployId": "6abc3954a368c700089a974e",
+    "functionalCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "lastObservedProductionCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
+    "functionalDeployId": "6ac267688469a20008853374",
+    "lastObservedProductionDeployId": "6ac267688469a20008853374",
+    "rollbackCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
+    "rollbackDeployId": "6ac2609d3913cd0008d6a2b1",
     "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-04T14:20:41.000Z",
+    "publishedAt": "2026-10-04T14:49:44.000Z",
     "publishedTimePrecision": "Netlify deploy log",
-    "lastVerifiedAt": "2026-10-04T14:21:35.694Z",
-    "candidateChangeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
+    "lastVerifiedAt": "2026-10-04T14:50:29.193Z",
+    "candidateChangeId": "BRUNA-REACOES-2026-10-04",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-04.1",
+    "bundleVersion": "2026-10-04.2",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -41,16 +41,11 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "ee97123268c8f1a6b0367e63b7c74d299e27f926018ac134234d7a8aa11eb227",
+    "driveProjectionSha256": "01ce724ae7b7966f70caa9194f3e6acbadec054a0a337cbbbba7ca161a0b2d87",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "bundleVersion": "2026-10-04.2",
-    "changeId": "BRUNA-REACOES-2026-10-04",
-    "status": "tested_local"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

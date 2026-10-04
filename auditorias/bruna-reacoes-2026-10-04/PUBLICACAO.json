@@ -1,5 +1,5 @@
 {
-  "status": "netlify_verified_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-REACOES-2026-10-04",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -58,5 +58,26 @@
     "authorizationContext": "Continuação da correção da mesma conversa, já autorizada com Corrija e publique; autorização persistente para corrigir comportamento e publicar.",
     "scope": "Reações tipadas sem recibo, alerta ou nova pendência; proteção de jobs legados e diretrizes canônicas.",
     "patientMessagesAuthorized": false
-  }
+  },
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "01ce724ae7b7966f70caa9194f3e6acbadec054a0a337cbbbba7ca161a0b2d87",
+      "bytes": 153447,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-10-04T14:51:19.520Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "970227bb0cd56f6ca7060b65d332f922001df904895d4c568e439feef6719f18",
+      "bytes": 238515,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-10-04T14:51:19.520Z"
+    }
+  ],
+  "documentationVerifiedAt": "2026-10-04T14:51:19.520Z"
 }
