@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
   "title": "Cumprir os dois assuntos aceitos após uma oferta informativa",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "08fe1bd44398c604809cd6b30342299f4a97244d",
   "authorization": {
     "required": true,
@@ -340,7 +340,7 @@
       "diff": "passed",
       "ops": "SYNC_PENDING expected before publication"
     },
-    "external": "Netlify functional commit published and read-only smoke passed; Drive reconciliation pending."
+    "external": "Functional commit published via existing Git integration; immutable and production health verified; same Drive files match committed local bytes."
   },
   "rollback": {
     "local": "Reverter somente este pacote.",
@@ -355,16 +355,16 @@
     ]
   },
   "release": {
-    "status": "netlify_verified_documentation_pending",
     "approvedCommit": "10b7a7d4bfde7e306ec785e6d7b70ee66a369723",
     "netlifyDeployId": "6ac2609d3913cd0008d6a2b1",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-04T14:22:13.586Z",
-    "documentationStatus": "pending_same_drive_files",
+    "verifiedAt": "2026-10-04T14:23:28.079Z",
+    "documentationStatus": "same_drive_files_verified",
     "destinationsChanged": [
       "Netlify",
       "Google Drive: manual and executive plan, same IDs"
     ],
-    "receipt": "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json"
+    "receipt": "auditorias/bruna-dois-assuntos-2026-10-04/PUBLICACAO.json",
+    "drivePlanSha256": "7e940757e83da3949342835ad447801457b934c921ab98d95970601e30883479"
   }
 }

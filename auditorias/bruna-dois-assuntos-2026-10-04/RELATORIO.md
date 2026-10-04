@@ -1,6 +1,6 @@
 # Continuidade de dois assuntos — 04/10/2026
 
-Estado: produção verificada; reconciliação documental em andamento.
+Estado: publicado e verificado; documentação reconciliada.
 
 A consulta viva confirmou que o aceite chegou completo e foi encaminhado para revisão por explicação e valor. A reprodução sintética encontrou ausência de resolução contextual: nenhum fato educativo ou pedido pendente foi carregado para a expressão Os dois. O ajuste pertence ao contexto linguístico comum, consumido por planejamento, fatos e contrato de saída. A composição de explicação e faixa aprovada deve preservar ambos os assuntos sob validação semântica e gate final.
 
@@ -15,3 +15,7 @@ As projeções existentes no Drive coincidem com o baseline, por leitura integra
 ## Publicação
 
 Commit 10b7a7d4bfde7e306ec785e6d7b70ee66a369723, Netlify 6ac2609d3913cd0008d6a2b1, versão 2026-10-04.1. Integração Git existente publicada às 11:20:41 BRT, conforme log da Netlify. Conta de leitura permite conferência; não foi necessário trocar de conta, alterar permissões ou interromper a automação. Cinco funções atualizadas, nenhum arquivo estático novo; cinco programações mantidas. GET de saúde ativo e POST não assinado recusado com 401 tanto no domínio quanto na URL imutável. Isso comprova publicação e proteção técnica, não entrega futura a pacientes. Sem primeira interação natural ou ganho de conversão medido. Recibos documentais seguem nos mesmos IDs do Drive.
+
+## Reconciliação documental
+
+Diretrizes e Plano foram substituídos nos mesmos arquivos existentes do Drive. Leitura integral posterior idêntica aos bytes locais commitados; hashes e horários no recibo. Manifesto, candidato e recibos apontam para o mesmo commit funcional e deploy. Nenhum arquivo concorrente de planejamento, permissão ou gatilho foi criado.

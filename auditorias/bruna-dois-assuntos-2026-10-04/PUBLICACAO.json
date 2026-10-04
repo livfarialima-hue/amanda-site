@@ -1,5 +1,5 @@
 {
-  "status": "netlify_verified_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-DOIS-ASSUNTOS-2026-10-04",
   "patientMessagesSent": 0,
   "appsScriptVersion": 161,
@@ -66,5 +66,26 @@
     "request": "Pq vc nao seguiu explicando? Corrija e publique.",
     "scope": "Continuidade dos dois assuntos oferecidos pela Bruna, consumidores e diretrizes canônicas",
     "patientMessagesAuthorized": false
-  }
+  },
+  "driveProjections": [
+    {
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "source": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "ee97123268c8f1a6b0367e63b7c74d299e27f926018ac134234d7a8aa11eb227",
+      "bytes": 151814,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-10-04T14:23:28.079Z"
+    },
+    {
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "source": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "7e940757e83da3949342835ad447801457b934c921ab98d95970601e30883479",
+      "bytes": 236882,
+      "sameFileId": true,
+      "rawReadbackMatchesLocal": true,
+      "verifiedAt": "2026-10-04T14:23:28.079Z"
+    }
+  ],
+  "documentationVerifiedAt": "2026-10-04T14:23:28.079Z"
 }
