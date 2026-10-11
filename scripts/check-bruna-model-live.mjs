@@ -24,9 +24,9 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     { direction: 'IN', role: 'user', text: 'Gostaria de entender a avaliação.', at: '2026-10-11T13:00:00Z' },
     { direction: 'OUT', role: 'assistant', source: 'bruna', text: 'A avaliação é individual. O que você gostaria de esclarecer?', at: '2026-10-11T13:01:00Z' },
   ];
-  const replyContract = { maxQuestions: 1, maxLinks: 0, allowCta: false, allowAppointmentConfirmation: false };
+  const replyContract = { maxQuestions: 1, maxLinks: 0, allowCta: false, allowAppointmentConfirmation: false, consultationNextStep: 'answer_only' };
   const scenarios = [
-    { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', preview: buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true }) },
+    { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', preview: buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep }) },
     { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', preview: buildLiftingFacialInformationReply({ text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial' }) },
     { name: 'clinical_urgency', text: 'Estou no pós-operatório e com falta de ar agora.', procedure: 'unknown', urgent: true },
     { name: 'classification', classification: true },
@@ -74,7 +74,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       scenario.urgent ? result.decision?.automaticAllowed === false : gate?.allowed === true && result.decision?.replyCode === scenario.code;
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;
     results.push({ name: scenario.name, passed, elapsedMs: Date.now() - startedAt, requests, status: result.status,
-      errorCode: result.errorCode, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
+      errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
     if (!passed) break;
   }
   return { status: results.length === scenarios.length && results.every(r => r.passed) ? 'passed' : 'failed',

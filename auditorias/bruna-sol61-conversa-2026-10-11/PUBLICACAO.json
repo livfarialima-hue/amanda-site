@@ -16,5 +16,24 @@
     "commit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
     "deployId": "6ac2830ee4b0b50008ce8e5a",
     "noReplay": true
-  }
+  },
+  "attempts": [
+    {
+      "commit": "1c2b8846f78f579bea4c23da37dee7d84f05f86b",
+      "deployId": "6acbc83a3d7cf70008dd16d6",
+      "status": "build_blocked_before_publish",
+      "checkedAt": "2026-10-11T17:33:10.663Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "httpStatus": 200,
+      "responseStatus": "completed",
+      "elapsedMs": 7546,
+      "usage": {
+        "input_tokens": 19434,
+        "output_tokens": 308,
+        "total_tokens": 19742
+      },
+      "reason": "Fixture de consulta sem consultationNextStep=answer_only gerava previa com CTA incompativel com o contrato sem CTA; o gate rejeitou. Corrigida a composicao da fixture para usar o mesmo contrato do webhook. Nenhum gate de producao foi relaxado."
+    }
+  ]
 }
