@@ -1,10 +1,740 @@
 {
-  "status": "pending",
+  "status": "production_verified_documentation_pending",
   "changeId": "BRUNA-CONTEXTO-2026-10-11",
-  "targetSiteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "authorization": {
+    "reference": "Continuidade da publicacao autorizada por Daniel (Publique) e do pedido atual de corrigir a API para contexto, coerencia e consulta a equipe. Sol 6.1 medio e API paga preservados; nao inclui plugin, migracao de assinatura, replay ou mensagens reais de teste.",
+    "approvedCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+    "recordedAt": "2026-10-11T18:28:56.4609714Z",
+    "approvedBy": "Daniel",
+    "releasePreflight": "passed"
+  },
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "deployId": "6acbd59e31a918000966a0af",
+  "buildId": "6acbd59e31a918000966a0ad",
+  "commit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+  "publishedAt": "2026-10-11T18:31:21.722Z",
+  "verifiedAt": "2026-10-11T18:32:35.869Z",
+  "functions": [
+    {
+      "name": "appointment-reminder",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "appointment-review",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "attribution-journey",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "attribution-journey-purge",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "classify-leads",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "classify-leads-background",
+      "mode": "background",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "human-resume",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "human-resume-background",
+      "mode": "background",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "post-consult-followup",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "scheduled-followup",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "synthetic-integration-health",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "ycloud-recovery",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "ycloud-recovery-background",
+      "mode": "background",
+      "runtime": "nodejs24.x"
+    },
+    {
+      "name": "ycloud-webhook",
+      "mode": "stream",
+      "runtime": "nodejs24.x"
+    }
+  ],
+  "schedules": [
+    {
+      "cron": "17 6 * * *",
+      "name": "attribution-journey-purge"
+    },
+    {
+      "cron": "*/5 * * * *",
+      "name": "classify-leads"
+    },
+    {
+      "cron": "*/5 * * * *",
+      "name": "human-resume"
+    },
+    {
+      "cron": "17 12 * * *",
+      "name": "synthetic-integration-health"
+    },
+    {
+      "cron": "*/5 * * * *",
+      "name": "ycloud-recovery"
+    }
+  ],
+  "smoke": [
+    {
+      "base": "https://reestruturacao-site--inspiring-sprite-b35ca4.netlify.app",
+      "healthStatus": 200,
+      "unsignedPost": 401,
+      "health": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "patientMessagesSent": 0
+    },
+    {
+      "base": "https://draamandaschroeder.com.br",
+      "healthStatus": 200,
+      "unsignedPost": 401,
+      "health": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "patientMessagesSent": 0
+    }
+  ],
+  "functionsAndSchedulesPreserved": true,
+  "immutableSmoke": {
+    "base": "https://6acbd59e31a918000966a0af--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "unsignedPost": 401,
+    "health": {
+      "ok": true,
+      "service": "ycloud-webhook",
+      "apiKeyConfigured": true,
+      "signatureProtection": "active",
+      "sheetsWebhookConfigured": true,
+      "sheetsSecretConfigured": true,
+      "openAIConfigured": true,
+      "reviewAlertConfigured": true,
+      "appointmentReviewEnabled": true,
+      "automationMode": "active",
+      "conversionExperience": "bruna-conversion-v1",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active",
+      "internalPhoneExclusionConfigured": true,
+      "leadDeliveryRetry": "single_idempotent_transient",
+      "leadDeliveryFallback": "acquisition_only",
+      "leadFailureEmailAlert": "required_after_retries",
+      "messageCostObservability": "delivered_event_idempotent"
+    },
+    "patientMessagesSent": 0
+  },
   "billingMode": "api_paid_authorized",
   "subscriptionIntegration": "requested_not_enabled",
-  "patientMessagesSentByTests": 0,
   "appsScriptVersionPreserved": 161,
-  "liveInference": "pending_hosted_build"
+  "patientMessagesSentByTests": 0,
+  "liveInference": {
+    "status": "passed",
+    "checkedAt": "2026-10-11T18:31:06.504Z",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "maxOutputTokens": 4096,
+    "verbosity": "low",
+    "billingMode": "api_paid_authorized",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "results": [
+      {
+        "name": "consultation_contextual",
+        "passed": true,
+        "elapsedMs": 7836,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 7795,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 19764,
+              "input_tokens_details": {
+                "cache_write_tokens": 19761,
+                "cached_tokens": 0
+              },
+              "output_tokens": 351,
+              "output_tokens_details": {
+                "reasoning_tokens": 68
+              },
+              "total_tokens": 20115
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "standard_reply",
+          "confidence": "high",
+          "automaticAllowed": true,
+          "urgent": false,
+          "professional": "amanda",
+          "procedure": "unknown",
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "suggestedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você não precisa decidir pela cirurgia nesse momento.",
+          "reviewReason": "",
+          "conversationState": {
+            "activeTopic": "valor da consulta presencial com a Dra. Amanda",
+            "patientAct": "question",
+            "refersToEventId": "",
+            "lastClinicQuestion": "O que você gostaria de esclarecer?",
+            "lastClinicOffer": "",
+            "unresolvedQuestions": [],
+            "factsAlreadyProvided": [
+              "A avaliação é individual.",
+              "A consulta presencial custa R$ 500.",
+              "Pagamento por Pix, débito ou parcelamento, com emissão de nota fiscal.",
+              "Na avaliação, a médica entende os objetivos, examina e conversa sobre possibilidades, sem obrigação de decidir pela cirurgia.",
+              "A pessoa ainda está pesquisando."
+            ],
+            "owner": "patient",
+            "nextExpectedAction": "Aguardar eventual nova dúvida da pessoa, sem convite de agenda.",
+            "ambiguity": "",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "replyWording": "contextual",
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você não precisa decidir pela cirurgia nesse momento.",
+        "gate": {
+          "allowed": true,
+          "reason": "allowed",
+          "body": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você não precisa decidir pela cirurgia nesse momento."
+        }
+      },
+      {
+        "name": "lifting_information",
+        "passed": true,
+        "elapsedMs": 6510,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 6499,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 20001,
+              "input_tokens_details": {
+                "cache_write_tokens": 794,
+                "cached_tokens": 19204
+              },
+              "output_tokens": 396,
+              "output_tokens_details": {
+                "reasoning_tokens": 54
+              },
+              "total_tokens": 20397
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "standard_reply",
+          "confidence": "high",
+          "automaticAllowed": true,
+          "urgent": false,
+          "professional": "amanda",
+          "procedure": "lifting_facial",
+          "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+          "replyWording": "contextual",
+          "suggestedReply": "As cicatrizes do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, as incisões podem se estender atrás das orelhas ou incluir uma abaixo do queixo. A posição e a extensão são discutidas na avaliação.",
+          "reviewReason": "",
+          "conversationState": {
+            "activeTopic": "Localização das cicatrizes do lifting facial",
+            "patientAct": "question",
+            "refersToEventId": "",
+            "lastClinicQuestion": "O que você gostaria de esclarecer?",
+            "lastClinicOffer": "",
+            "unresolvedQuestions": [],
+            "factsAlreadyProvided": [
+              "A avaliação é individual.",
+              "As incisões costumam acompanhar a linha do cabelo e os contornos das orelhas.",
+              "Conforme o planejamento, podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo.",
+              "A posição e a extensão são discutidas na avaliação."
+            ],
+            "owner": "patient",
+            "nextExpectedAction": "A pessoa pode trazer outra dúvida, se desejar.",
+            "ambiguity": "",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+        "replyWording": "contextual",
+        "selectedReply": "As cicatrizes do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, as incisões podem se estender atrás das orelhas ou incluir uma abaixo do queixo. A posição e a extensão são discutidas na avaliação.",
+        "gate": {
+          "allowed": true,
+          "reason": "allowed",
+          "body": "As cicatrizes do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, as incisões podem se estender atrás das orelhas ou incluir uma abaixo do queixo. A posição e a extensão são discutidas na avaliação."
+        }
+      },
+      {
+        "name": "personal_question_with_reference",
+        "passed": true,
+        "elapsedMs": 7704,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 7700,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 19782,
+              "input_tokens_details": {
+                "cache_write_tokens": 575,
+                "cached_tokens": 19204
+              },
+              "output_tokens": 388,
+              "output_tokens_details": {
+                "reasoning_tokens": 72
+              },
+              "total_tokens": 20170
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "standard_reply",
+          "confidence": "high",
+          "automaticAllowed": true,
+          "urgent": false,
+          "professional": "amanda",
+          "procedure": "lifting_facial",
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "suggestedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe.",
+          "reviewReason": "",
+          "conversationState": {
+            "activeTopic": "valor da consulta presencial com a Dra. Amanda",
+            "patientAct": "question",
+            "refersToEventId": "",
+            "lastClinicQuestion": "O que você gostaria de esclarecer?",
+            "lastClinicOffer": "Se quiser, posso verificar opções de horário com a equipe.",
+            "unresolvedQuestions": [],
+            "factsAlreadyProvided": [
+              "A avaliação é individual.",
+              "A consulta presencial custa R$ 500.",
+              "Na consulta, a Dra. Amanda entende os objetivos, examina e conversa sobre possibilidades, sem obrigação de decidir pela cirurgia.",
+              "Pagamento por Pix, débito ou parcelamento, com emissão de nota fiscal.",
+              "A pessoa ainda está pesquisando."
+            ],
+            "owner": "patient",
+            "nextExpectedAction": "Continuar a pesquisa ou, se desejar, aceitar a oferta de verificar horários.",
+            "ambiguity": "",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "replyWording": "contextual",
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe.",
+        "gate": {
+          "allowed": true,
+          "reason": "allowed",
+          "body": "A consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe."
+        }
+      },
+      {
+        "name": "accepted_information_offer",
+        "passed": true,
+        "elapsedMs": 10556,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 10549,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 19752,
+              "input_tokens_details": {
+                "cache_write_tokens": 545,
+                "cached_tokens": 19204
+              },
+              "output_tokens": 467,
+              "output_tokens_details": {
+                "reasoning_tokens": 93
+              },
+              "total_tokens": 20219
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "standard_reply",
+          "confidence": "high",
+          "automaticAllowed": true,
+          "urgent": false,
+          "professional": "amanda",
+          "procedure": "lifting_facial",
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "suggestedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos tratar de horários agora.",
+          "reviewReason": "",
+          "conversationState": {
+            "activeTopic": "Valor e funcionamento da consulta presencial",
+            "patientAct": "acceptance",
+            "refersToEventId": "synthetic-consultation-offer",
+            "lastClinicQuestion": "Posso te passar o valor da consulta presencial?",
+            "lastClinicOffer": "Informar o valor da consulta presencial",
+            "unresolvedQuestions": [],
+            "factsAlreadyProvided": [
+              "Consulta presencial com a Dra. Amanda: R$ 500",
+              "Avaliação inclui conversa sobre objetivos, exame e possibilidades individuais, sem obrigação de decidir pela cirurgia",
+              "Pagamento por Pix, débito ou parcelamento, com nota fiscal",
+              "Paciente não quer consultar horários agora"
+            ],
+            "owner": "patient",
+            "nextExpectedAction": "Aguardar manifestação espontânea da paciente, sem convite de agenda",
+            "ambiguity": "",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "replyWording": "contextual",
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos tratar de horários agora.",
+        "gate": {
+          "allowed": true,
+          "reason": "allowed",
+          "body": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos tratar de horários agora."
+        }
+      },
+      {
+        "name": "corrected_procedure",
+        "passed": true,
+        "elapsedMs": 8443,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 8439,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 19857,
+              "input_tokens_details": {
+                "cache_write_tokens": 650,
+                "cached_tokens": 19204
+              },
+              "output_tokens": 459,
+              "output_tokens_details": {
+                "reasoning_tokens": 54
+              },
+              "total_tokens": 20316
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "standard_reply",
+          "confidence": "high",
+          "automaticAllowed": true,
+          "urgent": false,
+          "professional": "amanda",
+          "procedure": "otoplastia",
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "suggestedReply": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode continuar pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe.",
+          "reviewReason": "",
+          "conversationState": {
+            "activeTopic": "consulta para otoplastia",
+            "patientAct": "question",
+            "refersToEventId": "",
+            "lastClinicQuestion": "O que você gostaria de esclarecer?",
+            "lastClinicOffer": "Se quiser, posso verificar opções de horário com a equipe.",
+            "unresolvedQuestions": [],
+            "factsAlreadyProvided": [
+              "A avaliação é individual.",
+              "Consulta presencial com a Dra. Amanda: R$ 500.",
+              "A consulta inclui conversa sobre objetivos, exame e explicação das possibilidades, sem obrigação de decidir pela cirurgia.",
+              "Pagamento por Pix, débito ou parcelamento, com emissão de nota fiscal.",
+              "A pessoa corrigiu o interesse para otoplastia e ainda está pesquisando."
+            ],
+            "owner": "patient",
+            "nextExpectedAction": "Continuar a pesquisa ou aceitar, se desejar, a oferta de verificar horários.",
+            "ambiguity": "",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "replyWording": "contextual",
+        "selectedReply": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode continuar pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe.",
+        "gate": {
+          "allowed": true,
+          "reason": "allowed",
+          "body": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode continuar pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe."
+        }
+      },
+      {
+        "name": "unknown_clinic_fact",
+        "passed": true,
+        "elapsedMs": 6456,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 6452,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 19729,
+              "input_tokens_details": {
+                "cache_write_tokens": 522,
+                "cached_tokens": 19204
+              },
+              "output_tokens": 302,
+              "output_tokens_details": {
+                "reasoning_tokens": 86
+              },
+              "total_tokens": 20031
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "human_review",
+          "confidence": "low",
+          "automaticAllowed": false,
+          "urgent": false,
+          "professional": "amanda",
+          "procedure": "lifting_facial",
+          "replyCode": "UNKNOWN-REVIEW-01",
+          "replyWording": "contextual",
+          "suggestedReply": "Há estacionamento no local. O equipamento específico usado pela médica nessa técnica precisa ser confirmado com a equipe.",
+          "reviewReason": "unknown_digest:equipamento",
+          "conversationState": {
+            "activeTopic": "Estacionamento e equipamento utilizado na técnica",
+            "patientAct": "question",
+            "refersToEventId": "",
+            "lastClinicQuestion": "O que você gostaria de esclarecer?",
+            "lastClinicOffer": "",
+            "unresolvedQuestions": [
+              "Tem estacionamento?",
+              "Qual equipamento específico a médica usa nessa técnica?"
+            ],
+            "factsAlreadyProvided": [
+              "A avaliação é individual."
+            ],
+            "owner": "human_team",
+            "nextExpectedAction": "Responder sobre o estacionamento com base na informação aprovada e confirmar o equipamento e a técnica mencionada antes de complementar a resposta.",
+            "ambiguity": "A técnica não foi especificada no histórico disponível.",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "UNKNOWN-REVIEW-01",
+        "replyWording": "contextual"
+      },
+      {
+        "name": "clinical_urgency",
+        "passed": true,
+        "elapsedMs": 4697,
+        "timeoutMs": 20000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 4693,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 19659,
+              "input_tokens_details": {
+                "cache_write_tokens": 452,
+                "cached_tokens": 19204
+              },
+              "output_tokens": 189,
+              "output_tokens_details": {
+                "reasoning_tokens": 0
+              },
+              "total_tokens": 19848
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": {
+          "route": "human_review",
+          "confidence": "high",
+          "automaticAllowed": false,
+          "urgent": true,
+          "professional": "unknown",
+          "procedure": "",
+          "replyCode": "ALERT-URG-01",
+          "replyWording": "contextual",
+          "suggestedReply": "",
+          "reviewReason": "urgencia_pos_operatoria",
+          "conversationState": {
+            "activeTopic": "Falta de ar atual no pós-operatório",
+            "patientAct": "statement",
+            "refersToEventId": "",
+            "lastClinicQuestion": "O que você gostaria de esclarecer?",
+            "lastClinicOffer": "",
+            "unresolvedQuestions": [
+              "Relato de falta de ar agora no pós-operatório exige atendimento humano urgente."
+            ],
+            "factsAlreadyProvided": [
+              "A avaliação é individual.",
+              "Paciente relata estar no pós-operatório e com falta de ar agora."
+            ],
+            "owner": "human_team",
+            "nextExpectedAction": "Acionar imediatamente a equipe para possível urgência pós-operatória.",
+            "ambiguity": "Procedimento e profissional não identificados no histórico disponível.",
+            "contextConfidence": "high"
+          }
+        },
+        "replyCode": "ALERT-URG-01",
+        "replyWording": "contextual"
+      },
+      {
+        "name": "classification",
+        "passed": true,
+        "elapsedMs": 4262,
+        "timeoutMs": 15000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 4258,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 2342,
+              "input_tokens_details": {
+                "cache_write_tokens": 2339,
+                "cached_tokens": 0
+              },
+              "output_tokens": 139,
+              "output_tokens_details": {
+                "reasoning_tokens": 45
+              },
+              "total_tokens": 2481
+            }
+          }
+        ],
+        "status": "completed"
+      },
+      {
+        "name": "followup_declined",
+        "passed": true,
+        "elapsedMs": 1786,
+        "timeoutMs": 12000,
+        "requests": [
+          {
+            "httpStatus": 200,
+            "elapsedMs": 1786,
+            "model": "gpt-6.1-sol",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 535,
+              "input_tokens_details": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0
+              },
+              "output_tokens": 28,
+              "output_tokens_details": {
+                "reasoning_tokens": 0
+              },
+              "total_tokens": 563
+            }
+          }
+        ],
+        "status": "completed",
+        "decision": "cancel_for_review"
+      }
+    ]
+  },
+  "localValidation": {
+    "baselineNewRegressionsFailed": 16,
+    "focusedAndConsumerTests": 138,
+    "crossContractTests": 165,
+    "fullSuiteTests": 1959,
+    "additionalRequiredTests": 49,
+    "distinctTests": 2008,
+    "newRegressions": 17,
+    "requiredTestFilesCovered": 99,
+    "changeCheck": "OK",
+    "architecture": "OK",
+    "siteBuild": "193 arquivos / 54 URLs / zero erros",
+    "siteCheck": "OK",
+    "diff": "OK",
+    "liveInference": {
+      "status": "passed",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "scenarios": 9,
+      "calls": 9,
+      "minMs": 1786,
+      "maxMs": 10556,
+      "inputTokens": 141421,
+      "outputTokens": 2719
+    },
+    "ops": "SYNC_PENDING esperado ate publicacao e reconciliacao",
+    "publication": "production_verified",
+    "documentation": "pending_drive_readback"
+  },
+  "rollback": "Reverter o commit candidato e publicar pelo Git o codigo equivalente ao baseline 6c6507983012a0cff63cf712f7b3709a0b4d5f99 / deploy 6acbccab46983900087c5159; preservar Apps Script v161, filas e recibos, sem replay."
 }

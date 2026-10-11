@@ -1,6 +1,6 @@
-## 2026-10-11.3 — contexto e revisão de conhecimento, candidato local
+## 2026-10-11.3 — contexto e revisão de conhecimento, publicado em 11/10/2026
 
-Veto semântico preservado antes de resolver KB e UNKNOWN-CLARIFY; currentTemplateId explícito; instruções de aceites e preço alinhadas às permissões existentes. Pendências concretas vão à equipe, sem transferir ao paciente perguntas sobre dados internos. Fatos, faixas e runtime Sol 6.1 médio preservados. Gate hospedado passa a exigir nove cenários sintéticos. Evidência científica e limites no documento canônico de referências.
+Veto semântico preservado antes de resolver KB e UNKNOWN-CLARIFY; currentTemplateId explícito; instruções de aceites e preço alinhadas às permissões existentes. Pendências concretas vão à equipe, sem transferir ao paciente perguntas sobre dados internos. Fatos, faixas e runtime Sol 6.1 médio preservados. Nove cenários reais sintéticos aprovados (1,8–10,6s), junto de 2.008 testes locais. Commit 590121d96c02bbfbb5bb01c53b30ab83a6a658b8; Netlify 6acbd59e31a918000966a0af. Evidência científica e limites no documento canônico de referências.
 
 ## 2026-10-11.2 — margem de inferência, publicado em 11/10/2026
 

@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
-    "lastObservedProductionCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
-    "functionalDeployId": "6acbccab46983900087c5159",
-    "lastObservedProductionDeployId": "6acbccab46983900087c5159",
-    "rollbackCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
-    "rollbackDeployId": "6acbc8ea817d3600075f6270",
+    "functionalCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+    "lastObservedProductionCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+    "functionalDeployId": "6acbd59e31a918000966a0af",
+    "lastObservedProductionDeployId": "6acbd59e31a918000966a0af",
+    "rollbackCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+    "rollbackDeployId": "6acbccab46983900087c5159",
     "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-11T17:52:33.382Z",
+    "publishedAt": "2026-10-11T18:31:21.722Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-11T17:53:06.0000000Z",
-    "candidateChangeId": "BRUNA-RUNTIME-2026-10-11",
-    "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-11.2",
+    "lastVerifiedAt": "2026-10-11T18:32:35.869Z",
+    "candidateChangeId": "BRUNA-CONTEXTO-2026-10-11",
+    "candidateStatus": "documentation_pending",
+    "bundleVersion": "2026-10-11.3",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -47,13 +47,5 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-CONTEXTO-2026-10-11",
-    "status": "tested_local",
-    "liveModelCheckRequired": true,
-    "authorization": "Continuidade de Publique e do pedido de corrigir a API para respeitar contexto e conferir duvidas com Daniel.",
-    "billingMode": "api_paid_authorized",
-    "bundleVersion": "2026-10-11.3"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

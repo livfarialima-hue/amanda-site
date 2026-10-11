@@ -1,6 +1,6 @@
 # Bruna: contexto atual e dúvidas que exigem a equipe
 
-Estado: testado localmente; publicação e inferência real pendentes.
+Estado: publicado e verificado em produção; projeções no Drive em reconciliação.
 
 ## Problemas e correções
 
@@ -20,7 +20,7 @@ A documentação oficial do Sol 6.1 orienta contexto relevante e instruções co
 
 Antes da correção: 16 falhas novas reproduzidas, entre guard, transporte do contexto atual e webhook completo com alerta interno. Após a correção inicial: 138 testes focados/consumidores passaram. O gate de API paga foi ampliado de cinco para nove cenários sintéticos, incluindo pergunta com referência, aceite curto, correção de procedimento e conhecimento parcial com pendência específica. Seu próprio teste rejeita o caso que responde só sobre estacionamento e omite equipamento.
 
-Transportes locais são simulados; não comprovam qualidade de inferência real. A execução real permanece restrita ao build hospedado de produção marcado e exige que os nove cenários passem antes da publicação. Não há envio de mensagem real, replay ou escrita em dados de paciente nesses testes. Suíte integral: 1.959/1.959. Adicionais contratuais: 49/49, total 2.008 distintos, incluindo 17 novas regressões. Cruzados: 165/165. Todos os 99 arquivos obrigatórios cobertos; change:check, architecture:check, build de 193 arquivos/54 URLs, site:check e diff sem erros. Inferência real e publicação ainda pendentes.
+Transportes locais são simulados; não comprovam qualidade de inferência real. A execução real permanece restrita ao build hospedado de produção marcado e exige que os nove cenários passem antes da publicação. Não há envio de mensagem real, replay ou escrita em dados de paciente nesses testes. Suíte integral: 1.959/1.959. Adicionais contratuais: 49/49, total 2.008 distintos, incluindo 17 novas regressões. Cruzados: 165/165. Todos os 99 arquivos obrigatórios cobertos; change:check, architecture:check, build de 193 arquivos/54 URLs, site:check e diff sem erros. Inferência real e publicação aprovadas, conforme recibo abaixo.
 
 ## Efeitos e retorno
 
@@ -29,3 +29,9 @@ Risco máximo: silêncio indevido por encaminhamento excessivo ou resposta sem c
 Baseline: c7fbe767a07e9a1320b5e26f00e0daa574b34128; produção funcional 6c6507983012a0cff63cf712f7b3709a0b4d5f99 / Netlify 6acbccab46983900087c5159. Rollback reverte o commit candidato e publica pelo Git o código equivalente a esse deploy, preservando Apps Script v161, filas e recibos, sem reenvio. Preflight em `PREFLIGHT.json`.
 
 Daniel/equipe devem observar primeiras conversas naturais, 48 horas e sete dias após publicação: cobertura dos pedidos, repetição, correção de assunto, pendência com responsável, latência, consulta agendada e comparecimento. Conter ou reverter diante de fato inventado, veto ignorado, envio duplicado ou degradação persistente. Não se criou tarefa agendada.
+
+## Publicação e verificação
+
+Commit funcional 590121d96c02bbfbb5bb01c53b30ab83a6a658b8; build 6acbd59e31a918000966a0ad; Netlify 6acbd59e31a918000966a0af, publicado em 2026-10-11T18:31:21.722Z, verificado em 2026-10-11T18:32:35.869Z. Nove cenários reais aprovados, nove chamadas, 1,8–10,6 segundos, Sol 6.1 medium confirmado e nenhuma saída incompleta. O aceite curto respeitou a recusa de horários; a correção para otoplastia prevaleceu; o equipamento desconhecido virou pendência da equipe sem resposta inventada. São cenários sintéticos, não prova de desempenho em conversas naturais.
+
+Saúde do backend 200 e POST sem assinatura 401 no domínio, na branch e na URL imutável. As 14 funções, modos de execução e cinco agendas coincidem com o baseline. Nenhum paciente recebeu mensagem de teste, nenhuma escrita em LEADS/CRM/Apps Script e nenhum replay. Recibo integral: `PUBLICACAO.json`.

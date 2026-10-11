@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTEXTO-2026-10-11",
   "title": "Contexto atual e revisao humana prevalecem sobre mensagens prontas",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "c7fbe767a07e9a1320b5e26f00e0daa574b34128",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -384,8 +384,20 @@
       "siteBuild": "193 arquivos / 54 URLs / zero erros",
       "siteCheck": "OK",
       "diff": "OK",
-      "liveInference": "pending_hosted_production_build",
-      "ops": "SYNC_PENDING esperado ate publicacao e reconciliacao"
+      "liveInference": {
+        "status": "passed",
+        "model": "gpt-6.1-sol",
+        "effort": "medium",
+        "scenarios": 9,
+        "calls": 9,
+        "minMs": 1786,
+        "maxMs": 10556,
+        "inputTokens": 141421,
+        "outputTokens": 2719
+      },
+      "ops": "SYNC_PENDING esperado ate publicacao e reconciliacao",
+      "publication": "production_verified",
+      "documentation": "pending_drive_readback"
     },
     "completedAt": "2026-10-11T18:27:56.027Z",
     "executionNote": "Todos os 99 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e o gate hospedado. Grupos sobrepostos nao repetidos; nao se afirma execucao literal de comandos redundantes."
@@ -404,8 +416,12 @@
     ]
   },
   "release": {
-    "status": "pending",
+    "status": "documentation_pending",
     "billingMode": "api_paid_authorized",
-    "subscriptionIntegration": "requested_not_enabled"
+    "subscriptionIntegration": "requested_not_enabled",
+    "approvedCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+    "netlifyDeployId": "6acbd59e31a918000966a0af",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-10-11T18:32:35.869Z"
   }
 }
