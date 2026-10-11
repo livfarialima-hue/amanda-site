@@ -34,6 +34,24 @@
         "total_tokens": 19742
       },
       "reason": "Fixture de consulta sem consultationNextStep=answer_only gerava previa com CTA incompativel com o contrato sem CTA; o gate rejeitou. Corrigida a composicao da fixture para usar o mesmo contrato do webhook. Nenhum gate de producao foi relaxado."
+    },
+    {
+      "commit": "d75893bedeb3caea1555c5bc1796c7e5d345537e",
+      "deployId": "6acbc889e93cea00088d422f",
+      "status": "build_blocked_before_publish",
+      "checkedAt": "2026-10-11T17:34:23.103Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "httpStatus": 200,
+      "responseStatus": "completed",
+      "elapsedMs": 7966,
+      "usage": {
+        "input_tokens": 19423,
+        "cached_tokens": 18906,
+        "output_tokens": 361,
+        "total_tokens": 19784
+      },
+      "reason": "Contrato parcial da fixture normalizava allowedResponseKind=none/risk=red; modelo corretamente encaminhou para humano. O gate agora importa decideConversationAction, proprietario real do contrato, sem contratos parciais nem alteracao de criterio de aprovacao."
     }
   ]
 }

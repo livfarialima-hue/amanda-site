@@ -7,6 +7,7 @@ import { buildConsultationInformationReply } from '../netlify/functions/lib/pati
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
 import { selectConfirmedReplyText } from '../netlify/functions/lib/semantic-reply-policy.mjs';
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
+import { decideConversationAction } from '../netlify/functions/lib/conversation-action-controller.mjs';
 import { BRUNA_MODEL, BRUNA_REASONING_EFFORT } from '../netlify/functions/lib/bruna-model-config.mjs';
 
 // Run only during an explicitly marked release, inside the hosted production
@@ -24,10 +25,9 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     { direction: 'IN', role: 'user', text: 'Gostaria de entender a avaliação.', at: '2026-10-11T13:00:00Z' },
     { direction: 'OUT', role: 'assistant', source: 'bruna', text: 'A avaliação é individual. O que você gostaria de esclarecer?', at: '2026-10-11T13:01:00Z' },
   ];
-  const replyContract = { maxQuestions: 1, maxLinks: 0, allowCta: false, allowAppointmentConfirmation: false, consultationNextStep: 'answer_only' };
   const scenarios = [
-    { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', preview: buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep }) },
-    { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', preview: buildLiftingFacialInformationReply({ text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial' }) },
+    { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request' },
+    { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', reason: 'lifting_facial_information_request' },
     { name: 'clinical_urgency', text: 'Estou no pós-operatório e com falta de ar agora.', procedure: 'unknown', urgent: true },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
@@ -57,15 +57,24 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       result = await reviewScheduledFollowupContext({ patientPhone: '+5511900000000', body: 'Ficou alguma dúvida sobre a avaliação?', humanApproved: true,
         recentConversation: [...history, { direction: 'IN', role: 'user', text: 'Prefiro não receber mais mensagens.', at: '2026-10-11T13:02:00Z' }] }, options);
     } else {
+      // Reuse the actual owner of the reply contract. A hand-written partial
+      // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
+      const plan = { route: scenario.urgent ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
+        automaticAllowed: !scenario.urgent, replyCode: scenario.code, reason: scenario.reason };
+      const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: history, conversionExperienceEnabled: true });
+      const replyContract = conversationAction.replyContract;
+      const preview = scenario.code === 'AMANDA-CONSULTA-INFO-01'
+        ? buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep })
+        : buildLiftingFacialInformationReply({ text: scenario.text, procedure: scenario.procedure });
       const policyHints = scenario.code ? { route: 'standard_reply', professional: 'amanda', procedure: scenario.procedure, automaticAllowed: true,
-        deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: scenario.procedure, deterministicReplyPreview: scenario.preview } : undefined;
+        deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: scenario.procedure, deterministicReplyPreview: preview } : undefined;
       result = await runOpenAIShadow({ phone: '+5511900000000', text: scenario.text, procedure: scenario.procedure, recentConversation: history,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
       if (scenario.code && result.status === 'completed') {
         selectedReply = selectConfirmedReplyText(result, { decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
-          professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: scenario.preview } });
+          professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } });
         gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: history,
-          conversationAction: { action: 'respond', semanticReplyAuthorized: true, semanticReplyCode: scenario.code, replyContract } });
+          conversationAction: { ...conversationAction, semanticReplyAuthorized: true, semanticReplyCode: scenario.code } });
       }
     }
     const modelConfirmed = requests.length > 0 && requests.every(r => r.httpStatus === 200 &&

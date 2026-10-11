@@ -45,6 +45,11 @@ test('all five synthetic scenarios use the real adapters and pass the outbound p
       const hints = input.policyHints;
       const urgent = !hints?.deterministicReplyCode;
       if (!urgent) assert.ok(hints.deterministicReplyPreview.length > 30);
+      if (!urgent) {
+        assert.equal(input.replyContract.allowedResponseKind, 'direct_answer');
+        assert.equal(input.replyContract.owner, 'bruna');
+        assert.notEqual(input.replyContract.risk, 'red');
+      }
       if (hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01') {
         assert.doesNotMatch(hints.deterministicReplyPreview, /horário|agenda/i, 'the preview must honor the answer-only consultation contract');
       }
